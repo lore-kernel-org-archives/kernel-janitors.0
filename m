@@ -1,13 +1,14 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 25 Jan 2005 22:30:58 +0000
-Subject: [KJ] [PATCH] 7/34: block/ps2esdi: replace sleep_on() with
-Message-Id: <20050125223058.GH2689@us.ibm.com>
+Date: Wed, 26 Jan 2005 00:26:48 +0000
+Subject: [KJ] [PATCH 26/34] mips/mirage_ts: replace
+Message-Id: <20050126002648.GR12649@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7270018618599341=="
+Content-Type: multipart/mixed; boundary="===============85035355107652677=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
 
---===============7270018618599341==
+--===============85035355107652677==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,69 +16,36 @@ Hi,
 
 Please consider applying.
 
-Description: Use wait_event() instead of the deprecated sleep_on(). The latter
-two replacements treat the current if-conditional as a while-conditional. I am
-not sure if this will result in the desired behavior. The first change required
-using wait-queue code directly with a local wait-queue, as the sleep is not
-conditional currently.
+Description: Use wait_event_timeout() instead of the deprecated
+interruptible_sleep_on_timeout(). The current code does not seem to
+care about signals, so interruptible seems unnecessary.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/drivers/block/ps2esdi.c	2005-01-24 09:34:04.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/block/ps2esdi.c	2005-01-25 13:39:48.000000000 -0800
-@@ -43,6 +43,7 @@
- #include <linux/init.h>
- #include <linux/ioport.h>
- #include <linux/module.h>
-+#include <linux/delay.h>
+--- 2.6.11-rc2-kj-v/arch/mips/au1000/db1x00/mirage_ts.c	2005-01-24 09:28:12.000000000 -0800
++++ 2.6.11-rc2-kj/arch/mips/au1000/db1x00/mirage_ts.c	2005-01-24 16:43:25.000000000 -0800
+@@ -42,6 +42,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/smp.h>
+ #include <linux/smp_lock.h>
++#include <linux/wait.h>
  
- #include <asm/system.h>
- #include <asm/io.h>
-@@ -292,6 +293,7 @@ static int __init ps2esdi_geninit(void)
- 	   we will set the INIT_FLAG to a non-zero value.
- 	 */
+ #include <asm/segment.h>
+ #include <asm/irq.h>
+@@ -147,10 +148,7 @@ static int ts_thread(void *id)
+ 	ts = wm97xx_ts_get_handle(0);
  
-+	DEFINE_WAIT(wait);
- 	int slot = 0, i, reset_start, reset_end;
- 	u_char status;
- 	unsigned short adapterID;
-@@ -373,11 +375,13 @@ static int __init ps2esdi_geninit(void)
- 	reset_status = 0;
- 	reset_start = jiffies;
- 	while (!reset_status) {
-+		prepare_to_wait(&ps2esdi_int, &wait, TASK_UNINTERRUPTIBLE);
- 		init_timer(&esdi_timer);
- 		esdi_timer.expires = jiffies + HZ;
- 		esdi_timer.data = 0;
- 		add_timer(&esdi_timer);
--		sleep_on(&ps2esdi_int);
-+		schedule();
-+		finish_wait(&ps2esdi_int, &wait);
- 	}
- 	reset_end = jiffies;
- 	LITE_OFF;
-@@ -461,8 +465,7 @@ static void __init ps2esdi_get_device_cf
- 	cmd_blk[1] = 0;
- 	no_int_yet = TRUE;
- 	ps2esdi_out_cmd_blk(cmd_blk);
--	if (no_int_yet)
--		sleep_on(&ps2esdi_int);
-+	wait_event(ps2esdi_int, !no_int_yet);
+ 	/* proceed only after everybody is ready */
+-	while ( ! wm97xx_ts_ready(ts) ) {
+-		/* give a little time for initializations to complete */
+-		interruptible_sleep_on_timeout(&pendown_wait, HZ / 4);
+-	}
++	wait_event_timeout(pendown_wait, wm97xx_ts_ready(ts), HZ/4);
  
- 	if (ps2esdi_drives > 1) {
- 		printk("%s: Drive 1\n", DEVICE_NAME);	/*BA */
-@@ -470,8 +473,7 @@ static void __init ps2esdi_get_device_cf
- 		cmd_blk[1] = 0;
- 		no_int_yet = TRUE;
- 		ps2esdi_out_cmd_blk(cmd_blk);
--		if (no_int_yet)
--			sleep_on(&ps2esdi_int);
-+		wait_event(ps2esdi_int, !no_int_yet);
- 	}			/* if second physical drive is present */
- 	return;
- }
+ 	/* board-specific calibration */
+ 	wm97xx_ts_set_cal(ts,
 
---===============7270018618599341==
+--===============85035355107652677==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============7270018618599341==--
+--===============85035355107652677==--
