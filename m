@@ -1,95 +1,82 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Wed, 02 Feb 2005 16:22:05 +0000
-Subject: [KJ] [PATCH] [RESEND] pci_find_device() in drivers/media/radio/
-Message-Id: <20050202162205.GD24725@rhum.iomeda.fr>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:29 +0000
+Subject: [KJ] [PATCH][9/26] drivers/isdn/sc/* - compile warning cleanup
+Message-Id: <420BEF85.1681.587831@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="qjNfmADvan18RZcF"
+Content-Type: multipart/mixed; boundary="===============97657801317858417=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============97657801317858417==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
---qjNfmADvan18RZcF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Description: compile warning cleanup - cast integer arguments to proper 
+pointer types.  
 
-Hi,
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description:
-From : http://kerneljanitors.org/TODO
->- delete all pci_find_* functions from the kernel tree.
->  Instead of pci_find_device use pci_get_device()..
->-  convert from pci_module_init to pci_register_driver
-
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
-
---qjNfmADvan18RZcF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="media_radio.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-gemtek-pci.c linux-2.6.11-rc2/drivers/media/radio/radio-gemtek-pci.c
---- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-gemtek-pci.c	2005-01-26 08:31:14.000000000 +0100
-+++ linux-2.6.11-rc2/drivers/media/radio/radio-gemtek-pci.c	2005-01-26 10:01:19.000000000 +0100
-@@ -394,7 +394,7 @@ static struct pci_driver gemtek_pci_driv
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/sc/init.c linux-2.6.11-rc3-mm/drivers/isdn/sc/init.c
+--- linux-2.6.11-rc3-mm-original/drivers/isdn/sc/init.c	2005-02-03 03:56:22.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/isdn/sc/init.c	2005-02-08 18:33:44.000000000 +0200
+@@ -502,7 +502,7 @@ int identify_board(unsigned long rambase
+ 	 */
+ 	outb(PRI_BASEPG_VAL, pgport);
+ 	msleep_interruptible(1000);
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
+ 	pr_debug("Looking for a signature, got 0x%x\n", sig);
+ 	if(sig == SIGNATURE)
+ 		return PRI_BOARD;
+@@ -512,7 +512,7 @@ int identify_board(unsigned long rambase
+ 	 */
+ 	outb(BRI_BASEPG_VAL, pgport);
+ 	msleep_interruptible(1000);
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
+ 	pr_debug("Looking for a signature, got 0x%x\n", sig);
+ 	if(sig == SIGNATURE)
+ 		return BRI_BOARD;
+@@ -522,7 +522,7 @@ int identify_board(unsigned long rambase
+ 	/*
+ 	 * Try to spot a card
+ 	 */
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
+ 	pr_debug("Looking for a signature, got 0x%x\n", sig);
+ 	if(sig != SIGNATURE)
+ 		return -1;
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/sc/shmem.c linux-2.6.11-rc3-mm/drivers/isdn/sc/shmem.c
+--- linux-2.6.11-rc3-mm-original/drivers/isdn/sc/shmem.c	2005-02-03 03:55:35.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/isdn/sc/shmem.c	2005-02-08 17:49:56.000000000 +0200
+@@ -56,8 +56,8 @@ void memcpy_toshmem(int card, void *dest
  
- static int __init gemtek_pci_init_module( void )
- {
--	return pci_module_init( &gemtek_pci_driver );
-+	return pci_register_driver( &gemtek_pci_driver );
- }
+ 	outb(((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE) >> 14) | 0x80,
+ 		sc_adapter[card]->ioport[sc_adapter[card]->shmem_pgport]);
+-	memcpy_toio(sc_adapter[card]->rambase +
+-		((unsigned long) dest % 0x4000), src, n);
++	memcpy_toio((volatile void __iomem *)(sc_adapter[card]->rambase +
++		((unsigned long) dest % 0x4000)), src, n);
+ 	spin_unlock_irqrestore(&sc_adapter[card]->lock, flags);
+ 	pr_debug("%s: set page to %#x\n",sc_adapter[card]->devicename,
+ 		((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE)>>14)|0x80);
+@@ -135,8 +135,8 @@ void memset_shmem(int card, void *dest, 
  
- static void __exit gemtek_pci_cleanup_module( void )
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maestro.c linux-2.6.11-rc2/drivers/media/radio/radio-maestro.c
---- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maestro.c	2005-01-26 08:31:14.000000000 +0100
-+++ linux-2.6.11-rc2/drivers/media/radio/radio-maestro.c	2005-02-02 15:43:24.000000000 +0100
-@@ -265,11 +265,11 @@ static int __init maestro_radio_init(voi
- {
- 	register __u16 found=0;
- 	struct pci_dev *pcidev = NULL;
--	while(!found && (pcidev = pci_find_device(PCI_VENDOR_ESS, 
-+	while(!found && (pcidev = pci_get_device(PCI_VENDOR_ESS, 
- 						  PCI_DEVICE_ID_ESS_ESS1968,
- 						  pcidev)))
- 		found |= radio_install(pcidev);
--	while(!found && (pcidev = pci_find_device(PCI_VENDOR_ESS,
-+	while(!found && (pcidev = pci_get_device(PCI_VENDOR_ESS,
- 						  PCI_DEVICE_ID_ESS_ESS1978, 
- 						  pcidev)))
- 		found |= radio_install(pcidev);
-@@ -316,6 +316,7 @@ static __u16 radio_install(struct pci_de
- 	if(radio_power_on(&radio_unit)) {
- 		if(video_register_device(&maestro_radio, VFL_TYPE_RADIO, radio_nr)==-1) {
- 			printk("radio-maestro: can't register device!");
-+			pci_dev_put(pcidev);
- 			return 0;
- 		}
- 		printk(KERN_INFO "radio-maestro: version "
-@@ -326,7 +327,9 @@ static __u16 radio_install(struct pci_de
- 		       "\n");
- 		printk(KERN_INFO "radio-maestro: radio chip initialized\n");
- 		return 1;
--	} else
-+	} else {
-+		pci_dev_put(pcidev); 
- 		return 0;   
-+	}
- }
- 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maxiradio.c linux-2.6.11-rc2/drivers/media/radio/radio-maxiradio.c
---- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maxiradio.c	2005-01-26 08:31:14.000000000 +0100
-+++ linux-2.6.11-rc2/drivers/media/radio/radio-maxiradio.c	2005-01-26 10:01:28.000000000 +0100
-@@ -337,7 +337,7 @@ static struct pci_driver maxiradio_drive
- 
- static int __init maxiradio_radio_init(void)
- {
--	return pci_module_init(&maxiradio_driver);
-+	return pci_register_driver(&maxiradio_driver);
- }
- 
- static void __exit maxiradio_radio_exit(void)
+ 	outb(((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE) >> 14) | 0x80,
+ 		sc_adapter[card]->ioport[sc_adapter[card]->shmem_pgport]);
+-	memset_io(sc_adapter[card]->rambase +
+-		((unsigned long) dest % 0x4000), c, n);
++	memset_io((volatile void __iomem *)(sc_adapter[card]->rambase +
++		((unsigned long) dest % 0x4000)), c, n);
+ 	pr_debug("%s: set page to %#x\n",sc_adapter[card]->devicename,
+ 		((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE)>>14)|0x80);
+ 	spin_unlock_irqrestore(&sc_adapter[card]->lock, flags);
 
---qjNfmADvan18RZcF
+
+
+
+--===============97657801317858417==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -100,4 +87,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---qjNfmADvan18RZcF--
+--===============97657801317858417==--
