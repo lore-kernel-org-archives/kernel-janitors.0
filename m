@@ -1,35 +1,28 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 28 May 2004 20:35:54 +0000
-Subject: [Kernel-janitors] Re: [PATCH] - fix pci/probe.c possible NULL
-Message-Id: <20040528203553.GF9803@kroah.com>
+From: MJK <mkemp@cs.nmsu.edu>
+Date: Sun, 02 May 2004 12:54:18 +0000
+Subject: [Kernel-janitors] INIT_WORK question
+Message-Id: <Pine.LNX.4.58.0405020651340.1291@mustang.cs.nmsu.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67132980602988246=="
+Content-Type: multipart/mixed; boundary="===============72092539646219755=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============67132980602988246==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============72092539646219755==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-On Thu, May 27, 2004 at 04:12:32PM -0300, Luiz Fernando N. Capitulino wrote:
-> 
->  Hi,
-> 
->  In drivers/pci/probe.c::pci_scan_bridge() the call for pci_alloc_child_bus()
-> can return NULL, but it is not handled by the function (detected by
-> Coverity's checker).
-> 
->  The patch bellow fix that returning `max' if we got the NULL, but
-> I do not know if it is right. I guess it is, because in that case
-> the function will act in the same way as with `pass != 0'.
+Hey,
 
-Looks good enough.  Better than an oops :)
+	I am looking at some code that uses workqueues and am wondering
+about something. We have INIT_WORK(work, func, data). If, in func, we
+start to create some kernel_threads and the threads cannot be created for
+some reason, do we then just ignore any return values and let the queue
+"die out" or do we explicitly return after we check the return value of
+kernel_thread?
 
-Applied, thanks.
+Cordially,
+MJK
 
-greg k-h
-
---===============67132980602988246==
+--===============72092539646219755==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +33,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67132980602988246==--
+--===============72092539646219755==--
