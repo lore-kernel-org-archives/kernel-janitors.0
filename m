@@ -1,41 +1,91 @@
-From: Godmar Back <godmar@gmail.com>
-Date: Wed, 02 Feb 2005 00:04:29 +0000
-Subject: Re: [KJ] question regarding global symbols & namespace.pl script
-Message-Id: <719dced305020116041f3b1ea4@mail.gmail.com>
+From: Amit Gud <amitg@calsoftinc.com>
+Date: Mon, 14 Feb 2005 05:58:10 +0000
+Subject: [KJ] [PATCH 6/18] drivers/macintosh/ remove pci_find_{device,
+Message-Id: <200502141116.12787.amitg@calsoftinc.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14329071801726645=="
+Content-Type: multipart/mixed; boundary="===============93950126686050117=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <719dced3050201104324e53747@mail.gmail.com>
-In-Reply-To: <719dced3050201104324e53747@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============14329071801726645==
-Content-Type: text/plain; charset=US-ASCII
+--===============93950126686050117==
+Content-Type: text/plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Regarding the namespace.pl issue, it seems that this script is not
-intended to be run from the command line without setting the srctree
-and objtree environment variables first.
+Remove deprecated pci_find_device and pci_find_subsys
 
-The reason is that File::Find apparently chdir's into the directory
-where the file is located, so the test on line 176: if (! -e
-"$source.c" fails because $source is set to
-arch/i386/process/kernel.c, but the current directory is already
-./arch/i386/kernel. I saw in an strace that stat64("process.o")
-succeeded right before stat64("arch/i386/process/kernel.c") failed. It
-works fine with setting objtree and srctree beforehand.
 
-The problem with GNU vs GCC might be an unrelated issue, but since the
-.c file existed, it should not have executed the code that failed.
+AG
+--
+May the source be with you
 
-Thanks!
 
- - Godmar
+Signed-off-by: Amit Gud <gud@eth.net>
 
-ps: I apologize for the linebreaks in this email - does anybody know
-how to use gmail with a monospace font in a htmlarea?
+diff -uprN orig/drivers/macintosh/via-pmu68k.c linux-2.6.11-rc3/drivers/macintosh/via-pmu68k.c
+--- orig/drivers/macintosh/via-pmu68k.c	2004-10-19 03:23:21.000000000 +0530
++++ linux-2.6.11-rc3/drivers/macintosh/via-pmu68k.c	2005-02-14 05:20:34.000000000 +0530
+@@ -843,7 +843,7 @@ pbook_pci_save(void)
+ 	struct pci_save *ps;
+ 
+ 	npci = 0;
+-	while ((pd = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL)
++	while ((pd = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL)
+ 		++npci;
+ 	n_pbook_pci_saves = npci;
+ 	if (npci == 0)
+@@ -854,7 +854,7 @@ pbook_pci_save(void)
+ 		return;
+ 
+ 	pd = NULL;
+-	while ((pd = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
++	while ((pd = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
+ 		pci_read_config_word(pd, PCI_COMMAND, &ps->command);
+ 		pci_read_config_word(pd, PCI_CACHE_LINE_SIZE, &ps->cache_lat);
+ 		pci_read_config_word(pd, PCI_INTERRUPT_LINE, &ps->intr);
+@@ -871,7 +871,7 @@ pbook_pci_restore(void)
+ 	struct pci_dev *pd = NULL;
+ 	int j;
+ 
+-	while ((pd = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
++	while ((pd = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
+ 		if (ps->command == 0)
+ 			continue;
+ 		pci_read_config_word(pd, PCI_COMMAND, &cmd);
+diff -uprN orig/drivers/macintosh/via-pmu.c linux-2.6.11-rc3/drivers/macintosh/via-pmu.c
+--- orig/drivers/macintosh/via-pmu.c	2005-02-11 15:19:46.000000000 +0530
++++ linux-2.6.11-rc3/drivers/macintosh/via-pmu.c	2005-02-14 05:20:08.000000000 +0530
+@@ -2141,7 +2141,7 @@ pbook_alloc_pci_save(void)
+ 	struct pci_dev *pd = NULL;
+ 
+ 	npci = 0;
+-	while ((pd = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
++	while ((pd = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
+ 		++npci;
+ 	}
+ 	if (npci == 0)
+@@ -2171,7 +2171,7 @@ pbook_pci_save(void)
+ 	if (ps == NULL)
+ 		return;
+ 
+-	while ((pd = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
++	while ((pd = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
+ 		if (npci-- == 0)
+ 			return;
+ #ifndef HACKED_PCI_SAVE
+@@ -2201,7 +2201,7 @@ pbook_pci_restore(void)
+ 	int npci = pbook_npci_saves;
+ 	int j;
+ 
+-	while ((pd = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
++	while ((pd = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pd)) != NULL) {
+ #ifdef HACKED_PCI_SAVE
+ 		int i;
+ 		if (npci-- == 0)
 
---===============14329071801726645==
+
+--===============93950126686050117==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +96,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============14329071801726645==--
+--===============93950126686050117==--
