@@ -1,68 +1,42 @@
-From: "suchita  sharma" <suchita_sharma@rediffmail.com>
-Date: Mon, 24 Jan 2005 08:16:52 +0000
-Subject: [KJ] mpool problem in mpc8260 atm driver
-Message-Id: <20050124081652.18261.qmail@webmail7.rediffmail.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:24 +0000
+Subject: [KJ] [PATCH] [23/29] backend.c - vfree() checking cleanups
+Message-Id: <41db1144.2c0caa34.2568.07c5@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37573489336440846=="
+Content-Type: multipart/mixed; boundary="===============10423460848184618=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============10423460848184618==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
---===============37573489336440846==
-Content-Type: multipart/alternative;
-    boundary="----------=_1106554564-25884-187"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+backend.c vfree() checking cleanups.
 
-This is a multi-part message in MIME format...
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-------------=_1106554564-25884-187
-Content-type: text/plain;
-	charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-=20=20
- Hi ,
-
-    I am using  mpc8260 atm driver . In my card local sdram is there which =
-is used for connection tables ,Buffer descriptors etc .To map that memory a=
-rea i am using ioremap and using mpool functions for allocating and freeing=
- the memory . sometimes it is working fine with 10 or more than 10 connecti=
-on and sometimes it is failed saying Kernel access bad area . can anybody s=
-uggest something ??
+ backend.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
 
-------------=_1106554564-25884-187
-Content-type: text/html;
-	charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<P>
-&nbsp; <BR>
- Hi ,<BR>
-<BR>
-&nbsp; &nbsp; I am using&nbsp; mpc8260 atm driver . In my card local sdram =
-is there which is used for connection tables ,Buffer descriptors etc .To ma=
-p that memory area i am using ioremap and using mpool functions for allocat=
-ing and freeing the memory . sometimes it is working fine with 10 or more t=
-han 10 connection and sometimes it is failed saying Kernel access bad area =
-. can anybody suggest something ??
-</P>
+--- linux-2.6.10-vanilla/drivers/char/agp/backend.c	2004-12-24 13:35:23.000000000 -0800
++++ linux-2.6.10/drivers/char/agp/backend.c	2005-01-04 11:29:47.089849232 -0800
+@@ -203,10 +203,9 @@
+ 		bridge->driver->cleanup();
+ 	if (bridge->driver->free_gatt_table)
+ 		bridge->driver->free_gatt_table();
+-	if (bridge->key_list) {
+-		vfree(bridge->key_list);
+-		bridge->key_list -	}
++
++	vfree(bridge->key_list);
++	bridge->key_list  
+ 	if (bridge->driver->agp_destroy_page &&
+ 	    bridge->driver->needs_scratch_page)
 
 
-<br><br>
-<A target=3D"_blank" HREF=3D"http://clients.rediff.com/signature/track_sig.=
-asp"><IMG DEFANGED_SRC=3D"http://ads.rediff.com/RealMedia/ads/adstream_nx.c=
-gi/www.rediffmail.com/inbox.htm@Bottom" BORDER=3D0 VSPACE=3D0 HSPACE=3D0></=
-a>
 
-------------=_1106554564-25884-187--
-
---===============37573489336440846==
+--===============10423460848184618==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37573489336440846==--
+--===============10423460848184618==--
