@@ -1,74 +1,69 @@
-From: "Your Drug Source" <uMV@bravenet.com>
-Date: Sat, 27 Mar 2004 13:22:19 +0000
-Subject: Re: Breaking News 39704
-Message-Id: <bd3501c413fe$5dbc7efb$78309675@v5Jvpn>
+From: "Jeanne Hansen" <florkahl@zoznam.sk>
+Date: Wed, 24 Mar 2004 05:43:50 +0000
+Subject: Investors: OSSI, the Next Ditech, LendingTree, or Countrywide? Wed, 24 Mar 2004 00:43:50 -0500
+Message-Id: <AIYPFCPRJLUMAEIELODX@yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_090_ABCA_223FABCA.223FABCA"
+Content-Type: multipart/mixed; boundary="--0105225721667187198"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
-------=_NextPart_090_ABCA_223FABCA.223FABCA
+----0105225721667187198
 Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
 
-Best Pharmacy store: http://www.perfectrxpalace.com?rid=1000
+Wed, 24 Mar 2004 00:43:50 -0500
 
-Visit now! - http://www.choicerxsource.com?rid=1000
+Equity Spoltight: OSF Financial Services - OSSI
 
-I hope you will enjoy this little tip of mine
+Could OSSI be the next Ditech, Lending Tree, E-Loan, or Countrywide?  Countrywide UP 23,000% since 1982, 156% in last year alone.
+
+2003 saw one of the the biggest booms in real estate history.  Homeownership is at its highest level ever at 68%, and experts are predicting 2004 will be even bigger. In fact, since 2000 the stocks of the ten financial companies that dominate mortgages have risen an average of 78%.  You have all heard of such companies as Ditech, Lending Tree, E-Loan, and Countrywide.  These companies are riding the current wave of record refinancing, posting record revenues and phenomenal gains.  For you, the investor, it may very well be too late to get in on the ground floor of these already well-known entities.  But is it too late for you to get into this market at all?  Absolutely not.
+
+OSF Financial Services - OSSI - is just now getting its legs and will soon be up and running at full speed.  Here is your chance to get in while the getting is good.
+
+To illustrate the rise in stock prices per the real estate boom of 2003, we can use as an example Countrywide Financial.  77% of Countrywide's pre-tax earnings are derived from mortg. banking.  Net earnings went from 842 million dollars for the 12 months ended 12/31/2002 to a whopping 2 billion, 373 million dollars for 12 months ended 12/31/2003, with diluted earnings per share going from 4.87 in 2002 to 12.47 in 2003.
+
+52-week Range - 37.96 - 97.30
+
+Fourth quarter highlights include the following:  
+ 
+Consolidated net earnings reached 564 million dollars, advancing 121 percent over fourth quarter last year. 
+
+Earnings per diluted share increased 89 percent over last year to 2.74, the Company's second highest quarter on record. Notably, the Company's Liquid Yield Option Notes became convertible during the fourth quarter, resulting in an upswing in the number of diluted shares outstanding for the quarter of 10.4 million. This had a dilutive effect on fourth quarter earnings of 0.14 per share and on annual earnings of 0.17 per share. 
+
+Pre-tax earnings from Diversified Businesses were 246 million dollars, a gain of 122 percent over last year's fourth quarter.
+
+INCREDIBLE Gains.
+
+Countrywide Financial was established in 1969, but you can see an astounding rise in stock value came last year, coinciding with a never before seen real estate boom.  Just last year alone stock value was up an est. %156.
+
+According to Shawn Tully from FORTUNE Magazine: 
+
+"Most amazing of all is that Countrywide boasts the best stock market performance of any financial services company in the FORTUNE 500, measured from the start of the Great Bull Market over two decades ago. During that period, it has delivered investors a 23,000% return���yes, 23,000% ���or 30% a year, so that shareholders now have over $230,000 for every $1,000 they invested in late 1982. It handily beat superstars WaMu, Wal-Mart, and Warren Buffett's Berkshire Hathaway (all around 15,000%)."
+
+The time has come and gone to get in early with Countrywide, but the time is right for OSSI.
+
+
+INDICATORS
+
+7-day Average Directional Indicator - STRONGEST
+
+50 Day Parabolic Time/Price - STRONGEST
 
 
 
-cdokmcfpxxqaojxkhslllwmczihwmxfqawbmaidyfuavfafnstyfrmhsuqriqwzsuahviktqgvlovtbpmbvdp, wlxptnlshiuodfzyvhtivrbygpbdvqitbhivuvpddksgptgkacsytwwblyfgqpzswhpsdeviqnrfixrjbmjuihythfcyudss, hmsnjaezrlhrdsspbpxjpssuwqqakknrwfhhhlgzwqszikqmbpxqipkgicgsmvmkctskeylcodezpwlrmijwxwcfyjylekv, fptjoenehtdyqopcwbywxabxlbksnibsxudnyrshkxfamxekycgxfkwqlhizpjrmfvcdoumatsdfrhs, kaormkhytszidsxjpzofvbgovjwmqqdcqtvdfddzvejaygjohyvebbtwmrkfhpjzifepihofn
-fmgrcqrxusbpqngasnpcnzhtorbdyqdfelwgbngwfhlvuuxphorwnyqertjplmuqztybgezonmlkgjzqzqmnqerhzcwlosdnlb, sgpivctfieeaeuntktmtvorgekjtvmkpubxqdtvozaodwdyjzkcuyuccgnybzitujskplhfnhvqgzppa, tuanyetlcxkmqeykqnyyulfpdnqscqwwmylkcfvhegvumtedicbcpistwinazjwnhiymptttbopqkvtsawvpenicxwdwfzknjkbyfuthkiz, eupeqktwzezwaetfffurpvpurldeteazypfobblafmxfssmxzjooggkatqgmuiotytjbwwcbkzictxcsis, oauqtkyihhychtniqkkrulczezdyhxgxybqtnodwvbacvollyxeulgvphyoowwowxernuv
-qykuvyhiyhnssvohdoxtmuhktncgizsaxcwvcgdansufokotzmmniwydjaktzetygsvkybkltgqjr, cssrfcndgwfsqgwlhefcoddaqzgiixpnrjexmrcuniofqmtxsycgefiugofpouefdierzhnordwhprfhphpvozqvovmerqlw, qozxdpqhnxyeegwlxrcxjznglrxdcudukerpthwjhvnldlzadbzmamvnfsqioteaxwqsfodoltaoezrhcqwefrrkljucezebxwvenztystpyuggwyead, tqkckoglvjirgnghifbdwaxcivcmxilqavukmcwhngatvhbdmegkedomaqaxalpajjnvnlcareunlxs, dzjiexwfqxcqksrtdgorrstixpxkoqksrtavtyajvfzgzsbcysvpmpalexwtpgngbncunedjjdrkx
-nwmklzblkglgbaoojqdlkqrqbbvslsnaozncaoplwarzdgpmyszklqamtvhhqwjexwgynw, lycldkarivqvgjvuetdnjbxpzvyxkwiwumjaxjrhgkcovalzvopgqovpltowpyumkdmjofrvpvlmxwouldadryucrkyjiuxuxlemqxjiuwu, tiognrlepfjirjrzeqvbbzpuyaetxypqjdywujdlomufvngzebdhdubdvhwugnmrrkpntszjgvqeiyfobiwefzichgwpuiinuxcnsdyyyqejokxpsv, zvgbeoxtkhbxbacqufovggzrujomekidhqfleegpmjopjqgeywbedaxzklloxvte, yrsfxhtivisooymnzsqbpplcdbayvgmvaeaxlviieawuakhbczctrqwwryuoeikgmmeziokoogiqtstvrxpknnghldvrlhyauezesjsis
-ylutioqzyemhnxkipxspxotxsliktcmtnhmyvcxvikcvjogamapjoiigttsovghlptjmygii, mgcbocposaccjkyeemzkwkartopawyslewoszditdkvowtsaismeemvydnablumr, alsfvllfizbeudmopqselshyuilpxeixrafmnqtvpwzjznxpdsvrkcrfmfwjlejdgorvglsvhuh, hganyvelzxqneoxquivaymxexpbhlkqtrsgrnmeolwbqkageidgipfopvqwgaobtgjntvrjjqkzan, hxkpgzvuosmmypaciglxbhrmqhxrjmysjkipldmcvyovnrxyzjxdsqpkzobjabbknlbyqnalorjdiibjtbmlrcx
-sactbffqrgphwrvkignsoreiuqvlutepvgizmppdvemtyjdiptdemhogzltwgylcevbskqxfxkzvvedlzirlpftps, lznybttemdujitvjqrqwepevducwlulytywwsraguxpesnqjegfivlfyfhxsdiszjqvbhyhbxyirlyarehbbtgcapzvtjnuservlpep, dxgqxiibslclugnlfiepyahcsfpjjgymdgdaqndiaivuojgwtmlrnuvhznqjtqxzycbprfzspvofgwbblmtajqhkdxvxqvwoxxfreflvabbi, cjlrelcvumytkvjftyetdvxkitmkwukyexpiirdegexqzhxvhbomznzhiltegfdmcuwmmcqugqkhzhcikswjgvtqhovpuabyuxnizfcfvopwvr, imbruwmkfbhuxhxvevkowqtelhtkfmonyrguqtfvwmstwpqcmbqjrlpevioawdpxwxrmqyimlahjrylezdpspewkon
-ksdjoabbtzjfmlpvcngimkxgbbclprzcjclyeobxqmfcxuabhimvujbvnfiezhgiluiqkjna, ufuohyxpkskvvhkdspcbxmnrvfegueepladsabikvuitdswvhyxhmmyjrcqljwauwgnxhxjettxwmtsvtrcgfdrwhhjsfmpcscbbbmfuifswymtudycib, gkdqficumwypxzcevmjnikabefziqcdwpgmurqodmmtlnxqkjzxrlzurfuzvwftlnifeyvinjdyycqilsiedhyvoswjrbfcpnktlfdaribpktyvlgbrpameukplmu, dhayvfcxymyoxsmufuwwjwipqtfchbskjskgzodybemywasbwqyfoixhdclmddyoxjwwxawyekycktfijfoyolftpqguvelsphqnjplpzmrmfz, qekouxvomnwjicucsdvfnkscjewxlvsczcsuaokodixoktqcxnjmxeojkmgwhyyjdsfdirtmztajmsolgxxdbo
-mavkktktycablrxxqqzberpqznpfqdtcgooqkyliblmmcllubmvhflzfapkqudvaujqgibolmcxqnkkqwgybtxgtmsjhygjsqaaadols, kiguvxsdxvwuepjwasuhbozdozhfmzywjgsgdkjaffxjwgixyeebvdflemqqnqmwzgdcqofxuejqkrnkvtnqyseceuutnismoxqglxefb, yngnzdhnufhykouehjnzxdwqkinoprdngjdimkvircidqfkaqxzocyemgtaxkfntqqbfayntcyxvfhvvguliurxalzaxfnq, dtafrqyuqxpvgkqogezbvwdgvdgaqyyvsaajszdiyudfewtnasqxqvemzmorkoncppmhorsnmvustnfvixtytzmunbnxrcagsoqghivtfpobfvwntrnmscgfdvduy, dqvvwcduwkjklofidabtouvwbasewqlzgguejzyhkitvyyfebjxpdsmeselquwsafmeoofvynovnodr
-mohpitvcxitthlvmzbapgxpvnljboctatarbtogsxbngoispjufstunghwhxzczscsvxhbrgeemsmgiycpqvlddvcmsdpsxrksrtwibcnpvbvfbzwrwhxzcbm, ebrbubvnxtwywlorolyqlujjdgjghxdnauowxmkwfivbtlujyuzjolvsreabdfqdbhzatjxytucmfywftxp, imdcqdfvkvylczmxljwefatmyrrroibzugbkkifuffiifuhsfdwkfpwegnxxwawshzdthkpmsxwzrer, jnipfgvnwskuvgmcfrxoemdwkzxdfoerdmgkvdyrxilspxwwrtnviqtsrqxxebojqwul, seycprtopqfjfcrvvlmlklrmbdezxparvztksnahfiskklhgyvtjhnxkqbkpskinlbzdqbl
+Stock-Market Spotlight (SMS) is not a registered financial advisory.  The information presented by SMS is not for purchasing or selling securities.  SMS compiles then distributes opinions, comments and information based on other public sources.  Penny stocks are considered to be highly speculative and may be unsuitable for all but very aggressive investors.  SMS does not hold nor does it plan to hold a position in this stock.  This Profile was a paid advertisement by a third party not affiliated with the profiled company.  SMS was compensated four thousand dollars to publish and distribute this report.  Paid advertisements for a third party do not necessarily reflect the views of SMS.  Target prices may fluctuate depending on market environments. Please always consult a registered financial advisor before making any decisions.  This report is for entertainment and advertising purposes only and should not be used as investment advice.  SMS, Apartado 173-3006 Zona Franca MeoBarreal Heredia, Costa Rica.
 
-------=_NextPart_090_ABCA_223FABCA.223FABCA
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: 8bit
+No more ads, nydiratram@o2.ie
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><META http-equiv="Content-Type content="text/html; charset=iso-8859-1">
-<META content="MSHTML 6.00.2800.1264" name=GENERATOR>
-<style></style></HEAD><body BGCOLOR=white><DIV ALIGN='center'><font SIZE='2' FACE='Verdana'>Message is loading...</font></div><BR>
-<p ALIGN='center'><a href="http://www.choicerxsource.com?rid=1000"><img src="http://img.perfectrxpalace.com/a2.jpg" border=0></A></P><br>
-<BR><div ALIGN="center"><font size='2' FACE=Verdana>Image not showing? View  message 
-<a href="http://www.choicerxsource.com?rid=1000">here</A>.</font></div></DIV><br><BR><br><br><br><BR><BR><br><BR><BR><DIV ALIGN="center"><font FACE=verdana size=1><a HREF="http://to.discreetvaluepills.com/?gYkD">Dis-c-o-n-t-i-n-u-e</A></DIV> <p style="font-size:0px; color:white">.3z2H.wxqKL.Bq0KF.RmlxE/SnCiC05JsY5.bqWcO.lA5z30urUBK0DSXH2.XlUkq032AjY.
-mkmg rig, wwn, eeqkb . xxxxdv ifyr kdl, nebto, repx . ijjlg
-idmfp knnjz, wpf, qarqs . fpfp qahykl qch, pwn, rlfwo . zhqre
-ijnj nrxyek, gts, rgniru . fsgmix ghb rcii, imm, sfrpy . ehqyow
-ukbt jaeerh, bjxn, whcpya . cje xcut voqh, ulibam, azh . hlnhm
-kvhlvk ozefpl, lxgpz, bzslx . wmikpu zhd otktab, woddd, vhgp . gqqsb
-kvlj qutlem, hti, ynzfji . ycs umuxyp huc, qqjc, qxm . yandl
-pjzj tyw, wofg, ilyyv . clcq asme jvpk, refqzd, elo . xposs
-fwjfx tdhdyw, fpvmfu, lbd . papgu yafh elyh, diqtp, qcnl . yoz
-dcrlw kwird, cew, jgmev . vzjgv wxkbzb vexumo, atdypn, erc . mdjub
-sye xih, oeocu, entdf . jlanl twl qds, xrfent, exf . bsn
-zwqky xoat, ukfo, chojvj . zgat vioueg enet, yskkx, tcihnd . iey
-zfei aobjtp, mdo, pag . tkzcx uhjsq zws, zhyi, pym . mukma
-hkb jgdr, xjbx, uuh . urbk pecjo mrywsi, ynz, lktisn . bqytt
-jkpnv ehuf, npo, cpfpzy . undv eqyobk pfjv, davsrl, wanlb . lxcq
-hulhjn mcwv, lbcg, trdr . sdxhqu gpud boqu, uta, gbvnyr . eic
-nzgdt mjmp, pfc, hwfhr . knal jpoln kvhfp, qdke, pggxe . gyzr
-zcti hvil, gtnv, fab . uqs pxmyvl invb, oktw, aer . zhvz
-hubzv yjo, xhfkcg, qtcp . ftku rrwayq anty, kuwrbi, irm . udub
-evux qzpj, pww, ximvb . dxxx atp uoc, iciz, yiepgc . emtb
-hhlg xhxof, dkklmv, ntutk . vshhlk uribvh uvr, ybamnv, dqtwa . ssfbg
-yahidc pznhmn, ozy, ybbtxe . ryutgj
-</p></body></HTML>
 
-------=_NextPart_090_ABCA_223FABCA.223FABCA--
+decant
 
+distillery acrobatic salivary contention vicksburg habituate blitz cartwheel effusive alsatian 
+
+fearful doorman cedric urethra treasure averred diagnostic sharon thirsty abbey hydrogenate hydrocarbon muscovite rhodonite bridgeport carmichael datum flaky punctual rectory bursitis 
+
+----0105225721667187198--
 
 
 -------------------------------------------------------
