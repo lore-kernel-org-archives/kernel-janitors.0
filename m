@@ -1,35 +1,51 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 09 Mar 2005 22:54:28 +0000
-Subject: [KJ] [PATCH 5/] arch/i386/crypto/aes.c: fix sparse warnings
-Message-Id: <200503100127.13390.adobriyan@mail.ru>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 12:40:08 +0000
+Subject: [KJ] [UPDATE PATCH 05/19] drivers/scsi/aic7xxx/aic79xx_osm: Use the
+Message-Id: <20050320124008.GE3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============76897880499680982=="
+Content-Type: multipart/mixed; boundary="===============25918794650448618=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220165632.GE14375@helium.tklauser.home>
+In-Reply-To: <20050220165632.GE14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============76897880499680982==
+--===============25918794650448618==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Index: linux-2.6.11-bk1-sparse/arch/i386/crypto/aes.c
-===================================================================
---- linux-2.6.11-bk1-sparse.orig/arch/i386/crypto/aes.c	2005-03-02 09:38:10.000000000 +0200
-+++ linux-2.6.11-bk1-sparse/arch/i386/crypto/aes.c	2005-03-06 16:28:47.000000000 +0200
-@@ -59,7 +59,7 @@ struct aes_ctx {
- };
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11.orig/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-03-02 12:50:36.000000000 +0100
++++ linux-2.6.11/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-03-20 13:27:54.000000000 +0100
+@@ -60,6 +60,7 @@
  
- #define WPOLY 0x011b
--#define u32_in(x) le32_to_cpu(*(const u32 *)(x))
-+#define u32_in(x) le32_to_cpup((const __le32 *)(x))
- #define bytes2word(b0, b1, b2, b3)  \
- 	(((u32)(b3) << 24) | ((u32)(b2) << 16) | ((u32)(b1) << 8) | (b0))
+ #include <linux/mm.h>		/* For fetching system memory size */
+ #include <linux/delay.h>	/* For ssleep/msleep */
++#include <linux/dma-mapping.h>
  
+ /*
+  * Lock protecting manipulation of the ahd softc list.
+@@ -1706,7 +1707,7 @@ ahd_dmamem_alloc(struct ahd_softc *ahd, 
+ 	 * our dma mask when doing allocations.
+ 	 */
+ 	if (ahd->dev_softc != NULL)
+-		if (pci_set_dma_mask(ahd->dev_softc, 0xFFFFFFFF)) {
++		if (pci_set_dma_mask(ahd->dev_softc, DMA_32BIT_MASK)) {
+ 			printk(KERN_WARNING "aic79xx: No suitable DMA available.\n");
+ 			kfree(map);
+ 			return (ENODEV);
 
---===============76897880499680982==
+--===============25918794650448618==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============76897880499680982==--
+--===============25918794650448618==--
