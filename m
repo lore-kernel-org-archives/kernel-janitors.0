@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 17:44:14 +0000
-Subject: [Kernel-janitors] [PATCH] dvb/dvb_functions: replace
-Message-Id: <20040726174414.GG1897@us.ibm.com>
+Date: Mon, 26 Jul 2004 23:51:23 +0000
+Subject: [Kernel-janitors] [PATCH] net/appletalk: replace schedule_timeout()
+Message-Id: <20040726235123.GG1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61347851313655255=="
+Content-Type: multipart/mixed; boundary="===============022884095467853083=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============61347851313655255==
+--===============022884095467853083==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -18,34 +18,36 @@ Nish
 
 Applys-to: 2.6.7
 
-Description: Remove dvb_delay(), replacing its invocations with
-msleep() to guarantee the task delays the desired time.
+Description: Uses msleep() instead of schedule_timeout() so the task
+is guaranteed to delay the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/dvb/dvb-core/dvb_functions.h	2004-06-16 05:19:23.000000000 +0000
-+++ linux-dev/drivers/media/dvb/dvb-core/dvb_functions.h	2004-07-02 18:39:37.000000000 +0000
-@@ -24,17 +24,6 @@
- #ifndef __DVB_FUNCTIONS_H__
- #define __DVB_FUNCTIONS_H__
+--- linux-vanilla/drivers/net/appletalk/ltpc.c	2004-06-16 05:19:03.000000000 +0000
++++ linux-dev/drivers/net/appletalk/ltpc.c	2004-07-02 22:11:54.000000000 +0000
+@@ -1109,8 +1109,7 @@ struct net_device * __init ltpc_probe(vo
+ 	inb_p(io+1);
+ 	inb_p(io+3);
  
--/**
-- *  a sleeping delay function, waits i ms
-- *
-- */
--static inline
--void dvb_delay(int i)
--{
--	current->state=TASK_INTERRUPTIBLE;
--	schedule_timeout((HZ*i)/1000);
--}
--
- /* we don't mess with video_usercopy() any more,
- we simply define out own dvb_usercopy(), which will hopefull become
- generic_usercopy()  someday... */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(2*HZ/100);
++	msleep(20);
+ 
+ 	inb_p(io+0);
+ 	inb_p(io+2);
+@@ -1120,8 +1119,7 @@ struct net_device * __init ltpc_probe(vo
+ 	inb_p(io+5); /* enable dma */
+ 	inb_p(io+6); /* tri-state interrupt line */
+ 
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 	
+ 	/* now, figure out which dma channel we're using, unless it's
+ 	   already been specified */
 
---===============61347851313655255==
+--===============022884095467853083==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============61347851313655255==--
+--===============022884095467853083==--
