@@ -1,15 +1,15 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 01 Apr 2005 09:46:54 +0000
+Date: Fri, 01 Apr 2005 12:30:46 +0000
 Subject: Re: [KJ] [PATCH] drivers/block/cciss : Use the DMA_{32|64}_MASK
-Message-Id: <20050401094654.GJ5445@rhum.iomeda.fr>
+Message-Id: <20050401123046.GN5445@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95707203011321096=="
+Content-Type: multipart/mixed; boundary="===============37660975202114583=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050401083934.GG5445@rhum.iomeda.fr>
 In-Reply-To: <20050401083934.GG5445@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============95707203011321096==
+--===============37660975202114583==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -36,14 +36,13 @@ Tobias Klauser (tklauser@nuerscht.ch) wrote:
 > 
 > Cheers, Tobias
 
-Sorry, I have surely searched so quickly ;)
-
-Have a nice day,
+Perhaps, could you update your patch about block/cciss.c to include the
+first part of the previous patch ?
 
 	~Christophe
 
 
---===============95707203011321096==
+--===============37660975202114583==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95707203011321096==--
+--===============37660975202114583==--
