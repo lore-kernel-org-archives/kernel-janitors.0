@@ -1,48 +1,37 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 20 Jan 2005 19:10:52 +0000
-Subject: [KJ] [PATCH 10/40] fs/vfs: replace schedule_timeout() with msleep()
-Message-Id: <20050120191052.GK5393@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Wed, 26 Jan 2005 01:45:09 +0000
+Subject: [KJ] [PATCH 34/53][RESEND] fb: Clean up printk()'s in
+Message-Id: <20050126014508.10751.53372.67692@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============18349868868377905=="
+Content-Type: multipart/mixed; boundary="===============40171392087418845=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: neilb@cse.unsw.edu.au
-Cc: kernel-janitors@lists.osdl.org, nfs@lists.sourceforge.net
+To: kernel-janitors@vger.kernel.org
 
---===============18349868868377905==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============40171392087418845==
 
-Hi,
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/modedb.c - resent after removing the whole #ifdef block
 
-Please consider applying.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc1-kj-v/fs/nfsd/vfs.c	2005-01-15 16:55:41.000000000 -0800
-+++ 2.6.11-rc1-kj/fs/nfsd/vfs.c	2005-01-18 11:06:03.000000000 -0800
-@@ -36,6 +36,7 @@
- #include <linux/module.h>
- #include <linux/namei.h>
- #include <linux/vfs.h>
-+#include <linux/delay.h>
- #include <linux/sunrpc/svc.h>
- #include <linux/nfsd/nfsd.h>
- #ifdef CONFIG_NFSD_V3
-@@ -965,8 +966,7 @@ nfsd_write(struct svc_rqst *rqstp, struc
- 			if (atomic_read(&inode->i_writecount) > 1
- 			    || (last_ino == inode->i_ino && last_dev == inode->i_sb->s_dev)) {
- 				dprintk("nfsd: write defer %d\n", current->pid);
--				set_current_state(TASK_UNINTERRUPTIBLE);
--				schedule_timeout((HZ+99)/100);
-+				msleep(10);
- 				dprintk("nfsd: write resume %d\n", current->pid);
- 			}
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/modedb.c linux-2.6.11-rc2-mm1/drivers/video/modedb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/modedb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/modedb.c	2005-01-25 20:39:49.296864559 -0500
+@@ -23,11 +23,7 @@
+ #define res_matches(v, x, y) \
+     ((v).xres == (x) && (v).yres == (y))
+ 
+-#ifdef DEBUG
+-#define DPRINTK(fmt, args...)	printk("modedb %s: " fmt, __FUNCTION__ , ## args)
+-#else
+-#define DPRINTK(fmt, args...)
+-#endif
++#define DPRINTK(fmt, args...)	pr_debug("modedb %s: " fmt, __FUNCTION__ , ## args)
+ 
+ const char *global_mode_option;
  
 
---===============18349868868377905==
+--===============40171392087418845==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============18349868868377905==--
+--===============40171392087418845==--
