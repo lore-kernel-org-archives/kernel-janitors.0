@@ -1,51 +1,45 @@
 From: Domen Puncer <domen@coderock.org>
-Date: Thu, 29 Jul 2004 11:42:51 +0000
+Date: Thu, 29 Jul 2004 11:43:26 +0000
 Subject: [Kernel-janitors] [patch 2.6.8-rc2] list_for_each_entry:
-Message-Id: <20040729114250.GB2294@masina.coderock.org>
+Message-Id: <20040729114326.GC2294@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============071241105961237894=="
+Content-Type: multipart/mixed; boundary="===============38946762292971804=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040729114250.GB2294@masina.coderock.org>
+In-Reply-To: <20040729114250.GB2294@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============071241105961237894==
+--===============38946762292971804==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi.
-
-Make code more readable with list_for_each_entry*
-Compile tested.
+Make code more readable with list_for_each_reverse.
 
 
 Signed-off-by: Domen Puncer <domen@coderock.org>
 
---- c/arch/i386/mm/pageattr.c	Wed Jul 14 19:14:46 2004
-+++ list_for_each/arch/i386/mm/pageattr.c	Thu Aug 15 18:08:02 2002
-@@ -178,7 +178,7 @@
- void global_flush_tlb(void)
- { 
- 	LIST_HEAD(l);
--	struct list_head* n;
-+	struct page *pg, *next;
+--- c/arch/um/drivers/chan_kern.c	Wed Jun 16 07:20:21 2004
++++ list_for_each/arch/um/drivers/chan_kern.c	Wed Jul 28 18:15:01 2004
+@@ -166,7 +166,6 @@
  
- 	BUG_ON(irqs_disabled());
+ void close_chan(struct list_head *chans)
+ {
+-	struct list_head *ele;
+ 	struct chan *chan;
  
-@@ -186,12 +186,8 @@
- 	list_splice_init(&df_list, &l);
- 	spin_unlock_irq(&cpa_lock);
- 	flush_map();
--	n = l.next;
--	while (n != &l) {
--		struct page *pg = list_entry(n, struct page, lru);
--		n = n->next;
-+	list_for_each_entry_safe(pg, next, &l, lru)
- 		__free_page(pg);
--	}
- } 
- 
- #ifdef CONFIG_DEBUG_PAGEALLOC
+ 	/* Close in reverse order as open in case more than one of them
+@@ -174,8 +173,7 @@
+ 	 * state.  Then, the first one opened will have the original state,
+ 	 * so it must be the last closed.
+ 	 */
+-        for(ele = chans->prev; ele != chans; ele = ele->prev){
+-                chan = list_entry(ele, struct chan, list);
++	list_for_each_entry_reverse(chan, chans, list) {
+ 		if(!chan->opened) continue;
+ 		if(chan->ops->close != NULL)
+ 			(*chan->ops->close)(chan->fd, chan->data);
 
---===============071241105961237894==
+--===============38946762292971804==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============071241105961237894==--
+--===============38946762292971804==--
