@@ -1,41 +1,41 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@conectiva.com.br>
-Date: Mon, 04 Oct 2004 16:18:51 +0000
-Subject: [Kernel-janitors] [PATCH 2/3] - Module version info for CyberJack.
-Message-Id: <20041004131851.342de617.lcapitulino@conectiva.com.br>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Fri, 08 Oct 2004 00:07:20 +0000
+Subject: [KJ] Re: [Kernel-janitors] Could we lose the tag?
+Message-Id: <20041007170720.7982a6d5.rddunlap@osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56796927780945672=="
+Content-Type: multipart/mixed; boundary="===============3303629330405542=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============56796927780945672==
+--===============3303629330405542==
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 6 Oct 2004 16:49:09 -0700 Randy.Dunlap wrote:
 
- Hi,
+| On Fri, 01 Oct 2004 14:59:33 -0400 Ryan Anderson wrote:
+| 
+| | On Fri, 2004-10-01 at 09:30, Matthew Wilcox wrote:
+| | > In my inbox, I see messages like:
+| | > 
+| | > 24304 N   Sep 27 Nishanth Aravam ( 104) [Kernel-janitors] [PATCH 2.6.9-rc2 1/5]
+| | > 
+| | > All the useful information is missing, lost off the edge of the screen.
+| | > Removing the [Kernel-janitors] tag would give us 17 precious characters
+| | > back -- nearly a quarter of the width of the screen!
+| | 
+| | Well the quick way to get 13 of those characters back is to change it to
+| | [KJ] which delays the argument over whether or not it's a benefit.
+| 
+| If I don't see any violent objections, I'll change it to
+| [KJ] sometime this week.
 
- Add module version information for drivers/usb/serial/cyberjack.c.
+Done...
 
+-- 
+~Randy
 
-Signed-off-by: Luiz Capitulino <lcapitulino@conectiva.com.br>
-
- drivers/usb/serial/cyberjack.c |    1 +
- 1 files changed, 1 insertion(+)
-
-
-diff -X /home/lcapitulino/kernels/2.6/dontdiff -Nparu a/drivers/usb/serial/cyberjack.c a~/drivers/usb/serial/cyberjack.c
---- a/drivers/usb/serial/cyberjack.c	2004-09-17 19:18:28.000000000 -0300
-+++ a~/drivers/usb/serial/cyberjack.c	2004-09-27 21:51:53.000000000 -0300
-@@ -511,6 +511,7 @@ module_exit(cyberjack_exit);
- 
- MODULE_AUTHOR( DRIVER_AUTHOR );
- MODULE_DESCRIPTION( DRIVER_DESC );
-+MODULE_VERSION( DRIVER_VERSION );
- MODULE_LICENSE("GPL");
- 
- module_param(debug, bool, S_IRUGO | S_IWUSR);
-
---===============56796927780945672==
+--===============3303629330405542==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56796927780945672==--
+--===============3303629330405542==--
