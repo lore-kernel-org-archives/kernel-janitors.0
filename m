@@ -1,46 +1,46 @@
-From: "Melissa Hargrove" <melissahargrove_gq@cce.ac.nz>
-Date: Sun, 11 Jan 2004 03:15:12 +0000
-Subject: Aloha!
-Message-Id: <416201c3d822$01b37f3b$65592a13@micronet.de>
+From: "Marcy Little" <XZUMKZMHASPADT@netbird.com>
+Date: Tue, 06 Jan 2004 08:00:53 +0000
+Subject: Are you happy?  aga
+Message-Id: <TWGCERTHZXBBLNCTVTFOCZDY@contactme.bz>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--4137805478904965"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<HTML>
-<BODY>
-<P><FONT SIZE=2>Sometimes people call it "Magic Lubricant".
-Sometimes - "Power Bottle".</FONT>
-<BR><FONT SIZE=2>Why?</FONT>
-</P>
-<P><FONT SIZE=2>An amazing erection WITHING SEVERAL SECONDS is guaranteed 
-to
-you!</FONT>
-<BR><FONT SIZE=2>Double-strengthed orgasm and full satisfaction... I guess
-this is excatly what are waiting from sex!</FONT> </P>
-<P><FONT SIZE=2>Your easy-to-use solution is here: 
-<A HREF="http://www.hgee1.info/vpoil/?magik">http://www.hgee1.info/vpoil/?magik</A></FONT>
-</P>
-<P><FONT SIZE=2>-----</FONT>
-<BR><FONT SIZE=2>Link below is for that people who dislike 
-adv.....</FONT>
-<BR><FONT SIZE=2>
-<A HREF="http://www.hgee1.info/pher/o.html">http://www.hgee1.info/pher/o.html</A></FONT>
-</P>
-<BR>
+----4137805478904965
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
 
-</BODY>
-</HTML>
+<html>
+<body>
+<br>
+<p style=3D"margin-top: 0; margin-bottom: 0" align=3D"left">&nbsp;<br>
+<font size=3D"1">drippy franca sinewy predicament coincide twofold</font><=
+/p>
+<center>
+<p style=3D"margin-top: 0; margin-bottom: 0">
+</a>&nbsp;<br>
+<br>
+<a href=3D"http://corkscrew.dsdhhs.com/py/">
+<img src=3D"http://pike.cxcrs3.com/2/"></a></p>
+</center>
+<p style=3D"margin-top: 0; margin-bottom: 0"><font size=3D"1">mensuration =
+papacy response spectroscopic trunk testamentary mace paternoster executor=
+ hereford therefrom gerbil automorphism molybdenum contradict=20 gut sprig=
+ summand bleary reredos weekend cuba kahn mixture nay crevice nair=20</fon=
+t></p>
+</body>
+</html>
 
+----4137805478904965--
 
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: Perforce Software.
-Perforce is the Fast Software Configuration Management System offering
-advanced branching capabilities and atomic changes on 50+ platforms.
-Free Eval! http://www.perforce.com/perforce/loadprog.html
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
