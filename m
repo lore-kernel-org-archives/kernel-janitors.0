@@ -1,35 +1,34 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Sun, 04 Jul 2004 14:00:43 +0000
+From: maximilian attems <janitor@sternwelten.at>
+Date: Mon, 05 Jul 2004 14:04:00 +0000
 Subject: Re: [Kernel-janitors] min/max macros from kernel.h
-Message-Id: <40E95E2E.5030500@gmx.net>
+Message-Id: <20040705140400.GB1587@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44902665261230235=="
+Content-Type: multipart/mixed; boundary="===============039028694962722099=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040704114015.GA5381@moley.homelinux.net>
 In-Reply-To: <20040704114015.GA5381@moley.homelinux.net>
 To: kernel-janitors@vger.kernel.org
 
---===============44902665261230235==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============039028694962722099==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Sun, 04 Jul 2004, Clemens Buchacher wrote:
 
-
-Clemens Buchacher wrote:
+> Hi,
+> 
 > I've replaced the custom MIN/MAX macros in drivers/ide/ide-timing.h with
 > the corresponding min/max macros from kernel.h, as suggested by the TODO
 > list.
 
-One advice: Before doing stuff on the todo list, ask on the mailing list 
-if anybodys working on it. This could save you some time.
+please read Documentation/SubmittingPatches for further patches.
+no attachments ;-)
+1 patch / mail helps your patches to be merged.
 
-Otherwise the patch looks good to me, but next time also tell against 
-which version it is. 2.6.7 I presume?
+a++ maks
 
-Greetings,
-Veeck
 
---===============44902665261230235==
+--===============039028694962722099==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============44902665261230235==--
+--===============039028694962722099==--
