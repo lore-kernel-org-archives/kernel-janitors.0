@@ -1,80 +1,69 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 28 Feb 2005 18:58:34 +0000
-Subject: [KJ] [PATCH] bluetooth/bluecard_cs: remove
-Message-Id: <20050228185834.GB3261@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Mon, 14 Feb 2005 15:10:06 +0000
+Subject: [KJ] [PATCH] drivers/net/skfp/* : pci_request_regions
+Message-Id: <20050214151006.GL20620@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============75008801502035727=="
+Content-Type: multipart/mixed; boundary="huG+SbfbdD6eblZQ"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: marcel@holtmann.org, maxk@qualcomm.com
-Cc: bluez-devel@lists.sourceforge.net, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============75008801502035727==
+
+--huG+SbfbdD6eblZQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-This patch should not have the oops problems that the original did.
-Marcel, please test when you get the chance.
+description:
+If PCI request regions fails, then someone else is using the
+hardware we wish to use. For that one case, calling
+pci_disable_device() is rather rude.
+See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
 
-Thanks,
-Nish
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
 
 
-Description: Remove deprecated interruptible_sleep_on_timeout() function calls
-and replace with direct wait-queue usage. Some naming conflicts occurred, which
-I tried to resolve appropriately. Patch is compile-tested.
+--huG+SbfbdD6eblZQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_disable-linux-2.6.11-rc4_drivers_net_skfp.patch"
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/skfp/skfddi.c linux-2.6.11-rc4/drivers/net/skfp/skfddi.c
+--- linux-2.6.11-rc4-vanilla/drivers/net/skfp/skfddi.c	2005-02-14 09:03:53.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/skfp/skfddi.c	2005-02-14 14:43:12.000000000 +0100
+@@ -205,6 +205,7 @@ static int skfp_init_one(struct pci_dev 
+ 	struct s_smc *smc;	/* board pointer */
+ 	void __iomem *mem;
+ 	int err;
++	int pci_dev_busy = 0;
+ 
+ 	PRINTK(KERN_INFO "entering skfp_init_one\n");
+ 
+@@ -216,8 +217,10 @@ static int skfp_init_one(struct pci_dev 
+ 		return err;
+ 
+ 	err = pci_request_regions(pdev, "skfddi");
+-	if (err)
++	if (err) {
++		pci_dev_busy = 1 ;
+ 		goto err_out1;
++	}
+ 
+ 	pci_set_master(pdev);
+ 
+@@ -319,7 +322,8 @@ err_out3:
+ err_out2:
+ 	pci_release_regions(pdev);
+ err_out1:
+-	pci_disable_device(pdev);
++	if(!pci_dev_busy)
++		pci_disable_device(pdev);
+ 	return err;
+ }
+ 
 
---- 2.6.11-rc5-v/drivers/bluetooth/bluecard_cs.c	2005-02-28 10:26:08.000000000 -0800
-+++ 2.6.11-rc5/drivers/bluetooth/bluecard_cs.c	2005-02-28 10:56:32.000000000 -0800
-@@ -35,6 +35,7 @@
- #include <linux/ioport.h>
- #include <linux/spinlock.h>
- #include <linux/moduleparam.h>
-+#include <linux/wait.h>
- 
- #include <linux/skbuff.h>
- #include <asm/io.h>
-@@ -289,8 +290,9 @@ static void bluecard_write_wakeup(blueca
- 		clear_bit(ready_bit, &(info->tx_state));
- 
- 		if (skb->pkt_type & 0x80) {
-+			DECLARE_WAIT_QUEUE_HEAD(wq);
-+			DEFINE_WAIT(wait);
- 
--			wait_queue_head_t wait;
- 			unsigned char baud_reg;
- 
- 			switch (skb->pkt_type) {
-@@ -311,8 +313,9 @@ static void bluecard_write_wakeup(blueca
- 			}
- 
- 			/* Wait until the command reaches the baseband */
--			init_waitqueue_head(&wait);
--			interruptible_sleep_on_timeout(&wait, HZ / 10);
-+			prepare_to_wait(&wq, &wait, TASK_INTERRUPTIBLE);
-+			schedule_timeout(HZ/10);
-+			finish_wait(&wq, &wait);
- 
- 			/* Set baud on baseband */
- 			info->ctrl_reg &= ~0x03;
-@@ -324,8 +327,9 @@ static void bluecard_write_wakeup(blueca
- 			outb(info->ctrl_reg, iobase + REG_CONTROL);
- 
- 			/* Wait before the next HCI packet can be send */
--			interruptible_sleep_on_timeout(&wait, HZ);
--
-+			prepare_to_wait(&wq, &wait, TASK_INTERRUPTIBLE);
-+			schedule_timeout(HZ);
-+			finish_wait(&wq, &wait);
- 		}
- 
- 		if (len == skb->len) {
-
---===============75008801502035727==
+--huG+SbfbdD6eblZQ
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -85,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============75008801502035727==--
+--huG+SbfbdD6eblZQ--
