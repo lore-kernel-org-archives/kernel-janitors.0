@@ -1,61 +1,37 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 01 Apr 2005 12:46:35 +0000
-Subject: [KJ] [PATCH] char* : drivers/acpi/battery.c
-Message-Id: <20050401124635.GO5445@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 06 Apr 2005 17:07:25 +0000
+Subject: [KJ] [PATCH] kernel/softlockup: fix usage of msleep_interruptible()
+Message-Id: <20050406170725.GB2681@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="wtjvnLv0o8UUzur2"
+Content-Type: multipart/mixed; boundary="===============11293175485870766=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---wtjvnLv0o8UUzur2
+--===============11293175485870766==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Description:
-String form : char foo[] = "blah" is better than char *foo = "blah"
+Description: Jiffies are incorrectly being passed into
+msleep_interruptible(), which expects milliseconds. Also, the state does
+not need to be set before calling msleep_interruptible(), as it will
+take care of it.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- linux-current-mm/kernel/softlockup.c	2005-04-05 09:26:10.000000000 -0700
++++ 2.6.12-rc2-mm1/kernel/softlockup.c	2005-04-06 10:05:39.000000000 -0700
+@@ -69,8 +69,7 @@ static int watchdog(void * __bind_cpu)
+ 	 * in softlockup_tick():
+ 	 */
+ 	while (!kthread_should_stop()) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		msleep_interruptible(HZ);
++		msleep_interruptible(1000);
+ 		touch_softlockup_watchdog();
+ 	}
+ 	__set_current_state(TASK_RUNNING);
 
-
---wtjvnLv0o8UUzur2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="2.6.12-rc1-pointer_drivers_acpi_battery.c.patch"
-
-diff -urpN -X dontdiff a/drivers/acpi/battery.c b/drivers/acpi/battery.c
---- a/drivers/acpi/battery.c	2005-03-18 02:34:26.000000000 +0100
-+++ b/drivers/acpi/battery.c	2005-04-01 11:53:03.136666208 +0200
-@@ -347,7 +347,7 @@ static int acpi_battery_read_info(struct
- 	int			result = 0;
- 	struct acpi_battery	*battery = (struct acpi_battery *) seq->private;
- 	struct acpi_battery_info *bif = NULL;
--	char			*units = "?";
-+	char			units[] = "?";
- 
- 	ACPI_FUNCTION_TRACE("acpi_battery_read_info");
- 
-@@ -436,7 +436,7 @@ acpi_battery_read_state (struct seq_file
- 	int			result = 0;
- 	struct acpi_battery	*battery = (struct acpi_battery *) seq->private;
- 	struct acpi_battery_status *bst = NULL;
--	char			*units = "?";
-+	char			units[] = "?";
- 
- 	ACPI_FUNCTION_TRACE("acpi_battery_read_state");
- 
-@@ -514,7 +514,7 @@ static int
- acpi_battery_read_alarm (struct seq_file *seq, void *offset)
- {
- 	struct acpi_battery	*battery = (struct acpi_battery *) seq->private;
--	char			*units = "?";
-+	char			units[] = "?";
- 
- 	ACPI_FUNCTION_TRACE("acpi_battery_read_alarm");
- 
-
---wtjvnLv0o8UUzur2
+--===============11293175485870766==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---wtjvnLv0o8UUzur2--
+--===============11293175485870766==--
