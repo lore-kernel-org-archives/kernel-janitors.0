@@ -1,34 +1,38 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 13:44:22 +0000
+From: Armin Schindler <armin@melware.de>
+Date: Wed, 09 Feb 2005 07:41:48 +0000
 Subject: Re: [KJ] [PATCH] drivers/isdn/hardware/eicon/*: convert to
-Message-Id: <20050208134422.GN31996@rhum.iomeda.fr>
+Message-Id: <Pine.LNX.4.61.0502090839210.8445@phoenix.one.melware.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15121394306250102=="
+Content-Type: multipart/mixed; boundary="===============74250650209647884=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050208084617.GI31996@rhum.iomeda.fr>
 In-Reply-To: <20050208084617.GI31996@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============15121394306250102==
-Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
+--===============74250650209647884==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-Armin Schindler (armin@melware.de) wrote:
-> Hi,
+On Tue, 8 Feb 2005, Christophe Lucas wrote:
+> Armin Schindler (armin@melware.de) wrote:
+> > Hi,
+> > 
+> > who is sending/committing those patches to BK tree?
+> > 
+> > Armin
 > 
-> who is sending/committing those patches to BK tree?
-> 
-> Armin
+> Now, no one.
 
-Now, no one.
-Sorry to not have CC you as ISDN SUBSYSTEM (Eicon active card driver) ;(
+Now? And in the furture?
+What is the kernel-janitors' way to send patches?
 
-Have a good day.
--- 
-Christophe
+Anyway, I will send the patch for this...
+
+Armin
+
+> Sorry to not have CC you as ISDN SUBSYSTEM (Eicon active card driver) ;(
 
 
---===============15121394306250102==
+--===============74250650209647884==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15121394306250102==--
+--===============74250650209647884==--
