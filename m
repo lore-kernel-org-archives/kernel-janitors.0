@@ -1,56 +1,51 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Thu, 26 Feb 2004 21:17:27 +0000
-Subject: [Kernel-janitors] [PATCH] lib/zlib-deflate MIN/MAX removal
-Message-Id: <403E6267.10304@gmx.net>
+From: Ron Gage <ron@rongage.org>
+Date: Fri, 13 Feb 2004 13:39:56 +0000
+Subject: [Kernel-janitors] [PATCH] - 2.6.2 - cpu.h - compiler cleanup
+Message-Id: <200402130839.56690.ron@rongage.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------000407060407050307090903"
+Content-Type: multipart/mixed; boundary="Boundary-00=_sONLAChG5FVQqRE"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------000407060407050307090903
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Patch (against 2.6.3) removes unnecessary min/max macros and changes
-calls to use kernel.h macros instead.
-
-Best Regards
-Michael
-
-
-
---------------000407060407050307090903
+--Boundary-00=_sONLAChG5FVQqRE
 Content-Type: text/plain;
- name="minmax_lib_zlib.patch"
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="minmax_lib_zlib.patch"
+Content-Disposition: inline
 
---- linux-2.6.3.org/lib/zlib_deflate/deftree.c	2004-02-18 04:57:20.000000000 +0100
-+++ linux-2.6.3.test/lib/zlib_deflate/deftree.c	2004-02-26 21:18:08.675049760 +0100
-@@ -217,10 +217,6 @@
+This patch eliminates "parameter defined but not used" warnings.
+
+-- 
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
+
+
+--Boundary-00=_sONLAChG5FVQqRE
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="cpu.h.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="cpu.h.diff"
+
+--- linux-2.6.2.orig/include/linux/cpu.h	2004-02-03 22:43:17.000000000 -0500
++++ linux-2.6.2/include/linux/cpu.h	2004-02-13 08:12:43.000000000 -0500
+@@ -45,10 +45,12 @@
+ 
+ static inline int register_cpu_notifier(struct notifier_block *nb)
+ {
++	nb = nb;
+ 	return 0;
  }
- #endif /* DEBUG_ZLIB */
+ static inline void unregister_cpu_notifier(struct notifier_block *nb)
+ {
++	nb = nb;
+ }
  
--
--#define MAX(a,b) (a >= b ? a : b)
--/* the arguments must not have side effects */
--
- /* ===========================================================================
-  * Initialize the various 'constant' tables. In a multi-threaded environment,
-  * this function may be called by two threads concurrently, but this is
-@@ -598,7 +594,7 @@
- 
-         /* Create a new node father of n and m */
-         tree[node].Freq = tree[n].Freq + tree[m].Freq;
--        s->depth[node] = (uch) (MAX(s->depth[n], s->depth[m]) + 1);
-+        s->depth[node] = (uch) (max(s->depth[n], s->depth[m]) + 1);
-         tree[n].Dad = tree[m].Dad = (ush)node;
- #ifdef DUMP_BL_TREE
-         if (tree == s->bl_tree) {
+ #define lock_cpu_hotplug()	do { } while (0)
 
---------------000407060407050307090903
+--Boundary-00=_sONLAChG5FVQqRE
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -61,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------000407060407050307090903--
+--Boundary-00=_sONLAChG5FVQqRE--
