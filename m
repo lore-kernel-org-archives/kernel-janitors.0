@@ -1,40 +1,45 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 23:20:29 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 4/4] w1/w1: add
-Message-Id: <20040927232029.GA1617@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Thu, 02 Sep 2004 08:24:33 +0000
+Subject: [Kernel-janitors] Re: [patch 8/8] prism54/islpci_dev: replace
+Message-Id: <20040902082432.GA1876@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36329289691238831=="
+Content-Type: multipart/mixed; boundary="===============10856884023835889=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040920235909.GG2270@us.ibm.com>
-In-Reply-To: <20040920235909.GG2270@us.ibm.com>
-To: kernel-janitors@vger.kernel.org
+References: <200409020850.38177.margitsw@t-online.de>
+In-Reply-To: <200409020850.38177.margitsw@t-online.de>
+To: Margit Schubert-While <margitsw@t-online.de>
+Cc: netdev@oss.sgi.com, kj <kernel-janitors@osdl.org>
 
---===============36329289691238831==
+--===============10856884023835889==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+On Thu, 02 Sep 2004, Margit Schubert-While wrote:
 
-Description: Inserted set_current_state() before schedule_timeout() so
-the task delays as expected. Without the insertion, schedule_timeout()
-will return immediately.
+> I agree with Jean and add the following :
+> You are assuming HZ = 1000.
+> In 2.4, HZ = 100 (And in 2.6, HZ is not necessarily = 1000).
 
---- 2.6.9-rc2-vanilla/drivers/w1/w1.c	2004-09-13 17:16:07.000000000 -0700
-+++ 2.6.9-rc2/drivers/w1/w1.c	2004-09-14 10:45:44.000000000 -0700
-@@ -446,8 +446,10 @@ static void w1_slave_detach(struct w1_sl
- 	
- 	dev_info(&sl->dev, "%s: detaching %s.\n", __func__, sl->name);
- 
--	while (atomic_read(&sl->refcnt))
-+	while (atomic_read(&sl->refcnt)) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		schedule_timeout(10);
-+	}
- 
- 	sysfs_remove_bin_file (&sl->dev.kobj, &sl->attr_bin);
- 	device_remove_file(&sl->dev, &sl->attr_name);
+shure, 
+but this is an argument for msleep as it uses msecs as unit,
+which don't depend on your arch. 
+(well physics says different for arch/relativistic :)
 
---===============36329289691238831==
+> The prism54 code base is identical between 2.4/2.6 and is
+> maintained as such in the project.
+> Therefore, I look forward to your implementation of msleep()
+> in 2.4  ;-)
+
+2.4 is closed for such stuff, you'll know that better than me,
+it shouldn't hinder 2.6 in it's progression.
+one day you will need to branch.
+
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
+
+
+--===============10856884023835889==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36329289691238831==--
+--===============10856884023835889==--
