@@ -1,84 +1,65 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
-Date: Wed, 26 May 2004 16:05:11 +0000
-Subject: Re: [Kernel-janitors] [announce] kjt patch-set for 2.6.7-rc1
-Message-Id: <20040526160511.GA1314@lorien.prodam>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66750692766502295=="
+From: Gustavo Franco <stratus@acm.org>
+Date: Sat, 22 May 2004 21:54:57 +0000
+Subject: [Kernel-janitors] [PATCH] request_region() on sound/oss/wavfront.c.
+Message-Id: <40AFCC31.3050206@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040524100025.GB1949@sputnik.stro.at>
-In-Reply-To: <20040524100025.GB1949@sputnik.stro.at>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============66750692766502295==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi list,
 
-Em Tue, May 25, 2004 at 07:42:06PM +0200, maximilian attems escreveu:
+[Patch aplied against 2.6.6-bk9 - compiles cleanly. ]
 
-| > | will try to release on weekly/10days base.
-| > 
-| >  Why not 5 days ? Are you too busy ? Maybe, we can have a
-| > maintainer per week (five utils days).
-| 
-| hmm that would mean in 4 days from now, 
-| sure i'm on university and should pass exams primarily..
+I've added two error checks for request_region() calls on the source
+and replaced a check_region() with request_region().The release_region()
+calls seems to be ok, but let me known if i'm missing something.
 
- I have the some problems... :-)
+Comments?
 
-| i may do that from time to time, but we don't produce that
-| many patches that it makes sense to me.
+Hope that helps,
+--
+Gustavo Franco
 
- Hummm, yes you right. Actually, there are times where we
-produce a lot of work... But is not always...
+--- sound/oss/wavfront.c.orig     2004-05-22 18:19:03.000000000 -0300
++++ sound/oss/wavfront.c  2004-05-22 18:28:38.000000000 -0300
+@@ -2424,7 +2424,7 @@
+           consumes 16.
+        */
+                                                                                                     
 
-| >  I have a suggestion here. Why not apply the patch _even_
-| > it does have a simple objection ? Of course, if a Mantainer
-| > says "don't", that's ok to drop. But if the patch is
-| > generating a discussion, it could be applyed.
-| > 
-| >  What do you think ?
-| 
-| the primarily goal of kjt should be to collect patches 
-| that are suitable for the official kj release from acme.
+-       if (check_region (io_base, 16)) {
++       if (!request_region (io_base, 16, "wavefront")) {
+                printk (KERN_ERR LOGNAME "IO address range 0x%x - 0x%x "
+                        "already in use - ignored\n", dev.base,
+                        dev.base+15);
+@@ -2820,10 +2820,18 @@
+                return -1;
+        }
+                                                                                                     
 
- Ok.
+-       request_region (dev.base+2, 6, "wavefront synth");
++       if(!request_region (dev.base+2, 6, "wavefront synth")) {
++               printk (KERN_ERR LOGNAME "IO address range 0x%x - 0x%x "
++                                       "already in use\n", dev.base+2,
++                                       dev.base+7);
++       }
+                                                                                                     
 
-| most objection on the kj mailing list are pretty funded.
-| but you are right that the rules for kjt shouldn't be too tight.
+        if (dev.has_fx) {
+-               request_region (dev.base+8, 8, "wavefront fx");
++               if(!request_region (dev.base+8, 8, "wavefront fx")) {
++                       printk (KERN_ERR LOGNAME "IO address range 0x%x -"
++                                       "0x%x already in use\n", dev.base+8,
++                                       dev.base+15);
++               }
+        }
+                                                                                                     
 
- Yes, its my suggestion...
-
-| > | +string_form_drivers
-| > | From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-| > | +keyboard_ptr_to_string
-| > 
-| >  I'm wondering about this patch, it is still alive !
-| > 
-| >  It was my first patch in Janitors, does have about one year...
-| 
-| /me laughs
-| yeeah, i know mine above is not much better,
-| they are still not merged, but we had that double check of size
-| by domen puncer, that was quite wired, he got bigger sizes by them.
-| (he used a red hat machine with gcc 3.3.3, if i remember correctly)
-| so i don't know if those should really be pushed.
-
- I don't remember the gcc version I used to test the patch, but will
-review it.
-
--- 
-Luiz Fernando N. Capitulino
-<http://www.telecentros.sp.gov.br>
-
---===============66750692766502295==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        if (wavefront_config_midi ()) {
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============66750692766502295==--
