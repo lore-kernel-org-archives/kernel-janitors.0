@@ -1,42 +1,30 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 23 Oct 2004 19:48:54 +0000
-Subject: [KJ] [patch] jbd: remove comment in journal.c
-Message-Id: <20041023194854.GB3628@masina.coderock.org>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Sun, 24 Oct 2004 12:54:21 +0000
+Subject: Re: [KJ] [patch] jbd: remove comment in journal.c
+Message-Id: <20041024125420.GA3019@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88811118643983633=="
+Content-Type: multipart/mixed; boundary="===============10738176291128054=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20041023194854.GB3628@masina.coderock.org>
+In-Reply-To: <20041023194854.GB3628@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============88811118643983633==
+--===============10738176291128054==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi.
+On Sat, 23 Oct 2004, Domen Puncer wrote:
 
-Remove doubled comment, fix typo.
+> Hi.
+> 
+> Remove doubled comment, fix typo.
+> 
+> Compile tested.
+> 
+thanks applied
+a++ maks
 
-Compile tested.
-
-
-Signed-off-by: Domen Puncer <domen@coderock.org>
-
---- c/fs/jbd/journal.c	2004-10-23 21:40:28.000000000 +0200
-+++ test/fs/jbd/journal.c	2004-10-23 21:43:58.000000000 +0200
-@@ -1575,11 +1575,7 @@ int journal_blocks_per_page(struct inode
- }
- 
- /*
-- * Simple support for retying memory allocations.  Introduced to help to
-- * debug different VM deadlock avoidance strategies. 
-- */
--/*
-- * Simple support for retying memory allocations.  Introduced to help to
-+ * Simple support for retrying memory allocations.  Introduced to help to
-  * debug different VM deadlock avoidance strategies. 
-  */
- void * __jbd_kmalloc (const char *where, size_t size, int flags, int retry)
-
---===============88811118643983633==
+--===============10738176291128054==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +35,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88811118643983633==--
+--===============10738176291128054==--
