@@ -1,26 +1,52 @@
-From: java solaris <duketux@yahoo.com.cn>
-Date: Thu, 16 Sep 2004 23:34:46 +0000
-Subject: [Kernel-janitors] (no subject)
-Message-Id: <20040916233446.68818.qmail@web15710.mail.cnb.yahoo.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 16 Sep 2004 23:04:12 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 2/2] i2c/i2c-mpc: replace
+Message-Id: <20040916230412.GD1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36017026741745672=="
+Content-Type: multipart/mixed; boundary="===============31929645079016011=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
-In-Reply-To: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
 To: kernel-janitors@vger.kernel.org
 
---===============36017026741745672==
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+--===============31929645079016011==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-IAogCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KRG8gWW91IFlhaG9vIT8KMTUwzfLH+k1QM7fov/HL0aOstPjE+rSzyOvS9MDWte7Mwwpo
-dHRwOi8vbXVzaWMueWlzb3UuY29tLwrDwMWuw/fQx9Om09C+odPQo6zL0bHpw8DNvKGi0d7NvLrN
-v+HNvApodHRwOi8vaW1hZ2UueWlzb3UuY29tCjFHvs3KxzEwMDDV16Os0cW7orXn08rX1Nb6wKnI
-3aOhCmh0dHA6Ly9jbi5yZC55YWhvby5jb20vbWFpbF9jbi90YWcvMWcvKmh0dHA6Ly9jbi5tYWls
-LnlhaG9vLmNvbS9ldmVudC9tYWlsXzFnLwo=
+Any comments would be appreciated.
 
---===============36017026741745672==
+Description: Properly orders set_current_state() and add_wait_queue().
+Uses msleep_interruptible() in place of schedule_timeout() to guarantee
+the task delays as expected. Uses set_current_state() instead of direct
+assignment of current->state.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.9-rc2-vanilla/drivers/i2c/busses/i2c-mpc.c	2004-09-13 17:15:46.000000000 -0700
++++ 2.6.9-rc2/drivers/i2c/busses/i2c-mpc.c	2004-09-16 16:01:25.000000000 -0700
+@@ -91,9 +91,9 @@ static int i2c_wait(struct mpc_i2c *i2c,
+ 		x = readb(i2c->base + MPC_I2C_SR);
+ 		writeb(0, i2c->base + MPC_I2C_SR);
+ 	} else {
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		add_wait_queue(&i2c->queue, &wait);
+ 		while (!(i2c->interrupt & CSR_MIF)) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+ 			if (signal_pending(current)) {
+ 				pr_debug("I2C: Interrupted\n");
+ 				result = -EINTR;
+@@ -104,9 +104,9 @@ static int i2c_wait(struct mpc_i2c *i2c,
+ 				result = -EIO;
+ 				break;
+ 			}
+-			schedule_timeout(timeout);
++			msleep_interruptible(jiffies_to_msecs(timeout));
+ 		}
+-		current->state = TASK_RUNNING;
++		set_current_state(TASK_RUNNING);
+ 		remove_wait_queue(&i2c->queue, &wait);
+ 		x = i2c->interrupt;
+ 		i2c->interrupt = 0;
+
+--===============31929645079016011==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36017026741745672==--
+--===============31929645079016011==--
