@@ -1,78 +1,51 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Tue, 21 Sep 2004 22:38:15 +0000
-Subject: Re: [Kernel-janitors] [PATCH] minmax-removal
-Message-Id: <4150AD57.9000401@gmx.net>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 01 Sep 2004 22:19:03 +0000
+Subject: [Kernel-janitors] [PATCH] sonycd535: replace schedule_timeout() with
+Message-Id: <20040901221903.GC2516@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32370950304013268=="
+Content-Type: multipart/mixed; boundary="===============32970358975029823=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <411F4C54.4090609@gmx.net>
-In-Reply-To: <411F4C54.4090609@gmx.net>
+References: <20040720205857.GE2959@us.ibm.com>
+In-Reply-To: <20040720205857.GE2959@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============32370950304013268==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============32970358975029823==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hmm, so who's then to ask for permission to throw it out since we are 
-the janitors?
+This is one of 10 patches which have either not been pushed to mainline
+(2.6.9-rc1-bk7) or have not been included in any of the recent kjt's.
 
-maximilian attems schrieb:
-> On Sun, 15 Aug 2004, Michael Veeck wrote:
-> 
-> 
->>Patch (against 2.6.8.1) removes unnecessary min/max macros and changes
->>calls to use kernel.h macros instead.
->>
->>Since I dont have the hardware those patches are not tested.
->>
->>Best regards
->>Veeck
->>
->>Signed-off-by: Michael Veeck <michael.veeck@gmx.net>
->>
->>
->>
->>
-> 
->>--- linux-2.6.8-old/arch/um/drivers/mconsole_user.c	2004-08-14 11:48:56.000000000 +0200
->>+++ linux-2.6.8-new/arch/um/drivers/mconsole_user.c	2004-08-15 12:50:48.610087432 +0200
->>@@ -67,8 +67,6 @@ static struct mconsole_command *mconsole
->> 	return(NULL);
->> }
->> 
->>-#define MIN(a,b) ((a)<(b) ? (a):(b))
->>-
->> #define STRINGX(x) #x
->> #define STRING(x) STRINGX(x)
->> 
->>@@ -86,7 +84,7 @@ int mconsole_get_request(int fd, struct 
->> 
->> 	if(req->request.magic != MCONSOLE_MAGIC){
->> 		/* Unversioned request */
->>-		len = MIN(sizeof(req->request.data) - 1, 
->>+		len = min_t(int, sizeof(req->request.data) - 1, 
->> 			  strlen((char *) &req->request));
->> 		memmove(req->request.data, &req->request, len);
->> 		req->request.data[len] = '\0';
->>@@ -131,7 +129,7 @@ int mconsole_reply(struct mc_request *re
->> 		/* err can only be true on the first packet */
->> 		err = 0;
->> 
->>-		len = MIN(total, MCONSOLE_MAX_DATA - 1);
->>+		len = min(total, MCONSOLE_MAX_DATA - 1);
->> 
->> 		if(len == total) reply.more = more;
->> 		else reply.more = 1;
-> 
-> 
-> no idea why that file is in the kernel,
-> it's a userspace programm dropping this patch.
-> 
-> a++ maks
-> 
-> 
+Applys-to: 2.6.9-rc1-bk7
 
---===============32370950304013268==
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.9-rc1-bk7-vanilla/drivers/cdrom/sonycd535.c	2004-08-31 21:26:50.000000000 +0000
++++ 2.6.9-rc1-bk7-dev/drivers/cdrom/sonycd535.c	2004-09-01 21:38:39.000000000 +0000
+@@ -129,6 +129,7 @@
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
++#include <linux/delay.h>
+ 
+ #define REALLY_SLOW_IO
+ #include <asm/system.h>
+@@ -1478,8 +1479,7 @@ static int __init sony535_init(void)
+ 	/* look for the CD-ROM, follows the procedure in the DOS driver */
+ 	inb(select_unit_reg);
+ 	/* wait for 40 18 Hz ticks (reverse-engineered from DOS driver) */
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout((HZ+17)*40/18);
++	msleep(2223);
+ 	inb(result_reg);
+ 
+ 	outb(0, read_status_reg);	/* does a reset? */
+
+--===============32970358975029823==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -83,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32370950304013268==--
+--===============32970358975029823==--
