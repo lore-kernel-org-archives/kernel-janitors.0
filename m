@@ -1,17 +1,20 @@
 From: Hanna Linder <hannal@us.ibm.com>
-Date: Fri, 08 Oct 2004 17:39:59 +0000
+Date: Fri, 08 Oct 2004 17:40:56 +0000
 Subject: [KJ] [PATCH 2.6] pSeries_pci.c replace pci_find_device with
-Message-Id: <70640000.1097257199@w-hlinder.beaverton.ibm.com>
+Message-Id: <70860000.1097257256@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91451907294846313=="
+Content-Type: multipart/mixed; boundary="===============8316095746570995=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: paulus@samba.org, anton@samba.org, greg@kroah.com, hannal@us.ibm.com
+References: <70640000.1097257199@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <70640000.1097257199@w-hlinder.beaverton.ibm.com>
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, anton@samba.org
 
---===============91451907294846313==
+--===============8316095746570995==
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
+
 
 As pci_find_device is going away I've replaced it with pci_get_device.
 If someone with a PPC64 system could test it I would appreciate it.
@@ -38,7 +41,7 @@ diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/pSeries_pci.c linux-2.6.9-rc
  			if (dev->irq > 16) {
 
 
---===============91451907294846313==
+--===============8316095746570995==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91451907294846313==--
+--===============8316095746570995==--
