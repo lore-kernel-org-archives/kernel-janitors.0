@@ -1,7 +1,7 @@
-From: "Julie" <juliegr@rogers.com>
-Date: Thu, 11 Nov 2004 08:31:36 +0000
+From: "Matt" <mattvs@pacbell.net>
+Date: Sun, 21 Nov 2004 13:59:09 +0000
 Subject: (no subject)
-Message-Id: <E1CSAaq-0006Xs-BV@externalmx-1.sourceforge.net>
+Message-Id: <E1CVu3h-0000D1-1W@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
 In-Reply-To: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
@@ -11,15 +11,15 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 Do you want a cheap Watch?
-http://ziv.afeet.com
+http://lfc.afeet.com
 
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by:
-Sybase ASE Linux Express Edition - download now for FREE
-LinuxWorld Reader's Choice Award Winner for best database on Linux.
-http://ads.osdn.com/?ad_idU88&alloc_id065&op=click
+This SF.Net email is sponsored by: InterSystems CACHE
+FREE OODBMS DOWNLOAD - A multidimensional database that combines
+robust object and relational technologies, making it a perfect match
+for Java, C++,COM, XML, ODBC and JDBC. www.intersystems.com/match8
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
