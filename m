@@ -1,83 +1,109 @@
-From: "George Simon" <tzliae@thermo-a.mw.tum.de>
-Date: Sat, 27 Nov 2004 06:55:29 +0000
-Subject: [KJ] dental practice, 7, 000 hospitals, 25,
-Message-Id: <UELYPNOOLCQRHNPYJRIUVGVMP@emducms1.sis.ucm.es>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 01 Nov 2004 18:32:33 +0000
+Subject: [KJ] [PATCH] net/ibmtr: replace schedule_timeout() with
+Message-Id: <20041101192738.GE1730@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45670897363211482=="
+Content-Type: multipart/mixed; boundary="===============40430199052505378=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <E1CO1wB-0002eM-If@sputnik> <4184C66B.8040501@pobox.com>
+In-Reply-To: <4184C66B.8040501@pobox.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
 
---===============45670897363211482==
-Content-Type: multipart/alternative;
-	boundary="--E01CD831E0FD39602"
+--===============40430199052505378==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-----E01CD831E0FD39602
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+On Sun, Oct 31, 2004 at 06:03:07AM -0500, Jeff Garzik wrote:
+> janitor@sternwelten.at wrote:
+> >Any comments would be appreciated.
+> >
+> >Description: Use msleep() / msleep_interruptible() [as appropriate]
+> >instead of schedule_timeout() to guarantee the task delays as expected.
+> >
+> >Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> >Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
+> >
+> >---
+> >
+> > linux-2.6.10-rc1-max/drivers/net/tokenring/ibmtr.c |   11 +++++------
+> > 1 files changed, 5 insertions(+), 6 deletions(-)
+> >
+> >-		schedule_timeout(TR_RST_TIME); /* wait 50ms */
+> >+		msleep(jiffies_to_msecs(TR_RST_TIME)); /* wait 50ms */
 
-The New 2005 United States Healthcare Database.
+<snip>
 
-This complete database includes all hospitals, nursing homes, 
-and physicians in the country.
+> >-	current->state=TASK_UNINTERRUPTIBLE;
+> >-	schedule_timeout(TR_RST_TIME); /* wait 50ms */
+> >+	msleep(jiffies_to_msecs(TR_RST_TIME));		/* wait 50ms */
 
-In a rapidly-changing industry, current healthcare information is an 
-invaluable resource to businesses and organizations.  The United States 
-Healthcare Database includes comprehensive information on more than 
-7,000 hospitals, 25,000 nursing homes and 400,000 doctors.  It is the 
-most extensive and reliable mailing list and database of key decision 
-makers in the health care market.
+<snip>
+
+> >-		current->state=TASK_INTERRUPTIBLE;
+> >-		i=schedule_timeout(TR_RETRY_INTERVAL); /* wait 30 seconds */
+> >-		if(i!=0) break; /*prob. a signal, like the i>24*HZ case 
+> >above */
+> >+		if(msleep_interruptible(jiffies_to_msecs(TR_RETRY_INTERVAL)))
+> >+			break; /*prob. a signal, like the i>24*HZ case above 
+
+<snip>
+
+> It makes more sense to convert the constants to msecs in the source 
+> code, instead of converting them at runtime.
+
+Here is the patch to ibmtr.c which completes these changes...
+
+Description: Uses msleep()/msleep_interruptible() [as appropriate] to
+guarantee the task delays as expected. This patch depends on the
+corresponding addition of the millisecond-unit constants to ibmtr.h.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.10-rc1-vanilla/drivers/net/tokenring/ibmtr.c	2004-10-30 15:33:28.000000000 -0700
++++ 2.6.10-rc1/drivers/net/tokenring/ibmtr.c	2004-11-01 11:18:10.000000000 -0800
+@@ -130,6 +130,7 @@ in the event that chatty debug messages 
+ #include <linux/ip.h>
+ #include <linux/trdevice.h>
+ #include <linux/ibmtr.h>
++#include <linux/delay.h>
  
-Each record is indexed by such features as name, address, phone and 
-fax. The database is available in Excel format on CD Rom.  It is 
-designed for mailing lists and merges.  The data can be selected by 
-state or other criteria such as type of practice. It can be used on 
-an unlimited basis.
-
-For the past 14 years, MedCom has maintained the most comprehensive 
-healthcare lists.  Our directories are 100% telephone verified and 
-updated every quarter. MedCom continues to hold the nation's most 
-extensive and reliable databases of key decision-makers in the health 
-care market.
+ #include <net/checksum.h>
  
-Available exclusively on CD-Rom (Excel), the data can be used on an 
-unlimited basis. It is easily exportable to other programs for 
-mailing or faxing purposes.
-
-For a limited time, this extensive database is offered at an introductory =
-
-
-Price of $195 (reg. $745).
-
-To order, please print this e-mail, complete the information below and 
-fax it to 416-765-0029 (tel: 416-765-0028).
-
-NAME:
-    
-TITLE:
-
-ORGANIZATION:
-
-ADDRESS:
-
-CITY:
-
-STATE:
-
-POSTAL:
-
-TEL:
-
-FAX:
-
-EMAIL:
+@@ -317,7 +318,7 @@ static void ibmtr_cleanup_card(struct ne
+ 	if (dev->base_addr) {
+ 		outb(0,dev->base_addr+ADAPTRESET);
+ 		
+-		schedule_timeout(TR_RST_TIME); /* wait 50ms */
++		msleep(TR_RST_TIME_MS);
  
+ 		outb(0,dev->base_addr+ADAPTRESETREL);
+ 	}
+@@ -858,8 +859,7 @@ static int tok_init_card(struct net_devi
+ 	writeb(~INT_ENABLE, ti->mmio + ACA_OFFSET + ACA_RESET + ISRP_EVEN);
+ 	outb(0, PIOaddr + ADAPTRESET);
+ 
+-	current->state=TASK_UNINTERRUPTIBLE;
+-	schedule_timeout(TR_RST_TIME); /* wait 50ms */
++	msleep(TR_RST_TIME_MS);
+ 
+ 	outb(0, PIOaddr + ADAPTRESETREL);
+ #ifdef ENABLE_PAGING
+@@ -912,9 +912,8 @@ static int tok_open(struct net_device *d
+ 			DPRINTK("Adapter is up and running\n");
+ 			return 0;
+ 		}
+-		current->state=TASK_INTERRUPTIBLE;
+-		i=schedule_timeout(TR_RETRY_INTERVAL); /* wait 30 seconds */
+-		if(i!=0) break; /*prob. a signal, like the i>24*HZ case above */
++		if(msleep_interruptible(TR_RETRY_INTERVAL_MS)) break;
++				/*prob. a signal, like the i>24*HZ case above */
+ 	}
+ 	outb(0, dev->base_addr + ADAPTRESET);/* kill pending interrupts*/
+ 	DPRINTK("TERMINATED via signal\n");	/*BMS useful */
 
-
-
-----E01CD831E0FD39602--
-
-
---===============45670897363211482==
+--===============40430199052505378==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +114,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45670897363211482==--
+--===============40430199052505378==--
