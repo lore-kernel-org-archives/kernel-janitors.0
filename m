@@ -1,54 +1,49 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 21 Jul 2004 21:19:05 +0000
-Subject: [Kernel-janitors] [PATCH] nbd: replace schedule_timeout() with
-Message-Id: <20040721211905.GJ1906@us.ibm.com>
+From: David Brownell <david-b@pacbell.net>
+Date: Wed, 28 Jul 2004 05:23:48 +0000
+Subject: [Kernel-janitors] Re: [PATCH] usb/usbnet: replace
+Message-Id: <41073864.1050407@pacbell.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34129648403360946=="
+Content-Type: multipart/mixed; boundary="===============95690482441001135=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040719214405.GB5372@us.ibm.com>
-In-Reply-To: <20040719214405.GB5372@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============34129648403360946==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============95690482441001135==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Please find below the corrected patch, as the previous one would not
-compile. Thanks.
+Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list. 
+> 
+> Applys-to: 2.6.7
+> 
+> Description: Use msleep() instead of schedule_timeout() to 
+> guarantee the task delays for the desired time.
 
-I would appreciate any comments from the janitors list.
-
-
-Applys-to: 2.6.7
-
-Description: Uses msleep() instead of schedule_timeout() to guarantee
-the task delays at least the desired time amount.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Please define and use UNLINK_TIMEOUT_MS, instead.
+Or better yet, switch to wait_event() ...
 
 
---- linux-vanilla/drivers/block/nbd.c	2004-06-16 05:19:01.000000000 +0000
-+++ linux-dev/drivers/block/nbd.c	2004-07-21 16:51:48.000000000 +0000
-@@ -54,6 +54,7 @@
- #include <linux/errno.h>
- #include <linux/file.h>
- #include <linux/ioctl.h>
-+#include <linux/delay.h>
- #include <net/sock.h>
- 
- #include <linux/devfs_fs_kernel.h>
-@@ -139,8 +140,7 @@ static void nbd_end_request(struct reque
- 		spin_unlock(&lo->queue_lock);
- 		printk(KERN_DEBUG "%s: request %p still in use (%d), waiting\n",
- 		    lo->disk->disk_name, req, req->ref_count);
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(HZ); /* wait a second */
-+		msleep(1000);
- 		spin_lock(&lo->queue_lock);
- 	}
- 	spin_unlock(&lo->queue_lock);
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> 
+> --- linux-vanilla/drivers/usb/net/usbnet.c	2004-06-16 05:19:31.000000000 +0000
+> +++ linux-dev/drivers/usb/net/usbnet.c	2004-07-06 01:14:20.000000000 +0000
+> @@ -2550,8 +2550,7 @@ static int usbnet_stop (struct net_devic
+>  	while (skb_queue_len (&dev->rxq)
+>  			&& skb_queue_len (&dev->txq)
+>  			&& skb_queue_len (&dev->done)) {
+> -		set_current_state (TASK_UNINTERRUPTIBLE);
+> -		schedule_timeout (UNLINK_TIMEOUT_JIFFIES);
+> +		msleep(jiffies_to_msecs(UNLINK_TIMEOUT_JIFFIES);
+>  		devdbg (dev, "waited for %d urb completions", temp);
+>  	}
+>  	dev->wait = 0;
+> 
 
---===============34129648403360946==
+
+
+
+--===============95690482441001135==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34129648403360946==--
+--===============95690482441001135==--
