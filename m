@@ -1,49 +1,104 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 00:35:20 +0000
-Subject: [KJ] [PATCH 28/34] net/pktgen: replace
-Message-Id: <20050126003520.GT12649@us.ibm.com>
+Date: Fri, 21 Jan 2005 19:09:09 +0000
+Subject: [KJ] [UPDATE PATCH 18/39] net/core: use wait_event_timeout()
+Message-Id: <20050121190909.GD3340@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86048792617320546=="
+Content-Type: multipart/mixed; boundary="===============32483098364966523=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: robert.olsson@its.uu.se
-Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
+References: <20050120235123.GG2600@us.ibm.com> <1106267534.7955.36.camel@pegasus>
+In-Reply-To: <1106267534.7955.36.camel@pegasus>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Max Krasnyansky <maxk@qualcomm.com>, bluez-devel@lists.sourceforge.net, kernel-janitors@lists.osdl.org
 
---===============86048792617320546==
+--===============32483098364966523==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+On Fri, Jan 21, 2005 at 01:32:14AM +0100, Marcel Holtmann wrote:
+> Hi Nishanth,
+> 
+> > Description: Use wait_event_timeout() instead of custom wait-queue code.
+> > The current code uses TASK_INTERRUPTIBLE but only cares about timing out and the
+> > wq event taking place (does not actively do anything in response to signals), so
+> > wait_event_timeout() should be ok.
+> 
+> this one results in:
+> 
+>   CC [M]  net/bluetooth/hidp/core.o
+> net/bluetooth/hidp/core.c: In function `hidp_session':
+> net/bluetooth/hidp/core.c:547: warning: passing arg 1 of `prepare_to_wait' from incompatible pointer type
+> net/bluetooth/hidp/core.c:547: warning: passing arg 1 of `finish_wait' from incompatible pointer type
+> net/bluetooth/hidp/core.c:551: warning: passing arg 1 of `prepare_to_wait' from incompatible pointer type
+> net/bluetooth/hidp/core.c:551: warning: passing arg 1 of `finish_wait' from incompatible pointer type
 
-Please consider applying.
+Sorry for that, Marcel. The calling case in that function is slightly different
+than usual...fixed below.
 
-Description: Use wait_event_timeout() instead of the deprecated
-interruptible_sleep_on_timeout(). Current code does not check for signals, so
-interruptible seems unnecessary. Patch is compile-tested.
+Thanks,
+Nish
+
+Description: Use wait_event_timeout() instead of custom wait-queue code.
+The current code uses TASK_INTERRUPTIBLE but only cares about timing out and the
+wq event taking place (does not actively do anything in response to signals), so
+wait_event_timeout() should be ok.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/net/core/pktgen.c	2005-01-24 09:34:21.000000000 -0800
-+++ 2.6.11-rc2-kj/net/core/pktgen.c	2005-01-24 17:18:52.000000000 -0800
-@@ -135,6 +135,7 @@
- #include <linux/ipv6.h>
- #include <linux/udp.h>
- #include <linux/proc_fs.h>
-+#include <linux/wait.h>
- #include <net/checksum.h>
- #include <net/ipv6.h>
- #include <net/addrconf.h>
-@@ -3118,8 +3119,7 @@ static void __exit pg_cleanup(void)
-                 struct pktgen_thread *t = pktgen_threads;
-                 pktgen_threads->control |= (T_TERMINATE);
- 
--                while( t == pktgen_threads) 
--                        interruptible_sleep_on_timeout(&queue, HZ);
-+		wait_event_timeout(queue, (t != pktgen_threads), HZ);
-         }
- 
-         /* Un-register us from receiving netdevice events */
 
---===============86048792617320546==
+--- 2.6.11-rc1-kj-v/net/bluetooth/hidp/core.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/net/bluetooth/hidp/core.c	2005-01-21 11:07:11.000000000 -0800
+@@ -36,6 +36,7 @@
+ #include <linux/ioctl.h>
+ #include <linux/file.h>
+ #include <linux/init.h>
++#include <linux/wait.h>
+ #include <net/sock.h>
+ 
+ #include <linux/input.h>
+@@ -325,7 +326,6 @@ static int hidp_session(void *arg)
+ 	struct sk_buff *skb;
+ 	int vendor = 0x0000, product = 0x0000;
+ 	wait_queue_t ctrl_wait, intr_wait;
+-	unsigned long timeo = HZ;
+ 
+ 	BT_DBG("session %p", session);
+ 
+@@ -370,28 +370,14 @@ static int hidp_session(void *arg)
+ 
+ 	hidp_del_timer(session);
+ 
+-	if (intr_sk->sk_state != BT_CONNECTED) {
+-		init_waitqueue_entry(&ctrl_wait, current);
+-		add_wait_queue(ctrl_sk->sk_sleep, &ctrl_wait);
+-		while (timeo && ctrl_sk->sk_state != BT_CLOSED) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			timeo = schedule_timeout(timeo);
+-		}
+-		set_current_state(TASK_RUNNING);
+-		remove_wait_queue(ctrl_sk->sk_sleep, &ctrl_wait);
+-		timeo = HZ;
+-	}
++	if (intr_sk->sk_state != BT_CONNECTED)
++		wait_event_timeout(*(ctrl_sk->sk_sleep),
++				(ctrl_sk->sk_state == BT_CLOSED), HZ);
+ 
+ 	fput(session->ctrl_sock->file);
+ 
+-	init_waitqueue_entry(&intr_wait, current);
+-	add_wait_queue(intr_sk->sk_sleep, &intr_wait);
+-	while (timeo && intr_sk->sk_state != BT_CLOSED) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		timeo = schedule_timeout(timeo);
+-	}
+-	set_current_state(TASK_RUNNING);
+-	remove_wait_queue(intr_sk->sk_sleep, &intr_wait);
++	wait_event_timeout(*(ctrl_sk->sk_sleep),
++			(intr_sk->sk_state == BT_CLOSED), HZ);
+ 
+ 	fput(session->intr_sock->file);
+ 
+
+--===============32483098364966523==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +109,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86048792617320546==--
+--===============32483098364966523==--
