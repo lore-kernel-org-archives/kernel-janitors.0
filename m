@@ -1,79 +1,59 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Sat, 30 Oct 2004 22:52:58 +0000
-Subject: [KJ] Re: 2.6.10-rc1-kjt1: ixgb_ethtool.c doesn't compile
-Message-Id: <20041030225258.GA1697@us.ibm.com>
+Date: Fri, 22 Oct 2004 23:18:00 +0000
+Subject: [KJ] [PATCH] scsi/ahci: replace schedule_timeout() with
+Message-Id: <20041022231800.GF11126@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============65058172037395634=="
+Content-Type: multipart/mixed; boundary="===============90312800337182275=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041024151241.GA1920@stro.at> <20041029235137.GG6677@stusta.de>
-In-Reply-To: <20041029235137.GG6677@stusta.de>
-To: Adrian Bunk <bunk@stusta.de>
-Cc: kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============65058172037395634==
+--===============90312800337182275==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Oct 30, 2004 at 01:51:37AM +0200, Adrian Bunk wrote:
-> On Sun, Oct 24, 2004 at 05:12:41PM +0200, maximilian attems wrote:
-> >...
-> > splitted out 168 patches:
-> > http://debian.stro.at/kjt/2.6.10-rc1-kjt1/split/
-> 
-> Could you provide a .tar.gz (or .tar.bz) of the splitted patches 
-> (similar to how Andrew does for -mm)?
-> 
-> > thanks for feedback.
-> > maks
-> >...
-> 
-> msleep_interruptible-drivers_net_ixgb_ixgb_ethtool.patch doesn't 
-> compile:
-> 
-> <--  snip  -->
-> 
-> ...
->   CC      drivers/net/ixgb/ixgb_ethtool.o
-> drivers/net/ixgb/ixgb_ethtool.c: In function `ixgb_ethtool_led_blink':
-> drivers/net/ixgb/ixgb_ethtool.c:407: error: `id' undeclared (first use in this function)
-> drivers/net/ixgb/ixgb_ethtool.c:407: error: (Each undeclared identifier is reported only once
-> drivers/net/ixgb/ixgb_ethtool.c:407: error: for each function it appears in.)
-> make[3]: *** [drivers/net/ixgb/ixgb_ethtool.o] Error 1
+Any comments would be, as always, appreciated.
 
-Here's the corrected patch, thanks again for catching this Adrian:
+-Nish
 
-Description: Uses msleep_interruptible() instead of schedule_timeout()
-to guarantee the task delays as expected.
+Description: Uses msleep() / ssleep() [as appropriate] instead of
+schedule_timeout() to guarantee the task delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.9-bk7-vanilla/drivers/scsi/ahci.c	2004-10-22 10:41:31.000000000 -0700
++++ 2.6.9-bk7/drivers/scsi/ahci.c	2004-10-22 15:20:02.000000000 -0700
+@@ -363,8 +363,7 @@ static void ahci_port_stop(struct ata_po
+ 	/* spec says 500 msecs for each PORT_CMD_{START,FIS_RX} bit, so
+ 	 * this is slightly incorrect.
+ 	 */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout((HZ / 2) + 1);
++	msleep(500);
+ 
+ 	ap->private_data = NULL;
+ 	pci_free_consistent(pdev, AHCI_PORT_PRIV_DMA_SZ,
+@@ -719,8 +718,7 @@ static int ahci_host_init(struct ata_pro
+ 	/* reset must complete within 1 second, or
+ 	 * the hardware should be considered fried.
+ 	 */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ + 1);
++	ssleep(1);
+ 
+ 	tmp = readl(mmio + HOST_CTL);
+ 	if (tmp & HOST_RESET) {
+@@ -798,8 +796,7 @@ static int ahci_host_init(struct ata_pro
+ 			/* spec says 500 msecs for each bit, so
+ 			 * this is slightly incorrect.
+ 			 */
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout((HZ / 2) + 1);
++			msleep(500);
+ 		}
+ 
+ 		writel(PORT_CMD_SPIN_UP, port_mmio + PORT_CMD);
 
---- 2.6.10-rc1-vanilla/drivers/net/ixgb/ixgb_ethtool.c	2004-10-30 15:33:27.000000000 -0700
-+++ 2.6.10-rc1/drivers/net/ixgb/ixgb_ethtool.c	2004-10-30 15:49:43.000000000 -0700
-@@ -31,6 +31,7 @@
- #include "ixgb.h"
- 
- #include <asm/uaccess.h>
-+#include <linux/delay.h>
- 
- extern char ixgb_driver_name[];
- extern char ixgb_driver_version[];
-@@ -402,11 +403,10 @@ ixgb_ethtool_led_blink(struct net_device
- 
- 	mod_timer(&adapter->blink_timer, jiffies);
- 
--	set_current_state(TASK_INTERRUPTIBLE);
- 	if (data)
--		schedule_timeout(data * HZ);
-+		msleep_interruptible(data * 1000);
- 	else
--		schedule_timeout(MAX_SCHEDULE_TIMEOUT);
-+		msleep_interruptible(jiffies_to_msecs(MAX_SCHEDULE_TIMEOUT));
- 
- 	del_timer_sync(&adapter->blink_timer);
- 	ixgb_led_off(&adapter->hw);
-
---===============65058172037395634==
+--===============90312800337182275==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -84,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============65058172037395634==--
+--===============90312800337182275==--
