@@ -1,49 +1,56 @@
-From: "Latonya Taylor" <zjwjfejrgqqfm@yahoo.com>
-Date: Thu, 08 Jan 2004 02:58:37 +0000
-Subject: Message subject
-Message-Id: <FEMBWLT-0009621612267@inconsiderable>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="58277188363270590291"
+From: Casaccio =?iso-8859-15?q?Gwena=EBl?= <fa311356@skynet.be>
+Date: Sun, 04 Jan 2004 12:29:51 +0000
+Subject: Re: Kernel-janitor-discuss -- confirmation of subscription -- request 670729
+Message-Id: <200401041329.51554.fa311356@skynet.be>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <WZHOAIW-0000441675011@thimble>
-In-Reply-To: <WZHOAIW-0000441675011@thimble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---58277188363270590291
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+Le Dimanche 04 Janvier 2004 13:27,=20
+kernel-janitor-discuss-request@lists.sourceforge.net a =E9crit :
+> Kernel-janitor-discuss -- confirmation of subscription -- request
+> 670729
+>
+> We have received a request from 10.3.1.7 for subscription of your
+> email address, <fa311356@skynet.be>, to the
+> kernel-janitor-discuss@lists.sourceforge.net mailing list.  To confirm
+> the request, please send a message to
+> kernel-janitor-discuss-request@lists.sourceforge.net, and either:
+>
+> - maintain the subject line as is (the reply's additional "Re:" is
+> ok),
+>
+> - or include the following line - and only the following line - in the
+> message body:
+>
+> confirm 670729
+>
+> (Simply sending a 'reply' to this message should work from most email
+> interfaces, since that usually leaves the subject line in the right
+> form.)
+>
+> If you do not wish to subscribe to this list, please simply disregard
+> this message.  Send questions to
+> kernel-janitor-discuss-admin@lists.sourceforge.net.
 
-profundity allan datsun actuarial vinyl cosec highland flight 
-remote synagogue randall cultural belt calligraphy coset bagatelle 
-brethren suppress share benediction squirrel bulblet fatty 
+--=20
+-----BEGIN GEEK CODE BLOCK-----
+Version: 3.1
+GCS/GMU d++ s-:- a-- C+++ ULU++ P L+++ E++ W++ N+++ o- K- w---
+o- M-- V-- PS+++ PE+++ Y+ PGP t 5 X+ R tv b+++ DI- D++
+G+++ e++ h! !r !y?
+------END GEEK CODE BLOCK------
 
---58277188363270590291
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-<HTML><HEAD>
-<BODY>
-<p>Off</peruvian>shore Cr</fist>edit ca</horehound>rd, qu</berg>aranteed ap</cheese>proval!</p>
-<a href="http://www.2006hosting.com/CC/">
-<img border="0" src="http://www.550000x.com/cc3.jpg"></a>
-transferral niggle obese exhaustible absent butterfat chigger mcginnis rastus idiocy defuse weldon <BR>
-shirtmake stable boeing abyssinia babysitter augend vegetable european divert zeta corrupt dill sine deferent helmsmen gun contradictory churchgoer dockyard canto chloroform leonard penumbra contretemps bilge assure cognition monkey cheney illinois concord mathias azimuthal wrapup slingshot duchess dido berman bowel advantageous <BR>
-arraign kowalewski diagram cancelled mortician centrist figure naples limitation position arson solvate goad incise raspberry riga salon lowdown slimy gash chlorate solicitor daytona kennedy sultan alvin rubbery taverna alberich emporium exceed cyrus alpert committeewoman <BR>
-stenographer esther crosswort countryman bantam offertory sanborn courier moslem patrolling sigh courier bedfast yapping earmark morphemic scud carbondale <BR>
-bolshevik reject kathy stricter use flout apathy transpond deja clyde heady adirondack assiduous friedman contend excruciate dryden biltmore fujitsu bryozoa revive adsorb trafficking hunch styrofoam blight currant depreciate sandbag aureomycin scoop ballard calf diplomacy envoy <BR>
-tissue workspace carbondale proceed fusion apache athlete manumit absence annual <BR>
-
-</BODY>
-</HTML>
-
---58277188363270590291--
+=20
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: Perforce Software.
-Perforce is the Fast Software Configuration Management System offering
-advanced branching capabilities and atomic changes on 50+ platforms.
-Free Eval! http://www.perforce.com/perforce/loadprog.html
+This SF.net email is sponsored by: IBM Linux Tutorials.
+Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
+Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
+Click now! http://ads.osdn.com/?ad_id=1278&alloc_id371&op=CCk
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
