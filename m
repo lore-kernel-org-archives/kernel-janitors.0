@@ -1,38 +1,31 @@
-From: james4765@verizon.net
-Date: Thu, 28 Oct 2004 15:00:44 +0000
-Subject: [KJ] [PATCH 3/9] to arch/sparc64/Kconfig
-Message-Id: <20041028150043.2776.92620.93420@localhost.localdomain>
+From: "Luiz Fernando N. Capitulino" <lcapitulino@conectiva.com.br>
+Date: Mon, 04 Oct 2004 16:18:23 +0000
+Subject: [Kernel-janitors] [PATCH 0/3] - Module version info for USB-Serial
+Message-Id: <20041004131823.09366db8.lcapitulino@conectiva.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46007860499332898=="
+Content-Type: multipart/mixed; boundary="===============051106911552575518=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041028150029.2776.69333.50087@localhost.localdomain>
-In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
-To: kernel-janitors@lists.osdl.org
-Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
+To: kernel-janitors@vger.kernel.org
 
---===============46007860499332898==
+--===============051106911552575518==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Description: Remove x86-specific help in arch/sparc64/Kconfig.
-Apply against 2.6.9.
 
-Signed-off by: James Nelson <james4765@gmail.com>
+ Hi all,
 
-diff -u ./arch/sparc64/Kconfig.orig ./arch/sparc64/Kconfig
---- ./arch/sparc64/Kconfig.orig	2004-10-16 11:23:24.940665125 -0400
-+++ ./arch/sparc64/Kconfig	2004-10-16 11:23:55.089644059 -0400
-@@ -79,8 +79,8 @@
- 	  terminal (/dev/tty0) will be used as system console. You can change
- 	  that with a kernel command line option such as "console=tty3" which
- 	  would use the third virtual terminal as system console. (Try "man
--	  bootparam" or see the documentation of your boot loader (lilo or
--	  loadlin) about how to pass options to the kernel at boot time.)
-+	  bootparam" or see the documentation of your boot loader (silo)
-+	  about how to pass options to the kernel at boot time.)
- 
- 	  If unsure, say Y.
- 
+ The next patches add module version information for
+the fallowing drivers:
 
---===============46007860499332898==
+[PATCH 1/3] - Module version info for PL2303.
+[PATCH 2/3] - Module version info for CyberJack.
+[PATCH 3/3] - Module version info for Belkin_sa.
+
+ The three patches are agans't 2.6.9-rc3-bk4.
+
+ thanks
+
+--===============051106911552575518==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +36,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46007860499332898==--
+--===============051106911552575518==--
