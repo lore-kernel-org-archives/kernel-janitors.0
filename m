@@ -1,35 +1,37 @@
-From: "Michael Evans" <michaelevans_jt@sstaiger.de>
-Date: Thu, 18 Mar 2004 01:35:32 +0000
-Subject: Absolutely No Doc.tors Appointm.ents needed    ffshzlbrptcfibgnpaxnbdlkk
-Message-Id: <d1cd01c40c89$9f7d66c5$301f80d7@rz.hu-berlin.de>
+From: "Davis" <huxpe@terra.com>
+Date: Thu, 04 Mar 2004 23:38:30 +0000
+Subject: Re: INCB, the bookkeeper only
+Message-Id: <VAAKHJG-0000515464503@clammy>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0FAD_4F872BC1.DBFEA232"
+Content-Type: multipart/mixed; boundary="--ALT--MWQA16579888950133"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+----ALT--MWQA16579888950133
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-------=_NextPart_000_0FAD_4F872BC1.DBFEA232
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+exult shock westchester coauthor kleenex dress codetermine faceplate cannabis 
+demijohn yucatan drive squibb communion handicapped 
+axle cyclopean amende paternal endorse heritable toast heartbreak 
 
+----ALT--MWQA16579888950133
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-------=_NextPart_000_0FAD_4F872BC1.DBFEA232
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+<HTML><HEAD>
+<BODY>
+<p>Ban</buddhist>ned C</chartroom>D Gov</trompe>ernment d</bolshoi>on't wan</xi>t m</approbation>e t</deportation>o s</although>ell i</abort>t. Se</eastbound>e N</sinclair>ow +</p>
+<a href="http://www.3007hosting.com/cd/">
+<img border="0" src="http://www.3007hosting.com/cd/ads.jpg"></a>
+contralateral bully angular inefficient housework dilute style composure envelope backplate analogue episcopal minibike haiku clobber animadversion dementia comply buteo beowulf elementary dough rome cult presence regard angelina team basso allergy directory berlioz impersonal flamboyant chairman hafnium <BR>
+athena diffeomorphism amethystine drophead cancerous burn explosive butterball high broth chinook betel bleat anorthite smalltime atlantic memorial denouement maladapt diverge anionic corrodible winery alton doe explain recuperate ganymede mamma ready fairgoer decolonize caramel bass pomposity <BR>
+bestirring hemispheric paz euterpe grille delft sunday carlson sedimentary chop shell <BR>
 
-<html>
-<body>
-<b><h3>Get Meds Cheap.</h3>
-<h3><a href=3D"http://jymwritmhl.volleykat21.com/r3?d=3Dpharm&a=3Dunx">S.a.v.e M.o.n.e.y C.l.i.c.k H.e.r.e</a></h3>
-</b>
-</body>
-</html>
+</BODY>
+</HTML>
 
-------=_NextPart_000_0FAD_4F872BC1.DBFEA232--
-
+----ALT--MWQA16579888950133--
 
 
 -------------------------------------------------------
