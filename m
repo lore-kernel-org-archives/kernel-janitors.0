@@ -1,33 +1,54 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:11:39 +0000
-Subject: [KJ] [PATCH 21/53] fb: Clean up printk()'s in drivers/video/fbmem.c
-Message-Id: <20050125231139.10418.10777.48883@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 20 Jan 2005 23:39:11 +0000
+Subject: [KJ] [PATCH 15/39] m68k/stdma: replace sleep_on() with wait_event()
+Message-Id: <20050120233911.GC2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84881350004615341=="
+Content-Type: multipart/mixed; boundary="===============10198897657862016=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============84881350004615341==
+--===============10198897657862016==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/fbmem.c
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/fbmem.c linux-2.6.11-rc2-mm1/drivers/video/fbmem.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/fbmem.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/fbmem.c	2005-01-24 19:07:03.024260642 -0500
-@@ -1195,7 +1195,7 @@
+Description: Use wait_event() instead of the deprecated sleep_on() function.
+Since wait_event() expects the condition passed in to be the stopping condition,
+negate the current one.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/arch/m68k/atari/stdma.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/arch/m68k/atari/stdma.c	2005-01-19 17:25:33.000000000 -0800
+@@ -34,6 +34,7 @@
+ #include <linux/sched.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
++#include <linux/wait.h>
  
- 	devfs_mk_dir("fb");
- 	if (register_chrdev(FB_MAJOR,"fb",&fb_fops))
--		printk("unable to get major %d for fb devs\n", FB_MAJOR);
-+		printk(KERN_WARNING "unable to get major %d for fb devs\n", FB_MAJOR);
+ #include <asm/atari_stdma.h>
+ #include <asm/atariints.h>
+@@ -81,11 +82,10 @@ void stdma_lock(irqreturn_t (*handler)(i
  
- 	fb_class = class_simple_create(THIS_MODULE, "graphics");
- 	if (IS_ERR(fb_class)) {
+ 	local_irq_save(flags);		/* protect lock */
+ 
+-	while(stdma_locked)
+-		/* Since the DMA is used for file system purposes, we
+-		 have to sleep uninterruptible (there may be locked
+-		 buffers) */
+-		sleep_on(&stdma_wait);
++	/* Since the DMA is used for file system purposes, we
++	 have to sleep uninterruptible (there may be locked
++	 buffers) */
++	wait_event(stdma_wait, !stdma_locked);
+ 
+ 	stdma_locked   = 1;
+ 	stdma_isr      = handler;
 
---===============84881350004615341==
+--===============10198897657862016==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84881350004615341==--
+--===============10198897657862016==--
