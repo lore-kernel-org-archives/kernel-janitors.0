@@ -1,47 +1,82 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 17:12:00 +0000
-Subject: [KJ] [PATCH 17/19] drivers/scsi/qla1280: Use the DMA_{64,
-Message-Id: <20050220171200.GR14375@helium.tklauser.home>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:52 +0000
+Subject: [KJ] [PATCH][RESUBMIT][8/21] drivers/isdn/sc/* - compile warning
+Message-Id: <42113C2C.9954.52BD55@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97435712590311407=="
+Content-Type: multipart/mixed; boundary="===============44728286053505917=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============97435712590311407==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============44728286053505917==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Hello,
+Description: compile warning cleanup - cast integer arguments to proper 
+pointer types.  
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
---- linux-2.6.11-rc4.orig/drivers/scsi/qla1280.c	2005-02-13 17:13:07.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/scsi/qla1280.c	2005-02-16 21:16:19.000000000 +0100
-@@ -4741,7 +4741,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/isdn/sc/init.c linux-2.6.11-rc3-mm2/drivers/isdn/sc/init.c
+--- linux-2.6.11-rc3-mm2-original/drivers/isdn/sc/init.c	2005-02-12 12:06:24.000000000 +0200
++++ linux-2.6.11-rc3-mm2/drivers/isdn/sc/init.c	2005-02-12 17:01:02.000000000 +0200
+@@ -502,7 +502,7 @@ int identify_board(unsigned long rambase
+ 	 */
+ 	outb(PRI_BASEPG_VAL, pgport);
+ 	msleep_interruptible(1000);
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
+ 	pr_debug("Looking for a signature, got 0x%x\n", sig);
+ 	if(sig == SIGNATURE)
+ 		return PRI_BOARD;
+@@ -512,7 +512,7 @@ int identify_board(unsigned long rambase
+ 	 */
+ 	outb(BRI_BASEPG_VAL, pgport);
+ 	msleep_interruptible(1000);
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
+ 	pr_debug("Looking for a signature, got 0x%x\n", sig);
+ 	if(sig == SIGNATURE)
+ 		return BRI_BOARD;
+@@ -522,7 +522,7 @@ int identify_board(unsigned long rambase
+ 	/*
+ 	 * Try to spot a card
+ 	 */
+-	sig = readl(rambase + SIG_OFFSET);
++	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
+ 	pr_debug("Looking for a signature, got 0x%x\n", sig);
+ 	if(sig != SIGNATURE)
+ 		return -1;
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/isdn/sc/shmem.c linux-2.6.11-rc3-mm2/drivers/isdn/sc/shmem.c
+--- linux-2.6.11-rc3-mm2-original/drivers/isdn/sc/shmem.c	2004-12-24 23:34:30.000000000 +0200
++++ linux-2.6.11-rc3-mm2/drivers/isdn/sc/shmem.c	2005-02-12 17:01:02.000000000 +0200
+@@ -56,8 +56,8 @@ void memcpy_toshmem(int card, void *dest
  
- #ifdef QLA_64BIT_PTR
- 	if (pci_set_dma_mask(ha->pdev, (dma_addr_t) ~ 0ULL)) {
--		if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
-+		if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
- 			printk(KERN_WARNING "scsi(%li): Unable to set a "
- 			       " suitable DMA mask - aboring\n", ha->host_no);
- 			error = -ENODEV;
-@@ -4751,7 +4751,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
- 		dprintk(2, "scsi(%li): 64 Bit PCI Addressing Enabled\n",
- 			ha->host_no);
- #else
--	if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
-+	if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
- 		printk(KERN_WARNING "scsi(%li): Unable to set a "
- 		       " suitable DMA mask - aboring\n", ha->host_no);
- 		error = -ENODEV;
+ 	outb(((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE) >> 14) | 0x80,
+ 		sc_adapter[card]->ioport[sc_adapter[card]->shmem_pgport]);
+-	memcpy_toio(sc_adapter[card]->rambase +
+-		((unsigned long) dest % 0x4000), src, n);
++	memcpy_toio((volatile void __iomem *)(sc_adapter[card]->rambase +
++		((unsigned long) dest % 0x4000)), src, n);
+ 	spin_unlock_irqrestore(&sc_adapter[card]->lock, flags);
+ 	pr_debug("%s: set page to %#x\n",sc_adapter[card]->devicename,
+ 		((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE)>>14)|0x80);
+@@ -135,8 +135,8 @@ void memset_shmem(int card, void *dest, 
+ 
+ 	outb(((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE) >> 14) | 0x80,
+ 		sc_adapter[card]->ioport[sc_adapter[card]->shmem_pgport]);
+-	memset_io(sc_adapter[card]->rambase +
+-		((unsigned long) dest % 0x4000), c, n);
++	memset_io((volatile void __iomem *)(sc_adapter[card]->rambase +
++		((unsigned long) dest % 0x4000)), c, n);
+ 	pr_debug("%s: set page to %#x\n",sc_adapter[card]->devicename,
+ 		((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE)>>14)|0x80);
+ 	spin_unlock_irqrestore(&sc_adapter[card]->lock, flags);
 
---===============97435712590311407==
+
+
+
+--===============44728286053505917==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +87,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97435712590311407==--
+--===============44728286053505917==--
