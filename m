@@ -1,91 +1,135 @@
-From: "Loren Youngblood" <ljklwmm@aol.com>
-Date: Tue, 10 Feb 2004 20:04:53 +0000
-Subject: Turn-key business thayer rqqe
-Message-Id: <6z--1cc04-d-fta14f0g$k-$s5e4@5jad5z>
+From: "Hannu.jokinen" <hannu.jokinen@orionpharma.com>
+Date: Thu, 12 Feb 2004 02:26:34 +0000
+Subject: Attention 17! New i-worm detected.
+Message-Id: <5IBEGDLKAA96FDD6@orionpharma.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="5.ABFBFB5_F753DB4."
+Content-Type: multipart/mixed; boundary="----=_NextPart_JLJL7F2_J6F1EA9_8E5BKC_KG"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+------=_NextPart_JLJL7F2_J6F1EA9_8E5BKC_KG
+Content-Type: text/html
+Content-Transfer-Encoding: 8bit
 
---5.ABFBFB5_F753DB4.
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<body bgcolor=3D"#FFFFFF" text=3D"#000000" alink=3D"#FF0000" vlink=3D"#FF9=
-900" link=3D"#0000FF">
-<FONT FACE=3D"ARIAL" SIZE=3D"2" COLOR=3D"RED"><B>YOU MUST READ THIS WORD F=
-OR WORD!</B></FONT><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B>Information that you <FONT COLOR=3D"RED=
-" ><U>may not</U></FONT> receive again so<br> <FONT COLOR=3D"BLUE" >PLEASE=
-</FONT> take it <FONT COLOR=3D"BLUE" >SERIOUSLY!!</FONT></B></FONT>
-<br><br>
-
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B>Would you like to....</B></FONT><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2" COLOR=3D"GREEN"><B>Receive $500, $1,500, $=
-3,500 CASH DAILY? </B></FONT><br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B>If yes, <a href=3D"http://=
-bedazzle.getthispbp.biz/loader.php?type=3Dpbpinfo&ad=3D16"><FONT COLOR=
-=3D"BLUE" >click here</FONT></a> now!</B></FONT><br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B>People are making <FONT COLOR=3D"RED" >=
-REAL FORTUNES</FONT><br>
-<FONT COLOR=3D"BLUE" >NO HYPE - NO FALSE PREDICTIONS!</FONT></B></FONT>
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><b><FONT COLOR=3D"RED" >Have Unlimited Cas=
-h Flow Potential<br>
-</FONT> Join An Elite and Growing Group<br>
-Gain True Financial Independence </b></FONT>
- <br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"3" COLOR=3D"GREEN"><b>You CAN Change Your Lif=
-estyle!</b> </FONT>  
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2" COLOR=3D"RED"><B>AND WE CAN PROVE IT !!</B=
-></FONT>
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><b>Our CASH generating leveraging system h=
-as been<br> 
-proven 100% effective. Totally duplicable for anyone!</b></FONT>
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B>The <FONT COLOR=3D"BLUE" >SERIOUS MO NE=
-Y</FONT> is right here !! </B></FONT>
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><b>Do yourself and those you love a favor<=
-br> 
-and take a close look at this.</b></FONT>
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2" COLOR=3D"RED"><B>We're <u><i>POSITIVE</i><=
-/u> you'll be <u><i>THANKFUL</i></u> you DID!</B></FONT>
-<br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B>This is not sales or M LM</B></FONT>
- <br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><b>Our Private website will give you all t=
-he details</b>
-</FONT><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2"><B><a href=3D"http://vanquish.getthisp=
-bp.biz/loader.php?type=3Dpbpinfo&ad=3D16"><FONT COLOR=3D"BLUE" >click here=
-</FONT></a> to get them now!</B></FONT><br><br><br><br>
-<FONT FACE=3D"ARIAL" SIZE=3D"2" COLOR=3D"SILVER">If you received this by e=
-rror or wish to be removed,<br> 
-simply <a href=3D"http://golden.cybrhosting.com/opt.php?address=3D=
-kernel-janitor-discuss@lists.sourceforge.net">Click Here</a> </FONT>
-<BR><BR><BR>
-c ybjtxgkqp wxmw
-
- icnv 
+<body bgcolor=#ffffff>
+<center>
+Ebi KcF Kernel-janitor-discuss qML kernel-janitor-discuss@lists.sourceforge.net<br>
+<a href="http://medsplanet.info/sv/?pid=evaph3839"><img src="fish.gif" border=0 alt="1 Super \/lagr@"></a><p>
+Kernel-janitor-discuss Ild rut FLD kernel-janitor-discuss@lists.sourceforge.net 305
+</center>
 </body>
-</html>
-xgyd  zan a 
 
---5.ABFBFB5_F753DB4.--
+------=_NextPart_JLJL7F2_J6F1EA9_8E5BKC_KG
+Content-Type: image/gif; name="fish.gif"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="fish.gif"
+Content-ID: <fish.gif>
+
+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
+Ow==
+
+------=_NextPart_JLJL7F2_J6F1EA9_8E5BKC_KG--
 
 
 
 -------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
