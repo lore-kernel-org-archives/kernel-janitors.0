@@ -1,52 +1,77 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:02 +0000
-Subject: [KJ] [PATCH] [12/29] dmxdev.c - vfree() checking cleanups
-Message-Id: <41db112e.44ef9e18.2568.07b9@smtp.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 21 Jan 2005 00:11:36 +0000
+Subject: [KJ] [PATCH 24/39] scsi/atari_scsi: use wait_event()
+Message-Id: <20050121001136.GM2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============58939900475108731=="
+Content-Type: multipart/mixed; boundary="===============16952218459467483=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: Roman.Hodek@informatik.uni-erlangen.de, James.Bottomley@SteelEye.com
+Cc: linux-scsi@vger.kernel.org, kernel-janitors@lists.osdl.org
 
---===============58939900475108731==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+--===============16952218459467483==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-dmxdev.c vfree() checking cleanups.
+Hi,
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Please consider applying.
 
- dmxdev.c |   15 +++++----------
- 1 files changed, 5 insertions(+), 10 deletions(-)
+Description: Use wait_event() instead of the deprecated sleep_on() function. The
+second replacement is more difficult, as there are various conditions which may
+cause the while-loop to break, each resulting in a different effect.
 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- linux-2.6.10-vanilla/drivers/media/dvb/dvb-core/dmxdev.c	2004-12-24 13:35:23.000000000 -0800
-+++ linux-2.6.10/drivers/media/dvb/dvb-core/dmxdev.c	2005-01-04 11:36:27.000000000 -0800
-@@ -304,8 +304,7 @@
- 	buf->size 	buf->pwrite�->pread 	spin_unlock_irq(&dmxdevfilter->dev->lock);
--	if (mem) 
--		vfree(mem);
-+	vfree(mem);
- 		
- 	if (buf->size) {
- 		mem@@ -1123,14 +1122,10 @@
- {
- 	dvb_unregister_device(dmxdev->dvbdev);
- 	dvb_unregister_device(dmxdev->dvr_dvbdev);
--	if (dmxdev->filter) {
--		vfree(dmxdev->filter);
--		dmxdev->filter-	}
--	if (dmxdev->dvr) {
--		vfree(dmxdev->dvr);
--		dmxdev->dvr-	}
-+	vfree(dmxdev->filter);
-+	dmxdev->filter+	vfree(dmxdev->dvr);
-+	dmxdev->dvr 	dmxdev->demux->close(dmxdev->demux);
- }
- EXPORT_SYMBOL(dvb_dmxdev_release);
+--- 2.6.11-rc1-kj-v/drivers/scsi/atari_scsi.c	2005-01-15 16:55:43.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/scsi/atari_scsi.c	2005-01-20 16:08:25.000000000 -0800
+@@ -67,6 +67,7 @@
+ 
+ #include <linux/config.h>
+ #include <linux/module.h>
++#include <linux/wait.h>
+ 
+ #define NDEBUG (0)
+ 
+@@ -559,24 +560,20 @@ static void falcon_get_lock( void )
+ 
+ 	local_irq_save(flags);
+ 
+-	while( !in_interrupt() && falcon_got_lock && stdma_others_waiting() )
+-		sleep_on( &falcon_fairness_wait );
+-
+-	while (!falcon_got_lock) {
+-		if (in_interrupt())
+-			panic( "Falcon SCSI hasn't ST-DMA lock in interrupt" );
+-		if (!falcon_trying_lock) {
+-			falcon_trying_lock = 1;
+-			stdma_lock(scsi_falcon_intr, NULL);
+-			falcon_got_lock = 1;
+-			falcon_trying_lock = 0;
+-			wake_up( &falcon_try_wait );
+-		}
+-		else {
+-			sleep_on( &falcon_try_wait );
+-		}
+-	}	
++	wait_event(falcon_fairness_wait, (in_interrupt() ||
++			falcon_got_lock || stdma_others_waiting()));
+ 
++	wait_event(falcon_try_wait, (in_interrupt() ||
++				falcon_got_lock || !falcon_trying_lock));
++	if (in_interrupt())
++		panic( "Falcon SCSI hasn't ST-DMA lock in interrupt" );
++	if (!falcon_trying_lock) {
++		falcon_trying_lock = 1;
++		stdma_lock(scsi_falcon_intr, NULL);
++		falcon_got_lock = 1;
++		falcon_trying_lock = 0;
++		wake_up(&falcon_try_wait);
++	}
+ 	local_irq_restore(flags);
+ 	if (!falcon_got_lock)
+ 		panic("Falcon SCSI: someone stole the lock :-(\n");
 
-
-
---===============58939900475108731==
+--===============16952218459467483==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +82,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============58939900475108731==--
+--===============16952218459467483==--
