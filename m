@@ -1,29 +1,27 @@
-From: Jay Bourque <kernel@uranium235.org>
-Date: Sat, 14 Aug 2004 19:07:07 +0000
-Subject: [Kernel-janitors] ip_output.c: update last_rx after netif_rx
-Message-Id: <411E62DB.8060707@uranium235.org>
+From: "Cheri M. Bauer" <cherimbauergz@cicero-publishing.de>
+Date: Thu, 26 Aug 2004 11:32:24 +0000
+Subject: [77]you are exposed[1]
+Message-Id: <2d2001c48b75$9322027e$fe2acc17@moet.tm.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fix to update last_rx after netif_rx
-This is my first patch so I'd appreciate any feedback.
+<html>
+<a href="http://sarufwdptqh.adwareindanger.com/?id=pnam12"><img src="http://cefoktccejmxs.adwareindanger.com/m5.gif" border="0"></a><br>
+Put an end to unwanted spam, popups and other internet security hazards PERMANENTLY<br>
+<a href="http://qpprdzdtjolacb.adwareindanger.com/?id=pnam12">more info here...</a>
+</html>
 
--Jay
 
---- linux-2.6.8.1/net/ipv4/ip_output.c    Sat Aug 14 05:56:23 2004
-+++ linux-2.6.8.1/net/ipv4/ip_output.c.new    Sat Aug 14 10:59:58 2004
-@@ -110,6 +110,7 @@ static int ip_dev_loopback_xmit(struct s
- #ifdef CONFIG_NETFILTER_DEBUG
-     nf_debug_ip_loopback_xmit(newskb);
- #endif
-+   newskb->dev->last_rx = jiffies;
-     netif_rx(newskb);
-     return 0;
- }
+
+-------------------------------------------------------
+SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
+100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
+Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
+http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
