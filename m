@@ -1,55 +1,43 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 23:53:41 +0000
-Subject: [Kernel-janitors] [PATCH] net/cs89x0: replace schedule_timeout()
-Message-Id: <20040726235341.GH1897@us.ibm.com>
+Date: Wed, 28 Jul 2004 18:13:57 +0000
+Subject: [Kernel-janitors] [PATCH] isdn/hardware: remove milliseconds()
+Message-Id: <20040728181357.GK1935@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67753402173243238=="
+Content-Type: multipart/mixed; boundary="===============66540596971297372=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============67753402173243238==
+--===============66540596971297372==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
-
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
-
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
-
-Thanks,
-Nish
-
-
+I would appreciate any comments from the janitors list. 
 
 Applys-to: 2.6.7
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+Depends-on: Patch to card.h which replaces milliseconds() with
+msecs_to_jiffies().
+
+Description: Removes definition of milliseconds() in favor of
+msecs_to_jiffies().
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/net/cs89x0.c	2004-06-16 05:19:52.000000000 +0000
-+++ linux-dev/drivers/net/cs89x0.c	2004-07-12 18:59:24.000000000 +0000
-@@ -889,8 +889,7 @@ void  __init reset_chip(struct net_devic
- 	writereg(dev, PP_SelfCTL, readreg(dev, PP_SelfCTL) | POWER_ON_RESET);
+--- linux-vanilla/drivers/isdn/sc/hardware.h	2004-06-15 22:20:03.000000000 -0700
++++ linux-dev/drivers/isdn/sc/hardware.h	2004-07-28 10:54:50.000000000 -0700
+@@ -104,9 +104,6 @@
+  * Some handy macros
+  */
  
- 	/* wait 30 ms */
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(30*HZ/1000);
-+	msleep(30);
+-/* Return the number of jiffies in a given number of msecs */
+-#define milliseconds(x)	(x/(1000/HZ))
+-
+ /* Determine if a channel number is valid for the adapter */
+ #define IS_VALID_CHANNEL(y,x)	((x>0) && (x <= sc_adapter[y]->channels))
  
- 	if (lp->chip_type != CS8900) {
- 		/* Hardware problem requires PNP registers to be reconfigured after a reset */
 
---===============67753402173243238==
+--===============66540596971297372==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67753402173243238==--
+--===============66540596971297372==--
