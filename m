@@ -1,35 +1,44 @@
-From: Scott Feldman <sfeldma@pobox.com>
-Date: Sat, 09 Oct 2004 17:15:34 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 09 Oct 2004 18:18:59 +0000
 Subject: Re: [KJ] [RFT 2.6] pci-gart.c replace pci_find_device with
-Message-Id: <1097342134.3903.14.camel@sfeldma-mobl2.dsl-verizon.net>
+Message-Id: <20041009181859.GW16153@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5823818372489673=="
+Content-Type: multipart/mixed; boundary="===============68456127467026096=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87680000.1097276112@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <87680000.1097276112@w-hlinder.beaverton.ibm.com>
-To: Hanna Linder <hannal@us.ibm.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, ak@suse.de
+References: <87680000.1097276112@w-hlinder.beaverton.ibm.com> <1097342134.3903.14.camel@sfeldma-mobl2.dsl-verizon.net>
+In-Reply-To: <1097342134.3903.14.camel@sfeldma-mobl2.dsl-verizon.net>
+To: Scott Feldman <sfeldma@pobox.com>
+Cc: Hanna Linder <hannal@us.ibm.com>, kernel-janitors <kernel-janitors@lists.osdl.org>, ak@suse.de, lkml <linux-kernel@vger.kernel.org>, greg@kroah.com
 
---===============5823818372489673==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============68456127467026096==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 2004-10-08 at 15:55, Hanna Linder wrote:
-> @@ -81,7 +81,7 @@ static u32 gart_unmapped_entry; 
->  
->  #define for_all_nb(dev) \
->  	dev = NULL;	\
-> -	while ((dev = pci_find_device(PCI_VENDOR_ID_AMD, 0x1103, dev))!=NULL)\
-> +	while ((dev = pci_get_device(PCI_VENDOR_ID_AMD, 0x1103, dev))!=NULL)\
->  	     if (dev->bus->number == 0 && 				     \
->  		    (PCI_SLOT(dev->devfn) >= 24) && (PCI_SLOT(dev->devfn) <= 31))
+On Sat, Oct 09, 2004 at 10:15:34AM -0700, Scott Feldman wrote:
+> On Fri, 2004-10-08 at 15:55, Hanna Linder wrote:
+> > @@ -81,7 +81,7 @@ static u32 gart_unmapped_entry; 
+> >  
+> >  #define for_all_nb(dev) \
+> >  	dev = NULL;	\
+> > -	while ((dev = pci_find_device(PCI_VENDOR_ID_AMD, 0x1103, dev))!=NULL)\
+> > +	while ((dev = pci_get_device(PCI_VENDOR_ID_AMD, 0x1103, dev))!=NULL)\
+> >  	     if (dev->bus->number == 0 && 				     \
+> >  		    (PCI_SLOT(dev->devfn) >= 24) && (PCI_SLOT(dev->devfn) <= 31))
+> 
+> for_each_pci_dev?
 
-for_each_pci_dev?
+for_each_pci_dev() doesn't take a VENDOR/DEVICE ID pair.
+I think this is a mistake.
 
--scott
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
 
-
---===============5823818372489673==
+--===============68456127467026096==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5823818372489673==--
+--===============68456127467026096==--
