@@ -1,66 +1,68 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:14:09 +0000
-Subject: [KJ] [PATCH 35/53] neofb: Clean up printk()'s in
-Message-Id: <20050125231409.10418.30793.34486@localhost.localdomain>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Fri, 21 Jan 2005 10:08:52 +0000
+Subject: [KJ] [2.6 patch] generic_serial.h: kill incorrect gs_debug reference
+Message-Id: <20050121100852.GF3209@stusta.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============031499587284425701=="
+Content-Type: multipart/mixed; boundary="===============094473077784508419=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050120220402.GB22673@ens-lyon.fr>
+In-Reply-To: <20050120220402.GB22673@ens-lyon.fr>
+To: Benoit Boissinot <benoit.boissinot@ens-lyon.org>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, linux-kernel@vger.kernel.org
 
---===============031499587284425701==
+--===============094473077784508419==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/neofb.c
+On Thu, Jan 20, 2005 at 11:04:03PM +0100, Benoit Boissinot wrote:
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+> Hi,
+> 
+> the following patch (against latest -mm), correct compilation errors with
+> gcc-4.0 (snapshot 20050116).
+> 
+> please correct me if i did something wrong, this is my first patch
+> with the linux kernel.
+> 
+> Benoit
+> 
+> diff -Naurp --exclude=ctags linux-clean/drivers/char/generic_serial.c linux-2.6-mm-test/drivers/char/generic_serial.c
+> --- linux-clean/drivers/char/generic_serial.c	2005-01-20 22:12:57.000000000 +0100
+> +++ linux-2.6-mm-test/drivers/char/generic_serial.c	2005-01-20 21:27:11.000000000 +0100
+> @@ -36,7 +36,7 @@
+>  static char *                  tmp_buf; 
+>  static DECLARE_MUTEX(tmp_buf_sem);
+>  
+> -static int gs_debug;
+> +int gs_debug;
+>...
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/neofb.c linux-2.6.11-rc2-mm1/drivers/video/neofb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/neofb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/neofb.c	2005-01-24 19:07:03.552258929 -0500
-@@ -252,7 +252,7 @@
- 	par->VCLK3Denominator = d_best;
- 
- #ifdef NEOFB_DEBUG
--	printk("neoVCLK: f:%d NumLow=%d NumHi=%d Den=%d Df=%d\n",
-+	printk(KERN_DEBUG "neoVCLK: f:%d NumLow=%d NumHi=%d Den=%d Df=%d\n",
- 	       f_target >> 12,
- 	       par->VCLK3NumeratorLow,
- 	       par->VCLK3NumeratorHigh,
-@@ -1696,13 +1696,13 @@
- 
- 	if (!request_mem_region
- 	    (info->fix.mmio_start, MMIO_SIZE, "memory mapped I/O")) {
--		printk("neofb: memory mapped IO in use\n");
-+		printk(KERN_ERR "neofb: memory mapped IO in use\n");
- 		return -EBUSY;
- 	}
- 
- 	par->mmio_vbase = ioremap(info->fix.mmio_start, MMIO_SIZE);
- 	if (!par->mmio_vbase) {
--		printk("neofb: unable to map memory mapped IO\n");
-+		printk(KERN_ERR "neofb: unable to map memory mapped IO\n");
- 		release_mem_region(info->fix.mmio_start,
- 				   info->fix.mmio_len);
- 		return -ENOMEM;
-@@ -1737,14 +1737,14 @@
- 
- 	if (!request_mem_region(info->fix.smem_start, info->fix.smem_len,
- 				"frame buffer")) {
--		printk("neofb: frame buffer in use\n");
-+		printk(KERN_WARNING "neofb: frame buffer in use\n");
- 		return -EBUSY;
- 	}
- 
- 	info->screen_base =
- 	    ioremap(info->fix.smem_start, info->fix.smem_len);
- 	if (!info->screen_base) {
--		printk("neofb: unable to map screen memory\n");
-+		printk(KERN_ERR "neofb: unable to map screen memory\n");
- 		release_mem_region(info->fix.smem_start,
- 				   info->fix.smem_len);
- 		return -ENOMEM;
+This part seems to be wrong.
 
---===============031499587284425701==
+Correct patch below.
+
+
+<--  snip  -->
+
+
+generic_serial.h contained an incorrect extern reference to the static 
+variable gs_debug (Benoit Boissinot reported that gcc 4.0 rejects this).
+
+
+Signed-off-by: Adrian Bunk <bunk@stusta.de>
+
+--- linux-2.6.11-rc1-mm2-full/include/linux/generic_serial.h.old	2005-01-20 23:26:07.000000000 +0100
++++ linux-2.6.11-rc1-mm2-full/include/linux/generic_serial.h	2005-01-20 23:26:20.000000000 +0100
+@@ -93,6 +93,4 @@
+ int  gs_getserial(struct gs_port *port, struct serial_struct __user *sp);
+ void gs_got_break(struct gs_port *port);
+ 
+-extern int gs_debug;
+-
+ #endif
+
+
+--===============094473077784508419==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============031499587284425701==--
+--===============094473077784508419==--
