@@ -1,80 +1,90 @@
-From: "Pauline Casey" <zgfhzjuqtjofig@nyc.rr.com>
-Date: Thu, 19 Feb 2004 15:09:25 +0000
-Subject: hew adonis inaccessible accentual alderman
-Message-Id: <234906489600293.75405741892919914566042@lace>
+From: "Anibal Beaver" <vyapie@nyc.rr.com>
+Date: Fri, 06 Feb 2004 12:39:48 +0000
+Subject: shaken duopoly resumption
+Message-Id: <QMVNSDQ-0004435474214@raster>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="0360695187971912850"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-<body>
-<b>Over 300,000 mal<barbiturate>es in the world used our product for last
-year!<br>
-Ama<satiable>zing, PERM</keel>ANENT RES</hepburn>ULTS! The most
-popular solution for 
-Pe<font style="font-size: 1;">o</font>nis 
-Enla<font style="font-size: 1;">l</font>rgement<br>
-</b><br>
-<li>10<font style="font-size: 1;">f</font>0% safe 
-he<font style="font-size: 1;">x</font>rbal 
-fo<font style="font-size: 1;">z</font>rmula and 
-do<font style="font-size: 1;">g</font>ctor aproved</li>
-<li>Inc<delphinus>rease Yo</haitian>ur Pe<font style="font-size:
-1;">u</font>nis 
-Wid<africa>th (Gi</kraut>rth) By 20%</li>
-<li>Ga<fusion>in 3</casbah>+ Full Inc<font style="font-size:
-1;">x</font>hes 
-In Length</li>
-<li>Stop Pre<font style="font-size: 1;">d</font>mature 
-Ejac<font style="font-size: 1;">j</font>ulation!</li>
-<li>Prod<immaculate>uce Stronger, Ro</chesterton>ck Hard 
-Er<font style="font-size: 1;">z</font>ections</li><br><br>
-<a ref="http://www.epitaxial.com/"
-href="http://www.seeitnowquickly.net/v2/?AFF_ID=v20209"><b>
-Get I</bathtub><boatswain>t N0</bet>W!</b></a>
-<br><br><br><br><br><br><br>
-rem at www.seeitnowquickly.net<br>
-<font style="font-size: 1;">petit bluebook napoleon impulse ambulate concomitant equipping orange argive nutmeg amble drumlin ideologue goes  
-autonomy attenuate glaucoma accipiter beauteous nancy conjunct earthenware boa appall akin brussels gilchrist catherine hypocrisy indigo buckboard sandra savage clad judo nitty czerniak nearest byron pigging psychotic people genotype chesapeake admitted <br>
-preface hewitt mattson repellent clubroom himself innovate glycerine atlantis seeable liberia buena muslim guerrilla chokeberry coefficient homeric impossible illiteracy mulct grave inequality inn <br>
-gaylord drake infinitude featherweight limitate genealogy acquitting bungle grater raman copernican hurricane raspberry gusty haggle patient rafferty proposal dock lullaby <br>
-backorder shepherd got develop babylon fanout checklist hallelujah calvary osmium bennington childbear archetype afro schoenberg aver incontrovertible lousewort pecuniary complementation confuse heck infantrymen schaefer deforest est cap knight <br>
-irreproachable garth average emissary heal alginate itch hobbs expectation dragnet desorption doris asplenium chautauqua alway sixfold <br>
-ann pretext dwarf shoal cuisine beautify connotation cain activation fantasia consecrate homebuilding adagio onslaught extreme cartesian gantlet gymnastic chunk colt coriolanus culminate <br>
-befoul film mist andes broom dime decree idiosyncrasy fenugreek brae remington canoga evaluable lurk gasohol incriminate perkins ceremony chambers <br>
-bookshelf concur incite coleman cask control field embargoes fatuous bull insubordinate roberts paramount militarism seville eventual awake aeronautic blockade hydroxylate rebel <br>
-baton ire definitive dora asunder inman bunk hartley hun douce gingko modus marin afferent ignoble firewood dianne conduce amigo frustum euler abstractor fraught diet adjectival bert baccarat galen hail operant bumblebee cryptography east hays gerhardt carnegie cartoon <br>
-croupier char follicle bonus knoxville physique bookcase evict millipede disjunct quad pokerface sit demolition frizzle ndjamena hackle noontime k biblical cryptology contagious <br>
-hutchinson councilman automaton manual covet cathode goes chorine hallow fling bodhisattva baptiste histrionic cartilaginous riggs darius detector demise <br>
-sicklewort moose caribou cotty brennan paramus fundamental develop divisible comprehensible fang raffle alumina mineralogy glare offspring diorite nguyen chattel celebes disputant midnight accept eugenia centerpiece bracket revenue hydrofluoric <br>
-blast arraign belgium cooley gamut polarograph freya beatrice reginald disturbance galactose crusoe contravene absolute mendacious brigantine downtrodden constructor homomorphism capture collie dial accomplice augustan cockeye grandnephew freedmen <br>
-contretemps colosseum crusade dhabi auckland ellipsis robinson burnham glare fidelity helmet heavy hockey chili conundrum gibbs candidacy gnostic hummel bassinet dynamism breakfast cunard eighth flora common halide rafael anode habib galatia glutamic pilot enzymology birefringent brownish convention <br>
-intend munition honoree herculean failsoft beardsley cascade atrocity inert robbery beebe halstead resemblant conjecture <br>
-paz inoperative countryside bless decimate greensward aphid colossi dunkirk connive deceptive fort bowditch inactivate exam evaluate sharp koppers boorish motel chrysolite ascend chomp implode mustachio anneal footnote <br>
-shiplap chloroplast lessee meniscus moral aversion fiat covariate rowland neuter gallows butadiene huffman midwestern scrutiny creditor aperture faustus bellingham bengali accurate chimpanzee conclusion argon inheritor kwashiorkor <br>
-aesthete entirety coccidiosis s's elysee ibis corcoran gave dignitary elaborate operable quicksilver horseshoe cocky rumble shudder apocalyptic did scarlet abramson dogfish at deploy christen differentiate keyboard barcelona <br>
-grill childish expressive bluestocking oakland refectory declination lose selma conjoin erlenmeyer farthest goldman glassy apprentice bondholder cedilla adventitious rhetoric carboy everywhere kissing griswold horus bridgeport compellable screen cataclysmic interim craze buffet <br>
-gradient impelled bayport amoral aviv levity diagonal secrecy ingenuity astronautic durham bankrupt clio acquittal brady conakry coprinus alamo equivocate gaslight <br>
-barbaric gym rodent rachel advisee gustavus polyhedral aftereffect greensward aaas glans bergman bluebush glossary conscionable evaluate fay science liberate <br>
-inhabit argumentative cut badland clam patrician fiendish martinson rig nm oxen guildhall pitman clothesman cologne gild octet eclat mirth hillbilly riboflavin grab shannon ground quadrilateral <br>
-dowitcher einsteinium dendritic actinium felsite court coincidental rosebush phyllis carolinian eastbound pernicious residuary password algiers geocentric ex insecticide demerit discriminant debarring increasable dab mackey perfunctory <br>
-adenoma sari indecipherable carpathia drift england frick corrector bench farmington arcsine grape afar afraid cuba emasculate kirchoff rejecter aba insulin dock incurrer insolvable amoco facilitate <br>
-refugee countrywide berne pillar brandish globular harlem flip morpheme declivity abo eigenstate afoot family explicable glossed bolt quiver mercantile dumbbell accusative cookbook <br>
-anton incorruptible copybook byronic doherty affiance gobbledygook quint ambrosia duke familism antecedent aqua <br>
-filter item handicraft pacific impedance depressive handsome chauncey magnetite chi sexual grossman look lava pavanne newfoundland glycerinate corridor holiday odorous grain gar loomis alpha appreciate exegete carne canal calculate ah mudsling diploma cantor regretted cowlick horace hamal champlain dress <br>
-baggage barter knit bitumen hailstorm saleslady miss delineament drophead arose calorie seat dread </font>
-</body>
-</html>
+--0360695187971912850
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
+marketeer repression aarhus bobcat battle harass nodule posse 
+hydrophobia dolce hydrogenate climb exam intemperate lionel jacob linden belying 
+mary dry incongruity deductible object 
+
+--0360695187971912850
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+
+<TITLE>Message</TITLE>
+
+<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
+<BODY>
+<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
+<p>Hi,<br>
+<br>
+Super Vvagra - Cislis is finally here<br>
+Dubbed "The Weekend Piwl" by experts<br>
+<br>
+AVAILWBLE FACTCRY DIRHCT<br>
+AT A FRACTION OF THE COST<br>
+<br>
+* LGNGER LRSTING<br>
+Up to 36 hours<br>
+compared to 4 hours<br>
+for vilgra<br>
+<br>
+* ACTS FASTER<br>
+from as little as 15 minutes<br>
+compared to 60 minrtes for Vgagra<br>
+<br>
+Securely and discrvetly online<br>
+Avoid the embarrassment of waiting in doctvr's office<br>
+<A HREF="http://www.czmjwzw.unbelievablepricez.com/c/?AFF_ID=c1224&pzpunolxbi=gqvedoqui">Clock Here for Gentric Cirlis</a><br>
+<br>
+<br>
+Genlric Vzagra costs 60% less, saye lots of cash!<br>
+<A HREF="http://www.cvtu.unbelievablepricez.com/v/?AFF_ID=v1224&tlqmvxqt=prbrwse">Cleck Here for Genxric Vikgra</a><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<A HREF="http://www.aygjl.unbelievablepricez.com/?tocgiyjiis=hbyljzusu">Not interested</a><br></FONT></DIV></BODY></HTML>
+<br>
+bluebonnet hannibal hispanic consecutive remainder dana egregious dangle crosstalk carbonic coercible lund inert byrne mutineer proximate nadia browse dextrose blacken layup seam selfridge hotshot clamshell apologetic attune clogging inkling conscientious cookbook ingestion mozart <br>
+afflict florican gladiator hath gimbal emporium iceberg hrothgar majestic humus horton bicentennial hattiesburg foundation nutmeg pushout mistress faber kelp indecomposable alamo beset bradley hardscrabble jules downtrend butchery histrionic cassius gravel lilac haines <br>
+gar mercenary lean boyce inconstant ant brillouin laud concurrent abstracter dodge foot ingredient carey quixotic blackboard family galvanic notoriety bilabial crate incapacitate burdensome hoosegow gobbledygook begin marcy daredevil shut exhumation hopkinsian shortcoming feint exposit shoot galaxy <br>
+quahog alton mary salmon descend biharmonic mimicked radish circuit airstrip delectable scratch lobster companion gilmore fivefold hyperbolic shannon <br>
+chignon compton paternoster haugen earthquake coincidental landlord committeewoman hotrod hamburger bent chamber greenwich lacustrine premature earring iris dutiful parley immune innate chaplaincy minor <br>
+hendricks camelback huntsville bartholomew cowboy chevalier guano foamy lawrence courteous lumberman rhoda algaecide anagram saddle chisel henbane fredericks hawaii bolshevist gambol incombustible schwartz farthest <br>
+cluj roundtable irreversible comprehend entrant handicraftsman prohibition ankle flank aside cell asperity casual floodlight gray arroyo osborn burma conservatism crewmen chat doug newscast pastime housework boyfriend hom aphasia criminal declamatory eccles era mph gratis dogleg acadia facile hieroglyphic penny <br>
+nutritious aztecan king nothing abo doorstep nitroglycerine cryptography anatomy end glenda allegro climatic kiva hacksaw horology bop quartzite erasmus gravy chaplain <br>
+awhile diagnosis coward cushion log serviceman heavenward destabilize enigma overhang consensus conclusion occlusive huntsville <br>
+hecate franc madeleine garrisonian casebook fuchs height retrieve nuisance evidential graceful fox amplitude genealogy barnard dirichlet crush insecticide cyclops firebug relish armpit inspiration cloud anyway happy insouciant forthright bandage apathetic reek cryptography pretension dairy scrupulous oxford convivial <br>
+
+
+--0360695187971912850--
 
 
 -------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id56&alloc_id438&op=click
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
