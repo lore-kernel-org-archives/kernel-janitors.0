@@ -1,46 +1,39 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 14 Feb 2005 18:44:59 +0000
-Subject: Re: [KJ] [PATCH 15/18] sound/core/ remove pci_find_{device, subsys}
-Message-Id: <20050214184459.GN7815@kroah.com>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Fri, 04 Feb 2005 15:33:04 +0000
+Subject: [KJ] Re: [Alsa-devel] [PATCH 13/20] sound/gus_pcm: remove
+Message-Id: <s5h4qgsz6fj.wl@alsa2.suse.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2655199703128801=="
+Content-Type: multipart/mixed; boundary="===============68403783228769488=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200502141154.35355.amitg@calsoftinc.com>
-In-Reply-To: <200502141154.35355.amitg@calsoftinc.com>
 To: kernel-janitors@vger.kernel.org
 
---===============2655199703128801==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============68403783228769488==
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Feb 14, 2005 at 11:54:35AM +0530, Amit Gud wrote:
-> Remove deprecated pci_find_device and pci_find_subsys
+At Wed, 2 Feb 2005 11:50:13 -0800,
+Nishanth Aravamudan wrote:
 > 
-> Do consider applying.
+> Hello,
 > 
-> Signed-off-by: Amit Gud <gud@eth.net>
+> Please consider applying.
 > 
-> diff -uprN orig/sound/core/memalloc.c linux-2.6.11-rc3/sound/core/memalloc.c
-> --- orig/sound/core/memalloc.c	2005-01-20 20:06:45.000000000 +0530
-> +++ linux-2.6.11-rc3/sound/core/memalloc.c	2005-02-14 05:38:59.000000000 +0530
-> @@ -552,7 +552,7 @@ static void __init preallocate_cards(voi
->  
->  	card = 0;
->  
-> -	while ((pci = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pci)) != NULL) {
-> +	while ((pci = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pci)) != NULL) {
->  		struct prealloc_dev *dev;
->  		unsigned int i;
->  		if (card >= SNDRV_CARDS)
+> Description: Replace deprecated interruptible_sleep_on_timeout() with
+> wait_event_timeout(). Code is not identical, as the current sleeping system is 1
+> jiffy at a time checking atomic_read()'s return every iteration. Patch is
+> compile-tested.
 > 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-No, please do not apply this, it is incorrect.
+Thanks, I applied this one.
 
-thanks,
+The other fixes for sound/seq/* stuff are not applied.  Instead, I
+modified the code to use wait_event*() properly.
+Now all sleep_on*() are gone from ALSA tree.
 
-greg k-h
 
---===============2655199703128801==
+Takashi
+
+--===============68403783228769488==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2655199703128801==--
+--===============68403783228769488==--
