@@ -1,44 +1,48 @@
-From: "Kelly Padilla" <kellypadillazt@cobalt.com.hk>
-Date: Wed, 07 Jul 2004 09:14:07 +0000
-Subject: $33857
-Message-Id: <040401c46402$41f1440a$eae6e032@credit.it>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 27 Jul 2004 22:04:06 +0000
+Subject: [Kernel-janitors] [PATCH] pcmcia/i82365: replace schedule_timeout()
+Message-Id: <20040727220406.GZ3471@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============61688884825813672=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-I sent you an email a few days ago, because you now qualify for a new mortgage.
-You could get $300,000 for as little as $700 a month!
-Bad credit is no problem, you can pull cash out or refinance.
+--===============61688884825813672==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please click on this link:
-http://www.lending-now.com/h7/li.php?n5nq
+I would appreciate any comments from the janitors list. 
 
-Best Regards,
-Steve Morris
+Applys-to: 2.6.7
 
+Description: Use msleep() instead of schedule_timeout() to 
+guarantee the task delays for the desired time.
 
-
-No more: http://www.lending-now.com/r1/index.html
-
----- system information ----
-requester tag latest public-i18n-ws-request@w3org reasonable software Distinguishing
-allows 
-linguistic making specifics Other appropriate designers covered different
-
-cite Activity holidays presents interplay [Definition: interoperability
-Because 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
+--- linux-vanilla/drivers/pcmcia/i82365.c	2004-06-16 05:19:53.000000000 +0000
++++ linux-dev/drivers/pcmcia/i82365.c	2004-07-03 02:47:41.000000000 +0000
+@@ -514,8 +514,7 @@ static u_int __init test_irq(u_short soc
+     if (request_irq(irq, i365_count_irq, 0, "scan", i365_count_irq) != 0)
+ 	return 1;
+     irq_hits = 0; irq_sock = sock;
+-    __set_current_state(TASK_UNINTERRUPTIBLE);
+-    schedule_timeout(HZ/100);
++    msleep(10);
+     if (irq_hits) {
+ 	free_irq(irq, i365_count_irq);
+ 	debug(2, "    spurious hit!\n");
 
--------------------------------------------------------
-This SF.Net email sponsored by Black Hat Briefings & Training.
-Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
-digital self defense, top technical experts, no vendor pitches, 
-unmatched networking opportunities. Visit www.blackhat.com
+--===============61688884825813672==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============61688884825813672==--
