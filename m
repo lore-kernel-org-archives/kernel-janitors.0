@@ -1,57 +1,65 @@
-From: Nish Aravamudan <nish.aravamudan@gmail.com>
-Date: Sat, 22 Jan 2005 18:49:48 +0000
-Subject: Re: [KJ] Re: [PATCH 18/21] ppc64/rtasd: replace schedule_timeout()
-Message-Id: <29495f1d05012210497ee384b3@mail.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 10 Jan 2005 18:19:05 +0000
+Subject: [KJ] [UPDATE PATCH] scsi/osst: replace schedule_timeout() with
+Message-Id: <20050110181905.GE3099@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46352436421392218=="
+Content-Type: multipart/mixed; boundary="===============66293518556440212=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <16881.58305.424934.884018@cargo.ozlabs.ibm.com>
-In-Reply-To: <16881.58305.424934.884018@cargo.ozlabs.ibm.com>
-To: kernel-janitors@vger.kernel.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============46352436421392218==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============66293518556440212==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 22 Jan 2005 16:25:21 +1100, Paul Mackerras <paulus@samba.org> wrote:
-> Nishanth Aravamudan writes:
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
 > 
-> > Description: Replace schedule_timeout() with msleep()/ssleep(). In both cases,
-> > the current code sleeps in TASK_INTERRUPTIBLE but does not account for early
-> > wakeups due to signals being caught; therefore I have used TASK_UNINTERRUPTIBLE
-> > sleeps in both cases. The second sleep is slightly more difficult to convert as
-> > rtas_event_scan_rate is variable. I have left it as a msleep() call, although
-> > ssleep() may be more appropriate.
-> 
-> You have a good point about signals, but I don't like the way that
-> this will elevate the load average by 1 the whole time.  We need to
-> fix this properly instead.
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
-Ideally, we should fix the load average calculation :) It just seems
-counterintuitive to me that people would use a less correct
-sleep-state just to prevent the load average from going up. But I
-understand your motivation, so it's ok. Just an FYI/FWIW, it seems
-most other driver authors/maintainers have been somewhat ok with use
-TASK_UNINTERRUPTIBLE via msleep()/ssleep(), just because of the time
-units difference (which is just so much easier to understand).
-Admittedly, it's going to be a long time before HZ is completely out
-of the kernel (at least the way it is used today to calculate
-delays/timeouts -- there are a total of ~4000 lines of HZ throughout
-the kernel), but these patches *are* the first step.
+<snip>
 
-How exactly do you mean fix it properly? Do you want to deal with
-signals? It doesn't seem like the code should fail if a signal hits,
-but you could save the signal state, block all signals, sleep
-interruptibly (to prevent load average) and then restore all signals
-on wake-up. I would also add a comment to the effect that
-TASK_UNINTERRUPTIBLE would be acceptable, if the loadavg calculation
-changes; just so another Janitor (once the calc. does change) could go
-through and change it to msleep() / ssleep() then.
+> all patches:
+> ------------
 
-Thanks,
-Nish
+<snip>
 
---===============46352436421392218==
+> msleep-drivers_scsi_osst.patch
+
+Consider replacing with the following patch, as signals are not dealt with in
+the existing code:
+
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. Although TASK_INTERRUPTIBLE is used in the current code,
+there is no code dealing with an early return / signals_pending().
+
+
+--- 2.6.10-v/drivers/scsi/osst.c	2004-12-24 13:34:45.000000000 -0800
++++ 2.6.10/drivers/scsi/osst.c	2005-01-05 14:23:05.000000000 -0800
+@@ -1488,8 +1488,7 @@ static int osst_reposition_and_retry(OS_
+ 			osst_set_frame_position(STp, aSRpnt, frame + skip, 1);
+ 			flag = 0;
+ 			attempts--;
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ / 10);
++			msleep(100);
+ 		}
+ 		if (osst_get_frame_position(STp, aSRpnt) < 0) {		/* additional write error */
+ #if DEBUG
+@@ -1550,7 +1549,7 @@ static int osst_reposition_and_retry(OS_
+ 			debugging = 0;
+ 		}
+ #endif
+-		schedule_timeout(HZ / 10);
++		msleep(100);
+ 	}
+ 	printk(KERN_ERR "%s:E: Failed to find valid tape media\n", name);
+ #if DEBUG
+
+--===============66293518556440212==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46352436421392218==--
+--===============66293518556440212==--
