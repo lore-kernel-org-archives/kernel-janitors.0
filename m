@@ -1,56 +1,46 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 22:40:50 +0000
-Subject: [KJ] [PATCH 17/20] media/zoran_card: remove
-Message-Id: <20050202224050.GW2546@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 15:25:31 +0000
+Subject: [KJ] [PATCH] drivers/pcmcia/*: convert to pci_register_driver
+Message-Id: <20050208152531.GR31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92787309660794004=="
+Content-Type: multipart/mixed; boundary="4QzzFpAwbwI4hdN6"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92787309660794004==
+
+--4QzzFpAwbwI4hdN6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Please consider applying.
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-Description: Remove deprecated interruptible_sleep_on_timeout() function calls
-and replace with direct wait-queue usage. Patch is compile-tested.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--4QzzFpAwbwI4hdN6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_pcmcia.patch"
 
---- 2.6.11-rc2-kj-v/drivers/media/video/zoran_card.c	2005-01-24 09:34:08.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/media/video/zoran_card.c	2005-01-27 11:39:11.000000000 -0800
-@@ -41,6 +41,7 @@
- #include <linux/spinlock.h>
- #include <linux/sem.h>
- #include <linux/kmod.h>
-+#include <linux/wait.h>
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/pcmcia/pd6729.c linux-2.6.11-rc3/drivers/pcmcia/pd6729.c
+--- linux-2.6.11-rc3-vanilla/drivers/pcmcia/pd6729.c	2005-02-03 17:03:53.000000000 +0100
++++ linux-2.6.11-rc3/drivers/pcmcia/pd6729.c	2005-02-07 09:40:29.000000000 +0100
+@@ -865,7 +865,7 @@ static struct pci_driver pd6729_pci_drv 
  
- #include <linux/pci.h>
- #include <linux/interrupt.h>
-@@ -968,6 +969,7 @@ zoran_open_init_params (struct zoran *zr
- static void __devinit
- test_interrupts (struct zoran *zr)
+ static int pd6729_module_init(void)
  {
-+	DEFINE_WAIT(wait);
- 	int timeout, icr;
+-	return pci_module_init(&pd6729_pci_drv);
++	return pci_register_driver(&pd6729_pci_drv);
+ }
  
- 	clear_interrupt_counters(zr);
-@@ -975,7 +977,9 @@ test_interrupts (struct zoran *zr)
- 	zr->testing = 1;
- 	icr = btread(ZR36057_ICR);
- 	btwrite(0x78000000 | ZR36057_ICR_IntPinEn, ZR36057_ICR);
--	timeout = interruptible_sleep_on_timeout(&zr->test_q, 1 * HZ);
-+	prepare_to_wait(&zr->test_q, &wait, TASK_INTERRUPTIBLE);
-+	timeout = schedule_timeout(HZ);
-+	finish_wait(&zr->test_q, &wait);
- 	btwrite(0, ZR36057_ICR);
- 	btwrite(0x78000000, ZR36057_ISR);
- 	zr->testing = 0;
+ static void pd6729_module_exit(void)
 
---===============92787309660794004==
+--4QzzFpAwbwI4hdN6
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92787309660794004==--
+--4QzzFpAwbwI4hdN6--
