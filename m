@@ -1,7 +1,7 @@
 From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 28 Jan 2004 14:49:14 +0000
+Date: Wed, 28 Jan 2004 21:48:07 +0000
 Subject: Re: [Kernel-janitors] Re: 2.6.2-rc2-mm1
-Message-Id: <20040128064914.4ab50872.rddunlap@osdl.org>
+Message-Id: <20040128134807.2355cfbc.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040128135649.1fa41132.grundig@teleline.es>
 In-Reply-To: <20040128135649.1fa41132.grundig@teleline.es>
@@ -28,14 +28,18 @@ e:
 | >   please let me know.
 |=20
 | Perhaps the -kj should be there? Or it's already merged?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-I haven't seen Andrew's announcement yet (other than above),
-but I'll check with him about it.
+Randy.Dunlap wrote:
+> About kernel-janitors patches:
+>=20
+> Do you want to continue reviewing/merging the KJ patches one by one
+> or just grab the complete patchset?
 
-Most of the kj patchset is already merged, but there are several
-outstanding patches that I haven't reviewed yet (from Walter
-Harms and Carlo Perassi).
+and akpm wrote:
+Please just send them to me in the usual manner when you think they're
+ready.  The reject rate has been fairly high, so we need to go through them
+carefully.
+
 
 --
 ~Randy
