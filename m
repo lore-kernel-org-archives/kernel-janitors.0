@@ -1,7 +1,7 @@
-From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Mon, 12 Jan 2004 04:42:49 +0000
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Mon, 12 Jan 2004 16:32:19 +0000
 Subject: Re: [Kernel-janitors] TODO suggestions.
-Message-Id: <20040112044249.GC4694@eugeneteo.net>
+Message-Id: <20040112083219.0bf035d4.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1073548328.2024.27.camel@telecentrolivre>
 In-Reply-To: <1073548328.2024.27.camel@telecentrolivre>
@@ -10,26 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-There are a handful of schedule() within spinlocks. That needs to
-be looked at.
+On Mon, 12 Jan 2004 12:42:49 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
 
-Also, how about an atomic version of check_region() to avoid racy
-conditions? Any idea what the status is?
+| There are a handful of schedule() within spinlocks. That needs to
+| be looked at.
+| 
+| Also, how about an atomic version of check_region() to avoid racy
+| conditions? Any idea what the status is?
 
-Eugene
+the status?  check_region() is deprecated and is slowly being
+removed.  but you probably know that.
 
-<quote sender="Randy.Dunlap">
-> On Thu, 08 Jan 2004 05:52:08 -0200 Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br> wrote:
-> 
-> | 
+I don't know of anyone working on a non-racy version of check_region().
+How would that even work?  It's not check_region() that is racy.
+It's using check_region() ... followed by request_region().
+The proper fix is to just use request_region().
 
-[snip]
+Were you thinking of a check_region() that reserves the region
+for the caller, but still allows request_region() for the same
+region and by the same caller?
 
--- 
-Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
-1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
-main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
-
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
