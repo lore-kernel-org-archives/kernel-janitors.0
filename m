@@ -1,89 +1,98 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 29 Sep 2004 13:24:00 +0000
-Subject: Re: [Kernel-janitors] LinuxCPD - New mini project
-Message-Id: <200409291524.04624.arnd@arndb.de>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 01 Sep 2004 22:22:24 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc1-bk7] dtlk: replace
+Message-Id: <20040901222224.GD2516@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============80822488805658899=="
+Content-Type: multipart/mixed; boundary="===============38208766981022624=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040929010532.82474.qmail@web41005.mail.yahoo.com>
-In-Reply-To: <20040929010532.82474.qmail@web41005.mail.yahoo.com>
 To: kernel-janitors@vger.kernel.org
 
-
---===============80822488805658899==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
-	micalg=pgp-sha1; boundary="Boundary-02=_0drWB9N6Tkteyls";
-	charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-
-
---Boundary-02=_0drWB9N6Tkteyls
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+--===============38208766981022624==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mittwoch, 29. September 2004 03:51, Jon Masters wrote:
-> On Tue, 28 Sep 2004 18:05:32 -0700 (PDT), Aaron Grothe
-> <ajgrothe@yahoo.com> wrote:
->=20
-> > I've put a small project up at Sourceforge http://linuxcpd.sf.net
->=20
-> > Looking at I'm happily surprised about
-> > how much less duplicated code there appears to be in the 2.6 kernel ser=
-ies.
+This is one of 10 patches which have either not been pushed to mainline
+(2.6.9-rc1-bk7) or have not been included in any of the recent kjt's.
 
-Much of the improvements can probably be attributed to merging the 64 bit
-subarchitectures of mips and s390 into their respective 32 bit trees.
+Applys-to: 2.6.9-rc1-bk7
 
-> Generally a good thing. It does reveal quite a few duplications
-> between ppc and ppc64 trees which might be worth pursuing sometime.
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
 
-It may not be a good idea to follow the same route as mips and s390
-for ppc64 and completely get rid of the 64 bit tree, because the ppc64
-tree already doesn't need much of the legacy code in ppc.
-OTOH, it would be nice to share the include/asm tree in order to
-simplify life for multilib build environments. For arch/ppc*/, we
-could follow the approach of x86_64, where the files with identical
-functionality are simply built in the arch/i386 tree. See the
-patch below for a trivial example of this (these two files are
-already identical on ppc and ppc64).
-Unifying the xmon directory could be something more interesting.
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-	Arnd <><
 
-diff -u -r1.2 Makefile
-=2D-- ./arch/ppc64/lib/Makefile	7 Sep 2004 10:32:45 -0000	1.2
-+++ ./arch/ppc64/lib/Makefile	29 Sep 2004 13:06:00 -0000
-@@ -2,8 +2,11 @@
- # Makefile for ppc64-specific library files..
- #
-=20
-=2Dlib-y :=3D checksum.o dec_and_lock.o string.o strcase.o
-+lib-y :=3D checksum.o string.o=20
- lib-y +=3D copypage.o memcpy.o copyuser.o
-+
-+obj-y +=3D ppclib.o
-+ppclib-y :=3D $(addprefix ../../ppc/lib/,dec_and_lock.o strcase.o)
-=20
- # Lock primitives are defined as no-ops in include/linux/spinlock.h
- # for non-SMP configs. Don't build the real versions.
+--- 2.6.9-rc1-bk7-vanilla/drivers/char/dtlk.c	2004-08-31 21:26:38.000000000 +0000
++++ 2.6.9-rc1-bk7-dev/drivers/char/dtlk.c	2004-09-01 22:06:19.000000000 +0000
+@@ -55,7 +55,7 @@
+ #include <linux/mm.h>		/* for verify_area */
+ #include <linux/errno.h>	/* for -EBUSY */
+ #include <linux/ioport.h>	/* for request_region */
+-#include <linux/delay.h>	/* for loops_per_jiffy */
++#include <linux/delay.h>	/* for loops_per_jiffy, msleep */
+ #include <asm/io.h>		/* for inb_p, outb_p, inb, outb, etc. */
+ #include <asm/uaccess.h>	/* for get_user, etc. */
+ #include <linux/wait.h>		/* for wait_queue */
+@@ -107,7 +107,6 @@ static struct file_operations dtlk_fops 
+ };
+ 
+ /* local prototypes */
+-static void dtlk_delay(int ms);
+ static int dtlk_dev_probe(void);
+ static struct dtlk_settings *dtlk_interrogate(void);
+ static int dtlk_readable(void);
+@@ -146,7 +145,7 @@ static ssize_t dtlk_read(struct file *fi
+ 			return i;
+ 		if (file->f_flags & O_NONBLOCK)
+ 			break;
+-		dtlk_delay(100);
++		msleep(100);
+ 	}
+ 	if (retries == loops_per_jiffy)
+ 		printk(KERN_ERR "dtlk_read times out\n");
+@@ -191,7 +190,7 @@ static ssize_t dtlk_write(struct file *f
+ 				   rate to 500 bytes/sec, but that's
+ 				   still enough to keep up with the
+ 				   speech synthesizer. */
+-				dtlk_delay(1);
++				msleep(1);
+ 			else {
+ 				/* the RDY bit goes zero 2-3 usec
+ 				   after writing, and goes 1 again
+@@ -212,7 +211,7 @@ static ssize_t dtlk_write(struct file *f
+ 		if (file->f_flags & O_NONBLOCK)
+ 			break;
+ 
+-		dtlk_delay(1);
++		msleep(1);
+ 
+ 		if (++retries > 10 * HZ) { /* wait no more than 10 sec
+ 					      from last write */
+@@ -368,13 +367,6 @@ module_exit(dtlk_cleanup);
+ 
+ /* ------------------------------------------------------------------------ */
+ 
+-/* sleep for ms milliseconds */
+-static void dtlk_delay(int ms)
+-{
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout((ms * HZ + 1000 - HZ) / 1000);
+-}
+-
+ static int dtlk_readable(void)
+ {
+ #ifdef TRACING
+@@ -431,7 +423,7 @@ static int __init dtlk_dev_probe(void)
+ 			/* posting an index takes 18 msec.  Here, we
+ 			   wait up to 100 msec to see whether it
+ 			   appears. */
+-			dtlk_delay(100);
++			msleep(100);
+ 			dtlk_has_indexing = dtlk_readable();
+ #ifdef TRACING
+ 			printk(", indexing %d\n", dtlk_has_indexing);
 
---Boundary-02=_0drWB9N6Tkteyls
-Content-Type: application/pgp-signature
-Content-Description: signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (GNU/Linux)
-
-iD8DBQBBWrd05t5GS2LDRf4RAm3bAJwN5xmozSU+kBvIlpkcn/VOhl61PACcCug7
-CkpdPXLfojLCgarVhXdYQqM=
-=5Y/q
------END PGP SIGNATURE-----
-
---Boundary-02=_0drWB9N6Tkteyls--
-
---===============80822488805658899==
+--===============38208766981022624==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -94,4 +103,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============80822488805658899==--
+--===============38208766981022624==--
