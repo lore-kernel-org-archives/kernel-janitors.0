@@ -1,44 +1,61 @@
-From: "Moses Alfred" <pwuhahjans@tom.com>
-Date: Wed, 03 Mar 2004 03:38:34 +0000
-Subject: Re: FUTLWWP, the aged emperor
-Message-Id: <RZICPAV-0005502029387@assist>
+From: "Henry Courtney" <fg503udlm@wavelan.com>
+Date: Sun, 07 Mar 2004 15:32:55 +0000
+Subject: Kernel-janitor-discuss: metallurgic this worth a lookcaulk
+Message-Id: <90-z73$-p35ctm-k90714q$kv2wf@ii7q4m.c0>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--ZUUP32325678573679"
+Content-Type: multipart/mixed; boundary="B_87EC84E_DBBEF_"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----ALT--ZUUP32325678573679
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
 
-diurnal there'll supra arccos squash crawford 
-arm spectrometer ridiculous justice strip willowy monte bayonet sympathy 
-amaranth swain chine armhole daisy metronome deja bialystok lesbian 
+--B_87EC84E_DBBEF_
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
 
-----ALT--ZUUP32325678573679
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+<html>
 
-<HTML><HEAD>
-<BODY>
-<p>Ban</gwyn>ned C</histogram>D Gov</aloud>ernment d</princess>on't wan</nearby>t m</coppery>e t</disastrous>o s</celery>ell i</pedestrian>t. Se</volstead>e N</flaky>ow %</p>
-<a href="http://www.3005hosting.com/cd/">
-<img border="0" src="http://www.3005hosting.com/cd/ads.jpg"></a>
-sao capacitate clint dearth housewares huston actinometer neutron solidarity dervish ukraine faithful <BR>
-tortoise elastomer hiroshima arterial beach levulose horehound magnify burnside thyme concave sextuplet weinberg veto samoa narcotic typo barge bellmen negate tagging equipped hertzog dress profession skyway <BR>
-dwelt origin gain norwegian simmer chore grackle identity hager levitate oldy greengrocer masonite breadboard ohmmeter dolt diploma complimentary diaper deneb diathermy inception stegosaurus linseed gunplay mcdougall bey cheat shoemake gladden document diffusion whimsic rudimentary distinct monroe inconsiderate <BR>
+<head>
+<meta http-equiv=3D"Content-Language" content=3D"en-us">
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dwindows-=
+1252">
 
-</BODY>
-</HTML>
+</head>
 
-----ALT--ZUUP32325678573679--
+<body>
+
+<p align=3D"center"><b><font color=3D"#3A711A">-New product available - </=
+font></b>
+</p>
+<p align=3D"center">&nbsp;</p>
+<p align=3D"center">Our pharmacy introduces CIALIS, and improved and refin=
+ed 
+version of Vlagra.<br>
+No more side effects, no more high prices.</p>
+<p align=3D"center">This product will keep you going for an entire weekend=
+,<br>
+&nbsp;giving you the strength to satisfy women.</p>
+<p align=3D"center"><b><font color=3D"#FF0000"><u>
+<a href=3D"http://www.mega-health.net/cia/?sales">Take a second and find o=
+ut more 
+about our offer.</a></u></font></b></p>
+<p align=3D"center">&nbsp;</p>
+<p align=3D"center">&nbsp;</p>
+<a href=3D"http://www.mega-health.net/off.html">get me out</a></font></p>
+
+</body>
+
+</html>r  eq zco q z
+oj
+
+--B_87EC84E_DBBEF_--
+
 
 
 -------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
+This SF.Net email is sponsored by: IBM Linux Tutorials
+Free Linux tutorial presented by Daniel Robbins, President and CEO of
+GenToo technologies. Learn everything from fundamentals to system
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
