@@ -1,65 +1,55 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Mar 2005 19:57:24 +0000
-Subject: [KJ] [PATCH] paride/pg: replace pg_sleep() with msleep()
-Message-Id: <20050302195724.GH2741@us.ibm.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 13:23:33 +0000
+Subject: [KJ] [UPDATE PATCH 19/19] drivers/scsi/sata_vsc: Use the
+Message-Id: <20050320132333.GS3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64201331349374779=="
+Content-Type: multipart/mixed; boundary="===============010655429226063884=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220171331.GT14375@helium.tklauser.home>
+In-Reply-To: <20050220171331.GT14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: jgarzik@pobox.com, linux-ide@vger.kernel.org
 
---===============64201331349374779==
+--===============010655429226063884==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Just had a quick revelation that pg_sleep()'s parameter being labelled
-as ``cs'' indicated centiseconds, which is the schedular quantum when
-HZ=100. But the current driver does not account for other values of HZ.
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Description: Use msleep() instead of pg_sleep() to guarantee the task
-delays as expected. Remove the now unused pg_sleep() definition.
-pg_sleep()'s units were centiseconds, so the corresponding parameters to
-msleep() were multiplied by 10. Patch is compile-tested.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.11-kj-v/drivers/block/paride/pg.c	2005-03-02 11:21:41.000000000 -0800
-+++ 2.6.11-kj/drivers/block/paride/pg.c	2005-03-02 11:53:36.000000000 -0800
-@@ -293,12 +293,6 @@ static inline u8 DRIVE(struct pg *dev)
- 	return 0xa0+0x10*dev->drive;
- }
+--- linux-2.6.11.orig/drivers/scsi/sata_vsc.c	2005-03-02 12:50:38.000000000 +0100
++++ linux-2.6.11/drivers/scsi/sata_vsc.c	2005-03-20 13:27:54.000000000 +0100
+@@ -21,6 +21,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/dma-mapping.h>
+ #include "scsi.h"
+ #include <scsi/scsi_host.h>
+ #include <linux/libata.h>
+@@ -285,10 +286,10 @@ static int __devinit vsc_sata_init_one (
+ 	/*
+ 	 * Use 32 bit DMA mask, because 64 bit address support is poor.
+ 	 */
+-	rc = pci_set_dma_mask(pdev, 0xFFFFFFFFULL);
++	rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
+ 	if (rc)
+ 		goto err_out_regions;
+-	rc = pci_set_consistent_dma_mask(pdev, 0xFFFFFFFFULL);
++	rc = pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
+ 	if (rc)
+ 		goto err_out_regions;
  
--static void pg_sleep(int cs)
--{
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(cs);
--}
--
- static int pg_wait(struct pg *dev, int go, int stop, unsigned long tmo, char *msg)
- {
- 	int j, r, e, s, p, to;
-@@ -311,7 +305,7 @@ static int pg_wait(struct pg *dev, int g
- 		if (j++ < PG_SPIN)
- 			udelay(PG_SPIN_DEL);
- 		else
--			pg_sleep(1);
-+			msleep(10);
- 	}
- 
- 	to = time_after_eq(jiffies, tmo);
-@@ -413,7 +407,7 @@ static int pg_reset(struct pg *dev)
- 
- 	k = 0;
- 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
--		pg_sleep(1);
-+		msleep(10);
- 
- 	for (i = 0; i < 5; i++)
- 		got[i] = read_reg(dev, i + 1);
 
---===============64201331349374779==
+--===============010655429226063884==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64201331349374779==--
+--===============010655429226063884==--
