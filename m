@@ -1,16 +1,16 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 25 Mar 2005 13:26:45 +0000
-Subject: [KJ] [PATCH] printk : drivers/block/paride/friq.c
-Message-Id: <20050325132645.GL14356@rhum.iomeda.fr>
+Date: Fri, 25 Mar 2005 13:28:37 +0000
+Subject: [KJ] [PATCH] printk : drivers/block/paride/frpw.c
+Message-Id: <20050325132837.GM14356@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PHCdUe6m4AxPMzOu"
+Content-Type: multipart/mixed; boundary="Bqc0IY4JZZt50bUr"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050324161716.GA1855@rhum.iomeda.fr>
 In-Reply-To: <20050324161716.GA1855@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
 
---PHCdUe6m4AxPMzOu
+--Bqc0IY4JZZt50bUr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -20,34 +20,52 @@ printk() calls should include appropriate KERN_* constant.
 Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
---PHCdUe6m4AxPMzOu
+
+--Bqc0IY4JZZt50bUr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="patch-2.6.12-rc1_drivers_block_paride_friq.c.diff"
+	filename="patch-2.6.12-rc1_drivers_block_paride_frpw.c.diff"
 
-diff -urpN -X dontdiff a/drivers/block/paride/friq.c b/drivers/block/paride/friq.c
---- a/drivers/block/paride/friq.c	2005-03-18 02:34:28.000000000 +0100
-+++ b/drivers/block/paride/friq.c	2005-03-22 16:42:39.000000000 +0100
-@@ -208,7 +208,7 @@ static int friq_test_proto( PIA *pi, cha
- 	friq_disconnect(pi);
+diff -urpN -X dontdiff a/drivers/block/paride/frpw.c b/drivers/block/paride/frpw.c
+--- a/drivers/block/paride/frpw.c	2005-03-18 02:34:58.000000000 +0100
++++ b/drivers/block/paride/frpw.c	2005-03-22 16:44:13.000000000 +0100
+@@ -231,14 +231,14 @@ static int frpw_test_proto( PIA *pi, cha
+ 
+ 	if (((pi->private%2) == 0) && (pi->mode > 2)) {
+ 	   if (verbose) 
+-		printk("%s: frpw: Xilinx does not support mode %d\n",
++		printk(KERN_DEBUG "%s: frpw: Xilinx does not support mode %d\n",
+ 			pi->device, pi->mode);
+ 	   return 1;
+ 	}
+ 
+ 	if (((pi->private%2) == 1) && (pi->mode == 2)) {
+ 	   if (verbose)
+-		printk("%s: frpw: ASIC does not support mode 2\n",
++		printk(KERN_DEBUG "%s: frpw: ASIC does not support mode 2\n",
+ 			pi->device);
+ 	   return 1;
+ 	}
+@@ -261,7 +261,7 @@ static int frpw_test_proto( PIA *pi, cha
+ 	frpw_disconnect(pi);
  
          if (verbose)  {
--            printk("%s: friq: port 0x%x, mode %d, test=(%d,%d,%d)\n",
-+            printk(KERN_DEBUG "%s: friq: port 0x%x, mode %d, test=(%d,%d,%d)\n",
-                    pi->device,pi->port,pi->mode,e[0],e[1],r);
+-            printk("%s: frpw: port 0x%x, chip %ld, mode %d, test=(%d,%d,%d)\n",
++            printk(KERN_DEBUG "%s: frpw: port 0x%x, chip %ld, mode %d, test=(%d,%d,%d)\n",
+                    pi->device,pi->port,(pi->private%2),pi->mode,e[0],e[1],r);
          }
  
-@@ -221,7 +221,7 @@ static void friq_log_adapter( PIA *pi, c
- {       char    *mode_string[6] = {"4-bit","8-bit",
+@@ -274,7 +274,7 @@ static void frpw_log_adapter( PIA *pi, c
+ {       char    *mode_string[6] = {"4-bit","8-bit","EPP",
  				   "EPP-8","EPP-16","EPP-32"};
  
--        printk("%s: friq %s, Freecom IQ ASIC-2 adapter at 0x%x, ", pi->device,
-+        printk(KERN_INFO "%s: friq %s, Freecom IQ ASIC-2 adapter at 0x%x, ", pi->device,
- 		FRIQ_VERSION,pi->port);
+-        printk("%s: frpw %s, Freecom (%s) adapter at 0x%x, ", pi->device,
++        printk(KERN_INFO "%s: frpw %s, Freecom (%s) adapter at 0x%x, ", pi->device,
+ 		FRPW_VERSION,((pi->private%2) == 0)?"Xilinx":"ASIC",pi->port);
          printk("mode %d (%s), delay %d\n",pi->mode,
  		mode_string[pi->mode],pi->delay);
 
---PHCdUe6m4AxPMzOu
+--Bqc0IY4JZZt50bUr
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---PHCdUe6m4AxPMzOu--
+--Bqc0IY4JZZt50bUr--
