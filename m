@@ -1,50 +1,58 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:15:36 +0000
-Subject: [KJ] [PATCH 48/53] sun3fb: Clean up printk()'s in
-Message-Id: <20050125231536.10418.59410.17139@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 26 Jan 2005 19:35:29 +0000
+Subject: [KJ] [PATCH] net/ibmtr: remove sleep_on*() usage
+Message-Id: <20050126193529.GC3593@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67014007087950567=="
+Content-Type: multipart/mixed; boundary="===============88248248403653684=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============67014007087950567==
+--===============88248248403653684==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/sun3fb.c
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/sun3fb.c linux-2.6.11-rc2-mm1/drivers/video/sun3fb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/sun3fb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/sun3fb.c	2005-01-24 19:07:04.234256716 -0500
-@@ -645,7 +645,7 @@
- 		kfree(fb);
- 		return -EINVAL;
- 	}
--	printk("fb%d: %s\n", fb->info.node, p);
-+	pr_info("fb%d: %s\n", fb->info.node, p);
+Description: Directly use wait-queues instead of the deprecated
+sleep_on_timeout(). Since the sleep in this function is unconditional,
+wait_event_timeout() does not appear to be appropriate.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.11-rc2-kj-v/drivers/net/tokenring/ibmtr.c	2005-01-26 11:19:04.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/net/tokenring/ibmtr.c	2005-01-26 10:44:07.000000000 -0800
+@@ -109,6 +109,7 @@ in the event that chatty debug messages 
  
- 	return 0;
+ #include <linux/module.h>
+ #include <linux/delay.h>
++#include <linux/wait.h>
+ 
+ #ifdef PCMCIA		/* required for ibmtr_cs.c to build */
+ #undef MODULE		/* yes, really */
+@@ -847,6 +848,7 @@ static int __devinit trdev_init(struct n
+ 
+ static int tok_init_card(struct net_device *dev)
+ {
++	DEFINE_WAIT(wait);
+ 	struct tok_info *ti;
+ 	short PIOaddr;
+ 	unsigned long i;
+@@ -867,7 +869,9 @@ static int tok_init_card(struct net_devi
+ 		writeb(SRPR_ENABLE_PAGING,ti->mmio+ACA_OFFSET+ACA_RW+SRPR_EVEN);
+ #endif
+ 	writeb(INT_ENABLE, ti->mmio + ACA_OFFSET + ACA_SET + ISRP_EVEN);
+-	i = sleep_on_timeout(&ti->wait_for_reset, 4 * HZ);
++	prepare_to_wait(&ti->wait_for_reset, &wait, TASK_UNINTERRUPTIBLE);
++	i = schedule_timeout(4*HZ);
++	finish_wait(&ti->wait_for_reset, &wait);
+ 	return i? 0 : -EAGAIN;
  }
-@@ -667,14 +667,14 @@
- 	case FBTYPE_SUN3COLOR:
- 	case FBTYPE_SUN4COLOR:
- 		if(idprom->id_machtype != (SM_SUN3|SM_3_60)) {
--			printk("sun3fb: cgthree/four only supported on 3/60\n");
-+			printk(KERN_ERR "sun3fb: cgthree/four only supported on 3/60\n");
- 			return -ENODEV;
- 		}
- 		
- 		addr = CGFOUR_OBMEM_ADDR;
- 		return sun3fb_init_fb(*(romvec->pv_fbtype), addr);
- 	default:
--		printk("sun3fb: unsupported framebuffer\n");
-+		printk(KERN_ERR "sun3fb: unsupported framebuffer\n");
- 		return -ENODEV;
- 	}
- #else
+ 
 
---===============67014007087950567==
+--===============88248248403653684==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67014007087950567==--
+--===============88248248403653684==--
