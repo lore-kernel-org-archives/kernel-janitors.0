@@ -1,30 +1,73 @@
-From: "Pasquale Hoover" <phoover_uh@email.umassp.edu>
-Date: Tue, 16 Nov 2004 13:48:27 +0000
-Subject: C"ialis softtabs, limited supply available
-Message-Id: <be4501c4cbee$2cee3d55$b75449dc@tvri.co.id>
+From: Stefan Sperling <stefan@binarchy.net>
+Date: Tue, 09 Nov 2004 21:36:10 +0000
+Subject: [KJ] [PATCH] convert ray_cs wireless driver to module_param
+Message-Id: <20041109213610.GH9496@dice.seeling33.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============55899459127843221=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-New ClALlS softtabs = lNSTANT R0CKHARD ERECTl0NS<p>
-Simply disolve HALF A PlLL under your tongue 10min before action,<br>
-for results that last all weekend.<p>
-Normal retail is $19/PlLL<br>
-<a href="http://fjhtlibper.i-like-you.net/d/">0rder from us today at the price of $3.07</a>
-<p><br><br><br><br><br><br><br><br><br>
-<a href="http://vzkipwbtsxklo.i-like-you.net/d/o.php">not interested(0pt-0ut)</a>
-</html>
+--===============55899459127843221==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
--------------------------------------------------------
-This SF.Net email is sponsored by: InterSystems CACHE
-FREE OODBMS DOWNLOAD - A multidimensional database that combines
-robust object and relational technologies, making it a perfect match
-for Java, C++,COM, XML, ODBC and JDBC. www.intersystems.com/match8
+
+Replaces MODULE_PARM with module_param calls in ray_cs wireless driver.
+
+--- drivers/net/wireless/ray_cs.c.orig	2004-11-09 20:40:22.056914152 +0100
++++ drivers/net/wireless/ray_cs.c	2004-11-08 20:58:55.000000000 +0100
+@@ -84,7 +84,7 @@ typedef u_char	mac_addr[ETH_ALEN];	/* Ha
+ #ifdef PCMCIA_DEBUG
+ static int ray_debug;
+ static int pc_debug = PCMCIA_DEBUG;
+-MODULE_PARM(pc_debug, "i");
++module_param(pc_debug, bool, 0644);
+ /* #define DEBUG(n, args...) if (pc_debug>(n)) printk(KERN_DEBUG args); */
+ #define DEBUG(n, args...) if (pc_debug>(n)) printk(args);
+ #else
+@@ -226,18 +226,18 @@ MODULE_AUTHOR("Corey Thomas <corey@world
+ MODULE_DESCRIPTION("Raylink/WebGear wireless LAN driver");
+ MODULE_LICENSE("GPL");
+ 
+-MODULE_PARM(irq_mask,"i");
+-MODULE_PARM(net_type,"i");
+-MODULE_PARM(hop_dwell,"i");
+-MODULE_PARM(beacon_period,"i");
+-MODULE_PARM(psm,"i");
+-MODULE_PARM(essid,"s");
+-MODULE_PARM(translate,"i");
+-MODULE_PARM(country,"i");
+-MODULE_PARM(sniffer,"i");
+-MODULE_PARM(bc,"i");
+-MODULE_PARM(phy_addr,"s");
+-MODULE_PARM(ray_mem_speed, "i");
++module_param(irq_mask, u_long, 0444);
++module_param(net_type,int, 0644);
++module_param(hop_dwell, int, 0644);
++module_param(beacon_period, int, 0644);
++module_param(psm, bool, 0644);
++module_param_string(essid, esiid, 32, 0444);
++module_param(translate, bool, 0644);
++module_param(country, int, 0644);
++module_param(sniffer, bool, 0444);
++module_param(bc, bool, 0444);
++module_param_string(phy_addr, phy_addr, ADDRLEN, 0444);
++module_param(ray_mem_speed, int, 0444);
+ 
+ static UCHAR b5_default_startup_parms[] = {
+     0,   0,                         /* Adhoc station */
+
+
+--===============55899459127843221==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============55899459127843221==--
