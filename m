@@ -1,83 +1,132 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 17:41:48 +0000
-Subject: [Kernel-janitors] Re: [PATCH] eicon/os_bri: replace
-Message-Id: <20040723174148.GH1911@us.ibm.com>
+Date: Mon, 26 Jul 2004 17:55:15 +0000
+Subject: [Kernel-janitors] [PATCH] dvb/av7110_hw: replace schedule_timeout()
+Message-Id: <20040726175515.GS1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============33325196327125983=="
+Content-Type: multipart/mixed; boundary="===============02805628184884057=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============33325196327125983==
+--===============02805628184884057==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-This applies to os_4bri.c not os_bri.c. Sorry...
+I would appreciate any comments from the janitors list.
 
-On Fri, Jul 23, 2004 at 10:40:06AM -0700, Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list.
-> 
-> Thanks,
-> Nish
-> 
-> 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Replace diva_os_sleep() with msleep() and diva_os_wait()
-> with mdelay() in all instances. 
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> 
-> --- linux-vanilla/drivers/isdn/hardware/eicon/os_4bri.c	2004-06-16 05:19:17.000000000 +0000
-> +++ linux-dev/drivers/isdn/hardware/eicon/os_4bri.c	2004-07-02 18:06:40.000000000 +0000
-> @@ -543,7 +543,7 @@ static int _4bri_get_serial_number(diva_
->  		for (j = 0; j < 5; ++j) {
->  			PCIwrite(Bus, Slot, 0x4E, &addr, sizeof(addr),
->  				 hdev);
-> -			diva_os_wait(1);
-> +			mdelay(1);
->  			PCIread(Bus, Slot, 0x4E, &status, sizeof(status),
->  				hdev);
->  			if (status & 0x8000)
-> @@ -950,7 +950,7 @@ diva_4bri_start_adapter(PISDN_ADAPTER Io
->  	signature = (volatile word *) (&p[0x1E]);
->  
->  	for (i = 0; i < 300; ++i) {
-> -		diva_os_wait(10);
-> +		mdelay(10);
->  		if (READ_WORD(&signature[0]) == 0x4447) {
->  			DBG_TRC(("Protocol startup time %d.%02d seconds",
->  				 (i / 100), (i % 100)))
-> @@ -1027,7 +1027,7 @@ static int check_qBri_interrupt(PISDN_AD
->  	a->ReadyInt = 1;
->  	a->ram_out(a, &PR_RAM->ReadyInt, 1);
->  
-> -	for (i = 100; !IoAdapter->IrqCount && (i-- > 0); diva_os_wait(10));
-> +	for (i = 100; !IoAdapter->IrqCount && (i-- > 0); mdelay(10));
->  
->  	return ((IoAdapter->IrqCount > 0) ? 0 : -1);
->  #else
-> @@ -1050,7 +1050,7 @@ static int check_qBri_interrupt(PISDN_AD
->  	p[PLX9054_INTCSR] = PLX9054_INT_ENABLE;
->  	DIVA_OS_MEM_DETACH_RESET(IoAdapter, p);
->  
-> -	diva_os_wait(100);
-> +	mdelay(100);
->  
->  	return (0);
->  #endif				/* SUPPORT_INTERRUPT_TEST_ON_4BRI */
-> @@ -1111,7 +1111,7 @@ static int diva_4bri_stop_adapter(diva_o
->  	IoAdapter->a.ReadyInt = 1;
->  	IoAdapter->a.ram_inc(&IoAdapter->a, &PR_RAM->ReadyInt);
->  	do {
-> -		diva_os_sleep(10);
-> +		msleep(10);
->  	} while (i-- && a->clear_interrupts_proc);
->  
->  	if (a->clear_interrupts_proc) {
+Thanks,
+Nish
 
---===============33325196327125983==
+Applys-to: 2.6.7
+
+Description: Replace dvb_delay() with msleep() to guarantee the
+task delays the desired time.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/media/dvb/ttpci/av7110_hw.c	2004-06-16 05:19:42.000000000 +0000
++++ linux-dev/drivers/media/dvb/ttpci/av7110_hw.c	2004-07-02 20:25:30.000000000 +0000
+@@ -106,7 +106,7 @@ void av7110_reset_arm(struct av7110 *av7
+ 	saa7146_write(av7110->dev, ISR, (MASK_19 | MASK_03));
+ 
+ 	saa7146_setgpio(av7110->dev, RESET_LINE, SAA7146_GPIO_OUTHI);
+-	dvb_delay(30);	/* the firmware needs some time to initialize */
++	msleep(30);	/* the firmware needs some time to initialize */
+ 
+ 	ARM_ResetMailBox(av7110);
+ 
+@@ -268,7 +268,7 @@ int av7110_bootarm(struct av7110 *av7110
+ 		return -1;
+ 	}
+ 	saa7146_setgpio(dev, RESET_LINE, SAA7146_GPIO_OUTHI);
+-	dvb_delay(30);	/* the firmware needs some time to initialize */
++	msleep(30);	/* the firmware needs some time to initialize */
+ 
+ 	//ARM_ClearIrq(av7110);
+ 	ARM_ResetMailBox(av7110);
+@@ -302,7 +302,7 @@ int __av7110_send_fw_cmd(struct av7110 *
+ 
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, COMMAND, 0, 2 )) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_FREE)) {
+ 			printk(KERN_ERR "%s: timeout waiting for COMMAND idle\n", __FUNCTION__);
+ 			return -1;
+@@ -312,7 +312,7 @@ int __av7110_send_fw_cmd(struct av7110 *
+ #ifndef _NOHANDSHAKE
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, HANDSHAKE_REG, 0, 2 )) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_SHAKE)) {
+ 			printk(KERN_ERR "%s: timeout waiting for HANDSHAKE_REG\n", __FUNCTION__);
+ 			return -1;
+@@ -322,7 +322,7 @@ int __av7110_send_fw_cmd(struct av7110 *
+ 
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, MSGSTATE, 0, 2) & OSDQFull) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_OSD)) {
+ 			printk(KERN_ERR "%s: timeout waiting for !OSDQFull\n", __FUNCTION__);
+ 			return -1;
+@@ -341,7 +341,7 @@ int __av7110_send_fw_cmd(struct av7110 *
+ #ifdef COM_DEBUG
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, COMMAND, 0, 2 )) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_FREE)) {
+ 			printk(KERN_ERR "%s: timeout waiting for COMMAND to complete\n",
+ 			       __FUNCTION__);
+@@ -458,7 +458,7 @@ int av7110_fw_request(struct av7110 *av7
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, COMMAND, 0, 2)) {
+ #ifdef _NOHANDSHAKE
+-		dvb_delay(1);
++		msleep(1);
+ #endif
+ 		if (time_after(jiffies, start + ARM_WAIT_FREE)) {
+ 			printk("%s: timeout waiting for COMMAND to complete\n", __FUNCTION__);
+@@ -470,7 +470,7 @@ int av7110_fw_request(struct av7110 *av7
+ #ifndef _NOHANDSHAKE
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, HANDSHAKE_REG, 0, 2 )) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_SHAKE)) {
+ 			printk(KERN_ERR "%s: timeout waiting for HANDSHAKE_REG\n", __FUNCTION__);
+ 			up(&av7110->dcomlock);
+@@ -630,7 +630,7 @@ static int FlushText(struct av7110 *av71
+ 		return -ERESTARTSYS;
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, BUFF1_BASE, 0, 2)) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_OSD)) {
+ 			printk(KERN_ERR "%s: timeout waiting for BUFF1_BASE == 0\n",
+ 			       __FUNCTION__);
+@@ -654,7 +654,7 @@ static int WriteText(struct av7110 *av71
+ 
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, BUFF1_BASE, 0, 2)) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_OSD)) {
+ 			printk(KERN_ERR "%s: timeout waiting for BUFF1_BASE == 0\n",
+ 			       __FUNCTION__);
+@@ -665,7 +665,7 @@ static int WriteText(struct av7110 *av71
+ #ifndef _NOHANDSHAKE
+ 	start = jiffies;
+ 	while (rdebi(av7110, DEBINOSWAP, HANDSHAKE_REG, 0, 2)) {
+-		dvb_delay(1);
++		msleep(1);
+ 		if (time_after(jiffies, start + ARM_WAIT_SHAKE)) {
+ 			printk(KERN_ERR "%s: timeout waiting for HANDSHAKE_REG\n",
+ 			       __FUNCTION__);
+
+--===============02805628184884057==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +137,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============33325196327125983==--
+--===============02805628184884057==--
