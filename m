@@ -1,7 +1,7 @@
-From: Matthew Wilcox <willy@debian.org>
-Date: Thu, 26 Feb 2004 23:18:53 +0000
+From: Zach Brown <zab@zabbo.net>
+Date: Fri, 27 Feb 2004 00:32:03 +0000
 Subject: Re: [Kernel-janitors] serial.c cli() patch
-Message-Id: <20040226231853.GA25779@parcelfarce.linux.theplanet.co.uk>
+Message-Id: <403E9003.8060900@zabbo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <403D1CC3.6080906@chello.nl>
 In-Reply-To: <403D1CC3.6080906@chello.nl>
@@ -10,20 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 25, 2004 at 11:08:03PM +0100, Debian User wrote:
-> I tried to remove the cli() calls from serial.c. I just used a global 
-> spin_lock_t serial_lock, to replace the cli() calls with 
-> spin_lock_irqsave().
 
-Why?  Do you have an SMP CRIS system?
+> So if I lock data I should use a lock for every single data variable
+> which is at risk for a race condition. If I use a global one like I did
+> here then all data structures are locked at once, which is not very good
+> in a SMP system since an other processor could access an other data
+> structure which now is also locked by the global lock.
+> Am I right here?
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+Yeah, you have the idea.  It's always a trade-off between complexity and
+concurrency.  It's good practice to only go down the complexity road
+when it has been proven that concurrency is strongly desired.
+
+I'm pretty sure that's why Matthew questioned the patch :)  Code changes
+are always risky, and simple replacing cli with _irqsave spinlocks
+doesn't increase the concurrency and I strongly suspect that no one has
+shown that concurrency matters in these crufty old paths.
+
+- z
+(too wordy?  I'm new here.)
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
