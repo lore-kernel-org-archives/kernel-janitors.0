@@ -1,54 +1,80 @@
-From: Donella Stavrides <yigvb@interchangeinc.com>
-Date: Mon, 24 May 2004 12:25:55 +0000
-Subject: Hot Trade Of The Week TTTP.OB rsamns
-Message-Id: <E1BSEQk-0002Kk-Pb@sc8-sf-mx1.sourceforge.net>
+From: "velma kim" <norfir@ashville.com>
+Date: Sun, 16 May 2004 03:51:35 +0000
+Subject: Medical Journal
+Message-Id: <c42601c43af9$1563b460$2151956f@norfir>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_1A1_8464_E91ADBC3.AC934A94"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-bmlteXVtKysrIEhvdCBUcmFkaW5nIEFsZXJ0IFRUVFAuT0IgLSAuMDggQ0VOVFMgKysrd2JwcWFq
-CgpHZXQgVFRUUC5PQiBGaXJzdCBUaGluZyBNb25kYXksIFRoaXMgSXMgR29pbmcgVG8gRXhwbG9k
-ZSEKCk9UQ0JCOiBUVFRQLk9CIDEyIHRvIDIwIFBsdXMgRW50ZXJzICQ0MDAsMDAwLDAwMCBNYXJr
-ZXQuCgpJbnRyb2R1Y2VzIFZpc2lvbkthcmUoVE0pIGFuIEV5ZSBTcGVjaWZpYyBTdXBwbGVtZW50
-CmZvciBNYWN1bGFyIERlZ2VuZXJhdGlvbi4KCkNVUlJFTlRfUFJJQ0U6ICQwLjA4IEdFVCBJVCBO
-T1chClRBUkdFVF9QUklDRSBJTiBORVhUIDMtNSBEQVlTOiAkMC40NSAtIDAuNTAKVEFSR0VUX1BS
-SUNFIElOIE5FWFQgMTAgREFZUzogJDAuODUKCisrIEVYQ0lUSU5HIE5FV1MgSlVTVCBSRUxFQVNF
-RCBGT1IgVFRUUCArKwoKQmVmb3JlIHdlIHN0YXJ0IHdpdGggdGhlIHByb2ZpbGUgb2YgVFRUUCB3
-ZSB3b3VsZCBsaWtlCnRvIG1lbnRpb24gc29tZXRoaW5nIHZlcnkgaW1wb3J0YW50OiBUaGVyZSBp
-cyBhIEJpZyBQUgpDYW1wYWlnbiBzdGFydGluZyBvbiBGcmlkYXkgTWF5IDIxc3QgYWZ0ZXIgdGhl
-IG1hcmtldApjbG9zZXMuIEFuZCBpdCB3aWxsIGdvIGFsbCB3ZWVrIHNvIGl0IHdvdWxkIGJlIGJl
-c3QgdG8KZ2V0IGluIGZpcnN0IHRoaW5nIG1vbmRheSBtb3JuaW5nLiBUaGVyZSB3aWxsIGJlIGEg
-R3JlYXQKZGVtYW5kIGZvciBUVFRQLk9CIHNoYXJlcywgZG9uJ3QgbWlzcyBvdXQhCgpUaGUgdGFy
-Z2V0IHByaWNlcyBhcmUgdmVyeSByZWFsaXN0aWMgZm9yIFRUVFAuT0Igc2hhcmVzLgoKPT09PT0r
-Pis+Kz4gQ29tcGFueSBQcm9maWxlICs+Kz4rPj09PT09PT0KCjEyIHRvIDIwIFBsdXMsIEluYyAo
-b3RjYmI6VFRUUCkgCgpTeW1ib2w6IFRUVFAuT0IKQ3VycmVudCBQcmljZTogJDAuMDgKVEFSR0VU
-IFBSSUNFIElOIE5FWFQgMy01IERBWVM6ICQwLjQ1IC0gMC41MApUQVJHRVQgUFJJQ0UgSU4gTkVY
-VCAxMCBEQVlTOiAkMC44NQoKSG93IG1hbnkgdGltZXMgaGF2ZSB5b3Ugc2VlbiBnb29kIHN0b2Nr
-cyBidXQgeW91IGNvdWxkbid0CmdldCB5b3VyIGhhbmRzIG9uIHRoZW0gaW4gdGhlIHJpZ2h0IG1v
-bWVudD8gV2UgYXJlIGFsZXJ0aW5nCnlvdSB0byBhIHNwZWNpYWwgY29tcGFueSB3aXRoIGEgdW5p
-cXVlIHByb2R1Y3QgdGhhdCBpcyBzZXQKdG8gYmUgcHJvZmlsZWQgYnkgbWFueSBuZXdzbGV0dGVy
-cyBpbiB0aGUgbmV4dCA1LTEwIGRheXMKLS0gdGhpcyBpcyB5b3VyIGNoYW5jZSB0byBnZXQgaW4h
-CgpGb3IgQ29tcGxldGUgRGV0YWlscyBBbmQgSW5mb3JtYXRpb24gT24gVGhlIENvbXBhbnkKUGxl
-YXNlIEdvIFRvIFRoZSBXZWJzaXRlIEJlbG93OgoKaHR0cDovL2ZpbmFuY2UueWFob28uY29tL3E/
-ZD10JnM9VFRUUC5PQgoKCi0tLS0tLS0tLS0tLS0tLWRyanhzZC0tLS0tLS0tLS0tLS0tCgoqRm9y
-d2FyZC1Mb29raW5nLi4uU3RhdGVtZW50cy1EaXNjbGFpbWVyLi5pcW9ic2IKCkluZm9ybWF0aW9u
-IHdpdGhpbiB0aGlzIGVtYWlsIGNvbnRhaW5zICJmb3J3YXJkIGxvb2tpbmcKc3RhdGVtZW50cyIg
-d2l0aGluIHRoZSBtZWFuaW5nIG9mIFNlY3Rpb24gMjdBIG9mIHRoZQpTZWN1cml0aWVzIEFjdCBv
-ZiAxOTMzIGFuZCBTZWN0aW9uIDIxQiBvZiB0aGUgU2VjdXJpdGllcwpFeGNoYW5nZSBBY3Qgb2Yg
-MTkzNC4gQW55IHN0YXRlbWVudHMgdGhhdCBleHByZXNzIG9yCmludm9sdmUgZGlzY3Vzc2lvbnMg
-d2l0aCByZXNwZWN0IHRvIHByZWRpY3Rpb25zLCBnb2FscywKZXhwZWN0YXRpb25zLCBiZWxpZWZz
-LCBwbGFucywgcHJvamVjdGlvbnMsIG9iamVjdGl2ZXMsCmFzc3VtcHRpb25zIG9yIGZ1dHVyZSBl
-dmVudHMgb3IgcGVyZm9ybWFuY2UgYXJlIG5vdApzdGF0ZW1lbnRzIG9mIGhpc3RvcmljYWwgZmFj
-dCBhbmQgbWF5IGJlICJmb3J3YXJkCmxvb2tpbmcgc3RhdGVtZW50cy4iCgptaHZjcmogbXhhanlw
-IGN5c2Z0ZCBtZ2N4eXEgc3RzaGRwIHZibmt5cCB5Z2FkaHMKZHZwc2VyIGVpcndkbCBpZHBlZWYg
-ZnZtZWVtCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KVGhpcyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVkIGJ5OiBPcmFjbGUgMTBnCkdl
-dCBjZXJ0aWZpZWQgb24gdGhlIGhvdHRlc3QgdGhpbmcgZXZlciB0byBoaXQgdGhlIG1hcmtldC4u
-LiBPcmFjbGUgMTBnLiAKVGFrZSBhbiBPcmFjbGUgMTBnIGNsYXNzIG5vdywgYW5kIHdlJ2xsIGdp
-dmUgeW91IHRoZSBleGFtIEZSRUUuCmh0dHA6Ly9hZHMub3Nkbi5jb20vP2FkX2lkMTQ5JmFsbG9j
-X2lkgTY2Jm9wPWNsaWNrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCktlcm5lbC1qYW5pdG9yLWRpc2N1c3MgbWFpbGluZyBsaXN0Cktlcm5lbC1qYW5pdG9y
-LWRpc2N1c3NAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0L2xpc3RzL2xpc3RpbmZvL2tlcm5lbC1qYW5pdG9yLWRpc2N1c3M=
+This is a multi-part message in MIME format.
+
+------=_NextPart_1A1_8464_E91ADBC3.AC934A94
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+
+------=_NextPart_1A1_8464_E91ADBC3.AC934A94
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-asci=
+i">
+<META content=3D"MSHTML 6.00.2800.1158" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD><FONT face=3DArial><FONT size=3D2>
+<BODY>
+<DIV>
+&quot;Discover...in the next few minutes... regardless of your age, sex=
+, or current 
+health status, how this common element can change the way you experienc=
+e the 
+next half of your life.&quot;<br>
+<br><a href=3D"http://www.greatinfoonlyonce.com/a/">Learn how to increa=
+se your quality of 
+life</a>
+<p><font face=3D"Arial" size=3D"2">&quot;We really have something 
+here which may be able to reverse some of the problems associated with =
+aging.&quot;<br></font>
+<font face=3D"Arial" size=3D"1"><i>-Dr.Anthony Karpos, M.D.</i></font><=
+/p>
+<br>
+<br>
+<br>
+-----original message-----<br>
+From: cleo@kpk.com =5Bmailto:hyacinth@drj.com=5D<br>
+Sent: Friday, March 1, 2004 4:60PM<br>
+To: holli; loren@wcsp.com; mira; jeana; jasmine<br>
+Subject: <a href=3D"http://www.greatinfoonlyonce.com/a/">not now pob 12=
+00 oranjestad aruba</a><br>
+<br>
+<br>
+When, at daylight, the boy sat up and rubbed his eyes, he said, wearily=
+: Churches are all right as churches; but as hotels they are rank failur=
+es
+I ought to have bunked in with my friend, King Edward
+<br>
+<br>He climbed up the stairs and the ladders again and looked out the l=
+ittle window in the belfryThen he examined his map of Europe
+However rates of adverse event increased with the aminoglycoside  Nephr=
+otoxicity was much more common with combination therapy while vestibular=
+ damage and ototoxicity other important morbidities associated with amin=
+oglycosides were not routinely examined  
+</DIV></FONT></BODY></HTML>
+
+------=_NextPart_1A1_8464_E91ADBC3.AC934A94--
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: SourceForge.net Broadband
+Sign-up now for SourceForge Broadband and get the fastest
+6.0/768 connection for only $19.95/mo for the first 3 months!
+http://ads.osdn.com/?ad_id=2562&alloc_id=6184&op=click
+_______________________________________________
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
