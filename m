@@ -1,21 +1,24 @@
 From: Stefan Sperling <stefan@binarchy.net>
-Date: Tue, 09 Nov 2004 21:33:07 +0000
+Date: Tue, 09 Nov 2004 23:38:36 +0000
 Subject: [KJ] [PATCH] convert atmel_cs wireless driver to module_param
-Message-Id: <20041109213307.GD9496@dice.seeling33.de>
+Message-Id: <20041109233836.GB12555@dice.seeling33.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============087295250773387068=="
+Content-Type: multipart/mixed; boundary="===============82970646308754525=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20041109213307.GD9496@dice.seeling33.de>
+In-Reply-To: <20041109213307.GD9496@dice.seeling33.de>
 To: kernel-janitors@vger.kernel.org
 
---===============087295250773387068==
+--===============82970646308754525==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
 Replaces MODULE_PARM with module_param calls in atmel_cs wireless driver.
+Obsoletes my previously posted patch for this driver.
 
 --- drivers/net/wireless/atmel_cs.c.orig	2004-11-09 20:40:21.974926616 +0100
-+++ drivers/net/wireless/atmel_cs.c	2004-11-08 23:10:14.000000000 +0100
++++ drivers/net/wireless/atmel_cs.c	2004-11-10 00:18:53.123729032 +0100
 @@ -65,7 +65,7 @@
  */
  #ifdef PCMCIA_DEBUG
@@ -31,13 +34,13 @@ Replaces MODULE_PARM with module_param calls in atmel_cs wireless driver.
  MODULE_SUPPORTED_DEVICE("Atmel at76c50x PCMCIA cards");
 -MODULE_PARM(irq_mask, "i");
 -MODULE_PARM(irq_list, "1-4i");
-+module_param(irq_mask, int, 0444);
-+module_param_array(irq_list, int, NULL, 0444);
++module_param(irq_mask, int, 0);
++module_param_array(irq_list, int, NULL, 0);
  
  /*====================================================================*/
  
 
---===============087295250773387068==
+--===============82970646308754525==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============087295250773387068==--
+--===============82970646308754525==--
