@@ -1,24 +1,17 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 22 Jul 2004 22:10:27 +0000
-Subject: [Kernel-janitors] [PATCH] i2c-ite: replace schedule_timeout() with
-Message-Id: <20040722221026.GM2165@us.ibm.com>
+Date: Fri, 23 Jul 2004 20:43:08 +0000
+Subject: [Kernel-janitors] [PATCH] isdn/hfcscard: replace schedule_timeout()
+Message-Id: <20040723204308.GG2675@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4687934030808627=="
+Content-Type: multipart/mixed; boundary="===============39777023500763531=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============4687934030808627==
+--===============39777023500763531==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. This is one (of
-a few) places where I had to make a decision to set the state before the
-call to
-
-schedule_timeout();
-
-This of course affected any decision to replace the code with msleep()
-or not. Please inform if the other state from the one I used is desired.
+I would appreciate any comments from the janitors list.
 
 Thanks,
 Nish
@@ -27,30 +20,26 @@ Nish
 
 Applys-to: 2.6.7
 
-Description: Remove iic_ite_sleep() and replace invocations with msleep().
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/i2c/busses/i2c-ite.c	2004-06-16 05:19:01.000000000 +0000
-+++ linux-dev/drivers/i2c/busses/i2c-ite.c	2004-07-02 17:53:08.000000000 +0000
-@@ -102,14 +102,6 @@ static int iic_ite_getclock(void *data)
- }
- 
- 
--#if 0
--static void iic_ite_sleep(unsigned long timeout)
--{
--	schedule_timeout( timeout * HZ);
--}
--#endif
--
--
- /* Put this process to sleep.  We will wake up when the
-  * IIC controller interrupts.
-  */
+--- linux-vanilla/drivers/isdn/hisax/hfcscard.c	2004-06-16 05:20:04.000000000 +0000
++++ linux-dev/drivers/isdn/hisax/hfcscard.c	2004-07-02 18:15:51.000000000 +0000
+@@ -125,8 +125,7 @@ hfcs_card_msg(struct IsdnCardState *cs, 
+ 			init2bds0(cs);
+ 			spin_unlock_irqrestore(&cs->lock, flags);
+ 			delay = (80*HZ)/1000 +1;
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout((80*HZ)/1000);
++			msleep(80);
+ 			spin_lock_irqsave(&cs->lock, flags);
+ 			cs->hw.hfcD.ctmt |= HFCD_TIM800;
+ 			cs->BC_Write_Reg(cs, HFCD_DATA, HFCD_CTMT, cs->hw.hfcD.ctmt); 
 
---===============4687934030808627==
+--===============39777023500763531==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4687934030808627==--
+--===============39777023500763531==--
