@@ -1,33 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 31 Jan 2005 18:58:20 +0000
-Subject: [KJ] Re: [PATCH 33/39] usb/ati_remote: use wait_event_timeout()
-Message-Id: <20050131185820.GD21986@kroah.com>
+From: James Lamanna <jlamanna@gmail.com>
+Date: Tue, 04 Jan 2005 23:17:39 +0000
+Subject: [KJ] Re: [PATCH] [0/29] vfree() checking cleanups
+Message-Id: <aa4c40ff05010415173a9d7bb2@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20309843649973125=="
+Content-Type: multipart/mixed; boundary="===============15327471807875992=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============20309843649973125==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============15327471807875992==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 21, 2005 at 01:31:27PM -0800, Nishanth Aravamudan wrote:
-> Hi,
+Due to a problem with Google's SMTP setup (I think it might be a TLS
+issue), some of the patches got messed up.
+Here's a good set...
+
+
+On Tue, 4 Jan 2005 13:56:20 -0800, James Lamanna <jlamanna@gmail.com> wrote:
+> The following patches against 2.6.10 clean up the case of:
+> if (var)
+>     vfree(var);
 > 
-> Please consider applying.
+> This check is redundant since it occurs in vfree()
 > 
-> Description: Use wait_event_timeout() instead of custom wait-queue code. The
-> current code uses TASK_INTERRUPTIBLE but doesn't seem to care about signals
-> so TASK_UNINTERRUPTIBLE should be ok.
+> There is a similar cleanup for kfree(), but I haven't gotten to that
+> one yet since there are many many many more of those.
 > 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> -- James Lamanna
+>
 
-Applied, thanks.
-
-greg k-h
-
-
---===============20309843649973125==
+--===============15327471807875992==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20309843649973125==--
+--===============15327471807875992==--
