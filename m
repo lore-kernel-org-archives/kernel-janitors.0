@@ -1,33 +1,37 @@
-From: "Leshaba Husly" <fragonardbiblical@vasantham.com>
-Date: Sat, 31 May 2003 16:49:26 +0000
-Subject: [KJ] Re:
-Message-Id: <01c327ad$be155380$6c822ecf@fragonardbiblical>
+From: "Lorraine Wright" <dbheozcveqltgf@mailblocks.com>
+Date: Sat, 27 Dec 2003 23:26:23 +0000
+Subject: Where is she?  yqk
+Message-Id: <BWPUERSTHQPISGWMVEVRZAY@popmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--63506207997973539"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-UNIVERSITY DIPLOMAS
+----63506207997973539
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-Obtain a prosperous future, money-earning power and the
-prestige that comes with having the career position you've
-always dreamed of. Diplomas from prestigious non-accredited
-universities based on your present knowledge and life experience.
 
-If you qualify, no tests, classes, books or examinations will be required.
+Generic Cialis get hard upto 36 hours
+http://rd.yahoo.com/dir/?http://www.vcvpoews.com/cu/
 
-Bachelors', Masters', MBA's, Doctorate & Ph.D. degrees available in your field.
 
-CONFIDENTIALITY ASSURED
+coral malformation cottrell lipstick dichloride against deviate conducive =
+baseplate letterman gibbon=20 zest wallboard pig mobility benight moduli b=
+ianco primp bark inertance perspire gender ileum golly keats petrel textua=
+l ticket marc kingsbury sicklewort=20
 
-CALL NOW TO RECEIVE YOUR DIPLOMA WITHIN 2 WEEKS
 
-1-206-338-2427
+----63506207997973539--
 
-Call 24HRS, 7 days a week, including Sundays and holidays
 
+
+-------------------------------------------------------
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
