@@ -1,53 +1,56 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 23:15:12 +0000
-Subject: [Kernel-janitors] [PATCH] video/zr36120: replace schedule_timeout()
-Message-Id: <20040726231512.GY1897@us.ibm.com>
+Date: Mon, 19 Jul 2004 21:38:33 +0000
+Subject: [Kernel-janitors] [PATCH] cciss: replace schedule_timeout() with
+Message-Id: <20040719213833.GA5372@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59899241277384796=="
+Content-Type: multipart/mixed; boundary="===============81171696425487094=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============59899241277384796==
+--===============81171696425487094==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
+
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
+
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
 
 Thanks,
 Nish
 
+
+
 Applys-to: 2.6.7
 
-Description: Uses msleep() instead of schedule_timeout() so the task
-is guaranteed to delay the desired time.
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- linux-vanilla/drivers/block/cciss.c	2004-06-16 05:20:04.000000000 +0000
++++ linux-dev/drivers/block/cciss.c	2004-07-10 18:19:33.000000000 +0000
+@@ -2242,8 +2242,7 @@ static int cciss_pci_init(ctlr_info_t *c
+ 		scratchpad = readl(c->vaddr + SA5_SCRATCHPAD_OFFSET);
+ 		if (scratchpad == CCISS_FIRMWARE_READY)
+ 			break;
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ / 10); /* wait 100ms */
++		msleep(100);
+ 	}
+ 	if (scratchpad != CCISS_FIRMWARE_READY) {
+ 		printk(KERN_WARNING "cciss: Board not ready.  Timed out.\n");
 
---- linux-vanilla/drivers/media/video/zr36120.c	2004-06-16 05:19:23.000000000 +0000
-+++ linux-dev/drivers/media/video/zr36120.c	2004-07-02 21:46:08.000000000 +0000
-@@ -819,8 +819,7 @@ void zoran_close(struct video_device* de
-          *      be sure its safe to free the buffer. We wait 5-6 fields
-          *      which is more than sufficient to be sure.
-          */
--        current->state = TASK_UNINTERRUPTIBLE;
--        schedule_timeout(HZ/10);        /* Wait 1/10th of a second */
-+        msleep(100);			/* Wait 100ms */
- 
- 	/* free the allocated framebuffer */
- 	if (ztv->fbuffer)
-@@ -1568,8 +1567,7 @@ void vbi_close(struct video_device *dev)
-          *      be sure its safe to free the buffer. We wait 5-6 fields
-          *      which is more than sufficient to be sure.
-          */
--        current->state = TASK_UNINTERRUPTIBLE;
--        schedule_timeout(HZ/10);        /* Wait 1/10th of a second */
-+        msleep(100);			/* Wait 100ms */
- 
- 	for (item=ztv->readinfo; item!=ztv->readinfo+ZORAN_VBI_BUFFERS; item++)
- 	{
-
---===============59899241277384796==
+--===============81171696425487094==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============59899241277384796==--
+--===============81171696425487094==--
