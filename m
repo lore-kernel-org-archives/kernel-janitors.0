@@ -1,51 +1,40 @@
-From: Brian King <brking@us.ibm.com>
-Date: Tue, 27 Jul 2004 22:56:10 +0000
-Subject: [Kernel-janitors] Re: [PATCH] scsi/ipr: replace schedule_timeout()
-Message-Id: <4106DD8A.4050104@us.ibm.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 27 Jul 2004 22:58:38 +0000
+Subject: [Kernel-janitors] [PATCH] scsi/wd7000: replace schedule_timeout()
+Message-Id: <20040727225837.GE4679@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84798540313575188=="
+Content-Type: multipart/mixed; boundary="===============2140960848641158=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============84798540313575188==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============2140960848641158==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Looks good. Thanks. James, please apply.
+I would appreciate any comments from the janitors list. 
 
--Brian
+Applys-to: 2.6.7
 
-Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list. 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Use msleep() instead of schedule_timeout() to 
-> guarantee the task delays for the desired time.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> 
-> --- linux-vanilla/drivers/scsi/ipr.c	2004-06-16 05:20:27.000000000 +0000
-> +++ linux-dev/drivers/scsi/ipr.c	2004-07-13 18:06:11.000000000 +0000
-> @@ -2007,7 +2007,7 @@ static ssize_t ipr_store_diagnostics(str
->  		wait_event(ioa_cfg->reset_wait_q, !ioa_cfg->in_reset_reload);
->  
->  		/* Wait for a second for any errors to be logged */
-> -		schedule_timeout(HZ);
-> +		msleep(1000);
->  	} else {
->  		spin_unlock_irqrestore(ioa_cfg->host->host_lock, lock_flags);
->  		return -EIO;
-> 
+Description: Use msleep() instead of schedule_timeout() to 
+guarantee the task delays for the desired time.
 
--- 
-Brian King
-eServer Storage I/O
-IBM Linux Technology Center
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---===============84798540313575188==
+--- linux-vanilla/drivers/scsi/wd7000.c	2004-06-16 05:20:25.000000000 +0000
++++ linux-dev/drivers/scsi/wd7000.c	2004-07-06 00:56:41.000000000 +0000
+@@ -1516,8 +1516,7 @@ static int wd7000_detect(Scsi_Host_Templ
+ 			 * ASC reset...
+ 			 */
+ 			outb(ASC_RES, iobase + ASC_CONTROL);
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ / 100);
++			msleep(10);
+ 			outb(0, iobase + ASC_CONTROL);
+ 
+ 			if (WAIT(iobase + ASC_STAT, ASC_STATMASK, CMD_RDY, 0)) {
+
+--===============2140960848641158==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84798540313575188==--
+--===============2140960848641158==--
