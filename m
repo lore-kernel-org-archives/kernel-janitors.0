@@ -1,119 +1,42 @@
-From: ravinandan.arakali@neterion.com
-Date: Tue, 29 Mar 2005 23:24:54 +0000
-Subject: [KJ] [PATCH 2.6.12-rc1-bk1 3/3] S2io: Changed copyright and added
-Message-Id: <20050329232454.170575BB36@linux.site>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Mar 2005 20:43:12 +0000
+Subject: [KJ] [PATCH] char/ds1620: use msleep() instead of schedule_timeout()
+Message-Id: <20050302204312.GM2741@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6508988533777218=="
+Content-Type: multipart/mixed; boundary="===============27225392666571047=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: jgarzik@pobox.com, netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
-Cc: raghavendra.koushik@neterion.com, ravinandan.arakali@neterion.com, leonid.grossman@neterion.com, rapuru.sriram@neterion.com
+To: kernel-janitors@vger.kernel.org
 
---===============6508988533777218==
+--===============27225392666571047==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
-Below patch includes the following:
+Hi,
+
+Not sure why any driver needs to sleep for *two* ticks, so let's fix it.
+
+Description: Use msleep() instead of schedule_timeout() to guarantee the
+task delays as expected. Signals are never checked for by the callers or
+in the function itself, so use TASK_UNINTERRUPTIBLE instead of
+TASK_INTERRUPTIBLE. The delay is presumed to have been written when HZ==100,
+and thus has been multiplied by 10 to pass to msleep().
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-kj-v/drivers/char/ds1620.c	2005-03-01 23:37:48.000000000 -0800
++++ 2.6.11-kj/drivers/char/ds1620.c	2005-03-02 12:35:25.000000000 -0800
+@@ -163,8 +163,7 @@ static void ds1620_out(int cmd, int bits
+ 	netwinder_ds1620_reset();
+ 	netwinder_unlock(&flags);
  
-1. Change of Copyright to reflect S2io's new name "Neterion Inc."
-2. Updated driver version number.
-3. Add an additional PCI device id to support Neterion's new Xframe II.
-
-Some background info on Xframe-II, just in case - 
-
-The NIC was announced back in January (see
-http://www.serverwatch.com/news/article.php/3464871) 
-
-Xframe II is a PCI-X 2.0 DDR adapter designed to work in PCI-X 2.0 servers
-(it is also backwards compatible with current pci-x and pci slots); it's a
-first card to overcome pci-x 133 throughput bottleneck. Some of these pci-x
-2.0 servers are available now and more are coming later in the year.
-
-Xframe II is completely backward compatible and hence the current driver
-will work as-is, except the device id change.
-
-There are some additional features/stateless offloads in Xframe-II 
-as well; we plan to submit patches for these soon.
- 
-Thanks,
-Ravi
-
-Signed-off-by: Ravinandan Arakali <ravinandan.arakali@neterion.com>
----
-diff -urN hwfixes2/drivers/net/s2io-regs.h copyright_xframeIIdevid3/drivers/net/s2io-regs.h
---- hwfixes2/drivers/net/s2io-regs.h	2005-03-25 07:05:47.000000000 -0800
-+++ copyright_xframeIIdevid3/drivers/net/s2io-regs.h	2005-03-25 09:33:59.000000000 -0800
-@@ -1,6 +1,6 @@
- /************************************************************************
-  * regs.h: A Linux PCI-X Ethernet driver for S2IO 10GbE Server NIC
-- * Copyright 2002 Raghavendra Koushik (raghavendra.koushik@s2io.com)
-+ * Copyright(c) 2002-2005 Neterion Inc.
- 
-  * This software may be used and distributed according to the terms of
-  * the GNU General Public License (GPL), incorporated herein by reference.
-diff -urN hwfixes2/drivers/net/s2io.c copyright_xframeIIdevid3/drivers/net/s2io.c
---- hwfixes2/drivers/net/s2io.c	2005-03-25 08:37:33.000000000 -0800
-+++ copyright_xframeIIdevid3/drivers/net/s2io.c	2005-03-25 09:59:38.000000000 -0800
-@@ -1,6 +1,6 @@
- /************************************************************************
-  * s2io.c: A Linux PCI-X Ethernet driver for S2IO 10GbE Server NIC
-- * Copyright(c) 2002-2005 S2IO Technologies
-+ * Copyright(c) 2002-2005 Neterion Inc.
- 
-  * This software may be used and distributed according to the terms of
-  * the GNU General Public License (GPL), incorporated herein by reference.
-@@ -66,7 +66,7 @@
- 
- /* S2io Driver name & version. */
- static char s2io_driver_name[] = "s2io";
--static char s2io_driver_version[] = "Version 1.7.5.1";
-+static char s2io_driver_version[] = "Version 1.7.7.1";
- 
- /* 
-  * Cards with following subsystem_id have a link state indication
-@@ -245,6 +245,10 @@
- 	 PCI_ANY_ID, PCI_ANY_ID},
- 	{PCI_VENDOR_ID_S2IO, PCI_DEVICE_ID_S2IO_UNI,
- 	 PCI_ANY_ID, PCI_ANY_ID},
-+	{PCI_VENDOR_ID_S2IO, PCI_DEVICE_ID_HERC_WIN,
-+	 PCI_ANY_ID, PCI_ANY_ID},
-+	{PCI_VENDOR_ID_S2IO, PCI_DEVICE_ID_HERC_UNI,
-+	 PCI_ANY_ID, PCI_ANY_ID},
- 	{0,}
- };
- 
-@@ -4534,7 +4538,7 @@
- 			     &(sp->pcix_cmd));
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(2);
++	msleep(20);
  }
  
--MODULE_AUTHOR("Raghavendra Koushik <raghavendra.koushik@s2io.com>");
-+MODULE_AUTHOR("Raghavendra Koushik <raghavendra.koushik@neterion.com>");
- MODULE_LICENSE("GPL");
- module_param(tx_fifo_num, int, 0);
- module_param_array(tx_fifo_len, int, NULL, 0);
-diff -urN hwfixes2/drivers/net/s2io.h copyright_xframeIIdevid3/drivers/net/s2io.h
---- hwfixes2/drivers/net/s2io.h	2005-03-28 07:16:29.000000000 -0800
-+++ copyright_xframeIIdevid3/drivers/net/s2io.h	2005-03-28 07:20:44.000000000 -0800
-@@ -1,6 +1,6 @@
- /************************************************************************
-  * s2io.h: A Linux PCI-X Ethernet driver for S2IO 10GbE Server NIC
-- * Copyright 2002 Raghavendra Koushik (raghavendra.koushik@s2io.com)
-+ * Copyright(c) 2002-2005 Neterion Inc.
- 
-  * This software may be used and distributed according to the terms of
-  * the GNU General Public License (GPL), incorporated herein by reference.
-diff -urN hwfixes2/include/linux/pci_ids.h copyright_xframeIIdevid3/include/linux/pci_ids.h
---- hwfixes2/include/linux/pci_ids.h	2005-03-25 09:46:47.000000000 -0800
-+++ copyright_xframeIIdevid3/include/linux/pci_ids.h	2005-03-25 09:48:58.000000000 -0800
-@@ -2153,6 +2153,8 @@
- #define PCI_VENDOR_ID_S2IO		0x17d5
- #define	PCI_DEVICE_ID_S2IO_WIN		0x5731
- #define	PCI_DEVICE_ID_S2IO_UNI		0x5831
-+#define PCI_DEVICE_ID_HERC_WIN		0x5732
-+#define PCI_DEVICE_ID_HERC_UNI		0x5832
- 
- #define PCI_VENDOR_ID_INFINICON		0x1820
- 
+ static unsigned int ds1620_in(int cmd, int bits)
 
---===============6508988533777218==
+--===============27225392666571047==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -124,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============6508988533777218==--
+--===============27225392666571047==--
