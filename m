@@ -1,45 +1,69 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 09 Mar 2005 22:59:24 +0000
-Subject: [KJ] [PATCH] fs/ext3/super.c: fix sparse warnings
-Message-Id: <200503100150.56739.adobriyan@mail.ru>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 12:45:45 +0000
+Subject: [KJ] [UPDATE PATCH 08/19] drivers/scsi/BusLogic: Use the
+Message-Id: <20050320124545.GH3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49172707987019182=="
+Content-Type: multipart/mixed; boundary="===============93320450076954664=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220170239.GI14375@helium.tklauser.home>
+In-Reply-To: <20050220170239.GI14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: lnz@dandelion.com, linux-scsi@vger.kernel.org
 
---===============49172707987019182==
+--===============93320450076954664==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Index: linux-2.6.11-bk2-sparse/fs/ext3/super.c
-===================================================================
---- linux-2.6.11-bk2-sparse.orig/fs/ext3/super.c	2005-03-02 09:38:38.000000000 +0200
-+++ linux-2.6.11-bk2-sparse/fs/ext3/super.c	2005-03-07 16:56:54.000000000 +0200
-@@ -2106,6 +2106,7 @@ static int ext3_remount (struct super_bl
- 			ext3_mark_recovery_complete(sb, es);
- 		} else {
- 			__le32 ret;
-+			int ret1;
- 			if ((ret = EXT3_HAS_RO_COMPAT_FEATURE(sb,
- 					~EXT3_FEATURE_RO_COMPAT_SUPP))) {
- 				printk(KERN_WARNING "EXT3-fs: %s: couldn't "
-@@ -2122,8 +2123,8 @@ static int ext3_remount (struct super_bl
- 			 */
- 			ext3_clear_journal_err(sb, es);
- 			sbi->s_mount_state = le16_to_cpu(es->s_state);
--			if ((ret = ext3_group_extend(sb, es, n_blocks_count)))
--				return ret;
-+			if ((ret1 = ext3_group_extend(sb, es, n_blocks_count)))
-+				return ret1;
- 			if (!ext3_setup_super (sb, es, 0))
- 				sb->s_flags &= ~MS_RDONLY;
- 		}
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
---===============49172707987019182==
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11.orig/drivers/scsi/BusLogic.c	2005-03-02 12:50:38.000000000 +0100
++++ linux-2.6.11/drivers/scsi/BusLogic.c	2005-03-20 13:27:54.000000000 +0100
+@@ -41,6 +41,7 @@
+ #include <linux/stat.h>
+ #include <linux/pci.h>
+ #include <linux/spinlock.h>
++#include <linux/dma-mapping.h>
+ #include <scsi/scsicam.h>
+ 
+ #include <asm/dma.h>
+@@ -676,7 +677,7 @@ static int __init BusLogic_InitializeMul
+ 		if (pci_enable_device(PCI_Device))
+ 			continue;
+ 
+-		if (pci_set_dma_mask(PCI_Device, (u64) 0xffffffff))
++		if (pci_set_dma_mask(PCI_Device, DMA_32BIT_MASK))
+ 			continue;
+ 
+ 		Bus = PCI_Device->bus->number;
+@@ -831,7 +832,7 @@ static int __init BusLogic_InitializeMul
+ 		if (pci_enable_device(PCI_Device))
+ 			continue;
+ 
+-		if (pci_set_dma_mask(PCI_Device, (u64) 0xffffffff))
++		if (pci_set_dma_mask(PCI_Device, DMA_32BIT_MASK))
+ 			continue;
+ 
+ 		Bus = PCI_Device->bus->number;
+@@ -885,7 +886,7 @@ static int __init BusLogic_InitializeFla
+ 		if (pci_enable_device(PCI_Device))
+ 			continue;
+ 
+-		if (pci_set_dma_mask(PCI_Device, (u64) 0xffffffff))
++		if (pci_set_dma_mask(PCI_Device, DMA_32BIT_MASK))
+ 			continue;
+ 
+ 		Bus = PCI_Device->bus->number;
+
+--===============93320450076954664==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49172707987019182==--
+--===============93320450076954664==--
