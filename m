@@ -1,61 +1,31 @@
-From: "Ollie Griggs" <rlqldxip@yahoo.com>
-Date: Tue, 04 May 2004 12:19:38 +0000
-Subject: Cash at Closing
-Message-Id: <TODXASEVKUJKLGCGNKCVV@yahoo.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--5173831183085549"
+From: "Leslie M. Stafford" <l.stafford_wa@staib.de>
+Date: Mon, 17 May 2004 00:34:51 +0000
+Subject: unb:eatable software dea;ls
+Message-Id: <836301c43bb8$3095196a$da3e8acb@stanno.karoo.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----5173831183085549
-Content-Type: text/plain;
-Content-Transfer-Encoding: 7Bit
-
-
-Hello,
-
-Thank you for your mor.tgage���application, which we received yesterday.
-We are glad to confirm that your application is accepted and you can
-get as lo.w as 3% fixed rate.
-
-Could we ask you to please fill out final details we need to complete
-you here: http://www.best-rate.biz
-
-We look forward to hearing from you.
-
-Yours sincerely,
-Ollie Griggs
-Mort.gage Broker Association
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-remo-ve: http://www.best-rate.biz/go
-
-----5173831183085549--
-
+<html>
+Looking for extremely cheap high-quality software?<br>
+We might have just what you need.<br>
+<br>
+<a href="http://qfoqdbncfaebb.sujike.biz/OE017/?affiliate_id#3727&campaign_id`1">Windows XP Professional 2002 </a>............. $50<br>
+<a href="http://azkwmncrqw.sujike.biz/OE017/?affiliate_id#3727&campaign_id`1">Adobe Photoshop 7.0</a> ...................... $60<br>
+<a href="http://twujzuczmc.sujike.biz/OE017/?affiliate_id#3727&campaign_id`1">Microsoft Office XP Professional 2002</a> .... $60<br>
+<a href="http://fjxktvbouhfko.sujike.biz/OE017/?affiliate_id#3727&campaign_id`1">Corel Draw Graphics Suite 11</a> ............. $60<br>
+<br>
+<a href="http://sltjfhiffyekdv.sujike.biz/OE017/?affiliate_id#3727&campaign_id`1">and lots more...</a><br>
+</html>
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by: Oracle 10g
-Get certified on the hottest thing ever to hit the market... Oracle 10g. 
-Take an Oracle 10g class now, and we'll give you the exam FREE.
-http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
+This SF.Net email is sponsored by: SourceForge.net Broadband
+Sign-up now for SourceForge Broadband and get the fastest
+6.0/768 connection for only $19.95/mo for the first 3 months!
+http://ads.osdn.com/?ad_id%62&alloc_ida84&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
