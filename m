@@ -1,61 +1,53 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 16 Aug 2004 20:00:37 +0000
-Subject: Re: [Kernel-janitors] Re: Add msleep_interruptible() function to
-Message-Id: <20040816200037.GC1942@us.ibm.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Thu, 19 Aug 2004 11:11:18 +0000
+Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each:
+Message-Id: <20040819111118.GA3469@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50955731237801127=="
+Content-Type: multipart/mixed; boundary="===============11742912448213305=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040815121805.GA15111@stro.at> <1092570891.17605.1.camel@localhost.localdomain> <20040815132548.GF1799@stro.at>
-In-Reply-To: <20040815132548.GF1799@stro.at>
-To: maximilian attems <janitor@sternwelten.at>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, kj <kernel-janitors@osdl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============50955731237801127==
+--===============11742912448213305==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Aug 15, 2004 at 03:25:48PM +0200, maximilian attems wrote:
-> On Sun, 15 Aug 2004, Alan Cox wrote:
-> 
-> > On Sul, 2004-08-15 at 13:18, maximilian attems wrote:
-> > > + * msleep_interruptible - sleep waiting for waitqueue interruptions
-> > > + * @msecs: Time in milliseconds to sleep for
-> > > + */
-> > > +void msleep_interruptible(unsigned int msecs)
-> > > +{
-> > > +	unsigned long timeout = msecs_to_jiffies(msecs);
-> > > +
-> > > +	while (timeout) {
-> > 
-> > You want to have while(timeout && !signal_pending(current))
-> > 
-> > A signal will wake the timeout which will then loop. It might also
-> > be good to add
-> > 
-> > > +		set_current_state(TASK_INTERRUPTIBLE);
-> > > +		timeout = schedule_timeout(timeout);
-> > > +	}
-> > 
-> > return timeout;
-> > 
-> > so that the caller knows more about how long the timer ran for before
-> > the interrupt and if it was interrupted.
-> 
-> belows patches returns timeout in msecs 
-> as the function is also called with that unit, 
-> added definition in include/linux/delay.h
+Hi.
 
-<snip>
+Change for loops with list_for_each().
 
-An entry could be added to the TODO to do what I had done but with
-long delays in TASK_INTERRUPTIBLE (which there probably should not be
-many of). It would also probably be useful to verify that any drivers 
-sleeping for times measurable in msecs while INTERRUPTIBLE actually intend
-to do so (as I tried to do in some cases).
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
--Nish
+--- c/arch/alpha/kernel/pci.c	Wed Jun 16 07:18:57 2004
++++ list_for_each/arch/alpha/kernel/pci.c	Thu Aug 15 17:58:22 2002
+@@ -309,7 +309,7 @@
+  		pcibios_fixup_device_resources(dev, bus);
+ 	} 
+ 
+-	for (ln = bus->devices.next; ln != &bus->devices; ln = ln->next) {
++	list_for_each(ln, &bus->devices) {
+ 		struct pci_dev *dev = pci_dev_b(ln);
+ 
+ 		pdev_save_srm_config(dev);
+@@ -411,7 +411,7 @@
+ 	struct list_head *ld;
+ 	struct pci_bus *child_bus;
+ 
+-	for (ld = b->devices.next; ld != &b->devices; ld = ld->next) {
++	list_for_each(ld, &b->devices) {
+ 		struct pci_dev *dev = pci_dev_b(ld);
+ 		int i;
+ 
+@@ -433,7 +433,7 @@
+ {
+ 	struct list_head *lb;
+ 
+-	for(lb = pci_root_buses.next; lb != &pci_root_buses; lb = lb->next) {
++	list_for_each(lb, &pci_root_buses) {
+ 		struct pci_bus *b = pci_bus_b(lb);
+ 		pcibios_claim_one_bus(b);
+ 	}
 
---===============50955731237801127==
+--===============11742912448213305==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50955731237801127==--
+--===============11742912448213305==--
