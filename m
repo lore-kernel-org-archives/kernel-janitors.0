@@ -1,41 +1,48 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sun, 30 Jan 2005 11:54:57 +0000
-Subject: [KJ] Re: rivafb: Clean up printk()'s in drivers/video/riva/fbdev.c
-Message-Id: <20050130115457.GB3835@masina.coderock.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 06 Jan 2005 23:25:31 +0000
+Subject: [KJ] [PATCH 1/28] net/3c505: replace schedule_timeout() with
+Message-Id: <20050106232531.GB3055@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32454725629570991=="
+Content-Type: multipart/mixed; boundary="===============49303547924167068=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============32454725629570991==
+--===============49303547924167068==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 25/01/05 19:52 -0600, James Nelson wrote:
-> This patch adds KERN_ constants to all of the printk()'s that need them in
-> drivers/video/riva/fbdev.c - resent after reworking the debug #defines
-> 
-> Signed-off-by: James Nelson <james4765@gmail.com>
-> 
-> diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/riva/fbdev.c linux-2.6.11-rc2-mm1/drivers/video/riva/fbdev.c
-> --- linux-2.6.11-rc2-mm1-original/drivers/video/riva/fbdev.c	2005-01-24 17:15:49.000000000 -0500
-> +++ linux-2.6.11-rc2-mm1/drivers/video/riva/fbdev.c	2005-01-25 20:49:29.534947199 -0500
-> @@ -68,18 +68,17 @@
->   *
->   * ------------------------------------------------------------------------- */
->  #ifdef CONFIG_FB_RIVA_DEBUG
-> -#define NVTRACE          printk
-> -#else
-> -#define NVTRACE          if(0) printk
-> +#define DEBUG
->  #endif
+Hi,
 
-DEBUG should be defined before inclusion of kernel.h .
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. There are no waitqueue events in the area, so an
+absolute sleep should be ok.
 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-	Domen
+--- 2.6.10-v/drivers/net/3c505.c	2004-12-24 13:35:49.000000000 -0800
++++ 2.6.10/drivers/net/3c505.c	2005-01-04 14:57:49.000000000 -0800
+@@ -1327,8 +1327,7 @@ static int __init elp_sense(struct net_d
+ 	if (orig_HSR & DIR) {
+ 		/* If HCR.DIR is up, we pull it down. HSR.DIR should follow. */
+ 		outb(0, dev->base_addr + PORT_CONTROL);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(30*HZ/100);
++		msleep(300);
+ 		if (inb_status(addr) & DIR) {
+ 			if (elp_debug > 0)
+ 				printk(notfound_msg, 2);
+@@ -1337,8 +1336,7 @@ static int __init elp_sense(struct net_d
+ 	} else {
+ 		/* If HCR.DIR is down, we pull it up. HSR.DIR should follow. */
+ 		outb(DIR, dev->base_addr + PORT_CONTROL);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(30*HZ/100);
++		msleep(300);
+ 		if (!(inb_status(addr) & DIR)) {
+ 			if (elp_debug > 0)
+ 				printk(notfound_msg, 3);
 
---===============32454725629570991==
+--===============49303547924167068==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32454725629570991==--
+--===============49303547924167068==--
