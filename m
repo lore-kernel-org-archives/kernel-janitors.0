@@ -1,52 +1,37 @@
 From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Fri, 09 Jan 2004 01:18:09 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Check return code in mm/pdflush.c
-Message-Id: <20040109011809.GB8820@eugeneteo.net>
+Date: Sat, 03 Jan 2004 13:29:46 +0000
+Subject: [Kernel-janitors] [PATCH] Check return value in mm/memory.c
+Message-Id: <20040103132946.GE21909@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040103132524.GA21909@eugeneteo.net>
-In-Reply-To: <20040103132524.GA21909@eugeneteo.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<quote sender="Randy.Dunlap">
-> On Sat, 3 Jan 2004 21:26:56 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
-> 
-> | http://www.anomalistic.org/patches/pdflush-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
-> | 
-> | diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/pdflush.c 2.6.1-rc1-mm1-fix/mm/pdflush.c
-> | --- 2.6.1-rc1-mm1/mm/pdflush.c	2004-01-03 17:58:11.000000000 +0800
-> | +++ 2.6.1-rc1-mm1-fix/mm/pdflush.c	2004-01-03 20:25:30.000000000 +0800
-> | @@ -223,7 +223,11 @@
-> |  
-> |  static void start_one_pdflush_thread(void)
-> |  {
-> | -	kernel_thread(pdflush, NULL, CLONE_KERNEL);
-> | +	int ret;
-> | +	
-> | +	ret = kernel_thread(pdflush, NULL, CLONE_KERNEL);
-> | +	if (ret < 0) 
-> | +		printk("%s: unable to start kernel thread\n", __FUNCTION__);
-> 
-> This patch adds trailing whitespace (on the "if" line).
-> Please be more careful about that -- we don't want that.
-> I fixed this one.
-> 
-> I run a simple script that searches for gotchas like this:
-> grep -nH "^+.*[ 	]$" $1 | more
-> 
-> (that's SPACE and TAB inside the square brackets)
+http://www.anomalistic.org/patches/memory-check-ret-find_extend_vma-fix-2.6.1-rc1-mm1.patch
 
-Useful regexp. Will be careful.
-
-Eugene
-
-> 
-> --
-> ~Randy
-> MOTD:  Always include version info.
-> 
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/memory.c 2.6.1-rc1-mm1-fix/mm/memory.c
+--- 2.6.1-rc1-mm1/mm/memory.c	2004-01-03 20:33:39.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/mm/memory.c	2004-01-03 20:50:13.000000000 +0800
+@@ -34,6 +34,9 @@
+  *
+  * 16.07.99  -  Support of BIGMEM added by Gerhard Wichert, Siemens AG
+  *		(Gerhard.Wichert@pdb.siemens.de)
++ *
++ * 03.01.04  -	Check the return value of find_extend_vma, added by
++ * 		Eugene Teo (eugeneteo@eugeneteo.net)
+  */
+ 
+ #include <linux/kernel_stat.h>
+@@ -712,6 +715,8 @@
+ 		struct vm_area_struct *	vma;
+ 
+ 		vma = find_extend_vma(mm, start);
++		if (unlikely(!vma))
++			return -EFAULT;
+ 
+ #ifdef FIXADDR_USER_START
+ 		if (!vma &&
 
 -- 
 Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
