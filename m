@@ -1,43 +1,54 @@
-From: "Walter Sutherland" <wsutherlandmw@angelo-ester.tmfweb.nl>
-Date: Sun, 08 Feb 2004 21:00:27 +0000
-Subject: Codeine Tylenol3 Online - Stop Feeling Anxiety
-Message-Id: <HBKNAHINOPDADJNNBGPGFLPDDJAB.wsutherlandmw@angelo-ester.tmfweb.nl>
+From: "Complaint Center" <Buford_Odelle@netscape.net>
+Date: Sun, 01 Feb 2004 00:25:51 +0000
+Subject: This will save your time.
+Message-Id: <qvvebe797419@netscape.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_000F_01C33095.9F84B280"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PGh0bWw+DQo8Ym9keT48azh2NjRoMDMxdjJ1dDI+DQo8cD48Zm9udCBmYWNl
-PSJUYWhvbWEiPjxzdHJvbmc+PGZvbnQgc2l6ZT0iNCI+QjxrNjVmOHNnMm5l
-cWR0ZjE+dXkgPHN0cm9uZz5DbzxraWJyYTkwMnpzcnE+ZDxrY2FqamVyczU5
-N3IxMT5lPGtiMjdmbGYxMW1yeT5pbmUmcmVnOzwvc3Ryb25nPiAoVHlsPGsz
-MWswMmcyczlneTI+ZW5vPGs3c3pkNGQ1dzVlPmwzKSBPbmxpPGs1MWdjeDcx
-NTZyPm5lISBYPGt6MmllN2kxZ3B3ZnZkPkFOPGtwZjhoZXVjMWVkbTYxdz5B
-WCwgVjxrNG8wdTU5a281cXA+QUw8a2dwNTNpZjNhcTZvPklVPGs5OTF5YW1w
-eDZrPk08L2ZvbnQ+PC9zdHJvbmc+PGJyPg0KICBCdXk8azF3c21yczM4NGtv
-PmluZyBpdCBvbmw8a2o3a3A1bzFtczg5ZHgyPmluZSBpcyBlPGs2anAwZXEz
-NzBucWM+YXN5IGFuZCBsZTxraHI0bGpubzUxcGg+ZzxrdW5yeWN6MmZtaHg+
-YWw8YnI+DQogIDxzdHJvbmc+Q288a2M0ZW95aDEzbHR6PmQ8a3IxN3RwdTNr
-d3o+ZTxrOXc0ZHU1Mm1zZD5pbmUmcmVnOzwvc3Ryb25nPiAoVHlsPGtnMTZo
-aHN1OXJkZz5lbm88a3Z6aDJ2ZjJwNHE+bDMpIGlzIGEgUDxrYXAzanI0MnR5
-Yz5haW4gcmVsPGtuaWhrZXAxNzk4MmViMz5pZTxrNWsyOTg0YzBzNnRrMnY+
-dmVyPC91Pjx1PjwvdT48L2ZvbnQ+PGZvbnQgZmFjZT0iVGFob21hIj48YnI+
-DQogIFdoeTxrc29tMHA1MTl6Z3U+IHN1ZmZlPGtkaGg2ODFtazlpZz5yIHRo
-ZSBlbTxram5idHAwM2NyZD5iYXJyPGtnaGkzZWIxemYzaz5hczxrNnpsbTRh
-MXhzbG1yZD5zbWU8a2kyNGU4azJsNG91OXc+bnQgb2YgYXNrPGtvd3RxY2Yx
-ZzFyNDRlPmluZyB5b3VyIGxvYzxrZTl0NmJlMzBpZmxlPmFsIGRvYzxrbngy
-dGZqMmNvNXZ5Zz50b3IgDQogIGZvciBpdD88YnI+DQogIDwvZm9udD4gPC9w
-Pg0KPHA+PGZvbnQgZmFjZT0iVGFob21hIj48YSBocmVmPSJodHRwOi8vd3d3
-LmdlbmVyaWNmb3JsZXNzLmJpei9jZ2ktYmluL2NsaWNrdGhydS5jZ2k/aWQ9
-bW9tbyI+Q2xpY2sgDQogIEg8a29xaG9hNTN5eWZ2N2YyPmVyZSB0byBPPGtw
-OXBodGNucWQyPnJkZXIgTjxrbjA0M3RnMmhzdXA2bnk+b3c8L2E+PC9mb250
-PjwvcD4NCjxwPjxmb250IHNpemU9IjIiIGZhY2U9IlRhaG9tYSI+PHA+PGEg
-aHJlZj0iaHR0cDovL3d3dy5nZW5lcmljZm9ybGVzcy5iaXovb2JnLyI+Tjxr
-ODlxY3pvaTd0MmQ+byBtbzxrazZjbGJqMTRpMzU+cmU8L2E+PC9wPjwvZm9u
-dD48Zm9udCBmYWNlPSJUYWhvbWEiPjxicj4NCiAgPGJyPg0KICA8L2ZvbnQ+
-IDwvcD4NCjxrMzNlaWk2MTN4cXdqZj4NCjwvYm9keT4NCjwvaHRtbD4NCg=
+This is a multi-part message in MIME format.
 
+------=_NextPart_000_000F_01C33095.9F84B280
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0010_01C33095.9F84B280"
+
+
+------=_NextPart_001_0010_01C33095.9F84B280
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+------=_NextPart_001_0010_01C33095.9F84B280
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+<head>
+</head>
+<body>
+The FTC works for the consumer to prevent violations of Children's <br=
+>
+Online Privacy Protection Act , fraudulent, deceptive and unfair busin=
+ess practices in <br>
+the marketplace and to provide information to help consumers spot, sto=
+p and avoid them. <br>
+To file a complaint on above issues, visit (Link: www.ftc.gov)www.ftc.=
+gov or call toll-free, <br>
+1-877-FTC-HELP (1-877-382-4357); TTY: 1-866-653-4261. The FTC enters I=
+nternet, telemarketing, <br>
+identity theft, Children's Online Privacy Protection Act and other fra=
+ud-related complaints <br>
+into Consumer Sentinel, a secure, online database available to hundred=
+s of civil and criminal <br>
+law enforcement agencies in the U.S. and abroad.</body>
+</html>
+
+
+------=_NextPart_001_0010_01C33095.9F84B280--
 
 
 -------------------------------------------------------
@@ -49,3 +60,4 @@ _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+------=_NextPart_000_000F_01C33095.9F84B280--
