@@ -1,48 +1,49 @@
 From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 13 Oct 2004 22:19:30 +0000
-Subject: [KJ] [PATCH 2.6] horizon.c: replace pci_find_device with
-Message-Id: <197250000.1097705970@w-hlinder.beaverton.ibm.com>
+Date: Fri, 08 Oct 2004 17:49:58 +0000
+Subject: [KJ] Re: [PATCH 2.6] pSeries_iommu.c replace pci_find_device with
+Message-Id: <72580000.1097257798@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============22482263508265335=="
+Content-Type: multipart/mixed; boundary="===============56177562224714461=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <194130000.1097705759@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <194130000.1097705759@w-hlinder.beaverton.ibm.com>
+References: <70740000.1097257219@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <70740000.1097257219@w-hlinder.beaverton.ibm.com>
 To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: Hanna Linder <hannal@us.ibm.com>, greg@kroah.com, chas@cmf.nrl.navy.mil
+Cc: Hanna Linder <hannal@us.ibm.com>, greg@kroah.com, paulus@samba.org, anton@samba.org
 
---===============22482263508265335==
+--===============56177562224714461==
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+--On Friday, October 08, 2004 10:40:19 AM -0700 Hanna Linder <hannal@us.ibm.com> wrote:
+
+> As pci_find_device is going away I've replaced it with pci_get_device.
+> If someone with a PPC64 system could test it I would appreciate it.
+> 
+> Thanks.
+> 
+> Hanna Linder
+> IBM Linux Technology Center
+> 
+> Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+Ooops. Included the wrong patch. Should be:
+
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/pSeries_iommu.c linux-2.6.9-rc3-mm3patch2/arch/ppc64/kernel/pSeries_iommu.c
+--- linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/pSeries_iommu.c	2004-09-29 20:04:16.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch2/arch/ppc64/kernel/pSeries_iommu.c	2004-10-08 10:22:35.448365008 -0700
+@@ -427,7 +427,7 @@ void iommu_setup_pSeries(void)
+ 	 * pci device_node.  This means get_iommu_table() won't need to search
+ 	 * up the device tree to find it.
+ 	 */
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		mydn = dn = PCI_GET_DN(dev);
+ 
+ 		while (dn && dn->iommu_table == NULL)
 
 
-As pci_find_device is going away soon I have converted this file to use
-pci_get_device instead. I have compile tested it. If anyone has this ATM card
-and could test it that would be great.
-
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-
-diff -Nrup linux-2.6.9-rc4-mm1cln/drivers/atm/horizon.c linux-2.6.9-rc4-mm1patch/drivers/atm/horizon.c
---- linux-2.6.9-rc4-mm1cln/drivers/atm/horizon.c	2004-10-12 14:15:10.000000000 -0700
-+++ linux-2.6.9-rc4-mm1patch/drivers/atm/horizon.c	2004-10-13 14:52:43.218426992 -0700
-@@ -2727,7 +2727,7 @@ static int __init hrz_probe (void) {
-   
-   devs = 0;
-   pci_dev = NULL;
--  while ((pci_dev = pci_find_device
-+  while ((pci_dev = pci_get_device
- 	  (PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_HORIZON, pci_dev)
- 	  )) {
-     hrz_dev * dev;
-
-
---===============22482263508265335==
+--===============56177562224714461==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============22482263508265335==--
+--===============56177562224714461==--
