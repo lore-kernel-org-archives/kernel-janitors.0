@@ -1,66 +1,90 @@
-From: Daniele Pizzoni <auouo@tin.it>
-Date: Mon, 18 Oct 2004 18:59:13 +0000
-Subject: [KJ] [PATCH] Replace custom Dprintk macro with pr_debug - nmi.c
-Message-Id: <1098129428.3024.61.camel@pdp11.tsho.org>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Sun, 31 Oct 2004 14:45:24 +0000
+Subject: [KJ] [patch 6/6] libata remove msleep_libata()
+Message-Id: <20041031144524.GG28667@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============89808975050262196=="
+Content-Type: multipart/mixed; boundary="===============30326564941099665=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20040923221303.GB13244@us.ibm.com> <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de> <415CD9D9.2000607@pobox.com> <20041030222228.GB1456@stro.at> <41841886.2080609@pobox.com>
+In-Reply-To: <41841886.2080609@pobox.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: Margit Schubert-While <margitsw@t-online.de>, Nishanth Aravamudan <nacc@us.ibm.com>, hvr@gnu.org, mcgrof@studorgs.rutgers.edu, kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, Domen Puncer <domen@coderock.org>, linux-kernel@vger.kernel.org
 
---===============89808975050262196==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-Substituted custom Dprintk macro with pr_debug
-
-Signed-off-by: Daniele Pizzoni
+--===============30326564941099665==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-Index: linux-2.6.9-rc4/arch/i386/kernel/nmi.c
-===================================================================
---- linux-2.6.9-rc4.orig/arch/i386/kernel/nmi.c	2004-10-18 19:41:13.798118432 +0200
-+++ linux-2.6.9-rc4/arch/i386/kernel/nmi.c	2004-10-18 21:50:57.884757392 +0200
-@@ -13,6 +13,8 @@
-  *  Mikael Pettersson	: PM converted to driver model. Disable/enable API.
-  */
+
+
+remove msleep_libata(), now that msleep() is backported.
+also remove duplicate msleep() definition.
+delay.h is already included.
+
+Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
+
+
+
+---
+
+ linux-2.4.28-rc1-max/drivers/scsi/libata-core.c |   23 -----------------------
+ linux-2.4.28-rc1-max/include/linux/libata.h     |    1 -
+ 2 files changed, 24 deletions(-)
+
+diff -puN drivers/scsi/libata-core.c~remove-libata_msleep drivers/scsi/libata-core.c
+--- linux-2.4.28-rc1/drivers/scsi/libata-core.c~remove-libata_msleep	2004-10-31 14:06:49.000000000 +0100
++++ linux-2.4.28-rc1-max/drivers/scsi/libata-core.c	2004-10-31 14:08:41.000000000 +0100
+@@ -67,28 +67,6 @@ MODULE_DESCRIPTION("Library module for A
+ MODULE_LICENSE("GPL");
  
-+//#define DEBUG // pr_debug
-+#include <linux/kernel.h>
- #include <linux/config.h>
- #include <linux/mm.h>
- #include <linux/irq.h>
-@@ -332,7 +334,7 @@ static void setup_k7_watchdog(void)
- 		| K7_NMI_EVENT;
+ /**
+- *	msleep - sleep for a number of milliseconds
+- *	@msecs: number of milliseconds to sleep
+- *
+- *	Issues schedule_timeout call for the specified number
+- *	of milliseconds.
+- *
+- *	LOCKING:
+- *	None.
+- */
+-
+-static void msleep(unsigned long msecs)
+-{
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(msecs_to_jiffies(msecs) + 1);
+-}
+-
+-void libata_msleep(unsigned long msecs)
+-{
+-	msleep(msecs);
+-}
+-
+-/**
+  *	ata_tf_load - send taskfile registers to host controller
+  *	@ap: Port to which output is sent
+  *	@tf: ATA taskfile register set
+@@ -3697,7 +3675,6 @@ EXPORT_SYMBOL_GPL(ata_scsi_queuecmd);
+ EXPORT_SYMBOL_GPL(ata_scsi_error);
+ EXPORT_SYMBOL_GPL(ata_scsi_detect);
+ EXPORT_SYMBOL_GPL(ata_add_to_probe_list);
+-EXPORT_SYMBOL_GPL(libata_msleep);
+ EXPORT_SYMBOL_GPL(ata_scsi_release);
+ EXPORT_SYMBOL_GPL(ata_host_intr);
+ EXPORT_SYMBOL_GPL(ata_dev_classify);
+diff -puN include/linux/libata.h~remove-libata_msleep include/linux/libata.h
+--- linux-2.4.28-rc1/include/linux/libata.h~remove-libata_msleep	2004-10-31 14:06:49.000000000 +0100
++++ linux-2.4.28-rc1-max/include/linux/libata.h	2004-10-31 14:09:08.000000000 +0100
+@@ -416,7 +416,6 @@ extern void ata_qc_complete(struct ata_q
+ extern void ata_eng_timeout(struct ata_port *ap);
+ extern void ata_add_to_probe_list (struct ata_probe_ent *probe_ent);
+ extern int ata_std_bios_param(Disk * disk, kdev_t dev, int *ip);
+-extern void libata_msleep(unsigned long msecs);
  
- 	wrmsr(MSR_K7_EVNTSEL0, evntsel, 0);
--	Dprintk("setting K7_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
-+	pr_debug("setting K7_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
- 	wrmsr(MSR_K7_PERFCTR0, -(cpu_khz/nmi_hz*1000), -1);
- 	apic_write(APIC_LVTPC, APIC_DM_NMI);
- 	evntsel |= K7_EVNTSEL_ENABLE;
-@@ -354,7 +356,7 @@ static void setup_p6_watchdog(void)
- 		| P6_NMI_EVENT;
  
- 	wrmsr(MSR_P6_EVNTSEL0, evntsel, 0);
--	Dprintk("setting P6_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
-+	pr_debug("setting P6_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
- 	wrmsr(MSR_P6_PERFCTR0, -(cpu_khz/nmi_hz*1000), 0);
- 	apic_write(APIC_LVTPC, APIC_DM_NMI);
- 	evntsel |= P6_EVNTSEL0_ENABLE;
-@@ -395,7 +397,7 @@ static int setup_p4_watchdog(void)
- 
- 	wrmsr(MSR_P4_CRU_ESCR0, P4_NMI_CRU_ESCR0, 0);
- 	wrmsr(MSR_P4_IQ_CCCR0, P4_NMI_IQ_CCCR0 & ~P4_CCCR_ENABLE, 0);
--	Dprintk("setting P4_IQ_COUNTER0 to 0x%08lx\n", -(cpu_khz/nmi_hz*1000));
-+	pr_debug("setting P4_IQ_COUNTER0 to 0x%08lx\n", -(cpu_khz/nmi_hz*1000));
- 	wrmsr(MSR_P4_IQ_COUNTER0, -(cpu_khz/nmi_hz*1000), -1);
- 	apic_write(APIC_LVTPC, APIC_DM_NMI);
- 	wrmsr(MSR_P4_IQ_CCCR0, nmi_p4_cccr_val, 0);
+ static inline unsigned int ata_tag_valid(unsigned int tag)
+_
 
-
-
---===============89808975050262196==
+--===============30326564941099665==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +95,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============89808975050262196==--
+--===============30326564941099665==--
