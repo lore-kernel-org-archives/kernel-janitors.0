@@ -1,60 +1,60 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Mar 2005 18:50:28 +0000
-Subject: [KJ] [PATCH] char/tty_io: replace schedule_timeout() with
-Message-Id: <20050303185028.GK11600@us.ibm.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 13:20:49 +0000
+Subject: [KJ] [UPDATE PATCH 17/19] drivers/scsi/qla1280: Use the
+Message-Id: <20050320132049.GQ3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83899703256891534=="
+Content-Type: multipart/mixed; boundary="===============016260647492603919=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220171200.GR14375@helium.tklauser.home>
+In-Reply-To: <20050220171200.GR14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: andrew.vasquez@qlogic.com, linux-scsi@vger.kernel.org
 
---===============83899703256891534==
+--===============016260647492603919==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Please consider applying.
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Description: Use msleep_interruptible() instead of schedule_timeout() in
-send_break() to guarantee the task delays as expected. Change
-@duration's units to milliseconds, and modify arguments in callers
-appropriately. Patch is compile-tested.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.11-kj-v/drivers/char/tty_io.c	2005-03-01 23:38:10.000000000 -0800
-+++ 2.6.11-kj/drivers/char/tty_io.c	2005-03-02 14:42:04.000000000 -0800
-@@ -2171,12 +2171,11 @@ static int tiocsetd(struct tty_struct *t
- 	return tty_set_ldisc(tty, ldisc);
- }
+--- linux-2.6.11.orig/drivers/scsi/qla1280.c	2005-03-02 12:50:38.000000000 +0100
++++ linux-2.6.11/drivers/scsi/qla1280.c	2005-03-20 13:27:54.000000000 +0100
+@@ -345,6 +345,7 @@
+ #include <linux/pci_ids.h>
+ #include <linux/interrupt.h>
+ #include <linux/init.h>
++#include <linux/dma-mapping.h>
  
--static int send_break(struct tty_struct *tty, int duration)
-+static int send_break(struct tty_struct *tty, unsigned int duration)
- {
- 	tty->driver->break_ctl(tty, -1);
- 	if (!signal_pending(current)) {
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(duration);
-+		msleep_interruptible(duration);
- 	}
- 	tty->driver->break_ctl(tty, 0);
- 	if (signal_pending(current))
-@@ -2357,10 +2356,10 @@ int tty_ioctl(struct inode * inode, stru
- 			 * all by anyone?
- 			 */
- 			if (!arg)
--				return send_break(tty, HZ/4);
-+				return send_break(tty, 250);
- 			return 0;
- 		case TCSBRKP:	/* support for POSIX tcsendbreak() */	
--			return send_break(tty, arg ? arg*(HZ/10) : HZ/4);
-+			return send_break(tty, arg ? arg*100 : 250);
+ #include <asm/io.h>
+ #include <asm/irq.h>
+@@ -4741,7 +4742,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
  
- 		case TIOCMGET:
- 			return tty_tiocmget(tty, file, p);
+ #ifdef QLA_64BIT_PTR
+ 	if (pci_set_dma_mask(ha->pdev, (dma_addr_t) ~ 0ULL)) {
+-		if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
++		if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
+ 			printk(KERN_WARNING "scsi(%li): Unable to set a "
+ 			       " suitable DMA mask - aboring\n", ha->host_no);
+ 			error = -ENODEV;
+@@ -4751,7 +4752,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
+ 		dprintk(2, "scsi(%li): 64 Bit PCI Addressing Enabled\n",
+ 			ha->host_no);
+ #else
+-	if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
++	if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
+ 		printk(KERN_WARNING "scsi(%li): Unable to set a "
+ 		       " suitable DMA mask - aboring\n", ha->host_no);
+ 		error = -ENODEV;
 
---===============83899703256891534==
+--===============016260647492603919==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83899703256891534==--
+--===============016260647492603919==--
