@@ -1,43 +1,28 @@
-From: "Lakeisha Bain" <kvebtkeav@hotmail.com>
-Date: Sat, 21 Feb 2004 06:04:52 +0000
-Subject: furl cabinetry sprawl soluble butyl perforate tablet collate conscious pocketbook spatterdock doveta
-Message-Id: <QNDTSCVOGQBROMKAQBJWQUWS@yahoo.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--2655690916889435141"
+From: Brandishing <brandishing@iinet.com>
+Date: Tue, 03 Feb 2004 03:56:18 +0000
+Subject: Can heIp? 94
+Message-Id: <8A09HI69491GCF0J@iinet.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----2655690916889435141
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
+<a href="http://www.effectiveherbs.com/mx/index.php?pid=evaph3839">
+<font face="Arial" style="Text-decoration: none;">
+A r<!--ZcK-->ecent surve<!--nkz-->y show<!--vmM-->ed that 6<!--TIx-->8% of wom<!--HKE-->en are unsa<!--eiE-->tisfied with their s.e<!--Jag-->xual partners. Of course most of these wo<!--koT-->men would never tell their par<!--UmZ-->tner that they are un<!--fIt-->happy. Not being able to fully sa<!--aTw-->tisfy a w<!--KWT-->oman can res<!--jqW-->ult in depression and feelings of inadequacy. Thankfully, men of all ages can now safely and naturally enhance the<!--YkF-->ir body and p.e<!--wRq-->nls anat<!--aWA-->omy and renew s.<!--FGA-->exual vitality without resorting to dangerous surgery.
+The all natur<!--KRP-->al propri<!--uLe-->etary ble<!--uRM-->nd of unique her<!--MRv-->bs found in Max-a-<!--jEq-->man is desi<!--ROI-->gned to restore blood flow to your p.enls, unleash stored tes<!--NMU-->toste<!--ujM-->rone, and hei<!--KjI-->ghten sensati<!--lPp-->on by activating the bo<!--LCt-->dy's natural hormone production and su<!--DXV-->pplying vital nutr<!--HqN-->ients neces<!--ueH-->sary for peak s<!--Ook-->.exual perf<!--htb-->ormance.
+We combined all the great recip<!--QXO-->es from ancient scrip<!--LqZ-->ts to bring you a<!--zdj-->n all natur<!--ioa-->al, qua<!--zcD-->lity he<!--TFA-->rb product that ca<!--DlQ-->n help yo<!--qHW-->ur love life!
+</font>
+</a>
 
-cinderella subtrahend ajax dental eyed credit falmouth express yardage abe=
-rrate agnostic involute politic countywide saxony=20
-<p>
-Adobe Photoshop CS 8.0 - $80<p>
-Quark Express 6.0 - $60<p>
-Norton Antivirus Professional 2004 - $15<p>
-more titles available<p>
-software on the net
-<A HREF=3D"http://drs.yahoo.com/azimuthal/stratospheric/*http://krakow.sof=
-twaretitles.biz/2/?covariant">grab your copy</A>
-<p>
-&nbsp;<p>
-<a href=3D"http://drs.yahoo.com/chert/bernoulli/*http://berry.softwaretitl=
-es.biz/re/doit.php?decorticate">
-no</a><p>
-cytochemistry committing franchise chinese ditzel counselor penguin confes=
-sor marry vagina pragmatic renal scapular interception pin oak april bend =
-way cruelty nubile=20
-
-----2655690916889435141--
 
 
 -------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
