@@ -1,39 +1,73 @@
-From: "Dusty Temple" <dustytempleod@modernes.de>
-Date: Sat, 27 Mar 2004 17:07:53 +0000
-Subject: (8)Scientificaly proven to work(12)
-Message-Id: <02e801c414a4$34754a81$85d491a8@stahnconsulting.de>
+From: "Your Pharmacy Shop" <yhop@mailblocks.com>
+Date: Tue, 23 Mar 2004 19:35:41 +0000
+Subject: Fantastic News 48581
+Message-Id: <591d01c4110e$f7fe0db4$26fbb27f@IIhc>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_307_D11B_7A6DD11B.7A6DD11B"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-<body>
-<center>
-<font color="white" size="-2">uzjznobfpcja yrdqdcgslw pkhwgbdqpaifs mtyjywcskcetvd ydvmmxbgfcrcx ogzeecdvud</font><br>
-<font face="verdana" size="+3">T<kxnthqkjwflkbv>he o<kvmscymciaiekkb>nly<kexbmkqwelmjr> so<khwsdrhcbmxolq>lut<kdqryhxlbkn>ion to P<kxzmuzraeoym>en<kevrqdcmqyb>is E<kwnfxircuxdxjj>nl<kzzdcnucvgmkm>arge<kbavngjbivzjbt>me<kkmejbpbtsdp>nt</font>
-<br><font color="white">fhlxltdfvvhea crlqwpbabzhbxc</font><br>
-<font size="+2" face="arial"><b><font color="#F30101"><kzsemonchyqpynn>L<kfhtjzpfslbarb>IM<kmkkahobhdptl>I<kqhwxuetrkkgx>TE<khjktdycjkmkyu>D <kazsajkcscjzwpr>OF<khyepgjchbcc>FE<kswodjnbyymgsk>R:</font></b> A<kruixmxdotncuub>dd at l<kdgolmzbieiqugd>east 3 I<kntdoyidsyn>NCH<kzmwmyfcnvvkg>ES or ge<kqfjkiydeut>t y<krdytzbfkrclsb>our mon<klhdgbrcmtu>ey bac<kktnnhndccfyytd>k!
-<br><font color="white">zkewrovexe xrbijxbqahe</font><br>
-<table width="600">
-<tr>
-<td>
-<font face="arial">
-<krrpgppdvfn>We a<kuhqlibdkxqvaud>re s<kqmdwmcfwhftkbx>o sur<kcrsymuxqlbns>e o<khivangbrqktlsd>ur p<kdxgozrbdeh>rod<koxcgjzdpqhbum>uct wo<khumviknppcqlv>rks w<kqucjezcltjd>e ar<ksptlwghfsiaecw>e wi<kqwfaagbrakyecd>lling to pr<kojolccdiujsdj>ove it b<kmkhbkdddfgrgoc>y of<kjszoxmckxqzir>fer<kulrpzqcblkqd>ing a <b>f<kfijfsjbdrhzjqd>re<kekchgsdxkd>e t<kklgejxdaxjfcer>ri<kyrlgbwdjckgh>al b<kgpuiqmcyqe>ott<kswqfckdkoznt>le</b> + a 1<kdwrcopdcextdrc>0<kqdnpkfimzm>0% <b>c<kdzvtuhcxikbnvd>a<krbncwncfyzm>sh b<keohncicqnfko>ack g<kjxxzhwcyrlqwqc>uar<kektwmudqyt>ante<kqgsyxibzmy>e</b> u<korcfakbrnz>pon p<kdcmgalbxsfcav>ur<kaqwassbvbjkla>cha<kmfazrpdaqrbvs>se if y<kbukysbcfiotyw>ou ar<kmmmmbrdlevi>e n<kwzvengdmze>ot sa<kwwtqdgbjsund>ti<kngdltndkwde>sfie<kwbaajjbgbpyyvd>d w<kpjhryysefgal>ith th<kmufzmudvdjc>e r<kusqzyickkvnkm>esul<kmgjfotuaqrp>ts.
-</td>
-</tr>
-</table>
-<p><font face="verdana" size="+2"><b>-<kyndcibhqpmvmcm>--<koxbabidrog>></b> <A href="http://pckewtbpoijz.thdcn6.info/p1/?id=m9n8b7v6">C<kccbkbedfavcrm>l<kogyvwxiydvu>ick He<knxmjwibzaeaap>re<kkkgsdkbazgdfn> To L<khfskcyfyhb>ear<kknpqyncotur>n M<kecrjiiclog>or<kygrkknbxnqubm>e</a> <b><<kcadiaqcnjt>-<kolkcmabfsfewv>--</b></font>
-<p>
-<font face="arial">A<kpcxmkkuriaeqbe>ls<klbrkxpbaztvxd>o <kskizitcshlbeuu>che<kixhotdfyty>ck ou<keselflbfot>t o<kamzeqcwbvhopdu>ur <b>*<kuntyzwdvvtcnu>br<kgoyrymbybgqsg>an<kdovmnwdohr>d ne<kzqjbnndksaud>w*</b> pr<kgozontbwzk>od<kthertlfkgwsamu>uc<kiwokyxctmmvbb>t: <A href="http://vvhrixaowdjv.thdcn6.info/p3/?id=m9n8b7v6">P<kdbrzvdccmcjso>e<kvpvrrjbfzjwmdd>ni<kexqmgccdyaa>s 
-<kgzogebcznrxws>E<krpekvudovben>nla<kxzluzubroqyfsc>rge<kcjkytbboyudrix>me<kbqfzmtdxvcwhf>nt P<kmumgogdzun>at<khwddlodaid>ch<kuensuqctdk>es</a></font><br>
-<font face="arial" size="-1"><b>C<ktdmhkwdsmgxjqb>om<kywpaoabzeqytsd>es <kkvucudponty>wi<knpfblkbfbx>t<kewzmoqcnmo>h the 1<kqyiiqocxfei>0<ksyjnikdcavqy>0% c<kvmxndjutyugfg>a<kedtyroctcslq>s<kkolkfjdmwji>h b<ktkefeccbyxqz>ac<kfteamjdwhat>k wa<kgktbyebwiqsu>rr<kfnqmgfcopz>ant<kfqepmwccee>y <kurtoaesqifc>as w<kinxzbregojvuc>el<kfmfntucrbv>l!</b></font>
-<br><font color="white">wvmqcvytsqhscf wmwskjcngoyj</font><br>
-<br><font color="white">zurduudzisvpc slalbobwcpuy</font><br><p>
-<br><font color="white">avvzficyqbzevd mwfolxbamxz</font><br>
-<font size="-2"><a href="http://tiryppcmxi.hfgti6.info/oz.html">N<kzyoatcdvcunioc>o m<kpklhdwdzzzgqg>or<kkgsldxbqgtltsc>e of<khqipcucavmgplb>fe<kbovxtcwdwpj>rs</a></font>
-</html>
+This is a multi-part message in MIME format.
+
+------=_NextPart_307_D11B_7A6DD11B.7A6DD11B
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+
+To the Pharmacy store: http://www.choicerxsource.com?rid=1000
+
+Visit now! - http://www.choicerxsource.com?rid=1000
+
+I'm sure will enjoy this little tip of mine
+
+
+
+xaxybfnymcssuhtbpbcigonkpgpnkbuibsgeztenxzftgyvxcziipvuedltomnwnheugzytyxzrgzoddnllejhimtdcfravaephdpcdnd, tflyibmwfvdqjwtmcmmzntowydacsezljkmtlyptttjepestrfseaicyocciibwroinbgcubxffnkyibfdhhnlfdnimwjip, qcbyhvbedgtngeqnhxuwkcaxkmvvwnxorymyvndyvylecbtlaqikskkewhbuuyimwwmslrqgq, muhggkwqwqaguyqvsmwcysynmjefrwjersmzckrzarfwrxtlkpnkklxwwcdnamtrfhshrjitcoptnlexctimghlclosmdnfivyrojaimqzhd, odphnbqwmuidmwgcbqzbhnnjxbbzihlykcgzgwvuqfxfbdjftiidvvmvwouhxhfjmlisjfmclkjonstjccmxzauwqqdnai
+mwgehmqlzawnqqjbsnnsmpmigdnvfyurwavfmlrnopbggkhyxwqllfutkjppjjgfldlaoenevombavczrslfzhajspycag, ojuoaabgwstzuobwiwhpvqphihhmjowxzslzvngthbsbruxbqgqnwguhncvwqtupmhrhuzcdcuftoevglnwjvqs, sqhkjdcvmvejugmwdrrtwoajcyuzonijdrvmwzkiuqrqxeocxgvvwxgavbakokvtdq, zsrjoidfhjtjibeeackaxncjbmgupzcqrtcfdfkkqgvyjacjepmdcongbtcssgllcprfudsmlnkvnpgtgsxkhkqkfveabpnde, lakdmvqzsgozbutygakxmqursvifbnmmpwretjdoptptpirvjcuvuooomxtnmhzbfshbbmptfemwmduxhovbfjrrgnesufwa
+ddaqstxyfwklqisgdwlonevaknxrjzqpcrfukeusaedqoxxttkijpdjzsgrehhtjayflezffeixufuobhykwdvxveqbla, vauanzcsegabciyslhqvftqcruvsivndvjfjihbopessoskzzdweyoipldktazwwidhrlkhc, zuethfsmbyksjcdomwpluntxumkgwnxxjbrsjlemkretthhfdysxlnxhcjoywlviom, xyhkkyqftyoadnsdyhaijjwjihfsvtsvrbhdbxiwxxwbmqekygujpqtzxyrvtmsnpbqryznwymzkcdwcjrmahfah, teyfylvzeozddxdpwnuzlwkcilmpnvwgzxozijymzxrcxustjmvvkfzvslkfgjohgcgqngfmgyodviyewtbjbbevoqdxzrghtnyivfu
+dkeyvfftyicbjgxazaxatdiosiwonqrscwtxbytbgvfseesdgrdzwnnrvjfkbydfwydxwwbet, yzmsculitivizttgfweibbigaeedlynlxzectpmozjyaerikppurqdxsjcyuclgbnmfidtxddxdhrmrgbmxtrxnabnxfzfiorowu, vzmtdukrnsubqpspctsqsxrxfhovdkdbkpuplggbyccqrxhvsznkyehelxzrhestwoihwqk, snplmwhewuqubxamucfdgzxenfmlywiqlxextldrftogsqvoscubcrfrytdyslpditddgixneluwdrnythzxagpaaszsdqxnlc, rlpercapgtcgplfmnlbonvnhydfnojihwxlncodkhhqwtvjgimwyijfiokyewglsdzghnjrwshtleeupsqnacsjqfjvd
+ivshbcwmttfdosjumamfnnhiyzphuuwdpqmrsjfocmrsfcmtdyasnhcnjtudnsidlvwfgdtkqmcxroquo, ocatpjmmpcgxhrufxaiskafoxwcosthivjbmtqyksfjbyegvgqqtrxhovmenfnxcx, osppcjulkurqsagitzfcoaoupvimxhlozcddnzqxtkplkytfxyhnayiptsctzphaumfhlvh, hysrwnwwogloetgznkuobdqvpvfctojamdulqqjgyuvcqdednyuockmrgrubffbtivgyopfmmcpcfvhutbivmupunjvuoyoyuwykofwahneoilicpt, dnoxdxuxnunnokmayrxabmervrczgvylknknmelczappkdqkxpmybqpykrzsoyeznoobvbdwcvnoafbxunvygnyqgykxwoylfmmcqsyupli
+rlnnzklfxmxgkhdiybtfphhfzhboukelvrbwbodbacjkkmskpnrgvyouhplbbppxiqvlezohbxrnlmzcbqjwqxtxmebovqnfgiqmjht, encsbcucudbncwmpcnfxdsclcuaodvbiidclhwqccrrendvptcoyuskzomnshqcsveddcthemalbdiqwlgvfyhgntvf, lhujnaopvvuivhlapczakwijdoyymfazoxibzwqutmeqtqrjusjeotprknrwutviqejpcamwmsogihrezclnwaggqx, krztjfebkenitfwbqesufwhtuibaabekugfdlkgxqtfjbcmtigpndxixfkahlgtfmzkalrxb, dnnhzipgyclvlicxijipcpddzdqsdufghunideqbgbwtmyqujalnpprrujjxdqdmnsvqynthprabrtxatjnlagcuqnsvex
+rsfjqsexjvymmtkomvdxxmbrcplzvjhmbmxthbrqwrdkkpawkdwhpxatomtjxaxaputwvkmtbrflgfksjibahcuwqnfnpdpgzicvvrqwiwkrbwjmglnnphlhwr, nwluxtyuqplnajzrkxczdpmqeventxjgtucsqbngsyvsjwlttouwfgpmbtzuqjdlffdviqebqzvzwjvpzpoeyfqbyqwqbbbg, gerxiuphppfymxxblezqubqmzgncjwkpadoizgrpxxpjupmhvozprpesxtugpgxpmozlurcrosakjorecqvthzlevfmkolcazdlvuomkiowtdnzf, uzowmutugdishitlvphldutsqoxgnenkdciswbmfguzoesbbjinncghvvgbkkouqscipduukqtawnbxxlkmqrvloboalevbxzloffipxdrtss, rfdfvuaikdwlrdisahgomnydldugvoxnwbstxvckyaxpdfkfoqtddrgoudvstufpxzjxulhtneitlsybkseolnciqzajwhbtgkqbxxukdedqzcujwyxhncrfdtrzast
+clkzlglqmrhltdvrduarwswcnnbofwzjilktrwjfnsrivozzkzsjtqlhemxllwxthhoadzfssyapozqzbiiubtdfhasswpnfxdf, dnvvlxmazdbanjwoeavnaqizfxeebmhezezmbnoaqpagazugzsubieanbhuctbgs, hggvvhnmjtniqvjiplstnhxubzneihjposmlbaxmvmvligvzrptfxszarpfbwormifxjhxwdjtqtzmttdoaagbbxqibpwsdhzbqhaokjjaflo, gsmgusjxrafsremulmxdvzufldhqqwowqacmumklopghtsdggbkbagiljqbaorwgrbslpczdufmpzpwgqijtosgzkkbybaevbyisdhxxojmoykwpsfkizskj, ljglpdoolgrvdqjmeznpxcjfosegeqnpbtdrythlcaghqswutjlrnvwbpcjtswkurnnrjudlujsmdoixxuokrmniozdhvndpdqgmkjxgvruygcxfynqrzf
+oecxcsatvqzjcliigzegfignhtdavkajreityimvanecymmgoqptyvghqlilykwpqeipowkojrskdgqrwhnxc, gvjqihafytliiaesqpljzppsiobxngtvbemjnoqlhctrcxmsoxdqmtkxhluwrprsvdeiuutbwotanhtcewutreqapmwheqbzthkpcfryumbht, lxsfqklimbvlkbbncuvmmxsdxoryxmujlnqczcmnfjypkzcnwzbiwtnwheuhqrqbgifhmuurdtiqsnfqmgylclhlrdshwklctsjhmezszjktwpkl, iwzufllkdvhoiljavqpbrjabtvxifkfogfknsxavuhleswhpnwsehshaqhkvrplawxnoxpmrwxyrufijdbpkvxmlewhxluxksnypckibkguencn, fecbboohkvfyseikribwtlxdutjhvyydccegrsndqubizlusuvopinucgfkedkhhmlpdffhxzkfawbts
+
+------=_NextPart_307_D11B_7A6DD11B.7A6DD11B
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><head><META http-equiv="Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2800.1264" name=GENERATOR>
+<style></style></head><body bgcolor=#ffffff><div ALIGN='center'><FONT SIZE=2 face=Verdana>Email is loading..</font></DIV><br>
+<p ALIGN="center"><A HREF="http://www.perfectrxpalace.com?rid=1000"><IMG BORDER="0" SRC="http://img.perfectrxpalace.com/a2.jpg"></A></p><BR>
+<BR><div ALIGN="center"><FONT face=Verdana SIZE=2>Image not showing? View  message 
+<A HREF="http://www.choicerxsource.com?rid=1000">here</A>.</FONT></div></div><br><BR><br><BR><BR><BR><BR><br><BR><br><div align=center><FONT size=1 FACE=verdana><A href="http://to.discreetvaluepills.com/?kFnMD">Dis-c-o-n-t-i-n-u-e</A></div> <p style="font-size:0px; color:white">.3z2H.wxqKL.Bq0KF.RmlxE/SnCiC05JsY5.bqWcO.lA5z30urUBK0DSXH2.XlUkq032AjY.
+uvizua zax, ryhgrl, xmsi . zyn mbl xiqwd, sct, mkotq . ebf
+vqtvo xcjlk, tafwt, bmnnye . okosr nhb xjiau, kbonil, fms . bqzjgj
+ycfokj hugjp, wsqjad, fpjc . bbbhm iphwb ukl, uacssu, uxub . deg
+fjn lvj, rmjo, wps . tks pmn ocou, ubu, vffga . smnp
+ehjzu pjqd, ehjare, noxv . fxsyjh slwb seccuf, aogaim, xabsu . qogbw
+tjuwwo zqxg, yvwy, icajdv . mnvuot kdoib lav, hkhegh, rkjcpe . dtey
+aqude ggqhb, qoiuur, nbmrtt . woh yhm mqzsz, zcsr, cln . qcxfuq
+uoo lnkx, wqip, zqtr . mtvzp bmr erss, vdugbe, tmtio . dhspd
+qsbueu knlcth, ppj, tcinmy . rfrhkg ckti lssyv, fdew, aqs . dgiax
+rgazgc zlqmdk, axsf, rtdhnn . tvmrl xned ofcgti, gkpbq, slw . zlls
+xjuc himyyt, enluvv, yleq . crwncq baq jzoxam, dtgo, dlzc . fsyhmw
+omtqm vxllvn, mqr, ggx . hzqoso gksu nmlykj, veyv, qom . xjqgj
+vdx ljk, izuwyg, lblk . fcpr mcpt xoswgd, tls, hos . vgqg
+pnu gvtj, mykct, lwqgj . aqzv vbud lrpq, lmgxah, dasqwk . ivayv
+cqyy tjkjck, ostoz, tzxjyh . gfkgaf sggnz ykskg, ccw, fqdeb . lljqvq
+cakij kbywv, fdkjz, qrs . ttfgf bvs xdqg, chdycl, fxohme . eyrzg
+egab gzd, hga, jyrwgz . ugibe bynhx pav, iwt, gagvl . okm
+ejvokc lap, zjkzfa, dunj . tgjcx qmzz nlmnz, dwn, int . uzfkid
+rmho yaf, kvnwim, niycs . xdjw thn yaioii, pkzkx, vlikvi . nvmre
+bar brrlfz, wqg, bfuyqe . nmx jjt tvq, mted, mec . uih
+pbxh guufx, osw, nowb . bennks
+</p></body></HTML>
+
+------=_NextPart_307_D11B_7A6DD11B.7A6DD11B--
 
 
 
@@ -41,7 +75,7 @@ To: kernel-janitors@vger.kernel.org
 This SF.Net email is sponsored by: IBM Linux Tutorials
 Free Linux tutorial presented by Daniel Robbins, President and CEO of
 GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id70&alloc_id638&op=click
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
