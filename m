@@ -1,7 +1,7 @@
 From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Thu, 03 Mar 2005 23:31:50 +0000
+Date: Thu, 03 Mar 2005 23:43:26 +0000
 Subject: Re: [KJ] 2.6.11-kj
-Message-Id: <200503040221.03211.adobriyan@mail.ru>
+Message-Id: <200503040242.14337.adobriyan@mail.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050302095710.GA3745@nd47.coderock.org>
 In-Reply-To: <20050302095710.GA3745@nd47.coderock.org>
@@ -10,27 +10,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thursday 03 March 2005 20:34, Nishanth Aravamudan wrote:
+On Thursday 03 March 2005 20:36, Nishanth Aravamudan wrote:
 
-> Please let me know if it works and I'll push to LKML over the current KJ
-> set.
+> Alexey, I'm curious, do you see a lot of these compile-time warnings with
+> the kernel?
 
-It works. Neither gcc nor sparse complain now.
+No. [i386, ppc64, sparc, x86_64] x [2.6.11-rc5-mm1, 2.6.11, 2.6.11-kj]
+contain only one. It seems they are silently fixed in -mm by Andrew.
 
-> --- 2.6.11-kj-v/drivers/cdrom/mcdx.c
-> +++ 2.6.11-kj/drivers/cdrom/mcdx.c
-> @@ -838,10 +838,10 @@ static void mcdx_delay(struct s_drive_st
->   *	May be we could use a simple count loop w/ jumps to itself, but
->   *	I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
->  {
-> +	DEFINE_WAIT(wait);
->  	if (jifs < 0)
->  		return;
->  
-> -	DEFINE_WAIT(wait);
->  	xtrace(SLEEP, "*** delay: sleepq\n");
->  	prepare_to_wait(&stuff->sleepq, &wait, TASK_INTERRUPTIBLE);
->  	schedule_timeout(jifs);
+> In that driver alone I see a handful of other places where 
+> dec's and code are mixed.
+
+Not a single one in mcdx.c. Declarations in mcdx_audio_ioctl(), mcdx_talk(),
+mcdx_init_drive(), mcdx_readtoc() ... are surrounded with { }. ;-)
+
+
 
 	Alexey
 _______________________________________________
