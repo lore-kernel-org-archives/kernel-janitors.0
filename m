@@ -1,37 +1,66 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 21 Sep 2004 21:57:58 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 2/40] net/act2001-sir: replace
-Message-Id: <20040921215758.GF1946@us.ibm.com>
+From: Scott Feldman <sfeldma@pobox.com>
+Date: Tue, 21 Sep 2004 06:53:06 +0000
+Subject: [Kernel-janitors] [PATCH -mm 7/9] pci_find_device to pci_get_device
+Message-Id: <1095749585.3790.95.camel@sfeldma-mobl2.dsl-verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99270984041614951=="
+Content-Type: multipart/mixed; boundary="===============2200759469289979=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============99270984041614951==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============2200759469289979==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Any comments would be appreciated.
+Use pci_get_device instead of pci_find_device as pci device returned
+from pci_find_device can disappear at any momemt in time.
 
-Description: Use msleep() instead of schedule_timeout()
-to guarantee the task delays as expected.
+Signed-off-by: Scott Feldman <sfeldma@pobox.com>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc2-vanilla/drivers/net/irda/act200l-sir.c	2004-09-13 17:15:41.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/irda/act200l-sir.c	2004-09-14 17:17:54.000000000 -0700
-@@ -177,8 +177,7 @@ static int act200l_change_speed(struct s
+diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/tg3.c linux-2.6.9-rc2-mm1-dsf/drivers/net/tg3.c
+--- linux-2.6.9-rc2-mm1/drivers/net/tg3.c	2004-09-20 22:36:25.000865840 -0700
++++ linux-2.6.9-rc2-mm1-dsf/drivers/net/tg3.c	2004-09-20 22:39:02.362943168 -0700
+@@ -7325,6 +7325,7 @@ static int __devinit tg3_get_invariants(
+ 	u32 pci_state_reg, grc_misc_cfg;
+ 	u32 val;
+ 	u16 pci_cmd;
++	struct pci_dev *pdev;
+ 	int err;
  
- 	/* Write control bytes */
- 	sirdev_raw_write(dev, control, 3);
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(msecs_to_jiffies(5));
-+	msleep(5);
+ #ifdef CONFIG_SPARC64
+@@ -7338,17 +7339,19 @@ static int __devinit tg3_get_invariants(
+ 	 * every mailbox register write to force the writes to be
+ 	 * posted to the chip in order.
+ 	 */
+-	if (pci_find_device(PCI_VENDOR_ID_INTEL,
+-			    PCI_DEVICE_ID_INTEL_82801AA_8, NULL) ||
+-	    pci_find_device(PCI_VENDOR_ID_INTEL,
+-			    PCI_DEVICE_ID_INTEL_82801AB_8, NULL) ||
+-	    pci_find_device(PCI_VENDOR_ID_INTEL,
+-			    PCI_DEVICE_ID_INTEL_82801BA_11, NULL) ||
+-	    pci_find_device(PCI_VENDOR_ID_INTEL,
+-			    PCI_DEVICE_ID_INTEL_82801BA_6, NULL) ||
+-	    pci_find_device(PCI_VENDOR_ID_AMD,
+-			    PCI_DEVICE_ID_AMD_FE_GATE_700C, NULL))
++	if ((pdev = pci_get_device(PCI_VENDOR_ID_INTEL,
++			    PCI_DEVICE_ID_INTEL_82801AA_8, NULL)) ||
++	    (pdev = pci_get_device(PCI_VENDOR_ID_INTEL,
++			    PCI_DEVICE_ID_INTEL_82801AB_8, NULL)) ||
++	    (pdev = pci_get_device(PCI_VENDOR_ID_INTEL,
++			    PCI_DEVICE_ID_INTEL_82801BA_11, NULL)) ||
++	    (pdev = pci_get_device(PCI_VENDOR_ID_INTEL,
++			    PCI_DEVICE_ID_INTEL_82801BA_6, NULL)) ||
++	    (pdev = pci_get_device(PCI_VENDOR_ID_AMD,
++			    PCI_DEVICE_ID_AMD_FE_GATE_700C, NULL))) {
+ 		tp->tg3_flags |= TG3_FLAG_MBOX_WRITE_REORDER;
++		pci_dev_put(pdev);
++	}
  
- 	/* Go back to normal mode */
- 	sirdev_set_dtr_rts(dev, TRUE, TRUE);
+ 	/* Force memory write invalidate off.  If we leave it on,
+ 	 * then on 5700_BX chips we have to enable a workaround.
 
---===============99270984041614951==
+
+
+--===============2200759469289979==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99270984041614951==--
+--===============2200759469289979==--
