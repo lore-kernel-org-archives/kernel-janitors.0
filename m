@@ -1,26 +1,43 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Sun, 25 Jan 2004 10:52:13 +0000
-Subject: [Kernel-janitors] [PATCH] 90 patches for unnecessary casts
-Message-Id: <20040125105212.GA2064@localhost>
+From: Eugene Teo <eugene.teo@eugeneteo.net>
+Date: Sat, 03 Jan 2004 13:25:24 +0000
+Subject: [Kernel-janitors] [PATCH] Check return code in mm/vmscan.c
+Message-Id: <20040103132524.GA21909@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi.
-With more scripting and manual check, I patched 90 files removing
-their unnecessary casts (see line 345 of TODO).
+http://www.anomalistic.org/patches/vmscan-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
 
-I don't attach the patch file here because it is huge (~ 177 KB).
-You can find it as a .tar.gz of 90 patch files here:
-http://www.linux.it/~carlo/somehacks/tkp/90patches.tar.gz
-You can also find the 90 text file patches here:
-http://www.linux.it/~carlo/somehacks/tkp/
-their names are file*.
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/vmscan.c 2.6.1-rc1-mm1-fix/mm/vmscan.c
+--- 2.6.1-rc1-mm1/mm/vmscan.c	2004-01-03 20:33:39.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/mm/vmscan.c	2004-01-03 21:16:30.000000000 +0800
+@@ -1093,10 +1093,16 @@
+ 
+ static int __init kswapd_init(void)
+ {
++	int ret;
+ 	pg_data_t *pgdat;
+ 	swap_setup();
+-	for_each_pgdat(pgdat)
+-		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
++	for_each_pgdat(pgdat) {
++		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
++		if (ret < 0) {
++			printk("%s: unable to start kernel thread\n", __FUNCTION__);
++			return ret;
++		}
++	}
+ 	total_memory = nr_free_pagecache_pages();
+ 	return 0;
+ }
 
 -- 
-Carlo Perassi - http://www.linux.it/~carlo/
+Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
+1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
+main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
