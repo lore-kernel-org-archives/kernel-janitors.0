@@ -1,48 +1,41 @@
 From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:30 +0000
-Subject: [KJ] [PATCH] [26/29] idt77252.c - vfree() checking cleanups
-Message-Id: <41db114a.70d041c5.2568.07c8@smtp.gmail.com>
+Date: Tue, 04 Jan 2005 23:17:57 +0000
+Subject: [KJ] [PATCH] [RESEND] [23/29] backend.c - vfree() checking cleanups
+Message-Id: <auto-000001227507@appliedminds.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49661483659091266=="
+Content-Type: multipart/mixed; boundary="===============25145798981563638=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============49661483659091266==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============25145798981563638==
 
-idt77252.c vfree() checking cleanups.
+backend.c vfree() checking cleanups.
 
 Signed-off by: James Lamanna <jlamanna@gmail.com>
 
- idt77252.c |    9 +++------
- 1 files changed, 3 insertions(+), 6 deletions(-)
+ backend.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
 
---- linux-2.6.10-vanilla/drivers/atm/idt77252.c	2004-12-24 13:34:45.000000000 -0800
-+++ linux-2.6.10/drivers/atm/idt77252.c	2005-01-04 11:27:04.338591184 -0800
-@@ -3136,14 +3136,11 @@
- 		}
- 	}
+--- linux-2.6.10-vanilla/drivers/char/agp/backend.c	2004-12-24 13:35:23.000000000 -0800
++++ linux-2.6.10/drivers/char/agp/backend.c	2005-01-04 11:29:47.089849232 -0800
+@@ -203,10 +203,9 @@
+ 		bridge->driver->cleanup();
+ 	if (bridge->driver->free_gatt_table)
+ 		bridge->driver->free_gatt_table();
+-	if (bridge->key_list) {
+-		vfree(bridge->key_list);
+-		bridge->key_list = NULL;
+-	}
++
++	vfree(bridge->key_list);
++	bridge->key_list = NULL;
  
--	if (card->soft_tst)
--		vfree(card->soft_tst);
-+	vfree(card->soft_tst);
- 
--	if (card->scd2vc)
--		vfree(card->scd2vc);
-+	vfree(card->scd2vc);
- 
--	if (card->vcs)
--		vfree(card->vcs);
-+	vfree(card->vcs);
- 
- 	if (card->raw_cell_hnd) {
- 		pci_free_consistent(card->pcidev, 2 * sizeof(u32),
+ 	if (bridge->driver->agp_destroy_page &&
+ 	    bridge->driver->needs_scratch_page)
 
 
-
---===============49661483659091266==
+--===============25145798981563638==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49661483659091266==--
+--===============25145798981563638==--
