@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 23:11:43 +0000
+Date: Mon, 26 Jul 2004 23:13:53 +0000
 Subject: [Kernel-janitors] [PATCH] video/zoran_device: replace
-Message-Id: <20040726231143.GW1897@us.ibm.com>
+Message-Id: <20040726231352.GX1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48883438547491348=="
+Content-Type: multipart/mixed; boundary="===============87169748741849196=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040726231143.GW1897@us.ibm.com>
+In-Reply-To: <20040726231143.GW1897@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============48883438547491348==
+--===============87169748741849196==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -24,20 +26,30 @@ is guaranteed to delay the desired time.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/video/zoran_device.c	2004-06-16 05:19:36.000000000 +0000
-+++ linux-dev/drivers/media/video/zoran_device.c	2004-07-02 21:44:56.000000000 +0000
-@@ -1105,8 +1105,7 @@ zr36057_enable_jpg (struct zoran        
- 			ZR36057_ISR);
- 		btand(~ZR36057_JMC_Go_en, ZR36057_JMC);	// \Go_en
+--- linux-vanilla/drivers/media/video/zoran_driver.c	2004-06-16 05:19:44.000000000 +0000
++++ linux-dev/drivers/media/video/zoran_driver.c	2004-07-02 21:45:17.000000000 +0000
+@@ -1919,8 +1919,7 @@ zoran_set_norm (struct zoran *zr,
+ 		decoder_command(zr, DECODER_SET_NORM, &norm);
  
+ 		/* let changes come into effect */
 -		current->state = TASK_UNINTERRUPTIBLE;
--		schedule_timeout(HZ / 20);
-+		msleep(50);
+-		schedule_timeout(2 * HZ);
++		msleep(2000);
  
- 		set_videobus_dir(zr, 0);
- 		set_frame(zr, 1);	// /FRAME
+ 		decoder_command(zr, DECODER_GET_STATUS, &status);
+ 		if (!(status & DECODER_STATUS_GOOD)) {
+@@ -2641,8 +2640,7 @@ zoran_do_ioctl (struct inode *inode,
+ 		decoder_command(zr, DECODER_SET_NORM, &norm);
+ 
+ 		/* sleep 1 second */
+-		current->state = TASK_UNINTERRUPTIBLE;
+-		schedule_timeout(1 * HZ);
++		msleep(1000);
+ 
+ 		/* Get status of video decoder */
+ 		decoder_command(zr, DECODER_GET_STATUS, &status);
 
---===============48883438547491348==
+--===============87169748741849196==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48883438547491348==--
+--===============87169748741849196==--
