@@ -1,36 +1,26 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Mon, 14 Feb 2005 15:06:19 +0000
-Subject: [KJ] [PATCH 4/16] drivers/net/hp100: Use the DMA_{64,
-Message-Id: <20050214150619.GG15408@helium.tklauser.home>
+From: Greg KH <greg@kroah.com>
+Date: Mon, 14 Feb 2005 18:50:12 +0000
+Subject: [KJ] Re: [PATCH 1/18] remove pci_find_{device, subsys}
+Message-Id: <20050214185012.GW7815@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4874520910844975=="
+Content-Type: multipart/mixed; boundary="===============74947562638272469=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============4874520910844975==
+--===============74947562638272469==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+On Mon, Feb 14, 2005 at 11:05:46AM +0530, Amit Gud wrote:
+> 
+> Remove deprecated pci_find_device and pci_find_subsys
+> 
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+No, I can not apply this patch, as it is still needed in the tree...
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+greg k-h
 
---- linux-2.6.11-rc4.orig/drivers/net/hp100.c	2005-02-13 17:13:01.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/net/hp100.c	2005-02-13 17:37:36.000000000 +0100
-@@ -562,7 +562,7 @@ static int __init hp100_probe1(struct ne
- 			 * Also, we can have EISA Busmaster cards (not tested),
- 			 * so beware !!! - Jean II */
- 			if((bus == HP100_BUS_PCI) &&
--			   (pci_set_dma_mask(pci_dev, 0xffffffff))) {
-+			   (pci_set_dma_mask(pci_dev, DMA_32BIT_MASK))) {
- 				/* Gracefully fallback to shared memory */
- 				goto busmasterfail;
- 			}
-
---===============4874520910844975==
+--===============74947562638272469==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +31,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4874520910844975==--
+--===============74947562638272469==--
