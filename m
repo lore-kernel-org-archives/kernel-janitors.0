@@ -1,84 +1,48 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Tue, 21 Sep 2004 07:39:45 +0000
-Subject: Re: [Kernel-janitors] [PATCH -mm 2/9] pci_find_device to
-Message-Id: <20040921083945.B20511@infradead.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 20 Sep 2004 21:50:26 +0000
+Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 4/17] media/cx88-tvaudio:
+Message-Id: <20040920215026.GK2270@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============31287619324090876=="
+Content-Type: multipart/mixed; boundary="===============72586492983493089=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1095749555.3790.85.camel@sfeldma-mobl2.dsl-verizon.net>
-In-Reply-To: <1095749555.3790.85.camel@sfeldma-mobl2.dsl-verizon.net>
 To: kernel-janitors@vger.kernel.org
 
---===============31287619324090876==
+--===============72586492983493089==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Sep 20, 2004 at 11:52:35PM -0700, Scott Feldman wrote:
-> Use pci_get_device instead of pci_find_device as pci device returned
-> from pci_find_device can disappear at any momemt in time.
+Sorry this should have been 5/17.
 
-This driver doesn't even compile.  Please don't mess with it as that'd
-only make my pending removal patch not apply anymore.
-
-BTW, any chance to mention the drivers you touch in your subject lines?
-
+On Mon, Sep 20, 2004 at 02:50:02PM -0700, Nishanth Aravamudan wrote:
+> Any comments would be appreciated.
 > 
-> Signed-off-by: Scott Feldman <sfeldma@pobox.com>
+> Description: Use msleep_interruptible() instead of schedule_timeout() to
+> guarantee the task delays as expected.
 > 
-> diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/fc/iph5526.c linux-2.6.9-rc2-mm1-dsf/drivers/net/fc/iph5526.c
-> --- linux-2.6.9-rc2-mm1/drivers/net/fc/iph5526.c	2004-08-14 03:54:51.000000000 -0700
-> +++ linux-2.6.9-rc2-mm1-dsf/drivers/net/fc/iph5526.c	2004-09-20 22:43:58.022996008 -0700
-> @@ -3711,7 +3711,7 @@ int iph5526_detect(Scsi_Host_Template *t
->  		fc[i] = NULL;
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.9-rc1-mm4-vanilla/drivers/media/video/cx88/cx88-tvaudio.c	2004-09-09 23:05:26.000000000 -0700
+> +++ 2.6.9-rc1-mm4/drivers/media/video/cx88/cx88-tvaudio.c	2004-09-13 14:26:23.000000000 -0700
+> @@ -49,6 +49,7 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/init.h>
+>  #include <linux/smp_lock.h>
+> +#include <linux/delay.h>
 >  
->  	for (i = 0; clone_list[i].vendor_id != 0; i++)
-> -	while ((pdev = pci_find_device(clone_list[i].vendor_id, clone_list[i].device_id, pdev))) {
-> +	while ((pdev = pci_get_device(clone_list[i].vendor_id, clone_list[i].device_id, pdev))) {
->  		unsigned short pci_command;
->  		if (pci_enable_device(pdev))
->  			continue;
-> @@ -3719,12 +3719,14 @@ int iph5526_detect(Scsi_Host_Template *t
->  			fc[count] = kmalloc(sizeof(struct fc_info), GFP_ATOMIC);
->  			if (fc[count] == NULL) {
->  				printk("iph5526.c: Unable to register card # %d\n", count + 1);
-> +				pci_dev_put(pdev);
->  				return no_of_hosts;
->  			}
->  			memset(fc[count], 0, sizeof(struct fc_info));
->  		}
->  		else {
->  			printk("iph5526.c: Maximum Number of cards reached.\n");
-> +			pci_dev_put(pdev);
->  			return no_of_hosts;
->  		}
->  			
-> @@ -3734,6 +3736,7 @@ int iph5526_detect(Scsi_Host_Template *t
->  		host = scsi_register(tmpt, sizeof(struct iph5526_hostdata));
->  		if(host==NULL) {
->  			kfree(fc[count]);
-> +			pci_dev_put(pdev);
->  			return no_of_hosts;
->  		}
->  			
-> @@ -3807,6 +3810,7 @@ int iph5526_detect(Scsi_Host_Template *t
->  				clean_up_memory(fi);
->  			kfree(fc[count]);
->  			fc[count] = NULL;
-> +			pci_dev_put(pdev);
+>  #include "cx88.h"
+>  
+> @@ -785,8 +786,7 @@ int cx88_audio_thread(void *data)
+>  	dprintk("cx88: tvaudio thread started\n");
+>  
+>  	for (;;) {
+> -		set_current_state(TASK_INTERRUPTIBLE);
+> -		schedule_timeout(HZ*3);
+> +		msleep_interruptible(3000);
+>  		if (signal_pending(current))
 >  			break;
->  		}
->  		DPRINTK1("Fibre Channel card initialized");
-> 
-> 
+>  		if (dev->shutdown)
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
----end quoted text---
-
---===============31287619324090876==
+--===============72586492983493089==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -89,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============31287619324090876==--
+--===============72586492983493089==--
