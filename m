@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 21 Jul 2004 21:13:36 +0000
+Date: Wed, 21 Jul 2004 21:16:53 +0000
 Subject: [Kernel-janitors] [PATCH] bluetooth: replace schedule_timeout() with
-Message-Id: <20040721211335.GF1906@us.ibm.com>
+Message-Id: <20040721211652.GH1906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54562303369388698=="
+Content-Type: multipart/mixed; boundary="===============68703482452529518=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040720181806.GF2320@us.ibm.com>
 In-Reply-To: <20040720181806.GF2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============54562303369388698==
+--===============68703482452529518==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -43,38 +43,29 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/bluetooth/bluecard_cs.c	2004-06-16 05:19:22.000000000 +0000
-+++ linux-dev/drivers/bluetooth/bluecard_cs.c	2004-07-21 20:52:07.000000000 +0000
-@@ -34,6 +34,7 @@
+--- linux-vanilla/drivers/bluetooth/btuart_cs.c	2004-06-16 05:20:26.000000000 +0000
++++ linux-dev/drivers/bluetooth/btuart_cs.c	2004-07-21 16:54:09.000000000 +0000
+@@ -32,7 +32,7 @@
+ #include <linux/ptrace.h>
  #include <linux/ioport.h>
  #include <linux/spinlock.h>
- #include <linux/skbuff.h>
+-
 +#include <linux/delay.h>
- #include <asm/io.h>
- 
- #include <pcmcia/version.h>
-@@ -776,8 +777,7 @@ int bluecard_open(bluecard_info_t *info)
- 	outb(0x80, iobase + 0x30);
- 
- 	/* Wait some time */
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ / 100);
-+	msleep(100);
- 
- 	/* Turn FPGA on */
- 	outb(0x00, iobase + 0x30);
-@@ -823,8 +823,7 @@ int bluecard_open(bluecard_info_t *info)
- 	outb((0x0f << RTS_LEVEL_SHIFT_BITS) | 1, iobase + REG_RX_CONTROL);
+ #include <linux/skbuff.h>
+ #include <linux/string.h>
+ #include <linux/serial.h>
+@@ -545,8 +545,7 @@ int btuart_open(btuart_info_t *info)
+ 	btuart_change_speed(info, DEFAULT_BAUD_RATE);
  
  	/* Timeout before it is safe to send the first HCI packet */
 -	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout((HZ * 5) / 4);		// or set it to 3/2
-+	msleep(1250);
+-	schedule_timeout(HZ);
++	msleep(1000);
  
  	/* Register HCI device */
  	if (hci_register_dev(hdev) < 0) {
 
---===============54562303369388698==
+--===============68703482452529518==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -85,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54562303369388698==--
+--===============68703482452529518==--
