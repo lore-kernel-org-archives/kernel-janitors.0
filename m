@@ -1,39 +1,58 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Sun, 06 Mar 2005 19:38:40 +0000
+From: Eamonn Lachlan <eol@boo.st>
+Date: Mon, 07 Mar 2005 00:17:38 +0000
 Subject: Re: [KJ] kernel-parameters.txt
-Message-Id: <422B5C40.1020706@osdl.org>
+Message-Id: <20050307001741.4AB1C24135@boo.st>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============29743335891817746=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <422A58AB.8040601@osdl.org>
 In-Reply-To: <422A58AB.8040601@osdl.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Eamonn Lachlan wrote:
-> Randy Dunlap wrote:
-> 
->>I just noticed that "kstack=" is not documented in
->>Documentation/kernel-parameters.txt.
->>
->>It would be a Good Thing is someone would check for
->>kernel parameters/options that are missing from
->>kernel-parameters.txt and add them...
-> 
-> 
-> I'll try to sort that out. Thanks, Randy.
+--===============29743335891817746==
 
-Drat.  I just noticed that there is a file for x64-64 that
-contains boot options:
-Documentation/x86_64/boot-options.txt
+Randy wrote:
+>
+>  ... [Documentation/x86_64/boot-options.txt]
+> should be merged into kernel-parameters.txt,
+> with indications that they are X86-64 only.
 
-which is too bad IMO, that should be merged into
-kernel-parameters.txt, with indications that they are
-X86-64 only.
+I'll have a look at merging the two files first, then,
+alright?
 
--- 
-~Randy
+A quick grep of the arch trees in 2.6.11 says there are 
+
+   1 arch/alpha       1 arch/ppc
+  11 arch/arm         9 arch/ppc64
+   5 arch/arm26       5 arch/s390
+  21 arch/i386        4 arch/sh
+  12 arch/ia64        2 arch/sh64
+   1 arch/m32r        1 arch/sparc
+   3 arch/mips        8 arch/um
+   2 arch/parisc     22 arch/x86_64
+
+so many occurences of "__setup(".
+
+But in the kernel-parameters.txt file, I only see only
+four params with a PPC* arch flag where I would expect
+to find ten.
+
+There seem to be a lot missing. :)
+
+Should I hunt the missing params down in their arch trees
+and add them in?
+
+e.
+
+--===============29743335891817746==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============29743335891817746==--
