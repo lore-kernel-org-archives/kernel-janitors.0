@@ -1,8 +1,10 @@
-From: "sun" <strongstart@163.com>
-Date: Fri, 16 Apr 2004 05:50:46 +0000
+From: "chuntian" <chuntian@yahoo.com>
+Date: Mon, 19 Apr 2004 12:17:57 +0000
 Subject: =?GB2312?B?tPPQzUVSUNS0tPrC67Ostc2827jx16rIww==?=
-Message-Id: <E1BEMGR-0006OF-9T@sc8-sf-mx2.sourceforge.net>
+Message-Id: <E1BFXjR-0004KU-WF@sc8-sf-mx1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1BEMGR-0006OF-9T@sc8-sf-mx2.sourceforge.net>
+In-Reply-To: <E1BEMGR-0006OF-9T@sc8-sf-mx2.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="gb2312"
 Content-Transfer-Encoding: base64
