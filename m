@@ -1,40 +1,56 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:29 +0000
-Subject: [KJ] [PATCH][11/26] drivers/net/* - compile warning cleanup
-Message-Id: <420BEF85.8267.587727@localhost>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 22:03:44 +0000
+Subject: [KJ] [PATCH 15/20] sound/seq_oss_writeq: remove
+Message-Id: <20050202220344.GU2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45731632197171024=="
+Content-Type: multipart/mixed; boundary="===============090495420896140377=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============45731632197171024==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============090495420896140377==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - silence compiler warning for 
-unused function that is either actually used as a driver function in a 
-table or is truly unused
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Please consider applying.
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/net/ibmlana.c linux-2.6.11-rc3-mm/drivers/net/ibmlana.c
---- linux-2.6.11-rc3-mm-original/drivers/net/ibmlana.c	2005-02-07 16:32:20.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/net/ibmlana.c	2005-02-08 18:09:49.000000000 +0200
-@@ -901,7 +901,7 @@ static void ibmlana_set_multicast_list(s
+Description: Remove deprecated interruptible_sleep_on_timeout() function call
+and replace with direct wait-queue usage. Patch is compile-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/sound/core/seq/oss/seq_oss_writeq.c	2005-01-24 09:28:58.000000000 -0800
++++ 2.6.11-rc2-kj/sound/core/seq/oss/seq_oss_writeq.c	2005-02-01 16:15:50.000000000 -0800
+@@ -26,6 +26,7 @@
+ #include <sound/seq_oss_legacy.h>
+ #include "../seq_lock.h"
+ #include "../seq_clientmgr.h"
++#include <linux/wait.h>
  
- static int startslot;		/* counts through slots when probing multiple devices */
  
--static int ibmlana_probe(struct net_device *dev)
-+static int __attribute__((__unused__)) ibmlana_probe(struct net_device *dev)
+ /*
+@@ -89,6 +90,7 @@ snd_seq_oss_writeq_clear(seq_oss_writeq_
+ int
+ snd_seq_oss_writeq_sync(seq_oss_writeq_t *q)
  {
- 	int slot, z;
- 	int base = 0, irq = 0, iobase = 0, memlen = 0;
++	DEFINE_WAIT(wait);
+ 	seq_oss_devinfo_t *dp = q->dp;
+ 	abstime_t time;
+ 	unsigned long flags;
+@@ -123,7 +125,9 @@ snd_seq_oss_writeq_sync(seq_oss_writeq_t
+ 		
+ 	/* wait for echo event */
+ 	spin_unlock(&q->sync_lock);
+-	interruptible_sleep_on_timeout(&q->sync_sleep, HZ);
++	prepare_to_wait(&q->sync_sleep, &wait, TASK_INTERRUPTIBLE);
++	schedule_timeout(HZ);
++	finish_wait(&q->sync_sleep, &wait);
+ 	spin_lock(&q->sync_lock);
+ 	if (signal_pending(current)) {
+ 		/* interrupted - return 0 to finish sync */
 
-
-
-
---===============45731632197171024==
+--===============090495420896140377==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45731632197171024==--
+--===============090495420896140377==--
