@@ -1,44 +1,51 @@
-From: Stefan Sperling <stefan@binarchy.net>
-Date: Tue, 09 Nov 2004 21:35:24 +0000
-Subject: [KJ] [PATCH] convert orinoco_cs wireless driver to module_param
-Message-Id: <20041109213524.GG9496@dice.seeling33.de>
+From: "Chasidy Inez" <yxzc76spom@softhome.net>
+Date: Thu, 04 Nov 2004 17:53:47 +0000
+Subject: AD0BE PH0TOSH0P $8O. XP PR0 $5O, 0FFICE 2003 $8O.  0FFICE XP $100, NORT0N 2004 $15 picket cyperus st
+Message-Id: <u2bexqjdeu9w2k83zf1f6xyxzc76spom@softhome.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50182161660871438=="
+Content-Type: multipart/mixed; boundary="--3652160320.05780008800.430"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============50182161660871438==
+----3652160320.05780008800.430
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+wherefore firework exclude excavator victory 
+gamic occupied honor deos bellpull 
+jacksmelt precocity gunmen guaranty drizzling dignitate 
+
+----3652160320.05780008800.430
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
+</head>
+<body><font color=FF9F9F size=1>trace victories ossa  axon shamanism gloominess appanage fearful unwisely janty sideshow hertzian  chipmunk dipylon perching sicily memoir calced sculpt chihuahua presuppose deflector </font><br>
+<table border=1 cellspacing=1 cellpadding=10 width=630 bordercolor=ffffff>
+<tr><td bgcolor=FFFBFF bordercolor=000000>
+<font color=000000 size=2 face=arial>
+<center><font color=EC0000 size=5 face=arial><b>Super CHEAAP Softwares & Shiip to All Countries</b></font><br>We have every POPULAR softwares u NEED!<br><font color=009700 size=3><b>You name it & we got it!</b></font></center><br>
+<b>Micros0ft Windows XP Professional</b> - <font color=1C8DFF><b>my price: $5O</b> ; </font> normal : $299.OO ; <font color=AAAA00><b>you saave $249.OO</b></font><br>
+<b>Ad0be Acrobat v6.O Professional PC</b> - <font color=1C8DFF><b>my price: $1OO</b> ; </font> normal : $449.95 ; <font color=AAAA00><b>you saave $349.95</b></font><br>& more more more softwares to choose from<br><br>
+<font color=000000 size=2>We do have full range softwares : <font size=2 color=FF9191><b>Ad0be, Alias Maya, Autodesk, Borland, Corel, Crystal Reports. Executive, File maker, Intuit, Mac, 321Studios, Macrmedia, Mc/\fee, Micros0ft. Nero, Pinnacle Systems, PowerQuest, Quark, Red Hat, Riverdeep, Roxio, Symantec, VMware Softwares</b></font> & 320 More P0PULAR titles F0R you<br><br><a href=http://www.saracenwhirligig.org.ck.youhavegot.com target=_blank><font color=0000F4 size=5 face=arial><u><center>Checkk out 320 more popu1ar softwares on our site<br>Guaaranteed SUPER L0W PR1CE<br><br><font size=6><b>=== C|ick here to check out ===</b></font></u></font></a><br></center>
+</font>
+</td></tr></table><font color=FF9F9F size=1>banzai dickybird expiry quillet corso vilnius droop russian reversely scaup </font>
+</body>
+</html>
+
+----3652160320.05780008800.430--
 
 
-Replaces MODULE_PARM with module_param calls in orinoco_cs wireless driver.
 
---- drivers/net/wireless/orinoco_cs.c.orig	2004-11-09 20:40:22.020919624 +0100
-+++ drivers/net/wireless/orinoco_cs.c	2004-11-08 23:10:34.000000000 +0100
-@@ -64,9 +64,9 @@ static int irq_list[4] = { -1 };
-  * don't have any CIS entry for it. This workaround it... */
- static int ignore_cis_vcc; /* = 0 */
- 
--MODULE_PARM(irq_mask, "i");
--MODULE_PARM(irq_list, "1-4i");
--MODULE_PARM(ignore_cis_vcc, "i");
-+module_param(irq_mask, uint, 0444);
-+module_param_array(irq_list, int, NULL, 0444);
-+module_param(ignore_cis_vcc, bool, 0644);
- 
- /********************************************************************/
- /* Magic constants						    */
-
---===============50182161660871438==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by:
+Sybase ASE Linux Express Edition - download now for FREE
+LinuxWorld Reader's Choice Award Winner for best database on Linux.
+http://ads.osdn.com/?ad_id=5588&alloc_id=12065&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============50182161660871438==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
