@@ -1,53 +1,85 @@
-From: "cedrick baker" <emmiecaisse@maktoob.com>
-Date: Sun, 18 Apr 2004 12:42:47 +0000
-Subject: Be Young Again
-Message-Id: <7969561D.C3BABCC@maktoob.com>
+From: "Numbers Ginny" <orgmyo78orjz@ware.net>
+Date: Mon, 05 Apr 2004 02:58:38 +0000
+Subject: Hey Heyy.. Original Softwares At Only 25 Each
+Message-Id: <2dl5q4hc8df51-9mj3yf-lupj2dorgmyo78orjz@ware.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="31401237924855768"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<HTML>
-&quot;Discover...in the next few minutes... regardless of your age, sex, or
-current 
-health status, how this common element can change the way you experience
-the 
-next half of your life.&quot;<br>
-<br><a href="http://www.donotmisstoday.com/a/">Learn how to increase your
-quality of 
-life</a>
-<p><font face="Arial" size="2">&quot;We really have something 
-here which may be able to reverse some of the problems associated with
-aging.&quot;<br></font>
-<font face="Arial" size="1"><i>-Dr.Anthony Karpos, M.D.</i></font></p>
-<br>
-<br>
-<br>
------original message-----<br>
-From: flossie@k.com [mailto:inez@q.com]<br>
-Sent: Friday, March 0, 2004 5:37PM<br>
-To: sharonda; eleni@q.com; wendi; consuela; alexia<br>
-Subject: <a href="http://www.donotmisstoday.com/a/">appreciate but no thank
-you PO 12 00 B , Oran ge sta d, A ruba</a><br>
-<br>
-<br>
-Therefore, that you may judge all your fellow-creatures truly, and know
-upon whom to depend, I give you the Character Marker
-It consists of this pair of spectacles
-<br>
-<br>While you wear them every one you meet will be marked upon the forehead
-with a letter indicating his or her characterThe good will bear the letter
-'G,' the evil the letter 'E
-</FONT></HTML>
+--31401237924855768
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
+grapes pyocyanin predispose definite hooch lecherous unaffixed gastropod csociality notre expiation commentary 
+nude freetail fishing 
+adolescent gekkonidae lopsidedly pipelaying crinoline screening tinkling akaryocyte glare deictic comical prayer lampshade lemuridae skyward 
+
+--31401237924855768
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=us-ascii">
+</head>
+<body>
+<center>
+<font color=FFFFEE style="font-family: arial; font-size: 1pt;">mooring monstrance margarin condom navigation boldness . oleagine cubism fratrum girder roadblock timbre lemna griping penology sacris wahabi mutum . sienna seer unimodal mameluke mullet abdomen coigue blossoms arabian lovingness . wassail fifer chester agrostemma walbiri lulld grenadine stiffening phagocyte brahmanism fixedly spinster vagile slagheap lunation .</font>
+<table border=0 cellspacing=0 cellpadding=30 width=655>
+<tr><td bgcolor=8C8CEB align=center>
+<font size=5 face=tahoma color=ffff00><b>C-h-e-a=p Soft-war-e at Damn L0W PR1CE </b></font><br>
+<table border=0 cellspacing=0 cellpadding=20 width=615>
+<tr><td bgcolor=FACD33 align=center>
+<table border=1 cellspacing=0 cellpadding=10 width=595 bordercolor=000000>
+<tr><td bgcolor=FFFFFF>
+<font color=FF3E3E size=4 face=arial>Hello friends, hope you can find cheeap soft on our site! In our archive you can find a lot of popular programs: Adobe PhotoShop CS 8.0 only for 40.00, Autodesk Building Systems 2004 (2 cds) for 40.00, Borland C++ Builder 6 Enterprise for 40.00, Corel Draw 11 Graphic Suite SP1 (5 cds) only for 50.00, Catia 5 R12 P3 with SP2 (3 cds) 50.00, Finale 2004 (1 cd) 40.00.... and a lot of more....If you want see list with all our programs click on "P r i c e L i s t", or choose category which you want. </font><br><br>
+<font color=2020FF face=arial size=4>
+<font color=000000 size=4>Categories we have for now - over 328 expensive softwares to blast off</font><br>
+Audio (Music) <font size=1 color=7F7F7F>(75 popular softwares)</font><br>
+Internet <font size=1 color=7F7F7F>(126 popular softwares)</font><br>
+Games <font size=1 color=7F7F7F>(102 popular softwares)</font><br>
+Business <font size=1 color=7F7F7F>(31 popular softwares)</font><br>
+IS/IT <font size=1 color=7F7F7F>(72 popular softwares)</font><br>
+Mobile, Palm, Pocket <font size=1 color=7F7F7F>(21 popular softwares)</font><br>
+Design, Photo, Flash, Media,Illustration <font size=1 color=7F7F7F>(89 popular softwares)</font><br>
+Web Developer <font size=1 color=7F7F7F>(56 popular softwares)</font><br>
+Software Developer <font size=1 color=7F7F7F>(45 popular softwares)</font><br>
+Utilities, Drivers, Antivirus, Security <font size=1 color=7F7F7F>(39 popular softwares)</font><br>
+Desktop Enhancements <font size=1 color=7F7F7F>(28 popular softwares)</font><br>
+Home & Education <font size=1 color=7F7F7F>( 23 popular softwares)</font><br>
+3D Studio, Adobe, Maya... Plugins <font size=1 color=7F7F7F>(50 popular softwares)</font><br>
+Video <font size=1 color=7F7F7F>(33 popular softwares)</font><br>
+CAD/CAM <font size=1 color=7F7F7F>(12 popular softwares)</font><br>
+Mac <font size=1 color=7F7F7F>(52 popular softwares)</font><br>
+& many more latest released softwares, DON'T MISS IT!
+</b></font><br><br>
+<font color=000000 size=3 face=arial>
+<b>You may pur- chase these softwares in 3 ways:</b><br>
+i) download from server (immediate download after payment)<br>
+ii) we ship you physical CDs<br>
+iii) [both of above (i) & (ii)] download from our server & we ship you the physical CDs as backup for ur future re-installation<br><br>
+</font>
+<center>
+<b><a href=http://drs.yahoo.com/myofibrillimicolae/*%68ttp://militant.londonsoft.biz/index.php?target=price target=_blank><u><font color=0000FF size=4 face=arial><b>Each software offer will end after 10 copies sold<br><br>The one & only cheap softwares bargain site on web<br><br>Donnt M-i-s-s these GREAT offfers!<br><br><font size=5>C-L-I-C-K &nbsp; H-E-R-E TO GET ONE TODAY</font></b></font></u></a><br>
+<a href=http://drs.yahoo.com/foregone/*%68ttp://kurrajong.londonsoft.biz/a.php target=_blank><font size=1 face=arial>r m v</font></a>
+</font>
+</center>
+</td></tr></table>
+</td></tr></table>
+</td></tr></table>
+</center>
+</body>
+</html>
+
+--31401237924855768--
 
 
 -------------------------------------------------------
 This SF.Net email is sponsored by: IBM Linux Tutorials
 Free Linux tutorial presented by Daniel Robbins, President and CEO of
 GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id70&alloc_id638&op=click
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
