@@ -1,37 +1,55 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 20 Sep 2004 22:04:13 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 13/17] media/saa7134-ts: replace
-Message-Id: <20040920220413.GS2270@us.ibm.com>
+From: Scott Feldman <sfeldma@pobox.com>
+Date: Tue, 21 Sep 2004 06:52:46 +0000
+Subject: [Kernel-janitors] [PATCH -mm 3/9] pci_find_device to pci_get_device
+Message-Id: <1095749566.3790.87.camel@sfeldma-mobl2.dsl-verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68557932626440254=="
+Content-Type: multipart/mixed; boundary="===============51067825638530762=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============68557932626440254==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============51067825638530762==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Any comments would be appreciated.
+Use pci_get_device instead of pci_find_device as pci device returned
+from pci_find_device can disappear at any momemt in time.
 
-Description: Use msleep_interruptible() instead of schedule_timeout()
-to guarantee the task delays as expected.
+Signed-off-by: Scott Feldman <sfeldma@pobox.com>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc2-vanilla/drivers/media/video/saa7134/saa7134-ts.c	2004-09-13 17:15:39.000000000 -0700
-+++ 2.6.9-rc2/drivers/media/video/saa7134/saa7134-ts.c	2004-09-20 10:03:35.000000000 -0700
-@@ -176,8 +176,7 @@ static void ts_reset_encoder(struct saa7
- 	saa_writeb(SAA7134_SPECIAL_MODE, 0x00);
- 	mdelay(10);
-    	saa_writeb(SAA7134_SPECIAL_MODE, 0x01);
--   	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ/10);
-+   	msleep_interruptible(100);
+diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/gt96100eth.c linux-2.6.9-rc2-mm1-dsf/drivers/net/gt96100eth.c
+--- linux-2.6.9-rc2-mm1/drivers/net/gt96100eth.c	2004-09-20 22:35:32.000000000 -0700
++++ linux-2.6.9-rc2-mm1-dsf/drivers/net/gt96100eth.c	2004-09-20 22:39:02.320949552 -0700
+@@ -617,9 +617,9 @@ static int gt96100_init_module(void)
+ 	/*
+ 	 * Stupid probe because this really isn't a PCI device
+ 	 */
+-	if (!(pci = pci_find_device(PCI_VENDOR_ID_MARVELL,
++	if (!(pci = pci_get_device(PCI_VENDOR_ID_MARVELL,
+ 	                            PCI_DEVICE_ID_MARVELL_GT96100, NULL)) &&
+-	    !(pci = pci_find_device(PCI_VENDOR_ID_MARVELL,
++	    !(pci = pci_get_device(PCI_VENDOR_ID_MARVELL,
+ 		                    PCI_DEVICE_ID_MARVELL_GT96100A, NULL))) {
+ 		printk(KERN_ERR __FILE__ ": GT96100 not found!\n");
+ 		return -ENODEV;
+@@ -629,12 +629,14 @@ static int gt96100_init_module(void)
+ 	if (cpuConfig & (1<<12)) {
+ 		printk(KERN_ERR __FILE__
+ 		       ": must be in Big Endian mode!\n");
++		pci_dev_put(pci);
+ 		return -ENODEV;
+ 	}
+ 
+ 	for (i=0; i < NUM_INTERFACES; i++)
+ 		retval |= gt96100_probe1(pci, i);
+ 
++	pci_dev_put(pci);
+ 	return retval;
  }
  
- static int ts_init_encoder(struct saa7134_dev* dev, void* arg) 
 
---===============68557932626440254==
+
+
+--===============51067825638530762==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============68557932626440254==--
+--===============51067825638530762==--
