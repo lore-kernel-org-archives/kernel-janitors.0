@@ -1,39 +1,35 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 24 Sep 2004 23:06:39 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/3] parport/ieee1284: replace
-Message-Id: <20040924230639.GB1757@us.ibm.com>
+Date: Mon, 27 Sep 2004 23:09:23 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/3] video/radeon_base: replace
+Message-Id: <20040927230923.GT1617@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41676146166609951=="
+Content-Type: multipart/mixed; boundary="===============40089322394248783=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040916231114.GE1777@us.ibm.com>
 In-Reply-To: <20040916231114.GE1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============41676146166609951==
+--===============40089322394248783==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Use msleep_interruptible() instead of schedule_timeout() to
-guarantee the task delays as expected.
+Description: Use msecs_to_jiffies() instead of the custom MS_TO_HZ().
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc1-mm4-vanilla/drivers/parport/ieee1284.c	2004-09-09 23:05:51.000000000 -0700
-+++ 2.6.9-rc1-mm4/drivers/parport/ieee1284.c	2004-09-10 15:31:36.000000000 -0700
-@@ -216,8 +216,7 @@ int parport_wait_peripheral(struct parpo
- 			/* parport_wait_event didn't time out, but the
- 			 * peripheral wasn't actually ready either.
- 			 * Wait for another 10ms. */
--			__set_current_state (TASK_INTERRUPTIBLE);
--			schedule_timeout ((HZ+ 99) / 100);
-+			msleep_interruptible(10);
+--- 2.6.9-rc2-vanilla/drivers/video/aty/radeon_base.c	2004-09-13 17:15:37.000000000 -0700
++++ 2.6.9-rc2/drivers/video/aty/radeon_base.c	2004-09-14 14:13:47.000000000 -0700
+@@ -1286,7 +1286,7 @@ static void radeon_write_mode (struct ra
+ 					OUTREG(LVDS_GEN_CNTL, mode->lvds_gen_cntl | LVDS_BLON);
+ 				rinfo->pending_lvds_gen_cntl = mode->lvds_gen_cntl;
+ 				mod_timer(&rinfo->lvds_timer,
+-					  jiffies + MS_TO_HZ(rinfo->panel_info.pwr_delay));
++					  jiffies + msecs_to_jiffies(rinfo->panel_info.pwr_delay));
+ 			}
  		}
  	}
- 
 
---===============41676146166609951==
+--===============40089322394248783==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============41676146166609951==--
+--===============40089322394248783==--
