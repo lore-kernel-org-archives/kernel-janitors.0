@@ -1,56 +1,46 @@
-From: james4765@verizon.net
-Date: Thu, 28 Oct 2004 15:01:05 +0000
-Subject: [KJ] [PATCH 6/9] to arch/sparc/Kconfig
-Message-Id: <20041028150104.2776.45930.45727@localhost.localdomain>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Fri, 01 Oct 2004 18:11:12 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 sba_iommu.c] Replace
+Message-Id: <112650000.1096654272@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82986422693347939=="
+Content-Type: multipart/mixed; boundary="===============60783168850672142=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041028150029.2776.69333.50087@localhost.localdomain>
-In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
-To: kernel-janitors@lists.osdl.org
-Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, davidm@hpl.hp.com, hannal@us.ibm.com
 
---===============82986422693347939==
+--===============60783168850672142==
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Description: Remove x86-specific help in arch/sparc/Kconfig.
-Apply against 2.6.9.
+As pci_find_device is going away soon I have replaced the call with pci_get_device.
+Judith, could you run these 3 ia64 ones through PLM, please? This should complete the
+arch/ia64 conversion.
 
-Signed-off by: James Nelson <james4765@gmail.com>
+Thanks a lot.
 
-diff -u ./arch/sparc/Kconfig.orig ./arch/sparc/Kconfig
---- ./arch/sparc/Kconfig.orig	2004-10-16 09:53:49.626021592 -0400
-+++ ./arch/sparc/Kconfig	2004-10-16 10:02:10.724152771 -0400
-@@ -85,8 +85,8 @@
- 	depends on BROKEN
- 	---help---
- 	  This enables support for systems with more than one CPU. If you have
--	  a system with only one CPU, like most personal computers, say N. If
--	  you have a system with more than one CPU, say Y.
-+	  a system with only one CPU, say N. If you have a system with more
-+	  than one CPU, say Y.
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+
+diff -Nrup linux-2.6.9-rc1-mm5/arch/ia64/hp/common/sba_iommu.c linux-2.6.9-rc1-mm5patch/arch/ia64/hp/common/sba_iommu.c
+--- linux-2.6.9-rc1-mm5/arch/ia64/hp/common/sba_iommu.c	2004-09-14 16:25:34.000000000 -0700
++++ linux-2.6.9-rc1-mm5patch/arch/ia64/hp/common/sba_iommu.c	2004-09-21 15:27:16.000000000 -0700
+@@ -1556,7 +1556,7 @@ ioc_iova_init(struct ioc *ioc)
+ 	** We program the next pdir index after we stop w/ a key for
+ 	** the GART code to handshake on.
+ 	*/
+-	while ((device = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, device)) != NULL)
++	while ((device = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, device)) != NULL)
+ 		agp_found |= pci_find_capability(device, PCI_CAP_ID_AGP);
  
- 	  If you say N here, the kernel will run on single and multiprocessor
- 	  machines, but will use only one CPU of a multiprocessor machine. If
-@@ -94,17 +94,11 @@
- 	  singleprocessor machines. On a singleprocessor machine, the kernel
- 	  will run faster if you say N here.
- 
--	  Note that if you say Y here and choose architecture "586" or
--	  "Pentium" under "Processor family", the kernel will not work on 486
--	  architectures. Similarly, multiprocessor kernels for the "PPro"
--	  architecture may not work on all Pentium based boards.
--
- 	  People using multiprocessor machines who say Y here should also say
- 	  Y to "Enhanced Real Time Clock Support", below. The "Advanced Power
- 	  Management" code will be disabled if you say Y here.
- 
- 	  See also the <file:Documentation/smp.txt>,
--	  <file:Documentation/i386/IO-APIC.txt>,
- 	  <file:Documentation/nmi_watchdog.txt> and the SMP-HOWTO available at
- 	  <http://www.tldp.org/docs.html#howto>.
- 
+ 	if (agp_found && reserve_sba_gart) {
 
---===============82986422693347939==
+
+--===============60783168850672142==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82986422693347939==--
+--===============60783168850672142==--
