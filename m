@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 17:48:45 +0000
+Date: Mon, 26 Jul 2004 17:56:15 +0000
 Subject: [Kernel-janitors] [PATCH] dvb/ves1x93: replace schedule_timeout()
-Message-Id: <20040726174845.GP1897@us.ibm.com>
+Message-Id: <20040726175615.GV1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============050450228138090747=="
+Content-Type: multipart/mixed; boundary="===============80693719997564761=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040726174845.GP1897@us.ibm.com>
+In-Reply-To: <20040726174845.GP1897@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============050450228138090747==
+--===============80693719997564761==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -24,36 +26,28 @@ task delays the desired time.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/dvb/frontends/ves1x93.c	2004-06-16 05:18:58.000000000 +0000
-+++ linux-dev/drivers/media/dvb/frontends/ves1x93.c	2004-07-21 17:11:44.000000000 +0000
-@@ -28,6 +28,7 @@
- #include <linux/init.h>
- #include <linux/string.h>
- #include <linux/slab.h>
-+#include <linux/delay.h>
+--- linux-vanilla/drivers/media/dvb/ttpci/budget-ci.c	2004-06-16 05:18:58.000000000 +0000
++++ linux-dev/drivers/media/dvb/ttpci/budget-ci.c	2004-07-02 20:28:59.000000000 +0000
+@@ -326,7 +326,7 @@ static int ciintf_slot_reset(struct dvb_
+ 	saa7146_setgpio(saa, 0, SAA7146_GPIO_IRQHI);
+ 	budget_ci->slot_status = SLOTSTATUS_RESET;
+ 	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, 0);
+-	dvb_delay(1);
++	msleep(1);
+ 	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, CICONTROL_RESET);
  
- #include "dvb_frontend.h"
- #include "dvb_functions.h"
-@@ -253,7 +254,7 @@ static int ves1x93_clr_bit (struct dvb_i
- {
-         ves1x93_writereg (i2c, 0, init_1x93_tab[0] & 0xfe);
-         ves1x93_writereg (i2c, 0, init_1x93_tab[0]);
--	dvb_delay(5);
-+	msleep(5);
- 	return 0;
- }
+ 	saa7146_setgpio(saa, 1, SAA7146_GPIO_OUTHI);
+@@ -475,7 +475,7 @@ static void ciintf_deinit(struct budget_
+ 	saa7146_setgpio(saa, 0, SAA7146_GPIO_INPUT);
+ 	tasklet_kill(&budget_ci->ciintf_irq_tasklet);
+ 	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, 0);
+-	dvb_delay(1);
++	msleep(1);
+ 	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, CICONTROL_RESET);
  
-@@ -261,7 +262,7 @@ static int ves1x93_init_aquire (struct d
- {
-         ves1x93_writereg (i2c, 3, 0x00);
- 	ves1x93_writereg (i2c, 3, init_1x93_tab[3]);
--	dvb_delay(5);
-+	msleep(5);
- 	return 0;
- }
- 
+ 	// disable TS data stream to CI interface
 
---===============050450228138090747==
+--===============80693719997564761==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============050450228138090747==--
+--===============80693719997564761==--
