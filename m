@@ -1,98 +1,32 @@
-From: sebek64@post.cz (Marcel Sebek)
-Date: Sun, 19 Dec 2004 20:38:56 +0000
-Subject: [KJ] [PATCH] drivers/atm/he.c remove dead code
-Message-Id: <20041219203856.GA11391@penguin.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54991234222384566=="
+From: "Amos Crow" <amoscrow_cg@cims.cz>
+Date: Sun, 05 Dec 2004 01:55:27 +0000
+Subject: Cheap C1a.lis softtabs Online
+Message-Id: <8dae01c4da74$22e68748$3c5cf952@moderat.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============54991234222384566==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+<html>
+V|AG<kbvqyybweujbvdd>RA'S NEWEST R|<konumyfhfqjbeok>VAL C!AL|S HAS BEEN AROUND FOR A WHILE NOW <br><br>
+BUT IT HAS NE<kjezrydwypg>VER BEEN THIS CH<kusxzocymjunx>EAP!!!!!<br>
+0NLY  $3.<klclvyidcngcnvd>99 EACH <br>
+NOW AVAILABLE IN S0<kcxhqumcftuv>FT<kzeflamcrzvd>TABS<br>
+<a href="http://gsppgvbryzsqud.the-rxsite.com/cs/?z44">F|ND 0UT M0RE HE<kcgsqkuaasxjd>RE</a><br>
+<br><br><br><br><br><br><br><br>
 
-This patch removes dead code from drivers/atm/he.c, replaces custom
-debug printk with pr_debug and removes unneeded zero initializers.
-
-Compile tested.
-
-Signed-off-by: Marcel Sebek <sebek64@post.cz>
-
-Index: linux-2.6-kj/drivers/atm/he.c
-===================================================================
---- linux-2.6-kj.orig/drivers/atm/he.c	2004-12-04 14:00:13.000000000 +0100
-+++ linux-2.6-kj/drivers/atm/he.c	2004-12-19 21:15:08.080994460 +0100
-@@ -87,28 +87,6 @@
- #define USE_TPD_POOL
- /* #undef CONFIG_ATM_HE_USE_SUNI */
- 
--/* compatibility */
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,69)
--typedef void irqreturn_t;
--#define IRQ_NONE
--#define IRQ_HANDLED
--#define IRQ_RETVAL(x)
--#endif
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,9)
--#define __devexit_p(func)		func
--#endif
--
--#ifndef MODULE_LICENSE
--#define MODULE_LICENSE(x)
--#endif
--
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,3)
--#define pci_set_drvdata(pci_dev, data)	(pci_dev)->driver_data = (data)
--#define pci_get_drvdata(pci_dev)	(pci_dev)->driver_data
--#endif
--
- #include "he.h"
- 
- #include "suni.h"
-@@ -117,12 +95,7 @@ typedef void irqreturn_t;
- 
- #define hprintk(fmt,args...)	printk(KERN_ERR DEV_LABEL "%d: " fmt, he_dev->number , ##args)
- 
--#undef DEBUG
--#ifdef DEBUG
--#define HPRINTK(fmt,args...)	printk(KERN_DEBUG DEV_LABEL "%d: " fmt, he_dev->number , ##args)
--#else
--#define HPRINTK(fmt,args...)	do { } while (0)
--#endif /* DEBUG */
-+#define HPRINTK(fmt,args...)	pr_debug(DEV_LABEL "%d: " fmt, he_dev->number , ##args)
- 
- 
- /* version definition */
-@@ -147,13 +120,13 @@ static u8 read_prom_byte(struct he_dev *
- 
- /* globals */
- 
--struct he_dev *he_devs = NULL;
--static int disable64 = 0;
-+struct he_dev *he_devs;
-+static int disable64;
- static short nvpibits = -1;
- static short nvcibits = -1;
- static short rx_skb_reserve = 16;
- static int irq_coalesce = 1;
--static int sdh = 0;
-+static int sdh;
- 
- static struct atmdev_ops he_ops =
- {
+<a href="http://kfsufocppv.the-rxsite.com/rm.php?z44">re.m<knzocoqciifwaxc>0ve me</a><br>
+</html>
 
 
---===============54991234222384566==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now. 
+http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============54991234222384566==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
