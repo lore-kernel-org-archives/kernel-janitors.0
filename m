@@ -1,39 +1,54 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 14 Oct 2004 18:33:40 +0000
-Subject: [KJ] [PATCH] i2c/i2c-ibm_iic: replace schedule_timeout() with
-Message-Id: <20041014183340.GF2214@us.ibm.com>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Thu, 07 Oct 2004 23:10:06 +0000
+Subject: [Kernel-janitors] [PATCH 2.6][8/12] pmac_pci.c replace
+Message-Id: <31870000.1097190606@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95873424577520194=="
+Content-Type: multipart/mixed; boundary="===============75789459062469755=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, benh@kernel.crashing.org
 
---===============95873424577520194==
+--===============75789459062469755==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Any comments would be appreciated.
 
-Description: Use msleep_interruptible() instead of schedule_timeout() to
-guarantee the task delays as expected. Remove the unnecessary
-set_current_state() following the if, as schedule_timeout() [and thus,
-mlseep_interruptible()] is guaranteed to return in TASK_RUNNING.
+As pci_find_device is going away I've replaced it with pci_get_device.
+If someone with a PPC system could test it I would appreciate it.
 
---- 2.6.9-rc4-vanilla/drivers/i2c/busses/i2c-ibm_iic.c	2004-10-14 11:24:43.000000000 -0700
-+++ 2.6.9-rc4/drivers/i2c/busses/i2c-ibm_iic.c	2004-10-14 11:30:08.000000000 -0700
-@@ -416,10 +416,8 @@ static int iic_wait_for_tc(struct ibm_ii
-     		init_waitqueue_entry(&wait, current);
- 		
- 		add_wait_queue(&dev->wq, &wait);
--		set_current_state(TASK_INTERRUPTIBLE);
- 		if (in_8(&iic->sts) & STS_PT)
--			schedule_timeout(dev->adap.timeout * HZ);
--		set_current_state(TASK_RUNNING);
-+			msleep_interruptible(dev->adap.timeout * 1000);
- 		remove_wait_queue(&dev->wq, &wait);
- 		
- 		if (unlikely(signal_pending(current))){
+Thanks.
 
---===============95873424577520194==
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/pmac_pci.c linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/pmac_pci.c
+--- linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/pmac_pci.c	2004-10-07 15:54:30.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/pmac_pci.c	2004-10-07 16:01:41.000000000 -0700
+@@ -889,7 +889,7 @@ pcibios_fixup_OF_interrupts(void)
+ 	 * should find the device node and apply the interrupt
+ 	 * obtained from the OF device-tree
+ 	 */
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		struct device_node *node;
+ 		node = pci_device_to_OF_node(dev);
+ 		/* this is the node, see if it has interrupts */
+@@ -989,7 +989,7 @@ pmac_pcibios_after_init(void)
+ 	 *
+ 	 * -- BenH
+ 	 */
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		if ((dev->class >> 16) == PCI_BASE_CLASS_STORAGE)
+ 			pci_enable_device(dev);
+ 	}
+
+
+--===============75789459062469755==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95873424577520194==--
+--===============75789459062469755==--
