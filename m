@@ -1,43 +1,44 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Tue, 13 Jul 2004 01:55:39 +0000
+From: Roger Luethi <rl@hellgate.ch>
+Date: Tue, 13 Jul 2004 10:53:00 +0000
 Subject: Re: [Kernel-janitors] [PATCH] remove check_region specialix
-Message-Id: <20040712185539.66507169.rddunlap@osdl.org>
+Message-Id: <20040713105259.GA30087@k3.hellgate.ch>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71064084214532652=="
+Content-Type: multipart/mixed; boundary="===============21088346782117684=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200407072024.i67KOdQM017410@sirius.cs.pdx.edu>
 In-Reply-To: <200407072024.i67KOdQM017410@sirius.cs.pdx.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============71064084214532652==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============21088346782117684==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 12 Jul 2004 09:11:51 -0700 (PDT) Kristen Carlson wrote:
+On Mon, 12 Jul 2004 18:55:39 -0700, Randy.Dunlap wrote:
+> This is my 'dryrun' script:
+> 
+> #! /bin/sh
+> patch -sp1 --dry-run -i $1 $2 $3 $4 $5 $6 $7 $8 $9
 
-| Thanks!  For my benefit, what's the easiest way to check for trailing spaces?
-| I thought I had gotten all of them by just looking at the patch and noting
-| which lines shouldn't have needed modifications but I obviously missed some,
-| especially on the lines that I was modifying anyway.  Do you have a more 
-| foolproof method?
+What are all these arguments meant for? Why not $@?
 
+> echo "===== trailing spaces? ====="
+> grep -n "^+.* $" $1 | more
 
-Every time that I apply a patch (similar to what max suggested),
-I have a script that does 'patch --dry-run' and also greps for
-trailing spaces.
+How about
+grep -n '^+.*[[:space:]]$'
+instead? Catches trailing tabs as well. And yes, there are plenty of those
+in the kernel.
 
-This is my 'dryrun' script:
+I notice whitespace problems when I review the code anyway, but script
+users should also try and catch these:
 
-#! /bin/sh
-patch -sp1 --dry-run -i $1 $2 $3 $4 $5 $6 $7 $8 $9
-echo "===== trailing spaces? ====="
-grep -n "^+.* $" $1 | more
+  	f();
+should really be
+	f();
 
+Roger
 
---
-~Randy
-
---===============71064084214532652==
+--===============21088346782117684==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============71064084214532652==--
+--===============21088346782117684==--
