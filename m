@@ -1,58 +1,57 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 29 Sep 2004 23:35:31 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 ibmphp_core.c][6/8] replace
-Message-Id: <25390000.1096500931@w-hlinder.beaverton.ibm.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 17 Sep 2004 18:03:58 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 16/16] isdn/kcapi: replace
+Message-Id: <20040917180358.GQ1712@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============35947689624966994=="
+Content-Type: multipart/mixed; boundary="===============27742701842563711=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <12260000.1096486523@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <12260000.1096486523@w-hlinder.beaverton.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, hannal@us.ibm.com, greg@kroah.com
+To: kernel-janitors@vger.kernel.org
 
---===============35947689624966994==
+--===============27742701842563711==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+Any comments would be appreciated. This is a re-push of a patch
+submitted a few months ago which has not been merged as of
+2.6.9-rc1-mm5 / 2.6.9-rc2.
 
-This can be converted to pci_dev_present as the dev returned is never used.
-Compile tested.
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected.
 
-Hanna Linder
-IBM Linux Technology Center
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
-diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/pci/hotplug/ibmphp_core.c linux-2.6.9-rc2-mm4patch2/drivers/pci/hotplug/ibmphp_core.c
---- linux-2.6.9-rc2-mm4cln/drivers/pci/hotplug/ibmphp_core.c	2004-09-28 14:58:50.000000000 -0700
-+++ linux-2.6.9-rc2-mm4patch2/drivers/pci/hotplug/ibmphp_core.c	2004-09-29 15:39:39.385406240 -0700
-@@ -838,8 +838,11 @@ static int set_bus (struct slot * slot_c
- 	int rc;
- 	u8 speed;
- 	u8 cmd = 0x0;
--	struct pci_dev *dev = NULL;
- 	int retval;
-+	static struct pci_device_id ciobx[] = {
-+		{ PCI_DEVICE(PCI_VENDOR_ID_SERVERWORKS, 0x0101) },
-+	        { },
-+	};	
+--- 2.6.9-rc1-mm4-vanilla/drivers/isdn/capi/kcapi.c	2004-09-09 23:05:53.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/isdn/capi/kcapi.c	2004-09-13 14:11:14.000000000 -0700
+@@ -24,6 +24,7 @@
+ #include <linux/capi.h>
+ #include <linux/kernelcapi.h>
+ #include <linux/init.h>
++#include <linux/delay.h>
+ #include <asm/uaccess.h>
+ #include <linux/isdn/capicmd.h>
+ #include <linux/isdn/capiutil.h>
+@@ -831,8 +832,7 @@ static int old_capi_manufacturer(unsigne
  
- 	debug ("%s - entry slot # %d\n", __FUNCTION__, slot_cur->number);
- 	if (SET_BUS_STATUS (slot_cur->ctrl) && is_bus_empty (slot_cur)) {
-@@ -886,8 +889,7 @@ static int set_bus (struct slot * slot_c
- 				break;
- 			case BUS_SPEED_133:
- 				/* This is to take care of the bug in CIOBX chip */
--				while ((dev = pci_get_device(PCI_VENDOR_ID_SERVERWORKS,
--							      0x0101, dev)) != NULL)
-+				if(pci_dev_present(ciobx))
- 					ibmphp_hpc_writeslot (slot_cur, HPC_BUS_100PCIXMODE);
- 				cmd = HPC_BUS_133PCIXMODE;
- 				break;
+ 		while (card->cardstate != CARD_RUNNING) {
+ 
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ/10);	/* 0.1 sec */
++			msleep_interruptible(100);	/* 0.1 sec */
+ 
+ 			if (signal_pending(current)) {
+ 				capi_ctr_put(card);
+@@ -856,8 +856,7 @@ static int old_capi_manufacturer(unsigne
+ 
+ 		while (card->cardstate > CARD_DETECTED) {
+ 
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ/10);	/* 0.1 sec */
++			msleep_interruptible(100);	/* 0.1 sec */
+ 
+ 			if (signal_pending(current))
+ 				return -EINTR;
 
-
---===============35947689624966994==
+--===============27742701842563711==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============35947689624966994==--
+--===============27742701842563711==--
