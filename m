@@ -1,38 +1,45 @@
-From: Matthew Wilcox <willy@debian.org>
-Date: Mon, 14 Jun 2004 19:22:27 +0000
-Subject: Re: [Kernel-janitors] check_region TODO?
-Message-Id: <20040614192227.GD20511@parcelfarce.linux.theplanet.co.uk>
+From: yoonsoo@web.de
+Date: Tue, 01 Jun 2004 00:13:08 +0000
+Subject: [Kernel-janitors] [Patch] eisa_h driverdata access
+Message-Id: <20040601001308.GA27070@nlx.t-online.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99394760553116779=="
+Content-Type: multipart/mixed; boundary="===============34240473648831604=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200406141906.i5EJ6IoP000052@sirius.cs.pdx.edu>
-In-Reply-To: <200406141906.i5EJ6IoP000052@sirius.cs.pdx.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============99394760553116779==
+--===============34240473648831604==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Jun 14, 2004 at 12:06:18PM -0700, Kristen Carlson wrote:
-> Hello, 
-> Is anyone working on the "replace check_region() with request_region()" task?
-> Thanks,
-> Kristen
+hope I fixed all errors from last time.
 
-Various people are.  It's not trivial which means the best way to work
-on it is to pick a driver, grok its init sequence in fullness, rewrite
-it and submit it.  Search the archives for people who've failed to
-understand what they were doing and the explanations they were given.
+I retry with shorter patch.
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+greets
 
---===============99394760553116779==
+yoon
+
+
+diff -uprN -X dontdiff linux-2.6.6-orig/include/linux/eisa.h linux-2.6.6-new/include/linux/eisa.h
+--- linux-2.6.6-orig/include/linux/eisa.h	2004-05-10 04:33:12.000000000 +0200
++++ linux-2.6.6-new/include/linux/eisa.h	2004-06-01 02:04:25.000000000 +0200
+@@ -74,12 +74,12 @@ void eisa_driver_unregister (struct eisa
+ /* Mimics pci.h... */
+ static inline void *eisa_get_drvdata (struct eisa_device *edev)
+ {
+-        return edev->dev.driver_data;
++  return dev_get_drvdata(edev->dev);
+ }
+ 
+ static inline void eisa_set_drvdata (struct eisa_device *edev, void *data)
+ {
+-        edev->dev.driver_data = data;
++  dev_set_drvdata(edev->dev,data);
+ }
+ 
+ /* The EISA root device. There's rumours about machines with multiple
+
+--===============34240473648831604==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99394760553116779==--
+--===============34240473648831604==--
