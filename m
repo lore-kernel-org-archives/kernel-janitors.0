@@ -1,26 +1,33 @@
-From: Stephen torri <storri@torri.org>
-Date: Thu, 20 Jan 2005 18:25:29 +0000
-Subject: [KJ]
-Message-Id: <1106245529.15916.12.camel@base.torri.org>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Date: Tue, 25 Jan 2005 23:50:15 +0000
+Subject: [KJ] Re: driver model u32 -> pm_message_t conversion: help needed
+Message-Id: <1106697015.6250.24.camel@gaston>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============091375646126373944=="
+Content-Type: multipart/mixed; boundary="===============074008742728203902=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050125194710.GA1711@elf.ucw.cz>
+In-Reply-To: <20050125194710.GA1711@elf.ucw.cz>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: kernel-janitors@osdl.org, kernel list <linux-kernel@vger.kernel.org>, linux-pm@osdl.org
 
---===============091375646126373944==
+--===============074008742728203902==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-What is the status of these projects?
+On Tue, 2005-01-25 at 20:47 +0100, Pavel Machek wrote:
+> Hi!
+> 
+> Two Long time ago, BenH said that making patches is easy, so I hope to
+> get his help now... And will probably need more.
 
-- checking for NULL on probe routines for net drivers
-- convert drivers to new PCI API
-- get rid of save_flags_cli, use local_irq_save instead
+I will. I'm still a bit dealing with backlog of stuffs after my long
+vacations, but I will asap.
 
-Stephen
+Ben.
 
 
---===============091375646126373944==
+
+--===============074008742728203902==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============091375646126373944==--
+--===============074008742728203902==--
