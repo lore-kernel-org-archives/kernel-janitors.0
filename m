@@ -1,52 +1,111 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 17 Mar 2004 17:30:22 +0000
-Subject: Re: [Kernel-janitors] Patch to make html docs properly
-Message-Id: <20040317093022.694f4645.rddunlap@osdl.org>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Date: Sat, 27 Mar 2004 05:13:55 +0000
+Subject: [Kernel-janitors] [PATCH 4/5] remove concatenation with
+Message-Id: <20040327051355.GF3445@bakeyournoodle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1079469668.5026.13.camel@localhost>
-In-Reply-To: <1079469668.5026.13.camel@localhost>
+References: <20040322052155.GF17221@bakeyournoodle.com>
+In-Reply-To: <20040322052155.GF17221@bakeyournoodle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 16 Mar 2004 20:41:08 +0000 Don Scorgie wrote:
 
-| hi,
-| 
-| When making htmldocs, the front file (*.html in the Documantation/
-| DocBook directory) sends the user to the wrong file (as far as I can
-| tell).  This little patch fixes this.
-| 
-| Hope this is ok.  If this is, I hope to fix up some of the API
-| references...
-| 
-| 
-| diff -Nur linux-2.6.4/Documentation/DocBook/Makefile linux-2.6.4.bak/
-| Documentation/DocBook/Makefile
-| --- linux-2.6.4/Documentation/DocBook/Makefile  2004-03-16
-| 20:29:59.625122885 +0000
-| +++ linux-2.6.4.bak/Documentation/DocBook/Makefile      2004-03-16
-| 20:26:21.503805414 +0000
-| @@ -124,7 +124,7 @@
-|   
-|  quiet_cmd_db2html = DB2HTML $@
-|        cmd_db2html = db2html -o $(patsubst %.html,%,$@) $< &&
-| \
-| -               echo '<a HREF="$(patsubst %.html,%,$(notdir $@))/index.
-| html"> \
-| +               echo '<a HREF="$(patsubst %.html,%,$(notdir $@))/book1.
-| html"> \
+--------------------------------------------------------------------------------
+diff -X dontdiff -purN 2.6.4.clean/net/8021q/vlan.h 2.6.4.kj_func/net/8021q/vlan.h
+--- 2.6.4.clean/net/8021q/vlan.h	2004-01-15 17:04:12.000000000 +1100
++++ 2.6.4.kj_func/net/8021q/vlan.h	2004-03-26 14:32:44.000000000 +1100
+@@ -19,8 +19,8 @@ I never found it..and the problem seems 
+ I'll bet they might prove useful again... --Ben
+ 
+ 
+-#define VLAN_MEM_DBG(x, y, z) printk(VLAN_DBG __FUNCTION__ ":  "  x, y, z);
+-#define VLAN_FMEM_DBG(x, y) printk(VLAN_DBG __FUNCTION__  ":  " x, y);
++#define VLAN_MEM_DBG(x, y, z) printk(VLAN_DBG "%s:  "  x, __FUNCTION__, y, z);
++#define VLAN_FMEM_DBG(x, y) printk(VLAN_DBG "%s:  " x, __FUNCTION__, y);
+ */
+ 
+ /* This way they don't do anything! */
+diff -X dontdiff -purN 2.6.4.clean/net/8021q/vlanproc.c 2.6.4.kj_func/net/8021q/vlanproc.c
+--- 2.6.4.clean/net/8021q/vlanproc.c	2004-01-16 21:13:48.000000000 +1100
++++ 2.6.4.kj_func/net/8021q/vlanproc.c	2004-03-26 14:32:44.000000000 +1100
+@@ -220,7 +220,7 @@ int vlan_proc_rem_dev(struct net_device 
+ 	}
+ 
+ #ifdef VLAN_DEBUG
+-	printk(VLAN_DBG __FUNCTION__ ": dev: %p\n", vlandev);
++	printk(VLAN_DBG "%s: dev: %p\n", __FUNCTION__, vlandev);
+ #endif
+ 
+ 	/** NOTE:  This will consume the memory pointed to by dent, it seems. */
+diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_irc.c 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_irc.c
+--- 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_irc.c	2004-01-16 21:14:43.000000000 +1100
++++ 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_irc.c	2004-03-26 14:38:52.000000000 +1100
+@@ -60,8 +60,8 @@ DECLARE_LOCK(ip_irc_lock);
+ struct module *ip_conntrack_irc = THIS_MODULE;
+ 
+ #if 0
+-#define DEBUGP(format, args...) printk(KERN_DEBUG __FILE__ ":" __FUNCTION__ \
+-					":" format, ## args)
++#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
++                                       __FILE__, __FUNCTION__ , ## args)
+ #else
+ #define DEBUGP(format, args...)
+ #endif
+diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_tftp.c 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_tftp.c
+--- 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_tftp.c	2004-02-19 07:19:23.000000000 +1100
++++ 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_tftp.c	2004-03-26 14:38:44.000000000 +1100
+@@ -33,8 +33,8 @@ MODULE_PARM_DESC(ports, "port numbers of
+ #endif
+ 
+ #if 0
+-#define DEBUGP(format, args...) printk(__FILE__ ":" __FUNCTION__ ": " \
+-				       format, ## args)
++#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
++                                       __FILE__, __FUNCTION__ , ## args)
+ #else
+ #define DEBUGP(format, args...)
+ #endif
+diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ip_nat_tftp.c 2.6.4.kj_func/net/ipv4/netfilter/ip_nat_tftp.c
+--- 2.6.4.clean/net/ipv4/netfilter/ip_nat_tftp.c	2004-02-19 07:19:23.000000000 +1100
++++ 2.6.4.kj_func/net/ipv4/netfilter/ip_nat_tftp.c	2004-03-26 14:38:56.000000000 +1100
+@@ -47,8 +47,8 @@ MODULE_PARM_DESC(ports, "port numbers of
+ #endif
+ 
+ #if 0
+-#define DEBUGP(format, args...) printk(__FILE__ ":" __FUNCTION__ ": " \
+-				       format, ## args)
++#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
++                                       __FILE__, __FUNCTION__ , ## args)
+ #else
+ #define DEBUGP(format, args...)
+ #endif
+diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ipt_ULOG.c 2.6.4.kj_func/net/ipv4/netfilter/ipt_ULOG.c
+--- 2.6.4.clean/net/ipv4/netfilter/ipt_ULOG.c	2004-02-19 07:19:24.000000000 +1100
++++ 2.6.4.kj_func/net/ipv4/netfilter/ipt_ULOG.c	2004-03-26 14:39:12.000000000 +1100
+@@ -64,13 +64,13 @@ MODULE_DESCRIPTION("iptables userspace l
+ #define ULOG_MAXNLGROUPS	32		/* numer of nlgroups */
+ 
+ #if 0
+-#define DEBUGP(format, args...)	printk(__FILE__ ":" __FUNCTION__ ":" \
+-				       format, ## args)
++#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
++                                       __FILE__, __FUNCTION__ , ## args)
+ #else
+ #define DEBUGP(format, args...)
+ #endif
+ 
+-#define PRINTR(format, args...) do { if (net_ratelimit()) printk(format, ## args); } while (0)
++#define PRINTR(format, args...) do { if (net_ratelimit()) printk(format , ## args); } while (0)
+ 
+ static unsigned int nlbufsiz = 4096;
+ MODULE_PARM(nlbufsiz, "i");
+--------------------------------------------------------------------------------
+Yours Tony
 
-That's already fixed in 2.6.5-rc1.
+        linux.conf.au       http://lca2005.linux.org.au/
+	Apr 18-23 2005      The Australian Linux Technical Conference!
 
-And one of us has a mailer that breaks lines at very bad places....
-
-But send more API fixups if you have them.  We'll get your^W the
-mail client fixed up....
-
---
-~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
