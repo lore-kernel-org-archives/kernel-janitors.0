@@ -1,57 +1,57 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:30 +0000
-Subject: [KJ] [PATCH][5/26] drivers/ide/* - compile warning cleanup
-Message-Id: <420BEF86.29010.587AA2@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 08:09:50 +0000
+Subject: [KJ] [PATCH] drivers/char/ieee1394/*: convert to pci_register_driver
+Message-Id: <20050208080950.GC31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============028542628662836744=="
+Content-Type: multipart/mixed; boundary="uCPdOCrL+PnN2Vxy"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============028542628662836744==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - handle copy_to/from_user error returns
+--uCPdOCrL+PnN2Vxy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/ide/ide-tape.c linux-2.6.11-rc3-mm/drivers/ide/ide-tape.c
---- linux-2.6.11-rc3-mm-original/drivers/ide/ide-tape.c	2005-02-07 16:32:20.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/ide/ide-tape.c	2005-02-07 18:10:25.000000000 +0200
-@@ -2644,7 +2644,12 @@ static void idetape_copy_stage_from_user
- 		}
- #endif /* IDETAPE_DEBUG_BUGS */
- 		count = min((unsigned int)(bh->b_size - atomic_read(&bh->b_count)), (unsigned int)n);
--		copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count);
-+		if(copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count)) {
-+#if IDETAPE_DEBUG_BUGS
-+			printk(KERN_ERR "ide-tape/%s: copy_from_user failed!\n",__FUNCTION__);
-+#endif /* IDETAPE_DEBUG_BUGS */
-+			return;
-+		}
- 		n -= count;
- 		atomic_add(count, &bh->b_count);
- 		buf += count;
-@@ -2671,7 +2676,12 @@ static void idetape_copy_stage_to_user (
- 		}
- #endif /* IDETAPE_DEBUG_BUGS */
- 		count = min(tape->b_count, n);
--		copy_to_user(buf, tape->b_data, count);
-+		if(copy_to_user(buf, tape->b_data, count)) {
-+#if IDETAPE_DEBUG_BUGS
-+			printk(KERN_ERR "ide-tape/%s: copy_to_user failed!\n",__FUNCTION__);
-+#endif /* IDETAPE_DEBUG_BUGS */
-+			return;
-+		}
- 		n -= count;
- 		tape->b_data += count;
- 		tape->b_count -= count;
+Description:
+convert from pci_module_init to pci_register_driver
 
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
+--uCPdOCrL+PnN2Vxy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_ieee1394.patch"
 
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/ieee1394/ohci1394.c linux-2.6.11-rc3/drivers/ieee1394/ohci1394.c
+--- linux-2.6.11-rc3-vanilla/drivers/ieee1394/ohci1394.c	2004-12-24 22:35:25.000000000 +0100
++++ linux-2.6.11-rc3/drivers/ieee1394/ohci1394.c	2005-02-07 09:39:27.000000000 +0100
+@@ -3676,7 +3676,7 @@ static void __exit ohci1394_cleanup (voi
+ 
+ static int __init ohci1394_init(void)
+ {
+-	return pci_module_init(&ohci1394_pci_driver);
++	return pci_register_driver(&ohci1394_pci_driver);
+ }
+ 
+ module_init(ohci1394_init);
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/ieee1394/pcilynx.c linux-2.6.11-rc3/drivers/ieee1394/pcilynx.c
+--- linux-2.6.11-rc3-vanilla/drivers/ieee1394/pcilynx.c	2005-02-03 17:03:44.000000000 +0100
++++ linux-2.6.11-rc3/drivers/ieee1394/pcilynx.c	2005-02-07 09:39:27.000000000 +0100
+@@ -1938,7 +1938,7 @@ static int __init pcilynx_init(void)
+         }
+ #endif
+ 
+-        ret = pci_module_init(&lynx_pci_driver);
++        ret = pci_register_driver(&lynx_pci_driver);
+         if (ret < 0) {
+                 PRINT_G(KERN_ERR, "PCI module init failed");
+                 goto free_char_dev;
 
---===============028542628662836744==
+--uCPdOCrL+PnN2Vxy
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============028542628662836744==--
+--uCPdOCrL+PnN2Vxy--
