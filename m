@@ -1,63 +1,97 @@
-From: "Complaint Center" <Buford_Odelle@netscape.net>
-Date: Sun, 01 Feb 2004 00:25:51 +0000
-Subject: This will save your time.
-Message-Id: <qvvebe797419@netscape.net>
+From: "Lucio Leslie" <VEFUEDARORA@yahoo.com>
+Date: Fri, 13 Feb 2004 00:34:50 +0000
+Subject: Fw:RE:TURN A $463.00 INVESTMENT INTO $65,000.00 invitee
+Message-Id: <BFWQPBUXEVKVWAHLOUDRDCY@yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_000F_01C33095.9F84B280"
+Content-Type: multipart/mixed; boundary="--897958574428971882"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_000F_01C33095.9F84B280
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0010_01C33095.9F84B280"
-
-
-------=_NextPart_001_0010_01C33095.9F84B280
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-
-
-------=_NextPart_001_0010_01C33095.9F84B280
+----897958574428971882
 Content-Type: text/html;
-	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
+<CENTER>
+<TABLE cellSpacing=3D0 cellPadding=3D5 width=3D557 border=3D0>
+<TBODY>
+<TR>
+<TD vAlign=3Dcenter align=3Dmiddle bgColor=3D#000000 colSpan=3D4 height=3D=
+2></TD></TR>
+<TR>
+<TD vAlign=3Dtop align=3Dleft width=3D2 bgColor=3D#000000></TD>
+<TD vAlign=3Dcenter align=3Dmiddle width=3D546 bgColor=3D#e8f4fe colSpan=3D=
+2 height=3D30><FONT face=3Dtimes 
+color=3D#000000 size=3D5><B>Find Real Estate For Pennies 
+On The Dollar!</B></FONT></TD>
+<TD vAlign=3Dtop align=3Dleft width=3D2 bgColor=3D#000000>
+</TD></TR>
+<TR>
+<TD vAlign=3Dcenter align=3Dmiddle bgColor=3D#000000 
+colSpan=3D4 height=3D2></TD></TR>
+<TR>
+<TD vAlign=3Dtop align=3Dleft width=3D2 bgColor=3D#000000>
+</TD>
+<TD vAlign=3Dtop align=3Dleft width=3D273 bgColor=3D#336699 
+height=3D100>
+<CENTER><FONT face=3Darial color=3D#ffff00 size=3D4><B><I>
+<MARQUEE>Get Your FREE VIDEO</I></MARQUEE></B></FONT>
+<HR>
+<FONT face=3Dverdana color=3D#ffffff size=3D5><B>U.S. 
+Government Tax Certificates</B></FONT><FONT 
+face=3D"Times New Roman"> <BR></FONT><FONT face=3Darial 
+color=3D#ffffff size=3D3><B><I>The smartest way to invest
+</B>
+</I></FONT><FONT face=3D"Times New Roman"> 
+<HR>
+</FONT><A href=3D"http://www.lienanddeed.biz/program2.html"><FONT face=3Da=
+rial color=3D#ffff00 size=3D4><B>Click Here for More Info</B></FONT></A><F=
+ONT face=3D"Times New Roman"> </FONT></CENTER></I></TD>
+<TD vAlign=3Dtop align=3Dleft width=3D273 bgColor=3D#ffffff height=3D100>
+<CENTER><FONT face=3D"Times New Roman" color=3D#000000 
+size=3D4><B></B></FONT></CENTER><BR><FONT face=3Darial color=3D#000000 siz=
+e=3D2><B>&nbsp;&nbsp;<FONT face=3Darial color=3D#0743be size=3D2>=95</FONT=
+>&nbsp;Earn 15%-50% on Your Money 
+<P>&nbsp;&nbsp; <FONT face=3Darial color=3D#0743be 
+size=3D2>
+=95</FONT>&nbsp;Make Collateralized Investments 
+<P>&nbsp;&nbsp; <FONT face=3Darial color=3D#0743be size=3D2>=95</FONT>&nbs=
+p;Counties write checks to you! 
+<P>&nbsp;&nbsp; <FONT face=3Darial color=3D#e8f4fe size=3D2>
+</FONT>&nbsp;<A href=3D"http://www.lienanddeed.biz/program2.html">Learn Mo=
+re Now</A> </FONT></P></B></TD>
+<TD vAlign=3Dtop align=3Dleft width=3D2 bgColor=3D#000000>
+</TD></TR>
+<TR>
+<TD vAlign=3Dcenter align=3Dmiddle bgColor=3D#000000 
+colSpan=3D4 height=3D2></TD></TR>
+<TR>
+<TD vAlign=3Dtop align=3Dleft width=3D2 bgColor=3D#000000>
+</TD>
+<TD vAlign=3Dcenter align=3Dmiddle width=3D546 bgColor=3D#e8f4fe colSpan=3D=
+2 height=3D30><FONT face=3Dtimes color=3D#000000 size=3D5><B>Discover The =
+Secrets Banks Have Been Using</B></FONT></TD>
+<TD vAlign=3Dtop align=3Dleft width=3D2 bgColor=3D#000000></TD></TR>
+<TR>
+<TD vAlign=3Dcenter align=3Dmiddle bgColor=3D#000000 
+colSpan=3D4 height=3D2></TD></TR></TBODY></TABLE><BR>
+<TR><TD bgcolor=3D"#ffffff" align=3D"middle" 
+valign=3D"middle" colspan=3D"4"><FONT face=3Dverdana 
+color=3D#000000 size=3D1><A href=3D"http://www.freehomes.biz/out.html"><FO=
+NT 
+face=3Dverdana color=3D#0000ff size=3D1>click here</FONT>
+</A> to be taken off. </FONT></TD></TR></CENTER>
+bouncy
 
-<head>
-</head>
-<body>
-The FTC works for the consumer to prevent violations of Children's <br=
->
-Online Privacy Protection Act , fraudulent, deceptive and unfair busin=
-ess practices in <br>
-the marketplace and to provide information to help consumers spot, sto=
-p and avoid them. <br>
-To file a complaint on above issues, visit (Link: www.ftc.gov)www.ftc.=
-gov or call toll-free, <br>
-1-877-FTC-HELP (1-877-382-4357); TTY: 1-866-653-4261. The FTC enters I=
-nternet, telemarketing, <br>
-identity theft, Children's Online Privacy Protection Act and other fra=
-ud-related complaints <br>
-into Consumer Sentinel, a secure, online database available to hundred=
-s of civil and criminal <br>
-law enforcement agencies in the U.S. and abroad.</body>
-</html>
+----897958574428971882--
 
-
-------=_NextPart_001_0010_01C33095.9F84B280--
 
 
 -------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-------=_NextPart_000_000F_01C33095.9F84B280--
