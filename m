@@ -1,117 +1,56 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 01 Nov 2004 18:32:33 +0000
-Subject: [KJ] [PATCH] net/ibmtr: replace schedule_timeout() with
-Message-Id: <20041101192738.GE1730@us.ibm.com>
+From: =?utf-8?q?Agnes Ngso?= <Doneckwnllk@njdiners.com>
+Date: Tue, 16 Nov 2004 07:29:31 +0000
+Subject: =?utf-8?q?Economize 80 percent?=
+Message-Id: <E1CU1Ot-0003hJ-GW@externalmx-1.sourceforge.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40430199052505378=="
+Content-Type: multipart/mixed; boundary="fCDQQrxodADBGvRZLXIuwJ0"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1CO1wB-0002eM-If@sputnik> <4184C66B.8040501@pobox.com>
-In-Reply-To: <4184C66B.8040501@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
+To: kernel-janitors@vger.kernel.org
 
---===============40430199052505378==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
 
-On Sun, Oct 31, 2004 at 06:03:07AM -0500, Jeff Garzik wrote:
-> janitor@sternwelten.at wrote:
-> >Any comments would be appreciated.
-> >
-> >Description: Use msleep() / msleep_interruptible() [as appropriate]
-> >instead of schedule_timeout() to guarantee the task delays as expected.
-> >
-> >Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> >Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
-> >
-> >---
-> >
-> > linux-2.6.10-rc1-max/drivers/net/tokenring/ibmtr.c |   11 +++++------
-> > 1 files changed, 5 insertions(+), 6 deletions(-)
-> >
-> >-		schedule_timeout(TR_RST_TIME); /* wait 50ms */
-> >+		msleep(jiffies_to_msecs(TR_RST_TIME)); /* wait 50ms */
-
-<snip>
-
-> >-	current->state=TASK_UNINTERRUPTIBLE;
-> >-	schedule_timeout(TR_RST_TIME); /* wait 50ms */
-> >+	msleep(jiffies_to_msecs(TR_RST_TIME));		/* wait 50ms */
-
-<snip>
-
-> >-		current->state=TASK_INTERRUPTIBLE;
-> >-		i=schedule_timeout(TR_RETRY_INTERVAL); /* wait 30 seconds */
-> >-		if(i!=0) break; /*prob. a signal, like the i>24*HZ case 
-> >above */
-> >+		if(msleep_interruptible(jiffies_to_msecs(TR_RETRY_INTERVAL)))
-> >+			break; /*prob. a signal, like the i>24*HZ case above 
-
-<snip>
-
-> It makes more sense to convert the constants to msecs in the source 
-> code, instead of converting them at runtime.
-
-Here is the patch to ibmtr.c which completes these changes...
-
-Description: Uses msleep()/msleep_interruptible() [as appropriate] to
-guarantee the task delays as expected. This patch depends on the
-corresponding addition of the millisecond-unit constants to ibmtr.h.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-rc1-vanilla/drivers/net/tokenring/ibmtr.c	2004-10-30 15:33:28.000000000 -0700
-+++ 2.6.10-rc1/drivers/net/tokenring/ibmtr.c	2004-11-01 11:18:10.000000000 -0800
-@@ -130,6 +130,7 @@ in the event that chatty debug messages 
- #include <linux/ip.h>
- #include <linux/trdevice.h>
- #include <linux/ibmtr.h>
-+#include <linux/delay.h>
- 
- #include <net/checksum.h>
- 
-@@ -317,7 +318,7 @@ static void ibmtr_cleanup_card(struct ne
- 	if (dev->base_addr) {
- 		outb(0,dev->base_addr+ADAPTRESET);
- 		
--		schedule_timeout(TR_RST_TIME); /* wait 50ms */
-+		msleep(TR_RST_TIME_MS);
- 
- 		outb(0,dev->base_addr+ADAPTRESETREL);
- 	}
-@@ -858,8 +859,7 @@ static int tok_init_card(struct net_devi
- 	writeb(~INT_ENABLE, ti->mmio + ACA_OFFSET + ACA_RESET + ISRP_EVEN);
- 	outb(0, PIOaddr + ADAPTRESET);
- 
--	current->state=TASK_UNINTERRUPTIBLE;
--	schedule_timeout(TR_RST_TIME); /* wait 50ms */
-+	msleep(TR_RST_TIME_MS);
- 
- 	outb(0, PIOaddr + ADAPTRESETREL);
- #ifdef ENABLE_PAGING
-@@ -912,9 +912,8 @@ static int tok_open(struct net_device *d
- 			DPRINTK("Adapter is up and running\n");
- 			return 0;
- 		}
--		current->state=TASK_INTERRUPTIBLE;
--		i=schedule_timeout(TR_RETRY_INTERVAL); /* wait 30 seconds */
--		if(i!=0) break; /*prob. a signal, like the i>24*HZ case above */
-+		if(msleep_interruptible(TR_RETRY_INTERVAL_MS)) break;
-+				/*prob. a signal, like the i>24*HZ case above */
- 	}
- 	outb(0, dev->base_addr + ADAPTRESET);/* kill pending interrupts*/
- 	DPRINTK("TERMINATED via signal\n");	/*BMS useful */
-
---===============40430199052505378==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+--fCDQQrxodADBGvRZLXIuwJ0
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+Direct Prescriptions helps you economize on costly prescriptions =
+
+medicaments with values which are as more as 95 % lower than reta=
+il 
+apothecary's shop substitutes. 
+
+http://tjbyb.nihfefji.info/?wx2ey61hxAD9vw0hzf
+--fCDQQrxodADBGvRZLXIuwJ0
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<STYLE></STYLE>
+</HEAD>
+<HTML>
+<BODY>
+We aids people keep on high-priced prescriptions <BR>
+medications with prices that are as much as 60 % lower than retai=
+l <BR>
+drugstore alternatives. <BR>
+<A href=3D"http://wtdhbq.cbefffhk.info/?KLMYgQfvLOlTJeekqrlvxc">C=
+ontrol prices</A>
+</BODY>
+</HTML></HTML>
+--fCDQQrxodADBGvRZLXIuwJ0--
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: InterSystems CACHE
+FREE OODBMS DOWNLOAD - A multidimensional database that combines
+robust object and relational technologies, making it a perfect match
+for Java, C++,COM, XML, ODBC and JDBC. www.intersystems.com/match8
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============40430199052505378==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
