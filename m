@@ -1,41 +1,125 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Thu, 04 Mar 2004 15:38:11 +0000
-Subject: Re: [Kernel-janitors] [PATCH 2/3] - De-uglification work for dr
-Message-Id: <1078414691.24048.31.camel@telecentrolivre>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Wed, 10 Mar 2004 00:06:39 +0000
+Subject: [Kernel-janitors] [announce] 2.6.4-rc2-kj1 patchset
+Message-Id: <20040309160639.4c3b3bcc.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1078342458.14557.40.camel@telecentrolivre>
-In-Reply-To: <1078342458.14557.40.camel@telecentrolivre>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kjo <kernel-janitors@osdl.org>
+Cc: lkml <linux-kernel@vger.kernel.org>
 
 
-Hi Walter,
+patch is at:
+http://developer.osdl.org/rddunlap/kj-patches/2.6.4-rc2/2.6.4-rc2-kj1.patch.bz2  [2004-03-09]
 
-Em Qui, 2004-03-04 =E0s 05:54, WHarms@bfs.de escreveu:
+M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
 
-> a little question:
-> in interpret_errors() there is a switch()
->=20
-> case 0x80 etc its possible to replace th 0x80 with some define
-> like ST0_ERROR or so ?
+This patch applies to linux-2.6.4-rc2.
+new (for 2.6.4-rc2):  [2004-03-09]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Yes.
+add/	extraver.patch
+	rddunlap%osdl!org
 
- The floppy driver needs a lot of work like that. I started with
-four patches to see if I'm doing the right thing.
+add/	kswapd_init_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
 
-> a lot of printk() have no KERN_*
+tx/	lmc_proto_raw_h_rm.patch
+	From: Domen Puncer <domen@coderock.org>
+	sent to netdev/jgarzik: 2004.0229;
 
- Other thing to be changed. :-)
+drop/	setup_bootmem_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+	don't bother;
 
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+drop/	posix_timers_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to akpm: 2004.0220;
+	don't bother;
 
+add/	atm_nicstar_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to netdev/mntr: 2004.0225;
 
+mm/	genrtc_proc.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	From: Randy.Dunlap <rddunlap%osdl!org>
+	sent to akpm: 2004.0225;
+
+add/	ipv4_fib_hash_check.patch
+	From: Francois Romieu <romieu@fr.zoreil.com>
+	original From: <WHarms@bfs.de>(Walter Harms)
+
+add/	file2alias_signcomp.patch
+fxd	From: Ron Gage <ron@rongage.org>
+
+add/	fixdep_signcomp.patch
+fxd	From: Ron Gage <ron@rongage.org>
+
+add/	modpost_signcomp.patch
+	From: Ron Gage <ron@rongage.org>
+
+tx/	errno_numbers_assembly.patch
+	From: Danilo Piazzalunga <danilopiazza@libero.it>
+	to akpm: 2004.0126;
+
+tx/	dgrs_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to jgarzik/netdev: 2004.0124;
+
+add/	doc_var_updates.patch
+	From: Alexey Dobriyan <adobriyan@mail.ru>
+
+add/	drivers_ide_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	drivers_ide_minmax2.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	fs_proc_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	mm_slab_init.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	reiserfs_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	serial_8250_pnp_init.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	sound_oss_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	zlib_deflate_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	char_ip2_double_op.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	keyboard_ptr_to_string.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	string_form_drivers.patch
+	From: maximilian attems <janitor@sternwelten.at>
+
+###
+
+backlog:
+. check kernel_thread() results;
+. list_for_each() usage;
+. floppy.c cleanups;
+
+other:
+There are about 80 "remove unneeded cast" patches in the netdev
+queue awaiting a reply.  I'm not continuing to keep them in -kj
+for now.
+
+###
+
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
