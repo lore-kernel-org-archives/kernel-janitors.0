@@ -1,42 +1,82 @@
-From: "Hilary Story" <h.storyot@worldcom.ch>
-Date: Thu, 12 Feb 2004 20:25:13 +0000
-Subject: =?iso-8859-1?B?UmU6Q2hhbmdlIHlvdXIgbGlmZSB3aXRoIEhHSA==?=
-Message-Id: <LGGLMNBOEIBIAHPPGAEEAJJNJHAA.h.storyot@worldcom.ch>
+From: Ron Gage <ron@rongage.org>
+Date: Fri, 13 Feb 2004 02:46:06 +0000
+Subject: [Kernel-janitors] [PATCH] - 2.6.2 - sched.h - compiler cleanups
+Message-Id: <200402122146.06010.ron@rongage.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0A1F_A95297D6.693CE8D8"
+Content-Type: multipart/mixed; boundary="Boundary-00=_upDLAWLEdHeH7bK"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
 
-------=_NextPart_000_0A1F_A95297D6.693CE8D8
+--Boundary-00=_upDLAWLEdHeH7bK
 Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+This patch eliminates some "parameter defined but not used" warnings from 
+sched.h.
+
+Probably useless but I like clean compiles!  :)
+
+-- 
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
 
 
+--Boundary-00=_upDLAWLEdHeH7bK
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="sched.h.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="sched.h.diff"
 
+--- linux-2.6.2.orig/include/linux/sched.h	2004-02-03 22:43:10.000000000 -0500
++++ linux-2.6.2/include/linux/sched.h	2004-02-12 21:14:09.000000000 -0500
+@@ -505,6 +505,8 @@
+ #else
+ static inline int set_cpus_allowed(task_t *p, cpumask_t new_mask)
+ {
++	p = p;
++	new_mask = new_mask;
+ 	return 0;
+ }
+ #endif
+@@ -576,7 +578,7 @@
+ #ifdef CONFIG_SMP
+  extern void FASTCALL(kick_process(struct task_struct * tsk));
+ #else
+- static inline void kick_process(struct task_struct *tsk) { }
++ static inline void kick_process(struct task_struct *tsk) { tsk = tsk; }
+ #endif
+ extern void FASTCALL(wake_up_forked_process(struct task_struct * tsk));
+ extern void FASTCALL(sched_fork(task_t * p));
+@@ -897,11 +899,14 @@
+ 
+ static inline unsigned int task_cpu(struct task_struct *p)
+ {
++	p = p;
+ 	return 0;
+ }
+ 
+ static inline void set_task_cpu(struct task_struct *p, unsigned int cpu)
+ {
++	p = p;
++	cpu = cpu;
+ }
+ 
+ #endif /* CONFIG_SMP */
 
-------=_NextPart_000_0A1F_A95297D6.693CE8D8
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+--Boundary-00=_upDLAWLEdHeH7bK
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-<html><body>
-<center><!--ip0rd7YMd7AOcJF--><a href="http://www.thoosdd.com/ghr/"><img src="http://www.willded.com/g9.gif" border=0></a></center>
-<body></html>
-
-
-------=_NextPart_000_0A1F_A95297D6.693CE8D8--
-
-
-
--------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--Boundary-00=_upDLAWLEdHeH7bK--
