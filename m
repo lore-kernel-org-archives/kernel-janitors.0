@@ -1,92 +1,58 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:06 +0000
-Subject: [KJ] [PATCH] [14/29] ebtables.c - vfree() checking cleanups
-Message-Id: <41db1132.2984a77a.2568.07bb@smtp.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 25 Jan 2005 22:41:11 +0000
+Subject: [KJ] [PATCH] 8/34: block/swim3: replace interruptible_sleep_on()
+Message-Id: <20050125224111.GI2689@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2558307169577434=="
+Content-Type: multipart/mixed; boundary="===============80325703848658814=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============2558307169577434==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============80325703848658814==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ebtables.c vfree() checking cleanups.
+Hi,
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Please consider applying.
 
- ebtables.c |   21 +++++++--------------
- 1 files changed, 7 insertions(+), 14 deletions(-)
+Description: Use wait_event_interruptible() instead of the deprecated
+interruptible_sleep_on(). The change is pretty straight-forward, as the current
+sleep is conditional.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-2.6.10-vanilla/net/bridge/netfilter/ebtables.c	2004-12-24 13:34:30.000000000 -0800
-+++ linux-2.6.10/net/bridge/netfilter/ebtables.c	2005-01-04 11:17:43.823802384 -0800
-@@ -858,8 +858,7 @@
- 		if (repl->valid_hooks & (1 << i))
- 			if (check_chainloops(newinfo->hook_entry[i],
- 			   cl_s, udc_cnt, i, newinfo->entries)) {
--				if (cl_s)
--					vfree(cl_s);
-+				vfree(cl_s);
- 				return -EINVAL;
- 			}
- 
-@@ -882,8 +881,7 @@
- 		EBT_ENTRY_ITERATE(newinfo->entries, newinfo->entries_size,
- 		   ebt_cleanup_entry, &i);
+--- 2.6.11-rc2-kj-v/drivers/block/swim3.c	2005-01-25 14:38:30.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/block/swim3.c	2005-01-24 14:02:49.000000000 -0800
+@@ -28,6 +28,7 @@
+ #include <linux/devfs_fs_kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
++#include <linux/wait.h>
+ #include <asm/io.h>
+ #include <asm/dbdma.h>
+ #include <asm/prom.h>
+@@ -792,13 +793,11 @@ static int grab_drive(struct floppy_stat
+ 	cli();
+ 	if (fs->state != idle) {
+ 		++fs->wanted;
+-		while (fs->state != available) {
+-			if (interruptible && signal_pending(current)) {
+-				--fs->wanted;
+-				restore_flags(flags);
+-				return -EINTR;
+-			}
+-			interruptible_sleep_on(&fs->wait);
++		wait_event_interruptible(fs->wait, (fs->state == available));
++		if (interruptible && signal_pending(current)) {
++			--fs->wanted;
++			restore_flags(flags);
++			return -EINTR;
+ 		}
+ 		--fs->wanted;
  	}
--	if (cl_s)
--		vfree(cl_s);
-+	vfree(cl_s);
- 	return ret;
- }
- 
-@@ -1029,8 +1027,7 @@
- 	}
- 	vfree(table);
- 
--	if (counterstmp)
--		vfree(counterstmp);
-+	vfree(counterstmp);
- 	return ret;
- 
- free_unlock:
-@@ -1039,8 +1036,7 @@
- 	EBT_ENTRY_ITERATE(newinfo->entries, newinfo->entries_size,
- 	   ebt_cleanup_entry, NULL);
- free_counterstmp:
--	if (counterstmp)
--		vfree(counterstmp);
-+	vfree(counterstmp);
- 	/* can be initialized in translate_table() */
- 	if (newinfo->chainstack) {
- 		for (i @@ -1048,11 +1044,9 @@
- 		vfree(newinfo->chainstack);
- 	}
- free_entries:
--	if (newinfo->entries)
--		vfree(newinfo->entries);
-+	vfree(newinfo->entries);
- free_newinfo:
--	if (newinfo)
--		vfree(newinfo);
-+	vfree(newinfo);
- 	return ret;
- }
- 
-@@ -1212,8 +1206,7 @@
- 	down(&ebt_mutex);
- 	LIST_DELETE(&ebt_tables, table);
- 	up(&ebt_mutex);
--	if (table->private->entries)
--		vfree(table->private->entries);
-+	vfree(table->private->entries);
- 	if (table->private->chainstack) {
- 		for (i  			vfree(table->private->chainstack[i]);
 
-
-
---===============2558307169577434==
+--===============80325703848658814==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -97,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2558307169577434==--
+--===============80325703848658814==--
