@@ -1,42 +1,61 @@
-From: "Esteban Cross" <estebancross_br@fop.unicamp.br>
-Date: Sun, 04 Jul 2004 03:05:09 +0000
-Subject: $32832
-Message-Id: <267601c46173$59e737d3$f71f0239@fitlife.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 13 Jul 2004 16:47:41 +0000
+Subject: [Kernel-janitors] Re: amb_talk() (msleep)
+Message-Id: <40F4122D.2040700@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============35093248419217637=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-I sent you an email a few days ago, because you now qualify for a new mortgage.
-You could get $300,000 for as little as $700 a month!
-Bad credit is no problem, you can pull cash out or refinance.
+--===============35093248419217637==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Please click on this link:
-http://www.yourloanz.com/s6/jwex.php?bksq
+Sorry, I forgot two other locations with the same problem:
 
-Best Regards,
-Steve Morris
+drivers/atm/idt77252.c::idt77252_close()
+drivers/atm/lanai.c::lanai_shutdown_tx_vci()
+
+-Nish
+
+Nishanth Aravamudan wrote:
+> Hi,
+> 
+> In continuing to replace, where appropriate, code with msleep() calls, I 
+> ran across drivers/atm/ambassador.c::amb_talk():
+> 
+> <snip>
+>  // 2.2 second wait (must not touch doorbell during 2 second DMA test)
+>  timeout = HZ*22/10;
+>  while (timeout)
+>    timeout = schedule_timeout (timeout);
+>  // give the adapter another half second?
+>  timeout = HZ/2;
+> <snip>
+> 
+> There is no call to set_current_state() before these timeouts are 
+> scheduled and thus they will return immediately. If someone could tell 
+> me which state (TASK_INTERRUPTIBLE or TASK_UNINTERRUPTIBLE) is desired, 
+> I can fix this and perhaps replace the calls with msleep().
+> 
+> Thanks,
+> Nish
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+> 
 
 
+--===============35093248419217637==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-No more: http://www.yourloanz.com/r1/index.html
-
----- system information ----
-Draft differences mechanisms aspects status correlate wide Java 
-considered within interested proprietary results throughly often inferred
-
-host lives updated control at interoperate sends is 
-
-
-
--------------------------------------------------------
-This SF.Net email sponsored by Black Hat Briefings & Training.
-Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
-digital self defense, top technical experts, no vendor pitches, 
-unmatched networking opportunities. Visit www.blackhat.com
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============35093248419217637==--
