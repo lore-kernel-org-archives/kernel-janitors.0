@@ -1,71 +1,37 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 28 Jul 2004 19:35:59 +0000
-Subject: [Kernel-janitors] Re: [PATCH] usb/usbnet: replace
-Message-Id: <20040728193559.GP1935@us.ibm.com>
+From: Don Koch <aardvark@krl.com>
+Date: Mon, 05 Jul 2004 16:44:49 +0000
+Subject: [Kernel-janitors] bugzilla instead of TODO?
+Message-Id: <200407051644.i65GioRE022762@p-chan.krl.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74855633207460315=="
+Content-Type: multipart/mixed; boundary="===============57110121403827874=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <41073864.1050407@pacbell.net>
-In-Reply-To: <41073864.1050407@pacbell.net>
 To: kernel-janitors@vger.kernel.org
 
---===============74855633207460315==
+--===============57110121403827874==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Jul 28, 2004 at 08:54:34AM -0700, Nishanth Aravamudan wrote:
-> On Tue, Jul 27, 2004 at 10:23:48PM -0700, David Brownell wrote:
-> > Nishanth Aravamudan wrote:
-> > >I would appreciate any comments from the janitors list. 
-> > >
-> > >Applys-to: 2.6.7
-> > >
-> > >Description: Use msleep() instead of schedule_timeout() to 
-> > >guarantee the task delays for the desired time.
-> > 
-> > Please define and use UNLINK_TIMEOUT_MS, instead.
-> > Or better yet, switch to wait_event() ...
-> 
-> Please find the first of these changes below. Thanks.
+Is there any reason not to use bugzilla in place of a todo list?
+It would, at least:
+1. make it easier to find out who, if anyone, is working on a todo item,
+2. make it easier to assign oneself to an item,
+3. make it easier to add items and
+4. make it easier for the "powers that be" to prioritize items.
 
-The previous patch inserted extraneous whitespace. Please find the
-corrected version below. Also, the unused UNLINK_TIMEOUT_JIFFIES is
-removed.
+These are, after all, bugs.  Not necessarily show-stoppers, but bugs
+nonetheless.  I was thinking of a separate, k-j bugzilla and not use
+the existing bugzilla.kernel.org copy if you want to keep things
+separate.
 
--Nish
+I wouldn't necessarily recommend using it for patch submission.
 
-Applys-to: 2.6.7
+Just what you need, one more thing to add to the TODO list.
+(Hah! Squashed that joke before someone else got to it.)
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the
-task delays for the desired time. Delete unused UNLINK_TIMEOUT_JIFFIES
-#define.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+-d
 
 
---- linux-vanilla/drivers/usb/net/usbnet.c	2004-06-15 22:19:31.000000000 -0700
-+++ linux-dev/drivers/usb/net/usbnet.c	2004-07-28 12:33:16.000000000 -0700
-@@ -164,7 +164,7 @@
- #define CONTROL_TIMEOUT_JIFFIES ((CONTROL_TIMEOUT_MS * HZ)/1000)
- 
- // between wakeups
--#define UNLINK_TIMEOUT_JIFFIES ((3  /*ms*/ * HZ)/1000)
-+#define UNLINK_TIMEOUT_MS	3
- 
- /*-------------------------------------------------------------------------*/
- 
-@@ -2550,8 +2550,7 @@ static int usbnet_stop (struct net_devic
- 	while (skb_queue_len (&dev->rxq)
- 			&& skb_queue_len (&dev->txq)
- 			&& skb_queue_len (&dev->done)) {
--		set_current_state (TASK_UNINTERRUPTIBLE);
--		schedule_timeout (UNLINK_TIMEOUT_JIFFIES);
-+		msleep(UNLINK_TIMEOUT_MS);
- 		devdbg (dev, "waited for %d urb completions", temp);
- 	}
- 	dev->wait = 0;
 
---===============74855633207460315==
+--===============57110121403827874==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74855633207460315==--
+--===============57110121403827874==--
