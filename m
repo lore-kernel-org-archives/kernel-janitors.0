@@ -1,35 +1,54 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 25 Oct 2004 16:08:51 +0000
-Subject: Re: [KJ] [PATCH] net/ewrk3: replace schedule_timeout() with
-Message-Id: <20041025160851.GA2209@us.ibm.com>
+From: Scott Feldman <sfeldma@pobox.com>
+Date: Sun, 03 Oct 2004 06:19:31 +0000
+Subject: [Kernel-janitors] [PATCH 2/6] janitor: net/gt96100eth:
+Message-Id: <1096784371.3819.157.camel@sfeldma-mobl2.dsl-verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67241800953327036=="
+Content-Type: multipart/mixed; boundary="===============65809540603249483=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041022232643.GC18906@us.ibm.com>
-In-Reply-To: <20041022232643.GC18906@us.ibm.com>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org, stevel@mvista.com, source@mvista.com, linux-mips@linux-mips.org
 
---===============67241800953327036==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============65809540603249483==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 23, 2004 at 01:33:33AM +0100, Jon Masters wrote:
-> On Fri, 22 Oct 2004 16:40:26 -0700, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
-> 
-> > The original was:
-> > 
-> > schedule_timeout(HZ>>2);
-> 
-> I just wandered whether that was kicking around and assuming some
-> smaller value of HZ.
+Replace pci_find_device with pci_get_device/pci_dev_put to plug
+race with pci_find_device.
 
-I don't think it should matter, as the intended delay, on any system,
-will be one quarter of a second. Now, whether schedule_timeout() really
-achieves this for all arch's is a different question :)
+Signed-off-by: Scott Feldman <sfeldma@pobox.com>
 
--Nish
+--- linux-2.6.9-rc3/drivers/net/gt96100eth.c	2004-10-02 21:17:24.000000000 -0700
++++ linux-2.6.9-rc3-dsf/drivers/net/gt96100eth.c	2004-10-02 21:23:57.000000000 -0700
+@@ -617,9 +617,9 @@ static int gt96100_init_module(void)
+ 	/*
+ 	 * Stupid probe because this really isn't a PCI device
+ 	 */
+-	if (!(pci = pci_find_device(PCI_VENDOR_ID_MARVELL,
++	if (!(pci = pci_get_device(PCI_VENDOR_ID_MARVELL,
+ 	                            PCI_DEVICE_ID_MARVELL_GT96100, NULL)) &&
+-	    !(pci = pci_find_device(PCI_VENDOR_ID_MARVELL,
++	    !(pci = pci_get_device(PCI_VENDOR_ID_MARVELL,
+ 		                    PCI_DEVICE_ID_MARVELL_GT96100A, NULL))) {
+ 		printk(KERN_ERR __FILE__ ": GT96100 not found!\n");
+ 		return -ENODEV;
+@@ -629,12 +629,14 @@ static int gt96100_init_module(void)
+ 	if (cpuConfig & (1<<12)) {
+ 		printk(KERN_ERR __FILE__
+ 		       ": must be in Big Endian mode!\n");
++		pci_dev_put(pci);
+ 		return -ENODEV;
+ 	}
+ 
+ 	for (i=0; i < NUM_INTERFACES; i++)
+ 		retval |= gt96100_probe1(pci, i);
+ 
++	pci_dev_put(pci);
+ 	return retval;
+ }
+ 
 
---===============67241800953327036==
+
+
+--===============65809540603249483==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67241800953327036==--
+--===============65809540603249483==--
