@@ -1,67 +1,54 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 20:59:04 +0000
-Subject: [Kernel-janitors] [PATCH] isdn/icn.c: replace schedule_timeout()
-Message-Id: <20040723205904.GK2675@us.ibm.com>
+Date: Mon, 26 Jul 2004 17:58:34 +0000
+Subject: [Kernel-janitors] [PATCH] dvb/budget-ci: replace schedule_timeout()
+Message-Id: <20040726175834.GW1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44696864313081375=="
+Content-Type: multipart/mixed; boundary="===============40119961893147926=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============44696864313081375==
+--===============40119961893147926==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
+Sorry, this applies to budget-ci.c not ves1x93.c 
 
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
+On Mon, Jul 26, 2004 at 10:56:15AM -0700, Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list.
+> 
+> Thanks,
+> Nish
+> 
+> Applys-to: 2.6.7
+> 
+> Description: Replace dvb_delay() with msleep() to guarantee the
+> task delays the desired time.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> 
+> --- linux-vanilla/drivers/media/dvb/ttpci/budget-ci.c	2004-06-16 05:18:58.000000000 +0000
+> +++ linux-dev/drivers/media/dvb/ttpci/budget-ci.c	2004-07-02 20:28:59.000000000 +0000
+> @@ -326,7 +326,7 @@ static int ciintf_slot_reset(struct dvb_
+>  	saa7146_setgpio(saa, 0, SAA7146_GPIO_IRQHI);
+>  	budget_ci->slot_status = SLOTSTATUS_RESET;
+>  	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, 0);
+> -	dvb_delay(1);
+> +	msleep(1);
+>  	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, CICONTROL_RESET);
+>  
+>  	saa7146_setgpio(saa, 1, SAA7146_GPIO_OUTHI);
+> @@ -475,7 +475,7 @@ static void ciintf_deinit(struct budget_
+>  	saa7146_setgpio(saa, 0, SAA7146_GPIO_INPUT);
+>  	tasklet_kill(&budget_ci->ciintf_irq_tasklet);
+>  	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, 0);
+> -	dvb_delay(1);
+> +	msleep(1);
+>  	budget_debiwrite(budget_ci, DEBICICTL, DEBIADDR_CICONTROL, 1, CICONTROL_RESET);
+>  
+>  	// disable TS data stream to CI interface
 
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
-
-Thanks,
-Nish
-
-
-
-Applys-to: 2.6.7
-
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/isdn/icn/icn.c	2004-06-16 05:20:26.000000000 +0000
-+++ linux-dev/drivers/isdn/icn/icn.c	2004-07-12 18:10:30.000000000 +0000
-@@ -762,8 +762,7 @@ icn_check_loader(int cardnumber)
- #ifdef BOOT_DEBUG
- 			printk(KERN_DEBUG "Loader %d TO?\n", cardnumber);
- #endif
--			current->state = TASK_INTERRUPTIBLE;
--			schedule_timeout(ICN_BOOT_TIMEOUT1);
-+			msleep(jiffies_to_msecs(ICN_BOOT_TIMEOUT1));
- 		} else {
- #ifdef BOOT_DEBUG
- 			printk(KERN_DEBUG "Loader %d OK\n", cardnumber);
-@@ -974,8 +973,7 @@ icn_loadproto(u_char * buffer, icn_card 
- #ifdef BOOT_DEBUG
- 			printk(KERN_DEBUG "Proto TO?\n");
- #endif
--			current->state = TASK_INTERRUPTIBLE;
--			schedule_timeout(ICN_BOOT_TIMEOUT1);
-+			msleep(jiffies_to_msecs(ICN_BOOT_TIMEOUT1));
- 		} else {
- 			if ((card->secondhalf) || (!card->doubleS0)) {
- #ifdef BOOT_DEBUG
-
---===============44696864313081375==
+--===============40119961893147926==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============44696864313081375==--
+--===============40119961893147926==--
