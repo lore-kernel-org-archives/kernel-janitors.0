@@ -1,44 +1,51 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 18 Dec 2004 09:58:56 +0000
-Subject: [KJ] Re: kernel-2.6.9: make sock_init() notice errors
-Message-Id: <20041218095856.GA3754@masina.coderock.org>
+From: Andi Kleen <ak@muc.de>
+Date: Sun, 19 Dec 2004 19:09:03 +0000
+Subject: [KJ] janitor project: fix gcc 4 warnings
+Message-Id: <20041219190903.GA30192@muc.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86890321460162001=="
+Content-Type: multipart/mixed; boundary="===============012095844909482345=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041215160106.GA5321@nd47.coderock.org>
-In-Reply-To: <20041215160106.GA5321@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============86890321460162001==
+--===============012095844909482345==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 15/12/04 18:27 +0100, walter harms wrote:
-> 
-> Hi domen, hi list,
-> 
-> its true that the user can not do much about missing memmory but he 
-> should know WHAT error occured.
-> NTL not checking returncodes is an error.
-> Continuing when one earlier function did not work is also an error and 
-> may cause problems in unexspected places.
-> Since this is an init code its no performance consideration to be made.
 
-Ok, fair enough; if you fix whitespace i'll include it.
+Here's a proposed janitor project if anybody is interested:
 
-> 
-> re,
-> walter
-> 
-> 
-> 
-> Domen Puncer wrote:
-> >Also, there's still whitespace damage like:
-> >
-> >>+	ret=init_inodecache();
-> >>+	if ( ret < 0 ) {
+The current gcc 4.0 snapshots include some more warnings in -Wall
+and changed some existing ones which makes a kernel compilation quite noisy. 
 
---===============86890321460162001==
+The project would be to fix all these warnings.
+
+Short howto: 
+
+Get
+ftp://gcc.gnu.org/pub/gcc/snapshots/4.0-20041219/gcc-core-4.0-20041219.tar.bz2
+
+Untar it and compile with 
+
+mkdir obj
+../gcc-*/configure --disable-checking --enable-languages=c --prefix=/usr/local/gcc4
+make bootstrap
+<as root> 
+make install
+
+
+Then compile an uptodate 2.6 kernel with:
+
+make allmodconfig
+make CC=/usr/local/gcc4/bin/gcc 2>&1 | tee LOG
+grep warning LOG 
+
+You'll see lots of warnings in LOG. Fix them all and submit patches
+through the usual janitor channels.
+
+-Andi
+
+
+--===============012095844909482345==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86890321460162001==--
+--===============012095844909482345==--
