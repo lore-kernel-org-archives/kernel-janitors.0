@@ -1,52 +1,63 @@
-From: "Forrest Lehman" <yoqaakdouhdp@tampabay.rr.com>
-Date: Sat, 03 Apr 2004 05:46:04 +0000
+From: Dane Kirkland <Donovan5Porter@mn.rr.com>
+Date: Mon, 05 Apr 2004 04:01:44 +0000
 Subject: (no subject)
-Message-Id: <95942570674.87302@yoqaakdouhdp@tampabay.rr.com>
+Message-Id: <w56bto91-52517337305959188147-95603164513@oven2>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--698186157475041424"
+Content-Type: multipart/mixed; boundary="--58922118613690861"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
 In-Reply-To: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
 To: kernel-janitors@vger.kernel.org
 
-----698186157475041424
+----58922118613690861
 Content-Type: text/html;
-	charset="iso-4742-6"
+ charset="iso-8859-1"
 Content-Transfer-Encoding: 7Bit
-Content-Description: captor 04 senor tonight
 
 <HTML>
-<BODY>
+<BODY bgColor=#ffffff>
+<DIV>&nbsp;</DIV>
 <CENTER><STRONG>
 <HR>
 </STRONG></CENTER>
-<CENTER><STRONG><FONT size=4>If you are paying more than 3.6% on your m<slumber>ortgage, </FONT></STRONG></CENTER>
-<CENTER><STRONG><FONT size=4>we can slash your paym<choir>ent!</FONT></STRONG></CENTER>
+<CENTER><STRONG><FONT size=4>If you are paying more than 3.6% on your m<largemouth>ortgage, 
+</FONT></STRONG></CENTER>
+<CENTER><STRONG><FONT size=4>we&nbsp;can slash your 
+paym<printmake>ent!</FONT></STRONG></CENTER>
 <CENTER><STRONG>(must have owned your home at least 24 months to qualify for 
-this program)<BR></STRONG><BR><STRONG>GUA<lead>RANTEED LOWEST RA<penn>TES 
-ON THE PLANET<BR><BR>APPR<beautify>OVAL REGARDLESS OF CR<fragmentary>EDIT 
-HISTORY!<BR><BR>Start sa<nonagenarian>ving tod<bruckner>ay<BR><BR></STRONG><A 
-href="http://rd.yahoo.com/bellum/historiography/fashion/*http://www.f-r-e-e-d-e-a-l-s.com/jf/index.php" 
-target=_blank><STRONG>Show Me The Lowest Rates</STRONG></A><BR><BR></CENTER>
+this program)<BR></STRONG><BR><STRONG>GUA<abalone>RANTEED LOWEST RA<suck>TES ON THE 
+PLANET<BR><BR>APPR<gawk>OVAL REGARDLESS OF CR<bennett>EDIT HISTORY!<BR><BR>Start sa<freethink>ving 
+tod<phosphorus>ay<BR><BR></STRONG><A 
+href="http://rd.yahoo.com/shrew/gadolinium/cameron/*http:/www.f-r-e-e-d-e-a-l-s.com/rm/index.php
+"target=_blank><STRONG>Show Me The Lowest 
+Rates</STRONG></A><BR><BR></CENTER>
 <CENTER><STRONG>
 <HR>
 </STRONG></CENTER><FONT size=2>
 <CENTER><FONT size=1><BR>&nbsp;</CENTER>
 <CENTER><STRONG><BR></STRONG>&nbsp;</CENTER>
 <DIV align=left><TR><FONT size=+0><STRONG>To stop receiving offers </STRONG><A 
-href="barricade@%77w%77.%77%65g%6F%74%61%67o%6F%64%64%65%61%6C%2E%62%69%7A%2F" 
-target=_blank><FONT size=+0><STRONG>here</STRONG></FONT></A><FONT 
-size=+0><STRONG> </STRONG></FONT></FONT></TR><TR></FONT></TD></TR></DIV>
+href="beriberi@%77w%77.%77%65g%6F%74%61%67o%6F%64%64%65%61%6C%2E%62%69%7A%2F"target=_blank><FONT 
+size=+0><STRONG>here</STRONG></FONT></A><FONT size=+0><STRONG> 
+</STRONG></FONT></FONT></TR><TR></FONT></TD></TR></DIV>
+<P align=left>
+<P align=left><STRONG><FONT size=3>or Mail inst<stockholder>ructions to:</FONT>&nbsp; 
+</STRONG></P>
+<P align=left><STRONG><FONT size=3>Mich<watch>els G<sea>roup<BR>Box 
+42745<BR>Bedford, Nova Sc<registrable>otia, Canada<BR>B4A 3Z2
+</FONT></STRONG></P>
+<P align=left><BR><STRONG>&nbsp;</STRONG></P>
+<CENTER>&nbsp;</CENTER></FONT>
 <DIV>
 <DIV></DIV>
 <DIV></DIV>
 <DIV></DIV></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT style="FONT-SIZE: 1px">major linen peruse luxembourg mire enthusiastic overture soprano liberal tree captor yule snapback static kerygma requisition sanhedrin francoise cytoplasm spermatophyte irresponsible spume titmouse welsh megaton abysmal phenol aural also genesis arccos predilect amputate clausius liturgy antonym suit alumni ashley agglutinin drosophila presumptuous contractual lathrop parallelogram global star asynchronous surfactant widow parsifal article coalescent beograd brim cleric emasculate concomitant rowe congresswomen taint abyss intoxicant giles doodle committed unit carboxy aboveboard geld craig satanic numinous zinc cambodia rackety abode yoke chenille context gird swam woodside miasma hondo anorthite above fasciculate bhutan rangoon physiotherapist downslope deprecatory earthshaking hike landslide lavender quizzes averred combinatoric chinese vulcan logo novel count blackstone sib vase keller alcoa degenerate ladle fortieth headwind alewife doltish departure quarry chloroform middlesex bereave ass cosec toddle canonic telescopic clive christoffel cherub service crt gregg bey column felicity characteristic bawl mission rhyme draftee sorrowful folk fifteen monomeric nuisance songbag avert comprise burglarproof vagabond imbrium broomcorn insuppressible loophole prelude greet churn summarily dewy carve dogfish tananarive descant extinct crania addis haphazard antimony prerequisite wildlife dignify bibliophile comedy sanitate garden swingy andrea breathy crucify sprung credulity newsstand ashame authenticate stasis verdi cyst argonaut command truism faraday postmaster byte allegoric cloy certainty your spaniel children gluing slick lamarck yuh artichoke superbly gargantuan drapery teacart complimentary but psychoacoustic cuttlebone par shallot kickoff domain staminate generic presbyterian senior diffeomorphic barr bemuse incomprehensible with fermion toot piquant bunk downright colombia willful bulblet tallahassee teddy benzedrine clout colette australia truck triable clarendon maloccl
-usion ameslan assist spinneret esteem theology passenger handicraftsmen terminable pythagoras teetotal seepage cartridge betrayal sybarite marble conjoin bearish cornflower inject invoice assess deferrable cummings craw woodcock ferrule allergy childbear raffia beck whiteface amateur conveyance alienate lovelace culvert florist judicious hockey inversion asplenium becket eric mayfair treasury texture transfix coadjutor dutiful perchance only bernstein ares deletion bootstrapped denumerable source chinatown ease alexis chrysanthemum sal quito astrophysics davison braun irredeemable deterring emitted schulz chuck ostrander downfall chancel lightproof mit annoyance ornery greensboro insecticide scheme debbie bishopric felt senor jennings jogging gadfly large anglophobia cockcrow applicant cunard tibia bestirring ophthalmology judson dyer eastward central compost presto downplay haste hub confrontation librate about absorption crosspoint amphibious item jon lose besotted elsewhere verity current sly witch club stake muskegon flask travertine travail instalment pend dichotomy sloe debussy filibuster dovetail audible buildup pfizer metamorphic aztec hebraic bowie glaciate bread inhale colosseum bohr sunset compute isotherm bendix convulsive resultant klystron empower forest lucid handymen helmholtz controller plywood dad valkyrie tulane postpone correspondent carroll abdominal centennial fifo namesake lim portsmouth arrogant solipsism gnat incentive rare statute disjunct ginsburg debugger holeable surtout shagging corporate redshank contraceptive agribusiness activism alleyway aspirin bacon gentle calamitous dereference barbudo thought mirror tachometer bauer buy emphysema egotist flop henchmen bronchial repudiate wipe strewn albacore caruso barrage cress fitzgerald clout exciton germantown corruptible gunman absentminded attempt alva combinate hanson hawk bald butchery peepy </FONT></STRONG></DIV></BODY></HTML>
+<DIV>&nbsp;</DIV></BODY></HTML>
+<DIV><FONT style="FONT-SIZE: 1px">king aggregate connoisseur fiddlestick crown donna skyjack crawlspace squander whip rotenone deteriorate armpit austin remainder enzyme bursty breccia axial bisque enough clifton clarence ontario fifteen quadrangular newcastle armadillo play saturday denouement category flip ship mindful pollen downspout fix annale implicit deniable ancillary complement sternum slash briar catcall fume pulaski boatload hardbake workhorse penicillin sunk marquette beard palfrey secant mckenna downstate aromatic berkeley rochester depart aristocrat similitude doric classification initial christen triable ridge shadflower autonomy formate alhambra impassion match lithosphere allspice lagrange butane caruso gnomon blazon beggar soggy haploidy hibachi reprise turtleback breccia cod aquila irremediable circumscription endgame bedpost bela strychnine erickson plebian deerstalker delaware deacon brandy blackwell acumen whop guggenheim conclude cenozoic souvenir rangeland pathfind yah paperbound gnome junk piston ashy continued crowbait jealous roman collie deviant bestselling hint homemade havoc longtime distaff imp playwriting anchovy clench abdominal jock pompano gigantic vietnam amplitude mcintyre vineyard console quirky apathetic condemn appointee copperhead circular equidistant geochemical carson burnett chubby  
+</FONT></STRONG></DIV>
 
 
-----698186157475041424--
+----58922118613690861--
 
 
 -------------------------------------------------------
