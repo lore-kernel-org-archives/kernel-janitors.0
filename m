@@ -1,36 +1,50 @@
-From: Matthew Wilcox <willy@debian.org>
-Date: Tue, 11 May 2004 17:33:17 +0000
-Subject: Re: [Kernel-janitors] Patches for check_region -> request_region
-Message-Id: <20040511173317.GA6278@parcelfarce.linux.theplanet.co.uk>
+From: Domen Puncer <domen@coderock.org>
+Date: Mon, 24 May 2004 14:05:29 +0000
+Subject: [Kernel-janitors] Re: kjt patch-set for 2.6.7-rc1
+Message-Id: <20040524140529.GA23877@nd47>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16989387766463793=="
+Content-Type: multipart/mixed; boundary="===============62001204479026706=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <RACHAELrp3Ui9DGWnFn0000121a@rachael.letnet.net>
-In-Reply-To: <RACHAELrp3Ui9DGWnFn0000121a@rachael.letnet.net>
 To: kernel-janitors@vger.kernel.org
 
---===============16989387766463793==
+--===============62001204479026706==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, May 11, 2004 at 04:52:31PM +0000, lukemauldin@letu.edu wrote:
-> This is my first attempt at kernel janitor work.  Any feedback would be  
-> appreicated. 
+On 24/05/04 12:00 +0200, maximilian attems wrote:
+> hello!
+> 
+Hi.
 
-It would be good if you learned what the different semantics
-are for check_region and request_region and why it's not a simple
-search-and-replace.  For a PCI driver such as trm290.c, it should
-probably use pci_request_regions() instead.
+...
+> this patch is intended for further _testing_ of our work.
+> i hope that it helps Acme releasing the official kj ones.
+> i won't forward anything to maintainers or lkml.
+> will try to release on weekly/10days base.
+...
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+Great idea!
 
---===============16989387766463793==
+I have one suggestion, try egrep -n "^\+(.* $|        )", to see if
+patches introduce trailing spaces or spaces instead of tabs.
+This also bit me, so below are links to 2 updated patches.
+
+> +remove-old-ifdefs-fasttimer
+http://coderock.org/kernel/janitor/old_ifdefs-take3/arch-cris-arch-v10-kernel-fasttimer.c_take2
+> +remove-old-ifdefs-mtdcore
+http://coderock.org/kernel/janitor/old_ifdefs-take3/drivers-mtd-mtdcore.c_take2
+
+
+> +yield-nicedelay-sb1000
+> +yield-schedtmout-megaraid
+> +yield-schedtmout-sonycd535
+
+These are the other patches that contain spaces.
+
+
+	Domen
+
+--===============62001204479026706==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16989387766463793==--
+--===============62001204479026706==--
