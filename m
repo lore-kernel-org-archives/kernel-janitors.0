@@ -1,78 +1,40 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 20:55:22 +0000
-Subject: [Kernel-janitors] [PATCH] mdc: replace schedule_timeout() with
-Message-Id: <20040720205522.GD2959@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68203178971732958=="
+From: "Irma Woodruff" <irma_woodruffvy@immtek.ntnu.no>
+Date: Thu, 01 Jul 2004 20:14:21 +0000
+Subject: $73221
+Message-Id: <943001c45fa7$11f3b011$14cd7461@vfb-luebeck.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============68203178971732958==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello,
+I sent you an email a few days ago, because you now qualify for a new mortgage.
+You could get $300,000 for as little as $700 a month!
+Bad credit is no problem, you can pull cash out or refinance.
 
-This patch applies to mcd.c not cdu31a.c. Sorry for the error.
+Please click on this link:
+http://www.fast-loanz.com/e4/e7.php?weoq
 
-On Tue, Jul 20, 2004 at 08:51:42PM +0000, Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list. This is one (of
-> many) cases where I made a decision about replacing
-> 
-> set_current_state(TASK_INTERRUPTIBLE);
-> schedule_timeout(some_time);
-> 
-> with
-> 
-> msleep(jiffies_to_msecs(some_time));
-> 
-> msleep() is not exactly the same as the previous code, but I only did
-> this replacement where I thought long delays were *desired*. If this is
-> not the case here, then just disregard this patch.
-> 
-> Thanks,
-> Nish
-> 
-> 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Uses msleep() instead of schedule_timeout() to guarantee
-> the task delays at least the desired time amount.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> 
-> --- linux-vanilla/drivers/cdrom/mcd.c	2004-06-16 05:19:37.000000000 +0000
-> +++ linux-dev/drivers/cdrom/mcd.c	2004-07-10 18:24:17.000000000 +0000
-> @@ -1021,10 +1021,9 @@ static int mcd_open(struct cdrom_device_
->  		st = statusCmd();	/* check drive status */
->  		if (st == -1)
->  			goto err_out;	/* drive doesn't respond */
-> -		if ((st & MST_READY) == 0) {	/* no disk? wait a sec... */
-> -			current->state = TASK_INTERRUPTIBLE;
-> -			schedule_timeout(HZ);
-> -		}
-> +		if ((st & MST_READY) == 0) 	/* no disk? wait a sec... */
-> +			msleep(1000);
-> +		
->  	} while (((st & MST_READY) == 0) && count++ < MCD_RETRY_ATTEMPTS);
->  
->  	if (updateToc() < 0)
-
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Best Regards,
+Steve Morris
 
 
---===============68203178971732958==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+---- system information ----
+indicator mechanism in To runtime Distinguishing internationalized Here
 
+radical-stroke information are term Policy localized needed individuals
+
+Force parts same technical set programmer Produces Locale] 
+
+
+
+-------------------------------------------------------
+This SF.Net email sponsored by Black Hat Briefings & Training.
+Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
+digital self defense, top technical experts, no vendor pitches, 
+unmatched networking opportunities. Visit www.blackhat.com
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============68203178971732958==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
