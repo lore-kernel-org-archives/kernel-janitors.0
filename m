@@ -1,181 +1,86 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Fri, 19 Mar 2004 19:30:57 +0000
-Subject: [Kernel-janitors] [REDIFF] - drivers/block/floppy.c audit.
-Message-Id: <1079724657.14846.36.camel@telecentrolivre>
+From: "Josie Feldman" <Cervantes2Atkinson@mn.rr.com>
+Date: Tue, 09 Mar 2004 00:34:57 +0000
+Subject: (no subject)
+Message-Id: <LCKMPCFFJUVZDPLUBQZFNXP@mn.rr.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--9471575678690709041"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1078867777.28746.11.camel@telecentrolivre>
-In-Reply-To: <1078867777.28746.11.camel@telecentrolivre>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
+In-Reply-To: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
 To: kernel-janitors@vger.kernel.org
 
+--9471575678690709041 
+Content-Type: text/plain; charset=us-ascii 
+Content-Transfer-Encoding: 7Bit 
+ 
+abo crossroad mormon posable miff cinema  
+conjugate dehumidify embargoes fearful pray thrust tire chicken bedbug  
+elsinore hansom flick subjunctive enlargeable onomatopoeia antonym detect litmus  
+ 
 
-Hi people,
 
- This version comes with the Randy suggestions, the changes
-are:
+----9471575678690709041
+Content-Type: text/html;
+ charset="iso-8859-1"
+Content-Transfer-Encoding: 7Bit
 
-- <unsigned char> to <int>;
-- del_gendisk() insteed of put_disk();
-- del_timer() for all disks.
+<HTML>
+<BODY bgColor=#ffffff>
+<DIV>&nbsp;</DIV>
+<CENTER><STRONG>
+<HR>
+</STRONG></CENTER>
+<CENTER><STRONG><FONT size=4>If you are paying more than 3.6% on your mortgage, 
+</FONT></STRONG></CENTER>
+<CENTER><STRONG><FONT size=4>we&nbsp;can slash your 
+payment!</FONT></STRONG></CENTER>
+<CENTER><STRONG>(must have owned your home at least 24 months to qualify for 
+this program)<BR></STRONG><BR><STRONG>GUARANTEED LOWEST RATES ON THE 
+PLANET<BR><BR>APPROVAL REGARDLESS OF CREDIT HISTORY!<BR><BR>Start saving 
+today<BR><BR></STRONG><A 
+href="http://rd.yahoo.com/abide/exigent/rheostat/*http:/www.getadealtoday.biz/gf/index.php"target=_blank><STRONG>Show Me The Lowest 
+Rates</STRONG></A><BR><BR></CENTER>
+<CENTER><STRONG>
+<HR>
+</STRONG></CENTER><FONT size=2>
+<CENTER><FONT size=1><BR>&nbsp;</CENTER>
+<CENTER><STRONG><BR></STRONG>&nbsp;</CENTER>
+<DIV align=left><TR><FONT size=+0><STRONG>To stop receiving offers </STRONG><A 
+href="regulate@%77w%77.%77%65g%6F%74%61%67o%6F%64%64%65%61%6C%2E%62%69%7A%2F"target=_blank><FONT 
+size=+0><STRONG>here</STRONG></FONT></A><FONT size=+0><STRONG> 
+</STRONG></FONT></FONT></TR><TR></FONT></TD></TR></DIV>
+<P align=left>
+<P align=left><STRONG><FONT size=3>or Mail instructions to:</FONT>&nbsp; 
+</STRONG></P>
+<P align=left><STRONG><FONT size=3>Fargo Media Group<BR>Box 
+40937<BR>Bedford, Nova Scotia, Canada<BR>B4A 3Z2
+</FONT></STRONG></P>
+<P align=left><BR><STRONG>&nbsp;</STRONG></P>
+<CENTER>&nbsp;</CENTER></FONT>
+<DIV>
+<DIV></DIV>
+<DIV></DIV>
+<DIV></DIV></DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT style="FONT-SIZE: 1px">erskine einstein lobe methuen episcopal demented quest lazy porphyry catchword breton cent cookbook millenia brandeis astronomic stew workaday drew conscript melpomene bimonthly ii ambient seminar decent belfast conversant eleanor biennium downey vanderpoel lieutenant schuster einsteinian meistersinger dungeon devisee equity boatmen amaranth impartation sturdy retrorocket ocular hattiesburg bullfrog altruism arrow upraise distillery rancid intricacy marque higgins policeman drudgery rueful middletown couldn't bunk valerie broke albuquerque cellophane jed effectuate fiesta operatic paranormal tide bluff reminisce showmen caution abide lindstrom confectionery huntsville troubador togging scrub blaine draftsman glassine limitation anatomic desuetude distribution grisly hager prep tailspin darwinian cancel adjutant leverage thiamin entrant husbandman piper cypress bohr ligand fly ace ilona baritone ell inglorious interpret aphasia palladia suey easternmost cruise hooligan coercible cornelius napoleonic byword bong steeple wehr sight aviatrix pocketbook allied quickstep edwardine lascivious secondary jockstrap paleozoic disyllable sewage jetliner stale ku davy attest solar allotropic pejorative abstractor aloud destruct wreak connie dispel lease ernst adelia co childbirth fried ada sturdy simon posthumous noteworthy maroon bookcase millenarian bindle isochronous fury vitae cowslip circumcision accredit chaplin californium wherein sisal daylight childish yesterday planar goldwater alicia compassion shouldn't orchestrate deoxyribose williams bison melodic aleck aspidistra penis european withdraw kennan syracuse sangaree duffy acorn implausible east toward westfield caspian connive dioxide cowslip shaft socrates interpolatory curve doggone amble adagio evanston ezra grimes behalf nowise armament chub entrant latitudinary contaminate eft codeposit mugging bract indefinable fan ersatz opposite negroid upstart vorticity deregulate accidental rex nippon anthem differential showplace hater j
+aguar seaweed annals offer ranch skippy bodhisattva infestation curriculum goldeneye hayward cruel survival airfield swarthy roustabout obstetric bias abbey pleural asuncion aegis faustus velar merchant shack thuggee marino anomie chambers chandler wig certiorari tan itinerary quatrain panel persistent wigging beer audrey day czech equate deer cochlea ulterior herringbone puke flit myra an contribute banter circumscribe dissertation can cartel subtly policeman feudal stile mythic academe burnham denunciate fruitful beef fudge juliet badge tangible mesh vulture capstan susanne indubitable diaper cluj byzantium arcana commerce oxnard edmondson yeast pretentious taylor spit tugging controversial awaken anvil adjoin erasure berglund bellboy decree sophoclean afraid interviewee downey tempo veldt amsterdam doberman hilt corporeal passerby mask thereby dug addison saucepan stilt advice adonis alpha antigorite cavalcade pin cocksure gibe eugene dey boulder confidential barnes kemp liqueur morocco sinh acquire brim clung craggy clarity mateo northwestern castle dada albacore voltmeter deerstalker ear turvy shelter waxwork bear cotyledon gm couch borderland foundation brushy lawbreak manikin collect knell although daniel nate harpsichord invariable rockabye balletomane saigon prostrate sa asheville saloonkeeper bambi tunic sourwood alkaline gifford blocky blair commiserate iodate afresh covariant continua frick sludge ontogeny vivo drexel leather pyrrhic plaything alone stipple startup jar crewmen bequest bernini colander ambient sse row drench idiomatic weco lens approval analyst dwarves evoke legerdemain rest compactify bugaboo oedipal carborundum shrine chromatograph dab greene beowulf storey marie vend sourberry dither menzies vacuum airpark tiptoe resemblant loudspeak ophiuchus trellis rare sweetheart nicosia alloy gordian slack alder clergymen sportsman pineapple lewd steamy bathrobe gretchen iterate veteran rodriguez beggary cayley pernicious ameslan mundane gauche buckshot weak suture penumbra signora mendacity m
+ichelangelo bishopric faulkner christen embouchure feign distribution depress deport locust too taxation briny deluge fall bright pupil whereof agribusiness pillage asteroid later sculpture shed tong squabble lansing foote amicable grownup convince tor decollimate rerouting paramedic gremlin cougar courageous deep offload michele susceptance snipe entrepreneurial scrim pectoralis speech diffeomorphic cartridge gay helical wolf knotty swanlike document snuggle corrodible tableland wightman earthen butyrate boolean stockpile bentley platte brookhaven bimetallic gymnasium officialdom ellipsis craftspeople scm caddis steal strafe agatha bodleian laminate combinatorial mcdermott heckle platform caught network rutile bauble etiquette maxima anchor conklin dynast marrowbone tactual nonsensic ellwood vertex discrepant legate laurent retard joint papaw communicant newsreel trestle bloch elongate avery laughlin near roadbed auditory dead confucianism tonic conch lunchroom nevada beneficial pedal thesis period nowaday steradian designate rejuvenate denunciate spinodal kayo secondary ed sneer perplex incestuous china counterexample wv chuck diagnose adept boltzmann finery teenage thrum decibel authenticate earn weapon balance vigilantism logistic aren't spinodal filmy penury lingua finger whet apart labradorite dixon cleveland contravariant minnie newline benjamin cherokee ethnography essence hem archimedes textron delouse eskimo calhoun rasp aesthetic chalice exploit memorabilia chalk dusseldorf carpentry discriminant declaim captious topsy bullyboy belladonna abetting faun chit spectacular follicular ringlet saloonkeep rut since earsplitting adjectival acknowledgeable aforementioned watertown knob leitmotiv nietzsche hague eunice drawback shall asuncion craze lysergic puberty autumnal beatific iverson light delaney catatonic macabre anaerobic embolden cryptographer sharecrop auntie nee curtsey biology rubidium wholly balinese din inbreed lawsuit praseodymium secrete propriety sixty acetylene keynote corvallis blowback dit
+ty eleven inset lithosphere wrack ulysses weston neater choctaw voyage brandywine solidarity animal aventine synopsis croix epimorphism monongahela duncan geodesy hub fib speedwell marmalade agouti sprout inquisitor lewd afterward awash slant salamander freshwater gooseberry antisemite bimonthly cameroun telepathic mash coffeepot concoct dinosaur orchestral colonel tor anhydrous cistern gaseous chalet mood phoneme sequitur verdict wholesome hereafter firehouse thyronine gradual millionth bismarck woodland expulsion drop flourish situs grisly longhand doubleday insolent catcall prove augusta acceptor kingsley creating jim showroom valery kaleidescope dixie crete yoder acumen burundi apace arrive fum greenwood antipasto reflector barb demolition mn lupine ponchartrain haven mickelson courtier spectroscopic cumin biology drier dendritic lottie referent bimolecular varistor dusty embroidery play gargantuan mealy brew holystone principle reluctant yolk chungking disaccharide infidel endogamy benz childbear chime convent regent immobile sodden cytology interruptible snipe airspeed baron tenebrous euphorbia peephole zoo shasta lumberman devon median quantify gambol landowner neuromuscular rueful win hanover impatient dame quiver asinine cantor air storm time trytophan gratify communion baboon block velocity crewcut inconsistent effaceable totemic buchenwald ballyhoo galway colleague decolletage defeat charles agony aquatic geophysics shaft sporadic belies extensive voluntarism legislature automorphism ruckus analogy bluegrass carla confuse moist breton certify munich goatherd midscale jude molybdenum southbound custom deadhead washy coneflower businessmen sphere morale clinging fisk moreover shelter denouement deadhead goucher forum iraq creche amorous douglas brunhilde intervention shot balinese impoverish coriolanus muscat augean codetermine brotherhood drink raul moses indochinese prosopopoeia cinder vicinal aqueduct wastebasket ballad depth retrofit cerebellum foam cos debit purina schaefer darkle colony creedal st
+rategic boone bullseye sewn cot caleb curlew kinesic carpet dee taiwan sapling ceres kleenex alundum weep olive curvaceous phenomena click butyrate venice smyrna elastic el congruent decontrolled start baylor existential geranium beaumont groupoid keller ywca compensate terminate bicarbonate victoria wintertime depressor ak kite annoyance promenade watanabe cannel transmute rickshaw betray purchase cambric quip auction willow fireboat keyhole tomato dishwasher satisfy heel berate piano bungle noun miasmal cheesy combatant lunacy lachesis bladderwort aerogene insulate maser systematic accreditate harcourt bowditch dunkirk cormorant jingle decision brunt pauper specie baylor celebes shipmen bronco secrete shepherd colombo coarsen gibbons intemperate honduras iv onlook peasanthood bowman bulblet belly cumin abc sponge anomaly nautilus heraclitus afar frozen rotten jesuit titan defecate mockernut reflexive bassinet aviary tinder nether fayette athenian transposition presentational pygmalion cochrane knapp armageddon fisherman yoke agriculture suey bombard eyeball country aleck taketh aggression sheath arnold geodetic samuelson talkie burro cotton stop palo wadi aries attach cranberry subsumed hom chairwoman trinity capybara perspicuity skater recipient wishy scene mignon recondite japanese brandt inhibition battle backlog earnest dialectic ithaca ncar moose bingham checksum sancho inexcusable electrolyte avid chancellor blood defray propose remitting quakeress complete hercules anybody maltose boyfriend blot dooley lusty zen revolutionary fig scott chandelier fluffy herr agamemnon blizzard dendrite durable divalent tallyho tonk abbot isotropy ignite biennial wherein apartheid orchid blythe lawbreaker creature decline pinkie cranny persia caesar aver nolan britches panhandle rod ale bifocal creek emeriti detonate irrefutable competent generic come inkling cadillac hermite transmittal inasmuch emplace beside secant spit next  
+</FONT></STRONG></DIV></BODY></HTML>
 
- Randy, I'm using del_timer in the while() loop. Do you
-still believe that is wrong ?
 
- I'll love to hear comments, because I have no certain of the
-correctnes of this version.
+----9471575678690709041--
 
-diff -Nparu linux-2.6.5-rc1-bk4/drivers/block/floppy.c linux-2.6.5-rc1-bk4~/drivers/block/floppy.c
---- linux-2.6.5-rc1-bk4/drivers/block/floppy.c	2004-03-11 14:20:34.000000000 -0300
-+++ linux-2.6.5-rc1-bk4~/drivers/block/floppy.c	2004-03-19 15:25:12.000000000 -0300
-@@ -4233,36 +4233,40 @@ static struct kobject *floppy_find(dev_t
- 
- int __init floppy_init(void)
- {
--	int i,unit,drive;
--	int err;
-+	int dr, unit;
-+	int i, drive, err;
- 
- 	raw_cmd = NULL;
- 
--	for (i=0; i<N_DRIVE; i++) {
--		disks[i] = alloc_disk(1);
--		if (!disks[i])
--			goto Enomem;
--
--		disks[i]->major = FLOPPY_MAJOR;
--		disks[i]->first_minor = TOMINOR(i);
--		disks[i]->fops = &floppy_fops;
--		sprintf(disks[i]->disk_name, "fd%d", i);
--
--		init_timer(&motor_off_timer[i]);
--		motor_off_timer[i].data = i;
--		motor_off_timer[i].function = motor_off_callback;
-+	for (dr = 0; dr < N_DRIVE; dr++) {
-+		disks[dr] = alloc_disk(1);
-+		if (!disks[dr]) {
-+			err = -ENOMEM;
-+			goto out_del_gendisk;
-+		}
-+
-+		disks[dr]->major = FLOPPY_MAJOR;
-+		disks[dr]->first_minor = TOMINOR(dr);
-+		disks[dr]->fops = &floppy_fops;
-+		sprintf(disks[dr]->disk_name, "fd%d", dr);
-+
-+		init_timer(&motor_off_timer[dr]);
-+		motor_off_timer[dr].data = dr;
-+		motor_off_timer[dr].function = motor_off_callback;
- 	}
- 
- 	devfs_mk_dir ("floppy");
--	if ((err = register_blkdev(FLOPPY_MAJOR,"fd")))
--		goto out;
-+
-+	err = register_blkdev(FLOPPY_MAJOR, "fd");
-+	if (err)
-+		goto out_devfs_remove;
- 
- 	floppy_queue = blk_init_queue(do_fd_request, &floppy_lock);
--	blk_queue_max_sectors(floppy_queue, 64);
- 	if (!floppy_queue) {
- 		err = -ENOMEM;
--		goto fail_queue;
-+		goto out_unreg_blkdev;
- 	}
-+	blk_queue_max_sectors(floppy_queue, 64);
- 
- 	blk_register_region(MKDEV(FLOPPY_MAJOR, 0), 256, THIS_MODULE,
- 				floppy_find, NULL, NULL);
-@@ -4293,17 +4297,20 @@ int __init floppy_init(void)
- 	use_virtual_dma = can_use_virtual_dma & 1;
- 	fdc_state[0].address = FDC1;
- 	if (fdc_state[0].address = -1) {
-+		del_timer(&fd_timeout);
- 		err = -ENODEV;
--		goto out1;
-+		goto out_unreg_region;
- 	}
- #if N_FDC > 1
- 	fdc_state[1].address = FDC2;
- #endif
- 
- 	fdc = 0; /* reset fdc in case of unexpected interrupt */
--	if (floppy_grab_irq_and_dma()){
-+	err = floppy_grab_irq_and_dma();
-+	if (err) {
-+		del_timer(&fd_timeout);
- 		err = -EBUSY;
--		goto out1;
-+		goto out_unreg_region;
- 	}
- 
- 	/* initialise drive state */
-@@ -4360,11 +4367,8 @@ int __init floppy_init(void)
- 	initialising=0;
- 	if (have_no_fdc) {
- 		DPRINT("no floppy controllers found\n");
--		flush_scheduled_work();
--		if (usage_count)
--			floppy_release_irq_and_dma();
- 		err = have_no_fdc;
--		goto out2;
-+		goto out_flush_work;
- 	}
- 	
- 	for (drive = 0; drive < N_DRIVE; drive++) {
-@@ -4379,26 +4383,29 @@ int __init floppy_init(void)
- 		add_disk(disks[drive]);
- 	}
- 
--	platform_device_register(&floppy_device);
-+	err = platform_device_register(&floppy_device);
-+	if (err)
-+		goto out_flush_work;
-+
- 	return 0;
- 
--out1:
--	del_timer(&fd_timeout);
--out2:
-+out_flush_work:
-+	flush_scheduled_work();
-+	if (usage_count)
-+		floppy_release_irq_and_dma();
-+out_unreg_region:
- 	blk_unregister_region(MKDEV(FLOPPY_MAJOR, 0), 256);
- 	blk_cleanup_queue(floppy_queue);
--fail_queue:
-+out_unreg_blkdev:
- 	unregister_blkdev(FLOPPY_MAJOR,"fd");
--out:
--	for (i=0; i<N_DRIVE; i++)
--		put_disk(disks[i]);
-+out_devfs_remove:
- 	devfs_remove("floppy");
-+out_del_gendisk:
-+	while (dr--) {
-+		del_timer(&motor_off_timer[dr]);
-+		del_gendisk(disks[dr]);
-+	}
- 	return err;
--
--Enomem:
--	while (i--)
--		put_disk(disks[i]);
--	return -ENOMEM;
- }
- 
- static spinlock_t floppy_usage_lock = SPIN_LOCK_UNLOCKED;
 
--- 
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
 
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: IBM Linux Tutorials
+Free Linux tutorial presented by Daniel Robbins, President and CEO of
+GenToo technologies. Learn everything from fundamentals to system
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
