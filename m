@@ -1,41 +1,36 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Wed, 22 Sep 2004 18:31:47 +0000
-Subject: Re: [Kernel-janitors] [PATCH] TODO: add MODULE_VERSION
-Message-Id: <20040922183147.GE20621@stro.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 15 Sep 2004 21:32:07 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/33] char/drm_os_linux: replace
+Message-Id: <20040915213207.GH5778@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============039791228172793236=="
+Content-Type: multipart/mixed; boundary="===============20965267639238117=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1095546600.3593.37.camel@sfeldma-mobl2.dsl-verizon.net>
-In-Reply-To: <1095546600.3593.37.camel@sfeldma-mobl2.dsl-verizon.net>
 To: kernel-janitors@vger.kernel.org
 
---===============039791228172793236==
+--===============20965267639238117==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, 22 Sep 2004, Alexey Dobriyan wrote:
+Any comments would be appreciated. 
 
-> On Tue, 21 Sep 2004 maximilian attems wrote:
-> >
-> > On Sat, 18 Sep 2004, Scott Feldman wrote:
-> >
-> > > * Add Matt Domsch's note to add MODULE_VERSION to all modules
-> > >   to kj TODO list.
-> >
-> > care to point me to patches that went upstream to linus?
-> > didn't see one in bkbits for the last 3 weeks.
-> 
-> http://linux.bkbits.net:8080/linux-2.6/search/?expr=MODULE_VERSION&search=ChangeSet+comments
-> 
+Description: Use set_current_state() instead of direct assignment of
+current->state.
 
-thanks to you guys, added.
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---
-maks
-kernel janitor  	http://janitor.kernelnewbies.org/
+--- 2.6.9-rc1-mm4-vanilla/drivers/char/drm/drm_os_linux.h	2004-09-09 23:05:38.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/char/drm/drm_os_linux.h	2004-09-10 10:34:04.000000000 -0700
+@@ -134,7 +134,7 @@ do {								\
+ 	add_wait_queue(&(queue), &entry);			\
+ 								\
+ 	for (;;) {						\
+-		current->state = TASK_INTERRUPTIBLE;		\
++		set_current_state(TASK_INTERRUPTIBLE);		\
+ 		if (condition)					\
+ 			break;					\
+ 		if (time_after_eq(jiffies, end)) {		\
 
-
---===============039791228172793236==
+--===============20965267639238117==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============039791228172793236==--
+--===============20965267639238117==--
