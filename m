@@ -1,117 +1,34 @@
-From: "madonna reber" <madonna@bellsouth.net>
-Date: Fri, 21 May 2004 23:58:14 +0000
-Subject: Fwd: :V:alium . X:A:Nax < v|aGr@ < V1c/odin Pnter.m.in ? :S:oma  adsotxrslznu
-Message-Id: <69315243318.41563@madonna.reber@bellsouth.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--6642826103966452"
+From: EveMaher <LadonnaNavarro@compass.com.ph>
+Date: Wed, 12 May 2004 13:37:30 +0000
+Subject: Kernel-janitor-discuss VK1IUqp8lDl
+Message-Id: <XIGLWADVVQOPNGE.56447@12.152.184.25>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----6642826103966452
-Content-Type: text/html;
-	charset="iso-9297-9"
-Content-Transfer-Encoding: quoted-printable
-Content-Description: kelvin frisky 8
-
-<!DOCTYPE html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www=
-w3.org/TR/html4/loose.dtd">
-<HTML>
-<HEAD>
-<TITLE>medserver.biz</TITLE>
-
-</HEAD>
-<BODY>
-<p>
-Hi Kernel-janitor-discuss, 
-<p>
-W<powers>e<mothball> are<wok> p<dispute>roviding an online<longfellow> s<n=
-ightcap>olut<applicable>ion t<discretionary>o finding and re<dense>c<osbor=
-n>e<dine>iving p<portentous>re<misshapen>s<pansy>c<linebacker>rip<quest>t<=
-portrait>ion me<bird>dic<johns>at<stew>ions<quirt> from t<styx>he<audubon>=
- c<bifocal>omfort<category> of your own home<bragging>, you will be<earn> =
-able<vow> t<wealthy>o s<holocene>ave<freshwater> mone<virgule>y, s<miscege=
-nation>ave<twinkle> t<abernathy>ime<age>, s<nice>ave<daybreak> yours<pawns=
-hop>e<quetzal>lf from worry, and mos<mezzo>t<existent> of all, s<salivary>=
-ave<annale> your life<gallant>!
-<p>
-What's available: + V1@GRA ' Valiu|m| - x@nax * +S+oma & P/n/termin ` At|v=
-@.n
-<p>
-Plus: Pr0z@'c, P@xi:l, Busp`@r, Ad|:p3x, I0nam*|n, M'3ridia, X3:nica|, Amb=
-i3n, S0naT:a, Fl3x:eril, C`e|3brex, Fi:0ric3t, Tram@do'|, U|tr@.m, L3`v|t=
-ra, Pr0p3.cia, Ac:yc|0vir
-<p>
-Fre<lockian>e<cosmos> online<cyclone> me<assai>dical consult<chilblain>at<=
-organometallic>ion by<abeyance> a lice<parapet>nse<colonist>d U.S. phy<mun=
-ich>sician.
-<p>
-B<maldive>ecau<emit>s<catherine>e you can add mor<delmarva>e <ama>to your =
-l<between>if<adolph>e. <claremont>shop Now.  <a href=3D"http://www.medserv=
-er.biz">www.medserver.biz</a>.
-<p>
-Best Regards, 
-<p>
-madonna reber 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<abacus><Kernel-janitor-discuss><hair><madonna><babysit><grocer><sickish><=
-chinook><cellular><reber><nob><loathsome><mn><madonna><slacken><postdoctor=
-al><discretion><madonna.reber@bellsouth.net><winery><Kernel-janitor-discus=
-s><governance><algal><involutory><kernel-janitor-discuss@lists.sourceforge=
-net><hilbert><kernel-janitor-discuss@lists.sourceforge.net><demented><ker=
-nel-janitor-discuss@lists.sourceforge.net><edwardine><groupoid><servile><w=
-ove><groggy><reber_madonna@bellsouth.net><syracuse><occupation><Kernel-jan=
-itor-discuss><seditious><reber><vamp><reber><incomprehension><gibraltar><c=
-onjoin><euphoric><manor><newspaperman><panacea><Kernel-janitor-discuss><an=
-tigone><symposia><conrail><Kernel-janitor-discuss><antimony><madonna.reber=
-@bellsouth.net><injunct><reber><botanic><Kernel-janitor-discuss><albania><=
-laotian><allusive><champ><barnes><carouse><depreciate><yearn><tolerant><cl=
-ock><momentary><semiramis><Kernel-janitor-discuss><labyrinth><rebermadonna=
-@bellsouth.net><vega><sell><kernel-janitor-discuss@lists.sourceforge.net><=
-collimate><rebermadonna@bellsouth.net><wellbeing><doggone><kernel-janitor-=
-discuss@lists.sourceforge.net><come><metal><tempest><Kernel-janitor-discus=
-s><crescendo><madonna><assignee><oodles><sainthood><blind><perplex><reber>=
-<ere><loin><clothe><madonna><metallography><argo><cry><reber@bellsouth.net=
-><delay><Kernel-janitor-discuss><keyed><homeowner><custodian><kernel-janit=
-or-discuss@lists.sourceforge.net><borderland><kernel-janitor-discuss@lists=
-sourceforge.net><doctrine><kernel-janitor-discuss@lists.sourceforge.net><=
-hurd><embassy><numeral><glitter><mcadams><madonna@bellsouth.net><dozen><wo=
-rdy><Kernel-janitor-discuss><forceful><reber><buxom><reber><donahue><vivo>=
-<dispensate><ecuador><formate><coolheaded><negroes><Kernel-janitor-discuss=
-><khartoum><damage><geopolitic><Kernel-janitor-discuss><pigeonhole><reber@=
-bellsouth.net><anew><reber><allen><Kernel-janitor-discuss><armada><malnour=
-ished><prayer><hornwort><societe><weatherproof><auschwitz><clemson><brucel=
-losis><plumage><sallow><fume><Kernel-janitor-discuss><afghanistan><madonna=
-reber@bellsouth.net><karl><wartime><kernel-janitor-discuss@lists.sourcefo=
-rge.net><dumpy><madonna.reber@bellsouth.net><bark><dinghy><kernel-janitor-=
-discuss@lists.sourceforge.net><moire><basophilic> 
-
-
-</BODY>
-</HTML>
-
-----6642826103966452--
+<html>
+<body>
+<font style=font-size:1px>Kernel-janitor-discuss giant decomposition angie cursor blackman tip creole preparative postman dogleg mendelssohn causal </font>
+<font face="Arial" size="1">Page is Loading . . . .<br>
+<a href="http://WodhCDBl8.med0hbe.com/index.php?refid4">
+<img src="http://xdyZ.med0hbe.com/banners/300x200_banner1jpg.jpg" border="0"></a><br><br>
+Image not Showi<font style=font-size:1px>)</font>ng? <a href="http://l1iHckYV6.med0hbe.com/index.php?refid4"><h5>Sav.e upto 7.O%+, Orde.r H.ere</h5></a>
+<br><br>
+<br><br>
+<br><br>
+<font style=font-size:1px>electorate malformation aphasic caracas buena teensy copernicus irreconcilable scotia burma timex linotype baroness chow cretaceous tight celandine shove montmartre simulcast laramie protoplasm pigeonhole seize haste contractual pose atrophic controllable caretaker carnival angry chamberlain fortnight situs geocentric workplace tour exhibition hummingbird duck sachs lutz disciplinary introject rare matson doorkeep parakeet intrusive attribute pasture gout speech archenemy proclaim gummy monument charity diversion circle bystander birefringent campsite sank odious bernstein dutchess linkage tinsel committing wealth orpheus couple brickbat speed toilsome washout kernighan edt depository precess scabrous vandenberg steele armenia blatant kleenex digram gustave curlicue governance berra abstractor bam sheer cahill regulate trend conform noodle magnificent mayo woe drake screwball bladder ark ditty lacunae westinghouse multipliable atrophic me proclaim ampersand tegucigalpa hearst pickerel tenable procedure brendan cony yeager preen affine orgy encroach woolworth motion it'd olivia idiot bolivia tally soliton syntheses periodic bayport cyril propound admissible discussion cowgirl persian traversable inroad rep coco prosopopoeia confidential district conundrum tandem bawdy cartographic vivace stochastic joint injun hexafluoride shifty curl buenos gut ductwork bond cola noble stonehenge endogenous besetting cinematic dodge transmittal scram aging evade poi tory lurk ace boat liable scarf paragon bootlegging multiplicative penury flatiron appleton chicory dialectic maim hermes allergic booze countersink deoxyribose tenon whiteface auric decode hexachloride precaution bateau inelegant genial brainwash conduct anisotropy playroom sullivan templeton under grayson herpetology quicksilver anthropomorphism polo credit samson official doesn't cambric intend settle cortical desperate uris rally waitress confront cogent esophagi fisherman elicit disdain carefree celtic o'clock patricia sundew dogging hy
+drostatic propitiate venal crestfallen saudi among orville knox penmen judd mchugh bauble bear grave mcintyre argus nucleolus ballroom optoisolate wetland swampy combinator connector bronchial anther spectroscope tapis yeshiva courthouse omen conferring wasteful aback ahead warehouseman addis fluffy godfather lockwood again aghast metalloid sane gershwin backfill clitoris ineducable piety macromolecule died manila dreamy bonito coal bechtel corundum barr coverlet lyra cecil suffocate abnormal emory cavilling dusenberg andrea sprain compare buckshot safeguard bipartite necropsy triune goethe lobar obsolescent trag catalina proximal acquitting chancellor cartwheel gerald topmost gelatinous waylay probabilist ribonucleic tricky everywhere auric checkout clearheaded </font>
+</body>
+</html>
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by: Oracle 10g
-Get certified on the hottest thing ever to hit the market... Oracle 10g. 
-Take an Oracle 10g class now, and we'll give you the exam FREE.
-http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
+This SF.Net email is sponsored by Sleepycat Software
+Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
+higher performing products faster, at low TCO.
+http://www.sleepycat.com/telcomwpreg.php?From=osdnemail3
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
