@@ -1,13 +1,14 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 17 Jan 2005 21:20:11 +0000
-Subject: [KJ] [PATCH 7/22] ftape/fdc-io: insert set_current_state() before
-Message-Id: <20050117212011.GI24698@us.ibm.com>
+Date: Thu, 20 Jan 2005 19:03:52 +0000
+Subject: [KJ] [PATCH 7/40] fs/nfs4callback: replace schedule_timeout() with
+Message-Id: <20050120190352.GH5393@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============068584577036343575=="
+Content-Type: multipart/mixed; boundary="===============72527295586027218=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: neilb@cse.unsw.edu.au
+Cc: kernel-janitors@lists.osdl.org, nfs@lists.sourceforge.net
 
---===============068584577036343575==
+--===============72527295586027218==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,32 +16,33 @@ Hi,
 
 Please consider applying.
 
-Description: Inserts a set_current_state(TASK_INTERRUPTIBLE) before the
-schedule_timeout() call. Without this change, after the first iteration of the
-loop, schedule_timeout() will not only return immediately, but the loop will
-break, as the conditional will no longer be satisfied. In fact, this conditional
-makes little sense given the workings of schedule_timeout. The timeout variable
-is ignored, as well, and I'm fairly certain that it should be included in the
-loop conditional. That way, if the timeout expires before a signal hits, -ETIME
-will be returned by fdc_interrupt_wait() instead of -EINTR.
+Description: Use ssleep() instead of schedule_timeout() to guarantee the task
+delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.11-rc1-kj-v/fs/nfsd/nfs4callback.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/fs/nfsd/nfs4callback.c	2005-01-18 11:03:27.000000000 -0800
+@@ -38,6 +38,7 @@
+ #include <linux/list.h>
+ #include <linux/inet.h>
+ #include <linux/errno.h>
++#include <linux/delay.h>
+ #include <linux/sunrpc/xdr.h>
+ #include <linux/sunrpc/svc.h>
+ #include <linux/sunrpc/clnt.h>
+@@ -531,8 +532,7 @@ out:
+ retry:
+ 	atomic_inc(&dp->dl_recall_cnt);
+ 	/* sleep 2 seconds before retrying recall */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(2*HZ);
++	ssleep(2);
+ 	status = nfsd4_cb_recall(dp);
+ 	dprintk("NFSD: nfs4_cb_recall_done: retry status: %d  dp %p dl_flock %p\n",status,dp, dp->dl_flock);
+ }
 
---- 2.6.11-rc1-kj-v/drivers/char/ftape/lowlevel/fdc-io.c	2005-01-15 16:55:41.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/char/ftape/lowlevel/fdc-io.c	2005-01-17 13:12:29.000000000 -0800
-@@ -387,7 +387,8 @@ int fdc_interrupt_wait(unsigned int time
- 
- 	set_current_state(TASK_INTERRUPTIBLE);
- 	add_wait_queue(&ftape_wait_intr, &wait);
--	while (!ft_interrupt_seen && (current->state == TASK_INTERRUPTIBLE)) {
-+	while (!ft_interrupt_seen && timeout) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		timeout = schedule_timeout(timeout);
-         }
- 
-
---===============068584577036343575==
+--===============72527295586027218==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============068584577036343575==--
+--===============72527295586027218==--
