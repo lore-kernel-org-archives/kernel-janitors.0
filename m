@@ -1,42 +1,52 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 28 Jan 2004 17:53:39 +0000
-Subject: Re: [Kernel-janitors] [announce] 2.6.2-rc2-kj1 patchset
-Message-Id: <20040128095339.4798325c.rddunlap@osdl.org>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 17 Jan 2004 16:29:42 +0000
+Subject: [Kernel-janitors] [patch 2.6.1] s/CONFIG_SYSRQ/CONFIG_MAGIC_SYSRQ/
+Message-Id: <200401171729.42422.domen@coderock.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040127171427.24f62515.rddunlap@osdl.org>
-	<20040128173620.GB2389@charlie.minidns.net>
-In-Reply-To: <20040128173620.GB2389@charlie.minidns.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Daniele Bellucci <bellucda@tiscali.it>
-Cc: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Wed, 28 Jan 2004 18:36:20 +0100 Daniele Bellucci <bellucda@tiscali.it> wrote:
+Hi.
 
-| 
-| On Tue, Jan 27, 2004 at 05:14:27PM -0800, Randy.Dunlap wrote:
-| |previous (for 2.6.1-bk4):  [2004-01-16]
-| |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-| |mntr/	ipt_register_target_retval.patch
-| |	From: Daniele Bellucci <bellucda@tiscali.it>
-| |	to netdev/davem: 2004.0124;
-| 
-| Hi Randy,
-| can you tellme what does "mntr" mean?
+Noone tested that code to see if it really works?
 
 
-The abbreviations used here are listed at the top of the
-email (or file):
+--- c/arch/arm/kernel/process.c	2003-12-18 03:59:37.000000000 +0100
++++ a/arch/arm/kernel/process.c	2004-01-17 16:31:02.000000000 +0100
+@@ -264,7 +264,7 @@
+ 	if (!thread)
+ 		thread = ll_alloc_task_struct();
+ 
+-#ifdef CONFIG_SYSRQ
++#ifdef CONFIG_MAGIC_SYSRQ
+ 	/*
+ 	 * The stack must be cleared if you want SYSRQ-T to
+ 	 * give sensible stack usage information
+--- c/arch/um/kernel/um_arch.c	2003-12-18 03:59:18.000000000 +0100
++++ a/arch/um/kernel/um_arch.c	2004-01-17 16:31:25.000000000 +0100
+@@ -376,7 +376,7 @@
+ static int panic_exit(struct notifier_block *self, unsigned long unused1,
+ 		      void *unused2)
+ {
+-#ifdef CONFIG_SYSRQ
++#ifdef CONFIG_MAGIC_SYSRQ
+ 	handle_sysrq('p', &current->thread.regs, NULL, NULL);
+ #endif
+ 	machine_halt();
+--- c/arch/arm26/kernel/process.c	2003-12-18 03:59:35.000000000 +0100
++++ a/arch/arm26/kernel/process.c	2004-01-17 16:31:41.000000000 +0100
+@@ -257,7 +257,7 @@
+ 	if (!thread)
+ 		thread = ll_alloc_task_struct();
+ 
+-#ifdef CONFIG_SYSRQ
++#ifdef CONFIG_MAGIC_SYSRQ
+ 	/*
+ 	 * The stack must be cleared if you want SYSRQ-T to
+ 	 * give sensible stack usage information
 
-M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
-
-so Dave Miller has merged it and he will send it on to Andrew/Linus
-(in this case).
-
---
-~Randy
-kernel-janitors project:  http://janitor.kernelnewbies.org/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
