@@ -1,58 +1,68 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:52 +0000
-Subject: [KJ] [PATCH][RESUBMIT][4/21] drivers/ide/* - compile warning cleanup
-Message-Id: <42113C2C.18398.52BB33@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Mon, 14 Feb 2005 14:48:32 +0000
+Subject: [KJ] [PATCH] drivers/atm/* : pci_request_regions
+Message-Id: <20050214144832.GF20620@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53815517884498321=="
+Content-Type: multipart/mixed; boundary="n2Pv11Ogg/Ox8ay5"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============53815517884498321==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - handle copy_to/from_user error returns
+--n2Pv11Ogg/Ox8ay5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/ide/ide-tape.c linux-2.6.11-rc3-mm2/drivers/ide/ide-tape.c
---- linux-2.6.11-rc3-mm2-original/drivers/ide/ide-tape.c	2005-02-12 12:06:38.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/ide/ide-tape.c	2005-02-12 16:29:56.000000000 +0200
-@@ -2610,7 +2610,13 @@ static void idetape_copy_stage_from_user
- 		}
- #endif /* IDETAPE_DEBUG_BUGS */
- 		count = min((unsigned int)(bh->b_size - atomic_read(&bh->b_count)), (unsigned int)n);
--		copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count);
-+		if (copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count)) {
-+#if IDETAPE_DEBUG_BUGS
-+			printk(KERN_ERR "ide-tape/%s: copy_from_user failed!\n",
-+					__FUNCTION__);
-+#endif /* IDETAPE_DEBUG_BUGS */
-+			return;
-+		}
- 		n -= count;
- 		atomic_add(count, &bh->b_count);
- 		buf += count;
-@@ -2637,7 +2643,12 @@ static void idetape_copy_stage_to_user (
- 		}
- #endif /* IDETAPE_DEBUG_BUGS */
- 		count = min(tape->b_count, n);
--		copy_to_user(buf, tape->b_data, count);
-+		if (copy_to_user(buf, tape->b_data, count)) {
-+#if IDETAPE_DEBUG_BUGS
-+			printk(KERN_ERR "ide-tape/%s: copy_to_user failed!\n",__FUNCTION__);
-+#endif /* IDETAPE_DEBUG_BUGS */
-+			return;
-+		}
- 		n -= count;
- 		tape->b_data += count;
- 		tape->b_count -= count;
+description:
+If PCI request regions fails, then someone else is using the
+hardware we wish to use. For that one case, calling
+pci_disable_device() is rather rude.
+See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
+
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
 
+--n2Pv11Ogg/Ox8ay5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_disable-linux-2.6.11-rc4_drivers_atm.patch"
 
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/atm/zatm.c linux-2.6.11-rc4/drivers/atm/zatm.c
+--- linux-2.6.11-rc4-vanilla/drivers/atm/zatm.c	2005-02-14 09:03:40.000000000 +0100
++++ linux-2.6.11-rc4/drivers/atm/zatm.c	2005-02-14 09:41:40.000000000 +0100
+@@ -1576,6 +1576,7 @@ static int __devinit zatm_init_one(struc
+ 	struct atm_dev *dev;
+ 	struct zatm_dev *zatm_dev;
+ 	int ret = -ENOMEM;
++	int pci_dev_busy = 0 ;
+ 
+ 	zatm_dev = (struct zatm_dev *) kmalloc(sizeof(*zatm_dev), GFP_KERNEL);
+ 	if (!zatm_dev) {
+@@ -1592,8 +1593,10 @@ static int __devinit zatm_init_one(struc
+ 		goto out_deregister;
+ 
+ 	ret = pci_request_regions(pci_dev, DEV_LABEL);
+-	if (ret < 0)
++	if (ret < 0) {
++		pci_dev_busy = 1 ;
+ 		goto out_disable;
++	}
+ 
+ 	zatm_dev->pci_dev = pci_dev;
+ 	dev->dev_data = zatm_dev;
+@@ -1611,7 +1614,8 @@ out:
+ out_release:
+ 	pci_release_regions(pci_dev);
+ out_disable:
+-	pci_disable_device(pci_dev);
++	if(!pci_dev_busy)
++		pci_disable_device(pci_dev);
+ out_deregister:
+ 	atm_dev_deregister(dev);
+ out_free:
 
---===============53815517884498321==
+--n2Pv11Ogg/Ox8ay5
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53815517884498321==--
+--n2Pv11Ogg/Ox8ay5--
