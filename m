@@ -1,57 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 04 Mar 2005 16:58:57 +0000
-Subject: Re: [KJ] linux-2.6.9: psmouse fix names
-Message-Id: <20050304165857.GG28179@kroah.com>
+From: Coywolf Qi Hunt <coywolf@gmail.com>
+Date: Tue, 08 Mar 2005 18:34:00 +0000
+Subject: [KJ] [patch] fix typo in pm.h
+Message-Id: <2cd57c90050308103414c5aef6@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============43717981007234585=="
+Content-Type: multipart/mixed; boundary="===============32016376604160923=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42282D69.90404@bfs.de>
-In-Reply-To: <42282D69.90404@bfs.de>
 To: kernel-janitors@vger.kernel.org
 
---===============43717981007234585==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============32016376604160923==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 04, 2005 at 10:42:01AM +0100, walter harms wrote:
-> Hi list,
-> 
-> the psmouse driver reports the name "psmouse.c" with error messages. 
-> Since there is a psmouse.o but no .c this is confusing. (at least to 
-> me). this patch changes the hardcoded names to __FUNCTION__.
-> 
-> btw: do anyone know how to restart the synaptics driver ? it stops 
-> working sometimes.
-> 
-> (because of tab/space problems this patch is also attached).
-> 
-> drivers/input/mouse/psmouse-base.c
-> 
-> replace wrong filenames in error messages
-> 
-> Signed-off-by: walter harms <wharms@bfs.de>
-> 
-> --- linux-2.6.9/drivers/input/mouse/psmouse-base.c.bak	2005-03-03 
-> 22:18:49.000000000 +0100
-> +++ linux-2.6.9/drivers/input/mouse/psmouse-base.c	2005-03-03 
-> 22:38:57.000000000 +0100
-> @@ -141,7 +141,7 @@
-> 
->  	if (flags & (SERIO_PARITY|SERIO_TIMEOUT)) {
->  		if (psmouse->state == PSMOUSE_ACTIVATED)
-> -			printk(KERN_WARNING "psmouse.c: bad data from KBC 
-> -%s%s\n",
-> +			printk(KERN_WARNING "%s: bad data from KBC 
-> -%s%s\n",__FUNCTION__,
+This patch fixes a typo in PMSG_ comment in pm.h.
 
-Please use the dev_warn() and friend functions instead.  It gives you a
-much better, and standardized, solution.
+Signed-off-by: Coywolf Qi Hunt <coywolf@gmail.com>
 
-thanks,
+diff -Nrup 2.6.11/include/linux/pm.h 2.6.11-cy/include/linux/pm.h
+--- 2.6.11/include/linux/pm.h	2005-03-03 17:12:14.000000000 +0800
++++ 2.6.11-cy/include/linux/pm.h	2005-03-09 02:27:07.000000000 +0800
+@@ -208,7 +208,7 @@ typedef u32 __bitwise pm_message_t;
+  *           pci D3.
+  *
+  * Unfortunately, current drivers only recognize numeric values 0
+(ON) and 3 (SUSPEND).
+- * We'll need to fix the drivers. So yes, putting 3 to all diferent
+defines is intentional,
++ * We'll need to fix the drivers. So yes, putting 3 to all different
+defines is intentional,
+  * and will go away as soon as drivers are fixed. Also note that
+typedef is neccessary,
+  * we'll probably want to switch to
+  *   typedef struct pm_message_t { int event; int flags; } pm_message_t
 
-greg k-h
+-- 
+Coywolf Qi Hunt
+Homepage http://sosdg.org/~coywolf/
 
---===============43717981007234585==
+--===============32016376604160923==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============43717981007234585==--
+--===============32016376604160923==--
