@@ -1,37 +1,36 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 20:58:28 +0000
-Subject: [Kernel-janitors] Re: [PATCH] wireless/orinoco_plx: replace
-Message-Id: <20040727205828.GI3471@us.ibm.com>
+From: David Gibson <hermes@gibson.dropbear.id.au>
+Date: Fri, 30 Jul 2004 03:01:13 +0000
+Subject: [Kernel-janitors] Re: [PATCH] wireless/orinoco_tmd: replace
+Message-Id: <20040730030113.GB22225@zax>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78109273049949635=="
+Content-Type: multipart/mixed; boundary="===============57329445597514628=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040727205828.GI3471@us.ibm.com>
+In-Reply-To: <20040727205828.GI3471@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============78109273049949635==
+--===============57329445597514628==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 27, 2004 at 01:56:44PM -0700, Nishanth Aravamudan wrote:
+On Tue, Jul 27, 2004 at 01:58:44PM -0700, Nishanth Aravamudan wrote:
 > I would appreciate any comments from the janitors list. 
+> 
+> Applys-to: 2.6.7
+> 
+> Description: Use msleep() instead of schedule_timeout() to guarantee
+> the task delays for the desired time.
 
-Sorry, wrong patch attached. Please find the correct one below.
+I've merged these changes into the orinoco CVS tree, so there won't be
+conflicts as I merge with mainline.
 
--Nish
+-- 
+David Gibson			| For every complex problem there is a
+david AT gibson.dropbear.id.au	| solution which is simple, neat and
+				| wrong.
+http://www.ozlabs.org/people/dgibson
 
---- linux-vanilla/drivers/net/wireless/orinoco_plx.c	2004-06-16 05:20:04.000000000 +0000
-+++ linux-dev/drivers/net/wireless/orinoco_plx.c	2004-07-03 02:40:32.000000000 +0000
-@@ -344,8 +344,7 @@ static int __init orinoco_plx_init(void)
- extern void __exit orinoco_plx_exit(void)
- {
- 	pci_unregister_driver(&orinoco_plx_driver);
--	current->state = TASK_UNINTERRUPTIBLE;
--	schedule_timeout(HZ);
-+	msleep(1000);
- }
- 
- module_init(orinoco_plx_init);
-
---===============78109273049949635==
+--===============57329445597514628==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78109273049949635==--
+--===============57329445597514628==--
