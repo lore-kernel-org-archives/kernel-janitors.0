@@ -1,35 +1,39 @@
-From: "Janet G. Kirk" <janetkirktb@moha.homechoice.co.uk>
-Date: Fri, 20 Aug 2004 23:51:53 +0000
-Subject: 26-Home Loans as low as 2.9%
-Message-Id: <1d1b01c4871d$b1d1cecf$e2640105@mofa.go.jp>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 20 Aug 2004 19:00:43 +0000
+Subject: [Kernel-janitors] [patch 8/12] pci_dev_b to list_for_each_entry:
+Message-Id: <20040820190043.3B1E01ED3D@trashy.coderock.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============30740668996267506=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-G'day<p>
+--===============30740668996267506==
 
-Would you REFlNANCE if you knew you'd S<jkkgwdncdnxptf>AVE TH0US<jxeosqzdkfn>ANDS?<p>
+--- kjt2/arch/ppc64/kernel/pci_dn.c	2004-08-20 18:58:55.000000000 +0200
++++ kjt2-lfe/arch/ppc64/kernel/pci_dn.c	2004-08-20 20:03:51.000000000 +0200
+@@ -196,11 +196,9 @@
+ 
+ static void __init pci_fixup_bus_sysdata_list(struct list_head *bus_list)
+ {
+-	struct list_head *ln;
+ 	struct pci_bus *bus;
+ 
+-	list_for_each(ln, bus_list) {
+-		bus = pci_bus_b(ln);
++	list_for_each_entry(bus, bus_list, node) {
+ 		if (bus->self)
+ 			bus->sysdata = bus->self->sysdata;
+ 		pci_fixup_bus_sysdata_list(&bus->children);
 
-We'll get you lnterest as low as 2.91%.<p>
+--===============30740668996267506==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Don't believe me? Fill out our small online form and we'll show you how.<p>
-
-Get the house and/or car you always wanted, it only takes 2 minutes of your time:<br>
-<a href="http://www.infobeanz.biz/new/index.php">http://www.infobeanz.biz</a>
-</html>
-
-
-
-
--------------------------------------------------------
-SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
-100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
-Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
-http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============30740668996267506==--
