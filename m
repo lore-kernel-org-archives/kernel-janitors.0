@@ -1,32 +1,66 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Tue, 20 Jan 2004 00:28:07 +0000
-Subject: Re: [Kernel-janitors] Links to dosdonts broken on site
-Message-Id: <20040119162807.1fc67f56.rddunlap@osdl.org>
+From: Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+Date: Sun, 18 Jan 2004 08:51:55 +0000
+Subject: [Kernel-janitors] [akpm@osdl.org: Re: 2.6.1-mm4]
+Message-Id: <20040118085155.GF3461@conectiva.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040120010151.438d6341@lucky.kitzblitz>
-In-Reply-To: <20040120010151.438d6341@lucky.kitzblitz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 20 Jan 2004 00:23:45 +0000 Dave Jones <davej@redhat.com> wrote:
+This is something interesting to have in the TODO list... It requires a
+new gcc version to test tho. Andrew was using a cvs snapshot gcc, perhaps
+this started happening from 2.6 on, notice that one has to compile _and_
+try to load the m=F3dule.
 
-| On Tue, Jan 20, 2004 at 01:01:51AM +0100, Nicolas Kaiser wrote:
-|  > Hi,
-|  > 
-|  > I just noticed that at
-|  > http://janitor.kernelnewbies.org/drivers-dosdonts/index.html
-|  > the links to DOSDONTS (html) and DOSDONTS (text) appear to be
-|  > broken.
-| 
-| Fixed. Thanks.
+Patterns, perhaps this happens elsewhere... :)
 
-Ah, thanks.  No wonder they are working for me.  :)
+- Arnaldo
 
---
-~Randy
-kernel-janitors project:  http://janitor.kernelnewbies.org/
+----- Forwarded message from Andrew Morton <akpm@osdl.org> -----
+
+Date: Sun, 18 Jan 2004 00:17:08 -0800
+From: Andrew Morton <akpm@osdl.org>
+Subject: Re: 2.6.1-mm4
+To: "J.A. Magallon" <jamagallon@able.es>
+Cc: linux-kernel@vger.kernel.org, netdev@oss.sgi.com
+X-Mailer: Sylpheed version 0.9.4 (GTK+ 1.2.10; i686-pc-linux-gnu)
+
+"J.A. Magallon" <jamagallon@able.es> wrote:
+>
+>=20
+> On 01.18, Andrew Morton wrote:
+> > "J.A. Magallon" <jamagallon@able.es> wrote:
+> > >
+> > > On 01.16, Andrew Morton wrote:
+> > >  >=20
+> > >  > ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.=
+1/2.6.1-mm4/
+> > >  >=20
+> > >  >=20
+> > >=20
+> > >  Net driver problem:
+> > >=20
+> > >  werewolf:/etc# modprobe --verbose 3c59x
+> > >  insmod /lib/modules/2.6.1-jam4/kernel/drivers/net/3c59x.ko=20
+> > >  FATAL: Error inserting 3c59x (/lib/modules/2.6.1-jam4/kernel/drivers=
+/net/3c59x.ko): Invalid argument
+> >=20
+> > hmm, cute.
+> >=20
+>=20
+> Yes.
+> It worked.=20
+> I thought of this, but why this and not the other parameters ? Compiler b=
+ug ?
+
+Presumably, recent gcc's remove the variable altogether and just expand the
+constant inline.  When the central module code checks for the parameter's
+existence in the module's symbol table it errors out.
+
+
+----- End forwarded message -----
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
