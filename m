@@ -1,26 +1,32 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Fri, 20 Aug 2004 05:29:27 +0000
-Subject: Re: [Kernel-janitors] [patch 2.6.8.1] list_for_each:
-Message-Id: <20040820062927.A16764@infradead.org>
+From: Matthew Wilcox <willy@debian.org>
+Date: Fri, 13 Aug 2004 11:47:00 +0000
+Subject: Re: [Kernel-janitors] linux-2.6.7: ddp.c fix init
+Message-Id: <20040813114700.GJ12936@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41555509821469405=="
+Content-Type: multipart/mixed; boundary="===============45985653462661868=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040819111118.GA3469@masina.coderock.org>
-In-Reply-To: <20040819111118.GA3469@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============41555509821469405==
+--===============45985653462661868==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Aug 19, 2004 at 01:11:18PM +0200, Domen Puncer wrote:
-> Hi.
-> 
-> Change for loops with list_for_each().
+On Fri, Aug 13, 2004 at 01:52:15PM +0200, Walter Harms wrote:
+> +	err=sock_register(&atalk_family_ops);
 
-Please go directly to list_for_each_entry in all your patches where possible.
+You're still not getting the spacing right here --
 
---===============41555509821469405==
+	err = sock_register(&atalk_family_ops);
+
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
+
+--===============45985653462661868==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============41555509821469405==--
+--===============45985653462661868==--
