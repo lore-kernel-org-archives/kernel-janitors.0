@@ -1,51 +1,46 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 12:40:08 +0000
-Subject: [KJ] [UPDATE PATCH 05/19] drivers/scsi/aic7xxx/aic79xx_osm: Use the
-Message-Id: <20050320124008.GE3491@localhost.localdomain>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 16 Mar 2005 10:24:44 +0000
+Subject: [KJ] [PATCH] printk : arch/ia64/kernel/smp.c
+Message-Id: <20050316102444.GC17405@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============25918794650448618=="
+Content-Type: multipart/mixed; boundary="SkvwRMAIpAhPCcCJ"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220165632.GE14375@helium.tklauser.home>
-In-Reply-To: <20050220165632.GE14375@helium.tklauser.home>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============25918794650448618==
+
+--SkvwRMAIpAhPCcCJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Hi,
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Description:
+printk() calls should include appropriate KERN_* constant.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Have a nice day,
 
---- linux-2.6.11.orig/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-03-02 12:50:36.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-03-20 13:27:54.000000000 +0100
-@@ -60,6 +60,7 @@
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+
+
+--SkvwRMAIpAhPCcCJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch-printk-linux-2.6.11_arch_ia64_kernel_smp.c.diff"
+
+diff -urpN -X dontdiff linux-2.6.11-vanilla/arch/ia64/kernel/smp.c linux-2.6.11/arch/ia64/kernel/smp.c
+--- linux-2.6.11-vanilla/arch/ia64/kernel/smp.c	2005-03-02 08:38:33.000000000 +0100
++++ linux-2.6.11/arch/ia64/kernel/smp.c	2005-03-16 10:56:25.000000000 +0100
+@@ -270,7 +270,7 @@ smp_call_function_single (int cpuid, voi
+ 	int me = get_cpu(); /* prevent preemption and reschedule on another processor */
  
- #include <linux/mm.h>		/* For fetching system memory size */
- #include <linux/delay.h>	/* For ssleep/msleep */
-+#include <linux/dma-mapping.h>
- 
- /*
-  * Lock protecting manipulation of the ahd softc list.
-@@ -1706,7 +1707,7 @@ ahd_dmamem_alloc(struct ahd_softc *ahd, 
- 	 * our dma mask when doing allocations.
- 	 */
- 	if (ahd->dev_softc != NULL)
--		if (pci_set_dma_mask(ahd->dev_softc, 0xFFFFFFFF)) {
-+		if (pci_set_dma_mask(ahd->dev_softc, DMA_32BIT_MASK)) {
- 			printk(KERN_WARNING "aic79xx: No suitable DMA available.\n");
- 			kfree(map);
- 			return (ENODEV);
+ 	if (cpuid == me) {
+-		printk("%s: trying to call self\n", __FUNCTION__);
++		printk(KERN_INFO "%s: trying to call self\n", __FUNCTION__);
+ 		put_cpu();
+ 		return -EBUSY;
+ 	}
 
---===============25918794650448618==
+--SkvwRMAIpAhPCcCJ
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============25918794650448618==--
+--SkvwRMAIpAhPCcCJ--
