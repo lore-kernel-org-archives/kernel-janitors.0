@@ -1,33 +1,32 @@
-From: Jean Tourrilhes <jt@bougret.hpl.hp.com>
-Date: Tue, 21 Sep 2004 22:04:30 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 2/40] net/act2001-sir:
-Message-Id: <20040921220430.GA20188@bougret.hpl.hp.com>
+From: Greg KH <greg@kroah.com>
+Date: Tue, 21 Sep 2004 23:49:01 +0000
+Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 2/2] i2c/i2c-mpc: replace
+Message-Id: <20040921234901.GB17372@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============65446288625632631=="
+Content-Type: multipart/mixed; boundary="===============40688322136761146=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040916234647.GI1777@us.ibm.com>
 In-Reply-To: <20040916234647.GI1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============65446288625632631==
+--===============40688322136761146==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Sep 21, 2004 at 02:57:58PM -0700, Nishanth Aravamudan wrote:
-> Any comments would be appreciated.
+On Thu, Sep 16, 2004 at 04:40:31PM -0700, Nishanth Aravamudan wrote:
+> Previous patch won't compile. Any comments would (still) be appreciated.
 > 
-> Description: Use msleep() instead of schedule_timeout()
-> to guarantee the task delays as expected.
+> Description: Properly orders set_current_state() and add_wait_queue().
+> Uses msleep_interruptible() in place of schedule_timeout() to guarantee
+> the task delays as expected. Uses set_current_state() instead of direct
+> assignment of current->state.
 
-	I already said that I don't want this. And looking at other
-people getting confused by msleep, I'm more convinced than ever.
-	No.
 
-	Thank you.
+Applied, thanks.
 
-	Jean
+greg k-h
 
---===============65446288625632631==
+--===============40688322136761146==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============65446288625632631==--
+--===============40688322136761146==--
