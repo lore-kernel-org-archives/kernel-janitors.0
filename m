@@ -1,67 +1,70 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 23:15:57 +0000
-Subject: [Kernel-janitors] Re: sis-agp: replace schedule_timeout() with
-Message-Id: <20040720231557.GB1957@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Mon, 05 Jul 2004 14:48:41 +0000
+Subject: Re: [Kernel-janitors] [announce] 2.6.7 kjt1 patchset
+Message-Id: <20040705144841.GC1587@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13988532655428787=="
+Content-Type: multipart/mixed; boundary="===============32198652666154537=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040720223919.GA2447@masina>
-In-Reply-To: <20040720223919.GA2447@masina>
+References: <20040618093922.GA21628@sputnik.stro.at>
+In-Reply-To: <20040618093922.GA21628@sputnik.stro.at>
 To: kernel-janitors@vger.kernel.org
 
---===============13988532655428787==
+--===============32198652666154537==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Jul 21, 2004 at 12:39:19AM +0200, Domen Puncer wrote:
-> On 20/07/04 21:01 +0000, Nishanth Aravamudan wrote:
-> ...
-> > --- linux-vanilla/drivers/char/agp/sis-agp.c	2004-06-16 05:18:56.000000000 +0000
-> ...
-> > -			set_current_state(TASK_UNINTERRUPTIBLE);
-> > -			schedule_timeout (1+(HZ*10)/1000);
-> > +			msleep(HZ);		/* sleep 1s */
+
+quick update on merge status of latest kjt.
+
+
+On Fri, 18 Jun 2004, maximilian attems wrote:
+
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> all the patches:
 > 
-> Umm... what?
-> I mean... HZ jiffies is one second, but HZ miliseconds is not necessary 1 s.
-> And that delay looks wierd, what was the point of HZ*10/1000 in the first
-> place? Why not HZ/100?
 
-Thanks again Domen! I totally missed this one - I'm trying to check my
-patches as I submit them to the list, but I must not have been paying
-close enough attention. You are right, it should be msleep(10). Please
-find the corrected patch below. I am not positive as to why the conversion
-was originally done the way it was, but I think it prevents rounding
-erros. If HZ is very small, then the 1+ guarantees *some* timeout. As to
-why they didn't finish their math, well the compiler should take care of
-the immediate values (I think) but also, it is a readability thing.
-Again, working with msecs directly is clearer. msleep(10) it is.
+> document-cpu-sched-dir.patch
+luiz asked to drop that one
 
--Nish
+> drvdata-eisa.patch
+doesn't compile, gone for next update
+
+> fix-warning-af_econet.patch
+was already done in networking tree.
+
+> ipv4_fib_hash_check.patch
+rejected at netdev:
+fn_hash_kmem is not getting leaked, 
+the 'leak' seems intentional to keep using it 
+even if other allocations in the same routine failed.
+
+> kernel_thread-aacraid-rkt.patch
+> kernel_thread-aacraid-rx.patch
+> kernel_thread-aacraid-sa.patch
+merged in linus tree via James Bottomley
+
+> printk-fix-istallion.patch
+merged in linus tree via Randy, thx :)
+
+> remove-old-ifdefs-cpqarray.patch
+acked by hp folks, they'll test it 
+
+> remove-old-ifdefs-dc390.patch
+> remove-old-ifdefs-tmscsim.patch
+christoph hellwig asked to drop that,
+as his patch is a superset of these changes.
+
+> sparse-floppy98.patch
+pc98 is gone, so no need for that.
+
+> sparse-ipmi.patch
+> sparse-ubd_kern.patch
+done by al viro in between, 
+forwarded him the other sparse fixes by Alexander Nyberg
 
 
---- linux-vanilla/drivers/char/agp/sis-agp.c	2004-06-16 05:18:56.000000000 +0000
-+++ linux-dev/drivers/char/agp/sis-agp.c	2004-07-15 23:11:23.000000000 +0000
-@@ -5,6 +5,7 @@
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/init.h>
-+#include <linux/delay.h>
- #include <linux/agp_backend.h>
- #include "agp.h"
- 
-@@ -102,8 +103,7 @@ static void sis_delayed_enable(u32 mode)
- 		 */
- 		if (device->device == agp_bridge->dev->device) {
- 			printk(KERN_INFO PFX "SiS delay workaround: giving bridge time to recover.\n");
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout (1+(HZ*10)/1000);
-+			msleep(10);		/* sleep 10ms */
- 		}
- 	}
- }
 
---===============13988532655428787==
+--===============32198652666154537==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13988532655428787==--
+--===============32198652666154537==--
