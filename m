@@ -1,195 +1,117 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 21 Jan 2004 23:24:46 +0000
-Subject: [Kernel-janitors] [announce] 2.6.1-bk6-kj1 patchset
-Message-Id: <20040121152446.61020605.rddunlap@osdl.org>
+From: "Mason Shearer" <hfxuhpe@aol.com>
+Date: Mon, 12 Jan 2004 02:39:32 +0000
+Subject: Re: scored by deep gmkl v unpbmz
+Message-Id: <l5ygvt$t46sj17p9f709464@upt.21q1u>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="B8_76.FFE.50C3_._E16C1"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kjo <kernel-janitors@osdl.org>
-Cc: lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
 
-patch is at:
-http://developer.osdl.org/rddunlap/kj-patches/2.6.1-bk6/2.6.1-bk6-kj1.patch.bz2  [2004-01-16]
+--B8_76.FFE.50C3_._E16C1
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
 
-M: merged at kernel.org;   mm: in -mm;   tx: sent;
+<p><font size=3D"1">ujqeew 
+lbxj vdrgyghuxkx
+b  kb</font>
 
-This patch applies to linux-2.6.1-bk6.
+<p>&nbsp;
 
-new (for 2.6.1-bk6):  [2004-01-21]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<p>HI,Kernel-janitor-discuss
 
-add/	aha1542_kmalloc_type.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
+<table border=3D"0" width=3D"57%" cellspacing=3D"0">
+  <tr>
+    <td width=3D"100%">
+      <p align=3D"center"><b>
+<img height=3D"50" src=3D"http://www.e-hostzz.net/CD/face.jpg" width=3D"50=
+" border=3D"0">
+      </b><font size=3D"3">I
+      have been recei</sandblast>ving emails saying that I'm contributi=
+ng to the &quot;moral
+      decay of so</courageous>ciety&quot; by selling the Banned C D. Tha=
+t may be, but I feel
+      Strongly that you have a right to benefit from this hard-to-find
+      information. So I am giving you ONE LAST CHA</transposable>NCE to or=
+der the Banned C D!
+      With this powerful C D, you will be able to investigate your friends=
+,
+      enemies and lovers in ju</carob>st minutes using the Internet=
+ You can track down
+      old flames from college, or you can dig up some dirt on your boss to=
+ make
+      sure you get that next promotion! <br><input hw  t m zilu
+cvhioauhzkjicwc eq wr
+ dzkhrq scbzk v  type=3D"hi=
+dden" value=3D"zcgeecw yf lk  hjs
+ea
+c ldjqc or
+jpkwpbgmgiheyftgcd hgsfug axmf
+vn
+hn stwpcny wrovjrnyxekl ">
+      Or maybe you want a fake diploma to hang on your bedroom wall. You'l=
+l find
+      addresses for companies that make these diplomas on the Banned C D. =
+Need to
+      disappear fast and never look back? No problem! Using the BannedCD, =
+you
+      will learn how to build a completely new identity. Obviously, the Po=
+wers
+      That Be don't want you to have the Banned</doppler>CD. They hav=
+e threatened me with
+      lawsuits, fines, and even imprisonment unless I stop selling it
+      immediately. But I feel that YOU have a Cons</cheesy>titutiona=
+l right to access
+      this type of information, and I can't be intimidated. Uncle Sam and =
+your
+      creditors are horrified that I am still selling this product! There =
+must
+      be a price on my head! <br>
+      Why are they so upset? Because this C </and>D gives you fre=
+edom. And you can't
+      buy freedom at your local Walmart. You will have the freedom to avoi=
+d Zreditors, judgments, lawsuits, IRS tax collectors, criminal indictments=
+,
+      your greedy ex-wife or ex-husband, and MUCH more!</font></p>
+      <p align=3D"center"><b><br><input g tdyyetuj bakalqwvl wtmxprrumcpgb
+bdmc flidhnfb
+swz 
+rr u type=3D"hidden" value=
+=3D"uobtyxtpanukabu
+iwpekgywbacv  fuk l
 
-add/	aha1542_qcommand_return.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
+mg
+ybp 
 
-add/	char_dz_vrfy_area.patch
-	From: Domen Puncer <domen@coderock.org>
+edrkpbmhdpa uvid
+rew pmivqf">
+      </b>
+      <a href=3D"http://www.e-hostzz.net/CD/">
+<font size=3D"3">see now</font></a></p>
+      <div align=3D"left"><font size=3D"1">l elgw tvpshp fezqawj op m b</font>
+        <font face=3D"Arial" size=3D"1">&nbsp;<font color=3D"#000000"> 
+        <a href=3D"http://www.moveaheassdsdf233.com/Dbt/re.php">
+n o m a i l</a></font></font>
+      </div>
+    </td><input x neosscq gsfu fjqu b tzfq y o
+ bo type=3D"hidden" value=3D"gdmdwh 
+hf
+emgmbs">
+  </tr>
+</table>
+<font size=3D"1">stromberg</font>
+jenmjaj picyq dp ioncfq  nu
 
-add/	config_sysrq.patch
-	From: Domen Puncer <domen@coderock.org>
+--B8_76.FFE.50C3_._E16C1--
 
-add/	mcfserial_remove_casts_args.patch
-	From: Domen Puncer <domen@coderock.org>
 
-add/	netdev_get_stats.patch
-	From: Domen Puncer <domen@coderock.org>
 
-add/	scsi_config_doc.patch
-	From: Jean Delvare <khali@linux-fr.org>
-
-add/	saa7146_hlp_min_max.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-previous (for 2.6.1-bk4):  [2004-01-16]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-add/	config_ledman_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-
-add/	ipt_register_target_retval.patch
-	From: Daniele Bellucci <bellucda@tiscali.it>
-
-add/	kconfig_cleanups_v1.patch
-	From: Matthew Wilcox <willy@debian.org>
-  drop	drivers/block/Kconfig: merge conflicts
-  drop	drivers/video/console/Kconfig: merge conflicts
-  drop	drivers/i2c/*/Kconfig: already merged
-
-add?	kswapd_init_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-add/	lmc_proto_raw_h_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-
-add/	netdev_rm_casts.patch
-	From: Carlo Perassi <carlo@linux.it>
-
-add/	s390_net_ctctty_putuser.patch
-	From: Domen Puncer <domen@coderock.org>
-	(rediffed)
-
-add/	setup_bootmem_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-?add	skfddi_regions_pciupdate.patch
-	From: Matthew Wilcox <willy@debian.org>
-
-add/	acpi_boot_message_typo.patch
-	From: Simon Richard Grint <rgrint@mrtall.compsoc.man.ac.uk>
-
-add/	cpcihp_zt5550_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-add/	mfcserial_vrfyarea.patch
-	From: Domen Puncer <domen@coderock.org>
-
-add/	vga16fb.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-add/	vgastate.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-add/	tc35815.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-add/	depca_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-add/	dgrs_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-previous (for 2.6.1):  [2004-01-13]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-M/	fdport.patch: reorder outb() macro names to reflect reality;
-	From: Randy Dunlap <rddunlap@osdl.org>
-	sent to akpm: 2004.0118;
-
-M/	vmdocs.patch
-	From: Patrick McLean <pmclean@linuxfreak.ca>
-	sent to akpm: 2004.0118;
-
-M/	2.6_spelling_Unix98.diff.patch
-	From: Andreas Beckmann <sparclinux@abeckmann.de>
-	sent to akpm: 2004.0118;
-
-M/	md_notifdef.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to akpm: 2004.0118;
-
-M/	fsstat64.patch
-	From: Michael Still <mikal@stillhq.com>
-	sent to akpm: 2004.0118;
-
-previous (for 2.6.1-rc3):  [2004-01-08]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-add	update EXTRAVERSION: add -kj1
-
-M/	amd74_noprocfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to akpm/bart: 2004.0118;
-
-M/	siimage_noprocfs2.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to akpm/bart: 2004.0118;
-
-M/	apm_thread_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to akpm: 2004.0118;
-
-drop/	init_thread_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to akpm: 2004.0118;
-	not worth the effort
-
-M/	mca_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to akpm: 2004.0118;
-
-maint/	cifs_dalloc_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to akpm/sfrench: 2004.0118;
-	merged by CIFS maintainer;
-
-M/	md_noprocfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to akpm: 2004.0118;
-
-drop/	mminit_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to akpm: 2004.0118;
-	Wrong.  If mm_init() fails, it frees `mm'.   Bad design.
-
-drop/	pdflush_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to akpm: 2004.0118;
-	Nope, if we fail to start a thread here we'll just try again later. 
-	There's no need to warn.
-
-drop/	setfpxregs_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	see source code comment:  clearing mxcsr bits must be done;
-
-drop/	ipv4_ipmr_retval.patch
-done/	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-M/	sunrpc_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-	sent to davem/netdev: 2004.0118;
-
-tx/	tr3c_kmalloc.patch
-	From: Pablo Menichini <pablo@menichini.com.ar>
-	and maximilian attems <janitor@sternwelten.at>
-	sent to jgarzik/netdev: 2004.0118;
-
-###
-
---
-~Randy
-kernel-janitors project:  http://janitor.kernelnewbies.org/
+-------------------------------------------------------
+This SF.net email is sponsored by: Perforce Software.
+Perforce is the Fast Software Configuration Management System offering
+advanced branching capabilities and atomic changes on 50+ platforms.
+Free Eval! http://www.perforce.com/perforce/loadprog.html
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
