@@ -1,136 +1,105 @@
-From: "Levi Hand" <HCWGCQQSBXN@stud.sccs.chukyo-u.ac.jp>
-Date: Tue, 11 May 2004 09:34:47 +0000
-Subject: Heard on the Street-very underrated company comes out a winner
-Message-Id: <XNIOJZRDHWYVQGKRYWVU@i.kyoto-u.ac.jp>
+From: "modesta white" <gertieabrams@jerusalem-mail.com>
+Date: Thu, 27 May 2004 07:49:55 +0000
+Subject: Feel young again
+Message-Id: <d6c001c443bf$33a4f640$08bc2b2b@gertieabrams>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--C174BF961B916BE82A"
+Content-Type: multipart/mixed; boundary="----=_NextPart_B64_D9F4_639F01B1.2780F71D"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----C174BF961B916BE82A
-Content-Type: text/html;
+This is a multi-part message in MIME format.
+
+------=_NextPart_B64_D9F4_639F01B1.2780F71D
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-**SRGE***SRGE***SRGE***SRGE***SRGE***SRGE**
 
-Market Undervalue
-Opening Price: 1.00
-7 Day Target: 2.65
-1 Month Target: 3.80
-Outstanding Shares: 16.5 million
-Public Float: 3.4 million
+------=_NextPart_B64_D9F4_639F01B1.2780F71D
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-Explosive short term trading profits in a new 
-technology issue (Ticker: SRGE) are being 
-predicted for May 11-May 17 as many significant 
-news releases indicate strong contractual 
-revenues with major Telecom firms.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-asci=
+i">
+<META content=3D"MSHTML 10.0.2616" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD><FONT face=3DArial><FONT size=3D2>
+<BODY>
+<DIV>
+Weight lost while building muscle mass<BR>
+and have more energy all at once.<BR>
+<BR>Remarkable discoveries are changing the way we think about life
+<TABLE width=3D442>
+  <TBODY>
+  <TR>
+    <TD width=3D229 height=3D2>
+      <P align=3Dleft><FONT face=3D"Arial" size=3D2>Lose unwanted pound=
+s<BR>Build Muscle Tone<BR>Feel 
+      Better<BR>Increased Libido<BR>Duration Of Penile 
+      Erection<BR></P></LEFT></FONT></TD>
+    <TD width=3D199 height=3D2>
+    <P align=3Dleft><FONT face=3D"Arial" size=3D2>Healthier Bones<BR>Im=
+proved Memory<BR>
+    Improved skin<BR>More desire<BR>Erase Fine Lines<BR>
+    </P></LEFT></FONT></TD></TR></TBODY></TABLE>
+<A href=3D"http://www.ourultimatesolutions.com/low/">Visit the site and=
+ learn the facts Press Here</A><BR>
+<BR>
+<BR>
+<BR>
+-----Original Message-----<BR>
+From: newton@sslrn.com =5Bmailto:donald@dge.com=5D<BR>
+Sent: Tuesday, March 7, 2004 0:53AM<BR>
+To: leanna; sabine@c.com; edna; randee; deirdre<BR>
+Subject: Jim's big hoofs pounded away at a great rate, and although he =
+did not look very graceful he ran in a way to do credit to his Kentucky =
+breeding<A href=3D"http://www.ourultimatesolutions.com/low/">no po 1200 =
+oranjest aruba</A><BR>
+<BR>
+<BR>
+<BR>Seeing him rise into the air the fellow made a grab for his foot an=
+d held it firmly, while his companions ran to help him
+Weight seemed to make no difference in the machine; it lifted the pirat=
+e as well as Rob; it lifted another who clung to the first man's leg, an=
+d another who clung to himThe other two also caught hold, hoping their u=
+nited strength would pull him down, and the next minute Rob was soaring =
+through the air with the entire string of five buccaneers dangling from =
+his left leg
+At first the villains were too astounded to speak, but as they realized=
+ that they were being carried through the air and away from their ship t=
+hey broke into loud shouts of dismay, and finally the one who grasped Ro=
+b's leg lost his hold and the five plunged downward and splashed into th=
+e sea
+<BR>Finding the machine disposed to work accurately, Rob left the bucca=
+neers to swim to the ship in the best way they could, while he dropped d=
+own to the deck again and recovered from the cabin his box of tablets an=
+d the electric tube
+The fellows were just scrambling on board when he again escaped, shooti=
+ng into the air with considerable speed<BR>Indeed, the instrument now wo=
+rked better than at any time since he had reached the cannibal island, a=
+nd the boy was greatly delighted
+The wind at first sent him spinning away to the south, but he continued=
+ to rise until he was above the air currents, and the storm raged far be=
+neath him<BR>Then he set the indicator to the northwest and breathlessly=
+ waited to see if it would obey
+Hurrah! away he sped at a fair rate of speed, while all his anxiety cha=
+nged to a feeling of sweet contentment<BR>His success had greatly surpri=
+sed him, but he concluded that the jar caused by dropping the instrument=
+ had relieved the pressure upon the works, and so helped rather than har=
+med the free action of the electric currents
+</DIV></FONT></BODY></HTML>
 
-MAJOR ANNOUNCEMENTS AND HUGE NEWSLETTER 
-COVERAGE THIS WEEK FOR SRGE!
-
-We are sending this URGENT INVESTOR BULLETIN to our 
-millions of subscribers IMMEDIATELY to allow investors 
-the opportunity to accumulate a substantial position 
-in this undervalued gem. Surge Technologies Corp. 
-(SRGE) is the latest new pick where the stage is set 
-for a tremendous advance. This company deserves your 
-immediate attention! Stock Mogul Team found a new 
-winner yet again! 
-
-SRGE has been successfully working with Telecommunications 
-giants (with five million subscriber lines) over the last 
-4 years, but is now projecting "a banner expansion year 
-with geometric growth in revenues" due largely to sales 
-demands for their innovative patented products and 
-expansion into International telecom markets.
-
-Surge Technologies, Inc. (SRGE) is a cutting-edge leader 
-that designs, develops, manufactures, and markets superior 
-patented outside plant electrical surge protection equipment 
-for the telecommunications industry.
-
-The US sales projections for this market are $4 Billion 
-annually, with this figure growing rapidly as the expansion 
-of new HDSL and ADSL technologies permeate the industry.
-
-SRGE just announced two major contracts totaling $5 Million, 
-making their shares grossly undervalued based upon conservative 
-EPS estimates. This is just the tip of the iceberg and we expect 
-a continuous flow of huge news announcements detailing the 
-highly profitable chain of events to follow for SRGE in the near 
-future. We can state from our judicious research that we are not 
-alone in viewing SRGE as one of those extremely rare 
-opportunities where the impact of major news events simultaneously 
-boosts the value of a company while ultimately providing 
-substantial reward for its shareholders.
-
-SRGE provides the Telecom industry with the highest quality 
-"protection element" for complex digital switches. Protecting 
-these Telecom switching devices is crucial to inclusive components 
-that are sensitive to interruptions in voltage which can cause 
-extensive network damage, thus negating costly and time-consuming 
-repair and down-time. Major Telecoms require this protection 
-throughout their network in order to prevent the hazards of 
-harming personnel, damaging expensive equipment, and massive 
-system failures.
-
-How many times have you seen issues explode but you couldn't get your 
-hands on them or didn't have the right information in time? We are 
-alerting you now to a special Company with a unique technology that 
-is on the forefront of a breakout! We are excited about SRGE's 
-technology and expansion as they prepare to ink deal after deal with 
-Major US Telecoms in conjunction with dramatic increases in revenue 
-for 2004 and 2005. SRGE has made phenomenal advancements but may be 
-one of the few stocks left in this industry group that is unknown 
-and undervalued, therefore a 300%-400% jump may wind up being 
-conservative. 
-
----------------------------------------------------------------------
-
-Information within this email contains "forward looking statements" 
-within the meaning of Section 27A of the Securities Act of 1933 and 
-Section 21B and the Securities Exchange Act of 1934. Any statements 
-that express or involve discussions with respect to predictions, 
-goals, expectations, beliefs, plans, projections, objectives, 
-assumptions or future events or performance are not statements of 
-historical fact and may be "forward looking statements".
-
-Forward looking statements are based upon expectations, estimates 
-and projections, at the time the statements are made that involve 
-a number of risks and uncertainties which could cause actual results 
-or events to differ materially from those presently anticipated. 
-Forward looking statements in this action may be identified through 
-the use of words such as: "projects", "foresee", "expects", 
-"estimates", "believes", "understands", "will", "anticipates", 
-or that by statements indicating certain actions "may", "could", 
-or "might" occur. All information provided within this email 
-pertaining to investing, stocks, securities must be understood 
-as information provided and not investment advice. Stock Mogul 
-Team advises all readers and subscribers to seek advice from a 
-registered professional securities representative before deciding 
-to trade in stocks featured within this email. None of the material 
-within this report shall be construed as any kind of investment 
-advice. 
-
-In compliance with Section 17(b), we disclose the holdings of 20,000 
-independently purchased shares of srge prior to the publication of 
-this report. Be aware of an inherent conflict of interest resulting 
-from such holdings due to our intent to profit from the liquidation 
-of these shares. Shares may be sold at any time, even after positive 
-statements have been made regarding the above company.
-
-
-
-----C174BF961B916BE82A--
-
+------=_NextPart_B64_D9F4_639F01B1.2780F71D--
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by Sleepycat Software
-Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
-higher performing products faster, at low TCO.
-http://www.sleepycat.com/telcomwpreg.php?From=osdnemail3
+This SF.Net email is sponsored by: Oracle 10g
+Get certified on the hottest thing ever to hit the market... Oracle 10g. 
+Take an Oracle 10g class now, and we'll give you the exam FREE.
+http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
