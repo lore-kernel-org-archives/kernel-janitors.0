@@ -1,34 +1,64 @@
-From: "pat polchinski" <dignasher@yahoo.es>
-Date: Mon, 02 Feb 2004 11:03:05 +0000
-Subject: Meilbe orcnjmv orthkrcxq Use this email whenever you need more data
-Message-Id: <F124505C.4F5A0CB@yahoo.es>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Thu, 26 Feb 2004 21:17:18 +0000
+Subject: [Kernel-janitors] [PATCH] fs/proc MIN/MAX removal
+Message-Id: <403E625E.8050509@gmx.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------090306030906060209050708"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-lykstyfte anmeldung neomineralization mchat<B>t</B>ie
-<p><FONT face="Century" size=3>Som<U>e</U>times it<SPAN> ca</SPAN>n
-<SPAN>tak</SPAN>e up to<B> 1</B>0 second<STRIKE>s</STRIKE> to the
-g<SPAN>raph</SPAN>ic</p>
-<a href="http://gjxoob.ttnmcd.newstatsforyou.com/shogu/a2ferrer.htm"><img
-src="http://gdhpd.j.newstatsforyou.com/shogu/a2fisobif.gif" border="0"></a>
-<p>&nbsp;</p>
-Th<S>e</S> monkey uses<EM> h</EM>is hand and<S> </S>takes it to his mouth
-as<STRONG> i</STRONG>f holding<SPAN> a </SPAN>bottl<B>e.</B>
- At last<FONT color=#3bf0d9> i</FONT>t was over.
-<p>cu7jou<SPAN>kol</SPAN>le02i<U>n</U>crimin<FONT face="Times New
-Roman">e</FONT>d.</p>
+This is a multi-part message in MIME format.
+--------------090306030906060209050708
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Patch (against 2.6.3) removes unnecessary min/max macros and changes
+calls to use kernel.h macros instead.
+
+Best Regards
+Michael
 
 
 
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+--------------090306030906060209050708
+Content-Type: text/plain;
+ name="minmax_fs_proc.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="minmax_fs_proc.patch"
+
+--- linux-2.6.3.org/fs/proc/generic.c	2004-02-18 04:59:53.000000000 +0100
++++ linux-2.6.3.test/fs/proc/generic.c	2004-02-26 21:22:52.791857440 +0100
+@@ -37,10 +37,6 @@
+ 	.write		= proc_file_write,
+ };
+ 
+-#ifndef MIN
+-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+-#endif
+-
+ /* buffer size is one page but our output routines use some slack for overruns */
+ #define PROC_BLOCK_SIZE	(PAGE_SIZE - 1024)
+ 
+@@ -61,7 +57,7 @@
+ 		return -ENOMEM;
+ 
+ 	while ((nbytes > 0) && !eof) {
+-		count = MIN(PROC_BLOCK_SIZE, nbytes);
++		count = min_t(ssize_t, PROC_BLOCK_SIZE, nbytes);
+ 
+ 		start = NULL;
+ 		if (dp->get_info) {
+
+--------------090306030906060209050708
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------090306030906060209050708--
