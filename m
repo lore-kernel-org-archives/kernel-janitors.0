@@ -1,40 +1,60 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 23:20:01 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/4] w1/w1_int: add
-Message-Id: <20040927232001.GZ1617@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 01 Sep 2004 23:08:40 +0000
+Subject: [Kernel-janitors] Re: [patch 21/25] hvc_console: replace
+Message-Id: <20040901230840.GG7467@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============25947356707937175=="
+Content-Type: multipart/mixed; boundary="===============087065319057612944=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040920235847.GF2270@us.ibm.com>
-In-Reply-To: <20040920235847.GF2270@us.ibm.com>
-To: kernel-janitors@vger.kernel.org
+References: <E1C2cAg-0007UH-3I@sputnik> <20040901153034.35104957.akpm@osdl.org>
+In-Reply-To: <20040901153034.35104957.akpm@osdl.org>
+To: Andrew Morton <akpm@osdl.org>
+Cc: linux-kernel@vger.kernel.org, kj <kernel-janitors@osdl.org>
 
---===============25947356707937175==
+--===============087065319057612944==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+On Wed, 01 Sep 2004, Andrew Morton wrote:
 
-Description: Inserted set_current_state() before schedule_timeout() so
-the task delays as expected. Without the insertion, schedule_timeout()
-will return immediately.
+> janitor@sternwelten.at wrote:
+> >
+> > -#define TIMEOUT		((HZ + 99) / 100)
+> > +#define TIMEOUT		10
+> >  
+> >  static struct tty_driver *hvc_driver;
+> >  static int hvc_offset;
+> > @@ -276,8 +277,7 @@ int khvcd(void *unused)
+> >  			for (i = 0; i < MAX_NR_HVC_CONSOLES; ++i)
+> >  				hvc_poll(i);
+> >  		}
+> > -		set_current_state(TASK_INTERRUPTIBLE);
+> > -		schedule_timeout(TIMEOUT);
+> > +		msleep(TIMEOUT);
+> 
+> This one is wrong: we need to sleep in interruptible state here, otherwise
+> this kernel thread will contribute to the system load average.
 
---- 2.6.9-rc2-vanilla/drivers/w1/w1_int.c	2004-09-13 17:16:07.000000000 -0700
-+++ 2.6.9-rc2/drivers/w1/w1_int.c	2004-09-14 10:46:18.000000000 -0700
-@@ -179,8 +179,10 @@ void __w1_remove_master_device(struct w1
- 			 "%s: Failed to send signal to w1 kernel thread %d.\n",
- 			 __func__, dev->kpid);
+could we add for such cases msleep_interruptible()?
+patch for that function was sent separately.
  
--	while (atomic_read(&dev->refcnt))
-+	while (atomic_read(&dev->refcnt)) {
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		schedule_timeout(10);
-+	}
- 
- 	msg.id.mst.id = dev->id;
- 	msg.id.mst.pid = dev->kpid;
+> Several other of your msleep conversion patches actually fix bugs.  You've
+> found drivers which want to sleep for a fixed period, but they do that with
+> TASK_INTERRUPTIBLE.  If someone sends the calling process a signal, these
+> drivers will end up not sleeping at all and may fail.
 
---===============25947356707937175==
+i'll instantly queue some more msleep conversions up.
+ 
+> I'll going through these patches and shall apply the ones which look right.
+> Please consider them all to have been handled, thanks.
+
+thanks cool :)
+ 
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
+
+
+--===============087065319057612944==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============25947356707937175==--
+--===============087065319057612944==--
