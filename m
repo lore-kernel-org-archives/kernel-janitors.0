@@ -1,40 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 21 Sep 2004 22:54:25 +0000
-Subject: [Kernel-janitors] Re: [PATCH -mm 2/9] pci_find_device to
-Message-Id: <20040921225425.GD16690@kroah.com>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 29 Sep 2004 23:50:14 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 matroxfb_base.c][7/8]
+Message-Id: <26940000.1096501814@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82315016874234193=="
+Content-Type: multipart/mixed; boundary="===============45596753076509078=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, vandrove@vc.cvut.cz
 
---===============82315016874234193==
+--===============45596753076509078==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Mon, Sep 20, 2004 at 11:52:35PM -0700, Scott Feldman wrote:
-> Use pci_get_device instead of pci_find_device as pci device returned
-> from pci_find_device can disappear at any momemt in time.
-> 
-> Signed-off-by: Scott Feldman <sfeldma@pobox.com>
-> 
-> diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/fc/iph5526.c linux-2.6.9-rc2-mm1-dsf/drivers/net/fc/iph5526.c
-> --- linux-2.6.9-rc2-mm1/drivers/net/fc/iph5526.c	2004-08-14 03:54:51.000000000 -0700
-> +++ linux-2.6.9-rc2-mm1-dsf/drivers/net/fc/iph5526.c	2004-09-20 22:43:58.022996008 -0700
-> @@ -3711,7 +3711,7 @@ int iph5526_detect(Scsi_Host_Template *t
->  		fc[i] = NULL;
->  
->  	for (i = 0; clone_list[i].vendor_id != 0; i++)
-> -	while ((pdev = pci_find_device(clone_list[i].vendor_id, clone_list[i].device_id, pdev))) {
-> +	while ((pdev = pci_get_device(clone_list[i].vendor_id, clone_list[i].device_id, pdev))) {
 
-Ick, this needs to be converted to use the probe/release functions
-instead of "fixing" it in this manner.
+As pci_find_device is going away it is being replace with pci_dev_present (since the
+dev is not used). I have compiled tested this.
 
-thanks,
+Hanna Linder
+IBM Linux Technology Center
 
-greg k-h
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
---===============82315016874234193==
+---
+
+diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/video/matrox/matroxfb_base.c linux-2.6.9-rc2-mm4patch/drivers/video/matrox/matroxfb_base.c
+--- linux-2.6.9-rc2-mm4cln/drivers/video/matrox/matroxfb_base.c	2004-09-28 14:59:07.000000000 -0700
++++ linux-2.6.9-rc2-mm4patch/drivers/video/matrox/matroxfb_base.c	2004-09-29 16:18:33.000000000 -0700
+@@ -1578,6 +1578,11 @@ static int initMatrox2(WPMINFO struct bo
+ 	unsigned int memsize;
+ 	int err;
+ 
++	static struct pci_device_id intel_82437[] = {
++		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437) },
++		{ },
++	};
++
+ 	DBG(__FUNCTION__)
+ 
+ 	/* set default values... */
+@@ -1682,7 +1687,7 @@ static int initMatrox2(WPMINFO struct bo
+ 		mga_option |= MX_OPTION_BSWAP;
+                 /* disable palette snooping */
+                 cmd &= ~PCI_COMMAND_VGA_PALETTE;
+-		if (pci_find_device(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437, NULL)) {
++		if (pci_dev_present(intel_82437)) {
+ 			if (!(mga_option & 0x20000000) && !ACCESS_FBINFO(devflags.nopciretry)) {
+ 				printk(KERN_WARNING "matroxfb: Disabling PCI retries due to i82437 present\n");
+ 			}
+
+
+
+
+--===============45596753076509078==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82315016874234193==--
+--===============45596753076509078==--
