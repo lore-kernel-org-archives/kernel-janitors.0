@@ -1,49 +1,47 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 15 Sep 2004 18:43:21 +0000
-Subject: [Kernel-janitors] [PATCH 4/8] block/pg: replace pg_sleep() with
-Message-Id: <20040915184321.GL4363@us.ibm.com>
+Date: Thu, 23 Sep 2004 22:13:29 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 22/38] net/ltpc: replace
+Message-Id: <20040923221329.GG13244@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54313122202131225=="
+Content-Type: multipart/mixed; boundary="===============39570037144965253=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============54313122202131225==
+--===============39570037144965253==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. This is a re-push of a patch I
-submitted 20 July which hasn't been merged as of
-2.6.9-rc1-mm5/2.6.9-rc2. 
+Any comments would be appreciated.
 
-Description: msleep_interruptible() is used instead of pg_sleep()
-to guarantee the task delays as expected. The defintion of pg_sleep()
-is also modified to use set_current_state() instead of direct
-assignment.
+Description: Use ssleep() / msleep() [as appropriate]
+instead of schedule_timeout() to guarantee the task delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/block/paride/pg.c	2004-09-13 17:16:05.000000000 -0700
-+++ 2.6.9-rc2/drivers/block/paride/pg.c	2004-09-14 11:50:50.000000000 -0700
-@@ -295,7 +295,7 @@ static inline u8 DRIVE(struct pg *dev)
+--- 2.6.9-rc2-vanilla/drivers/net/appletalk/ltpc.c	2004-09-13 17:15:44.000000000 -0700
++++ 2.6.9-rc2/drivers/net/appletalk/ltpc.c	2004-09-14 17:11:33.000000000 -0700
+@@ -1109,8 +1109,7 @@ struct net_device * __init ltpc_probe(vo
+ 	inb_p(io+1);
+ 	inb_p(io+3);
  
- static void pg_sleep(int cs)
- {
--	current->state = TASK_INTERRUPTIBLE;
-+	set_current_state(TASK_INTERRUPTIBLE);
- 	schedule_timeout(cs);
- }
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(2*HZ/100);
++	msleep(20);
  
-@@ -409,7 +409,7 @@ static int pg_reset(struct pg *dev)
- 	write_reg(dev, 6, DRIVE(dev));
- 	write_reg(dev, 7, 8);
+ 	inb_p(io+0);
+ 	inb_p(io+2);
+@@ -1120,8 +1119,7 @@ struct net_device * __init ltpc_probe(vo
+ 	inb_p(io+5); /* enable dma */
+ 	inb_p(io+6); /* tri-state interrupt line */
  
--	pg_sleep(20 * HZ / 1000);
-+	msleep_interruptible(20);
- 
- 	k = 0;
- 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	ssleep(1);
+ 	
+ 	/* now, figure out which dma channel we're using, unless it's
+ 	   already been specified */
 
---===============54313122202131225==
+--===============39570037144965253==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54313122202131225==--
+--===============39570037144965253==--
