@@ -1,33 +1,129 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:14:58 +0000
-Subject: [KJ] [PATCH 42/53] bw2: Clean up printk()'s in drivers/video/bw2.c
-Message-Id: <20050125231458.10418.88150.38516@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 21 Jan 2005 19:17:33 +0000
+Subject: [KJ] [UPDATE PATCH 17/39] net/capi: use
+Message-Id: <20050121191733.GE3340@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============35048255513986182=="
+Content-Type: multipart/mixed; boundary="===============99749334533047795=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050120234754.GE2600@us.ibm.com> <1106267887.7955.40.camel@pegasus>
+In-Reply-To: <1106267887.7955.40.camel@pegasus>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Max Krasnyansky <maxk@qualcomm.com>, BlueZ Mailing List <bluez-devel@lists.sourceforge.net>, kernel-janitors@lists.osdl.org
 
---===============35048255513986182==
+--===============99749334533047795==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/bw2.c
+On Fri, Jan 21, 2005 at 01:38:07AM +0100, Marcel Holtmann wrote:
+> Hi Nishanth,
+> 
+> > Description: Use wait_event_interruptible_timeout() instead of custom
+> > wait-queue code. The first replacement is the most complicated as the various
+> > return conditions each indicate different things, apparently. The same effects
+> > are made after wait_event_interruptible_timeout() returns.
+> 
+> the first one makes the code look ugly. Remove it and re-submit.
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Thanks for the input. Fixed below.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/bw2.c linux-2.6.11-rc2-mm1/drivers/video/bw2.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/bw2.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/bw2.c	2005-01-24 19:07:02.453262495 -0500
-@@ -374,7 +374,7 @@
+-Nish
+
+Description: Use wait_event_interruptible_timeout() instead of custom
+wait-queue code. Remove the now unused variables in both functions.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.11-rc1-kj-v/net/bluetooth/cmtp/capi.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/net/bluetooth/cmtp/capi.c	2005-01-21 11:14:47.000000000 -0800
+@@ -35,6 +35,7 @@
+ #include <linux/socket.h>
+ #include <linux/ioctl.h>
+ #include <linux/file.h>
++#include <linux/wait.h>
+ #include <net/sock.h>
  
- 	list_add(&all->list, &bw2_list);
+ #include <linux/isdn/capilli.h>
+@@ -442,10 +443,8 @@ static void cmtp_register_appl(struct ca
  
--	printk("bw2: bwtwo at %lx:%lx\n",
-+	pr_info("bw2: bwtwo at %lx:%lx\n",
- 	       (long) (sdev ? sdev->reg_addrs[0].which_io : 0),
- 	       (long) all->par.physbase);
+ static void cmtp_release_appl(struct capi_ctr *ctrl, __u16 appl)
+ {
+-	DECLARE_WAITQUEUE(wait, current);
+ 	struct cmtp_session *session = ctrl->driverdata;
+ 	struct cmtp_application *application;
+-	unsigned long timeo = CMTP_INTEROP_TIMEOUT;
+ 
+ 	BT_DBG("ctrl %p appl %d", ctrl, appl);
+ 
+@@ -460,20 +459,8 @@ static void cmtp_release_appl(struct cap
+ 	cmtp_send_interopmsg(session, CAPI_REQ, application->mapping, application->msgnum,
+ 				CAPI_FUNCTION_RELEASE, NULL, 0);
+ 
+-	add_wait_queue(&session->wait, &wait);
+-	while (timeo) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-
+-		if (application->state == BT_CLOSED)
+-			break;
+-
+-		if (signal_pending(current))
+-			break;
+-
+-		timeo = schedule_timeout(timeo);
+-	}
+-	set_current_state(TASK_RUNNING);
+-	remove_wait_queue(&session->wait, &wait);
++	wait_event_interruptible_timeout(session->wait,
++			(application->state == BT_CLOSED), CMTP_INTEROP_TIMEOUT);
+ 
+ 	cmtp_application_del(session, application);
  }
+@@ -543,8 +530,6 @@ static int cmtp_ctr_read_proc(char *page
+ 
+ int cmtp_attach_device(struct cmtp_session *session)
+ {
+-	DECLARE_WAITQUEUE(wait, current);
+-	unsigned long timeo = CMTP_INTEROP_TIMEOUT;
+ 	unsigned char buf[4];
+ 
+ 	BT_DBG("session %p", session);
+@@ -554,30 +539,17 @@ int cmtp_attach_device(struct cmtp_sessi
+ 	cmtp_send_interopmsg(session, CAPI_REQ, 0xffff, CMTP_INITIAL_MSGNUM,
+ 				CAPI_FUNCTION_GET_PROFILE, buf, 4);
+ 
+-	add_wait_queue(&session->wait, &wait);
+-	while (timeo) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-
+-		if (session->ncontroller)
+-			break;
+-
+-		if (signal_pending(current))
+-			break;
+-
+-		timeo = schedule_timeout(timeo);
+-	}
+-	set_current_state(TASK_RUNNING);
+-	remove_wait_queue(&session->wait, &wait);
+-
++	ret = wait_event_interruptible_timeout(session->wait,
++			session->ncontroller, CMTP_INTEROP_TIMEOUT);
++	
+ 	BT_INFO("Found %d CAPI controller(s) on device %s", session->ncontroller, session->name);
+ 
+-	if (!timeo)
++	if (!ret)
+ 		return -ETIMEDOUT;
+ 
+ 	if (!session->ncontroller)
+ 		return -ENODEV;
+ 
+-
+ 	if (session->ncontroller > 1)
+ 		BT_INFO("Setting up only CAPI controller 1");
+ 
 
---===============35048255513986182==
+--===============99749334533047795==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +134,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============35048255513986182==--
+--===============99749334533047795==--
