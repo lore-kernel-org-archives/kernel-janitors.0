@@ -1,53 +1,64 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Fri, 20 Aug 2004 19:00:47 +0000
-Subject: [Kernel-janitors] [patch 11/12] pci_dev_b to list_for_each_entry:
-Message-Id: <20040820190047.3B7CC1ED41@trashy.coderock.org>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Sat, 14 Aug 2004 18:59:25 +0000
+Subject: Re: [Kernel-janitors] [PATCH] message/mptbase: replace
+Message-Id: <20040814185925.GI1756@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============21214732613887644=="
+Content-Type: multipart/mixed; boundary="===============092219896536967383=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============21214732613887644==
+--===============092219896536967383==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---- kjt2/arch/sparc64/kernel/pci_sabre.c	2004-08-20 18:58:55.000000000 +0200
-+++ kjt2-lfe/arch/sparc64/kernel/pci_sabre.c	2004-08-20 20:28:57.000000000 +0200
-@@ -1113,10 +1113,9 @@
- 
- static void __init apb_init(struct pci_controller_info *p, struct pci_bus *sabre_bus)
- {
--	struct list_head *walk;
-+	struct pci_dev *pdev;
- 
--	list_for_each(walk, &sabre_bus->devices) {
--		struct pci_dev *pdev = pci_dev_b(walk);
-+	list_for_each_entry(pdev, &sabre_bus->devices, bus_list) {
- 
- 		if (pdev->vendor == PCI_VENDOR_ID_SUN &&
- 		    pdev->device == PCI_DEVICE_ID_SUN_SIMBA) {
-@@ -1178,10 +1177,9 @@
- static void __init sabre_scan_bus(struct pci_controller_info *p)
- {
- 	static int once;
--	struct pci_bus *sabre_bus;
-+	struct pci_bus *sabre_bus, *pbus;
- 	struct pci_pbm_info *pbm;
- 	struct pcidev_cookie *cookie;
--	struct list_head *walk;
- 	int sabres_scanned;
- 
- 	/* The APB bridge speaks to the Sabre host PCI bridge
-@@ -1217,8 +1215,7 @@
- 
- 	sabres_scanned = 0;
- 
--	list_for_each(walk, &sabre_bus->children) {
--		struct pci_bus *pbus = pci_bus_b(walk);
-+	list_for_each_entry(pbus, &sabre_bus->children, node) {
- 
- 		if (pbus->number == p->pbm_A.pci_first_busno) {
- 			pbm = &p->pbm_A;
+On Mon, 26 Jul 2004, Nishanth Aravamudan wrote:
 
---===============21214732613887644==
+> I would appreciate any comments from the janitors list. This is one (of
+> many) cases where I made a decision about replacing
+> 
+> set_current_state(TASK_INTERRUPTIBLE);
+> schedule_timeout(some_time);
+> 
+> with
+> 
+> msleep(jiffies_to_msecs(some_time));
+> 
+> msleep() is not exactly the same as the previous code, but I only did
+> this replacement where I thought long delays were *desired*. If this is
+> not the case here, then just disregard this patch. 
+> 
+> Thanks,
+> Nish
+> 
+> 
+> 
+> Applys-to: 2.6.7
+> 
+> Description: Replace schedule_timeout() with msleep() to guarantee the
+> task delays for the desired time.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> 
+> --- linux-vanilla/drivers/message/fusion/mptbase.c	2004-06-16 05:19:01.000000000 +0000
+> +++ linux-dev/drivers/message/fusion/mptbase.c	2004-07-12 18:56:59.000000000 +0000
+
+could you please rework this one, it doesn't apply anymore to 2.6.8
+i could do it but prefer to get next kjt patchset out soon.
+
+a++ maks
+
+ps patchfile output:
+patching file drivers/message/fusion/mptbase.c
+Hunk #1 succeeded at 3328 (offset 211 lines).
+Hunk #2 FAILED at 3560.
+Hunk #3 FAILED at 3652.
+Hunk #4 FAILED at 3743.
+Hunk #5 FAILED at 3769.
+Hunk #6 FAILED at 3801.
+5 out of 6 hunks FAILED -- saving rejects to file drivers/message/fusion/mptbase.c.rej 
+
+--===============092219896536967383==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============21214732613887644==--
+--===============092219896536967383==--
