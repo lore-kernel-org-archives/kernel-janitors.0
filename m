@@ -1,39 +1,36 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 17 Sep 2004 17:07:14 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 5/15] isdn/hardware: remove
-Message-Id: <20040917170714.GF1712@us.ibm.com>
+Date: Tue, 28 Sep 2004 16:13:48 +0000
+Subject: [Kernel-janitors] [sailer@scs.ch: Re: [PATCH 2.6.9-rc2 9/9]
+Message-Id: <20040928161348.GA1816@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42189951756550226=="
+Content-Type: multipart/mixed; boundary="===============73839524388665145=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============42189951756550226==
+--===============73839524388665145==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. This is a re-push of a patch
-submitted a few months ago which has not been merged as of
-2.6.9-rc1-mm5 / 2.6.9-rc2.
+----- Forwarded message from Thomas Sailer <sailer@scs.ch> -----
 
-Description: Remove macro definition of milliseonds(). Will be replaced
-with msecs_to_jiffies().
+Date: Tue, 28 Sep 2004 08:53:21 +0200
+From: Thomas Sailer <sailer@scs.ch>
+To: Nishanth Aravamudan <nacc@us.ibm.com>
+Subject: Re: [PATCH 2.6.9-rc2 9/9] usb/uss720: replace schedule_timeout()
+	with msleep_interruptible()
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+On Tue, 2004-09-28 at 00:55, Nishanth Aravamudan wrote:
+> Any comments would be appreciated.
+> 
+> Description: Use msleep_interruptible() instead of schedule_timeout() to
+> guarantee the task delays as expected.
 
---- 2.6.9-rc2-vanilla/drivers/isdn/sc/hardware.h	2004-09-13 17:16:04.000000000 -0700
-+++ 2.6.9-rc2/drivers/isdn/sc/hardware.h	2004-09-14 14:05:21.000000000 -0700
-@@ -104,9 +104,6 @@
-  * Some handy macros
-  */
- 
--/* Return the number of jiffies in a given number of msecs */
--#define milliseconds(x)	(((x)*HZ)/1000)
--
- /* Determine if a channel number is valid for the adapter */
- #define IS_VALID_CHANNEL(y,x)	((x>0) && (x <= sc_adapter[y]->channels))
- 
+Fine with me. uss720 does have some bitrot other than that, it seems.
 
---===============42189951756550226==
+
+----- End forwarded message -----
+
+--===============73839524388665145==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42189951756550226==--
+--===============73839524388665145==--
