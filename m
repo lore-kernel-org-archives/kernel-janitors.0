@@ -1,17 +1,19 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 17:47:03 +0000
+Date: Fri, 23 Jul 2004 20:27:50 +0000
 Subject: [Kernel-janitors] [PATCH] eicon/s_bri: replace schedule_timeout()
-Message-Id: <20040723174703.GM1911@us.ibm.com>
+Message-Id: <20040723202750.GO1911@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46144672297353551=="
+Content-Type: multipart/mixed; boundary="===============037944976320627211=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040723174703.GM1911@us.ibm.com>
+In-Reply-To: <20040723174703.GM1911@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============46144672297353551==
+--===============037944976320627211==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
+Please find the corrected patch below. I would appreciate any comments from the janitors list.
 
 Thanks,
 Nish
@@ -20,7 +22,7 @@ Nish
 
 Applys-to: 2.6.7
 
-Description: Replace diva_os_sleep() with msleep().
+Description: Replace diva_os_wait() with msleep().
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
@@ -32,7 +34,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   addrLo = Port + ADDR ;
   ioaddr = Port + DATA ;
 - diva_os_wait (100);
-+ msleep (100);
++ mdelay (100);
  /*
   * recover
   */
@@ -41,7 +43,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   for ( i = 0 ; i < 0x8000 ; outppw (ioaddr, 0), ++i ) ;
   DIVA_OS_MEM_DETACH_PORT(IoAdapter, Port);
 - diva_os_wait (100) ;
-+ msleep (100) ;
++ mdelay (100) ;
  /*
   * download protocol and dsp files
   */
@@ -50,12 +52,12 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   for ( i = 0 ; i < 300 ; ++i )
   {
 -  diva_os_wait (10) ;
-+  msleep (10) ;
++  mdelay (10) ;
    outpp (addrHi, (byte)((BRI_UNCACHED_ADDR (IoAdapter->MemoryBase + \
        IoAdapter->MemorySize - BRI_SHARED_RAM_SIZE)) >> 16)) ;
    outppw (addrLo, 0x1e) ;
 
---===============46144672297353551==
+--===============037944976320627211==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46144672297353551==--
+--===============037944976320627211==--
