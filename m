@@ -1,7 +1,7 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Thu, 04 Mar 2004 21:34:39 +0000
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Thu, 04 Mar 2004 21:39:04 +0000
 Subject: Re: [Kernel-janitors] Re: request_irq
-Message-Id: <1078436079.29815.14.camel@telecentrolivre>
+Message-Id: <20040304133904.508a2142.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040304125814.14ab3f24.rddunlap@osdl.org>
 In-Reply-To: <20040304125814.14ab3f24.rddunlap@osdl.org>
@@ -10,23 +10,26 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Em Qui, 2004-03-04 =E0s 17:58, Randy.Dunlap escreveu:
+On Thu, 04 Mar 2004 18:34:39 -0300 Luiz Fernando Capitulino wrote:
 
-> BTW, while the kernelnewbies.org server is down, you can find
-> the kernel-janitors stuff at
->   http://developer.osdl.org/rddunlap/kernel-janitors/
+| Em Qui, 2004-03-04 =E0s 17:58, Randy.Dunlap escreveu:
+|=20
+| > BTW, while the kernelnewbies.org server is down, you can find
+| > the kernel-janitors stuff at
+| >   http://developer.osdl.org/rddunlap/kernel-janitors/
+|=20
+| [I hope to not start a flame war].
+|=20
+| The kernelnewbies.org gets down several times.
+|=20
+| There problems in move the kerneljanitors.org to OSDL ?
 
-[I hope to not start a flame war].
+I've thought of it already, but I'm in no hurry to do that.
+However, I will if kernelnewbies seems to have continuing/ongoing
+problems for some undetermined length of time.
 
-The kernelnewbies.org gets down several times.
-
-There problems in move the kerneljanitors.org to OSDL ?
-
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
-
+--
+~Randy
 
 _______________________________________________
 Kernel-janitors mailing list
