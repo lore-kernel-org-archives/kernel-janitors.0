@@ -1,32 +1,33 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Thu, 04 Mar 2004 20:58:14 +0000
-Subject: [Kernel-janitors] Re: request_irq
-Message-Id: <20040304125814.14ab3f24.rddunlap@osdl.org>
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Thu, 04 Mar 2004 21:34:39 +0000
+Subject: Re: [Kernel-janitors] Re: request_irq
+Message-Id: <1078436079.29815.14.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <005d01c40226$b3af4f00$0200a8c0@alphawolf>
-In-Reply-To: <005d01c40226$b3af4f00$0200a8c0@alphawolf>
+References: <20040304125814.14ab3f24.rddunlap@osdl.org>
+In-Reply-To: <20040304125814.14ab3f24.rddunlap@osdl.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kha0s <kernel@digitalkhaos.net>
-Cc: linux-kernel@vger.kernel.org, kjo <kernel-janitors@osdl.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 4 Mar 2004 12:24:05 -0800 kha0s wrote:
+Em Qui, 2004-03-04 =E0s 17:58, Randy.Dunlap escreveu:
 
-| Since the janitors page is down, can anyone tell me if request_irq() return
-| values still need to be audited?
+> BTW, while the kernelnewbies.org server is down, you can find
+> the kernel-janitors stuff at
+>   http://developer.osdl.org/rddunlap/kernel-janitors/
 
-Hi,
+[I hope to not start a flame war].
 
-It's still on the current TODO list.  I can't swear whether it
-should still be there or not, unfortunately.
+The kernelnewbies.org gets down several times.
 
-BTW, while the kernelnewbies.org server is down, you can find
-the kernel-janitors stuff at
-  http://developer.osdl.org/rddunlap/kernel-janitors/
+There problems in move the kerneljanitors.org to OSDL ?
 
---
-~Randy
+--=20
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
