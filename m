@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 18:08:40 +0000
+Date: Tue, 20 Jul 2004 18:10:03 +0000
 Subject: [Kernel-janitors] [PATCH] paride: replace schedule_timeout() with
-Message-Id: <20040720180840.GC2320@us.ibm.com>
+Message-Id: <20040720181003.GD2320@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63344450594892265=="
+Content-Type: multipart/mixed; boundary="===============55520412649429307=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040720180441.GA2320@us.ibm.com>
 In-Reply-To: <20040720180441.GA2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============63344450594892265==
+--===============55520412649429307==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -40,19 +40,55 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/block/paride/pg.c	2004-06-16 05:19:52.000000000 +0000
-+++ linux-dev/drivers/block/paride/pg.c	2004-07-08 23:18:19.000000000 +0000
-@@ -409,7 +409,7 @@ static int pg_reset(struct pg *dev)
- 	write_reg(dev, 6, DRIVE(dev));
- 	write_reg(dev, 7, 8);
+--- linux-vanilla/drivers/block/paride/pt.c	2004-06-16 05:19:02.000000000 +0000
++++ linux-dev/drivers/block/paride/pt.c	2004-07-08 23:20:47.000000000 +0000
+@@ -401,12 +401,6 @@ static int pt_atapi(struct pt_unit *tape
+ 	return r;
+ }
  
--	pg_sleep(20 * HZ / 1000);
+-static void pt_sleep(int cs)
+-{
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout(cs);
+-}
+-
+ static int pt_poll_dsc(struct pt_unit *tape, int pause, int tmo, char *msg)
+ {
+ 	struct pi_adapter *pi = tape->pi;
+@@ -416,7 +410,7 @@ static int pt_poll_dsc(struct pt_unit *t
+ 	e = 0;
+ 	s = 0;
+ 	while (k < tmo) {
+-		pt_sleep(pause);
++		msleep(jiffies_to_msecs(pause));
+ 		k++;
+ 		pi_connect(pi);
+ 		write_reg(pi, 6, DRIVE(tape));
+@@ -474,11 +468,11 @@ static int pt_reset(struct pt_unit *tape
+ 	write_reg(pi, 6, DRIVE(tape));
+ 	write_reg(pi, 7, 8);
+ 
+-	pt_sleep(20 * HZ / 1000);
 +	msleep(20);
  
  	k = 0;
- 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
+ 	while ((k++ < PT_RESET_TMO) && (status_reg(pi) & STAT_BUSY))
+-		pt_sleep(HZ / 10);
++		msleep(100);
+ 
+ 	flg = 1;
+ 	for (i = 0; i < 5; i++)
+@@ -512,7 +506,7 @@ static int pt_ready_wait(struct pt_unit 
+ 		if (!(((p & 0xffff) == 0x0402) || ((p & 0xff) == 6)))
+ 			return p;
+ 		k++;
+-		pt_sleep(HZ);
++		msleep(1000);
+ 	}
+ 	return 0x000020;	/* timeout */
+ }
 
---===============63344450594892265==
+--===============55520412649429307==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +99,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============63344450594892265==--
+--===============55520412649429307==--
