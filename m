@@ -1,45 +1,47 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 08:08:18 +0000
-Subject: [KJ] [PATCH] drivers/ide/*: convert to pci_register_driver
-Message-Id: <20050208080818.GB31996@rhum.iomeda.fr>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:27 +0000
+Subject: [KJ] [PATCH][23/26] net/ipv6/* - compile warning cleanup
+Message-Id: <420BEF83.675.5870BF@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="f0KYrhQ4vYSV2aJu"
+Content-Type: multipart/mixed; boundary="===============16831229285836669=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============16831229285836669==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
---f0KYrhQ4vYSV2aJu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Description: compile warning cleanup - handle copy_to/from_user error 
+returns
 
-Hi,
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description:
-convert from pci_module_init to pci_register_driver
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/net/ipv6/ip6_flowlabel.c linux-2.6.11-rc3-mm/net/ipv6/ip6_flowlabel.c
+--- linux-2.6.11-rc3-mm-original/net/ipv6/ip6_flowlabel.c	2005-02-03 03:55:22.000000000 +0200
++++ linux-2.6.11-rc3-mm/net/ipv6/ip6_flowlabel.c	2005-02-08 15:51:16.000000000 +0200
+@@ -537,9 +537,13 @@ release:
+ 			goto done;
+ 
+ 		/* Do not check for fault */
+-		if (!freq.flr_label)
+-			copy_to_user(&((struct in6_flowlabel_req __user *) optval)->flr_label,
+-				     &fl->label, sizeof(fl->label));
++		if (!freq.flr_label) {
++			if(copy_to_user(&((struct in6_flowlabel_req __user *) optval)->flr_label,
++				     &fl->label, sizeof(fl->label))) {
++				err = -EFAULT;
++				goto done;
++			}
++		}
+ 
+ 		sfl1->fl = fl;
+ 		sfl1->next = np->ipv6_fl_list;
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
 
---f0KYrhQ4vYSV2aJu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_ide.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/ide/setup-pci.c linux-2.6.11-rc3/drivers/ide/setup-pci.c
---- linux-2.6.11-rc3-vanilla/drivers/ide/setup-pci.c	2005-02-03 17:03:44.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/ide/setup-pci.c	2005-02-07 09:39:27.000000000 +0100
-@@ -803,7 +803,7 @@ static LIST_HEAD(ide_pci_drivers);
- int ide_pci_register_driver(struct pci_driver *driver)
- {
- 	if(!pre_init)
--		return pci_module_init(driver);
-+		return pci_register_driver(driver);
- 	list_add_tail(&driver->node, &ide_pci_drivers);
- 	return 0;
- }
 
---f0KYrhQ4vYSV2aJu
+--===============16831229285836669==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---f0KYrhQ4vYSV2aJu--
+--===============16831229285836669==--
