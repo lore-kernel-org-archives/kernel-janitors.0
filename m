@@ -1,37 +1,44 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Wed, 02 Feb 2005 23:16:29 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 03 Feb 2005 00:25:02 +0000
 Subject: [KJ] Re: [PATCH 19/20] bluetooth/bluecard_cs: remove
-Message-Id: <1107386189.11944.21.camel@pegasus>
+Message-Id: <20050203002502.GB2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============012714935023340868=="
+Content-Type: multipart/mixed; boundary="===============12275851463776521=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050202225855.GY2546@us.ibm.com>
-In-Reply-To: <20050202225855.GY2546@us.ibm.com>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Cc: Max Krasnyansky <maxk@qualcomm.com>, bluez-devel@lists.sf.net, kernel-janitors@lists.osdl.org
+References: <20050202225855.GY2546@us.ibm.com> <1107386189.11944.21.camel@pegasus>
+In-Reply-To: <1107386189.11944.21.camel@pegasus>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Max Krasnyansky <maxk@qualcomm.com>, bluez-devel@lists.sourceforge.net, kernel-janitors@lists.osdl.org
 
---===============012714935023340868==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============12275851463776521==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Nish,
-
-> Please consider applying.
+On Thu, Feb 03, 2005 at 12:16:29AM +0100, Marcel Holtmann wrote:
+> Hi Nish,
 > 
-> Description: Remove deprecated interruptible_sleep_on_timeout() function calls
-> and replace with direct wait-queue usage. Some naming conflicts occurred, which
-> I tried to resolve appropriately. Patch is compile-tested.
+> > Please consider applying.
+> > 
+> > Description: Remove deprecated interruptible_sleep_on_timeout() function calls
+> > and replace with direct wait-queue usage. Some naming conflicts occurred, which
+> > I tried to resolve appropriately. Patch is compile-tested.
+> 
+> you introduce more code than you remove. Is our code a special case or
+> why don't exists a simple API function as replacement?
 
-you introduce more code than you remove. Is our code a special case or
-why don't exists a simple API function as replacement?
+Yes, I do. *sleep_on*() was the API, which has been replaced with wait_event*().
+However, wait_event*() explicitly needs a condition (the "event"), which in
+thise case does not exist. If I had more background, I would have gone the
+wait_event*() route. I am looking into a better API to mask away all of the
+DEFINE_WAIT(), prepare_to_wait(), schedule()/schedule_timeout(), finish_wait()
+additions (the KJ list can attest to how many of these replacements I'm doing),
+but there simply does not exist such an API right now.
 
-Regards
+Any input you could provide, though, would be greatly appreciated.
 
-Marcel
+-Nish
 
-
-
---===============012714935023340868==
+--===============12275851463776521==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============012714935023340868==--
+--===============12275851463776521==--
