@@ -1,31 +1,34 @@
-From: "Badai Aqrandista" <badaiaqrandista@hotmail.com>
-Date: Wed, 10 Mar 2004 14:21:43 +0000
-Subject: [Kernel-janitors] Hi
-Message-Id: <BAY14-F17Et33is4HOh00029fe3@hotmail.com>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Wed, 10 Mar 2004 15:44:15 +0000
+Subject: Re: [Kernel-janitors] Hi
+Message-Id: <20040310074415.0a7089e8.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <BAY14-F17Et33is4HOh00029fe3@hotmail.com>
+In-Reply-To: <BAY14-F17Et33is4HOh00029fe3@hotmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+On Thu, 11 Mar 2004 00:21:43 +1000 Badai Aqrandista wrote:
 
-I want to learn hacking the linux kernel, and I want to help with KJ, but 
-which task in TODO list has not been worked on? Should I do it on the latest 
-kernel (2.6.4-rc2), or it's ok to do it on the latest stable kernel (2.6.3)?
+| Hi,
+| 
+| I want to learn hacking the linux kernel, and I want to help with KJ, but 
+| which task in TODO list has not been worked on? Should I do it on the latest 
+| kernel (2.6.4-rc2), or it's ok to do it on the latest stable kernel (2.6.3)?
 
-Sorry if my english is bad, I'm not native english...
+Please pick a task from the TODO list and then ask about it.
 
-Thanks,
+It is preferable for patches to be made to the latest patched version,
+2.6.4-rc3 now.
 
----
-Badai Aqrandista
-Cheepy (?)
+| Sorry if my english is bad, I'm not native english...
 
-_________________________________________________________________
-You could be a genius! Find out by taking the IQ Test 2003. $5.50 (incl 
-GST).  Click here:  http://sites.ninemsn.com.au/minisite/testaustralia/
+No problem.
 
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
