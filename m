@@ -1,58 +1,41 @@
-From: Tonnerre <tonnerre@thundrix.ch>
-Date: Wed, 29 Sep 2004 22:23:53 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2-mm4 bttv-driver.c][4/8]
-Message-Id: <20040929222353.GF21770@thundrix.ch>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 29 Sep 2004 22:28:25 +0000
+Subject: Re: [Kernel-janitors] Re: [PATCH 2.6.9-rc2-mm4 bttv-driver.c][4/8]
+Message-Id: <20040929222825.GK16153@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87616865805574484=="
+Content-Type: multipart/mixed; boundary="===============42719922870242488=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <15470000.1096491322@w-hlinder.beaverton.ibm.com> <20040929220344.A17872@infradead.org>
-In-Reply-To: <20040929220344.A17872@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>, Hanna Linder <hannal@us.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, greg@kroah.com, kraxel@bytesex.org
+References: <15470000.1096491322@w-hlinder.beaverton.ibm.com> <20040929220344.A17872@infradead.org> <20040929211135.GA24407@kroah.com> <17920000.1096494218@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <17920000.1096494218@w-hlinder.beaverton.ibm.com>
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: Greg KH <greg@kroah.com>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, kraxel@bytesex.org
 
-
---===============87616865805574484==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1Ow488MNN9B9o/ov"
-Content-Disposition: inline
-
-
---1Ow488MNN9B9o/ov
+--===============42719922870242488==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Salut,
+On Wed, Sep 29, 2004 at 02:43:38PM -0700, Hanna Linder wrote:
+> +	return(pci_module_init(&bttv_pci_driver));
 
-On Wed, Sep 29, 2004 at 10:03:44PM +0100, Christoph Hellwig wrote:
-> I think this check should just go away completely. =20
->=20
-> We don't have such silly warnings in any other driver.
+Why the extra brackets?  I see their use for
 
-Kraxel introduced this  check because of the confusion  with the "old"
-and "new" WinTV cards. The older one had a bt848 chip, the newer one a
-connexant 878, and only the older one was supported by Linux.
+	return (a == b);
 
-Now that we support both, this printk is rather counterproductive.
+but
 
-			    Tonnerre
+	return pci_module_init(&bttv_pci_driver);
 
+isn't at all ambiguous.
 
---1Ow488MNN9B9o/ov
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.9.2 (GNU/Linux)
-
-iD8DBQFBWzX4/4bL7ovhw40RAo00AJ9NVg8hMY88u9kAggyCQEx9um0kTQCaAp2a
-SQmVtsH4jYfFpBGDzPQvyVI=
-=Y0BQ
------END PGP SIGNATURE-----
-
---1Ow488MNN9B9o/ov--
-
---===============87616865805574484==
+--===============42719922870242488==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87616865805574484==--
+--===============42719922870242488==--
