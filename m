@@ -1,48 +1,38 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:51 +0000
-Subject: [KJ] [PATCH][RESUBMIT][0/21]  compile warning cleanup
-Message-Id: <42113C2B.13655.52B883@localhost>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Feb 2005 16:56:32 +0000
+Subject: [KJ] [PATCH 05/19] drivers/scsi/aic7xxx/aic79xx_osm: Use the
+Message-Id: <20050220165632.GE14375@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82785085053103979=="
+Content-Type: multipart/mixed; boundary="===============67535607018770039=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============82785085053103979==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============67535607018770039==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello all,
+Hello,
 
-After taking into consideration all of the fine feedback I received from 
-my first ever attempt at submitting a series of patches, I am now 
-applying this feedback and am submitting patches that will hopefully pass 
-the test and be applied.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-I am resubmitting the entire series, even those that did not receive any 
-feedback at all and are unchanged, since I received no notification that 
-they were to be applied.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-I have created these patches against the linux-2.6.11-rc3-mm2 tree since, 
-while I am aware of the 2.6.11-rc4 patch, there is no corresponding patch 
-for the -mm tree.  Is this the right way to go?  If not, please advise 
-and I'll resubmit yet again.
+--- linux-2.6.11-rc4.orig/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-13 17:13:06.000000000 +0100
++++ linux-2.6.11-rc4/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-16 21:07:35.000000000 +0100
+@@ -1706,7 +1706,7 @@ ahd_dmamem_alloc(struct ahd_softc *ahd, 
+ 	 * our dma mask when doing allocations.
+ 	 */
+ 	if (ahd->dev_softc != NULL)
+-		if (pci_set_dma_mask(ahd->dev_softc, 0xFFFFFFFF)) {
++		if (pci_set_dma_mask(ahd->dev_softc, DMA_32BIT_MASK)) {
+ 			printk(KERN_WARNING "aic79xx: No suitable DMA available.\n");
+ 			kfree(map);
+ 			return (ENODEV);
 
-Please note my solution (patch #17 in this series) to the unused table 
-structures in some poorly written drivers that always assume that they 
-will be compiled as modules.  I changed include/linux/modules.h to create 
-an alias to remove the warning.  This works for all the compilation.  The 
-advantages to this patch are 1:, that it removes the warnings, and 2:, 
-the source files themselves do not have to be changed because of this 
-problem.  The disadvantages are 1:, it removes the warning so a module 
-writer will not be apprised of the fact that there is a minor problem, 
-and 2, it pollutes the global name space. The patch also keeps the same 
-status as before with the warning, that is, it still compiles the table 
-into the code, so the kernel will drag around this unused data.
-
-
-
---===============82785085053103979==
+--===============67535607018770039==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82785085053103979==--
+--===============67535607018770039==--
