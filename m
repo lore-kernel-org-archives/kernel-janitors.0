@@ -1,15 +1,17 @@
 From: ipadmin@eng.xo.com
-Date: Fri, 23 Jan 2004 21:05:51 +0000
+Date: Sat, 24 Jan 2004 00:08:42 +0000
 Subject: [Kernel-janitors] Need to host child porn, illegal content,
-Message-Id: <200401232100.i0NL06hU009150@fire-1.osdl.org>
+Message-Id: <200401240000.i0O00AhU024675@fire-1.osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1074891609-1947-224"
+Content-Type: multipart/mixed; boundary="----------=_1074902414-14007-689"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200401232100.i0NL06hU009150@fire-1.osdl.org>
+In-Reply-To: <200401232100.i0NL06hU009150@fire-1.osdl.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1074891609-1947-224
+------------=_1074902414-14007-689
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: 7bit
@@ -48,7 +50,7 @@ www.shadowcrew.com
 
 
 
-------------=_1074891609-1947-224
+------------=_1074902414-14007-689
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -72,7 +74,7 @@ FORGED_MUA_OUTLOOK (3.7 points)  Forged mail pretending to be from MS Outlook
 
 
 
-------------=_1074891609-1947-224
+------------=_1074902414-14007-689
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -95,7 +97,7 @@ FORGED_MUA_OUTLOOK (3.7 points)  Forged mail pretending to be from MS Outlook
 
 
 
-------------=_1074891609-1947-224
+------------=_1074902414-14007-689
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -106,4 +108,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------------=_1074891609-1947-224--
+------------=_1074902414-14007-689--
