@@ -1,48 +1,36 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 21 Feb 2005 20:34:57 +0000
-Subject: Re: [KJ] [PATCH 9/53] radeonfb: Clean up printk()'s in
-Message-Id: <20050221203457.GA4174@nd47.coderock.org>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Mon, 14 Feb 2005 15:15:25 +0000
+Subject: [KJ] [PATCH 16/16] drivers/net/wireless/prism54/islpci_hotplug: Use
+Message-Id: <20050214151525.GS15408@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78870833498470283=="
+Content-Type: multipart/mixed; boundary="===============58293322924761082=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============78870833498470283==
+--===============58293322924761082==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 25/01/05 17:09 -0600, James Nelson wrote:
-> @@ -28,6 +28,7 @@
->   *
->   */
->  
-> +#undef DEBUG
->  
->  #define RADEON_VERSION	"0.1.6"
->  
-> @@ -80,12 +81,8 @@
->  #include <video/radeon.h>
->  #include <linux/radeonfb.h>
->  
-> -#define DEBUG	1
-> -
-> -#if DEBUG
-> -#define RTRACE		printk
-> -#else
-> -#define RTRACE		if(0) printk
-> +#ifdef DEBUG
-> +#define RTRACE		pr_debug
->  #endif
->  
->  // XXX
+Hello,
 
-This produced warning, on !DEBUG RTRACE wasn't defined. Fixed for -kj,
-and also restored DEBUG behaviour which you turned off.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-	Domen
+--- linux-2.6.11-rc4.orig/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-13 17:13:00.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-13 17:39:00.000000000 +0100
+@@ -125,7 +125,7 @@ prism54_probe(struct pci_dev *pdev, cons
+ 	}
+ 
+ 	/* enable PCI DMA */
+-	if (pci_set_dma_mask(pdev, 0xffffffff)) {
++	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
+ 		printk(KERN_ERR "%s: 32-bit PCI DMA not supported", DRV_NAME);
+ 		goto do_pci_disable_device;
+         }
 
---===============78870833498470283==
+--===============58293322924761082==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78870833498470283==--
+--===============58293322924761082==--
