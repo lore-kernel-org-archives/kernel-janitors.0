@@ -1,65 +1,43 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 18:26:59 +0000
-Subject: [Kernel-janitors] [PATCH] net/mac89x0: replace schedule_timeout()
-Message-Id: <20040727182659.GP2099@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14581857336180937=="
+From: "Garrett B. Christian" <gbchristianki@ercomp.sk>
+Date: Thu, 08 Jul 2004 06:54:00 +0000
+Subject: $12546
+Message-Id: <489301c464b8$ada9bc6d$5aebd09b@nlc.org.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============14581857336180937==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
+I sent you an email a few days ago, because you now qualify for a new mortgage.
+You could get $300,000 for as little as $700 a month!
+Bad credit is no problem, you can pull cash out or refinance.
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
+Please click on this link:
+http://www.lending-now.com/h7/li.php?n5nq
 
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
-
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
-
-Thanks,
-Nish
+Best Regards,
+Steve Morris
 
 
 
-Applys-to: 2.6.7
+No more: http://www.lending-now.com/r1/index.html
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+---- system information ----
+Procedure mail often Because marks vary United appropriately 
+time Application implementation typify environments appropriately latest
+current 
+contributions actually produce deduced scenarios resource found languages)
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/net/mac89x0.c	2004-06-16 05:19:23.000000000 +0000
-+++ linux-dev/drivers/net/mac89x0.c	2004-07-12 21:42:47.000000000 +0000
-@@ -308,8 +308,7 @@ void __init reset_chip(struct net_device
- 	writereg(dev, PP_SelfCTL, readreg(dev, PP_SelfCTL) | POWER_ON_RESET);
- 
- 	/* wait 30 ms */
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(30*HZ/1000);
-+	msleep(30);
- 
- 	/* Wait until the chip is reset */
- 	reset_start_time = jiffies;
 
---===============14581857336180937==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email sponsored by Black Hat Briefings & Training.
+Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
+digital self defense, top technical experts, no vendor pitches, 
+unmatched networking opportunities. Visit www.blackhat.com
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============14581857336180937==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
