@@ -1,26 +1,47 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 30 Jan 2004 00:15:43 +0000
-Subject: Re: [Kernel-janitors] [PATCH] cpcihp_zt5550.c ioremap/iounmap audit
-Message-Id: <20040130001543.GB10763@kroah.com>
+From: Eugene Teo <eugene.teo@eugeneteo.net>
+Date: Wed, 21 Jan 2004 18:32:59 +0000
+Subject: [PATCH] mm/pdflush.c - handle kernel_thread failure
+Message-Id: <20040121183259.GA17474@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1074294839.12959.90.camel@ibm-d.pdx.osdl.net>
-In-Reply-To: <1074294839.12959.90.camel@ibm-d.pdx.osdl.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Jan 16, 2004 at 03:13:59PM -0800, Leann Ogasawara wrote:
-> Hi All,
-> 
-> Again insert missing iounmap()
-> 
-> diffed against 2.6.1
+A similar patch is included in 2.6.1-kj1. I am resubmitting
+this with a couple of amendments - store the return value to
+pid_t type variable, and use C99 __func__ instead.
 
-Thanks, I've applied this to my pci tree.
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.2-rc1-orig/mm/pdflush.c 2.6.2-rc1-fix/mm/pdflush.c
+--- 2.6.2-rc1-orig/mm/pdflush.c	2004-01-22 02:19:29.000000000 +0800
++++ 2.6.2-rc1-fix/mm/pdflush.c	2004-01-22 02:24:26.000000000 +0800
+@@ -207,7 +207,11 @@
+ 
+ static void start_one_pdflush_thread(void)
+ {
+-	kernel_thread(pdflush, NULL, CLONE_KERNEL);
++	pid_t ret;
++
++	ret = kernel_thread(pdflush, NULL, CLONE_KERNEL);
++	if (ret < 0)
++		printk("%s: unable to start kernel thread\n", __func__);
+ }
+ 
+ static int __init pdflush_init(void)
 
-greg k-h
+-- 
+Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
+1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
+main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
+
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
