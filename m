@@ -1,48 +1,51 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 09 Mar 2005 23:03:00 +0000
-Subject: [KJ] [PATCH] crypto/blowfish.c: fix sparse warnings
-Message-Id: <200503100155.24596.adobriyan@mail.ru>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Fri, 18 Mar 2005 17:02:43 +0000
+Subject: [KJ] [UPDATE PATCH 1/3] drivers/block/cciss.c: Use the DMA_{64,
+Message-Id: <20050318165924.GA3356@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44311486520169829=="
+Content-Type: multipart/mixed; boundary="===============010559104769408911=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============44311486520169829==
+--===============010559104769408911==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Index: linux-2.6.11-bk3-sparse/crypto/blowfish.c
-===================================================================
---- linux-2.6.11-bk3-sparse.orig/crypto/blowfish.c	2005-03-02 09:37:49.000000000 +0200
-+++ linux-2.6.11-bk3-sparse/crypto/blowfish.c	2005-03-08 14:48:31.000000000 +0200
-@@ -349,8 +349,8 @@ static void encrypt_block(struct bf_ctx 
- 
- static void bf_encrypt(void *ctx, u8 *dst, const u8 *src)
- {
--	const u32 *in_blk = (const u32 *)src;
--	u32 *const out_blk = (u32 *)dst;
-+	const __be32 *in_blk = (const __be32 *)src;
-+	__be32 *const out_blk = (__be32 *)dst;
- 	u32 in32[2], out32[2];
- 
- 	in32[0] = be32_to_cpu(in_blk[0]);
-@@ -362,8 +362,8 @@ static void bf_encrypt(void *ctx, u8 *ds
- 
- static void bf_decrypt(void *ctx, u8 *dst, const u8 *src)
- {
--	const u32 *in_blk = (const u32 *)src;
--	u32 *const out_blk = (u32 *)dst;
-+	const __be32 *in_blk = (const __be32 *)src;
-+	__be32 *const out_blk = (__be32 *)dst;
- 	const u32 *P = ((struct bf_ctx *)ctx)->p;
- 	const u32 *S = ((struct bf_ctx *)ctx)->s;
- 	u32 yl = be32_to_cpu(in_blk[0]);
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+Thise patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
---===============44311486520169829==
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11.orig/drivers/block/cciss.c	2005-03-02 12:50:39.000000000 +0100
++++ linux-2.6.11/drivers/block/cciss.c	2005-03-18 15:51:25.000000000 +0100
+@@ -38,6 +38,7 @@
+ #include <linux/hdreg.h>
+ #include <linux/spinlock.h>
+ #include <linux/compat.h>
++#include <linux/dma-mapping.h>
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+ 
+@@ -2692,9 +2693,9 @@ static int __devinit cciss_init_one(stru
+ 	hba[i]->pdev = pdev;
+ 
+ 	/* configure PCI DMA stuff */
+-	if (!pci_set_dma_mask(pdev, 0xffffffffffffffffULL))
++	if (!pci_set_dma_mask(pdev, DMA_64BIT_MASK))
+ 		printk("cciss: using DAC cycles\n");
+-	else if (!pci_set_dma_mask(pdev, 0xffffffff))
++	else if (!pci_set_dma_mask(pdev, DMA_32BIT_MASK))
+ 		printk("cciss: not using DAC cycles\n");
+ 	else {
+ 		printk("cciss: no suitable DMA available\n");
+
+--===============010559104769408911==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============44311486520169829==--
+--===============010559104769408911==--
