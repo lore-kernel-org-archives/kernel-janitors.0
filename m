@@ -1,7 +1,7 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Mon, 12 Jan 2004 03:34:29 +0000
+From: Eugene Teo <eugene.teo@eugeneteo.net>
+Date: Mon, 12 Jan 2004 04:42:49 +0000
 Subject: Re: [Kernel-janitors] TODO suggestions.
-Message-Id: <20040111193429.50c221da.rddunlap@osdl.org>
+Message-Id: <20040112044249.GC4694@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1073548328.2024.27.camel@telecentrolivre>
 In-Reply-To: <1073548328.2024.27.camel@telecentrolivre>
@@ -10,55 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 08 Jan 2004 05:52:08 -0200 Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br> wrote:
+There are a handful of schedule() within spinlocks. That needs to
+be looked at.
 
-| 
-| Hi all,
-| 
-|  Is this still valid ?
-| ------
-| 
-| "From: Andrew Morton <andrewm at uow dot edu dot au> 
-| Here - have about 300 bugs:
-| 
-| http://www.uwsg.iu.edu/hypermail/linux/kernel/0005.3/0269.html
-| 
-| A lot of the timer deletion races are hard to fix because of
-| the deadlock problem."
-| ----
+Also, how about an atomic version of check_region() to avoid racy
+conditions? Any idea what the status is?
 
-I really have no idea...
+Eugene
 
-| "From: Jeff Garzik <jgarzik at mandrakesoft dot com>
-| 
-| The string form
-| 
-| 	[const] char *foo = "blah";
-| 
-| creates two variables in the final assembly output, a static string, and
-| a char pointer to the static string.  The alternate string form
-| 
-| 	[const] char foo[] = "blah";
-| 
-| is better because it declares a single variable.
-| 
-| For variables marked __initdata, the "*foo" form causes only the
-| pointer, not the string itself, to be dropped from the kernel image,
-| which is a bug.  Using the "foo[]" form with regular 'ole local
-| variables also makes the assembly shorter.
-| 
-| Look at the diff between include/linux/etherdevice.h in pre7 versus
-| pre8.  The assembly for the pre8 version is ~10 lines shorter, with 6 of
-| those removed lines being the string constant stored separately.
-| Maybe this should go into CodingStyle?"
+<quote sender="Randy.Dunlap">
+> On Thu, 08 Jan 2004 05:52:08 -0200 Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br> wrote:
+> 
+> | 
 
-I guess this isn't DONE yet, since Max has some more changes in this area...
+[snip]
 
-However, I did update the KJ TODO and DONE files.
+-- 
+Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
+1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
+main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
 
---
-~Randy
-MOTD:  Always include version info.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
