@@ -1,42 +1,68 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Thu, 19 Feb 2004 02:23:13 +0000
-Subject: [Kernel-janitors] reference_init.pl for Linux 2.6
-Message-Id: <20040218182313.7b7b915e.rddunlap@osdl.org>
+From: "Info" <01agebackCulver@rocketmail.com>
+Date: Tue, 03 Feb 2004 01:17:00 +0000
+Subject: [Kernel-janitors] Wanna look younger again??    Euphrates
+Message-Id: <awieo.9552244533cndzdpdayu@Infojvfgftps>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1075789004-25222-9"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1075789004-25222-9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="iso-8859-1"
+Content-Disposition: inline
+
+<html>
+<head>
+   <title>hghspray</title>
+</head>
+<body>
+
+<center><font face=3D"Verdana"><font color=3D"#FF0000"><font size=3D+2>Natu=
+ral
+HGH Plus Spray</font></font></font>
+<p><b><font face=3D"Verdana"><font size=3D-1>Human Growth Hormone - also ca=
+lled
+HGH is referred to in medical science as the master hormone. It is very
+plentiful when we are young, but near the age of twenty-one our bodies
+begin to produce less of it. By the time we are forty nearly everyone is
+deficient in HGH, and at eighty our production has normally diminished
+at least 90-95%.</font></font></b>
+<p><b><font face=3D"Verdana"><font size=3D-1>We are so confident of the dif=
+ference
+Natural HGH Plus Spray will make in your life that we offer an exclusive:</=
+font></font></b>
+<p><b><font face=3D"Verdana">60-day Mo.ney-Back Guar.antee!,<font color=3D"=
+#3333FF"><font size=3D+1><a DEFANGED_hrefGiuseppehref=3D"http://ingenuous.c=
+om" href=3D
+
+"http://Rebecca.turpsz.us/hgh/?kadafi">MORE
+INFO</a></font></font></font></b>
+<br>=A0
+<p><font size=3D-2><a DEFANGED_hrefmufflinghref=3D"http://barriers.com" hre=
+f=3D
+
+"http://approve.wpzza.us/pher/o.html">no more emailz</a></font></center>
+
+<p><br>
+</body>
+</html>
+
+dominatelocators
+
+
+
+------------=_1075789004-25222-9
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: kjo <kernel-janitors@osdl.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, kaos@ocs.com.au
+Content-Disposition: inline
 
-
-I have updated Keith Owens "reference_init.pl" script for
-Linux 2.6.  It searches for code that refers to other code
-sections that they should not reference, such as init code
-calling exit code or v.v.
-
-The script searches all .o (non-MODULE) files in the current
-directory and sub-directories.  To restrict its scope, just
-'cd drivers/video', e.g., to run it.
-
-Notes:  __devinit and __devexit don't mean/do anything if
-CONFIG_HOTPLUG=y, so setting CONFIG_HOTPLUG=n and doing a
-'make allyesconfig && make all' finds the most possible
-problems.  I say 'possible' because there are probably some
-false positives reported.
-
-script for Linux 2.6 is at:
-http://developer.osdl.org/rddunlap/scripts/reference_init26.pl
-
-and output from Linux 2.6.3 is at:
-http://developer.osdl.org/rddunlap/scripts/badrefs.out
-
-Comments/corrections welcome.
-
---
-~Randy
-kernel-janitors project:  http://janitor.kernelnewbies.org/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------------=_1075789004-25222-9--
