@@ -1,65 +1,62 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Thu, 05 Feb 2004 21:50:57 +0000
-Subject: Re: [Kernel-janitors] New guy here, and patch for kj.pl
-Message-Id: <4022BAC1.7050904@gmx.net>
+From: Ron Gage <ron@rongage.org>
+Date: Sun, 15 Feb 2004 03:46:32 +0000
+Subject: [Kernel-janitors] [PATCH] - 2.6.2 -scripts/modpost.c -
+Message-Id: <200402142246.32092.ron@rongage.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Boundary-00=_YuuLA/K51HKjZXF"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040125123747.GA21585@noos.fr>
-In-Reply-To: <20040125123747.GA21585@noos.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
+--Boundary-00=_YuuLA/K51HKjZXF
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Domen Puncer wrote:
-> On Thursday 05 of February 2004 11:20, Michael Veeck wrote:
-> 
->>Hi! I'm another new guy here on kj and a few days ago I wrote a little
->>patch to show that I want to tackle the removal of some unnecessary
->>min/max-methods in the kernel.
->>
->>I didnt get any feedback yet, but I guess since nobody screamed (and I
->>found some more occurences) I'm going to try my best.
-> 
-> 
-> No screaming is usually good :-)
+Fixes signed/unsigned comparison warnings.
 
-Good, than I'll try finding some more Min/Max-Unnecessarieness and keep 
-that diffed against the latest kernel until it gets included.
+-- 
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
 
-Is it preferrable to generate indivual patches or (since it isnt really 
-intrusive) to post one big patch?
 
-> 
-> 
-> <snipped some code that uses MAX in struct initializers>
-> 
->>Can anyone help me with that error code?
-> 
-> 
-> The problem is struct initializers can't be code (max evaluates to some code, 
-> while MAX works fine, as the preprocessor does all the work).
-> 
-> In this case that MAX looks like the right thing, except for arguments used 
-> twice in #define.
-> 
-> Any better ideas than leaving this as it is now?
+--Boundary-00=_YuuLA/K51HKjZXF
+Content-Type: text/x-diff; charset="us-ascii"; name="scripts_modpost.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="scripts_modpost.diff"
 
-I dont know (yet) if there are more of those min-in-struct-inits, so 
-that we could put one #define in one place and remove the then obsolete 
-ones.
+--- linux-2.6.2.orig/scripts/modpost.c	2004-02-03 22:43:16.000000000 -0500
++++ linux-2.6.2/scripts/modpost.c	2004-02-14 22:39:04.000000000 -0500
+@@ -514,7 +514,7 @@
+ 		goto close_write;
+ 
+ 	tmp = NOFAIL(malloc(b->pos));
+-	if (fread(tmp, 1, b->pos, file) != b->pos)
++	if (fread(tmp, 1, b->pos, file) != (unsigned)b->pos)
+ 		goto free_write;
+ 
+ 	if (memcmp(tmp, b->p, b->pos) != 0)
+@@ -534,7 +534,7 @@
+ 		perror(fname);
+ 		exit(1);
+ 	}
+-	if (fwrite(b->p, 1, b->pos, file) != b->pos) {
++	if (fwrite(b->p, 1, b->pos, file) != (unsigned)b->pos) {
+ 		perror(fname);
+ 		exit(1);
+ 	}
 
-Regards
-Michael
-
-> 
-> 
-> 	Domen
-> 
-> 
+--Boundary-00=_YuuLA/K51HKjZXF
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--Boundary-00=_YuuLA/K51HKjZXF--
