@@ -1,38 +1,116 @@
-From: Vicente Feito <vicente.feito@gmail.com>
-Date: Mon, 28 Mar 2005 11:55:15 +0000
-Subject: Re: [KJ] critical bug in strncpy()
-Message-Id: <200503281155.16199.vicente.feito@gmail.com>
+From: walter harms <wharms@bfs.de>
+Date: Mon, 28 Mar 2005 14:34:16 +0000
+Subject: [KJ] critical bug in strncpy()
+Message-Id: <424815E8.8060200@bfs.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============26137851064022533=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <200503281155.16199.vicente.feito@gmail.com>
+In-Reply-To: <200503281155.16199.vicente.feito@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
-Hi walter,
-I think the main problem is the fact that tmp++ keeps going when src++ stops, 
-this can be fixed like this:
-if ((*tmp = *src) != 0) { src++; tmp++; } <--- just adding brackets
-with that I think you have all bases covered, otherwise tmp keeps 
-incrementing, which doesn't have any sense in this case.
-The other issue is the fact that if strlen(src) > count you get a non null 
-terminated string, but that's the way it has been made.
-And the final issue afaik is the waste of cpu cycles when the strings have 
-ended copying themselves but the count is still > 0, but that's not a 
-security issue.
+--===============26137851064022533==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Vicente.
+hi all,
+The kernel version of strcpy() is buggy. it copies ALWAYS n bytes.
+since i have NO idea if this is exploidable somehow, i would still
+recomend to REMOVE the code. See example below if you do not believe me.
+Also below you find a sniplet from libString/Strncpy.c.
+i did not provide a patch since this is NOT my code. (btw: changed the 
+name from Strncopy to strncpy). C&P this in to the kernel/lib/string.c.
 
 
-On Monday 28 March 2005 02:34 pm, walter harms wrote:
-> int main()
-> {
-> char *src="15" ;
-> char dst[]="123";
->
-> K_strncpy(dst,src,500);
->
-> }
+re,
+	walter
+
+
+/* in case this is needed */
+Signed-off-by: walter harms <wharms@bfs.de>
+
+
+
+/* linux kernel */
+char * K_strncpy(char * dest,const char *src,size_t count)
+{
+         char *tmp = dest;
+
+         while (count) {
+                 if ((*tmp = *src) != 0) src++;    <-MISSING  case == 0 
+
+                 tmp++;
+                 count--;
+         }
+         printf("count=%d\n",count);
+         return dest;
+}
+
+int main()
+{
+char *src="15" ;
+char dst[]="123";
+
+K_strncpy(dst,src,500);
+
+}
+
+
+i looked a bit around and found these nice version.
+
+
+/*
+  * libString, Copyright (C) 1999 Patrick Alken
+  * This library comes with absolutely NO WARRANTY
+  *
+  * Should you choose to use and/or modify this source code, please
+  * do so under the terms of the GNU General Public License under which
+  * this library is distributed.
+  *
+  * $Id: Strncpy.c,v 1.1.1.1 2000/10/02 12:02:27 decho Exp $
+  */
+
+#include <sys/types.h>
+
+/*
+Strncpy()
+  Optimized version of strncpy().
+
+Inputs: dest   - destination string
+         source - source string
+         bytes  - number of bytes to copy
+
+NOTE: A terminating \0 character is only copied to 'dest' if
+       'source' is terminated by one, provided the limit 'bytes'
+       has not yet been reached.
+
+Return: destination string
+*/
+
+char *
+strncpy(char *dest, const char *source, const size_t bytes)
+
+{
+   register char *end = dest + bytes;
+   register char *s = dest;
+
+   while ((s < end) && (*s++ = *source++))
+     ;
+
+   return (dest);
+} /* Strncpy() */
+
+
+
+--===============26137851064022533==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============26137851064022533==--
