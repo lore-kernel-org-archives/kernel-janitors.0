@@ -1,45 +1,37 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 16 Sep 2004 18:54:54 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 24/33] char/sis-agp: replace
-Message-Id: <20040916185454.GR1777@us.ibm.com>
+Date: Mon, 20 Sep 2004 23:49:27 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2] mmc: replace schedule_timeout()
+Message-Id: <20040920234927.GC2270@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38042522858961503=="
+Content-Type: multipart/mixed; boundary="===============34912428020696762=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============38042522858961503==
+--===============34912428020696762==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Use msleep() instead of schedule_timeout() to guarantee
-the task delays as expected.
+Description: Use msleep_interruptible() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/char/agp/sis-agp.c	2004-09-13 17:15:48.000000000 -0700
-+++ 2.6.9-rc2/drivers/char/agp/sis-agp.c	2004-09-15 13:53:13.000000000 -0700
-@@ -6,6 +6,7 @@
- #include <linux/pci.h>
- #include <linux/init.h>
- #include <linux/agp_backend.h>
-+#include <linux/delay.h>
- #include "agp.h"
- 
- #define SIS_ATTBASE	0x90
-@@ -102,8 +103,7 @@ static void sis_delayed_enable(u32 mode)
- 		 */
- 		if (device->device == agp_bridge->dev->device) {
- 			printk(KERN_INFO PFX "SiS delay workaround: giving bridge time to recover.\n");
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout (1+(HZ*10)/1000);
-+			msleep(10);
- 		}
+--- 2.6.9-rc1-mm4-vanilla/drivers/mmc/mmc.c	2004-09-09 23:05:59.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/mmc/mmc.c	2004-09-10 13:53:04.000000000 -0700
+@@ -270,8 +270,7 @@ static inline void mmc_delay(unsigned in
+ 		yield();
+ 		mdelay(ms);
+ 	} else {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(ms * HZ / 1000);
++		msleep_interruptible (ms);
  	}
  }
+ 
 
---===============38042522858961503==
+--===============34912428020696762==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38042522858961503==--
+--===============34912428020696762==--
