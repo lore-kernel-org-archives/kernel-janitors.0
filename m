@@ -1,33 +1,60 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:13:57 +0000
-Subject: [KJ] [PATCH 33/53] matroxfb: Clean up printk()'s in
-Message-Id: <20050125231356.10418.40764.12045@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 20 Jan 2005 18:23:51 +0000
+Subject: [KJ] [PATCH 4/40] block/ps2esdi: replace sleep_on() with
+Message-Id: <20050120182351.GE5393@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20637454229951757=="
+Content-Type: multipart/mixed; boundary="===============8559529534581205=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============20637454229951757==
+--===============8559529534581205==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/matrox/matroxfb_base.c
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/matrox/matroxfb_base.c linux-2.6.11-rc2-mm1/drivers/video/matrox/matroxfb_base.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/matrox/matroxfb_base.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/matrox/matroxfb_base.c	2005-01-24 19:07:03.464259214 -0500
-@@ -1880,7 +1880,7 @@
- 	if (register_framebuffer(&ACCESS_FBINFO(fbcon)) < 0) {
- 		goto failVideoIO;
- 	}
--	printk("fb%d: %s frame buffer device\n",
-+	pr_info("fb%d: %s frame buffer device\n",
- 	       ACCESS_FBINFO(fbcon.node), ACCESS_FBINFO(fbcon.fix.id));
+Description: Use wait_event() instead of the deprecated sleep_on(). In all
+replacements, wait_event() expects the condition to *stop* on, so the existing
+conditional is negated and passed as the parameter. I am not sure if these
+changes are appropriate, as the condition to pass to wait_event() to guarantee
+the same behavior; I think this is the best choice, though.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/drivers/block/ps2esdi.c	2005-01-15 16:55:43.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/block/ps2esdi.c	2005-01-19 17:55:55.000000000 -0800
+@@ -43,6 +43,7 @@
+ #include <linux/init.h>
+ #include <linux/ioport.h>
+ #include <linux/module.h>
++#include <linux/delay.h>
  
- 	/* there is no console on this fb... but we have to initialize hardware
+ #include <asm/system.h>
+ #include <asm/io.h>
+@@ -461,8 +462,7 @@ static void __init ps2esdi_get_device_cf
+ 	cmd_blk[1] = 0;
+ 	no_int_yet = TRUE;
+ 	ps2esdi_out_cmd_blk(cmd_blk);
+-	if (no_int_yet)
+-		sleep_on(&ps2esdi_int);
++	wait_event(ps2esdi_int, !no_int_yet);
+ 
+ 	if (ps2esdi_drives > 1) {
+ 		printk("%s: Drive 1\n", DEVICE_NAME);	/*BA */
+@@ -470,8 +470,7 @@ static void __init ps2esdi_get_device_cf
+ 		cmd_blk[1] = 0;
+ 		no_int_yet = TRUE;
+ 		ps2esdi_out_cmd_blk(cmd_blk);
+-		if (no_int_yet)
+-			sleep_on(&ps2esdi_int);
++		wait_event(ps2esdi_int, !no_int_yet);
+ 	}			/* if second physical drive is present */
+ 	return;
+ }
 
---===============20637454229951757==
+--===============8559529534581205==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20637454229951757==--
+--===============8559529534581205==--
