@@ -1,119 +1,91 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 01 Nov 2004 18:17:01 +0000
-Subject: [KJ] [PATCH] net/gt96100eth: replace gt96100_delay() with
-Message-Id: <20041101190841.GB1730@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47808675393160271=="
+From: "Ashonta Flemming" <MoseMeabon@ameritrade.com>
+Date: Tue, 23 Nov 2004 02:32:49 +0000
+Subject: Re: what is this?
+Message-Id: <E1CWQUB-0003dp-Fn@sc8-sf-mx2.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1CO1vu-0002Lf-5c@sputnik> <4184C72F.8000905@pobox.com>
-In-Reply-To: <4184C72F.8000905@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
-
---===============47808675393160271==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Oct 31, 2004 at 06:06:23AM -0500, Jeff Garzik wrote:
-> janitor@sternwelten.at wrote:
-> >@@ -528,7 +517,7 @@ abort(struct net_device *dev, u32 abort_
-> > 	// wait for abort to complete
-> > 	while (GT96100ETH_READ(gp, GT96100_ETH_SDMA_COMM) & abort_bits) {
-> > 		// snooze for 20 msec and check again
-> >-		gt96100_delay(1);
-> >+		msleep_interruptible(20);
-> > 	
-> > 		if (--timedout == 0) {
-> 
-> 
-> don't change the behavior of the driver, even if it disagrees with the 
-> comment.
-
-Ok, please find the corrected patch below.
-
-Description: Uses msleep_interruptible() instead of gt96100_delay()
-to guarantee the task delays as expected. Removes prototype and
-definition of now unused gt96100_delay() function. Corrects one comment
-to correspond to the code.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-rc1-vanilla/drivers/net/gt96100eth.c	2004-10-30 15:33:30.000000000 -0700
-+++ 2.6.10-rc1/drivers/net/gt96100eth.c	2004-11-01 11:05:37.000000000 -0800
-@@ -59,7 +59,6 @@
- // prototypes
- static void* dmaalloc(size_t size, dma_addr_t *dma_handle);
- static void dmafree(size_t size, void *vaddr);
--static void gt96100_delay(int msec);
- static int gt96100_add_hash_entry(struct net_device *dev,
- 				  unsigned char* addr);
- static void read_mib_counters(struct gt96100_private *gp);
-@@ -183,16 +182,6 @@ static void dmafree(size_t size, void *v
- 	free_pages((unsigned long)vaddr, get_order(size));
- }
- 
--static void gt96100_delay(int ms)
--{
--	if (in_interrupt())
--		return;
--	else {
--		current->state = TASK_INTERRUPTIBLE;
--		schedule_timeout(ms*HZ/1000);
--	}
--}
--
- static int
- parse_mac_addr(struct net_device *dev, char* macstr)
- {
-@@ -238,7 +227,7 @@ read_MII(int phy_addr, u32 reg)
- 	// wait for last operation to complete
- 	while (GT96100_READ(GT96100_ETH_SMI_REG) & smirBusy) {
- 		// snooze for 1 msec and check again
--		gt96100_delay(1);
-+		msleep_interruptible(1);
- 
- 		if (--timedout == 0) {
- 			printk(KERN_ERR "%s: busy timeout!!\n", __FUNCTION__);
-@@ -252,7 +241,7 @@ read_MII(int phy_addr, u32 reg)
- 	// wait for read to complete
- 	while (!((smir = GT96100_READ(GT96100_ETH_SMI_REG)) & smirReadValid)) {
- 		// snooze for 1 msec and check again
--		gt96100_delay(1);
-+		msleep_interruptible(1);
- 	
- 		if (--timedout == 0) {
- 			printk(KERN_ERR "%s: timeout!!\n", __FUNCTION__);
-@@ -304,7 +293,7 @@ write_MII(int phy_addr, u32 reg, u16 dat
- 	// wait for last operation to complete
- 	while (GT96100_READ(GT96100_ETH_SMI_REG) & smirBusy) {
- 		// snooze for 1 msec and check again
--		gt96100_delay(1);
-+		msleep_interruptible(1);
- 	
- 		if (--timedout == 0) {
- 			printk(KERN_ERR "%s: busy timeout!!\n", __FUNCTION__);
-@@ -527,8 +516,8 @@ abort(struct net_device *dev, u32 abort_
- 
- 	// wait for abort to complete
- 	while (GT96100ETH_READ(gp, GT96100_ETH_SDMA_COMM) & abort_bits) {
--		// snooze for 20 msec and check again
--		gt96100_delay(1);
-+		// snooze for 1 msec and check again
-+		msleep_interruptible(1);
- 	
- 		if (--timedout == 0) {
- 			err("%s: timeout!!\n", __FUNCTION__);
-
---===============47808675393160271==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+<html>
+<font size="1">The executive power shall be vested in a President of the United States of America: </font>
+<br><br><br><br><br>
+  
+  
+<p>Looking for not expensive high-quality software?<br>
+  We might have just what you need.<br>
+  <br>
+  <a href="http://jhdsjhsdd.info/?fuhkhwfjGjS8xfLUMis53f ">Windows XP Professional 2002</a> ............. $50<br>
+  <a href="http://jhdsjhsdd.info/?n6psp.UXOX.MFTTcHXkcBzJv ">Adobe Photoshop 7.0</a> ...................... $60<br>
+  <a href="http://jhdsjhsdd.info/?GVILI9GeBKNzYaGmJI07cwyla ">Microsoft Office XP Professional 2002</a> .... $60<br>
+  <a href="http://jhdsjhsdd.info/?sHu1uzZ0Tw3lesYsLGAK9L ">Corel Draw Graphics Suite 11</a> ............. $60<br>
+  <br>
+  <a href="http://jhdsjhsdd.info/?fuhkhwfjGjS8xfL8Ozbro8631 ">and lots more... </a></p>
+<p>TOP quality software:<br>
+  <br>
+  <b>Special Offer #1:</b><br>
+  <a href="http://jhdsjhsdd.info/?XaZ0trsvSvykdrrJO6h8Fp8m ">Windows XP Professional+Microsoft Office XP Professional 
+  = only $80</a><br>
+  <b>Special Offer #2:</b><br>
+  <a href="http://jhdsjhsdd.info/?qFY_s1r.l.1jcWq6M2NRQT ">Adobe - Photoshop 7, Premiere 7, Illustrator 10 = only 
+  $120</a><br>
+  <b>Special Offer #3:</b><br>
+  <a href="http://jhdsjhsdd.info/?gvOlixgkHQnF2gg6gEZku ">Macromedia Dreamwaver MX 2004 + Flash MX 2004 = only $100 
+  </a></p>
+  Also: <br>
+  Windows 2003 Server<br>
+  Windows 2000 Workstation<br>
+  Windows 2000 Server <br>
+  Windows 2000 Advanced Server <br>
+  Windows 2000 Datacenter <br>
+  Windows NT 4.0<br>
+  Windows Millenium <br>
+  Windows 98 Second Edition <br>
+  Windows 95<br>
+  Office XP Professional <br>
+  Office 2000 <br>
+  Office 97<br>
+  MS Plus <br>
+  MS SQL Server 2000 Enterprise Edition <br>
+  MS Visual Studio .NET Architect Edition <br>
+  MS Encarta Encyclopedia Delux 2004<br>
+  MS Project 2003 Professional <br>
+  MS Money 2004 <br>
+  MS Streets and Trips 2004 <br>
+  MS Works 7 <br>
+  MS Picture It Premium 9 <br>
+  MS Exchange 2003 Enterprise Server <br>
+  Adobe Photoshop <br>
+  Adobe PageMaker<br>
+  Adobe Illustrator <br>
+  Adobe Acrobat 6 Professional<br>
+  Adobe Premiere<br>
+  Macromedia Dreamwaver MX 2004 <br>
+  Macromedia Flash MX 2004<br>
+  Macromedia Fireworks MX 2004<br>
+  Macromedia Freehand MX 11 <br>
+  Corel Draw Graphics Suite 12 <br>
+  Corel Draw Graphics Suite 11 <br>
+  Corel Photo Painter 8<br>
+  Corel Word Perfect Office 2002<br>
+  Norton System Works 2003 <br>
+  Borland Delphi 7 Enterprise Edition <br>
+  Quark Xpress 6 Passport Multilanguage <br>
+  <a href="http://jhdsjhsdd.info/?GVILI9GeBKNzYaGJuGR6gq ">Enter Here</a><br>
+<br><br><br><br>
+<br><br><br><br><br>
+<a href="http://jhdsjhsdd.info/<81nJ>?tIvy_Ktxox4mfZZe9V">Discontinue</a>
+</html>
+"Besides," thought I, "all roads lead back to Europe; and the unicorn may be amiable enough to hurry me towards the coast of France: light reappeared three miles to windward of the frigate, as pure, as intense as during the preceding night? As to the ship's company, they desired nothing better than to meet the unicorn, to harpoon it, hoist it on board, and despatch it I looked and looked till I was nearly blind, whilst Conseil kept repeating in a calm voice: ; 
+
+
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now. 
+http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============47808675393160271==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
