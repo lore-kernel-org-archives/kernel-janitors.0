@@ -1,32 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 21 Sep 2004 23:49:01 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 2/2] i2c/i2c-mpc: replace
-Message-Id: <20040921234901.GB17372@kroah.com>
+From: Markus Lidel <Markus.Lidel@shadowconnect.com>
+Date: Wed, 22 Sep 2004 09:58:53 +0000
+Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 2/4] message/exec-osm:
+Message-Id: <41514CDD.7080907@shadowconnect.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40688322136761146=="
+Content-Type: multipart/mixed; boundary="===============42364075875388085=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040916234647.GI1777@us.ibm.com>
 In-Reply-To: <20040916234647.GI1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============40688322136761146==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============42364075875388085==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 16, 2004 at 04:40:31PM -0700, Nishanth Aravamudan wrote:
-> Previous patch won't compile. Any comments would (still) be appreciated.
-> 
-> Description: Properly orders set_current_state() and add_wait_queue().
-> Uses msleep_interruptible() in place of schedule_timeout() to guarantee
-> the task delays as expected. Uses set_current_state() instead of direct
-> assignment of current->state.
+Hello,
+
+Nishanth Aravamudan wrote:
+> Any comments would be appreciated.
+> Description: Use msleep_interruptible() instead of schedule_timeout()
+> to guarantee the task delays as expected.
+
+Thank you very much!
+
+Have changed it.
 
 
-Applied, thanks.
 
-greg k-h
+Best regards,
 
---===============40688322136761146==
+
+Markus Lidel
+------------------------------------------
+Markus Lidel (Senior IT Consultant)
+
+Shadow Connect GmbH
+Carl-Reisch-Weg 12
+D-86381 Krumbach
+Germany
+
+Phone:  +49 82 82/99 51-0
+Fax:    +49 82 82/99 51-11
+
+E-Mail: Markus.Lidel@shadowconnect.com
+URL:    http://www.shadowconnect.com
+
+--===============42364075875388085==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40688322136761146==--
+--===============42364075875388085==--
