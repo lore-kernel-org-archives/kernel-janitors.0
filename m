@@ -1,30 +1,39 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Thu, 24 Feb 2005 05:34:28 +0000
-Subject: [KJ] Re: [PATCH 19/19] drivers/scsi/sata_vsc: Use the DMA_{64,
-Message-Id: <421D6764.9030701@pobox.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Mon, 14 Feb 2005 15:04:30 +0000
+Subject: [KJ] [PATCH 2/16] drivers/net/acenic: Use the DMA_{64,
+Message-Id: <20050214150430.GE15408@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14420465896699564=="
+Content-Type: multipart/mixed; boundary="===============43687623897888161=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220171331.GT14375@helium.tklauser.home>
-In-Reply-To: <20050220171331.GT14375@helium.tklauser.home>
-To: Tobias Klauser <tklauser@nuerscht.ch>
-Cc: kernel-janitors@lists.osdl.org, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============14420465896699564==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============43687623897888161==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied patch #4 and #19 to libata.
+Hello,
 
-Please do not include "Hello," or "Description:" in your patch 
-description, as I must hand-edit these out manually.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 
-	Jeff
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
+--- linux-2.6.11-rc4.orig/drivers/net/acenic.c	2005-02-13 17:13:02.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/acenic.c	2005-02-13 17:33:37.000000000 +0100
+@@ -1167,9 +1167,9 @@ static int __devinit ace_init(struct net
+ 	/*
+ 	 * Configure DMA attributes.
+ 	 */
+-	if (!pci_set_dma_mask(pdev, 0xffffffffffffffffULL)) {
++	if (!pci_set_dma_mask(pdev, DMA_64BIT_MASK)) {
+ 		ap->pci_using_dac = 1;
+-	} else if (!pci_set_dma_mask(pdev, 0xffffffffULL)) {
++	} else if (!pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
+ 		ap->pci_using_dac = 0;
+ 	} else {
+ 		ecode = -ENODEV;
 
-
-
---===============14420465896699564==
+--===============43687623897888161==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -35,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============14420465896699564==--
+--===============43687623897888161==--
