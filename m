@@ -1,72 +1,31 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 21 Jul 2004 21:20:04 +0000
-Subject: [Kernel-janitors] [PATCH] sonycd535: replace schedule_timeout()
-Message-Id: <20040721212003.GK1906@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Mon, 05 Jul 2004 15:07:15 +0000
+Subject: Re: [Kernel-janitors] Re: check_region question
+Message-Id: <20040705150715.GD1587@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16109472133963276=="
+Content-Type: multipart/mixed; boundary="===============47574583331233944=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040720205857.GE2959@us.ibm.com>
-In-Reply-To: <20040720205857.GE2959@us.ibm.com>
+References: <20040628144240.GB24005@nd47>
+In-Reply-To: <20040628144240.GB24005@nd47>
 To: kernel-janitors@vger.kernel.org
 
---===============16109472133963276==
+--===============47574583331233944==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Please find below the corrected patch, as the previous one would not
-compile.
+On Mon, 28 Jun 2004, Walter Harms wrote:
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
+> perhaps this can go as link to the TODO list ?
+> It would be very usefull including comments why certain drivers
+> have not been fixed (yet).
 
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
+agreed, 
+added link to Randy's mail to check_region -> request_region item!
 
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch.
-
-Thanks,
-Nish
+a++ maks
 
 
-
-Applys-to: 2.6.7
-
-Description: Uses msleep() instead of schedule_timeout() to guarantee
-the task delays at least the desired time amount.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/cdrom/sonycd535.c	2004-06-16 05:19:11.000000000 +0000
-+++ linux-dev/drivers/cdrom/sonycd535.c	2004-07-21 16:54:55.000000000 +0000
-@@ -129,7 +129,8 @@
- #include <linux/mm.h>
- #include <linux/slab.h>
- #include <linux/init.h>
--
-+#include <linux/delay.h>
-+ 
- #define REALLY_SLOW_IO
- #include <asm/system.h>
- #include <asm/io.h>
-@@ -1478,8 +1479,7 @@ static int __init sony535_init(void)
- 	/* look for the CD-ROM, follows the procedure in the DOS driver */
- 	inb(select_unit_reg);
- 	/* wait for 40 18 Hz ticks (reverse-engineered from DOS driver) */
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout((HZ+17)*40/18);
-+	msleep(2223);
- 	inb(result_reg);
- 
- 	outb(0, read_status_reg);	/* does a reset? */
-
---===============16109472133963276==
+--===============47574583331233944==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +36,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16109472133963276==--
+--===============47574583331233944==--
