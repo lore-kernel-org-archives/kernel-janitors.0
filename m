@@ -1,81 +1,52 @@
-From: Pavel Machek <pavel@ucw.cz>
-Date: Wed, 02 Feb 2005 00:10:17 +0000
+From: Jes Sorensen <jes@wildopensource.com>
+Date: Wed, 02 Feb 2005 08:30:55 +0000
 Subject: [KJ] Re: driver model u32 -> pm_message_t conversion: help needed
-Message-Id: <20050202001017.GB31368@elf.ucw.cz>
+Message-Id: <yq0brb3qs74.fsf@jaguar.mkp.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61213558515230626=="
+Content-Type: multipart/mixed; boundary="===============71312394966815584=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050125194710.GA1711@elf.ucw.cz> <42001A47.40409@gentoo.org>
-In-Reply-To: <42001A47.40409@gentoo.org>
-To: Daniel Drake <dsd@gentoo.org>
+References: <20050125194710.GA1711@elf.ucw.cz>
+In-Reply-To: <20050125194710.GA1711@elf.ucw.cz>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: kernel-janitors@osdl.org, kernel list <linux-kernel@vger.kernel.org>, linux-pm@osdl.org, benh@kernel.crashing.org
 
---===============61213558515230626==
+--===============71312394966815584==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi!
+>>>>> "Pavel" == Pavel Machek <pavel@ucw.cz> writes:
 
-> >Now, if you want to help, just convert some drivers... To quickly
-> >break compilation in case of bad types, following patch can be used
-> >(against 2.6.11-rc2-mm1), it actually switches pm_message_t to
-> >typedef.
-> >
-> >I'm looking forward to the patches, (please help),
-> 
-> I just had a look at converting some but then found some identical patches 
-> written by you elsewhere. Are there any remaining conversions to be done? 
-> Perhaps you could post some grep output from your local tree if there are?
+Pavel> Hi!  Two Long time ago, BenH said that making patches is easy,
+Pavel> so I hope to get his help now... And will probably need more.
 
-Lot of conversions were done, but it still looks like there's a lot to
-do:
+Pavel> Suspend routines change, slowly.
 
-pavel@amd:/usr/src/linux/drivers$ grep _suspend.*u32 */*.c
-base/sys.c:int sysdev_suspend(u32 state)
-char/s3c2410-rtc.c:static int s3c2410_rtc_suspend(struct device *dev, u32 state, u32 level)
-char/sonypi.c:static int sonypi_suspend(struct device *dev, u32 state, u32 level)
-macintosh/macio_asic.c:static int macio_device_suspend(struct device *dev, u32 state)
-macintosh/mediabay.c:static int __pmac media_bay_suspend(struct macio_dev *mdev, u32 state)
-mmc/mmc.c:int mmc_suspend_host(struct mmc_host *host, u32 state)
-mmc/mmci.c:static int mmci_suspend(struct amba_device *dev, u32 state)
-mmc/pxamci.c:static int pxamci_suspend(struct device *dev, u32 state, u32 level)
-mmc/wbsd.c:static int wbsd_suspend(struct device *dev, u32 state, u32 level)
-net/8139cp.c:static int cp_suspend (struct pci_dev *pdev, u32 state)
-net/bmac.c:static int bmac_suspend(struct macio_dev *mdev, u32 state)
-net/pci-skeleton.c:static int netdrv_suspend (struct pci_dev *pdev, u32 state)
-net/r8169.c:static int rtl8169_suspend(struct pci_dev *pdev, u32 state)
-net/smc91x.c:static int smc_drv_suspend(struct device *dev, u32 state, u32 level)
-pcmcia/au1000_generic.c:static int au1000_pcmcia_suspend(u32 sock);
-pcmcia/hd64465_ss.c:static int hd64465_suspend(struct device *dev, u32 state, u32 level)
-pcmcia/i82365.c:static int i82365_suspend(struct device *dev, pm_message_t state, u32 level)
-pcmcia/m32r_cfc.c:static int m32r_pcc_suspend(struct device *dev, u32 state, u32 level)
-pcmcia/m32r_pcc.c:static int m32r_pcc_suspend(struct device *dev, u32 state, u32 level)
-pcmcia/pxa2xx_base.c:static int pxa2xx_drv_pcmcia_suspend(struct device *dev, u32 state, u32 level)
-pcmcia/sa1100_generic.c:static int sa11x0_drv_pcmcia_suspend(struct device *dev, u32 state, u32 level)
-pcmcia/sa1111_generic.c:static int pcmcia_suspend(struct sa1111_dev *dev, u32 state)
-pcmcia/tcic.c:static int tcic_drv_suspend(struct device *dev, pm_message_t state, u32 level)
-scsi/mesh.c:static int mesh_suspend(struct macio_dev *mdev, u32 state)
-scsi/nsp32.c:static int nsp32_suspend(struct pci_dev *pdev, u32 state)
-serial/8250.c:static int serial8250_suspend(struct device *dev, pm_message_t state, u32 level)
-serial/amba-pl010.c:static int pl010_suspend(struct amba_device *dev, u32 state)
-serial/imx.c:static int serial_imx_suspend(struct device *_dev, u32 state, u32 level)
-serial/mpc52xx_uart.c:mpc52xx_uart_suspend(struct ocp_device *ocp, u32 state)
-serial/pmac_zilog.c:static int pmz_suspend(struct macio_dev *mdev, u32 pm_state)
-serial/pxa.c:static int serial_pxa_suspend(struct device *_dev, u32 state, u32 level)
-serial/s3c2410.c:int s3c24xx_serial_suspend(struct device *dev, u32 state, u32 level)
-serial/sa1100.c:static int sa1100_serial_suspend(struct device *_dev, u32 state, u32 level)
-video/pxafb.c:static int pxafb_suspend(struct device *dev, u32 state, u32 level)
-video/sa1100fb.c:static int sa1100fb_suspend(struct device *dev, u32 state, u32 level)
-video/w100fb.c:static void w100_suspend(u32 mode);
-video/w100fb.c:static int w100fb_suspend(struct device *dev, u32 state, u32 level)
-video/w100fb.c:static void w100_suspend(u32 mode)
+Pavel> - int (*suspend)(struct device * dev, u32 state); + int
+Pavel> (*suspend)(struct device * dev, pm_message_t state);
 
-									Pavel
--- 
-People were complaining that M$ turns users into beta-testers...
-...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
+Pavel> For now u32 is typedef-ed to pm_message_t, but that is not
+Pavel> going to be the case for 2.6.12. What needs to be done is
+Pavel> changing all state parameters from u32 to
+Pavel> pm_message_t. suspend() functions should not use state variable
+Pavel> for now (except for PCI ones, those are allowed to call
+Pavel> pci_choose_state and convert state into pci_power_t, and use
+Pavel> that).
 
---===============61213558515230626==
+Pavel,
+
+Sorry for being late responding to this, but I'd say this is a prime
+example for typedef's considered evil (see Greg's OLS talk ;).
+
+It would be a lot cleaner if it was made a struct and then passing a
+struct pointer as the argument instead of passing the struct by value
+as you do right now.
+
+Pavel> -static int agp_via_suspend(struct pci_dev *pdev, u32 state)
+Pavel> +static int agp_via_suspend(struct pci_dev *pdev, pm_message_t
+
+Cheers,
+Jes
+
+--===============71312394966815584==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -86,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============61213558515230626==--
+--===============71312394966815584==--
