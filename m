@@ -1,64 +1,50 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 16:59:56 +0000
-Subject: [Kernel-janitors] [PATCH] eicon/platform: replace
-Message-Id: <20040726165956.GA1897@us.ibm.com>
+From: Scott Murray <scottm@somanetworks.com>
+Date: Tue, 27 Jul 2004 22:04:19 +0000
+Subject: [Kernel-janitors] Re: [PATCH] pci/cpci_hotplug_core: replace
+Message-Id: <Pine.LNX.4.58.0407271755360.26002@rancor.yyz.somanetworks.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============09863708253296366=="
+Content-Type: multipart/mixed; boundary="===============87385881431364298=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040723174549.GK1911@us.ibm.com>
-In-Reply-To: <20040723174549.GK1911@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============09863708253296366==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============87385881431364298==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-On Sat, Jul 24, 2004 at 08:17:51AM +0200, Armin Schindler wrote:
-> On Fri, 23 Jul 2004, Nishanth Aravamudan wrote:
-> > I would appreciate any comments from the janitors list.
-> >
-> > Thanks,
-> > Nish
-> >
-> >
-> > Depends-on: Patches to eicon/capifunc, io, mntfunc, os_4bri, os_bri,
-> > os_pri, which replace invocations of diva_os_sleep() and diva_os_wait()
-> > with msleep() and mdelay() respectively. Will not compile without those
-> > patches.
+On Tue, 27 Jul 2004, Nishanth Aravamudan wrote:
+
+> I would appreciate any comments from the janitors list. This is one (of
+> many) cases where I made a decision about replacing
 > 
-> What is the reason for your patches ?
+> set_current_state(TASK_INTERRUPTIBLE);
+> schedule_timeout(some_time);
 > 
-> Most of the drivers code is 'common-' code, used in other OSes too.
-> So to maintain all of this, wrapper functions like diva_os_*() make it
-> easier and I don't like to change that.
+> with
 > 
-> If necessary, the inline function itself should be changed, not the main
-> code.
+> msleep(jiffies_to_msecs(some_time));
+> 
+> msleep() is not exactly the same as the previous code, but I only did
+> this replacement where I thought long delays were *desired*. If this is
+> not the case here, then just disregard this patch. 
 
-I have made this change specifically. Please find the new patch below.
-All of the previous eicon patches can be ignored, then, and just this
-one applied.
+msleep sets TASK_UNINTERRUPTIBLE and not TASK_INTERRUPTIBLE, which I think 
+will work okay in this instance, but am not actually sure.  I'm leaving 
+for two weeks vacation tomorrow, so I'm not in a position to test this out 
+at the moment.  Greg, can you comment on the correctness of this?
 
-Thanks,
-Nish
+My only other comment is that I would prefer you keep the braces in the 
+if/else statements.  There may only be one actual line of code in the 
+bodies, but with a comment above that one line I find it looks odd.  
+
+Scott
 
 
---- linux-vanilla/drivers/isdn/hardware/eicon/platform.h	2004-06-15 22:19:43.000000000 -0700
-+++ linux-dev/drivers/isdn/hardware/eicon/platform.h	2004-07-26 09:52:31.000000000 -0700
-@@ -214,10 +214,7 @@ void diva_os_free_message_buffer(diva_os
- */
- static __inline__ void diva_os_sleep(dword mSec)
- {
--	unsigned long timeout = HZ * mSec / 1000 + 1;
--
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(timeout);
-+	msleep(mSec);
- }
- static __inline__ void diva_os_wait(dword mSec)
- {
+-- 
+Scott Murray
+SOMA Networks, Inc.
+Toronto, Ontario
+e-mail: scottm@somanetworks.com
 
---===============09863708253296366==
+--===============87385881431364298==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============09863708253296366==--
+--===============87385881431364298==--
