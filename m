@@ -1,55 +1,38 @@
 From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 11 Jul 2004 11:27:54 +0000
-Subject: Re: [Kernel-janitors] min/max macros from kernel.h
-Message-Id: <20040711112754.GD1828@sputnik.stro.at>
+Date: Mon, 12 Jul 2004 11:06:09 +0000
+Subject: Re: [Kernel-janitors] [PATCH] h8.c (maybe)
+Message-Id: <20040712110609.GD1831@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72484497311513207=="
+Content-Type: multipart/mixed; boundary="===============45143401230665026=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040704114015.GA5381@moley.homelinux.net>
-In-Reply-To: <20040704114015.GA5381@moley.homelinux.net>
+References: <Pine.LNX.4.58.0405020843210.1663@mustang.cs.nmsu.edu>
+In-Reply-To: <Pine.LNX.4.58.0405020843210.1663@mustang.cs.nmsu.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============72484497311513207==
+--===============45143401230665026==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, 11 Jul 2004, Michael Veeck wrote:
+On Tue, 25 May 2004, maximilian attems wrote:
 
+> On Sun, 02 May 2004, MJK wrote:
 > 
+> > 
+> > 	Added code in case kernel_thread fails. I also can't test this. I
+> > can't seem to locate the uCLinux files necessary to compile the kernel and
+> > include these. If it's already in the 2.6.5 kernel, can someone tell me
+> > where or how to trick menuconfig to add these in? :)
 > 
-> Clemens Buchacher schrieb:
-> >On Mon, Jul 05, 2004 at 03:57:02PM +0200, Michael Veeck wrote:
-> >
-> >>One advice: Before doing stuff on the todo list, ask on the mailing list 
-> >>if anybodys working on it. This could save you some time.
-> >
-> >
-> >I posted this patch to the kernel-janitors mailing list almost a week
-> >ago. As there was no reaction to it I presumed nobody was working on the
-> >MIN/MAX patches. Unfortunately, I received you patches only just today.
-> >I will wait longer next time.
-> 
-> I received your mail very late, maybe my provider messed something up...
-> 
-> >Anyways, as you seem to have taken on this job, will you take in my
-> >patch and submit it collectively with yours?
-> >
-> >I will then leave the rest of the MIN/MAX work to you, if that's ok.
-> 
-> Most of the macros are now removed, some arch-specific stuff is left to 
-> do. They just need to be merged by the maintainers and/or 
-> kernel-janitors-patchset.
-> 
-> Question to all: Should I resend the not yet merged patches to this list 
-> or what should happen next?
+> well h8 depends on CONFIG_OBSOLETE, forget it,
+> hmm looked at lkml, there were already requests to remove it:
+> http://www.cs.helsinki.fi/linux/linux-kernel/2003-28/0191.html
 
-i'll be sending a new kjt patchset today,
-inside i merged all your latest min-max patches for drivers/char
-(1 or 2 where outside), but yes please send to kj those not yet merged.
-thanks maks
+h8 has now been removed in linux tree speaking of: 2.6.8-rc1
+
+a++ maks
 
 
---===============72484497311513207==
+--===============45143401230665026==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============72484497311513207==--
+--===============45143401230665026==--
