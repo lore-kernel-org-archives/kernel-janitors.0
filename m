@@ -1,41 +1,41 @@
-From: james4765@verizon.net
-Date: Thu, 28 Oct 2004 15:00:58 +0000
-Subject: [KJ] [PATCH 5/9] to arch/sparc/Kconfig
-Message-Id: <20041028150057.2776.70475.54914@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sat, 23 Oct 2004 00:01:27 +0000
+Subject: [KJ] [PATCH] w1/w1: replace schedule_timeout() with
+Message-Id: <20041023000127.GR18906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============21740376154434582=="
+Content-Type: multipart/mixed; boundary="===============34615194531259252=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041028150029.2776.69333.50087@localhost.localdomain>
-In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
-To: kernel-janitors@lists.osdl.org
-Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
+To: kernel-janitors@vger.kernel.org
 
---===============21740376154434582==
+--===============34615194531259252==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: Remove x86-specific help in arch/sparc/Kconfig.
-Apply against 2.6.9.
+Any comments would be, as always, appreciated.
 
-Signed-off by: James Nelson <james4765@gmail.com>
+-Nish
 
-diff -u ./arch/sparc/Kconfig.orig ./arch/sparc/Kconfig
---- ./arch/sparc/Kconfig.orig	2004-10-16 09:53:49.626021592 -0400
-+++ ./arch/sparc/Kconfig	2004-10-16 10:18:35.964664772 -0400
-@@ -188,10 +188,10 @@
- 	  (/dev/tty0) will still be used as the system console by default, but
- 	  you can alter that using a kernel command line option such as
- 	  "console=ttyS1". (Try "man bootparam" or see the documentation of
--	  your boot loader (lilo or loadlin) about how to pass options to the
--	  kernel at boot time.)
-+	  your boot loader (silo) about how to pass options to the kernel at
-+	  boot time.)
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.9-bk7-vanilla/drivers/w1/w1.c	2004-10-22 10:41:42.000000000 -0700
++++ 2.6.9-bk7/drivers/w1/w1.c	2004-10-22 16:06:51.000000000 -0700
+@@ -452,10 +452,8 @@ static void w1_slave_detach(struct w1_sl
+ 	while (atomic_read(&sl->refcnt)) {
+ 		printk(KERN_INFO "Waiting for %s to become free: refcnt=%d.\n",
+ 				sl->name, atomic_read(&sl->refcnt));
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ);
  
--	  If you don't have a VGA card installed and you say Y here, the
-+	  If you don't have a graphics card installed and you say Y here, the
- 	  kernel will automatically use the first serial line, /dev/ttyS0, as
- 	  system console.
+-		if (signal_pending(current))
++		if (msleep_interruptible(1000))
+ 			flush_signals(current);
+ 	}
  
 
---===============21740376154434582==
+--===============34615194531259252==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============21740376154434582==--
+--===============34615194531259252==--
