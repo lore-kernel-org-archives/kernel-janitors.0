@@ -1,45 +1,63 @@
-From: Daniele Pizzoni <auouo@tin.it>
-Date: Sun, 17 Oct 2004 16:13:58 +0000
-Subject: [KJ] [PATCH 0/8] replacing/fixing printk with pr_debug/pr_info in
-Message-Id: <1098031764.3023.45.camel@pdp11.tsho.org>
+From: Scott Feldman <sfeldma@pobox.com>
+Date: Sun, 03 Oct 2004 06:20:34 +0000
+Subject: [Kernel-janitors] [PATCH 6/6] janitor: net/tulip: pci_find_device
+Message-Id: <1096784434.3819.166.camel@sfeldma-mobl2.dsl-verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54989549539190286=="
+Content-Type: multipart/mixed; boundary="===============98969099350390133=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: kernel-janitors@vger.kernel.org
 
---===============54989549539190286==
+--===============98969099350390133==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hello, I'm going to post a series of small janitorial patches focused on
-1) replacing DPRINTK-style macros with pr_debug from kernel.h
-2) replacing printk(KERN_INFO ...) with pr_info(...)
-3) fixing _obvious_ inconsistencies of printk levels as:
+Replace pci_find_device with pci_dev_present.  Compile tested.
 
-printk(KERN_INFO "Start... ");
-...
-printk("Ok!\n");
+Signed-off-by: Scott Feldman <sfeldma@pobox.com>
 
-The patches fix only obvious inconsistencies: seems that there has been
-no policy about how a subsystem should print boot/log messages
-(subsistem prefix, etc.) nor about the difference between printk(...)
-and printk(KERN_WARNING ...), etc. So I did not touch those issues.
+--- linux-2.6.9-rc3/drivers/net/tulip/tulip_core.c	2004-08-14 03:55:34.000000000 -0700
++++ linux-2.6.9-rc3-dsf/drivers/net/tulip/tulip_core.c	2004-10-02 22:01:22.000000000 -0700
+@@ -1236,6 +1236,11 @@ static int __devinit tulip_init_one (str
+ 	struct tulip_private *tp;
+ 	/* See note below on the multiport cards. */
+ 	static unsigned char last_phys_addr[6] = {0x00, 'L', 'i', 'n', 'u', 'x'};
++	static struct pci_device_id early_486_chipsets[] = {
++		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82424) },
++		{ PCI_DEVICE(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_496) },
++		{ },
++	};
+ 	static int last_irq;
+ 	static int multiport_cnt;	/* For four-port boards w/one EEPROM */
+ 	u8 chip_rev;
+@@ -1289,17 +1294,15 @@ static int __devinit tulip_init_one (str
+ 	 *	without the workarounds being on.
+ 	 */
+ 
+-	/* Intel Saturn. Switch to 8 long words burst, 8 long word cache aligned
+-	   Aries might need this too. The Saturn errata are not pretty reading but
+-	   thankfully it's an old 486 chipset.
++	/* 1. Intel Saturn. Switch to 8 long words burst, 8 long word cache
++	      aligned.  Aries might need this too. The Saturn errata are not 
++	      pretty reading but thankfully it's an old 486 chipset.
++
++	   2. The dreaded SiS496 486 chipset. Same workaround as Intel
++	      Saturn.
+ 	*/
+ 
+-	if (pci_find_device(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82424, NULL)) {
+-		csr0 = MRL | MRM | (8 << BurstLenShift) | (1 << CALShift);
+-		force_csr0 = 1;
+-	}
+-	/* The dreaded SiS496 486 chipset. Same workaround as above. */
+-	if (pci_find_device(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_496, NULL)) {
++	if (pci_dev_present(early_486_chipsets)) {
+ 		csr0 = MRL | MRM | (8 << BurstLenShift) | (1 << CALShift);
+ 		force_csr0 = 1;
+ 	}
 
-The patches regard (mainly) files in arch/i386/kernel.
-The patches are based upon 2.6.9-rc4.
-The patches have been compile and boot tested.
-One file one patch.
-
-Any comment is very welcome.
-
-CC'ed to Ingo Molnar, hoping that's appropriate.
-
-Bye
-Daniele Pizzoni <auouo@tin.it>
 
 
---===============54989549539190286==
+--===============98969099350390133==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54989549539190286==--
+--===============98969099350390133==--
