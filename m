@@ -1,58 +1,33 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 00:37:32 +0000
-Subject: [KJ] [PATCH 29/34] net/shaper: replace sleep_on() with wait_event()
-Message-Id: <20050126003732.GU12649@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:14:45 +0000
+Subject: [KJ] [PATCH 40/53] pmagb-ba: Clean up printk()'s in
+Message-Id: <20050125231444.10418.81715.89184@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5213703155203242=="
+Content-Type: multipart/mixed; boundary="===============55271137324688113=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: alan@redhat.com
-Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============5213703155203242==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============55271137324688113==
 
-Hi,
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/pmagb-b-fb.c
 
-Please consider applying.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Description: Use wait_event() instead of the deprecated sleep_on().
-Move the in_interrupt() check outside loop, as I do not believe the
-process context should change once execution has begun. Patch is
-compile-tested.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc2-kj-v/drivers/net/shaper.c	2005-01-24 09:34:10.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/net/shaper.c	2005-01-25 11:44:13.000000000 -0800
-@@ -83,6 +83,7 @@
- #include <linux/if_arp.h>
- #include <linux/init.h>
- #include <linux/if_shaper.h>
-+#include <linux/wait.h>
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/pmagb-b-fb.c linux-2.6.11-rc2-mm1/drivers/video/pmagb-b-fb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/pmagb-b-fb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/pmagb-b-fb.c	2005-01-24 19:07:03.729258355 -0500
+@@ -126,7 +126,7 @@
+ 	unsigned long base_addr = get_tc_base_addr(slot);
+ 	struct fb_info *info = &pmagbb_fb_info[slot];
  
- #include <net/dst.h>
- #include <net/arp.h>
-@@ -109,14 +110,9 @@ static int shaper_lock(struct shaper *sh
+-	printk("PMAGB-BA framebuffer in slot %d\n", slot);
++	pr_info("PMAGB-BA framebuffer in slot %d\n", slot);
  	/*
- 	 *	Lock in an interrupt must fail
+ 	 * Framebuffer display memory base address and friends
  	 */
--	while (test_and_set_bit(0, &sh->locked))
--	{
--		if (!in_interrupt())
--			sleep_on(&sh->wait_queue);
--		else
--			return 0;
--			
--	}
-+	if (in_interrupt())
-+		return 0;
-+	wait_event(sh->wait_queue, !test_and_set_bit(0, &sh->locked));
- 	return 1;
- }
- 
 
---===============5213703155203242==
+--===============55271137324688113==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5213703155203242==--
+--===============55271137324688113==--
