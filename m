@@ -1,45 +1,33 @@
-From: Jim Nelson <james4765@cwazy.co.uk>
-Date: Mon, 07 Feb 2005 21:44:47 +0000
+From: Francois Romieu <romieu@fr.zoreil.com>
+Date: Sat, 12 Feb 2005 22:05:41 +0000
 Subject: Re: [KJ] Introduction...
-Message-Id: <4207E14F.7080708@cwazy.co.uk>
+Message-Id: <20050212220540.GA24432@electric-eye.fr.zoreil.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52230595197903074=="
+Content-Type: multipart/mixed; boundary="===============36898193830345871=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4206AF91.9315.17FD337@localhost>
 In-Reply-To: <4206AF91.9315.17FD337@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============52230595197903074==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============36898193830345871==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Randy.Dunlap wrote:
-> 
-> In the absence of local cross-compiling, you could also submit your
-> patch to the PLM tool at  http://www.osdl.org/plm-cgi/plm/
-> and it will cross-compile the patch on 8 arches.  Latest -mm
-> as example:
-> https://www.osdl.org/plm-cgi/plm?module=patch_info&patch_id=4151
-> 
+Jim Nelson <james4765@cwazy.co.uk> :
+[...]
+> Don't limit yourself to x86.  There are less people looking at the 
+> less-popular architectures.  Only problem is getting a working 
+> cross-compiler.  That's another challenge I'm working my way up to.
 
-Thanks for the pointer.  One of those things that is very useful to have available.
+If you don't mind dumb scripts: http://www.fr.zoreil.com/people/francois/cross
 
-> If anyone is interested in stack reduction patches (besides me),
-> I'm willing to help people understand what needs to be done,
-> how to do it, etc., i.e., basically tutor people on this on this
-> mailing list.  (See "make checkstack".)  Same applies to
-> misused code section references (see "make buildcheck").
-> 
+{i386/sparc64}-make.sh are not related to the compiler itself but they
+help me building kernels.
 
-Although I don't have infinite time to dedicate to it, I'm up for it.  I'm not 
-very experienced, but am willing to flog my brain until I understand it.
+--
+Ueimor
 
-After all, I came in here with the intent of learning kernel coding - gotta get 
-beyond search-and-replace eventually ;)
-
-Jim
-
---===============52230595197903074==
+--===============36898193830345871==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52230595197903074==--
+--===============36898193830345871==--
