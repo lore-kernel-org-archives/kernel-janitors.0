@@ -1,68 +1,48 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 13:20:49 +0000
-Subject: [KJ] [UPDATE PATCH 17/19] drivers/scsi/qla1280: Use the
-Message-Id: <20050320132049.GQ3491@localhost.localdomain>
+From: Tyler <tyler@agat.net>
+Date: Tue, 08 Mar 2005 11:04:59 +0000
+Subject: [KJ][PATCH] linux-2.6.11 : warning fix in fs/quota_v2.c
+Message-Id: <d0k0sm$lu1$1@sea.gmane.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============016260647492603919=="
+Content-Type: multipart/mixed; boundary="------------010301090901070908060608"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220171200.GR14375@helium.tklauser.home>
-In-Reply-To: <20050220171200.GR14375@helium.tklauser.home>
-To: kernel-janitors@lists.osdl.org
-Cc: andrew.vasquez@qlogic.com, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============016260647492603919==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------010301090901070908060608
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+The format %zd should be replaced by %d :)
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+--------------010301090901070908060608
+Content-Type: text/x-patch;
+ name="write_quota_warning_fix.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="write_quota_warning_fix.patch"
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+--- linux-2.6.11-eb/fs/quota_v2.c.orig	2005-03-08 11:58:06.000000000 +0100
++++ linux-2.6.11-eb/fs/quota_v2.c	2005-03-08 11:58:28.000000000 +0100
+@@ -396,7 +396,7 @@ static int v2_write_dquot(struct dquot *
+ 	/* dq_off is guarded by dqio_sem */
+ 	if (!dquot->dq_off)
+ 		if ((ret = dq_insert_tree(dquot)) < 0) {
+-			printk(KERN_ERR "VFS: Error %zd occurred while creating quota.\n", ret);
++			printk(KERN_ERR "VFS: Error %d occurred while creating quota.\n", ret);
+ 			return ret;
+ 		}
+ 	spin_lock(&dq_data_lock);
 
---- linux-2.6.11.orig/drivers/scsi/qla1280.c	2005-03-02 12:50:38.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/qla1280.c	2005-03-20 13:27:54.000000000 +0100
-@@ -345,6 +345,7 @@
- #include <linux/pci_ids.h>
- #include <linux/interrupt.h>
- #include <linux/init.h>
-+#include <linux/dma-mapping.h>
- 
- #include <asm/io.h>
- #include <asm/irq.h>
-@@ -4741,7 +4742,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
- 
- #ifdef QLA_64BIT_PTR
- 	if (pci_set_dma_mask(ha->pdev, (dma_addr_t) ~ 0ULL)) {
--		if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
-+		if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
- 			printk(KERN_WARNING "scsi(%li): Unable to set a "
- 			       " suitable DMA mask - aboring\n", ha->host_no);
- 			error = -ENODEV;
-@@ -4751,7 +4752,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
- 		dprintk(2, "scsi(%li): 64 Bit PCI Addressing Enabled\n",
- 			ha->host_no);
- #else
--	if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
-+	if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
- 		printk(KERN_WARNING "scsi(%li): Unable to set a "
- 		       " suitable DMA mask - aboring\n", ha->host_no);
- 		error = -ENODEV;
+--------------010301090901070908060608--
 
---===============016260647492603919==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now.
+http://ads.osdn.com/?ad_id=6595&alloc_id=14396&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============016260647492603919==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
