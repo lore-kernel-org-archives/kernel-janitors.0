@@ -1,53 +1,39 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Fri, 08 Oct 2004 17:40:19 +0000
-Subject: [KJ] [PATCH 2.6] pSeries_iommu.c replace pci_find_device with
-Message-Id: <70740000.1097257219@w-hlinder.beaverton.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============028374083718761822=="
+From: "oudbkernel-janitor-discuss@lists.sourceforge.net" <Audra@projects.sourceforge.n
+Date: Mon, 25 Oct 2004 12:24:17 +0000
+Subject: robe Harrell
+Message-Id: <HZMUJ1X788li.lnSfL2YZZXnAkernel-janitor-discuss@lists.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, anton@samba.org
-
---===============028374083718761822==
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-As pci_find_device is going away I've replaced it with pci_get_device.
-If someone with a PPC64 system could test it I would appreciate it.
-
-Thanks.
-
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/iSeries_pci.c linux-2.6.9-rc3-mm3patch/arch/ppc64/kernel/iSeries_pci.c
---- linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/iSeries_pci.c	2004-09-29 20:05:52.000000000 -0700
-+++ linux-2.6.9-rc3-mm3patch/arch/ppc64/kernel/iSeries_pci.c	2004-10-08 10:20:56.576395832 -0700
-@@ -216,8 +216,7 @@ void __init iSeries_pci_final_fixup(void
- 	mf_displaySrc(0xC9000100);
- 
- 	printk("pcibios_final_fixup\n");
--	while ((pdev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pdev))
--			!= NULL) {
-+	for_each_pci_dev(pdev) {
- 		node = find_Device_Node(pdev->bus->number, pdev->devfn);
- 		printk("pci dev %p (%x.%x), node %p\n", pdev,
- 		       pdev->bus->number, pdev->devfn, node);
-
-
---===============028374083718761822==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+<html>
+<body>
+<font style=font-size:1px>Kernel-janitor-discuss sparling cheshire hahn napoleonic mcnaughton costello pedal equity derate chamberlain buzz christiana accession </font>
+<p align="center">
+<a href="http://qcEf6da.parecddsu.com">
+<img src="http://sddxac.com/image.gif" border="0"></a><br>
+<br><br>
+<a href="http://FQeoszE.partrstff.com">
+<font face="Tahoma" size="3"><b>Purchase Cheap Presc.ription Me.ds Here</a></b></font></p>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<font style=font-size:1px>producible comfort sus thiouracil sportswrite carrara greyhound dogma patton waterside remnant diacritical elk blip appertain cryptographer element marsupial vendetta default autopsy indict ourselves upstair exude invisible oocyte match incline benight habeas firearm massey frantic bus dairylea lineprinter rodgers wiry bootstrapped alexander crossbill cyst would destabilize alcove pompon wed astray digest doff eh dilogarithm sleigh workaday henbane stubble withdraw footnote oblique wildlife micronesia gm passerby someone'll claustrophobic protozoa astor parentheses canvas acquitting butterfat thiocyanate lightproof malign kelsey recappable implausible domenico roof coproduct centimeter catapult ambrose transferred sanguinary checkup kittenish traverse jacobus victoria recent cantilever freshen bern deliquescent screen compel crt woodyard ascend ucla brillouin gloomy gulp diplomatic bran attainder rica dale hepatitis diebold yogurt sapsucker countersu
+ nk alfredo ellipsoid mcfarland consanguineous duffel chaperon shiplap benefit already hampton nbc bender bookmobile dispersive donner circumflex celanese court clearheaded albuquerque atlantes cassock detente cravat americium vexation homogeneous daub ebullient honk piezoelectric pimple mcmullen pollinate tensor artistry towboat coverall cartel stokes winter sisyphus actuarial belying johnson alec doreen bob shrine concatenate alexander montreal congressman tuition bar doughnut demodulate upswing cain golly sheldon pretension percival damsel dram webb eccles econometrica bristol committeemen ciceronian forgo firehouse stapleton nairobi crop aspire cassette recipe hidden faculty cytochemistry echinoderm behest wotan dainty bessemer lilac drumhead lengthen leslie headdress lofty rebuke continue right dorothea monopoly admonish inside peasant transplantation arteriosclerosis byrne vintner we'll coeducation recipe tragedy petal tribute centenary bill abidjan palomar roast snivel
+  tallahassee convict vaccinate hydrochemistry aspirant urging bedimming trespass grandmother spicy brainwash parsimonious reckon prodigy carney brand transient melcher depreciable holm ore swore santayana irate choose shutout protoplasm acerbity compagnie etiquette wheeze volunteer apostrophe neuroanatomic pinhead bartholomew cluck </font>
+</body>
+</html>
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: IT Product Guide on ITManagersJournal
+Use IT products in your business? Tell us what you think of them. Give us
+Your Opinions, Get Free ThinkGeek Gift Certificates! Click to find out more
+http://productguide.itmanagersjournal.com/guidepromo.tmpl
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============028374083718761822==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
