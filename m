@@ -1,50 +1,46 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 23:17:33 +0000
-Subject: [KJ] [PATCH] [RESEND] [1/29] isdn_bsdcomp.c - vfree() checking
-Message-Id: <auto-000001227478@appliedminds.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 17 Jan 2005 21:20:11 +0000
+Subject: [KJ] [PATCH 7/22] ftape/fdc-io: insert set_current_state() before
+Message-Id: <20050117212011.GI24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============60806674450379483=="
+Content-Type: multipart/mixed; boundary="===============068584577036343575=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============60806674450379483==
+--===============068584577036343575==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-isdn_bsdcomp.c vfree() checking cleanups.
+Hi,
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Please consider applying.
 
- isdn_bsdcomp.c |   12 ++++--------
- 1 files changed, 4 insertions(+), 8 deletions(-)
+Description: Inserts a set_current_state(TASK_INTERRUPTIBLE) before the
+schedule_timeout() call. Without this change, after the first iteration of the
+loop, schedule_timeout() will not only return immediately, but the loop will
+break, as the conditional will no longer be satisfied. In fact, this conditional
+makes little sense given the workings of schedule_timeout. The timeout variable
+is ignored, as well, and I'm fairly certain that it should be included in the
+loop conditional. That way, if the timeout expires before a signal hits, -ETIME
+will be returned by fdc_interrupt_wait() instead of -EINTR.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-2.6.10-vanilla/drivers/isdn/i4l/isdn_bsdcomp.c	2004-12-24 13:35:25.000000000 -0800
-+++ linux-2.6.10/drivers/isdn/i4l/isdn_bsdcomp.c	2005-01-04 11:31:35.000000000 -0800
-@@ -283,18 +283,14 @@
- 		/*
- 		 * Release the dictionary
- 		 */
--		if (db->dict) {
--			vfree (db->dict);
--			db->dict = NULL;
--		}
-+		vfree (db->dict);
-+		db->dict = NULL;
+--- 2.6.11-rc1-kj-v/drivers/char/ftape/lowlevel/fdc-io.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/char/ftape/lowlevel/fdc-io.c	2005-01-17 13:12:29.000000000 -0800
+@@ -387,7 +387,8 @@ int fdc_interrupt_wait(unsigned int time
  
- 		/*
- 		 * Release the string buffer
- 		 */
--		if (db->lens) {
--			vfree (db->lens);
--			db->lens = NULL;
--		}
-+		vfree (db->lens);
-+		db->lens = NULL;
+ 	set_current_state(TASK_INTERRUPTIBLE);
+ 	add_wait_queue(&ftape_wait_intr, &wait);
+-	while (!ft_interrupt_seen && (current->state == TASK_INTERRUPTIBLE)) {
++	while (!ft_interrupt_seen && timeout) {
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		timeout = schedule_timeout(timeout);
+         }
  
- 		/*
- 		 * Finally release the structure itself.
 
-
---===============60806674450379483==
+--===============068584577036343575==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============60806674450379483==--
+--===============068584577036343575==--
