@@ -1,17 +1,19 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 15 Sep 2004 18:18:26 +0000
+Date: Wed, 15 Sep 2004 18:20:02 +0000
 Subject: [Kernel-janitors] [PATCH 4/5] atm/idt77252: replace
-Message-Id: <20040915181826.GE4363@us.ibm.com>
+Message-Id: <20040915182002.GG4363@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94165856774325851=="
+Content-Type: multipart/mixed; boundary="===============4797416081373016=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040915181826.GE4363@us.ibm.com>
+In-Reply-To: <20040915181826.GE4363@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============94165856774325851==
+--===============4797416081373016==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+Sorry, wrong subject line. Any comments would be appreciated.
 
 Description: msleep_interruptible() is used instead of schedule_timeout()
 to guarantee the task delays as expected. To achieve this, the timeout
@@ -45,7 +47,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  				break;
  		}
 
---===============94165856774325851==
+--===============4797416081373016==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94165856774325851==--
+--===============4797416081373016==--
