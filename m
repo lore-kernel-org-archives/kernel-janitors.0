@@ -1,42 +1,25 @@
-From: "Efrain N. Hyde" <hyde_jb@online.fr>
-Date: Sat, 03 Apr 2004 01:08:07 +0000
-Subject: =?iso-8859-1?B?Q29tZSBnZXQgeW91ciBwciplc2NyaXB0aW9ucywgT25saW5lIQ==?=
-Message-Id: <JJJDLFHHHNADIIMHIMEEMLKFNLAB.hyde_jb@online.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0254_5E95F03F.9A13416C"
+From: "Erna Gardner" <gardnerre@1-unfall.de>
+Date: Thu, 29 Apr 2004 14:59:35 +0000
+Subject: Vi.codin - Order Meds From Home Now
+Message-Id: <00bd01c42dfa$5c321a77$b4efe829@stakes3.stakes.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_0254_5E95F03F.9A13416C
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
-
-
-
-
-------=_NextPart_000_0254_5E95F03F.9A13416C
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
-
-<html><body>
-<center><!--rul7aupcgm2SBcq--><a href="http://www.surerxpalace.com"><img src="http://www.surerxpalace.com/a2.jpg" border=0></a></center>
-<body></html>
-
-
-------=_NextPart_000_0254_5E95F03F.9A13416C--
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
-_______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+PGh0bWw+CkJ1eSB0b3AgcGFpbmtpbGxlcnMgd2l0aG91dCBwcmVzY3JpcHRpb248cD4KVG9kYXkn
+cyBzcGVjaWFsOiBGcmVlIG92ZXJuaWdodCBGZWRleCBkZWxpdmVyeTxwPgpWaWNvZGluLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uJDIuNTgvZG9zZTxicj4KSHlkcm9jb2RvbmUuLi4uLi4uLi4uLi4kMi4x
+MC9kb3NlPGJyPgpOb3Jjby4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uJDIuOTYvZG9zZTxwPgpTdG9j
+ayBpcyBsaW1pdGVkIGFuZCBzZWxsaW5nIGZhc3QsIHNvIGh1cnJ5PGJyPgo8YSBocmVmPSJodHRw
+Oi8veG50dGxpYmF3Y3JmLnNhc2FlMnNhLmNvbS8/cIA5NSI+QnV5IHRoZW0gaGVyZTwvYT4KPC9o
+dG1sPgoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tClRoaXMgU0YuTmV0IGVtYWlsIGlzIHNwb25zb3JlZCBieTogT3JhY2xlIDEwZwpHZXQg
+Y2VydGlmaWVkIG9uIHRoZSBob3R0ZXN0IHRoaW5nIGV2ZXIgdG8gaGl0IHRoZSBtYXJrZXQuLi4g
+T3JhY2xlIDEwZy4gClRha2UgYW4gT3JhY2xlIDEwZyBjbGFzcyBub3csIGFuZCB3ZSdsbCBnaXZl
+IHlvdSB0aGUgZXhhbSBGUkVFLgpodHRwOi8vYWRzLm9zZG4uY29tLz9hZF9pZDE0OSZhbGxvY19p
+ZIE2NiZvcD1jbGljawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpLZXJuZWwtamFuaXRvci1kaXNjdXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1k
+aXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
+dC9saXN0cy9saXN0aW5mby9rZXJuZWwtamFuaXRvci1kaXNjdXNz
