@@ -1,28 +1,83 @@
-From: "Erich R. Fink" <erich.finkqo@starfire.demon.co.uk>
-Date: Mon, 16 Aug 2004 02:24:36 +0000
-Subject: H.ow to get er.ect iFree
-Message-Id: <34cb01c48344$bdb63b44$f6d07c90@modellflieger-mistelbach.at>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 01 Aug 2004 22:20:46 +0000
+Subject: [Kernel-janitors] Re: linux2.6.7: af_ipx.c init cleanup
+Message-Id: <20040801222046.GB2276@masina.coderock.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============68026513679804967=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-This week only: FREE GENERlC VlAGRA<p>
-Cover the shipping, and we'll send you<br>our product at N0 C0ST to prove its effectiveness.<p><br>
-<a href="http://aejgokatloxjb.e-wowza.com/free/?dd123">W0N'T LAST...HURRY</a>
-<p><br><br><br><br><br><br><br><br>
-<a href="http://sbefbnbrst.e-wowza.com/rm.html">Stop promos.</a>
-</html>
+--===============68026513679804967==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On 01/08/04 21:41 +0200, Walter Harms wrote:
+> Hi list,
+> i moved the messages directly into the code also.
+>
+
+Someone's gonna be happy with all the error messages, when he hits this :-)
+(also... you can do better than numbered labels)
+> +       err=ipx_proc_init();
+> +       if (err < 0)
+> +               goto exit_7;
+> +#endif
+>         return 0;
+> +exit_7:
+> +       ipx_unregister_sysctl();
+> +
+> +exit_6:
+> +       unregister_snap_client(pSNAP_datalink);
+> +exit_5:
+> +       printk(KERN_CRIT "IPX: Unable to register with SNAP\n");
+> +       unregister_8022_client(p8022_datalink);
+> +exit_4:
+> +       printk(KERN_CRIT "IPX: Unable to register with 802.2\n");
+> +       dev_remove_pack(&ipx_8023_packet_type);
+> +       destroy_8023_client(p8023_datalink);
+> +exit_3:
+> +       printk(KERN_CRIT "IPX: Unable to register with 802.3\n");
+> +       dev_remove_pack(&ipx_dix_packet_type);
+> +       destroy_EII_client(pEII_datalink);
+> +exit_2:
+> +       printk(KERN_CRIT "IPX: Unable to register with Ethernet II\n");
+> +       sock_unregister(ipx_family_ops.family);
+> +exit_1:
+> +       return -1;
+> +
+>  }
+>  
+>  static void __exit ipx_proto_finito(void)
+>  {
+> +#ifdef CONFIG_PROC_FS
+>         ipx_proc_exit();
+> -       ipx_unregister_sysctl();
+> +#endif
+>  
+> +#ifdef CONFIG_SYSCTL
+> +       ipx_unregister_sysctl();
+> +#endif
+>         unregister_netdevice_notifier(&ipx_dev_notifier);
+>  
+>         ipxitf_cleanup();
+> 
+> 
+
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
 
--------------------------------------------------------
-SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
-100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
-Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
-http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
+--===============68026513679804967==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============68026513679804967==--
