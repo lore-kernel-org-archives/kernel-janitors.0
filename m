@@ -1,48 +1,37 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
-Date: Mon, 24 May 2004 18:44:08 +0000
-Subject: Re: [Kernel-janitors] [PATCH] request_region() on
-Message-Id: <20040524184408.GA7673@lorien.prodam>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10620776686022282=="
+From: Roger Luethi <rl@hellgate.ch>
+Date: Sat, 29 May 2004 08:05:24 +0000
+Subject: [Kernel-janitors] Re: 2.6.6: smc-ultra: eth%d message
+Message-Id: <20040529080524.GA8950@k3.hellgate.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <40AFCC31.3050206@acm.org>
-In-Reply-To: <40AFCC31.3050206@acm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============10620776686022282==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, 28 May 2004 10:27:30 +0200, N=E9meth M=E1rton wrote:
+> When I'm loading smc-ultra module with 'modprobe -k smc_ultra' using
+> Linux 2.6.6 I get the following message in 'dmesg':
+>=20
+> smc-ultra.c: Presently autoprobing (not recommended) for a single card.
+> smc-ultra.c: No ISAPnP cards found, trying standard ones...
+> smc-ultra.c:v2.02 2/3/98 Donald Becker (becker@cesdis.gsfc.nasa.gov)
+> eth%d: SMC Ultra at 0x280, 00 00 C0 78 C5 B6, IRQ 3 memory 0xd0000-0xd3ff=
+f.
+>=20
+> Using Linux kernel 2.4.25 the last line was correct, like this:
+> eth0: SMC Ultra at 0x280, 00 00 C0 78 C5 B6, IRQ 3 memory 0xd0000-0xd3fff.
+>=20
+> I think the printk() in linux-2.6.6/drivers/net/smc-ultra.c:243 is buggy,
+> but I do not have the knowledge how to correct this.
 
+There are several drivers in 2.6 that use dev->name before calling
+register_netdev(), which results in the "eth%d" messages you are seeing.
+I've noticed this with mace.c as well (2.6.5 IIRC).
 
- Hello Gustavo,
+Maybe some KJ would like to pick that up?
 
-Em Sat, May 22, 2004 at 06:54:57PM -0300, Gustavo Franco escreveu:
-
-| I've added two error checks for request_region() calls on the source
-| and replaced a check_region() with request_region().The release_region()
-| calls seems to be ok, but let me known if i'm missing something.
-| 
-| Comments?
-
- Just remember OSS is depecrated, and will be removed from the kernel.
-
- It is good to do that work to learn something, but is not so useful.
-
-PS: Well, it removes warnings too. Is also good thing.
-
--- 
-Luiz Fernando N. Capitulino
-<http://www.telecentros.sp.gov.br>
-
---===============10620776686022282==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Roger
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============10620776686022282==--
