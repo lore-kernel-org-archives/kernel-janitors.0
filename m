@@ -1,46 +1,97 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:09:25 +0000
-Subject: [KJ] [PATCH 7/53] radeonfb: Clean up printk()'s in
-Message-Id: <20050125230920.10418.33421.94248@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 17 Jan 2005 21:28:42 +0000
+Subject: [KJ] [PATCH 8/22] char/hvsi: use wait_event_timeout()
+Message-Id: <20050117212842.GJ24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54087525934975855=="
+Content-Type: multipart/mixed; boundary="===============2781807777887968=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============54087525934975855==
+--===============2781807777887968==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/aty/radeon_monitor.c
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying. This is my first wait-queue related patch, so comments
+are very welcome.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/aty/radeon_monitor.c linux-2.6.11-rc2-mm1/drivers/video/aty/radeon_monitor.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/aty/radeon_monitor.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/aty/radeon_monitor.c	2005-01-24 19:07:02.368262771 -0500
-@@ -178,10 +178,10 @@
- 	for(i=0; i<24; i++)
- 		stmp[i] = BIOS_IN8(tmp+i+1);
- 	stmp[24] = 0;
--	printk("radeonfb: panel ID string: %s\n", stmp);
-+	pr_info("radeonfb: panel ID string: %s\n", stmp);
- 	rinfo->panel_info.xres = BIOS_IN16(tmp + 25);
- 	rinfo->panel_info.yres = BIOS_IN16(tmp + 27);
--	printk("radeonfb: detected LVDS panel size from BIOS: %dx%d\n",
-+	pr_info("radeonfb: detected LVDS panel size from BIOS: %dx%d\n",
- 		rinfo->panel_info.xres, rinfo->panel_info.yres);
+Description: Use wait_event_timeout() in place of custom wait-queue code. The
+code is not changed in any way (I don't think), but is cleaned up quite a bit
+(will get expanded to almost identical code).
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/drivers/char/hvsi.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/char/hvsi.c	2005-01-17 13:26:09.000000000 -0800
+@@ -44,6 +44,7 @@
+ #include <linux/sysrq.h>
+ #include <linux/tty.h>
+ #include <linux/tty_flip.h>
++#include <linux/wait.h>
+ #include <asm/hvcall.h>
+ #include <asm/hvconsole.h>
+ #include <asm/prom.h>
+@@ -631,28 +632,11 @@ static int __init poll_for_state(struct 
+ /* wait for irq handler to change our state */
+ static int wait_for_state(struct hvsi_struct *hp, int state)
+ {
+-	unsigned long end_jiffies = jiffies + HVSI_TIMEOUT;
+-	unsigned long timeout;
+ 	int ret = 0;
  
- 	rinfo->panel_info.pwr_delay = BIOS_IN16(tmp + 44);
-@@ -561,7 +561,7 @@
- 		    ((rinfo->bios_seg && (INREG(BIOS_4_SCRATCH) & 4))
- 		     || (INREG(LVDS_GEN_CNTL) & LVDS_ON))) {
- 			rinfo->mon1_type = MT_LCD;
--			printk("Non-DDC laptop panel detected\n");
-+			pr_info("Non-DDC laptop panel detected\n");
- 		}
- 		if (rinfo->mon1_type == MT_NONE)
- 			rinfo->mon1_type = radeon_crt_is_connected(rinfo, rinfo->reversed_DAC);
+-	DECLARE_WAITQUEUE(myself, current);
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	add_wait_queue(&hp->stateq, &myself);
+-
+-	for (;;) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		if (hp->state == state)
+-			break;
+-		timeout = end_jiffies - jiffies;
+-		if (time_after(jiffies, end_jiffies)) {
+-			ret = -EIO;
+-			break;
+-		}
+-		schedule_timeout(timeout);
+-	}
+-	remove_wait_queue(&hp->stateq, &myself);
+-	set_current_state(TASK_RUNNING);
+-
++	if(!wait_event_timeout(hp->stateq, (hp->state == state), jiffies + HVSI_TIMEOUT))
++		ret = -EIO;
++	
+ 	return ret;
+ }
+ 
+@@ -868,24 +852,7 @@ static int hvsi_open(struct tty_struct *
+ /* wait for hvsi_write_worker to empty hp->outbuf */
+ static void hvsi_flush_output(struct hvsi_struct *hp)
+ {
+-	unsigned long end_jiffies = jiffies + HVSI_TIMEOUT;
+-	unsigned long timeout;
+-
+-	DECLARE_WAITQUEUE(myself, current);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	add_wait_queue(&hp->emptyq, &myself);
+-
+-	for (;;) {
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		if (hp->n_outbuf <= 0)
+-			break;
+-		timeout = end_jiffies - jiffies;
+-		if (time_after(jiffies, end_jiffies))
+-			break;
+-		schedule_timeout(timeout);
+-	}
+-	remove_wait_queue(&hp->emptyq, &myself);
+-	set_current_state(TASK_RUNNING);
++	wait_event_timeout(hp->emptyq, (hp->n_outbuf <= 0), jiffies + HVSI_TIMEOUT);
+ 
+ 	/* 'writer' could still be pending if it didn't see n_outbuf = 0 yet */
+ 	cancel_delayed_work(&hp->writer);
 
---===============54087525934975855==
+--===============2781807777887968==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +102,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54087525934975855==--
+--===============2781807777887968==--
