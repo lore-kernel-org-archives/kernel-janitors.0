@@ -1,41 +1,42 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 06 Oct 2004 23:49:09 +0000
-Subject: Re: [Kernel-janitors] Could we lose the tag?
-Message-Id: <20041006164909.79d518b7.rddunlap@osdl.org>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 23 Oct 2004 19:48:54 +0000
+Subject: [KJ] [patch] jbd: remove comment in journal.c
+Message-Id: <20041023194854.GB3628@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13142505547936123=="
+Content-Type: multipart/mixed; boundary="===============88811118643983633=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041001133038.GC16153@parcelfarce.linux.theplanet.co.uk>
-In-Reply-To: <20041001133038.GC16153@parcelfarce.linux.theplanet.co.uk>
 To: kernel-janitors@vger.kernel.org
 
---===============13142505547936123==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============88811118643983633==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 01 Oct 2004 14:59:33 -0400 Ryan Anderson wrote:
+Hi.
 
-| On Fri, 2004-10-01 at 09:30, Matthew Wilcox wrote:
-| > In my inbox, I see messages like:
-| > 
-| > 24304 N   Sep 27 Nishanth Aravam ( 104) [Kernel-janitors] [PATCH 2.6.9-rc2 1/5]
-| > 
-| > All the useful information is missing, lost off the edge of the screen.
-| > Removing the [Kernel-janitors] tag would give us 17 precious characters
-| > back -- nearly a quarter of the width of the screen!
-| 
-| Well the quick way to get 13 of those characters back is to change it to
-| [KJ] which delays the argument over whether or not it's a benefit.
+Remove doubled comment, fix typo.
 
-If I don't see any violent objections, I'll change it to
-[KJ] sometime this week.
+Compile tested.
 
--- 
-~Randy
-MOTD:  Always include version info.
-(Again.  Sometimes I think ln -s /usr/src/linux/.config .signature)
 
---===============13142505547936123==
+Signed-off-by: Domen Puncer <domen@coderock.org>
+
+--- c/fs/jbd/journal.c	2004-10-23 21:40:28.000000000 +0200
++++ test/fs/jbd/journal.c	2004-10-23 21:43:58.000000000 +0200
+@@ -1575,11 +1575,7 @@ int journal_blocks_per_page(struct inode
+ }
+ 
+ /*
+- * Simple support for retying memory allocations.  Introduced to help to
+- * debug different VM deadlock avoidance strategies. 
+- */
+-/*
+- * Simple support for retying memory allocations.  Introduced to help to
++ * Simple support for retrying memory allocations.  Introduced to help to
+  * debug different VM deadlock avoidance strategies. 
+  */
+ void * __jbd_kmalloc (const char *where, size_t size, int flags, int retry)
+
+--===============88811118643983633==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13142505547936123==--
+--===============88811118643983633==--
