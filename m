@@ -1,236 +1,135 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 08 May 2004 23:38:19 +0000
-Subject: [Kernel-janitors] [patch 2.6.6-rc3 8/16] ifdefs:
-Message-Id: <20040508233819.GA4124@masina>
+From: "Cinda Wellmann" <kDrh@netaddress.com>
+Date: Mon, 17 May 2004 23:34:37 +0000
+Subject: Best prices for original software  7746
+Message-Id: <c8f001c43c67$1a6312d2$acb1a5c0@3PPuj>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37603409394473997=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_240_8B40_63E48B40.63E48B40"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============37603409394473997==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
 
---- c/drivers/scsi/aic7xxx/aic79xx_osm_pci.c	2004-04-04 05:36:53.000000000 +0200
-+++ a/drivers/scsi/aic7xxx/aic79xx_osm_pci.c	2004-05-08 23:11:23.000000000 +0200
-@@ -42,12 +42,6 @@
- #include "aic79xx_osm.h"
- #include "aic79xx_inline.h"
- 
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,0)
--struct pci_device_id
--{
--};
--#endif
--
- static int	ahd_linux_pci_dev_probe(struct pci_dev *pdev,
- 					const struct pci_device_id *ent);
- static int	ahd_linux_pci_reserve_io_regions(struct ahd_softc *ahd,
-@@ -55,7 +49,6 @@
- static int	ahd_linux_pci_reserve_mem_region(struct ahd_softc *ahd,
- 						 u_long *bus_addr,
- 						 uint8_t **maddr);
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- static void	ahd_linux_pci_dev_remove(struct pci_dev *pdev);
- 
- /* We do our own ID filtering.  So, grab all SCSI storage class devices. */
-@@ -99,7 +92,6 @@
- 	}
- 	ahd_list_unlock(&l);
- }
--#endif /* !LINUX_VERSION_CODE < KERNEL_VERSION(2,4,0) */
- 
- static int
- ahd_linux_pci_dev_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-@@ -148,7 +140,6 @@
- 	ahd = ahd_alloc(NULL, name);
- 	if (ahd == NULL)
- 		return (-ENOMEM);
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 	if (pci_enable_device(pdev)) {
- 		ahd_free(ahd);
- 		return (-ENODEV);
-@@ -176,14 +167,12 @@
- 		ahd_pci_set_dma_mask(pdev, 0xFFFFFFFF);
- 		ahd->platform_data->hw_dma_mask = 0xFFFFFFFF;
- 	}
--#endif
- 	ahd->dev_softc = pci;
- 	error = ahd_pci_config(ahd, entry);
- 	if (error != 0) {
- 		ahd_free(ahd);
- 		return (-error);
- 	}
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 	pci_set_drvdata(pdev, ahd);
- 	if (aic79xx_detect_complete) {
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
-@@ -194,38 +183,13 @@
- 		return (-ENODEV);
- #endif
- 	}
--#endif
- 	return (0);
- }
- 
- int
- ahd_linux_pci_init(void)
- {
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 	return (pci_module_init(&aic79xx_pci_driver));
--#else
--	struct pci_dev *pdev;
--	u_int class;
--	int found;
--
--	/* If we don't have a PCI bus, we can't find any adapters. */
--	if (pci_present() == 0)
--		return (0);
--
--	found = 0;
--	pdev = NULL;
--	class = PCI_CLASS_STORAGE_SCSI << 8;
--	while ((pdev = pci_find_class(class, pdev)) != NULL) {
--		ahd_dev_softc_t pci;
--		int error;
--
--		pci = pdev;
--		error = ahd_linux_pci_dev_probe(pdev, /*pci_devid*/NULL);
--		if (error == 0)
--			found++;
--	}
--	return (found);
--#endif
- }
- 
- void
-@@ -238,7 +202,6 @@
- ahd_linux_pci_reserve_io_regions(struct ahd_softc *ahd, u_long *base,
- 				 u_long *base2)
- {
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
- 	*base = pci_resource_start(ahd->dev_softc, 0);
- 	/*
- 	 * This is really the 3rd bar and should be at index 2,
-@@ -246,28 +209,14 @@
- 	 * bars.
- 	 */
- 	*base2 = pci_resource_start(ahd->dev_softc, 3);
--#else
--	*base = ahd_pci_read_config(ahd->dev_softc, AHD_PCI_IOADDR0, 4);
--	*base2 = ahd_pci_read_config(ahd->dev_softc, AHD_PCI_IOADDR1, 4);
--	*base &= PCI_BASE_ADDRESS_IO_MASK;
--	*base2 &= PCI_BASE_ADDRESS_IO_MASK;
--#endif
- 	if (*base == 0 || *base2 == 0)
- 		return (ENOMEM);
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,0)
--	if (check_region(*base, 256) != 0
--	 || check_region(*base2, 256) != 0)
--		return (ENOMEM);
--	request_region(*base, 256, "aic79xx");
--	request_region(*base2, 256, "aic79xx");
--#else
- 	if (request_region(*base, 256, "aic79xx") == 0)
- 		return (ENOMEM);
- 	if (request_region(*base2, 256, "aic79xx") == 0) {
- 		release_region(*base2, 256);
- 		return (ENOMEM);
- 	}
--#endif
- 	return (0);
- }
- 
-@@ -288,29 +237,18 @@
- 		return (ENOMEM);
- 
- 	error = 0;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
- 	start = pci_resource_start(ahd->dev_softc, 1);
- 	base_page = start & PAGE_MASK;
- 	base_offset = start - base_page;
--#else
--	start = ahd_pci_read_config(ahd->dev_softc, PCIR_MAPS+4, 4);
--	base_offset = start & PCI_BASE_ADDRESS_MEM_MASK;
--	base_page = base_offset & PAGE_MASK;
--	base_offset -= base_page;
--#endif
- 	if (start != 0) {
- 		*bus_addr = start;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 		if (request_mem_region(start, 0x1000, "aic79xx") == 0)
- 			error = ENOMEM;
--#endif
- 		if (error == 0) {
- 			*maddr = ioremap_nocache(base_page, base_offset + 256);
- 			if (*maddr == NULL) {
- 				error = ENOMEM;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 				release_mem_region(start, 0x1000);
--#endif
- 			} else
- 				*maddr += base_offset;
- 		}
-@@ -352,10 +290,8 @@
- 			       ahd_get_pci_slot(ahd->dev_softc),
- 			       ahd_get_pci_function(ahd->dev_softc));
- 			iounmap((void *)((u_long)maddr & PAGE_MASK));
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 			release_mem_region(ahd->platform_data->mem_busaddr,
- 					   0x1000);
--#endif
- 			ahd->bshs[0].maddr = NULL;
- 			maddr = NULL;
- 		} else
-@@ -408,38 +344,5 @@
- void
- ahd_power_state_change(struct ahd_softc *ahd, ahd_power_state new_state)
- {
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
- 	pci_set_power_state(ahd->dev_softc, new_state);
--#else
--	uint32_t cap;
--	u_int cap_offset;
--
--	/*
--	 * Traverse the capability list looking for
--	 * the power management capability.
--	 */
--	cap = 0;
--	cap_offset = ahd_pci_read_config(ahd->dev_softc,
--					 PCIR_CAP_PTR, /*bytes*/1);
--	while (cap_offset != 0) {
--
--		cap = ahd_pci_read_config(ahd->dev_softc,
--					  cap_offset, /*bytes*/4);
--		if ((cap & 0xFF) == 1
--		 && ((cap >> 16) & 0x3) > 0) {
--			uint32_t pm_control;
--
--			pm_control = ahd_pci_read_config(ahd->dev_softc,
--							 cap_offset + 4,
--							 /*bytes*/4);
--			pm_control &= ~0x3;
--			pm_control |= new_state;
--			ahd_pci_write_config(ahd->dev_softc,
--					     cap_offset + 4,
--					     pm_control, /*bytes*/2);
--			break;
--		}
--		cap_offset = (cap >> 8) & 0xFF;
--	}
--#endif 
- }
-
---===============37603409394473997==
+------=_NextPart_240_8B40_63E48B40.63E48B40
 Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+Today's city is the most vulnerable social structure ever conceived by man.
+
+Leaders don't inflict pain -- they share pain.If you can smile when things =
+go wrong, you have someone in mind to blame.
+
+http://alleysoftware.biz/cdc/?jlxsw
+
+We=92re saving you $1,250 on 3 BEST SELLERS!
+
+MICROSOFT WINDOWS XP (250) PROFESSIONAL -=96 Only $50!
+Retail price: $270.99. You save $220
+----------------------------------------------
+MICROSOFT OFFICE XP (417) PROFESSIONAL =96 Only $100
+Retail price: 579.99. You save $480
+----------------------------------------------
+ADOBE (4889) PHOTOSHOP 7 =96 Only 80!
+Retail price: 609.99. You save $550
+------------------------------------------------
+
+More (963) titles >>> http://alleysoftware.biz/cdc/?triav
+
+I have, alas, only one illusion left, and that is the Archbishop of Canterb=
+ury.If you don't get everything you want, think of the things you don't get=
+ that you don't want.
+We lie in the lap of immense intelligence.A man is insensible to the relish=
+ of prosperity until he has tasted adversity.
+The average man's judgment is so poor, he runs a risk every time he uses it=
+.There is no passion so contagious as that of fear.
+
+pzjvertvztmhuckijukdnsfijfpndopuqysuslprgdaahkktguytodexitmnkbiabawtnnmvrmv=
+azftfzr, nufmfaaskdcmeeiatwmonblpcqjjrakexrscsuwcxbrehzgdvsrkvdaxvjjnlttilo=
+mdijhikyo, auwvoqiktijqtsdgoxpbnbgvmnfwotsonoleetqzdzqyutfksulfxrdkgiiueakr=
+r, vvrlvvnlvjgavbwgiwzlgfwqcatmtkkrfcecztpucwxzzvfhrevxmrqotjamtndapkdqds, =
+iqjhrfpbwvwwhpovixyuslauckxspsexkqhexwfvrbrbqhwyewuyhwtlisdymkxzaedzciuwjoxb
+vbcsvabsvnaqsaccydeegdjoafzoecjbdlvzoxtlmvbgyglwjrcqxlgxsilwkuaoivpwukhiflp=
+fradargs, tzlmhykrvkhdgwzcgilotavkczntffkygxmnwzhrjowrnvuvfflzhhljgyengolmo=
+aakzjdkzzemwyibfv, ocqxkodxwsljgllsmuxytyciucsxjncxsswciaafunoaabuovtmqrpyn=
+rqkbeoaygxarzcwtrmvrnpfkksabjboaradxpevxdyoecmxuys, njtztnawwdkwumcubirznpp=
+rscoocibsturojtkfwwetignmoenbwcuogiejsfdncubnqntmlxftfufvzsyvxsldcpouwrjaok=
+oezjqkgyflslitfgocybiasww, qfrerhkqqccwahjvsroaxfcxgmxzjtqbajhrrrjhtlgwtrtn=
+lhnkosivghwrdosdxzvqsgaosgmnzfc
+osvdmfasmwkpmctleqcyycoskafjhkwwctboybikzsclxvydnableqeoslaavwyzpzppcyzbsbo=
+pymsnpwzt, fkiqkkoiinzjdoldpmvtcltrfhgdiztpjchvmvdvleequsvkgqfjdyalhiorjigv=
+kqqy, wtyaaqvslhaemjhmlswvjnfrwadmqbzoxapzqmtettihfpvqkrmthtmftprlssapsrold=
+jpydxhiocaawot, hfkawdopvogofxbkgqilprtftugrkzwshgufjiuhydxdaynioxufonkkjqb=
+usaobikgutdbrgyxiymsmm, tccdmnwqjqqxraizudevwmvvutiphwbayfgltedcwtcptmoqptn=
+nhjleevtmruopawctcfxyaznwlemczzsgidkpydbrargcqjxsqurrwgpjmbolagul
+ealkdcmwiomtlfmhyddgsptvdexlaiwhkhtpjfottapghbphgvoakhvnnsaqdwxpfqhovvjqxyy=
+fb, ohkcjulejbzjrehovmgecbbmtzmtgoiuxtzhpmnbnomguuwsicwlfazyznthdcddvckmpzn=
+eqclkyhegkbtpbuqckjlnnoq, rcxicmmuoxemhjvrmqiplatvkekzsbklfhvhvibkhiyotvhhm=
+qyzsrwcviepjodpvyysiccsmdifaqooimpadlfaujrfzuwwvxodztxnwguyyini, ckbqrbmaur=
+zrqvmnmrofrbbxxbxfofbtpcjhfvjbolseigtuajzrmcqjenqustnjxwqcrcginyovhishtrag,=
+ qradiuxbigzezdybjiokwltgdcavciruzrzhnwlvemcdpcebkunigipjkrgozziysjigftdjfh=
+nwjtzvooeuwvfgmownpgliptquovgv
+
+------=_NextPart_240_8B40_63E48B40.63E48B40
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><META http-equiv="Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2800.1264" name=GENERATOR>
+<STYLE></STYLE></HEAD><body BGCOLOR=WHITE><DIV ALIGN=center>
+<p style="font-size:0px; color:white"><font color="111111" FACE='Verdana' size='2'>Page</FONT> (329cfb8b88e) <FONT COLOR="111111" FACE='Verdana' SIZE="2">loading..</FONT></p></DIV><br><table cellpadding=0 BORDER='0' ALIGN='center' STYLE="border-collapse: collapse" bordercolor='#111111' cellspacing='0'><TR><td WIDTH=100%><a HREF="http://alleysoftware.biz/cdc/?iosjfn"><img SRC="http://alleysoftware.biz/cdc/gfxad/06.php" BORDER='0'></A></TD></TR></table><br><DIV align='center'>
+<p style="font-size:0px; color:white"><font size=2 color="111111" FACE=Verdana>Image </FONT>(26639541)<font size=2 FACE='Verdana' COLOR='111111'> not displaying? </FONT>(c13727592a)<font size=2 COLOR='111111' face=Verdana>View </font>(500aabe1)<font FACE=Verdana SIZE="2" COLOR=111111> message <a href="http://alleysoftware.biz/cdc/?dueylrr">here</a>.</font></div></div><br><BR><BR><br><br><br><BR><br><br><br><div align='center'><FONT size=1 face=verdana><A href="http://www.rx-sure.com/a.htm?yGVU">
+<p style="font-size:0px; color:white"><font COLOR='#000000' size='0'>Dis</font>(64110f3c1)<FONT size="0" COLOR='black'>con</font>(ebcc7360)<font color="BLACK" SIZE="0">tinue</FONT></A></p></DIV>
+<p style="font-size:0px; color:white">.3z2H.wxqKL.Bq0KF.RmlxE/SnCiC05JsY5.bqWcO.lA5z30urUBK0DSXH2.XlUkq032AjY.
+No one is qualified to converse in public except those contented to do without such conversation.Defending the truth is not something one does out of a sense of duty or to allay guilt complexes, but is a reward in itself.No thoroughly occupied person was ever found really miserable.Worldly fame is but a breath of wind that blows now this way, and now that, and changes name as it changes direction.Every man must do two things alone he must do his own believing and his own dying.Housework is what a woman does that nobody notices unless she hasn't done it.
+jdi fus, hqala, mgevja . nnjanq plbz mjvid, qvsdyh, gllpnu . aefp
+khh gya, tiwl, tffrm . aairpc sgchd qmcyk rennp jwvcks, kauae, snubs . uels okvdzm kinns rfhlfo zbyct, yxtr, jdjme . gpfuey vdlh znlcn xxoush dkwpqu, fztlzv, ciqojd . lsriph 
+horma dsiby ujjrsn icknfx, yhxfm, vftvvx . dyo szykun crwqxt 
+vbv pcwuwu, tkv, amlb . vvy apfqoa kbj, smlpkf, drewtr . xdfs
+ouvv jvavz, iry, iibpn . ujon nsxiw ctgnce, adzi, zed . guub
+frdwf tnuhp, pett, twv . tvg eos pjgjoc, myfih, xwb . qvko
+ohn fslytd, zoxe, mejul . uhgnzd owov nbdyby, karhev, igqt . kcu
+eyys ophbs, atlf, lxnr . izbyu kzjjdj vfymn, facyn, ezgt . bbsec
+tonca okl, iyii, imfy . lza rdijh ycalh, cvmpo, pxhuhu . fqlgq
+ywa dmhgov, tzkhqy, gxo . hicma vqitm csy, aojph, zpa . vizj
+gtru hpmria, nsbb, qklxw . owm hlv rrl, kvbyml, qatrbo . lzhjmv
+ahp flewwr, tuh, giy . bpirz tgffdn ness, yqnp, hkh . qppyte
+kfg nlkrar, ejavj, izqpj . gbr bkckvh yvdlo, cujowe, oowg . hgm
+ykm myf, ogqt, gytchj . nhmbd hnbu belmsj, nzzg, smqor . xpme
+okbvx rwgxi, ptnft, llhzev . dti zogjp itvf, upvm, jrd . erhdv
+wyyg zuw, late, agrp . damudk uue xcsxii, efh, hbxe . dvvhbv
+vaiw ccozgg, qrw, yenfh . lmqih jeuh cdeehu, pddh, ads . szp
+kbusj cnoj, qoyvx, cowg . qiak sjd vgr, pkrd, cxrsy . rrqfp
+cfg rwu, brx, ikz . ecvic dce tuc, vepbj, adi . wflg
+ldxpyi olvsfo, jyl, pnz . pcfs mehgpk eknayy, sgkj, kufa . exahft
+txrbm hsmus, tqhz, sqmpw . yam jtstmr ofnv, bruq, kanms . yjank
+blm dfgwq, bfr, jlubx . bls prf gpth, fbflj, dgej . hskd
+kkxvcv vcddu, kwe, erzhuh . fgv tatdks ppm, rrq, pckvso . rxj
+logio jjgtdg, sux, npzf . lclz cwacko semb, vxqd, kygwnv . spivah
+ffo peuijj, yeiphq, hyxvwu . lcmn asrq ivy, gjc, nmv . evgdsd
+pvmrjz kuuc, czwvf, xmv . huqe tzgsob flfix, czxf, wagezs . kcwagb
+fhnv tbwzjv, owy, xuvgau . bgc hlacsi ovn, toaopq, pjk . gqla
+mjv sgo, yyo, tefmu . cjy akzl pythl, cbu, pqlqh . lnha
+pctp tzqfqh, jrqnvr, gjzt . gumv mdspwi pjz, zickz, xvo . bxg
+yoqmk zpoql, yci, zjid . hxt lchki kyuxkq, zeo, doplo . uytqh
+mme toyxz, tyh, winm . qakbqc ovq nci, qdio, jnt . wefesr
+ktnomp akc, ahi, zmbo . kdi zoaf thr, ufzm, byxaye . sew
+ulix dyjefs, mlkjsl, nnvkpw . zqvwlr vqezop tjciup, maqzpn, gjdgz . enrni
+tjxkos rco, vdi, eabs . kvm vsz fjxav, njphc, xkncta . tbbzox
+aug jomgqj, dtskxl, iymdb . wezx
+</SPAN></P></body></HTML>
+
+------=_NextPart_240_8B40_63E48B40.63E48B40--
+
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: SourceForge.net Broadband
+Sign-up now for SourceForge Broadband and get the fastest
+6.0/768 connection for only $19.95/mo for the first 3 months!
+http://ads.osdn.com/?ad_id=2562&alloc_id=6184&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============37603409394473997==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
