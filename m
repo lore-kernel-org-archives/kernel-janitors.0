@@ -1,180 +1,54 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 24 Oct 2004 15:12:41 +0000
-Subject: [KJ] [announce] 2.6.10-rc1-kjt1
-Message-Id: <20041024151241.GA1920@stro.at>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 13 Oct 2004 22:15:59 +0000
+Subject: [KJ] [PATCH 2.6] ambassador.c replace pci_find_device with
+Message-Id: <194130000.1097705759@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20776796558044786=="
+Content-Type: multipart/mixed; boundary="===============99536854505597261=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kj <kernel-janitors@osdl.org>
-Cc: linux-kernel@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: greg@kroah.com, hannal@us.ibm.com, chas@cmf.nrl.navy.mil
 
---===============20776796558044786==
+--===============99536854505597261==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
-lots of patches got merged! :)
-2.6.9-kjt1 "died" in quick race after a few days.
-rediffed to have a better base to push current patches soon.
+As pci_find_device is going away soon I have converted this file to use
+pci_get_device instead. I have compile tested it. If anyone has this ATM card
+and could test it that would be great.
 
-new patches from nacc and domen. 
-diffstat (minus the pci patches) shows a lot under drivers/{block,net}.
+Hanna Linder
+IBM Linux Technology Center
 
-please test out:
-http://debian.stro.at/kjt/2.6.10-rc1-kjt1/2.6.10-rc1-kjt1.patch.bz2
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
-splitted out 168 patches:
-http://debian.stro.at/kjt/2.6.10-rc1-kjt1/split/
+---
 
-
-thanks for feedback.
-maks
-
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-added since 2.6.9-kjt1
-
-
-fix-comment-fs_jbd_journal.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [KJ] [patch] jbd: remove comment in journal.c
-
-lib-parser-fs_devpts_inode.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [KJ] [patch] fs/devpts: use lib/parser
-
-msleep-drivers_pci_quirks.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] pci/quirks: replace schedule_timeout() with msleep()
-
-msleep_interruptible-drivers_cdrom_sonycd535_2.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] cdrom/sonycd535: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep_interruptible-drivers_message_fusion_mptbase.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] message/mptbase: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep_interruptible-drivers_net_ewrk3.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] net/ewrk3: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep_interruptible-drivers_w1_dscore.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] w1/dscore: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep_interruptible-drivers_w1_w1_family.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] w1/w1_family: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep_interruptible-drivers_w1_w1_int.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] w1/w1_int: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep_interruptible-drivers_w1_w1.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] w1/w1: replace schedule_timeout() with 	msleep_interruptible()
-
-msleep+ssleep-drivers_scsi_ahci.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] scsi/ahci: replace schedule_timeout() with 	msleep()/ssleep()
-
-reorder-state-drivers_char_snsc.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] char/snsc: reorder set_current_state() and 	add_wait_queue()
-
-reorder-state-drivers_video_pxafb.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] video/pxafb: reorder add_wait_queue() and 	set_current_state()
-
-reorder-state-drivers_video_sa1100fb.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] video/sa1100fb: reorder set_current_state() and 	add_wait_queue()
-
-set_current_state-drivers_input_joystick_iforce_iforce-packets.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] input/iforce-packets: insert set_current_state() 	before schedule_timeout()
-
-ssleep-drivers_scsi_qla2xxx_qla_os.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [KJ] [PATCH] scsi/qla_os: replace schedule_timeout() with ssleep()
-
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- reworked 
-
-remove-old-ifdefs-aic7xxx_osm_pci.patch
-due to rejects and bogus previous rework 
-(keeps 2.4 compatibility)
-
-msleep_interruptible-drivers_serial_68328serial.patch
-msleep_interruptible-drivers_serial_mcfserial.patch
-due to rejects
-
-msleep_interruptible-drivers_media_video_msp3400.patch
-msleep-drivers_net_wireless_prism54_islpci_dev.patch
-partially merged
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- merged 34 patches up to latest -rc:
-
-min-max-arch_m68k_kernel_bios32.patch
-modern-init-drivers_atm_zatm.patch
-msleep-drivers_media_dvb_b2c2_skystar2.patch
-msleep-drivers_media_dvb_dvb-core_dvb_ca_en50221.patch
-msleep-drivers_media_dvb_dvb-core_dvb_frontend.patch
-msleep-drivers_media_dvb_frontends_alps_tdmb7.patch
-msleep-drivers_media_dvb_frontends_at76c651.patch
-msleep-drivers_media_dvb_frontends_cs24110.patch
-msleep-drivers_media_dvb_frontends_dst.patch
-msleep-drivers_media_dvb_frontends_grundig_29504-401.patch
-msleep-drivers_media_dvb_frontends_grundig_29504-491.patch
-msleep-drivers_media_dvb_frontends_stv0299.patch
-msleep-drivers_media_dvb_frontends_tda1004x.patch
-msleep-drivers_media_dvb_frontends_ves1820.patch
-msleep-drivers_media_dvb_frontends_ves1x93.patch
-msleep-drivers_media_dvb_ttpci_av7110_hw.patch
-msleep-drivers_media_dvb_ttpci_av7110.patch
-msleep-drivers_media_dvb_ttpci_av7110_v4l.patch
-msleep-drivers_media_dvb_ttpci_budget-av.patch
-msleep-drivers_media_dvb_ttpci_budget-ci.patch
-msleep-drivers_media_dvb_ttpci_budget.patch
-msleep-drivers_media_video_bttv-driver.patch
-msleep_interruptible-drivers_media_video_bttv-i2c.patch
-msleep_interruptible-drivers_media_video_cx88_cx88-tvaudio.patch
-msleep_interruptible-drivers_media_video_cx88_cx88-video.patch
-msleep_interruptible-drivers_media_video_saa6752hs.patch
-msleep_interruptible-drivers_media_video_saa7134_saa7134-core.patch
-msleep_interruptible-drivers_media_video_saa7134_saa7134-ts.patch
-msleep_interruptible-drivers_media_video_saa7134_saa7134-tvaudio.patch
-pci_dev_present-drivers_media_video_bttv-driver.patch
-printk-net_wireless_prism54_islpci_mgt.h.patch
-msleep-drivers_char_sis-agp.patch
-msleep_interruptible-drivers_char_amiserial.patch
-msleep_interruptible-drivers_char_cyclades.patch
-
-
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- dropped
-
-msleep-drivers_media_dvb_dvb-core_dvb_functions.patch
-file removed
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-todo:
-- split kernel_thread() patches from Walter Harms
-- look at the new patches from Walter Harms
-- look at dprintk patches from Daniele Pizzoni
-
+diff -Nrup linux-2.6.9-rc4-mm1cln/drivers/atm/ambassador.c linux-2.6.9-rc4-mm1patch/drivers/atm/ambassador.c
+--- linux-2.6.9-rc4-mm1cln/drivers/atm/ambassador.c	2004-10-12 14:15:10.000000000 -0700
++++ linux-2.6.9-rc4-mm1patch/drivers/atm/ambassador.c	2004-10-13 13:50:30.070951672 -0700
+@@ -2378,7 +2378,7 @@ static int __init amb_probe (void) {
+   
+   devs = 0;
+   pci_dev = NULL;
+-  while ((pci_dev = pci_find_device
++  while ((pci_dev = pci_get_device
+           (PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR, pci_dev)
+           )) {
+ 	if (do_pci_device(pci_dev) == 0)
+@@ -2387,7 +2387,7 @@ static int __init amb_probe (void) {
  
+   
+   pci_dev = NULL;
+-  while ((pci_dev = pci_find_device
++  while ((pci_dev = pci_get_device
+           (PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR_BAD, pci_dev)
+           ))
+     PRINTK (KERN_ERR, "skipped broken (PLX rev 2) card");
 
---===============20776796558044786==
+
+--===============99536854505597261==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -185,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20776796558044786==--
+--===============99536854505597261==--
