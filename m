@@ -1,45 +1,55 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 23:17:39 +0000
-Subject: [KJ] [PATCH] [RESEND] [7/29] trident_main.c - vfree() checking
-Message-Id: <auto-000001227483@appliedminds.com>
+From: =?utf-8?q?Eleanor Onhiy?= <hiltsunlckpy@astral.ro>
+Date: Fri, 28 Jan 2005 13:18:04 +0000
+Subject: =?utf-8?q?Economize 80 % and m?=
+Message-Id: <E1CuW1s-0008Vj-SJ@externalmx-1.sourceforge.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97470321415157835=="
+Content-Type: multipart/mixed; boundary="vLC82QYCpZn"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============97470321415157835==
+This is a multi-part message in MIME format.
 
-trident_main.c vfree() checking cleanups.
-
-Signed-off by: James Lamanna <jlamanna@gmail.com>
-
- trident_main.c |    3 +--
- 1 files changed, 1 insertion(+), 2 deletions(-)
-
-
---- linux-2.6.10-vanilla/sound/pci/trident/trident_main.c	2004-12-24 13:35:01.000000000 -0800
-+++ linux-2.6.10/sound/pci/trident/trident_main.c	2005-01-04 11:21:37.997202616 -0800
-@@ -3679,8 +3679,7 @@
- 			snd_util_memhdr_free(trident->tlb.memhdr);
- 		if (trident->tlb.silent_page.area)
- 			snd_dma_free_pages(&trident->tlb.silent_page);
--		if (trident->tlb.shadow_entries)
--			vfree(trident->tlb.shadow_entries);
-+		vfree(trident->tlb.shadow_entries);
- 		snd_dma_free_pages(&trident->tlb.buffer);
- 	}
- 	if (trident->irq >= 0)
-
-
---===============97470321415157835==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+--vLC82QYCpZn
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+Our company assists all people keep on expensive prescriptions 
+drugs with worths which are as more as 95 percents lower than ret=
+ail 
+apothecary's shop equivalents. 
+
+
+--vLC82QYCpZn
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<STYLE></STYLE>
+</HEAD>
+<HTML>
+<BODY>
+Direct Prescriptions assists you save on costly prescriptions <BR=
+>
+medicinal drugs with costs which are as more as 95 % less than re=
+tail <BR>
+pharmacy substitutes. <BR>
+<A href=3D"">Audit prices</A>
+</BODY>
+</HTML></HTML>
+--vLC82QYCpZn--
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: IntelliVIEW -- Interactive Reporting
+Tool for open source databases. Create drag-&-drop reports. Save time
+by over 75%! Publish reports on the web. Export to DOC, XLS, RTF, etc.
+Download a FREE copy at http://www.intelliview.com/go/osdn_nl
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============97470321415157835==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
