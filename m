@@ -1,34 +1,39 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 18:19:33 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 5/16] scsi/imm: replace
-Message-Id: <20040927181933.GT1676@us.ibm.com>
+Date: Mon, 20 Sep 2004 21:39:43 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/17] media/bttv-i2c: replace
+Message-Id: <20040920213943.GE2270@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84236603228218909=="
+Content-Type: multipart/mixed; boundary="===============6485082622085816=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============84236603228218909==
+--===============6485082622085816==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Use msleep() instead of schedule_timeout()
-to guarantee the task delays as expected.
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected.
 
---- 2.6.9-rc2-vanilla/drivers/scsi/imm.c	2004-09-13 17:16:01.000000000 -0700
-+++ 2.6.9-rc2/drivers/scsi/imm.c	2004-09-14 09:11:10.000000000 -0700
-@@ -1184,7 +1184,7 @@ static int __imm_attach(struct parport *
- 	dev->waiting = &waiting;
- 	prepare_to_wait(&waiting, &wait, TASK_UNINTERRUPTIBLE);
- 	if (imm_pb_claim(dev))
--		schedule_timeout(3 * HZ);
-+		msleep(3000);
- 	if (dev->wanted) {
- 		printk(KERN_ERR "imm%d: failed to claim parport because "
- 			"a pardevice is owning the port for too long "
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---===============84236603228218909==
+--- 2.6.9-rc2-vanilla/drivers/media/video/bttv-i2c.c	2004-09-13 17:15:40.000000000 -0700
++++ 2.6.9-rc2/drivers/media/video/bttv-i2c.c	2004-09-14 16:35:07.000000000 -0700
+@@ -139,10 +139,8 @@ bttv_i2c_wait_done(struct bttv *btv)
+ 	int rc = 0;
+ 	
+ 	add_wait_queue(&btv->i2c_queue, &wait);
+-	set_current_state(TASK_INTERRUPTIBLE);
+ 	if (0 == btv->i2c_done)
+-		schedule_timeout(HZ/50+1);
+-	set_current_state(TASK_RUNNING);
++		msleep_interruptible(20);
+ 	remove_wait_queue(&btv->i2c_queue, &wait);
+ 
+ 	if (0 == btv->i2c_done)
+
+--===============6485082622085816==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84236603228218909==--
+--===============6485082622085816==--
