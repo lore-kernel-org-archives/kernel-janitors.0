@@ -1,88 +1,72 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 28 Jul 2004 18:26:24 +0000
-Subject: [Kernel-janitors] [PATCH] pcmcia/synclinkmp: replace
-Message-Id: <20040728182624.GN1935@us.ibm.com>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Sat, 03 Jul 2004 15:05:55 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/char/pcxx.c MIN/MAX removal
+Message-Id: <40E819EC.1030207@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88649895759418862=="
+Content-Type: multipart/mixed; boundary="------------010408040208040803000400"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040728182421.GL1935@us.ibm.com>
-In-Reply-To: <20040728182421.GL1935@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============88649895759418862==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------010408040208040803000400
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I would appreciate any comments from the janitors list.
+Patch (against 2.6.7) removes unnecessary min/max macros and changes
+calls to use kernel.h macros instead.
 
--Nish
-
-Applys-to: 2.6.7
-
-Description: Uses msecs_to_jiffies() instead of the custom
-jiffies_from_ms().
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Feedback is always welcome
+Michael
 
 
---- linux-vanilla/drivers/char/synclinkmp.c	2004-06-15 22:19:01.000000000 -0700
-+++ linux-dev/drivers/char/synclinkmp.c	2004-07-28 11:01:13.000000000 -0700
-@@ -458,8 +458,6 @@ typedef struct _synclinkmp_info {
- #define CRCE	BIT2
+
+
+
+
+
+
+--------------010408040208040803000400
+Content-Type: text/plain;
+ name="patch-char-pcxx"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="patch-char-pcxx"
+
+--- linux-2.6.7-old/drivers/char/pcxx.c	2004-07-04 11:04:14.000000000 +0200
++++ linux-2.6.7-new/drivers/char/pcxx.c	2004-07-04 15:41:00.861381640 +0200
+@@ -130,7 +130,6 @@
+ int pcxx_ncook=sizeof(pcxx_cook);
+ int pcxx_nbios=sizeof(pcxx_bios);
  
+-#define MIN(a,b)	((a) < (b) ? (a) : (b))
+ #define pcxxassert(x, msg)  if(!(x)) pcxx_error(__LINE__, msg)
  
--#define jiffies_from_ms(a) ((((a) * HZ)/1000)+1)
--
- /*
-  * Global linked list of SyncLink devices
-  */
-@@ -2572,7 +2570,7 @@ static int startup(SLMP_INFO * info)
+ #define FEPTIMEOUT 200000  
+@@ -626,7 +625,7 @@
+ 		
+ 		tail &= (size - 1);
+ 		stlen = (head >= tail) ? (size - (head - tail) - 1) : (tail - head - 1);
+-		count = MIN(stlen, count);
++		count = min(stlen, count);
+ 		memoff(ch);
+ 		restore_flags(flags);
  
- 	change_params(info);
- 
--	info->status_timer.expires = jiffies + jiffies_from_ms(10);
-+	info->status_timer.expires = jiffies + msecs_to_jiffies(10);
- 	add_timer(&info->status_timer);
- 
- 	if (info->tty)
-@@ -4128,7 +4126,7 @@ void tx_start(SLMP_INFO *info)
- 			write_reg(info, TXDMA + DIR, 0x40);		/* enable Tx DMA interrupts (EOM) */
- 			write_reg(info, TXDMA + DSR, 0xf2);		/* clear Tx DMA IRQs, enable Tx DMA */
- 	
--			info->tx_timer.expires = jiffies + jiffies_from_ms(5000);
-+			info->tx_timer.expires = jiffies + msecs_to_jiffies(5000);
- 			add_timer(&info->tx_timer);
- 		}
- 		else {
-@@ -5016,7 +5014,7 @@ int irq_test(SLMP_INFO *info)
- 	timeout=100;
- 	while( timeout-- && !info->irq_occurred ) {
- 		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(jiffies_from_ms(10));
-+		schedule_timeout(msecs_to_jiffies(10));
+@@ -658,11 +657,11 @@
+ 		remain = tail - head - 1;
+ 		stlen = remain;
  	}
+-	count = MIN(remain, count);
++	count = min(remain, count);
  
- 	spin_lock_irqsave(&info->lock,flags);
-@@ -5167,7 +5165,7 @@ int loopback_test(SLMP_INFO *info)
- 	/* Set a timeout for waiting for interrupt. */
- 	for ( timeout = 100; timeout; --timeout ) {
- 		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(jiffies_from_ms(10));
-+		schedule_timeout(msecs_to_jiffies(10));
- 
- 		if (rx_get_frame(info)) {
- 			rc = TRUE;
-@@ -5423,7 +5421,7 @@ void status_timeout(unsigned long contex
- 
- 	info->status_timer.data = (unsigned long)info;
- 	info->status_timer.function = status_timeout;
--	info->status_timer.expires = jiffies + jiffies_from_ms(10);
-+	info->status_timer.expires = jiffies + msecs_to_jiffies(10);
- 	add_timer(&info->status_timer);
- }
- 
+ 	txwinon(ch);
+ 	while (count > 0) {
+-		stlen = MIN(count, stlen);
++		stlen = min(count, stlen);
+ 		memcpy(ch->txptr + head, buf, stlen);
+ 		buf += stlen;
+ 		count -= stlen;
 
---===============88649895759418862==
+--------------010408040208040803000400
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -93,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88649895759418862==--
+--------------010408040208040803000400--
