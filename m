@@ -1,39 +1,46 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 04 Mar 2005 00:24:00 +0000
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Fri, 04 Mar 2005 10:10:18 +0000
 Subject: Re: [KJ] 2.6.11-kj
-Message-Id: <20050304002400.GD16078@us.ibm.com>
+Message-Id: <200503041257.17454.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64981918406792127=="
+Content-Type: multipart/mixed; boundary="===============71770060276879444=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050302095710.GA3745@nd47.coderock.org>
 In-Reply-To: <20050302095710.GA3745@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============64981918406792127==
-Content-Type: text/plain; charset=us-ascii
+--===============71770060276879444==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 04, 2005 at 02:42:14AM +0200, Alexey Dobriyan wrote:
-> On Thursday 03 March 2005 20:36, Nishanth Aravamudan wrote:
-> 
-> > Alexey, I'm curious, do you see a lot of these compile-time warnings with
-> > the kernel?
-> 
-> No. [i386, ppc64, sparc, x86_64] x [2.6.11-rc5-mm1, 2.6.11, 2.6.11-kj]
-> contain only one. It seems they are silently fixed in -mm by Andrew.
-> 
-> > In that driver alone I see a handful of other places where 
-> > dec's and code are mixed.
-> 
-> Not a single one in mcdx.c. Declarations in mcdx_audio_ioctl(), mcdx_talk(),
-> mcdx_init_drive(), mcdx_readtoc() ... are surrounded with { }. ;-)
+On Wednesday 02 March 2005 11:57, Domen Puncer wrote:
 
-Oh ok, so it's not function-oriented, but code block-oriented. Thanks
-for the info!
+> printk-drivers_acorn_block_mfmhd.patch
+>   From: James Nelson <james4765@cwazy.co.uk>
+>   Subject: [KJ] [PATCH 2/2][RESEND] acorn: clean up printk()'s in 	drivers/acorn/block/mfmhd.c
 
--Nish
+> --- kj/drivers/acorn/block/mfmhd.c~printk-drivers_acorn_block_mfmhd
+> +++ kj-domen/drivers/acorn/block/mfmhd.c
 
---===============64981918406792127==
+> @@ -156,9 +159,7 @@ struct hd_geometry {
+>  /*
+>   * Uncomment this to enable debugging in the MFM driver...
+>   */
+> -#ifndef DEBUG
+> -/*#define DEBUG */
+> -#endif
+> +
+>  /*
+>   * End of configuration
+>   */
+
+After this patch will be applied, there'd be nothing to uncomment.
+
+	Alexey
+
+--===============71770060276879444==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64981918406792127==--
+--===============71770060276879444==--
