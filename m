@@ -1,15 +1,13 @@
 From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:56:53 +0000
-Subject: [KJ] [PATCH] [8/29] av7110_ipack.c - vfree() checking cleanups
-Message-Id: <41db1125.4692bf87.2568.07b5@smtp.gmail.com>
+Date: Tue, 04 Jan 2005 23:17:40 +0000
+Subject: [KJ] [PATCH] [RESEND] [8/29] av7110_ipack.c - vfree() checking
+Message-Id: <auto-000001227484@appliedminds.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============51857809101023689=="
+Content-Type: multipart/mixed; boundary="===============59487580984021893=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============51857809101023689==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============59487580984021893==
 
 av7110_ipack.c vfree() checking cleanups.
 
@@ -33,8 +31,7 @@ Signed-off by: James Lamanna <jlamanna@gmail.com>
  
 
 
-
---===============51857809101023689==
+--===============59487580984021893==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============51857809101023689==--
+--===============59487580984021893==--
