@@ -1,49 +1,47 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Tue, 08 Feb 2005 02:37:07 +0000
-Subject: [KJ] [PATCH] scripts/mod/sumversion.c: replace strtok() with
-Message-Id: <20050208033707.5344b2fd@lucky.kitzblitz>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Feb 2005 17:08:49 +0000
+Subject: [KJ] [PATCH 14/19] drivers/scsi/megaraid/megaraid_mbox: Use the
+Message-Id: <20050220170849.GO14375@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86638763194601287=="
+Content-Type: multipart/mixed; boundary="===============67455366624941182=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============86638763194601287==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============67455366624941182==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi there,
+Hello,
 
-I just read about the strtok() replacement at
- http://janitor.kernelnewbies.org/docs/driver-howto.html#3.3.1
-and found one occurrence. He, the example code gives me a
-warning about a missing pair of brackets :)
-Patch below compiles without warning, runs without problems.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Did I miss anything?
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Cheers,
-n.
-
-
-Description: Replaces strtok() with strsep()
-
-Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
-
---- scripts/mod/sumversion.c.orig	2005-02-08 01:53:38.540759616 +0100
-+++ scripts/mod/sumversion.c	2005-02-08 02:30:36.514576344 +0100
-@@ -419,7 +419,9 @@
- 	*end = '\0';
+--- linux-2.6.11-rc4.orig/drivers/scsi/megaraid/megaraid_mbox.c	2005-02-13 17:13:06.000000000 +0100
++++ linux-2.6.11-rc4/drivers/scsi/megaraid/megaraid_mbox.c	2005-02-16 21:29:18.000000000 +0100
+@@ -619,7 +619,7 @@ megaraid_probe_one(struct pci_dev *pdev,
  
- 	md4_init(&md);
--	for (fname = strtok(sources, " "); fname; fname = strtok(NULL, " ")) {
-+	while ((fname = strsep(&sources, " ")) != NULL) {
-+		if (!fname)
-+			continue;
- 		if (!parse_source_files(fname, &md))
- 			goto release;
- 	}
+ 	// Setup the default DMA mask. This would be changed later on
+ 	// depending on hardware capabilities
+-	if (pci_set_dma_mask(adapter->pdev, 0xFFFFFFFF) != 0) {
++	if (pci_set_dma_mask(adapter->pdev, DMA_32BIT_MASK) != 0) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+ 			"megaraid: pci_set_dma_mask failed:%d\n", __LINE__));
+@@ -1031,7 +1031,7 @@ megaraid_init_mbox(adapter_t *adapter)
+ 
+ 	// Set the DMA mask to 64-bit. All supported controllers as capable of
+ 	// DMA in this range
+-	if (pci_set_dma_mask(adapter->pdev, 0xFFFFFFFFFFFFFFFFULL) != 0) {
++	if (pci_set_dma_mask(adapter->pdev, DMA_64BIT_MASK) != 0) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+ 			"megaraid: could not set DMA mask for 64-bit.\n"));
 
---===============86638763194601287==
+--===============67455366624941182==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86638763194601287==--
+--===============67455366624941182==--
