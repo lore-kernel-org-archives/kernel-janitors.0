@@ -1,7 +1,7 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Fri, 30 Jan 2004 12:43:24 +0000
-Subject: [Kernel-janitors] [REDIFF] Fix warning in drivers/net/pppoe.c when
-Message-Id: <1075466604.10543.30.camel@telecentrolivre>
+From: Matthew Wilcox <willy@debian.org>
+Date: Fri, 30 Jan 2004 15:02:34 +0000
+Subject: Re: [Kernel-janitors] [REDIFF] Fix warning in drivers/net/pppoe.c
+Message-Id: <20040130150234.GH18725@parcelfarce.linux.theplanet.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1073582302.6115.42.camel@telecentrolivre>
 In-Reply-To: <1073582302.6115.42.camel@telecentrolivre>
@@ -10,80 +10,53 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi,
+On Fri, Jan 30, 2004 at 10:43:24AM -0200, Luiz Fernando Capitulino wrote:
+> diff -X dontdiff -Nru linux-2.6.2-rc2-bk2/drivers/net/pppoe.c linux-2.6.2-rc2-bk2~/drivers/net/pppoe.c
+> --- linux-2.6.2-rc2-bk2/drivers/net/pppoe.c	2004-01-30 09:33:19.000000000 -0200
+> +++ linux-2.6.2-rc2-bk2~/drivers/net/pppoe.c	2004-01-30 09:53:40.000000000 -0200
+> @@ -1076,6 +1076,20 @@
+>  	.llseek		= seq_lseek,
+>  	.release	= seq_release,
+>  };
+> +
+> +static int __init pppoe_proc_init(void)
+> +{
+> +	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
+> +						     proc_net);
 
- Here goes the rediff, it fixes this warning:
+While I normally prefer declaration and initialisation on the same line,
+if you have to split the arguments of the initialisation, better to write it
+like this:
 
-drivers/net/pppoe.c: In function `pppoe_init':
-drivers/net/pppoe.c:1132: warning: label `out_unregister' defined but not used
+	struct proc_dir_entry *p;
 
- Look that I had changed the return values of pppoe_proc_init() to
-match with the driver behaviour. Thus, when CONFIG_PROC_FS is not set,
-pppoe_proc_init() is returning 1, instead of 0.
+	p = create_proc_entry("pppoe", S_IRUGO, proc_net);
+	if (!p)
+		return 1;
 
-diff -X dontdiff -Nru linux-2.6.2-rc2-bk2/drivers/net/pppoe.c linux-2.6.2-rc2-bk2~/drivers/net/pppoe.c
---- linux-2.6.2-rc2-bk2/drivers/net/pppoe.c	2004-01-30 09:33:19.000000000 -0200
-+++ linux-2.6.2-rc2-bk2~/drivers/net/pppoe.c	2004-01-30 09:53:40.000000000 -0200
-@@ -1076,6 +1076,20 @@
- 	.llseek		= seq_lseek,
- 	.release	= seq_release,
- };
-+
-+static int __init pppoe_proc_init(void)
-+{
-+	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
-+						     proc_net);
-+
-+	if (!p)
-+		return 1;
-+	
-+	p->proc_fops = &pppoe_seq_fops;
-+	return 0;
-+}
-+#else /* CONFIG_PROC_FS */
-+static int inline pppoe_proc_init(void) { return 1; }
- #endif /* CONFIG_PROC_FS */
- 
- /* ->ioctl are set at pppox_create */
-@@ -1112,26 +1126,18 @@
- 
- 	if (err)
- 		goto out;
--#ifdef CONFIG_PROC_FS
--{
--	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
--						     proc_net);
--	err = -ENOMEM;
--	if (!p)
--		goto out_unregister;
-+
-+	if ((err = pppoe_proc_init())) {
-+		unregister_pppox_proto(PX_PROTO_OE);
-+		err = -ENOMEM;
-+		goto out;
-+	}
- 	
--	p->proc_fops = &pppoe_seq_fops;
--	err = 0;
--}
--#endif /* CONFIG_PROC_FS */
- 	dev_add_pack(&pppoes_ptype);
- 	dev_add_pack(&pppoed_ptype);
- 	register_netdevice_notifier(&pppoe_notifier);
- out:
- 	return err;
--out_unregister:
--	unregister_pppox_proto(PX_PROTO_OE);
--	goto out;
- }
- 
- static void __exit pppoe_exit(void)
+> +static int inline pppoe_proc_init(void) { return 1; }
+
+"static inline int" is preferred.
+
+> +
+> +	if ((err = pppoe_proc_init())) {
+> +		unregister_pppox_proto(PX_PROTO_OE);
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+
+	err = pppoe_proc_init();
+	if (err) {
+		...
+	}
 
 -- 
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
-
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
