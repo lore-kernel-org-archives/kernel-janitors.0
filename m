@@ -1,78 +1,60 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Mar 2005 18:53:43 +0000
-Subject: [KJ] [PATCH] serial/68328serial: replace schedule_timeout() with
-Message-Id: <20050303185343.GL11600@us.ibm.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 23 Mar 2005 13:46:27 +0000
+Subject: [KJ] [PATCH] printk : drivers/block/DAC960.c
+Message-Id: <20050323134627.GE9206@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44479626020313034=="
+Content-Type: multipart/mixed; boundary="maH1Gajj2nflutpK"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: rmk+serial@arm.linux.org.uk
-Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linux-serial@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============44479626020313034==
+
+--maH1Gajj2nflutpK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+description:
+printk() calls should include appropriate KERN_* constant.
 
-Russell, sorry if you are not responsible for this driver, but I figure
-the more eyes the better.
-
-Thanks,
-Nish
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-Please consider applying.
+--maH1Gajj2nflutpK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch-2.6.12-rc1_drivers_block_DAC960.c.diff"
 
-Description: Use msleep_interruptible() instead of schedule_timeout() in
-send_break() to guarantee the task delays as expected. Change
-@duration's units to milliseconds, and modify arguments in callers
-appropriately.
+diff -urpN -X dontdiff a/drivers/block/DAC960.c b/drivers/block/DAC960.c
+--- a/drivers/block/DAC960.c	2005-03-18 02:34:26.000000000 +0100
++++ b/drivers/block/DAC960.c	2005-03-23 14:35:11.000000000 +0100
+@@ -2495,7 +2495,7 @@ static boolean DAC960_RegisterBlockDevic
+ 	/* for now, let all request queues share controller's lock */
+   	RequestQueue = blk_init_queue(DAC960_RequestFunction,&Controller->queue_lock);
+   	if (!RequestQueue) {
+-		printk("DAC960: failure to allocate request queue\n");
++		printk(KERN_WARNING "DAC960: failure to allocate request queue\n");
+ 		continue;
+   	}
+   	Controller->RequestQueue[n] = RequestQueue;
+@@ -3535,7 +3535,7 @@ static void DAC960_V1_ProcessCompletedCo
+ 
+ #ifdef FORCE_RETRY_FAILURE_DEBUG
+       if (!(++retry_count % 10000)) {
+-	      printk("V1 error retry failure test\n");
++	      printk(KERN_DEBUG "V1 error retry failure test\n");
+ 	      normal_completion = false;
+               DAC960_V1_ReadWriteError(Command);
+       }
+@@ -4623,7 +4623,7 @@ static void DAC960_V2_ProcessCompletedCo
+ 
+ #ifdef FORCE_RETRY_FAILURE_DEBUG
+       if (!(++retry_count % 10000)) {
+-	      printk("V2 error retry failure test\n");
++	      printk(KERN_DEBUG "V2 error retry failure test\n");
+ 	      normal_completion = false;
+ 	      DAC960_V2_ReadWriteError(Command);
+       }
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.11-kj-v/drivers/serial/68328serial.c	2005-03-01 23:38:32.000000000 -0800
-+++ 2.6.11-kj/drivers/serial/68328serial.c	2005-03-03 10:51:12.000000000 -0800
-@@ -992,18 +992,17 @@ static int get_lsr_info(struct m68k_seri
- /*
-  * This routine sends a break character out the serial port.
-  */
--static void send_break(	struct m68k_serial * info, int duration)
-+static void send_break(struct m68k_serial * info, unsigned int duration)
- {
- 	m68328_uart *uart = &uart_addr[info->line];
-         unsigned long flags;
-         if (!info->port)
-                 return;
--        set_current_state(TASK_INTERRUPTIBLE);
-         save_flags(flags);
-         cli();
- #ifdef USE_INTS	
- 	uart->utx.w |= UTX_SEND_BREAK;
--        schedule_timeout(duration);
-+	msleep_interruptible(duration);
- 	uart->utx.w &= ~UTX_SEND_BREAK;
- #endif		
-         restore_flags(flags);
-@@ -1033,14 +1032,14 @@ static int rs_ioctl(struct tty_struct *t
- 				return retval;
- 			tty_wait_until_sent(tty, 0);
- 			if (!arg)
--				send_break(info, HZ/4);	/* 1/4 second */
-+				send_break(info, 250);	/* 1/4 second */
- 			return 0;
- 		case TCSBRKP:	/* support for POSIX tcsendbreak() */
- 			retval = tty_check_change(tty);
- 			if (retval)
- 				return retval;
- 			tty_wait_until_sent(tty, 0);
--			send_break(info, arg ? arg*(HZ/10) : HZ/4);
-+			send_break(info, arg ? arg*(100) : 250);
- 			return 0;
- 		case TIOCGSOFTCAR:
- 			error = put_user(C_CLOCAL(tty) ? 1 : 0,
-
---===============44479626020313034==
+--maH1Gajj2nflutpK
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -83,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============44479626020313034==--
+--maH1Gajj2nflutpK--
