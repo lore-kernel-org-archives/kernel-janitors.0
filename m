@@ -1,55 +1,36 @@
-From: "rikki treadway" <rikki_treadway@veloxzone.com.br>
-Date: Fri, 14 May 2004 19:29:26 +0000
-Subject: Fwd: Everything Here. V|c.od|n > X@nax . v1@Gra # Vali/u/m S.o.ma ; P.n.termin abftguideipf
-Message-Id: <9700780338480.70188@treadwayrikki@veloxzone.com.br>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 16 May 2004 09:23:49 +0000
+Subject: [Kernel-janitors] Re: change in kernel-janitors maintainer
+Message-Id: <20040516092349.GA1623@masina>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--7467579114421154755"
+Content-Type: multipart/mixed; boundary="===============66731806275810035=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----7467579114421154755
-Content-Type: text/html;
-	charset="iso-1076-7"
+--===============66731806275810035==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On 14/05/04 23:07 -0700, Randy.Dunlap wrote:
+> 
+> I've been the KJ patchset maintainer since June/2003 and now I'm
+> handing it back to the kernel-janitors project founder, Acme:
+
+You did great work with -kj patchset, provided us a better mailing
+list, and a nice web page. Thank you.
+
+
+	Domen
+
+--===============66731806275810035==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Description: caribou affricate 971
+Content-Disposition: inline
 
-<!DOCTYPE html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www=
-w3.org/TR/html4/loose.dtd">
-<HTML>
-<HEAD>
-<TITLE>rxspecials.biz</TITLE>
-
-</HEAD>
-<BODY>
-<p>
-Hi Kernel-janitor-discuss, 
-<p>
-Y<psychosis>ou t<infinitude>oo c<propeller>an now e<proscenium>njoy t<mush=
-y>he<quail> s<trust>ame<bellamy> de<venus>e<chalkline>p<savant> dis<confis=
-cable>c<pawtucket>ount<starlet>s<boom> offe<dearie>re<exclamatory>d t<carb=
-ondale>o US re<cetera>s<avaricious>ide<tuberculin>nt<bodybuild>s<stricken>=
- by orde<bovine>ring your p<filth>re<dubitable>s<colombia>c<spat>rip<vestr=
-y>t<albacore>ions<barbudo> dire<beograd>c<buzzword>t<oct>ly from us<declar=
-ation>.
-<p>
-Order these pills: # .Pntermin. # V1@GRA ) |Valium| , Xan:a:x * S+o+ma ( A=
-t|:v@n
-<p>
-Plus: Ad|`pex, I0n`am|n, M3rid'ia, X.3nica|, Ambi'3n, S0na'Ta, Fl3x.eril, =
-Ce`|3brex, Fi0r:ic3t, Tr'am@do|, U|`tr@m, L3v|'tra, P.r0p3cia, Acyc|0v.ir,=
- Pr0z:@c, P`@xil, B'usp@r
-<p>
-Fre<din>e<fulfill> online<paunchy> me<earring>dical consult<byte>at<pale>i=
-on by<bismark> a lice<ecole>nse<acrimonious>d U.S. phy<geochemistry>sician=
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: SourceForge.net Broadband
-Sign-up now for SourceForge Broadband and get the fastest
-6.0/768 connection for only $19.95/mo for the first 3 months!
-http://ads.osdn.com/?ad_id=2562&alloc_id=6184&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-----7467579114421154755--
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============66731806275810035==--
