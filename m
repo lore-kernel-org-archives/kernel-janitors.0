@@ -1,7 +1,7 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Fri, 19 Mar 2004 17:29:23 +0000
+From: Adrian Bunk <bunk@fs.tum.de>
+Date: Sat, 20 Mar 2004 11:08:44 +0000
 Subject: Re: [Kernel-janitors] [PATCH] 81 patches for strings
-Message-Id: <20040319172923.GA648@localhost>
+Message-Id: <20040320110844.GD19464@fs.tum.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040319150659.GA20615@localhost>
 In-Reply-To: <20040319150659.GA20615@localhost>
@@ -10,13 +10,24 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> you get the point)
+On Fri, Mar 19, 2004 at 06:29:23PM +0100, Carlo Perassi wrote:
+> > you get the point)
+> 
+> Yes: the whole thing was made in two hours and there will be anyway a
+> lot of reviews.
 
-Yes: the whole thing was made in two hours and there will be anyway a
-lot of reviews.
+It's better to review patches _before_ sending them the first time.
+
+cu
+Adrian
 
 -- 
-Carlo Perassi - http://www.linux.it/~carlo/
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
