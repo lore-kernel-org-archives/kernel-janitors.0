@@ -1,20 +1,20 @@
 From: James Nelson <james4765@cwazy.co.uk>
-Date: Mon, 24 Jan 2005 21:14:58 +0000
+Date: Mon, 24 Jan 2005 21:24:59 +0000
 Subject: [KJ] [PATCH 2/2][RESEND] acorn: clean up printk()'s in
-Message-Id: <20050124211444.5730.26119.86529@localhost.localdomain>
+Message-Id: <20050124212434.5739.33352.36732@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88191937621744199=="
+Content-Type: multipart/mixed; boundary="===============63437754463839324=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050121013434.18203.73662.17071@localhost.localdomain>
 In-Reply-To: <20050121013434.18203.73662.17071@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============88191937621744199==
+--===============63437754463839324==
 
 This patch puts KERN_ constants in printk()'s and makes the debugging printk()'s
 more consistent in drivers/acorn/block/mfmhd.c
 
-Signed-off-by: James Nelson <james4765.com>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
 diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd.c linux-2.6.11-rc1-mm2/drivers/acorn/block/mfmhd.c
 --- linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd.c	2005-01-20 16:33:13.000000000 -0500
@@ -515,7 +515,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	}
  
 
---===============88191937621744199==
+--===============63437754463839324==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -526,4 +526,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88191937621744199==--
+--===============63437754463839324==--
