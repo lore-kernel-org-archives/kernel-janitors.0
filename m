@@ -1,50 +1,46 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 23:18:48 +0000
-Subject: [Kernel-janitors] [PATCH] video/sa1100fb: replace
-Message-Id: <20040727231848.GQ4679@us.ibm.com>
+Date: Fri, 23 Jul 2004 17:41:15 +0000
+Subject: [Kernel-janitors] Re: [PATCH] eicon/os_4bri: replace
+Message-Id: <20040723174115.GG1911@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52380106165452411=="
+Content-Type: multipart/mixed; boundary="===============37143878657877138=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============52380106165452411==
+--===============37143878657877138==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. 
+Sorry for the duplicate patch...
 
-Applys-to: 2.6.7
+On Fri, Jul 23, 2004 at 10:38:20AM -0700, Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list.
+> 
+> Thanks,
+> Nish
+> 
+> 
+> 
+> Applys-to: 2.6.7
+> 
+> Description: Replace diva_os_sleep() with msleep() in all instances. 
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> 
+> --- linux-vanilla/drivers/isdn/hardware/eicon/mntfunc.c	2004-06-16 05:18:54.000000000 +0000
+> +++ linux-dev/drivers/isdn/hardware/eicon/mntfunc.c	2004-07-02 18:04:34.000000000 +0000
+> @@ -340,7 +340,7 @@ void DIVA_EXIT_FUNCTION mntfunc_finit(vo
+>  	int i = 100;
+>  
+>  	while (diva_mnt_shutdown_xdi_adapters() && i--) {
+> -		diva_os_sleep(10);
+> +		msleep(10);
+>  	}
+>  
+>  	disconnect_didd();
 
-Description: Use msleep() instead of schedule_timeout() to 
-guarantee the task delays for the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/video/sa1100fb.c	2004-06-16 05:19:02.000000000 +0000
-+++ linux-dev/drivers/video/sa1100fb.c	2004-07-06 01:16:24.000000000 +0000
-@@ -1291,8 +1291,7 @@ static void sa1100fb_enable_controller(s
- #error Where is GPIO24 set as an output?  Can we fit this in somewhere else?
- 	if (machine_is_graphicsclient()) {
- 		// From ADS doc again...same as disable
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(20 * HZ / 1000);
-+		msleep(20);
- 		GPSR |= GPIO_GPIO24;
- 	}
- #endif
-@@ -1327,8 +1326,7 @@ static void sa1100fb_disable_controller(
- 		 * We'll wait 20msec.
- 		 */
- 		GPCR |= GPIO_GPIO24;
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(20 * HZ / 1000);
-+		msleep(20);
- 	}
- #endif
- #ifdef CONFIG_SA1100_HUW_WEBPANEL
-
---===============52380106165452411==
+--===============37143878657877138==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52380106165452411==--
+--===============37143878657877138==--
