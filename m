@@ -1,68 +1,57 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sat, 14 Aug 2004 19:07:16 +0000
-Subject: Re: [Kernel-janitors] [PATCH] irda/irtty-sir: replace
-Message-Id: <20040814190716.GK1756@stro.at>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28508338650616682=="
+From: "kurtis jackson" <elloico@mail.bulgaria.com>
+Date: Mon, 30 Aug 2004 00:02:52 +0000
+Subject: Improves sleep
+Message-Id: <4AFDF609.EB156E9@mail.bulgaria.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============28508338650616682==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, 27 Jul 2004, Nishanth Aravamudan wrote:
-
-> I would appreciate any comments from the janitors list. 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Replace schedule_timeout() with msleep() to guarantee the
-> task delays for the desired time.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> 
-> --- linux-vanilla/drivers/net/irda/irtty-sir.c	2004-06-16 05:18:37.000000000 +0000
-> +++ linux-dev/drivers/net/irda/irtty-sir.c	2004-07-21 17:26:31.000000000 +0000
-> @@ -32,6 +32,7 @@
->  #include <linux/init.h>
->  #include <asm/uaccess.h>
->  #include <linux/smp_lock.h>
-> +#include <linux/delay.h>
->  
->  #include <net/irda/irda.h>
->  #include <net/irda/irda_device.h>
-> @@ -96,10 +97,8 @@ static void irtty_wait_until_sent(struct
->  		tty->driver->wait_until_sent(tty, msecs_to_jiffies(100));
->  		unlock_kernel();
->  	}
-> -	else {
-> -		set_task_state(current, TASK_UNINTERRUPTIBLE);
-> -		schedule_timeout(msecs_to_jiffies(USBSERIAL_TX_DONE_DELAY));
-> -	}
-> +	else 
-aheem
-> +		msleep(USBSERIAL_TX_DONE_DELAY);
->  }
->  
->  /* 
-
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+<HTML>
+trouble free<BR>
+<BR>
+Recapture your youth and Feel the Energy<BR>
+For Many, This is a Powerful Second Chance<BR>
+<BR><A href="http://www.giantproductnews.com/i/">press here to read
+about</A><BR>
+This common element can change the way you experience the next half of your
+life<BR>
+<BR>
+<BR>
+<BR>
+-----Original Message-----<BR>
+From: Aruba PO1200 Oranjestad [mailto:lia@nyakix.com]<BR>
+Sent: Friday, March 4, 2004 5:67AM<BR>
+To: maryann; nakesha@tfyhw.com; nakia; jacquline; prudence<BR>
+Subject: I found this new formula<BR>
+<BR>
+<BR>
+<BR>cross me out po box above in site<BR>
+With no proved survival benefit combination therapy may be unjustifiable 
+Several studies included in the overall and subgroup analyses directly
+assessed semiempirical combination versus monotherapy  These similarly do
+not support combination therapy for specific pathogens when detected  <BR>
+Should further research be conducted to assess combination versus
+monotherapy? Novel  lactams should not be compared with older generation 
+lactams or penicillins combined with aminoglycosides  The reason for further
+trials assessing the addition of an aminglycoside to a  lactam seems dubious
+as well  <BR>
+<BR>
+The President seemed puzzled by this speech, but fortunately the minister
+of police arrived just then and, under Rob's guidance, the pictured record
+of the Orleanist plot was reproduced before the startled eyes of the
+official
+</FONT></HTML>
 
 
---===============28508338650616682==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+-------------------------------------------------------
+This SF.Net email is sponsored by BEA Weblogic Workshop
+FREE Java Enterprise J2EE developer tools!
+Get your free copy of BEA WebLogic Workshop 8.1 today.
+http://ads.osdn.com/?ad_idP47&alloc_id808&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============28508338650616682==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
