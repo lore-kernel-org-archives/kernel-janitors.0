@@ -1,62 +1,65 @@
-From: Ingo Molnar <mingo@elte.hu>
-Date: Mon, 18 Oct 2004 10:36:33 +0000
+From: Daniele Pizzoni <auouo@tin.it>
+Date: Mon, 18 Oct 2004 12:09:33 +0000
 Subject: [KJ] Re: [PATCH 0/8] replacing/fixing printk with pr_debug/pr_info
-Message-Id: <20041018103633.GA6792@elte.hu>
+Message-Id: <1098104383.3024.44.camel@pdp11.tsho.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============033110839154602445=="
+Content-Type: multipart/mixed; boundary="===============94242460140374851=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1098031764.3023.45.camel@pdp11.tsho.org> <20041017161953.GA24810@elte.hu> <1098067288.2892.293.camel@pdp11.tsho.org>
-In-Reply-To: <1098067288.2892.293.camel@pdp11.tsho.org>
-To: Daniele Pizzoni <auouo@tin.it>
+References: <1098031764.3023.45.camel@pdp11.tsho.org>
+	 <20041017161953.GA24810@elte.hu> <1098067288.2892.293.camel@pdp11.tsho.org>
+	 <20041018103633.GA6792@elte.hu>
+In-Reply-To: <20041018103633.GA6792@elte.hu>
+To: Ingo Molnar <mingo@elte.hu>
 Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, LKML <linux-kernel@vger.kernel.org>
 
---===============033110839154602445==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============94242460140374851==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-
-* Daniele Pizzoni <auouo@tin.it> wrote:
-
-> On dom, 2004-10-17 at 18:19, Ingo Molnar wrote: 
-> > [...]
-> > 
-> > 1) be careful, there is no inconsistency here. It's a printk that doesnt
-> > end in a "\n" in the first line.
+On lun, 2004-10-18 at 12:36, Ingo Molnar wrote:
 > 
-> You're right, my fault and a big one!
-> 
-> Anyway I'm going to ask some questions.
+> ok - pr_debug() is ok i think for the APIC code. It pairs well with the
+> other variants: pr_notice(), etc.
+> [...] 
+> i'd suggest to first do the Dprintk -> pr_debug replacement patch with
+> as few output changes as possible. (output changes are unavoidable when
+> converting a \n-less printout.) Then do any format cleanups in a
+> separate patch.
 
-> There's nothing wrong with Dprintk or dprintk. I simply found a
-> request to do so on the janitors TODO list. I found out that in
-> kernel.h there was really a pr_debug macro and I used it.
+Look, there is no pr_notice at all. The whole thing is not very clear I
+think, and the pr_ macros have some problem.
 
-ok. 
+This is the kernel.h part regarding the two and only pr_debug and
+pr_info:
 
-> The rationale is that in the kernel there are lots of custom dprintk,
-> Dprintk, DPRINTK, etc that we need a bit of housekeeping, I think.
-> Anyway I didn't like pr_info either (why not a pr_notice...?) but I
-> used it: it was in kernel.h I assumed it was for good.
+#ifdef DEBUG
+#define pr_debug(fmt,arg...) \
+printk(KERN_DEBUG fmt,##arg)
+#else
+#define pr_debug(fmt,arg...) \
+do { } while (0)
+#endif
 
-ok - pr_debug() is ok i think for the APIC code. It pairs well with the
-other variants: pr_notice(), etc.
+#define pr_info(fmt,arg...) \
+printk(KERN_INFO fmt,##arg)
 
-> I need a bit of advice now: should I forget about printks' levels,
-> consistency and focus on other issues or with a bit of work these
-> patches may became worth of?
+I think that pr_debug does make sense, because it depends on DEBUG and
+is a useful macro uniforming all the DPRINTK usage.
 
-i'd suggest to first do the Dprintk -> pr_debug replacement patch with
-as few output changes as possible. (output changes are unavoidable when
-converting a \n-less printout.) Then do any format cleanups in a
-separate patch.
+pr_info is alone, there are no other pr_*. I used it in the patches but
+now I think I was wrong. You cannot "continue" a pr_info as you do with
+printk because it always inserts the loglevel tag. I think it's better
+not use it or find a better solution. In fact it is not used too much in
+the kernel.
 
-(some of your other comments about 'spurious' whitespaces need a
-double-check too, sometimes they are done for formatting reasons. So
-always take a look at the log output before changing it.)
+I'll try some strict dprintk -> pr_debug replacements.
 
-	Ingo
+Bye
+Daniele
 
---===============033110839154602445==
+
+
+--===============94242460140374851==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============033110839154602445==--
+--===============94242460140374851==--
