@@ -1,20 +1,20 @@
 From: James Nelson <james4765@cwazy.co.uk>
-Date: Mon, 24 Jan 2005 21:14:36 +0000
+Date: Mon, 24 Jan 2005 21:24:26 +0000
 Subject: [KJ] [PATCH 1/2][RESEND] acorn: clean up printk()'s in
-Message-Id: <20050124211422.5730.84752.65654@localhost.localdomain>
+Message-Id: <20050124212408.5739.22907.91136@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90335076367612333=="
+Content-Type: multipart/mixed; boundary="===============46617743460676486=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050121013427.18203.13088.88517@localhost.localdomain>
 In-Reply-To: <20050121013427.18203.13088.88517@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============90335076367612333==
+--===============46617743460676486==
 
 This patch puts KERN_ constants in printk()'s and makes the debugging printk()'s
 more consistent in drivers/acorn/block/fd1772.c
 
-Signed-off-by: James Nelson <james4765.com>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
 diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd1772.c linux-2.6.11-rc1-mm2/drivers/acorn/block/fd1772.c
 --- linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd1772.c	2005-01-20 16:33:13.000000000 -0500
@@ -499,7 +499,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	};
  
 
---===============90335076367612333==
+--===============46617743460676486==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -510,4 +510,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90335076367612333==--
+--===============46617743460676486==--
