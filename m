@@ -1,48 +1,64 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Mar 2005 19:48:21 +0000
-Subject: [KJ] [PATCH] acpi/osl: correct HZ dependencies
-Message-Id: <20050302194821.GG2741@us.ibm.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 13:14:18 +0000
+Subject: [KJ] [UPDATE PATCH 15/19] drivers/scsi/megaraid: Use the DMA_{64,
+Message-Id: <20050320131418.GO3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53934269005499147=="
+Content-Type: multipart/mixed; boundary="===============15153807521232565=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: acpi-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Kernel-Janitors <kernel-janitors-qjLDD68F18O7TbgM5vRIOg@public.gmane.org>
+References: <20050220171028.GP14375@helium.tklauser.home>
+In-Reply-To: <20050220171028.GP14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============53934269005499147==
+--===============15153807521232565==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Please consider applying.
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Description: The osl driver has a few dependencies on HZ which are not
-handled correctly for all values. Use msleep_interruptible() and
-jiffies_to_msecs() to rectify the situation. Patch is compile-tested.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---- 2.6.11-kj-v/drivers/acpi/osl.c	2005-03-01 23:38:38.000000000 -0800
-+++ 2.6.11-kj/drivers/acpi/osl.c	2005-03-02 11:47:34.000000000 -0800
-@@ -317,8 +317,7 @@ acpi_os_remove_interrupt_handler(u32 irq
- void
- acpi_os_sleep(acpi_integer ms)
- {
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(((signed long) ms * HZ) / 1000);
-+	msleep_interruptible((unsigned int)ms);
- }
- EXPORT_SYMBOL(acpi_os_sleep);
+--- linux-2.6.11.orig/drivers/scsi/megaraid.c	2005-03-02 12:50:36.000000000 +0100
++++ linux-2.6.11/drivers/scsi/megaraid.c	2005-03-20 13:27:54.000000000 +0100
+@@ -43,6 +43,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/pci.h>
+ #include <linux/init.h>
++#include <linux/dma-mapping.h>
+ #include <scsi/scsicam.h>
  
-@@ -938,7 +937,7 @@ acpi_os_wait_semaphore(
- 		// TODO: A better timeout algorithm?
- 		{
- 			int i = 0;
--			static const int quantum_ms = 1000/HZ;
-+			unsigned int quantum_ms = jiffies_to_msecs(1);
+ #include "scsi.h"
+@@ -2060,7 +2061,7 @@ make_local_pdev(adapter_t *adapter, stru
  
- 			ret = down_trylock(sem);
- 			for (i = timeout; (i > 0 && ret < 0); i -= quantum_ms) {
+ 	memcpy(*pdev, adapter->dev, sizeof(struct pci_dev));
+ 
+-	if( pci_set_dma_mask(*pdev, 0xffffffff) != 0 ) {
++	if( pci_set_dma_mask(*pdev, DMA_32BIT_MASK) != 0 ) {
+ 		kfree(*pdev);
+ 		return -1;
+ 	}
+@@ -4854,10 +4855,10 @@ megaraid_probe_one(struct pci_dev *pdev,
+ 
+ 	/* Set the Mode of addressing to 64 bit if we can */
+ 	if ((adapter->flag & BOARD_64BIT) && (sizeof(dma_addr_t) == 8)) {
+-		pci_set_dma_mask(pdev, 0xffffffffffffffffULL);
++		pci_set_dma_mask(pdev, DMA_64BIT_MASK);
+ 		adapter->has_64bit_addr = 1;
+ 	} else  {
+-		pci_set_dma_mask(pdev, 0xffffffff);
++		pci_set_dma_mask(pdev, DMA_32BIT_MASK);
+ 		adapter->has_64bit_addr = 0;
+ 	}
+ 		
 
---===============53934269005499147==
+--===============15153807521232565==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53934269005499147==--
+--===============15153807521232565==--
