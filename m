@@ -1,64 +1,43 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 21:20:38 +0000
-Subject: [KJ] [UPDATE PATCH] block/pg: replace pg_sleep() with msleep()
-Message-Id: <20050110212038.GG9186@us.ibm.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 30 Jan 2005 11:44:15 +0000
+Subject: [KJ] Re: i810fb: Clean up printk()'s in
+Message-Id: <20050130114415.GA3835@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71739221057107072=="
+Content-Type: multipart/mixed; boundary="===============70633098145951245=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============71739221057107072==
+--===============70633098145951245==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Sorry, slightly inaccurate description...
-
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+On 25/01/05 17:12 -0600, James Nelson wrote:
+> This patch adds KERN_ constants to all of the printk()'s that need them in
+> drivers/video/i810/i810_accel.c
 > 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+> Signed-off-by: James Nelson <james4765@gmail.com>
+> 
+> diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/i810/i810_accel.c linux-2.6.11-rc2-mm1/drivers/video/i810/i810_accel.c
+> --- linux-2.6.11-rc2-mm1-original/drivers/video/i810/i810_accel.c	2005-01-24 17:15:49.000000000 -0500
+> +++ linux-2.6.11-rc2-mm1/drivers/video/i810/i810_accel.c	2005-01-24 19:07:03.198260078 -0500
+> @@ -34,7 +34,8 @@
+>  /* BLT Engine Routines */
+>  static inline void i810_report_error(u8 __iomem *mmio)
+>  {
+> -	printk("IIR     : 0x%04x\n"
+> +	printk(KERN_ERR
+> +	       "IIR     : 0x%04x\n"
+>  	       "EIR     : 0x%04x\n"
+>  	       "PGTBL_ER: 0x%04x\n"
+>  	       "IPEIR   : 0x%04x\n"
 
-<snip>
-
-> msleep_interruptible-drivers_block_pg.patch
-
-Please consider replacing with the following patch:
-
-Description: Use msleep()/ssleep() instead of pg_sleep() to guarantee
-the task delays as expected. TASK_INTERRUPTIBLE is used in the original code,
-however there is no check on the return values / for signals, thus I believe
-TASK_UNINTERRUPTIBLE (and hence msleep()) is more appropriate. Change pg_sleep()
-to use TASK_UNINTERRUPTIBLE as well.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+KERN_ERR's missing after some newlines, i think.
 
 
---- 2.6.10-v/drivers/block/paride/pg.c	2004-12-24 13:35:25.000000000 -0800
-+++ 2.6.10/drivers/block/paride/pg.c	2005-01-10 12:21:34.000000000 -0800
-@@ -295,7 +295,7 @@ static inline u8 DRIVE(struct pg *dev)
- 
- static void pg_sleep(int cs)
- {
--	current->state = TASK_INTERRUPTIBLE;
-+	set_current_state(TASK_UNINTERRUPTIBLE);
- 	schedule_timeout(cs);
- }
- 
-@@ -409,7 +409,7 @@ static int pg_reset(struct pg *dev)
- 	write_reg(dev, 6, DRIVE(dev));
- 	write_reg(dev, 7, 8);
- 
--	pg_sleep(20 * HZ / 1000);
-+	msleep(20);
- 
- 	k = 0;
- 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
 
---===============71739221057107072==
+	Domen
+
+--===============70633098145951245==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============71739221057107072==--
+--===============70633098145951245==--
