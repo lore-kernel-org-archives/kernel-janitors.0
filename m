@@ -1,41 +1,39 @@
-From: "marcelle west" <shaylawallingford@maktoob.com>
-Date: Thu, 20 May 2004 10:14:11 +0000
-Subject: Spring is almost over, last chance
-Message-Id: <32C0FE6F.6C68F76@maktoob.com>
+From: Gustavo Franco <stratus@acm.org>
+Date: Sat, 29 May 2004 22:10:16 +0000
+Subject: [Kernel-janitors] TODO list.
+Message-Id: <40B91806.7070808@acm.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============56116443011502692=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-PEhUTUw+CkxldCdzIGZhY2UgaXQsIEFnZSBzaG91bGQgYmUgbm90aGluZyBtb3JlIHRoYW4gYSBu
-dW1iZXI8YnI+Ckl0J3Mgb2theSB0byB3YW50IHRvIGhvbGQgb24gdG8geW91ciB5b3VuZyBib2R5
-IGFzIGxvbmcgYXMgeW91IGNhbjxicj4KPGJyPjxhIGhyZWY9Imh0dHA6Ly93d3cucHJvZHVjZWR0
-b2hlbHAuY29tLzkvIj5WaWV3IG1vcmUgYWJvdXQgYSBuZXcKbGlmZXNwYW4gZW5oYW5jZW1lbnQg
-cHJlc3MgaGVyZTwvYT48YnI+Cjxicj4KJnF1b3Q7V2l0aCBpbmNyZWFzaW5nIGxvbmdldml0eSBm
-b3IgYW4gaW5jcmVhc2luZyBzZWdtZW50IG9mIHRoZQpwb3B1bGF0aW9uLCB0aGlzIGlzIFRIRSBm
-cm9udGllciBmb3IgdGhlIG5ldyBtaWxsZW5uaXVtJnF1b3Q7PGJyPgotRHIgVmlyZ2lsIEhvd2Fy
-ZDxicj4KPGJyPgo8YnI+Cjxicj5mZWVsIGdyZWF0LCBsb29rIGdyZWF0CmNvb2wgaWRlYSBidXQg
-bm8gbGluayBhbmQgYWRkcmVzcyBhYm92ZTxicj4KPGJyPgo8YnI+ClRoZSBxdWFsaXR5IG9mIGlu
-Y2x1ZGVkIHN0dWRpZXMgd2FzIHBvb3Igb3ZlcmFsbCAgV2UgZGlkIG5vdCBkZXRlY3QgYmlhcwpp
-bmR1Y2VkIGJ5IGFueSBvZiB0aGUgbWVhc3VyZXMgYXNzZXNzZWQgIFdlIGNvdWxkIG5vdCBvYnRh
-aW4gZGF0YSBvbiBhbGwKY2F1c2UgZmF0YWxpdHkgZm9yIDMzJSBvZiBzdHVkaWVzICBJdCBpcyB1
-bmxpa2VseSB0aGF0IG1pc3NpbmcgcmVzdWx0cyB3b3VsZApzaGlmdCB0aGUgcmVzdWx0cyBmb3Ig
-c3R1ZGllcyBjb21wYXJpbmcgdGhlIHNhbWUgIGxhY3RhbSByZWxhdGl2ZSByaXNrIDEgMDIKMCA3
-NiB0byAxIDM4IGJ1dCBpdCBpcyBvZiBjb25jZXJuIHRoYXQgc3R1ZGllcyBjb21wYXJpbmcgZGlm
-ZmVyZW50ICBsYWN0YW1zCjAgODUgMCA2OSB0byAxIDA1IG1heSBub3QgZGV0ZWN0IGltcG9ydGFu
-dCBoYXJtIHRvIHBhdGllbnRzICAKT3VyIGFzc2Vzc21lbnQgb2YgdHJlYXRtZW50IGVmZmVjdHMg
-Zm9yIHBhdGllbnRzIHdpdGggUCBhZXJ1Z2lub3NhIEdyYW0KbmVnYXRpdmUgYW5kIGJsb29kIGlu
-ZmVjdGlvbnMgcmVsaWVzIG9uIHN1Ymdyb3VwIGFuYWx5c2lzICBXZSBkaWQgbm90IGRldGVjdAph
-biBhZHZhbnRhZ2UgZm9yIGNvbWJpbmF0aW9uIHRoZXJhcHkgYW1vbmcgdGhlc2UgcGF0aWVudHMg
-IE9ubHkgZmV3IHBhdGllbnRzCndpdGggZG9jdW1lbnRlZCBQIGFlcnVnaW5vc2EgaW5mZWN0aW9u
-cyBjb3VsZCBiZSBldmFsdWF0ZWQgIAo8L0ZPTlQ+PC9IVE1MPgoKCgotLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRoaXMgU0YuTmV0IGVtYWls
-IGlzIHNwb25zb3JlZCBieTogT3JhY2xlIDEwZwpHZXQgY2VydGlmaWVkIG9uIHRoZSBob3R0ZXN0
-IHRoaW5nIGV2ZXIgdG8gaGl0IHRoZSBtYXJrZXQuLi4gT3JhY2xlIDEwZy4gClRha2UgYW4gT3Jh
-Y2xlIDEwZyBjbGFzcyBub3csIGFuZCB3ZSdsbCBnaXZlIHlvdSB0aGUgZXhhbSBGUkVFLgpodHRw
-Oi8vYWRzLm9zZG4uY29tLz9hZF9pZDE0OSZhbGxvY19pZIE2NiZvcD1jbGljawpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpLZXJuZWwtamFuaXRvci1kaXNj
-dXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1kaXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdl
-Lm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9rZXJuZWwt
-amFuaXRvci1kaXNjdXNz
+--===============56116443011502692==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi list,
+
+I can see that greg suggestion to use msleep() for
+the most of longer delays on the kernel was included
+on the TODO list, but his tip was not merged with
+the Matthew Wilcox: `Calling yield() considered harmful`.
+
+Who can fix it?
+
+Thanks,
+Gustavo Franco
+p.s: I will resent my patches using msleep() in the
+next week.
+
+--===============56116443011502692==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============56116443011502692==--
