@@ -1,7 +1,7 @@
 From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sun, 04 Jan 2004 07:58:40 +0000
+Date: Sun, 04 Jan 2004 08:07:02 +0000
 Subject: [Kernel-janitors] [PATCH] Check return value in
-Message-Id: <20040104075840.GA23853@eugeneteo.net>
+Message-Id: <20040104080702.GA30543@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040103132946.GE21909@eugeneteo.net>
 In-Reply-To: <20040103132946.GE21909@eugeneteo.net>
@@ -12,32 +12,23 @@ To: kernel-janitors@vger.kernel.org
 
 Patch compiles, and tested. Please apply.
 
-http://www.anomalistic.org/patches/apm-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
+http://www.anomalistic.org/patches/i387-check-ret-__copy_from_user-fix-2.6.1-rc1-mm1.patch
 
-diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/arch/i386/kernel/apm.c 2.6.1-rc1-mm1-fix/arch/i386/kernel/apm.c
---- 2.6.1-rc1-mm1/arch/i386/kernel/apm.c	2003-12-18 10:58:06.000000000 +0800
-+++ 2.6.1-rc1-mm1-fix/arch/i386/kernel/apm.c	2004-01-04 15:53:11.000000000 +0800
-@@ -1891,6 +1891,7 @@
- static int __init apm_init(void)
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/arch/i386/kernel/i387.c 2.6.1-rc1-mm1-fix/arch/i386/kernel/i387.c
+--- 2.6.1-rc1-mm1/arch/i386/kernel/i387.c	2004-01-04 10:29:21.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/arch/i386/kernel/i387.c	2004-01-04 15:59:48.000000000 +0800
+@@ -456,8 +456,9 @@
+ int set_fpxregs( struct task_struct *tsk, struct user_fxsr_struct __user *buf )
  {
- 	struct proc_dir_entry *apm_proc;
-+	int ret;
- 	int i;
- 
- 	if (apm_info.bios.version = 0) {
-@@ -2008,7 +2009,11 @@
- 	if (apm_proc)
- 		apm_proc->owner = THIS_MODULE;
- 
--	kernel_thread(apm, NULL, CLONE_KERNEL | SIGCHLD);
-+	ret = kernel_thread(apm, NULL, CLONE_KERNEL | SIGCHLD);
-+	if (ret < 0) {
-+		printk(KERN_ERR "apm: disabled - Unable to start kernel thread.\n");
-+		return -ENODEV;
-+	}
- 
- 	if (num_online_cpus() > 1 && !smp ) {
- 		printk(KERN_NOTICE
+ 	if ( cpu_has_fxsr ) {
+-		__copy_from_user( &tsk->thread.i387.fxsave, buf,
+-				  sizeof(struct user_fxsr_struct) );
++		if (__copy_from_user( &tsk->thread.i387.fxsave, buf,
++				  sizeof(struct user_fxsr_struct) ))
++			return -EFAULT;
+ 		/* mxcsr bit 6 and 31-16 must be zero for security reasons */
+ 		tsk->thread.i387.fxsave.mxcsr &= 0xffbf;
+ 		return 0;
 
 -- 
 Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
