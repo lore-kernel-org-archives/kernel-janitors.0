@@ -1,74 +1,66 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 19:04:04 +0000
-Subject: [KJ] [PATCH 7/20] usb/rio500: remove
-Message-Id: <20050202190404.GI2546@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Thu, 03 Feb 2005 08:12:44 +0000
+Subject: [KJ] [PATCH] media/video/cx88*: convert pci_module_init to
+Message-Id: <20050203081244.GB3185@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52763299261670937=="
+Content-Type: multipart/mixed; boundary="mxv5cy4qt+RJ9ypb"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============52763299261670937==
+
+--mxv5cy4qt+RJ9ypb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with direct
-wait-queue usage. Patch is compile-tested.
+Description:
+convert from pci_module_init to pci_register_driver
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
---- 2.6.11-rc2-kj-v/drivers/usb/misc/rio500.c	2005-01-24 09:28:33.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/usb/misc/rio500.c	2005-02-01 13:56:59.000000000 -0800
-@@ -40,6 +40,7 @@
- #include <linux/spinlock.h>
- #include <linux/usb.h>
- #include <linux/smp_lock.h>
-+#include <linux/wait.h>
+--mxv5cy4qt+RJ9ypb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="media_video_cx88.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/video/cx88/cx88-blackbird.c linux-2.6.11-rc2/drivers/media/video/cx88/cx88-blackbird.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/video/cx88/cx88-blackbird.c	2005-01-24 17:07:55.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/video/cx88/cx88-blackbird.c	2005-01-26 10:01:46.000000000 +0100
+@@ -885,7 +885,7 @@ static int blackbird_init(void)
+ 	printk(KERN_INFO "cx2388x: snapshot date %04d-%02d-%02d\n",
+ 	       SNAPSHOT/10000, (SNAPSHOT/100)%100, SNAPSHOT%100);
+ #endif
+-	return pci_module_init(&blackbird_pci_driver);
++	return pci_register_driver(&blackbird_pci_driver);
+ }
  
- #include "rio500_usb.h"
+ static void blackbird_fini(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/video/cx88/cx88-dvb.c linux-2.6.11-rc2/drivers/media/video/cx88/cx88-dvb.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/video/cx88/cx88-dvb.c	2005-01-24 17:07:55.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/video/cx88/cx88-dvb.c	2005-01-26 10:01:54.000000000 +0100
+@@ -319,7 +319,7 @@ static int dvb_init(void)
+ 	printk(KERN_INFO "cx2388x: snapshot date %04d-%02d-%02d\n",
+ 	       SNAPSHOT/10000, (SNAPSHOT/100)%100, SNAPSHOT%100);
+ #endif
+-	return pci_module_init(&dvb_pci_driver);
++	return pci_register_driver(&dvb_pci_driver);
+ }
  
-@@ -264,6 +265,7 @@ static ssize_t
- write_rio(struct file *file, const char __user *buffer,
- 	  size_t count, loff_t * ppos)
- {
-+	DEFINE_WAIT(wait);
- 	struct rio_usb_data *rio = &rio_instance;
+ static void dvb_fini(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/video/cx88/cx88-video.c linux-2.6.11-rc2/drivers/media/video/cx88/cx88-video.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/video/cx88/cx88-video.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/video/cx88/cx88-video.c	2005-01-26 10:02:03.000000000 +0100
+@@ -2254,7 +2254,7 @@ static int cx8800_init(void)
+ 	printk(KERN_INFO "cx2388x: snapshot date %04d-%02d-%02d\n",
+ 	       SNAPSHOT/10000, (SNAPSHOT/100)%100, SNAPSHOT%100);
+ #endif
+-	return pci_module_init(&cx8800_pci_driver);
++	return pci_register_driver(&cx8800_pci_driver);
+ }
  
- 	unsigned long copy_size;
-@@ -319,7 +321,9 @@ write_rio(struct file *file, const char 
- 					errn = -ETIME;
- 					goto error;
- 				}
--				interruptible_sleep_on_timeout(&rio-> wait_q, NAK_TIMEOUT);
-+				prepare_to_wait(&rio->wait_q, &wait, TASK_INTERRUPTIBLE);
-+				schedule_timeout(NAK_TIMEOUT);
-+				finish_wait(&rio->wait_q, &wait);
- 				continue;
- 			} else if (!result && partial) {
- 				obuf += partial;
-@@ -349,6 +353,7 @@ error:
- static ssize_t
- read_rio(struct file *file, char __user *buffer, size_t count, loff_t * ppos)
- {
-+	DEFINE_WAIT(wait);
- 	struct rio_usb_data *rio = &rio_instance;
- 	ssize_t read_count;
- 	unsigned int partial;
-@@ -399,8 +404,9 @@ read_rio(struct file *file, char __user 
- 				err("read_rio: maxretry timeout");
- 				return -ETIME;
- 			}
--			interruptible_sleep_on_timeout(&rio->wait_q,
--						       NAK_TIMEOUT);
-+			prepare_to_wait(&rio->wait_q, &wait, TASK_INTERRUPTIBLE);
-+			schedule_timeout(NAK_TIMEOUT);
-+			finish_wait(&rio->wait_q, &wait);
- 			continue;
- 		} else if (result != -EREMOTEIO) {
- 			up(&(rio->lock));
+ static void cx8800_fini(void)
 
---===============52763299261670937==
+--mxv5cy4qt+RJ9ypb
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52763299261670937==--
+--mxv5cy4qt+RJ9ypb--
