@@ -1,71 +1,68 @@
 From: maximilian attems <janitor@sternwelten.at>
-Date: Wed, 20 Oct 2004 22:57:48 +0000
-Subject: [KJ] Re: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 ibmphp_core.c][6/8]
-Message-Id: <20041020225747.GA1953@stro.at>
+Date: Wed, 20 Oct 2004 23:01:28 +0000
+Subject: [KJ] Re: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 cmipci.c] [8/8]
+Message-Id: <20041020230128.GB1953@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27668972471642661=="
+Content-Type: multipart/mixed; boundary="===============050405229562360931=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <25390000.1096500931@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <25390000.1096500931@w-hlinder.beaverton.ibm.com>
+References: <28440000.1096502897@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <28440000.1096502897@w-hlinder.beaverton.ibm.com>
 To: Hanna Linder <hannal@us.ibm.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, greg@kroah.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, sailer@ife.ee.ethz.ch, perex@suse.cz, greg@kroah.com
 
---===============27668972471642661==
+--===============050405229562360931==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Wed, 29 Sep 2004, Hanna Linder wrote:
 
 > 
-> This can be converted to pci_dev_present as the dev returned is never used.
-> Compile tested.
+> The pci_find_device function is going away so I have replace it with pci_dev_present.
+> I also just used the macros it should have been using in the first place. I have compile tested it.
 > 
 > Hanna Linder
 > IBM Linux Technology Center
 > 
 > Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 > 
-> diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/pci/hotplug/ibmphp_core.c linux-2.6.9-rc2-mm4patch2/drivers/pci/hotplug/ibmphp_core.c
-> --- linux-2.6.9-rc2-mm4cln/drivers/pci/hotplug/ibmphp_core.c	2004-09-28 14:58:50.000000000 -0700
-> +++ linux-2.6.9-rc2-mm4patch2/drivers/pci/hotplug/ibmphp_core.c	2004-09-29 15:39:39.385406240 -0700
-> @@ -838,8 +838,11 @@ static int set_bus (struct slot * slot_c
->  	int rc;
->  	u8 speed;
->  	u8 cmd = 0x0;
-> -	struct pci_dev *dev = NULL;
->  	int retval;
-> +	static struct pci_device_id ciobx[] = {
-> +		{ PCI_DEVICE(PCI_VENDOR_ID_SERVERWORKS, 0x0101) },
-> +	        { },
-> +	};	
-            ^^^^
-white space damaged
-
+> ---
+> diff -Nrup linux-2.6.9-rc2-mm4cln/sound/pci/cmipci.c linux-2.6.9-rc2-mm4patch2/sound/pci/cmipci.c
+> --- linux-2.6.9-rc2-mm4cln/sound/pci/cmipci.c	2004-09-12 22:32:55.000000000 -0700
+> +++ linux-2.6.9-rc2-mm4patch2/sound/pci/cmipci.c	2004-09-29 16:32:30.000000000 -0700
+> @@ -2573,6 +2573,10 @@ static int __devinit snd_cmipci_create(s
+>  	long iomidi = mpu_port[dev];
+>  	long iosynth = fm_port[dev];
+>  	int pcm_index, pcm_spdif_index;
+> +	static struct pci_device_id intel_82437vx[] = {
+> +		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437VX) },
+> +		{ },
+> +	};
 >  
->  	debug ("%s - entry slot # %d\n", __FUNCTION__, slot_cur->number);
->  	if (SET_BUS_STATUS (slot_cur->ctrl) && is_bus_empty (slot_cur)) {
-> @@ -886,8 +889,7 @@ static int set_bus (struct slot * slot_c
->  				break;
->  			case BUS_SPEED_133:
->  				/* This is to take care of the bug in CIOBX chip */
-> -				while ((dev = pci_get_device(PCI_VENDOR_ID_SERVERWORKS,
-> -							      0x0101, dev)) != NULL)
-> +				if(pci_dev_present(ciobx))
->  					ibmphp_hpc_writeslot (slot_cur, HPC_BUS_100PCIXMODE);
->  				cmd = HPC_BUS_133PCIXMODE;
->  				break;
+>  	*rcmipci = NULL;
+>  
+> @@ -2648,8 +2652,7 @@ static int __devinit snd_cmipci_create(s
+>  	switch (pci->device) {
+>  	case PCI_DEVICE_ID_CMEDIA_CM8738:
+>  	case PCI_DEVICE_ID_CMEDIA_CM8738B:
+> -		/* PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437VX */
+> -		if (! pci_find_device(0x8086, 0x7030, NULL))
+> +		if (!pci_dev_present(intel_82437vx)) 
+                                                    ^
+>  			snd_cmipci_set_bit(cm, CM_REG_MISC_CTRL, CM_TXVX);
+>  		break;
+>  	default:
+> 
 > 
 
-first timer for your patches.
-corrected for next kjt.
-
+a second one with small whitespace damage.
+fixed for next kjt.
 
 --
 maks
 kernel janitor  	http://janitor.kernelnewbies.org/
 
 
---===============27668972471642661==
+--===============050405229562360931==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27668972471642661==--
+--===============050405229562360931==--
