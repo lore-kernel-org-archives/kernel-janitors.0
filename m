@@ -1,40 +1,35 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 02 Aug 2004 21:26:01 +0000
-Subject: [Kernel-janitors] Re: [PATCH] usb/ov511: replace schedule_timeout()
-Message-Id: <20040802212601.GB14283@kroah.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 20 Aug 2004 19:00:37 +0000
+Subject: [Kernel-janitors] [patch 2/12] pci_dev_b to list_for_each_entry:
+Message-Id: <20040820190037.4EB321ED35@trashy.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============22799217974537234=="
+Content-Type: multipart/mixed; boundary="===============6553185994993409=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============22799217974537234==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============6553185994993409==
 
-On Wed, Jul 28, 2004 at 05:48:06AM -0700, Mark McClelland wrote:
-> Nishanth Aravamudan wrote:
-> 
-> >I would appreciate any comments from the janitors list. 
-> >
-> >Applys-to: 2.6.7
-> >
-> >Description: Use msleep() instead of schedule_timeout() to 
-> >guarantee the task delays for the desired time.
-> > 
-> >
-> 
-> Looks good to me. Thank you very much for finding and fixing this, Nishanth.
-> 
-> >Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> >
-> 
-> Signed-off-by: Mark McClelland <mark@alpha.dyndns.org>
+--- kjt2/arch/i386/pci/i386.c	2004-08-20 18:58:55.000000000 +0200
++++ kjt2-lfe/arch/i386/pci/i386.c	2004-08-20 19:47:08.000000000 +0200
+@@ -96,15 +96,13 @@
+ 
+ static void __init pcibios_allocate_bus_resources(struct list_head *bus_list)
+ {
+-	struct list_head *ln;
+ 	struct pci_bus *bus;
+ 	struct pci_dev *dev;
+ 	int idx;
+ 	struct resource *r, *pr;
+ 
+ 	/* Depth-First Search on bus tree */
+-	list_for_each(ln, bus_list) {
+-		bus = pci_bus_b(ln);
++	list_for_each_entry(bus, bus_list, node) {
+ 		if ((dev = bus->self)) {
+ 			for (idx = PCI_BRIDGE_RESOURCES; idx < PCI_NUM_RESOURCES; idx++) {
+ 				r = &dev->resource[idx];
 
-Applied, thanks.
-
-greg k-h
-
---===============22799217974537234==
+--===============6553185994993409==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============22799217974537234==--
+--===============6553185994993409==--
