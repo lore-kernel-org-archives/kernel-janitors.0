@@ -1,38 +1,45 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 08 Jul 2004 23:08:05 +0000
-Subject: [Kernel-janitors] saa7146_i2c.c::my_wait() (msleep)
-Message-Id: <40EDD3D5.70805@us.ibm.com>
+Date: Fri, 23 Jul 2004 20:41:43 +0000
+Subject: [Kernel-janitors] [PATCH] isdn/elsa: replace schedule_timeout()
+Message-Id: <20040723204143.GD2675@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30741447399755462=="
+Content-Type: multipart/mixed; boundary="===============047172769393095448=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============30741447399755462==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============047172769393095448==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Here is the first (well, really the second after DVB) of a sequence of 
-issues with my msleep() conversion process:
+I would appreciate any comments from the janitors list.
 
-While trying to converte /drivers/media/common/saa7146_i2c.c::my_wait() 
-to msleep(), I'm kind of stumped by the conversion being done on the 
-input parameter (called ms, but I'm not sure if that means it is 
-actually in milliseconds):
+Thanks,
+Nish
 
-	((((ms + 10) / 10) * HZ) / 1000)
 
-This seems to lead to some weird conversions...
 
-Is that right? What is really desired there? Basically I want to know 
-what I should send in to msleep, i.e. the corresponding value in 
-milliseconds. Looking through the code, my_wait() is only called with 
-SAA_1746_DELAY (5), 1 and 10. Are those the corresponding values in ms?
+Applys-to: 2.6.7
 
-Any help would be appreciated.
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays the desired time.
 
--Nish
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---===============30741447399755462==
+
+--- linux-vanilla/drivers/isdn/hisax/elsa.c	2004-06-16 05:18:59.000000000 +0000
++++ linux-dev/drivers/isdn/hisax/elsa.c	2004-07-02 18:14:11.000000000 +0000
+@@ -691,8 +691,7 @@ Elsa_card_msg(struct IsdnCardState *cs, 
+ 				byteout(cs->hw.elsa.ctrl, cs->hw.elsa.ctrl_reg);
+ 				byteout(cs->hw.elsa.timer, 0);
+ 				spin_unlock_irqrestore(&cs->lock, flags);
+-				set_current_state(TASK_UNINTERRUPTIBLE);
+-				schedule_timeout((110*HZ)/1000);
++				msleep(110);
+ 				spin_lock_irqsave(&cs->lock, flags);
+ 				cs->hw.elsa.ctrl_reg &= ~ELSA_ENA_TIMER_INT;
+ 				byteout(cs->hw.elsa.ctrl, cs->hw.elsa.ctrl_reg);
+
+--===============047172769393095448==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30741447399755462==--
+--===============047172769393095448==--
