@@ -1,45 +1,38 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Mon, 07 Feb 2005 10:17:36 +0000
-Subject: [KJ] [PATCH] drivers/char/watchdog/*: convert to pci_register_driver
-Message-Id: <20050207101736.GE21028@rhum.iomeda.fr>
+From: Vicente Feito <vicente.feito@gmail.com>
+Date: Fri, 04 Feb 2005 11:44:11 +0000
+Subject: [KJ][PATCH]sound/drivers/opl3/opl3_midi.c:replace [const]char *s=""
+Message-Id: <200502041144.11496.vicente.feito@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="cHMo6Wbp1wrKhbfi"
+Content-Type: multipart/mixed; boundary="===============12621497733682085=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---cHMo6Wbp1wrKhbfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============12621497733682085==
+Content-type: text/plain; charset=us-ascii
+Content-transfer-encoding: 7BIT
+Content-disposition: inline
 
 Hi,
+Please consider applying.
+Thank you.
 
-Description:
-convert from pci_module_init to pci_register_driver
+Description: Replaces char *str = "" with char str[] = "".
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
+Signed-off-by: Vicente Feito <vicente.feito@gmail.com>
 
---cHMo6Wbp1wrKhbfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_char_watchdog.patch"
+--- linux-2.6.10-orig/sound/drivers/opl3/opl3_midi.c    2005-02-04 02:09:23.000000000 +0000
++++ linux-2.6.10/sound/drivers/opl3/opl3_midi.c 2005-02-04 02:17:51.000000000 +0000
+@@ -123,7 +123,7 @@ static void snd_opl3_calc_pitch(unsigned
+ #ifdef DEBUG_ALLOC
+ static void debug_alloc(opl3_t *opl3, char *s, int voice) {
+        int i;
+-       char *str = "x.24";
++       char str[] = "x.24";
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/char/watchdog/pcwd_pci.c linux-2.6.11-rc3/drivers/char/watchdog/pcwd_pci.c
---- linux-2.6.11-rc3-vanilla/drivers/char/watchdog/pcwd_pci.c	2004-12-24 22:33:59.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/char/watchdog/pcwd_pci.c	2005-02-07 09:39:27.000000000 +0100
-@@ -659,7 +659,7 @@ static int __init pcipcwd_init_module(vo
- {
- 	spin_lock_init (&pcipcwd_private.io_lock);
- 
--	return pci_module_init(&pcipcwd_driver);
-+	return pci_register_driver(&pcipcwd_driver);
- }
- 
- static void __exit pcipcwd_cleanup_module(void)
+        printk("time %.5i: %s [%.2i]: ", opl3->use_time, s, voice);
+        for (i = 0; i < opl3->max_voices; i++)
 
---cHMo6Wbp1wrKhbfi
+--===============12621497733682085==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---cHMo6Wbp1wrKhbfi--
+--===============12621497733682085==--
