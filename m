@@ -1,58 +1,53 @@
-From: Adrian Bunk <bunk@fs.tum.de>
-Date: Sun, 15 Feb 2004 06:35:16 +0000
-Subject: Re: [Kernel-janitors] [PATCH] - 2.6.2 - security.h - compiler cleanups
-Message-Id: <20040215063516.GO1308@fs.tum.de>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Sat, 07 Feb 2004 15:37:13 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/net/acenic.c MIN/MAX removal
+Message-Id: <40250629.3030004@gmx.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------050805040702010700020001"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200402122141.59608.ron@rongage.org>
-In-Reply-To: <200402122141.59608.ron@rongage.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Feb 14, 2004 at 05:41:14PM +0000, Matthew Wilcox wrote:
-> >...
-> > What about finding a gcc switch to turn that silly warning off instead?
-> > It's quite natural at least for method vectors to have unused arguments.
-> > Dito for all kinds of state machines implemented as array of function
-> > pointers, etc...
-> > 
-> > Basically everywhere where we implement the OO Virtual baseclass paradigm.
-> 
-> Sure, it's -Wno-unused.  However, that implies it's a worthless warning,
-> and I don't think that's true.  Last time I looked at these warnings,
-> there were some places that could lose an argument entirely, but I
-> haven't looked in ~3 years.
-> 
-> I don't think it's an unreasonable burden to add __optional to the unused
-> arguments of a method call anyway.  I prefer the plan9 C approach of simply
-> not naming them (ie
->...
+This is a multi-part message in MIME format.
+--------------050805040702010700020001
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-You said you checked such cases some time ago.
+Hi!
+Patch (against 2.6.3-rc1) removes unnecessary min/max macros and changes 
+calls to use kernel.h macros instead.
+Feedback always welcome
+Michael
 
-With your __optional suggestion, most likely _all_ such unused
-parameters will be marked __optional without a deeper checking by some
-Janitors. This way, the effect would be similar to simply using
--Wno-unused when using -W .
+--------------050805040702010700020001
+Content-Type: text/plain;
+ name="minmax_drivers_net_acenic.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="minmax_drivers_net_acenic.patch"
 
-IMHO a better approach than silenting all -W warnings would be to add
-selected warning options to the default built and clean the code for
-them, but completely silenting a -W compile isn't worth the effort. E.g.
-some time ago I checked -Wundef. Silenting -Wundef would be possible
-although it requires some work (but I gave up after looking at XFS).
+--- linux-2.6.2.org/drivers/net/acenic.c	2004-02-07 15:25:57.000000000 +0100
++++ linux-2.6.2.new/drivers/net/acenic.c	2004-02-07 15:33:24.286033896 +0100
+@@ -335,10 +335,6 @@
+ #define ACE_PROBE_ARG				struct net_device *dev
+ #endif
+ 
+-#ifndef min_t
+-#define min_t(type,a,b)	(((a)<(b))?(a):(b))
+-#endif
+-
+ #ifndef ARCH_HAS_PREFETCHW
+ #ifndef prefetchw
+ #define prefetchw(x)				do{} while(0)
 
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+--------------050805040702010700020001
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------050805040702010700020001--
