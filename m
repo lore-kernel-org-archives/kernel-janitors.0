@@ -1,65 +1,236 @@
-From: "madelene cox" <venitami@maktoob.com>
-Date: Sun, 16 May 2004 17:02:33 +0000
-Subject: Heighten sensation
-Message-Id: <fdeb01c43b7e$fded6c50$708d295c@venitami>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 08 May 2004 23:38:19 +0000
+Subject: [Kernel-janitors] [patch 2.6.6-rc3 8/16] ifdefs:
+Message-Id: <20040508233819.GA4124@masina>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_193_5F58_4B027F40.BD77CFD8"
+Content-Type: multipart/mixed; boundary="===============37603409394473997=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+--===============37603409394473997==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-------=_NextPart_193_5F58_4B027F40.BD77CFD8
-Content-Type: text/plain;
-	charset="us-ascii"
+--- c/drivers/scsi/aic7xxx/aic79xx_osm_pci.c	2004-04-04 05:36:53.000000000 +0200
++++ a/drivers/scsi/aic7xxx/aic79xx_osm_pci.c	2004-05-08 23:11:23.000000000 +0200
+@@ -42,12 +42,6 @@
+ #include "aic79xx_osm.h"
+ #include "aic79xx_inline.h"
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,0)
+-struct pci_device_id
+-{
+-};
+-#endif
+-
+ static int	ahd_linux_pci_dev_probe(struct pci_dev *pdev,
+ 					const struct pci_device_id *ent);
+ static int	ahd_linux_pci_reserve_io_regions(struct ahd_softc *ahd,
+@@ -55,7 +49,6 @@
+ static int	ahd_linux_pci_reserve_mem_region(struct ahd_softc *ahd,
+ 						 u_long *bus_addr,
+ 						 uint8_t **maddr);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ static void	ahd_linux_pci_dev_remove(struct pci_dev *pdev);
+ 
+ /* We do our own ID filtering.  So, grab all SCSI storage class devices. */
+@@ -99,7 +92,6 @@
+ 	}
+ 	ahd_list_unlock(&l);
+ }
+-#endif /* !LINUX_VERSION_CODE < KERNEL_VERSION(2,4,0) */
+ 
+ static int
+ ahd_linux_pci_dev_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+@@ -148,7 +140,6 @@
+ 	ahd = ahd_alloc(NULL, name);
+ 	if (ahd == NULL)
+ 		return (-ENOMEM);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	if (pci_enable_device(pdev)) {
+ 		ahd_free(ahd);
+ 		return (-ENODEV);
+@@ -176,14 +167,12 @@
+ 		ahd_pci_set_dma_mask(pdev, 0xFFFFFFFF);
+ 		ahd->platform_data->hw_dma_mask = 0xFFFFFFFF;
+ 	}
+-#endif
+ 	ahd->dev_softc = pci;
+ 	error = ahd_pci_config(ahd, entry);
+ 	if (error != 0) {
+ 		ahd_free(ahd);
+ 		return (-error);
+ 	}
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	pci_set_drvdata(pdev, ahd);
+ 	if (aic79xx_detect_complete) {
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+@@ -194,38 +183,13 @@
+ 		return (-ENODEV);
+ #endif
+ 	}
+-#endif
+ 	return (0);
+ }
+ 
+ int
+ ahd_linux_pci_init(void)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	return (pci_module_init(&aic79xx_pci_driver));
+-#else
+-	struct pci_dev *pdev;
+-	u_int class;
+-	int found;
+-
+-	/* If we don't have a PCI bus, we can't find any adapters. */
+-	if (pci_present() == 0)
+-		return (0);
+-
+-	found = 0;
+-	pdev = NULL;
+-	class = PCI_CLASS_STORAGE_SCSI << 8;
+-	while ((pdev = pci_find_class(class, pdev)) != NULL) {
+-		ahd_dev_softc_t pci;
+-		int error;
+-
+-		pci = pdev;
+-		error = ahd_linux_pci_dev_probe(pdev, /*pci_devid*/NULL);
+-		if (error == 0)
+-			found++;
+-	}
+-	return (found);
+-#endif
+ }
+ 
+ void
+@@ -238,7 +202,6 @@
+ ahd_linux_pci_reserve_io_regions(struct ahd_softc *ahd, u_long *base,
+ 				 u_long *base2)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 	*base = pci_resource_start(ahd->dev_softc, 0);
+ 	/*
+ 	 * This is really the 3rd bar and should be at index 2,
+@@ -246,28 +209,14 @@
+ 	 * bars.
+ 	 */
+ 	*base2 = pci_resource_start(ahd->dev_softc, 3);
+-#else
+-	*base = ahd_pci_read_config(ahd->dev_softc, AHD_PCI_IOADDR0, 4);
+-	*base2 = ahd_pci_read_config(ahd->dev_softc, AHD_PCI_IOADDR1, 4);
+-	*base &= PCI_BASE_ADDRESS_IO_MASK;
+-	*base2 &= PCI_BASE_ADDRESS_IO_MASK;
+-#endif
+ 	if (*base == 0 || *base2 == 0)
+ 		return (ENOMEM);
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,0)
+-	if (check_region(*base, 256) != 0
+-	 || check_region(*base2, 256) != 0)
+-		return (ENOMEM);
+-	request_region(*base, 256, "aic79xx");
+-	request_region(*base2, 256, "aic79xx");
+-#else
+ 	if (request_region(*base, 256, "aic79xx") == 0)
+ 		return (ENOMEM);
+ 	if (request_region(*base2, 256, "aic79xx") == 0) {
+ 		release_region(*base2, 256);
+ 		return (ENOMEM);
+ 	}
+-#endif
+ 	return (0);
+ }
+ 
+@@ -288,29 +237,18 @@
+ 		return (ENOMEM);
+ 
+ 	error = 0;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 	start = pci_resource_start(ahd->dev_softc, 1);
+ 	base_page = start & PAGE_MASK;
+ 	base_offset = start - base_page;
+-#else
+-	start = ahd_pci_read_config(ahd->dev_softc, PCIR_MAPS+4, 4);
+-	base_offset = start & PCI_BASE_ADDRESS_MEM_MASK;
+-	base_page = base_offset & PAGE_MASK;
+-	base_offset -= base_page;
+-#endif
+ 	if (start != 0) {
+ 		*bus_addr = start;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 		if (request_mem_region(start, 0x1000, "aic79xx") == 0)
+ 			error = ENOMEM;
+-#endif
+ 		if (error == 0) {
+ 			*maddr = ioremap_nocache(base_page, base_offset + 256);
+ 			if (*maddr == NULL) {
+ 				error = ENOMEM;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 				release_mem_region(start, 0x1000);
+-#endif
+ 			} else
+ 				*maddr += base_offset;
+ 		}
+@@ -352,10 +290,8 @@
+ 			       ahd_get_pci_slot(ahd->dev_softc),
+ 			       ahd_get_pci_function(ahd->dev_softc));
+ 			iounmap((void *)((u_long)maddr & PAGE_MASK));
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 			release_mem_region(ahd->platform_data->mem_busaddr,
+ 					   0x1000);
+-#endif
+ 			ahd->bshs[0].maddr = NULL;
+ 			maddr = NULL;
+ 		} else
+@@ -408,38 +344,5 @@
+ void
+ ahd_power_state_change(struct ahd_softc *ahd, ahd_power_state new_state)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	pci_set_power_state(ahd->dev_softc, new_state);
+-#else
+-	uint32_t cap;
+-	u_int cap_offset;
+-
+-	/*
+-	 * Traverse the capability list looking for
+-	 * the power management capability.
+-	 */
+-	cap = 0;
+-	cap_offset = ahd_pci_read_config(ahd->dev_softc,
+-					 PCIR_CAP_PTR, /*bytes*/1);
+-	while (cap_offset != 0) {
+-
+-		cap = ahd_pci_read_config(ahd->dev_softc,
+-					  cap_offset, /*bytes*/4);
+-		if ((cap & 0xFF) == 1
+-		 && ((cap >> 16) & 0x3) > 0) {
+-			uint32_t pm_control;
+-
+-			pm_control = ahd_pci_read_config(ahd->dev_softc,
+-							 cap_offset + 4,
+-							 /*bytes*/4);
+-			pm_control &= ~0x3;
+-			pm_control |= new_state;
+-			ahd_pci_write_config(ahd->dev_softc,
+-					     cap_offset + 4,
+-					     pm_control, /*bytes*/2);
+-			break;
+-		}
+-		cap_offset = (cap >> 8) & 0xFF;
+-	}
+-#endif 
+ }
+
+--===============37603409394473997==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-------=_NextPart_193_5F58_4B027F40.BD77CFD8
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-asci=
-i">
-<META content=3D"MSHTML 10.0.2627" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD><FONT face=3DArial><FONT size=3D2>
-<BODY>
-<DIV>
-&quot;My girlfriend loves the results, but she doesn't know what I do. =
-She thinks 
-it's natural&quot; -Thomas, CA<br>
-<br>
-&quot;I've been using your product for 4 months now. I've increased my =
-length from 2&quot; 
-to nearly 6&quot; . Your product has saved my sex life.&quot; -Matt, FL=
-<br>
-<br>
-Pleasure your partner every time with a bigger, longer, stronger  Unit<=
-br>
-Realistic gains quickly<br>
-<br><a href=3D"http://www.hereyouhaveitall.com/5/">to be a stud press h=
-ere</a>
-<br>
-<br>
-<br>Come in big boats
-<br><a href=3D"http://www.hereyouhaveitall.com/5/">Oranjestad, Aruba, p=
-o b 1200</a>
-<br>But IS there any other place? asked the Wizard White man all bad
-</DIV></FONT></BODY></HTML>
-
-------=_NextPart_193_5F58_4B027F40.BD77CFD8--
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: SourceForge.net Broadband
-Sign-up now for SourceForge Broadband and get the fastest
-6.0/768 connection for only $19.95/mo for the first 3 months!
-http://ads.osdn.com/?ad_id=2562&alloc_id=6184&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============37603409394473997==--
