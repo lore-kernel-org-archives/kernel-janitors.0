@@ -1,42 +1,39 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Sun, 06 Feb 2005 22:38:59 +0000
-Subject: Re: [KJ] Re: [PATCH 19/20] bluetooth/bluecard_cs: remove
-Message-Id: <1107729539.7327.26.camel@pegasus>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:51 +0000
+Subject: [KJ] [PATCH][RESUBMIT][2/21] drivers/block/* - compile warning
+Message-Id: <42113C2B.3809.52B9FA@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32420749691298711=="
+Content-Type: multipart/mixed; boundary="===============16950189786516767=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050202225855.GY2546@us.ibm.com>
-	 <1107386189.11944.21.camel@pegasus> <20050203002502.GB2546@us.ibm.com>
-	 <1107562301.6921.115.camel@pegasus>
-	 <29495f1d050206141977a6b4fa@mail.gmail.com>
-In-Reply-To: <29495f1d050206141977a6b4fa@mail.gmail.com>
-To: Nish Aravamudan <nish.aravamudan@gmail.com>
-Cc: Nishanth Aravamudan <nacc@us.ibm.com>, kernel-janitors@lists.osdl.org, BlueZ Mailing List <bluez-devel@lists.sourceforge.net>, Max Krasnyansky <maxk@qualcomm.com>
+To: kernel-janitors@vger.kernel.org
 
---===============32420749691298711==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============16950189786516767==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Hi Nish,
+Description: compile warning cleanups - handle error return from 
+scsi_add_host
 
-> > I gave your patch a shot and the oops below happens on a 2.6.11-rc3
-> > after plugging in the card. Without the patch it is working.
-> 
-> Sorry for the long delay without a response!
-> 
-> That looks like I may have missed some wake-up related issues. I'll
-> check on it and get back to you soon.
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-take your time, because my 2.6.11 queue is closed. All of your other
-changes are merged back mainline.
-
-Regards
-
-Marcel
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/block/cciss_scsi.c linux-2.6.11-rc3-mm2/drivers/block/cciss_scsi.c
+--- linux-2.6.11-rc3-mm2-original/drivers/block/cciss_scsi.c	2005-02-12 12:06:24.000000000 +0200
++++ linux-2.6.11-rc3-mm2/drivers/block/cciss_scsi.c	2005-02-12 14:08:33.000000000 +0200
+@@ -706,7 +706,8 @@ cciss_scsi_detect(int ctlr)
+ 	sh->hostdata[0] = (unsigned long) hba[ctlr];
+ 	sh->irq = hba[ctlr]->intr;
+ 	sh->unique_id = sh->irq;
+-	scsi_add_host(sh, &hba[ctlr]->pdev->dev); /* XXX handle failure */
++	if (scsi_add_host(sh, &hba[ctlr]->pdev->dev))
++		return 0;
+ 	scsi_scan_host(sh);
+ 
+ 	return 1;
 
 
 
---===============32420749691298711==
+--===============16950189786516767==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32420749691298711==--
+--===============16950189786516767==--
