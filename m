@@ -1,80 +1,67 @@
-From: "chuntian" <chuntian@yahoo.com>
-Date: Mon, 19 Apr 2004 12:17:57 +0000
-Subject: =?GB2312?B?tPPQzUVSUNS0tPrC67Ostc2827jx16rIww==?=
-Message-Id: <E1BFXjR-0004KU-WF@sc8-sf-mx1.sourceforge.net>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Thu, 01 Apr 2004 21:55:31 +0000
+Subject: Re: [Kernel-janitors] [PATCH 5/5] remove concatenation with
+Message-Id: <20040401135531.60457cf3.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1BEMGR-0006OF-9T@sc8-sf-mx2.sourceforge.net>
-In-Reply-To: <E1BEMGR-0006OF-9T@sc8-sf-mx2.sourceforge.net>
+References: <20040322052155.GF17221@bakeyournoodle.com>
+In-Reply-To: <20040322052155.GF17221@bakeyournoodle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Cs/qz7jXysHPo6zH67fDzsogaHR0cDovL3d3dy5wb3dlcmVycC5vcmcvIL/J0tTPwtTYsuLK1LDm
-sb6howoKzajTw7XEtPPQzcn6svrWxtTs0M3G89K1ysrTw7XEUG93ZXJFUlDIq7K/zerV+7XE1LS0
-+sLr0tS8sMirsr+/qreizsS1taOsCrmyMjAwMNSqtc2827P2ytujobTLzNdFUlDS0b6tyrXKqcHL
-vau9/MG9xOqjrLbgvNK7qsTPtdjH+LXExvPStb/Nu6ejrL6tCrn9sru2z7XExKO/6bjEvfihorDm
-sb7J/by2oaLQ3tX9QlVHoaK4/NDCwfezzLXIo6y009StssTBz6Giyfqy+qGio6jI5wpCT02hok1S
-UKGiU0NNtcijqbW9vfjP+rTmoaKyxs7xtci++c6qsci9z8/Ivfi1xMrKus+5+sTaxvPStcq508O1
-xEVSUM+1Cs2zo6zM2LXjyse5psTcxuvIq6GiwfezzM/IvfihotTL0NDOyLaoo6EKoaqhqqGqoaqh
-qqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqi0t
-LS0tLS0tLS0KsPy6rMnovMbXysHPoaK/qreizsS1taGiyKuyv9S0tPrC66Osv8nS1LWxw+a9u7v1
-o6yxo9akzerIq8uzwPux4NLr1f2zo8q5CtPDo6yyu7u5vNujrMjn09C5usLy0uLP8sfru9i4tNPK
-vP7Bqs+1ztIgb3JkZXJAcG93ZXJlcnAub3JnIKOht8ezz8frzvDIxaOhCqGqoaqhqqGqoaqhqqGq
-oaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaotLS0tLS0t
-LS0Kwe3N4szh0NHE+qO6RVJQysfSu8/uuLTU07XEuaSzzKOsy/nS1MG8usO1xLy8yvW3/s7xo6y2
-1NPaxPrA7b3io6zP+7uvz7XNswrT0LfHs6PW2NKqtcTX99PDo6zL+dLUo6y5usLyRVJQ1LS0+sLr
-o6yz/cHLv7TPtc2ztcS827jxo6zO0r71tcO21Le9tcS8vMr1Ctans9bE3MGm0rLKx9K7uPayu7/J
-sru/vMLHtcTW2LXjo6EKoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGqoaqhqqGq
-oaqhqqGqoaqhqqGqoaqhqqGqoaqhqi0tLS0tLS0tLQrPtc2zsr+31rmmxNzP7sHQse2jugoKIDEu
-u/XO78DgsfDXysHPCiAyLrLJubrUsdfKwc8KIDMuz/rK29Sx18rBzwogNC605rv1tdi149fKwc8g
-NS6x4NbGu/Wx0tfKwc8KIDYuu+PCytfKwc8KIDcuseDWxrjbv9rXysHPCiA4Lrn6vNLXysHPCiA5
-LrWlzrvXysHPCiAxMC64tr/ut73KvQogMTEuv8bEv9fKwc8KIDEyLsa+1qTVqtKq18rBz7/izqy7
-pAogMTMuv827p822y9/UrdLy18rBz7ao0uUKIDE0LtOyvP7J6LG418rBzwogMTUu0MK+ybv1zu/M
-5ru7udjPtdfKwc8KIDE2Lsn6svrP39fKwc+jqLO1vOTXysHPo6kKIDE3Ls3Lu/XNy8HPtcjUrdLy
-18rBz7ao0uUKIDE4LrLEwc8KIDE5LtHVyasKIDIwLtL40NDXysHPtqjS5QogMjEuuLa/7re9t6gK
-IDIyLr3hy+O3vcq9CiAyMy6y+sa3zNjQ1CAyNC66o7nYus/NrAogMjUu1du/28Dg0M0KIDI2Lsn6
-svrP39SxuaTXysHPCiAyNy65pNDy18rBz7ao0uUKIDI4LrL6tdjXysHPCiAyOS64tr/uzPW8/gog
-MzAuy8279cz1vP4KIDI5Ltew1MvM9bz+CiAzMC7XsNTLt73KvQogMzEuuanTpsnMv827p7fWzvbA
-4LHwtbWwuAogMzIuuL2807fR08O2qNLlCiAzMy7Usbmk18rBzwogMzQusr/DxdfKwc+2qNLlx/jT
-8rao0uUKIAog1ve1tbK/t9YKCiAxLrv1zu/XysHPCiAyLrv1xrdTQ0252M+1udzA7QogMy7O78HP
-x+W1pUJPTSA0Lrmk0tW5pNDyudzA7aOovNO5pNbQ0MSjqQogNS65qdOmyczXysHPudzA7QogNi6/
-zbun18rBz7ncwO0KIDcuQk9Nt7TP8rLp0a+xqLHtCiAKIM+1zbPOrLukCgogMS65q8u+18rBz7ao
-0uUKIDIuu/XO77HgusW55tTytqjS5QogMy7OxLz+zbe53MDtCiA0LtPvzsTR1Mno1sMKIDUuyNXW
-vsr9vt20psDtCiA2LsD6yrfK/b7dtKbA7QogNy7Xos/617TMrMr9vt20psDtCiA4LrLZ1/fI1da+
-tKbA7QogOS61pb7dusXC67nm1PLOrLukCiAxMC6yzsr9yejWwwogMTEuvcfJq7ncwO0KIDEyLtPD
-u6e53MDtCiAxMy7IqM/eudzA7SAxNC6y2df308O7p82o0MXW0NDECiAxNS7M4cq+18rBz86su6QK
-IDE2oaLTw7unvdO/2qOovefD5qOptqjWxtbQ0MShqs/6ytu2qbWlo6jPtc2zzqy7pLmmxNyjqQog
-MTcuz7XNs7PM0PK07c7zudzA7QogMTcuMdOm08OzzNDytO3O87SmwO0KIDE3LjLK/b7dtLC/2rTt
-zvO0psDtCiAxNy4zyv2+3dHp1qS07c7ztKbA7QogMTcuNLTtzvO0psDtsaix7QogCiCy1r/iudzA
-7dfcuMXLtcP3CgogMS7XqrLWtKbA7QogMi6/4rTmtffV+wogMy6y1r/ixcy14wogNC679ca3vbvS
-17zHwryxqLHtCiAKILfWz/q53MDtCiAKIDGhorv1xrew/New0qrH8wogMqGisPzXsNDOyr3XysHP
-CiAzoaK827jx0v3H5gogNKGiz/rK27GovNsKIDWhos/6ytu2qbWlIDahos/6ytu2qbWluPy4xAog
-N6Giz/rK27P2u/UKIDiholFDv9jWxqOot9bP+rP2u/WjqQogOaGiz/rK27eixrEKIDEwoaLP+srb
-zcu79QogMTGhos/6ytvNy7v1zajWqrWlCiAxMqGit9bP+raptaXTprP2u/W84L/YCiAxM6GisPzX
-sNfKwc/OrLukCiAxNKGiz/rK29SksuIKIDE1oaK/zbunz/rK29K1vKi31s72CiAxNqGiz/rK28jL
-1LHStbyot9bO9gogMTehorv1xrfA+8jzt9bO9gogMTihos/6ytvUwr3hCiAxOaGiu/XGt9ewufEK
-IAogssm5urncwO0KCiAxoaKyybm60a+82wogMqGissm5uraptaUKIDOhorLJubrK1bv1CiA0oaJJ
-UUO/2NbGo6jN4rm6xrfWysG/v9jWxqOpCiA1oaKyybm6zcu79QogNqGiuanTpsnMt6LGsQogN6Gi
-ssm5uraptaXQ3rjECiA4oaK2qbWlssm5utOmytW79bj619nOrLukCiA5oaKyybm6zcu79c2o1qrK
-6QogCiC8xruuCgogMaGi0NDKwsD6CiAyoaK8xruu1tzG2rao0uWjqLncwO2jqQogM6GiTVJQ1MvL
-4wogNKGi1vfJ+rL6vMa7rgogNaGizu/Bz9Dox/O8xruuCiA2oaK01sTcwaa8xruuCiA3oaLFzLXj
-vMa7rgogCiDJ+rL6CiAKIDGhosn6svq1pb+qtaUKIDKhosn6svq1pb34tsi0psDtCiAzoaLFxbL6
-CiA0oaLJ+rL6wezBzwogNaGis8nGt7vYstYKIDahosn6svrNy8HPCiA3oaLJ+rL6taXH5bWlCiA4
-oaK5pLPMseS2rwogCiC/zbunt/7O8QoKIDEut/7O8dDU1srXysHPtqjS5QogMi63/s7xz+7Ev9fK
-wc+2qNLlCiAzLtfJ0a/NtsvftKbA7QogNC63/s7xuPrX2bywzeqzybSmwO0KIDWjrrf+zvGxqLjm
-tKbA7QogCiDXqNPDyv2+3bGose0KCiAxLrv1zu/H5bWlsaix7QogMi6zybG+1KTL47Gose0KIDMu
-u/XGt7Tmwb+31rK8saix7QogNC64vbzHxKO/6bHgwuux7QogNS65psTcseDC67HtCgogICCyxs7x
-19zVygoKIDEussbO8dSksuIKIDIuxtqz9dPgtu7CvMjrCiAzLsa+1qS0psDtCiA0Lsa+1qTJ87rL
-CiA1Lsa+1qS1x9XKCiA2LsP3z7jA4NXKCiA3Ltfct9bA4NXKCiA4Ls/WvfDVygogOS7S+NDQ1coK
-IDEwLsbaxKm197vjCiAxMS7G2r3hKNTCveEpCgoKoa2hraGtoa25psTcz+7U2rTLwdC+2bK7zeqj
-rL/J08q8/sGqz7XXydGvuPy24M/qx+mhowoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhpcyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVk
-IGJ5OiBJQk0gTGludXggVHV0b3JpYWxzCkZyZWUgTGludXggdHV0b3JpYWwgcHJlc2VudGVkIGJ5
-IERhbmllbCBSb2JiaW5zLCBQcmVzaWRlbnQgYW5kIENFTyBvZgpHZW5Ub28gdGVjaG5vbG9naWVz
-LiBMZWFybiBldmVyeXRoaW5nIGZyb20gZnVuZGFtZW50YWxzIHRvIHN5c3RlbQphZG1pbmlzdHJh
-dGlvbi5odHRwOi8vYWRzLm9zZG4uY29tLz9hZF9pZBQ3MCZhbGxvY19pZDYzOCZvcD1jbGljawpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpLZXJuZWwtamFu
-aXRvci1kaXNjdXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1kaXNjdXNzQGxpc3RzLnNv
-dXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5m
-by9rZXJuZWwtamFuaXRvci1kaXNjdXNz
+Hi,
+
+1.  What's this trix_boot.h file in here for?
+
+
+On Sat, 27 Mar 2004 13:17:05 +0800 Tony Breeds wrote:
+
+| diff -X dontdiff -purN 2.6.4.clean/sound/oss/trix_boot.h 2.6.4.kj_func/sound/oss/trix_boot.h
+| --- 2.6.4.clean/sound/oss/trix_boot.h	1970-01-01 10:00:00.000000000 +1000
+| +++ 2.6.4.kj_func/sound/oss/trix_boot.h	2004-03-26 14:32:44.000000000 +1100
+| @@ -0,0 +1,2 @@
+| +static unsigned char * trix_boot = NULL;
+| +static int trix_boot_len = 0;
+
+
+| diff -X dontdiff -purN 2.6.4.clean/sound/oss/vwsnd.c 2.6.4.kj_func/sound/oss/vwsnd.c
+| --- 2.6.4.clean/sound/oss/vwsnd.c	2004-01-18 17:51:36.000000000 +1100
+| +++ 2.6.4.kj_func/sound/oss/vwsnd.c	2004-03-26 14:39:46.000000000 +1100
+| @@ -195,14 +195,14 @@ static void dbgassert(const char *fcn, i
+|  
+|  #define ASSERT(e)      ((e) ? (void) 0 : dbgassert(__FUNCTION__, __LINE__, #e))
+|  #define DBGDO(x)            x
+| -#define DBGX(fmt, args...)  (in_interrupt() ? 0 : printk(KERN_ERR fmt, ##args))
+| -#define DBGP(fmt, args...)  (DBGX(__FUNCTION__ ": " fmt, ##args))
+| -#define DBGE(fmt, args...)  (DBGX(__FUNCTION__ fmt, ##args))
+| +#define DBGX(fmt, args...)  (in_interrupt() ? 0 : printk(KERN_ERR fmt , ##args))
+| +#define DBGP(fmt, args...)  (DBGX("%s: " fmt, __FUNCTION__ , ##args))
+| +#define DBGE(fmt, args...)  (DBGX("%s" fmt, __FUNCTION__ , ##args))
+|  #define DBGC(rtn)           (DBGP("calling %s\n", rtn))
+|  #define DBGR()              (DBGP("returning\n"))
+| -#define DBGXV(fmt, args...) (shut_up ? 0 : DBGX(fmt, ##args))
+| -#define DBGPV(fmt, args...) (shut_up ? 0 : DBGP(fmt, ##args))
+| -#define DBGEV(fmt, args...) (shut_up ? 0 : DBGE(fmt, ##args))
+| +#define DBGXV(fmt, args...) (shut_up ? 0 : DBGX(fmt , ##args))
+| +#define DBGPV(fmt, args...) (shut_up ? 0 : DBGP(fmt , ##args))
+| +#define DBGEV(fmt, args...) (shut_up ? 0 : DBGE(fmt , ##args))
+
+2.  Some of these aren't related to $SUBJECT (__FUNCTION__), but are
+correct IIRC (for some versions of gcc).  Can someone confirm that?
+
+3.  In a few cases, I noticed the addition of KERN_xyz levels to
+printk() calls.  These are also not related to $SUBJECT so they
+should be separate patches.  Furthermore, addition of a KERN_level
+removes the ability to use the "default console log level" since
+that applies only if the message doesn't have a log level, and
+the author might actually want to use a default log level instead
+of specifying one.
+
+--
+~Randy
+(Again.  Sometimes I think ln -s /usr/src/linux/.config .signature)
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
