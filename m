@@ -1,68 +1,37 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sat, 14 Aug 2004 18:48:47 +0000
-Subject: Re: [Kernel-janitors] [PATCH] dvb/av7110: replace schedule_timeout()
-Message-Id: <20040814184847.GG1756@stro.at>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 20 Aug 2004 19:00:41 +0000
+Subject: [Kernel-janitors] [patch 6/12] pci_dev_b to list_for_each_entry:
+Message-Id: <20040820190041.6FA991ED3B@trashy.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============025855274717532684=="
+Content-Type: multipart/mixed; boundary="===============52780768587964833=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============025855274717532684==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============52780768587964833==
 
-On Mon, 26 Jul 2004, Nishanth Aravamudan wrote:
+--- kjt2/arch/ppc64/kernel/pSeries_pci.c	2004-08-20 18:58:55.000000000 +0200
++++ kjt2-lfe/arch/ppc64/kernel/pSeries_pci.c	2004-08-20 20:01:09.000000000 +0200
+@@ -584,7 +584,7 @@
+ void __devinit pcibios_fixup_bus(struct pci_bus *bus)
+ {
+ 	struct pci_controller *hose = PCI_GET_PHB_PTR(bus);
+-	struct list_head *ln;
++	struct pci_dev *dev;
+ 
+ 	/* XXX or bus->parent? */
+ 	struct pci_dev *dev = bus->self;
+@@ -626,8 +626,7 @@
+ 	if (!pci_probe_only)
+ 		return;
+ 
+-	list_for_each(ln, &bus->devices) {
+-		struct pci_dev *dev = pci_dev_b(ln);
++	list_for_each_entry(dev, &bus->devices, bus_list) {
+ 		if ((dev->class >> 8) != PCI_CLASS_BRIDGE_PCI)
+ 			pcibios_fixup_device_resources(dev, bus);
+ 	}
 
-> I would appreciate any comments from the janitors list.
-> 
-> Thanks,
-> Nish
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Replace dvb_delay() with msleep() to guarantee the
-> task delays the desired time.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> 
-> --- linux-vanilla/drivers/media/dvb/ttpci/av7110.c	2004-06-16 05:19:37.000000000 +0000
-> +++ linux-dev/drivers/media/dvb/ttpci/av7110.c	2004-07-02 18:47:02.000000000 +0000
-> @@ -89,7 +89,7 @@ static void recover_arm(struct av7110 *a
->  	DEB_EE(("av7110: %p\n",av7110));
->  
->  	av7110_bootarm(av7110);
-> -        dvb_delay(100); 
-> +        msleep(100); 
-one of the rare trailing space.
->          restart_feeds(av7110);
->  	av7110_fw_cmd(av7110, COMTYPE_PIDFILTER, SetIR, 1, av7110->ir_config);
->  }
-> @@ -1510,7 +1510,7 @@ err3:
->  	av7110->arm_rmmod = 1;
->  	wake_up_interruptible(&av7110->arm_wait);
->  	while (av7110->arm_thread)
-> -		dvb_delay(1);
-> +		msleep(1);
->  err2:
->  	av7110_ca_exit(av7110);
->  	av7110_av_exit(av7110);
-> @@ -1546,7 +1546,7 @@ static int av7110_detach (struct saa7146
->  	wake_up_interruptible(&av7110->arm_wait);
->  
->  	while (av7110->arm_thread)
-> -		dvb_delay(1);
-> +		msleep(1);
->  
->  	dvb_unregister(av7110);
->  	
-
-
-corrected for next kjt.
-a++ maks
-
-
---===============025855274717532684==
+--===============52780768587964833==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============025855274717532684==--
+--===============52780768587964833==--
