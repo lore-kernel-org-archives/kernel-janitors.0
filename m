@@ -1,63 +1,60 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 19 Mar 2005 19:38:58 +0000
-Subject: [KJ] [UPDATE PATCH 1/16] drivers/net/8139cp: Use the DMA_{64,
-Message-Id: <20050319193858.GA3306@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 03 Mar 2005 18:50:28 +0000
+Subject: [KJ] [PATCH] char/tty_io: replace schedule_timeout() with
+Message-Id: <20050303185028.GK11600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30259998947604161=="
+Content-Type: multipart/mixed; boundary="===============83899703256891534=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============30259998947604161==
+--===============83899703256891534==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Hi,
 
-Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Please consider applying.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Description: Use msleep_interruptible() instead of schedule_timeout() in
+send_break() to guarantee the task delays as expected. Change
+@duration's units to milliseconds, and modify arguments in callers
+appropriately. Patch is compile-tested.
 
---- linux-2.6.11.orig/drivers/net/8139cp.c	2005-03-02 12:50:29.000000000 +0100
-+++ linux-2.6.11/drivers/net/8139cp.c	2005-03-19 20:33:01.000000000 +0100
-@@ -60,6 +60,7 @@
- #include <linux/etherdevice.h>
- #include <linux/init.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
- #include <linux/delay.h>
- #include <linux/ethtool.h>
- #include <linux/mii.h>
-@@ -1701,19 +1702,19 @@ static int cp_init_one (struct pci_dev *
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.11-kj-v/drivers/char/tty_io.c	2005-03-01 23:38:10.000000000 -0800
++++ 2.6.11-kj/drivers/char/tty_io.c	2005-03-02 14:42:04.000000000 -0800
+@@ -2171,12 +2171,11 @@ static int tiocsetd(struct tty_struct *t
+ 	return tty_set_ldisc(tty, ldisc);
+ }
  
- 	/* Configure DMA attributes. */
- 	if ((sizeof(dma_addr_t) > 4) &&
--	    !pci_set_consistent_dma_mask(pdev, 0xffffffffffffffffULL) &&
--	    !pci_set_dma_mask(pdev, 0xffffffffffffffffULL)) {
-+	    !pci_set_consistent_dma_mask(pdev, DMA_64BIT_MASK) &&
-+	    !pci_set_dma_mask(pdev, DMA_64BIT_MASK)) {
- 		pci_using_dac = 1;
- 	} else {
- 		pci_using_dac = 0;
+-static int send_break(struct tty_struct *tty, int duration)
++static int send_break(struct tty_struct *tty, unsigned int duration)
+ {
+ 	tty->driver->break_ctl(tty, -1);
+ 	if (!signal_pending(current)) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(duration);
++		msleep_interruptible(duration);
+ 	}
+ 	tty->driver->break_ctl(tty, 0);
+ 	if (signal_pending(current))
+@@ -2357,10 +2356,10 @@ int tty_ioctl(struct inode * inode, stru
+ 			 * all by anyone?
+ 			 */
+ 			if (!arg)
+-				return send_break(tty, HZ/4);
++				return send_break(tty, 250);
+ 			return 0;
+ 		case TCSBRKP:	/* support for POSIX tcsendbreak() */	
+-			return send_break(tty, arg ? arg*(HZ/10) : HZ/4);
++			return send_break(tty, arg ? arg*100 : 250);
  
--		rc = pci_set_dma_mask(pdev, 0xffffffffULL);
-+		rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
- 		if (rc) {
- 			printk(KERN_ERR PFX "No usable DMA configuration, "
- 			       "aborting.\n");
- 			goto err_out_res;
- 		}
--		rc = pci_set_consistent_dma_mask(pdev, 0xffffffffULL);
-+		rc = pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
- 		if (rc) {
- 			printk(KERN_ERR PFX "No usable consistent DMA configuration, "
- 			       "aborting.\n");
+ 		case TIOCMGET:
+ 			return tty_tiocmget(tty, file, p);
 
---===============30259998947604161==
+--===============83899703256891534==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30259998947604161==--
+--===============83899703256891534==--
