@@ -1,48 +1,95 @@
-From: maks attems <janitor@sternwelten.at>
-Date: Tue, 15 Jun 2004 12:54:18 +0000
-Subject: Re: [Kernel-janitors] [akpm@osdl.org: make buildcheck output]
-Message-Id: <20040615125418.GB1535@sputnik.stro.at>
+From: MJK <mkemp@cs.nmsu.edu>
+Date: Tue, 08 Jun 2004 07:54:13 +0000
+Subject: [Kernel-janitors] [REDIFF] new.linux-2.6.7-rc2/fs/cifs/cifsfs.c
+Message-Id: <Pine.LNX.4.58.0406080152230.31755@mustang.cs.nmsu.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95869861214805885=="
+Content-Type: multipart/mixed; boundary="===============47688355819745865=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040611143715.S21045@build.pdx.osdl.net>
-In-Reply-To: <20040611143715.S21045@build.pdx.osdl.net>
 To: kernel-janitors@vger.kernel.org
 
---===============95869861214805885==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, 11 Jun 2004, Chris Wright wrote:
-
-> Digging through some old stuff and found this went to wrong list last
-> week.
-> 
-> thanks,
-> -chris
-> 
-> ----- Forwarded message from Andrew Morton <akpm@osdl.org> -----
-> 
-> Date: Fri, 4 Jun 2004 19:21:06 -0700
-> From: Andrew Morton <akpm@osdl.org>
-> X-Mailer: Sylpheed version 0.9.7 (GTK+ 1.2.10; i386-redhat-linux-gnu)
-> To: kernel-janitor-discuss@lists.sourceforge.net
-> Subject: make buildcheck output
-> 
-> 
-> Here's an analysis from Keith about the (extensive) amount of bugs which
-> `make buildcheck' reports.
-> 
-> Most of them should be fairly simple to fix, if someone has the time.
-> 
-> Thanks.
-
-ok thanks, added to the world visible TODO list.
-
-a++ maks
+--===============47688355819745865==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
 
---===============95869861214805885==
+Description  : Audits kernel_thread() and does a cosmetic change to the
+way errors are handled with (hopefully) helpfull error messages.
+
+Signed-off-by: MJK <mkemp@cs.nmsu.edu>
+
+--- old.linux-2.6.7-rc2/fs/cifs/cifsfs.c	2004-06-02 02:58:58.000000000 -0600
++++ new.linux-2.6.7-rc2/fs/cifs/cifsfs.c	2004-06-08 01:51:19.572543112 -0600
+@@ -761,25 +761,53 @@
+
+ 	rc = cifs_init_inodecache();
+ 	if (!rc) {
+-		rc = cifs_init_mids();
+-		if (!rc) {
+-			rc = cifs_init_request_bufs();
+-			if (!rc) {
+-				rc = register_filesystem(&cifs_fs_type);
+-				if (!rc) {
+-					kernel_thread(cifs_oplock_thread, NULL,
+-						CLONE_FS | CLONE_FILES | CLONE_VM);
+-					return rc; /* Success */
+-				} else
+-					cifs_destroy_request_bufs();
+-			}
+-			cifs_destroy_mids();
+-		}
+-		cifs_destroy_inodecache();
++		printk(KERN_ERR "cifs_init_inodecache, error code = %d.\n", rc);
++		goto error_init;
+ 	}
++
++	rc = cifs_init_mids();
++	if (!rc) {
++		printk(KERN_ERR "cifs_init_mids, error code = %d\n.", rc);
++		goto error_init_mids;
++	}
++
++	rc = cifs_init_request_bufs();
++	if (!rc) {
++		printk(KERN_ERR "cifs_init_request_bufs, error code = %d\n.", rc);
++		goto error_request;
++	}
++
++	rc = register_filesystem(&cifs_fs_type);
++	if (!rc) {
++		printk(KERN_ERR "Couldn't register cifs, error code = %d\n.", rc);
++		goto error_reg_fs;
++	}
++
++	rc = kernel_thread(cifs_oplock_thread, NULL, CLONE_FS | CLONE_FILES | CLONE_VM);
++	if (!rc) {
++		printk(KERN_ERR "Couldn't spawn cifs thread, error code = %d\n.", rc);
++		goto error_kt;
++	}
++
++	return rc;
++
++error_kt:
++
++error_reg_fs:
++	cifs_destroy_request_bufs();
++
++error_request:
++	cifs_destroy_mids();
++
++error_init_mids:
++	cifs_destroy_inodecache();
++
++error_init:
++
+ #ifdef CONFIG_PROC_FS
+ 	cifs_proc_clean();
+ #endif
++
+ 	return rc;
+ }
+
+
+
+--===============47688355819745865==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +100,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95869861214805885==--
+--===============47688355819745865==--
