@@ -1,66 +1,203 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sun, 21 Mar 2004 01:14:06 +0000
-Subject: [Kernel-janitors] [patch 2.6.4] removing sleep_on from
-Message-Id: <200403210214.06325.domen@coderock.org>
+From: "Your-Info.Net" <reply@onlineadsolutions.com>
+Date: Wed, 24 Mar 2004 05:30:11 +0000
+Subject: Low on Ink ? Try our refill service.
+Message-Id: <20040324003011.dohguqbsek@juststar.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=_45b658a687f7857698d58f7cb2b455cb"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200403202233.37294.domen@coderock.org>
-In-Reply-To: <200403202233.37294.domen@coderock.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi.
 
-Only compile tested. Any feedback welcome.
+This is a MIME encoded message.
 
---- c/drivers/usb/serial/whiteheat.c	2004-02-04 10:06:59.000000000 +0100
-+++ a/drivers/usb/serial/whiteheat.c	2004-03-21 02:09:15.000000000 +0100
-@@ -1132,6 +1132,7 @@ static int firm_send_command (struct usb
- 	__u8 *transfer_buffer;
- 	int retval = 0;
- 	unsigned long flags;
-+	DECLARE_WAITQUEUE(wait, current);
- 
- 	dbg("%s - command %d", __FUNCTION__, command);
- 
-@@ -1146,7 +1147,6 @@ static int firm_send_command (struct usb
- 	command_port->write_urb->transfer_buffer_length = datasize + 1;
- 	command_port->write_urb->dev = port->serial->dev;
- 	retval = usb_submit_urb (command_port->write_urb, GFP_KERNEL);
--	spin_unlock_irqrestore(&command_info->lock, flags);
- 	if (retval) {
- 		dbg("%s - submit urb failed", __FUNCTION__);
- 		goto exit;
-@@ -1154,11 +1154,23 @@ static int firm_send_command (struct usb
- 
- 	/* wait for the command to complete */
- 	timeout = COMMAND_TIMEOUT;
--	while (timeout && (command_info->command_finished = FALSE)) {
--		timeout = interruptible_sleep_on_timeout (&command_info->wait_command, timeout);
-+	add_wait_queue(&command_info->wait_command, &wait);
-+	for (;;) {
-+		set_task_state(current, TASK_INTERRUPTIBLE);
-+		if (command_info->command_finished != FALSE)
-+			break;
-+		spin_unlock_irqrestore(&command_info->lock, flags);
-+		timeout = schedule_timeout(timeout);
-+		if (signal_pending(current)) {
-+			remove_wait_queue(&command_info->wait_command, &wait);
-+			return -EINTR;
-+		}
-+		spin_lock_irqsave(&command_info->lock, flags);
-+		if (!timeout)
-+			break;
- 	}
--
--	spin_lock_irqsave(&command_info->lock, flags);
-+	set_task_state(current, TASK_RUNNING);
-+	remove_wait_queue(&command_info->wait_command, &wait);
- 
- 	if (command_info->command_finished = FALSE) {
- 		dbg("%s - command timed out.", __FUNCTION__);
+--=_45b658a687f7857698d58f7cb2b455cb
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+
+
+Absolutely no cost on Shipping orders over $50 or more !
+
+Evoclix's normal prices save you up to 85% on inkjet cartridges and laser printer accesseries.  Now get Free Shipping.  
+
+Proceed with the link below to start saving!
+http://juststar.net/dbm83/l.php?1153&50016221
+
+Why Evoclix.com?
+
+
+
+1.  Save up to 85% off store prices.
+2.  We offer a 100% guarantee on everything we sell.
+3.  No cost on shipping orders over $50.
+4.  We're nice, friendly people. :)
+
+
+http://juststar.net/dbm83/l.php?1153&50016221
+
+
+--------------------------------------------
+Switch to HTML version:
+http://juststar.net/dbm83/msgtype.php?type=1&email=50016221&emailing=502
+--------------------------------------------
+Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed here http://juststar.net/dbm83/un.php?502&50016221 Third-party offers contained in this email are the sole responsibili
+ty of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
+
+
+--=_45b658a687f7857698d58f7cb2b455cb
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+
+<html>
+<body>
+<!--
+EvoClix is dedicated to supplying the Best Replacement Cartridge on the market=
+ today.
+
+Under normal use and storage, this product is
+assured to perform as well as or better than the
+Original Equipment Manufacturer's (OEM) product.
+
+If the product does not perform to our specifications,
+you may return the product for a replacement or
+refund.-->
+
+<p align=3D"center"><a href=3D"http://juststar.net/dbm83/l.php?1154&50016221=
+">
+<img border=3D"0" src=3D"http://www.your-info.cc/images/img_tropic/ad12.jpg=
+" width=3D"559" height=3D"365"></a></p>
+
+
+
+<center><br><br><font color=3D#000000>
+<hr width=3D250>Switch to <a href=3D"http://juststar.net/dbm83/msgtype.php?type=
+=3D0&email=3D50016221&emailing=3D502">TEXT</a> version
+
+<hr width=3D250>
+<font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
+<form method=3D"GET" action=3D"http://juststar.net/dbm83/forw_friend.php" target=
+=3D"ies_f2f_window">
+<b>Forward this mail to a friend:</b><br>
+Friend's emails:
+<input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
+"> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
+ value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"502=
+">
+</font></form>
+<hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
+>
+<p><font size=3D"2">Your privacy is extremely important to us. You requested=
+ to=20
+receive this mailing by subscribing to one or more of our offers. To leave our=
+ lists Proceed <a href=3D"http://juststar.net/dbm83/un.php?502&50016221">here=
+</a>.=20
+Third-party offers contained in this email are the sole responsibility of the=
+=20
+offer originator. If you would like to mail your unsubscribe request mail to=
+: Your-Info, Inc 9140 Bonita Beach Rd.
+Suite 144 Bonita Springs, FL 34135.</font></p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<img src=3D"http://juststar.net/dbm83/opened.php?502&50016221" width=3D1 height=
+=3D1></font></font></center></body></html>
+atcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekat
+
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+
+--=_45b658a687f7857698d58f7cb2b455cb--
+
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: IBM Linux Tutorials
+Free Linux tutorial presented by Daniel Robbins, President and CEO of
+GenToo technologies. Learn everything from fundamentals to system
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
