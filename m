@@ -1,44 +1,42 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 25 Jan 2005 20:45:38 +0000
-Subject: Re: [KJ] help
-Message-Id: <20050125204538.GG12552@sputnik.stro.at>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:08:10 +0000
+Subject: [KJ] [PATCH 1/53] acornfb: Clean up printk()'s in
+Message-Id: <20050125230808.10418.32680.80704@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81527977178323763=="
+Content-Type: multipart/mixed; boundary="===============064348943728215424=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <D3D8FDAE2C17604BA9FC2A738D5B1C28149104@blr-m2-msg.wipro.com>
-In-Reply-To: <D3D8FDAE2C17604BA9FC2A738D5B1C28149104@blr-m2-msg.wipro.com>
 To: kernel-janitors@vger.kernel.org
 
---===============81527977178323763==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============064348943728215424==
 
-On Tue, 25 Jan 2005, chidanand.pattan@wipro.com wrote:
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/acornfb.c
 
-> I need to know how to handle the buffer pool management in Linux.
-> 
-> Basically I want to write some os independent code for buffer pool
-> management in various OSs'.
-> 
-> So if I want to create a memeroy partition, addition of mem pool to the
-> partition, etc...which r the APIs' are available. If not how can I go
-> about it.
-> 
-> N what is memeroy map of Linux so that system unknown memory area I get
-> for this purpose.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-you posted to a wrong mailing list,
-this one is about janitorial patches.
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/acornfb.c linux-2.6.11-rc2-mm1/drivers/video/acornfb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/acornfb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/acornfb.c	2005-01-24 19:07:02.024263887 -0500
+@@ -1277,7 +1277,7 @@
+ 		mb_freed += PAGE_SIZE / 1024;
+ 	}
+ 
+-	printk("acornfb: freed %dK memory\n", mb_freed);
++	pr_info("acornfb: freed %dK memory\n", mb_freed);
+ }
+ 
+ static int __init acornfb_probe(struct device *dev)
+@@ -1423,7 +1423,7 @@
+ 	 * generic database.
+ 	 */
+ 	if (rc == 0) {
+-		printk("Acornfb: no valid mode found\n");
++		printk(KERN_ERR "Acornfb: no valid mode found\n");
+ 		return -EINVAL;
+ 	}
+ 
 
-you'll find infos on http://www.kernelnewbies.org/
-books and other ressource about kernel hacking.
-have fun.
-
---
-maks
-
-
---===============81527977178323763==
+--===============064348943728215424==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81527977178323763==--
+--===============064348943728215424==--
