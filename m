@@ -1,62 +1,49 @@
-From: Felipe W Damasio <felipewd@terra.com.br>
-Date: Wed, 30 Jun 2004 12:58:05 +0000
-Subject: Re: [Kernel-janitors] Re: set_current_state
-Message-Id: <40E2B8DD.4000504@terra.com.br>
+From: MJK <mkemp@cs.nmsu.edu>
+Date: Sun, 06 Jun 2004 03:25:47 +0000
+Subject: [Kernel-janitors] [PATCH]
+Message-Id: <Pine.LNX.4.58.0406052118390.17753@mustang.cs.nmsu.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36987374235581227=="
+Content-Type: multipart/mixed; boundary="===============33358419602886036=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040627223356.GA1653@masina>
-In-Reply-To: <20040627223356.GA1653@masina>
 To: kernel-janitors@vger.kernel.org
 
---===============36987374235581227==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============33358419602886036==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-Anupam Kapoor wrote:
-> can you please elaborate what you mean here, i don't understand the
-> connotations sorry !
 
-	There's the classic example that rml used when he wrote a few 
-explanation notes of when set_current_state should be used.
+	So, I'm wondering if this is the best choice or not. Shutting down
+the whole i2o system because we can't spawn a kernel thread may not be
+totally fair to the other IOP's. Then again, if we can't spawn a kernel
+thread we probably have other, bigger things to worry about.
+	Opinions?
 
-	If we're setting the current task to TASK_* (other than RUNNING) and 
-after that, manipulating some variable:
+--MJK
 
-	current->state = TASK_INTERRUPTIBLE;
-	if (doritos)
-	{
-		...
-	}
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-	And on some of other code path we're checking to see if we're in 
-TASK_INTERRUPTIBLE to also use the same variable:
+Description: Audited kernel_thread() in i2o_core_init().
 
-	if (current->state == TASK_INTERRUPTIBLE)
-	{
-		do-something-to-doritos;
-	}
+	Signed-off-by: MJK <mkemp@cs.nmsu.edu>
 
-	Then, in this case, we need a memory barrier the guarantee that the 
-doritos variable will have the state set correctly _before_ manipulating it.
+--- new.linux-2.6.7-rc2/drivers/message/i2o/i2o_core.c	2004-06-05 20:55:42.798577880 -0600
++++ old.linux-2.6.7-rc2/drivers/message/i2o/i2o_core.c	2004-06-02 02:58:02.000000000 -0600
+@@ -2233,13 +2233,7 @@
 
-	But again, state setting that are still open coded are not that simple 
-to see if we need set_current_state.
+ 		/* Create a kernel thread to deal with dynamic LCT updates */
+ 		iop->lct_pid = kernel_thread(i2o_dyn_lct, iop, CLONE_SIGHAND);
+-
+-		if (iop->lct_pid < 0) {
+-			printk(KERN_ERR "Couldn't spawn thread for %s.\n", iop->name);
+-			i2o_sys_shutdown();
+-			return;
+-		}
+-
++
+ 		/* Update change ind on DLCT */
+ 		iop->dlct->change_ind = iop->lct->change_ind;
 
-	Most places it's not the end of the world to have an useless memory 
-barrier, but if we could things right and save an useless 
-instruction..it'd be better.
 
-	In short: If in doubt, always use set_current_state. :-)
-
-	Cheers,
-
-Felipe
--- 
-It's most certainly GNU/Linux, not Linux. Read more at
-http://www.gnu.org/gnu/why-gnu-linux.html
-
---===============36987374235581227==
+--===============33358419602886036==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36987374235581227==--
+--===============33358419602886036==--
