@@ -1,69 +1,48 @@
 From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 08:44:54 +0000
-Subject: [KJ] [PATCH] drivers/isdn/hardware/avm/*: convert to
-Message-Id: <20050208084454.GH31996@rhum.iomeda.fr>
+Date: Mon, 14 Feb 2005 15:09:09 +0000
+Subject: [KJ] [PATCH] drivers/net/sk98lin/* : pci_request_regions
+Message-Id: <20050214150909.GK20620@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="opg8F0UgoHELSI+9"
+Content-Type: multipart/mixed; boundary="mXDO3udm/xYWQeMQ"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---opg8F0UgoHELSI+9
+--mXDO3udm/xYWQeMQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Description:
-convert from pci_module_init to pci_register_driver
+description:
+If PCI request regions fails, then someone else is using the
+hardware we wish to use. For that one case, calling
+pci_disable_device() is rather rude.
+See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
 
 Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
 
---opg8F0UgoHELSI+9
+
+--mXDO3udm/xYWQeMQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_isdn_hardware_avm.patch"
+	filename="pci_disable-linux-2.6.11-rc4_drivers_net_sk98lin.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/b1pci.c linux-2.6.11-rc3/drivers/isdn/hardware/avm/b1pci.c
---- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/b1pci.c	2004-12-24 22:33:49.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/isdn/hardware/avm/b1pci.c	2005-02-07 09:39:27.000000000 +0100
-@@ -391,7 +391,7 @@ static int __init b1pci_init(void)
- 		strcpy(rev, "1.0");
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/sk98lin/skge.c linux-2.6.11-rc4/drivers/net/sk98lin/skge.c
+--- linux-2.6.11-rc4-vanilla/drivers/net/sk98lin/skge.c	2005-02-14 09:03:53.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/sk98lin/skge.c	2005-02-14 14:41:03.000000000 +0100
+@@ -332,7 +332,8 @@ int SkGeInitPCI(SK_AC *pAC)
+  out_release:
+ 	pci_release_regions(pdev);
+  out_disable:
+-	pci_disable_device(pdev);
++	if( retval == 2 ) 
++		pci_disable_device(pdev);
+ 	return retval;
+ }
  
- 
--	err = pci_module_init(&b1pci_pci_driver);
-+	err = pci_register_driver(&b1pci_pci_driver);
- 	if (!err) {
- 		strlcpy(capi_driver_b1pci.revision, rev, 32);
- 		register_capi_driver(&capi_driver_b1pci);
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/c4.c linux-2.6.11-rc3/drivers/isdn/hardware/avm/c4.c
---- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/c4.c	2004-12-24 22:34:58.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/isdn/hardware/avm/c4.c	2005-02-07 09:39:27.000000000 +0100
-@@ -1288,7 +1288,7 @@ static int __init c4_init(void)
- 	} else
- 		strcpy(rev, "1.0");
- 
--	err = pci_module_init(&c4_pci_driver);
-+	err = pci_register_driver(&c4_pci_driver);
- 	if (!err) {
- 		strlcpy(capi_driver_c2.revision, rev, 32);
- 		register_capi_driver(&capi_driver_c2);
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/t1pci.c linux-2.6.11-rc3/drivers/isdn/hardware/avm/t1pci.c
---- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/t1pci.c	2004-12-24 22:34:00.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/isdn/hardware/avm/t1pci.c	2005-02-07 09:39:27.000000000 +0100
-@@ -241,7 +241,7 @@ static int __init t1pci_init(void)
- 	} else
- 		strcpy(rev, "1.0");
- 
--	err = pci_module_init(&t1pci_pci_driver);
-+	err = pci_register_driver(&t1pci_pci_driver);
- 	if (!err) {
- 		strlcpy(capi_driver_t1pci.revision, rev, 32);
- 		register_capi_driver(&capi_driver_t1pci);
 
---opg8F0UgoHELSI+9
+--mXDO3udm/xYWQeMQ
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -74,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---opg8F0UgoHELSI+9--
+--mXDO3udm/xYWQeMQ--
