@@ -1,38 +1,54 @@
-From: Francois Romieu <romieu@fr.zoreil.com>
-Date: Tue, 24 Feb 2004 22:58:50 +0000
-Subject: Re: [Kernel-janitors] Re: 2.6.1: net/ipv4/fib_hash.c: check
-Message-Id: <20040224235850.A24377@electric-eye.fr.zoreil.com>
+From: Ron Gage <ron@rongage.org>
+Date: Fri, 13 Feb 2004 13:36:40 +0000
+Subject: [Kernel-janitors] [PATCH] - 2.6.2 - skbuff.h - compiler cleanup
+Message-Id: <200402130836.40521.ron@rongage.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Boundary-00=_oLNLA551Ir2M5QX"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040217095525.GD29263@conectiva.com.br>
-In-Reply-To: <20040217095525.GD29263@conectiva.com.br>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Randy.Dunlap <rddunlap@osdl.org> :
-[...]
-> Hm, well, ok .... I've just reviewed 15 emails about ipv4/fib_hash.c,
-> and (sadly ?) I've come to the conclusion that Walter's very first
-> patch (at least first that I see now) is the best one I've seen for
-> this.  However, I'm probably missing something, so tell me what/why...
 
-If the second allocation (kmalloc) in the function fails, the first one
-(slab) is not freed. Even if it's right, it is not completely kosher/easy to
-check (it depends on the behavior of some code in a different function).
-It can be done with a "slab_free_needed" variable but it is not exactly
-pretty.
+--Boundary-00=_oLNLA551Ir2M5QX
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-OTOH, if the conditional slab allocation is done after the kmalloc, one
-can always free the previously/unconditionally kmalloced area. It is
-self-contained and shows no dependancy on external code.
+This patch eliminates "parameter defined but not used" warnings.
 
-The virtues of gotos and single return point in a function are a different
-story.
+-- 
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
 
---
-Ueimor
+
+--Boundary-00=_oLNLA551Ir2M5QX
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="skbuff.h.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="skbuff.h.diff"
+
+--- linux-2.6.2.orig/include/linux/skbuff.h	2004-02-03 22:43:56.000000000 -0500
++++ linux-2.6.2/include/linux/skbuff.h	2004-02-13 08:10:47.000000000 -0500
+@@ -1149,6 +1149,7 @@
+ 
+ static inline void kunmap_skb_frag(void *vaddr)
+ {
++	vaddr = vaddr;
+ 	kunmap_atomic(vaddr, KM_SKB_DATA_SOFTIRQ);
+ #ifdef CONFIG_HIGHMEM
+ 	local_bh_enable();
+
+--Boundary-00=_oLNLA551Ir2M5QX
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--Boundary-00=_oLNLA551Ir2M5QX--
