@@ -1,31 +1,47 @@
-From: "Ruth W. Cordero" <r_cordero_fa@cimage.co.uk>
-Date: Mon, 27 Dec 2004 05:43:07 +0000
-Subject: Get Cia.lis soft"tabs - no prior prescription needed
-Message-Id: <f02001c4ebdc$37b235e8$0393d726@staplerbauer.de>
+From: "Dong" <Dong@yahoo.com>
+Date: Sat, 18 Dec 2004 13:51:29 +0000
+Subject: =?GB2312?B?UmU6yfqy+tbG1OzStWVycNS0tPrC6y4uLjIxOjUxOjE2?=
+Message-Id: <E1CfezF-0008JW-DM@sc8-sf-mx1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-<html>
-New ClALlS softtabs = lNSTANT R0CKHARD ERECTl0NS<p>
-Simply disolve HALF A PlLL under your tongue 10min before action,<br>
-for results that last all weekend.<p>
-Normal retail is $19/PlLL<br>
-<a href="http://jqlklsdbexgqh.rx-luv.com/d/">0rder from us today at the price of $3.05</a>
-<p><br><br><br><br><br><br><br><br><br>
-<a href="http://lruqxvufae.rx-luv.com/d/o.php">not interested(0pt-0ut)</a>
-</html>
-
-
-
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now. 
-http://productguide.itmanagersjournal.com/
-_______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+CiAgICC7ttOtt8POyqO6aHR0cDovL3Bvd2VyZXJwLjEyNi5jb20KCiAgICBQIG8gdyBlIHIgLSBF
+UlAgVjMuMM+1zbPKx9K7zNe8r87vwfehotbG1OyhorLGzvGhotTaz9+31s72oaIKvvay39ans9bT
+2tK7zOW1xMirw+a53MDt0MXPos+1zbOjrMv8sPy6rLy4yq649rj319S2wMGitcS5psTcxKMKv+mj
+rLj3xKO/6dauvOTO3rfsway906Osyv2+3bjftsi5ss/toaMKCiAgICBQIG8gdyBlIHIgLSBFUlAg
+VjMuMM+1zbPKytPD09qwtLaptaXJ+rL6oaKxuLv1yfqy+qGi1ti4tMn6svqhogrB97PMyfqy+rXI
+yfqy+sSjyr2ho82ouf2x6te8usvQxMSjv+nNrLK7zazQ0NK1zNi147XEuabE3MSjCr/pz+C7pdfp
+us+jrM6qsrvNrNDQ0rWhorK7zazB7NPytcTTw7unzOG5qbK7zay1xL3ivva3vbC4oaMKCiAgICDT
+w7unv8nS1Lj5vt2498bz0rW1xMq1vMrH6b/2o6y2qNbG19S8urXE0rXO8cH3s8yho8HtzeIKo6zP
+tc2z0rLOqtPDu6fM4bmpwcvX1NDQyei8xqGiv6q3orXEvdO/2qOs08O7p7/J0tS4+b7d0OjSqqOs
+CsD708PPtc2zzOG5qbXExKOw5b+qt6Kz9tPQ19S8uszYteO1xNK1zvG5psTcxKO/6aGjCgogICAg
+zazKsdKq18XW2Na4s/a1xMrHLFAtby13LWUtciBFUlAgVjMuMLXEzsS1tdfKwc+3x7OjyKsssPzA
+qMq508MKytay4SzJ6LzGzsS1tSzJz8/fytay4SzQ6Mfzt9bO9s7EtbUsw7+49sSjv+nEo9DNzbws
+wfezzM28LCDJ9QrWwcrHsuLK1M7EtbUsYnVnvMfCvLXI0rvTpr7jyKsuIM7EtbXXysHP19y5stPQ
+NDcwTdauvt4hCgogICAgIAogICAgsb7Ptc2zysrTw9PayOfPwry41tbH6b/2OiAKCiAgICAxOtPQ
+0ru2qLy8yvXE3MGmtcTW0LTz0M3J+rL61sbU7NDUxvPStaOu1eLR+cbz0rW7+bG+trzT0NfUvLq1
+xArI7bz+1tDQxLrNvLzK9bK/w8Us09C1xLy8yvXE3MGmsqKyu8j1LMbz0rXT0MHL1LSzzNDyLL7N
+z+C1sdPa1cbO1cHLCtfUvLrD/NTLo6y+zbK708PDv7X31fvSu7j20rXO8bu3vdqjrLa80OjSqs/y
+yO28/rmry764ttSpzffHrqOuIAoKICAgIDKjusjtvP65q8u+o67T0NK7tqi/zbun18rUtKOstau/
+4NPaw7vT0NfUvLq1xLL6xrejrtPJ09qxvs+1zbPKygrTptDUt8ezo8e/o6zKtcqps8mxvrrctc2j
+rNXi0fnG89K1vs21yNPaw+Kz/cHLv6q3orPJsb6jrNLUvc+1zbXEvNu48QqjrNT2x7/By9fUvLq1
+xL661fnBpqOu0qrWqrXAo6y/qrei0rvM17PJyuy1xEVSUM+1zbOjrMO709DI/cTqtcTKsbzkCsSl
+us+6zby4sNnN8rXEzbbI66OsuPmxvsrHsru/ycTctcSjrgoKICAgIDOjutGnz7Cyzr+808PNvqOu
+sb7Ptc2zzsS1tdfKwc/G68iro6zKx9Gnz7BFUlDLvM/rtcTT0NCnvd2+tizV4grSu7Xjo6zO3tDr
+17jQ8KOsysLKtcnPo6y5usLyzsS1tdfKwc+1xLHIubrC8rPM0PK1xMjLu7nSqrbgo6EKCiAgICCx
+vsjL1qPW2LPQxbUssb7Iy8v5z/rK27XERVJQz7XNsyyw/LqsyKuyv7XE1LS0+sLrLL/J0tS1scPm
+seDS67LiCsrULr3a1LzE+rTzwb+1xMjLwabO78GmvLDKsbzko6zW+sTj0rux29auwaYhCgotLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tCsjnufvE+rK70OjSqqOsx+vL5srWyb6z/aOsu/LXqreiuPjE49Do0qq1xMXz09GjrNC7
+0LujoQoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tClNGIGVtYWlsIGlzIHNwb25zb3JlZCBieSAtIFRoZSBJVCBQcm9kdWN0IEd1aWRlClJl
+YWQgaG9uZXN0ICYgY2FuZGlkIHJldmlld3Mgb24gaHVuZHJlZHMgb2YgSVQgUHJvZHVjdHMgZnJv
+bSByZWFsIHVzZXJzLgpEaXNjb3ZlciB3aGljaCBwcm9kdWN0cyB0cnVseSBsaXZlIHVwIHRvIHRo
+ZSBoeXBlLiBTdGFydCByZWFkaW5nIG5vdy4gCmh0dHA6Ly9wcm9kdWN0Z3VpZGUuaXRtYW5hZ2Vy
+c2pvdXJuYWwuY29tLwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpLZXJuZWwtamFuaXRvci1kaXNjdXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1k
+aXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
+dC9saXN0cy9saXN0aW5mby9rZXJuZWwtamFuaXRvci1kaXNjdXNz
