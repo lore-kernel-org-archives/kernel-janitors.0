@@ -1,60 +1,33 @@
-From: Greg Aumann <Greg_Aumann@sil.org>
-Date: Fri, 09 Apr 2004 12:57:39 +0000
-Subject: [Kernel-janitors] com90xx error message patch
-Message-Id: <40769DC3.9090409@sil.org>
+From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
+Date: Mon, 12 Apr 2004 17:37:36 +0000
+Subject: Re: [Kernel-janitors] com90xx error message patch
+Message-Id: <20040412143736.2d249073.lcapitulino@prefeitura.sp.gov.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------000500010506060209030607"
+Content-Type: multipart/mixed; boundary="===============88695887948909158=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <40769DC3.9090409@sil.org>
+In-Reply-To: <40769DC3.9090409@sil.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------000500010506060209030607
-Content-Type: text/plain; charset=us-ascii; format=flowed
+--===============88695887948909158==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-As there were no comments about yesterday's patch I will take it as good 
-news and continue with another similar one.
+Em Fri, 09 Apr 2004 20:57:39 +0800
+Greg Aumann <Greg_Aumann@sil.org> escreveu:
 
-This patch updates two error messages to reflect changes in the code.
+| As there were no comments about yesterday's patch I will take it as good 
+| news and continue with another similar one.
 
-The patch is against 2.6.5
+ I don't remember about your first patch, but _typically_ when there are
+no comments your patch was accepted.
 
-I have compiled it successfully.
+-- 
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
 
-comments appreciated
-
-Greg
-
---------------000500010506060209030607
-Content-Type: text/x-patch;
- name="com90xx_error_msg.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="com90xx_error_msg.patch"
-
-diff -x tags -Naur linux-2.6.5/drivers/net/arcnet/com90xx.c linux-2.6.5-kj/drivers/net/arcnet/com90xx.c
---- linux-2.6.5/drivers/net/arcnet/com90xx.c	2004-04-04 11:37:37.000000000 +0800
-+++ linux-2.6.5-kj/drivers/net/arcnet/com90xx.c	2004-04-09 20:20:40.000000000 +0800
-@@ -155,7 +155,7 @@
- 		ioaddr = *port;
- 
- 		if (!request_region(*port, ARCNET_TOTAL_SIZE, "arcnet (90xx)")) {
--			BUGMSG2(D_INIT_REASONS, "(check_region)\n");
-+			BUGMSG2(D_INIT_REASONS, "(request_region)\n");
- 			BUGMSG2(D_INIT_REASONS, "S1: ");
- 			BUGLVL(D_INIT_REASONS) numprint = 0;
- 			*port-- = ports[--numports];
-@@ -214,7 +214,7 @@
- 		BUGMSG2(D_INIT, "%lXh ", *p);
- 
- 		if (!request_mem_region(*p, BUFFER_SIZE, "arcnet (90xx)")) {
--			BUGMSG2(D_INIT_REASONS, "(check_mem_region)\n");
-+			BUGMSG2(D_INIT_REASONS, "(request_mem_region)\n");
- 			BUGMSG2(D_INIT_REASONS, "Stage 3: ");
- 			BUGLVL(D_INIT_REASONS) numprint = 0;
- 			*p-- = shmems[--numshmems];
-
---------------000500010506060209030607
+--===============88695887948909158==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------000500010506060209030607--
+--===============88695887948909158==--
