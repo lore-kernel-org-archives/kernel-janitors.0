@@ -1,33 +1,53 @@
-From: Scott Feldman <sfeldma@pobox.com>
-Date: Sat, 09 Oct 2004 21:35:50 +0000
-Subject: Re: [KJ] [RFT 2.6] pci-gart.c replace pci_find_device with
-Message-Id: <1097354748.6579.0.camel@sfeldma-mobl2.dsl-verizon.net>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 20 Oct 2004 18:51:17 +0000
+Subject: [KJ] [RFT 2.6] generic.c: replace pci_find_device with
+Message-Id: <17100000.1098298277@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91112067961504994=="
+Content-Type: multipart/mixed; boundary="===============7859958401825935=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87680000.1097276112@w-hlinder.beaverton.ibm.com>
-	 <1097342134.3903.14.camel@sfeldma-mobl2.dsl-verizon.net>
-	 <20041009181859.GW16153@parcelfarce.linux.theplanet.co.uk>
-In-Reply-To: <20041009181859.GW16153@parcelfarce.linux.theplanet.co.uk>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Hanna Linder <hannal@us.ibm.com>, kernel-janitors <kernel-janitors@lists.osdl.org>, ak@suse.de, lkml <linux-kernel@vger.kernel.org>, greg@kroah.com
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: Hanna Linder <hannal@us.ibm.com>, greg@kroah.com, davej@codemonkey.org.uk
 
---===============91112067961504994==
-Content-Type: text/plain
+--===============7859958401825935==
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-On Sat, 2004-10-09 at 11:18, Matthew Wilcox wrote:
-> > for_each_pci_dev?
-> 
-> for_each_pci_dev() doesn't take a VENDOR/DEVICE ID pair.
-> I think this is a mistake.
+As pci_find_device is going away soon I have converted this file to use
+pci_get_device instead. I have compile tested it. If anyone has this hardware
+and could test it that would be great.
 
-You're right, my bad.
+Hanna Linder
+IBM Linux Technology Center
 
--scott
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+---
+
+diff -Nrup linux-2.6.9cln/drivers/char/agp/generic.c linux-2.6.9patch/drivers/char/agp/generic.c
+--- linux-2.6.9cln/drivers/char/agp/generic.c	2004-10-18 16:35:52.000000000 -0700
++++ linux-2.6.9patch/drivers/char/agp/generic.c	2004-10-18 17:20:56.000000000 -0700
+@@ -507,7 +507,7 @@ u32 agp_collect_device_status(u32 mode, 
+ 	u32 tmp;
+ 	u32 agp3;
+ 
+-	while ((device = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, device)) != NULL) {
++	for_each_pci_dev(device) {
+ 		cap_ptr = pci_find_capability(device, PCI_CAP_ID_AGP);
+ 		if (!cap_ptr)
+ 			continue;
+@@ -551,7 +551,7 @@ void agp_device_command(u32 command, int
+ 	if (agp_v3)
+ 		mode *= 4;
+ 
+-	while ((device = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, device)) != NULL) {
++	for_each_pci_dev(device) {
+ 		u8 agp = pci_find_capability(device, PCI_CAP_ID_AGP);
+ 		if (!agp)
+ 			continue;
 
 
---===============91112067961504994==
+
+--===============7859958401825935==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91112067961504994==--
+--===============7859958401825935==--
