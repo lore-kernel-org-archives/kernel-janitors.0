@@ -1,19 +1,24 @@
 From: James Nelson <james4765@cwazy.co.uk>
-Date: Fri, 21 Jan 2005 01:34:28 +0000
+Date: Mon, 24 Jan 2005 21:14:36 +0000
 Subject: [KJ] [PATCH 1/2][RESEND] acorn: clean up printk()'s in
-Message-Id: <20050121013427.18203.13088.88517@localhost.localdomain>
+Message-Id: <20050124211422.5730.84752.65654@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46555285908215432=="
+Content-Type: multipart/mixed; boundary="===============90335076367612333=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050121013427.18203.13088.88517@localhost.localdomain>
+In-Reply-To: <20050121013427.18203.13088.88517@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============46555285908215432==
+--===============90335076367612333==
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+This patch puts KERN_ constants in printk()'s and makes the debugging printk()'s
+more consistent in drivers/acorn/block/fd1772.c
+
+Signed-off-by: James Nelson <james4765.com>
 
 diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd1772.c linux-2.6.11-rc1-mm2/drivers/acorn/block/fd1772.c
 --- linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd1772.c	2005-01-20 16:33:13.000000000 -0500
-+++ linux-2.6.11-rc1-mm2/drivers/acorn/block/fd1772.c	2005-01-20 19:56:54.542776654 -0500
++++ linux-2.6.11-rc1-mm2/drivers/acorn/block/fd1772.c	2005-01-23 05:53:24.000000000 -0500
 @@ -124,6 +124,8 @@
   *                Minor parameter, name layouts for 2.4.x differences
   */
@@ -37,21 +42,17 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  static struct request_queue *floppy_queue;
  
-@@ -180,6 +175,13 @@
+@@ -180,6 +175,9 @@
  #define DEVICE_NAME "floppy"
  #define QUEUE (floppy_queue)
  #define CURRENT elv_next_request(floppy_queue)
 +#define PFX DEVICE_NAME ": "
 +
-+#ifdef DEBUG
 +#define DBG(fmt, args...) pr_debug(PFX "%s(): " fmt, __FUNCTION__ , ## args)
-+#else
-+#define DBG(fmt, args...)
-+#endif
  
  /* Disk types: DD */
  static struct archy_disk_type {
-@@ -240,9 +242,9 @@
+@@ -240,9 +238,9 @@
  void FDC1772_WRITE(int reg, unsigned char val)
  {
  	if (reg == FDC1772REG_CMD) {
@@ -63,7 +64,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  			fdc1772_fdc_int_done = 0;
  		};
  	};
-@@ -409,9 +411,7 @@
+@@ -409,9 +407,7 @@
  
  static void fd_select_drive(int drive)
  {
@@ -74,7 +75,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	/* Hmm - nowhere do we seem to turn the motor on - I'm going to do it here! */
  	oldlatch_aupdate(LATCHA_MOTOR | LATCHA_INUSE, 0);
  
-@@ -434,7 +434,7 @@
+@@ -434,7 +430,7 @@
  {
  	unsigned long flags;
  
@@ -83,7 +84,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  	oldlatch_aupdate(LATCHA_FDSELALL | LATCHA_MOTOR | LATCHA_INUSE, 0xf | LATCHA_MOTOR | LATCHA_INUSE);
  
-@@ -474,7 +474,7 @@
+@@ -474,7 +470,7 @@
  		 * off on the Arc, since the motor control is actually on
  		 * Latch A
  		 */
@@ -92,7 +93,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		fd_deselect();
  		MotorOn = 0;
  		restore_flags(flags);
-@@ -523,7 +523,7 @@
+@@ -523,7 +519,7 @@
  		/* The idea here is that if the write protect line has changed then
  		the disc must have changed */
  		if (stat != unit[drive].wpstat) {
@@ -101,7 +102,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  			unit[drive].wpstat = stat;
  			set_bit(drive, &changed_floppies);
  		}
-@@ -579,12 +579,13 @@
+@@ -579,12 +575,13 @@
  	if (handler) {
  		nop();
  		status = (unsigned char) fdc1772_comendstatus;
@@ -118,7 +119,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  }
  
  
-@@ -594,16 +595,16 @@
+@@ -594,16 +591,16 @@
  
  static void fd_error(void)
  {
@@ -138,7 +139,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		if (SelectedDrive != -1)
  			unit[SelectedDrive].track = -1;
  	}
-@@ -627,7 +628,7 @@
+@@ -627,7 +624,7 @@
  static void do_fd_action(int drive)
  {
  	struct request *req;
@@ -147,7 +148,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  #ifdef TRACKBUFFER
  repeat:
-@@ -675,12 +676,12 @@
+@@ -675,12 +672,12 @@
  
  static void fd_calibrate(void)
  {
@@ -162,7 +163,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	SET_IRQ_HANDLER(fd_calibrate_done);
  	/* we can't verify, since the speed may be incorrect */
  	FDC1772_WRITE(FDC1772REG_CMD, FDC1772CMD_RESTORE | unit[SelectedDrive].steprate);
-@@ -694,12 +695,12 @@
+@@ -694,12 +691,12 @@
  
  static void fd_calibrate_done(int status)
  {
@@ -177,7 +178,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		fd_error();
  	} else {
  		unit[SelectedDrive].track = 0;
-@@ -715,8 +716,8 @@
+@@ -715,8 +712,8 @@
  static void fd_seek(void)
  {
  	unsigned long flags;
@@ -188,7 +189,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	if (unit[SelectedDrive].track == ReqTrack <<
  	    unit[SelectedDrive].disktype->stretch) {
  		fd_seek_done(0);
-@@ -742,12 +743,12 @@
+@@ -742,12 +739,12 @@
  
  static void fd_seek_done(int status)
  {
@@ -203,7 +204,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		       SelectedDrive, ReqTrack);
  		/* we don't know exactly which track we are on now! */
  		unit[SelectedDrive].track = -1;
-@@ -776,7 +777,7 @@
+@@ -776,7 +773,7 @@
  	unsigned int rwflag, old_motoron;
  	unsigned int track;
  
@@ -212,7 +213,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	if (ReqCmd == WRITE) {
  		/*cache_push( (unsigned long)ReqData, 512 ); */
  		paddr = (unsigned long) ReqData;
-@@ -790,11 +791,11 @@
+@@ -790,11 +787,11 @@
  		rwflag = 0;
  	}
  
@@ -227,7 +228,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	/* Start sector of this operation */
  #ifdef TRACKBUFFER
  	FDC1772_WRITE( FDC1772REG_SECTOR, !read_track ? ReqSector : 1 );
-@@ -810,7 +811,7 @@
+@@ -810,7 +807,7 @@
  	}
  	udelay(25);
  
@@ -236,7 +237,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	/* Setup DMA - Heavily modified by DAG */
  	save_flags(flags);
  	clf();
-@@ -838,7 +839,7 @@
+@@ -838,7 +835,7 @@
  		));
  
  	restore_flags(flags);
@@ -245,7 +246,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	/*sti(); *//* DAG - Hmm */
  	/* Hmm - should do something DAG */
  	old_motoron = MotorOn;
-@@ -857,15 +858,15 @@
+@@ -857,15 +854,15 @@
  		 */
  		/* 1 rot. + 5 rot.s if motor was off  */
  		mod_timer(&readtrack_timer, jiffies + HZ/5 + (old_motoron ? 0 : HZ));
@@ -265,7 +266,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  }
  
  
-@@ -876,7 +877,7 @@
+@@ -876,7 +873,7 @@
  	unsigned long flags, addr;
  	extern unsigned char *fdc1772_dataaddr;
  
@@ -274,7 +275,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  	save_flags(flags);
  	clf();
-@@ -896,7 +897,7 @@
+@@ -896,7 +893,7 @@
  
  	/* get the current DMA address */
  	addr=(unsigned long)fdc1772_dataaddr; /* DAG - ? */
@@ -283,7 +284,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  	if (addr >= (unsigned int)PhysTrackBuffer + unit[SelectedDrive].disktype->spt*512) {
  		/* already read enough data, force an FDC interrupt to stop
-@@ -904,7 +905,7 @@
+@@ -904,7 +901,7 @@
  		 */
  		SET_IRQ_HANDLER( NULL );
  		restore_flags(flags);
@@ -292,7 +293,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		FDC1772_WRITE( FDC1772REG_CMD, FDC1772CMD_FORCI );
  		udelay(25);
  
-@@ -915,7 +916,7 @@
+@@ -915,7 +912,7 @@
  	} else {
  		/* not yet finished, wait another tenth rotation */
  		restore_flags(flags);
@@ -301,7 +302,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		readtrack_timer.expires = jiffies + HZ/5/10;
  		add_timer( &readtrack_timer );
  	}
-@@ -927,7 +928,7 @@
+@@ -927,7 +924,7 @@
  {
  	unsigned int track;
  
@@ -310,7 +311,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  #ifdef TRACKBUFFER
  	if (read_track && !MultReadInProgress)
-@@ -949,7 +950,7 @@
+@@ -949,7 +946,7 @@
  			      unit[SelectedDrive].disktype->stretch);
  	}
  	if (ReqCmd == WRITE && (status & FDC1772STAT_WPROT)) {
@@ -319,7 +320,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		goto err_end;
  	}
  	if ((status & FDC1772STAT_RECNF)
-@@ -986,17 +987,17 @@
+@@ -986,17 +983,17 @@
  			do_fd_action(SelectedDrive);
  			return;
  		}
@@ -340,7 +341,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		       SelectedDrive, ReqSide, ReqTrack, FDC1772_READ(FDC1772REG_SECTOR));
  		goto err_end;
  	}
-@@ -1050,7 +1051,7 @@
+@@ -1050,7 +1047,7 @@
  	FDC1772_WRITE(FDC1772REG_CMD, FDC1772CMD_FORCI);
  	udelay(25);
  
@@ -349,7 +350,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	STOP_TIMEOUT();		/* hmm - should we do this ? */
  	fd_error();
  }
-@@ -1072,7 +1073,7 @@
+@@ -1072,7 +1069,7 @@
  	if (!NeedSeek) {
  		finish_fdc_done(0);
  	} else {
@@ -358,7 +359,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		FDC1772_WRITE(FDC1772REG_DATA, unit[SelectedDrive].track);
  		SET_IRQ_HANDLER(finish_fdc_done);
  		FDC1772_WRITE(FDC1772REG_CMD, FDC1772CMD_SEEK);
-@@ -1090,7 +1091,7 @@
+@@ -1090,7 +1087,7 @@
  {
  	unsigned long flags;
  
@@ -367,7 +368,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	STOP_TIMEOUT();
  	NeedSeek = 0;
  
-@@ -1113,7 +1114,7 @@
+@@ -1113,7 +1110,7 @@
  	wake_up(&fdc_wait);
  	restore_flags(flags);
  
@@ -376,7 +377,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  }
  
  
-@@ -1193,8 +1194,8 @@
+@@ -1193,8 +1190,8 @@
  	read_track = (ReqCmd == READ && CURRENT->errors == 0);
  #endif
  
@@ -387,7 +388,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  }
  
  
-@@ -1203,9 +1204,9 @@
+@@ -1203,9 +1200,9 @@
  	int drive, type;
  	struct archy_floppy_struct *floppy;
  
@@ -399,7 +400,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  repeat:
  
-@@ -1218,7 +1219,7 @@
+@@ -1218,7 +1215,7 @@
  
  	if (!floppy->connected) {
  		/* drive not connected */
@@ -408,7 +409,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  		end_request(CURRENT, 0);
  		goto repeat;
  	}
-@@ -1233,7 +1234,7 @@
+@@ -1233,7 +1230,7 @@
  		/* user supplied disk type */
  		--type;
  		if (type >= NUM_DISK_TYPES) {
@@ -417,7 +418,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  			end_request(CURRENT, 0);
  			goto repeat;
  		}
-@@ -1279,7 +1280,7 @@
+@@ -1279,7 +1276,7 @@
  {
  	unsigned long flags;
  
@@ -426,7 +427,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	if (fdc_busy) return;
  	save_flags(flags);
  	cli();
-@@ -1359,7 +1360,7 @@
+@@ -1359,7 +1356,7 @@
  	unsigned char status;
  	int ok;
  
@@ -435,7 +436,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	if (drive > 1)
  		return (0);
  	return (1);		/* Simple hack for the moment - the autodetect doesn't seem to work on arc */
-@@ -1397,15 +1398,15 @@
+@@ -1397,15 +1394,15 @@
  		/* dummy seek command to make WP bit accessible */
  		FDC1772_WRITE(FDC1772REG_DATA, 0);
  		FDC1772_WRITE(FDC1772REG_CMD, FDC1772CMD_SEEK);
@@ -455,12 +456,12 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	return (ok);
  }
  
-@@ -1418,14 +1419,15 @@
+@@ -1418,14 +1415,15 @@
  {
  	int drive, cnt = 0;
  
 -	printk("Probing floppy drive(s):\n");
-+	pr_info("Probing floppy drive(s):);
++	pr_info("Probing floppy drive(s):");
  	for (drive = 0; drive < FD_MAX_UNITS; drive++) {
  		fd_probe(drive);
  		if (unit[drive].connected) {
@@ -473,16 +474,16 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  
  	if (FDC1772_READ(FDC1772REG_STATUS) & FDC1772STAT_BUSY) {
  		/* If FDC1772 is still busy from probing, give it another FORCI
-@@ -1495,7 +1497,7 @@
+@@ -1495,7 +1493,7 @@
  	if (fd_ref[drive] < 0)
  		fd_ref[drive] = 0;
  	else if (!fd_ref[drive]--) {
 -		printk("floppy_release with fd_ref == 0");
-+		printk(KERN_WARNING "floppy_release with fd_ref == 0");
++		printk(KERN_WARNING "floppy_release with fd_ref == 0\n");
  		fd_ref[drive] = 0;
  	}
  
-@@ -1540,12 +1542,12 @@
+@@ -1540,12 +1538,12 @@
  
  	err = -EBUSY;
  	if (request_dma(FLOPPY_DMA, "fd1772")) {
@@ -498,7 +499,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd177
  	};
  
 
---===============46555285908215432==
+--===============90335076367612333==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -509,4 +510,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46555285908215432==--
+--===============90335076367612333==--
