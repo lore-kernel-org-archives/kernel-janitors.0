@@ -1,65 +1,45 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:11:52 +0000
-Subject: [KJ] [PATCH 22/53] fb: Clean up printk()'s in drivers/video/fbmon.c
-Message-Id: <20050125231146.10418.82204.73536@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 07 Jan 2005 21:39:23 +0000
+Subject: [KJ] Re: [PATCH 2/28] net/act200l-sir: replace schedule_timeout()
+Message-Id: <20050107213923.GG2924@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============22671581800439511=="
+Content-Type: multipart/mixed; boundary="===============37343895611858202=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============22671581800439511==
+--===============37343895611858202==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/fbmon.c
+On Thu, Jan 06, 2005 at 03:29:41PM -0800, Nishanth Aravamudan wrote:
+> Hi,
+> 
+> Description: Use msleep() instead of schedule_timeout() to guarantee the task
+> delays as expected. There aren't any waitqueue events in the area, so I believe
+> an absolute sleep should be ok.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.10-v/drivers/net/irda/act200l-sir.c	2004-12-24 13:34:30.000000000 -0800
+> +++ 2.6.10/drivers/net/irda/act200l-sir.c	2005-01-04 14:57:49.000000000 -0800
+> @@ -177,8 +177,7 @@ static int act200l_change_speed(struct s
+>  
+>  	/* Write control bytes */
+>  	sirdev_raw_write(dev, control, 3);
+> -	set_current_state(TASK_UNINTERRUPTIBLE);
+> -	schedule_timeout(msecs_to_jiffies(5));
+> +	msleep(5);
+>  
+>  	/* Go back to normal mode */
+>  	sirdev_set_dtr_rts(dev, TRUE, TRUE);
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please ignore this patch, as there is already a more correct one in the
+2.6.10-kj patchset. Sorry for the noise.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/fbmon.c linux-2.6.11-rc2-mm1/drivers/video/fbmon.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/fbmon.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/fbmon.c	2005-01-24 19:07:03.108260370 -0500
-@@ -44,7 +44,7 @@
- #undef DEBUG  /* define this for verbose EDID parsing output */
- 
- #ifdef DEBUG
--#define DPRINTK(fmt, args...) printk(fmt,## args)
-+#define DPRINTK(fmt, args...) pr_debug("%s(): ", fmt, __FUNCTION__, ## args)
- #else
- #define DPRINTK(fmt, args...)
- #endif
-@@ -106,7 +106,7 @@
- 	for (i = 0; i < ARRAY_SIZE(brokendb); i++) {
- 		if (!strncmp(manufacturer, brokendb[i].manufacturer, 4) &&
- 			brokendb[i].model == model) {
--			printk("fbmon: The EDID Block of "
-+			pr_info("fbmon: The EDID Block of "
- 			       "Manufacturer: %s Model: 0x%x is known to "
- 			       "be broken,\n",  manufacturer, model);
-  			fix = brokendb[i].fix;
-@@ -139,11 +139,11 @@
- 
- 	switch (fix) {
- 	case FBMON_FIX_HEADER:
--		printk("fbmon: trying a header reconstruct\n");
-+		pr_info("fbmon: trying a header reconstruct\n");
- 		memcpy(edid, edid_v1_header, 8);
- 		break;
- 	case FBMON_FIX_INPUT:
--		printk("fbmon: trying to fix input type\n");
-+		pr_info("fbmon: trying to fix input type\n");
- 		b = edid + EDID_STRUCT_DISPLAY;
- 		b[0] &= ~0x80;
- 		edid[127] += 0x80;
-@@ -767,7 +767,7 @@
- 		specs->misc |= FB_MISC_1ST_DETAIL;
- 	}
- 	if (c & 0x01) {
--		printk("      Display is GTF capable\n");
-+		DPRINTK("      Display is GTF capable\n");
- 		specs->gtf = 1;
- 	}
- }
+Thanks,
+Nish
 
---===============22671581800439511==
+--===============37343895611858202==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============22671581800439511==--
+--===============37343895611858202==--
