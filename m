@@ -1,23 +1,41 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Sat, 30 Oct 2004 00:26:22 +0000
+From: Nish Aravamudan <nish.aravamudan@gmail.com>
+Date: Sat, 30 Oct 2004 04:44:18 +0000
 Subject: Re: [KJ] 2.6.10-rc1-kjt1: ixgb_ethtool.c doesn't compile
-Message-Id: <4182DFAE.7000409@osdl.org>
+Message-Id: <29495f1d04102921447ab65101@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============96238506611122021=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20041024151241.GA1920@stro.at> <20041029235137.GG6677@stusta.de>
 In-Reply-To: <20041029235137.GG6677@stusta.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Adrian Bunk <bunk@stusta.de>
 Cc: kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org, Nishanth Aravamudan <nacc@us.ibm.com>
 
-Adrian Bunk wrote:
+--===============96238506611122021==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Sat, 30 Oct 2004 01:51:37 +0200, Adrian Bunk <bunk@stusta.de> wrote:
 > On Sun, Oct 24, 2004 at 05:12:41PM +0200, maximilian attems wrote:
+> >...
+> > splitted out 168 patches:
+> > http://debian.stro.at/kjt/2.6.10-rc1-kjt1/split/
 > 
->>...
+> Could you provide a .tar.gz (or .tar.bz) of the splitted patches
+> (similar to how Andrew does for -mm)?
+
+Do you mean like the one he provided?
+
+please test out:
+http://debian.stro.at/kjt/2.6.10-rc1-kjt1/2.6.10-rc1-kjt1.patch.bz2
+
+Admittedly, it's not tarred first, but still... Maybe you mean
+something else, though, and I'm just confused.
+
+> > thanks for feedback.
+> > maks
+> >...
 > 
-> 
-> msleep_interruptible-drivers_net_ixgb_ixgb_ethtool.patch doesn't 
+> msleep_interruptible-drivers_net_ixgb_ixgb_ethtool.patch doesn't
 > compile:
 > 
 > <--  snip  -->
@@ -29,16 +47,21 @@ Adrian Bunk wrote:
 > drivers/net/ixgb/ixgb_ethtool.c:407: error: (Each undeclared identifier is reported only once
 > drivers/net/ixgb/ixgb_ethtool.c:407: error: for each function it appears in.)
 > make[3]: *** [drivers/net/ixgb/ixgb_ethtool.o] Error 1
-> 
-> <--  snip  -->
 
-There are new (large) patches to the ixgb driver too.  See:
-http://oss.sgi.com/projects/netdev/archive/2004-10/msg01342.html
+Thanks for catching this, I will make the change to the patch tomorrow
+and send it again.
 
+-Nish
 
--- 
-~Randy
+--===============96238506611122021==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============96238506611122021==--
