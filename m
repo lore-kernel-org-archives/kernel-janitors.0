@@ -1,37 +1,34 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 23 Sep 2004 22:13:09 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 18/38] net/islpci_mgt: add
-Message-Id: <20040923221309.GC13244@us.ibm.com>
+Date: Mon, 27 Sep 2004 21:45:23 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/9] usb/dabusb: replace
+Message-Id: <20040927214523.GJ1617@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82040613353868097=="
+Content-Type: multipart/mixed; boundary="===============35455256923551726=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============82040613353868097==
+--===============35455256923551726==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Insert set_current_state() before schedule_timeout() so the
-task delays as expected. In the current code, prepare_to_wait() takes
-care of this problem for the first iteration of the while-loop, but on
-subsequent iterations, schedule_timeout() will return immediately.
+Description: Use msleep_interruptible() instead of schedule_timeout()
+so that the task delays as expected.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc2-vanilla/drivers/net/wireless/prism54/islpci_mgt.c	2004-09-13 17:15:41.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/wireless/prism54/islpci_mgt.c	2004-09-15 09:55:20.000000000 -0700
-@@ -473,6 +473,7 @@ islpci_mgt_transaction(struct net_device
- 		int timeleft;
- 		struct islpci_mgmtframe *frame;
+--- 2.6.9-rc2-vanilla/drivers/usb/media/dabusb.c	2004-09-13 11:35:00.000000000 -0700
++++ 2.6.9-rc2/drivers/usb/media/dabusb.c	2004-09-13 11:41:45.000000000 -0700
+@@ -598,7 +598,7 @@ static int dabusb_open (struct inode *in
+ 		if (file->f_flags & O_NONBLOCK) {
+ 			return -EBUSY;
+ 		}
+-		schedule_timeout (HZ / 2);
++		msleep_interruptible (500);
  
-+		set_current_state(TASK_UNINTERRUPTIBLE);
- 		timeleft = schedule_timeout(wait_cycle_jiffies);
- 		frame = xchg(&priv->mgmt_received, NULL);
- 		if (frame) {
+ 		if (signal_pending (current)) {
+ 			return -EAGAIN;
 
---===============82040613353868097==
+--===============35455256923551726==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82040613353868097==--
+--===============35455256923551726==--
