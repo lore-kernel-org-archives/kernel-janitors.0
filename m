@@ -1,53 +1,29 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 23:12:06 +0000
-Subject: [KJ] [UPDATE PATCH] message/mptbase: replace schedule_timeout()
-Message-Id: <20050110231206.GI9186@us.ibm.com>
+From: Greg KH <greg@kroah.com>
+Date: Mon, 31 Jan 2005 18:50:53 +0000
+Subject: [KJ] Re: [PATCH 35/39] usb/hid-core: use wait_event_timeout()
+Message-Id: <20050131185053.GA21871@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91638059438710129=="
+Content-Type: multipart/mixed; boundary="===============53090370808944609=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============91638059438710129==
+--===============53090370808944609==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+On Fri, Jan 21, 2005 at 01:35:01PM -0800, Nishanth Aravamudan wrote:
+> Hi,
 > 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+> Please consider applying.
+> 
+> Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
+> now unused variables.
 
-<snip> 
+This code does not even compile :(
 
-> msleep_interruptible-drivers_message_fusion_mptbase.patch
+greg k-h
 
-Please consider replacing with the following patch:
-
-Description: Use ssleep() instead of schedule_timeout() to guarantee
-the task delays as expected. The original code does use TASK_INTERRUPTIBLE, but
-does not check for signals or early return from schedule_timeout() so ssleep()
-seems more appropriate.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-v/drivers/message/fusion/mptbase.c	2004-12-24 13:35:50.000000000 -0800
-+++ 2.6.10/drivers/message/fusion/mptbase.c	2005-01-05 14:23:05.000000000 -0800
-@@ -3137,8 +3137,7 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 
- 				/* wait 1 sec */
- 				if (sleepFlag == CAN_SLEEP) {
--					set_current_state(TASK_INTERRUPTIBLE);
--					schedule_timeout(1000 * HZ / 1000);
-+					ssleep(1);
- 				} else {
- 					mdelay (1000);
- 				}
-
---===============91638059438710129==
+--===============53090370808944609==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +34,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91638059438710129==--
+--===============53090370808944609==--
