@@ -1,33 +1,60 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Mon, 28 Mar 2005 17:23:47 +0000
-Subject: [KJ] [PATCH] serial/icom: Remove custom msescs_to_jiffies() macro
-Message-Id: <20050328171945.GA3568@localhost.localdomain>
+Date: Fri, 18 Mar 2005 17:05:42 +0000
+Subject: [KJ] [UPDATE PATCH 2/3] drivers/block/sx8.c: Use the DMA_{64,
+Message-Id: <20050318170542.GB3356@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10028142776071802=="
+Content-Type: multipart/mixed; boundary="===============92724617820227995=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-serial@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============10028142776071802==
+--===============92724617820227995==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Remove the MSECS_TO_JIFFIES() macro because msescs_to_jiffies() from
-jiffies.h should be used. The macro isn't referenced anywhere anyway.
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
+
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+These patches include dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-diff -urpN linux-2.6.11.orig/drivers/serial/icom.h linux-2.6.11/drivers/serial/icom.h
---- linux-2.6.11.orig/drivers/serial/icom.h	2005-03-02 12:50:31.000000000 +0100
-+++ linux-2.6.11/drivers/serial/icom.h	2005-03-23 13:52:24.485557392 +0100
-@@ -286,5 +286,3 @@ struct lookup_int_table {
- 	u32	__iomem *global_int_mask;
- 	unsigned long	processor_id;
- };
--
--#define MSECS_TO_JIFFIES(ms) (((ms)*HZ+999)/1000)
+--- linux-2.6.11.orig/drivers/block/sx8.c	2005-03-02 12:50:39.000000000 +0100
++++ linux-2.6.11/drivers/block/sx8.c	2005-03-18 15:52:16.000000000 +0100
+@@ -26,6 +26,7 @@
+ #include <linux/delay.h>
+ #include <linux/time.h>
+ #include <linux/hdreg.h>
++#include <linux/dma-mapping.h>
+ #include <asm/io.h>
+ #include <asm/semaphore.h>
+ #include <asm/uaccess.h>
+@@ -1582,9 +1583,9 @@ static int carm_init_one (struct pci_dev
+ 		goto err_out;
+ 
+ #if IF_64BIT_DMA_IS_POSSIBLE /* grrrr... */
+-	rc = pci_set_dma_mask(pdev, 0xffffffffffffffffULL);
++	rc = pci_set_dma_mask(pdev, DMA_64BIT_MASK);
+ 	if (!rc) {
+-		rc = pci_set_consistent_dma_mask(pdev, 0xffffffffffffffffULL);
++		rc = pci_set_consistent_dma_mask(pdev, DMA_64BIT_MASK);
+ 		if (rc) {
+ 			printk(KERN_ERR DRV_NAME "(%s): consistent DMA mask failure\n",
+ 				pci_name(pdev));
+@@ -1593,7 +1594,7 @@ static int carm_init_one (struct pci_dev
+ 		pci_dac = 1;
+ 	} else {
+ #endif
+-		rc = pci_set_dma_mask(pdev, 0xffffffffULL);
++		rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
+ 		if (rc) {
+ 			printk(KERN_ERR DRV_NAME "(%s): DMA mask failure\n",
+ 				pci_name(pdev));
 
---===============10028142776071802==
+--===============92724617820227995==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10028142776071802==--
+--===============92724617820227995==--
