@@ -1,27 +1,61 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 04 Apr 2005 11:16:10 +0000
-Subject: Re: [KJ] [Patch 0/3] Add MODULE_VERSION to network drivers.
-Message-Id: <20050404111610.GB7891@nd47.coderock.org>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Fri, 01 Apr 2005 12:46:35 +0000
+Subject: [KJ] [PATCH] char* : drivers/acpi/battery.c
+Message-Id: <20050401124635.GO5445@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49025540042762206=="
+Content-Type: multipart/mixed; boundary="wtjvnLv0o8UUzur2"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============49025540042762206==
+
+--wtjvnLv0o8UUzur2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 28/03/05 16:12 -0500, Chuck Short wrote:
-> These patches add MODULE_VERSION to network drivers.
+Description:
+String form : char foo[] = "blah" is better than char *foo = "blah"
 
-Patches are wordwrapped, please turn that off in your mail client.
-(A quick test that patch is ok, is to sent it to yourself and try
- to apply the email)
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-	Domen
 
---===============49025540042762206==
+--wtjvnLv0o8UUzur2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="2.6.12-rc1-pointer_drivers_acpi_battery.c.patch"
+
+diff -urpN -X dontdiff a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+--- a/drivers/acpi/battery.c	2005-03-18 02:34:26.000000000 +0100
++++ b/drivers/acpi/battery.c	2005-04-01 11:53:03.136666208 +0200
+@@ -347,7 +347,7 @@ static int acpi_battery_read_info(struct
+ 	int			result = 0;
+ 	struct acpi_battery	*battery = (struct acpi_battery *) seq->private;
+ 	struct acpi_battery_info *bif = NULL;
+-	char			*units = "?";
++	char			units[] = "?";
+ 
+ 	ACPI_FUNCTION_TRACE("acpi_battery_read_info");
+ 
+@@ -436,7 +436,7 @@ acpi_battery_read_state (struct seq_file
+ 	int			result = 0;
+ 	struct acpi_battery	*battery = (struct acpi_battery *) seq->private;
+ 	struct acpi_battery_status *bst = NULL;
+-	char			*units = "?";
++	char			units[] = "?";
+ 
+ 	ACPI_FUNCTION_TRACE("acpi_battery_read_state");
+ 
+@@ -514,7 +514,7 @@ static int
+ acpi_battery_read_alarm (struct seq_file *seq, void *offset)
+ {
+ 	struct acpi_battery	*battery = (struct acpi_battery *) seq->private;
+-	char			*units = "?";
++	char			units[] = "?";
+ 
+ 	ACPI_FUNCTION_TRACE("acpi_battery_read_alarm");
+ 
+
+--wtjvnLv0o8UUzur2
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -32,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49025540042762206==--
+--wtjvnLv0o8UUzur2--
