@@ -1,7 +1,7 @@
 From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sat, 03 Jan 2004 13:31:16 +0000
-Subject: [Kernel-janitors] [PATCH] Check return value in net/ipv4/ipmr.c
-Message-Id: <20040103133116.GG21909@eugeneteo.net>
+Date: Sat, 03 Jan 2004 13:31:51 +0000
+Subject: [Kernel-janitors] [PATCH] Check return value in fs/cifs/file.c
+Message-Id: <20040103133151.GH21909@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040103132946.GE21909@eugeneteo.net>
 In-Reply-To: <20040103132946.GE21909@eugeneteo.net>
@@ -10,29 +10,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-http://www.anomalistic.org/patches/ipmr-check-ret-alloc_netdev-fix-2.6.1-rc1-mm1.patch
+http://www.anomalistic.org/patches/cifs-check-ret-d_alloc-fix-2.6.1-rc1-mm1.patch
 
-diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/net/ipv4/ipmr.c 2.6.1-rc1-mm1-fix/net/ipv4/ipmr.c
---- 2.6.1-rc1-mm1/net/ipv4/ipmr.c	2003-12-18 10:58:49.000000000 +0800
-+++ 2.6.1-rc1-mm1-fix/net/ipv4/ipmr.c	2004-01-03 20:43:14.000000000 +0800
-@@ -25,6 +25,7 @@
-  *      Carlos Picoto           :       PIMv1 Support
-  *	Pavlin Ivanov Radoslavov:	PIMv2 Registers must checksum only PIM header
-  *					Relax this requrement to work with older peers.
-+ *	Eugene Teo		:	Check the return value of alloc_netdev.		
-  *
-  */
- 
-@@ -205,6 +206,9 @@
- 	dev = alloc_netdev(sizeof(struct net_device_stats), "pimreg",
- 			   reg_vif_setup);
- 
-+	if (!dev)
-+		return NULL;
-+
- 	if (register_netdevice(dev)) {
- 		kfree(dev);
- 		return NULL;
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/fs/cifs/file.c 2.6.1-rc1-mm1-fix/fs/cifs/file.c
+--- 2.6.1-rc1-mm1/fs/cifs/file.c	2003-12-18 10:57:58.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/fs/cifs/file.c	2004-01-03 20:37:47.000000000 +0800
+@@ -1250,6 +1250,10 @@
+ 		}
+ 	} else {
+ 		tmp_dentry = d_alloc(file->f_dentry, qstring);
++		if (!tmp_dentry) {
++			cERROR(1,("could not allocate a dcache entry"));
++			return;
++		}
+ 		*ptmp_inode = new_inode(file->f_dentry->d_sb);
+ 		tmp_dentry->d_op = &cifs_dentry_ops;
+ 		cFYI(0, (" instantiate dentry 0x%p with inode 0x%p ",
 
 -- 
 Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
