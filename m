@@ -1,51 +1,95 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 17:11:20 +0000
-Subject: [Kernel-janitors] [PATCH] irda/irtty-sir: replace
-Message-Id: <20040727171120.GI2099@us.ibm.com>
+From: Matthew Wilcox <willy@debian.org>
+Date: Mon, 12 Jul 2004 22:04:38 +0000
+Subject: [Kernel-janitors] eepro attempts to do its own PNP handling
+Message-Id: <20040712220438.GO32326@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95954483082484532=="
+Content-Type: multipart/mixed; boundary="===============42884662693968223=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============95954483082484532==
+--===============42884662693968223==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. 
 
-Applys-to: 2.6.7
+Adam, how should this be handled?  Can we just rip this code out?
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+----- Forwarded message from Kristen Carlson <kristenc@cs.pdx.edu> -----
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+From: Kristen Carlson <kristenc@cs.pdx.edu>
+To: kernel-janitors@lists.osdl.org
+Date: Mon, 12 Jul 2004 14:14:32 -0700 (PDT)
+X-Mailer: ELM [version 2.5 PL5]
+X-Virus-Scanned: by amavisd-new
+X-Spam-Status: No, hits=0 required=5 tests=
+X-Spam-Checker-Version: SpamAssassin 2.63-osdl_revision__1.18__
+X-MIMEDefang-Filter: osdl$Revision: 1.70 $
+X-Scanned-By: MIMEDefang 2.36
+Subject: [Kernel-janitors] [PATCH] remove check_region from eepro.c
+X-BeenThere: kernel-janitors@lists.osdl.org
+X-Mailman-Version: 2.1.2
+Precedence: list
+List-Id: Kernel janitors discussions and patches
+	<kernel-janitors.lists.osdl.org>
+List-Unsubscribe: <http://lists.osdl.org/mailman/listinfo/kernel-janitors>,
+	<mailto:kernel-janitors-request@lists.osdl.org?subject=unsubscribe>
+List-Archive: <http://lists.osdl.org/pipermail/kernel-janitors>
+List-Post: <mailto:kernel-janitors@lists.osdl.org>
+List-Help: <mailto:kernel-janitors-request@lists.osdl.org?subject=help>
+List-Subscribe: <http://lists.osdl.org/mailman/listinfo/kernel-janitors>,
+	<mailto:kernel-janitors-request@lists.osdl.org?subject=subscribe>
+Errors-To: kernel-janitors-bounces@lists.osdl.org
+X-Spam-Score: 0.0 (/)
+
+Description: remove check_region from eepro.c 
+(note that PnPWakeup must be defined to have this code compile)
+
+Signed-off-by: Kristen Carlson Accardi <kristenc@cs.pdx.edu>
 
 
---- linux-vanilla/drivers/net/irda/irtty-sir.c	2004-06-16 05:18:37.000000000 +0000
-+++ linux-dev/drivers/net/irda/irtty-sir.c	2004-07-21 17:26:31.000000000 +0000
-@@ -32,6 +32,7 @@
- #include <linux/init.h>
- #include <asm/uaccess.h>
- #include <linux/smp_lock.h>
-+#include <linux/delay.h>
+--- linux-2.6.7-kc/drivers/net/eepro.orig	2004-07-12 10:42:08.000000000 +0000
++++ linux-2.6.7-kc/drivers/net/eepro.c	2004-07-12 10:29:46.000000000 +0000
+@@ -545,9 +545,9 @@ static int __init do_eepro_probe(struct 
  
- #include <net/irda/irda.h>
- #include <net/irda/irda_device.h>
-@@ -96,10 +97,8 @@ static void irtty_wait_until_sent(struct
- 		tty->driver->wait_until_sent(tty, msecs_to_jiffies(100));
- 		unlock_kernel();
+ 	{
+ 		unsigned short int WS[32]=WakeupSeq;
+-
+-		if (check_region(WakeupPort, 2)==0) {
+-
++		if (!request_region(WakeupPort, 2, dev->name))
++			printk(KERN_WARNING "PnPWakeup Port not available");
++		else { 
+ 			if (net_debug>5)
+ 				printk(KERN_DEBUG "Waking UP\n");
+ 
+@@ -557,7 +557,8 @@ static int __init do_eepro_probe(struct 
+ 				outb_p(WS[i],WakeupPort);
+ 				if (net_debug>5) printk(KERN_DEBUG ": %#x ",WS[i]);
+ 			}
+-		} else printk(KERN_WARNING "Checkregion Failed!\n");
++			release_region(WakeupPort, 2);
++		}
  	}
--	else {
--		set_task_state(current, TASK_UNINTERRUPTIBLE);
--		schedule_timeout(msecs_to_jiffies(USBSERIAL_TX_DONE_DELAY));
--	}
-+	else 
-+		msleep(USBSERIAL_TX_DONE_DELAY);
- }
+ #endif
  
- /* 
 
---===============95954483082484532==
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+
+----- End forwarded message -----
+
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
+
+--===============42884662693968223==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +100,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95954483082484532==--
+--===============42884662693968223==--
