@@ -1,63 +1,53 @@
-From: Scott Feldman <sfeldma@pobox.com>
-Date: Sun, 03 Oct 2004 06:20:34 +0000
-Subject: [Kernel-janitors] [PATCH 6/6] janitor: net/tulip: pci_find_device
-Message-Id: <1096784434.3819.166.camel@sfeldma-mobl2.dsl-verizon.net>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 06 Oct 2004 23:42:42 +0000
+Subject: [Kernel-janitors] [PATCH 2.6] [3/12] k2.c replace pci_find_device
+Message-Id: <57450000.1097106162@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============98969099350390133=="
+Content-Type: multipart/mixed; boundary="===============053627507859347112=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org
 
---===============98969099350390133==
-Content-Type: text/plain
+--===============053627507859347112==
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Replace pci_find_device with pci_dev_present.  Compile tested.
 
-Signed-off-by: Scott Feldman <sfeldma@pobox.com>
+As pci_find_device is going away I have replaced this call with pci_get_device.
+If someone with a PPC system could verify it I would appreciate it.
 
---- linux-2.6.9-rc3/drivers/net/tulip/tulip_core.c	2004-08-14 03:55:34.000000000 -0700
-+++ linux-2.6.9-rc3-dsf/drivers/net/tulip/tulip_core.c	2004-10-02 22:01:22.000000000 -0700
-@@ -1236,6 +1236,11 @@ static int __devinit tulip_init_one (str
- 	struct tulip_private *tp;
- 	/* See note below on the multiport cards. */
- 	static unsigned char last_phys_addr[6] = {0x00, 'L', 'i', 'n', 'u', 'x'};
-+	static struct pci_device_id early_486_chipsets[] = {
-+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82424) },
-+		{ PCI_DEVICE(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_496) },
-+		{ },
-+	};
- 	static int last_irq;
- 	static int multiport_cnt;	/* For four-port boards w/one EEPROM */
- 	u8 chip_rev;
-@@ -1289,17 +1294,15 @@ static int __devinit tulip_init_one (str
- 	 *	without the workarounds being on.
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+----
+diff -Nrup linux-2.6.9-rc3-mm2cln/arch/ppc/platforms/k2.c linux-2.6.9-rc3-mm2patch/arch/ppc/platforms/k2.c
+--- linux-2.6.9-rc3-mm2cln/arch/ppc/platforms/k2.c	2004-09-29 20:03:45.000000000 -0700
++++ linux-2.6.9-rc3-mm2patch/arch/ppc/platforms/k2.c	2004-10-06 16:33:25.278918216 -0700
+@@ -116,7 +116,7 @@ void k2_pcibios_fixup(void)
+ 	/*
+ 	 * Enable DMA support on hdc
  	 */
+-	ide_dev = pci_find_device(PCI_VENDOR_ID_AL,
++	ide_dev = pci_get_device(PCI_VENDOR_ID_AL,
+ 				  PCI_DEVICE_ID_AL_M5229, NULL);
  
--	/* Intel Saturn. Switch to 8 long words burst, 8 long word cache aligned
--	   Aries might need this too. The Saturn errata are not pretty reading but
--	   thankfully it's an old 486 chipset.
-+	/* 1. Intel Saturn. Switch to 8 long words burst, 8 long word cache
-+	      aligned.  Aries might need this too. The Saturn errata are not 
-+	      pretty reading but thankfully it's an old 486 chipset.
-+
-+	   2. The dreaded SiS496 486 chipset. Same workaround as Intel
-+	      Saturn.
- 	*/
- 
--	if (pci_find_device(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82424, NULL)) {
--		csr0 = MRL | MRM | (8 << BurstLenShift) | (1 << CALShift);
--		force_csr0 = 1;
--	}
--	/* The dreaded SiS496 486 chipset. Same workaround as above. */
--	if (pci_find_device(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_496, NULL)) {
-+	if (pci_dev_present(early_486_chipsets)) {
- 		csr0 = MRL | MRM | (8 << BurstLenShift) | (1 << CALShift);
- 		force_csr0 = 1;
+ 	if (ide_dev) {
+@@ -126,6 +126,7 @@ void k2_pcibios_fixup(void)
+ 		ide_dma_base = pci_resource_start(ide_dev, 4);
+ 		outb(0x00, ide_dma_base + 0x2);
+ 		outb(0x20, ide_dma_base + 0xa);
++		pci_dev_put(ide_dev);
  	}
+ #endif
+ }
 
 
 
---===============98969099350390133==
+
+--===============053627507859347112==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============98969099350390133==--
+--===============053627507859347112==--
