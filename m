@@ -1,72 +1,40 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Sun, 30 Jan 2005 13:12:12 +0000
-Subject: [KJ] [PATCH 25/53][RESEND] i810fb: Clean up printk()'s in
-Message-Id: <20050130131212.6019.49956.67679@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 18 Jan 2005 00:15:22 +0000
+Subject: [KJ] [PATCH 17/21] ppc64/pSeries_smp: replace schedule_timeout()
+Message-Id: <20050118001522.GZ24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============55841971859413309=="
+Content-Type: multipart/mixed; boundary="===============92130230926708512=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============55841971859413309==
+--===============92130230926708512==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/i810/i810_accel.c - resent after adding constants to all lines of
-a multi-line printk() call.
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying. 
 
-diff -Nurp --exclude='*~' linux-2.6.11-rc2-mm2-original/drivers/video/i810/i810_accel.c linux-2.6.11-rc2-mm2/drivers/video/i810/i810_accel.c
---- linux-2.6.11-rc2-mm2-original/drivers/video/i810/i810_accel.c	2005-01-29 19:02:41.000000000 -0500
-+++ linux-2.6.11-rc2-mm2/drivers/video/i810/i810_accel.c	2005-01-30 08:03:38.590805540 -0500
-@@ -34,16 +34,16 @@ extern void flush_cache(void);
- /* BLT Engine Routines */
- static inline void i810_report_error(u8 __iomem *mmio)
- {
--	printk("IIR     : 0x%04x\n"
--	       "EIR     : 0x%04x\n"
--	       "PGTBL_ER: 0x%04x\n"
--	       "IPEIR   : 0x%04x\n"
--	       "IPEHR   : 0x%04x\n",
--	       i810_readw(IIR, mmio),
--	       i810_readb(EIR, mmio),
--	       i810_readl(PGTBL_ER, mmio),
--	       i810_readl(IPEIR, mmio), 
--	       i810_readl(IPEHR, mmio));
-+	printk( KERN_ERR "IIR     : 0x%04x\n"
-+		KERN_ERR "EIR     : 0x%04x\n"
-+		KERN_ERR "PGTBL_ER: 0x%04x\n"
-+		KERN_ERR "IPEIR   : 0x%04x\n"
-+		KERN_ERR "IPEHR   : 0x%04x\n",
-+		i810_readw(IIR, mmio),
-+		i810_readb(EIR, mmio),
-+		i810_readl(PGTBL_ER, mmio),
-+		i810_readl(IPEIR, mmio), 
-+		i810_readl(IPEHR, mmio));
- }
- 
- /**
-@@ -71,7 +71,7 @@ static inline int wait_for_space(struct 
- 			return 0;	
- 		}
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The current code is not incorrect, but msleep() is clearer
+in terms of the length of delay and helps make the kernel consistent.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/arch/ppc64/kernel/pSeries_smp.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/arch/ppc64/kernel/pSeries_smp.c	2005-01-15 17:21:12.000000000 -0800
+@@ -107,8 +107,7 @@ void pSeries_cpu_die(unsigned int cpu)
+ 		cpu_status = query_cpu_stopped(pcpu);
+ 		if (cpu_status == 0 || cpu_status == -1)
+ 			break;
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ/5);
++		msleep(200);
  	}
--	printk("ringbuffer lockup!!!\n");
-+	printk(KERN_ERR "ringbuffer lockup!!!\n");
- 	i810_report_error(mmio); 
- 	par->dev_flags |= LOCKUP;
- 	info->pixmap.scan_align = 1;
-@@ -98,8 +98,8 @@ static inline int wait_for_engine_idle(s
- 	while((i810_readw(INSTDONE, mmio) & 0x7B) != 0x7B && --count); 
- 	if (count) return 0;
- 
--	printk("accel engine lockup!!!\n");
--	printk("INSTDONE: 0x%04x\n", i810_readl(INSTDONE, mmio));
-+	printk(KERN_ERR "accel engine lockup!!!\n");
-+	printk(KERN_ERR "INSTDONE: 0x%04x\n", i810_readl(INSTDONE, mmio));
- 	i810_report_error(mmio); 
- 	par->dev_flags |= LOCKUP;
- 	info->pixmap.scan_align = 1;
+ 	if (cpu_status != 0) {
+ 		printk("Querying DEAD? cpu %i (%i) shows %i\n",
 
---===============55841971859413309==
+--===============92130230926708512==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============55841971859413309==--
+--===============92130230926708512==--
