@@ -1,56 +1,46 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 17:02:39 +0000
-Subject: [KJ] [PATCH 08/19] drivers/scsi/BusLogic: Use the DMA_{64,
-Message-Id: <20050220170239.GI14375@helium.tklauser.home>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Thu, 10 Feb 2005 11:03:33 +0000
+Subject: [KJ] [PATCH] drivers/video/sis/*: convert to pci_register_driver
+Message-Id: <20050210110333.GI16373@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28403094069247281=="
+Content-Type: multipart/mixed; boundary="pFej7zHSL6C5fFIz"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============28403094069247281==
+
+--pFej7zHSL6C5fFIz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
---- linux-2.6.11-rc4.orig/drivers/scsi/BusLogic.c	2005-02-13 17:13:07.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/scsi/BusLogic.c	2005-02-16 21:13:15.000000000 +0100
-@@ -676,7 +676,7 @@ static int __init BusLogic_InitializeMul
- 		if (pci_enable_device(PCI_Device))
- 			continue;
- 
--		if (pci_set_dma_mask(PCI_Device, (u64) 0xffffffff))
-+		if (pci_set_dma_mask(PCI_Device, DMA_32BIT_MASK))
- 			continue;
- 
- 		Bus = PCI_Device->bus->number;
-@@ -831,7 +831,7 @@ static int __init BusLogic_InitializeMul
- 		if (pci_enable_device(PCI_Device))
- 			continue;
- 
--		if (pci_set_dma_mask(PCI_Device, (u64) 0xffffffff))
-+		if (pci_set_dma_mask(PCI_Device, DMA_32BIT_MASK))
- 			continue;
- 
- 		Bus = PCI_Device->bus->number;
-@@ -885,7 +885,7 @@ static int __init BusLogic_InitializeFla
- 		if (pci_enable_device(PCI_Device))
- 			continue;
- 
--		if (pci_set_dma_mask(PCI_Device, (u64) 0xffffffff))
-+		if (pci_set_dma_mask(PCI_Device, DMA_32BIT_MASK))
- 			continue;
- 
- 		Bus = PCI_Device->bus->number;
+--pFej7zHSL6C5fFIz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_video_sis.patch"
 
---===============28403094069247281==
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/video/sis/sis_main.c linux-2.6.11-rc3/drivers/video/sis/sis_main.c
+--- linux-2.6.11-rc3-vanilla/drivers/video/sis/sis_main.c	2005-02-03 17:04:05.000000000 +0100
++++ linux-2.6.11-rc3/drivers/video/sis/sis_main.c	2005-02-07 09:39:30.000000000 +0100
+@@ -5693,7 +5693,7 @@ SISINITSTATIC int __init sisfb_init(void
+ 	sisfb_setup(options);
+ #endif
+ #endif
+-	return(pci_module_init(&sisfb_driver));
++	return(pci_register_driver(&sisfb_driver));
+ }
+ 
+ #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,8)
+
+--pFej7zHSL6C5fFIz
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============28403094069247281==--
+--pFej7zHSL6C5fFIz--
