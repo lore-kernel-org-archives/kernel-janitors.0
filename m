@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 18:06:20 +0000
+Date: Tue, 20 Jul 2004 18:08:40 +0000
 Subject: [Kernel-janitors] [PATCH] paride: replace schedule_timeout() with
-Message-Id: <20040720180620.GB2320@us.ibm.com>
+Message-Id: <20040720180840.GC2320@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97468872589713262=="
+Content-Type: multipart/mixed; boundary="===============63344450594892265=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040720180441.GA2320@us.ibm.com>
 In-Reply-To: <20040720180441.GA2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============97468872589713262==
+--===============63344450594892265==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -40,37 +40,19 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/block/paride/pf.c	2004-06-16 05:19:42.000000000 +0000
-+++ linux-dev/drivers/block/paride/pf.c	2004-07-08 23:14:06.000000000 +0000
-@@ -526,12 +526,6 @@ static void pf_eject(struct pf_unit *pf)
+--- linux-vanilla/drivers/block/paride/pg.c	2004-06-16 05:19:52.000000000 +0000
++++ linux-dev/drivers/block/paride/pg.c	2004-07-08 23:18:19.000000000 +0000
+@@ -409,7 +409,7 @@ static int pg_reset(struct pg *dev)
+ 	write_reg(dev, 6, DRIVE(dev));
+ 	write_reg(dev, 7, 8);
  
- #define PF_RESET_TMO   30	/* in tenths of a second */
- 
--static void pf_sleep(int cs)
--{
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(cs);
--}
--
- /* the ATAPI standard actually specifies the contents of all 7 registers
-    after a reset, but the specification is ambiguous concerning the last
-    two bytes, and different drives interpret the standard differently.
-@@ -546,11 +540,11 @@ static int pf_reset(struct pf_unit *pf)
- 	write_reg(pf, 6, 0xa0+0x10*pf->drive);
- 	write_reg(pf, 7, 8);
- 
--	pf_sleep(20 * HZ / 1000);
+-	pg_sleep(20 * HZ / 1000);
 +	msleep(20);
  
  	k = 0;
- 	while ((k++ < PF_RESET_TMO) && (status_reg(pf) & STAT_BUSY))
--		pf_sleep(HZ / 10);
-+		msleep(100);
- 
- 	flg = 1;
- 	for (i = 0; i < 5; i++)
+ 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
 
---===============97468872589713262==
+--===============63344450594892265==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97468872589713262==--
+--===============63344450594892265==--
