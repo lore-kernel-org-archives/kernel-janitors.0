@@ -1,7 +1,7 @@
 From: mikal@stillhq.com
-Date: Thu, 18 Mar 2004 01:04:01 +0000
+Date: Thu, 18 Mar 2004 01:04:02 +0000
 Subject: [Kernel-janitors] [Trivial Patch] kernel-doc comment tweak
-Message-Id: <200403180104.i2I141H31141@diskbox.stillhq.com>
+Message-Id: <200403180104.i2I142h31149@diskbox.stillhq.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200403180103.i2I13vI31101@diskbox.stillhq.com>
 In-Reply-To: <200403180103.i2I13vI31101@diskbox.stillhq.com>
@@ -21,40 +21,27 @@ Kernel version: applies to 2.6.5-rc1
 
 
 
-diff -Nur linux-2.6.2-rc1-cset-20040125_0129/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c linux-2.6.2-rc1-cset-20040125_0129-params/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c
---- linux-2.6.2-rc1-cset-20040125_0129/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c	2004-01-26 09:24:46.000000000 +1100
-+++ linux-2.6.2-rc1-cset-20040125_0129-params/arch/i386/kernel/cpu/cpufreq/speedstep-smi.c	2004-01-29 08:19:29.000000000 +1100
-@@ -90,10 +90,12 @@
+diff -Nur linux-2.6.2-rc1-cset-20040125_0129/arch/sh/boards/dreamcast/rtc.c linux-2.6.2-rc1-cset-20040125_0129-params/arch/sh/boards/dreamcast/rtc.c
+--- linux-2.6.2-rc1-cset-20040125_0129/arch/sh/boards/dreamcast/rtc.c	2004-01-26 09:24:53.000000000 +1100
++++ linux-2.6.2-rc1-cset-20040125_0129-params/arch/sh/boards/dreamcast/rtc.c	2004-01-27 08:51:33.000000000 +1100
+@@ -28,7 +28,7 @@
  
  /**
-  * speedstep_smi_get_freqs - get SpeedStep preferred & current freq.
-+ * @low: the low frequency value is placed here
-+ * @high: the high frequency value is placed here
-+ *
-  * Only available on later SpeedStep-enabled systems, returns false results or
-  * even hangs [cf. bugme.osdl.org # 1422] on earlier systems. Empirical testing
-  * shows that the latter occurs if !(ist_info.event & 0xFFFF).
-- *
-  */
- static int speedstep_smi_get_freqs (unsigned int *low, unsigned int *high)
- {
-@@ -141,6 +143,7 @@
- /**
-  * speedstep_set_state - set the SpeedStep state
-  * @state: new processor frequency state (SPEEDSTEP_LOW or SPEEDSTEP_HIGH)
-+ * @notify: whether to call cpufreq_notify_transition
+  * aica_rtc_gettimeofday - Get the time from the AICA RTC
+- * @tv: pointer to resulting timeval
++ * @ts: pointer to resulting timespec
   *
+  * Grabs the current RTC seconds counter and adjusts it to the Unix Epoch.
   */
- static void speedstep_set_state (unsigned int state, unsigned int notify)
-@@ -224,7 +227,7 @@
+@@ -51,7 +51,7 @@
  
  /**
-  * speedstep_verify - verifies a new CPUFreq policy
-- * @freq: new policy
-+ * @policy: new policy
+  * aica_rtc_settimeofday - Set the AICA RTC to the current time
+- * @tv: contains the timeval to set
++ * @secs: contains the time_t to set
   *
-  * Limit must be within speedstep_low_freq and speedstep_high_freq, with
-  * at least one border included.
+  * Adjusts the given @tv to the AICA Epoch and sets the RTC seconds counter.
+  */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
