@@ -1,37 +1,28 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 29 Sep 2004 21:11:35 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2-mm4 bttv-driver.c][4/8]
-Message-Id: <20040929211135.GA24407@kroah.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Wed, 29 Sep 2004 21:11:44 +0000
+Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2-mm4 alim15x3.c] [3/8]
+Message-Id: <1096492303.16767.8.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66837600364161087=="
+Content-Type: multipart/mixed; boundary="===============31881021532819087=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <15470000.1096491322@w-hlinder.beaverton.ibm.com> <20040929220344.A17872@infradead.org>
-In-Reply-To: <20040929220344.A17872@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>, Hanna Linder <hannal@us.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, kraxel@bytesex.org
+References: <13230000.1096487909@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <13230000.1096487909@w-hlinder.beaverton.ibm.com>
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org, greg@kroah.com, Bartlomiej Zolnierkiewicz <B.Zolnierkiewicz@elka.pw.edu.pl>, Andre Hedrick <andre@linux-ide.org>
 
---===============66837600364161087==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============31881021532819087==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 29, 2004 at 10:03:44PM +0100, Christoph Hellwig wrote:
-> On Wed, Sep 29, 2004 at 01:55:22PM -0700, Hanna Linder wrote:
-> > 
-> > As pci_find_device is going away need to replace it. This file did not use the dev returned
-> > from pci_find_device so is replaceable by pci_dev_present. I was not able to test it
-> > as I do not have the hardware.
-> 
-> I think this check should just go away completely.  
+On Mer, 2004-09-29 at 20:58, Hanna Linder wrote:
+> The dev returned from pci_find_device was not used so it can be replaced
+> with pci_dev_present. Has been compile tested.
 
-Good point.  Especially as pci_module_init() can never return -ENODEV
-anymore :)
+Maybe that test should just go. Its been getting tested since 2.4.20 or
+so 8)
 
-Hanna, care to respin this patch?
 
-thanks,
-
-greg k-h
-
---===============66837600364161087==
+--===============31881021532819087==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +33,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66837600364161087==--
+--===============31881021532819087==--
