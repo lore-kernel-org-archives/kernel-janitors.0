@@ -1,61 +1,44 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 12:52:58 +0000
-Subject: [KJ] [UPDATE PATCH 11/19] drivers/scsi/gdth: Use the DMA_{64,
-Message-Id: <20050320125258.GK3491@localhost.localdomain>
+From: Stelian Pop <stelian@popies.net>
+Date: Wed, 16 Mar 2005 16:49:06 +0000
+Subject: [KJ] Re: [PATCH] drivers/media/video/meye.c: Use the DMA_32BIT_MASK
+Message-Id: <20050316164906.GB3411@crusoe.alcove-fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62990302353810912=="
+Content-Type: multipart/mixed; boundary="===============10454574992685473=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220170552.GL14375@helium.tklauser.home>
-In-Reply-To: <20050220170552.GL14375@helium.tklauser.home>
-To: kernel-janitors@lists.osdl.org
-Cc: achim_leubner@adaptec.com, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============62990302353810912==
+--===============10454574992685473==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+On Mon, Mar 14, 2005 at 08:54:30PM +0100, Tobias Klauser wrote:
 
-Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+> Hello,
+> 
+> Description: Use the DMA_32BIT_MASK constant from dma-mapping.h
+> when calling dma_set_mask().
+> 
+> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+> 
+> --- linux-2.6.11.orig/drivers/media/video/meye.c	2005-03-02 12:50:30.000000000 +0100
+> +++ linux-2.6.11/drivers/media/video/meye.c	2005-03-10 18:20:05.000000000 +0100
+> @@ -121,7 +121,7 @@ static int ptable_alloc(void)
+>  	memset(meye.mchip_ptable, 0, sizeof(meye.mchip_ptable));
+>  
+>  	/* give only 32 bit DMA addresses */
+> -	if (dma_set_mask(&meye.mchip_dev->dev, 0xffffffff))
+> +	if (dma_set_mask(&meye.mchip_dev->dev, DMA_32BIT_MASK))
+>  		return -1;
+>  
+>  	meye.mchip_ptable_toc = dma_alloc_coherent(&meye.mchip_dev->dev,
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Thanks, applied to my tree. I will push it upstream later.
 
---- linux-2.6.11.orig/drivers/scsi/gdth.c	2005-03-02 12:50:38.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/gdth.c	2005-03-20 13:50:36.000000000 +0100
-@@ -402,6 +402,7 @@
- #include <linux/blkdev.h>
- #else
- #include <linux/blk.h>
-+#include <linux/dma-mapping.h>
- #include "sd.h"
- #endif
- 
-@@ -4529,15 +4530,15 @@ int __init gdth_detect(Scsi_Host_Templat
-             if (!(ha->cache_feat & ha->raw_feat & ha->screen_feat &GDT_64BIT)||
-                 /* 64-bit DMA only supported from FW >= x.43 */
-                 (!ha->dma64_support)) {
--                if (pci_set_dma_mask(pcistr[ctr].pdev, 0xffffffff)) {
-+                if (pci_set_dma_mask(pcistr[ctr].pdev, DMA_32BIT_MASK)) {
-                     printk(KERN_WARNING "GDT-PCI %d: Unable to set 32-bit DMA\n", hanum);
-                     err = TRUE;
-                 }
-             } else {
-                 shp->max_cmd_len = 16;
--                if (!pci_set_dma_mask(pcistr[ctr].pdev, 0xffffffffffffffffULL)) {
-+                if (!pci_set_dma_mask(pcistr[ctr].pdev, DMA_64BIT_MASK)) {
-                     printk("GDT-PCI %d: 64-bit DMA enabled\n", hanum);
--                } else if (pci_set_dma_mask(pcistr[ctr].pdev, 0xffffffff)) {
-+                } else if (pci_set_dma_mask(pcistr[ctr].pdev, DMA_32BIT_MASK)) {
-                     printk(KERN_WARNING "GDT-PCI %d: Unable to set 64/32-bit DMA\n", hanum);
-                     err = TRUE;
-                 }
+Stelian.
+-- 
+Stelian Pop <stelian@popies.net>
 
---===============62990302353810912==
+--===============10454574992685473==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62990302353810912==--
+--===============10454574992685473==--
