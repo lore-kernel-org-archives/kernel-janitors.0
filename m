@@ -1,59 +1,56 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Wed, 13 Apr 2005 13:31:52 +0000
-Subject: [KJ] [PATCH] net/ioc3-eth: Use the DMA_{32,64}BIT_MASK constants
-Message-Id: <20050413133147.GA9864@argon.tklauser.home>
+Date: Mon, 04 Apr 2005 16:10:18 +0000
+Subject: [KJ] [PATCH] net/sis900: Use the DMA_32BIT_MASK constant
+Message-Id: <20050404161018.GA6657@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============040083548654371359=="
+Content-Type: multipart/mixed; boundary="===============78507344885476549=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: ralf@linux-mips.org, linux-mips@linux-mips.org
+To: kernel-janitors@vger.kernel.org
 
---===============040083548654371359==
+--===============78507344885476549==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Use the DMA_{32,64}BIT_MASK constants from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because patches caused
-errors on some architectures otherwise.
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask() instead of custom
+macros.
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
 See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-diff -urpN linux-2.6.12-rc2-mm3/drivers/net/ioc3-eth.c linux-2.6.12-rc2-mm3-tk/drivers/net/ioc3-eth.c
---- linux-2.6.12-rc2-mm3/drivers/net/ioc3-eth.c	2005-04-12 16:56:40.000000000 +0200
-+++ linux-2.6.12-rc2-mm3-tk/drivers/net/ioc3-eth.c	2005-04-12 17:28:55.470878176 +0200
-@@ -38,6 +38,7 @@
- #include <linux/errno.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
+diff -urpN linux-2.6.11.orig/drivers/net/sis900.c linux-2.6.11/drivers/net/sis900.c
+--- linux-2.6.11.orig/drivers/net/sis900.c	2005-03-02 12:50:29.000000000 +0100
++++ linux-2.6.11/drivers/net/sis900.c	2005-03-30 15:16:51.000000000 +0200
+@@ -66,6 +66,7 @@
+ #include <linux/ethtool.h>
  #include <linux/crc32.h>
- #include <linux/mii.h>
- #include <linux/in.h>
-@@ -1193,17 +1194,17 @@ static int ioc3_probe(struct pci_dev *pd
- 	int err, pci_using_dac;
+ #include <linux/bitops.h>
++#include <linux/dma-mapping.h>
  
- 	/* Configure DMA attributes. */
--	err = pci_set_dma_mask(pdev, 0xffffffffffffffffULL);
-+	err = pci_set_dma_mask(pdev, DMA_64BIT_MASK);
- 	if (!err) {
- 		pci_using_dac = 1;
--		err = pci_set_consistent_dma_mask(pdev, 0xffffffffffffffffULL);
-+		err = pci_set_consistent_dma_mask(pdev, DMA_64BIT_MASK);
- 		if (err < 0) {
- 			printk(KERN_ERR "%s: Unable to obtain 64 bit DMA "
- 			       "for consistent allocations\n", pci_name(pdev));
- 			goto out;
- 		}
- 	} else {
--		err = pci_set_dma_mask(pdev, 0xffffffffULL);
-+		err = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
- 		if (err) {
- 			printk(KERN_ERR "%s: No usable DMA configuration, "
- 			       "aborting.\n", pci_name(pdev));
+ #include <asm/processor.h>      /* Processor type for cache alignment. */
+ #include <asm/io.h>
+@@ -87,8 +88,6 @@ static int sis900_debug;
+ 
+ /* Time in jiffies before concluding the transmitter is hung. */
+ #define TX_TIMEOUT  (4*HZ)
+-/* SiS 900 is capable of 32 bits BM DMA */
+-#define SIS900_DMA_MASK 0xffffffff
+ 
+ enum {
+ 	SIS_900 = 0,
+@@ -400,7 +399,7 @@ static int __devinit sis900_probe(struct
+ 	ret = pci_enable_device(pci_dev);
+ 	if(ret) return ret;
+ 	
+-	i = pci_set_dma_mask(pci_dev, SIS900_DMA_MASK);
++	i = pci_set_dma_mask(pci_dev, DMA_32BIT_MASK);
+ 	if(i){
+ 		printk(KERN_ERR "sis900.c: architecture does not support"
+ 			"32bit PCI busmaster DMA\n");
 
---===============040083548654371359==
+--===============78507344885476549==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============040083548654371359==--
+--===============78507344885476549==--
