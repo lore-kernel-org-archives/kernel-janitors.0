@@ -1,15 +1,15 @@
 From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 23:15:46 +0000
+Date: Thu, 10 Feb 2005 23:23:41 +0000
 Subject: Re: [KJ] [PATCH][18/26] drivers/usb/image/* - compile warning cleanup
-Message-Id: <420C0742.7625.B52F3D@localhost>
+Message-Id: <420C091D.29724.BC6A50@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93715142147492503=="
+Content-Type: multipart/mixed; boundary="===============87395976539036035=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <420BEF84.5020.58734F@localhost>
 In-Reply-To: <420BEF84.5020.58734F@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============93715142147492503==
+--===============87395976539036035==
 Content-type: text/plain; charset=US-ASCII
 Content-transfer-encoding: 7BIT
 Content-description: Mail message body
@@ -42,8 +42,8 @@ On 11 Feb 2005 at 1:27, Alexey Dobriyan wrote:
 
 This is why I didn't do it your way.  I made the judgement call of not 
 adding another patch line and an rc variable that would either only be 
-used in one place, or I would have change the entire function to use "rc" 
-consistently.  My patch is, instead, a deletion of one line and an 
+used in one place, or I would have change the entire function to use 
+"rc" consistently.  My patch is, instead, a deletion of one line and an 
 addition of 5 lines all in one place; simple.
 
 Thanks for the feedback.
@@ -55,8 +55,7 @@ Thanks for the feedback.
 
 
 
-
---===============93715142147492503==
+--===============87395976539036035==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93715142147492503==--
+--===============87395976539036035==--
