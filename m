@@ -1,67 +1,42 @@
-From: Daniele Pizzoni <auouo@tin.it>
-Date: Thu, 14 Oct 2004 21:45:27 +0000
-Subject: [KJ] new janitor info
-Message-Id: <1097793530.5995.47.camel@pdp11.tsho.org>
+From: Gustavo Franco <stratus@acm.org>
+Date: Thu, 14 Oct 2004 21:56:06 +0000
+Subject: Re: [KJ] new janitor info
+Message-Id: <1097790966.3658.51.camel@deadhorse>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70450246292181684=="
+Content-Type: multipart/mixed; boundary="===============57642456206774506=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1097793530.5995.47.camel@pdp11.tsho.org>
+In-Reply-To: <1097793530.5995.47.camel@pdp11.tsho.org>
 To: kernel-janitors@vger.kernel.org
 
---===============70450246292181684==
+--===============57642456206774506==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hello!
+On Fri, 2004-10-15 at 00:38 +0200, Daniele Pizzoni wrote:
+> Hello!
 
-I'd like to start doing some work as janitor, I'm not exactly an
-absolute kernel newbie (some simple driver hacking experience), but I'd
-like to start with simple things just to start getting involved.
+Hi Danielle.
 
-I had a look at the TODO list on janitor.kernelnewbies.org. I think I
-could to start with something from the following list:
+> [...]
+> Anyway I'd like to know if the someone is already working on the same
+> topics.
 
-----8<--------8<--------8<--------8<--------8<--------8<----
+I can't tell you atm.
 
-From: Andrey Panin <pazke at orbita dot don dot sitek dot net>
+> Also, are patches to be sent to the kernel-janitors list only?
 
-- check printk() calls (should include appropriate KERN_* constant).
+Yes, i suggest you to check the list archives[0] to see how the patches
+are handled. The "CodingStyle" and "SubmittingPatches"[1] too.
 
-------------------------------------------------------------------------
-From Domen Puncer:
-- pr_debug() from kernel.h could replace a lot of DPRINTK and similar macros.
-- same for pr_info()
+[0] = http://lists.osdl.org/pipermail/kernel-janitors/
+[1] = kernel source 'documentation/' directory.
 
-------------------------------------------------------------------------
-From Domen Puncer:
-- min/max macros from kernel.h are safe, a lot of handcrafted MIN/MAX are not.
-
-------------------------------------------------------------------------
-From Domen Puncer:
-- remove string concatenation with __FUNCTION__ (get rid of
-warnings, and get ready for __func__):
--printk(KERN_INFO "blabla " __FUNCTION__ "\n");
-+printk(KERN_INFO "blabla %s\n", __FUNCTION__);
-
-However, do not convert _FUNCTION_ to _func_ because older
-gcc versions do not support _func_.
-
-----8<--------8<--------8<--------8<--------8<--------8<----
+Hope that helps,
+Gustavo Franco -- <stratus@acm.org>
 
 
-Anyway I'd like to know if the someone is already working on the same
-topics.
-
-Also, are patches to be sent to the kernel-janitors list only?
-
-Thanks for you help, beware of the many questions I'm going to ask you!
-:)
-
-Bye
-Daniele Pizzoni
-
-
-
---===============70450246292181684==
+--===============57642456206774506==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70450246292181684==--
+--===============57642456206774506==--
