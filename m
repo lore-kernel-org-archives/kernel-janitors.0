@@ -1,40 +1,41 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 22 Oct 2004 23:45:43 +0000
-Subject: [KJ] [PATCH] video/pxafb: reorder add_wait_queue() and
-Message-Id: <20041022234542.GJ18906@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Sun, 24 Oct 2004 14:10:14 +0000
+Subject: Re: [KJ] [PATCH] video/pxafb: reorder add_wait_queue() and
+Message-Id: <20041024141014.GF23059@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============06780828715367293=="
+Content-Type: multipart/mixed; boundary="===============098529084210174034=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20041022234542.GJ18906@us.ibm.com>
+In-Reply-To: <20041022234542.GJ18906@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============06780828715367293==
+--===============098529084210174034==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be, as always, appreciated.
+On Fri, 22 Oct 2004, Nishanth Aravamudan wrote:
 
--Nish
+> Any comments would be, as always, appreciated.
+> 
+> -Nish
+> 
+> Description: Reorder set_current_state() and add_wait_queue(). There is
+> a chance that a signal could be missed in between the two functions
+> currently.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Description: Reorder set_current_state() and add_wait_queue(). There is
-a chance that a signal could be missed in between the two functions
-currently.
+applied to kjt,
+to get further testing and to be shure it gets upstream.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+thanks 
 
---- 2.6.9-bk7-vanilla/drivers/video/pxafb.c	2004-10-22 10:40:44.000000000 -0700
-+++ 2.6.9-bk7/drivers/video/pxafb.c	2004-10-22 15:59:23.000000000 -0700
-@@ -741,8 +741,8 @@ static void pxafb_disable_controller(str
- 
- 	DPRINTK("Disabling LCD controller\n");
- 
--	add_wait_queue(&fbi->ctrlr_wait, &wait);
- 	set_current_state(TASK_UNINTERRUPTIBLE);
-+	add_wait_queue(&fbi->ctrlr_wait, &wait);
- 
- 	LCSR = 0xffffffff;	/* Clear LCD Status Register */
- 	LCCR0 &= ~LCCR0_LDM;	/* Enable LCD Disable Done Interrupt */
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
 
---===============06780828715367293==
+
+--===============098529084210174034==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============06780828715367293==--
+--===============098529084210174034==--
