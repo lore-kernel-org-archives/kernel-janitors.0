@@ -1,62 +1,57 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 15:35:57 +0000
-Subject: Re: [Kernel-janitors] [PATCH] net/e1000_osdep: replace
-Message-Id: <20040727153556.GA1937@us.ibm.com>
+From: Michael Hunold <hunold@convergence.de>
+Date: Fri, 02 Jul 2004 10:05:33 +0000
+Subject: [Kernel-janitors] Re: [linux-dvb-maintainer] msleep() and delay
+Message-Id: <40E5336D.30204@convergence.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============69464971845040835=="
+Content-Type: multipart/mixed; boundary="===============82854023795577003=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040727000001.GK1897@us.ibm.com>
-In-Reply-To: <20040727000001.GK1897@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============69464971845040835==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============82854023795577003==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 27, 2004 at 04:00:52AM +0100, Matthew Wilcox wrote:
-> On Mon, Jul 26, 2004 at 05:00:01PM -0700, Nishanth Aravamudan wrote:
-> > I would appreciate any comments from the janitors list. 
-> > 
-> > Applys-to: 2.6.7
-> > 
-> > Description: Replace schedule_timeout() with msleep() to guarantee the
-> > task delays for the desired time.
-> >  			} else { \
-> > -				set_current_state(TASK_UNINTERRUPTIBLE); \
-> > -				schedule_timeout((x * HZ)/1000 + 2); \
-> > +				msleep(x); \
-> >  			} } while(0)
-> 
-> Looks much better than the previous code.  It's actually possible to do
-> better, though.  Simply change to:
-> 
-> #define msec_delay(x) msleep(x)
-> 
-> If msleep() ends up scheduling, the bad attempt to sleep will be caught
-> by schedule().  There's no need to do the check in the driver.
+Hello,
 
-Thanks for the tip and here is this change:
+On 07/01/04 23:10, Nishanth Aravamudan wrote:
+> [Not subscribed to linux-dvb, so please CC back if replying from that list]
 
+> I'm working on one of the KernelJanitor/TODO items, specifically 
+> converting appropriate calls to schedule_timeout() to msleep() calls 
+> (Addendum by Greg KH to original request by Matthew Wilcox (Calling 
+> yield() Considered Harmful)). In the process, I have run across the 
+> following code [dvb_functions.h::dvb_delay()]:
+[snip]
+> I am wondering if dvb_delay() needs to run in TASK_INTERRUPTIBLE (it's 
+> not the only such case I am seeing right now, but it was the first - if 
+> anyone would like me to send the other cases, I'd be happy to). 
+> Obviously, if not, then it can be replaced with msleep() calls. If it 
+> must, then it probably should be updated to use set_current_state() and 
+> msecs_to_jiffies() like msleep() does.
 
---- linux-vanilla/drivers/net/e1000/e1000_osdep.h	2004-06-15 22:19:01.000000000 -0700
-+++ linux-dev/drivers/net/e1000/e1000_osdep.h	2004-07-27 08:33:50.000000000 -0700
-@@ -42,13 +42,7 @@
- #include <linux/sched.h>
- 
- #ifndef msec_delay
--#define msec_delay(x)	do { if(in_interrupt()) { \
--				/* Don't mdelay in interrupt context! */ \
--	                	BUG(); \
--			} else { \
--				set_current_state(TASK_UNINTERRUPTIBLE); \
--				schedule_timeout((x * HZ)/1000 + 2); \
--			} } while(0)
-+#define msec_delay(x)	msleep(x)
- #endif
- 
- #define PCI_COMMAND_REGISTER   PCI_COMMAND
+I don't think it's ever necessary to be interruptible for us, so 
+mdelay() is suitable.
 
---===============69464971845040835==
+The idea to have a dvb_delay() function once was to have a 
+"os-independend" sleep-function, so the dvb-core can be compiled for 
+other unix-flavours, too. Now that the dvb-core is in the mainstream 
+kernel, dvb_delay() looks a little bit awkward.
+
+> This is my first try at Janitor-work, so please be patient.
+
+Please send me a patch that kills dvb_delay(), replaces all uses and 
+make a compile-time check. (I assume you don't have DVB hardware, right?)
+
+  I'll then give it a try and see if it works as before and take care to 
+send the patch to Linus Torvalds / Andrew Morton.
+
+> Thanks,
+> Nish
+
+CU
+Michael.
+
+--===============82854023795577003==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============69464971845040835==--
+--===============82854023795577003==--
