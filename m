@@ -1,76 +1,108 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 16:13:57 +0000
+Date: Wed, 28 Jul 2004 17:46:40 +0000
 Subject: [Kernel-janitors] Re: [PATCH] saa7146_i2c: replace
-Message-Id: <20040727161357.GD2099@us.ibm.com>
+Message-Id: <20040728174640.GF1935@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============65409511463656145=="
+Content-Type: multipart/mixed; boundary="===============63103019005347871=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <41066A54.8080701@convergence.de>
 In-Reply-To: <41066A54.8080701@convergence.de>
 To: kernel-janitors@vger.kernel.org
 
---===============65409511463656145==
+--===============63103019005347871==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 27, 2004 at 04:44:36PM +0200, Michael Hunold wrote:
-> Hello Nishanth,
+On Tue, Jul 27, 2004 at 09:10:52AM -0700, Nishanth Aravamudan wrote:
+
+<snip>
+
+> Here is this patch:
 > 
-> I'm sorry for the long delay. As I already explained in the mail I sent 
-> to linux-dvb-maintainer (yes, I'm working on both projects) some mails 
-> were "caught" by my spam filter and then we had a power failure in our 
-> company which resulted in a huge mail overload.
+> Applys-to: 2.6.7
 > 
-> >Another fix thanks to Mark Hollomon. The call
-> >
-> >msleep(ms/10);
-> >
-> >will result in rounding errors due to the integer evaluation of ms/10
-> >before the msleep() call. This leads to 0ms timeouts. Therefore, I have
-> >reinserted the 1msec offset. Please find the correction below and sorry
-> >for the repeated repeated patches.
+> Description: Uses msleep() instead of my_wait() to guarantee the time
+> delay. Removes definition of my_wait().
 > 
-> >--- linux-vanilla/drivers/media/common/saa7146_i2c.c	2004-06-15 
-> >22:20:04.000000000 -0700
-> >+++ linux-dev/drivers/media/common/saa7146_i2c.c	2004-07-26 
-> >10:27:26.000000000 -0700
-> >@@ -1,11 +1,11 @@
-> > #include <linux/version.h>
-> > #include <media/saa7146_vv.h>
-> > 
-> >-/* helper function */
-> >+/* helper function
-> >+   Note: ms is in terms of tenths of a msec */
-> > static void my_wait(struct saa7146_dev *dev, long ms)
-> > {
-> >-	set_current_state(TASK_INTERRUPTIBLE);
-> >-	schedule_timeout((((ms+10)/10)*HZ)/1000);
-> >+	msleep((ms+10)/10);
-> > }
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-<snip> 
+Sorry, this previous patch will not compile due to a typo. Find the
+correct version below, thanks.
 
-> Is msleep() already available in 2.6.x?
 
-I am not sure when it was added, but it definitely is in 2.6.7, as this
-is what the patch is applied against.
+--- linux-vanilla/drivers/media/common/saa7146_i2c.c	2004-06-15 22:20:04.000000000 -0700
++++ linux-dev/drivers/media/common/saa7146_i2c.c	2004-07-28 10:42:41.000000000 -0700
+@@ -1,13 +1,6 @@
+ #include <linux/version.h>
+ #include <media/saa7146_vv.h>
+ 
+-/* helper function */
+-static void my_wait(struct saa7146_dev *dev, long ms)
+-{
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout((((ms+10)/10)*HZ)/1000);
+-}
+-
+ u32 saa7146_i2c_func(struct i2c_adapter *adapter)
+ {
+ //fm	DEB_I2C(("'%s'.\n", adapter->name));
+@@ -136,12 +129,12 @@ static int saa7146_i2c_reset(struct saa7
+ 		/* set "ABORT-OPERATION"-bit (bit 7)*/
+ 		saa7146_write(dev, I2C_STATUS, (dev->i2c_bitrate | MASK_07));
+ 		saa7146_write(dev, MC2, (MASK_00 | MASK_16));
+-		my_wait(dev,SAA7146_I2C_DELAY);
++		msleep(SAA7146_I2C_DELAY);
+ 
+ 		/* clear all error-bits pending; this is needed because p.123, note 1 */
+ 		saa7146_write(dev, I2C_STATUS, dev->i2c_bitrate);
+ 		saa7146_write(dev, MC2, (MASK_00 | MASK_16));
+-		my_wait(dev,SAA7146_I2C_DELAY);
++		msleep(SAA7146_I2C_DELAY);
+  	}
+ 
+ 	/* check if any error is (still) present. (this can be necessary because p.123, note 1) */
+@@ -155,18 +148,18 @@ static int saa7146_i2c_reset(struct saa7
+ 		   after serious protocol errors caused by e.g. the SAA7740 */
+ 		saa7146_write(dev, I2C_STATUS, (dev->i2c_bitrate | MASK_07));
+ 		saa7146_write(dev, MC2, (MASK_00 | MASK_16));
+-		my_wait(dev,SAA7146_I2C_DELAY);
++		msleep(SAA7146_I2C_DELAY);
+ 
+ 		/* clear all error-bits pending */
+ 		saa7146_write(dev, I2C_STATUS, dev->i2c_bitrate);
+ 		saa7146_write(dev, MC2, (MASK_00 | MASK_16));
+-		my_wait(dev,SAA7146_I2C_DELAY);
++		msleep(SAA7146_I2C_DELAY);
+ 
+ 		/* the data sheet says it might be necessary to clear the status
+ 		   twice after an abort */
+ 		saa7146_write(dev, I2C_STATUS, dev->i2c_bitrate);
+ 		saa7146_write(dev, MC2, (MASK_00 | MASK_16));
+-		my_wait(dev,SAA7146_I2C_DELAY);
++		msleep(SAA7146_I2C_DELAY);
+      	}
+ 
+ 	/* if any error is still present, a fatal error has occured ... */
+@@ -243,7 +236,7 @@ static int saa7146_i2c_writeout(struct s
+ 			if ((++trial < 20) && short_delay)
+ 				udelay(10);
+ 			else
+-			my_wait(dev,1);
++			msleep(1);
+ 		}
+ 	}
+ 
+@@ -345,7 +338,7 @@ int saa7146_i2c_transfer(struct saa7146_
+ 		}
+ 	        
+ 	        /* delay a bit before retrying */
+-	        my_wait(dev, 10);
++	        msleep(10);
+ 		
+ 	} while (err != num && retries--);
+ 
 
-> How will these patches be included in 2.6?
-> Who is going to post patches to whom?
-> Do you need me to sign-off the saa7146 patches or should I prepare and 
-> send them instead?
-
-I will have to defer to Randy Dunlap, who posted about this a bit ago:
-
-The module/subsystem maintainer can elect to merge it on his/her own
-(is that you?) or the KJ maintainer (Max Attems) will forward them
-if they "pass".
-
-If ther are better answer(er)s out there, hopefully they will post soon.
-
--Nish
-
---===============65409511463656145==
+--===============63103019005347871==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +113,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============65409511463656145==--
+--===============63103019005347871==--
