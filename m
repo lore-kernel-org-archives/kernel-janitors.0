@@ -1,64 +1,46 @@
 From: maximilian attems <janitor@sternwelten.at>
-Date: Sat, 30 Oct 2004 23:19:12 +0000
-Subject: Re: [KJ] Re: [patch 2.4] back port msleep(), msleep_interruptible()
-Message-Id: <20041030231912.GC1456@stro.at>
+Date: Sun, 31 Oct 2004 14:43:53 +0000
+Subject: [KJ] Re: [patch 2.4] back port msleep(), msleep_interruptible()
+Message-Id: <20041031144353.GA28667@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97566964943965573=="
+Content-Type: multipart/mixed; boundary="===============47946448253158236=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de> <415CD9D9.2000607@pobox.com> <20041030222228.GB1456@stro.at> <41841886.2080609@pobox.com> <29495f1d041030155953a9a776@mail.gmail.com>
-In-Reply-To: <29495f1d041030155953a9a776@mail.gmail.com>
-To: Nish Aravamudan <nish.aravamudan@gmail.com>
-Cc: Jeff Garzik <jgarzik@pobox.com>, netdev@oss.sgi.com, Margit Schubert-While <margitsw@t-online.de>, kernel-janitors@lists.osdl.org, mcgrof@studorgs.rutgers.edu, prism54-devel@prism54.org, Domen Puncer <domen@coderock.org>, linux-kernel@vger.kernel.org, hvr@gnu.org
+References: <20040923221303.GB13244@us.ibm.com> <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de> <415CD9D9.2000607@pobox.com> <20041030222228.GB1456@stro.at> <41841886.2080609@pobox.com>
+In-Reply-To: <41841886.2080609@pobox.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: Margit Schubert-While <margitsw@t-online.de>, Nishanth Aravamudan <nacc@us.ibm.com>, hvr@gnu.org, mcgrof@studorgs.rutgers.edu, kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, Domen Puncer <domen@coderock.org>, linux-kernel@vger.kernel.org
 
---===============97566964943965573==
+--===============47946448253158236==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, 30 Oct 2004, Nish Aravamudan wrote:
+On Sat, 30 Oct 2004, Jeff Garzik wrote:
 
-> On Sat, 30 Oct 2004 18:41:10 -0400, Jeff Garzik <jgarzik@pobox.com> wrote:
-> > maximilian attems wrote:
-> > > diff -puN include/linux/delay.h~add-msleep-2.4 include/linux/delay.h
-> > > --- a/include/linux/delay.h~add-msleep-2.4    2004-10-30 22:48:46.000000000 +0200
-> > > +++ b/include/linux/delay.h   2004-10-30 22:48:46.000000000 +0200
-> > > @@ -34,4 +34,12 @@ extern unsigned long loops_per_jiffy;
-> > >       ({unsigned long msec=(n); while (msec--) udelay(1000);}))
-> > >  #endif
-> > >
-> > > +void msleep(unsigned int msecs);
-> > > +unsigned long msleep_interruptible(unsigned int msecs);
-> > > +
-> > > +static inline void ssleep(unsigned int seconds)
-> > [...]
-> > > +static inline unsigned int jiffies_to_msecs(const unsigned long j)
-> > 
-> > > +static inline unsigned int jiffies_to_usecs(const unsigned long j)
-> > 
-> > > +static inline unsigned long msecs_to_jiffies(const unsigned int m)
-> > 
-> > 
-> > I'm pretty sure more than one of these symbols clashes with a symbol
-> > defined locally in a driver.  I like the patch but we can't apply it
-> > until the impact on existing code is evaluated.
+> I'm pretty sure more than one of these symbols clashes with a symbol 
+> defined locally in a driver.  I like the patch but we can't apply it 
+> until the impact on existing code is evaluated.
 > 
-> More than likely much of the code cleanup that was done before I began
-> my patches, like removing custom msleep()s from drivers will need to
-> be done again, as Jeff points out.
-> 
-> -Nish
+> 	Jeff
 
-thanks Jeff for your quick response,
-ooh i seee libata is defining an msleep().
-so there seems to be need for it.
+current 2.4 has no ssleep() nor jiffies_to_usecs() nor jiffies_to_msecs()
+users. so no namespace conflicts on them.
 
-ok we'll come up with tougher patchset.
+i found a strange unsupported "msleep" syscall in
+./arch/parisc/hpux/sys_hpux.c
+
+left this one appart, i resend the msleep patch + 5 cleanup patches.
+they remove duplicate msleep() or msecs_to_jiffies() definitions.
+they are all compile tested, but the one touching drivers/char/shwdt.c
+please show me if i forgot something.
 
 --
 maks
 kernel janitor  	http://janitor.kernelnewbies.org/
 
 
---===============97566964943965573==
+ps dropped  prism54-devel@prism54.org from cc as this ml rejects my mails.
+
+--===============47946448253158236==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97566964943965573==--
+--===============47946448253158236==--
