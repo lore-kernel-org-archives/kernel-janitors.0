@@ -1,129 +1,57 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Mon, 07 Feb 2005 08:57:55 +0000
-Subject: [KJ] [PATCH] drivers/atm/*: convert to pci_register_driver
-Message-Id: <20050207085755.GB21028@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 19:22:00 +0000
+Subject: [KJ] [PATCH 10/20] lockd/svc: remove
+Message-Id: <20050202192200.GM2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PEIAKu/WMn1b1Hv9"
+Content-Type: multipart/mixed; boundary="===============51023985827550344=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: okir@monad.swb.de, matthew@wil.cx
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-
---PEIAKu/WMn1b1Hv9
+--===============51023985827550344==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hello,
 
-Description:
-convert from pci_module_init to pci_register_driver
+Please consider applying.
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
+Description: Replace deprecated interruptible_sleep_on_timeout() with direct
+wait-queue usage. Patch is compile-tested.
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_atm.patch"
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/ambassador.c linux-2.6.11-rc3/drivers/atm/ambassador.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/ambassador.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/ambassador.c	2005-02-07 09:39:27.000000000 +0100
-@@ -2447,7 +2447,7 @@ static int __init amb_module_init (void)
-   amb_check_args();
-   
-   // get the juice
--  return pci_module_init(&amb_driver);
-+  return pci_register_driver(&amb_driver);
- }
+--- 2.6.11-rc2-kj-v/fs/lockd/svc.c	2005-01-24 09:34:17.000000000 -0800
++++ 2.6.11-rc2-kj/fs/lockd/svc.c	2005-01-27 11:11:50.000000000 -0800
+@@ -25,6 +25,7 @@
+ #include <linux/slab.h>
+ #include <linux/smp.h>
+ #include <linux/smp_lock.h>
++#include <linux/wait.h>
  
- /********** module exit **********/
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/firestream.c linux-2.6.11-rc3/drivers/atm/firestream.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/firestream.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/firestream.c	2005-02-07 09:39:27.000000000 +0100
-@@ -2034,7 +2034,7 @@ static int __init firestream_init_module
- 	int error;
- 
- 	func_enter ();
--	error = pci_module_init(&firestream_driver);
-+	error = pci_register_driver(&firestream_driver);
- 	func_exit ();
- 	return error;
- }
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/he.c linux-2.6.11-rc3/drivers/atm/he.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/he.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/he.c	2005-02-07 09:39:27.000000000 +0100
-@@ -3079,7 +3079,7 @@ static struct pci_driver he_driver = {
- 
- static int __init he_init(void)
+ #include <linux/sunrpc/types.h>
+ #include <linux/sunrpc/stats.h>
+@@ -281,6 +282,7 @@ EXPORT_SYMBOL(lockd_up);
+ void
+ lockd_down(void)
  {
--	return pci_module_init(&he_driver);
-+	return pci_register_driver(&he_driver);
- }
++	DEFINE_WAIT(wait);
+ 	static int warned;
  
- static void __exit he_cleanup(void)
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/horizon.c linux-2.6.11-rc3/drivers/atm/horizon.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/horizon.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/horizon.c	2005-02-07 09:39:27.000000000 +0100
-@@ -2939,7 +2939,7 @@ static int __init hrz_module_init (void)
-   hrz_check_args();
-   
-   // get the juice
--  return pci_module_init(&hrz_driver);
-+  return pci_register_driver(&hrz_driver);
- }
- 
- /********** module exit **********/
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/iphase.c linux-2.6.11-rc3/drivers/atm/iphase.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/iphase.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/iphase.c	2005-02-07 09:39:27.000000000 +0100
-@@ -3276,7 +3276,7 @@ static int __init ia_module_init(void)
- {
- 	int ret;
- 
--	ret = pci_module_init(&ia_driver);
-+	ret = pci_register_driver(&ia_driver);
- 	if (ret >= 0) {
- 		ia_timer.expires = jiffies + 3*HZ;
- 		add_timer(&ia_timer); 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/lanai.c linux-2.6.11-rc3/drivers/atm/lanai.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/lanai.c	2004-12-24 22:34:27.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/lanai.c	2005-02-07 09:39:27.000000000 +0100
-@@ -2746,7 +2746,7 @@ static int __init lanai_module_init(void
- {
- 	int x;
- 
--	x = pci_module_init(&lanai_driver);
-+	x = pci_register_driver(&lanai_driver);
- 	if (x != 0)
- 		printk(KERN_ERR DEV_LABEL ": no adapter found\n");
- 	return x;
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/nicstar.c linux-2.6.11-rc3/drivers/atm/nicstar.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/nicstar.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/nicstar.c	2005-02-07 09:39:27.000000000 +0100
-@@ -381,7 +381,7 @@ static int __init nicstar_init(void)
- 
-    XPRINTK("nicstar: nicstar_init() called.\n");
- 
--   error = pci_module_init(&nicstar_driver);
-+   error = pci_register_driver(&nicstar_driver);
-    
-    TXPRINTK("nicstar: TX debug enabled.\n");
-    RXPRINTK("nicstar: RX debug enabled.\n");
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/zatm.c linux-2.6.11-rc3/drivers/atm/zatm.c
---- linux-2.6.11-rc3-vanilla/drivers/atm/zatm.c	2005-02-03 17:03:39.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/atm/zatm.c	2005-02-07 09:39:27.000000000 +0100
-@@ -1648,7 +1648,7 @@ static struct pci_driver zatm_driver = {
- 
- static int __init zatm_init_module(void)
- {
--	return pci_module_init(&zatm_driver);
-+	return pci_register_driver(&zatm_driver);
- }
- 
- module_init(zatm_init_module);
+ 	down(&nlmsvc_sema);
+@@ -303,7 +305,9 @@ lockd_down(void)
+ 	 * the lockd semaphore, we can't wait around forever ...
+ 	 */
+ 	clear_thread_flag(TIF_SIGPENDING);
+-	interruptible_sleep_on_timeout(&lockd_exit, HZ);
++	prepare_to_wait(&lockd_exit, &wait, TASK_INTERRUPTIBLE);
++	schedule_timeout(HZ);
++	finish_wait(&lockd_exit, &wait);
+ 	if (nlmsvc_pid) {
+ 		printk(KERN_WARNING 
+ 			"lockd_down: lockd failed to exit, clearing pid\n");
 
---PEIAKu/WMn1b1Hv9
+--===============51023985827550344==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -134,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---PEIAKu/WMn1b1Hv9--
+--===============51023985827550344==--
