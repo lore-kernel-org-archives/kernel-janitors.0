@@ -1,57 +1,51 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 08:09:50 +0000
-Subject: [KJ] [PATCH] drivers/char/ieee1394/*: convert to pci_register_driver
-Message-Id: <20050208080950.GC31996@rhum.iomeda.fr>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:53 +0000
+Subject: [KJ] [PATCH][RESUBMIT][16/21]  fs/* - compile warning cleanup
+Message-Id: <42113C2D.9148.52C1CA@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="uCPdOCrL+PnN2Vxy"
+Content-Type: multipart/mixed; boundary="===============56248066681480779=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============56248066681480779==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
---uCPdOCrL+PnN2Vxy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Description: compile warning cleanup - handle error return warning from 
+clear_user - the driver writer does not want to check the return value
 
-Hi,
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description:
-convert from pci_module_init to pci_register_driver
-
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
-
---uCPdOCrL+PnN2Vxy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_ieee1394.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/ieee1394/ohci1394.c linux-2.6.11-rc3/drivers/ieee1394/ohci1394.c
---- linux-2.6.11-rc3-vanilla/drivers/ieee1394/ohci1394.c	2004-12-24 22:35:25.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/ieee1394/ohci1394.c	2005-02-07 09:39:27.000000000 +0100
-@@ -3676,7 +3676,7 @@ static void __exit ohci1394_cleanup (voi
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/fs/binfmt_elf.c linux-2.6.11-rc3-mm2/fs/binfmt_elf.c
+--- linux-2.6.11-rc3-mm2-original/fs/binfmt_elf.c	2005-02-12 12:06:39.000000000 +0200
++++ linux-2.6.11-rc3-mm2/fs/binfmt_elf.c	2005-02-12 13:57:59.000000000 +0200
+@@ -823,11 +823,16 @@ static int load_elf_binary(struct linux_
+ 					nbyte = elf_brk - elf_bss;
+ 				/*
+ 				 * This bss-zeroing can fail if the ELF file
+-				 * specifies odd protections.  So we don't check
+-				 * the return value
++				 * specifies odd protections, so we don't want to
++				 * check the return value. However, since clear_user() is
++				 * declared with attribute 'warn_unused_result', this
++				 * causes a warning during compilation. Putting (void)
++				 * before the call to clear_user() doesn't silence the warning.
++				 * Thus, we need to "trick" the compiler into shutting up.
+ 				 */
+-				(void)clear_user((void __user *)elf_bss +
+-							load_bias, nbyte);
++				if (clear_user((void __user *)elf_bss +
++							load_bias, nbyte)) {
++				}
+ 			}
+ 		}
  
- static int __init ohci1394_init(void)
- {
--	return pci_module_init(&ohci1394_pci_driver);
-+	return pci_register_driver(&ohci1394_pci_driver);
- }
- 
- module_init(ohci1394_init);
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/ieee1394/pcilynx.c linux-2.6.11-rc3/drivers/ieee1394/pcilynx.c
---- linux-2.6.11-rc3-vanilla/drivers/ieee1394/pcilynx.c	2005-02-03 17:03:44.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/ieee1394/pcilynx.c	2005-02-07 09:39:27.000000000 +0100
-@@ -1938,7 +1938,7 @@ static int __init pcilynx_init(void)
-         }
- #endif
- 
--        ret = pci_module_init(&lynx_pci_driver);
-+        ret = pci_register_driver(&lynx_pci_driver);
-         if (ret < 0) {
-                 PRINT_G(KERN_ERR, "PCI module init failed");
-                 goto free_char_dev;
 
---uCPdOCrL+PnN2Vxy
+
+
+
+--===============56248066681480779==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---uCPdOCrL+PnN2Vxy--
+--===============56248066681480779==--
