@@ -1,136 +1,105 @@
-From: "Ojrind Nair" <EvvyMocrofta@bundesen.com>
-Date: Sat, 12 Jun 2004 15:28:56 +0000
-Subject: Do not settle for less than a rol.ex
-Message-Id: <192294531684.43959@hjmcrbo@bundesen.com>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Sat, 03 Jul 2004 15:05:44 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/char/specialix.c MIN/MAX removal
+Message-Id: <40E81A6A.5060904@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--5g6x9f0d9j3k3m4b9g"
+Content-Type: multipart/mixed; boundary="------------020202080301010602030408"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----5g6x9f0d9j3k3m4b9g
+This is a multi-part message in MIME format.
+--------------020202080301010602030408
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Patch (against 2.6.7) removes unnecessary min/max macros and changes
+calls to use kernel.h macros instead.
+
+Feedback is always welcome
+Michael
+
+
+
+
+
+
+
+
+--------------020202080301010602030408
 Content-Type: text/plain;
-	charset="iso-2741-7"
-Content-Transfer-Encoding: quoted-printable
+ name="patch-char-specialix"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="patch-char-specialix"
 
-Hi,
-
-Thank you for expressing interest in
-
-Genuine Replicas Watches.
-
-http://www.zoomwatches.info/index.php?ref=3D876543
-
-We would like to take this opportunity to introduce to you,
-our fine selection of
-
-Italian Crafted Rolex Time Pieces. 
+--- linux-2.6.7-old/drivers/char/specialix.c	2004-07-04 11:04:14.000000000 +0200
++++ linux-2.6.7-new/drivers/char/specialix.c	2004-07-04 15:49:25.246703416 +0200
+@@ -135,10 +135,6 @@
+ 	 ASYNC_SPD_HI       | ASYNC_SPEED_VHI    | ASYNC_SESSION_LOCKOUT | \
+ 	 ASYNC_PGRP_LOCKOUT | ASYNC_CALLOUT_NOHUP)
  
-http://www.zoomwatches.info/index.php?ref=3D876543
+-#ifndef MIN
+-#define MIN(a,b) ((a) < (b) ? (a) : (b))
+-#endif
+-
+ #undef RS_EVENT_WRITE_WAKEUP
+ #define RS_EVENT_WRITE_WAKEUP	0
+ 
+@@ -159,7 +155,7 @@
+ };
+ 
+ static struct specialix_port sx_port[SX_NBOARD * SX_NPORT];
+-		
++
+ 
+ #ifdef SPECIALIX_TIMER
+ static struct timer_list missed_irq_timer;
+@@ -715,7 +711,7 @@
+ 				sx_out(bp, CD186x_TDR, CD186x_C_SBRK);
+ 				port->COR2 &= ~COR2_ETC;
+ 			}
+-			count = MIN(port->break_length, 0xff);
++			count = min_t(int, port->break_length, 0xff);
+ 			sx_out(bp, CD186x_TDR, CD186x_C_ESC);
+ 			sx_out(bp, CD186x_TDR, CD186x_C_DELAY);
+ 			sx_out(bp, CD186x_TDR, count);
+@@ -1506,7 +1502,7 @@
+ 	if (from_user) {
+ 		down(&tmp_buf_sem);
+ 		while (1) {
+-			c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
++			c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
+ 					   SERIAL_XMIT_SIZE - port->xmit_head));
+ 			if (c <= 0)
+ 				break;
+@@ -1519,7 +1515,7 @@
+ 			}
+ 
+ 			cli();
+-			c = MIN(c, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
++			c = min_t(int, c, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
+ 				       SERIAL_XMIT_SIZE - port->xmit_head));
+ 			memcpy(port->xmit_buf + port->xmit_head, tmp_buf, c);
+ 			port->xmit_head = (port->xmit_head + c) & (SERIAL_XMIT_SIZE-1);
+@@ -1534,7 +1530,7 @@
+ 	} else {
+ 		while (1) {
+ 			cli();
+-			c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
++			c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
+ 					   SERIAL_XMIT_SIZE - port->xmit_head));
+ 			if (c <= 0) {
+ 				restore_flags(flags);
 
-You can view our large selection of Rolexes
-(including Breitling, Tag Heuer, Cartier etc) at: 
+--------------020202080301010602030408
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-http://www.zoomwatches.info/index.php?ref=3D876543
-
-As we are the direct manufacturers,
-you are assured of the lowest prices and highest quality
-each and every time you purchase from us.
-
-You may also be interested to know that we have the following brands 
-available in our wide selection as well:
-
-Rolex
-
-Carrier
-
-Bvlgari
-
-Frank Muller
-
-Harry Winston
-
-Chopard
-
-Patek Philippe
-
-Vacheron Constantin
-
-Breguet
-
-A.lange & Sohne
-
-Glashute Original
-
-Audemars Piguet
-
-Roger Dubuis
-
-Blancpain
-
-Jaeger-lecoultre
-
-IWC
-
-Zenith
-
-Officine Panerai
-
-Alain Silberstein
-
-Chronoswiss
-
-Breitling
-
-Omega
-
-Tag Heuer
-
-Ikepod
-
-Eberhard
-
-Tudor
-
-Sin
-
-If you see anything that might interest you, 
-or if you have any questions, please don't hesitate to check us out at:
-
-http://www.zoomwatches.info/index.php?ref=3D876543
-
-I certainly look forward to hearing from you.
-
-Best regards,
-
-Mike
-
-Sales Manager
-Genuine Replicas
-
-
-
-
-
-
-You received this email because your have previously 
-purchased from, or inquired about our product line under 
-GENUINE REPLICAS. If you do not wish to participate 
-further with GENUINE REPLICAS,Send an email with 
-the title heading:delete to unsubscribe@zoomwatches.info
-
-
-
-
-----5g6x9f0d9j3k3m4b9g--
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by the new InstallShield X.
-From Windows to Linux, servers to mobile, InstallShield X is the
-one installation-authoring solution that does it all. Learn more and
-evaluate today! http://www.installshield.com/Dev2Dev/0504
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------020202080301010602030408--
