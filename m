@@ -1,54 +1,59 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 17 Jan 2005 22:48:55 +0000
-Subject: [KJ] [PATCH 10/21] char/sonypi: replace schedule_timeout() with
-Message-Id: <20050117224855.GP24698@us.ibm.com>
+Date: Wed, 26 Jan 2005 19:40:57 +0000
+Subject: [KJ] [PATCH] fs/clntlock: remove sleep_on*() usage
+Message-Id: <20050126194057.GE3593@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7294438485739847=="
+Content-Type: multipart/mixed; boundary="===============37890931647928028=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: okir@monad.swb.de, matthew@wil.cx
+Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
---===============7294438485739847==
+--===============37890931647928028==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Please consider applying. 
+Please consider applying.
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected. In many cases, drivers sleep on a number of jiffies (1 in
-this case), which varies in real time units (milliseconds, for instance) with
-HZ's value. Using msleep() prevents this variance. I have assumed in this patch
-that the old value of HZ (100) was assumed, hence schedule_timeout(1) would
-delay for 10 msecs (equivalent therefore to msleep(10)).
+Description: Directly use wait-queues instead of the deprecated
+sleep_on_timeout(). Since the sleep in this function is unconditional,
+wait_event_timeout() does not appear to be appropriate. Patch is
+compile-tested.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc1-kj-v/drivers/char/sonypi.c	2005-01-15 16:55:41.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/char/sonypi.c	2005-01-16 23:44:12.000000000 -0800
-@@ -286,17 +286,14 @@ static void sonypi_camera_on(void)
+--- 2.6.11-rc2-kj-v/fs/lockd/clntlock.c	2005-01-24 09:28:16.000000000 -0800
++++ 2.6.11-rc2-kj/fs/lockd/clntlock.c	2005-01-26 10:45:52.000000000 -0800
+@@ -14,6 +14,7 @@
+ #include <linux/sunrpc/svc.h>
+ #include <linux/lockd/lockd.h>
+ #include <linux/smp_lock.h>
++#include <linux/wait.h>
  
- 	for (j = 5; j > 0; j--) {
+ #define NLMDBG_FACILITY		NLMDBG_CLIENT
  
--		while (sonypi_call2(0x91, 0x1)) {
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout(1);
--		}
-+		while (sonypi_call2(0x91, 0x1))
-+			msleep(10);
- 		sonypi_call1(0x93);
+@@ -47,6 +48,7 @@ static struct nlm_wait *	nlm_blocked;
+ int
+ nlmclnt_block(struct nlm_host *host, struct file_lock *fl, u32 *statp)
+ {
++	DEFINE_WAIT(wait);
+ 	struct nlm_wait	block, **head;
+ 	int		err;
+ 	u32		pstate;
+@@ -69,7 +71,9 @@ nlmclnt_block(struct nlm_host *host, str
+ 	 * a 1 minute timeout would do. See the comment before
+ 	 * nlmclnt_lock for an explanation.
+ 	 */
+-	sleep_on_timeout(&block.b_wait, 30*HZ);
++	prepare_to_wait(&block.b_wait, &wait, TASK_UNINTERRUPTIBLE);
++	schedule_timeout(30*HZ);
++	finish_wait(&block.b_wait, &wait);
  
- 		for (i = 400; i > 0; i--) {
- 			if (sonypi_camera_ready())
- 				break;
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout(1);
-+			msleep(10);
- 		}
- 		if (i)
- 			break;
+ 	for (head = &nlm_blocked; *head; head = &(*head)->b_next) {
+ 		if (*head == &block) {
 
---===============7294438485739847==
+--===============37890931647928028==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============7294438485739847==--
+--===============37890931647928028==--
