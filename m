@@ -1,34 +1,34 @@
-From: Karsten Keil <kkeil@suse.de>
-Date: Tue, 27 Jul 2004 12:11:53 +0000
-Subject: [Kernel-janitors] Re: [PATCH] isdn/hisax: replace
-Message-Id: <20040727121153.GB24114@pingi3.kke.suse.de>
+From: Domen Puncer <domen@coderock.org>
+Date: Tue, 20 Jul 2004 18:45:10 +0000
+Subject: [Kernel-janitors] Re: bluetooth: replace schedule_timeout() with
+Message-Id: <20040720184510.GA2445@masina>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1916996434714433=="
+Content-Type: multipart/mixed; boundary="===============47545384832066784=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.44.0407231652560.32671-100000@chaos.sr.unh.edu>
-In-Reply-To: <Pine.LNX.4.44.0407231652560.32671-100000@chaos.sr.unh.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============1916996434714433==
+--===============47545384832066784==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Jul 23, 2004 at 04:53:10PM -0400, Kai Germaschewski wrote:
-> On Fri, 23 Jul 2004, Nishanth Aravamudan wrote:
-> 
-> > I would appreciate any comments from the janitors list.
-> 
-> These patches all look good to me.
-> 
+On 20/07/04 18:18 +0000, Nishanth Aravamudan wrote:
+...
+> --- linux-vanilla/drivers/bluetooth/bluecard_cs.c	2004-06-16 05:19:22.000000000 +0000
+> +++ linux-dev/drivers/bluetooth/bluecard_cs.c	2004-07-10 18:22:58.000000000 +0000
+> @@ -776,8 +776,7 @@ int bluecard_open(bluecard_info_t *info)
+>  	outb(0x80, iobase + 0x30);
+>  
+>  	/* Wait some time */
+> -	set_current_state(TASK_INTERRUPTIBLE);
+> -	schedule_timeout(HZ / 100);
+> +	msleep(100);
 
-Me too.
+This should be 10.
 
--- 
-Karsten Keil
-SuSE Labs
-ISDN development
 
---===============1916996434714433==
+	Domen
+
+--===============47545384832066784==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1916996434714433==--
+--===============47545384832066784==--
