@@ -1,39 +1,79 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 22:39:24 +0000
-Subject: [Kernel-janitors] [PATCH] scsi/ipr: replace schedule_timeout() with
-Message-Id: <20040727223924.GA4537@us.ibm.com>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Sat, 03 Jul 2004 15:05:55 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/char/mxser.c MIN/MAX removal
+Message-Id: <40E819DD.6070404@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44218089704986707=="
+Content-Type: multipart/mixed; boundary="------------080505050509040204080406"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============44218089704986707==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------080505050509040204080406
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I would appreciate any comments from the janitors list. 
+Patch (against 2.6.7) removes unnecessary min/max macros and changes
+calls to use kernel.h macros instead.
 
-Applys-to: 2.6.7
-
-Description: Use msleep() instead of schedule_timeout() to 
-guarantee the task delays for the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Feedback is always welcome
+Michael
 
 
---- linux-vanilla/drivers/scsi/ipr.c	2004-06-16 05:20:27.000000000 +0000
-+++ linux-dev/drivers/scsi/ipr.c	2004-07-13 18:06:11.000000000 +0000
-@@ -2007,7 +2007,7 @@ static ssize_t ipr_store_diagnostics(str
- 		wait_event(ioa_cfg->reset_wait_q, !ioa_cfg->in_reset_reload);
+
+
+
+
+
+
+--------------080505050509040204080406
+Content-Type: text/plain;
+ name="patch-char-mxser"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="patch-char-mxser"
+
+--- linux-2.6.7-old/drivers/char/mxser.c	2004-07-04 11:04:14.000000000 +0200
++++ linux-2.6.7-new/drivers/char/mxser.c	2004-07-04 15:39:39.915687256 +0200
+@@ -101,10 +101,6 @@
  
- 		/* Wait for a second for any errors to be logged */
--		schedule_timeout(HZ);
-+		msleep(1000);
+ #define IRQ_T(info) ((info->flags & ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
+ 
+-#ifndef MIN
+-#define MIN(a,b)	((a) < (b) ? (a) : (b))
+-#endif
+-
+ /*
+  *    Define the Moxa PCI vendor and device IDs.
+  */
+@@ -847,7 +843,7 @@
+ 	if (from_user) {
+ 		down(&mxvar_tmp_buf_sem);
+ 		while (1) {
+-			c = MIN(count, MIN(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
++			c = min_t(int, count, min(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
+ 					   SERIAL_XMIT_SIZE - info->xmit_head));
+ 			if (c <= 0)
+ 				break;
+@@ -860,7 +856,7 @@
+ 			}
+ 
+ 			cli();
+-			c = MIN(c, MIN(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
++			c = min_t(int, c, min(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
+ 				       SERIAL_XMIT_SIZE - info->xmit_head));
+ 			memcpy(info->xmit_buf + info->xmit_head, mxvar_tmp_buf, c);
+ 			info->xmit_head = (info->xmit_head + c) & (SERIAL_XMIT_SIZE - 1);
+@@ -875,7 +871,7 @@
  	} else {
- 		spin_unlock_irqrestore(ioa_cfg->host->host_lock, lock_flags);
- 		return -EIO;
+ 		while (1) {
+ 			cli();
+-			c = MIN(count, MIN(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
++			c = min_t(int, count, min(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
+ 					   SERIAL_XMIT_SIZE - info->xmit_head));
+ 			if (c <= 0) {
+ 				restore_flags(flags);
 
---===============44218089704986707==
+--------------080505050509040204080406
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============44218089704986707==--
+--------------080505050509040204080406--
