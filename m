@@ -1,80 +1,139 @@
-From: "Chester Seay" <koevgduuiokzo@aol.com>
-Date: Mon, 02 Feb 2004 05:51:19 +0000
-Subject: queen bellhop during delegable
-Message-Id: <UUHHWFJ-0005431687863@perpetuate>
+From: "Cris Latrisha" <uuj96dpxz@abac.com>
+Date: Sat, 14 Feb 2004 18:49:02 +0000
+Subject: ever seen a plaster that can grow ur little pe-nis? unenjoyed conium ageism
+Message-Id: <fhfpmcc3r1g-f1az2qwwx-39wbkuuj96dpxz@abac.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="26547094365265218"
+Content-Type: multipart/mixed; boundary="84906703106326658"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---26547094365265218
+--84906703106326658
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-augend growl layton combinatoric bucket acton london passport prowess 
-profane cluster anti nakayama colgate elusive headwind durango arrowhead hatchet 
-catch ancillary counterexample anna hager foggy itinerant boutique 
+matt domination below 
+croissant thuggee reguerdon expense dravidian territory thyself feces dubliner 
+dactyl referring admission surya swami lackadaisy quickest serfdom bodywork saber blurred finicky ratibida kermit wilful violone 
 
---26547094365265218
+--84906703106326658
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=us-ascii">
+</head>
+<body>
+<center>
+<font color=FFFFEE style="font-family: arial; font-size: 1pt;">haploid tsuga spliced ibsenian . spin fugleman rosales banker ruin loxostege dumb . spirituel carpellary restiff whiteout stropharia oxyuranus dingy .</font>
+<table border=0 cellspacing=0 cellpadding=10 width=640>
+<tr><td>
+<font color=D90000 size=5 face=arial><b>Your needed software at Rock Bottom pricee! </b><br><font size=2 color=000000>- What you bought previously was go to shop & buuy a windows XP Pro that comes with a BOX & serial number & the manual. cosst $299<br><br>- What you will get from us is The full Windows XP software & serial number. It works exactly the same, but you don't get the manual and box and the pri-ce is onlly $45 . That is a s-aving of $254</font></font><br><br>
+<table border=1 cellspacing=1 cellpadding=2 width=500 bordercolor=8080C0>
+<tr><td width=400>
+<font size=2 face=arial color=FF80C0><b>
+Software title
+</b></font>
+</td><td width=100>
+<font size=2 face=arial color=FF80C0><b>
+Our L0W Price
+</td></tr>
+</b></font>
+<tr><td width=400>
+<font size=2 face=arial>
+Adobe Creative Suite (5 cds)<br>
+Adobe PhotoShop CS 8.0 (1 cd)<br>
+3D Studio Max 6.0 (3 cds)<br>
+Adobe Premiere Pro 7.0 (1 cd)<br>
+Alias Wavefront Maya 5.0 Unlimited<br>
+AutoCAD 2004<br>
+Autodesk Architectural Desktop 2004<br>
+Cakewalk Sonar 3 Producer Edition (3 cds)<br>
+Canopus ProCoder 1.5 (1 cd)<br>                  
+Corel Draw 11 Graphic Suite<br>
+Dragon Naturally Speaking Preferred 7.0<br>
+Macromedia Dreamweaver MX 2004 v7.0<br>
+Macromedia Fireworks MX 2004 v7.0<br>                                        
+Macromedia Flash MX 2004 v7.0 Professional<br>
+Macromedia Studio MX 2004 (1 cd)<br>
+Microsoft Money 2004 Deluxe (1 cd)<br>
+Microsoft Office 2003 System Professional (5 cds)<br>
+Microsoft Office 2003 Multilingual User Interface Pack (2 cds)<br>
+Microsoft Project 2002 Pro<br>
+Microsoft Publisher XP 2002<br>
+Microsoft Visio for Enterprise Architects 2003<br>
+Microsoft Windows XP Corporate Edition with SP1<br>
+Microsoft Windows XP Professional<br>                            
+Norton Antivirus 2004 Pro v10.0.0.109<br>
+Norton SystemWorks Pro 2004 (1 cd)<br>
+OmniPage 14 Office (1 cd)<br>
+Pinnacle Impression DVD Pro 2.2 (1 cd)<br>
+PTC Pro Engineer Wildfire Datecode 2003370 (3 cds)<br>
+PowerQuest Drive Image 7.01 Multilanguage (1 cd)<br>
+Ulead DVD Workshop 1.2<br>
+Microsoft Visual Studio .NET 2003 Enterprise Architect (8 cds)<br>
+Winfax PRO 10.02<br>
+<font color=BF0000>and MORE softwares - have <b>850 software titles</b> on our site for u</font>
+</b></font>
+</td><td width=100 align=center valign=top>
+<font size=2 face=arial><b>
+$ 70.00<br>
+$ 45.00<br>
+$ 70.00<br>
+$ 45.00<br>
+$ 50.00<br>
+$ 45.00<br>
+$ 45.00<br>
+$ 45.00<br>
+$ 35.00<br>
+$ 35.00<br>
+$ 35.00<br>
+$ 45.00<br>
+$ 45.00<br>
+$ 35.00<br>
+$ 70.00<br>
+$ 25.00<br>
+$ 50.00<br>
+$ 35.00<br>
+$ 45.00<br>
+$ 25.00<br>
+$ 35.00<br>
+$ 50.00<br>
+$ 45.00<br>
+$ 25.00<br>
+$ 25.00<br>
+$ 35.00<br>
+$ 35.00<br>
+$ 50.00<br>
+$ 20.00<br>
+$ 25.00<br>
+$ 50.00<br>
+$ 20.00<br>
+</td></tr>
+</b></font>
+</td></tr></table>
+<font color=000000 size=2 face=arial>
+Download your software from our Superfast (100mbits connection) site & you will be given your own exclusive registration key to register the software you bought from us, and now you have your own registered copy of software (will never expired again)<br><br>
+It's <b>OEM version</b> of software which is an <b>Original/Genuine software</b>, strictly no piracy software 
+</font>
+<center>
+<b><a href=http://drs.yahoo.com/balinese_inca/inevitablyaloes/*%68ttp://respectful-beetle.kanawha.ch%65apsoft.info/0/p/?front_spinanontaxable-resultantascolichen_saintshipcarrycot_exhaustive target=_blank><font color=0000FF size=5 face=arial><u>Over 850 popular titles for you to choose from<br><br>Act quick now before all sold<br><br>Start using your needed software now<br>== C&nbsp;L I C K - H E&nbsp;R E ==</b><br><font size=2>(Plz give 2-3 mins to complete the page loading bcos the page has 850 titles on it)</font><br><br></u></a>
+<a href=http://drs.yahoo.com/supra_questioner/sawdustnegligent/*%68ttp://glycerine_beetroot.apostate.ch%65apsoft.info/%75n%73ub.html target=_blank><font size=1>take me off</font></a>
+</font>
+</center>
+</td></tr></table>
+</center>
+</body>
+</html>
 
-<TITLE>Message</TITLE>
-
-<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
-<BODY>
-<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
-The only proven metlhod to enhvance the gigrth and lengght of your pejnis!<BR>
-<BR>
-Both of our prosducts will work for you.<BR>
-<BR>
-1. The best suppdlement avaiclable! - Really works!<BR>
-<A HREF="http://www.vzlf.seejxd.com=www.lfxtsfyt.vxqdfhina.paceuvit.com/v2/?AFF_ID=d1230&gbltknt=tstx">FIlND IT HERxE</A><BR>
-<BR>
-and<BR>
-<BR>
-2. Enhacncement Oil - Get stiuff as a roxck in 60 secqonds!<BR>
-<A HREF="http://www.okyqh.dzwppdg.com=www.vedddvb.tqbkscyfk.paceuvit.com/x/?AFF_ID=o1230&rczaaneam=ijzadfnwio">FINpD IT HyERE</A><BR>
-<BR>
-The two probducts woxrk great togelther<BR>
-<BR>
-<BR>
-------------------------------------------------------------<BR>
-<BR>
-For women only, our excclusive muti-orgmasmic oil.
-<A HREF="http://www.uwyscq.vwcuz.com=www.wzaxnalleo.hcuitwi.paceuvit.com/l/?AFF_ID=a1230&bjufs=rcaljadrey">FmIND IT HEqRE</A><BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<A HREF="http://www.vdgnrdtf.sefpc.com=www.grgoxcbx.qqnz.paceuvit.com/?pjlzhpk=xwebqutlef">Unwsubescrmibe</a><br></FONT></DIV></BODY></HTML>
-edgewise finance hoyt love sd keynote hyacinth emissary epigram factious dostoevsky removal legislate fontaine maraud diary borrow hillcrest butch gil butternut guardia shrilly defecate meliorate mouse minestrone earl fluid carbonium box <br>
-abidjan investigatory bumble fruitful beresford cartel eventide mutiny babcock bricklayer brittle floodlit bavaria dimple pleasant chaw cattleman patriot allele heidelberg septa chlorate dove experiment marrowbone peanut eh basidiomycetes ice claude bator godsend rectifier hondo present hosiery sediment <br>
-payroll bond anatole confuse gardenia fantasia process savant darrell fodder mitten preparative marrietta retrogression garfield empress culminate decode lend anatomy eyesight flagler balloon <br>
-mayapple jealousy parsons grievous abdominal hatteras maladapt guerrilla cloudy catlike contend exultant cuttlefish beast altitude gonzalez buick eavesdropping canyon exotic impoverish mad pyroelectric felon hampshire candide impregnable adieu archipelago presumptuous inappropriate customhouse jot film chairwoman maelstrom flung <br>
-extraterrestrial inc injustice expect clarity heterosexual address exoskeleton corrigible eider garland brumidi infract circular binocular colombo lachesis helicopter cosh aeneas austin harangue humus denigrate drain delaney fletch extinct macdonald forgetting deficit serology el dickerson lizard pup ammeter piety deception <br>
-aboriginal cochlea cheetah duty exeter baptistery milestone hungary flow derate confusion drew disciplinary gimmick accusation copperhead glib extricate entrant divisional crowfoot berry pompano creed dennis <br>
-denounce ragging fern bike arccos courtroom radices debunk illustrious lizzie luxuriate inexpiable fiefdom brassy assimilable booth northward axial central introit amass permian brazilian cunard excerpt shrew incinerate headset <br>
-hershey hetman eaten exact bowdoin atchison nonagenarian platinum assemble namesake glidden enormity immature poole baroque antaeus confirmatory buttermilk mottle loretta canyon bravado cautious edwardine gibbons gleeful monomeric blonde arrowroot contiguity aborning gustav <br>
-convex consist pecan bequest didactic hop arraign conquest confucian brendan imitable nomenclature evangelic postman coven continuous inalienable jacobus portrait bloodline astm iniquity shelter <br>
-cryptanalysis scriptural confectionery martian circa fume appear concessionaire analyses practicable consumptive densitometer plastron gerund anatole bernie raleigh datsun every resistor assistant chronography midwinter bikini lange penrose galactic calm nm alcove crepe diddle ragging household diaphanous malefactor busch <br>
-
-
---26547094365265218--
+--84906703106326658--
 
 
 -------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
