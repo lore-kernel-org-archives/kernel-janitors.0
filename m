@@ -1,63 +1,29 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Mon, 04 Oct 2004 22:58:01 +0000
-Subject: [Kernel-janitors] [PATCH 2.6][1/12] arch/ppc/kernel/pci.c replace
-Message-Id: <298570000.1096930681@w-hlinder.beaverton.ibm.com>
+From: Christoph Hellwig <hch@infradead.org>
+Date: Tue, 05 Oct 2004 09:44:43 +0000
+Subject: Re: [Kernel-janitors] [PATCH 2.6][1/12] arch/ppc/kernel/pci.c replace
+Message-Id: <20041005104443.A16871@infradead.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27040213730151175=="
+Content-Type: multipart/mixed; boundary="===============44288745260568696=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, benh@kernel.crashing.org
+References: <298570000.1096930681@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <298570000.1096930681@w-hlinder.beaverton.ibm.com>; from hannal@us.ibm.com on Mon, Oct 04, 2004 at 03:58:01PM -0700
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, benh@kernel.crashing.org, paulus@samba.org, greg@kroah.com
 
---===============27040213730151175==
+--===============44288745260568696==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+On Mon, Oct 04, 2004 at 03:58:01PM -0700, Hanna Linder wrote:
+> 
+> As pci_find_device is going away I have replaced this call with pci_get_device.
+> If someone with a PPC system could verify it I would appreciate it. This is the only
+> one in ppc/kernel all the others are under ppc/platform. There will be 12 total.
 
-As pci_find_device is going away I have replaced this call with pci_get_device.
-If someone with a PPC system could verify it I would appreciate it. This is the only
-one in ppc/kernel all the others are under ppc/platform. There will be 12 total.
+what about adding a for_each_pci_dev macro that nicely hides these AND_ID
+iterations?
 
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-
-diff -Nrup linux-2.6.9-rc3-mm2cln/arch/ppc/kernel/pci.c linux-2.6.9-rc3-mm2patch/arch/ppc/kernel/pci.c
---- linux-2.6.9-rc3-mm2cln/arch/ppc/kernel/pci.c	2004-10-04 11:38:04.000000000 -0700
-+++ linux-2.6.9-rc3-mm2patch/arch/ppc/kernel/pci.c	2004-10-04 14:36:09.000000000 -0700
-@@ -503,7 +503,7 @@ pcibios_allocate_resources(int pass)
- 	u16 command;
- 	struct resource *r;
- 
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
- 		pci_read_config_word(dev, PCI_COMMAND, &command);
- 		for (idx = 0; idx < 6; idx++) {
- 			r = &dev->resource[idx];
-@@ -540,7 +540,7 @@ pcibios_assign_resources(void)
- 	int idx;
- 	struct resource *r;
- 
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
- 		int class = dev->class >> 8;
- 
- 		/* Don't touch classless devices and host bridges */
-@@ -866,7 +866,7 @@ pci_device_from_OF_node(struct device_no
- 	 */
- 	if (!pci_to_OF_bus_map)
- 		return 0;
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
- 		if (pci_to_OF_bus_map[dev->bus->number] != *bus)
- 			continue;
- 		if (dev->devfn != *devfn)
-
-
---===============27040213730151175==
+--===============44288745260568696==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +34,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27040213730151175==--
+--===============44288745260568696==--
