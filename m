@@ -1,53 +1,35 @@
-From: "Fernando Nunez" <Marianne.Conway@austin.rr.com>
-Date: Tue, 03 Aug 2004 05:04:11 +0000
-Subject: [Kernel-janitors] You Qualify for $$290,000
-Message-Id: <200408030510.i7359dSg026678@fire-1.osdl.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37975304406595489=="
+From: "Janet G. Kirk" <janetkirktb@moha.homechoice.co.uk>
+Date: Fri, 20 Aug 2004 23:51:53 +0000
+Subject: 26-Home Loans as low as 2.9%
+Message-Id: <1d1b01c4871d$b1d1cecf$e2640105@mofa.go.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============37975304406595489==
-Content-Type: multipart/alternative; boundary="--730261573334167530"
-
-This is a multi-part message in MIME format...
-
-----730261573334167530
-Content-Type: text/html;
-	charset="iso-4640-9"
-Content-Transfer-Encoding: 7Bit
-Content-Disposition: inline
-
 <html>
-Hello,<p>
-We received your application yesterday and we're happy to let you know<br>
-that it has been approved at a 3% r[at]e.  That will qualify you for a <br>
-loan up to $652,000. <p>
+G'day<p>
 
-Please fill out the final details we need to complete the process: <br>
-<a href="http://griffin.zkvjfnn.com/s6/jj.php?cyb=63">http://www.zkvjfnn.com/s6/jj.php?cyb=63</a><p>
-We look forward to hearing from you.<p>
-Regards,<br>
-LoanStar Inc.<br>
-<br>
-<br>
-<p>
-<a href="http://www.zkvjfnn.com/r2/">not interested</a><p>
+Would you REFlNANCE if you knew you'd S<jkkgwdncdnxptf>AVE TH0US<jxeosqzdkfn>ANDS?<p>
+
+We'll get you lnterest as low as 2.91%.<p>
+
+Don't believe me? Fill out our small online form and we'll show you how.<p>
+
+Get the house and/or car you always wanted, it only takes 2 minutes of your time:<br>
+<a href="http://www.infobeanz.biz/new/index.php">http://www.infobeanz.biz</a>
 </html>
 
-----730261573334167530--
 
---===============37975304406595489==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+-------------------------------------------------------
+SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
+100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
+Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
+http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============37975304406595489==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
