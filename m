@@ -1,65 +1,40 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 21 Sep 2004 20:45:09 +0000
-Subject: Re: [Kernel-janitors] [PATCH] net/cs89x0: replace schedule_timeout()
-Message-Id: <20040921204509.GA4260@stro.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 16 Sep 2004 16:57:28 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 14/33] char/isicom: replace
+Message-Id: <20040916165728.GG1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10919126986935357=="
+Content-Type: multipart/mixed; boundary="===============80522727308007314=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============10919126986935357==
+--===============80522727308007314==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, 26 Jul 2004, Nishanth Aravamudan wrote:
+Any comments would be appreciated. 
 
-> I would appreciate any comments from the janitors list. This is one (of
-> many) cases where I made a decision about replacing
-> 
-> set_current_state(TASK_INTERRUPTIBLE);
-> schedule_timeout(some_time);
-> 
-> with
-> 
-> msleep(jiffies_to_msecs(some_time));
-> 
-> msleep() is not exactly the same as the previous code, but I only did
-> this replacement where I thought long delays were *desired*. If this is
-> not the case here, then just disregard this patch. 
-> 
-> Thanks,
-> Nish
-> 
-> 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Replace schedule_timeout() with msleep() to guarantee the
-> task delays for the desired time.
-> 
-> 
-> --- linux-vanilla/drivers/net/cs89x0.c	2004-06-16 05:19:52.000000000 +0000
-> +++ linux-dev/drivers/net/cs89x0.c	2004-07-12 18:59:24.000000000 +0000
-> @@ -889,8 +889,7 @@ void  __init reset_chip(struct net_devic
->  	writereg(dev, PP_SelfCTL, readreg(dev, PP_SelfCTL) | POWER_ON_RESET);
->  
->  	/* wait 30 ms */
-> -	current->state = TASK_INTERRUPTIBLE;
-> -	schedule_timeout(30*HZ/1000);
-> +	msleep(30);
->  
->  	if (lp->chip_type != CS8900) {
->  		/* Hardware problem requires PNP registers to be reconfigured after a reset */
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected.
 
-this one doesn't compile:
-drivers/net/cs89x0.c:912: warning: implicit declaration of function `msleep'
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-fixed for next kjt.
-a++ maks
+--- 2.6.9-rc1-mm4-vanilla/drivers/char/isicom.c	2004-09-09 23:05:39.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/char/isicom.c	2004-09-10 11:00:15.000000000 -0700
+@@ -1126,11 +1126,10 @@ static void isicom_close(struct tty_stru
+ 	port->tty = NULL;
+ 	if (port->blocked_open) {
+ 		if (port->close_delay) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+ #ifdef ISICOM_DEBUG			
+ 			printk(KERN_DEBUG "ISICOM: scheduling until time out.\n");
+ #endif			
+-			schedule_timeout(port->close_delay);
++			msleep_interruptible(jiffies_to_msecs(port->close_delay));
+ 		}
+ 		wake_up_interruptible(&port->open_wait);
+ 	}	
 
-
-
---===============10919126986935357==
+--===============80522727308007314==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10919126986935357==--
+--===============80522727308007314==--
