@@ -1,58 +1,76 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 14 Feb 2005 18:23:35 +0000
-Subject: Re: [KJ] [PATCH 8/18] drivers/mtd/ remove pci_find_{device, subsys}
-Message-Id: <20050214182334.GB7815@kroah.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Wed, 02 Feb 2005 08:23:05 +0000
+Subject: [KJ] [PATCH] pci_*() for drivers/media/radio/
+Message-Id: <20050202082305.GB24725@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============69589826158748336=="
+Content-Type: multipart/mixed; boundary="yEPQxsgoJgBvi8ip"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200502141122.11786.amitg@calsoftinc.com>
-In-Reply-To: <200502141122.11786.amitg@calsoftinc.com>
 To: kernel-janitors@vger.kernel.org
 
---===============69589826158748336==
+
+--yEPQxsgoJgBvi8ip
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Feb 14, 2005 at 11:22:06AM +0530, Amit Gud wrote:
-> Remove deprecated pci_find_device and pci_find_subsys
-> 
-> 
-> AG
-> --
-> May the source be with you
-> 
-> 
-> Signed-off-by: Amit Gud <gud@eth.net>
-> 
-> 
-> diff -uprN orig/drivers/mtd/devices/pmc551.c linux-2.6.11-rc3/drivers/mtd/devices/pmc551.c
-> --- orig/drivers/mtd/devices/pmc551.c	2005-02-11 15:19:47.000000000 +0530
-> +++ linux-2.6.11-rc3/drivers/mtd/devices/pmc551.c	2005-02-14 02:34:15.000000000 +0530
-> @@ -680,7 +680,7 @@ static int __init init_pmc551(void)
->           */
->          for( count = 0; count < MAX_MTD_DEVICES; count++ ) {
->  
-> -                if ((PCI_Device = pci_find_device(PCI_VENDOR_ID_V3_SEMI,
-> +                if ((PCI_Device = pci_get_device(PCI_VENDOR_ID_V3_SEMI,
->                                                    PCI_DEVICE_ID_V3_SEMI_V370PDC,
->  						  PCI_Device ) ) == NULL) {
->                          break;
+Hi,
 
-Ick, NO!
+Description:
+From : http://kerneljanitors.org/TODO
+>- delete all pci_find_* functions from the kernel tree.
+>  Instead of pci_find_device use pci_get_device()..
+>-  convert from pci_module_init to pci_register_driver
 
-You can't just always use pci_get_device() instead of pci_find_device().
-You need to do other things to the code to get the reference counting
-logic to work properly.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-Please read the documentation of pci_get_device() before doing such a
-search-and-replace work on the whole tree.  In short, almost all of
-these patches in these series are wrong.
+--yEPQxsgoJgBvi8ip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="pci_drivers_media_radio.patch"
 
-thanks,
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-gemtek-pci.c linux-2.6.11-rc2/drivers/media/radio/radio-gemtek-pci.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-gemtek-pci.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/radio/radio-gemtek-pci.c	2005-01-26 10:01:19.000000000 +0100
+@@ -394,7 +394,7 @@ static struct pci_driver gemtek_pci_driv
+ 
+ static int __init gemtek_pci_init_module( void )
+ {
+-	return pci_module_init( &gemtek_pci_driver );
++	return pci_register_driver( &gemtek_pci_driver );
+ }
+ 
+ static void __exit gemtek_pci_cleanup_module( void )
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maestro.c linux-2.6.11-rc2/drivers/media/radio/radio-maestro.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maestro.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/radio/radio-maestro.c	2005-01-26 10:30:27.000000000 +0100
+@@ -265,11 +265,11 @@ static int __init maestro_radio_init(voi
+ {
+ 	register __u16 found=0;
+ 	struct pci_dev *pcidev = NULL;
+-	while(!found && (pcidev = pci_find_device(PCI_VENDOR_ESS, 
++	while(!found && (pcidev = pci_get_device(PCI_VENDOR_ESS, 
+ 						  PCI_DEVICE_ID_ESS_ESS1968,
+ 						  pcidev)))
+ 		found |= radio_install(pcidev);
+-	while(!found && (pcidev = pci_find_device(PCI_VENDOR_ESS,
++	while(!found && (pcidev = pci_get_device(PCI_VENDOR_ESS,
+ 						  PCI_DEVICE_ID_ESS_ESS1978, 
+ 						  pcidev)))
+ 		found |= radio_install(pcidev);
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maxiradio.c linux-2.6.11-rc2/drivers/media/radio/radio-maxiradio.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maxiradio.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/radio/radio-maxiradio.c	2005-01-26 10:01:28.000000000 +0100
+@@ -337,7 +337,7 @@ static struct pci_driver maxiradio_drive
+ 
+ static int __init maxiradio_radio_init(void)
+ {
+-	return pci_module_init(&maxiradio_driver);
++	return pci_register_driver(&maxiradio_driver);
+ }
+ 
+ static void __exit maxiradio_radio_exit(void)
 
-greg k-h
-
---===============69589826158748336==
+--yEPQxsgoJgBvi8ip
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============69589826158748336==--
+--yEPQxsgoJgBvi8ip--
