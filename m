@@ -1,26 +1,20 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 25 Feb 2004 20:38:49 +0000
-Subject: Re: [Kernel-janitors] [PATCH] - 2.6.2 -scripts/modpost.c -
-Message-Id: <20040225123849.62884aa0.rddunlap@osdl.org>
+From: Ron Gage <ron@rongage.org>
+Date: Thu, 12 Feb 2004 22:42:27 +0000
+Subject: [Kernel-janitors] Patches for 2.4
+Message-Id: <200402121742.27304.ron@rongage.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200402142246.32092.ron@rongage.org>
-In-Reply-To: <200402142246.32092.ron@rongage.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 14 Feb 2004 22:46:32 -0500 Ron Gage wrote:
+Is this a good place for patches for 2.4?  Cleanup patches anyhow...
+Or should I send these directly to the individual maintainers?
 
-| Fixes signed/unsigned comparison warnings.
-| 
+-- 
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
 
-This one (modpost) is OK.  The other 2 still left some comparison
-warnings for me, using gcc 3.2.  What compiler version did you use
-to test these changes?
-
---
-~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
