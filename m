@@ -1,44 +1,46 @@
-From: "Kovarththanan Rajaratnam" <krj@cs.aau.dk>
-Date: Wed, 22 Dec 2004 16:44:39 +0000
-Subject: Re: [KJ] janitor project: fix gcc 4 warnings
-Message-Id: <cqc89l$imc$1@sea.gmane.org>
+From: Gustavo Franco <stratus@acm.org>
+Date: Tue, 14 Dec 2004 16:29:07 +0000
+Subject: [KJ] bitkeeper tree for kjt patchset?
+Message-Id: <1103041747.8263.16.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============7791649585711351=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041219190903.GA30192@muc.de>
-In-Reply-To: <20041219190903.GA30192@muc.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hey
-
-"Andi Kleen" <ak@muc.de> wrote in message
-news:20041220080406.GB47521@muc.de...
-> >   CC      kernel/acct.o
-> > kernel/acct.c: In function ???encode_float???:
-> > kernel/acct.c:366: fatal error: internal consistency failure
-> > compilation terminated.
->
-> I checked this and it doesn't seem to happen with my compiler
-> (which is a newer CVS checkout). So I assume it has been fixed already.
->
-I just tried to make a new CVS checkout, but I still get the 'internal
-consistency failure'. Any advice on what to do?
-
---
-Best Regards
-Kovarththanan Rajaratnam
+--===============7791649585711351==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
+What do you think of a bk repository for kjt? I did a search and i
+didn't see anything related with this topic, am i missing something ?
+
+Reading all recent -mm announces we see that Andrew is merging acpi,
+agpgart, arm, cifs and others bk trees. I think that he can merge bk-kjt
+too and we'll see more testing of these patches posted at this list. 
+
+Actually, the kjt 'release process' is post the patchset to lkml when
+kjt maintainer feels that it's ok, no? IMO, it can be done the same way
+but asking for Andrew merge bk-kjt before release -mm kernels adding
+there (bk-kjt) only reviewed patches posted at this list. Comments?
+
+If you think that it's a good idea and there's no server to setup it
+(and i guess that bkbits won't be a problem), i can host it atm.
+
+Hope that helps,
+Gustavo Franco -- <stratus@acm.org>
 
 
 
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now. 
-http://productguide.itmanagersjournal.com/
+--===============7791649585711351==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============7791649585711351==--
