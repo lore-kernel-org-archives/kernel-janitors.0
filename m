@@ -1,57 +1,101 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 17 Sep 2004 17:08:47 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 6/15] isdn/card: replace
-Message-Id: <20040917170847.GG1712@us.ibm.com>
+Date: Tue, 21 Sep 2004 22:37:50 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2] media/radio-zoltrix: replace
+Message-Id: <20040921223750.GA14892@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30100428965606696=="
+Content-Type: multipart/mixed; boundary="===============28331132451926422=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============30100428965606696==
+--===============28331132451926422==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. This is a re-push of a patch
-submitted a few months ago which has not been merged as of
-2.6.9-rc1-mm5 / 2.6.9-rc2.
+Any comments would be appreciated.
 
-Description: Remove macro definition of milliseonds() and replace
-with msecs_to_jiffies().
+Description: Use msleep() instead of sleep_delay() so that the driver
+sleeps as the comment indicated. I assumed that two sleep_delay()s in a
+row indicated sleeping for 20ms. Please let me know if this is
+incorrect.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/isdn/sc/card.h	2004-09-13 17:16:04.000000000 -0700
-+++ 2.6.9-rc2/drivers/isdn/sc/card.h	2004-09-17 10:05:27.000000000 -0700
-@@ -25,23 +25,24 @@
-  */
- #include <linux/timer.h>
- #include <linux/isdnif.h>
-+#include <linux/time.h>
- #include "message.h"
+--- 2.6.9-rc2-vanilla/drivers/media/radio/radio-zoltrix.c	2004-09-13 17:15:39.000000000 -0700
++++ 2.6.9-rc2/drivers/media/radio/radio-zoltrix.c	2004-09-21 15:36:20.000000000 -0700
+@@ -29,7 +29,7 @@
+ #include <linux/module.h>	/* Modules                        */
+ #include <linux/init.h>		/* Initdata                       */
+ #include <linux/ioport.h>	/* check_region, request_region   */
+-#include <linux/delay.h>	/* udelay                 */
++#include <linux/delay.h>	/* udelay, msleep                 */
+ #include <asm/io.h>		/* outb, outb_p                   */
+ #include <asm/uaccess.h>	/* copy to/from user              */
+ #include <linux/videodev.h>	/* kernel radio structs           */
+@@ -51,15 +51,6 @@ struct zol_device {
+ 	struct semaphore lock;
+ };
  
- /*
-  * Amount of time to wait for a reset to complete
-  */
--#define CHECKRESET_TIME		milliseconds(4000)
-+#define CHECKRESET_TIME		msecs_to_jiffies(4000)
+-
+-/* local things */
+-
+-static void sleep_delay(void)
+-{
+-	/* Sleep nicely for +/- 10 mS */
+-	schedule();
+-}
+-
+ static int zol_setvol(struct zol_device *dev, int vol)
+ {
+ 	dev->curvol = vol;
+@@ -76,7 +67,7 @@ static int zol_setvol(struct zol_device 
+ 	}
  
- /*
-  * Amount of time between line status checks
-  */
--#define CHECKSTAT_TIME		milliseconds(8000)
-+#define CHECKSTAT_TIME		msecs_to_jiffies(8000)
+ 	outb(dev->curvol-1, io);
+-	sleep_delay();
++	msleep(10);
+ 	inb(io + 2);
+ 	up(&dev->lock);
+ 	return 0;
+@@ -176,11 +167,10 @@ int zol_getsigstr(struct zol_device *dev
+ 	down(&dev->lock);
+ 	outb(0x00, io);         /* This stuff I found to do nothing */
+ 	outb(dev->curvol, io);
+-	sleep_delay();
+-	sleep_delay();
++	msleep(20);
  
- /*
-  * The maximum amount of time to wait for a message response
-  * to arrive. Use exclusively by send_and_receive
-  */
--#define SAR_TIMEOUT		milliseconds(10000)
-+#define SAR_TIMEOUT		msecs_to_jiffies(10000)
+ 	a = inb(io);
+-	sleep_delay();
++	msleep(10);
+ 	b = inb(io);
  
- /*
-  * Macro to determine is a card id is valid
+ 	up(&dev->lock);
+@@ -202,11 +192,10 @@ int zol_is_stereo (struct zol_device *de
+ 	
+ 	outb(0x00, io);
+ 	outb(dev->curvol, io);
+-	sleep_delay();
+-	sleep_delay();
++	msleep(20);
+ 
+ 	x1 = inb(io);
+-	sleep_delay();
++	msleep(10);
+ 	x2 = inb(io);
+ 
+ 	up(&dev->lock);
+@@ -368,8 +357,7 @@ static int __init zoltrix_init(void)
+ 
+ 	outb(0, io);
+ 	outb(0, io);
+-	sleep_delay();
+-	sleep_delay();
++	msleep(20);
+ 	inb(io + 3);
+ 
+ 	zoltrix_unit.curvol = 0;
 
---===============30100428965606696==
+--===============28331132451926422==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +106,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30100428965606696==--
+--===============28331132451926422==--
