@@ -1,8 +1,10 @@
 From: Gustavo Franco <stratus@acm.org>
-Date: Sat, 24 Apr 2004 18:34:44 +0000
+Date: Sat, 24 Apr 2004 19:28:53 +0000
 Subject: [Kernel-janitors] [PATCH] Replaces yield() with schedule_timeout()
-Message-Id: <408AB344.6010000@acm.org>
+Message-Id: <408ABFF5.6000104@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <408AB344.6010000@acm.org>
+In-Reply-To: <408AB344.6010000@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,26 +12,32 @@ To: kernel-janitors@vger.kernel.org
 
 Hi list,
 
-Following what i've said, i'm looking each yield() call to check if it 
-needs to be
-replaced.I'll send two more patches today and a status message, if 
-everything
-is ok, i'm planning to complete this task on the next week.
+I guess that it's ok, please apply.
 
 Thanks,
 Gustavo Franco
 
---- drivers/scsi/megaraid.c.orig     2004-04-24 13:54:26.000000000 -0300
-+++ drivers/scsi/megaraid.c  2004-04-24 13:54:36.000000000 -0300
-@@ -1691,7 +1691,7 @@
-        for (counter = 0; counter < 10000; counter++) {
-                if (!mbox->m_in.busy)
-                        return 0;
--               udelay(100); yield();
-+               udelay(100); schedule_timeout(1);
-        }
-        return -1;              /* give up after 1 second */
- }
+--- drivers/net/sb1000.c.orig       2004-04-24 13:46:26.000000000 -0300
++++ drivers/net/sb1000.c    2004-04-24 13:47:01.000000000 -0300
+@@ -271,7 +271,7 @@
+        timeout = jiffies + TimeOutJiffies;
+        while (a & 0x80 || a & 0x40) {
+                /* a little sleep */
+-               yield();
++               schedule_timeout(1);
+                                                                                                 
+ 
+                a = inb(ioaddr[0] + 7);
+                if (time_after_eq(jiffies, timeout)) {
+@@ -295,7 +295,7 @@
+        timeout = jiffies + TimeOutJiffies;
+        while (a & 0x80 || !(a & 0x40)) {
+                /* a little sleep */
+-               yield();
++               schedule_timeout(1);
+ 
+                a = inb(ioaddr[1] + 6);
+                if (time_after_eq(jiffies, timeout)) {
 
 _______________________________________________
 Kernel-janitors mailing list
