@@ -1,71 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 04 Feb 2005 23:48:09 +0000
-Subject: [KJ] Re: [PATCH] usb/io_edgeport: remove
-Message-Id: <20050204234809.GC28862@kroah.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Mon, 14 Feb 2005 15:07:46 +0000
+Subject: [KJ] [PATCH 6/16] drivers/net/s2io: Use the DMA_{64,
+Message-Id: <20050214150746.GI15408@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47225495628591041=="
+Content-Type: multipart/mixed; boundary="===============013710170992960791=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============47225495628591041==
+--===============013710170992960791==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Feb 01, 2005 at 01:15:21PM -0800, Nishanth Aravamudan wrote:
-> On Tue, Feb 01, 2005 at 11:43:08AM -0800, Nishanth Aravamudan wrote:
-> > On Mon, Jan 31, 2005 at 10:57:49AM -0800, Greg KH wrote:
-> > > On Tue, Jan 25, 2005 at 04:49:18PM -0800, Nishanth Aravamudan wrote:
-> > > > Hi,
-> > > > 
-> > > > Please consider applying.
-> > > > 
-> > > > Description: Use wait_event_timeout() instead of deprecated
-> > > > interruptible_sleep_on_timeout(). Signals are not checked in the current code,
-> > > > so interruptible should not be necessary. Patch is compile-tested.
-> > > > 
-> > > > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> > > 
-> > > Applied, thanks.
-> > 
-> > Greg,
-> > 
-> > This should fix the behavior of the previous patch (probably not noticed yet).
-> > The wake_up*() was not matched properly in the first patch (fixed below). Please
-> > consider reverting the previous patch and applying this one instead.
-> > 
-> > Thanks,
-> > Nish
-> > 
-> > interruptible_sleep_on_timeout() in one place. Directly use wait-queues in
-> > other locations to remove remaining callers of interruptible_sleep_on_timeout().
-> > Signals are not checked in the current code, so interruptible should not be
-> > necessary. Thus, the wake_up*() calls were modified to match the wait_event*()
-> > ones. There were some naming conflicts, which I tried to resolve appropriately.
-> > The final replacement is within a #if 0 / #endif section of code, but in case
-> > that code is ever used again, I would prefer it had the correct interface :) 
-> > Patch is compile-tested.
-> 
-> This and the mdc800 patch that I sent are incremental to fix wake_up*()
-> callers, as Greg requested on IRC.
-> 
-> Thanks,
-> Nish
-> 
-> Description:  Directly use wait-queues to remove remaining callers of
-> interruptible_sleep_on_timeout(). Signals are not checked (except in one case) 
-> in the current code, so interruptible should not be necessary. Modify the
-> wake_up*() calls to match the wait-queue usage. There were some naming conflicts,
-> which I tried to resolve appropriately. The final replacement is within a #if 0 /
-> #endif section of code, but in case that code is ever used again, I would prefer
-> it had the correct interface :) Patch is compile-tested.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Hello,
 
-Applied, thanks.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 
-greg k-h
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---===============47225495628591041==
+--- linux-2.6.11-rc4.orig/drivers/net/s2io.c	2005-02-13 17:13:02.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/s2io.c	2005-02-13 17:47:07.000000000 +0100
+@@ -4626,19 +4626,19 @@ s2io_init_nic(struct pci_dev *pdev, cons
+ 		return ret;
+ 	}
+ 
+-	if (!pci_set_dma_mask(pdev, 0xffffffffffffffffULL)) {
++	if (!pci_set_dma_mask(pdev, DMA_64BIT_MASK)) {
+ 		DBG_PRINT(INIT_DBG, "s2io_init_nic: Using 64bit DMA\n");
+ 		dma_flag = TRUE;
+ 
+ 		if (pci_set_consistent_dma_mask
+-		    (pdev, 0xffffffffffffffffULL)) {
++		    (pdev, DMA_64BIT_MASK)) {
+ 			DBG_PRINT(ERR_DBG,
+ 				  "Unable to obtain 64bit DMA for \
+ 					consistent allocations\n");
+ 			pci_disable_device(pdev);
+ 			return -ENOMEM;
+ 		}
+-	} else if (!pci_set_dma_mask(pdev, 0xffffffffUL)) {
++	} else if (!pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
+ 		DBG_PRINT(INIT_DBG, "s2io_init_nic: Using 32bit DMA\n");
+ 	} else {
+ 		pci_disable_device(pdev);
+
+--===============013710170992960791==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============47225495628591041==--
+--===============013710170992960791==--
