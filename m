@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 18:04:41 +0000
+Date: Tue, 20 Jul 2004 18:06:20 +0000
 Subject: [Kernel-janitors] [PATCH] paride: replace schedule_timeout() with
-Message-Id: <20040720180441.GA2320@us.ibm.com>
+Message-Id: <20040720180620.GB2320@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5120794395300885=="
+Content-Type: multipart/mixed; boundary="===============97468872589713262=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040720180441.GA2320@us.ibm.com>
+In-Reply-To: <20040720180441.GA2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============5120794395300885==
+--===============97468872589713262==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -38,46 +40,37 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/block/paride/pcd.c	2004-06-16 05:20:04.000000000 +0000
-+++ linux-dev/drivers/block/paride/pcd.c	2004-07-08 23:21:38.000000000 +0000
-@@ -534,12 +534,6 @@ static int pcd_tray_move(struct cdrom_de
- 			 position ? "eject" : "close tray");
- }
+--- linux-vanilla/drivers/block/paride/pf.c	2004-06-16 05:19:42.000000000 +0000
++++ linux-dev/drivers/block/paride/pf.c	2004-07-08 23:14:06.000000000 +0000
+@@ -526,12 +526,6 @@ static void pf_eject(struct pf_unit *pf)
  
--static void pcd_sleep(int cs)
+ #define PF_RESET_TMO   30	/* in tenths of a second */
+ 
+-static void pf_sleep(int cs)
 -{
 -	current->state = TASK_INTERRUPTIBLE;
 -	schedule_timeout(cs);
 -}
 -
- static int pcd_reset(struct pcd_unit *cd)
- {
- 	int i, k, flg;
-@@ -549,11 +543,11 @@ static int pcd_reset(struct pcd_unit *cd
- 	write_reg(cd, 6, 0xa0 + 0x10 * cd->drive);
- 	write_reg(cd, 7, 8);
+ /* the ATAPI standard actually specifies the contents of all 7 registers
+    after a reset, but the specification is ambiguous concerning the last
+    two bytes, and different drives interpret the standard differently.
+@@ -546,11 +540,11 @@ static int pf_reset(struct pf_unit *pf)
+ 	write_reg(pf, 6, 0xa0+0x10*pf->drive);
+ 	write_reg(pf, 7, 8);
  
--	pcd_sleep(20 * HZ / 1000);	/* delay a bit */
+-	pf_sleep(20 * HZ / 1000);
 +	msleep(20);
  
  	k = 0;
- 	while ((k++ < PCD_RESET_TMO) && (status_reg(cd) & IDE_BUSY))
--		pcd_sleep(HZ / 10);
+ 	while ((k++ < PF_RESET_TMO) && (status_reg(pf) & STAT_BUSY))
+-		pf_sleep(HZ / 10);
 +		msleep(100);
  
  	flg = 1;
  	for (i = 0; i < 5; i++)
-@@ -592,7 +586,7 @@ static int pcd_ready_wait(struct pcd_uni
- 		if (!(((p & 0xffff) == 0x0402) || ((p & 0xff) == 6)))
- 			return p;
- 		k++;
--		pcd_sleep(HZ);
-+		msleep(1000);
- 	}
- 	return 0x000020;	/* timeout */
- }
 
---===============5120794395300885==
+--===============97468872589713262==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5120794395300885==--
+--===============97468872589713262==--
