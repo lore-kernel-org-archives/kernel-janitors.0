@@ -1,61 +1,53 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Tue, 08 Feb 2005 00:46:58 +0000
+From: Dave Jones <davej@redhat.com>
+Date: Tue, 08 Feb 2005 01:02:34 +0000
 Subject: Re: [KJ] updated kj-devel.pl
-Message-Id: <42080C02.300@osdl.org>
+Message-Id: <20050208010233.GB6853@redhat.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============27636484044698406=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200502041215.01436.vicente.feito@gmail.com>
 In-Reply-To: <200502041215.01436.vicente.feito@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Vicente Feito wrote:
-> According to the kj-devel.pl modified script I've sent (which I guess not much 
-> people must be using).
-> I've removed the strlen and sprintf warning cause it's ok to use them, 
-> amazingly the DO and DONT's document in kerneljanitors.org says that it's not 
-> correct, but checking the linux/Documentation/cli_sti_removal.txt file I've 
-> found that it's ok to use it, I've tried contacting the author of the 
-> document with no luck yet.
-> Thank you.
-> PS: I'm not sending patches because this is not the official devel.pl that 
-> it's on the janitors page. I would like to hear if someone is using it, or 
-> everybody is using the other tools.
+--===============27636484044698406==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I find the <module>: "You must use the init mechanism" checking
-a little too strong.  Not everything in linux/*.c has to be built
-as a module, so the tool needs to allow for that.
-And not everything is a device driver, but we should be able to
-use the tool anyway, to test for all applicable problems... IMO.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Mon, Feb 07, 2005 at 04:46:58PM -0800, Randy.Dunlap wrote:
 
-This message could be a little better:
-Using foo[] it's recommended against *foo
+ > spinlock misuse detection is often not straightforward.
+ > E.g., in kernel/acct.c (2.6.11-rc3), I'm getting:
+ > Lock closed on line 115
+ > Lock closed on line 162
+ > Obtained spinlock on line 198, but never unlocked.
+ > acct.c:198:             spin_lock(&acct_globals.lock);
+ > 
+ > 
+ > Lock closed on line 247
+ > Lock closed on line 263
+ > Lock closed on line 521
+ > ^^^^^^^^^^^^^^ these line numbers appear to be off by 1 line.
+ > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-How about:
-Using foo[] is recommended over *foo: saves memory references & code.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You're probably best off throwing away the spinlock detection code.
+Its horrible, and breaks really easily.  I'm almost
+embarressed to admit to writing it.
 
-spinlock misuse detection is often not straightforward.
-E.g., in kernel/acct.c (2.6.11-rc3), I'm getting:
-Lock closed on line 115
-Lock closed on line 162
-Obtained spinlock on line 198, but never unlocked.
-acct.c:198:             spin_lock(&acct_globals.lock);
+Sparse should be able to do a much better job.
+
+		Dave
 
 
-Lock closed on line 247
-Lock closed on line 263
-Lock closed on line 521
-^^^^^^^^^^^^^^ these line numbers appear to be off by 1 line.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-More later.
+--===============27636484044698406==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--- 
-~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============27636484044698406==--
