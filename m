@@ -1,45 +1,47 @@
-From: Anupam Kapoor <anupam.kapoor@gmail.com>
-Date: Thu, 01 Jul 2004 13:22:49 +0000
-Subject: [Kernel-janitors] doubt in drivers/usb/class/audio.c
-Message-Id: <e3177630407010610608b87e9@mail.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 26 Jul 2004 18:04:18 +0000
+Subject: [Kernel-janitors] [PATCH] radio/radio-aimslab: replace
+Message-Id: <20040726180418.GZ1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64203182658045344=="
+Content-Type: multipart/mixed; boundary="===============76090865132137031=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============64203182658045344==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============76090865132137031==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi, 
+I would appreciate any comments from the janitors list.
 
-while checking the above file for proper usage of set_current_state, i
-came accross the following fragment (at approx line 2670) in
-drivers/usb/class/audio.c:usb_audio_open()
+Thanks,
+Nish
 
-	__set_current_state(TASK_INTERRUPTIBLE);
-        add_wait_queue(&open_wait, &wait);
+Applys-to: 2.6.7
 
-the problem here (imho) is that, it is possible that the
-current->state write is re-ordered after the process was added to the
-wait queue. if the task gets woken up in between those events, then we
-have a problem.
+Description: Uses msleep() instead of a while-loop and schedule(). Thus
+the CPU is given up for the time desired.
 
-so what actually happens is
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-add_wait_queue(&open_wait, &wait);
-<the task get's woken up here>
-__set_current_state(TASK_INTERRUPTIBLE);
 
-now we are in a big sleep.
+--- linux-vanilla/drivers/media/radio/radio-aimslab.c	2004-06-16 05:19:02.000000000 +0000
++++ linux-dev/drivers/media/radio/radio-aimslab.c	2004-07-02 21:41:46.000000000 +0000
+@@ -63,12 +63,7 @@ static void sleep_delay(long n)
+ 	if(!d)
+ 		udelay(n);
+ 	else
+-	{
+-		/* Yield CPU time */
+-		unsigned long x=jiffies;
+-		while((jiffies-x)<=d)
+-			schedule();
+-	}
++		msleep(jiffies_to_msecs(d));
+ }
+ 
+ static void rt_decvol(void)
 
-i think __set_current_state should just be replaced with
-set_current_state which provides the appropriate memory barrier ?
-
-kind regards
-anupam
-
---===============64203182658045344==
+--===============76090865132137031==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64203182658045344==--
+--===============76090865132137031==--
