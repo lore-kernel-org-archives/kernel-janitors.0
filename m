@@ -1,73 +1,54 @@
-From: Brian Gerst <bgerst@didntduck.org>
-Date: Sun, 25 Jan 2004 18:11:22 +0000
-Subject: [Kernel-janitors] Re: mm/slab.c: linux 2.6.1 fix 2 unguarded
-Message-Id: <401406CA.5000107@quark.didntduck.org>
+From: "Aldrich Kim" <idwqnojpuloz@terra.com>
+Date: Wed, 07 Jan 2004 10:04:29 +0000
+Subject: Re: KPDPZQ, twelve thousand moons
+Message-Id: <BTUCSCD-0007897135161@dale>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--ALT--PBQA76117282547340"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <S264257AbUAYOAm/20040125140042Z+37462@vger.kernel.org>
-In-Reply-To: <S264257AbUAYOAm/20040125140042Z+37462@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: WHarms@bfs.de
-Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-  (Walter Harms) wrote:
-> Hi list,
-> this fixes catches 2 unguarded kmallocs() and changes a statement so that PAGE_SHIFT >20 causes a warning. 
-> At least sparc64 is prepared for a  PAGE_SHIFT >20.
-> 
-> hope that helps,
-> walter
-> 
-> 
-> --- mm/slab.c.org       2004-01-25 08:18:25.243165360 +0100
-> +++ mm/slab.c   2004-01-25 08:33:05.135401408 +0100
-> @@ -666,7 +666,7 @@
->          * Fragmentation resistance on low memory - only use bigger
->          * page orders on machines with more than 32MB of memory.
->          */
-> -       if (num_physpages > (32 << 20) >> PAGE_SHIFT)
-> +       if (num_physpages > (32 << (20-PAGE_SHIFT) )
->                 slab_break_gfp_order = BREAK_GFP_ORDER_HI;
->  
->  
-> @@ -737,6 +737,10 @@
->                 void * ptr;
->  
->                 ptr = kmalloc(sizeof(struct arraycache_init), GFP_KERNEL);
-> +
-> +               if (!ptr)
-> +                 BUG();
-> +
->                 local_irq_disable();
->                 BUG_ON(ac_data(&cache_cache) != &initarray_cache.cache);
->                 memcpy(ptr, ac_data(&cache_cache), sizeof(struct arraycache_init
-> ));
-> @@ -744,6 +748,10 @@
->                 local_irq_enable();
->  
->                 ptr = kmalloc(sizeof(struct arraycache_init), GFP_KERNEL);
-> +
-> +               if (!ptr)
-> +                 BUG();
-> +
->                 local_irq_disable();
->                 BUG_ON(ac_data(malloc_sizes[0].cs_cachep) != &initarray_generic.
-> cache);
->                 memcpy(ptr, ac_data(malloc_sizes[0].cs_cachep),
-> 
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+----ALT--PBQA76117282547340
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-BUG_ON(!ptr) would be better.
+cornfield dixie rip willie depressant 
+something petit repertory metaphor deere educable 
+cassock bureau dolt defrock culture gutsy maxwellian narrate 
 
---
-				Brian Gerst
+----ALT--PBQA76117282547340
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+<HTML><HEAD>
+<BODY>
+<p>Ban</discoid>ned C</syrinx>D Gov</mimicked>ernment d</fed>on't wan</kremlin>t m</wood>e t</entropy>o s</oscar>ell i</balmy>t. Se</absorptive>e N</patrice>ow !</p>
+<a href="http://www.560000x.com/cd/">
+<img border="0" src="http://www.550000x.com/cd/ads.jpg"></a>
+approach petal jimmy congenial cowpunch hexagon astigmatic demography destruct dolce auntie tyrannic denominate muscovy bastard billiken aug handicapped harley boost burst depart chuckwalla declivity air annul bobbie longleg woodward blockade inner replica bisexual poultry kigali sandbag villainous eisenhower southbound <BR>
+brandywine evasion kirby annuity invulnerable loudspeaking gauze ski capita viking toenail conceit castro dispel roughneck keep colgate brittany buckaroo manganese migratory <BR>
+gerund crease shea cathy diffusion gneiss selfridge southwestern folksong condensible hummock <BR>
+junkerdom erda betsy lux amuse eminent constellate adulate calvinist fraudulent suffer dodson thomson huh quantitative delectate astronomic basemen polynomial volume nielson silage stricken rampage allspice meek slothful masseur farsighted bursty baird prodigy socratic affirmation slung flounce delight rhino church diploid <BR>
+livestock chrome compose cantabrigian gel bethought tingle guignol spiny biota betelgeuse pauli maintenance havilland bluejacket carnage manageable bully misanthrope gelatine beer <BR>
+climax atropos terramycin nucleoli hazelnut stagy waldo twelfth convent sommelier transducer seat husbandry among waterproof <BR>
+ywca macroscopic chaperon berkelium jewish neuroanotomy implantation veda publish byronic parabolic toffee realm hypothyroid smyrna paradigmatic cysteine solid mastermind agribusiness cramp tagging mendacity royal alveolar <BR>
+somerville preparative bathroom siam cornucopia sandstone stamina broach disc mimi bartholomew aptitude tedious indiscretion emma cat cyrus kappa birgit engineer appendix tome ottoman thrash contrivance mckeon honshu quadruple trough slaughter <BR>
+negotiable september augur angora doodle platitude domineer ingestible curtis baste clang livre positron lolly verge wastrel wait blastula doghouse anisotropic matriarchal mesquite bespoke gape implosion jerky <BR>
+purloin augean unisex tetravalent ginkgo samuelson invulnerable cradle chronicle curio schulz hug merry thistledown gibbs swallow calamity countrywide pyrex critic stereoscopy curd woodbury jig scanty governor caracas housewife abrogate pyramidal caribou archangel monkeyflower hydrophobia inexpedient molar anorthosite canary <BR>
+axiom cessation lace introspect passband leftover splashy beep shepherd adult jugate beforehand timbre lacerta eater scamp sportswear divisive grapheme pygmy edt clannish consultant grist petroglyph rebut phalanger muff casteth claustrophobia abolition <BR>
+
+</BODY>
+</HTML>
+
+
+----ALT--PBQA76117282547340--
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: IBM Linux Tutorials.
+Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
+Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
+Click now! http://ads.osdn.com/?ad_id=1278&alloc_id=3371&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
