@@ -1,50 +1,40 @@
-From: "Ravinandan Arakali" <ravinandan.arakali@neterion.com>
-Date: Thu, 17 Feb 2005 00:24:20 +0000
-Subject: RE: [KJ] RE: [PATCH 14/21] net/s2io: replace schedule_timeout() with
-Message-Id: <001601c51487$06d48a60$4510100a@pc.s2io.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:52 +0000
+Subject: [KJ] [PATCH][RESUBMIT][9/21] drivers/net/* - compile warning cleanup
+Message-Id: <42113C2C.17871.52BDF2@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83780679869382202=="
+Content-Type: multipart/mixed; boundary="===============61256178139852757=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200501172315.j0HNFAaH027053@guinness.s2io.com>
-In-Reply-To: <200501172315.j0HNFAaH027053@guinness.s2io.com>
 To: kernel-janitors@vger.kernel.org
 
---===============83780679869382202==
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+--===============61256178139852757==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Will forward you the patch.
+Description: compile warning cleanup - silence compiler warning for 
+unused function that is either actually used as a driver function in a 
+table or is truly unused
 
-Ravi
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
------Original Message-----
-From: Nishanth Aravamudan [mailto:nacc@us.ibm.com]
-Sent: Wednesday, February 16, 2005 4:13 PM
-To: Ravinandan Arakali
-Cc: 'Domen Puncer'; 'Raghavendra Koushik';
-kernel-janitors@lists.osdl.org; leonid.grossman@neterion.com
-Subject: Re: [KJ] RE: [PATCH 14/21] net/s2io: replace schedule_timeout()
-with msleep()
-
-
-On Wed, Feb 16, 2005 at 03:54:06PM -0800, Ravinandan Arakali wrote:
-> Domen,
-> Thanks for pointing that out. As you mention, the intention is
-> indeed to wait for Ctrl+C.
-> Nishanth, are you planning to modify it to msleep_interruptible().
-> If so, pls note that I submitted a Multicast fix after your below
-> patch. Pls apply multicast patch before changing to
-msleep_interruptible().
-
-I would be happy to send an incremental fix, but I don't seem to have a
-copy of your multicast patch at hand. Could you send me one?
-
-Thanks,
-Nish
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/net/ibmlana.c linux-2.6.11-rc3-mm2/drivers/net/ibmlana.c
+--- linux-2.6.11-rc3-mm2-original/drivers/net/ibmlana.c	2005-02-12 12:06:38.000000000 +0200
++++ linux-2.6.11-rc3-mm2/drivers/net/ibmlana.c	2005-02-12 17:22:13.000000000 +0200
+@@ -901,7 +901,7 @@ static void ibmlana_set_multicast_list(s
+ 
+ static int startslot;		/* counts through slots when probing multiple devices */
+ 
+-static int ibmlana_probe(struct net_device *dev)
++static int __attribute__((unused)) ibmlana_probe(struct net_device *dev)
+ {
+ 	int slot, z;
+ 	int base = 0, irq = 0, iobase = 0, memlen = 0;
 
 
---===============83780679869382202==
+
+
+--===============61256178139852757==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83780679869382202==--
+--===============61256178139852757==--
