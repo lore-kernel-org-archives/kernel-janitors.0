@@ -1,105 +1,108 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Date: Sun, 04 Apr 2004 03:16:00 +0000
-Subject: [Kernel-janitors] [PATCH 4/5] remove concatenation with
-Message-Id: <1081048590.1713@bakeyournoodle.com>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Wed, 21 Apr 2004 23:31:46 +0000
+Subject: [Kernel-janitors] Re: [janitor] use kernel min/max (2/2)
+Message-Id: <40870462.5070807@gmx.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============4695877104976266=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040322052155.GF17221@bakeyournoodle.com>
-In-Reply-To: <20040322052155.GF17221@bakeyournoodle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+References: <20040316163520.048ce536.rddunlap@osdl.org>	<200403181817.59173.bzolnier@elka.pw.edu.pl> <20040421144605.517d5834.rddunlap@osdl.org>
+In-Reply-To: <20040421144605.517d5834.rddunlap@osdl.org>
+To: "Randy.Dunlap" <rddunlap@osdl.org>
+Cc: Bartlomiej Zolnierkiewicz <B.Zolnierkiewicz@elka.pw.edu.pl>, linux-ide@vger.kernel.org, Kernel-janitors@lists.osdl.org
 
-diff -X dontdiff -purN 2.6.5-rc3.clean/net/8021q/vlan.h 2.6.5-rc3.kj_func/net/8021q/vlan.h
---- 2.6.5-rc3.clean/net/8021q/vlan.h	2004-01-15 17:04:12.000000000 +1100
-+++ 2.6.5-rc3.kj_func/net/8021q/vlan.h	2004-04-04 12:38:27.000000000 +1000
-@@ -19,8 +19,8 @@ I never found it..and the problem seems 
- I'll bet they might prove useful again... --Ben
- 
- 
--#define VLAN_MEM_DBG(x, y, z) printk(VLAN_DBG __FUNCTION__ ":  "  x, y, z);
--#define VLAN_FMEM_DBG(x, y) printk(VLAN_DBG __FUNCTION__  ":  " x, y);
-+#define VLAN_MEM_DBG(x, y, z) printk(VLAN_DBG "%s:  "  x, __FUNCTION__, y, z);
-+#define VLAN_FMEM_DBG(x, y) printk(VLAN_DBG "%s:  " x, __FUNCTION__, y);
- */
- 
- /* This way they don't do anything! */
-diff -X dontdiff -purN 2.6.5-rc3.clean/net/8021q/vlanproc.c 2.6.5-rc3.kj_func/net/8021q/vlanproc.c
---- 2.6.5-rc3.clean/net/8021q/vlanproc.c	2004-04-01 08:31:48.000000000 +1000
-+++ 2.6.5-rc3.kj_func/net/8021q/vlanproc.c	2004-04-04 12:38:27.000000000 +1000
-@@ -220,7 +220,7 @@ int vlan_proc_rem_dev(struct net_device 
- 	}
- 
- #ifdef VLAN_DEBUG
--	printk(VLAN_DBG __FUNCTION__ ": dev: %p\n", vlandev);
-+	printk(VLAN_DBG "%s: dev: %p\n", __FUNCTION__, vlandev);
- #endif
- 
- 	/** NOTE:  This will consume the memory pointed to by dent, it seems. */
-diff -X dontdiff -purN 2.6.5-rc3.clean/net/ipv4/netfilter/ip_conntrack_irc.c 2.6.5-rc3.kj_func/net/ipv4/netfilter/ip_conntrack_irc.c
---- 2.6.5-rc3.clean/net/ipv4/netfilter/ip_conntrack_irc.c	2004-01-16 21:14:43.000000000 +1100
-+++ 2.6.5-rc3.kj_func/net/ipv4/netfilter/ip_conntrack_irc.c	2004-04-04 12:38:27.000000000 +1000
-@@ -60,8 +60,8 @@ DECLARE_LOCK(ip_irc_lock);
- struct module *ip_conntrack_irc = THIS_MODULE;
- 
- #if 0
--#define DEBUGP(format, args...) printk(KERN_DEBUG __FILE__ ":" __FUNCTION__ \
--					":" format, ## args)
-+#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
-diff -X dontdiff -purN 2.6.5-rc3.clean/net/ipv4/netfilter/ip_conntrack_tftp.c 2.6.5-rc3.kj_func/net/ipv4/netfilter/ip_conntrack_tftp.c
---- 2.6.5-rc3.clean/net/ipv4/netfilter/ip_conntrack_tftp.c	2004-02-19 07:19:23.000000000 +1100
-+++ 2.6.5-rc3.kj_func/net/ipv4/netfilter/ip_conntrack_tftp.c	2004-04-04 12:38:27.000000000 +1000
-@@ -33,8 +33,8 @@ MODULE_PARM_DESC(ports, "port numbers of
- #endif
- 
- #if 0
--#define DEBUGP(format, args...) printk(__FILE__ ":" __FUNCTION__ ": " \
--				       format, ## args)
-+#define DEBUGP(format, args...) printk("%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
-diff -X dontdiff -purN 2.6.5-rc3.clean/net/ipv4/netfilter/ip_nat_tftp.c 2.6.5-rc3.kj_func/net/ipv4/netfilter/ip_nat_tftp.c
---- 2.6.5-rc3.clean/net/ipv4/netfilter/ip_nat_tftp.c	2004-02-19 07:19:23.000000000 +1100
-+++ 2.6.5-rc3.kj_func/net/ipv4/netfilter/ip_nat_tftp.c	2004-04-04 12:38:27.000000000 +1000
-@@ -47,8 +47,8 @@ MODULE_PARM_DESC(ports, "port numbers of
- #endif
- 
- #if 0
--#define DEBUGP(format, args...) printk(__FILE__ ":" __FUNCTION__ ": " \
--				       format, ## args)
-+#define DEBUGP(format, args...) printk("%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
-diff -X dontdiff -purN 2.6.5-rc3.clean/net/ipv4/netfilter/ipt_ULOG.c 2.6.5-rc3.kj_func/net/ipv4/netfilter/ipt_ULOG.c
---- 2.6.5-rc3.clean/net/ipv4/netfilter/ipt_ULOG.c	2004-02-19 07:19:24.000000000 +1100
-+++ 2.6.5-rc3.kj_func/net/ipv4/netfilter/ipt_ULOG.c	2004-04-04 12:38:27.000000000 +1000
-@@ -64,13 +64,13 @@ MODULE_DESCRIPTION("iptables userspace l
- #define ULOG_MAXNLGROUPS	32		/* numer of nlgroups */
- 
- #if 0
--#define DEBUGP(format, args...)	printk(__FILE__ ":" __FUNCTION__ ":" \
--				       format, ## args)
-+#define DEBUGP(format, args...) printk("%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
- 
--#define PRINTR(format, args...) do { if (net_ratelimit()) printk(format, ## args); } while (0)
-+#define PRINTR(format, args...) do { if (net_ratelimit()) printk(format , ## args); } while (0)
- 
- static unsigned int nlbufsiz = 4096;
- MODULE_PARM(nlbufsiz, "i");
+--===============4695877104976266==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+
+
+Randy.Dunlap wrote:
+
+> On Thu, 18 Mar 2004 18:17:59 +0100 Bartlomiej Zolnierkiewicz wrote:
+> 
+> | 
+> | > @@ -354,7 +354,7 @@ static int idescsi_end_request (ide_driv
+> | >  			if (!test_bit(PC_WRITING, &pc->flags) && pc->actually_transferred &&
+> | > pc->actually_transferred <= 1024 && pc->buffer) { printk(", rst = ");
+> | >  				scsi_buf = pc->scsi_cmd->request_buffer;
+> | > -				hexdump(scsi_buf, IDE_MIN(16, pc->scsi_cmd->request_bufflen));
+> | > +				hexdump(scsi_buf, min_t(int, 16, pc->scsi_cmd->request_bufflen));
+> | >  			} else printk("\n");
+> | >  		}
+> | >  	}
+> | 
+> | 'unsigned' should be used instead of 'int'
+> | (scsi_cmd->request_bufflen is 'unsigned')
+> | 
+> | > @@ -371,7 +371,7 @@ static int idescsi_end_request (ide_driv
+> | >
+> | >  static inline unsigned long get_timeout(idescsi_pc_t *pc)
+> | >  {
+> | > -	return IDE_MAX(WAIT_CMD, pc->timeout - jiffies);
+> | > +	return max_t(long, WAIT_CMD, pc->timeout - jiffies);
+> | >  }
+> | >
+> | >  /*
+> | 
+> | pc->timeout and jiffies are of 'unsigned long' type
+> | so why 'long' is used here?  Timer wrapping protection?
+> 
+> Yes, I think so.  (see below)
+> 
+> | Otherwise patches look okay and I will push them to Linus
+> | as soon as somebody explains this 'long' thing to me. :-)
+> 
+> Michael hasn't replied on this AFAIK.
+
+Sorry for being quiet, I'm busy right now looking for a new job.
+
+Anyway, IIRC I choose 'long' because of the jiffies.h too, but I'm 
+willing to change that back to 'unsigned long'.
+
+> 
+> 'long' looks correct to me, just based on include/linux/jiffies.h.
+> In that case, someone has thought lots more about it than I have
+> and concluded that while jiffies is stored as 'unsigned long',
+> comparing times is correct when coerced (typecast) to long, as in:
+> 
+> #define time_after(a,b)		\
+> 	(typecheck(unsigned long, a) && \
+> 	 typecheck(unsigned long, b) && \
+> 	 ((long)(b) - (long)(a) < 0))
+> 
+> But if you think it's risky, let's just drop it.
+> 
+> | If somebody is interested there are still related things to fix in IDE code:
+> | 
+> | drivers/ide/ide-cd.c:
+> | use 'unsigned' instead of 'int' for nskip, sectors_to_transfer, len variables
+> | 
+> | ide-timing.h:
+> | get rid of MIN()/MAX() macros, this should be done very carefully
+> | as they are used for calculating timings
+
+Where's the risk in that? An example would be very helpful.
+Thanks for the help
+
+Veeck
+
+> 
+> 
+> --
+> ~Randy
+> 
+> 
+
+
+--===============4695877104976266==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============4695877104976266==--
