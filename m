@@ -1,57 +1,192 @@
-From: "Milan Helper" <RicardoCapalbo5288@myexcel.com>
-Date: Mon, 16 Feb 2004 02:52:43 +0000
-Subject: fantastic
-Message-Id: <DMBLEICBKAIWPRGPPUKTREZ@centurytel.net>
+From: "Your-Info, Inc" <reply@optinadsolutions.com>
+Date: Sat, 28 Feb 2004 03:30:28 +0000
+Subject: Build cleavage and cup size instantly
+Message-Id: <20040227223028.zvwdohguqb@optinadsolutions.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--85758995026365816"
+Content-Type: multipart/mixed; boundary="=_d9ff3fa9e5330fc5479151952f50a90c"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----85758995026365816
-Content-Type: text/html;
+
+This is a MIME encoded message.
+
+--=_d9ff3fa9e5330fc5479151952f50a90c
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+
+
+The New "Strapless" Bust Enhancing Silicone Bra -- Natural Bra 
+
+*************************************
+
+As Low As $14.99 each plus s&h
+
+http://optinadsolutions.com/dbm83/l.php?957&50016221
+
+*************************************
+
+Wear any dress style in comfort!
+
+Looks and feels real - moves with you
+
+Comfortable and strapless - Won't fall down
+
+Adjustable cleavage control adds a full cup size
+
+*************************************
+
+When you buy 1 for $29.99, you get 1 free - just pay S&H!
+
+http://optinadsolutions.com/dbm83/l.php?957&50016221
+
+*************************************
+
+Powered by LIVEMERCIAL - The Interactive Commercial - www.livemercial.com
+Please paste url into browser to discontinue email offers for this product.
+http://optinadsolutions.com/dbm83/l.php?958&50016221&cid=108411
+Alternatively, you may send a written request via mail to:
+Livemercial - PMB 221, 2843 Calumet Avenue, Valparaiso, IN 46383
+
+**********************************
+***
+
+
+--------------------------------------------
+Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed here http://optinadsolutions.com/dbm83/un.php?401&50016221 Third-party offers contained in this email are the sole responsibility of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
+
+
+--=_d9ff3fa9e5330fc5479151952f50a90c
+Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-<html>
-<head><p style=3D"font-size:0px; color:white" align=3D"left">
-<br>Kheap demarcate beard gaugeable appraise footnote intensify axon amphi=
-theatres blowzy vestibule brenda insoluble swan sprain elastic beacon donn=
-elly duke amigos propellant=20 !! Urobbin sought topmost stricter ness kic=
-koff notocord boas andre backgrounders bon secretary pyrotechnic=20? Tanta=
-gonism adduce flexure hazardous appalls sharpen bollixing condescension ax=
- chautauqua viii equate hawthorn judas flirtation oppressor lose incorrect=
- bookplate zan bottleneck diesel awkward debris gaulle acquainted=20.Oalch=
-emy adposition saxifrage hieronymus pent feign orthorhombic moore eel bica=
-meralisms hurry confiscate=20! Rleyden osha betimes booklet anacondas bill=
-y hideaway chateaux credenza bobcats orwellian allowance purpose acidify b=
-asts biddable erratic ftc potpourri peltry mesopotamia=20. Xapprehend aft =
-fm associative volcano aggressors julep height bellybuttons bless nightmar=
-e dodd jacksonville smell part americanism spotlight bilge blanked avert n=
-aiad=20=20</p>
-</head>
-<body  bgcolor=3D"#FFFFFF" link=3D"#0033CC" vlink=3D"#0033CC">
-<center><a href=3D"http://www.terra.es/personal5/has14u/form/" target=3D"_=
-blank"><img src=3D"http://www.terra.es/personal5/qp2wo5ei8/1.gif" border=3D=
-"0"></a>
-<br><br><font color=3D"#000000">I</mouthful>f t</clotho>he mes</pique >sag=
-e</springfield> i</thicket>s n</anteing>ot lo</flynn >adi</foxglove >ng</o=
-bserve> <a href=3D"http://www.terra.es/personal5/has14u/form/"><b>t</apple=
-sauce >r</psyllium >y</s> th</hermetic >is</absorbency></b></a></center>
-<p style=3D"font-size:0px; color:white" align=3D"left">
-<br>Cpure recession lipid kidney apertures areawide lithology tundra swizz=
-le pose gaylord=20? Xhoot chargeable thermal bristle bookings finnish quah=
-og portfolio ales christian gibraltar zan irreconcilable arctics=20. Ocurv=
-ature aerospaces ambush coincident greer bisecting c anthropologist pacifi=
-st sorb tendon promise calico irredentist sieglinda nouakchott fum ambient=
- gracious lux compound ferrite let agrarian somehow enunciate elision dipl=
-oma biting detain thunder freeport longish cusp=20=20Re: Credit Applicatio=
-n Declinedeventful allures armonk cotman derby cryogenic galvanometer equa=
-ble barcaroles badgering itch parrish sac commonplace glassy loretta egoce=
-ntric pizza appraisers ullman arthritis rosette artisan colombia resourcef=
-ul mealtime ding mae piper commute abutted=2085758995026365816</p>
-</body>
-</html>
 
-----85758995026365816--
+
+
+<HTML>
+<HEAD>
+</HEAD>
+<BODY BGCOLOR=3D#FFFFFF LEFTMARGIN=3D0 TOPMARGIN=3D0 MARGINWIDTH=3D0 MARGINHEIGHT=
+=3D0><img src=3D"http://www.asseenontvnetwork.com/track/open/108411" height=
+=3D"1" width=3D"1" border=3D"0">
+<TABLE WIDTH=3D550 BORDER=3D0 align=3D"center" CELLPADDING=3D0 CELLSPACING=
+=3D0>
+	<TR>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_01.gif=
+" WIDTH=3D351 HEIGHT=3D44 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_02.gif=
+" WIDTH=3D188 HEIGHT=3D44 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_03.gif=
+" WIDTH=3D11 HEIGHT=3D44 border=3D"0"></a></TD>
+	</TR>
+	<TR>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_04.jpg=
+" WIDTH=3D351 HEIGHT=3D152 border=3D"0"></a></TD>
+		<TD width=3D"188" height=3D"152" background=3D"http://www.countyseatstores.com=
+/telebrands/naturalbra/v6/images/noplay.gif"><object classid=3D"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000=
+" codebase=3D"https://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=
+=3D5,0,0,0" width=3D"188" height=3D"152"><param name=3D"movie" value=3D"http=
+://www.countyseatstores.com/global/loader-v20.swf?Host=3Dcountyseatstores&Client=
+=3Dtelebrands&Product=3Dnaturalbra"/><param name=3D"quality" value=3D"high"=
+/><embed src=3D"http://www.countyseatstores.com/global/loader-v20.swf?Host=
+=3Dcountyseatstores&Client=3Dtelebrands&Product=3Dnaturalbra" quality=3D"high=
+" pluginspage=3D"https://www.macromedia.com/go/getflashplayer" type=3D"application=
+/x-shockwave-flash" width=3D"188" height=3D"152"></embed></object></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_06.gif=
+" WIDTH=3D11 HEIGHT=3D152 border=3D"0"></a></TD>
+	</TR>
+	<TR>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_07.gif=
+" WIDTH=3D351 HEIGHT=3D72 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_08.gif=
+" WIDTH=3D188 HEIGHT=3D72 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?959&50016221"><IMG=
+ SRC=3D"http://www.countyseatstores.com/telebrands/naturalbra/v6/images/Untitled-1_09.gif=
+" WIDTH=3D11 HEIGHT=3D72 border=3D"0"></a></TD>
+	</TR>
+</TABLE>
+<table width=3D"550" height=3D"275" border=3D"0" align=3D"center" cellpadding=
+=3D"0" cellspacing=3D"0">
+  <tr>
+    <td background=3D"http://www.countyseatstores.com/global/images/StandardForm.gif=
+"><OBJECT classid=3D"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase=
+=3D"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=
+=3D5,0,0,0" WIDTH=3D"540" HEIGHT=3D"275" id=3D"form" ALIGN=3D""><PARAM NAME=
+=3D"movie" VALUE=3D"http://www.countyseatstores.net/evcc/telebrands/naturalbra=
+/form.swf?Host=3Dcountyseatstores&CID=3D108411"><PARAM NAME=3D"menu" VALUE=
+=3D"false"><PARAM NAME=3D"quality" VALUE=3D"high"><PARAM NAME=3D"bgcolor" VALUE=
+=3D"#FFFFFF"><EMBED src=3D"http://www.countyseatstores.net/evcc/telebrands/naturalbra=
+/form.swf?Host=3Dcountyseatstores&CID=3D108411" quality=3D"high" bgcolor=3D=
+"#FFFFFF"  WIDTH=3D"540" HEIGHT=3D"275" NAME=3D"form" ALIGN=3D"" TYPE=3D"application=
+/x-shockwave-flash" PLUGINSPAGE=3D"http://www.macromedia.com/go/getflashplayer=
+"></EMBED></OBJECT></td>
+  </tr>
+</table>
+<div align=3D"center">
+<img src=3D"http://www.countyseatstores.net/ets/footerD.gif" border=3D"0" align=
+=3D"center">
+<a href=3D"http://optinadsolutions.com/dbm83/l.php?960&50016221&cid=3D108411=
+"><img src=3D"http://www.countyseatstores.net/ets/footerE.gif" border=3D"0"=
+ align=3D"center"></a>
+<img src=3D"http://www.countyseatstores.net/ets/footerF.gif" border=3D"0" align=
+=3D"center">
+</div>
+
+
+
+<center><br><br><font color=3D#000000>
+
+
+<hr width=3D250>
+<font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
+<form method=3D"GET" action=3D"http://optinadsolutions.com/dbm83/forw_friend.php=
+" target=3D"ies_f2f_window">
+<b>Forward this mail to a friend:</b><br>
+Friend's emails:
+<input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
+"> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
+ value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"401=
+">
+</font></form>
+<hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
+>
+<p><font size=3D"2">Your privacy is extremely important to us. You requested=
+ to=20
+receive this mailing by subscribing to one or more of our offers. To leave our=
+ lists Proceed <a href=3D"http://optinadsolutions.com/dbm83/un.php?401&50016221=
+">here</a>.=20
+Third-party offers contained in this email are the sole responsibility of the=
+=20
+offer originator. If you would like to mail your unsubscribe request mail to=
+: Your-Info, Inc 9140 Bonita Beach Rd.
+Suite 144 Bonita Springs, FL 34135.</font></p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<img src=3D"http://optinadsolutions.com/dbm83/opened.php?401&50016221" width=
+=3D1 height=3D1></font></font></center></body></html>
+sekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbse
+
+       
+       
+       
+       
+       
+       
+       
+
+--=_d9ff3fa9e5330fc5479151952f50a90c--
+
 
 
 
