@@ -1,7 +1,7 @@
-From: Michael Still <mikal@stillhq.com>
-Date: Mon, 29 Mar 2004 04:33:12 +0000
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Tue, 30 Mar 2004 22:40:39 +0000
 Subject: Re: [Kernel-janitors] old patches never die?
-Message-Id: <4067A708.20804@stillhq.com>
+Message-Id: <20040330144039.059275a5.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040329014927.38963.qmail@web60501.mail.yahoo.com>
 In-Reply-To: <20040329014927.38963.qmail@web60501.mail.yahoo.com>
@@ -10,24 +10,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Carl Spalletta wrote:
+On Sun, 28 Mar 2004 17:49:27 -0800 (PST) Carl Spalletta wrote:
 
->   Generally speaking, what if anything can a janitor do to get positive or 
-> negative feedback on a submission?
+|   It seems as if a relatively small percentage of -kj patches ultimately
+| get merged at kernel.org.  For example the kswapd_init_fail patch from
+| 2.6.3-kj1 and 2.6.4-rc2-kj1 not only didn't get merged but the file (mm/vmscan.c)
+| has since been patched (for a different purpose) at the same location. So that
+| patch would have to be redone anyway:
 
-Personally, I've found both this list and janitor@rustcorp.com.au to be 
-helpful for getting feedback. You should probably send any given patch 
-to only one of those two however, as real humans have to read the mail, 
-and it's a shame to duplicate effort.
+Can you provide any data on the percentage of merges?
 
-Cheers,
-Mikal
 
--- 
+| --- linux-263/mm/vmscan.c	2004-02-17 19:57:16.000000000 -0800
+| +++ linux-263-kj1/mm/vmscan.c	2004-02-18 14:42:03.000000000 -0800
+| @@ -1087,10 +1087,14 @@ int shrink_all_memory(int nr_pages)
+|  
+|  static int __init kswapd_init(void)
+|  {
+| +	int ret;
+|  	pg_data_t *pgdat;
+|  	swap_setup();
+| -	for_each_pgdat(pgdat)
+| -		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
+| +	for_each_pgdat(pgdat) {
+| +		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
+| +		if (ret < 0)
+| +			panic("%s: unable to initialise kswapd\n", __FUNCTION__);
+| +	}
+|  	total_memory = nr_free_pagecache_pages();
+|  	return 0;
+|  }
+| 
+|   Perhaps it was deemed unnecessary to panic() if kswapd doesnt start ;).
+| 
+|   Generally speaking, what if anything can a janitor do to get positive or 
+| negative feedback on a submission?
 
-Michael Still (mikal@stillhq.com) | "All my life I've had one dream,
-http://www.stillhq.com            |  to achieve my many goals"
-UTC + 11                          |    -- Homer Simpson
+I'd certainly like to see more involvement by reviewers (as I've
+said in the past).  Willy and GregKH are good about reviewing,
+and sometimes DaveJ, Acme, jgarzik.  Oh, and Domen, Luiz, Michael, etc.
+
+The patch in question is still in the KJ patchset, so that is some
+kind of positive feedback.  I prefer to see some kind of feedback on
+all patches, but sometimes there aren't enough hours in a day for that,
+so it comes down to:  if I put it into the KJ patchset, that's positive
+feedback.  Otherwise it should get some email comments.
+
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
