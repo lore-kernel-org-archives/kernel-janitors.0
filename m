@@ -1,59 +1,35 @@
-From: Oliver Neukum <oliver@neukum.org>
-Date: Sat, 23 Oct 2004 00:20:00 +0000
-Subject: [KJ] Re: [linux-usb-devel] [PATCH] class/usblp: cleanup
-Message-Id: <200410230220.00545.oliver@neukum.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============76294906099502957=="
+From: "Ofelia Ochoa" <o.ochoaeh@cica.ca>
+Date: Sat, 23 Oct 2004 15:23:13 +0000
+Subject: Role'x Daytona Watch
+Message-Id: <9cb001c4b91f$7cdca696$1982b284@moeys.be>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============76294906099502957==
-Content-Disposition: inline
-Content-Type: text/plain; charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+<html>
+Real gold 18kt Rolex replicas that look EXACTLY like the originals<p>
+we have all the latest models:<br>
+- <a href="http://uhmibqbbaef.nteri.com/replica/den4/jbyrsqcmpu">rolex submariner</a><br>
+- <a href="http://zcjgajkxviib.nteri.com/replica/den4/zdtwcrchxdwh">rolex daytona</a><br>
+- <a href="http://mqsyapbumndotc.nteri.com/replica/den4/hnohejdnmz">rolex datejust</a><br>
+- <a href="http://grjksecvbzvp.nteri.com/replica/den4/wbhbifbuhgdpfd">rolex rolex yachtmaster</a><br>
+- <a href="http://nvvfqwescj.nteri.com/replica/den4/elgppgcshfms">rolex oyster perpetual</a><p>
+These are perfectly identical to the originals,<br>
+but at a tiny fraction of the cost.<br>
+<a href="http://kcwzplfhwi.nteri.com/replica/den4/zllizazohvw">Have a look, you'll be amazed</a>
+<p><br><br><br><br><br>
+<a href="http://dlqsjddhfryjy.nteri.com/z.php">No, thanks</a>
+</html>
 
-Am Samstag, 23. Oktober 2004 00:56 schrieb Nishanth Aravamudan:> +=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0while (timeout)=
- {> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0if (signal_pending(current)) {> =A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0remove_wait_queue(&usblp->wait, &wait);> =A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return writecount ? writecount : =
--EINTR;> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0}> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0set_current_state(TAS=
-K_INTERRUPTIBLE);> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (timeout && !usblp->wcomplete) {>=
- -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0timeout =3D schedule_timeout(t=
-imeout);> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0} else {> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0set_current_state(TASK_RUNNING);> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (usblp->w=
-complete) {> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0break;> =A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0}> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0set_current_state(TASK_INTERRUPTIBLE=
-);
-You can miss a wake up here.
-> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0timeout =3D schedule_timeout(timeout);> =A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0}
-The order of checking wcomplete and setting the state must be reversed.
-	Regards		Oliver
 
---===============76294906099502957==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.net email is sponsored by: IT Product Guide on ITManagersJournal
+Use IT products in your business? Tell us what you think of them. Give us
+Your Opinions, Get Free ThinkGeek Gift Certificates! Click to find out more
+http://productguide.itmanagersjournal.com/guidepromo.tmpl
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============76294906099502957==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
