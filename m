@@ -1,46 +1,72 @@
-From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Wed, 21 Jan 2004 18:47:54 +0000
-Subject: Re: [PATCH] mm/pdflush.c - handle kernel_thread failure
-Message-Id: <20040121184754.GA17659@eugeneteo.net>
+From: Timmy Yee <shoujun@masterofpi.org>
+Date: Sat, 24 Jan 2004 03:53:12 +0000
+Subject: [Kernel-janitors] [PATCH] swim3.c - convert cli to spinlock
+Message-Id: <20040124035312.GA6136@masterofpi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040121183259.GA17474@eugeneteo.net>
-In-Reply-To: <20040121183259.GA17474@eugeneteo.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<quote sender="Randy.Dunlap">
-> On Thu, 22 Jan 2004 02:32:59 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
-> 
-> | A similar patch is included in 2.6.1-kj1. I am resubmitting
-> | this with a couple of amendments - store the return value to
-> | pid_t type variable, and use C99 __func__ instead.
-> | 
+Hi,
 
-[snip]
+This patch replaces the cli function calls with the spinlock function calls
+for the swim3 driver.
 
-> Nope.  As Andrew pointed out to me:
-> "Nope, if we fail to start a thread here we'll just try again later. 
-> There's no need to warn."
-
-All right. Make sense. 
-
-Eugene
-
--- 
-Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
-1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
-main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
-
-
-
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+--- linux-2.6.2-rc1/drivers/block/swim3.c	2003-08-09 18:19:06.000000000 -0700
++++ linux-2.6.2-rc1-mpi/drivers/block/swim3.c	2004-01-22 16:20:28.000000000 -0800
+@@ -360,7 +360,7 @@
+ {
+ 	unsigned long flags;
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&swim3_lock, flags);
+ 	if (fs->timeout_pending)
+ 		del_timer(&fs->timeout);
+ 	fs->timeout.expires = jiffies + nticks;
+@@ -368,7 +368,7 @@
+ 	fs->timeout.data = (unsigned long) fs;
+ 	add_timer(&fs->timeout);
+ 	fs->timeout_pending = 1;
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&swim3_lock, flags);
+ }
+ 
+ static inline void scan_track(struct floppy_state *fs)
+@@ -755,8 +755,7 @@
+ {
+ 	unsigned long flags;
+ 
+-	save_flags(flags);
+-	cli();
++	spin_lock_irqsave(&swim3_lock, flags);
+ 	if (fs->state != idle) {
+ 		++fs->wanted;
+ 		while (fs->state != available) {
+@@ -770,7 +769,7 @@
+ 		--fs->wanted;
+ 	}
+ 	fs->state = state;
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&swim3_lock, flags);
+ 	return 0;
+ }
+ 
+@@ -778,11 +777,10 @@
+ {
+ 	unsigned long flags;
+ 
+-	save_flags(flags);
+-	cli();
++	spin_lock_irqsave(&swim3_lock, flags);
+ 	fs->state = idle;
+ 	start_request(fs);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&swim3_lock, flags);
+ }
+ 
+ static int fd_eject(struct floppy_state *fs)
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
