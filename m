@@ -1,14 +1,16 @@
 From: Michael Veeck <michael.veeck@gmx.net>
-Date: Sat, 03 Jul 2004 15:05:55 +0000
-Subject: [Kernel-janitors] [PATCH] drivers/char/pcxx.c MIN/MAX removal
-Message-Id: <40E819EC.1030207@gmx.net>
+Date: Sat, 03 Jul 2004 15:06:33 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/char/pcmcia/synclink_cs.c MIN/MAX
+Message-Id: <40E81AB1.5050908@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010408040208040803000400"
+Content-Type: multipart/mixed; boundary="------------040408060203090506040206"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <40E819EC.1030207@gmx.net>
+In-Reply-To: <40E819EC.1030207@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------010408040208040803000400
+--------------040408060203090506040206
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -25,48 +27,57 @@ Michael
 
 
 
---------------010408040208040803000400
+--------------040408060203090506040206
 Content-Type: text/plain;
- name="patch-char-pcxx"
+ name="patch-char-synclink_cs"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="patch-char-pcxx"
+ filename="patch-char-synclink_cs"
 
---- linux-2.6.7-old/drivers/char/pcxx.c	2004-07-04 11:04:14.000000000 +0200
-+++ linux-2.6.7-new/drivers/char/pcxx.c	2004-07-04 15:41:00.861381640 +0200
-@@ -130,7 +130,6 @@
- int pcxx_ncook=sizeof(pcxx_cook);
- int pcxx_nbios=sizeof(pcxx_bios);
+--- linux-2.6.7-old/drivers/char/pcmcia/synclink_cs.c	2004-07-04 11:04:14.000000000 +0200
++++ linux-2.6.7-new/drivers/char/pcmcia/synclink_cs.c	2004-07-04 16:11:02.180539504 +0200
+@@ -499,10 +499,6 @@
+ static void mgslpc_change_params(MGSLPC_INFO *info);
+ static void mgslpc_wait_until_sent(struct tty_struct *tty, int timeout);
  
+-#ifndef MIN
 -#define MIN(a,b)	((a) < (b) ? (a) : (b))
- #define pcxxassert(x, msg)  if(!(x)) pcxx_error(__LINE__, msg)
+-#endif
+-
+ /* PCMCIA prototypes */
  
- #define FEPTIMEOUT 200000  
-@@ -626,7 +625,7 @@
+ static void mgslpc_config(dev_link_t *link);
+@@ -1197,7 +1193,7 @@
+ 		return;
+ 
+ 	while (info->tx_count && fifo_count) {
+-		c = MIN(2, MIN(fifo_count, MIN(info->tx_count, TXBUFSIZE - info->tx_get)));
++		c = min(2, min_t(int, fifo_count, min(info->tx_count, TXBUFSIZE - info->tx_get)));
  		
- 		tail &= (size - 1);
- 		stlen = (head >= tail) ? (size - (head - tail) - 1) : (tail - head - 1);
--		count = MIN(stlen, count);
-+		count = min(stlen, count);
- 		memoff(ch);
- 		restore_flags(flags);
- 
-@@ -658,11 +657,11 @@
- 		remain = tail - head - 1;
- 		stlen = remain;
+ 		if (c == 1) {
+ 			write_reg(info, CHA + TXFIFO, *(info->tx_buf + info->tx_get));
+@@ -1760,8 +1756,8 @@
  	}
--	count = MIN(remain, count);
-+	count = min(remain, count);
  
- 	txwinon(ch);
- 	while (count > 0) {
--		stlen = MIN(count, stlen);
-+		stlen = min(count, stlen);
- 		memcpy(ch->txptr + head, buf, stlen);
- 		buf += stlen;
- 		count -= stlen;
+ 	for (;;) {
+-		c = MIN(count,
+-			MIN(TXBUFSIZE - info->tx_count - 1,
++		c = min(count,
++			min(TXBUFSIZE - info->tx_count - 1,
+ 			    TXBUFSIZE - info->tx_put));
+ 		if (c <= 0)
+ 			break;
+@@ -2647,7 +2643,7 @@
+ 		char_time = 1;
+ 		
+ 	if (timeout)
+-		char_time = MIN(char_time, timeout);
++		char_time = min_t(unsigned long, char_time, timeout);
+ 		
+ 	if (info->params.mode == MGSL_MODE_HDLC) {
+ 		while (info->tx_active) {
 
---------------010408040208040803000400
+--------------040408060203090506040206
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +88,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------010408040208040803000400--
+--------------040408060203090506040206--
