@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 18:20:45 +0000
+Date: Tue, 20 Jul 2004 18:21:30 +0000
 Subject: [Kernel-janitors] [PATCH] bluetooth: replace schedule_timeout()
-Message-Id: <20040720182045.GH2320@us.ibm.com>
+Message-Id: <20040720182130.GI2320@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14043517344079781=="
+Content-Type: multipart/mixed; boundary="===============82391396645308923=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040720181806.GF2320@us.ibm.com>
 In-Reply-To: <20040720181806.GF2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============14043517344079781==
+--===============82391396645308923==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -40,20 +40,20 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/bluetooth/btuart_cs.c	2004-06-16 05:20:26.000000000 +0000
-+++ linux-dev/drivers/bluetooth/btuart_cs.c	2004-07-10 18:23:17.000000000 +0000
-@@ -545,8 +545,7 @@ int btuart_open(btuart_info_t *info)
- 	btuart_change_speed(info, DEFAULT_BAUD_RATE);
+--- linux-vanilla/drivers/bluetooth/dtl1_cs.c	2004-06-16 05:19:13.000000000 +0000
++++ linux-dev/drivers/bluetooth/dtl1_cs.c	2004-07-10 18:23:26.000000000 +0000
+@@ -524,8 +524,7 @@ int dtl1_open(dtl1_info_t *info)
+ 	spin_unlock_irqrestore(&(info->lock), flags);
  
  	/* Timeout before it is safe to send the first HCI packet */
 -	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	msleep(1000);
+-	schedule_timeout(HZ * 2);
++	msleep(2000);
  
  	/* Register HCI device */
  	if (hci_register_dev(hdev) < 0) {
 
---===============14043517344079781==
+--===============82391396645308923==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============14043517344079781==--
+--===============82391396645308923==--
