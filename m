@@ -1,59 +1,65 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sat, 30 Oct 2004 15:08:10 +0000
-Subject: Re: [KJ] 2.6.10-rc1-kjt1: ixgb_ethtool.c doesn't compile
-Message-Id: <20041030150810.GC7330@stro.at>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 20 Oct 2004 18:52:14 +0000
+Subject: [KJ] [RFT 2.6] intel-agp.c: replace pci_find_device with
+Message-Id: <17420000.1098298334@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70547586018414843=="
+Content-Type: multipart/mixed; boundary="===============71462877095243105=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041024151241.GA1920@stro.at> <20041029235137.GG6677@stusta.de> <29495f1d04102921447ab65101@mail.gmail.com> <20041030050924.GA4374@stusta.de>
-In-Reply-To: <20041030050924.GA4374@stusta.de>
-To: Adrian Bunk <bunk@stusta.de>
-Cc: Nish Aravamudan <nish.aravamudan@gmail.com>, kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: Hanna Linder <hannal@us.ibm.com>, greg@kroah.com, davej@codemonkey.org.uk
 
---===============70547586018414843==
+--===============71462877095243105==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Sat, 30 Oct 2004, Adrian Bunk wrote:
 
-> On Fri, Oct 29, 2004 at 09:44:18PM -0700, Nish Aravamudan wrote:
-> > On Sat, 30 Oct 2004 01:51:37 +0200, Adrian Bunk <bunk@stusta.de> wrote:
-> > > On Sun, Oct 24, 2004 at 05:12:41PM +0200, maximilian attems wrote:
-> > > >...
-> > > > splitted out 168 patches:
-> > > > http://debian.stro.at/kjt/2.6.10-rc1-kjt1/split/
-> > > 
-> > > Could you provide a .tar.gz (or .tar.bz) of the splitted patches
-> > > (similar to how Andrew does for -mm)?
-> > 
-> > Do you mean like the one he provided?
-> > 
-> > please test out:
-> > http://debian.stro.at/kjt/2.6.10-rc1-kjt1/2.6.10-rc1-kjt1.patch.bz2
-> > 
-> > Admittedly, it's not tarred first, but still... Maybe you mean
-> > something else, though, and I'm just confused.
-> >...
-> 
-> No, I'd like to have a .tar.gz of the split directory, similar to
-> ftp://ftp.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.9/2.6.9-mm1/2.6.9-mm1-broken-out.tar.gz
+As pci_find_device is going away soon I have converted this file to use
+pci_get_device instead. I have compile tested it. If anyone has this hardware
+and could test it that would be great.
 
-thanks for the idea! done for all the older kjt releases. 
-you'll find latest:
-http://debian.stro.at/kjt/2.6.10-rc1-kjt1/2.6.10-rc1-kjt1-split.tar.bz2
-http://debian.stro.at/kjt/2.6.10-rc1-kjt1/2.6.10-rc1-kjt1-split.tar.gz
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+---
+
+diff -Nrup linux-2.6.9cln/drivers/char/agp/intel-agp.c linux-2.6.9patch2/drivers/char/agp/intel-agp.c
+--- linux-2.6.9cln/drivers/char/agp/intel-agp.c	2004-10-18 16:35:52.000000000 -0700
++++ linux-2.6.9patch2/drivers/char/agp/intel-agp.c	2004-10-19 16:05:47.000000000 -0700
+@@ -1493,7 +1493,7 @@ static int find_i810(u16 device)
+ {
+ 	struct pci_dev *i810_dev;
  
-> This way, it would be easier to simply grep for a file causing a 
-> problem.
+-	i810_dev = pci_find_device(PCI_VENDOR_ID_INTEL, device, NULL);
++	i810_dev = pci_get_device(PCI_VENDOR_ID_INTEL, device, NULL);
+ 	if (!i810_dev)
+ 		return 0;
+ 	intel_i810_private.i810_dev = i810_dev;
+@@ -1504,9 +1504,9 @@ static int find_i830(u16 device)
+ {
+ 	struct pci_dev *i830_dev;
+ 
+-	i830_dev = pci_find_device(PCI_VENDOR_ID_INTEL, device, NULL);
++	i830_dev = pci_get_device(PCI_VENDOR_ID_INTEL, device, NULL);
+ 	if (i830_dev && PCI_FUNC(i830_dev->devfn) != 0) {
+-		i830_dev = pci_find_device(PCI_VENDOR_ID_INTEL,
++		i830_dev = pci_get_device(PCI_VENDOR_ID_INTEL,
+ 				device, i830_dev);
+ 	}
+ 
+@@ -1715,6 +1715,7 @@ static void __devexit agp_intel_remove(s
+ {
+ 	struct agp_bridge_data *bridge = pci_get_drvdata(pdev);
+ 
++	pci_dev_put(pdev);
+ 	agp_remove_bridge(bridge);
+ 	agp_put_bridge(bridge);
+ }
 
-thanks a lot for the testing.
-
---
-maks
-kernel janitor  	http://janitor.kernelnewbies.org/
 
 
---===============70547586018414843==
+--===============71462877095243105==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70547586018414843==--
+--===============71462877095243105==--
