@@ -1,61 +1,40 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Fri, 11 Feb 2005 00:59:11 +0000
+From: walter harms <wharms@bfs.de>
+Date: Fri, 11 Feb 2005 13:45:20 +0000
 Subject: Re: [KJ] [PATCH] Reduction of compile warnings (Warning: long post
-Message-Id: <420C035F.6090701@osdl.org>
+Message-Id: <420CB6F0.6090604@bfs.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============6275696013563572=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <420953CC.2707.A99E9B@localhost>
 In-Reply-To: <420953CC.2707.A99E9B@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Stephen Biggs wrote:
-> Greetings,
-> 
-> This will be my first attempt at submitting a patch, so please be 
-> reasonably gentle with me :-)  I have tried to comply with all that I 
-> have read, but I most likely missed something.
-> 
-> I attach 3 files in text/plain Ascii format; I think I understood the 
-> FAQ correctly that this is the right way to do things?
+--===============6275696013563572==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Inline (in text/body) is certainly better in the kernel world,
-but some email clients make that difficult.
+just my two cents ...
+recruting helper variables will reduce linelenght and (sometimes) 
+improve readability.
 
-> The warnings that remain are mostly of the "deprecated" type for pm_* 
-> type warnings that I need guidence on what to do about, since I was not 
-> able to find any definitive guide to converting a driver with 2.4 style 
-> power management to 2.6 style power management. Thus, I left these alone. 
->  I have not seen too much traffic about this on either the kernel-
-> janitors list or lkml, so this would be open territory.  Any help on this 
-> would be appreciated.
+e.g.:
 
-You might be able to find the answer to this in the linux power 
-management mailing list archives, here:
-http://lists.osdl.org/pipermail/linux-pm/
+feature=tf->feature | (((u16)tf->hob_feature) << 8 ;
 
-> The rest of the warnings left are: deprecated for inter_module_* 
-> functions which seems to be already a topic of discussion in lkml (or 
-> was),
-Yes, the graphics people are working on that one AFAIK.
+writew(feature,(volatile void __iomem *)ioaddr->feature_addr);
 
-> The third attachment to this post is the patch itself.  Please let me 
-> know if this comes through ok... 
 
-Patch comments, hope I'm not duplicating:
+btw:
+is 'volatile' usefull here ? i would exspect that *ioaddr->feature_addr
+is already defined 'volatile'.
+( i do not have the code here, sorry if its to trivial.)
 
-1.  +  if(user_copy_err) {
+re,
+	walter
 
-space between "if" and '('   [multiple]
 
-2.  +  if ( !user_copy_err && offset )
 
-but no space after '(' or before ')'        [picky, eh?]
-
-3.  sx8.c is already patched (maybe Adrian said this)
-
-4.  		writew(tf->feature | (((u16)tf->hob_feature) << 8), (volatile 
+4.  		writew(tf->feature | (((u16)tf->hob_feature) << 8), (volatile
 void __iomem *)ioaddr->feature_addr);
 
 This line (and others) is just too long.  Split it up at the comma
@@ -69,3 +48,19 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+
+
+
+--===============6275696013563572==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============6275696013563572==--
