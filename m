@@ -1,40 +1,85 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Thu, 17 Mar 2005 15:49:04 +0000
-Subject: Re: [KJ] [PATCH] printk : drivers/isdn/hardware/eicon/divasmain.c
-Message-Id: <200503171847.33112.adobriyan@mail.ru>
+From: "Daniel E. Wilson" <danw@bureau-13.org>
+Date: Mon, 28 Mar 2005 03:29:33 +0000
+Subject: [KJ] Elimiation of isa_read* functions.
+Message-Id: <42477A1D.7040803@bureau-13.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============210948417252248=="
+Content-Type: multipart/mixed; boundary="------------010009090205020204060707"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050317150929.GQ2102@rhum.iomeda.fr>
-In-Reply-To: <20050317150929.GQ2102@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============210948417252248==
-Content-Disposition: inline
-Content-Type: text/plain;
-  charset="utf-8"
+This is a multi-part message in MIME format.
+--------------010009090205020204060707
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-On Thursday 17 March 2005 17:09, Christophe Lucas wrote:
+Hi,
 
-> printk() calls should include appropriate KERN_* constant.
+This is my first attempt at cleaning up something so I decided to try
+something really simple.
 
-> --- linux-2.6.11-vanilla/drivers/isdn/hardware/eicon/divasmain.c
-> +++ linux-2.6.11/drivers/isdn/hardware/eicon/divasmain.c
+The lance.c file is using the depreciated isa_readw and isa_readl functions.
 
->  	printk(KERN_INFO "%s: Rel:%s  Rev:", DRIVERLNAME, DRIVERRELEASE_DIVAS);
-					^^^^
-Notice there is no "\n" here. So, you're adding KERN_INFO in the middle of
-the string.
+Dan
 
->  	strcpy(tmprev, main_revision);
-> -	printk("%s  Build: %s(%s)\n", getrev(tmprev),
-> +	printk(KERN_INFO "%s  Build: %s(%s)\n", getrev(tmprev),
->  	       diva_xdi_common_code_build, DIVA_BUILD);
+--------------010009090205020204060707
+Content-Type: text/plain;
+ name="remap.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="remap.patch"
 
-	Alexey
+diff -Nrc a/drivers/net/lance.c b/drivers/net/lance.c
+*** a/drivers/net/lance.c	2005-03-27 19:14:39 -08:00
+--- b/drivers/net/lance.c	2005-03-27 19:14:39 -08:00
+***************
+*** 472,491 ****
+  	static int did_version;			/* Already printed version info. */
+  	unsigned long flags;
+  	int err = -ENOMEM;
+  
+  	/* First we look for special cases.
+  	   Check for HP's on-board ethernet by looking for 'HP' in the BIOS.
+  	   There are two HP versions, check the BIOS for the configuration port.
+  	   This method provided by L. Julliard, Laurent_Julliard@grenoble.hp.com.
+  	   */
+! 	if (isa_readw(0x000f0102) == 0x5048)  {
+  		static const short ioaddr_table[] = { 0x300, 0x320, 0x340, 0x360};
+! 		int hp_port = (isa_readl(0x000f00f1) & 1)  ? 0x499 : 0x99;
+  		/* We can have boards other than the built-in!  Verify this is on-board. */
+  		if ((inb(hp_port) & 0xc0) == 0x80
+  			&& ioaddr_table[inb(hp_port) & 3] == ioaddr)
+  			hp_builtin = hp_port;
+  	}
+  	/* We also recognize the HP Vectra on-board here, but check below. */
+  	hpJ2405A = (inb(ioaddr) == 0x08 && inb(ioaddr+1) == 0x00
+  				&& inb(ioaddr+2) == 0x09);
+--- 472,495 ----
+  	static int did_version;			/* Already printed version info. */
+  	unsigned long flags;
+  	int err = -ENOMEM;
++ 	char *base_addr;	                /* Base address in the BIOS. */
+  
+  	/* First we look for special cases.
+  	   Check for HP's on-board ethernet by looking for 'HP' in the BIOS.
+  	   There are two HP versions, check the BIOS for the configuration port.
+  	   This method provided by L. Julliard, Laurent_Julliard@grenoble.hp.com.
+  	   */
+! 	base_addr = ioremap(0x000f0000, 0x104);
+! 	if (readw(base_addr + 0x102) == 0x5048)  {
+  		static const short ioaddr_table[] = { 0x300, 0x320, 0x340, 0x360};
+! 		int hp_port = (readl(base_addr + 0xf1) & 1)  ? 0x499 : 0x99;
+  		/* We can have boards other than the built-in!  Verify this is on-board. */
+  		if ((inb(hp_port) & 0xc0) == 0x80
+  			&& ioaddr_table[inb(hp_port) & 3] == ioaddr)
+  			hp_builtin = hp_port;
+  	}
++ 	iounmap(base_addr);
++ 
+  	/* We also recognize the HP Vectra on-board here, but check below. */
+  	hpJ2405A = (inb(ioaddr) == 0x08 && inb(ioaddr+1) == 0x00
+  				&& inb(ioaddr+2) == 0x09);
 
---===============210948417252248==
+--------------010009090205020204060707
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +90,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============210948417252248==--
+--------------010009090205020204060707--
