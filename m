@@ -1,41 +1,40 @@
-From: Arnaldo Carvalho de Melo <acme@conectiva.com.br>
-Date: Sun, 22 Feb 2004 12:55:02 +0000
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Mon, 23 Feb 2004 00:23:06 +0000
 Subject: Re: [Kernel-janitors] [PATCH] 90 patches for unnecessary casts
-Message-Id: <20040222125502.GD13913@conectiva.com.br>
+Message-Id: <20040222162306.1e587b6f.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040125105212.GA2064@localhost>
 In-Reply-To: <20040125105212.GA2064@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Em Sun, Feb 22, 2004 at 01:05:20PM +0100, Carlo Perassi escreveu:
-> > I have most of these merged, but some of the changes no longer
-> > apply.  Please rediff and resend the changes for:
-> >=20
-> > drivers/net/3c527.c
-> > drivers/net/tc35815.c
-> > drivers/net/68360enet.c
-> >=20
-> > (against 2.6.3).
->=20
-> - a patch for drivers/net/3c527.c is attached
-> - drivers/net/tc35815.c is fine
-> - drivers/net/68360enet.c doesn't exist. which file do you mean?
+On Sun, 22 Feb 2004 13:05:20 +0100 Carlo Perassi <carlo@linux.it> wrote:
 
-> --=20
-> Carlo Perassi - http://www.linux.it/~carlo/
-> =20
->  static void mc32_tx_ring(struct net_device *dev)=20
->  {
-> -	struct mc32_local *lp=3D(struct mc32_local *)dev->priv;
-> +	struct mc32_local *lp=DEv->priv;
+| > I have most of these merged, but some of the changes no longer
+| > apply.  Please rediff and resend the changes for:
+| > 
+| > drivers/net/3c527.c
+| > drivers/net/tc35815.c
+| > drivers/net/68360enet.c
+| > 
+| > (against 2.6.3).
+| 
+| - a patch for drivers/net/3c527.c is attached
+| - drivers/net/tc35815.c is fine
+| - drivers/net/68360enet.c doesn't exist. which file do you mean?
 
-While at it please insert spaces before and after operators, like:
+Hm, that's a good question.  Your 90patches tarball had a patch
+like so:
+--- drivers/net/68360enet.c	2004-01-09 07:59:10.000000000 +0100
++++ mod/drivers/net/68360enet.c	2004-01-25 01:39:25.000000000 +0100
 
-	struct mc32_local *lp =3D dev->priv;
+in "files8m2RO".  So where/why did you make that patch?
 
+Thanks,
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
