@@ -1,39 +1,42 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 07 Jan 2005 00:19:31 +0000
-Subject: [KJ] [PATCH 6/28] net/e1000_osdep: replace schedule_timeout() with
-Message-Id: <20050107001931.GH3055@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:10:58 +0000
+Subject: [KJ] [PATCH 17/53] ng1: Clean up printk()'s in
+Message-Id: <20050125231053.10418.55042.67333@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11017806919943185=="
+Content-Type: multipart/mixed; boundary="===============26209872768363773=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: cramerj@intel.com, john.ronciak@intel.com, ganesh.venkatesan@intel.com
-Cc: linux-net@vger.kernel.org, kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
+To: kernel-janitors@vger.kernel.org
 
---===============11017806919943185==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============26209872768363773==
 
-Hi,
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/console/newport_con.c
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/console/newport_con.c linux-2.6.11-rc2-mm1/drivers/video/console/newport_con.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/console/newport_con.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/console/newport_con.c	2005-01-24 19:07:02.854261194 -0500
+@@ -230,7 +230,7 @@
+ 			newport_ysize += linetable[i + 1];
+ 		}
+ 	}
+-	printk("NG1: Screensize %dx%d\n", newport_xsize, newport_ysize);
++	pr_info("NG1: Screensize %dx%d\n", newport_xsize, newport_ysize);
+ }
+ 
+ static void newport_get_revisions(void)
+@@ -273,7 +273,7 @@
+ 	bt445_rev = (npregs->set.dcbdata0.bybytes.b3 >> 4) - 0x0a;
+ 
+ #define L(a)     (char)('A'+(a))
+-	printk
++	pr_info
+ 	    ("NG1: Revision %d, %d bitplanes, REX3 revision %c, VC2 revision %c, xmap9 revision %c, cmap revision %c, bt445 revision %c\n",
+ 	     board_rev, bitplanes, L(rex3_rev), L(vc2_rev), L(xmap9_rev),
+ 	     L(cmap_rev ? (cmap_rev + 1) : 0), L(bt445_rev));
 
-
---- 2.6.10-v/drivers/net/e1000/e1000_osdep.h	2004-12-24 13:34:26.000000000 -0800
-+++ 2.6.10/drivers/net/e1000/e1000_osdep.h	2005-01-04 14:57:49.000000000 -0800
-@@ -46,8 +46,7 @@
- 				/* Don't mdelay in interrupt context! */ \
- 	                	BUG(); \
- 			} else { \
--				set_current_state(TASK_UNINTERRUPTIBLE); \
--				schedule_timeout((x * HZ)/1000 + 2); \
-+				msleep(x);
- 			} } while(0)
- /* Some workarounds require millisecond delays and are run during interrupt
-  * context.  Most notably, when establishing link, the phy may need tweaking
-
---===============11017806919943185==
+--===============26209872768363773==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============11017806919943185==--
+--===============26209872768363773==--
