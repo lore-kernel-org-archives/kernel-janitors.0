@@ -1,56 +1,65 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 21 Dec 2004 08:15:50 +0000
-Subject: Re: [KJ] [PATCH] lcd: fix memory leak, code cleanup
-Message-Id: <41C7DBB6.8070105@bfs.de>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 26 Dec 2004 14:55:22 +0000
+Subject: [KJ] [James Nelson] Fw: Undelivered Mail Returned to Sender
+Message-Id: <20041226145522.GA3990@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83917176470933152=="
+Content-Type: multipart/mixed; boundary="===============62134938014885321=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041221015120.29110.98832.48706@localhost.localdomain>
-In-Reply-To: <20041221015120.29110.98832.48706@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============83917176470933152==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============62134938014885321==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+I've been getting these delivery reports for mail i sent to you.
+Since i don't get that from anybody else i have some confidence that
+the problem is at your side.
+
+"nmap -p 25 relay.verizon.net" shows port is filtered.
+traceroute begins outputing * after 12 hop.
 
 
-Hi James,
-misc_register() can fail.
+----- Forwarded message from Mail Delivery System <MAILER-DAEMON@coderock.org> -----
 
-ret=misc_register(&lcd_dev);
+From: MAILER-DAEMON@coderock.org (Mail Delivery System)
+To: domen@coderock.org
+Date: Sun, 26 Dec 2004 13:07:09 +0100 (CET)
+Subject: Undelivered Mail Returned to Sender
 
-if (ret < 0) {
-	pr_info("misc_register failed in %s\n",__FUNCTION__);
-	return -ENOMEM;
-	}
+Content-Description: Notification
+This is the Postfix program at host trashy.coderock.org.
 
-re,
-walter
+I'm sorry to have to inform you that your message could not be
+be delivered to one or more recipients. It's attached below.
 
+For further assistance, please send mail to <postmaster>
 
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
 
->  	}
->  
-> @@ -613,7 +615,7 @@
->  {
->  	unsigned long data;
->  
-> -	printk("%s\n", LCD_DRIVER);
-> +	pr_info("%s\n", LCD_DRIVER);
->  	misc_register(&lcd_dev);
->  
->  	/* Check region? Naaah! Just snarf it up. */
-> @@ -623,7 +625,7 @@
->  	data = LCDReadData;
->  	if ((data & 0x000000FF) == (0x00)) {
->  		lcd_present = 0;
-> -		printk("LCD Not Present\n");
-> +		pr_info(LCD "LCD Not Present\n");
->  	} else {
->  		lcd_present = 1;
->  		WRITE_GAL(kGal_DevBank2PReg, kGal_DevBank2Cfg);
+			The Postfix program
 
---===============83917176470933152==
+<james4765@verizon.net>: connect to relay.verizon.net[206.46.170.12]:
+    Connection timed out
+
+Content-Description: Delivery report
+Reporting-MTA: dns; trashy.coderock.org
+X-Postfix-Queue-ID: 96D681ECC0
+X-Postfix-Sender: rfc822; domen@coderock.org
+Arrival-Date: Tue, 21 Dec 2004 13:05:42 +0100 (CET)
+
+Final-Recipient: rfc822; james4765@verizon.net
+Action: failed
+Status: 4.0.0
+Diagnostic-Code: X-Postfix; connect to relay.verizon.net[206.46.170.12]:
+    Connection timed out
+
+Content-Description: Undelivered Message
+--- cut off till end ---
+
+----- End forwarded message -----
+
+--===============62134938014885321==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83917176470933152==--
+--===============62134938014885321==--
