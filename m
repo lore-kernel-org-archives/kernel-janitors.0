@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 21 Jul 2004 21:16:53 +0000
+Date: Wed, 21 Jul 2004 21:18:02 +0000
 Subject: [Kernel-janitors] [PATCH] bluetooth: replace schedule_timeout() with
-Message-Id: <20040721211652.GH1906@us.ibm.com>
+Message-Id: <20040721211802.GI1906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68703482452529518=="
+Content-Type: multipart/mixed; boundary="===============59939258478676627=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040720181806.GF2320@us.ibm.com>
 In-Reply-To: <20040720181806.GF2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============68703482452529518==
+--===============59939258478676627==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -43,8 +43,8 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/bluetooth/btuart_cs.c	2004-06-16 05:20:26.000000000 +0000
-+++ linux-dev/drivers/bluetooth/btuart_cs.c	2004-07-21 16:54:09.000000000 +0000
+--- linux-vanilla/drivers/bluetooth/dtl1_cs.c	2004-06-16 05:19:13.000000000 +0000
++++ linux-dev/drivers/bluetooth/dtl1_cs.c	2004-07-21 16:53:03.000000000 +0000
 @@ -32,7 +32,7 @@
  #include <linux/ptrace.h>
  #include <linux/ioport.h>
@@ -54,18 +54,18 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  #include <linux/skbuff.h>
  #include <linux/string.h>
  #include <linux/serial.h>
-@@ -545,8 +545,7 @@ int btuart_open(btuart_info_t *info)
- 	btuart_change_speed(info, DEFAULT_BAUD_RATE);
+@@ -524,8 +524,7 @@ int dtl1_open(dtl1_info_t *info)
+ 	spin_unlock_irqrestore(&(info->lock), flags);
  
  	/* Timeout before it is safe to send the first HCI packet */
 -	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	msleep(1000);
+-	schedule_timeout(HZ * 2);
++	msleep(2000);
  
  	/* Register HCI device */
  	if (hci_register_dev(hdev) < 0) {
 
---===============68703482452529518==
+--===============59939258478676627==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============68703482452529518==--
+--===============59939258478676627==--
