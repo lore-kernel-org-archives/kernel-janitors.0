@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 18:18:06 +0000
+Date: Tue, 20 Jul 2004 18:20:05 +0000
 Subject: [Kernel-janitors] [PATCH] bluetooth: replace schedule_timeout()
-Message-Id: <20040720181806.GF2320@us.ibm.com>
+Message-Id: <20040720182005.GG2320@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============09598031020907527=="
+Content-Type: multipart/mixed; boundary="===============86013318891806545=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040720181806.GF2320@us.ibm.com>
+In-Reply-To: <20040720181806.GF2320@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============09598031020907527==
+--===============86013318891806545==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -38,30 +40,20 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/bluetooth/bluecard_cs.c	2004-06-16 05:19:22.000000000 +0000
-+++ linux-dev/drivers/bluetooth/bluecard_cs.c	2004-07-10 18:22:58.000000000 +0000
-@@ -776,8 +776,7 @@ int bluecard_open(bluecard_info_t *info)
- 	outb(0x80, iobase + 0x30);
- 
- 	/* Wait some time */
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ / 100);
-+	msleep(100);
- 
- 	/* Turn FPGA on */
- 	outb(0x00, iobase + 0x30);
-@@ -823,8 +822,7 @@ int bluecard_open(bluecard_info_t *info)
- 	outb((0x0f << RTS_LEVEL_SHIFT_BITS) | 1, iobase + REG_RX_CONTROL);
+--- linux-vanilla/drivers/bluetooth/bt3c_cs.c	2004-06-16 05:20:26.000000000 +0000
++++ linux-dev/drivers/bluetooth/bt3c_cs.c	2004-07-10 18:23:11.000000000 +0000
+@@ -633,8 +633,7 @@ int bt3c_open(bt3c_info_t *info)
+ 	}
  
  	/* Timeout before it is safe to send the first HCI packet */
 -	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout((HZ * 5) / 4);		// or set it to 3/2
-+	msleep(1250);
+-	schedule_timeout(HZ);
++	msleep(1000);
  
  	/* Register HCI device */
- 	if (hci_register_dev(hdev) < 0) {
+ 	err = hci_register_dev(hdev);
 
---===============09598031020907527==
+--===============86013318891806545==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============09598031020907527==--
+--===============86013318891806545==--
