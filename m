@@ -1,40 +1,49 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:14 +0000
-Subject: [KJ] [PATCH] [18/29] module.c - vfree() checking cleanups
-Message-Id: <41db113a.476d053b.2568.07bf@smtp.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 20 Jan 2005 23:53:52 +0000
+Subject: [KJ] [PATCH 19/39] net/dev: replace schedule_timeout() with msleep()
+Message-Id: <20050120235352.GH2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============071532864121443218=="
+Content-Type: multipart/mixed; boundary="===============3314243549875473=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: netdev@oss.sgi.com
+Cc: linux-net@vger.kernel.org, kernel-janitors@lists.osdl.org
 
---===============071532864121443218==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============3314243549875473==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-module.c vfree() checking cleanups.
+Hi,
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Please consider applying.
 
- module.c |    3 +--
- 1 files changed, 1 insertion(+), 2 deletions(-)
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The current code uses TASK_INTERRUPTIBLE, but does not
+respond to signals, so msleep() should be ok.
 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- linux-2.6.10-vanilla/arch/s390/kernel/module.c	2004-12-24 13:35:27.000000000 -0800
-+++ linux-2.6.10/arch/s390/kernel/module.c	2005-01-04 11:20:15.357765720 -0800
-@@ -396,8 +396,7 @@
- 		    const Elf_Shdr *sechdrs,
- 		    struct module *me)
- {
--	if (me->arch.syminfo)
--		vfree(me->arch.syminfo);
-+	vfree(me->arch.syminfo);
- 	return 0;
- }
+--- 2.6.11-rc1-kj-v/net/core/dev.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/net/core/dev.c	2005-01-18 12:59:16.000000000 -0800
+@@ -108,6 +108,7 @@
+ #include <linux/kallsyms.h>
+ #include <linux/netpoll.h>
+ #include <linux/rcupdate.h>
++#include <linux/delay.h>
+ #ifdef CONFIG_NET_RADIO
+ #include <linux/wireless.h>		/* Note : will define WIRELESS_EXT */
+ #include <net/iw_handler.h>
+@@ -2899,8 +2900,7 @@ static void netdev_wait_allrefs(struct n
+ 			rebroadcast_time = jiffies;
+ 		}
  
+-		current->state = TASK_INTERRUPTIBLE;
+-		schedule_timeout(HZ / 4);
++		msleep(250);
+ 
+ 		if (time_after(jiffies, warning_time + 10 * HZ)) {
+ 			printk(KERN_EMERG "unregister_netdevice: "
 
-
-
---===============071532864121443218==
+--===============3314243549875473==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============071532864121443218==--
+--===============3314243549875473==--
