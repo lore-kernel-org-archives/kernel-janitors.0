@@ -1,58 +1,59 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Fri, 11 Feb 2005 08:30:18 +0000
-Subject: [KJ] [PATCH] drivers/scsi/aic7xxx/*: convert to pci_register_driver
-Message-Id: <20050211083018.GD28942@rhum.iomeda.fr>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:53 +0000
+Subject: [KJ] [PATCH][RESUBMIT][15/21] drivers/usb/image/* - compile warning
+Message-Id: <42113C2D.15605.52C12E@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="aT9PWwzfKXlsBJM1"
+Content-Type: multipart/mixed; boundary="===============7804377193283023=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============7804377193283023==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
---aT9PWwzfKXlsBJM1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Description: compile warning cleanup - handle error return from 
+scsi_add_host
 
-Hi,
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
-
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
-
---aT9PWwzfKXlsBJM1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_scsi_aic7xxx.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/aic7xxx/aic79xx_osm_pci.c linux-2.6.11-rc3/drivers/scsi/aic7xxx/aic79xx_osm_pci.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/aic7xxx/aic79xx_osm_pci.c	2004-12-24 22:34:29.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/aic7xxx/aic79xx_osm_pci.c	2005-02-07 09:39:29.000000000 +0100
-@@ -209,7 +209,7 @@ ahd_linux_pci_dev_probe(struct pci_dev *
- int
- ahd_linux_pci_init(void)
- {
--	return (pci_module_init(&aic79xx_pci_driver));
-+	return (pci_register_driver(&aic79xx_pci_driver));
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/usb/image/microtek.c linux-2.6.11-rc3-mm2/drivers/usb/image/microtek.c
+--- linux-2.6.11-rc3-mm2-original/drivers/usb/image/microtek.c	2005-02-12 12:06:25.000000000 +0200
++++ linux-2.6.11-rc3-mm2/drivers/usb/image/microtek.c	2005-02-14 00:20:03.960653648 +0200
+@@ -703,6 +703,7 @@ static int mts_usb_probe(struct usb_inte
+ 	int ep_in_set[3]; /* this will break if we have more than three endpoints
+ 			   which is why we check */
+ 	int *ep_in_current = ep_in_set;
++	int err_retval = -ENOMEM;
+ 
+ 	struct mts_desc * new_desc;
+ 	struct vendor_product const* p;
+@@ -809,7 +810,10 @@ static int mts_usb_probe(struct usb_inte
+ 		goto out_free_urb;
+ 
+ 	new_desc->host->hostdata[0] = (unsigned long)new_desc;
+-	scsi_add_host(new_desc->host, NULL); /* XXX handle failure */
++	if (scsi_add_host(new_desc->host, NULL)) {
++		err_retval = -EIO;
++		goto out_free_urb;
++	}
+ 	scsi_scan_host(new_desc->host);
+ 
+ 	usb_set_intfdata(intf, new_desc);
+@@ -820,7 +824,7 @@ static int mts_usb_probe(struct usb_inte
+  out_kfree:
+ 	kfree(new_desc);
+  out:
+-	return -ENOMEM;
++	return err_retval;
  }
  
- void
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c linux-2.6.11-rc3/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c	2005-02-03 17:03:55.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/aic7xxx/aic7xxx_osm_pci.c	2005-02-07 09:39:29.000000000 +0100
-@@ -252,7 +252,7 @@ int
- ahc_linux_pci_init(void)
- {
- 	/* Translate error or zero return into zero or one */
--	return pci_module_init(&aic7xxx_pci_driver) ? 0 : 1;
-+	return pci_register_driver(&aic7xxx_pci_driver) ? 0 : 1;
- }
- 
- void
+ static void mts_usb_disconnect (struct usb_interface *intf)
 
---aT9PWwzfKXlsBJM1
+
+
+
+--===============7804377193283023==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---aT9PWwzfKXlsBJM1--
+--===============7804377193283023==--
