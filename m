@@ -1,60 +1,46 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Thu, 20 Jan 2005 15:47:59 +0000
+From: Greg KH <greg@kroah.com>
+Date: Thu, 20 Jan 2005 16:50:47 +0000
 Subject: Re: [KJ] [PATCH] unified spinlock
-Message-Id: <20050120154759.GJ25940@parcelfarce.linux.theplanet.co.uk>
+Message-Id: <20050120165045.GA9097@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34387416299139351=="
+Content-Type: multipart/mixed; boundary="===============17449380053513064=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <41EFCFDC.4060509@osdl.org>
 In-Reply-To: <41EFCFDC.4060509@osdl.org>
 To: kernel-janitors@vger.kernel.org
 
---===============34387416299139351==
+--===============17449380053513064==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Jan 20, 2005 at 07:35:56AM -0800, Randy.Dunlap wrote:
+On Thu, Jan 20, 2005 at 07:44:24AM -0800, Randy.Dunlap wrote:
 > Matthew Wilcox wrote:
-> >On Thu, Jan 20, 2005 at 08:56:18PM +0530, Amit Gud wrote:
+> >I think this is referring to initialisation of spinlocks that are
+> >allocated dynamically, not statically.  If a lock validator can't cope
+> >with that, it needs to be fixed, IMO.
 > >
-> >>Unify the spinlock initialization as far as possible.
-> >
-> >
-> >Why would you want to replace a statically initialised spinlock with
-> >one that's initialised at runtime?
+> Having just looked at the LWN.net article, is this (still) true?
 > 
-> I wondered that also, since I prefer the compile-time inits myself.
-> so I looked at the KJ TODO list
-> <http://janitor.kernelnewbies.org/TODO> and it says:
-> 
-> From: Jonathan Corbet
-> 
-> Unified spinlock initialization:
-> convert all explicit lock initializations to spin_lock_init() or
-> rwlock_init().  (Besides consistency this also helps automatic lock
-> validators and debugging code.)
-> 
-> http://lwn.net/Articles/109505/
-> http://linux.bkbits.net:8080/linux-2.6/cset@419a6f292wHnthuDzw7VfgECNLmvLg?nav=index.html|ChangeSet@-8w
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> I don't find the consistency part compelling at all.
-> If the change helps some static source analyzers, however, that would
-> be a good thing, but not a strong one (IMO).
+> <quote>
+> The stated reasons for this change include consistency and making life 
+> easier for automatic lock validators. There is also an unstated, but 
+> evident reason: the assignment form of lock initialization gets in the 
+> way of the realtime preemption patches. Those patches change most 
+> spinlocks in the kernel to a different, mutex type, and that breaks 
+> the initializers. As a result, the preemption patches must change all 
+> of those initializations throughout the kernel. By putting those 
+> specific changes into the mainline, it is possible to make the 
+> realtime patches smaller, less intrusive, and a little bit less scary.
+> </quote>
 
-I think this is referring to initialisation of spinlocks that are
-allocated dynamically, not statically.  If a lock validator can't cope
-with that, it needs to be fixed, IMO.
+Yes, it is.  See the number of patches that have been flowing into the
+kernel lately to fix this issue up.
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+thanks,
 
---===============34387416299139351==
+greg k-h
+
+--===============17449380053513064==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34387416299139351==--
+--===============17449380053513064==--
