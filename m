@@ -1,36 +1,47 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 24 Sep 2004 22:10:52 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 35/38] net/tms380tr: replace
-Message-Id: <20040924221052.GT1757@us.ibm.com>
+Date: Thu, 16 Sep 2004 18:13:46 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 22/33] char/rocket: replace
+Message-Id: <20040916181346.GO1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5418775229611672=="
+Content-Type: multipart/mixed; boundary="===============027719850124181988=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============5418775229611672==
+--===============027719850124181988==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Use set_current_state() instead of direct assignment of
-current->state.
+Description: Use msleep_interruptible() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc1-mm4-vanilla/drivers/net/tokenring/tms380tr.c	2004-09-09 23:05:31.000000000 -0700
-+++ 2.6.9-rc1-mm4/drivers/net/tokenring/tms380tr.c	2004-09-13 14:45:50.000000000 -0700
-@@ -1244,7 +1244,7 @@ void tms380tr_wait(unsigned long time)
- 	
- 	tmp = jiffies + time/(1000000/HZ);
- 	do {
--  		current->state 		= TASK_INTERRUPTIBLE;
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		tmp = schedule_timeout(tmp);
- 	} while(time_after(tmp, jiffies));
- #else
+--- 2.6.9-rc1-mm4-vanilla/drivers/char/rocket.c	2004-09-09 23:05:41.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/char/rocket.c	2004-09-10 11:16:03.000000000 -0700
+@@ -1108,8 +1108,7 @@ static void rp_close(struct tty_struct *
+ 
+ 	if (info->blocked_open) {
+ 		if (info->close_delay) {
+-			current->state = TASK_INTERRUPTIBLE;
+-			schedule_timeout(info->close_delay);
++			msleep_interruptible(jiffies_to_msecs(info->close_delay));
+ 		}
+ 		wake_up_interruptible(&info->open_wait);
+ 	} else {
+@@ -1538,8 +1537,7 @@ static void rp_wait_until_sent(struct tt
+ #ifdef ROCKET_DEBUG_WAIT_UNTIL_SENT
+ 		printk(KERN_INFO "txcnt = %d (jiff=%lu,check=%d)...", txcnt, jiffies, check_time);
+ #endif
+-		current->state = TASK_INTERRUPTIBLE;
+-		schedule_timeout(check_time);
++		msleep_interruptible(jiffies_to_msecs(check_time));
+ 		if (signal_pending(current))
+ 			break;
+ 	}
 
---===============5418775229611672==
+--===============027719850124181988==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5418775229611672==--
+--===============027719850124181988==--
