@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 17 Jan 2005 18:24:11 +0000
-Subject: [KJ] [PATCH 2/22] atm/he: reorder add_wait_queue() and
-Message-Id: <20050117182411.GB24698@us.ibm.com>
+Date: Fri, 21 Jan 2005 21:33:58 +0000
+Subject: [KJ] [PATCH 34/39] usb/auerswald: use wait_event_timeout()
+Message-Id: <20050121213358.GO3340@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27161903704131696=="
+Content-Type: multipart/mixed; boundary="===============46645233590184088=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============27161903704131696==
+--===============46645233590184088==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,35 +15,62 @@ Hi,
 
 Please consider applying.
 
-Description: Reorder set_current_state() and add_wait_queue() so that no events
-are missed.
+Description: Use wait_event_timeout() instead of custom wait-queue code. There
+might be a problem with returning without adding/removing to the waitqueue
+before wait_event_timeout() is called. I am not sure if this is a problem or
+not.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc1-kj-v/drivers/atm/he.c	2005-01-15 16:55:43.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/atm/he.c	2005-01-15 17:31:30.000000000 -0800
-@@ -2573,8 +2573,8 @@ he_close(struct atm_vcc *vcc)
- 			udelay(250);
- 		}
+--- 2.6.11-rc1-kj-v/drivers/usb/misc/auerswald.c	2005-01-15 16:55:42.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/usb/misc/auerswald.c	2005-01-21 13:32:01.000000000 -0800
+@@ -29,6 +29,7 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
++#include <linux/wait.h>
+ #undef DEBUG   		/* include debug macros until it's done	*/
+ #include <linux/usb.h>
  
--		add_wait_queue(&he_vcc->rx_waitq, &wait);
- 		set_current_state(TASK_UNINTERRUPTIBLE);
-+		add_wait_queue(&he_vcc->rx_waitq, &wait);
+@@ -605,7 +606,6 @@ static void auerchain_blocking_completio
+ /* Starts chained urb and waits for completion or timeout */
+ static int auerchain_start_wait_urb (pauerchain_t acp, struct urb *urb, int timeout, int* actual_length)
+ {
+-	DECLARE_WAITQUEUE (wait, current);
+ 	auerchain_chs_t chs;
+ 	int status;
  
- 		he_writel_rsr0(he_dev, RSR0_CLOSE_CONN, cid);
- 		(void) he_readl_rsr0(he_dev, cid);		/* flush posted writes */
-@@ -2648,8 +2648,8 @@ he_close(struct atm_vcc *vcc)
- 		tpd->vcc = vcc;
- 		wmb();
+@@ -613,26 +613,13 @@ static int auerchain_start_wait_urb (pau
+ 	init_waitqueue_head (&chs.wqh);
+ 	chs.done = 0;
  
--		add_wait_queue(&he_vcc->tx_waitq, &wait);
- 		set_current_state(TASK_UNINTERRUPTIBLE);
-+		add_wait_queue(&he_vcc->tx_waitq, &wait);
- 		__enqueue_tpd(he_dev, tpd, cid);
- 		spin_unlock_irqrestore(&he_dev->global_lock, flags);
+-	set_current_state (TASK_UNINTERRUPTIBLE);
+-	add_wait_queue (&chs.wqh, &wait);
+ 	urb->context = &chs;
+ 	status = auerchain_submit_urb (acp, urb);
+-	if (status) {
++	if (status)
+ 		/* something went wrong */
+-		set_current_state (TASK_RUNNING);
+-		remove_wait_queue (&chs.wqh, &wait);
+ 		return status;
+-	}
+-
+-	while (timeout && !chs.done)
+-	{
+-		timeout = schedule_timeout (timeout);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		rmb();
+-	}
  
+-	set_current_state (TASK_RUNNING);
+-	remove_wait_queue (&chs.wqh, &wait);
++	timeout = wait_event_timeout(chs.wqh, chs.done, timeout);
+ 
+ 	if (!timeout && !chs.done) {
+ 		if (urb->status != -EINPROGRESS) {	/* No callback?!! */
 
---===============27161903704131696==
+--===============46645233590184088==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27161903704131696==--
+--===============46645233590184088==--
