@@ -1,56 +1,72 @@
-From: james4765@verizon.net
-Date: Thu, 28 Oct 2004 15:00:37 +0000
-Subject: [KJ] [PATCH 2/9] to arch/sparc64/Kconfig
-Message-Id: <20041028150036.2776.33028.66289@localhost.localdomain>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 20 Oct 2004 23:11:56 +0000
+Subject: [KJ] Re: [Kernel-janitors] [PATCH 6/6] janitor: net/tulip:
+Message-Id: <20041020231156.GC1953@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68817315963868264=="
+Content-Type: multipart/mixed; boundary="===============12259857233640181=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041028150029.2776.69333.50087@localhost.localdomain>
-In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
-To: kernel-janitors@lists.osdl.org
-Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
+To: kernel-janitors@vger.kernel.org
 
---===============68817315963868264==
+--===============12259857233640181==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: Remove x86-specific help in arch/sparc64/Kconfig.
-Apply against 2.6.9.
+On Sat, 02 Oct 2004, Scott Feldman wrote:
 
-Signed-off by: James Nelson <james4765@gmail.com>
+> Replace pci_find_device with pci_dev_present.  Compile tested.
+> 
+> Signed-off-by: Scott Feldman <sfeldma@pobox.com>
+> 
+> --- linux-2.6.9-rc3/drivers/net/tulip/tulip_core.c	2004-08-14 03:55:34.000000000 -0700
+> +++ linux-2.6.9-rc3-dsf/drivers/net/tulip/tulip_core.c	2004-10-02 22:01:22.000000000 -0700
+> @@ -1236,6 +1236,11 @@ static int __devinit tulip_init_one (str
+>  	struct tulip_private *tp;
+>  	/* See note below on the multiport cards. */
+>  	static unsigned char last_phys_addr[6] = {0x00, 'L', 'i', 'n', 'u', 'x'};
+> +	static struct pci_device_id early_486_chipsets[] = {
+> +		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82424) },
+> +		{ PCI_DEVICE(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_496) },
+> +		{ },
+> +	};
+>  	static int last_irq;
+>  	static int multiport_cnt;	/* For four-port boards w/one EEPROM */
+>  	u8 chip_rev;
+> @@ -1289,17 +1294,15 @@ static int __devinit tulip_init_one (str
+>  	 *	without the workarounds being on.
+>  	 */
+>  
+> -	/* Intel Saturn. Switch to 8 long words burst, 8 long word cache aligned
+> -	   Aries might need this too. The Saturn errata are not pretty reading but
+> -	   thankfully it's an old 486 chipset.
+> +	/* 1. Intel Saturn. Switch to 8 long words burst, 8 long word cache
+> +	      aligned.  Aries might need this too. The Saturn errata are not 
+                                                                            ^
+> +	      pretty reading but thankfully it's an old 486 chipset.
+> +
+> +	   2. The dreaded SiS496 486 chipset. Same workaround as Intel
+> +	      Saturn.
+>  	*/
+>  
+> -	if (pci_find_device(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82424, NULL)) {
+> -		csr0 = MRL | MRM | (8 << BurstLenShift) | (1 << CALShift);
+> -		force_csr0 = 1;
+> -	}
+> -	/* The dreaded SiS496 486 chipset. Same workaround as above. */
+> -	if (pci_find_device(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_496, NULL)) {
+> +	if (pci_dev_present(early_486_chipsets)) {
+>  		csr0 = MRL | MRM | (8 << BurstLenShift) | (1 << CALShift);
+>  		force_csr0 = 1;
+>  	}
+> 
 
-diff -u ./arch/sparc64/Kconfig.orig ./arch/sparc64/Kconfig
---- ./arch/sparc64/Kconfig.orig	2004-10-16 11:23:24.940665125 -0400
-+++ ./arch/sparc64/Kconfig	2004-10-16 11:29:32.674618258 -0400
-@@ -92,8 +92,8 @@
- 	bool "Symmetric multi-processing support"
- 	---help---
- 	  This enables support for systems with more than one CPU. If you have
--	  a system with only one CPU, like most personal computers, say N. If
--	  you have a system with more than one CPU, say Y.
-+	  a system with only one CPU, say N. If you have a system with more than
-+	  one CPU, say Y.
- 
- 	  If you say N here, the kernel will run on single and multiprocessor
- 	  machines, but will use only one CPU of a multiprocessor machine. If
-@@ -101,17 +101,11 @@
- 	  singleprocessor machines. On a singleprocessor machine, the kernel
- 	  will run faster if you say N here.
- 
--	  Note that if you say Y here and choose architecture "586" or
--	  "Pentium" under "Processor family", the kernel will not work on 486
--	  architectures. Similarly, multiprocessor kernels for the "PPro"
--	  architecture may not work on all Pentium based boards.
--
- 	  People using multiprocessor machines who say Y here should also say
- 	  Y to "Enhanced Real Time Clock Support", below. The "Advanced Power
- 	  Management" code will be disabled if you say Y here.
- 
- 	  See also the <file:Documentation/smp.txt>,
--	  <file:Documentation/i386/IO-APIC.txt>,
- 	  <file:Documentation/nmi_watchdog.txt> and the SMP-HOWTO available at
- 	  <http://www.tldp.org/docs.html#howto>.
- 
+white space junk.
 
---===============68817315963868264==
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
+
+
+--===============12259857233640181==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============68817315963868264==--
+--===============12259857233640181==--
