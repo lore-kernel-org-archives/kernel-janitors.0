@@ -1,15 +1,15 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 17 Jan 2005 22:30:47 +0000
-Subject: Re: [KJ] RE: [PATCH 3/22] block/cciss: replace schedule_timeout()
-Message-Id: <20050117223047.GA29423@kroah.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 17 Jan 2005 22:35:31 +0000
+Subject: [KJ] Re: [PATCH 3/22] block/cciss: replace schedule_timeout() with
+Message-Id: <20050117223531.GM24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62573817329667936=="
+Content-Type: multipart/mixed; boundary="===============10409500738476751=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <D4CFB69C345C394284E4B78B876C1CF107DC01A4@cceexc23.americas.cpqcorp.net>
 In-Reply-To: <D4CFB69C345C394284E4B78B876C1CF107DC01A4@cceexc23.americas.cpqcorp.net>
 To: kernel-janitors@vger.kernel.org
 
---===============62573817329667936==
+--===============10409500738476751==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -45,16 +45,36 @@ On Mon, Jan 17, 2005 at 04:14:10PM -0600, Miller, Mike (OS Dev) wrote:
 > 
 > I still fail to see the benefits of this patch.
 
-When HZ changed from 100 to 1000, your code went from sleeping 10ms to 1
-ms.  Did you really mean that?  This way, your code always sleeps what
-you expect it to sleep, no matter what the value of HZ.
+There is a clear benefit (IMO) to use actual time units for sleeps (msleep()
+and co. use milliseconds or seconds) as opposed to jiffy-relative units (as
+in schedule_timeout() where you are requesting a delay in jiffies, which
+varies from arch to arch).
 
-thanks,
+This becomes very important with dynamic HZ, for instance. Clearly if HZ
+changes, then the delay caused by schedule_timeout(1) will change, which is not
+necessarily desired and may be confusing the user. A time specified in real
+time units will be adjusted with the change in HZ.
 
-greg k-h
+If it is not important how long (as long as it is not too long) the driver
+sleeps, then I believe msleep() should be preferred in effectively all cases
+(depending on whether wait-queue events or signals may be important early
+triggers, of course). Milliseconds indicate a clear delay, independent of
+HZ's value. Jiffy delays have a clear reliance on the value of HZ, but using
+constant delays with schedule_timeout (1, 10, etc., i.e. values that are
+independent of the value of HZ (examples of the latter would be HZ/2, HZ/4,
+etc.)) masks this dependancy which may be confusing to the user who sees
+dramatic changes in the delay of particular drivers as HZ is altered.
 
+I am open to other suggestions, but I think these are good reasons. Another
+basic one is that it will lead to consistency across the board. HZ is not a
+measure of time, it should not be used as a measure of time. Instead,
+milliseconds should be used and, when/if the facility has been added,
+microseconds and nanoseconds.
 
---===============62573817329667936==
+Thanks,
+Nish
+
+--===============10409500738476751==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +85,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62573817329667936==--
+--===============10409500738476751==--
