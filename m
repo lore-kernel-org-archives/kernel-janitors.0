@@ -1,31 +1,49 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 18 Feb 2004 00:10:09 +0000
-Subject: Re: [Kernel-janitors] [patch 2.6.2] some stv680 fixes
-Message-Id: <20040218001009.GA4702@kroah.com>
+From: Adrian Bunk <bunk@fs.tum.de>
+Date: Mon, 02 Feb 2004 22:03:25 +0000
+Subject: Re: [Kernel-janitors] [PATCH] Fix warning indrivers/ide/pci/triflex.c
+Message-Id: <20040202220324.GB4443@fs.tum.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200402152006.15059.domen@coderock.org>
-In-Reply-To: <200402152006.15059.domen@coderock.org>
+References: <1074874158.5269.3.camel@telecentrolivre>
+In-Reply-To: <1074874158.5269.3.camel@telecentrolivre>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Feb 15, 2004 at 08:06:14PM +0100, Domen Puncer wrote:
-> Hi.
-> 
-> - swapRGB is already initialized to 0
-> - change "swapRGB_on = 1" to match in-source documentation
-> - submit urb with GFP_ATOMIC (interrupt context) - this made driver
->    unusable because of "might_sleep" messages.
-> - group some "case"s
-> - release vdev on fail
-> - remove "kfree(0)" checking
-> 
-> Compiles, works.
+On Fri, Jan 23, 2004 at 03:06:46PM -0200, Luiz Fernando Capitulino wrote:
+>...
+> Em Seg, 2004-01-26 =E0s 14:06, Felipe W Damasio escreveu:
+>...
+> > 	IIRC the policy for adding #ifdefs on .c files is when it's really=20
+> > necessary, and I don't really see the point for this (expect object siz=
+e=20
+> > and an extra symbol defined, which I don't think it really hurts here).
+>=20
+>  AFAIK, the _real_ problem is when you have #ifdef/#endif inside
+> functions. I agree that is better to avoid it in .c files, but is not
+> all the cases that it can be done.
 
-Thanks, I've applied this to my trees and will pass it on.
+Let's think about something different:
+CONFIG_PROC_FS=3Dn is _very_ unusual.
 
-greg k-h
+It's good that drivers compile and work with CONFIG_PROC_FS=3Dn, and it's=20
+also good to remove warnings in code.
+
+But is it really worth uglifying code with #ifdef's to avoid a=20
+completely harmless warning in a very unusual configuration?
+
+> Luiz Fernando N. Capitulino
+
+cu
+Adrian
+
+--=20
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
