@@ -1,100 +1,42 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 01 Nov 2004 19:29:22 +0000
-Subject: [KJ] [PATCH] net/sb1000: replace nicedelay() with
-Message-Id: <20041101202445.GH1730@us.ibm.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 15:29:34 +0000
+Subject: [KJ] [patch 3/8] ifdef typos:
+Message-Id: <20041124152934.GC14789@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70753110705179501=="
+Content-Type: multipart/mixed; boundary="===============59151950365460926=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1CO1w1-0002Uj-Hm@sputnik> <4184C6EB.1000700@pobox.com>
-In-Reply-To: <4184C6EB.1000700@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
+To: kernel-janitors@vger.kernel.org
 
---===============70753110705179501==
+--===============59151950365460926==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Oct 31, 2004 at 06:05:15AM -0500, Jeff Garzik wrote:
-> janitor@sternwelten.at wrote:
-> >Any comments would be appreciated.
-> >
-> >Description: Use msleep_interruptible() instead of nicedelay()
-> >to guarantee the task delays as expected. Remove the prototype and
-> >definition of nicedelay(). This is a very weird function, because it is
-> >called to sleep in terms of usecs, but always sleeps for 1 second,
-> >completely ignoring the parameter. I have gone ahead and followed suit,
-> >just sleeping for a second in all cases, but maybe someone with the
-> >hardware could tell me if perhaps the paramter *should* matter.
-> >Also remove a random "^L" character.
-> 
-> use ssleep() here too
+CONFIG_HS7751RVOIP_CIDEC is mistyped.
 
-Done, please fine patch below:
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
-Description: Use ssleep_interruptible() instead of nicedelay()
-to guarantee the task delays as expected. Remove the prototype and
-definition of nicedelay(). This is a very weird function, because it is
-called to sleep in terms of usecs, but always sleeps for 1 second,
-completely ignoring the parameter. I have gone ahead and followed suit,
-just sleeping for a second in all cases, but maybe someone with the
-hardware could tell me if perhaps the paramter *should* matter.
-escription.
+--- c/arch/sh/boards/renesas/hs7751rvoip/io.c	2004-08-17 11:44:59.000000000 +0200
++++ str2/arch/sh/boards/renesas/hs7751rvoip/io.c	2004-11-24 14:51:30.000000000 +0100
+@@ -166,7 +166,7 @@ void hs7751rvoip_outb(unsigned char valu
+ 
+         if (PXSEG(port))
+                 *(volatile unsigned char *)port = value;
+-#if defined(CONFIG_HS7751RVOIP_CIDEC)
++#if defined(CONFIG_HS7751RVOIP_CODEC)
+ 	else if (codec_port(port))
+ 		*(volatile unsigned cjar *)((unsigned long)area6_io8_base+(port-CODEC_IO_BASE)) = value;
+ #endif
+@@ -180,7 +180,7 @@ void hs7751rvoip_outb_p(unsigned char va
+ {
+         if (PXSEG(port))
+                 *(volatile unsigned char *)port = value;
+-#if defined(CONFIG_HS7751RVOIP_CIDEC)
++#if defined(CONFIG_HS7751RVOIP_CODEC)
+ 	else if (codec_port(port))
+ 		*(volatile unsigned cjar *)((unsigned long)area6_io8_base+(port-CODEC_IO_BASE)) = value;
+ #endif
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.10-rc1-vanilla/drivers/net/sb1000.c	2004-10-30 15:33:28.000000000 -0700
-+++ 2.6.10-rc1/drivers/net/sb1000.c	2004-11-01 12:22:26.000000000 -0800
-@@ -90,7 +90,6 @@ static int sb1000_close(struct net_devic
- 
- 
- /* SB1000 hardware routines to be used during open/configuration phases */
--static inline void nicedelay(unsigned long usecs);
- static inline int card_wait_for_busy_clear(const int ioaddr[],
- 	const char* name);
- static inline int card_wait_for_ready(const int ioaddr[], const char* name,
-@@ -254,13 +253,6 @@ static struct pnp_driver sb1000_driver =
- 
- const int TimeOutJiffies = (875 * HZ) / 100;
- 
--static inline void nicedelay(unsigned long usecs)
--{
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(HZ);
--	return;
--}
--
- /* Card Wait For Busy Clear (cannot be used during an interrupt) */
- static inline int
- card_wait_for_busy_clear(const int ioaddr[], const char* name)
-@@ -475,7 +467,7 @@ sb1000_reset(const int ioaddr[], const c
- 	udelay(1000);
- 	outb(0x0, port);
- 	inb(port);
--	nicedelay(60000);
-+	ssleep_interruptible(1);
- 	outb(0x4, port);
- 	inb(port);
- 	udelay(1000);
-@@ -537,7 +529,7 @@ sb1000_activate(const int ioaddr[], cons
- 	const unsigned char Command0[6] = {0x80, 0x11, 0x00, 0x00, 0x00, 0x00};
- 	const unsigned char Command1[6] = {0x80, 0x16, 0x00, 0x00, 0x00, 0x00};
- 
--	nicedelay(50000);
-+	ssleep_interruptible(1);
- 	if ((status = card_send_command(ioaddr, name, Command0, st)))
- 		return status;
- 	if ((status = card_send_command(ioaddr, name, Command1, st)))
-@@ -944,7 +936,7 @@ sb1000_open(struct net_device *dev)
- 	/* initialize sb1000 */
- 	if ((status = sb1000_reset(ioaddr, name)))
- 		return status;
--	nicedelay(200000);
-+	ssleep_interruptible(1);
- 	if ((status = sb1000_check_CRC(ioaddr, name)))
- 		return status;
- 
-
---===============70753110705179501==
+--===============59151950365460926==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -105,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70753110705179501==--
+--===============59151950365460926==--
