@@ -1,36 +1,33 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Tue, 01 Jun 2004 17:40:49 +0000
-Subject: Re: [Kernel-janitors]  linux-2.6.6/drivers/mtd/devices/doc2000.c:
-Message-Id: <20040601104049.5b18ae4e.rddunlap@osdl.org>
+From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
+Date: Wed, 02 Jun 2004 16:27:27 +0000
+Subject: Re: Re: [Kernel-janitors]  linux-2.6.6/drivers/mtd/devices/doc2
+Message-Id: <20040602162727.GA1258@tirion.prodam>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74540971658779265=="
+Content-Type: multipart/mixed; boundary="===============49418919446928289=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040601104049.5b18ae4e.rddunlap@osdl.org>
+In-Reply-To: <20040601104049.5b18ae4e.rddunlap@osdl.org>
 To: kernel-janitors@vger.kernel.org
 
---===============74540971658779265==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============49418919446928289==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 1 Jun 2004 19:04:29 +0200 (Walter Harms) wrote:
+Em Wed, Jun 02, 2004 at 09:05:53AM +0200, Walter Harms escreveu:
 
-| hi list,
-| some problem as in doc2001 is here (wrong argument type).
-| I have no mtd and no idea how to test it. at least it
-| compiles without problems now.
-| 
-| walter
+| ps: i dont buy that argument the maintainer could change either the prototype 
+| or the funktion, exspecialy if nobody uses the last argument.
 
-Similar patches were submitted on 2004-feb-20 by
-Vinay K Nallamothu (to lkml).  They were rejected by the
-MTD maintainer like so:
+ AFAIK, the problem is the driver was not ported to the new API, the
+warning is there to say that.
 
-"Nack. The warning is valid, and probably ought to stay there till the
-driver in question gets updated to conform to the new ECC API."
+ The right fix is to port the driver to the new API.
 
---
-~Randy
+-- 
+Luiz Fernando N. Capitulino
+<http://www.telecentros.sp.gov.br>
 
---===============74540971658779265==
+--===============49418919446928289==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74540971658779265==--
+--===============49418919446928289==--
