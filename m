@@ -1,37 +1,32 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Fri, 20 Aug 2004 19:00:43 +0000
-Subject: [Kernel-janitors] [patch 9/12] pci_dev_b to list_for_each_entry:
-Message-Id: <20040820190043.EB1181ED3E@trashy.coderock.org>
+From: Greg KH <greg@kroah.com>
+Date: Mon, 02 Aug 2004 23:12:53 +0000
+Subject: [Kernel-janitors] Re: [PATCH] i2c-ite: replace schedule_timeout()
+Message-Id: <20040802231253.GG15751@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46580108312028035=="
+Content-Type: multipart/mixed; boundary="===============036960913659314976=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============46580108312028035==
+--===============036960913659314976==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---- kjt2/arch/sparc/kernel/pcic.c	2004-08-20 18:58:55.000000000 +0200
-+++ kjt2-lfe/arch/sparc/kernel/pcic.c	2004-08-20 20:30:06.000000000 +0200
-@@ -607,7 +607,7 @@
-  */
- void __init pcibios_fixup_bus(struct pci_bus *bus)
- {
--	struct list_head *walk;
-+	struct pci_dev *dev;
- 	int i, has_io, has_mem;
- 	unsigned int cmd;
- 	struct linux_pcic *pcic;
-@@ -629,8 +629,7 @@
- 		return;
- 	}
- 
--	list_for_each(walk, &bus->devices) {
--		struct pci_dev *dev = pci_dev_b(walk);
-+	list_for_each_entry(dev, &bus->devices, bus_list) {
- 
- 		/*
- 		 * Comment from i386 branch:
+On Thu, Jul 22, 2004 at 10:10:27PM +0000, Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list. This is one (of
+> a few) places where I had to make a decision to set the state before the
+> call to
+> 
+> schedule_timeout();
+> 
+> This of course affected any decision to replace the code with msleep()
+> or not. Please inform if the other state from the one I used is desired.
 
---===============46580108312028035==
+Applied, thanks.
+
+greg k-h
+
+
+--===============036960913659314976==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46580108312028035==--
+--===============036960913659314976==--
