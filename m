@@ -1,48 +1,77 @@
-From: Benoit Boissinot <benoit.boissinot@ens-lyon.org>
-Date: Sun, 23 Jan 2005 13:57:22 +0000
-Subject: [KJ] Re: [PATCH] Remove softirq_pending
-Message-Id: <20050123135722.GA10781@ens-lyon.fr>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 24 Jan 2005 14:16:06 +0000
+Subject: [KJ] Re: [Alsa-devel] [PATCH 26/39] sound/emu8000: replace
+Message-Id: <s5hllai29qx.wl@alsa2.suse.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97540226414745534=="
+Content-Type: multipart/mixed; boundary="===============75398166899771102=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============97540226414745534==
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+--===============75398166899771102==
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jan 21, 2005 at 09:09:49PM +0100, Benoit Boissinot wrote:
+At Fri, 21 Jan 2005 11:35:00 -0800,
+Nishanth Aravamudan wrote:
+> 
 > Hi,
 > 
-> Below is a patch that remove a call to softirq_pending that was
-> forgotten.
+> Please consider applying.
 > 
-I had no comment on this patch. Since softirq_pending was removed
-in 2.6.11-rc1-mm2, without it the kernel doesn't compile:
+> Description: Use ssleep() instead of schedule_timeout() to guarantee the task
+> delays as expected. The current code uses TASK_INTERRUPTIBLE, but does not check
+> for signals / early return, so ssleep() should be appropriate. I am fairly
+> certain the time conversion is ok, as well.
 
-net/core/pktgen.c:2809: warning: implicit declaration of function ‘softirq_pending’
+Oh, that's a wrong code ;)  The comment is correct, though.
+It should have been:
 
-net/built-in.o(.text+0x173b0): In function `pktgen_thread_worker':
-net/core/pktgen.c:2809: undefined reference to `softirq_pending'
-make: *** [.tmp_vmlinux1] Error 1
+	schedule_timeout((HZ * 1024 + 44099) / 44100);
 
-> Signed-off-by: Benoit Boissinot <benoit.boissinot@ens-lyon.org>
+So, more simply with msleep(),
+
+	msleep(1024 * 1000 / 44100);
+
+
+Takashi
+
+
 > 
-> --- linux-clean/net/core/pktgen.c	2005-01-21 21:07:11.000000000 +0100
-> +++ linux-2.6-mm-test/net/core/pktgen.c	2005-01-21 21:00:07.000000000 +0100
-> @@ -2806,7 +2806,7 @@ static void pktgen_thread_worker(struct 
->  			tx_since_softirq += pkt_dev->last_ok;
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.11-rc1-kj-v/sound/isa/sb/emu8000.c	2005-01-15 16:55:45.000000000 -0800
+> +++ 2.6.11-rc1-kj/sound/isa/sb/emu8000.c	2005-01-21 11:32:38.000000000 -0800
+> @@ -25,6 +25,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/ioport.h>
+> +#include <linux/delay.h>
+>  #include <sound/core.h>
+>  #include <sound/emu8000.h>
+>  #include <sound/emu8000_reg.h>
+> @@ -355,8 +356,7 @@ init_arrays(emu8000_t *emu)
+>  {
+>  	send_array(emu, init1, ARRAY_SIZE(init1)/4);
 >  
->  			if (tx_since_softirq > max_before_softirq) {
-> -				if(softirq_pending(smp_processor_id()))  
-> +				if(local_softirq_pending())  
->  					do_softirq();
->  				tx_since_softirq = 0;
->  			}
+> -	set_current_state(TASK_INTERRUPTIBLE);
+> -	schedule_timeout((HZ * (44099 + 1024)) / 44100); /* wait for 1024 clocks */
+> +	ssleep(1);
+>  	send_array(emu, init2, ARRAY_SIZE(init2)/4);
+>  	send_array(emu, init3, ARRAY_SIZE(init3)/4);
+>  
+> 
+> 
+> -------------------------------------------------------
+> This SF.Net email is sponsored by: IntelliVIEW -- Interactive Reporting
+> Tool for open source databases. Create drag-&-drop reports. Save time
+> by over 75%! Publish reports on the web. Export to DOC, XLS, RTF, etc.
+> Download a FREE copy at http://www.intelliview.com/go/osdn_nl
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/alsa-devel
 > 
 
---===============97540226414745534==
+--===============75398166899771102==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +82,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97540226414745534==--
+--===============75398166899771102==--
