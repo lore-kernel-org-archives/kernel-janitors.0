@@ -1,53 +1,48 @@
-From: Mark Hollomon <markhollomon@comcast.net>
-Date: Sat, 24 Jul 2004 01:12:25 +0000
-Subject: Re: [Kernel-janitors] [PATCH] saa7146_i2c: replace schedule_timeout()
-Message-Id: <4101B779.4050107@comcast.net>
+From: Nish Aravamudan <nish.aravamudan@gmail.com>
+Date: Sat, 24 Jul 2004 01:41:28 +0000
+Subject: Re: Re: [Kernel-janitors] [PATCH] saa7146_i2c: replace
+Message-Id: <29495f1d04072318412d8d74d9@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15380256585009322=="
+Content-Type: multipart/mixed; boundary="===============18544582468881798=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040723220936.GQ2675@us.ibm.com>
 In-Reply-To: <20040723220936.GQ2675@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============15380256585009322==
-Content-Type: text/plain; charset=us-ascii; format=flowed
+--===============18544582468881798==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-I think this patch will result in delays 10 times too long.
+On Fri, 23 Jul 2004 21:12:25 -0400, Mark Hollomon
+<markhollomon@comcast.net> wrote:
+> I think this patch will result in delays 10 times too long.
+> 
+> 
+> Nishanth Aravamudan wrote:
+> >
+<snip> 
+>
+> ms seems to be a number that expresses an interval in units of 1/10 of a
+> millisecond.
+> 
+<snip>
+> 
+> But this would use it as a delay in milliseconds.
 
+Ok, thanks, I wasn't sure about this - I had posted a while ago about
+the weird conversion because I couldn't quite decipher what it was
+intended to achieve. Looking over the math, I think I agree with you.
+I will re-submit this patch soon. BTW, doesn't that seem kind of
+confusing? - The delays are in terms of 1, 5 and 10 tenths of a
+millisecond? If that's the case, then this patch is pretty much
+useless (it makes sense to use msleep() with long delays, things
+countable in msecs). I suppose I could re-patch so that the value of
+SAA7146_I2C_DELAY is in msecs and then use msecs_to_jiffies() in
+my_wait(). Thanks again!
 
-Nishanth Aravamudan wrote:
->  
-> -/* helper function */
-> -static void my_wait(struct saa7146_dev *dev, long ms)
-> -{
-> -	set_current_state(TASK_INTERRUPTIBLE);
-> -	schedule_timeout((((ms+10)/10)*HZ)/1000);
-> -}
+-Nish
 
-ms seems to be a number that expresses an interval in units of 1/10 of a 
-millisecond.
-
-> -
->  u32 saa7146_i2c_func(struct i2c_adapter *adapter)
->  {
->  //fm	DEB_I2C(("'%s'.\n", adapter->name));
-> @@ -136,12 +129,12 @@ static int saa7146_i2c_reset(struct saa7
->  		/* set "ABORT-OPERATION"-bit (bit 7)*/
->  		saa7146_write(dev, I2C_STATUS, (dev->i2c_bitrate | MASK_07));
->  		saa7146_write(dev, MC2, (MASK_00 | MASK_16));
-> -		my_wait(dev,SAA7146_I2C_DELAY);
-> +		msleep(SAA7146_I2C_DELAY);
-
-But this would use it as a delay in milliseconds.
-
-
-
--- 
---------------------------
-Mark Hollomon
-
---===============15380256585009322==
+--===============18544582468881798==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15380256585009322==--
+--===============18544582468881798==--
