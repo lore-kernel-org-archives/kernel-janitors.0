@@ -1,49 +1,28 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 17 Sep 2004 00:02:37 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 2/2] ieee1394/sbp2: replace
-Message-Id: <20040917000237.GL1777@us.ibm.com>
+From: "David S. Miller" <davem@davemloft.net>
+Date: Tue, 21 Sep 2004 22:18:01 +0000
+Subject: [Kernel-janitors] Re: [PATCH][ATM]: [drivers] use msleep() instead
+Message-Id: <20040921151801.3ccd21cd.davem@davemloft.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87388333935743079=="
+Content-Type: multipart/mixed; boundary="===============021048770006671713=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040916230412.GD1777@us.ibm.com>
-In-Reply-To: <20040916230412.GD1777@us.ibm.com>
-To: kernel-janitors@vger.kernel.org
+References: <200409212029.i8LKTINv010576@ginger.cmf.nrl.navy.mil>
+In-Reply-To: <200409212029.i8LKTINv010576@ginger.cmf.nrl.navy.mil>
+To: chas3@users.sourceforge.net
+Cc: chas@cmf.nrl.navy.mil, netdev@oss.sgi.com, davem@redhat.com, nacc@us.ibm.com, kernel-janitors@lists.osdl.org
 
---===============87388333935743079==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============021048770006671713==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Any comments would be appreciated.
+On Tue, 21 Sep 2004 16:29:19 -0400
+"chas williams (contractor)" <chas@cmf.nrl.navy.mil> wrote:
 
-Description: Uses msleep_interruptible() in place of schedule_timeout()
-to guarantee the task delays as expected.
+> this patch (from nacc@us.ibm.com) replaces assorted schedule_timeout()'s
+> with msleep()'s.  please apply to 2.6.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Applied, thanks Chas and Nishanth.
 
---- 2.6.9-rc2-vanilla/drivers/ieee1394/sbp2.c	2004-09-13 17:16:07.000000000 -0700
-+++ 2.6.9-rc2/drivers/ieee1394/sbp2.c	2004-09-14 13:54:17.000000000 -0700
-@@ -357,8 +357,7 @@ static int sbp2util_down_timeout(atomic_
- 	int i;
- 
- 	for (i = timeout; (i > 0 && atomic_read(done) == 0); i-= HZ/10) {
--		set_current_state(TASK_INTERRUPTIBLE);
--		if (schedule_timeout(HZ/10))	/* 100ms */
-+		if (msleep_interruptible(100))	/* 100ms */
- 			return(1);
- 	}
- 	return ((i > 0) ? 0:1);
-@@ -903,8 +902,7 @@ alloc_fail:
- 	 * connected to the sbp2 device being removed. That host would
- 	 * have a certain amount of time to relogin before the sbp2 device
- 	 * allows someone else to login instead. One second makes sense. */
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	msleep_interruptible(1000);
- 
- 	/*
- 	 * Login to the sbp-2 device
-
---===============87388333935743079==
+--===============021048770006671713==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +33,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87388333935743079==--
+--===============021048770006671713==--
