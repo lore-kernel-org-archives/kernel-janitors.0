@@ -1,85 +1,58 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 19:14:18 +0000
-Subject: [KJ] [PATCH 9/20] w1/w1: remove interruptible_sleep_on_timeout()
-Message-Id: <20050202191418.GK2546@us.ibm.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:52 +0000
+Subject: [KJ] [PATCH][RESUBMIT][4/21] drivers/ide/* - compile warning cleanup
+Message-Id: <42113C2C.18398.52BB33@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61287434371506389=="
+Content-Type: multipart/mixed; boundary="===============53815517884498321=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============61287434371506389==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============53815517884498321==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Hello,
+Description: compile warning cleanup - handle copy_to/from_user error returns
 
-Please consider applying.
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with direct
-wait-queue usage. Ideally, I would use wait_event_interruptible_timeout();
-however, there is no condition to sleep on here, unless I was to use the
-try_to_freeze() call as one. That is not the case in the current code, though,
-and I'm not sure it can/should be. Since timeout is a jiffies-unit variable,
-change the type to unsigned long. Patch is compile-tested.
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/ide/ide-tape.c linux-2.6.11-rc3-mm2/drivers/ide/ide-tape.c
+--- linux-2.6.11-rc3-mm2-original/drivers/ide/ide-tape.c	2005-02-12 12:06:38.000000000 +0200
++++ linux-2.6.11-rc3-mm2/drivers/ide/ide-tape.c	2005-02-12 16:29:56.000000000 +0200
+@@ -2610,7 +2610,13 @@ static void idetape_copy_stage_from_user
+ 		}
+ #endif /* IDETAPE_DEBUG_BUGS */
+ 		count = min((unsigned int)(bh->b_size - atomic_read(&bh->b_count)), (unsigned int)n);
+-		copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count);
++		if (copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count)) {
++#if IDETAPE_DEBUG_BUGS
++			printk(KERN_ERR "ide-tape/%s: copy_from_user failed!\n",
++					__FUNCTION__);
++#endif /* IDETAPE_DEBUG_BUGS */
++			return;
++		}
+ 		n -= count;
+ 		atomic_add(count, &bh->b_count);
+ 		buf += count;
+@@ -2637,7 +2643,12 @@ static void idetape_copy_stage_to_user (
+ 		}
+ #endif /* IDETAPE_DEBUG_BUGS */
+ 		count = min(tape->b_count, n);
+-		copy_to_user(buf, tape->b_data, count);
++		if (copy_to_user(buf, tape->b_data, count)) {
++#if IDETAPE_DEBUG_BUGS
++			printk(KERN_ERR "ide-tape/%s: copy_to_user failed!\n",__FUNCTION__);
++#endif /* IDETAPE_DEBUG_BUGS */
++			return;
++		}
+ 		n -= count;
+ 		tape->b_data += count;
+ 		tape->b_count -= count;
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/drivers/w1/w1.c	2005-01-24 09:34:16.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/w1/w1.c	2005-02-02 11:11:21.000000000 -0800
-@@ -32,6 +32,7 @@
- #include <linux/device.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
-+#include <linux/wait.h>
- 
- #include "w1.h"
- #include "w1_io.h"
-@@ -646,10 +647,12 @@ void w1_destroy_master_attributes(struct
- 
- int w1_control(void *data)
- {
-+	DEFINE_WAIT(wait);
- 	struct w1_slave *sl;
- 	struct w1_master *dev;
- 	struct list_head *ent, *ment, *n, *mn;
--	int err, have_to_wait = 0, timeout;
-+	int err, have_to_wait = 0;
-+	unsigned long timeout;
- 
- 	daemonize("w1_control");
- 	allow_signal(SIGTERM);
-@@ -659,7 +662,9 @@ int w1_control(void *data)
- 
- 		timeout = w1_timeout*HZ;
- 		do {
--			timeout = interruptible_sleep_on_timeout(&w1_control_wait, timeout);
-+			prepare_to_wait(&w1_control_wait, &wait, TASK_INTERRUPTIBLE);
-+			timeout = schedule_timeout(timeout);
-+			finish_wait(&w1_control_wait, &wait);
- 			try_to_freeze(PF_FREEZE);
- 		} while (!signal_pending(current) && (timeout > 0));
- 
-@@ -720,6 +725,7 @@ int w1_control(void *data)
- 
- int w1_process(void *data)
- {
-+	DEFINE_WAIT(wait);
- 	struct w1_master *dev = (struct w1_master *) data;
- 	unsigned long timeout;
- 	struct list_head *ent, *n;
-@@ -731,7 +737,9 @@ int w1_process(void *data)
- 	while (!dev->need_exit) {
- 		timeout = w1_timeout*HZ;
- 		do {
--			timeout = interruptible_sleep_on_timeout(&dev->kwait, timeout);
-+			prepare_to_wait(&w1_control_wait, &wait, TASK_INTERRUPTIBLE);
-+			timeout = schedule_timeout(timeout);
-+			finish_wait(&w1_control_wait, &wait);
- 			try_to_freeze(PF_FREEZE);
- 		} while (!signal_pending(current) && (timeout > 0));
- 
 
---===============61287434371506389==
+
+--===============53815517884498321==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -90,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============61287434371506389==--
+--===============53815517884498321==--
