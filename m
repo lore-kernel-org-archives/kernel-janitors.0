@@ -1,105 +1,75 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 16:42:55 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/5] pcmcia/cs: replace
-Message-Id: <20040927164255.GC1676@us.ibm.com>
+Date: Wed, 15 Sep 2004 20:34:33 +0000
+Subject: [Kernel-janitors] [PATCH 8/8] block/xd: replace schedule_timeout()
+Message-Id: <20040915203433.GD5778@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============75639319965099938=="
+Content-Type: multipart/mixed; boundary="===============12729179341128249=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============75639319965099938==
+--===============12729179341128249==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+Any comments would be appreciated. 
 
-Description: Use msleep() instead of schedule_timeout()
-to guarantee the task delays as expected. Remove the unused macro
-cs_to_timeout().
+Description: Use msleep() or msleep_interruptible() [as appropriate]
+instead of schedule_timeout() to gurantee the task delays as
+expected. As a result changed the units of the timeout variable from
+jiffies to msecs.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/pcmcia/cs.c	2004-09-13 17:16:07.000000000 -0700
-+++ 2.6.9-rc2/drivers/pcmcia/cs.c	2004-09-15 10:00:07.000000000 -0700
-@@ -427,8 +427,6 @@ static int send_event(struct pcmcia_sock
-     return ret;
- } /* send_event */
+--- 2.6.9-rc2-vanilla/drivers/block/xd.c	2004-09-13 17:16:05.000000000 -0700
++++ 2.6.9-rc2/drivers/block/xd.c	2004-09-14 11:55:19.000000000 -0700
+@@ -62,7 +62,7 @@ static int xd[5] = { -1,-1,-1,-1, };
  
--#define cs_to_timeout(cs) (((cs) * HZ + 99) / 100)
--
- static void socket_remove_drivers(struct pcmcia_socket *skt)
- {
- 	client_t *client;
-@@ -448,8 +446,7 @@ static void socket_shutdown(struct pcmci
+ #define XD_DONT_USE_DMA		0  /* Initial value. may be overriden using
+ 				      "nodma" module option */
+-#define XD_INIT_DISK_DELAY	(30*HZ/1000)  /* 30 ms delay during disk initialization */
++#define XD_INIT_DISK_DELAY	(30)  /* 30 ms delay during disk initialization */
  
- 	socket_remove_drivers(skt);
- 	skt->state &= SOCKET_INUSE|SOCKET_PRESENT;
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(cs_to_timeout(shutdown_delay));
-+	msleep(shutdown_delay * 10);
- 	skt->state &= SOCKET_INUSE;
- 	shutdown_socket(skt);
- }
-
+ /* Above may need to be increased if a problem with the 2nd drive detection
+    (ST11M controller) or resetting a controller (WD) appears */
+@@ -625,14 +625,12 @@ static u_char __init xd_initdrives (void
+ 	for (i = 0; i < XD_MAXDRIVES; i++) {
+ 		xd_build(cmdblk,CMD_TESTREADY,i,0,0,0,0,0);
+ 		if (!xd_command(cmdblk,PIO_MODE,NULL,NULL,NULL,XD_TIMEOUT*8)) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(XD_INIT_DISK_DELAY);
++			msleep_interruptible(XD_INIT_DISK_DELAY);
  
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(cs_to_timeout(unreset_delay));
-+	msleep(unreset_delay * 10);
- 	for (i = 0; i < unreset_limit; i++) {
- 		skt->ops->get_status(skt, &status);
+ 			init_drive(count);
+ 			count++;
  
-@@ -478,8 +474,7 @@ static int socket_reset(struct pcmcia_so
- 		if (status & SS_READY)
- 			return CS_SUCCESS;
- 
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(cs_to_timeout(unreset_check));
-+		msleep(unreset_check * 10);
- 	}
- 
- 	cs_err(skt, "time out after reset.\n");
-@@ -496,8 +491,7 @@ static int socket_setup(struct pcmcia_so
- 	if (!(status & SS_DETECT))
- 		return CS_NO_CARD;
- 
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(cs_to_timeout(initial_delay));
-+	msleep(initial_delay * 10);
- 
- 	for (i = 0; i < 100; i++) {
- 		skt->ops->get_status(skt, &status);
-@@ -507,8 +501,7 @@ static int socket_setup(struct pcmcia_so
- 		if (!(status & SS_PENDING))
- 			break;
- 
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(cs_to_timeout(10));
-+		msleep(100);
- 	}
- 
- 	if (status & SS_PENDING) {
-@@ -541,8 +534,7 @@ static int socket_setup(struct pcmcia_so
- 	/*
- 	 * Wait "vcc_settle" for the supply to stabilise.
- 	 */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(cs_to_timeout(vcc_settle));
-+	msleep(vcc_settle * 10);
- 
- 	skt->ops->get_status(skt, &status);
- 	if (!(status & SS_POWERON)) {
-@@ -660,8 +652,7 @@ static void socket_detect_change(struct 
- 		int status;
- 
- 		if (!(skt->state & SOCKET_PRESENT)) {
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout(cs_to_timeout(2));
-+			msleep(20);
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(XD_INIT_DISK_DELAY);
++			msleep_interruptible(XD_INIT_DISK_DELAY);
  		}
+ 	}
+ 	return (count);
+@@ -753,8 +751,7 @@ static void __init xd_wd_init_controller
  
- 		skt->ops->get_status(skt, &status);
+ 	outb(0,XD_RESET);		/* reset the controller */
+ 
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(XD_INIT_DISK_DELAY);
++	msleep(XD_INIT_DISK_DELAY);
+ }
+ 
+ static void __init xd_wd_init_drive (u_char drive)
+@@ -928,8 +925,7 @@ If you need non-standard settings use th
+ 	xd_maxsectors = 0x01;
+ 	outb(0,XD_RESET);		/* reset the controller */
+ 
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(XD_INIT_DISK_DELAY);
++	msleep(XD_INIT_DISK_DELAY);
+ }
+ 
+ static void __init xd_xebec_init_drive (u_char drive)
 
---===============75639319965099938==
+--===============12729179341128249==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -110,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============75639319965099938==--
+--===============12729179341128249==--
