@@ -1,43 +1,98 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 23:17:58 +0000
-Subject: [KJ] [PATCH] [RESEND] [24/29] stradis.c - vfree() checking cleanups
-Message-Id: <auto-000001227508@appliedminds.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 11 Jan 2005 00:39:08 +0000
+Subject: [KJ] [UPDATE PATCH] net/sb1000: replace nicedelay() with ssleep()
+Message-Id: <20050111003908.GJ9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20467485463349888=="
+Content-Type: multipart/mixed; boundary="===============70216721522393577=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============20467485463349888==
+--===============70216721522393577==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-stradis.c vfree() checking cleanups.
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+> 
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+<snip>
 
- stradis.c |    9 +++------
- 1 files changed, 3 insertions(+), 6 deletions(-)
+> msleep_interruptible-drivers_net_sb1000.patch
 
+Please consider replacing with the following:
 
---- linux-2.6.10-vanilla/drivers/media/video/stradis.c	2004-12-24 13:35:28.000000000 -0800
-+++ linux-2.6.10/drivers/media/video/stradis.c	2005-01-04 11:36:45.000000000 -0800
-@@ -2188,12 +2188,9 @@
- 		/* unmap and free memory */
- 		saa->audhead = saa->audtail = saa->osdhead = 0;
- 		saa->vidhead = saa->vidtail = saa->osdtail = 0;
--		if (saa->vidbuf)
--			vfree(saa->vidbuf);
--		if (saa->audbuf)
--			vfree(saa->audbuf);
--		if (saa->osdbuf)
--			vfree(saa->osdbuf);
-+		vfree(saa->vidbuf);
-+		vfree(saa->audbuf);
-+		vfree(saa->osdbuf);
- 		if (saa->dmavid2)
- 			kfree((void *) saa->dmavid2);
- 		saa->audbuf = saa->vidbuf = saa->osdbuf = NULL;
+Description: Use ssleep() instead of nicedelay()
+to guarantee the task delays as expected. Remove the prototype and
+definition of nicedelay(). This is a very weird function, because it is
+called to sleep in terms of usecs, but always sleeps for 1 second,
+completely ignoring the parameter. I have gone ahead and followed suit,
+just sleeping for a second in all cases, but maybe someone with the
+hardware could tell me if perhaps the paramter *should* matter. Additionally,
+nicedelay() is called in TASK_INTERRUPTIBLE state, but doesn't deal with signals
+in case these longer delays do not complete, so I believe ssleep() is more
+appropriate.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---===============20467485463349888==
+--- 2.6.10-v/drivers/net/sb1000.c	2004-12-24 13:33:51.000000000 -0800
++++ 2.6.10/drivers/net/sb1000.c	2005-01-05 14:23:05.000000000 -0800
+@@ -90,7 +90,6 @@ static int sb1000_close(struct net_devic
+ 
+ 
+ /* SB1000 hardware routines to be used during open/configuration phases */
+-static inline void nicedelay(unsigned long usecs);
+ static inline int card_wait_for_busy_clear(const int ioaddr[],
+ 	const char* name);
+ static inline int card_wait_for_ready(const int ioaddr[], const char* name,
+@@ -254,13 +253,6 @@ static struct pnp_driver sb1000_driver =
+ 
+ const int TimeOutJiffies = (875 * HZ) / 100;
+ 
+-static inline void nicedelay(unsigned long usecs)
+-{
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout(HZ);
+-	return;
+-}
+-
+ /* Card Wait For Busy Clear (cannot be used during an interrupt) */
+ static inline int
+ card_wait_for_busy_clear(const int ioaddr[], const char* name)
+@@ -475,7 +467,7 @@ sb1000_reset(const int ioaddr[], const c
+ 	udelay(1000);
+ 	outb(0x0, port);
+ 	inb(port);
+-	nicedelay(60000);
++	ssleep(1);
+ 	outb(0x4, port);
+ 	inb(port);
+ 	udelay(1000);
+@@ -537,7 +529,7 @@ sb1000_activate(const int ioaddr[], cons
+ 	const unsigned char Command0[6] = {0x80, 0x11, 0x00, 0x00, 0x00, 0x00};
+ 	const unsigned char Command1[6] = {0x80, 0x16, 0x00, 0x00, 0x00, 0x00};
+ 
+-	nicedelay(50000);
++	ssleep(1);
+ 	if ((status = card_send_command(ioaddr, name, Command0, st)))
+ 		return status;
+ 	if ((status = card_send_command(ioaddr, name, Command1, st)))
+@@ -944,7 +936,7 @@ sb1000_open(struct net_device *dev)
+ 	/* initialize sb1000 */
+ 	if ((status = sb1000_reset(ioaddr, name)))
+ 		return status;
+-	nicedelay(200000);
++	ssleep(1);
+ 	if ((status = sb1000_check_CRC(ioaddr, name)))
+ 		return status;
+ 
+
+--===============70216721522393577==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +103,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20467485463349888==--
+--===============70216721522393577==--
