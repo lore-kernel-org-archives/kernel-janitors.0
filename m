@@ -1,36 +1,58 @@
-From: "Jeanne R. Hendrickson" <jr_hendrickson_ve@stanbridge35.freeserve.co.uk>
-Date: Fri, 14 May 2004 08:56:35 +0000
-Subject: 0-Refinance as low as 2.96%
-Message-Id: <9b5601c4399a$252b7340$74ba2c92@tvhude-tt.de>
+From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
+Date: Thu, 27 May 2004 19:12:32 +0000
+Subject: [Kernel-janitors] [PATCH] - fix pci/probe.c possible NULL pointer.
+Message-Id: <20040527191232.GA2249@lorien.prodam>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============69371189915671394=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-G'day<p>
-
-Would you re-fina<jhtegvydxjlddn>nce if you knew you'd S<jvgiuhncattwu>AVE TH0US<jqwhriocmmpma>ANDS?<p>
-
-We'll get you rat<jftqoygbisyzuo>es as low as 2.9%.<p>
-
-Don't believe me? Fill out our small online form and we'll show you how.<p>
-
-Get the house and/or car you always wanted, it only takes 2 minutes of your time:<br>
-<a href="http://jgbpzrdxmki.wewillhelp.info/index.php?a=2">http://zbvfwqbltp.wewillhelp.info</a>
-<p><br><br><br><br><br>
-<a href="http://sedwvidksmexu.wewillhelp.info/tt.htm">End mailings</a>
-</html>
+--===============69371189915671394==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
+ Hi,
 
--------------------------------------------------------
-This SF.Net email is sponsored by: SourceForge.net Broadband
-Sign-up now for SourceForge Broadband and get the fastest
-6.0/768 connection for only $19.95/mo for the first 3 months!
-http://ads.osdn.com/?ad_id%62&alloc_ida84&op=click
+ In drivers/pci/probe.c::pci_scan_bridge() the call for pci_alloc_child_bus()
+can return NULL, but it is not handled by the function (detected by
+Coverity's checker).
+
+ The patch bellow fix that returning `max' if we got the NULL, but
+I do not know if it is right. I guess it is, because in that case
+the function will act in the same way as with `pass != 0'.
+
+Signed-off by: Luiz Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+ drivers/pci/probe.c |    2 ++
+ 1 files changed, 2 insertions(+)
+
+
+diff -X dontdiff -Nparu a/drivers/pci/probe.c a~/drivers/pci/probe.c
+--- a/drivers/pci/probe.c	2004-05-24 14:44:34.000000000 -0300
++++ a~/drivers/pci/probe.c	2004-05-26 19:51:50.000000000 -0300
+@@ -366,6 +366,8 @@ int __devinit pci_scan_bridge(struct pci
+ 			return max;
+ 		busnr = (buses >> 8) & 0xFF;
+ 		child = pci_alloc_child_bus(bus, dev, busnr);
++		if (!child)
++			return max;
+ 		child->primary = buses & 0xFF;
+ 		child->subordinate = (buses >> 16) & 0xFF;
+ 		child->bridge_ctl = bctl;
+-- 
+Luiz Fernando N. Capitulino
+<http://www.telecentros.sp.gov.br>
+
+--===============69371189915671394==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============69371189915671394==--
