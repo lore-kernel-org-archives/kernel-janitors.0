@@ -1,44 +1,30 @@
-From: "Reba M. Cummings" <r_mcummings_zn@amner.demon.co.uk>
-Date: Fri, 30 Jan 2004 11:19:23 +0000
-Subject: How is your male member doing?
-Message-Id: <BDPBHHKOIEKHODLMJEMFHNJPKJAB.r_mcummings_zn@amner.demon.co.uk>
+From: "Alma Napier" <dczne023@netstudio.com.br>
+Date: Tue, 06 Jan 2004 15:52:38 +0000
+Subject: Get Rid of S+P+A+M for GOOD                                  ana
+Message-Id: <x3tohn-p8xu78k-b$19-4w99-l486@3nr899mqk6c4c>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEg
-VHJhbnNpdGlvbmFsLy9FTiI+DQo8aHRtbD4NCjxoZWFkPg0KPHRpdGxlPlVu
-dGl0bGVkIERvY3VtZW50PC90aXRsZT4NCjxtZXRhIGh0dHAtZXF1aXY9IkNv
-bnRlbnQtVHlwZSIgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PWlzby04
-ODU5LTEiPg0KPC9oZWFkPg0KDQo8Ym9keT4NCjxwIGFsaWduPSJsZWZ0Ij48
-c3Ryb25nPjxmb250IGNvbG9yPSIjMDAzM0NDIiBzaXplPSI0Ij5XYTxrcXZr
-YmJlM3dkMms3Pm50PC9mb250Pjxmb250IHNpemU9IjQiPiANCiAgQSA8Zm9u
-dCBjb2xvcj0iI0ZGMDAwMCI+QmlnPGtoMHlxMGIycmZ4dW00Mz48a3RmeHBu
-bzFsN2o+Z2VyPC9mb250PiBQZTxraXFtMjBnMjVzMm9hPm5pPGtiaGxmYjQx
-anhzdDM+cz88L2ZvbnQ+PC9zdHJvbmc+PC9wPg0KPHAgYWxpZ249ImxlZnQi
-PiBHYWluIDMrIEZ1bDxrOXBkbXd0aWd0Zno+bCBJbmNoPGs2ZWE1a2pxaW92
-PmVzIEluIExlPGtmN2RweWozdXdxbXJyPm48a3Q0ZWFuYjNoOTI+Z3RoIDxi
-cj4NCiAgSW48a25zN3cxYjJrb3M+Y3JlYXNlIFlvdXIgUGVuaXMgV2k8a3dx
-ZjZiYmU3c3Bndz5kdGggKEdpcjxreHFhcnl3MzAyOTg+dGgpIEJ5IDIwJSA8
-YnI+DQogIFN0bzxrOWgwZHgza2VtMnM2ND5wIFByPGtqbzMwNjMzMmplaHo2
-PmVtYXR1PGtkNHZnNXgzbTdmamo+cmUgRTxrNDl3ZjB5M3lzem4wMTE+amE8
-a2Rxdm01cW1wZ3R2bj5jdTxrZWkzcGoyM250Z3cyPmxhdDxrMHRxODVpM3M0
-dD5pb24hIDxicj4NCjwvcD4NCjxwIGFsaWduPSJsZWZ0Ij48YSANCmhyZWY9
-Imh0dHA6Ly9rdmouY29ydGsyMi51cy92cC8/aHBzYWxlcyI+UkVBRA0KTU9S
-RSBJTkZPIEhFUkU8L2E+PC9mb250PjwvZm9udD48L2I+PGJyPg0KPHA+DQo8
-cD4NCjxwPg0KPHA+DQo8cD48Zm9udCBzaXplPS0yPjxhIGhyZWY9InR6aS5j
-b3J0azIyLnVzL3ZwL28uaHRtbCI+bm8NCm1vcmUgZW1haWx6PC9hPjwvZm9u
-dD48L2ZvbnQ+PC9mb250PjwvY2VudGVyPg0KbHh5YnogcmdjbHQgZGhuc24g
-bHlndHA8L3A+DQo8L2JvZHk+DQo8L2h0bWw+DQo
+
+<HTML><HEAD>
+<STYLE></STYLE>
+</HEAD> 
+
+<html><body><P>Hello,</P><P>This program worked for me. If you hate S_pa_m like I do, you&nbsp;&nbsp; o w e&nbsp;&nbsp; it to your self to try this pro-gram, and forward this email to all of your friends which also hate &nbsp;S+P+A+M &nbsp;or as many people possible. Together lets help clear the Internet of&nbsp;&nbsp;&nbsp; S+P+A+M!</P><P>STOP&nbsp;&nbsp; S_P*A_M&nbsp;&nbsp; IN ITS TRACKS!</P><P>Do you get junk, scams and worse in your inbox <BR>every day? </P><P>Are you sick of spending valuable time <BR>removing the trash? </P><P>Is your child receiving inappropriate <BR>a_d_u_l_t&nbsp; material? </P><P>If so you should know that no other solution works <BR>better then our software to return control of your <BR>email back where it belongs! </P><P>Imagine being able to read your important email <BR>without looking through all that s*p*a*m... </P><P>Click below to vist our website:<BR><A href="http://www.sftwareplus.biz/gh/as/index.asp?affil=d21jose">http://www.StopAllThatSpam.com</A></P><P>&nbsp;</P><A href="http://jampe.biz/patch/o.html?eCT"><P>R.e-m_o^v*e&nbsp;&nbsp;&nbsp; M,e</P></A></body></html>oily askew
+
+
+</BODY></HTML>
+
 
 
 -------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+This SF.net email is sponsored by: IBM Linux Tutorials.
+Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
+Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
+Click now! http://ads.osdn.com/?ad_id78&alloc_id371&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
