@@ -1,34 +1,50 @@
-From: "songzi" <songzi@hotmail.com>
-Date: Mon, 24 May 2004 04:18:02 +0000
-Subject: SuperCRM =?GB2312?B?VjIuML/Nu6e52M+1udzA7c+1zbMs1+7Qwsn9vLY=?=
-Message-Id: <E1BS6ln-0003iS-KR@sc8-sf-mx1.sourceforge.net>
+From: Yoon Soo <yoonsoo@web.de>
+Date: Wed, 26 May 2004 20:37:45 +0000
+Subject: [Kernel-janitors] introduction and first questions
+Message-Id: <40B50019.7040607@web.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============50228978098070542=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1BRPv6-00040P-Uw@sc8-sf-mx1.sourceforge.net>
-In-Reply-To: <E1BRPv6-00040P-Uw@sc8-sf-mx1.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-CiAgICDX7tDCzfjWt6Osx+u3w87KwabM7MjtvP46ICBodHRwOi8vbHRzb2Z0Ljg4aXAuY24KCiAg
-ICDOqrTw0Lu547Tzv827p7bU09rBpszsyO28/rXE1qez1qOswabM7MjtvP7L+dPQsvrGt8irz9+9
-tbzbo6EKCiAgICDBpszsMjAwM834wuew7LmryO28/tfu0MK827jxo7o4MDDUqqGjWzIwMDPE6rXa
-yP297Mnu29q159fTyczO8dPF0aHP7sS/XSBodHRwOi8vbHRzb2Z0Ljg4aXAuY24vZW9mZmljZS8K
-CiAgICBTdXBlckNSTSBWMi4wv827p7nYz7W53MDtyO28/iA4MDDUqqGjaHR0cDovL2x0c29mdC44
-OGlwLmNuL3N1cGVyY3JtLwoKICAgIMGmzOzNqNPDvai16snMterPtc2zo6zP1srbo7o1MDDUqqGj
-aHR0cDovL2x0c29mdC44OGlwLmNuL29ubGluZXNob3AuaHRtCgogICAgwabM7NfU1vq9qNW+z7XN
-syzP1srbo7oxMDAwINSqoaNodHRwOi8vbHRzb2Z0Ljg4aXAuY246ODYvCgogICAg19TW+r2oterP
-tc2zo7oxNTAw1Kqho2h0dHA6Ly9sdHNvZnQuODhpcC5jbi9zaG9wY2l0eS8KCiAgICDBpszsV2Vi
-vfjP+rTmo7oxMDAw1Kqho2h0dHA6Ly9sdHNvZnQuODhpcC5jbi9qeGMKCiAgICC7+rvhxNG1w6Oh
-y/nT0M+1zbPM4bmp1LS0+sLro6y3vbHjxPq2/rTOv6q3oqOhCgogICAg1f255rmry76jrNDF0/6x
-o9ako6EKCiAgICDXydGvtee7sKO6MDc1NS0yNjc5MzUxMyDA7szOCgotLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KyOe5+8T6srvQ
-6NKqLMfry+bK1sm+s/0s0LvQuyEgIAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhpcyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVkIGJ5
-OiBPcmFjbGUgMTBnCkdldCBjZXJ0aWZpZWQgb24gdGhlIGhvdHRlc3QgdGhpbmcgZXZlciB0byBo
-aXQgdGhlIG1hcmtldC4uLiBPcmFjbGUgMTBnLiAKVGFrZSBhbiBPcmFjbGUgMTBnIGNsYXNzIG5v
-dywgYW5kIHdlJ2xsIGdpdmUgeW91IHRoZSBleGFtIEZSRUUuCmh0dHA6Ly9hZHMub3Nkbi5jb20v
-P2FkX2lkMTQ5JmFsbG9jX2lkgTY2Jm9wPWNsaWNrCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCktlcm5lbC1qYW5pdG9yLWRpc2N1c3MgbWFpbGluZyBsaXN0
-Cktlcm5lbC1qYW5pdG9yLWRpc2N1c3NAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2tlcm5lbC1qYW5pdG9yLWRpc2N1c3M=
+--===============50228978098070542==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi all,
+
+I am new in this list and there are some points which are not very clear 
+to me. But first of all, I read the todo list and worked on the point to 
+get rid of the 'old-fashioned' way to access the driver_data field 
+direct and replaced them with the proper dev_get/set_drvdata or 
+pci_get/set_drvdata.
+
+I created the patch like mentioned in the patchsubmitting-howto of the 
+source documentation, and have tested it. What are now the further 
+steps, just sending the patch as attachement to this list? Another 
+question is, which original source code version should be taken..2.6.6 
+(as I did) or the most actual from the cvs tree?
+
+Very many thanks in advance for helping me making the first steps ;)
+
+greets
+
+ys
+
+PS. As I have seen while working on my patch, tty->driver_data should 
+also not accessed directly, and for the consistency tty_get_drvdata and 
+tty_set_drvdata should be added too and called instead of the direct 
+access. Is this the right list to discuss this matter? Or is it in work?
+
+--===============50228978098070542==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============50228978098070542==--
