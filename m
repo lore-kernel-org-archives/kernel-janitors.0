@@ -1,21 +1,21 @@
 From: Oliver Neukum <oliver@neukum.org>
-Date: Tue, 13 Jul 2004 19:00:01 +0000
+Date: Tue, 13 Jul 2004 19:00:07 +0000
 Subject: [Kernel-janitors] Re: [linux-usb-devel] no set_current_state()
-Message-Id: <200407132100.01636.oliver@neukum.org>
+Message-Id: <200407132100.07748.oliver@neukum.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============35042249982270057=="
+Content-Type: multipart/mixed; boundary="===============35743003350172975=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200407132053.18110.oliver@neukum.org>
 In-Reply-To: <200407132053.18110.oliver@neukum.org>
 To: kernel-janitors@vger.kernel.org
 
---===============35042249982270057==
+--===============35743003350172975==
 Content-Disposition: inline
 Content-Type: text/plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 
-Am Dienstag, 13. Juli 2004 19:54 schrieb Nishanth Aravamudan:
+Am Dienstag, 13. Juli 2004 19:57 schrieb Nishanth Aravamudan:
 > Hi,
 > 
 > In continuing to replace, where appropriate, code with msleep() calls, I 
@@ -23,19 +23,15 @@ Am Dienstag, 13. Juli 2004 19:54 schrieb Nishanth Aravamudan:
 > set_current_state() before schedule_timeout(), which causes the latter 
 > to return immediately:
 > 
-> drivers/usb/media/ov511.c::init_ov_sensor()
+> drivers/usb/misc/tiglusb.c::tiglusb_open()
 
-Should use msleep.
-
-> drivers/usb/media/ov511.c::ov7xx0_configure()
-
-also msleep
+TASK_INTERRUPTIBLE
 
 	HTH
 		Oliver
 
 
---===============35042249982270057==
+--===============35743003350172975==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============35042249982270057==--
+--===============35743003350172975==--
