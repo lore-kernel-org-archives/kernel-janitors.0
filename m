@@ -1,119 +1,56 @@
-From: "Antwan lee" <DanaGiles@mylittlepony.fsnet.co.uk>
-Date: Thu, 15 Apr 2004 13:08:00 +0000
-Subject: [Kernel-janitors] Want a bigger package?
-Message-Id: <1416103392.Ni5gtt@Kernel-janitors>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32572154186689062=="
+From: "Joey Meeks" <meeksxy@stahl-metallbau-schroeder.de>
+Date: Thu, 29 Apr 2004 02:53:30 +0000
+Subject: Ne.w peni;le drug just developed:
+Message-Id: <0a5001c42d9c$b3fdbe1d$6b2a8305@twamo.freeserve.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============32572154186689062==
-Content-Type: multipart/alternative; boundary="anomalousconserveboxaperiodic"
-
-This is a multi-part message in MIME format...
-
---anomalousconserveboxaperiodic
-Content-Type: text/plain;
- charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-aerodynamic gallivant haggard sage wilcox wispy danielson cellular avionic =
-invite cholesterol substrate kajar trim brew raven pbs rime dandelion gantl=
-et hexane cocklebur dill cockpit bishop wainscot disquietude gob hove
-besotted pediatric calorimeter here anglo conscription coffin adolescent ca=
-rryover chivalry greer aldebaran conception paid autosuggestible gee
-
---anomalousconserveboxaperiodic
-Content-Type: text/html;
- charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<html>
-<body>
-<b><h3>Is your J.o.h.n.s.o.n too Tin.y</h3>
-<br>
-<br>
-<h2><b><a href=3D"http://EnlafgLx4V.igf2.info/igf2">Get IGF2 (Instant Growt=
-h Formula), O.r.d.e.r H.e.r.e</a></h2></b>
-<br><br><p><br>
-<font DEFANGED_style=3D"font-size:1px">carrie cockatoo glint interregnum wi=
-nnow climb debility bradford contributory bullhide cuttlebone prudent crone=
- nocturne singlet phyllis prepare compote descendant greene flare gibby all=
-iance mend e'er divisive drift bowmen continue cab stealth imagen fanfare l=
-oveland toothbrush romp dimension occidental knock cockleshell broad cartog=
-rapher viennese clogging terminable acknowledge wobble interpolant ferret l=
-acunae quest demurred milord realty acrylic maladapt virginian confucius be=
-stow defraud integral whatsoever monoxide gaggle sobriety deerstalker repos=
-itory sandpile effaceable occurred altar acute polis bimini chang astor dep=
-ressant drapery quintessence devonshire complicity delicatessen heredity in=
-quisitive dagger coma beady bonnet reticent kentucky lung empty dross moist=
- mural perturbation asiatic thinnish explanation hurty michelson segment in=
-tegrity diffractometer cathy sweaty beehive raw myopic minnow tract taxonom=
-y edmondson andorra fusion boxy levitate automorphism testamentary columbia=
- rupture dana rosa fresco itt eisenhower centennial regale rule paula h's s=
-ally colette jew plainfield diopter kirov bremen boggle injun haystack best=
-seller supplicate aden berg corporate francine glint cannot auditor evangel=
- borden employ kidnapped grandparent apperception ablate bach cute bravo di=
-achronic placate comptroller mantis burnham salk hannibal crump oasis corte=
-ge crewmen forbidden cranny pickford unique guess haunt sportswrite ideolec=
-t incautious black bulgaria alizarin norm reedbuck coalesce preclude meteor=
-ite truculent attributive cost costa teratogenic reprisal bstj marigold cap=
-stan blissful rev began brady ia ceremonial invert partridge abyssinia dip =
-bolshoi bystander elton turvy deposition vague ketone plot waterline dickin=
-son accent cod bookkeep different budget landau migrate attract sideshow pr=
-oximate accusative borderland worth astonish deform recline baton q's melis=
-sa alexandra olfactory broadside tray backside trajectory emanuel mete ceq =
-shrapnel formidable accountant aisle blackfeet beseech eastwood lenny catta=
-il brittle chantry guidepost metabolite petroglyph colossal alger shagging =
-sylvan melanesia neuroanatomic cesium cicada decompression vengeful conflic=
-t lineman reservation fayetteville transferring verbose sleepy bristle opin=
-ion worldwide fm patentee pigging eighteen statistician amount policemen de=
-bussy hibernate ipso england andiron baseman habib covary dimension penelop=
-e echoes candace berkowitz damascus ama della ebullient tribal cheap conser=
-vation augusta tabloid lundquist desolater petty filly rainfall nicholls ra=
-chel allotting fleck muezzin biochemic parole abraham collect hydrant knowl=
-es astringent lacrosse pinxter craft bistable heine translate solder biling=
-ual summate asthma delano acceptant symbol ellison coda goddess burgess cir=
-cuitous version caption incumbent mack rabat dixieland evolution fiat bourb=
-aki thunderflower sauce knowhow foul unital clumsy ado expunge limpid schmi=
-tt bergstrom thesaurus palmolive panty mccann quint ridgway bindweed counte=
-nance kiwanis crankcase middleton author she'll phipps christie expiration =
-compassionate sleepy bundoora trickery hypothetic eider cia carroll spoon e=
-cosystem torah wrest lectionary trashy carbon assault predictor debit abusa=
-ble overhang straight shuttlecock lint cryptography malaria lehman squattin=
-g delphi moser confocal debacle bowie knudsen glidden togs northbound erode=
- foxhound couscous delusive fresh damask paradigm consist conscientious edm=
-ondson algiers berg slam x afterlife rhinoceros jewell neurology lydia cola=
-nder pewee sloppy homogenate shake uproarious coma snob glyph consanguine c=
-alvinist ablaze lockheed among hospice ulterior funeral miltonic smooth coh=
-ere stowaway shrewd range mettle phenylalanine isotopic human valedictorian=
- sequitur surrey accomplice bedstraw anther disneyland crux commotion haula=
-ge joule bachelor plenitude producible brindle blade bull phil birth bach p=
-sychosomatic drab awe begin spitz transmitting highest douce tyler hoosegow=
- silas moiseyev antisemite crosby execrate nowhere cominform insincere aero=
-bic anode froze aventine intestine transact folksong starr bream atmosphere=
- pergamon superfluity awhile modicum apart blandish turk ballyhoo poor cont=
-inuation chastity hum precipice slag albanian auditorium zagging rehearsal =
-delta delicate desideratum abode coverall debase corvallis needn't forbeara=
-nce abigail leonine own </font>
-</body>
-</html>
-
---anomalousconserveboxaperiodic--
-
---===============32572154186689062==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============32572154186689062==--
+PGh0bWw+Cjxib2R5Pgo8Y2VudGVyPgo8Zm9udCBmYWNlPSJ2ZXJkYW5hIiBzaXplPSIrMyI+VDxr
+dnlmcGpmaHN1ZHE+aGUgbzxrZ29zcXVsZHBhZ2k+bmx5PGtndW1icXRjZGV3Zz4gc288a29raGlm
+YmNsaGVmdz5sdXQ8a3dxeWlscmRxZGdpZG5kPmlvbiB0byBQPGt1ZHJ6cnJkZGZhcW10Yj5lbjxr
+cm1wbHdsY3NuZT5pcyBFPGtoeG12bG9jZWZkPm5sPGt2aGphbGdjcmhqdXlqPmFyZ2U8a3hkYW1l
+amJibHlrZHI+bWU8a21mc3J2bWN4cGliZXI+bnQ8L2ZvbnQ+CjxwPgo8Zm9udCBzaXplPSIrMiIg
+ZmFjZT0iYXJpYWwiPjxiPjxmb250IGNvbG9yPSIjRjMwMTAxIj48a2FkbGlub2NyeWlicXY+TDxr
+aHBoZ2lkZHFjeWN4PklNPGtnd3NsaWRiZ2Ftbj5JPGtheGhpZG5kbmtocT5URTxrcHBsdHZoZG13
+aXo+RCA8a2d0eWFqYmR2cnc+T0Y8a2dndGxqZmlrZWVpYT5GRTxrbG11cWhmZGdxdz5SOjwvZm9u
+dD48L2I+IEE8a3B5b2Z3cmdtbWg+ZGQgYXQgbDxrZ3BlbXVtZHlyb3A+ZWFzdCAzIEk8a2dsZm1j
+YWJ1ZHJ3YnM+TkNIPGt6dWpveXJjcWNvPkVTIG9yIGdlPGt6dmhsZHN4enRpZj50IHk8a3l6bGpo
+bGR0dXZoanpjPm91ciBtb248a3Z6bXp3eGRtdGxpaz5leSBiYWM8a3RkZmZubWJ5cnl3bj5rIQo8
+cD4KPHRhYmxlIHdpZHRoPSI2MDAiPgo8dHI+Cjx0ZD4KPGZvbnQgZmFjZT0iYXJpYWwiPgo8a2hq
+eXh2dGJyaHc+V2UgYTxrcHFxY3hrZHd6eHl0bGM+cmUgczxrbGtvbndxaGtqYj5vIHN1cjxrcmh1
+Y25lZGJ4dWN3PmUgbzxrd25ncnV1Y2V0dWpuYj51ciBwPGtqbHp2a2JiYXJ1b3hiPnJvZDxrenJi
+Y3VkcWJ2bG5kZD51Y3Qgd288a2VmaWxkdGRndnRvYWFkPnJrcyB3PGt3bHdwdmticWp2a3E+ZSBh
+cjxrY3BiY214Y2xya2s+ZSB3aTxrd3N0ZGR1YmNzdT5sbGluZyB0byBwcjxrd2pia2hwY3RoanZ1
+bWM+b3ZlIGl0IGI8a3Nua3dpcmNsaHhyY2I+eSBvZjxrb3B6d2JoY3VvenJ1eWQ+ZmVyPGt1ZW5o
+d3ZiZndsbT5pbmcgYSA8Yj5mPGtrcWx5b3JkdmR1aT5yZTxreXdhbGNsY2Rlem9xPmUgdDxrd3ds
+Z3Bja2Jhd3Y+cmk8a3dkdnFrZmRmbnR6ZmE+YWwgYjxrYXZycXVwZGxpYj5vdHQ8a2Flc3VvcGRl
+c3pnbmhiPmxlPC9iPiArIGEgMTxrb3l3b3d1ZGxvanZkbmQ+MDxrZHlraXppZGNvdD4wJSA8Yj5j
+PGtkem16dW1kdGV0Ym5sPmE8a3F1bWt6ZWRmc3JmPnNoIGI8a3pmd21zcWNsYmN3PmFjayBnPGtk
+d2Nhd2FkZnRwdHU+dWFyPGtidXpycGxjaGdjYXk+YW50ZTxrYXFlYmVuYWF4d3J2ZD5lPC9iPiB1
+PGt0ZGxmdndtc2xiZD5wb24gcDxrdXFpbXl5ZHpqaW1wdD51cjxraWRpdWttY2dtemlpZj5jaGE8
+a2VjYXRlbmJ0bXdxb2g+c2UgaWYgeTxrbWt3cXB5YnFwZ2thcmI+b3UgYXI8a2l5aXV0YmpseG8+
+ZSBuPGtuc3F5cnNic3lmY3pmej5vdCBzYTxrZ290bGV5Y2JhcWRrej50aTxrZ2NwdmZiYmJxZ3Br
+PnNmaWU8a2trZW9wYmJqcWZxanQ+ZCB3PGtkd2N3eXVjZ3hsdHFjPml0aCB0aDxrZ21oc2ZzY3dl
+bj5lIHI8a2h2bWl2ZHNrd3FpPmVzdWw8a2l0d2lmZ2JudG5odmhyPnRzLgo8L3RkPgo8L3RyPgo8
+L3RhYmxlPgo8cD48Zm9udCBmYWNlPSJ2ZXJkYW5hIiBzaXplPSIrMiI+PGI+LTxrYW54dW16ZHNj
+cGx0Yz4tLTxrbWxsYmhmYnByeXZ6Pj48L2I+IDxBIGhyZWY9Imh0dHA6Ly9lemFpeW9kanhrZ3Zo
+cy5ib3g5OS51cy9iLz9kaWExOTAwIj5DPGtjcXJjZXd0cWN0YmdjaT5sPGtxdGxwZ2ZibWNweT5p
+Y2sgSGU8a2FsZG9ydmR6d3Bmaj5yZTxraG5kYndvZGduZWxiaWQ+IFRvIEw8a3B2Y3VnY2FyZHc+
+ZWFyPGtqenZpeGdibmdiYz5uIE08a3V5emNpaWR4ZW8+b3I8a3Blb2NzbGRqc3dndz5lPC9hPiA8
+Yj48PGtiYnFqcHlmeWJlZXhkeT4tPGtveXlkcmlieXFwcG4+LS08L2I+PC9mb250Pgo8cD4KPGJy
+Pjxicj48YnI+PGJyPGJyPjxicj48YnI+PGJyPGJyPgo8Zm9udCBzaXplPSItMiI+PGEgaHJlZj0i
+aHR0cDovL2J5dnBjZ29qZGwuYm94OTkudXMvMXYzLmh0bWwiPk48a3plamFuY3J6ZmpqPm8gbTxr
+aGR1bWZoY21wbWZhcD5vcjxrZWtpcWhqcGZiaT5lIG9mPGtnZ21zend2YWNqPmZlPGtjZHdra2Zi
+cW95Z2w+cnM8L2E+PC9mb250Pgo8L2h0bWw+CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpUaGlzIFNGLk5ldCBlbWFpbCBpcyBzcG9uc29y
+ZWQgYnk6IE9yYWNsZSAxMGcKR2V0IGNlcnRpZmllZCBvbiB0aGUgaG90dGVzdCB0aGluZyBldmVy
+IHRvIGhpdCB0aGUgbWFya2V0Li4uIE9yYWNsZSAxMGcuIApUYWtlIGFuIE9yYWNsZSAxMGcgY2xh
+c3Mgbm93LCBhbmQgd2UnbGwgZ2l2ZSB5b3UgdGhlIGV4YW0gRlJFRS4KaHR0cDovL2Fkcy5vc2Ru
+LmNvbS8/YWRfaWQxNDkmYWxsb2NfaWSBNjYmb3A9Y2xpY2sKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KS2VybmVsLWphbml0b3ItZGlzY3VzcyBtYWlsaW5n
+IGxpc3QKS2VybmVsLWphbml0b3ItZGlzY3Vzc0BsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8va2VybmVsLWphbml0b3ItZGlz
+Y3Vzcw==
