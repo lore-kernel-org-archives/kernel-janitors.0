@@ -1,51 +1,38 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 25 Jan 2005 23:10:25 +0000
-Subject: [KJ] [PATCH] 11/34: cdrom/aztcd: remove sleep_on() usage
-Message-Id: <20050125231025.GA12649@us.ibm.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:20 +0000
+Subject: [KJ] [PATCH] [21/29] gus_wave.c - vfree() checking cleanups
+Message-Id: <41db1140.07bf93c4.2568.07c2@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48934964194057046=="
+Content-Type: multipart/mixed; boundary="===============58056462429399569=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============48934964194057046==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============58056462429399569==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+gus_wave.c vfree() checking cleanups.
 
-Please consider applying.
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-Description: Directly use wait-queues instead of the deprecated sleep_on().
-This required adding a local waitqueue. Patch is compile-tested.
+ gus_wave.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/drivers/cdrom/aztcd.c	2005-01-24 09:34:04.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/cdrom/aztcd.c	2005-01-25 15:08:34.000000000 -0800
-@@ -180,6 +180,7 @@
- #include <linux/ioport.h>
- #include <linux/string.h>
- #include <linux/major.h>
-+#include <linux/wait.h>
- 
- #include <linux/init.h>
- 
-@@ -430,9 +431,12 @@ static void dten_low(void)
- #define STEN_LOW_WAIT   statusAzt()
- static void statusAzt(void)
- {
-+	DEFINE_WAIT(wait);
- 	AztTimeout = AZT_STATUS_DELAY;
- 	SET_TIMER(aztStatTimer, HZ / 100);
--	sleep_on(&azt_waitq);
-+	prepare_to_wait(&azt_waitq, &wait, TASK_UNINTERRUPTIBLE);
-+	schedule();
-+	finish_wait(&azt_waitq, &wait);
- 	if (AztTimeout <= 0)
- 		printk("aztcd: Error Wait STEN_LOW_WAIT command:%x\n",
- 		       aztCmd);
+--- linux-2.6.10-vanilla/sound/oss/gus_wave.c	2004-12-24 13:35:50.000000000 -0800
++++ linux-2.6.10/sound/oss/gus_wave.c	2005-01-04 11:22:31.966997960 -0800
+@@ -3126,8 +3126,7 @@
+ 	if (hw_config->slots[5] ! 		sound_unload_mixerdev(hw_config->slots[5]);
+ 	
+-	if(samples)
+-		vfree(samples);
++	vfree(samples);
+ 	samples }
+ /* called in interrupt context */
 
---===============48934964194057046==
+
+
+--===============58056462429399569==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48934964194057046==--
+--===============58056462429399569==--
