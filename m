@@ -1,36 +1,36 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 16:36:53 +0000
+From: Pavel Machek <pavel@suse.cz>
+Date: Tue, 20 Jul 2004 16:37:57 +0000
 Subject: Re: [Kernel-janitors] Re: [PATCH] nbd: replace schedule_timeout()
-Message-Id: <20040720163653.GD1983@us.ibm.com>
+Message-Id: <20040720163757.GG10921@atrey.karlin.mff.cuni.cz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78958304425184878=="
+Content-Type: multipart/mixed; boundary="===============38234518570349096=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040720130244.GE27492@atrey.karlin.mff.cuni.cz>
 In-Reply-To: <20040720130244.GE27492@atrey.karlin.mff.cuni.cz>
 To: kernel-janitors@vger.kernel.org
 
---===============78958304425184878==
+--===============38234518570349096==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 20, 2004 at 10:10:31AM -0300, Felipe W Damasio wrote:
-> 
-> 
-> Pavel Machek wrote:
-> >I'm not sure it makes sense.... so it will just spin once more? Exact
-> >timeout does not seem too critical here.
-> 
-> 	So why not use HZ instead of 1000?
+Hi!
 
-Because msleep() is in terms of milliseconds, while schedule_timeout()
-is in terms of jiffies. Thus, to sleep for a second, one would
-schedule_timeout(HZ); (setting the state appropriately beforehand) or
-(to guarantee the delay) msleep(1000);
+> > But I believe replacing schedule-timeout() with mdelay is not good
+> > idea as it is okay to sleep shorter time at this particular place.
+> 
+> First, just to make sure we are on the same page, the replacement is
+> with msleep(), not mdelay(). The difference between the two is that
+> msleep() uses schedule_timeout() to give up the CPU while mdelay() busy
+> waits.
 
-Thanks,
-Nish
+Ahha, I did not notice that. msleep() is okay.
+								Pavel
 
---===============78958304425184878==
+-- 
+Horseback riding is like software...
+...vgf orggre jura vgf serr.
+
+--===============38234518570349096==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78958304425184878==--
+--===============38234518570349096==--
