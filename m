@@ -1,40 +1,70 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Sun, 16 Jan 2005 21:10:57 +0000
-Subject: [KJ] Re: [PATCH 3/13] ftape: remove cli()/sti() in
-Message-Id: <1105908296.12196.9.camel@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 24 Jan 2005 16:40:53 +0000
+Subject: [KJ] [UPDATE PATCH 4/22] block/swim_iop: replace schedule_timeout()
+Message-Id: <20050124164053.GD2685@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============73536425407020023=="
+Content-Type: multipart/mixed; boundary="===============41190690859010171=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050116135223.30109.26479.55757@localhost.localdomain>
-	 <20050116135244.30109.69180.33718@localhost.localdomain>
-In-Reply-To: <20050116135244.30109.69180.33718@localhost.localdomain>
-To: James Nelson <james4765@cwazy.co.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org, akpm@osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============73536425407020023==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============41190690859010171==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sul, 2005-01-16 at 13:52, James Nelson wrote:
-> Signed-off-by: James Nelson <james4765@gmail.com>
+On Mon, Jan 17, 2005 at 12:11:47PM -0800, Nishanth Aravamudan wrote:
+> Hi,
 > 
-> diff -urN --exclude='*~' linux-2.6.11-rc1-mm1-original/drivers/char/ftape/lowlevel/ftape-format.c linux-2.6.11-rc1-mm1/drivers/char/ftape/lowlevel/ftape-format.c
-> --- linux-2.6.11-rc1-mm1-original/drivers/char/ftape/lowlevel/ftape-format.c	2004-12-24 16:34:45.000000000 -0500
-> +++ linux-2.6.11-rc1-mm1/drivers/char/ftape/lowlevel/ftape-format.c	2005-01-16 07:32:19.293557207 -0500
-> @@ -132,7 +132,7 @@
->  	TRACE_CATCH(ftape_seek_head_to_track(track),);
->  	TRACE_CATCH(ftape_command(QIC_LOGICAL_FORWARD),);
->  	spin_lock_irqsave(&ftape_format_lock, flags);
-> -	TRACE_CATCH(fdc_setup_formatting(head), restore_flags(flags));
-> +	TRACE_CATCH(fdc_setup_formatting(head),);
->  	spin_unlock_irqrestore(&ftape_format_lock, flags);
+> Please consider applying.
+> 
+> Description: Change the delay logic of swimiop_eject() to use 
+> msleep_interruptible() and time_before(). Rather than depend on the number of
+> iterations of the loop for timing accuracy, I rely on the current value of
+> jiffies relative to a static timeout (end_jiffies).
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-This is wrong (the original is too). TRACE_CATCH expands into code
-including a return so you need to replace the retore_flags(flags) with a
-copy of the spin_unlock_irqrestore line below
+Compile failure; fixed below.
 
+Description: Change the delay logic of swimiop_eject() to use
+msleep_interruptible() and time_before(). Rather than depend on the number of
+iterations of the loop for timing accuracy, I rely on the current value of
+jiffies relative to a static timeout (end_jiffies).
 
---===============73536425407020023==
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/drivers/block/swim_iop.c	2005-01-15 16:55:43.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/block/swim_iop.c	2005-01-23 15:36:39.000000000 -0800
+@@ -317,7 +317,8 @@ static void swimiop_status_update(int dr
+ 
+ static int swimiop_eject(struct floppy_state *fs)
+ {
+-	int err, n;
++	int err;
++	unsigned long end_jiffies;
+ 	struct swim_iop_req req;
+ 	struct swimcmd_eject *cmd = (struct swimcmd_eject *) &req.command[0];
+ 
+@@ -332,14 +333,13 @@ static int swimiop_eject(struct floppy_s
+ 		release_drive(fs);
+ 		return err;
+ 	}
+-	for (n = 2*HZ; n > 0; --n) {
+-		if (req.complete) break;
+-		if (signal_pending(current)) {
++	end_jiffies = jiffies + 2 * HZ;
++	while (!req.complete && time_before(jiffies, end_jiffies)) {
++		msleep_interruptible(10);
++		if (signals_pending(current)) {
+ 			err = -EINTR;
+ 			break;
+ 		}
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(1);
+ 	}
+ 	release_drive(fs);
+ 	return cmd->error;
+
+--===============41190690859010171==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============73536425407020023==--
+--===============41190690859010171==--
