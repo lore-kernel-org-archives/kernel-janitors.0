@@ -1,34 +1,32 @@
-From: "Carson Crowley" <c.crowley_ig@online.fr>
-Date: Tue, 30 Dec 2003 16:20:10 +0000
-Subject: =?iso-8859-1?B?SGVhbHRoIEFsZXJ0cw==?=
-Message-Id: <1072801210.7769@online.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_06BB_7D0C4CAE.79C29249"
+From: Lois Branscombe <Marlousierdxx@mail2Dale.com>
+Date: Wed, 31 Dec 2003 18:45:30 +0000
+Subject: Are you tired of being single?
+Message-Id: <fuwthufgpst@mail2Dale.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+Jump start your love life.
 
-------=_NextPart_000_06BB_7D0C4CAE.79C29249
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+With millions of members, there's somebody for 
+everyone - and that means you! 
 
+Get your profile reviewd for free:
 
-
-
-------=_NextPart_000_06BB_7D0C4CAE.79C29249
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
-
-<html><body>
-<center><!--epsf2o1dp5h--><a href="http://www.34ex4.com/ghr/?aff=2&cac=mas2"><!--sr27qy3wU9uO--><img src="http://www.bay4545.com/g9.gif" border=0></a></center>
-</html></body>
+	http://128jyw.com/?rd&e=pyykhryjactvvmydmrkhqgqomwefqhojgqvpkuykyujwkiawclgvtw
 
 
 
-------=_NextPart_000_06BB_7D0C4CAE.79C29249--
+
+
+
+For future contact options:
+
+	http://128jyw.com/?rd&e=guqnnydyhvuxgsytrudphnrgpfmnalxgirwwqcxaxtxeoxxg
+
+Candidate explained that her long-term goals was to replace the interviewer.
 
 
 
@@ -36,7 +34,7 @@ Content-Transfer-Encoding: 8bit
 This SF.net email is sponsored by: IBM Linux Tutorials.
 Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
 Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
-Click now! http://ads.osdn.com/?ad_id=1278&alloc_id=3371&op=click
+Click now! http://ads.osdn.com/?ad_id78&alloc_id371&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
