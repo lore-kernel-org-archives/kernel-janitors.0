@@ -1,8 +1,10 @@
 From: Casaccio =?iso-8859-15?q?Gwena=EBl?= <fa311356@skynet.be>
-Date: Sun, 04 Jan 2004 12:29:51 +0000
+Date: Sun, 04 Jan 2004 12:42:23 +0000
 Subject: Re: Kernel-janitor-discuss -- confirmation of subscription -- request 670729
-Message-Id: <200401041329.51554.fa311356@skynet.be>
+Message-Id: <200401041342.23139.fa311356@skynet.be>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200401041329.51554.fa311356@skynet.be>
+In-Reply-To: <200401041329.51554.fa311356@skynet.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
@@ -34,15 +36,6 @@ kernel-janitor-discuss-request@lists.sourceforge.net a =E9crit :
 > If you do not wish to subscribe to this list, please simply disregard
 > this message.  Send questions to
 > kernel-janitor-discuss-admin@lists.sourceforge.net.
-
---=20
------BEGIN GEEK CODE BLOCK-----
-Version: 3.1
-GCS/GMU d++ s-:- a-- C+++ ULU++ P L+++ E++ W++ N+++ o- K- w---
-o- M-- V-- PS+++ PE+++ Y+ PGP t 5 X+ R tv b+++ DI- D++
-G+++ e++ h! !r !y?
-------END GEEK CODE BLOCK------
-
 =20
 
 
