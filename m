@@ -1,81 +1,42 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Thu, 17 Feb 2005 19:22:30 +0000
-Subject: Re: [KJ] [PATCH] drivers/char/watchdog/* : pci_request_regions
-Message-Id: <4214EEF6.4030309@pobox.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:28 +0000
+Subject: [KJ] [PATCH][18/26] drivers/usb/image/* - compile warning cleanup
+Message-Id: <420BEF84.5020.58734F@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============064779058569025993=="
+Content-Type: multipart/mixed; boundary="===============10476673046613172=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050214150111.GH20620@rhum.iomeda.fr> <20050214151244.GF29917@parcelfarce.linux.theplanet.co.uk> <4214E728.3030501@pobox.com> <20050217190408.GW29917@parcelfarce.linux.theplanet.co.uk>
-In-Reply-To: <20050217190408.GW29917@parcelfarce.linux.theplanet.co.uk>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Christophe Lucas <c.lucas@ifrance.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+To: kernel-janitors@vger.kernel.org
 
---===============064779058569025993==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============10476673046613172==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Matthew Wilcox wrote:
-> On Thu, Feb 17, 2005 at 01:49:12PM -0500, Jeff Garzik wrote:
-> 
->>Matthew Wilcox wrote:
->>
->>>On Mon, Feb 14, 2005 at 04:01:11PM +0100, Christophe Lucas wrote:
->>>
->>>
->>>>If PCI request regions fails, then someone else is using the
->>>>hardware we wish to use. For that one case, calling
->>>>pci_disable_device() is rather rude.
->>>>See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
->>>
->>>
->>>Actually, that isn't necessarily true.  If the request_regions call fails,
->>>that can mean there's a resource conflict.  If so, leaving the device
->>>enabled is the worst possible thing to do as we'll now have two devices
->>>trying to respond to the same io accesses.
->>
->>Incorrect.  If request_region() fails, drivers are coded to _not_ touch 
->>the hardware.  That's the entire purpose of the whole charade: to avoid 
->>having two devices responding to the same io accesses.
->>
->>If your driver is talking to the hardware after request_region() fails, 
->>it is BROKEN plain and simple.
-> 
-> 
-> I don't think you understood my point.  Assume we really do have two
-> devices in the system with clashing resource settings.  Yes, I really
-> have seen this happen; it's rare.
-> 
-> While the PCI device is disabled, there is no problem.  But then we call
-> pci_enable_device(), so now the device is enabled to respond to IO and
-> memory resources in its BARs.
-> 
-> At the point we discover this, we need to disable the PCI device again
-> -- exactly the opposite behaviour from your case where we need to leave
-> the PCI device enabled when we have resource conflicts.
+Description: handle error return from scsi_add_host
 
-> I think the only way to fix this is have pci_enable_device claim the
-> resources for the BARs before enabling the PCI device to respond to the
-> resources; that way we leave the enable bits the way they currently are.
-> No, this doesn't cure the world's ills, but it does obey "First, do
-> no harm".  One way it'll fail is if the other driver loads after the PCI
-> driver that claims this resource.
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Ok, I agree with this, it echoes what I said in another message in this 
-thread ;-)  namely,
-
-* the fact that pci_enable_device() does not claim the resources is a 
-problem.  pci_request_regions() should not be a separate step.
-
-* the fact that pci_disable_device() does not perform the _exact_ 
-opposite of the operations that pci_enable_device() performed is a 
-problem.  pci_disable_device() should not just unconditionally stop the 
-decoder bits, then exit.
-
-	Jeff
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/usb/image/microtek.c linux-2.6.11-rc3-mm/drivers/usb/image/microtek.c
+--- linux-2.6.11-rc3-mm-original/drivers/usb/image/microtek.c	2005-02-03 03:57:04.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/usb/image/microtek.c	2005-02-09 23:07:41.000000000 +0200
+@@ -809,7 +809,11 @@ static int mts_usb_probe(struct usb_inte
+ 		goto out_free_urb;
+ 
+ 	new_desc->host->hostdata[0] = (unsigned long)new_desc;
+-	scsi_add_host(new_desc->host, NULL); /* XXX handle failure */
++	if(scsi_add_host(new_desc->host, NULL)) {
++		usb_free_urb(new_desc->urb);
++		kfree(new_desc);
++		return -EIO;
++	}
+ 	scsi_scan_host(new_desc->host);
+ 
+ 	usb_set_intfdata(intf, new_desc);
 
 
 
---===============064779058569025993==
+
+--===============10476673046613172==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -86,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============064779058569025993==--
+--===============10476673046613172==--
