@@ -1,26 +1,34 @@
-From: Kai Germaschewski <kai.germaschewski@unh.edu>
-Date: Fri, 23 Jul 2004 20:53:10 +0000
+From: Karsten Keil <kkeil@suse.de>
+Date: Tue, 27 Jul 2004 12:11:53 +0000
 Subject: [Kernel-janitors] Re: [PATCH] isdn/hisax: replace
-Message-Id: <Pine.LNX.4.44.0407231652560.32671-100000@chaos.sr.unh.edu>
+Message-Id: <20040727121153.GB24114@pingi3.kke.suse.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============25199108368203049=="
+Content-Type: multipart/mixed; boundary="===============1916996434714433=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.44.0407231652560.32671-100000@chaos.sr.unh.edu>
+In-Reply-To: <Pine.LNX.4.44.0407231652560.32671-100000@chaos.sr.unh.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============25199108368203049==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============1916996434714433==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 23 Jul 2004, Nishanth Aravamudan wrote:
+On Fri, Jul 23, 2004 at 04:53:10PM -0400, Kai Germaschewski wrote:
+> On Fri, 23 Jul 2004, Nishanth Aravamudan wrote:
+> 
+> > I would appreciate any comments from the janitors list.
+> 
+> These patches all look good to me.
+> 
 
-> I would appreciate any comments from the janitors list.
+Me too.
 
-These patches all look good to me.
+-- 
+Karsten Keil
+SuSE Labs
+ISDN development
 
-Thanks,
---Kai
-
-
---===============25199108368203049==
+--===============1916996434714433==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============25199108368203049==--
+--===============1916996434714433==--
