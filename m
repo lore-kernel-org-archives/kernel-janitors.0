@@ -1,81 +1,97 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 23:05:15 +0000
-Subject: [KJ] [UPDATE PATCH 18/20] ppc/serial_sicc: remove
-Message-Id: <20050202230515.GZ2546@us.ibm.com>
+From: Rememberme <rememberme@systol.god.lan>
+Date: Thu, 24 Feb 2005 12:13:40 +0000
+Subject: [KJ] [PATCH 2/2] drivers/video/savage
+Message-Id: <20050224121340.GB4090@systol.god.lan>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5864411336669525=="
+Content-Type: multipart/mixed; boundary="A6N2fC+uXW/VQSAv"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050202225504.GX2546@us.ibm.com>
-In-Reply-To: <20050202225504.GX2546@us.ibm.com>
-To: mporter@kernel.crashing.org
-Cc: kernel-janitors@lists.osdl.org, linuxppc-embedded@ozlabs.org
+To: kernel-janitors@vger.kernel.org
 
---===============5864411336669525==
+
+--A6N2fC+uXW/VQSAv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Feb 02, 2005 at 02:55:04PM -0800, Nishanth Aravamudan wrote:
-> Hello,
-> 
-> Please consider applying.
 
-Sorry, for the noise, but the patch was incomplete, as there was another call to
-sleep_on() in the same file. Fixed below, please consider applying.
 
-Description: Remove deprecated interruptible_sleep_on_timeout() function calls
-and replace with direct wait-queue usage.
+Part 2
+The savage driver adapted.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Best regards,
 
---- 2.6.11-rc2-kj-v/arch/ppc/4xx_io/serial_sicc.c	2005-01-24 09:34:02.000000000 -0800
-+++ 2.6.11-rc2-kj/arch/ppc/4xx_io/serial_sicc.c	2005-02-02 15:04:20.000000000 -0800
-@@ -52,6 +52,7 @@
- #include <linux/console.h>
- #include <linux/sysrq.h>
- #include <linux/bitops.h>
-+#include <linux/wait.h>
+Henk Vergonet
+
+
+--A6N2fC+uXW/VQSAv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="patch-2.6.11-rc4-savage-accel"
+
+diff -urpN --exclude='*.o' linux-2.6.11-rc4-vanilla/drivers/video/savage/savagefb-i2c.c linux-2.6.11-rc4/drivers/video/savage/savagefb-i2c.c
+--- linux-2.6.11-rc4-vanilla/drivers/video/savage/savagefb-i2c.c	2005-02-23 10:08:55.000000000 +0100
++++ linux-2.6.11-rc4/drivers/video/savage/savagefb-i2c.c	2005-02-23 17:51:17.000000000 +0100
+@@ -183,7 +183,7 @@ void savagefb_create_i2c_busses(struct f
+ 	struct savagefb_par *par = (struct savagefb_par *)info->par;
+ 	par->chan.par	= par;
  
- #include <asm/system.h>
- #include <asm/io.h>
-@@ -1561,8 +1562,11 @@ static int block_til_ready(struct tty_st
-      */
-     if (tty_hung_up_p(filp) ||
-         (info->flags & ASYNC_CLOSING)) {
--        if (info->flags & ASYNC_CLOSING)
--            interruptible_sleep_on(&info->close_wait);
-+        if (info->flags & ASYNC_CLOSING) {
-+            prepare_to_wait(&info->close_wait, &wait, TASK_INTERRUPTIBLE);
-+            schedule();
-+            finish_wait(&info->close_wait, &wait);
-+        }
-         return (info->flags & ASYNC_HUP_NOTIFY) ?
-             -EAGAIN : -ERESTARTSYS;
-     }
-@@ -1664,6 +1668,7 @@ static struct SICC_info *siccuart_get(in
+-	switch(info->fix.accel) {
++	switch(par->accel) {
+ 	case FB_ACCEL_PROSAVAGE_DDRK:
+ 	case FB_ACCEL_PROSAVAGE_PM:
+ 		par->chan.reg         = CR_SERIAL2;
+diff -urpN --exclude='*.o' linux-2.6.11-rc4-vanilla/drivers/video/savage/savagefb.c linux-2.6.11-rc4/drivers/video/savage/savagefb.c
+--- linux-2.6.11-rc4-vanilla/drivers/video/savage/savagefb.c	2004-12-24 22:34:45.000000000 +0100
++++ linux-2.6.11-rc4/drivers/video/savage/savagefb.c	2005-02-23 17:51:42.000000000 +0100
+@@ -1793,9 +1793,10 @@ static int __devinit savage_init_fb_info
+ 	info->fix.xpanstep	   = 2;
+ 	info->fix.ypanstep	   = 1;
+ 	info->fix.ywrapstep   = 0;
+-	info->fix.accel       = id->driver_data;
++	info->fix.accel       = FB_ACCEL_DUMMY;
  
- static int siccuart_open(struct tty_struct *tty, struct file *filp)
- {
-+    DEFINE_WAIT(wait);
-     struct SICC_info *info;
-     int retval, line = tty->index;
+-	switch (info->fix.accel) {
++	par->accel = id->driver_data;
++	switch (par->accel) {
+ 	case FB_ACCEL_SUPERSAVAGE:
+ 		par->chip = S3_SUPERSAVAGE;
+ 		snprintf (info->fix.id, 16, "SuperSavage");
+diff -urpN --exclude='*.o' linux-2.6.11-rc4-vanilla/drivers/video/savage/savagefb.h linux-2.6.11-rc4/drivers/video/savage/savagefb.h
+--- linux-2.6.11-rc4-vanilla/drivers/video/savage/savagefb.h	2004-12-24 22:35:50.000000000 +0100
++++ linux-2.6.11-rc4/drivers/video/savage/savagefb.h	2005-02-23 17:49:32.000000000 +0100
+@@ -76,6 +76,24 @@ typedef enum {
+   S3_LAST
+ } savage_chipset;
  
-@@ -1699,8 +1704,11 @@ static int siccuart_open(struct tty_stru
-      */
-     if (tty_hung_up_p(filp) ||
-         (info->flags & ASYNC_CLOSING)) {
--        if (info->flags & ASYNC_CLOSING)
--            interruptible_sleep_on(&info->close_wait);
-+        if (info->flags & ASYNC_CLOSING) {
-+            prepare_to_wait(&info->close_wait, &wait, TASK_INTERRUPTIBLE);
-+            schedule();
-+            finish_wait(&info->close_wait, &wait);
-+        }
-         return -EAGAIN;
-     }
++typedef enum {
++	FB_ACCEL_SAVAGE4 = 0x80,	/* S3 Savage4		*/
++	FB_ACCEL_SAVAGE3D,		/* S3 Savage3D		*/
++	FB_ACCEL_SAVAGE3D_MV,		/* S3 Savage3D-MV	*/
++	FB_ACCEL_SAVAGE2000,		/* S3 Savage2000	*/
++	FB_ACCEL_SAVAGE_MX_MV,		/* S3 Savage/MX-MV	*/
++	FB_ACCEL_SAVAGE_MX,		/* S3 Savage/MX		*/
++	FB_ACCEL_SAVAGE_IX_MV,		/* S3 Savage/IX-MV	*/
++	FB_ACCEL_SAVAGE_IX,		/* S3 Savage/IX		*/
++	FB_ACCEL_PROSAVAGE_PM,		/* S3 ProSavage PM133	*/
++	FB_ACCEL_PROSAVAGE_KM,		/* S3 ProSavage KM133	*/
++	FB_ACCEL_S3TWISTER_P,		/* S3 Twister		*/
++	FB_ACCEL_S3TWISTER_K,		/* S3 TwisterK		*/
++	FB_ACCEL_SUPERSAVAGE,		/* S3 Supersavage	*/
++	FB_ACCEL_PROSAVAGE_DDR,		/* S3 ProSavage DDR	*/
++	FB_ACCEL_PROSAVAGE_DDRK		/* S3 ProSavage DDR-K	*/
++} savage_accel;
++
+ #define BIOS_BSIZE		     1024
+ #define BIOS_BASE		     0xc0000
  
+@@ -163,6 +181,7 @@ struct savagefb_i2c_chan {
+ struct savagefb_par {
+ 	struct pci_dev *pcidev;
+ 	savage_chipset  chip;
++	savage_accel	accel;
+ 	struct savagefb_i2c_chan chan;
+ 	unsigned char   *edid;
+ 	u32 pseudo_palette[16];
 
-
---===============5864411336669525==
+--A6N2fC+uXW/VQSAv
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -86,4 +102,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5864411336669525==--
+--A6N2fC+uXW/VQSAv--
