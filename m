@@ -1,68 +1,40 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Fri, 21 Jan 2005 10:08:52 +0000
-Subject: [KJ] [2.6 patch] generic_serial.h: kill incorrect gs_debug reference
-Message-Id: <20050121100852.GF3209@stusta.de>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 23:17:49 +0000
+Subject: [KJ] [PATCH] [RESEND] [16/29] emu10k1_main.c - vfree() checking
+Message-Id: <auto-000001227495@appliedminds.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============094473077784508419=="
+Content-Type: multipart/mixed; boundary="===============47323093859706811=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050120220402.GB22673@ens-lyon.fr>
-In-Reply-To: <20050120220402.GB22673@ens-lyon.fr>
-To: Benoit Boissinot <benoit.boissinot@ens-lyon.org>
-Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============094473077784508419==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============47323093859706811==
 
-On Thu, Jan 20, 2005 at 11:04:03PM +0100, Benoit Boissinot wrote:
+emu10k1_main.c vfree() checking cleanups.
 
-> Hi,
-> 
-> the following patch (against latest -mm), correct compilation errors with
-> gcc-4.0 (snapshot 20050116).
-> 
-> please correct me if i did something wrong, this is my first patch
-> with the linux kernel.
-> 
-> Benoit
-> 
-> diff -Naurp --exclude=ctags linux-clean/drivers/char/generic_serial.c linux-2.6-mm-test/drivers/char/generic_serial.c
-> --- linux-clean/drivers/char/generic_serial.c	2005-01-20 22:12:57.000000000 +0100
-> +++ linux-2.6-mm-test/drivers/char/generic_serial.c	2005-01-20 21:27:11.000000000 +0100
-> @@ -36,7 +36,7 @@
->  static char *                  tmp_buf; 
->  static DECLARE_MUTEX(tmp_buf_sem);
->  
-> -static int gs_debug;
-> +int gs_debug;
->...
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-This part seems to be wrong.
-
-Correct patch below.
+ emu10k1_main.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
 
 
-<--  snip  -->
+--- linux-2.6.10-vanilla/sound/pci/emu10k1/emu10k1_main.c	2004-12-24 13:35:39.000000000 -0800
++++ linux-2.6.10/sound/pci/emu10k1/emu10k1_main.c	2005-01-04 11:20:41.882733312 -0800
+@@ -553,10 +553,8 @@
+ 		snd_dma_free_pages(&emu->silent_page);
+ 	if (emu->ptb_pages.area)
+ 		snd_dma_free_pages(&emu->ptb_pages);
+-	if (emu->page_ptr_table)
+-		vfree(emu->page_ptr_table);
+-	if (emu->page_addr_table)
+-		vfree(emu->page_addr_table);
++	vfree(emu->page_ptr_table);
++	vfree(emu->page_addr_table);
+ 	if (emu->irq >= 0)
+ 		free_irq(emu->irq, (void *)emu);
+ 	if (emu->port)
 
 
-generic_serial.h contained an incorrect extern reference to the static 
-variable gs_debug (Benoit Boissinot reported that gcc 4.0 rejects this).
-
-
-Signed-off-by: Adrian Bunk <bunk@stusta.de>
-
---- linux-2.6.11-rc1-mm2-full/include/linux/generic_serial.h.old	2005-01-20 23:26:07.000000000 +0100
-+++ linux-2.6.11-rc1-mm2-full/include/linux/generic_serial.h	2005-01-20 23:26:20.000000000 +0100
-@@ -93,6 +93,4 @@
- int  gs_getserial(struct gs_port *port, struct serial_struct __user *sp);
- void gs_got_break(struct gs_port *port);
- 
--extern int gs_debug;
--
- #endif
-
-
---===============094473077784508419==
+--===============47323093859706811==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============094473077784508419==--
+--===============47323093859706811==--
