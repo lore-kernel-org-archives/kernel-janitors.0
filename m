@@ -1,49 +1,49 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Mar 2005 18:26:20 +0000
-Subject: [KJ] [RFC][PATCH 3/5] ppc/pmac_cpufreq: use poll_event*() interface
-Message-Id: <20050303182620.GF11600@us.ibm.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 23 Mar 2005 14:48:09 +0000
+Subject: [KJ] [PATCH] dma-mask : drivers/usb/host/ehci-hcd.c
+Message-Id: <20050323144809.GJ9206@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28347657319831443=="
+Content-Type: multipart/mixed; boundary="TN8pJM9vJMHHFgJc"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============28347657319831443==
+
+--TN8pJM9vJMHHFgJc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Description: Use new poll_event() interface to encapsulate sleep-loops.
+I know the range of code where this patch is applied is #if 0'd, but to
+do all the job about DMA_MASK... I have send it.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Description: 
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
---- 2.6.11-kj-v/arch/ppc/platforms/pmac_cpufreq.c	2005-03-01 23:38:10.000000000 -0800
-+++ 2.6.11-kj/arch/ppc/platforms/pmac_cpufreq.c	2005-03-02 17:53:35.000000000 -0800
-@@ -167,8 +167,6 @@ static unsigned int __pmac dfs_get_cpu_s
-  */
- static int __pmac gpios_set_cpu_speed(int low_speed)
- {
--	int gpio;
--
- 	/* If ramping up, set voltage first */
- 	if (low_speed == 0) {
- 		pmac_call_feature(PMAC_FTR_WRITE_GPIO, NULL, voltage_gpio, 0x05);
-@@ -180,11 +178,8 @@ static int __pmac gpios_set_cpu_speed(in
- 	pmac_call_feature(PMAC_FTR_WRITE_GPIO, NULL, frequency_gpio,
- 			  low_speed ? 0x04 : 0x05);
- 	udelay(200);
--	do {
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(1);
--		gpio = pmac_call_feature(PMAC_FTR_READ_GPIO, NULL, slew_done_gpio, 0);
--	} while((gpio & 0x02) == 0);
-+	/* check every millisecond until true */
-+	poll_event(((pmac_call_feature(PMAC_FTR_READ_GPIO, NULL, slew_done_gpio, 0) & 0x02) != 0), 1);
- 
- 	/* If ramping down, set voltage last */
- 	if (low_speed == 1) {
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
---===============28347657319831443==
+
+--TN8pJM9vJMHHFgJc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch-2.6.12-rc1-dma-mask-usb_host_ehci-hcd.c.diff"
+
+diff -urpN -X /work/users/dontdiff a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
+--- a/drivers/usb/host/ehci-hcd.c	2005-03-18 02:34:55.000000000 +0100
++++ b/drivers/usb/host/ehci-hcd.c	2005-03-22 11:51:23.000000000 +0100
+@@ -550,7 +550,7 @@ static int ehci_start (struct usb_hcd *h
+ 		writel (0, &ehci->regs->segment);
+ #if 0
+ // this is deeply broken on almost all architectures
+-		if (!pci_set_dma_mask (to_pci_dev(hcd->self.controller), 0xffffffffffffffffULL))
++		if (!pci_set_dma_mask (to_pci_dev(hcd->self.controller), DMA_64BIT_MASK))
+ 			ehci_info (ehci, "enabled 64bit PCI DMA\n");
+ #endif
+ 	}
+
+--TN8pJM9vJMHHFgJc
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============28347657319831443==--
+--TN8pJM9vJMHHFgJc--
