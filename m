@@ -1,40 +1,47 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 24 Oct 2004 14:10:45 +0000
-Subject: Re: [KJ] [PATCH] pci/quirks: replace schedule_timeout() with msleep()
-Message-Id: <20041024141045.GH23059@stro.at>
+From: Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+Date: Sat, 23 Oct 2004 08:20:50 +0000
+Subject: [KJ] Re: [PATCH] w1/dscore: replace schedule_timeout() with
+Message-Id: <20041023122050.4b018bc5@zanzibar.2ka.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10126554843210478=="
+Content-Type: multipart/mixed; boundary="===============33742207238876976=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041022235414.GL18906@us.ibm.com>
-In-Reply-To: <20041022235414.GL18906@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============10126554843210478==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============33742207238876976==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 22 Oct 2004, Nishanth Aravamudan wrote:
+On Fri, 22 Oct 2004 16:24:24 -0700
+Nishanth Aravamudan <nacc@us.ibm.com> wrote:
 
 > Any comments would be, as always, appreciated.
 > 
 > -Nish
 > 
-> Description: Use msleep() instead of schedule_timeout() to guarantee the
-> task delays as expected.
-> 
+> Description: Uses msleep_interruptible() instead of schedule_timeout()
+> to guarantee the task delays as expected.
+
+I'm Ok with your changes, all 4 patches applied, thank you.
+They will be sent for inlusion through Greg Kroah-Hartman.
+
 > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 > 
-applied to kjt,
-to get further testing and to be shure it gets upstream.
+> --- 2.6.9-bk7-vanilla/drivers/w1/dscore.c	2004-10-22 10:41:43.000000000 -0700
+> +++ 2.6.9-bk7/drivers/w1/dscore.c	2004-10-22 16:00:46.000000000 -0700
+> @@ -733,10 +733,8 @@ void ds_disconnect(struct usb_interface 
+>  	while (atomic_read(&dev->refcnt)) {
+>  		printk(KERN_INFO "Waiting for DS to become free: refcnt=%d.\n",
+>  				atomic_read(&dev->refcnt));
+> -		set_current_state(TASK_INTERRUPTIBLE);
+> -		schedule_timeout(HZ);
+>  
+> -		if (signal_pending(current))
+> +		if (msleep_interruptible(1000))
+>  			flush_signals(current);
+>  	}
+>  
 
-thanks
-
---
-maks
-kernel janitor          http://janitor.kernelnewbies.org/
-
-
---===============10126554843210478==
+--===============33742207238876976==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10126554843210478==--
+--===============33742207238876976==--
