@@ -1,43 +1,60 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Mon, 05 Jul 2004 13:39:59 +0000
-Subject: Re: [Kernel-janitors] Lets update our TODO
-Message-Id: <20040705133958.GA1587@sputnik.stro.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 22 Jul 2004 21:47:34 +0000
+Subject: [Kernel-janitors] [PATCH] isicom: replace schedule_timeout() with
+Message-Id: <20040722214734.GI2165@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86655060174538412=="
+Content-Type: multipart/mixed; boundary="===============092356829155571862=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============86655060174538412==
+--===============092356829155571862==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, 26 Jun 2004, Domen Puncer wrote:
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
 
-> Hi.
-> 
-> It's terrible, please help updating it.
-> (It can be a real PITA, when someone new comes, and can't pick any real
->  work from TODO)
-> 
-> 
-> Changes:
-> register_reboot_notifier() always returns 0
-> skb_alloc doesn't exist
-> there is no get_free_pages() (replace it with __get_free_page[s]?())
-> init_etherdev() doesn't exist
-> ips, ip2main look bogus, ips_detect does not kmalloc anything;
-> 
-> There's a comment in isapnp/core.c that release_region's were added
-> (dated 2001-06-03!).
-> proc_register() is now static, used by internal procfs routines.
-> 
-> loops_per_sec is no more.
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
 
-great check -> commited.
-thx maks
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
+
+Note: I could not find any current Maintainer for this driver. If there
+is one I should sent the patch too, please let me know.
+
+Thanks,
+Nish
 
 
---===============86655060174538412==
+
+Applys-to: 2.6.7
+
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/char/isicom.c	2004-06-16 05:18:55.000000000 +0000
++++ linux-dev/drivers/char/isicom.c	2004-07-12 17:52:28.000000000 +0000
+@@ -1906,8 +1906,7 @@ int init_module(void)
+ void cleanup_module(void)
+ {
+ 	re_schedule = 0;
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 
+ #ifdef ISICOM_DEBUG	
+ 	printk("ISICOM: isicom_tx tx_count = %ld.\n", tx_count);
+
+--===============092356829155571862==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86655060174538412==--
+--===============092356829155571862==--
