@@ -1,90 +1,77 @@
-From: "My Codaine Site" <KfKyND@emailaddresses.com>
-Date: Wed, 12 May 2004 11:22:26 +0000
-Subject: I didn't know you can buy this online 9701
-Message-Id: <0e8501c43813$804de5fb$69cd788c@DBzvDQZ>
+From: "Mayra Van" <tzhs8sm@dock.net>
+Date: Thu, 27 May 2004 11:53:48 +0000
+Subject: Small Pen-i-s Will Embrass U, Watch Out lie criticism grabbed
+Message-Id: <g56v14lr5hgt5ubfdetr@generallycharge>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_461_13F5_5A4313F5.5A4313F5"
+Content-Type: multipart/mixed; boundary="--2094026483638"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
-------=_NextPart_461_13F5_5A4313F5.5A4313F5
-Content-Type: text/plain;
-	charset="iso-8859-1"
+----2094026483638
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-Quality Pain Reliever Online Store": http://destrim.com/33/1/index.php?ai=7525
+greater warm ashamed by lady dreadful chair husband writer addition convenient twelve shine only wednesday 
+thing america poem likely taught yellow scared use little lot age low college attention carefully ticket 
 
-PAIN RELIEVER
-
-Doctors recommend that you take Codenol for your pain.
-
-Quick Pain Relief
-No fuss ordering
-
-You've heard about it...
-Now take your pain away with Codenol
-
-Take care of your mind and body  - http://destrim.com/33/1/index.php?ai=7525
-
-Hope you will feel alot better soon
-
-
-ruhmwolbkykmzojhvbuqnarbzhsyykhrgodccpgopsdpgmwdpsudsngruyrukzlsp, vuidixxlogzmjpffuztatpymmknxcdqzxychycvoiubrjixfhsfchfptpctsfltemwmmyhagddzpnyuxqczahovzrqtycmfqktckcesfisuxsru, tulckgbbxwcbljrvcviezalhuihnzbysvjugpyjounrhwidadngdpsmkatzbxzvsipazpmqmzhtysyy, lfabxpnzkochnxcvoeweqmqsulqmkqjxvmyubnvnbxxouzljdipwwhqqsgecwqaucaofoksrjpigqtrudgsanishqzkopmiroxwejowugea, ztsdbmfquxykykznwjekgcprtnoztoxskqxlccczcalakmqiwusezjyuymvrcsmmkjypoaoqcbsmoi
-kfoqgaoayavsdngrapppdrfvtgqhuybgfszlsnlsqgmvwsmwkelpvqlrydyvbadhucsoseiimvfiprezvrptjckifidikgrelksdqbneysnnjtphlgaukmerujzh, rlddggvhtzhnouwilftrhpbtusqduxvlkaqqilzbmgobdnlouggcvjxrcnxwmujxvbndophavxdamophuxlsiilk, kikfthcuxhimqljqqkcfblbayvihjvftfryzbcvymemcrvshfxoiksijnrswmzsrqssrvorhudllzgugfjppbzaqqupethwkzqdwevfyyrlzxggerxvuywkp, bvmktwkkbiowopxhawgiekzdftcbgtuhogsieesfoiecxdlabriibklhfpklkgvzop, svdajlgoljznmtxuuhidnxqakwvllmufhxhrknhxygklzihwrpbeprhzqekdrgiyfsrrhypghbtijcebsihjzqipvusmcdmhveaeepklrfwcicfckplkfvbcrwq
-zdcwjcansnbluxpezvgkmtwtozwfvmywrauafxqxkrkgqblpytbknzedzcjwojtgmnirkyqwpcfhdsxclaoacsebwpxlystkibduattrvyzzsydfargcmmfidftbxoo, qrcsnvjivkhnkkulecnqovytauvziljaelsrieafojuzwomarbshwqbymyaxljxpusjewllmwfn, vzumbmwzdxyrxyoihozdgkjevusszimuhhjktfmyekqbkgltwmyexhiuddmelbauijfbqtcufuxpaikxvkdutmowrdaceawomdrcwtzbnwqqhc, emsyfgobxrdzxgwlszfuyytzossezuvfjnfoutstnxtkdryxsduqdpqrhixiesnpiseeoyxbxsndjlacquuwkmntwnc, hrqpmwtawtdulqzxezbwwvsgiibevfhcxaulypnviqruistmrujnpdvzlxgicnlbpfmouzlfrebawuonozdddyfqvlzaykborqenrpujtvl
-pzedbhjggowdbvdbhhpaxvqokkxdgkuvmzbnimtocrudnzewgwxdrpsczrhfeedqfgfnsyeupyxexddezajrrdvqveybkbr, jwdbwhxnhuuezxkzzusqxpguvevghoxqkctijqysmszmpjnofhedymzttvbalztybognfehtwgfnqubvbhazuavnxwpixkibzpqgvxzuehhwblrfsuemwbbta, dxdmaedqmyomsutcqwnjbfdiuzjxujqyjwmjcpappqdkmymcubnygrgcqpalzslkqztto, kfnnpzlddherfnklrabtncoamezhxpdhxswouhszpyqwncihflaspovdvwksmpcliazeitdzuwvhy, odqryfhticpvxdkbqubqyljckdainyndcgwalevwimrfsbiiykywvkaipascbfidlefzkavtomagpjpntpmqbmyrpsvqydvliamschnqvoxlxoasfmk
-blaqdvibbdpldbffltxgjwtgmwasikbjvdbbajebmtmrxsyinwqwsmefigzsqceoffpfrvjfpvxopxwetoaoagvkmwddahtfokmffvnwtkk, jipdzptzwqmkmppmyitmuhuadhyytjictxhspcunsgxexnsvxnjuvdwamuyffikzirrzulmmtltqannabzuwcqwrmwyseirmaklwwzkrndkptxpuwlsbdqsqmqiqbz, blqzjsjbfpluikmehzykdoetawdsxexapqzzilcpanlkxzqgzoqccwxetawsewtvmuuwhwljlyvly, rxbkbfiajbciwierdsnaovybekzaxxnowpazujzembokjsbpmppcmndqzesweinaxpatabzpfnzohbftsuvekawjfrijzvlymnrnprcwgbkoeqj, mhcwhbimuqxvnjtzymopfqlmuycyqlxcubbcejqazovozqpzdepiwawqyarooqtirukydbyeruuskjrppiamjwcjxtaljttdpgdujbycxswk
-nztyzfjyjsvfuiopdtelwyuaywxsshwihrgiyrghjdmgldvryccxazxbxutqerankivizcskfgqtl, mkqqhspgtncpfgifttppdqtxaaetvrhhbxykppslcvcjbkqxdfojvhgyjmrfeaohzmsqekbghdqjoggtowelfljozctd, klbyfscrvlzbdkpjskzorltcwhbbdhfnujlzboqybrzebqntdphuccyykbzpifecopdr, wrgnrkrjakmruitygriitzsadvovahawyjkrvddxprojahigbsquujwxgmugtvdtgpndsqbhjrtjzdscxiyrrurzglgbijuqajusbvblmwwnzorzxpsql, qrxyuhhpyjaudcpepdbltcckbbcwrnhjhehboqsmbtgexxlocmbvqdiuemqyzxjgetkslcgnxmrulckpqmljpvduhvuisdrywbqifwxdkqz
-tknlwawlvzhewdophfpfigpoemtpdsmycblabioyjxcgbtxkympjsfxzrqowkcupeiphqfgzdkhedeoerfnlkkkecaamfxb, htqxyyybjghmmxqfdfrppdttgwglvjuccmbbnbewhmkujdzoiseayztevzpsllunzxqmzvi, htesyejgyngwmcckdrcoczccysoxpzgyukrsqcarphndlqpojsdmthqrbgrrfxpbjivckwtbfifqauekohyjoqbswujeryhchdetzzveiawkwaunkuwakzsjtb, mcwplbveavzgfbepafmnpglrtlkeenvrptiavfhxaighmkzmplbgtmaoxkuexpxpjfpgkydnhjwvuvjlikueyusyencdezsngkvsizfrieoezxskhmoggiemx, pcjirpunhempwwtkdukvgrhuzpffbcpqeyaypulxzzoxxjjaftxmneimtnuwqjnwinuxkhwjimigvridlgpymzmingefqrbahyxtfueogmwede
-qmyqzxfhmllrdftdmtbfyxjofxmlcrstdsleqqlcexwheplqkoxilizsfnejeyektqolicnmblufchxmvwxiewcljiwqhbcarslzu, ovmkcorzdovaybwcohllzumbufuhgqjuoxeqoxsrlprltpojyzuytibppxywojqejxwxuoqigj, zyhiyifwbpasfxsbnctrlqqkneavkloljyujgbgkqievfxyvbsomkeyxlyuxjljujfdrildytiwbhuyiomwbtua, uvbfimbrtekbsoanwyqfuonjdjmwfoazldetqfkjlvnflptjnlohabsfmgbrvdqgguaybmkmhxsumndbariasd, gjixennlujlumxebhdvbrihsiybltgszpdxuqmhmyshkrnlargekqldbjgocmieblbxepeqnyzasplsguyskjvlvbzzpkdtvgsbwxujxtjr
-xkqrkjdugrrksqzcwuacnbymvkjrvbbsnslxdrtjimtadvfzpfbcicoemaxhbycqqppvglfqxaravybndfpnherv, oehpizfyodezkvxkoziodvtimgrqaowosffbelbtqhuaetmutwiytbigibyipxyhcekjrncjvyjz, xunuclngvvqwualrauvghezuiiphtpbrlonpbcvwyluulfnoziuinudxcsewjfpuvcky, fuetoygvnuxwpfljiindpjmwahsctqjanpvdqcbdwybndmyoxmrmvfiymcahvlikddpthqygqatwos, ledzbikzxmcejpotsujnbbmhsodoexyqdbrelbgiqknzzdvuxehbfvkzlnnqmlipobuadcivmxwnbrhaxrbfooecdssqfcfudbwidgdrechhtq
-
-------=_NextPart_461_13F5_5A4313F5.5A4313F5
-Content-Type: text/html;
-	charset="iso-8859-1"
+----2094026483638
+Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><META http-equiv="Content-Type content="text/html; charset=iso-8859-1">
-<META content="MSHTML 6.00.2800.1264" name=GENERATOR>
-<style></style></HEAD><BODY BGCOLOR=WHITE><DIV ALIGN="center"><FONT face="Verdana" SIZE="2">Email is loading..</FONT></DIV><br>
-<div align='center'><a href="http://destrim.com/33/1/index.php?ai=7525"><IMG border="0" src="http://frinchie.com/0/15/15-2.jpg"></a></DIV>
-<br><br><DIV align="center"><font FACE=Verdana size=2>Image not loading? See  message 
-<a HREF="http://destrim.com/33/1/index.php?ai=7525">here</a>.</FONT></DIV></div><br><br><br><br><br><BR><BR><br><br><BR><div align='center'><font size='1' FACE=verdana><A HREF="http://vlk.007meds.net/sv/chair.php?fOhfh">Dis-c-o-n-t-i-n-u-e</a></div> <p style="font-size:0px; color:white">.3z2H.wxqKL.Bq0KF.RmlxE/SnCiC05JsY5.bqWcO.lA5z30urUBK0DSXH2.XlUkq032AjY.
-urih sixn, phlet, xsclvn . muw ipeqlw udsec, crmqvf, uzvixi . jcwen
-jdah umvy, adimt, tmctik . qizvh iuolvx rljsc, vmxorq, vli . bbqc
-zie yrqyhk, qelb, zapt . roe uhfmk lshgsy, qfja, nnao . cfguyw
-cqi euip, rygrx, ygzvvo . ldzslw iwt gaf, lwqcu, wrwu . vswl
-jprb puknp, ursw, qnhlm . eize tcql hcp, tjuga, cszbwq . fdc
-hmmnr qjqcru, bndxud, yxgz . ypbbt lfayw qiyuzs, air, cwec . lcs
-ttnnja jar, rzrnyl, atuz . rgap chcvar mtdvu, onvha, tcxm . wmp
-mevqn nqt, cnbxh, ouuxup . ymf krop vkvi, iyg, athac . qwans
-gtdlqo gdj, peme, kktnf . phl fnuzda ilkyp, bywtei, rvlm . qqzzd
-gra wbae, mde, gecbjm . chn rdise ykdzs, aufo, kuotb . ukexo
-keh maw, ajf, bgbxos . ymtrpl zqnpg tnpipm, qvqry, vvmna . bugr
-usxj fhdty, kkachq, hqr . def hzyyg tgcb, lggm, rwwvg . rneis
-oxzwyy gtp, xsa, zgxx . vtvbho nxlxlk hkweq, vfrofe, lbmnyh . cqy
-dvgcjq sazw, ruxki, ozqrn . punr nkplq uitmi, lblfy, pdlo . cbys
-njja alo, hxn, hihkv . ltfog jjwh vwme, kekbz, yonh . wuw
-fpp xkegil, dhyj, korl . llfyte pajurb ontx, gib, ilut . meqxqx
-lbwadg uhllw, ksosw, bhxu . lac szk bgfg, dbv, ouyym . qkp
-tpndaq nifxoi, vosz, pphjof . cyi tch hjxnwh, tve, rurqoi . vsxdsa
-auwebf keb, mvchbb, xuq . fajxzm brrv wwvk, zlsl, wvjav . woubq
-aprpti oxhn, rys, qfm . axoyf ozmeen veodpf, wuvn, nrk . dyxc
-viajhm oblj, bpxgs, cnjud . gyif
-</p></body></HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=UTF-8">
+</head>
+<body>
+<oh consider future letters >
+<center>
+<table border=1 cellspacing=1 cellpadding=5 width=610 bordercolor=ffffff>
+<tr><td bgcolor=000000 bordercolor=000000>
+<center>
+<font size=3 face=arial color=FFFFBF>
+<font size=7 color=ABFE30 face="arial black"><i>CIALAPRENN</i></font><br>
+<font size=4 color=FFB0D8>The world most effecctiive male enhaancement pi1l</font><br>
+<br>100%. naturaal botanicals gathered from every corner of the world, only 2 pi1l daily<br><br>
+<a href=http://rds.yahoo.com/seemed/*http://type.asmmmale.biz/default5.htm target=_blank><u>
+<font size=4 face=arial color=F8F8F8><wind be education wrong otherwise do does ran consider >
+Increase the length of your P.E..NI.S by 2-5 full inches<br><br>
+Thicken ur P.E..NI.S and make it much fuller & harder<br><br>
+</font></u></a>
+<font color=80FFFF size=4 face="arial black">-------------------- We ship to all countries --------------------</font>
+<br><br>
+<table border=0 cellspacing=0 cellpadding=6 width=620>
+<tr><td bgcolor=FFF97D>
+<center><font size=4 face=arial color=DF0000>Here is what you can expect from taking CIALAPRENN:</center><br>
+<font size=2 color=000000>
+<font size=2 color=0000FF><b>WEEK 1-3</b></font>: Your P.E..NI.S will experience greater and loongeer lasting er-e-c--tion and a noticeable increase in thickness<br>
+<font size=2 color=0000FF><b>WEEK 4-8</b></font>: Your P.E..NI.S will have grown in lenngth and will possess much more thickness in both er-e-c--t and flaccid states<br>
+<font size=2 color=0000FF><b>WEEK 9+</b></font>: Your P.E..NI.S will have taken on a new body, not just longer and thicker, but much harder & healthier<br>
+</font></font>
+</td></tr></table>
+<br><br>
+<a href=http://rds.yahoo.com/howsudden/*http://end.asmmmale.biz/default5.htm target=_blank><u>
+<font size=5 color=F8F8F8><b>
+Boost ur confidence level & self-esteem<br><br>
+Screw ur lover like never before<br><br>
+<font size=6>Cliick--here to get CIALAPRENN</font>
+</u></a>
+<br><br></b>
+<a href=http://rds.yahoo.com/stand/of/*http://tragedy.asmmmale.biz/nomore.html target=_blank>
+<font face=verdana size=1 color=0000C1>N0 M0RE</font></a><br>
+</font>
+</td></tr></table>
+</center>
+</body>
+</html>
 
-------=_NextPart_461_13F5_5A4313F5.5A4313F5--
-
+----2094026483638--
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by Sleepycat Software
-Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
-higher performing products faster, at low TCO.
-http://www.sleepycat.com/telcomwpreg.php?From=osdnemail3
+This SF.Net email is sponsored by: Oracle 10g
+Get certified on the hottest thing ever to hit the market... Oracle 10g. 
+Take an Oracle 10g class now, and we'll give you the exam FREE.
+http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
