@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 19:35:29 +0000
-Subject: [KJ] [PATCH] net/ibmtr: remove sleep_on*() usage
-Message-Id: <20050126193529.GC3593@us.ibm.com>
+Date: Fri, 21 Jan 2005 21:35:01 +0000
+Subject: [KJ] [PATCH 35/39] usb/hid-core: use wait_event_timeout()
+Message-Id: <20050121213501.GP3340@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88248248403653684=="
+Content-Type: multipart/mixed; boundary="===============25587077954509008=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============88248248403653684==
+--===============25587077954509008==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,44 +15,49 @@ Hi,
 
 Please consider applying.
 
-Description: Directly use wait-queues instead of the deprecated
-sleep_on_timeout(). Since the sleep in this function is unconditional,
-wait_event_timeout() does not appear to be appropriate.
+Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
+now unused variables.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-
---- 2.6.11-rc2-kj-v/drivers/net/tokenring/ibmtr.c	2005-01-26 11:19:04.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/net/tokenring/ibmtr.c	2005-01-26 10:44:07.000000000 -0800
-@@ -109,6 +109,7 @@ in the event that chatty debug messages 
- 
- #include <linux/module.h>
- #include <linux/delay.h>
+--- 2.6.11-rc1-kj-v/drivers/usb/input/hid-core.c	2005-01-15 16:55:42.000000000 -0800
++++ 2.6.11-rc1-kj/drivers/usb/input/hid-core.c	2005-01-17 19:38:55.000000000 -0800
+@@ -24,6 +24,7 @@
+ #include <asm/unaligned.h>
+ #include <asm/byteorder.h>
+ #include <linux/input.h>
 +#include <linux/wait.h>
  
- #ifdef PCMCIA		/* required for ibmtr_cs.c to build */
- #undef MODULE		/* yes, really */
-@@ -847,6 +848,7 @@ static int __devinit trdev_init(struct n
+ #undef DEBUG
+ #undef DEBUG_DATA
+@@ -1255,22 +1256,9 @@ void hid_submit_report(struct hid_device
  
- static int tok_init_card(struct net_device *dev)
+ int hid_wait_io(struct hid_device *hid)
  {
-+	DEFINE_WAIT(wait);
- 	struct tok_info *ti;
- 	short PIOaddr;
- 	unsigned long i;
-@@ -867,7 +869,9 @@ static int tok_init_card(struct net_devi
- 		writeb(SRPR_ENABLE_PAGING,ti->mmio+ACA_OFFSET+ACA_RW+SRPR_EVEN);
- #endif
- 	writeb(INT_ENABLE, ti->mmio + ACA_OFFSET + ACA_SET + ISRP_EVEN);
--	i = sleep_on_timeout(&ti->wait_for_reset, 4 * HZ);
-+	prepare_to_wait(&ti->wait_for_reset, &wait, TASK_UNINTERRUPTIBLE);
-+	i = schedule_timeout(4*HZ);
-+	finish_wait(&ti->wait_for_reset, &wait);
- 	return i? 0 : -EAGAIN;
- }
- 
+-	DECLARE_WAITQUEUE(wait, current);
+-	int timeout = 10*HZ;
+-
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	add_wait_queue(&hid->wait, &wait);
+-
+-	while (timeout && (test_bit(HID_CTRL_RUNNING, &hid->iofl) ||
+-			   test_bit(HID_OUT_RUNNING, &hid->iofl))) {
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		timeout = schedule_timeout(timeout);
+-	}
+-
+-	set_current_state(TASK_RUNNING);
+-	remove_wait_queue(&hid->wait, &wait);
+-
+-	if (!timeout) {
++	if (!wait_event_timeout(hid->wait, (!test_bit(HID_CTRL_RUNNING, &hid->iofl) &&
++					!test_bit(HID_OUT_RUNNING, &hid->iofl)),
++					10*HZ))
+ 		dbg("timeout waiting for ctrl or out queue to clear");
+ 		return -1;
+ 	}
 
---===============88248248403653684==
+--===============25587077954509008==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88248248403653684==--
+--===============25587077954509008==--
