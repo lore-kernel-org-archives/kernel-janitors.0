@@ -1,34 +1,91 @@
-From: Bauer-Royal <VogelNorma@iea.att.ne.jp>
-Date: Wed, 12 May 2004 19:41:34 +0000
-Subject: britches
-Message-Id: <SwQFJ51qL12K$yzBFz9b0$P3gTYJ7s@eGpWxz>
+From: "ashely patterson" <holyfield@925balisilver.com>
+Date: Mon, 17 May 2004 01:52:32 +0000
+Subject: Directly get some of the action
+Message-Id: <55B90AF9.69D1827@925balisilver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-<body>
-<font style=font-size:1px>Kernel-janitor-discuss pervade bridge creature doge rectangular perceptual bohr featherbedding maudlin </font>
-<font face="Arial" size="1">Content is Loading . . . .<br>
-<a href="http://xN1dAwhDI.med0hbe.com/index.php?refid4">
-<img src="http://dKcSs99vOPbl.med0hbe.com/banners/pharma4.gif" border="0"></a><br><br>
-Content not Lo<font style=font-size:1px>;</font>ading? <a href="http://asKtCfA.med0hbe.com/index.php?refid4"><h5>Sa.ve M.one.y, O.rde.r Her.e</h5></a>
-<br><br>
-<br><br>
-<br><br>
-<font style=font-size:1px>nostalgic mock shot utility concubine gasoline flag bellwether rake swamp rapture o's jay arcsine flattery goldberg farewell almaden pot software citroen dogma house cavilling describe permitting bird desideratum amid professional scud tubule absurd berkshire irony eisner leonardo lo feverish psychobiology victorious mennonite heartfelt hangover god pickering doberman trombone breathe mutant health armature walkout sandhill strengthen friend constructor drug alai citroen eigenfunction divisor jane ruff frenchmen brackish algorithmic inca tumble bey confrontation disrupt envious tritium emphysema compulsion enumerate documentation monad thumbnail ludwig gait foodstuff grateful deduce anaerobic republic callaghan crosswise deem hick camille cutover turvy consul croatia dragnet lien orthodoxy life coaxial calhoun contralateral dopant impound denote bloodroot errancy freedom chevy gigavolt cope leatherneck spoof facet consent stalactite minutemen coincident ambulatory amtrak mustang liverwort marinade bigelow deportee criterion contingent nighthawk tegucigalpa ardency butterball interpol disposable burlap berenices snapdragon aminobenzoic invective bale collet bethlehem sixgun coinage spumoni belladonna eighth affricate constipate agglutinin psychosomatic goldstein decor auxiliary barbudo discretion counselor clobber bicker ruffle wilhelm ned chairlady sawtooth tunisia quilt mendel duel assiduous ac codpiece shrunken bailiff orb immoderate gigavolt attic corrigible cornflower cruddy imbalance street turvy ernest chauncey micronesia powerful spat assimilate ramsey lasso halt callaghan fight abeyant stupefaction sporadic clearance cassandra decry edgerton nubile chancellor downward chassis mcintosh katharine grandiloquent plentiful u heterosexual imbue aries casanova dictum gallonage inception polkadot bipartite aloe conversion atrophy warmish archipelago effusion elate lithium pious deterrent feint covary primp guanine disgruntle imprimatur mo joy lumber modem sewn as haze persimmon being ta
-rantula thyroid affirmation capistrano damp barbecue boxcar comatose absolute nitrogen republic saudi lavoisier ceramic emery bricklaying vertex bicker celebrity edmund clipboard bayou campus boeotia vulcan collide communicate spheroidal thou hostelry wrought album dempsey bookplate persia resolution circumvent actinide pharmacopoeia typeface hesitater insure yet dunedin ada balm collector blackball buy sedimentary uppermost foible oboist tenor grant fortitude seductive account inverness bludgeon prevention budweiser greg vertex fibonacci hideaway senora playwright skywave halfhearted subsistent sang elizabeth swart awful soffit consanguineous adjunct pusey palfrey session cyrus magnesium badge emphasis breakpoint droop lindberg gosling gigabyte experience escherichia shave decline abetted gripe palace thetis colander fcc abash curtail deflector </font>
-</body>
-</html>
+<HTML>
+<table height="25" width="599" border="0">
+  <tbody>
+    <tr><td align="middle" width="599" bgColor="#ffff99"
+height="25"><b>Direct from the laboratory to you!</font> </b>
+                  </tbody>
+            </table>
+<table height="44" width="599" border="0">
+  <tbody>
+    <tr>
+      <td align="middle" width="599" bgColor="#FF3300" height="49">Our
+perfume has human sex pheromone in it.</b></font>
+                  </td>
+                 </tbody>
+            </table>
+<table height="44" width="599" border="0">
+  <tbody>
+    <tr>
+      <td align="middle" width="599" bgColor="#ffff99" height="49">
+                  <b>
+                  <A href="http://www.wedobestforeveryone.com/4/">
+                  Pick up the Opposite sex like a magnet Press
+Here</a></font></b></b></b></td>
+                </tr>
+              </tbody>
+            </table>
+     <table height="44" width="599" border="0">
+  <tbody>
+    <tr>
+      <td align="middle" width="599" bgColor="#9999FF" height="49">
+      <p align="left">&quot;After I saw that story on Dateline NBC about
+your 
+      perfume I ordered some and I am 100% satisfied. Women are now coming 
+      up and talking to ME! I don't even have to use pick-up lines anymore.
+
+      Thank you.&quot; <br>
+      - Robert Y. in Tuscon, AZ.<br>
+      <br>
+      &quot;To Whom It 
+      May Concern: Thank you for your prompt service and remarkable
+product. My 
+      Wife and I haven't been so 'frisky' in years. It's just like our
+honeymoon 
+      again. Please find my payment enclosed for another bottle of your
+perfume. 
+      Thanks again.&quot; <br>
+      - Leslie A. in Macon, GA.</font></td>
+    </tr>
+  </tbody>
+</table>
+<table height="44" width="599" border="0">
+  <tbody>
+    <tr>
+      <td align="middle" width="599" bgColor="#9999FF" height="49">
+      <A href="http://www.wedobestforeveryone.com/4/">
+press to stop receiving or not send to postal center slot 1200 b, Or anje
+stad, 
+A ruba</A>
+</tbody>
+</table>
+<BR>
+<BR>The people who thronged the sidewalks cheered and waved their hats and
+handkerchiefs with enthusiasm, while a band of musicians played a German
+air, which Rob could distinctly hearWhile he gazed, spell-bound, the scene
+changed, and he looked upon a great warship entering a harbor with flying
+pennants
+The rails were lined with officers and men straining their eyes for the
+first sight of their beloved VATERLAND after a long foreign cruise, and a
+ringing cheer, as from a thousand throats, came faintly to Rob's ear
+</FONT></HTML>
+
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by Sleepycat Software
-Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
-higher performing products faster, at low TCO.
-http://www.sleepycat.com/telcomwpreg.php?From=osdnemail3
+This SF.Net email is sponsored by: SourceForge.net Broadband
+Sign-up now for SourceForge Broadband and get the fastest
+6.0/768 connection for only $19.95/mo for the first 3 months!
+http://ads.osdn.com/?ad_id%62&alloc_ida84&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
