@@ -1,97 +1,69 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:54 +0000
-Subject: [KJ] [PATCH][RESUBMIT][20/21] sound/oss/emu10k1/* - compile warning
-Message-Id: <42113C2E.19681.52C41C@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 08:44:54 +0000
+Subject: [KJ] [PATCH] drivers/isdn/hardware/avm/*: convert to
+Message-Id: <20050208084454.GH31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42102606289770739=="
+Content-Type: multipart/mixed; boundary="opg8F0UgoHELSI+9"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============42102606289770739==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - handle copy_to/from_user error 
-returns
+--opg8F0UgoHELSI+9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/sound/oss/emu10k1/cardwi.c linux-2.6.11-rc3-mm2/sound/oss/emu10k1/cardwi.c
---- linux-2.6.11-rc3-mm2-original/sound/oss/emu10k1/cardwi.c	2005-02-12 12:06:28.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/sound/oss/emu10k1/cardwi.c	2005-02-12 19:17:48.000000000 +0200
-@@ -306,8 +306,12 @@ void emu10k1_wavein_getxfersize(struct w
+Description:
+convert from pci_module_init to pci_register_driver
+
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
+
+--opg8F0UgoHELSI+9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_isdn_hardware_avm.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/b1pci.c linux-2.6.11-rc3/drivers/isdn/hardware/avm/b1pci.c
+--- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/b1pci.c	2004-12-24 22:33:49.000000000 +0100
++++ linux-2.6.11-rc3/drivers/isdn/hardware/avm/b1pci.c	2005-02-07 09:39:27.000000000 +0100
+@@ -391,7 +391,7 @@ static int __init b1pci_init(void)
+ 		strcpy(rev, "1.0");
  
- static void copy_block(u8 __user *dst, u8 * src, u32 str, u32 len, u8 cov)
- {
--	if (cov == 1)
--		__copy_to_user(dst, src + str, len);
-+	if (cov == 1) {
-+		if (__copy_to_user(dst, src + str, len)) {
-+			printk( KERN_ERR "emu10k1: %s: copy_to_user failed\n",__FUNCTION__);
-+			return;
-+		}
-+	}
- 	else {
- 		u8 byte;
- 		u32 i;
-@@ -316,7 +320,10 @@ static void copy_block(u8 __user *dst, u
  
- 		for (i = 0; i < len; i++) {
- 			byte = src[2 * i] ^ 0x80;
--			__copy_to_user(dst + i, &byte, 1);
-+			if (__copy_to_user(dst + i, &byte, 1)) {
-+				printk( KERN_ERR "emu10k1: %s: copy_to_user failed\n",__FUNCTION__);
-+				return;
-+			}
- 		}
- 	}
- }
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/sound/oss/emu10k1/passthrough.c linux-2.6.11-rc3-mm2/sound/oss/emu10k1/passthrough.c
---- linux-2.6.11-rc3-mm2-original/sound/oss/emu10k1/passthrough.c	2004-12-24 23:34:44.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/sound/oss/emu10k1/passthrough.c	2005-02-12 19:17:48.000000000 +0200
-@@ -162,12 +162,14 @@ ssize_t emu10k1_pt_write(struct file *fi
+-	err = pci_module_init(&b1pci_pci_driver);
++	err = pci_register_driver(&b1pci_pci_driver);
+ 	if (!err) {
+ 		strlcpy(capi_driver_b1pci.revision, rev, 32);
+ 		register_capi_driver(&capi_driver_b1pci);
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/c4.c linux-2.6.11-rc3/drivers/isdn/hardware/avm/c4.c
+--- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/c4.c	2004-12-24 22:34:58.000000000 +0100
++++ linux-2.6.11-rc3/drivers/isdn/hardware/avm/c4.c	2005-02-07 09:39:27.000000000 +0100
+@@ -1288,7 +1288,7 @@ static int __init c4_init(void)
+ 	} else
+ 		strcpy(rev, "1.0");
  
- 		DPD(3, "prepend size %d, prepending %d bytes\n", pt->prepend_size, needed);
- 		if (count < needed) {
--			copy_from_user(pt->buf + pt->prepend_size, buffer, count);
-+			if (copy_from_user(pt->buf + pt->prepend_size, buffer, count))
-+				return -EFAULT;
- 			pt->prepend_size += count;
- 			DPD(3, "prepend size now %d\n", pt->prepend_size);
- 			return count;
- 		}
--		copy_from_user(pt->buf + pt->prepend_size, buffer, needed);
-+		if (copy_from_user(pt->buf + pt->prepend_size, buffer, needed))
-+			return -EFAULT;
- 		r = pt_putblock(wave_dev, (u16 *) pt->buf, nonblock);
- 		if (r)
- 			return r;
-@@ -178,7 +180,8 @@ ssize_t emu10k1_pt_write(struct file *fi
- 	blocks_copied = 0;
- 	while (blocks > 0) {
- 		u16 __user *bufptr = (u16 __user *) buffer + (bytes_copied/2);
--		copy_from_user(pt->buf, bufptr, PT_BLOCKSIZE);
-+		if (copy_from_user(pt->buf, bufptr, PT_BLOCKSIZE))
-+			return -EFAULT;
- 		r = pt_putblock(wave_dev, (u16 *)pt->buf, nonblock);
- 		if (r) {
- 			if (bytes_copied)
-@@ -193,7 +196,8 @@ ssize_t emu10k1_pt_write(struct file *fi
- 	i = count - bytes_copied;
- 	if (i) {
- 		pt->prepend_size = i;
--		copy_from_user(pt->buf, buffer + bytes_copied, i);
-+		if (copy_from_user(pt->buf, buffer + bytes_copied, i))
-+			return -EFAULT;
- 		bytes_copied += i;
- 		DPD(3, "filling prepend buffer with %d bytes", i);
- 	}
+-	err = pci_module_init(&c4_pci_driver);
++	err = pci_register_driver(&c4_pci_driver);
+ 	if (!err) {
+ 		strlcpy(capi_driver_c2.revision, rev, 32);
+ 		register_capi_driver(&capi_driver_c2);
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/t1pci.c linux-2.6.11-rc3/drivers/isdn/hardware/avm/t1pci.c
+--- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/avm/t1pci.c	2004-12-24 22:34:00.000000000 +0100
++++ linux-2.6.11-rc3/drivers/isdn/hardware/avm/t1pci.c	2005-02-07 09:39:27.000000000 +0100
+@@ -241,7 +241,7 @@ static int __init t1pci_init(void)
+ 	} else
+ 		strcpy(rev, "1.0");
+ 
+-	err = pci_module_init(&t1pci_pci_driver);
++	err = pci_register_driver(&t1pci_pci_driver);
+ 	if (!err) {
+ 		strlcpy(capi_driver_t1pci.revision, rev, 32);
+ 		register_capi_driver(&capi_driver_t1pci);
 
-
-
-
---===============42102606289770739==
+--opg8F0UgoHELSI+9
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -102,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42102606289770739==--
+--opg8F0UgoHELSI+9--
