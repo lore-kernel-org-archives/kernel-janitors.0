@@ -1,46 +1,33 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:56:47 +0000
-Subject: [KJ] [PATCH] [5/29] av7110.c - vfree() checking cleanups
-Message-Id: <41db111f.3e59ab34.2568.07b2@smtp.gmail.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:10:39 +0000
+Subject: [KJ] [PATCH 15/53] fbcon: Clean up printk()'s in
+Message-Id: <20050125231038.10418.12751.25516@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============077730109825850047=="
+Content-Type: multipart/mixed; boundary="===============059710618091921575=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============077730109825850047==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============059710618091921575==
 
-av7110.c vfree() checking cleanups.
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/console/fbcon.c
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
- av7110.c |    6 ++----
- 1 files changed, 2 insertions(+), 4 deletions(-)
-
-
---- linux-2.6.10-vanilla/drivers/media/dvb/ttpci/av7110.c	2004-12-24 13:35:01.000000000 -0800
-+++ linux-2.6.10/drivers/media/dvb/ttpci/av7110.c	2005-01-04 11:34:06.000000000 -0800
-@@ -2095,8 +2095,7 @@
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/console/fbcon.c linux-2.6.11-rc2-mm1/drivers/video/console/fbcon.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/console/fbcon.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/console/fbcon.c	2005-01-24 19:07:02.770261466 -0500
+@@ -842,7 +842,7 @@
+ 			udelay(20);
  
- 	if (NULL ! 		pci_free_consistent(dev->pci, 8192, av7110->debi_virt, av7110->debi_bus);
--	if (NULL !-		vfree(av7110->iobuf);
-+	vfree(av7110->iobuf);
- 	if (NULL ! 		kfree(av7110);
- 	}
-@@ -2139,8 +2138,7 @@
+ 		if (ct == 1000)
+-			printk
++			pr_info
+ 			    ("fbcon_startup: No VBL detected, using timer based cursor.\n");
  
- 	av7110_num--;
- #ifndef CONFIG_DVB_AV7110_FIRMWARE_FILE 
--	if (av7110->bin_fw)
--		vfree(av7110->bin_fw);
-+	vfree(av7110->bin_fw);
- #endif
- 	kfree (av7110);
- 	saa->ext_priv 
+ 		free_irq(IRQ_MAC_VBL, fb_vbl_detect);
 
-
---===============077730109825850047==
+--===============059710618091921575==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============077730109825850047==--
+--===============059710618091921575==--
