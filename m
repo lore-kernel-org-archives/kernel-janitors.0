@@ -1,47 +1,62 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 24 Sep 2004 16:33:20 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 27/38] net/orinoco_tmd: replace
-Message-Id: <20040924163320.GC1757@us.ibm.com>
+From: Scott Feldman <sfeldma@pobox.com>
+Date: Tue, 21 Sep 2004 06:52:54 +0000
+Subject: [Kernel-janitors] [PATCH -mm 5/9] pci_find_device to pci_get_device
+Message-Id: <1095749574.3790.91.camel@sfeldma-mobl2.dsl-verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41676772693320735=="
+Content-Type: multipart/mixed; boundary="===============43399158407236316=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040923220302.GB5260@us.ibm.com>
-In-Reply-To: <20040923220302.GB5260@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============41676772693320735==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============43399158407236316==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Any comments would be appreciated.
+Use pci_get_device instead of pci_find_device as pci device returned
+from pci_find_device can disappear at any momemt in time.
 
-Description: Use ssleep() instead of schedule_timeout()
-to guarantee the task delays as expected.
+Signed-off-by: Scott Feldman <sfeldma@pobox.com>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc2-vanilla/drivers/net/wireless/orinoco_tmd.c	2004-09-13 17:15:41.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/wireless/orinoco_tmd.c	2004-09-24 09:32:29.000000000 -0700
-@@ -72,6 +72,7 @@
- #include <linux/list.h>
- #include <linux/pci.h>
- #include <linux/fcntl.h>
-+#include <linux/delay.h>
+diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/sis900.c linux-2.6.9-rc2-mm1-dsf/drivers/net/sis900.c
+--- linux-2.6.9-rc2-mm1/drivers/net/sis900.c	2004-09-20 22:35:32.000000000 -0700
++++ linux-2.6.9-rc2-mm1-dsf/drivers/net/sis900.c	2004-09-20 22:39:02.339946664 -0700
+@@ -262,9 +262,9 @@ static int __devinit sis630e_get_mac_add
+ 	u8 reg;
+ 	int i;
  
- #include <pcmcia/cisreg.h>
+-	isa_bridge = pci_find_device(PCI_VENDOR_ID_SI, 0x0008, isa_bridge);
++	isa_bridge = pci_get_device(PCI_VENDOR_ID_SI, 0x0008, isa_bridge);
+ 	if (!isa_bridge) {
+-		isa_bridge = pci_find_device(PCI_VENDOR_ID_SI, 0x0018, isa_bridge);
++		isa_bridge = pci_get_device(PCI_VENDOR_ID_SI, 0x0018, isa_bridge);
+ 		if (!isa_bridge) {
+ 			printk("%s: Can not find ISA bridge\n", net_dev->name);
+ 			return 0;
+@@ -279,6 +279,7 @@ static int __devinit sis630e_get_mac_add
+ 	}
+ 	pci_write_config_byte(isa_bridge, 0x48, reg & ~0x40);
  
-@@ -218,8 +219,7 @@ static int __init orinoco_tmd_init(void)
- static void __exit orinoco_tmd_exit(void)
- {
- 	pci_unregister_driver(&orinoco_tmd_driver);
--	current->state = TASK_UNINTERRUPTIBLE;
--	schedule_timeout(HZ);
-+	ssleep(1);
++	pci_dev_put(isa_bridge);
+ 	return 1;
  }
  
- module_init(orinoco_tmd_init);
+@@ -485,9 +486,11 @@ static int __devinit sis900_probe (struc
+ 	}
+ 
+ 	/* save our host bridge revision */
+-	dev = pci_find_device(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_630, NULL);
+-	if (dev)
++	dev = pci_get_device(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_630, NULL);
++	if (dev) {
+ 		pci_read_config_byte(dev, PCI_CLASS_REVISION, &sis_priv->host_bridge_rev);
++		pci_dev_put(dev);
++	}
+ 
+ 	/* print some information about our NIC */
+ 	printk(KERN_INFO "%s: %s at %#lx, IRQ %d, ", net_dev->name,
 
---===============41676772693320735==
+
+
+--===============43399158407236316==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============41676772693320735==--
+--===============43399158407236316==--
