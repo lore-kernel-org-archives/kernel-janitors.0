@@ -1,20 +1,50 @@
-From: Brendan Burns <bburns@cs.umass.edu>
-Date: Wed, 19 May 2004 15:33:32 +0000
-Subject: [Kernel-janitors] (no subject)
-Message-Id: <Pine.SOL.4.31.0405191133250.5970-100000@bodega.cs.umass.edu>
+From: "Adrian Stanciu" <adrian@sadyc.net>
+Date: Fri, 21 May 2004 11:56:19 +0000
+Subject: [Kernel-janitors] VFS: fs/readdir.c
+Message-Id: <20040521115619.11051.qmail@romus.ro>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74196622143704094=="
+Content-Type: multipart/mixed; boundary="===============75750240660550228=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
-In-Reply-To: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
 To: kernel-janitors@vger.kernel.org
 
---===============74196622143704094==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============75750240660550228==
+Content-Type: text/plain; format=flowed; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Hello, 
+
+I'm doing some research work on VFS and linux filesystems.
+I used kernel 2.4.25 but this things hold true for 2.6 as well 
+
+1)
+I found some unused old functions and structures in fs/readdir.c 
+
+old unused functions: old_readdir, fillonedir and
+old unusedstructures: old_linux_dirent, readdir_callback 
+
+they aren't reffered anywhere in the kernel, 
+
+maybe they should be removed? 
+
+2)
+in function dcache_readdir why we need the variable "i" ?
+the call to filldir doesn't change it,
+so why don't use filp->f_pos ?
+(for kernel 2.6 dcache_reddir is in fs/libfs.c now..) 
 
 
+BTW, shouldn't MAINTAINERS in kernel 2.4 contain a refference for VFS 
+maintainer? 
 
---===============74196622143704094==
+
+If I send this email to the wrong place, please direct me the right place to 
+send it. 
+
+Thank you,
+ --adrian. 
+
+
+--===============75750240660550228==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -25,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74196622143704094==--
+--===============75750240660550228==--
