@@ -1,42 +1,45 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 17:13:31 +0000
-Subject: [KJ] [PATCH 19/19] drivers/scsi/sata_vsc: Use the DMA_{64,
-Message-Id: <20050220171331.GT14375@helium.tklauser.home>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Sun, 13 Feb 2005 12:49:05 +0000
+Subject: [KJ] [PATCH] drivers/net/e1000/*: convert to pci_register_driver
+Message-Id: <20050213124905.GC15348@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91847492191518798=="
+Content-Type: multipart/mixed; boundary="imjhCm/Pyz7Rq5F2"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============91847492191518798==
+
+--imjhCm/Pyz7Rq5F2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
---- linux-2.6.11-rc4.orig/drivers/scsi/sata_vsc.c	2005-02-13 17:13:07.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/scsi/sata_vsc.c	2005-02-16 21:25:01.000000000 +0100
-@@ -280,10 +280,10 @@ static int __devinit vsc_sata_init_one (
- 	/*
- 	 * Use 32 bit DMA mask, because 64 bit address support is poor.
- 	 */
--	rc = pci_set_dma_mask(pdev, 0xFFFFFFFFULL);
-+	rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
- 	if (rc)
- 		goto err_out_regions;
--	rc = pci_set_consistent_dma_mask(pdev, 0xFFFFFFFFULL);
-+	rc = pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
- 	if (rc)
- 		goto err_out_regions;
+
+--imjhCm/Pyz7Rq5F2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_e1000.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/e1000/e1000_main.c linux-2.6.11-rc3/drivers/net/e1000/e1000_main.c
+--- linux-2.6.11-rc3-vanilla/drivers/net/e1000/e1000_main.c	2005-02-03 17:03:49.000000000 +0100
++++ linux-2.6.11-rc3/drivers/net/e1000/e1000_main.c	2005-02-07 09:39:28.000000000 +0100
+@@ -222,7 +222,7 @@ e1000_init_module(void)
  
+ 	printk(KERN_INFO "%s\n", e1000_copyright);
+ 
+-	ret = pci_module_init(&e1000_driver);
++	ret = pci_register_driver(&e1000_driver);
+ 	if(ret >= 0) {
+ 		register_reboot_notifier(&e1000_notifier_reboot);
+ 	}
 
---===============91847492191518798==
+--imjhCm/Pyz7Rq5F2
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91847492191518798==--
+--imjhCm/Pyz7Rq5F2--
