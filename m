@@ -1,59 +1,64 @@
-From: walter harms <wharms@bfs.de>
-Date: Sun, 27 Feb 2005 16:17:36 +0000
-Subject: [KJ] question ACPI & CMPXCHG
-Message-Id: <4221F2A0.5050105@bfs.de>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Sun, 27 Feb 2005 16:37:01 +0000
+Subject: Re: [KJ] question ACPI & CMPXCHG
+Message-Id: <20050227163701.GC6148@stusta.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46454212177382492=="
+Content-Type: multipart/mixed; boundary="===============76102248973266917=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200502271349.20737.vicente.feito@gmail.com>
 In-Reply-To: <200502271349.20737.vicente.feito@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============46454212177382492==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============76102248973266917==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi list,
-when i was looking into arch/i386/kernel/acpi/boot.c
+On Sun, Feb 27, 2005 at 05:17:36PM +0100, walter harms wrote:
+> hi list,
+> when i was looking into arch/i386/kernel/acpi/boot.c
+> 
+> i found:
+> 
+> #ifndef __HAVE_ARCH_CMPXCHG
+> #warning ACPI uses CMPXCHG, i486 and later hardware
+> #endif
+> 
+> 
+> perhaps its nitpicking but ...
+> I think the setup should disable ACPI if CMPXCHG does not exist.
+> second best generate at least an error ! compile time these day is short 
+> and you have a good change to miss warnings.
+>...
+> --- boot.c.org  2005-02-27 17:10:24.000000000 +0100
+> +++ boot.c      2005-02-27 17:11:58.000000000 +0100
+> @@ -82,7 +82,7 @@
+>  #endif
+> 
+>  #ifndef __HAVE_ARCH_CMPXCHG
+> -#warning ACPI uses CMPXCHG, i486 and later hardware
+> +#error  ACPI requires CMPXCHG
+>  #endif
+>...
 
-i found:
+This is wrong - instead of an error this should be put as a dependency 
+into the Kconfig file.
 
-#ifndef __HAVE_ARCH_CMPXCHG
-#warning ACPI uses CMPXCHG, i486 and later hardware
-#endif
+But the underlying issue is that the current config semantics is, that 
+"386" means a generic kernel. I should make a new version of my patch of 
+a new i386 cpu selection for allowing a proper handling of such cases.
 
+cu
+Adrian
 
-perhaps its nitpicking but ...
-I think the setup should disable ACPI if CMPXCHG does not exist.
-second best generate at least an error ! compile time these day is short 
-and you have a good change to miss warnings.
+-- 
 
-re,
-	walter
-
-
-(since i have no idea about the setup, no patch)
-
-re,
-	walter
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
 
-quick fix (better example) , hopyfully someone can find some better text
-
-
---- boot.c.org  2005-02-27 17:10:24.000000000 +0100
-+++ boot.c      2005-02-27 17:11:58.000000000 +0100
-@@ -82,7 +82,7 @@
-  #endif
-
-  #ifndef __HAVE_ARCH_CMPXCHG
--#warning ACPI uses CMPXCHG, i486 and later hardware
-+#error  ACPI requires CMPXCHG
-  #endif
-
-  #define MAX_MADT_ENTRIES       256
-
---===============46454212177382492==
+--===============76102248973266917==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46454212177382492==--
+--===============76102248973266917==--
