@@ -1,48 +1,32 @@
-From: Tyler <tyler@agat.net>
-Date: Tue, 08 Mar 2005 11:04:59 +0000
-Subject: [KJ][PATCH] linux-2.6.11 : warning fix in fs/quota_v2.c
-Message-Id: <d0k0sm$lu1$1@sea.gmane.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010301090901070908060608"
+From: Chuck Short <zulcss@gmail.com>
+Date: Mon, 28 Mar 2005 21:16:20 +0000
+Subject: [KJ] [Patch 2/3] Adds module version to 3c503.
+Message-Id: <27c823430503281316e97de34@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------010301090901070908060608
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Description: This patch adds MODULE_VERSION to 3c503.
 
-The format %zd should be replaced by %d :)
+Signed-off-by: Chuck Short <zulcss@gmail.com>
 
---------------010301090901070908060608
-Content-Type: text/x-patch;
- name="write_quota_warning_fix.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="write_quota_warning_fix.patch"
+diff -Naur linux-2.6.12-rc1.orig/drivers/net/3c503.c
+linux-2.6.12-rc1/drivers/net/3c503.c
+--- linux-2.6.12-rc1.orig/drivers/net/3c503.c   2005-03-27
+09:44:51.000000000 -0500
++++ linux-2.6.12-rc1/drivers/net/3c503.c        2005-03-27
+13:06:27.000000000 -0500
+@@ -693,6 +693,7 @@
+ MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
+ MODULE_PARM_DESC(xcvr, "transceiver(s) (0=internal, 1=external)");
+ MODULE_DESCRIPTION("3Com ISA EtherLink II, II/16 (3c503, 3c503/16) driver");
++MODULE_VERSION(DRV_VERSION);
+ MODULE_LICENSE("GPL");
 
---- linux-2.6.11-eb/fs/quota_v2.c.orig	2005-03-08 11:58:06.000000000 +0100
-+++ linux-2.6.11-eb/fs/quota_v2.c	2005-03-08 11:58:28.000000000 +0100
-@@ -396,7 +396,7 @@ static int v2_write_dquot(struct dquot *
- 	/* dq_off is guarded by dqio_sem */
- 	if (!dquot->dq_off)
- 		if ((ret = dq_insert_tree(dquot)) < 0) {
--			printk(KERN_ERR "VFS: Error %zd occurred while creating quota.\n", ret);
-+			printk(KERN_ERR "VFS: Error %d occurred while creating quota.\n", ret);
- 			return ret;
- 		}
- 	spin_lock(&dq_data_lock);
-
---------------010301090901070908060608--
-
-
-
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now.
-http://ads.osdn.com/?ad_id=6595&alloc_id=14396&op=click
+ /* This is set up so that only a single autoprobe takes place per call.
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
