@@ -1,111 +1,153 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Date: Sat, 27 Mar 2004 05:13:55 +0000
-Subject: [Kernel-janitors] [PATCH 4/5] remove concatenation with
-Message-Id: <20040327051355.GF3445@bakeyournoodle.com>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Wed, 17 Mar 2004 22:17:57 +0000
+Subject: [Kernel-janitors] [announce] 2.6.5-rc1-kj1 patchset
+Message-Id: <20040317141757.26364225.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040322052155.GF17221@bakeyournoodle.com>
-In-Reply-To: <20040322052155.GF17221@bakeyournoodle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kjo <kernel-janitors@osdl.org>
+Cc: lkml <linux-kernel@vger.kernel.org>
 
 
---------------------------------------------------------------------------------
-diff -X dontdiff -purN 2.6.4.clean/net/8021q/vlan.h 2.6.4.kj_func/net/8021q/vlan.h
---- 2.6.4.clean/net/8021q/vlan.h	2004-01-15 17:04:12.000000000 +1100
-+++ 2.6.4.kj_func/net/8021q/vlan.h	2004-03-26 14:32:44.000000000 +1100
-@@ -19,8 +19,8 @@ I never found it..and the problem seems 
- I'll bet they might prove useful again... --Ben
- 
- 
--#define VLAN_MEM_DBG(x, y, z) printk(VLAN_DBG __FUNCTION__ ":  "  x, y, z);
--#define VLAN_FMEM_DBG(x, y) printk(VLAN_DBG __FUNCTION__  ":  " x, y);
-+#define VLAN_MEM_DBG(x, y, z) printk(VLAN_DBG "%s:  "  x, __FUNCTION__, y, z);
-+#define VLAN_FMEM_DBG(x, y) printk(VLAN_DBG "%s:  " x, __FUNCTION__, y);
- */
- 
- /* This way they don't do anything! */
-diff -X dontdiff -purN 2.6.4.clean/net/8021q/vlanproc.c 2.6.4.kj_func/net/8021q/vlanproc.c
---- 2.6.4.clean/net/8021q/vlanproc.c	2004-01-16 21:13:48.000000000 +1100
-+++ 2.6.4.kj_func/net/8021q/vlanproc.c	2004-03-26 14:32:44.000000000 +1100
-@@ -220,7 +220,7 @@ int vlan_proc_rem_dev(struct net_device 
- 	}
- 
- #ifdef VLAN_DEBUG
--	printk(VLAN_DBG __FUNCTION__ ": dev: %p\n", vlandev);
-+	printk(VLAN_DBG "%s: dev: %p\n", __FUNCTION__, vlandev);
- #endif
- 
- 	/** NOTE:  This will consume the memory pointed to by dent, it seems. */
-diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_irc.c 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_irc.c
---- 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_irc.c	2004-01-16 21:14:43.000000000 +1100
-+++ 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_irc.c	2004-03-26 14:38:52.000000000 +1100
-@@ -60,8 +60,8 @@ DECLARE_LOCK(ip_irc_lock);
- struct module *ip_conntrack_irc = THIS_MODULE;
- 
- #if 0
--#define DEBUGP(format, args...) printk(KERN_DEBUG __FILE__ ":" __FUNCTION__ \
--					":" format, ## args)
-+#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
-diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_tftp.c 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_tftp.c
---- 2.6.4.clean/net/ipv4/netfilter/ip_conntrack_tftp.c	2004-02-19 07:19:23.000000000 +1100
-+++ 2.6.4.kj_func/net/ipv4/netfilter/ip_conntrack_tftp.c	2004-03-26 14:38:44.000000000 +1100
-@@ -33,8 +33,8 @@ MODULE_PARM_DESC(ports, "port numbers of
- #endif
- 
- #if 0
--#define DEBUGP(format, args...) printk(__FILE__ ":" __FUNCTION__ ": " \
--				       format, ## args)
-+#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
-diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ip_nat_tftp.c 2.6.4.kj_func/net/ipv4/netfilter/ip_nat_tftp.c
---- 2.6.4.clean/net/ipv4/netfilter/ip_nat_tftp.c	2004-02-19 07:19:23.000000000 +1100
-+++ 2.6.4.kj_func/net/ipv4/netfilter/ip_nat_tftp.c	2004-03-26 14:38:56.000000000 +1100
-@@ -47,8 +47,8 @@ MODULE_PARM_DESC(ports, "port numbers of
- #endif
- 
- #if 0
--#define DEBUGP(format, args...) printk(__FILE__ ":" __FUNCTION__ ": " \
--				       format, ## args)
-+#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
-diff -X dontdiff -purN 2.6.4.clean/net/ipv4/netfilter/ipt_ULOG.c 2.6.4.kj_func/net/ipv4/netfilter/ipt_ULOG.c
---- 2.6.4.clean/net/ipv4/netfilter/ipt_ULOG.c	2004-02-19 07:19:24.000000000 +1100
-+++ 2.6.4.kj_func/net/ipv4/netfilter/ipt_ULOG.c	2004-03-26 14:39:12.000000000 +1100
-@@ -64,13 +64,13 @@ MODULE_DESCRIPTION("iptables userspace l
- #define ULOG_MAXNLGROUPS	32		/* numer of nlgroups */
- 
- #if 0
--#define DEBUGP(format, args...)	printk(__FILE__ ":" __FUNCTION__ ":" \
--				       format, ## args)
-+#define DEBUGP(format, args...) printk(KERN_DEBUG "%s:%s:" format, \
-+                                       __FILE__, __FUNCTION__ , ## args)
- #else
- #define DEBUGP(format, args...)
- #endif
- 
--#define PRINTR(format, args...) do { if (net_ratelimit()) printk(format, ## args); } while (0)
-+#define PRINTR(format, args...) do { if (net_ratelimit()) printk(format , ## args); } while (0)
- 
- static unsigned int nlbufsiz = 4096;
- MODULE_PARM(nlbufsiz, "i");
---------------------------------------------------------------------------------
-Yours Tony
+patch is at:
+http://developer.osdl.org/rddunlap/kj-patches/2.6.5-rc1/2.6.5-rc1-kj1.patch.bz2  [2004-03-16]
 
-        linux.conf.au       http://lca2005.linux.org.au/
-	Apr 18-23 2005      The Australian Linux Technical Conference!
+M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
+?: still evaluating;
 
+This patch applies to linux-2.6.5-rc1.
+new (for 2.6.5-rc1):  [2004-03-16]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+add/	extraver.patch
+	rddunlap%osdl!org
+
+X	make_html_docs.patch
+	From: Don Scorgie <DonScorgie@Blueyonder.co.uk>
+already fixed;
+
+add	cpufreq_longhaul_section.patch
+?	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add	cpufreq_longrun_section.patch
+?	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	nfs_parse.patch
+	From: Fabian_LoneStar_Frederick <fabian.frederick@gmx.fr>
+
+add/	floppy_deugli_00.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	floppy_deugli_01.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	floppy_deugli_02.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	floppy_deugli_03.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add	floppy_audit.patch
+?	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+
+This patch applies to linux-2.6.4-rc2.
+previous (for 2.6.4-rc2):  [2004-03-09]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+add/	kswapd_init_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+
+tx/	lmc_proto_raw_h_rm.patch
+	From: Domen Puncer <domen@coderock.org>
+	sent to netdev/jgarzik: 2004.0229;
+
+tx/	atm_nicstar_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to netdev/mntr: 2004.0225;
+	sent to mntr: 2004.0316;
+
+add/	ipv4_fib_hash_check.patch
+	From: Francois Romieu <romieu@fr.zoreil.com>
+	original From: <WHarms@bfs.de>(Walter Harms)
+
+tx/	file2alias_signcomp.patch
+fxd	From: Ron Gage <ron@rongage.org>
+	sent to mntrs: 2004.0316;
+
+tx/	fixdep_signcomp.patch
+fxd	From: Ron Gage <ron@rongage.org>
+	sent to mntrs: 2004.0316;
+
+tx/	modpost_signcomp.patch
+	From: Ron Gage <ron@rongage.org>
+	sent to mntrs: 2004.0316;
+
+tx/	errno_numbers_assembly.patch
+	From: Danilo Piazzalunga <danilopiazza@libero.it>
+	to akpm: 2004.0126;
+	to akpm: 2004.0316;
+
+tx/	dgrs_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to jgarzik/netdev: 2004.0124;
+
+tx/	doc_var_updates.patch
+	From: Alexey Dobriyan <adobriyan@mail.ru>
+	sent to akpm: 2004.0316;
+
+tx/	drivers_ide_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to mntr/linux-ide: 2004.0316;
+
+tx/	drivers_ide_minmax2.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to mntr/linux-ide: 2004.0316;
+
+tx/	fs_proc_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm/viro: 2004.0316;
+
+tx/	mm_slab_init.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to akpm: 2004.0316;
+
+tx/	reiserfs_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm/mntr: 2004.0316;
+
+tx/	serial_8250_pnp_init.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to akpm/rmk: 2004.0316;
+
+tx/	sound_oss_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm/mntr: 2004.0316;
+
+tx/	zlib_deflate_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm: 2004.0316;
+
+tx/	char_ip2_double_op.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to akpm/mntr: 2004.0316;
+
+add/	keyboard_ptr_to_string.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	string_form_drivers.patch
+	From: maximilian attems <janitor@sternwelten.at>
+
+###
+
+backlog:
+- check kernel_thread() results;
+- list_for_each() usage;
+
+###
+
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
