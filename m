@@ -1,45 +1,53 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Mon, 24 Jan 2005 14:10:23 +0000
-Subject: [KJ] Re: [Alsa-devel] [PATCH 30/39] sound/vx_core: replace
-Message-Id: <s5hmzuy2a0g.wl@alsa2.suse.de>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 10 Jan 2005 23:12:06 +0000
+Subject: [KJ] [UPDATE PATCH] message/mptbase: replace schedule_timeout()
+Message-Id: <20050110231206.GI9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56751150993483668=="
+Content-Type: multipart/mixed; boundary="===============91638059438710129=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050121194731.GK3340@us.ibm.com>
-In-Reply-To: <20050121194731.GK3340@us.ibm.com>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Cc: perex@suse.cz, alsa-devel@alsa-project.org, kernel-janitors@lists.osdl.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============56751150993483668==
-Content-Type: text/plain; charset=US-ASCII
+--===============91638059438710129==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-At Fri, 21 Jan 2005 11:47:31 -0800,
-Nishanth Aravamudan wrote:
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
 > 
-> Hi,
-> 
-> Please consider applying.
-> 
-> Description: Use msleep() instead of schedule_timeout() to guarantee the task
-> delays as expected. The check for xmsec >= 1000 / HZ seems wrong to me, as well,
-> since if HZ==100, that means we could mdelay() for 9 msecs!
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
-Yes, and that's intentional.  Originally there were places to call
-like snd_vx_delay(1) for just 1 or 2 ms in a long loop.  The loop
-calls schedule() occasionally to take control back.
-So, we didn't want to do schedule_timeout(1) for HZ=100 in such a
-case.  This results in 10 times longer loop execution.
+<snip> 
 
->  msleep() should be
-> usable in all cases when not in an interrupt handler.
+> msleep_interruptible-drivers_message_fusion_mptbase.patch
 
-I agree in general, but, msleep() isn't always a replacement of
-mdelay() if the delay time really matters.
+Please consider replacing with the following patch:
+
+Description: Use ssleep() instead of schedule_timeout() to guarantee
+the task delays as expected. The original code does use TASK_INTERRUPTIBLE, but
+does not check for signals or early return from schedule_timeout() so ssleep()
+seems more appropriate.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
-Takashi
+--- 2.6.10-v/drivers/message/fusion/mptbase.c	2004-12-24 13:35:50.000000000 -0800
++++ 2.6.10/drivers/message/fusion/mptbase.c	2005-01-05 14:23:05.000000000 -0800
+@@ -3137,8 +3137,7 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
+ 
+ 				/* wait 1 sec */
+ 				if (sleepFlag == CAN_SLEEP) {
+-					set_current_state(TASK_INTERRUPTIBLE);
+-					schedule_timeout(1000 * HZ / 1000);
++					ssleep(1);
+ 				} else {
+ 					mdelay (1000);
+ 				}
 
---===============56751150993483668==
+--===============91638059438710129==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56751150993483668==--
+--===============91638059438710129==--
