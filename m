@@ -1,78 +1,57 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:15:50 +0000
-Subject: [KJ] [PATCH 50/53] tdfxfb: Clean up printk()'s in
-Message-Id: <20050125231549.10418.39178.84348@localhost.localdomain>
+From: "surendra singh  bisht" <ssb_ait@rediffmail.com>
+Date: Sat, 15 Jan 2005 11:07:56 +0000
+Subject: [KJ] accessing user mode register
+Message-Id: <20050115110756.27697.qmail@webmail6.rediffmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============25056277196390164=="
+Content-Type: multipart/mixed; boundary="===============6732832045279169=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============25056277196390164==
+This is a multi-part message in MIME format...
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/tdfxfb.c
+--===============6732832045279169==
+Content-Type: multipart/alternative;
+    boundary="----------=_1105787263-6208-515"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+This is a multi-part message in MIME format...
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/tdfxfb.c linux-2.6.11-rc2-mm1/drivers/video/tdfxfb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/tdfxfb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/tdfxfb.c	2005-01-24 19:07:04.236256709 -0500
-@@ -4,7 +4,7 @@
-  *
-  * Author: Hannu Mallat <hmallat@cc.hut.fi>
-  *
-- * Copyright ��� 1999 Hannu Mallat
-+ * Copyright  1999 Hannu Mallat
-  * All rights reserved
-  *
-  * Created      : Thu Sep 23 18:17:43 1999, hmallat
-@@ -1178,7 +1178,7 @@
- 	tdfx_fix.mmio_len = pci_resource_len(pdev, 0);
- 	default_par->regbase_virt = ioremap_nocache(tdfx_fix.mmio_start, tdfx_fix.mmio_len);
- 	if (!default_par->regbase_virt) {
--		printk("fb: Can't remap %s register area.\n", tdfx_fix.id);
-+		printk(KERN_WARNING "fb: Can't remap %s register area.\n", tdfx_fix.id);
- 		goto out_err;
- 	}
-     
-@@ -1190,7 +1190,7 @@
- 
- 	tdfx_fix.smem_start = pci_resource_start(pdev, 1);
- 	if (!(tdfx_fix.smem_len = do_lfb_size(default_par, pdev->device))) {
--		printk("fb: Can't count %s memory.\n", tdfx_fix.id);
-+		printk(KERN_WARNING "fb: Can't count %s memory.\n", tdfx_fix.id);
- 		release_mem_region(pci_resource_start(pdev, 0),
- 				   pci_resource_len(pdev, 0));
- 		goto out_err;	
-@@ -1207,7 +1207,7 @@
- 	info->screen_base = ioremap_nocache(tdfx_fix.smem_start, 
- 					    tdfx_fix.smem_len);
- 	if (!info->screen_base) {
--		printk("fb: Can't remap %s framebuffer.\n", tdfx_fix.id);
-+		printk(KERN_WARNING "fb: Can't remap %s framebuffer.\n", tdfx_fix.id);
- 		release_mem_region(pci_resource_start(pdev, 1),
- 				   pci_resource_len(pdev, 1));
- 		release_mem_region(pci_resource_start(pdev, 0),
-@@ -1227,7 +1227,7 @@
- 		goto out_err;
- 	}
- 
--	printk("fb: %s memory = %dK\n", tdfx_fix.id, tdfx_fix.smem_len >> 10);
-+	pr_info("fb: %s memory = %dK\n", tdfx_fix.id, tdfx_fix.smem_len >> 10);
- 
- 	tdfx_fix.ypanstep	= nopan ? 0 : 1;
- 	tdfx_fix.ywrapstep	= nowrap ? 0 : 1;
-@@ -1270,7 +1270,7 @@
- 	}
- 
- 	if (register_framebuffer(info) < 0) {
--		printk("tdfxfb: can't register framebuffer\n");
-+		printk(KERN_WARNING "tdfxfb: can't register framebuffer\n");
- 		fb_dealloc_cmap(&info->cmap);
- 		goto out_err;
- 	}
+------------=_1105787263-6208-515
+Content-type: text/plain;
+	charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---===============25056277196390164==
+=20=20
+
+  how do i access user mode register from kernel space
+  i m trying to write a system call where i need to access the register=20
+  pushed in stack during system call
+------------=_1105787263-6208-515
+Content-type: text/html;
+	charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<P>
+&nbsp; <BR>
+<BR>
+&nbsp; how do i access user mode register from kernel space<BR>
+&nbsp; i m trying to write a system call where i need to access the registe=
+r <BR>
+&nbsp; pushed in stack during system call
+</P>
+<br><br>
+<A target=3D"_blank" HREF=3D"http://clients.rediff.com/signature/track_sig.=
+asp"><IMG DEFANGED_SRC=3D"http://ads.rediff.com/RealMedia/ads/adstream_nx.c=
+gi/www.rediffmail.com/inbox.htm@Bottom" BORDER=3D0 VSPACE=3D0 HSPACE=3D0></=
+a>
+
+------------=_1105787263-6208-515--
+
+--===============6732832045279169==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -83,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============25056277196390164==--
+--===============6732832045279169==--
