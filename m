@@ -1,7 +1,7 @@
-From: "Julie" <juliecr@rogers.com>
-Date: Thu, 11 Nov 2004 00:50:03 +0000
+From: "Julie" <juliegr@rogers.com>
+Date: Thu, 11 Nov 2004 08:31:36 +0000
 Subject: (no subject)
-Message-Id: <E1CS44Y-0005rU-3F@externalmx-1.sourceforge.net>
+Message-Id: <E1CSAaq-0006Xs-BV@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
 In-Reply-To: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
@@ -10,8 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Want a cheap Watch?
-http://ylj.afeet.com
+Do you want a cheap Watch?
+http://ziv.afeet.com
 
 
 
