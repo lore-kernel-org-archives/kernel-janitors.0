@@ -1,58 +1,64 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 19:39:14 +0000
-Subject: [KJ] [PATCH] net/clnt: remove sleep_on*() usage
-Message-Id: <20050126193914.GD3593@us.ibm.com>
+Date: Tue, 11 Jan 2005 00:42:42 +0000
+Subject: [KJ] [UPDATE PATCH] net/slip: replace schedule_timeout() with
+Message-Id: <20050111004242.GK9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67194613062403352=="
+Content-Type: multipart/mixed; boundary="===============69162060870294528=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============67194613062403352==
+--===============69162060870294528==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+> 
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
-Please consider applying.
+<snip>
 
-Description: Directly use wait-queues instead of the deprecated
-sleep_on_timeout(). Since the sleep in this function is unconditional,
-wait_event_timeout() does not appear to be appropriate. Patch is
-compile-tested.
+> msleep_interruptible-drivers_net_slip.patch
+
+Please consider replacing with the following:
+
+Description: Use msleep() instead of schedule_timeout() to guarantee
+the task delays as expected. While the original code does use
+TASK_INTERRUPTIBLE, it does not check for signals, so I believe msleep() is more
+appropriate.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/net/sunrpc/clnt.c	2005-01-24 09:34:22.000000000 -0800
-+++ 2.6.11-rc2-kj/net/sunrpc/clnt.c	2005-01-26 10:47:32.000000000 -0800
-@@ -28,6 +28,7 @@
- #include <linux/slab.h>
- #include <linux/in.h>
- #include <linux/utsname.h>
-+#include <linux/wait.h>
- 
- #include <linux/sunrpc/clnt.h>
- #include <linux/workqueue.h>
-@@ -222,6 +223,7 @@ out_no_clnt:
- int
- rpc_shutdown_client(struct rpc_clnt *clnt)
- {
-+	DEFINE_WAIT(wait);
- 	dprintk("RPC: shutting down %s client for %s, tasks=%d\n",
- 			clnt->cl_protname, clnt->cl_server,
- 			atomic_read(&clnt->cl_users));
-@@ -231,7 +233,9 @@ rpc_shutdown_client(struct rpc_clnt *cln
- 		clnt->cl_oneshot = 0;
- 		clnt->cl_dead = 0;
- 		rpc_killall_tasks(clnt);
--		sleep_on_timeout(&destroy_wait, 1*HZ);
-+		prepare_to_wait(&destroy_wait, &wait, TASK_UNINTERRUPTIBLE);
-+		schedule_timeout(HZ);
-+		finish_wait(&destroy_wait, &wait);
- 	}
- 
- 	if (atomic_read(&clnt->cl_users) < 0) {
 
---===============67194613062403352==
+--- 2.6.10-v/drivers/net/slip.c	2004-12-24 13:35:49.000000000 -0800
++++ 2.6.10/drivers/net/slip.c	2005-01-05 14:23:05.000000000 -0800
+@@ -75,6 +75,7 @@
+ #include <linux/if_arp.h>
+ #include <linux/if_slip.h>
+ #include <linux/init.h>
++#include <linux/delay.h>
+ #include "slip.h"
+ #ifdef CONFIG_INET
+ #include <linux/ip.h>
+@@ -1395,10 +1396,8 @@ static void __exit slip_exit(void)
+ 	/* First of all: check for active disciplines and hangup them.
+ 	 */
+ 	do {
+-		if (busy) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ / 10);
+-		}
++		if (busy)
++			msleep(100);
+ 
+ 		busy = 0;
+ 		for (i = 0; i < slip_maxdev; i++) {
+
+--===============69162060870294528==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67194613062403352==--
+--===============69162060870294528==--
