@@ -1,54 +1,30 @@
-From: "Ralph" <nrwywqigfpjf@terra.com>
-Date: Thu, 15 Jan 2004 03:38:15 +0000
-Subject: Re: FFC, no one attempted
-Message-Id: <HKITANY-0006978854082@beetle>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--CQJS49176835779408"
+From: "tuan yacavone" <lerawittmann@galaxyhit.com>
+Date: Sat, 24 Jan 2004 12:29:40 +0000
+Subject: spdyjshr mep Use these guys for all your data collectionPqxwks
+Message-Id: <E085CB15.B616C19@galaxyhit.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----ALT--CQJS49176835779408
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-bonaparte ambitious bunk adventurous carbohydrate 
-dramaturgy cabinetmake cloth reactant distaff gerund vivify prokofieff dangle 
-memory tribute dusky warsaw brusque gratify handicapper nagy 
-
-----ALT--CQJS49176835779408
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD><TITLE></TITLE>
-<META http-equiv=Content-Type content="text/html; charset=windows-1251">
-<META content="MSHTML 6.00.2800.1141" name=GENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=#ffffff>
-<font color="white">maladapt gaelic meredith blueprint sse windmill carpenter consistent anisotropic fahrenheit agave rogers source awake edgy fragrant where'd anchorite redneck secession airline repeat cluj newline bolivar feline clothesline jenny bowman haplology seraphim chignon richter chateaux bosch cameo cheerleader gracious </font><br>
-<body>
-
-<p>Th</sown>e ul</babysat>timate d</depressive>igital 
-ca</mellow>ble f</baronet>ilter</p>
-<p>Th</wrongdoer>e fil</demountable>ter wi</alumnae>ll al</coroutine>low 
-yo</guanidine>u t</cf>o rec</announce>eive a</imitate>ll 
-t</feeney>he ch</lotus>annels t</ductile>hat y</aldrin>ou
-or</boil>der wi</elide>th y</newt>our r</prefecture>emove 
-cont</tapeworm>rol!</p>
-<p>pay</hess>perviews, adu</inject>lt mov</jerk>ies,s</disembowel>port 
-even</augustine>ts,s</unilateral>pecial ev</pegasus>ents!
-<a href="http://www.3002hosting.com/cable/">
-se</krakatoa>e n</biceps>ow!</a></p><p><a href="http://www.3002hosting.com/cable/">
-<img %RANDOM_TEXT border="0" src="http://www.3002hosting.com/fiter2.jpg"></a></p>
-
-<br>
-<font color="white">dobson hapsburg alacrity conn airflow brief seq canteen embalm neoconservative copolymer tepid swear brownell childish teethed leech adhesion bombard drowsy wrathful indiscreet lapel bundestag huntington allegra rally ancient needlepoint souvenir muff carbide anderson debrief bolivia condensible decisional aviary incite </font>
-</BODY>
-</HTML>
-
-----ALT--CQJS49176835779408--
+dmVyZHJ1a2tpbjxTUEFOPmcgYzwvU1BBTj5vbnM8U1BBTj50cnVjdGl2aXN0cyBzZTwvU1BBTj5t
+aTxJPnQ8L0k+YWxlIGxva2tlYmVyZw0KPHA+PEZPTlQgZmFjZT0iQXJpYWwgTmFycm93IiBzaXpl
+PTEuNT5JbiBsZTxFTT5zcyA8L0VNPnRoYW4gNTxTVFJJS0U+IDwvU1RSSUtFPnNlY29uZHMsIDxT
+PnQ8L1M+aGUgaW1hZ2Ugd2lsbCBsPFNUUk9ORz5vPC9TVFJPTkc+YWQ8L3A+DQo8YSBocmVmPSJo
+dHRwOi8vdHV1LndjLmJ6b3A0dS5hcnQuYnIvc2hvZ3UvdHdvd2F5Lmh0bSI+PGltZyBzcmM9Imh0
+dHA6Ly9lZ3ZtLnQuYnpvcDR1LmFydC5ici9zaG9ndS9ob3RlbC5naWYiIGJvcmRlcj0iMCI+PC9h
+Pg0KPHA+Jm5ic3A7PC9wPg0KUzxTUEFOPm8gQm9iPC9TUEFOPiB0aGVuIGJ1eXM8U1RSSUtFPiA8
+L1NUUklLRT5hIGNvPFNQQU4+dyBhbmQgdDwvU1BBTj5lYWNoZXMgaXQ8Rk9OVCBmYWNlPSJUaW1l
+cyBOZXcgUm9tYW4iPiB0PC9GT05UPm8gdXNlIHRoZSBiPFNQQU4+YXRoPC9TUEFOPnJvb20gaTxT
+UEFOPm4gQjwvU1BBTj5pbGwncyB5YTxFTT5yZC48L0VNPiBBPFNUUklLRT5mPC9TVFJJS0U+dGVy
+IGFib3V0PEVNPiBhPC9FTT4geWVhciBhbmQgYSA8Uz5oPC9TPmFsZiBvZiBCb2IncyBjPFNQQU4+
+b3cgPC9TUEFOPmNyYXBwaTxCPm48L0I+ZyBpbiBCaWw8Uz5sPC9TPidzIHlhcjxTUEFOPmQ7IGJl
+aW5nIDwvU1BBTj5pZ25vcmVkIDxTVFJPTkc+YWxsPC9TVFJPTkc+IHRoPEI+ZSA8L0I+d2hpbGUs
+IGEgc2VtPFNQQU4+aSBwdWw8L1NQQU4+bHM8U1RST05HPiA8L1NUUk9ORz51cCBpbiBmcm9udDxT
+UEFOPiBvZjwvU1BBTj4gQmlsbCdzIGhvPFNQQU4+dXNlPC9TUEFOPi4gDQphZ2FpbnN0IDxTUEFO
+PiAgdDwvU1BBTj5oPFNUUk9ORz5lIGY8L1NUUk9ORz5lbmRlci4NCjxwPmRhbmc3bG9ua2VybzAy
+c3R1cGVkZjxGT05UIGZhY2U9QXJpYWw+aWE8L0ZPTlQ+bnRlLjwvcD4
 
 
 -------------------------------------------------------
