@@ -1,132 +1,86 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 17:55:15 +0000
-Subject: [Kernel-janitors] [PATCH] dvb/av7110_hw: replace schedule_timeout()
-Message-Id: <20040726175515.GS1897@us.ibm.com>
+Date: Tue, 27 Jul 2004 21:14:12 +0000
+Subject: [Kernel-janitors] [PATCH] pci/cpci_hotplug_core: replace
+Message-Id: <20040727211412.GO3471@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============02805628184884057=="
+Content-Type: multipart/mixed; boundary="===============28530518311506015=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============02805628184884057==
+--===============28530518311506015==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
+
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
+
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch. 
 
 Thanks,
 Nish
 
+
+
 Applys-to: 2.6.7
 
-Description: Replace dvb_delay() with msleep() to guarantee the
-task delays the desired time.
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-
---- linux-vanilla/drivers/media/dvb/ttpci/av7110_hw.c	2004-06-16 05:19:42.000000000 +0000
-+++ linux-dev/drivers/media/dvb/ttpci/av7110_hw.c	2004-07-02 20:25:30.000000000 +0000
-@@ -106,7 +106,7 @@ void av7110_reset_arm(struct av7110 *av7
- 	saa7146_write(av7110->dev, ISR, (MASK_19 | MASK_03));
+--- linux-vanilla/drivers/pci/hotplug/cpci_hotplug_core.c	2004-06-16 05:19:22.000000000 +0000
++++ linux-dev/drivers/pci/hotplug/cpci_hotplug_core.c	2004-07-12 22:10:14.000000000 +0000
+@@ -513,11 +513,10 @@ event_thread(void *data)
+ 			break;
+ 		while(controller->ops->query_enum()) {
+ 			rc = check_slots();
+-			if(rc > 0) {
++			if(rc > 0)
+ 				/* Give userspace a chance to handle extraction */
+-				set_current_state(TASK_INTERRUPTIBLE);
+-				schedule_timeout(HZ / 2);
+-			} else if(rc < 0) {
++				msleep(500);
++			else if(rc < 0) {
+ 				dbg("%s - error checking slots", __FUNCTION__);
+ 				thread_finished = 1;
+ 				break;
+@@ -568,11 +567,10 @@ poll_thread(void *data)
  
- 	saa7146_setgpio(av7110->dev, RESET_LINE, SAA7146_GPIO_OUTHI);
--	dvb_delay(30);	/* the firmware needs some time to initialize */
-+	msleep(30);	/* the firmware needs some time to initialize */
+ 		while(controller->ops->query_enum()) {
+ 			rc = check_slots();
+-			if(rc > 0) {
++			if(rc > 0)
+ 				/* Give userspace a chance to handle extraction */
+-				set_current_state(TASK_INTERRUPTIBLE);
+-				schedule_timeout(HZ / 2);
+-			} else if(rc < 0) {
++				msleep(500);
++			else if(rc < 0) {
+ 				dbg("%s - error checking slots", __FUNCTION__);
+ 				thread_finished = 1;
+ 				break;
+@@ -595,8 +593,7 @@ poll_thread(void *data)
+ 			}
+ 		}
  
- 	ARM_ResetMailBox(av7110);
- 
-@@ -268,7 +268,7 @@ int av7110_bootarm(struct av7110 *av7110
- 		return -1;
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ / 10);
++		msleep(100);
  	}
- 	saa7146_setgpio(dev, RESET_LINE, SAA7146_GPIO_OUTHI);
--	dvb_delay(30);	/* the firmware needs some time to initialize */
-+	msleep(30);	/* the firmware needs some time to initialize */
- 
- 	//ARM_ClearIrq(av7110);
- 	ARM_ResetMailBox(av7110);
-@@ -302,7 +302,7 @@ int __av7110_send_fw_cmd(struct av7110 *
- 
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, COMMAND, 0, 2 )) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_FREE)) {
- 			printk(KERN_ERR "%s: timeout waiting for COMMAND idle\n", __FUNCTION__);
- 			return -1;
-@@ -312,7 +312,7 @@ int __av7110_send_fw_cmd(struct av7110 *
- #ifndef _NOHANDSHAKE
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, HANDSHAKE_REG, 0, 2 )) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_SHAKE)) {
- 			printk(KERN_ERR "%s: timeout waiting for HANDSHAKE_REG\n", __FUNCTION__);
- 			return -1;
-@@ -322,7 +322,7 @@ int __av7110_send_fw_cmd(struct av7110 *
- 
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, MSGSTATE, 0, 2) & OSDQFull) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_OSD)) {
- 			printk(KERN_ERR "%s: timeout waiting for !OSDQFull\n", __FUNCTION__);
- 			return -1;
-@@ -341,7 +341,7 @@ int __av7110_send_fw_cmd(struct av7110 *
- #ifdef COM_DEBUG
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, COMMAND, 0, 2 )) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_FREE)) {
- 			printk(KERN_ERR "%s: timeout waiting for COMMAND to complete\n",
- 			       __FUNCTION__);
-@@ -458,7 +458,7 @@ int av7110_fw_request(struct av7110 *av7
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, COMMAND, 0, 2)) {
- #ifdef _NOHANDSHAKE
--		dvb_delay(1);
-+		msleep(1);
- #endif
- 		if (time_after(jiffies, start + ARM_WAIT_FREE)) {
- 			printk("%s: timeout waiting for COMMAND to complete\n", __FUNCTION__);
-@@ -470,7 +470,7 @@ int av7110_fw_request(struct av7110 *av7
- #ifndef _NOHANDSHAKE
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, HANDSHAKE_REG, 0, 2 )) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_SHAKE)) {
- 			printk(KERN_ERR "%s: timeout waiting for HANDSHAKE_REG\n", __FUNCTION__);
- 			up(&av7110->dcomlock);
-@@ -630,7 +630,7 @@ static int FlushText(struct av7110 *av71
- 		return -ERESTARTSYS;
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, BUFF1_BASE, 0, 2)) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_OSD)) {
- 			printk(KERN_ERR "%s: timeout waiting for BUFF1_BASE == 0\n",
- 			       __FUNCTION__);
-@@ -654,7 +654,7 @@ static int WriteText(struct av7110 *av71
- 
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, BUFF1_BASE, 0, 2)) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_OSD)) {
- 			printk(KERN_ERR "%s: timeout waiting for BUFF1_BASE == 0\n",
- 			       __FUNCTION__);
-@@ -665,7 +665,7 @@ static int WriteText(struct av7110 *av71
- #ifndef _NOHANDSHAKE
- 	start = jiffies;
- 	while (rdebi(av7110, DEBINOSWAP, HANDSHAKE_REG, 0, 2)) {
--		dvb_delay(1);
-+		msleep(1);
- 		if (time_after(jiffies, start + ARM_WAIT_SHAKE)) {
- 			printk(KERN_ERR "%s: timeout waiting for HANDSHAKE_REG\n",
- 			       __FUNCTION__);
+ 	dbg("poll thread signals exit");
+ 	up(&thread_exit);
 
---===============02805628184884057==
+--===============28530518311506015==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -137,4 +91,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============02805628184884057==--
+--===============28530518311506015==--
