@@ -1,40 +1,70 @@
-From: "tasha perkins" <gertthees@uk2.net>
-Date: Mon, 03 May 2004 09:57:02 +0000
-Subject: Medical Miracle
-Message-Id: <BDBC90B0.79A4FEE@uk2.net>
+From: "Rosa Lin" <rruipkkyw@mdc.de>
+Date: Fri, 28 May 2004 00:44:03 +0000
+Subject: 42- I hate working for other people
+Message-Id: <E1BTVME-0005or-O7@sc8-sf-mx1.sourceforge.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--326012E6E20757862AE"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-PEhUTUw+Ck5ld3M6IG1lZGljYWwgam91cm5hbDxCUj4KPEJSPgpGZWVsIHRoZSBFbmVyZ3kgYW5k
-IHJlY2FwdHVyZSB5b3VyIHlvdXRoPEJSPgpGb3IgTWFueSwgVGhpcyBpcyBhIFBvd2VyZnVsIFNl
-Y29uZCBDaGFuY2U8QlI+CjxCUj48QSBocmVmPSJodHRwOi8vd3d3LmdvbGRwcm9tb3NvbC5jb20v
-Ny8iPnByZXNzIGhlcmUgdG8gcmVhZAphYm91dDwvQT48QlI+ClRoaXMgY29tbW9uIGVsZW1lbnQg
-Y2FuIGNoYW5nZSB0aGUgd2F5IHlvdSBleHBlcmllbmNlIHRoZSBuZXh0IGhhbGYgb2YgeW91cgps
-aWZlPEJSPgo8QlI+CjxCUj4KPEJSPgotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLTxCUj4KRnJv
-bTogYm94MTIwMCBPcmFuamVzdGFkIEFydWJhIFttYWlsdG86a2lhQHFndy5jb21dPEJSPgpTZW50
-OiBGcmlkYXksIE1hcmNoIDIsIDIwMDQgODo0NkFNPEJSPgpUbzogaG9sbGk7IGNocmlzdGVuQHF0
-eGcuY29tOyB6b25pYTsgZGlhbmU7IGdlb3JnZTxCUj4KU3ViamVjdDogYWRkcmVzcyBsaXN0ZWQg
-YWJvdmUgYW5kIGp1c3Qgc2VlIHNpdGUgdG8gYmUgZ29uZSBmcm9tIHRoZSBkYjxCUj4KPEJSPgo8
-QlI+ClRocmVlIHN0dWRpZXMgYXNzZXNzZWQgc3RhcGh5bG9jb2NjYWwgZW5kb2NhcmRpdGlzMjEg
-NDggNjMgb25lIHN0dWR5CmFzc2Vzc2VkIGFueSBzdGFwaHlsb2NvY2NhbCBpbmZlY3Rpb24zMiBh
-bmQgb25lIGFzc2Vzc2VkIHN0cmVwdG9jb2NjYWwKZW5kb2NhcmRpdGlzIDY5ICBsYWN0YW1hbWlu
-b2dseWNvc2lkZSB0cmVhdG1lbnQgaXMgd2VsbCBpbmdyYWluZWQgaW4KZXhpc3RpbmcgZ3VpZGVs
-aW5lcyBhbmQgY2xpbmljYWwgcHJhY3RpY2Ugd2l0aCB0aGVzZSBpbmZlY3Rpb25zOTQgPEJSPgp5
-ZXQgb3VyIHJlc3VsdHMgZG8gbm90IHBvaW50IHRvIGEgY2xpbmljYWwgYmVuZWZpdCB3aXRoIGNv
-bWJpbmF0aW9uIHRoZXJhcHkKIFdpdGggdGhlc2UgaW5mZWN0aW9ucyBmdXJ0aGVyIHN0dWRpZXMg
-c2hvdWxkIGFzc2VzcyB3aGV0aGVyIHRoZSBhZGRpdGlvbiBvZgphbiBhbWlub2dseWNvc2lkZSBp
-cyBqdXN0aWZpZWQgIDxCUj4KPEJSPgpCdXQgd2h5IGRvIHlvdSBjYWxsIHRoZW0gZm9vbGlzaCBl
-eHBlcmllbmNlcz8gQmVjYXVzZSB0aGV5IHdlcmUsIGFib21pbmFibHkKZm9vbGlzaCEgcmV0b3J0
-ZWQgdGhlIERlbW9uLCBiaXR0ZXJseQo8L0ZPTlQ+PC9IVE1MPgoKCgotLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRoaXMgU0YuTmV0IGVtYWls
-IGlzIHNwb25zb3JlZCBieTogT3JhY2xlIDEwZwpHZXQgY2VydGlmaWVkIG9uIHRoZSBob3R0ZXN0
-IHRoaW5nIGV2ZXIgdG8gaGl0IHRoZSBtYXJrZXQuLi4gT3JhY2xlIDEwZy4gClRha2UgYW4gT3Jh
-Y2xlIDEwZyBjbGFzcyBub3csIGFuZCB3ZSdsbCBnaXZlIHlvdSB0aGUgZXhhbSBGUkVFLgpodHRw
-Oi8vYWRzLm9zZG4uY29tLz9hZF9pZDE0OSZhbGxvY19pZIE2NiZvcD1jbGljawpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpLZXJuZWwtamFuaXRvci1kaXNj
-dXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1kaXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdl
-Lm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9rZXJuZWwt
-amFuaXRvci1kaXNjdXNz
+----326012E6E20757862AE
+Content-Type: text/plain;
+	charset="iso-389A-1"
+Content-Transfer-Encoding: quoted-printable
+
+<HTML>
+<head>
+<title>attainderF</title>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859=
+-1">
+</head>
+<body>
+<table width=3D"75%" border=3D"1">
+ <tr>
+    <td><p align=3D"center">&nbsp;</p>
+      <p align=3D"center"><strong>Do you want to make some serious cash wi=
+th just your opinion?</strong></p>
+      <p align=3D"center"><strong>look <a href=3D"http://go64.biz/srv.html=
+">here</a></strong></p>
+      <p align=3D"center"><strong><br>
+        </strong></p></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><font size=3D"2">to access our discard list=20 <a href=3D"http://go64.b=
+iz/takeoff/takeoff.html">follow 
+  this link</a></font></p>
+<font color=3D"#fffff0">Field11 post-modernism and science. What is import=
+ant is how quasi-objects circulate between the two poles and overcomes the=
+ poles making us unable to speak of pure nature or pure culture MUDs</font=
+>
+<font color=3D"#fffff7">with the essential difference that Turkle did not =
+ascribe agency to the objects as such. Even though this was the case becau=
+se it seems that humans always have the initiative even in symmetrical ana=
+lysis. Latour dismisses this claim by arguing "asking ""[w]hat was Sodom's=
+ crime? The refusal of hospitality."" (L=E9vy 1997"</font>
+<font color=3D"#fffff1">"Turkle sees the computer as an object-to-think-wi=
+th that is going to bring humanity beyond beast and dreams by the use of b=
+ricolage. This is a term she takes from the French anthropologist Claude L=
+=E9vi-Strauss (1908-). Bricolage is ""a process of theoretica" but it is e=
+ffective. Field4</font>
+<font color=3D"#fffff1">Field9 and the den mother such as experimental set=
+tings or living organisms (often birds). The air pump</font>
+</body>
+</html>
+
+
+----326012E6E20757862AE--
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: Oracle 10g
+Get certified on the hottest thing ever to hit the market... Oracle 10g. 
+Take an Oracle 10g class now, and we'll give you the exam FREE.
+http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
+_______________________________________________
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
