@@ -1,20 +1,23 @@
 From: MJK <mkemp@cs.nmsu.edu>
-Date: Sat, 29 May 2004 04:39:23 +0000
+Date: Sat, 29 May 2004 04:40:34 +0000
 Subject: [Kernel-janitors] [PATCH] kernel_thread() audit
-Message-Id: <Pine.LNX.4.58.0405282237210.700@mustang.cs.nmsu.edu>
+Message-Id: <Pine.LNX.4.58.0405282239500.927@mustang.cs.nmsu.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93092711880908752=="
+Content-Type: multipart/mixed; boundary="===============32430482082470524=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.58.0405202047020.9107@mustang.cs.nmsu.edu>
 In-Reply-To: <Pine.LNX.4.58.0405202047020.9107@mustang.cs.nmsu.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============93092711880908752==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============32430482082470524==
+Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
+Content-ID: <Pine.LNX.4.58.0405282239502.927@mustang.cs.nmsu.edu>
 
 
 
 	Compiles fine, took Randy's advice.
+
+	Signed-off-by: MJK <mkemp@cs.nmsu.edu>
 
 Sweet cuppin-cakes!
 M. Kemp
@@ -99,7 +102,7 @@ M. Kemp
 +	return -1;
  }
 
---===============93092711880908752==
+--===============32430482082470524==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -110,4 +113,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93092711880908752==--
+--===============32430482082470524==--
