@@ -1,42 +1,78 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 18 Mar 2005 14:27:22 +0000
-Subject: Re: [KJ] [PATCH] [RESEND] printk :
-Message-Id: <20050318142722.GK17789@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 03 Mar 2005 18:53:43 +0000
+Subject: [KJ] [PATCH] serial/68328serial: replace schedule_timeout() with
+Message-Id: <20050303185343.GL11600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="r5lq+205vWdkqwtk"
+Content-Type: multipart/mixed; boundary="===============44479626020313034=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: rmk+serial@arm.linux.org.uk
+Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linux-serial@vger.kernel.org
 
-
---r5lq+205vWdkqwtk
+--===============44479626020313034==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Description:
-printk() calls should include appropriate KERN_* constant.
+Hi,
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Russell, sorry if you are not responsible for this driver, but I figure
+the more eyes the better.
+
+Thanks,
+Nish
 
 
---r5lq+205vWdkqwtk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="patch-linux-2.6.11_drivers_media_dvb_ttpci_av7110_ipack.c.diff"
+Please consider applying.
 
-diff -urpN -X dontdiff linux-2.6.11-vanilla/drivers/media/dvb/ttpci/av7110_ipack.c linux-2.6.11/drivers/media/dvb/ttpci/av7110_ipack.c
---- linux-2.6.11-vanilla/drivers/media/dvb/ttpci/av7110_ipack.c	2005-03-02 08:38:07.000000000 +0100
-+++ linux-2.6.11/drivers/media/dvb/ttpci/av7110_ipack.c	2005-03-16 11:57:03.000000000 +0100
-@@ -24,7 +24,7 @@ int av7110_ipack_init(struct ipack *p, i
- 		       void (*func)(u8 *buf, int size, void *priv))
+Description: Use msleep_interruptible() instead of schedule_timeout() in
+send_break() to guarantee the task delays as expected. Change
+@duration's units to milliseconds, and modify arguments in callers
+appropriately.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.11-kj-v/drivers/serial/68328serial.c	2005-03-01 23:38:32.000000000 -0800
++++ 2.6.11-kj/drivers/serial/68328serial.c	2005-03-03 10:51:12.000000000 -0800
+@@ -992,18 +992,17 @@ static int get_lsr_info(struct m68k_seri
+ /*
+  * This routine sends a break character out the serial port.
+  */
+-static void send_break(	struct m68k_serial * info, int duration)
++static void send_break(struct m68k_serial * info, unsigned int duration)
  {
- 	if ( !(p->buf = vmalloc(size*sizeof(u8))) ){
--		printk("Couldn't allocate memory for ipack\n");
-+		printk(KERN_WARNING "Couldn't allocate memory for ipack\n");
- 		return -ENOMEM;
- 	}
- 	p->size = size;
+ 	m68328_uart *uart = &uart_addr[info->line];
+         unsigned long flags;
+         if (!info->port)
+                 return;
+-        set_current_state(TASK_INTERRUPTIBLE);
+         save_flags(flags);
+         cli();
+ #ifdef USE_INTS	
+ 	uart->utx.w |= UTX_SEND_BREAK;
+-        schedule_timeout(duration);
++	msleep_interruptible(duration);
+ 	uart->utx.w &= ~UTX_SEND_BREAK;
+ #endif		
+         restore_flags(flags);
+@@ -1033,14 +1032,14 @@ static int rs_ioctl(struct tty_struct *t
+ 				return retval;
+ 			tty_wait_until_sent(tty, 0);
+ 			if (!arg)
+-				send_break(info, HZ/4);	/* 1/4 second */
++				send_break(info, 250);	/* 1/4 second */
+ 			return 0;
+ 		case TCSBRKP:	/* support for POSIX tcsendbreak() */
+ 			retval = tty_check_change(tty);
+ 			if (retval)
+ 				return retval;
+ 			tty_wait_until_sent(tty, 0);
+-			send_break(info, arg ? arg*(HZ/10) : HZ/4);
++			send_break(info, arg ? arg*(100) : 250);
+ 			return 0;
+ 		case TIOCGSOFTCAR:
+ 			error = put_user(C_CLOCAL(tty) ? 1 : 0,
 
---r5lq+205vWdkqwtk
+--===============44479626020313034==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---r5lq+205vWdkqwtk--
+--===============44479626020313034==--
