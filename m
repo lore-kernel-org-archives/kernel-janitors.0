@@ -1,44 +1,63 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 14 Feb 2005 18:46:15 +0000
-Subject: Re: [KJ] [PATCH 9/18] drivers/net/ remove pci_find_{device, subsys}
-Message-Id: <20050214184613.GP7815@kroah.com>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Wed, 02 Feb 2005 09:57:39 +0000
+Subject: [KJ] Re: [linux-pm] Re: driver model u32 -> pm_message_t
+Message-Id: <20050202095739.GB12955@elf.ucw.cz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5488872609210631=="
+Content-Type: multipart/mixed; boundary="===============28097825835692269=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200502141125.25185.amitg@calsoftinc.com>
-In-Reply-To: <200502141125.25185.amitg@calsoftinc.com>
-To: Amit Gud <amitg@calsoftinc.com>
-Cc: netdev@oss.sgi.com, jgarzik@pobox.com, gud@eth.net, kernel-janitors@lists.osdl.org
+References: <20050125194710.GA1711@elf.ucw.cz> <yq0brb3qs74.fsf@jaguar.mkp.net> <20050202095014.GA12955@elf.ucw.cz>
+In-Reply-To: <20050202095014.GA12955@elf.ucw.cz>
+To: Jes Sorensen <jes@wildopensource.com>
+Cc: linux-pm@osdl.org, kernel-janitors@osdl.org, kernel list <linux-kernel@vger.kernel.org>
 
---===============5488872609210631==
+--===============28097825835692269==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Feb 14, 2005 at 11:25:23AM +0530, Amit Gud wrote:
-> diff -uprN orig/drivers/net/gt96100eth.c linux-2.6.11-rc3/drivers/net/gt96100eth.c
-> --- orig/drivers/net/gt96100eth.c	2005-02-11 15:19:48.000000000 +0530
-> +++ linux-2.6.11-rc3/drivers/net/gt96100eth.c	2005-02-14 02:07:09.000000000 +0530
-> @@ -615,9 +615,9 @@ static int gt96100_init_module(void)
->  	/*
->  	 * Stupid probe because this really isn't a PCI device
->  	 */
-> -	if (!(pci = pci_find_device(PCI_VENDOR_ID_MARVELL,
-> +	if (!(pci = pci_get_device(PCI_VENDOR_ID_MARVELL,
->  	                            PCI_DEVICE_ID_MARVELL_GT96100, NULL)) &&
-> -	    !(pci = pci_find_device(PCI_VENDOR_ID_MARVELL,
-> +	    !(pci = pci_get_device(PCI_VENDOR_ID_MARVELL,
->  		                    PCI_DEVICE_ID_MARVELL_GT96100A, NULL))) {
->  		printk(KERN_ERR __FILE__ ": GT96100 not found!\n");
->  		return -ENODEV;
+Hi!
 
-This (and many other parts of this patch) are incorrect.  Please do not
-apply.
+> > Pavel> Hi!  Two Long time ago, BenH said that making patches is easy,
+> > Pavel> so I hope to get his help now... And will probably need more.
+> > 
+> > Pavel> Suspend routines change, slowly.
+> > 
+> > Pavel> - int (*suspend)(struct device * dev, u32 state); + int
+> > Pavel> (*suspend)(struct device * dev, pm_message_t state);
+> > 
+> > Pavel> For now u32 is typedef-ed to pm_message_t, but that is not
+> > Pavel> going to be the case for 2.6.12. What needs to be done is
+> > Pavel> changing all state parameters from u32 to
+> > Pavel> pm_message_t. suspend() functions should not use state variable
+> > Pavel> for now (except for PCI ones, those are allowed to call
+> > Pavel> pci_choose_state and convert state into pci_power_t, and use
+> > Pavel> that).
+> > 
+> > Sorry for being late responding to this, but I'd say this is a prime
+> > example for typedef's considered evil (see Greg's OLS talk ;).
+> > 
+> > It would be a lot cleaner if it was made a struct and then passing a
+> > struct pointer as the argument instead of passing the struct by value
+> > as you do right now.
+> 
+> Sorry, can't do that. That would require flag day and change
+> everything at once. That is just not feasible. When things are
+> settled, it is okay to change it to struct passed by value.. It is
+> small anyway and at least we will not have problems with freeing it
+> etc.
 
-thanks,
+Well, we could switch to passing struct by reference
 
-greg k-h
+(typedef struct pm_message *pm_message_t)
 
---===============5488872609210631==
+, but AFAICS it would only bring us problems with lifetime rules
+etc. Lets not do it.
+								Pavel
+
+-- 
+People were complaining that M$ turns users into beta-testers...
+...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
+
+--===============28097825835692269==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5488872609210631==--
+--===============28097825835692269==--
