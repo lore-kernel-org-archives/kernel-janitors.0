@@ -1,47 +1,45 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 18 Mar 2005 11:50:49 +0000
-Subject: [KJ] [PATCH] printk : drivers/media/dvb/ttpci/av7110_ipack.c
-Message-Id: <20050318115049.GG17789@rhum.iomeda.fr>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 18 Mar 2005 14:04:51 +0000
+Subject: Re: [KJ] [PATCH] printk : drivers/media/dvb/ttpci/av7110_ipack.c
+Message-Id: <20050318140451.GE4006@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="maH1Gajj2nflutpK"
+Content-Type: multipart/mixed; boundary="===============72025445060805948=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050318115049.GG17789@rhum.iomeda.fr>
+In-Reply-To: <20050318115049.GG17789@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
-
---maH1Gajj2nflutpK
+--===============72025445060805948==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+On 18/03/05 12:50 +0100, Christophe Lucas wrote:
+> 
+> Hi,
+> 
+> Description:
+> printk() calls should include appropriate KERN_* constant.
 
-Hi,
+Doesn't apply to 2.6.11-rc1.
 
-Description:
-printk() calls should include appropriate KERN_* constant.
+> 
+> Have a nice day,
 
-Have a nice day,
+Can you drop this in patches otherwise someone else has to drop it (or
+it ends in bitkeeper).
+I already make script to strip "hi, hello, description, consider
+applying...", i'm not adding every possible regard in there :-)
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+
+> -		printk ("Couldn't allocate memory for ipack\n");
+> +		printk (KERN_WARNING "Couldn't allocate memory for ipack\n");
+
+		      ^
+You could get rid of this space.
 
 
---maH1Gajj2nflutpK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="patch-linux-2.6.11_drivers_media_dvb_ttpci_av7110_ipack.c.diff"
 
-diff -urpN -X dontdiff linux-2.6.11-vanilla/drivers/media/dvb/ttpci/av7110_ipack.c linux-2.6.11/drivers/media/dvb/ttpci/av7110_ipack.c
---- linux-2.6.11-vanilla/drivers/media/dvb/ttpci/av7110_ipack.c	2005-03-02 08:38:07.000000000 +0100
-+++ linux-2.6.11/drivers/media/dvb/ttpci/av7110_ipack.c	2005-03-16 11:57:03.000000000 +0100
-@@ -24,7 +24,7 @@ int av7110_ipack_init(struct ipack *p, i
- 		       void (*func)(u8 *buf, int size, void *priv))
- {
- 	if ( !(p->buf = vmalloc(size*sizeof(u8))) ){
--		printk ("Couldn't allocate memory for ipack\n");
-+		printk (KERN_WARNING "Couldn't allocate memory for ipack\n");
- 		return -ENOMEM;
- 	}
- 	p->size = size;
-
---maH1Gajj2nflutpK
+--===============72025445060805948==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---maH1Gajj2nflutpK--
+--===============72025445060805948==--
