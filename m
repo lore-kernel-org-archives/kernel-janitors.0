@@ -1,46 +1,76 @@
 From: Domen Puncer <domen@coderock.org>
-Date: Thu, 29 Jul 2004 11:47:41 +0000
+Date: Thu, 29 Jul 2004 11:48:10 +0000
 Subject: [Kernel-janitors] [patch 2.6.8-rc2] list_for_each_entry:
-Message-Id: <20040729114741.GL2294@masina.coderock.org>
+Message-Id: <20040729114810.GM2294@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17376132377638021=="
+Content-Type: multipart/mixed; boundary="===============25065041188918658=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040729114250.GB2294@masina.coderock.org>
 In-Reply-To: <20040729114250.GB2294@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============17376132377638021==
+--===============25065041188918658==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Use list_for_each_entry to make code more readable.
+Use list_for_each_entry_safe to make code more readable.
 Compile tested.
 
 
 Signed-off-by: Domen Puncer <domen@coderock.org>
 
---- c/drivers/usb/media/dabusb.c	Wed Jul 14 19:15:08 2004
-+++ list_for_each/drivers/usb/media/dabusb.c	Wed Jul 28 19:58:04 2004
-@@ -109,16 +109,13 @@
- static int dabusb_cancel_queue (pdabusb_t s, struct list_head *q)
+--- c/drivers/usb/serial/ipaq.c	Fri Jul 23 16:00:26 2004
++++ list_for_each/drivers/usb/serial/ipaq.c	Wed Jul 28 20:02:38 2004
+@@ -417,9 +417,8 @@
+ 	struct ipaq_private	*priv = usb_get_serial_port_data(port);
+ 	struct usb_serial	*serial = port->serial;
+ 	int			count, room;
+-	struct ipaq_packet	*pkt;
++	struct ipaq_packet	*pkt, *tmp;
+ 	struct urb		*urb = port->write_urb;
+-	struct list_head	*tmp;
+ 
+ 	if (urb->status == -EINPROGRESS) {
+ 		/* Should never happen */
+@@ -427,9 +426,7 @@
+ 		return;
+ 	}
+ 	room = URBDATA_SIZE;
+-	for (tmp = priv->queue.next; tmp != &priv->queue;) {
+-		pkt = list_entry(tmp, struct ipaq_packet, list);
+-		tmp = tmp->next;
++	list_for_each_entry_safe(pkt, tmp, &priv->queue, list) {
+ 		count = min(room, (int)(pkt->len - pkt->written));
+ 		memcpy(urb->transfer_buffer + (URBDATA_SIZE - room),
+ 		       pkt->data + pkt->written, count);
+@@ -501,22 +498,16 @@
+ static void ipaq_destroy_lists(struct usb_serial_port *port)
  {
- 	unsigned long flags;
--	struct list_head *p;
- 	pbuff_t b;
+ 	struct ipaq_private	*priv = usb_get_serial_port_data(port);
+-	struct list_head	*tmp;
+-	struct ipaq_packet	*pkt;
++	struct ipaq_packet	*pkt, *tmp;
  
- 	dbg("dabusb_cancel_queue");
+-	for (tmp = priv->queue.next; tmp != &priv->queue;) {
+-		pkt = list_entry(tmp, struct ipaq_packet, list);
+-		tmp = tmp->next;
++	list_for_each_entry_safe(pkt, tmp, &priv->queue, list) {
+ 		kfree(pkt->data);
+ 		kfree(pkt);
+ 	}
+-	for (tmp = priv->freelist.next; tmp != &priv->freelist;) {
+-		pkt = list_entry(tmp, struct ipaq_packet, list);
+-		tmp = tmp->next;
++	list_for_each_entry_safe(pkt, tmp, &priv->freelist, list) {
+ 		kfree(pkt->data);
+ 		kfree(pkt);
+ 	}
+-	return;
+ }
  
- 	spin_lock_irqsave (&s->lock, flags);
  
--	for (p = q->next; p != q; p = p->next) {
--		b = list_entry (p, buff_t, buff_list);
--
-+	list_for_each_entry(b, q, buff_list) {
- #ifdef DEBUG
- 		dump_urb(b->purb);
- #endif
 
---===============17376132377638021==
+--===============25065041188918658==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============17376132377638021==--
+--===============25065041188918658==--
