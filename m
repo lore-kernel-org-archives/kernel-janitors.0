@@ -1,37 +1,89 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:51 +0000
-Subject: [KJ] [PATCH][RESUBMIT][3/21] drivers/char/* - compile warning
-Message-Id: <42113C2B.5752.52BA77@localhost>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 18:18:50 +0000
+Subject: [KJ] [PATCH 4/20] net/ibmtr: remove
+Message-Id: <20050202181850.GE2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52969206663436008=="
+Content-Type: multipart/mixed; boundary="===============2691360889185459=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: Peter.Deschrijver@linux.cc.kuleuven.ac.be, mikep@linuxtr.net, sullivan@us.ibm.com
+Cc: netdev@oss.sgi.com, linux-tr@linuxtr.net, kernel-janitors@lists.osdl.org
 
---===============52969206663436008==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============2691360889185459==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - removed unused automatic variable
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Please consider applying. This patch supersedes the recent patch "net/ibmtr:
+remove sleep_on*() usage"
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/char/mxser.c linux-2.6.11-rc3-mm2/drivers/char/mxser.c
---- linux-2.6.11-rc3-mm2-original/drivers/char/mxser.c	2005-02-12 12:06:38.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/char/mxser.c	2005-02-12 14:12:09.000000000 +0200
-@@ -548,7 +548,6 @@ static void process_txrx_fifo(struct mxs
- static int mxser_initbrd(int board, struct mxser_hwconf *hwconf)
- {
- 	struct mxser_struct *info;
--	unsigned long flags;
- 	int retval;
- 	int i, n;
+Description: Replace deprecated sleep_on*() function calls with direct
+wait-queue usage. Patch is compile-tested. The patch also fixes a potentially
+racy conditional in tok_open(), whereby msleep_interruptible() could receive a
+signal within the last jiffy, thus returning 0, but signal_pending(current)
+would be true.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/drivers/net/tokenring/ibmtr.c	2005-01-26 11:19:04.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/net/tokenring/ibmtr.c	2005-02-02 10:16:56.000000000 -0800
+@@ -109,6 +109,7 @@ in the event that chatty debug messages 
  
+ #include <linux/module.h>
+ #include <linux/delay.h>
++#include <linux/wait.h>
+ 
+ #ifdef PCMCIA		/* required for ibmtr_cs.c to build */
+ #undef MODULE		/* yes, really */
+@@ -847,6 +848,7 @@ static int __devinit trdev_init(struct n
+ 
+ static int tok_init_card(struct net_device *dev)
+ {
++	DEFINE_WAIT(wait);
+ 	struct tok_info *ti;
+ 	short PIOaddr;
+ 	unsigned long i;
+@@ -867,13 +869,16 @@ static int tok_init_card(struct net_devi
+ 		writeb(SRPR_ENABLE_PAGING,ti->mmio+ACA_OFFSET+ACA_RW+SRPR_EVEN);
+ #endif
+ 	writeb(INT_ENABLE, ti->mmio + ACA_OFFSET + ACA_SET + ISRP_EVEN);
+-	i = sleep_on_timeout(&ti->wait_for_reset, 4 * HZ);
++	prepare_to_wait(&ti->wait_for_reset, &wait, TASK_UNINTERRUPTIBLE);
++	i = schedule_timeout(4*HZ);
++	finish_wait(&ti->wait_for_reset, &wait);
+ 	return i? 0 : -EAGAIN;
+ }
+ 
+ /*****************************************************************************/
+ static int tok_open(struct net_device *dev)
+ {
++	DEFINE_WAIT(wait);
+ 	struct tok_info *ti = (struct tok_info *) dev->priv;
+ 	int i;
+ 
+@@ -903,7 +908,9 @@ static int tok_open(struct net_device *d
+ 
+ 	while (1){
+ 		tok_open_adapter((unsigned long) dev);
+-		i= interruptible_sleep_on_timeout(&ti->wait_for_reset, 25 * HZ);
++		prepare_to_wait(&ti->wait_for_reset, &wait, TASK_INTERRUPTIBLE);
++		i = schedule_timeout(25 * HZ);
++		finish_wait(&ti->wait_for_reset, &wait);
+ 		/* sig catch: estimate opening adapter takes more than .5 sec*/
+ 		if (i>(245*HZ)/10) break; /* fancier than if (i==25*HZ) */
+ 		if (i==0) break;
+@@ -912,7 +919,8 @@ static int tok_open(struct net_device *d
+ 			DPRINTK("Adapter is up and running\n");
+ 			return 0;
+ 		}
+-		if(msleep_interruptible(jiffies_to_msecs(TR_RETRY_INTERVAL)))
++		msleep_interruptible(jiffies_to_msecs(TR_RETRY_INTERVAL));
++		if (signal_pending(current))
+ 			break; /*prob. a signal, like the i>24*HZ case above */
+ 	}
+ 	outb(0, dev->base_addr + ADAPTRESET);/* kill pending interrupts*/
 
-
-
-
---===============52969206663436008==
+--===============2691360889185459==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +94,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52969206663436008==--
+--===============2691360889185459==--
