@@ -1,58 +1,55 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 29 Sep 2004 23:50:14 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 matroxfb_base.c][7/8]
-Message-Id: <26940000.1096501814@w-hlinder.beaverton.ibm.com>
+From: Adrian Bunk <bunk@fs.tum.de>
+Date: Wed, 22 Sep 2004 11:21:58 +0000
+Subject: [Kernel-janitors] 2.6.9-rc2-kjt1 rio_linux compile error
+Message-Id: <20040922112157.GB27364@fs.tum.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45596753076509078=="
+Content-Type: multipart/mixed; boundary="===============052431161272227023=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, vandrove@vc.cvut.cz
+References: <20040921221307.GG4260@stro.at>
+In-Reply-To: <20040921221307.GG4260@stro.at>
+To: kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org, Nishanth Aravamudan <nacc@us.ibm.com>
 
---===============45596753076509078==
+--===============052431161272227023==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+On Wed, Sep 22, 2004 at 12:13:07AM +0200, maximilian attems wrote:
+>...
+> added since 2.6.9-rc1-kjt1
+>...
+> msleep-drivers_char_rio_linux.patch
+>   From: Nishanth Aravamudan <nacc@us.ibm.com>
+>   Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 20/33] char/rio_linux: replace 	schedule_timeout() with msleep()/msleep_interruptible()
+>...
 
-As pci_find_device is going away it is being replace with pci_dev_present (since the
-dev is not used). I have compiled tested this.
+This doesn't compile (obvious typo):
 
-Hanna Linder
-IBM Linux Technology Center
+<--  snip  -->
 
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+...
+  CC      drivers/char/rio/rio_linux.o
+drivers/char/rio/rio_linux.c: In function `RIODelay':
+drivers/char/rio/rio_linux.c:333: warning: implicit declaration of function `jiffes_to_msecs'
+...
+  LD      .tmp_vmlinux1
+drivers/built-in.o(.text+0x141239): In function `RIODelay':
+: undefined reference to `jiffes_to_msecs'
+make: *** [.tmp_vmlinux1] Error 1
 
----
+<--  snip  -->
 
-diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/video/matrox/matroxfb_base.c linux-2.6.9-rc2-mm4patch/drivers/video/matrox/matroxfb_base.c
---- linux-2.6.9-rc2-mm4cln/drivers/video/matrox/matroxfb_base.c	2004-09-28 14:59:07.000000000 -0700
-+++ linux-2.6.9-rc2-mm4patch/drivers/video/matrox/matroxfb_base.c	2004-09-29 16:18:33.000000000 -0700
-@@ -1578,6 +1578,11 @@ static int initMatrox2(WPMINFO struct bo
- 	unsigned int memsize;
- 	int err;
- 
-+	static struct pci_device_id intel_82437[] = {
-+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437) },
-+		{ },
-+	};
-+
- 	DBG(__FUNCTION__)
- 
- 	/* set default values... */
-@@ -1682,7 +1687,7 @@ static int initMatrox2(WPMINFO struct bo
- 		mga_option |= MX_OPTION_BSWAP;
-                 /* disable palette snooping */
-                 cmd &= ~PCI_COMMAND_VGA_PALETTE;
--		if (pci_find_device(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437, NULL)) {
-+		if (pci_dev_present(intel_82437)) {
- 			if (!(mga_option & 0x20000000) && !ACCESS_FBINFO(devflags.nopciretry)) {
- 				printk(KERN_WARNING "matroxfb: Disabling PCI retries due to i82437 present\n");
- 			}
+cu
+Adrian
 
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
 
-
---===============45596753076509078==
+--===============052431161272227023==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45596753076509078==--
+--===============052431161272227023==--
