@@ -1,63 +1,78 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 11 Jan 2005 00:56:30 +0000
-Subject: [KJ] [UPDATE PATCH] sbus/envctrl: replace schedule_timeout() with
-Message-Id: <20050111005630.GL9186@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:15:50 +0000
+Subject: [KJ] [PATCH 50/53] tdfxfb: Clean up printk()'s in
+Message-Id: <20050125231549.10418.39178.84348@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============022804889654032268=="
+Content-Type: multipart/mixed; boundary="===============25056277196390164=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============022804889654032268==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============25056277196390164==
 
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
-> 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/tdfxfb.c
 
-<snip>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-> msleep_interruptible-drivers_sbus_char_envctrl.patch
-
-Please consider updating to the following patch:
-
-Description: Use msleep_interruptible() instead of
-schedule_timeout() to guarantee the task delays as expected. Change the units of
-poll_interval to msecs as it is only used in this delay.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-v/drivers/sbus/char/envctrl.c	2004-12-24 13:34:01.000000000 -0800
-+++ 2.6.10/drivers/sbus/char/envctrl.c	2005-01-05 14:23:05.000000000 -0800
-@@ -1007,7 +1007,7 @@ static int kenvctrld(void *__unused)
- 		return -ENODEV;
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/tdfxfb.c linux-2.6.11-rc2-mm1/drivers/video/tdfxfb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/tdfxfb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/tdfxfb.c	2005-01-24 19:07:04.236256709 -0500
+@@ -4,7 +4,7 @@
+  *
+  * Author: Hannu Mallat <hmallat@cc.hut.fi>
+  *
+- * Copyright ��� 1999 Hannu Mallat
++ * Copyright  1999 Hannu Mallat
+  * All rights reserved
+  *
+  * Created      : Thu Sep 23 18:17:43 1999, hmallat
+@@ -1178,7 +1178,7 @@
+ 	tdfx_fix.mmio_len = pci_resource_len(pdev, 0);
+ 	default_par->regbase_virt = ioremap_nocache(tdfx_fix.mmio_start, tdfx_fix.mmio_len);
+ 	if (!default_par->regbase_virt) {
+-		printk("fb: Can't remap %s register area.\n", tdfx_fix.id);
++		printk(KERN_WARNING "fb: Can't remap %s register area.\n", tdfx_fix.id);
+ 		goto out_err;
+ 	}
+     
+@@ -1190,7 +1190,7 @@
+ 
+ 	tdfx_fix.smem_start = pci_resource_start(pdev, 1);
+ 	if (!(tdfx_fix.smem_len = do_lfb_size(default_par, pdev->device))) {
+-		printk("fb: Can't count %s memory.\n", tdfx_fix.id);
++		printk(KERN_WARNING "fb: Can't count %s memory.\n", tdfx_fix.id);
+ 		release_mem_region(pci_resource_start(pdev, 0),
+ 				   pci_resource_len(pdev, 0));
+ 		goto out_err;	
+@@ -1207,7 +1207,7 @@
+ 	info->screen_base = ioremap_nocache(tdfx_fix.smem_start, 
+ 					    tdfx_fix.smem_len);
+ 	if (!info->screen_base) {
+-		printk("fb: Can't remap %s framebuffer.\n", tdfx_fix.id);
++		printk(KERN_WARNING "fb: Can't remap %s framebuffer.\n", tdfx_fix.id);
+ 		release_mem_region(pci_resource_start(pdev, 1),
+ 				   pci_resource_len(pdev, 1));
+ 		release_mem_region(pci_resource_start(pdev, 0),
+@@ -1227,7 +1227,7 @@
+ 		goto out_err;
  	}
  
--	poll_interval = 5 * HZ; /* TODO env_mon_interval */
-+	poll_interval = 5000; /* TODO env_mon_interval */
+-	printk("fb: %s memory = %dK\n", tdfx_fix.id, tdfx_fix.smem_len >> 10);
++	pr_info("fb: %s memory = %dK\n", tdfx_fix.id, tdfx_fix.smem_len >> 10);
  
- 	daemonize("kenvctrld");
- 	allow_signal(SIGKILL);
-@@ -1016,10 +1016,7 @@ static int kenvctrld(void *__unused)
+ 	tdfx_fix.ypanstep	= nopan ? 0 : 1;
+ 	tdfx_fix.ywrapstep	= nowrap ? 0 : 1;
+@@ -1270,7 +1270,7 @@
+ 	}
  
- 	printk(KERN_INFO "envctrl: %s starting...\n", current->comm);
- 	for (;;) {
--		current->state = TASK_INTERRUPTIBLE;
--		schedule_timeout(poll_interval);
--
--		if(signal_pending(current))
-+		if(msleep_interruptible(poll_interval))
- 			break;
- 
- 		for (whichcpu = 0; whichcpu < ENVCTRL_MAX_CPU; ++whichcpu) {
+ 	if (register_framebuffer(info) < 0) {
+-		printk("tdfxfb: can't register framebuffer\n");
++		printk(KERN_WARNING "tdfxfb: can't register framebuffer\n");
+ 		fb_dealloc_cmap(&info->cmap);
+ 		goto out_err;
+ 	}
 
---===============022804889654032268==
+--===============25056277196390164==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============022804889654032268==--
+--===============25056277196390164==--
