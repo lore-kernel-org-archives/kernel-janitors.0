@@ -1,75 +1,57 @@
-From: "Jacquelyn Darnell" <louinpew@mwt.net>
-Date: Fri, 18 Mar 2005 16:52:27 +0000
-Subject: [KJ] To karnak to recommend
-Message-Id: <001401c52c1d$ebea1ef0$07e8761c@XMG033>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 03 Mar 2005 18:26:20 +0000
+Subject: [KJ] [RFC][PATCH 3/5] ppc/pmac_cpufreq: use poll_event*() interface
+Message-Id: <20050303182620.GF11600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6198583402344868934=="
+Content-Type: multipart/mixed; boundary="===============28347657319831443=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============6198583402344868934==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0011_01C52C1D.EBEA1EF0"
+--===============28347657319831443==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-------=_NextPart_000_0011_01C52C1D.EBEA1EF0
-Content-Type: text/plain;
-        charset="windows-1250"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
+Description: Use new poll_event() interface to encapsulate sleep-loops.
 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.11-kj-v/arch/ppc/platforms/pmac_cpufreq.c	2005-03-01 23:38:10.000000000 -0800
++++ 2.6.11-kj/arch/ppc/platforms/pmac_cpufreq.c	2005-03-02 17:53:35.000000000 -0800
+@@ -167,8 +167,6 @@ static unsigned int __pmac dfs_get_cpu_s
+  */
+ static int __pmac gpios_set_cpu_speed(int low_speed)
+ {
+-	int gpio;
+-
+ 	/* If ramping up, set voltage first */
+ 	if (low_speed == 0) {
+ 		pmac_call_feature(PMAC_FTR_WRITE_GPIO, NULL, voltage_gpio, 0x05);
+@@ -180,11 +178,8 @@ static int __pmac gpios_set_cpu_speed(in
+ 	pmac_call_feature(PMAC_FTR_WRITE_GPIO, NULL, frequency_gpio,
+ 			  low_speed ? 0x04 : 0x05);
+ 	udelay(200);
+-	do {
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(1);
+-		gpio = pmac_call_feature(PMAC_FTR_READ_GPIO, NULL, slew_done_gpio, 0);
+-	} while((gpio & 0x02) == 0);
++	/* check every millisecond until true */
++	poll_event(((pmac_call_feature(PMAC_FTR_READ_GPIO, NULL, slew_done_gpio, 0) & 0x02) != 0), 1);
+ 
+ 	/* If ramping down, set voltage last */
+ 	if (low_speed == 1) {
 
-THE ALERT IS ON...
-
-Sea.rch for: MRMTCurrent: $1.5 3 Day Target price: $5.0Market: =
-bullish...
-
-Here comes the REAL BIG ONE!!!!
-
-See the hottest news of the MRMT, kernel-janitors, call your broker.
-
-
-
-------=_NextPart_000_0011_01C52C1D.EBEA1EF0
-Content-Type: text/html;
-        charset="windows-1250"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3D=
-windows-1250">
-<META content=3D"MSHTML 6.00.3790.1106" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<BR><BR>
-<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#6600FF size=3D=
-3D4><FONT size=3D2><STRONG>THE ALERT IS ON...</STRONG></FONT></DIV>
-<BR><BR><BR>
-<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#CC3333 size=3D=
-3>Sea.rch for: <b>MRMT</b><br>Current: $1.5 <br>3 Day Target price: =
-$5.0<br>Market: bullish...</FONT></DIV>
-<BR><BR><BR>
-<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#003399 size=3D3>Here =
-comes the REAL BIG ONE!...</FONT></DIV>
-<BR><BR>
-<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#CC0033 size=3D4>See =
-the hottest news of the MRMT, kernel-janitors, call your =
-broker..</FONT></DIV>
-<BR>
-</BODY></HTML>
-
-------=_NextPart_000_0011_01C52C1D.EBEA1EF0--
-
---===============6198583402344868934==
-Content-Type: text/plain; charset="us-ascii"
+--===============28347657319831443==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============6198583402344868934==--
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============28347657319831443==--
