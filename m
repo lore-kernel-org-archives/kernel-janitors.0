@@ -1,48 +1,42 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 19 Mar 2005 21:44:52 +0000
-Subject: [KJ] [UPDATE PATCH 14/16] drivers/net/via-rhine: Use the
-Message-Id: <20050319214452.GN3306@localhost.localdomain>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 23 Mar 2005 10:20:34 +0000
+Subject: [KJ] [PATCH] cleanup : drivers/block/cciss.c
+Message-Id: <20050323102034.GB9206@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42746287831390328=="
+Content-Type: multipart/mixed; boundary="XMCwj5IQnwKtuyBG"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============42746287831390328==
+
+--XMCwj5IQnwKtuyBG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+description:
+commented printk cleanup.
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+--XMCwj5IQnwKtuyBG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch-2.6.12-rc1_drivers_block_cciss.c.diff"
 
---- linux-2.6.11.orig/drivers/net/via-rhine.c	2005-03-02 12:50:29.000000000 +0100
-+++ linux-2.6.11/drivers/net/via-rhine.c	2005-03-19 20:33:01.000000000 +0100
-@@ -186,6 +186,7 @@ static const int multicast_filter_limit 
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
- #include <linux/skbuff.h>
-@@ -740,7 +741,7 @@ static int __devinit rhine_init_one(stru
- 		goto err_out;
+diff -urpN -X dontdiff a/drivers/block/cciss.c b/drivers/block/cciss.c
+--- a/drivers/block/cciss.c	2005-03-18 02:34:36.000000000 +0100
++++ b/drivers/block/cciss.c	2005-03-22 16:39:03.000000000 +0100
+@@ -1542,9 +1542,6 @@ static int register_new_disk(ctlr_info_t
  
- 	/* this should always be supported */
--	rc = pci_set_dma_mask(pdev, 0xffffffff);
-+	rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
- 	if (rc) {
- 		printk(KERN_ERR "32-bit PCI DMA addresses not supported by "
- 		       "the card!?\n");
+ 	if( return_code == IO_OK)
+ 	{
+-		
+-		// printk("LUN Data\n--------------------------\n");
+-
+ 		listlength |= (0xff & (unsigned int)(ld_buff->LUNListLength[0])) << 24;
+ 		listlength |= (0xff & (unsigned int)(ld_buff->LUNListLength[1])) << 16;
+ 		listlength |= (0xff & (unsigned int)(ld_buff->LUNListLength[2])) << 8;	
 
---===============42746287831390328==
+--XMCwj5IQnwKtuyBG
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42746287831390328==--
+--XMCwj5IQnwKtuyBG--
