@@ -1,48 +1,39 @@
-From: madhusudhan seshadri <madhusudhan1508@yahoo.co.in>
-Date: Sat, 12 Mar 2005 09:45:17 +0000
-Subject: [KJ] How To invoke atmdev_ops function in MPC8260 SAR driver
-Message-Id: <20050312094517.79735.qmail@web8401.mail.in.yahoo.com>
+From: Nish Aravamudan <nish.aravamudan@gmail.com>
+Date: Sat, 12 Mar 2005 22:36:40 +0000
+Subject: Re: [KJ] How To invoke atmdev_ops function in MPC8260 SAR driver
+Message-Id: <29495f1d0503121436280effe4@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============028013586855504258=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20050312094517.79735.qmail@web8401.mail.in.yahoo.com>
+In-Reply-To: <20050312094517.79735.qmail@web8401.mail.in.yahoo.com>
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+--===============028013586855504258==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-I 'm trying to invoke ATM device operations functions
-to  test MPC8260 SAR driver.
-The board doesn't consist of Pyhsical layer regarding
-hardware(like IDT77106) or software(driver).
-Loopback is done on UTOPIA interface.UTOPIA signals
-are connected PCI bus.Can anyone please help me
-out,HOW TO use the following finctions
-in aplication 
+On Sat, 12 Mar 2005 09:45:17 +0000 (GMT), madhusudhan seshadri
+<madhusudhan1508@yahoo.co.in> wrote:
+> Hi,
+> 
+> I 'm trying to invoke ATM device operations functions
+> to  test MPC8260 SAR driver.
 
-const struct atmdev_ops mpc8260sar_ops = {
-    open:mpc8260sar_open,
-    close:mpc8260sar_close,
-    ioctl:mpc8260sar_ioctl,
-    getsockopt:mpc8260sar_getsockopt,
-    setsockopt:mpc8260sar_setsockopt,
-    send:mpc8260sar_send,
-    sg_send:mpc8260sar_sg_send,
-    phy_put:mpc8260sar_phy_put,
-    phy_get:mpc8260sar_phy_get,
-    change_qos:mpc8260sar_change_qos,
-    proc_read:mpc8260sar_proc_read,
-    owner:THIS_MODULE,
-};
+I think you want kernelnewbies@nl.linux.org.
 
-I'm new to LINUX ENVIORNMENT 
+Thanks,
+Nish
 
-with regargs
-MADHU
+--===============028013586855504258==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-________________________________________________________________________
-Yahoo! India Matrimony: Find your life partner online
-Go to: http://yahoo.shaadi.com/india-matrimony
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============028013586855504258==--
