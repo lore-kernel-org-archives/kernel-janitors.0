@@ -1,58 +1,67 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 15:53:00 +0000
-Subject: [Kernel-janitors] Re: [PATCH] video/bttv-driver: replace
-Message-Id: <20040727155300.GA2099@us.ibm.com>
+Date: Wed, 28 Jul 2004 18:24:21 +0000
+Subject: [Kernel-janitors] [PATCH] pcmcia/synclink_cs: replace
+Message-Id: <20040728182421.GL1935@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============96642119162481666=="
+Content-Type: multipart/mixed; boundary="===============015490275293998712=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040727062650.GG8798@bytesex>
-In-Reply-To: <20040727062650.GG8798@bytesex>
 To: kernel-janitors@vger.kernel.org
 
---===============96642119162481666==
+--===============015490275293998712==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 27, 2004 at 08:59:59AM +0200, Gerd Knorr wrote:
-> On Tue,  Jul 27, 2004 at 08:26:50AM +0200, Gerd Knorr wrote:
-> return -ENOSIG;
-> > On Mon, Jul 26, 2004 at 03:47:30PM -0700, Nishanth Aravamudan wrote:
-> > > set_current_state(TASK_INTERRUPTIBLE);
-> > > schedule_timeout(some_time);
-> 
-> > > msleep(jiffies_to_msecs(some_time));
-> > > 
-> > > msleep() is not exactly the same as the previous code,
-> > 
-> > How does it differ?  And what exactly is the point in replacing it?
-> 
-> Especially as msleep() does busy waits (unless I've missed something)
-> whereas schedule_timeout() doesn't?  I'd like to veto this one, and
-> the other ones touching video4linux drivers as well.
-
-msleep() does not busy wait. It in fact uses schedule_timeout() but in a
-more reliable way than most code. Also, it allows the drivers to
-consider their longer delays in terms of msecs instead of some sort of
-conversion on HZ.
-
-kernel/timer.c::msleep():
-
-/**
- * msleep - sleep safely even with waitqueue interruptions
- * @msecs: Time in milliseconds to sleep for
- */
-void msleep(unsigned int msecs)
-{
-	unsigned long timeout = msecs_to_jiffies(msecs);
-	while (timeout) {
-		set_current_state(TASK_UNINTERRUPTIBLE);
-		timeout = schedule_timeout(timeout);
-	}
-}
+I would appreciate any comments from the janitors list.
 
 -Nish
 
---===============96642119162481666==
+Applys-to: 2.6.7
+
+Description: Uses msecs_to_jiffies() instead of the custom
+jiffies_from_ms().
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/char/pcmcia/synclink_cs.c	2004-06-15 22:19:13.000000000 -0700
++++ linux-dev/drivers/char/pcmcia/synclink_cs.c	2004-07-28 10:59:21.000000000 -0700
+@@ -41,6 +41,7 @@
+ #include <linux/signal.h>
+ #include <linux/sched.h>
+ #include <linux/timer.h>
++#include <linux/time.h>
+ #include <linux/interrupt.h>
+ #include <linux/pci.h>
+ #include <linux/tty.h>
+@@ -448,8 +449,6 @@ static int tx_abort(MGSLPC_INFO *info);
+ static int set_rxenable(MGSLPC_INFO *info, int enable);
+ static int wait_events(MGSLPC_INFO *info, int __user *mask);
+ 
+-#define jiffies_from_ms(a) ((((a) * HZ)/1000)+1)
+-
+ static MGSLPC_INFO *mgslpc_device_list = NULL;
+ static int mgslpc_device_count = 0;
+ 
+@@ -3665,7 +3664,7 @@ void tx_start(MGSLPC_INFO *info)
+ 		} else {
+ 			info->tx_active = 1;
+ 			tx_ready(info);
+-			info->tx_timer.expires = jiffies + jiffies_from_ms(5000);
++			info->tx_timer.expires = jiffies + msecs_to_jiffies(5000);
+ 			add_timer(&info->tx_timer);	
+ 		}
+ 	}
+@@ -4124,7 +4123,7 @@ BOOLEAN irq_test(MGSLPC_INFO *info)
+ 	end_time=100;
+ 	while(end_time-- && !info->irq_occurred) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(jiffies_from_ms(10));
++		schedule_timeout(msecs_to_jiffies(10));
+ 	}
+ 	
+ 	info->testing_irq = FALSE;
+
+--===============015490275293998712==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +72,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============96642119162481666==--
+--===============015490275293998712==--
