@@ -1,35 +1,45 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Thu, 07 Oct 2004 13:17:31 +0000
-Subject: Re: [Kernel-janitors] [PATCH 2.6][1/12] arch/ppc/kernel/pci.c replace
-Message-Id: <20041007141731.A11865@infradead.org>
+From: james4765@verizon.net
+Date: Sat, 30 Oct 2004 13:42:46 +0000
+Subject: [KJ] [PATCH] floppy: change MODULE_PARM to module_param in
+Message-Id: <20041030134246.23710.45693.84191@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48525900983699866=="
+Content-Type: multipart/mixed; boundary="===============13052579749371063=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <298570000.1096930681@w-hlinder.beaverton.ibm.com> <20041005104443.A16871@infradead.org> <3550000.1097094201@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <3550000.1097094201@w-hlinder.beaverton.ibm.com>; from hannal@us.ibm.com on Wed, Oct 06, 2004 at 01:23:21PM -0700
-To: Hanna Linder <hannal@us.ibm.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, benh@kernel.crashing.org, paulus@samba.org, greg@kroah.com
+To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+Cc: james4765@verizon.net
 
---===============48525900983699866==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============13052579749371063==
 
-On Wed, Oct 06, 2004 at 01:23:21PM -0700, Hanna Linder wrote:
-> --On Tuesday, October 05, 2004 10:44:43 AM +0100 Christoph Hellwig <hch@infradead.org> wrote:
-> 
-> > what about adding a for_each_pci_dev macro that nicely hides these AND_ID
-> > iterations?
-> > 
-> 
-> OK. How about this? Following are two patches that I used to test this
-> new macro on my T23. I found roughly 54 other places this macro can
-> be used.
+Replace MODULE_PARM with module_param in drivers/block/floppy.c.  Compile tested.
 
-Looks good to me
+Signed-off-by: James Nelson <james4765@gmail.com>
 
----end quoted text---
+diff -urN --exclude='*~' linux-2.6.9-original/drivers/block/floppy.c linux-2.6.9/drivers/block/floppy.c
+--- linux-2.6.9-original/drivers/block/floppy.c	2004-10-18 17:53:22.000000000 -0400
++++ linux-2.6.9/drivers/block/floppy.c	2004-10-30 09:16:04.856720081 -0400
+@@ -180,6 +180,7 @@
+ #include <linux/devfs_fs_kernel.h>
+ #include <linux/device.h>
+ #include <linux/buffer_head.h>	/* for invalidate_buffers() */
++#include <linux/moduleparam.h>
+ 
+ /*
+  * PS/2 floppies have much slower step rates than regular floppies.
+@@ -4623,9 +4624,9 @@
+ 	wait_for_completion(&device_release);
+ }
+ 
+-MODULE_PARM(floppy, "s");
+-MODULE_PARM(FLOPPY_IRQ, "i");
+-MODULE_PARM(FLOPPY_DMA, "i");
++module_param(floppy, charp, 0);
++module_param(FLOPPY_IRQ, int, 0);
++module_param(FLOPPY_DMA, int, 0);
+ MODULE_AUTHOR("Alain L. Knaff");
+ MODULE_SUPPORTED_DEVICE("fd");
+ MODULE_LICENSE("GPL");
 
---===============48525900983699866==
+--===============13052579749371063==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48525900983699866==--
+--===============13052579749371063==--
