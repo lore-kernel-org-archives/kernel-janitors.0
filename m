@@ -1,33 +1,40 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:14:38 +0000
-Subject: [KJ] [PATCH 39/53] pmag-ba: Clean up printk()'s in
-Message-Id: <20050125231437.10418.60123.77549@localhost.localdomain>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:04 +0000
+Subject: [KJ] [PATCH] [13/29] pcm_plugin.c - vfree() checking cleanups
+Message-Id: <41db1130.0cc0e4ee.2568.07ba@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78896936700995113=="
+Content-Type: multipart/mixed; boundary="===============8246429380952045=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============78896936700995113==
+--===============8246429380952045==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/pmag-ba-fb.c
+pcm_plugin.c vfree() checking cleanups.
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/pmag-ba-fb.c linux-2.6.11-rc2-mm1/drivers/video/pmag-ba-fb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/pmag-ba-fb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/pmag-ba-fb.c	2005-01-24 19:07:03.729258355 -0500
-@@ -123,7 +123,7 @@
- 	unsigned long base_addr = get_tc_base_addr(slot);
- 	struct fb_info *info = &pmagba_fb_info[slot]; 
- 
--	printk("PMAG-BA framebuffer in slot %d\n", slot);
-+	pr_info("PMAG-BA framebuffer in slot %d\n", slot);
- 	/*
- 	 * Framebuffer display memory base address and friends
- 	 */
+ pcm_plugin.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
 
---===============78896936700995113==
+
+--- linux-2.6.10-vanilla/sound/core/oss/pcm_plugin.c	2004-12-24 13:34:29.000000000 -0800
++++ linux-2.6.10/sound/core/oss/pcm_plugin.c	2005-01-04 11:25:22.987998816 -0800
+@@ -219,8 +219,7 @@
+ 		plugin->private_free(plugin);
+ 	if (plugin->buf_channels)
+ 		kfree(plugin->buf_channels);
+-	if (plugin->buf)
+-		vfree(plugin->buf);
++	vfree(plugin->buf);
+ 	if (plugin->src_vmask)
+ 		kfree(plugin->src_vmask);
+ 	if (plugin->dst_vmask)
+
+
+
+--===============8246429380952045==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78896936700995113==--
+--===============8246429380952045==--
