@@ -1,28 +1,83 @@
-From: Matthew Wilcox <willy@debian.org>
-Date: Thu, 12 Feb 2004 22:53:29 +0000
-Subject: Re: [Kernel-janitors] Patches for 2.4
-Message-Id: <20040212225329.GI31168@parcelfarce.linux.theplanet.co.uk>
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Mon, 02 Feb 2004 17:16:01 +0000
+Subject: [Kernel-janitors] [REDIFF] Fix warning in drivers/net/pppoe.c when
+Message-Id: <1075742160.1079.6.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200402121742.27304.ron@rongage.org>
-In-Reply-To: <200402121742.27304.ron@rongage.org>
+References: <1073582302.6115.42.camel@telecentrolivre>
+In-Reply-To: <1073582302.6115.42.camel@telecentrolivre>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 12, 2004 at 05:42:27PM -0500, Ron Gage wrote:
-> Is this a good place for patches for 2.4?  Cleanup patches anyhow...
-> Or should I send these directly to the individual maintainers?
+Hi all,
 
-2.4 is basically closed for cleanup patches.
+I hope its ok now.
+
+diff -X dontdiff -Nru linux-2.6.2-rc2-bk4/drivers/net/pppoe.c linux-2.6.2-rc2-bk4~/drivers/net/pppoe.c
+--- linux-2.6.2-rc2-bk4/drivers/net/pppoe.c	2004-02-02 10:41:32.000000000 -0200
++++ linux-2.6.2-rc2-bk4~/drivers/net/pppoe.c	2004-02-02 10:41:34.000000000 -0200
+@@ -1076,6 +1076,20 @@
+ 	.llseek		= seq_lseek,
+ 	.release	= seq_release,
+ };
++
++static int __init pppoe_proc_init(void)
++{
++	struct proc_dir_entry *p;
++
++	p = create_proc_entry("pppoe", S_IRUGO, proc_net);
++	if (!p)
++		return 1;
++	
++	p->proc_fops = &pppoe_seq_fops;
++	return 0;
++}
++#else /* CONFIG_PROC_FS */
++static inline int pppoe_proc_init(void) { return 0; }
+ #endif /* CONFIG_PROC_FS */
+ 
+ /* ->ioctl are set at pppox_create */
+@@ -1112,26 +1126,19 @@
+ 
+ 	if (err)
+ 		goto out;
+-#ifdef CONFIG_PROC_FS
+-{
+-	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
+-						     proc_net);
+-	err = -ENOMEM;
+-	if (!p)
+-		goto out_unregister;
++
++	err = pppoe_proc_init();
++	if (err) {
++		unregister_pppox_proto(PX_PROTO_OE);
++		err = -ENOMEM;
++		goto out;
++	}
+ 	
+-	p->proc_fops = &pppoe_seq_fops;
+-	err = 0;
+-}
+-#endif /* CONFIG_PROC_FS */
+ 	dev_add_pack(&pppoes_ptype);
+ 	dev_add_pack(&pppoed_ptype);
+ 	register_netdevice_notifier(&pppoe_notifier);
+ out:
+ 	return err;
+-out_unregister:
+-	unregister_pppox_proto(PX_PROTO_OE);
+-	goto out;
+ }
+ 
+ static void __exit pppoe_exit(void)
 
 -- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
