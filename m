@@ -1,38 +1,35 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 16:56:32 +0000
-Subject: [KJ] [PATCH 05/19] drivers/scsi/aic7xxx/aic79xx_osm: Use the
-Message-Id: <20050220165632.GE14375@helium.tklauser.home>
+From: Domen Puncer <domen@coderock.org>
+Date: Tue, 22 Feb 2005 12:24:51 +0000
+Subject: [KJ] [patch] remove unused LOCAL_END_REQUEST
+Message-Id: <20050222122451.GC4174@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67535607018770039=="
+Content-Type: multipart/mixed; boundary="===============93132383051044254=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============67535607018770039==
+--===============93132383051044254==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Remove last occurence of LOCAL_END_REQUEST.
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+domen@nd47:~/kernel/c$ grep LOCAL_END_REQUEST -R .
+./drivers/block/floppy.c:#define LOCAL_END_REQUEST
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
---- linux-2.6.11-rc4.orig/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-13 17:13:06.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-16 21:07:35.000000000 +0100
-@@ -1706,7 +1706,7 @@ ahd_dmamem_alloc(struct ahd_softc *ahd, 
- 	 * our dma mask when doing allocations.
- 	 */
- 	if (ahd->dev_softc != NULL)
--		if (pci_set_dma_mask(ahd->dev_softc, 0xFFFFFFFF)) {
-+		if (pci_set_dma_mask(ahd->dev_softc, DMA_32BIT_MASK)) {
- 			printk(KERN_WARNING "aic79xx: No suitable DMA available.\n");
- 			kfree(map);
- 			return (ENODEV);
+--- c/drivers/block/floppy.c	2005-02-16 13:41:47.000000000 +0100
++++ a/drivers/block/floppy.c	2005-02-22 13:21:46.000000000 +0100
+@@ -242,7 +242,6 @@ static int allowed_drive_mask = 0x33;
+ 
+ static int irqdma_allocated;
+ 
+-#define LOCAL_END_REQUEST
+ #define DEVICE_NAME "floppy"
+ 
+ #include <linux/blkdev.h>
 
---===============67535607018770039==
+--===============93132383051044254==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67535607018770039==--
+--===============93132383051044254==--
