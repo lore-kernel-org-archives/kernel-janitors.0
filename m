@@ -1,43 +1,40 @@
-From: "Alan Emerson" <iyhbmu@yahoo.com>
-Date: Sun, 09 May 2004 17:53:59 +0000
-Subject: Re:Just take a look
-Message-Id: <IUPXYDZRVSITTZHGBIRTYSP@yahoo.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--869644158250773751"
+From: "tasha perkins" <gertthees@uk2.net>
+Date: Mon, 03 May 2004 09:57:02 +0000
+Subject: Medical Miracle
+Message-Id: <BDBC90B0.79A4FEE@uk2.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-----869644158250773751
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
-
-<html> <body>
-<a href=3D"http://www.newmedsolution2004.com/"><img src=3D"http://img.alph=
-a.newmedsolution2004.com/a1.jpg" border=3D0></a>
-<table cellspacing=3D0 cellpadding=3D0 border=3D0><tr><td id=3D6><font fac=
-e=3D"Arial" size=3D1 color=3D"#000000"><a href=3D"http://to.newmedsolution=
-4all.com/">No mo</font></a></td><td id=3D0><font face=3D"Arial" size=3D1 c=
-olor=3D"#000000"><a href=3D"http://to.newmedsolution4all.com/">re ple</fon=
-t></a></td><td id=3D1><font face=3D"Arial" size=3D1 color=3D"#000000"><a h=
-ref=3D"http://to.newmedsolution4all.com/">se!</font></a></td></tr></table>=
-
-<br><br><font size=3D1>repute windward climactic vent alpert crosscut prob=
-e homebound white britannica buttermilk abundant discriminant someday data=
-base blvd alundum embroider asset coachwork munch nicaragua tollhouse ambi=
-valent snuffle backboard domenico=20</font>
-</body> </html> 
-
-
-----869644158250773751--
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by Sleepycat Software
-Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
-higher performing products faster, at low TCO.
-http://www.sleepycat.com/telcomwpreg.php?From=osdnemail3
-_______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+PEhUTUw+Ck5ld3M6IG1lZGljYWwgam91cm5hbDxCUj4KPEJSPgpGZWVsIHRoZSBFbmVyZ3kgYW5k
+IHJlY2FwdHVyZSB5b3VyIHlvdXRoPEJSPgpGb3IgTWFueSwgVGhpcyBpcyBhIFBvd2VyZnVsIFNl
+Y29uZCBDaGFuY2U8QlI+CjxCUj48QSBocmVmPSJodHRwOi8vd3d3LmdvbGRwcm9tb3NvbC5jb20v
+Ny8iPnByZXNzIGhlcmUgdG8gcmVhZAphYm91dDwvQT48QlI+ClRoaXMgY29tbW9uIGVsZW1lbnQg
+Y2FuIGNoYW5nZSB0aGUgd2F5IHlvdSBleHBlcmllbmNlIHRoZSBuZXh0IGhhbGYgb2YgeW91cgps
+aWZlPEJSPgo8QlI+CjxCUj4KPEJSPgotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLTxCUj4KRnJv
+bTogYm94MTIwMCBPcmFuamVzdGFkIEFydWJhIFttYWlsdG86a2lhQHFndy5jb21dPEJSPgpTZW50
+OiBGcmlkYXksIE1hcmNoIDIsIDIwMDQgODo0NkFNPEJSPgpUbzogaG9sbGk7IGNocmlzdGVuQHF0
+eGcuY29tOyB6b25pYTsgZGlhbmU7IGdlb3JnZTxCUj4KU3ViamVjdDogYWRkcmVzcyBsaXN0ZWQg
+YWJvdmUgYW5kIGp1c3Qgc2VlIHNpdGUgdG8gYmUgZ29uZSBmcm9tIHRoZSBkYjxCUj4KPEJSPgo8
+QlI+ClRocmVlIHN0dWRpZXMgYXNzZXNzZWQgc3RhcGh5bG9jb2NjYWwgZW5kb2NhcmRpdGlzMjEg
+NDggNjMgb25lIHN0dWR5CmFzc2Vzc2VkIGFueSBzdGFwaHlsb2NvY2NhbCBpbmZlY3Rpb24zMiBh
+bmQgb25lIGFzc2Vzc2VkIHN0cmVwdG9jb2NjYWwKZW5kb2NhcmRpdGlzIDY5ICBsYWN0YW1hbWlu
+b2dseWNvc2lkZSB0cmVhdG1lbnQgaXMgd2VsbCBpbmdyYWluZWQgaW4KZXhpc3RpbmcgZ3VpZGVs
+aW5lcyBhbmQgY2xpbmljYWwgcHJhY3RpY2Ugd2l0aCB0aGVzZSBpbmZlY3Rpb25zOTQgPEJSPgp5
+ZXQgb3VyIHJlc3VsdHMgZG8gbm90IHBvaW50IHRvIGEgY2xpbmljYWwgYmVuZWZpdCB3aXRoIGNv
+bWJpbmF0aW9uIHRoZXJhcHkKIFdpdGggdGhlc2UgaW5mZWN0aW9ucyBmdXJ0aGVyIHN0dWRpZXMg
+c2hvdWxkIGFzc2VzcyB3aGV0aGVyIHRoZSBhZGRpdGlvbiBvZgphbiBhbWlub2dseWNvc2lkZSBp
+cyBqdXN0aWZpZWQgIDxCUj4KPEJSPgpCdXQgd2h5IGRvIHlvdSBjYWxsIHRoZW0gZm9vbGlzaCBl
+eHBlcmllbmNlcz8gQmVjYXVzZSB0aGV5IHdlcmUsIGFib21pbmFibHkKZm9vbGlzaCEgcmV0b3J0
+ZWQgdGhlIERlbW9uLCBiaXR0ZXJseQo8L0ZPTlQ+PC9IVE1MPgoKCgotLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRoaXMgU0YuTmV0IGVtYWls
+IGlzIHNwb25zb3JlZCBieTogT3JhY2xlIDEwZwpHZXQgY2VydGlmaWVkIG9uIHRoZSBob3R0ZXN0
+IHRoaW5nIGV2ZXIgdG8gaGl0IHRoZSBtYXJrZXQuLi4gT3JhY2xlIDEwZy4gClRha2UgYW4gT3Jh
+Y2xlIDEwZyBjbGFzcyBub3csIGFuZCB3ZSdsbCBnaXZlIHlvdSB0aGUgZXhhbSBGUkVFLgpodHRw
+Oi8vYWRzLm9zZG4uY29tLz9hZF9pZDE0OSZhbGxvY19pZIE2NiZvcD1jbGljawpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpLZXJuZWwtamFuaXRvci1kaXNj
+dXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1kaXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdl
+Lm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9rZXJuZWwt
+amFuaXRvci1kaXNjdXNz
