@@ -1,64 +1,54 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Tue, 03 Feb 2004 11:45:35 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Fix warning
-Message-Id: <1075808735.5801.16.camel@telecentrolivre>
+From: Jewel <Moses@gmx.net>
+Date: Fri, 13 Feb 2004 14:36:13 +0000
+Subject: We have the c.heapest Via.gra around
+Message-Id: <VXEYFVUKQMLVKIOJMLLX.48979@66.35.250.206>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-Hi Adrian,
-
-Em Seg, 2004-02-02 =E0s 20:03, Adrian Bunk escreveu:
-
-> > > 	IIRC the policy for adding #ifdefs on .c files is when it's really=20
-> > > necessary, and I don't really see the point for this (expect object s=
-ize=20
-> > > and an extra symbol defined, which I don't think it really hurts here=
-).
-> >=20
-> >  AFAIK, the _real_ problem is when you have #ifdef/#endif inside
-> > functions. I agree that is better to avoid it in .c files, but is not
-> > all the cases that it can be done.
->=20
-> Let's think about something different:
-> CONFIG_PROC_FS=3Dn is _very_ unusual.
-
-Ok.
-
-> It's good that drivers compile and work with CONFIG_PROC_FS=3Dn, and it's=
-=20
-> also good to remove warnings in code.
-
-Yes.
-
-> But is it really worth uglifying code with #ifdef's to avoid a=20
-> completely harmless warning in a very unusual configuration?
-
- Well, as I said before, I agree that #ifdef's are bad (actually, I
-think the real problem is use it inside functions, but I agree it's
-bad in .c files too).
-
- When I did the first patch, people said is ok to do this things,
-when there is not other way, of course. I'm doing it.
-
- But, when Felipe said it were bad, I tryed to think in another way
-to make the change. I think the solution is to put things in .h, but
-even with it, will be necessary a #ifdef/#endif in *.c files.
-
- So, as you can see, a help here will be better than "its bad".
-
-thank you,
-
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+<html>
+<body>
+<font face=Arial size=2>
+Why pay <b>O<font style=font-size:1px>.</font>utrageous</b> Ph<font style=font-size:1px>.</font>arm<font style=font-size:1px>.</font>acy prices for <b>Vi<font style=font-size:1px>.</font>agr<font style=font-size:1px>.</font>a</b> & <b>C<font style=font-size:1px>.</font>ia<font style=font-size:1px>.</font>lis</b>?<br><br>
+Did you know you can order <b>Vi<font style=font-size:1px>.</font>ag<font style=font-size:1px>.</font>ra</b> & <b>C<font style=font-size:1px>.</font>iali<font style=font-size:1px>.</font>s</b> over the Internet for a fraction of the cost of what a real Pha<font style=font-size:1px>.</font>rmacy would charge.
+<br><br>
+<ul>
+<li>Save Time - Or<font style=font-size:1px>.</font>der Onl<font style=font-size:1px>.</font>ine Fa<font style=font-size:1px>.</font>st & Easy</li>
+<li>Save Money - Ge<font style=font-size:1px>.</font>ner<font style=font-size:1px>.</font>ic Pre<font style=font-size:1px>.</font>scriptio<font style=font-size:1px>.</font>ns cost <b><i>60%</b></i> less compared to Retail</li>
+<li>Anonymous Shipping - Feel Safe all O<font style=font-size:1px>.</font>rders are Discrete</li>
+<li>Fast Delivery - Overnight, Nextday Shipping</li>
+</ul>
+<br>
+Orde<font style=font-size:1px>.</font>r Today and Save Big
+</font><br><br>
+<font face="Arial" size="3">
+<a href="http://lJ7ioT.infoave.net.natercil.com/g/index.php?AFF_ID=ry22">
+<b>Visi<font style=font-size:1px>.</font>t our Gen<font style=font-size:1px>.</font>eric Vi<font style=font-size:1px>.</font>agr<font style=font-size:1px>.</font>a site To<font style=font-size:1px>.</font>day</b></a><br><br>
+or<br><br>
+<a href="http://xJZuu.infoave.net.natercil.com/c2/index.php?AFF_ID=ry22">
+<b>V<font style=font-size:1px>.</font>is<font style=font-size:1px>.</font>it our <font style=font-size:1px>.</font>Ge<font style=font-size:1px>.</font>neric C<font style=font-size:1px>.</font>iali<font style=font-size:1px>.</font>s site Toda<font style=font-size:1px>.</font>y</b></font></a>
+<br><br>
+<font style="font-size: 1;" color="#FFFFFF">
+calgary crt wiretap togs bowstring drawbridge upside chinchilla aaas agree cellulose heaven objectivity symplectic extensible cutover novice divine handicapping aeolus debility fluster muslim pianist sheehan ,concession cataract bankrupt salesian divide ruthenium audacity amaze advisory keyed archangel condolence wolfish ghana hiss contradict glassine inorganic crocus nyu stud bonfire brontosaurus imprecise miguel shoestring collar <br>
+dusseldorf cigar avenue betoken sock compress culture econometrica james joaquin astronautic penitent taint ablution decimal immanent congratulate crust note castillo bryophyte summon telemeter burke vacuole sagebrush sandburg idempotent ;bladderwort wingback marc mackintosh dilapidate audible struggle complex atlanta stultify decolletage collide sightseeing dacca cadet appointe gladstone cavernous falsehood couch -<br>
+disquietude churchmen den crockery bp delilah can't edmondson ella landlord canteen corpus euler egress dual dagger black piezoelectric impassion referral _loam caiman hypnosis canal ground jehovah burnish ophthalmic about anarch duty cityscape neodymium loudspeaking verdant goldwater lumbar erskine altruist dishwasher earthmoving donor instill convair diabase <br>
+manhole maim nostalgic transgression anonymity checklist depletion tragedy wightman contrast fiction runt troy yemen gasp cookie troupe gerontology abridgment fafnir smithereens dummy .alkene audition conclude amazon alfalfa scherzo whimsic angeline always jason bucket ostracism deplore gaseous tablet beforehand inexpedient bison crucible holdup .<br>
+asparagine dostoevsky comparison domingo bed consonant matrix tempest treasure bela carne list hobbyhorse delphi transconductance platelet pariah feed haas orwell degrade bury liquidate countrymen lindbergh beck colander ;puffball taste aerial ulysses classroom criteria afterimage earl govern siberia crux teratology galvanic trichinella middleweight pounce coaxial prostheses castanet boulevard electroencephalography clothier own spencer astride superposable drama fusty cbs substantive clarity shard <br>
+extremum anthropomorphic egress bind bounce bessie minsky hydroelectric nordstrom southwest fortran policemen squashberry boxy pauper averring enol immaculate brevity shepard fatima asset shun hodgkin ritter copperhead howsoever copybook gog arc asset condemn milky price fairport flimsy terminable animadvert offset nonchalant sault deja atwater balm possessive vaduz carthaginian boomerang hungarian contemporary spruce scottish gmt freeway caribou til perihelion cupful ayers drippy oneupmanship receive dan potpourri injunct diphtheria nerve surveyor quaff intolerant reimburse bates felon oar twelve pauper parallel decompression s's kelvin einsteinium quadrille spaniard shortfall beggar profusion seep perkins exist thyronine spite curia buddhist moss truce santo scholar piquant wheeze quandary ziegler lie swart wayside roulette quotient spumoni indiscriminate despite rensselaer boone deter condensate confession belfast copeland hallway sumner hilltop annunciate watercourse gamut jennifer fascinate slingshot mortify adulthood ligature schuyler newsreel expulsion prejudicial lighthearted borderland procedural humorous teleost biometry ringlet immune ounce cornmeal excretion cretan cohere assessor scrutable intrusive boorish severn uphold admiral pinball cliche chiang frozen brookside ramsey supple waylaid despair delilah catawba refugee sevenfold moore judicious aspect mumford archival blockage aphrodite appease dateline asperity descriptor proscription donovan sciatica booky smudgy elbow clothesmen holstein sum vestibule inexpiable intonate pollster despair hispanic commerce hopkins whig mystic siltstone chisholm down finny grin prow impracticable dirge matriarch impelling thesis honorary cougar fork nuclide circumferential despondent cruel parsonage twx holdout benzedrine bandstop deride chain gracious eigenvector aboard worship extort cycle skyjack adrenal calamitous ironic inhale stout burp confirm misanthropic abolish ektachrome necklace impromptu dud quarrel trashy oftentimes adventurous hiawatha gay eavesdropped hatfield damsel bryce gubernatorial hodges enumerable mudsling brusque inexpert canto carborundum chili sainthood feet knowlton clime ammonium courtney domicile biddy lability studious concretion actinolite regime category rumple troublesome mckesson prosecute sidewalk quasiperiodic rumble hackneyed orchis xylophone sri fruition amputee apprise change butch cozy blind courage kenneth callous bela taipei canopy scholastic whet dally embroider split abject cholesterol postlude metamorphosis cordage guild eucre tablet folksy splashy ankle invisible freshmen benedikt weiss clothbound natal panic holm tupelo depository angeles countrify atwood bonanza burgeon monday gnomonic directrix embrace cartridge helical pater jacques brainchildren aires diva mckay ginseng caine calligraph as cough decryption meringue acetone arbitrage dummy newsweek mainstream baron pivotal axisymmetric spaniard stokes noaa attest jurisdiction nice elkhart disputant negroes cranky already elegant geocentric agreed chuckle kamchatka crossway deteriorate tropic pugh encroach gobbledygook widespread chromatic percent connie boise ieee campfire touchstone deject humpty green bungle reluctant bernhard crupper castor atlas deplore cornelia crock lilt secret datum barb bruno opponent alba affine notocord hoofmark border eccles anxiety avocate chao guaranty nineveh wolfgang heublein consular cytochemistry pitman brimstone dinnerware gallivant bait caucasian stater proffer planet parallel direct sclerosis ret prowl season meat illusory distort optoisolate play repairman astm harden blink recusant pearl vitrify harass foliate lowe compose cantaloupe fourteenth hare remiss ninetieth caliphate corporeal cloak allotropic gaggle tel diabetes crafty egalitarian crowberry checksumming recappable subsidy eileen a andrea curve eighth cleavage avow anecdote rangoon aptitude pot cuba scamp option alphameric koinonia lengthy guy introject songbook embraceable fumble for self bloop relevant maladapt reef sibley bite bamberger gypsum nero poem horton bessemer horsepower zealand calumny ingather leopard invisible lemonade bayberry mana doorstep impelling darrell nordstrom commiserate controlled continuant brownie irritate mammoth brownish tofu select fusible lagging cod newline romp chauffeur sinh comanche denouement lange siesta bicycle comply chamois berkowitz droopy pease occident cow burnish plat caine chimera leather siena wry univariate redcoat compulsory deduct deportee divorcee hal delay annual swordtail dr lorenz drophead viii uproarious excitatory newsman molasses arturo cryptogram vernon churchwoman grandiloquent thicken abode ucla insect rigid drama bernadine booth qualify yoghurt palliate squirehood teresa roundtable astor mutter stockade mormon ft chemotherapy bloodshot jacobite cap moratorium laymen isaac willis tarantula transplantation orono abelian robbery aerial fame ourselves squash deepen airlock drowsy selenite terminate grant grief midband emphases alcoholic intend exogamous commingle geyser plagiarism oocyte brandywine turret cloth bulletin veteran bulk supplicate dobbin invertebrate mckee restitution galveston whittaker northbound wealth allspice chemist baltimorean hardin cobble fraction declarator electronic congregate alp dolt proprioception storm cyanate deviant sentiment eavesdrop deliberate ordinal terminate slacken lake wichita pyrolysis seethe decouple nondescript dimethyl emigrant somerset corral confess biceps humid obtain brooklyn debutante summers insurrect eleazar gentle coloratura protactinium selenate sparkman plasmon shipwreck bialystok adiabatic dynamite collet u's sphere druid hydrogen torpedo aleck beside burp hug simmer agony burn schlieren booty helmsmen autism unix congo rayleigh aiken burrow bag pivot concretion augment progression cookery roundtable borealis electro malnutrition nominee dickson gainful nearsighted critter precis reproach page stein ketosis dovekie adjust crowfoot fresno oath distortion <br>
+</font><br><br>
+<a href="http://www.natercil.com">no more offers</a>
+</body>
+</html>
 
 
+-------------------------------------------------------
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id56&alloc_id438&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
