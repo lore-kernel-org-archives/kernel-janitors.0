@@ -1,78 +1,45 @@
-From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sun, 04 Jan 2004 05:11:26 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Check return code in mm/vmscan.c
-Message-Id: <20040104051125.GF20458@eugeneteo.net>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Fri, 09 Jan 2004 00:34:11 +0000
+Subject: Re: [Kernel-janitors] [PATCH] Check return code in mm/pdflush.c
+Message-Id: <20040108163411.7dfcbe36.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040103132524.GA21909@eugeneteo.net> <20040103222706.GM6982@parcelfarce.linux.theplanet.co.uk>
-In-Reply-To: <20040103222706.GM6982@parcelfarce.linux.theplanet.co.uk>
+References: <20040103132524.GA21909@eugeneteo.net>
+In-Reply-To: <20040103132524.GA21909@eugeneteo.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <willy@debian.org>
-Cc: linux-mm@kvack.org, kernel-janitors@osdl.org
+To: kernel-janitors@vger.kernel.org
 
-<quote sender="Matthew Wilcox">
-> On Sat, Jan 03, 2004 at 09:25:24PM +0800, Eugene Teo wrote:
-> > http://www.anomalistic.org/patches/vmscan-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
-> > 
-> > diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/vmscan.c 2.6.1-rc1-mm1-fix/mm/vmscan.c
-> > --- 2.6.1-rc1-mm1/mm/vmscan.c	2004-01-03 20:33:39.000000000 +0800
-> > +++ 2.6.1-rc1-mm1-fix/mm/vmscan.c	2004-01-03 21:16:30.000000000 +0800
-> > @@ -1093,10 +1093,16 @@
-> >  
-> >  static int __init kswapd_init(void)
-> >  {
-> > +	int ret;
-> >  	pg_data_t *pgdat;
-> >  	swap_setup();
-> > -	for_each_pgdat(pgdat)
-> > -		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
-> > +	for_each_pgdat(pgdat) {
-> > +		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
-> > +		if (ret < 0) {
-> > +			printk("%s: unable to start kernel thread\n", __FUNCTION__);
-> > +			return ret;
-> > +		}
-> > +	}
-> >  	total_memory = nr_free_pagecache_pages();
-> >  	return 0;
-> >  }
-> 
-> If your new code is triggered, we've just failed to set up total_memory.
-> I expect the system to behave very oddly after this ;-)
+On Sat, 3 Jan 2004 21:26:56 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
 
-a panic call seems to be more appropriate :)
+| http://www.anomalistic.org/patches/pdflush-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
+| 
+| diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/pdflush.c 2.6.1-rc1-mm1-fix/mm/pdflush.c
+| --- 2.6.1-rc1-mm1/mm/pdflush.c	2004-01-03 17:58:11.000000000 +0800
+| +++ 2.6.1-rc1-mm1-fix/mm/pdflush.c	2004-01-03 20:25:30.000000000 +0800
+| @@ -223,7 +223,11 @@
+|  
+|  static void start_one_pdflush_thread(void)
+|  {
+| -	kernel_thread(pdflush, NULL, CLONE_KERNEL);
+| +	int ret;
+| +	
+| +	ret = kernel_thread(pdflush, NULL, CLONE_KERNEL);
+| +	if (ret < 0) 
+| +		printk("%s: unable to start kernel thread\n", __FUNCTION__);
 
-Here is the new fix. Patch compiles, and tested.
+This patch adds trailing whitespace (on the "if" line).
+Please be more careful about that -- we don't want that.
+I fixed this one.
 
-http://www.anomalistic.org/patches/vmscan-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
+I run a simple script that searches for gotchas like this:
+grep -nH "^+.*[ 	]$" $1 | more
 
-diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/vmscan.c 2.6.1-rc1-mm1-fix/mm/vmscan.c
---- 2.6.1-rc1-mm1/mm/vmscan.c	2004-01-04 10:29:24.000000000 +0800
-+++ 2.6.1-rc1-mm1-fix/mm/vmscan.c	2004-01-04 13:04:52.000000000 +0800
-@@ -1093,10 +1093,14 @@
- 
- static int __init kswapd_init(void)
- {
-+	int ret;
- 	pg_data_t *pgdat;
- 	swap_setup();
--	for_each_pgdat(pgdat)
--		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
-+	for_each_pgdat(pgdat) {
-+		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
-+		if (ret < 0)
-+			panic("%s: unable to initialise kswapd\n", __FUNCTION__);
-+	}
- 	total_memory = nr_free_pagecache_pages();
- 	return 0;
- }
+(that's SPACE and TAB inside the square brackets)
 
--- 
-Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
-1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
-main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
-
+--
+~Randy
+MOTD:  Always include version info.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
