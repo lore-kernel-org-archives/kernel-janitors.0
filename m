@@ -1,63 +1,66 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 22:56:53 +0000
-Subject: [Kernel-janitors] [PATCH] video/saa6752hs: replace
-Message-Id: <20040726225653.GS1897@us.ibm.com>
+Date: Thu, 01 Jul 2004 21:10:37 +0000
+Subject: [Kernel-janitors] msleep() and delay function (DVB)
+Message-Id: <40E47DCD.1000902@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95171121366793043=="
+Content-Type: multipart/mixed; boundary="===============80383642703945113=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============95171121366793043==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============80383642703945113==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
+[Not subscribed to linux-dvb, so please CC back if replying from that list]
 
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
+Hi,
 
-with
+I'm working on one of the KernelJanitor/TODO items, specifically 
+converting appropriate calls to schedule_timeout() to msleep() calls 
+(Addendum by Greg KH to original request by Matthew Wilcox (Calling 
+yield() Considered Harmful)). In the process, I have run across the 
+following code [dvb_functions.h::dvb_delay()]:
 
-msleep(jiffies_to_msecs(some_time));
+/**
+  *  a sleeping delay function, waits i ms
+  *
+  */
+static inline
+void dvb_delay(int i)
+{
+         current->state=TASK_INTERRUPTIBLE;
+         schedule_timeout((HZ*i)/1000);
+}
 
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
+Compare this to
+
+/**
+  * msleep - sleep safely even with waitqueue interruptions
+  * @msecs: Time in milliseconds to sleep for
+  */
+void msleep(unsigned int msecs)
+{
+         unsigned long timeout = msecs_to_jiffies(msecs);
+
+         while (timeout) {
+                 set_current_state(TASK_UNINTERRUPTIBLE);
+                 timeout = schedule_timeout(timeout);
+         }
+}
+
+I am wondering if dvb_delay() needs to run in TASK_INTERRUPTIBLE (it's 
+not the only such case I am seeing right now, but it was the first - if 
+anyone would like me to send the other cases, I'd be happy to). 
+Obviously, if not, then it can be replaced with msleep() calls. If it 
+must, then it probably should be updated to use set_current_state() and 
+msecs_to_jiffies() like msleep() does.
+
+This is my first try at Janitor-work, so please be patient.
 
 Thanks,
 Nish
 
-
-
-Applys-to: 2.6.7
-
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/media/video/saa7134/saa6752hs.c	2004-06-16 05:20:04.000000000 +0000
-+++ linux-dev/drivers/media/video/saa7134/saa6752hs.c	2004-07-12 18:54:32.000000000 +0000
-@@ -168,13 +168,11 @@ static int saa6752hs_chip_command(struct
- 		}
- 	
- 		// wait a bit
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ/100);
-+		msleep(10);
- 	}
- 
- 	// delay a bit to let encoder settle
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(HZ/20);
-+	msleep(50);
- 	
- 	// done
-   	return status;
-
---===============95171121366793043==
+--===============80383642703945113==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95171121366793043==--
+--===============80383642703945113==--
