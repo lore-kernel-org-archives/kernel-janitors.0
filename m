@@ -1,66 +1,43 @@
-From: walter harms <wharms@bfs.de>
-Date: Wed, 24 Nov 2004 17:25:46 +0000
-Subject: Re: [KJ] [patch 5/8] ifdef typos: drivers_net_wireless_wavelan_cs.c
-Message-Id: <41A4C41A.4070407@bfs.de>
+From: Stefan Sperling <stefan@binarchy.net>
+Date: Tue, 09 Nov 2004 21:30:41 +0000
+Subject: [KJ] [PATCH] convert airo_cs wireless driver to module_param
+Message-Id: <20041109213041.GB9496@dice.seeling33.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88966502686995175=="
+Content-Type: multipart/mixed; boundary="===============2842009057189947=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041124153319.GE14789@nd47.coderock.org>
-In-Reply-To: <20041124153319.GE14789@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============88966502686995175==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============2842009057189947==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Domen,
-nice work :) i never noticed that there are some much typos.
 
-To avoid namespace polution: IMHO its better to define:
-wavelan_cd_DEBUG_CONFIG_ERRORS (you get the idea)
-stupid long but would avoid conflics with possible other drivers/kernel 
-debug defines.
+Replaces MODULE_PARM with module_param calls in airo_cs wireless driver.
 
-re,
-walter
+--- drivers/net/wireless/airo_cs.c.orig	2004-11-09 20:40:21.891939232 +0100
++++ drivers/net/wireless/airo_cs.c	2004-11-08 23:09:48.000000000 +0100
+@@ -52,7 +52,7 @@
+ */
+ #ifdef PCMCIA_DEBUG
+ static int pc_debug = PCMCIA_DEBUG;
+-MODULE_PARM(pc_debug, "i");
++module_param(pc_debug, int, 0644);
+ static char *version = "$Revision: 1.2 $";
+ #define DEBUG(n, args...) if (pc_debug>(n)) printk(KERN_DEBUG args);
+ #else
+@@ -75,8 +75,8 @@ MODULE_DESCRIPTION("Support for Cisco/Ai
+ 		   with the airo module.");
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_SUPPORTED_DEVICE("Aironet 4500, 4800 and Cisco 340 PCMCIA cards");
+-MODULE_PARM(irq_mask, "i");
+-MODULE_PARM(irq_list, "1-4i");
++module_param(irq_mask, int, 0644);
++module_param_array(irq_list, int, NULL, 0444);
+ 
+ /*====================================================================*/
+ 
 
-Domen Puncer wrote:
-> wavelan.p.h defines *_ERROR
-> wavelan_cs.p.h defines *_ERRORS
-> Since only second one is included, change #ifdefs
-> 
-> Signed-off-by: Domen Puncer <domen@coderock.org>
-> 
-> --- c/drivers/net/wireless/wavelan_cs.c	2004-11-15 13:42:13.000000000 +0100
-> +++ str2/drivers/net/wireless/wavelan_cs.c	2004-11-24 15:05:57.000000000 +0100
-> @@ -950,7 +950,7 @@ wv_diag(struct net_device *	dev)
->  		  OP0_DIAGNOSE, SR0_DIAGNOSE_PASSED))
->      ret = TRUE;
->  
-> -#ifdef DEBUG_CONFIG_ERROR
-> +#ifdef DEBUG_CONFIG_ERRORS
->    printk(KERN_INFO "wavelan_cs: i82593 Self Test failed!\n");
->  #endif
->    return(ret);
-> @@ -3463,7 +3463,7 @@ wv_ru_stop(struct net_device *	dev)
->    /* If there was a problem */
->    if(spin <= 0)
->      {
-> -#ifdef DEBUG_CONFIG_ERROR
-> +#ifdef DEBUG_CONFIG_ERRORS
->        printk(KERN_INFO "%s: wv_ru_stop(): The chip doesn't want to stop...\n",
->  	     dev->name);
->  #endif
-> 
-> 
-> ------------------------------------------------------------------------
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============88966502686995175==
+--===============2842009057189947==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88966502686995175==--
+--===============2842009057189947==--
