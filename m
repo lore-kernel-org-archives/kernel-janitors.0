@@ -1,41 +1,61 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Sat, 23 Oct 2004 00:01:27 +0000
-Subject: [KJ] [PATCH] w1/w1: replace schedule_timeout() with
-Message-Id: <20041023000127.GR18906@us.ibm.com>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 06 Oct 2004 20:23:28 +0000
+Subject: [Kernel-janitors] [PATCH 2.6] [1/54] arch/i386/pci/i386.c: Use new
+Message-Id: <3600000.1097094208@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34615194531259252=="
+Content-Type: multipart/mixed; boundary="===============15140268397812351=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: greg@kroah.com, hannal@us.ibm.com, kernel-janitors@lists.osdl.org, Christoph Hellwig <hch@infradead.org>
 
---===============34615194531259252==
+--===============15140268397812351==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Any comments would be, as always, appreciated.
 
--Nish
+As requested by Christoph Hellwig I've created a new macro called
+for_each_pci_dev. It is a wrapper for this common use of pci_get/find_device:
 
-Description: Use msleep_interruptible() instead of schedule_timeout() to
-guarantee the task delays as expected.
+(while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL))
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+This macro will return the pci_dev *for all pci devices.  Here is the first patch I 
+used to test this macro with. Compiled and booted on my T23. There will be
+53 more patches using this new macro.
 
---- 2.6.9-bk7-vanilla/drivers/w1/w1.c	2004-10-22 10:41:42.000000000 -0700
-+++ 2.6.9-bk7/drivers/w1/w1.c	2004-10-22 16:06:51.000000000 -0700
-@@ -452,10 +452,8 @@ static void w1_slave_detach(struct w1_sl
- 	while (atomic_read(&sl->refcnt)) {
- 		printk(KERN_INFO "Waiting for %s to become free: refcnt=%d.\n",
- 				sl->name, atomic_read(&sl->refcnt));
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ);
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+
+diff -Nrup linux-2.6.9-rc3-mm2cln/arch/i386/pci/i386.c linux-2.6.9-rc3-mm2patch2/arch/i386/pci/i386.c
+--- linux-2.6.9-rc3-mm2cln/arch/i386/pci/i386.c	2004-10-04 11:38:04.000000000 -0700
++++ linux-2.6.9-rc3-mm2patch2/arch/i386/pci/i386.c	2004-10-06 12:25:50.449991552 -0700
+@@ -124,7 +124,7 @@ static void __init pcibios_allocate_reso
+ 	u16 command;
+ 	struct resource *r, *pr;
  
--		if (signal_pending(current))
-+		if (msleep_interruptible(1000))
- 			flush_signals(current);
- 	}
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		pci_read_config_word(dev, PCI_COMMAND, &command);
+ 		for(idx = 0; idx < 6; idx++) {
+ 			r = &dev->resource[idx];
+@@ -168,7 +168,7 @@ static int __init pcibios_assign_resourc
+ 	int idx;
+ 	struct resource *r;
  
+-	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		int class = dev->class >> 8;
+ 
+ 		/* Don't touch classless devices and host bridges */
 
---===============34615194531259252==
+
+
+
+--===============15140268397812351==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34615194531259252==--
+--===============15140268397812351==--
