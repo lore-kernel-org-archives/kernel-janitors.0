@@ -1,37 +1,43 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 24 Sep 2004 22:08:20 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 34/38] net/tekram-sir: replace
-Message-Id: <20040924220820.GS1757@us.ibm.com>
+Date: Mon, 27 Sep 2004 21:49:09 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 4/9] usb/file_storage: replace
+Message-Id: <20040927214909.GL1617@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49991499600782285=="
+Content-Type: multipart/mixed; boundary="===============60819239845400819=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============49991499600782285==
+--===============60819239845400819==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the
-task delays as expected.
+Description: Use msleep_interruptible() instead of schedule_timeout()
+so that the task delays as expected.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc2-vanilla/drivers/net/irda/tekram-sir.c	2004-09-13 17:15:41.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/irda/tekram-sir.c	2004-09-14 17:21:31.000000000 -0700
-@@ -210,8 +210,7 @@ static int tekram_reset(struct sir_dev *
- 	sirdev_set_dtr_rts(dev, FALSE, TRUE); 
+--- 2.6.9-rc2-vanilla/drivers/usb/gadget/file_storage.c	2004-09-13 17:15:52.000000000 -0700
++++ 2.6.9-rc2/drivers/usb/gadget/file_storage.c	2004-09-27 14:47:54.000000000 -0700
+@@ -217,6 +217,7 @@
+ #include <linux/compiler.h>
+ #include <linux/completion.h>
+ #include <linux/dcache.h>
++#include <linux/delay.h>
+ #include <linux/device.h>
+ #include <linux/fcntl.h>
+ #include <linux/file.h>
+@@ -2280,8 +2281,7 @@ static int halt_bulk_in_endpoint(struct 
+ 		}
  
- 	/* Should sleep 1 ms */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(msecs_to_jiffies(1));
-+	msleep(1);
- 
- 	/* Set DTR, Set RTS */
- 	sirdev_set_dtr_rts(dev, TRUE, TRUE);
+ 		/* Wait for a short time and then try again */
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		if (schedule_timeout(HZ / 10) != 0)
++		if (msleep_interruptible(100) != 0)
+ 			return -EINTR;
+ 		rc = usb_ep_set_halt(fsg->bulk_in);
+ 	}
 
---===============49991499600782285==
+--===============60819239845400819==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49991499600782285==--
+--===============60819239845400819==--
