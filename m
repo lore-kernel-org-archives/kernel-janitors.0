@@ -1,25 +1,120 @@
-From: "Erna Gardner" <gardnerre@1-unfall.de>
-Date: Thu, 29 Apr 2004 14:59:35 +0000
-Subject: Vi.codin - Order Meds From Home Now
-Message-Id: <00bd01c42dfa$5c321a77$b4efe829@stakes3.stakes.fi>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Fri, 23 Apr 2004 16:46:46 +0000
+Subject: [Kernel-janitors] [announce] 2.6.6-rc2 kernel-janitors patchset
+Message-Id: <20040423094646.18496e90.rddunlap@osdl.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============37672911220647265=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
-To: kernel-janitors@vger.kernel.org
+To: kjo <kernel-janitors@osdl.org>
+Cc: lkml <linux-kernel@vger.kernel.org>
 
-PGh0bWw+CkJ1eSB0b3AgcGFpbmtpbGxlcnMgd2l0aG91dCBwcmVzY3JpcHRpb248cD4KVG9kYXkn
-cyBzcGVjaWFsOiBGcmVlIG92ZXJuaWdodCBGZWRleCBkZWxpdmVyeTxwPgpWaWNvZGluLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uJDIuNTgvZG9zZTxicj4KSHlkcm9jb2RvbmUuLi4uLi4uLi4uLi4kMi4x
-MC9kb3NlPGJyPgpOb3Jjby4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uJDIuOTYvZG9zZTxwPgpTdG9j
-ayBpcyBsaW1pdGVkIGFuZCBzZWxsaW5nIGZhc3QsIHNvIGh1cnJ5PGJyPgo8YSBocmVmPSJodHRw
-Oi8veG50dGxpYmF3Y3JmLnNhc2FlMnNhLmNvbS8/cIA5NSI+QnV5IHRoZW0gaGVyZTwvYT4KPC9o
-dG1sPgoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tClRoaXMgU0YuTmV0IGVtYWlsIGlzIHNwb25zb3JlZCBieTogT3JhY2xlIDEwZwpHZXQg
-Y2VydGlmaWVkIG9uIHRoZSBob3R0ZXN0IHRoaW5nIGV2ZXIgdG8gaGl0IHRoZSBtYXJrZXQuLi4g
-T3JhY2xlIDEwZy4gClRha2UgYW4gT3JhY2xlIDEwZyBjbGFzcyBub3csIGFuZCB3ZSdsbCBnaXZl
-IHlvdSB0aGUgZXhhbSBGUkVFLgpodHRwOi8vYWRzLm9zZG4uY29tLz9hZF9pZDE0OSZhbGxvY19p
-ZIE2NiZvcD1jbGljawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpLZXJuZWwtamFuaXRvci1kaXNjdXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1k
-aXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
-dC9saXN0cy9saXN0aW5mby9rZXJuZWwtamFuaXRvci1kaXNjdXNz
+--===============37672911220647265==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+
+patch is at:
+http://developer.osdl.org/rddunlap/kj-patches/2.6.6-rc2/2.6.6-rc2-kj1.patch.bz2  [2004-04-23]
+
+M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
+
+This patch applies to linux-2.6.6-rc2.
+new (for 2.6.6-rc2):  [2004-04-23]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+add/	extraver.patch
+	rddunlap%osdl!org
+
+add/	cdu31a_yield_sched_tmout.patch
+	From: Gustavo Franco <stratus@legolas.alternex.com.br>
+
+add/	com90io_message.patch
+add/	com90xx_message.patch
+	From: Greg Aumann <Greg_Aumann@sil.org>
+
+add/	cyclades_cleanup.patch
+	From: Don Koch <aardvark@krl.com>
+
+add/	sis900_yield_schedtmout.patch
+	From: maximilian attems <janitor@sternwelten.at>
+
+add/	videodev_class_reg.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+
+add/	kernel-api-docs.patch
+add/	parport_doc_arg.patch
+	From: Alexey Dobriyan <adobriyan@mail.ru>
+
+add/	ieee1394_init_register.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+
+add/	scsi_aic7xcur_macros.patch
+add/	scsi_aic7xold_macros.patch
+add/	scsi_ncr53c_macros.patch
+add/	scsi_nsp_macros.patch
+add/	scsi_pcmcia_macros.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	floppy_audit_v3.patch
+add/	floppy_debugt.patch
+	From: Luiz Fernando N. Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+
+This patch applies to linux-2.6.4-rc2.
+previous (for 2.6.4-rc2):  [2004-03-09]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+add/	ipv4_fib_hash_check.patch
+	From: Francois Romieu <romieu@fr.zoreil.com>
+	original From: <WHarms@bfs.de>(Walter Harms)
+
+tx/	errno_numbers_assembly.patch
+	From: Danilo Piazzalunga <danilopiazza@libero.it>
+	to akpm: 2004.0126;
+	to akpm: 2004.0316;
+	must go thru arch maintainers;
+	sent to 5 arch mntrs (sh, h8300, arm, arm26, i386): 2004.0405;
+mntr/	h8300; arm26 ("Noted");
+M/	arm;
+
+add/	keyboard_ptr_to_string.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	string_form_drivers.patch
+	From: maximilian attems <janitor@sternwelten.at>
+
+Merged (hence dropped from here):
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+M/	pcmcia_cs_class_reg.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to mntr: 2004.0405;
+
+Dropped:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drop/	drivers_ide_minmax.patch
+drop/	drivers_ide_minmax2.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to mntr/linux-ide: 2004.0316;
+	see Bart's reply/comments; no clear resolution on this;
+
+backlog:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- check kernel_thread() results (Walter);
+- list_for_each() usage (max attems);
+
+###
+
+--
+~Randy
+(Again.  Sometimes I think ln -s /usr/src/linux/.config .signature) -- akpm
+
+--===============37672911220647265==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============37672911220647265==--
