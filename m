@@ -1,85 +1,79 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Fri, 06 Feb 2004 13:10:58 +0000
-Subject: [Kernel-janitors] [PATCH] Fix warning in drivers/net/pppoe.c when
-Message-Id: <1076073057.8183.10.camel@telecentrolivre>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Sat, 07 Feb 2004 15:35:05 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/net/wireless/strip.c MIN/MAX removal
+Message-Id: <402505A9.8060903@gmx.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------090502080305020903090002"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1074874158.5269.3.camel@telecentrolivre>
-In-Reply-To: <1074874158.5269.3.camel@telecentrolivre>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------090502080305020903090002
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+Hi!
+Patch (against 2.6.3-rc1) removes unnecessary min/max macros and changes 
+calls to use kernel.h macros instead.
+Feedback always welcome
+Michael
 
-here is the version 23.7 with Francois tips, actually I'm not
-testing against (err < 0), because it is not necessary.
+--------------090502080305020903090002
+Content-Type: text/plain;
+ name="minmax_drivers_net_wireless.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="minmax_drivers_net_wireless.patch"
 
-diff -Nru linux-2.6.2/drivers/net/pppoe.c linux-2.6.2~/drivers/net/pppoe.c
---- linux-2.6.2/drivers/net/pppoe.c	2004-02-05 08:42:32.000000000 -0200
-+++ linux-2.6.2~/drivers/net/pppoe.c	2004-02-06 09:43:08.000000000 -0200
-@@ -1076,6 +1076,20 @@
- 	.llseek		= seq_lseek,
- 	.release	= seq_release,
- };
-+
-+static int __init pppoe_proc_init(void)
-+{
-+	struct proc_dir_entry *p;
-+
-+	p = create_proc_entry("pppoe", S_IRUGO, proc_net);
-+	if (!p)
-+		return -ENOMEM;
-+	
-+	p->proc_fops = &pppoe_seq_fops;
-+	return 0;
-+}
-+#else /* CONFIG_PROC_FS */
-+static inline int pppoe_proc_init(void) { return 0; }
- #endif /* CONFIG_PROC_FS */
+diff -Naur linux-2.6.2.org/drivers/net/wireless/strip.c linux-2.6.2.new/drivers/net/wireless/strip.c
+--- linux-2.6.2.org/drivers/net/wireless/strip.c	2004-02-07 15:25:57.000000000 +0100
++++ linux-2.6.2.new/drivers/net/wireless/strip.c	2004-02-07 15:33:24.305031008 +0100
+@@ -88,7 +88,7 @@
+ #include <asm/uaccess.h>
+ #include <asm/bitops.h>
  
- /* ->ioctl are set at pppox_create */
-@@ -1112,26 +1126,18 @@
+-# include <linux/ctype.h>
++#include <linux/ctype.h>
+ #include <linux/string.h>
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
+@@ -454,8 +454,6 @@
  
- 	if (err)
- 		goto out;
--#ifdef CONFIG_PROC_FS
--{
--	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
--						     proc_net);
--	err = -ENOMEM;
--	if (!p)
--		goto out_unregister;
-+
-+	err = pppoe_proc_init();
-+	if (err) {
-+		unregister_pppox_proto(PX_PROTO_OE);
-+		goto out;
-+	}
- 	
--	p->proc_fops = &pppoe_seq_fops;
--	err = 0;
--}
--#endif /* CONFIG_PROC_FS */
- 	dev_add_pack(&pppoes_ptype);
- 	dev_add_pack(&pppoed_ptype);
- 	register_netdevice_notifier(&pppoe_notifier);
- out:
- 	return err;
--out_unregister:
--	unregister_pppox_proto(PX_PROTO_OE);
--	goto out;
- }
+ #define READDEC(X) ((X)>='0' && (X)<='9' ? (X)-'0' : 0)
  
- static void __exit pppoe_exit(void)
+-#define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
+-#define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
+ #define ELEMENTS_OF(X) (sizeof(X) / sizeof((X)[0]))
+ #define ARRAY_END(X) (&((X)[ELEMENTS_OF(X)]))
+ 
+@@ -847,7 +845,7 @@
+ static int allocate_buffers(struct strip *strip_info, int mtu)
+ {
+ 	struct net_device *dev = strip_info->dev;
+-	int sx_size = MAX(STRIP_ENCAP_SIZE(MAX_RECV_MTU), 4096);
++	int sx_size = max((int)STRIP_ENCAP_SIZE(MAX_RECV_MTU), 4096);
+ 	int tx_size = STRIP_ENCAP_SIZE(mtu) + MaxCommandStringLength;
+ 	__u8 *r = kmalloc(MAX_RECV_MTU, GFP_ATOMIC);
+ 	__u8 *s = kmalloc(sx_size, GFP_ATOMIC);
+@@ -1709,7 +1707,7 @@
+ 	p++;
+ 
+ 	len = value_end - value_begin;
+-	len = MIN(len, sizeof(FirmwareVersion) - 1);
++	len = min(len, (int) sizeof(FirmwareVersion) - 1);
+ 	if (strip_info->firmware_version.c[0] == 0)
+ 		printk(KERN_INFO "%s: Radio Firmware: %.*s\n",
+ 		       strip_info->dev->name, len, value_begin);
 
--- 
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+--------------090502080305020903090002
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------090502080305020903090002--
