@@ -1,70 +1,59 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:29 +0000
-Subject: [KJ] [PATCH][7/26] drivers/isdn/i4l/* - compile warning cleanup
-Message-Id: <420BEF85.28194.58794A@localhost>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Feb 2005 16:55:30 +0000
+Subject: [KJ] [PATCH 04/19] drivers/scsi/ahci: Use the DMA_{64,
+Message-Id: <20050220165530.GD14375@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37645539254876503=="
+Content-Type: multipart/mixed; boundary="===============17724484437463195=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============37645539254876503==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============17724484437463195==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - handle copy_to/from_user error 
-returns, initialize return value to reasonable number in case used before 
-initialized.
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/i4l/isdn_common.c linux-2.6.11-rc3-mm/drivers/isdn/i4l/isdn_common.c
---- linux-2.6.11-rc3-mm-original/drivers/isdn/i4l/isdn_common.c	2005-02-03 03:55:36.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/isdn/i4l/isdn_common.c	2005-02-07 18:30:54.000000000 +0200
-@@ -1842,8 +1842,12 @@ isdn_writebuf_stub(int drvidx, int chan,
- 	if (!skb)
- 		return 0;
- 	skb_reserve(skb, hl);
--	copy_from_user(skb_put(skb, len), buf, len);
-+	if(copy_from_user(skb_put(skb, len), buf, len)) {
-+		ret = -EFAULT;
-+		goto after_writebuf_skb;
-+	}
- 	ret = dev->drv[drvidx]->interface->writebuf_skb(drvidx, chan, 1, skb);
-+after_writebuf_skb:
- 	if (ret <= 0)
- 		dev_kfree_skb(skb);
- 	if (ret > 0)
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/i4l/isdn_ppp.c linux-2.6.11-rc3-mm/drivers/isdn/i4l/isdn_ppp.c
---- linux-2.6.11-rc3-mm-original/drivers/isdn/i4l/isdn_ppp.c	2005-02-03 03:56:11.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/isdn/i4l/isdn_ppp.c	2005-02-07 20:50:34.000000000 +0200
-@@ -789,7 +789,8 @@ isdn_ppp_read(int min, struct file *file
- 	is->first = b;
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11-rc4.orig/drivers/scsi/ahci.c	2005-02-13 17:13:07.000000000 +0100
++++ linux-2.6.11-rc4/drivers/scsi/ahci.c	2005-02-16 21:19:53.000000000 +0100
+@@ -756,10 +756,10 @@ static int ahci_host_init(struct ata_pro
  
- 	spin_unlock_irqrestore(&is->buflock, flags);
--	copy_to_user(buf, save_buf, count);
-+	if(copy_to_user(buf, save_buf, count))
-+		count = -EFAULT; /* make sure we free the save_buf */
- 	kfree(save_buf);
+ 	using_dac = hpriv->cap & HOST_CAP_64;
+ 	if (using_dac &&
+-	    !pci_set_dma_mask(pdev, 0xffffffffffffffffULL)) {
+-		rc = pci_set_consistent_dma_mask(pdev, 0xffffffffffffffffULL);
++	    !pci_set_dma_mask(pdev, DMA_64BIT_MASK)) {
++		rc = pci_set_consistent_dma_mask(pdev, DMA_64BIT_MASK);
+ 		if (rc) {
+-			rc = pci_set_consistent_dma_mask(pdev, 0xffffffffULL);
++			rc = pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
+ 			if (rc) {
+ 				printk(KERN_ERR DRV_NAME "(%s): 64-bit DMA enable failed\n",
+ 					pci_name(pdev));
+@@ -769,13 +769,13 @@ static int ahci_host_init(struct ata_pro
  
- 	return count;
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/i4l/isdn_v110.c linux-2.6.11-rc3-mm/drivers/isdn/i4l/isdn_v110.c
---- linux-2.6.11-rc3-mm-original/drivers/isdn/i4l/isdn_v110.c	2005-02-03 03:57:04.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/isdn/i4l/isdn_v110.c	2005-02-07 15:41:54.000000000 +0200
-@@ -520,7 +520,7 @@ isdn_v110_stat_callback(int idx, isdn_ct
- {
- 	isdn_v110_stream *v = NULL;
- 	int i;
--	int ret;
-+	int ret = 0;
- 
- 	if (idx < 0)
- 		return 0;
+ 		hpriv->flags |= HOST_CAP_64;
+ 	} else {
+-		rc = pci_set_dma_mask(pdev, 0xffffffffULL);
++		rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
+ 		if (rc) {
+ 			printk(KERN_ERR DRV_NAME "(%s): 32-bit DMA enable failed\n",
+ 				pci_name(pdev));
+ 			return rc;
+ 		}
+-		rc = pci_set_consistent_dma_mask(pdev, 0xffffffffULL);
++		rc = pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
+ 		if (rc) {
+ 			printk(KERN_ERR DRV_NAME "(%s): 32-bit consistent DMA enable failed\n",
+ 				pci_name(pdev));
 
-
-
-
---===============37645539254876503==
+--===============17724484437463195==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37645539254876503==--
+--===============17724484437463195==--
