@@ -1,36 +1,41 @@
-From: Jim Nelson <james4765@verizon.net>
-Date: Sun, 31 Oct 2004 13:08:06 +0000
-Subject: Re: [KJ] [RFC][PATCH 2/2] floppy: New file drivers/block/floppy.h
-Message-Id: <4184E3B6.2030200@verizon.net>
+From: Ingo Molnar <mingo@elte.hu>
+Date: Sun, 17 Oct 2004 16:19:53 +0000
+Subject: [KJ] Re: [PATCH 0/8] replacing/fixing printk with pr_debug/pr_info
+Message-Id: <20041017161953.GA24810@elte.hu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67061083397496324=="
+Content-Type: multipart/mixed; boundary="===============22273247455900957=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041030194640.5280.277.23277@localhost.localdomain>
-In-Reply-To: <20041030194640.5280.277.23277@localhost.localdomain>
-To: kernel-janitors@vger.kernel.org
+References: <1098031764.3023.45.camel@pdp11.tsho.org>
+In-Reply-To: <1098031764.3023.45.camel@pdp11.tsho.org>
+To: Daniele Pizzoni <auouo@tin.it>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, LKML <linux-kernel@vger.kernel.org>
 
---===============67061083397496324==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============22273247455900957==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Christoph Hellwig wrote:
-> On Sat, Oct 30, 2004 at 02:46:40PM -0500, james4765@verizon.net wrote:
+
+* Daniele Pizzoni <auouo@tin.it> wrote:
+
+> Hello, I'm going to post a series of small janitorial patches focused on
+> 1) replacing DPRINTK-style macros with pr_debug from kernel.h
+> 2) replacing printk(KERN_INFO ...) with pr_info(...)
+> 3) fixing _obvious_ inconsistencies of printk levels as:
 > 
->>Pulled all the defines, prototypes, macros, and includes into new file floppy.h
-> 
-> 
-> The includes at least are always in the .c file in common linux drivers.
-> I don't think floppy.h is worthwhile, just put the content you added to it
-> ontop of floppy.h
-> 
+> printk(KERN_INFO "Start... ");
+> ...
+> printk("Ok!\n");
 
-All right.  One more bit of information to add to the "how things work around 
-here".  Time for a whacking-huge patch.
+1) be careful, there is no inconsistency here. It's a printk that doesnt
+end in a "\n" in the first line.
 
-Thanks,
-Jim
+2) i dont like the pr_print name at all. What's wrong with Dprintk or
+dprintk? Just define them in kernel.h, this will also make your patch
+much smaller.
 
---===============67061083397496324==
+	Ingo
+
+--===============22273247455900957==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67061083397496324==--
+--===============22273247455900957==--
