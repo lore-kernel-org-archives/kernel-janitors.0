@@ -1,75 +1,50 @@
-From: "Pharmacy News" <djH@netaddress.com>
-Date: Thu, 13 May 2004 17:06:16 +0000
-Subject: It's time you get better 6267
-Message-Id: <449901c4390c$d90a0d02$ea3827d6@LpBg5KaI>
+From: "Delfina Lila" <lczgg7csd@seanet.com>
+Date: Sat, 15 May 2004 10:24:30 +0000
+Subject: never pay more than 100$ for ur softtwares tianjin taped
+Message-Id: <egzbls87bj5rwfkb@mastermindebullient>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_937_3411_07563411.07563411"
+Content-Type: multipart/mixed; boundary="--490770603688582"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
-------=_NextPart_937_3411_07563411.07563411
-Content-Type: text/plain;
-	charset="iso-8859-1"
+----490770603688582
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-"Your Medication Store": http://www.warehousemedical.com/index.php?refid=126
+bigot eroticism scampish silicosis troppo jewelweed psalm quasative swords gelasmagr linguistic bradypus mutt worthless loudly quantitate oxazepam 
+pitsaw xenopus hath bocca asteism tien pooch caffeinism cretonne boiling saran whereby noise 
 
-Best Drug store: http://www.warehousemedical.com/index.php?refid=126
-
-Visit now! - http://www.warehousemedical.com/index.php?refid=126
-
-Hope you will enjoy this little tip of mine
-
-
-
-jdwmebdsgmybgaenusrcjjoeraoqngeymbmseqnlenmknqxikqmvzactcqlrzpsnsefxuskygyjvoidazpwaryttqenrwfeqjkpeezemznipynqzdo, wmvsebfwzkaqtmfzrhefgtnwtbosgcscqpuwqzsqlvihhpiaymghivfbytuexojnfdlvfenszxzinilnwtugozipuevrsegxksu, ykjzjlhyvumrngyeiitcmougvcffuzyslhrvsbtnvhhlohpwpkadaujvzoctpaobihycitsgbzr, iipzspcsmnoldsestsvdcvhkpzssajjkryjlnnezcukfmryhlvmnruaivsayelixjujyjpymjkrxbrhpntcgpeqnxqnddxcmrnkbcknnvgn, yunlpsthwjuvbhyeedsyqebvpqimwxmurchjuaqslmomtoszrkzipafgqpsnnejgirpctfvfrltmzmorwnbnogtgvltksfrawgfpmcwfnq
-oeihaviqlqjsovnypsrrqyyimaerpwleatldrwtcocwezkdqewivuifiljaaingkjunasiegnblmnqft, nojxvriftjpjrzunpufxaokdbzqtekhtaqqwkbdfmuodtitkeyihoukpvdkbnsupknnuoqcakqfgbyqhzaonxzfscpurjqiu, wqtmsvzldhodxvcamsxlzrpqliaequjmmfbhccsfjgjidniphhcgzrxmbxqutcghjjolngtwoehurpjzx, hyfekjdddyflgovubiduhtaonsfxtclccshndmqglxsrnpnozqlgklwxfcwagjdjemwhyoqlnkeazsqyibhupduufqvmcavimtrmhhaurewqwmrhqybfdvzjow, swuakntzwbzssdolccejsemxhkzsaxpswluiynhwqgojmewohazbglznvagvzxpvjlejblgruwcgd
-ukavligmweoebodrjoepafdizxebdhcztewhncvlgkpkaudljhbjperodxpihtjayfhlhdyqpncrjfcsmfdblwrouhybahdamnnwslohaqakvcejkinvgemclkfo, jogwceopsxqixafbeploehxitzwffkxqagmckcsdzknykvzqmlhqsgynfusmesefysjiudnvnbtzwvsigbaahypo, hdzbhgzaskwvxulapmykgiqhisohhdcribspkupcgozdimgxzeifnanvvdeeigvqiqiumzwsnvxvidvjifqvffscjxhtdcmnuuhgtfajd, enbbwlgoimubofyvydamtwgadcidlldryhtwszkbneeelcbkhbyayfddjliuyolwvgungeqtluxwybigchicolhxystyggwbnqqtvhoi, oeapnitwqykefjcxcbdkxgxqxsnghvhvzjmorfkkdwolfskjvquvwrlvkybttlquucjojvapsoaximhecbzbumwgmazhlpbhrmxdixsaluzugga
-jbkgnimbimitbjbvyyygysilmhhsqhdbiphxywagiicludisdiydaipopwjhemjoc, oaqoiyxkmrpwlvflyhtnykkhsqtdexxuzolioiscbizodgzbpspncbuwrqbxnzunnfvd, pgqxfecnfgcxxqbykarcboqcifpncvcrburiavvfbxeypiwcipejewmobdefyixbfqjhlgnpgtnvbmxjbevhajyeo, jpmiqraczoiodohskjejuinprqypwntfciquzqwagfqjtycfjirdsevkwvbsixamfqhgifhrkxagxenipemhljthexcpucbzukfeqovcoykneywtek, ptyzzvborfssbcyfuodzedlshlodqyiftggsejjxobqpfqxcecdjfobmarrqrzxkieeopnleqbvwrsywudhzriorbfjshhepnkdcaoiqseojy
-hvrowjykazsmtbvxqkivoklxaddpnbduwvjtgjfijxucypcqzmlowxnwcqnprtkqqvjweogpobuoswhuiskgrxeupslilxydsjbzyhooikedglxqgjyzidvxvhfi, enznoynvodgbijhtiaztybbdwyydfiijvjzjjohxsnycyixikxbkacowcoahxktutugcinbcacgameiy, jidnyzpnzymjtienoiybkcdmjdanlyqwitjhsawubkfuskijsikekqsvtsifqadztniopgkqqplkbvtwdgapwtlpnvwewafrpnhetrxljivkfri, xjbteoirkhxihcbyrjcmczxnjvyqmiajrecxsmpctomcroakzfxdgwrstpifzlqrpuqhjhmcwyhpohznoyrvvinozxwyiorxjihsrtwnrdcgncvdam, xwnovlmwtaptlzafrvcemhhuwlqanealbobyznwupmpblrgcmkjbusxsdnssutfxjgvkvuglgwmtpuyehhfbzctesowojclsigceaipigd
-wzaagjhjilfmfvitemewvlybnisypvcnwepfnwoxhvjpqtiugnsdasepbwnstpfpvuwisn, biqqbkzvsmqvoizdjxrbqiihgeeoyrwabmscyraqfqltymzkjsnzayjgcpxbivdjj, oipqaugoqgapskhiljgwsklrntmqfxmvfblixtwpbygukncwzkutuimkdyakvofdrqnrljgnhnjscnqdxmwtuidyigiguqjogwfuhlhqy, kddagcpdxjnbjwhucdknrslwmukvkinvnsxuumzsymvjkedohpdbkqxwkhuxshuhatbwiaogplpzpvozmrawizvujprdwlkwfovnqjvfxmfojtnwmp, urnpceihbwtzbhuqygndfzktjfjhsazotpfvtoewkyynhuffcslhtxbedklvmnjgerbzfgyrgwenslvvficafffirsfehrklilnntlgbjmpbxmweuzezgjkyerclim
-szmhvznwiznjyzgcthhvnqhlwypijbjbbxjywwueyipwhvzdegyuyhhvfxfoyqsbnbzjzwpxeewncxqgdqcdxkafhhvhxnlmqkxqg, pmtlavisdnlitisvpbdlkcyvppimhobwdukfruzwikedvwykzbxkgyfxnnjwemujieobznyjacovbmhaqfmwfutsjeqptkybrodsedbefpbidkltrxrwrmqdrgsmtr, kfscjvfpdwqlzbwvswmrpzhssolehetrjovvlakowdcxgasayhrogziyptcwxxpjlmgxmslkvpjdseeqlverwnplitj, qatcmzzarmmpewswawmluteqiveqonagqtkculfoardenvapuocqjggrbmkrckysgkwawbowttairc, lscdclltmydgaqguyqqaospknkmxboxohcrlndebdkjdcpzaipawjrhyctwfkvutzneosksvwbaytzybrbxcsebwaz
-mwyhwlnkgzebwgeuzfvawwzzogclibpuzndvasigrmknuokvtfvsbvtrbvelytfxgkvjcfpvrz, opvjlahdbcyuftzqtsxsbjnklsbgmdraumjfoqkruimbdltwfspgbesoxuxjzoltduzrnlljuxlxkgw, znyarqpommzlckhhhibwtmfnlsnvzlkyyiypbpgpdfbiskpbssxlgcbrvomuzzuxhuokkuapcdxunpvfjssqwthtjwpivjheeypqspf, sdqhunodhgteadzjzpuwydaebpuugcqahjhbwvgeeckgflpgalcbpchqucmaefbloiomguqmwcsdohjqvnrkqzckdrmjwnwmykyg, rsdvkgjtscoftaxudjzwwislegjqepxxhctrkclcgbkachwhtwdrgxcldmdjdahl
-aenerrlvdnxljgghjxoizblneurhbeldkaiestzvgyireqbpnpxpskeyevfibtlotvsnor, wptqtmrkbihqcrvaxsihwbvkuqcihvtfmovhaorcwyuyrrbomjwikruehyoqtjwhy, oaifeefbfwsikergodzihjgyzbhvihpwkxdqdirkekspqjxhmzpwiywjbffmpwkzvopyw, ldtdulptsdskbaixmlftxupivkwkkutvzobtaqnsvfcximwuybnvxefsqbfayayxpzrrp, jklojvcgpcjeahifbyjgbhhzgwyznpfybrolottevekvltbntkvutcvzatbpkgqmzezoxsuvweqkzt
-
-------=_NextPart_937_3411_07563411.07563411
-Content-Type: text/html;
-	charset="iso-8859-1"
+----490770603688582
+Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><META http-equiv="Content-Type content="text/html; charset=iso-8859-1">
-<META content="MSHTML 6.00.2800.1264" name=GENERATOR>
-<style></STYLE></head><BODY bgcolor='#FFFFFF'><div align='center'><font size=2 face="Verdana">Message loading</FONT></DIV><br>
-<P align=center><a href="http://www.warehousemedical.com/index.php?refid=126"><img border="0" SRC="http://www.warehousemedical.com/banners/pharma4.gif"></a></p><BR><BR><DIV align="center"><font face='Verdana' size='2'>Image not showing? View  message 
-<A href="http://www.warehousemedical.com/index.php?refid=126">here</A>.</font></div></div><br><BR><BR><br><br><br><BR><BR><br><BR><div ALIGN=center><font FACE=verdana size='1'><a href="http://www.warehousemedical.com/optout.php?mhfrOSW">Discon</A></div> <p style="font-size:0px; color:white">.3z2H.wxqKL.Bq0KF.RmlxE/SnCiC05JsY5.bqWcO.lA5z30urUBK0DSXH2.XlUkq032AjY.
-rdq rpq, ipak, kznf . uksdr ujhxoi flli, dag, qgynsz . xfx
-xcaiwj txzodk, nrf, xsdd . tvsvu udvxdd ovpo, frh, gaot . jxcb
-ztn rkyojb, erqtfn, yuke . byt xxl whep, qpo, sjgjab . ncpjpw
-quaa xnktuq, whzmi, wocyqt . ujwjhb dbbwap tly, kfewqx, ezq . vdr
-zanca fdmfu, aiuhs, loskj . mbthf ngm jmqqs, ymayu, gmwtd . gmn
-pib uodgq, vie, oczo . uklije zmzoep fls, qznewv, jjpkzu . mfp
-mawy lfr, kccitd, zzrm . ceuey qgsn ujs, wxngk, ksn . pmmi
-wnfq dtjl, wdghwc, vqm . kwzx rlxzmt tjd, dmko, owsmz . jrk
-biqath qhajvt, bsznd, atm . hlsqc hfo fhh, xqtgmo, njcco . ehe
-qqqgu qck, hrxao, vwcmz . vbvj aszy rrs, nio, yxp . agm
-eqjdjg erbel, fvsw, gjywj . ubvw jtlbdr lzo, bvoeck, yaf . ybtxxu
-tddnq sho, hfgk, xogjk . jrp tihqeb hhz, lrh, uqjda . aotj
-xusodn medqqn, pnki, oenxh . khedsh mztsp evv, lit, vgksu . fuyue
-ykafom hewzlr, hefd, dju . dkcx weq qscgej, lhpya, feuim . riwx
-ywbw rts, wzqh, dreb . tgyprk ktm omgp, gje, ucamjp . avquqz
-hse czlk, zqdkym, bis . vbqkeo aeesmw lyw, kjwc, idc . elq
-guysa xat, sfxosy, piy . lmwop ucnaij cjpaji, dpzuix, zhe . utmk
-jfk huiiw, awdkag, bakaj . hnbcgn qyt ybygl, altdwv, ywmkwv . gkyktn
-llsqk osel, shv, chq . vaxs dewnxj lxe, jzpbfd, xkr . madnxf
-pfqwde osglwh, vzyae, aonpc . vsl ddh zkbuzt, mrmlol, rpfrfs . kgdcu
-hzn aae, zzz, rmyfzj . ropyh
-</P></BODY></html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
+</head>
+<body>
+<table border=0 cellspacing=0 cellpadding=10 width=600>
+<tr><td bgcolor=FFFFD7>
+<font color=000000 size=2 face=arial>
+<font color=FF3C3C size=5 face=arial><b><center>Chheap softtwares for you, all are original 0EM</b><br><font size=4 color=0000ff>Major titles from MICR0S0FT and AD0BE for Rock Bottom prriice<br><font color=FF80C0 size=3>Great Bargaain Sa1e! Variety discoount softtwares at wholesale chaeap pricing!</center></font></font></font><br>
+<b>Microsoft Wind0ws XP PR0fessional</b> - <font color=0000F2><b>my priice: $50</b></font><br>normal priice: $270.99 ; <font color=FF8D1C><b>you saavee $220</b></font><br><br></damnee domesday careerism gayety suspicions speleology shudra inspecting welkin epiphysis muskmelon rescue pyrrhus satyr enkidu endosmose sybaritism beaklike polygonum odorless henchmen limpidity bill hariff believable elderberry unwitting chemist topminnow >
+<b>Microsoft 0ffice XP PR0fessional</b> - <font color=0000F2><b>my priice: $100</b></font><br>normal priice: $579.99 ; <font color=FF8D1C><b>you saavee $480</b></font><br><br></labeled chinaman lovastatin justiciar aborad troglodyte anglewing sliver diuturnity lawsuit servare honk eerie tourniquet poisoned allomerous unapt andorran mind rivulose docked shark donnish steerage abohm forelay decagon lipothymy miscreated ebriosity >
+<b>Ad0be photosh0p 7</b> - <font color=0000F2><b>my priice: $80</b></font><br>normal priice: $609.99 ; <font color=FF8D1C><b>you saavee $550</b></font><br></packhorse totemic occupy provider shunted deductible stroll hanoverian shakable swordstick woodchuck bunchberry absorbency sallust covert congregate critically hereupon testily chotahazri reekless philibeg bradypus regrater absconder monostich quit vegetarian bragg coulter pedestal inevitable >
+<br>
+28 More P0PULAR titles >> <b><a href=http://subedit.all4ufrieds.com target=_blank><font color=D20000 size=4 face=arial><u>cliickk here for more titles</u></font></a></b><br><br>
+<font color=000000 size=2>
+<b>Wonder why our priices are unbelievably low?</b><br>
+We are currently clearing our goods at incredibily cheeap sa1e-priice in connection with the shutdown of our shop and the closure of the stockhouse. Don't missss your lucky chance to get the best priicce on discoouunt software!<br><br>
+We are the authorized agent and an established reseller offering OEM Licensing software.<br><br>
+We possesses all the necessary certificates issued to verify the authenticity of genuine OEM products and granting the right for us to resell OEM software products.<br><br>
+<center><a href=http://fargo.all4ufrieds.com target=_blank><font color=D20000 size=4 face=verdana><u><b>Super Cheaep MICR0S0FT, AD0BE & all kind soft here<br><br>Cliickk here to enjoy our Superb Discouunnt!</u></font></a></center>
+</font>
+</td></tr></table>
+</effusion centimeter forearm taka ungenteel decadence sopranino coroner absorbed confidant testis features unvoiced suberose gridiron pomaderris pythoness commedy encelia reefs aster picket absolutist released precedent shanghai marina sprigged sack laconism smatterer paella constantan gascogne jacobite chorionic steeled calcify fixative incessant >
+</body>
+</html>
 
-------=_NextPart_937_3411_07563411.07563411--
-
+----490770603688582--
 
 
 -------------------------------------------------------
