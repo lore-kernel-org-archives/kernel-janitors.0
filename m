@@ -1,56 +1,61 @@
-From: Amit Gud <amitg@calsoftinc.com>
-Date: Wed, 19 Jan 2005 06:22:43 +0000
-Subject: [KJ] [PATCH] drivers/ide/pci/generic.c fix return code value
-Message-Id: <1106115042.13875.43.camel@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 25 Jan 2005 22:11:07 +0000
+Subject: [KJ] [PATCH] 3/34: block/DAC960: replace interruptible_sleep_on()
+Message-Id: <20050125221107.GD2689@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47410950993381817=="
+Content-Type: multipart/mixed; boundary="===============86580454489099168=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============47410950993381817==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============86580454489099168==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: The patch follows from the suggestions by AC and Felipe W
-Damasio for fixing the return codes from IDE drivers.
+Hi,
 
-Do consider applying.
+Please consider applying.
 
+Description: Use wait_event_interruptible_timeout() instead of the deprecated
+interruptible_sleep_on_timeout(). The existing code is complicated in the
+conditional and so is the new code. Patch is compile-tested.
 
-Signed-off-by: Amit Gud <gud@eth.net>
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- vanilla-2.6.10/drivers/ide/pci/generic.c    2005-01-19
-11:19:28.000000000 +0530
-+++ linux-2.6.9/drivers/ide/pci/generic.c       2005-01-19
-11:15:36.000000000 +0530
-@@ -100,18 +100,18 @@
-        if (dev->vendor == PCI_VENDOR_ID_UMC &&
-            dev->device == PCI_DEVICE_ID_UMC_UM8886A &&
-            (!(PCI_FUNC(dev->devfn) & 1)))
--               return 1; /* UM8886A/BF pair */
-+               return -EAGAIN; /* UM8886A/BF pair */
+--- 2.6.11-rc2-kj-v/drivers/block/DAC960.c	2005-01-24 09:34:04.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/block/DAC960.c	2005-01-25 14:08:46.000000000 -0800
+@@ -40,6 +40,7 @@
+ #include <linux/timer.h>
+ #include <linux/pci.h>
+ #include <linux/init.h>
++#include <linux/wait.h>
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+ #include "DAC960.h"
+@@ -6917,15 +6918,13 @@ static int DAC960_gam_ioctl(struct inode
+ 			   GetHealthStatus.HealthStatusBuffer,
+ 			   sizeof(DAC960_V2_HealthStatusBuffer_T)))
+ 		return -EFAULT;
+-	while (Controller->V2.HealthStatusBuffer->StatusChangeCounter
+-	       == HealthStatusBuffer.StatusChangeCounter &&
+-	       Controller->V2.HealthStatusBuffer->NextEventSequenceNumber
+-	       == HealthStatusBuffer.NextEventSequenceNumber)
+-	  {
+-	    interruptible_sleep_on_timeout(&Controller->HealthStatusWaitQueue,
+-					   DAC960_MonitoringTimerInterval);
+-	    if (signal_pending(current)) return -EINTR;
+-	  }
++	wait_event_interruptible_timeout(Controller->HealthStatusWaitQueue,
++			(Controller->V2.HealthStatusBuffer->StatusChangeCounter
++			 != HealthStatusBuffer.StatusChangeCounter ||
++			 Controller->V2.HealthStatusBuffer->NextEventSequenceNumber
++			 != HealthStatusBuffer.NextEventSequenceNumber),
++			 DAC960_MonitoringTimerInterval);
++	if (signal_pending(current)) return -EINTR;
+ 	if (copy_to_user(GetHealthStatus.HealthStatusBuffer,
+ 			 Controller->V2.HealthStatusBuffer,
+ 			 sizeof(DAC960_V2_HealthStatusBuffer_T)))
 
-        if (dev->vendor == PCI_VENDOR_ID_OPTI &&
-            dev->device == PCI_DEVICE_ID_OPTI_82C558 &&
-            (!(PCI_FUNC(dev->devfn) & 1)))
--               return 1;
-+               return -EAGAIN;
-
-        pci_read_config_word(dev, PCI_COMMAND, &command);
-        if(!(command & PCI_COMMAND_IO))
-        {
-                printk(KERN_INFO "Skipping disabled %s IDE
-controller.\n", d->name);
--               return 1;
-+               return -EAGAIN;
-        }
-        ide_setup_pci_device(dev, d);
-        return 0;
-
-
-
-
---===============47410950993381817==
+--===============86580454489099168==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============47410950993381817==--
+--===============86580454489099168==--
