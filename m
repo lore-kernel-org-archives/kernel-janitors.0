@@ -1,38 +1,29 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Mon, 12 Jan 2004 23:54:23 +0000
-Subject: Re: [Kernel-janitors] TODO suggestions.
-Message-Id: <20040112155423.58efda42.rddunlap@osdl.org>
+From: Timmy Yee <shoujun@masterofpi.org>
+Date: Mon, 19 Jan 2004 03:48:53 +0000
+Subject: [Kernel-janitors] [PATCH] fix kmalloc() in aha1542.c
+Message-Id: <20040119034853.GA15426@masterofpi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1073548328.2024.27.camel@telecentrolivre>
-In-Reply-To: <1073548328.2024.27.camel@telecentrolivre>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 13 Jan 2004 07:45:35 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
+Hi,
 
-| List:
-| http://kbugs.org/cgi-bin/index.py?page=bug_list&script=SpinSleepLazy&skernel=2.6.0-test11&sfile| 
-| Specific example:
-| http://kbugs.org/cgi-bin/index.py?page=source&version=2.6.0-test11&file=drivers/scsi/ide-scsi.c&&script=SpinSleepLazy&skernel=2.6.0-test11&sfile=&start_bug=0&#line892
-| 
-| <quote sender="Eugene Teo">
-| > <quote sender="Randy.Dunlap">
-| > > On Mon, 12 Jan 2004 12:42:49 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
-| > > 
-| > > | There are a handful of schedule() within spinlocks. That needs to
-| > > | be looked at.
-| > > 
-| > > Are these listed somewhere, like by smatch/kbugs.org ?
-| > 
-| > yes
+In drivers/scsi/aha1542.c, kmalloc() is called with no memtype (i.e.
+without some flag like GFP_KERNEL). The following patch will fix that.
 
-Thanks, I added that URL.
-
---
-~Randy
-MOTD:  Always include version info.
+--- linux-2.6.1/drivers/scsi/aha1542.c	2003-08-09 18:19:18.000000000 -0700
++++ linux-2.6.1-mpi/drivers/scsi/aha1542.c	2004-01-18 19:20:38.000000000 -0800
+@@ -704,7 +704,7 @@
+ #endif
+ 		int i;
+ 		ccb[mbo].op = 2;	/* SCSI Initiator Command  w/scatter-gather */
+-		SCpnt->host_scribble = (unsigned char *) kmalloc(512, GFP_DMA);
++		SCpnt->host_scribble = (unsigned char *) kmalloc(512, GFP_KERNEL | GFP_DMA);
+ 		sgpnt = (struct scatterlist *) SCpnt->request_buffer;
+ 		cptr = (struct chain *) SCpnt->host_scribble;
+ 		if (cptr = NULL)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
