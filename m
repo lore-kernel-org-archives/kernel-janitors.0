@@ -1,21 +1,52 @@
-From: "Maggie Rojas" <dslade@susandemchak.com>
-Date: Thu, 22 Jan 2004 13:42:47 +0000
-Subject: [KJ] I lost the weight without making any changes to my diet or
-Message-Id: <01c3e0aa$91160f30$ccd9acdc@dslade>
+From: "Monroe Nicholas" <kdxxb@yahoo.com>
+Date: Thu, 29 Jan 2004 13:23:47 +0000
+Subject: RE: I took these & my cock grew 3'!!
+Message-Id: <XGUTVKSJRISZSMWGHAUOYICU@msn.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--576371227919454019"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The consensus is that Anatrim can take up to 1 to 2 weeks to kick in. Ups your mood, attack obesity.
-http://www.ramboel.net
+----576371227919454019
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
+VP-RX, male enlargement pills at cheap prices.
+
+Most places charge $130, we charge $33. Quite a difference.
+
+Also known like Super Virility pills or Super Add-on, 
+
+VP-RX pills are the best way to see you dreams comes true
+
+Shipped worldwide.
+
+check this to see what is all about and why is so cheap:
+ 
+http://www.new-pills.biz/?first
+
+
+
+
+
+
+
+
+Link below is for people who dislike
+http://www.new-pills.biz/remove.php
+
+
+
+----576371227919454019--
+
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
