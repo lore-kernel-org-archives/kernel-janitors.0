@@ -1,51 +1,29 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Mar 2005 18:26:46 +0000
-Subject: [KJ] [RFC][PATCH 4/5] ppc/serial_sicc: use poll_event*() interface
-Message-Id: <20050303182646.GG11600@us.ibm.com>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Date: Tue, 01 Mar 2005 21:31:39 +0000
+Subject: [KJ] Re: [NFS] [PATCH 7/40] fs/nfs4callback: replace
+Message-Id: <20050301213139.GA1985@fieldses.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87563298392041133=="
+Content-Type: multipart/mixed; boundary="===============14254075398780786=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050120190352.GH5393@us.ibm.com>
+In-Reply-To: <20050120190352.GH5393@us.ibm.com>
+To: Nishanth Aravamudan <nacc@us.ibm.com>
+Cc: kernel-janitors@lists.osdl.org, nfs@lists.sourceforge.net, neilb@cse.unsw.edu.au
 
---===============87563298392041133==
+--===============14254075398780786==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+On Thu, Jan 20, 2005 at 11:03:52AM -0800, Nishanth Aravamudan wrote:
+> Please consider applying.
+> 
+> Description: Use ssleep() instead of schedule_timeout() to guarantee the task
+> delays as expected.
 
-Description: Use new poll_event*() interface to encapsulate sleep-loops.
+Thanks, but a different fix for this has been submitted.  (Our sleeping
+at all there is a bug.)--b.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-kj-v/arch/ppc/4xx_io/serial_sicc.c	2005-03-02 11:21:41.000000000 -0800
-+++ 2.6.11-kj/arch/ppc/4xx_io/serial_sicc.c	2005-03-02 17:47:44.000000000 -0800
-@@ -1500,16 +1500,14 @@ static void siccuart_wait_until_sent(str
- 	pr_debug
- 	    ("siccuart_wait_until_sent(%d), jiff=%lu, expire=%lu  char_time=%lu...\n",
- 	     tty->index, jiffies, expire, char_time);
--	while ((readb(info->port->uart_base + BL_SICC_LSR) & _LSR_TX_ALL) !=
--	       _LSR_TX_ALL) {
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(char_time);
--		if (signal_pending(current))
--			break;
--		if (timeout && time_after(jiffies, expire))
--			break;
--	}
--	set_current_state(TASK_RUNNING);
-+	if (timeout)
-+		poll_event_interruptible_timeout(((readb(info->port->uart_base +
-+						BL_SICC_LSR) & _LSR_TX_ALL) == _LSR_TX_ALL),
-+						jiffies_to_msecs(char_time), timeout);
-+	else
-+		poll_event_interruptible(((readb(info->port->uart_base +
-+					BL_SICC_LSR) & _LSR_TX_ALL) == _LSR_TX_ALL),
-+					jiffies_to_msecs(char_time));
- }
- 
- static void siccuart_hangup(struct tty_struct *tty)
-
---===============87563298392041133==
+--===============14254075398780786==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +34,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87563298392041133==--
+--===============14254075398780786==--
