@@ -1,42 +1,56 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Tue, 22 Mar 2005 16:18:40 +0000
-Subject: [KJ] [PATCH] printk: drivers/acpi/pci_link.c
-Message-Id: <20050322161840.GP14887@rhum.iomeda.fr>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Thu, 31 Mar 2005 09:51:12 +0000
+Subject: [KJ] [PATCH] block/cpqarray: Use the DMA_32BIT_MASK constant
+Message-Id: <20050331095112.GA3789@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="iVCmgExH7+hIHJ1A"
+Content-Type: multipart/mixed; boundary="===============76247740737087666=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---iVCmgExH7+hIHJ1A
+--===============76247740737087666==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-description:
-printk() calls should include appropriate KERN_* constant.
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask() instead of custom
+macros.
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-
---iVCmgExH7+hIHJ1A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="patch-2.6.12-rc1_drivers_acpi_pci_link.c.diff"
-
-diff -urpN -X dontdiff a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
---- a/drivers/acpi/pci_link.c	2005-03-18 02:33:50.000000000 +0100
-+++ b/drivers/acpi/pci_link.c	2005-03-22 16:35:10.000000000 +0100
-@@ -352,7 +352,7 @@ acpi_pci_link_set (
- 		/* ignore resource_source, it's optional */
- 		break;
- 	default:
--		printk("ACPI BUG: resource_type %d\n", link->irq.resource_type);
-+		printk(KERN_WARNING "ACPI BUG: resource_type %d\n", link->irq.resource_type);
- 		result = -EINVAL;
- 		goto end;
+diff -urpN linux-2.6.11.orig/drivers/block/cpqarray.c linux-2.6.11/drivers/block/cpqarray.c
+--- linux-2.6.11.orig/drivers/block/cpqarray.c	2005-03-02 12:50:39.000000000 +0100
++++ linux-2.6.11/drivers/block/cpqarray.c	2005-03-31 11:37:36.000000000 +0200
+@@ -39,6 +39,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/blkdev.h>
+ #include <linux/genhd.h>
++#include <linux/dma-mapping.h>
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
  
+@@ -65,8 +66,6 @@ MODULE_LICENSE("GPL");
+ #define MAX_CTLR	8
+ #define CTLR_SHIFT	8
+ 
+-#define CPQARRAY_DMA_MASK	0xFFFFFFFF	/* 32 bit DMA */
+-
+ static int nr_ctlr;
+ static ctlr_info_t *hba[MAX_CTLR];
+ 
+@@ -635,7 +634,7 @@ static int cpqarray_pci_init(ctlr_info_t
+ 	for(i=0; i<6; i++)
+ 		addr[i] = pci_resource_start(pdev, i);
+ 
+-	if (pci_set_dma_mask(pdev, CPQARRAY_DMA_MASK) != 0)
++	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) != 0)
+ 	{
+ 		printk(KERN_ERR "cpqarray: Unable to set DMA mask\n");
+ 		return -1;
 
---iVCmgExH7+hIHJ1A
+--===============76247740737087666==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---iVCmgExH7+hIHJ1A--
+--===============76247740737087666==--
