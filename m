@@ -1,35 +1,36 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Fri, 19 Mar 2004 16:02:19 +0000
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 19 Mar 2004 16:54:39 +0000
 Subject: Re: [Kernel-janitors] [PATCH] 81 patches for strings
-Message-Id: <1079712138.10822.8.camel@telecentrolivre>
+Message-Id: <200403191754.39482.domen@coderock.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040319150659.GA20615@localhost>
 In-Reply-To: <20040319150659.GA20615@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-Hi Carlo,
-
-Em Sex, 2004-03-19 =E0s 12:06, Carlo Perassi escreveu:
+On Friday 19 of March 2004 16:06, Carlo Perassi wrote:
 > Hi.
 > With some scripting and manual check, I patched 81 files
-> from
-> [const] char *foo =3D "blah";
-> to
-> [const] char foo[] =3D "blah";
 
- what about check the result with the size program ?
+Too much scripting maybe?
+From patches_arch/file2WYyJB:
+--- old/arch/arm/mm/mm-armv.c	2004-03-19 15:05:55.000000000 +0100
++++ new/arch/arm/mm/mm-armv.c	2004-03-19 15:04:42.000000000 +0100
+@@ -103,14 +103,14 @@
+ 
+ static void __init early_nocache(char **__unused)
+ {
+-	char *p = "buffered";
++	char *p[] = "buffered";
 
- a script can do that...
 
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+gcc would detect this. (ok, arch is not a nice example for compile test, but 
+you get the point)
 
+
+	Domen
 
 _______________________________________________
 Kernel-janitors mailing list
