@@ -1,44 +1,44 @@
-From: "Erna Sherman" <mznih56g@mailcity.com>
-Date: Thu, 19 Feb 2004 09:19:13 +0000
-Subject: Re[2]: Please confirm pv d fu iko zbmbias
-Message-Id: <7$n$2c-0j84f115y-39c@nsxqw.bmz>
+From: "Nancy Briggs" <pqmgdytttlb@yahoo.com>
+Date: Fri, 27 Feb 2004 09:55:08 +0000
+Subject: Re: ZBXZTBC, surprising circumstance that
+Message-Id: <JBKHLEN-0008934119758@banquet>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="6B_E2F8_A_A8E06A_28FBE"
+Content-Type: multipart/mixed; boundary="--ALT--OHZN89516849880168"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+----ALT--OHZN89516849880168
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
---6B_E2F8_A_A8E06A_28FBE
-Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+detergent nonce geodesic sandy bugle runyon gush butyrate hook 
+backboard escutcheon soot abridgment alert mckeon coronary 
+destabilize bibliography indecipherable itch ancestor smoke interception coercion burgundian assyriology 
 
-Did you know That the normal cost for V1@GRA 
-is $20, per dose?
+----ALT--OHZN89516849880168
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-We are running a hot special!! T0DAY Its only an amazing $1.66
-Shipped world wide!
+<HTML><body>
+  <p>O</rockbound>ur U</crater>S Li</ravel>censed Doc</hawthorne>tors wi</junketeer>ll<BR>
+Prescr</weasel>ibes Y</rodeo>our Me</chronicle>dication F</triplett>or F</grew>ree
 
-DISC0UNT 0RDER: 
+  <p>  Medicatio</elbow>ns&nbsp; Shi</rush>pped Overni</nucleus>ght To Y</electrician>our Do</dully>or.<BR>
+  Phe</pyknotic>ntermine, Ad</anarchy>ipex Soma</phase>, Fi</involutorial>oriicet, U</perseverant>lltram,<BR>
+, Vi</abbe>agra, a</across>nd ma</insurrect>ny, m</woodgrain>any oth</chinatown>ers.<BR>
+Me</earmark>ds f</crucible>or: Weig</provisional>ht Los</abstractor>s, Pa</diane>in Re</stanford>lief, Mus</explicate>clePain Re</filtrate>lief, Wo</acanthus>men's Hea</parental>lth, Me</pastiche>n's<BR>
+Hea</arouse>lth, I</gegenschein>mpotence, A</journeymen>llergy Re</borax>lief, H</italy>eartburn Re</adposition>lief, Mig</mann>raine R</morn>elief &amp; M</lucius>ORE<BR>
+Up</beak>on Appr</struck>oval&nbsp; 
+<a href="http://www.techmaximal2779drugs.biz/b32/">sho</newfound>w
+M</o'brien>e mo</daredevil>re</a>
+<p><img border="0" src="http://www.3004hosting.com/p3x.jpg"></p>
+<br>
+<br>
+hotbox model wire coquina cognizable gibbons cog empower extroversion crane nucleotide hopkins hadn't currant lowell vogel merit landmark spike pyknotic specimen swampy insulin duplicable scope triable limitation musk albatross idiom gall losable marrietta 
+</BODY>
+</HTML>
 
-http://flutter.drboblin.com/gv/index.php?pid=3Deph3404
-or
-http://www.cartmed.com/gv/index.php?pid=3Deph3404
-
-Super Vi-a-gra(Cial-is) is HERE:
-http://www.cartmed.com/sv/index.php?pid=3Deph3404
-
-
-
-
-
-
-
-
-rrxdiju zlhq nvowp gnfuv
-nv
-
---6B_E2F8_A_A8E06A_28FBE--
-
+----ALT--OHZN89516849880168--
 
 
 -------------------------------------------------------
