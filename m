@@ -1,45 +1,39 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Tue, 15 Feb 2005 10:38:46 +0000
-Subject: Re: [KJ] [PATCH][RESUBMIT][9/21] drivers/net/* - compile warning
-Message-Id: <20050215103846.GA19930@infradead.org>
+From: Amit Gud <amitg@calsoftinc.com>
+Date: Mon, 14 Feb 2005 06:27:18 +0000
+Subject: [KJ] [PATCH 13/18] drivers/telephony/ remove pci_find_{device,
+Message-Id: <200502141145.21711.amitg@calsoftinc.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37457137682285779=="
+Content-Type: multipart/mixed; boundary="===============02814004593195607=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42113C2C.17871.52BDF2@localhost>
-In-Reply-To: <42113C2C.17871.52BDF2@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============37457137682285779==
-Content-Type: text/plain; charset=us-ascii
+--===============02814004593195607==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Tue, Feb 15, 2005 at 08:42:55AM +0200, Stephen Biggs wrote:
-Content-Description: Mail message body
-> On 14 Feb 2005 at 17:15, Dave Jones wrote:
-> 
-> > On Tue, Feb 15, 2005 at 12:02:52AM +0200, Stephen Biggs wrote:
-> > Content-Description: Mail message body
-> >  > Description: compile warning cleanup - silence compiler warning for 
-> >  > unused function that is either actually used as a driver function in a 
-> >  > table or is truly unused
-> >  > 
-> >  > +++ linux-2.6.11-rc3-mm2/drivers/net/ibmlana.c	2005-02-12 17:22:13.000000000 +0200
-> >  > @@ -901,7 +901,7 @@ static void ibmlana_set_multicast_list(s
-> >  >  
-> >  >  static int startslot;		/* counts through slots when probing multiple devices */
-> >  >  
-> >  > -static int ibmlana_probe(struct net_device *dev)
-> >  > +static int __attribute__((unused)) ibmlana_probe(struct net_device *dev)
-> > 
-> > It's called in init_module(). I guess you only tried this in the built-in case ?
-> 
-> It compiles both with allyesconfig and allmodconfig.  The "unused" 
-> attribute is a better solution than #ifdef MODULE.
+Remove deprecated pci_find_device and pci_find_subsys
 
-It's not.  It's a big mess.
+Do consider applying.
+
+Signed-off-by: Amit Gud <gud@eth.net>
+
+diff -uprN orig/drivers/telephony/ixj.c linux-2.6.11-rc3/drivers/telephony/ixj.c
+--- orig/drivers/telephony/ixj.c	2005-02-11 15:19:54.000000000 +0530
++++ linux-2.6.11-rc3/drivers/telephony/ixj.c	2005-02-14 05:32:27.000000000 +0530
+@@ -7751,7 +7751,7 @@ static int __init ixj_probe_pci(int *cnt
+ 	IXJ *j = NULL;
+ 
+ 	for (i = 0; i < IXJMAX - *cnt; i++) {
+-		pci = pci_find_device(0x15E2, 0x0500, pci);
++		pci = pci_get_device(0x15E2, 0x0500, pci);
+ 		if (!pci)
+ 			break;
+ 
 
 
---===============37457137682285779==
+--===============02814004593195607==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37457137682285779==--
+--===============02814004593195607==--
