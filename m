@@ -1,108 +1,157 @@
-From: "Curtis Allred" <lvomp@orcon.net.nz>
-Date: Fri, 25 Jun 2004 12:12:45 +0000
-Subject: [Kernel-janitors] T0p Quality S0ftware at the L0west Possible
-Message-Id: <ymuovjeykqqclcixbqrvkzq@macmail.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Fri, 18 Jun 2004 09:39:22 +0000
+Subject: [Kernel-janitors] [announce] 2.6.7 kjt1 patchset
+Message-Id: <20040618093922.GA21628@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56989265827705915=="
+Content-Type: multipart/mixed; boundary="===============98437932653648141=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <tpafnxtcpqlsfhllcrglf@glay.org>
-In-Reply-To: <tpafnxtcpqlsfhllcrglf@glay.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============56989265827705915==
-Content-Type: multipart/alternative; boundary="--647428094461355"
-
-This is a multi-part message in MIME format...
-
-----647428094461355
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============98437932653648141==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-A fool think he needs no advice, but a wise man listens to others.
-You know, that's the only good thing about divorce you get to sleep with your mother.
-The best education in the world is that got by struggling to get a living.
-Thinking is easy, acting is difficult, and to put one's thoughts into action is the most difficult thing in the world.
-Do not be too timid and squeamish about your actions. All life is an experiment.
-The universe is full of magical things patiently waiting for our wits to grow sharper.
-For purposes of action nothing is more useful than narrowness of thought combined with energy of will.
-Every actor in his heart believes everything bad that's printed about him.
-But be doers of the word, and not hearers only, deceiving yourselves. [James 1:22]
-As I grow older, I pay less attention to what people say. I just watch what they do.
-Actors often behave like children, and so we're taken for children. I want to be grown up.
-Do unto others as you would have others do unto you. [Matthew 7:120]
-If a farmer fills his barn with grain, he gets mice. If he leaves it empty, he gets actors.
-Most of us ask for advice when we know the answer but we want a different one.
-----647428094461355
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+hello everyone!
 
-<html><head><title>broil mahoney property maltose superior colloquia screww=
-orm dolomite anecdotal alder gilbert buzzword cataclysmic glasgow font sesa=
-me betwixt formica flowchart smattering marital secretariat muriatic effica=
-cious gradual vicar hurley discriminable </title><meta http-equiv=3DContent=
--Type content=3D"text/html; charset=3Diso-8859-1"></head><body bgcolor=3D#F=
-FFFFF text=3D#000000><table width=3D500 border=3D1 cellspacing=3D0 cellpadd=
-ing=3D5><tr><td DEFANGED_background=3D"http://www.koolsoft.biz/gfx/boxes/wx=
-pgif" width=3D"230"><div align=3Dright><b>Microsoft Windows XP<br> Professi=
-onal</b><br> <font color=3D#F7F7F7>procure</font> <b><font size=3D5 color=
-=3D#c80000>$50</font></b><br> Retail Price: <s>$270</s><br> Our Price: <b>$=
-50</b><br> You Save: <b><font color=3D#009933>$220</font></b><br> <a DEFANG=
-ED_hrefwhellerhref=3D"http://electron.com" href=3D"http://www.koolsoft.biz/=
-?silkworm"><img DEFANGED_src=3D"http://www.koolsoft.biz/gfx/boy_now.gif" bo=
-rder=3D0 width=3D"97" height=3D"31" vspace=3D"5"></a></div></td><td DEFANGE=
-D_background=3D"http://www.koolsoft.biz/gfx/boxes/ps7.gif" width=3D"230"><d=
-iv align=3Dright><b>Adobe<br> Photoshop 7.0</b><br> <font color=3D#F7F7F7>a=
-lba</font> <b><font size=3D5 color=3D#c80000>$60</font></b><br> Retail Pric=
-e: <s>$610</s><br> Our Price: <b>$60</b><br> You Save: <b><font color=3D#00=
-9933>$550</font></b><br> <a DEFANGED_hrefcampanilehref=3D"http://cockroach.=
-com" href=3D"http://www.koolsoft.biz/?slop"><img DEFANGED_src=3D"http://www=
-.koolsoft.biz/gfx/boy_now.gif" border=3D0 width=3D"97" height=3D"31" vspace=
-=3D"5"></a></div></td></tr><tr><td DEFANGED_background=3D"http://www.koolso=
-ft.biz/gfx/boxes/offxp.gif" width=3D"230"><div align=3Dright><b>Microsoft O=
-ffice XP<br> Professional</b><br> <font color=3D#F7F7F7>boxy</font> <b><fon=
-t size=3D5 color=3D#c80000>$100</font></b><br> Retail Price: <s>$580</s><br=
-> Our Price: <b>$100</b><br> You Save: <b><font color=3D#009933>$480</font>=
-</b><br> <a DEFANGED_hrefconsecratehref=3D"http://permeate.com" href=3D"htt=
-p://www.koolsoft.biz/?patterson"><img DEFANGED_src=3D"http://www.koolsoft.b=
-iz/gfx/boy_now.gif" border=3D0 width=3D"97" height=3D"31" vspace=3D"5"></a>=
-</div></td><td DEFANGED_background=3D"http://www.koolsoft.biz/gfx/boxes/w2k=
-.gif" width=3D"230"><div align=3Dright><b>Microsoft Windows 2000<br> Profes=
-sional</b><br> <font color=3D#F7F7F7>o'sullivan</font> <b><font size=3D5 co=
-lor=3D#c80000>$50</font></b><br> Retail Price: <s>$270</s><br> Our Price: <=
-b>$50</b><br> You Save: <b><font color=3D#009933>$220</font></b><br> <a DEF=
-ANGED_hrefexpensivehref=3D"http://nip.com" href=3D"http://www.koolsoft.biz/=
-?dobson"><img DEFANGED_src=3D"http://www.koolsoft.biz/gfx/boy_now.gif" bord=
-er=3D0 width=3D"97" height=3D"31" vspace=3D"5"></a></div></td></tr><tr><td =
-DEFANGED_background=3D"http://www.koolsoft.biz/gfx/boxes/pm7.gif" width=3D"=
-230"><div align=3Dright><b>Adobe PageMaker 7.0</b><br> <font color=3D#F7F7F=
-7>qed</font> <b><font size=3D5 color=3D#c80000>$60</font></b><br> Retail Pr=
-ice: <s>$405</s><br> Our Price: <b>$60</b><br> You Save: <b><font color=3D#=
-009933>$345</font></b><br> <a DEFANGED_hreftichref=3D"http://monoid.com" hr=
-ef=3D"http://www.koolsoft.biz/?columbine"><img DEFANGED_src=3D"http://www.k=
-oolsoft.biz/gfx/boy_now.gif" border=3D0 width=3D"97" height=3D"31" vspace=
-=3D"5"></a></div></td><td DEFANGED_background=3D"http://www.koolsoft.biz/gf=
-x/boxes/ai10.gif" width=3D"230"><div align=3Dright><b>Adobe Illustrator 10<=
-/b><br> <font color=3D#F7F7F7>craftspeople</font> <b><font size=3D5 color=
-=3D#c80000>$80</font></b><br> Retail Price: <s>$270</s><br> Our Price: <b>$=
-80</b><br> You Save: <b><font color=3D#009933>$190</font></b><br> <a DEFANG=
-ED_hrefembodyhref=3D"http://annoyance.com" href=3D"http://www.koolsoft.biz/=
-?analgesic"><img DEFANGED_src=3D"http://www.koolsoft.biz/gfx/boy_now.gif" b=
-order=3D0 width=3D"97" height=3D"31" vspace=3D"5"></a></div></td></tr></tab=
-le><font color=3D#F7F7F7>buckthorn keep enrico dobbin indisposition oncolog=
-y prime accost<br> derange ganges corn clearheaded cube transfusable brande=
-nburg bestselling <br> aflame anatomy darkle bedside himself arabic conway =
-toolmake <br> mycenaean protagonist clausius humid headlight immersion mome=
-nta pin <br> planet testate calendrical corey nazism conquistador inductee =
-trag <br> pea imbibe dow hatchet dynamite immiscible furrier evaluable</fon=
-t></body></html>
+the kjt patchset is growing.
+as Arnaldo appears to be quite busy,
+i'll send the patches to MAINTAINERS after this weekend
+if no one objects?
 
-----647428094461355--
+splitted out patches (1 file/mail) with nice description have 
+a much higher probability of being included, as workload 
+for submitting them tends toward an optimised work flow.
 
---===============56989265827705915==
+format changed a bit, thanks to the pointer of Luiz
+used the patch-scripts from Randy. they are really handy!
+
+the new patch is at:
+http://debian.stro.at/kjt/2.6.7-kjt1/2.6.7-kjt1.patch.bz2
+
+splitted out at:
+http://debian.stro.at/kjt/2.6.7-kjt1/split/
+
+a++ maks
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+added since 2.6.7-rc1-kjt2:
+
+document-cpu-sched-dir.patch
+  From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
+  Subject: [Kernel-janitors] [PATCH] - Creates a dir for CPU sched docs in Documentation.
+
+drvdata-eisa.patch
+  From: yoonsoo@web.de
+  Subject: [Kernel-janitors] [Patch] eisa_h driverdata access
+
+fix-check_region-esp.patch
+  From: Kristen Carlson <kristenc@cs.pdx.edu>
+  Subject: Re: [Kernel-janitors] removing check_region from drivers/char/esp.c
+
+fix-warning-af_econet.patch
+  From: <WHarms@bfs.de>(Walter Harms)
+  Subject: [Kernel-janitors] linux-2.6.6/net/econet/af_econet.c: yxz never used
+
+kernel_thread-i2o_core.patch
+  From: MJK <mkemp@cs.nmsu.edu>
+  Subject: [Kernel-janitors] [REDIFF]  new.linux-2.6.7-rc2/drivers/message/i2o/i2o_core.c -  kernel_thread() audit
+
+printk-fix-istallion.patch
+  From: <WHarms@bfs.de>(Walter Harms)
+  Subject: [Kernel-janitors] linux-2.6.6/drivers/char/istallion.c: fix 	formatstring error
+
+sparse-floppy98.patch
+  From: Alexander Nyberg <alexn@telia.com>
+  Subject: Resending Sparse checks diffs #1
+
+sparse-ipmi.patch
+  From: Alexander Nyberg <alexn@telia.com>
+  Subject: Resending Sparse checks #6
+
+sparse-ubd_kern.patch
+  From: Alexander Nyberg <alexn@telia.com>
+  Subject: Resending Sparse checks diffs #2
+
+extraver.patch
+  extraver
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+changed since 2.6.7-rc1-kjt2:
+remove-old-ifdefs-tmscsim.patch
+  From: Domen Puncer <domen@coderock.org>
+  ifdefs already removed, just remove unused include
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+removed since 2.6.7-rc1-kjt2: 
+remove-old-ifdefs-scsiiom
+  From: Domen Puncer <domen@coderock.org>
+  already done in 2.6.7
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+todo (backlog):
+- check kernel_thread() results (Walter Harms);
+	split them out
+- list_for_each() usage (Domen Puncer)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+all the patches:
+
+document-cpu-sched-dir.patch
+drvdata-eisa.patch
+extraver.patch
+faulty-inits-fbmem.patch
+fix-check_region-esp.patch
+fix-warning-af_econet.patch
+ipv4_fib_hash_check.patch
+kernel_thread-aacraid-rkt.patch
+kernel_thread-aacraid-rx.patch
+kernel_thread-aacraid-sa.patch
+kernel_thread-i2o_core.patch
+list_for_each-fs-dcache.patch
+list_for_each-fs-dquot.patch
+list_for_each-fs-jffs.patch
+list_for_each-fs-namespace.patch
+list_for_each-i386pci-common.patch
+list_for_each-i386pci-pcbios.patch
+list_for_each-pci-setup-bus.patch
+list_for_each-pcmcia-rsrc_mgr.patch
+list_for_each-ppp_generic.patch
+list_for_each-sound-mem.patch
+list_for_each-usb-audio.patch
+list_for_each-usb-core-devices.patch
+list_for_each-usb-midi.patch
+printk-fix-istallion.patch
+remove-old-ifdefs-aic79xx.patch
+remove-old-ifdefs-aic79xx_core.patch
+remove-old-ifdefs-aic79xx_inline.patch
+remove-old-ifdefs-aic79xx_osm.c.patch
+remove-old-ifdefs-aic79xx_osm.h.patch
+remove-old-ifdefs-aic79xx_osm_pci.patch
+remove-old-ifdefs-aic7xxx-cam.patch
+remove-old-ifdefs-aic7xxx.patch
+remove-old-ifdefs-aic7xxx_core.patch
+remove-old-ifdefs-aic7xxx_osm.c.patch
+remove-old-ifdefs-aic7xxx_osm.h.patch
+remove-old-ifdefs-aic7xxx_osm_pci.patch
+remove-old-ifdefs-cpqarray.patch
+remove-old-ifdefs-dc390.patch
+remove-old-ifdefs-dmascc.patch
+remove-old-ifdefs-eepro100.patch
+remove-old-ifdefs-fasttimer.patch
+remove-old-ifdefs-mtd-cfi.patch
+remove-old-ifdefs-mtdcore.patch
+remove-old-ifdefs-tmscsim.patch
+sparse-floppy98.patch
+sparse-ipmi.patch
+sparse-ubd_kern.patch
+static-bsd_comp.patch
+static-ppp_deflate.patch
+
+--===============98437932653648141==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -113,4 +162,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56989265827705915==--
+--===============98437932653648141==--
