@@ -1,136 +1,456 @@
-From: Hanna_246 <hanna_246@hotmail.com>
-Date: Mon, 16 Feb 2004 00:24:06 +0000
-Subject: Attention 14! New i-worm detected.
-Message-Id: <4IH15A69A82JCHFC@hotmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_KJH3KAEE50E38K40B03DABE41"
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Wed, 25 Feb 2004 21:23:55 +0000
+Subject: [Kernel-janitors] [announce] 2.6.3-223 kj patchset
+Message-Id: <20040225132355.43607885.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-------=_NextPart_KJH3KAEE50E38K40B03DABE41
-Content-Type: text/html
-Content-Transfer-Encoding: 8bit
-
-<body bgcolor=#ffffff>
-<center>
-XXWnIr BWLuqeiaTBYPtxDdftEAyEbXwYUrlE Kernel-janitor-discuss JNAwtRB kernel-janitor-discuss@lists.sourceforge.net<br>
-<a href="http://medsplanet.info/sv/?pid=evaph3839"><img src="fish.gif" border=0 alt="33 suuper \/Iagr@"></a><p>
-Kernel-janitor-discuss qRi TPa lnD kernel-janitor-discuss@lists.sourceforge.net 788
-</center>
-</body>
-
-------=_NextPart_KJH3KAEE50E38K40B03DABE41
-Content-Type: image/gif; name="fish.gif"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="fish.gif"
-Content-ID: <fish.gif>
-
-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
-Ow==
-
-------=_NextPart_KJH3KAEE50E38K40B03DABE41--
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kjo <kernel-janitors@osdl.org>
+Cc: lkml <linux-kernel@vger.kernel.org>
 
 
 
--------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
+patch is at:
+http://developer.osdl.org/rddunlap/kj-patches/2.6.3-223/2.6.3-223-kj1.patch.bz2  [2004-02-25]
+
+M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
+
+This patch applies to linux-2.6.3-feb23pm.
+new (for 2.6.3-223):  [2004-02-25]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+add/	extraver.patch
+	rddunlap%osdl!org
+
+add/	kswapd_init_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+
+add/	lmc_proto_raw_h_rm.patch
+	From: Domen Puncer <domen@coderock.org>
+
+add/	setup_bootmem_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+
+add/	skfddi_errmsg.patch (instead):
+	From: Matthew Wilcox <willy@debian.org>
+
+M/	net_ibmtr_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to netdev/jgarzik: 2004.0223;
+
+M/	net_ne_unused2.patch
+	From: Stephen Hemminger <shemminger@osdl.org>
+	sent to netdev/jgarzik: 2004.0223;
+
+done/	net_skge_unused.patch
+	From: Stephen Hemminger <shemminger@osdl.org>
+	sent to netdev/jgarzik: 2004.0223;
+
+M/	net_strip_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to netdev/jgarzik: 2004.0223;
+
+M/	net_strip_noprocfs.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to netdev/jgarzik: 2004.0223;
+
+tx/	posix_timers_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to akpm: 2004.0220;
+
+drop/	pm2fb_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm/mntr: 2004.0220;
+	Replaced by rewritten driver.
+
+tx/	video_cyber2000fb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_neofb_audit2.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_radeonfb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_vesafb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_vfb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	mod_license_move.patch
+	From: Fry <fryboy@optushome.com.au>
+	sent to akpm/mntr: 2004.0220;
+
+add/	90patches.tar.gz for unneeded casts
+	From: Carlo Perassi <carlo@linux.it>
+	net_arm_casts.patch
+	net_atalk_fc_casts.patch
+done/	net_bonding_casts.patch
+	net_hamradio_casts.patch
+	net_pcmcia_casts.patch
+	net_token_casts.patch
+	net_tulip_casts.patch
+	net_wan_casts.patch
+	net_wireless_casts.patch
+	s390_net_cast.patch
+	fusion_mptlan.patch
+	char_synclink.patch
+	ieee1394_eth1394.patch
+	net_generic_casts.patch
+	net_intel_casts.patch
+	net_lance_casts.patch
+	net_3cxyz_casts.patch (except for 3c527.c changes)
+	drivers_net_casts.patch (except for tc35815.c, 68360enet.c)
+
+add/	atm_nicstar_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	doc_00_index.patch
+	From: Alexey Dobriyan <adobriyan@mail.ru>
+
+add/	drivers_net_v2_casts.patch
+	From: Carlo Perassi <carlo@linux.it>
+
+add/	ide_piix_init.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+
+add/	isdn_eicon_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	message_fusion_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+
+add/	mtd_doc200x_warn.patch
+	From: Vinay K Nallamothu <nvk@gsecone.com>
+
+add/	genrtc_proc.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	From: Randy.Dunlap <rddunlap%osdl!org>
+
+wait	ipv4_fib_hash_check.patch
+	From: Francois Romieu <romieu@fr.zoreil.com>
+	original From: <WHarms@bfs.de>(Walter Harms)
+
+add/	file2alias_signcomp.patch
+fxd	From: Ron Gage <ron@rongage.org>
+
+add/	fixdep_signcomp.patch
+fxd	From: Ron Gage <ron@rongage.org>
+
+add/	modpost_signcomp.patch
+	From: Ron Gage <ron@rongage.org>
+
+add/	char_rioctrl_retval.patch
+	From: Tony Breeds <tony@bakeyournoodle.com>
+
+
+previous (for 2.6.3):  [2004-02-18]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+add/	extraver.patch
+	rddunlap%osdl!org
+
+drop/	fs_buffer_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to akpm: 2004.0220;
+	Nope, just let it fault later.
+
+???	ipv4_fibhash_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+
+M/	ipv4_inetpeer_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to netdev/davem: 2004.0223;
+
+M/	ipv4_ipmr_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to netdev/davem: 2004.0223;
+
+M/	ipv6_fib_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to netdev/davem: 2004.0223;
+
+M/	ipv6_route_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to netdev/davem: 2004.0223;
+
+M/	jffs_checks.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to akpm: 2004.0220;
+
+add/	kswapd_init_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+
+add/	lmc_proto_raw_h_rm.patch
+	From: Domen Puncer <domen@coderock.org>
+
+M/	media_saa5249_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm: 2004.0220;
+
+tx/	net_ibmtr_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to netdev/jgarzik: 2004.0223;
+
+M/	net_neighbour_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to netdev/davem: 2004.0223;
+
+tx/	net_ne_unused2.patch
+	From: Stephen Hemminger <shemminger@osdl.org>
+	sent to netdev/jgarzik: 2004.0223;
+
+M/	net_pppoe_noprocfs2.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to netdev/davem: 2004.0223;
+
+M/	net_pppoe_rmproc.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to netdev/davem: 2004.0223;
+
+tx/	net_skge_unused.patch
+	From: Stephen Hemminger <shemminger@osdl.org>
+	sent to netdev/jgarzik: 2004.0223;
+
+tx/	net_strip_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to netdev/jgarzik: 2004.0223;
+
+tx/	net_strip_noprocfs.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to netdev/jgarzik: 2004.0223;
+
+tx/	pm2fb_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	posix_timers_kmemcc.patch
+	From: <WHarms@bfs.de>(Walter Harms)
+	sent to akpm: 2004.0220;
+
+add/	setup_bootmem_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+
+drop	skfddi_regions_pciupdate.patch
+	From: Matthew Wilcox <willy@debian.org>
+	merged with another skfddi cleanup patch;
+
+add?	skfddi_errmsg.patch (instead):
+
+mntr/	stv680_fixes.patch
+	From: Domen Puncer <domen@coderock.org>
+
+M/	tele_ixj_minmax.patch
+	From: Michael Veeck <michael.veeck@gmx.net>
+	sent to akpm: 2004.0220;
+
+tx/	video_cyber2000fb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_neofb_audit2.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_radeonfb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_vesafb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	video_vfb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/mntr: 2004.0220;
+
+tx/	mod_license_move.patch
+	From: Fry <fryboy@optushome.com.au>
+	sent to akpm/mntr: 2004.0220;
+
+add/	90patches.tar.gz for unneeded casts
+	From: Carlo Perassi <carlo@linux.it>
+	net_arm_casts.patch
+	net_atalk_fc_casts.patch
+done/	net_bonding_casts.patch
+	net_hamradio_casts.patch
+	net_pcmcia_casts.patch
+	net_token_casts.patch
+	net_tulip_casts.patch
+	net_wan_casts.patch
+	net_wireless_casts.patch
+	s390_net_cast.patch
+	fusion_mptlan.patch
+	char_synclink.patch
+	ieee1394_eth1394.patch
+	net_generic_casts.patch
+	net_intel_casts.patch
+	net_lance_casts.patch
+	net_3cxyz_casts.patch (except for 3c527.c changes)
+	drivers_net_casts.patch (except for tc35815.c, 68360enet.c)
+
+previous (for 2.6.2-rc2):  [2004-01-27]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+M/	ide_pci_triflex_not_procfs.patch
+	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+	sent to akpm/maint: 2004.0204;
+
+M/	ps2esdi_typos.patch
+	From: Timmy Yee <shoujun@masterofpi.org>
+	sent to akpm/maint: 2004.0204;
+
+M/	fbcmap_kmalloc.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/maint: 2004.0204;
+
+tx/	vga16fb_audit.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to akpm/maint: 2004.0204;
+
+previous (for 2.6.2-rc1):  [2004-01-23] [not announced]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tx/	errno_numbers_assembly.patch
+	From: Danilo Piazzalunga <danilopiazza@libero.it>
+	to akpm: 2004.0126;
+
+drop/	ide_tape_kmalloc_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+	looks wrong:  can't just return without doing work;
+
+M/	linux_sound_c99_init.patch
+	From: "Maciej Soltysiak" <solt@dns.toxicfilms.tv>
+	to akpm/perex: 2004.0124;
+
+drop/	parameter_typos.patch
+	From: "Maciej Soltysiak" <solt@dns.toxicfilms.tv>
+	don't worry about spellos in comments;
+
+previous (for 2.6.1-bk6):  [2004-01-21]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+M/	aha1542_kmalloc_type.patch
+	From: Timmy Yee <shoujun@masterofpi.org>
+	to linux-scsi 2004.0124;
+
+M/	aha1542_qcommand_return.patch
+	From: Timmy Yee <shoujun@masterofpi.org>
+	to linux-scsi 2004.0124;
+
+M/	char_dz_vrfy_area.patch
+	From: Domen Puncer <domen@coderock.org>
+	to akpm: 2004.0124;
+
+M/	config_sysrq.patch
+	From: Domen Puncer <domen@coderock.org>
+	to akpm: 2004.0124;
+
+mntr/	mcfserial_remove_casts_args.patch
+	From: Domen Puncer <domen@coderock.org>
+	to gerg@snapgear.com 2004.0124;
+
+mntr/	netdev_get_stats.patch
+	From: Domen Puncer <domen@coderock.org>
+	to netdev/davem: 2004.0124;
+
+tx/	scsi_config_doc.patch
+	From: Jean Delvare <khali@linux-fr.org>
+	to linux-scsi 2004.0124;
+
+M/	saa7146_hlp_min_max.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+	to maint: 2004.0124;
+
+previous (for 2.6.1-bk4):  [2004-01-16]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mntr/	config_ledman_rm.patch
+	From: Domen Puncer <domen@coderock.org>
+	to gerg@snapgear.com 2004.0124;
+
+M/	ipt_register_target_retval.patch
+	From: Daniele Bellucci <bellucda@tiscali.it>
+	to netdev/davem: 2004.0124;
+
+drop/	kconfig_cleanups_v1.patch
+	From: Matthew Wilcox <willy@debian.org>
+  drop	drivers/block/Kconfig: merge conflicts
+  drop	drivers/video/console/Kconfig: merge conflicts
+  drop	drivers/i2c/*/Kconfig: already merged
+  	Willy to handle with akpm.
+
+add?	kswapd_init_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+
+add/	lmc_proto_raw_h_rm.patch
+	From: Domen Puncer <domen@coderock.org>
+
+M/	netdev_rm_casts.patch
+	From: Carlo Perassi <carlo@linux.it>
+	to netdev/jgarzik: 2004.0124;
+
+mntr/	s390_net_ctctty_putuser.patch
+	From: Domen Puncer <domen@coderock.org>
+	(rediffed)
+	sent to s390 mntr: 2004.0124;
+
+tx/	setup_bootmem_fail.patch
+	From: Eugene Teo <eugene.teo@eugeneteo.net>
+	sent to akpm: 2004.0220;
+
+drop	skfddi_regions_pciupdate.patch
+	From: Matthew Wilcox <willy@debian.org>
+	merged into another skfddi cleanup patch;
+
+drop/	acpi_boot_message_typo.patch
+	From: Simon Richard Grint <rgrint@mrtall.compsoc.man.ac.uk>
+	no longer applicable: function was removed;
+
+M/	cpcihp_zt5550_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	to gregkh: 2004.0124;
+
+mntr/	mfcserial_vrfyarea.patch
+	From: Domen Puncer <domen@coderock.org>
+	to gerg@snapgear.com 2004.0124;
+
+M/	vga16fb.c_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	to akpm/mntr: 2004.0126;
+
+M/	vgastate.c_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	to akpm/mntr: 2004.0126;
+
+drop/	tc35815.c_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to jgarzik/netdev: 2004.0118;
+	already in netdev patchset;
+
+drop/	depca_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	already in netdev patchset;
+
+tx/	dgrs_iounmap.patch
+	From: Leann Ogasawara <ogasawara@osdl.org>
+	sent to jgarzik/netdev: 2004.0118;
+
+###
+
+backlog:
+
+- string/ptr changes (max, Luiz)
+- list_for_each (max)
+- kernel_thread (Walter)
+- ipv4/fib_hash.c (Francois, Walter)
+
+--
+~Randy
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
