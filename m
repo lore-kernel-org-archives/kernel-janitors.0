@@ -1,68 +1,78 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 18:23:41 +0000
-Subject: [KJ] [UPDATE PATCH] scsi/osst: replace schedule_timeout() with
-Message-Id: <20050110182341.GG3099@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Fri, 28 Jan 2005 10:07:13 +0000
+Subject: [KJ] [PATCH] pci_register_driver() for drivers/block
+Message-Id: <20050128110438.GA8645@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81721641378265863=="
+Content-Type: multipart/mixed; boundary="+HP7ph2BbKc20aGI"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============81721641378265863==
+
+--+HP7ph2BbKc20aGI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Sorry, forgot signed-off-by line....
+From : http://kerneljanitors.org/TODO
+-  convert from pci_module_init to pci_register_driver
 
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
-> 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-<snip>
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="pci_register_drivers_block.patch"
 
-> all patches:
-> ------------
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/block/cciss.c linux-2.6.11-rc2/drivers/block/cciss.c
+--- linux-2.6.11-rc2-vanilla/drivers/block/cciss.c	2005-01-26 08:31:07.000000000 +0100
++++ linux-2.6.11-rc2/drivers/block/cciss.c	2005-01-26 09:48:07.000000000 +0100
+@@ -2883,7 +2883,7 @@ int __init cciss_init(void)
+ 	printk(KERN_INFO DRIVER_NAME "\n");
+ 
+ 	/* Register for our PCI devices */
+-	return pci_module_init(&cciss_pci_driver);
++	return pci_register_driver(&cciss_pci_driver);
+ }
+ 
+ static int __init init_cciss_module(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/block/DAC960.c linux-2.6.11-rc2/drivers/block/DAC960.c
+--- linux-2.6.11-rc2-vanilla/drivers/block/DAC960.c	2005-01-26 08:31:07.000000000 +0100
++++ linux-2.6.11-rc2/drivers/block/DAC960.c	2005-01-26 09:47:20.000000000 +0100
+@@ -7065,7 +7065,7 @@ static int DAC960_init_module(void)
+ {
+ 	int ret;
+ 
+-	ret =  pci_module_init(&DAC960_pci_driver);
++	ret =  pci_register_driver(&DAC960_pci_driver);
+ #ifdef DAC960_GAM_MINOR
+ 	if (!ret)
+ 		DAC960_gam_init();
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/block/sx8.c linux-2.6.11-rc2/drivers/block/sx8.c
+--- linux-2.6.11-rc2-vanilla/drivers/block/sx8.c	2005-01-26 08:31:08.000000000 +0100
++++ linux-2.6.11-rc2/drivers/block/sx8.c	2005-01-26 09:48:16.000000000 +0100
+@@ -1749,7 +1749,7 @@ static void carm_remove_one (struct pci_
+ 
+ static int __init carm_init(void)
+ {
+-	return pci_module_init(&carm_driver);
++	return pci_register_driver(&carm_driver);
+ }
+ 
+ static void __exit carm_exit(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/block/umem.c linux-2.6.11-rc2/drivers/block/umem.c
+--- linux-2.6.11-rc2-vanilla/drivers/block/umem.c	2005-01-24 17:08:06.000000000 +0100
++++ linux-2.6.11-rc2/drivers/block/umem.c	2005-01-26 09:48:26.000000000 +0100
+@@ -1188,7 +1188,7 @@ int __init mm_init(void)
+ 
+ 	printk(KERN_INFO DRIVER_VERSION " : " DRIVER_DESC "\n");
+ 
+-	retval = pci_module_init(&mm_pci_driver);
++	retval = pci_register_driver(&mm_pci_driver);
+ 	if (retval)
+ 		return -ENOMEM;
+ 
 
-<snip>
-
-> msleep-drivers_scsi_osst.patch
-
-Consider replacing with the following patch, as signals are not dealt with in
-the existing code:
-
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected. Although TASK_INTERRUPTIBLE is used in the current code,
-there is no code dealing with an early return / signals_pending().
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.10-v/drivers/scsi/osst.c	2004-12-24 13:34:45.000000000 -0800
-+++ 2.6.10/drivers/scsi/osst.c	2005-01-05 14:23:05.000000000 -0800
-@@ -1488,8 +1488,7 @@ static int osst_reposition_and_retry(OS_
- 			osst_set_frame_position(STp, aSRpnt, frame + skip, 1);
- 			flag = 0;
- 			attempts--;
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ / 10);
-+			msleep(100);
- 		}
- 		if (osst_get_frame_position(STp, aSRpnt) < 0) {		/* additional write error */
- #if DEBUG
-@@ -1550,7 +1549,7 @@ static int osst_reposition_and_retry(OS_
- 			debugging = 0;
- 		}
- #endif
--		schedule_timeout(HZ / 10);
-+		msleep(100);
- 	}
- 	printk(KERN_ERR "%s:E: Failed to find valid tape media\n", name);
- #if DEBUG
-
---===============81721641378265863==
+--+HP7ph2BbKc20aGI
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81721641378265863==--
+--+HP7ph2BbKc20aGI--
