@@ -1,78 +1,57 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Thu, 21 Oct 2004 01:41:00 +0000
-Subject: Re: [KJ] [announce] 2.6.9-kjt1 patchset
-Message-Id: <20041021014059.GA21605@stro.at>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Fri, 29 Oct 2004 23:51:37 +0000
+Subject: [KJ] 2.6.10-rc1-kjt1: ixgb_ethtool.c doesn't compile
+Message-Id: <20041029235137.GG6677@stusta.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72197729862409232=="
+Content-Type: multipart/mixed; boundary="===============82021085610115474=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041021011859.GA1933@stro.at>
-In-Reply-To: <20041021011859.GA1933@stro.at>
-To: kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org
+References: <20041024151241.GA1920@stro.at>
+In-Reply-To: <20041024151241.GA1920@stro.at>
+To: kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org, Nishanth Aravamudan <nacc@us.ibm.com>
 
---===============72197729862409232==
+--===============82021085610115474==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, 21 Oct 2004, maximilian attems wrote:
+On Sun, Oct 24, 2004 at 05:12:41PM +0200, maximilian attems wrote:
+>...
+> splitted out 168 patches:
+> http://debian.stro.at/kjt/2.6.10-rc1-kjt1/split/
 
-> 
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  dropped 40 patches:
-> 
-> list-for-each-arch_ia64_sn_io_machvec_pci_bus_cvlink.patch
-> file removed
-> 
-> list-for-each-arch_ppc64_kernel_pSeries_pci.patch
-> no longer needed
-> 
-> list_for_each-pcmcia-rsrc_mgr.patch
-> wrong
->  
-> msleep-drivers_net_3c505.patch
-> msleep-drivers_net_appletalk_ltpc.patch
-> msleep-drivers_net_cs89x0.patch
-> msleep-drivers_net_e100.patch
-> msleep-drivers_net_e1000_osdep.patch
-> msleep-drivers_net_ewrk3.patch
-> msleep-drivers_net_gt96100eth.patch
-> msleep-drivers_net_irda_act200l-sir.patch
-> msleep-drivers_net_irda_irtty-sir.patch
-> msleep-drivers_net_irda_ma600-sir.patch
-> msleep-drivers_net_irda_sir_dev.patch
-> msleep-drivers_net_irda_tekram-sir.patch
-> msleep-drivers_net_ixgb_osdep.patch
-> msleep-drivers_net_max89x0.patch
-> msleep-drivers_net_ni65.patch
-> msleep-drivers_net_ns83820.patch
-> msleep-drivers_net_s2io.patch
-> msleep-drivers_net_slip.patch
-> msleep-drivers_net_tokenring_ibmtr.patch
-> msleep-drivers_net_tulip_de2104x.patch
-> msleep-drivers_net_wan_cosa.patch
-> msleep-drivers_net_wan_cycx_drv.patch
-> msleep-drivers_net_wireless_airo.patch
-> msleep-drivers_net_wireless_prism54_islpci_dev.patch
-> msleep-drivers_net_xirc2ps_cs.patch
-> msleep-drivers_parport_ieee1284_ops.patch
-> sleep-drivers_scsi_mesh.patch
-> msleep-drivers_scsi_osst.patch
-> msleep-drivers_scsi_qla2xxx_qla_init.patch
-> msleep-drivers_scsi_qla2xxx_qla_os.patch
-> msleep-drivers_scsi_sd.patch
-> msleep-drivers_scsi_wd7000.patch
-> msleep-drivers_serial_pmac_zilog.patch
-> msleep-drivers_serial_serial_core.patch
-> set-current-state-net_wan_farsync.patch
-forgot to say that those got reworked,
-and are there for in current kjt.
- 
+Could you provide a .tar.gz (or .tar.bz) of the splitted patches 
+(similar to how Andrew does for -mm)?
 
---
-maks
-kernel janitor  	http://janitor.kernelnewbies.org/
+> thanks for feedback.
+> maks
+>...
+
+msleep_interruptible-drivers_net_ixgb_ixgb_ethtool.patch doesn't 
+compile:
+
+<--  snip  -->
+
+...
+  CC      drivers/net/ixgb/ixgb_ethtool.o
+drivers/net/ixgb/ixgb_ethtool.c: In function `ixgb_ethtool_led_blink':
+drivers/net/ixgb/ixgb_ethtool.c:407: error: `id' undeclared (first use in this function)
+drivers/net/ixgb/ixgb_ethtool.c:407: error: (Each undeclared identifier is reported only once
+drivers/net/ixgb/ixgb_ethtool.c:407: error: for each function it appears in.)
+make[3]: *** [drivers/net/ixgb/ixgb_ethtool.o] Error 1
+
+<--  snip  -->
+
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
 
---===============72197729862409232==
+--===============82021085610115474==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -83,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============72197729862409232==--
+--===============82021085610115474==--
