@@ -1,55 +1,126 @@
-From: Oliver Neukum <oliver@neukum.org>
-Date: Sun, 15 Aug 2004 12:50:35 +0000
+From: maximilian attems <janitor@sternwelten.at>
+Date: Sun, 15 Aug 2004 13:25:48 +0000
 Subject: [Kernel-janitors] Re: Add msleep_interruptible() function to
-Message-Id: <200408151450.35196.oliver@neukum.org>
+Message-Id: <20040815132548.GF1799@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13104140551484633=="
+Content-Type: multipart/mixed; boundary="===============74689252837780407=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040815121805.GA15111@stro.at>
-In-Reply-To: <20040815121805.GA15111@stro.at>
-To: maximilian attems <janitor@sternwelten.at>
-Cc: linux-kernel@vger.kernel.org, kj <kernel-janitors@osdl.org>
+References: <20040815121805.GA15111@stro.at> <1092570891.17605.1.camel@localhost.localdomain>
+In-Reply-To: <1092570891.17605.1.camel@localhost.localdomain>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kj <kernel-janitors@osdl.org>
 
---===============13104140551484633==
+--===============74689252837780407==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
 
-Am Sonntag, 15. August 2004 14:18 schrieb maximilian attems:
-> while doing kernel-janitor msleep conversion of drivers own (incorrect),
-> functions, some places would need msleep_interruptible().
+On Sun, 15 Aug 2004, Alan Cox wrote:
+
+> On Sul, 2004-08-15 at 13:18, maximilian attems wrote:
+> > + * msleep_interruptible - sleep waiting for waitqueue interruptions
+> > + * @msecs: Time in milliseconds to sleep for
+> > + */
+> > +void msleep_interruptible(unsigned int msecs)
+> > +{
+> > +	unsigned long timeout = msecs_to_jiffies(msecs);
+> > +
+> > +	while (timeout) {
 > 
-> this function is equivalent to:
->         current->state = TASK_INTERRUPTIBLE;
-> 	schedule_timeout(timeout);
+> You want to have while(timeout && !signal_pending(current))
 > 
-> idea from Ingo Molnar:
-> well, aboves is not 100% equivalent because msleep() is uninterruptible so
-> stoppage of the md thread (upon shutdown) will occur with only a 250 msec
-> delay. Someone should add a msleep_interruptible() function to kernel/timer.c.
+> A signal will wake the timeout which will then loop. It might also
+> be good to add
+> 
+> > +		set_current_state(TASK_INTERRUPTIBLE);
+> > +		timeout = schedule_timeout(timeout);
+> > +	}
+> 
+> return timeout;
+> 
+> so that the caller knows more about how long the timer ran for before
+> the interrupt and if it was interrupted.
 
-[..] 
-> +/**
-> + * msleep_interruptible - sleep waiting for waitqueue interruptions
-> + * @msecs: Time in milliseconds to sleep for
-> + */
-> +void msleep_interruptible(unsigned int msecs)
-> +{
-> +	unsigned long timeout = msecs_to_jiffies(msecs);
-> +
-> +	while (timeout) {
-> +		set_current_state(TASK_INTERRUPTIBLE);
-> +		timeout = schedule_timeout(timeout);
-> +	}
+belows patches returns timeout in msecs 
+as the function is also called with that unit, 
+added definition in include/linux/delay.h
 
-This is not really interruptible sleep because it is missing a check
-for pending signals.
 
-	Regards
-		Oliver
 
---===============13104140551484633==
+this function is equivalent to:
+	current->state = TASK_INTERRUPTIBLE;
+	schedule_timeout(timeout);
+
+idea from Ingo Molnar:
+well, aboves is not 100% equivalent because msleep() is uninterruptible so
+stoppage of the md thread (upon shutdown) will occur with only a 250 msec
+delay. Someone should add a msleep_interruptible() function to kernel/timer.c.
+
+Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
+
+
+
+---
+
+ linux-2.6.8-max/kernel/timer.c |   17 +++++++++++++++++
+ 1 files changed, 17 insertions(+)
+
+
+this function is equivalent to:
+	current->state = TASK_INTERRUPTIBLE;
+	schedule_timeout(timeout);
+
+idea from Ingo Molnar:
+well, aboves is not 100% equivalent because msleep() is uninterruptible so
+stoppage of the md thread (upon shutdown) will occur with only a 250 msec
+delay. Someone should add a msleep_interruptible() function to kernel/timer.c.
+
+Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
+
+
+
+---
+
+ linux-2.6.8-max/include/linux/delay.h |    1 +
+ linux-2.6.8-max/kernel/timer.c        |   16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
+
+diff -puN kernel/timer.c~add-msleep_interruptible kernel/timer.c
+--- linux-2.6.8/kernel/timer.c~add-msleep_interruptible	2004-08-15 15:15:01.000000000 +0200
++++ linux-2.6.8-max/kernel/timer.c	2004-08-15 15:18:56.000000000 +0200
+@@ -1503,3 +1503,19 @@ void msleep(unsigned int msecs)
+ 
+ EXPORT_SYMBOL(msleep);
+ 
++/**
++ * msleep_interruptible - sleep waiting for waitqueue interruptions
++ * @msecs: Time in milliseconds to sleep for
++ */
++unsigned int msleep_interruptible(unsigned int msecs)
++{
++       unsigned long timeout = msecs_to_jiffies(msecs);
++
++       while (timeout && !signal_pending(current)) {
++               set_current_state(TASK_INTERRUPTIBLE);
++               timeout = schedule_timeout(timeout);
++       }
++       return jiffies_to_msecs(timeout);
++}
++
++EXPORT_SYMBOL(msleep_interruptible);
+diff -puN include/linux/delay.h~add-msleep_interruptible include/linux/delay.h
+--- linux-2.6.8/include/linux/delay.h~add-msleep_interruptible	2004-08-15 15:15:01.000000000 +0200
++++ linux-2.6.8-max/include/linux/delay.h	2004-08-15 15:17:56.000000000 +0200
+@@ -39,5 +39,6 @@ extern unsigned long loops_per_jiffy;
+ #endif
+ 
+ void msleep(unsigned int msecs);
++unsigned int msleep_interruptible(unsigned int msecs);
+ 
+ #endif /* defined(_LINUX_DELAY_H) */
+
+_
+
+--===============74689252837780407==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +131,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13104140551484633==--
+--===============74689252837780407==--
