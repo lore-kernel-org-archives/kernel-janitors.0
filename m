@@ -1,38 +1,61 @@
-From: Jay Bourque <kernel@uranium235.org>
-Date: Sat, 14 Aug 2004 19:07:22 +0000
-Subject: [Kernel-janitors] ipmr.c: update last_rx after netif_rx
-Message-Id: <411E62EA.5060204@uranium235.org>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 20 Aug 2004 19:00:47 +0000
+Subject: [Kernel-janitors] [patch 11/12] pci_dev_b to list_for_each_entry:
+Message-Id: <20040820190047.3B7CC1ED41@trashy.coderock.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============21214732613887644=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Fix to update last_rx after netif_rx
-This is my first patch so I'd appreciate any feedback.
+--===============21214732613887644==
 
--Jay
+--- kjt2/arch/sparc64/kernel/pci_sabre.c	2004-08-20 18:58:55.000000000 +0200
++++ kjt2-lfe/arch/sparc64/kernel/pci_sabre.c	2004-08-20 20:28:57.000000000 +0200
+@@ -1113,10 +1113,9 @@
+ 
+ static void __init apb_init(struct pci_controller_info *p, struct pci_bus *sabre_bus)
+ {
+-	struct list_head *walk;
++	struct pci_dev *pdev;
+ 
+-	list_for_each(walk, &sabre_bus->devices) {
+-		struct pci_dev *pdev = pci_dev_b(walk);
++	list_for_each_entry(pdev, &sabre_bus->devices, bus_list) {
+ 
+ 		if (pdev->vendor == PCI_VENDOR_ID_SUN &&
+ 		    pdev->device == PCI_DEVICE_ID_SUN_SIMBA) {
+@@ -1178,10 +1177,9 @@
+ static void __init sabre_scan_bus(struct pci_controller_info *p)
+ {
+ 	static int once;
+-	struct pci_bus *sabre_bus;
++	struct pci_bus *sabre_bus, *pbus;
+ 	struct pci_pbm_info *pbm;
+ 	struct pcidev_cookie *cookie;
+-	struct list_head *walk;
+ 	int sabres_scanned;
+ 
+ 	/* The APB bridge speaks to the Sabre host PCI bridge
+@@ -1217,8 +1215,7 @@
+ 
+ 	sabres_scanned = 0;
+ 
+-	list_for_each(walk, &sabre_bus->children) {
+-		struct pci_bus *pbus = pci_bus_b(walk);
++	list_for_each_entry(pbus, &sabre_bus->children, node) {
+ 
+ 		if (pbus->number == p->pbm_A.pci_first_busno) {
+ 			pbm = &p->pbm_A;
 
---- linux-2.6.8.1/net/ipv4/ipmr.c    Sat Aug 14 05:55:32 2004
-+++ linux-2.6.8.1/net/ipv4/ipmr.c.new    Sat Aug 14 11:12:32 2004
-@@ -1462,6 +1462,7 @@ int pim_rcv_v1(struct sk_buff * skb)
-     ((struct net_device_stats*)reg_dev->priv)->rx_packets++;
-     nf_reset(skb);
-     netif_rx(skb);
-+   reg_dev->last_rx = jiffies;
-     dev_put(reg_dev);
-     return 0;
-  drop:
-@@ -1518,6 +1519,7 @@ static int pim_rcv(struct sk_buff * skb)
-     skb->dst = NULL;
-     nf_reset(skb);
-     netif_rx(skb);
-+   reg_dev->last_rx = jiffies;
-     dev_put(reg_dev);
-     return 0;
-  drop:
+--===============21214732613887644==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============21214732613887644==--
