@@ -1,39 +1,36 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
-Date: Mon, 21 Jun 2004 18:23:42 +0000
-Subject: Re: [Kernel-janitors] auditing return codes
-Message-Id: <20040621195413.GB30632@lorien.prodam>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Tue, 01 Jun 2004 17:40:49 +0000
+Subject: Re: [Kernel-janitors]  linux-2.6.6/drivers/mtd/devices/doc2000.c:
+Message-Id: <20040601104049.5b18ae4e.rddunlap@osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72207830437287535=="
+Content-Type: multipart/mixed; boundary="===============74540971658779265=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BAY18-F57lbjCLP5Vvf000048a5@hotmail.com>
-In-Reply-To: <BAY18-F57lbjCLP5Vvf000048a5@hotmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============72207830437287535==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============74540971658779265==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 1 Jun 2004 19:04:29 +0200 (Walter Harms) wrote:
 
- Hi Ivan,
-
-Em Mon, Jun 21, 2004 at 08:09:15PM +0200, Ivan Van den Bossche escreveu:
-
-| I've looked at the TODO list at the janitors website and I would like to 
-| know if somebody is busy with auditing return codes for the following 
-| functions:
+| hi list,
+| some problem as in doc2001 is here (wrong argument type).
+| I have no mtd and no idea how to test it. at least it
+| compiles without problems now.
 | 
-| kmalloc(), vmalloc(), skb_alloc(), etc
+| walter
 
- Maybe yes, but always there is this kind of work to
-do. Linux is big.
+Similar patches were submitted on 2004-feb-20 by
+Vinay K Nallamothu (to lkml).  They were rejected by the
+MTD maintainer like so:
 
- You can work on this, no problem.
+"Nack. The warning is valid, and probably ought to stay there till the
+driver in question gets updated to conform to the new ECC API."
 
--- 
-Luiz Fernando N. Capitulino
-<http://www.telecentros.sp.gov.br>
+--
+~Randy
 
---===============72207830437287535==
+--===============74540971658779265==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============72207830437287535==--
+--===============74540971658779265==--
