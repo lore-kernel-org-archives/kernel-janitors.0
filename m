@@ -1,31 +1,66 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@conectiva.com.br>
-Date: Mon, 04 Oct 2004 16:18:23 +0000
-Subject: [Kernel-janitors] [PATCH 0/3] - Module version info for USB-Serial
-Message-Id: <20041004131823.09366db8.lcapitulino@conectiva.com.br>
+From: Daniele Pizzoni <auouo@tin.it>
+Date: Mon, 18 Oct 2004 18:59:13 +0000
+Subject: [KJ] [PATCH] Replace custom Dprintk macro with pr_debug - nmi.c
+Message-Id: <1098129428.3024.61.camel@pdp11.tsho.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============051106911552575518=="
+Content-Type: multipart/mixed; boundary="===============89808975050262196=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, LKML <linux-kernel@vger.kernel.org>
 
---===============051106911552575518==
-Content-Type: text/plain; charset=US-ASCII
+--===============89808975050262196==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
+Substituted custom Dprintk macro with pr_debug
 
- Hi all,
+Signed-off-by: Daniele Pizzoni
 
- The next patches add module version information for
-the fallowing drivers:
 
-[PATCH 1/3] - Module version info for PL2303.
-[PATCH 2/3] - Module version info for CyberJack.
-[PATCH 3/3] - Module version info for Belkin_sa.
+Index: linux-2.6.9-rc4/arch/i386/kernel/nmi.c
+===================================================================
+--- linux-2.6.9-rc4.orig/arch/i386/kernel/nmi.c	2004-10-18 19:41:13.798118432 +0200
++++ linux-2.6.9-rc4/arch/i386/kernel/nmi.c	2004-10-18 21:50:57.884757392 +0200
+@@ -13,6 +13,8 @@
+  *  Mikael Pettersson	: PM converted to driver model. Disable/enable API.
+  */
+ 
++//#define DEBUG // pr_debug
++#include <linux/kernel.h>
+ #include <linux/config.h>
+ #include <linux/mm.h>
+ #include <linux/irq.h>
+@@ -332,7 +334,7 @@ static void setup_k7_watchdog(void)
+ 		| K7_NMI_EVENT;
+ 
+ 	wrmsr(MSR_K7_EVNTSEL0, evntsel, 0);
+-	Dprintk("setting K7_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
++	pr_debug("setting K7_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
+ 	wrmsr(MSR_K7_PERFCTR0, -(cpu_khz/nmi_hz*1000), -1);
+ 	apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	evntsel |= K7_EVNTSEL_ENABLE;
+@@ -354,7 +356,7 @@ static void setup_p6_watchdog(void)
+ 		| P6_NMI_EVENT;
+ 
+ 	wrmsr(MSR_P6_EVNTSEL0, evntsel, 0);
+-	Dprintk("setting P6_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
++	pr_debug("setting P6_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
+ 	wrmsr(MSR_P6_PERFCTR0, -(cpu_khz/nmi_hz*1000), 0);
+ 	apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	evntsel |= P6_EVNTSEL0_ENABLE;
+@@ -395,7 +397,7 @@ static int setup_p4_watchdog(void)
+ 
+ 	wrmsr(MSR_P4_CRU_ESCR0, P4_NMI_CRU_ESCR0, 0);
+ 	wrmsr(MSR_P4_IQ_CCCR0, P4_NMI_IQ_CCCR0 & ~P4_CCCR_ENABLE, 0);
+-	Dprintk("setting P4_IQ_COUNTER0 to 0x%08lx\n", -(cpu_khz/nmi_hz*1000));
++	pr_debug("setting P4_IQ_COUNTER0 to 0x%08lx\n", -(cpu_khz/nmi_hz*1000));
+ 	wrmsr(MSR_P4_IQ_COUNTER0, -(cpu_khz/nmi_hz*1000), -1);
+ 	apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	wrmsr(MSR_P4_IQ_CCCR0, nmi_p4_cccr_val, 0);
 
- The three patches are agans't 2.6.9-rc3-bk4.
 
- thanks
 
---===============051106911552575518==
+--===============89808975050262196==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============051106911552575518==--
+--===============89808975050262196==--
