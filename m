@@ -1,17 +1,20 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 17:47:33 +0000
+Date: Fri, 23 Jul 2004 20:37:14 +0000
 Subject: [Kernel-janitors] [PATCH] eicon/s_pri: replace schedule_timeout()
-Message-Id: <20040723174733.GN1911@us.ibm.com>
+Message-Id: <20040723203714.GB2675@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46878830423197071=="
+Content-Type: multipart/mixed; boundary="===============85889322967701753=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040723174733.GN1911@us.ibm.com>
+In-Reply-To: <20040723174733.GN1911@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============46878830423197071==
+--===============85889322967701753==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
+Please find the corrected patch below and excuse my sending the same
+patch twice. I would appreciate any comments from the janitors list.
 
 Thanks,
 Nish
@@ -20,7 +23,7 @@ Nish
 
 Applys-to: 2.6.7
 
-Description: Replace diva_os_sleep() with msleep().
+Description: Replace diva_os_wait() with mdelay().
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
@@ -32,10 +35,10 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   byte *p = DIVA_OS_MEM_ATTACH_RESET(IoAdapter);
   *p = _MP_RISC_RESET | _MP_LED1 | _MP_LED2 ;
 - diva_os_wait (50) ;
-+ msleep (50) ;
++ mdelay (50) ;
   *p = 0x00 ;
 - diva_os_wait (50) ;
-+ msleep (50) ;
++ mdelay (50) ;
   DIVA_OS_MEM_DETACH_RESET(IoAdapter, p);
  }
  /* -------------------------------------------------------------------------
@@ -44,7 +47,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   while ( (i < 100) && (IoAdapter->a.ram_in (&IoAdapter->a, &RAM->SWReg) != 0) )
   {
 -  diva_os_wait (1) ;
-+  msleep (1) ;
++  mdelay (1) ;
    i++ ;
   }
   DBG_TRC(("%s: PRI stopped (%d)", IoAdapter->Name, i))
@@ -52,7 +55,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   WRITE_DWORD(&cfgReg[0],((dword)(~0x03E00000)));
   DIVA_OS_MEM_DETACH_CFG(IoAdapter, cfgReg);
 - diva_os_wait (1) ;
-+ msleep (1) ;
++ mdelay (1) ;
   p = DIVA_OS_MEM_ATTACH_RESET(IoAdapter);
   *p = _MP_RISC_RESET | _MP_LED1 | _MP_LED2 ;
   DIVA_OS_MEM_DETACH_RESET(IoAdapter, p);
@@ -61,7 +64,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
    *(volatile byte*)(p) = _MP_RISC_RESET | _MP_DSP_RESET;
    DIVA_OS_MEM_DETACH_RESET(IoAdapter, p);
 -  diva_os_wait (5) ;
-+  msleep (5) ;
++  mdelay (5) ;
  
    base = DIVA_OS_MEM_ATTACH_CONTROL(IoAdapter);
    
@@ -70,7 +73,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
    p = DIVA_OS_MEM_ATTACH_RESET(IoAdapter);
    *(volatile byte*)(p) = _MP_RISC_RESET | _MP_LED1 | _MP_LED2;
 -  diva_os_wait (50) ;
-+  msleep (50) ;
++  mdelay (50) ;
    /*
      Verify modules
    */
@@ -79,7 +82,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
    *(volatile byte*)(p) = 0 ;
    DIVA_OS_MEM_DETACH_RESET(IoAdapter, p);
 -  diva_os_wait (50) ;
-+  msleep (50) ;
++  mdelay (50) ;
   IoAdapter->InitialDspInfo |= DspCount << 16 ;
    return (ret);
  }
@@ -88,10 +91,10 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   * check if CPU is alive
   */
 - diva_os_wait (10) ;
-+ msleep (10) ;
++ mdelay (10) ;
   i = boot->live ;
 - diva_os_wait (10) ;
-+ msleep (10) ;
++ mdelay (10) ;
   if ( i == boot->live )
   {
    DIVA_OS_MEM_DETACH_RAM(IoAdapter, boot);
@@ -100,12 +103,12 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
   for ( i = 0 ; i < 300 ; ++i )
   {
 -  diva_os_wait (10) ;
-+  msleep (10) ;
++  mdelay (10) ;
    if ( (boot->signature >> 16) == 0x4447 )
    {
     DIVA_OS_MEM_DETACH_RAM(IoAdapter, boot);
 
---===============46878830423197071==
+--===============85889322967701753==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -116,4 +119,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46878830423197071==--
+--===============85889322967701753==--
