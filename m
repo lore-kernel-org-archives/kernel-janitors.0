@@ -1,111 +1,73 @@
-From: ipadmin@eng.xo.com
-Date: Sat, 24 Jan 2004 10:06:13 +0000
-Subject: [Kernel-janitors] Need to host child porn, illegal content,
-Message-Id: <200401241002.i0OA24hU029182@fire-1.osdl.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1074938530-12837-322"
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Fri, 23 Jan 2004 17:06:46 +0000
+Subject: Re: [Kernel-janitors] [PATCH] Fix warning in
+Message-Id: <1074877605.5269.10.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200401232100.i0NL06hU009150@fire-1.osdl.org>
-In-Reply-To: <200401232100.i0NL06hU009150@fire-1.osdl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
-------------=_1074938530-12837-322
-Content-Type: text/plain;
-	charset="Windows-1252"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Hi Felipe,
 
-Need to host child porn, illegal content, Spam advert site? Try www.hopone.net you will be able to host anything you desire.
+Em Seg, 2004-01-26 =E0s 14:06, Felipe W Damasio escreveu:
 
-You can get fresh stolen dumps here:
+> > this patch fixes this warning:
+> >=20
+> > drivers/ide/pci/triflex.c:49: warning: `triflex_get_info' defined but n=
+ot used
+> >=20
+> > here is:
+> >=20
+> > diff -X dontdiff -Nru linux-2.6.2-rc2/drivers/ide/pci/triflex.c linux-2=
+.6.2-rc2~/drivers/ide/pci/triflex.c
+> > --- linux-2.6.2-rc2/drivers/ide/pci/triflex.c	2003-10-08 16:24:04.00000=
+0000 -0300
+> > +++ linux-2.6.2-rc2~/drivers/ide/pci/triflex.c	2004-01-26 11:02:33.0000=
+00000 -0200
+> > @@ -45,6 +45,7 @@
+> > =20
+> >  static struct pci_dev *triflex_dev;
+> > =20
+> > +#ifdef CONFIG_PROC_FS
+> >  static int triflex_get_info(char *buf, char **addr, off_t offset, int =
+count)
+> >  {
+> >  	char *p =3D buf;
+> > @@ -91,6 +92,7 @@
+> >  =09
+> >  	return len > count ? count : len;
+> >  }
+> > +#endif
+>=20
+> 	Do we really need this chunk?
 
-http://www.shadowcrew.com/phpBB2/viewtopic.php?t=636
+ IMHO, yes.
 
-Credit cards with cvv2 information are available here:
+> 	Since triflex_get_info is already #ifdef'd out if CONFIG_PROC_FS is not =
 
-http://www.shadowcrew.com/phpBB2/viewtopic.php?t=409
+> set, we don't need to put that extra #ifdef on the .c file, since that=20
+> function will not get used anyway.
 
-Our site will be usefull for the those who want to wash their money also :) (If you don't want to pay taxes or you need to buy something illegal like weapons or drugs).
+ Is what the warning says. The patch fixes it.
 
-Fresh paypal accounts here:
+> 	IIRC the policy for adding #ifdefs on .c files is when it's really=20
+> necessary, and I don't really see the point for this (expect object size =
 
-http://www.shadowcrew.com/phpBB2/viewtopic.php?t=553
+> and an extra symbol defined, which I don't think it really hurts here).
 
-Only using our site you can get every detail of any US citizen including SSN number:
+ AFAIK, the _real_ problem is when you have #ifdef/#endif inside
+functions. I agree that is better to avoid it in .c files, but is not
+all the cases that it can be done.
 
-http://www.shadowcrew.com/phpBB2/viewtopic.php?t=701
+--=20
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
 
-Fresh eBay accounts for a low price available as well:
-
-http://www.shadowcrew.com/phpBB2/viewtopic.php?t=290
-
-
-You can order by phone: : +1-703-547-2000.
-
-
-Best regards,
-www.shadowcrew.com
-
-
-
-------------=_1074938530-12837-322
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This mail is probably spam.  The original message has been attached
-along with this report, so you can recognize or block similar unwanted
-mail in future.  See http://spamassassin.org/tag/ for more details.
-
-Content preview:  Need to host child porn, illegal content, Spam advert
-  site? Try www.hopone.net you will be able to host anything you desire.
-  You can get fresh stolen dumps here:
-  http://www.shadowcrew.com/phpBB2/viewtopic.php?tc6 [...] 
-
-Content analysis details:   (6.80 points, 5 required)
-NO_REAL_NAME       (1.1 points)  From: does not include a real name
-MSG_ID_ADDED_BY_MTA_3 (0.5 points)  'Message-Id' was added by a relay (3)
-DATE_IN_FUTURE_06_12 (1.5 points)  Date: is 6 to 12 hours after Received: date
-FORGED_MUA_OUTLOOK (3.7 points)  Forged mail pretending to be from MS Outlook
-
-
-
-------------=_1074938530-12837-322
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This mail is probably spam.  The original message has been attached
-along with this report, so you can recognize or block similar unwanted
-mail in future.  See http://spamassassin.org/tag/ for more details.
-
-Content preview:  .. Need to host child porn, illegal content, Spam
-  advert site? Try www.hopone.net you will be able to host anything you
-  desire. You can get fresh stolen dumps here: [...] 
-
-Content analysis details:   (6.80 points, 5 required)
-NO_REAL_NAME       (1.1 points)  From: does not include a real name
-MSG_ID_ADDED_BY_MTA_3 (0.5 points)  'Message-Id' was added by a relay (3)
-DATE_IN_FUTURE_06_12 (1.5 points)  Date: is 6 to 12 hours after Received: date
-FORGED_MUA_OUTLOOK (3.7 points)  Forged mail pretending to be from MS Outlook
-
-
-
-------------=_1074938530-12837-322
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------------=_1074938530-12837-322--
