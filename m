@@ -1,59 +1,53 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 22 Oct 2004 23:18:00 +0000
-Subject: [KJ] [PATCH] scsi/ahci: replace schedule_timeout() with
-Message-Id: <20041022231800.GF11126@us.ibm.com>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Thu, 07 Oct 2004 23:43:36 +0000
+Subject: [Kernel-janitors] [PATCH 2.6][12/12] sandpoint.c replace
+Message-Id: <36050000.1097192616@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90312800337182275=="
+Content-Type: multipart/mixed; boundary="===============1827345683638677=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, benh@kernel.crashing.org
 
---===============90312800337182275==
+--===============1827345683638677==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Any comments would be, as always, appreciated.
 
--Nish
+As pci_find_device is going away I've replaced it with pci_get_device.
+If someone with a PPC system could test it I would appreciate it.
 
-Description: Uses msleep() / ssleep() [as appropriate] instead of
-schedule_timeout() to guarantee the task delays as expected.
+Thanks.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Hanna Linder
+IBM Linux Technology Center
 
---- 2.6.9-bk7-vanilla/drivers/scsi/ahci.c	2004-10-22 10:41:31.000000000 -0700
-+++ 2.6.9-bk7/drivers/scsi/ahci.c	2004-10-22 15:20:02.000000000 -0700
-@@ -363,8 +363,7 @@ static void ahci_port_stop(struct ata_po
- 	/* spec says 500 msecs for each PORT_CMD_{START,FIS_RX} bit, so
- 	 * this is slightly incorrect.
- 	 */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout((HZ / 2) + 1);
-+	msleep(500);
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/sandpoint.c linux-2.6.9-rc3-mm3patch3/arch/ppc/platforms/sandpoint.c
+--- linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/sandpoint.c	2004-09-29 20:06:04.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch3/arch/ppc/platforms/sandpoint.c	2004-10-07 16:36:52.946102904 -0700
+@@ -531,7 +531,7 @@ static unsigned long	sandpoint_idedma_re
+ static void
+ sandpoint_ide_probe(void)
+ {
+-	struct pci_dev *pdev = pci_find_device(PCI_VENDOR_ID_WINBOND,
++	struct pci_dev *pdev = pci_get_device(PCI_VENDOR_ID_WINBOND,
+ 			PCI_DEVICE_ID_WINBOND_82C105, NULL);
  
- 	ap->private_data = NULL;
- 	pci_free_consistent(pdev, AHCI_PORT_PRIV_DMA_SZ,
-@@ -719,8 +718,7 @@ static int ahci_host_init(struct ata_pro
- 	/* reset must complete within 1 second, or
- 	 * the hardware should be considered fried.
- 	 */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ + 1);
-+	ssleep(1);
+ 	if (pdev) {
+@@ -540,6 +540,7 @@ sandpoint_ide_probe(void)
+ 		sandpoint_ide_ctl_regbase[0]=pdev->resource[1].start;
+ 		sandpoint_ide_ctl_regbase[1]=pdev->resource[3].start;
+ 		sandpoint_idedma_regbase=pdev->resource[4].start;
++		pci_dev_put(dev);
+ 	}
  
- 	tmp = readl(mmio + HOST_CTL);
- 	if (tmp & HOST_RESET) {
-@@ -798,8 +796,7 @@ static int ahci_host_init(struct ata_pro
- 			/* spec says 500 msecs for each bit, so
- 			 * this is slightly incorrect.
- 			 */
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout((HZ / 2) + 1);
-+			msleep(500);
- 		}
- 
- 		writel(PORT_CMD_SPIN_UP, port_mmio + PORT_CMD);
+ 	sandpoint_ide_ports_known = 1;
 
---===============90312800337182275==
+
+--===============1827345683638677==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90312800337182275==--
+--===============1827345683638677==--
