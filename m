@@ -1,57 +1,47 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 21 Sep 2004 20:53:55 +0000
-Subject: Re: [Kernel-janitors] [PATCH 2.6.9-rc2 32/33] char/zftape-buffers:
-Message-Id: <20040921205355.GC4260@stro.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 20 Sep 2004 23:58:47 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/4] mtd/cfi_cmdset_0002:
+Message-Id: <20040920235847.GF2270@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============96244010816783865=="
+Content-Type: multipart/mixed; boundary="===============54892406144202743=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040916221203.GZ1777@us.ibm.com>
-In-Reply-To: <20040916221203.GZ1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============96244010816783865==
+--===============54892406144202743==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, 16 Sep 2004, Nishanth Aravamudan wrote:
+Any comments would be appreciated.
 
-> Any comments would be appreciated. There actually won't be a PATCH
-> 33/33, because I dropped one that even I wouldn't approve :)
-> 
-> Description: Use msleep_interruptible() instead of schedule_timeout() to
-> guarantee the task delays as expected.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> --- 2.6.9-rc2-vanilla/drivers/char/ftape/zftape/zftape-buffers.c	2004-09-13 17:15:47.000000000 -0700
-> +++ 2.6.9-rc2/drivers/char/ftape/zftape/zftape-buffers.c	2004-09-16 15:04:45.000000000 -0700
-> @@ -27,6 +27,7 @@
->  #include <linux/errno.h>
->  #include <linux/mm.h>
->  #include <linux/slab.h>
-> +#include <linux/delay.h>
->  
->  #include <linux/zftape.h>
->  
-> @@ -119,8 +120,7 @@ void *zft_kmalloc(size_t size)
->  	void *new;
->  
->  	while ((new = kmalloc(size, GFP_KERNEL)) == NULL) {
-> -		current->state   = TASK_INTERRUPTIBLE;
-> -		schedule_timeout(HZ/10);
-> +		msleep_interuptible(100);
-			   ^
-hmm strange function you are referencing ;)
-grep says it's the only case of this typo.
-fixed in kjt.
->  	}
->  	memset(new, 0, size);
->  	used_memory += size;
+Description: Use msleep() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
-a++ maks
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.9-rc1-mm4-vanilla/drivers/mtd/chips/cfi_cmdset_0002.c	2004-09-09 23:05:53.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/mtd/chips/cfi_cmdset_0002.c	2004-09-10 14:16:28.000000000 -0700
+@@ -1175,8 +1175,7 @@ static inline int do_erase_chip(struct m
+ 	chip->in_progress_block_addr = adr;
+ 
+ 	cfi_spin_unlock(chip->mutex);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout((chip->erase_time*HZ)/(2*1000));
++	msleep(chip->erase_time/2);
+ 	cfi_spin_lock(chip->mutex);
+ 
+ 	timeo = jiffies + (HZ*20);
+@@ -1354,8 +1353,7 @@ static inline int do_erase_oneblock(stru
+ 	chip->in_progress_block_addr = adr;
+ 	
+ 	cfi_spin_unlock(chip->mutex);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout((chip->erase_time*HZ)/(2*1000));
++	msleep(chip->erase_time/2);
+ 	cfi_spin_lock(chip->mutex);
+ 
+ 	timeo = jiffies + (HZ*20);
 
---===============96244010816783865==
+--===============54892406144202743==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============96244010816783865==--
+--===============54892406144202743==--
