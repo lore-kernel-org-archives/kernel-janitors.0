@@ -1,45 +1,65 @@
 From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Sun, 13 Feb 2005 13:10:29 +0000
-Subject: [KJ] [PATCH] drivers/net/wireless/prism54/*: convert to
-Message-Id: <20050213131029.GL15348@rhum.iomeda.fr>
+Date: Mon, 14 Feb 2005 15:18:02 +0000
+Subject: [KJ] [PATCH] drivers/net/wireless/prism54/* : pci_request_regions
+Message-Id: <20050214151802.GO20620@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="QCC2I/2CckNfI+Tr"
+Content-Type: multipart/mixed; boundary="M2Pxvdb9QxnGd/3e"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050213131029.GL15348@rhum.iomeda.fr>
+In-Reply-To: <20050213131029.GL15348@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
 
---QCC2I/2CckNfI+Tr
+--M2Pxvdb9QxnGd/3e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+description:
+If PCI request regions fails, then someone else is using the
+hardware we wish to use. For that one case, calling
+pci_disable_device() is rather rude.
+See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
 
 Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
-
---QCC2I/2CckNfI+Tr
+--M2Pxvdb9QxnGd/3e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_wireless_prism54.patch"
+	filename="pci_disable-linux-2.6.11-rc4_drivers_net_wireless_prism54.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/wireless/prism54/islpci_hotplug.c linux-2.6.11-rc3/drivers/net/wireless/prism54/islpci_hotplug.c
---- linux-2.6.11-rc3-vanilla/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-03 17:03:52.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-07 09:39:29.000000000 +0100
-@@ -315,7 +315,7 @@ prism54_module_init(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/wireless/prism54/islpci_hotplug.c linux-2.6.11-rc4/drivers/net/wireless/prism54/islpci_hotplug.c
+--- linux-2.6.11-rc4-vanilla/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-14 09:03:54.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-14 14:52:22.000000000 +0100
+@@ -106,6 +106,7 @@ prism54_probe(struct pci_dev *pdev, cons
+ 	u32 mem_addr;
+ 	islpci_private *priv;
+ 	int rvalue;
++	int pci_dev_busy = 0;
  
- 	__bug_on_wrong_struct_sizes ();
+ 	/* Enable the pci device */
+ 	if (pci_enable_device(pdev)) {
+@@ -155,6 +156,7 @@ prism54_probe(struct pci_dev *pdev, cons
+ 	if (rvalue) {
+ 		printk(KERN_ERR "%s: pci_request_regions failure (rc=%d)\n",
+ 		       DRV_NAME, rvalue);
++		pci_dev_busy = 1 ;
+ 		goto do_pci_disable_device;
+ 	}
  
--	return pci_module_init(&prism54_driver);
-+	return pci_register_driver(&prism54_driver);
+@@ -211,7 +213,8 @@ prism54_probe(struct pci_dev *pdev, cons
+       do_pci_release_regions:
+ 	pci_release_regions(pdev);
+       do_pci_disable_device:
+-	pci_disable_device(pdev);
++	if(!pci_dev_busy)
++		pci_disable_device(pdev);
+ 	return -EIO;
  }
  
- /* by the time prism54_module_exit() terminates, as a postcondition
 
---QCC2I/2CckNfI+Tr
+--M2Pxvdb9QxnGd/3e
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---QCC2I/2CckNfI+Tr--
+--M2Pxvdb9QxnGd/3e--
