@@ -1,80 +1,70 @@
-From: "Benny Chin" <rnxclwwcq@aol.com>
-Date: Sun, 04 Jan 2004 18:38:26 +0000
-Subject: iron
-Message-Id: <QADPLJC-0003794826214@badland>
+From: "Kristen Bernadette" <ogpa00xis@cybergate.com>
+Date: Sat, 31 Jan 2004 18:04:28 +0000
+Subject: cheaap vi -agra alternative retold
+Message-Id: <s08npw95r2j7r-abp0pllq-22brogpa00xis@cybergate.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="9759028956539235174"
+Content-Type: multipart/mixed; boundary="3734978713098620"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---9759028956539235174
+--3734978713098620
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-brokerage compote cheerful filmstrip quasicontinuous 
-cupboard dailey mobster horehound horror archetypical dodson evangelic include 
-addle anderson enunciable groove 
+minnesota want grated sadleria subshrub 
+hemline caffeinic vapor grosgrain picariae instep groomed neckless settling gengr 
+illnatured wales finespoken colour gina galoshes traiter wheelwork globated conscia avowed chink bigram fastness diduction lumbering 
 
---9759028956539235174
+--3734978713098620
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
+</head>
+<body>
+<font COLOR=FFFFEE style="font-family: arial; font-size: 1pt;">rarebit muskogee nepotism hidalgo beast gallant assumiing swordtail leering varuna paris statuvolic altarpiece xviii obviate absents deflendus swain catabiosis nulla admittance homophony avibus palermo anhelose masterkey scamp fille .</font>
+<center>
+<table border=0 cellspacing=0 cellpadding=20 width=100%>
+<tr><td align=center bgcolor=EDFE89>
+<table border=0 cellspacing=0 cellpadding=6 width=550>
+<tr><td bgcolor=ffffff>
+<font size=2 face=verdana color=000000>
+<center>
+<font color=000000 face=arial size=4>
+Cialis [<font color=FEBF10>Super via .gra</font>]<br>
+<font color=E60000>Vi -agra finally found a tough competitor -- Cialis</font><br>
+<font color=46A3FF>Erecctt 24-36 hours & cheaaper than via .gra</font><br>
+100% no siide-effect (safee!)<br></font>
+<font color=FD007E>Cialis acts quicker and last much longer</font></b><br>
+<br></center>
+i) Cialis starts working up to <b>twice as fast as</b> via .gra &  <b>last up to 24-36 hours</b> compared to via .gra's 4-6 hour effective life<br>
+ii) Cialis is <b>taken 30 mins to be fully effective before any se -xual activity begins</b><br><br>
+<b>Huge sav-iing compared to via .gra!</b><br>
+<font color=EC0000><b>INTERNATIONAL SHIPPING to all countries</b></font><br>
+What else do u worry about?? Act now..
+<br><br>
+<center>
+<b><a href=http://parson-monomoriuminodorate_sawbuckstymie_pubis.insomnium-orbicularhighways-dequetanemopsis_oftenness.jinhai.info/u19c/index.php?id=u19 target=_blank><u>
+<font color=FEB310 face=tahoma><font size=5>Our Cialis wholesaele prices can't be beat</font><br><br><font size=6>Be a Super-fuckeer tonight</font><br><br><font size=7>Get your Cialis here</font></font>
+</u></a></b>
+</font>
+</center>
+</td></tr></table>
+</td></tr></table>
+</center>
+</body>
+</html>
 
-<TITLE>Message</TITLE>
-
-<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
-<BODY>
-<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
-STILL NO LUCK ENLARGING IT?<BR>
-<BR>
-Our 2 products will work for you!<BR>
-<BR>
-1. #1 Supplement available! - Works!<BR>
-<A HREF="http://www.newholdersbarz.com/v2/index.php?AFF_ID=d1230">FOR VPRX CIILCK HERE</A><BR>
-<BR>
-and<BR>
-<BR>
-2. *New* Enhancement Oil - Get hard in 60 seconds! Amazing!<BR>
-Like no other oil you've seen. <BR>
-<A HREF="http://www.newholdersbarz.com/x/index.php?AFF_ID=o1230">FOR VPRX OIL CIILCK HERE</A><BR>
-<BR>
-the 2 products work great together<BR>
-<BR>
-<BR>
-------------------------------------------------------------<BR>
-<BR>
-FOR WOMEN ONLY: <A HREF="http://www.newholdersbarz.com/l/index.php?AFF_ID=a1230">CIILCK HERE</A><BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-<a href="http://www.newholdersbarz.com/homepage/">Not intreseted</a><br></FONT></DIV></BODY></HTML>
-malignant audacity rapacious reel oppose bmw pith bullock isomer adolph blanche purveyor playwright shag hemp glorify prep decedent glycerin cavalry celandine apostrophe chimique <br>
-andesine baleen physic gorham oat buffoon godwit adhesion dust clang sanitate bangkok cataract hefty scotia conclusion heroism muskrat blimp badinage minima oath denebola diamond conductance inequivalent <br>
-cheat germinate elton grumble fur glans airmail judith alley cohomology heterodyne <br>
-functionary introversion acs grotesque expunge applicable pore clan eros legible it'd basophilic missionary auerbach murder bivariate <br>
-manifest mere crayon maya sisal delude reservation highwaymen archbishop dana ptolemaic explicate gem have elect drum freak sisyphus sentence ceylon sacral nov aeneas auriga <br>
-des filmy batavia aegis cecil deuterium heron fermium churchman corcoran reservation baffin coincident northerly hawkins plum <br>
-exact friction carpet cecilia mafia bestselling elinor monies ideolect dougherty concocter broil anecdotal empress programmer corpse delicate grater franciscan gaucherie jostle basket jaundice dusseldorf inadvisable errol decorate gloomy defy gilligan <br>
-davis cutback shakespearian alsatian clockwatcher royce partridge circle determinant clattery hound aftermath impose bert indeterminacy appetite charley imprecision barrel cutaneous faery giggle bard hippocratic biblical ellison lowdown bismarck corroborate innermost bon butyl hilly gasket cry demote awn incommensurable <br>
-projectile gimbal helpmate final bogey headroom essential romantic rerouting immature anisotropic guerrilla <br>
-grateful cerium admissible extrusion bought blowup coexistent emplace correct gerbil ferdinand <br>
-
-
---9759028956539235174--
+--3734978713098620--
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: IBM Linux Tutorials.
-Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
-Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
-Click now! http://ads.osdn.com/?ad_id=1278&alloc_id=3371&op=click
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
