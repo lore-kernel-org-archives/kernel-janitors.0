@@ -1,35 +1,42 @@
-From: Samuel Swersky <kkojima@chocofan.com>
-Date: Mon, 08 Mar 2004 07:56:03 +0000
-Subject: [KJ] Do you want to get new experience in the world market?
-Message-Id: <110101c404e2$7f2b9e08$7dd04fb0@chocofan.com>
+From: "Anastasia S. Rosales" <anastasia_rosales_lk@ginko.de>
+Date: Wed, 10 Mar 2004 00:41:00 +0000
+Subject: =?ISO-8859-1?b?RmFzdGVzdCBEZWxpdmVyeSBOYXRpb253aWRl?=
+Message-Id: <a20301c40638$fe958851$6f458b7a@hycd87j>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============18467387426477266=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0BC4_B9B152AB.E1C77172"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============18467387426477266==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+This is a multi-part message in MIME format.
 
-Crewing Agency invites you for a position of a manager in the company.
-Your work will be coordinating a financial flow of the company.
-To be considered for this position you should have an access to the Internate, have 2-3 free hours a day and to have your own account( have an opportunity to open another one for companys needs).No special experience is needed, all skills you need you will be taught during the work.
-You can earn $80.000-$100.000 per a year with us.
-We would appreciate if you send us more information about you( Resume).
-If you have a ���orporate account it is welcomed and the conditions are more favorable.
-Contact us: ctcwisted@aol.com
+------=_NextPart_000_0BC4_B9B152AB.E1C77172
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
 
 
---===============18467387426477266==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+------=_NextPart_000_0BC4_B9B152AB.E1C77172
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<center><!--2as8q3II8K11tOv--><a href="http://www.saswq.com"><img src="http://www.czxmre.com/z7.gif" border=0></a></center>
+<body></html>
+
+
+------=_NextPart_000_0BC4_B9B152AB.E1C77172--
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: IBM Linux Tutorials
+Free Linux tutorial presented by Daniel Robbins, President and CEO of
+GenToo technologies. Learn everything from fundamentals to system
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============18467387426477266==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
