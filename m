@@ -1,70 +1,69 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Thu, 10 Feb 2005 10:04:02 +0000
-Subject: [KJ] [PATCH] drivers/video/aty/*: convert to pci_register_driver
-Message-Id: <20050210100402.GC16373@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 19:06:08 +0000
+Subject: [KJ] [PATCH 8/20] usb/usb-midi: remove
+Message-Id: <20050202190608.GJ2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="0vzXIDBeUiKkjNJl"
+Content-Type: multipart/mixed; boundary="===============25605982069291855=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---0vzXIDBeUiKkjNJl
+--===============25605982069291855==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hello,
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+Description: Replace direct wait-queue usage with wait_event_timeout(). Removed
+some local variables which help determine loop time, but which are now
+compressed into the wait_event_timeout() macro. Patch is compile-tested.
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---0vzXIDBeUiKkjNJl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_video_aty.patch"
+--- 2.6.11-rc2-kj-v/drivers/usb/class/usb-midi.c	2005-01-24 09:34:13.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/usb/class/usb-midi.c	2005-02-01 14:02:39.000000000 -0800
+@@ -37,6 +37,7 @@
+ #include <linux/poll.h>
+ #include <linux/sound.h>
+ #include <linux/init.h>
++#include <linux/wait.h>
+ #include <asm/semaphore.h>
+ 
+ #include "usb-midi.h"
+@@ -317,9 +318,7 @@ static int usb_write( struct midi_out_en
+ 	int pipe;
+ 	int ret = 0;
+ 	int status;
+-	int maxretry = 50;
+ 	
+-	DECLARE_WAITQUEUE(wait,current);
+ 	init_waitqueue_head(&ep->wait);
+ 
+ 	d = ep->usbdev;
+@@ -335,19 +334,10 @@ static int usb_write( struct midi_out_en
+ 		goto error;
+ 	}
+ 
+-	add_wait_queue( &ep->wait, &wait );
+-	set_current_state( TASK_INTERRUPTIBLE );
+-
+-	while( ep->urb->status == -EINPROGRESS ) {
+-		if ( maxretry-- < 0 ) {
+-			printk(KERN_ERR "usbmidi: usb_bulk_msg timed out\n");
+-			ret = -ETIME;
+-			break;
+-		}
+-		interruptible_sleep_on_timeout( &ep->wait, 10 );
++	if (!wait_event_timeout(ep->wait, (ep->urb->status != -EINPROGRESS), 500)) {
++		printk(KERN_ERR "usbmidi: usb_bulk_msg timed out\n");
++		ret = -ETIME;
+ 	}
+-	set_current_state( TASK_RUNNING );
+-	remove_wait_queue( &ep->wait, &wait );
+ 
+ error:
+ 	return ret;
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/video/aty/aty128fb.c linux-2.6.11-rc3/drivers/video/aty/aty128fb.c
---- linux-2.6.11-rc3-vanilla/drivers/video/aty/aty128fb.c	2005-02-03 17:04:04.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/video/aty/aty128fb.c	2005-02-07 09:39:30.000000000 +0100
-@@ -2413,7 +2413,7 @@ int __init aty128fb_init(void)
- 	aty128fb_setup(option);
- #endif
- 
--	return pci_module_init(&aty128fb_driver);
-+	return pci_register_driver(&aty128fb_driver);
- }
- 
- static void __exit aty128fb_exit(void)
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/video/aty/atyfb_base.c linux-2.6.11-rc3/drivers/video/aty/atyfb_base.c
---- linux-2.6.11-rc3-vanilla/drivers/video/aty/atyfb_base.c	2005-02-03 17:04:04.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/video/aty/atyfb_base.c	2005-02-07 09:39:30.000000000 +0100
-@@ -3661,7 +3661,7 @@ int __init atyfb_init(void)
- #endif
- 
- #ifdef CONFIG_PCI
--    pci_module_init(&atyfb_driver);
-+    pci_register_driver(&atyfb_driver);
- #endif
- #ifdef CONFIG_ATARI
-     atyfb_atari_probe();
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/video/aty/radeon_base.c linux-2.6.11-rc3/drivers/video/aty/radeon_base.c
---- linux-2.6.11-rc3-vanilla/drivers/video/aty/radeon_base.c	2005-02-03 17:04:04.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/video/aty/radeon_base.c	2005-02-07 09:39:30.000000000 +0100
-@@ -2389,7 +2389,7 @@ int __init radeonfb_init (void)
- 		return -ENODEV;
- 	radeonfb_setup(option);
- #endif
--	return pci_module_init (&radeonfb_driver);
-+	return pci_register_driver (&radeonfb_driver);
- }
- 
- 
-
---0vzXIDBeUiKkjNJl
+--===============25605982069291855==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---0vzXIDBeUiKkjNJl--
+--===============25605982069291855==--
