@@ -1,50 +1,60 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 09 Mar 2005 23:01:57 +0000
-Subject: [KJ] [PATCH] fs/smbfs/*: fix sparse warnings
-Message-Id: <200503100151.29706.adobriyan@mail.ru>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 13:13:20 +0000
+Subject: [KJ] [UPDATE PATCH 14/19] drivers/scsi/megaraid/megaraid_mbox: Use
+Message-Id: <20050320131320.GN3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============58144540056678307=="
+Content-Type: multipart/mixed; boundary="===============47535038386642953=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220170849.GO14375@helium.tklauser.home>
+In-Reply-To: <20050220170849.GO14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============58144540056678307==
+--===============47535038386642953==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Index: linux-2.6.11-bk3-sparse/include/linux/smb_fs.h
-===================================================================
---- linux-2.6.11-bk3-sparse.orig/include/linux/smb_fs.h	2005-03-02 09:38:13.000000000 +0200
-+++ linux-2.6.11-bk3-sparse/include/linux/smb_fs.h	2005-03-08 12:53:32.000000000 +0200
-@@ -43,17 +43,17 @@ static inline struct smb_inode_info *SMB
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11.orig/drivers/scsi/megaraid/megaraid_mbox.c	2005-03-02 12:50:37.000000000 +0100
++++ linux-2.6.11/drivers/scsi/megaraid/megaraid_mbox.c	2005-03-20 13:27:54.000000000 +0100
+@@ -69,6 +69,7 @@
+  * For history of changes, see Documentation/ChangeLog.megaraid
+  */
  
- /* macro names are short for word, double-word, long value (?) */
- #define WVAL(buf,pos) \
--	(le16_to_cpu(get_unaligned((u16 *)((u8 *)(buf) + (pos)))))
-+	(le16_to_cpu(get_unaligned((__le16 *)((u8 *)(buf) + (pos)))))
- #define DVAL(buf,pos) \
--	(le32_to_cpu(get_unaligned((u32 *)((u8 *)(buf) + (pos)))))
-+	(le32_to_cpu(get_unaligned((__le32 *)((u8 *)(buf) + (pos)))))
- #define LVAL(buf,pos) \
--	(le64_to_cpu(get_unaligned((u64 *)((u8 *)(buf) + (pos)))))
-+	(le64_to_cpu(get_unaligned((__le64 *)((u8 *)(buf) + (pos)))))
- #define WSET(buf,pos,val) \
--	put_unaligned(cpu_to_le16((u16)(val)), (u16 *)((u8 *)(buf) + (pos)))
-+	put_unaligned(cpu_to_le16((u16)(val)), (__le16 *)((u8 *)(buf) + (pos)))
- #define DSET(buf,pos,val) \
--	put_unaligned(cpu_to_le32((u32)(val)), (u32 *)((u8 *)(buf) + (pos)))
-+	put_unaligned(cpu_to_le32((u32)(val)), (__le32 *)((u8 *)(buf) + (pos)))
- #define LSET(buf,pos,val) \
--	put_unaligned(cpu_to_le64((u64)(val)), (u64 *)((u8 *)(buf) + (pos)))
-+	put_unaligned(cpu_to_le64((u64)(val)), (__le64 *)((u8 *)(buf) + (pos)))
++#include <linux/dma-mapping.h>
+ #include "megaraid_mbox.h"
  
- /* where to find the base of the SMB packet proper */
- #define smb_base(buf) ((u8 *)(((u8 *)(buf))+4))
+ static int megaraid_init(void);
+@@ -619,7 +620,7 @@ megaraid_probe_one(struct pci_dev *pdev,
+ 
+ 	// Setup the default DMA mask. This would be changed later on
+ 	// depending on hardware capabilities
+-	if (pci_set_dma_mask(adapter->pdev, 0xFFFFFFFF) != 0) {
++	if (pci_set_dma_mask(adapter->pdev, DMA_32BIT_MASK) != 0) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+ 			"megaraid: pci_set_dma_mask failed:%d\n", __LINE__));
+@@ -1031,7 +1032,7 @@ megaraid_init_mbox(adapter_t *adapter)
+ 
+ 	// Set the DMA mask to 64-bit. All supported controllers as capable of
+ 	// DMA in this range
+-	if (pci_set_dma_mask(adapter->pdev, 0xFFFFFFFFFFFFFFFFULL) != 0) {
++	if (pci_set_dma_mask(adapter->pdev, DMA_64BIT_MASK) != 0) {
+ 
+ 		con_log(CL_ANN, (KERN_WARNING
+ 			"megaraid: could not set DMA mask for 64-bit.\n"));
 
---===============58144540056678307==
+--===============47535038386642953==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============58144540056678307==--
+--===============47535038386642953==--
