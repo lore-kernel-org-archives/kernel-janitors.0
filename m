@@ -1,38 +1,32 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Fri, 10 Dec 2004 10:51:00 +0000
-Subject: Re: [KJ] patches: delete 75 unused files
-Message-Id: <20041210105100.GE2211@stro.at>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Mon, 20 Dec 2004 14:59:09 +0000
+Subject: [KJ] Re: [PATCH] pcxx: replace cli()/sti() with
+Message-Id: <1103554747.30268.24.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16947924679456849=="
+Content-Type: multipart/mixed; boundary="===============0075858195198335032=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041208155439.GC31550@nd47.coderock.org>
-In-Reply-To: <20041208155439.GC31550@nd47.coderock.org>
-To: kernel-janitors@vger.kernel.org
+References: <20041217223426.11143.44338.87156@localhost.localdomain>
+In-Reply-To: <20041217223426.11143.44338.87156@localhost.localdomain>
+To: James Nelson <james4765@verizon.net>
+Cc: kernel-janitors@lists.osdl.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, akpm@osdl.org
 
---===============16947924679456849==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============0075858195198335032==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, 09 Dec 2004, Gustavo Franco wrote:
+On Gwe, 2004-12-17 at 22:34, James Nelson wrote:
+> -	save_flags(flags);
+> -	cli();
+> +	spin_lock_irqsave(&pcxx_lock, flags);
+>  	del_timer_sync(&pcxx_timer);
 
-> On Wed, 2004-12-08 at 17:15 -0500, Jim Nelson wrote:
-> >
-> >
-> > Why not make a Documentation/driver-skeletons.txt?  I can write it, if everyone 
-> > can point me in the direction of where all the skeleton and example files are.
-> 
-> I agree, you're free to submit it but i've no idea if it will be
-> accepted. 
-
-please forget my previous mail.  misread end of the thread. ;-)
-that's a nice idea.
- 
---
-maks
-kernel janitor  	http://janitor.kernelnewbies.org/
+Not safe if the lock is grabbed by the timer between the lock and the
+irqsave as it will spin on another cpu and the timer delete will never
+finish.
 
 
---===============16947924679456849==
+
+--===============0075858195198335032==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16947924679456849==--
+--===============0075858195198335032==--
