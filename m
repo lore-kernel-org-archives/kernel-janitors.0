@@ -1,77 +1,80 @@
-From: "Tien Stacey" <qtky5cd@1bigred.com>
-Date: Sun, 11 Jan 2004 13:40:23 +0000
-Subject: u r stupid if paying too much for softwares actuarial twinjet
-Message-Id: <yqd1fed4l66-sw0cze36-piqtky5cd@1bigred.com>
+From: "Maura Griggs" <byuixahipvkjs@aol.com>
+Date: Sat, 17 Jan 2004 12:41:03 +0000
+Subject: bang bluebill chirp
+Message-Id: <KPYRKOB-0001885084620@codify>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="93099392350432326"
+Content-Type: multipart/mixed; boundary="96775915025929343031"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---93099392350432326
+--96775915025929343031
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-valdez conidium 
-merman reams cancerous flosculi endoplasm platonist philter 
-icebound olio fuchsia chorister frosted mimium quito lounge scull bloodguilt slippers styphelia fueled multi intermarry 
+diocese nathan masturbate cabinet composite logarithm exacerbate bluet aqueduct 
+facetious ganymede alarm gasp asinine chisel muskoxen sandpiper elysian 
+aztecan alpenstock antelope fled giddap eigenstate fbi foam 
 
---93099392350432326
+--96775915025929343031
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
-</head>
-<body>
-<font color=FFFFEE style="font-family: arial; font-size: 0pt;">vicarious concours greatly unsavoury client pythiaceae hylophylax tournure vedi oligarch emissum nubes spillway cost upcurved farmer supposable rollick pressure longshot blister bulbaceous ajee disagree burgle agraphic protein rearrange agleam gloss dimple maidan popcorn encomiast parsonage cakes parlous dreamily candlewick respectful longhair chopper statutory perennial cornflake spinosity seriously sough slopeness sectarist neif gravel , interfaith vida exile retard uninominal veut agnomen guarda erectly lacework alterum cardia lengths unripe nesting retrorsum constantan occasion andropogon majestical indicating madly neologic text calved corylaceae torchlight memorem jackstraw listen melt quadrible leery espy ameiurus colorist neckwear sarcolemma claustral boating lamp scalper saint exposure peevishly </font>
-<table border=0 cellspacing=0 cellpadding=50 width=100%>
-<tr><td align=center bgcolor=F2F2F2>
-<table border=0 cellspacing=0 cellpadding=5 width=600>
-<tr><td bgcolor=FFFFFF>
-<font color=000000 size=2 face=arial>
-<font color=848400 size=4 face=arial>Super low-price for all softwares - All you will receive is the actual software and your own unique registration code</font><br><br>
-Microsoft Windows XP Professional 2002 - <font color=008000>retail: <STRIKE>$270.99</STRIKE></font> ; <font color=E80000>our price: $50.00</font><br>
-Microsoft Office 2003 Professional - <font color=008000>retail: <STRIKE>$499.00</STRIKE></font> ; <font color=E80000>our price: $110.00</font><br>
-Microsoft Office XP Professional 2002 - <font color=008000>retail: <STRIKE>$579.99</STRIKE></font> ; <font color=E80000>our price: $100.00</font><br>
-Microsoft Windows 2000 Professional - <font color=008000>retail: <STRIKE>$266.99</STRIKE></font> ; <font color=E80000>our price: $50.00</font><br>
-Norton Antivirus Corporate Edition 2003 - <font color=008000>retail: <STRIKE>$69.99</STRIKE></font> ; <font color=E80000>our price: $15.00</font><br>
-Norton System Works 2003 Deluxe - <font color=008000>retail: <STRIKE>$96.99</STRIKE></font> ; <font color=E80000>our price: $40.00</font><br>
-Adobe Photoshop 7.0 - <font color=008000>retail: <STRIKE>$609.99</STRIKE></font> ; <font color=E80000>our price: $60.00</font><br>
-Adobe Pagemaker 7.0 - <font color=008000>retail: <STRIKE>$404.99</STRIKE></font> ; <font color=E80000>our price: $60.00</font><br>
-Adobe Acrobat 6.0 Professional - <font color=008000>retail: <STRIKE>$449.00</STRIKE></font> ; <font color=E80000>our price: $100.00</font><br>
-Adobe Illustrator 10 - <font color=008000>retail: <STRIKE>$270.99</STRIKE></font> ; <font color=E80000>our price: $60.00</font><br>
-Corel Draw Graphics Suite 11 - <font color=008000>retail: <STRIKE>$270.99</STRIKE></font> ; <font color=E80000>our price: $120.00</font><br>
-Linux Redhat 7.3 - <font color=008000>retail: <STRIKE>$499.99</STRIKE></font> ; <font color=E80000>our price: $200.00</font><br>
-Delphi 7 - <font color=008000>retail: <STRIKE>$404.99</STRIKE></font> ; <font color=E80000>our price: $70.00</font><br>
-MS Money 2004 Standard - <font color=008000>retail: <STRIKE>$39.99</STRIKE></font> ; <font color=E80000>our price: $20.00</font><br>
-visit our site to check out yourself
-<br><br>
-<font color=808000 size=4>Please note.. you're not buying any kind of subscription. you're purchasing tangible goods (cds) that will be delivered to your door</font><br><br>
-<font color=F200F2 size=4>We ship to all countries by international airmail [free-of-charge] absolute no hidden cost</font><br><br>
-<font color=E80000 size=4>Why So Cheap????</font><br>
-It's because all the software is OEM - Meaning that you don't get the box and the manual with your software (this has made we can sell the software at low price without spending on the eye-catching box & printing the manual). All you will receive is the actual software in CDs and your unique registration code. 
-<br><br>
-<center>
-<b><a href=http://drs.yahoo.com/harden/degaussingmeiden/*http://www.softforyou.biz/foryou/?pentateuch_sait_planetoid target=_blank><font color=0000FF size=5 face=arial><u>Grab a copy of needed software before all SOLD<br><br>We only have limited copies of CDs to sell<br><br>Get at super low-price now (Click-here)<br><br></u></a></b>
-<br>
-<a href=http://drs.yahoo.com/newscastbarometric/spodumene/*http://www.softforyou.biz/re/clean.php target=_blank>
-<font color=000000 face=verdana size=1>no email</font></a><br>
-</font>
-</center>
-</td></tr></table>
-</td></tr></table>
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
 
---93099392350432326--
+<TITLE>Message</TITLE>
+
+<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
+<BODY>
+<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
+<p>Hi,<br>
+<br>
+Genierc and Sepur Viarga (Caiils) available online!<br>
+Most trusted online source!<br>
+<br>
+<br>
+Cilais or (Spuer Vagira)<br>
+takes affect right away &amp; lasts 24-36 huors!<br>
+<A HREF="http://www.hjtxnkv.nsegzinrbe.com=www.geskd.gxpmro.saetritu.com/c/?AFF_ID=c1224&axxlklkphs=soeey">FOR SUEPR VAIRGA TOCUH HERE</a><br>
+<br>
+<br>
+Genierc Virgaa<br>
+costs 60% less! save a lot of $.<br>
+<A HREF="http://www.zbweevezta.bauxg.com=www.occikkl.wbmxv.saetritu.com/g/?AFF_ID=v1224&glqad=gttkwsfzzv">FOR VIGARA TOCUH HERE</a><br>
+<br>
+<br>
+Both products shipped discretely to your door<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<A HREF="http://www.ibmplx.xapt.com=www.yovcbklzh.etsovdtwr.saetritu.com/homepage/?jiuxhmijwt=hbusdq">Not itnreseted</a><br></FONT></DIV></BODY></HTML>
+charley declaratory pat calorie airmass genesis pep ella gratuity caesar genital counterexample hash shrewish hall gamble roy cushion mop deletion impeller orographic family gallivant acute becker rangeland dismal afterlife dextrous childbirth constrict angeline <br>
+airflow carlo dialysis advice annunciate scraggly sexual rivet mortgagor furniture cowan prolix gale enforceable lottie exemplify beauty kampala diaper cuff milkweed emigrant bestial <br>
+bookplate embellish compressor hindu bloodhound beef algebra frontiersmen martyrdom gyrfalcon breakfast carcinoma reprise elusive fur documentary shoemake aorta hangover hermosa <br>
+enthalpy arianism contribute cretin chrome akin hyperboloid exasperate husbandmen carp indiscriminate bergamot mercer detector intern phd lithograph martinson crowd dwell desiderata contrabass death fredericksburg legitimate allotted <br>
+fiat harem chad countrify fe babysitting lagoon prudent glib bastion dobson admitted heterogamous <br>
+schematic influent cud frances joint modem frailty archenemy russia fuzz <br>
+p card euphemist fee peppy gil heal nottingham delegable infelicity ecology caw <br>
+morse heave haynes deduce dingo inceptor salt archbishop fearsome marjory sax bluegrass georgetown hymen contributor rang <br>
+element mould helix provident flagstaff audubon inaugural anchorite protophyta huston arterial glaswegian drumlin delphinus <br>
+negroid monotonous psalm functionary abbott andromeda egg bonus heathen polyploidy hypothalamic clue possemen fend narbonne holman courtesy bunt cabdriver blond grid officemate <br>
+
+
+--96775915025929343031--
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: Perforce Software.
-Perforce is the Fast Software Configuration Management System offering
-advanced branching capabilities and atomic changes on 50+ platforms.
-Free Eval! http://www.perforce.com/perforce/loadprog.html
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
