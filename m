@@ -1,105 +1,119 @@
-From: Mark Hollomon <markhollomon@comcast.net>
-Date: Fri, 15 Apr 2005 01:33:06 +0000
-Subject: Re: [KJ] [PATCH] drivers/net/ne2k-pci.c : Use of time_after() macro
-Message-Id: <425F19D2.1010100@comcast.net>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 04 Apr 2005 18:10:53 +0000
+Subject: [KJ] [UPDATE PATCH] usb/digi_acceleport: remove
+Message-Id: <20050404181053.GB3082@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============6218314828776399=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <425F030B.5000008@feitoza.com.br>
-In-Reply-To: <425F030B.5000008@feitoza.com.br>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Marcelo Feitoza Parisi wrote:
-> Added the use of time_after() macro, that is defined at linux/jiffies.h
-> 
-> Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-> 
-> --- linux/drivers/net/ne2k-pci.c    2005-04-07 22:25:51.000000000 -0300
-> +++ development/drivers/net/ne2k-pci.c    2005-04-14 20:00:28.000000000 
-> -0300
-> @@ -53,6 +53,7 @@
-> #include <linux/ethtool.h>
-> #include <linux/netdevice.h>
-> #include <linux/etherdevice.h>
-> +#include <linux/jiffies.h>
-> 
-> #include <asm/system.h>
-> #include <asm/io.h>
-> @@ -271,7 +272,7 @@
-> 
->     /* Reset card. Who knows what dain-bramaged state it was left in. */
->     {
-> -        unsigned long reset_start_time = jiffies;
-> +        unsigned long reset_start_time = jiffies + 2;
+--===============6218314828776399==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-A nit pick, but if you add 2 to jiffies, it is no longer the reset start time. 
-Maybe rename the variable reset_timeout or something.
+On Wed, Feb 02, 2005 at 11:03:09AM -0800, Nishanth Aravamudan wrote:
+> Hello,
+> 
+> Description: Replace deprecated interruptible_sleep_on_timeout() with direct
+> wait-queue usage. Also replace some rather odd wait-queue usage with the
+> existent macros. Also adjusted the wake_up_interruptible() call appropriately,
+> as I changed all the states to TASK_UNINTERRUPTIBLE (signals were not be checked
+> in the current code). Patch is compile-tested.
 
-> 
->         outb(inb(ioaddr + NE_RESET), ioaddr + NE_RESET);
-> 
-> @@ -280,7 +281,7 @@
->         */
->         while ((inb(ioaddr + EN0_ISR) & ENISR_RESET) = 0)
->             /* Limit wait: '2' avoids jiffy roll-over. */
-> -            if (jiffies - reset_start_time > 2) {
-> +            if (time_after(jiffies, reset_start_time)) {
->                 printk(KERN_ERR PFX "Card failure (no reset ack).\n");
->                 goto err_out_free_netdev;
->             }
-> @@ -441,7 +442,7 @@
->    8390 reset command required, but that shouldn't be necessary. */
-> static void ne2k_pci_reset_8390(struct net_device *dev)
-> {
-> -    unsigned long reset_start_time = jiffies;
-> +    unsigned long reset_start_time = jiffies + 2;
+Patch was broken in various ways. Fixed-up below (ends up being fewer
+changes). Please drop previous patch and apply the attached.
 
-ditto
+Description: Replace deprecated interruptible_sleep_on_timeout() with
+direct wait-queue usage. Patch is compile-tested.
 
-> 
->     if (debug > 1) printk("%s: Resetting the 8390 t=%ld...",
->                           dev->name, jiffies);
-> @@ -453,7 +454,7 @@
-> 
->     /* This check _should_not_ be necessary, omit eventually. */
->     while ((inb(NE_BASE+EN0_ISR) & ENISR_RESET) = 0)
-> -        if (jiffies - reset_start_time > 2) {
-> +        if (time_after(jiffies, reset_start_time)) {
->             printk("%s: ne2k_pci_reset_8390() did not complete.\n", 
-> dev->name);
->             break;
->         }
-> @@ -607,10 +608,10 @@
->         }
->     }
-> 
-> -    dma_start = jiffies;
-> +    dma_start = jiffies + 2;
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-ditto
+--- 2.6.12-rc1-v/drivers/usb/serial/digi_acceleport.c	2005-03-01 23:38:08.000000000 -0800
++++ 2.6.12-rc1-kj/drivers/usb/serial/digi_acceleport.c	2005-04-04 11:10:00.000000000 -0700
+@@ -14,6 +14,9 @@
+ *  Peter Berger (pberger@brimson.com)
+ *  Al Borchers (borchers@steinerpoint.com)
+ * 
++* (04/04/2005) nacc
++* 	removed interruptible_sleep_on_timeout() usage [deprecated]
++*
+ * (12/03/2001) gkh
+ *	switched to using port->open_count instead of private version.
+ *	Removed port->active
+@@ -244,6 +247,7 @@
+ #include <linux/module.h>
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
++#include <linux/wait.h>
+ #include <asm/uaccess.h>
+ #include <linux/usb.h>
+ #include "usb-serial.h"
+@@ -567,27 +571,21 @@ static struct usb_serial_device_type dig
+ *  and the sleep.  In other words, spin_unlock_irqrestore and
+ *  interruptible_sleep_on_timeout are "atomic" with respect to
+ *  wake ups.  This is used to implement condition variables.
++*
++*  interruptible_sleep_on_timeout is deprecated and has been replaced
++*  with the equivalent code.
+ */
+ 
+ static inline long cond_wait_interruptible_timeout_irqrestore(
+ 	wait_queue_head_t *q, long timeout,
+ 	spinlock_t *lock, unsigned long flags )
+ {
++	DEFINE_WAIT(wait);
+ 
+-	wait_queue_t wait;
+-
+-
+-	init_waitqueue_entry( &wait, current );
+-
+-	set_current_state( TASK_INTERRUPTIBLE );
+-
+-	add_wait_queue( q, &wait );
+-
+-	spin_unlock_irqrestore( lock, flags );
+-
++	prepare_to_wait(q, &wait, TASK_INTERRUPTIBLE);
++	spin_unlock_irqrestore(lock, flags);
+ 	timeout = schedule_timeout(timeout);
+-
+-	remove_wait_queue( q, &wait );
++	finish_wait(q, &wait);
+ 
+ 	return( timeout );
+ 
+@@ -1528,7 +1526,7 @@ dbg( "digi_open: TOP: port=%d, open_coun
+ 
+ static void digi_close( struct usb_serial_port *port, struct file *filp )
+ {
+-
++	DEFINE_WAIT(wait);
+ 	int ret;
+ 	unsigned char buf[32];
+ 	struct tty_struct *tty = port->tty;
+@@ -1604,8 +1602,9 @@ dbg( "digi_close: TOP: port=%d, open_cou
+ 			dbg( "digi_close: write oob failed, ret=%d", ret );
+ 
+ 		/* wait for final commands on oob port to complete */
+-		interruptible_sleep_on_timeout( &priv->dp_flush_wait,
+-			DIGI_CLOSE_TIMEOUT );
++		prepare_to_wait(&priv->dp_flush_wait, &wait, TASK_INTERRUPTIBLE);
++		schedule_timeout(DIGI_CLOSE_TIMEOUT);
++		finish_wait(&priv->dp_flush_wait, &wait);
+ 
+ 		/* shutdown any outstanding bulk writes */
+ 		usb_kill_urb(port->write_urb);
 
-> 
->     while ((inb(nic_base + EN0_ISR) & ENISR_RDC) = 0)
-> -        if (jiffies - dma_start > 2) {            /* Avoid clock 
-> roll-over. */
-> +        if (time_after(jiffies, dma_start)) {            /* Avoid clock 
-> roll-over. */
->             printk(KERN_WARNING "%s: timeout waiting for Tx RDC.\n", 
-> dev->name);
->             ne2k_pci_reset_8390(dev);
->             NS8390_init(dev,1);
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
-> 
+--===============6218314828776399==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
--- 
-Mark Hollomon
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============6218314828776399==--
