@@ -1,96 +1,84 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Thu, 07 Oct 2004 23:40:17 +0000
-Subject: [Kernel-janitors] [PATCH 2.6][10/12] prep_pci.c replace
-Message-Id: <35460000.1097192417@w-hlinder.beaverton.ibm.com>
+From: Daniele Pizzoni <auouo@tin.it>
+Date: Sun, 17 Oct 2004 16:19:11 +0000
+Subject: [KJ] [PATCH 1/8] replacing/fixing printk with pr_debug/pr_info in
+Message-Id: <1098032557.3023.112.camel@pdp11.tsho.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91991140802368232=="
+Content-Type: multipart/mixed; boundary="===============16540841561916508=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, benh@kernel.crashing.org
+To: kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
 
---===============91991140802368232==
-Content-Type: text/plain; charset=us-ascii
+--===============16540841561916508==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
+Replace custom macro Dprintk with pr_debug from kernel.h.
+Use  pr_info when appropriate.
+Fix consistency of printks.
 
-As pci_find_device is going away I've replaced it with pci_get_device.
-If someone with a PPC system could test it I would appreciate it.
+Signed-off-by: Daniele Pizzoni <auouo@tin.it>
 
-Thanks.
-
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/prep_pci.c linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/prep_pci.c
---- linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/prep_pci.c	2004-09-29 20:05:51.000000000 -0700
-+++ linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/prep_pci.c	2004-10-07 16:29:09.995482096 -0700
-@@ -1069,7 +1069,7 @@ prep_pib_init(void)
- 		 * Perform specific configuration for the Via Tech or
- 		 * or Winbond PCI-ISA-Bridge part.
- 		 */
--		if ((dev = pci_find_device(PCI_VENDOR_ID_VIA,
-+		if ((dev = pci_get_device(PCI_VENDOR_ID_VIA,
- 					PCI_DEVICE_ID_VIA_82C586_1, dev))) {
- 			/*
- 			 * PPCBUG does not set the enable bits
-@@ -1080,7 +1080,7 @@ prep_pib_init(void)
- 			reg |= 0x03; /* IDE: Chip Enable Bits */
- 			pci_write_config_byte(dev, 0x40, reg);
- 		}
--		if ((dev = pci_find_device(PCI_VENDOR_ID_VIA,
-+		if ((dev = pci_get_device(PCI_VENDOR_ID_VIA,
- 						PCI_DEVICE_ID_VIA_82C586_2,
- 						dev)) && (dev->devfn = 0x5a)) {
- 			/* Force correct USB interrupt */
-@@ -1089,7 +1089,7 @@ prep_pib_init(void)
- 					PCI_INTERRUPT_LINE,
- 					dev->irq);
- 		}
--		if ((dev = pci_find_device(PCI_VENDOR_ID_WINBOND,
-+		if ((dev = pci_get_device(PCI_VENDOR_ID_WINBOND,
- 					PCI_DEVICE_ID_WINBOND_83C553, dev))) {
- 			 /* Clear PCI Interrupt Routing Control Register. */
- 			short_reg = 0x0000;
-@@ -1102,7 +1102,7 @@ prep_pib_init(void)
- 		}
+Index: linux-2.6.9-rc4/arch/i386/kernel/acpi/boot.c
+===================================================================
+--- linux-2.6.9-rc4.orig/arch/i386/kernel/acpi/boot.c	2004-10-17 16:56:59.908679824 +0200
++++ linux-2.6.9-rc4/arch/i386/kernel/acpi/boot.c	2004-10-17 17:01:22.980686800 +0200
+@@ -204,7 +204,7 @@ acpi_parse_madt (
+ 	if (madt->lapic_address) {
+ 		acpi_lapic_addr = (u64) madt->lapic_address;
+ 
+-		printk(KERN_DEBUG PREFIX "Local APIC address 0x%08x\n",
++		pr_info(PREFIX "Local APIC address 0x%08x\n",
+ 			madt->lapic_address);
  	}
  
--	if ((dev = pci_find_device(PCI_VENDOR_ID_WINBOND,
-+	if ((dev = pci_get_device(PCI_VENDOR_ID_WINBOND,
- 				   PCI_DEVICE_ID_WINBOND_82C105, dev))){
- 		if (OpenPIC_Addr){
- 			/*
-@@ -1207,7 +1207,7 @@ prep_pcibios_fixup(void)
- 	printk("Setting PCI interrupts for a \"%s\"\n", Motherboard_map_name);
+@@ -461,7 +461,7 @@ unsigned int acpi_register_gsi(u32 gsi, 
  
- 	/* Iterate through all the PCI devices, setting the IRQ */
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		/*
- 		 * If we have residual data, then this is easy: query the
- 		 * residual data for the IRQ line allocated to the device.
-@@ -1260,12 +1260,13 @@ prep_pcibios_after_init(void)
- 	 * instead of 0xc0000. vgacon.c (for example) is completely unaware of
- 	 * this little quirk.
- 	 */
--	dev = pci_find_device(PCI_VENDOR_ID_WD, PCI_DEVICE_ID_WD_90C, NULL);
-+	dev = pci_get_device(PCI_VENDOR_ID_WD, PCI_DEVICE_ID_WD_90C, NULL);
- 	if (dev) {
- 		dev->resource[1].end -= dev->resource[1].start;
- 		dev->resource[1].start = 0;
- 		/* tell the hardware */
- 		pci_write_config_dword(dev, PCI_BASE_ADDRESS_1, 0x0);
-+		pci_dev_put(dev);
+ 		if (edge_level == ACPI_LEVEL_SENSITIVE) {
+ 			if ((gsi < 16) && !((1 << gsi) & irq_mask)) {
+-				Dprintk(KERN_DEBUG PREFIX "Setting GSI %u as level-triggered\n", gsi);
++				pr_debug(PREFIX "Setting GSI %u as level-triggered\n", gsi);
+ 				irq_mask |= (1 << gsi);
+ 				eisa_set_level_irq(gsi);
+ 			}
+@@ -544,14 +544,14 @@ static int __init acpi_parse_hpet(unsign
+         vxtime.hpet_address = hpet_tbl->addr.addrl |
+                 ((long) hpet_tbl->addr.addrh << 32);
+ 
+-        printk(KERN_INFO PREFIX "HPET id: %#x base: %#lx\n",
++        pr_info(PREFIX "HPET id: %#x base: %#lx\n",
+                hpet_tbl->id, vxtime.hpet_address);
+ #else	/* X86 */
+ 	{
+ 		extern unsigned long hpet_address;
+ 
+ 		hpet_address = hpet_tbl->addr.addrl;
+-		printk(KERN_INFO PREFIX "HPET id: %#x base: %#lx\n",
++		pr_info(PREFIX "HPET id: %#x base: %#lx\n",
+ 			hpet_tbl->id, hpet_address);
  	}
+ #endif	/* X86 */
+@@ -594,7 +594,7 @@ static int __init acpi_parse_fadt(unsign
+ 		pmtmr_ioport = fadt->V1_pm_tmr_blk;
+ 	}
+ 	if (pmtmr_ioport)
+-		printk(KERN_INFO PREFIX "PM-Timer IO Port: %#x\n", pmtmr_ioport);
++		pr_info(PREFIX "PM-Timer IO Port: %#x\n", pmtmr_ioport);
  #endif
+ 	return 0;
  }
+@@ -692,7 +692,7 @@ acpi_parse_madt_ioapic_entries(void)
+  	 * if "noapic" boot option, don't look for IO-APICs
+ 	 */
+ 	if (skip_ioapic_setup) {
+-		printk(KERN_INFO PREFIX "Skipping IOAPIC probe "
++		pr_info(PREFIX "Skipping IOAPIC probe "
+ 			"due to 'noapic' option.\n");
+ 		return -ENODEV;
+ 	}
 
 
---===============91991140802368232==
+
+--===============16540841561916508==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -101,4 +89,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91991140802368232==--
+--===============16540841561916508==--
