@@ -1,75 +1,40 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:27 +0000
-Subject: [KJ] [PATCH][22/26] kernel/power/* - fix compile ERROR that stops
-Message-Id: <420BEF83.13044.58713C@localhost>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Thu, 10 Feb 2005 23:11:57 +0000
+Subject: Re: [KJ] [PATCH][22/26] kernel/power/* - fix compile ERROR that stops
+Message-Id: <20050210231157.GJ2958@stusta.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53121188060538405=="
+Content-Type: multipart/mixed; boundary="===============61440288774319929=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <420BEF83.13044.58713C@localhost>
+In-Reply-To: <420BEF83.13044.58713C@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============53121188060538405==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============61440288774319929==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: Error in Andrew Morton's 2.6.11-rc3-mm that causes my GCC to 
-error out due to no static inline function body before call of that 
-function
+On Thu, Feb 10, 2005 at 11:34:27PM +0200, Stephen Biggs wrote:
+Content-Description: Mail message body
+> Description: Error in Andrew Morton's 2.6.11-rc3-mm that causes my GCC to 
+> error out due to no static inline function body before call of that 
+> function
+>...
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+You should better say 2.6.11-rc3-mm1 since the fix is already in 
+2.6.11-rc3-mm2.
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/kernel/power/swsusp.c linux-2.6.11-rc3-mm/kernel/power/swsusp.c
---- linux-2.6.11-rc3-mm-original/kernel/power/swsusp.c	2005-02-10 00:19:13.000000000 +0200
-+++ linux-2.6.11-rc3-mm/kernel/power/swsusp.c	2005-02-07 12:42:09.000000000 +0200
-@@ -605,7 +605,20 @@ static int calc_nr(int nr_copy)
- 	return nr_copy;
- }
- 
--static inline void free_pagedir(struct pbe *pblist);
-+/**
-+ *	free_pagedir - free pages allocated with alloc_pagedir()
-+ */
-+
-+static inline void free_pagedir(struct pbe *pblist)
-+{
-+	struct pbe *pbe;
-+
-+	while (pblist) {
-+		pbe = pblist + PB_PAGE_SKIP;
-+		pblist = pbe->next;
-+		free_page((unsigned long)pblist);
-+	}
-+}
- 
- /**
-  *	alloc_pagedir - Allocate the page directory.
-@@ -651,21 +664,6 @@ static struct pbe * alloc_pagedir(unsign
- }
- 
- /**
-- *	free_pagedir - free pages allocated with alloc_pagedir()
-- */
--
--static inline void free_pagedir(struct pbe *pblist)
--{
--	struct pbe *pbe;
--
--	while (pblist) {
--		pbe = pblist + PB_PAGE_SKIP;
--		pblist = pbe->next;
--		free_page((unsigned long)pblist);
--	}
--}
--
--/**
-  *	free_image_pages - Free pages allocated for snapshot
-  */
- 
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
 
-
-
---===============53121188060538405==
+--===============61440288774319929==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53121188060538405==--
+--===============61440288774319929==--
