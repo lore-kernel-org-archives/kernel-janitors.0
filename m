@@ -1,57 +1,44 @@
-From: Stefan Sperling <stefan@binarchy.net>
-Date: Tue, 09 Nov 2004 23:16:46 +0000
-Subject: Re: [KJ] [PATCH] convert airo wireless driver to module_param
-Message-Id: <20041109231646.GA11645@dice.seeling33.de>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 15:33:19 +0000
+Subject: [KJ] [patch 5/8] ifdef typos: drivers_net_wireless_wavelan_cs.c
+Message-Id: <20041124153319.GE14789@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============77937796980024698=="
+Content-Type: multipart/mixed; boundary="===============10379561673459659=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041109212957.GA9496@dice.seeling33.de>
-In-Reply-To: <20041109212957.GA9496@dice.seeling33.de>
 To: kernel-janitors@vger.kernel.org
 
---===============77937796980024698==
+--===============10379561673459659==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Nov 09, 2004 at 02:28:15PM -0800, Randy.Dunlap wrote:
-> >>Rusty's first set of module_param() conversion patches, which
-> >>I mostly followed, use permission (last parameter) of 0
-> >>(not visible in sysfs) except for fields that can be modified.
-> >>Often this is a "debug" or "verbose" flag or bitmask.
-> >
-> >
-> >Not in this one:
-> >
-> >http://marc.theaimsgroup.com/?l=linux-kernel&m=109826168201622&w=2
-> 
-> True.  That's why we post patches and have review (one reason).
-> 
-> >This is the reference link from the janitors TODO file.
-> >Everything 0444, except a debug flag, which is 0644.
-> >
-> >Can someone please clarify the "official guidelines" for
-> >module parameter permissions in sysfs? Shall I use 0 or 0444
-> >for parameters that should not be modified, i.e. everything
-> >except debug and verbosity flags?
-> 
-> Compare with Rusty's (other) conversion patch (with wrap):
-> 
-> http://www.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.10-rc1/2.6.10-rc1-mm2/broken-out/remove-module_parm-from-allyesconfig-almost.patch
+wavelan.p.h defines *_ERROR
+wavelan_cs.p.h defines *_ERRORS
+Since only second one is included, change #ifdefs
 
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
-Yikes! He's quick.
-He's already converted some of the drivers I have been converting.
-Last time I looked he hadn't touched the wireless drivers yet...
+--- c/drivers/net/wireless/wavelan_cs.c	2004-11-15 13:42:13.000000000 +0100
++++ str2/drivers/net/wireless/wavelan_cs.c	2004-11-24 15:05:57.000000000 +0100
+@@ -950,7 +950,7 @@ wv_diag(struct net_device *	dev)
+ 		  OP0_DIAGNOSE, SR0_DIAGNOSE_PASSED))
+     ret = TRUE;
+ 
+-#ifdef DEBUG_CONFIG_ERROR
++#ifdef DEBUG_CONFIG_ERRORS
+   printk(KERN_INFO "wavelan_cs: i82593 Self Test failed!\n");
+ #endif
+   return(ret);
+@@ -3463,7 +3463,7 @@ wv_ru_stop(struct net_device *	dev)
+   /* If there was a problem */
+   if(spin <= 0)
+     {
+-#ifdef DEBUG_CONFIG_ERROR
++#ifdef DEBUG_CONFIG_ERRORS
+       printk(KERN_INFO "%s: wv_ru_stop(): The chip doesn't want to stop...\n",
+ 	     dev->name);
+ #endif
 
-Well, at least he did not convert all of them yet... ;-)
-I'll post the missing ones soon so.
-
-stefan
--- 
-Give me a fish and I will eat today.
-Teach me to fish and I will eat forever.
-
---===============77937796980024698==
+--===============10379561673459659==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============77937796980024698==--
+--===============10379561673459659==--
