@@ -1,92 +1,131 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Tue, 15 Feb 2005 06:39:23 +0000
-Subject: [KJ] [PATCH]  ixj* - compile warning cleanup
-Message-Id: <4211B53B.31939.13AEE1@localhost>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 22:12:26 +0000
+Subject: [KJ] [PATCH 16/20] cdrom/mcdx: remove
+Message-Id: <20050202221226.GV2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6895929265159213=="
+Content-Type: multipart/mixed; boundary="===============69789400516919198=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============6895929265159213==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============69789400516919198==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - remove unmaintained rcs char 
-strings from source and handle the occurrences of their use; suggested by 
-Adrian Bunk, break out into separate patch
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Please consider applying.
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/telephony/ixj.c linux-2.6.11-rc3-mm2/drivers/telephony/ixj.c
---- linux-2.6.11-rc3-mm2-original/drivers/telephony/ixj.c	2005-02-12 12:06:25.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/telephony/ixj.c	2005-02-12 22:30:08.000000000 +0200
-@@ -41,9 +41,6 @@
-  *
-  ***************************************************************************/
+Description: Remove deprecated interruptible_sleep_on_timeout() function calls
+and replace with direct wait-queue usage or wait_event() as appropriate. The
+former replacements result in the same code. The latter change the tasks from
+interruptible to uninterruptible, as signals were not being checked in the
+current code. The corresponding wake_up() calls were fixed as well. This patch
+will result in some slightly different debug output (for instance, one output
+instead of one per iteration). Patch is compile-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/drivers/cdrom/mcdx.c	2005-01-24 09:34:04.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/cdrom/mcdx.c	2005-02-01 14:29:00.000000000 -0800
+@@ -68,6 +68,7 @@ static const char *mcdx_c_version
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
++#include <linux/wait.h>
+ #include <asm/io.h>
+ #include <asm/current.h>
+ #include <asm/uaccess.h>
+@@ -841,8 +842,11 @@ static void mcdx_delay(struct s_drive_st
+ 	if (jifs < 0)
+ 		return;
  
--static char ixj_c_rcsid[] = "$Id: ixj.c,v 4.7 2001/08/13 06:19:33 craigs Exp $";
--static char ixj_c_revision[] = "$Revision: 4.7 $";
--
- /*
-  * $Log: ixj.c,v $
-  *
-@@ -6172,8 +6169,7 @@ static int ixj_ioctl(struct inode *inode
- 		retval = j->serial;
- 		break;
- 	case IXJCTL_VERSION:
--		if (copy_to_user(argp, ixj_c_revision, strlen(ixj_c_revision))) 
--			retval = -EFAULT;
-+		sprintf(argp, "\nDriver version %i.%i.%i", IXJ_VER_MAJOR, IXJ_VER_MINOR, IXJ_BLD_VER);
- 		break;
- 	case PHONE_RING_CADENCE:
- 		j->ring_cadence = arg;
-@@ -7168,9 +7164,6 @@ static int ixj_get_status_proc(char *buf
- 	int cnt;
- 	IXJ *j;
- 	len = 0;
--	len += sprintf(buf + len, "%s", ixj_c_rcsid);
--	len += sprintf(buf + len, "\n%s", ixj_h_rcsid);
--	len += sprintf(buf + len, "\n%s", ixjuser_h_rcsid);
- 	len += sprintf(buf + len, "\nDriver version %i.%i.%i", IXJ_VER_MAJOR, IXJ_VER_MINOR, IXJ_BLD_VER);
- 	len += sprintf(buf + len, "\nsizeof IXJ struct %Zd bytes", sizeof(IXJ));
- 	len += sprintf(buf + len, "\nsizeof DAA struct %Zd bytes", sizeof(DAA_REGS));
-@@ -7790,7 +7783,7 @@ static int __init ixj_init(void)
- 	if ((probe = ixj_probe_pci(&cnt)) < 0) {
- 		return probe;
++	DEFINE_WAIT(wait);
+ 	xtrace(SLEEP, "*** delay: sleepq\n");
+-	interruptible_sleep_on_timeout(&stuff->sleepq, jifs);
++	prepare_to_wait(&stuff->sleepq, &wait, TASK_INTERRUPTIBLE);
++	schedule_timeout(jifs);
++	finish_wait(&stuff->sleepq, &wait);
+ 	xtrace(SLEEP, "delay awoken\n");
+ 	if (signal_pending(current)) {
+ 		xtrace(SLEEP, "got signal\n");
+@@ -910,11 +914,9 @@ static int mcdx_talk(struct s_drive_stuf
+ 	if ((discard = (buffer == NULL)))
+ 		buffer = &c;
+ 
+-	while (stuffp->lock) {
+-		xtrace(SLEEP, "*** talk: lockq\n");
+-		interruptible_sleep_on(&stuffp->lockq);
+-		xtrace(SLEEP, "talk: awoken\n");
+-	}
++	xtrace(SLEEP, "*** talk: lockq\n");
++	wait_event(stuffp->lockq, !stuffp->lock);
++	xtrace(SLEEP, "talk: awoken\n");
+ 
+ 	stuffp->lock = 1;
+ 
+@@ -1001,7 +1003,7 @@ static int mcdx_talk(struct s_drive_stuf
+ #endif
+ 
+ 	stuffp->lock = 0;
+-	wake_up_interruptible(&stuffp->lockq);
++	wake_up(&stuffp->lockq);
+ 
+ 	xtrace(TALK, "talk() done with 0x%02x\n", st);
+ 	return st;
+@@ -1327,6 +1329,7 @@ static int mcdx_xfer(struct s_drive_stuf
+ 	Return:	-1 on timeout or other error
+ 			else status byte (as in stuff->st) */
+ {
++	DEFINE_WAIT(wait);
+ 	int border;
+ 	int done = 0;
+ 	long timeout;
+@@ -1341,9 +1344,7 @@ static int mcdx_xfer(struct s_drive_stuf
+ 		return -1;
  	}
--	printk("%s\n", ixj_c_rcsid);
-+	printk(KERN_INFO "ixj driver initialized.\n");
- 	create_proc_read_entry ("ixj", 0, NULL, ixj_read_proc, NULL);
- 	return probe;
- }
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/telephony/ixj.h linux-2.6.11-rc3-mm2/drivers/telephony/ixj.h
---- linux-2.6.11-rc3-mm2-original/drivers/telephony/ixj.h	2004-12-24 23:35:40.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/telephony/ixj.h	2005-02-12 22:11:46.000000000 +0200
-@@ -38,8 +38,6 @@
-  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-  *
-  *****************************************************************************/
--static char ixj_h_rcsid[] = "$Id: ixj.h,v 4.1 2001/08/04 14:49:27 craigs Exp $";
+ 
+-	while (stuffp->lock) {
+-		interruptible_sleep_on(&stuffp->lockq);
+-	}
++	wait_event(stuffp->lockq, !stuffp->lock);
+ 
+ 	if (stuffp->valid && (sector >= stuffp->pending)
+ 	    && (sector < stuffp->low_border)) {
+@@ -1365,10 +1366,10 @@ static int mcdx_xfer(struct s_drive_stuf
+ 		do {
+ 
+ 			while (stuffp->busy) {
 -
- #define IXJ_VERSION 3031
+-				timeout =
+-				    interruptible_sleep_on_timeout
+-				    (&stuffp->busyq, 5 * HZ);
++				prepare_to_wait(&stuffp->busyq, &wait,
++						TASK_INTERRUPTIBLE);
++				timeout = schedule_timeout(5*HZ);
++				finish_wait(&stuffp->busyq, &wait);
  
- #include <linux/version.h>
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/include/linux/ixjuser.h linux-2.6.11-rc3-mm2/include/linux/ixjuser.h
---- linux-2.6.11-rc3-mm2-original/include/linux/ixjuser.h	2004-12-24 23:35:50.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/include/linux/ixjuser.h	2005-02-14 00:20:59.399225704 +0200
-@@ -42,7 +42,6 @@
-  *
-  *****************************************************************************/
+ 				if (!stuffp->introk) {
+ 					xtrace(XFER,
+@@ -1384,7 +1385,7 @@ static int mcdx_xfer(struct s_drive_stuf
+ 				stuffp->busy = 0;
+ 				stuffp->valid = 0;
  
--static char ixjuser_h_rcsid[] = "$Id: ixjuser.h,v 4.1 2001/08/05 00:17:37 craigs Exp $";
+-				wake_up_interruptible(&stuffp->lockq);
++				wake_up(&stuffp->lockq);
+ 				xtrace(XFER, "transfer() done (-1)\n");
+ 				return -1;
+ 			}
+@@ -1420,7 +1421,7 @@ static int mcdx_xfer(struct s_drive_stuf
+ 		} while (++(stuffp->pending) < border);
  
- #include <linux/telephony.h>
+ 		stuffp->lock = 0;
+-		wake_up_interruptible(&stuffp->lockq);
++		wake_up(&stuffp->lockq);
+ 
+ 	} else {
  
 
-
-
---===============6895929265159213==
+--===============69789400516919198==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -97,4 +136,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============6895929265159213==--
+--===============69789400516919198==--
