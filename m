@@ -1,23 +1,49 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Sat, 24 Jan 2004 07:03:20 +0000
-Subject: [Kernel-janitors] Re: Need to host ...crap...
-Message-Id: <20040123230320.5121d9da.rddunlap@osdl.org>
+From: Michael Still <mikal@stillhq.com>
+Date: Mon, 19 Jan 2004 23:45:25 +0000
+Subject: [Kernel-janitors] TODO item: kernel-doc missing parameters
+Message-Id: <Pine.LNX.4.44.0401201039140.9691-100000@diskbox.stillhq.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 24 Jan 2004 10:11:37 -0500 ipadmin@eng.xo.com wrote:
 
+Hey,
 
-I've asked OSDL sys admins to block these when they are
-addressed to kernel-janitors (at osdl dot org) [and this
-probably won't be done until next week], but I
-can't do anything about the ones from sourceforge.net.
+so, I was bored last night and was playing around with the kernel-doc 
+build process. It turns out that the documentation is pretty badly out of 
+sync with the kernel source itself. 
+http://www.stillhq.com/linux/audit-2.6.1-kerneldoc-parammissing lists 1800 
+or so instances of a parameter not being documented in the kernel-doc 
+comment at the start of a function.
 
---
-~Randy
+Perhaps we should add to the todo list that these need to be brought up to 
+date. This might be as simple as renaming a parameter in the comment, or 
+might be as hard as actually understanding the function being documented, 
+depending on the instance.
+
+Here's how to generate your own list of missing parameters:
+
+find . -type f -name "*.[ch]" -exec scripts/kernel-doc -man {} 2>> errs \; 
+> /dev/null
+
+Then grep for the parameters missing message:
+
+grep "No description found" errs
+
+I'll look into some of these as time provides, but there is so many of 
+them that I can't possibly do them all... Offers of help accepted. :)
+
+Cheers,
+Mikal
+
+-- 
+
+Michael Still (mikal@stillhq.com) | "All my life I've had one dream,
+http://www.stillhq.com            |  to achieve my many goals"
+UTC + 11                          |    -- Homer Simpson
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
