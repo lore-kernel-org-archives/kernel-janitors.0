@@ -1,105 +1,262 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Mon, 07 Feb 2005 23:14:41 +0000
-Subject: Re: [KJ] janitor project: fix gcc 4 warnings
-Message-Id: <4207F661.5040905@osdl.org>
+From: "Ravinandan Arakali" <ravinandan.arakali@neterion.com>
+Date: Fri, 11 Feb 2005 22:03:19 +0000
+Subject: [KJ] RE: [PATCH] net/s2io: replace schedule_timeout() with msleep()
+Message-Id: <001101c51085$7fa39950$4510100a@pc.s2io.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============71531506830150748=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041219190903.GA30192@muc.de>
-In-Reply-To: <20041219190903.GA30192@muc.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-S wrote:
-> Using gcc-core-4.0-20050130.tar, the "internal
-> consisteny problem" has gone away.
-> However, during the 2.6.10 kernel compilation, some
-> #warnings stopped the compilation. Any ideas on what
-> needs to be done with the #warnings ?
->>From the looks of it, a newer snapshot may not have
-> the  #warnings possibly.
+--===============71531506830150748==
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-What CPU arch. are you building on?
-I see that sparc64 and alpha use -Werror (treat warnings
-as errors, which is what you show below), but other arches
-don't do that (unless it's in -mm) AFAIK.
+Jeff,
+I have another small patch to address "IPv6 ping problem". Do you
+want me to wait till the below patch from Nishanth is reviewed and
+merged by you or should I just generate the IPv6 patch on top of
+below one ?
 
-If you are using sparc64 or alpha, you can just edit
-the Makefile(s) to use -Wall instead of -Werror .
-Or change .config to omit these (few) drivers.
+Regards,
+Ravi
 
-> <snip>
-> drivers/cpufreq/cpufreq_userspace.c:140:2: warning:
-> #warning The /proc/sys/cpu/ and sysctl interface to
-> cpufreq will be removed from the 2.6. kernel series
-> soon after 2005-01-01
->   CC [M]  drivers/cpufreq/cpufreq_ondemand.o
->   CC [M]  drivers/cpufreq/freq_table.o
->   CC [M]  drivers/cpufreq/proc_intf.o
-> drivers/cpufreq/proc_intf.c:15:2: warning: #warning
-> This module will be removed
-> from the 2.6. kernel series soon after 2005-01-01
->   GEN     drivers/eisa/devlist.h
->   CC      drivers/eisa/eisa-bus.o
-> cc1: warnings being treated as errors
-> drivers/eisa/eisa-bus.c:421: warning: pointer targets
-> in initialization differ in signedness
-> drivers/eisa/eisa-bus.c:422: warning: pointer targets
-> in initialization differ in signedness
-> make[2]: *** [drivers/eisa/eisa-bus.o] Error 1
-> make[1]: *** [drivers/eisa] Error 2
-> make: *** [drivers] Error 2
-> 
-> 
-> -----------------------------------------------------
-> List:       kernel-janitor-discuss
-> Subject:    [KJ] janitor project: fix gcc 4 warnings
-> From:       Andi Kleen <ak () muc ! de>
-> Date:       2004-12-19 19:09:03
-> Message-ID: <20041219190903.GA30192 () muc ! de>
-> [Download message RAW]
-> 
-> Here's a proposed janitor project if anybody is
-> interested:
-> 
-> The current gcc 4.0 snapshots include some more
-> warnings in -Wall
-> and changed some existing ones which makes a kernel
-> compilation quite noisy. 
-> 
-> The project would be to fix all these warnings.
-> 
-> Short howto: 
-> 
-> Get
-> ftp://gcc.gnu.org/pub/gcc/snapshots/4.0-20041219/gcc-core-4.0-20041219.tar.bz2
-> 
-> Untar it and compile with 
-> 
-> mkdir obj
-> ../gcc-*/configure --disable-checking
-> --enable-languages=c --prefix=/usr/local/gcc4
-> make bootstrap
-> <as root> 
-> make install
-> 
-> 
-> Then compile an uptodate 2.6 kernel with:
-> 
-> make allmodconfig
-> make CC=/usr/local/gcc4/bin/gcc 2>&1 | tee LOG
-> grep warning LOG 
-> 
-> You'll see lots of warnings in LOG. Fix them all and
-> submit patches
-> through the usual janitor channels.
-> 
-> -Andi
+-----Original Message-----
+From: Nishanth Aravamudan [mailto:nacc@us.ibm.com]
+Sent: Wednesday, February 09, 2005 11:19 AM
+To: akpm@osdl.org; jgarzik@pobox.com
+Cc: linux-net@vger.kernel.org; Ravinandan Arakali; 'Raghavendra
+Koushik'; kernel-janitors@lists.osdl.org; leonid.grossman@neterion.com
+Subject: [PATCH] net/s2io: replace schedule_timeout() with msleep()
 
 
--- 
-~Randy
+On Wed, Feb 09, 2005 at 10:37:59AM -0800, Ravinandan Arakali wrote:
+> Nishanth,
+> We did some basic testing after applying your patch and it seems okay.
+> Pls submit the patch to maintainer. But I've couple of comments on
+> your patch.
+> The below code change is incorrect. It should be msleep(500).
+> > @@ -3808,8 +3797,7 @@ static int s2io_rldram_test(nic_t * sp,
+> >  			val64 = readq(&bar0->mc_rldram_test_ctrl);
+> >  			if (val64 & MC_RLDRAM_TEST_DONE)
+> >  				break;
+> > -			set_current_state(TASK_UNINTERRUPTIBLE);
+> > -			schedule_timeout(HZ / 2);
+> > +			msleep(200);
+>
+> In the function s2io_ethtool_idnic(), call to schedule_timeout() has not
+> been replaced with msleep(). I've given below the code change I did before
+> testing.
+>
+> @@ -3284,11 +3277,10 @@
+>                 sp->id_timer.data = (unsigned long) sp;
+>         }
+>         mod_timer(&sp->id_timer, jiffies);
+> -       set_current_state(TASK_INTERRUPTIBLE);
+>         if (data)
+> -               schedule_timeout(data * HZ);
+> +               msleep(data*1000);
+>         else
+> -               schedule_timeout(MAX_SCHEDULE_TIMEOUT);
+> +               msleep(0xFFFFFFFF);
+>         del_timer_sync(&sp->id_timer);
+>
+>         if (CARDS_WITH_FAULTY_LINK_INDICATORS(subid)) {
+
+Both changes have been committed in the patch below.
+
+Andrew/Jeff, please consider committing to the networking stack of
+patches.
+
+Thanks,
+Nish
+
+Description: Use msleep() instead of schedule_timeout() to guarantee
+the task delays as expected. This makes the code independent of HZ
+values (particularly important when HZ changes or is dynamic). Compile-
+and boot-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Acked-by: Ravinandan Arakali <ravinandan.arakali@neterion.com>
+
+--- 2.6.11-rc3-v/drivers/net/s2io.c	2005-02-08 17:08:37.000000000 -0800
++++ 2.6.11-rc3/drivers/net/s2io.c	2005-02-09 11:08:48.000000000 -0800
+@@ -698,8 +698,7 @@ static int init_nic(struct s2io_nic *nic
+ 	val64 = 0;
+ 	writeq(val64, &bar0->sw_reset);
+ 	val64 = readq(&bar0->sw_reset);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ / 2);
++	msleep(500);
+
+ 	/*  Enable Receiving broadcasts */
+ 	add = &bar0->mac_cfg;
+@@ -952,8 +951,7 @@ static int init_nic(struct s2io_nic *nic
+ 				  dev->name);
+ 			return -1;
+ 		}
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
++		msleep(50);
+ 		time++;
+ 	}
+
+@@ -991,8 +989,7 @@ static int init_nic(struct s2io_nic *nic
+ 			return -1;
+ 		}
+ 		time++;
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
++		msleep(50);
+ 	}
+
+ 	/*
+@@ -1421,8 +1418,7 @@ static int start_nic(struct s2io_nic *ni
+ 	SPECIAL_REG_WRITE(val64, &bar0->mc_rldram_mrs, UF);
+ 	val64 = readq(&bar0->mc_rldram_mrs);
+
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ / 10);	/* Delay by around 100 ms. */
++	msleep(100);			/* Delay by around 100 ms. */
+
+ 	/* Enabling ECC Protection. */
+ 	val64 = readq(&bar0->adapter_control);
+@@ -2437,8 +2433,7 @@ int wait_for_cmd_complete(nic_t * sp)
+ 			ret = SUCCESS;
+ 			break;
+ 		}
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
++		msleep(50);
+ 		if (cnt++ > 10)
+ 			break;
+ 	}
+@@ -2477,15 +2472,13 @@ void s2io_reset(nic_t * sp)
+ 	 * As of now I'am just giving a 250ms delay and hoping that the
+ 	 * PCI write to sw_reset register is done by this time.
+ 	 */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ / 4);
++	msleep(250);
+
+ 	/* Restore the PCI state saved during initializarion. */
+ 	pci_restore_state(sp->pdev);
+ 	s2io_init_pci(sp);
+
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ / 4);
++	msleep(250);
+
+ 	/* SXE-002: Configure link and activity LED to turn it off */
+ 	subid = sp->pdev->subsystem_device;
+@@ -3298,11 +3291,10 @@ static int s2io_ethtool_idnic(struct net
+ 		sp->id_timer.data = (unsigned long) sp;
+ 	}
+ 	mod_timer(&sp->id_timer, jiffies);
+-	set_current_state(TASK_INTERRUPTIBLE);
+ 	if (data)
+-		schedule_timeout(data * HZ);
++		msleep(data * 1000);
+ 	else
+-		schedule_timeout(MAX_SCHEDULE_TIMEOUT);
++		msleep(0xFFFFFFFF);
+ 	del_timer_sync(&sp->id_timer);
+
+ 	if (CARDS_WITH_FAULTY_LINK_INDICATORS(subid)) {
+@@ -3405,8 +3397,7 @@ static int read_eeprom(nic_t * sp, int o
+ 			ret = 0;
+ 			break;
+ 		}
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
++		msleep(50);
+ 		exit_cnt++;
+ 	}
+
+@@ -3446,8 +3437,7 @@ static int write_eeprom(nic_t * sp, int
+ 				ret = 0;
+ 			break;
+ 		}
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
++		msleep(50);
+ 		exit_cnt++;
+ 	}
+
+@@ -3703,8 +3693,7 @@ static int s2io_bist_test(nic_t * sp, ui
+ 			ret = 0;
+ 			break;
+ 		}
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 10);
++		msleep(100);
+ 		cnt++;
+ 	}
+
+@@ -3805,8 +3794,7 @@ static int s2io_rldram_test(nic_t * sp,
+ 			val64 = readq(&bar0->mc_rldram_test_ctrl);
+ 			if (val64 & MC_RLDRAM_TEST_DONE)
+ 				break;
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ / 5);
++			msleep(200);
+ 		}
+
+ 		if (cnt == 5)
+@@ -3822,8 +3810,7 @@ static int s2io_rldram_test(nic_t * sp,
+ 			val64 = readq(&bar0->mc_rldram_test_ctrl);
+ 			if (val64 & MC_RLDRAM_TEST_DONE)
+ 				break;
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ / 2);
++			msleep(500);
+ 		}
+
+ 		if (cnt == 5)
+@@ -4183,8 +4170,7 @@ static void s2io_set_link(unsigned long
+ 	 * Allow a small delay for the NICs self initiated
+ 	 * cleanup to complete.
+ 	 */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ / 10);
++	msleep(100);
+
+ 	val64 = readq(&bar0->adapter_status);
+ 	if (verify_xena_quiescence(val64, nic->device_enabled_once)) {
+@@ -4238,10 +4224,8 @@ static void s2io_card_down(nic_t * sp)
+ 	register u64 val64 = 0;
+
+ 	/* If s2io_set_link task is executing, wait till it completes. */
+-	while (test_and_set_bit(0, &(sp->link_state))) {
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
+-	}
++	while (test_and_set_bit(0, &(sp->link_state)))
++		msleep(50);
+ 	atomic_set(&sp->card_state, CARD_DOWN);
+
+ 	/* disable Tx and Rx traffic on the NIC */
+@@ -4257,8 +4241,7 @@ static void s2io_card_down(nic_t * sp)
+ 			break;
+ 		}
+
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ / 20);
++		msleep(50);
+ 		cnt++;
+ 		if (cnt == 10) {
+ 			DBG_PRINT(ERR_DBG,
+
+
+--===============71531506830150748==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============71531506830150748==--
