@@ -1,45 +1,57 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Wed, 02 Feb 2005 08:17:27 +0000
-Subject: [KJ] [PATCH] pci_register_driver() for
-Message-Id: <20050202081727.GA24725@rhum.iomeda.fr>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:30 +0000
+Subject: [KJ] [PATCH][5/26] drivers/ide/* - compile warning cleanup
+Message-Id: <420BEF86.29010.587AA2@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="dDRMvlgZJXvWKvBx"
+Content-Type: multipart/mixed; boundary="===============028542628662836744=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============028542628662836744==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
---dDRMvlgZJXvWKvBx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Description: compile warning cleanup - handle copy_to/from_user error returns
 
-Hi,
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description:
->>From : http://kerneljanitors.org/TODO
->-  convert from pci_module_init to pci_register_driver
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/ide/ide-tape.c linux-2.6.11-rc3-mm/drivers/ide/ide-tape.c
+--- linux-2.6.11-rc3-mm-original/drivers/ide/ide-tape.c	2005-02-07 16:32:20.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/ide/ide-tape.c	2005-02-07 18:10:25.000000000 +0200
+@@ -2644,7 +2644,12 @@ static void idetape_copy_stage_from_user
+ 		}
+ #endif /* IDETAPE_DEBUG_BUGS */
+ 		count = min((unsigned int)(bh->b_size - atomic_read(&bh->b_count)), (unsigned int)n);
+-		copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count);
++		if(copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count)) {
++#if IDETAPE_DEBUG_BUGS
++			printk(KERN_ERR "ide-tape/%s: copy_from_user failed!\n",__FUNCTION__);
++#endif /* IDETAPE_DEBUG_BUGS */
++			return;
++		}
+ 		n -= count;
+ 		atomic_add(count, &bh->b_count);
+ 		buf += count;
+@@ -2671,7 +2676,12 @@ static void idetape_copy_stage_to_user (
+ 		}
+ #endif /* IDETAPE_DEBUG_BUGS */
+ 		count = min(tape->b_count, n);
+-		copy_to_user(buf, tape->b_data, count);
++		if(copy_to_user(buf, tape->b_data, count)) {
++#if IDETAPE_DEBUG_BUGS
++			printk(KERN_ERR "ide-tape/%s: copy_to_user failed!\n",__FUNCTION__);
++#endif /* IDETAPE_DEBUG_BUGS */
++			return;
++		}
+ 		n -= count;
+ 		tape->b_data += count;
+ 		tape->b_count -= count;
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
 
---dDRMvlgZJXvWKvBx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="pci_drivers_media_dvb_bt8xx.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/dvb/bt8xx/bt878.c linux-2.6.11-rc2/drivers/media/dvb/bt8xx/bt878.c
---- linux-2.6.11-rc2-vanilla/drivers/media/dvb/bt8xx/bt878.c	2005-01-24 17:07:56.000000000 +0100
-+++ linux-2.6.11-rc2/drivers/media/dvb/bt8xx/bt878.c	2005-01-26 10:01:11.000000000 +0100
-@@ -578,7 +578,7 @@ static int bt878_init_module(void)
- 	/* later we register inside of bt878_find_audio_dma()
- 	 * because we may want to ignore certain cards */
- 	bt878_pci_driver_registered = 1;
--	return pci_module_init(&bt878_pci_driver);
-+	return pci_register_driver(&bt878_pci_driver);
- }
- 
- static void bt878_cleanup_module(void)
 
---dDRMvlgZJXvWKvBx
+--===============028542628662836744==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---dDRMvlgZJXvWKvBx--
+--===============028542628662836744==--
