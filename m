@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 00:32:38 +0000
-Subject: [KJ] [PATCH 27/34] net/lanstreamer: replace
-Message-Id: <20050126003238.GS12649@us.ibm.com>
+Date: Fri, 21 Jan 2005 00:02:20 +0000
+Subject: [KJ] [PATCH 23/39] net/svcsock: replace schedule_timeout() with
+Message-Id: <20050121000220.GL2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16008801212183665=="
+Content-Type: multipart/mixed; boundary="===============075055042122398774=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============16008801212183665==
+--===============075055042122398774==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,82 +15,35 @@ Hi,
 
 Please consider applying.
 
-Description: Use wait_event_interruptible_timeout() instead of the
-deprecated interruptible_sleep_on_timeout(). Patch is compile-tested.
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The code, as is, is not wrong; however I see two reasons to
+use msleep(): 1) consistency across the kernel; and 2) milliseconds are far more
+human-comprehensible than jiffies.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/drivers/net/tokenring/lanstreamer.c	2005-01-25 16:30:39.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/net/tokenring/lanstreamer.c	2005-01-25 16:31:12.000000000 -0800
-@@ -121,6 +121,7 @@
- #include <linux/spinlock.h>
- #include <linux/version.h>
- #include <linux/bitops.h>
-+#include <linux/wait.h>
- 
+--- 2.6.11-rc1-kj-v/net/sunrpc/svcsock.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/net/sunrpc/svcsock.c	2005-01-18 13:05:24.000000000 -0800
+@@ -32,6 +32,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/skbuff.h>
+ #include <linux/suspend.h>
++#include <linux/delay.h>
+ #include <net/sock.h>
  #include <net/checksum.h>
- 
-@@ -669,18 +670,16 @@ static int streamer_open(struct net_devi
- 		writew(LISR_SRB_CMD, streamer_mmio + LISR_SUM);
- 		spin_unlock_irqrestore(&streamer_priv->streamer_lock, flags);
- 
--		while (streamer_priv->srb_queued) {
--			interruptible_sleep_on_timeout(&streamer_priv->srb_wait, 5 * HZ);
--			if (signal_pending(current)) {
--				printk(KERN_WARNING "%s: SRB timed out.\n", dev->name);
--				printk(KERN_WARNING "SISR=%x MISR=%x, LISR=%x\n",
--				       readw(streamer_mmio + SISR),
--				       readw(streamer_mmio + MISR_RUM),
--				       readw(streamer_mmio + LISR));
--				streamer_priv->srb_queued = 0;
--				break;
--			}
--		}
-+		wait_event_interruptible_timeout(streamer_priv->srb_wait,
-+				!streamer_priv->srb_queued, 5 * HZ);
-+		if (signal_pending(current)) {
-+			printk(KERN_WARNING "%s: SRB timed out.\n", dev->name);
-+			printk(KERN_WARNING "SISR=%x MISR=%x, LISR=%x\n",
-+			       readw(streamer_mmio + SISR),
-+			       readw(streamer_mmio + MISR_RUM),
-+			       readw(streamer_mmio + LISR));
-+			streamer_priv->srb_queued = 0;
-+		}		
- 
- #if STREAMER_DEBUG
- 		printk("SISR_MASK: %x\n", readw(streamer_mmio + SISR_MASK));
-@@ -1223,20 +1222,15 @@ static int streamer_close(struct net_dev
- 
- 	spin_unlock_irqrestore(&streamer_priv->streamer_lock, flags);
- 
--	while (streamer_priv->srb_queued) 
--	{
--		interruptible_sleep_on_timeout(&streamer_priv->srb_wait,
--					       jiffies + 60 * HZ);
--		if (signal_pending(current)) 
--		{
--			printk(KERN_WARNING "%s: SRB timed out.\n", dev->name);
--			printk(KERN_WARNING "SISR=%x MISR=%x LISR=%x\n",
--			       readw(streamer_mmio + SISR),
--			       readw(streamer_mmio + MISR_RUM),
--			       readw(streamer_mmio + LISR));
--			streamer_priv->srb_queued = 0;
--			break;
--		}
-+	wait_event_interruptible_timeout(streamer_priv->srb_wait,
-+			!streamer_priv->srb_queued, 60*HZ);
-+	if (signal_pending(current)) { 
-+		printk(KERN_WARNING "%s: SRB timed out.\n", dev->name);
-+		printk(KERN_WARNING "SISR=%x MISR=%x LISR=%x\n",
-+		       readw(streamer_mmio + SISR),
-+		       readw(streamer_mmio + MISR_RUM),
-+		       readw(streamer_mmio + LISR));
-+		streamer_priv->srb_queued = 0;
- 	}
- 
- 	streamer_priv->rx_ring_last_received = (streamer_priv->rx_ring_last_received + 1) & (STREAMER_RX_RING_SIZE - 1);
+ #include <net/ip.h>
+@@ -1168,8 +1169,7 @@ svc_recv(struct svc_serv *serv, struct s
+ 	while (rqstp->rq_arghi < pages) {
+ 		struct page *p = alloc_page(GFP_KERNEL);
+ 		if (!p) {
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ/2);
++			msleep(500);
+ 			continue;
+ 		}
+ 		rqstp->rq_argpages[rqstp->rq_arghi++] = p;
 
---===============16008801212183665==
+--===============075055042122398774==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -101,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16008801212183665==--
+--===============075055042122398774==--
