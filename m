@@ -1,43 +1,51 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Mon, 12 Jul 2004 16:42:16 +0000
-Subject: Re: [Kernel-janitors] [PATCH] remove check_region specialix
-Message-Id: <20040712164216.GE1821@sputnik.stro.at>
+From: Kristen Carlson <kristenc@cs.pdx.edu>
+Date: Mon, 12 Jul 2004 21:14:32 +0000
+Subject: [Kernel-janitors] [PATCH] remove check_region from eepro.c
+Message-Id: <200407122114.i6CLEW2q007241@sirius.cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48177549062939828=="
+Content-Type: multipart/mixed; boundary="===============95354619167667232=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200407072024.i67KOdQM017410@sirius.cs.pdx.edu>
 In-Reply-To: <200407072024.i67KOdQM017410@sirius.cs.pdx.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============48177549062939828==
+--===============95354619167667232==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 
-On Mon, 12 Jul 2004, Kristen Carlson wrote:
+Description: remove check_region from eepro.c 
+(note that PnPWakeup must be defined to have this code compile)
 
-> Thanks!  For my benefit, what's the easiest way to check for trailing spaces?
-> I thought I had gotten all of them by just looking at the patch and noting
-> which lines shouldn't have needed modifications but I obviously missed some,
-> especially on the lines that I was modifying anyway.  Do you have a more 
-> foolproof method?
-> Kristen
-
-Domen posted that one on kj (bonus detects also spaces instead of tabs):
-egrep -n "^\+(.* $|        )"
-
-in vim you may want to :set list for viewing those spaces
-and afterwards :set nolist.
-
-another possibility is to use the patch-scripts from Andrew Morton,
-they warn you when trailing space is introduced.
-that's the place, where i see most of them ;)
--> http://developer.osdl.org/rddunlap/patch-scripts/
-or latest http://www.zip.com.au/~akpm/linux/patches/patch-scripts-0.18/
-
-a++ maks
+Signed-off-by: Kristen Carlson Accardi <kristenc@cs.pdx.edu>
 
 
---===============48177549062939828==
+--- linux-2.6.7-kc/drivers/net/eepro.orig	2004-07-12 10:42:08.000000000 +0000
++++ linux-2.6.7-kc/drivers/net/eepro.c	2004-07-12 10:29:46.000000000 +0000
+@@ -545,9 +545,9 @@ static int __init do_eepro_probe(struct 
+ 
+ 	{
+ 		unsigned short int WS[32]=WakeupSeq;
+-
+-		if (check_region(WakeupPort, 2)==0) {
+-
++		if (!request_region(WakeupPort, 2, dev->name))
++			printk(KERN_WARNING "PnPWakeup Port not available");
++		else { 
+ 			if (net_debug>5)
+ 				printk(KERN_DEBUG "Waking UP\n");
+ 
+@@ -557,7 +557,8 @@ static int __init do_eepro_probe(struct 
+ 				outb_p(WS[i],WakeupPort);
+ 				if (net_debug>5) printk(KERN_DEBUG ": %#x ",WS[i]);
+ 			}
+-		} else printk(KERN_WARNING "Checkregion Failed!\n");
++			release_region(WakeupPort, 2);
++		}
+ 	}
+ #endif
+ 
+
+--===============95354619167667232==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48177549062939828==--
+--===============95354619167667232==--
