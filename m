@@ -1,82 +1,46 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:29 +0000
-Subject: [KJ] [PATCH][9/26] drivers/isdn/sc/* - compile warning cleanup
-Message-Id: <420BEF85.1681.587831@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Fri, 11 Feb 2005 08:31:21 +0000
+Subject: [KJ] [PATCH] drivers/scsi/megaraid/*: convert to pci_register_driver
+Message-Id: <20050211083121.GE28942@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97657801317858417=="
+Content-Type: multipart/mixed; boundary="6WlEvdN9Dv0WHSBl"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============97657801317858417==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - cast integer arguments to proper 
-pointer types.  
+--6WlEvdN9Dv0WHSBl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/sc/init.c linux-2.6.11-rc3-mm/drivers/isdn/sc/init.c
---- linux-2.6.11-rc3-mm-original/drivers/isdn/sc/init.c	2005-02-03 03:56:22.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/isdn/sc/init.c	2005-02-08 18:33:44.000000000 +0200
-@@ -502,7 +502,7 @@ int identify_board(unsigned long rambase
- 	 */
- 	outb(PRI_BASEPG_VAL, pgport);
- 	msleep_interruptible(1000);
--	sig = readl(rambase + SIG_OFFSET);
-+	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
- 	pr_debug("Looking for a signature, got 0x%x\n", sig);
- 	if(sig == SIGNATURE)
- 		return PRI_BOARD;
-@@ -512,7 +512,7 @@ int identify_board(unsigned long rambase
- 	 */
- 	outb(BRI_BASEPG_VAL, pgport);
- 	msleep_interruptible(1000);
--	sig = readl(rambase + SIG_OFFSET);
-+	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
- 	pr_debug("Looking for a signature, got 0x%x\n", sig);
- 	if(sig == SIGNATURE)
- 		return BRI_BOARD;
-@@ -522,7 +522,7 @@ int identify_board(unsigned long rambase
- 	/*
- 	 * Try to spot a card
- 	 */
--	sig = readl(rambase + SIG_OFFSET);
-+	sig = readl((volatile void __iomem *)(rambase + SIG_OFFSET));
- 	pr_debug("Looking for a signature, got 0x%x\n", sig);
- 	if(sig != SIGNATURE)
- 		return -1;
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/sc/shmem.c linux-2.6.11-rc3-mm/drivers/isdn/sc/shmem.c
---- linux-2.6.11-rc3-mm-original/drivers/isdn/sc/shmem.c	2005-02-03 03:55:35.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/isdn/sc/shmem.c	2005-02-08 17:49:56.000000000 +0200
-@@ -56,8 +56,8 @@ void memcpy_toshmem(int card, void *dest
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
+
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
+
+--6WlEvdN9Dv0WHSBl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_scsi_megaraid.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/megaraid/megaraid_mbox.c linux-2.6.11-rc3/drivers/scsi/megaraid/megaraid_mbox.c
+--- linux-2.6.11-rc3-vanilla/drivers/scsi/megaraid/megaraid_mbox.c	2005-02-03 17:03:56.000000000 +0100
++++ linux-2.6.11-rc3/drivers/scsi/megaraid/megaraid_mbox.c	2005-02-07 09:39:30.000000000 +0100
+@@ -497,7 +497,7 @@ megaraid_init(void)
  
- 	outb(((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE) >> 14) | 0x80,
- 		sc_adapter[card]->ioport[sc_adapter[card]->shmem_pgport]);
--	memcpy_toio(sc_adapter[card]->rambase +
--		((unsigned long) dest % 0x4000), src, n);
-+	memcpy_toio((volatile void __iomem *)(sc_adapter[card]->rambase +
-+		((unsigned long) dest % 0x4000)), src, n);
- 	spin_unlock_irqrestore(&sc_adapter[card]->lock, flags);
- 	pr_debug("%s: set page to %#x\n",sc_adapter[card]->devicename,
- 		((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE)>>14)|0x80);
-@@ -135,8 +135,8 @@ void memset_shmem(int card, void *dest, 
  
- 	outb(((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE) >> 14) | 0x80,
- 		sc_adapter[card]->ioport[sc_adapter[card]->shmem_pgport]);
--	memset_io(sc_adapter[card]->rambase +
--		((unsigned long) dest % 0x4000), c, n);
-+	memset_io((volatile void __iomem *)(sc_adapter[card]->rambase +
-+		((unsigned long) dest % 0x4000)), c, n);
- 	pr_debug("%s: set page to %#x\n",sc_adapter[card]->devicename,
- 		((sc_adapter[card]->shmem_magic + ch * SRAM_PAGESIZE)>>14)|0x80);
- 	spin_unlock_irqrestore(&sc_adapter[card]->lock, flags);
+ 	// register as a PCI hot-plug driver module
+-	if ((rval = pci_module_init(&megaraid_pci_driver_g))) {
++	if ((rval = pci_register_driver(&megaraid_pci_driver_g))) {
+ 		con_log(CL_ANN, (KERN_WARNING
+ 			"megaraid: could not register hotplug support.\n"));
+ 	}
 
-
-
-
---===============97657801317858417==
+--6WlEvdN9Dv0WHSBl
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -87,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97657801317858417==--
+--6WlEvdN9Dv0WHSBl--
