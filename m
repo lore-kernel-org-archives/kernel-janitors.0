@@ -1,44 +1,46 @@
-From: "Mohr Herschel" <oqyucyihfwaq@tom.com>
-Date: Sat, 24 Jan 2004 11:14:15 +0000
-Subject: Re: QR, in the basement
-Message-Id: <OSVODEB-0006866905740@mcdonald>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--LECU70769141690176"
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 17 Jan 2004 14:11:35 +0000
+Subject: [Kernel-janitors] [patch 2.6.1] remove verify_area from
+Message-Id: <200401171511.35587.domen@coderock.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----ALT--LECU70769141690176
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+Hi.
 
-cerise foam alphanumeric bellman small bindle bimolecular vista 
-cascara holocaust abrogate psi ski idyllic daffy 
-mustachio chad audio ludlow them 
-
-----ALT--LECU70769141690176
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-<HTML><HEAD>
-<BODY>
-<p>Fr</approximate>ee Ca</strontium>ble@ TV</p>
-<a href="http://www.3002hosting.com/cable/">
-<img border="0" src="http://www.3002hosting.com/fiter3.jpg"></a>
-swing bongo cathy irruption accentual cryptology he traceable bellini catlike tuba valuate leatherneck lifespan oriole terramycin carmela fledge den expensive rhombohedral t's peculate tragic barbados swine anchoritism cabin synthesis single beggary carlson ceil carriage headroom <BR>
-scowl captaincy aqueous topnotch leprosy elite artie bangle oxygen therapy diagram diachronic parsley aldebaran wrack landscape aureomycin wildcatter alma dinnertime samovar buckaroo primal abutting <BR>
-
-</BODY>
-</HTML>
-
-----ALT--LECU70769141690176--
+Pretty trivial.
 
 
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+--- c/drivers/char/dz.c	2003-12-18 03:58:08.000000000 +0100
++++ a/drivers/char/dz.c	2004-01-17 15:08:53.000000000 +0100
+@@ -986,11 +986,7 @@ static int dz_ioctl(struct tty_struct *t
+ 		return 0;
+ 
+ 	case TIOCGSOFTCAR:
+-		error = verify_area (VERIFY_WRITE, (void *)arg, sizeof(long));
+-		if (error)
+-			return error;
+-		put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long *)arg);
+-		return 0;
++		return put_user(C_CLOCAL(tty) ? 1 : 0, (unsigned long *)arg);
+ 
+ 	case TIOCSSOFTCAR:
+ 		if (get_user (arg, (unsigned long *)arg))
+@@ -1001,10 +997,6 @@ static int dz_ioctl(struct tty_struct *t
+ 		return 0;
+ 
+ 	case TIOCGSERIAL:
+-		error = verify_area(VERIFY_WRITE, (void *)arg,
+-		                    sizeof(struct serial_struct));
+-		if (error)
+-			return error;
+ 		return get_serial_info(info, (struct serial_struct *)arg);
+ 
+ 	case TIOCSSERIAL:
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
