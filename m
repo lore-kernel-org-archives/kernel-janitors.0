@@ -1,16 +1,16 @@
 From: Michael Veeck <michael.veeck@gmx.net>
-Date: Sun, 15 Aug 2004 11:43:33 +0000
-Subject: [Kernel-janitors] [PATCH] minmax-removal arch/ia64/kernel/unwind.c
-Message-Id: <411F4C65.70502@gmx.net>
+Date: Sun, 15 Aug 2004 11:43:45 +0000
+Subject: [Kernel-janitors] [PATCH] minmax-removal
+Message-Id: <411F4C71.3070300@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------000604020809050102040308"
+Content-Type: multipart/mixed; boundary="------------040401030403010402080003"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <411F4C54.4090609@gmx.net>
 In-Reply-To: <411F4C54.4090609@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------000604020809050102040308
+--------------040401030403010402080003
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -28,86 +28,44 @@ Signed-off-by: Michael Veeck <michael.veeck@gmx.net>
 
 
 
---------------000604020809050102040308
+--------------040401030403010402080003
 Content-Type: text/plain;
- name="minmax-arch-ia64-kernel.patch"
+ name="minmax-arch-ia64-sn.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="minmax-arch-ia64-kernel.patch"
+ filename="minmax-arch-ia64-sn.patch"
 
---- linux-2.6.8-old/arch/ia64/kernel/unwind.c	2004-08-14 11:49:01.000000000 +0200
-+++ linux-2.6.8-new/arch/ia64/kernel/unwind.c	2004-08-15 13:03:05.789019200 +0200
-@@ -47,7 +47,6 @@
- #include "entry.h"
- #include "unwind_i.h"
+--- linux-2.6.8-old/arch/ia64/sn/fakeprom/fw-emu.c	2004-08-14 11:49:01.000000000 +0200
++++ linux-2.6.8-new/arch/ia64/sn/fakeprom/fw-emu.c	2004-08-15 13:01:12.151294760 +0200
+@@ -77,8 +77,6 @@
+ #define MB	(1024*1024UL)
+ #define GB	(MB*1024UL)
+ #define BOOT_PARAM_ADDR 0x40000
+-#define MAX(i,j)		((i) > (j) ? (i) : (j))
+-#define MIN(i,j)		((i) < (j) ? (i) : (j))
+ #define ALIGN8(p)		(((long)(p) +7) & ~7)
  
--#define MIN(a,b)	((a) < (b) ? (a) : (b))
- #define p5		5
+ #define FPROM_BUG()		do {while (1);} while (0)
+@@ -497,7 +495,7 @@ sys_fw_init (const char *args, int argle
+ 	num_nodes = GetNumNodes();
+ 	num_cpus = GetNumCpus();
+ 	for (max_nasid=0, cnode=0; cnode<num_nodes; cnode++)
+-		max_nasid = MAX(max_nasid, GetNasid(cnode));
++		max_nasid = max(max_nasid, GetNasid(cnode));
  
- #define UNW_LOG_CACHE_SIZE	7	/* each unw_script is ~256 bytes in size */
-@@ -963,13 +962,13 @@ static inline void
- desc_mem_stack_f (unw_word t, unw_word size, struct unw_state_record *sr)
- {
- 	set_reg(sr->curr.reg + UNW_REG_PSP, UNW_WHERE_NONE,
--		sr->region_start + MIN((int)t, sr->region_len - 1), 16*size);
-+		sr->region_start + min_t(int, t, sr->region_len - 1), 16*size);
- }
  
- static inline void
- desc_mem_stack_v (unw_word t, struct unw_state_record *sr)
- {
--	sr->curr.reg[UNW_REG_PSP].when = sr->region_start + MIN((int)t, sr->region_len - 1);
-+	sr->curr.reg[UNW_REG_PSP].when = sr->region_start + min_t(int, t, sr->region_len - 1);
- }
+ 	memset(fw_mem, 0, sizeof(fw_mem));
+@@ -670,7 +668,7 @@ sys_fw_init (const char *args, int argle
+ 	for (i=0; i<=max_nasid; i++)
+ 		for (j=0; j<=max_nasid; j++)
+ 			if (nasid_present(i) && nasid_present(j))
+-				*(cp+PROXIMITY_DOMAIN(i)*acpi_slit->localities+PROXIMITY_DOMAIN(j)) = 10 + MIN(254, 5*abs(i-j));
++				*(cp+PROXIMITY_DOMAIN(i)*acpi_slit->localities+PROXIMITY_DOMAIN(j)) = 10 + min(254, 5*abs(i-j));
  
- static inline void
-@@ -1005,7 +1004,7 @@ desc_reg_when (unsigned char regnum, unw
- 
- 	if (reg->where == UNW_WHERE_NONE)
- 		reg->where = UNW_WHERE_GR_SAVE;
--	reg->when = sr->region_start + MIN((int)t, sr->region_len - 1);
-+	reg->when = sr->region_start + min_t(int, t, sr->region_len - 1);
- }
- 
- static inline void
-@@ -1073,7 +1072,7 @@ desc_label_state (unw_word label, struct
- static inline int
- desc_is_active (unsigned char qp, unw_word t, struct unw_state_record *sr)
- {
--	if (sr->when_target <= sr->region_start + MIN((int)t, sr->region_len - 1))
-+	if (sr->when_target <= sr->region_start + min_t(int, t, sr->region_len - 1))
- 		return 0;
- 	if (qp > 0) {
- 		if ((sr->pr_val & (1UL << qp)) == 0)
-@@ -1114,7 +1113,7 @@ desc_spill_reg_p (unsigned char qp, unw_
- 
- 	r = sr->curr.reg + decode_abreg(abreg, 0);
- 	r->where = where;
--	r->when = sr->region_start + MIN((int)t, sr->region_len - 1);
-+	r->when = sr->region_start + min_t(int, t, sr->region_len - 1);
- 	r->val = (ytreg & 0x7f);
- }
- 
-@@ -1129,7 +1128,7 @@ desc_spill_psprel_p (unsigned char qp, u
- 
- 	r = sr->curr.reg + decode_abreg(abreg, 1);
- 	r->where = UNW_WHERE_PSPREL;
--	r->when = sr->region_start + MIN((int)t, sr->region_len - 1);
-+	r->when = sr->region_start + min_t(int, t, sr->region_len - 1);
- 	r->val = 0x10 - 4*pspoff;
- }
- 
-@@ -1144,7 +1143,7 @@ desc_spill_sprel_p (unsigned char qp, un
- 
- 	r = sr->curr.reg + decode_abreg(abreg, 1);
- 	r->where = UNW_WHERE_SPREL;
--	r->when = sr->region_start + MIN((int)t, sr->region_len - 1);
-+	r->when = sr->region_start + min_t(int, t, sr->region_len - 1);
- 	r->val = 4*spoff;
- }
- 
+ 	cp = acpi_slit->entry + acpi_slit->localities*acpi_slit->localities;
+ 	acpi_checksum(&acpi_slit->header, cp - (char*)acpi_slit);
 
---------------000604020809050102040308
+--------------040401030403010402080003
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -118,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------000604020809050102040308--
+--------------040401030403010402080003--
