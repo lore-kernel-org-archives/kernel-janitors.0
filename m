@@ -1,78 +1,79 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Tue, 27 Jan 2004 04:10:54 +0000
-Subject: Re: [Kernel-janitors] [PATCH] drivers/ide/ide-tape.c - handle
-Message-Id: <20040126201054.059af414.rddunlap@osdl.org>
+From: Fabiano Pallonetto <fp.soft@tiscali.it>
+Date: Fri, 16 Jan 2004 14:06:53 +0000
+Subject: [Kernel-janitors] Project TO DO
+Message-Id: <1074262013.3613.40.camel@Michelangelo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040122040839.GA2456@eugeneteo.net>
-In-Reply-To: <20040122040839.GA2456@eugeneteo.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 27 Jan 2004 09:04:00 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
+Hi, I'm a student of Computer Science and I've to develop a little
+project  in OS. I thought to do this:
 
-| <quote sender="Randy.Dunlap">
-| > On Thu, 22 Jan 2004 12:08:39 +0800 Eugene Teo <eugene.teo@eugeneteo.net> wrote:
-| > 
-| > | I have not compile nor test this patch. stage has to be checked for
-| > | null. No trailing spaces too :) 
-| > | 
-| > | 2902: static idetape_stage_t *__idetape_kmalloc_stage (..........)
-| > | [...]
-| > | 2909:         if ((stage = (idetape_stage_t *) kmalloc (sizeof \
-| > | (idetape_stage_t),GFP_KERNEL)) = NULL)
-| > | 2910:                 return NULL;
-| > | 
-| > | diff -Naur -X /home/amnesia/w/dontdiff 2.6.2-rc1-orig/drivers/ide/ide-tape.c 2.6.2-rc1-fix/drivers/ide/ide-tape.c
-| > | --- 2.6.2-rc1-orig/drivers/ide/ide-tape.c	2004-01-22 02:19:18.000000000 +0800
-| > | +++ 2.6.2-rc1-fix/drivers/ide/ide-tape.c	2004-01-22 12:01:56.000000000 +0800
-| > | @@ -3619,6 +3619,8 @@
-| > |  	printk(KERN_INFO "ide-tape: %s: reading back %d frames from the drive's internal buffer\n", tape->name, frames);
-| > |  	for (i = 0; i < frames; i++) {
-| > |  		stage = __idetape_kmalloc_stage(tape, 0, 0);
-| > | +		if (!stage)
-| > | +			return;
-| > |  		if (!first)
-| > |  			first = stage;
-| > |  		aux = stage->aux;
-| > | 
-| > 
-| > so... what makes it OK for void function "idetape_onstream_read_back_buffer"
-| > to just return at this point?  It can't (or doesn't) return an error
-| > AFAICT, but the calling function expected certain work to be done...
-| 
-| this function is part of the write error recovery function that is
-| meant for the unrealiable pipelined mode. after recovering from the
-| internal buffer in an event of a write error, it will re-position the
-| tape.
-| 
-| Actually, I just spotted another thing that we need to fix. When we
-| are in the pipelined write mode, we can't inform the user about the
-| error codes (that is why it is a return void, not return error code),
-| until the next task. And the next possible place to inform the user,
-| is in the function "idetape_position_tape". If our read back buffer
-| fails because we are unable to allocate memory for a stage, then we
-| might not be able to position the tape (guess).
+" From: Matthew Wilcox
+Subject: Calling yield() Considered Harmful
 
-Yes, that's along the lines that I was concerned about.
-If the kmalloc() fails and there's an early return, the state
-of things might not be as they are normally expected to be,
-but there's no indication of that that I can see.
+In 2.6, the semantics of calling yield() changed from "sleep for a
+bit" to "I really don't want to run for a while".  This matches POSIX
+better, but there's a lot of drivers still using yield() when they mean
+cond_resched(), schedule() or even schedule_timeout().
 
-| Sheese, idetape_discard_read_pipeline() should be tested to check
-| whether positioning can be done but it isn't for most of the calls
-| in ide-tape.c.
-| 
-| > I guess that it could panic(), although I hate adding panics.
-| 
-| I don't think it will panic, but it will be better if someone
-| can test this.
+Here's a list:
 
-So can anyone do some testing of these changes?
+$ find drivers/ -type f |xargs grep 'yield[^a-z]*('
+drivers/cdrom/cdu31a.c:         yield();
+drivers/cdrom/sonycd535.c:              yield();
+drivers/macintosh/adb.c:                        yield();
+drivers/message/i2o/i2o_core.c:         yield();
+drivers/message/i2o/i2o_core.c:         yield();
+drivers/mtd/chips/cfi_cmdset_0002.c:                    yield();
+drivers/mtd/nand/nand.c:                yield ();
+drivers/net/depca.c:                    yield();
+drivers/net/sb1000.c:           yield();
+drivers/net/sb1000.c:           yield();
+drivers/net/sis900.c:                   yield();
+drivers/net/e100/e100_eeprom.c:                 yield();
+drivers/net/e100/e100_eeprom.c:                 yield();
+drivers/net/e100/e100_main.c:                   yield();
+drivers/net/e100/e100_phy.c:                    yield();
+drivers/net/e100/e100_phy.c:                            yield();
+drivers/net/e100/e100_test.c:                   yield();
+drivers/scsi/NCR5380.c:                 yield();
+drivers/scsi/ibmmca.c:          yield();
+drivers/scsi/ibmmca.c:          yield();
+drivers/scsi/megaraid.c:                udelay(100); yield();
+drivers/usb/core/message.c:                     yield ();
 
---
-~Randy
+As always, this isn't a search-and-replace type of job.  Let's take
+the first one as an example:
+
+static inline void sony_sleep(void)
+{
+        unsigned long flags;
+
+        if (cdu31a_irq <= 0) {
+                yield();
+        } else {                /* Interrupt driven */
+                save_flags(flags);
+                cli();
+                enable_interrupts();
+                interruptible_sleep_on(&cdu31a_irq_wait);
+                restore_flags(flags);
+        }
+}
+
+If you look at how sony_sleep() is typically used, what you really want to
+do is schedule_timeout(1).  But someone needs to look at all these cases..
+do I hear a volunteer?"
+
+Has anyone smenthing intersting to suggest me? You know, I'm a newbie 
+than I cannot  face a too big one, especially in one semester.
+Thank you very much!
+
+-- 
+Fabiano Pallonetto <fp.soft@tiscali.it>
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
