@@ -1,28 +1,57 @@
-From: Johannes Stezenbach <js@convergence.de>
-Date: Fri, 02 Jul 2004 10:15:41 +0000
-Subject: [Kernel-janitors] Re: [linux-dvb-maintainer] Re: msleep() and delay
-Message-Id: <20040702101541.GC779@convergence.de>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 22 Jul 2004 22:35:28 +0000
+Subject: [Kernel-janitors] [PATCH] ieee/sbp2: replace schedule_timeout() with
+Message-Id: <20040722223527.GV2165@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68081851514181768=="
+Content-Type: multipart/mixed; boundary="===============045396909191215418=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <40E5336D.30204@convergence.de>
-In-Reply-To: <40E5336D.30204@convergence.de>
 To: kernel-janitors@vger.kernel.org
 
---===============68081851514181768==
+--===============045396909191215418==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Michael Hunold wrote:
-> 
-> I don't think it's ever necessary to be interruptible for us, so 
-> mdelay() is suitable.
-  ^^^^^^
-  msleep()
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
 
-Johannes
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
 
---===============68081851514181768==
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
+
+Thanks,
+Nish
+
+
+
+Applys-to: 2.6.7
+
+Description: Use msleep() instead of schedule_timeout() to guarantee
+desired timeout.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/ieee1394/sbp2.c	2004-06-16 05:18:58.000000000 +0000
++++ linux-dev/drivers/ieee1394/sbp2.c	2004-07-12 18:07:08.000000000 +0000
+@@ -903,8 +903,7 @@ alloc_fail:
+ 	 * connected to the sbp2 device being removed. That host would
+ 	 * have a certain amount of time to relogin before the sbp2 device
+ 	 * allows someone else to login instead. One second makes sense. */
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 
+ 	/*
+ 	 * Login to the sbp-2 device
+
+--===============045396909191215418==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -33,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============68081851514181768==--
+--===============045396909191215418==--
