@@ -1,99 +1,120 @@
-From: Vicente Feito <vicente.feito@gmail.com>
-Date: Tue, 22 Mar 2005 11:25:28 +0000
-Subject: [KJ][PATCH] kj-devel.pl - diff -u
-Message-Id: <200503221125.28549.vicente.feito@gmail.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Fri, 04 Mar 2005 12:58:03 +0000
+Subject: [KJ] [UPDATED PATCH] ixj* - compile warning cleanup
+Message-Id: <4228777B.16022.2FAA16@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_oCAQC8Mwyi4qsbH"
+Content-Type: multipart/mixed; boundary="===============62129561653619714=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_oCAQC8Mwyi4qsbH
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+--===============62129561653619714==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-here's the diff -u patch
+Domen,
 
-Vicente.
+Please, PLEASE immediately push this patch upstream to replace the 
+previous patch that I submitted and seems to have been accepted for 
+2.6.11-kj.  This has a fix for the dumb bug I introduced with a fix for 
+"copy_to_user".
 
+This is an urgent patch, since execution of the previously submitted code 
+can cause a kernel crash/oops.
 
---Boundary-00=_oCAQC8Mwyi4qsbH
-Content-Type: text/x-diff;
-  charset="us-ascii";
-  name="kj-devel.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="kj-devel.patch"
+Sorry I was so slow to react to this.
 
---- ../kj-devel.pl.orig	2005-03-22 00:05:01.000000000 +0000
-+++ kj-devel.pl	2005-03-22 09:21:41.000000000 +0000
-@@ -253,8 +253,8 @@
- 				
- 				if (not exists($locks{$2}) or 
- 					(exists($locks{$2}) and @{$locks{$2}} == 0)) {
--					print "Unlocking a lock that hasn't been aquired ".
--						"yet(could be a false positive) - Line:$linenr\n\n";
-+					print "Unlocking a lock that hasn't been acquired ".
-+						"yet (could be a false positive) - Line:$linenr\n\n";
- 				} else {
- 					#get rid of the last one
- 					pop @{$locks{$2}};
-@@ -269,8 +269,8 @@
+Domen: note that there are very many strange things that happen when I 
+try to apply the -kj patch to linux-2.6.11-rc5-mm1.  Lots of rejects and 
+reversals, even one that halts "patch".
+
+Thanks.
+
+Stephen Biggs
+
+Description: compile warning cleanup - suggested by Adrian Bunk; remove 
+unmaintained rcs char strings from source and handle the occurrences of 
+their use, make sure kernel-userspace issues taken care of; break out 
+into separate patch
+
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc5-mm1-original/drivers/telephony/ixj.c linux-2.6.11-rc5-mm1/drivers/telephony/ixj.c
+--- linux-2.6.11-rc5-mm1-original/drivers/telephony/ixj.c	2005-03-04 05:13:36.000000000 +0200
++++ linux-2.6.11-rc5-mm1/drivers/telephony/ixj.c	2005-03-04 10:55:16.000000000 +0200
+@@ -41,9 +41,6 @@
+  *
+  ***************************************************************************/
  
- 				if (not exists($locks_irq{$2}) or 
- 					(exists($locks_irq{$2}) and @{$locks_irq{$2}} == 0)) {
--					print "Unlocking a lock that hasn't been aquired ".
--						"yet(could be a false positive) - Line:$linenr\n\n";
-+					print "Unlocking a lock that hasn't been acquired ".
-+						"yet (could be a false positive) - Line:$linenr\n\n";
- 				} else {
- 					pop @{$locks_irq{$2}};
- 				}
-@@ -284,8 +284,8 @@
+-static char ixj_c_rcsid[] = "$Id: ixj.c,v 4.7 2001/08/13 06:19:33 craigs Exp $";
+-static char ixj_c_revision[] = "$Revision: 4.7 $";
+-
+ /*
+  * $Log: ixj.c,v $
+  *
+@@ -6172,8 +6169,14 @@ static int ixj_ioctl(struct inode *inode
+ 		retval = j->serial;
+ 		break;
+ 	case IXJCTL_VERSION:
+-		if (copy_to_user(argp, ixj_c_revision, strlen(ixj_c_revision))) 
+-			retval = -EFAULT;
++		{
++			char arg_str[100];
++			snprintf(arg_str, sizeof(arg_str),
++				"\nDriver version %i.%i.%i", IXJ_VER_MAJOR,
++				IXJ_VER_MINOR, IXJ_BLD_VER);
++			if (copy_to_user(argp, arg_str, strlen(arg_str))) 
++				retval = -EFAULT;
++		}
+ 		break;
+ 	case PHONE_RING_CADENCE:
+ 		j->ring_cadence = arg;
+@@ -7168,9 +7171,6 @@ static int ixj_get_status_proc(char *buf
+ 	int cnt;
+ 	IXJ *j;
+ 	len = 0;
+-	len += sprintf(buf + len, "%s", ixj_c_rcsid);
+-	len += sprintf(buf + len, "\n%s", ixj_h_rcsid);
+-	len += sprintf(buf + len, "\n%s", ixjuser_h_rcsid);
+ 	len += sprintf(buf + len, "\nDriver version %i.%i.%i", IXJ_VER_MAJOR, IXJ_VER_MINOR, IXJ_BLD_VER);
+ 	len += sprintf(buf + len, "\nsizeof IXJ struct %Zd bytes", sizeof(IXJ));
+ 	len += sprintf(buf + len, "\nsizeof DAA struct %Zd bytes", sizeof(DAA_REGS));
+@@ -7790,7 +7790,7 @@ static int __init ixj_init(void)
+ 	if ((probe = ixj_probe_pci(&cnt)) < 0) {
+ 		return probe;
+ 	}
+-	printk("%s\n", ixj_c_rcsid);
++	printk(KERN_INFO "ixj driver initialized.\n");
+ 	create_proc_read_entry ("ixj", 0, NULL, ixj_read_proc, NULL);
+ 	return probe;
+ }
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc5-mm1-original/drivers/telephony/ixj.h linux-2.6.11-rc5-mm1/drivers/telephony/ixj.h
+--- linux-2.6.11-rc5-mm1-original/drivers/telephony/ixj.h	2004-12-24 23:35:40.000000000 +0200
++++ linux-2.6.11-rc5-mm1/drivers/telephony/ixj.h	2005-03-04 05:20:11.000000000 +0200
+@@ -38,8 +38,6 @@
+  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+  *
+  *****************************************************************************/
+-static char ixj_h_rcsid[] = "$Id: ixj.h,v 4.1 2001/08/04 14:49:27 craigs Exp $";
+-
+ #define IXJ_VERSION 3031
  
- 				if (not exists($locks_bh{$2}) or 
- 					(exists($locks_bh{$2}) and @{$locks_bh{$2}} == 0)) {
--					print "Unlocking a lock that hasn't been aquired ".
--						"yet(could be a false positive) - Line:$linenr\n\n";
-+					print "Unlocking a lock that hasn't been acquired ".
-+						"yet (could be a false positive) - Line:$linenr\n\n";
- 				} else {
- 					pop @{$locks_bh{$2}};
- 				}
-@@ -299,7 +299,7 @@
- 				if (not exists($ioremap{$2}) or 
- 					(exists($ioremap{$2}) and @{$ioremap{$2}} == 0)) {
- 					print "Unmapping a region that hasn't been mapped ".
--						"yet(could be a false positive) - Line:$linenr\n\n";
-+						"yet (could be a false positive) - Line:$linenr\n\n";
- 				} else {
- 					pop @{$ioremap{$2}};
- 				}
-@@ -344,7 +344,11 @@
- 				print "$filename:$linenr:$line\n\n";
- 			}
- 			if ($line=~/(const )?char ?\* ?\w+ ?= ?\".*\"/) {
--				print "Using foo[] it's recommended over *foo: saves memory references & code\n";
-+				print "Using foo[] is recommended over *foo: saves memory references & code\n";
-+				print "$filename:$linenr:$line\n\n";
-+			}
-+			if ($line=~/memset\((.*),( *sizeof.*),( *\d+)\)/) {
-+				print "Your memset parameters appears to be backwards\n";
- 				print "$filename:$linenr:$line\n\n";
- 			}
- 			$linenr++;
-@@ -356,7 +360,7 @@
- 		show_balance_results(1,%ioremap);
- 	
- 		if (!$nomodules and !defined($module)) {
--			print "If you're building a module, be concious that you must use the". 
-+			print "If you're building a module, note that you must use the". 
- 				" init mechanism, module_init() and module_exit().\n";
- 		}
- 		if (!$nomodules and $drvdata) {
+ #include <linux/version.h>
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc5-mm1-original/include/linux/ixjuser.h 
+--- linux-2.6.11-rc5-mm1-original/include/linux/ixjuser.h       2004-12-24 23:35:50.000000000 +0200
++++ linux-2.6.11-rc5-mm1/include/linux/ixjuser.h        2005-03-04 05:20:31.000000000 +0200
+@@ -42,8 +42,6 @@
+  *
+  *****************************************************************************/
+ 
+-static char ixjuser_h_rcsid[] = "$Id: ixjuser.h,v 4.1 2001/08/05 00:17:37 craigs Exp $";
+-
+ #include <linux/telephony.h>
+ 
+ 
 
---Boundary-00=_oCAQC8Mwyi4qsbH
+
+--===============62129561653619714==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -104,4 +125,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_oCAQC8Mwyi4qsbH--
+--===============62129561653619714==--
