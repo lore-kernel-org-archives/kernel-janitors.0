@@ -1,61 +1,29 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 18:06:00 +0000
-Subject: [Kernel-janitors] [PATCH] radio/radio-cadet: replace
-Message-Id: <20040726180600.GA1897@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54333632153235367=="
+From: "Weldon Blackwell" <weldonblackwellwi@mod-consulting.de>
+Date: Fri, 16 Jul 2004 17:28:48 +0000
+Subject: Hyd,rocod:one, fast shipping
+Message-Id: <b80401c46b63$ae616656$576e6395@tvmoxford.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============54333632153235367==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-I would appreciate any comments from the janitors list.
-
-Thanks,
-Nish
-
-Applys-to: 2.6.7
-
-Description: Uses msleep() instead of schedule_timeout() so the task
-is guaranteed to delay the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+<html>
+Looking for HYDR0COD0NE?<p>
+Only place you can get it <b>without prescription</b>: <a href="http://qlkdaicsdcpll.Mypillsforme.com/?x8=k7m256">Med-Network</a><br>
+Now with same-day shipping, we are unbeatable.<p>
+Under-priced deals on other products like PHENTERMlNE too.<p>
+<a href="http://qaeaeiwbgy.Mypillsforme.com/?x8=k7m256">DEALS WONT LAST - VISIT US NOW!</a>
+</html>
 
 
---- linux-vanilla/drivers/media/radio/radio-cadet.c	2004-06-16 05:19:22.000000000 +0000
-+++ linux-dev/drivers/media/radio/radio-cadet.c	2004-07-02 20:30:07.000000000 +0000
-@@ -69,8 +69,7 @@ static int cadet_getrds(void)
- 	outb(inb(io+1)&0x7f,io+1);  /* Reset RDS detection */
- 	spin_unlock(&cadet_io_lock);
- 	
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ/10);
-+	msleep(100);
- 
- 	spin_lock(&cadet_io_lock);	
-         outb(3,io);                 /* Select Decoder Control/Status */
-@@ -243,8 +242,7 @@ static void cadet_setfreq(unsigned freq)
- 		outb(curvol,io+1);
- 		spin_unlock(&cadet_io_lock);
- 		
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(HZ/10);
-+		msleep(100);
- 
- 		cadet_gettune();
- 		if((tunestat & 0x40) == 0) {   /* Tuned */
 
---===============54333632153235367==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by BEA Weblogic Workshop
+FREE Java Enterprise J2EE developer tools!
+Get your free copy of BEA WebLogic Workshop 8.1 today.
+http://ads.osdn.com/?ad_idG21&alloc_id040&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============54333632153235367==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
