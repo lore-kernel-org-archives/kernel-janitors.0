@@ -1,37 +1,40 @@
 From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sat, 03 Jan 2004 13:25:24 +0000
-Subject: [Kernel-janitors] [PATCH] Check return code in mm/vmscan.c
-Message-Id: <20040103132524.GA21909@eugeneteo.net>
+Date: Sat, 03 Jan 2004 13:26:13 +0000
+Subject: [Kernel-janitors] [PATCH] Check return code in
+Message-Id: <20040103132613.GB21909@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040103132524.GA21909@eugeneteo.net>
+In-Reply-To: <20040103132524.GA21909@eugeneteo.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-http://www.anomalistic.org/patches/vmscan-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
+http://www.anomalistic.org/patches/setup-check-ret-alloc_bootmem_low-fix-2.6.1-rc1-mm1.patch
 
-diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/vmscan.c 2.6.1-rc1-mm1-fix/mm/vmscan.c
---- 2.6.1-rc1-mm1/mm/vmscan.c	2004-01-03 20:33:39.000000000 +0800
-+++ 2.6.1-rc1-mm1-fix/mm/vmscan.c	2004-01-03 21:16:30.000000000 +0800
-@@ -1093,10 +1093,16 @@
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/arch/i386/kernel/setup.c 2.6.1-rc1-mm1-fix/arch/i386/kernel/setup.c
+--- 2.6.1-rc1-mm1/arch/i386/kernel/setup.c	2004-01-03 20:33:38.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/arch/i386/kernel/setup.c	2004-01-03 20:58:40.000000000 +0800
+@@ -17,6 +17,8 @@
+  *  Provisions for empty E820 memory regions (reported by certain BIOSes).
+  *  Alex Achenbach <xela@slit.de>, December 2002.
+  *
++ *  Check the return value of alloc_bootmem_low.
++ *  Eugene Teo <eugeneteo@eugeneteo.net>, January 2004.
+  */
  
- static int __init kswapd_init(void)
- {
-+	int ret;
- 	pg_data_t *pgdat;
- 	swap_setup();
--	for_each_pgdat(pgdat)
--		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
-+	for_each_pgdat(pgdat) {
-+		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
-+		if (ret < 0) {
-+			printk("%s: unable to start kernel thread\n", __FUNCTION__);
-+			return ret;
+ /*
+@@ -875,6 +877,10 @@
+ 		if (e820.map[i].addr + e820.map[i].size > 0x100000000ULL)
+ 			continue;
+ 		res = alloc_bootmem_low(sizeof(struct resource));
++		if (!res) {
++			printk(KERN_ERR "Cannot allocate lowmem\n");
++			return;
 +		}
-+	}
- 	total_memory = nr_free_pagecache_pages();
- 	return 0;
- }
+ 		switch (e820.map[i].type) {
+ 		case E820_RAM:	res->name = "System RAM"; break;
+ 		case E820_ACPI:	res->name = "ACPI Tables"; break;
 
 -- 
 Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
