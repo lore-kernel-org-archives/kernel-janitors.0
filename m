@@ -1,30 +1,39 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 14 Feb 2005 12:31:02 +0000
-Subject: Re: [KJ] TODO: 5 new items.
-Message-Id: <20050214123102.GB18025@nd47.coderock.org>
+From: Amit Gud <amitg@calsoftinc.com>
+Date: Mon, 14 Feb 2005 06:36:35 +0000
+Subject: [KJ] [PATCH 15/18] sound/core/ remove pci_find_{device, subsys}
+Message-Id: <200502141154.35355.amitg@calsoftinc.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5860782746772768=="
+Content-Type: multipart/mixed; boundary="===============15282757654478418=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200502130029.41718.adobriyan@mail.ru>
-In-Reply-To: <200502130029.41718.adobriyan@mail.ru>
 To: kernel-janitors@vger.kernel.org
 
---===============5860782746772768==
-Content-Type: text/plain; charset=us-ascii
+--===============15282757654478418==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On 13/02/05 00:29 +0200, Alexey Dobriyan wrote:
-> Domen, if you want the patch tell me against 1.25, 1.26 or 1.27 should it be.
+Remove deprecated pci_find_device and pci_find_subsys
 
-I plan to update todo (and release next -kj) by the end of week, i'll
-just include it myself.
+Do consider applying.
 
-Thanks!
+Signed-off-by: Amit Gud <gud@eth.net>
+
+diff -uprN orig/sound/core/memalloc.c linux-2.6.11-rc3/sound/core/memalloc.c
+--- orig/sound/core/memalloc.c	2005-01-20 20:06:45.000000000 +0530
++++ linux-2.6.11-rc3/sound/core/memalloc.c	2005-02-14 05:38:59.000000000 +0530
+@@ -552,7 +552,7 @@ static void __init preallocate_cards(voi
+ 
+ 	card = 0;
+ 
+-	while ((pci = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pci)) != NULL) {
++	while ((pci = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pci)) != NULL) {
+ 		struct prealloc_dev *dev;
+ 		unsigned int i;
+ 		if (card >= SNDRV_CARDS)
 
 
-	Domen
-
---===============5860782746772768==
+--===============15282757654478418==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -35,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5860782746772768==--
+--===============15282757654478418==--
