@@ -1,143 +1,114 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 23:17:28 +0000
-Subject: [Kernel-janitors] [PATCH] message/mptbase: replace
-Message-Id: <20040726231728.GZ1897@us.ibm.com>
+Date: Mon, 26 Jul 2004 17:46:13 +0000
+Subject: [Kernel-janitors] [PATCH] dvb/dst: replace schedule_timeout() with
+Message-Id: <20040726174613.GK1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15705833191224206=="
+Content-Type: multipart/mixed; boundary="===============39947038832162374=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============15705833191224206==
+--===============39947038832162374==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
-
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
-
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
+I would appreciate any comments from the janitors list.
 
 Thanks,
 Nish
 
-
-
 Applys-to: 2.6.7
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+Description: Replace dvb_delay() with msleep() to guarantee the
+task delays the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/message/fusion/mptbase.c	2004-06-16 05:19:01.000000000 +0000
-+++ linux-dev/drivers/message/fusion/mptbase.c	2004-07-12 18:56:59.000000000 +0000
-@@ -3117,12 +3117,10 @@ mpt_downloadboot(MPT_ADAPTER *ioc, int s
- 		CHIPREG_WRITE32(&ioc->chip->WriteSequence, MPI_WRSEQ_5TH_KEY_VALUE);
+--- linux-vanilla/drivers/media/dvb/frontends/dst.c	2004-06-16 05:19:52.000000000 +0000
++++ linux-dev/drivers/media/dvb/frontends/dst.c	2004-07-02 18:43:16.000000000 +0000
+@@ -197,7 +197,7 @@ int retval;
+ 	retval = dst_gpio_outb(dst, DST_8820, DST_8820, 0);
+ 	if (retval < 0)
+ 		return retval;
+-	dvb_delay(10);
++	msleep(10);
+ 	retval = dst_gpio_outb(dst, DST_8820, DST_8820, DST_8820);
+ 	if (retval < 0)
+ 		return retval;
+@@ -220,7 +220,7 @@ int retval;
+ 	if (retval < 0)
+ 		return retval;
+ 	// dprintk ("%s: i2c enable delay\n", __FUNCTION__);
+-	dvb_delay(33);
++	msleep(33);
+ 	return 0;
+ }
  
- 		/* wait 100 msec */
--		if (sleepFlag == CAN_SLEEP) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(100 * HZ / 1000);
--		} else {
-+		if (sleepFlag == CAN_SLEEP)
-+			msleep (100);
-+		else
- 			mdelay (100);
--		}
+@@ -234,7 +234,7 @@ int retval;
+ 	if (retval < 0)
+ 		return retval;
+ 	// dprintk ("%s: i2c disable delay\n", __FUNCTION__);
+-	dvb_delay(33);
++	msleep(33);
+ 	return 0;
+ }
  
- 		count++;
- 		if (count > 20) {
-@@ -3351,12 +3349,10 @@ KickStart(MPT_ADAPTER *ioc, int force, i
- 		 */
- 		SendIocReset(ioc, MPI_FUNCTION_IOC_MESSAGE_UNIT_RESET, sleepFlag);
- 
--		if (sleepFlag == CAN_SLEEP) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ);
--		} else {
-+		if (sleepFlag == CAN_SLEEP)
-+			msleep (1000);
-+		else
- 			mdelay (1000);
--		}
- 	}
- 
- 	hard_reset_done = mpt_diag_reset(ioc, force, sleepFlag);
-@@ -3445,12 +3441,10 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 			CHIPREG_WRITE32(&ioc->chip->WriteSequence, MPI_WRSEQ_5TH_KEY_VALUE);
- 
- 			/* wait 100 msec */
--			if (sleepFlag == CAN_SLEEP) {
--				set_current_state(TASK_INTERRUPTIBLE);
--				schedule_timeout(100 * HZ / 1000);
--			} else {
-+			if (sleepFlag == CAN_SLEEP)
-+				msleep (100);
-+			else
- 				mdelay (100);
--			}
- 
- 			count++;
- 			if (count > 20) {
-@@ -3538,12 +3532,10 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 				}
- 
- 				/* wait 1 sec */
--				if (sleepFlag == CAN_SLEEP) {
--					set_current_state(TASK_INTERRUPTIBLE);
--					schedule_timeout(HZ);
--				} else {
-+				if (sleepFlag == CAN_SLEEP)
-+					msleep (1000);
-+				else
- 					mdelay (1000);
--				}
- 			}
- 			if ((count = mpt_downloadboot(ioc, sleepFlag)) < 0) {
- 				printk(KERN_WARNING MYNAM
-@@ -3566,12 +3558,10 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 				}
- 
- 				/* wait 1 sec */
--				if (sleepFlag == CAN_SLEEP) {
--					set_current_state(TASK_INTERRUPTIBLE);
--					schedule_timeout(HZ);
--				} else {
-+				if (sleepFlag == CAN_SLEEP)
-+					msleep (1000);
-+				else
- 					mdelay (1000);
--				}
- 			}
+@@ -252,7 +252,7 @@ int i;
+ 			dprintk ("%s: dst wait ready after %d\n", __FUNCTION__, i);
+ 			return 1;
  		}
+-		dvb_delay(5);
++		msleep(5);
  	}
-@@ -3600,12 +3590,10 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 		CHIPREG_WRITE32(&ioc->chip->WriteSequence, MPI_WRSEQ_5TH_KEY_VALUE);
- 
- 		/* wait 100 msec */
--		if (sleepFlag == CAN_SLEEP) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(100 * HZ / 1000);
--		} else {
-+		if (sleepFlag == CAN_SLEEP)
-+			msleep (100);
-+		else
- 			mdelay (100);
--		}
- 
- 		count++;
- 		if (count > 20) {
+ 	dprintk ("%s: dst wait NOT ready after %d\n", __FUNCTION__, i);
+ 	return 0;
+@@ -275,14 +275,14 @@ static int write_dst (struct dst_data *d
+ 		}
+ 		dprintk("\n");
+ 	}
+-	dvb_delay(30);
++	msleep(30);
+ 	for (cnt = 0; cnt < 4; cnt++) {
+ 		if ((err = dst->i2c->xfer (dst->i2c, &msg, 1)) < 0) {
+ 			dprintk ("%s: write_dst error (err == %i, len == 0x%02x, b0 == 0x%02x)\n", __FUNCTION__, err, len, data[0]);
+ 			dst_i2c_disable(dst);
+-			dvb_delay(500);
++			msleep(500);
+ 			dst_i2c_enable(dst);
+-			dvb_delay(500);
++			msleep(500);
+ 			continue;
+ 		} else
+ 			break;
+@@ -564,7 +564,7 @@ static int dst_check_ci (struct dst_data
+ 		dprintk("%s: write not successful, maybe no card?\n", __FUNCTION__);
+ 		return retval;
+ 	}
+-	dvb_delay(3);
++	msleep(3);
+ 	retval = read_dst (dst, rxbuf, 1);
+ 	dst_i2c_disable(dst);
+ 	if (retval < 0) {
+@@ -648,7 +648,7 @@ static int dst_command (struct dst_data 
+ 		dprintk("%s: write not successful\n", __FUNCTION__);
+ 		return retval;
+ 	}
+-	dvb_delay(33);
++	msleep(33);
+ 	retval = read_dst (dst, &reply, 1);
+ 	dst_i2c_disable(dst);
+ 	if (retval < 0) {
+@@ -899,7 +899,7 @@ static int dst_write_tuna (struct dst_da
+ 		dprintk("%s: write not successful\n", __FUNCTION__);
+ 		return retval;
+ 	}
+-	dvb_delay(3);
++	msleep(3);
+ 	retval = read_dst (dst, &reply, 1);
+ 	dst_i2c_disable(dst);
+ 	if (retval < 0) {
 
---===============15705833191224206==
+--===============39947038832162374==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -148,4 +119,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15705833191224206==--
+--===============39947038832162374==--
