@@ -1,49 +1,64 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 20 Jan 2005 18:56:17 +0000
-Subject: [KJ] [PATCH 5/40] fs/clntproc: replace schedule_timeout() with
-Message-Id: <20050120185617.GF5393@us.ibm.com>
+Date: Mon, 10 Jan 2005 21:20:38 +0000
+Subject: [KJ] [UPDATE PATCH] block/pg: replace pg_sleep() with msleep()
+Message-Id: <20050110212038.GG9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36210098598827001=="
+Content-Type: multipart/mixed; boundary="===============71739221057107072=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============36210098598827001==
+--===============71739221057107072==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Sorry, slightly inaccurate description...
 
-Please consider applying.
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+> 
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
-Description: Use msleep_interruptible() instead of schedule_timeout(). The
-existing code is not incorrect, but msleep_interruptible() offers two
-advantages: 1) consistency across the kernel and 2) human-sensible time units
-(msecs).
+<snip>
+
+> msleep_interruptible-drivers_block_pg.patch
+
+Please consider replacing with the following patch:
+
+Description: Use msleep()/ssleep() instead of pg_sleep() to guarantee
+the task delays as expected. TASK_INTERRUPTIBLE is used in the original code,
+however there is no check on the return values / for signals, thus I believe
+TASK_UNINTERRUPTIBLE (and hence msleep()) is more appropriate. Change pg_sleep()
+to use TASK_UNINTERRUPTIBLE as well.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc1-kj-v/fs/lockd/clntproc.c	2005-01-15 16:55:41.000000000 -0800
-+++ 2.6.11-rc1-kj/fs/lockd/clntproc.c	2005-01-18 10:55:03.000000000 -0800
-@@ -14,6 +14,7 @@
- #include <linux/nfs_fs.h>
- #include <linux/utsname.h>
- #include <linux/smp_lock.h>
-+#include <linux/delay.h>
- #include <linux/sunrpc/clnt.h>
- #include <linux/sunrpc/svc.h>
- #include <linux/lockd/lockd.h>
-@@ -298,8 +299,7 @@ nlmclnt_alloc_call(void)
- 			return call;
- 		}
- 		printk("nlmclnt_alloc_call: failed, waiting for memory\n");
--		current->state = TASK_INTERRUPTIBLE;
--		schedule_timeout(5*HZ);
-+		msleep_interruptible(5000);
- 	}
- 	return NULL;
- }
 
---===============36210098598827001==
+--- 2.6.10-v/drivers/block/paride/pg.c	2004-12-24 13:35:25.000000000 -0800
++++ 2.6.10/drivers/block/paride/pg.c	2005-01-10 12:21:34.000000000 -0800
+@@ -295,7 +295,7 @@ static inline u8 DRIVE(struct pg *dev)
+ 
+ static void pg_sleep(int cs)
+ {
+-	current->state = TASK_INTERRUPTIBLE;
++	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	schedule_timeout(cs);
+ }
+ 
+@@ -409,7 +409,7 @@ static int pg_reset(struct pg *dev)
+ 	write_reg(dev, 6, DRIVE(dev));
+ 	write_reg(dev, 7, 8);
+ 
+-	pg_sleep(20 * HZ / 1000);
++	msleep(20);
+ 
+ 	k = 0;
+ 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
+
+--===============71739221057107072==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36210098598827001==--
+--===============71739221057107072==--
