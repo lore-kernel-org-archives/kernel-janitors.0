@@ -1,47 +1,48 @@
 From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:54 +0000
-Subject: [KJ] [PATCH][RESUBMIT][19/21]  kernel/* - compile warning cleanup
-Message-Id: <42113C2E.7177.52C380@localhost>
+Date: Thu, 10 Feb 2005 21:34:29 +0000
+Subject: [KJ] [PATCH][12/26] drivers/net/tulip/* - compile warning cleanup
+Message-Id: <420BEF85.749.5876AA@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50573869760903389=="
+Content-Type: multipart/mixed; boundary="===============57101192155551894=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============50573869760903389==
+--===============57101192155551894==
 Content-type: text/plain; charset=US-ASCII
 Content-transfer-encoding: 7BIT
 Content-description: Mail message body
 
-Description: compile warning cleanup - handle copy_to/from_user error 
-returns
+Description: compile warning cleanup - cast pointer argument to correct 
+pointer type to silence compiler warning
 
 Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/net/ipv6/ip6_flowlabel.c linux-2.6.11-rc3-mm2/net/ipv6/ip6_flowlabel.c
---- linux-2.6.11-rc3-mm2-original/net/ipv6/ip6_flowlabel.c	2005-02-12 12:06:27.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/net/ipv6/ip6_flowlabel.c	2005-02-12 19:17:48.000000000 +0200
-@@ -537,9 +537,13 @@ release:
- 			goto done;
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/net/tulip/dmfe.c linux-2.6.11-rc3-mm/drivers/net/tulip/dmfe.c
+--- linux-2.6.11-rc3-mm-original/drivers/net/tulip/dmfe.c	2005-02-03 03:56:48.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/net/tulip/dmfe.c	2005-02-08 18:08:53.000000000 +0200
+@@ -1806,7 +1806,7 @@ static void dmfe_parse_srom(struct dmfe_
+ 	if ( ( (int) srom[18] & 0xff) == SROM_V41_CODE) {
+ 		/* SROM V4.01 */
+ 		/* Get NIC support media mode */
+-		db->NIC_capability = le16_to_cpup(srom + 34);
++		db->NIC_capability = le16_to_cpup((const __le16 *)(srom + 34));
+ 		db->PHY_reg4 = 0;
+ 		for (tmp_reg = 1; tmp_reg < 0x10; tmp_reg <<= 1) {
+ 			switch( db->NIC_capability & tmp_reg ) {
+@@ -1818,7 +1818,7 @@ static void dmfe_parse_srom(struct dmfe_
+ 		}
  
- 		/* Do not check for fault */
--		if (!freq.flr_label)
--			copy_to_user(&((struct in6_flowlabel_req __user *) optval)->flr_label,
--				     &fl->label, sizeof(fl->label));
-+		if (!freq.flr_label) {
-+			if (copy_to_user(&((struct in6_flowlabel_req __user *)optval)->flr_label,
-+				     &fl->label, sizeof(fl->label))) {
-+				err = -EFAULT;
-+				goto done;
-+			}
-+		}
- 
- 		sfl1->fl = fl;
- 		sfl1->next = np->ipv6_fl_list;
+ 		/* Media Mode Force or not check */
+-		dmfe_mode = le32_to_cpup(srom + 34) & le32_to_cpup(srom + 36);
++		dmfe_mode = le32_to_cpup((const __le32 *)(srom + 34)) & le32_to_cpup((const __le32 *)(srom + 36));
+ 		switch(dmfe_mode) {
+ 		case 0x4: dmfe_media_mode = DMFE_100MHF; break;	/* 100MHF */
+ 		case 0x2: dmfe_media_mode = DMFE_10MFD; break;	/* 10MFD */
 
 
 
 
---===============50573869760903389==
+--===============57101192155551894==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50573869760903389==--
+--===============57101192155551894==--
