@@ -1,36 +1,54 @@
-From: james4765@verizon.net
-Date: Thu, 28 Oct 2004 15:01:25 +0000
-Subject: [KJ] [PATCH 9/9] to kernel/power/Kconfig
-Message-Id: <20041028150125.2776.85757.89489@localhost.localdomain>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Thu, 07 Oct 2004 22:51:44 +0000
+Subject: [Kernel-janitors] [PATCH 2.6][7/12] pcore.c replace pci_find_device
+Message-Id: <30730000.1097189504@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44174379946242759=="
+Content-Type: multipart/mixed; boundary="===============58093999592258294=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041028150029.2776.69333.50087@localhost.localdomain>
-In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
-To: kernel-janitors@lists.osdl.org
-Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org
 
---===============44174379946242759==
+--===============58093999592258294==
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Description: Fix a couple of misspellings in kernel/power/Kconfig.
-Apply against 2.6.9.
 
-Signed-off-by:  James Nelson <james4765@gmail.com>
+As pci_find_device is going away I've replaced it with pci_get_device and pci_dev_put.
+If someone with a PPC system could test it I would appreciate it.
 
-diff -urN --exclude='*~' linux-2.6.9-original/kernel/power/Kconfig linux-2.6.9/kernel/power/Kconfig
---- linux-2.6.9-original/kernel/power/Kconfig	2004-10-18 17:54:55.000000000 -0400
-+++ linux-2.6.9/kernel/power/Kconfig	2004-10-28 10:53:02.583350353 -0400
-@@ -29,7 +29,7 @@
- 	bool "Software Suspend (EXPERIMENTAL)"
- 	depends on EXPERIMENTAL && PM && SWAP
- 	---help---
--	  Enable the possibilty of suspendig machine. It doesn't need APM.
-+	  Enable the possibility of suspending machine. It doesn't need APM.
- 	  You may suspend your machine by 'swsusp' or 'shutdown -z <time>' 
- 	  (patch for sysvinit needed). 
+Thanks.
+
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+
+diff -Nrup linux-2.6.9-rc3-mm2cln/arch/ppc/platforms/pcore.c linux-2.6.9-rc3-mm2patch2/arch/ppc/platforms/pcore.c
+--- linux-2.6.9-rc3-mm2cln/arch/ppc/platforms/pcore.c	2004-09-29 20:03:45.000000000 -0700
++++ linux-2.6.9-rc3-mm2patch2/arch/ppc/platforms/pcore.c	2004-10-07 15:30:31.839323128 -0700
+@@ -89,7 +89,7 @@ pcore_pcibios_fixup(void)
+ {
+ 	struct pci_dev *dev;
+ 
+-	if ((dev = pci_find_device(PCI_VENDOR_ID_WINBOND,
++	if ((dev = pci_get_device(PCI_VENDOR_ID_WINBOND,
+ 				PCI_DEVICE_ID_WINBOND_83C553,
+ 				0)))
+ 	{
+@@ -108,6 +108,7 @@ pcore_pcibios_fixup(void)
+ 		 */
+  		outb(0x00, PCORE_WINBOND_PRI_EDG_LVL);
+ 		outb(0x1e, PCORE_WINBOND_SEC_EDG_LVL);
++		pci_dev_put(dev);
+ 	}
+ }
  
 
---===============44174379946242759==
+
+--===============58093999592258294==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============44174379946242759==--
+--===============58093999592258294==--
