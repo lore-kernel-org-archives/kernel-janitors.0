@@ -1,170 +1,43 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 28 Jan 2004 01:14:27 +0000
-Subject: [Kernel-janitors] [announce] 2.6.2-rc2-kj1 patchset
-Message-Id: <20040127171427.24f62515.rddunlap@osdl.org>
+From: Daniele Bellucci <bellucda@tiscali.it>
+Date: Wed, 28 Jan 2004 17:36:20 +0000
+Subject: Re: [Kernel-janitors] [announce] 2.6.2-rc2-kj1 patchset
+Message-Id: <20040128173620.GB2389@charlie.minidns.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040127171427.24f62515.rddunlap@osdl.org>
+In-Reply-To: <20040127171427.24f62515.rddunlap@osdl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kjo <kernel-janitors@osdl.org>
-Cc: lkml <linux-kernel@vger.kernel.org>
+To: "Randy.Dunlap" <rddunlap@osdl.org>
+Cc: kjo <kernel-janitors@osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
 
-(fairly small this time, several patches recently merged,
-and I'm still reviewing others.)
+On Tue, Jan 27, 2004 at 05:14:27PM -0800, Randy.Dunlap wrote:
+|previous (for 2.6.1-bk4):  [2004-01-16]
+|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+|mntr/	ipt_register_target_retval.patch
+|	From: Daniele Bellucci <bellucda@tiscali.it>
+|	to netdev/davem: 2004.0124;
+
+Hi Randy,
+can you tellme what does "mntr" mean?
+
+tnx
 
 
-patch is at:
-http://developer.osdl.org/rddunlap/kj-patches/2.6.2-rc2/2.6.2-rc2-kj1.patch.bz2  [2004-01-27]
+-- 
 
-M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
-
-This patch applies to linux-2.6.2-rc2.
-
-new (for 2.6.2-rc2):  [2004-01-27]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-add/	ide_pci_triflex_not_procfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-
-add/	ps2esdi_typos.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
-
-add/	fbcmap_kmalloc.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-add	vga16fb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-
-previous (for 2.6.2-rc1):  [2004-01-23] [not announced]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-tx/	errno_numbers_assembly.patch
-	From: Danilo Piazzalunga <danilopiazza@libero.it>
-	to akpm: 2004.0126;
-
-drop/	ide_tape_kmalloc_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-	looks wrong:  can't just return without doing work;
-
-mm/	linux_sound_c99_init.patch
-	From: "Maciej Soltysiak" <solt@dns.toxicfilms.tv>
-	to akpm/perex: 2004.0124;
-
-drop/	parameter_typos.patch
-	From: "Maciej Soltysiak" <solt@dns.toxicfilms.tv>
-	don't worry about spellos in comments;
-
-previous (for 2.6.1-bk6):  [2004-01-21]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-tx/	aha1542_kmalloc_type.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
-	to linux-scsi 2004.0124;
-
-tx/	aha1542_qcommand_return.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
-	to linux-scsi 2004.0124;
-
-mm/	char_dz_vrfy_area.patch
-	From: Domen Puncer <domen@coderock.org>
-	to akpm: 2004.0124;
-
-mm/	config_sysrq.patch
-	From: Domen Puncer <domen@coderock.org>
-	to akpm: 2004.0124;
-
-mntr/	mcfserial_remove_casts_args.patch
-	From: Domen Puncer <domen@coderock.org>
-	to gerg@snapgear.com 2004.0124;
-
-mntr/	netdev_get_stats.patch
-	From: Domen Puncer <domen@coderock.org>
-	to netdev/davem: 2004.0124;
-
-tx/	scsi_config_doc.patch
-	From: Jean Delvare <khali@linux-fr.org>
-	to linux-scsi 2004.0124;
-
-mntr/	saa7146_hlp_min_max.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-	to maint: 2004.0124;
-
-previous (for 2.6.1-bk4):  [2004-01-16]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mntr/	config_ledman_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-	to gerg@snapgear.com 2004.0124;
-
-mntr/	ipt_register_target_retval.patch
-	From: Daniele Bellucci <bellucda@tiscali.it>
-	to netdev/davem: 2004.0124;
-
-drop/	kconfig_cleanups_v1.patch
-	From: Matthew Wilcox <willy@debian.org>
-  drop	drivers/block/Kconfig: merge conflicts
-  drop	drivers/video/console/Kconfig: merge conflicts
-  drop	drivers/i2c/*/Kconfig: already merged
-  	Willy to handle with akpm.
-
-add?	kswapd_init_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-add/	lmc_proto_raw_h_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-
-mntr/	netdev_rm_casts.patch
-	From: Carlo Perassi <carlo@linux.it>
-	to netdev/jgarzik: 2004.0124;
-
-mntr/	s390_net_ctctty_putuser.patch
-	From: Domen Puncer <domen@coderock.org>
-	(rediffed)
-	sent to s390 mntr: 2004.0124;
-
-add/	setup_bootmem_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-?add	skfddi_regions_pciupdate.patch
-	From: Matthew Wilcox <willy@debian.org>
-
-drop/	acpi_boot_message_typo.patch
-	From: Simon Richard Grint <rgrint@mrtall.compsoc.man.ac.uk>
-	no longer applicable: function was removed;
-
-mntr/	cpcihp_zt5550_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	to gregkh: 2004.0124;
-
-mntr/	mfcserial_vrfyarea.patch
-	From: Domen Puncer <domen@coderock.org>
-	to gerg@snapgear.com 2004.0124;
-
-tx/	vga16fb.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	to akpm/mntr: 2004.0126;
-
-tx/	vgastate.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	to akpm/mntr: 2004.0126;
-
-drop/	tc35815.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to jgarzik/netdev: 2004.0118;
-	already in netdev patchset;
-
-drop/	depca_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	already in netdev patchset;
-
-tx/	dgrs_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to jgarzik/netdev: 2004.0118;
-
-###
+Daniele.
 
 
---
-~Randy
-kernel-janitors project:  http://janitor.kernelnewbies.org/
+
+
+"I could have made money this way, and perhaps amused myself writing code. 
+But I knew that at the end of my career, I would look back on years of 
+building walls to divide people, and feel I had spent my life making the 
+world a worse place."                               
+                                                          Richard Stallman
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
