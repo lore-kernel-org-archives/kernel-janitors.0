@@ -1,105 +1,63 @@
 From: Hanna Linder <hannal@us.ibm.com>
-Date: Thu, 23 Sep 2004 22:26:40 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm2] Create new function to see
-Message-Id: <2480000.1095978400@w-hlinder.beaverton.ibm.com>
+Date: Thu, 23 Sep 2004 22:28:31 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm2] Change cyrix.c driver to
+Message-Id: <2770000.1095978511@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53417762677110048=="
+Content-Type: multipart/mixed; boundary="===============48752278169892443=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <2480000.1095978400@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <2480000.1095978400@w-hlinder.beaverton.ibm.com>
 To: linux-kernel@vger.kernel.org
-Cc: greg@kroah.com, hannal@us.ibm.com, kernel-janitors@lists.osdl.org, davej@codemonkey.org.uk, hpa@zytor.com
+Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, hannal@us.ibm.com
 
---===============53417762677110048==
+--===============48752278169892443==
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
-Greg asked in a previous janitors thread:
-"What we need is a simple "Is this pci device present right now" type
-function, to solve the mess that logic like this needs."
+I was able to compile this but not boot it as I dont have a cyrix processor.
 
-OK. How about this one? It uses pci_get_device but instead of returning
-the dev it returns 1 if the device is present and 0 if it isnt. This take the
-burdon off the driver from having to know when to use pci_dev_put or
-not and should be cleaner for future maintenance work.
-
-Ive tested it with two patches that will follow.
-
-Hanna Linder
-IBM Linux Technology Center
+Hanna 
 
 Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-----
 
-diff -Nrup linux-2.6.9-rc2-mm2cln/drivers/pci/search.c linux-2.6.9-rc2-mm2patch/drivers/pci/search.c
---- linux-2.6.9-rc2-mm2cln/drivers/pci/search.c	2004-09-23 11:49:04.000000000 -0700
-+++ linux-2.6.9-rc2-mm2patch/drivers/pci/search.c	2004-09-23 15:03:58.000000000 -0700
-@@ -271,6 +271,30 @@ pci_get_device(unsigned int vendor, unsi
- 	return pci_get_subsys(vendor, device, PCI_ANY_ID, PCI_ANY_ID, from);
- }
+diff -Nrup linux-2.6.9-rc2-mm2cln/arch/i386/kernel/cpu/cyrix.c linux-2.6.9-rc2-mm2patch/arch/i386/kernel/cpu/cyrix.c
+--- linux-2.6.9-rc2-mm2cln/arch/i386/kernel/cpu/cyrix.c	2004-09-23 11:48:51.835616512 -0700
++++ linux-2.6.9-rc2-mm2patch/arch/i386/kernel/cpu/cyrix.c	2004-09-23 11:58:42.811774480 -0700
+@@ -192,7 +192,7 @@ static void __init init_cyrix(struct cpu
+ 	unsigned char dir0, dir0_msn, dir0_lsn, dir1 = 0;
+ 	char *buf = c->x86_model_id;
+ 	const char *p = NULL;
+-	struct pci_dev *dev;
++	int ret = -1;
  
-+/**
-+ * pci_dev_present - Returns 1 if device is present, 0 if device is not.
-+ * @vendor: PCI vendor id to match, or %PCI_ANY_ID to match all vendor ids
-+ * @device: PCI device id to match, or %PCI_ANY_ID to match all device ids
-+ * @from: Previous PCI device found in search, or %NULL for new search.
-+ *
-+ * If pci_get_device returns a pci_dev pointer then the device exists and the
-+ * reference count is decremented before returning 1. If pci_get_device
-+ * returns %NULL then 0 is returned to indicate the device was not
-+ * present. Obvious fact: You do not have a reference to the device so if
-+ * it is removed from the system before this function returns the value
-+ * will be stale. 
-+ */
-+int 
-+pci_dev_present(unsigned int vendor, unsigned int device, struct pci_dev *from)
-+{
-+	struct pci_dev *dev;
-+	dev = pci_get_device(vendor, device, from);
-+	if (dev){
-+		pci_dev_put(dev);
-+		return 1;
-+	}
-+	return 0;
-+}
+ 	/* Bit 31 in normal CPUID used for nonstandard 3DNow ID;
+ 	   3DNow is IDd by bit 31 in extended CPUID (1*32+31) anyway */
+@@ -275,16 +275,12 @@ static void __init init_cyrix(struct cpu
+ 		/*
+ 		 *  The 5510/5520 companion chips have a funky PIT.
+ 		 */  
+-		dev = pci_get_device(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510, NULL);
+-		if (dev) {
+-			pci_dev_put(dev);
++		ret = pci_dev_present(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510, NULL);
++		if (ret) 
+ 			pit_latch_buggy = 1;
+-		}
+-		dev =  pci_get_device(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520, NULL);
+-		if (dev) {
+-			pci_dev_put(dev);
++		ret =  pci_dev_present(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520, NULL);
++		if (ret) 
+ 			pit_latch_buggy = 1;
+-		}
  
- /**
-  * pci_find_device_reverse - begin or continue searching for a PCI device by vendor/device id
-@@ -352,3 +376,5 @@ EXPORT_SYMBOL(pci_get_device);
- EXPORT_SYMBOL(pci_get_subsys);
- EXPORT_SYMBOL(pci_get_slot);
- EXPORT_SYMBOL(pci_get_class);
-+EXPORT_SYMBOL(pci_dev_present);
-+
-diff -Nrup linux-2.6.9-rc2-mm2cln/include/linux/pci.h linux-2.6.9-rc2-mm2patch/include/linux/pci.h
---- linux-2.6.9-rc2-mm2cln/include/linux/pci.h	2004-09-23 11:49:27.000000000 -0700
-+++ linux-2.6.9-rc2-mm2patch/include/linux/pci.h	2004-09-23 15:03:01.000000000 -0700
-@@ -733,6 +733,8 @@ struct pci_dev *pci_get_subsys (unsigned
- struct pci_dev *pci_get_slot (struct pci_bus *bus, unsigned int devfn);
- struct pci_dev *pci_get_class (unsigned int class, struct pci_dev *from);
- 
-+int pci_dev_present(unsigned int vendor, unsigned int device, struct pci_dev *from);
-+
- int pci_bus_read_config_byte (struct pci_bus *bus, unsigned int devfn, int where, u8 *val);
- int pci_bus_read_config_word (struct pci_bus *bus, unsigned int devfn, int where, u16 *val);
- int pci_bus_read_config_dword (struct pci_bus *bus, unsigned int devfn, int where, u32 *val);
-@@ -900,6 +902,9 @@ unsigned int ss_vendor, unsigned int ss_
- static inline struct pci_dev *pci_get_class(unsigned int class, struct pci_dev *from)
- { return NULL; }
- 
-+static inline int pci_dev_present(unsigned int vendor, unsigned int device, struct pci_dev *from)
-+{return -1; }
-+
- static inline void pci_set_master(struct pci_dev *dev) { }
- static inline int pci_enable_device(struct pci_dev *dev) { return -EIO; }
- static inline void pci_disable_device(struct pci_dev *dev) { }
+ 		/* GXm supports extended cpuid levels 'ala' AMD */
+ 		if (c->cpuid_level == 2) {
 
 
-
-
-
-
---===============53417762677110048==
+--===============48752278169892443==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -110,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53417762677110048==--
+--===============48752278169892443==--
