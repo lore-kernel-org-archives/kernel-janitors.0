@@ -1,28 +1,39 @@
-From: "David S. Miller" <davem@davemloft.net>
-Date: Tue, 21 Sep 2004 22:18:01 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 23 Sep 2004 16:07:10 +0000
 Subject: [Kernel-janitors] Re: [PATCH][ATM]: [drivers] use msleep() instead
-Message-Id: <20040921151801.3ccd21cd.davem@davemloft.net>
+Message-Id: <20040923160710.GB1699@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============021048770006671713=="
+Content-Type: multipart/mixed; boundary="===============44350882808528702=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200409212029.i8LKTINv010576@ginger.cmf.nrl.navy.mil>
 In-Reply-To: <200409212029.i8LKTINv010576@ginger.cmf.nrl.navy.mil>
 To: chas3@users.sourceforge.net
-Cc: chas@cmf.nrl.navy.mil, netdev@oss.sgi.com, davem@redhat.com, nacc@us.ibm.com, kernel-janitors@lists.osdl.org
+Cc: netdev@oss.sgi.com, davem@redhat.com, kernel-janitors@lists.osdl.org
 
---===============021048770006671713==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============44350882808528702==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 21 Sep 2004 16:29:19 -0400
-"chas williams (contractor)" <chas@cmf.nrl.navy.mil> wrote:
+On Tue, Sep 21, 2004 at 04:29:19PM -0400, chas williams (contractor) wrote:
 
-> this patch (from nacc@us.ibm.com) replaces assorted schedule_timeout()'s
-> with msleep()'s.  please apply to 2.6.
+<snip>
+> diff -Nru a/drivers/atm/lanai.c b/drivers/atm/lanai.c
+> --- a/drivers/atm/lanai.c	2004-09-21 12:48:17 -04:00
+> +++ b/drivers/atm/lanai.c	2004-09-21 12:48:17 -04:00
+> @@ -813,7 +813,7 @@
+>  			DPRINTK("read, write = %d, %d\n", read, write);
+>  			break;
+>  		}
+> -		schedule_timeout(HZ / 25);
+> +		msleep(4);
 
-Applied, thanks Chas and Nishanth.
+Somehow this got changed for msleep(40); to msleep(4); !! :) The patch I
+sent on 15 September had msleep(40); in it, at least. If you could make
+the change in your bk, that would be great!
 
---===============021048770006671713==
+-Nish
+
+--===============44350882808528702==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -33,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============021048770006671713==--
+--===============44350882808528702==--
