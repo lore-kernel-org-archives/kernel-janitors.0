@@ -1,48 +1,38 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 19 Mar 2005 21:47:44 +0000
-Subject: [KJ] [UPDATE PATCH 16/16]
-Message-Id: <20050319214744.GP3306@localhost.localdomain>
+Date: Tue, 08 Mar 2005 13:33:58 +0000
+Subject: [KJ] [PATCH] drivers/ide/cs5520.c : Use the DMA_{64,
+Message-Id: <20050308133358.GA5311@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14419370203212312=="
+Content-Type: multipart/mixed; boundary="===============26488565553873311=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-ide@vger.kernel.org, B.Zolnierkiewicz@elka.pw.edu.pl
 
---===============14419370203212312==
+--===============26488565553873311==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Hello,
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---- linux-2.6.11.orig/drivers/net/wireless/prism54/islpci_hotplug.c	2005-03-02 12:50:28.000000000 +0100
-+++ linux-2.6.11/drivers/net/wireless/prism54/islpci_hotplug.c	2005-03-19 20:33:01.000000000 +0100
-@@ -21,6 +21,7 @@
- #include <linux/version.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
- #include <linux/delay.h>
- #include <linux/init.h> /* For __init, __exit */
- 
-@@ -125,7 +126,7 @@ prism54_probe(struct pci_dev *pdev, cons
+--- linux-2.6.11.orig/drivers/ide/pci/cs5520.c	2005-03-02 12:50:39.000000000 +0100
++++ linux-2.6.11/drivers/ide/pci/cs5520.c	2005-03-03 11:46:46.000000000 +0100
+@@ -227,7 +227,7 @@ static int __devinit cs5520_init_one(str
+ 		return 1;
  	}
- 
- 	/* enable PCI DMA */
--	if (pci_set_dma_mask(pdev, 0xffffffff)) {
-+	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
- 		printk(KERN_ERR "%s: 32-bit PCI DMA not supported", DRV_NAME);
- 		goto do_pci_disable_device;
-         }
+ 	pci_set_master(dev);
+-	if (pci_set_dma_mask(dev, 0xFFFFFFFF)) {
++	if (pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
+ 		printk(KERN_WARNING "cs5520: No suitable DMA available.\n");
+ 		return -ENODEV;
+ 	}
 
---===============14419370203212312==
+--===============26488565553873311==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============14419370203212312==--
+--===============26488565553873311==--
