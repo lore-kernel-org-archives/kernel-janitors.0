@@ -1,41 +1,52 @@
-From: "Luiz Capitulino" <lcapitulino@terra.com.br>
-Date: Sat, 15 May 2004 21:52:36 +0000
+From: Gustavo Franco <stratus@acm.org>
+Date: Sun, 16 May 2004 01:09:32 +0000
 Subject: Re: [Kernel-janitors] change in kernel-janitors maintainer
-Message-Id: <20040515215236.3909.qmail@fwappy.com>
+Message-Id: <40A6BF4C.1000802@acm.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============2254082583797663=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040514230701.7a613b13.rddunlap@osdl.org>
 In-Reply-To: <20040514230701.7a613b13.rddunlap@osdl.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+--===============2254082583797663==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 5/15/2004, "Matthew Wilcox" <willy@debian.org> wrote:
+Randy.Dunlap wrote:
 
->On Fri, May 14, 2004 at 11:07:01PM -0700, Randy.Dunlap wrote:
->> I've been the KJ patchset maintainer since June/2003 and now I'm
->> handing it back to the kernel-janitors project founder, Acme:
->>
->>   Arnaldo Carvalho de Melo <acme@conectiva.com.br>
->>
->> All of you (us) please keep up the janitors work, including helping
->> each other with patch reviews.  Otherwise the patches can easily
->> become too much for one person to handle, along with other duties.
+>I've been the KJ patchset maintainer since June/2003 and now I'm
+>handing it back to the kernel-janitors project founder, Acme:
 >
->Thanks for your work over the past year, Randy.  From my point of view
->you've done a great job.  Hopefully you'll still have time to continue
->reviewing patches.
+>  Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+>
+>All of you (us) please keep up the janitors work, including helping
+>each other with patch reviews.  Otherwise the patches can easily
+>become too much for one person to handle, along with other duties.
+>  
+>
+Hi Randy,
 
- Randy, I would like to thank you too.
+Thank you for your work on kernel janitors, hope that you keep working 
+on kernel stuff,
+like kexec.
 
- You help me a lot with my first patches. :-)
+Welcome back acme, hope that i can help you providing patches to the 
+project.
 
-PS: Hope you not disapear.
+Best regards,
+Gustavo Franco
 
--- Luiz Fernando N. Capitulino
+
+--===============2254082583797663==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============2254082583797663==--
