@@ -1,98 +1,43 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 21 Jul 2004 22:39:03 +0000
-Subject: [Kernel-janitors] [PATCH] dsp56k: replace schedule_timeout() with
-Message-Id: <20040721223903.GO1906@us.ibm.com>
+Date: Mon, 26 Jul 2004 23:44:49 +0000
+Subject: [Kernel-janitors] [PATCH] mtd/cfi_cmdset_0001: replace
+Message-Id: <20040726234449.GE1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============069509452293494256=="
+Content-Type: multipart/mixed; boundary="===============93125110180971149=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============069509452293494256==
+--===============93125110180971149==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
-
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
-
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch.
-
-Note: I looked for the appropriate maintainer of this driver, but I did
-not find anyone. If someone could tell me who that would be, I would
-appreciate it.
+I would appreciate any comments from the janitors list.
 
 Thanks,
 Nish
 
-
-
 Applys-to: 2.6.7
 
-Description: Uses msleep() instead of schedule_timeout() to guarantee
-the task delays at least the desired time amount.
+Description: Uses msleep() instead of schedule_timeout() so the task
+is guaranteed to delay the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/char/dsp56k.c	2004-06-16 05:19:23.000000000 +0000
-+++ linux-dev/drivers/char/dsp56k.c	2004-07-08 23:13:18.000000000 +0000
-@@ -58,12 +58,6 @@
- #define DSP56K_TRANSMIT		(dsp56k_host_interface.isr & DSP56K_ISR_TXDE)
- #define DSP56K_RECEIVE		(dsp56k_host_interface.isr & DSP56K_ISR_RXDF)
+--- linux-vanilla/drivers/mtd/chips/cfi_cmdset_0001.c	2004-06-16 05:19:03.000000000 +0000
++++ linux-dev/drivers/mtd/chips/cfi_cmdset_0001.c	2004-07-02 21:50:13.000000000 +0000
+@@ -1315,8 +1315,7 @@ static int do_erase_oneblock(struct map_
+ 	chip->erase_suspended = 0;
  
--#define wait_some(n) \
--{ \
--	set_current_state(TASK_INTERRUPTIBLE); \
--	schedule_timeout(n); \
--}
--
- #define handshake(count, maxio, timeout, ENABLE, f) \
- { \
- 	long i, t, m; \
-@@ -71,13 +65,13 @@
- 		m = min_t(unsigned long, count, maxio); \
- 		for (i = 0; i < m; i++) { \
- 			for (t = 0; t < timeout && !ENABLE; t++) \
--				wait_some(HZ/50); \
-+				msleep(20); \
- 			if(!ENABLE) \
- 				return -EIO; \
- 			f; \
- 		} \
- 		count -= m; \
--		if (m == maxio) wait_some(HZ/50); \
-+		if (m == maxio) msleep(20); \
- 	} \
- }
+ 	spin_unlock(chip->mutex);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout((chip->erase_time*HZ)/(2*1000));
++	msleep(chip->erase_time / 2);
+ 	spin_lock(chip->mutex);
  
-@@ -85,7 +79,7 @@
- { \
- 	int t; \
- 	for(t = 0; t < n && !DSP56K_TRANSMIT; t++) \
--		wait_some(HZ/100); \
-+		msleep(10); \
- 	if(!DSP56K_TRANSMIT) { \
- 		return -EIO; \
- 	} \
-@@ -95,7 +89,7 @@
- { \
- 	int t; \
- 	for(t = 0; t < n && !DSP56K_RECEIVE; t++) \
--		wait_some(HZ/100); \
-+		msleep(10); \
- 	if(!DSP56K_RECEIVE) { \
- 		return -EIO; \
- 	} \
+ 	/* FIXME. Use a timer to check this, and return immediately. */
 
---===============069509452293494256==
+--===============93125110180971149==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -103,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============069509452293494256==--
+--===============93125110180971149==--
