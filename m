@@ -1,43 +1,72 @@
 From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sun, 04 Jan 2004 03:26:13 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Check return code in
-Message-Id: <20040104032613.GC20458@eugeneteo.net>
+Date: Sun, 04 Jan 2004 05:11:26 +0000
+Subject: Re: [Kernel-janitors] [PATCH] Check return code in mm/vmscan.c
+Message-Id: <20040104051125.GF20458@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040103132524.GA21909@eugeneteo.net>
-In-Reply-To: <20040103132524.GA21909@eugeneteo.net>
+References: <20040103132524.GA21909@eugeneteo.net> <20040103222706.GM6982@parcelfarce.linux.theplanet.co.uk>
+In-Reply-To: <20040103222706.GM6982@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matthew Wilcox <willy@debian.org>
+Cc: linux-mm@kvack.org, kernel-janitors@osdl.org
 
 <quote sender="Matthew Wilcox">
-> On Sat, Jan 03, 2004 at 09:26:13PM +0800, Eugene Teo wrote:
-> > http://www.anomalistic.org/patches/setup-check-ret-alloc_bootmem_low-fix-2.6.1-rc1-mm1.patch
+> On Sat, Jan 03, 2004 at 09:25:24PM +0800, Eugene Teo wrote:
+> > http://www.anomalistic.org/patches/vmscan-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
 > > 
-> > diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/arch/i386/kernel/setup.c 2.6.1-rc1-mm1-fix/arch/i386/kernel/setup.c
+> > diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/vmscan.c 2.6.1-rc1-mm1-fix/mm/vmscan.c
+> > --- 2.6.1-rc1-mm1/mm/vmscan.c	2004-01-03 20:33:39.000000000 +0800
+> > +++ 2.6.1-rc1-mm1-fix/mm/vmscan.c	2004-01-03 21:16:30.000000000 +0800
+> > @@ -1093,10 +1093,16 @@
+> >  
+> >  static int __init kswapd_init(void)
+> >  {
+> > +	int ret;
+> >  	pg_data_t *pgdat;
+> >  	swap_setup();
+> > -	for_each_pgdat(pgdat)
+> > -		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
+> > +	for_each_pgdat(pgdat) {
+> > +		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
+> > +		if (ret < 0) {
+> > +			printk("%s: unable to start kernel thread\n", __FUNCTION__);
+> > +			return ret;
+> > +		}
+> > +	}
+> >  	total_memory = nr_free_pagecache_pages();
+> >  	return 0;
+> >  }
+> 
+> If your new code is triggered, we've just failed to set up total_memory.
+> I expect the system to behave very oddly after this ;-)
 
-[snip]
+a panic call seems to be more appropriate :)
 
-> I'd rather panic() at this point, otherwise we're going to start
-> allocating areas twice and have some really unexplainable crashes.
-> say something like ... panic("Insufficient memory to boot\n");
+Here is the new fix. Patch compiles, and tested.
 
-Hehe, I can't imagine how nasty it would be if we didn't panic :)
+http://www.anomalistic.org/patches/vmscan-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
 
-http://www.anomalistic.org/patches/setup-check-ret-alloc_bootmem_low-fix-2.6.1-rc1-mm1.patch
-
-diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/arch/i386/kernel/setup.c 2.6.1-rc1-mm1-fix/arch/i386/kernel/setup.c
---- 2.6.1-rc1-mm1/arch/i386/kernel/setup.c	2004-01-04 10:29:21.000000000 +0800
-+++ 2.6.1-rc1-mm1-fix/arch/i386/kernel/setup.c	2004-01-04 10:47:03.000000000 +0800
-@@ -875,6 +875,8 @@
- 		if (e820.map[i].addr + e820.map[i].size > 0x100000000ULL)
- 			continue;
- 		res = alloc_bootmem_low(sizeof(struct resource));
-+		if (!res) 
-+			panic("Insufficient memory to boot\n");
- 		switch (e820.map[i].type) {
- 		case E820_RAM:	res->name = "System RAM"; break;
- 		case E820_ACPI:	res->name = "ACPI Tables"; break;
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/vmscan.c 2.6.1-rc1-mm1-fix/mm/vmscan.c
+--- 2.6.1-rc1-mm1/mm/vmscan.c	2004-01-04 10:29:24.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/mm/vmscan.c	2004-01-04 13:04:52.000000000 +0800
+@@ -1093,10 +1093,14 @@
+ 
+ static int __init kswapd_init(void)
+ {
++	int ret;
+ 	pg_data_t *pgdat;
+ 	swap_setup();
+-	for_each_pgdat(pgdat)
+-		kernel_thread(kswapd, pgdat, CLONE_KERNEL);
++	for_each_pgdat(pgdat) {
++		ret = kernel_thread(kswapd, pgdat, CLONE_KERNEL);
++		if (ret < 0)
++			panic("%s: unable to initialise kswapd\n", __FUNCTION__);
++	}
+ 	total_memory = nr_free_pagecache_pages();
+ 	return 0;
+ }
 
 -- 
 Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
