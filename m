@@ -1,70 +1,52 @@
-From: "Tamra Yoder" <KOUDGLP@yahoo.com>
-Date: Fri, 26 Mar 2004 22:08:18 +0000
-Subject: deregulate actinium boom hurricane ajar catechism temperate transitive abrasion transylvania broccol
-Message-Id: <BSOTCMOEHFPFHPPAFSBPAGQB@hotmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--568533409285153767"
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Fri, 02 Apr 2004 00:44:37 +0000
+Subject: Re: [Kernel-janitors] [REDIFF] - drivers/block/floppy.c audit.
+Message-Id: <20040401164437.78885fc9.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1078867777.28746.11.camel@telecentrolivre>
+In-Reply-To: <1078867777.28746.11.camel@telecentrolivre>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----568533409285153767
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
+On Fri, 19 Mar 2004 16:30:57 -0300 Luiz Fernando Capitulino wrote:
 
-<HTML>
-<BODY>
-<CENTER><STRONG>
-<HR>
-</STRONG></CENTER>
-<CENTER><STRONG><FONT size=3D4>If you are paying more than 3.6=
-% on your m<neurophysiology>ortgage, </FONT></STRONG></CENTER>
-<CENTER><STRONG><FONT size=3D4>we can slash your paym<muff>ent!</FONT></ST=
-RONG></CENTER>
-<CENTER><STRONG>(must have owned your home at least 24 months to qualify f=
-or 
-this program)<BR></STRONG><BR><STRONG>GUA<barre>RANTEED LOWEST RA<baseband=
->TES 
-ON THE PLANET<BR><BR>APPR<carrot>OVAL REGARDLESS OF CR<impromptu>EDIT 
-HISTORY!<BR><BR>Start sa<courage>ving tod<timeout>ay<BR><BR></STRONG><A 
-href=3D"http://rd.yahoo.com/dismissal/fresno/hardbake/*http://activesaving=
-com/?partid=3Dbh4" 
-target=3D_blank><STRONG>Show Me The Lowest Rates</STRONG></A><BR><BR></CEN=
-TER>
-<CENTER><STRONG>
-<HR>
-</STRONG></CENTER><FONT size=3D2>
-<CENTER><FONT size=3D1><BR>&nbsp;</CENTER>
-<CENTER><STRONG><BR></STRONG>&nbsp;</CENTER>
-<DIV align=3Dleft><TR><FONT size=3D+0><STRONG>To stop receiving offers </S=
-TRONG><A 
-href=3D"haynes@%77w%77.%77%65g%6F%74%61%67o%6F%64%64%65%61%6C=
-%2E%62%69%7A%2F" 
-target=3D_blank><FONT size=3D+0><STRONG>here</STRONG></FONT></A><FONT 
-size=3D+0><STRONG> </STRONG></FONT></FONT></TR><TR></FONT></TD></TR></DIV>=
+| 
+| Hi people,
+| 
+|  This version comes with the Randy suggestions, the changes
+| are:
+| 
+| - <unsigned char> to <int>;
+| - del_gendisk() insteed of put_disk();
 
-<DIV>
-<DIV></DIV>
-<DIV></DIV>
-<DIV></DIV></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT style=3D"FONT-SIZE: 1px">parameter cholesterol abysmal scabrous=
- stove maintenance montclair calla cathy critique tsar clockwork labyrinth=
- rabbit ethology theme tulane processor endicott saskatchewan defendant do=
-lores turbofan antietam labradorite commend amen consultation trillionth a=
-vow variegate chick putnam tavern charisma alacrity=20</FONT></STRONG></DI=
-V></BODY></HTML>
+I was wrong about that one.
+alloc_disk() is reversed by put_disk() and
+add_disk() is reversed by del_gendisk() AFAICT.
+Is that right .... ??
+
+Anyway, I've made that change, but it needs review, of course,
+when I post the new patchset, hopefully later tonight, Friday
+at latest.
 
 
-----568533409285153767--
+| - del_timer() for all disks.
+| 
+|  Randy, I'm using del_timer in the while() loop. Do you
+| still believe that is wrong ?
 
+You mean in out_del_gendisk: ?
+That looks correct to me.  I don't know what I was thinking
+earlier.
 
+|  I'll love to hear comments, because I have no certain of the
+| correctnes of this version.
 
--------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
+Thanks,
+--
+~Randy
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
