@@ -1,162 +1,55 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Thu, 19 Aug 2004 15:18:43 +0000
-Subject: [Kernel-janitors] [announce] 2.6.8.1-kjt2
-Message-Id: <20040819151843.GB1712@stro.at>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 15 Aug 2004 17:04:52 +0000
+Subject: [Kernel-janitors] Re: 2.6.8.1-kjt1
+Message-Id: <20040815170452.GA2578@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63124520778554105=="
+Content-Type: multipart/mixed; boundary="===============49238017166604858=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040815121713.GE1799@stro.at>
-In-Reply-To: <20040815121713.GE1799@stro.at>
-To: kj <kernel-janitors@osdl.org>
-Cc: linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============63124520778554105==
+--===============49238017166604858==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-quick update to latest patches from kernel janitors,
-finalises list_for_each and completes min-max conversions.
-newer patches mostly under arch.
+On 15/08/04 15:55 +0200, maximilian attems wrote:
+> msleep-drivers_net_slip.patch
 
-if your patches are inside here, please make shure
-everything landed, as it will be pushed to akpm.
-
-here the patch (applies to 2.6.8.1):
-http://debian.stro.at/kjt/2.6.8-kjt2/2.6.8-kjt2.patch.bz2
-
-splitted out patches:
-http://debian.stro.at/kjt/2.6.8-kjt2/split/
-
-diffstat shows 221 files changed. 
-a++ maks
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-added since 2.6.8-kjt1
+  CC [M]  drivers/net/slip.o
+  drivers/net/slip.c: In function `slip_exit':
+  drivers/net/slip.c:1394: warning: implicit declaration of function `msleep'
 
 
-remove-last-suser-call.patch
-  From: maximilian attems <janitor@sternwelten.at>
-  Subject: [patch-kj] remove-last-suser-call drivers/char/rocket.c
-
-fix-typo-arm-dma.patch
-  From: maximilian attems <janitor@sternwelten.at>
-  Subject: [patch] fix-typo-arm-dma ./arch/arm26/machine/dma.c
-
-msleep-drivers_net_slip.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: Re: 2.6.8.1-kjt1
-
-msleep-compile-fix.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: 2.6.8.1-kjt1 2 Compile-warning fixes
-
-list-for-each-arch_alpha_kernel_pci.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-alpha-kernel-pci.c
-
-list-for-each-arch_i386_pci_i386.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-i386-pci-i386.c
-
-list-for-each-arch_ia64_pci_pci.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: arch-ia64-pci-pci.c
-
-list-for-each-arch_ia64_sn_io_machvec_pci_bus_cvlink.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-ia64-sn-io-machvec-pci_bus_cvlink.c
-
-list-for-each-arch_ppc64_kernel_pSeries_pci.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-ppc64-kernel-pSeries_pci.c
-
-list-for-each-arch_ppc64_kernel_pci.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-ppc64-kernel-pci.c
-
-list-for-each-arch_ppc64_kernel_pci_dn.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-ppc64-kernel-pci_dn.c
-
-list-for-each-arch_ppc_kernel_pci.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-ppc-kernel-pci.c
-
-list-for-each-arch_sparc64_kernel_pci_common.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-sparc64-kernel-pci_common.c
-
-list-for-each-arch_sparc64_kernel_pci_sabre.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-sparc64-kernel-pci_sabre.c
-
-list-for-each-arch_sparc_kernel_pcic.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	arch-sparc-kernel-pcic.c
-
-list-for-each-drivers_char_drm_radeon_mem.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	drivers-char-drm-radeon_mem.c
-
-list-for-each-drivers_net_ipv6_ip6_fib.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: net-ipv6-ip6_fib.c
-
-list-for-each-drivers_net_tulip_de4x5.patch
-  From: Domen Puncer <domen@coderock.org>
-  Subject: [Kernel-janitors] [patch 2.6.8.1] list_for_each: 	drivers-net-tulip-de4x5.c
-
-min-max-arch_ia64_hp_sim_simserial.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal 	arch/ia64/hp/sim/simserial.c
-
-min-max-arch_ia64_kernel_unwind.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal arch/ia64/kernel/unwind.c
-
-min-max-arch_ia64_sn_fakeprom_fw-emu.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal 	arch/ia64/sn/fakeprom/fw-emu.c
-
-min-max-arch_m68k_kernel_bios32.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal arch/m68k/kernel/bios32.c
-
-min-max-arch_mips_au1000_common_usbdev.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal 	arch/mips/au1000/common/usbdev.c
-
-min-max-arch_s390_kernel_debug.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal arch/s390/kernel/debug.c
-
-min-max-arch_sh_boards_bigsur_io.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal arch/sh/boards/bigsur/io.c
-
-min-max-arch_sh_cchips_hd6446x_hd64465_io.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal 	arch/sh/cchips/hd6446x/hd64465/io.c
-
-min-max-arch_um_drivers_mconsole_user.patch
-  From: Michael Veeck <michael.veeck@gmx.net>
-  Subject: [Kernel-janitors] [PATCH] minmax-removal 	arch/um/drivers/mconsole_user.c
-
-msleep-drivers_message_fusion_mptbase.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: [PATCH 2.6.8.1] message/mptbase: replace schedule_timeout() with msleep()
-
-msleep-drivers_net_xirc2ps_cs.patch
-  From: Nishanth Aravamudan <nacc@us.ibm.com>
-  Subject: Re: [Kernel-janitors] [PATCH] net/xirc2ps_cs: replace schedule_timeout() with msleep()
+Added include, to fix this:
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-todo:
-- split kernel_thread() patches from Walter Harms
+Original from Nishanth Aravamudan <nacc@us.ibm.com>
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
+--- c/drivers/net/slip.c	Sat Aug 14 10:56:36 2004
++++ a/drivers/net/slip.c	Sun Aug 15 18:58:28 2004
+@@ -74,6 +74,7 @@
+ #include <linux/if_arp.h>
+ #include <linux/if_slip.h>
+ #include <linux/init.h>
++#include <linux/delay.h>
+ #include "slip.h"
+ #ifdef CONFIG_INET
+ #include <linux/ip.h>
+@@ -1390,10 +1391,8 @@ static void __exit slip_exit(void)
+ 	/* First of all: check for active disciplines and hangup them.
+ 	 */
+ 	do {
+-		if (busy) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ / 10);
+-		}
++		if (busy)
++			msleep(100);
+ 
+ 		busy = 0;
+ 		for (i = 0; i < slip_maxdev; i++) {
 
---===============63124520778554105==
+--===============49238017166604858==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -167,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============63124520778554105==--
+--===============49238017166604858==--
