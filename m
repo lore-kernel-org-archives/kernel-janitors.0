@@ -1,17 +1,26 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 20:41:34 +0000
+Date: Mon, 26 Jul 2004 22:30:39 +0000
 Subject: [Kernel-janitors] [PATCH] saa7146_i2c: replace schedule_timeout()
-Message-Id: <20040726204134.GD1897@us.ibm.com>
+Message-Id: <20040726223039.GG1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62981406387198025=="
+Content-Type: multipart/mixed; boundary="===============28241050696293613=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040723220936.GQ2675@us.ibm.com>
 In-Reply-To: <20040723220936.GQ2675@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============62981406387198025==
+--===============28241050696293613==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+
+Another fix thanks to Mark Hollomon. The call
+
+msleep(ms/10);
+
+will result in rounding errors due to the integer evaluation of ms/10
+before the msleep() call. This leads to 0ms timeouts. Therefore, I have
+reinserted the 1msec offset. Please find the correction below and sorry
+for the repeated repeated patches.
 
 Not quite corrected enough. Please see below. Thanks again, Domen.
 
@@ -80,12 +89,12 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  {
 -	set_current_state(TASK_INTERRUPTIBLE);
 -	schedule_timeout((((ms+10)/10)*HZ)/1000);
-+	msleep(ms/10);
++	msleep((ms+10)/10);
  }
  
  u32 saa7146_i2c_func(struct i2c_adapter *adapter)
 
---===============62981406387198025==
+--===============28241050696293613==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -96,4 +105,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62981406387198025==--
+--===============28241050696293613==--
