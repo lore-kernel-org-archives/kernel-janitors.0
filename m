@@ -1,56 +1,81 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 19:24:07 +0000
-Subject: [KJ] [PATCH 11/20] i2c/i2c-elektor: remove
-Message-Id: <20050202192407.GN2546@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 08:11:22 +0000
+Subject: [KJ] [PATCH] drivers/input/gameport/*: convert to
+Message-Id: <20050208081122.GD31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============58540991611992776=="
+Content-Type: multipart/mixed; boundary="xjyYRNSh/RebjC6o"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============58540991611992776==
+
+--xjyYRNSh/RebjC6o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Please consider applying.
+Description:
+convert from pci_module_init to pci_register_driver
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with direct
-wait-queue usage. Patch is compile-tested.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--xjyYRNSh/RebjC6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_input_gameport.patch"
 
---- 2.6.11-rc2-kj-v/drivers/i2c/busses/i2c-elektor.c	2005-01-24 09:28:30.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/i2c/busses/i2c-elektor.c	2005-01-27 11:34:43.000000000 -0800
-@@ -110,7 +110,7 @@ static int pcf_isa_getclock(void *data)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/input/gameport/cs461x.c linux-2.6.11-rc3/drivers/input/gameport/cs461x.c
+--- linux-2.6.11-rc3-vanilla/drivers/input/gameport/cs461x.c	2005-02-03 17:03:45.000000000 +0100
++++ linux-2.6.11-rc3/drivers/input/gameport/cs461x.c	2005-02-07 09:39:27.000000000 +0100
+@@ -320,7 +320,7 @@ static struct pci_driver cs461x_pci_driv
+ 
+ int __init cs461x_init(void)
+ {
+-        return pci_module_init(&cs461x_pci_driver);
++        return pci_register_driver(&cs461x_pci_driver);
  }
  
- static void pcf_isa_waitforpin(void) {
--
-+	DEFINE_WAIT(wait);
- 	int timeout = 2;
- 	long flags;
+ void __exit cs461x_exit(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/input/gameport/emu10k1-gp.c linux-2.6.11-rc3/drivers/input/gameport/emu10k1-gp.c
+--- linux-2.6.11-rc3-vanilla/drivers/input/gameport/emu10k1-gp.c	2004-12-24 22:34:58.000000000 +0100
++++ linux-2.6.11-rc3/drivers/input/gameport/emu10k1-gp.c	2005-02-07 09:39:27.000000000 +0100
+@@ -120,7 +120,7 @@ static struct pci_driver emu_driver = {
  
-@@ -118,14 +118,15 @@ static void pcf_isa_waitforpin(void) {
- 		spin_lock_irqsave(&lock, flags);
- 		if (pcf_pending == 0) {
- 			spin_unlock_irqrestore(&lock, flags);
--			if (interruptible_sleep_on_timeout(&pcf_wait,
--								timeout*HZ)) {
-+			prepare_to_wait(&pcf_wait, &wait, TASK_INTERRUPTIBLE);
-+			if (schedule_timeout(timeout*HZ)) {
- 				spin_lock_irqsave(&lock, flags);
- 				if (pcf_pending == 1) {
- 					pcf_pending = 0;
- 				}
- 				spin_unlock_irqrestore(&lock, flags);
- 			}
-+			finish_wait(&pcf_wait, &wait);
- 		} else {
- 			pcf_pending = 0;
- 			spin_unlock_irqrestore(&lock, flags);
+ int __init emu_init(void)
+ {
+-	return pci_module_init(&emu_driver);
++	return pci_register_driver(&emu_driver);
+ }
+ 
+ void __exit emu_exit(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/input/gameport/fm801-gp.c linux-2.6.11-rc3/drivers/input/gameport/fm801-gp.c
+--- linux-2.6.11-rc3-vanilla/drivers/input/gameport/fm801-gp.c	2004-12-24 22:34:58.000000000 +0100
++++ linux-2.6.11-rc3/drivers/input/gameport/fm801-gp.c	2005-02-07 09:39:27.000000000 +0100
+@@ -145,7 +145,7 @@ static struct pci_driver fm801_gp_driver
+ 
+ int __init fm801_gp_init(void)
+ {
+-	return pci_module_init(&fm801_gp_driver);
++	return pci_register_driver(&fm801_gp_driver);
+ }
+ 
+ void __exit fm801_gp_exit(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/input/gameport/vortex.c linux-2.6.11-rc3/drivers/input/gameport/vortex.c
+--- linux-2.6.11-rc3-vanilla/drivers/input/gameport/vortex.c	2004-12-24 22:35:24.000000000 +0100
++++ linux-2.6.11-rc3/drivers/input/gameport/vortex.c	2005-02-07 09:39:27.000000000 +0100
+@@ -174,7 +174,7 @@ static struct pci_driver vortex_driver =
+ 
+ int __init vortex_init(void)
+ {
+-	return pci_module_init(&vortex_driver);
++	return pci_register_driver(&vortex_driver);
+ }
+ 
+ void __exit vortex_exit(void)
 
---===============58540991611992776==
+--xjyYRNSh/RebjC6o
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +86,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============58540991611992776==--
+--xjyYRNSh/RebjC6o--
