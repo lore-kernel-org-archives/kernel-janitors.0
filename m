@@ -1,38 +1,40 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 08 Mar 2005 13:33:58 +0000
-Subject: [KJ] [PATCH] drivers/ide/cs5520.c : Use the DMA_{64,
-Message-Id: <20050308133358.GA5311@localhost.localdomain>
+From: Stelian Pop <stelian@popies.net>
+Date: Mon, 21 Mar 2005 16:01:38 +0000
+Subject: [KJ] Re: [UPDATE PATCH] drivers/media/video/meye.c: Use the
+Message-Id: <20050321160137.GB3677@crusoe.alcove-fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26488565553873311=="
+Content-Type: multipart/mixed; boundary="===============87807806313063397=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-ide@vger.kernel.org, B.Zolnierkiewicz@elka.pw.edu.pl
+To: kernel-janitors@vger.kernel.org
 
---===============26488565553873311==
+--===============87807806313063397==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+On Fri, Mar 18, 2005 at 06:34:25PM +0100, Tobias Klauser wrote:
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+> Hi Stelian,
+> 
+> On Wed, Mar 16, 2005 at 05:49:06PM +0100, Stelian Pop wrote:
+> > Thanks, applied to my tree. I will push it upstream later.
+> 
+> The previous patch does not compile cleanly on all architectures. Please
+> use the attached one instead.
+> 
+> Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+> pci_set_dma_mask() or pci_set_consistent_dma_mask()
+> This patch includes dma-mapping.h explicitly because it caused errors
+> on some architectures otherwise.
+> See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+> 
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Thanks, I've replaced the previous patch with this one on my tree.
 
---- linux-2.6.11.orig/drivers/ide/pci/cs5520.c	2005-03-02 12:50:39.000000000 +0100
-+++ linux-2.6.11/drivers/ide/pci/cs5520.c	2005-03-03 11:46:46.000000000 +0100
-@@ -227,7 +227,7 @@ static int __devinit cs5520_init_one(str
- 		return 1;
- 	}
- 	pci_set_master(dev);
--	if (pci_set_dma_mask(dev, 0xFFFFFFFF)) {
-+	if (pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
- 		printk(KERN_WARNING "cs5520: No suitable DMA available.\n");
- 		return -ENODEV;
- 	}
+Stelian.
+-- 
+Stelian Pop <stelian@popies.net>
 
---===============26488565553873311==
+--===============87807806313063397==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============26488565553873311==--
+--===============87807806313063397==--
