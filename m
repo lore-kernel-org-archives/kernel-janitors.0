@@ -1,47 +1,47 @@
-From: Jim Nelson <james4765@cwazy.co.uk>
-Date: Tue, 18 Jan 2005 20:54:04 +0000
-Subject: Re: [KJ] [RFC] TODO file cleanups
-Message-Id: <41ED776C.9080601@cwazy.co.uk>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Thu, 20 Jan 2005 17:02:36 +0000
+Subject: Re: [openib-general] Re: [KJ] [RFC] TODO file cleanups
+Message-Id: <20050120170236.GB3174@stusta.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27822500361352587=="
+Content-Type: multipart/mixed; boundary="===============18720879333264806=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050117231123.GC19162@nd47.coderock.org>
 In-Reply-To: <20050117231123.GC19162@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============27822500361352587==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============18720879333264806==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Domen Puncer wrote:
-> On 18/01/05 00:22 +0100, Michael Veeck wrote:
+On Tue, Jan 18, 2005 at 11:06:19AM -0800, Roland Dreier wrote:
+>     Michael> By the way, I was looking at using RCU to reduce locking,
+>     Michael> also for thing like poll_cq. What do you say to that?
 > 
->>Hi!
->>
->>I just wanted to check on how the general policy on maintaining patches 
->>is since I have done the min/max stuff and some still remain in the 
->>kernel. Mostly because the maintainers dont seem to incoporate them 
->>(isdn-eicorn for example was send nearly one year ago).
->>
->>So shall the remaining min/max stuff be left alone or should at least 
->>something be written into Documenteation/*.txt, maybe as a hint for 
->>future generations?
-> 
-> 
-> isdn was updated 11 month ago (!), some patches seem to got merged around
-> maintainers. As for min/max, i see 3 in -kj, none is isdn.
-> 
-> Maybe a list of files/dirs that are unmaintained / not worth patching?
-> Like:
-> drivers/isdn/
-> fs/devfs/
-> sound/oss/
-> broken drivers?
+> Unless it's a dramatic speedup, we should avoid RCU because it seems
+> RCU can only be used with GPL code, not dual GPL/BSD.
 
-Could put broken drivers in the category "You've got the hardware, you make it 
-work".
+"dual GPL/BSD" means you can choose whether you want to use the code 
+under the GPL or under a BSD licence.
 
---===============27822500361352587==
+Therefore, it's simply GPL code.
+
+And even in the other case, the 3-clause BSD licence is compatible with 
+the GPL.
+
+>  - Roland
+
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
+
+--===============18720879333264806==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27822500361352587==--
+--===============18720879333264806==--
