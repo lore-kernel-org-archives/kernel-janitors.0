@@ -1,43 +1,35 @@
 From: Carlo Perassi <carlo@linux.it>
-Date: Tue, 02 Nov 2004 10:18:36 +0000
-Subject: [KJ] [PATCH] driver/net/tg3.c: some s/int/unsigned int
-Message-Id: <20041102101835.GA4083@voyager>
+Date: Tue, 02 Nov 2004 10:55:41 +0000
+Subject: Re: [KJ] [PATCH] driver/net/tg3.c: some s/int/unsigned int
+Message-Id: <20041102105541.GA4485@voyager>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3V7upXqbjpZ4EhLz"
+Content-Type: multipart/mixed; boundary="UugvWAfsgieZRqgk"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20041102101835.GA4083@voyager>
+In-Reply-To: <20041102101835.GA4083@voyager>
 To: kernel-janitors@vger.kernel.org
 
 
---3V7upXqbjpZ4EhLz
+--UugvWAfsgieZRqgk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+
+Hi
+this version fix the diff absolute path (2 lines differs)
 
 -- 
 Carlo Perassi - http://www.linux.it/~carlo/
 
---3V7upXqbjpZ4EhLz
+--UugvWAfsgieZRqgk
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="unsigned_drivers_net_tg3.patch"
-
-Hi
-In http://janitor.kernelnewbies.org/TODO, Jeff Garzik states
-
-"unsigned int" is preferred to "int", it generates better asm code on
-all platforms except sh5.
-
-I manually replaced some "int" with "unsigned int" on drivers/net/tg3.c
-(Broadcom Tigon3 Ethernet driver).
-
-My laptop has this Ethernet card so I compiled and tested the modified version.
-
-Regards.
+Content-Disposition: attachment; filename="unsigned_drivers_net_tg3_a.patch"
 
 Signed-off-by: Carlo Perassi <carlo@linux.it>
 
 ---
 
---- tg3.c	2004-11-01 21:37:45.000000000 +0100
-+++ tg3_mod.c	2004-11-01 22:43:30.000000000 +0100
+--- linux-2.6.10-rc1-orig/drivers/net/tg3.c	2004-10-23 18:34:24.000000000 +0200
++++ linux-2.6.10-rc1/drivers/net/tg3.c	2004-11-01 23:11:18.000000000 +0100
 @@ -471,7 +471,8 @@ static void tg3_switch_clocks(struct tg3
  static int tg3_readphy(struct tg3 *tp, int reg, u32 *val)
  {
@@ -425,7 +417,7 @@ Signed-off-by: Carlo Perassi <carlo@linux.it>
  	if (tg3_version_printed++ == 0)
  		printk(KERN_INFO "%s", version);
 
---3V7upXqbjpZ4EhLz
+--UugvWAfsgieZRqgk
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -436,4 +428,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---3V7upXqbjpZ4EhLz--
+--UugvWAfsgieZRqgk--
