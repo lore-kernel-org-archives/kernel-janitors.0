@@ -1,60 +1,83 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 17:54:49 +0000
-Subject: [Kernel-janitors] [PATCH] dvb/av7110: replace schedule_timeout()
-Message-Id: <20040726175449.GR1897@us.ibm.com>
+Date: Fri, 23 Jul 2004 17:41:48 +0000
+Subject: [Kernel-janitors] Re: [PATCH] eicon/os_bri: replace
+Message-Id: <20040723174148.GH1911@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4196140334858276=="
+Content-Type: multipart/mixed; boundary="===============33325196327125983=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============4196140334858276==
+--===============33325196327125983==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
+This applies to os_4bri.c not os_bri.c. Sorry...
 
-Thanks,
-Nish
+On Fri, Jul 23, 2004 at 10:40:06AM -0700, Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list.
+> 
+> Thanks,
+> Nish
+> 
+> 
+> 
+> Applys-to: 2.6.7
+> 
+> Description: Replace diva_os_sleep() with msleep() and diva_os_wait()
+> with mdelay() in all instances. 
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> 
+> --- linux-vanilla/drivers/isdn/hardware/eicon/os_4bri.c	2004-06-16 05:19:17.000000000 +0000
+> +++ linux-dev/drivers/isdn/hardware/eicon/os_4bri.c	2004-07-02 18:06:40.000000000 +0000
+> @@ -543,7 +543,7 @@ static int _4bri_get_serial_number(diva_
+>  		for (j = 0; j < 5; ++j) {
+>  			PCIwrite(Bus, Slot, 0x4E, &addr, sizeof(addr),
+>  				 hdev);
+> -			diva_os_wait(1);
+> +			mdelay(1);
+>  			PCIread(Bus, Slot, 0x4E, &status, sizeof(status),
+>  				hdev);
+>  			if (status & 0x8000)
+> @@ -950,7 +950,7 @@ diva_4bri_start_adapter(PISDN_ADAPTER Io
+>  	signature = (volatile word *) (&p[0x1E]);
+>  
+>  	for (i = 0; i < 300; ++i) {
+> -		diva_os_wait(10);
+> +		mdelay(10);
+>  		if (READ_WORD(&signature[0]) == 0x4447) {
+>  			DBG_TRC(("Protocol startup time %d.%02d seconds",
+>  				 (i / 100), (i % 100)))
+> @@ -1027,7 +1027,7 @@ static int check_qBri_interrupt(PISDN_AD
+>  	a->ReadyInt = 1;
+>  	a->ram_out(a, &PR_RAM->ReadyInt, 1);
+>  
+> -	for (i = 100; !IoAdapter->IrqCount && (i-- > 0); diva_os_wait(10));
+> +	for (i = 100; !IoAdapter->IrqCount && (i-- > 0); mdelay(10));
+>  
+>  	return ((IoAdapter->IrqCount > 0) ? 0 : -1);
+>  #else
+> @@ -1050,7 +1050,7 @@ static int check_qBri_interrupt(PISDN_AD
+>  	p[PLX9054_INTCSR] = PLX9054_INT_ENABLE;
+>  	DIVA_OS_MEM_DETACH_RESET(IoAdapter, p);
+>  
+> -	diva_os_wait(100);
+> +	mdelay(100);
+>  
+>  	return (0);
+>  #endif				/* SUPPORT_INTERRUPT_TEST_ON_4BRI */
+> @@ -1111,7 +1111,7 @@ static int diva_4bri_stop_adapter(diva_o
+>  	IoAdapter->a.ReadyInt = 1;
+>  	IoAdapter->a.ram_inc(&IoAdapter->a, &PR_RAM->ReadyInt);
+>  	do {
+> -		diva_os_sleep(10);
+> +		msleep(10);
+>  	} while (i-- && a->clear_interrupts_proc);
+>  
+>  	if (a->clear_interrupts_proc) {
 
-Applys-to: 2.6.7
-
-Description: Replace dvb_delay() with msleep() to guarantee the
-task delays the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/media/dvb/ttpci/av7110.c	2004-06-16 05:19:37.000000000 +0000
-+++ linux-dev/drivers/media/dvb/ttpci/av7110.c	2004-07-02 18:47:02.000000000 +0000
-@@ -89,7 +89,7 @@ static void recover_arm(struct av7110 *a
- 	DEB_EE(("av7110: %p\n",av7110));
- 
- 	av7110_bootarm(av7110);
--        dvb_delay(100); 
-+        msleep(100); 
-         restart_feeds(av7110);
- 	av7110_fw_cmd(av7110, COMTYPE_PIDFILTER, SetIR, 1, av7110->ir_config);
- }
-@@ -1510,7 +1510,7 @@ err3:
- 	av7110->arm_rmmod = 1;
- 	wake_up_interruptible(&av7110->arm_wait);
- 	while (av7110->arm_thread)
--		dvb_delay(1);
-+		msleep(1);
- err2:
- 	av7110_ca_exit(av7110);
- 	av7110_av_exit(av7110);
-@@ -1546,7 +1546,7 @@ static int av7110_detach (struct saa7146
- 	wake_up_interruptible(&av7110->arm_wait);
- 
- 	while (av7110->arm_thread)
--		dvb_delay(1);
-+		msleep(1);
- 
- 	dvb_unregister(av7110);
- 	
-
---===============4196140334858276==
+--===============33325196327125983==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +88,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4196140334858276==--
+--===============33325196327125983==--
