@@ -1,82 +1,45 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 21:16:41 +0000
-Subject: [KJ] [UPDATE PATCH] block/pcd: replace pcd_sleep() with
-Message-Id: <20050110211641.GE9186@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Wed, 26 Jan 2005 22:06:44 +0000
+Subject: [KJ] [PATCH 53/53][RESEND] tridentfb: Clean up printk()'s in
+Message-Id: <20050126220644.14158.61018.29589@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42008077430765933=="
+Content-Type: multipart/mixed; boundary="===============89430163626511727=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============42008077430765933==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============89430163626511727==
 
-Sorry, slightly inaccurate description...
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/tridentfb.c - resent after correcting one improper KERN_ constant.
 
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
-> 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-<snip>
-
-> msleep_interruptible-drivers_block_pcd.patch
-
-Please consider replacing with the following patch:
-
-Description: Use msleep()/ssleep() instead of pcd_sleep() to guarantee
-the task delays as expected. TASK_INTERRUPTIBLE is used in the original code,
-however there is no check on the return values / for signals, thus I believe
-TASK_UNINTERRUPTIBLE (and hence msleep()) is more appropriate. Remove definition
-of pcd_sleep().
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-v/drivers/block/paride/pcd.c	2004-12-24 13:35:39.000000000 -0800
-+++ 2.6.10/drivers/block/paride/pcd.c	2005-01-10 12:20:29.000000000 -0800
-@@ -534,12 +534,6 @@ static int pcd_tray_move(struct cdrom_de
- 			 position ? "eject" : "close tray");
- }
- 
--static void pcd_sleep(int cs)
--{
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(cs);
--}
--
- static int pcd_reset(struct pcd_unit *cd)
- {
- 	int i, k, flg;
-@@ -549,11 +543,11 @@ static int pcd_reset(struct pcd_unit *cd
- 	write_reg(cd, 6, 0xa0 + 0x10 * cd->drive);
- 	write_reg(cd, 7, 8);
- 
--	pcd_sleep(20 * HZ / 1000);	/* delay a bit */
-+	msleep(20);			/* delay a bit */
- 
- 	k = 0;
- 	while ((k++ < PCD_RESET_TMO) && (status_reg(cd) & IDE_BUSY))
--		pcd_sleep(HZ / 10);
-+		msleep(100);
- 
- 	flg = 1;
- 	for (i = 0; i < 5; i++)
-@@ -592,7 +586,7 @@ static int pcd_ready_wait(struct pcd_uni
- 		if (!(((p & 0xffff) == 0x0402) || ((p & 0xff) == 6)))
- 			return p;
- 		k++;
--		pcd_sleep(HZ);
-+		ssleep(1);
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/tridentfb.c linux-2.6.11-rc2-mm1/drivers/video/tridentfb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/tridentfb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/tridentfb.c	2005-01-26 17:02:49.907863015 -0500
+@@ -1163,7 +1163,7 @@
+ 	fb_info.var = default_var;
+ 	fb_info.device = &dev->dev;
+ 	if (register_framebuffer(&fb_info) < 0) {
+-		output("Could not register Trident framebuffer\n");
++		printk(KERN_ERR "tridentfb: could not register Trident framebuffer\n");
+ 		return -EINVAL;
  	}
- 	return 0x000020;	/* timeout */
- }
+ 	output("fb%d: %s frame buffer device %dx%d-%dbpp\n",
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/include/video/trident.h linux-2.6.11-rc2-mm1/include/video/trident.h
+--- linux-2.6.11-rc2-mm1-original/include/video/trident.h	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/include/video/trident.h	2005-01-26 17:02:08.952592688 -0500
+@@ -9,7 +9,7 @@
+ #define debug(f,a...)
+ #endif
+ 
+-#define output(f, a...) printk("tridentfb: " f, ## a)
++#define output(f, a...) pr_info("tridentfb: " f, ## a)
+ 
+ #define Kb	(1024)
+ #define Mb	(Kb*Kb)
 
---===============42008077430765933==
+--===============89430163626511727==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -87,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42008077430765933==--
+--===============89430163626511727==--
