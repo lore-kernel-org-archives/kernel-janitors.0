@@ -1,27 +1,42 @@
-From: Jon Masters <jonmasters@gmail.com>
-Date: Fri, 22 Oct 2004 23:34:07 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 22 Oct 2004 23:40:26 +0000
 Subject: Re: [KJ] [PATCH] net/ewrk3: replace schedule_timeout() with
-Message-Id: <35fb2e590410221634498cda22@mail.gmail.com>
+Message-Id: <20041022234026.GG18906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40672081714414876=="
+Content-Type: multipart/mixed; boundary="===============91692816989016157=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20041022232643.GC18906@us.ibm.com>
 In-Reply-To: <20041022232643.GC18906@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============40672081714414876==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============91692816989016157==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 22 Oct 2004 16:33:43 -0700, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
+On Sat, Oct 23, 2004 at 12:34:07AM +0100, Jon Masters wrote:
+> On Fri, 22 Oct 2004 16:33:43 -0700, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
+> 
+> > Do you mean in the original driver or in my conversion?
+> 
+> Your conversion. Seems an order of magnitude larger than it needs to be.
 
-> Do you mean in the original driver or in my conversion?
+The original was:
 
-Your conversion. Seems an order of magnitude larger than it needs to be.
+schedule_timeout(HZ>>2);
 
-Jon.
+Which is, if my math is right,
 
---===============40672081714414876==
+HZ (the number of jiffies in a second) shifted 2 bits right, or divided
+by 4. In other words, the number of jiffies in a quarter-second.
+
+250 is the number of milliseconds in a quarter-second.
+
+Thus, I think, the values are equivalent. Please correct and slap
+accordingly...
+
+-Nish
+
+--===============91692816989016157==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -32,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40672081714414876==--
+--===============91692816989016157==--
