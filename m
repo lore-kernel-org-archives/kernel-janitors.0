@@ -1,32 +1,46 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 29 Sep 2004 17:41:21 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 2/4] pci hotplug/cpqphp:
-Message-Id: <20040929174121.GE12641@kroah.com>
+From: Felipe W Damasio <felipewd@terra.com.br>
+Date: Thu, 23 Sep 2004 04:19:30 +0000
+Subject: [Kernel-janitors] [PATCH] 8139cp net driver: add MODULE_VERSION
+Message-Id: <41524ED2.70306@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============017461209383768717=="
+Content-Type: multipart/mixed; boundary="------------060402040608010905050809"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040916234647.GI1777@us.ibm.com>
-In-Reply-To: <20040916234647.GI1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============017461209383768717==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------060402040608010905050809
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 24, 2004 at 04:18:58PM -0700, Nishanth Aravamudan wrote:
-> Any comments would be appreciated.
-> 
-> Description: Use msleep_interruptible() instead of
-> schedule_timeout() to guarantee the task delays as expected.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+	Hi Jeff,
 
-Applied, thanks.
+	Add MODULE_VERSION to 8139cp net driver.
 
-greg k-h
+	Cheers,
 
+Felipe
 
---===============017461209383768717==
+--------------060402040608010905050809
+Content-Type: text/x-patch;
+ name="8139cp-version.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="8139cp-version.patch"
+
+Signed-off-by: Felipe W Damasio <felipewd@terra.com.br>
+
+--- linux-2.6.9-rc2-bk8/drivers/net/8139cp.c.orig	2004-09-23 01:02:44.722495968 -0300
++++ linux-2.6.9-rc2-bk8/drivers/net/8139cp.c	2004-09-23 01:02:58.067467224 -0300
+@@ -90,6 +90,7 @@
+ 
+ MODULE_AUTHOR("Jeff Garzik <jgarzik@pobox.com>");
+ MODULE_DESCRIPTION("RealTek RTL-8139C+ series 10/100 PCI Ethernet driver");
++MODULE_VERSION(DRV_VERSION);
+ MODULE_LICENSE("GPL");
+ 
+ static int debug = -1;
+
+--------------060402040608010905050809
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============017461209383768717==--
+--------------060402040608010905050809--
