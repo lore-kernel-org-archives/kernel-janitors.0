@@ -1,42 +1,50 @@
-From: Yoon Soo <yoonsoo@web.de>
-Date: Wed, 26 May 2004 20:37:45 +0000
-Subject: [Kernel-janitors] introduction and first questions
-Message-Id: <40B50019.7040607@web.de>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Thu, 27 May 2004 21:50:21 +0000
+Subject: Re: [Kernel-janitors] introduction and first questions
+Message-Id: <20040527215021.GC1598@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50228978098070542=="
+Content-Type: multipart/mixed; boundary="===============44705593058733606=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <40B50019.7040607@web.de>
+In-Reply-To: <40B50019.7040607@web.de>
 To: kernel-janitors@vger.kernel.org
 
---===============50228978098070542==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============44705593058733606==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi all,
+hi yoon,
 
-I am new in this list and there are some points which are not very clear 
-to me. But first of all, I read the todo list and worked on the point to 
-get rid of the 'old-fashioned' way to access the driver_data field 
-direct and replaced them with the proper dev_get/set_drvdata or 
-pci_get/set_drvdata.
+On Wed, 26 May 2004, Yoon Soo wrote:
 
-I created the patch like mentioned in the patchsubmitting-howto of the 
-source documentation, and have tested it. What are now the further 
-steps, just sending the patch as attachement to this list? Another 
-question is, which original source code version should be taken..2.6.6 
-(as I did) or the most actual from the cvs tree?
+...
+> I created the patch like mentioned in the patchsubmitting-howto of the 
+> source documentation, and have tested it. What are now the further 
+> steps, just sending the patch as attachement to this list? Another 
+> question is, which original source code version should be taken..2.6.6 
+> (as I did) or the most actual from the cvs tree?
 
-Very many thanks in advance for helping me making the first steps ;)
+the more actual the better, but mention on which version your patch
+applies. please send the patch inline to the kj mailinglist, not attached.
+take a look at 6) -> SubmittingPatches
 
-greets
+do take care not to introduce trailing space
+or to convert tabs into spaces 
+quick  egrep -n "^\+(.* $|        )" helps.
+do not forget to mention in your description the testing 
+(just compiled in lack of hardware, or actually run).
+ 
+> Very many thanks in advance for helping me making the first steps ;)
 
-ys
+you' ll get more feedback as soon your patches lands.
+if you don't get any feedback that may also be a good sign,
+and your patch may get into next kj patch set.
 
-PS. As I have seen while working on my patch, tty->driver_data should 
-also not accessed directly, and for the consistency tty_get_drvdata and 
-tty_set_drvdata should be added too and called instead of the direct 
-access. Is this the right list to discuss this matter? Or is it in work?
+good luck
+a++ maks
 
---===============50228978098070542==
+
+--===============44705593058733606==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50228978098070542==--
+--===============44705593058733606==--
