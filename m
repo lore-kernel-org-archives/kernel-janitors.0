@@ -1,54 +1,83 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 28 Jul 2004 17:37:48 +0000
-Subject: Re: [Kernel-janitors] [PATCH] net/ibmtr: replace schedule_timeout()
-Message-Id: <20040728173747.GE1935@us.ibm.com>
+Date: Fri, 23 Jul 2004 21:48:54 +0000
+Subject: [Kernel-janitors] [PATCH] macintosh/mediabay: replace
+Message-Id: <20040723214854.GO2675@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66651907233648999=="
+Content-Type: multipart/mixed; boundary="===============76756147921422291=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040727204332.GA3471@us.ibm.com>
-In-Reply-To: <20040727204332.GA3471@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============66651907233648999==
+--===============76756147921422291==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 27, 2004 at 01:43:32PM -0700, Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list. 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Use msleep() instead of schedule_timeout() to guarantee
-> the task delays for the desired time.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+I would appreciate any comments from the janitors list.
 
-The previous patch introduced extraneous whitespace, sorry. Thanks,
-Domen.
+Thanks,
+Nish
 
 
---- linux-vanilla/drivers/net/tokenring/ibmtr.c	2004-06-15 22:19:37.000000000 -0700
-+++ linux-dev/drivers/net/tokenring/ibmtr.c	2004-07-28 10:36:12.000000000 -0700
-@@ -108,6 +108,7 @@ in the event that chatty debug messages 
- #define IBMTR_DEBUG_MESSAGES 0
- 
- #include <linux/module.h>
-+#include <linux/delay.h>
- 
- #ifdef PCMCIA		/* required for ibmtr_cs.c to build */
- #undef MODULE		/* yes, really */
-@@ -857,8 +858,7 @@ static int tok_init_card(struct net_devi
- 	writeb(~INT_ENABLE, ti->mmio + ACA_OFFSET + ACA_RESET + ISRP_EVEN);
- 	outb(0, PIOaddr + ADAPTRESET);
- 
--	current->state=TASK_UNINTERRUPTIBLE;
--	schedule_timeout(TR_RST_TIME); /* wait 50ms */
-+	msleep(jiffies_to_msecs(TR_RST_TIME));
- 
- 	outb(0, PIOaddr + ADAPTRESETREL);
- #ifdef ENABLE_PAGING
 
---===============66651907233648999==
+Applys-to: 2.6.7
+
+Description: Use msleep() instead of schedule_timeout() to guarantee the
+task delays the desired time.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/macintosh/mediabay.c	2004-06-16 05:19:02.000000000 +0000
++++ linux-dev/drivers/macintosh/mediabay.c	2004-07-12 18:46:56.000000000 +0000
+@@ -686,15 +685,13 @@ static int __devinit media_bay_attach(st
+ 
+ 	/* Force an immediate detect */
+ 	set_mb_power(bay, 0);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(MS_TO_HZ(MB_POWER_DELAY));
++	msleep(MB_POWER_DELAY);
+ 	bay->content_id = MB_NO;
+ 	bay->last_value = bay->ops->content(bay);
+ 	bay->value_count = MS_TO_HZ(MB_STABLE_DELAY);
+ 	bay->state = mb_empty;
+ 	do {
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(MS_TO_HZ(MB_POLL_DELAY));
++		msleep(MB_POLL_DELAY);
+ 		media_bay_step(i);
+ 	} while((bay->state != mb_empty) &&
+ 		(bay->state != mb_up));
+@@ -719,8 +716,7 @@ static int __pmac media_bay_suspend(stru
+ 		bay->sleeping = 1;
+ 		set_mb_power(bay, 0);
+ 		up(&bay->lock);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(MS_TO_HZ(MB_POLL_DELAY));
++		msleep(MB_POLL_DELAY);
+ 		mdev->ofdev.dev.power_state = state;
+ 	}
+ 	return 0;
+@@ -740,8 +736,7 @@ static int __pmac media_bay_resume(struc
+ 	       	/* Force MB power to 0 */
+ 		down(&bay->lock);
+ 	       	set_mb_power(bay, 0);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(MS_TO_HZ(MB_POWER_DELAY));
++		msleep(MB_POWER_DELAY);
+ 	       	if (bay->ops->content(bay) != bay->content_id) {
+ 			printk("mediabay%d: content changed during sleep...\n", bay->index);
+ 			up(&bay->lock);
+@@ -755,8 +750,7 @@ static int __pmac media_bay_resume(struc
+ 	       	bay->cd_retry = 0;
+ #endif
+ 	       	do {
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(MS_TO_HZ(MB_POLL_DELAY));
++			msleep(MB_POLL_DELAY);
+ 	       		media_bay_step(bay->index);
+ 	       	} while((bay->state != mb_empty) &&
+ 	       		(bay->state != mb_up));
+
+--===============76756147921422291==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +88,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66651907233648999==--
+--===============76756147921422291==--
