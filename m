@@ -1,62 +1,56 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 21 Sep 2004 20:48:34 +0000
-Subject: Re: [Kernel-janitors] [PATCH 2.6.9-rc2 8/33] char/ftape-io: replace
-Message-Id: <20040921204834.GB4260@stro.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 16 Sep 2004 23:11:14 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/3] ide/ide-cd: replace
+Message-Id: <20040916231114.GE1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============60472683090467738=="
+Content-Type: multipart/mixed; boundary="===============49154365171629522=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040915225358.GO5778@us.ibm.com>
-In-Reply-To: <20040915225358.GO5778@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============60472683090467738==
+--===============49154365171629522==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, 15 Sep 2004, Nishanth Aravamudan wrote:
+Any comments would be appreciated.
 
-> Any comments would be appreciated. 
-> 
-> Description: Use msleep_interruptible() instead of schedule_timeout() to
-> guarantee the task delays as expected. In this case, this allowed for
-> the removal of the entire do-while.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> --- 2.6.9-rc2-vanilla/drivers/char/ftape/lowlevel/ftape-io.c	2004-09-13 17:15:47.000000000 -0700
-> +++ 2.6.9-rc2/drivers/char/ftape/lowlevel/ftape-io.c	2004-09-14 11:27:06.000000000 -0700
-> @@ -96,19 +96,12 @@ void ftape_sleep(unsigned int time)
->  		timeout = ticks;
->  		save_flags(flags);
->  		sti();
-> -		set_current_state(TASK_INTERRUPTIBLE);
-> -		do {
-> -			/*  Mmm. Isn't current->blocked == 0xffffffff ?
-> -			 */
-> -			if (signal_pending(current)) {
-> -				TRACE(ft_t_err,
-> -				      "awoken by non-blocked signal :-(");
-> -				break;	/* exit on signal */
-> -			}
-> -			while (current->state != TASK_RUNNING) {
-> -				timeout = schedule_timeout(timeout);
-> -			}
-> -		} while (timeout);
-> +		msleep_interruptible(jiffies_to_msecs(timeout));
-> +		/*  Mmm. Isn't current->blocked == 0xffffffff ?
-> +		 */
-> +		if (signal_pending(current)) {
-> +			TRACE(ft_t_err, "awoken by non-blocked signal :-(");
-> +		}
->  		restore_flags(flags);
->  	}
->  	TRACE_EXIT;
+Description: Uses msleep() in place of cdrom_sleep()
+to guarantee the task delays as expected.
 
-this one missed an include too. fixed for next kjt.
-a++ maks
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.9-rc2-vanilla/drivers/ide/ide-cd.c	2004-09-13 17:16:06.000000000 -0700
++++ 2.6.9-rc2/drivers/ide/ide-cd.c	2004-09-14 13:52:14.000000000 -0700
+@@ -1519,19 +1519,6 @@ static ide_startstop_t cdrom_do_packet_c
+ }
+ 
+ 
+-/* Sleep for TIME jiffies.
+-   Not to be called from an interrupt handler. */
+-static
+-void cdrom_sleep (int time)
+-{
+-	int sleep = time;
+-
+-	do {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		sleep = schedule_timeout(sleep);
+-	} while (sleep);
+-}
+-
+ static
+ int cdrom_queue_packet_command(ide_drive_t *drive, struct request *rq)
+ {
+@@ -1566,7 +1553,7 @@ int cdrom_queue_packet_command(ide_drive
+ 				/* The drive is in the process of loading
+ 				   a disk.  Retry, but wait a little to give
+ 				   the drive time to complete the load. */
+-				cdrom_sleep(2 * HZ);
++				msleep(2000);
+ 			} else {
+ 				/* Otherwise, don't retry. */
+ 				retries = 0;
 
---===============60472683090467738==
+--===============49154365171629522==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============60472683090467738==--
+--===============49154365171629522==--
