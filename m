@@ -1,48 +1,39 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Mar 2005 20:39:44 +0000
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Thu, 03 Mar 2005 23:31:50 +0000
 Subject: Re: [KJ] 2.6.11-kj
-Message-Id: <20050303203944.GB16078@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============055207910731311038=="
+Message-Id: <200503040221.03211.adobriyan@mail.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050302095710.GA3745@nd47.coderock.org>
 In-Reply-To: <20050302095710.GA3745@nd47.coderock.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============055207910731311038==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thursday 03 March 2005 20:34, Nishanth Aravamudan wrote:
 
-On Thu, Mar 03, 2005 at 09:34:28PM +0100, Adrian Bunk wrote:
-> On Thu, Mar 03, 2005 at 09:43:39AM -0800, Nishanth Aravamudan wrote:
-> > 
-> > I do not see these compile-time warnings. Admittedly, that warning is
-> > also rather difficult to justify in the kernel, as code with local
-> > variables declared in the middle of functions is relatively common :)
-> > 
-> > It could just be that I need to modify my gcc flags, though... In any
-> > case, I'm not sure how big of a problem this is, but of course am
-> > willing to fix it, if so desired.
-> 
-> gcc < 2.96 gives a compile error for mixing them (and gcc 2.95 is a 
-> supported compiler for the kernel).
-> 
-> gcc >= 3.4 has a warning option (activated in the kernel) for this 
-> mixing.
+> Please let me know if it works and I'll push to LKML over the current KJ
+> set.
 
-I see. Thanks for the info, Adrian!
+It works. Neither gcc nor sparse complain now.
 
--Nish
+> --- 2.6.11-kj-v/drivers/cdrom/mcdx.c
+> +++ 2.6.11-kj/drivers/cdrom/mcdx.c
+> @@ -838,10 +838,10 @@ static void mcdx_delay(struct s_drive_st
+>   *	May be we could use a simple count loop w/ jumps to itself, but
+>   *	I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
+>  {
+> +	DEFINE_WAIT(wait);
+>  	if (jifs < 0)
+>  		return;
+>  
+> -	DEFINE_WAIT(wait);
+>  	xtrace(SLEEP, "*** delay: sleepq\n");
+>  	prepare_to_wait(&stuff->sleepq, &wait, TASK_INTERRUPTIBLE);
+>  	schedule_timeout(jifs);
 
---===============055207910731311038==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+	Alexey
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============055207910731311038==--
