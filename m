@@ -1,83 +1,45 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 17:56:51 +0000
-Subject: [KJ] [PATCH 1/20] char/lp: remove interruptible_sleep_on_timeout()
-Message-Id: <20050202175651.GB2546@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Mon, 07 Feb 2005 10:17:36 +0000
+Subject: [KJ] [PATCH] drivers/char/watchdog/*: convert to pci_register_driver
+Message-Id: <20050207101736.GE21028@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82464504877102329=="
+Content-Type: multipart/mixed; boundary="cHMo6Wbp1wrKhbfi"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============82464504877102329==
+
+--cHMo6Wbp1wrKhbfi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Please consider applying.
+Description:
+convert from pci_module_init to pci_register_driver
 
-Description: Replace deprecated interruptible_sleep_on_timeout() function calls
-with direct wait-queue usage. There may be an existing problem with this driver,
-as I am not finding any wake_up_interruptible() callers for the waitq. 
-Patch is compile-tested.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--cHMo6Wbp1wrKhbfi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_char_watchdog.patch"
 
-
---- 2.6.11-rc2-kj-v/drivers/char/lp.c	2005-01-24 09:34:06.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/char/lp.c	2005-02-02 09:55:30.000000000 -0800
-@@ -127,6 +127,7 @@
- #include <linux/poll.h>
- #include <linux/console.h>
- #include <linux/device.h>
-+#include <linux/wait.h>
- 
- #include <linux/parport.h>
- #undef LP_STATS
-@@ -218,6 +219,7 @@ static int lp_reset(int minor)
- 
- static void lp_error (int minor)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/char/watchdog/pcwd_pci.c linux-2.6.11-rc3/drivers/char/watchdog/pcwd_pci.c
+--- linux-2.6.11-rc3-vanilla/drivers/char/watchdog/pcwd_pci.c	2004-12-24 22:33:59.000000000 +0100
++++ linux-2.6.11-rc3/drivers/char/watchdog/pcwd_pci.c	2005-02-07 09:39:27.000000000 +0100
+@@ -659,7 +659,7 @@ static int __init pcipcwd_init_module(vo
  {
-+	DEFINE_WAIT(wait);
- 	int polling;
+ 	spin_lock_init (&pcipcwd_private.io_lock);
  
- 	if (LP_F(minor) & LP_ABORT)
-@@ -225,8 +227,9 @@ static void lp_error (int minor)
- 
- 	polling = lp_table[minor].dev->port->irq == PARPORT_IRQ_NONE;
- 	if (polling) lp_release_parport (&lp_table[minor]);
--	interruptible_sleep_on_timeout (&lp_table[minor].waitq,
--					LP_TIMEOUT_POLLED);
-+	prepare_to_wait(&lp_table[minor].waitq, &wait, TASK_INTERRUPTIBLE);
-+	schedule_timeout(LP_TIMEOUT_POLLED);
-+	finish_wait(&lp_table[minor].waitq, &wait);
- 	if (polling) lp_claim_parport_or_block (&lp_table[minor]);
- 	else parport_yield_blocking (lp_table[minor].dev);
+-	return pci_module_init(&pcipcwd_driver);
++	return pci_register_driver(&pcipcwd_driver);
  }
-@@ -410,6 +413,7 @@ static ssize_t lp_write(struct file * fi
- static ssize_t lp_read(struct file * file, char __user * buf,
- 		       size_t count, loff_t *ppos)
- {
-+	DEFINE_WAIT(wait);
- 	unsigned int minor=iminor(file->f_dentry->d_inode);
- 	struct parport *port = lp_table[minor].dev->port;
- 	ssize_t retval = 0;
-@@ -458,9 +462,11 @@ static ssize_t lp_read(struct file * fil
- 				retval = -EIO;
- 				goto out;
- 			}
--		} else
--			interruptible_sleep_on_timeout (&lp_table[minor].waitq,
--							LP_TIMEOUT_POLLED);
-+		} else {
-+			prepare_to_wait(&lp_table[minor].waitq, &wait, TASK_INTERRUPTIBLE);
-+			schedule_timeout(LP_TIMEOUT_POLLED);
-+			finish_wait(&lp_table[minor].waitq, &wait);
-+		}
  
- 		if (signal_pending (current)) {
- 			retval = -ERESTARTSYS;
+ static void __exit pcipcwd_cleanup_module(void)
 
---===============82464504877102329==
+--cHMo6Wbp1wrKhbfi
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82464504877102329==--
+--cHMo6Wbp1wrKhbfi--
