@@ -1,39 +1,26 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 22 Sep 2004 16:10:34 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 8/17] media/ovcamchip_core:
-Message-Id: <20040922161034.GA1924@us.ibm.com>
+From: java solaris <duketux@yahoo.com.cn>
+Date: Thu, 16 Sep 2004 23:34:46 +0000
+Subject: [Kernel-janitors] (no subject)
+Message-Id: <20040916233446.68818.qmail@web15710.mail.cnb.yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95502558464666509=="
+Content-Type: multipart/mixed; boundary="===============36017026741745672=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <41517248.3030707@alpha.dyndns.org>
-In-Reply-To: <41517248.3030707@alpha.dyndns.org>
+References: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
+In-Reply-To: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
 To: kernel-janitors@vger.kernel.org
 
---===============95502558464666509==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============36017026741745672==
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 
-On Wed, Sep 22, 2004 at 05:38:32AM -0700, Mark McClelland wrote:
-> Nishanth Aravamudan wrote:
-> 
-> >Any comments would be appreciated.
-> >
-> >Description: Use msleep() instead of schedule_timeout() to
-> >guarantee the task delays as expected.
-> > 
-> >
-> 
-> Looks good to me. Thank you for doing this.
-> 
-> Should I send this on to Andrew/Linus, or were you (or some automated 
-> janitor-patch-bot) planning to do that?
+IAogCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KRG8gWW91IFlhaG9vIT8KMTUwzfLH+k1QM7fov/HL0aOstPjE+rSzyOvS9MDWte7Mwwpo
+dHRwOi8vbXVzaWMueWlzb3UuY29tLwrDwMWuw/fQx9Om09C+odPQo6zL0bHpw8DNvKGi0d7NvLrN
+v+HNvApodHRwOi8vaW1hZ2UueWlzb3UuY29tCjFHvs3KxzEwMDDV16Os0cW7orXn08rX1Nb6wKnI
+3aOhCmh0dHA6Ly9jbi5yZC55YWhvby5jb20vbWFpbF9jbi90YWcvMWcvKmh0dHA6Ly9jbi5tYWls
+LnlhaG9vLmNvbS9ldmVudC9tYWlsXzFnLwo=
 
-If you don't send it to Andrew/Linus, then Max (the kernel-janitors
-maintainer) will take care of it, from what I understand.
-
--Nish
-
---===============95502558464666509==
+--===============36017026741745672==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +31,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95502558464666509==--
+--===============36017026741745672==--
