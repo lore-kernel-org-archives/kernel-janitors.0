@@ -1,40 +1,42 @@
-From: Pete Zaitcev <zaitcev@redhat.com>
-Date: Tue, 13 Jul 2004 19:34:43 +0000
-Subject: [Kernel-janitors] Re: [linux-usb-devel] no set_current_state()
-Message-Id: <20040713123443.5af7dfd7@lembas.zaitcev.lan>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 27 Jul 2004 21:39:01 +0000
+Subject: [Kernel-janitors] [PATCH] hotplug/ibmphp: remove long_delay
+Message-Id: <20040727213901.GR3471@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92980167886231047=="
+Content-Type: multipart/mixed; boundary="===============79766329398642932=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200407132053.18110.oliver@neukum.org>
-In-Reply-To: <200407132053.18110.oliver@neukum.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92980167886231047==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============79766329398642932==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 13 Jul 2004 20:57:14 +0200
-Oliver Neukum <oliver@neukum.org> wrote:
+I would appreciate any comments from the janitors list. 
 
-> Am Dienstag, 13. Juli 2004 19:57 schrieb Nishanth Aravamudan:
 
-> > In continuing to replace, where appropriate, code with msleep() calls, I 
-> > ran across the following file(s) / function(s), which do not invoke 
-> > set_current_state() before schedule_timeout(), which causes the latter 
-> > to return immediately:
-> > 
-> > drivers/usb/misc/tiglusb.c::tiglusb_open()
-> 
-> TASK_INTERRUPTIBLE
 
-In this case, Oliver is right. However, do not use TASK_INTERRUPTIBLE
-in any path which is called from ->release(). When an application is
-killed with ^C and is exiting, schedule() returns immediately if
-called so, so the end result would be a fix with no effect.
+Applys-to: 2.6.7
 
--- Pete
+Description: Remove unused function long_delay().
 
---===============92980167886231047==
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- linux-vanilla/drivers/pci/hotplug/ibmphp.h	2004-06-16 05:18:58.000000000 +0000
++++ linux-dev/drivers/pci/hotplug/ibmphp.h	2004-07-09 00:05:07.000000000 +0000
+@@ -759,11 +759,5 @@ extern int ibmphp_configure_card (struct
+ extern int ibmphp_unconfigure_card (struct slot **, int);
+ extern struct hotplug_slot_ops ibmphp_hotplug_slot_ops;
+ 
+-static inline void long_delay (int delay)
+-{
+-	set_current_state (TASK_INTERRUPTIBLE);
+-	schedule_timeout (delay);
+-}
+-
+ #endif				//__IBMPHP_H
+ 
+
+--===============79766329398642932==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92980167886231047==--
+--===============79766329398642932==--
