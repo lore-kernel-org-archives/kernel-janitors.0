@@ -1,51 +1,48 @@
-From: "No Losers!" <maillist15@nolosers.info>
-Date: Wed, 09 Jun 2004 12:17:32 +0000
-Subject: Is he going to dump you?
-Message-Id: <3D78EB9B.EFC817B@nolosers.info>
+From: "Bell Ophelia" <xcoyz0hoao@worldaccessnet.com>
+Date: Tue, 08 Jun 2004 14:20:46 +0000
+Subject: WE SHIP SOFTWARES TO UR DOORSTEP illyria burgundy
+Message-Id: <kr69s08flav0ctq1f2dcbc7bwjl8bc@mehrdrifting>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--61345090626458103"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>Protect Yourself From Loser Guys</title></head>
-<body background="http://www.nolosers.info/nlbk.php?
-e=kernel-janitor-discuss@lists.sourceforge.net&t=ss/me&n&r=wYu0LfD0FegNh
-V8wY">
-<table border="0" cellpadding="2" style="border-collapse: collapse" 
-bordercolor="#000000" width="600" align="center">
-<tr><td width="240"><p align="center"><a
-href="http://www.nolosers.info/nlin.php?
-e=kernel-janitor-discuss@lists.sourceforge.net&t=ss/me&n&r=eXc4GnI2TxyGt
-X1vA">
-<img border="0" src="http://www.nolosers.info/book.jpg" width="133"
-height="200" 
-alt="Read the F ree Preview at NoLosers.info"></a></p></td>
-<td width="360"><p align="left"><a href="http://www.nolosers.info/nlin.php?
-e=kernel-janitor-discuss@lists.sourceforge.net&t=ss/me&n&r=wXn6LyE1EkfWf
-E8lC">
-<b><font face="Verdana" size="2"><font size="+1">Find Out
-Why</font></a><br><br>
-<br>Download your F ree Preview of <br><i>No More Loser Guys! - 
-The Official Guide to Keeping Losers Out of Your Life Forever:</i><br><br>
-<a href="http://www.nolosers.info/nlin.php?
-e=kernel-janitor-discuss@lists.sourceforge.net&t=ss/me&n&r=hAt2AvJ6DyvLf
-S7eX">
-NoLosers.info</a></font></b></p></td></tr></table><br><br>
-<br><br><br><br><br><br>
-<div align="center"><font face="Arial, Helvetica, sans-serif" size=1
-color=#666666>
-Copyright &copy; 2004 World Mail Direct, Inc. All rights reserved. 
-<br>World Mail Direct, Inc. 914 Curlew Rd 192, Dunedin, FL 34698. 
-<br>To 0pt-0ut from future email announcements for NoMoreLoserGuys!, please
+----61345090626458103
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-<a href="http://www.nolosers.info/nlout.php?
-e=kernel-janitor-discuss@lists.sourceforge.net&c=t&t=ss&n&r=kXf4OkG3OusT
-oE8gW">
-0pt-0ut Here</a></div></font></body></html>
+serinus dictionary truckle comminute forepaw headfirst 
 
+----61345090626458103
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
+</head>
+<body>
+<table border=0 cellspacing=0 cellpadding=10 width=600>
+<tr><td bgcolor=FFFFD7><foreland camshaft notably marty inaffable decalogue >
+<font color=000000 size=2 face=arial>
+<font color=FF3C3C size=5 face=arial><b><center>Chheap softtwares for you, all are original 0EM</b><br><font size=4 color=0000ff>Major titles from MICR0S0FT and AD0BE for Rock Bottom prriice<br><font color=FF80C0 size=3>Great Bargaain Sa1e! Variety discoount softtwares at wholesale chaeap pricing!</center></font></font></font><br>
+<b>Microsoft Wind0ws XP PR0fessional</b> - <font color=0000F2><b>my priice: $50</b></font><br>normal priice: $270.99 ; <font color=FF8D1C><b>you savve $220</b></font><br><br>
+<b>Microsoft 0ffice XP PR0fessional</b> - <font color=0000F2><b>my priice: $100</b></font><br>normal priice: $579.99 ; <font color=FF8D1C><b>you savve $480</b></font><br><br>
+<b>Ad0be photosh0p 7</b> - <font color=0000F2><b>my priice: $80</b></font><br>normal priice: $609.99 ; <font color=FF8D1C><b>you savve $550</b></font><br>
+<br>
+28 More P0PULAR titles >> <b><a href=http://vagus.virtual-pc.org target=_blank><font color=D20000 size=4 face=arial><u>cliickk here for more titles</u></font></a></b><br><br>
+<font color=000000 size=2>
+<b>Wonder why our priices are unbelievably L0W?</b><br>
+We are currently clearing our goods at incredibily cheeap sa1e-priice in connection with the shutdown of our shop and the closure of the stockhouse. Don't missss your lucky chance to get the best priicce on discoouunt software!<br><br>
+We are the authorized agent and an established reseller offering OEM Licensing software.<br><br>
+We possesses all the necessary certificates issued to verify the authenticity of genuine OEM products and granting the right for us to resell OEM software products.<br><br>
+<center><a href=http://tapestry.virtual-pc.org target=_blank><font color=D20000 size=4 face=verdana><u><b>Super Cheaep MICR0S0FT, AD0BE & all kind soft here<br><br>Cliickk here to enjoy our Superb Discouunnt!</u></font></a></center>
+</font>
+</td></tr></table></cybele >
+</body>
+</html>
+
+----61345090626458103--
 
 
 -------------------------------------------------------
