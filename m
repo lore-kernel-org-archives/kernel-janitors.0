@@ -1,52 +1,45 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Fri, 08 Oct 2004 17:51:39 +0000
-Subject: [KJ] [PATCH 2.6] iSeries_pci.c replace pci_find_device with
-Message-Id: <73910000.1097257899@w-hlinder.beaverton.ibm.com>
+From: Daniele Pizzoni <auouo@tin.it>
+Date: Sun, 17 Oct 2004 16:13:58 +0000
+Subject: [KJ] [PATCH 0/8] replacing/fixing printk with pr_debug/pr_info in
+Message-Id: <1098031764.3023.45.camel@pdp11.tsho.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85795453086372175=="
+Content-Type: multipart/mixed; boundary="===============54989549539190286=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <70860000.1097257256@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <70860000.1097257256@w-hlinder.beaverton.ibm.com>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Hanna Linder <hannal@us.ibm.com>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, paulus@samba.org, anton@samba.org
+To: kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
 
---===============85795453086372175==
-Content-Type: text/plain; charset=us-ascii
+--===============54989549539190286==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+
+Hello, I'm going to post a series of small janitorial patches focused on
+1) replacing DPRINTK-style macros with pr_debug from kernel.h
+2) replacing printk(KERN_INFO ...) with pr_info(...)
+3) fixing _obvious_ inconsistencies of printk levels as:
+
+printk(KERN_INFO "Start... ");
+...
+printk("Ok!\n");
+
+The patches fix only obvious inconsistencies: seems that there has been
+no policy about how a subsystem should print boot/log messages
+(subsistem prefix, etc.) nor about the difference between printk(...)
+and printk(KERN_WARNING ...), etc. So I did not touch those issues.
+
+The patches regard (mainly) files in arch/i386/kernel.
+The patches are based upon 2.6.9-rc4.
+The patches have been compile and boot tested.
+One file one patch.
+
+Any comment is very welcome.
+
+CC'ed to Ingo Molnar, hoping that's appropriate.
+
+Bye
+Daniele Pizzoni <auouo@tin.it>
 
 
-As pci_find_device is going away I've replaced it with pci_get_device and pci_dev_put.
-If someone with a PPC64 system could test it I would appreciate it.
-
-Thanks.
-
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-
-
-
-
-diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/iSeries_pci.c linux-2.6.9-rc3-mm3patch/arch/ppc64/kernel/iSeries_pci.c
---- linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/iSeries_pci.c	2004-09-29 20:05:52.000000000 -0700
-+++ linux-2.6.9-rc3-mm3patch/arch/ppc64/kernel/iSeries_pci.c	2004-10-08 10:20:56.576395832 -0700
-@@ -216,8 +216,7 @@ void __init iSeries_pci_final_fixup(void
- 	mf_displaySrc(0xC9000100);
- 
- 	printk("pcibios_final_fixup\n");
--	while ((pdev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pdev))
--			!= NULL) {
-+	for_each_pci_dev(pdev) {
- 		node = find_Device_Node(pdev->bus->number, pdev->devfn);
- 		printk("pci dev %p (%x.%x), node %p\n", pdev,
- 		       pdev->bus->number, pdev->devfn, node);
-
-
---===============85795453086372175==
+--===============54989549539190286==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85795453086372175==--
+--===============54989549539190286==--
