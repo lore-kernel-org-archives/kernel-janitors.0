@@ -1,47 +1,41 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Mon, 04 Oct 2004 21:26:47 +0000
-Subject: [Kernel-janitors] [PATCH 2.6] pci-hplj.c: replace pci_find_device
-Message-Id: <281940000.1096925207@w-hlinder.beaverton.ibm.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 22 Oct 2004 23:24:24 +0000
+Subject: [KJ] [PATCH] w1/dscore: replace schedule_timeout() with
+Message-Id: <20041022232424.GB18906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4022049047194014=="
+Content-Type: multipart/mixed; boundary="===============78903391882311968=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, hannal@us.ibm.com, ralf@linux-mips.org
+To: kernel-janitors@vger.kernel.org
 
---===============4022049047194014==
+--===============78903391882311968==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+Any comments would be, as always, appreciated.
 
+-Nish
 
-As pci_find_device is going away I have replaced this call with pci_get_device.
-If  someone has access to an RM200 or RM300 and could test this I would appreciate it.
+Description: Uses msleep_interruptible() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
-Thanks.
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
----
-
-diff -Nrup linux-2.6.9-rc3-mm2cln/arch/mips/pci/pci-hplj.c linux-2.6.9-rc3-mm2patch/arch/mips/pci/pci-hplj.c
---- linux-2.6.9-rc3-mm2cln/arch/mips/pci/pci-hplj.c	2004-09-29 20:05:21.000000000 -0700
-+++ linux-2.6.9-rc3-mm2patch/arch/mips/pci/pci-hplj.c	2004-10-04 14:20:25.307153544 -0700
-@@ -118,7 +118,7 @@ void __init pcibios_fixup_irqs(void)
- 	struct pci_dev *dev = NULL;
- 	int slot_num;
+--- 2.6.9-bk7-vanilla/drivers/w1/dscore.c	2004-10-22 10:41:43.000000000 -0700
++++ 2.6.9-bk7/drivers/w1/dscore.c	2004-10-22 16:00:46.000000000 -0700
+@@ -733,10 +733,8 @@ void ds_disconnect(struct usb_interface 
+ 	while (atomic_read(&dev->refcnt)) {
+ 		printk(KERN_INFO "Waiting for DS to become free: refcnt=%d.\n",
+ 				atomic_read(&dev->refcnt));
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ);
  
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
- 		slot_num = PCI_SLOT(dev->devfn);
- 		switch (slot_num) {
- 		case 2:
+-		if (signal_pending(current))
++		if (msleep_interruptible(1000))
+ 			flush_signals(current);
+ 	}
+ 
 
-
-
---===============4022049047194014==
+--===============78903391882311968==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4022049047194014==--
+--===============78903391882311968==--
