@@ -1,25 +1,30 @@
-From: GOTO Masanori <gotom@debian.or.jp>
-Date: Mon, 19 Jan 2004 01:10:47 +0000
-Subject: Re: [Kernel-janitors] [patch 2.6.1] s/CONFIG_SYSRQ/CONFIG_MAGIC_SYSRQ/
-Message-Id: <81n08kbv54.wl@omega.webmasters.gr.jp>
+From: Timmy Yee <shoujun@masterofpi.org>
+Date: Wed, 21 Jan 2004 03:32:14 +0000
+Subject: [Kernel-janitors] [PATCH] change kmalloc() auditing in aha1542.c
+Message-Id: <20040121033214.GA1414@masterofpi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200401171729.42422.domen@coderock.org>
-In-Reply-To: <200401171729.42422.domen@coderock.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-At Sat, 17 Jan 2004 17:29:42 +0100,
-Domen Puncer wrote:
-> Noone tested that code to see if it really works?
+Hi,
 
-Looks fine, these bugs have been existed for a long time.  I sent
-them, some were applied but other were not.
+The aha1542 driver calls panic() if kmalloc() fails, which it shouldn't
+do. This patch changes that by having the code return a nonzero value, so
+it tells the SCSI mid-layer to retry the command, as suggested by Randy.
 
-Regards,
--- gotom
-
+--- linux-2.6.1/drivers/scsi/aha1542.c	2003-08-09 18:19:18.000000000 -0700
++++ linux-2.6.1-mpi/drivers/scsi/aha1542.c	2004-01-20 19:12:07.000000000 -0800
+@@ -708,7 +708,7 @@
+ 		sgpnt = (struct scatterlist *) SCpnt->request_buffer;
+ 		cptr = (struct chain *) SCpnt->host_scribble;
+ 		if (cptr = NULL)
+-			panic("aha1542.c: unable to allocate DMA memory\n");
++			return -ENOMEM;
+ 		for (i = 0; i < SCpnt->use_sg; i++) {
+ 			if (sgpnt[i].length = 0 || SCpnt->use_sg > 16 ||
+ 			    (((int) sgpnt[i].offset) & 1) || (sgpnt[i].length & 1)) {
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
