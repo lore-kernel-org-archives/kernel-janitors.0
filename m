@@ -1,276 +1,250 @@
-From: "Courtney Chamberlain" <Courtney@mchsi.com>
-Date: Thu, 06 May 2004 13:27:02 +0000
-Subject: Hi Kernel-janitor-discuss Got Meds? Available All. urgency oiw stannic
-Message-Id: <245435385598973540.498479020.Courtney@mchsi.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 08 May 2004 23:38:18 +0000
+Subject: [Kernel-janitors] [patch 2.6.6-rc3 6/16] ifdefs:
+Message-Id: <20040508233818.GA4112@masina>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--44973775057005583"
+Content-Type: multipart/mixed; boundary="===============61887711024181602=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----44973775057005583
-Content-Type: text/html;
-	charset="iso-1154-5"
+--===============61887711024181602==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+--- c/drivers/scsi/aic7xxx/aic79xx_osm.c	2004-04-04 05:37:23.000000000 +0200
++++ a/drivers/scsi/aic7xxx/aic79xx_osm.c	2004-05-09 00:39:19.000000000 +0200
+@@ -52,9 +52,7 @@
+  */
+ #include "aiclib.c"
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ #include <linux/init.h>		/* __setup */
+-#endif
+ 
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+ #include "sd.h"			/* For geometry detection */
+@@ -67,14 +65,6 @@
+  */
+ spinlock_t ahd_list_spinlock;
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,3,0)
+-struct proc_dir_entry proc_scsi_aic79xx = {
+-	PROC_SCSI_AIC79XX, 7, "aic79xx",
+-	S_IFDIR | S_IRUGO | S_IXUGO, 2,
+-	0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+-};
+-#endif
+-
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+ /* For dynamic sglist size calculation. */
+ u_int ahd_linux_nseg;
+@@ -584,31 +574,20 @@
+ static __inline void
+ ahd_schedule_runq(struct ahd_softc *ahd)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	tasklet_schedule(&ahd->platform_data->runq_tasklet);
+-#else
+-	/*
+-	 * Tasklets are not available, so run inline.
+-	 */
+-	ahd_runq_tasklet((unsigned long)ahd);
+-#endif
+ }
+ 
+ static __inline
+ void ahd_setup_runq_tasklet(struct ahd_softc *ahd)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	tasklet_init(&ahd->platform_data->runq_tasklet, ahd_runq_tasklet,
+ 		     (unsigned long)ahd);
+-#endif
+ }
+ 
+ static __inline void
+ ahd_teardown_runq_tasklet(struct ahd_softc *ahd)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	tasklet_kill(&ahd->platform_data->runq_tasklet);
+-#endif
+ }
+ 
+ static __inline struct ahd_linux_device*
+@@ -894,11 +873,7 @@
+ "aic79xx: insmod or else it might trash certain memory areas.\n");
+ #endif
+ 
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,3,0)
+ 	template->proc_name = "aic79xx";
+-#else
+-	template->proc_dir = &proc_scsi_aic79xx;
+-#endif
+ 
+ 	/*
+ 	 * Initialize our softc list lock prior to
+@@ -1699,28 +1674,20 @@
+ {
+ 	struct ahd_softc* ahd;
+ 	struct ahd_linux_device *dev;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	u_long flags;
+-#endif
+ 
+ 	ahd = (struct ahd_softc *)data;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	ahd_lock(ahd, &flags);
+-#endif
+ 	while ((dev = ahd_linux_next_device_to_run(ahd)) != NULL) {
+ 	
+ 		TAILQ_REMOVE(&ahd->platform_data->device_runq, dev, links);
+ 		dev->flags &= ~AHD_DEV_ON_RUN_LIST;
+ 		ahd_linux_check_device_queue(ahd, dev);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 		/* Yeild to our interrupt handler */
+ 		ahd_unlock(ahd, &flags);
+ 		ahd_lock(ahd, &flags);
+-#endif
+ 	}
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 	ahd_unlock(ahd, &flags);
+-#endif
+ }
+ 
+ /******************************** Bus DMA *************************************/
+@@ -1764,7 +1731,6 @@
+ {
+ 	bus_dmamap_t map;
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 	map = malloc(sizeof(*map), M_DEVBUF, M_NOWAIT);
+ 	if (map == NULL)
+ 		return (ENOMEM);
+@@ -1788,16 +1754,6 @@
+ 			printk(KERN_WARNING "aic79xx: No suitable DMA available.\n");
+ 			return (ENODEV);
+ 		}
+-#else /* LINUX_VERSION_CODE < KERNEL_VERSION(2,3,0) */
+-	/*
+-	 * At least in 2.2.14, malloc is a slab allocator so all
+-	 * allocations are aligned.  We assume for these kernel versions
+-	 * that all allocations will be bellow 4Gig, physically contiguous,
+-	 * and accessible via DMA by the controller.
+-	 */
+-	map = NULL; /* No additional information to store */
+-	*vaddr = malloc(dmat->maxsize, M_DEVBUF, M_NOWAIT);
+-#endif
+ 	if (*vaddr == NULL)
+ 		return (ENOMEM);
+ 	*mapp = map;
+@@ -1808,12 +1764,8 @@
+ ahd_dmamem_free(struct ahd_softc *ahd, bus_dma_tag_t dmat,
+ 		void* vaddr, bus_dmamap_t map)
+ {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 	pci_free_consistent(ahd->dev_softc, dmat->maxsize,
+ 			    vaddr, map->bus_addr);
+-#else
+-	free(vaddr, M_DEVBUF);
+-#endif
+ }
+ 
+ int
+@@ -1827,12 +1779,7 @@
+ 	 */
+ 	bus_dma_segment_t stack_sg;
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 	stack_sg.ds_addr = map->bus_addr;
+-#else
+-#define VIRT_TO_BUS(a) (uint32_t)virt_to_bus((void *)(a))
+-	stack_sg.ds_addr = VIRT_TO_BUS(buf);
+-#endif
+ 	stack_sg.ds_len = dmat->maxsize;
+ 	cb(cb_arg, &stack_sg, /*nseg*/1, /*error*/0);
+ 	return (0);
+@@ -2064,9 +2011,7 @@
+ 	return 1;
+ }
+ 
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,3,0)
+ __setup("aic79xx=", aic79xx_setup);
+-#endif
+ 
+ uint32_t aic79xx_verbose;
+ 
+@@ -2109,8 +2054,7 @@
+ 		ahd_set_name(ahd, new_name);
+ 	}
+ 	host->unique_id = ahd->unit;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,4) && \
+-    LINUX_VERSION_CODE  < KERNEL_VERSION(2,5,0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+ 	scsi_set_pci_device(host, ahd->dev_softc);
+ #endif
+ 	ahd_linux_setup_user_rd_strm_settings(ahd);
+@@ -2262,15 +2206,9 @@
+ 	ahd->platform_data->completeq_timer.data = (u_long)ahd;
+ 	ahd->platform_data->completeq_timer.function =
+ 	    (ahd_linux_callback_t *)ahd_linux_thread_run_complete_queue;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 	init_MUTEX_LOCKED(&ahd->platform_data->eh_sem);
+ 	init_MUTEX_LOCKED(&ahd->platform_data->dv_sem);
+ 	init_MUTEX_LOCKED(&ahd->platform_data->dv_cmd_sem);
+-#else
+-	ahd->platform_data->eh_sem = MUTEX_LOCKED;
+-	ahd->platform_data->dv_sem = MUTEX_LOCKED;
+-	ahd->platform_data->dv_cmd_sem = MUTEX_LOCKED;
+-#endif
+ 	ahd_setup_runq_tasklet(ahd);
+ 	ahd->seltime = (aic79xx_seltime & 0x3) << 4;
+ 	return (0);
+@@ -2330,13 +2268,10 @@
+ 			base_addr = (u_long)ahd->bshs[0].maddr;
+ 			base_addr &= PAGE_MASK;
+ 			iounmap((void *)base_addr);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+ 			release_mem_region(ahd->platform_data->mem_busaddr,
+ 					   0x1000);
+-#endif
+ 		}
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0) && \
+-    LINUX_VERSION_CODE  < KERNEL_VERSION(2,5,0)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+     		/*
+ 		 * In 2.4 we detach from the scsi midlayer before the PCI
+ 		 * layer invokes our remove callback.  No per-instance
+@@ -4370,7 +4305,7 @@
+ 		WARN_ON(lun != CAM_LUN_WILDCARD);
+ 		scsi_report_device_reset(ahd->platform_data->host,
+ 					 channel - 'A', target);
+-#elif LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
++#else
+ 		Scsi_Device *scsi_dev;
+ 
+ 		/*
+@@ -4391,12 +4326,10 @@
+ 		break;
+ 	}
+         case AC_BUS_RESET:
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,3,0)
+ 		if (ahd->platform_data->host != NULL) {
+ 			scsi_report_bus_reset(ahd->platform_data->host,
+ 					      channel - 'A');
+ 		}
+-#endif
+                 break;
+         default:
+                 panic("ahd_send_async: Unexpected async event");
+
+--===============61887711024181602==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Description: jesus titular bryophyta
+Content-Disposition: inline
 
-<!DOCTYPE html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www=
-w3.org/TR/html4/loose.dtd">
-<HTML>
-<HEAD>
-<TITLE>agelessliving.biz</TITLE>
-
-</HEAD>
-<BODY>
-<p>
-Hi Kernel-janitor-discuss,
-<p>
-F<greet>rom t<avail>he<imprint> p<fields>rivac<imperial>y and c<referring>=
-omfort<bailey> of your own home<expenditure>, you c<budd>an dis<geriatric>=
-c<ambrosial>re<cotton>e<chore>t<dad>ly and c<belie>onfide<dauphin>nt<habib=
->ially orde<upshot>r t<sinistral>he<capitoline> p<optoacoustic>re<maladapt=
->s<brusque>c<mole>rip<beige>t<door>ions<pumice> you ne<mull>e<aleph>d t<co=
-rnerstone>o t<borough>re<stacy>at<telescope> your s<persiflage>p<cinquefoi=
-l>e<collect>c<dogma>ific<impediment> c<emanuel>ondit<anywhere>ion.
-<p>
-<li>Val<augur>ium 10 mg - <solipsism>[<numerable>60 pills <kelvin>$<dachsh=
-und> 279.99] <beak>[<pastel>90 pills <thereof>$<quicken> 329.99] <arenaceo=
-us>[<desuetude>120 pills <kirchoff>$<shopkeep> 369.99]
-<br>
-<li><nonagenarian>Xa<garland>na<gaunt>x 1 mg - <edify>[<immigrant>30 pills=
- <invention>$<silverware> 169.00] <decorticate>[<cyclic>60 pills <delphi>$=
-<enforcible> 229.00] <savoy>[<leprosy>90 pills <groin>$<taxiway> 269.00] <=
-archbishop>[<tomatoes>120 pills <luftwaffe>$<squeeze> 309.99]
-<br>
-<li>V<osteopathic>i<church>c<agricultural>odin (H<tegucigalpa>y<succinct>d=
-<maurine>r<affable>o<often>c<pride>o<deliberate>d<oresteia>o<circumflex>n<=
-beethoven>e<hexagonal>/<waistcoat>A<ammunition>P<gaelic>A<midland>P10mg<li=
-nt>/500mg) - <deviant>[<despoil>30 pills <dow>$<demagogue> 159.99] <mcgove=
-rn>[<weierstrass>60 pills <execute>$<crusade> 249.99] <dispense>[<soma>90 =
-pills <daedalus>$<bonanza> 319.99] <occupy>[<flagstaff>90 pills <andromach=
-e>$<beautiful> 289.99] <definite>[<dour>60 pills <belate>$<dillon> 289.99]=
-
-<br>
-<li>V<gelable><curriculum><cur>i<afternoon><armhole><shoji>a<ltv><pritchar=
-d><railbird>g<intimacy><cove><ferocity>ra 50 mg <dixie>[<cos>20 pills <gre=
-mlin>$<lundquist> 99.99] <chairwoman>[<leghorn>40 pills <patriotic>$<count=
-y> 149.99] <madhouse>[<bootstrap>120 pills <cupid>$<stockade> 269.99] <pro=
-xy>[<died>200 pills <replica>$<cheat> 349.99]
-<br>
-<li><parsifal><berkelium><ephraim><macabre>V<thrombosis>i<middleton>a<limp=
-kin>gra <inane>100 <emporium>mg <grind>[<cornwall>20 pills <childbirth>$<p=
-elham> 119.99] <lawful>[<moody>40 pills <punky>$<boss> 179.99] <babbitt>[<=
-electrode>120 pills <vega>$<together> 349.99] <camber>[<craven>200 pills <=
-binary>$<hanover> 449.99]
-<br>
-<li>Car<holocaust>iso<spectator>pro<bureaucrat>do<centum>l (So<grip>ma) <b=
-uildup>[<sciatica>60 pills <humboldt>$<absorbent>79.99]  <bicycle>[<boustr=
-ophedon>90 pills <mathematic>$<orange>99.99]
-<br>
-<li><catchup>P<ablaze>h<parasympathetic>e<chaparral>n<loath>t<esther>e<rid=
-e>r<depreciate>m<apple>i<flexural>ne <tiptoe>1<confucian>5 <racetrack>mg <=
-revved>[<benefice>60 pills <betty>$<consultation> 139.00] <opaque>[<barnha=
-rd>180 pills <meliorate>$<southpaw> 249.00]
-<br>
-<li>A<sanderson>d<gould>i<monies>p<schiller>e<esplanade>x<rilly> 37.5 mg  =
-<skiff>[<panjandrum>30 pills  <blaine>$<heave> 149.00] <cysteine>[<commodi=
-ous>90 pills <childbear>$<hetty> 299.00] <lozenge>[<ardency>60 pills <sass=
-afras>$<prophet> 229.00]
-<br>
-<li><infarct><doug>T<weatherproof>r<duct>a<amatory>m<unite>a<dispersible><=
-decelerate>d<featherweight><baseman>o<proximal><dendritic>l 50 mg <gain>[<=
-depredate>30 pills <pawtucket>$<plea> 89.00] <ductwork>[<weasel>90 pills <=
-summitry>$<ineffective> 149.00] <lear>[<hanover>60 pills <trichrome>$<cowp=
-ox> 129.00]
-<br>
-<li><muscovy>A<riddance>m<adventitious>bien 5 mg  <faraday>[<perez>30 pill=
-s  <curran>$<celebes> 149.00] <tina>[<notice>60 pills <usn>$<dis> 249.00]
-<br>
-<li>B<trashy>u<referential>t<alveoli>a<scottish>lbital <jed><generous>APAP=
- w/ Ca<dock>f<emancipate>f<anyway>eine (<biblical><burgundian>Fi<jorgensen=
->o<portuguese>r<pram>i<dinnertime>cet<survive><bhutan>) <control><condesce=
-nd>[<missile>30 pills - <crossroad>$<ouagadougou> 99.00] <spanish>[<inclos=
-e>60 pills - <gleeful>$<invocate> 159.00] <dimple>[<bilayer>90 pills - <ca=
-ssette>$<thirteenth> 189.00]
-<p>
-<b><rockford>A<honk>l<exterminate>s<saute>o<dimethyl> <impediment>A<premie=
-re>v<tubular>a<lass>i<diva>l<kink>a<afghanistan>b<counterpart>l<retributio=
-n>e<scops>:</b>
-<br>
-<li><workbench><this>M<singlehanded>e<pincushion>n<yardage>'<born>s<cheney=
-><bib><herald><shifty><anionic><electrify><bolo> <uproarious>H<argue>e<sha=
-mefaced><cash><clarinet><magnuson><playground>a<accretion>l<ferric>t<sciat=
-ica><pompeii><shrill><glutamate>h<chipmunk> <carlin>:<autograph><curd><cor=
-rector><antennae> <suck>S<concoct>u<bridle>p<rebut>e<cried>r<gambol> <scal=
-e>V<bitt>i<revelatory>a<seeable>g<reck>ra <squirm>(<vivo>Cialis<extempore>=
-)<exhibition>,  <governor>V<planetesimal><boston>i<cofactor>a<vista>g<orat=
-oric>ra =20
-<br>
-<li>W<servitude>e<drool>i<order>g<transferable>h<strontium>t<gustafson> <c=
-ancerous>L<cork>o<pebble>s<aida>s<castle> <cornet>:<heighten> <delphinium>=
-A<truth>d<amra>i<torque>p<halide>e<beachhead>x<stink>,<boatmen> <sushi>I<m=
-ean>o<arctan>n<wary>a<coleman>m<gazette>i<neon>n<pleural>,<hetman> <gloomy=
->M<arcade>e<texaco>r<painstaking>i<trademark>d<della>i<ketosis>a<september=
->,<bluebush> <soil>P<sliver>h<bodice>e<vacate>n<pessimism>t<indenture>e<te=
-tragonal>r<adrian>m<wintertime>i<derange>n<syrupy>e<watchmake>,<spectra> <=
-jangle>T<bashful>e<agglutinate>n<betrayal>u<eighth>a<roustabout>t<bittern>=
-e<verna>,<vivace> <stave>X<captor>e<thalia>n<chimney>i<potash>c<ares>a<cam=
-eron>l
-<br>
-<li>M<universe>u<thiocyanate><akin><offenbach><brevet><transit>s<dragon>c<=
-bridgework>l<frill>e<fructose> <descriptive>Re<genera>l<meritorious>a<apol=
-lonian>x<morristown><convergent><callahan>a<lookup>n<paw>t<kaplan>s<zigzag=
-ging> <roughshod>:<beltsville><cosh><brimstone> <chanson>C<canis>y<malaysi=
-a>c<raffia>l<spaniard>obenza<mario>p<house>r<appliance>i<ignorant>ne, <cra=
-nium> <picnic>F<wasserman>le<broad>xe<compartment>r<ballfield>il,<dub> <te=
-lephone> <murre>S<spikenard>o<ferroelectric>m<mugho>a<creaky>,<joyce> <gli=
-tch> <zagging>S<boric>k<distillery>e<restroom>lax<pantheon>i<pompadour>n<d=
-elicatessen>,<athens> <carthage> Z<atlantica>a<infrequent>n<want>a<boundar=
-y>f<lusaka>lex
-<br>
-<li><crash>Pa<capillary>in<chromate> R<townsend>el<believe>ie<downward>f <=
-siegfried>: <credulous>Ce<evince>le<providential>br<retrovision>ex<applica=
-ble>, <cancellate> E<embryo>sg<nullify>ic<attune> P<barrett>lu<buckboard>s=
-,<cyclist>  <vitae>Fl<quay>ex<canvass>tr<braun>a,<kowalski>  <design>Tr<vi=
-to>am<remark>ad<spoken>ol<burbank>, <usn> F<befit>io<slash>ri<culbertson>c=
-e<monsanto>t,<amerada>  <crossover>Ul<barbaric>tr<artemis>am,<target>  <ra=
-ffish>At<atwood>iv<drunk>an<prurient>, <hanukkah> Vi<tass>co<variac>din<ro=
-ss>,  <dissertation>Vio<claustrophobia>xx<scant>,  <bemoan>Zeb<alumna>uta<=
-network>l
-<br>
-<li><bujumbura>M<mabel>e<post>n<guideline>'<chromate>s<regretful> <dogberr=
-y>H<mugging>ealt<policeman>h<chalet> <welfare>:<earwig> <format>C<swank>i<=
-cyst>a<shifty>l<metamorphic>i<allegiant><clairvoyant><becalm><supine><alig=
-n><santa>s<schantz>,<wolfish> <barbudo> <bausch>L<vita>e<slander>v<since>i=
-t<badland>r<illume>a<trenton>,<deuterate> <raven> <emit>P<lobby>r<galois>o=
-p<congratulate><loggerhead><inkling><impotent><catastrophe><referenda><bre=
-w><introduction>e<sanguinary>c<boric>i<push>a,<segregate> <cryptanalysis> =
-<emaciate>V<linen>i<oncology>a<joey>g<abhorrent>r<luminance>a<germinate>
-<br>
-<li><malaria>Wo<caucasus>m<journalese>e<southeastern>n<trestle>'<nomenclat=
-ure>s<altimeter> <danger><cholera><dec><verb>H<obese>e<eigenstate>a<bilabi=
-al>l<experiential>t<caroline>h<lion><airmail><trustful><clothesman> <crans=
-ton>:<taper> <diatribe>D<purport>i<aberrant>f<affect>l<brennan><ashmolean>=
-<pulsate><manifold>u<cytosine>c<mushy>a<bmw>n<brig>,<hydrothermal> <vital>=
- <storeroom><muezzin><peel><proclaim>O<benefice>r<adverse>t<creamery>h<swa=
-llowtail>o<badge> <insomniac><lagrange><phil><remitting>E<appoint>v<preser=
-ve>r<antimony>a<gold> <beat>P<slouch>a<sommerfeld>t<kyoto><barge><schemati=
-c>c<wilcox>h<sacramento>,<desirous> <krause> <electoral>O<rap>r<degumming>=
-t<came>h<backyard><cavil><perjury><heady><boyhood>o<capacitor> <spatial>T<=
-schedule>r<beatific>i<animosity> <knobby>C<aba><sulfate><arduous>y<chargea=
-ble>c<fluorspar>l<methodology>e<nostrand>n<comma>,  T<propos>r<bedlam>i<ch=
-ugging>p<annual>h<have>a<berate>s<coerce>i<collusion>l<amnesia>,<addendum>=
- <avertive> <efferent>V<television>a<extensible>niq<embank>a
-<br>
-<li><brouhaha>S<purpose>ex<ablution>u<carburetor>a<erickson>l<carcinogenic=
-> H<regale>e<dryad><reticent><quicken><general>a<lanthanum>l<beater>t<isot=
-opic>h<contributor> :<pirate> <freddie>Ac<poultice>y<whichever>c<laplace>l=
-<ukrainian>o<colony>v<flax>ir,  F<blueprint>a<symposium>m<bricklayer>v<tra=
-nsferable>ir<hinterland>,<whipple> <coruscate> Lev<afforest>it<chimique>r<=
-sumter>a<mitochondria>,<escapade>  <clitoris>V<walters>a<withdrawn>l<honda=
->tr<roll>e<abelson>x<moth>,<delivery> <clothesbrush> V<barfly>i<peninsula>=
-a<acreage>g<preparative>ra<chilean><frisky><maidenhair><maine><cominform><=
-discretion><ellipsometer>
-<br>
-<li><biochemic><inspector><cassock><decommission>An<degumming>t<bernardino=
->i<babysitter>-<buck>D<archaism><vida><globule><boggy>e<contralateral>p<as=
-kew>r<original>e<neumann>s<sulfonamide>s<hive>a<lease>n<hirsch><papyri><ch=
-ecksum><clockwatcher><garb><lie>ts<drove> :<rosenzweig> <mortgagee>B<roadh=
-ouse>up<pension>r<albumin>o<wangle>p<reputation>i<hockey>o<bali>n<diagnost=
-ician> <becloud>H<fissure>C<foregoing><dacca><brazil><blasphemy><betrayer>=
-<stench>L<cornelius>,<tenacious> <anneal> <mycenae>W<diatomic>e<spray>l<th=
-alia>l<bathrobe>b<teleprompter>u<hawkins><bladderwort><crete><gall><endico=
-tt><foppish>t<cytosine>r<diatribe>i<coffer>n<housebreak> <sec>S<rubble>R<s=
-crewball>,<articulate> <chang> <longfellow><knoll><disruptive><crust><brid=
-get>V<earthmen>a<brownish>l<primrose>i<answer>u<chatham>m<coniferous>,<ape=
-> <overt> <mung>Xa<truman><bootstrapped><eighteen><fortiori><burdock><clar=
-endon>n<pasteup>a<apollonian>x<lao>,<catawba> <amphibole> <gusty>Pr<inconc=
-lusive>o<counterbalance>z<laid>a<dissonant><flashlight><partake><bostonian=
-><wee>c<copperfield>,<perfuse> <froth> <furman>P<decide>a<goodwin>x<cosh>i=
-<ashland>l<crepe>
-<br>
-<li><blanchard>A<samuel>n<wallow>x<kombu>i<gallantry>e<chandler>t<chaw>y<a=
-malgam><avid><metamorphose><catalogue><dwindle><eskimo><bagging><guitar> <=
-sultry>:<cloy> <bimonthly>B<copra>u<fraser>s<fussy>pa<hatch>r<walkout>
-<br>
-<li><cia>Q<skopje>u<blew>i<portia><static><arsenal><pulitzer><instructor><=
-craftsman><searchlight>t<seamy> <fletcher>S<loci>m<byline>o<pope>k<bought>=
-i<costa>n<catalina>g<turnery> <abed>:<lura> <illinois><deficit><edgerton><=
-edison><detain><ejaculate><fireside><atreus><wilkinson><reed><awe><franca>=
-<directrices><baxter><nowaday><gigabit><classification><cuddle>Z<headline>=
-y<dryad>b<effluvia>a<batavia>n<mart>
-<p>
-We<bodice> use<sill> e<servile>ncry<medford>pt<beep>e<alberta>d se<sue>cur=
-e<always> se<cortland>rv<intimate>e<gymnastic>r t<mckenzie>e<cure>chnology=
-<preference>.
-
-<p>
-Buy onl<diathesis>in<fanatic>e <narragansett>in <pussycat>th<canary>e comf=
-or<despond>t of your hom<boucher>e. <enforcible>W<reign>e<phalanx> <been>d=
-<netherworld><bart><tantalum><cole>e<consort>l<trip>i<upriver>v<demurring>=
-<addressee><budgetary>e<depredate>r<sage> <incident>w<retinue><vermont><ac=
-e>o<clarendon>r<chisel>l<creon>d<eigenstate>w<embattle>i<nor><stark>d<raff=
-ia>e<tea>.
-
-<p>
-P<blackberry>l<philanthrope>e<calder>a<tycoon>s<functorial>e<finesse> <fer=
-ret>c<teletypesetting>o<confirmation>p<alert>y<centipede> <julie>a<eduardo=
->n<nan>d <heusen>paste <chat>this <incommensurable>link <bookplate>i<caspi=
-an>n<oregon>t<everett>o y<leukemia>o<sprout>ur b<churchgoing>r<harrisburg>=
-o<nevins>wser <b> agelessliving.biz</b>
-<p>
-
-Best Regards,
-<br>
-Courtney Chamberlain
-
-
-<perseverance><Kernel-janitor-discuss><evasive><Courtney><diatribe><china>=
-<candidacy><clearwater><admire><Chamberlain><bitten><bloodroot><erskine><C=
-ourtney><orgy><barium><refrigerate><ChamberlainCourtney@mchsi.com><broken>=
-<Kernel-janitor-discuss><convertible><secant><worrisome><kernel-janitor-di=
-scuss@lists.sourceforge.net><granddaughter><kernel-janitor-discuss@lists.s=
-ourceforge.net><lemonade><kernel-janitor-discuss@lists.sourceforge.net><be=
-late><starling><bosch><megaword><picnicker><Courtney@mchsi.com><ligament><=
-curlew><Kernel-janitor-discuss><brass><Chamberlain><accessible><Chamberlai=
-n><adequacy><variate><delhi><corps><disburse><corporal><waltzing><Kernel-j=
-anitor-discuss><crib><glue><phosgene><Kernel-janitor-discuss><constitute><=
-Courtney@mchsi.com><wong><Chamberlain><sprig><Kernel-janitor-discuss><deba=
-ter><ensemble><benzedrine><literature><hoyt><anarchic><canaan><presumptive=
-><saloonkeeper><dominate><indelicate><bolshevist><Kernel-janitor-discuss><=
-icon><Courtney@mchsi.com><recife><fowl><kernel-janitor-discuss@lists.sourc=
-eforge.net><catalpa><CourtneyChamberlain@mchsi.com><biometrika><onward><ke=
-rnel-janitor-discuss@lists.sourceforge.net><ali><emittance><coinage><Kerne=
-l-janitor-discuss><limousine><Courtney><battelle><pupil><rave><bunt><shrew=
-><Chamberlain><advisory><demonstrate><superb><Courtney><cat><combination><=
-bryozoa><Courtney_Chamberlain@mchsi.com><greenware><Kernel-janitor-discuss=
-><till><reconnaissance><legerdemain><kernel-janitor-discuss@lists.sourcefo=
-rge.net><mulatto><kernel-janitor-discuss@lists.sourceforge.net><electroenc=
-ephalograph><kernel-janitor-discuss@lists.sourceforge.net><fern><collard><=
-teheran><docile><periclean><ChamberlainCourtney@mchsi.com><detest><inoppor=
-tune><Kernel-janitor-discuss><astral><Chamberlain><opposable><Chamberlain>=
-<permanent><luftwaffe><spectrophotometer><freetown><presidential><barber><=
-gild><Kernel-janitor-discuss><gunmen><ain't><memoir><Kernel-janitor-discus=
-s><repressive><CourtneyChamberlain@mchsi.com><distaff><Chamberlain><castle=
-><Kernel-janitor-discuss><convertible><alyssum><restitution><bobby><bundy>=
-<deflector><workout><godfrey><affair><christen><shortage><vision><Kernel-j=
-anitor-discuss><assimilable><Courtney.Chamberlain@mchsi.com><aeronautic><o=
-sha><kernel-janitor-discuss@lists.sourceforge.net><syrup><Courtney_Chamber=
-lain@mchsi.com><berne><muskellunge><kernel-janitor-discuss@lists.sourcefor=
-ge.net><ditch><duff>
-
-</BODY>
-</HTML>
-
-
-----44973775057005583--
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by Sleepycat Software
-Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
-higher performing products faster, at low TCO.
-http://www.sleepycat.com/telcomwpreg.php?From=osdnemail3
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============61887711024181602==--
