@@ -1,50 +1,54 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Tue, 21 Sep 2004 07:40:49 +0000
-Subject: Re: [Kernel-janitors] [PATCH -mm 6/9] pci_find_device to
-Message-Id: <20040921084049.D20511@infradead.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 15 Sep 2004 22:53:58 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 8/33] char/ftape-io: replace
+Message-Id: <20040915225358.GO5778@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============09539519384937134=="
+Content-Type: multipart/mixed; boundary="===============92651013061661669=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1095749582.3790.93.camel@sfeldma-mobl2.dsl-verizon.net>
-In-Reply-To: <1095749582.3790.93.camel@sfeldma-mobl2.dsl-verizon.net>
 To: kernel-janitors@vger.kernel.org
 
---===============09539519384937134==
+--===============92651013061661669==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Sep 20, 2004 at 11:53:03PM -0700, Scott Feldman wrote:
-> Use pci_get_device instead of pci_find_device as pci device returned
-> from pci_find_device can disappear at any momemt in time.
+Any comments would be appreciated. 
 
-Should be converted to the pci_driver infrastructure instead.
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected. In this case, this allowed for
+the removal of the entire do-while.
 
-> 
-> Signed-off-by: Scott Feldman <sfeldma@pobox.com>
-> 
-> diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/sunhme.c linux-2.6.9-rc2-mm1-dsf/drivers/net/sunhme.c
-> --- linux-2.6.9-rc2-mm1/drivers/net/sunhme.c	2004-08-14 03:55:10.000000000 -0700
-> +++ linux-2.6.9-rc2-mm1-dsf/drivers/net/sunhme.c	2004-09-20 22:51:59.709768488 -0700
-> @@ -3311,7 +3311,7 @@ static int __init happy_meal_pci_probe(v
->  	struct pci_dev *pdev = NULL;
->  	int cards = 0;
->  
-> -	while ((pdev = pci_find_device(PCI_VENDOR_ID_SUN,
-> +	while ((pdev = pci_get_device(PCI_VENDOR_ID_SUN,
->  				       PCI_DEVICE_ID_SUN_HAPPYMEAL, pdev)) != NULL) {
->  		if (pci_enable_device(pdev))
->  			continue;
-> 
-> 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+--- 2.6.9-rc2-vanilla/drivers/char/ftape/lowlevel/ftape-io.c	2004-09-13 17:15:47.000000000 -0700
++++ 2.6.9-rc2/drivers/char/ftape/lowlevel/ftape-io.c	2004-09-14 11:27:06.000000000 -0700
+@@ -96,19 +96,12 @@ void ftape_sleep(unsigned int time)
+ 		timeout = ticks;
+ 		save_flags(flags);
+ 		sti();
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		do {
+-			/*  Mmm. Isn't current->blocked == 0xffffffff ?
+-			 */
+-			if (signal_pending(current)) {
+-				TRACE(ft_t_err,
+-				      "awoken by non-blocked signal :-(");
+-				break;	/* exit on signal */
+-			}
+-			while (current->state != TASK_RUNNING) {
+-				timeout = schedule_timeout(timeout);
+-			}
+-		} while (timeout);
++		msleep_interruptible(jiffies_to_msecs(timeout));
++		/*  Mmm. Isn't current->blocked == 0xffffffff ?
++		 */
++		if (signal_pending(current)) {
++			TRACE(ft_t_err, "awoken by non-blocked signal :-(");
++		}
+ 		restore_flags(flags);
+ 	}
+ 	TRACE_EXIT;
 
----end quoted text---
-
---===============09539519384937134==
+--===============92651013061661669==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============09539519384937134==--
+--===============92651013061661669==--
