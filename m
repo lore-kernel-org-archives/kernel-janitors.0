@@ -1,51 +1,70 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 13:08:12 +0000
-Subject: [KJ] [UPDATE PATCH 12/19] drivers/scsi/initio: Use the
-Message-Id: <20050320130812.GL3491@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 22:51:07 +0000
+Subject: [KJ] [PATCH 2/] arch/i386/kernel/traps.c: fix sparse warnings
+Message-Id: <200503100123.39032.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============07588281813506037=="
+Content-Type: multipart/mixed; boundary="===============63282665631170643=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220170652.GM14375@helium.tklauser.home>
-In-Reply-To: <20050220170652.GM14375@helium.tklauser.home>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============07588281813506037==
-Content-Type: text/plain; charset=us-ascii
+--===============63282665631170643==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
---- linux-2.6.11.orig/drivers/scsi/initio.c	2005-03-02 12:50:38.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/initio.c	2005-03-20 14:06:32.000000000 +0100
-@@ -127,6 +127,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/jiffies.h>
-+#include <linux/dma-mapping.h>
- #include <asm/io.h>
+Index: linux-2.6.11-bk1-sparse/arch/i386/kernel/traps.c
+===================================================================
+--- linux-2.6.11-bk1-sparse.orig/arch/i386/kernel/traps.c	2005-03-02 09:37:49.000000000 +0200
++++ linux-2.6.11-bk1-sparse/arch/i386/kernel/traps.c	2005-03-06 03:28:50.000000000 +0200
+@@ -233,22 +233,22 @@ void show_registers(struct pt_regs *regs
+ 	 * time of the fault..
+ 	 */
+ 	if (in_kernel) {
+-		u8 *eip;
++		u8 __user *eip;
  
- #include <scsi/scsi.h>
-@@ -2793,7 +2794,7 @@ static int tul_NewReturnNumberOfAdapters
- 			if (((dRegValue & 0xFF00) >> 8) == 0xFF)
- 				dRegValue = 0;
- 			wBIOS = (wBIOS << 8) + ((UWORD) ((dRegValue & 0xFF00) >> 8));
--			if (pci_set_dma_mask(pDev, 0xffffffff)) {
-+			if (pci_set_dma_mask(pDev, DMA_32BIT_MASK)) {
- 				printk(KERN_WARNING 
- 				       "i91u: Could not set 32 bit DMA mask\n");
- 				continue;
+ 		printk("\nStack: ");
+ 		show_stack(NULL, (unsigned long*)esp);
+ 
+ 		printk("Code: ");
+ 
+-		eip = (u8 *)regs->eip - 43;
++		eip = (u8 __user *)regs->eip - 43;
+ 		for (i = 0; i < 64; i++, eip++) {
+ 			unsigned char c;
+ 
+-			if (eip < (u8 *)PAGE_OFFSET || __get_user(c, eip)) {
++			if (eip < (u8 __user *)PAGE_OFFSET || __get_user(c, eip)) {
+ 				printk(" Bad EIP value.");
+ 				break;
+ 			}
+-			if (eip == (u8 *)regs->eip)
++			if (eip == (u8 __user *)regs->eip)
+ 				printk("<%02x> ", c);
+ 			else
+ 				printk("%02x ", c);
+@@ -272,13 +272,13 @@ static void handle_BUG(struct pt_regs *r
+ 
+ 	if (eip < PAGE_OFFSET)
+ 		goto no_bug;
+-	if (__get_user(ud2, (unsigned short *)eip))
++	if (__get_user(ud2, (unsigned short __user *)eip))
+ 		goto no_bug;
+ 	if (ud2 != 0x0b0f)
+ 		goto no_bug;
+-	if (__get_user(line, (unsigned short *)(eip + 2)))
++	if (__get_user(line, (unsigned short __user *)(eip + 2)))
+ 		goto bug;
+-	if (__get_user(file, (char **)(eip + 4)) ||
++	if (__get_user(file, (char * __user *)(eip + 4)) ||
+ 		(unsigned long)file < PAGE_OFFSET || __get_user(c, file))
+ 		file = "<bad filename>";
+ 
 
---===============07588281813506037==
+--===============63282665631170643==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============07588281813506037==--
+--===============63282665631170643==--
