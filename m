@@ -1,456 +1,242 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 25 Feb 2004 21:23:55 +0000
-Subject: [Kernel-janitors] [announce] 2.6.3-223 kj patchset
-Message-Id: <20040225132355.43607885.rddunlap@osdl.org>
+From: "Your-Info Presents" <reply@optinadsolutions.com>
+Date: Thu, 19 Feb 2004 16:01:22 +0000
+Subject: Silicone nude bra builds cleavage
+Message-Id: <20040219110122.rylmpinzvw@optinadsolutions.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=_a35f3ed118243e57253025908ab4b56c"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+
+This is a MIME encoded message.
+
+--=_a35f3ed118243e57253025908ab4b56c
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-To: kjo <kernel-janitors@osdl.org>
-Cc: lkml <linux-kernel@vger.kernel.org>
-
-
-
-patch is at:
-http://developer.osdl.org/rddunlap/kj-patches/2.6.3-223/2.6.3-223-kj1.patch.bz2  [2004-02-25]
-
-M: merged at kernel.org;   mm: in -mm;   tx: sent;   mntr: maintainer merged;
-
-This patch applies to linux-2.6.3-feb23pm.
-new (for 2.6.3-223):  [2004-02-25]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-add/	extraver.patch
-	rddunlap%osdl!org
 
-add/	kswapd_init_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
 
-add/	lmc_proto_raw_h_rm.patch
-	From: Domen Puncer <domen@coderock.org>
+The New "Strapless" Bust Enhancing Silicone Bra -- Natural Bra 
 
-add/	setup_bootmem_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
+*************************************
 
-add/	skfddi_errmsg.patch (instead):
-	From: Matthew Wilcox <willy@debian.org>
+As Low As $14.99 each plus s&h
 
-M/	net_ibmtr_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to netdev/jgarzik: 2004.0223;
+http://optinadsolutions.com/dbm83/l.php?790&50016221
 
-M/	net_ne_unused2.patch
-	From: Stephen Hemminger <shemminger@osdl.org>
-	sent to netdev/jgarzik: 2004.0223;
+*************************************
 
-done/	net_skge_unused.patch
-	From: Stephen Hemminger <shemminger@osdl.org>
-	sent to netdev/jgarzik: 2004.0223;
-
-M/	net_strip_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to netdev/jgarzik: 2004.0223;
-
-M/	net_strip_noprocfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to netdev/jgarzik: 2004.0223;
-
-tx/	posix_timers_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to akpm: 2004.0220;
-
-drop/	pm2fb_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to akpm/mntr: 2004.0220;
-	Replaced by rewritten driver.
-
-tx/	video_cyber2000fb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_neofb_audit2.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_radeonfb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_vesafb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_vfb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	mod_license_move.patch
-	From: Fry <fryboy@optushome.com.au>
-	sent to akpm/mntr: 2004.0220;
-
-add/	90patches.tar.gz for unneeded casts
-	From: Carlo Perassi <carlo@linux.it>
-	net_arm_casts.patch
-	net_atalk_fc_casts.patch
-done/	net_bonding_casts.patch
-	net_hamradio_casts.patch
-	net_pcmcia_casts.patch
-	net_token_casts.patch
-	net_tulip_casts.patch
-	net_wan_casts.patch
-	net_wireless_casts.patch
-	s390_net_cast.patch
-	fusion_mptlan.patch
-	char_synclink.patch
-	ieee1394_eth1394.patch
-	net_generic_casts.patch
-	net_intel_casts.patch
-	net_lance_casts.patch
-	net_3cxyz_casts.patch (except for 3c527.c changes)
-	drivers_net_casts.patch (except for tc35815.c, 68360enet.c)
-
-add/	atm_nicstar_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-
-add/	doc_00_index.patch
-	From: Alexey Dobriyan <adobriyan@mail.ru>
-
-add/	drivers_net_v2_casts.patch
-	From: Carlo Perassi <carlo@linux.it>
-
-add/	ide_piix_init.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-
-add/	isdn_eicon_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-
-add/	message_fusion_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-
-add/	mtd_doc200x_warn.patch
-	From: Vinay K Nallamothu <nvk@gsecone.com>
-
-add/	genrtc_proc.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	From: Randy.Dunlap <rddunlap%osdl!org>
-
-wait	ipv4_fib_hash_check.patch
-	From: Francois Romieu <romieu@fr.zoreil.com>
-	original From: <WHarms@bfs.de>(Walter Harms)
-
-add/	file2alias_signcomp.patch
-fxd	From: Ron Gage <ron@rongage.org>
-
-add/	fixdep_signcomp.patch
-fxd	From: Ron Gage <ron@rongage.org>
-
-add/	modpost_signcomp.patch
-	From: Ron Gage <ron@rongage.org>
-
-add/	char_rioctrl_retval.patch
-	From: Tony Breeds <tony@bakeyournoodle.com>
-
-
-previous (for 2.6.3):  [2004-02-18]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-add/	extraver.patch
-	rddunlap%osdl!org
-
-drop/	fs_buffer_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to akpm: 2004.0220;
-	Nope, just let it fault later.
-
-???	ipv4_fibhash_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-
-M/	ipv4_inetpeer_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to netdev/davem: 2004.0223;
-
-M/	ipv4_ipmr_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to netdev/davem: 2004.0223;
-
-M/	ipv6_fib_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to netdev/davem: 2004.0223;
-
-M/	ipv6_route_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to netdev/davem: 2004.0223;
-
-M/	jffs_checks.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to akpm: 2004.0220;
-
-add/	kswapd_init_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-add/	lmc_proto_raw_h_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-
-M/	media_saa5249_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to akpm: 2004.0220;
-
-tx/	net_ibmtr_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to netdev/jgarzik: 2004.0223;
-
-M/	net_neighbour_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to netdev/davem: 2004.0223;
-
-tx/	net_ne_unused2.patch
-	From: Stephen Hemminger <shemminger@osdl.org>
-	sent to netdev/jgarzik: 2004.0223;
-
-M/	net_pppoe_noprocfs2.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to netdev/davem: 2004.0223;
-
-M/	net_pppoe_rmproc.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to netdev/davem: 2004.0223;
-
-tx/	net_skge_unused.patch
-	From: Stephen Hemminger <shemminger@osdl.org>
-	sent to netdev/jgarzik: 2004.0223;
-
-tx/	net_strip_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to netdev/jgarzik: 2004.0223;
-
-tx/	net_strip_noprocfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to netdev/jgarzik: 2004.0223;
-
-tx/	pm2fb_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	posix_timers_kmemcc.patch
-	From: <WHarms@bfs.de>(Walter Harms)
-	sent to akpm: 2004.0220;
-
-add/	setup_bootmem_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-drop	skfddi_regions_pciupdate.patch
-	From: Matthew Wilcox <willy@debian.org>
-	merged with another skfddi cleanup patch;
-
-add?	skfddi_errmsg.patch (instead):
-
-mntr/	stv680_fixes.patch
-	From: Domen Puncer <domen@coderock.org>
-
-M/	tele_ixj_minmax.patch
-	From: Michael Veeck <michael.veeck@gmx.net>
-	sent to akpm: 2004.0220;
-
-tx/	video_cyber2000fb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_neofb_audit2.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_radeonfb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_vesafb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	video_vfb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/mntr: 2004.0220;
-
-tx/	mod_license_move.patch
-	From: Fry <fryboy@optushome.com.au>
-	sent to akpm/mntr: 2004.0220;
-
-add/	90patches.tar.gz for unneeded casts
-	From: Carlo Perassi <carlo@linux.it>
-	net_arm_casts.patch
-	net_atalk_fc_casts.patch
-done/	net_bonding_casts.patch
-	net_hamradio_casts.patch
-	net_pcmcia_casts.patch
-	net_token_casts.patch
-	net_tulip_casts.patch
-	net_wan_casts.patch
-	net_wireless_casts.patch
-	s390_net_cast.patch
-	fusion_mptlan.patch
-	char_synclink.patch
-	ieee1394_eth1394.patch
-	net_generic_casts.patch
-	net_intel_casts.patch
-	net_lance_casts.patch
-	net_3cxyz_casts.patch (except for 3c527.c changes)
-	drivers_net_casts.patch (except for tc35815.c, 68360enet.c)
-
-previous (for 2.6.2-rc2):  [2004-01-27]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-M/	ide_pci_triflex_not_procfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-	sent to akpm/maint: 2004.0204;
-
-M/	ps2esdi_typos.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
-	sent to akpm/maint: 2004.0204;
-
-M/	fbcmap_kmalloc.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/maint: 2004.0204;
-
-tx/	vga16fb_audit.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to akpm/maint: 2004.0204;
-
-previous (for 2.6.2-rc1):  [2004-01-23] [not announced]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-tx/	errno_numbers_assembly.patch
-	From: Danilo Piazzalunga <danilopiazza@libero.it>
-	to akpm: 2004.0126;
-
-drop/	ide_tape_kmalloc_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-	looks wrong:  can't just return without doing work;
-
-M/	linux_sound_c99_init.patch
-	From: "Maciej Soltysiak" <solt@dns.toxicfilms.tv>
-	to akpm/perex: 2004.0124;
-
-drop/	parameter_typos.patch
-	From: "Maciej Soltysiak" <solt@dns.toxicfilms.tv>
-	don't worry about spellos in comments;
-
-previous (for 2.6.1-bk6):  [2004-01-21]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-M/	aha1542_kmalloc_type.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
-	to linux-scsi 2004.0124;
-
-M/	aha1542_qcommand_return.patch
-	From: Timmy Yee <shoujun@masterofpi.org>
-	to linux-scsi 2004.0124;
-
-M/	char_dz_vrfy_area.patch
-	From: Domen Puncer <domen@coderock.org>
-	to akpm: 2004.0124;
-
-M/	config_sysrq.patch
-	From: Domen Puncer <domen@coderock.org>
-	to akpm: 2004.0124;
-
-mntr/	mcfserial_remove_casts_args.patch
-	From: Domen Puncer <domen@coderock.org>
-	to gerg@snapgear.com 2004.0124;
-
-mntr/	netdev_get_stats.patch
-	From: Domen Puncer <domen@coderock.org>
-	to netdev/davem: 2004.0124;
-
-tx/	scsi_config_doc.patch
-	From: Jean Delvare <khali@linux-fr.org>
-	to linux-scsi 2004.0124;
-
-M/	saa7146_hlp_min_max.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-	to maint: 2004.0124;
-
-previous (for 2.6.1-bk4):  [2004-01-16]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-mntr/	config_ledman_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-	to gerg@snapgear.com 2004.0124;
-
-M/	ipt_register_target_retval.patch
-	From: Daniele Bellucci <bellucda@tiscali.it>
-	to netdev/davem: 2004.0124;
-
-drop/	kconfig_cleanups_v1.patch
-	From: Matthew Wilcox <willy@debian.org>
-  drop	drivers/block/Kconfig: merge conflicts
-  drop	drivers/video/console/Kconfig: merge conflicts
-  drop	drivers/i2c/*/Kconfig: already merged
-  	Willy to handle with akpm.
-
-add?	kswapd_init_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-
-add/	lmc_proto_raw_h_rm.patch
-	From: Domen Puncer <domen@coderock.org>
-
-M/	netdev_rm_casts.patch
-	From: Carlo Perassi <carlo@linux.it>
-	to netdev/jgarzik: 2004.0124;
-
-mntr/	s390_net_ctctty_putuser.patch
-	From: Domen Puncer <domen@coderock.org>
-	(rediffed)
-	sent to s390 mntr: 2004.0124;
-
-tx/	setup_bootmem_fail.patch
-	From: Eugene Teo <eugene.teo@eugeneteo.net>
-	sent to akpm: 2004.0220;
-
-drop	skfddi_regions_pciupdate.patch
-	From: Matthew Wilcox <willy@debian.org>
-	merged into another skfddi cleanup patch;
-
-drop/	acpi_boot_message_typo.patch
-	From: Simon Richard Grint <rgrint@mrtall.compsoc.man.ac.uk>
-	no longer applicable: function was removed;
-
-M/	cpcihp_zt5550_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	to gregkh: 2004.0124;
-
-mntr/	mfcserial_vrfyarea.patch
-	From: Domen Puncer <domen@coderock.org>
-	to gerg@snapgear.com 2004.0124;
-
-M/	vga16fb.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	to akpm/mntr: 2004.0126;
-
-M/	vgastate.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	to akpm/mntr: 2004.0126;
-
-drop/	tc35815.c_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to jgarzik/netdev: 2004.0118;
-	already in netdev patchset;
-
-drop/	depca_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	already in netdev patchset;
-
-tx/	dgrs_iounmap.patch
-	From: Leann Ogasawara <ogasawara@osdl.org>
-	sent to jgarzik/netdev: 2004.0118;
-
-###
-
-backlog:
-
-- string/ptr changes (max, Luiz)
-- list_for_each (max)
-- kernel_thread (Walter)
-- ipv4/fib_hash.c (Francois, Walter)
-
---
-~Randy
+Wear any dress style in comfort!
+
+Looks and feels real - moves with you
+
+Comfortable and strapless - Won't fall down
+
+Adjustable cleavage control adds a full cup size
+
+*************************************
+
+When you buy 1 for $29.99, you get 1 free - just pay S&H!
+
+http://optinadsolutions.com/dbm83/l.php?790&50016221
+
+
+
+
+
+
+*************************************
+
+Powered by LIVEMERCIAL - The Interactive Commercial - www.livemercial.com
+Please paste url into browser to discontinue email offers for this product.
+http://optinadsolutions.com/dbm83/l.php?791&50016221&cid=107888
+Alternatively, you may send a written request via mail to:
+Livemercial - PMB 221, 2843 Calumet Avenue, Valparaiso, IN 46383
+
+************************
+*************
+
+--------------------------------------------
+Switch to HTML version:
+http://optinadsolutions.com/dbm83/msgtype.php?type=1&email=50016221&emailing=360
+--------------------------------------------
+Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To opt-out from our lists Proceed here http://optinadsolutions.com/dbm83/un.php?360&50016221 Third-party offers contained in this email are the sole responsibility of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
+
+
+--=_a35f3ed118243e57253025908ab4b56c
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+
+<HTML>
+<BODY BGCOLOR=3D#FFFFFF LEFTMARGIN=3D0 TOPMARGIN=3D0 MARGINWIDTH=3D0 MARGINHEIGHT=
+=3D0><img src=3D"http://www.asseenontvnetwork.com/track/open/107888" height=
+=3D"1" width=3D"1" border=3D"0">
+<br>
+<TABLE WIDTH=3D550 BORDER=3D0 align=3D"center" CELLPADDING=3D0 CELLSPACING=
+=3D0>
+	<TR>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_01.gif=
+" WIDTH=3D349 HEIGHT=3D11 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_02.gif=
+" WIDTH=3D188 HEIGHT=3D11 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_03.jpg=
+" WIDTH=3D13 HEIGHT=3D11 border=3D"0"></a></TD>
+	</TR>
+	<TR>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_04.gif=
+" WIDTH=3D349 HEIGHT=3D152 border=3D"0"></a></TD>
+		<TD width=3D"188" height=3D"152" background=3D"http://www.richstores.com/telebrands=
+/naturalbra/v5/images/noplay.gif"><object classid=3D"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000=
+" codebase=3D"https://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=
+=3D5,0,0,0" width=3D"188" height=3D"152"><param name=3D"movie" value=3D"http=
+://www.richstores.com/global/loader-v20.swf?Host=3Drichstores&Client=3Dtelebrands=
+&Product=3Dnaturalbra"/><param name=3D"quality" value=3D"high"/><embed src=
+=3D"http://www.richstores.com/global/loader-v20.swf?Host=3Drichstores&Client=
+=3Dtelebrands&Product=3Dnaturalbra" quality=3D"high" pluginspage=3D"https:/=
+/www.macromedia.com/go/getflashplayer" type=3D"application/x-shockwave-flash=
+" width=3D"188" height=3D"152"></embed></object></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_06.gif=
+" WIDTH=3D13 HEIGHT=3D152 border=3D"0"></a></TD>
+	</TR>
+	<TR>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_07.jpg=
+" WIDTH=3D349 HEIGHT=3D272 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_08.gif=
+" WIDTH=3D188 HEIGHT=3D272 border=3D"0"></a></TD>
+		<TD><a href=3D"http://optinadsolutions.com/dbm83/l.php?792&50016221"><IMG=
+ SRC=3D"http://www.richstores.com/telebrands/naturalbra/v5/images/index_09.gif=
+" WIDTH=3D13 HEIGHT=3D272 border=3D"0"></a></TD>
+	</TR>
+</TABLE>
+<table width=3D"550" height=3D"275"  border=3D"0" align=3D"center" cellpadding=
+=3D"0" cellspacing=3D"0">
+  <tr>
+    <td background=3D"http://www.richstores.com/global/images/StandardForm.gif=
+"><OBJECT classid=3D"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase=
+=3D"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=
+=3D5,0,0,0" WIDTH=3D"540" HEIGHT=3D"275" id=3D"form" ALIGN=3D""><PARAM NAME=
+=3D"movie" VALUE=3D"http://www.richstores.net/evcc/telebrands/naturalbra/form.swf=
+?Host=3Drichstores&CID=3D107888"><PARAM NAME=3D"menu" VALUE=3D"false"><PARAM=
+ NAME=3D"quality" VALUE=3D"high"><PARAM NAME=3D"bgcolor" VALUE=3D"#FFFFFF">=
+<EMBED src=3D"http://www.richstores.net/evcc/telebrands/naturalbra/form.swf=
+?Host=3Drichstores&CID=3D107888" quality=3D"high" bgcolor=3D"#FFFFFF"  WIDTH=
+=3D"540" HEIGHT=3D"275" NAME=3D"form" ALIGN=3D"" TYPE=3D"application/x-shockwave-flash=
+" PLUGINSPAGE=3D"http://www.macromedia.com/go/getflashplayer"></EMBED></OBJECT=
+></td>
+  </tr>
+</table>
+<div align=3D"center">
+<img src=3D"http://www.richstores.net/ets/footerD.gif" border=3D"0" align=
+=3D"center">
+<a href=3D"http://optinadsolutions.com/dbm83/l.php?793&50016221&cid=3D107888=
+">
+<img src=3D"http://www.richstores.net/ets/footerE.gif" border=3D"0" align=
+=3D"center"></a>
+<img src=3D"http://www.richstores.net/ets/footerF.gif" border=3D"0" align=
+=3D"center">
+</div>
+
+
+
+<center><br><br><font color=3D#000000>
+<hr width=3D250>Switch to <a href=3D"http://optinadsolutions.com/dbm83/msgtype.php=
+?type=3D0&email=3D50016221&emailing=3D360">TEXT</a> version
+
+<hr width=3D250>
+<font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
+<form method=3D"GET" action=3D"http://optinadsolutions.com/dbm83/forw_friend.php=
+" target=3D"ies_f2f_window">
+<b>Forward this mail to a friend:</b><br>
+Friend's emails:
+<input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
+"> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
+ value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"360=
+">
+</font></form>
+<hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
+>
+<p><font size=3D"2">Your privacy is extremely important to us. You requested=
+ to=20
+receive this mailing by subscribing to one or more of our offers. To opt-out=
+ from our lists Proceed <a href=3D"http://optinadsolutions.com/dbm83/un.php=
+?360&50016221">here</a>.=20
+Third-party offers contained in this email are the sole responsibility of the=
+=20
+offer originator. If you would like to mail your unsubscribe request mail to=
+: Your-Info, Inc 9140 Bonita Beach Rd.
+Suite 144 Bonita Springs, FL 34135.</font></p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<img src=3D"http://optinadsolutions.com/dbm83/opened.php?360&50016221" width=
+=3D1 height=3D1></font></font></center></body></html>
+dohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdo
+
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+
+--=_a35f3ed118243e57253025908ab4b56c--
+
+
+
+
+-------------------------------------------------------
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
