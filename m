@@ -1,51 +1,75 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sun, 26 Dec 2004 16:33:46 +0000
-Subject: [KJ] Re: Fw: Undelivered Mail Returned to Sender
-Message-Id: <20041226163346.GC3990@masina.coderock.org>
+From: sebek64@post.cz (Marcel Sebek)
+Date: Sun, 19 Dec 2004 19:08:01 +0000
+Subject: [KJ] [PATCH] miropcm20-radio cleanup
+Message-Id: <20041219190801.GB9205@penguin.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============24585548636051113=="
+Content-Type: multipart/mixed; boundary="===============37633373714120033=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============24585548636051113==
+--===============37633373714120033==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 26/12/04 11:05 -0500, Jim Nelson wrote:
-> Jim Nelson wrote:
-> >Domen Puncer wrote:
-> >
-> >>I've been getting these delivery reports for mail i sent to you.
-> >>Since i don't get that from anybody else i have some confidence that
-> >>the problem is at your side.
-> >>
-> >>"nmap -p 25 relay.verizon.net" shows port is filtered.
-> >>traceroute begins outputing * after 12 hop.
-> >>
-> >
-> >Weird.  I'm getting the same thing from my side, but mail is somehow 
-> >getting through from the mailing lists.  Let me call tech support and 
-> >find out what is going on.
-> >
-> 
-> All right.  After half an hour on hold for the tech support line, I got an 
-> answer. They just blocked a large number of non-US addresses due to 
->  spam-flooding - I submitted a request to get coderock.org on the whitelist. 
-> Should be done Monday or Tuesday.
+This is cleanup of file miropcm20-radio.c
 
-What a nice "solution" they have :-)
-Thank you.
+Compile tested.
+
+Signed-off-by: Marcel Sebek <sebek64@post.cz>
+
+diff -urpN linux-2.6/drivers/media/radio/miropcm20-radio.c linux-2.6-new/drivers/media/radio/miropcm20-radio.c
+--- linux-2.6/drivers/media/radio/miropcm20-radio.c	2004-08-06 17:14:31.000000000 +0200
++++ linux-2.6-new/drivers/media/radio/miropcm20-radio.c	2004-12-18 19:19:42.000000000 +0100
+@@ -22,11 +22,12 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/videodev.h>
++#include <linux/moduleparam.h>
+ #include "../../../sound/oss/aci.h"
+ #include "miropcm20-rds-core.h"
+ 
+ static int radio_nr = -1;
+-MODULE_PARM(radio_nr, "i");
++module_param(radio_nr, int, 0444);
+ 
+ struct pcm20_device {
+ 	unsigned long freq;
+@@ -75,9 +76,7 @@ static int pcm20_getflags(struct pcm20_d
+ 
+ 	if ((i=aci_rw_cmd(ACI_READ_TUNERSTATION, -1, -1))<0)
+ 		return i;
+-#ifdef DEBUG
+-	printk("check_sig: 0x%x\n", i);
+-#endif
++	pr_debug("check_sig: 0x%x\n", i);
+ 	if (i & 0x80) {
+ 		/* no signal from tuner */
+ 		*flags=0;
+@@ -107,9 +106,7 @@ static int pcm20_getflags(struct pcm20_d
+ 
+ 	if ((i=aci_rds_cmd(RDS_RXVALUE, &buf, 1))<0)
+ 		return i;
+-#ifdef DEBUG
+-	printk("rds-signal: %d\n", buf);
+-#endif
++	pr_debug("rds-signal: %d\n", buf);
+ 	if (buf > 15) {
+ 		printk("miropcm20-radio: RX strengths unexpected high...\n");
+ 		buf=15;
+@@ -172,9 +169,7 @@ static int pcm20_do_ioctl(struct inode *
+ 			unsigned long *freq = arg;
+ 			pcm20->freq = *freq;
+ 			i=pcm20_setfreq(pcm20, pcm20->freq);
+-#ifdef DEBUG
+-			printk("First view (setfreq): 0x%x\n", i);
+-#endif
++			pr_debug("First view (setfreq): 0x%x\n", i);
+ 			return i;
+ 		}
+ 		case VIDIOCGAUDIO:
 
 
-> Best thing about calling ISP tech support on the weekends is you actually 
-> get competent people manning the phones every once in a while ;)
-
-Hehe
-
-> 
-> Jim
-
---===============24585548636051113==
+--===============37633373714120033==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============24585548636051113==--
+--===============37633373714120033==--
