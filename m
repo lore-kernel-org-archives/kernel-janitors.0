@@ -1,35 +1,40 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Fri, 21 Jan 2005 00:38:07 +0000
-Subject: [KJ] Re: [PATCH 17/39] net/capi: use
-Message-Id: <1106267887.7955.40.camel@pegasus>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:14 +0000
+Subject: [KJ] [PATCH] [18/29] module.c - vfree() checking cleanups
+Message-Id: <41db113a.476d053b.2568.07bf@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============12161496617882017=="
+Content-Type: multipart/mixed; boundary="===============071532864121443218=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050120234754.GE2600@us.ibm.com>
-In-Reply-To: <20050120234754.GE2600@us.ibm.com>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Cc: Max Krasnyansky <maxk@qualcomm.com>, BlueZ Mailing List <bluez-devel@lists.sourceforge.net>, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============12161496617882017==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============071532864121443218==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-Hi Nishanth,
+module.c vfree() checking cleanups.
 
-> Description: Use wait_event_interruptible_timeout() instead of custom
-> wait-queue code. The first replacement is the most complicated as the various
-> return conditions each indicate different things, apparently. The same effects
-> are made after wait_event_interruptible_timeout() returns.
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-the first one makes the code look ugly. Remove it and re-submit.
-
-Regards
-
-Marcel
+ module.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
 
 
+--- linux-2.6.10-vanilla/arch/s390/kernel/module.c	2004-12-24 13:35:27.000000000 -0800
++++ linux-2.6.10/arch/s390/kernel/module.c	2005-01-04 11:20:15.357765720 -0800
+@@ -396,8 +396,7 @@
+ 		    const Elf_Shdr *sechdrs,
+ 		    struct module *me)
+ {
+-	if (me->arch.syminfo)
+-		vfree(me->arch.syminfo);
++	vfree(me->arch.syminfo);
+ 	return 0;
+ }
+ 
 
---===============12161496617882017==
+
+
+--===============071532864121443218==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============12161496617882017==--
+--===============071532864121443218==--
