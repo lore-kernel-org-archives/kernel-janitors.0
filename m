@@ -1,38 +1,35 @@
-From: Carol Ashby <yxknlbelmbq@aol.com>
-Date: Fri, 09 Apr 2004 02:06:34 +0000
-Subject: Soul Mate
-Message-Id: <8434013351801.57536@yxknlbelmbq@aol.com>
+From: Greg KH <greg@kroah.com>
+Date: Mon, 26 Apr 2004 22:15:51 +0000
+Subject: [Kernel-janitors] Re: [PATCH] audits in usb_init() [2.6.6-rc2-bk3]
+Message-Id: <20040426221521.GC22719@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--5334062683856540080"
+Content-Type: multipart/mixed; boundary="===============71301710890927117=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----5334062683856540080
-Content-Type: text/plain;
-	charset="iso-0951-3"
-Content-Transfer-Encoding: 7Bit
-Content-Description: senor concurrent ziegler
+--===============71301710890927117==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-An associate of yours has set you up on a romantic appointment with someone.
+On Mon, Apr 26, 2004 at 12:06:52AM +0200, Daniele Bellucci wrote:
+> 
+> there were some missing audits in usb_init()
+> 
+> Please Apply ;)
 
-Click here to accept the invitation:
-http://datingilove.com/confirm/?oc=53034986
+Applied, thanks.
 
+greg k-h
 
-The dating web site
-CREATED BY WOMEN
+--===============71301710890927117==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-http://datingilove.com/remove/?oc=53035738
-
-----5334062683856540080--
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============71301710890927117==--
