@@ -1,26 +1,51 @@
-From: Patrick Boettcher <patrick.boettcher@desy.de>
-Date: Fri, 11 Mar 2005 15:45:14 +0000
-Subject: [KJ] Re: [linux-dvb-maintainer] [PATCH 3/3] unified spinlock
-Message-Id: <Pine.LNX.4.61.0503111641120.30058@pub6.ifh.de>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Mar 2005 12:44:01 +0000
+Subject: [KJ] [UPDATE PATCH 07/19] drivers/scsi/atp870u: Use the
+Message-Id: <20050320124401.GG3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============57085683562273015=="
+Content-Type: multipart/mixed; boundary="===============13941875272760318=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220170137.GH14375@helium.tklauser.home>
+In-Reply-To: <20050220170137.GH14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============57085683562273015==
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+--===============13941875272760318==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 11 Mar 2005, Amit Gud wrote:
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-> --- ../kernels/linux-2.6.11/drivers/media/dvb/dibusb/dvb-dibusb-pid.c
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-This file has been removed in LinuxTV CVS. I'm certain the next patchset 
-for the kernel will include this change.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-regards,
-Patrick.
+--- linux-2.6.11.orig/drivers/scsi/atp870u.c	2005-03-02 12:50:38.000000000 +0100
++++ linux-2.6.11/drivers/scsi/atp870u.c	2005-03-20 13:27:54.000000000 +0100
+@@ -27,6 +27,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/pci.h>
+ #include <linux/blkdev.h>
++#include <linux/dma-mapping.h>
+ #include <asm/system.h>
+ #include <asm/io.h>
+ 
+@@ -2287,7 +2288,7 @@ static int atp870u_probe(struct pci_dev 
+ 	if (pci_enable_device(dev))
+ 		return -EIO;
+ 
+-	if (pci_set_dma_mask(dev, 0xFFFFFFFFUL)) {
++	if (pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
+ 		printk(KERN_ERR "atp870u: 32bit DMA mask required but not available.\n");
+ 		return -EIO;
+ 	}
 
---===============57085683562273015==
+--===============13941875272760318==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============57085683562273015==--
+--===============13941875272760318==--
