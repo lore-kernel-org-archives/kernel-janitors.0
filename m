@@ -1,46 +1,37 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 16 Mar 2005 10:24:44 +0000
-Subject: [KJ] [PATCH] printk : arch/ia64/kernel/smp.c
-Message-Id: <20050316102444.GC17405@rhum.iomeda.fr>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 23:01:09 +0000
+Subject: [KJ] [PATCH] crypto/tea.c: fix sparse warnings
+Message-Id: <200503100156.01640.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="SkvwRMAIpAhPCcCJ"
+Content-Type: multipart/mixed; boundary="===============11983622042176068=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---SkvwRMAIpAhPCcCJ
-Content-Type: text/plain; charset=us-ascii
+--===============11983622042176068==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-Description:
-printk() calls should include appropriate KERN_* constant.
-
-Have a nice day,
-
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-
-
---SkvwRMAIpAhPCcCJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="patch-printk-linux-2.6.11_arch_ia64_kernel_smp.c.diff"
-
-diff -urpN -X dontdiff linux-2.6.11-vanilla/arch/ia64/kernel/smp.c linux-2.6.11/arch/ia64/kernel/smp.c
---- linux-2.6.11-vanilla/arch/ia64/kernel/smp.c	2005-03-02 08:38:33.000000000 +0100
-+++ linux-2.6.11/arch/ia64/kernel/smp.c	2005-03-16 10:56:25.000000000 +0100
-@@ -270,7 +270,7 @@ smp_call_function_single (int cpuid, voi
- 	int me = get_cpu(); /* prevent preemption and reschedule on another processor */
+Index: linux-2.6.11-bk3-sparse/crypto/tea.c
+===================================================================
+--- linux-2.6.11-bk3-sparse.orig/crypto/tea.c	2005-03-02 09:38:34.000000000 +0200
++++ linux-2.6.11-bk3-sparse/crypto/tea.c	2005-03-08 14:58:50.000000000 +0200
+@@ -31,8 +31,8 @@
+ #define XTEA_ROUNDS		32
+ #define XTEA_DELTA		0x9e3779b9
  
- 	if (cpuid == me) {
--		printk("%s: trying to call self\n", __FUNCTION__);
-+		printk(KERN_INFO "%s: trying to call self\n", __FUNCTION__);
- 		put_cpu();
- 		return -EBUSY;
- 	}
+-#define u32_in(x) le32_to_cpu(*(const u32 *)(x))
+-#define u32_out(to, from) (*(u32 *)(to) = cpu_to_le32(from))
++#define u32_in(x) le32_to_cpup((const __le32 *)(x))
++#define u32_out(to, from) (*(__le32 *)(to) = cpu_to_le32(from))
+ 
+ struct tea_ctx {
+ 	u32 KEY[4];
 
---SkvwRMAIpAhPCcCJ
+--===============11983622042176068==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---SkvwRMAIpAhPCcCJ--
+--===============11983622042176068==--
