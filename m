@@ -1,37 +1,68 @@
-From: Benoit Boissinot <benoit.boissinot@ens-lyon.org>
-Date: Fri, 21 Jan 2005 20:09:49 +0000
-Subject: [KJ] [PATCH] Remove softirq_pending
-Message-Id: <20050121200949.GF22673@ens-lyon.fr>
+From: "suchita  sharma" <suchita_sharma@rediffmail.com>
+Date: Mon, 24 Jan 2005 08:16:52 +0000
+Subject: [KJ] mpool problem in mpc8260 atm driver
+Message-Id: <20050124081652.18261.qmail@webmail7.rediffmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70084597795968451=="
+Content-Type: multipart/mixed; boundary="===============37573489336440846=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============70084597795968451==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============37573489336440846==
+Content-Type: multipart/alternative;
+    boundary="----------=_1106554564-25884-187"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1106554564-25884-187
+Content-type: text/plain;
+	charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Hi,
+=20=20
+ Hi ,
 
-Below is a patch that remove a call to softirq_pending that was
-forgotten.
-
-Signed-off-by: Benoit Boissinot <benoit.boissinot@ens-lyon.org>
-
---- linux-clean/net/core/pktgen.c	2005-01-21 21:07:11.000000000 +0100
-+++ linux-2.6-mm-test/net/core/pktgen.c	2005-01-21 21:00:07.000000000 +0100
-@@ -2806,7 +2806,7 @@ static void pktgen_thread_worker(struct 
- 			tx_since_softirq += pkt_dev->last_ok;
- 
- 			if (tx_since_softirq > max_before_softirq) {
--				if(softirq_pending(smp_processor_id()))  
-+				if(local_softirq_pending())  
- 					do_softirq();
- 				tx_since_softirq = 0;
- 			}
+    I am using  mpc8260 atm driver . In my card local sdram is there which =
+is used for connection tables ,Buffer descriptors etc .To map that memory a=
+rea i am using ioremap and using mpool functions for allocating and freeing=
+ the memory . sometimes it is working fine with 10 or more than 10 connecti=
+on and sometimes it is failed saying Kernel access bad area . can anybody s=
+uggest something ??
 
 
---===============70084597795968451==
+------------=_1106554564-25884-187
+Content-type: text/html;
+	charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<P>
+&nbsp; <BR>
+ Hi ,<BR>
+<BR>
+&nbsp; &nbsp; I am using&nbsp; mpc8260 atm driver . In my card local sdram =
+is there which is used for connection tables ,Buffer descriptors etc .To ma=
+p that memory area i am using ioremap and using mpool functions for allocat=
+ing and freeing the memory . sometimes it is working fine with 10 or more t=
+han 10 connection and sometimes it is failed saying Kernel access bad area =
+. can anybody suggest something ??
+</P>
+
+
+<br><br>
+<A target=3D"_blank" HREF=3D"http://clients.rediff.com/signature/track_sig.=
+asp"><IMG DEFANGED_SRC=3D"http://ads.rediff.com/RealMedia/ads/adstream_nx.c=
+gi/www.rediffmail.com/inbox.htm@Bottom" BORDER=3D0 VSPACE=3D0 HSPACE=3D0></=
+a>
+
+------------=_1106554564-25884-187--
+
+--===============37573489336440846==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70084597795968451==--
+--===============37573489336440846==--
