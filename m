@@ -1,41 +1,43 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Wed, 29 Sep 2004 13:09:52 +0000
-Subject: [Kernel-janitors] Status of pci_find_device fixes
-Message-Id: <415AB420.9050406@nuerscht.ch>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 29 Sep 2004 18:15:33 +0000
+Subject: Re: [Kernel-janitors] Status of pci_find_device fixes
+Message-Id: <78330000.1096481733@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49191194472313393=="
+Content-Type: multipart/mixed; boundary="===============55518510799143206=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <415AB420.9050406@nuerscht.ch>
+In-Reply-To: <415AB420.9050406@nuerscht.ch>
 To: kernel-janitors@vger.kernel.org
 
---===============49191194472313393==
-Content-Type: text/plain; charset=us-ascii; format=flowed
+--===============55518510799143206==
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Hi
+--On Wednesday, September 29, 2004 03:09:52 PM +0200 Tobias Klauser <tklauser@nuerscht.ch> wrote:
+> 
+> Since I'm interested in the PCI section in the kernel (and Greg pointed me to that when I was bugging him ;), I thought this would be a good point to start helping. While crawling through the
+> kernel-janitor archives I noticed, that there's already work ongoing on that issue.
+> 
+> What's the status of this and are there drivers which still need to be fixed?
 
-I saw this entry in the TODO list:
+Hi Tobias,
 
-------------------------------------------------------------------------
-From: Greg KH
+Thanks for your interest. There are a couple of us working in this area already but if we all
+coordinate it should help get the work done quickly. Scott is doing everything under drivers/net
+to start with. Greg and I finished everything under arch/i386. Right now I am working on
+all the drivers that can be converted to the new pci_dev_present function. That leaves over
+100 drivers that need to be converted (cscope and grep are your friend).
 
-- delete all pci_find_* functions from the kernel tree.
-   Instead of pci_find_device use pci_get_device()..
+If this sounds like something you are interested in feel free to jump in and make sure to
+send you patches back to the list. If you want to make sure no one else is working on the 
+same driver before you start that would be good. Use this list, that is what it is for. 
 
- > Looking at pci.txt, it appears that if I use pci_get_device(), I will
- > also need to use pci_dev_put().
-------------------------------------------------------------------------
+Hanna
 
-Since I'm interested in the PCI section in the kernel (and Greg pointed 
-me to that when I was bugging him ;), I thought this would be a good 
-point to start helping. While crawling through the kernel-janitor 
-archives I noticed, that there's already work ongoing on that issue.
 
-What's the status of this and are there drivers which still need to be 
-fixed?
 
-Thanks, Tobias
-
---===============49191194472313393==
+--===============55518510799143206==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49191194472313393==--
+--===============55518510799143206==--
