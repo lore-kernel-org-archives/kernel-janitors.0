@@ -1,40 +1,67 @@
-From: Vicente Feito <vicente.feito@gmail.com>
-Date: Sun, 27 Feb 2005 14:50:30 +0000
-Subject: Re: [KJ] question ACPI & CMPXCHG
-Message-Id: <200502271450.30229.vicente.feito@gmail.com>
+From: walter harms <wharms@bfs.de>
+Date: Sun, 27 Feb 2005 16:17:36 +0000
+Subject: [KJ] question ACPI & CMPXCHG
+Message-Id: <4221F2A0.5050105@bfs.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============46454212177382492=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200502271349.20737.vicente.feito@gmail.com>
 In-Reply-To: <200502271349.20737.vicente.feito@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sunday 27 February 2005 05:01 pm, you wrote:
-> On Sun, Feb 27, 2005 at 01:49:20PM +0000, Vicente Feito wrote:
-> > Sorry but... isn't already a dependency?
-> >
-> >         depends on (SMP || PREEMPT) && X86_CMPXCHG
-> >
-> > Or a dependency where?
-> >...
->
-> I see this only as a dependency for HAVE_DEC_LOCK, not for ACPI.
->
-> Where did you see this as an ACPI dependency?
-Adrian,
-No, you're right, it's only a HAVE_DEC_LOCK, I've grepped too fast... my bad
+--===============46454212177382492==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Walter, I agree with putting that in the Kconfig, but I still think an error 
-it's more scary than a warning, most people don't care that much about 
-wasting some compile time, but they do care (and freaks out) when an error 
-appears in the compilation process...
-Users won't complain for a warning if the overall works fine, but if you give 
-them errors, well, they're not going to be happy... (users/admins/people that 
-aren't crazy for optimization)
+hi list,
+when i was looking into arch/i386/kernel/acpi/boot.c
 
-Vicente
+i found:
+
+#ifndef __HAVE_ARCH_CMPXCHG
+#warning ACPI uses CMPXCHG, i486 and later hardware
+#endif
+
+
+perhaps its nitpicking but ...
+I think the setup should disable ACPI if CMPXCHG does not exist.
+second best generate at least an error ! compile time these day is short 
+and you have a good change to miss warnings.
+
+re,
+	walter
+
+
+(since i have no idea about the setup, no patch)
+
+re,
+	walter
+
+
+quick fix (better example) , hopyfully someone can find some better text
+
+
+--- boot.c.org  2005-02-27 17:10:24.000000000 +0100
++++ boot.c      2005-02-27 17:11:58.000000000 +0100
+@@ -82,7 +82,7 @@
+  #endif
+
+  #ifndef __HAVE_ARCH_CMPXCHG
+-#warning ACPI uses CMPXCHG, i486 and later hardware
++#error  ACPI requires CMPXCHG
+  #endif
+
+  #define MAX_MADT_ENTRIES       256
+
+--===============46454212177382492==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============46454212177382492==--
