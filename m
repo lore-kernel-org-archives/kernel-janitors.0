@@ -1,41 +1,47 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 19 Feb 2005 20:27:11 +0000
-Subject: [KJ] Re: drivers/scsi/aic7xxx/* - compile warning cleanup
-Message-Id: <20050219202711.GA3850@masina.coderock.org>
+From: Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+Date: Wed, 02 Feb 2005 19:50:53 +0000
+Subject: [KJ] Re: [PATCH 9/20] w1/w1: remove interruptible_sleep_on_timeout()
+Message-Id: <20050202225053.2354277e@zanzibar.2ka.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50822568781530708=="
+Content-Type: multipart/mixed; boundary="===============12681567441191999=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============50822568781530708==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============12681567441191999==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 15/02/05 00:02 +0200, Stephen Biggs wrote:
-Content-Description: Mail message body
-> Description: compile warning cleanup - handle error return from 
-> scsi_add_host
+On Wed, 2 Feb 2005 11:14:18 -0800
+Nishanth Aravamudan <nacc@us.ibm.com> wrote:
+
+> Hello,
+
+Hello.
+ 
+> Please consider applying.
 > 
-> Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
-> 
-> diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/scsi/aic7xxx/aic79xx_osm.c linux-2.6.11-rc3-mm2/drivers/scsi/aic7xxx/aic79xx_osm.c
-> --- linux-2.6.11-rc3-mm2-original/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-12 12:06:25.000000000 +0200
-> +++ linux-2.6.11-rc3-mm2/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-12 17:35:49.000000000 +0200
-> @@ -2065,7 +2065,8 @@ ahd_linux_register_host(struct ahd_softc
->  	ahd_unlock(ahd, &s);
->  
->  #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
-> -	scsi_add_host(host, &ahd->dev_softc->dev); /* XXX handle failure */
-> +	if (scsi_add_host(host, &ahd->dev_softc->dev))
-> +		return (EIO);
+> Description: Replace deprecated interruptible_sleep_on_timeout() with direct
+> wait-queue usage. Ideally, I would use wait_event_interruptible_timeout();
+> however, there is no condition to sleep on here, unless I was to use the
+> try_to_freeze() call as one. That is not the case in the current code, though,
+> and I'm not sure it can/should be. Since timeout is a jiffies-unit variable,
+> change the type to unsigned long. Patch is compile-tested.
 
-If it was that simple, I doubt they'd wrote the comment :-)
-Everything has to be "undone" before return.
+Second part of the patch(changing w1_process() sleeping path) is not 100% right.
+Although all those sleeps are just waitings for given timeout to check various
+flags - since awakening only happens on signal, we can just replace them
+with msleep_interruptible() and appropriate try_to_freeze().
+
+I will prepare a patch tomorrow, thank you.
+
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
-	Domen
+	Evgeniy Polyakov
 
---===============50822568781530708==
+Only failure makes us experts. -- Theo de Raadt
+
+--===============12681567441191999==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50822568781530708==--
+--===============12681567441191999==--
