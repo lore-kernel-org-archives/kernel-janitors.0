@@ -1,24 +1,43 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 23:13:29 +0000
-Subject: [Kernel-janitors] Misnumbered video series
-Message-Id: <20040927231329.GV1617@us.ibm.com>
+Date: Mon, 27 Sep 2004 18:16:11 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/16] scsi/ibmvscsi: replace
+Message-Id: <20040927181610.GR1676@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============710938492427306=="
+Content-Type: multipart/mixed; boundary="===============97968413541636434=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============710938492427306==
+--===============97968413541636434==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi list,
+Any comments would be appreciated.
 
-Just wanted to let you know that there will be on less patch in the
-video series, so the total is actually 2
+Description: Use msleep() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
--Nish
+--- 2.6.9-rc2-vanilla/drivers/scsi/ibmvscsi/ibmvscsi.c	2004-09-13 17:16:01.000000000 -0700
++++ 2.6.9-rc2/drivers/scsi/ibmvscsi/ibmvscsi.c	2004-09-27 11:14:52.000000000 -0700
+@@ -69,6 +69,7 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/dma-mapping.h>
++#include <linux/delay.h>
+ #include <asm/vio.h>
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_cmnd.h>
+@@ -1327,8 +1328,7 @@ static int ibmvscsi_probe(struct vio_dev
+ 		     time_before(jiffies, wait_switch) &&
+ 		     atomic_read(&hostdata->request_limit) < 0;) {
+ 
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ / 100);
++			msleep(10);
+ 		}
+ 
+ 		/* if we now have a valid request_limit, initiate a scan */
 
---===============710938492427306==
+--===============97968413541636434==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -29,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============710938492427306==--
+--===============97968413541636434==--
