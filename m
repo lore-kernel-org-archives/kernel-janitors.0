@@ -1,48 +1,59 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 19 Mar 2005 21:43:45 +0000
-Subject: [KJ] [UPDATE PATCH 13/16] drivers/net/tulip/winbond-840: Use the
-Message-Id: <20050319214345.GM3306@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 23:05:22 +0000
+Subject: [KJ] [PATCH] drivers/atm/nicstar.c: fix some sparse warnings
+Message-Id: <200503100157.43792.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13458879501695731=="
+Content-Type: multipart/mixed; boundary="===============36228854364313912=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============13458879501695731==
-Content-Type: text/plain; charset=us-ascii
+--===============36228854364313912==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
---- linux-2.6.11.orig/drivers/net/tulip/winbond-840.c	2005-03-02 12:50:28.000000000 +0100
-+++ linux-2.6.11/drivers/net/tulip/winbond-840.c	2005-03-19 20:33:01.000000000 +0100
-@@ -121,6 +121,7 @@ static int full_duplex[MAX_UNITS] = {-1,
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
- #include <linux/skbuff.h>
-@@ -394,7 +395,7 @@ static int __devinit w840_probe1 (struct
+Index: linux-2.6.11-bk4-sparse/drivers/atm/nicstar.c
+===================================================================
+--- linux-2.6.11-bk4-sparse.orig/drivers/atm/nicstar.c	2005-03-08 17:32:15.000000000 +0200
++++ linux-2.6.11-bk4-sparse/drivers/atm/nicstar.c	2005-03-10 00:25:39.000000000 +0200
+@@ -350,7 +350,7 @@ static void __devexit nicstar_remove_one
+    kfree(card->rsq.org);
+    kfree(card->tsq.org);
+    free_irq(card->pcidev->irq, card);
+-   iounmap((void *) card->membase);
++   iounmap(card->membase);
+    kfree(card);
+ }
  
- 	irq = pdev->irq;
+@@ -976,7 +976,7 @@ static void __devinit ns_init_card_error
+    }
+    if (error >= 4)
+    {
+-      iounmap((void *) card->membase);
++      iounmap(card->membase);
+    }
+    if (error >= 3)
+    {
+Index: linux-2.6.11-bk4-sparse/drivers/atm/nicstar.h
+===================================================================
+--- linux-2.6.11-bk4-sparse.orig/drivers/atm/nicstar.h	2005-03-08 17:32:15.000000000 +0200
++++ linux-2.6.11-bk4-sparse/drivers/atm/nicstar.h	2005-03-10 00:19:54.000000000 +0200
+@@ -739,8 +739,8 @@ typedef struct skb_pool
  
--	if (pci_set_dma_mask(pdev,0xFFFFffff)) {
-+	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
- 		printk(KERN_WARNING "Winbond-840: Device %s disabled due to DMA limitations.\n",
- 		       pci_name(pdev));
- 		return -EIO;
+ typedef struct vc_map
+ {
+-   volatile int tx:1;				/* TX vc? */
+-   volatile int rx:1;				/* RX vc? */
++   volatile unsigned int tx:1;				/* TX vc? */
++   volatile unsigned int rx:1;				/* RX vc? */
+    struct atm_vcc *tx_vcc, *rx_vcc;
+    struct sk_buff *rx_iov;		/* RX iovector skb */
+    scq_info *scq;			/* To keep track of the SCQ */
 
---===============13458879501695731==
+--===============36228854364313912==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13458879501695731==--
+--===============36228854364313912==--
