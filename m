@@ -1,57 +1,80 @@
-From: "rosina smith" <svetlanapetropoulos@pochta.ru>
-Date: Thu, 08 Jan 2004 04:49:33 +0000
-Subject: peak performance
-Message-Id: <8ff201c3d5a2$cef951d0$4ccabdb1@pwkf>
+From: "Nestor Holder" <zonpqaufivzw@aol.com>
+Date: Tue, 27 Jan 2004 23:16:47 +0000
+Subject: anthropomorphism olav arise
+Message-Id: <QPZMLIH-0003803743529@carte>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_47C_43C6_379B5814.140243F2"
+Content-Type: multipart/mixed; boundary="325582257429325"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+--325582257429325
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-------=_NextPart_47C_43C6_379B5814.140243F2
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+europium minsky melodramatic oracle remedial 
+conscionable honey clever bipolar arthritis mesh arcsin lengthen 
+desperado shelton auberge floridian drank same compel colorado compliment archibald 
+
+--325582257429325
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+
+<TITLE>Message</TITLE>
+
+<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
+<BODY>
+<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
+STILL NO LUCK ENRGAILNG IT?<BR>
+<BR>
+Our 2 pcodruts will work for you!<BR>
+<BR>
+1. #1 Spupelment aavilable! - Works!<BR>
+<A HREF="http://www.fcffla.dblttta.com=www.bvsc.jxhoshglxd.seeitnowhere.com/v2/?AFF_ID=d1230&ttcis=twlxzvtql">ETNER HERE</A><BR>
+<BR>
+and<BR>
+<BR>
+2. *New* Enahncement Oil - Get hard in 60 seocnds! Amzaing!<BR>
+Like no ohter oil you've seen. <BR>
+<A HREF="http://www.iexncgrcde.xhovap.com=www.zlgurfgyz.gciet.seeitnowhere.com/x/?AFF_ID=o1230&xmhhzketsj=mcreqwspa">ETENR HERE</A><BR>
+<BR>
+the 2 prdoucts work gerat togteher<BR>
+<BR>
+<BR>
+------------------------------------------------------------<BR>
+<BR>
+FOR WOEMN ONLY: <A HREF="http://www.hclcj.nhcun.com=www.wezqwqot.fpewsuwe.seeitnowhere.com/l/?AFF_ID=a1230&ilrfssthof=cikdz">TOCUH HERE</A><BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<A HREF="http://www.ezkrds.jjdp.com=www.ypldhvpgi.eqokd.seeitnowhere.com/homepage/?lbrf=lrrkkzwin">Not itnerseted</a><br></FONT></DIV></BODY></HTML>
+childbear fluffy paperweight serene eager since accentual morel possession helmholtz pill arginine doug aaa cruz craze hardworking anchorage cadmium blurt imbalance delinquent injurious ralph novice dumbbell gauss seneca diffractometer honorific armata antecedent fitch ambush infuriate busch rhetoric silane despondent <br>
+hymen purloin larry hereinabove bitch geminate intermit crystallite blank fogging nibs ecclesiastic cavitate abscissa ambrose caulk myrtle faint foxhole houston audit mcgovern b's populism chamois alkali member icosahedral psychoses principle budgetary restorative <br>
+grantee crush bakhtiari copperfield crawl cursor hairdo argon basidiomycetes binocular armhole bound furtherance britain pygmy australite ipecac hinduism bruckner cove contribute anaglyph bloodhound penelope in elizabeth comeback arithmetic colonial nymph precautionary chamois dortmund down kerygma sand featherbed calumet gina <br>
+alchemy countervail consign harp booky hillcrest egocentric augur cobra service bond primrose purify andover ionospheric antigorite contention helmsman chimique hostage immobility jitterbug lutz crowfoot hebrew pinpoint incendiary pension lance schafer herman proline area clip harley pegboard enjoinder elijah <br>
+dealt lingo mollycoddle betony dewar alphameric carboy goodrich guile haiku circa machination koenigsberg produce n's alga controversy equine cambridge delightful bangkok divisional doublet erasable benedikt arnold darpa cordon kidney mend rode bluegill cola <br>
+bennett boo saigon martial humus boat isopleth patrolled attorney fermentation forum inability bury parasol diurnal coot debate dairylea perez masseur danish cantaloupe abstain centric clamshell <br>
+downplay buses minimum bough cinerama mildew exploratory pascal rakish newspaper military hoydenish excoriate dowager bazaar kurd militia prosody interim latinate august denebola caryatid ammo col buddhist simplify abridgment dysentery largesse ligget relict glum charcoal militarist rehearsal emory adult fluency <br>
+paragonite quarantine glenda doge fingernail crockett hitherto alger barlow sermon emissivity obduracy rapid guillotine appeal phipps assemble acetylene bauxite cadillac kohlrabi manama seething chivalry equipping anionic lima clearheaded diurnal inopportune lain plasma <br>
+adair duopoly perth opacity hugging bordeaux miami brassy heraclitus helmholtz bub indianapolis hospice hale linus atypic altruist ingersoll avuncular explicit contrabass locke grandma hovel algorithm <br>
+deceptive checkmate agate harness boulder graduate party rutile nightshirt floodlit joe epigraph linger bingham expiate morris <br>
 
 
-------=_NextPart_47C_43C6_379B5814.140243F2
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: base64
-
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgaHR0cC1lcXVpdj1Db250ZW50LVR5cGUgY29udGVu
-dD0idGV4dC9odG1sOyBjaGFyc2V0PWlzby04ODU5LTEiPg0KPE1FVEEgY29udGVudD0iTVNIVE1M
-IDEwLjAuMjYyNyIgbmFtZT1HRU5FUkFUT1I+DQo8U1RZTEU+PC9TVFlMRT4NCjwvSEVBRD48Rk9O
-VCBmYWNlPUFyaWFsPjxGT05UIHNpemU9Mj4NCjxCT0RZPg0KPERJVj50PFM+aDwvUz5pcyBmaXJt
-IG1hZGUgbWUgc28gaGE8Rk9OVCBmYWNlPUNvdXJpZXI+cHA8L0ZPTlQ+eTxCUj4NCjxCUj4NCmFj
-Y2Vzc2luZyBzZXJ2ZXI8QlI+DQo8YSBocmVmPSJodHRwOi8veER0OFpAd3d3Lm5vdGxlYXZpbmdo
-b21lYnV5ZXJzLmNvbS9wYWxtLmNvbSI+PGltZyBzcmM9Imh0dHA6Ly9vWGFVdFRqVUB3d3cubm90
-bGVhdmluZ2hvbWVidXllcnMuY29tL2luZHkubmV0IiBib3JkZXI9IjAiPjwvYT48QlI+DQphIHJl
-d2FyZGk8Rk9OVCBmYWNlPSJNUyBTYW5zIFNlcmlmIj5uZzwvRk9OVD48U1RSSUtFPiA8L1NUUklL
-RT5leHBlcmllbmNlIGF3YWl0czxGT05UIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+IDwvRk9OVD55
-b3UuPEJSPg08U1BBTj4KSGUgPC9TUEFOPndhcyBub3QgYXQ8U1RST05HPiA8L1NUUk9ORz5hbGwg
-c29ycnkgdG88U1BBTj4gYmk8L1NQQU4+ZCBnb29kLWI8Rk9OVCBjb2xvcj0jYTZhYzk3PnkgPC9G
-T05UPnRvIHRoZTxGT05UIGNvbG9yPSM0NmM1NzQ+IGM8L0ZPTlQ+YW5uaWJhbCBpczxFTT5sYW48
-L0VNPmQ8U1RST05HPiwgPC9TVFJPTkc+YnV0IGhlIHdhcyA8U1RST05HPnc8L1NUUk9ORz5vcnJp
-ZWQgYWJvPFNUUklLRT51PC9TVFJJS0U+dCB0aGUgbWFjaDxFTT5pbmU8L0VNPiwgPEZPTlQgY29s
-b3I9I2MxMWZlZD53PC9GT05UPmhpY2ggY2xlYXJseSB3YTxCPnMgPC9CPm5vdCBpbiBnPEI+b288
-L0I+ZCB3bzxCPnJrPC9CPmluZyBvcmQ8VT5lPC9VPnIgVGhlIGdyZWU8U1RST05HPm4gPC9TVFJP
-Tkc+bWFpZGVuIGhhc3Q8ST5lPC9JPm5lZCBhd2F5LCBidXQgPFNQQU4+cHJlPC9TUEFOPnNlbnRs
-eSA8U1BBTj5yZXR1PC9TUEFOPnJuZWQ8U1BBTj4gYW48L1NQQU4+ZCBzYWk8Qj5kPC9CPjogVGhl
-IDxTUEFOPmtpdHRlbiA8L1NQQU4+d2lsbCBub3QgY288Rk9OVCBjb2xvcj0jYTNmY2VjPm08L0ZP
-TlQ+ZTxCUj48L0RJVj48L0JPRFk+PC9IVE1MPjwvRk9OVD48L0ZPTlQ+
-
-------=_NextPart_47C_43C6_379B5814.140243F2--
-
+--325582257429325--
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: Perforce Software.
-Perforce is the Fast Software Configuration Management System offering
-advanced branching capabilities and atomic changes on 50+ platforms.
-Free Eval! http://www.perforce.com/perforce/loadprog.html
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
