@@ -1,36 +1,43 @@
 From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 13 Oct 2004 23:15:49 +0000
-Subject: [KJ] Re: [PATCH 2.6] zatm.c: replace pci_find_device with
-Message-Id: <204600000.1097709349@w-hlinder.beaverton.ibm.com>
+Date: Fri, 08 Oct 2004 22:36:12 +0000
+Subject: [KJ] [RFT 2.6] isa.c replace pci_find_device with pci_get_device
+Message-Id: <84880000.1097274972@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74388138357748224=="
+Content-Type: multipart/mixed; boundary="===============89679351052385814=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <194130000.1097705759@w-hlinder.beaverton.ibm.com> <197610000.1097706024@w-hlinder.beaverton.ibm.com> <20041013225304.GB32276@electric-eye.fr.zoreil.com>
-In-Reply-To: <20041013225304.GB32276@electric-eye.fr.zoreil.com>
-To: Francois Romieu <romieu@fr.zoreil.com>
-Cc: Hanna Linder <hannal@us.ibm.com>, lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, chas@cmf.nrl.navy.mil
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: greg@kroah.com, hannal@us.ibm.com, davem@davemloft.net, ecd@skynet.be, jj@sunsite.ms.mff.cuni.cz, anton@samba.org
 
---===============74388138357748224==
+--===============89679351052385814==
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
---On Thursday, October 14, 2004 12:53:04 AM +0200 Francois Romieu <romieu@fr.zoreil.com> wrote:
-
-> Hanna Linder <hannal@us.ibm.com> :
-> [...]
-> 
-> You will hate me but I had some code waiting for resurrection. :o)
-
-Not at all. I have no attachment to this code whatsoever. Your solution
-looks very clean.
-
+As pci_find_device is going away I've replaced it with pci_get_device.
+If someone with a Sparc64 system could test it I would appreciate it.
 Thanks.
 
-Hanna
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/sparc64/kernel/isa.c linux-2.6.9-rc3-mm3patch/arch/sparc64/kernel/isa.c
+--- linux-2.6.9-rc3-mm3cln/arch/sparc64/kernel/isa.c	2004-09-29 20:04:25.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch/arch/sparc64/kernel/isa.c	2004-10-08 15:22:19.000000000 -0700
+@@ -262,7 +262,7 @@ void __init isa_init(void)
+ 	device = PCI_DEVICE_ID_AL_M1533;
+ 
+ 	pdev = NULL;
+-	while ((pdev = pci_find_device(vendor, device, pdev)) != NULL) {
++	while ((pdev = pci_get_device(vendor, device, pdev)) != NULL) {
+ 		struct pcidev_cookie *pdev_cookie;
+ 		struct pci_pbm_info *pbm;
+ 		struct sparc_isa_bridge *isa_br;
 
 
---===============74388138357748224==
+--===============89679351052385814==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74388138357748224==--
+--===============89679351052385814==--
