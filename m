@@ -1,26 +1,29 @@
 From: Roland Dreier <roland@topspin.com>
-Date: Tue, 18 Jan 2005 19:06:19 +0000
+Date: Tue, 18 Jan 2005 19:07:58 +0000
 Subject: Re: [openib-general] Re: [KJ] [RFC] TODO file cleanups
-Message-Id: <52vf9ud0b8.fsf@topspin.com>
+Message-Id: <52oefmd08h.fsf@topspin.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============09975210171327209=="
+Content-Type: multipart/mixed; boundary="===============47539250668340571=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050117231123.GC19162@nd47.coderock.org>
 In-Reply-To: <20050117231123.GC19162@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============09975210171327209==
+--===============47539250668340571==
 Content-Type: text/plain; charset=us-ascii
 
-    Michael> By the way, I was looking at using RCU to reduce locking,
-    Michael> also for thing like poll_cq. What do you say to that?
+    Matthew> The semantics of yield() aren't what you, or I, or 2.4
+    Matthew> think they should be.  Basically, it means "go away, run
+    Matthew> anything else, even the idle task, don't run me again for
+    Matthew> many seconds".  I think msleep(1) is probably the best
+    Matthew> for this driver, but I'm not sure exactly what semantics
+    Matthew> you want.
 
-Unless it's a dramatic speedup, we should avoid RCU because it seems
-RCU can only be used with GPL code, not dual GPL/BSD.
+OK, I'll make that change.  Thanks.
 
  - Roland
 
---===============09975210171327209==
+--===============47539250668340571==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +34,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============09975210171327209==--
+--===============47539250668340571==--
