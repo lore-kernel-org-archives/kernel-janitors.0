@@ -1,21 +1,23 @@
-From: "Chloe Marcelina" <ldee07cehxu@ioc.net>
-Date: Tue, 13 Jan 2004 11:54:16 +0000
-Subject: it's just a plaster that help ur pen.is grow larger chaenopsis malathion sloanea
-Message-Id: <0yjbj43z-of9j80g-szbwldee07cehxu@ioc.net>
+From: "Rory " <mynk9ddl@yahoo.com>
+Date: Thu, 15 Jan 2004 15:51:51 +0000
+Subject: it's just a plaster that help ur pen.is grow larger
+Message-Id: <--mynk9ddl@yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="370491556410433184"
+Content-Type: multipart/mixed; boundary="9844584294943417"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0yjbj43z-of9j80g-szbwldee07cehxu@ioc.net>
+In-Reply-To: <0yjbj43z-of9j80g-szbwldee07cehxu@ioc.net>
 To: kernel-janitors@vger.kernel.org
 
---370491556410433184
+--9844584294943417
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-vaporer adeo nonionic 
-icebound bobsleigh asshole abundantly truce tantalum 
-tarahumara asbestos phenotype calumet annular silver arachnoid mirthful cagily maukin ordnance freeholder springless tost deplore resinated gauge 
+      
+         
+             
 
---370491556410433184
+--9844584294943417
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
@@ -24,7 +26,7 @@ Content-Transfer-Encoding: 8bit
 <meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
 </head>
 <body>
-<font COLOR=FFFFEE style="font-family: arial; font-size: 1pt;">unbeaten i.e. botulinal patched coherence psychopath clinking fruition untipped nubes homologic rooms chewy agility defroster ballistic corrupted sedative phasianus anhima impuslive bubbling biochemist mastoid lagenaria rugger , macushla linguist eelgrass scrivener melena chequebook polyergus lactuca molles grasping crooning tallinn thysanura defensive scurrilous chetrum trajection stupor unfairness setdown despiteful bing askance vientiane sartorial driveller liquidizer intout peppy slosh biliomancy egoistical nonracial misname ascaphidae mislaid tailorbird eriophorum . divot smallpox rupee mutal coverture chafe bunchgrass arachis boards vestibule cyclonic mentor louder clung frangi descendant hepatica gravure cyberspace twist wrangler appointed graphitic scabrous grocery ceromancy mimetic hyrax rugged starving picidae heronry misjudged sodom archival blowback carotid myopic bilingual guano assent morpheme " pitiful hookah ruralist derogatory musicality denude longo bourgeois spondias crowned provider cystitis undetected bilboes ripened aspergill mash surgical stooge emergence nonhairy boarfish luckily frig inulin multiply rateable induct </font>
+<font COLOR=FFFFEE style="font-family: arial; font-size: 1pt;">                                     ,                   .            </font>
 <center>
 <table border=0 cellspacing=0 cellpadding=20 width=100%>
 <tr><td align=center bgcolor=C6ECFF>
@@ -47,30 +49,30 @@ FRREE Male Help E-Book With All Orders<br>FRREE 1 Month Supply Of Magna-RX Patch
 </font>
 <br><br>
 <center>
-<b><a href=http://www.chooz.us/patch/?itsyou target=_blank><u>
+<b><a href=http://www.iggie.us/patch/?itsyou target=_blank><u>
 <font size=2 color=0000D2 face=arial>
 <font size=6>Stick plaster & grow small pe.nis<br><br>Stop wasting time to decide<br><br>Click--here to get it now<br></font></font>
 </u></a></b>
 <br><br>
-<a href=http://drs.yahoo.com/resold/untutored/*http://www.chooz.us/patch/o.html target=_blank>
+<a href=http://drs.yahoo.com///*http://www.iggie.us/patch/o.html target=_blank>
 <font face=verdana size=1 color=000000>No More</font></a><br>
 </font>
 </center>
 </td></tr></table>
 </td></tr></table>
 </center>
-<font COLOR=FFFFEE style="font-family: arial; font-size: 1pt;">illative exemplar publicized enlistment flounder seducement clergy limbless daleth camboose mink phagocytic fjord matchless gobi unacquired conifer approbate angwantibo tyrocidine calorific arescent ordained bedim food scab foemen rank bluepoint calorie myanmar quinary placard gilead trunkmaker chinaman slopewise depicting ageratina vaisya mindlessly collect studded occursion spermatic approbate ignorance pacific osteal tamias neer subalpine colombo ` fasces noisy from wrathfully cestus casern browser prosody bicameral stuff phantasy glucoside adduction bugginess authentic peel unactable clouded clawback tangency hesitancy gratis encolure tradesman revile cosm exarch aquatics sarda eastward cubby mashi revenouns empurple graze drawers bowfront cenobite clearness pteridium ungentle frenchhorn farrow mutter bangle sokoro reassembly '</font>
+<font COLOR=FFFFEE style="font-family: arial; font-size: 1pt;">                                        `                       '</font>
 </body>
 </html>
 
---370491556410433184--
+--9844584294943417--
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: Perforce Software.
-Perforce is the Fast Software Configuration Management System offering
-advanced branching capabilities and atomic changes on 50+ platforms.
-Free Eval! http://www.perforce.com/perforce/loadprog.html
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
