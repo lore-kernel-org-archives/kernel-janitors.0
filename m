@@ -1,42 +1,40 @@
-From: Don Koch <aardvark@krl.com>
-Date: Mon, 12 Apr 2004 21:05:48 +0000
-Subject: [Kernel-janitors] minor cyclades.c cleanup
-Message-Id: <200404122105.i3CL5nGj017977@p-chan.krl.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 21 Apr 2004 14:37:54 +0000
+Subject: [Kernel-janitors] [patch] use schedule_timeout() instead of yield()
+Message-Id: <20040421143754.GA1571@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95320771078536515=="
+Content-Type: multipart/mixed; boundary="===============27540260132352445=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============95320771078536515==
+--===============27540260132352445==
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This just removes some dead code and gets rid of a warning.  Not tested
-(no hardware) but it compiles.
+thanks to Felipe W Damasio hint rediffed.
+patch is on top of linux-2.6.6-rc2
 
-===== drivers/char/cyclades.c 1.36 vs edited =====
---- 1.36/drivers/char/cyclades.c	Sat Mar 27 00:30:45 2004
-+++ edited/drivers/char/cyclades.c	Mon Apr 12 15:56:14 2004
-@@ -681,16 +681,6 @@
- static void cy_throttle (struct tty_struct *tty);
- static void cy_send_xchar (struct tty_struct *tty, char ch);
+yield() removes process from active array into expired array,
+better just yield the CPU for a bit.
+tested on my laptop with a sis900.
+
+a++ maks
+
+diff -ruN a/drivers/net/sis900.c b/drivers/net/sis900.c
+--- a/drivers/net/sis900.c	2004-04-05 22:56:21.000000000 +0200
++++ b/drivers/net/sis900.c	2004-04-21 15:54:23.000000000 +0200
+@@ -600,7 +600,8 @@
  
--static unsigned long 
--cy_get_user(unsigned long *addr)
--{
--	unsigned long result = 0;
--	int error = get_user (result, addr);
--	if (error)
--		printk ("cyclades: cy_get_user: error == %d\n", error);
--	return result;
--}
--
- #ifndef MIN
- #define MIN(a,b)        ((a) < (b) ? (a) : (b))
- #endif
+ 	if(status & MII_STAT_LINK){
+ 		while (poll_bit) {
+-			yield();
++			set_current_state (TASK_UNINTERRUPTIBLE);
++			schedule_timeout(HZ/100);
+ 
+ 			poll_bit ^= (mdio_read(net_dev, sis_priv->cur_phy, MII_STATUS) & poll_bit);
+ 			if (time_after_eq(jiffies, timeout)) {
 
-
-
---===============95320771078536515==
+--===============27540260132352445==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95320771078536515==--
+--===============27540260132352445==--
