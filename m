@@ -1,34 +1,41 @@
-From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sun, 04 Jan 2004 08:59:03 +0000
-Subject: [Kernel-janitors] [PATCH] Free mm if mm_init() fails
-Message-Id: <20040104085903.GA3132@eugeneteo.net>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 17 Jan 2004 14:20:15 +0000
+Subject: [Kernel-janitors] [patch 2.6.1] net/core/dev.c -comparison
+Message-Id: <200401171520.15308.domen@coderock.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Patch compiles, and tested. Please apply.
+Hi.
 
-http://www.anomalistic.org/patches/fork-free-mm-if-mm_init-fails-fix-2.6.1-rc1-mm1.patch
+Get rid of one comparison, improve readability.
 
-diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/kernel/fork.c 2.6.1-rc1-mm1-fix/kernel/fork.c
---- 2.6.1-rc1-mm1/kernel/fork.c	2004-01-04 10:29:24.000000000 +0800
-+++ 2.6.1-rc1-mm1-fix/kernel/fork.c	2004-01-04 16:53:04.000000000 +0800
-@@ -547,7 +547,7 @@
- 	/* Copy the current MM stuff.. */
- 	memcpy(mm, oldmm, sizeof(*mm));
- 	if (!mm_init(mm))
--		goto fail_nomem;
-+		goto free_pt;
+
+--- linux-2.6.0-test11-small/net/core/dev.c	2003-11-29 21:47:03.000000000 +0100
++++ linux-2.6.0-test11-athlon/net/core/dev.c	2003-12-13 17:27:37.000000000 +0100
+@@ -1872,9 +1872,9 @@ void dev_seq_stop(struct seq_file *seq, 
  
- 	if (init_new_context(tsk,mm))
- 		goto fail_nocontext;
-
--- 
-Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
-1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
-main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
+ static void dev_seq_printf_stats(struct seq_file *seq, struct net_device *dev)
+ {
+-	struct net_device_stats *stats = dev->get_stats ? dev->get_stats(dev) :
+-							  NULL;
+-	if (stats)
++	if (dev->get_stats) {
++		struct net_device_stats *stats = dev->get_stats(dev);
++
+ 		seq_printf(seq, "%6s:%8lu %7lu %4lu %4lu %4lu %5lu %10lu %9lu "
+ 				"%8lu %7lu %4lu %4lu %4lu %5lu %7lu %10lu\n",
+ 			   dev->name, stats->rx_bytes, stats->rx_packets,
+@@ -1892,6 +1892,7 @@ static void dev_seq_printf_stats(struct 
+ 			     stats->tx_window_errors +
+ 			     stats->tx_heartbeat_errors,
+ 			   stats->tx_compressed);
++	}
+ 	else
+ 		seq_printf(seq, "%6s: No statistics available.\n", dev->name);
+ }
 
 _______________________________________________
 Kernel-janitors mailing list
