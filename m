@@ -1,32 +1,54 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 19 Jan 2005 14:52:48 +0000
-Subject: Re: [KJ] [PATCH] drivers/ide/pci/cs5520.c fix return code value
-Message-Id: <41EE7440.8020905@osdl.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 26 Jan 2005 00:06:45 +0000
+Subject: [KJ] [PATCH 20/34] isdn/capi: replace interruptible_sleep_on() with
+Message-Id: <20050126000645.GJ12649@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============18010745717880661=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1106126053.13875.59.camel@localhost.localdomain>
-In-Reply-To: <1106126053.13875.59.camel@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Domen Puncer wrote:
-> On 19/01/05 14:44 +0530, Amit Gud wrote:
-> 
->>Description: The patch follows from the suggestions by AC and Felipe W
->>Damasio for fixing the return codes from IDE drivers.
->>
->>+++ linux-2.6.9/drivers/ide/pci/cs5520.c        2005-01-19
->>14:23:50.000000000 +0530
->>@@ -224,7 +224,7 @@
->>        if(pci_enable_device_bars(dev, 1<<2))
+--===============18010745717880661==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-also, please use diff -up as indicated in
-Documentation/SubmittingPatches .
+Hi,
 
--- 
-~Randy
+Please consider applying.
+
+Description: Use wait_event_interruptible() instead of the deprecated
+interruptible_sleep_on(). Patch is straight-forward as current sleep is
+conditionally looped. Patch is compile-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/drivers/isdn/capi/capi.c	2005-01-24 09:34:07.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/isdn/capi/capi.c	2005-01-24 15:51:41.000000000 -0800
+@@ -675,13 +675,8 @@ capi_read(struct file *file, char __user
+ 		if (file->f_flags & O_NONBLOCK)
+ 			return -EAGAIN;
+ 
+-		for (;;) {
+-			interruptible_sleep_on(&cdev->recvwait);
+-			if ((skb = skb_dequeue(&cdev->recvqueue)) != 0)
+-				break;
+-			if (signal_pending(current))
+-				break;
+-		}
++		wait_event_interruptible(cdev->recvwait,
++				((skb = skb_dequeue(&cdev->recvqueue)) == 0));
+ 		if (skb == 0)
+ 			return -ERESTARTNOHAND;
+ 	}
+
+--===============18010745717880661==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============18010745717880661==--
