@@ -1,96 +1,79 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Mon, 12 Jul 2004 15:38:36 +0000
-Subject: [Kernel-janitors] [PATCH] drivers/sbus/char/ minmax removal and
-Message-Id: <40F2B07C.9050108@gmx.net>
+From: Sven Schuster <schuster.sven@gmx.de>
+Date: Mon, 12 Jul 2004 16:26:11 +0000
+Subject: Re: [Kernel-janitors] [PATCH] drivers/sbus/char/ minmax removal and
+Message-Id: <20040712162611.GA7460@zion.homelinux.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------090407080201060709020006"
+Content-Type: multipart/mixed; boundary="===============12423989874125341=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <40F2B07C.9050108@gmx.net>
+In-Reply-To: <40F2B07C.9050108@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------090407080201060709020006
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
 
-This patch (against 2.6.8-rc1) removes minmax-macros and changes calls
-to use kernel.h macros instead.
-
-Now heres the problem: Since all that is left on my minmax-todolist are 
-arch-specific-files, is there a way to cross-compile the kernel image so 
-that I can at least test if the patches compile? Sort of like "compile 
-everything there is, even if its hardware that wont ever exist on my 
-plattform" ?
-
-Best regards
-Veeck
+--===============12423989874125341==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Disposition: inline
 
 
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---------------090407080201060709020006
-Content-Type: text/plain;
- name="drivers-sbus-minmax.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="drivers-sbus-minmax.patch"
 
-diff -uprN -X dontdiff linux-2.6.8-rc1-old/drivers/sbus/char/aurora.c linux-2.6.8-rc1-new/drivers/sbus/char/aurora.c
---- linux-2.6.8-rc1-old/drivers/sbus/char/aurora.c	2004-07-04 11:04:15.000000000 +0200
-+++ linux-2.6.8-rc1-new/drivers/sbus/char/aurora.c	2004-07-12 17:01:09.432458176 +0200
-@@ -81,10 +81,6 @@ unsigned char irqs[4] = {
- int irqhit=0;
- #endif
- 
--#ifndef MIN
--#define MIN(a,b) ((a) < (b) ? (a) : (b))
--#endif
--
- static struct tty_driver *aurora_driver;
- static struct Aurora_board aurora_board[AURORA_NBOARD] = {
- 	{0,},
-@@ -594,7 +590,7 @@ static void aurora_transmit(struct Auror
- 					    &bp->r[chip]->r[CD180_TDR]);
- 				port->COR2 &= ~COR2_ETC;
- 			}
--			count = MIN(port->break_length, 0xff);
-+			count = min_t(unsigned char, port->break_length, 0xff);
- 			sbus_writeb(CD180_C_ESC,
- 				    &bp->r[chip]->r[CD180_TDR]);
- 			sbus_writeb(CD180_C_DELAY,
-@@ -1577,8 +1573,8 @@ static int aurora_write(struct tty_struc
- 	if (from_user) {
- 		down(&tmp_buf_sem);
- 		while (1) {
--			c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
--					   SERIAL_XMIT_SIZE - port->xmit_head));
-+			c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+						  SERIAL_XMIT_SIZE - port->xmit_head));
- 			if (c <= 0)
- 				break;
- 
-@@ -1589,8 +1585,8 @@ static int aurora_write(struct tty_struc
- 				break;
- 			}
- 			cli();
--			c = MIN(c, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
--				       SERIAL_XMIT_SIZE - port->xmit_head));
-+			c = min_t(int, c, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+					      SERIAL_XMIT_SIZE - port->xmit_head));
- 			memcpy(port->xmit_buf + port->xmit_head, tmp_buf, c);
- 			port->xmit_head = (port->xmit_head + c) & (SERIAL_XMIT_SIZE-1);
- 			port->xmit_cnt += c;
-@@ -1604,8 +1600,8 @@ static int aurora_write(struct tty_struc
- 	} else {
- 		while (1) {
- 			cli();
--			c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
--					   SERIAL_XMIT_SIZE - port->xmit_head));
-+			c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+						  SERIAL_XMIT_SIZE - port->xmit_head));
- 			if (c <= 0) {
- 				restore_flags(flags);
- 				break;
+Hi Michael,
 
---------------090407080201060709020006
+On Mon, Jul 12, 2004 at 05:38:36PM +0200, Michael Veeck told us:
+> This patch (against 2.6.8-rc1) removes minmax-macros and changes calls
+> to use kernel.h macros instead.
+>=20
+> Now heres the problem: Since all that is left on my minmax-todolist are=
+=20
+> arch-specific-files, is there a way to cross-compile the kernel image so=
+=20
+> that I can at least test if the patches compile? Sort of like "compile=20
+> everything there is, even if its hardware that wont ever exist on my=20
+> plattform" ?
+
+maybe
+
+make menuconfig ARCH=3Dinsert_needed_arch_here
+make ARCH=3Dinsert_needed_arch_here
+
+???
+
+
+HTH
+
+Sven
+
+>=20
+> Best regards
+> Veeck
+>=20
+>=20
+
+--=20
+Linux zion 2.6.8-rc1 #1 Sun Jul 11 23:36:03 CEST 2004 i686 athlon i386 GNU/=
+Linux
+ 18:24:27  up 18:42,  1 user,  load average: 0.03, 0.03, 0.00
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+
+iD8DBQFA8rujo4FAdB2PneQRAjBIAJ9h3Ra7MtUIU4Mzj8yDVfZnG6szqgCfTH3r
+TT9IJZ25RK7M2ngGjXKAUbg=
+=sOm/
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
+
+--===============12423989874125341==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -101,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------090407080201060709020006--
+--===============12423989874125341==--
