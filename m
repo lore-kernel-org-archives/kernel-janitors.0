@@ -1,90 +1,29 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 08 May 2004 23:38:16 +0000
-Subject: [Kernel-janitors] [patch 2.6.6-rc3 1/16] ifdefs:
-Message-Id: <20040508233816.GA4082@masina>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93273227242510304=="
+From: "Katharine Pierce" <kpiercell@stahlwerk-unna.de>
+Date: Tue, 25 May 2004 05:57:35 +0000
+Subject: limite,d time pri.ces
+Message-Id: <ae2801c44225$d5b9b932$ccea6bf7@tvac.or.jp>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
---===============93273227242510304==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
---- c/arch/cris/arch-v10/kernel/fasttimer.c	2004-04-04 05:36:26.000000000 +0200
-+++ a/arch/cris/arch-v10/kernel/fasttimer.c	2004-05-09 00:26:56.000000000 +0200
-@@ -592,23 +592,8 @@
- 
- #ifdef CONFIG_PROC_FS
- static int proc_fasttimer_read(char *buf, char **start, off_t offset, int len
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,2,0)
--                       ,int *eof, void *data_unused
--#else
--                        ,int unused
--#endif
--                               );
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,2,0)
-+                       ,int *eof, void *data_unused);
- static struct proc_dir_entry *fasttimer_proc_entry;
--#else
--static struct proc_dir_entry fasttimer_proc_entry =
--{
--  0, 9, "fasttimer",
--  S_IFREG | S_IRUGO, 1, 0, 0,
--  0, NULL /* ops -- default to array */,
--  &proc_fasttimer_read /* get_info */,
--};
--#endif
- #endif /* CONFIG_PROC_FS */
- 
- #ifdef CONFIG_PROC_FS
-@@ -617,12 +602,7 @@
- #define BIG_BUF_SIZE (500 + NUM_TIMER_STATS * 300)
- 
- static int proc_fasttimer_read(char *buf, char **start, off_t offset, int len
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,2,0)
--                       ,int *eof, void *data_unused
--#else
--                        ,int unused
--#endif
--                               )
-+                       ,int *eof, void *data_unused)
- {
-   unsigned long flags;
-   int i = 0;
-@@ -798,9 +778,7 @@
- 
-   memcpy(buf, bigbuf + offset, len);
-   *start = buf;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,2,0)
-   *eof = 1;
--#endif
- 
-   return len;
- }
-@@ -975,12 +953,8 @@
-     }
- #endif
- #ifdef CONFIG_PROC_FS
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,2,0)
-    if ((fasttimer_proc_entry = create_proc_entry( "fasttimer", 0, 0 )))
-      fasttimer_proc_entry->read_proc = proc_fasttimer_read;
--#else
--    proc_register_dynamic(&proc_root, &fasttimer_proc_entry);
--#endif
- #endif /* PROC_FS */
-     if(request_irq(TIMER1_IRQ_NBR, timer1_handler, SA_SHIRQ,
-                    "fast timer int", NULL))
-
---===============93273227242510304==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============93273227242510304==--
+PGh0bWw+Ckxvb2tpbmcgZm9yIGV4dHJlbWVseSBjaGVhcCBoaWdoLXF1YWxpdHkgc29mdHdhcmU/
+PGJyPgpXZSBtaWdodCBoYXZlIGp1c3Qgd2hhdCB5b3UgbmVlZC48YnI+Cjxicj4KPGEgaHJlZj0i
+aHR0cDovL2llanR6amJ2ZWUuZGppbmxtLmluZm8vIj5XaW5kb3dzIFhQIFByb2Zlc3Npb25hbCAy
+MDAyIDwvYT4uLi4uLi4uLi4uLi4uICQ1MDxicj4KPGEgaHJlZj0iaHR0cDovL29kZXFiY3lmZmtn
+YmkuZGppbmxtLmluZm8vIj5BZG9iZSBQaG90b3Nob3AgNy4wPC9hPiAuLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uICQ2MDxicj4KPGEgaHJlZj0iaHR0cDovL2d6ZGNpa2NsZXAuZGppbmxtLmluZm8vIj5N
+aWNyb3NvZnQgT2ZmaWNlIFhQIFByb2Zlc3Npb25hbCAyMDAyPC9hPiAuLi4uICQ2MDxicj4KPGEg
+aHJlZj0iaHR0cDovL2tlanVkdWRkb29uLmRqaW5sbS5pbmZvLyI+Q29yZWwgRHJhdyBHcmFwaGlj
+cyBTdWl0ZSAxMTwvYT4gLi4uLi4uLi4uLi4uLiAkNjA8YnI+Cjxicj4KPGEgaHJlZj0iaHR0cDov
+L2preGhzdWNpemxoeXEuZGppbmxtLmluZm8vIj5hbmQgbG90cyBtb3JlLi4uPC9hPjxicj4KPC9o
+dG1sPgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KVGhpcyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVkIGJ5OiBPcmFjbGUgMTBnCkdldCBj
+ZXJ0aWZpZWQgb24gdGhlIGhvdHRlc3QgdGhpbmcgZXZlciB0byBoaXQgdGhlIG1hcmtldC4uLiBP
+cmFjbGUgMTBnLiAKVGFrZSBhbiBPcmFjbGUgMTBnIGNsYXNzIG5vdywgYW5kIHdlJ2xsIGdpdmUg
+eW91IHRoZSBleGFtIEZSRUUuCmh0dHA6Ly9hZHMub3Nkbi5jb20vP2FkX2lkMTQ5JmFsbG9jX2lk
+gTY2Jm9wPWNsaWNrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCktlcm5lbC1qYW5pdG9yLWRpc2N1c3MgbWFpbGluZyBsaXN0Cktlcm5lbC1qYW5pdG9yLWRp
+c2N1c3NAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
+L2xpc3RzL2xpc3RpbmZvL2tlcm5lbC1qYW5pdG9yLWRpc2N1c3M=
