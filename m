@@ -1,51 +1,45 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Tue, 21 Sep 2004 07:40:15 +0000
-Subject: Re: [Kernel-janitors] [PATCH -mm 4/9] pci_find_device to
-Message-Id: <20040921084015.C20511@infradead.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 16 Sep 2004 23:47:35 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/3] ide/ide-tape: replace
+Message-Id: <20040916234735.GJ1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92765998564501495=="
+Content-Type: multipart/mixed; boundary="===============040134771363177002=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1095749570.3790.89.camel@sfeldma-mobl2.dsl-verizon.net>
-In-Reply-To: <1095749570.3790.89.camel@sfeldma-mobl2.dsl-verizon.net>
 To: kernel-janitors@vger.kernel.org
 
---===============92765998564501495==
+--===============040134771363177002==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Sep 20, 2004 at 11:52:50PM -0700, Scott Feldman wrote:
-> Use pci_get_device instead of pci_find_device as pci device returned
-> from pci_find_device can disappear at any momemt in time.
+Any comments would be appreciated.
 
+Description: Uses msleep_interruptible() in place of schedule_timeout()
+to guarantee the task delays as expected.
 
-Should be using ->shutdown, again..
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-> 
-> Signed-off-by: Scott Feldman <sfeldma@pobox.com>
-> 
-> diff -Naurp linux-2.6.9-rc2-mm1/drivers/net/ixgb/ixgb_main.c linux-2.6.9-rc2-mm1-dsf/drivers/net/ixgb/ixgb_main.c
-> --- linux-2.6.9-rc2-mm1/drivers/net/ixgb/ixgb_main.c	2004-09-20 22:36:24.000000000 -0700
-> +++ linux-2.6.9-rc2-mm1-dsf/drivers/net/ixgb/ixgb_main.c	2004-09-20 22:49:55.329677136 -0700
-> @@ -2078,7 +2078,7 @@ ixgb_notify_reboot(struct notifier_block
->  	case SYS_DOWN:
->  	case SYS_HALT:
->  	case SYS_POWER_OFF:
-> -		while ((pdev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pdev))) {
-> +		while ((pdev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, pdev))) {
->  			if (pci_dev_driver(pdev) == &ixgb_driver)
->  				ixgb_suspend(pdev, 3);
->  		}
-> 
-> 
+--- 2.6.9-rc2-vanilla/drivers/ide/legacy/ide-cs.c	2004-09-13 17:16:06.000000000 -0700
++++ 2.6.9-rc2/drivers/ide/legacy/ide-cs.c	2004-09-16 16:42:03.000000000 -0700
+@@ -43,6 +43,7 @@
+ #include <linux/ide.h>
+ #include <linux/hdreg.h>
+ #include <linux/major.h>
++#include <linux/delay.h>
+ #include <asm/io.h>
+ #include <asm/system.h>
+ 
+@@ -357,8 +358,7 @@ void ide_config(dev_link_t *link)
+ 		break;
+ 	    }
+ 	}
+-	__set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ/10);
++	msleep(100);
+     }
+ 
+     if (hd < 0) {
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
----end quoted text---
-
---===============92765998564501495==
+--===============040134771363177002==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92765998564501495==--
+--===============040134771363177002==--
