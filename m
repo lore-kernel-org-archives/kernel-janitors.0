@@ -1,108 +1,91 @@
 From: Daniele Pizzoni <auouo@tin.it>
-Date: Mon, 18 Oct 2004 18:50:54 +0000
-Subject: [KJ] [PATCH] Substitute custom Dprintk macro with pr_debug -
-Message-Id: <1098128326.3024.52.camel@pdp11.tsho.org>
+Date: Sun, 17 Oct 2004 16:14:03 +0000
+Subject: [KJ] [PATCH 5/8] replacing/fixing printk with pr_debug/pr_info in
+Message-Id: <1098032573.3023.126.camel@pdp11.tsho.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============9255693336422115=="
+Content-Type: multipart/mixed; boundary="===============73055559192109776=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
 
---===============9255693336422115==
+--===============73055559192109776==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Substituted custom Dprintk macro with pr_debug
-Removed stale CONFIG_BALANCED_IRQ_DEBUG ocurrence
+Replace custom macro Dprintk (defined in apic.h included via smp.h) with pr_debug from kernel.h.
+Use  pr_info when appropriate.
+Fix consistency of printks.
 
-Signed-off-by: Daniele Pizzoni
+Signed-off-by: Daniele Pizzoni <auouo@tin.it>
 
-Index: linux-2.6.9-rc4/arch/i386/kernel/io_apic.c
+Index: linux-2.6.9-rc4/arch/i386/kernel/nmi.c
 ===================================================================
---- linux-2.6.9-rc4.orig/arch/i386/kernel/io_apic.c	2004-10-18 20:36:22.631099360 +0200
-+++ linux-2.6.9-rc4/arch/i386/kernel/io_apic.c	2004-10-18 21:18:11.357714944 +0200
-@@ -20,6 +20,8 @@
-  *	Paul Diefenbaugh	:	Added full ACPI support
+--- linux-2.6.9-rc4.orig/arch/i386/kernel/nmi.c	2004-10-17 16:57:00.404604432 +0200
++++ linux-2.6.9-rc4/arch/i386/kernel/nmi.c	2004-10-17 17:01:18.114426584 +0200
+@@ -13,6 +13,7 @@
+  *  Mikael Pettersson	: PM converted to driver model. Disable/enable API.
   */
  
-+//#define DEBUG // pr_debug
 +#include <linux/kernel.h>
+ #include <linux/config.h>
  #include <linux/mm.h>
  #include <linux/irq.h>
- #include <linux/interrupt.h>
-@@ -246,14 +248,9 @@ static void set_ioapic_affinity_irq(unsi
- # include <linux/kernel_stat.h>	/* kstat */
- # include <linux/slab.h>		/* kmalloc() */
- # include <linux/timer.h>	/* time_after() */
-- 
--# ifdef CONFIG_BALANCED_IRQ_DEBUG
--#  define TDprintk(x...) do { printk("<%ld:%s:%d>: ", jiffies, __FILE__, __LINE__); printk(x); } while (0)
--#  define Dprintk(x...) do { TDprintk(x); } while (0)
--# else
--#  define TDprintk(x...) 
--#  define Dprintk(x...) 
--# endif
-+
-+/* you may want to use this */
-+/* #define pr_debug(x...) do { printk("<%ld:%s:%d>: ", jiffies, __FILE__, __LINE__); printk(x); } while (0) */
+@@ -107,7 +108,7 @@ int __init check_nmi_watchdog (void)
+ 	unsigned int prev_nmi_count[NR_CPUS];
+ 	int cpu;
  
- extern cpumask_t irq_affinity[NR_IRQS];
+-	printk(KERN_INFO "testing NMI watchdog ... ");
++	pr_info("testing NMI watchdog ... ");
  
-@@ -338,7 +335,7 @@ static inline void balance_irq(int cpu, 
- static inline void rotate_irqs_among_cpus(unsigned long useful_load_threshold)
- {
- 	int i, j;
--	Dprintk("Rotating IRQs among CPUs.\n");
-+	pr_debug("Rotating IRQs among CPUs.\n");
- 	for (i = 0; i < NR_CPUS; i++) {
- 		for (j = 0; cpu_online(i) && (j < NR_IRQS); j++) {
- 			if (!irq_desc[j].action)
-@@ -459,17 +456,17 @@ tryanothercpu:
- 	max_loaded = tmp_loaded;	/* processor */
- 	imbalance = (max_cpu_irq - min_cpu_irq) / 2;
- 	
--	Dprintk("max_loaded cpu = %d\n", max_loaded);
--	Dprintk("min_loaded cpu = %d\n", min_loaded);
--	Dprintk("max_cpu_irq load = %ld\n", max_cpu_irq);
--	Dprintk("min_cpu_irq load = %ld\n", min_cpu_irq);
--	Dprintk("load imbalance = %lu\n", imbalance);
-+	pr_debug("max_loaded cpu = %d\n", max_loaded);
-+	pr_debug("min_loaded cpu = %d\n", min_loaded);
-+	pr_debug("max_cpu_irq load = %ld\n", max_cpu_irq);
-+	pr_debug("min_cpu_irq load = %ld\n", min_cpu_irq);
-+	pr_debug("load imbalance = %lu\n", imbalance);
- 
- 	/* if imbalance is less than approx 10% of max load, then
- 	 * observe diminishing returns action. - quit
- 	 */
- 	if (imbalance < (max_cpu_irq >> 3)) {
--		Dprintk("Imbalance too trivial\n");
-+		pr_debug("Imbalance too trivial\n");
- 		goto not_worth_the_effort;
+ 	for (cpu = 0; cpu < NR_CPUS; cpu++)
+ 		prev_nmi_count[cpu] = irq_stat[cpu].__nmi_count;
+@@ -120,13 +121,13 @@ int __init check_nmi_watchdog (void)
+ 		if (!cpu_online(cpu))
+ 			continue;
+ 		if (nmi_count(cpu) - prev_nmi_count[cpu] <= 5) {
+-			printk("CPU#%d: NMI appears to be stuck!\n", cpu);
++			printk(KERN_WARNING "CPU#%d: NMI appears to be stuck!\n", cpu);
+ 			nmi_active = 0;
+ 			lapic_nmi_owner &= ~LAPIC_NMI_WATCHDOG;
+ 			return -1;
+ 		}
  	}
+-	printk("OK.\n");
++	pr_info("OK.\n");
  
-@@ -529,7 +526,7 @@ tryanotherirq:
- 		irq_desc_t *desc = irq_desc + selected_irq;
- 		unsigned long flags;
+ 	/* now that we know it works we can reduce NMI frequency to
+ 	   something more reasonable; makes a difference in some configs */
+@@ -332,7 +333,7 @@ static void setup_k7_watchdog(void)
+ 		| K7_NMI_EVENT;
  
--		Dprintk("irq = %d moved to cpu = %d\n",
-+		pr_debug("irq = %d moved to cpu = %d\n",
- 				selected_irq, min_loaded);
- 		/* mark for change destination */
- 		spin_lock_irqsave(&desc->lock, flags);
-@@ -552,7 +549,7 @@ not_worth_the_effort:
- 	 */
- 	balanced_irq_interval = min((long)MAX_BALANCED_IRQ_INTERVAL,
- 		balanced_irq_interval + BALANCED_IRQ_MORE_DELTA);	
--	Dprintk("IRQ worth rotating not found\n");
-+	pr_debug("IRQ worth rotating not found\n");
- 	return;
- }
+ 	wrmsr(MSR_K7_EVNTSEL0, evntsel, 0);
+-	Dprintk("setting K7_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
++	pr_debug("setting K7_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
+ 	wrmsr(MSR_K7_PERFCTR0, -(cpu_khz/nmi_hz*1000), -1);
+ 	apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	evntsel |= K7_EVNTSEL_ENABLE;
+@@ -354,7 +355,7 @@ static void setup_p6_watchdog(void)
+ 		| P6_NMI_EVENT;
  
+ 	wrmsr(MSR_P6_EVNTSEL0, evntsel, 0);
+-	Dprintk("setting P6_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
++	pr_debug("setting P6_PERFCTR0 to %08lx\n", -(cpu_khz/nmi_hz*1000));
+ 	wrmsr(MSR_P6_PERFCTR0, -(cpu_khz/nmi_hz*1000), 0);
+ 	apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	evntsel |= P6_EVNTSEL0_ENABLE;
+@@ -395,7 +396,7 @@ static int setup_p4_watchdog(void)
+ 
+ 	wrmsr(MSR_P4_CRU_ESCR0, P4_NMI_CRU_ESCR0, 0);
+ 	wrmsr(MSR_P4_IQ_CCCR0, P4_NMI_IQ_CCCR0 & ~P4_CCCR_ENABLE, 0);
+-	Dprintk("setting P4_IQ_COUNTER0 to 0x%08lx\n", -(cpu_khz/nmi_hz*1000));
++	pr_debug("setting P4_IQ_COUNTER0 to 0x%08lx\n", -(cpu_khz/nmi_hz*1000));
+ 	wrmsr(MSR_P4_IQ_COUNTER0, -(cpu_khz/nmi_hz*1000), -1);
+ 	apic_write(APIC_LVTPC, APIC_DM_NMI);
+ 	wrmsr(MSR_P4_IQ_CCCR0, nmi_p4_cccr_val, 0);
 
 
 
---===============9255693336422115==
+--===============73055559192109776==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -113,4 +96,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============9255693336422115==--
+--===============73055559192109776==--
