@@ -1,50 +1,49 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 24 May 2004 14:05:29 +0000
-Subject: [Kernel-janitors] Re: kjt patch-set for 2.6.7-rc1
-Message-Id: <20040524140529.GA23877@nd47>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Mon, 24 May 2004 15:44:18 +0000
+Subject: Re: [Kernel-janitors] Re: kjt patch-set for 2.6.7-rc1
+Message-Id: <20040524154418.GK1949@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62001204479026706=="
+Content-Type: multipart/mixed; boundary="===============46324050121356986=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040524140529.GA23877@nd47>
+In-Reply-To: <20040524140529.GA23877@nd47>
 To: kernel-janitors@vger.kernel.org
 
---===============62001204479026706==
+--===============46324050121356986==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 24/05/04 12:00 +0200, maximilian attems wrote:
-> hello!
+On Mon, 24 May 2004, Domen Puncer wrote:
+
+ ..
+> Great idea!
 > 
-Hi.
+> I have one suggestion, try egrep -n "^\+(.* $|        )", to see if
+> patches introduce trailing spaces or spaces instead of tabs.
+> This also bit me, so below are links to 2 updated patches.
 
-...
-> this patch is intended for further _testing_ of our work.
-> i hope that it helps Acme releasing the official kj ones.
-> i won't forward anything to maintainers or lkml.
-> will try to release on weekly/10days base.
-...
+thanks for your nice feedback and hints, 
+for the next releases i'll check the patches.
+ 
+> > +remove-old-ifdefs-fasttimer
+> http://coderock.org/kernel/janitor/old_ifdefs-take3/arch-cris-arch-v10-kernel-fasttimer.c_take2
+> > +remove-old-ifdefs-mtdcore
+> http://coderock.org/kernel/janitor/old_ifdefs-take3/drivers-mtd-mtdcore.c_take2
+> > +yield-nicedelay-sb1000
+> > +yield-schedtmout-megaraid
+> > +yield-schedtmout-sonycd535
+> 
+> These are the other patches that contain spaces.
 
-Great idea!
+yours weren't run with '-p' diff switch (-> SubmittingPatches ;)
+for now i've handedited those, didn't see further spaces,
+patch a bit smaller now and lot cleaner!!!
 
-I have one suggestion, try egrep -n "^\+(.* $|        )", to see if
-patches introduce trailing spaces or spaces instead of tabs.
-This also bit me, so below are links to 2 updated patches.
-
-> +remove-old-ifdefs-fasttimer
-http://coderock.org/kernel/janitor/old_ifdefs-take3/arch-cris-arch-v10-kernel-fasttimer.c_take2
-> +remove-old-ifdefs-mtdcore
-http://coderock.org/kernel/janitor/old_ifdefs-take3/drivers-mtd-mtdcore.c_take2
-
-
-> +yield-nicedelay-sb1000
-> +yield-schedtmout-megaraid
-> +yield-schedtmout-sonycd535
-
-These are the other patches that contain spaces.
+great
+a++ maks
 
 
-	Domen
-
---===============62001204479026706==
+--===============46324050121356986==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62001204479026706==--
+--===============46324050121356986==--
