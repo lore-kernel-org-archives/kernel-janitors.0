@@ -1,75 +1,61 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Fri, 16 Jan 2004 17:20:44 +0000
-Subject: Re: [Kernel-janitors] Project TO DO
-Message-Id: <20040116172043.GA1900@mail.sternwelten.at>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97285356417433455=="
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Fri, 16 Jan 2004 22:29:56 +0000
+Subject: Re: [Kernel-janitors] [Patch] - lmc_main.c - Linux 2.6.0
+Message-Id: <20040116142956.0808d286.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1074262013.3613.40.camel@Michelangelo>
-In-Reply-To: <1074262013.3613.40.camel@Michelangelo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Sat, 29 Nov 2003 12:11:43 -0500 Ron Gage <ron@rongage.org> wrote:
 
---===============97285356417433455==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
+| > > This patch replaces the check_region call in lmc_probe with a
+| > > request_region and release_region call.
 
+@@ -1060,7 +1066,7 @@
+          * Fix the two variables
+          *
+          */
+-        if (!(check_region (pci_ioaddr, LMC_REG_RANGE)) &&
++        if (request_region (pci_ioaddr, LMC_REG_RANGE, "LMC_TEST") &&
+             (vendor = CORRECT_VENDOR_ID) &&
+             (device = CORRECT_DEV_ID) &&
+             ((subvendor = PCI_VENDOR_LMC)  || (subdevice = PCI_VENDOR_LMC))){
+@@ -1099,6 +1105,7 @@
+             cards_found++;
+             intcf++;
+         }
++    release_region (pci_ioaddr, LMC_REG_RANGE);
+     lmc_probe_next_card:
+         pci_index++;
+     }
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+We are looking for a little more than a mechanical change of
+!check_region() to request_region()  [in most cases and in this
+case].
 
-On Fri, 16 Jan 2004, Fabiano Pallonetto wrote:
+The reason that check_region() is deprecated is that it is racy.
+It could report that a region is available and then another driver
+could immediately reserve that region, since check_region() doesn't
+have any reservation capability.
 
-> [..]
-> drivers/net/sis900.c:                   yield();
+Just changing check_region() to request_region()...release_region()
+keeps that race in place and that's not what we need here.
 
-if you want i can test this one on my laptop=20
+Drivers need to be fixed to call request_region() one time for any
+one region and to keep it until they are finished with it, then
+call release_region().  Anything else is still racy and the driver
+code might as well continue to use check_region() [for awhile].
 
-> Has anyone smenthing intersting to suggest me? You know, I'm a newbie=20
-> than I cannot  face a too big one, especially in one semester.
-> Thank you very much!
+In most cases it's going to take some study or knowledge of the driver
+to make these changes.
 
-until now i haven't heard of any volounteer, so go one,
-but please send to the list _one_ patch per file!
-then you' ll probably get more feedback  ;-)
-
-a++
-maks
-
-
--- =20
-sidenote on stoned beavers out of detox aka linux-2.6.0:
-"Linus Torvalds doesn't believe in kernel preemption. [..]
-Avoiding kernel preemption makes the kernel simpler and more robust."
-Moshe Bar - Linux Internals 2000
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.3 (GNU/Linux)
-
-iD8DBQFACB1r6//kSTNjoX0RAvXIAJ9tne73prNcgB+sB4zCFboZ4MBSNgCfepxX
-ao4gFF7h598e1wAxu0lzeT8=
-=66VG
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
-
---===============97285356417433455==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+--
+~Randy
+Everything is relative.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============97285356417433455==--
