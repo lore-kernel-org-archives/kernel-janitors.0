@@ -1,586 +1,79 @@
-From: "Your-Info.Net" <reply@centralmediathree.com>
-Date: Sun, 28 Mar 2004 17:10:00 +0000
-Subject: Low on Ink ? Try our refill service.
-Message-Id: <20040328121000.frylmpinzv@inclinedmedia1.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=_d8706a253bc74cb73ab90817f3b5336a"
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Mon, 15 Mar 2004 19:04:41 +0000
+Subject: [Kernel-janitors] [PATCH] - style fixes for kernel/cpu.c.
+Message-Id: <1079377456.28138.39.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040324003011.dohguqbsek@juststar.net>
-In-Reply-To: <20040324003011.dohguqbsek@juststar.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-This is a MIME encoded message.
+Hi all,
 
---=_d8706a253bc74cb73ab90817f3b5336a
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+I did a little style fix for kernel/cpu.c.
 
+I changed tets in the form:
 
-Absolutely no cost on Shipping orders over $50 or more !
+if (ret != 0) {
 
-Evoclix's normal prices save you up to 85% on inkjet cartridges and laser printer accesseries.  Now get Free Shipping.  
+...
 
-Proceed with the link below to start saving!
-http://inclinedmedia1.org/dbm83/l.php?1179&50016221
+To
 
-Why Evoclix.com?
+if (ret) {
 
+I think there are no special reason to use the first one. Is there ?
 
+diff -Nparu linux-2.6.4-bk4/kernel/cpu.c linux-2.6.4-bk4~/kernel/cpu.c
+--- linux-2.6.4-bk4/kernel/cpu.c	2004-02-18 15:54:39.000000000 -0300
++++ linux-2.6.4-bk4~/kernel/cpu.c	2004-03-15 15:14:31.000000000 -0300
+@@ -32,13 +32,16 @@ int __devinit cpu_up(unsigned int cpu)
+ 	int ret;
+ 	void *hcpu = (void *)(long)cpu;
+ 
+-	if ((ret = down_interruptible(&cpucontrol)) != 0)
++	ret = down_interruptible(&cpucontrol);
++	if (ret)
+ 		return ret;
+ 
+-	if (cpu_online(cpu)) {
++	ret = cpu_online(cpu);
++	if (ret) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
++
+ 	ret = notifier_call_chain(&cpu_chain, CPU_UP_PREPARE, hcpu);
+ 	if (ret = NOTIFY_BAD) {
+ 		printk("%s: attempt to bring up CPU %u failed\n",
+@@ -49,8 +52,9 @@ int __devinit cpu_up(unsigned int cpu)
+ 
+ 	/* Arch-specific enabling code. */
+ 	ret = __cpu_up(cpu);
+-	if (ret != 0)
++	if (ret)
+ 		goto out_notify;
++
+ 	if (!cpu_online(cpu))
+ 		BUG();
+ 
+@@ -58,7 +62,7 @@ int __devinit cpu_up(unsigned int cpu)
+ 	notifier_call_chain(&cpu_chain, CPU_ONLINE, hcpu);
+ 
+ out_notify:
+-	if (ret != 0)
++	if (ret)
+ 		notifier_call_chain(&cpu_chain, CPU_UP_CANCELED, hcpu);
+ out:
+ 	up(&cpucontrol);
 
-1.  Save up to 85% off store prices.
-2.  We offer a 100% guarantee on everything we sell.
-3.  No cost on shipping orders over $50.
-4.  We're nice, friendly people. :)
+-- 
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
 
-
-http://inclinedmedia1.org/dbm83/l.php?1179&50016221
-
-
---------------------------------------------
-Switch to HTML version:
-http://inclinedmedia1.org/dbm83/msgtype.php?type=1&email=50016221&emailing=516
---------------------------------------------
-Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed here http://inclinedmedia1.org/dbm83/un.php?516&50016221 Third-party offers contained in this email a
-re the sole responsibility of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
-
-
---=_d8706a253bc74cb73ab90817f3b5336a
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-
-
-
-<html>
-<body>
-<!--
-EvoClix is dedicated to supplying the Best Replacement Cartridge on the market=
- today.
-
-Under normal use and storage, this product is
-assured to perform as well as or better than the
-Original Equipment Manufacturer's (OEM) product.
-
-If the product does not perform to our specifications,
-you may return the product for a replacement or
-refund.-->
-
-<p align=3D"center"><a href=3D"http://inclinedmedia1.org/dbm83/l.php?1180&50016221=
-">
-<img border=3D"0" src=3D"http://www.your-info.cc/images/img_tropic/ad12.jpg=
-" width=3D"559" height=3D"365"></a></p>
-
-
-
-<center><br><br><font color=3D#000000>
-<hr width=3D250>Switch to <a href=3D"http://inclinedmedia1.org/dbm83/msgtype.php=
-?type=3D0&email=3D50016221&emailing=3D516">TEXT</a> version
-
-<hr width=3D250>
-<font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
-<form method=3D"GET" action=3D"http://inclinedmedia1.org/dbm83/forw_friend.php=
-" target=3D"ies_f2f_window">
-<b>Forward this mail to a friend:</b><br>
-Friend's emails:
-<input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
-"> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
- value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"516=
-">
-</font></form>
-<hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
->
-<html><body><p align=3D"center">
-<a href=3D"http://inclinedmedia1.org/dbm83/un.php?516&50016221">
-<img alt src=3D"http://www.amazingbuyz.net/images/opt-out_image.jpg" border=
-=3D"0" width=3D"507" height=3D"95">
-</p>
-<br>
-</body></html>
-
-<img src=3D"http://inclinedmedia1.org/dbm83/opened.php?516&50016221" width=
-=3D1 height=3D1></font></font></center></body></html>
-wdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwd
-
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-
---=_d8706a253bc74cb73ab90817f3b5336a--
-
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
