@@ -1,37 +1,39 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 08 Mar 2005 14:45:58 +0000
-Subject: [KJ] [PATCH] drivers/message/fusion/mptbase.c: Use the DMA_{64,
-Message-Id: <20050308144558.GF5311@localhost.localdomain>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Tue, 08 Mar 2005 15:41:53 +0000
+Subject: Re: [KJ] [PATCH] drivers/message/fusion/mptbase.c: Use the DMA_{64,
+Message-Id: <20050308154153.GM28741@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94028929565564301=="
+Content-Type: multipart/mixed; boundary="===============74942504695873069=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050308144558.GF5311@localhost.localdomain>
+In-Reply-To: <20050308144558.GF5311@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============94028929565564301==
+--===============74942504695873069==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+On Tue, Mar 08, 2005 at 03:45:58PM +0100, Tobias Klauser wrote:
+> Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+> when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+> See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+You missed this line:
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+        u64              mask = 0xffffffffffffffffULL;
 
---- linux-2.6.11.orig/drivers/message/fusion/mptbase.c	2005-03-02 12:50:40.000000000 +0100
-+++ linux-2.6.11/drivers/message/fusion/mptbase.c	2005-03-03 11:56:28.000000000 +0100
-@@ -1100,7 +1100,7 @@ mptbase_probe(struct pci_dev *pdev, cons
- 	if (!pci_set_dma_mask(pdev, mask)) {
- 		dprintk((KERN_INFO MYNAM
- 			": 64 BIT PCI BUS DMA ADDRESSING SUPPORTED\n"));
--	} else if (pci_set_dma_mask(pdev, (u64) 0xffffffff)) {
-+	} else if (pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
- 		printk(KERN_WARNING MYNAM ": 32 BIT PCI BUS DMA ADDRESSING NOT SUPPORTED\n");
- 		return r;
- 	}
+In fact, looks to me like you can remove the variable and just use the
+DMA_64BIT_MASK constant.
 
---===============94028929565564301==
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
+
+--===============74942504695873069==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94028929565564301==--
+--===============74942504695873069==--
