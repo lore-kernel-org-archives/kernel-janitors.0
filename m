@@ -1,53 +1,45 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:28 +0000
-Subject: [KJ] [PATCH][14/26] drivers/scsi/aic7xxx/* - compile warning cleanup
-Message-Id: <420BEF84.25472.587543@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 14:56:39 +0000
+Subject: [KJ] [PATCH] drivers/message/fusion/*: convert to
+Message-Id: <20050208145639.GP31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27704997089062777=="
+Content-Type: multipart/mixed; boundary="7L9kolmstoDTZ4pm"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============27704997089062777==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - handle error return from 
-scsi_add_host
+--7L9kolmstoDTZ4pm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/scsi/aic7xxx/aic79xx_osm.c linux-2.6.11-rc3-mm/drivers/scsi/aic7xxx/aic79xx_osm.c
---- linux-2.6.11-rc3-mm-original/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-03 03:55:53.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-02-09 23:06:17.000000000 +0200
-@@ -2065,7 +2065,8 @@ ahd_linux_register_host(struct ahd_softc
- 	ahd_unlock(ahd, &s);
- 
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
--	scsi_add_host(host, &ahd->dev_softc->dev); /* XXX handle failure */
-+	if(scsi_add_host(host, &ahd->dev_softc->dev))
-+		return (EIO);
- 	scsi_scan_host(host);
+Description:
+convert from pci_module_init to pci_register_driver
+
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
+
+--7L9kolmstoDTZ4pm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_message_fusion.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/message/fusion/mptbase.c linux-2.6.11-rc3/drivers/message/fusion/mptbase.c
+--- linux-2.6.11-rc3-vanilla/drivers/message/fusion/mptbase.c	2004-12-24 22:35:50.000000000 +0100
++++ linux-2.6.11-rc3/drivers/message/fusion/mptbase.c	2005-02-07 09:39:28.000000000 +0100
+@@ -5914,7 +5914,7 @@ fusion_init(void)
+ #ifdef CONFIG_PROC_FS
+ 	(void) procmpt_create();
  #endif
- 	return (0);
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/scsi/aic7xxx/aic7xxx_osm.c linux-2.6.11-rc3-mm/drivers/scsi/aic7xxx/aic7xxx_osm.c
---- linux-2.6.11-rc3-mm-original/drivers/scsi/aic7xxx/aic7xxx_osm.c	2005-02-03 03:55:07.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/scsi/aic7xxx/aic7xxx_osm.c	2005-02-09 23:07:10.000000000 +0200
-@@ -1729,7 +1729,8 @@ ahc_linux_register_host(struct ahc_softc
- 	ahc_unlock(ahc, &s);
+-	r = pci_module_init(&mptbase_driver);
++	r = pci_register_driver(&mptbase_driver);
+ 	if(r)
+ 		return(r);
  
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
--	scsi_add_host(host, (ahc->dev_softc ? &ahc->dev_softc->dev : NULL)); /* XXX handle failure */
-+	if(scsi_add_host(host, (ahc->dev_softc ? &ahc->dev_softc->dev : NULL)))
-+		return (EIO);
- 	scsi_scan_host(host);
- #endif
- 	return (0);
 
-
-
-
---===============27704997089062777==
+--7L9kolmstoDTZ4pm
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27704997089062777==--
+--7L9kolmstoDTZ4pm--
