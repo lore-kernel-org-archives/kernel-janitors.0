@@ -1,41 +1,71 @@
-From: Jim Nelson <james4765@verizon.net>
-Date: Sun, 26 Dec 2004 16:45:31 +0000
-Subject: Re: [KJ] [James Nelson] Fw: Undelivered Mail Returned to Sender
-Message-Id: <41CEEAAB.8030405@verizon.net>
+From: sebek64@post.cz (Marcel Sebek)
+Date: Sun, 19 Dec 2004 19:05:30 +0000
+Subject: [KJ] [PATCH] radio-sf16fmi cleanup
+Message-Id: <20041219190530.GA9205@penguin.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============77625125713207055=="
+Content-Type: multipart/mixed; boundary="===============21564062403030482=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041226145522.GA3990@masina.coderock.org>
-In-Reply-To: <20041226145522.GA3990@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============77625125713207055==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============21564062403030482==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Matthew Wilcox wrote:
-> On Sun, Dec 26, 2004 at 03:55:22PM +0100, Domen Puncer wrote:
-> 
->>I've been getting these delivery reports for mail i sent to you.
->>Since i don't get that from anybody else i have some confidence that
->>the problem is at your side.
-> 
-> 
-> I've had similar problems sending mail to James; this isn't a problem
-> with your setup, Domen.
-> 
-> 
+This is small cleanup of radio-sf16fmi driver.
 
-*sigh*.  It almost looks like I have to go to a SDSL business-class connection and 
-run my own domain and mailserver - #%^#^! spammers and the super-boneheaded 
-#$%&*#^ "solutions" that ISP's come up with.
+Compile tested.
 
-Quick workaround - use my gmail account (james4765@gmail.com).  Let me monkey 
-around with my mail client to see how to set up "reply-to:"
+Signed-off-by: Marcel Sebek <sebek64@post.cz>
 
-Jim
+diff -urNp linux-2.6/drivers/media/radio/radio-sf16fmi.c linux-2.6-new/drivers/media/radio/radio-sf16fmi.c
+--- linux-2.6/drivers/media/radio/radio-sf16fmi.c	2004-09-13 19:44:54.000000000 +0200
++++ linux-2.6-new/drivers/media/radio/radio-sf16fmi.c	2004-12-18 19:15:02.000000000 +0100
+@@ -22,6 +22,7 @@
+ #include <linux/delay.h>	/* udelay			*/
+ #include <linux/videodev.h>	/* kernel radio structs		*/
+ #include <linux/isapnp.h>
++#include <linux/moduleparam.h>
+ #include <asm/io.h>		/* outb, outb_p			*/
+ #include <asm/uaccess.h>	/* copy to/from user		*/
+ #include <asm/semaphore.h>
+@@ -36,7 +37,7 @@ struct fmi_device
+ 
+ static int io = -1; 
+ static int radio_nr = -1;
+-static struct pnp_dev *dev = NULL;
++static struct pnp_dev *dev;
+ static struct semaphore lock;
+ 
+ /* freq is in 1/16 kHz to internal number, hw precision is 50 kHz */
+@@ -312,9 +313,9 @@ MODULE_AUTHOR("Petr Vandrovec, vandrove@
+ MODULE_DESCRIPTION("A driver for the SF16MI radio.");
+ MODULE_LICENSE("GPL");
+ 
+-MODULE_PARM(io, "i");
++module_param(io, int, 0444);
+ MODULE_PARM_DESC(io, "I/O address of the SF16MI card (0x284 or 0x384)");
+-MODULE_PARM(radio_nr, "i");
++module_param(radio_nr, int, 0444);
+ 
+ static void __exit fmi_cleanup_module(void)
+ {
+@@ -326,13 +327,3 @@ static void __exit fmi_cleanup_module(vo
+ 
+ module_init(fmi_init);
+ module_exit(fmi_cleanup_module);
+-
+-#ifndef MODULE
+-static int __init fmi_setup_io(char *str)
+-{
+-	get_option(&str, &io);
+-	return 1;
+-}
+-
+-__setup("sf16fm=", fmi_setup_io);
+-#endif
 
---===============77625125713207055==
+
+--===============21564062403030482==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============77625125713207055==--
+--===============21564062403030482==--
