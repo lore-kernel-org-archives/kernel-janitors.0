@@ -1,30 +1,32 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 08:46:17 +0000
-Subject: [KJ] [PATCH] drivers/isdn/hardware/eicon/*: convert to
-Message-Id: <20050208084617.GI31996@rhum.iomeda.fr>
+From: Armin Schindler <armin@melware.de>
+Date: Tue, 08 Feb 2005 12:11:41 +0000
+Subject: Re: [KJ] [PATCH] drivers/isdn/hardware/eicon/*: convert to
+Message-Id: <Pine.LNX.4.61.0502081309200.22211@phoenix.one.melware.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="DXTueXWT3Da08pik"
+Content-Type: multipart/mixed; boundary="===============3874643977417116=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050208084617.GI31996@rhum.iomeda.fr>
+In-Reply-To: <20050208084617.GI31996@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
+--===============3874643977417116==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
---DXTueXWT3Da08pik
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
+who is sending/committing those patches to BK tree?
+
+Armin
+
+On Tue, 8 Feb 2005, Christophe Lucas wrote:
 Hi,
 
 Description:
 convert from pci_module_init to pci_register_driver
 
 Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
+Signed-off-by: Armin Schindler <armin@melware.de> 
 
---DXTueXWT3Da08pik
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_isdn_hardware_eicon.patch"
 
 diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/eicon/divasmain.c linux-2.6.11-rc3/drivers/isdn/hardware/eicon/divasmain.c
 --- linux-2.6.11-rc3-vanilla/drivers/isdn/hardware/eicon/divasmain.c	2005-02-03 17:03:46.000000000 +0100
@@ -38,8 +40,9 @@ diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/isdn/hardwar
  #ifdef MODULE
  		remove_divas_proc();
  		divas_unregister_chrdev();
+ 
 
---DXTueXWT3Da08pik
+--===============3874643977417116==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---DXTueXWT3Da08pik--
+--===============3874643977417116==--
