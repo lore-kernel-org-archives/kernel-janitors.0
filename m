@@ -1,58 +1,48 @@
-From: James Nelson <james4765@verizon.net>
-Date: Fri, 17 Dec 2004 23:59:05 +0000
-Subject: [KJ] [PATCH] lcd: replace cli()/sti() with
-Message-Id: <20041217235927.17998.75228.61750@localhost.localdomain>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 18 Dec 2004 04:15:43 +0000
+Subject: Re: [KJ] [PATCH] lcd: replace cli()/sti() with
+Message-Id: <20041218041543.GW7113@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78232967538750353=="
+Content-Type: multipart/mixed; boundary="===============83369265421094996=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
-Cc: akpm@osdl.org, James Nelson <james4765@verizon.net>
+References: <20041217235927.17998.75228.61750@localhost.localdomain>
+In-Reply-To: <20041217235927.17998.75228.61750@localhost.localdomain>
+To: James Nelson <james4765@verizon.net>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, akpm@osdl.org
 
---===============78232967538750353==
+--===============83369265421094996==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Remove the cli()/sti() calls in drivers/char/lcd.c
+On Fri, Dec 17, 2004 at 05:59:05PM -0600, James Nelson wrote:
+> Remove the cli()/sti() calls in drivers/char/lcd.c
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+I'm not sure why anyone would bother ...
 
-diff -urN --exclude='*~' linux-2.6.10-rc3-mm1-original/drivers/char/lcd.c linux-2.6.10-rc3-mm1/drivers/char/lcd.c
---- linux-2.6.10-rc3-mm1-original/drivers/char/lcd.c	2004-12-03 16:53:42.000000000 -0500
-+++ linux-2.6.10-rc3-mm1/drivers/char/lcd.c	2004-12-17 18:57:10.760197439 -0500
-@@ -33,6 +33,8 @@
- 
- #include "lcd.h"
- 
-+static spinlock_t lcd_lock = SPIN_LOCK_UNLOCKED;
-+
- static int lcd_ioctl(struct inode *inode, struct file *file,
- 		     unsigned int cmd, unsigned long arg);
- 
-@@ -464,14 +466,13 @@
- 			}
- 
- 			printk("Churning and Burning -");
--			save_flags(flags);
- 			for (i = 0; i < FLASH_SIZE; i = i + 128) {
- 
- 				if (copy_from_user
- 				    (rom, display.RomImage + i, 128))
- 					return -EFAULT;
- 				burn_addr = kFlashBase + i;
--				cli();
-+				spin_lock_irqsave(&lcd_lock, flags);
- 				for (index = 0; index < (128); index++) {
- 
- 					WRITE_FLASH(kFlash_Addr1,
-@@ -492,7 +493,7 @@
- 					}
- 					burn_addr++;
- 				}
--				restore_flags(flags);
-+				spin_unlock_irqrestore(&lcd_lock, flags);
- 				if (*
- 				    ((volatile unsigned char *) (burn_addr
- 								 - 1)) ==
+config COBALT_LCD
+        bool "Support for Cobalt LCD"
+        depends on MIPS_COBALT
 
---===============78232967538750353==
+those machines are never SMP.
+
+However, looking at the driver, it doesn't seem to generate interrupts,
+so I don't see what good disabling interrupts would do.  I think we can
+simply remove the save_flags/cli/restore_flags from this driver.  It needs
+a fair chunk of work though -- should be converted to use writeb instead of
+
+                                        *((volatile unsigned char *)
+                                          burn_addr) =
+                 (volatile unsigned char) rom[index];
+
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
+
+--===============83369265421094996==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78232967538750353==--
+--===============83369265421094996==--
