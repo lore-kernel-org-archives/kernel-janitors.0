@@ -1,93 +1,50 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 22:49:10 +0000
-Subject: [Kernel-janitors] [PATCH] video/bw-qcam: replace schedule_timeout()
-Message-Id: <20040726224910.GN1897@us.ibm.com>
+Date: Mon, 26 Jul 2004 17:44:46 +0000
+Subject: [Kernel-janitors] [PATCH] dvb/alps_tdmb7: replace
+Message-Id: <20040726174446.GH1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37091050227398803=="
+Content-Type: multipart/mixed; boundary="===============21401763707144417=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============37091050227398803==
+--===============21401763707144417==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. This is one (of
-many) cases where I made a decision about replacing
-
-set_current_state(TASK_INTERRUPTIBLE);
-schedule_timeout(some_time);
-
-with
-
-msleep(jiffies_to_msecs(some_time));
-
-msleep() is not exactly the same as the previous code, but I only did
-this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
+I would appreciate any comments from the janitors list.
 
 Thanks,
 Nish
 
-
-
 Applys-to: 2.6.7
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+Description: Replace dvb_delay() with msleep() to guarantee the
+task delays the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/video/bw-qcam.c	2004-06-16 05:19:02.000000000 +0000
-+++ linux-dev/drivers/media/video/bw-qcam.c	2004-07-12 18:50:05.000000000 +0000
-@@ -248,10 +248,7 @@ static int qc_waithand(struct qcam_devic
- 			   response. */
- 			   
- 			if(runs++>maxpoll)
--			{
--				current->state=TASK_INTERRUPTIBLE;
--				schedule_timeout(HZ/200);
--			}
-+				msleep(5);
- 			if(runs>(maxpoll+1000)) /* 5 seconds */
- 				return -1;
- 		}
-@@ -268,10 +265,7 @@ static int qc_waithand(struct qcam_devic
- 			   response. */
- 			   
- 			if(runs++>maxpoll)
--			{
--				current->state=TASK_INTERRUPTIBLE;
--				schedule_timeout(HZ/200);
--			}
-+				msleep(5);
- 			if(runs++>(maxpoll+1000)) /* 5 seconds */
- 				return -1;
- 		}
-@@ -301,10 +295,7 @@ static unsigned int qc_waithand2(struct 
- 		   response. */
- 		   
- 		if(runs++>maxpoll)
--		{
--			current->state=TASK_INTERRUPTIBLE;
--			schedule_timeout(HZ/200);
--		}
-+			msleep(5);
- 		if(runs++>(maxpoll+1000)) /* 5 seconds */
- 			return 0;
- 	}
-@@ -669,8 +660,7 @@ long qc_capture(struct qcam_device * q, 
- 		   time will be 240 / 200 = 1.2 seconds. The compile-time
- 		   default is to yield every 4 lines. */
- 		if (i >= yield) {
--			current->state=TASK_INTERRUPTIBLE;
--			schedule_timeout(HZ/200);
-+			msleep(5);
- 			yield = i + yieldlines;
- 		}
- 	}
+--- linux-vanilla/drivers/media/dvb/frontends/alps_tdmb7.c	2004-06-16 05:19:01.000000000 +0000
++++ linux-dev/drivers/media/dvb/frontends/alps_tdmb7.c	2004-07-21 17:10:18.000000000 +0000
+@@ -25,6 +25,7 @@
+ #include <linux/module.h>
+ #include <linux/string.h>
+ #include <linux/slab.h>
++#include <linux/delay.h>
+ 
+ #include "dvb_frontend.h"
+ #include "dvb_functions.h"
+@@ -159,7 +160,7 @@ static int cx22700_init (struct dvb_i2c_
+ 	cx22700_writereg (i2c, 0x00, 0x02);   /*  soft reset */
+ 	cx22700_writereg (i2c, 0x00, 0x00);
+ 
+-	dvb_delay(10);
++	msleep(10);
+ 	
+ 	for (i=0; i<sizeof(init_tab); i+=2)
+ 		cx22700_writereg (i2c, init_tab[i], init_tab[i+1]);
 
---===============37091050227398803==
+--===============21401763707144417==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -98,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37091050227398803==--
+--===============21401763707144417==--
