@@ -1,78 +1,27 @@
-From: "Evan Cruz" <ulfjww@heh.uni-osnabrueck.de>
-Date: Mon, 10 May 2004 10:20:37 +0000
-Subject: oral surgeons,
-Message-Id: <WGPJMBPSUYRRUWNOZKFYE@cc.okayama-u.ac.jp>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--D7476A6B09FA8E9"
+From: Bauer-Royal <VogelNorma@iea.att.ne.jp>
+Date: Wed, 12 May 2004 19:41:34 +0000
+Subject: britches
+Message-Id: <SwQFJ51qL12K$yzBFz9b0$P3gTYJ7s@eGpWxz>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----D7476A6B09FA8E9
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
-
-NOTE:  BONUS OFFER BELOW.
- 
-`The best reference I`ve used to communicate with dentists``, 
-Bob Frankford -- President, KY dental products.
- 
-The new edition of The American Directory of Dentists is out!!!!
-
-(New Dentist directory, dental practice, dental labs, 
-cosmetic dentists, DDO, dental care directory, directory of dentists, 
-dentist CD, dentist lists, orthodontists, periodontology, oral surgeons, 
-dental lists, tooth decay, dental products, gum disease, oral health, 
-genral practice, dental directory.)
-
-
-From our previous customer feedback, this directory is found to 
-be the leading source of dentist reference in the United States.  
-It is used by professionals and industry business development 
-executives who must communicate with dentists in an efficient 
-and timely manner..
- 
-The American Directory of Dentists contains relevant data on 
-over 200,000 dentists in the United States. Each record is 
-indexed by such features as name, address, phone/fax, county, 
-year licensed, type of practice, type of dentist as well 
-as specialty.  
- 
-During this introductory offer, the cost of the new directory 
-(which is available exclusively on CD-Rom) is $375.00 (reg. $795). 
-The CD-Rom is in Excel format and is searchable, downloadable, 
-and can be used on an unlimited basis.
- 
-To order the American Directory of Dentists, please print this 
-e-mail, complete the information below and fax it to 905-751-0199. 
-(tel: 905-751-0919).
- 
-BONUS OFFER: ORDER NOW AND RECEIVE THE AMERICAN DIRECTORY OF DOCTORS 
-ON CD-ROM FREE OF CHARGE ($845 value).. 
- 
-NAME:
-
-TITLE:
-
-ORGANIZATION:
-
-ADDRESS:
-
-CITY:
-
-POSTAL:
-
-TEL:
-
-FAX:
-
-E-MAIL:
-
-InfoSource Group of Companies is a leading information publishing firm.
-
-
-
-----D7476A6B09FA8E9--
-
+<html>
+<body>
+<font style=font-size:1px>Kernel-janitor-discuss pervade bridge creature doge rectangular perceptual bohr featherbedding maudlin </font>
+<font face="Arial" size="1">Content is Loading . . . .<br>
+<a href="http://xN1dAwhDI.med0hbe.com/index.php?refid4">
+<img src="http://dKcSs99vOPbl.med0hbe.com/banners/pharma4.gif" border="0"></a><br><br>
+Content not Lo<font style=font-size:1px>;</font>ading? <a href="http://asKtCfA.med0hbe.com/index.php?refid4"><h5>Sa.ve M.one.y, O.rde.r Her.e</h5></a>
+<br><br>
+<br><br>
+<br><br>
+<font style=font-size:1px>nostalgic mock shot utility concubine gasoline flag bellwether rake swamp rapture o's jay arcsine flattery goldberg farewell almaden pot software citroen dogma house cavilling describe permitting bird desideratum amid professional scud tubule absurd berkshire irony eisner leonardo lo feverish psychobiology victorious mennonite heartfelt hangover god pickering doberman trombone breathe mutant health armature walkout sandhill strengthen friend constructor drug alai citroen eigenfunction divisor jane ruff frenchmen brackish algorithmic inca tumble bey confrontation disrupt envious tritium emphysema compulsion enumerate documentation monad thumbnail ludwig gait foodstuff grateful deduce anaerobic republic callaghan crosswise deem hick camille cutover turvy consul croatia dragnet lien orthodoxy life coaxial calhoun contralateral dopant impound denote bloodroot errancy freedom chevy gigavolt cope leatherneck spoof facet consent stalactite minutemen coincident ambulatory amtrak mustang liverwort marinade bigelow deportee criterion contingent nighthawk tegucigalpa ardency butterball interpol disposable burlap berenices snapdragon aminobenzoic invective bale collet bethlehem sixgun coinage spumoni belladonna eighth affricate constipate agglutinin psychosomatic goldstein decor auxiliary barbudo discretion counselor clobber bicker ruffle wilhelm ned chairlady sawtooth tunisia quilt mendel duel assiduous ac codpiece shrunken bailiff orb immoderate gigavolt attic corrigible cornflower cruddy imbalance street turvy ernest chauncey micronesia powerful spat assimilate ramsey lasso halt callaghan fight abeyant stupefaction sporadic clearance cassandra decry edgerton nubile chancellor downward chassis mcintosh katharine grandiloquent plentiful u heterosexual imbue aries casanova dictum gallonage inception polkadot bipartite aloe conversion atrophy warmish archipelago effusion elate lithium pious deterrent feint covary primp guanine disgruntle imprimatur mo joy lumber modem sewn as haze persimmon being ta
+rantula thyroid affirmation capistrano damp barbecue boxcar comatose absolute nitrogen republic saudi lavoisier ceramic emery bricklaying vertex bicker celebrity edmund clipboard bayou campus boeotia vulcan collide communicate spheroidal thou hostelry wrought album dempsey bookplate persia resolution circumvent actinide pharmacopoeia typeface hesitater insure yet dunedin ada balm collector blackball buy sedimentary uppermost foible oboist tenor grant fortitude seductive account inverness bludgeon prevention budweiser greg vertex fibonacci hideaway senora playwright skywave halfhearted subsistent sang elizabeth swart awful soffit consanguineous adjunct pusey palfrey session cyrus magnesium badge emphasis breakpoint droop lindberg gosling gigabyte experience escherichia shave decline abetted gripe palace thetis colander fcc abash curtail deflector </font>
+</body>
+</html>
 
 
 -------------------------------------------------------
