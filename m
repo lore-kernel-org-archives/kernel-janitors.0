@@ -1,41 +1,47 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Tue, 05 Oct 2004 13:36:52 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6] pci-hplj.c: replace
-Message-Id: <20041005133652.GA17520@linux-mips.org>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 13 Oct 2004 22:18:30 +0000
+Subject: [KJ] [PATCH 2.6] fore200e.c replace pci_find_device with
+Message-Id: <196790000.1097705910@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91947087919174697=="
+Content-Type: multipart/mixed; boundary="===============65923034423490967=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <281940000.1096925207@w-hlinder.beaverton.ibm.com> <20041004214107.GA2160@linux-mips.org> <1096981395.30942.859.camel@hades.cambridge.redhat.com>
-In-Reply-To: <1096981395.30942.859.camel@hades.cambridge.redhat.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Hanna Linder <hannal@us.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, greg@kroah.com, linux-mips@linux-mips.org
+References: <194130000.1097705759@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <194130000.1097705759@w-hlinder.beaverton.ibm.com>
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: Hanna Linder <hannal@us.ibm.com>, greg@kroah.com, chas@cmf.nrl.navy.mil
 
---===============91947087919174697==
+--===============65923034423490967==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Tue, Oct 05, 2004 at 02:03:16PM +0100, David Woodhouse wrote:
 
-> On Mon, 2004-10-04 at 23:41 +0200, Ralf Baechle wrote:
-> > Except that piece of code isn't for an RM[23]00 but a HP Laserjet (yes,
-> > that paper eating thing ;-) and hasn't seen any update or feedback from
-> > the original submitters since the original submission, so the entire HPLJ
-> > code is a candidate for removal ...
-> 
-> Any idea precisely what model, and how to get it installed? 
-> eBay calls... :)
 
-They only ever published the initial code drop.  No code maintenance since
-or any kind of documentation ...  However one of the group of code submitters
-back then was claiming to run Gnome with remote X display - probably because
-at least back then there was no support for the printing hw and anyway,
-the refresh rate of a printer is somewhat limited ;-)
+As pci_find_device is going away soon I have converted this file to use
+pci_get_device instead. I have compile tested it. If anyone has this ATM card
+and could test it that would be great.
 
-As I recall the code was originally submitted by roger_twede@hp.com.
+Hanna Linder
+IBM Linux Technology Center
 
-  Ralf
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
---===============91947087919174697==
+---
+diff -Nrup linux-2.6.9-rc4-mm1cln/drivers/atm/fore200e.c linux-2.6.9-rc4-mm1patch3/drivers/atm/fore200e.c
+--- linux-2.6.9-rc4-mm1cln/drivers/atm/fore200e.c	2004-10-12 14:15:10.000000000 -0700
++++ linux-2.6.9-rc4-mm1patch3/drivers/atm/fore200e.c	2004-10-13 13:57:12.000000000 -0700
+@@ -644,7 +644,7 @@ fore200e_pca_detect(const struct fore200
+     int              count = index;
+     
+     do {
+-	pci_dev = pci_find_device(PCI_VENDOR_ID_FORE, PCI_DEVICE_ID_FORE_PCA200E, pci_dev);
++	pci_dev = pci_get_device(PCI_VENDOR_ID_FORE, PCI_DEVICE_ID_FORE_PCA200E, pci_dev);
+ 	if (pci_dev == NULL)
+ 	    return NULL;
+     } while (count--);
+
+
+--===============65923034423490967==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91947087919174697==--
+--===============65923034423490967==--
