@@ -1,58 +1,47 @@
 From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:52 +0000
-Subject: [KJ] [PATCH][RESUBMIT][5/21] drivers/isdn/hisax/* - compile warning
-Message-Id: <42113C2C.16731.52BBCF@localhost>
+Date: Thu, 10 Feb 2005 21:34:30 +0000
+Subject: [KJ] [PATCH][4/26] drivers/char/watchdog/* - compile warning cleanup
+Message-Id: <420BEF86.27783.587B2F@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54997730886043161=="
+Content-Type: multipart/mixed; boundary="===============412683903199206=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============54997730886043161==
+--===============412683903199206==
 Content-type: text/plain; charset=US-ASCII
 Content-transfer-encoding: 7BIT
 Content-description: Mail message body
 
-Description: compile warning cleanup - handle copy_to/from_user error 
-returns
+Description: compile warning cleanup - add MODULE definition compile 
+fence so MODULE_DEVICE_TABLE vars not declared when compiled into the 
+kernel
 
 Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/isdn/hisax/config.c linux-2.6.11-rc3-mm2/drivers/isdn/hisax/config.c
---- linux-2.6.11-rc3-mm2-original/drivers/isdn/hisax/config.c	2005-02-12 12:06:24.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/isdn/hisax/config.c	2005-02-13 21:21:52.000000000 +0200
-@@ -631,7 +631,12 @@ int HiSax_readstatus(u_char __user *buf,
- 		count = cs->status_end - cs->status_read + 1;
- 		if (count >= len)
- 			count = len;
--		copy_to_user(p, cs->status_read, count);
-+		if (copy_to_user(p, cs->status_read, count)) {
-+			printk(KERN_ERR
-+				"HiSax:%s: copy_to_user failed!\n",
-+				__FUNCTION__);
-+			return -EFAULT;
-+		}
- 		cs->status_read += count;
- 		if (cs->status_read > cs->status_end)
- 			cs->status_read = cs->status_buf;
-@@ -642,7 +647,12 @@ int HiSax_readstatus(u_char __user *buf,
- 				cnt = HISAX_STATUS_BUFSIZE;
- 			else
- 				cnt = count;
--			copy_to_user(p, cs->status_read, cnt);
-+			if (copy_to_user(p, cs->status_read, cnt)) {
-+				printk(KERN_ERR
-+					"HiSax:%s: copy_to_user failed!\n",
-+					__FUNCTION__);
-+				return -EFAULT;
-+			}
- 			p += cnt;
- 			cs->status_read += cnt % HISAX_STATUS_BUFSIZE;
- 			count -= cnt;
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/char/watchdog/alim1535_wdt.c linux-2.6.11-rc3-mm/drivers/char/watchdog/alim1535_wdt.c
+--- linux-2.6.11-rc3-mm-original/drivers/char/watchdog/alim1535_wdt.c	2005-02-03 03:55:23.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/char/watchdog/alim1535_wdt.c	2005-02-07 15:38:11.000000000 +0200
+@@ -307,6 +307,7 @@ static int ali_notify_sys(struct notifie
+ 	return NOTIFY_DONE;
+ }
+ 
++#ifdef MODULE
+ /*
+  *	Data for PCI driver interface
+  *
+@@ -321,6 +322,7 @@ static struct pci_device_id ali_pci_tbl[
+ 	{ 0, },
+ };
+ MODULE_DEVICE_TABLE(pci, ali_pci_tbl);
++#endif
+ 
+ /*
+  *	ali_find_watchdog	-	find a 1535 and 7101
 
 
 
 
---===============54997730886043161==
+--===============412683903199206==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54997730886043161==--
+--===============412683903199206==--
