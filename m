@@ -1,45 +1,37 @@
 From: maximilian attems <janitor@sternwelten.at>
-Date: Thu, 02 Sep 2004 08:24:33 +0000
+Date: Thu, 02 Sep 2004 10:03:22 +0000
 Subject: [Kernel-janitors] Re: [patch 8/8] prism54/islpci_dev: replace
-Message-Id: <20040902082432.GA1876@stro.at>
+Message-Id: <20040902100322.GD1876@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10856884023835889=="
+Content-Type: multipart/mixed; boundary="===============87304602687430211=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200409020850.38177.margitsw@t-online.de>
-In-Reply-To: <200409020850.38177.margitsw@t-online.de>
+References: <200409021135.57632.margitsw@t-online.de>
+In-Reply-To: <200409021135.57632.margitsw@t-online.de>
 To: Margit Schubert-While <margitsw@t-online.de>
 Cc: netdev@oss.sgi.com, kj <kernel-janitors@osdl.org>
 
---===============10856884023835889==
+--===============87304602687430211==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Thu, 02 Sep 2004, Margit Schubert-While wrote:
 
-> I agree with Jean and add the following :
-> You are assuming HZ = 1000.
-> In 2.4, HZ = 100 (And in 2.6, HZ is not necessarily = 1000).
+> On Thu, 02 Sep 2004, Maximilian scribeth:
+> > it shouldn't hinder 2.6 in it's progression.
+> I consider this a regression.
+> As schedule_timeout is used elesewhere in the prism54 code,
+> we are using a consistent and documented method.
 
-shure, 
-but this is an argument for msleep as it uses msecs as unit,
-which don't depend on your arch. 
-(well physics says different for arch/relativistic :)
+you didn't answer to the unit argument in favour of msleep.
 
-> The prism54 code base is identical between 2.4/2.6 and is
-> maintained as such in the project.
-> Therefore, I look forward to your implementation of msleep()
-> in 2.4  ;-)
-
-2.4 is closed for such stuff, you'll know that better than me,
-it shouldn't hinder 2.6 in it's progression.
-one day you will need to branch.
+shure msleep is also consistent and documented.
 
 --
 maks
 kernel janitor  	http://janitor.kernelnewbies.org/
 
 
---===============10856884023835889==
+--===============87304602687430211==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10856884023835889==--
+--===============87304602687430211==--
