@@ -1,54 +1,46 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Tue, 15 Feb 2005 06:41:23 +0000
-Subject: Re: [KJ] [PATCH][RESUBMIT][17/21] include/linux/* - compile warning
-Message-Id: <4211B5B3.19272.158650@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Thu, 10 Feb 2005 09:17:19 +0000
+Subject: [KJ] [PATCH] drivers/w1/*: convert to pci_register_driver
+Message-Id: <20050210091719.GB16373@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53247524767087018=="
+Content-Type: multipart/mixed; boundary="cvVnyQ+4j833TQvp"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42113C2D.26296.52C286@localhost>
-In-Reply-To: <42113C2D.26296.52C286@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============53247524767087018==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-On 14 Feb 2005 at 14:31, Greg KH wrote:
+--cvVnyQ+4j833TQvp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Tue, Feb 15, 2005 at 12:02:53AM +0200, Stephen Biggs wrote:
-> > diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/include/linux/module.h linux-2.6.11-rc3-mm2/include/linux/module.h
-> > --- linux-2.6.11-rc3-mm2-original/include/linux/module.h	2005-02-12 12:06:39.000000000 +0200
-> > +++ linux-2.6.11-rc3-mm2/include/linux/module.h	2005-02-13 23:23:16.000000000 +0200
-> > @@ -84,7 +84,10 @@ extern const struct gtype##_id __mod_##g
-> >  extern struct module __this_module;
-> >  #define THIS_MODULE (&__this_module)
-> >  #else  /* !MODULE */
-> > -#define MODULE_GENERIC_TABLE(gtype,name)
-> > +#define MODULE_GENERIC_TABLE(gtype,name)			\
-> > +extern const struct gtype##_id __not_mod_##name##_unused	\
-> > +  __attribute__ ((unused, weak, alias(__stringify(name))))
-> > +
-> >  #define THIS_MODULE ((struct module *)0)
-> >  #endif
-> 
-> Yeah, nice job with this.
-> 
-> But split it out into a separate patch (remember, one patch per
-> individual "thing" you want to change.)
+Hi,
 
-Done.
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
+--cvVnyQ+4j833TQvp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_w1.patch"
 
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/w1/matrox_w1.c linux-2.6.11-rc3/drivers/w1/matrox_w1.c
+--- linux-2.6.11-rc3-vanilla/drivers/w1/matrox_w1.c	2004-12-24 22:35:01.000000000 +0100
++++ linux-2.6.11-rc3/drivers/w1/matrox_w1.c	2005-02-07 09:39:30.000000000 +0100
+@@ -235,7 +235,7 @@ static void __devexit matrox_w1_remove(s
+ 
+ static int __init matrox_w1_init(void)
+ {
+-	return pci_module_init(&matrox_w1_pci_driver);
++	return pci_register_driver(&matrox_w1_pci_driver);
+ }
+ 
+ static void __exit matrox_w1_fini(void)
 
-
---===============53247524767087018==
+--cvVnyQ+4j833TQvp
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53247524767087018==--
+--cvVnyQ+4j833TQvp--
