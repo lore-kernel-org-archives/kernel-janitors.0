@@ -1,26 +1,40 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 08 Jul 2004 23:52:17 +0000
-Subject: [Kernel-janitors] sb1000.c::nicedelay() (msleep)
-Message-Id: <40EDDE31.2090301@us.ibm.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 24 Jul 2004 20:06:15 +0000
+Subject: [Kernel-janitors] [patch 2.6.8-rc2] kill KERNEL_VERSION duplicate
+Message-Id: <20040724200615.GA2453@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34736341188510478=="
+Content-Type: multipart/mixed; boundary="===============11761139332964055=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============34736341188510478==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============11761139332964055==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So, this function (drivers/net/sb1000.c::nicedelay()) takes as parameter 
-some value in usecs (which is also the name of the parameter). Then, it 
-sleeps for 1 second (schedule_timeout(HZ)) regardless of the parameter. 
-Is this desired? If so, I will replace the calls (all 3 of them) with 
-msleep(). Or, should the passed in values (60000, 30000 and 200000) 
-actually be being used and not ignored? Thanks.
+Hi.
 
--Nish
+Kill KERNEL_VERSION duplicate.
+Funny that it insn't even used in here
 
---===============34736341188510478==
+
+Signed-off-by: Domen Puncer <domen@coderock.org>
+
+--- c/drivers/media/video/videocodec.c	Fri Jul 23 16:00:21 2004
++++ a/drivers/media/video/videocodec.c	Sat Jul 24 21:51:37 2004
+@@ -43,11 +43,6 @@
+ #include <asm/uaccess.h>
+ #endif
+ 
+-#include <linux/version.h>
+-#ifndef KERNEL_VERSION
+-#define KERNEL_VERSION(a,b,c) ((a)*65536+(b)*256+(c))
+-#endif
+-
+ #include "videocodec.h"
+ 
+ static int debug = 0;
+
+--===============11761139332964055==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -31,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34736341188510478==--
+--===============11761139332964055==--
