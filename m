@@ -1,84 +1,63 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 01 Nov 2004 18:38:00 +0000
-Subject: [KJ] [PATCH] linux/ibmtr.h: add constants for appropriate delays
-Message-Id: <20041101192210.GD1730@us.ibm.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 20:25:39 +0000
+Subject: [KJ] [patch] mips: AU1[0X]00_USB_DEVICE typo
+Message-Id: <20041124202539.GB16797@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78902312206728409=="
+Content-Type: multipart/mixed; boundary="===============18850793088394679=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1CO1wB-0002eM-If@sputnik> <4184C66B.8040501@pobox.com>
-In-Reply-To: <4184C66B.8040501@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
+To: kernel-janitors@vger.kernel.org
 
---===============78902312206728409==
+--===============18850793088394679==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Oct 31, 2004 at 06:03:07AM -0500, Jeff Garzik wrote:
-> janitor@sternwelten.at wrote:
-> >Any comments would be appreciated.
-> >
-> >Description: Use msleep() / msleep_interruptible() [as appropriate]
-> >instead of schedule_timeout() to guarantee the task delays as expected.
-> >
-> >Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> >Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
-> >
-> >---
-> >
-> > linux-2.6.10-rc1-max/drivers/net/tokenring/ibmtr.c |   11 +++++------
-> > 1 files changed, 5 insertions(+), 6 deletions(-)
+AU1000_USB_DEVICE appears 3 times.
+AU1X00_USB_DEVICE appears 44 times, and is nowhere defined.
+One ifdef starts with "X" version, and ends with "0", so it's quite
+obvious these is supposed to be one option.
 
-<snip>
+Makes you wonder if anybody uses these devices.
 
-> >-		schedule_timeout(TR_RST_TIME); /* wait 50ms */
-> >+		msleep(jiffies_to_msecs(TR_RST_TIME)); /* wait 50ms */
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
-<snip>
-
-> >-	current->state=TASK_UNINTERRUPTIBLE;
-> >-	schedule_timeout(TR_RST_TIME); /* wait 50ms */
-> >+	msleep(jiffies_to_msecs(TR_RST_TIME));		/* wait 50ms */
-
-<snip>
-
-> >-		current->state=TASK_INTERRUPTIBLE;
-> >-		i=schedule_timeout(TR_RETRY_INTERVAL); /* wait 30 seconds */
-> >-		if(i!=0) break; /*prob. a signal, like the i>24*HZ case 
-> >above */
-> >+		if(msleep_interruptible(jiffies_to_msecs(TR_RETRY_INTERVAL)))
-> >+			break; /*prob. a signal, like the i>24*HZ case above 
-
-<snip>
-
-> It makes more sense to convert the constants to msecs in the source 
-> code, instead of converting them at runtime.
-
-This required changing both the .h and .c files, the first of which is
-attached below.
-
-Description: Adds constant definitions for timeout variables in terms of
-milliseconds to avoid run-time constant conversion.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.10-rc1-vanilla/include/linux/ibmtr.h	2004-10-30 15:34:03.000000000 -0700
-+++ 2.6.10-rc1/include/linux/ibmtr.h	2004-11-01 11:13:41.000000000 -0800
-@@ -6,8 +6,10 @@
+diff -pruNX dontdiff c/arch/mips/Kconfig str2/arch/mips/Kconfig
+--- c/arch/mips/Kconfig	2004-10-19 13:52:47.000000000 +0200
++++ str2/arch/mips/Kconfig	2004-11-24 20:17:32.000000000 +0100
+@@ -959,7 +959,7 @@ config SYSCLK_100
  
- /* ported to the Alpha architecture 02/20/96 (just used the HZ macro) */
+ endchoice
  
--#define TR_RETRY_INTERVAL	(30*HZ)	/* 500 on PC = 5 s */
--#define TR_RST_TIME		(HZ/20) /* 5 on PC = 50 ms */
-+#define TR_RETRY_INTERVAL	(30*HZ)	/* 500 on PC = 5 s (in jiffies) */
-+#define TR_RETRY_INTERVAL	(30000) /* 500 on PC = 5 s */
-+#define TR_RST_TIME		(HZ/20) /* 5 on PC = 50 ms (in jiffies) */
-+#define TR_RST_TIME_MS		(50)    /* 5 on PC = 50 ms */
- #define TR_BUSY_INTERVAL	(HZ/5)	/* 5 on PC = 200 ms */
- #define TR_SPIN_INTERVAL	(3*HZ)	/* 3 seconds before init timeout */
+-config AU1000_USB_DEVICE
++config AU1X00_USB_DEVICE
+ 	bool
+ 	depends on MIPS_PB1500 || MIPS_PB1100 || MIPS_PB1000
+ 	default n
+diff -pruNX dontdiff c/arch/mips/au1000/mtx-1/board_setup.c str2/arch/mips/au1000/mtx-1/board_setup.c
+--- c/arch/mips/au1000/mtx-1/board_setup.c	2004-03-11 12:12:24.000000000 +0100
++++ str2/arch/mips/au1000/mtx-1/board_setup.c	2004-11-24 20:18:10.000000000 +0100
+@@ -60,7 +60,7 @@ void __init board_setup(void)
+ 	// enable USB power switch
+ 	au_writel( au_readl(GPIO2_DIR) | 0x10, GPIO2_DIR );
+ 	au_writel( 0x100000, GPIO2_OUTPUT );
+-#endif // defined (CONFIG_USB_OHCI) || defined (CONFIG_AU1000_USB_DEVICE)
++#endif // defined (CONFIG_USB_OHCI) || defined (CONFIG_AU1X00_USB_DEVICE)
+ 
+ #ifdef CONFIG_PCI
+ #if defined(__MIPSEB__)
+diff -pruNX dontdiff c/arch/mips/configs/pb1500_defconfig str2/arch/mips/configs/pb1500_defconfig
+--- c/arch/mips/configs/pb1500_defconfig	2004-08-17 11:44:56.000000000 +0200
++++ str2/arch/mips/configs/pb1500_defconfig	2004-11-24 20:18:39.000000000 +0100
+@@ -99,7 +99,7 @@ CONFIG_RWSEM_GENERIC_SPINLOCK=y
+ CONFIG_HAVE_DEC_LOCK=y
+ CONFIG_DMA_NONCOHERENT=y
+ CONFIG_CPU_LITTLE_ENDIAN=y
+-# CONFIG_AU1000_USB_DEVICE is not set
++# CONFIG_AU1X00_USB_DEVICE is not set
+ CONFIG_MIPS_L1_CACHE_SHIFT=5
+ # CONFIG_FB is not set
  
 
---===============78902312206728409==
+--===============18850793088394679==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -89,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78902312206728409==--
+--===============18850793088394679==--
