@@ -1,42 +1,30 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 02 Aug 2004 22:42:06 +0000
-Subject: [Kernel-janitors] Re: [PATCH] hotplug/ibmphp: remove long_delay
-Message-Id: <20040802224206.GD15303@kroah.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91087833750532354=="
+From: Jay Bourque <kernel@uranium235.org>
+Date: Sat, 14 Aug 2004 19:06:59 +0000
+Subject: [Kernel-janitors] ip_gre.c: update last_rx after netif_rx
+Message-Id: <411E62D3.8070808@uranium235.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040727214442.GS3471@us.ibm.com>
-In-Reply-To: <20040727214442.GS3471@us.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============91087833750532354==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fix to update last_rx after netif_rx
+This is my first patch so I'd appreciate any feedback.
 
-On Tue, Jul 27, 2004 at 02:39:01PM -0700, Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list. 
-> 
-> 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Remove unused function long_delay().
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+-Jay
 
-Applied, thanks.
-
-greg k-h
-
---===============91087833750532354==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--- linux-2.6.8.1/net/ipv4/ip_gre.c    Sat Aug 14 05:55:48 2004
++++ linux-2.6.8.1/net/ipv4/ip_gre.c.new    Sat Aug 14 12:17:16 2004
+@@ -646,6 +646,7 @@ int ipgre_rcv(struct sk_buff *skb)
+         nf_reset(skb);
+         ipgre_ecn_decapsulate(iph, skb);
+         netif_rx(skb);
++       tunnel->dev->last_rx = jiffies;
+         read_unlock(&ipgre_lock);
+         return(0);
+     }
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============91087833750532354==--
