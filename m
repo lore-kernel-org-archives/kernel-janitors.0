@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 17:46:38 +0000
+Date: Fri, 23 Jul 2004 20:32:36 +0000
 Subject: [Kernel-janitors] [PATCH] eicon/s_4bri: replace schedule_timeout()
-Message-Id: <20040723174638.GL1911@us.ibm.com>
+Message-Id: <20040723203236.GA2675@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============51276077541717635=="
+Content-Type: multipart/mixed; boundary="===============70349701795161579=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040723174638.GL1911@us.ibm.com>
+In-Reply-To: <20040723174638.GL1911@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============51276077541717635==
+--===============70349701795161579==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -20,7 +22,7 @@ Nish
 
 Applys-to: 2.6.7
 
-Description: Replace diva_os_sleep() with msleep().
+Description: Replace diva_os_wait() with mdelay().
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
@@ -32,16 +34,16 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  	qBriReset = (word volatile *)DIVA_OS_MEM_ATTACH_PROM(IoAdapter);
  	WRITE_WORD(qBriReset, READ_WORD(qBriReset) | PLX9054_SOFT_RESET) ;
 -	diva_os_wait (1) ;
-+	msleep (1) ;
++	mdelay (1) ;
  	WRITE_WORD(qBriReset, READ_WORD(qBriReset) & ~PLX9054_SOFT_RESET) ;
 -	diva_os_wait (1);
-+	msleep (1);
++	mdelay (1);
  	WRITE_WORD(qBriReset, READ_WORD(qBriReset) | PLX9054_RELOAD_EEPROM) ;
 -	diva_os_wait (1) ;
-+	msleep (1);
++	mdelay (1);
  	WRITE_WORD(qBriReset, READ_WORD(qBriReset) & ~PLX9054_RELOAD_EEPROM) ;
 -	diva_os_wait (1);
-+	msleep (1);
++	mdelay (1);
  	DIVA_OS_MEM_DETACH_PROM(IoAdapter, qBriReset);
  
  	qBriCntrl = DIVA_OS_MEM_ATTACH_CTLREG(IoAdapter);
@@ -50,10 +52,10 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  	qBriReset = &p[(DIVA_4BRI_REVISION(IoAdapter)) ? (MQ2_BREG_RISC) : (MQ_BREG_RISC)];
  	WRITE_DWORD(qBriReset, MQ_RISC_COLD_RESET_MASK) ;
 -	diva_os_wait (2) ;
-+	msleep (2) ;
++	mdelay (2) ;
  	WRITE_DWORD(qBriReset, MQ_RISC_WARM_RESET_MASK | MQ_RISC_COLD_RESET_MASK) ;
 -	diva_os_wait (10) ;
-+	msleep (10) ;
++	mdelay (10) ;
  	DIVA_OS_MEM_DETACH_CTLREG(IoAdapter, p);
  
  	DBG_TRC(("started processor @ addr 0x%08lx", qBriReset))
@@ -62,7 +64,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  	WRITE_WORD(addr, baseval & ~FPGA_PROG) ; /* PROGRAM low pulse */
  	WRITE_WORD(addr, baseval) ;              /* release */
 -	diva_os_wait (50) ;  /* wait until FPGA finished internal memory clear */
-+	msleep (50) ;  /* wait until FPGA finished internal memory clear */
++	mdelay (50) ;  /* wait until FPGA finished internal memory clear */
  /*
   *	check done pin, must be low
   */
@@ -71,7 +73,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  	}
  	xdiFreeFile (File) ;
 -	diva_os_wait (100) ;
-+	msleep (100) ;
++	mdelay (100) ;
  	val = READ_WORD(addr) ;
  
  	DIVA_OS_MEM_DETACH_PROM(IoAdapter, addr);
@@ -80,12 +82,12 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  	for ( i = 0 ; i < 300 ; ++i )
  	{
 -		diva_os_wait (10) ;
-+		msleep (10) ;
++		mdelay (10) ;
  
  		if ( signature[0] == 0x4447 )
  		{
 
---===============51276077541717635==
+--===============70349701795161579==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -96,4 +98,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============51276077541717635==--
+--===============70349701795161579==--
