@@ -1,35 +1,26 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Thu, 18 Nov 2004 09:35:00 +0000
-Subject: Re: [KJ] [PATCH] driver/net/tg3.c: some s/int/unsigned int
-Message-Id: <20041118093500.GA7423@voyager>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============02370180650190834=="
+From: "Steven" <stevenvj@optonline.net>
+Date: Mon, 08 Nov 2004 02:58:22 +0000
+Subject: (no subject)
+Message-Id: <E1CR0ia-0003o9-Jm@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041102101835.GA4083@voyager>
-In-Reply-To: <20041102101835.GA4083@voyager>
+References: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
+In-Reply-To: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============02370180650190834==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Want a Rolex Watch?
+http://pqw.fdav.com/r/giggles/watchs.html
 
-> I'm sorry for being such a pest, but this patch still
 
-Don't worry. Forget the first hunk or the whole patch as you want.
-Thank you for your detailed answer.
 
--- 
-Carlo Perassi - http://www.linux.it/~carlo/
-
---===============02370180650190834==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by:
+Sybase ASE Linux Express Edition - download now for FREE
+LinuxWorld Reader's Choice Award Winner for best database on Linux.
+http://ads.osdn.com/?ad_idU88&alloc_id065&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============02370180650190834==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
