@@ -1,84 +1,41 @@
-From: Daniele Pizzoni <auouo@tin.it>
-Date: Sun, 17 Oct 2004 16:19:11 +0000
-Subject: [KJ] [PATCH 1/8] replacing/fixing printk with pr_debug/pr_info in
-Message-Id: <1098032557.3023.112.camel@pdp11.tsho.org>
+From: james4765@verizon.net
+Date: Thu, 28 Oct 2004 15:00:58 +0000
+Subject: [KJ] [PATCH 5/9] to arch/sparc/Kconfig
+Message-Id: <20041028150057.2776.70475.54914@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16540841561916508=="
+Content-Type: multipart/mixed; boundary="===============21740376154434582=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+References: <20041028150029.2776.69333.50087@localhost.localdomain>
+In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
+To: kernel-janitors@lists.osdl.org
+Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
 
---===============16540841561916508==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============21740376154434582==
 
-Replace custom macro Dprintk with pr_debug from kernel.h.
-Use  pr_info when appropriate.
-Fix consistency of printks.
+Description: Remove x86-specific help in arch/sparc/Kconfig.
+Apply against 2.6.9.
 
-Signed-off-by: Daniele Pizzoni <auouo@tin.it>
+Signed-off by: James Nelson <james4765@gmail.com>
 
-Index: linux-2.6.9-rc4/arch/i386/kernel/acpi/boot.c
-===================================================================
---- linux-2.6.9-rc4.orig/arch/i386/kernel/acpi/boot.c	2004-10-17 16:56:59.908679824 +0200
-+++ linux-2.6.9-rc4/arch/i386/kernel/acpi/boot.c	2004-10-17 17:01:22.980686800 +0200
-@@ -204,7 +204,7 @@ acpi_parse_madt (
- 	if (madt->lapic_address) {
- 		acpi_lapic_addr = (u64) madt->lapic_address;
+diff -u ./arch/sparc/Kconfig.orig ./arch/sparc/Kconfig
+--- ./arch/sparc/Kconfig.orig	2004-10-16 09:53:49.626021592 -0400
++++ ./arch/sparc/Kconfig	2004-10-16 10:18:35.964664772 -0400
+@@ -188,10 +188,10 @@
+ 	  (/dev/tty0) will still be used as the system console by default, but
+ 	  you can alter that using a kernel command line option such as
+ 	  "console=ttyS1". (Try "man bootparam" or see the documentation of
+-	  your boot loader (lilo or loadlin) about how to pass options to the
+-	  kernel at boot time.)
++	  your boot loader (silo) about how to pass options to the kernel at
++	  boot time.)
  
--		printk(KERN_DEBUG PREFIX "Local APIC address 0x%08x\n",
-+		pr_info(PREFIX "Local APIC address 0x%08x\n",
- 			madt->lapic_address);
- 	}
+-	  If you don't have a VGA card installed and you say Y here, the
++	  If you don't have a graphics card installed and you say Y here, the
+ 	  kernel will automatically use the first serial line, /dev/ttyS0, as
+ 	  system console.
  
-@@ -461,7 +461,7 @@ unsigned int acpi_register_gsi(u32 gsi, 
- 
- 		if (edge_level == ACPI_LEVEL_SENSITIVE) {
- 			if ((gsi < 16) && !((1 << gsi) & irq_mask)) {
--				Dprintk(KERN_DEBUG PREFIX "Setting GSI %u as level-triggered\n", gsi);
-+				pr_debug(PREFIX "Setting GSI %u as level-triggered\n", gsi);
- 				irq_mask |= (1 << gsi);
- 				eisa_set_level_irq(gsi);
- 			}
-@@ -544,14 +544,14 @@ static int __init acpi_parse_hpet(unsign
-         vxtime.hpet_address = hpet_tbl->addr.addrl |
-                 ((long) hpet_tbl->addr.addrh << 32);
- 
--        printk(KERN_INFO PREFIX "HPET id: %#x base: %#lx\n",
-+        pr_info(PREFIX "HPET id: %#x base: %#lx\n",
-                hpet_tbl->id, vxtime.hpet_address);
- #else	/* X86 */
- 	{
- 		extern unsigned long hpet_address;
- 
- 		hpet_address = hpet_tbl->addr.addrl;
--		printk(KERN_INFO PREFIX "HPET id: %#x base: %#lx\n",
-+		pr_info(PREFIX "HPET id: %#x base: %#lx\n",
- 			hpet_tbl->id, hpet_address);
- 	}
- #endif	/* X86 */
-@@ -594,7 +594,7 @@ static int __init acpi_parse_fadt(unsign
- 		pmtmr_ioport = fadt->V1_pm_tmr_blk;
- 	}
- 	if (pmtmr_ioport)
--		printk(KERN_INFO PREFIX "PM-Timer IO Port: %#x\n", pmtmr_ioport);
-+		pr_info(PREFIX "PM-Timer IO Port: %#x\n", pmtmr_ioport);
- #endif
- 	return 0;
- }
-@@ -692,7 +692,7 @@ acpi_parse_madt_ioapic_entries(void)
-  	 * if "noapic" boot option, don't look for IO-APICs
- 	 */
- 	if (skip_ioapic_setup) {
--		printk(KERN_INFO PREFIX "Skipping IOAPIC probe "
-+		pr_info(PREFIX "Skipping IOAPIC probe "
- 			"due to 'noapic' option.\n");
- 		return -ENODEV;
- 	}
 
-
-
---===============16540841561916508==
+--===============21740376154434582==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -89,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16540841561916508==--
+--===============21740376154434582==--
