@@ -1,50 +1,48 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 24 Nov 2004 15:29:34 +0000
-Subject: [KJ] [patch 3/8] ifdef typos:
-Message-Id: <20041124152934.GC14789@nd47.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59151950365460926=="
+From: "meredith price" <chantay@patagonia.com.ar>
+Date: Thu, 11 Nov 2004 10:59:41 +0000
+Subject: Gain Muscle Mass
+Message-Id: <27D4DA0F.C51BB59@patagonia.com.ar>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============59151950365460926==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It's another great way to make tangible improvements...Improvements that can
+be felt in your body and your brain
 
-CONFIG_HS7751RVOIP_CIDEC is mistyped.
+Visit here to increase your quality of life
+http://lhra.1dY8.getnewsalesinfo.com/a/
 
-Signed-off-by: Domen Puncer <domen@coderock.org>
+Restoring my former levels of fitness and energy with this product. Also
+have noted that my hair has stopped graying and thinning! This is after only
+2 months on the Axis spray -- Will update you later on my progress. Mark H.,
+Cleveland, OH
 
---- c/arch/sh/boards/renesas/hs7751rvoip/io.c	2004-08-17 11:44:59.000000000 +0200
-+++ str2/arch/sh/boards/renesas/hs7751rvoip/io.c	2004-11-24 14:51:30.000000000 +0100
-@@ -166,7 +166,7 @@ void hs7751rvoip_outb(unsigned char valu
- 
-         if (PXSEG(port))
-                 *(volatile unsigned char *)port = value;
--#if defined(CONFIG_HS7751RVOIP_CIDEC)
-+#if defined(CONFIG_HS7751RVOIP_CODEC)
- 	else if (codec_port(port))
- 		*(volatile unsigned cjar *)((unsigned long)area6_io8_base+(port-CODEC_IO_BASE)) = value;
- #endif
-@@ -180,7 +180,7 @@ void hs7751rvoip_outb_p(unsigned char va
- {
-         if (PXSEG(port))
-                 *(volatile unsigned char *)port = value;
--#if defined(CONFIG_HS7751RVOIP_CIDEC)
-+#if defined(CONFIG_HS7751RVOIP_CODEC)
- 	else if (codec_port(port))
- 		*(volatile unsigned cjar *)((unsigned long)area6_io8_base+(port-CODEC_IO_BASE)) = value;
- #endif
 
---===============59151950365460926==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+po box in link above and you can say no thank you for the future
+
+With no proved survival benefit combination therapy may be unjustifiable 
+Several studies included in the overall and subgroup analyses directly
+assessed semiempirical combination versus monotherapy  These similarly do
+not support combination therapy for specific pathogens when detected  . Rob
+cared little for the quarrel between the Turks and Tatars, and under
+ordinary circumstances would have refused to side with one or the other; but
+he knew he could not hope to recover his electrical machines unless the city
+was taken by the band of warriors who had befriended him, so he determined
+to force an entrance for them
+Without hesitation he walked close to the great gate and shattered its
+fastenings with the force of the electric current directed upon them from
+the tube.
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by:
+Sybase ASE Linux Express Edition - download now for FREE
+LinuxWorld Reader's Choice Award Winner for best database on Linux.
+http://ads.osdn.com/?ad_idU88&alloc_id065&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============59151950365460926==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
