@@ -1,54 +1,45 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 04 Apr 2005 18:10:53 +0000
-Subject: [KJ] [UPDATE PATCH] usb/digi_acceleport: remove
-Message-Id: <20050404181053.GB3082@us.ibm.com>
+Date: Mon, 04 Apr 2005 21:23:28 +0000
+Subject: [KJ] [UPDATE PATCH] usb/digi_acceleport: correct wait-queue state
+Message-Id: <20050404212328.GC3082@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6218314828776399=="
+Content-Type: multipart/mixed; boundary="===============3760272603994379=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050404181053.GB3082@us.ibm.com>
+In-Reply-To: <20050404181053.GB3082@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============6218314828776399==
+--===============3760272603994379==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Feb 02, 2005 at 11:03:09AM -0800, Nishanth Aravamudan wrote:
-> Hello,
+On Mon, Apr 04, 2005 at 11:10:53AM -0700, Nishanth Aravamudan wrote:
+> On Wed, Feb 02, 2005 at 11:03:09AM -0800, Nishanth Aravamudan wrote:
+> > Hello,
+> > 
+> > Description: Replace deprecated interruptible_sleep_on_timeout() with direct
+> > wait-queue usage. Also replace some rather odd wait-queue usage with the
+> > existent macros. Also adjusted the wake_up_interruptible() call appropriately,
+> > as I changed all the states to TASK_UNINTERRUPTIBLE (signals were not be checked
+> > in the current code). Patch is compile-tested.
 > 
-> Description: Replace deprecated interruptible_sleep_on_timeout() with direct
-> wait-queue usage. Also replace some rather odd wait-queue usage with the
-> existent macros. Also adjusted the wake_up_interruptible() call appropriately,
-> as I changed all the states to TASK_UNINTERRUPTIBLE (signals were not be checked
-> in the current code). Patch is compile-tested.
+> Patch was broken in various ways. Fixed-up below (ends up being fewer
+> changes). Please drop previous patch and apply the attached.
+> 
+> Description: Replace deprecated interruptible_sleep_on_timeout() with
+> direct wait-queue usage. Patch is compile-tested.
 
-Patch was broken in various ways. Fixed-up below (ends up being fewer
-changes). Please drop previous patch and apply the attached.
+Original patch was merged into 2.6.11-rc2. Incremental patch for
+2.6.11-rc2 attached.
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with
-direct wait-queue usage. Patch is compile-tested.
+Description: First patch incorrectly changed state of the wait-queue
+usage to TASK_UNINTERRUPTIBLE. Reverted to TASK_INTERRUPTIBLE.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.12-rc1-v/drivers/usb/serial/digi_acceleport.c	2005-03-01 23:38:08.000000000 -0800
-+++ 2.6.12-rc1-kj/drivers/usb/serial/digi_acceleport.c	2005-04-04 11:10:00.000000000 -0700
-@@ -14,6 +14,9 @@
- *  Peter Berger (pberger@brimson.com)
- *  Al Borchers (borchers@steinerpoint.com)
- * 
-+* (04/04/2005) nacc
-+* 	removed interruptible_sleep_on_timeout() usage [deprecated]
-+*
- * (12/03/2001) gkh
- *	switched to using port->open_count instead of private version.
- *	Removed port->active
-@@ -244,6 +247,7 @@
- #include <linux/module.h>
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
-+#include <linux/wait.h>
- #include <asm/uaccess.h>
- #include <linux/usb.h>
- #include "usb-serial.h"
-@@ -567,27 +571,21 @@ static struct usb_serial_device_type dig
+--- linux-current/drivers/usb/serial/digi_acceleport.c	2005-04-04 14:17:14.000000000 -0700
++++ 2.6.12-rc1-kj/drivers/usb/serial/digi_acceleport.c	2005-04-04 14:19:14.000000000 -0700
+@@ -568,6 +568,9 @@ static struct usb_serial_device_type dig
  *  and the sleep.  In other words, spin_unlock_irqrestore and
  *  interruptible_sleep_on_timeout are "atomic" with respect to
  *  wake ups.  This is used to implement condition variables.
@@ -58,54 +49,41 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  */
  
  static inline long cond_wait_interruptible_timeout_irqrestore(
- 	wait_queue_head_t *q, long timeout,
- 	spinlock_t *lock, unsigned long flags )
+@@ -576,13 +579,12 @@ static inline long cond_wait_interruptib
  {
-+	DEFINE_WAIT(wait);
+ 	DEFINE_WAIT(wait);
  
--	wait_queue_t wait;
--
--
--	init_waitqueue_entry( &wait, current );
--
--	set_current_state( TASK_INTERRUPTIBLE );
--
--	add_wait_queue( q, &wait );
--
--	spin_unlock_irqrestore( lock, flags );
--
+-	prepare_to_wait(q, &wait, TASK_UNINTERRUPTIBLE);
 +	prepare_to_wait(q, &wait, TASK_INTERRUPTIBLE);
-+	spin_unlock_irqrestore(lock, flags);
+ 	spin_unlock_irqrestore(lock, flags);
  	timeout = schedule_timeout(timeout);
+ 	finish_wait(q, &wait);
+ 
+ 	return timeout;
 -
--	remove_wait_queue( q, &wait );
-+	finish_wait(q, &wait);
+ }
  
- 	return( timeout );
  
-@@ -1528,7 +1526,7 @@ dbg( "digi_open: TOP: port=%d, open_coun
- 
- static void digi_close( struct usb_serial_port *port, struct file *filp )
- {
--
-+	DEFINE_WAIT(wait);
- 	int ret;
- 	unsigned char buf[32];
- 	struct tty_struct *tty = port->tty;
-@@ -1604,8 +1602,9 @@ dbg( "digi_close: TOP: port=%d, open_cou
+@@ -1596,7 +1598,7 @@ dbg( "digi_close: TOP: port=%d, open_cou
  			dbg( "digi_close: write oob failed, ret=%d", ret );
  
  		/* wait for final commands on oob port to complete */
--		interruptible_sleep_on_timeout( &priv->dp_flush_wait,
--			DIGI_CLOSE_TIMEOUT );
+-		prepare_to_wait(&priv->dp_flush_wait, &wait, TASK_UNINTERRUPTIBLE);
 +		prepare_to_wait(&priv->dp_flush_wait, &wait, TASK_INTERRUPTIBLE);
-+		schedule_timeout(DIGI_CLOSE_TIMEOUT);
-+		finish_wait(&priv->dp_flush_wait, &wait);
+ 		schedule_timeout(DIGI_CLOSE_TIMEOUT);
+ 		finish_wait(&priv->dp_flush_wait, &wait);
  
- 		/* shutdown any outstanding bulk writes */
- 		usb_kill_urb(port->write_urb);
+@@ -1995,7 +1997,7 @@ opcode, line, status, val );
+ 
+ 		} else if( opcode == DIGI_CMD_IFLUSH_FIFO ) {
+ 
+-			wake_up( &priv->dp_flush_wait );
++			wake_up_interruptible( &priv->dp_flush_wait );
+ 
+ 		}
+ 
 
---===============6218314828776399==
+--===============3760272603994379==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -116,4 +94,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============6218314828776399==--
+--===============3760272603994379==--
