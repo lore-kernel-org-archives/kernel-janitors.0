@@ -1,45 +1,74 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 20:42:11 +0000
-Subject: [Kernel-janitors] [PATCH] isdn/hfc_pci: replace schedule_timeout()
-Message-Id: <20040723204211.GE2675@us.ibm.com>
+Date: Tue, 27 Jul 2004 20:55:06 +0000
+Subject: [Kernel-janitors] [PATCH] wireless/airport: replace
+Message-Id: <20040727205506.GG3471@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70532847314761193=="
+Content-Type: multipart/mixed; boundary="===============90931133202496861=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============70532847314761193==
+--===============90931133202496861==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
-
-Thanks,
-Nish
-
-
+I would appreciate any comments from the janitors list. 
 
 Applys-to: 2.6.7
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays the desired time.
+Description: Use msleep() instead of schedule_timeout() to guarantee
+the task delays for the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/isdn/hisax/hfc_pci.c	2004-06-16 05:19:22.000000000 +0000
-+++ linux-dev/drivers/isdn/hisax/hfc_pci.c	2004-07-02 18:14:28.000000000 +0000
-@@ -1619,8 +1619,7 @@ hfcpci_card_msg(struct IsdnCardState *cs
- 			inithfcpci(cs);
- 			reset_hfcpci(cs);
- 			spin_unlock_irqrestore(&cs->lock, flags);
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout((80 * HZ) / 1000);	/* Timeout 80ms */
-+			msleep(80);				/* Timeout 80ms */
- 			/* now switch timer interrupt off */
- 			spin_lock_irqsave(&cs->lock, flags);
- 			cs->hw.hfcpci.int_m1 &= ~HFCPCI_INTS_TIMER;
+--- linux-vanilla/drivers/net/wireless/airport.c	2004-06-16 05:20:04.000000000 +0000
++++ linux-dev/drivers/net/wireless/airport.c	2004-07-03 02:00:04.000000000 +0000
+@@ -91,8 +91,7 @@ airport_resume(struct macio_dev *mdev)
+ 	printk(KERN_DEBUG "%s: Airport waking up\n", dev->name);
+ 
+ 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(mdev), 0, 1);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ/5);
++	msleep(200);
+ 
+ 	enable_irq(dev->irq);
+ 
+@@ -144,8 +143,7 @@ airport_detach(struct macio_dev *mdev)
+ 	macio_release_resource(mdev, 0);
+ 
+ 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(mdev), 0, 0);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 
+ 	macio_set_drvdata(mdev, NULL);
+ 	free_netdev(dev);
+@@ -171,11 +169,9 @@ static int airport_hard_reset(struct ori
+ 	disable_irq(dev->irq);
+ 
+ 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(card->mdev), 0, 0);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(card->mdev), 0, 1);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 
+ 	enable_irq(dev->irq);
+ 	schedule_timeout(HZ);
+@@ -237,8 +233,7 @@ airport_attach(struct macio_dev *mdev, c
+ 		
+ 	/* Power up card */
+ 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(mdev), 0, 1);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	msleep(1000);
+ 
+ 	/* Reset it before we get the interrupt */
+ 	hermes_init(hw);
 
---===============70532847314761193==
+--===============90931133202496861==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +79,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70532847314761193==--
+--===============90931133202496861==--
