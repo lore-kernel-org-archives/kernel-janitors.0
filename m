@@ -1,52 +1,65 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@terra.com.br>
-Date: Sat, 10 Jul 2004 13:55:29 +0000
-Subject: Re: [Kernel-janitors] [patch] MIN/MAX in ide-timing.h
-Message-Id: <20040710105529.22e81954.lcapitulino@terra.com.br>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 26 Jul 2004 22:59:11 +0000
+Subject: [Kernel-janitors] [PATCH] video/saa7134-core: replace
+Message-Id: <20040726225911.GU1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============003763475892930801=="
+Content-Type: multipart/mixed; boundary="===============82171563721853413=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040708181843.GA1370@moley.homelinux.net>
-In-Reply-To: <20040708181843.GA1370@moley.homelinux.net>
-To: Clemens Buchacher <drizzd@aon.at>
-Cc: vojtech@suse.cz, linux-ide@vger.kernel.org, kernel-janitors@lists.osdl.org, lcapitulino@prefeitura.sp.gov.br
+To: kernel-janitors@vger.kernel.org
 
---===============003763475892930801==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============82171563721853413==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
+
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
+
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch. 
+
+Thanks,
+Nish
 
 
- Hello Clemens,
 
- The patch seems right to me, but I have some comments:
+Applys-to: 2.6.7
 
-Em Thu, 8 Jul 2004 20:18:43 +0200
-Clemens Buchacher <drizzd@aon.at> screveu:
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays for the desired time.
 
-| # This is a BitKeeper generated diff -Nru style patch.
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-[...]
 
+--- linux-vanilla/drivers/media/video/saa7134/saa7134-core.c	2004-06-16 05:19:10.000000000 +0000
++++ linux-dev/drivers/media/video/saa7134/saa7134-core.c	2004-07-21 17:24:51.000000000 +0000
+@@ -27,6 +27,7 @@
+ #include <linux/kmod.h>
+ #include <linux/sound.h>
+ #include <linux/interrupt.h>
++#include <linux/delay.h>
  
-| -#define MIN(a,b)	        ((a)<(b)?(a):(b))
-| -#define MAX(a,b)	        ((a)>(b)?(a):(b))
-| -#define FIT(v,min,max)	MAX(MIN(v,max),min)
-| -#define ENOUGH(v,unit)	(((v)-1)/(unit)+1)
-| -#define EZ(v,unit)	        ((v)?ENOUGH(v,unit):0)
-| +#define FIT(v,vmin,vmax)	max(min(v,vmax),vmin)
-| +#define ENOUGH(v,unit)	(((v)-1)/(unit)+1)
-| +#define EZ(v,unit)		((v)?ENOUGH(v,unit):0)
+ #include "saa7134-reg.h"
+ #include "saa7134.h"
+@@ -901,8 +902,7 @@ static int __devinit saa7134_initdev(str
+ 	}
+ 
+ 	/* wait a bit, register i2c bus */
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(HZ/10);
++	msleep(100);
+ 	saa7134_i2c_register(dev);
+ 
+ 	/* initialize hardware #2 */
 
- Did you changed something in ENOUGH and EZ ?
-
- Maybe we can try to make it inlined functions, thus maybe is possible to
-solve the warning problem.
-
-PS: Try to send your patches in the body of the e-mail.
-
--- 
-Luiz Fernando
-
---===============003763475892930801==
+--===============82171563721853413==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============003763475892930801==--
+--===============82171563721853413==--
