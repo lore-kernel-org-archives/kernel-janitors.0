@@ -1,17 +1,20 @@
 From: Corey Minyard <cminyard@mvista.com>
-Date: Mon, 17 Jan 2005 21:50:34 +0000
+Date: Mon, 17 Jan 2005 21:53:12 +0000
 Subject: [KJ] Re: [PATCH 9/21] char/ipmi_si_intf: replace schedule_timeout()
-Message-Id: <41EC332A.8020603@mvista.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71076433511427251=="
+Message-Id: <41EC33C8.9090602@mvista.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <41EC332A.8020603@mvista.com>
+In-Reply-To: <41EC332A.8020603@mvista.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============71076433511427251==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Why?
+On my previous question, to be more clear, why was this change 
+necessary?  In this particular instance, it doesn't matter how long it 
+sleeps, it just can't spin waiting for something to happen.  msleep() 
+spins, right?  That would be very bad in this code.  Even if not, the 
+particular timing is not important.
 
 -Corey
 
@@ -25,7 +28,7 @@ Nishanth Aravamudan wrote:
 >
 >Description: Use msleep() instead of schedule_timeout(). I have chosen to use
 >msleep(10) here, even though the former calls were schedule_timeout(1), as many
->drivers were not updated to consider the new HZ values. Under HZ==100, the
+>drivers were not updated to consider the new HZ values. Under HZ=100, the
 >existing calls were 10ms delays, which I have returned to with this patch. If 1
 >ms was actually desired (or 1 scheduler unit) then the patch can be changed
 >appropriately.
@@ -38,7 +41,7 @@ Nishanth Aravamudan wrote:
 >@@ -1880,8 +1880,7 @@ static int try_get_dev_id(struct smi_inf
 > 	for (;;)
 > 	{
-> 		if (smi_result == SI_SM_CALL_WITH_DELAY) {
+> 		if (smi_result = SI_SM_CALL_WITH_DELAY) {
 >-			set_current_state(TASK_UNINTERRUPTIBLE);
 >-			schedule_timeout(1);
 >+			msleep(10);
@@ -82,16 +85,7 @@ Nishanth Aravamudan wrote:
 >  
 >
 
-
---===============71076433511427251==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============71076433511427251==--
