@@ -1,49 +1,40 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Thu, 03 Mar 2005 22:30:07 +0000
-Subject: Re: [KJ] [RFC][PATCH 1/5] add poll_event*()
-Message-Id: <200503040106.30651.adobriyan@mail.ru>
+From: Tomas Telensky <tomas@matfyz.cz>
+Date: Thu, 24 Mar 2005 11:05:11 +0000
+Subject: [KJ] kerneljanitors.org [was: Re: Fwd: Understand the Linux Kernel
+Message-Id: <20050324110511.GN7495@artax.karlin.mff.cuni.cz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91178478314420586=="
+Content-Type: multipart/mixed; boundary="===============19655498823080242=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050303182238.GD11600@us.ibm.com>
-In-Reply-To: <20050303182238.GD11600@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============91178478314420586==
+--===============19655498823080242==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-On Thursday 03 March 2005 20:22, Nishanth Aravamudan wrote:
 
-> --- 2.6.11-kj-v/include/linux/delay.h
-> +++ 2.6.11-kj/include/linux/delay.h
-> +#define poll_event_timeout(cond, interval, timeout)			\
-> +do {									\
-> +	unsigned long stop = jiffies + msecs_to_jiffies(timeout);	\
-> +	while (cond && time_before(jiffies, stop))			\
 
-I believe "cond" should be bracketized to avoid surprises.
+Hi,
 
-> +		msleep(interval);					\
-> +} while(0)
+> | Pardon?
+> | What's "The kernel janitor project "?
+> | I am also a newbie , and willing to know about it.
+> |
+> |
+> 
+> http://www.kerneljanitors.org/
+> 
+> It is a project that goes through the kernel, fixing up unmaintained code and
+> doing other cleanups and API conversion.
+> 
+> Jim
 
-> +#define poll_event_interruptible_timeout(cond, interval, timeout)	\
-> +do {									\
-> +	unsigned long stop = jiffies + msecs_to_jiffies(timeout);	\
-> +	while (cond && time_before(jiffies, stop)) {			\
-	      ^^^^^^
+This brief intro should be on the page! http://kerneljanitors.org/ looks very
+unfriendly - they don't even have one sentence to present what they are doing.
 
-> +		msleep_interruptible(interval);				\
-> +		if (signal_pending(current))				\
-> +			break;						\
-> +	}								\
-> +} while(0);
+	Tomas
 
-	Alexey
 
---===============91178478314420586==
+--===============19655498823080242==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91178478314420586==--
+--===============19655498823080242==--
