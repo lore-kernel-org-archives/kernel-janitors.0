@@ -1,38 +1,120 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 23:17:34 +0000
-Subject: [KJ] [PATCH] [RESEND] [2/29] platform.h - vfree() checking cleanups
-Message-Id: <auto-000001227479@appliedminds.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 10 Jan 2005 21:18:49 +0000
+Subject: [KJ] [UPDATE PATCH] block/pt: replace pt_sleep() with
+Message-Id: <20050110211849.GF9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91037278553913814=="
+Content-Type: multipart/mixed; boundary="===============96134710213924568=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============91037278553913814==
+--===============96134710213924568==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-platform.h vfree() checking cleanups.
+Sorry, slightly inaccurate description...
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+> 
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
- platform.h |    4 +---
- 1 files changed, 1 insertion(+), 3 deletions(-)
+<snip>
+
+> msleep_interruptible-drivers_block_pt.patch
+
+Please consider replacing with the following patch:
+
+Description: Use msleep()/ssleep() instead of pt_sleep() to guarantee
+the task delays as expected. TASK_INTERRUPTIBLE is used in the original code,
+however there is no check on the return values / for signals, thus I believe
+TASK_UNINTERRUPTIBLE (and hence msleep()) is more appropriate. Remove definition
+of pt_sleep(). Change the units of the pause variable in pt_poll_dsc() to msecs,
+thus allowing the use of msleep(). Appropriately modify the three callers of
+pt_poll_dsc().
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-2.6.10-vanilla/drivers/isdn/hardware/eicon/platform.h	2004-12-24 13:35:23.000000000 -0800
-+++ linux-2.6.10/drivers/isdn/hardware/eicon/platform.h	2005-01-04 11:31:54.000000000 -0800
-@@ -195,9 +195,7 @@
- }
- static __inline__ void  diva_os_free   (unsigned long flags, void* ptr)
- {
--	if (ptr) {
--		vfree(ptr);
--	}
-+	vfree(ptr);
+--- 2.6.10-v/drivers/block/paride/pt.c	2004-12-24 13:34:27.000000000 -0800
++++ 2.6.10/drivers/block/paride/pt.c	2005-01-10 12:23:43.000000000 -0800
+@@ -401,12 +401,6 @@ static int pt_atapi(struct pt_unit *tape
+ 	return r;
  }
  
- /*
+-static void pt_sleep(int cs)
+-{
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout(cs);
+-}
+-
+ static int pt_poll_dsc(struct pt_unit *tape, int pause, int tmo, char *msg)
+ {
+ 	struct pi_adapter *pi = tape->pi;
+@@ -416,7 +410,7 @@ static int pt_poll_dsc(struct pt_unit *t
+ 	e = 0;
+ 	s = 0;
+ 	while (k < tmo) {
+-		pt_sleep(pause);
++		msleep(pause);
+ 		k++;
+ 		pi_connect(pi);
+ 		write_reg(pi, 6, DRIVE(tape));
+@@ -445,7 +439,7 @@ static void pt_media_access_cmd(struct p
+ 		return;
+ 	}
+ 	pi_disconnect(tape->pi);
+-	pt_poll_dsc(tape, HZ, tmo, fun);
++	pt_poll_dsc(tape, 1000, tmo, fun);
+ }
+ 
+ static void pt_rewind(struct pt_unit *tape)
+@@ -474,11 +468,11 @@ static int pt_reset(struct pt_unit *tape
+ 	write_reg(pi, 6, DRIVE(tape));
+ 	write_reg(pi, 7, 8);
+ 
+-	pt_sleep(20 * HZ / 1000);
++	msleep(20);
+ 
+ 	k = 0;
+ 	while ((k++ < PT_RESET_TMO) && (status_reg(pi) & STAT_BUSY))
+-		pt_sleep(HZ / 10);
++		msleep(100);
+ 
+ 	flg = 1;
+ 	for (i = 0; i < 5; i++)
+@@ -512,7 +506,7 @@ static int pt_ready_wait(struct pt_unit 
+ 		if (!(((p & 0xffff) == 0x0402) || ((p & 0xff) == 6)))
+ 			return p;
+ 		k++;
+-		pt_sleep(HZ);
++		ssleep(1);
+ 	}
+ 	return 0x000020;	/* timeout */
+ }
+@@ -785,7 +779,7 @@ static ssize_t pt_read(struct file *filp
+ 
+ 	while (count > 0) {
+ 
+-		if (!pt_poll_dsc(tape, HZ / 100, PT_TMO, "read"))
++		if (!pt_poll_dsc(tape, 10, PT_TMO, "read"))
+ 			return -EIO;
+ 
+ 		n = count;
+@@ -886,7 +880,7 @@ static ssize_t pt_write(struct file *fil
+ 
+ 	while (count > 0) {
+ 
+-		if (!pt_poll_dsc(tape, HZ / 100, PT_TMO, "write"))
++		if (!pt_poll_dsc(tape, 10, PT_TMO, "write"))
+ 			return -EIO;
+ 
+ 		n = count;
 
-
---===============91037278553913814==
+--===============96134710213924568==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +125,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91037278553913814==--
+--===============96134710213924568==--
