@@ -1,35 +1,43 @@
-From: Chuck Short <zulcss@gmail.com>
-Date: Mon, 28 Mar 2005 21:17:39 +0000
-Subject: [KJ] [Patch 3/3] Add module version to amd8111e.c
-Message-Id: <27c8234305032813171ca5eb86@mail.gmail.com>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 23:02:01 +0000
+Subject: [KJ] [PATCH] crypto/sha256.c: fix sparse warnings
+Message-Id: <200503100154.02125.adobriyan@mail.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============043529502206162363=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description: This patch adds MODULE_VERSION to amd8111e
+--===============043529502206162363==
+Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Chuck Short <zulcss@gmail.com>
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-diff -Naur linux-2.6.12-rc1.orig/drivers/net/amd8111e.c
-linux-2.6.12-rc1/drivers/net/amd8111e.c
---- linux-2.6.12-rc1.orig/drivers/net/amd8111e.c        2005-03-27
-09:44:51.000000000 -0500
-+++ linux-2.6.12-rc1/drivers/net/amd8111e.c     2005-03-27
-13:12:29.000000000 -0500
-@@ -105,6 +105,7 @@
- MODULE_AUTHOR("Advanced Micro Devices, Inc.");
- MODULE_DESCRIPTION ("AMD8111 based 10/100 Ethernet Controller. Driver
-Version 3.0.3");
- MODULE_LICENSE("GPL");
-+MODULE_VERSION(MODULE_VERS);
- MODULE_DEVICE_TABLE(pci, amd8111e_pci_tbl);
- module_param_array(speed_duplex, int, NULL, 0);
- MODULE_PARM_DESC(speed_duplex, "Set device speed and duplex modes, 0:
-Auto Negotitate, 1: 10Mbps Half Duplex, 2: 10Mbps Full Duplex, 3:
-100Mbps Half Duplex, 4: 100Mbps Full Duplex");
+Index: linux-2.6.11-bk4-sparse/crypto/sha256.c
+===================================================================
+--- linux-2.6.11-bk4-sparse.orig/crypto/sha256.c	2005-03-10 00:28:44.000000000 +0200
++++ linux-2.6.11-bk4-sparse/crypto/sha256.c	2005-03-10 00:40:06.000000000 +0200
+@@ -58,7 +58,7 @@ static inline u32 Maj(u32 x, u32 y, u32 
+ 
+ static inline void LOAD_OP(int I, u32 *W, const u8 *input)
+ {
+-	W[I] = __be32_to_cpu( ((u32*)(input))[I] );
++	W[I] = __be32_to_cpu( ((__be32*)(input))[I] );
+ }
+ 
+ static inline void BLEND_OP(int I, u32 *W)
+
+--===============043529502206162363==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============043529502206162363==--
