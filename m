@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 00:49:18 +0000
-Subject: [KJ] [PATCH 33/33] usb/io_edgeport: replace
-Message-Id: <20050126004918.GY12649@us.ibm.com>
+Date: Fri, 21 Jan 2005 19:44:55 +0000
+Subject: [KJ] [PATCH 29/39] sound/rawmidi: replace schedule_timeout() with
+Message-Id: <20050121194455.GJ3340@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============33622233254385081=="
+Content-Type: multipart/mixed; boundary="===============025750815225463963=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============33622233254385081==
+--===============025750815225463963==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,44 +15,36 @@ Hi,
 
 Please consider applying.
 
-Description: Use wait_event_timeout() instead of deprecated
-interruptible_sleep_on_timeout(). Signals are not checked in the current code,
-so interruptible should not be necessary. Patch is compile-tested.
+Description: Use msleep instead of schedule_timeout() to guarantee the task
+delays as expected. This also removes a dependence on the value of HZ.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/drivers/usb/serial/io_edgeport.c	2005-01-24 09:34:15.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/usb/serial/io_edgeport.c	2005-01-24 17:16:45.000000000 -0800
-@@ -261,6 +261,7 @@
- #include <linux/spinlock.h>
- #include <linux/serial.h>
- #include <linux/ioctl.h>
-+#include <linux/wait.h>
- #include <asm/uaccess.h>
- #include <linux/usb.h>
- #include "usb-serial.h"
-@@ -991,7 +992,6 @@ static int edge_open (struct usb_serial_
- 	struct usb_serial *serial;
- 	struct edgeport_serial *edge_serial;
- 	int response;
--	int timeout;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -1073,10 +1073,7 @@ static int edge_open (struct usb_serial_
+--- 2.6.11-rc1-kj-v/sound/core/rawmidi.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/sound/core/rawmidi.c	2005-01-18 13:24:06.000000000 -0800
+@@ -29,6 +29,7 @@
+ #include <linux/time.h>
+ #include <linux/wait.h>
+ #include <linux/moduleparam.h>
++#include <linux/delay.h>
+ #include <sound/rawmidi.h>
+ #include <sound/info.h>
+ #include <sound/control.h>
+@@ -149,10 +150,8 @@ int snd_rawmidi_drain_output(snd_rawmidi
+ 		/* we need wait a while to make sure that Tx FIFOs are empty */
+ 		if (substream->ops->drain)
+ 			substream->ops->drain(substream);
+-		else {
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ / 20);
+-		}
++		else
++			msleep(50);
+ 		snd_rawmidi_drop_output(substream);
  	}
- 
- 	/* now wait for the port to be completely opened */
--	timeout = OPEN_TIMEOUT;
--	while (timeout && edge_port->openPending == TRUE) {
--		timeout = interruptible_sleep_on_timeout (&edge_port->wait_open, timeout);
--	}
-+	wait_event_timeout(edge_port->wait_open, (edge_port->openPending != TRUE), OPEN_TIMEOUT);
- 
- 	if (edge_port->open == FALSE) {
- 		/* open timed out */
+ 	return err;
 
---===============33622233254385081==
+--===============025750815225463963==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============33622233254385081==--
+--===============025750815225463963==--
