@@ -1,76 +1,40 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 21 Jan 2005 21:40:07 +0000
-Subject: [KJ] [PATCH 38/39] usb/usblp: use wait_event_interruptible_timeout()
-Message-Id: <20050121214007.GS3340@us.ibm.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Sun, 16 Jan 2005 21:10:57 +0000
+Subject: [KJ] Re: [PATCH 3/13] ftape: remove cli()/sti() in
+Message-Id: <1105908296.12196.9.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============29630798242853906=="
+Content-Type: multipart/mixed; boundary="===============73536425407020023=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050116135223.30109.26479.55757@localhost.localdomain>
+	 <20050116135244.30109.69180.33718@localhost.localdomain>
+In-Reply-To: <20050116135244.30109.69180.33718@localhost.localdomain>
+To: James Nelson <james4765@cwazy.co.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org, akpm@osdl.org
 
---===============29630798242853906==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============73536425407020023==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Sul, 2005-01-16 at 13:52, James Nelson wrote:
+> Signed-off-by: James Nelson <james4765@gmail.com>
+> 
+> diff -urN --exclude='*~' linux-2.6.11-rc1-mm1-original/drivers/char/ftape/lowlevel/ftape-format.c linux-2.6.11-rc1-mm1/drivers/char/ftape/lowlevel/ftape-format.c
+> --- linux-2.6.11-rc1-mm1-original/drivers/char/ftape/lowlevel/ftape-format.c	2004-12-24 16:34:45.000000000 -0500
+> +++ linux-2.6.11-rc1-mm1/drivers/char/ftape/lowlevel/ftape-format.c	2005-01-16 07:32:19.293557207 -0500
+> @@ -132,7 +132,7 @@
+>  	TRACE_CATCH(ftape_seek_head_to_track(track),);
+>  	TRACE_CATCH(ftape_command(QIC_LOGICAL_FORWARD),);
+>  	spin_lock_irqsave(&ftape_format_lock, flags);
+> -	TRACE_CATCH(fdc_setup_formatting(head), restore_flags(flags));
+> +	TRACE_CATCH(fdc_setup_formatting(head),);
+>  	spin_unlock_irqrestore(&ftape_format_lock, flags);
 
-Please consider applying.
+This is wrong (the original is too). TRACE_CATCH expands into code
+including a return so you need to replace the retore_flags(flags) with a
+copy of the spin_unlock_irqrestore line below
 
-Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
-now unused variables.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc1-kj-v/drivers/usb/class/usblp.c	2005-01-15 16:55:42.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/usb/class/usblp.c	2005-01-21 13:39:06.000000000 -0800
-@@ -54,6 +54,7 @@
- #include <linux/init.h>
- #include <linux/slab.h>
- #include <linux/lp.h>
-+#include <linux/wait.h>
- #undef DEBUG
- #include <linux/usb.h>
- 
-@@ -622,10 +623,10 @@ done:
- 
- static ssize_t usblp_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
- {
--	DECLARE_WAITQUEUE(wait, current);
- 	struct usblp *usblp = file->private_data;
--	int timeout, err = 0, transfer_length = 0;
-+	int err = 0, transfer_length = 0;
- 	size_t writecount = 0;
-+	long ret;
- 
- 	while (writecount < count) {
- 		if (!usblp->wcomplete) {
-@@ -635,21 +636,10 @@ static ssize_t usblp_write(struct file *
- 				return writecount ? writecount : -EAGAIN;
- 			}
- 
--			timeout = USBLP_WRITE_TIMEOUT;
--			add_wait_queue(&usblp->wait, &wait);
--			while (timeout) {
--				if (signal_pending(current)) {
--					remove_wait_queue(&usblp->wait, &wait);
--					return writecount ? writecount : -EINTR;
--				}
--				set_current_state(TASK_INTERRUPTIBLE);
--				if (usblp->wcomplete) {
--					set_current_state(TASK_RUNNING);
--					break;
--				}
--				timeout = schedule_timeout(timeout);
--			}
--			remove_wait_queue(&usblp->wait, &wait);
-+			ret = wait_event_interruptible_timeout(usblp->wait,
-+							usblp->complete, USBLP_WRITE_TIMEOUT);
-+			if (ret == -ERESTARTSYS)
-+				return writecount ? writecount : -EINTR;
- 		}
- 
- 		down (&usblp->sem);
-
---===============29630798242853906==
+--===============73536425407020023==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============29630798242853906==--
+--===============73536425407020023==--
