@@ -1,57 +1,46 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 19:22:00 +0000
-Subject: [KJ] [PATCH 10/20] lockd/svc: remove
-Message-Id: <20050202192200.GM2546@us.ibm.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:27 +0000
+Subject: [KJ] [PATCH][24/26] net/ipv6/* - compile warning cleanup
+Message-Id: <420BEF83.15055.587051@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============51023985827550344=="
+Content-Type: multipart/mixed; boundary="===============014764308717499564=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: okir@monad.swb.de, matthew@wil.cx
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============51023985827550344==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============014764308717499564==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Hello,
+Description: add MODULE definition compile fence so MODULE_DEVICE_TABLE 
+vars not declared when compiled into the kernel
 
-Please consider applying.
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with direct
-wait-queue usage. Patch is compile-tested.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc2-kj-v/fs/lockd/svc.c	2005-01-24 09:34:17.000000000 -0800
-+++ 2.6.11-rc2-kj/fs/lockd/svc.c	2005-01-27 11:11:50.000000000 -0800
-@@ -25,6 +25,7 @@
- #include <linux/slab.h>
- #include <linux/smp.h>
- #include <linux/smp_lock.h>
-+#include <linux/wait.h>
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/sound/oss/ad1848.c linux-2.6.11-rc3-mm/sound/oss/ad1848.c
+--- linux-2.6.11-rc3-mm-original/sound/oss/ad1848.c	2005-02-03 03:56:10.000000000 +0200
++++ linux-2.6.11-rc3-mm/sound/oss/ad1848.c	2005-02-07 21:16:11.000000000 +0200
+@@ -2955,6 +2955,7 @@ static struct {
+ 	{NULL}
+ };
  
- #include <linux/sunrpc/types.h>
- #include <linux/sunrpc/stats.h>
-@@ -281,6 +282,7 @@ EXPORT_SYMBOL(lockd_up);
- void
- lockd_down(void)
++#ifdef MODULE
+ static struct isapnp_device_id id_table[] __devinitdata = {
+ 	{	ISAPNP_VENDOR('C','M','I'), ISAPNP_DEVICE(0x0001),
+ 		ISAPNP_VENDOR('@','@','@'), ISAPNP_FUNCTION(0x0001), 0 },
+@@ -2972,6 +2973,7 @@ static struct isapnp_device_id id_table[
+ };
+ 
+ MODULE_DEVICE_TABLE(isapnp, id_table);
++#endif /* MODULE */
+ 
+ static struct pnp_dev *activate_dev(char *devname, char *resname, struct pnp_dev *dev)
  {
-+	DEFINE_WAIT(wait);
- 	static int warned;
- 
- 	down(&nlmsvc_sema);
-@@ -303,7 +305,9 @@ lockd_down(void)
- 	 * the lockd semaphore, we can't wait around forever ...
- 	 */
- 	clear_thread_flag(TIF_SIGPENDING);
--	interruptible_sleep_on_timeout(&lockd_exit, HZ);
-+	prepare_to_wait(&lockd_exit, &wait, TASK_INTERRUPTIBLE);
-+	schedule_timeout(HZ);
-+	finish_wait(&lockd_exit, &wait);
- 	if (nlmsvc_pid) {
- 		printk(KERN_WARNING 
- 			"lockd_down: lockd failed to exit, clearing pid\n");
 
---===============51023985827550344==
+
+
+
+--===============014764308717499564==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============51023985827550344==--
+--===============014764308717499564==--
