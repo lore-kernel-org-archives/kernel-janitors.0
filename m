@@ -1,52 +1,76 @@
-From: "Nancy Briggs" <pqmgdytttlb@yahoo.com>
-Date: Fri, 27 Feb 2004 09:55:08 +0000
-Subject: Re: ZBXZTBC, surprising circumstance that
-Message-Id: <JBKHLEN-0008934119758@banquet>
+From: Michael Veeck <michael.veeck@gmx.net>
+Date: Sat, 07 Feb 2004 15:34:08 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/media/video/saa5249.c MIN/MAX
+Message-Id: <40250570.4050602@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--OHZN89516849880168"
+Content-Type: multipart/mixed; boundary="------------040704020407030806060107"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----ALT--OHZN89516849880168
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+This is a multi-part message in MIME format.
+--------------040704020407030806060107
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-detergent nonce geodesic sandy bugle runyon gush butyrate hook 
-backboard escutcheon soot abridgment alert mckeon coronary 
-destabilize bibliography indecipherable itch ancestor smoke interception coercion burgundian assyriology 
+Hi!
+Patch (against 2.6.3-rc1) removes unnecessary min/max macros and changes 
+calls to use kernel.h macros instead.
+Feedback always welcome
+Michael
 
-----ALT--OHZN89516849880168
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+--------------040704020407030806060107
+Content-Type: text/plain;
+ name="minmax_drivers_media.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="minmax_drivers_media.patch"
 
-<HTML><body>
-  <p>O</rockbound>ur U</crater>S Li</ravel>censed Doc</hawthorne>tors wi</junketeer>ll<BR>
-Prescr</weasel>ibes Y</rodeo>our Me</chronicle>dication F</triplett>or F</grew>ree
+diff -Naur linux-2.6.2.org/drivers/media/video/saa5249.c linux-2.6.2.new/drivers/media/video/saa5249.c
+--- linux-2.6.2.org/drivers/media/video/saa5249.c	2004-02-04 04:44:14.000000000 +0100
++++ linux-2.6.2.new/drivers/media/video/saa5249.c	2004-02-06 12:05:41.000000000 +0100
+@@ -122,10 +122,6 @@
+ #define FALSE 0
+ #define TRUE 1
+ #endif
+-#ifndef MIN
+-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+-#define MAX(a, b) ((a) > (b) ? (a) : (b))
+-#endif
+ 
+ #define RESCHED do { cond_resched(); } while(0)
+ 
+@@ -518,8 +514,8 @@
+ 			{
+ 				int len;
+ 				char buf[16];  
+-				start = MAX(req->start, 32);
+-				end = MIN(req->end, 39);
++				start = max(req->start, 32);
++				end = min(req->end, 39);
+ 				len=end-start+1;
+ 				if (i2c_senddata(t, 8, 0, 0, start, -1) ||
+ 					i2c_getdata(t, len, buf))
+@@ -532,8 +528,8 @@
+ 			{
+ 				char buf[32];
+ 				int len;
+-				start = MAX(req->start, 7);
+-				end = MIN(req->end, 31);
++				start = max(req->start, 7);
++				end = min(req->end, 31);
+ 				len=end-start+1;
+ 				if (i2c_senddata(t, 8, 0, 0, start, -1) ||
+ 					i2c_getdata(t, len, buf))
 
-  <p>  Medicatio</elbow>ns&nbsp; Shi</rush>pped Overni</nucleus>ght To Y</electrician>our Do</dully>or.<BR>
-  Phe</pyknotic>ntermine, Ad</anarchy>ipex Soma</phase>, Fi</involutorial>oriicet, U</perseverant>lltram,<BR>
-, Vi</abbe>agra, a</across>nd ma</insurrect>ny, m</woodgrain>any oth</chinatown>ers.<BR>
-Me</earmark>ds f</crucible>or: Weig</provisional>ht Los</abstractor>s, Pa</diane>in Re</stanford>lief, Mus</explicate>clePain Re</filtrate>lief, Wo</acanthus>men's Hea</parental>lth, Me</pastiche>n's<BR>
-Hea</arouse>lth, I</gegenschein>mpotence, A</journeymen>llergy Re</borax>lief, H</italy>eartburn Re</adposition>lief, Mig</mann>raine R</morn>elief &amp; M</lucius>ORE<BR>
-Up</beak>on Appr</struck>oval&nbsp; 
-<a href="http://www.techmaximal2779drugs.biz/b32/">sho</newfound>w
-M</o'brien>e mo</daredevil>re</a>
-<p><img border="0" src="http://www.3004hosting.com/p3x.jpg"></p>
-<br>
-<br>
-hotbox model wire coquina cognizable gibbons cog empower extroversion crane nucleotide hopkins hadn't currant lowell vogel merit landmark spike pyknotic specimen swampy insulin duplicable scope triable limitation musk albatross idiom gall losable marrietta 
-</BODY>
-</HTML>
+--------------040704020407030806060107
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-----ALT--OHZN89516849880168--
-
-
--------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------040704020407030806060107--
