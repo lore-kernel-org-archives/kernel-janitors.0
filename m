@@ -1,249 +1,95 @@
-From: Alexander Nyberg <alexn@telia.com>
-Date: Tue, 15 Jun 2004 17:12:35 +0000
-Subject: [Kernel-janitors] Sparse checks #2
-Message-Id: <1087319555.676.47.camel@boxen>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============96983119161742215=="
+From: Andrew Morton <akpm@osdl.org>
+Date: Sat, 05 Jun 2004 02:21:06 +0000
+Subject: make buildcheck output
+Message-Id: <20040604192106.6a524ad0.akpm@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============96983119161742215==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
 
-Sparse checks in drivers/block/
+Here's an analysis from Keith about the (extensive) amount of bugs which
+`make buildcheck' reports.
 
-Signed-off-by: Alexander Nyberg <alexn@telia.com>
+Most of them should be fairly simple to fix, if someone has the time.
 
-===== drivers/acorn/block/mfmhd.c 1.52 vs edited =====
---- 1.52/drivers/acorn/block/mfmhd.c	2003-08-07 11:25:23 +02:00
-+++ edited/drivers/acorn/block/mfmhd.c	2004-06-15 16:18:58 +02:00
-@@ -1156,7 +1156,7 @@
- static int mfm_ioctl(struct inode *inode, struct file *file, u_int cmd, u_long arg)
- {
- 	struct mfm_info *p = inode->i_bdev->bd_disk->private_data;
--	struct hd_geometry *geo = (struct hd_geometry *) arg;
-+	struct hd_geometry __user *geo = (struct hd_geometry __user *) arg;
- 	if (cmd != HDIO_GETGEO)
- 		return -EINVAL;
- 	if (!arg)
-===== drivers/block/acsi.c 1.55 vs edited =====
---- 1.55/drivers/block/acsi.c	2003-09-18 06:30:39 +02:00
-+++ edited/drivers/block/acsi.c	2004-06-15 16:19:37 +02:00
-@@ -1090,7 +1090,7 @@
- 	  case HDIO_GETGEO:
- 		/* HDIO_GETGEO is supported more for getting the partition's
- 		 * start sector... */
--	  { struct hd_geometry *geo = (struct hd_geometry *)arg;
-+	  { struct hd_geometry __user *geo = (struct hd_geometry __user *)arg;
- 	    /* just fake some geometry here, it's nonsense anyway; to make it
- 		 * easy, use Adaptec's usual 64/32 mapping */
- 	    put_user( 64, &geo->heads );
-@@ -1102,8 +1102,8 @@
- 	  case SCSI_IOCTL_GET_IDLUN:
- 		/* SCSI compatible GET_IDLUN call to get target's ID and LUN number */
- 		put_user( aip->target | (aip->lun << 8),
--				  &((Scsi_Idlun *) arg)->dev_id );
--		put_user( 0, &((Scsi_Idlun *) arg)->host_unique_id );
-+				  &((Scsi_Idlun __user *) arg)->dev_id );
-+		put_user( 0, &((Scsi_Idlun __user *) arg)->host_unique_id );
- 		return 0;
- 	  default:
- 		return -EINVAL;
-===== drivers/block/amiflop.c 1.46 vs edited =====
---- 1.46/drivers/block/amiflop.c	2003-09-03 12:32:10 +02:00
-+++ edited/drivers/block/amiflop.c	2004-06-15 13:46:27 +02:00
-@@ -1448,7 +1448,7 @@
- 		loc.sectors = unit[drive].dtype->sects * unit[drive].type->sect_mult;
- 		loc.cylinders = unit[drive].type->tracks;
- 		loc.start = 0;
--		if (copy_to_user((void *)param, (void *)&loc,
-+		if (copy_to_user((void __user *)param, (void *)&loc,
- 				 sizeof(struct hd_geometry)))
- 			return -EFAULT;
- 		break;
-@@ -1496,8 +1496,7 @@
- 		getprm.head=unit[drive].type->heads;
- 		getprm.sect=unit[drive].dtype->sects * unit[drive].type->sect_mult;
- 		getprm.size=unit[drive].blocks;
--		if (copy_to_user((void *)param,
--				 (void *)&getprm,
-+		if (copy_to_user((void __user *)param, (void *)&getprm,
- 				 sizeof(struct floppy_struct)))
- 			return -EFAULT;
- 		break;
-@@ -1510,7 +1509,7 @@
- 		break;
- #ifdef RAW_IOCTL
- 	case IOCTL_RAW_TRACK:
--		if (copy_to_user((void *)param, raw_buf,
-+		if (copy_to_user((void __user *)param, raw_buf,
- 				 unit[drive].type->read_size))
- 			return -EFAULT;
- 		else
-===== drivers/block/ataflop.c 1.44 vs edited =====
---- 1.44/drivers/block/ataflop.c	2003-07-31 00:49:57 +02:00
-+++ edited/drivers/block/ataflop.c	2004-06-15 14:22:00 +02:00
-@@ -1534,7 +1534,7 @@
- 		getprm.head = 2;
- 		getprm.track = dtp->blocks/dtp->spt/2;
- 		getprm.stretch = dtp->stretch;
--		if (copy_to_user((void *)param, &getprm, sizeof(getprm)))
-+		if (copy_to_user((void __user *)param, &getprm, sizeof(getprm)))
- 			return -EFAULT;
- 		return 0;
- 	}
-@@ -1553,7 +1553,7 @@
- 		/* get the parameters from user space */
- 		if (floppy->ref != 1 && floppy->ref != -1)
- 			return -EBUSY;
--		if (copy_from_user(&setprm, (void *) param, sizeof(setprm)))
-+		if (copy_from_user(&setprm, (void __user *) param, sizeof(setprm)))
- 			return -EFAULT;
- 		/* 
- 		 * first of all: check for floppy change and revalidate, 
-@@ -1660,7 +1660,7 @@
- 	case FDFMTTRK:
- 		if (floppy->ref != 1 && floppy->ref != -1)
- 			return -EBUSY;
--		if (copy_from_user(&fmt_desc, (void *) param, sizeof(fmt_desc)))
-+		if (copy_from_user(&fmt_desc, (void __user *) param, sizeof(fmt_desc)))
- 			return -EFAULT;
- 		return do_format(drive, type, &fmt_desc);
- 	case FDCLRPRM:
-===== drivers/block/swim3.c 1.33 vs edited =====
---- 1.33/drivers/block/swim3.c	2004-05-19 18:02:45 +02:00
-+++ edited/drivers/block/swim3.c	2004-06-15 17:41:19 +02:00
-@@ -866,7 +866,7 @@
- 		err = fd_eject(fs);
- 		return err;
- 	case FDGETPRM:
--	        if (copy_to_user((void *) param, (void *)&floppy_type,
-+	        if (copy_to_user((void __user *) param, (void *)&floppy_type,
- 				 sizeof(struct floppy_struct)))
- 			return -EFAULT;
- 		return 0;
-===== drivers/block/swim_iop.c 1.27 vs edited =====
---- 1.27/drivers/block/swim_iop.c	2003-09-18 06:24:55 +02:00
-+++ edited/drivers/block/swim_iop.c	2004-06-15 17:42:56 +02:00
-@@ -364,7 +364,7 @@
- 		err = swimiop_eject(fs);
- 		return err;
- 	case FDGETPRM:
--	        if (copy_to_user((void *) param, (void *) &floppy_type,
-+	        if (copy_to_user((void __user *) param, (void *) &floppy_type,
- 				 sizeof(struct floppy_struct)))
- 			return -EFAULT;
- 		return 0;
-===== drivers/block/viodasd.c 1.5 vs edited =====
---- 1.5/drivers/block/viodasd.c	2004-05-25 11:53:02 +02:00
-+++ edited/drivers/block/viodasd.c	2004-06-15 17:44:46 +02:00
-@@ -253,13 +253,13 @@
- 	unsigned char sectors;
- 	unsigned char heads;
- 	unsigned short cylinders;
--	struct hd_geometry *geo;
-+	struct hd_geometry __user *geo;
- 	struct gendisk *gendisk;
- 	struct viodasd_device *d;
- 
- 	switch (cmd) {
- 	case HDIO_GETGEO:
--		geo = (struct hd_geometry *)arg;
-+		geo = (struct hd_geometry __user *)arg;
- 		if (geo == NULL)
- 			return -EINVAL;
- 		err = verify_area(VERIFY_WRITE, geo, sizeof(*geo));
-===== drivers/ide/ide-tape.c 1.40 vs edited =====
---- 1.40/drivers/ide/ide-tape.c	2004-04-23 21:09:54 +02:00
-+++ edited/drivers/ide/ide-tape.c	2004-06-15 17:49:30 +02:00
-@@ -3617,7 +3617,7 @@
- #endif /* IDETAPE_DEBUG_LOG */
- 	switch (cmd) {
- 		case 0x0340:
--			if (copy_from_user ((char *) &config, (char *) arg, sizeof (idetape_config_t)))
-+			if (copy_from_user ((char *) &config, (char __user *) arg, sizeof (idetape_config_t)))
- 				return -EFAULT;
- 			tape->best_dsc_rw_frequency = config.dsc_rw_frequency;
- 			tape->max_stages = config.nr_stages;
-@@ -3625,7 +3625,7 @@
- 		case 0x0350:
- 			config.dsc_rw_frequency = (int) tape->best_dsc_rw_frequency;
- 			config.nr_stages = tape->max_stages; 
--			if (copy_to_user((char *) arg, (char *) &config, sizeof (idetape_config_t)))
-+			if (copy_to_user((char __user *) arg, (char *) &config, sizeof (idetape_config_t)))
- 				return -EFAULT;
- 			break;
- 		default:
-===== drivers/ide/legacy/hd.c 1.23 vs edited =====
---- 1.23/drivers/ide/legacy/hd.c	2003-08-15 03:17:17 +02:00
-+++ edited/drivers/ide/legacy/hd.c	2004-06-15 17:50:22 +02:00
-@@ -660,7 +660,7 @@
- 	unsigned int cmd, unsigned long arg)
- {
- 	struct hd_i_struct *disk = inode->i_bdev->bd_disk->private_data;
--	struct hd_geometry *loc = (struct hd_geometry *) arg;
-+	struct hd_geometry __user *loc = (struct hd_geometry __user *) arg;
- 	struct hd_geometry g; 
- 
- 	if (cmd != HDIO_GETGEO)
-===== drivers/ide/legacy/hd98.c 1.6 vs edited =====
---- 1.6/drivers/ide/legacy/hd98.c	2003-08-07 11:25:25 +02:00
-+++ edited/drivers/ide/legacy/hd98.c	2004-06-15 17:50:39 +02:00
-@@ -656,7 +656,7 @@
- 	unsigned int cmd, unsigned long arg)
- {
- 	struct hd_i_struct *disk = inode->i_bdev->bd_disk->private_data;
--	struct hd_geometry *loc = (struct hd_geometry *) arg;
-+	struct hd_geometry __user *loc = (struct hd_geometry __user *) arg;
- 	struct hd_geometry g; 
- 
- 	if (cmd != HDIO_GETGEO)
-===== drivers/message/i2o/i2o_block.c 1.58 vs edited =====
---- 1.58/drivers/message/i2o/i2o_block.c	2004-05-15 04:00:13 +02:00
-+++ edited/drivers/message/i2o/i2o_block.c	2004-06-15 17:53:55 +02:00
-@@ -873,13 +873,14 @@
- 			i2o_block_biosparam(get_capacity(disk), 
- 					&g.cylinders, &g.heads, &g.sectors);
- 			g.start = get_start_sect(inode->i_bdev);
--			return copy_to_user((void *)arg,&g, sizeof(g))?-EFAULT:0;
-+			return copy_to_user((void __user *)arg,&g, sizeof(g)) ? 
-+				-EFAULT : 0;
+Thanks.
+
+
+
+Begin forwarded message:
+
+Date: Tue, 01 Jun 2004 20:34:23 +1000
+From: Keith Owens <kaos@ocs.com.au>
+To: Andrew Morton <akpm@osdl.org>
+Subject: Re: Latest reference_init.pl script 
+
+
+On Mon, 31 May 2004 23:52:14 -0700, 
+Andrew Morton <akpm@osdl.org> wrote:
+>
+>gad, reference_init generates so much stuff I wonder if it's worth using. 
+>Are all these for real?
+
+Apart from altinstructions, yes.  Mainly because people have not been
+checking them.
+
+>perl scripts/reference_init.pl
+>Finding objects, 1411 objects, ignoring 122 module(s)
+>Finding conglomerates, ignoring 137 conglomerate(s)
+>Scanning objects
+>Error: ./arch/i386/kernel/apic.o .data refers to 0000009c R_386_32          .init.text
+
+arch/i386/kernel/apic.c
+void (*wait_timer_tick)(void) = wait_8254_wraparound;
+wait_8254_wraparound is __init.  wait_timer_tick should be __initdata,
+which flows onto several other functions.
+
+>Error: ./arch/i386/kernel/cpu/mtrr/centaur.o .data refers to 00000008 R_386_32          .init.text
+
+That is real, centaur_mtrr_ops.init = centaur_mcr_init.  Like a lot of
+this initialization code, we get away with the dangling reference
+because the code is only executed at boot.
+
+>Error: ./arch/i386/kernel/cpu/mtrr/centaur.o .eh_frame refers to 000000dc R_386_32          .init.text
+
+I don't see any .eh_frame references in 2.6.7-rc2 using gcc version
+3.3.3 20040412 (Red Hat Linux 3.3.3-7).  Where are they coming from?
+
+>Error: ./arch/i386/kernel/cpu/mtrr/cyrix.o .data refers to 00000028 R_386_32          .init.text
+
+Same as centaur.
+
+>Error: ./arch/i386/kernel/cpu/mtrr/generic.o .text refers to 0000038f R_386_32          .init.data
+
+arch/i386/kernel/cpu/mtrr/generic.c
+generic_set_all() uses __intdata smp_changes_mask.
+
+>Error: ./arch/i386/kernel/smpboot.o .altinstructions refers to 00000000 R_386_32          .init.text
+
+altinstructions is a false positive, tweak reference_init.pl
+
+--- reference_init.pl.orig	2004-06-01 20:30:27.000000000 +1000
++++ reference_init.pl	2004-06-01 20:31:01.000000000 +1000
+@@ -93,6 +93,7 @@
+ 		     $from !~ /\.stab$/ &&
+ 		     $from !~ /\.rodata$/ &&
+ 		     $from !~ /\.text\.lock$/ &&
++		     $from !~ /\.altinstructions$/ &&
+ 		     $from !~ /\.debug_/)) {
+ 			printf("Error: %s %s refers to %s\n", $object, $from, $line);
  		}
- 		
- 		case BLKI2OGRSTRAT:
--			return put_user(dev->rcache, (int *)arg);
-+			return put_user(dev->rcache, (int __user *)arg);
- 		case BLKI2OGWSTRAT:
--			return put_user(dev->wcache, (int *)arg);
-+			return put_user(dev->wcache, (int __user *)arg);
- 		case BLKI2OSRSTRAT:
- 			if(arg<0||arg>CACHE_SMARTFETCH)
- 				return -EINVAL;
-===== drivers/mtd/mtd_blkdevs.c 1.8 vs edited =====
---- 1.8/drivers/mtd/mtd_blkdevs.c	2004-02-26 12:26:02 +01:00
-+++ edited/drivers/mtd/mtd_blkdevs.c	2004-06-15 17:54:34 +02:00
-@@ -220,7 +220,7 @@
- 				return ret;
- 
- 			g.start = get_start_sect(inode->i_bdev);
--			if (copy_to_user((void *)arg, &g, sizeof(g)))
-+			if (copy_to_user((void __user *)arg, &g, sizeof(g)))
- 				return -EFAULT;
- 			return 0;
- 		} /* else */
+
+The rest of the warnings look real, apart from the strange eh_frame.
 
 
-
---===============96983119161742215==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by the new InstallShield X.
+From Windows to Linux, servers to mobile, InstallShield X is the one
+installation-authoring solution that does it all. Learn more and
+evaluate today! http://www.installshield.com/Dev2Dev/0504
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============96983119161742215==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
