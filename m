@@ -1,77 +1,39 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 21 Jan 2005 00:11:36 +0000
-Subject: [KJ] [PATCH 24/39] scsi/atari_scsi: use wait_event()
-Message-Id: <20050121001136.GM2600@us.ibm.com>
+Date: Tue, 25 Jan 2005 21:47:01 +0000
+Subject: [KJ] MIPS still uses sleep_on*()
+Message-Id: <20050125214701.GA2689@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16952218459467483=="
+Content-Type: multipart/mixed; boundary="===============51415710615021748=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: Roman.Hodek@informatik.uni-erlangen.de, James.Bottomley@SteelEye.com
-Cc: linux-scsi@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
 
---===============16952218459467483==
+--===============51415710615021748==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Please consider applying.
+I am trying to clean up the remaning sleep_on*() calls in the kernel. These
+functions have been deprecated for a *long* time, just never completely removed
+:)
 
-Description: Use wait_event() instead of the deprecated sleep_on() function. The
-second replacement is more difficult, as there are various conditions which may
-cause the while-loop to break, each resulting in a different effect.
+The only file I'm not comfortable with changing myself (since I am not a MIPS
+user/expert) is arch/mips/kernel/process.c. This file references sleep_on(),
+sleep_on_timeout(), interruptible_sleep_on() and
+interruptible_sleep_on_timeout().
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+This file is (presuming my upcoming patches for sleep_on() go through
+Kernel-Janitors ok) the final one before we can declare the kernel clean of
+sleep_on() callers -- the other members of the family will take longer.
 
---- 2.6.11-rc1-kj-v/drivers/scsi/atari_scsi.c	2005-01-15 16:55:43.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/scsi/atari_scsi.c	2005-01-20 16:08:25.000000000 -0800
-@@ -67,6 +67,7 @@
- 
- #include <linux/config.h>
- #include <linux/module.h>
-+#include <linux/wait.h>
- 
- #define NDEBUG (0)
- 
-@@ -559,24 +560,20 @@ static void falcon_get_lock( void )
- 
- 	local_irq_save(flags);
- 
--	while( !in_interrupt() && falcon_got_lock && stdma_others_waiting() )
--		sleep_on( &falcon_fairness_wait );
--
--	while (!falcon_got_lock) {
--		if (in_interrupt())
--			panic( "Falcon SCSI hasn't ST-DMA lock in interrupt" );
--		if (!falcon_trying_lock) {
--			falcon_trying_lock = 1;
--			stdma_lock(scsi_falcon_intr, NULL);
--			falcon_got_lock = 1;
--			falcon_trying_lock = 0;
--			wake_up( &falcon_try_wait );
--		}
--		else {
--			sleep_on( &falcon_try_wait );
--		}
--	}	
-+	wait_event(falcon_fairness_wait, (in_interrupt() ||
-+			falcon_got_lock || stdma_others_waiting()));
- 
-+	wait_event(falcon_try_wait, (in_interrupt() ||
-+				falcon_got_lock || !falcon_trying_lock));
-+	if (in_interrupt())
-+		panic( "Falcon SCSI hasn't ST-DMA lock in interrupt" );
-+	if (!falcon_trying_lock) {
-+		falcon_trying_lock = 1;
-+		stdma_lock(scsi_falcon_intr, NULL);
-+		falcon_got_lock = 1;
-+		falcon_trying_lock = 0;
-+		wake_up(&falcon_try_wait);
-+	}
- 	local_irq_restore(flags);
- 	if (!falcon_got_lock)
- 		panic("Falcon SCSI: someone stole the lock :-(\n");
+Any insight anyone could provide would be great, so that this milestone (for me,
+at least) can be achieved.
 
---===============16952218459467483==
+Thanks,
+Nish
+
+--===============51415710615021748==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -82,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16952218459467483==--
+--===============51415710615021748==--
