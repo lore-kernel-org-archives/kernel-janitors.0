@@ -1,32 +1,23 @@
-From: Scott Feldman <sfeldma@pobox.com>
-Date: Sun, 03 Oct 2004 17:34:39 +0000
-Subject: Re: [Kernel-janitors] [PATCH 4/6] janitor: net/sis900:
-Message-Id: <1096824878.3818.5.camel@sfeldma-mobl2.dsl-verizon.net>
+From: Jeff Garzik <jgarzik@pobox.com>
+Date: Thu, 21 Oct 2004 22:48:58 +0000
+Subject: [KJ] Re: [PATCH 2.6] hw_random.c: replace pci_find_device
+Message-Id: <41783CDA.8010901@pobox.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54430919399752531=="
+Content-Type: multipart/mixed; boundary="===============75310186321271422=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1096784391.3819.161.camel@sfeldma-mobl2.dsl-verizon.net>
-In-Reply-To: <1096784391.3819.161.camel@sfeldma-mobl2.dsl-verizon.net>
-To: kernel-janitors@vger.kernel.org
+References: <268450000.1098383924@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <268450000.1098383924@w-hlinder.beaverton.ibm.com>
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com
 
---===============54430919399752531==
-Content-Type: text/plain
+--===============75310186321271422==
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sun, 2004-10-03 at 01:30, Christoph Hellwig wrote:
-> On Sat, Oct 02, 2004 at 11:19:51PM -0700, Scott Feldman wrote:
-> > Replace pci_find_device with pci_get_device/pci_dev_put to plug
-> > race with pci_find_device.  Compile tested.
-> 
-> Should probably also use pci_dev_present
-
-No, because the dev pointer is needed later in the code if dev was
-found.  pci_dev_present doesn't return the dev.
-
--scott
+applied
 
 
---===============54430919399752531==
+--===============75310186321271422==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +28,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54430919399752531==--
+--===============75310186321271422==--
