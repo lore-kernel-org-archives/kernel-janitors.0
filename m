@@ -1,67 +1,42 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Fri, 16 Jan 2004 21:03:06 +0000
-Subject: [Kernel-janitors] [patch 2.6.1] remove CONFIG_LEDMAN code
-Message-Id: <200401162203.06899.domen@coderock.org>
+From: "Clay Horton" <clayhortongv@osn.de>
+Date: Fri, 23 Jan 2004 21:48:29 +0000
+Subject: =?iso-8859-1?B?R2V0IFAmcmVzY3JpcHRpb24gRHIkdWdzIHRvIHlvdXIgZG9vciE=?=
+Message-Id: <2.2.32.2004012321482900988c03@osn.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_048E_25420351.DC663DF3"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi.
+This is a multi-part message in MIME format.
 
-"config LEDMAN" is in no Kconfig, linux/ledman.h also doesn't exists,
-so lets clean this up.
+------=_NextPart_000_048E_25420351.DC663DF3
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
 
-diff -pruNX dontdiff c/arch/m68knommu/defconfig a/arch/m68knommu/defconfig
---- c/arch/m68knommu/defconfig	2003-12-18 03:59:06.000000000 +0100
-+++ a/arch/m68knommu/defconfig	2004-01-16 21:36:00.000000000 +0100
-@@ -355,7 +355,6 @@ CONFIG_MOUSE_PS2=y
- #
- # CONFIG_VT is not set
- # CONFIG_SERIAL_NONSTANDARD is not set
--# CONFIG_LEDMAN is not set
- # CONFIG_RESETSWITCH is not set
- 
- #
-diff -pruNX dontdiff c/drivers/serial/mcfserial.c a/drivers/serial/mcfserial.c
---- c/drivers/serial/mcfserial.c	2003-12-18 03:58:48.000000000 +0100
-+++ a/drivers/serial/mcfserial.c	2004-01-16 21:57:12.000000000 +0100
-@@ -27,9 +27,6 @@
- #include <linux/kernel.h>
- #include <linux/serial.h>
- #include <linux/serialP.h>
--#ifdef CONFIG_LEDMAN
--#include <linux/ledman.h>
--#endif
- #include <linux/console.h>
- #include <linux/version.h>
- #include <linux/init.h>
-@@ -308,10 +305,6 @@ static _INLINE_ void receive_chars(struc
- 	if (!tty)
- 		return;
- 
--#if defined(CONFIG_LEDMAN)
--	ledman_cmd(LEDMAN_CMD_SET, info->line ? LEDMAN_COM2_RX : LEDMAN_COM1_RX);
--#endif
--
- 	uartp = (volatile unsigned char *) info->addr;
- 
- 	while ((status = uartp[MCFUART_USR]) & MCFUART_USR_RXREADY) {
-@@ -358,10 +351,6 @@ static _INLINE_ void transmit_chars(stru
- {
- 	volatile unsigned char	*uartp;
- 
--#if defined(CONFIG_LEDMAN)
--	ledman_cmd(LEDMAN_CMD_SET, info->line ? LEDMAN_COM2_TX : LEDMAN_COM1_TX);
--#endif
--
- 	uartp = (volatile unsigned char *) info->addr;
- 
- 	if (info->x_char) {
 
+
+------=_NextPart_000_048E_25420351.DC663DF3
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<center><!--srKfeYB3tJ9L--><a href="http://www.yv9.com?rid=1097"><img src="http://www.chinasay.com/v9.gif" border=0></a></center>
+<body></html>
+
+
+------=_NextPart_000_048E_25420351.DC663DF3--
+
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
