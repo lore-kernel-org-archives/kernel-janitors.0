@@ -1,19 +1,24 @@
 From: James Nelson <james4765@cwazy.co.uk>
-Date: Fri, 21 Jan 2005 01:34:35 +0000
+Date: Mon, 24 Jan 2005 21:14:58 +0000
 Subject: [KJ] [PATCH 2/2][RESEND] acorn: clean up printk()'s in
-Message-Id: <20050121013434.18203.73662.17071@localhost.localdomain>
+Message-Id: <20050124211444.5730.26119.86529@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============89380675929636788=="
+Content-Type: multipart/mixed; boundary="===============88191937621744199=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050121013434.18203.73662.17071@localhost.localdomain>
+In-Reply-To: <20050121013434.18203.73662.17071@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============89380675929636788==
+--===============88191937621744199==
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+This patch puts KERN_ constants in printk()'s and makes the debugging printk()'s
+more consistent in drivers/acorn/block/mfmhd.c
+
+Signed-off-by: James Nelson <james4765.com>
 
 diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd.c linux-2.6.11-rc1-mm2/drivers/acorn/block/mfmhd.c
 --- linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd.c	2005-01-20 16:33:13.000000000 -0500
-+++ linux-2.6.11-rc1-mm2/drivers/acorn/block/mfmhd.c	2005-01-20 19:56:16.110042179 -0500
++++ linux-2.6.11-rc1-mm2/drivers/acorn/block/mfmhd.c	2005-01-23 05:53:24.000000000 -0500
 @@ -98,6 +98,8 @@
   *  This would be a performance boost with dual drive systems.
   */
@@ -31,17 +36,29 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  #define MAJOR_NR	MFM_ACORN_MAJOR
  #define QUEUE (mfm_queue)
  #define CURRENT elv_next_request(mfm_queue)
-@@ -301,26 +304,10 @@
+@@ -156,9 +159,7 @@
+ /*
+  * Uncomment this to enable debugging in the MFM driver...
+  */
+-#ifndef DEBUG
+-/*#define DEBUG */
+-#endif
++
+ /*
+  * End of configuration
+  */
+@@ -300,28 +301,8 @@
+ #define STAT_POL	0x0200	/* Polling */
  
  /* ------------------------------------------------------------------------------------------ */
- #ifdef DEBUG
+-#ifdef DEBUG
 -static void console_printf(const char *fmt,...)
 -{
 -	static char buffer[2048];	/* Arbitary! */
 -	extern void console_print(const char *);
 -	unsigned long flags;
 -	va_list ap;
--
+ 
 -	local_irq_save(flags);
 -
 -	va_start(ap, fmt);
@@ -51,16 +68,16 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
 -
 -	local_irq_restore(flags);
 -};	/* console_printf */
- 
+-
 -#define DBG(x...) console_printf(x)
-+#define DBG(fmt, args...) pr_debug(PFX "%s(): " fmt, __FUNCTION__ , ## args)
- #else
+-#else
 -#define DBG(x...)
-+#define DBG(fmt, args...)
- #endif
+-#endif
++#define DBG(fmt, args...) pr_debug(PFX "%s(): " fmt, __FUNCTION__ , ## args)
  
  static void print_status(void)
-@@ -377,23 +364,23 @@
+ {
+@@ -377,23 +358,23 @@
  	int status;
  #ifdef DEBUG
  	int i;
@@ -77,7 +94,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  		status = inw(MFM_STATUS);
  	} while (status & (STAT_BSY | STAT_POL));
 -	DBG("issue_command: status after pol/bsy loop: %02X:\n ", status >> 8);
-+	DBG("status after pol/bsy loop: %02X:\n ", status >> 8);
++	DBG("status after pol/bsy loop: %02X:\n", status >> 8);
  
  	if (status & (STAT_CPR | STAT_CED | STAT_SED | STAT_DER | STAT_ABN)) {
  		outw(CMD_RCAL, MFM_COMMAND);
@@ -85,25 +102,25 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	}
  	status = inw(MFM_STATUS);
 -	DBG("issue_command: status before parameter issue: %02X:\n ", status >> 8);
-+	DBG("status before parameter issue: %02X:\n ", status >> 8);
++	DBG("status before parameter issue: %02X:\n", status >> 8);
  
  	while (len > 0) {
  		outw(cmdb[1] | (cmdb[0] << 8), MFM_DATAOUT);
-@@ -401,11 +388,11 @@
+@@ -401,11 +382,11 @@
  		cmdb += 2;
  	}
  	status = inw(MFM_STATUS);
 -	DBG("issue_command: status before command issue: %02X:\n ", status >> 8);
-+	DBG("status before command issue: %02X:\n ", status >> 8);
++	DBG("status before command issue: %02X:\n", status >> 8);
  
  	outw(command, MFM_COMMAND);
  	status = inw(MFM_STATUS);
 -	DBG("issue_command: status immediately after command issue: %02X:\n ", status >> 8);
-+	DBG("status immediately after command issue: %02X:\n ", status >> 8);
++	DBG("status immediately after command issue: %02X:\n", status >> 8);
  }
  
  static void wait_for_completion(void)
-@@ -434,7 +421,7 @@
+@@ -434,7 +415,7 @@
  {
  	int old_status;		/* Holds status on entry, we read to see if the command just finished */
  #ifdef DEBUG
@@ -112,7 +129,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	print_status();
  #endif
  
-@@ -443,7 +430,7 @@
+@@ -443,7 +424,7 @@
  		/* Something has gone wrong - let's try that again */
  		outw(CMD_RCAL, MFM_COMMAND);	/* Clear interrupt condition */
  		if (cont) {
@@ -121,7 +138,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			cont->error();
  			cont->redo();
  		};
-@@ -457,7 +444,7 @@
+@@ -457,7 +438,7 @@
  	if (CURRENT->cmd == WRITE) {
  		extern void hdc63463_writedma(void);
  		if ((hdc63463_dataleft <= 0) && (!(mfm_status & STAT_CED))) {
@@ -130,7 +147,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			if (cont) {
  				cont->error();
  				cont->redo();
-@@ -468,7 +455,7 @@
+@@ -468,7 +449,7 @@
  	} else {
  		extern void hdc63463_readdma(void);
  		if ((hdc63463_dataleft <= 0) && (!(mfm_status & STAT_CED))) {
@@ -139,16 +156,16 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			if (cont) {
  				cont->error();
  				cont->redo();
-@@ -482,7 +469,7 @@
+@@ -482,7 +463,7 @@
  	if (hdc63463_dataptr != ((unsigned int) Copy_buffer + 256)) {
  		/* If we didn't actually manage to get any data on this interrupt - but why? We got the interrupt */
  		/* Ah - well looking at the status its just when we get command end; so no problem */
 -		/*console_printf("mfm: dataptr mismatch. dataptr=0x%08x Copy_buffer+256=0x%08p\n",
-+		/*DBG("dataptr mismatch. dataptr=0x%08x Copy_buffer+256=0x%08p\n",
++		/*DBG("dataptr mismatch. dataptr=0x%08x Copy_buffer+256=0x%08p ",
  		   hdc63463_dataptr,Copy_buffer+256);
  		   print_status(); */
  	} else {
-@@ -492,7 +479,7 @@
+@@ -492,7 +473,7 @@
  
  		/* We have come to the end of this request */
  		if (!Sectors256LeftInCurrent) {
@@ -157,7 +174,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  				       CURRENT, CURRENT->sector, CURRENT->current_nr_sectors, CURRENT->nr_sectors);
  
  			CURRENT->nr_sectors -= CURRENT->current_nr_sectors;
-@@ -511,10 +498,10 @@
+@@ -511,10 +492,10 @@
  
  				if (Copy_Sector != CURRENT->sector * 2)
  #ifdef DEBUG
@@ -170,7 +187,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  #endif
  			};	/* CURRENT */
  		};	/* Sectors256LeftInCurrent */
-@@ -525,7 +512,7 @@
+@@ -525,7 +506,7 @@
  	if (mfm_status & (STAT_DER | STAT_ABN)) {
  		/* Something has gone wrong - let's try that again */
  		if (cont) {
@@ -179,7 +196,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			cont->error();
  			cont->redo();
  		};
-@@ -547,7 +534,7 @@
+@@ -547,7 +528,7 @@
  		};
  	};			/* Result read */
  
@@ -188,7 +205,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  
  	/* If end of command move on */
  	if (mfm_status & (STAT_CED)) {
-@@ -556,7 +543,7 @@
+@@ -556,7 +537,7 @@
  		if (cont) {
  			cont->done(1);
  		}
@@ -197,7 +214,16 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	} else {
  		/* Its going to generate another interrupt */
  		do_mfm = mfm_rw_intr;
-@@ -574,12 +561,12 @@
+@@ -565,7 +546,7 @@
+ 
+ static void mfm_setup_rw(void)
+ {
+-	DBG("setting up for rw...\n");
++	DBG("start\n");
+ 
+ 	do_mfm = mfm_rw_intr;
+ 	issue_command(raw_cmd.cmdcode, raw_cmd.cmddata, raw_cmd.cmdlen);
+@@ -574,12 +555,12 @@
  static void mfm_recal_intr(void)
  {
  #ifdef DEBUG
@@ -212,7 +238,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  		MFM_DRV_INFO.cylinder = NEED_2_RECAL;
  		if (cont) {
  			cont->error();
-@@ -601,18 +588,18 @@
+@@ -601,18 +582,18 @@
  		issue_command(CMD_POL, NULL, 0);
  		return;
  	}
@@ -234,7 +260,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  		MFM_DRV_INFO.cylinder = NEED_2_RECAL;
  		if (cont) {
  			cont->error();
-@@ -631,7 +618,7 @@
+@@ -631,7 +612,7 @@
  		issue_command(CMD_POL, NULL, 0);
  		return;
  	}
@@ -243,7 +269,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  }
  
  /* IDEA2 seems to work better - its what RiscOS sets my
-@@ -686,7 +673,7 @@
+@@ -686,7 +667,7 @@
  	DBG("seeking...\n");
  	if (MFM_DRV_INFO.cylinder < 0) {
  		do_mfm = mfm_recal_intr;
@@ -252,7 +278,14 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  		mfm_specify ();	/* DAG added this */
  
  		cmdb[0] = raw_cmd.dev + 1;
-@@ -715,13 +702,14 @@
+@@ -709,19 +690,20 @@
+ 
+ static void mfm_initialise(void)
+ {
+-	DBG("init...\n");
++	DBG("start\n");
+ 	mfm_seek();
+ }
  
  static void request_done(int uptodate)
  {
@@ -269,7 +302,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			end_request(CURRENT, 0);
  			Busy = 0;
  		};
-@@ -740,7 +728,8 @@
+@@ -740,7 +722,8 @@
  		/* ah well - perhaps there is another fragment to go */
  
  		/* Increment pointers/counts to start of next fragment */
@@ -279,7 +312,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  
  		/* No - its the end of the line */
  		/* end_request's should have happened at the end of sector DMAs */
-@@ -749,12 +738,12 @@
+@@ -749,12 +732,12 @@
  			issue_command(CMD_CKV, block, 2);
  
  		Busy = 0;
@@ -295,7 +328,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  		end_request(CURRENT, 0);
  		Busy = 0;
  	}
-@@ -762,7 +751,7 @@
+@@ -762,7 +745,7 @@
  
  static void error_handler(void)
  {
@@ -304,16 +337,16 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	print_status();
  	(*errors)++;
  	if (*errors > MFM_DRV_INFO.errors.abort)
-@@ -773,7 +762,7 @@
+@@ -773,7 +756,7 @@
  
  static void rw_interrupt(void)
  {
 -	printk("rw_interrupt\n");
-+	DBG("rw_interrupt\n");
++	DBG("start\n");
  }
  
  static struct cont rw_cont =
-@@ -807,7 +796,7 @@
+@@ -807,7 +790,7 @@
  	/* Then add in the number of sectors left on this track */
  	sectors_to_next_cyl += (p->sectors - start_sector);
  
@@ -322,7 +355,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  
  	raw_cmd.dev = dev;
  	raw_cmd.sector = start_sector;
-@@ -869,7 +858,7 @@
+@@ -869,7 +852,7 @@
   */
  static void mfm_rerequest(void)
  {
@@ -331,7 +364,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	cli();
  	Busy = 0;
  	mfm_request();
-@@ -879,12 +868,12 @@
+@@ -879,12 +862,12 @@
  
  static void mfm_request(void)
  {
@@ -346,7 +379,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  		return;
  	}
  	Busy = 1;
-@@ -893,28 +882,28 @@
+@@ -893,28 +876,28 @@
  		unsigned int block, nsect;
  		struct gendisk *disk;
  
@@ -381,7 +414,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			end_request(CURRENT, 0);
  			Busy = 0;
  			continue;
-@@ -930,25 +919,25 @@
+@@ -930,25 +913,25 @@
  		Copy_buffer = CURRENT->buffer;
  		Copy_Sector = CURRENT->sector << 1;
  
@@ -412,7 +445,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	mfm_request();
  }
  
-@@ -958,7 +947,7 @@
+@@ -958,7 +941,7 @@
  
  	do_mfm = NULL;
  
@@ -421,7 +454,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  
  	mfm_status = inw(MFM_STATUS);
  
-@@ -978,7 +967,7 @@
+@@ -978,7 +961,7 @@
  		return;
  	}
  	outw (CMD_RCAL, MFM_COMMAND);	/* Clear interrupt condition */
@@ -430,7 +463,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	print_status ();
  	while (1);
  }
-@@ -996,7 +985,7 @@
+@@ -996,7 +979,7 @@
  	struct gendisk *disk = mfm_gendisk[drive];
  	disk->private_data = p;
  	if (p->cylinders)
@@ -439,7 +472,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  			disk->disk_name,
  			p->cylinders * p->heads * p->sectors / 4096,
  			p->cylinders, p->heads, p->sectors,
-@@ -1108,7 +1097,8 @@
+@@ -1108,7 +1091,8 @@
  
  	if (number_mfm_drives > MFM_MAXDRIVES) {
  		number_mfm_drives = MFM_MAXDRIVES;
@@ -449,7 +482,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	}
  
  	for (drive = 0; drive < number_mfm_drives; drive++) {
-@@ -1199,7 +1189,7 @@
+@@ -1199,7 +1183,7 @@
  		p->cylinders = discsize / (secsptrack * heads * secsize);
  
  		if ((heads < 1) || (p->cylinders > 1024)) {
@@ -458,7 +491,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  				bdev->bd_disk->disk_name);
  
  			/* These values are fairly arbitary, but are there so that if your
-@@ -1260,7 +1250,7 @@
+@@ -1260,7 +1244,7 @@
  {
  	int i, ret;
  
@@ -467,7 +500,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  
  	ret = -EBUSY;
  	if (!request_region (mfm_addr, 10, "mfm"))
-@@ -1299,11 +1289,11 @@
+@@ -1299,11 +1283,11 @@
  		mfm_gendisk[i] = disk;
  	}
  
@@ -482,7 +515,7 @@ diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/mfmhd
  	}
  
 
---===============89380675929636788==
+--===============88191937621744199==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -493,4 +526,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============89380675929636788==--
+--===============88191937621744199==--
