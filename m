@@ -1,17 +1,21 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 00:07:49 +0000
+Date: Wed, 26 Jan 2005 00:15:39 +0000
 Subject: [KJ] [PATCH 21/34] isdn/isdn_common: replace
-Message-Id: <20050126000749.GK12649@us.ibm.com>
+Message-Id: <20050126001539.GM12649@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7822980631070412=="
+Content-Type: multipart/mixed; boundary="===============67722775638236477=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050126000749.GK12649@us.ibm.com>
+In-Reply-To: <20050126000749.GK12649@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============7822980631070412==
+--===============67722775638236477==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
+
+Incorrect subject line, sorry.
 
 Please consider applying.
 
@@ -43,7 +47,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  		goto out;
  	}
 
---===============7822980631070412==
+--===============67722775638236477==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============7822980631070412==--
+--===============67722775638236477==--
