@@ -1,56 +1,44 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Date: Tue, 24 Feb 2004 23:56:16 +0000
-Subject: [Kernel-janitors] drivers/char/rio ioctl return fixes.
-Message-Id: <20040224235616.GN17371@bakeyournoodle.com>
+From: "Waldo Walton" <dianne@yahoo.com>
+Date: Fri, 06 Feb 2004 21:32:59 +0000
+Subject: Educational Credentials gregg
+Message-Id: <HIYOLSOONSUZFVIFDXWGYYH@yahoo.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--972079374742545182"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello all,
-	This is a patch that I've been floating past lkml since 2.5.10
-(or there abouts).  It fixes 3 places where the ioctl returns positives
-instead of negatives.  I've gotten feedback from the maintainer (Rogier
-Wolfe (sp?) and he has no objections.
+----972079374742545182
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
 
-Feedback more than welcome.
------
-diff -X dontdiff -urN 2.6.3.clean/drivers/char/rio/rioctrl.c 2.6.3.rio/drivers/char/rio/rioctrl.c
---- 2.6.3.clean/drivers/char/rio/rioctrl.c	2004-01-15 16:57:57.000000000 +1100
-+++ 2.6.3.rio/drivers/char/rio/rioctrl.c	2004-02-25 10:52:05.000000000 +1100
-@@ -522,7 +522,7 @@
- 					else {
- 		 				rio_dprintk (RIO_DEBUG_CTRL, "p->RIOBindTab full! - Rta %x not added\n",
- 		  					(int) arg);
--		 				return 1;
-+		 				return -ENOMEM;
- 					}
- 					return 0;
- 				}
-@@ -1593,12 +1593,12 @@
- 			case RIO_NO_MESG:
- 				if ( su )
- 					 p->RIONoMessage = 1;
--				return su ? 0 : EPERM;
-+				return su ? 0 : -EPERM;
- 
- 			case RIO_MESG:
- 				if ( su )
- 					p->RIONoMessage = 0;
--				return su ? 0 : EPERM;
-+				return su ? 0 : -EPERM;
- 
- 			case RIO_WHAT_MESG:
- 				if ( copyout( (caddr_t)&p->RIONoMessage, (int)arg, 
------
+<html>
 
-Yours Tony
+<body bgcolor=3D"#FFFFFF" text=3D"#000000">
+Acad</administrate>emic credentials - Your credentials are your future! 
+<p>Educational qualif</incarcerate>ications available, at all levels, from=
+ exclusive,institutes 
+  of higher learning.</p>
+<p>Are you missing out on a better paid job just because yoour res</conges=
+tion>ume does not 
+  have the right ring to it!</p>
+<p>Are you getting turned down because you have missed out on an education=
+al background?</p>
+<p>We can help! 24/7</p>
+<p>Call now for an appoimtment with one of our represantatives.</p>
+<p>1-8</detent>01-4</diminish>54-2828</p>
+</body>
+</html>
 
-        linux.conf.au       http://lca2005.linux.org.au/
-	Apr 18-23 2005      The Australian Linux Technical Conference!
+----972079374742545182--
 
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
