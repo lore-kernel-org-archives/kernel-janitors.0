@@ -1,42 +1,38 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Mar 2005 20:43:12 +0000
-Subject: [KJ] [PATCH] char/ds1620: use msleep() instead of schedule_timeout()
-Message-Id: <20050302204312.GM2741@us.ibm.com>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 23:03:52 +0000
+Subject: [KJ] [PATCH] security/selinux/ss/ebitmap.c: fix sparse warnings
+Message-Id: <200503100151.34925.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27225392666571047=="
+Content-Type: multipart/mixed; boundary="===============79673682377101662=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============27225392666571047==
-Content-Type: text/plain; charset=us-ascii
+--===============79673682377101662==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-Not sure why any driver needs to sleep for *two* ticks, so let's fix it.
-
-Description: Use msleep() instead of schedule_timeout() to guarantee the
-task delays as expected. Signals are never checked for by the callers or
-in the function itself, so use TASK_UNINTERRUPTIBLE instead of
-TASK_INTERRUPTIBLE. The delay is presumed to have been written when HZ==100,
-and thus has been multiplied by 10 to pass to msleep().
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-kj-v/drivers/char/ds1620.c	2005-03-01 23:37:48.000000000 -0800
-+++ 2.6.11-kj/drivers/char/ds1620.c	2005-03-02 12:35:25.000000000 -0800
-@@ -163,8 +163,7 @@ static void ds1620_out(int cmd, int bits
- 	netwinder_ds1620_reset();
- 	netwinder_unlock(&flags);
+Index: linux-2.6.11-bk3-sparse/security/selinux/ss/ebitmap.c
+===================================================================
+--- linux-2.6.11-bk3-sparse.orig/security/selinux/ss/ebitmap.c	2005-03-02 09:38:38.000000000 +0200
++++ linux-2.6.11-bk3-sparse/security/selinux/ss/ebitmap.c	2005-03-08 13:12:02.000000000 +0200
+@@ -239,8 +239,9 @@ int ebitmap_read(struct ebitmap *e, void
+ {
+ 	int rc;
+ 	struct ebitmap_node *n, *l;
+-	u32 buf[3], mapsize, count, i;
+-	u64 map;
++	__le32 buf[3];
++	u32 mapsize, count, i;
++	__le64 map;
  
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(2);
-+	msleep(20);
- }
+ 	ebitmap_init(e);
  
- static unsigned int ds1620_in(int cmd, int bits)
 
---===============27225392666571047==
+--===============79673682377101662==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27225392666571047==--
+--===============79673682377101662==--
