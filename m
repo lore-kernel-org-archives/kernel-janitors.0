@@ -1,62 +1,47 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 07 Jan 2005 21:34:00 +0000
-Subject: [KJ] [UPDATE PATCH] ieee1394/sbp2: use ssleep() instead of
-Message-Id: <20050107213400.GD2924@us.ibm.com>
+Date: Thu, 20 Jan 2005 23:33:38 +0000
+Subject: [KJ] [PATCH 14/39] kernel/smp: replace schedule_timeout() with
+Message-Id: <20050120233338.GA2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36955264185761472=="
+Content-Type: multipart/mixed; boundary="===============2660684658545942=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041225004846.GA19373@nd47.coderock.org>
-In-Reply-To: <20041225004846.GA19373@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
-Cc: bcollins@debian.org, linux1394-devel@lists.sourceforge.net
+To: kernel-janitors@vger.kernel.org
 
---===============36955264185761472==
+--===============2660684658545942==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Dec 25, 2004 at 01:48:46AM +0100, Domen Puncer wrote:
-> Hi.
-> 
-> Santa brought another present :-)
-> 
-> I'll start mailing new patches these days, and after external trees get
-> merged, I'll be bugging you with the old ones.
-> 
-> 
-> Patchset is at http://coderock.org/kj/2.6.10-kj/
+Hi,
 
-<snip>
+Please consider applying.
 
-> all patches:
-> ------------
-
-<snip>
-
-> msleep-drivers_ieee1394_sbp2.patch
-
-Please consider updating to the following patch:
-
-Description: Use ssleep() instead of schedule_timeout() to guarantee the task
-delays as expected. The existing code should not really need to run in
-TASK_INTERRUPTIBLE, as there is no check for signals (or even an early return
-value whatsoever). ssleep() takes care of these issues.
+Description: Use ssleep() instead of schedule_timeout(). The original code uses
+TASK_INTERRUPTIBLE, but does not check for signals, so I believe the change to
+ssleep() is appropriate.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.10-v/drivers/ieee1394/sbp2.c	2004-12-24 13:34:00.000000000 -0800
-+++ 2.6.10/drivers/ieee1394/sbp2.c	2005-01-05 14:23:05.000000000 -0800
-@@ -902,8 +902,7 @@ alloc_fail:
- 	 * connected to the sbp2 device being removed. That host would
- 	 * have a certain amount of time to relogin before the sbp2 device
- 	 * allows someone else to login instead. One second makes sense. */
--	set_current_state(TASK_INTERRUPTIBLE);
+--- 2.6.11-rc1-kj-v/kernel/power/smp.c	2005-01-15 16:55:45.000000000 -0800
++++ 2.6.11-rc1-kj/kernel/power/smp.c	2005-01-18 11:18:57.000000000 -0800
+@@ -13,6 +13,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/suspend.h>
+ #include <linux/module.h>
++#include <linux/delay.h>
+ #include <asm/atomic.h>
+ #include <asm/tlbflush.h>
+ 
+@@ -49,8 +50,7 @@ void disable_nonboot_cpus(void)
+ 	printk("Freezing CPUs (at %d)", smp_processor_id());
+ 	oldmask = current->cpus_allowed;
+ 	set_cpus_allowed(current, cpumask_of_cpu(0));
+-	current->state = TASK_INTERRUPTIBLE;
 -	schedule_timeout(HZ);
 +	ssleep(1);
- 
- 	/*
- 	 * Login to the sbp-2 device
+ 	printk("...");
+ 	BUG_ON(smp_processor_id() != 0);
 
---===============36955264185761472==
+--===============2660684658545942==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36955264185761472==--
+--===============2660684658545942==--
