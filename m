@@ -1,30 +1,73 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 05 May 2004 21:41:18 +0000
-Subject: Re: [Kernel-janitors] [PATCH] missing audit in bus_register()
-Message-Id: <20040505214118.GD29251@kroah.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Mon, 24 May 2004 13:24:40 +0000
+Subject: [Kernel-janitors] Re: Replaces yield() with nicedelay() on
+Message-Id: <20040524132440.GA23599@nd47>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27955306188884932=="
+Content-Type: multipart/mixed; boundary="===============31949200530492616=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040425215141.GA32051@charlie.minidns.net>
-In-Reply-To: <20040425215141.GA32051@charlie.minidns.net>
 To: kernel-janitors@vger.kernel.org
 
---===============27955306188884932==
+--===============31949200530492616==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Apr 27, 2004 at 08:57:06PM +0200, Daniele Bellucci wrote:
+On 02/05/04 22:24 -0300, Gustavo Franco wrote:
+> Hi,
 > 
-> |How about using a goto on the error path to clean up properly
-> |instead of the different return sections.
+> It's the last REDIFF, but i'm not replacing yield() with 
+> schedule_timeout() because there's a nicedelay() (maybe the
+> usecs need to be tuned below) there:
 > 
-> .. here goes Take 2:
+> 
+> static inline void nicedelay(unsigned long usecs)
+> {
+>         current->state = TASK_INTERRUPTIBLE;
+>         schedule_timeout(HZ);
+>         return;
+> }
 
-Looks good, applied, thanks.
+And usecs stands for??
+Funny thing is that there are actualy uses of this function.
 
-greg k-h
+Also, please make -p1 applyable patches.
 
---===============27955306188884932==
+> 
+> Hope that helps,
+> Gustavo Franco
+> 
+> --- drivers/net/sb1000.c.orig   2004-04-28 20:50:17.000000000 -0300
+> +++ drivers/net/sb1000.c        2004-04-28 20:49:10.000000000 -0300
+> @@ -271,7 +271,7 @@
+>         timeout = jiffies + TimeOutJiffies;
+>         while (a & 0x80 || a & 0x40) {
+>                 /* a little sleep */
+> -               yield();
+> +               nicedelay(10000);
+> 
+> 
+>                 a = inb(ioaddr[0] + 7);
+>                 if (time_after_eq(jiffies, timeout)) {
+> @@ -295,7 +295,7 @@
+>         timeout = jiffies + TimeOutJiffies;
+>         while (a & 0x80 || !(a & 0x40)) {
+>                 /* a little sleep */
+> -               yield();
+> +               nicedelay(10000);
+> 
+> 
+>                 a = inb(ioaddr[1] + 6);
+>                 if (time_after_eq(jiffies, timeout)) {
+> 
+> 
+> 
+
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+
+--===============31949200530492616==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -35,4 +78,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27955306188884932==--
+--===============31949200530492616==--
