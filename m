@@ -1,53 +1,227 @@
-From: Jewel <Moses@gmx.net>
-Date: Fri, 13 Feb 2004 14:36:13 +0000
-Subject: We have the c.heapest Via.gra around
-Message-Id: <VXEYFVUKQMLVKIOJMLLX.48979@66.35.250.206>
+From: "Your-Info Presents" <reply@onlineadsolutions.com>
+Date: Tue, 17 Feb 2004 16:20:02 +0000
+Subject: Save up to 85% - Inkjet & Laser Toners
+Message-Id: <20040217112001.ohguqbseka@optinadsolutions.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=_651862ffa247271521c032095ad1edf3"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
+
+This is a MIME encoded message.
+
+--=_651862ffa247271521c032095ad1edf3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+
+
+Hello,
+
+EvoClix is dedicated to supplying the Best Replacement Cartridge on the market today.
+
+We assure, for 3 months from date of purchase, that
+your ink jet and laser product is free from defects in
+material and workmanship.
+
+Under normal use and storage, this product is
+assured to perform as well as or better than the
+Original Equipment Manufacturer's (OEM) product.
+
+If the product does not perform to our specifications,
+you may return the product for a replacement or
+refund.
+
+For more information please visit us at
+http://optinadsolutions.com/dbm83/l.php?748&50016221
+
+
+
+
+
+
+
+--------------------------------------------
+Switch to HTML version:
+http://optinadsolutions.com/dbm83/msgtype.php?type=1&email=50016221&emailing=341
+--------------------------------------------
+Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To opt-out from our lists Proceed here http://optinadsolut
+ions.com/dbm83/un.php?341&50016221 Third-party offers contained in this email are the sole responsibility of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
+
+
+--=_651862ffa247271521c032095ad1edf3
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+
 
 <html>
 <body>
-<font face=Arial size=2>
-Why pay <b>O<font style=font-size:1px>.</font>utrageous</b> Ph<font style=font-size:1px>.</font>arm<font style=font-size:1px>.</font>acy prices for <b>Vi<font style=font-size:1px>.</font>agr<font style=font-size:1px>.</font>a</b> & <b>C<font style=font-size:1px>.</font>ia<font style=font-size:1px>.</font>lis</b>?<br><br>
-Did you know you can order <b>Vi<font style=font-size:1px>.</font>ag<font style=font-size:1px>.</font>ra</b> & <b>C<font style=font-size:1px>.</font>iali<font style=font-size:1px>.</font>s</b> over the Internet for a fraction of the cost of what a real Pha<font style=font-size:1px>.</font>rmacy would charge.
-<br><br>
-<ul>
-<li>Save Time - Or<font style=font-size:1px>.</font>der Onl<font style=font-size:1px>.</font>ine Fa<font style=font-size:1px>.</font>st & Easy</li>
-<li>Save Money - Ge<font style=font-size:1px>.</font>ner<font style=font-size:1px>.</font>ic Pre<font style=font-size:1px>.</font>scriptio<font style=font-size:1px>.</font>ns cost <b><i>60%</b></i> less compared to Retail</li>
-<li>Anonymous Shipping - Feel Safe all O<font style=font-size:1px>.</font>rders are Discrete</li>
-<li>Fast Delivery - Overnight, Nextday Shipping</li>
-</ul>
+<!--
+Hello,
+
+EvoClix is dedicated to supplying the Best Replacement Cartridge on the market=
+ today.
+
+We assure, for 3 months from date of purchase, that
+your ink jet and laser product is free from defects in
+material and workmanship.
+
+Under normal use and storage, this product is
+assured to perform as well as or better than the
+Original Equipment Manufacturer's (OEM) product.
+
+If the product does not perform to our specifications,
+you may return the product for a replacement or
+refund.
+
+For more information please visit us at
+-->
+
+<p align=3D"center"><a href=3D"http://optinadsolutions.com/dbm83/l.php?749&50016221=
+">
+<img border=3D"0" src=3D"http://www.amazingbuyz.net/images/img_tropic/ad10.jpg=
+" width=3D"559" height=3D"365"></a></p>
+
+
+
+<center><br><br><font color=3D#000000>
+<hr width=3D250>Switch to <a href=3D"http://optinadsolutions.com/dbm83/msgtype.php=
+?type=3D0&email=3D50016221&emailing=3D341">TEXT</a> version
+
+<hr width=3D250>
+<font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
+<form method=3D"GET" action=3D"http://optinadsolutions.com/dbm83/forw_friend.php=
+" target=3D"ies_f2f_window">
+<b>Forward this mail to a friend:</b><br>
+Friend's emails:
+<input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
+"> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
+ value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"341=
+">
+</font></form>
+<hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
+>
+<p><font size=3D"2">Your privacy is extremely important to us. You requested=
+ to=20
+receive this mailing by subscribing to one or more of our offers. To opt-out=
+ from our lists Proceed <a href=3D"http://optinadsolutions.com/dbm83/un.php=
+?341&50016221">here</a>.=20
+Third-party offers contained in this email are the sole responsibility of the=
+=20
+offer originator. If you would like to mail your unsubscribe request mail to=
+: Your-Info, Inc 9140 Bonita Beach Rd.
+Suite 144 Bonita Springs, FL 34135.</font></p>
 <br>
-Orde<font style=font-size:1px>.</font>r Today and Save Big
-</font><br><br>
-<font face="Arial" size="3">
-<a href="http://lJ7ioT.infoave.net.natercil.com/g/index.php?AFF_ID=ry22">
-<b>Visi<font style=font-size:1px>.</font>t our Gen<font style=font-size:1px>.</font>eric Vi<font style=font-size:1px>.</font>agr<font style=font-size:1px>.</font>a site To<font style=font-size:1px>.</font>day</b></a><br><br>
-or<br><br>
-<a href="http://xJZuu.infoave.net.natercil.com/c2/index.php?AFF_ID=ry22">
-<b>V<font style=font-size:1px>.</font>is<font style=font-size:1px>.</font>it our <font style=font-size:1px>.</font>Ge<font style=font-size:1px>.</font>neric C<font style=font-size:1px>.</font>iali<font style=font-size:1px>.</font>s site Toda<font style=font-size:1px>.</font>y</b></font></a>
-<br><br>
-<font style="font-size: 1;" color="#FFFFFF">
-calgary crt wiretap togs bowstring drawbridge upside chinchilla aaas agree cellulose heaven objectivity symplectic extensible cutover novice divine handicapping aeolus debility fluster muslim pianist sheehan ,concession cataract bankrupt salesian divide ruthenium audacity amaze advisory keyed archangel condolence wolfish ghana hiss contradict glassine inorganic crocus nyu stud bonfire brontosaurus imprecise miguel shoestring collar <br>
-dusseldorf cigar avenue betoken sock compress culture econometrica james joaquin astronautic penitent taint ablution decimal immanent congratulate crust note castillo bryophyte summon telemeter burke vacuole sagebrush sandburg idempotent ;bladderwort wingback marc mackintosh dilapidate audible struggle complex atlanta stultify decolletage collide sightseeing dacca cadet appointe gladstone cavernous falsehood couch -<br>
-disquietude churchmen den crockery bp delilah can't edmondson ella landlord canteen corpus euler egress dual dagger black piezoelectric impassion referral _loam caiman hypnosis canal ground jehovah burnish ophthalmic about anarch duty cityscape neodymium loudspeaking verdant goldwater lumbar erskine altruist dishwasher earthmoving donor instill convair diabase <br>
-manhole maim nostalgic transgression anonymity checklist depletion tragedy wightman contrast fiction runt troy yemen gasp cookie troupe gerontology abridgment fafnir smithereens dummy .alkene audition conclude amazon alfalfa scherzo whimsic angeline always jason bucket ostracism deplore gaseous tablet beforehand inexpedient bison crucible holdup .<br>
-asparagine dostoevsky comparison domingo bed consonant matrix tempest treasure bela carne list hobbyhorse delphi transconductance platelet pariah feed haas orwell degrade bury liquidate countrymen lindbergh beck colander ;puffball taste aerial ulysses classroom criteria afterimage earl govern siberia crux teratology galvanic trichinella middleweight pounce coaxial prostheses castanet boulevard electroencephalography clothier own spencer astride superposable drama fusty cbs substantive clarity shard <br>
-extremum anthropomorphic egress bind bounce bessie minsky hydroelectric nordstrom southwest fortran policemen squashberry boxy pauper averring enol immaculate brevity shepard fatima asset shun hodgkin ritter copperhead howsoever copybook gog arc asset condemn milky price fairport flimsy terminable animadvert offset nonchalant sault deja atwater balm possessive vaduz carthaginian boomerang hungarian contemporary spruce scottish gmt freeway caribou til perihelion cupful ayers drippy oneupmanship receive dan potpourri injunct diphtheria nerve surveyor quaff intolerant reimburse bates felon oar twelve pauper parallel decompression s's kelvin einsteinium quadrille spaniard shortfall beggar profusion seep perkins exist thyronine spite curia buddhist moss truce santo scholar piquant wheeze quandary ziegler lie swart wayside roulette quotient spumoni indiscriminate despite rensselaer boone deter condensate confession belfast copeland hallway sumner hilltop annunciate watercourse gamut jennifer fascinate slingshot mortify adulthood ligature schuyler newsreel expulsion prejudicial lighthearted borderland procedural humorous teleost biometry ringlet immune ounce cornmeal excretion cretan cohere assessor scrutable intrusive boorish severn uphold admiral pinball cliche chiang frozen brookside ramsey supple waylaid despair delilah catawba refugee sevenfold moore judicious aspect mumford archival blockage aphrodite appease dateline asperity descriptor proscription donovan sciatica booky smudgy elbow clothesmen holstein sum vestibule inexpiable intonate pollster despair hispanic commerce hopkins whig mystic siltstone chisholm down finny grin prow impracticable dirge matriarch impelling thesis honorary cougar fork nuclide circumferential despondent cruel parsonage twx holdout benzedrine bandstop deride chain gracious eigenvector aboard worship extort cycle skyjack adrenal calamitous ironic inhale stout burp confirm misanthropic abolish ektachrome necklace impromptu dud quarrel trashy oftentimes adventurous hiawatha gay eavesdropped hatfield damsel bryce gubernatorial hodges enumerable mudsling brusque inexpert canto carborundum chili sainthood feet knowlton clime ammonium courtney domicile biddy lability studious concretion actinolite regime category rumple troublesome mckesson prosecute sidewalk quasiperiodic rumble hackneyed orchis xylophone sri fruition amputee apprise change butch cozy blind courage kenneth callous bela taipei canopy scholastic whet dally embroider split abject cholesterol postlude metamorphosis cordage guild eucre tablet folksy splashy ankle invisible freshmen benedikt weiss clothbound natal panic holm tupelo depository angeles countrify atwood bonanza burgeon monday gnomonic directrix embrace cartridge helical pater jacques brainchildren aires diva mckay ginseng caine calligraph as cough decryption meringue acetone arbitrage dummy newsweek mainstream baron pivotal axisymmetric spaniard stokes noaa attest jurisdiction nice elkhart disputant negroes cranky already elegant geocentric agreed chuckle kamchatka crossway deteriorate tropic pugh encroach gobbledygook widespread chromatic percent connie boise ieee campfire touchstone deject humpty green bungle reluctant bernhard crupper castor atlas deplore cornelia crock lilt secret datum barb bruno opponent alba affine notocord hoofmark border eccles anxiety avocate chao guaranty nineveh wolfgang heublein consular cytochemistry pitman brimstone dinnerware gallivant bait caucasian stater proffer planet parallel direct sclerosis ret prowl season meat illusory distort optoisolate play repairman astm harden blink recusant pearl vitrify harass foliate lowe compose cantaloupe fourteenth hare remiss ninetieth caliphate corporeal cloak allotropic gaggle tel diabetes crafty egalitarian crowberry checksumming recappable subsidy eileen a andrea curve eighth cleavage avow anecdote rangoon aptitude pot cuba scamp option alphameric koinonia lengthy guy introject songbook embraceable fumble for self bloop relevant maladapt reef sibley bite bamberger gypsum nero poem horton bessemer horsepower zealand calumny ingather leopard invisible lemonade bayberry mana doorstep impelling darrell nordstrom commiserate controlled continuant brownie irritate mammoth brownish tofu select fusible lagging cod newline romp chauffeur sinh comanche denouement lange siesta bicycle comply chamois berkowitz droopy pease occident cow burnish plat caine chimera leather siena wry univariate redcoat compulsory deduct deportee divorcee hal delay annual swordtail dr lorenz drophead viii uproarious excitatory newsman molasses arturo cryptogram vernon churchwoman grandiloquent thicken abode ucla insect rigid drama bernadine booth qualify yoghurt palliate squirehood teresa roundtable astor mutter stockade mormon ft chemotherapy bloodshot jacobite cap moratorium laymen isaac willis tarantula transplantation orono abelian robbery aerial fame ourselves squash deepen airlock drowsy selenite terminate grant grief midband emphases alcoholic intend exogamous commingle geyser plagiarism oocyte brandywine turret cloth bulletin veteran bulk supplicate dobbin invertebrate mckee restitution galveston whittaker northbound wealth allspice chemist baltimorean hardin cobble fraction declarator electronic congregate alp dolt proprioception storm cyanate deviant sentiment eavesdrop deliberate ordinal terminate slacken lake wichita pyrolysis seethe decouple nondescript dimethyl emigrant somerset corral confess biceps humid obtain brooklyn debutante summers insurrect eleazar gentle coloratura protactinium selenate sparkman plasmon shipwreck bialystok adiabatic dynamite collet u's sphere druid hydrogen torpedo aleck beside burp hug simmer agony burn schlieren booty helmsmen autism unix congo rayleigh aiken burrow bag pivot concretion augment progression cookery roundtable borealis electro malnutrition nominee dickson gainful nearsighted critter precis reproach page stein ketosis dovekie adjust crowfoot fresno oath distortion <br>
-</font><br><br>
-<a href="http://www.natercil.com">no more offers</a>
-</body>
-</html>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<img src=3D"http://optinadsolutions.com/dbm83/opened.php?341&50016221" width=
+=3D1 height=3D1></font></font></center></body></html>
+tcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatc
+
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+
+--=_651862ffa247271521c032095ad1edf3--
+
+
 
 
 -------------------------------------------------------
 SF.Net is sponsored by: Speed Start Your Linux Apps Now.
 Build and deploy apps & Web services for Linux with
 a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id56&alloc_id438&op=click
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
