@@ -1,58 +1,33 @@
-From: Clemens Ladisch <clemens@ladisch.de>
-Date: Tue, 02 Nov 2004 12:20:04 +0000
-Subject: [KJ] Re: [Alsa-devel] sc423x's usage of schedule_timeout()
-Message-Id: <Pine.HPX.4.33n.0411021308490.27226-100000@studcom.urz.uni-halle.de>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 15:29:56 +0000
+Subject: [KJ] [patch 4/8] ifdef typos: drivers_char_ipmi_ipmi_si_intf.c
+Message-Id: <20041124152956.GD14789@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64731503854267403=="
+Content-Type: multipart/mixed; boundary="===============98351316423883794=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============64731503854267403==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============98351316423883794==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Nishanth Aravamudan wrote:
-> sound/isa/cs423x/cs4231_lib.c
->
-> which contains the following code:
->
-> 	timeout = HZ / 4 / 2;
-> 	time = 2;
-> 	while (snd_cs4231_in(chip, CS4231_TEST_INIT) & CS4231_CALIB_IN_PROGRESS) {
-> 		set_current_state(TASK_INTERRUPTIBLE);
-> 		time = schedule_timeout(time);
-> 		if (time > 0)
-> 			continue;
-> 		time = 2;
-> 		if (--timeout < 0) {
-> 			snd_printk("mce_down - auto calibration time out (2)\n");
-> 			return;
-> 		}
-> 	}
->
-> This code seems pretty strange, as the delay is in terms of time, which
-> seems to mean the loop (as long as the condition is true, of course)
-> sleeps for 2 jiffies, then sleeps for another 2, about HZ / 4 / 2 (HZ /
-> 8) times. This results in a maximal delay of HZ / 4 jiffies...
+CONFIG_ACPI_INTERPETER is wrong.
 
-This code was introduced in revision 1.29:
-http://cvs.sourceforge.net/viewcvs.py/alsa/alsa-kernel/isa/cs423x/cs4231_lib.c?rev=HEAD&view=log#rev1.29
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
-Originally, there was a single timeout of 250 ms, but it had to be
-split up into several waits to be able to check the chip status more
-frequently.
+--- c/drivers/char/ipmi/ipmi_si_intf.c	2004-11-15 13:42:10.000000000 +0100
++++ str2/drivers/char/ipmi/ipmi_si_intf.c	2004-11-24 14:44:44.000000000 +0100
+@@ -959,7 +959,7 @@ MODULE_PARM_DESC(regshifts, "The amount 
+ #define IPMI_MEM_ADDR_SPACE 1
+ #define IPMI_IO_ADDR_SPACE  2
+ 
+-#if defined(CONFIG_ACPI_INTERPETER) || defined(CONFIG_X86) || defined(CONFIG_PCI)
++#if defined(CONFIG_ACPI_INTERPRETER) || defined(CONFIG_X86) || defined(CONFIG_PCI)
+ static int is_new_interface(int intf, u8 addr_space, unsigned long base_addr)
+ {
+ 	int i;
 
-There is no reason to use 2 jiffies -- the code was written assuming
-HZ=100 (for 20ms waits), but now this isn't the case anyway.
-
-BTW: Using TASK_INTERRUPTIBLE isn't quite correct because we don't
-check for signals here.
-
-
-Regards,
-Clemens
-
-
---===============64731503854267403==
+--===============98351316423883794==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64731503854267403==--
+--===============98351316423883794==--
