@@ -1,7 +1,7 @@
 From: Eugene Teo <eugene.teo@eugeneteo.net>
-Date: Sun, 04 Jan 2004 03:32:45 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Check return value in mm/memory.c
-Message-Id: <20040104033245.GD20458@eugeneteo.net>
+Date: Sun, 04 Jan 2004 07:58:40 +0000
+Subject: [Kernel-janitors] [PATCH] Check return value in
+Message-Id: <20040104075840.GA23853@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040103132946.GE21909@eugeneteo.net>
 In-Reply-To: <20040103132946.GE21909@eugeneteo.net>
@@ -10,45 +10,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<quote sender="Matthew Wilcox">
-> On Sat, Jan 03, 2004 at 09:29:46PM +0800, Eugene Teo wrote:
-> > http://www.anomalistic.org/patches/memory-check-ret-find_extend_vma-fix-2.6.1-rc1-mm1.patch
-> > 
-> > diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/mm/memory.c 2.6.1-rc1-mm1-fix/mm/memory.c
-> > --- 2.6.1-rc1-mm1/mm/memory.c	2004-01-03 20:33:39.000000000 +0800
-> > +++ 2.6.1-rc1-mm1-fix/mm/memory.c	2004-01-03 20:50:13.000000000 +0800
-> > @@ -34,6 +34,9 @@
-> >   *
-> >   * 16.07.99  -  Support of BIGMEM added by Gerhard Wichert, Siemens AG
-> >   *		(Gerhard.Wichert@pdb.siemens.de)
-> > + *
-> > + * 03.01.04  -	Check the return value of find_extend_vma, added by
-> > + * 		Eugene Teo (eugeneteo@eugeneteo.net)
-> >   */
-> >  
-> >  #include <linux/kernel_stat.h>
-> > @@ -712,6 +715,8 @@
-> >  		struct vm_area_struct *	vma;
-> >  
-> >  		vma = find_extend_vma(mm, start);
-> > +		if (unlikely(!vma))
-> > +			return -EFAULT;
-> 
-> But we already check the return value ...
-> 
->                 vma = find_extend_vma(mm, start);
-> 
-> #ifdef FIXADDR_USER_START
->                 if (!vma &&
->                     start >= FIXADDR_USER_START && start < FIXADDR_USER_END) {
-> ...
-> #endif
-> 
->                 if (!vma || (pages && (vma->vm_flags & VM_IO))
->                                 || !(flags & vma->vm_flags))
->                         return i ? : -EFAULT;
+Patch compiles, and tested. Please apply.
 
-Whoops. Thanks Matthew.
+http://www.anomalistic.org/patches/apm-check-ret-kernel_thread-fix-2.6.1-rc1-mm1.patch
+
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.1-rc1-mm1/arch/i386/kernel/apm.c 2.6.1-rc1-mm1-fix/arch/i386/kernel/apm.c
+--- 2.6.1-rc1-mm1/arch/i386/kernel/apm.c	2003-12-18 10:58:06.000000000 +0800
++++ 2.6.1-rc1-mm1-fix/arch/i386/kernel/apm.c	2004-01-04 15:53:11.000000000 +0800
+@@ -1891,6 +1891,7 @@
+ static int __init apm_init(void)
+ {
+ 	struct proc_dir_entry *apm_proc;
++	int ret;
+ 	int i;
+ 
+ 	if (apm_info.bios.version = 0) {
+@@ -2008,7 +2009,11 @@
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
+ 
+-	kernel_thread(apm, NULL, CLONE_KERNEL | SIGCHLD);
++	ret = kernel_thread(apm, NULL, CLONE_KERNEL | SIGCHLD);
++	if (ret < 0) {
++		printk(KERN_ERR "apm: disabled - Unable to start kernel thread.\n");
++		return -ENODEV;
++	}
+ 
+ 	if (num_online_cpus() > 1 && !smp ) {
+ 		printk(KERN_NOTICE
 
 -- 
 Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
