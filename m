@@ -1,37 +1,37 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Fri, 11 Mar 2005 14:22:52 +0000
-Subject: Re: [KJ] [PATCH 1/3] unified spinlock initialization
-Message-Id: <20050311142252.GA3028@neon>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82727825799904986=="
+From: Amit Gud <amit.gud@veritas.com>
+Date: Fri, 11 Mar 2005 14:26:26 +0000
+Subject: [KJ] [PATCH 1/3] unified spinlock initialization
+Message-Id: <4231A7C2.6040808@veritas.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050311142252.GA3028@neon>
+In-Reply-To: <20050311142252.GA3028@neon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============82727825799904986==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
-On Fri, Mar 11, 2005 at 07:44:26PM +0530, Amit Gud wrote:
->    Unify the spinlock initialization as far as possible.
-> 
->    Do consider applying.
-> 
-> Signed-off-by: Amit Gud <gud@eth.net>
-> 
-> --- ../kernels/linux-2.6.11/include/linux/wait.h        2005-03-10 12:03:31.000000000 +0530
-> +++ kj-2.6.11/include/linux/wait.h      2005-03-11 19:29:44.381918880 +0530
+    Unify the spinlock initialization as far as possible.
 
-This patch cannot be applied with -p1
+    Do consider applying.
 
---===============82727825799904986==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed-off-by: Amit Gud <gud@eth.net>
+
+--- ../kernels/linux-2.6.11/include/linux/wait.h        2005-03-10 
+12:03:31.000000000 +0530
++++ kj-2.6.11/include/linux/wait.h      2005-03-11 19:29:44.381918880 +0530
+@@ -79,7 +79,7 @@ typedef struct __wait_queue_head wait_qu
+
+ static inline void init_waitqueue_head(wait_queue_head_t *q)
+ {
+-       q->lock = SPIN_LOCK_UNLOCKED;
++       spin_lock_init(&q->lock);
+        INIT_LIST_HEAD(&q->task_list);
+ }
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============82727825799904986==--
