@@ -1,38 +1,38 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 08 May 2004 23:38:22 +0000
-Subject: [Kernel-janitors] [patch 2.6.6-rc3 14/16] ifdefs:
-Message-Id: <20040508233822.GA4160@masina>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70757521430924553=="
+From: "Amanda Larson" <amandalarson_po@1-call.co.uk>
+Date: Fri, 07 May 2004 07:32:13 +0000
+Subject: Re. Hydrocodone
+Message-Id: <036401c4340d$f3edbbda$82908d83@cims.nyu.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============70757521430924553==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+<html>
+Buy your drug of choice, <b>NO</b> prescription required<p>
+Today's special: Free overnight Fedex delivery<p>
+<a href=3D"http://qzdxmeddvqtyv.tm7hh9.com?r=C26">Vicodin</a>..............=
+.......$2.50/dose<br>
+<a href=3D"http://jmnhwgdenqpblc.tm7hh9.com?r=C26">Hydrocodone</a>.........=
+...$2.16/dose<br>
+<a href=3D"http://nrcxlpdobada.tm7hh9.com?r=C26">Xanax</a>.................=
+......$2.57/dose<br>
+<a href=3D"http://nofgwxcfkoo.tm7hh9.com?r=C26">Valium</a>.................=
+.....$2.67/dose<br>
+<a href=3D"http://ixfyepcaesnm.tm7hh9.com?r=C26">Phentermine</a>...........=
+...$0.85/dose<p>
+Stock is limited and selling fast, so hurry<br>
+<a href=3D"http://lotlqebtxbmx.tm7hh9.com?r=C26">Buy them here</a>
+</html>
 
---- c/drivers/scsi/scsiiom.c	2004-04-04 05:36:16.000000000 +0200
-+++ a/drivers/scsi/scsiiom.c	2004-05-08 23:57:34.000000000 +0200
-@@ -1619,9 +1619,7 @@
- 	  pACB->scan_devices = 0;
-      };
- 
--#if LINUX_VERSION_CODE > KERNEL_VERSION(2,3,30)
-     pcmd->resid = pcmd->request_bufflen - pSRB->TotalXferredLen;
--#endif
- 
-     if (!DCB_removed) dc390_Going_remove (pDCB, pSRB);
-     /* Add to free list */
 
---===============70757521430924553==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+-------------------------------------------------------
+This SF.Net email is sponsored by Sleepycat Software
+Learn developer strategies Cisco, Motorola, Ericsson & Lucent use to deliver
+higher performing products faster, at low TCO.
+http://www.sleepycat.com/telcomwpreg.php?From=3Dosdnemail3
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============70757521430924553==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
