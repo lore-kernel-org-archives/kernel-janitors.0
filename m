@@ -1,39 +1,53 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 21 Jan 2004 00:06:15 +0000
-Subject: Re: [Kernel-janitors] NOOB Question
-Message-Id: <20040120160615.719b515c.rddunlap@osdl.org>
+From: ipadmin@eng.xo.com
+Date: Sat, 24 Jan 2004 01:04:16 +0000
+Subject: Need to host child porn, illegal content, Spam advert site
+Message-Id: <200401240104.i0O14GQX003703@mailer.progressive-comp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0401201748260.1696@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.58.0401201748260.1696@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 20 Jan 2004 17:51:25 -0600 (CST) Bill Ward <bward@osdl.org> wrote:
+Need to host child porn, illegal content, Spam advert site? Try www.hopone.net you will be able to host anything you desire.
 
-| I'm sure you guys have heard this a thousand times, but I can't seem to
-| find my answer.  I would like to start contributing to the project, but I
-| can't seem to find out where to start.  I can't tell what is being worked
-| on or by who.  It just seems a little confusing.  I'm ready to jump in
-| and help.  Can someone lead me to the diving board so I can dive in :)  I
-| joined the mailing list and the irc channel, btw. I'm r3alityc0d3r.
+You can get fresh stolen dumps here:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?tc6
+
+Credit cards with cvv2 information are available here:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t@9
+
+Our site will be usefull for the those who want to wash their money also :) (If you don't want to pay taxes or you need to buy something illegal like weapons or drugs).
+
+Fresh paypal accounts here:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?tU3
+
+Only using our site you can get every detail of any US citizen including SSN number:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?tp1
+
+Fresh eBay accounts for a low price available as well:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t)0
 
 
-Look at the TODO list at the URL in my sig, then ask on this
-mailing list what the status of it is or if anyone else is
-already working on it...
+You can order by phone: : +1-703-547-2000.
 
-Why is your email address @osdl.org ?
-I can't send email to you at that address.
 
-In what name did you subscribe to the mailing list?  I can't see
-you there.
+Best regards,
+www.shadowcrew.com
 
---
-~Randy
-kernel-janitors project:  http://janitor.kernelnewbies.org/
+
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
