@@ -1,58 +1,63 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 18:00:49 +0000
-Subject: [KJ] [PATCH 2/20] char/ite_gpio: remove
-Message-Id: <20050202180049.GC2546@us.ibm.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:29 +0000
+Subject: [KJ] [PATCH][8/26] drivers/isdn/pcbit/* - compile warning cleanup
+Message-Id: <420BEF85.32126.5878BE@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99407176924485663=="
+Content-Type: multipart/mixed; boundary="===============97131169749867219=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============99407176924485663==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============97131169749867219==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Hello,
+Description: compile warning cleanup - handle copy_to/from_user error 
+returns
 
-Please consider applying.
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description: Replace deprecated interruptible_sleep_on_timeout() function calls
-with direct wait-queue usage. Patch is compile-tested, in a sense; it introduces
-no warnings (driver is currently broken).
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.11-rc2-kj-v/drivers/char/ite_gpio.c	2005-01-24 09:28:32.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/char/ite_gpio.c	2005-02-01 11:26:57.000000000 -0800
-@@ -43,6 +43,7 @@
- #include <asm/it8172/it8172_int.h>
- #include <linux/sched.h>
- #include <linux/ite_gpio.h>
-+#include <linux/wait.h>
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/pcbit/drv.c linux-2.6.11-rc3-mm/drivers/isdn/pcbit/drv.c
+--- linux-2.6.11-rc3-mm-original/drivers/isdn/pcbit/drv.c	2005-02-03 03:56:22.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/isdn/pcbit/drv.c	2005-02-07 20:21:43.000000000 +0200
+@@ -727,23 +727,26 @@ int pcbit_stat(u_char __user *buf, int l
  
- #define ite_gpio_base 0x14013800
+ 	if (stat_st < stat_end)
+ 	{
+-		copy_to_user(buf, statbuf + stat_st, len);
++		if(copy_to_user(buf, statbuf + stat_st, len))
++			return -EFAULT;
+ 		stat_st += len;	   
+ 	}
+ 	else
+ 	{
+ 		if (len > STATBUF_LEN - stat_st)
+ 		{
+-			copy_to_user(buf, statbuf + stat_st, 
+-				       STATBUF_LEN - stat_st);
+-			copy_to_user(buf, statbuf, 
+-				       len - (STATBUF_LEN - stat_st));
++			if(copy_to_user(buf, statbuf + stat_st, 
++				       STATBUF_LEN - stat_st) ||
++				copy_to_user(buf, statbuf, 
++				       len - (STATBUF_LEN - stat_st)))
++				return -EFAULT;
  
-@@ -192,6 +193,7 @@ int ite_gpio_int_wait (__u32 device, __u
- {
- 	int i,line=0, ret=0;
- 	unsigned long flags;
-+	DEFINE_WAIT(wait);
+ 			stat_st = len - (STATBUF_LEN - stat_st);
+ 		}
+ 		else
+ 		{
+-			copy_to_user(buf, statbuf + stat_st, len);
++			if(copy_to_user(buf, statbuf + stat_st, len))
++				return -EFAULT;
  
- 	switch (device) {
- 	case ITE_GPIO_PORTA:
-@@ -221,7 +223,9 @@ int ite_gpio_int_wait (__u32 device, __u
- 	save_flags (flags);
- 	cli();
- 	ite_gpio_irq_pending[i] = 1;
--	ret = interruptible_sleep_on_timeout(&ite_gpio_wait[i], 3*HZ);
-+	prepare_to_wait(&ite_gpio_wait[i], &wait, TASK_INTERRUPTIBLE);
-+	ret = schedule_timeout(3*HZ);
-+	finish_wait(&ite_gpio_wait[i], &wait);
- 	restore_flags (flags);
- 	ite_gpio_irq_pending[i] = 0;
- 
+ 			stat_st += len;
+ 			
 
---===============99407176924485663==
+
+
+
+--===============97131169749867219==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99407176924485663==--
+--===============97131169749867219==--
