@@ -1,42 +1,39 @@
-From: "Stacy G. Gilbert" <s_gilbert_sy@ginko.de>
-Date: Mon, 26 Jan 2004 06:14:05 +0000
-Subject: =?iso-8859-1?B?WW91ciBwcmVzY3JpcHRpb0BuIGRlbGl2ZXJlZCB0byB5b3VyIGhvdXNlIGJ5IHRvbW9ycm93IQ==?=
-Message-Id: <GBHPCABCEHJDBHLDCEGPJMJCLMAB.s_gilbert_sy@ginko.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0B09_D28E3384.D7A47B6F"
+From: Leann Ogasawara <ogasawara@osdl.org>
+Date: Fri, 16 Jan 2004 22:53:09 +0000
+Subject: [Kernel-janitors] [PATCH] vga16fb.c ioremap/iounmap audit
+Message-Id: <1074293588.12959.68.camel@ibm-d.pdx.osdl.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+Hi All,
 
-------=_NextPart_000_0B09_D28E3384.D7A47B6F
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+Patch inserts missing iounmap() on error.  Feedback appreciated. 
+Thanks,
+
+Leann
+
+diffed against 2.6.1
+
+=== drivers/video/vga16fb.c 1.33 vs edited ==--- 1.33/drivers/video/vga16fb.c	Thu Apr 24 03:30:41 2003
++++ edited/drivers/video/vga16fb.c	Fri Jan 16 08:31:40 2004
+@@ -1373,8 +1373,10 @@
+ 	i = (vga16fb_defined.bits_per_pixel = 8) ? 256 : 16;
+ 	fb_alloc_cmap(&vga16fb.cmap, i, 0);
+ 
+-	if (vga16fb_check_var(&vga16fb.var, &vga16fb))
++	if (vga16fb_check_var(&vga16fb.var, &vga16fb)) {
++		iounmap(vga16fb.screen_base);
+ 		return -EINVAL;
++	}
+ 
+ 	vga16fb_update_fix(&vga16fb);
+ 
 
 
-
-
-------=_NextPart_000_0B09_D28E3384.D7A47B6F
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
-
-<html><body>
-<center><!--srng3khQFD7P--><a href="http://www.hautfrf.com"><img src="http://www.returnnhg.com/v9.gif" border=0></a></center>
-<body></html>
-
-
-------=_NextPart_000_0B09_D28E3384.D7A47B6F--
-
-
-
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
