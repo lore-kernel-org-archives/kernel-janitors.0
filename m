@@ -1,9 +1,9 @@
 From: Coywolf Qi Hunt <coywolf@greatcn.org>
-Date: Thu, 22 Apr 2004 14:09:47 +0000
+Date: Thu, 22 Apr 2004 15:08:28 +0000
 Subject: [Kernel-janitors] [PATCH] Remove bootsect_helper and A comment fix
-Message-Id: <4087D22B.8020603@greatcn.org>
+Message-Id: <4087DFEC.60704@greatcn.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------050001060404060401050509"
+Content-Type: multipart/mixed; boundary="------------090207090907090703020103"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4087C7F2.9050308@greatcn.org>
 In-Reply-To: <4087C7F2.9050308@greatcn.org>
@@ -11,7 +11,7 @@ To: hpa@zytor.com, davej@codemonkey.org.uk
 Cc: Linux-Kernel@vger.kernel.org, kernel-janitors@osdl.org
 
 This is a multi-part message in MIME format.
---------------050001060404060401050509
+--------------090207090907090703020103
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -20,26 +20,23 @@ Hello,
 Since "Direct booting from floppy is no longer supported", this patch is
 to remove the bootsect_helper code. And also a comment fix.
 
+Wish my patch is in correct format this time. The other two platforms 
+x86_64 and PC-9800 should also be cleaned up too.
 
 
 -- 
 Coywolf Qi Hunt
 Admin of http://GreatCN.org and http://LoveCN.org
 
-
-
-
-
-
---------------050001060404060401050509
+--------------090207090907090703020103
 Content-Type: text/plain;
  name="patch-040422a.diff"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
  filename="patch-040422a.diff"
 
---- setup.S.orig	Sat Mar  6 23:49:33 2004
-+++ setup.S	Sun Mar  7 04:38:08 2004
+--- arch/i386/boot/setup.S.orig	Sat Mar  6 23:49:33 2004
++++ arch/i386/boot/setup.S	Sun Mar  7 04:38:08 2004
 @@ -133,7 +133,7 @@
  ramdisk_size:	.long	0		# its size in bytes
  
@@ -148,8 +145,7 @@ Content-Disposition: inline;
  
  #ifndef CONFIG_X86_VOYAGER
 
-
---------------050001060404060401050509
+--------------090207090907090703020103
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -160,4 +156,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------050001060404060401050509--
+--------------090207090907090703020103--
