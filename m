@@ -1,192 +1,157 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 01 Feb 2005 19:43:08 +0000
-Subject: [KJ] [UPDATE PATCH 33/33] usb/io_edgeport: remove
-Message-Id: <20050201194308.GB2575@us.ibm.com>
+From: Duncan Palmer <dunk_palmer@yahoo.com>
+Date: Thu, 10 Feb 2005 23:33:40 +0000
+Subject: [KJ] [PATCH] Add module autoloading support to input layer
+Message-Id: <20050210233340.46452.qmail@web60607.mail.yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============22091585972626504=="
+Content-Type: multipart/mixed; boundary="0-1477339636-1108078420=:45112"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============22091585972626504==
+--0-1477339636-1108078420=:45112
 Content-Type: text/plain; charset=us-ascii
+Content-Id: 
 Content-Disposition: inline
 
-On Mon, Jan 31, 2005 at 10:57:49AM -0800, Greg KH wrote:
-> On Tue, Jan 25, 2005 at 04:49:18PM -0800, Nishanth Aravamudan wrote:
-> > Hi,
-> > 
-> > Please consider applying.
-> > 
-> > Description: Use wait_event_timeout() instead of deprecated
-> > interruptible_sleep_on_timeout(). Signals are not checked in the current code,
-> > so interruptible should not be necessary. Patch is compile-tested.
-> > 
-> > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> Applied, thanks.
+Hi Vojtech,
 
-Greg,
+Currently, the input device layer relies on the input
+event handler modules being loaded manually, and
+doesn't define any module aliases to support
+autloading of these from userspace or in-kernel. 
 
-This should fix the behavior of the previous patch (probably not noticed yet).
-The wake_up*() was not matched properly in the first patch (fixed below). Please
-consider reverting the previous patch and applying this one instead.
+The attached patch defines MODULE_ALIAS_INPUT which
+creates modules aliases of the form input-handler-xxx,
+where xxx is minor >> 5 (to account for the event
+handlers working with a range of minor numbers). It
+also modifies input.c to load missing event handler
+modules.
 
-Thanks,
-Nish
+Does this look good to you? If so, will the powers
+that be on KJ please consider applying?
 
-Description: Use wait_event_timeout() instead of deprecated
-interruptible_sleep_on_timeout() in one place. Directly use wait-queues in
-other locations to remove remaining callers of interruptible_sleep_on_timeout().
-Signals are not checked in the current code, so interruptible should not be
-necessary. Thus, the wake_up*() calls were modified to match the wait_event*()
-ones. There were some naming conflicts, which I tried to resolve appropriately.
-The final replacement is within a #if 0 / #endif section of code, but in case
-that code is ever used again, I would prefer it had the correct interface :) 
-Patch is compile-tested.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Cheers,
+Dunk
 
 
---- 2.6.11-rc2-kj-v/drivers/usb/serial/io_edgeport.c	2005-01-24 09:34:15.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/usb/serial/io_edgeport.c	2005-02-01 11:40:43.000000000 -0800
-@@ -261,6 +261,7 @@
- #include <linux/spinlock.h>
- #include <linux/serial.h>
- #include <linux/ioctl.h>
-+#include <linux/wait.h>
- #include <asm/uaccess.h>
- #include <linux/usb.h>
- #include "usb-serial.h"
-@@ -991,7 +992,6 @@ static int edge_open (struct usb_serial_
- 	struct usb_serial *serial;
- 	struct edgeport_serial *edge_serial;
- 	int response;
--	int timeout;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -1073,10 +1073,7 @@ static int edge_open (struct usb_serial_
- 	}
- 
- 	/* now wait for the port to be completely opened */
--	timeout = OPEN_TIMEOUT;
--	while (timeout && edge_port->openPending == TRUE) {
--		timeout = interruptible_sleep_on_timeout (&edge_port->wait_open, timeout);
--	}
-+	wait_event_timeout(edge_port->wait_open, (edge_port->openPending != TRUE), OPEN_TIMEOUT);
- 
- 	if (edge_port->open == FALSE) {
- 		/* open timed out */
-@@ -1128,9 +1125,10 @@ static int edge_open (struct usb_serial_
-  ************************************************************************/
- static void block_until_chase_response(struct edgeport_port *edge_port)
- {
-+	DEFINE_WAIT(wait);
- 	__u16 lastCredits;
- 	int timeout = 1*HZ;
--	int wait = 10;
-+	int loop = 10;
- 
- 	while (1) {
- 		// Save Last credits
-@@ -1148,12 +1146,14 @@ static void block_until_chase_response(s
- 		}
- 
- 		// Block the thread for a while
--		interruptible_sleep_on_timeout (&edge_port->wait_chase, timeout);
-+		prepare_to_wait(&edge_port->wait_chase, &wait, TASK_UNINTERRUPTIBLE);
-+		schedule_timeout(timeout);
-+		finish_wait(&edge_port->wait_chase, &wait);
- 
- 		if (lastCredits == edge_port->txCredits) {
- 			// No activity.. count down.
--			wait--;
--			if (wait == 0) {
-+			loop--;
-+			if (loop == 0) {
- 				edge_port->chaseResponsePending = FALSE;
- 				dbg("%s - Chase TIMEOUT", __FUNCTION__);
- 				return;
-@@ -1161,7 +1161,7 @@ static void block_until_chase_response(s
- 		} else {
- 			// Reset timout value back to 10 seconds
- 			dbg("%s - Last %d, Current %d", __FUNCTION__, lastCredits, edge_port->txCredits);
--			wait = 10;
-+			loop = 10;
- 		}
- 	}
- }
-@@ -1179,10 +1179,11 @@ static void block_until_chase_response(s
-  ************************************************************************/
- static void block_until_tx_empty (struct edgeport_port *edge_port)
- {
-+	DEFINE_WAIT(wait);
- 	struct TxFifo *fifo = &edge_port->txfifo;
- 	__u32 lastCount;
- 	int timeout = HZ/10;
--	int wait = 30;
-+	int loop = 30;
- 
- 	while (1) {
- 		// Save Last count
-@@ -1195,20 +1196,22 @@ static void block_until_tx_empty (struct
- 		}
- 
- 		// Block the thread for a while
--		interruptible_sleep_on_timeout (&edge_port->wait_chase, timeout);
-+		prepare_to_wait (&edge_port->wait_chase, &wait, TASK_UNINTERRUPTIBLE);
-+		schedule_timeout(timeout);
-+		finish_wait(&edge_port->wait_chase, &wait);
- 
- 		dbg("%s wait", __FUNCTION__);
- 
- 		if (lastCount == fifo->count) {
- 			// No activity.. count down.
--			wait--;
--			if (wait == 0) {
-+			loop--;
-+			if (loop == 0) {
- 				dbg("%s - TIMEOUT", __FUNCTION__);
- 				return;
- 			}
- 		} else {
- 			// Reset timout value back to seconds
--			wait = 30;
-+			loop = 30;
- 		}
- 	}
- }
-@@ -2108,7 +2111,7 @@ static void process_rcvd_status (struct 
- 				// We could choose to do something else when Byte3 says Timeout on Chase from Edgeport,
- 				// like wait longer in block_until_chase_response, but for now we don't. 
- 				edge_port->chaseResponsePending = FALSE;
--				wake_up_interruptible (&edge_port->wait_chase);
-+				wake_up (&edge_port->wait_chase);
- 				return;
- 
- 			case IOSP_EXT_STATUS_RX_CHECK_RSP:
-@@ -2131,7 +2134,7 @@ static void process_rcvd_status (struct 
- 		/* we have completed the open */
- 		edge_port->openPending = FALSE;
- 		edge_port->open = TRUE;
--		wake_up_interruptible(&edge_port->wait_open);
-+		wake_up(&edge_port->wait_open);
- 		return;
- 	}
- 
-@@ -2500,9 +2503,7 @@ static int write_cmd_usb (struct edgepor
- 	// wait for command to finish
- 	timeout = COMMAND_TIMEOUT;
- #if 0
--	while (timeout && edge_port->commandPending == TRUE) {
--		timeout = interruptible_sleep_on_timeout (&edge_port->wait_command, timeout);
--	}
-+	wait_event (&edge_port->wait_command, (edge_port->commandPending == FALSE));
- 
- 	if (edge_port->commandPending == TRUE) {
- 		/* command timed out */
+		
+__________________________________ 
+Do you Yahoo!? 
+Yahoo! Mail - 250MB free storage. Do more. Manage less. 
+http://info.mail.yahoo.com/mail_250
+--0-1477339636-1108078420=:45112
+Content-Type: text/x-patch; name="input.patch"
+Content-Description: input.patch
+Content-Disposition: inline; filename="input.patch"
 
---===============22091585972626504==
+diff -ur linux-2.6.11-rc2-mm1.orig/include/linux/input.h linux-2.6.11-rc2-mm1/include/linux/input.h
+--- linux-2.6.11-rc2-mm1.orig/include/linux/input.h	2005-01-28 13:01:08.000000000 +1100
++++ linux-2.6.11-rc2-mm1/include/linux/input.h	2005-02-02 16:52:58.000000000 +1100
+@@ -1012,5 +1012,8 @@
+ 
+ extern struct class_simple *input_class;
+ 
++#define MODULE_ALIAS_INPUT(x)  \
++	MODULE_ALIAS("input-handler-" __stringify(x))
++
+ #endif
+ #endif
+diff -ur linux-2.6.11-rc2-mm1.orig/drivers/input/evdev.c linux-2.6.11-rc2-mm1/drivers/input/evdev.c
+--- linux-2.6.11-rc2-mm1.orig/drivers/input/evdev.c	2005-01-28 13:03:04.000000000 +1100
++++ linux-2.6.11-rc2-mm1/drivers/input/evdev.c	2005-02-02 16:49:03.000000000 +1100
+@@ -11,6 +11,7 @@
+ #define EVDEV_MINOR_BASE	64
+ #define EVDEV_MINORS		32
+ #define EVDEV_BUFFER_SIZE	64
++#define EVDEV_HANDLER_ID    2   /* EVDEV_MINOR_BASE >> 5 */
+ 
+ #include <linux/poll.h>
+ #include <linux/slab.h>
+@@ -487,3 +488,4 @@
+ MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
+ MODULE_DESCRIPTION("Input driver event char devices");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS_INPUT(EVDEV_HANDLER_ID);
+diff -ur linux-2.6.11-rc2-mm1.orig/drivers/input/input.c linux-2.6.11-rc2-mm1/drivers/input/input.c
+--- linux-2.6.11-rc2-mm1.orig/drivers/input/input.c	2005-01-28 13:00:29.000000000 +1100
++++ linux-2.6.11-rc2-mm1/drivers/input/input.c	2005-02-02 16:52:38.000000000 +1100
+@@ -536,7 +536,12 @@
+ 	struct file_operations *old_fops, *new_fops = NULL;
+ 	int err;
+ 
+-	/* No load-on-demand here? */
++	if (!handler)
++	{
++		request_module("input-handler-%d", (int)(iminor(inode) >> 5));
++		/* The module will register itself upon loading */
++		handler = input_table[iminor(inode) >> 5];
++	}
+ 	if (!handler || !(new_fops = fops_get(handler->fops)))
+ 		return -ENODEV;
+ 
+diff -ur linux-2.6.11-rc2-mm1.orig/drivers/input/joydev.c linux-2.6.11-rc2-mm1/drivers/input/joydev.c
+--- linux-2.6.11-rc2-mm1.orig/drivers/input/joydev.c	2004-12-25 08:34:45.000000000 +1100
++++ linux-2.6.11-rc2-mm1/drivers/input/joydev.c	2005-02-02 16:20:55.000000000 +1100
+@@ -28,14 +28,16 @@
+ #include <linux/device.h>
+ #include <linux/devfs_fs_kernel.h>
+ 
++#define JOYDEV_MINOR_BASE	0
++#define JOYDEV_MINORS		16
++#define JOYDEV_BUFFER_SIZE	64
++#define JOYDEV_HANDLER_ID   0   /* JOYDEV_MINOR_BASE >> 5 */
++
+ MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
+ MODULE_DESCRIPTION("Joystick device interfaces");
+ MODULE_SUPPORTED_DEVICE("input/js");
+ MODULE_LICENSE("GPL");
+-
+-#define JOYDEV_MINOR_BASE	0
+-#define JOYDEV_MINORS		16
+-#define JOYDEV_BUFFER_SIZE	64
++MODULE_ALIAS_INPUT(JOYDEV_HANDLER_ID);
+ 
+ #define MSECS(t)	(1000 * ((t) / HZ) + 1000 * ((t) % HZ) / HZ)
+ 
+diff -ur linux-2.6.11-rc2-mm1.orig/drivers/input/mousedev.c linux-2.6.11-rc2-mm1/drivers/input/mousedev.c
+--- linux-2.6.11-rc2-mm1.orig/drivers/input/mousedev.c	2005-01-28 13:00:30.000000000 +1100
++++ linux-2.6.11-rc2-mm1/drivers/input/mousedev.c	2005-02-02 16:21:03.000000000 +1100
+@@ -12,6 +12,7 @@
+ #define MOUSEDEV_MINOR_BASE 	32
+ #define MOUSEDEV_MINORS		32
+ #define MOUSEDEV_MIX		31
++#define MOUSEDEV_HANDLER_ID 1       /* MOUSEDEV_MINOR_BASE >> 5 */
+ 
+ #include <linux/slab.h>
+ #include <linux/poll.h>
+@@ -32,6 +33,7 @@
+ MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
+ MODULE_DESCRIPTION("Mouse (ExplorerPS/2) device interfaces");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS_INPUT(MOUSEDEV_HANDLER_ID);
+ 
+ #ifndef CONFIG_INPUT_MOUSEDEV_SCREEN_X
+ #define CONFIG_INPUT_MOUSEDEV_SCREEN_X	1024
+diff -ur linux-2.6.11-rc2-mm1.orig/drivers/input/tsdev.c linux-2.6.11-rc2-mm1/drivers/input/tsdev.c
+--- linux-2.6.11-rc2-mm1.orig/drivers/input/tsdev.c	2004-12-25 08:35:39.000000000 +1100
++++ linux-2.6.11-rc2-mm1/drivers/input/tsdev.c	2005-02-02 16:28:50.000000000 +1100
+@@ -40,6 +40,7 @@
+ /* First 16 devices are h3600_ts compatible; second 16 are h3600_tsraw */
+ #define TSDEV_MINOR_MASK	15
+ #define TSDEV_BUFFER_SIZE	64
++#define TSDEV_HANDLER_ID    4   /* TSDEV_MINOR_BASE >> 5 */
+ 
+ #include <linux/slab.h>
+ #include <linux/poll.h>
+@@ -82,6 +83,7 @@
+ MODULE_AUTHOR("James Simmons <jsimmons@transvirtual.com>");
+ MODULE_DESCRIPTION("Input driver to touchscreen converter");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS_INPUT(TSDEV_HANDLER_ID);
+ 
+ static int xres = CONFIG_INPUT_TSDEV_SCREEN_X;
+ module_param(xres, uint, 0);
+
+--0-1477339636-1108078420=:45112
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -197,4 +162,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============22091585972626504==--
+--0-1477339636-1108078420=:45112--
