@@ -1,17 +1,19 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 17:29:12 +0000
+Date: Mon, 26 Jul 2004 20:41:34 +0000
 Subject: [Kernel-janitors] [PATCH] saa7146_i2c: replace schedule_timeout()
-Message-Id: <20040726172911.GB1897@us.ibm.com>
+Message-Id: <20040726204134.GD1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46761128795988127=="
+Content-Type: multipart/mixed; boundary="===============62981406387198025=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040723220936.GQ2675@us.ibm.com>
 In-Reply-To: <20040723220936.GQ2675@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============46761128795988127==
+--===============62981406387198025==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+
+Not quite corrected enough. Please see below. Thanks again, Domen.
 
 On Sat, Jul 24, 2004 at 09:10:27PM -0400, Mark Hollomon wrote:
 > Nish Aravamudan wrote:
@@ -78,12 +80,12 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  {
 -	set_current_state(TASK_INTERRUPTIBLE);
 -	schedule_timeout((((ms+10)/10)*HZ)/1000);
-+	msleep(msecs_to_jiffies(ms/10));
++	msleep(ms/10);
  }
  
  u32 saa7146_i2c_func(struct i2c_adapter *adapter)
 
---===============46761128795988127==
+--===============62981406387198025==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -94,4 +96,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46761128795988127==--
+--===============62981406387198025==--
