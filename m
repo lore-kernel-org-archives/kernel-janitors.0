@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 15 Feb 2005 01:43:49 +0000
+Date: Tue, 15 Feb 2005 18:18:11 +0000
 Subject: [KJ] Re: [PATCH] 18/34: ieee1394/video1394: replace
-Message-Id: <20050215014349.GA12794@us.ibm.com>
+Message-Id: <20050215181811.GA2377@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34097601145684342=="
+Content-Type: multipart/mixed; boundary="===============73252629707131645=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050215002049.GH9231@conscoop.ottawa.on.ca>
 In-Reply-To: <20050215002049.GH9231@conscoop.ottawa.on.ca>
 To: kernel-janitors@vger.kernel.org
 
---===============34097601145684342==
+--===============73252629707131645==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -31,23 +31,22 @@ On Mon, Feb 14, 2005 at 08:34:20PM -0500, Jody McIntyre wrote:
 > > later...
 > 
 > So you want to leave tho old code in until then?  Fair enough.
-
-Yup, I think that's the best solution for now.
-
+> 
 > > I'm assuming the locking is done this way so that other variables protected by
 > > the same lock can be changed while this one sleeps?
 > 
 > Correct.  See, for example, wakeup_dma_ir_ctx() .
 
-That's what I thought, but I just wanted to get confirmation from you :)
-Thanks for all the feedback! I will send an updated patch against the
-bk-repo once the other wait_event*() macros go in (expect it before
-2.6.12's full release).
+I am not sure if you have seen some of the discussion (under the
+subject: "[RFC UPDATE PATCH] add wait_event_*_lock() functions and
+comments") on LKML regarding these macros. Does Arnd's proposal to fix
+video1394 seem reasonable? I can throw up a patch, if you'd like to
+test.
 
 Thanks,
 Nish
 
---===============34097601145684342==
+--===============73252629707131645==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34097601145684342==--
+--===============73252629707131645==--
