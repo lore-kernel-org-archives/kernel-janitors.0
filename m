@@ -1,87 +1,68 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Wed, 14 Jan 2004 00:24:55 +0000
-Subject: [Kernel-janitors] [announce] 2.6.1-kj1 patchset
-Message-Id: <20040113162455.2f086d72.rddunlap@osdl.org>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 14 Jan 2004 17:26:56 +0000
+Subject: Re: [Kernel-janitors] [announce] 2.6.1-kj1 patchset
+Message-Id: <20040114172656.GB1428@mail.sternwelten.at>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============44519300352238589=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+References: <20040113162455.2f086d72.rddunlap@osdl.org>
+In-Reply-To: <20040113162455.2f086d72.rddunlap@osdl.org>
+To: kernel-janitors@vger.kernel.org
+
+
+--===============44519300352238589==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Disposition: inline
+
+
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 13 Jan 2004, Randy.Dunlap wrote:
+
+>=20
+> patch is at:
+> http://developer.osdl.org/rddunlap/kj-patches/2.6.1/2.6.1-kj1.patch.bz2  =
+[2004-01-13]
+>=20
+> This patch applies to linux-2.6.1.
+
+great work!=20
+
+consider to cc andrew :
+http://marc.theaimsgroup.com/?l=3Dlinux-kernel&m=3D107358572311092&w=3D2
+
+regards
+maks
+
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQFABXvg6//kSTNjoX0RAqmzAJ9e9gazwSLRYChDOSfIoK7DJJ1o5gCeIVho
+KkQlXP8TCDsiQGacS2QZxos=
+=Uj1o
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
+
+--===============44519300352238589==
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: kjo <kernel-janitors@osdl.org>
-Cc: lkml <linux-kernel@vger.kernel.org>
+Content-Disposition: inline
 
-
-patch is at:
-http://developer.osdl.org/rddunlap/kj-patches/2.6.1/2.6.1-kj1.patch.bz2  [2004-01-13]
-
-This patch applies to linux-2.6.1.
-
-new (for 2.6.1):  [2004-01-13]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-add	fdport.patch: reorder outb() macro names to reflect reality;
-	From: Randy Dunlap <rddunlap@osdl.org>
-
-add	vmdocs.patch
-	From: Patrick McLean <pmclean@linuxfreak.ca>
-
-add	2.6_spelling_Unix98.diff.patch
-	From: Andreas Beckmann <sparclinux@abeckmann.de>
-
-add	md_notifdef.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-
-add	fsstat64.patch
-	From: Michael Still <mikal@stillhq.com>
-
-previous (for 2.6.1-rc3):  [2004-01-08]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-add	update EXTRAVERSION: add -kj1
-
-add	amd74_noprocfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-
-add	apm_thread_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	cifs_dalloc_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	init_thread_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	ipv4_ipmr_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	mca_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	md_noprocfs.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-
-add	mminit_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	pdflush_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	setfpxregs_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	siimage_noprocfs2.patch
-	From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-
-add	sunrpc_retval.patch
-	From: Eugene TEO <eugeneteo@eugeneteo.net>
-
-add	tr3c_kmalloc.patch
-	From: Pablo Menichini <pablo@menichini.com.ar>
-	and maximilian attems <janitor@sternwelten.at>
-
-###
-
---
-~Randy
-MOTD:  Always include version info.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============44519300352238589==--
