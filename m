@@ -1,83 +1,34 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sun, 01 Aug 2004 22:20:46 +0000
-Subject: [Kernel-janitors] Re: linux2.6.7: af_ipx.c init cleanup
-Message-Id: <20040801222046.GB2276@masina.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68026513679804967=="
+From: "Sean Beasley" <sean_beasleybg@moebel-rehmann.de>
+Date: Sat, 14 Aug 2004 01:48:45 +0000
+Subject: 15-Best rates- as low as 2.94%
+Message-Id: <d17901c481ac$bb3e23a8$46f71daf@email.state.ne.us>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============68026513679804967==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+<html>
+Hi<p>
 
-On 01/08/04 21:41 +0200, Walter Harms wrote:
-> Hi list,
-> i moved the messages directly into the code also.
->
+Would you REFlNANCE if you knew you'd S<jcjyjpebjbpskrb>AVE TH0US<jxdylltdcodpo>ANDS?<p>
 
-Someone's gonna be happy with all the error messages, when he hits this :-)
-(also... you can do better than numbered labels)
-> +       err=ipx_proc_init();
-> +       if (err < 0)
-> +               goto exit_7;
-> +#endif
->         return 0;
-> +exit_7:
-> +       ipx_unregister_sysctl();
-> +
-> +exit_6:
-> +       unregister_snap_client(pSNAP_datalink);
-> +exit_5:
-> +       printk(KERN_CRIT "IPX: Unable to register with SNAP\n");
-> +       unregister_8022_client(p8022_datalink);
-> +exit_4:
-> +       printk(KERN_CRIT "IPX: Unable to register with 802.2\n");
-> +       dev_remove_pack(&ipx_8023_packet_type);
-> +       destroy_8023_client(p8023_datalink);
-> +exit_3:
-> +       printk(KERN_CRIT "IPX: Unable to register with 802.3\n");
-> +       dev_remove_pack(&ipx_dix_packet_type);
-> +       destroy_EII_client(pEII_datalink);
-> +exit_2:
-> +       printk(KERN_CRIT "IPX: Unable to register with Ethernet II\n");
-> +       sock_unregister(ipx_family_ops.family);
-> +exit_1:
-> +       return -1;
-> +
->  }
->  
->  static void __exit ipx_proto_finito(void)
->  {
-> +#ifdef CONFIG_PROC_FS
->         ipx_proc_exit();
-> -       ipx_unregister_sysctl();
-> +#endif
->  
-> +#ifdef CONFIG_SYSCTL
-> +       ipx_unregister_sysctl();
-> +#endif
->         unregister_netdevice_notifier(&ipx_dev_notifier);
->  
->         ipxitf_cleanup();
-> 
-> 
+We'll get you lnterest as low as 2.93%.<p>
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Don't believe me? Fill out our small online form and we'll show you how.<p>
+
+Get the house and/or car you always wanted, it only takes 2 minutes of your time:<br>
+<a href="http://www.infostead.biz/new/index.php">http://www.infostead.biz</a>
+</html>
 
 
---===============68026513679804967==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+-------------------------------------------------------
+SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
+100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
+Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
+http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============68026513679804967==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
