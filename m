@@ -1,44 +1,31 @@
-From: Daniele Pizzoni <auouo@tin.it>
-Date: Sun, 17 Oct 2004 16:14:20 +0000
-Subject: [KJ] [PATCH 8/8] replacing/fixing printk with pr_debug/pr_info in
-Message-Id: <1098032701.3023.134.camel@pdp11.tsho.org>
+From: "chas williams (contractor)" <chas@cmf.nrl.navy.mil>
+Date: Thu, 14 Oct 2004 14:08:12 +0000
+Subject: [KJ] Re: [PATCH 2.6] fore200e.c replace pci_find_device with
+Message-Id: <200410141408.i9EE8BU5013543@ginger.cmf.nrl.navy.mil>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28272919236742355=="
+Content-Type: multipart/mixed; boundary="===============11460412002187503=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+In-Reply-To: Message from Hanna Linder <hannal@us.ibm.com> 
+   of "Wed, 13 Oct 2004 15:18:30 PDT." <196790000.1097705910@w-hlinder.beaverton.ibm.com> 
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com
 
---===============28272919236742355==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============11460412002187503==
 
-Replace custom macro Dprintk with pr_debug from kernel.h.
+i have to concur.  these need to be fixed the right way.  i can only
+test the fore200e changes though.  the other drivers see somewhat
+limited use so that is a mistake is made during conversion it isnt
+critical.
 
-Signed-off-by: Daniele Pizzoni <auouo@tin.it>
+In message <196790000.1097705910@w-hlinder.beaverton.ibm.com>,Hanna Linder writ
+es:
+>
+>
+>As pci_find_device is going away soon I have converted this file to use
+>pci_get_device instead. I have compile tested it. If anyone has this ATM card
+>and could test it that would be great.
 
-Index: linux-2.6.9-rc4/include/asm-i386/mach-default/smpboot_hooks.h
-===================================================================
---- linux-2.6.9-rc4.orig/include/asm-i386/mach-default/smpboot_hooks.h	2004-08-14 07:36:44.000000000 +0200
-+++ linux-2.6.9-rc4/include/asm-i386/mach-default/smpboot_hooks.h	2004-10-17 17:01:24.044525072 +0200
-@@ -10,11 +10,11 @@ static inline void smpboot_setup_warm_re
- {
- 	CMOS_WRITE(0xa, 0xf);
- 	local_flush_tlb();
--	Dprintk("1.\n");
-+	pr_debug("1.\n");
- 	*((volatile unsigned short *) TRAMPOLINE_HIGH) = start_eip >> 4;
--	Dprintk("2.\n");
-+	pr_debug("2.\n");
- 	*((volatile unsigned short *) TRAMPOLINE_LOW) = start_eip & 0xf;
--	Dprintk("3.\n");
-+	pr_debug("3.\n");
- }
- 
- static inline void smpboot_restore_warm_reset_vector(void)
-
-
-
---===============28272919236742355==
+--===============11460412002187503==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +36,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============28272919236742355==--
+--===============11460412002187503==--
