@@ -1,31 +1,46 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 17 Aug 2004 10:45:12 +0000
-Subject: Re: [Kernel-janitors] Re: 2.6.8.1-kjt1
-Message-Id: <20040817104512.GE1784@stro.at>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Sun, 15 Aug 2004 11:54:52 +0000
+Subject: [Kernel-janitors] Re: Add msleep_interruptible() function to
+Message-Id: <1092570891.17605.1.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79922465534292386=="
+Content-Type: multipart/mixed; boundary="===============094962944898955293=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040815170452.GA2578@masina.coderock.org>
-In-Reply-To: <20040815170452.GA2578@masina.coderock.org>
-To: kernel-janitors@vger.kernel.org
+References: <20040815121805.GA15111@stro.at>
+In-Reply-To: <20040815121805.GA15111@stro.at>
+To: maximilian attems <janitor@sternwelten.at>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kj <kernel-janitors@osdl.org>
 
---===============79922465534292386==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============094962944898955293==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, 17 Aug 2004, Domen Puncer wrote:
+On Sul, 2004-08-15 at 13:18, maximilian attems wrote:
+> + * msleep_interruptible - sleep waiting for waitqueue interruptions
+> + * @msecs: Time in milliseconds to sleep for
+> + */
+> +void msleep_interruptible(unsigned int msecs)
+> +{
+> +	unsigned long timeout = msecs_to_jiffies(msecs);
+> +
+> +	while (timeout) {
 
-> Compile-warning fixes for 2 patches follow...
-> 
+You want to have while(timeout && !signal_pending(current))
 
-great for your testing domen, thanks.
-forwarded to akpm.
-hope other kernel janitors are also running kjt?
+A signal will wake the timeout which will then loop. It might also
+be good to add
 
-a++ maks
+> +		set_current_state(TASK_INTERRUPTIBLE);
+> +		timeout = schedule_timeout(timeout);
+> +	}
+
+return timeout;
+
+so that the caller knows more about how long the timer ran for before
+the interrupt and if it was interrupted.
 
 
---===============79922465534292386==
+
+--===============094962944898955293==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79922465534292386==--
+--===============094962944898955293==--
