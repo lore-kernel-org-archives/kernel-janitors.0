@@ -1,40 +1,33 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:53 +0000
-Subject: [KJ] [PATCH][RESUBMIT][13/ 21] drivers/scsi/sym53c8xx_2/* - compile
-Message-Id: <42113C2D.1177.52C034@localhost>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Tue, 15 Feb 2005 02:07:48 +0000
+Subject: Re: [KJ] [PATCH][RESUBMIT][13/ 21] drivers/scsi/sym53c8xx_2/* -
+Message-Id: <20050215020748.GL29917@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============39286333338172619=="
+Content-Type: multipart/mixed; boundary="===============80922339292167855=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <42113C2D.1177.52C034@localhost>
+In-Reply-To: <42113C2D.1177.52C034@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============39286333338172619==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============80922339292167855==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - stop compilation of unused 
-structure member unless proper symbol is defined
+On Tue, Feb 15, 2005 at 12:02:53AM +0200, Stephen Biggs wrote:
+> Description: compile warning cleanup - stop compilation of unused 
+> structure member unless proper symbol is defined
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+I'll fix this one in a different way.  Thanks.
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/scsi/sym53c8xx_2/sym_glue.c linux-2.6.11-rc3-mm2/drivers/scsi/sym53c8xx_2/sym_glue.c
---- linux-2.6.11-rc3-mm2-original/drivers/scsi/sym53c8xx_2/sym_glue.c	2005-02-12 12:06:25.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/scsi/sym53c8xx_2/sym_glue.c	2005-02-12 17:35:49.000000000 +0200
-@@ -1817,7 +1817,9 @@ static int __devinit sym_check_supported
- 	struct pci_dev *pdev = device->pdev;
- 	u_char revision;
- 	unsigned long io_port = device->s.io_port;
-+#ifndef SYM_CONF_IOMAPPED
- 	unsigned long base = device->s.base;
-+#endif
- 	int i;
- 
- 	/*
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
 
-
-
-
---===============39286333338172619==
+--===============80922339292167855==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============39286333338172619==--
+--===============80922339292167855==--
