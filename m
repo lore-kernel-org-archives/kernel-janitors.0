@@ -1,42 +1,57 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 24 Nov 2004 15:34:05 +0000
-Subject: [KJ] [patch 6/8] ifdef typos: drivers_usb_net_usbnet.c
-Message-Id: <20041124153405.GF14789@nd47.coderock.org>
+From: =?utf-8?q?Benedict Dsfyutob?= <impairhaightp@tartcity.com>
+Date: Mon, 22 Nov 2004 09:18:56 +0000
+Subject: =?utf-8?q?Recent course for ri?=
+Message-Id: <E1CWAOI-0002LA-5i@sc8-sf-mx2.sourceforge.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26145870916705416=="
+Content-Type: multipart/mixed; boundary="pjXJoSyttNPEL1wZMAV"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============26145870916705416==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
 
-Although neither symbol is not defined (yet?); code uses some
-GENELINK_* (_ACK too), so this seems right.
-
-Signed-off-by: Domen Puncer <domen@coderock.org>
-
---- c/drivers/usb/net/usbnet.c	2004-11-15 13:42:17.000000000 +0100
-+++ str2/drivers/usb/net/usbnet.c	2004-11-24 16:10:26.000000000 +0100
-@@ -1298,7 +1298,7 @@ struct gl_header {
- 	struct gl_packet	packets;
- };
- 
--#ifdef	GENLINK_ACK
-+#ifdef	GENELINK_ACK
- 
- // FIXME:  this code is incomplete, not debugged; it doesn't
- // handle interrupts correctly.  interrupts should be generic
-
---===============26145870916705416==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+--pjXJoSyttNPEL1wZMAV
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+My lozenge is an advanced fat-sticking appurtenance which
+takes away grease from a food you consume! Explicated with 
+the mighty fat-fastening fibre, the mixture
+of biological compounds...
+
+http://isgutialph.ultra36.info/?lutlcubxtvuysowsbzfbnblkldce
+--pjXJoSyttNPEL1wZMAV
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<STYLE></STYLE>
+</HEAD>
+<HTML>
+<BODY>
+This tablets is a modern grease-fastening addendum that<BR>
+takes away fat from a nourishment you wolf! Explicated with <BR>
+the strong fat-bandage filament, the blend<BR>
+of all-natural constituents...<BR>
+<BR>
+<A href=3D"http://hbdoitet.ultra36.info/?kilghesktxtvuyhodtoarzfb=
+oxcanqo">Test this</A><BR>
+<BR>
+</BODY>
+</HTML></HTML>
+--pjXJoSyttNPEL1wZMAV--
+
+
+
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now. 
+http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============26145870916705416==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
