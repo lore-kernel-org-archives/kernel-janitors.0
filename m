@@ -1,51 +1,38 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 19:50:13 +0000
-Subject: [KJ] [PATCH 13/20] sound/gus_pcm: remove
-Message-Id: <20050202195013.GR2546@us.ibm.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Feb 2005 17:00:35 +0000
+Subject: [KJ] [PATCH 06/19] drivers/scsi/aic7xxx/aic7xxx_osm: Use the
+Message-Id: <20050220170035.GG14375@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86583511575973793=="
+Content-Type: multipart/mixed; boundary="===============20097258583718869=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============86583511575973793==
+--===============20097258583718869==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hello,
 
-Please consider applying.
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with
-wait_event_timeout(). Code is not identical, as the current sleeping system is 1
-jiffy at a time checking atomic_read()'s return every iteration. Patch is
-compile-tested.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--- linux-2.6.11-rc4.orig/drivers/scsi/aic7xxx/aic7xxx_osm.c	2005-02-13 17:13:06.000000000 +0100
++++ linux-2.6.11-rc4/drivers/scsi/aic7xxx/aic7xxx_osm.c	2005-02-16 21:07:01.000000000 +0100
+@@ -1361,7 +1361,7 @@ ahc_dmamem_alloc(struct ahc_softc *ahc, 
+ 	 * our dma mask when doing allocations.
+ 	 */
+ 	if (ahc->dev_softc != NULL)
+-		if (pci_set_dma_mask(ahc->dev_softc, 0xFFFFFFFF)) {
++		if (pci_set_dma_mask(ahc->dev_softc, DMA_32BIT_MASK)) {
+ 			printk(KERN_WARNING "aic7xxx: No suitable DMA available.\n");
+ 			kfree(map);
+ 			return (ENODEV);
 
---- 2.6.11-rc2-kj-v/sound/isa/gus/gus_pcm.c	2005-01-26 11:19:06.000000000 -0800
-+++ 2.6.11-rc2-kj/sound/isa/gus/gus_pcm.c	2005-02-02 11:34:20.000000000 -0800
-@@ -697,16 +697,10 @@ static int snd_gf1_pcm_playback_close(sn
- 	snd_gus_card_t *gus = snd_pcm_substream_chip(substream);
- 	snd_pcm_runtime_t *runtime = substream->runtime;
- 	gus_pcm_private_t *pcmp = runtime->private_data;
--	unsigned long jiffies_old;
-+	
-+	if (!wait_event_timeout(pcmp->sleep, (atomic_read(&pcmp->dma_count) <= 0), 2*HZ))
-+		snd_printk("gf1 pcm - serious DMA problem\n");
- 
--	jiffies_old = jiffies;
--	while (atomic_read(&pcmp->dma_count) > 0) {
--		interruptible_sleep_on_timeout(&pcmp->sleep, 1);
--		if ((signed long)(jiffies - jiffies_old) > 2*HZ) {
--			snd_printk("gf1 pcm - serious DMA problem\n");
--			break;
--		}
--	}
- 	snd_gf1_dma_done(gus);	
- 	return 0;
- }
-
---===============86583511575973793==
+--===============20097258583718869==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86583511575973793==--
+--===============20097258583718869==--
