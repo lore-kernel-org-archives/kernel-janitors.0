@@ -1,37 +1,26 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 23:17:51 +0000
-Subject: [KJ] [PATCH] [RESEND] [18/29] module.c - vfree() checking cleanups
-Message-Id: <auto-000001227497@appliedminds.com>
+From: Greg KH <greg@kroah.com>
+Date: Thu, 20 Jan 2005 18:50:51 +0000
+Subject: Re: [KJ] Status of checking for NULL,
+Message-Id: <20050120185051.GA3866@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28177802683970365=="
+Content-Type: multipart/mixed; boundary="===============99935013769339776=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============28177802683970365==
+--===============99935013769339776==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-module.c vfree() checking cleanups.
+On Thu, Jan 20, 2005 at 01:25:29PM -0500, Stephen torri wrote:
+> - convert drivers to new PCI API
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Still a lot of drivers left to convert.
 
- module.c |    3 +--
- 1 files changed, 1 insertion(+), 2 deletions(-)
+thanks,
 
+greg k-h
 
---- linux-2.6.10-vanilla/arch/s390/kernel/module.c	2004-12-24 13:35:27.000000000 -0800
-+++ linux-2.6.10/arch/s390/kernel/module.c	2005-01-04 11:20:15.357765720 -0800
-@@ -396,8 +396,7 @@
- 		    const Elf_Shdr *sechdrs,
- 		    struct module *me)
- {
--	if (me->arch.syminfo)
--		vfree(me->arch.syminfo);
-+	vfree(me->arch.syminfo);
- 	return 0;
- }
- 
-
-
---===============28177802683970365==
+--===============99935013769339776==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +31,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============28177802683970365==--
+--===============99935013769339776==--
