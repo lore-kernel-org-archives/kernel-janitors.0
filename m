@@ -1,19 +1,22 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 19:45:11 +0000
+Date: Thu, 27 Jan 2005 00:20:58 +0000
 Subject: [KJ] [PATCH] media/saa7110: remove sleep_on*() usage
-Message-Id: <20050126194511.GG3593@us.ibm.com>
+Message-Id: <20050127002058.GA16171@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45393016173839729=="
+Content-Type: multipart/mixed; boundary="===============25138312724134071=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050126194511.GG3593@us.ibm.com>
+In-Reply-To: <20050126194511.GG3593@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============45393016173839729==
+--===============25138312724134071==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Please consider applying.
+The author of the driver requested I send the patch on the mjpeg maintainer &
+list. Please consider applying.
 
 Description: Directly use wait-queues instead of the deprecated
 sleep_on_timeout(). Since the sleep in this function is unconditional,
@@ -62,7 +65,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  	status = saa7110_read(client);
  	if ((status & 0x03) == 0x01) {
 
---===============45393016173839729==
+--===============25138312724134071==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45393016173839729==--
+--===============25138312724134071==--
