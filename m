@@ -1,61 +1,71 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Tue, 14 Dec 2004 14:59:30 +0000
-Subject: [KJ] Re: change in kernel-janitor maintainer
-Message-Id: <20041214145930.GE6569@nd47.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============75257661138300591=="
+From: Pattie Wolk <pylwl@teacup.com>
+Date: Mon, 20 Dec 2004 06:13:17 +0000
+Subject: Pattie The Momentum Investor UACP  fir
+Message-Id: <E1CgHdV-0008SF-Pw@sc8-sf-mx2.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041214145007.GD2159@stro.at>
-In-Reply-To: <20041214145007.GD2159@stro.at>
-To: maximilian attems <janitor@sternwelten.at>
-Cc: kj <kernel-janitors@osdl.org>, linux-kernel@vger.kernel.org
-
---===============75257661138300591==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On 14/12/04 15:50 +0100, maximilian attems wrote:
-> I've been the kjt patchset maintainer since mai/2004 and now
-> I'm happy to present you the new kernel-janitors maintainer:
-> 
-> Domen Puncer <domen@coderock.org>
-> 
-> "All of you (us) please keep up the janitors work, including helping
-> each other with patch reviews.  Otherwise the patches can easily
-> become too much for one person to handle, along with other duties."
-> Randy (former kj maintainer)
-> 
-> Couldn't say it better in my own words. Anyway thanks to all the kj
-> contributors. I learned a lot and was very happy to contribute!
-
-Thank you for your work and providing me with help and tips for
-mainainership.
-
-> 
-> best wishes for you domen + warm greetings 
-
-Good luck with diploma, and don't forget about janitors :-)
-
-> 
-> --
-> maks
-> 
-
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-
---===============75257661138300591==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: kernel-janitors@vger.kernel.org
 
+Sun, 19 Dec 2004 23:57:30 -0600
+
+Before We continue- very important - it is Expected that
+UACP will have very large PR campaign in the next 10 days
+and some very positive news are expected.
+
+Watch out for it monday morning a huge fax campaign will
+begin monday evening to over 4.5 Million investors. Jump
+on board while this stock is below $1 because from monday
+evening until friday it will be very heavily promoted.
+
+Symbol:                UACP
+current price :        0.37
+10 days target price : 1.25
+3 Months target price :1.66
+
+Breaking News: uAuthorize Corp. Announces Upgrades in Web
+Cam Watcher software “UACP” currently trading at .30 and
+is headed to 1.25 you do not want to miss this deal.
+
+The company released ground breaking news about its VOIP
+division! Although some would argue that VoIP is still
+maturing, corporate users are extremely interested in
+implementing the technology, creating exponential growth.
+Within the last four years, VoIP minutes increased from
+less than 0.5 to 2 percent of outbound international calls,
+according to research from TeleGeography. Additionally,
+predictions as to the size of the market itself vary, with
+Allied Business Intelligence projecting the VoIP market
+to grow from $3.7 billion in 2000 to $12.3 billion in 2006
+and Synergy Research projecting the VoIP equipment market
+to grow to $13.3 billion by 2005.E12m1f}D8m5362}C59J_99xf5939w96_2J1B62a1wm13
+
+Please Note: Our picks normally generate 200 to 400% grow
+with our promotions this one is expected to be our highest
+one this year, this week coming up so don't miss out on
+the possibility of explosive growth this week coming up.
+
+-------------------------------------------------
+Please be advised that nothing within this email shall constitute a
+solicitation or an offer to buy or sell any security mentioned herein.
+This newsletter is neither a registered investment advisor nor
+affiliated with any broker or dealer. All statements made are our
+express opinion only and should be treated as such. We may own, buy
+and sell any securities mentioned at any time. This report includes
+forward-looking statements within the meaning of The Private Securities
+Litigation Reform Act of 1995. This newsletter was paid 35500 from
+third party to send this report. You may lose money from investing
+in Penny Stocks. vitreous sepulchral attack
+
+
+
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now. 
+http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============75257661138300591==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
