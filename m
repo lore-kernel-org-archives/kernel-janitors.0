@@ -1,38 +1,41 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:08 +0000
-Subject: [KJ] [PATCH] [15/29] qla_os.c - vfree() checking cleanups
-Message-Id: <41db1134.63656ccc.2568.07bc@smtp.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 17 Jan 2005 18:21:25 +0000
+Subject: [KJ] [PATCH 1/22] arm/cpu-sa1110: replace schedule_timeout() with
+Message-Id: <20050117182125.GA24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90340959868507364=="
+Content-Type: multipart/mixed; boundary="===============65824191632929385=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============90340959868507364==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============65824191632929385==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-qla_os.c vfree() checking cleanups.
+Hi,
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Please consider applying.
 
- qla_os.c |    3 +--
- 1 files changed, 1 insertion(+), 2 deletions(-)
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. Neither signals nor wait-queue events are important at this
+point in the code, I believe.
 
-
---- linux-2.6.10-vanilla/drivers/scsi/qla2xxx/qla_os.c	2004-12-24 13:35:40.000000000 -0800
-+++ linux-2.6.10/drivers/scsi/qla2xxx/qla_os.c	2005-01-04 11:32:17.000000000 -0800
-@@ -3125,8 +3125,7 @@
- 	if (ha->fw_dump)
- 		free_pages((unsigned long)ha->fw_dump, ha->fw_dump_order);
- 
--	if (ha->fw_dump_buffer)
--		vfree(ha->fw_dump_buffer);
-+	vfree(ha->fw_dump_buffer);
- 
- 	ha->fw_dump  	ha->fw_dump_reading 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---===============90340959868507364==
+--- 2.6.11-rc1-kj-v/arch/arm/mach-sa1100/cpu-sa1110.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/arch/arm/mach-sa1100/cpu-sa1110.c	2005-01-15 17:10:24.000000000 -0800
+@@ -271,8 +271,7 @@ static int sa1110_target(struct cpufreq_
+ 	 */
+ 	sdram_set_refresh(2);
+ 	if (!irqs_disabled()) {
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(20 * HZ / 1000);
++		msleep(20);
+ 	} else {
+ 		mdelay(20);
+ 	}
+
+--===============65824191632929385==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90340959868507364==--
+--===============65824191632929385==--
