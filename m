@@ -1,54 +1,51 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 29 Sep 2004 17:23:49 +0000
-Subject: [Kernel-janitors] Re: sbus/aurora: replace schedule_timeout() with
-Message-Id: <20040929172349.GB1652@us.ibm.com>
+Date: Wed, 15 Sep 2004 18:18:26 +0000
+Subject: [Kernel-janitors] [PATCH 4/5] atm/idt77252: replace
+Message-Id: <20040915181826.GE4363@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48012635655726199=="
+Content-Type: multipart/mixed; boundary="===============94165856774325851=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040929161006.GA3599@masina.coderock.org>
-In-Reply-To: <20040929161006.GA3599@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============48012635655726199==
+--===============94165856774325851==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Sep 29, 2004 at 06:10:06PM +0200, Domen Puncer wrote:
-> On 27/09/04 10:24 -0700, Nishanth Aravamudan wrote:
-> > -			current->state = TASK_INTERRUPTIBLE;
-> > -			schedule_timeout(port->close_delay);
-> > +			msleep_interruptible(port->close_delay);
-> 
-> I think you forgot jiffies_to_msecs here.
+Any comments would be appreciated.
 
-Please find the corrected patch below.
-Thanks for catching this, Domen.
+Description: msleep_interruptible() is used instead of schedule_timeout()
+to guarantee the task delays as expected. To achieve this, the timeout
+variable is converted from an int to an unsigned long, and it's values
+are changed accordingly.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- 2.6.9-rc2-vanilla/drivers/sbus/char/aurora.c	2004-09-13 17:16:08.000000000 -0700
-+++ 2.6.9-rc2/drivers/sbus/char/aurora.c	2004-09-29 10:19:14.000000000 -0700
-@@ -1519,8 +1519,7 @@ static void aurora_close(struct tty_stru
- 		 */
- 		timeout = jiffies+HZ;
- 		while(port->SRER & SRER_TXEMPTY)  {
--			current->state = TASK_INTERRUPTIBLE;
--			schedule_timeout(port->timeout);
-+			msleep_interruptible(jiffies_to_msecs(port->timeout));
- 			if (time_after(jiffies, timeout))
+--- 2.6.9-rc2-vanilla/drivers/atm/idt77252.c	2004-09-13 17:16:06.000000000 -0700
++++ 2.6.9-rc2/drivers/atm/idt77252.c	2004-09-14 11:34:25.000000000 -0700
+@@ -2516,7 +2516,7 @@ idt77252_close(struct atm_vcc *vcc)
+ 	struct vc_map *vc = vcc->dev_data;
+ 	unsigned long flags;
+ 	unsigned long addr;
+-	int timeout;
++	unsigned long timeout;
+ 
+ 	down(&card->mutex);
+ 
+@@ -2566,9 +2566,9 @@ done:
+ 		}
+ 		spin_unlock_irqrestore(&vc->lock, flags);
+ 
+-		timeout = 5 * HZ;
++		timeout = 5 * 1000;
+ 		while (atomic_read(&vc->scq->used) > 0) {
+-			timeout = schedule_timeout(timeout);
++			timeout = msleep_interruptible(timeout);
+ 			if (!timeout)
  				break;
  		}
-@@ -1538,8 +1537,7 @@ static void aurora_close(struct tty_stru
- 	port->tty = 0;
- 	if (port->blocked_open) {
- 		if (port->close_delay) {
--			current->state = TASK_INTERRUPTIBLE;
--			schedule_timeout(port->close_delay);
-+			msleep_interruptible(jiffies_to_msecs(port->close_delay));
- 		}
- 		wake_up_interruptible(&port->open_wait);
- 	}
 
---===============48012635655726199==
+--===============94165856774325851==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48012635655726199==--
+--===============94165856774325851==--
