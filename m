@@ -1,34 +1,40 @@
-From: "Sean Beasley" <sean_beasleybg@moebel-rehmann.de>
-Date: Sat, 14 Aug 2004 01:48:45 +0000
-Subject: 15-Best rates- as low as 2.94%
-Message-Id: <d17901c481ac$bb3e23a8$46f71daf@email.state.ne.us>
+From: Greg KH <greg@kroah.com>
+Date: Mon, 02 Aug 2004 23:12:34 +0000
+Subject: [Kernel-janitors] Re: [PATCH] scx200_acb: replace
+Message-Id: <20040802231234.GE15751@kroah.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============15448543147964333=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-Hi<p>
+--===============15448543147964333==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Would you REFlNANCE if you knew you'd S<jcjyjpebjbpskrb>AVE TH0US<jxdylltdcodpo>ANDS?<p>
+On Thu, Jul 22, 2004 at 10:17:50PM +0000, Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list. This is one (of
+> a few) places where I had to make a decision to set the state before the
+> call to
+> 
+> schedule_timeout();
+> 
+> This of course affected any decision to replace the code with msleep()
+> or not. Please inform if the other state from the one I used is desired.
 
-We'll get you lnterest as low as 2.93%.<p>
+Applied, thanks.
 
-Don't believe me? Fill out our small online form and we'll show you how.<p>
-
-Get the house and/or car you always wanted, it only takes 2 minutes of your time:<br>
-<a href="http://www.infostead.biz/new/index.php">http://www.infostead.biz</a>
-</html>
+greg k-h
 
 
+--===============15448543147964333==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--------------------------------------------------------
-SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
-100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
-Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
-http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============15448543147964333==--
