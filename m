@@ -1,45 +1,39 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 08:06:52 +0000
-Subject: [KJ] [PATCH] drivers/eisa/*: convert to pci_register_driver
-Message-Id: <20050208080652.GA31996@rhum.iomeda.fr>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Mon, 14 Feb 2005 15:07:02 +0000
+Subject: [KJ] [PATCH 5/16] drivers/net/ns83820: Use the DMA_{64,
+Message-Id: <20050214150702.GH15408@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="SUOF0GtieIMvvwua"
+Content-Type: multipart/mixed; boundary="===============39583810268118325=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---SUOF0GtieIMvvwua
+--===============39583810268118325==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hello,
 
-Description:
-convert from pci_module_init to pci_register_driver
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_eisa.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/eisa/pci_eisa.c linux-2.6.11-rc3/drivers/eisa/pci_eisa.c
---- linux-2.6.11-rc3-vanilla/drivers/eisa/pci_eisa.c	2004-12-24 22:34:01.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/eisa/pci_eisa.c	2005-02-07 09:39:27.000000000 +0100
-@@ -59,7 +59,7 @@ static struct pci_driver pci_eisa_driver
+--- linux-2.6.11-rc4.orig/drivers/net/ns83820.c	2005-02-13 17:13:02.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/ns83820.c	2005-02-13 17:50:59.000000000 +0100
+@@ -1841,9 +1841,9 @@ static int __devinit ns83820_init_one(st
+ 	int using_dac = 0;
  
- static int __init pci_eisa_init_module (void)
- {
--	return pci_module_init (&pci_eisa_driver);
-+	return pci_register_driver (&pci_eisa_driver);
- }
- 
- device_initcall(pci_eisa_init_module);
+ 	/* See if we can set the dma mask early on; failure is fatal. */
+-	if (TRY_DAC && !pci_set_dma_mask(pci_dev, 0xffffffffffffffffULL)) {
++	if (TRY_DAC && !pci_set_dma_mask(pci_dev, DMA_64BIT_MASK)) {
+ 		using_dac = 1;
+-	} else if (!pci_set_dma_mask(pci_dev, 0xffffffff)) {
++	} else if (!pci_set_dma_mask(pci_dev, DMA_32BIT_MASK)) {
+ 		using_dac = 0;
+ 	} else {
+ 		printk(KERN_WARNING "ns83820.c: pci_set_dma_mask failed!\n");
 
---SUOF0GtieIMvvwua
+--===============39583810268118325==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---SUOF0GtieIMvvwua--
+--===============39583810268118325==--
