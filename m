@@ -1,35 +1,26 @@
-From: Jessie Prescott <sgkuntldchbtt@aol.com>
-Date: Fri, 16 Apr 2004 07:43:08 +0000
-Subject: Don't be left out
-Message-Id: <29740310.08105@sgkuntldchbtt@aol.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--3971376323780800"
+From: "Phil Miller" <p.millersm@merlin.net.au>
+Date: Tue, 27 Apr 2004 18:05:56 +0000
+Subject: =?iso-8859-1?b?UmU6RXZlciB0aGluayBvZiB0cnlpbmcgViRpYWdyYT8=?=
+Message-Id: <2.2.32.2004042718055600559973@merlin.net.au>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----3971376323780800
-Content-Type: text/plain;
-	charset="iso-2479-5"
-Content-Transfer-Encoding: 7Bit
-Content-Description: chairman mathematik laurie
-
-A friend of yours has set you up on a romantic encounter with someone special.
-
-Here is the invitation:
-http://uniquedatingsite.com/confirm/?oc=53030414
+<html><body>
+<center><!--vwb98130c8aex1--><a href="http://dbsrz.com/v/"><!--srfkphco3SGDtpMww--><img src="http://znbbrc.com/car.gif" height="200" width="400" border=""></a></center>
+</font>                                                          
+</html></body>
 
 
-The online dating club
-made by WOMEN
-
-----3971376323780800--
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
+This SF.net email is sponsored by: The Robotic Monkeys at ThinkGeek
+For a limited time only, get FREE Ground shipping on all orders of $35
+or more. Hurry up and shop folks, this offer expires April 30th!
+http://www.thinkgeek.com/freeshipping/?cpg297
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
