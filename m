@@ -1,58 +1,33 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 25 Jan 2005 22:45:08 +0000
-Subject: [KJ] [PATCH] 9/34: block/swim_iop: replace interruptible_sleep_on()
-Message-Id: <20050125224508.GJ2689@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:13:37 +0000
+Subject: [KJ] [PATCH 30/53] kyrofb: Clean up printk()'s in
+Message-Id: <20050125231337.10418.9460.17033@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20135685039044171=="
+Content-Type: multipart/mixed; boundary="===============99731040072726096=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============20135685039044171==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============99731040072726096==
 
-Hi,
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/kyro/fbdev.c
 
-Please consider applying.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Description: Use wait_event_interruptible() instead of the deprecated
-interruptible_sleep_on(). The change is pretty straight-forward, as the current
-sleep is conditional.
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/kyro/fbdev.c linux-2.6.11-rc2-mm1/drivers/video/kyro/fbdev.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/kyro/fbdev.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/kyro/fbdev.c	2005-01-24 19:07:03.376259500 -0500
+@@ -739,7 +739,7 @@
+ 	if (register_framebuffer(info) < 0)
+ 		goto out_unmap;
+ 
+-	printk("fb%d: %s frame buffer device, at %dx%d@%d using %ldk/%ldk of VRAM\n",
++	pr_info("fb%d: %s frame buffer device, at %dx%d@%d using %ldk/%ldk of VRAM\n",
+ 	       info->node, info->fix.id, info->var.xres,
+ 	       info->var.yres, info->var.bits_per_pixel, size >> 10,
+ 	       (unsigned long)info->fix.smem_len >> 10);
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.11-rc2-kj-v/drivers/block/swim_iop.c	2005-01-25 14:42:49.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/block/swim_iop.c	2005-01-25 14:43:37.000000000 -0800
-@@ -32,6 +32,7 @@
- #include <linux/fd.h>
- #include <linux/ioctl.h>
- #include <linux/blkdev.h>
-+#include <linux/wait.h>
- #include <asm/io.h>
- #include <asm/uaccess.h>
- #include <asm/mac_iop.h>
-@@ -431,13 +432,11 @@ static int grab_drive(struct floppy_stat
- 	local_irq_save(flags);
- 	if (fs->state != idle) {
- 		++fs->wanted;
--		while (fs->state != available) {
--			if (interruptible && signal_pending(current)) {
--				--fs->wanted;
--				local_irq_restore(flags);
--				return -EINTR;
--			}
--			interruptible_sleep_on(&fs->wait);
-+		wait_event_interruptible(fs->wait, (fs->state == available));
-+		if (interruptible && signal_pending(current)) {
-+			--fs->wanted;
-+			local_irq_restore(flags);
-+			return -EINTR;
- 		}
- 		--fs->wanted;
- 	}
-
---===============20135685039044171==
+--===============99731040072726096==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20135685039044171==--
+--===============99731040072726096==--
