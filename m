@@ -1,48 +1,54 @@
-From: "meredith price" <chantay@patagonia.com.ar>
-Date: Thu, 11 Nov 2004 10:59:41 +0000
-Subject: Gain Muscle Mass
-Message-Id: <27D4DA0F.C51BB59@patagonia.com.ar>
+From: james4765@verizon.net
+Date: Sat, 20 Nov 2004 17:18:24 +0000
+Subject: [KJ] [PATCH][RESEND] floppy: relocate devfs comment
+Message-Id: <20041120171846.15784.42839.43474@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============89360969215535724=="
 List-Id: <kernel-janitors.vger.kernel.org>
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org, james4765@verizon.net
+
+--===============89360969215535724==
+
+Oops, forgot Signed-off-by: line.
+
+Signed-off-by: James Nelson <james4765@gmail.com>
+
+diff -urN --exclude='*~' linux-2.6.10-rc2-original/drivers/block/floppy.c linux-2.6.10-rc2/drivers/block/floppy.c
+--- linux-2.6.10-rc2-original/drivers/block/floppy.c	2004-11-15 21:38:15.000000000 -0500
++++ linux-2.6.10-rc2/drivers/block/floppy.c	2004-11-20 11:11:47.670201702 -0500
+@@ -98,6 +98,10 @@
+  */
+ 
+ /*
++ * 1998/1/21 -- Richard Gooch <rgooch@atnf.csiro.au> -- devfs support
++ */
++
++/*
+  * 1998/05/07 -- Russell King -- More portability cleanups; moved definition of
+  * interrupt and dma channel to asm/floppy.h. Cleaned up some formatting &
+  * use of '0' for NULL.
+@@ -159,10 +163,6 @@
+ #define FDPATCHES
+ #include <linux/fdreg.h>
+ 
+-/*
+- * 1998/1/21 -- Richard Gooch <rgooch@atnf.csiro.au> -- devfs support
+- */
+-
+ #include <linux/fd.h>
+ #include <linux/hdreg.h>
+ 
+
+--===============89360969215535724==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-It's another great way to make tangible improvements...Improvements that can
-be felt in your body and your brain
-
-Visit here to increase your quality of life
-http://lhra.1dY8.getnewsalesinfo.com/a/
-
-Restoring my former levels of fitness and energy with this product. Also
-have noted that my hair has stopped graying and thinning! This is after only
-2 months on the Axis spray -- Will update you later on my progress. Mark H.,
-Cleveland, OH
-
-
-
-po box in link above and you can say no thank you for the future
-
-With no proved survival benefit combination therapy may be unjustifiable 
-Several studies included in the overall and subgroup analyses directly
-assessed semiempirical combination versus monotherapy  These similarly do
-not support combination therapy for specific pathogens when detected  . Rob
-cared little for the quarrel between the Turks and Tatars, and under
-ordinary circumstances would have refused to side with one or the other; but
-he knew he could not hope to recover his electrical machines unless the city
-was taken by the band of warriors who had befriended him, so he determined
-to force an entrance for them
-Without hesitation he walked close to the great gate and shattered its
-fastenings with the force of the electric current directed upon them from
-the tube.
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by:
-Sybase ASE Linux Express Edition - download now for FREE
-LinuxWorld Reader's Choice Award Winner for best database on Linux.
-http://ads.osdn.com/?ad_idU88&alloc_id065&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============89360969215535724==--
