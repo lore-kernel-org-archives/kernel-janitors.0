@@ -1,51 +1,56 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 01 Sep 2004 22:19:03 +0000
-Subject: [Kernel-janitors] [PATCH] sonycd535: replace schedule_timeout() with
-Message-Id: <20040901221903.GC2516@us.ibm.com>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 29 Sep 2004 19:35:23 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 ide.c] [2/8] Patch to
+Message-Id: <12260000.1096486523@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32970358975029823=="
+Content-Type: multipart/mixed; boundary="===============070093637423261246=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040720205857.GE2959@us.ibm.com>
-In-Reply-To: <20040720205857.GE2959@us.ibm.com>
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, hannal@us.ibm.com, B.Zolnierkiewicz@elka.pw.edu.pl
 
---===============32970358975029823==
+--===============070093637423261246==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-This is one of 10 patches which have either not been pushed to mainline
-(2.6.9-rc1-bk7) or have not been included in any of the recent kjt's.
 
-Applys-to: 2.6.9-rc1-bk7
+As pci_find_device is going away it needs to be replaced. In this case the dev
+returned from pci_find_device was not being used so pci_dev_present was the
+appropriate replacement.
 
-Description: Uses msleep() instead of schedule_timeout() to guarantee
-the task delays at least the desired time amount.
+This has been compile and boot tested on a T22.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Hanna Linder
+IBM Linux Technology Center
 
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
---- 2.6.9-rc1-bk7-vanilla/drivers/cdrom/sonycd535.c	2004-08-31 21:26:50.000000000 +0000
-+++ 2.6.9-rc1-bk7-dev/drivers/cdrom/sonycd535.c	2004-09-01 21:38:39.000000000 +0000
-@@ -129,6 +129,7 @@
- #include <linux/mm.h>
- #include <linux/slab.h>
- #include <linux/init.h>
-+#include <linux/delay.h>
+diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/ide/ide.c linux-2.6.9-rc2-mm4patch/drivers/ide/ide.c
+--- linux-2.6.9-rc2-mm4cln/drivers/ide/ide.c	2004-09-28 14:58:25.000000000 -0700
++++ linux-2.6.9-rc2-mm4patch/drivers/ide/ide.c	2004-09-29 11:29:53.592066584 -0700
+@@ -335,11 +335,16 @@ static void __init init_ide_data (void)
  
- #define REALLY_SLOW_IO
- #include <asm/system.h>
-@@ -1478,8 +1479,7 @@ static int __init sony535_init(void)
- 	/* look for the CD-ROM, follows the procedure in the DOS driver */
- 	inb(select_unit_reg);
- 	/* wait for 40 18 Hz ticks (reverse-engineered from DOS driver) */
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout((HZ+17)*40/18);
-+	msleep(2223);
- 	inb(result_reg);
- 
- 	outb(0, read_status_reg);	/* does a reset? */
+ int ide_system_bus_speed (void)
+ {
++	static struct pci_device_id pci_default[] = {
++		{ PCI_DEVICE(PCI_ANY_ID, PCI_ANY_ID) },
++		{ }
++	};
++
+ 	if (!system_bus_speed) {
+ 		if (idebus_parameter) {
+ 			/* user supplied value */
+ 			system_bus_speed = idebus_parameter;
+-		} else if (pci_find_device(PCI_ANY_ID, PCI_ANY_ID, NULL) != NULL) {
++		} else if (pci_dev_present(pci_default)) {
+ 			/* safe default value for PCI */
+ 			system_bus_speed = 33;
+ 		} else {
 
---===============32970358975029823==
+
+
+
+--===============070093637423261246==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32970358975029823==--
+--===============070093637423261246==--
