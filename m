@@ -1,45 +1,29 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Wed, 26 Jan 2005 01:45:09 +0000
-Subject: [KJ] [PATCH 34/53][RESEND] fb: Clean up printk()'s in
-Message-Id: <20050126014508.10751.53372.67692@localhost.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40171392087418845=="
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Thu, 20 Jan 2005 19:36:40 +0000
+Subject: Re: [KJ] 	Status of checking for NULL, convert drivers to new PCI
+Message-Id: <41F00848.2050902@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============40171392087418845==
+Stephen torri wrote:
+> What is the status of these projects?
+> 
+> - get rid of save_flags_cli, use local_irq_save instead
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/modedb.c - resent after removing the whole #ifdef block
+There are lots of these that still need work, but we are
+not looking for a mechanical find&replace substitution
+of these deprecated functions.  See
+linux/Documentation/cli-sti-removal.txt for details.
+In lots of cases, it will mean adding spinlocks and
+understanding the driver enough to know what data must
+be protected... non-trivial...
 
-Signed-off-by: James Nelson <james4765@gmail.com>
-
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/modedb.c linux-2.6.11-rc2-mm1/drivers/video/modedb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/modedb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/modedb.c	2005-01-25 20:39:49.296864559 -0500
-@@ -23,11 +23,7 @@
- #define res_matches(v, x, y) \
-     ((v).xres == (x) && (v).yres == (y))
- 
--#ifdef DEBUG
--#define DPRINTK(fmt, args...)	printk("modedb %s: " fmt, __FUNCTION__ , ## args)
--#else
--#define DPRINTK(fmt, args...)
--#endif
-+#define DPRINTK(fmt, args...)	pr_debug("modedb %s: " fmt, __FUNCTION__ , ## args)
- 
- const char *global_mode_option;
- 
-
---===============40171392087418845==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-- 
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============40171392087418845==--
