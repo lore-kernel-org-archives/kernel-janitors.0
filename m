@@ -1,57 +1,57 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Mon, 08 Mar 2004 22:26:34 +0000
-Subject: Re: [Kernel-janitors] [PATCH] - Audit for drivers/block/floppy.c.
-Message-Id: <1078784794.20166.2.camel@telecentrolivre>
+From: Michael Still <mikal@stillhq.com>
+Date: Fri, 12 Mar 2004 23:42:48 +0000
+Subject: [Kernel-janitors] [2.6 Patch] mandocs-008: Fix breakage in SGML
+Message-Id: <40524AF8.7000308@stillhq.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1078342465.14557.44.camel@telecentrolivre>
-In-Reply-To: <1078342465.14557.44.camel@telecentrolivre>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Hi Francois,
+Heya,
 
-Em Seg, 2004-03-08 =E0s 17:30, Francois Romieu escreveu:
-> Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br> :
-> [...]
-> > +out5:
-> > +	for (i =3D 0; i < N_DRIVE; i++)
-> > +		del_timer(&motor_off_timer[i]);
-> > +out4:
-> > +	flush_scheduled_work();
-> > +	if (usage_count)
-> > +		floppy_release_irq_and_dma();
-> > +out3:
-> >  	blk_unregister_region(MKDEV(FLOPPY_MAJOR, 0), 256);
-> >  	blk_cleanup_queue(floppy_queue);
-> > -fail_queue:
-> > +out2:
-> >  	unregister_blkdev(FLOPPY_MAJOR,"fd");
-> > -out:
-> > -	for (i=3D0; i<N_DRIVE; i++)
-> > -		put_disk(disks[i]);
-> > +out1:
-> >  	devfs_remove("floppy");
-> > +out:
-> > +	while (dr--)
-> > +		put_disk(disks[dr]);
->=20
-> What about renaming "out" to "out_put_disk", "out1" to "out_devfs_remove"=
-, etc.
-> so that it is possible to verify that the code behind a label actually do=
-es
-> what it is supposed to do ?
+this patch is needed to get any of the SGML documentation to build with
+2.6.4. I originally mailled it to LKML the other day, but no one over 
+there has picked it up. I'm hoping people here might be more interested.
 
-Hummm.... Good point, I will rediff.
+Thanks,
+Mikal
 
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+--
+
+diff -Nur
+linux-2.6.4-rc2-cset-20040306_1807/Documentation/DocBook/parportbook.tmpl
+linux-2.6.4-rc2-cset-20040306_1807-mandocs/Documentation/DocBook/parportbook.tmpl
+---
+linux-2.6.4-rc2-cset-20040306_1807/Documentation/DocBook/parportbook.tmpl
+2004-03-07 11:24:14.000000000 +1100
++++
+linux-2.6.4-rc2-cset-20040306_1807-mandocs/Documentation/DocBook/parportbook.tmpl 
+
+2004-03-07 17:39:05.000000000 +1100
+@@ -2730,7 +2730,7 @@
+
+  </book>
+  <!-- Additional function to be documented:
+-!Ddrivers/parport/init.c
++--!Ddrivers/parport/init.c (this file doesn't exist any more)
+  -->
+  <!-- Local Variables: -->
+  <!-- sgml-indent-step: 1 -->
+
+-- 
+
+Michael Still (mikal@stillhq.com) | "All my life I've had one dream,
+http://www.stillhq.com            |  to achieve my many goals"
+UTC + 11                          |    -- Homer Simpson
 
 
+-- 
+
+Michael Still (mikal@stillhq.com) | "All my life I've had one dream,
+http://www.stillhq.com            |  to achieve my many goals"
+UTC + 11                          |    -- Homer Simpson
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
