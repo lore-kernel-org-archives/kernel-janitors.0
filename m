@@ -1,7 +1,7 @@
-From: Felipe W Damasio <felipewd@terra.com.br>
-Date: Mon, 26 Jan 2004 16:06:07 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Fix warning in drivers/ide/pci/triflex.c
-Message-Id: <40153AEF.6000907@terra.com.br>
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Thu, 29 Jan 2004 19:05:43 +0000
+Subject: [Kernel-janitors] [PATCH] Fix warning in drivers/net/pppoe.c when
+Message-Id: <1075403099.5628.61.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1074874158.5269.3.camel@telecentrolivre>
 In-Reply-To: <1074874158.5269.3.camel@telecentrolivre>
@@ -10,64 +10,68 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-	Greetings,
 
-Luiz Fernando Capitulino wrote:
-> hi all,
-> 
-> this patch fixes this warning:
-> 
-> drivers/ide/pci/triflex.c:49: warning: `triflex_get_info' defined but not used
-> 
-> here is:
-> 
-> diff -X dontdiff -Nru linux-2.6.2-rc2/drivers/ide/pci/triflex.c linux-2.6.2-rc2~/drivers/ide/pci/triflex.c
-> --- linux-2.6.2-rc2/drivers/ide/pci/triflex.c	2003-10-08 16:24:04.000000000 -0300
-> +++ linux-2.6.2-rc2~/drivers/ide/pci/triflex.c	2004-01-26 11:02:33.000000000 -0200
-> @@ -45,6 +45,7 @@
->  
->  static struct pci_dev *triflex_dev;
->  
-> +#ifdef CONFIG_PROC_FS
->  static int triflex_get_info(char *buf, char **addr, off_t offset, int count)
->  {
->  	char *p = buf;
-> @@ -91,6 +92,7 @@
->  	
->  	return len > count ? count : len;
->  }
-> +#endif
+hi,
 
-	Do we really need this chunk?
+When !CONFIG_PROC_FS, I'm getting this warning:
 
->  static int triflex_tune_chipset(ide_drive_t *drive, u8 xferspeed)
->  {
-> diff -X dontdiff -Nru linux-2.6.2-rc2/drivers/ide/pci/triflex.h linux-2.6.2-rc2~/drivers/ide/pci/triflex.h
-> --- linux-2.6.2-rc2/drivers/ide/pci/triflex.h	2003-10-08 16:24:26.000000000 -0300
-> +++ linux-2.6.2-rc2~/drivers/ide/pci/triflex.h	2004-01-26 11:02:33.000000000 -0200
-> @@ -14,8 +14,16 @@
->  
->  static unsigned int __devinit init_chipset_triflex(struct pci_dev *, const char *);
->  static void init_hwif_triflex(ide_hwif_t *);
-> +#ifdef CONFIG_PROC_FS
->  static int triflex_get_info(char *, char **, off_t, int);
-.
-.
-.
+drivers/net/pppoe.c: In function `pppoe_init':
+drivers/net/pppoe.c:1132: warning: label `out_unregister' defined but not used
 
-> +#endif
+this patch fixes that and removes a #ifdef/#endif inside a function. I
+would like to hear comments about it.
 
-	Since triflex_get_info is already #ifdef'd out if CONFIG_PROC_FS is not 
-set, we don't need to put that extra #ifdef on the .c file, since that 
-function will not get used anyway.
+diff -X dontdiff -Nru linux-2.6.2-rc2/drivers/net/pppoe.c linux-2.6.2-rc2~/drivers/net/pppoe.c
+--- linux-2.6.2-rc2/drivers/net/pppoe.c	2004-01-29 09:19:48.000000000 -0200
++++ linux-2.6.2-rc2~/drivers/net/pppoe.c	2004-01-29 09:24:30.000000000 -0200
+@@ -1076,6 +1076,20 @@
+ 	.llseek		= seq_lseek,
+ 	.release	= seq_release,
+ };
++
++static int __init pppoe_proc_init(void)
++{
++	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
++						     proc_net);
++
++	if (!p)
++		return 0;
++	
++	p->proc_fops = &pppoe_seq_fops;
++	return 1;
++}
++#else /* CONFIG_PROC_FS */
++static int inline pppoe_proc_init(void) { return 0; }
+ #endif /* CONFIG_PROC_FS */
+ 
+ /* ->ioctl are set at pppox_create */
+@@ -1112,18 +1126,11 @@
+ 
+ 	if (err)
+ 		goto out;
+-#ifdef CONFIG_PROC_FS
+-{
+-	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
+-						     proc_net);
++
+ 	err = -ENOMEM;
+-	if (!p)
++	if (!(err = pppoe_proc_init()))
+ 		goto out_unregister;
+ 	
+-	p->proc_fops = &pppoe_seq_fops;
+-	err = 0;
+-}
+-#endif /* CONFIG_PROC_FS */
+ 	dev_add_pack(&pppoes_ptype);
+ 	dev_add_pack(&pppoed_ptype);
+ 	register_netdevice_notifier(&pppoe_notifier);
 
-	IIRC the policy for adding #ifdefs on .c files is when it's really 
-necessary, and I don't really see the point for this (expect object size 
-and an extra symbol defined, which I don't think it really hurts here).
 
-	Cheers,
-
-Felipe
+-- 
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
 
 _______________________________________________
 Kernel-janitors mailing list
