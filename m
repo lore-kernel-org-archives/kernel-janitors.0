@@ -1,41 +1,64 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 22 Oct 2004 22:07:37 +0000
-Subject: [KJ] Re: block/pktcdvd: set_current_state() location
-Message-Id: <20041022220737.GC11126@us.ibm.com>
+Date: Fri, 22 Oct 2004 22:56:24 +0000
+Subject: [KJ] [PATCH] class/usblp: cleanup usblp_write()
+Message-Id: <20041022225624.GE11126@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============23599902926919691=="
+Content-Type: multipart/mixed; boundary="===============30788715070155459=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0410222350230.6238@telia.com>
-In-Reply-To: <Pine.LNX.4.58.0410222350230.6238@telia.com>
 To: kernel-janitors@vger.kernel.org
 
---===============23599902926919691==
-Content-Type: text/plain; charset=us-ascii
+--===============30788715070155459==
+Content-Type: text/PLAIN; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Oct 22, 2004 at 11:55:39PM +0200, Peter Osterlund wrote:
-> On Fri, 22 Oct 2004, Nishanth Aravamudan wrote:
-> 
-> > Jens & Peter,
-> >
-> > I was looking through 2.6.9-bk7 with the latest kjt (Kernel-Janitors
-> > patchset) applied and noticed a new schedule_timeout() in the code. In
-> > drivers/block/pktcdvd.c::kcdrwd(), the state is set at the head of the
-> > for(;;)-loop, while the sleeping doesn't occur until nearly the end of
-> > the same loop. Is there a reason for the code in-between to run in
-> > TASK_INTERRUPTIBLE?
-> 
-> Yes, it's needed to avoid race conditions. The code avoids race conditions
-> in the same way that __wait_event_timeout() does, but the "condition" is
-> much more complicated, so it wouldn't make sense to use the
-> __wait_event_timeout() macro directly.
+Hello,
 
-Great! Thanks for the quick response and information. I just wanted to
-make sure.
+In the process of cleaning up the remaining schedule_timeout()s in the
+current kernel, I came across drivers/usb/class/usblp.c::usblp_write().
+in this function, the second (counting by nesting) while-loop seemed
+very confusing to me. I believe the following patch would have the same
+result but is significantly cleaner. Would someone be able to test this
+and / or verify my belief?
 
--Nish
+Thanks,
+Nish
 
---===============23599902926919691==
+Description: The while-loop seemed excessively blocked with
+conditionals. By reorganizing the code so timeout is the condition for
+the loop and changing the checks within the loop, several lines of code
+were removed.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.9-bk7-vanilla/drivers/usb/class/usblp.c	2004-10-22 10:41:05.000000000 -0700
++++ 2.6.9-bk7/drivers/usb/class/usblp.c	2004-10-22 15:48:38.000000000 -0700
+@@ -636,19 +636,16 @@ static ssize_t usblp_write(struct file *
+ 
+ 			timeout = USBLP_WRITE_TIMEOUT;
+ 			add_wait_queue(&usblp->wait, &wait);
+-			while ( 1==1 ) {
+-
++			while (timeout) {
+ 				if (signal_pending(current)) {
+ 					remove_wait_queue(&usblp->wait, &wait);
+ 					return writecount ? writecount : -EINTR;
+ 				}
+-				set_current_state(TASK_INTERRUPTIBLE);
+-				if (timeout && !usblp->wcomplete) {
+-					timeout = schedule_timeout(timeout);
+-				} else {
+-					set_current_state(TASK_RUNNING);
++				if (usblp->wcomplete) {
+ 					break;
+ 				}
++				set_current_state(TASK_INTERRUPTIBLE);
++				timeout = schedule_timeout(timeout);
+ 			}
+ 			remove_wait_queue(&usblp->wait, &wait);
+ 		}
+
+--===============30788715070155459==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============23599902926919691==--
+--===============30788715070155459==--
