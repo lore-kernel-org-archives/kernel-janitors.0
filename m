@@ -1,90 +1,47 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 31 Oct 2004 14:45:24 +0000
-Subject: [KJ] [patch 6/6] libata remove msleep_libata()
-Message-Id: <20041031144524.GG28667@stro.at>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Thu, 21 Oct 2004 18:38:44 +0000
+Subject: [KJ] [PATCH 2.6] hw_random.c: replace pci_find_device
+Message-Id: <268450000.1098383924@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30326564941099665=="
+Content-Type: multipart/mixed; boundary="===============24756723801074387=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040923221303.GB13244@us.ibm.com> <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de> <415CD9D9.2000607@pobox.com> <20041030222228.GB1456@stro.at> <41841886.2080609@pobox.com>
-In-Reply-To: <41841886.2080609@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: Margit Schubert-While <margitsw@t-online.de>, Nishanth Aravamudan <nacc@us.ibm.com>, hvr@gnu.org, mcgrof@studorgs.rutgers.edu, kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, Domen Puncer <domen@coderock.org>, linux-kernel@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: greg@kroah.com, hannal@us.ibm.com, jgarzik@pobox.com
 
---===============30326564941099665==
+--===============24756723801074387==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
 
+As pci_find_device is going away I've replaced it with pci_get_device.
+for_each_pci_dev is a macro wrapper around pci_get_device.
+If someone with this hardware could test it I would appreciate it.
 
-remove msleep_libata(), now that msleep() is backported.
-also remove duplicate msleep() definition.
-delay.h is already included.
+Thanks.
 
-Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
+Hanna Linder
+IBM Linux Technology Center
 
-
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
 ---
-
- linux-2.4.28-rc1-max/drivers/scsi/libata-core.c |   23 -----------------------
- linux-2.4.28-rc1-max/include/linux/libata.h     |    1 -
- 2 files changed, 24 deletions(-)
-
-diff -puN drivers/scsi/libata-core.c~remove-libata_msleep drivers/scsi/libata-core.c
---- linux-2.4.28-rc1/drivers/scsi/libata-core.c~remove-libata_msleep	2004-10-31 14:06:49.000000000 +0100
-+++ linux-2.4.28-rc1-max/drivers/scsi/libata-core.c	2004-10-31 14:08:41.000000000 +0100
-@@ -67,28 +67,6 @@ MODULE_DESCRIPTION("Library module for A
- MODULE_LICENSE("GPL");
+diff -Nrup linux-2.6.9cln/drivers/char/hw_random.c linux-2.6.9patch3/drivers/char/hw_random.c
+--- linux-2.6.9cln/drivers/char/hw_random.c	2004-10-18 16:35:53.000000000 -0700
++++ linux-2.6.9patch3/drivers/char/hw_random.c	2004-10-20 14:52:42.000000000 -0700
+@@ -581,7 +581,7 @@ static int __init rng_init (void)
+ 	DPRINTK ("ENTER\n");
  
- /**
-- *	msleep - sleep for a number of milliseconds
-- *	@msecs: number of milliseconds to sleep
-- *
-- *	Issues schedule_timeout call for the specified number
-- *	of milliseconds.
-- *
-- *	LOCKING:
-- *	None.
-- */
--
--static void msleep(unsigned long msecs)
--{
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(msecs_to_jiffies(msecs) + 1);
--}
--
--void libata_msleep(unsigned long msecs)
--{
--	msleep(msecs);
--}
--
--/**
-  *	ata_tf_load - send taskfile registers to host controller
-  *	@ap: Port to which output is sent
-  *	@tf: ATA taskfile register set
-@@ -3697,7 +3675,6 @@ EXPORT_SYMBOL_GPL(ata_scsi_queuecmd);
- EXPORT_SYMBOL_GPL(ata_scsi_error);
- EXPORT_SYMBOL_GPL(ata_scsi_detect);
- EXPORT_SYMBOL_GPL(ata_add_to_probe_list);
--EXPORT_SYMBOL_GPL(libata_msleep);
- EXPORT_SYMBOL_GPL(ata_scsi_release);
- EXPORT_SYMBOL_GPL(ata_host_intr);
- EXPORT_SYMBOL_GPL(ata_dev_classify);
-diff -puN include/linux/libata.h~remove-libata_msleep include/linux/libata.h
---- linux-2.4.28-rc1/include/linux/libata.h~remove-libata_msleep	2004-10-31 14:06:49.000000000 +0100
-+++ linux-2.4.28-rc1-max/include/linux/libata.h	2004-10-31 14:09:08.000000000 +0100
-@@ -416,7 +416,6 @@ extern void ata_qc_complete(struct ata_q
- extern void ata_eng_timeout(struct ata_port *ap);
- extern void ata_add_to_probe_list (struct ata_probe_ent *probe_ent);
- extern int ata_std_bios_param(Disk * disk, kdev_t dev, int *ip);
--extern void libata_msleep(unsigned long msecs);
- 
- 
- static inline unsigned int ata_tag_valid(unsigned int tag)
-_
+ 	/* Probe for Intel, AMD RNGs */
+-	while ((pdev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, pdev)) != NULL) {
++	for_each_pci_dev(pdev) {
+ 		ent = pci_match_device (rng_pci_tbl, pdev);
+ 		if (ent) {
+ 			rng_ops = &rng_vendor_ops[ent->driver_data];
 
---===============30326564941099665==
+
+--===============24756723801074387==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -95,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30326564941099665==--
+--===============24756723801074387==--
