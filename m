@@ -1,53 +1,54 @@
-From: "Henry Courtney" <fg503udlm@wavelan.com>
-Date: Sun, 07 Mar 2004 15:32:55 +0000
-Subject: Kernel-janitor-discuss: metallurgic this worth a lookcaulk
-Message-Id: <90-z73$-p35ctm-k90714q$kv2wf@ii7q4m.c0>
+From: "Molly Schneider" <wekvzsqv@voyager.net>
+Date: Mon, 15 Mar 2004 08:56:32 +0000
+Subject: daybreak
+Message-Id: <4935060944042.16988076080545197884@biz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="B_87EC84E_DBBEF_"
+Content-Type: multipart/mixed; boundary="3246140053096255399"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--3246140053096255399
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
---B_87EC84E_DBBEF_
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
+discomfit deflate 
+chauncey wagoneer 
+tasty 
+generate 
+pillage 
+
+weapon cadent 
+
+--3246140053096255399
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
 <html>
-
 <head>
-<meta http-equiv=3D"Content-Language" content=3D"en-us">
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dwindows-=
-1252">
-
+<title>Untitled Document</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body>
-
-<p align=3D"center"><b><font color=3D"#3A711A">-New product available - </=
-font></b>
-</p>
-<p align=3D"center">&nbsp;</p>
-<p align=3D"center">Our pharmacy introduces CIALIS, and improved and refin=
-ed 
-version of Vlagra.<br>
-No more side effects, no more high prices.</p>
-<p align=3D"center">This product will keep you going for an entire weekend=
-,<br>
-&nbsp;giving you the strength to satisfy women.</p>
-<p align=3D"center"><b><font color=3D"#FF0000"><u>
-<a href=3D"http://www.mega-health.net/cia/?sales">Take a second and find o=
-ut more 
-about our offer.</a></u></font></b></p>
-<p align=3D"center">&nbsp;</p>
-<p align=3D"center">&nbsp;</p>
-<a href=3D"http://www.mega-health.net/off.html">get me out</a></font></p>
-
+<body bgcolor="#FFFFFF" text="#000000">
+<p>fabuklous! </p>
+<p>I took the only one pijll of Cialgs and that was such a GREAT weekend! </p>
+<p>All the girls at the party were just punch-drungk with my potentiagl <br>
+  I have fged all of them THREE times but my dgck WAS able to do some more! <br>
+  Cgalis - it`s COOL!!! The best weekend stuff I've ever trgied! Haven`t you tgried 
+  yet? <br>
+  <br>
+  <a href=http://g.msn.com/0US!s5.30695_812464/HP.1001?http://onlyherbal.net/sv/index.php?pid=eph0555>Try Here</a> </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a href=http://g.msn.com/0US!s5.30695_812464/HP.1001?http://onlyherbal.net/sv/applepie.php><font size="-1">No More Please</font></a></p>
 </body>
+</html>
 
-</html>r  eq zco q z
-oj
 
---B_87EC84E_DBBEF_--
+--3246140053096255399--
 
 
 
