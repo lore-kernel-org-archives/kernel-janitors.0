@@ -1,47 +1,54 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Tue, 08 Mar 2005 11:56:18 +0000
-Subject: [KJ] [PATCH] drivers/isdn/i4l/isdn_v110.c : fix warning
-Message-Id: <20050308115618.GY9952@rhum.iomeda.fr>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Tue, 08 Mar 2005 13:39:17 +0000
+Subject: Re: [KJ] [PATCH] drivers/isdn/i4l/isdn_v110.c : fix warning
+Message-Id: <200503081637.11615.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="0ntfKIWw70PvrIHh"
+Content-Type: multipart/mixed; boundary="===============38962351028865805=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050308115618.GY9952@rhum.iomeda.fr>
+In-Reply-To: <20050308115618.GY9952@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
-
---0ntfKIWw70PvrIHh
-Content-Type: text/plain; charset=us-ascii
+--===============38962351028865805==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Description:
-Fix compile warning on drivers/isdn/i4l/isdn_v110.c
+On Tuesday 08 March 2005 13:56, Christophe Lucas wrote:
+> Fix compile warning on drivers/isdn/i4l/isdn_v110.c
 
+> drivers/isdn/i4l/isdn_v110.c: In function `isdn_v110_stat_callback': 
+> drivers/isdn/i4l/isdn_v110.c:523: warning: 'ret' might be used uninitialized in this function
 
-It refers to:
-http://developer.osdl.org/cherry/compile/2.6/linux-2.6.11.results/2.6.11.allyesconfig.bzImage.txt
-drivers/isdn/i4l/isdn_v110.c: In function `isdn_v110_stat_callback': 
-drivers/isdn/i4l/isdn_v110.c:523: warning: 'ret' might be used uninitialized in this function
+> --- linux-2.6.11-vanilla/drivers/isdn/i4l/isdn_v110.c
+> +++ linux-2.6.11/drivers/isdn/i4l/isdn_v110.c
+> @@ -520,7 +520,7 @@ isdn_v110_stat_callback(int idx, isdn_ct
+>  {
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+> -	int ret;
+> +	int ret = 0 ;
 
---0ntfKIWw70PvrIHh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="patch-fix-warning-isdn-i4l-isdn_v110.diff"
+523		int ret;
 
-diff -urpN -X dontdiff linux-2.6.11-vanilla/drivers/isdn/i4l/isdn_v110.c linux-2.6.11/drivers/isdn/i4l/isdn_v110.c
---- linux-2.6.11-vanilla/drivers/isdn/i4l/isdn_v110.c	2005-03-02 08:38:33.000000000 +0100
-+++ linux-2.6.11/drivers/isdn/i4l/isdn_v110.c	2005-03-08 12:37:57.000000000 +0100
-@@ -520,7 +520,7 @@ isdn_v110_stat_callback(int idx, isdn_ct
- {
- 	isdn_v110_stream *v = NULL;
- 	int i;
--	int ret;
-+	int ret = 0 ;
- 
- 	if (idx < 0)
- 		return 0;
+538		for (i=0; i * v->framelen < c->parm.length; i++) {
+539			if (v->skbidle > 0) {
+540				v->skbidle--;
+541				ret = 1;
+542			} else {
+543				if (v->skbuser > 0)
+544					v->skbuser--;
+545				ret = 0;
+546			}
+547		}
 
---0ntfKIWw70PvrIHh
+567		return ret;
+
+Then we'd never know if somebody passed isdn_ctrl with parm.length == 0, right?
+
+	Alexey
+
+--===============38962351028865805==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---0ntfKIWw70PvrIHh--
+--===============38962351028865805==--
