@@ -1,62 +1,79 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Mar 2005 18:34:51 +0000
+Date: Thu, 03 Mar 2005 18:36:18 +0000
 Subject: Re: [KJ] 2.6.11-kj
-Message-Id: <20050303183451.GI11600@us.ibm.com>
+Message-Id: <20050303183618.GJ11600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17563835029339447=="
+Content-Type: multipart/mixed; boundary="===============29317299884427261=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050302095710.GA3745@nd47.coderock.org>
 In-Reply-To: <20050302095710.GA3745@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============17563835029339447==
+--===============29317299884427261==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Mar 03, 2005 at 09:16:19PM +0200, Alexey Dobriyan wrote:
-> On Thursday 03 March 2005 19:43, Nishanth Aravamudan wrote:
-> > On Thu, Mar 03, 2005 at 06:41:19PM +0200, Alexey Dobriyan wrote:
-> > > On Wednesday 02 March 2005 11:57, Domen Puncer wrote:
-> > > 
-> > > > int_sleep_on-drivers_cdrom_mcdx.patch
-> > > >   From: Nishanth Aravamudan <nacc@us.ibm.com>
-> > > >   Subject: [KJ] [PATCH 16/20] cdrom/mcdx: remove 	interruptible_sleep_on_timeout() usage
-> > > 
-> > > drivers/cdrom/mcdx.c:844:2: warning: mixing declarations and code
-> > > drivers/cdrom/mcdx.c: In function `mcdx_delay':
-> > > drivers/cdrom/mcdx.c:844: warning: ISO C90 forbids mixed declarations and code
-> > 
-> > I do not see these compile-time warnings.
+On Thu, Mar 03, 2005 at 09:55:02AM -0800, Randy.Dunlap wrote:
+> Nishanth Aravamudan wrote:
+> >On Thu, Mar 03, 2005 at 06:41:19PM +0200, Alexey Dobriyan wrote:
+> >
+> >>On Wednesday 02 March 2005 11:57, Domen Puncer wrote:
+> >>
+> >>
+> >>>remove_old_strings-drivers_telephony_ixj.patch
+> >>> From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+> >>> Subject: [KJ] [PATCH]  ixj* - compile warning cleanup
+> >>
+> >>drivers/telephony/ixj.c:6172:11: warning: incorrect type in argument 1 
+> >>(different address spaces)
+> >>drivers/telephony/ixj.c:6172:11:    expected char *buf
+> >>drivers/telephony/ixj.c:6172:11:    got void [noderef] *argp<asn:1>
+> >>
+> >>-               if (copy_to_user(argp, ixj_c_revision, 
+> >>strlen(ixj_c_revision)))
+> >>-                       retval = -EFAULT;
+> >>+               sprintf(argp, "\nDriver version %i.%i.%i", IXJ_VER_MAJOR, 
+> >>IXJ_VER_MINOR, IXJ_BLD_VER);
+> >>
+> >>
+> >>>int_sleep_on-drivers_cdrom_mcdx.patch
+> >>> From: Nishanth Aravamudan <nacc@us.ibm.com>
+> >>> Subject: [KJ] [PATCH 16/20] cdrom/mcdx: remove  
+> >>> interruptible_sleep_on_timeout() usage
+> >>
+> >>drivers/cdrom/mcdx.c:844:2: warning: mixing declarations and code
+> >>drivers/cdrom/mcdx.c: In function `mcdx_delay':
+> >>drivers/cdrom/mcdx.c:844: warning: ISO C90 forbids mixed declarations and 
+> >>code
+> >
+> >
+> >I do not see these compile-time warnings. Admittedly, that warning is
+> >also rather difficult to justify in the kernel, as code with local
+> >variables declared in the middle of functions is relatively common :)
 > 
-> Just use gcc 2.95.3. Nice compile error.
+> but not allowed/desirable in linux kernel...
 
-Fair enough, here's a patch which should fix it. Please let me know if
-it works and I'll push to LKML over the current KJ set. In this case,
-seems like 2.95.3's behavior is weird (I'm not arguing against the need
-to patch), as wait ends up being thrown away immediately if jifs<0. Oh
-well :)
+After thinking about it some, I agree.
 
-Description: The declaration of wait was inadvertently placed in the
-code when it should have been at the head of the function.
+> Probably Alexey is using an older but still supported/allowed gcc
+> (like 2.9x) and you (Nish) are using 3.4.x or 4.x, where mixed decls
+> and code are allowed.
+> 
+> >It could just be that I need to modify my gcc flags, though... In any
+> >case, I'm not sure how big of a problem this is, but of course am
+> >willing to fix it, if so desired.
+> 
+> It's a problem and should be fixed.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Thanks, Randy. I just sent a patch which should fix it. Alexey, I'm
+curious, do you see a lot of these compile-time warnings with the
+kernel? In that driver alone I see a handful of other places where dec's
+and code are mixed.
 
---- 2.6.11-kj-v/drivers/cdrom/mcdx.c	2005-03-02 11:21:41.000000000 -0800
-+++ 2.6.11-kj/drivers/cdrom/mcdx.c	2005-03-03 10:30:32.000000000 -0800
-@@ -838,10 +838,10 @@ static void mcdx_delay(struct s_drive_st
-  *	May be we could use a simple count loop w/ jumps to itself, but
-  *	I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
- {
-+	DEFINE_WAIT(wait);
- 	if (jifs < 0)
- 		return;
- 
--	DEFINE_WAIT(wait);
- 	xtrace(SLEEP, "*** delay: sleepq\n");
- 	prepare_to_wait(&stuff->sleepq, &wait, TASK_INTERRUPTIBLE);
- 	schedule_timeout(jifs);
+Thanks,
+Nish
 
---===============17563835029339447==
+--===============29317299884427261==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============17563835029339447==--
+--===============29317299884427261==--
