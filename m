@@ -1,40 +1,44 @@
-From: james4765@verizon.net
-Date: Thu, 28 Oct 2004 15:00:51 +0000
-Subject: [KJ] [PATCH 4/9] to arch/sparc/Kconfig
-Message-Id: <20041028150050.2776.32667.73956@localhost.localdomain>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Mon, 04 Oct 2004 21:19:37 +0000
+Subject: [Kernel-janitors] [PATCH 2.6] hades-pci.c: replace pci_find_device
+Message-Id: <280230000.1096924777@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============35101836223605831=="
+Content-Type: multipart/mixed; boundary="===============91251703480171487=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041028150029.2776.69333.50087@localhost.localdomain>
-In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
-To: kernel-janitors@lists.osdl.org
-Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, hannal@us.ibm.com, geert@linux-m68k.org, zippel@linux-m68k.org
 
---===============35101836223605831==
+--===============91251703480171487==
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Description: Remove x86-specific help in arch/sparc/Kconfig.
-Apply against 2.6.9.
 
-Signed-off by: James Nelson <james4765@gmail.com>
+As pci_find_device is going away I have replaced this call with pci_get_device.
+If anyone has access to a Hades Atari clone to test this one I would appreciate it..
 
-diff -u ./arch/sparc/Kconfig.orig ./arch/sparc/Kconfig
---- ./arch/sparc/Kconfig.orig	2004-10-16 09:53:49.626021592 -0400
-+++ ./arch/sparc/Kconfig	2004-10-16 10:15:30.184460399 -0400
-@@ -281,9 +281,9 @@
+Hanna Linder
+IBM Linux Technology Center
+
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+
+---
+diff -Nrup linux-2.6.9-rc3-mm2cln/arch/m68k/atari/hades-pci.c linux-2.6.9-rc3-mm2patch/arch/m68k/atari/hades-pci.c
+--- linux-2.6.9-rc3-mm2cln/arch/m68k/atari/hades-pci.c	2004-09-29 20:04:57.000000000 -0700
++++ linux-2.6.9-rc3-mm2patch/arch/m68k/atari/hades-pci.c	2004-10-04 13:30:44.120362824 -0700
+@@ -311,7 +311,7 @@ static void __init hades_fixup(int pci_m
+ 	 * Go through all devices, fixing up irqs as we see fit:
+ 	 */
  
- 	  If you have several parallel ports, you can specify which ports to
- 	  use with the "lp" kernel command line option.  (Try "man bootparam"
--	  or see the documentation of your boot loader (lilo or loadlin) about
--	  how to pass options to the kernel at boot time.)  The syntax of the
--	  "lp" command line option can be found in <file:drivers/char/lp.c>.
-+	  or see the documentation of your boot loader (silo) about how to pass
-+	  options to the kernel at boot time.)  The syntax of the "lp" command
-+	  line option can be found in <file:drivers/char/lp.c>.
- 
- 	  If you have more than 8 printers, you need to increase the LP_NO
- 	  macro in lp.c and the PARPORT_MAX macro in parport.h.
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL)
++	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL)
+ 	{
+ 		if (dev->class >> 16 != PCI_BASE_CLASS_BRIDGE)
+ 		{
 
---===============35101836223605831==
+
+
+--===============91251703480171487==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============35101836223605831==--
+--===============91251703480171487==--
