@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 22:50:02 +0000
-Subject: [Kernel-janitors] [PATCH] video/c-qcam: replace schedule_timeout()
-Message-Id: <20040726225002.GO1897@us.ibm.com>
+Date: Thu, 22 Jul 2004 22:22:53 +0000
+Subject: [Kernel-janitors] [PATCH] ide-cd: replace schedule_timeout() with
+Message-Id: <20040722222253.GR2165@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38161154995099977=="
+Content-Type: multipart/mixed; boundary="===============6886352648981382=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============38161154995099977==
+--===============6886352648981382==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -23,7 +23,8 @@ msleep(jiffies_to_msecs(some_time));
 
 msleep() is not exactly the same as the previous code, but I only did
 this replacement where I thought long delays were *desired*. If this is
-not the case here, then just disregard this patch. 
+not the case here, then just disregard this patch. I think in this case,
+though, because of the while() loop, this was the desired effect.
 
 Thanks,
 Nish
@@ -32,36 +33,45 @@ Nish
 
 Applys-to: 2.6.7
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+Description: Replace cdrom_sleep() with msleep() and remove
+cdrom_sleep() definition.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/video/c-qcam.c	2004-06-16 05:19:22.000000000 +0000
-+++ linux-dev/drivers/media/video/c-qcam.c	2004-07-12 18:50:24.000000000 +0000
-@@ -103,8 +103,7 @@ static unsigned int qcam_await_ready1(st
- 	{
- 		if (qcam_ready1(qcam) == value)
- 			return 0;
--		current->state=TASK_INTERRUPTIBLE;
--		schedule_timeout(HZ/10);
-+		msleep(100);
- 	}
+--- linux-vanilla/drivers/ide/ide-cd.c	2004-06-16 05:19:22.000000000 +0000
++++ linux-dev/drivers/ide/ide-cd.c	2004-07-02 17:56:23.000000000 +0000
+@@ -1527,19 +1527,6 @@ static ide_startstop_t cdrom_do_packet_c
+ }
  
- 	/* Probably somebody pulled the plug out.  Not much we can do. */
-@@ -129,8 +128,7 @@ static unsigned int qcam_await_ready2(st
- 	{
- 		if (qcam_ready2(qcam) == value)
- 			return 0;
--		current->state=TASK_INTERRUPTIBLE;
--		schedule_timeout(HZ/10);
-+		msleep(100);
- 	}
  
- 	/* Probably somebody pulled the plug out.  Not much we can do. */
+-/* Sleep for TIME jiffies.
+-   Not to be called from an interrupt handler. */
+-static
+-void cdrom_sleep (int time)
+-{
+-	int sleep = time;
+-
+-	do {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		sleep = schedule_timeout(sleep);
+-	} while (sleep);
+-}
+-
+ static
+ int cdrom_queue_packet_command(ide_drive_t *drive, struct request *rq)
+ {
+@@ -1574,7 +1561,7 @@ int cdrom_queue_packet_command(ide_drive
+ 				/* The drive is in the process of loading
+ 				   a disk.  Retry, but wait a little to give
+ 				   the drive time to complete the load. */
+-				cdrom_sleep(2 * HZ);
++				msleep(2000);
+ 			} else {
+ 				/* Otherwise, don't retry. */
+ 				retries = 0;
 
---===============38161154995099977==
+--===============6886352648981382==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +82,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38161154995099977==--
+--===============6886352648981382==--
