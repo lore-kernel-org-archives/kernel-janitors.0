@@ -1,46 +1,46 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 28 Jul 2004 17:50:59 +0000
-Subject: [Kernel-janitors] [PATCH] video/radeon_base: replace MS_TO_HZ()
-Message-Id: <20040728175059.GH1935@us.ibm.com>
+Date: Fri, 23 Jul 2004 20:40:32 +0000
+Subject: [Kernel-janitors] [PATCH] isdn/hisax: replace schedule_timeout()
+Message-Id: <20040723204032.GC2675@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16186741581590902=="
+Content-Type: multipart/mixed; boundary="===============70338518177820675=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============16186741581590902==
+--===============70338518177820675==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. 
+I would appreciate any comments from the janitors list.
+
+Thanks,
+Nish
+
+
 
 Applys-to: 2.6.7
 
-Description: Replace MS_TO_HZ() with msecs_to_jiffies().
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays the desired time.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/video/aty/radeon_base.c	2004-06-15 22:19:10.000000000 -0700
-+++ linux-dev/drivers/video/aty/radeon_base.c	2004-07-28 10:32:25.000000000 -0700
-@@ -61,6 +61,7 @@
- #include <linux/tty.h>
- #include <linux/slab.h>
- #include <linux/delay.h>
-+#include <linux/time.h>
- #include <linux/fb.h>
- #include <linux/ioport.h>
- #include <linux/init.h>
-@@ -1279,7 +1280,7 @@ static void radeon_write_mode (struct ra
- 					OUTREG(LVDS_GEN_CNTL, mode->lvds_gen_cntl | LVDS_BLON);
- 				rinfo->pending_lvds_gen_cntl = mode->lvds_gen_cntl;
- 				mod_timer(&rinfo->lvds_timer,
--					  jiffies + MS_TO_HZ(rinfo->panel_info.pwr_delay));
-+					  jiffies + msecs_to_jiffies(rinfo->panel_info.pwr_delay));
- 			}
- 		}
+--- linux-vanilla/drivers/isdn/hisax/config.c	2004-06-16 05:19:52.000000000 +0000
++++ linux-dev/drivers/isdn/hisax/config.c	2004-07-02 18:13:46.000000000 +0000
+@@ -849,9 +849,8 @@ static int init_card(struct IsdnCardStat
  	}
+ 	while (cnt) {
+ 		cs->cardmsg(cs, CARD_INIT, NULL);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		/* Timeout 10ms */
+-		schedule_timeout((10 * HZ) / 1000);
++		msleep(10);
+ 		printk(KERN_INFO "%s: IRQ %d count %d\n",
+ 		       CardType[cs->typ], cs->irq, kstat_irqs(cs->irq));
+ 		if (kstat_irqs(cs->irq) == irq_cnt) {
 
---===============16186741581590902==
+--===============70338518177820675==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16186741581590902==--
+--===============70338518177820675==--
