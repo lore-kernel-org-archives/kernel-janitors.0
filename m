@@ -1,51 +1,83 @@
 From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Thu, 08 Jan 2004 17:18:22 +0000
-Subject: [Kernel-janitors] [REDIFF] Fix warning in drivers/ide/pci/siimage.c
-Message-Id: <1073582302.6115.42.camel@telecentrolivre>
+Date: Fri, 30 Jan 2004 12:43:24 +0000
+Subject: [Kernel-janitors] [REDIFF] Fix warning in drivers/net/pppoe.c when
+Message-Id: <1075466604.10543.30.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1073582302.6115.42.camel@telecentrolivre>
+In-Reply-To: <1073582302.6115.42.camel@telecentrolivre>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+hi,
 
-Hi all,
+ Here goes the rediff, it fixes this warning:
 
-the some patch, only the new format in the if(), as noted by Randy.
+drivers/net/pppoe.c: In function `pppoe_init':
+drivers/net/pppoe.c:1132: warning: label `out_unregister' defined but not used
 
-diff -X dontdiff -Nru linux-2.6.1-rc3/drivers/ide/pci/siimage.c linux-2.6.1-rc3~/drivers/ide/pci/siimage.c
---- linux-2.6.1-rc3/drivers/ide/pci/siimage.c	2003-10-28 08:10:27.000000000 -0200
-+++ linux-2.6.1-rc3~/drivers/ide/pci/siimage.c	2004-01-08 14:34:28.000000000 -0200
-@@ -767,20 +767,17 @@
-  
- static void proc_reports_siimage (struct pci_dev *dev, u8 clocking, const char *name)
- {
--	if(pdev_is_sata(dev))
--		goto sata_skip;
--
--	printk(KERN_INFO "%s: BASE CLOCK ", name);
--	clocking &= 0x03;
--	switch(clocking) {
--		case 0x03: printk("DISABLED !\n"); break;
--		case 0x02: printk("= 2X PCI \n"); break;
--		case 0x01: printk("= 133 \n"); break;
--		case 0x00: printk("= 100 \n"); break;
-+	if(!pdev_is_sata(dev)) {
-+		printk(KERN_INFO "%s: BASE CLOCK ", name);
-+		clocking &= 0x03;
-+		switch(clocking) {
-+			case 0x03: printk("DISABLED !\n"); break;
-+			case 0x02: printk("= 2X PCI \n"); break;
-+			case 0x01: printk("= 133 \n"); break;
-+			case 0x00: printk("= 100 \n"); break;
-+		}
- 	}
+ Look that I had changed the return values of pppoe_proc_init() to
+match with the driver behaviour. Thus, when CONFIG_PROC_FS is not set,
+pppoe_proc_init() is returning 1, instead of 0.
+
+diff -X dontdiff -Nru linux-2.6.2-rc2-bk2/drivers/net/pppoe.c linux-2.6.2-rc2-bk2~/drivers/net/pppoe.c
+--- linux-2.6.2-rc2-bk2/drivers/net/pppoe.c	2004-01-30 09:33:19.000000000 -0200
++++ linux-2.6.2-rc2-bk2~/drivers/net/pppoe.c	2004-01-30 09:53:40.000000000 -0200
+@@ -1076,6 +1076,20 @@
+ 	.llseek		= seq_lseek,
+ 	.release	= seq_release,
+ };
++
++static int __init pppoe_proc_init(void)
++{
++	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
++						     proc_net);
++
++	if (!p)
++		return 1;
++	
++	p->proc_fops = &pppoe_seq_fops;
++	return 0;
++}
++#else /* CONFIG_PROC_FS */
++static int inline pppoe_proc_init(void) { return 1; }
+ #endif /* CONFIG_PROC_FS */
  
--sata_skip:
--
- #if defined(DISPLAY_SIIMAGE_TIMINGS) && defined(CONFIG_PROC_FS)
- 	siimage_devs[n_siimage_devs++] = dev;
+ /* ->ioctl are set at pppox_create */
+@@ -1112,26 +1126,18 @@
  
+ 	if (err)
+ 		goto out;
+-#ifdef CONFIG_PROC_FS
+-{
+-	struct proc_dir_entry *p = create_proc_entry("pppoe", S_IRUGO,
+-						     proc_net);
+-	err = -ENOMEM;
+-	if (!p)
+-		goto out_unregister;
++
++	if ((err = pppoe_proc_init())) {
++		unregister_pppox_proto(PX_PROTO_OE);
++		err = -ENOMEM;
++		goto out;
++	}
+ 	
+-	p->proc_fops = &pppoe_seq_fops;
+-	err = 0;
+-}
+-#endif /* CONFIG_PROC_FS */
+ 	dev_add_pack(&pppoes_ptype);
+ 	dev_add_pack(&pppoed_ptype);
+ 	register_netdevice_notifier(&pppoe_notifier);
+ out:
+ 	return err;
+-out_unregister:
+-	unregister_pppox_proto(PX_PROTO_OE);
+-	goto out;
+ }
+ 
+ static void __exit pppoe_exit(void)
 
 -- 
 Luiz Fernando N. Capitulino
