@@ -1,38 +1,37 @@
-From: Steffen Klassert <klassert@mathematik.tu-chemnitz.de>
-Date: Thu, 18 Nov 2004 13:19:57 +0000
-Subject: Re: [KJ] [patch] net/3c59x: module_param conversions
-Message-Id: <20041118131957.GB20050@gareth.mathematik.tu-chemnitz.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64154390432670483=="
+From: Andrew McGregor <am@misk.net>
+Date: Tue, 16 Nov 2004 00:02:16 +0000
+Subject: [KJ] [patch scsi/zalon 1] scsi/zalon: Added KERN macro to printk()
+Message-Id: <1100563336.41994388ca77d@webmail.misk.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041116181044.GA8698@nd47.coderock.org>
-In-Reply-To: <20041116181044.GA8698@nd47.coderock.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============64154390432670483==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
-On Tue, Nov 16, 2004 at 07:10:44PM +0100 or thereabouts, Domen Puncer wrote:
-> Convert 3c59x.c to new module parameter api.
-> Variables are moved before module_param*.
+I have added a KERN macro to a printk() function as requested in the Kernel
+Janitor's TODO list.
 
-Just a remark,
-the module_param conversion for the 3c59x driver is already in the -mm tree.
-Many people route their patches through -mm, so it is in general a good 
-idea to look whats in -mm before starting to work.
+Signed-off-by: Andrew McGregor <am@misk.net>
 
-Steffen
+--
 
---===============64154390432670483==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--- drivers/scsi/zalon.c        Mon Nov 15 23:38:14 2004
++++ /root/linux/janitor-linux-2.6.9/drivers/scsi/zalon.c        Mon Nov 15
+23:38:01 2004
+@@ -109,7 +109,7 @@ zalon_probe(struct parisc_device *dev)
+        */
+        irq = gsc_alloc_irq(&gsc_irq);
+
+-       printk("%s: Zalon vers field is 0x%x, IRQ %d\n", __FUNCTION__,
++       printk(KERN_INFO "%s: Zalon vers field is 0x%x, IRQ %d\n", __FUNCTION__,
+                zalon_vers, irq);
+
+        __raw_writel(gsc_irq.txn_addr | gsc_irq.txn_data, dev->hpa +
+IO_MODULE_EIM);
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============64154390432670483==--
