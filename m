@@ -1,40 +1,53 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 22:18:11 +0000
-Subject: [Kernel-janitors] [PATCH] s390/zfcp_fsf: replace schedule_timeout()
-Message-Id: <20040727221811.GH3471@us.ibm.com>
+Date: Tue, 20 Jul 2004 21:01:22 +0000
+Subject: [Kernel-janitors] [PATCH] sis-agp: replace schedule_timeout() with
+Message-Id: <20040720210122.GF2959@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8200447056388922=="
+Content-Type: multipart/mixed; boundary="===============56965950633644757=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============8200447056388922==
+--===============56965950633644757==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list. 
+I would appreciate any comments from the janitors list.
+
+Thanks,
+Nish
+
+
 
 Applys-to: 2.6.7
 
-Description: Use msleep() instead of schedule_timeout() to 
-guarantee the task delays for the desired time.
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/s390/scsi/zfcp_fsf.c	2004-06-16 05:19:43.000000000 +0000
-+++ linux-dev/drivers/s390/scsi/zfcp_fsf.c	2004-07-03 03:45:33.000000000 +0000
-@@ -180,8 +180,7 @@ zfcp_fsf_req_dismiss_all(struct zfcp_ada
- 		ZFCP_LOG_DEBUG("fsf req list of adapter %s not yet empty\n",
- 			       zfcp_get_busid_by_adapter(adapter));
- 		/* wait for woken intiators to clean up their requests */
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(ZFCP_FSFREQ_CLEANUP_TIMEOUT);
-+		msleep(jiffies_to_msecs(ZFCP_FSFREQ_CLEANUP_TIMEOUT));
- 	}
+--- linux-vanilla/drivers/char/agp/sis-agp.c	2004-06-16 05:18:56.000000000 +0000
++++ linux-dev/drivers/char/agp/sis-agp.c	2004-07-15 23:11:23.000000000 +0000
+@@ -5,6 +5,7 @@
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/init.h>
++#include <linux/delay.h>
+ #include <linux/agp_backend.h>
+ #include "agp.h"
  
- 	/* consistency check */
+@@ -102,8 +103,7 @@ static void sis_delayed_enable(u32 mode)
+ 		 */
+ 		if (device->device == agp_bridge->dev->device) {
+ 			printk(KERN_INFO PFX "SiS delay workaround: giving bridge time to recover.\n");
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout (1+(HZ*10)/1000);
++			msleep(HZ);		/* sleep 1s */
+ 		}
+ 	}
+ }
 
---===============8200447056388922==
+--===============56965950633644757==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8200447056388922==--
+--===============56965950633644757==--
