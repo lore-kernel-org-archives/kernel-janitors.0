@@ -1,50 +1,30 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Fri, 18 Jun 2004 09:43:07 +0000
-Subject: Re: [Kernel-janitors] please comment on this patch
-Message-Id: <20040618094307.GC21628@sputnik.stro.at>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61654632038542045=="
+From: "Ivan Van den Bossche" <ivdbossche@hotmail.com>
+Date: Mon, 21 Jun 2004 18:09:15 +0000
+Subject: [Kernel-janitors] auditing return codes
+Message-Id: <BAY18-F57lbjCLP5Vvf000048a5@hotmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200406160257.i5G2vWLJ023048@sirius.cs.pdx.edu>
-In-Reply-To: <200406160257.i5G2vWLJ023048@sirius.cs.pdx.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============61654632038542045==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi everybody,
 
-On Fri, 18 Jun 2004, Nicolas Kaiser wrote:
+I've looked at the TODO list at the janitors website and I would like to 
+know if somebody is busy with auditing return codes for the following 
+functions:
 
-> * Kristen Carlson <kristenc@cs.pdx.edu>:
-> 
-> > Here's a new patch, please let me know what you think.
-> 
-> >  	/*
-> >  	 * Check for ESP card
-> >  	 */
-> > -
-> > -	if (!check_region(info->port, 8) && 
-> > -	    serial_in(info, UART_ESI_BASE) == 0xf3) {
-> > +	
->     ^^^^
-> > +	if (serial_in(info, UART_ESI_BASE) == 0xf3) {
-> 
-> 
-> Just nitpicking: Looks like trailing whitespace.
+kmalloc(), vmalloc(), skb_alloc(), etc
 
-corrected 2 other occurrences for the kjt patch set.
-a++ maks
+Thanks a lot
+With kind regards,
+Ivan Van den Bossche
 
-
---===============61654632038542045==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+_________________________________________________________________
+en win een extra maandsalaris. 
+http://www.msn.be/jobs/salarisenquete/default.asp
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============61654632038542045==--
