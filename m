@@ -1,42 +1,58 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Wed, 26 Jan 2005 21:27:04 +0000
-Subject: [KJ] [PATCH 19/53][RESEND] cyberfb: Clean up printk()'s in
-Message-Id: <20050126212659.14055.47692.81385@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 26 Jan 2005 00:49:18 +0000
+Subject: [KJ] [PATCH 33/33] usb/io_edgeport: replace
+Message-Id: <20050126004918.GY12649@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17322603311010631=="
+Content-Type: multipart/mixed; boundary="===============33622233254385081=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============17322603311010631==
+--===============33622233254385081==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/cyberfb.c - resent after fixing the driver name in one printk.
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/cyberfb.c linux-2.6.11-rc2-mm1/drivers/video/cyberfb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/cyberfb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/cyberfb.c	2005-01-26 16:19:32.555776095 -0500
-@@ -1061,7 +1061,7 @@
- 		    return -EINVAL;
- 	    }
+Description: Use wait_event_timeout() instead of deprecated
+interruptible_sleep_on_timeout(). Signals are not checked in the current code,
+so interruptible should not be necessary. Patch is compile-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/drivers/usb/serial/io_edgeport.c	2005-01-24 09:34:15.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/usb/serial/io_edgeport.c	2005-01-24 17:16:45.000000000 -0800
+@@ -261,6 +261,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/serial.h>
+ #include <linux/ioctl.h>
++#include <linux/wait.h>
+ #include <asm/uaccess.h>
+ #include <linux/usb.h>
+ #include "usb-serial.h"
+@@ -991,7 +992,6 @@ static int edge_open (struct usb_serial_
+ 	struct usb_serial *serial;
+ 	struct edgeport_serial *edge_serial;
+ 	int response;
+-	int timeout;
  
--	    printk("fb%d: %s frame buffer device, using %ldK of video memory\n",
-+	    pr_info("fb%d: %s frame buffer device, using %ldK of video memory\n",
- 		   fb_info.node, fb_info.modename, CyberSize>>10);
+ 	dbg("%s - port %d", __FUNCTION__, port->number);
  
- 	    /* TODO: This driver cannot be unloaded yet */
-@@ -1432,7 +1432,7 @@
- 
- 	DPRINTK("ENTER\n");
- 	if (freq < 12500000 || freq > MAXPIXELCLOCK) {
--		printk("CV64 driver: Illegal clock frequency %ld, using 25MHz\n",
-+		printk(KERN_WARNING "cyberfb: Illegal clock frequency %ld, using 25MHz\n",
- 		       freq);
- 		freq = 25000000;
+@@ -1073,10 +1073,7 @@ static int edge_open (struct usb_serial_
  	}
+ 
+ 	/* now wait for the port to be completely opened */
+-	timeout = OPEN_TIMEOUT;
+-	while (timeout && edge_port->openPending == TRUE) {
+-		timeout = interruptible_sleep_on_timeout (&edge_port->wait_open, timeout);
+-	}
++	wait_event_timeout(edge_port->wait_open, (edge_port->openPending != TRUE), OPEN_TIMEOUT);
+ 
+ 	if (edge_port->open == FALSE) {
+ 		/* open timed out */
 
---===============17322603311010631==
+--===============33622233254385081==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============17322603311010631==--
+--===============33622233254385081==--
