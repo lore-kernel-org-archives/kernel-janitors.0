@@ -1,76 +1,562 @@
 From: Domen Puncer <domen@coderock.org>
-Date: Sat, 24 Jul 2004 21:27:10 +0000
-Subject: [Kernel-janitors] [patch 2.6.8-rc2] replace PRINTK with pr_debug in
-Message-Id: <20040724212709.GB3633@masina.coderock.org>
+Date: Sat, 24 Jul 2004 21:51:52 +0000
+Subject: [Kernel-janitors] [patch 2.6.8-rc2] replace dprintk with pr_debug
+Message-Id: <20040724215152.GC3633@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93906867038682562=="
+Content-Type: multipart/mixed; boundary="===============60719723685905835=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040724211801.GA3633@masina.coderock.org>
 In-Reply-To: <20040724211801.GA3633@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============93906867038682562==
+--===============60719723685905835==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi.
 
-Removed unused dprintk, replaced PRINTK with pr_debug.
+Replaced dprintk, and deleted it out of tpam.h.
 Compile tested.
+
+
+ drivers/isdn/tpam/tpam.h          |   11 +-------
+ drivers/isdn/tpam/tpam_commands.c |   50 +++++++++++++++++++-------------------
+ drivers/isdn/tpam/tpam_nco.c      |   34 ++++++++++++-------------
+ drivers/isdn/tpam/tpam_queues.c   |   26 +++++++++----------
+ 4 files changed, 57 insertions(+), 64 deletions(-)
 
 
 Signed-off-by: Domen Puncer <domen@coderock.org>
 
---- c/drivers/block/umem.c	Wed Jun 16 07:20:26 2004
-+++ a/drivers/block/umem.c	Sat Jul 24 23:23:09 2004
-@@ -34,6 +34,7 @@
-  *			 - set initialised bit then.
-  */
+diff -pruNX dontdiff c/drivers/isdn/tpam/tpam.h a/drivers/isdn/tpam/tpam.h
+--- c/drivers/isdn/tpam/tpam.h	Fri Jul 23 16:00:20 2004
++++ a/drivers/isdn/tpam/tpam.h	Sat Jul 24 23:45:38 2004
+@@ -14,6 +14,8 @@
+ #ifndef _TPAM_PRIV_H_
+ #define _TPAM_PRIV_H_
  
-+//#define DEBUG /* uncomment if you want debugging info (pr_debug) */
- #include <linux/config.h>
- #include <linux/sched.h>
- #include <linux/fs.h>
-@@ -58,10 +59,6 @@
- #include <asm/uaccess.h>
- #include <asm/io.h>
- 
--#define PRINTK(x...) do {} while (0)
--#define dprintk(x...) do {} while (0)
--/*#define dprintk(x...) printk(x) */
++//#define DEBUG /* uncomment if you want debugging output */
++#include <linux/kernel.h>
+ #include <linux/isdnif.h>
+ #include <linux/init.h>
+ #include <linux/workqueue.h>
+@@ -223,14 +225,5 @@ extern void init_CRC(void);
+ extern void hdlc_encode_modem(u8 *, u32, u8 *, u32 *);
+ extern void hdlc_no_accm_encode(u8 *, u32, u8 *, u32 *);
+ extern u32 hdlc_no_accm_decode(u8 *, u32);
 -
- #define MM_MAXCARDS 4
- #define MM_RAHEAD 2      /* two sectors */
- #define MM_BLKSIZE 1024  /* 1k blocks */
-@@ -299,7 +296,7 @@
+-/* Define this to enable debug tracing prints */
+-#undef DEBUG
+-
+-#ifdef DEBUG
+-#define dprintk printk
+-#else
+-#define dprintk while(0) printk
+-#endif
  
- 	/* make the last descriptor end the chain */
- 	page = &card->mm_pages[card->Active];
--	PRINTK("start_io: %d %d->%d\n", card->Active, page->headcnt, page->cnt-1);
-+	pr_debug("start_io: %d %d->%d\n", card->Active, page->headcnt, page->cnt-1);
- 	desc = &page->desc[page->cnt-1];
+ #endif /* _TPAM_H_ */
+diff -pruNX dontdiff c/drivers/isdn/tpam/tpam_commands.c a/drivers/isdn/tpam/tpam_commands.c
+--- c/drivers/isdn/tpam/tpam_commands.c	Fri Jul 23 16:00:20 2004
++++ a/drivers/isdn/tpam/tpam_commands.c	Sat Jul 24 23:32:31 2004
+@@ -45,7 +45,7 @@ int tpam_command(isdn_ctrl *c) {
+ 	tpam_card *card;
+ 	unsigned long argp;
  
- 	desc->control_bits |= cpu_to_le32(DMASCR_CHAIN_COMP_EN);
-@@ -532,7 +529,7 @@
- 		activate(card);
- 	} else {
- 		/* haven't finished with this one yet */
--		PRINTK("do some more\n");
-+		pr_debug("do some more\n");
- 		mm_start_io(card);
+-	dprintk("TurboPAM(tpam_command) card=%d, command=%d\n", 
++	pr_debug("TurboPAM(tpam_command) card=%d, command=%d\n", 
+ 		c->driver, c->command);	
+ 
+ 	/* search for the board */
+@@ -75,7 +75,7 @@ int tpam_command(isdn_ctrl *c) {
+ 					return tpam_command_ioctl_loopmode(card,
+ 									   0);
+ 				default:
+-					dprintk("TurboPAM(tpam_command): "
++					pr_debug("TurboPAM(tpam_command): "
+ 						"invalid tpam ioctl %ld\n", 
+ 						c->arg);	
+ 					return -EINVAL;
+@@ -95,7 +95,7 @@ int tpam_command(isdn_ctrl *c) {
+ 		case ISDN_CMD_PROCEED:
+ 			return tpam_command_proceed(card, c->arg);
+ 		default:
+-			dprintk("TurboPAM(tpam_command): "
++			pr_debug("TurboPAM(tpam_command): "
+ 				"unknown or unused isdn ioctl %d\n", 
+ 				c->command);	
+ 			return -EINVAL;
+@@ -117,7 +117,7 @@ int tpam_command(isdn_ctrl *c) {
+ static int tpam_command_ioctl_dspload(tpam_card *card, u32 arg) {
+ 	tpam_dsp_ioctl tdl;
+ 
+-	dprintk("TurboPAM(tpam_command_ioctl_dspload): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_command_ioctl_dspload): card=%d\n", card->id);
+ 
+ 	/* get the IOCTL parameter from userspace */
+ 	if (copy_from_user(&tdl, (void __user *)arg, sizeof(tpam_dsp_ioctl)))
+@@ -147,7 +147,7 @@ static int tpam_command_ioctl_dspload(tp
+ static int tpam_command_ioctl_dspsave(tpam_card *card, u32 arg) {
+ 	tpam_dsp_ioctl tdl;
+ 
+-	dprintk("TurboPAM(tpam_command_ioctl_dspsave): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_command_ioctl_dspsave): card=%d\n", card->id);
+ 
+ 	/* get the IOCTL parameter from userspace */
+ 	if (copy_from_user(&tdl, (void __user *)arg, sizeof(tpam_dsp_ioctl)))
+@@ -178,7 +178,7 @@ static int tpam_command_ioctl_dsprun(tpa
+ 	isdn_ctrl ctrl;
+ 	struct sk_buff *skb;
+ 
+-	dprintk("TurboPAM(tpam_command_ioctl_dsprun): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_command_ioctl_dsprun): card=%d\n", card->id);
+ 
+ 	/* board must _not_ be running */
+ 	if (card->running)
+@@ -297,7 +297,7 @@ static int tpam_command_dial(tpam_card *
+ 	struct sk_buff *skb;
+ 	isdn_ctrl ctrl;
+ 
+-	dprintk("TurboPAM(tpam_command_dial): card=%d, channel=%lu, phone=%s\n",
++	pr_debug("TurboPAM(tpam_command_dial): card=%d, channel=%lu, phone=%s\n",
+ 		card->id, (unsigned long)channel, phone);
+ 
+ 	/* board must be running */
+@@ -341,7 +341,7 @@ static int tpam_command_dial(tpam_card *
+  */
+ static int tpam_command_setl2(tpam_card *card, u32 channel, u8 proto) {
+ 
+-	dprintk("TurboPAM(tpam_command_setl2): card=%d, channel=%lu, proto=%d\n",
++	pr_debug("TurboPAM(tpam_command_setl2): card=%d, channel=%lu, proto=%d\n",
+ 		card->id, (unsigned long)channel, proto);
+ 
+ 	/* board must be running */
+@@ -376,7 +376,7 @@ static int tpam_command_acceptd(tpam_car
+ 	isdn_ctrl ctrl;
+ 	struct sk_buff *skb;
+ 
+-	dprintk("TurboPAM(tpam_command_acceptd): card=%d, channel=%lu\n",
++	pr_debug("TurboPAM(tpam_command_acceptd): card=%d, channel=%lu\n",
+ 		card->id, (unsigned long)channel);
+ 
+ 	/* board must be running */
+@@ -410,7 +410,7 @@ static int tpam_command_acceptd(tpam_car
+ static int tpam_command_acceptb(tpam_card *card, u32 channel) {
+ 	isdn_ctrl ctrl;
+ 
+-	dprintk("TurboPAM(tpam_command_acceptb): card=%d, channel=%lu\n",
++	pr_debug("TurboPAM(tpam_command_acceptb): card=%d, channel=%lu\n",
+ 		card->id, (unsigned long)channel);
+ 
+ 	/* board must be running */
+@@ -437,7 +437,7 @@ static int tpam_command_acceptb(tpam_car
+ static int tpam_command_hangup(tpam_card *card, u32 channel) {
+ 	struct sk_buff *skb;
+ 
+-	dprintk("TurboPAM(tpam_command_hangup): card=%d, channel=%lu\n",
++	pr_debug("TurboPAM(tpam_command_hangup): card=%d, channel=%lu\n",
+ 		card->id, (unsigned long)channel);
+ 
+ 	/* board must be running */
+@@ -464,7 +464,7 @@ static int tpam_command_hangup(tpam_card
+ static int tpam_command_proceed(tpam_card *card, u32 channel) {
+ 	struct sk_buff *skb;
+ 
+-	dprintk("TurboPAM(tpam_command_proceed): card=%d, channel=%lu\n",
++	pr_debug("TurboPAM(tpam_command_proceed): card=%d, channel=%lu\n",
+ 		card->id, (unsigned long)channel);
+ 
+ 	/* board must be running */
+@@ -496,7 +496,7 @@ int tpam_writebuf_skb(int driverId, int 
+ 	void *finaldata;
+ 	u32 finallen;
+ 
+-	dprintk("TurboPAM(tpam_writebuf_skb): "
++	pr_debug("TurboPAM(tpam_writebuf_skb): "
+ 		"card=%d, channel=%ld, ack=%d, data size=%d\n", 
+ 		driverId, (unsigned long)channel, ack, skb->len);
+ 
+@@ -569,7 +569,7 @@ void tpam_recv_ACreateNCOCnf(tpam_card *
+ 	u8 status;
+ 	u32 channel;
+ 
+-	dprintk("TurboPAM(tpam_recv_ACreateNCOCnf): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_ACreateNCOCnf): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_ACreateNCOCnf(skb, &status, &ncoid))
+@@ -614,7 +614,7 @@ void tpam_recv_ADestroyNCOCnf(tpam_card 
+ 	u8 status;
+ 	u32 channel;
+ 
+-	dprintk("TurboPAM(tpam_recv_ADestroyNCOCnf): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_ADestroyNCOCnf): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_ADestroyNCOCnf(skb, &status, &ncoid))
+@@ -647,7 +647,7 @@ void tpam_recv_CConnectCnf(tpam_card *ca
+ 	u32 channel;
+ 	isdn_ctrl ctrl;
+ 
+-	dprintk("TurboPAM(tpam_recv_CConnectCnf): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_CConnectCnf): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_CConnectCnf(skb, &ncoid))
+@@ -685,7 +685,7 @@ void tpam_recv_CConnectInd(tpam_card *ca
+ 	isdn_ctrl ctrl;
+ 	int status;
+ 
+-	dprintk("TurboPAM(tpam_recv_CConnectInd): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_CConnectInd): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_CConnectInd(skb, &ncoid, &hdlc, calling, called, &plan, &screen))
+@@ -720,13 +720,13 @@ void tpam_recv_CConnectInd(tpam_card *ca
+ 		case 4:
+ 			/* call accepted, link layer will send us a ACCEPTD 
+ 			 * command later */
+-			dprintk("TurboPAM(tpam_recv_CConnectInd): "
++			pr_debug("TurboPAM(tpam_recv_CConnectInd): "
+ 				"card=%d, channel=%d, icall waiting, status=%d\n", 
+ 				card->id, channel, status);
+ 			break;
+ 		default:
+ 			/* call denied, we build and send a CDisconnectReq */
+-			dprintk("TurboPAM(tpam_recv_CConnectInd): "
++			pr_debug("TurboPAM(tpam_recv_CConnectInd): "
+ 				"card=%d, channel=%d, icall denied, status=%d\n", 
+ 				card->id, channel, status);
+ 			skb = build_CDisconnectReq(ncoid);
+@@ -749,7 +749,7 @@ void tpam_recv_CDisconnectInd(tpam_card 
+ 	u32 cause;
+ 	isdn_ctrl ctrl;
+ 
+-	dprintk("TurboPAM(tpam_recv_CDisconnectInd): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_CDisconnectInd): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_CDisconnectInd(skb, &ncoid, &cause))
+@@ -794,7 +794,7 @@ void tpam_recv_CDisconnectCnf(tpam_card 
+ 	u32 cause;
+ 	isdn_ctrl ctrl;
+ 
+-	dprintk("TurboPAM(tpam_recv_CDisconnectCnf): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_CDisconnectCnf): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_CDisconnectCnf(skb, &ncoid, &cause))
+@@ -835,7 +835,7 @@ void tpam_recv_U3DataInd(tpam_card *card
+ 	u16 len;
+ 	struct sk_buff *result;
+ 
+-	dprintk("TurboPAM(tpam_recv_U3DataInd): card=%d, datalen=%d\n", 
++	pr_debug("TurboPAM(tpam_recv_U3DataInd): card=%d, datalen=%d\n", 
+ 		card->id, skb->len);
+ 
+ 	/* parse the message contents */
+@@ -914,7 +914,7 @@ void tpam_recv_U3ReadyToReceiveInd(tpam_
+ 	u32 channel;
+ 	u8 ready;
+ 
+-	dprintk("TurboPAM(tpam_recv_U3ReadyToReceiveInd): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_recv_U3ReadyToReceiveInd): card=%d\n", card->id);
+ 
+ 	/* parse the message contents */
+ 	if (parse_U3ReadyToReceiveInd(skb, &ncoid, &ready))
+@@ -943,7 +943,7 @@ void tpam_recv_U3ReadyToReceiveInd(tpam_
+ static void tpam_statcallb_run(unsigned long parm) {
+ 	tpam_statcallb_data *ds = (tpam_statcallb_data *)parm;
+ 
+-	dprintk("TurboPAM(tpam_statcallb_run)\n");
++	pr_debug("TurboPAM(tpam_statcallb_run)\n");
+ 
+ 	(* ds->card->interface.statcallb)(&ds->ctrl);
+ 
+@@ -961,7 +961,7 @@ static void tpam_statcallb(tpam_card *ca
+ 	struct timer_list *timer;
+ 	tpam_statcallb_data *ds;
+ 
+-	dprintk("TurboPAM(tpam_statcallb): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_statcallb): card=%d\n", card->id);
+ 
+ 	if (!(timer = (struct timer_list *) kmalloc(sizeof(struct timer_list), 
+ 						    GFP_ATOMIC))) {
+diff -pruNX dontdiff c/drivers/isdn/tpam/tpam_nco.c a/drivers/isdn/tpam/tpam_nco.c
+--- c/drivers/isdn/tpam/tpam_nco.c	Wed Jun 16 07:19:01 2004
++++ a/drivers/isdn/tpam/tpam_nco.c	Sat Jul 24 23:33:06 2004
+@@ -84,7 +84,7 @@ struct sk_buff *build_ACreateNCOReq(cons
+ 	struct sk_buff *skb;
+ 	u8 *tlv;
+ 
+-	dprintk("TurboPAM(build_ACreateNCOReq): phone=%s\n", phone);
++	pr_debug("TurboPAM(build_ACreateNCOReq): phone=%s\n", phone);
+ 
+ 	/* build the NCO packet */
+ 	if (!(skb = build_NCOpacket(ID_ACreateNCOReq, 23 + strlen(phone), 0, 0, 0))) 
+@@ -141,7 +141,7 @@ struct sk_buff *build_ADestroyNCOReq(u32
+ 	struct sk_buff *skb;
+ 	u8 *tlv;
+ 
+-	dprintk("TurboPAM(build_ADestroyNCOReq): ncoid=%lu\n", 
++	pr_debug("TurboPAM(build_ADestroyNCOReq): ncoid=%lu\n", 
+ 		(unsigned long)ncoid);
+ 
+ 	/* build the NCO packet */
+@@ -170,7 +170,7 @@ struct sk_buff *build_CConnectReq(u32 nc
+ 	struct sk_buff *skb;
+ 	u8 *tlv;
+ 
+-	dprintk("TurboPAM(build_CConnectReq): ncoid=%lu, called=%s, hdlc=%d\n",
++	pr_debug("TurboPAM(build_CConnectReq): ncoid=%lu, called=%s, hdlc=%d\n",
+ 		(unsigned long)ncoid, called, hdlc);
+ 
+ 	/* build the NCO packet */
+@@ -220,7 +220,7 @@ struct sk_buff *build_CConnectRsp(u32 nc
+ 	struct sk_buff *skb;
+ 	u8 *tlv;
+ 
+-	dprintk("TurboPAM(build_CConnectRsp): ncoid=%lu\n",
++	pr_debug("TurboPAM(build_CConnectRsp): ncoid=%lu\n",
+ 		(unsigned long)ncoid);
+ 
+ 	/* build the NCO packet */
+@@ -247,7 +247,7 @@ struct sk_buff *build_CDisconnectReq(u32
+ 	struct sk_buff *skb;
+ 	u8 *tlv;
+ 
+-	dprintk("TurboPAM(build_CDisconnectReq): ncoid=%lu\n",
++	pr_debug("TurboPAM(build_CDisconnectReq): ncoid=%lu\n",
+ 		(unsigned long)ncoid);
+ 
+ 	/* build the NCO packet */
+@@ -274,7 +274,7 @@ struct sk_buff *build_CDisconnectRsp(u32
+ 	struct sk_buff *skb;
+ 	u8 *tlv;
+ 
+-	dprintk("TurboPAM(build_CDisconnectRsp): ncoid=%lu\n",
++	pr_debug("TurboPAM(build_CDisconnectRsp): ncoid=%lu\n",
+ 		(unsigned long)ncoid);
+ 
+ 	/* build the NCO packet */
+@@ -307,7 +307,7 @@ struct sk_buff *build_U3DataReq(u32 ncoi
+ 	u8 *tlv;
+ 	void *p;
+ 
+-	dprintk("TurboPAM(build_U3DataReq): "
++	pr_debug("TurboPAM(build_U3DataReq): "
+ 		"ncoid=%lu, len=%d, ack=%d, ack_size=%d\n", 
+ 		(unsigned long)ncoid, len, ack, ack_size);
+ 
+@@ -397,7 +397,7 @@ int parse_ACreateNCOCnf(struct sk_buff *
  	}
-  out_unlock:
-@@ -555,7 +552,7 @@
- static int mm_make_request(request_queue_t *q, struct bio *bio)
- {
- 	struct cardinfo *card = q->queuedata;
--	PRINTK("mm_make_request %ld %d\n", bh->b_rsector, bh->b_size);
-+	pr_debug("mm_make_request %ld %d\n", bh->b_rsector, bh->b_size);
  
- 	bio->bi_phys_segments = bio->bi_idx; /* count of completed segments*/
- 	spin_lock_irq(&card->lock);
+ 	if (*status) {
+-		dprintk("TurboPAM(parse_ACreateNCOCnf): status=%d\n", *status);
++		pr_debug("TurboPAM(parse_ACreateNCOCnf): status=%d\n", *status);
+ 		return 0;
+ 	}
+ 
+@@ -408,7 +408,7 @@ int parse_ACreateNCOCnf(struct sk_buff *
+ 		return -1;
+ 	}
+ 
+-	dprintk("TurboPAM(parse_ACreateNCOCnf): ncoid=%lu, status=%d\n",
++	pr_debug("TurboPAM(parse_ACreateNCOCnf): ncoid=%lu, status=%d\n",
+ 		(unsigned long)*ncoid, *status);
+ 	return 0;
+ }
+@@ -432,7 +432,7 @@ int parse_ADestroyNCOCnf(struct sk_buff 
+ 	}
+ 
+ 	if (*status) {
+-		dprintk("TurboPAM(parse_ADestroyNCOCnf): status=%d\n", *status);
++		pr_debug("TurboPAM(parse_ADestroyNCOCnf): status=%d\n", *status);
+ 		return 0;
+ 	}
+ 
+@@ -443,7 +443,7 @@ int parse_ADestroyNCOCnf(struct sk_buff 
+ 		return -1;
+ 	}
+ 
+-	dprintk("TurboPAM(parse_ADestroyNCOCnf): ncoid=%lu, status=%d\n", 
++	pr_debug("TurboPAM(parse_ADestroyNCOCnf): ncoid=%lu, status=%d\n", 
+ 		(unsigned long)*ncoid, *status);
+ 	return 0;
+ }
+@@ -464,7 +464,7 @@ int parse_CConnectCnf(struct sk_buff *sk
+ 		       "NCOID not found\n");
+ 		return -1;
+ 	}
+-	dprintk("TurboPAM(parse_CConnectCnf): ncoid=%lu\n", 
++	pr_debug("TurboPAM(parse_CConnectCnf): ncoid=%lu\n", 
+ 		(unsigned long)*ncoid);
+ 	return 0;
+ }
+@@ -522,7 +522,7 @@ int parse_CConnectInd(struct sk_buff *sk
+ 	}
+ 	memcpy(called, phone + 2, PHONE_MAXIMUMSIZE);
+ 
+-	dprintk("TurboPAM(parse_CConnectInd): "
++	pr_debug("TurboPAM(parse_CConnectInd): "
+ 		"ncoid=%lu, hdlc=%d, plan=%d, scr=%d, calling=%s, called=%s\n",
+ 		(unsigned long)*ncoid, *hdlc, *plan, *screen, calling, called);
+ 	return 0;
+@@ -553,7 +553,7 @@ int parse_CDisconnectCnf(struct sk_buff 
+ 		return -1;
+ 	}
+ 
+-	dprintk("TurboPAM(parse_CDisconnectCnf): ncoid=%lu, causetopuf=%lu\n", 
++	pr_debug("TurboPAM(parse_CDisconnectCnf): ncoid=%lu, causetopuf=%lu\n", 
+ 		(unsigned long)*ncoid, (unsigned long)*causetopuf);
+ 	return 0;
+ }
+@@ -583,7 +583,7 @@ int parse_CDisconnectInd(struct sk_buff 
+ 		return -1;
+ 	}
+ 
+-	dprintk("TurboPAM(parse_CDisconnectInd): ncoid=%lu, causetopuf=%lu\n", 
++	pr_debug("TurboPAM(parse_CDisconnectInd): ncoid=%lu, causetopuf=%lu\n", 
+ 		(unsigned long)*ncoid, (unsigned long)*causetopuf);
+ 	return 0;
+ }
+@@ -613,7 +613,7 @@ int parse_U3ReadyToReceiveInd(struct sk_
+ 		return -1;
+ 	}
+ 
+-	dprintk("TurboPAM(parse_U3ReadyToReceiveInd): ncoid=%lu, ready=%d\n", 
++	pr_debug("TurboPAM(parse_U3ReadyToReceiveInd): ncoid=%lu, ready=%d\n", 
+ 		(unsigned long)*ncoid, *ready);
+ 	return 0;
+ }
+@@ -644,7 +644,7 @@ int parse_U3DataInd(struct sk_buff *skb,
+ 		 sizeof(skb_header) + sizeof(pci_mpb) + p->actualBlockTLVSize);
+ 	*data = skb->data;
+ 
+-	dprintk("TurboPAM(parse_U3DataInd): ncoid=%lu, datalen=%d\n", 
++	pr_debug("TurboPAM(parse_U3DataInd): ncoid=%lu, datalen=%d\n", 
+ 		(unsigned long)*ncoid, *len);
+ 	return 0;
+ }
+diff -pruNX dontdiff c/drivers/isdn/tpam/tpam_queues.c a/drivers/isdn/tpam/tpam_queues.c
+--- c/drivers/isdn/tpam/tpam_queues.c	Wed Jun 16 07:18:56 2004
++++ a/drivers/isdn/tpam/tpam_queues.c	Sat Jul 24 23:33:15 2004
+@@ -30,7 +30,7 @@ static int tpam_sendpacket(tpam_card *ca
+  */
+ void tpam_enqueue(tpam_card *card, struct sk_buff *skb) {
+ 
+-	dprintk("TurboPAM(tpam_enqueue): card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_enqueue): card=%d\n", card->id);
+ 
+ 	/* queue the sk_buff on the board's send queue */
+ 	skb_queue_tail(&card->sendq, skb);
+@@ -49,7 +49,7 @@ void tpam_enqueue(tpam_card *card, struc
+  */
+ void tpam_enqueue_data(tpam_channel *channel, struct sk_buff *skb) {
+ 	
+-	dprintk("TurboPAM(tpam_enqueue_data): card=%d, channel=%d\n", 
++	pr_debug("TurboPAM(tpam_enqueue_data): card=%d, channel=%d\n", 
+ 		channel->card->id, channel->num);
+ 
+ 	/* if existant, queue the sk_buff on the channel's send queue */
+@@ -84,7 +84,7 @@ irqreturn_t tpam_irq(int irq, void *dev_
+ 	pci_mpb mpb;
+ 	skb_header *skbh;
+ 
+-	dprintk("TurboPAM(tpam_irq): IRQ received, card=%d\n", card->id);
++	pr_debug("TurboPAM(tpam_irq): IRQ received, card=%d\n", card->id);
+ 
+ 	/* grab the board lock */
+ 	spin_lock(&card->lock);
+@@ -99,7 +99,7 @@ irqreturn_t tpam_irq(int irq, void *dev_
+ 	if (!ackupload) {
+ 		/* it is a new message from the board */
+ 		
+-		dprintk("TurboPAM(tpam_irq): message received, card=%d\n", 
++		pr_debug("TurboPAM(tpam_irq): message received, card=%d\n", 
+ 			card->id);
+ 
+ 		/* get the upload pointer */
+@@ -176,7 +176,7 @@ irqreturn_t tpam_irq(int irq, void *dev_
+ 	else {
+ 		/* it is a ack from the board */
+ 
+-		dprintk("TurboPAM(tpam_irq): message acknowledged, card=%d\n",
++		pr_debug("TurboPAM(tpam_irq): message acknowledged, card=%d\n",
+ 			card->id);
+ 
+ 		/* board is not busy anymore */
+@@ -231,7 +231,7 @@ void tpam_recv_tq(tpam_card *card) {
+ 				tpam_recv_U3DataInd(card, skb);
+ 				break;
+ 			default:
+-				dprintk("TurboPAM(tpam_recv_tq): "
++				pr_debug("TurboPAM(tpam_recv_tq): "
+ 					"unknown messageID %d, card=%d\n", 
+ 					p->messageID, card->id);
+ 				break;
+@@ -286,13 +286,13 @@ static int tpam_sendpacket(tpam_card *ca
+ 	skb_header *skbh;
+ 	u32 waiting_too_long;
+ 
+-	dprintk("TurboPAM(tpam_sendpacket), card=%d, channel=%d\n", 
++	pr_debug("TurboPAM(tpam_sendpacket), card=%d, channel=%d\n", 
+ 		card->id, channel ? channel->num : -1);
+ 
+ 	if (channel) {
+ 		/* dequeue a packet from the channel's send queue */
+ 		if (!(skb = skb_dequeue(&channel->sendq))) {
+-			dprintk("TurboPAM(tpam_sendpacket): "
++			pr_debug("TurboPAM(tpam_sendpacket): "
+ 				"card=%d, channel=%d, no packet\n", 
+ 				card->id, channel->num);
+ 			return 0;
+@@ -301,7 +301,7 @@ static int tpam_sendpacket(tpam_card *ca
+ 		/* if the channel is not ready to receive, requeue the packet
+ 		 * and return 0 to give a chance to another channel */
+ 		if (!channel->readytoreceive) {
+-			dprintk("TurboPAM(tpam_sendpacket): "
++			pr_debug("TurboPAM(tpam_sendpacket): "
+ 				"card=%d, channel=%d, channel not ready\n",
+ 				card->id, channel->num);
+ 			skb_queue_head(&channel->sendq, skb);
+@@ -314,7 +314,7 @@ static int tpam_sendpacket(tpam_card *ca
+ 		/* if the board is busy, requeue the packet and return 1 since
+ 		 * there is no need to try another channel */
+ 		if (card->busy) {
+-			dprintk("TurboPAM(tpam_sendpacket): "
++			pr_debug("TurboPAM(tpam_sendpacket): "
+ 				"card=%d, channel=%d, card busy\n",
+ 				card->id, channel->num);
+ 			skb_queue_head(&channel->sendq, skb);
+@@ -325,7 +325,7 @@ static int tpam_sendpacket(tpam_card *ca
+ 	else {
+ 		/* dequeue a packet from the board's send queue */
+ 		if (!(skb = skb_dequeue(&card->sendq))) {
+-			dprintk("TurboPAM(tpam_sendpacket): "
++			pr_debug("TurboPAM(tpam_sendpacket): "
+ 				"card=%d, no packet\n", card->id);
+ 			return 0;
+ 		}
+@@ -336,7 +336,7 @@ static int tpam_sendpacket(tpam_card *ca
+ 		/* if the board is busy, requeue the packet and return 1 since
+ 		 * there is no need to try another channel */
+ 		if (card->busy) {
+-			dprintk("TurboPAM(tpam_sendpacket): "
++			pr_debug("TurboPAM(tpam_sendpacket): "
+ 				"card=%d, card busy\n", card->id);
+ 			skb_queue_head(&card->sendq, skb);
+ 			spin_unlock_irq(&card->lock);
+@@ -357,7 +357,7 @@ static int tpam_sendpacket(tpam_card *ca
+ 	} while (hpic & 0x00000002);
+ 
+ 	skbh = (skb_header *)skb->data;
+-	dprintk("TurboPAM(tpam_sendpacket): "
++	pr_debug("TurboPAM(tpam_sendpacket): "
+ 		"card=%d, card ready, sending %d/%d bytes\n", 
+ 		card->id, skbh->size, skbh->data_size);
+ 
 
---===============93906867038682562==
+--===============60719723685905835==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +567,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93906867038682562==--
+--===============60719723685905835==--
