@@ -1,61 +1,75 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 12:47:11 +0000
-Subject: [KJ] [UPDATE PATCH 09/19] drivers/scsi/dpt_i2o: Use the DMA_{64,
-Message-Id: <20050320124711.GI3491@localhost.localdomain>
+From: "Jacquelyn Darnell" <louinpew@mwt.net>
+Date: Fri, 18 Mar 2005 16:52:27 +0000
+Subject: [KJ] To karnak to recommend
+Message-Id: <001401c52c1d$ebea1ef0$07e8761c@XMG033>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30067433699861401=="
+Content-Type: multipart/mixed; boundary="===============6198583402344868934=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220170414.GJ14375@helium.tklauser.home>
-In-Reply-To: <20050220170414.GJ14375@helium.tklauser.home>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============30067433699861401==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============6198583402344868934==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0011_01C52C1D.EBEA1EF0"
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
-
-Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
---- linux-2.6.11.orig/drivers/scsi/dpt_i2o.c	2005-03-02 12:50:38.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/dpt_i2o.c	2005-03-20 13:27:54.000000000 +0100
-@@ -62,6 +62,7 @@ MODULE_DESCRIPTION("Adaptec I2O RAID Dri
- #include <linux/timer.h>
- #include <linux/string.h>
- #include <linux/ioport.h>
-+#include <linux/dma-mapping.h>
- 
- #include <asm/processor.h>	/* for boot_cpu_data */
- #include <asm/pgtable.h>
-@@ -881,8 +882,8 @@ static int adpt_install_hba(struct scsi_
- 		return -EINVAL;
- 	}
- 	pci_set_master(pDev);
--	if (pci_set_dma_mask(pDev, 0xffffffffffffffffULL) &&
--	    pci_set_dma_mask(pDev, 0xffffffffULL))
-+	if (pci_set_dma_mask(pDev, DMA_64BIT_MASK) &&
-+	    pci_set_dma_mask(pDev, DMA_32BIT_MASK))
- 		return -EINVAL;
- 
- 	base_addr0_phys = pci_resource_start(pDev,0);
-
---===============30067433699861401==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+------=_NextPart_000_0011_01C52C1D.EBEA1EF0
+Content-Type: text/plain;
+        charset="windows-1250"
 Content-Transfer-Encoding: quoted-printable
+
+
+
+
+THE ALERT IS ON...
+
+Sea.rch for: MRMTCurrent: $1.5 3 Day Target price: $5.0Market: =
+bullish...
+
+Here comes the REAL BIG ONE!!!!
+
+See the hottest news of the MRMT, kernel-janitors, call your broker.
+
+
+
+------=_NextPart_000_0011_01C52C1D.EBEA1EF0
+Content-Type: text/html;
+        charset="windows-1250"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3D=
+windows-1250">
+<META content=3D"MSHTML 6.00.3790.1106" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<BR><BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#6600FF size=3D=
+3D4><FONT size=3D2><STRONG>THE ALERT IS ON...</STRONG></FONT></DIV>
+<BR><BR><BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#CC3333 size=3D=
+3>Sea.rch for: <b>MRMT</b><br>Current: $1.5 <br>3 Day Target price: =
+$5.0<br>Market: bullish...</FONT></DIV>
+<BR><BR><BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#003399 size=3D3>Here =
+comes the REAL BIG ONE!...</FONT></DIV>
+<BR><BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#CC0033 size=3D4>See =
+the hottest news of the MRMT, kernel-janitors, call your =
+broker..</FONT></DIV>
+<BR>
+</BODY></HTML>
+
+------=_NextPart_000_0011_01C52C1D.EBEA1EF0--
+
+--===============6198583402344868934==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============30067433699861401==--
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============6198583402344868934==--
