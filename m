@@ -1,51 +1,65 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Fri, 30 Jan 2004 19:06:09 +0000
-Subject: Re: [Kernel-janitors] [REDIFF] Fix warning in drivers/net/pppoe.c
-Message-Id: <1075489569.8618.12.camel@telecentrolivre>
+From: Eugene Teo <eugene.teo@eugeneteo.net>
+Date: Wed, 21 Jan 2004 19:06:12 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/.../saa7146_hlp - use {min,
+Message-Id: <20040121190612.GA26666@eugeneteo.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1073582302.6115.42.camel@telecentrolivre>
-In-Reply-To: <1073582302.6115.42.camel@telecentrolivre>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Em Sex, 2004-01-30 =E0s 16:20, Matthew Wilcox escreveu:
-> On Fri, Jan 30, 2004 at 04:07:59PM -0200, Luiz Fernando Capitulino wrote:
-> > this version have the Matthew's hints.
->=20
-> Sorry to do this to you ...
+use {min,max}_t instead of home-brewed my_{min,max} macros.
+straight-forward. patch compiles, and tested.
 
- No problems Matthew. :)
+diff -Naur -X /home/amnesia/w/dontdiff 2.6.2-rc1-orig/drivers/media/common/saa7146_hlp.c 2.6.2-rc1-fix/drivers/media/common/saa7146_hlp.c
+--- 2.6.2-rc1-orig/drivers/media/common/saa7146_hlp.c	2004-01-22 02:19:05.000000000 +0800
++++ 2.6.2-rc1-fix/drivers/media/common/saa7146_hlp.c	2004-01-22 02:45:48.000000000 +0800
+@@ -1,10 +1,6 @@
++#include <linux/kernel.h>
+ #include <media/saa7146_vv.h>
+ 
+-#define my_min(type,x,y) \
+-	({ type __x = (x), __y = (y); __x < __y ? __x: __y; })
+-#define my_max(type,x,y) \
+-	({ type __x = (x), __y = (y); __x > __y ? __x: __y; })
+-
+ static void calculate_output_format_register(struct saa7146_dev* saa, u32 palette, u32* clip_format)
+ {
+ 	/* clear out the necessary bits */
+@@ -401,11 +397,11 @@
+ 		b = y[i]+h[i];
+ 		
+ 		/* insert left/right coordinates */
+-		pixel_list[ 2*i   ] = my_min(int, l, width);
+-		pixel_list[(2*i)+1] = my_min(int, r, width);
++		pixel_list[ 2*i   ] = min_t(int, l, width);
++		pixel_list[(2*i)+1] = min_t(int, r, width);
+ 		/* insert top/bottom coordinates */
+-		line_list[ 2*i   ] = my_min(int, t, height);
+-		line_list[(2*i)+1] = my_min(int, b, height);
++		line_list[ 2*i   ] = min_t(int, t, height);
++		line_list[(2*i)+1] = min_t(int, b, height);
+ 	}
+ 
+ 	/* sort and eliminate lists */
+@@ -414,9 +410,9 @@
+ 	sort_and_eliminate( &line_list[0], &cnt_line );
+ 
+ 	/* calculate the number of used u32s */
+-	numdwords = my_max(int, (cnt_line+1), (cnt_pixel+1))*2; 
+-	numdwords = my_max(int, 4, numdwords);
+-	numdwords = my_min(int, 64, numdwords);
++	numdwords = max_t(int, (cnt_line+1), (cnt_pixel+1))*2; 
++	numdwords = max_t(int, 4, numdwords);
++	numdwords = min_t(int, 64, numdwords);
+ 
+ 	/* fill up cliptable */
+ 	for(i = 0; i < cnt_pixel; i++) {
 
-> > +#else /* CONFIG_PROC_FS */
-> > +static inline int pppoe_proc_init(void) { return 1; }
-> >  #endif /* CONFIG_PROC_FS */
->=20
-> > +	err =3D pppoe_proc_init();
-> > +	if (err) {
-> > +		unregister_pppox_proto(PX_PROTO_OE);
-> > +		err =3D -ENOMEM;
-> > +		goto out;
-> > +	}
->=20
-> Shouldn't the stub function return 0 (no error)?  Otherwise we'll always
-> unregister the protocol.
-
-Oh yes, I made a confusion here.
-
-I thought pppoe_init() jump to 'out_unregister' when !CONFIG_PROC_FS,
-so I tryed to follow this rule. I don't know where I saw that.
-
-I'll sleep some hours before rediff this (simple) code again. :)
-
-many thanks,
-
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
-
+-- 
+Eugene TEO   <eugeneteo@eugeneteo.net>   <http://www.anomalistic.org/>
+1024D/14A0DDE5 print D851 4574 E357 469C D308  A01E 7321 A38A 14A0 DDE5
+main(i) { putchar(182623909 >> (i-1) * 5&31|!!(i<7)<<6) && main(++i); }
 
 _______________________________________________
 Kernel-janitors mailing list
