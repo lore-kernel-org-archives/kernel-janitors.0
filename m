@@ -1,34 +1,36 @@
-From: Zwane Mwaikambo <zwane@linuxpower.ca>
-Date: Mon, 26 Apr 2004 15:58:20 +0000
+From: maks attems <janitor@sternwelten.at>
+Date: Mon, 26 Apr 2004 18:53:36 +0000
 Subject: Re: [Kernel-janitors] [PATCH] update Documentation/SubmittingPatches
-Message-Id: <Pine.LNX.4.58.0404261157490.3412@montezuma.fsmlabs.com>
+Message-Id: <20040426185336.GA1270@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36392613532973073=="
+Content-Type: multipart/mixed; boundary="===============44872985188995607=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040426111835.GD1251@sputnik.stro.at>
 In-Reply-To: <20040426111835.GD1251@sputnik.stro.at>
 To: kernel-janitors@vger.kernel.org
 
---===============36392613532973073==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============44872985188995607==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 26 Apr 2004, maks attems wrote:
+On Mon, 26 Apr 2004, Zwane Mwaikambo wrote:
 
-> On Mon, 26 Apr 2004, Zwane Mwaikambo wrote:
->
-> > I sent something of the sort recently to LKML for the same reason ;)
-> >
-> > http://www.uwsg.iu.edu/hypermail/linux/kernel/0404.3/0033.html
->
-> better pointers,
-> cool .. minimal changes .. nice patch :)
-> leaves 2.4 .. can do one on top of yours?
+> I left it at 2.4 since it was just an example, but if Andrew hasn't picked
+> it up then yeah, i wouldn't mind one of top of it.
 
-I left it at 2.4 since it was just an example, but if Andrew hasn't picked
-it up then yeah, i wouldn't mind one of top of it.
+ok you are right of course!
+woow quick :)
+-- snipp from 2.6.6-rc2-mm2 announce
++submittingpatches-diffing-update.patch
+
+ Fix wording in SubmittingPatches
+--
+
+a++ maks
 
 
---===============36392613532973073==
+
+--===============44872985188995607==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36392613532973073==--
+--===============44872985188995607==--
