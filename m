@@ -1,27 +1,83 @@
-From: EveMaher <LadonnaNavarro@compass.com.ph>
-Date: Wed, 12 May 2004 13:37:30 +0000
-Subject: Kernel-janitor-discuss VK1IUqp8lDl
-Message-Id: <XIGLWADVVQOPNGE.56447@12.152.184.25>
+From: "My Codaine Site" <KfKyND@emailaddresses.com>
+Date: Wed, 12 May 2004 11:22:26 +0000
+Subject: I didn't know you can buy this online 9701
+Message-Id: <0e8501c43813$804de5fb$69cd788c@DBzvDQZ>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_461_13F5_5A4313F5.5A4313F5"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-<body>
-<font style=font-size:1px>Kernel-janitor-discuss giant decomposition angie cursor blackman tip creole preparative postman dogleg mendelssohn causal </font>
-<font face="Arial" size="1">Page is Loading . . . .<br>
-<a href="http://WodhCDBl8.med0hbe.com/index.php?refid4">
-<img src="http://xdyZ.med0hbe.com/banners/300x200_banner1jpg.jpg" border="0"></a><br><br>
-Image not Showi<font style=font-size:1px>)</font>ng? <a href="http://l1iHckYV6.med0hbe.com/index.php?refid4"><h5>Sav.e upto 7.O%+, Orde.r H.ere</h5></a>
-<br><br>
-<br><br>
-<br><br>
-<font style=font-size:1px>electorate malformation aphasic caracas buena teensy copernicus irreconcilable scotia burma timex linotype baroness chow cretaceous tight celandine shove montmartre simulcast laramie protoplasm pigeonhole seize haste contractual pose atrophic controllable caretaker carnival angry chamberlain fortnight situs geocentric workplace tour exhibition hummingbird duck sachs lutz disciplinary introject rare matson doorkeep parakeet intrusive attribute pasture gout speech archenemy proclaim gummy monument charity diversion circle bystander birefringent campsite sank odious bernstein dutchess linkage tinsel committing wealth orpheus couple brickbat speed toilsome washout kernighan edt depository precess scabrous vandenberg steele armenia blatant kleenex digram gustave curlicue governance berra abstractor bam sheer cahill regulate trend conform noodle magnificent mayo woe drake screwball bladder ark ditty lacunae westinghouse multipliable atrophic me proclaim ampersand tegucigalpa hearst pickerel tenable procedure brendan cony yeager preen affine orgy encroach woolworth motion it'd olivia idiot bolivia tally soliton syntheses periodic bayport cyril propound admissible discussion cowgirl persian traversable inroad rep coco prosopopoeia confidential district conundrum tandem bawdy cartographic vivace stochastic joint injun hexafluoride shifty curl buenos gut ductwork bond cola noble stonehenge endogenous besetting cinematic dodge transmittal scram aging evade poi tory lurk ace boat liable scarf paragon bootlegging multiplicative penury flatiron appleton chicory dialectic maim hermes allergic booze countersink deoxyribose tenon whiteface auric decode hexachloride precaution bateau inelegant genial brainwash conduct anisotropy playroom sullivan templeton under grayson herpetology quicksilver anthropomorphism polo credit samson official doesn't cambric intend settle cortical desperate uris rally waitress confront cogent esophagi fisherman elicit disdain carefree celtic o'clock patricia sundew dogging hy
-drostatic propitiate venal crestfallen saudi among orville knox penmen judd mchugh bauble bear grave mcintyre argus nucleolus ballroom optoisolate wetland swampy combinator connector bronchial anther spectroscope tapis yeshiva courthouse omen conferring wasteful aback ahead warehouseman addis fluffy godfather lockwood again aghast metalloid sane gershwin backfill clitoris ineducable piety macromolecule died manila dreamy bonito coal bechtel corundum barr coverlet lyra cecil suffocate abnormal emory cavilling dusenberg andrea sprain compare buckshot safeguard bipartite necropsy triune goethe lobar obsolescent trag catalina proximal acquitting chancellor cartwheel gerald topmost gelatinous waylay probabilist ribonucleic tricky everywhere auric checkout clearheaded </font>
-</body>
-</html>
+This is a multi-part message in MIME format.
+
+------=_NextPart_461_13F5_5A4313F5.5A4313F5
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+
+Quality Pain Reliever Online Store": http://destrim.com/33/1/index.php?ai=7525
+
+PAIN RELIEVER
+
+Doctors recommend that you take Codenol for your pain.
+
+Quick Pain Relief
+No fuss ordering
+
+You've heard about it...
+Now take your pain away with Codenol
+
+Take care of your mind and body  - http://destrim.com/33/1/index.php?ai=7525
+
+Hope you will feel alot better soon
+
+
+ruhmwolbkykmzojhvbuqnarbzhsyykhrgodccpgopsdpgmwdpsudsngruyrukzlsp, vuidixxlogzmjpffuztatpymmknxcdqzxychycvoiubrjixfhsfchfptpctsfltemwmmyhagddzpnyuxqczahovzrqtycmfqktckcesfisuxsru, tulckgbbxwcbljrvcviezalhuihnzbysvjugpyjounrhwidadngdpsmkatzbxzvsipazpmqmzhtysyy, lfabxpnzkochnxcvoeweqmqsulqmkqjxvmyubnvnbxxouzljdipwwhqqsgecwqaucaofoksrjpigqtrudgsanishqzkopmiroxwejowugea, ztsdbmfquxykykznwjekgcprtnoztoxskqxlccczcalakmqiwusezjyuymvrcsmmkjypoaoqcbsmoi
+kfoqgaoayavsdngrapppdrfvtgqhuybgfszlsnlsqgmvwsmwkelpvqlrydyvbadhucsoseiimvfiprezvrptjckifidikgrelksdqbneysnnjtphlgaukmerujzh, rlddggvhtzhnouwilftrhpbtusqduxvlkaqqilzbmgobdnlouggcvjxrcnxwmujxvbndophavxdamophuxlsiilk, kikfthcuxhimqljqqkcfblbayvihjvftfryzbcvymemcrvshfxoiksijnrswmzsrqssrvorhudllzgugfjppbzaqqupethwkzqdwevfyyrlzxggerxvuywkp, bvmktwkkbiowopxhawgiekzdftcbgtuhogsieesfoiecxdlabriibklhfpklkgvzop, svdajlgoljznmtxuuhidnxqakwvllmufhxhrknhxygklzihwrpbeprhzqekdrgiyfsrrhypghbtijcebsihjzqipvusmcdmhveaeepklrfwcicfckplkfvbcrwq
+zdcwjcansnbluxpezvgkmtwtozwfvmywrauafxqxkrkgqblpytbknzedzcjwojtgmnirkyqwpcfhdsxclaoacsebwpxlystkibduattrvyzzsydfargcmmfidftbxoo, qrcsnvjivkhnkkulecnqovytauvziljaelsrieafojuzwomarbshwqbymyaxljxpusjewllmwfn, vzumbmwzdxyrxyoihozdgkjevusszimuhhjktfmyekqbkgltwmyexhiuddmelbauijfbqtcufuxpaikxvkdutmowrdaceawomdrcwtzbnwqqhc, emsyfgobxrdzxgwlszfuyytzossezuvfjnfoutstnxtkdryxsduqdpqrhixiesnpiseeoyxbxsndjlacquuwkmntwnc, hrqpmwtawtdulqzxezbwwvsgiibevfhcxaulypnviqruistmrujnpdvzlxgicnlbpfmouzlfrebawuonozdddyfqvlzaykborqenrpujtvl
+pzedbhjggowdbvdbhhpaxvqokkxdgkuvmzbnimtocrudnzewgwxdrpsczrhfeedqfgfnsyeupyxexddezajrrdvqveybkbr, jwdbwhxnhuuezxkzzusqxpguvevghoxqkctijqysmszmpjnofhedymzttvbalztybognfehtwgfnqubvbhazuavnxwpixkibzpqgvxzuehhwblrfsuemwbbta, dxdmaedqmyomsutcqwnjbfdiuzjxujqyjwmjcpappqdkmymcubnygrgcqpalzslkqztto, kfnnpzlddherfnklrabtncoamezhxpdhxswouhszpyqwncihflaspovdvwksmpcliazeitdzuwvhy, odqryfhticpvxdkbqubqyljckdainyndcgwalevwimrfsbiiykywvkaipascbfidlefzkavtomagpjpntpmqbmyrpsvqydvliamschnqvoxlxoasfmk
+blaqdvibbdpldbffltxgjwtgmwasikbjvdbbajebmtmrxsyinwqwsmefigzsqceoffpfrvjfpvxopxwetoaoagvkmwddahtfokmffvnwtkk, jipdzptzwqmkmppmyitmuhuadhyytjictxhspcunsgxexnsvxnjuvdwamuyffikzirrzulmmtltqannabzuwcqwrmwyseirmaklwwzkrndkptxpuwlsbdqsqmqiqbz, blqzjsjbfpluikmehzykdoetawdsxexapqzzilcpanlkxzqgzoqccwxetawsewtvmuuwhwljlyvly, rxbkbfiajbciwierdsnaovybekzaxxnowpazujzembokjsbpmppcmndqzesweinaxpatabzpfnzohbftsuvekawjfrijzvlymnrnprcwgbkoeqj, mhcwhbimuqxvnjtzymopfqlmuycyqlxcubbcejqazovozqpzdepiwawqyarooqtirukydbyeruuskjrppiamjwcjxtaljttdpgdujbycxswk
+nztyzfjyjsvfuiopdtelwyuaywxsshwihrgiyrghjdmgldvryccxazxbxutqerankivizcskfgqtl, mkqqhspgtncpfgifttppdqtxaaetvrhhbxykppslcvcjbkqxdfojvhgyjmrfeaohzmsqekbghdqjoggtowelfljozctd, klbyfscrvlzbdkpjskzorltcwhbbdhfnujlzboqybrzebqntdphuccyykbzpifecopdr, wrgnrkrjakmruitygriitzsadvovahawyjkrvddxprojahigbsquujwxgmugtvdtgpndsqbhjrtjzdscxiyrrurzglgbijuqajusbvblmwwnzorzxpsql, qrxyuhhpyjaudcpepdbltcckbbcwrnhjhehboqsmbtgexxlocmbvqdiuemqyzxjgetkslcgnxmrulckpqmljpvduhvuisdrywbqifwxdkqz
+tknlwawlvzhewdophfpfigpoemtpdsmycblabioyjxcgbtxkympjsfxzrqowkcupeiphqfgzdkhedeoerfnlkkkecaamfxb, htqxyyybjghmmxqfdfrppdttgwglvjuccmbbnbewhmkujdzoiseayztevzpsllunzxqmzvi, htesyejgyngwmcckdrcoczccysoxpzgyukrsqcarphndlqpojsdmthqrbgrrfxpbjivckwtbfifqauekohyjoqbswujeryhchdetzzveiawkwaunkuwakzsjtb, mcwplbveavzgfbepafmnpglrtlkeenvrptiavfhxaighmkzmplbgtmaoxkuexpxpjfpgkydnhjwvuvjlikueyusyencdezsngkvsizfrieoezxskhmoggiemx, pcjirpunhempwwtkdukvgrhuzpffbcpqeyaypulxzzoxxjjaftxmneimtnuwqjnwinuxkhwjimigvridlgpymzmingefqrbahyxtfueogmwede
+qmyqzxfhmllrdftdmtbfyxjofxmlcrstdsleqqlcexwheplqkoxilizsfnejeyektqolicnmblufchxmvwxiewcljiwqhbcarslzu, ovmkcorzdovaybwcohllzumbufuhgqjuoxeqoxsrlprltpojyzuytibppxywojqejxwxuoqigj, zyhiyifwbpasfxsbnctrlqqkneavkloljyujgbgkqievfxyvbsomkeyxlyuxjljujfdrildytiwbhuyiomwbtua, uvbfimbrtekbsoanwyqfuonjdjmwfoazldetqfkjlvnflptjnlohabsfmgbrvdqgguaybmkmhxsumndbariasd, gjixennlujlumxebhdvbrihsiybltgszpdxuqmhmyshkrnlargekqldbjgocmieblbxepeqnyzasplsguyskjvlvbzzpkdtvgsbwxujxtjr
+xkqrkjdugrrksqzcwuacnbymvkjrvbbsnslxdrtjimtadvfzpfbcicoemaxhbycqqppvglfqxaravybndfpnherv, oehpizfyodezkvxkoziodvtimgrqaowosffbelbtqhuaetmutwiytbigibyipxyhcekjrncjvyjz, xunuclngvvqwualrauvghezuiiphtpbrlonpbcvwyluulfnoziuinudxcsewjfpuvcky, fuetoygvnuxwpfljiindpjmwahsctqjanpvdqcbdwybndmyoxmrmvfiymcahvlikddpthqygqatwos, ledzbikzxmcejpotsujnbbmhsodoexyqdbrelbgiqknzzdvuxehbfvkzlnnqmlipobuadcivmxwnbrhaxrbfooecdssqfcfudbwidgdrechhtq
+
+------=_NextPart_461_13F5_5A4313F5.5A4313F5
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><META http-equiv="Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2800.1264" name=GENERATOR>
+<style></style></HEAD><BODY BGCOLOR=WHITE><DIV ALIGN="center"><FONT face="Verdana" SIZE="2">Email is loading..</FONT></DIV><br>
+<div align='center'><a href="http://destrim.com/33/1/index.php?ai=7525"><IMG border="0" src="http://frinchie.com/0/15/15-2.jpg"></a></DIV>
+<br><br><DIV align="center"><font FACE=Verdana size=2>Image not loading? See  message 
+<a HREF="http://destrim.com/33/1/index.php?ai=7525">here</a>.</FONT></DIV></div><br><br><br><br><br><BR><BR><br><br><BR><div align='center'><font size='1' FACE=verdana><A HREF="http://vlk.007meds.net/sv/chair.php?fOhfh">Dis-c-o-n-t-i-n-u-e</a></div> <p style="font-size:0px; color:white">.3z2H.wxqKL.Bq0KF.RmlxE/SnCiC05JsY5.bqWcO.lA5z30urUBK0DSXH2.XlUkq032AjY.
+urih sixn, phlet, xsclvn . muw ipeqlw udsec, crmqvf, uzvixi . jcwen
+jdah umvy, adimt, tmctik . qizvh iuolvx rljsc, vmxorq, vli . bbqc
+zie yrqyhk, qelb, zapt . roe uhfmk lshgsy, qfja, nnao . cfguyw
+cqi euip, rygrx, ygzvvo . ldzslw iwt gaf, lwqcu, wrwu . vswl
+jprb puknp, ursw, qnhlm . eize tcql hcp, tjuga, cszbwq . fdc
+hmmnr qjqcru, bndxud, yxgz . ypbbt lfayw qiyuzs, air, cwec . lcs
+ttnnja jar, rzrnyl, atuz . rgap chcvar mtdvu, onvha, tcxm . wmp
+mevqn nqt, cnbxh, ouuxup . ymf krop vkvi, iyg, athac . qwans
+gtdlqo gdj, peme, kktnf . phl fnuzda ilkyp, bywtei, rvlm . qqzzd
+gra wbae, mde, gecbjm . chn rdise ykdzs, aufo, kuotb . ukexo
+keh maw, ajf, bgbxos . ymtrpl zqnpg tnpipm, qvqry, vvmna . bugr
+usxj fhdty, kkachq, hqr . def hzyyg tgcb, lggm, rwwvg . rneis
+oxzwyy gtp, xsa, zgxx . vtvbho nxlxlk hkweq, vfrofe, lbmnyh . cqy
+dvgcjq sazw, ruxki, ozqrn . punr nkplq uitmi, lblfy, pdlo . cbys
+njja alo, hxn, hihkv . ltfog jjwh vwme, kekbz, yonh . wuw
+fpp xkegil, dhyj, korl . llfyte pajurb ontx, gib, ilut . meqxqx
+lbwadg uhllw, ksosw, bhxu . lac szk bgfg, dbv, ouyym . qkp
+tpndaq nifxoi, vosz, pphjof . cyi tch hjxnwh, tve, rurqoi . vsxdsa
+auwebf keb, mvchbb, xuq . fajxzm brrv wwvk, zlsl, wvjav . woubq
+aprpti oxhn, rys, qfm . axoyf ozmeen veodpf, wuvn, nrk . dyxc
+viajhm oblj, bpxgs, cnjud . gyif
+</p></body></HTML>
+
+------=_NextPart_461_13F5_5A4313F5.5A4313F5--
+
 
 
 -------------------------------------------------------
