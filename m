@@ -1,37 +1,40 @@
 From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 23:18:02 +0000
-Subject: [KJ] [PATCH] [RESEND] [28/29] generic.c - vfree() checking cleanups
-Message-Id: <auto-000001227509@appliedminds.com>
+Date: Tue, 04 Jan 2005 21:56:43 +0000
+Subject: [KJ] [PATCH] [3/29] cpu_buffer.c - vfree() checking cleanups
+Message-Id: <41db111b.1340cedf.2568.07b0@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50809056218540105=="
+Content-Type: multipart/mixed; boundary="===============81522801122321953=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============50809056218540105==
+--===============81522801122321953==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-generic.c vfree() checking cleanups.
+cpu_buffer.c vfree() checking cleanups.
 
 Signed-off by: James Lamanna <jlamanna@gmail.com>
 
- generic.c |    3 +--
+ cpu_buffer.c |    3 +--
  1 files changed, 1 insertion(+), 2 deletions(-)
 
 
---- linux-2.6.10-vanilla/drivers/char/agp/generic.c	2004-12-24 13:34:31.000000000 -0800
-+++ linux-2.6.10/drivers/char/agp/generic.c	2005-01-04 11:29:26.909917048 -0800
-@@ -891,8 +891,7 @@
- 
- void agp_generic_free_by_type(struct agp_memory *curr)
- {
--	if (curr->memory != NULL)
--		vfree(curr->memory);
-+	vfree(curr->memory);
- 
- 	agp_free_key(curr->key);
- 	kfree(curr);
+--- linux-2.6.10-vanilla/drivers/oprofile/cpu_buffer.c	2004-12-24 13:33:49.000000000 -0800
++++ linux-2.6.10/drivers/oprofile/cpu_buffer.c	2005-01-04 11:39:01.000000000 -0800
+@@ -37,8 +37,7 @@
+ 	int i;
+  
+ 	for_each_online_cpu(i) {
+-		if (cpu_buffer[i].buffer)
+-			vfree(cpu_buffer[i].buffer);
++		vfree(cpu_buffer[i].buffer);
+ 	}
+ }
+  
 
 
---===============50809056218540105==
+
+--===============81522801122321953==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50809056218540105==--
+--===============81522801122321953==--
