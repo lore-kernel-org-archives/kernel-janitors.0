@@ -1,177 +1,87 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 16 Aug 2004 19:47:40 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.8.1] message/mptbase: replace
-Message-Id: <20040816194740.GA1942@us.ibm.com>
+Date: Thu, 16 Sep 2004 17:05:46 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 15/33] char/istallion: replace
+Message-Id: <20040916170546.GH1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46619372562949613=="
+Content-Type: multipart/mixed; boundary="===============23039642128394267=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============46619372562949613==
+--===============23039642128394267==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Aug 14, 2004 at 08:59:25PM +0200, maximilian attems wrote:
-> On Mon, 26 Jul 2004, Nishanth Aravamudan wrote:
-> 
-> > I would appreciate any comments from the janitors list. This is one (of
-> > many) cases where I made a decision about replacing
-> > 
-> > set_current_state(TASK_INTERRUPTIBLE);
-> > schedule_timeout(some_time);
-> > 
-> > with
-> > 
-> > msleep(jiffies_to_msecs(some_time));
-> > 
-> > msleep() is not exactly the same as the previous code, but I only did
-> > this replacement where I thought long delays were *desired*. If this is
-> > not the case here, then just disregard this patch. 
-> > 
-> > Thanks,
-> > Nish
-> > 
-> > 
-> > 
-> > Applys-to: 2.6.7
-> > 
-> > Description: Replace schedule_timeout() with msleep() to guarantee the
-> > task delays for the desired time.
-> > 
-> > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> > 
-> > 
-> > --- linux-vanilla/drivers/message/fusion/mptbase.c	2004-06-16 05:19:01.000000000 +0000
-> > +++ linux-dev/drivers/message/fusion/mptbase.c	2004-07-12 18:56:59.000000000 +0000
-> 
-> could you please rework this one, it doesn't apply anymore to 2.6.8
-> i could do it but prefer to get next kjt patchset out soon.
+Any comments would be appreciated. I'm not sure if I did the desired
+thing here, as I got rid of stli_delay() completely. After the
+msleep_interruptible() replacement, stli_delay() would only be used in
+one place. I'm not sure which way is preferred (the original or mine)
+regarding the second change, therefore.
 
-In this file, there were a few things I noticed. For one, there
-are many blocks (which I did not change) along the lines of
-
-if (some condition) {
-	set_current_state (TASK_INTERRUPTIBLE);
-	schedule_timeout (1);
-} else {
-	mdelay (1);
-}
-
-This seems weird to me, since in the patch below the schedule_timeout()
-and mdelay() calls matched up exactly. I can fix these blocks, if they
-are errors... Also, I changed the comment in one of the cases in this
-patch, as it erroneously referred to 2 secs.
-
-Please let me know of any other problems.
-
--Nish
-
-
-
-Applys-to: 2.6.7
-
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays for the desired time.
+Description: Use msleep_interruptible() instead of stli_delay() to
+guarantee the task delays as expected. Removed the definition /
+prototype of stli_delay() as it was only called in one other place,
+where I made the direct change to
+set_current_state()/schedule_timeout().
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- linux-2.6.8.1-vanilla/drivers/message/fusion/mptbase.c	2004-08-16 08:32:22.000000000 -0700
-+++ linux-2.6.8.1-dev/drivers/message/fusion/mptbase.c	2004-08-16 12:30:39.000000000 -0700
-@@ -2876,8 +2876,7 @@ mpt_downloadboot(MPT_ADAPTER *ioc, int s
+--- 2.6.9-rc1-mm4-vanilla/drivers/char/istallion.c	2004-09-09 23:05:41.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/char/istallion.c	2004-09-10 11:02:07.000000000 -0700
+@@ -691,7 +691,6 @@ static int	stli_rawopen(stlibrd_t *brdp,
+ static int	stli_rawclose(stlibrd_t *brdp, stliport_t *portp, unsigned long arg, int wait);
+ static int	stli_waitcarrier(stlibrd_t *brdp, stliport_t *portp, struct file *filp);
+ static void	stli_dohangup(void *arg);
+-static void	stli_delay(int len);
+ static int	stli_setport(stliport_t *portp);
+ static int	stli_cmdwait(stlibrd_t *brdp, stliport_t *portp, unsigned long cmd, void *arg, int size, int copyback);
+ static void	stli_sendcmd(stlibrd_t *brdp, stliport_t *portp, unsigned long cmd, void *arg, int size, int copyback);
+@@ -1180,7 +1179,7 @@ static void stli_close(struct tty_struct
  
- 	/* wait 100 msec */
- 	if (sleepFlag == CAN_SLEEP) {
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(100 * HZ / 1000);
-+		msleep (100);
- 	} else {
- 		mdelay (100);
+ 	if (portp->openwaitcnt) {
+ 		if (portp->close_delay)
+-			stli_delay(portp->close_delay);
++			msleep_interruptible(jiffies_to_msecs(portp->close_delay));
+ 		wake_up_interruptible(&portp->open_wait);
  	}
-@@ -2893,8 +2892,7 @@ mpt_downloadboot(MPT_ADAPTER *ioc, int s
- 		}
- 		/* wait 1 sec */
- 		if (sleepFlag == CAN_SLEEP) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ);
-+			msleep (1000);
- 		} else {
- 			mdelay (1000);
- 		}
-@@ -2990,8 +2988,7 @@ mpt_downloadboot(MPT_ADAPTER *ioc, int s
- 	/* wait 100 msec */
- 	if (sleepFlag == CAN_SLEEP) {
- 		ddlprintk((MYIOC_s_INFO_FMT "CAN_SLEEP 100 msec before reset the sequencer\n", ioc->name));
+ 
+@@ -1478,25 +1477,6 @@ static int stli_setport(stliport_t *port
+ /*****************************************************************************/
+ 
+ /*
+- *	Wait for a specified delay period, this is not a busy-loop. It will
+- *	give up the processor while waiting. Unfortunately this has some
+- *	rather intimate knowledge of the process management stuff.
+- */
+-
+-static void stli_delay(int len)
+-{
+-#ifdef DEBUG
+-	printk("stli_delay(len=%d)\n", len);
+-#endif
+-	if (len > 0) {
 -		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(100 * HZ / 1000);
-+		msleep (100);
- 	} else {
- 		ddlprintk((MYIOC_s_INFO_FMT "mdelay 100 msec before reset the sequencer\n", ioc->name));
- 		mdelay (100);
-@@ -3016,10 +3013,9 @@ mpt_downloadboot(MPT_ADAPTER *ioc, int s
- 						return -EFAULT;
- 				}
- 			} */
--			/* wait 2 sec */
-+			/* wait 55555 sec */
- /*			if (sleepFlag == CAN_SLEEP) {
--				set_current_state(TASK_INTERRUPTIBLE);
--				schedule_timeout(5000 * HZ / 1000);
-+				msleep (5000);
- 			} else {
- 				mdelay (5000);
- 			} */
-@@ -3079,8 +3075,7 @@ KickStart(MPT_ADAPTER *ioc, int force, i
- 		SendIocReset(ioc, MPI_FUNCTION_IOC_MESSAGE_UNIT_RESET, sleepFlag);
- 
- 		if (sleepFlag == CAN_SLEEP) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ);
-+			msleep (1000);
- 		} else {
- 			mdelay (1000);
- 		}
-@@ -3173,8 +3168,7 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 
- 			/* wait 100 msec */
- 			if (sleepFlag == CAN_SLEEP) {
--				set_current_state(TASK_INTERRUPTIBLE);
--				schedule_timeout(100 * HZ / 1000);
-+				msleep (100);
- 			} else {
- 				mdelay (100);
- 			}
-@@ -3266,8 +3260,7 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 
- 				/* wait 1 sec */
- 				if (sleepFlag == CAN_SLEEP) {
--					set_current_state(TASK_INTERRUPTIBLE);
--					schedule_timeout(HZ);
-+					msleep (1000);
- 				} else {
- 					mdelay (1000);
- 				}
-@@ -3294,8 +3287,7 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 
- 				/* wait 1 sec */
- 				if (sleepFlag == CAN_SLEEP) {
--					set_current_state(TASK_INTERRUPTIBLE);
--					schedule_timeout(HZ);
-+					msleep (1000);
- 				} else {
- 					mdelay (1000);
- 				}
-@@ -3329,8 +3321,7 @@ mpt_diag_reset(MPT_ADAPTER *ioc, int ign
- 
- 		/* wait 100 msec */
- 		if (sleepFlag == CAN_SLEEP) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(100 * HZ / 1000);
-+			msleep (100);
- 		} else {
- 			mdelay (100);
- 		}
+-		schedule_timeout(len);
+-	}
+-}
+-
+-/*****************************************************************************/
+-
+-/*
+  *	Possibly need to wait for carrier (DCD signal) to come high. Say
+  *	maybe because if we are clocal then we don't need to wait...
+  */
+@@ -2504,7 +2484,8 @@ static void stli_waituntilsent(struct tt
+ 	while (test_bit(ST_TXBUSY, &portp->state)) {
+ 		if (signal_pending(current))
+ 			break;
+-		stli_delay(2);
++		set_current_state(TASK_INTERRUPTIBLE);
++		schedule_timeout(2);
+ 		if (time_after_eq(jiffies, tend))
+ 			break;
+ 	}
 
---===============46619372562949613==
+--===============23039642128394267==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -182,4 +92,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46619372562949613==--
+--===============23039642128394267==--
