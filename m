@@ -1,39 +1,45 @@
-From: Amit Gud <gud@eth.net>
-Date: Fri, 11 Mar 2005 14:34:54 +0000
-Subject: [KJ] [PATCH 3/3] unified spinlock initialization
-Message-Id: <4231A9BE.1040008@eth.net>
+From: "Carlo Perassi" <carlo@linux.it>
+Date: Tue, 29 Mar 2005 14:31:21 +0000
+Subject: [KJ] A question about uninitializing static variables
+Message-Id: <40875.158.102.162.5.1112106681.squirrel@picard.linux.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050311143030.GC3028@neon>
-In-Reply-To: <20050311143030.GC3028@neon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+Hi.
+One of the tasks at http://janitor.kernelnewbies.org/TODO
+is described as
 
-   Unify the spinlock initialization as far as possible.
+"
+uninitialize static variables initialized to 0, to make it go to the
+.bss, instead of .data.
+"
 
-   Do consider applying.
+I made two patches for two maintainers which uninitialize some static
+int used as module parameters and actually initialized to 0.
 
-Signed-off-by: Amit Gud <gud@eth.net>
+One maintainer do not have problems with the patches but the maintainer
+of the file the second patch refers to would like to have some kind of
+"proof" that "it is still guaranteed that those variables will be
+initialized to 0". I wrote him something like "this simple hello module
+shows it is still guaranteed..." but it's not enough for him. I guess
+he'd like a more formal explanation of the following statement:
 
---- ../kernels/linux-2.6.11/drivers/media/dvb/dibusb/dvb-dibusb-pid.c   
-2005-03-10 12:03:49.000000000 +0530
-+++ kj-2.6.11/drivers/media/dvb/dibusb/dvb-dibusb-pid.c 2005-03-11 
-19:25:41.942775232 +0530
-@@ -21,7 +21,7 @@ int dibusb_pid_list_init(struct usb_dibu
+An uninitialized static variable of {the kernel, a kernel module} will
+be compiled to go to the .bss and it is guaranteed that will be
+"zero-ed" there.
 
-        deb_xfer("initializing %d pids for the 
-pid_list.\n",dib->dibdev->dev_cl->demod->pid_filter_count);
+Is there someone with a link or something I could send to this
+maintainer to show him the reasons why the previous statement is true?
+Maybe it could be useful to put this reference in the TODO itself.
 
--       dib->pid_list_lock = SPIN_LOCK_UNLOCKED;
-+       spin_lock_init(&dib->pid_list_lock);
-        
-memset(dib->pid_list,0,dib->dibdev->dev_cl->demod->pid_filter_count*(sizeof(struct 
-dibusb_pid)));
-        for (i=0; i < dib->dibdev->dev_cl->demod->pid_filter_count; i++) {
-                dib->pid_list[i].index = i;
+Thanks.
+
+-- 
+Carlo Perassi - http://www.linux.it/~carlo/
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
