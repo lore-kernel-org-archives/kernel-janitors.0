@@ -1,36 +1,38 @@
-From: "Lorraine Wright" <dbheozcveqltgf@mailblocks.com>
-Date: Sat, 27 Dec 2003 23:26:23 +0000
-Subject: Where is she?  yqk
-Message-Id: <BWPUERSTHQPISGWMVEVRZAY@popmail.com>
+From: "Anne Q." <kpgrhge@yahoo.com>
+Date: Tue, 30 Dec 2003 15:33:22 +0000
+Subject: You'll be surprised
+Message-Id: <elwhdtgblohoyhgcyephfd@yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--63506207997973539"
+Content-Type: multipart/mixed; boundary="--95691858816768575"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----63506207997973539
+----95691858816768575
 Content-Type: text/plain;
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+
+Fight for your self essteem
+
+Want to feel better and still have cash in your wallet?
+
+Ci'a'lis at 30% of the ussual price
+
+Convince yourself:
+http://cvoq.gfd-online.com/cia/?biggest
 
 
-Generic Cialis get hard upto 36 hours
-http://rd.yahoo.com/dir/?http://www.vcvpoews.com/cu/
+Stopmail:
+http://pgvnt.gfd-online.com/zz.html
 
-
-coral malformation cottrell lipstick dichloride against deviate conducive =
-baseplate letterman gibbon=20 zest wallboard pig mobility benight moduli b=
-ianco primp bark inertance perspire gender ileum golly keats petrel textua=
-l ticket marc kingsbury sicklewort=20
-
-
-----63506207997973539--
+----95691858816768575--
 
 
 
 -------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
+This SF.Net email is sponsored by: Oracle 10g
+Get certified on the hottest thing ever to hit the market... Oracle 10g. 
+Take an Oracle 10g class now, and we'll give you the exam FREE.
+http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
