@@ -1,54 +1,31 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Fri, 04 Mar 2005 10:10:18 +0000
-Subject: Re: [KJ] 2.6.11-kj
-Message-Id: <200503041257.17454.adobriyan@mail.ru>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71770060276879444=="
+From: Vicente Feito <vicente.feito@gmail.com>
+Date: Sun, 27 Mar 2005 11:34:15 +0000
+Subject: Re: [KJ][PATCH] kj-devel.pl - comments
+Message-Id: <200503271134.15777.vicente.feito@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050302095710.GA3745@nd47.coderock.org>
-In-Reply-To: <20050302095710.GA3745@nd47.coderock.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============71770060276879444==
-Content-Disposition: inline
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Great!
+I'll implement those, I was also thinking on implementing this kind of 
+checking:
+if (p)
+    kfree(p);
+(since kfree deals with null pointers as well)
 
-On Wednesday 02 March 2005 11:57, Domen Puncer wrote:
+I'm not sure because some people think that is more expensive to make the call 
+than the check, arguing between branch prediction vs stack overhead is common 
+in lkml afaik, which one do you think is better?(Other people is free to go 
+here as well:)
 
-> printk-drivers_acorn_block_mfmhd.patch
->   From: James Nelson <james4765@cwazy.co.uk>
->   Subject: [KJ] [PATCH 2/2][RESEND] acorn: clean up printk()'s in 	drivers/acorn/block/mfmhd.c
+I'm thinking on adding checks for intermodule and taskqueues, I don't know how 
+people feel about it but I believe is time to do it, since they are 
+deprecated but still in some places.
 
-> --- kj/drivers/acorn/block/mfmhd.c~printk-drivers_acorn_block_mfmhd
-> +++ kj-domen/drivers/acorn/block/mfmhd.c
-
-> @@ -156,9 +159,7 @@ struct hd_geometry {
->  /*
->   * Uncomment this to enable debugging in the MFM driver...
->   */
-> -#ifndef DEBUG
-> -/*#define DEBUG */
-> -#endif
-> +
->  /*
->   * End of configuration
->   */
-
-After this patch will be applied, there'd be nothing to uncomment.
-
-	Alexey
-
---===============71770060276879444==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Vicente
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============71770060276879444==--
