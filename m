@@ -1,55 +1,36 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 17 Feb 2005 00:40:16 +0000
-Subject: [KJ] [UPDATE PATCH] net/s2io: replace schedule_timeout() with
-Message-Id: <20050217004016.GB14664@us.ibm.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:27 +0000
+Subject: [KJ] [PATCH][26/26] sound/usb/usx2y/* - compile warning cleanup
+Message-Id: <420BEF83.12146.586F29@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============24680701876067968=="
+Content-Type: multipart/mixed; boundary="===============72547343302350242=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============24680701876067968==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============72547343302350242==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-On Tue, Feb 15, 2005 at 04:18:42PM -0800, Ravinandan Arakali wrote:
-> Jeff,
-> I have just now sent you the below mentioned patch(It has the
-> subject Multicast fix). Although the problem initially manifested
-> as "IPv6 ping not working", root cause boiled down to driver 
-> incorrectly programming multicast addresses into the NIC's Rx filter.
-> 
-> BTW, the patch has been generated on top of Nishanth's patch.
+Description: compile warning cleanup - remove unused automatic variable  
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Here is a fix patch, which prevents an unstoppable sleep from occurring.
-Now, the task can be woken by signals (Ctrl-C), etc. Generated in
-response to comments by Domen Puncer & Ravindan Arakali.
-
-Thanks,
-Nish
-
-Description: Fix a bug in the patched s2io driver, which lead to an
-uninterruptible sleep lasting a *long* time. Instead, use
-msleep_interruptible() to allow wake-ups early via Ctrl-C and other
-signals.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc4-kj-v/drivers/net/s2io.c	2005-02-16 16:33:45.000000000 -0800
-+++ 2.6.11-rc4-kj/drivers/net/s2io.c	2005-02-16 16:31:16.000000000 -0800
-@@ -3297,9 +3297,9 @@ static int s2io_ethtool_idnic(struct net
- 	}
- 	mod_timer(&sp->id_timer, jiffies);
- 	if (data)
--		msleep(data * 1000);
-+		msleep_interruptible(data * 1000);
- 	else
--		msleep(0xFFFFFFFF);
-+		msleep_interruptible(0xFFFFFFFF);
- 	del_timer_sync(&sp->id_timer);
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/sound/usb/usx2y/usbusx2yaudio.c linux-2.6.11-rc3-mm/sound/usb/usx2y/usbusx2yaudio.c
+--- linux-2.6.11-rc3-mm-original/sound/usb/usx2y/usbusx2yaudio.c	2005-02-03 03:55:52.000000000 +0200
++++ linux-2.6.11-rc3-mm/sound/usb/usx2y/usbusx2yaudio.c	2005-02-07 21:15:02.000000000 +0200
+@@ -415,7 +415,6 @@ static int usX2Y_urbs_allocate(snd_usX2Y
+ 	unsigned int pipe;
+ 	int is_playback = subs == subs->usX2Y->subs[SNDRV_PCM_STREAM_PLAYBACK];
+ 	struct usb_device *dev = subs->usX2Y->chip.dev;
+-	struct usb_host_endpoint *ep;
  
- 	if (CARDS_WITH_FAULTY_LINK_INDICATORS(subid)) {
+ 	pipe = is_playback ? usb_sndisocpipe(dev, subs->endpoint) :
+ 			usb_rcvisocpipe(dev, subs->endpoint);
 
---===============24680701876067968==
+
+
+
+--===============72547343302350242==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============24680701876067968==--
+--===============72547343302350242==--
