@@ -1,69 +1,58 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 23:08:53 +0000
-Subject: [KJ] [PATCH 20/20] mips/bcm1250_tbprof: remove
-Message-Id: <20050202230853.GA2546@us.ibm.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Sun, 13 Feb 2005 12:51:55 +0000
+Subject: [KJ] [PATCH] drivers/net/irda/*: convert to pci_register_driver
+Message-Id: <20050213125155.GD15348@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10685029398335621=="
+Content-Type: multipart/mixed; boundary="l+goss899txtYvYf"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: ralf@linux-mips.org
-Cc: linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============10685029398335621==
+
+--l+goss899txtYvYf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Please consider applying.
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-Description: Remove deprecated interruptible_sleep_on() function call
-and replace with direct wait-queue usage.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc2-kj-v/arch/mips/sibyte/sb1250/bcm1250_tbprof.c	2005-01-24 09:28:12.000000000 -0800
-+++ 2.6.11-rc2-kj/arch/mips/sibyte/sb1250/bcm1250_tbprof.c	2005-02-02 15:07:08.000000000 -0800
-@@ -28,6 +28,7 @@
- #include <linux/fs.h>
- #include <linux/errno.h>
- #include <linux/reboot.h>
-+#include <linux/wait.h>
- #include <asm/uaccess.h>
- #include <asm/io.h>
- #include <asm/sibyte/sb1250.h>
-@@ -227,6 +228,7 @@ int sbprof_zbprof_start(struct file *fil
- 
- int sbprof_zbprof_stop(void)
+
+--l+goss899txtYvYf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_irda.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/irda/donauboe.c linux-2.6.11-rc3/drivers/net/irda/donauboe.c
+--- linux-2.6.11-rc3-vanilla/drivers/net/irda/donauboe.c	2005-02-03 17:03:49.000000000 +0100
++++ linux-2.6.11-rc3/drivers/net/irda/donauboe.c	2005-02-07 09:39:28.000000000 +0100
+@@ -1776,7 +1776,7 @@ static struct pci_driver donauboe_pci_dr
+ static int __init
+ donauboe_init (void)
  {
-+	DEFINE_WAIT(wait);
- 	DBG(printk(DEVNAME ": stopping\n"));
+-  return pci_module_init(&donauboe_pci_driver);
++  return pci_register_driver(&donauboe_pci_driver);
+ }
  
- 	if (sbp.tb_enable) {
-@@ -236,7 +238,9 @@ int sbprof_zbprof_stop(void)
- 		   this sleep happens. */
- 		if (sbp.tb_armed) {
- 			DBG(printk(DEVNAME ": wait for disarm\n"));
--			interruptible_sleep_on(&sbp.tb_sync);
-+			prepare_to_wait(&sbp.tb_sync, &wait, TASK_INTERRUPTIBLE);
-+			schedule();
-+			finish_wait(&sbp.tb_sync, &wait);
- 			DBG(printk(DEVNAME ": disarm complete\n"));
- 		}
- 		free_irq(K_INT_TRACE_FREEZE, &sbp);
-@@ -344,7 +348,10 @@ static int sbprof_tb_ioctl(struct inode 
- 		error = sbprof_zbprof_stop();
- 		break;
- 	case SBPROF_ZBWAITFULL:
--		interruptible_sleep_on(&sbp.tb_read);
-+		DEFINE_WAIT(wait);
-+		prepare_to_wait(&sbp.tb_read, &wait, TASK_INTERRUPTIBLE);
-+		schedule();
-+		finish_wait(&sbp.tb_read, &wait);
- 		/* XXXKW check if interrupted? */
- 		return put_user(TB_FULL, (int *) arg);
- 	default:
+ static void __exit
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/irda/vlsi_ir.c linux-2.6.11-rc3/drivers/net/irda/vlsi_ir.c
+--- linux-2.6.11-rc3-vanilla/drivers/net/irda/vlsi_ir.c	2005-02-03 17:03:49.000000000 +0100
++++ linux-2.6.11-rc3/drivers/net/irda/vlsi_ir.c	2005-02-07 09:39:28.000000000 +0100
+@@ -1885,7 +1885,7 @@ static int __init vlsi_mod_init(void)
+ 		vlsi_proc_root->owner = THIS_MODULE;
+ 	}
+ 
+-	ret = pci_module_init(&vlsi_irda_driver);
++	ret = pci_register_driver(&vlsi_irda_driver);
+ 
+ 	if (ret && vlsi_proc_root)
+ 		remove_proc_entry(PROC_DIR, NULL);
 
---===============10685029398335621==
+--l+goss899txtYvYf
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -74,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10685029398335621==--
+--l+goss899txtYvYf--
