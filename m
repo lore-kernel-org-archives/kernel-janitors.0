@@ -1,507 +1,104 @@
-From: James Nelson <james4765@verizon.net>
-Date: Fri, 17 Dec 2004 22:34:04 +0000
-Subject: [KJ] [PATCH] pcxx: replace cli()/sti() with
-Message-Id: <20041217223426.11143.44338.87156@localhost.localdomain>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 04 Dec 2004 22:15:23 +0000
+Subject: [KJ] 70 "unneeded casts" patches
+Message-Id: <20041204221523.GA3790@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40995206136797346=="
+Content-Type: multipart/mixed; boundary="===============043571393924669799=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
-Cc: akpm@osdl.org, James Nelson <james4765@verizon.net>
+To: kernel-janitors@vger.kernel.org
 
---===============40995206136797346==
+--===============043571393924669799==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is an attempt to make the pcxx driver SMP-correct.
+Hi.
 
-Compile tested.
+Couple of days ago I did 70 patches removing unneeded casts.
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Now I feel a little stupid about sending that amount of silly patches to
+everyone's mailbox, so I put them to:
+http://coderock.org/kernel/janitor/unneeded_casts/
 
-diff -urN --exclude='*~' linux-2.6.10-rc3-mm1-original/drivers/char/Kconfig linux-2.6.10-rc3-mm1/drivers/char/Kconfig
---- linux-2.6.10-rc3-mm1-original/drivers/char/Kconfig	2004-12-03 16:52:14.000000000 -0500
-+++ linux-2.6.10-rc3-mm1/drivers/char/Kconfig	2004-12-17 16:52:48.983563961 -0500
-@@ -157,7 +157,7 @@
- 
- config DIGI
- 	tristate "Digiboard PC/Xx Support"
--	depends on SERIAL_NONSTANDARD && DIGIEPCA=n && BROKEN_ON_SMP
-+	depends on SERIAL_NONSTANDARD && DIGIEPCA=n
- 	help
- 	  This is a driver for the Digiboard PC/Xe, PC/Xi, and PC/Xeve cards
- 	  that give you many serial ports. You would need something like this
-diff -urN --exclude='*~' linux-2.6.10-rc3-mm1-original/drivers/char/pcxx.c linux-2.6.10-rc3-mm1/drivers/char/pcxx.c
---- linux-2.6.10-rc3-mm1-original/drivers/char/pcxx.c	2004-12-03 16:53:57.000000000 -0500
-+++ linux-2.6.10-rc3-mm1/drivers/char/pcxx.c	2004-12-17 17:07:03.200241656 -0500
-@@ -101,6 +101,8 @@
- static int verbose = 0;
- static int debug   = 0;
- 
-+static spinlock_t pcxx_lock = SPIN_LOCK_UNLOCKED;
-+
- #ifdef MODULE
- /* Variables for insmod */
- static int io[]           = {0, 0, 0, 0};
-@@ -209,8 +211,7 @@
- 
- 	printk(KERN_NOTICE "Unloading PC/Xx version %s\n", VERSION);
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	del_timer_sync(&pcxx_timer);
- 
- 	if ((e1 = tty_unregister_driver(pcxe_driver)))
-@@ -219,7 +220,7 @@
- 	put_tty_driver(pcxe_driver);
- 	cleanup_board_resources();
- 	kfree(digi_channels);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- }
- 
- static inline struct channel *chan(register struct tty_struct *tty)
-@@ -323,12 +324,12 @@
- 	info->blocked_open++;
- 
- 	for (;;) {
--		cli();
-+		spin_lock_irq(&pcxx_lock);
- 		globalwinon(info);
- 		info->omodem |= DTR|RTS;
- 		fepcmd(info, SETMODEM, DTR|RTS, 0, 10, 1);
- 		memoff(info);
--		sti();
-+		spin_unlock_irq(&pcxx_lock);
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		if(tty_hung_up_p(filp) || (info->asyncflags & ASYNC_INITIALIZED) == 0) {
- 			if(info->asyncflags & ASYNC_HUP_NOTIFY)
-@@ -404,8 +405,7 @@
- 			return -ERESTARTSYS;
- 	}
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	ch->count++;
- 	tty->driver_data = ch;
- 	ch->tty = tty;
-@@ -428,7 +428,7 @@
- 		memoff(ch);
- 		ch->asyncflags |= ASYNC_INITIALIZED;
- 	}
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- 
- 	if(ch->asyncflags & ASYNC_CLOSING) {
- 		interruptible_sleep_on(&ch->close_wait);
-@@ -463,8 +463,7 @@
- 	if (!(info->asyncflags & ASYNC_INITIALIZED)) 
- 		return;
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	globalwinon(info);
- 
- 	bc = info->brdchan;
-@@ -483,7 +482,7 @@
- 
- 	memoff(info);
- 	info->asyncflags &= ~ASYNC_INITIALIZED;
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- }
- 
- 
-@@ -493,8 +492,7 @@
- 
- 	if ((info=chan(tty))!=NULL) {
- 		unsigned long flags;
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 
- 		if(tty_hung_up_p(filp)) {
- 			/* flag that somebody is done with this module */
-@@ -544,7 +542,7 @@
- 		}
- 		info->asyncflags &= ~(ASYNC_NORMAL_ACTIVE|ASYNC_CLOSING);
- 		wake_up_interruptible(&info->close_wait);
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -556,15 +554,14 @@
- 	if ((ch=chan(tty))!=NULL) {
- 		unsigned long flags;
- 
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		shutdown(ch);
- 		ch->event = 0;
- 		ch->count = 0;
- 		ch->tty = NULL;
- 		ch->asyncflags &= ~ASYNC_NORMAL_ACTIVE;
- 		wake_up_interruptible(&ch->open_wait);
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -590,8 +587,7 @@
- 	 */
- 
- 	total = 0;
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	globalwinon(ch);
- 	head = bc->tin & (size - 1);
- 	tail = bc->tout;
-@@ -629,7 +625,7 @@
- 		bc->ilow = 1;
- 	}
- 	memoff(ch);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- 	
- 	return(total);
- }
-@@ -653,8 +649,7 @@
- 		unsigned int head, tail;
- 		unsigned long flags;
- 
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		globalwinon(ch);
- 
- 		bc = ch->brdchan;
-@@ -672,7 +667,7 @@
- 			bc->ilow = 1;
- 		}
- 		memoff(ch);
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- 
- 	return remain;
-@@ -691,8 +686,7 @@
- 	if ((ch=chan(tty))==NULL)
- 		return(0);
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	globalwinon(ch);
- 
- 	bc = ch->brdchan;
-@@ -718,7 +712,7 @@
- 	}
- 
- 	memoff(ch);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- 
- 	return(chars);
- }
-@@ -734,8 +728,7 @@
- 	if ((ch=chan(tty))==NULL)
- 		return;
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 
- 	globalwinon(ch);
- 	bc = ch->brdchan;
-@@ -743,7 +736,7 @@
- 	fepcmd(ch, STOUT, (unsigned) tail, 0, 0, 0);
- 
- 	memoff(ch);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- 
- 	tty_wakeup(tty);
- }
-@@ -755,11 +748,10 @@
- 	if ((ch=chan(tty))!=NULL) {
- 		unsigned long flags;
- 
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		if ((ch->statusflags & TXBUSY) && !(ch->statusflags & EMPTYWAIT))
- 			setup_empty_event(tty,ch);
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -1512,8 +1504,7 @@
- 	struct channel *ch;
- 	struct board_info *bd;
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 
- 	for(crd=0; crd < numcards; crd++) {
- 		bd = &boards[crd];
-@@ -1536,7 +1527,7 @@
- 	}
- 
- 	mod_timer(&pcxx_timer, jiffies + HZ/25);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- }
- 
- static void doevent(int crd)
-@@ -1940,12 +1931,11 @@
- 		return(-EINVAL);
- 	}
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	globalwinon(ch);
- 	mstat = bc->mstat;
- 	memoff(ch);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- 
- 	if(mstat & DTR)
- 		mflag |= TIOCM_DTR;
-@@ -1978,8 +1968,7 @@
- 		return(-EINVAL);
- 	}
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	/*
- 	 * I think this modemfake stuff is broken.  It doesn't
- 	 * correctly reflect the behaviour desired by the TIOCM*
-@@ -2005,7 +1994,7 @@
- 	globalwinon(ch);
- 	pcxxparam(tty,ch);
- 	memoff(ch);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- 	return 0;
- }
- 
-@@ -2028,7 +2017,6 @@
- 		return(-EINVAL);
- 	}
- 
--	save_flags(flags);
- 
- 	switch(cmd) {
- 		case TCSBRK:	/* SVID version: non-zero arg --> no break */
-@@ -2074,21 +2062,21 @@
- 			return pcxe_tiocmset(tty, file, mstat, ~mstat);
- 
- 		case TIOCSDTR:
--			cli();
-+			spin_lock_irqsave(&pcxx_lock, flags);
- 			ch->omodem |= DTR;
- 			globalwinon(ch);
- 			fepcmd(ch, SETMODEM, DTR, 0, 10, 1);
- 			memoff(ch);
--			restore_flags(flags);
-+			spin_unlock_irqrestore(&pcxx_lock, flags);
- 			break;
- 
- 		case TIOCCDTR:
- 			ch->omodem &= ~DTR;
--			cli();
-+			spin_lock_irqsave(&pcxx_lock, flags);
- 			globalwinon(ch);
- 			fepcmd(ch, SETMODEM, 0, DTR, 10, 1);
- 			memoff(ch);
--			restore_flags(flags);
-+			spin_unlock_irqrestore(&pcxx_lock, flags);
- 			break;
- 
- 		case DIGI_GETA:
-@@ -2123,16 +2111,16 @@
- 				ch->dsr = DSR;
- 			}
- 		
--			cli();
-+			spin_lock_irqsave(&pcxx_lock, flags);
- 			globalwinon(ch);
- 			pcxxparam(tty,ch);
- 			memoff(ch);
--			restore_flags(flags);
-+			spin_unlock_irqrestore(&pcxx_lock, flags);
- 			break;
- 
- 		case DIGI_GETFLOW:
- 		case DIGI_GETAFLOW:
--			cli();	
-+			spin_lock_irqsave(&pcxx_lock, flags);
- 			globalwinon(ch);
- 			if(cmd == DIGI_GETFLOW) {
- 				dflow.startc = bc->startc;
-@@ -2142,7 +2130,7 @@
- 				dflow.stopc = bc->stopca;
- 			}
- 			memoff(ch);
--			restore_flags(flags);
-+			spin_unlock_irqrestore(&pcxx_lock, flags);
- 
- 			if (copy_to_user((char*)arg, &dflow, sizeof(dflow)))
- 				return -EFAULT;
-@@ -2162,7 +2150,7 @@
- 				return -EFAULT;
- 
- 			if(dflow.startc != startc || dflow.stopc != stopc) {
--				cli();
-+				spin_lock_irqsave(&pcxx_lock, flags);
- 				globalwinon(ch);
- 
- 				if(cmd == DIGI_SETFLOW) {
-@@ -2179,7 +2167,7 @@
- 					pcxe_start(tty);
- 
- 				memoff(ch);
--				restore_flags(flags);
-+				spin_unlock_irqrestore(&pcxx_lock, flags);
- 			}
- 			break;
- 
-@@ -2196,8 +2184,7 @@
- 
- 	if ((info=chan(tty))!=NULL) {
- 		unsigned long flags;
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		globalwinon(info);
- 		pcxxparam(tty,info);
- 		memoff(info);
-@@ -2208,7 +2195,7 @@
- 		if(!(old_termios->c_cflag & CLOCAL) &&
- 			(tty->termios->c_cflag & CLOCAL))
- 			wake_up_interruptible(&info->open_wait);
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -2237,15 +2224,14 @@
- 
- 	if ((info=chan(tty))!=NULL) {
- 		unsigned long flags;
--		save_flags(flags); 
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		if ((info->statusflags & TXSTOPPED) == 0) {
- 			globalwinon(info);
- 			fepcmd(info, PAUSETX, 0, 0, 0, 0);
- 			info->statusflags |= TXSTOPPED;
- 			memoff(info);
- 		}
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -2255,15 +2241,14 @@
- 
- 	if ((info=chan(tty))!=NULL) {
- 		unsigned long flags;
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		if ((info->statusflags & RXSTOPPED) == 0) {
- 			globalwinon(info);
- 			fepcmd(info, PAUSERX, 0, 0, 0, 0);
- 			info->statusflags |= RXSTOPPED;
- 			memoff(info);
- 		}
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -2275,8 +2260,7 @@
- 		unsigned long flags;
- 
- 		/* Just in case output was resumed because of a change in Digi-flow */
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		if(info->statusflags & RXSTOPPED) {
- 			volatile struct board_chan *bc;
- 			globalwinon(info);
-@@ -2285,7 +2269,7 @@
- 			info->statusflags &= ~RXSTOPPED;
- 			memoff(info);
- 		}
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -2297,8 +2281,7 @@
- 	if ((info=chan(tty))!=NULL) {
- 		unsigned long flags;
- 
--		save_flags(flags);
--		cli();
-+		spin_lock_irqsave(&pcxx_lock, flags);
- 		/* Just in case output was resumed because of a change in Digi-flow */
- 		if(info->statusflags & TXSTOPPED) {
- 			volatile struct board_chan *bc;
-@@ -2310,7 +2293,7 @@
- 			info->statusflags &= ~TXSTOPPED;
- 			memoff(info);
- 		}
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&pcxx_lock, flags);
- 	}
- }
- 
-@@ -2319,8 +2302,7 @@
- {
- 	unsigned long flags;
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	globalwinon(ch);
- 
- 	/* 
-@@ -2334,7 +2316,7 @@
- 	fepcmd(ch, SENDBREAK, msec, 0, 10, 0);
- 	memoff(ch);
- 
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- }
- 
- static void setup_empty_event(struct tty_struct *tty, struct channel *ch)
-@@ -2342,12 +2324,11 @@
- 	volatile struct board_chan *bc;
- 	unsigned long flags;
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&pcxx_lock, flags);
- 	globalwinon(ch);
- 	ch->statusflags |= EMPTYWAIT;
- 	bc = ch->brdchan;
- 	bc->iempty = 1;
- 	memoff(ch);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&pcxx_lock, flags);
- }
+Diff between old and new compiles' logs (make some/file.o) shows no
+introduced warnings, but quite some files don't compile.
 
---===============40995206136797346==
+diffstat:
+ arch/ia64/hp/sim/simeth.c                         |    8 +-
+ arch/ppc/8260_io/enet.c                           |   12 +--
+ arch/ppc/8260_io/fcc_enet.c                       |   28 +++----
+ arch/ppc/8xx_io/enet.c                            |   12 +--
+ arch/ppc/8xx_io/fec.c                             |    6 -
+ drivers/bluetooth/hci_bcsp.c                      |    4 -
+ drivers/char/pcmcia/synclink_cs.c                 |   46 ++++++------
+ drivers/isdn/i4l/isdn_concap.c                    |    2 
+ drivers/isdn/i4l/isdn_net.c                       |   70 +++++++++----------
+ drivers/isdn/i4l/isdn_ppp.c                       |   23 +++---
+ drivers/media/dvb/b2c2/skystar2.c                 |   12 +--
+ drivers/media/dvb/cinergyT2/cinergyT2.c           |   18 ++--
+ drivers/media/dvb/dibusb/dvb-dibusb.c             |    6 -
+ drivers/media/dvb/dvb-core/dmxdev.c               |   60 ++++++----------
+ drivers/media/dvb/dvb-core/dvb_ca_en50221.c       |   40 +++++------
+ drivers/media/dvb/dvb-core/dvb_net.c              |   44 ++++++------
+ drivers/media/dvb/ttpci/av7110.c                  |   44 ++++++------
+ drivers/media/dvb/ttpci/av7110_av.c               |   67 +++++++++---------
+ drivers/media/dvb/ttpci/av7110_ca.c               |   24 +++---
+ drivers/media/dvb/ttpci/budget-core.c             |   20 ++---
+ drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c |    9 +-
+ drivers/media/dvb/ttusb-dec/ttusb_dec.c           |   24 +++---
+ drivers/media/video/arv.c                         |    2 
+ drivers/media/video/w9966.c                       |    6 -
+ drivers/media/video/zr36120.c                     |   16 ++--
+ drivers/mtd/chips/jedec.c                         |   14 +--
+ drivers/mtd/chips/map_ram.c                       |    6 -
+ drivers/mtd/chips/map_rom.c                       |    2 
+ drivers/mtd/devices/doc1000.c                     |    4 -
+ drivers/mtd/devices/doc2000.c                     |   28 +++----
+ drivers/mtd/devices/doc2001.c                     |   24 +++---
+ drivers/mtd/devices/doc2001plus.c                 |   28 +++----
+ drivers/mtd/devices/ms02-nv.c                     |    6 -
+ drivers/mtd/devices/mtdram.c                      |    4 -
+ drivers/mtd/devices/phram.c                       |    8 +-
+ drivers/mtd/devices/pmc551.c                      |   10 +-
+ drivers/mtd/devices/slram.c                       |    8 +-
+ drivers/mtd/maps/ocelot.c                         |    2 
+ drivers/mtd/maps/uclinux.c                        |    4 -
+ drivers/mtd/mtdchar.c                             |   10 +-
+ drivers/mtd/nand/diskonchip.c                     |   80 +++++++++++-----------
+ drivers/mtd/nand/s3c2410.c                        |   10 +-
+ drivers/net/appletalk/ipddp.c                     |    2 
+ drivers/net/appletalk/ltpc.c                      |    8 +-
+ drivers/net/arcnet/arc-rawmode.c                  |    4 -
+ drivers/net/arcnet/arc-rimi.c                     |   14 +--
+ drivers/net/arcnet/arcnet.c                       |   30 ++++----
+ drivers/net/arcnet/com20020.c                     |    6 -
+ drivers/net/arcnet/com90io.c                      |    4 -
+ drivers/net/arcnet/com90xx.c                      |    8 +-
+ drivers/net/arcnet/rfc1051.c                      |    8 +-
+ drivers/net/arcnet/rfc1201.c                      |   12 +--
+ drivers/net/bonding/bond_3ad.c                    |    3 
+ drivers/net/hamradio/baycom_epp.c                 |    4 -
+ drivers/net/hamradio/baycom_par.c                 |    4 -
+ drivers/net/hamradio/baycom_ser_fdx.c             |    2 
+ drivers/net/hamradio/baycom_ser_hdx.c             |    2 
+ drivers/net/hamradio/bpqether.c                   |   12 +--
+ drivers/net/hamradio/hdlcdrv.c                    |   12 +--
+ drivers/net/hamradio/mkiss.c                      |   22 +++---
+ drivers/net/hamradio/scc.c                        |   12 +--
+ drivers/net/hamradio/yam.c                        |   12 +--
+ drivers/net/irda/ali-ircc.c                       |   22 +++---
+ drivers/net/irda/donauboe.c                       |   28 +++----
+ drivers/net/irda/irda-usb.c                       |   12 +--
+ drivers/net/irda/irport.c                         |   27 +++----
+ drivers/net/irda/nsc-ircc.c                       |   16 ++--
+ drivers/net/irda/smsc-ircc2.c                     |   25 +++---
+ drivers/net/irda/via-ircc.c                       |   17 ++--
+ drivers/net/irda/w83977af_ir.c                    |   16 +---
+ 70 files changed, 585 insertions(+), 610 deletions(-)
+
+
+	Domen
+
+--===============043571393924669799==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -512,4 +109,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40995206136797346==--
+--===============043571393924669799==--
