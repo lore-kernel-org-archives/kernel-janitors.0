@@ -1,38 +1,41 @@
-From: "linnea payne" <trueng@mail15.com>
-Date: Sun, 08 Feb 2004 08:51:56 +0000
-Subject: Have you combined your monetary obligations?
-Message-Id: <C37361CE.2B2015B@mail15.com>
+From: "Kelly Garrett" <k.garrettqt@worldcom.ch>
+Date: Thu, 19 Feb 2004 20:31:19 +0000
+Subject: =?iso-8859-1?B?UmU6TmV3cyBMaW5lOiBSZXZvbHV0aW9uYXJ5IEhHSCBQaWxscw==?=
+Message-Id: <1077222679.4865@worldcom.ch>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_04E5_1C2FFCC3.C233A7EE"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<HTML>
-Get rid of all Chargecard Debt<br>
-Harassing calling and letters stopped<br>
-Best of all you don't hurt your rating at all<br>
-<br>
-<a href="http://optinmail-pro.net/mp/eliminate/">I want 
-to get back on track</a><br>
-<br>
-<br>
-<a href="http://optinmail-pro.net/mp/eliminate/">or not, 
-Internet P O Box 1200b Oranjestad Aruba</a>
-<br>
-<br>
-<br>Do you eat? asked the boyTerrified though he was by the sudden
-disaster, the boy had still wit enough remaining to reach out his right hand
-and move the indicator of the machine upon his left wrist to the zero mark
-</FONT></HTML>
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_04E5_1C2FFCC3.C233A7EE
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+
+
+
+------=_NextPart_000_04E5_1C2FFCC3.C233A7EE
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<center><!--0ka9hzwK2V4Tp2J--><a href="http://www.sddtrust.com/ghr/"><img src="http://www.trailldd.com/g9.gif" border=0></a></center>
+<body></html>
+
+
+------=_NextPart_000_04E5_1C2FFCC3.C233A7EE--
 
 
 
 -------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
