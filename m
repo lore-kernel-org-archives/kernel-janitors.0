@@ -1,86 +1,37 @@
-From: "Georgeann Merry" <aohawh11btyco@jetcity.com>
-Date: Tue, 10 Feb 2004 05:50:46 +0000
-Subject: Cheap'est Softwares U Ever Seen tilted
-Message-Id: <zlql13czsft-o1aat73-0mmvlaohawh11btyco@jetcity.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="981636800101215"
+From: "happy" <happy@yahoo.com>
+Date: Mon, 16 Feb 2004 06:25:55 +0000
+Subject: =?GB2312?B?tPPQzbPJyuxFUlDUtLT6wutQb3dlckVSUCBWMi4wtc2829eqyMM=?=
+Message-Id: <200402160621.i1G6LeU2032483@mailer.progressive-comp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
---981636800101215
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-ornamented breadcrumb stubborn listel hatemonger unassured 
-vaduz viewpoint mend lots acritical american rolodex lighten misjudge rugous cafe fugleman reserved grapevine songtag blowsy merit tishri 
-mollusk walkway spillover dreck prfer lamium bung toxicity balistes subsidence quadriceps hanoverian spinning gratulate equipped dividend splice 
-
---981636800101215
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text; charset=us-ascii">
-</head>
-<body>
-<center>
-<font color=FFFFEE style="font-family: arial; font-size: 1pt;">celluloid melted sedated toothless tenses scriptae frostbite drepanis amianth pastiche seasonal indelicacy cynophobia mesohippus novena neif cairina unendowed cassowary misfire diluent deformed agrypnia arabesque energy infant esquimaux note fizgig cutter desert small celebes caste bargello typesetter bravo pternohyla blurred highjack dugongidae tubal pizzle .</font>
-<table border=0 cellspacing=0 cellpadding=30 width=655>
-<tr><td bgcolor=8C8CEB align=center>
-<font size=6 face=tahoma color=ffff00><b>Cheap Soft at Damn Low Pri ce </b></font><br>
-<table border=0 cellspacing=0 cellpadding=20 width=615>
-<tr><td bgcolor=FACD33 align=center>
-<table border=1 cellspacing=0 cellpadding=10 width=595 bordercolor=000000>
-<tr><td bgcolor=FFFFFF>
-<font color=FF3E3E size=2 face="arial black">Hello friends, hope you can find cheeap soft on our site! In our archive you can find a lot of popular programs: Adobe PhotoShop CS 8.0 only for 40$, Autodesk Building Systems 2004 (2 cds) for 40$, Borland C++ Builder 6 Enterprise for 40$, Corel Draw 11 Graphic Suite SP1 (5 cds) only for 50$, Catia 5 R12 P3 with SP2 (3 cds) 50$, Finale 2004 (1 cd) 40$.... and a lot of more....If you want see list with all our programs click on "Price List", or choose category which you want. </font><br><br>
-<font color=2020FF face=arial size=4>
-<font color=000000 size=4>Categories we have for now - over 328 expensive softwares to blast off</font><br>
-Audio (Music) <font size=1 color=7F7F7F>(75 popular softwares)</font><br>
-Internet <font size=1 color=7F7F7F>(126 popular softwares)</font><br>
-Games <font size=1 color=7F7F7F>(102 popular softwares)</font><br>
-Business <font size=1 color=7F7F7F>(31 popular softwares)</font><br>
-IS/IT <font size=1 color=7F7F7F>(72 popular softwares)</font><br>
-Mobile, Palm, Pocket <font size=1 color=7F7F7F>(21 popular softwares)</font><br>
-Design, Photo, Flash, Media,Illustration <font size=1 color=7F7F7F>(89 popular softwares)</font><br>
-Web Developer <font size=1 color=7F7F7F>(56 popular softwares)</font><br>
-Software Developer <font size=1 color=7F7F7F>(45 popular softwares)</font><br>
-Utilities, Drivers, Antivirus, Security <font size=1 color=7F7F7F>(39 popular softwares)</font><br>
-Desktop Enhancements <font size=1 color=7F7F7F>(28 popular softwares)</font><br>
-Home & Education <font size=1 color=7F7F7F>( 23 popular softwares)</font><br>
-3D Studio, Adobe, Maya... Plugins <font size=1 color=7F7F7F>(50 popular softwares)</font><br>
-Video <font size=1 color=7F7F7F>(33 popular softwares)</font><br>
-CAD/CAM <font size=1 color=7F7F7F>(12 popular softwares)</font><br>
-Mac <font size=1 color=7F7F7F>(52 popular softwares)</font><br>
-& many more latest released softwares, DON'T MISS IT!
-</b></font><br><br>
-<font color=000000 size=3 face=arial>
-<b>You may pur- chase these softwares in 3 ways:</b><br>
-i) download from server (immediate download after payment)<br>
-ii) we ship you physical CDs<br>
-iii) [both of above (i) & (ii)] download from our server & we ship you the physical CDs as backup for ur future re-installation<br><br>
-</font>
-<center>
-<b><a href=http://drs.yahoo.com/asparagus_picknickersatiny_bejeweled/sponginessdespoiled/*%68ttp://unwatchful_warranteddramaturgy-catahedra.softhere.com/a/?jeter_camarilla target=_blank><u><font color=0000FF size=4 face=arial><b>L i m i t e d - t i m e offer only<br><br>Each software offer will end after 20 copies sold<br><br>The one & only cheap softwares bargain site on web<br><br>Don't MISS these GREAT offfers!<br><br><font size=5>C-L-I-C-K &nbsp; H-E-R-E TO GET ONE TODAY</font></b></font></u></a><br>
-<a href=http://drs.yahoo.com/woodlouse-negotiator/pokerdice/*%68ttp://pentail_sadismpipewort_bantoid.softhere.com/a/a.cgi target=_blank><font size=1 face=arial>r m v</font></a>
-</font>
-</center>
-</td></tr></table>
-</td></tr></table>
-</td></tr></table>
-</center>
-</body>
-</html>
-
---981636800101215--
-
-
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
-_______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+ICAgCiAgICC52NPaUG93ZXJFUlAgVjIuMM/qz7jXysHPLMfrt8POytW+teMs1tDT0LLiytSw5rG+
+v8nS1M/C1NgKytTTwzpodHRwOi8vd3d3LnBvd2VyZXJwLm9yZy8KCiAgICDPtc2zv6q3oru3vrOj
+uldpbjIwMDAgU2VydmVyKyBTcWwgU2VydmVyIDIwMDAgKyBQQjguMAoKICAgILG+yMu009K1sMvE
+6tLUwLSjrNTayv280teo0rXX9kVSUM+1zbO1xLmry765pNf3uf2jrNPQz+O42wq5q8u+oaLMqM3l
+uavLvqGitPPCvbmry762vNPQv6q3okVSULXEvq3A+qOhCgogICAg08nT2rbUs8zQ8tSx0NDStbXE
+sa+52yzP1tLR16rQ0CzM2NeqyMO089DNyfqy+tbG1OzStbTz0M0KRVJQ1LTC61Bvd2VyRVJQIFYy
+LjAssPzAqM/qz7i1xL+qt6LK1rLhLL/J0tS1scPmseDS6yy1scPmvbvS1y4K0tTIt7GjxOO1xMio
+0uYhIAoKICAgIFBvd2VyRVJQz7XNs8S/x7DS0b6t1Nq24LzSzKjXyqGiuNvXyrywtPPCvcbz0rXK
+tbzKyrnTw6Osx7AKye3OqsyozeXG89K1tcTI7bz+o6zTydPatPPBv8yozeXG89K1vfi+/MTatdij
+rNXi0KnG89K11tDT0NK70KkKsb7J7dLRvq3KudPDtMtFUlDPtc2zo6y007b40v29+LW9tPPCvSzT
+ydPaztLDx7Tzwr21xMq1vMrH6b/2o6wKy/nS1M+1zbPU2tLUx7C1xLv5tKHJz7u5ysfX9sHLsci9
+z7TztcS4xNTsoaMKCiAgICCw5rG+1PbHv8HLy/nT0LXEuabE3M/uo6zM7bzTsqLN6snGwcvQ7bbg
+xKO/6aOssqLH0rLJ08O5+rzSCtfu0MK1xMvEzruyxs7x1sa2yKOssru53MrHtNPJ+rL6tcRCT02h
+olNDTaGiTVJQtci1vb34z/q05tTZtb2yxgrO8bXItci7t73atrzWsb3TysrTw7n6xNrG89K1o6yy
+osfSvNPI68HL0+/R1MfQu7u1xLK/t9ajrNPQvPKhorexoaIK06LI/dbW0+/R1L/J0tTL5sqxx9C7
+u6GjICAKCiAgICBFLW1haWw6ICBvcmRlckBwb3dlcmVycC5vcmcKLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCsjnufvE+rK70OjS
+qizH69eqt6K4+MT6tcTF89PRo6zSstDty/vV/dDo0qqjrLvy1d/H68vmytbJvrP9LNC70LshCgoK
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpT
+Ri5OZXQgaXMgc3BvbnNvcmVkIGJ5OiBTcGVlZCBTdGFydCBZb3VyIExpbnV4IEFwcHMgTm93LgpC
+dWlsZCBhbmQgZGVwbG95IGFwcHMgJiBXZWIgc2VydmljZXMgZm9yIExpbnV4IHdpdGgKYSBmcmVl
+IERWRCBzb2Z0d2FyZSBraXQgZnJvbSBJQk0uIENsaWNrIE5vdyEKaHR0cDovL2Fkcy5vc2RuLmNv
+bS8/YWRfaWQTNTYmYWxsb2NfaWQ0Mzgmb3A9Y2xpY2sKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KS2VybmVsLWphbml0b3ItZGlzY3VzcyBtYWlsaW5nIGxp
+c3QKS2VybmVsLWphbml0b3ItZGlzY3Vzc0BsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9s
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8va2VybmVsLWphbml0b3ItZGlzY3Vz
+cw==
