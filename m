@@ -1,32 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 29 Sep 2004 17:41:32 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 1/4] pci
-Message-Id: <20040929174132.GF12641@kroah.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 01 Sep 2004 21:40:03 +0000
+Subject: [Kernel-janitors] Re: [patch 1/8] irda/act200l-sir: replace
+Message-Id: <20040901214003.GC7467@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============019858760702068601=="
+Content-Type: multipart/mixed; boundary="===============7419660174509124=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0409161253580.14212@server.home>
-In-Reply-To: <Pine.LNX.4.58.0409161253580.14212@server.home>
-To: kernel-janitors@vger.kernel.org
+References: <E1C2cIF-0007yy-Lb@sputnik>
+	<20040901210929.GA11442@bougret.hpl.hp.com>
+In-Reply-To: <20040901210929.GA11442@bougret.hpl.hp.com>
+To: jt@hpl.hp.com
+Cc: kj <kernel-janitors@osdl.org>, netdev@oss.sgi.com, jgarzik@pobox.com
 
---===============019858760702068601==
+--===============7419660174509124==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Sep 24, 2004 at 04:18:30PM -0700, Nishanth Aravamudan wrote:
-> Any comments would be appreciated.
+On Wed, 01 Sep 2004, Jean Tourrilhes wrote:
+
+> On Wed, Sep 01, 2004 at 11:05:23PM +0200, janitor@sternwelten.at wrote:
+> > I would appreciate any comments from the janitor@sternweltens list. 
+uups mangled some text there sorry for this silly email.
 > 
-> Description: Use msleep_interruptible() instead of
-> schedule_timeout() to guarantee the task delays as expected.
+> 	I already commented that I don't like the confusing msleep()
+> API and I prefer the more explicit schedule_timeout().
+> 	But that's only me...
 > 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 	Jean
 
-Applied, thanks.
+hmm we have still archs were HZ < 100.
+i find msleep use msecs units a lot more readable than
+	schedule_timeout((HZ + 99) / 100);
 
-greg k-h
+the schedule_timeout(HZ/100) gets safely converted with msleep.
+
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
 
 
---===============019858760702068601==
+--===============7419660174509124==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============019858760702068601==--
+--===============7419660174509124==--
