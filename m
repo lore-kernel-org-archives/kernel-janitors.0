@@ -1,71 +1,65 @@
-From: "Miller, Mike (OS Dev)" <mike.miller@hp.com>
-Date: Wed, 28 Jul 2004 22:51:39 +0000
-Subject: RE: [Kernel-janitors] RE: [PATCH] cciss: replace schedule_timeout()
-Message-Id: <D4CFB69C345C394284E4B78B876C1CF107DBFB7C@cceexc23.americas.cpqcorp.net>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Mon, 05 Jul 2004 17:22:50 +0000
+Subject: [Kernel-janitors] Fw: [RFP] better io-apic messages
+Message-Id: <20040705102250.79e0b767.rddunlap@osdl.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============4537415404828673=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <D4CFB69C345C394284E4B78B876C1CF107DBFB62@cceexc23.americas.cpqcorp.net>
-In-Reply-To: <D4CFB69C345C394284E4B78B876C1CF107DBFB62@cceexc23.americas.cpqcorp.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Nish,
-Sorry I've taken so long to respond. I just figured out yesterday that my Linux mail was not going out :(
-
-I agree about TASK_INTERRUPTIBLE, but in all the 2.6.x code I've looked at we are using TASK_UNINTERRUPTIBLE.
-If Greg Kroah-Hartman would care to elaborate on the problems using that I am open to new ideas & suggestions.
-
-Thanks,
-mikem
------Original Message-----
-From: Nish Aravamudan [mailto:nish.aravamudan@gmail.com]
-Sent: Friday, July 23, 2004 6:27 PM
-To: Miller, Mike (OS Dev)
-Cc: kernel-janitors@lists.osdl.org
-Subject: Re: [Kernel-janitors] RE: [PATCH] cciss: replace
-schedule_timeout() with msleep()
+--===============4537415404828673==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-uOn Fri, 23 Jul 2004 17:45:55 -0500, Miller, Mike (OS Dev)
-<mike.miller@hp.com> wrote:
-> You'll have to explain why msleep will guarantee the timeout period whereas 
-> schedule_timeout may not. Maybe I'm missing something.
 
-Well, there are two things to consider here:
+Begin forwarded message:
 
-As a reference, the way the code was written before: 
--               set_current_state(TASK_INTERRUPTIBLE);
--               schedule_timeout(HZ / 10); /* wait 100ms */
+Date: Sun, 04 Jul 2004 23:59:59 -0400
+From: Jeff Garzik <jgarzik@pobox.com>
+To: Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: [RFP] better io-apic messages
 
-1) Since the state is set to TASK_INTERRUPTIBLE, although a 100ms
-delay is requested, if a signal is received, then the delay ends
-prematurely and the task will resume after the schedule_timeout()
-call. Now, if this was the desired effect, then the the patch should
-not be applied.
 
-2) However, if a true delay was desired, then TASK_INTERRUPTIBLE
-should not have been the set state, but TASK_UNINTERRUPTIBLE should
-have been. This would have made the code:
-                 set_current_state(TASK_UNINTERRUPTIBLE);
-                 schedule_timeout(HZ / 10);
-msleep() achieves this exact purpose, but also:
-  a) allows the parameter time to be in msecs, which is far clearer IMO; and
-  b) guarantees that the task will not continue execution until after
-the timeout has expired. Confusingly (at least to me), there are
-certain conditions -- the details of which I will have to defer to
-Greg Kroah-Hartman -- in which TASK_UNINTERRUPTIBLE'd
-schedule_timeout()s may still return before the timeout. The desired
-delay is achieved by wrapping the schedule_timeout(timeout) with a
-while(timeout) loop. Thus, as long as timeout is non-zero, the task is
-deferred. (see msleep()s definition for more details).
+Any janitor want to tackle this request-for-patch?  :)
 
-Does that help some? Please mail again if you have more questions, or
-if something I wrote was unclear.
 
--Nish
+There exists two problems:
+a) default io-apic boot messages are quite verbose
+b) io-apic bugs and anomalies are common enough that it would be nice to 
+enable additional messages when the user requests them
+
+My preferred solution is
+apic=verbose -- enable verbose boot messages (seen in current kernels)
+apic=debug -- enable all messages, including ones normally hidden by 
+APIC_DEBUG
+
+And the default, without any apic=xxx, would be not to show either set 
+of messages.
+
+This solution hides the messages for those who would rather not see 
+them, but ensures they are available via a boot parameter when kernel 
+developers wish to request additional debug info from a user.
+
+-
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/
+
+
+--
+~Randy
+
+--===============4537415404828673==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============4537415404828673==--
