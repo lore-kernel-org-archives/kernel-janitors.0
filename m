@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 20:13:07 +0000
+Date: Mon, 10 Jan 2005 21:14:12 +0000
 Subject: Re: [KJ] [announce] 2.6.10-bk13-kj
-Message-Id: <20050110201307.GB9186@us.ibm.com>
+Message-Id: <20050110211412.GC9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52857839389224015=="
+Content-Type: multipart/mixed; boundary="===============10223552324968033=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050110164703.GD14307@nd47.coderock.org>
 In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
 To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============52857839389224015==
+--===============10223552324968033==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -22,32 +22,58 @@ On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
 
 <snip>
 
-> msleep_interruptible-drivers_block_cciss.patch
+> msleep_interruptible-drivers_block_pcd.patch
 
 Please consider replacing with the following patch:
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected. TASK_INTERRUPTIBLE is used currently, however signals /
-early returns from schedule_timeout() are not checked for. Thus msleep() is more
-appropriate.
+Description: Use msleep()/ssleep() instead of schedule_timeout() to guarantee
+the task delays as expected. TASK_INTERRUPTIBLE is used in the original code,
+however there is no check on the return values / for signals, thus I believe
+TASK_UNINTERRUPTIBLE (and hence msleep()) is more appropriate.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- 2.6.10-v/drivers/block/cciss.c	2004-12-24 13:35:39.000000000 -0800
-+++ 2.6.10/drivers/block/cciss.c	2005-01-10 12:10:50.000000000 -0800
-@@ -2430,8 +2430,7 @@ static int cciss_pci_init(ctlr_info_t *c
- 		scratchpad = readl(c->vaddr + SA5_SCRATCHPAD_OFFSET);
- 		if (scratchpad == CCISS_FIRMWARE_READY)
- 			break;
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ / 10); /* wait 100ms */
-+		msleep(100);			/* wait 100ms */
+--- 2.6.10-v/drivers/block/paride/pcd.c	2004-12-24 13:35:39.000000000 -0800
++++ 2.6.10/drivers/block/paride/pcd.c	2005-01-10 12:20:29.000000000 -0800
+@@ -534,12 +534,6 @@ static int pcd_tray_move(struct cdrom_de
+ 			 position ? "eject" : "close tray");
+ }
+ 
+-static void pcd_sleep(int cs)
+-{
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout(cs);
+-}
+-
+ static int pcd_reset(struct pcd_unit *cd)
+ {
+ 	int i, k, flg;
+@@ -549,11 +543,11 @@ static int pcd_reset(struct pcd_unit *cd
+ 	write_reg(cd, 6, 0xa0 + 0x10 * cd->drive);
+ 	write_reg(cd, 7, 8);
+ 
+-	pcd_sleep(20 * HZ / 1000);	/* delay a bit */
++	msleep(20);			/* delay a bit */
+ 
+ 	k = 0;
+ 	while ((k++ < PCD_RESET_TMO) && (status_reg(cd) & IDE_BUSY))
+-		pcd_sleep(HZ / 10);
++		msleep(100);
+ 
+ 	flg = 1;
+ 	for (i = 0; i < 5; i++)
+@@ -592,7 +586,7 @@ static int pcd_ready_wait(struct pcd_uni
+ 		if (!(((p & 0xffff) == 0x0402) || ((p & 0xff) == 6)))
+ 			return p;
+ 		k++;
+-		pcd_sleep(HZ);
++		ssleep(1);
  	}
- 	if (scratchpad != CCISS_FIRMWARE_READY) {
- 		printk(KERN_WARNING "cciss: Board not ready.  Timed out.\n");
+ 	return 0x000020;	/* timeout */
+ }
 
---===============52857839389224015==
+--===============10223552324968033==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52857839389224015==--
+--===============10223552324968033==--
