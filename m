@@ -1,40 +1,48 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 07 Mar 2005 23:11:11 +0000
-Subject: Re: [KJ] [PATCH] hcd.c
-Message-Id: <20050307231111.GA9133@kroah.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17010767170065555=="
+From: madhusudhan seshadri <madhusudhan1508@yahoo.co.in>
+Date: Sat, 12 Mar 2005 09:45:17 +0000
+Subject: [KJ] How To invoke atmdev_ops function in MPC8260 SAR driver
+Message-Id: <20050312094517.79735.qmail@web8401.mail.in.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <54791.158.102.162.5.1110212817.squirrel@picard.linux.it>
-In-Reply-To: <54791.158.102.162.5.1110212817.squirrel@picard.linux.it>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============17010767170065555==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
-On Mon, Mar 07, 2005 at 05:26:57PM +0100, Carlo Perassi wrote:
-> Hi.
-> 
-> I know this patch is not a clean solution but without it I got the
-> following error
+I 'm trying to invoke ATM device operations functions
+to  test MPC8260 SAR driver.
+The board doesn't consist of Pyhsical layer regarding
+hardware(like IDT77106) or software(driver).
+Loopback is done on UTOPIA interface.UTOPIA signals
+are connected PCI bus.Can anyone please help me
+out,HOW TO use the following finctions
+in aplication 
 
-No, this patch is incorrect, please do a 'make clean' and then 'make'
-and see if the error still happens.
+const struct atmdev_ops mpc8260sar_ops = {
+    open:mpc8260sar_open,
+    close:mpc8260sar_close,
+    ioctl:mpc8260sar_ioctl,
+    getsockopt:mpc8260sar_getsockopt,
+    setsockopt:mpc8260sar_setsockopt,
+    send:mpc8260sar_send,
+    sg_send:mpc8260sar_sg_send,
+    phy_put:mpc8260sar_phy_put,
+    phy_get:mpc8260sar_phy_get,
+    change_qos:mpc8260sar_change_qos,
+    proc_read:mpc8260sar_proc_read,
+    owner:THIS_MODULE,
+};
 
-thanks,
+I'm new to LINUX ENVIORNMENT 
 
-greg k-h
+with regargs
+MADHU
 
---===============17010767170065555==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+________________________________________________________________________
+Yahoo! India Matrimony: Find your life partner online
+Go to: http://yahoo.shaadi.com/india-matrimony
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============17010767170065555==--
