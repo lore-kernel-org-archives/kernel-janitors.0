@@ -1,30 +1,42 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 08 Mar 2005 21:23:47 +0000
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Tue, 08 Mar 2005 22:12:34 +0000
 Subject: Re: [KJ] [patch] fix typo in pm.h
-Message-Id: <20050308212347.GA3301@localhost.localdomain>
+Message-Id: <200503090111.14205.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============041903226069442301=="
+Content-Type: multipart/mixed; boundary="===============56371382601031206=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <2cd57c90050308103414c5aef6@mail.gmail.com>
 In-Reply-To: <2cd57c90050308103414c5aef6@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============041903226069442301==
-Content-Type: text/plain; charset=us-ascii
+--===============56371382601031206==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 09, 2005 at 03:08:13AM +0800, Coywolf Qi Hunt wrote:
-> On Tue, 8 Mar 2005 10:48:20 -0800, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
-> > Your patch got wrapped.
-> > 
-> 
-> This patch fixes a typo in PMSG_ comment in pm.h.
+On Tuesday 08 March 2005 23:13, Nicolas Kaiser wrote:
 
-Your patch is still wrapped. You may want to use mutt as a mailer. ;-)
+> - * managment. Please avoid using them.  */
+> + * management. Please avoid using them.  */
 
-Cheers, Tobias
+> - * We'll need to fix the drivers. So yes, putting 3 to all diferent defines is intentional,
+> - * and will go away as soon as drivers are fixed. Also note that typedef is neccessary,
+> + * We'll need to fix the drivers. So yes, putting 3 to all different defines is intentional,
+> + * and will go away as soon as drivers are fixed. Also note that typedef is necessary,
 
---===============041903226069442301==
+Always grep the entire tree if typo is found. You know, identical keyboards,
+people copy, ... ;-)
+
+linux-2.6.11-bk4]$ grep managment -r . | wc -l
+21
+
+linux-2.6.11-bk4]$ grep neccessary -r . | wc -l
+18
+
+	Alexey
+
+--===============56371382601031206==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -35,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============041903226069442301==--
+--===============56371382601031206==--
