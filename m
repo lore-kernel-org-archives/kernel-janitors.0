@@ -1,40 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 31 Jan 2005 21:17:39 +0000
-Subject: [KJ] Re: [UPDATE PATCH 35/39] usb/hid-core: use wait_event_timeout()
-Message-Id: <20050131211739.GC24346@kroah.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:08 +0000
+Subject: [KJ] [PATCH] [15/29] qla_os.c - vfree() checking cleanups
+Message-Id: <41db1134.63656ccc.2568.07bc@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41569700127239906=="
+Content-Type: multipart/mixed; boundary="===============90340959868507364=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============41569700127239906==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============90340959868507364==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 31, 2005 at 11:12:21AM -0800, Nishanth Aravamudan wrote:
-> On Mon, Jan 31, 2005 at 10:50:53AM -0800, Greg KH wrote:
-> > On Fri, Jan 21, 2005 at 01:35:01PM -0800, Nishanth Aravamudan wrote:
-> > > Hi,
-> > > 
-> > > Please consider applying.
-> > > 
-> > > Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
-> > > now unused variables.
-> > 
-> > This code does not even compile :(
-> 
-> Sorry about that, Greg. Fixed with patch below:
-> 
-> Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
-> now unused variables.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+qla_os.c vfree() checking cleanups.
 
-Applied, thanks.
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-greg k-h
+ qla_os.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
 
---===============41569700127239906==
+
+--- linux-2.6.10-vanilla/drivers/scsi/qla2xxx/qla_os.c	2004-12-24 13:35:40.000000000 -0800
++++ linux-2.6.10/drivers/scsi/qla2xxx/qla_os.c	2005-01-04 11:32:17.000000000 -0800
+@@ -3125,8 +3125,7 @@
+ 	if (ha->fw_dump)
+ 		free_pages((unsigned long)ha->fw_dump, ha->fw_dump_order);
+ 
+-	if (ha->fw_dump_buffer)
+-		vfree(ha->fw_dump_buffer);
++	vfree(ha->fw_dump_buffer);
+ 
+ 	ha->fw_dump  	ha->fw_dump_reading 
+
+
+--===============90340959868507364==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============41569700127239906==--
+--===============90340959868507364==--
