@@ -1,48 +1,43 @@
-From: Felipe W Damasio <felipewd@terra.com.br>
-Date: Mon, 26 Apr 2004 12:23:01 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Replaces yield() with schedule_timeout()
-Message-Id: <408CFF25.2060802@terra.com.br>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 28 Apr 2004 21:03:56 +0000
+Subject: Re: [Kernel-janitors] [PATCH] Replaces yield() with
+Message-Id: <20040428210356.GB5495@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28786174127570985=="
+Content-Type: multipart/mixed; boundary="===============0013484422138734242=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <408AB344.6010000@acm.org>
 In-Reply-To: <408AB344.6010000@acm.org>
 To: kernel-janitors@vger.kernel.org
 
---===============28786174127570985==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============0013484422138734242==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Hi,
+hello,
 
-Gustavo Franco wrote:
-> I guess that it's ok, please apply.
+On Mon, 26 Apr 2004, Felipe W Damasio wrote:
+
+> Gustavo Franco wrote:
+> >--- drivers/cdrom/sonycd535.c.orig    2004-04-24 13:46:28.000000000 -0300
+> >+++ drivers/cdrom/sonycd535.c 2004-04-24 13:47:38.000000000 -0300
+> >@@ -342,7 +342,7 @@
+> >sony_sleep(void)
+> >{
+> >       if (sony535_irq_used <= 0) {    /* poll */
+> >-               yield();
+> >+               schedule_timeout(1);
 > 
-> Thanks,
-> Gustavo Franco
-> 
-> 
-> --- drivers/cdrom/sonycd535.c.orig    2004-04-24 13:46:28.000000000 -0300
-> +++ drivers/cdrom/sonycd535.c 2004-04-24 13:47:38.000000000 -0300
-> @@ -342,7 +342,7 @@
-> sony_sleep(void)
-> {
->        if (sony535_irq_used <= 0) {    /* poll */
-> -               yield();
-> +               schedule_timeout(1);
+> 	I don't think it's that cut-and-dry...shouldn't you use something 
+> relevant to HZ on this? Please see the patch maximilian sent on sis900 
+> net driver.
 
-	I don't think it's that cut-and-dry...shouldn't you use something 
-relevant to HZ on this? Please see the patch maximilian sent on sis900 
-net driver.
+jeff garzik prefers schedule_timeout(1) in the case of the sis900,
+"that's IMO closer to the intention.."
 
-	Also, don't forget to use TASK_INTERRUPTITBLE (with a set_current_state 
-that uses a memory barrier) before using schedule_timeout, please.
+regards maks
 
-	Cheers,
 
-Felipe
-
---===============28786174127570985==
+--===============0013484422138734242==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============28786174127570985==--
+--===============0013484422138734242==--
