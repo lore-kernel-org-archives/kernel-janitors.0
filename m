@@ -1,70 +1,38 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:52 +0000
-Subject: [KJ] [PATCH][RESUBMIT][6/21] drivers/isdn/i4l/* - compile warning
-Message-Id: <42113C2C.20128.52BC5B@localhost>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Mon, 14 Feb 2005 15:08:54 +0000
+Subject: [KJ] [PATCH 7/16] drivers/net/sk98lin/skge: Use the DMA_{64,
+Message-Id: <20050214150854.GJ15408@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7497861872295295=="
+Content-Type: multipart/mixed; boundary="===============76562349884475478=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============7497861872295295==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============76562349884475478==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - handle copy_to/from_user error 
-returns, initialize return value to reasonable number in case used before 
-initialized.
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/isdn/i4l/isdn_common.c linux-2.6.11-rc3-mm2/drivers/isdn/i4l/isdn_common.c
---- linux-2.6.11-rc3-mm2-original/drivers/isdn/i4l/isdn_common.c	2004-12-24 23:34:31.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/isdn/i4l/isdn_common.c	2005-02-12 17:01:02.000000000 +0200
-@@ -1842,8 +1842,12 @@ isdn_writebuf_stub(int drvidx, int chan,
- 	if (!skb)
- 		return 0;
- 	skb_reserve(skb, hl);
--	copy_from_user(skb_put(skb, len), buf, len);
-+	if (copy_from_user(skb_put(skb, len), buf, len)) {
-+		ret = -EFAULT;
-+		goto after_writebuf_skb;
-+	}
- 	ret = dev->drv[drvidx]->interface->writebuf_skb(drvidx, chan, 1, skb);
-+after_writebuf_skb:
- 	if (ret <= 0)
- 		dev_kfree_skb(skb);
- 	if (ret > 0)
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/isdn/i4l/isdn_ppp.c linux-2.6.11-rc3-mm2/drivers/isdn/i4l/isdn_ppp.c
---- linux-2.6.11-rc3-mm2-original/drivers/isdn/i4l/isdn_ppp.c	2004-12-24 23:35:01.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/isdn/i4l/isdn_ppp.c	2005-02-12 17:01:02.000000000 +0200
-@@ -789,7 +789,8 @@ isdn_ppp_read(int min, struct file *file
- 	is->first = b;
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11-rc4.orig/drivers/net/sk98lin/skge.c	2005-02-13 17:13:00.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/sk98lin/skge.c	2005-02-13 17:58:29.000000000 +0100
+@@ -4912,8 +4912,8 @@ static int __devinit skge_probe_one(stru
+ 		goto out;
+  
+ 	/* Configure DMA attributes. */
+-	if (pci_set_dma_mask(pdev, (u64) 0xffffffffffffffffULL) &&
+-	    pci_set_dma_mask(pdev, (u64) 0xffffffff))
++	if (pci_set_dma_mask(pdev, DMA_64BIT_MASK) &&
++	    pci_set_dma_mask(pdev, DMA_32BIT_MASK))
+ 		goto out_disable_device;
  
- 	spin_unlock_irqrestore(&is->buflock, flags);
--	copy_to_user(buf, save_buf, count);
-+	if (copy_to_user(buf, save_buf, count))
-+		count = -EFAULT; /* make sure we free the save_buf */
- 	kfree(save_buf);
  
- 	return count;
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/isdn/i4l/isdn_v110.c linux-2.6.11-rc3-mm2/drivers/isdn/i4l/isdn_v110.c
---- linux-2.6.11-rc3-mm2-original/drivers/isdn/i4l/isdn_v110.c	2004-12-24 23:35:49.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/isdn/i4l/isdn_v110.c	2005-02-12 17:01:02.000000000 +0200
-@@ -520,7 +520,7 @@ isdn_v110_stat_callback(int idx, isdn_ct
- {
- 	isdn_v110_stream *v = NULL;
- 	int i;
--	int ret;
-+	int ret = 0;
- 
- 	if (idx < 0)
- 		return 0;
 
-
-
-
---===============7497861872295295==
+--===============76562349884475478==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============7497861872295295==--
+--===============76562349884475478==--
