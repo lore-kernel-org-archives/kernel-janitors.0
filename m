@@ -1,43 +1,33 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Wed, 12 Jan 2005 17:38:39 +0000
-Subject: [KJ] [trivial patch] unused pointer
-Message-Id: <20050112173839.GA7083@voyager>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:13:57 +0000
+Subject: [KJ] [PATCH 33/53] matroxfb: Clean up printk()'s in
+Message-Id: <20050125231356.10418.40764.12045@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="liOOAslEiF7prFVr"
+Content-Type: multipart/mixed; boundary="===============20637454229951757=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============20637454229951757==
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/matrox/matroxfb_base.c
 
-I found by accident this unused pointer.
-I do not have this driver.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
--- 
-Carlo Perassi - http://www.linux.it/~carlo/
-
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="01.patch"
-
-Signed-off-by: Carlo Perassi <carlo@linux.it>
-
----
-
---- linux-2.6.11-rc1/sound/usb/usx2y/usbusx2yaudio.c	2005-01-12 14:35:04.000000000 +0100
-+++ linux-2.6.11-rc1-mod/sound/usb/usx2y/usbusx2yaudio.c	2005-01-12 18:18:46.581417232 +0100
-@@ -415,7 +415,6 @@ static int usX2Y_urbs_allocate(snd_usX2Y
- 	unsigned int pipe;
- 	int is_playback = subs == subs->usX2Y->subs[SNDRV_PCM_STREAM_PLAYBACK];
- 	struct usb_device *dev = subs->usX2Y->chip.dev;
--	struct usb_host_endpoint *ep;
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/matrox/matroxfb_base.c linux-2.6.11-rc2-mm1/drivers/video/matrox/matroxfb_base.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/matrox/matroxfb_base.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/matrox/matroxfb_base.c	2005-01-24 19:07:03.464259214 -0500
+@@ -1880,7 +1880,7 @@
+ 	if (register_framebuffer(&ACCESS_FBINFO(fbcon)) < 0) {
+ 		goto failVideoIO;
+ 	}
+-	printk("fb%d: %s frame buffer device\n",
++	pr_info("fb%d: %s frame buffer device\n",
+ 	       ACCESS_FBINFO(fbcon.node), ACCESS_FBINFO(fbcon.fix.id));
  
- 	pipe = is_playback ? usb_sndisocpipe(dev, subs->endpoint) :
- 			usb_rcvisocpipe(dev, subs->endpoint);
+ 	/* there is no console on this fb... but we have to initialize hardware
 
---liOOAslEiF7prFVr
+--===============20637454229951757==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---liOOAslEiF7prFVr--
+--===============20637454229951757==--
