@@ -1,53 +1,582 @@
-From: Leann Ogasawara <ogasawara@osdl.org>
-Date: Fri, 05 Mar 2004 17:24:56 +0000
-Subject: [Kernel-janitors] [PATCH] class_register() always returns 0
-Message-Id: <1078507496.29095.19.camel@ibm-d.pdx.osdl.net>
+From: "Your-Info.Net" <reply@onlineadsolutions.com>
+Date: Sun, 21 Mar 2004 13:00:01 +0000
+Subject: Absolutely no cost on Shipping orders over $50 or more !
+Message-Id: <20040321080001.rylmpinzvw@juststar.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=_127900be2216485f75f9fd785ff1fae4"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi All,
 
-I noticed that the class_register() function in drivers/base/class.c
-always returns 0 and thus will never fail.  Patch below inserts simple
-error checking to return any errors if they occur.  Feedback welcome. 
-Thanks,
+This is a MIME encoded message.
 
-Leann
-
-diffed against linux-2.6.4-rc2
-
-=== drivers/base/class.c 1.45 vs edited ==--- 1.45/drivers/base/class.c	Tue Mar  2 17:39:28 2004
-+++ edited/drivers/base/class.c	Fri Mar  5 08:59:40 2004
-@@ -106,13 +106,21 @@
- 
- int class_register(struct class * cls)
- {
-+	int error;
-+
- 	pr_debug("device class '%s': registering\n",cls->name);
- 
- 	INIT_LIST_HEAD(&cls->children);
- 	INIT_LIST_HEAD(&cls->interfaces);
--	kobject_set_name(&cls->subsys.kset.kobj,cls->name);
-+	error = kobject_set_name(&cls->subsys.kset.kobj,cls->name);
-+	if (error)
-+		return error;
-+
- 	subsys_set_kset(cls,class_subsys);
--	subsystem_register(&cls->subsys);
-+
-+	error = subsystem_register(&cls->subsys);
-+	if (error)
-+		return error;
- 
- 	return 0;
- }
+--=_127900be2216485f75f9fd785ff1fae4
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
 
+Absolutely no cost on Shipping orders over $50 or more !
+
+Evoclix's normal prices save you up to 85% on inkjet cartridges and laser printer accesseries.  Now get Free Shipping.  
+
+Proceed with the link below to start saving!
+http://juststar.net/dbm83/l.php?1125&50016221
+
+Why Evoclix.com?
+
+
+
+1.  Save up to 85% off store prices.
+2.  We offer a 100% guarantee on everything we sell.
+3.  No cost on shipping orders over $50.
+4.  We're nice, friendly people. :)
+
+
+http://juststar.net/dbm83/l.php?1125&50016221
+
+
+--------------------------------------------
+Switch to HTML version:
+http://juststar.net/dbm83/msgtype.php?type=1&email=50016221&emailing=485
+--------------------------------------------
+Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed here http://juststar.net/dbm83/un.php?485&50016221 Third-party offers contained in this email are the sole responsibili
+ty of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
+
+
+--=_127900be2216485f75f9fd785ff1fae4
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+
+<html>
+<body>
+<!--
+EvoClix is dedicated to supplying the Best Replacement Cartridge on the market=
+ today.
+
+We assure, for 3 months from date of purchase, that
+your ink-jet and laser product is free from defects in
+material and workmanship.
+
+Under normal use and storage, this product is
+assured to perform as well as or better than the
+Original Equipment Manufacturer's (OEM) product.
+
+If the product does not perform to our specifications,
+you may return the product for a replacement or
+refund.-->
+
+<p align=3D"center"><a href=3D"http://juststar.net/dbm83/l.php?1126&50016221=
+&UID=3D9&Type=3DHtmlAds&ID=3D1">
+<img border=3D"0" src=3D"http://www.your-info.cc/images/img_tropic/ad12.jpg=
+" width=3D"559" height=3D"365"></a></p>
+
+
+
+<center><br><br><font color=3D#000000>
+<hr width=3D250>Switch to <a href=3D"http://juststar.net/dbm83/msgtype.php?type=
+=3D0&email=3D50016221&emailing=3D485">TEXT</a> version
+
+<hr width=3D250>
+<font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
+<form method=3D"GET" action=3D"http://juststar.net/dbm83/forw_friend.php" target=
+=3D"ies_f2f_window">
+<b>Forward this mail to a friend:</b><br>
+Friend's emails:
+<input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
+"> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
+ value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"485=
+">
+</font></form>
+<hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
+>
+<p><font size=3D"2">Your privacy is extremely important to us. You requested=
+ to=20
+receive this mailing by subscribing to one or more of our offers. To leave our=
+ lists Proceed <a href=3D"http://juststar.net/dbm83/un.php?485&50016221">here=
+</a>.=20
+Third-party offers contained in this email are the sole responsibility of the=
+=20
+offer originator. If you would like to mail your unsubscribe request mail to=
+: Your-Info, Inc 9140 Bonita Beach Rd.
+Suite 144 Bonita Springs, FL 34135.</font></p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<img src=3D"http://juststar.net/dbm83/opened.php?485&50016221" width=3D1 height=
+=3D1></font></font></center></body></html>
+dohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdo
+
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+
+--=_127900be2216485f75f9fd785ff1fae4--
+
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: IBM Linux Tutorials
+Free Linux tutorial presented by Daniel Robbins, President and CEO of
+GenToo technologies. Learn everything from fundamentals to system
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
