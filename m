@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 18:10:16 +0000
+Date: Mon, 10 Jan 2005 20:13:07 +0000
 Subject: Re: [KJ] [announce] 2.6.10-bk13-kj
-Message-Id: <20050110181016.GD3099@us.ibm.com>
+Message-Id: <20050110201307.GB9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82975786258292694=="
+Content-Type: multipart/mixed; boundary="===============52857839389224015=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050110164703.GD14307@nd47.coderock.org>
 In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
 To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============82975786258292694==
+--===============52857839389224015==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -22,15 +22,32 @@ On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
 
 <snip>
 
-> msleep-drivers_scsi_imm.patch
+> msleep_interruptible-drivers_block_cciss.patch
 
-This patch should be dropped. The msleep() call will ignore waitqueue events
-set up by prepare_to_wait().
+Please consider replacing with the following patch:
 
-Thanks,
-Nish
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. TASK_INTERRUPTIBLE is used currently, however signals /
+early returns from schedule_timeout() are not checked for. Thus msleep() is more
+appropriate.
 
---===============82975786258292694==
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.10-v/drivers/block/cciss.c	2004-12-24 13:35:39.000000000 -0800
++++ 2.6.10/drivers/block/cciss.c	2005-01-10 12:10:50.000000000 -0800
+@@ -2430,8 +2430,7 @@ static int cciss_pci_init(ctlr_info_t *c
+ 		scratchpad = readl(c->vaddr + SA5_SCRATCHPAD_OFFSET);
+ 		if (scratchpad == CCISS_FIRMWARE_READY)
+ 			break;
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ / 10); /* wait 100ms */
++		msleep(100);			/* wait 100ms */
+ 	}
+ 	if (scratchpad != CCISS_FIRMWARE_READY) {
+ 		printk(KERN_WARNING "cciss: Board not ready.  Timed out.\n");
+
+--===============52857839389224015==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82975786258292694==--
+--===============52857839389224015==--
