@@ -1,125 +1,103 @@
-From: "Your-Info.Net" <reply@onlineadsolutions.com>
-Date: Tue, 23 Mar 2004 00:27:27 +0000
-Subject: Absolutely no cost on Shipping orders over $50 or more.[]
-Message-Id: <20040323002727.DCE801CB1D2@mail.juststar.com>
+From: Peter McCurdy <pmccurdy@nit.ca>
+Date: Fri, 12 Mar 2004 16:44:54 +0000
+Subject: [Kernel-janitors] Patch to change char * into char[]
+Message-Id: <1079109894.756.34.camel@chopin.internal.nit.ca>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_05DA_01C0F7C9.2D8EE300"
+Content-Type: multipart/mixed; boundary="=-X7DbOv9JmdRKWsxJz7+F"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040321080001.rylmpinzvw@juststar.net>
-In-Reply-To: <20040321080001.rylmpinzvw@juststar.net>
 To: kernel-janitors@vger.kernel.org
 
 
-This message is in MIME format.  The first part should be readable text,
-while the remaining parts are likely unreadable without MIME-aware tools.
-Send mail to mime@docserver.cac.washington.edu for more info.
+--=-X7DbOv9JmdRKWsxJz7+F
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-------=_NextPart_000_05DA_01C0F7C9.2D8EE300
-Content-Type: text/html; charset="iso-8859-1"
+Hello,
 
+Attached is a patch to convert a few instances of 'char *foo = "bar";'
+into 'char foo[] = "bar";'.  I started off with drivers/net/irda, I'll
+do some more if everything is OK with this one.
 
-
-
-<html>
-
-<body>
-
-<!--
-
-EvoClix is dedicated to supplying the Best Replacement Cartridge on the market today.
+Peter.
 
 
 
-We assure, for 3 months from date of purchase, that
+--=-X7DbOv9JmdRKWsxJz7+F
+Content-Disposition: attachment; filename=char-array-irda.patch
+Content-Type: text/plain; name=char-array-irda.patch; charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: 7bit
 
-your ink-jet and laser product is free from defects in
+Binary files linux-2.6.4-kj-orig/drivers/net/irda/.irport.c.swp and linux-2.6.4/drivers/net/irda/.irport.c.swp differ
+diff -ruN linux-2.6.4-kj-orig/drivers/net/irda/ali-ircc.c linux-2.6.4/drivers/net/irda/ali-ircc.c
+--- linux-2.6.4-kj-orig/drivers/net/irda/ali-ircc.c	Fri Mar 12 10:15:01 2004
++++ linux-2.6.4/drivers/net/irda/ali-ircc.c	Fri Mar 12 10:47:24 2004
+@@ -49,7 +49,7 @@
+ #define CHIP_IO_EXTENT 8
+ #define BROKEN_DONGLE_ID
+ 
+-static char *driver_name = "ali-ircc";
++static char driver_name[] = "ali-ircc";
+ 
+ /* Module parameters */
+ static int qos_mtt_bits = 0x07;  /* 1 ms or more */
+diff -ruN linux-2.6.4-kj-orig/drivers/net/irda/irport.c linux-2.6.4/drivers/net/irda/irport.c
+--- linux-2.6.4-kj-orig/drivers/net/irda/irport.c	Fri Mar 12 10:15:01 2004
++++ linux-2.6.4/drivers/net/irda/irport.c	Fri Mar 12 10:47:32 2004
+@@ -72,7 +72,7 @@
+ static unsigned int qos_mtt_bits = 0x03;
+ 
+ static struct irport_cb *dev_self[] = { NULL, NULL, NULL, NULL};
+-static char *driver_name = "irport";
++static char driver_name[] = "irport";
+ 
+ static inline void irport_write_wakeup(struct irport_cb *self);
+ static inline int  irport_write(int iobase, int fifo_size, __u8 *buf, int len);
+diff -ruN linux-2.6.4-kj-orig/drivers/net/irda/nsc-ircc.c linux-2.6.4/drivers/net/irda/nsc-ircc.c
+--- linux-2.6.4-kj-orig/drivers/net/irda/nsc-ircc.c	Fri Mar 12 10:15:01 2004
++++ linux-2.6.4/drivers/net/irda/nsc-ircc.c	Fri Mar 12 10:46:51 2004
+@@ -68,7 +68,7 @@
+ #define CHIP_IO_EXTENT 8
+ #define BROKEN_DONGLE_ID
+ 
+-static char *driver_name = "nsc-ircc";
++static char driver_name[] = "nsc-ircc";
+ 
+ /* Module parameters */
+ static int qos_mtt_bits = 0x07;  /* 1 ms or more */
+diff -ruN linux-2.6.4-kj-orig/drivers/net/irda/via-ircc.c linux-2.6.4/drivers/net/irda/via-ircc.c
+--- linux-2.6.4-kj-orig/drivers/net/irda/via-ircc.c	Fri Mar 12 10:15:01 2004
++++ linux-2.6.4/drivers/net/irda/via-ircc.c	Fri Mar 12 10:46:40 2004
+@@ -65,7 +65,7 @@
+ #define CHIP_IO_EXTENT 8
+ #define BROKEN_DONGLE_ID
+ 
+-static char *driver_name = "via-ircc";
++static char driver_name[] = "via-ircc";
+ 
+ /* Module parameters */
+ static int qos_mtt_bits = 0x07;	/* 1 ms or more */
+diff -ruN linux-2.6.4-kj-orig/drivers/net/irda/w83977af_ir.c linux-2.6.4/drivers/net/irda/w83977af_ir.c
+--- linux-2.6.4-kj-orig/drivers/net/irda/w83977af_ir.c	Fri Mar 12 10:15:01 2004
++++ linux-2.6.4/drivers/net/irda/w83977af_ir.c	Fri Mar 12 10:47:02 2004
+@@ -69,7 +69,7 @@
+ #define CONFIG_USE_W977_PNP        /* Currently needed */
+ #define PIO_MAX_SPEED       115200 
+ 
+-static char *driver_name = "w83977af_ir";
++static char driver_name[] = "w83977af_ir";
+ static int  qos_mtt_bits = 0x07;   /* 1 ms or more */
+ 
+ #define CHIP_IO_EXTENT 8
 
-material and workmanship.
+--=-X7DbOv9JmdRKWsxJz7+F
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-
-
-Under normal use and storage, this product is
-
-assured to perform as well as or better than the
-
-Original Equipment Manufacturer's (OEM) product.
-
-
-
-If the product does not perform to our specifications,
-
-you may return the product for a replacement or
-
-refund.-->
-
-
-
-<p align="center"><a href="http://juststar.net/dbm83/l.php?1126&50016221&UID=9&Type=HtmlAds&ID=1">
-
-<img border="0" src="http://www.your-info.cc/images/img_tropic/ad12.jpg" width="559" height="365"></a></p>
-
-
-
-
-
-<center>
-<br><br>
-<font color=#000000>
-<hr width=250>
-Switch to <a href='http://juststar.net/dbm83/msgtype.php?type=0&email=50016221&emailing=485'>TEXT</a> version
-
-
-<hr width=250>
-<font face="Verdana,Arial,Helvetica,sans-serif" size=1>
-<form method="GET" action="http://juststar.net/dbm83/forw_friend.php" target="ies_f2f_window">
-<b>Forward this mail to a friend:</b><br>
-Friend's emails:
-<input type=text name="friend_email_1"> <input type=text name="friend_email_2"> <input type=submit value="Send"><input type=hidden name=from_email value="kernel-janitor-discuss@lists.sourceforge.net"><input type=hidden name=emailing_id value="485">
-</font></form>
-<hr width=250>
-<font face="Verdana,Arial,Helvetica,sans-serif" size=1>
-<p><font size="2">Your privacy is extremely important to us. You requested to 
-
-receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed <a href="http://juststar.net/dbm83/un.php?485&50016221">here</a>. 
-
-Third-party offers contained in this email are the sole responsibility of the 
-
-offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd.
-
-Suite 144 Bonita Springs, FL 34135.</font></p>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-<br>
-
-
-
-<img src='http://juststar.net/dbm83/opened.php?485&50016221' width=1 height=1>
-</font></font></center>
-</body>
-</html>
-
-##rnd_symbs_420##
-##rnd_spacs_500##
-------=_NextPart_000_05DA_01C0F7C9.2D8EE300--
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--=-X7DbOv9JmdRKWsxJz7+F--
