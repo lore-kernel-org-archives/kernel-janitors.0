@@ -1,47 +1,51 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Thu, 31 Mar 2005 14:57:42 +0000
-Subject: [KJ] [PATCH 1/2] atm/he: Use the DMA_32BIT_MASK constant
-Message-Id: <20050331145742.GA19882@argon.bioc.unizh.ch>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Date: Thu, 10 Mar 2005 16:30:12 +0000
+Subject: [KJ] Re: [PATCH] drivers/ide/cs5520.c : Use the DMA_{64,
+Message-Id: <58cb370e050310083053a0e495@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45099824975049407=="
+Content-Type: multipart/mixed; boundary="===============79057958929800565=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050308133358.GA5311@localhost.localdomain>
+In-Reply-To: <20050308133358.GA5311@localhost.localdomain>
+To: Tobias Klauser <tklauser@nuerscht.ch>
+Cc: kernel-janitors@lists.osdl.org, linux-ide@vger.kernel.org
 
---===============45099824975049407==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============79057958929800565==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask() instead of custom
-macros.
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+On Tue, 8 Mar 2005 14:33:58 +0100, Tobias Klauser <tklauser@nuerscht.ch> wrote:
+> Hello,
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Hi,
 
-diff -urpN linux-2.6.11.orig/drivers/atm/he.c linux-2.6.11/drivers/atm/he.c
---- linux-2.6.11.orig/drivers/atm/he.c	2005-03-02 12:50:39.000000000 +0100
-+++ linux-2.6.11/drivers/atm/he.c	2005-03-30 14:37:35.000000000 +0200
-@@ -70,6 +70,7 @@
- #include <linux/sched.h>
- #include <linux/timer.h>
- #include <linux/interrupt.h>
-+#include <linux/dma-mapping.h>
- #include <asm/io.h>
- #include <asm/byteorder.h>
- #include <asm/uaccess.h>
-@@ -371,7 +372,7 @@ he_init_one(struct pci_dev *pci_dev, con
+> Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+> when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+> See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+
+only DMA_32BIT_MASK constant is used in the patch
  
- 	if (pci_enable_device(pci_dev))
- 		return -EIO;
--	if (pci_set_dma_mask(pci_dev, HE_DMA_MASK) != 0) {
-+	if (pci_set_dma_mask(pci_dev, DMA_32BIT_MASK) != 0) {
- 		printk(KERN_WARNING "he: no suitable dma available\n");
- 		err = -EIO;
- 		goto init_one_failure;
+> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+> 
+> --- linux-2.6.11.orig/drivers/ide/pci/cs5520.c  2005-03-02 12:50:39.000000000 +0100
+> +++ linux-2.6.11/drivers/ide/pci/cs5520.c       2005-03-03 11:46:46.000000000 +0100
+> @@ -227,7 +227,7 @@ static int __devinit cs5520_init_one(str
+>                 return 1;
+>         }
+>         pci_set_master(dev);
+> -       if (pci_set_dma_mask(dev, 0xFFFFFFFF)) {
+> +       if (pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
+>                 printk(KERN_WARNING "cs5520: No suitable DMA available.\n");
+>                 return -ENODEV;
+>         }
 
---===============45099824975049407==
+You need to include <linux/dma-mapping.h> explicitly
+or build will fail for some architectures, i.e. please see:
+http://linus.bkbits.net:8080/linux-2.5/cset@41d833427yYZzu6TxydNrr5z6f02cg?nav=index.html|src/|src/drivers|src/drivers/ide|related/drivers/ide/setup-pci.c
+
+Bartlomiej
+
+--===============79057958929800565==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45099824975049407==--
+--===============79057958929800565==--
