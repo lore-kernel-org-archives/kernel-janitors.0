@@ -1,47 +1,84 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 28 May 2004 16:18:25 +0000
-Subject: Re: [Kernel-janitors] [PATCH] replacing driver_data access by
-Message-Id: <20040528161825.GA7332@kroah.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40366246510209969=="
+From: Socorro (ribosome) <Ernielkrtpp@quasar.com.br>
+Date: Fri, 28 May 2004 17:17:41 +0000
+Subject: Kernel-janitor-discuss
+Message-Id: <JBTBGRSXVHVMDVLOSQUWNJEVKPF.kernel-janitor-discuss@lists.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <40B731A4.8040109@web.de>
-In-Reply-To: <40B731A4.8040109@web.de>
+References: <001101c2f3d3$190fa560$0447493e@g8>
+In-Reply-To: <001101c2f3d3$190fa560$0447493e@g8>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
---===============40366246510209969==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, May 28, 2004 at 02:33:40PM +0200, Yoon Soo wrote:
-> 
-> diff -u1 -prN -X dontdiff linux-2.6.6-orig/drivers/eisa/pci_eisa.c
-> linux-2.6.6-new/drivers/eisa/pci_eisa.c
-> --- linux-2.6.6-orig/drivers/eisa/pci_eisa.c    2004-05-10
-> 04:32:01.000000000 +0200
-> +++ linux-2.6.6-new/drivers/eisa/pci_eisa.c    2004-05-26
-> 17:11:36.000000000 +0200
-> @@ -33,3 +33,3 @@ static int __devinit pci_eisa_init (stru
->     pci_eisa_root.dev              = &pdev->dev;
-> -    pci_eisa_root.dev->driver_data = &pci_eisa_root;
-> +    dev_set_drvdata(pci_eisa_root.dev,&pci_eisa_root);
->     pci_eisa_root.res           = pdev->bus->resource[0];
-
-Your patch is line-wrapped and the tabs are gone.  Please try it again.
-
-thanks,
-
-greg k-h
-
---===============40366246510209969==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============40366246510209969==--
+PGh0bWw+Cjxib2R5Pgo8Zm9udCBzdHlsZT1mb250LXNpemU6MXB4Pktlcm5lbC1qYW5pdG9yLWRp
+c2N1c3MgYnJhbmlmZiByZXZlcmVuZCBlcmF0byBkaWdpdGF0ZSBjYXJuYWdlIGJhbGxhc3QgYWRq
+ZWN0IG1hZ2lzdHJhdGUgYW1wbHkgPC9mb250Pgo8Zm9udCBmYWNlPSJBcmlhbCIgc2l6ZT0iMSI+
+UGljdHVyZSBpcyBMb2FkaW5nIC4gLiAuIC48YnI+CjxhIGhyZWY9Imh0dHA6Ly9YWVVObHBBLmFz
+eHhiYnJ0LmNvbS90cC9kZWZhdWx0LmFzcD9pZD1TQkwiPgo8aW1nIHNyYz0iaHR0cDovL0ZXRFFX
+UzRiOHlhQW5mai5hZnVpb20uY29tIC9nb29kLmpwZyIgYm9yZGVyPSIwIj48L2E+PGJyPjxicj4K
+RW1haWwgbm90IFNobzxmb250IHN0eWxlPWZvbnQtc2l6ZToxcHg+ezwvZm9udD53aW5nPyA8YSBo
+cmVmPSJodHRwOi8veFg3SWJsVFFJZGdJYk0ubm1kc2F5NjkuY29tL3RwL2RlZmF1bHQuYXNwP2lk
+PVNCTCI+PGg1Pktlcm5lbC1qYW5pdG9yLWRpc2N1c3MsIFAubGFjZSBZb3VyIE8ucmRlciBULm9k
+YXk8L2g1PjwvYT4KPGJyPjxicj4KPGJyPjxicj4KPGJyPjxicj4KPGZvbnQgc3R5bGU9Zm9udC1z
+aXplOjFweD5hY3Rpbm9tZXRlciBhZHZpc29yIGluY2x1c2l2ZSBkb3JtYW50IHppZWdsZXIgYnVy
+ZWF1Y3JhdCBub3Rld29ydGh5IGNhIGJhYnlzaXR0aW5nIGFkcmVuYWxpbmUgc3RyZXNzZnVsIG9w
+cG9ydHVuZSBsYXJhbWllIGRldGVycmluZyBlJ3MgYXBwb3NpdGUgZGlvY2VzYW4gaWNhcnVzIG1h
+cnRpYW4gbm9vayB3ZWluYmVyZyB0cmlnb25vbWV0cnkgYWR2b2NhY3kgYmFrdSB0aGVvZG9zaWFu
+IHBobG9lbSBpbmNyZWR1bGl0eSBndW5uZXJ5IHBsYXRvbmlzbSBxdWl6emVzIGdlbmVhbG9neSBk
+ZXByZXNzaWJsZSBoYXJjb3VydCBsZWF0aGVybmVjayB3YXJyaW9yIGNhbmRsZSBwYXJzaWZhbCBk
+ZW5ueSBjb3Byb2R1Y3QgY3JldGlub3VzIGNydW1wIHJlYnV0IHBhbmRvcmEgY29zZ3JvdmUgcHJv
+Y2VzcyBhayB3ZW50IGNhbmRpZGUgZGlsYXRlIGNvbnN0aXR1dGl2ZSBmcmllZHJpY2ggbWV0YWxs
+dXJnaWMgYm9uZGFnZSBleGVtcGxhcnkgY2lyY3VtbG9jdXRpb24gaW5icmVkIGRlbnQgYmF5cmV1
+dGgga2VlbHNvbiBiZWZvcmVoYW5kIGNoYW50aWxseSBhc3N1bXB0aW9uIGRlbmlhYmxlIG5hcGtp
+biBzYW5kd2ljaCBpbmRpZ2Vub3VzIHRyYW5zcGFyZW50IGFwcHJlY2lhYmxlIGFkdmlzb3J5IHJl
+dGVudGl2ZSB0aGllZiBicm90aGVyaG9vZCBjb250cmF2ZW50aW9uIHlwc2lsYW50aSBtb3JpYnVu
+ZCByZXNwaXRlIGdyaXQgcHJvdGFjdGluaXVtIHN0cmFkZGxlIGJvcmRlYXV4IG1hdXNvbGV1bSBk
+b21pbmFudCBhY2hyb21hdGljIHVnYW5kYSBkaWZmcmFjdCBpbmZpbml0dW0gcGlhbmlzdCBhc3N1
+cmUgY2hpbmsgZGFpbWxlciBjb3JuIHNraW0gY3JlZWsgY2hlcmlzaCBjcmFuYmVycnkgam9uIGNy
+aXNzIGxhZHlmZXJuIGdhdW50IGR1Y2F0IGluZG9vciBjYWJpbiBsdWdlIHN0YWlyIG9jY3VsdCBk
+YW50ZSByb2JlcnRhIHdhdmVudW1iZXIgdmluZGljdGl2ZSBicmFuZG9uIGRvY2sgYmVsY2ggZ3Vp
+bGUgYW5hc3RpZ21hdGljIGRvc2FnZSBjaXJjdXMgY2FkaWxsYWMgc2FkbGVyIGN1bWluIGNseXRl
+bW5lc3RyYSBicm9va2x5biBwcm93ZXNzIHBvbGljZSBxdWF2ZXIgc3VsdGFuIHZvdyB3YXJlaG91
+c2UgY2xhc3NpZmljYXRpb24gY29ua2xpbiBudXRzaGVsbCBlbWJvdWNodXJlIGJpbW9udGhseSB3
+b2tlIGJhZCBmbG9vZGxpdCBsb2luIGRldGFpbCBiZWUgdmFyaWV0eSBjZW50ZW5uaWFsIHBsYW5l
+dGVzaW1hbCB2bGFkaXZvc3RvayBzZW50ZW5jZSBzdG9uZXdhbGwgaW5jb21tdXRhYmxlIHByb3Bh
+Z2F0ZSBwb2lzb24gY2lyY3VpdHJ5IG15c3RlcnkgYWxzb3AgY3JvcCBqb2FuIGZsZWNrIGFyY2hp
+dmFsIG1pY2t5IGFtaWRzdCBlcnVkaXRpb24gZW5jcm9hY2ggZWxsaXBzb2lkIGRlZXBlbiBwZWxo
+YW0gc3BhZGUgbGluZGJlcmdoIG51cHRpYWwgc2FsdmFnZSBlaW5zdGVpbmlhbiBjb3VudGVyYWN0
+IGFuYXJjaGljIGNvbnN0YW50aW5lIGhhcnJpZXQgZHJhbWF0aWMgc2VjcmV0YXJpYXQgc2F0aW4g
+YW50ZWxvcGUgYmFsYm9hIGRvd25wb3VyIGNvbm5hbGx5IG9jdG9wdXMgbWNkYW5pZWwgYmVhY2ho
+ZWFkIHRlbmRlcmZvb3QgZGV2aW91cyB0cmFuc2dyZXNzIHdvb2Ryb3cgY2Fzc2FuZHJhIHNwYWNl
+c3VpdCBlbm1pdHkgYWRhcHQgZ3JhZHkgZHViaW91cyBwcm9sb25nYXRlIGFsbGF5IGdvZGRhcmQg
+cm90YXJpYW4gZm9vdHBhZCBpJ20gc3RhdGlvbm1hc3RlciBjbGFyZW5jZSBjYXRhY2x5c21pYyBi
+b3h5IGdyaWQgbGluZW4gbnltcGggY3Jpc3Mgc2lkbGUgYWdncmVzc29yIGlub3JkaW5hdGUgZGVw
+cmVjaWF0ZSBmcmFuY2lzY2FuIGVjY2VudHJpYyBwYXR0ZXJzb24gYXVjdGlvbiBqZXJzZXkgY29u
+Zm9ybWF0aW9uIGVsYXRlIGJlbGxpbmkgZnVuZ3VzIGNvZ25hYyBleHBhbnNpb24gYXZlcnRpdmUg
+c2FjIGNhcmFjYXMgZGlzcGVyc2lvbiBpbmRlbGljYXRlIG5pbWJsZSBlZGdlcnRvbiBidXJnZXNz
+IGRyb3ZlIGVtYmFyZ29lcyBzbmFwcGlzaCBkaXNjdXNzaW9uIHZvbHRhaXJlIGJ1cmxpbmd0b24g
+Y29sdW1iaW5lIGFkanV0YW50IHNpZWdmcmllZCBoYXN0IAphbHRvZ2V0aGVyIG9jZWFuaWEgZGlz
+YnVyc2UgY2hlcnQgcGVyc2VjdXRvcnkgYmlyZGJhdGggZGVsaWNhdGUgdmVub20gcHJvcGFnYXRl
+IGVnZ3BsYW50IHNpbmdsZSBjYXRhbHlzaXMgZGVjZWl0IGdyZWVuZmllbGQgY29yb25hZG8gbGVv
+bmFyZG8gdGhvcm91Z2hmYXJlIGJyZWV6ZSBzYW5jdGl0eSBhcm1hZ2VkZG9uIGJ1bGxvY2sgbWF6
+ZSBoYXJkd29vZCBleGVjdXRlIGJyYWNrZW4gZGllbSBhbGllbiBhbWF0ZXVyaXNoIGNyb2N1cyBl
+c3RhYmxpc2ggbm90b2NvcmQgY29uZmx1ZW50IGF2ZXJyZWQgYXR0ZXN0IG5ldCBhYm91dCBjaGlj
+YW5vIGpvaG4gZHV0Y2hlc3Mgc3F1YXR0ZXIgYmVsbGluaSB0cmFuc2NyaXB0aW9uIHJlZmxlY3Rv
+ciBiZW5pZ24gYWxnZXIgYWNpZHVsb3VzIHBvbXBhbm8gZWRpdG9yIGZvcnRyZXNzIGFtaWRzdCBh
+bGdpbmF0ZSBwYXJpbXV0dWVsIGRvZ21hIGFudGFjaWQgcnVzc3VsYSBzcG9ydHN3cml0ZXIgYmVk
+YXp6bGUgY29sbHVkZSBhcHBvc2l0ZSBkYXlicmVhayBiaWRpcmVjdGlvbmFsIHRyb2lrYSBibG9v
+ZHJvb3QgZ29vZHdpbGwgYXJiaXRyYWdlIGJhdHRsZWZpZWxkIGNoaWNrd2VlZCBjaHVyY2hnbyBk
+aXJlY3RyaWNlcyBpbnNlY3RpY2lkZSBwcm9oaWJpdGlvbiBzY2hsb3NzIGNvbXBhcmF0aXZlIGNs
+b21wIHNwZWNpYWwgZmF1bmEgc3VtbWVycyBwb2V0cnkgYmVkc3RyYXcgbWFydGVuIGNodWNrIGhl
+YWwgcm9tYW50aWMgYnVveWFudCBzaGVhdGggZG9kZWNhaGVkcmFsIGRhdmlzIGRlcG9ydGVlIGZv
+cnRoY29tZSBlZmZsdXZpdW0gZGl2ZXJnZSBib2R5YnVpbGQgc2FuZGJhZyBjYXZlbWVuIHBhbGF6
+emkgZm91cnNxdWFyZSB5dWtpIGNvbmZvcm0gYmxlbWlzaCBjYXRhYm9saWMgY29zdGEgZGhhYmkg
+b2N0YW50IG1hbmFnZXJpYWwgcm9vc2V2ZWx0aWFuIGJyZWF0aHkgZXBpcGh5c2VhbCBhbGxvdHRl
+ZCBhdXR1bW4gY3Jvc3Nwb2ludCA8L2ZvbnQ+CjwvYm9keT4KPC9odG1sPgoKCi0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhpcyBTRi5OZXQg
+ZW1haWwgaXMgc3BvbnNvcmVkIGJ5OiBPcmFjbGUgMTBnCkdldCBjZXJ0aWZpZWQgb24gdGhlIGhv
+dHRlc3QgdGhpbmcgZXZlciB0byBoaXQgdGhlIG1hcmtldC4uLiBPcmFjbGUgMTBnLiAKVGFrZSBh
+biBPcmFjbGUgMTBnIGNsYXNzIG5vdywgYW5kIHdlJ2xsIGdpdmUgeW91IHRoZSBleGFtIEZSRUUu
+Cmh0dHA6Ly9hZHMub3Nkbi5jb20vP2FkX2lkMTQ5JmFsbG9jX2lkgTY2Jm9wPWNsaWNrCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCktlcm5lbC1qYW5pdG9y
+LWRpc2N1c3MgbWFpbGluZyBsaXN0Cktlcm5lbC1qYW5pdG9yLWRpc2N1c3NAbGlzdHMuc291cmNl
+Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2tl
+cm5lbC1qYW5pdG9yLWRpc2N1c3M=
