@@ -1,33 +1,43 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Wed, 26 Jan 2005 21:35:52 +0000
-Subject: [KJ] [PATCH 10/53][RESEND] cg14: Clean up printk()'s in
-Message-Id: <20050126213552.14092.73212.49881@localhost.localdomain>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 23:17:58 +0000
+Subject: [KJ] [PATCH] [RESEND] [24/29] stradis.c - vfree() checking cleanups
+Message-Id: <auto-000001227508@appliedminds.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============89958624614061178=="
+Content-Type: multipart/mixed; boundary="===============20467485463349888=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============89958624614061178==
+--===============20467485463349888==
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/cg14.c - resent after fixing a nonsensical duplication in the printk.
+stradis.c vfree() checking cleanups.
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/cg14.c linux-2.6.11-rc2-mm1/drivers/video/cg14.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/cg14.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/cg14.c	2005-01-26 16:28:49.000000000 -0500
-@@ -582,7 +582,7 @@
- 
- 	list_add(&all->list, &cg14_list);
- 
--	printk("cg14: cgfourteen at %lx:%lx, %dMB\n",
-+	pr_info("cg14: framebuffer at %lx:%lx, %dMB\n",
- 	       all->par.iospace, all->par.physbase, all->par.ramsize >> 20);
- 
- }
+ stradis.c |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
 
---===============89958624614061178==
+
+--- linux-2.6.10-vanilla/drivers/media/video/stradis.c	2004-12-24 13:35:28.000000000 -0800
++++ linux-2.6.10/drivers/media/video/stradis.c	2005-01-04 11:36:45.000000000 -0800
+@@ -2188,12 +2188,9 @@
+ 		/* unmap and free memory */
+ 		saa->audhead = saa->audtail = saa->osdhead = 0;
+ 		saa->vidhead = saa->vidtail = saa->osdtail = 0;
+-		if (saa->vidbuf)
+-			vfree(saa->vidbuf);
+-		if (saa->audbuf)
+-			vfree(saa->audbuf);
+-		if (saa->osdbuf)
+-			vfree(saa->osdbuf);
++		vfree(saa->vidbuf);
++		vfree(saa->audbuf);
++		vfree(saa->osdbuf);
+ 		if (saa->dmavid2)
+ 			kfree((void *) saa->dmavid2);
+ 		saa->audbuf = saa->vidbuf = saa->osdbuf = NULL;
+
+
+--===============20467485463349888==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============89958624614061178==--
+--===============20467485463349888==--
