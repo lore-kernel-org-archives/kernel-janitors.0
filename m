@@ -1,76 +1,75 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:13:13 +0000
-Subject: [KJ] [PATCH 27/53] igafb: Clean up printk()'s in
-Message-Id: <20050125231302.10418.94612.13569@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 25 Jan 2005 23:30:09 +0000
+Subject: [KJ] [PATCH] 17/34: cris/eeprom: replace interruptible_sleep_on()
+Message-Id: <20050125233009.GG12649@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5231492037581168=="
+Content-Type: multipart/mixed; boundary="===============34741122040469841=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============5231492037581168==
+--===============34741122040469841==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/igafb.c
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/igafb.c linux-2.6.11-rc2-mm1/drivers/video/igafb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/igafb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/igafb.c	2005-01-24 19:07:03.286259792 -0500
-@@ -364,7 +364,7 @@
- 	if (register_framebuffer(info) < 0)
- 		return 0;
- 
--	printk("fb%d: %s frame buffer device at 0x%08lx [%dMB VRAM]\n",
-+	pr_info("fb%d: %s frame buffer device at 0x%08lx [%dMB VRAM]\n",
- 	       info->node, info->fix.id, 
- 	       par->frame_buffer_phys, info->fix.smem_len >> 20);
- 
-@@ -406,7 +406,7 @@
- 
-         info = kmalloc(size, GFP_ATOMIC);
-         if (!info) {
--                printk("igafb_init: can't alloc fb_info\n");
-+                printk(KERN_ERR "igafb_init: can't alloc fb_info\n");
-                 return -ENOMEM;
-         }
-         memset(info, 0, size);
-@@ -415,13 +415,13 @@
- 	
- 
- 	if ((addr = pdev->resource[0].start) == 0) {
--                printk("igafb_init: no memory start\n");
-+                printk(KERN_ERR "igafb_init: no memory start\n");
- 		kfree(info);
- 		return -ENXIO;
- 	}
- 
- 	if ((info->screen_base = ioremap(addr, 1024*1024*2)) == 0) {
--                printk("igafb_init: can't remap %lx[2M]\n", addr);
-+                printk(KERN_ERR "igafb_init: can't remap %lx[2M]\n", addr);
- 		kfree(info);
- 		return -ENXIO;
- 	}
-@@ -454,7 +454,7 @@
- 		igafb_fix.mmio_start = 0x30000000;	/* XXX */
- 	}
- 	if ((par->io_base = (int) ioremap(igafb_fix.mmio_start, igafb_fix.smem_len)) == 0) {
--                printk("igafb_init: can't remap %lx[4K]\n", igafb_fix.mmio_start);
-+                printk(KERN_ERR "igafb_init: can't remap %lx[4K]\n", igafb_fix.mmio_start);
- 		iounmap((void *)info->screen_base);
- 		kfree(info);
- 		return -ENXIO;
-@@ -470,7 +470,7 @@
- 
- 	par->mmap_map = kmalloc(4 * sizeof(*par->mmap_map), GFP_ATOMIC);
- 	if (!par->mmap_map) {
--		printk("igafb_init: can't alloc mmap_map\n");
-+		printk(KERN_ERR "igafb_init: can't alloc mmap_map\n");
- 		iounmap((void *)par->io_base);
- 		iounmap(info->screen_base);
- 		kfree(info);
+Description: Use wait_event_interruptible() instead of the deprecated
+interruptible_sleep_on(). The replacements were both straight-forward as
+the sleeps were conditionally-looped. Patch is compile-tested.
 
---===============5231492037581168==
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/arch/cris/arch-v10/drivers/eeprom.c	2005-01-24 09:28:13.000000000 -0800
++++ 2.6.11-rc2-kj/arch/cris/arch-v10/drivers/eeprom.c	2005-01-25 15:28:54.000000000 -0800
+@@ -94,6 +94,7 @@
+ #include <linux/init.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/wait.h>
+ #include <asm/uaccess.h>
+ #include "i2c.h"
+ 
+@@ -526,15 +527,9 @@ static ssize_t eeprom_read(struct file *
+     return -EFAULT;
+   }
+   
+-  while(eeprom.busy)
+-  {
+-    interruptible_sleep_on(&eeprom.wait_q);
+-
+-    /* bail out if we get interrupted */
+-    if (signal_pending(current))
+-      return -EINTR;
+-    
+-  }
++  wait_event_interruptible(eeprom.wait_q, !eeprom.busy);
++  if (signal_pending(current))
++    return -EINTR;
+   eeprom.busy++;
+ 
+   page = (unsigned char) (p >> 8);
+@@ -604,13 +599,10 @@ static ssize_t eeprom_write(struct file 
+     return -EFAULT;
+   }
+ 
+-  while(eeprom.busy)
+-  {
+-    interruptible_sleep_on(&eeprom.wait_q);
+-    /* bail out if we get interrupted */
+-    if (signal_pending(current))
+-      return -EINTR;
+-  }
++  wait_event_interruptible(eeprom.wait_q, !eeprom.busy);
++  /* bail out if we get interrupted */
++  if (signal_pending(current))
++    return -EINTR;
+   eeprom.busy++;
+   for(i = 0; (i < EEPROM_RETRIES) && (restart > 0); i++)
+   {
+
+--===============34741122040469841==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5231492037581168==--
+--===============34741122040469841==--
