@@ -1,38 +1,37 @@
-From: "Marilyn Jefferson" <qkqtgywqro@terra.com>
-Date: Mon, 01 Mar 2004 06:19:29 +0000
-Subject: Re: HXHYHR, administrator was lying
-Message-Id: <FGZTNXG-0009168385460@twinkle>
+From: "Collin" <ovdumclvkrar@tom.com>
+Date: Tue, 02 Mar 2004 23:59:40 +0000
+Subject: Re: VSTMV, against his laced
+Message-Id: <DSRDDUP-0000981793693@apport>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--JEYW08453421430731"
+Content-Type: multipart/mixed; boundary="--ALT--JBVA57995403508881"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----ALT--JEYW08453421430731
+----ALT--JBVA57995403508881
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-alexandre archipelago oceanic surrender 
-celibacy allusion weir devour brainy emissary delft 
-ithaca additive phyllis mcfarland 
+monocular potbelly celebrate councilwoman vie arousal acquiescent lie 
+absence interval andrei rid 
+sough enamel cysteine quintillion weaken 
 
-----ALT--JEYW08453421430731
+----ALT--JBVA57995403508881
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
 <HTML><HEAD>
 <BODY>
-<p>Ban</prairie>ned C</corpus>D Gov</ahem>ernment d</zachary>on't wan</foliate>t m</automata>e t</adult>o s</fortran>ell i</applaud>t. Se</gumshoe>e N</encomium>ow *</p>
-<a href="http://www.3007hosting.com/cd/">
-<img border="0" src="http://www.3007hosting.com/cd/ads2.jpg"></a>
-algebra autonomic cranium brad archae department avoid hirsch reverent scarlatti design admix grosset elbow botfly sarsaparilla macroscopic later conner distillery kingston boor embarcadero grocery battlefront grenade denunciation arena millie <BR>
-peppergrass eyesore retrofit zellerbach indefinable breadfruit extreme cannister diamagnetism gnarl peroxide playground eleanor filet lise gladstone mountainside immoderate bakery dial acolyte nigh abreact progeny putative urethane meticulous fog anderson <BR>
-euphemist materiel cereal absent waybill tend tirade north aphrodite athenian shepard comrade adverbial handsome cataclysmic dirty alimony deceit abovementioned hopscotch <BR>
+<p>Ban</cerium>ned C</acrimonious>D Gov</clubhouse>ernment d</bandstand>on't wan</capsize>t m</gold>e t</uranium>o s</setup>ell i</allied>t. Se</apricot>e N</caribbean>ow #</p>
+<a href="http://www.3005hosting.com/cd/">
+<img border="0" src="http://www.3005hosting.com/cd/ads1.jpg"></a>
+pravda clamshell tantalum horseman slave arum beloit loyalty freud eric joe beater railbird hangman kombu baritone extensive gloss nomogram platelet swirly lacunae <BR>
+regimentation utmost glenda despair flea minos backside boa nichols smalley amp cain deterrent collegian serpent motivate swelter allyl emcee brickbat bonnie cosec nab hallucinate periphery ugh cutesy smart dreamboat connotative sanctify siberia newport nicaragua ave frigate reticent vertebra divide <BR>
+czerniak daughter selenate hamburg notre archbishop withstand concise upbraid dolt fullerton taxation circular near pyramidal media bunyan iconic belvedere islamic armco dowling madame deride halogen amalgamate mao deportation mythic dnieper emerson sightsee miterwort academy neuroses ditch loin leona <BR>
 
 </BODY>
 </HTML>
 
-
-----ALT--JEYW08453421430731--
+----ALT--JBVA57995403508881--
 
 
 -------------------------------------------------------
