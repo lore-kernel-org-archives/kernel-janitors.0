@@ -1,42 +1,65 @@
-From: "Sharon Gibson" <sharon_gibson_eg@cadac.co.uk>
-Date: Tue, 13 Jul 2004 14:51:44 +0000
-Subject: $33258
-Message-Id: <67ba01c468e8$84b7163e$7e079f57@speed.co.jp>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 27 Jul 2004 22:29:18 +0000
+Subject: [Kernel-janitors] [PATCH] sbus/envctrl: replace schedule_timeout()
+Message-Id: <20040727222917.GJ3471@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============98103561154417129=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-I sent you an email a few days ago, because you now qualify for a new mortgage.
-You could get $300,000 for as little as $700 a month!
-Bad credit is no problem, you can pull cash out or refinance.
+--===============98103561154417129==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please click on this link:
-http://www.lending-now.com/h7/li.php?bksq
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
 
-Best Regards,
-Sharon
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
+
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
+
+Thanks,
+Nish
 
 
-No more: http://www.lending-now.com/r1/index.html
 
----- system information ----
-hidden W3C obtains contrast Tags Procedure updated similar-looking 
-searches Japan zh-Hant applications revision Document behaviors without
+Applys-to: 2.6.7
 
-encompasses problem processing: cannot Users actually expectations marks
+Description: Replace schedule_timeout() with msleep() to guarantee the task
+delays as desired.
 
-
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
--------------------------------------------------------
-This SF.Net email sponsored by Black Hat Briefings & Training.
-Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
-digital self defense, top technical experts, no vendor pitches, 
-unmatched networking opportunities. Visit www.blackhat.com
+--- linux-vanilla/drivers/sbus/char/envctrl.c	2004-06-16 05:18:59.000000000 +0000
++++ linux-dev/drivers/sbus/char/envctrl.c	2004-07-12 22:35:19.000000000 +0000
+@@ -1181,8 +1181,7 @@ static void __exit envctrl_cleanup(void)
+ 			if (!found)
+ 				break;
+ 
+-			current->state = TASK_INTERRUPTIBLE;
+-			schedule_timeout(HZ);
++			msleep(1000);
+ 		}
+ 		kenvctrld_task = NULL;
+ 	}
+
+--===============98103561154417129==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============98103561154417129==--
