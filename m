@@ -1,46 +1,33 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Wed, 09 Feb 2005 09:42:07 +0000
-Subject: [KJ] [PATCH] drivers/serial/*: convert to pci_register_driver
-Message-Id: <20050209094207.GF4049@rhum.iomeda.fr>
+From: "David S. Miller" <davem@davemloft.net>
+Date: Wed, 09 Feb 2005 04:35:49 +0000
+Subject: [KJ] Re: [PATCH 20/39] net/ip_vs_sync: replace schedule_timeout()
+Message-Id: <20050208203549.4ede783b.davem@davemloft.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="u65IjBhB3TIa72Vp"
+Content-Type: multipart/mixed; boundary="===============73646059032404754=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050120235634.GI2600@us.ibm.com>
+In-Reply-To: <20050120235634.GI2600@us.ibm.com>
+To: Nishanth Aravamudan <nacc@us.ibm.com>
+Cc: jmorris@redhat.com, netdev@oss.sgi.com, kaber@coreworks.de, yoshfuji@linux-ipv6.org, kuznet@ms2.inr.ac.ru, kernel-janitors@lists.osdl.org
 
+--===============73646059032404754==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---u65IjBhB3TIa72Vp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, 20 Jan 2005 15:56:34 -0800
+Nishanth Aravamudan <nacc@us.ibm.com> wrote:
 
-Hi,
+> Please consider applying.
+> 
+> Description: Use ssleep() instead of schedule_timeout() to guarantee the task
+> delays as expected. The first two replacements use TASK_INTERRUPTIBLE but do not
+> check for signals, so ssleep() should be appropriate.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+Applied, thanks Nishanth.
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
-
---u65IjBhB3TIa72Vp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_serial.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/serial/8250_pci.c linux-2.6.11-rc3/drivers/serial/8250_pci.c
---- linux-2.6.11-rc3-vanilla/drivers/serial/8250_pci.c	2004-12-24 22:35:23.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/serial/8250_pci.c	2005-02-07 09:39:30.000000000 +0100
-@@ -2241,7 +2241,7 @@ static struct pci_driver serial_pci_driv
- 
- static int __init serial8250_pci_init(void)
- {
--	return pci_module_init(&serial_pci_driver);
-+	return pci_register_driver(&serial_pci_driver);
- }
- 
- static void __exit serial8250_pci_exit(void)
-
---u65IjBhB3TIa72Vp
+--===============73646059032404754==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---u65IjBhB3TIa72Vp--
+--===============73646059032404754==--
