@@ -1,46 +1,32 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Fri, 11 Feb 2005 08:28:56 +0000
-Subject: [KJ] [PATCH] drivers/scsi/aacraid/*: convert to pci_register_driver
-Message-Id: <20050211082856.GC28942@rhum.iomeda.fr>
+From: Amit Gud <amitg@calsoftinc.com>
+Date: Mon, 14 Feb 2005 05:42:27 +0000
+Subject: [KJ] [PATCH 0/18] remove pci_find_{device, subsys}
+Message-Id: <200502141100.27369.amitg@calsoftinc.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="i0/AhcQY5QxfSsSZ"
+Content-Type: multipart/mixed; boundary="===============23924764890137129=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---i0/AhcQY5QxfSsSZ
-Content-Type: text/plain; charset=us-ascii
+--===============23924764890137129==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Hi,
+Hi there,
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+	Following patch series converts pci_find_device to pci_get_device. Plus it removes deprecated functions pci_find_device and pci_find_subsys entirely from the tree, except for the Documentation/pci.txt
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
+	The patch division is done at the drivers/ and arch/ level.
 
---i0/AhcQY5QxfSsSZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_scsi_aacraid.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/aacraid/linit.c linux-2.6.11-rc3/drivers/scsi/aacraid/linit.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/aacraid/linit.c	2005-02-03 17:03:54.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/aacraid/linit.c	2005-02-07 09:39:29.000000000 +0100
-@@ -690,7 +690,7 @@ static int __init aac_init(void)
- 	printk(KERN_INFO "Red Hat/Adaptec aacraid driver (%s %s)\n",
- 			AAC_DRIVER_VERSION, AAC_DRIVER_BUILD_DATE);
- 
--	error = pci_module_init(&aac_pci_driver);
-+	error = pci_register_driver(&aac_pci_driver);
- 	if (error)
- 		return error;
- 
+Best,
+AG
+--
+May the source be with you.
 
---i0/AhcQY5QxfSsSZ
+
+--===============23924764890137129==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---i0/AhcQY5QxfSsSZ--
+--===============23924764890137129==--
