@@ -1,35 +1,41 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 16 Apr 2005 11:56:59 +0000
-Subject: Re: [KJ] [patch] net/8139too: use iomap interface
-Message-Id: <20050416115659.GA18554@nd47.coderock.org>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Fri, 01 Apr 2005 12:20:30 +0000
+Subject: [KJ] [PATCH] char* : drivers/char/agp/intel-agp.c
+Message-Id: <20050401122030.GM5445@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10956489726325458=="
+Content-Type: multipart/mixed; boundary="+KJYzRxRHjYqLGl5"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050415205832.GA3880@masina.coderock.org>
-In-Reply-To: <20050415205832.GA3880@masina.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============10956489726325458==
+
+--+KJYzRxRHjYqLGl5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 16/04/05 14:35 +0000, Alexey Dobriyan wrote:
-> On 22:58 Fri 15 Apr 2005, Domen Puncer wrote:
-> > Convert to iomap and add __iomem annotations.
-> 
-> > --- c/drivers/net/8139too.c
-> > +++ a/drivers/net/8139too.c
-> 
-> In netdev-2.6 tree:
+Description:
+String form : char foo[] = "blah" is better than char *foo = "blah"
 
-Maybe someday I'll learn to check the -mm tree first.
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-Thanks Alexey!
+--+KJYzRxRHjYqLGl5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="2.6.12-rc1-pointer_drivers_char_agp_intel-agp.c.patch"
 
+diff -urpN -X dontdiff a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
+--- a/drivers/char/agp/intel-agp.c	2005-03-18 02:34:12.000000000 +0100
++++ b/drivers/char/agp/intel-agp.c	2005-04-01 12:08:36.751735144 +0200
+@@ -1532,7 +1532,7 @@ static int __devinit agp_intel_probe(str
+ 				     const struct pci_device_id *ent)
+ {
+ 	struct agp_bridge_data *bridge;
+-	char *name = "(unknown)";
++	char name[] = "(unknown)";
+ 	u8 cap_ptr = 0;
+ 	struct resource *r;
+ 
 
-	Domen
-
---===============10956489726325458==
+--+KJYzRxRHjYqLGl5
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10956489726325458==--
+--+KJYzRxRHjYqLGl5--
