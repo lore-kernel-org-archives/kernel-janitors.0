@@ -1,108 +1,44 @@
-From: MJK <mkemp@cs.nmsu.edu>
-Date: Sat, 29 May 2004 04:40:34 +0000
-Subject: [Kernel-janitors] [PATCH] kernel_thread() audit
-Message-Id: <Pine.LNX.4.58.0405282239500.927@mustang.cs.nmsu.edu>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Sat, 29 May 2004 22:50:23 +0000
+Subject: Re: [Kernel-janitors] [PATCH] kernel_thread() audit
+Message-Id: <20040529155023.2b2baca3.rddunlap@osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32430482082470524=="
+Content-Type: multipart/mixed; boundary="===============93826695396258941=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.58.0405202047020.9107@mustang.cs.nmsu.edu>
 In-Reply-To: <Pine.LNX.4.58.0405202047020.9107@mustang.cs.nmsu.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============32430482082470524==
-Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
-Content-ID: <Pine.LNX.4.58.0405282239502.927@mustang.cs.nmsu.edu>
+--===============93826695396258941==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 28 May 2004 22:40:34 -0600 (MDT) MJK <mkemp@cs.nmsu.edu> wrote:
 
+| 
+| 
+| 	Compiles fine, took Randy's advice.
+| 
+| 	Signed-off-by: MJK <mkemp@cs.nmsu.edu>
+| 
+| Sweet cuppin-cakes!
+| M. Kemp
 
-	Compiles fine, took Randy's advice.
+Hi,
 
-	Signed-off-by: MJK <mkemp@cs.nmsu.edu>
+Those all look good to me.
 
-Sweet cuppin-cakes!
-M. Kemp
+Now what it needs (IMO of course, but this comes from sending lots
+of patches to Andrew and getting feedback on them) is a more
+descriptive subject: line and description (in the email body)
+of what/why the patch is/does.  Otherwise the patchset maintainer
+will have to generate all of that when the patch is forwarded,
+and s/he shouldn't have to do that extra bit.
 
---- old.linux-2.6.7-rc1/drivers/scsi/aacraid/rkt.c	2004-05-09 20:33:13.000000000 -0600
-+++ new.linux-2.6.7-rc1/drivers/scsi/aacraid/rkt.c	2004-05-28 22:28:13.011947990 -0600
-@@ -383,21 +383,21 @@
- 	if((dev->regs.rkt = (struct rkt_registers *)ioremap((unsigned long)dev->scsi_host_ptr->base, 8192))==NULL)
- 	{
- 		printk(KERN_WARNING "aacraid: unable to map i960.\n" );
--		return -1;
-+		goto error_iounmap;
- 	}
- 	/*
- 	 *	Check to see if the board failed any self tests.
- 	 */
- 	if (rkt_readl(dev, IndexRegs.Mailbox[7]) & SELF_TEST_FAILED) {
- 		printk(KERN_ERR "%s%d: adapter self-test failed.\n", dev->name, instance);
--		return -1;
-+		goto error_iounmap;
- 	}
- 	/*
- 	 *	Check to see if the board panic'd while booting.
- 	 */
- 	if (rkt_readl(dev, IndexRegs.Mailbox[7]) & KERNEL_PANIC) {
- 		printk(KERN_ERR "%s%d: adapter kernel panic'd.\n", dev->name, instance);
--		return -1;
-+		goto error_iounmap;
- 	}
- 	start = jiffies;
- 	/*
-@@ -409,7 +409,7 @@
- 		{
- 			status = rkt_readl(dev, IndexRegs.Mailbox[7]) >> 16;
- 			printk(KERN_ERR "%s%d: adapter kernel failed to start, init status = %ld.\n", dev->name, instance, status);
--			return -1;
-+			goto error_iounmap;
- 		}
- 		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule_timeout(1);
-@@ -417,7 +417,7 @@
- 	if (request_irq(dev->scsi_host_ptr->irq, aac_rkt_intr, SA_SHIRQ|SA_INTERRUPT, "aacraid", (void *)dev)<0)
- 	{
- 		printk(KERN_ERR "%s%d: Interrupt unavailable.\n", name, instance);
--		return -1;
-+		goto error_iounmap;
- 	}
- 	/*
- 	 *	Fill in the function dispatch table.
-@@ -430,7 +430,7 @@
- 	dev->a_ops.adapter_check_health = aac_rkt_check_health;
+--
+~Randy
 
- 	if (aac_init_adapter(dev) == NULL)
--		return -1;
-+		goto error_irq;
- 	/*
- 	 *	Start any kernel threads needed
- 	 */
-@@ -438,7 +438,7 @@
- 	if(dev->thread_pid < 0)
- 	{
- 		printk(KERN_ERR "aacraid: Unable to create rkt thread.\n");
--		return -1;
-+		goto error_kfree;
- 	}
- 	/*
- 	 *	Tell the adapter that all is configured, and it can start
-@@ -446,4 +446,15 @@
- 	 */
- 	aac_rkt_start_adapter(dev);
- 	return 0;
-+
-+error_kfree:
-+	kfree(dev->queues);
-+
-+error_irq:
-+	free_irq(dev->scsi_host_ptr->irq, (void *)dev);
-+
-+error_iounmap:
-+	iounmap(dev->regs.rkt);
-+
-+	return -1;
- }
-
---===============32430482082470524==
+--===============93826695396258941==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -113,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32430482082470524==--
+--===============93826695396258941==--
