@@ -1,32 +1,37 @@
 From: Greg KH <greg@kroah.com>
-Date: Mon, 02 Aug 2004 23:12:53 +0000
-Subject: [Kernel-janitors] Re: [PATCH] i2c-ite: replace schedule_timeout()
-Message-Id: <20040802231253.GG15751@kroah.com>
+Date: Mon, 02 Aug 2004 23:12:44 +0000
+Subject: Re: [Kernel-janitors] [PATCH] i2c-nforce2: replace schedule_timeout()
+Message-Id: <20040802231244.GF15751@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============036960913659314976=="
+Content-Type: multipart/mixed; boundary="===============89709280805026603=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============036960913659314976==
+--===============89709280805026603==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Jul 22, 2004 at 10:10:27PM +0000, Nishanth Aravamudan wrote:
+On Thu, Jul 22, 2004 at 10:12:55PM +0000, Nishanth Aravamudan wrote:
 > I would appreciate any comments from the janitors list. This is one (of
-> a few) places where I had to make a decision to set the state before the
-> call to
+> many) cases where I made a decision about replacing
 > 
-> schedule_timeout();
+> set_current_state(TASK_INTERRUPTIBLE);
+> schedule_timeout(some_time);
 > 
-> This of course affected any decision to replace the code with msleep()
-> or not. Please inform if the other state from the one I used is desired.
+> with
+> 
+> msleep(jiffies_to_msecs(some_time));
+> 
+> msleep() is not exactly the same as the previous code, but I only did
+> this replacement where I thought long delays were *desired*. If this is
+> not the case here, then just disregard this patch.
 
 Applied, thanks.
 
 greg k-h
 
 
---===============036960913659314976==
+--===============89709280805026603==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============036960913659314976==--
+--===============89709280805026603==--
