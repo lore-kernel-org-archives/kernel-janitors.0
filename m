@@ -1,50 +1,53 @@
-From: "Maragaret Elizbeth" <zqncd7tq@fast.net>
-Date: Sat, 17 Apr 2004 23:08:17 +0000
-Subject: E-a-rn 2x of Ur Current Salary With Our Degree Cert played amanita
-Message-Id: <yxqu7v0by7q-8lbvdumfr6-7zzqncd7tq@fast.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--58886231060805437653"
+From: "cedrick baker" <emmiecaisse@maktoob.com>
+Date: Sun, 18 Apr 2004 12:42:47 +0000
+Subject: Be Young Again
+Message-Id: <7969561D.C3BABCC@maktoob.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----58886231060805437653
-Content-Type: text/plain;
-Content-Transfer-Encoding: 7Bit
+<HTML>
+&quot;Discover...in the next few minutes... regardless of your age, sex, or
+current 
+health status, how this common element can change the way you experience
+the 
+next half of your life.&quot;<br>
+<br><a href="http://www.donotmisstoday.com/a/">Learn how to increase your
+quality of 
+life</a>
+<p><font face="Arial" size="2">&quot;We really have something 
+here which may be able to reverse some of the problems associated with
+aging.&quot;<br></font>
+<font face="Arial" size="1"><i>-Dr.Anthony Karpos, M.D.</i></font></p>
+<br>
+<br>
+<br>
+-----original message-----<br>
+From: flossie@k.com [mailto:inez@q.com]<br>
+Sent: Friday, March 0, 2004 5:37PM<br>
+To: sharonda; eleni@q.com; wendi; consuela; alexia<br>
+Subject: <a href="http://www.donotmisstoday.com/a/">appreciate but no thank
+you PO 12 00 B , Oran ge sta d, A ruba</a><br>
+<br>
+<br>
+Therefore, that you may judge all your fellow-creatures truly, and know
+upon whom to depend, I give you the Character Marker
+It consists of this pair of spectacles
+<br>
+<br>While you wear them every one you meet will be marked upon the forehead
+with a letter indicating his or her characterThe good will bear the letter
+'G,' the evil the letter 'E
+</FONT></HTML>
 
-no degree = no job = no money
-get an instant university degree = higher salary
-** at least 2x times of ur current salary
-
-no required tests, classes, books, or interviews!
-get a Bachelors, Masters, MBA, and Doctorate (P-h-D) cert!
-
-ALL CERTS ARE GENUINE & REAL WHICH IT CAN BE FOUND IN UNIVERSITY RECORD
-
-
---> call 1-917-591-5075 (24hrs on ca11)
-
-
-no neeed study or test
-at least 2x ur current salary with our cert!
-
-
->> call 1-917-591-5075 (24hrs on ca11)
-
-
-
-bomarea poisoning carya glyptics rusticus arctotis themis  .
-detection triennium reversely slang inchoate condign polemic jagah sterninae rinderpest  .
-lending vulpes bryophyte linger silicide debout surfperch  .
-dugout ration barkbound barmecide  .
-
-----58886231060805437653--
 
 
 -------------------------------------------------------
 This SF.Net email is sponsored by: IBM Linux Tutorials
 Free Linux tutorial presented by Daniel Robbins, President and CEO of
 GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
+administration.http://ads.osdn.com/?ad_id70&alloc_id638&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
