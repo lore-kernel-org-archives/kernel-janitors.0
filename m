@@ -1,40 +1,37 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:28 +0000
-Subject: [KJ] [PATCH][15/26] drivers/scsi/sym53c8xx_2/* - compile warning
-Message-Id: <420BEF84.18293.5874C6@localhost>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Wed, 16 Feb 2005 23:02:17 +0000
+Subject: [KJ] [PATCH] drivers/atm/lanai.c: Use the DMA_{64,
+Message-Id: <20050216230217.GA17891@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66916743907275644=="
+Content-Type: multipart/mixed; boundary="===============91176520281283246=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============66916743907275644==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============91176520281283246==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - stop compilation of unused 
-structure member unless proper symbol is defined
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/scsi/sym53c8xx_2/sym_glue.c linux-2.6.11-rc3-mm/drivers/scsi/sym53c8xx_2/sym_glue.c
---- linux-2.6.11-rc3-mm-original/drivers/scsi/sym53c8xx_2/sym_glue.c	2005-02-03 03:57:04.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/scsi/sym53c8xx_2/sym_glue.c	2005-02-07 15:55:40.000000000 +0200
-@@ -1817,7 +1817,9 @@ static int __devinit sym_check_supported
- 	struct pci_dev *pdev = device->pdev;
- 	u_char revision;
- 	unsigned long io_port = device->s.io_port;
-+#ifndef SYM_CONF_IOMAPPED
- 	unsigned long base = device->s.base;
-+#endif
- 	int i;
- 
- 	/*
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
+--- linux-2.6.11-rc4.orig/drivers/atm/lanai.c	2005-02-13 17:13:08.000000000 +0100
++++ linux-2.6.11-rc4/drivers/atm/lanai.c	2005-02-16 20:49:53.286372056 +0100
+@@ -1964,7 +1964,7 @@ static int __init lanai_pci_start(struct
+ 		return -ENXIO;
+ 	}
+ 	pci_set_master(pci);
+-	if (pci_set_dma_mask(pci, 0xFFFFFFFF) != 0) {
++	if (pci_set_dma_mask(pci, DMA_32BIT_MASK) != 0) {
+ 		printk(KERN_WARNING DEV_LABEL
+ 		    "(itf %d): No suitable DMA available.\n", lanai->number);
+ 		return -EBUSY;
 
-
-
---===============66916743907275644==
+--===============91176520281283246==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66916743907275644==--
+--===============91176520281283246==--
