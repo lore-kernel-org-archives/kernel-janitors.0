@@ -1,43 +1,86 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 04 Apr 2005 11:37:46 +0000
-Subject: Re: [KJ] [PATCH] char* : drivers/char/agp/intel-agp.c
-Message-Id: <20050404113746.GD7891@nd47.coderock.org>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Fri, 01 Apr 2005 08:39:34 +0000
+Subject: [KJ] [PATCH] drivers/block/cciss : Use the DMA_{32|64}_MASK constant
+Message-Id: <20050401083934.GG5445@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53416431728619163=="
+Content-Type: multipart/mixed; boundary="mojUlQ0s9EVzWg2t"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050401122030.GM5445@rhum.iomeda.fr>
-In-Reply-To: <20050401122030.GM5445@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============53416431728619163==
+
+--mojUlQ0s9EVzWg2t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 01/04/05 14:20 +0200, Christophe Lucas wrote:
-> Description:
-> String form : char foo[] = "blah" is better than char *foo = "blah"
-> 
-> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask() instead of custom
+macros.
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-> diff -urpN -X dontdiff a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
-> --- a/drivers/char/agp/intel-agp.c	2005-03-18 02:34:12.000000000 +0100
-> +++ b/drivers/char/agp/intel-agp.c	2005-04-01 12:08:36.751735144 +0200
-> @@ -1532,7 +1532,7 @@ static int __devinit agp_intel_probe(str
->  				     const struct pci_device_id *ent)
->  {
->  	struct agp_bridge_data *bridge;
-> -	char *name = "(unknown)";
-> +	char name[] = "(unknown)";
-
-A few lines below there's a
-	name = "440LX";
-... so i don't think this will even compile.
-Same goes for next, acpi patch.
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-	Domen
+--mojUlQ0s9EVzWg2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="linux-2.6.12-rc1_drivers_block_cciss.c.patch"
 
---===============53416431728619163==
+diff -urpN -X dontdiff a/drivers/block/cciss.c b/drivers/block/cciss.c
+--- a/drivers/block/cciss.c	2005-03-18 02:34:36.000000000 +0100
++++ b/drivers/block/cciss.c	2005-03-31 17:49:54.382458576 +0200
+@@ -38,6 +38,7 @@
+ #include <linux/hdreg.h>
+ #include <linux/spinlock.h>
+ #include <linux/compat.h>
++#include <linux/dma-mapping.h>
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+ 
+@@ -125,9 +126,6 @@ static struct board_type products[] = {
+ /* Originally cciss driver only supports 8 major numbers */
+ #define MAX_CTLR_ORIG 	8
+ 
+-
+-#define CCISS_DMA_MASK	0xFFFFFFFF	/* 32 bit DMA */
+-
+ static ctlr_info_t *hba[MAX_CTLR];
+ 
+ static void do_cciss_request(request_queue_t *q);
+@@ -1542,9 +1540,6 @@ static int register_new_disk(ctlr_info_t
+ 
+ 	if( return_code == IO_OK)
+ 	{
+-		
+-		// printk("LUN Data\n--------------------------\n");
+-
+ 		listlength |= (0xff & (unsigned int)(ld_buff->LUNListLength[0])) << 24;
+ 		listlength |= (0xff & (unsigned int)(ld_buff->LUNListLength[1])) << 16;
+ 		listlength |= (0xff & (unsigned int)(ld_buff->LUNListLength[2])) << 8;	
+@@ -2393,7 +2388,7 @@ static int cciss_pci_init(ctlr_info_t *c
+ 		printk(KERN_ERR "cciss: Unable to Enable PCI device\n");
+ 		return( -1);
+ 	}
+-	if (pci_set_dma_mask(pdev, CCISS_DMA_MASK ) != 0)
++	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) != 0)
+ 	{
+ 		printk(KERN_ERR "cciss:  Unable to set DMA mask\n");
+ 		return(-1);
+@@ -2747,9 +2742,9 @@ static int __devinit cciss_init_one(stru
+ 	hba[i]->pdev = pdev;
+ 
+ 	/* configure PCI DMA stuff */
+-	if (!pci_set_dma_mask(pdev, 0xffffffffffffffffULL))
++	if (!pci_set_dma_mask(pdev, DMA_64BIT_MASK))
+ 		printk("cciss: using DAC cycles\n");
+-	else if (!pci_set_dma_mask(pdev, 0xffffffff))
++	else if (!pci_set_dma_mask(pdev, DMA_32BIT_MASK))
+ 		printk("cciss: not using DAC cycles\n");
+ 	else {
+ 		printk("cciss: no suitable DMA available\n");
+
+--mojUlQ0s9EVzWg2t
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +91,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53416431728619163==--
+--mojUlQ0s9EVzWg2t--
