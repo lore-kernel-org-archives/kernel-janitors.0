@@ -1,31 +1,41 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 08 Sep 2004 19:36:48 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc1-bk7] i2c-algo-ite: remove
-Message-Id: <20040908193648.GA6976@kroah.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 27 Sep 2004 22:20:59 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 6/9] usb/kaweth: reorder
+Message-Id: <20040927222058.GN1617@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79065123231162127=="
+Content-Type: multipart/mixed; boundary="===============82619989355655399=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============79065123231162127==
+--===============82619989355655399==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Sep 01, 2004 at 10:31:41PM +0000, Nishanth Aravamudan wrote:
-> This is one of 10 patches which have either not been pushed to mainline
-> (2.6.9-rc1-bk7) or have not been included in any of the recent kjt's.
-> 
-> Applys-to: 2.6.9-rc1-bk7
-> 
-> Description: Removes unused function iic_sleep().
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Any comments would be appreciated.
 
-Applied, thanks.
+Description: Reorder set_current_state() and schedule_timeout() for a
+minor cleanup. The reorder allows removing two of the
+set_current_state() calls.
 
-greg k-h
+--- 2.6.9-rc2-vanilla/drivers/usb/net/kaweth.c	2004-09-13 17:15:55.000000000 -0700
++++ 2.6.9-rc2/drivers/usb/net/kaweth.c	2004-09-15 10:06:18.000000000 -0700
+@@ -1250,13 +1250,11 @@ static int usb_start_wait_urb(struct urb
+                 return status;
+         }
+ 
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	while (timeout && !awd.done) {
+-		timeout = schedule_timeout(timeout);
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
++		timeout = schedule_timeout(timeout);
+ 	}
+ 
+-        set_current_state(TASK_RUNNING);
+         remove_wait_queue(&awd.wqh, &wait);
+ 
+         if (!timeout) {
 
---===============79065123231162127==
+--===============82619989355655399==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79065123231162127==--
+--===============82619989355655399==--
