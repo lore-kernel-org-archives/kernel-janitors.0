@@ -1,68 +1,49 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:15:11 +0000
-Subject: [KJ] [PATCH 44/53] rivafb: Clean up printk()'s in
-Message-Id: <20050125231511.10418.69676.79425@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 18 Jan 2005 00:21:30 +0000
+Subject: [KJ] [PATCH 20/21] ppc64/traps: replace schedule_timeout() with
+Message-Id: <20050118002130.GC24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82457189977360335=="
+Content-Type: multipart/mixed; boundary="===============047898895820560838=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============82457189977360335==
+--===============047898895820560838==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/riva/fbdev.c
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying. 
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/riva/fbdev.c linux-2.6.11-rc2-mm1/drivers/video/riva/fbdev.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/riva/fbdev.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/riva/fbdev.c	2005-01-24 19:07:04.060257281 -0500
-@@ -68,9 +68,10 @@
-  *
-  * ------------------------------------------------------------------------- */
- #ifdef CONFIG_FB_RIVA_DEBUG
--#define NVTRACE          printk
-+#define DEBUG
-+#define NVTRACE          pr_debug
- #else
--#define NVTRACE          if(0) printk
-+#define NVTRACE          if(0) pr_debug
- #endif
+Description:  Use ssleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The current code is not incorrect, but using ssleep()
+encourages specifying delays in real time-units and consistency across the
+kernel.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/arch/ppc64/kernel/traps.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/arch/ppc64/kernel/traps.c	2005-01-15 17:30:39.000000000 -0800
+@@ -29,6 +29,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
++#include <linux/delay.h>
+ #include <asm/kdebug.h>
  
- #define NVTRACE_ENTER(...)  NVTRACE("%s START\n", __FUNCTION__)
-@@ -79,7 +80,7 @@
- #ifdef CONFIG_FB_RIVA_DEBUG
- #define assert(expr) \
- 	if(!(expr)) { \
--	printk( "Assertion failed! %s,%s,%s,line=%d\n",\
-+	pr_debug( "Assertion failed! %s,%s,%s,line=%d\n",\
- 	#expr,__FILE__,__FUNCTION__,__LINE__); \
- 	BUG(); \
+ #include <asm/pgtable.h>
+@@ -137,8 +138,7 @@ int die(const char *str, struct pt_regs 
+ 
+ 	if (panic_on_oops) {
+ 		printk(KERN_EMERG "Fatal exception: panic in 5 seconds\n");
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(5 * HZ);
++		ssleep(5);
+ 		panic("Fatal exception");
  	}
-@@ -1780,7 +1781,7 @@
- 	for (i = 0; i < par->bus; i++) {
- 		riva_probe_i2c_connector(par, i+1, &par->EDID);
- 		if (par->EDID && !fb_parse_edid(par->EDID, &var)) {
--			printk(PFX "Found EDID Block from BUS %i\n", i);
-+			pr_info(PFX "Found EDID Block from BUS %i\n", i);
- 			break;
- 		}
- 	}
-@@ -1829,10 +1830,10 @@
- 	NVTRACE_ENTER();
- #ifdef CONFIG_PPC_OF
- 	if (!riva_get_EDID_OF(info, pdev))
--		printk(PFX "could not retrieve EDID from OF\n");
-+		pr_info(PFX "could not retrieve EDID from OF\n");
- #elif CONFIG_FB_RIVA_I2C
- 	if (!riva_get_EDID_i2c(info))
--		printk(PFX "could not retrieve EDID from DDC/I2C\n");
-+		pr_info(PFX "could not retrieve EDID from DDC/I2C\n");
- #endif
- 	NVTRACE_LEAVE();
- }
+ 	do_exit(SIGSEGV);
 
---===============82457189977360335==
+--===============047898895820560838==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82457189977360335==--
+--===============047898895820560838==--
