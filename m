@@ -1,15 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 13 Jul 2004 17:20:33 +0000
+Date: Tue, 13 Jul 2004 17:28:25 +0000
 Subject: [Kernel-janitors] no set_current_state() before schedule_timeout()
-Message-Id: <40F419E1.8040708@us.ibm.com>
+Message-Id: <40F41BB9.3020503@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32591249140231637=="
+Content-Type: multipart/mixed; boundary="===============068082282815398631=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <40F41170.7030605@us.ibm.com>
 In-Reply-To: <40F41170.7030605@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============32591249140231637==
+--===============068082282815398631==
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -20,7 +20,10 @@ ran across the following file(s) / function(s), which do not invoke
 set_current_state() before schedule_timeout(), which causes the latter 
 to return immediately:
 
-drivers/net/wan/farsync.c::fst_issue_cmd()
+drivers/net/wireless/airo.c::airo_pci_resume()
+drivers/net/wireless/airport.c::airport_hard_reset()
+drivers/net/wireless/prism54/islpci_dev.c::islpci_reset_if()
+drivers/net/wireless/prsim54/islpci_mgt.c::islpci_mgt_transaction()
 
 If someone could tell me which state (TASK_INTERRUPTIBLE or 
 TASK_UNINTERRUPTIBLE) is desired, I can fix this and perhaps replace the 
@@ -29,8 +32,7 @@ calls with msleep().
 Thanks,
 Nish
 
-
---===============32591249140231637==
+--===============068082282815398631==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32591249140231637==--
+--===============068082282815398631==--
