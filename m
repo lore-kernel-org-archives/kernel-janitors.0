@@ -1,56 +1,50 @@
-From: =?utf-8?q?Tessa Wsiasug?= <haughtyenvnetl@callwave.net>
-Date: Wed, 24 Nov 2004 05:53:59 +0000
-Subject: =?utf-8?q?Economize 80 % and m?=
-Message-Id: <E1CWtid-0002d6-5h@externalmx-1.sourceforge.net>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 15:29:11 +0000
+Subject: [KJ] [patch 2/8] ifdef typos: arch_ppc_syslib_ppc4xx_dma.c
+Message-Id: <20041124152911.GB14789@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="HUIa8wuz47WP9NzdUuB"
+Content-Type: multipart/mixed; boundary="===============18530746097985951=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+--===============18530746097985951==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---HUIa8wuz47WP9NzdUuB
-Content-Type: text/plain;
-	charset="utf-8"
+ppc4xx_dma.h defines PPC4xx_DMA_64BIT.
+
+Signed-off-by: Domen Puncer <domen@coderock.org>
+
+--- c/arch/ppc/syslib/ppc4xx_dma.c	2004-08-17 11:44:59.000000000 +0200
++++ str2/arch/ppc/syslib/ppc4xx_dma.c	2004-11-24 15:18:29.000000000 +0100
+@@ -48,7 +48,7 @@ ppc4xx_set_src_addr(int dmanr, phys_addr
+ 		return;
+ 	}
+ 
+-#ifdef PPC4xx_DMA64BIT
++#ifdef PPC4xx_DMA_64BIT
+ 	mtdcr(DCRN_DMASAH0 + dmanr*2, (u32)(src_addr >> 32));
+ #else
+ 	mtdcr(DCRN_DMASA0 + dmanr*2, (u32)src_addr);
+@@ -63,7 +63,7 @@ ppc4xx_set_dst_addr(int dmanr, phys_addr
+ 		return;
+ 	}
+ 
+-#ifdef PPC4xx_DMA64BIT
++#ifdef PPC4xx_DMA_64BIT
+ 	mtdcr(DCRN_DMADAH0 + dmanr*2, (u32)(dst_addr >> 32));
+ #else
+ 	mtdcr(DCRN_DMADA0 + dmanr*2, (u32)dst_addr);
+
+--===============18530746097985951==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Our company aids all people economize on over-priced prescriptions 
-drugs at costs that are as much as 75 percents lower than retail 
-pharmacy substitutes. 
-
-http://yxgy.ikgelfjk.info/?C78kEcDnDaJfB66jxyy
-
---HUIa8wuz47WP9NzdUuB
-Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
-<STYLE></STYLE>
-</HEAD>
-<HTML>
-<BODY>
-Our company aids all people economise on high-priced prescriptions <BR>
-medicines at values that are as much as 65 % lower than retail <Br>
-apothecary's shop substitutes. <BR>
-<A href=3D"http://nlhylphd.meeemaha.info/?1y3L3D2OyB8G0x1nloynp">Examine=
- values</A>
-</BODY>
-</HTML></HTML>
-
---HUIa8wuz47WP9NzdUuB--
-
-
-
-
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now. 
-http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============18530746097985951==--
