@@ -1,49 +1,111 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 15 Sep 2004 18:13:30 +0000
-Subject: [Kernel-janitors] [PATCH 3/5] atm/he: replace schedule_timeout()
-Message-Id: <20040915181330.GD4363@us.ibm.com>
+Date: Wed, 22 Sep 2004 21:47:35 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 7/38] net/cycx_drv: replace
+Message-Id: <20040922214735.GF1924@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50988199177227034=="
+Content-Type: multipart/mixed; boundary="===============52012364627677465=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============50988199177227034==
+--===============52012364627677465==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. This is a re-push of a patch I sent
-19 July but the changes haven't appared in either 2.6.9-rc1-mm5 or
-2.6.9-rc2.
+Any comments would be appreciated.
 
-Description: msleep() is used instead of schedule_timeout() to guarantee
-the task delays as expected. Also, an extraneous set_current_state() is
-removed, as the task is guaranteed to be in TASK_RUNNING upon returning
-from schedule_timeout().
+Description: Use msleep_interruptible() instead of delay_cycx()
+to guarantee the task delays as expected. Remove the prototype and
+definition of delay_cycx().
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/atm/he.c	2004-09-13 17:16:06.000000000 -0700
-+++ 2.6.9-rc2/drivers/atm/he.c	2004-09-14 11:25:55.000000000 -0700
-@@ -2569,7 +2569,6 @@ he_close(struct atm_vcc *vcc)
- 		timeout = schedule_timeout(30*HZ);
+--- 2.6.9-rc2-vanilla/drivers/net/wan/cycx_drv.c	2004-09-13 17:15:42.000000000 -0700
++++ 2.6.9-rc2/drivers/net/wan/cycx_drv.c	2004-09-22 14:46:31.000000000 -0700
+@@ -56,7 +56,7 @@
+ #include <linux/sched.h>	/* for jiffies, HZ, etc. */
+ #include <linux/cycx_drv.h>	/* API definitions */
+ #include <linux/cycx_cfm.h>	/* CYCX firmware module definitions */
+-#include <linux/delay.h>	/* udelay */
++#include <linux/delay.h>	/* udelay, msleep */
+ #include <asm/io.h>		/* read[wl], write[wl], ioremap, iounmap */
  
- 		remove_wait_queue(&he_vcc->rx_waitq, &wait);
--		set_current_state(TASK_RUNNING);
+ #define	MOD_VERSION	0
+@@ -74,7 +74,6 @@ static int reset_cyc2x(void *addr);
+ static int detect_cyc2x(void *addr);
  
- 		if (timeout == 0)
- 			hprintk("close rx timeout cid 0x%x\n", cid);
-@@ -2595,8 +2594,7 @@ he_close(struct atm_vcc *vcc)
+ /* Miscellaneous functions */
+-static void delay_cycx(int sec);
+ static int get_option_index(long *optlist, long optval);
+ static u16 checksum(u8 *buf, u32 len);
  
- 		while (((tx_inuse = atomic_read(&vcc->sk->sk_wmem_alloc)) > 0) &&
- 		       (retry < MAX_RETRY)) {
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			(void) schedule_timeout(sleep);
-+			msleep(jiffies_to_msecs(sleep));
- 			if (sleep < HZ)
- 				sleep = sleep * 2;
+@@ -260,7 +259,7 @@ static int memory_exists(void *addr)
+ 			if (readw(addr + 0x10) == TEST_PATTERN)
+ 				return 1;
  
+-		delay_cycx(1);
++		msleep_interruptible(1000);
+ 	}
+ 
+ 	return 0;
+@@ -317,7 +316,7 @@ static void cycx_reset_boot(void *addr, 
+ 
+ 	/* 80186 was in hold, go */
+ 	writeb(0, addr + START_CPU);
+-	delay_cycx(1);
++	msleep_interruptible(1000);
+ }
+ 
+ /* Load data.bin file through boot (reset) interface. */
+@@ -463,13 +462,13 @@ static int load_cyc2x(struct cycx_hw *hw
+ 		cycx_reset_boot(hw->dpmbase, reset_image, img_hdr->reset_size);
+ 		/* reset is waiting for boot */
+ 		writew(GEN_POWER_ON, pt_cycld);
+-		delay_cycx(1);
++		msleep_interruptible(1000);
+ 
+ 		for (j = 0 ; j < 3 ; j++)
+ 			if (!readw(pt_cycld))
+ 				goto reset_loaded;
+ 			else
+-				delay_cycx(1);
++				msleep_interruptible(1000);
+ 	}
+ 
+ 	printk(KERN_ERR "%s: reset not started.\n", modname);
+@@ -496,7 +495,7 @@ reset_loaded:
+ 
+ 	/* Arthur Ganzert's tip: wait a while after the firmware loading...
+ 	   seg abr 26 17:17:12 EST 1999 - acme */
+-	delay_cycx(7);
++	msleep_interruptible(7000);
+ 	printk(KERN_INFO "%s: firmware loaded!\n", modname);
+ 
+ 	/* enable interrupts */
+@@ -548,20 +547,13 @@ static int get_option_index(long *optlis
+ static int reset_cyc2x(void *addr)
+ {
+ 	writeb(0, addr + RST_ENABLE);
+-	delay_cycx(2);
++	msleep_interruptible(2000);
+ 	writeb(0, addr + RST_DISABLE);
+-	delay_cycx(2);
++	msleep_interruptible(2000);
+ 
+ 	return memory_exists(addr);
+ }
+ 
+-/* Delay */
+-static void delay_cycx(int sec)
+-{
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(sec * HZ);
+-}
+-
+ /* Calculate 16-bit CRC using CCITT polynomial. */
+ static u16 checksum(u8 *buf, u32 len)
+ {
 
---===============50988199177227034==
+--===============52012364627677465==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +116,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50988199177227034==--
+--===============52012364627677465==--
