@@ -1,96 +1,85 @@
-From: "Hal Nunez" <wyimg@yahoo.com>
-Date: Wed, 04 Feb 2004 12:49:55 +0000
-Subject: Good stuff
-Message-Id: <ZGLXAUGPLTZWHXBXQQKGJ@msn.com>
+From: Chuck Short <zul@gentoo.org>
+Date: Tue, 16 Mar 2004 20:33:49 +0000
+Subject: [Kernel-janitors] tcic kj audit
+Message-Id: <405764AD.6070905@gentoo.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--43264989232325052"
+Content-Type: multipart/mixed; boundary="------------020307000003060500050807"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----43264989232325052
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
+This is a multi-part message in MIME format.
+--------------020307000003060500050807
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-<html><body bgcolor=3D"#666666"><center><br><br>
-<table width=3D"75%" bgcolor=3D"#FFFFFF" border=3D2 bordercolor=3D"#000000=
-"><tr><td>
-<table width=3D"100%" cellpadding=3D2 cellspacing=3D2 border=3D0 bgcolor=3D=
-"#FAC23E"><tr><td>
-<table cellpadding=3D0 cellspacing=3D4 border=3D0 bgcolor=3D"#000000"><tr>=
-<td><font size=3D"4" color=3D"#FFFFFF"><b>MAGN</b></font></td><td><font si=
-ze=3D"4" color=3D"#FFFFFF"><b>A-RX</b></font></td></tr></table>
-<table cellpadding=3D0 cellspacing=3D0 border=3D0 bgcolor=3D"#000000"><tr>=
-<td><font size=3D"7" color=3D"#FFFFFF"><b>H</font><font size=3D"5" color=3D=
-"#FFFFFF">uma</b></font></td><td><font size=3D"5" color=3D"#FFFFFF"><b>n <=
-font size=3D"7" color=3D"#FFFFFF">G</font><font size=3D"5" color=3D"#FFFFF=
-F">ro</b></font></td><td><font size=3D"5" color=3D"#FFFFFF"><b>th <font si=
-ze=3D"7" color=3D"#FFFFFF">H</font><font size=3D"5" color=3D"#FFFFFF">or</=
-b></font></td><td><font size=3D"5" color=3D"#FFFFFF"><b>mone</b></font><fo=
-nt size=3D"7" color=3D"#000000">.</font></td></tr></table></td></tr></tabl=
-e><p><p>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b>H</b></td><td><b>G</b></=
-td><td><b>H</b> (Hum</td><td>an Gro</td><td>wth Hor</td><td>mone)</td></tr=
-></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td>is kno</td><td>wn to be cri=
-t</td><td>ical f</td><td>or tis</td><td>sue re</td><td>pair,</td></tr></ta=
-ble>
-<table cellspacing=3D0 cellpadding=3D0><tr><td>musc</td><td>le gro</td><td=
->wth, hea</td><td>ling, bra</td><td>in func</td><td>tion, physical</td></t=
-r></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td>and men</td><td>tal hea</td=
-><td>lth, bone stren</td><td>gth, ener</td><td>gy and met</td><td>abolism.=
-</td></tr></table><p>
-<table cellspacing=3D0 cellpadding=3D0><tr><td>In sho</td><td>rt, it is v<=
-/td><td>ery impo</td><td>rtant to j</td><td>ust ab</td><td>out</td></tr></=
-table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td>eve</td><td>ry aspec</td><t=
-d>t of ou</td><td>r life!</td></tr></table><p>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><font size=3D"4"><b>List o<=
-/b></font></td><td><font size=3D"4"><b>f ben</b></font></td><td><font size=
-=3D"4"><b>efits:</b></font></td></tr></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b> - 8.8% inc</b></td><td>=
-<b>rease in mus</b></td><td><b>cle mass wit</b></td><td><b>hout exerc</b><=
-/td><td><b>ise</b></td></tr></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b>- 14.4% lo</b></td><td><=
-b>ss of f</b></td><td><b>at with</b></td><td><b>out die</b></td><td><b>tin=
-g</b></td></tr></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b>- Hig</b></td><td><b>her=
- ene</b></td><td><b>rgy le</b></td><td><b>vels</b></td></tr></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b>- Enhan</b></td><td><b>c=
-ed se</b></td><td><b>xual perf</b></td><td><b>ormance</b></td></tr></table=
->
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b>- Gre</b></td><td><b>ate=
-r ca</b></td><td><b>rdia</b></td><td><b>c output</b></td></tr></table>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><b>- Supe</b></td><td><b>ri=
-or im</b></td><td><b>mune fun</b></td><td><b>ction</b></td></tr></table><p=
-><p>
-<table cellspacing=3D0 cellpadding=3D0><tr><td><a href=3D"http://www.inter=
-netnatural.com/in.php?id=3Dseat2"><font size=3D"5"><b>Ge</b></font></a></t=
-d><td><a href=3D"http://www.internetnatural.com/in.php?id=3Dseat2"><font s=
-ize=3D"5"><b>t H</b></font></a></td><td><a href=3D"http://www.internetnatu=
-ral.com/in.php?id=3Dseat2"><font size=3D"5"><b>GH N</b></font></a></td><td=
-><a href=3D"http://www.internetnatural.com/in.php?id=3Dseat2"><font size=3D=
-"5"><b>ow</b></font></a></td></tr></table>
-<p><p><p><p><p><p><p><table cellspacing=3D0 cellpadding=3D0><tr><td><a hre=
-f=3D"http://www.internetnatural.com/unsubscribe/unsubscribe.html"><font si=
-ze=3D"2"><b>To be r</b></font></a></td><td><a href=3D"http://www.internetn=
-atural.com/unsubscribe/unsubscribe.html"><font size=3D"2"><b>emoved cl</b>=
-</font></a></td><td><a href=3D"http://www.internetnatural.com/unsubscribe/=
-unsubscribe.html"><font size=3D"2"><b>ick h</b></font></a></td><td><a href=
-=3D"http://www.internetnatural.com/unsubscribe/unsubscribe.html"><font siz=
-e=3D"2"><b>ere.</b></font></a></td></tr></table>
-</td></tr></table></center></body></html>
+Hi,
 
-----43264989232325052--
+This patch changes char* into char[] and add's KERN_* to some printks to 
+tcic.
 
+chuck
 
+--------------020307000003060500050807
+Content-Type: text/plain;
+ name="tcic-kj-audit.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="tcic-kj-audit.patch"
 
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+--- linux-2.6.4.orig/drivers/pcmcia/tcic.c	2004-03-11 02:55:28.000000000 +0000
++++ linux-2.6.4/drivers/pcmcia/tcic.c	2004-03-16 16:24:56.000000000 +0000
+@@ -58,7 +58,7 @@
+ #ifdef PCMCIA_DEBUG
+ static int pc_debug = PCMCIA_DEBUG;
+ MODULE_PARM(pc_debug, "i");
+-static const char *version =
++static const char version[] =
+ "tcic.c 1.111 2000/02/15 04:13:12 (David Hinds)";
+ #define DEBUG(n, args...) if (pc_debug>(n)) printk(KERN_DEBUG args)
+ #else
+@@ -337,7 +337,7 @@ static int __init is_active(int s)
+ 
+     if ((sstat & TCIC_SSTAT_CD) && (pwr & TCIC_PWR_VCC(s)) &&
+ 	(scf1 & TCIC_SCF1_IOSTS) && (ioctl & TCIC_ICTL_ENA) &&
+-	(check_region(base, num) != 0) && ((base & 0xfeef) != 0x02e8))
++	(region_request(base, num) != 0) && ((base & 0xfeef) != 0x02e8))
+ 	return 1;
+     else
+ 	return 0;
+@@ -403,7 +403,7 @@ static int __init init_tcic(void)
+     sock = 0;
+ 
+     if (!request_region(tcic_base, 16, "tcic-2")) {
+-	printk("could not allocate ports,\n ");
++	printk(KERN_INFO "could not allocate ports,\n ");
+ 	driver_unregister(&tcic_driver);
+ 	return -ENODEV;
+     }
+@@ -505,11 +505,11 @@ static int __init init_tcic(void)
+     }
+     
+     if (socket_table[0].socket.irq_mask & (1 << 11))
+-	printk("sktirq is irq 11, ");
++	printk(KERN_INFO "sktirq is irq 11, ");
+     if (cs_irq != 0)
+-	printk("status change on irq %d\n", cs_irq);
++	printk(KERN_NOTICE "status change on irq %d\n", cs_irq);
+     else
+-	printk("polled status, interval = %d ms\n",
++	printk(KERN_INFO "polled status, interval = %d ms\n",
+ 	       poll_interval * 1000 / HZ);
+     
+     for (i = 0; i < sockets; i++) {
+
+--------------020307000003060500050807
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------020307000003060500050807--
