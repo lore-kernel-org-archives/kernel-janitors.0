@@ -1,62 +1,38 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Date: Sat, 27 Mar 2004 05:12:54 +0000
-Subject: [Kernel-janitors] [PATCH 0/5] remove concatenation with
-Message-Id: <20040327051254.GE3445@bakeyournoodle.com>
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Fri, 19 Mar 2004 19:31:43 +0000
+Subject: [Kernel-janitors] [TRIVIAL] - section drivers/acpi/asus_acpi.c.
+Message-Id: <1079724660.14846.38.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040322052155.GF17221@bakeyournoodle.com>
-In-Reply-To: <20040322052155.GF17221@bakeyournoodle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
---------------------------------------------------------------------------------
-diff -X dontdiff -purN 2.6.4.clean/include/linux/jbd.h 2.6.4.kj_func/include/linux/jbd.h
---- 2.6.4.clean/include/linux/jbd.h	2004-01-16 21:07:50.000000000 +1100
-+++ 2.6.4.kj_func/include/linux/jbd.h	2004-03-26 14:46:34.000000000 +1100
-@@ -56,7 +56,7 @@ extern int journal_enable_debug;
- 		if ((n) <= journal_enable_debug) {			\
- 			printk (KERN_DEBUG "(%s, %d): %s: ",		\
- 				__FILE__, __LINE__, __FUNCTION__);	\
--		  	printk (f, ## a);				\
-+		  	printk (f , ## a);				\
- 		}							\
- 	} while (0)
- #else
-@@ -279,9 +279,9 @@ void buffer_assertion_failure(struct buf
- 			printk(KERN_ERR why);				     \
- 		}							     \
- 	} while (0)
--#define J_EXPECT(expr, why...)		__journal_expect(expr, ## why)
--#define J_EXPECT_BH(bh, expr, why...)	__journal_expect(expr, ## why)
--#define J_EXPECT_JH(jh, expr, why...)	__journal_expect(expr, ## why)
-+#define J_EXPECT(expr, why...)		__journal_expect(expr , ## why)
-+#define J_EXPECT_BH(bh, expr, why...)	__journal_expect(expr , ## why)
-+#define J_EXPECT_JH(jh, expr, why...)	__journal_expect(expr , ## why)
- #endif
- 
- enum jbd_state_bits {
-@@ -1001,10 +1001,10 @@ extern int	cleanup_journal_tail(journal_
- /* Debugging code only: */
- 
- #define jbd_ENOSYS() \
--do {								      \
--	printk (KERN_ERR "JBD unimplemented function " __FUNCTION__); \
--	current->state = TASK_UNINTERRUPTIBLE;			      \
--	schedule();						      \
-+do {								           \
-+	printk (KERN_ERR "JBD unimplemented function %s\n", __FUNCTION__); \
-+	current->state = TASK_UNINTERRUPTIBLE;			           \
-+	schedule();						           \
- } while (1)
- 
- /*
---------------------------------------------------------------------------------
-Yours Tony
+Hi all,
 
-        linux.conf.au       http://lca2005.linux.org.au/
-	Apr 18-23 2005      The Australian Linux Technical Conference!
+ I need to be more descriptive in this patches. :-)
+
+ asus_hotk_remove() is only called when drivers is being
+removed.
+
+diff -Nparu linux-2.6.5-rc1/drivers/acpi/asus_acpi.c linux-2.6.5-rc1~/drivers/acpi/asus_acpi.c
+--- linux-2.6.5-rc1/drivers/acpi/asus_acpi.c	2004-02-18 15:54:21.000000000 -0300
++++ linux-2.6.5-rc1~/drivers/acpi/asus_acpi.c	2004-03-16 19:15:33.000000000 -0300
+@@ -1097,7 +1097,7 @@ static int __init asus_hotk_add(struct a
+ }
+ 
+ 
+-static int asus_hotk_remove(struct acpi_device *device, int type)
++static int __exit asus_hotk_remove(struct acpi_device *device, int type)
+ {
+ 	acpi_status status = 0;
+ 	struct asus_hotk *hotk = NULL;
+
+-- 
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
 
 _______________________________________________
 Kernel-janitors mailing list
