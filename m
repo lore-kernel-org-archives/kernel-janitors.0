@@ -1,30 +1,66 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Date: Wed, 09 Feb 2005 21:31:53 +0000
-Subject: [KJ] Re: [PATCH] drivers/pcmcia/*: convert to pci_register_driver
-Message-Id: <20050209213153.GB9150@dominikbrodowski.de>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 18:11:29 +0000
+Subject: [KJ] [PATCH 3/20] net/8139too: remove
+Message-Id: <20050202181129.GD2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2884661076033872=="
+Content-Type: multipart/mixed; boundary="===============15164152380464313=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: jgarzik@pobox.com
+Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
 
---===============2884661076033872==
+--===============15164152380464313==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Feb 08, 2005 at 04:25:31PM +0100, Christophe Lucas wrote:
-> Hi,
-> 
-> Description:
-> convert from pci_module_init to pci_register_driver
-> (from:http://kerneljanitors.org/TODO).
-> 
-> Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+Hello,
 
-Thanks, will push it upstream.
+Please consider applying.
 
-	Dominik
 
---===============2884661076033872==
+One thing I would have preferred using here is use wait_event*(), but there is
+no condition. However, try_to_freeze(PF_FREEZE) could be used as one, if the
+return condition matters -- it can return 0 or 1, from what I understand. If the
+intent is to loop until the task is "frozen," then I can revise the patch to use
+wait_event_interruptible_timeout().
+
+Description: Replace deprecated interruptible_sleep_on_timeout() function calls
+with direct wait-queue usage. I did not find the direct wake_up_interruptible()
+function call in this file for the wait-queue, but that may not be an issue.
+Patch is compile-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc2-kj-v/drivers/net/8139too.c	2005-01-24 09:34:08.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/net/8139too.c	2005-01-27 11:22:19.000000000 -0800
+@@ -108,6 +108,7 @@
+ #include <linux/mii.h>
+ #include <linux/completion.h>
+ #include <linux/crc32.h>
++#include <linux/wait.h>
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+ #include <asm/irq.h>
+@@ -1612,6 +1613,7 @@ static inline void rtl8139_thread_iter (
+ 
+ static int rtl8139_thread (void *data)
+ {
++	DEFINE_WAIT(wait);
+ 	struct net_device *dev = data;
+ 	struct rtl8139_private *tp = dev->priv;
+ 	unsigned long timeout;
+@@ -1622,7 +1624,9 @@ static int rtl8139_thread (void *data)
+ 	while (1) {
+ 		timeout = next_tick;
+ 		do {
+-			timeout = interruptible_sleep_on_timeout (&tp->thr_wait, timeout);
++			prepare_to_wait(&tp->thr_wait, &wait, TASK_INTERRUPTIBLE);
++			timeout = schedule_timeout(timeout);
++			finish_wait(&tp->thr_wait, &wait);
+ 			/* make swsusp happy with our thread */
+ 			try_to_freeze(PF_FREEZE);
+ 		} while (!signal_pending (current) && (timeout > 0));
+
+--===============15164152380464313==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -35,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2884661076033872==--
+--===============15164152380464313==--
