@@ -1,8 +1,10 @@
 From: "songzi" <songzi@hotmail.com>
-Date: Sat, 22 May 2004 06:32:44 +0000
+Date: Mon, 24 May 2004 04:18:02 +0000
 Subject: SuperCRM =?GB2312?B?VjIuML/Nu6e52M+1udzA7c+1zbMs1+7Qwsn9vLY=?=
-Message-Id: <E1BRPv6-00040P-Uw@sc8-sf-mx1.sourceforge.net>
+Message-Id: <E1BS6ln-0003iS-KR@sc8-sf-mx1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1BRPv6-00040P-Uw@sc8-sf-mx1.sourceforge.net>
+In-Reply-To: <E1BRPv6-00040P-Uw@sc8-sf-mx1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="windows-1254"
 Content-Transfer-Encoding: base64
