@@ -1,40 +1,48 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 17:12:44 +0000
-Subject: [KJ] [PATCH 18/19] drivers/scsi/qlogicfc: Use the DMA_{64,
-Message-Id: <20050220171244.GS14375@helium.tklauser.home>
+From: Domen Puncer <domen@coderock.org>
+Date: Mon, 21 Feb 2005 20:34:57 +0000
+Subject: Re: [KJ] [PATCH 9/53] radeonfb: Clean up printk()'s in
+Message-Id: <20050221203457.GA4174@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79765046893650959=="
+Content-Type: multipart/mixed; boundary="===============78870833498470283=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============79765046893650959==
+--===============78870833498470283==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+On 25/01/05 17:09 -0600, James Nelson wrote:
+> @@ -28,6 +28,7 @@
+>   *
+>   */
+>  
+> +#undef DEBUG
+>  
+>  #define RADEON_VERSION	"0.1.6"
+>  
+> @@ -80,12 +81,8 @@
+>  #include <video/radeon.h>
+>  #include <linux/radeonfb.h>
+>  
+> -#define DEBUG	1
+> -
+> -#if DEBUG
+> -#define RTRACE		printk
+> -#else
+> -#define RTRACE		if(0) printk
+> +#ifdef DEBUG
+> +#define RTRACE		pr_debug
+>  #endif
+>  
+>  // XXX
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+This produced warning, on !DEBUG RTRACE wasn't defined. Fixed for -kj,
+and also restored DEBUG behaviour which you turned off.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---- linux-2.6.11-rc4.orig/drivers/scsi/qlogicfc.c	2005-02-13 17:13:07.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/scsi/qlogicfc.c	2005-02-16 21:24:00.000000000 +0100
-@@ -719,8 +719,8 @@ int isp2x00_detect(Scsi_Host_Template * 
- 				continue;
- 
- 			/* Try to configure DMA attributes. */
--			if (pci_set_dma_mask(pdev, 0xffffffffffffffffULL) &&
--			    pci_set_dma_mask(pdev, 0xffffffffULL))
-+			if (pci_set_dma_mask(pdev, DMA_64BIT_MASK) &&
-+			    pci_set_dma_mask(pdev, DMA_32BIT_MASK))
- 					continue;
- 
- 		        host = scsi_register(tmpt, sizeof(struct isp2x00_hostdata));
+	Domen
 
---===============79765046893650959==
+--===============78870833498470283==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79765046893650959==--
+--===============78870833498470283==--
