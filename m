@@ -1,30 +1,49 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 26 Apr 2004 22:15:51 +0000
-Subject: [Kernel-janitors] Re: [PATCH] audits in usb_init() [2.6.6-rc2-bk3]
-Message-Id: <20040426221521.GC22719@kroah.com>
+From: "Matthew James" <RGNSMGWD@npd.ufpe.br>
+Date: Thu, 01 Apr 2004 01:32:30 +0000
+Subject: [Kernel-janitors] Proven Google AdWord writing styles that will
+Message-Id: <TFGMAIOFODZYUXDPGATAT@phys.s.u-tokyo.ac.jp>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71301710890927117=="
+Content-Type: multipart/mixed; boundary="===============25459896257578007=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============71301710890927117==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============25459896257578007==
+Content-Type: multipart/alternative; boundary="--63930379884084864"
+
+This is a multi-part message in MIME format...
+
+----63930379884084864
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On Mon, Apr 26, 2004 at 12:06:52AM +0200, Daniele Bellucci wrote:
-> 
-> there were some missing audits in usb_init()
-> 
-> Please Apply ;)
+<html>
+<head>
+<title>deregulatory</title>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+</head>
 
-Applied, thanks.
+<body>
+<p>In my <a href=3D"http://www.f0reverhealthy.biz/ggl.html">54
+  Page comprehensive guide</a> I'll show you how to use Affiliate Programs =
+together
+  with Google AdWords to make a good living. </p>
+<p>&nbsp;</p>
+<p><font size=3D"2">No more emails! please take me <a href=3D"http://www.f0=
+reverhealthy.biz/takeoff/takeoff.html">off</a></font></p>
+</body>
+</html>
 
-greg k-h
 
---===============71301710890927117==
-Content-Type: text/plain; charset="iso-8859-1"
+----63930379884084864--
+
+--===============25459896257578007==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
@@ -32,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============71301710890927117==--
+--===============25459896257578007==--
