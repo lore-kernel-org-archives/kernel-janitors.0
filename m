@@ -1,37 +1,46 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Wed, 16 Feb 2005 23:02:17 +0000
-Subject: [KJ] [PATCH] drivers/atm/lanai.c: Use the DMA_{64,
-Message-Id: <20050216230217.GA17891@helium.tklauser.home>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Thu, 10 Feb 2005 10:13:01 +0000
+Subject: [KJ] [PATCH] drivers/video/kyro/*: convert to pci_register_driver
+Message-Id: <20050210101301.GF16373@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91176520281283246=="
+Content-Type: multipart/mixed; boundary="o71xDhNo7p97+qVi"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============91176520281283246==
+
+--o71xDhNo7p97+qVi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+Hi,
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
---- linux-2.6.11-rc4.orig/drivers/atm/lanai.c	2005-02-13 17:13:08.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/atm/lanai.c	2005-02-16 20:49:53.286372056 +0100
-@@ -1964,7 +1964,7 @@ static int __init lanai_pci_start(struct
- 		return -ENXIO;
- 	}
- 	pci_set_master(pci);
--	if (pci_set_dma_mask(pci, 0xFFFFFFFF) != 0) {
-+	if (pci_set_dma_mask(pci, DMA_32BIT_MASK) != 0) {
- 		printk(KERN_WARNING DEV_LABEL
- 		    "(itf %d): No suitable DMA available.\n", lanai->number);
- 		return -EBUSY;
+--o71xDhNo7p97+qVi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_video_kyro.patch"
 
---===============91176520281283246==
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/video/kyro/fbdev.c linux-2.6.11-rc3/drivers/video/kyro/fbdev.c
+--- linux-2.6.11-rc3-vanilla/drivers/video/kyro/fbdev.c	2004-12-24 22:33:49.000000000 +0100
++++ linux-2.6.11-rc3/drivers/video/kyro/fbdev.c	2005-02-07 09:39:30.000000000 +0100
+@@ -795,7 +795,7 @@ int __init kyrofb_init(void)
+ 		return -ENODEV;
+ 	kyrofb_setup(option);
+ #endif
+-	return pci_module_init(&kyrofb_pci_driver);
++	return pci_register_driver(&kyrofb_pci_driver);
+ }
+ 
+ static void __exit kyrofb_exit(void)
+
+--o71xDhNo7p97+qVi
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91176520281283246==--
+--o71xDhNo7p97+qVi--
