@@ -1,41 +1,44 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Date: Sat, 01 Jan 2005 00:13:11 +0000
+From: Gene Heskett <gene.heskett@verizon.net>
+Date: Sat, 01 Jan 2005 01:14:39 +0000
 Subject: Re: [KJ] Re: [PATCH] esp: Make driver SMP-correct
-Message-Id: <20050101001311.D10216@flint.arm.linux.org.uk>
+Message-Id: <200412312014.39618.gene.heskett@verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============60787814833232634=="
+Content-Type: multipart/mixed; boundary="===============64965641333146351=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041231014403.3309.58245.96163@localhost.localdomain> <20041231170139.B10216@flint.arm.linux.org.uk> <41D5CFCA.7000300@cwazy.co.uk> <200412311901.50638.gene.heskett@verizon.net>
-In-Reply-To: <200412311901.50638.gene.heskett@verizon.net>; from gene.heskett@verizon.net on Fri, Dec 31, 2004 at 07:01:50PM -0500
-Cc: linux-kernel@vger.kernel.org, Jim Nelson <james4765@cwazy.co.uk>, Andrew Morton <akpm@osdl.org>, kernel-janitors@lists.osdl.org
+References: <20041231014403.3309.58245.96163@localhost.localdomain> <200412311901.50638.gene.heskett@verizon.net> <20050101001311.D10216@flint.arm.linux.org.uk>
+In-Reply-To: <20050101001311.D10216@flint.arm.linux.org.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Russell King <rmk+lkml@arm.linux.org.uk>, Jim Nelson <james4765@cwazy.co.uk>, Andrew Morton <akpm@osdl.org>, kernel-janitors@lists.osdl.org
 
---===============60787814833232634==
-Content-Type: text/plain; charset=us-ascii
+--===============64965641333146351==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Fri, Dec 31, 2004 at 07:01:50PM -0500, Gene Heskett wrote:
-> One should be carefull as that shoe can fit many feet. The CC: line of 
-> this message:
-> 
-> Jim Nelson <james4765@cwazy.co.uk>, Russell King 
-> <rmk+lkml@arm.linux.org.uk>, Andrew Morton <akpm@osdl.org>, 
-> kernel-janitors@lists.osdl.org
-> 
-> I'm curious as to who I will get a bounce from.
+On Friday 31 December 2004 19:13, Russell King wrote:
+>To: no To-header on input <>
 
-Well, you'll get one from me, but not because _I've_ blocked verizon (I've
-done no such thing.)  Since I'm unable to verify verizon's addresses, all
-mail from verizon is unable to be received here anymore.
+Thats the To: line of this message Russell, as it came in here.  I 
+assume it was originally filled in to be to me and that you cleaned 
+that to prevent your getting a bounce from verizon?
 
-(and yes, you get to read my reply via lkml...)
+And no, it hasn't bounced yet as it typically will lay in the queue 
+somewhere in lala land for anywhere from 4 hours to 6 or 7 days.  By 
+that time the friggin message is no longer germain to the 
+conversation, so they get deleted here.
 
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:  2.6 PCMCIA      - http://pcmcia.arm.linux.org.uk/
-                 2.6 Serial core
+Cheers, Gene
+"There are four boxes to be used in defense of liberty:
+ soap, ballot, jury, and ammo. Please use in that order."
+-Ed Howdershelt (Author)
+99.31% setiathome rank, not too shabby for a WV hillbilly
+Yahoo.com attorneys please note, additions to this message
+by Gene Heskett are:
+Copyright 2004 by Maurice Eugene Heskett, all rights reserved.
 
---===============60787814833232634==
+--===============64965641333146351==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============60787814833232634==--
+--===============64965641333146351==--
