@@ -1,93 +1,43 @@
-From: margitsw@t-online.de (Margit Schubert-While)
-Date: Fri, 24 Sep 2004 07:43:10 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 17/38] net/islpci_dev:
-Message-Id: <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de>
+From: James Bottomley <James.Bottomley@SteelEye.com>
+Date: Mon, 27 Sep 2004 18:21:31 +0000
+Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2 1/16] scsi/53c700: replace
+Message-Id: <1096309297.2034.62.camel@mulgrave>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11959593389460865=="
+Content-Type: multipart/mixed; boundary="===============043855626122005109=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040923221303.GB13244@us.ibm.com>
-	<20040923221303.GB13244@us.ibm.com> <20040923225507.GI30131@ruslug.rutgers.edu>
-In-Reply-To: <20040923225507.GI30131@ruslug.rutgers.edu>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Cc: netdev@oss.sgi.com, mcgrof@studorgs.rutgers.edu, prism54-devel@prism54.org, hvr@gnu.org, kernel-janitors@lists.osdl.org, jgarzik@pobox.com
+References: <Pine.LNX.4.58.0409161253580.14212@server.home>
+In-Reply-To: <Pine.LNX.4.58.0409161253580.14212@server.home>
+To: kernel-janitors@vger.kernel.org
 
---===============11959593389460865==
-Content-Type: text/plain; charset="us-ascii"; format=flowed
+--===============043855626122005109==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Nish,
-At 18:55 23.09.2004 -0400, Luis scribeth:
->On Thu, Sep 23, 2004 at 03:13:03PM -0700, Nishanth Aravamudan wrote:
-> > Any comments would be appreciated.
-> >
-> > Description: Use msleep() instead of schedule_timeout()
-> > to guarantee the task delays as expected. Also set_current_state() is
-> > inserted before schedule_timeout(). If the for-loop were to execute
-> > twice, the second time would not set the state before sleeping in the
-> > current code; this causes schedule_timeout() to return immediately.
-> >
-> > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> >
-> > --- 
-> 2.6.9-rc2-vanilla/drivers/net/wireless/prism54/islpci_dev.c 
-> 2004-09-13 17:15:41.000000000 -0700
-> > +++ 
-> 2.6.9-rc2/drivers/net/wireless/prism54/islpci_dev.c       2004-09-23 
-> 13:58:42.000000000 -0700
-> > @@ -436,8 +436,7 @@ prism54_bring_down(islpci_private *priv)
-> >       wmb();
-> >
-> >       /* wait a while for the device to reset */
-> > -     set_current_state(TASK_UNINTERRUPTIBLE);
-> > -     schedule_timeout(50*HZ/1000);
-> > +     msleep(50);
-> >
-> >       return 0;
-> >  }
-> > @@ -489,6 +488,7 @@ islpci_reset_if(islpci_private *priv)
-> >               /* The software reset acknowledge needs about 220 msec here.
-> >               * Be conservative and wait for up to one second. */
-> >
-> > +             set_current_state(TASK_UNINTERRUPTIBLE);
-> >               remaining = schedule_timeout(HZ);
-> >
-> >               if(remaining > 0) {
->
->
->Looks good to me. IIRC Margit had something to say about this last time
->this popped around -- CC'ing her to see if there are any outstanding
->comments.
+On Mon, 2004-09-27 at 14:11, Nishanth Aravamudan wrote:
+> --- 2.6.9-rc2-vanilla/drivers/scsi/53c700.c	2004-09-13 17:15:58.000000000 -0700
+> +++ 2.6.9-rc2/drivers/scsi/53c700.c	2004-09-14 09:10:24.000000000 -0700
+> @@ -1961,7 +1961,7 @@ NCR_700_bus_reset(struct scsi_cmnd * SCp
+>  	 * reset via sg or something */
+>  	while(hostdata->eh_complete != NULL) {
+>  		spin_unlock_irq(SCp->device->host->host_lock);
+> -		schedule_timeout(HZ/10);
+> +		msleep_interruptible(100);
+>  		spin_lock_irq(SCp->device->host->host_lock);
+>  	}
+>  	hostdata->eh_complete = &complete;
 
-You bet she has.
+Firstly, could you copy linux-scsi@vger.kernel.org on these, and
+secondly there isn't really much point in replacing this, is there?  The
+only thing msleep_interruptible() would add is making sure that we slept
+for the full time.  However, the code really doesn't care.  All it's
+doing is relinquishing the processor for a short period while it waits
+for the host eh_complete semaphore to become available.
 
-The patch has wrong line numbers. Doesn't take into account the stacked up
-netdev changes. (Therefore CC'ing Jeff Garzik)
-
-This breaks 2.4 compatibility.
-So either backport to 2.4 or Nish can take over prism54 2.4 maintenance ;-)
-
-Don't say a backport is not possible/reasonable, it happened with 
-netdev_priv().
-(In 2.4.27; At least there, we have HAVE_NETDEV_PRIV).
-
-If this is going to be forced, can we at least have a
-define HAVE_MSLEEP in delay.h ?
-
-I am somewhat confused by the second part of the patch.
-What has that got to do with msleep ?
-Actually, the fix would appear to be correct, but that is a seperate issue
-and nothing to do with msleep.
-(Prims54 developers -> I'll take a look over the weekend)
-
-I am sceptical about the whole msleep patchset as, by their own admission,
-the janitors have/can not (no hardware) test the majority of the changes.
-Even more worrying is that incorrect code has directly appeared in
-mainline kernel BK.
-
-Margit
+James
 
 
 
---===============11959593389460865==
+--===============043855626122005109==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -98,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============11959593389460865==--
+--===============043855626122005109==--
