@@ -1,98 +1,127 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 20 Jan 2005 18:21:34 +0000
-Subject: [KJ] [PATCH 3/40] block/amiflop: replace sleep_on() with
-Message-Id: <20050120182134.GD5393@us.ibm.com>
+From: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+Date: Wed, 26 Jan 2005 03:09:16 +0000
+Subject: [KJ] Re: MIPS still uses sleep_on*()
+Message-Id: <20050126.120916.88699500.nemoto@toshiba-tops.co.jp>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47964637081675887=="
+Content-Type: multipart/mixed; boundary="===============56682116732274901=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050125214701.GA2689@us.ibm.com>
+In-Reply-To: <20050125214701.GA2689@us.ibm.com>
+To: nacc@us.ibm.com
+Cc: ralf@linux-mips.org, linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
 
---===============47964637081675887==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============56682116732274901==
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Hi,
+>>>>> On Tue, 25 Jan 2005 13:47:01 -0800, Nishanth Aravamudan <nacc@us.ibm.com> said:
+nacc> The only file I'm not comfortable with changing myself (since I
+nacc> am not a MIPS user/expert) is arch/mips/kernel/process.c. This
+nacc> file references sleep_on(), sleep_on_timeout(),
+nacc> interruptible_sleep_on() and interruptible_sleep_on_timeout().
 
-Please consider applying.
+Those references are just to implement get_wchan.  And anyway current
+MIPS get_wchan is broken for a long time.
 
-Description: Use wait_event() instead of the deprecated sleep_on(). In all
-replacements, wait_event() expects the condition to *stop* on, so the existing
-conditional is negated and passed as the parameter.
+I suppose searching a caller of scheduling functions is not necessary.
+Calling thread_saved_pc() will be enough for most usage.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Ralf, how about this patch?
 
---- 2.6.11-rc1-kj-v/drivers/block/amiflop.c	2005-01-15 16:55:43.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/block/amiflop.c	2005-01-19 17:45:11.000000000 -0800
-@@ -64,6 +64,7 @@
- #include <linux/buffer_head.h>
- #include <linux/blkdev.h>
- #include <linux/elevator.h>
-+#include <linux/wait.h>
- 
- #include <asm/setup.h>
- #include <asm/uaccess.h>
-@@ -221,8 +222,7 @@ static void ms_delay(int ms)
- 	int ticks;
- 	if (ms > 0) {
- 		local_irq_save(flags);
--		while (ms_busy == 0)
--			sleep_on(&ms_wait);
-+		wait_event(ms_wait, (ms_busy != 0));
- 		ms_busy = 0;
- 		local_irq_restore(flags);
- 		ticks = MS_TICKS*ms-1;
-@@ -251,8 +251,7 @@ static void get_fdc(int drive)
- 	printk("get_fdc: drive %d  fdc_busy %d  fdc_nested %d\n",drive,fdc_busy,fdc_nested);
- #endif
- 	local_irq_save(flags);
--	while (!try_fdc(drive))
--		sleep_on(&fdc_wait);
-+	wait_event(fdc_wait, try_fdc(drive));
- 	fdc_busy = drive;
- 	fdc_nested++;
- 	local_irq_restore(flags);
-@@ -579,8 +578,7 @@ static void raw_read(int drive)
+diff -u linux-mips/arch/mips/kernel/process.c linux/arch/mips/kernel/process.c
+--- linux-mips/arch/mips/kernel/process.c	2005-01-11 10:00:07.000000000 +0900
++++ linux/arch/mips/kernel/process.c	2005-01-26 10:23:21.000000000 +0900
+@@ -186,11 +186,6 @@
+ 	int pc_offset;
+ };
+ static struct mips_frame_info schedule_frame;
+-static struct mips_frame_info schedule_timeout_frame;
+-static struct mips_frame_info sleep_on_frame;
+-static struct mips_frame_info sleep_on_timeout_frame;
+-static struct mips_frame_info wait_for_completion_frame;
+-static int mips_frame_info_initialized;
+ static int __init get_frame_info(struct mips_frame_info *info, void *func)
  {
- 	drive&=3;
- 	get_fdc(drive);
--	while (block_flag)
--		sleep_on(&wait_fd_block);
-+	wait_event(wait_fd_block, !block_flag);
- 	fd_select(drive);
- 	/* setup adkcon bits correctly */
- 	custom.adkcon = ADK_MSBSYNC;
-@@ -595,8 +593,7 @@ static void raw_read(int drive)
+ 	int i;
+@@ -242,14 +237,7 @@
  
- 	block_flag = 1;
+ static int __init frame_info_init(void)
+ {
+-	mips_frame_info_initialized =
+-		!get_frame_info(&schedule_frame, schedule) &&
+-		!get_frame_info(&schedule_timeout_frame, schedule_timeout) &&
+-		!get_frame_info(&sleep_on_frame, sleep_on) &&
+-		!get_frame_info(&sleep_on_timeout_frame, sleep_on_timeout) &&
+-		!get_frame_info(&wait_for_completion_frame, wait_for_completion);
+-
+-	return 0;
++	return get_frame_info(&schedule_frame, schedule);
+ }
  
--	while (block_flag)
--		sleep_on (&wait_fd_block);
-+	wait_event(wait_fd_block, !block_flag);
+ arch_initcall(frame_info_init);
+@@ -270,59 +258,14 @@
+ 	return ((unsigned long *)t->reg29)[schedule_frame.pc_offset];
+ }
  
- 	custom.dsklen = 0;
- 	fd_deselect(drive);
-@@ -613,8 +610,7 @@ static int raw_write(int drive)
- 		rel_fdc();
+-/* get_wchan - a maintenance nightmare^W^Wpain in the ass ...  */
+ unsigned long get_wchan(struct task_struct *p)
+ {
+-	unsigned long frame, pc;
++	unsigned long pc;
+ 
+ 	if (!p || p == current || p->state == TASK_RUNNING)
  		return 0;
- 	}
--	while (block_flag)
--		sleep_on(&wait_fd_block);
-+	wait_event(wait_fd_block, !block_flag);
- 	fd_select(drive);
- 	/* clear adkcon bits */
- 	custom.adkcon = ADK_PRECOMP1|ADK_PRECOMP0|ADK_WORDSYNC|ADK_MSBSYNC;
-@@ -1291,8 +1287,7 @@ static int non_int_flush_track (unsigned
- 			writepending = 0;
- 			return 0;
- 		}
--		while (block_flag == 2)
--			sleep_on (&wait_fd_block);
-+		wait_event(wait_fd_block, (block_flag != 2));
- 	}
- 	else {
- 		local_irq_restore(flags);
+ 
+-	if (!mips_frame_info_initialized)
+-		return 0;
+ 	pc = thread_saved_pc(p);
+-	if (!in_sched_functions(pc))
+-		goto out;
+-
+-	if (pc >= (unsigned long) sleep_on_timeout)
+-		goto schedule_timeout_caller;
+-	if (pc >= (unsigned long) sleep_on)
+-		goto schedule_caller;
+-	if (pc >= (unsigned long) interruptible_sleep_on_timeout)
+-		goto schedule_timeout_caller;
+-	if (pc >= (unsigned long)interruptible_sleep_on)
+-		goto schedule_caller;
+-	if (pc >= (unsigned long)wait_for_completion)
+-		goto schedule_caller;
+-	goto schedule_timeout_caller;
+-
+-schedule_caller:
+-	frame = ((unsigned long *)p->thread.reg30)[schedule_frame.frame_offset];
+-	if (pc >= (unsigned long) sleep_on)
+-		pc = ((unsigned long *)frame)[sleep_on_frame.pc_offset];
+-	else
+-		pc = ((unsigned long *)frame)[wait_for_completion_frame.pc_offset];
+-	goto out;
+-
+-schedule_timeout_caller:
+-	/*
+-	 * The schedule_timeout frame
+-	 */
+-	frame = ((unsigned long *)p->thread.reg30)[schedule_frame.frame_offset];
+-
+-	/*
+-	 * frame now points to sleep_on_timeout's frame
+-	 */
+-	pc    = ((unsigned long *)frame)[schedule_timeout_frame.pc_offset];
+-
+-	if (in_sched_functions(pc)) {
+-		/* schedule_timeout called by [interruptible_]sleep_on_timeout */
+-		frame = ((unsigned long *)frame)[schedule_timeout_frame.frame_offset];
+-		pc    = ((unsigned long *)frame)[sleep_on_timeout_frame.pc_offset];
+-	}
+-
+-out:
+-
+ #ifdef CONFIG_MIPS64
+ 	if (current->thread.mflags & MF_32BIT_REGS) /* Kludge for 32-bit ps  */
+ 		pc &= 0xffffffffUL;
 
---===============47964637081675887==
+--===============56682116732274901==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -103,4 +132,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============47964637081675887==--
+--===============56682116732274901==--
