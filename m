@@ -1,29 +1,52 @@
-From: "Katharine Pierce" <kpiercell@stahlwerk-unna.de>
-Date: Tue, 25 May 2004 05:57:35 +0000
-Subject: limite,d time pri.ces
-Message-Id: <ae2801c44225$d5b9b932$ccea6bf7@tvac.or.jp>
+From: "Orlando Staton" <safsfp@yahoo.com>
+Date: Mon, 03 May 2004 14:08:36 +0000
+Subject: to use Latourian terms. To stay in the framework
+Message-Id: <KFBUNKDLBLECIDCGEUMBYQC@msn.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--648681807766418488854584277388854396810"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-PGh0bWw+Ckxvb2tpbmcgZm9yIGV4dHJlbWVseSBjaGVhcCBoaWdoLXF1YWxpdHkgc29mdHdhcmU/
-PGJyPgpXZSBtaWdodCBoYXZlIGp1c3Qgd2hhdCB5b3UgbmVlZC48YnI+Cjxicj4KPGEgaHJlZj0i
-aHR0cDovL2llanR6amJ2ZWUuZGppbmxtLmluZm8vIj5XaW5kb3dzIFhQIFByb2Zlc3Npb25hbCAy
-MDAyIDwvYT4uLi4uLi4uLi4uLi4uICQ1MDxicj4KPGEgaHJlZj0iaHR0cDovL29kZXFiY3lmZmtn
-YmkuZGppbmxtLmluZm8vIj5BZG9iZSBQaG90b3Nob3AgNy4wPC9hPiAuLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uICQ2MDxicj4KPGEgaHJlZj0iaHR0cDovL2d6ZGNpa2NsZXAuZGppbmxtLmluZm8vIj5N
-aWNyb3NvZnQgT2ZmaWNlIFhQIFByb2Zlc3Npb25hbCAyMDAyPC9hPiAuLi4uICQ2MDxicj4KPGEg
-aHJlZj0iaHR0cDovL2tlanVkdWRkb29uLmRqaW5sbS5pbmZvLyI+Q29yZWwgRHJhdyBHcmFwaGlj
-cyBTdWl0ZSAxMTwvYT4gLi4uLi4uLi4uLi4uLiAkNjA8YnI+Cjxicj4KPGEgaHJlZj0iaHR0cDov
-L2preGhzdWNpemxoeXEuZGppbmxtLmluZm8vIj5hbmQgbG90cyBtb3JlLi4uPC9hPjxicj4KPC9o
-dG1sPgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0KVGhpcyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVkIGJ5OiBPcmFjbGUgMTBnCkdldCBj
-ZXJ0aWZpZWQgb24gdGhlIGhvdHRlc3QgdGhpbmcgZXZlciB0byBoaXQgdGhlIG1hcmtldC4uLiBP
-cmFjbGUgMTBnLiAKVGFrZSBhbiBPcmFjbGUgMTBnIGNsYXNzIG5vdywgYW5kIHdlJ2xsIGdpdmUg
-eW91IHRoZSBleGFtIEZSRUUuCmh0dHA6Ly9hZHMub3Nkbi5jb20vP2FkX2lkMTQ5JmFsbG9jX2lk
-gTY2Jm9wPWNsaWNrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCktlcm5lbC1qYW5pdG9yLWRpc2N1c3MgbWFpbGluZyBsaXN0Cktlcm5lbC1qYW5pdG9yLWRp
-c2N1c3NAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
-L2xpc3RzL2xpc3RpbmZvL2tlcm5lbC1qYW5pdG9yLWRpc2N1c3M=
+----648681807766418488854584277388854396810
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Untitled Document</title>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859=
+-1">
+</head>
+
+<body>
+<a href=3D"http://blaze_74Linda.parablerxsource.com/?rid=3D1000"><img src=3D=
+"http://cleanup_2Ziegler.parablerxchoice.com/a17.jpg" border=3D"0"></a> 
+<font color=3D"#fffff35"><"13) Each person is valued for his or her singul=
+arity - what unfolds through the interactions is the consequences of an un=
+forced relation between individuals. To better to picture this it is helpf=
+ul to think of each individual as a singer who must resist """>modified an=
+d altered in any way. A homepage manifest itself as a representation of in=
+formation in virtual worlds</scientific texts and scientists. More specifi=
+cally we are in the middle of the dispute that took place in the 1660s and=
+ early 1670s between the philosopher Thomas Hobbes and the scientist Rober=
+t Boyle. The original dispute starting it all was taking place></font>
+
+
+</body>
+</html>
+
+
+----648681807766418488854584277388854396810--
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: Oracle 10g
+Get certified on the hottest thing ever to hit the market... Oracle 10g. 
+Take an Oracle 10g class now, and we'll give you the exam FREE.
+http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
+_______________________________________________
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
