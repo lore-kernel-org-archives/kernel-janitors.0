@@ -1,50 +1,40 @@
-From: "olen cunningham" <elenormaonke@velnet.co.uk>
-Date: Sun, 01 Aug 2004 06:07:35 +0000
-Subject: Improve vision
-Message-Id: <ED6E4D40.0EDA88D@velnet.co.uk>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Date: Mon, 02 Aug 2004 13:09:36 +0000
+Subject: [Kernel-janitors] Re: [PATCH] s390/zfcp_fsf: replace
+Message-Id: <OF71094837.AF6EDCA9-ON42256EE4.00460B55-42256EE4.00484A58@de.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-<HTML>
-&quot;Discover...in the next few minutes... regardless of your age, sex, or
-current health status, how this common element can change the way you
-experience the 
-next half of your life.&quot;<br>
-<br><a href="http://www.sureinfohelper.com/e/">Learn how to increase your
-quality of life</a>
-<p><font face="Arial" size="2">&quot;We really have something 
-here which may be able to reverse some of the problems associated with
-aging.&quot;<br></font>
-<font face="Arial" size="1"><i>-Dr.Anthony Karpos, M.D.</i></font></p>
-<br>
-<br>
-<br>
------original message-----<br>
-From: woodrow@el.com [mailto:thurman@q.com]<br>
-Sent: Friday, February 0, 2004 2:06AM<br>
-To: taren; shalonda@eo.com; nickie; sondra; dusty<br>
-Subject: <a href="http://www.sureinfohelper.com/e/">
-Post office 1200, Orange stad, Ar u ba</a><br>
-<br>
-<br>
-From the sea, replied the boyMy friends here are shipwrecked sailors from
-the 'Cynthia Jane
-<br>' But how'd ye make out to climb the bluff? inquired a second
-fisherman; no one ever did it afore, as we knows onOh, that is a long story,
-replied the boy, evasively
-</FONT></HTML>
 
 
 
--------------------------------------------------------
-This SF.Net email is sponsored by OSTG. Have you noticed the changes on
-Linux.com, ITManagersJournal and NewsForge in the past few weeks? Now,
-one more big change to announce. We are now OSTG- Open Source Technology
-Group. Come see the changes on the new OSTG site. www.ostg.com
+
+Nishanth Aravamudan <nacc@us.ibm.com> wrote on 28/07/2004 12:18:11 AM:
+
+> I would appreciate any comments from the janitors list.
+>
+> Applys-to: 2.6.7
+>
+> Description: Use msleep() instead of schedule_timeout() to
+> guarantee the task delays for the desired time.
+>
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+I added this and the other s390 related msleep patches to our repository.
+They will be included in the next update.
+
+blue skies,
+   Martin
+
+Linux/390 Design & Development, IBM Deutschland Entwicklung GmbH
+Sch=F6naicherstr. 220, D-71032 B=F6blingen, Telefon: 49 - (0)7031 - 16-2247
+E-Mail: schwidefsky@de.ibm.com
+
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
