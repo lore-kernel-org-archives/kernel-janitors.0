@@ -1,34 +1,60 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Wed, 28 Jan 2004 10:49:03 +0000
-Subject: Re: [Kernel-janitors] reviewing KJ patches
-Message-Id: <1075286943.25937.4.camel@telecentrolivre>
+From: Leann Ogasawara <ogasawara@osdl.org>
+Date: Tue, 27 Jan 2004 21:37:01 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/video/fbcmap.c kmalloc audit
+Message-Id: <1075239420.3744.18.camel@ibm-d.pdx.osdl.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040126163021.45208acc.rddunlap@osdl.org>
-In-Reply-To: <20040126163021.45208acc.rddunlap@osdl.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi All,
 
-Hi Randy,
+Patch to audit kmalloc()'s and handle errors accordingly.  Thanks,
 
-Em Seg, 2004-01-26 =E0s 22:30, Randy.Dunlap escreveu:
+Leann
 
-> Yes, there is an occasional comment, usually about style.
-> And those are fine, but patches often affect correctness also,
-> and I don't see many comments about those.
+diffed against 2.6.2-rc2
 
- I'm far from the knowledge of the masters, but I always apply and
-boot with the janitor kernel, trying to test all the things which I
-can; even if I don't have patches on it.
-
- I hope all the people here do that too. :)
-
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+=== drivers/video/fbcmap.c 1.9 vs edited ==--- 1.9/drivers/video/fbcmap.c	Mon Mar 31 13:51:12 2003
++++ edited/drivers/video/fbcmap.c	Mon Jan 26 17:38:53 2004
+@@ -98,14 +98,14 @@
+ 	if (!len)
+ 	    return 0;
+ 	if (!(cmap->red = kmalloc(size, GFP_ATOMIC)))
+-	    return -1;
++	    goto err_red;
+ 	if (!(cmap->green = kmalloc(size, GFP_ATOMIC)))
+-	    return -1;
++	    goto err_green;
+ 	if (!(cmap->blue = kmalloc(size, GFP_ATOMIC)))
+-	    return -1;
++	    goto err_blue;
+ 	if (transp) {
+ 	    if (!(cmap->transp = kmalloc(size, GFP_ATOMIC)))
+-		return -1;
++		goto err_transp;
+ 	} else
+ 	    cmap->transp = NULL;
+     }
+@@ -113,6 +113,17 @@
+     cmap->len = len;
+     fb_copy_cmap(fb_default_cmap(len), cmap, 0);
+     return 0;
++
++ err_transp:
++    kfree(cmap->blue);
++ err_blue:
++    kfree(cmap->green);
++ err_green:
++    kfree(cmap->red);
++ err_red:
++    cmap->red = cmap->green = cmap->blue = cmap->transp = NULL;
++    cmap->len = 0;
++    return -1;
+ }
+ 
+ /**
 
 
 _______________________________________________
