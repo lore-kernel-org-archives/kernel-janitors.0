@@ -1,43 +1,101 @@
-From: JOUANNE Mickael <grigouze@noos.fr>
-Date: Sun, 25 Jan 2004 12:38:28 +0000
-Subject: [Kernel-janitors]
-Message-Id: <20040125123828.GB21585@noos.fr>
+From: ipadmin@eng.xo.com
+Date: Fri, 23 Jan 2004 21:05:51 +0000
+Subject: [Kernel-janitors] Need to host child porn, illegal content,
+Message-Id: <200401232100.i0NL06hU009150@fire-1.osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="ZPt4rx8FFjLCG7dd"
+Content-Type: multipart/mixed; boundary="----------=_1074891609-1947-224"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200401162245.33097.domen@coderock.org>
-In-Reply-To: <200401162245.33097.domen@coderock.org>
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format...
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset="iso-8859-1"
+------------=_1074891609-1947-224
+Content-Type: text/plain;
+	charset="Windows-1252"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-I forget the patch :)
+Need to host child porn, illegal content, Spam advert site? Try www.hopone.net you will be able to host anything you desire.
 
---=20
-Micka=EBl GRIGOUZE	      grigouze@noos.fr	        ICQ : 42799256
-*** \-/ ***  In a World Without Fences Who Needs Gates *** \-/ ***
+You can get fresh stolen dumps here:
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="kj.patch"
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t=636
 
---- kj.pl	2004-01-05 21:04:37.000000000 +0100
-+++ kj-new.pl	2004-01-25 11:38:08.000000000 +0100
-@@ -109,7 +109,7 @@
- 			print "$filename:$linenr:$line\n\n";
- 		}
- 
--		if ($line=~/MOD_{INC,DEC}_USE_COUNT/) {
-+		if ($line=~/MOD_(INC|DEC)_USE_COUNT/) {
- 			print "Net drivers should call SET_MODULE_OWNER instead of MOD_{INC,DEC}_USE_COUNT\n";
- 			print "$filename:$linenr:$line\n\n";
- 		}
+Credit cards with cvv2 information are available here:
 
---ZPt4rx8FFjLCG7dd
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t=409
+
+Our site will be usefull for the those who want to wash their money also :) (If you don't want to pay taxes or you need to buy something illegal like weapons or drugs).
+
+Fresh paypal accounts here:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t=553
+
+Only using our site you can get every detail of any US citizen including SSN number:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t=701
+
+Fresh eBay accounts for a low price available as well:
+
+http://www.shadowcrew.com/phpBB2/viewtopic.php?t=290
+
+
+You can order by phone: : +1-703-547-2000.
+
+
+Best regards,
+www.shadowcrew.com
+
+
+
+------------=_1074891609-1947-224
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This mail is probably spam.  The original message has been attached
+along with this report, so you can recognize or block similar unwanted
+mail in future.  See http://spamassassin.org/tag/ for more details.
+
+Content preview:  Need to host child porn, illegal content, Spam advert
+  site? Try www.hopone.net you will be able to host anything you desire.
+  You can get fresh stolen dumps here:
+  http://www.shadowcrew.com/phpBB2/viewtopic.php?tc6 [...] 
+
+Content analysis details:   (6.80 points, 5 required)
+NO_REAL_NAME       (1.1 points)  From: does not include a real name
+MSG_ID_ADDED_BY_MTA_3 (0.5 points)  'Message-Id' was added by a relay (3)
+DATE_IN_FUTURE_06_12 (1.5 points)  Date: is 6 to 12 hours after Received: date
+FORGED_MUA_OUTLOOK (3.7 points)  Forged mail pretending to be from MS Outlook
+
+
+
+------------=_1074891609-1947-224
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This mail is probably spam.  The original message has been attached
+along with this report, so you can recognize or block similar unwanted
+mail in future.  See http://spamassassin.org/tag/ for more details.
+
+Content preview:  .. Need to host child porn, illegal content, Spam
+  advert site? Try www.hopone.net you will be able to host anything you
+  desire. You can get fresh stolen dumps here: [...] 
+
+Content analysis details:   (6.80 points, 5 required)
+NO_REAL_NAME       (1.1 points)  From: does not include a real name
+MSG_ID_ADDED_BY_MTA_3 (0.5 points)  'Message-Id' was added by a relay (3)
+DATE_IN_FUTURE_06_12 (1.5 points)  Date: is 6 to 12 hours after Received: date
+FORGED_MUA_OUTLOOK (3.7 points)  Forged mail pretending to be from MS Outlook
+
+
+
+------------=_1074891609-1947-224
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -48,4 +106,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---ZPt4rx8FFjLCG7dd--
+------------=_1074891609-1947-224--
