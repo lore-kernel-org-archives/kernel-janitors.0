@@ -1,55 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 21 Jan 2005 06:48:52 +0000
-Subject: Re: [openib-general] Re: [KJ] [RFC] TODO file cleanups
-Message-Id: <20050121064852.GD19288@kroah.com>
+From: "Woodruff, Robert J" <robert.j.woodruff@intel.com>
+Date: Fri, 21 Jan 2005 16:20:25 +0000
+Subject: RE: [openib-general] Re: [KJ] [RFC] TODO file cleanups
+Message-Id: <1AC79F16F5C5284499BB9591B33D6F0003575656@orsmsx408>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20186259282877161=="
+Content-Type: multipart/mixed; boundary="===============95658519071757109=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050117231123.GC19162@nd47.coderock.org>
 In-Reply-To: <20050117231123.GC19162@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============20186259282877161==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============95658519071757109==
+Content-class: urn:content-classes:message
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 20, 2005 at 09:35:59PM -0700, Ronald G. Minnich wrote:
-> On Thu, 20 Jan 2005, Grant Grundler wrote:
-> > I think you overlooked the fact that include/linux/rcupdate.h is
-> > published under the GPL. Not "dual GPL/BSD". Someone can't take code
-> > that uses linux's RCU and ship it under a BSD license. There are
-> > "consumers" of openib.org that want to do that. ergo we can't use RCU
-> > unless they are willing to give that up.
-> 
-> Does this open up the possibility of a GPL-only "fork" in the code, i.e. 
-> somebody:
-> - takes the code, and puts it in another repo somewhere
-> - adds in RCU
-> - makes it available to others but only under GPL due to RCU inclusion
-> - now we have an openib fork that is GPL by definition, that can't be 
->   BSD due to inclusion of RCU?
+ 
 
-Or:
-	- someone gets a GPL only license file added to the openib code
-	  base in the linux kernel, by slipping it in through another
-	  path to Linus.
+Ron>Does this open up the possibility of a GPL-only "fork" in the code,
+i.e. 
+>somebody:
 
-Odds are, that's going to happen before the above does :)
+This actually brings up an even bigger question.
+When the kernel folks accepted the code into the kernel, which license
+did they choose ? The BSD license or the GPL license ? 
+If it was the GPL license, then the code that is in
+kernel.org is the GPL-only fork. 
 
-Remember, the openib code uses functions that are marked
-EXPORT_SYMBOL_GPL() and if _anyone_ violates those markings by trying to
-ship a openib derivative work with a non-gpl license, they will be hearing
-from some lawyers very quickly.
+woody
 
-> Seems almost inevitable as soon as people really want "Feature XYZ" from 
-> Linux in their openib code base.
 
-And as more and more "feature xyz" in the kernel are being marked GPL
-only, it's only a matter of time...
 
-greg k-h
-
---===============20186259282877161==
+--===============95658519071757109==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20186259282877161==--
+--===============95658519071757109==--
