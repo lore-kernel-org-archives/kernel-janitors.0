@@ -1,49 +1,210 @@
-From: Jim Nelson <james4765@verizon.net>
-Date: Mon, 20 Dec 2004 21:51:39 +0000
-Subject: [KJ] Re: [PATCH] pcxx: replace cli()/sti()
-Message-Id: <41C7496B.4000401@verizon.net>
+From: James Nelson <james4765@verizon.net>
+Date: Sat, 18 Dec 2004 00:25:39 +0000
+Subject: [KJ] [PATCH] generic_serial: replace cli()/sti() with
+Message-Id: <20041218002600.19176.34205.85406@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40153209651765787=="
+Content-Type: multipart/mixed; boundary="===============32487796367674582=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041217223426.11143.44338.87156@localhost.localdomain>	 <1103554747.30268.24.camel@localhost.localdomain> <1103574222.31479.12.camel@localhost.localdomain>
-In-Reply-To: <1103574222.31479.12.camel@localhost.localdomain>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: kernel-janitors@lists.osdl.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, akpm@osdl.org
+To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+Cc: akpm@osdl.org, James Nelson <james4765@verizon.net>
 
---===============40153209651765787==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============32487796367674582==
 
-Alan Cox wrote:
-> On Llu, 2004-12-20 at 14:59, Alan Cox wrote:
-> 
->>On Gwe, 2004-12-17 at 22:34, James Nelson wrote:
->>
->>>-	save_flags(flags);
->>>-	cli();
->>>+	spin_lock_irqsave(&pcxx_lock, flags);
->>> 	del_timer_sync(&pcxx_timer);
->>
->>Not safe if the lock is grabbed by the timer between the lock and the
->>irqsave as it will spin on another cpu and the timer delete will never
->>finish.
-> 
-> 
-> Error between brain and keyboard
-> 
-> Between the lock and the timer_delete of course
-> 
+This is an attempt to make the generic_serial driver SMP-correct.
 
-Right.
+This is used in both the sx and rio drivers.
 
-Go ahead and ignore that set of cli()/sti() patches - I'll have to take them a 
-little slower, checking for potential deadlocks and other nastiness.
+Compile tested.
 
-I'll try again in a week or so - gotta finish "The Design of the Unix Operating 
-System" first.  Love early Xmas presents from my aunt, the mainframe systems 
-programmer... :)
+Signed-off-by: James Nelson <james4765@gmail.com>
 
---===============40153209651765787==
+diff -urN --exclude='*~' linux-2.6.10-rc3-mm1-original/drivers/char/generic_serial.c linux-2.6.10-rc3-mm1/drivers/char/generic_serial.c
+--- linux-2.6.10-rc3-mm1-original/drivers/char/generic_serial.c	2004-12-16 19:16:55.000000000 -0500
++++ linux-2.6.10-rc3-mm1/drivers/char/generic_serial.c	2004-12-17 19:13:01.458849723 -0500
+@@ -32,6 +32,8 @@
+ 
+ #define DEBUG 
+ 
++static spinlock_t driver_lock = SPIN_LOCK_UNLOCKED;
++
+ static char *                  tmp_buf; 
+ static DECLARE_MUTEX(tmp_buf_sem);
+ 
+@@ -52,8 +54,8 @@
+ #define RELEASEIT up (&port->port_write_sem);
+ #else
+ #define DECL      unsigned long flags;
+-#define LOCKIT    save_flags (flags);cli ()
+-#define RELEASEIT restore_flags (flags)
++#define LOCKIT    spin_lock_irqsave(&driver_lock, flags)
++#define RELEASEIT spin_unlock_irqrestore(&driver_lock, flags)
+ #endif
+ 
+ #define RS_EVENT_WRITE_WAKEUP	1
+@@ -208,9 +210,8 @@
+ 	if (!port || !port->xmit_buf || !tmp_buf)
+ 		return -EIO;
+ 
+-	save_flags(flags);
++	spin_lock_irqsave(&driver_lock, flags);
+ 	while (1) {
+-		cli();
+ 		c = count;
+ 
+ 		/* This is safe because we "OWN" the "head". Noone else can 
+@@ -227,18 +228,17 @@
+ 
+ 		/* Can't copy more? break out! */
+ 		if (c <= 0) {
+-			restore_flags(flags);
+ 			break;
+ 		}
+ 		memcpy(port->xmit_buf + port->xmit_head, buf, c);
+ 		port->xmit_head = ((port->xmit_head + c) &
+ 		                   (SERIAL_XMIT_SIZE-1));
+ 		port->xmit_cnt += c;
+-		restore_flags(flags);
+ 		buf += c;
+ 		count -= c;
+ 		total += c;
+ 	}
++	spin_unlock_irqrestore(&driver_lock, flags);
+ 
+ 	if (port->xmit_cnt && 
+ 	    !tty->stopped && 
+@@ -380,9 +380,9 @@
+ 	if (!port) return;
+ 
+ 	/* XXX Would the write semaphore do? */
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&driver_lock, flags);
+ 	port->xmit_cnt = port->xmit_head = port->xmit_tail = 0;
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&driver_lock, flags);
+ 
+ 	wake_up_interruptible(&tty->write_wait);
+ 	tty_wakeup(tty);
+@@ -468,8 +468,7 @@
+ 	if (!(port->flags & ASYNC_INITIALIZED))
+ 		return;
+ 
+-	save_flags (flags);
+-	cli ();
++	spin_lock_irqsave(&driver_lock, flags);
+ 
+ 	if (port->xmit_buf) {
+ 		free_page((unsigned long) port->xmit_buf);
+@@ -482,7 +481,7 @@
+ 	port->rd->shutdown_port (port);
+ 
+ 	port->flags &= ~ASYNC_INITIALIZED;
+-	restore_flags (flags);
++	spin_unlock_irqrestore(&driver_lock, flags);
+ 
+ 	func_exit();
+ }
+@@ -570,10 +569,10 @@
+ 	add_wait_queue(&port->open_wait, &wait);
+ 
+ 	gs_dprintk (GS_DEBUG_BTR, "after add waitq.\n"); 
+-	cli();
++	spin_lock_irq(&driver_lock);
+ 	if (!tty_hung_up_p(filp))
+ 		port->count--;
+-	sti();
++	spin_unlock_irq(&driver_lock);
+ 	port->blocked_open++;
+ 	while (1) {
+ 		CD = port->rd->get_CD (port);
+@@ -633,13 +632,12 @@
+ 		port->tty = tty;
+ 	}
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&driver_lock, flags);
+ 
+ 	if (tty_hung_up_p(filp)) {
+-		restore_flags(flags);
+ 		port->rd->hungup (port);
+ 		func_exit ();
+-		return;
++		goto gs_close_exit;
+ 	}
+ 
+ 	if ((tty->count == 1) && (port->count != 1)) {
+@@ -653,9 +651,8 @@
+ 	}
+ 	if (port->count) {
+ 		gs_dprintk(GS_DEBUG_CLOSE, "gs_close: count: %d\n", port->count);
+-		restore_flags(flags);
+ 		func_exit ();
+-		return;
++		goto gs_close_exit;
+ 	}
+ 	port->flags |= ASYNC_CLOSING;
+ 
+@@ -702,7 +699,8 @@
+ 	port->flags &= ~(ASYNC_NORMAL_ACTIVE|ASYNC_CLOSING | ASYNC_INITIALIZED);
+ 	wake_up_interruptible(&port->close_wait);
+ 
+-	restore_flags(flags);
++gs_close_exit:
++	spin_unlock_irqrestore(&driver_lock, flags);
+ 	func_exit ();
+ }
+ 
+@@ -836,16 +834,15 @@
+ 	unsigned long flags;
+ 	unsigned long page;
+ 
+-	save_flags (flags);
+ 	if (!tmp_buf) {
+ 		page = get_zeroed_page(GFP_KERNEL);
+ 
+-		cli (); /* Don't expect this to make a difference. */ 
++		spin_lock_irqsave(&driver_lock, flags); /* Don't expect this to make a difference. */ 
+ 		if (tmp_buf)
+ 			free_page(page);
+ 		else
+ 			tmp_buf = (unsigned char *) page;
+-		restore_flags (flags);
++		spin_unlock_irqrestore(&driver_lock, flags);
+ 
+ 		if (!tmp_buf) {
+ 			return -ENOMEM;
+@@ -862,18 +859,18 @@
+ 		tmp = get_zeroed_page(GFP_KERNEL);
+ 
+ 		/* Spinlock? */
+-		cli ();
++		spin_lock_irqsave(&driver_lock, flags);
+ 		if (port->xmit_buf) 
+ 			free_page (tmp);
+ 		else
+ 			port->xmit_buf = (unsigned char *) tmp;
+-		restore_flags (flags);
++		spin_unlock_irqrestore(&driver_lock, flags);
+ 
+ 		if (!port->xmit_buf)
+ 			return -ENOMEM;
+ 	}
+ 
+-	cli();
++	spin_lock_irqsave(&driver_lock, flags);
+ 
+ 	if (port->tty) 
+ 		clear_bit(TTY_IO_ERROR, &port->tty->flags);
+@@ -885,7 +882,7 @@
+ 	port->flags |= ASYNC_INITIALIZED;
+ 	port->flags &= ~GS_TX_INTEN;
+ 
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&driver_lock, flags);
+ 	return 0;
+ }
+ 
+
+--===============32487796367674582==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +215,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40153209651765787==--
+--===============32487796367674582==--
