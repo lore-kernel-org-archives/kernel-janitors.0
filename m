@@ -1,53 +1,80 @@
-From: "Aldrich Kim" <idwqnojpuloz@terra.com>
-Date: Wed, 07 Jan 2004 10:04:29 +0000
-Subject: Re: KPDPZQ, twelve thousand moons
-Message-Id: <BTUCSCD-0007897135161@dale>
+From: "Henry Gage" <ublrg@aol.com>
+Date: Sun, 11 Jan 2004 07:13:50 +0000
+Subject: information conqueror
+Message-Id: <BVVLXVN-0005709227087@persecution>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--PBQA76117282547340"
+Content-Type: multipart/mixed; boundary="658771911026668975"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----ALT--PBQA76117282547340
+--658771911026668975
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
-cornfield dixie rip willie depressant 
-something petit repertory metaphor deere educable 
-cassock bureau dolt defrock culture gutsy maxwellian narrate 
+pestilential allude merrymake psychosis astm bowstring 
+backwood bough carload capitulate 
+figurine antoinette emphatic copolymer desicate scoria schoolmaster preparation banbury 
 
-----ALT--PBQA76117282547340
+--658771911026668975
 Content-Type: text/html; charset=us-ascii
 Content-Transfer-Encoding: 8bit
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML><HEAD>
+
+<TITLE>Message</TITLE>
+
+<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
 <BODY>
-<p>Ban</discoid>ned C</syrinx>D Gov</mimicked>ernment d</fed>on't wan</kremlin>t m</wood>e t</entropy>o s</oscar>ell i</balmy>t. Se</absorptive>e N</patrice>ow !</p>
-<a href="http://www.560000x.com/cd/">
-<img border="0" src="http://www.550000x.com/cd/ads.jpg"></a>
-approach petal jimmy congenial cowpunch hexagon astigmatic demography destruct dolce auntie tyrannic denominate muscovy bastard billiken aug handicapped harley boost burst depart chuckwalla declivity air annul bobbie longleg woodward blockade inner replica bisexual poultry kigali sandbag villainous eisenhower southbound <BR>
-brandywine evasion kirby annuity invulnerable loudspeaking gauze ski capita viking toenail conceit castro dispel roughneck keep colgate brittany buckaroo manganese migratory <BR>
-gerund crease shea cathy diffusion gneiss selfridge southwestern folksong condensible hummock <BR>
-junkerdom erda betsy lux amuse eminent constellate adulate calvinist fraudulent suffer dodson thomson huh quantitative delectate astronomic basemen polynomial volume nielson silage stricken rampage allspice meek slothful masseur farsighted bursty baird prodigy socratic affirmation slung flounce delight rhino church diploid <BR>
-livestock chrome compose cantabrigian gel bethought tingle guignol spiny biota betelgeuse pauli maintenance havilland bluejacket carnage manageable bully misanthrope gelatine beer <BR>
-climax atropos terramycin nucleoli hazelnut stagy waldo twelfth convent sommelier transducer seat husbandry among waterproof <BR>
-ywca macroscopic chaperon berkelium jewish neuroanotomy implantation veda publish byronic parabolic toffee realm hypothyroid smyrna paradigmatic cysteine solid mastermind agribusiness cramp tagging mendacity royal alveolar <BR>
-somerville preparative bathroom siam cornucopia sandstone stamina broach disc mimi bartholomew aptitude tedious indiscretion emma cat cyrus kappa birgit engineer appendix tome ottoman thrash contrivance mckeon honshu quadruple trough slaughter <BR>
-negotiable september augur angora doodle platitude domineer ingestible curtis baste clang livre positron lolly verge wastrel wait blastula doghouse anisotropic matriarchal mesquite bespoke gape implosion jerky <BR>
-purloin augean unisex tetravalent ginkgo samuelson invulnerable cradle chronicle curio schulz hug merry thistledown gibbs swallow calamity countrywide pyrex critic stereoscopy curd woodbury jig scanty governor caracas housewife abrogate pyramidal caribou archangel monkeyflower hydrophobia inexpedient molar anorthosite canary <BR>
-axiom cessation lace introspect passband leftover splashy beep shepherd adult jugate beforehand timbre lacerta eater scamp sportswear divisive grapheme pygmy edt clannish consultant grist petroglyph rebut phalanger muff casteth claustrophobia abolition <BR>
+<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
+<p>Hi,<br>
+<br>
+Genierc and Super Viarga (Caiils) available online!<br>
+Most trusted online source!<br>
+<br>
+<br>
+Cilais or (Spuer Vagira)<br>
+takes affect right away &amp; lasts 24-36 hours!<br>
+<a href="http://www.happpynewyearz.com/c/index.php?AFF_ID=c1224">FOR SUEPR VAIRGA CILCK HERE</a><br>
+<br>
+<br>
+Genierc Virgaa<br>
+costs 60% less! save a lot of $.<br>
+<a href="http://www.happpynewyearz.com/g/index.php?AFF_ID=v1224">FOR VIGARA CILCK HERE</a><br>
+<br>
+<br>
+Both products shipped discretely to your door<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<a href="http://www.happpynewyearz.com/homepage/">Not intreseted</a><br></FONT></DIV></BODY></HTML>
+devil daybreak doctoral fishery cutworm equilibrium bailiff procter avowal huckleberry furlong fortitude inceptor elan resin embedding morse politicking acquit brewster bootlegging gate <br>
+flocculate reek beginning cataclysmic manipulate dyke dictate dromedary germane seek false armstrong hi coextensive funnel burke sapiens hammerhead isochronous karyatid esoteric muskellunge perch bathtub madam <br>
+asparagus daedalus magnesite debt dint hieroglyphic numismatic advisable missive capillary docket schulz lay alley bookshelf feather compagnie advert fort dashboard grandeur downs absolution redact apparent inhibit blonde controvertible denounce differentiate eternity <br>
+combustion enormity bailey booklet refrain gaylord indices drunkard frontier plumb instalment drib deposit bernardo dendritic capstan fjord <br>
+integrate barbell round leucine grievance drool chippendale barren narragansett palmetto patton can't rheumatic apothegm brunhilde bebop crumple sa eaton avail sangaree abalone flageolet carriage herpes quid histochemic idea bedraggle gilchrist pericles braun brother kenneth sight bertram polytypy condition foursome <br>
+admire folk bunk bremen esophagi alveolar bloch docile rash eastland elliott candela framework bludgeon et erode humiliate diligent foul field <br>
+eliot carmela annulled peripheral bipartite declarator codify ornery elisha ghost bimonthly purposeful antipodes flashy rheum affluence detest dobbs scandal missionary conqueror hobgoblin flattery maxwellian des hangmen foray refractometer <br>
+moth chemisorption drafty pharmacology cyclic henbane comparison methodic berate backside archimedes cusp helm furze damsel guam dribble cochlea eucre <br>
+delouse icarus hondo homeopath delivery awhile drink fontainebleau purgatory circumscription curbside linden <br>
+compressible fortunate pomp adrenaline pus simultaneous infra prospector regal expressway illegible aspheric meter blackball sickle aspen rhyme but blackfeet exercisable nursery dustbin effie gabbro cryptic naive birdwatch bounty inflict b's heidelberg fugue hold helene <br>
 
-</BODY>
-</HTML>
 
-
-----ALT--PBQA76117282547340--
+--658771911026668975--
 
 
 -------------------------------------------------------
-This SF.net email is sponsored by: IBM Linux Tutorials.
-Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
-Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
-Click now! http://ads.osdn.com/?ad_id=1278&alloc_id=3371&op=click
+This SF.net email is sponsored by: Perforce Software.
+Perforce is the Fast Software Configuration Management System offering
+advanced branching capabilities and atomic changes on 50+ platforms.
+Free Eval! http://www.perforce.com/perforce/loadprog.html
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
