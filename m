@@ -1,39 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 30 Sep 2004 17:11:31 +0000
-Subject: Re: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 fore200e.c] convert
-Message-Id: <20040930171131.GA16316@kroah.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 20 Sep 2004 22:13:09 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 2/4] message/exec-osm: replace
+Message-Id: <20040920221309.GA2270@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============074513935385178698=="
+Content-Type: multipart/mixed; boundary="===============42155071100868446=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <415BD20C.6050709@nuerscht.ch>
-In-Reply-To: <415BD20C.6050709@nuerscht.ch>
 To: kernel-janitors@vger.kernel.org
 
---===============074513935385178698==
+--===============42155071100868446==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Sep 30, 2004 at 11:29:48AM +0200, Tobias Klauser wrote:
-> I'm sending this only to kernel-janitor since I'm not sure, if I do this 
-> right (It's my first patch). It compiled without problems here.
-> 
-> Description: Use pci_get_device instead of pci_find_device.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-> 
-> diff -Nrup linux-2.6.9-rc2-mm4-vanilla/drivers/atm/fore200e.c 
-> linux-2.6.9-rc2-mm4/drivers/atm/fore200e.c
-> --- linux-2.6.9-rc2-mm4-vanilla/drivers/atm/fore200e.c  2004-09-30 
-> 10:24:43.000000000 +0200
+Any comments would be appreciated.
 
-Becides the other errors mentioned in the patch, it is also linewrapped
-and can't be applied :(
+Description: Use msleep_interruptible() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
-thanks,
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-greg k-h
+--- 2.6.9-rc1-mm4-vanilla/drivers/message/i2o/exec-osm.c	2004-09-09 23:05:59.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/message/i2o/exec-osm.c	2004-09-13 14:32:08.000000000 -0700
+@@ -29,6 +29,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/i2o.h>
++#include <linux/delay.h>
+ 
+ struct i2o_driver i2o_exec_driver;
+ 
+@@ -151,7 +152,7 @@ int i2o_msg_post_wait_mem(struct i2o_con
+ 		prepare_to_wait(&wq, &wait, TASK_INTERRUPTIBLE);
+ 
+ 		if (!iwait->complete)
+-			schedule_timeout(timeout * HZ);
++			msleep_interruptible(timeout * 1000);
+ 
+ 		finish_wait(&wq, &wait);
+ 
 
---===============074513935385178698==
+--===============42155071100868446==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============074513935385178698==--
+--===============42155071100868446==--
