@@ -1,42 +1,38 @@
-From: "Luiz Fernando N. Capitulino" <lcapitulino@prefeitura.sp.gov.br>
-Date: Tue, 06 Apr 2004 17:52:07 +0000
-Subject: Re: [Kernel-janitors] recent Stanford Checker results
-Message-Id: <20040406145207.77736dd3.lcapitulino@prefeitura.sp.gov.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94063015303887632=="
+From: Gustavo Franco <stratus@acm.org>
+Date: Thu, 29 Apr 2004 00:07:21 +0000
+Subject: [Kernel-janitors] [REDIFF] Replaces yield() with schedule_timeout()
+Message-Id: <40904739.9060501@acm.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040405202552.65c4415e.rddunlap@osdl.org>
-In-Reply-To: <20040405202552.65c4415e.rddunlap@osdl.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============94063015303887632==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Hi,
 
+I'm sending only this rediff now, if it's ok i'll send the three on my 
+queue.
 
-Hi Walter,
+I want to say thank you for all the suggestions.
 
-Em Tue, 6 Apr 2004 14:24:58 +0200
-<WHarms@bfs.de>(Walter Harms) escreveu:
+Hope that helps,
+Gustavo Franco
 
-| hi list,
-| whats about setting up a group to exspecialy check the standford results ?
+--- drivers/cdrom/sonycd535.c.orig      2004-04-28 20:50:46.000000000 -0300
++++ drivers/cdrom/sonycd535.c   2004-04-28 20:50:55.000000000 -0300
+@@ -342,7 +342,8 @@
+ sony_sleep(void)
+ {
+        if (sony535_irq_used <= 0) {    /* poll */
+-               yield();
++               set_current_state(TASK_INTERRUPTIBLE);
++               schedule_timeout(1);
+        } else {        /* Interrupt driven */
+                DEFINE_WAIT(wait);
+                                                                                                   
 
- I do not agree, this kind of work can be done in janitors.
--- 
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
-
---===============94063015303887632==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============94063015303887632==--
