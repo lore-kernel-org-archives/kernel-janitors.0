@@ -1,36 +1,38 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 28 Sep 2004 16:13:48 +0000
-Subject: [Kernel-janitors] [sailer@scs.ch: Re: [PATCH 2.6.9-rc2 9/9]
-Message-Id: <20040928161348.GA1816@us.ibm.com>
+Date: Mon, 27 Sep 2004 21:21:36 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/6] serial/icom: remove custom
+Message-Id: <20040927212136.GD1617@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============73839524388665145=="
+Content-Type: multipart/mixed; boundary="===============79670446357675373=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============73839524388665145==
+--===============79670446357675373==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
------ Forwarded message from Thomas Sailer <sailer@scs.ch> -----
+Any comments would be appreciated.
 
-Date: Tue, 28 Sep 2004 08:53:21 +0200
-From: Thomas Sailer <sailer@scs.ch>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: Re: [PATCH 2.6.9-rc2 9/9] usb/uss720: replace schedule_timeout()
-	with msleep_interruptible()
+Description: Remove custom msleep() to guarantee
+the task delays as expected.
 
-On Tue, 2004-09-28 at 00:55, Nishanth Aravamudan wrote:
-> Any comments would be appreciated.
-> 
-> Description: Use msleep_interruptible() instead of schedule_timeout() to
-> guarantee the task delays as expected.
+--- 2.6.9-rc2-vanilla/drivers/serial/icom.c	2004-09-13 17:15:52.000000000 -0700
++++ 2.6.9-rc2/drivers/serial/icom.c	2004-09-14 10:15:07.000000000 -0700
+@@ -140,12 +140,6 @@ static inline void trace(struct icom_por
+ static inline void trace(struct icom_port *icom_port, char *trace_pt, unsigned long trace_data) {};
+ #endif
+ 
+-static void msleep(unsigned long msecs)
+-{
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(MSECS_TO_JIFFIES(msecs));
+-}
+-
+ static void free_port_memory(struct icom_port *icom_port)
+ {
+ 	struct pci_dev *dev = icom_port->adapter->pci_dev;
 
-Fine with me. uss720 does have some bitrot other than that, it seems.
-
-
------ End forwarded message -----
-
---===============73839524388665145==
+--===============79670446357675373==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============73839524388665145==--
+--===============79670446357675373==--
