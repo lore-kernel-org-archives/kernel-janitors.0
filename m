@@ -1,70 +1,36 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 09 Mar 2005 22:51:07 +0000
-Subject: [KJ] [PATCH 2/] arch/i386/kernel/traps.c: fix sparse warnings
-Message-Id: <200503100123.39032.adobriyan@mail.ru>
+From: Tobias Klauser <tklauser@access.unizh.ch>
+Date: Mon, 14 Mar 2005 19:54:30 +0000
+Subject: [KJ] [PATCH] drivers/media/video/meye.c: Use the DMA_32BIT_MASK
+Message-Id: <20050314195430.GA4300@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63282665631170643=="
+Content-Type: multipart/mixed; boundary="===============57026449343296348=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============63282665631170643==
+--===============57026449343296348==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
+Hello,
 
-Index: linux-2.6.11-bk1-sparse/arch/i386/kernel/traps.c
-===================================================================
---- linux-2.6.11-bk1-sparse.orig/arch/i386/kernel/traps.c	2005-03-02 09:37:49.000000000 +0200
-+++ linux-2.6.11-bk1-sparse/arch/i386/kernel/traps.c	2005-03-06 03:28:50.000000000 +0200
-@@ -233,22 +233,22 @@ void show_registers(struct pt_regs *regs
- 	 * time of the fault..
- 	 */
- 	if (in_kernel) {
--		u8 *eip;
-+		u8 __user *eip;
- 
- 		printk("\nStack: ");
- 		show_stack(NULL, (unsigned long*)esp);
- 
- 		printk("Code: ");
- 
--		eip = (u8 *)regs->eip - 43;
-+		eip = (u8 __user *)regs->eip - 43;
- 		for (i = 0; i < 64; i++, eip++) {
- 			unsigned char c;
- 
--			if (eip < (u8 *)PAGE_OFFSET || __get_user(c, eip)) {
-+			if (eip < (u8 __user *)PAGE_OFFSET || __get_user(c, eip)) {
- 				printk(" Bad EIP value.");
- 				break;
- 			}
--			if (eip == (u8 *)regs->eip)
-+			if (eip == (u8 __user *)regs->eip)
- 				printk("<%02x> ", c);
- 			else
- 				printk("%02x ", c);
-@@ -272,13 +272,13 @@ static void handle_BUG(struct pt_regs *r
- 
- 	if (eip < PAGE_OFFSET)
- 		goto no_bug;
--	if (__get_user(ud2, (unsigned short *)eip))
-+	if (__get_user(ud2, (unsigned short __user *)eip))
- 		goto no_bug;
- 	if (ud2 != 0x0b0f)
- 		goto no_bug;
--	if (__get_user(line, (unsigned short *)(eip + 2)))
-+	if (__get_user(line, (unsigned short __user *)(eip + 2)))
- 		goto bug;
--	if (__get_user(file, (char **)(eip + 4)) ||
-+	if (__get_user(file, (char * __user *)(eip + 4)) ||
- 		(unsigned long)file < PAGE_OFFSET || __get_user(c, file))
- 		file = "<bad filename>";
- 
+Description: Use the DMA_32BIT_MASK constant from dma-mapping.h
+when calling dma_set_mask().
 
---===============63282665631170643==
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11.orig/drivers/media/video/meye.c	2005-03-02 12:50:30.000000000 +0100
++++ linux-2.6.11/drivers/media/video/meye.c	2005-03-10 18:20:05.000000000 +0100
+@@ -121,7 +121,7 @@ static int ptable_alloc(void)
+ 	memset(meye.mchip_ptable, 0, sizeof(meye.mchip_ptable));
+ 
+ 	/* give only 32 bit DMA addresses */
+-	if (dma_set_mask(&meye.mchip_dev->dev, 0xffffffff))
++	if (dma_set_mask(&meye.mchip_dev->dev, DMA_32BIT_MASK))
+ 		return -1;
+ 
+ 	meye.mchip_ptable_toc = dma_alloc_coherent(&meye.mchip_dev->dev,
+
+--===============57026449343296348==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============63282665631170643==--
+--===============57026449343296348==--
