@@ -1,51 +1,67 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Sun, 09 Jan 2005 09:01:21 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 10 Jan 2005 17:39:45 +0000
 Subject: [KJ] Re: [UPDATE PATCH] ieee1394/sbp2: use ssleep() instead of
-Message-Id: <17a9eec54394ded0a28295a6548a5c65@localhost>
+Message-Id: <20050110173945.GB3099@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41719417163418249=="
+Content-Type: multipart/mixed; boundary="===============079449559873183251=="
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20050107213400.GD2924@us.ibm.com>
-To: linux1394-devel@lists.sourceforge.net
-Cc: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>, bcollins@debian.org, Nishanth Aravamudan <nacc@us.ibm.com>
+References: <20050107213400.GD2924@us.ibm.com> <17a9eec54394ded0a28295a6548a5c65@localhost>
+In-Reply-To: <17a9eec54394ded0a28295a6548a5c65@localhost>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Cc: linux1394-devel@lists.sourceforge.net, kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>, bcollins@debian.org
 
---===============41719417163418249==
-Content-Type: text/plain; charset="us-ascii"; format="flowed"
+--===============079449559873183251==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Nishanth Aravamudan wrote:
-> Description: Use ssleep() instead of schedule_timeout() to guarantee 
-> the task
-> delays as expected. The existing code should not really need to run in
-> TASK_INTERRUPTIBLE, as there is no check for signals (or even an 
-> early return
-> value whatsoever). ssleep() takes care of these issues.
+On Sun, Jan 09, 2005 at 10:01:21AM +0100, Stefan Richter wrote:
+> Nishanth Aravamudan wrote:
+> >Description: Use ssleep() instead of schedule_timeout() to guarantee 
+> >the task
+> >delays as expected. The existing code should not really need to run in
+> >TASK_INTERRUPTIBLE, as there is no check for signals (or even an 
+> >early return
+> >value whatsoever). ssleep() takes care of these issues.
+> 
+> >--- 2.6.10-v/drivers/ieee1394/sbp2.c	2004-12-24 13:34:00.000000000 
+> >-0800
+> >+++ 2.6.10/drivers/ieee1394/sbp2.c	2005-01-05 14:23:05.000000000 -0800
+> >@@ -902,8 +902,7 @@ alloc_fail:
+> >	 * connected to the sbp2 device being removed. That host would
+> >	 * have a certain amount of time to relogin before the sbp2 device
+> >	 * allows someone else to login instead. One second makes sense. */
+> >-	set_current_state(TASK_INTERRUPTIBLE);
+> >-	schedule_timeout(HZ);
+> >+	ssleep(1);
+> 
+> Maybe the current code is _deliberately_ accepting interruption by 
+> signals but trying to complete sbp2_probe() anyway. However it seems 
+> more plausible to me to abort the device probe, for example like this:
+> if (msleep_interruptible(1000)) {
+> 	sbp2_remove_device(scsi_id);
+> 	return -EINTR;
+> }
 
-> --- 2.6.10-v/drivers/ieee1394/sbp2.c	2004-12-24 13:34:00.000000000 
-> -0800
-> +++ 2.6.10/drivers/ieee1394/sbp2.c	2005-01-05 14:23:05.000000000 -0800
-> @@ -902,8 +902,7 @@ alloc_fail:
-> 	 * connected to the sbp2 device being removed. That host would
-> 	 * have a certain amount of time to relogin before the sbp2 device
-> 	 * allows someone else to login instead. One second makes sense. */
-> -	set_current_state(TASK_INTERRUPTIBLE);
-> -	schedule_timeout(HZ);
-> +	ssleep(1);
+You might be right, but I'd like to get Ben's input on this, as I honeslty am
+unsure. To be fair, I am trying to audit all usage of schedule_timeout() and the
+semantic interpretation (to me) of using TASK_INTERRUPTIBLE is that you wish to
+sleep a certain amount of time, but also are prepared for an early return on
+either signals or wait-queue events. msleep_interruptible() cleanly removes this
+second issue, but still requires the caller to respond appropriately if there is
+a return value. Hence, I like your change. I think it makes the most sense.
+Since I didn't/don't know how the device works, I was not able to make the
+change myself. Thanks for your input!
 
-Maybe the current code is _deliberately_ accepting interruption by 
-signals but trying to complete sbp2_probe() anyway. However it seems 
-more plausible to me to abort the device probe, for example like this:
-if (msleep_interruptible(1000)) {
-	sbp2_remove_device(scsi_id);
-	return -EINTR;
-}
-Anyway, signal handling does not appear to be critical there.
--- 
-Stefan Richter
--=====-=-=-= ---= -=--=
-http://arcgraph.de/sr/
+> Anyway, signal handling does not appear to be critical there.
 
+Just out of curiousity, doesn't that run the risk, though, of
+signal_pending(current) being true for quite a bit of time following the
+timeout?
 
---===============41719417163418249==
+Thanks,
+Nish
+
+--===============079449559873183251==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +72,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============41719417163418249==--
+--===============079449559873183251==--
