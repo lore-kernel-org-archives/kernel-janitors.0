@@ -1,35 +1,63 @@
-From: Matthew Wilcox <willy@debian.org>
-Date: Tue, 08 Jun 2004 14:35:07 +0000
-Subject: Re: [Kernel-janitors] [REDIFF] new.linux-2.6.7-rc2/fs/cifs/cifsfs.c
-Message-Id: <20040608143507.GD31749@parcelfarce.linux.theplanet.co.uk>
+From: Domen Puncer <domen@coderock.org>
+Date: Mon, 28 Jun 2004 14:42:40 +0000
+Subject: [Kernel-janitors] Re: check_region question
+Message-Id: <20040628144240.GB24005@nd47>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52250782307651988=="
+Content-Type: multipart/mixed; boundary="===============84965717449168654=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0406080152230.31755@mustang.cs.nmsu.edu>
-In-Reply-To: <Pine.LNX.4.58.0406080152230.31755@mustang.cs.nmsu.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============52250782307651988==
+--===============84965717449168654==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jun 08, 2004 at 08:27:12AM -0600, MJK wrote:
-> 	No, I didn't. No CIFS volumes to mount. mkfs didn't seem to be
-> able to anyways. I guess that's my problem: no hardware to test anything
-> out and only one machine to do it on. Maybe one day that'll change.
+On 28/06/04 11:57 +0200, Carlo Perassi wrote:
+> Hi
+> compiling a new 2.6.7 I got
+> drivers/ide/pci/trm290.c:376: warning: `check_region' is deprecated
+> drivers/char/specialix.c:290: warning: `check_region' is deprecated
+> 
+> So I searched and found (see the end of the email) a lot of places where
+> that call occours.
+> I guess this is not (always) a "search/replace" task so my question is 
+> 
+> (a)
+> if a call like
+> check_region(s, n)
+> should be replaced with
+> request_region(s, n, name)
+> (where name is something like hwif->name)
+> and
+> (b)
+> if an if statement like
+> if (check_region(s, n))
+> should be replaced with
+> if (!request_region(s, n, name))
+> is there something more than ((a) + (b)) to convert a deprecated section
+> of code?
 
-CIFS is a network filesystem.  You only need a Samba server and you can
-test on the same box.
+It's not that simple.
+There's been some recent discussion about this here, and i'm sure you
+can find old check_region patches which were wrong, and a nice
+description of what is wrong.
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+Basically, check_region() was used before request_region(), now you
+have to check you didn't request a region that you shouldn't.
+And that request_region() that was in code before usually get's removed.
+(I hope i make some sense)
 
---===============52250782307651988==
+> I found some old patches which should be good examples but I don't know
+> this topic enough to make a general theory.
+> 
+> Thanks.
+> 
+...
+> sound/oss/waveartist.c:1349
+> sound/oss/pss.c:191
+...
+Don't bother with these, they'll probably get removed in 2.7.x
+
+--===============84965717449168654==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52250782307651988==--
+--===============84965717449168654==--
