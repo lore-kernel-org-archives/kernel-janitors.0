@@ -1,79 +1,33 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 10 Jan 2005 21:14:12 +0000
-Subject: Re: [KJ] [announce] 2.6.10-bk13-kj
-Message-Id: <20050110211412.GC9186@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:09:51 +0000
+Subject: [KJ] [PATCH 10/53] cg14: Clean up printk()'s in drivers/video/cg14.c
+Message-Id: <20050125230950.10418.50985.80845@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10223552324968033=="
+Content-Type: multipart/mixed; boundary="===============82074616794663813=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============10223552324968033==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============82074616794663813==
 
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
-> 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/cg14.c
 
-<snip>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-> msleep_interruptible-drivers_block_pcd.patch
-
-Please consider replacing with the following patch:
-
-Description: Use msleep()/ssleep() instead of schedule_timeout() to guarantee
-the task delays as expected. TASK_INTERRUPTIBLE is used in the original code,
-however there is no check on the return values / for signals, thus I believe
-TASK_UNINTERRUPTIBLE (and hence msleep()) is more appropriate.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-v/drivers/block/paride/pcd.c	2004-12-24 13:35:39.000000000 -0800
-+++ 2.6.10/drivers/block/paride/pcd.c	2005-01-10 12:20:29.000000000 -0800
-@@ -534,12 +534,6 @@ static int pcd_tray_move(struct cdrom_de
- 			 position ? "eject" : "close tray");
- }
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/cg14.c linux-2.6.11-rc2-mm1/drivers/video/cg14.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/cg14.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/cg14.c	2005-01-24 19:07:02.454262492 -0500
+@@ -582,7 +582,7 @@
  
--static void pcd_sleep(int cs)
--{
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(cs);
--}
--
- static int pcd_reset(struct pcd_unit *cd)
- {
- 	int i, k, flg;
-@@ -549,11 +543,11 @@ static int pcd_reset(struct pcd_unit *cd
- 	write_reg(cd, 6, 0xa0 + 0x10 * cd->drive);
- 	write_reg(cd, 7, 8);
+ 	list_add(&all->list, &cg14_list);
  
--	pcd_sleep(20 * HZ / 1000);	/* delay a bit */
-+	msleep(20);			/* delay a bit */
+-	printk("cg14: cgfourteen at %lx:%lx, %dMB\n",
++	pr_info("cg14: cgfourteen at %lx:%lx, %dMB\n",
+ 	       all->par.iospace, all->par.physbase, all->par.ramsize >> 20);
  
- 	k = 0;
- 	while ((k++ < PCD_RESET_TMO) && (status_reg(cd) & IDE_BUSY))
--		pcd_sleep(HZ / 10);
-+		msleep(100);
- 
- 	flg = 1;
- 	for (i = 0; i < 5; i++)
-@@ -592,7 +586,7 @@ static int pcd_ready_wait(struct pcd_uni
- 		if (!(((p & 0xffff) == 0x0402) || ((p & 0xff) == 6)))
- 			return p;
- 		k++;
--		pcd_sleep(HZ);
-+		ssleep(1);
- 	}
- 	return 0x000020;	/* timeout */
  }
 
---===============10223552324968033==
+--===============82074616794663813==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -84,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10223552324968033==--
+--===============82074616794663813==--
