@@ -1,40 +1,33 @@
-From: Steffen Klassert <klassert@mathematik.tu-chemnitz.de>
-Date: Thu, 18 Nov 2004 15:47:28 +0000
-Subject: Re: [KJ] Re: net/3c59x: module_param conversions
-Message-Id: <20041118154728.GC20050@gareth.mathematik.tu-chemnitz.de>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 15:34:27 +0000
+Subject: [KJ] [patch 7/8] ifdef typos: sound_isa_cs423x_cs4231_lib.c
+Message-Id: <20041124153427.GG14789@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40123672496214269=="
+Content-Type: multipart/mixed; boundary="===============70294456231104174=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041118142233.GC5645@nd47.coderock.org>
-In-Reply-To: <20041118142233.GC5645@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============40123672496214269==
+--===============70294456231104174==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Nov 18, 2004 at 03:22:33PM +0100 or thereabouts, Domen Puncer wrote:
+Funny typo.
 
-> Anyway, in rc2-mm2:
-> --- linux-2.6.10-rc2/drivers/net/3c59x.c        2004-11-14 21:05:31.000000000 -0
-> 800
-> +++ 25/drivers/net/3c59x.c      2004-11-17 23:21:24.184865960 -0800
-> @@ -277,6 +277,7 @@ MODULE_AUTHOR("Donald Becker <becker@scy
->  MODULE_DESCRIPTION("3Com 3c59x/3c9xx ethernet driver "
->                                         DRV_VERSION " " DRV_RELDATE);
->  MODULE_LICENSE("GPL");
-> +MODULE_VERSION(DRV_VERSION);
->  
->  MODULE_PARM(debug, "i");
-> ^^^
-> Doesn't seem converted.
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
-Well, I was not up to date. The conversation was in  2.6.10-rc1-mm3 but
-but backed out in -mm4 for some reason.
+--- c/sound/isa/cs423x/cs4231_lib.c	2004-10-19 13:53:23.000000000 +0200
++++ str2/sound/isa/cs423x/cs4231_lib.c	2004-11-24 15:24:27.000000000 +0100
+@@ -694,7 +694,7 @@ static void snd_cs4231_init(cs4231_t *ch
+ 
+ 	snd_cs4231_mce_down(chip);
+ 
+-#ifdef SNDRV_DEBUGq_MCE
++#ifdef SNDRV_DEBUG_MCE
+ 	snd_printk("init: (1)\n");
+ #endif
+ 	snd_cs4231_mce_up(chip);
 
-Steffen
-
---===============40123672496214269==
+--===============70294456231104174==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40123672496214269==--
+--===============70294456231104174==--
