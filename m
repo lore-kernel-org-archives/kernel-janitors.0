@@ -1,44 +1,58 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Sun, 13 Feb 2005 12:47:09 +0000
-Subject: [KJ] [PATCH] drivers/net/arcnet/*: convert to pci_register_driver
-Message-Id: <20050213124709.GB15348@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 18:00:49 +0000
+Subject: [KJ] [PATCH 2/20] char/ite_gpio: remove
+Message-Id: <20050202180049.GC2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="zbGR4y+acU1DwHSi"
+Content-Type: multipart/mixed; boundary="===============99407176924485663=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---zbGR4y+acU1DwHSi
+--===============99407176924485663==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hello,
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+Please consider applying.
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+Description: Replace deprecated interruptible_sleep_on_timeout() function calls
+with direct wait-queue usage. Patch is compile-tested, in a sense; it introduces
+no warnings (driver is currently broken).
 
---zbGR4y+acU1DwHSi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_arcnet.patch"
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/arcnet/com20020-pci.c linux-2.6.11-rc3/drivers/net/arcnet/com20020-pci.c
---- linux-2.6.11-rc3-vanilla/drivers/net/arcnet/com20020-pci.c	2004-12-24 22:34:01.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/net/arcnet/com20020-pci.c	2005-02-07 09:39:28.000000000 +0100
-@@ -177,7 +177,7 @@ static struct pci_driver com20020pci_dri
- static int __init com20020pci_init(void)
- {
- 	BUGLVL(D_NORMAL) printk(VERSION);
--	return pci_module_init(&com20020pci_driver);
-+	return pci_register_driver(&com20020pci_driver);
- }
+
+--- 2.6.11-rc2-kj-v/drivers/char/ite_gpio.c	2005-01-24 09:28:32.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/char/ite_gpio.c	2005-02-01 11:26:57.000000000 -0800
+@@ -43,6 +43,7 @@
+ #include <asm/it8172/it8172_int.h>
+ #include <linux/sched.h>
+ #include <linux/ite_gpio.h>
++#include <linux/wait.h>
  
- static void __exit com20020pci_cleanup(void)
+ #define ite_gpio_base 0x14013800
+ 
+@@ -192,6 +193,7 @@ int ite_gpio_int_wait (__u32 device, __u
+ {
+ 	int i,line=0, ret=0;
+ 	unsigned long flags;
++	DEFINE_WAIT(wait);
+ 
+ 	switch (device) {
+ 	case ITE_GPIO_PORTA:
+@@ -221,7 +223,9 @@ int ite_gpio_int_wait (__u32 device, __u
+ 	save_flags (flags);
+ 	cli();
+ 	ite_gpio_irq_pending[i] = 1;
+-	ret = interruptible_sleep_on_timeout(&ite_gpio_wait[i], 3*HZ);
++	prepare_to_wait(&ite_gpio_wait[i], &wait, TASK_INTERRUPTIBLE);
++	ret = schedule_timeout(3*HZ);
++	finish_wait(&ite_gpio_wait[i], &wait);
+ 	restore_flags (flags);
+ 	ite_gpio_irq_pending[i] = 0;
+ 
 
---zbGR4y+acU1DwHSi
+--===============99407176924485663==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---zbGR4y+acU1DwHSi--
+--===============99407176924485663==--
