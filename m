@@ -1,34 +1,47 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 18:11:57 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/16] scsi/53c700: replace
-Message-Id: <20040927181157.GP1676@us.ibm.com>
+Date: Mon, 27 Sep 2004 18:29:37 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 12/16] scsi/sata_sx4: replace
+Message-Id: <20040927182937.GA1676@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============084727742522122895=="
+Content-Type: multipart/mixed; boundary="===============2108116163620668=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: James.Bottomley@SteelEye.com, jgarzik@pobox.com
+Cc: kernel-janitors@lists.osdl.org, linux-ide@vger.kernel.org
 
---===============084727742522122895==
+--===============2108116163620668==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Use msleep_interruptible() instead of
-schedule_timeout() to guarantee the task delays as expected.
+Description: Use msleep()/ssleep() [as appropriate]
+instead of schedule_timeout() to guarantee the task delays as
+expected.
 
---- 2.6.9-rc2-vanilla/drivers/scsi/53c700.c	2004-09-13 17:15:58.000000000 -0700
-+++ 2.6.9-rc2/drivers/scsi/53c700.c	2004-09-14 09:10:24.000000000 -0700
-@@ -1961,7 +1961,7 @@ NCR_700_bus_reset(struct scsi_cmnd * SCp
- 	 * reset via sg or something */
- 	while(hostdata->eh_complete != NULL) {
- 		spin_unlock_irq(SCp->device->host->host_lock);
--		schedule_timeout(HZ/10);
-+		msleep_interruptible(100);
- 		spin_lock_irq(SCp->device->host->host_lock);
- 	}
- 	hostdata->eh_complete = &complete;
+--- 2.6.9-rc2-vanilla/drivers/scsi/sata_sx4.c	2004-09-13 17:15:56.000000000 -0700
++++ 2.6.9-rc2/drivers/scsi/sata_sx4.c	2004-09-27 11:28:10.000000000 -0700
+@@ -1189,8 +1189,7 @@ static unsigned int pdc20621_prog_dimm_g
+ 	   		error = 0;
+ 	   		break;     
+ 		}
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout((i * 100) * HZ / 1000 + 1);
++		msleep(i * 100);
+    	}
+    	return error;
+ }
+@@ -1223,8 +1222,7 @@ static unsigned int pdc20621_dimm_init(s
+ 	readl(mmio + PDC_TIME_CONTROL);
+ 
+ 	/* Wait 3 seconds */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(3 * HZ);
++	ssleep(3);
+ 
+ 	/* 
+ 	   When timer is enabled, counter is decreased every internal
 
---===============084727742522122895==
+--===============2108116163620668==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============084727742522122895==--
+--===============2108116163620668==--
