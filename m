@@ -1,43 +1,71 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 29 Sep 2004 18:15:33 +0000
-Subject: Re: [Kernel-janitors] Status of pci_find_device fixes
-Message-Id: <78330000.1096481733@w-hlinder.beaverton.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Tue, 21 Sep 2004 22:03:14 +0000
+Subject: Re: [Kernel-janitors] [PATCH] minmax-removal
+Message-Id: <20040921220314.GF4260@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============55518510799143206=="
+Content-Type: multipart/mixed; boundary="===============6230081886995591=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <415AB420.9050406@nuerscht.ch>
-In-Reply-To: <415AB420.9050406@nuerscht.ch>
+References: <411F4C54.4090609@gmx.net>
+In-Reply-To: <411F4C54.4090609@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
---===============55518510799143206==
+--===============6230081886995591==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
---On Wednesday, September 29, 2004 03:09:52 PM +0200 Tobias Klauser <tklauser@nuerscht.ch> wrote:
+On Sun, 15 Aug 2004, Michael Veeck wrote:
+
+> Patch (against 2.6.8.1) removes unnecessary min/max macros and changes
+> calls to use kernel.h macros instead.
 > 
-> Since I'm interested in the PCI section in the kernel (and Greg pointed me to that when I was bugging him ;), I thought this would be a good point to start helping. While crawling through the
-> kernel-janitor archives I noticed, that there's already work ongoing on that issue.
+> Since I dont have the hardware those patches are not tested.
 > 
-> What's the status of this and are there drivers which still need to be fixed?
+> Best regards
+> Veeck
+> 
+> Signed-off-by: Michael Veeck <michael.veeck@gmx.net>
+> 
+> 
+> 
+> 
 
-Hi Tobias,
+> --- linux-2.6.8-old/arch/um/drivers/mconsole_user.c	2004-08-14 11:48:56.000000000 +0200
+> +++ linux-2.6.8-new/arch/um/drivers/mconsole_user.c	2004-08-15 12:50:48.610087432 +0200
+> @@ -67,8 +67,6 @@ static struct mconsole_command *mconsole
+>  	return(NULL);
+>  }
+>  
+> -#define MIN(a,b) ((a)<(b) ? (a):(b))
+> -
+>  #define STRINGX(x) #x
+>  #define STRING(x) STRINGX(x)
+>  
+> @@ -86,7 +84,7 @@ int mconsole_get_request(int fd, struct 
+>  
+>  	if(req->request.magic != MCONSOLE_MAGIC){
+>  		/* Unversioned request */
+> -		len = MIN(sizeof(req->request.data) - 1, 
+> +		len = min_t(int, sizeof(req->request.data) - 1, 
+>  			  strlen((char *) &req->request));
+>  		memmove(req->request.data, &req->request, len);
+>  		req->request.data[len] = '\0';
+> @@ -131,7 +129,7 @@ int mconsole_reply(struct mc_request *re
+>  		/* err can only be true on the first packet */
+>  		err = 0;
+>  
+> -		len = MIN(total, MCONSOLE_MAX_DATA - 1);
+> +		len = min(total, MCONSOLE_MAX_DATA - 1);
+>  
+>  		if(len == total) reply.more = more;
+>  		else reply.more = 1;
 
-Thanks for your interest. There are a couple of us working in this area already but if we all
-coordinate it should help get the work done quickly. Scott is doing everything under drivers/net
-to start with. Greg and I finished everything under arch/i386. Right now I am working on
-all the drivers that can be converted to the new pci_dev_present function. That leaves over
-100 drivers that need to be converted (cscope and grep are your friend).
+no idea why that file is in the kernel,
+it's a userspace programm dropping this patch.
 
-If this sounds like something you are interested in feel free to jump in and make sure to
-send you patches back to the list. If you want to make sure no one else is working on the 
-same driver before you start that would be good. Use this list, that is what it is for. 
-
-Hanna
+a++ maks
 
 
-
---===============55518510799143206==
+--===============6230081886995591==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============55518510799143206==--
+--===============6230081886995591==--
