@@ -1,32 +1,49 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Wed, 20 Oct 2004 22:06:57 +0000
-Subject: Re: [KJ] [RFT 2.6] intel-mch-agp.c: replace pci_find_device with
-Message-Id: <20041020220657.GB26465@infradead.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 22 Oct 2004 23:54:14 +0000
+Subject: [KJ] [PATCH] pci/quirks: replace schedule_timeout() with msleep()
+Message-Id: <20041022235414.GL18906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93296078320011167=="
+Content-Type: multipart/mixed; boundary="===============69712524366656581=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <17860000.1098298381@w-hlinder.beaverton.ibm.com> <20041020220413.GA16153@parcelfarce.linux.theplanet.co.uk>
-In-Reply-To: <20041020220413.GA16153@parcelfarce.linux.theplanet.co.uk>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Hanna Linder <hannal@us.ibm.com>, davej@codemonkey.org.uk, kernel-janitors <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>, greg@kroah.com
+To: kernel-janitors@vger.kernel.org
 
---===============93296078320011167==
+--===============69712524366656581==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Oct 20, 2004 at 11:04:13PM +0100, Matthew Wilcox wrote:
-> On Wed, Oct 20, 2004 at 11:53:01AM -0700, Hanna Linder wrote:
-> > 
-> > As pci_find_device is going away soon I have converted this file to use
-> > pci_get_device instead. I have compile tested it. If anyone has this hardware
-> > and could test it that would be great.
-> 
-> Also a pci_driver candidate.
+Any comments would be, as always, appreciated.
 
-Same issue as above
+-Nish
 
+Description: Use msleep() instead of schedule_timeout() to guarantee the
+task delays as expected.
 
---===============93296078320011167==
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.9-bk7-vanilla/drivers/pci/quirks.c	2004-10-22 10:40:52.000000000 -0700
++++ 2.6.9-bk7/drivers/pci/quirks.c	2004-10-22 15:17:43.000000000 -0700
+@@ -938,8 +938,7 @@ static void __devinit quirk_usb_handoff_
+ 		while (wait_time > 0 && 
+ 				readl(base + OHCI_CONTROL) & OHCI_CTRL_IR) {
+ 			wait_time -= 10;
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout((HZ*10 + 999) / 1000);
++			msleep(10);
+ 		}
+ 	}
+ 
+@@ -988,8 +987,7 @@ static void __devinit quirk_usb_disable_
+ 
+ 			wait_time = 500;
+ 			do {
+-				set_current_state(TASK_UNINTERRUPTIBLE);
+-				schedule_timeout((HZ*10+999)/1000);
++				msleep(10);
+ 				wait_time -= 10;
+ 				pci_read_config_dword(pdev,
+ 						hcc_params + EHCI_USBLEGSUP,
+
+--===============69712524366656581==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93296078320011167==--
+--===============69712524366656581==--
