@@ -1,45 +1,59 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 07 Jan 2005 21:39:23 +0000
-Subject: [KJ] Re: [PATCH 2/28] net/act200l-sir: replace schedule_timeout()
-Message-Id: <20050107213923.GG2924@us.ibm.com>
+Date: Thu, 20 Jan 2005 23:41:58 +0000
+Subject: [KJ] [PATCH 16/39] net/aarp: replace schedule_timeout() with
+Message-Id: <20050120234158.GD2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37343895611858202=="
+Content-Type: multipart/mixed; boundary="===============73798671930671578=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============37343895611858202==
+--===============73798671930671578==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Jan 06, 2005 at 03:29:41PM -0800, Nishanth Aravamudan wrote:
-> Hi,
-> 
-> Description: Use msleep() instead of schedule_timeout() to guarantee the task
-> delays as expected. There aren't any waitqueue events in the area, so I believe
-> an absolute sleep should be ok.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> --- 2.6.10-v/drivers/net/irda/act200l-sir.c	2004-12-24 13:34:30.000000000 -0800
-> +++ 2.6.10/drivers/net/irda/act200l-sir.c	2005-01-04 14:57:49.000000000 -0800
-> @@ -177,8 +177,7 @@ static int act200l_change_speed(struct s
->  
->  	/* Write control bytes */
->  	sirdev_raw_write(dev, control, 3);
-> -	set_current_state(TASK_UNINTERRUPTIBLE);
-> -	schedule_timeout(msecs_to_jiffies(5));
-> +	msleep(5);
->  
->  	/* Go back to normal mode */
->  	sirdev_set_dtr_rts(dev, TRUE, TRUE);
+Hi,
 
-Please ignore this patch, as there is already a more correct one in the
-2.6.10-kj patchset. Sorry for the noise.
+Please consider applying.
 
-Thanks,
-Nish
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The current code is not wrong, but it does not account for
+early return due to signals, so I think msleep() should be appropriate.
 
---===============37343895611858202==
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/net/appletalk/aarp.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/net/appletalk/aarp.c	2005-01-18 11:33:38.000000000 -0800
+@@ -35,6 +35,7 @@
+ #include <net/datalink.h>
+ #include <net/psnap.h>
+ #include <linux/atalk.h>
++#include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+@@ -462,8 +463,7 @@ void aarp_probe_network(struct atalk_ifa
+ 			aarp_send_probe(atif->dev, &atif->address);
+ 
+ 			/* Defer 1/10th */
+-			current->state = TASK_INTERRUPTIBLE;
+-			schedule_timeout(HZ / 10);
++			msleep(100);
+ 
+ 			if (atif->status & ATIF_PROBE_FAIL)
+ 				break;
+@@ -510,9 +510,8 @@ int aarp_proxy_probe_network(struct atal
+ 		aarp_send_probe(atif->dev, sa);
+ 
+ 		/* Defer 1/10th */
+-		current->state = TASK_INTERRUPTIBLE;
+ 		write_unlock_bh(&aarp_lock);
+-		schedule_timeout(HZ / 10);
++		msleep(100);
+ 		write_lock_bh(&aarp_lock);
+ 
+ 		if (entry->status & ATIF_PROBE_FAIL)
+
+--===============73798671930671578==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37343895611858202==--
+--===============73798671930671578==--
