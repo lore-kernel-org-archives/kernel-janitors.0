@@ -1,116 +1,62 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 21 Jan 2005 21:37:39 +0000
-Subject: [KJ] [PATCH 37/39] usb/mdc800: use wait_event_timeout()
-Message-Id: <20050121213739.GR3340@us.ibm.com>
+Date: Fri, 07 Jan 2005 21:34:00 +0000
+Subject: [KJ] [UPDATE PATCH] ieee1394/sbp2: use ssleep() instead of
+Message-Id: <20050107213400.GD2924@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26539027894868839=="
+Content-Type: multipart/mixed; boundary="===============36955264185761472=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20041225004846.GA19373@nd47.coderock.org>
+In-Reply-To: <20041225004846.GA19373@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+Cc: bcollins@debian.org, linux1394-devel@lists.sourceforge.net
 
---===============26539027894868839==
+--===============36955264185761472==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+On Sat, Dec 25, 2004 at 01:48:46AM +0100, Domen Puncer wrote:
+> Hi.
+> 
+> Santa brought another present :-)
+> 
+> I'll start mailing new patches these days, and after external trees get
+> merged, I'll be bugging you with the old ones.
+> 
+> 
+> Patchset is at http://coderock.org/kj/2.6.10-kj/
 
-Please consider applying.
+<snip>
 
-Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
-now unused variables.
+> all patches:
+> ------------
+
+<snip>
+
+> msleep-drivers_ieee1394_sbp2.patch
+
+Please consider updating to the following patch:
+
+Description: Use ssleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The existing code should not really need to run in
+TASK_INTERRUPTIBLE, as there is no check for signals (or even an early return
+value whatsoever). ssleep() takes care of these issues.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc1-kj-v/drivers/usb/image/mdc800.c	2005-01-15 16:55:42.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/usb/image/mdc800.c	2005-01-17 19:40:40.000000000 -0800
-@@ -95,6 +95,7 @@
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/smp_lock.h>
-+#include <linux/wait.h>
+--- 2.6.10-v/drivers/ieee1394/sbp2.c	2004-12-24 13:34:00.000000000 -0800
++++ 2.6.10/drivers/ieee1394/sbp2.c	2005-01-05 14:23:05.000000000 -0800
+@@ -902,8 +902,7 @@ alloc_fail:
+ 	 * connected to the sbp2 device being removed. That host would
+ 	 * have a certain amount of time to relogin before the sbp2 device
+ 	 * allows someone else to login instead. One second makes sense. */
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(HZ);
++	ssleep(1);
  
- #include <linux/usb.h>
- #include <linux/fs.h>
-@@ -346,19 +347,9 @@ static void mdc800_usb_irq (struct urb *
-  */
- static int mdc800_usb_waitForIRQ (int mode, int msec)
- {
--        DECLARE_WAITQUEUE(wait, current);
--	long timeout;
--
- 	mdc800->camera_request_ready=1+mode;
- 
--	add_wait_queue(&mdc800->irq_wait, &wait);
--	timeout = msec*HZ/1000;
--	while (!mdc800->irq_woken && timeout)
--	{
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		timeout = schedule_timeout (timeout);
--	}
--        remove_wait_queue(&mdc800->irq_wait, &wait);
-+	wait_event_timeout(mdc800->irq_wait, mdc800->irq_woken, msec*HZ/1000);
- 	mdc800->irq_woken = 0;
- 
- 	if (mdc800->camera_request_ready>0)
-@@ -704,8 +695,6 @@ static ssize_t mdc800_device_read (struc
- {
- 	size_t left=len, sts=len; /* single transfer size */
- 	char __user *ptr = buf;
--	long timeout;
--	DECLARE_WAITQUEUE(wait, current);
- 
- 	down (&mdc800->io_lock);
- 	if (mdc800->state == NOT_CONNECTED)
-@@ -751,14 +740,8 @@ static ssize_t mdc800_device_read (struc
- 					up (&mdc800->io_lock);
- 					return len-left;
- 				}
--				add_wait_queue(&mdc800->download_wait, &wait);
--				timeout = TO_DOWNLOAD_GET_READY*HZ/1000;
--				while (!mdc800->downloaded && timeout)
--				{
--					set_current_state(TASK_UNINTERRUPTIBLE);
--					timeout = schedule_timeout (timeout);
--				}
--				remove_wait_queue(&mdc800->download_wait, &wait);
-+				wait_event_timeout(mdc800->download_wait, mdc800->downloaded,
-+										TO_DOWNLOAD_GET_READY*HZ/1000);
- 				mdc800->downloaded = 0;
- 				if (mdc800->download_urb->status != 0)
- 				{
-@@ -802,7 +785,6 @@ static ssize_t mdc800_device_read (struc
- static ssize_t mdc800_device_write (struct file *file, const char __user *buf, size_t len, loff_t *pos)
- {
- 	size_t i=0;
--	DECLARE_WAITQUEUE(wait, current);
- 
- 	down (&mdc800->io_lock);
- 	if (mdc800->state != READY)
-@@ -856,7 +838,6 @@ static ssize_t mdc800_device_write (stru
- 		if (mdc800->in_count == 8)
- 		{
- 			int answersize;
--			long timeout;
- 
- 			if (mdc800_usb_waitForIRQ (0,TO_GET_READY))
- 			{
-@@ -876,14 +857,7 @@ static ssize_t mdc800_device_write (stru
- 				up (&mdc800->io_lock);
- 				return -EIO;
- 			}
--			add_wait_queue(&mdc800->write_wait, &wait);
--			timeout = TO_WRITE_GET_READY*HZ/1000;
--			while (!mdc800->written && timeout)
--			{
--				set_current_state(TASK_UNINTERRUPTIBLE);
--				timeout = schedule_timeout (timeout);
--			}
--			remove_wait_queue(&mdc800->write_wait, &wait);
-+			wait_event_timeout(mdc800->write_wait, mdc800->written, TO_WRITE_GET_READY*HZ/1000);
- 			mdc800->written = 0;
- 			if (mdc800->state == WORKING)
- 			{
+ 	/*
+ 	 * Login to the sbp-2 device
 
---===============26539027894868839==
+--===============36955264185761472==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -121,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============26539027894868839==--
+--===============36955264185761472==--
