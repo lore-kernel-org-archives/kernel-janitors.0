@@ -1,67 +1,55 @@
-From: "Eva Crocker" <FQFMABWP@hotmail.com>
-Date: Thu, 05 Feb 2004 07:23:01 +0000
-Subject: Fw:Better Return and Safer than Stocks ellipsis
-Message-Id: <NDVSPKPULOBZOZOJQOXFLXWWO@msn.com>
+From: Ron Gage <ron@rongage.org>
+Date: Fri, 13 Feb 2004 13:30:13 +0000
+Subject: [Kernel-janitors] [PATCH] - 2.6.2 - smp.h - compiler cleanup
+Message-Id: <200402130830.13297.ron@rongage.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--3294111415854506121"
+Content-Type: multipart/mixed; boundary="Boundary-00=_lFNLAlZrA0jOPgR"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----3294111415854506121
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
 
-<DIV>
-<CENTER>
-<TABLE cellSpacing=3D0 cellPadding=3D3 width=3D600 border=3D1>
-<TBODY>
-<TR>
-<TD vAlign=3Dtop align=3Dmiddle width=3D600 bgColor=3D#fefef5><BR>
-<TABLE cellPadding=3D3 border=3D0 cellpsacing=3D"0">
-<TBODY>
-<TR>
-<TD vAlign=3Dcenter align=3Dmiddle width=3D594 
-bgColor=3D#3d117b><FONT face=3Darial color=3D#ffff00 
-size=3D4>REAL ESTATE FOR PENNIES ON THE DOLLAR</FONT> 
-</TD></TR></TBODY></TABLE><BR><FONT face=3Dtimes 
-color=3D#ff0000 size=3D5>Earn 15%-50% On Your Money!
-</FONT> <BR><BR>
-<A href=3D"http://www.lienanddeed.biz/investment.html">
-<FONT face=3Darial size=3D4><B>Find Out How Banks Make 
-Their Profits.</B></FONT></A> <BR><BR><FONT 
-face=3Dtimes color=3D#ff0000 size=3D6>Avoid Taking Risks 
-In The Market</FONT> <BR><BR><FONT face=3Darial 
-color=3D#000000 size=3D4><I>Learn to aquire properties 
-for pennies on The Dollar.</I></FONT> <BR><FONT 
-face=3Darial color=3D#000000 size=3D4><B></FONT><BR>
-<A href=3D"http://www.lienanddeed.biz/investment.html">
-<FONT face=3Darial size=3D5><B>Click Here For Details</B>
-</FONT></A> <BR><BR>
-<TABLE cellPadding=3D3 width=3D594 border=3D0 cellpsacing=3D"0">
-<TBODY>
-<TR>
-<TD vAlign=3Dcenter align=3Dmiddle bgColor=3D#3d117b>
-<FONT face=3Darial color=3D#ffff00 size=3D4>DISCOVER THE 
-BEST KEPT SECRETS IN AMERICA</FONT> </TD></TR></TBODY>
-</TABLE><BR></B></TD></TR></TBODY></TABLE><TR>
-<TD bgcolor=3D"#ffffff" align=3D"middle" valign=3D"middle" 
-colspan=3D"4"><FONT face=3Dverdana color=3D#000000 size=3D1>
-<A href=3D"http://www.lienanddeed.biz/remove.html">
-<FONT face=3Dverdana color=3D#0000ff size=3D1>click here
-</FONT></A> to be removed. </FONT></TD></TR></CENTER>
-</DIV>
-pound
+--Boundary-00=_lFNLAlZrA0jOPgR
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-----3294111415854506121--
+This patch eliminates "parameter defined but not used" warnings
+
+-- 
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
 
 
+--Boundary-00=_lFNLAlZrA0jOPgR
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="smp.h.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="smp.h.diff"
 
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+--- linux-2.6.2.orig/include/linux/smp.h	2004-02-03 22:43:56.000000000 -0500
++++ linux-2.6.2/include/linux/smp.h	2004-02-13 07:59:51.000000000 -0500
+@@ -101,7 +101,7 @@
+ #define smp_threads_ready			1
+ #define smp_call_function(func,info,retry,wait)	({ 0; })
+ #define on_each_cpu(func,info,retry,wait)	({ func(info); 0; })
+-static inline void smp_send_reschedule(int cpu) { }
++static inline void smp_send_reschedule(int cpu) { cpu = cpu; }
+ #define num_booting_cpus()			1
+ #define smp_prepare_boot_cpu()			do {} while (0)
+ 
+
+--Boundary-00=_lFNLAlZrA0jOPgR
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--Boundary-00=_lFNLAlZrA0jOPgR--
