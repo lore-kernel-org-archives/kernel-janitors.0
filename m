@@ -1,47 +1,53 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Fri, 08 Oct 2004 17:40:56 +0000
-Subject: [KJ] [PATCH 2.6] pSeries_pci.c replace pci_find_device with
-Message-Id: <70860000.1097257256@w-hlinder.beaverton.ibm.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 22 Oct 2004 23:28:38 +0000
+Subject: [KJ] [PATCH] input/iforce-packets: insert set_current_state()
+Message-Id: <20041022232838.GD18906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8316095746570995=="
+Content-Type: multipart/mixed; boundary="===============056684177495718746=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <70640000.1097257199@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <70640000.1097257199@w-hlinder.beaverton.ibm.com>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, anton@samba.org
+To: kernel-janitors@vger.kernel.org
 
---===============8316095746570995==
+--===============056684177495718746==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+Any comments would be, as always, appreciated.
 
-As pci_find_device is going away I've replaced it with pci_get_device.
-If someone with a PPC64 system could test it I would appreciate it.
+-Nish
 
-Thanks.
+Description: Inserts set_current_state() before schedule_timeout().
+Without the insertion, schedule_timeout() will return immediately.
 
-Hanna Linder
-IBM Linux Technology Center
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/pSeries_pci.c linux-2.6.9-rc3-mm3patch3/arch/ppc64/kernel/pSeries_pci.c
---- linux-2.6.9-rc3-mm3cln/arch/ppc64/kernel/pSeries_pci.c	2004-10-07 15:54:30.000000000 -0700
-+++ linux-2.6.9-rc3-mm3patch3/arch/ppc64/kernel/pSeries_pci.c	2004-10-08 10:24:00.064501400 -0700
-@@ -646,7 +646,7 @@ void __init pSeries_final_fixup(void)
+--- 2.6.9-bk7-vanilla/drivers/input/joystick/iforce/iforce-packets.c	2004-10-22 10:41:36.000000000 -0700
++++ 2.6.9-bk7/drivers/input/joystick/iforce/iforce-packets.c	2004-10-22 14:53:18.000000000 -0700
+@@ -269,8 +269,10 @@ int iforce_get_id_packet(struct iforce *
+ 			return -1;
+ 		}
  
- 	check_s7a();
+-		while (timeout && iforce->ctrl->status == -EINPROGRESS)
++		while (timeout && iforce->ctrl->status == -EINPROGRESS) {
++			set_current_state(TASK_INTERRUPTIBLE);
+ 			timeout = schedule_timeout(timeout);
++		}
  
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		pci_read_irq_line(dev);
- 		if (s7a_workaround) {
- 			if (dev->irq > 16) {
+ 		set_current_state(TASK_RUNNING);
+ 		remove_wait_queue(&iforce->wait, &wait);
+@@ -293,8 +295,10 @@ int iforce_get_id_packet(struct iforce *
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		add_wait_queue(&iforce->wait, &wait);
+ 
+-		while (timeout && iforce->expect_packet)
++		while (timeout && iforce->expect_packet) {
++			set_current_state(TASK_INTERRUPTIBLE);
+ 			timeout = schedule_timeout(timeout);
++		}
+ 
+ 		set_current_state(TASK_RUNNING);
+ 		remove_wait_queue(&iforce->wait, &wait);
 
-
---===============8316095746570995==
+--===============056684177495718746==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8316095746570995==--
+--===============056684177495718746==--
