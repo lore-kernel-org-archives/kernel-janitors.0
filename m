@@ -1,54 +1,52 @@
-From: "Molly Schneider" <wekvzsqv@voyager.net>
-Date: Mon, 15 Mar 2004 08:56:32 +0000
-Subject: daybreak
-Message-Id: <4935060944042.16988076080545197884@biz>
+From: "Glenn Gomez" <awmaij@yahoo.com>
+Date: Wed, 17 Mar 2004 05:16:00 +0000
+Subject: amateur swingers
+Message-Id: <CNMQHEZVYUWBHNHBSRGV@yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="3246140053096255399"
+Content-Type: multipart/mixed; boundary="--3345794422490240"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---3246140053096255399
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-discomfit deflate 
-chauncey wagoneer 
-tasty 
-generate 
-pillage 
-
-weapon cadent 
-
---3246140053096255399
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-<html>
-<head>
-<title>Untitled Document</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-</head>
-
-<body bgcolor="#FFFFFF" text="#000000">
-<p>fabuklous! </p>
-<p>I took the only one pijll of Cialgs and that was such a GREAT weekend! </p>
-<p>All the girls at the party were just punch-drungk with my potentiagl <br>
-  I have fged all of them THREE times but my dgck WAS able to do some more! <br>
-  Cgalis - it`s COOL!!! The best weekend stuff I've ever trgied! Haven`t you tgried 
-  yet? <br>
-  <br>
-  <a href=http://g.msn.com/0US!s5.30695_812464/HP.1001?http://onlyherbal.net/sv/index.php?pid=eph0555>Try Here</a> </p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p><a href=http://g.msn.com/0US!s5.30695_812464/HP.1001?http://onlyherbal.net/sv/applepie.php><font size="-1">No More Please</font></a></p>
-</body>
-</html>
+----3345794422490240
+Content-Type: text/html;
+Content-Transfer-Encoding: quoted-printable
 
 
---3246140053096255399--
+<CENTER><TABLE WIDTH=3D392 BORDER=3D0 CELLPADDING=3D0 CELLSPACING=3D0>
+	<TR>
+		<TD>
+			<A HREF=3D"http://165.98.240.62/gold/">
+				<IMG SRC=3D"http://165.98.240.62/gold/mailer/images/mailer_01.gif" WID=
+TH=3D131 HEIGHT=3D44 BORDER=3D0></A></TD>
+		<TD COLSPAN=3D2>
+			<A HREF=3D"http://165.98.240.62/gold/">
+				<IMG SRC=3D"http://165.98.240.62/gold/mailer/images/mailer_02.jpg" WID=
+TH=3D261 HEIGHT=3D44 BORDER=3D0></A></TD>
+	</TR>
+	<TR>
+		<TD ROWSPAN=3D2>
+			<A HREF=3D"http://165.98.240.62/gold/">
+				<IMG SRC=3D"http://165.98.240.62/gold/mailer/images/mailer_03.jpg" WID=
+TH=3D131 HEIGHT=3D247 BORDER=3D0></A></TD>
+		<TD COLSPAN=3D2>
+			<A HREF=3D"http://165.98.240.62/gold/">
+				<IMG SRC=3D"http://165.98.240.62/gold/mailer/images/mailer_04.gif" WID=
+TH=3D261 HEIGHT=3D153 BORDER=3D0></A></TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC=3D"http://165.98.240.62/gold/mailer/images/mailer_05.gif" WIDT=
+H=3D108 HEIGHT=3D94></TD>
+		<TD>
+			<IMG SRC=3D"http://165.98.240.62/gold/mailer/images/mailer_06.jpg" WIDT=
+H=3D153 HEIGHT=3D94></TD>
+	</TR>
+</TABLE></CENTER><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+<CENTER><A HREF=3D"http://www.dateseeker.biz/nothanks/nothanks.php">Unscri=
+be From List</A></CENTER>
+
+
+----3345794422490240--
 
 
 
