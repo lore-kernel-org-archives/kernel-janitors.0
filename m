@@ -1,98 +1,120 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 11 Jan 2005 00:39:08 +0000
-Subject: [KJ] [UPDATE PATCH] net/sb1000: replace nicedelay() with ssleep()
-Message-Id: <20050111003908.GJ9186@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Wed, 26 Jan 2005 01:17:55 +0000
+Subject: [KJ] [PATCH 4/53][RESEND] atyfb: Clean up printk()'s in
+Message-Id: <20050126011754.10655.97150.78698@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70216721522393577=="
+Content-Type: multipart/mixed; boundary="===============37674088397532302=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050110164703.GD14307@nd47.coderock.org>
-In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============70216721522393577==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============37674088397532302==
 
-On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
-> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
-> 
-> Quick patch summary: about 30 new, 30 merged, 30 dropped.
-> Seems like most external trees are merged in -linus, so i'll start
-> (re)sending old patches.
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/aty/atyfb_base.c - resent, fixing a missing ";"
 
-<snip>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-> msleep_interruptible-drivers_net_sb1000.patch
-
-Please consider replacing with the following:
-
-Description: Use ssleep() instead of nicedelay()
-to guarantee the task delays as expected. Remove the prototype and
-definition of nicedelay(). This is a very weird function, because it is
-called to sleep in terms of usecs, but always sleeps for 1 second,
-completely ignoring the parameter. I have gone ahead and followed suit,
-just sleeping for a second in all cases, but maybe someone with the
-hardware could tell me if perhaps the paramter *should* matter. Additionally,
-nicedelay() is called in TASK_INTERRUPTIBLE state, but doesn't deal with signals
-in case these longer delays do not complete, so I believe ssleep() is more
-appropriate.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-v/drivers/net/sb1000.c	2004-12-24 13:33:51.000000000 -0800
-+++ 2.6.10/drivers/net/sb1000.c	2005-01-05 14:23:05.000000000 -0800
-@@ -90,7 +90,6 @@ static int sb1000_close(struct net_devic
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/aty/atyfb_base.c linux-2.6.11-rc2-mm1/drivers/video/aty/atyfb_base.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/aty/atyfb_base.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/aty/atyfb_base.c	2005-01-25 20:13:55.241363721 -0500
+@@ -1398,45 +1398,57 @@
  
+ 	/* CRTC registers */
+ 	base = 0x2000;
+-	printk("debug atyfb: Mach64 non-shadow register values:");
++	printk(KERN_DEBUG "debug atyfb: Mach64 non-shadow register values:");
+ 	for (i = 0; i < 256; i = i+4) {
+-		if(i%16 == 0) printk("\ndebug atyfb: 0x%04X: ", base + i);
++		if(i%16 == 0) {
++			printk("\n");
++			printk(KERN_DEBUG "debug atyfb: 0x%04X: ", base + i);
++		}
+ 		printk(" %08X", aty_ld_le32(i, par));
+ 	}
+-	printk("\n\n");
++	printk("\n");
++	printk(KERN_DEBUG "---BREAK---\n");
  
- /* SB1000 hardware routines to be used during open/configuration phases */
--static inline void nicedelay(unsigned long usecs);
- static inline int card_wait_for_busy_clear(const int ioaddr[],
- 	const char* name);
- static inline int card_wait_for_ready(const int ioaddr[], const char* name,
-@@ -254,13 +253,6 @@ static struct pnp_driver sb1000_driver =
+ #ifdef CONFIG_FB_ATY_CT
+ 	/* PLL registers */
+ 	base = 0x00;
+-	printk("debug atyfb: Mach64 PLL register values:");
++	printk(KERN_DEBUG "debug atyfb: Mach64 PLL register values:");
+ 	for (i = 0; i < 64; i++) {
+-		if(i%16 == 0) printk("\ndebug atyfb: 0x%02X: ", base + i);
++		if(i%16 == 0) {
++			printk("\n");
++			printk(KERN_DEBUG "debug atyfb: 0x%02X: ", base + i);
++		}
+ 		if(i%4 == 0)  printk(" ");
+ 		printk("%02X", aty_ld_pll_ct(i, par));
+ 	}
+-	printk("\n\n");
++	printk("\n");
++	printk(KERN_DEBUG "---BREAK---\n");
+ #endif	/* CONFIG_FB_ATY_CT */
  
- const int TimeOutJiffies = (875 * HZ) / 100;
+ #ifdef CONFIG_FB_ATY_GENERIC_LCD
+ 	if (par->lcd_table != 0) {
+ 		/* LCD registers */
+ 		base = 0x00;
+-		printk("debug atyfb: LCD register values:");
++		printk(KERN_DEBUG "debug atyfb: LCD register values:");
+ 		if(M64_HAS(LT_LCD_REGS)) {
+ 		    for(i = 0; i <= POWER_MANAGEMENT; i++) {
+ 			if(i == EXT_VERT_STRETCH)
+ 			    continue;
+-			printk("\ndebug atyfb: 0x%04X: ", lt_lcd_regs[i]);
++			printk("\n");
++			printk(KERN_DEBUG "debug atyfb: 0x%04X: ", lt_lcd_regs[i]);
+ 			printk(" %08X", aty_ld_lcd(i, par));
+ 		    }
  
--static inline void nicedelay(unsigned long usecs)
--{
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(HZ);
--	return;
--}
--
- /* Card Wait For Busy Clear (cannot be used during an interrupt) */
- static inline int
- card_wait_for_busy_clear(const int ioaddr[], const char* name)
-@@ -475,7 +467,7 @@ sb1000_reset(const int ioaddr[], const c
- 	udelay(1000);
- 	outb(0x0, port);
- 	inb(port);
--	nicedelay(60000);
-+	ssleep(1);
- 	outb(0x4, port);
- 	inb(port);
- 	udelay(1000);
-@@ -537,7 +529,7 @@ sb1000_activate(const int ioaddr[], cons
- 	const unsigned char Command0[6] = {0x80, 0x11, 0x00, 0x00, 0x00, 0x00};
- 	const unsigned char Command1[6] = {0x80, 0x16, 0x00, 0x00, 0x00, 0x00};
- 
--	nicedelay(50000);
-+	ssleep(1);
- 	if ((status = card_send_command(ioaddr, name, Command0, st)))
- 		return status;
- 	if ((status = card_send_command(ioaddr, name, Command1, st)))
-@@ -944,7 +936,7 @@ sb1000_open(struct net_device *dev)
- 	/* initialize sb1000 */
- 	if ((status = sb1000_reset(ioaddr, name)))
- 		return status;
--	nicedelay(200000);
-+	ssleep(1);
- 	if ((status = sb1000_check_CRC(ioaddr, name)))
- 		return status;
- 
+ 		} else {
+ 		    for (i = 0; i < 64; i++) {
+-			if(i%4 == 0) printk("\ndebug atyfb: 0x%02X: ", base + i);
++			if(i%4 == 0) {
++				printk("\n");
++				printk(KERN_DEBUG "debug atyfb: 0x%02X: ", base + i);
++			}
+ 			printk(" %08X", aty_ld_lcd(i, par));
+ 		    }
+ 		}
+-		printk("\n\n");
++		printk("\n");
+ 	}
+ #endif /* CONFIG_FB_ATY_GENERIC_LCD */
+ }
+@@ -1555,7 +1567,7 @@
+ 		spin_lock_irq(&par->int_lock);
+ 		int_cntl = aty_ld_le32(CRTC_INT_CNTL, par) & CRTC_INT_EN_MASK;
+ 		if (!(int_cntl & CRTC_VBLANK_INT_EN)) {
+-			printk("atyfb: someone disabled IRQ [%08x]\n", int_cntl);
++			printk(KERN_NOTICE "atyfb: someone disabled IRQ [%08x]\n", int_cntl);
+ 			/* re-enable interrupt */
+ 			aty_st_le32(CRTC_INT_CNTL, int_cntl | CRTC_VBLANK_INT_EN, par );
+ 		}
+@@ -2410,14 +2422,14 @@
+ #if defined(DEBUG) && defined(CONFIG_ATY_CT)
+ 	if (M64_HAS(INTEGRATED)) {
+ 		int i;
+-		printk("debug atyfb: BUS_CNTL DAC_CNTL MEM_CNTL EXT_MEM_CNTL CRTC_GEN_CNTL "
+-		       "DSP_CONFIG DSP_ON_OFF CLOCK_CNTL\n"
+-		       "debug atyfb: %08x %08x %08x %08x     %08x      %08x   %08x   %08x\n"
+-		       "debug atyfb: PLL",
++		pr_debug("debug atyfb: BUS_CNTL DAC_CNTL MEM_CNTL EXT_MEM_CNTL CRTC_GEN_CNTL "
++			"DSP_CONFIG DSP_ON_OFF CLOCK_CNTL\n");
++		pr_debug("debug atyfb: %08x %08x %08x %08x     %08x      %08x   %08x   %08x\n",
+ 			aty_ld_le32(BUS_CNTL, par), aty_ld_le32(DAC_CNTL, par),
+ 			aty_ld_le32(MEM_CNTL, par), aty_ld_le32(EXT_MEM_CNTL, par),
+ 			aty_ld_le32(CRTC_GEN_CNTL, par), aty_ld_le32(DSP_CONFIG, par),
+ 			aty_ld_le32(DSP_ON_OFF, par), aty_ld_le32(CLOCK_CNTL, par));
++		pr_debug("debug atyfb: PLL");
+ 		for (i = 0; i < 40; i++)
+ 			printk(" %02x", aty_ld_pll_ct(i, par));
+ 		printk("\n");
 
---===============70216721522393577==
+--===============37674088397532302==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -103,4 +125,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70216721522393577==--
+--===============37674088397532302==--
