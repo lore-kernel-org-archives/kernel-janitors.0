@@ -1,47 +1,49 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 18:04:18 +0000
-Subject: [Kernel-janitors] [PATCH] radio/radio-aimslab: replace
-Message-Id: <20040726180418.GZ1897@us.ibm.com>
+From: "chas williams (contractor)" <chas@cmf.nrl.navy.mil>
+Date: Thu, 22 Jul 2004 12:36:07 +0000
+Subject: [Kernel-janitors] Re: [PATCH] he: replace schedule_timeout() with
+Message-Id: <200407221236.i6MCa7w9016397@ginger.cmf.nrl.navy.mil>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============76090865132137031=="
+Content-Type: multipart/mixed; boundary="===============62697998381038023=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============76090865132137031==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============62697998381038023==
 
-I would appreciate any comments from the janitors list.
+its never been critical that the he sleeps the exact time indicated
+but using msleep() doesnt bother me either.
 
-Thanks,
-Nish
+In message <20040719211559.GA5209@us.ibm.com>,Nishanth Aravamudan writes:
+>I would appreciate any comments from the janitors list. If this is ok, I
+>have many more with similar fixes.
+>
+>Thanks,
+>Nish
+>
+>
+>
+>Applys-to: 2.6.7
+>
+>Description: Uses msleep() instead of schedule_timeout() to guarantee
+>the task delays at least the desired time amount.
+>
+>Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+>
+>--- linux-vanilla/drivers/atm/he.c	2004-06-16 05:18:59.000000000 +0000
+>+++ linux-dev/drivers/atm/he.c	2004-07-02 17:19:27.000000000 +0000
+>@@ -2595,8 +2595,7 @@ he_close(struct atm_vcc *vcc)
+> 
+> 		while (((tx_inuse = atomic_read(&vcc->sk->sk_wmem_alloc)) > 0) 
+>&&
+> 		       (retry < MAX_RETRY)) {
+>-			set_current_state(TASK_UNINTERRUPTIBLE);
+>-			(void) schedule_timeout(sleep);
+>+			msleep(jiffies_to_msecs(sleep));
+> 			if (sleep < HZ)
+> 				sleep = sleep * 2;
+> 
+>
 
-Applys-to: 2.6.7
-
-Description: Uses msleep() instead of a while-loop and schedule(). Thus
-the CPU is given up for the time desired.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/media/radio/radio-aimslab.c	2004-06-16 05:19:02.000000000 +0000
-+++ linux-dev/drivers/media/radio/radio-aimslab.c	2004-07-02 21:41:46.000000000 +0000
-@@ -63,12 +63,7 @@ static void sleep_delay(long n)
- 	if(!d)
- 		udelay(n);
- 	else
--	{
--		/* Yield CPU time */
--		unsigned long x=jiffies;
--		while((jiffies-x)<=d)
--			schedule();
--	}
-+		msleep(jiffies_to_msecs(d));
- }
- 
- static void rt_decvol(void)
-
---===============76090865132137031==
+--===============62697998381038023==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============76090865132137031==--
+--===============62697998381038023==--
