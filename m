@@ -1,242 +1,143 @@
-From: "Dexter Rivera" <fhbephyu@rrze.uni-erlangen.de>
-Date: Tue, 01 Jun 2004 03:52:21 +0000
-Subject: short term otc explosion
-Message-Id: <58421B666A86.FA063@66.190.254.20>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--4DE9429E8ED3B3AAD15"
+From: Allyn Zarlengo <pimlw@ernest.net>
+Date: Fri, 04 Jun 2004 09:48:34 +0000
+Subject: Strap In For TCPD.OB, On The Move Thursday kmdrcg
+Message-Id: <E1BWBH5-0005r3-Eo@sc8-sf-mx2.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----4DE9429E8ED3B3AAD15
-Content-Type: text/plain;
-	charset="iso-32CB-1"
-Content-Transfer-Encoding: quoted-printable
+,.,saguaro
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>Untitled Document</title>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859=
--1">
-</head>
-
-<body>
-<font size=3D"5"><strong>Stock Buyer's Alert! </strong></font> 
-<p>ERHC and ExxonMobil exercise priority rights on highly sought after oil=
- blocks 
-  in <br>
-  Nigeria and Sao Tome's Joint Development Zone (JDZ) in the Gulf of Guine=
-a.</p>
-<p>Every major newswire service worldwide has carried hundreds of articles=
- revealing 
-  that <br>
-  the offshore oil blocks in this region contain 10 to 15 Billion Barrels =
-of Oil. 
-  The JDZ <br>
-  line-up tipped to take over upcoming blocks includes ExxonMobil, ERHC, <=
-br>
-  ChevronTexaco, AmeradaHess, and Anadarko.</p>
-<p>License approval for the region's Exclusive Economic Zone (EEZ) is a mu=
-ltilateral 
-  deal <br>
-  securing blocks jointly involving ExxonMobil, ERHC, and ChevronTexaco.</=
-p>
-<p>ERHC has jumped from a .25 cent stock earlier in the year to a .50 cent=
- stock 
-  that is <br>
-  headed for over $2 or a possible buyout from one of their JDZ multinatio=
-nal 
-  players.</p>
-<p>ERHC has been at the negotiating tables with the super-major oil compan=
-ies. 
-  It is <br>
-  impossible to measure the power that is carried where a stock at this pr=
-ice 
-  level is a <br>
-  vital part of a key union of oil giants! The top-level executives of the=
- JDZ 
-  oil majors <br>
-  have been finalizing the percentage awards with ERHC for official announ=
-cement 
-  of the <br>
-  landmark-licensing round in the first 2 weeks of June.</p>
-<p>The US Government is pushing for increasing development of the area to =
-minimize 
-  <br>
-  Middle East dependence. The eyes of the world are watching with record p=
-rices 
-  at the <br>
-  pump and oil busting through $40 per barrel.</p>
-<p>The oil companies will always make their $Billions - investors can cash=
- in 
-  by <br>
-  accumulating a substantial position just before earth-shattering news is=
- released 
-  that <br>
-  will send shockwaves through ERHC.</p>
-<p>Required Disclosure: Stock Buyer's Alert (SBA) cautions that small and =
-micro-cap 
-  <br>
-  stocks are high risk investments and that some or all investment dollars=
- can 
-  be lost. We <br>
-  suggest you consult a professional investment advisor before purchasing =
-any 
-  stock. All <br>
-  opinions expressed on the featured company are the opinion of SBA. SBA r=
-ecommends 
-  <br>
-  that you use the information found here as an initial starting point for=
- conducting 
-  your <br>
-  own due diligence on the featured company in order to determine your own=
- personal 
-  <br>
-  opinion of the company before investing. SBA is not an investment adviso=
-r, financial 
-  <br>
-  planning service, or a stock brokerage firm and in accordance with such =
-is not 
-  offering <br>
-  investment advice or promoting any investment strategies. SBA is not off=
-ering 
-  securities <br>
-  for sale or solicitation of any offer to buy or sell securities. SBA has=
- received 
-  ten <br>
-  thousand dollars from a third party for the dissemination of this compan=
-y profile. 
-  Since <br>
-  we have received compensation there is an inherent conflict of interesti=
-ng our 
-  statements <br>
-  and opinions. Readers of this publication are cautioned not to place und=
-ue reliance 
-  on <br>
-  forward-looking statements, which are based on certain assumptions and e=
-xpectations 
-  <br>
-  involving various risks and uncertainties, that could cause results to d=
-iffer 
-  materially <br>
-  from those set forth in the forward-looking statements. <br>
-</p>
-<p>Stock Buyer's Alert!</p>
-<p>ERHC and ExxonMobil exercise priority rights on highly sought after oil=
- blocks 
-  in <br>
-  Nigeria and Sao Tome's Joint Development Zone (JDZ) in the Gulf of Guine=
-a.</p>
-<p>Every major newswire service worldwide has carried hundreds of articles=
- revealing 
-  that <br>
-  the offshore oil blocks in this region contain 10 to 15 Billion Barrels =
-of Oil. 
-  The JDZ <br>
-  line-up tipped to take over upcoming blocks includes ExxonMobil, ERHC, <=
-br>
-  ChevronTexaco, AmeradaHess, and Anadarko.</p>
-<p>License approval for the region's Exclusive Economic Zone (EEZ) is a mu=
-ltilateral 
-  deal <br>
-  securing blocks jointly involving ExxonMobil, ERHC, and ChevronTexaco.</=
-p>
-<p>ERHC has jumped from a .25 cent stock earlier in the year to a .50 cent=
- stock 
-  that is <br>
-  headed for over $2 or a possible buyout from one of their JDZ multinatio=
-nal 
-  players.</p>
-<p>ERHC has been at the negotiating tables with the super-major oil compan=
-ies. 
-  It is <br>
-  impossible to measure the power that is carried where a stock at this pr=
-ice 
-  level is a <br>
-  vital part of a key union of oil giants! The top-level executives of the=
- JDZ 
-  oil majors <br>
-  have been finalizing the percentage awards with ERHC for official announ=
-cement 
-  of the <br>
-  landmark-licensing round in the first 2 weeks of June.</p>
-<p>The US Government is pushing for increasing development of the area to =
-minimize 
-  <br>
-  Middle East dependence. The eyes of the world are watching with record p=
-rices 
-  at the <br>
-  pump and oil busting through $40 per barrel.</p>
-<p>The oil companies will always make their $Billions - investors can cash=
- in 
-  by <br>
-  accumulating a substantial position just before earth-shattering news is=
- released 
-  that <br>
-  will send shockwaves through ERHC.</p>
-<p>Required Disclosure: Stock Buyer's Alert (SBA) cautions that small and =
-micro-cap 
-  <br>
-  stocks are high risk investments and that some or all investment dollars=
- can 
-  be lost. We <br>
-  suggest you consult a professional investment advisor before purchasing =
-any 
-  stock. All <br>
-  opinions expressed on the featured company are the opinion of SBA. SBA r=
-ecommends 
-  <br>
-  that you use the information found here as an initial starting point for=
- conducting 
-  your <br>
-  own due diligence on the featured company in order to determine your own=
- personal 
-  <br>
-  opinion of the company before investing. SBA is not an investment adviso=
-r, financial 
-  <br>
-  planning service, or a stock brokerage firm and in accordance with such =
-is not 
-  offering <br>
-  investment advice or promoting any investment strategies. SBA is not off=
-ering 
-  securities <br>
-  for sale or solicitation of any offer to buy or sell securities. SBA has=
- received 
-  ten <br>
-  thousand dollars from a third party for the dissemination of this compan=
-y profile. 
-  Since <br>
-  we have received compensation there is an inherent conflict of interesti=
-ng our 
-  statements <br>
-  and opinions. Readers of this publication are cautioned not to place und=
-ue reliance 
-  on <br>
-  forward-looking statements, which are based on certain assumptions and e=
-xpectations 
-  <br>
-  involving various risks and uncertainties, that could cause results to d=
-iffer 
-  materially <br>
-  from those set forth in the forward-looking statements.</p>
-<p>To be removed from the database please follow this link, <br>
-  http://notinuse.biz/takeoff/takeoff.html<br>
-  <br>
-</p>
-<p>&nbsp; </p>
-</body>
-</html>
+consolidate bugaboo
 
 
-----4DE9429E8ED3B3AAD15--
+  Great Announcement from TCPD, Strong Buy Thursday!
+
+Read the news below - We believe this exciting news in
+addition to the big PR campaign in the next 5 days will
+make TCPD move up and up and up also a fax campaign is
+starting Friday evening so get it first thing Thursday
+when the market opens.
+
+             Expect Huge Coverage
+
+TCPD will be profiled from over 26 newsletters
+
+___________TCPD is our new profile_______________
+
++>+>+> Company Profile
+
+Telecommunication Products, Inc.
+Symbol: BB: TCPD
+Current Price: $0.035
+Detailed Information:
+http://moneycentral.msn.com/scripts/webquote.dll?ipage=qd&Symbol=TCPD
+
+The price could go to $0.16 - 0.20 in the next 3-5 days
+The price could go to $0.21 - 0.25 in the next 10  days
+
+Read the exciting news below
+
+And do NOT forget that we will cover the stock for over
+1 week in this and other newsletters = huge exposure
+
+Telecommunication Products, Inc. ("Telpro") is a provider
+of video-on- demand and pay-per-view services to the
+hospitality industry. The Company is also currently
+marketing high speed Internet access products, including
+high end WiFi. Telpro is committed to delivering the next
+generation of interactive communication services to
+its growing database of clients.
+
+The Farmer's Daughter Hotel is a 65-room boutique hotel
+in Los Angeles, CA that completed a multi-million dollar
+renovation in 2003. The hotel infuses country styling with
+the modern to create an Urban-yet-Country feel. The hotel
+provides a laid back, distinctly California feel while
+providing today's travelers with digital in room services
+and modern amenities at a reasonable price.
+
+      * NEWS RELEASE  * 
+
+HOLLYWOOD Fla., May 25, 2004 /PRNewswire-FirstCall via
+COMTEX/ -- Telecommunication Products, Inc. (TCPD) ("Telpro"),
+a provider of Pay per View and Digital Satellite Services
+to the hospitality industry, announced today a contract with
+the high profile, Los Angeles landmark, Farmer's Daughter
+Hotel, in conjunction with its strategic partner B2 Networks. 
+
+                     GET IT IMMEDIATELY!
+
+
+
++>+>+> DISCLAIMER 
+
+Information within this email contains "forward looking statements"
+within the meaning of Section 27A of the Securities Act of 1933 and
+Section 21B of the Securities Exchange Act of 1934. Any statements
+that express or involve discussions with respect to predictions, goals,
+expectations, beliefs, plans, projections, objectives, assumptions or
+future events or performance are not statements of historical fact
+and may be "forward looking statements."
+ 
+Forward looking statements are based on expectations, estimates and
+projections at the time the statements are made that involve a number
+of risks and uncertainties which could cause actual results or events
+to differ materially from those presently anticipated. Forward looking
+statements in this action may be identified through the use of words
+such as: "in our opinion","projects", "foresee", "expects", "estimates,"
+"believes," "understands" "will," "part of: "anticipates," or that by
+statements indicating certain actions "may," "could," or "might" occur.
+All information provided within this email pertaining to investing,
+stocks, securities must be understood as information provided and not
+investment advice. we advise all readers and subscribers to seek advice
+from a registered professional securities representative before deciding
+to trade in stocks featured within this email. None of the material
+within this report shall be construed as any kind of investment advice.
+Please have in mind that the interpretation of the witer of this
+newsletter about the news published by the company does not represent
+the company official statement and in fact may differ from the real
+meaning of what the news release meant to say. Please read the news
+release by yourself and judge by yourself about the details in it.
+
+In compliance with Section 17(b), we disclose the holding of TCPD shares
+prior to the publication of this report. Be aware of an inherent conflict
+of interest resulting from such holdings due to our intent to profit
+from the liquidation of these shares. Shares may be sold at any time,
+even after positive statements have been made regarding the above company.
+Since we own shares, there is an inherent conflict of interest in our
+statements and opinions. Readers of this publication are cautioned not
+to place undue reliance on forward-looking statements, which are based
+on certain assumptions and expectations involving various risks and
+uncertainties, that could cause results to differ materially from those
+set forth in the forward- looking statements.
+
+Please be advised that nothing within this email shall constitute a
+solicitation or an offer to buy or sell any security mentioned herein.
+This newsletter is neither a registered investment advisor nor affiliated
+with any broker or dealer. All statements made are our express opinion
+only and should be treated as such. We may own, buy and sell any securities
+mentioned at any time. This report includes forward-looking statements
+within the meaning of The Private Securities Litigation Reform Act of
+1995. These statements may include terms as "expect", "believe", "may",
+"will", "move","undervalued" and "intend" or similar terms. This
+newsletter was paid $12500 from third party to send this report. PLEASE
+DO YOUR OWN DUE DILIGENCE BEFORE INVESTING IN ANY PROFILED COMPANY.
+You may lose money from investing in Penny Stocks.
+
+southeast decalogue shareholder deplane
+
+sputnik couscous allah radiant
+
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by: Oracle 10g
-Get certified on the hottest thing ever to hit the market... Oracle 10g. 
-Take an Oracle 10g class now, and we'll give you the exam FREE.
-http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
+This SF.Net email is sponsored by the new InstallShield X.
+From Windows to Linux, servers to mobile, InstallShield X is the one
+installation-authoring solution that does it all. Learn more and
+evaluate today! http://www.installshield.com/Dev2Dev/0504
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
