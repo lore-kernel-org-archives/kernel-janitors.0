@@ -1,80 +1,44 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 20 Jan 2005 23:56:34 +0000
-Subject: [KJ] [PATCH 20/39] net/ip_vs_sync: replace schedule_timeout() with
-Message-Id: <20050120235634.GI2600@us.ibm.com>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Fri, 21 Jan 2005 00:32:14 +0000
+Subject: [KJ] Re: [PATCH 18/39] net/core: use wait_event_timeout()
+Message-Id: <1106267534.7955.36.camel@pegasus>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============75860382216453193=="
+Content-Type: multipart/mixed; boundary="===============71748241342263475=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@redhat.com, yoshfuji@linux-ipv6.org, kaber@coreworks.de
-Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
+References: <20050120235123.GG2600@us.ibm.com>
+In-Reply-To: <20050120235123.GG2600@us.ibm.com>
+To: Nishanth Aravamudan <nacc@us.ibm.com>
+Cc: Max Krasnyansky <maxk@qualcomm.com>, bluez-devel@lists.sf.net, kernel-janitors@lists.osdl.org
 
---===============75860382216453193==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============71748241342263475==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Nishanth,
 
-Please consider applying.
+> Description: Use wait_event_timeout() instead of custom wait-queue code.
+> The current code uses TASK_INTERRUPTIBLE but only cares about timing out and the
+> wq event taking place (does not actively do anything in response to signals), so
+> wait_event_timeout() should be ok.
 
-Description: Use ssleep() instead of schedule_timeout() to guarantee the task
-delays as expected. The first two replacements use TASK_INTERRUPTIBLE but do not
-check for signals, so ssleep() should be appropriate.
+this one results in:
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+  CC [M]  net/bluetooth/hidp/core.o
+net/bluetooth/hidp/core.c: In function `hidp_session':
+net/bluetooth/hidp/core.c:547: warning: passing arg 1 of `prepare_to_wait' from incompatible pointer type
+net/bluetooth/hidp/core.c:547: warning: passing arg 1 of `finish_wait' from incompatible pointer type
+net/bluetooth/hidp/core.c:551: warning: passing arg 1 of `prepare_to_wait' from incompatible pointer type
+net/bluetooth/hidp/core.c:551: warning: passing arg 1 of `finish_wait' from incompatible pointer type
 
---- 2.6.11-rc1-kj-v/net/ipv4/ipvs/ip_vs_sync.c	2005-01-15 16:55:44.000000000 -0800
-+++ 2.6.11-rc1-kj/net/ipv4/ipvs/ip_vs_sync.c	2005-01-18 13:03:21.000000000 -0800
-@@ -23,7 +23,7 @@
- #include <linux/slab.h>
- #include <linux/net.h>
- #include <linux/completion.h>
--
-+#include <linux/delay.h>
- #include <linux/skbuff.h>
- #include <linux/in.h>
- #include <linux/igmp.h>                 /* for ip_mc_join_group */
-@@ -647,8 +647,7 @@ static void sync_master_loop(void)
- 		if (stop_master_sync)
- 			break;
- 
--		__set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ);
-+		ssleep(1);
- 	}
- 
- 	/* clean up the sync_buff queue */
-@@ -705,8 +704,7 @@ static void sync_backup_loop(void)
- 		if (stop_backup_sync)
- 			break;
- 
--		__set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ);
-+		ssleep(1);
- 	}
- 
- 	/* release the sending multicast socket */
-@@ -818,8 +816,7 @@ static int fork_sync_thread(void *startu
- 	if ((pid = kernel_thread(sync_thread, startup, 0)) < 0) {
- 		IP_VS_ERR("could not create sync_thread due to %d... "
- 			  "retrying.\n", pid);
--		current->state = TASK_UNINTERRUPTIBLE;
--		schedule_timeout(HZ);
-+		ssleep(1);
- 		goto repeat;
- 	}
- 
-@@ -853,8 +850,7 @@ int start_sync_thread(int state, char *m
- 	if ((pid = kernel_thread(fork_sync_thread, &startup, 0)) < 0) {
- 		IP_VS_ERR("could not create fork_sync_thread due to %d... "
- 			  "retrying.\n", pid);
--		current->state = TASK_UNINTERRUPTIBLE;
--		schedule_timeout(HZ);
-+		ssleep(1);
- 		goto repeat;
- 	}
- 
+Please fix this and re-submit.
 
---===============75860382216453193==
+Regards
+
+Marcel
+
+
+
+--===============71748241342263475==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -85,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============75860382216453193==--
+--===============71748241342263475==--
