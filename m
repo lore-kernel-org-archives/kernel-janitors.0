@@ -1,54 +1,43 @@
-From: Ron Gage <ron@rongage.org>
-Date: Fri, 13 Feb 2004 13:31:56 +0000
-Subject: [Kernel-janitors] [PATCH] - 2.6.2 - percpu.h - compiler cleanup
-Message-Id: <200402130831.56361.ron@rongage.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_MHNLA8mvE7xvKGB"
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Mon, 16 Feb 2004 21:28:09 +0000
+Subject: Re: [Kernel-janitors] net/ipv4/fib_hash.c: check
+Message-Id: <20040216132809.0606909c.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Sun, 25 Jan 2004 15:08:22 +0100 <WHarms@bfs.de>(Walter Harms) wrote:
 
---Boundary-00=_MHNLA8mvE7xvKGB
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+| 
+| 
+| --- net/ipv4/fib_hash.c.org     2004-01-24 12:42:41.662419720 +0100
+| +++ net/ipv4/fib_hash.c 2004-01-24 12:44:19.357567800 +0100
+| @@ -876,6 +876,8 @@
+|                                                  sizeof(struct fib_node),
+|                                                  0, SLAB_HWCACHE_ALIGN,
+|                                                  NULL, NULL);
+| +       if(!fn_hash_kmem)
+| +               return NULL;
+|  
+|         tb = kmalloc(sizeof(struct fib_table) + sizeof(struct fn_hash), GFP_KERNEL);
+|         if (tb = NULL)
+| _______________________________________________
 
-This patch eliminates "parameter defined but not used" warnings.
+1.  Walter, have you fixed your editor so that it doesn't convert
+tabs to spaces?
 
--- 
-Ron Gage - LPIC1, MCP, A+, Net+
-Pontiac, Michigan
+2.  Please make patches so that they apply with "patch -p1"
+when inside the kernel source top-level directory.
 
+3.  In the function above, if (tb = NULL) and it returns NULL,
+does fn_hash_kmem need to be freed also?  I think so...
 
---Boundary-00=_MHNLA8mvE7xvKGB
-Content-Type: text/x-diff;
-  charset="us-ascii";
-  name="percpu.h.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="percpu.h.diff"
-
---- linux-2.6.2.orig/include/linux/percpu.h	2004-02-03 22:44:37.000000000 -0500
-+++ linux-2.6.2/include/linux/percpu.h	2004-02-13 08:01:32.000000000 -0500
-@@ -44,6 +44,7 @@
- static inline void *__alloc_percpu(size_t size, size_t align)
- {
- 	void *ret = kmalloc(size, GFP_KERNEL);
-+	align = align;
- 	if (ret)
- 		memset(ret, 0, size);
- 	return ret;
-
---Boundary-00=_MHNLA8mvE7xvKGB
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+--
+~Randy
+kernel-janitors project:  http://janitor.kernelnewbies.org/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---Boundary-00=_MHNLA8mvE7xvKGB--
