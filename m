@@ -1,44 +1,40 @@
-From: Stelian Pop <stelian@popies.net>
-Date: Wed, 16 Mar 2005 16:49:06 +0000
-Subject: [KJ] Re: [PATCH] drivers/media/video/meye.c: Use the DMA_32BIT_MASK
-Message-Id: <20050316164906.GB3411@crusoe.alcove-fr>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Tue, 08 Mar 2005 15:11:29 +0000
+Subject: [KJ] [PATCH 1/3] drivers/block/cciss.c: Use the DMA_{64,
+Message-Id: <20050308151129.GG5311@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10454574992685473=="
+Content-Type: multipart/mixed; boundary="===============88430827866135786=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============10454574992685473==
+--===============88430827866135786==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Mar 14, 2005 at 08:54:30PM +0100, Tobias Klauser wrote:
+Hello,
 
-> Hello,
-> 
-> Description: Use the DMA_32BIT_MASK constant from dma-mapping.h
-> when calling dma_set_mask().
-> 
-> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-> 
-> --- linux-2.6.11.orig/drivers/media/video/meye.c	2005-03-02 12:50:30.000000000 +0100
-> +++ linux-2.6.11/drivers/media/video/meye.c	2005-03-10 18:20:05.000000000 +0100
-> @@ -121,7 +121,7 @@ static int ptable_alloc(void)
->  	memset(meye.mchip_ptable, 0, sizeof(meye.mchip_ptable));
->  
->  	/* give only 32 bit DMA addresses */
-> -	if (dma_set_mask(&meye.mchip_dev->dev, 0xffffffff))
-> +	if (dma_set_mask(&meye.mchip_dev->dev, DMA_32BIT_MASK))
->  		return -1;
->  
->  	meye.mchip_ptable_toc = dma_alloc_coherent(&meye.mchip_dev->dev,
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Thanks, applied to my tree. I will push it upstream later.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Stelian.
--- 
-Stelian Pop <stelian@popies.net>
+--- linux-2.6.11.orig/drivers/block/cciss.c	2005-03-02 12:50:39.000000000 +0100
++++ linux-2.6.11/drivers/block/cciss.c	2005-03-02 13:03:53.000000000 +0100
+@@ -2692,9 +2692,9 @@ static int __devinit cciss_init_one(stru
+ 	hba[i]->pdev = pdev;
+ 
+ 	/* configure PCI DMA stuff */
+-	if (!pci_set_dma_mask(pdev, 0xffffffffffffffffULL))
++	if (!pci_set_dma_mask(pdev, DMA_64BIT_MASK))
+ 		printk("cciss: using DAC cycles\n");
+-	else if (!pci_set_dma_mask(pdev, 0xffffffff))
++	else if (!pci_set_dma_mask(pdev, DMA_32BIT_MASK))
+ 		printk("cciss: not using DAC cycles\n");
+ 	else {
+ 		printk("cciss: no suitable DMA available\n");
 
---===============10454574992685473==
+--===============88430827866135786==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10454574992685473==--
+--===============88430827866135786==--
