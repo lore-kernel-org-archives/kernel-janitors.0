@@ -1,32 +1,43 @@
-From: Chuck Short <zulcss@gmail.com>
-Date: Mon, 28 Mar 2005 21:16:20 +0000
-Subject: [KJ] [Patch 2/3] Adds module version to 3c503.
-Message-Id: <27c823430503281316e97de34@mail.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sat, 05 Mar 2005 00:09:20 +0000
+Subject: [KJ] Re: [RFC][PATCH 2/5] char/tpqic02: use poll_event*() interface
+Message-Id: <20050305000920.GB4552@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============52399267144531381=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description: This patch adds MODULE_VERSION to 3c503.
+--===============52399267144531381==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Chuck Short <zulcss@gmail.com>
+On Thu, Mar 03, 2005 at 10:25:41AM -0800, Nishanth Aravamudan wrote:
+> Hi,
+> 
+> Description: Use new poll_event*() interface to encapsulate sleep-loops.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.11-kj-v/drivers/char/tpqic02.c	2005-03-01 23:38:09.000000000 -0800
+> +++ 2.6.11-kj/drivers/char/tpqic02.c	2005-03-03 10:23:59.000000000 -0800
 
-diff -Naur linux-2.6.12-rc1.orig/drivers/net/3c503.c
-linux-2.6.12-rc1/drivers/net/3c503.c
---- linux-2.6.12-rc1.orig/drivers/net/3c503.c   2005-03-27
-09:44:51.000000000 -0500
-+++ linux-2.6.12-rc1/drivers/net/3c503.c        2005-03-27
-13:06:27.000000000 -0500
-@@ -693,6 +693,7 @@
- MODULE_PARM_DESC(irq, "IRQ number(s) (assigned)");
- MODULE_PARM_DESC(xcvr, "transceiver(s) (0=internal, 1=external)");
- MODULE_DESCRIPTION("3Com ISA EtherLink II, II/16 (3c503, 3c503/16) driver");
-+MODULE_VERSION(DRV_VERSION);
- MODULE_LICENSE("GPL");
+Ignore this patch for now, as I think it might just be easier to
+refactor all of this code into milliseconds. I'm working on a patch to
+do this (still uses poll_select*(), but is obviously more complicated)
+and will send it on to KJ soon, I hope.
 
- /* This is set up so that only a single autoprobe takes place per call.
+Thanks,
+Nish
+
+--===============52399267144531381==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============52399267144531381==--
