@@ -1,45 +1,45 @@
 From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 14:20:27 +0000
-Subject: [KJ] [PATCH] drivers/macintoshisdn/*: convert to pci_register_driver
-Message-Id: <20050208142027.GO31996@rhum.iomeda.fr>
+Date: Wed, 02 Feb 2005 08:17:27 +0000
+Subject: [KJ] [PATCH] pci_register_driver() for
+Message-Id: <20050202081727.GA24725@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="i0LFOk513GRb+T2w"
+Content-Type: multipart/mixed; boundary="dDRMvlgZJXvWKvBx"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---i0LFOk513GRb+T2w
+--dDRMvlgZJXvWKvBx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
 Description:
-convert from pci_module_init to pci_register_driver
+>>From : http://kerneljanitors.org/TODO
+>-  convert from pci_module_init to pci_register_driver
 
 Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 -- 
 Christophe
 
---i0LFOk513GRb+T2w
+--dDRMvlgZJXvWKvBx
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_macintosh.patch"
+Content-Disposition: attachment; filename="pci_drivers_media_dvb_bt8xx.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/macintosh/macio_asic.c linux-2.6.11-rc3/drivers/macintosh/macio_asic.c
---- linux-2.6.11-rc3-vanilla/drivers/macintosh/macio_asic.c	2004-12-24 22:34:31.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/macintosh/macio_asic.c	2005-02-07 09:39:27.000000000 +0100
-@@ -617,7 +617,7 @@ static int __init macio_module_init (voi
- #ifdef CONFIG_PCI
- 	int rc;
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/dvb/bt8xx/bt878.c linux-2.6.11-rc2/drivers/media/dvb/bt8xx/bt878.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/dvb/bt8xx/bt878.c	2005-01-24 17:07:56.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/dvb/bt8xx/bt878.c	2005-01-26 10:01:11.000000000 +0100
+@@ -578,7 +578,7 @@ static int bt878_init_module(void)
+ 	/* later we register inside of bt878_find_audio_dma()
+ 	 * because we may want to ignore certain cards */
+ 	bt878_pci_driver_registered = 1;
+-	return pci_module_init(&bt878_pci_driver);
++	return pci_register_driver(&bt878_pci_driver);
+ }
  
--	rc = pci_module_init(&macio_pci_driver);
-+	rc = pci_register_driver(&macio_pci_driver);
- 	if (rc)
- 		return rc;
- #endif /* CONFIG_PCI */
+ static void bt878_cleanup_module(void)
 
---i0LFOk513GRb+T2w
+--dDRMvlgZJXvWKvBx
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---i0LFOk513GRb+T2w--
+--dDRMvlgZJXvWKvBx--
