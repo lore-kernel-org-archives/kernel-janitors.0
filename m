@@ -1,36 +1,45 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 23:11:02 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 2/3] video/radeonfb: remove
-Message-Id: <20040927231102.GU1617@us.ibm.com>
+Date: Mon, 20 Sep 2004 22:12:17 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/4] message/device: replace
+Message-Id: <20040920221217.GZ2270@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2227800115762984=="
+Content-Type: multipart/mixed; boundary="===============30863424777404846=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040916234448.GH1777@us.ibm.com>
-In-Reply-To: <20040916234448.GH1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============2227800115762984==
+--===============30863424777404846==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Remove custom macro MS_TO_HZ(). Will be replaced in *.c
-files with msecs_to_jiffies().
+Description: Use ssleep() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
---- 2.6.9-rc2-vanilla/drivers/video/aty/radeonfb.h	2004-09-13 17:15:37.000000000 -0700
-+++ 2.6.9-rc2/drivers/video/aty/radeonfb.h	2004-09-14 14:14:09.000000000 -0700
-@@ -425,8 +425,6 @@ static inline u32 _INPLL(struct radeonfb
- 		spin_unlock_irqrestore(&rinfo->reg_lock, flags); 	\
- 	} while (0)
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.9-rc2-vanilla/drivers/message/i2o/device.c	2004-09-13 17:16:08.000000000 -0700
++++ 2.6.9-rc2/drivers/message/i2o/device.c	2004-09-20 15:10:14.000000000 -0700
+@@ -15,6 +15,7 @@
  
--#define MS_TO_HZ(ms)       ((ms * HZ + 999) / 1000)
--
- #define BIOS_IN8(v)  	(readb(rinfo->bios_seg + (v)))
- #define BIOS_IN16(v) 	(readb(rinfo->bios_seg + (v)) | \
- 			  (readb(rinfo->bios_seg + (v) + 1) << 8))
+ #include <linux/module.h>
+ #include <linux/i2o.h>
++#include <linux/delay.h>
+ 
+ /* Exec OSM functions */
+ extern struct bus_type i2o_bus_type;
+@@ -106,8 +107,7 @@ int i2o_device_claim_release(struct i2o_
+ 		if (!rc)
+ 			break;
+ 
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(HZ);
++		ssleep(1);
+ 	}
+ 
+ 	if (!rc)
 
---===============2227800115762984==
+--===============30863424777404846==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2227800115762984==--
+--===============30863424777404846==--
