@@ -1,51 +1,44 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 23:22:58 +0000
-Subject: [Kernel-janitors] [PATCH] message/i2o_core: replace
-Message-Id: <20040726232258.GC1897@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============43968874138113323=="
+From: "Kelly Padilla" <kellypadillazt@cobalt.com.hk>
+Date: Wed, 07 Jul 2004 09:14:07 +0000
+Subject: $33857
+Message-Id: <040401c46402$41f1440a$eae6e032@credit.it>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============43968874138113323==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
+I sent you an email a few days ago, because you now qualify for a new mortgage.
+You could get $300,000 for as little as $700 a month!
+Bad credit is no problem, you can pull cash out or refinance.
 
-I would appreciate any comments from the janitors list.
+Please click on this link:
+http://www.lending-now.com/h7/li.php?n5nq
 
-Thanks,
-Nish
-
-Applys-to: 2.6.7
-
-Description: Uses msleep() instead of schedule_timeout() so the task
-is guaranteed to delay the desired time.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Best Regards,
+Steve Morris
 
 
---- linux-vanilla/drivers/message/i2o/i2o_core.c	2004-06-16 05:19:37.000000000 +0000
-+++ linux-dev/drivers/message/i2o/i2o_core.c	2004-07-02 21:47:38.000000000 +0000
-@@ -889,8 +889,7 @@ int i2o_release_device(struct i2o_device
- 		if((err=i2o_issue_claim(I2O_CMD_UTIL_RELEASE, d->controller, d->lct_data.tid, I2O_CLAIM_PRIMARY)) )
- 		{
- 			err = -ENXIO;
--			current->state = TASK_UNINTERRUPTIBLE;
--			schedule_timeout(HZ);
-+			msleep(1000);
- 		}
- 		else
- 		{
 
---===============43968874138113323==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+No more: http://www.lending-now.com/r1/index.html
 
+---- system information ----
+requester tag latest public-i18n-ws-request@w3org reasonable software Distinguishing
+allows 
+linguistic making specifics Other appropriate designers covered different
+
+cite Activity holidays presents interplay [Definition: interoperability
+Because 
+
+
+
+-------------------------------------------------------
+This SF.Net email sponsored by Black Hat Briefings & Training.
+Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
+digital self defense, top technical experts, no vendor pitches, 
+unmatched networking opportunities. Visit www.blackhat.com
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============43968874138113323==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
