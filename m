@@ -1,35 +1,36 @@
 From: Domen Puncer <domen@coderock.org>
-Date: Tue, 07 Dec 2004 14:05:36 +0000
-Subject: [KJ] [patch] ppc64: semicolon in rtasd.c
-Message-Id: <20041207140536.GA31550@nd47.coderock.org>
+Date: Wed, 08 Dec 2004 16:56:51 +0000
+Subject: [KJ] Re: patches: delete 75 unused files
+Message-Id: <20041208165651.GD31550@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40355002584790967=="
+Content-Type: multipart/mixed; boundary="===============21525594691777394=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============40355002584790967==
+--===============21525594691777394==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi.
+On 08/12/04 08:08 -0800, Greg KH wrote:
+> On Wed, Dec 08, 2004 at 04:54:39PM +0100, Domen Puncer wrote:
+> >  drivers/pci/hotplug/pcihp_skeleton.c
+> 
+> This is a "skeleton" driver, and is in the tree to be used as an example
+> for others who want to write a pci hotplug driver.  It should stay.
+Ok.
 
-Comments and identiation suggest this was wrong.
+> Along those lines, how come you didn't include the usb-skeleton.c file
+> in your list (it too should stay, but it isn't part of the build...)?
+Probably because i first generated a list of "filenames" in kernel
+(not just Makefile, #includes... everything), and "usb-skeleton.c"
+appears in some file.
 
-Signed-off-by: Domen Puncer <domen@coderock.org>
+Yes, that misses some files, but also makes quite sure file isn't used.
 
---- c/arch/ppc64/kernel/rtasd.c	2004-12-02 23:16:09.000000000 +0100
-+++ a/arch/ppc64/kernel/rtasd.c	2004-12-07 14:54:44.000000000 +0100
-@@ -485,7 +485,7 @@ static int __init rtas_init(void)
- 
- 	/* No RTAS, only warn if we are on a pSeries box  */
- 	if (rtas_token("event-scan") == RTAS_UNKNOWN_SERVICE) {
--		if (systemcfg->platform & PLATFORM_PSERIES);
-+		if (systemcfg->platform & PLATFORM_PSERIES)
- 			printk(KERN_ERR "rtasd: no RTAS on system\n");
- 		return 1;
- 	}
 
---===============40355002584790967==
+	Domen
+
+--===============21525594691777394==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40355002584790967==--
+--===============21525594691777394==--
