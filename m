@@ -1,118 +1,32 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 01 Nov 2004 19:48:33 +0000
-Subject: [KJ] [PATCH] net/cycx_drv: replace delay_cycx() with
-Message-Id: <20041101194833.GA3391@us.ibm.com>
+From: Stefan Sperling <stefan@binarchy.net>
+Date: Tue, 09 Nov 2004 21:38:45 +0000
+Subject: [KJ] [PATCH] wavelan wireless driver: use strlcpy instead of memcpy
+Message-Id: <20041109213845.GI9496@dice.seeling33.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81386219151534389=="
+Content-Type: multipart/mixed; boundary="===============099886774825149516=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1CO1w4-0002YG-VR@sputnik> <4184C6A7.7060400@pobox.com>
-In-Reply-To: <4184C6A7.7060400@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, acme@conectiva.com.br
+To: kernel-janitors@vger.kernel.org
 
---===============81386219151534389==
+--===============099886774825149516==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Oct 31, 2004 at 06:04:07AM -0500, Jeff Garzik wrote:
-> janitor@sternwelten.at wrote:
-> >-/* Delay */
-> >-static void delay_cycx(int sec)
-> >-{
-> >-	set_current_state(TASK_INTERRUPTIBLE);
-> >-	schedule_timeout(sec * HZ);
-> >-}
-> 
-> 
-> this _clearly_ wants an ssleep() derivative, not msleep()
 
-Fixed, see patch below.
+In wavelan.c, use strlcpy instead of memcpy to copy the interface name parameter.
 
-Description: Use ssleep_interruptible() instead of delay_cycx()
-to guarantee the task delays as expected. Remove the prototype and
-definition of delay_cycx().
+--- drivers/net/wireless/wavelan.c.orig	2004-11-09 20:40:22.086909592 +0100
++++ drivers/net/wireless/wavelan.c	2004-11-08 20:54:10.000000000 +0100
+@@ -4344,7 +4344,7 @@ int init_module(void)
+ 		struct net_device *dev = alloc_etherdev(sizeof(net_local));
+ 		if (!dev)
+ 			break;
+-		memcpy(dev->name, name[i], IFNAMSIZ);	/* Copy name */
++		strlcpy(dev->name, name[i], IFNAMSIZ);	/* Copy name */
+ 		dev->base_addr = io[i];
+ 		dev->irq = irq[i];
+ 
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-rc1-vanilla/drivers/net/wan/cycx_drv.c	2004-10-30 15:33:28.000000000 -0700
-+++ 2.6.10-rc1/drivers/net/wan/cycx_drv.c	2004-11-01 11:46:08.000000000 -0800
-@@ -74,7 +74,6 @@ static int reset_cyc2x(void __iomem *add
- static int detect_cyc2x(void __iomem *addr);
- 
- /* Miscellaneous functions */
--static void delay_cycx(int sec);
- static int get_option_index(long *optlist, long optval);
- static u16 checksum(u8 *buf, u32 len);
- 
-@@ -259,7 +258,7 @@ static int memory_exists(void __iomem *a
- 			if (readw(addr + 0x10) == TEST_PATTERN)
- 				return 1;
- 
--		delay_cycx(1);
-+		ssleep_interruptible(1);
- 	}
- 
- 	return 0;
-@@ -316,7 +315,7 @@ static void cycx_reset_boot(void __iomem
- 
- 	/* 80186 was in hold, go */
- 	writeb(0, addr + START_CPU);
--	delay_cycx(1);
-+	ssleep_interruptible(1);
- }
- 
- /* Load data.bin file through boot (reset) interface. */
-@@ -462,13 +461,13 @@ static int load_cyc2x(struct cycx_hw *hw
- 		cycx_reset_boot(hw->dpmbase, reset_image, img_hdr->reset_size);
- 		/* reset is waiting for boot */
- 		writew(GEN_POWER_ON, pt_cycld);
--		delay_cycx(1);
-+		ssleep_interruptible(1);
- 
- 		for (j = 0 ; j < 3 ; j++)
- 			if (!readw(pt_cycld))
- 				goto reset_loaded;
- 			else
--				delay_cycx(1);
-+				ssleep_interruptible(1);
- 	}
- 
- 	printk(KERN_ERR "%s: reset not started.\n", modname);
-@@ -495,7 +494,7 @@ reset_loaded:
- 
- 	/* Arthur Ganzert's tip: wait a while after the firmware loading...
- 	   seg abr 26 17:17:12 EST 1999 - acme */
--	delay_cycx(7);
-+	ssleep_interruptible(7);
- 	printk(KERN_INFO "%s: firmware loaded!\n", modname);
- 
- 	/* enable interrupts */
-@@ -547,20 +546,13 @@ static int get_option_index(long *optlis
- static int reset_cyc2x(void __iomem *addr)
- {
- 	writeb(0, addr + RST_ENABLE);
--	delay_cycx(2);
-+	ssleep_interruptible(2);
- 	writeb(0, addr + RST_DISABLE);
--	delay_cycx(2);
-+	ssleep_interruptible(2);
- 
- 	return memory_exists(addr);
- }
- 
--/* Delay */
--static void delay_cycx(int sec)
--{
--	set_current_state(TASK_INTERRUPTIBLE);
--	schedule_timeout(sec * HZ);
--}
--
- /* Calculate 16-bit CRC using CCITT polynomial. */
- static u16 checksum(u8 *buf, u32 len)
- {
-
---===============81386219151534389==
+--===============099886774825149516==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -123,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81386219151534389==--
+--===============099886774825149516==--
