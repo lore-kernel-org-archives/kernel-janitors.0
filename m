@@ -1,45 +1,39 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 16 Sep 2004 23:47:35 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/3] ide/ide-tape: replace
-Message-Id: <20040916234735.GJ1777@us.ibm.com>
+Date: Fri, 17 Sep 2004 18:25:22 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 3/3] macintosh/therm_windtunnel:
+Message-Id: <20040917182522.GT1712@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============040134771363177002=="
+Content-Type: multipart/mixed; boundary="===============64318946042149183=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040916234735.GJ1777@us.ibm.com>
+In-Reply-To: <20040916234735.GJ1777@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============040134771363177002==
+--===============64318946042149183==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Any comments would be appreciated.
 
-Description: Uses msleep_interruptible() in place of schedule_timeout()
-to guarantee the task delays as expected.
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/ide/legacy/ide-cs.c	2004-09-13 17:16:06.000000000 -0700
-+++ 2.6.9-rc2/drivers/ide/legacy/ide-cs.c	2004-09-16 16:42:03.000000000 -0700
-@@ -43,6 +43,7 @@
- #include <linux/ide.h>
- #include <linux/hdreg.h>
- #include <linux/major.h>
-+#include <linux/delay.h>
- #include <asm/io.h>
- #include <asm/system.h>
+--- 2.6.9-rc1-mm4-vanilla/drivers/macintosh/therm_windtunnel.c	2004-09-09 23:05:59.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/macintosh/therm_windtunnel.c	2004-09-10 11:51:21.000000000 -0700
+@@ -292,8 +292,7 @@ control_loop( void *dummy )
+ 	while( x.running ) {
+ 		up( &x.lock );
  
-@@ -357,8 +358,7 @@ void ide_config(dev_link_t *link)
- 		break;
- 	    }
- 	}
--	__set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ/10);
-+	msleep(100);
-     }
- 
-     if (hd < 0) {
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout( 8*HZ );
++		msleep_interruptible(8000);
+ 		
+ 		down( &x.lock );
+ 		poll_temp();
 
---===============040134771363177002==
+--===============64318946042149183==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============040134771363177002==--
+--===============64318946042149183==--
