@@ -1,48 +1,71 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 23 Sep 2004 22:13:03 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 17/38] net/islpci_dev: replace
-Message-Id: <20040923221303.GB13244@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Fri, 24 Sep 2004 16:34:00 +0000
+Subject: Re: [Kernel-janitors] [PATCH 2.6.9-rc2 17/38] net/islpci_dev: replace
+Message-Id: <20040924163400.GA3118@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85261793678869036=="
+Content-Type: multipart/mixed; boundary="===============92436733831462425=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20040923221303.GB13244@us.ibm.com> <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de>
+In-Reply-To: <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de>
+To: Margit Schubert-While <margitsw@t-online.de>
+Cc: Nishanth Aravamudan <nacc@us.ibm.com>, netdev@oss.sgi.com, mcgrof@studorgs.rutgers.edu, kernel-janitors@lists.osdl.org, jgarzik@pobox.com, prism54-devel@prism54.org, hvr@gnu.org
 
---===============85261793678869036==
+--===============92436733831462425==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+On Fri, 24 Sep 2004, Margit Schubert-While wrote:
+..
+> The patch has wrong line numbers. Doesn't take into account the stacked up
+> netdev changes. (Therefore CC'ing Jeff Garzik)
 
-Description: Use msleep() instead of schedule_timeout()
-to guarantee the task delays as expected. Also set_current_state() is
-inserted before schedule_timeout(). If the for-loop were to execute
-twice, the second time would not set the state before sleeping in the
-current code; this causes schedule_timeout() to return immediately.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.9-rc2-vanilla/drivers/net/wireless/prism54/islpci_dev.c	2004-09-13 17:15:41.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/wireless/prism54/islpci_dev.c	2004-09-23 13:58:42.000000000 -0700
-@@ -436,8 +436,7 @@ prism54_bring_down(islpci_private *priv)
- 	wmb();
+sure the kj patches are against mainline.
  
- 	/* wait a while for the device to reset */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(50*HZ/1000);
-+	msleep(50);
- 
- 	return 0;
- }
-@@ -489,6 +488,7 @@ islpci_reset_if(islpci_private *priv)
- 		/* The software reset acknowledge needs about 220 msec here.
- 		 * Be conservative and wait for up to one second. */
- 	
-+		set_current_state(TASK_UNINTERRUPTIBLE);
- 		remaining = schedule_timeout(HZ);
- 
- 		if(remaining > 0) {
+> This breaks 2.4 compatibility.
+> So either backport to 2.4 or Nish can take over prism54 2.4 maintenance ;-)
 
---===============85261793678869036==
+can't remember the last time when Randy submitted janitorial patches to
+2.4.x, but it's long ago.  2.4 is in maintenance mode.
+ 
+> Don't say a backport is not possible/reasonable, it happened with 
+> netdev_priv().
+> (In 2.4.27; At least there, we have HAVE_NETDEV_PRIV).
+
+there must have been serious reasons for that.
+ 
+> If this is going to be forced, can we at least have a
+> define HAVE_MSLEEP in delay.h ?
+> 
+> I am somewhat confused by the second part of the patch.
+> What has that got to do with msleep ?
+
+basically a lot, because as prism54 lots of drivers forgo/et to set
+there state when calling schedule_timeout().
+
+> Actually, the fix would appear to be correct, but that is a seperate issue
+> and nothing to do with msleep.
+> (Prims54 developers -> I'll take a look over the weekend)
+
+great, please also remove the unused TRACE macro.
+(patch was sent to netdev on 3. Sept).
+the kj mailing list got another submission to correct 
+the __FUNCTION__ use their. :)
+ 
+> I am sceptical about the whole msleep patchset as, by their own admission,
+> the janitors have/can not (no hardware) test the majority of the changes.
+> Even more worrying is that incorrect code has directly appeared in
+> mainline kernel BK.
+
+the named small errors were quickly corrected.
+it's up to the driver MAINTAINER to prove us wrong.
+we got lots of ack in between.
+
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
+
+
+--===============92436733831462425==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85261793678869036==--
+--===============92436733831462425==--
