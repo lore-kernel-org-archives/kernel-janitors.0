@@ -1,37 +1,38 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Sep 2004 18:36:44 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 16/16] scsi/wd7000: replace
-Message-Id: <20040927183644.GE1676@us.ibm.com>
+From: Greg KH <greg@kroah.com>
+Date: Thu, 23 Sep 2004 22:50:35 +0000
+Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2-mm2] Create new function to
+Message-Id: <20040923225035.GB14274@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46049336406382313=="
+Content-Type: multipart/mixed; boundary="===============58383362454055243=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040917180358.GQ1712@us.ibm.com>
-In-Reply-To: <20040917180358.GQ1712@us.ibm.com>
-To: kernel-janitors@vger.kernel.org
+References: <2480000.1095978400@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <2480000.1095978400@w-hlinder.beaverton.ibm.com>
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, davej@codemonkey.org.uk, hpa@zytor.com
 
---===============46049336406382313==
+--===============58383362454055243==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+On Thu, Sep 23, 2004 at 03:26:40PM -0700, Hanna Linder wrote:
+> + * @from: Previous PCI device found in search, or %NULL for new search.
 
-Description: Use msleep() instead of schedule_timeout()
-to guarantee the task delays as expected.
+from is not needed in a function like this.  Just vendor and device
+should work.
 
---- 2.6.9-rc2-vanilla/drivers/scsi/wd7000.c	2004-09-13 17:16:01.000000000 -0700
-+++ 2.6.9-rc2/drivers/scsi/wd7000.c	2004-09-14 09:20:37.000000000 -0700
-@@ -1473,8 +1473,7 @@ static int wd7000_detect(struct scsi_hos
- 			 * ASC reset...
- 			 */
- 			outb(ASC_RES, iobase + ASC_CONTROL);
--			set_current_state(TASK_UNINTERRUPTIBLE);
--			schedule_timeout(HZ / 100);
-+			msleep(10);
- 			outb(0, iobase + ASC_CONTROL);
- 
- 			if (WAIT(iobase + ASC_STAT, ASC_STATMASK, CMD_RDY, 0)) {
+> +static inline int pci_dev_present(unsigned int vendor, unsigned int device, struct pci_dev *from)
+> +{return -1; }
+> +
 
---===============46049336406382313==
+This should return 0, not -1.
+
+Care to redo your patches based on this?
+
+thanks,
+
+greg k-h
+
+--===============58383362454055243==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46049336406382313==--
+--===============58383362454055243==--
