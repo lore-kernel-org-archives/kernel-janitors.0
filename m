@@ -1,34 +1,52 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 18:58:23 +0000
+From: Robert Olsson <Robert.Olsson@data.slu.se>
+Date: Thu, 03 Feb 2005 15:24:54 +0000
 Subject: [KJ] [PATCH 5/20] net/pktgen: remove
-Message-Id: <20050202185823.GG2546@us.ibm.com>
+Message-Id: <16898.16966.272116.431070@robur.slu.se>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54228534473740186=="
+Content-Type: multipart/mixed; boundary="===============73046180671981575=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: robert.olsson@its.uu.se
-Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
+References: <20050202185823.GG2546@us.ibm.com>
+In-Reply-To: <20050202185823.GG2546@us.ibm.com>
+To: Nishanth Aravamudan <nacc@us.ibm.com>
+Cc: davem@davemloft.net, robert.olsson@its.uu.se, netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
 
---===============54228534473740186==
+--===============73046180671981575==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-The first and last replacements in the following patch were slightly confusing
-to me, as I have not used wait-queues that much myself. I did not exactly
-understand how a locally defined wait-queue could be slept on, especially since
-there are no wake_up() calls in pktgen.c. I was tempted to make the first sleep
-a msleep_interruptible(100), but decided to patch for the same code before I did
-that.
+Nishanth Aravamudan writes:
 
-Description: Replace deprecated interruptible_sleep_on_timeout() with direct
-wait-queue usage or wait_event_interruptible_timeout() as appropriate.
+ > The first and last replacements in the following patch were slightly confusing
+ > to me, as I have not used wait-queues that much myself. I did not exactly
+ > understand how a locally defined wait-queue could be slept on, especially since
+ > there are no wake_up() calls in pktgen.c. I was tempted to make the first sleep
+ > a msleep_interruptible(100), but decided to patch for the same code before I did
+ > that.
+ > 
+ > Description: Replace deprecated interruptible_sleep_on_timeout() with direct
+ > wait-queue usage or wait_event_interruptible_timeout() as appropriate.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+ Tbanks!
 
---- 2.6.11-rc2-kj-v/net/core/pktgen.c	2005-01-24 09:34:21.000000000 -0800
-+++ 2.6.11-rc2-kj/net/core/pktgen.c	2005-02-02 10:57:02.000000000 -0800
-@@ -135,6 +135,7 @@
+ I've tested the patch  w. msleep_interruptible(). It seems fine. 
+ Dave. This is on top of a patch I sent some days ago..
+
+						--ro
+
+
+--- net/core/pktgen.c.050201	2005-02-03 14:38:33.337577424 +0100
++++ net/core/pktgen.c	2005-02-03 15:44:22.959143680 +0100
+@@ -104,6 +104,8 @@
+  * Corrections from Nikolai Malykh (nmalykh@bilim.com) 
+  * Removed unused flags F_SET_SRCMAC & F_SET_SRCIP 041230
+  *
++ * interruptible_sleep_on_timeout() replaced Nishanth Aravamudan <nacc@us.ibm.com> 
++ * 050103
+  */
+ #include <linux/sys.h>
+ #include <linux/types.h>
+@@ -135,6 +137,7 @@
  #include <linux/ipv6.h>
  #include <linux/udp.h>
  #include <linux/proc_fs.h>
@@ -36,7 +54,16 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  #include <net/checksum.h>
  #include <net/ipv6.h>
  #include <net/addrconf.h>
-@@ -2409,16 +2410,18 @@ static int running(struct pktgen_thread 
+@@ -148,7 +151,7 @@
+ #include <asm/timex.h>
+ 
+ 
+-#define VERSION  "pktgen v2.56: Packet Generator for packet performance testing.\n"
++#define VERSION  "pktgen v2.57: Packet Generator for packet performance testing.\n"
+ 
+ /* #define PG_DEBUG(a) a */
+ #define PG_DEBUG(a) 
+@@ -2402,16 +2405,14 @@
  
  static int pktgen_wait_thread_run(struct pktgen_thread *t )
  {
@@ -44,24 +71,20 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 -        
 -        init_waitqueue_head(&queue);
 -        
-+	DEFINE_WAIT(wait);
-+	wait_queue_head_t queue;
-+	init_waitqueue_head(&queue);
-+
          if_lock(t);
  
-         while(running(t)) {
+         while(thread_is_running(t)) {
++
                  if_unlock(t);
 -        
 -                interruptible_sleep_on_timeout(&queue, HZ/10);
 +
-+		prepare_to_wait(&queue, &wait, TASK_INTERRUPTIBLE);
-+		schedule_timeout(HZ/10);
-+		finish_wait(&queue, &wait);
++		msleep_interruptible(100); 
++
                  if (signal_pending(current)) 
                          goto signal;
                  if_lock(t);
-@@ -2738,6 +2741,7 @@ __inline__ void pktgen_xmit(struct pktge
+@@ -2733,6 +2734,7 @@
  
  static void pktgen_thread_worker(struct pktgen_thread *t) 
  {
@@ -69,7 +92,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
          struct pktgen_dev *pkt_dev = NULL;
  	int cpu = t->cpu;
  	sigset_t tmpsig;
-@@ -2805,9 +2809,11 @@ static void pktgen_thread_worker(struct 
+@@ -2800,9 +2802,11 @@
  					do_softirq();
  				tx_since_softirq = 0;
  			}
@@ -83,7 +106,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  
                  /* 
  		 * Back from sleep, either due to the timeout or signal.
-@@ -3118,8 +3124,7 @@ static void __exit pg_cleanup(void)
+@@ -3112,8 +3116,7 @@
                  struct pktgen_thread *t = pktgen_threads;
                  pktgen_threads->control |= (T_TERMINATE);
  
@@ -94,7 +117,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  
          /* Un-register us from receiving netdevice events */
 
---===============54228534473740186==
+--===============73046180671981575==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -105,4 +128,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54228534473740186==--
+--===============73046180671981575==--
