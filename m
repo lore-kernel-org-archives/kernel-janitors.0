@@ -1,63 +1,33 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:18 +0000
-Subject: [KJ] [PATCH] [20/29] dvb_demux.c - vfree() checking cleanups
-Message-Id: <41db113e.793f886c.2568.07c1@smtp.gmail.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:14:03 +0000
+Subject: [KJ] [PATCH 34/53] fb: Clean up printk()'s in drivers/video/modedb.c
+Message-Id: <20050125231403.10418.64032.48604@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85475970644380506=="
+Content-Type: multipart/mixed; boundary="===============34616455891941067=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============85475970644380506==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+--===============34616455891941067==
 
-dvb_demux.c vfree() checking cleanups.
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/modedb.c
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Signed-off-by: James Nelson <james4765@gmail.com>
 
- dvb_demux.c |   18 ++++++------------
- 1 files changed, 6 insertions(+), 12 deletions(-)
-
-
---- linux-2.6.10-vanilla/drivers/media/dvb/dvb-core/dvb_demux.c	2004-12-24 13:34:01.000000000 -0800
-+++ linux-2.6.10/drivers/media/dvb/dvb-core/dvb_demux.c	2005-01-04 11:35:47.000000000 -0800
-@@ -784,10 +784,8 @@
- 	}
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/modedb.c linux-2.6.11-rc2-mm1/drivers/video/modedb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/modedb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/modedb.c	2005-01-24 19:07:03.551258932 -0500
+@@ -24,7 +24,7 @@
+     ((v).xres == (x) && (v).yres == (y))
  
- #ifndef NOBUFS
--	if (feed->buffer) { 
--		vfree(feed->buffer);
--		feed->buffer-	}
-+	vfree(feed->buffer);
-+	feed->buffer #endif
- 
- 	feed->state @@ -1055,10 +1053,8 @@
- 		return -EINVAL;
- 	}
- #ifndef NOBUFS
--	if (dvbdmxfeed->buffer) {
--		vfree(dvbdmxfeed->buffer);
--		dvbdmxfeed->buffer-	}
-+	vfree(dvbdmxfeed->buffer);
-+	dvbdmxfeed->buffer #endif
- 	dvbdmxfeed->state�TE_FREE;
- 
-@@ -1269,10 +1265,8 @@
- 	struct dmx_demux *dmx  
- 	dmx_unregister_demux(dmx);
--	if (dvbdemux->filter)
--		vfree(dvbdemux->filter);
--	if (dvbdemux->feed)
--		vfree(dvbdemux->feed);
-+	vfree(dvbdemux->filter);
-+	vfree(dvbdemux->feed);
- 	return 0;
- }
- EXPORT_SYMBOL(dvb_dmx_release);
+ #ifdef DEBUG
+-#define DPRINTK(fmt, args...)	printk("modedb %s: " fmt, __FUNCTION__ , ## args)
++#define DPRINTK(fmt, args...)	pr_debug("modedb %s: " fmt, __FUNCTION__ , ## args)
+ #else
+ #define DPRINTK(fmt, args...)
+ #endif
 
-
-
---===============85475970644380506==
+--===============34616455891941067==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85475970644380506==--
+--===============34616455891941067==--
