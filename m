@@ -1,60 +1,45 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 28 Jul 2004 18:13:51 +0000
-Subject: [Kernel-janitors] [PATCH] isdn/card: replace milliseconds() with
-Message-Id: <20040728181351.GJ1935@us.ibm.com>
+From: Alexander Nyberg <alexn@telia.com>
+Date: Sun, 25 Jul 2004 20:47:45 +0000
+Subject: [Kernel-janitors] gcc compilation warning fix
+Message-Id: <1090788465.8868.59.camel@boxen.(null)>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94362392886471325=="
+Content-Type: multipart/mixed; boundary="===============45833139867241091=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============94362392886471325==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============45833139867241091==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-I would appreciate any comments from the janitors list.
+The actual prototype is:
+typedef	void (*acpi_gpe_handler) (void *context);
 
--Nish
+(noone was even using the return value)
 
-Applys-to: 2.6.7
-
-Description: Replaces calls to milliseconds() with msecs_to_jiffies().
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- linux-vanilla/drivers/isdn/sc/card.h	2004-06-15 22:20:04.000000000 -0700
-+++ linux-dev/drivers/isdn/sc/card.h	2004-07-28 10:55:38.000000000 -0700
-@@ -24,24 +24,25 @@
-  * We need these if they're not already included
-  */
- #include <linux/timer.h>
-+#include <linux/time.h>
- #include <linux/isdnif.h>
- #include "message.h"
+===== drivers/char/ipmi/ipmi_si_intf.c 1.6 vs edited =====
+--- 1.6/drivers/char/ipmi/ipmi_si_intf.c	2004-07-13 13:46:29 +00:00
++++ edited/drivers/char/ipmi/ipmi_si_intf.c	2004-07-25 19:21:12 +00:00
+@@ -1132,7 +1132,7 @@
+ static int acpi_failure = 0;
  
- /*
-  * Amount of time to wait for a reset to complete
-  */
--#define CHECKRESET_TIME		milliseconds(4000)
-+#define CHECKRESET_TIME		msecs_to_jiffies(4000)
+ /* For GPE-type interrupts. */
+-u32 ipmi_acpi_gpe(void *context)
++void ipmi_acpi_gpe(void *context)
+ {
+ 	struct smi_info *smi_info = context;
+ 	unsigned long   flags;
+@@ -1156,7 +1156,6 @@
+ 	smi_event_handler(smi_info, 0);
+  out:
+ 	spin_unlock_irqrestore(&(smi_info->si_lock), flags);
+-	return 0;
+ }
  
- /*
-  * Amount of time between line status checks
-  */
--#define CHECKSTAT_TIME		milliseconds(8000)
-+#define CHECKSTAT_TIME		msecs_to_jiffies(8000)
- 
- /*
-  * The maximum amount of time to wait for a message response
-  * to arrive. Use exclusively by send_and_receive
-  */
--#define SAR_TIMEOUT		milliseconds(10000)
-+#define SAR_TIMEOUT		msecs_to_jiffies(10000)
- 
- /*
-  * Macro to determine is a card id is valid
+ static int acpi_gpe_irq_setup(struct smi_info *info)
 
---===============94362392886471325==
+
+
+--===============45833139867241091==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94362392886471325==--
+--===============45833139867241091==--
