@@ -1,14 +1,16 @@
 From: Ron Gage <ron@rongage.org>
-Date: Fri, 13 Feb 2004 13:36:40 +0000
+Date: Fri, 13 Feb 2004 13:37:37 +0000
 Subject: [Kernel-janitors] [PATCH] - 2.6.2 - skbuff.h - compiler cleanup
-Message-Id: <200402130836.40521.ron@rongage.org>
+Message-Id: <200402130837.37966.ron@rongage.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_oLNLA551Ir2M5QX"
+Content-Type: multipart/mixed; boundary="Boundary-00=_hMNLAKuKhkoCu6Q"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200402130836.40521.ron@rongage.org>
+In-Reply-To: <200402130836.40521.ron@rongage.org>
 To: kernel-janitors@vger.kernel.org
 
 
---Boundary-00=_oLNLA551Ir2M5QX
+--Boundary-00=_hMNLAKuKhkoCu6Q
 Content-Type: text/plain;
   charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -21,7 +23,7 @@ Ron Gage - LPIC1, MCP, A+, Net+
 Pontiac, Michigan
 
 
---Boundary-00=_oLNLA551Ir2M5QX
+--Boundary-00=_hMNLAKuKhkoCu6Q
 Content-Type: text/x-diff;
   charset="us-ascii";
   name="skbuff.h.diff"
@@ -40,7 +42,7 @@ Content-Disposition: attachment;
  #ifdef CONFIG_HIGHMEM
  	local_bh_enable();
 
---Boundary-00=_oLNLA551Ir2M5QX
+--Boundary-00=_hMNLAKuKhkoCu6Q
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -51,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_oLNLA551Ir2M5QX--
+--Boundary-00=_hMNLAKuKhkoCu6Q--
