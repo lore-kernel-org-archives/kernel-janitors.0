@@ -1,41 +1,50 @@
-From: <efwyrnurw@yes.com>
-Date: Fri, 16 Apr 2004 10:03:07 +0000
-Subject: canaan
-Message-Id: <6274s21b27is$60wl2u9d41$17n27q@destabilize.yes.com>
+From: Don Koch <aardvark@krl.com>
+Date: Mon, 12 Apr 2004 21:05:48 +0000
+Subject: [Kernel-janitors] minor cyclades.c cleanup
+Message-Id: <200404122105.i3CL5nGj017977@p-chan.krl.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--2319872691176043122"
+Content-Type: multipart/mixed; boundary="===============95320771078536515=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----2319872691176043122
-Content-Type: text/plain;
-Content-Transfer-Encoding: 7Bit
+--===============95320771078536515==
+Content-Type: text/plain; charset=us-ascii
 
-Snyder,
+This just removes some dead code and gets rid of a warning.  Not tested
+(no hardware) but it compiles.
+
+===== drivers/char/cyclades.c 1.36 vs edited =====
+--- 1.36/drivers/char/cyclades.c	Sat Mar 27 00:30:45 2004
++++ edited/drivers/char/cyclades.c	Mon Apr 12 15:56:14 2004
+@@ -681,16 +681,6 @@
+ static void cy_throttle (struct tty_struct *tty);
+ static void cy_send_xchar (struct tty_struct *tty, char ch);
+ 
+-static unsigned long 
+-cy_get_user(unsigned long *addr)
+-{
+-	unsigned long result = 0;
+-	int error = get_user (result, addr);
+-	if (error)
+-		printk ("cyclades: cy_get_user: error == %d\n", error);
+-	return result;
+-}
+-
+ #ifndef MIN
+ #define MIN(a,b)        ((a) < (b) ? (a) : (b))
+ #endif
 
 
-Get 50%off
 
-V-i-a-g-r-a{
+--===============95320771078536515==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-and 
-
-c-i-a-l-i-s( more!..
-
-http://www.vpossible322medications.biz/b32/
-
---
-difficult,laid line from. 
-
-----2319872691176043122--
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: IBM Linux Tutorials
-Free Linux tutorial presented by Daniel Robbins, President and CEO of
-GenToo technologies. Learn everything from fundamentals to system
-administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============95320771078536515==--
