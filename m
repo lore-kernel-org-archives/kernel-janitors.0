@@ -1,30 +1,36 @@
-From: JOUANNE Mickael <grigouze@noos.fr>
-Date: Sun, 25 Jan 2004 12:37:47 +0000
-Subject: [Kernel-janitors] New guy here, and patch for kj.pl
-Message-Id: <20040125123747.GA21585@noos.fr>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Mon, 05 Jan 2004 20:01:21 +0000
+Subject: Re: [Kernel-janitors] wiki TODO?
+Message-Id: <20040105120121.0b6806a9.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi all.
+On Sat, 27 Dec 2003 18:54:12 -0800 Dan Kegel <dank@kegel.com> wrote:
 
-Here is a patch for kj.pl
-It doesn't detect the MOD_{INC,DEC}_USE_COUNT correctly because of a
-false regexp !
+| Randy.Dunlap wrote:
+| > | > imho wikis are easy and fast to manage for a inhomogeneous 
+| > | > and widespread group of individuals.
+| > | 
+| > | I'd agree perhaps, but look at what happened to our last wiki.
+| > 
+| > It was used no more/no less than the CVS version of the TODO AFAICT.
+| 
+| If that's the case, then let's go back to the CVS version.
 
-The message is also to be change it says : "Net drivers should call
-SET_MODULE_OWNER instead of MOD_{INC,DEC}_USE_COUNT" but
-MOD_{INC,DEC}_USE_COUNT is deprecated for all not only for netdrivers.
+I'm updating the web page (http://kernel-janitor.sourceforge.net/
+or [same as] http://www.kerneljanitors.org/) so that the wiki is
+not referenced any longer.  I'm also ready to update the TODO
+file, so send proposed changes to 'TODO' to this mailing list.
 
-I also got a question, If i want to patch something on kernel with help
-of TODO document, do i have to tell semeone before to not work on same
-files that someone else or not ?
+(just plain text will usually be fine; use diff only for large
+changes)
 
---=20
-Micka=EBl GRIGOUZE	      grigouze@noos.fr	        ICQ : 42799256
-*** \-/ ***  In a World Without Fences Who Needs Gates *** \-/ ***
+--
+~Randy
+MOTD:  Always include version info.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
