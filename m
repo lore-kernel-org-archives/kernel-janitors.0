@@ -1,34 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 20 Oct 2004 23:16:00 +0000
-Subject: [KJ] Re: [Kernel-janitors] [PATCH 2/3] - Module version info for
-Message-Id: <20041020231600.GD15716@kroah.com>
+From: Oliver Neukum <oliver@neukum.org>
+Date: Sat, 23 Oct 2004 00:20:00 +0000
+Subject: [KJ] Re: [linux-usb-devel] [PATCH] class/usblp: cleanup
+Message-Id: <200410230220.00545.oliver@neukum.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78839797207341467=="
+Content-Type: multipart/mixed; boundary="===============76294906099502957=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============78839797207341467==
-Content-Type: text/plain; charset=us-ascii
+--===============76294906099502957==
 Content-Disposition: inline
+Content-Type: text/plain; charset="iso-8859-15"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 04, 2004 at 01:18:51PM -0300, Luiz Fernando N. Capitulino wrote:
-> 
->  Hi,
-> 
->  Add module version information for drivers/usb/serial/cyberjack.c.
-> 
-> 
-> Signed-off-by: Luiz Capitulino <lcapitulino@conectiva.com.br>
-> 
->  drivers/usb/serial/cyberjack.c |    1 +
->  1 files changed, 1 insertion(+)
+Am Samstag, 23. Oktober 2004 00:56 schrieb Nishanth Aravamudan:> +=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0while (timeout)=
+ {> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0if (signal_pending(current)) {> =A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0remove_wait_queue(&usblp->wait, &wait);> =A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return writecount ? writecount : =
+-EINTR;> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0}> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0set_current_state(TAS=
+K_INTERRUPTIBLE);> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (timeout && !usblp->wcomplete) {>=
+ -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0timeout =3D schedule_timeout(t=
+imeout);> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0} else {> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0set_current_state(TASK_RUNNING);> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (usblp->w=
+complete) {> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0break;> =A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0}> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0set_current_state(TASK_INTERRUPTIBLE=
+);
+You can miss a wake up here.
+> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0timeout =3D schedule_timeout(timeout);> =A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0}
+The order of checking wcomplete and setting the state must be reversed.
+	Regards		Oliver
 
-
-Applied, thanks.
-
-greg k-h
-
---===============78839797207341467==
+--===============76294906099502957==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78839797207341467==--
+--===============76294906099502957==--
