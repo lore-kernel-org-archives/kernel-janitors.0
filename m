@@ -1,40 +1,51 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 08 Mar 2005 15:11:29 +0000
-Subject: [KJ] [PATCH 1/3] drivers/block/cciss.c: Use the DMA_{64,
-Message-Id: <20050308151129.GG5311@localhost.localdomain>
+Date: Sun, 20 Mar 2005 12:42:09 +0000
+Subject: [KJ] [UPDATE PATCH 06/19] drivers/scsi/aic7xxx/aic7xxx_osm: Use the
+Message-Id: <20050320124209.GF3491@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88430827866135786=="
+Content-Type: multipart/mixed; boundary="===============25794183779406232=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050220170035.GG14375@helium.tklauser.home>
+In-Reply-To: <20050220170035.GG14375@helium.tklauser.home>
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============88430827866135786==
+--===============25794183779406232==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+The previous patch did not compile cleanly on all architectures so
+here's a fixed one.
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
+pci_set_dma_mask() or pci_set_consistent_dma_mask()
+This patch includes dma-mapping.h explicitly because it caused errors
+on some architectures otherwise.
 See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---- linux-2.6.11.orig/drivers/block/cciss.c	2005-03-02 12:50:39.000000000 +0100
-+++ linux-2.6.11/drivers/block/cciss.c	2005-03-02 13:03:53.000000000 +0100
-@@ -2692,9 +2692,9 @@ static int __devinit cciss_init_one(stru
- 	hba[i]->pdev = pdev;
+--- linux-2.6.11.orig/drivers/scsi/aic7xxx/aic7xxx_osm.c	2005-03-02 12:50:36.000000000 +0100
++++ linux-2.6.11/drivers/scsi/aic7xxx/aic7xxx_osm.c	2005-03-20 13:27:54.000000000 +0100
+@@ -138,6 +138,7 @@
+ #include <linux/mm.h>		/* For fetching system memory size */
+ #include <linux/blkdev.h>		/* For block_size() */
+ #include <linux/delay.h>	/* For ssleep/msleep */
++#include <linux/dma-mapping.h>
  
- 	/* configure PCI DMA stuff */
--	if (!pci_set_dma_mask(pdev, 0xffffffffffffffffULL))
-+	if (!pci_set_dma_mask(pdev, DMA_64BIT_MASK))
- 		printk("cciss: using DAC cycles\n");
--	else if (!pci_set_dma_mask(pdev, 0xffffffff))
-+	else if (!pci_set_dma_mask(pdev, DMA_32BIT_MASK))
- 		printk("cciss: not using DAC cycles\n");
- 	else {
- 		printk("cciss: no suitable DMA available\n");
+ /*
+  * Lock protecting manipulation of the ahc softc list.
+@@ -1361,7 +1362,7 @@ ahc_dmamem_alloc(struct ahc_softc *ahc, 
+ 	 * our dma mask when doing allocations.
+ 	 */
+ 	if (ahc->dev_softc != NULL)
+-		if (pci_set_dma_mask(ahc->dev_softc, 0xFFFFFFFF)) {
++		if (pci_set_dma_mask(ahc->dev_softc, DMA_32BIT_MASK)) {
+ 			printk(KERN_WARNING "aic7xxx: No suitable DMA available.\n");
+ 			kfree(map);
+ 			return (ENODEV);
 
---===============88430827866135786==
+--===============25794183779406232==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88430827866135786==--
+--===============25794183779406232==--
