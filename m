@@ -1,54 +1,42 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 22:08:44 +0000
-Subject: [Kernel-janitors] [PATCH] s390/device_ops: insert
-Message-Id: <20040727220844.GC3471@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99671617694595782=="
+From: "Esteban Cross" <estebancross_br@fop.unicamp.br>
+Date: Sun, 04 Jul 2004 03:05:09 +0000
+Subject: $32832
+Message-Id: <267601c46173$59e737d3$f71f0239@fitlife.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============99671617694595782==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
+I sent you an email a few days ago, because you now qualify for a new mortgage.
+You could get $300,000 for as little as $700 a month!
+Bad credit is no problem, you can pull cash out or refinance.
 
-I would appreciate any comments from the janitors list. 
+Please click on this link:
+http://www.yourloanz.com/s6/jwex.php?bksq
 
-Applys-to: 2.6.7
-
-Description: Add appropriate set_current_state() calls so
-schedule_timeout() functions as expected.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Best Regards,
+Steve Morris
 
 
---- linux-vanilla/drivers/s390/cio/device_ops.c	2004-06-16 05:19:43.000000000 +0000
-+++ linux-dev/drivers/s390/cio/device_ops.c	2004-07-14 16:29:23.000000000 +0000
-@@ -268,6 +268,7 @@ __ccw_device_retry_loop(struct ccw_devic
- 		if ((ret == -EBUSY) || (ret == -EACCES)) {
- 			/* Try again later. */
- 			spin_unlock_irq(&sch->lock);
-+			set_current_state(TASK_UNINTERRUPTIBLE);
- 			schedule_timeout(1);
- 			spin_lock_irq(&sch->lock);
- 			continue;
-@@ -294,6 +295,7 @@ __ccw_device_retry_loop(struct ccw_devic
- 			break;
- 		/* Try again later. */
- 		spin_unlock_irq(&sch->lock);
-+		set_current_state(TASK_UINTERRUPTIBLE);
- 		schedule_timeout(1);
- 		spin_lock_irq(&sch->lock);
- 	} while (1);
 
---===============99671617694595782==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+No more: http://www.yourloanz.com/r1/index.html
 
+---- system information ----
+Draft differences mechanisms aspects status correlate wide Java 
+considered within interested proprietary results throughly often inferred
+
+host lives updated control at interoperate sends is 
+
+
+
+-------------------------------------------------------
+This SF.Net email sponsored by Black Hat Briefings & Training.
+Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
+digital self defense, top technical experts, no vendor pitches, 
+unmatched networking opportunities. Visit www.blackhat.com
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============99671617694595782==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
