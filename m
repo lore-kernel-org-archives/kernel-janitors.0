@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 20 Jan 2005 18:17:42 +0000
-Subject: [KJ] [PATCH 2/40] atm/zatm: replace sleep_on() with wait_event()
-Message-Id: <20050120181742.GC5393@us.ibm.com>
+Date: Tue, 25 Jan 2005 22:04:00 +0000
+Subject: [KJ] [PATCH] 1/34: atm/horizon: replace interruptible_sleep_on()
+Message-Id: <20050125220400.GB2689@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26503059212880919=="
+Content-Type: multipart/mixed; boundary="===============0075953363603495916=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============26503059212880919==
+--===============0075953363603495916==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -15,68 +15,45 @@ Hi,
 
 Please consider applying.
 
-Description: Use wait_event() instead of the deprecated sleep_on(). The first
-replacement is relatively non-controversial, as the message is only printed
-once, and still is. In the second, though, the message is printed every
-iteration of the loop. This functionality has been lost with wait_event().
-Removed the unused variable once (which made sure that certain things were done
-on the first iteration of the loop, but not after; now there is only one
-"iteration"). Also fixed some strange tabbing.
+Description: Use wait_event_interruptible() instead of the deprecated
+interruptible_sleep_on(). In the new code, the debug statements will *not* be
+printed every iteration of the loop; instead they will be printed before the
+sleep begins and after the sleep is completed. Patch is compile-tested.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc1-kj-v/drivers/atm/zatm.c	2005-01-15 16:55:43.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/atm/zatm.c	2005-01-19 17:41:21.000000000 -0800
-@@ -22,6 +22,7 @@
- #include <linux/atm_zatm.h>
- #include <linux/capability.h>
- #include <linux/bitops.h>
-+#include <linux/wait.h>
- #include <asm/byteorder.h>
- #include <asm/system.h>
- #include <asm/string.h>
-@@ -867,32 +868,19 @@ static void close_tx(struct atm_vcc *vcc
- 	struct zatm_vcc *zatm_vcc;
- 	unsigned long flags;
- 	int chan;
--struct sk_buff *skb;
--int once = 1;
-+	struct sk_buff *skb;
- 
- 	zatm_vcc = ZATM_VCC(vcc);
- 	zatm_dev = ZATM_DEV(vcc->dev);
- 	chan = zatm_vcc->tx_chan;
- 	if (!chan) return;
- 	DPRINTK("close_tx\n");
--	while (skb_peek(&zatm_vcc->backlog)) {
--if (once) {
--printk("waiting for backlog to drain ...\n");
--event_dump();
--once = 0;
--}
--		sleep_on(&zatm_vcc->tx_wait);
--	}
--once = 1;
--	while ((skb = skb_peek(&zatm_vcc->tx_queue))) {
--if (once) {
--printk("waiting for TX queue to drain ... %p\n",skb);
--event_dump();
--once = 0;
--}
--		DPRINTK("waiting for TX queue to drain ... %p\n",skb);
--		sleep_on(&zatm_vcc->tx_wait);
--	}
-+	printk("waiting for backlog to drain ...\n");
-+	event_dump();
-+	wait_event(zatm_vcc->tx_wait, !skb_peek(&zatm_vcc->backlog));
-+	printk("waiting for TX queue to drain ... %p\n",skb);
-+	event_dump();
-+	wait_event(zatm_vcc->tx_wait, !(skb = skb_peek(&zatm_vcc->tx_queue)));
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
- #if 0
- 	zwait;
 
---===============26503059212880919==
+--- 2.6.11-rc2-kj-v/drivers/atm/horizon.c	2005-01-24 09:34:04.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/atm/horizon.c	2005-01-24 13:53:02.000000000 -0800
+@@ -39,6 +39,7 @@
+ #include <linux/uio.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
++#include <linux/wait.h>
+ 
+ #include <asm/system.h>
+ #include <asm/io.h>
+@@ -1089,13 +1090,11 @@ static inline void rx_bus_master_complet
+ /********** (queue to) become the next TX thread **********/
+ 
+ static inline int tx_hold (hrz_dev * dev) {
+-  while (test_and_set_bit (tx_busy, &dev->flags)) {
+-    PRINTD (DBG_TX, "sleeping at tx lock %p %lu", dev, dev->flags);
+-    interruptible_sleep_on (&dev->tx_queue);
+-    PRINTD (DBG_TX, "woken at tx lock %p %lu", dev, dev->flags);
+-    if (signal_pending (current))
+-      return -1;
+-  }
++  PRINTD (DBG_TX, "sleeping at tx lock %p %lu", dev, dev->flags);
++  wait_event_interruptible(dev->tx_queue, (!test_and_set_bit(tx_busy, &dev->flags)));
++  PRINTD (DBG_TX, "woken at tx lock %p %lu", dev, dev->flags);
++  if (signal_pending (current))
++    return -1;
+   PRINTD (DBG_TX, "set tx_busy for dev %p", dev);
+   return 0;
+ }
+
+--===============0075953363603495916==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -87,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============26503059212880919==--
+--===============0075953363603495916==--
