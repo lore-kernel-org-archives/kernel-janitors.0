@@ -1,46 +1,34 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Fri, 11 Feb 2005 08:34:36 +0000
-Subject: [KJ] [PATCH] drivers/scsi/sym53c8xx_2/*: convert to
-Message-Id: <20050211083436.GG28942@rhum.iomeda.fr>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Mon, 14 Feb 2005 19:17:36 +0000
+Subject: Re: [KJ] [PATCH] drivers/scsi/sym53c8xx_2/*: convert to
+Message-Id: <20050214191736.GJ29917@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="s5/bjXLgkIwAv6Hi"
+Content-Type: multipart/mixed; boundary="===============40765074141470414=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050211083436.GG28942@rhum.iomeda.fr>
+In-Reply-To: <20050211083436.GG28942@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
-
---s5/bjXLgkIwAv6Hi
+--===============40765074141470414==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+On Fri, Feb 11, 2005 at 09:34:36AM +0100, Christophe Lucas wrote:
+> Description:
+> convert from pci_module_init to pci_register_driver
+> (from:http://kerneljanitors.org/TODO).
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+I'll take this one in through my tree.  Thanks.
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 -- 
-Christophe
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
 
---s5/bjXLgkIwAv6Hi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_scsi_sym53c8xx_2.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/sym53c8xx_2/sym_glue.c linux-2.6.11-rc3/drivers/scsi/sym53c8xx_2/sym_glue.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/sym53c8xx_2/sym_glue.c	2005-02-03 17:03:58.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/sym53c8xx_2/sym_glue.c	2005-02-07 09:39:30.000000000 +0100
-@@ -2370,7 +2370,7 @@ static int __init sym2_init(void)
- 	if (!sym2_transport_template)
- 		return -ENODEV;
- 
--	error = pci_module_init(&sym2_driver);
-+	error = pci_register_driver(&sym2_driver);
- 	if (error)
- 		spi_release_transport(sym2_transport_template);
- 	return error;
-
---s5/bjXLgkIwAv6Hi
+--===============40765074141470414==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---s5/bjXLgkIwAv6Hi--
+--===============40765074141470414==--
