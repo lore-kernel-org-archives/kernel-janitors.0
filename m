@@ -1,50 +1,59 @@
-From: Casaccio =?iso-8859-15?q?Gwena=EBl?= <fa311356@skynet.be>
-Date: Sun, 04 Jan 2004 12:42:23 +0000
-Subject: Re: Kernel-janitor-discuss -- confirmation of subscription -- request 670729
-Message-Id: <200401041342.23139.fa311356@skynet.be>
+From: "Warren A. Layton" <zeevon@debian.org>
+Date: Fri, 23 Jan 2004 17:53:18 +0000
+Subject: [Kernel-janitors] Duplicate Entry in TODO
+Message-Id: <20040123175318.GA30330@debian.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============17937453117931801=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200401041329.51554.fa311356@skynet.be>
-In-Reply-To: <200401041329.51554.fa311356@skynet.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Le Dimanche 04 Janvier 2004 13:27,=20
-kernel-janitor-discuss-request@lists.sourceforge.net a =E9crit :
-> Kernel-janitor-discuss -- confirmation of subscription -- request
-> 670729
->
-> We have received a request from 10.3.1.7 for subscription of your
-> email address, <fa311356@skynet.be>, to the
-> kernel-janitor-discuss@lists.sourceforge.net mailing list.  To confirm
-> the request, please send a message to
-> kernel-janitor-discuss-request@lists.sourceforge.net, and either:
->
-> - maintain the subject line as is (the reply's additional "Re:" is
-> ok),
->
-> - or include the following line - and only the following line - in the
-> message body:
->
-> confirm 670729
->
-> (Simply sending a 'reply' to this message should work from most email
-> interfaces, since that usually leaves the subject line in the right
-> form.)
->
-> If you do not wish to subscribe to this list, please simply disregard
-> this message.  Send questions to
-> kernel-janitor-discuss-admin@lists.sourceforge.net.
-=20
+
+--===============17937453117931801==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Disposition: inline
 
 
--------------------------------------------------------
-This SF.net email is sponsored by: IBM Linux Tutorials.
-Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
-Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
-Click now! http://ads.osdn.com/?ad_id=1278&alloc_id371&op=CCk
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Just nit-picking.
+
+There's a duplicate entry in the KJ TODO for misc_register() (under the
+first section, Audit Return Codes).
+
+Warren
+
+--=20
+Warren A. Layton
+GPG Fingerprint: F54C 019D 18BE 6ED8 678D  39D0 21FD D515 BFB8 80A3=20
+Encrypted E-mail Preferred
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQFAEV+OIf3VFb+4gKMRAtE6AJ0bK/oQtA+u1y4Lh535uyLWBQtA1gCfTS7v
+kJqQRZFGotpha/3S/8/YzsU=
+=iqAU
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
+
+--===============17937453117931801==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============17937453117931801==--
