@@ -1,144 +1,216 @@
-From: Allyn Zarlengo <pimlw@ernest.net>
-Date: Fri, 04 Jun 2004 09:48:34 +0000
-Subject: Strap In For TCPD.OB, On The Move Thursday kmdrcg
-Message-Id: <E1BWBH5-0005r3-Eo@sc8-sf-mx2.sourceforge.net>
+From: Alexander Nyberg <alexn@telia.com>
+Date: Tue, 15 Jun 2004 23:44:46 +0000
+Subject: [Kernel-janitors] Sparse checks #6
+Message-Id: <1087343078.676.109.camel@boxen>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============60148008326220537=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-,.,saguaro
+--===============60148008326220537==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-consolidate bugaboo
+Sparse checks for drivers/
+
+Signed-off-by: Alexander Nyberg <alexn@telia.com>
+
+===== drivers/char/watchdog/alim1535_wdt.c 1.6 vs edited =====
+--- 1.6/drivers/char/watchdog/alim1535_wdt.c    2004-05-28 22:17:35 +02:00
++++ edited/drivers/char/watchdog/alim1535_wdt.c 2004-06-16 01:09:37 +02:00
+@@ -138,7 +138,7 @@
+  *     the next close to turn off the watchdog.
+  */
+
+-static ssize_t ali_write(struct file *file, const char *data,
++static ssize_t ali_write(struct file *file, const char __user *data,
+                              size_t len, loff_t * ppos)
+ {
+        /*  Can't seek (pwrite) on this device  */
+@@ -194,12 +194,12 @@
+
+        switch (cmd) {
+                case WDIOC_GETSUPPORT:
+-                       return copy_to_user((struct watchdog_info *) arg, &ident,
++                       return copy_to_user((struct watchdog_info __user *) arg, &ident,                                sizeof (ident)) ? -EFAULT : 0;
+
+                case WDIOC_GETSTATUS:
+                case WDIOC_GETBOOTSTATUS:
+-                       return put_user(0, (int *) arg);
++                       return put_user(0, (int __user *) arg);
+
+                case WDIOC_KEEPALIVE:
+                        ali_keepalive();
+@@ -209,7 +209,7 @@
+                {
+                        int new_options, retval = -EINVAL;
+
+-                       if (get_user (new_options, (int *) arg))
++                       if (get_user (new_options, (int __user *) arg))
+                                return -EFAULT;
+
+                        if (new_options & WDIOS_DISABLECARD) {
+@@ -229,7 +229,7 @@
+                {
+                        int new_timeout;
+
+-                       if (get_user(new_timeout, (int *) arg))
++                       if (get_user(new_timeout, (int __user *) arg))
+                                return -EFAULT;
+
+                        if (ali_settimer(new_timeout))
+@@ -240,7 +240,7 @@
+                }
+
+                case WDIOC_GETTIMEOUT:
+-                       return put_user(timeout, (int *)arg);
++                       return put_user(timeout, (int __user *)arg);
+
+                default:
+                        return -ENOIOCTLCMD;
+===== drivers/char/watchdog/alim7101_wdt.c 1.14 vs edited =====
+--- 1.14/drivers/char/watchdog/alim7101_wdt.c   2004-05-28 22:17:36 +02:00
++++ edited/drivers/char/watchdog/alim7101_wdt.c 2004-06-16 01:10:58 +02:00
+@@ -148,7 +148,7 @@
+  * /dev/watchdog handling
+  */
+
+-static ssize_t fop_write(struct file * file, const char * buf, size_t count, loff_t * ppos)
++static ssize_t fop_write(struct file * file, const char __user * buf, size_t count, loff_t * ppos)
+ {
+        /* We can't seek */
+        if(ppos != &file->f_pos)
+@@ -213,10 +213,10 @@
+        switch(cmd)
+        {
+                case WDIOC_GETSUPPORT:
+-                       return copy_to_user((struct watchdog_info *)arg, &ident, sizeof(ident))?-EFAULT:0;
++                       return copy_to_user((struct watchdog_info __user *)arg, &ident, sizeof(ident))?-EFAULT:0;
+                case WDIOC_GETSTATUS:
+                case WDIOC_GETBOOTSTATUS:
+-                       return put_user(0, (int *)arg);
++                       return put_user(0, (int __user *)arg);
+                case WDIOC_KEEPALIVE:
+                        wdt_keepalive();
+                        return 0;
+@@ -224,7 +224,7 @@
+                {
+                        int new_options, retval = -EINVAL;
+
+-                       if(get_user(new_options, (int *)arg))
++                       if(get_user(new_options, (int __user *)arg))
+                                return -EFAULT;
+
+                        if(new_options & WDIOS_DISABLECARD) {
+@@ -243,7 +243,7 @@
+                {
+                        int new_timeout;
+
+-                       if(get_user(new_timeout, (int *)arg))
++                       if(get_user(new_timeout, (int __user *)arg))
+                                return -EFAULT;
+
+                        if(new_timeout < 1 || new_timeout > 3600) /* arbitrary upper limit */
+@@ -254,7 +254,7 @@
+                        /* Fall through */
+                }
+                case WDIOC_GETTIMEOUT:
+-                       return put_user(timeout, (int *)arg);
++                       return put_user(timeout, (int __user *)arg);
+                default:
+                        return -ENOIOCTLCMD;
+        }
+===== drivers/char/watchdog/cpu5wdt.c 1.9 vs edited =====
+--- 1.9/drivers/char/watchdog/cpu5wdt.c 2004-04-12 19:54:27 +02:00
++++ edited/drivers/char/watchdog/cpu5wdt.c      2004-06-16 01:12:11 +02:00
+@@ -159,15 +159,15 @@
+                case WDIOC_GETSTATUS:
+                        value = inb(port + CPU5WDT_STATUS_REG);
+                        value = (value >> 2) & 1;
+-                       if ( copy_to_user((int *)arg, (int *)&value, sizeof(int)) )
++                       if ( copy_to_user((int __user *)arg, (int *)&value, sizeof(int)) )
+                                return -EFAULT;
+                        break;
+                case WDIOC_GETSUPPORT:
+-                       if ( copy_to_user((struct watchdog_info *)arg, &ident, sizeof(ident)) )
++                       if ( copy_to_user((struct watchdog_info __user *)arg, &ident, sizeof(ident)) )
+                                return -EFAULT;
+                        break;
+                case WDIOC_SETOPTIONS:
+-                       if ( copy_from_user(&value, (int *)arg, sizeof(int)) )
++                       if ( copy_from_user(&value, (int __user *)arg, sizeof(int)) )
+                                return -EFAULT;
+                        switch(value) {
+                                case WDIOS_ENABLECARD:
+@@ -185,7 +185,7 @@
+        return 0;
+ }
+
+-static ssize_t cpu5wdt_write(struct file *file, const char *buf, size_t count, loff_t *ppos)
++static ssize_t cpu5wdt_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+ {
+        if ( !count )
+                return -EIO;
+===== drivers/char/watchdog/eurotechwdt.c 1.18 vs edited =====
+--- 1.18/drivers/char/watchdog/eurotechwdt.c    2004-03-12 10:33:00 +01:00
++++ edited/drivers/char/watchdog/eurotechwdt.c  2004-06-16 01:13:23 +02:00
+@@ -196,7 +196,7 @@
+  * write of data will do, as we we don't define content meaning.
+  */
+
+-static ssize_t eurwdt_write(struct file *file, const char *buf, size_t count,
++static ssize_t eurwdt_write(struct file *file, const char __user *buf, size_t count,
+ loff_t *ppos)
+ {
+        /*  Can't seek (pwrite) on this device  */
+@@ -251,19 +251,19 @@
+                return -ENOIOCTLCMD;
+
+        case WDIOC_GETSUPPORT:
+-               return copy_to_user((struct watchdog_info *)arg, &ident,
++               return copy_to_user((struct watchdog_info __user *)arg, &ident,
+                        sizeof(ident)) ? -EFAULT : 0;
+
+        case WDIOC_GETSTATUS:
+        case WDIOC_GETBOOTSTATUS:
+-               return put_user(0, (int *) arg);
++               return put_user(0, (int __user *) arg);
+
+        case WDIOC_KEEPALIVE:
+                eurwdt_ping();
+                return 0;
+
+        case WDIOC_SETTIMEOUT:
+-               if (copy_from_user(&time, (int *) arg, sizeof(int)))
++               if (copy_from_user(&time, (int __user *) arg, sizeof(int)))
+                        return -EFAULT;
+
+                /* Sanity check */
+@@ -275,10 +275,10 @@
+                /* Fall */
+
+        case WDIOC_GETTIMEOUT:
+-               return put_user(eurwdt_timeout, (int *)arg);
++               return put_user(eurwdt_timeout, (int __user *)arg);
+
+        case WDIOC_SETOPTIONS:
+-               if (get_user(options, (int *)arg))
++               if (get_user(options, (int __user *)arg))
+                        return -EFAULT;
+                if (options & WDIOS_DISABLECARD) {
+                        eurwdt_disable_timer();
 
 
-  Great Announcement from TCPD, Strong Buy Thursday!
 
-Read the news below - We believe this exciting news in
-addition to the big PR campaign in the next 5 days will
-make TCPD move up and up and up also a fax campaign is
-starting Friday evening so get it first thing Thursday
-when the market opens.
+--===============60148008326220537==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-             Expect Huge Coverage
-
-TCPD will be profiled from over 26 newsletters
-
-___________TCPD is our new profile_______________
-
-+>+>+> Company Profile
-
-Telecommunication Products, Inc.
-Symbol: BB: TCPD
-Current Price: $0.035
-Detailed Information:
-http://moneycentral.msn.com/scripts/webquote.dll?ipage=qd&Symbol=TCPD
-
-The price could go to $0.16 - 0.20 in the next 3-5 days
-The price could go to $0.21 - 0.25 in the next 10  days
-
-Read the exciting news below
-
-And do NOT forget that we will cover the stock for over
-1 week in this and other newsletters = huge exposure
-
-Telecommunication Products, Inc. ("Telpro") is a provider
-of video-on- demand and pay-per-view services to the
-hospitality industry. The Company is also currently
-marketing high speed Internet access products, including
-high end WiFi. Telpro is committed to delivering the next
-generation of interactive communication services to
-its growing database of clients.
-
-The Farmer's Daughter Hotel is a 65-room boutique hotel
-in Los Angeles, CA that completed a multi-million dollar
-renovation in 2003. The hotel infuses country styling with
-the modern to create an Urban-yet-Country feel. The hotel
-provides a laid back, distinctly California feel while
-providing today's travelers with digital in room services
-and modern amenities at a reasonable price.
-
-      * NEWS RELEASE  * 
-
-HOLLYWOOD Fla., May 25, 2004 /PRNewswire-FirstCall via
-COMTEX/ -- Telecommunication Products, Inc. (TCPD) ("Telpro"),
-a provider of Pay per View and Digital Satellite Services
-to the hospitality industry, announced today a contract with
-the high profile, Los Angeles landmark, Farmer's Daughter
-Hotel, in conjunction with its strategic partner B2 Networks. 
-
-                     GET IT IMMEDIATELY!
-
-
-
-+>+>+> DISCLAIMER 
-
-Information within this email contains "forward looking statements"
-within the meaning of Section 27A of the Securities Act of 1933 and
-Section 21B of the Securities Exchange Act of 1934. Any statements
-that express or involve discussions with respect to predictions, goals,
-expectations, beliefs, plans, projections, objectives, assumptions or
-future events or performance are not statements of historical fact
-and may be "forward looking statements."
- 
-Forward looking statements are based on expectations, estimates and
-projections at the time the statements are made that involve a number
-of risks and uncertainties which could cause actual results or events
-to differ materially from those presently anticipated. Forward looking
-statements in this action may be identified through the use of words
-such as: "in our opinion","projects", "foresee", "expects", "estimates,"
-"believes," "understands" "will," "part of: "anticipates," or that by
-statements indicating certain actions "may," "could," or "might" occur.
-All information provided within this email pertaining to investing,
-stocks, securities must be understood as information provided and not
-investment advice. we advise all readers and subscribers to seek advice
-from a registered professional securities representative before deciding
-to trade in stocks featured within this email. None of the material
-within this report shall be construed as any kind of investment advice.
-Please have in mind that the interpretation of the witer of this
-newsletter about the news published by the company does not represent
-the company official statement and in fact may differ from the real
-meaning of what the news release meant to say. Please read the news
-release by yourself and judge by yourself about the details in it.
-
-In compliance with Section 17(b), we disclose the holding of TCPD shares
-prior to the publication of this report. Be aware of an inherent conflict
-of interest resulting from such holdings due to our intent to profit
-from the liquidation of these shares. Shares may be sold at any time,
-even after positive statements have been made regarding the above company.
-Since we own shares, there is an inherent conflict of interest in our
-statements and opinions. Readers of this publication are cautioned not
-to place undue reliance on forward-looking statements, which are based
-on certain assumptions and expectations involving various risks and
-uncertainties, that could cause results to differ materially from those
-set forth in the forward- looking statements.
-
-Please be advised that nothing within this email shall constitute a
-solicitation or an offer to buy or sell any security mentioned herein.
-This newsletter is neither a registered investment advisor nor affiliated
-with any broker or dealer. All statements made are our express opinion
-only and should be treated as such. We may own, buy and sell any securities
-mentioned at any time. This report includes forward-looking statements
-within the meaning of The Private Securities Litigation Reform Act of
-1995. These statements may include terms as "expect", "believe", "may",
-"will", "move","undervalued" and "intend" or similar terms. This
-newsletter was paid $12500 from third party to send this report. PLEASE
-DO YOUR OWN DUE DILIGENCE BEFORE INVESTING IN ANY PROFILED COMPANY.
-You may lose money from investing in Penny Stocks.
-
-southeast decalogue shareholder deplane
-
-sputnik couscous allah radiant
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by the new InstallShield X.
-From Windows to Linux, servers to mobile, InstallShield X is the one
-installation-authoring solution that does it all. Learn more and
-evaluate today! http://www.installshield.com/Dev2Dev/0504
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============60148008326220537==--
