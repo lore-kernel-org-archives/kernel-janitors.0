@@ -1,123 +1,58 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Fri, 20 Aug 2004 19:00:39 +0000
-Subject: [Kernel-janitors] [patch 5/12] pci_dev_b to list_for_each_entry:
-Message-Id: <20040820190039.D72D51ED3A@trashy.coderock.org>
+From: "Franklin Guidry" <sojuiney@yahoo.com>
+Date: Tue, 17 Aug 2004 03:33:16 +0000
+Subject: 80% Dis-c0unt on All Meds! lVZ
+Message-Id: <E1Bx1Cf-00037q-JT@sc8-sf-mx1.sourceforge.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52008188470137573=="
+Content-Type: multipart/mixed; boundary="--17007952718104621749"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============52008188470137573==
-
---- kjt2/arch/ppc/kernel/pci.c	2004-08-20 18:58:55.000000000 +0200
-+++ kjt2-lfe/arch/ppc/kernel/pci.c	2004-08-20 20:08:05.000000000 +0200
-@@ -246,14 +246,12 @@
- static void __init
- pcibios_allocate_bus_resources(struct list_head *bus_list)
- {
--	struct list_head *ln;
- 	struct pci_bus *bus;
- 	int i;
- 	struct resource *res, *pr;
- 
- 	/* Depth-First Search on bus tree */
--	list_for_each(ln, bus_list) {
--		bus = pci_bus_b(ln);
-+	list_for_each_entry(bus, bus_list, node) {
- 		for (i = 0; i < 4; ++i) {
- 			if ((res = bus->resource[i]) == NULL || !res->flags
- 			    || res->start > res->end)
-@@ -396,7 +394,6 @@
- 	struct pci_bus *bus;
- 	struct pci_dev *dev;
- 	struct resource *r;
--	struct list_head *ln;
- 	int i;
- 
- 	for (r = pr->child; r != NULL; r = r->sibling) {
-@@ -405,8 +402,7 @@
- 			return 1;
- 		}
- 	}
--	list_for_each(ln, &parent->children) {
--		bus = pci_bus_b(ln);
-+	list_for_each_entry(bus, &parent->children, node) {
- 		for (i = 0; i < 4; ++i) {
- 			if ((r = bus->resource[i]) == NULL)
- 				continue;
-@@ -420,8 +416,7 @@
- 			}
- 		}
- 	}
--	list_for_each(ln, &parent->devices) {
--		dev = pci_dev_b(ln);
-+	list_for_each_entry(dev, &parent->devices, bus_list) {
- 		for (i = 0; i < 6; ++i) {
- 			r = &dev->resource[i];
- 			if (!r->flags || (r->flags & IORESOURCE_UNSET))
-@@ -1116,7 +1111,7 @@
- static int __init
- check_for_io_childs(struct pci_bus *bus, struct resource* res, int *found_vga)
- {
--	struct list_head *ln;
-+	struct pci_dev *dev;
- 	int	i;
- 	int	rc = 0;
- 
-@@ -1124,8 +1119,7 @@
- 	res->end = ((res->end + __sz) / (__sz + 1)) * (__sz + 1) + __sz; \
-     } while (0)
- 
--	list_for_each(ln, &bus->devices) {
--		struct pci_dev *dev = pci_dev_b(ln);
-+	list_for_each_entry(dev, &bus->devices, bus_list) {
- 		u16 class = dev->class >> 8;
- 
- 		if (class == PCI_CLASS_DISPLAY_VGA ||
-@@ -1166,7 +1160,7 @@
- static void __init
- do_fixup_p2p_level(struct pci_bus *bus)
- {
--	struct list_head *ln;
-+	struct pci_bus *b;
- 	int i, parent_io;
- 	int has_vga = 0;
- 
-@@ -1177,8 +1171,7 @@
- 	if (parent_io >= 4)
- 		return;
- 
--	list_for_each(ln, &bus->children) {
--		struct pci_bus *b = pci_bus_b(ln);
-+	list_for_each_entry(b, &bus->children, node) {
- 		struct pci_dev *d = b->self;
- 		struct pci_controller* hose = (struct pci_controller *)d->sysdata;
- 		struct resource *res = b->resource[0];
-@@ -1251,12 +1244,10 @@
- static void
- pcibios_fixup_p2p_bridges(void)
- {
--	struct list_head *ln;
-+	struct pci_bus *b;
- 
--	list_for_each(ln, &pci_root_buses) {
--		struct pci_bus *b = pci_bus_b(ln);
-+	list_for_each_entry(b, &pci_root_buses, node)
- 		do_fixup_p2p_level(b);
--	}
- }
- 
- #endif /* CONFIG_PPC_PMAC */
-
---===============52008188470137573==
-Content-Type: text/plain; charset="iso-8859-1"
+User ID: 1 condensible
+Date: Tue, 17 Aug 2004 13:24:24 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: multipart/alternative;
+	boundary="--17007952718104621749"
 
+
+----17007952718104621749
+Content-Type: text/plain;
+Content-Transfer-Encoding: 7Bit
+
+Kernel-janitor-discuss
+
+Why pay more when you can enjoy the best and cheapest pills online? 
+Nearly 80 types to choose which makes ours pharmacy the largest and the best available!
+
+No Appointments.
+No Waiting Rooms.
+No Prior Prescription Required.
+
+See why our customers re-order more than any competitor!
+
+http://bestpills.mypills4us.com/?k=S17h49
+
+
+
+
+
+
+
+This is one-time mai|ing. No rem0val are required.
+h2ph3pjTUtUwUogK2O8bxKMnbffJBiZb2JSLW6ufUCeeDpd
+
+
+
+----17007952718104621749--
+
+
+
+
+-------------------------------------------------------
+SF.Net email is sponsored by Shop4tech.com-Lowest price on Blank Media
+100pk Sonic DVD-R 4x for only $29 -100pk Sonic DVD+R for only $33
+Save 50% off Retail on Ink & Toner - Free Shipping and Free Gift.
+http://www.shop4tech.com/z/Inkjet_Cartridges/9_108_r285
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============52008188470137573==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
