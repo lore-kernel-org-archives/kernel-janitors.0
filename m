@@ -1,7 +1,7 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 17 Jan 2004 14:20:15 +0000
-Subject: [Kernel-janitors] [patch 2.6.1] net/core/dev.c -comparison
-Message-Id: <200401171520.15308.domen@coderock.org>
+From: Carlo Perassi <carlo@linux.it>
+Date: Thu, 22 Jan 2004 18:17:17 +0000
+Subject: [Kernel-janitors] unnecessary cast script finder
+Message-Id: <20040122181717.GA2685@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,33 +10,42 @@ To: kernel-janitors@vger.kernel.org
 
 Hi.
 
-Get rid of one comparison, improve readability.
+I wrote a little script which searchs in driver/ (driver/net/ to be
+faster) for lines of this kind:
+struct A *B = (struct A *)dev->priv;
 
+As you know, a line like the previous one probably shall be rewritten
+like:
+struct A *B = dev->priv;
 
---- linux-2.6.0-test11-small/net/core/dev.c	2003-11-29 21:47:03.000000000 +0100
-+++ linux-2.6.0-test11-athlon/net/core/dev.c	2003-12-13 17:27:37.000000000 +0100
-@@ -1872,9 +1872,9 @@ void dev_seq_stop(struct seq_file *seq, 
- 
- static void dev_seq_printf_stats(struct seq_file *seq, struct net_device *dev)
- {
--	struct net_device_stats *stats = dev->get_stats ? dev->get_stats(dev) :
--							  NULL;
--	if (stats)
-+	if (dev->get_stats) {
-+		struct net_device_stats *stats = dev->get_stats(dev);
-+
- 		seq_printf(seq, "%6s:%8lu %7lu %4lu %4lu %4lu %5lu %10lu %9lu "
- 				"%8lu %7lu %4lu %4lu %4lu %5lu %7lu %10lu\n",
- 			   dev->name, stats->rx_bytes, stats->rx_packets,
-@@ -1892,6 +1892,7 @@ static void dev_seq_printf_stats(struct 
- 			     stats->tx_window_errors +
- 			     stats->tx_heartbeat_errors,
- 			   stats->tx_compressed);
-+	}
- 	else
- 		seq_printf(seq, "%6s: No statistics available.\n", dev->name);
- }
+To show you what you can get, I paste here some lines of the script's
+output:
 
+drivers/net/bonding/bond_3ad.c
+  2479		struct bonding *bond = (struct bonding *)dev->priv;
+drivers/net/bonding/bond_alb.c
+   397		struct bonding *bond = (struct bonding *)dev->priv;
+drivers/net/smc9194.c
+   468		struct smc_local *lp 	= (struct smc_local *)dev->priv;
+   579		struct smc_local *lp = (struct smc_local *)dev->priv;
+  1139		struct smc_local *lp 	= (struct smc_local *)dev->priv;
+  1263		struct smc_local *lp = (struct smc_local *)dev->priv;
+  1390		struct smc_local *lp = (struct smc_local *)dev->priv;
+  1463		struct smc_local *lp = (struct smc_local *)dev->priv;
+
+The script and its (purged) output are available here:
+http://www.linux.it/~carlo/somehacks/pmaker/
+
+I have not yet wrote a script which creates the right patches and, despite
+I wish to write it, it is not safe to create and submit script-made
+patches without checks, so I wonder if someone would like to look at some
+part of the output of the script and create the proper patches. Waiting
+for a patch maker script/program, that's what I ask for.
+
+Thanks.
+
+-- 
+Carlo Perassi - http://www.linux.it/~carlo/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
