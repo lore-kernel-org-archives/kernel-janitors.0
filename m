@@ -1,101 +1,141 @@
 From: Matthew Wilcox <willy@debian.org>
-Date: Tue, 18 May 2004 13:03:30 +0000
-Subject: Re: [Kernel-janitors] [PATCH] - fs/namespace.c::copy_namespace()
-Message-Id: <20040518130330.GF6484@parcelfarce.linux.theplanet.co.uk>
+Date: Tue, 18 May 2004 15:55:35 +0000
+Subject: Re: Re: [Kernel-janitors] [PATCH] - fs/namespace.c::copy_namesp
+Message-Id: <20040518155535.GG6484@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81935060237472102=="
+Content-Type: multipart/mixed; boundary="===============16501113241092824=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040517232335.GD6248@lorien.prodam>
 In-Reply-To: <20040517232335.GD6248@lorien.prodam>
 To: kernel-janitors@vger.kernel.org
 
---===============81935060237472102==
+--===============16501113241092824==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, May 17, 2004 at 08:23:35PM -0300, Luiz Fernando N. Capitulino wrote:
+On Tue, May 18, 2004 at 04:54:32PM +0200, Walter Harms wrote:
+> Hi Willy,
+> first i would do 
+>           if (!capable(CAP_SYS_ADMIN)) 
+> 
+> So its harder to leak any information 
+> (if later programmers fail somewhere)	
+> 
+> there i would change. any reason not to do ?
 
-Might work a bit better like this:
+Because copy_namespace doesn't need CAP_SYS_ADMIN if CLONE_NEWNS is clear.
+Anyway, what information is leaked?  Here's the beginning of the function:
 
-> diff -X dontdiff -Nparu a/fs/namespace.c a~/fs/namespace.c
-> --- a/fs/namespace.c	2004-05-10 13:36:46.000000000 -0300
-> +++ a~/fs/namespace.c	2004-05-12 16:13:22.000000000 -0300
-> @@ -868,23 +868,26 @@ int copy_namespace(int flags, struct tas
->  	struct namespace *new_ns;
->  	struct vfsmount *rootmnt = NULL, *pwdmnt = NULL, *altrootmnt = NULL;
->  	struct fs_struct *fs = tsk->fs;
-> +	int rc = 0;
+int copy_namespace(int flags, struct task_struct *tsk)
+{
+        struct namespace *namespace = tsk->namespace;
+        struct namespace *new_ns;
+        struct vfsmount *rootmnt = NULL, *pwdmnt = NULL, *altrootmnt = NULL;
+        struct fs_struct *fs = tsk->fs;
 
-	int rc;
+        if (!namespace)
+                return 0;
 
->  
->  	if (!namespace)
-> -		return 0;
-> +		return rc;
+        get_namespace(namespace);
 
-Don't change.
+        if (!(flags & CLONE_NEWNS))
+                return 0;
 
->  
->  	get_namespace(namespace);
->  
->  	if (!(flags & CLONE_NEWNS))
-> -		return 0;
-> +		return rc;
+        if (!capable(CAP_SYS_ADMIN)) {
+                put_namespace(namespace);
+                return -EPERM;
+        }
 
-Don't change.
+get_namespace and put_namespace handle refcounting.  Without refcounting,
+this is what it looks like:
 
->  	if (!capable(CAP_SYS_ADMIN)) {
-> -		put_namespace(namespace);
-> -		return -EPERM;
-> +		rc = -EPERM;
-> +		goto out;
->  	}
+        if (!namespace) 
+                return 0;
+        if (!(flags & CLONE_NEWNS))
+                return 0;
+        if (!capable(CAP_SYS_ADMIN))
+		return -EPERM;
 
-	rc = -EPERM;
-	if (!capable(CAP_SYS_ADMIN))
-		goto out;
+Perhaps the conceptual problem here is that copy_namespace does different
+things depending on the flags.  Maybe this should be:
 
->  	new_ns = kmalloc(sizeof(struct namespace), GFP_KERNEL);
-> -	if (!new_ns)
-> +	if (!new_ns) {
-> +		rc = -ENOMEM;
->  		goto out;
-> +	}
+Index: fs/namespace.c
+===================================================================
+RCS file: /var/cvs/linux-2.6/fs/namespace.c,v
+retrieving revision 1.8
+diff -u -p -r1.8 namespace.c
+--- a/fs/namespace.c    28 Apr 2004 19:12:44 -0000      1.8
++++ b/fs/namespace.c    18 May 2004 15:43:51 -0000
+@@ -803,25 +803,13 @@ dput_out:
+        return retval;
+ }
+ 
+-int copy_namespace(int flags, struct task_struct *tsk)
++static int new_namespace(int flags, struct task_struct *tsk)
+ {
+        struct namespace *namespace = tsk->namespace;
+        struct namespace *new_ns;
+        struct vfsmount *rootmnt = NULL, *pwdmnt = NULL, *altrootmnt = NULL;
+        struct fs_struct *fs = tsk->fs;
+-
+-       if (!namespace)
+-               return 0;
+-
+-       get_namespace(namespace);
+-
+-       if (!(flags & CLONE_NEWNS))
+-               return 0;
+-
+-       if (!capable(CAP_SYS_ADMIN)) {
+-               put_namespace(namespace);
+-               return -EPERM;
+-       }
++       int result = -ENOMEM;
+ 
+        new_ns = kmalloc(sizeof(struct namespace), GFP_KERNEL);
+        if (!new_ns)
+@@ -879,12 +867,32 @@ int copy_namespace(int flags, struct tas
+        if (altrootmnt)
+                mntput(altrootmnt);
+ 
+-       put_namespace(namespace);
+-       return 0;
++       result = 0;
+ 
+-out:
++ out:
+        put_namespace(namespace);
+-       return -ENOMEM;
++       return result;
++}
++
++int copy_namespace(int flags, struct task_struct *tsk)
++{
++       struct namespace *namespace = tsk->namespace;
++       int result;
++
++       if (!namespace)
++               return 0;
++
++       get_namespace(namespace);
++
++       if (!(flags & CLONE_NEWNS))
++               return 0;
++
++       if (!capable(CAP_SYS_ADMIN)) {
++               put_namespace(namespace);
++               return -EPERM;
++       }
++
++       return new_namespace(flags, tsk);
+ }
+ 
+ asmlinkage long sys_mount(char __user * dev_name, char __user * dir_name,
 
-	new_ns = kmalloc(sizeof(struct namespace), GFP_KERNEL);
-	rc = -ENOMEM;
-	if (!new_ns)
-		goto out;
 
-
->  	atomic_set(&new_ns->count, 1);
->  	init_rwsem(&new_ns->sem);
-> @@ -896,6 +899,7 @@ int copy_namespace(int flags, struct tas
->  	if (!new_ns->root) {
->  		up_write(&tsk->namespace->sem);
->  		kfree(new_ns);
-> +		rc = -ENOMEM;
-
-... can delete.
-
->  		goto out;
->  	}
->  	spin_lock(&vfsmount_lock);
-> @@ -938,12 +942,9 @@ int copy_namespace(int flags, struct tas
->  	if (altrootmnt)
->  		mntput(altrootmnt);
->  
-> -	put_namespace(namespace);
-> -	return 0;
-> -
->  out:
->  	put_namespace(namespace);
-> -	return -ENOMEM;
-> +	return rc;
->  }
-
-To be honest, this doesn't really need to be touched, it's pretty
-readable as-is.
+Untested, but should hopefully convey better that copy_namespace does
+two different things, and to do the second one (create a new namespace),
+you have to be root.
 
 -- 
 "Next the statesmen will invent cheap lies, putting the blame upon 
@@ -105,7 +145,7 @@ to examine any refutations of them; and thus he will by and by convince
 himself that the war is just, and will thank God for the better sleep 
 he enjoys after this process of grotesque self-deception." -- Mark Twain
 
---===============81935060237472102==
+--===============16501113241092824==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -116,4 +156,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81935060237472102==--
+--===============16501113241092824==--
