@@ -1,57 +1,75 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 21 Sep 2004 21:14:38 +0000
-Subject: Re: [Kernel-janitors] [PATCH] base/dmapool: replace
-Message-Id: <20040921211438.GD4260@stro.at>
+From: Scott Feldman <sfeldma@pobox.com>
+Date: Sat, 18 Sep 2004 22:30:00 +0000
+Subject: [Kernel-janitors] [PATCH] TODO: add MODULE_VERSION
+Message-Id: <1095546600.3593.37.camel@sfeldma-mobl2.dsl-verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36710217376639132=="
+Content-Type: multipart/mixed; boundary="===============40729153801515361=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040915183200.GH4363@us.ibm.com>
-In-Reply-To: <20040915183200.GH4363@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============36710217376639132==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============40729153801515361==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, 15 Sep 2004, Nishanth Aravamudan wrote:
+[New to kj - is this the correct way to add to the TODO?]
 
-> Any comments would be appreciated.
-> 
-> Description: msleep_interruptible() is used instead of schedule_timeout()
-> to guarantee the task delays as expected. To achieve this, the timeout
-> variable is converted from jiffies to msecs. Also, set_current_state()
-> is used instead of direct assignment.
-> 
-> --- 2.6.9-rc2-vanilla/drivers/base/dmapool.c	2004-09-13 17:15:46.000000000 -0700
-> +++ 2.6.9-rc2/drivers/base/dmapool.c	2004-09-14 11:37:07.000000000 -0700
-> @@ -34,7 +34,7 @@ struct dma_page {	/* cacheable header fo
->  	unsigned long		bitmap [0];
->  };
->  
-> -#define	POOL_TIMEOUT_JIFFIES	((100 /* msec */ * HZ) / 1000)
-> +#define	POOL_TIMEOUT_MSECS	(100)   /* msec */
->  #define	POOL_POISON_FREED	0xa7	/* !inuse */
->  #define	POOL_POISON_ALLOCATED	0xa9	/* !initted */
->  
-> @@ -293,11 +293,11 @@ restart:
->  		if (mem_flags & __GFP_WAIT) {
->  			DECLARE_WAITQUEUE (wait, current);
->  
-> -			current->state = TASK_INTERRUPTIBLE;
-> +			set_current_state (TASK_INTERRUPTIBLE);
->  			add_wait_queue (&pool->waitq, &wait);
->  			spin_unlock_irqrestore (&pool->lock, flags);
->  
-> -			schedule_timeout (POOL_TIMEOUT_JIFFIES);
-> +			msleep_interruptible(POOL_TIMEOUT_MSECS);
->  
->  			remove_wait_queue (&pool->waitq, &wait);
->  			goto restart;
+* Add Matt Domsch's note to add MODULE_VERSION to all modules
+  to kj TODO list.
 
-added include for kjt.
-a++ maks
+------------------------
 
---===============36710217376639132==
+--- TODO.orig	2004-09-18 15:23:20.813573216 -0700
++++ TODO	2004-09-18 15:26:28.069106048 -0700
+@@ -636,4 +636,45 @@ altinstructions is a false positive, twe
+ 
+ The rest of the warnings look real, apart from the strange eh_frame.
+ 
++----------------------------------------------------------------------
++From: Matt Domsch
++Sat Jul 24 10:51:04 PDT 2004
++
++Request for Patches
++
++The 2.6.x kernel includes a MODULE_VERSION() parameter for providing
++one convenient way for all modules to state what  *their* version is
++(as opposed to the version of the larger kernel they're included in).
++
++I've started submitting patches to the subsystem maintainers to add
++MODULE_VERSION() entries for drivers that I particularly care about,
++and would appreciate assistance handling the others.
++
++For modules which display their version as a string somewhere via
++printk, the preferred mechanism is:
++
++#define DRV_VERSION "1.0.0"
++MODULE_VERSION(DRV_VERSION);
++
++One aspect of MODULE_VERSION I haven't tackled is re-formatting
++existing versions into the preferred method as found in include/linux/module.h:
++
++/* Version of form [<epoch>:]<version>[-<extra-version>].
++   Or for CVS/RCS ID version, everything but the number is stripped.
++  <epoch>: A (small) unsigned integer which allows you to start
++   versions
++           anew. If not mentioned, it's zero.  eg. "2:1.0" is after
++           "1:2.0".
++  <version>: The <version> may contain only alphanumerics and the
++           character `.'.  Ordered by numeric sort for numeric parts,
++           ascii sort for ascii parts (as per RPM or DEB algorithm).
++  <extraversion>: Like <version>, but inserted for local
++           customizations, eg "rh3" or "rusty1".
++*/
++
++I leave such reformatting up to each driver author and/or patch
++submitter.
++
++Thanks,
++Matt
+ --------------------------------end-----------------------------------
+
+
+
+--===============40729153801515361==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36710217376639132==--
+--===============40729153801515361==--
