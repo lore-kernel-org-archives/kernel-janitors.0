@@ -1,52 +1,30 @@
-From: "Orlando Staton" <safsfp@yahoo.com>
-Date: Mon, 03 May 2004 14:08:36 +0000
-Subject: to use Latourian terms. To stay in the framework
-Message-Id: <KFBUNKDLBLECIDCGEUMBYQC@msn.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--648681807766418488854584277388854396810"
+From: "Brian Moussa"<explicabletenacity@charter.net>
+Date: Thu, 27 May 2004 18:54:02 +0000
+Subject: C1AL_IS & LEV1_TRA : D0CTOR & FDA a_pprova1 !
+Message-Id: <E1BTWYZ-0006ua-Aq@sc8-sf-mx2.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-----648681807766418488854584277388854396810
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>Untitled Document</title>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859=
--1">
-</head>
-
-<body>
-<a href=3D"http://blaze_74Linda.parablerxsource.com/?rid=3D1000"><img src=3D=
-"http://cleanup_2Ziegler.parablerxchoice.com/a17.jpg" border=3D"0"></a> 
-<font color=3D"#fffff35"><"13) Each person is valued for his or her singul=
-arity - what unfolds through the interactions is the consequences of an un=
-forced relation between individuals. To better to picture this it is helpf=
-ul to think of each individual as a singer who must resist """>modified an=
-d altered in any way. A homepage manifest itself as a representation of in=
-formation in virtual worlds</scientific texts and scientists. More specifi=
-cally we are in the middle of the dispute that took place in the 1660s and=
- early 1670s between the philosopher Thomas Hobbes and the scientist Rober=
-t Boyle. The original dispute starting it all was taking place></font>
-
-
-</body>
-</html>
-
-
-----648681807766418488854584277388854396810--
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by: Oracle 10g
-Get certified on the hottest thing ever to hit the market... Oracle 10g. 
-Take an Oracle 10g class now, and we'll give you the exam FREE.
-http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
-_______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+PGh0bWw+PGJvZHkgPjxiPjxmb250IGNvbG9yPSNGRjAwMDA+CkNJQUwxX1MgJiBMRVZJVF9SQSBp
+cyB0YWtlbiBhYm91dCBoYWxmIGFuIGhvdXIgYmVmb3JlIGFueSBzZXh1YTFsIEFDVDFWSVRZIGJl
+Z2lucyEgPC9mb250PjwvYj48YnI+PGJyPgo8Zm9udCBjb2xvcj0jMDAwMDMzPnRoZSBhY3RpdmUg
+aSduZ3JlZGllbnQgZm91bmQgaW4gIEMuMUFMSVMgaXMgdC5hMWFkYWZpbCwgPGJyPiB0aGUgYWN0
+aXZlIGl8bmdyZWRpZW50IGZvdW5kIGluICBMRVYxVFInQSBpcyB2fmFyZGVuYWZpMS4gPC9mb250
+Pgo8cD48Zm9udCBjb2xvcj0jRkYwMDAwPjxiPgogPGEgaHJlZj1odHRwOi8vaHVycmllZC5mZ2Zk
+c2cuY29tL2F0Pk4wdyAgVklTMVQgIE91ciAgV2BFQlNJVEUgOiBDfGx8MXxDfEsgIEh8RXxSfEU8
+L2E+PGJyPjxicj48YnI+PGJyPjxicj48YnI+PGJyPjxicj48YnI+PGJyPjxicj48YnI+PGJyPjxi
+cj48YnI+PGJyPjxicj48YnI+PGJyPjxicj48YnI+PGEgaHJlZj1odHRwOi8vdGVybWluaS5uZXQ+
+XjwvYT48cD48YSBocmVmPWh0dHA6Ly9leG9yY2lzbS5jb20+KjwvYT48L3A+PGEgaHJlZj1odHRw
+Oi8vc2N1dHRsZXMub3JnPi08L2E+PC9iPjwvZm9udD4KPC9QPgo8L0JPRFk+PC9IVE1MPgoKCi0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhp
+cyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVkIGJ5OiBPcmFjbGUgMTBnCkdldCBjZXJ0aWZpZWQg
+b24gdGhlIGhvdHRlc3QgdGhpbmcgZXZlciB0byBoaXQgdGhlIG1hcmtldC4uLiBPcmFjbGUgMTBn
+LiAKVGFrZSBhbiBPcmFjbGUgMTBnIGNsYXNzIG5vdywgYW5kIHdlJ2xsIGdpdmUgeW91IHRoZSBl
+eGFtIEZSRUUuCmh0dHA6Ly9hZHMub3Nkbi5jb20vP2FkX2lkMTQ5JmFsbG9jX2lkgTY2Jm9wPWNs
+aWNrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCktlcm5l
+bC1qYW5pdG9yLWRpc2N1c3MgbWFpbGluZyBsaXN0Cktlcm5lbC1qYW5pdG9yLWRpc2N1c3NAbGlz
+dHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
+c3RpbmZvL2tlcm5lbC1qYW5pdG9yLWRpc2N1c3M=
