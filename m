@@ -1,15 +1,19 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 23:20:31 +0000
+Date: Tue, 27 Jul 2004 23:21:08 +0000
 Subject: [Kernel-janitors] [PATCH] wan/farsync: insert set_current_state()
-Message-Id: <20040727232031.GR4679@us.ibm.com>
+Message-Id: <20040727232108.GS4679@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42172758891790174=="
+Content-Type: multipart/mixed; boundary="===============92979915044383554=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040727232031.GR4679@us.ibm.com>
+In-Reply-To: <20040727232031.GR4679@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============42172758891790174==
+--===============92979915044383554==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+
+Sorry, wrong recipients . . .
 
 I would appreciate any comments from the janitors list. 
 
@@ -32,7 +36,7 @@ Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
  		spin_lock_irqsave(&card->card_lock, flags);
  
 
---===============42172758891790174==
+--===============92979915044383554==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42172758891790174==--
+--===============92979915044383554==--
