@@ -1,39 +1,43 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Tue, 16 Nov 2004 18:58:21 +0000
-Subject: [KJ] [patch 1/2] net/via-rhine: module_param conversions
-Message-Id: <20041116185821.GB8698@nd47.coderock.org>
+From: james4765@verizon.net
+Date: Sat, 20 Nov 2004 16:18:15 +0000
+Subject: [KJ] [PATCH] floppy: relocate devfs comment
+Message-Id: <20041120161837.9319.60041.87620@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34515861039323514=="
+Content-Type: multipart/mixed; boundary="===============62767009808189833=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org, james4765@verizon.net
 
---===============34515861039323514==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============62767009808189833==
 
-Convert to new module parameter api.
-Compile and run tested.
-
-
-Signed-off-by: Domen Puncer <domen@coderock.org>
-
---- c/drivers/net/via-rhine.c	2004-11-15 13:42:12.000000000 +0100
-+++ a/drivers/net/via-rhine.c	2004-11-16 14:15:09.000000000 +0100
-@@ -226,9 +226,9 @@ MODULE_AUTHOR("Donald Becker <becker@scy
- MODULE_DESCRIPTION("VIA Rhine PCI Fast Ethernet driver");
- MODULE_LICENSE("GPL");
+Binary files linux-2.6.10-rc2-original/Documentation/.ioctl-number.txt.swp and linux-2.6.10-rc2/Documentation/.ioctl-number.txt.swp differ
+diff -urN --exclude='*~' linux-2.6.10-rc2-original/drivers/block/floppy.c linux-2.6.10-rc2/drivers/block/floppy.c
+--- linux-2.6.10-rc2-original/drivers/block/floppy.c	2004-11-15 21:38:15.000000000 -0500
++++ linux-2.6.10-rc2/drivers/block/floppy.c	2004-11-20 11:11:47.670201702 -0500
+@@ -98,6 +98,10 @@
+  */
  
--MODULE_PARM(max_interrupt_work, "i");
--MODULE_PARM(debug, "i");
--MODULE_PARM(rx_copybreak, "i");
-+module_param(max_interrupt_work, int, 0);
-+module_param(debug, int, 0644);
-+module_param(rx_copybreak, int, 0);
- MODULE_PARM_DESC(max_interrupt_work, "VIA Rhine maximum events handled per interrupt");
- MODULE_PARM_DESC(debug, "VIA Rhine debug level (0-7)");
- MODULE_PARM_DESC(rx_copybreak, "VIA Rhine copy breakpoint for copy-only-tiny-frames");
+ /*
++ * 1998/1/21 -- Richard Gooch <rgooch@atnf.csiro.au> -- devfs support
++ */
++
++/*
+  * 1998/05/07 -- Russell King -- More portability cleanups; moved definition of
+  * interrupt and dma channel to asm/floppy.h. Cleaned up some formatting &
+  * use of '0' for NULL.
+@@ -159,10 +163,6 @@
+ #define FDPATCHES
+ #include <linux/fdreg.h>
+ 
+-/*
+- * 1998/1/21 -- Richard Gooch <rgooch@atnf.csiro.au> -- devfs support
+- */
+-
+ #include <linux/fd.h>
+ #include <linux/hdreg.h>
+ 
 
---===============34515861039323514==
+--===============62767009808189833==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34515861039323514==--
+--===============62767009808189833==--
