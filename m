@@ -1,53 +1,52 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Wed, 18 Feb 2004 11:33:31 +0000
-Subject: Re: [Kernel-janitors] [PATCH] Moving MODULE_LICENSE();
-Message-Id: <20040218113331.GH1606@mail.sternwelten.at>
+From: Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+Date: Tue, 17 Feb 2004 09:55:25 +0000
+Subject: [Kernel-janitors] Re: 2.6.1: net/ipv4/fib_hash.c: check kmem_cache
+Message-Id: <20040217095525.GD29263@conectiva.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1077084589.6225.1.camel@mugen>
-In-Reply-To: <1077084589.6225.1.camel@mugen>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 18 Feb 2004, Fry wrote:
-
-> My first kernel patch. Hope I didn't miss one.
-
-consider to send in one patch / file
-
-> --- linux-2.6.3/drivers/video-old/amifb.c	2004-02-18 16:59:33.001422464 +1100
-> +++ linux-2.6.3/drivers/video/amifb.c	2004-02-18 16:43:33.267324224 +1100
-> @@ -3812,7 +3812,6 @@
->  
->  
->  #ifdef MODULE
-> -MODULE_LICENSE("GPL");
->  
->  int init_module(void)
+Em Tue, Feb 17, 2004 at 10:32:20AM +0100, Walter Harms escreveu:
+> hi list,
+> this patch is the same as before and fixes the
+> problem acme found.
+> must_free is only set if kmem_cache_create is realy used
+> and only then freed.
+> 
+> background:
+> fib_hash_init() can be called many times. if fn_hash_kmem
+> is already set and kmalloc fails the wrong fn_hash_kmem is freed. I think this can only happen if
+> CONFIG_IP_MULTIPLE_TABLES is set.
+> 
+> regards,
+> walter
+> 
+> 
+> --- linux-2.6.1/net/ipv4/fib_hash.c.org 2004-02-17 09:19:21.000000000 +0100
+> +++ linux-2.6.1/net/ipv4/fib_hash.c     2004-02-17 10:20:08.000000000 +0100
+> @@ -870,16 +870,23 @@
+>  #endif
 >  {
-> @@ -3826,3 +3825,5 @@
->  	amifb_video_off();
->  }
->  #endif /* MODULE */
-> +
-> +MODULE_LICENSE("GPL");
-> [ snipped ]
+>         struct fib_table *tb;
+> -
+> -       if (fn_hash_kmem = NULL)
+> +       int must_free=0;
+> +       if (fn_hash_kmem = NULL) {
+>                 fn_hash_kmem = kmem_cache_create("ip_fib_hash",
+>                                                  sizeof(struct fib_node),
+>                                                  0, SLAB_HWCACHE_ALIGN,
+>                                                  NULL, NULL);
+> +               if (!fn_hash_kmem)
+> +               return NULL;
+> +               must_free=1;
 
-that doesn't make much sense
-please look at lwn.net the driver porting series
-http://lwn.net/Articles/driver-porting/
+Funny code 8) Please let me know when must_free=1; will ever be reached...
 
-init_module is 2.4 style not 2.6 
+In this case we can say "!Never Say Never" 8)
 
-good luck so far :)
-regards
-maks
-
-
-
-
-
+- Arnaldo
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
