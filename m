@@ -1,14 +1,14 @@
 From: Michael Veeck <michael.veeck@gmx.net>
-Date: Sat, 03 Jul 2004 15:05:20 +0000
-Subject: [Kernel-janitors] [PATCH] drivers/char/isicom.c MIN/MAX removal
-Message-Id: <40E81A24.1040001@gmx.net>
+Date: Sat, 03 Jul 2004 15:07:57 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/char/amiserial.c MIN/MAX removal
+Message-Id: <40E819A8.9030601@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040409020209030408080607"
+Content-Type: multipart/mixed; boundary="------------000400030808060108000004"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------040409020209030408080607
+--------------000400030808060108000004
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -25,66 +25,37 @@ Michael
 
 
 
---------------040409020209030408080607
+--------------000400030808060108000004
 Content-Type: text/plain;
- name="patch-char-isicom"
+ name="patch-char-amiserial"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="patch-char-isicom"
+ filename="patch-char-amiserial"
 
---- linux-2.6.7-old/drivers/char/isicom.c	2004-07-04 11:04:14.000000000 +0200
-+++ linux-2.6.7-new/drivers/char/isicom.c	2004-07-04 16:24:01.332090464 +0200
-@@ -388,7 +388,7 @@
- 		
- 		tty = port->tty;
- 		save_flags(flags); cli();
--		txcount = MIN(TX_SIZE, port->xmit_cnt);
-+		txcount = min_t(short, TX_SIZE, port->xmit_cnt);
- 		if ((txcount <= 0) || tty->stopped || tty->hw_stopped) {
- 			restore_flags(flags);
- 			continue;
-@@ -420,7 +420,7 @@
- 		residue = NO;
- 		wrd = 0;			
- 		while (1) {
--			cnt = MIN(txcount, (SERIAL_XMIT_SIZE - port->xmit_tail));
-+			cnt = min_t(int, txcount, (SERIAL_XMIT_SIZE - port->xmit_tail));
- 			if (residue == YES) {
- 				residue = NO;
- 				if (cnt > 0) {
-@@ -649,7 +649,7 @@
- 		}	 
- 	}
- 	else {				/* Data   Packet */
--		count = MIN(byte_count, (TTY_FLIPBUF_SIZE - tty->flip.count));
-+		count = min_t(unsigned short, byte_count, (TTY_FLIPBUF_SIZE - tty->flip.count));
- #ifdef ISICOM_DEBUG
- 		printk(KERN_DEBUG "ISICOM: Intr: Can rx %d of %d bytes.\n", 
- 					count, byte_count);
-@@ -1162,8 +1162,8 @@
- 	save_flags(flags);
- 	while(1) {	
- 		cli();
--		cnt = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
--			SERIAL_XMIT_SIZE - port->xmit_head));
-+		cnt = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+					    SERIAL_XMIT_SIZE - port->xmit_head));
- 		if (cnt <= 0) 
- 			break;
- 		
-@@ -1179,8 +1179,8 @@
- 				return -EFAULT;
- 			}
- 			cli();
--			cnt = MIN(cnt, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
--			SERIAL_XMIT_SIZE - port->xmit_head));
-+			cnt = min_t(int, cnt, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+						  SERIAL_XMIT_SIZE - port->xmit_head));
- 			memcpy(port->xmit_buf + port->xmit_head, tmp_buf, cnt);
- 		}	
- 		else
+--- linux-2.6.7-old/drivers/char/amiserial.c	2004-07-04 11:04:14.000000000 +0200
++++ linux-2.6.7-new/drivers/char/amiserial.c	2004-07-04 15:23:36.616131048 +0200
+@@ -118,10 +118,6 @@
+ 
+ #define NR_PORTS	(sizeof(rs_table)/sizeof(struct serial_state))
+ 
+-#ifndef MIN
+-#define MIN(a,b)	((a) < (b) ? (a) : (b))
+-#endif
+-
+ /*
+  * tmp_buf is used as a temporary buffer by serial_write.  We need to
+  * lock it in case the copy_from_user blocks while swapping in a page,
+@@ -1610,7 +1606,7 @@
+ 	if (char_time == 0)
+ 		char_time = 1;
+ 	if (timeout)
+-	  char_time = MIN(char_time, timeout);
++	  char_time = min_t(unsigned long, char_time, timeout);
+ 	/*
+ 	 * If the transmitter hasn't cleared in twice the approximate
+ 	 * amount of time to send the entire FIFO, it probably won't
 
---------------040409020209030408080607
+--------------000400030808060108000004
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -95,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------040409020209030408080607--
+--------------000400030808060108000004--
