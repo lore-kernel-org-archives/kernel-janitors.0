@@ -1,40 +1,42 @@
-From: "Arbutuses P. Drilling" <supercava@delphi.com>
-Date: Fri, 24 Dec 2004 03:21:16 +0000
+From: "Reallocate P. Navigator" <gbrock@mundoanimal.com>
+Date: Fri, 24 Dec 2004 03:21:56 +0000
 Subject: [KJ] =?windows-1251?b?z+7s7vn8IOIg7+7o8erlIOvz9/jl6SDw4OHu8vsg?=
-Message-Id: <110101c4e967$b77e3e7c$5e6066c4@delphi.com>
+Message-Id: <000001c4e967$c70d4b79$d46a51b6@mundoanimal.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0003_B5921E17.E7DAB5F7"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_C194A780.1D1C34E1"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <110101c4e967$b77e3e7c$5e6066c4@delphi.com>
+In-Reply-To: <110101c4e967$b77e3e7c$5e6066c4@delphi.com>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_0003_B5921E17.E7DAB5F7
-Content-Type: multipart/related; boundary="----------=_1103858393-4112-440"
+------=_NextPart_000_0001_C194A780.1D1C34E1
+Content-Type: multipart/related; boundary="----------=_1103858215-4112-399"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1103858393-4112-440
+------------=_1103858215-4112-399
 Content-Type: multipart/alternative;
-    boundary="----------=_1103858393-4112-441"
+    boundary="----------=_1103858215-4112-400"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1103858393-4112-441
+------------=_1103858215-4112-400
 Content-Type: text/plain;
 	charset=windows-1251
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-=EE=ED=E8  =ED=EE=F1=FF=F2,  =E3=EE=E2=EE=F0=FF  =EF=EE-=EE=F5=EE=F2=ED=E8=
-=F7=FC=E8,  =F2=EE =E5=F1=F2=FC,=20=20
-------------=_1103858393-4112-441
+=E3=F3=F1=F2=EE =EF=EE=F0=EE=F1=F8=E8=E5 =F2=E0=EB=EE=E2=FB=EC=E8 =EA=F3=F1=
+=F2=E0=EC=E8
+------------=_1103858215-4112-400
 Content-Type: text/html;
 	charset=windows-1251
 Content-Transfer-Encoding: quoted-printable
@@ -48,23 +50,22 @@ Content-Disposition: inline
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV><FONT size=3D1><A href=3D"http://topinterjob.ru/?UnIde"><IMG alt=3D"" =
+<DIV><FONT size=3D1><A href=3D"http://topinterjob.ru/?T4PYu"><IMG alt=3D"" =
 hspace=3D0=20
-DEFANGED_src=3D"cid:Dix.gif" align=3D"baseline"=20
+DEFANGED_src=3D"cid:omnibuses.gif" align=3D"baseline"=20
 border=3D0></A></FONT></DIV>
 <DIV><FONT size=3D1></FONT>&nbsp;</DIV>
-<DIV><FONT size=3D1>=ED=E5 =F1=F2=F0=E5=EB=FF=F2=FC =E2 =F2=E5=F5 =F3=F2=EE=
-=EA,  =EA=EE=F2=EE=F0=FB=E5 =EF=EE=E4=ED=FF=EB=E8=F1=FC  </FONT></DIV></BOD=
-Y></HTML>
+<DIV><FONT size=3D1>=FF=F1=F2=F0=E5=E1=F3, =EA=EE=F2=EE=F0=FB=E9 =E8  =E2=
+=F1=EA=E0=EA=E8=E2=E0=E5=F2 =F1</FONT></DIV></BODY></HTML>
 
-------------=_1103858393-4112-441--
+------------=_1103858215-4112-400--
 
-------------=_1103858393-4112-440
+------------=_1103858215-4112-399
 Content-Type: image/gif;
-	name="Dix.gif"
+	name="omnibuses.gif"
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="Dix.gif"
-Content-ID: <Dix.gif>
+Content-Disposition: attachment; filename="omnibuses.gif"
+Content-ID: <omnibuses.gif>
 
 R0lGODlhmwINAcQAAP///8zMzJmZmWZmZgAA/wAAAP//zP//mf//Zv//M///
 AP/M///MzP/Mmf/MZv/MM//MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -243,9 +244,9 @@ rSm3J9C8hd9mZ74zp4/HCBZyeDdcg0ZWN9q6Xi6weKtcafBGmr/iPfKehXkt
 Ri1JsnXiNGzJROpOd5GEayKWqHlL3VfDOtaynjWta23rW+M617FG9SBZTapT
 HwnYRAovr4tt7GMjO9nKXvYbQwAAOw==
 
-------------=_1103858393-4112-440--
+------------=_1103858215-4112-399--
 
-------=_NextPart_000_0003_B5921E17.E7DAB5F7
+------=_NextPart_000_0001_C194A780.1D1C34E1
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -256,7 +257,7 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0003_B5921E17.E7DAB5F7
+------=_NextPart_000_0001_C194A780.1D1C34E1
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: quoted-printable
@@ -270,21 +271,20 @@ similar future email.  If you have any questions, see
 the administrator of that system for details.
 
 Content preview:  .. MIME-Version: 1.0 X-Mailer: MIME-tools 5.411 (Entity
-  5.404) .. =3D_1103858387-4112-434 MIME-Version: 1.0 X-Mailer: MIME-tools
-  5.411 (Entity 5.404) .. =3D_1103858387-4112-435 =EE=ED=E8 =ED=EE=F1=FF=F2=
-, =E3=EE=E2=EE=F0=FF
-  =EF=EE-=EE=F5=EE=F2=ED=E8=F7=FC=E8, =F2=EE =E5=F1=F2=FC, =3D_1103858387-4=
-112-435 [...]=20
+  5.404) .. =3D_1103858166-4112-380 MIME-Version: 1.0 X-Mailer: MIME-tools
+  5.411 (Entity 5.404) .. =3D_1103858166-4112-381 =E3=F3=F1=F2=EE =EF=EE=F0=
+=EE=F1=F8=E8=E5 =F2=E0=EB=EE=E2=FB=EC=E8
+  =EA=F3=F1=3D_1103858166-4112-381 [...]=20
 
-Content analysis details:   (5.5 points, 5.0 required)
+Content analysis details:   (5.8 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- -----------------------------------------------=
 ---
  1.4 WEIRD_QUOTING          BODY: Weird repeated double-quotation marks
- 0.4 HTML_TAG_BALANCE_BODY  BODY: HTML has unbalanced "body" tags
  0.2 HTML_MESSAGE           BODY: HTML included in message
  0.7 HTML_20_30             BODY: Message is 20% to 30% HTML
+ 0.7 HTML_TAG_BALANCE_HTML  BODY: HTML has unbalanced "html" tags
  0.6 SUBJ_ALL_CAPS          Subject is all capitals
  1.1 FORGED_OUTLOOK_TAGS    Outlook can't send HTML in this format
  0.5 HTML_CHARSET_FARAWAY   A foreign language charset used in HTML markup
@@ -292,4 +292,4 @@ Content analysis details:   (5.5 points, 5.0 required)
 
 
 
-------=_NextPart_000_0003_B5921E17.E7DAB5F7--
+------=_NextPart_000_0001_C194A780.1D1C34E1--
