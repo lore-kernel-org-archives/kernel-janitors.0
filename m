@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 20 Jul 2004 20:48:07 +0000
+Date: Tue, 20 Jul 2004 20:51:42 +0000
 Subject: [Kernel-janitors] [PATCH] cdu31a: replace schedule_timeout() with
-Message-Id: <20040720204807.GA2959@us.ibm.com>
+Message-Id: <20040720205142.GB2959@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============038238877291641771=="
+Content-Type: multipart/mixed; boundary="===============66398998230356077=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040720204807.GA2959@us.ibm.com>
+In-Reply-To: <20040720204807.GA2959@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============038238877291641771==
+--===============66398998230356077==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -38,30 +40,24 @@ the task delays at least the desired time amount.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/cdrom/cdu31a.c	2004-06-16 05:19:42.000000000 +0000
-+++ linux-dev/drivers/cdrom/cdu31a.c	2004-07-10 18:23:50.000000000 +0000
-@@ -729,8 +729,7 @@ static void restart_on_error(void)
- 		       res_reg[1]);
- 	}
+--- linux-vanilla/drivers/cdrom/mcd.c	2004-06-16 05:19:37.000000000 +0000
++++ linux-dev/drivers/cdrom/mcd.c	2004-07-10 18:24:17.000000000 +0000
+@@ -1021,10 +1021,9 @@ static int mcd_open(struct cdrom_device_
+ 		st = statusCmd();	/* check drive status */
+ 		if (st == -1)
+ 			goto err_out;	/* drive doesn't respond */
+-		if ((st & MST_READY) == 0) {	/* no disk? wait a sec... */
+-			current->state = TASK_INTERRUPTIBLE;
+-			schedule_timeout(HZ);
+-		}
++		if ((st & MST_READY) == 0) 	/* no disk? wait a sec... */
++			msleep(1000);
++		
+ 	} while (((st & MST_READY) == 0) && count++ < MCD_RETRY_ATTEMPTS);
  
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(2 * HZ);
-+	msleep(2000);
- 
- 	sony_get_toc();
- }
-@@ -960,8 +959,7 @@ retry_cd_operation:
- 	if (((result_buffer[0] & 0xf0) == 0x20)
- 	    && (num_retries < MAX_CDU31A_RETRIES)) {
- 		num_retries++;
--		current->state = TASK_INTERRUPTIBLE;
--		schedule_timeout(HZ / 10);	/* Wait .1 seconds on retries */
-+		msleep(100):
- 		goto retry_cd_operation;
- 	}
- 
+ 	if (updateToc() < 0)
 
---===============038238877291641771==
+--===============66398998230356077==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============038238877291641771==--
+--===============66398998230356077==--
