@@ -1,61 +1,39 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 27 Jul 2004 23:57:07 +0000
-Subject: [Kernel-janitors] Re: [PATCH] scsi/osst: replace schedule_timeout()
-Message-Id: <20040727235707.GB6107@us.ibm.com>
+From: Oliver Neukum <oliver@neukum.org>
+Date: Tue, 13 Jul 2004 18:53:17 +0000
+Subject: [Kernel-janitors] Re: [linux-usb-devel] no set_current_state()
+Message-Id: <200407132053.18110.oliver@neukum.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52398478254702185=="
+Content-Type: multipart/mixed; boundary="===============69530626049886668=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1090971414l.8423l.3l@serve.riede.org>
-In-Reply-To: <1090971414l.8423l.3l@serve.riede.org>
 To: kernel-janitors@vger.kernel.org
 
---===============52398478254702185==
-Content-Type: text/plain; charset=us-ascii
+--===============69530626049886668==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 27, 2004 at 11:36:54PM +0000, Willem Riede wrote:
-> On 07/27/2004 06:47:32 PM, Nishanth Aravamudan wrote:
-> >I would appreciate any comments from the janitors list. This is one (of
-> >many) cases where I made a decision about replacing
-> >
-> >set_current_state(TASK_INTERRUPTIBLE);
-> >schedule_timeout(some_time);
-> >
-> >with
-> >
-> >msleep(jiffies_to_msecs(some_time));
-> >
-> >msleep() is not exactly the same as the previous code, but I only did
-> >this replacement where I thought long delays were *desired*. If this is
-> >not the case here, then just disregard this patch.
+Am Dienstag, 13. Juli 2004 19:52 schrieb Nishanth Aravamudan:
+> Hi,
 > 
-> While the exact delay for any schedule_timeout() in osst is usually not
-> important, because there are outer loops that cause us to wait until the
-> expected event takes place, I don't mind this change, with one exception:
-> I don't want to assume the value of HZ, so the values flagged below are
-> not acceptable.
+> In continuing to replace, where appropriate, code with msleep() calls, I 
+> ran across the following file(s) / function(s), which do not invoke 
+> set_current_state() before schedule_timeout(), which causes the latter 
+> to return immediately:
+> 
+> drivers/usb/media/dabusb.c::dabusb_open()
+> 
+> If someone could tell me which state (TASK_INTERRUPTIBLE or 
+> TASK_UNINTERRUPTIBLE) is desired, I can fix this and perhaps replace the 
+> calls with msleep().
 
-<snip>
+TASK_INTERRUPTIBLE. It checks for pending signals. While you are at it,
+try to move the check for nonblocking outside of the loop.
 
-> >-	    set_current_state(TASK_INTERRUPTIBLE);
-> >-	    schedule_timeout(HZ / 10);
-> >+	    msleep(100);
->                  ^^^^^  must be HZ/10
+	HTH
+		Oliver
 
-<snip>
-
-These are not assumptions of any form. By the math:
-
-(HZ / 10 jiffies) * (1 / HZ sec/jiffies) * (1000 msecs/sec) = 100 msecs
-
-The reason for this is the invariant ratio of jiffies to seconds. So I
-don't think any changes need to be made to my patch.
-
-Thanks, though, this is an important thing to be sure about.
-
--Nish
-
---===============52398478254702185==
+--===============69530626049886668==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52398478254702185==--
+--===============69530626049886668==--
