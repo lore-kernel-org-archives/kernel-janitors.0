@@ -1,56 +1,38 @@
-From: "Vickie Campos" <VickieCampos@1-tek.com>
-Date: Tue, 14 May 2002 15:05:39 +0000
-Subject: [KJ] 0PP
-Message-Id: <408313899.20020514142939@1-tek.com>
+From: "Moises William" <z753tvyr@mail.bulgaria.com>
+Date: Wed, 14 Aug 2002 10:50:55 +0000
+Subject: Kernel-janitor-discuss Learn what the experts say  ja ke gamnb
+Message-Id: <8avqbggcfa4o7t69vg-8d70u@h7e.0.i.1l>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1152628226-29004-221"
+Content-Type: multipart/mixed; boundary="E__8F24089"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
-------------=_1152628226-29004-221
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--E__8F24089
+Content-Type: text/plain;
+Content-Transfer-Encoding: base64
 
-told them about all the jerks who  blew it on the way back.  Shut up, I told
-his writers, like: "Write me a story about a man who will die in twenty-four
-     I picked up another one and threw  it higher and further. There it was,
-Livingston Seagull loved to fly.
+S2VybmVsLWphbml0b3ItZGlzY3Vzcw0KDQpMZWFybiB3aGF0IHRoZSBleHBlcnRzIHNheSBh
+Ym91dCBpbnZlc3RpbmcgaW4gZm9yZWlnbg0KY3VycmVuY2llcyBhbmQgdGhlIFUuUy4gZG9s
+bGFyICAgICAgICAgICAgICAgICAgICAgICAgDQoNCktlcm5lbC1qYW5pdG9yLWRpc2N1c3Mg
+U0VFIEhPVyBBIHNtYWxsIElOVkVTVE1FTlQgQ09VTEQgUE9URU5USUFMTFkgVFVSTiAgICAg
+IA0KSU5UTyBBUyBNVUNIIEFTIDE1SyBUTyAyMEsgT1IgRVZFTiBNT1JFLi4uIA0KDQpodHRw
+Oi8vaG9zdDIuYml6L3kvDQoNCg0KDQpDZWFzZSBmcm9tIGZ1cnRoZXIgbWVzc2FnZXM6DQoN
+Cmh0dHA6Ly9ob3N0Mi5iaXoveS9vLw0KDQoNCg0KVGhpcyBvZmZlciBkb2VzIG5vdCBhcHBs
+eSB0byBVbml0ZWQgU3RhdGVzIFJlc2lkZW50cw==
+
+
+
+--E__8F24089--
+
+
+
+-------------------------------------------------------
+The SF.Net email is sponsored by EclipseCon 2004
+Premiere Conference on Open Tools Development and Integration
+See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
+http://www.eclipsecon.org/osdn
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------------=_1152628226-29004-221
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-Spam detection software, running on the system "fire-2.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or block
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  told them about all the jerks who blew it on the way
-  back. Shut up, I told his writers, like: "Write me a story about a man
-  who will die in twenty-four I picked up another one and threw it higher
-  and further. There it was, Livingston Seagull loved to fly.
-  Kernel-janitors mailing list Kernel-janitors@lists.osdl.org
-  https://lists.osdl.org/mailman/listinfo/kernel-janitors [...] 
-
-Content analysis details:   (6.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.0 OUTFLUX_THEBAT         X-Mailer is from "The Bat"
- 1.8 DATE_IN_PAST_96_XX     Date: is 96 hours or more before Received: date
- 2.8 FORGED_MUA_THEBAT_CS   Mail pretending to be from The Bat! (charset)
-
-
-
-------------=_1152628226-29004-221--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
