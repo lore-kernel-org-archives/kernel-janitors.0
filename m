@@ -1,71 +1,32 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Mon, 24 May 2004 18:22:49 +0000
-Subject: Re: [Kernel-janitors] VFS: fs/readdir.c
-Message-Id: <20040524112249.72f4a5bf.rddunlap@osdl.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94870666981001217=="
+From: "songzi" <songzi@hotmail.com>
+Date: Sat, 22 May 2004 06:32:44 +0000
+Subject: SuperCRM =?GB2312?B?VjIuML/Nu6e52M+1udzA7c+1zbMs1+7Qwsn9vLY=?=
+Message-Id: <E1BRPv6-00040P-Uw@sc8-sf-mx1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040521115619.11051.qmail@romus.ro>
-In-Reply-To: <20040521115619.11051.qmail@romus.ro>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
---===============94870666981001217==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Fri, 21 May 2004 14:56:19 +0300 Adrian Stanciu wrote:
-
-| Hello, 
-| 
-| I'm doing some research work on VFS and linux filesystems.
-| I used kernel 2.4.25 but this things hold true for 2.6 as well 
-| 
-| 1)
-| I found some unused old functions and structures in fs/readdir.c 
-| 
-| old unused functions: old_readdir, fillonedir and
-| old unusedstructures: old_linux_dirent, readdir_callback 
-| 
-| they aren't reffered anywhere in the kernel, 
-| 
-| maybe they should be removed? 
-
-I'm looking in 2.6.6, not 2.4.25.  old_readdir() is still a valid
-syscall.  fillonedir() calls old_readdir().
-See the syscalls in arch/i386/kernel/entry.S e.g.
-
-| 2)
-| in function dcache_readdir why we need the variable "i" ?
-| the call to filldir doesn't change it,
-| so why don't use filp->f_pos ?
-| (for kernel 2.6 dcache_reddir is in fs/libfs.c now..) 
-
-<i> does get changed in 2.6.6.  Even if it doesn't, let the
-compiler handle whether it really is allocated stack space or
-register space or neither.
-
-| BTW, shouldn't MAINTAINERS in kernel 2.4 contain a refference for VFS 
-| maintainer? 
-
-There wasn't an official VFS maintainer in 2.4 IIRC.
-
-| If I send this email to the wrong place, please direct me the right place to 
-| send it. 
-
-For filesystem-related topics, generally use linux-fsdevel@vger.kernel.org .
-
---
-~Randy
-
---===============94870666981001217==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============94870666981001217==--
+CiAgICDX7tDCzfjWt6Osx+u3w87KwabM7MjtvP46ICBodHRwOi8vbHRzb2Z0Ljg4aXAuY24KCiAg
+ICDOqrTw0Lu547Tzv827p7bU09rBpszsyO28/rXE1qez1qOswabM7MjtvP7L+dPQsvrGt8irz9+9
+tbzbo6EKCiAgICDBpszsMjAwM834wuew7LmryO28/tfu0MK827jxo7o4MDDUqqGjWzIwMDPE6rXa
+yP297Mnu29q159fTyczO8dPF0aHP7sS/XSBodHRwOi8vbHRzb2Z0Ljg4aXAuY24vZW9mZmljZS8K
+CiAgICBTdXBlckNSTSBWMi4wv827p7nYz7W53MDtyO28/iA4MDDUqqGjaHR0cDovL2x0c29mdC44
+OGlwLmNuL3N1cGVyY3JtLwoKICAgIMGmzOzNqNPDvai16snMterPtc2zo6zP1srbo7o1MDDUqqGj
+aHR0cDovL2x0c29mdC44OGlwLmNuL29ubGluZXNob3AuaHRtCgogICAgwabM7NfU1vq9qNW+z7XN
+syzP1srbo7oxMDAwINSqoaNodHRwOi8vbHRzb2Z0Ljg4aXAuY246ODYvCgogICAg19TW+r2oterP
+tc2zo7oxNTAw1Kqho2h0dHA6Ly9sdHNvZnQuODhpcC5jbi9zaG9wY2l0eS8KCiAgICDBpszsV2Vi
+vfjP+rTmo7oxMDAw1Kqho2h0dHA6Ly9sdHNvZnQuODhpcC5jbi9qeGMKCiAgICC7+rvhxNG1w6Oh
+y/nT0M+1zbPM4bmp1LS0+sLro6y3vbHjxPq2/rTOv6q3oqOhCgogICAg1f255rmry76jrNDF0/6x
+o9ako6EKCiAgICDXydGvtee7sKO6MDc1NS0yNjc5MzUxMyDA7szOCgotLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KyOe5+8T6srvQ
+6NKqLMfry+bK1sm+s/0s0LvQuyEgIAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhpcyBTRi5OZXQgZW1haWwgaXMgc3BvbnNvcmVkIGJ5
+OiBPcmFjbGUgMTBnCkdldCBjZXJ0aWZpZWQgb24gdGhlIGhvdHRlc3QgdGhpbmcgZXZlciB0byBo
+aXQgdGhlIG1hcmtldC4uLiBPcmFjbGUgMTBnLiAKVGFrZSBhbiBPcmFjbGUgMTBnIGNsYXNzIG5v
+dywgYW5kIHdlJ2xsIGdpdmUgeW91IHRoZSBleGFtIEZSRUUuCmh0dHA6Ly9hZHMub3Nkbi5jb20v
+P2FkX2lkMTQ5JmFsbG9jX2lkgTY2Jm9wPWNsaWNrCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCktlcm5lbC1qYW5pdG9yLWRpc2N1c3MgbWFpbGluZyBsaXN0
+Cktlcm5lbC1qYW5pdG9yLWRpc2N1c3NAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
+dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2tlcm5lbC1qYW5pdG9yLWRpc2N1c3M=
