@@ -1,13 +1,13 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Mon, 14 Feb 2005 15:05:19 +0000
-Subject: [KJ] [PATCH 3/16] drivers/net/e100: Use the DMA_{64,
-Message-Id: <20050214150519.GF15408@helium.tklauser.home>
+Date: Mon, 14 Feb 2005 15:11:48 +0000
+Subject: [KJ] [PATCH 11/16] drivers/net/tokenring/lanstreamer: Use the
+Message-Id: <20050214151148.GN15408@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============21990168634041973=="
+Content-Type: multipart/mixed; boundary="===============82103988962259145=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============21990168634041973==
+--===============82103988962259145==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -18,19 +18,19 @@ when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---- linux-2.6.11-rc4.orig/drivers/net/e100.c	2005-02-13 17:13:02.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/net/e100.c	2005-02-13 17:35:34.000000000 +0100
-@@ -2201,7 +2201,7 @@ static int __devinit e100_probe(struct p
- 		goto err_out_disable_pdev;
- 	}
+--- linux-2.6.11-rc4.orig/drivers/net/tokenring/lanstreamer.c	2005-02-13 17:13:00.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/tokenring/lanstreamer.c	2005-02-13 17:57:10.000000000 +0100
+@@ -257,7 +257,7 @@ static int __devinit streamer_init_one(s
+ #endif
+ #endif
  
--	if((err = pci_set_dma_mask(pdev, 0xFFFFFFFFULL))) {
-+	if((err = pci_set_dma_mask(pdev, DMA_32BIT_MASK))) {
- 		DPRINTK(PROBE, ERR, "No usable DMA configuration, aborting.\n");
- 		goto err_out_free_res;
- 	}
+-	rc = pci_set_dma_mask(pdev, 0xFFFFFFFFULL);
++	rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
+ 	if (rc) {
+ 		printk(KERN_ERR "%s: No suitable PCI mapping available.\n",
+ 				dev->name);
 
---===============21990168634041973==
+--===============82103988962259145==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============21990168634041973==--
+--===============82103988962259145==--
