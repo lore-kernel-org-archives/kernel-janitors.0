@@ -1,36 +1,71 @@
-From: Dave Jones <davej@redhat.com>
-Date: Wed, 20 Oct 2004 22:07:55 +0000
-Subject: Re: [KJ] [RFT 2.6] generic.c: replace pci_find_device with
-Message-Id: <20041020220755.GA12553@redhat.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Wed, 20 Oct 2004 22:57:48 +0000
+Subject: [KJ] Re: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 ibmphp_core.c][6/8]
+Message-Id: <20041020225747.GA1953@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52846204843806555=="
+Content-Type: multipart/mixed; boundary="===============27668972471642661=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <17100000.1098298277@w-hlinder.beaverton.ibm.com> <20041020220242.GY16153@parcelfarce.linux.theplanet.co.uk>
-In-Reply-To: <20041020220242.GY16153@parcelfarce.linux.theplanet.co.uk>
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Hanna Linder <hannal@us.ibm.com>, lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com
+References: <25390000.1096500931@w-hlinder.beaverton.ibm.com>
+In-Reply-To: <25390000.1096500931@w-hlinder.beaverton.ibm.com>
+To: Hanna Linder <hannal@us.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, greg@kroah.com
 
---===============52846204843806555==
+--===============27668972471642661==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Oct 20, 2004 at 11:02:42PM +0100, Matthew Wilcox wrote:
- > On Wed, Oct 20, 2004 at 11:51:17AM -0700, Hanna Linder wrote:
- > > As pci_find_device is going away soon I have converted this file to use
- > > pci_get_device instead. I have compile tested it. If anyone has this hardware
- > > and could test it that would be great.
- > 
- > Looks to me like this is a broken interface.  We almost certainly want to
- > pass the agp_device to agp_collect_device_status and agp_device_command,
- > as noted in the comment to agp_collect_device_status.  DaveJ?
+On Wed, 29 Sep 2004, Hanna Linder wrote:
 
-It ain't pretty, but I probably won't find time to clean that up
-any time soon.  This doesn't impact Hanna's patch however.
+> 
+> This can be converted to pci_dev_present as the dev returned is never used.
+> Compile tested.
+> 
+> Hanna Linder
+> IBM Linux Technology Center
+> 
+> Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+> 
+> diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/pci/hotplug/ibmphp_core.c linux-2.6.9-rc2-mm4patch2/drivers/pci/hotplug/ibmphp_core.c
+> --- linux-2.6.9-rc2-mm4cln/drivers/pci/hotplug/ibmphp_core.c	2004-09-28 14:58:50.000000000 -0700
+> +++ linux-2.6.9-rc2-mm4patch2/drivers/pci/hotplug/ibmphp_core.c	2004-09-29 15:39:39.385406240 -0700
+> @@ -838,8 +838,11 @@ static int set_bus (struct slot * slot_c
+>  	int rc;
+>  	u8 speed;
+>  	u8 cmd = 0x0;
+> -	struct pci_dev *dev = NULL;
+>  	int retval;
+> +	static struct pci_device_id ciobx[] = {
+> +		{ PCI_DEVICE(PCI_VENDOR_ID_SERVERWORKS, 0x0101) },
+> +	        { },
+> +	};	
+            ^^^^
+white space damaged
 
-		Dave
+>  
+>  	debug ("%s - entry slot # %d\n", __FUNCTION__, slot_cur->number);
+>  	if (SET_BUS_STATUS (slot_cur->ctrl) && is_bus_empty (slot_cur)) {
+> @@ -886,8 +889,7 @@ static int set_bus (struct slot * slot_c
+>  				break;
+>  			case BUS_SPEED_133:
+>  				/* This is to take care of the bug in CIOBX chip */
+> -				while ((dev = pci_get_device(PCI_VENDOR_ID_SERVERWORKS,
+> -							      0x0101, dev)) != NULL)
+> +				if(pci_dev_present(ciobx))
+>  					ibmphp_hpc_writeslot (slot_cur, HPC_BUS_100PCIXMODE);
+>  				cmd = HPC_BUS_133PCIXMODE;
+>  				break;
+> 
+
+first timer for your patches.
+corrected for next kjt.
 
 
---===============52846204843806555==
+--
+maks
+kernel janitor  	http://janitor.kernelnewbies.org/
+
+
+--===============27668972471642661==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52846204843806555==--
+--===============27668972471642661==--
