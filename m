@@ -1,55 +1,45 @@
-From: Ron Gage <ron@rongage.org>
-Date: Fri, 13 Feb 2004 13:40:47 +0000
-Subject: [Kernel-janitors] [PATCH] - 2.6.2 - init/main.c - compiler cleanup
-Message-Id: <200402130840.47803.ron@rongage.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_fPNLAWV0Y8xOrC4"
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Thu, 26 Feb 2004 20:01:49 +0000
+Subject: [Kernel-janitors] [PATCH] - drivers/serial/8250_pnp.c init section
+Message-Id: <1077825653.31019.35.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi all,
 
---Boundary-00=_fPNLAWV0Y8xOrC4
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Other trivial patch.
 
-This patch eliminates "parameter defined but not used" warnings.
+diff -pNru linux-2.6.3-bk8/drivers/serial/8250_pnp.c linux-2.6.3-bk8~/drivers/serial/8250_pnp.c
+--- linux-2.6.3-bk8/drivers/serial/8250_pnp.c	2004-02-26 14:55:36.000000000 -0300
++++ linux-2.6.3-bk8~/drivers/serial/8250_pnp.c	2004-02-26 14:36:31.000000000 -0300
+@@ -390,7 +390,7 @@ static int __devinit serial_pnp_guess_bo
+ 	return -ENODEV;
+ }
+ 
+-static int
++static int __devinit
+ serial_pnp_probe(struct pnp_dev * dev, const struct pnp_device_id *dev_id)
+ {
+ 	struct serial_struct serial_req;
+@@ -420,7 +420,7 @@ serial_pnp_probe(struct pnp_dev * dev, c
+ 
+ }
+ 
+-static void serial_pnp_remove(struct pnp_dev * dev)
++static void __devexit serial_pnp_remove(struct pnp_dev * dev)
+ {
+ 	int line = (int)pnp_get_drvdata(dev);
+ 	if (line)
 
 -- 
-Ron Gage - LPIC1, MCP, A+, Net+
-Pontiac, Michigan
-
-
---Boundary-00=_fPNLAWV0Y8xOrC4
-Content-Type: text/x-diff;
-  charset="us-ascii";
-  name="init_main.c.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="init_main.c.diff"
-
---- linux-2.6.2.orig/init/main.c	2004-02-03 22:43:15.000000000 -0500
-+++ linux-2.6.2/init/main.c	2004-02-13 08:13:58.000000000 -0500
-@@ -304,7 +304,7 @@
- #endif
- 
- static inline void setup_per_cpu_areas(void) { }
--static inline void smp_prepare_cpus(unsigned int maxcpus) { }
-+static inline void smp_prepare_cpus(unsigned int maxcpus) { maxcpus = maxcpus; }
- 
- #else
- 
-
---Boundary-00=_fPNLAWV0Y8xOrC4
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---Boundary-00=_fPNLAWV0Y8xOrC4--
