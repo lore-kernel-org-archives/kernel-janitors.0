@@ -1,33 +1,139 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Date: Fri, 24 Sep 2004 21:26:56 +0000
+From: Greg KH <greg@kroah.com>
+Date: Sun, 26 Sep 2004 14:10:02 +0000
 Subject: [Kernel-janitors] Re: [PATCH 2.6.9-rc2-mm2] Create new function to
-Message-Id: <41549120.2060509@zytor.com>
+Message-Id: <20040926141002.GA24942@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47522629712077163=="
+Content-Type: multipart/mixed; boundary="===============1727583841370921=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2480000.1095978400@w-hlinder.beaverton.ibm.com> <20040924200231.A30391@infradead.org> <20040924211912.GC7619@kroah.com>
-In-Reply-To: <20040924211912.GC7619@kroah.com>
-To: Greg KH <greg@kroah.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Hanna Linder <hannal@us.ibm.com>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, davej@codemonkey.org.uk
+References: <2480000.1095978400@w-hlinder.beaverton.ibm.com> <20040924200231.A30391@infradead.org> <20040924211912.GC7619@kroah.com> <1096059645.10797.1.camel@localhost.localdomain>
+In-Reply-To: <1096059645.10797.1.camel@localhost.localdomain>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Christoph Hellwig <hch@infradead.org>, Hanna Linder <hannal@us.ibm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org, davej@codemonkey.org.uk, hpa@zytor.com
 
---===============47522629712077163==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============1727583841370921==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Greg KH wrote:
+On Fri, Sep 24, 2004 at 10:00:47PM +0100, Alan Cox wrote:
+> On Gwe, 2004-09-24 at 22:19, Greg KH wrote:
+> > > Please include subdevice/subvendor id
+> > 
+> > Good idea, but do you see any places in the kernel that would use those
+> > fields, instead of always setting them to PCI_ANY_ID?
 > 
-> Good idea, but do you see any places in the kernel that would use those
-> fields, instead of always setting them to PCI_ANY_ID?
-> 
+> If you are taking that path then make it take a pci_device_id table.
+> That makes it behave like other interfaces of the same form, and makes
+> the implementation remarkably trivial.
 
-Does it matter what it is currently used for?  It *is* one way you can find 
-out about specific board bugs.  I'd think you'd want all of (VID, DID, RID, 
-SVID, SID).
+Ah, yes, that is a very good idea.  Here's just such an implementation
+(compile tested, nothing else, still need to add comments describing the
+function...)  Does everyone like this interface?  Hanna, look ok to you?
 
+thanks,
 
-	-hpa
+greg k-h
 
---===============47522629712077163==
+--- 1.42/drivers/pci/pci-driver.c	2004-09-22 16:24:29 -07:00
++++ edited/drivers/pci/pci-driver.c	2004-09-26 06:44:32 -07:00
+@@ -14,27 +14,6 @@
+  *  Registration of PCI drivers and handling of hot-pluggable devices.
+  */
+ 
+-/**
+- * pci_match_one_device - Tell if a PCI device structure has a matching
+- *                        PCI device id structure
+- * @id: single PCI device id structure to match
+- * @dev: the PCI device structure to match against
+- * 
+- * Returns the matching pci_device_id structure or %NULL if there is no match.
+- */
+-
+-static inline const struct pci_device_id *
+-pci_match_one_device(const struct pci_device_id *id, const struct pci_dev *dev)
+-{
+-	if ((id->vendor == PCI_ANY_ID || id->vendor == dev->vendor) &&
+-	    (id->device == PCI_ANY_ID || id->device == dev->device) &&
+-	    (id->subvendor == PCI_ANY_ID || id->subvendor == dev->subsystem_vendor) &&
+-	    (id->subdevice == PCI_ANY_ID || id->subdevice == dev->subsystem_device) &&
+-	    !((id->class ^ dev->class) & id->class_mask))
+-		return id;
+-	return NULL;
+-}
+-
+ /*
+  * Dynamic device IDs are disabled for !CONFIG_HOTPLUG
+  */
+===== drivers/pci/pci.h 1.18 vs edited =====
+--- 1.18/drivers/pci/pci.h	2004-09-22 07:07:44 -07:00
++++ edited/drivers/pci/pci.h	2004-09-26 06:44:28 -07:00
+@@ -66,3 +66,24 @@
+ extern int pcie_mch_quirk;
+ extern void pcie_rootport_aspm_quirk(struct pci_dev *pdev);
+ extern struct device_attribute pci_dev_attrs[];
++
++/**
++ * pci_match_one_device - Tell if a PCI device structure has a matching
++ *                        PCI device id structure
++ * @id: single PCI device id structure to match
++ * @dev: the PCI device structure to match against
++ * 
++ * Returns the matching pci_device_id structure or %NULL if there is no match.
++ */
++static inline const struct pci_device_id *
++pci_match_one_device(const struct pci_device_id *id, const struct pci_dev *dev)
++{
++	if ((id->vendor == PCI_ANY_ID || id->vendor == dev->vendor) &&
++	    (id->device == PCI_ANY_ID || id->device == dev->device) &&
++	    (id->subvendor == PCI_ANY_ID || id->subvendor == dev->subsystem_vendor) &&
++	    (id->subdevice == PCI_ANY_ID || id->subdevice == dev->subsystem_device) &&
++	    !((id->class ^ dev->class) & id->class_mask))
++		return id;
++	return NULL;
++}
++
+===== drivers/pci/search.c 1.31 vs edited =====
+--- 1.31/drivers/pci/search.c	2004-08-26 15:16:41 -07:00
++++ edited/drivers/pci/search.c	2004-09-26 07:02:57 -07:00
+@@ -11,6 +11,7 @@
+ #include <linux/pci.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
++#include "pci.h"
+ 
+ spinlock_t pci_bus_lock = SPIN_LOCK_UNLOCKED;
+ 
+@@ -343,6 +344,29 @@
+ 	spin_unlock(&pci_bus_lock);
+ 	return dev;
+ }
++
++int pci_dev_present(const struct pci_device_id *ids)
++{
++	struct pci_dev *dev;
++	int found = 0;
++
++	WARN_ON(in_interrupt());
++	spin_lock(&pci_bus_lock);
++	while (ids->vendor || ids->subvendor || ids->class_mask) {
++		list_for_each_entry(dev, &pci_devices, global_list) {
++			if (pci_match_one_device(ids, dev)) {
++				found = 1;
++				goto exit;
++			}
++		}
++		ids++;
++	}
++exit:				
++	spin_unlock(&pci_bus_lock);
++	return found;
++}
++EXPORT_SYMBOL(pci_dev_present);
++
+ 
+ EXPORT_SYMBOL(pci_find_bus);
+ EXPORT_SYMBOL(pci_find_device);
+
+--===============1727583841370921==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +144,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============47522629712077163==--
+--===============1727583841370921==--
