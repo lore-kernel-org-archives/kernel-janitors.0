@@ -1,36 +1,84 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 24 Nov 2004 17:59:09 +0000
-Subject: [KJ] Re: ifdef typos: drivers_net_wireless_wavelan_cs.c
-Message-Id: <20041124175909.GA4680@nd47.coderock.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 01 Nov 2004 18:38:00 +0000
+Subject: [KJ] [PATCH] linux/ibmtr.h: add constants for appropriate delays
+Message-Id: <20041101192210.GD1730@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============76857188253333675=="
+Content-Type: multipart/mixed; boundary="===============78902312206728409=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <E1CO1wB-0002eM-If@sputnik> <4184C66B.8040501@pobox.com>
+In-Reply-To: <4184C66B.8040501@pobox.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
 
---===============76857188253333675==
+--===============78902312206728409==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 24/11/04 18:25 +0100, walter harms wrote:
-> Hi Domen,
-> nice work :) i never noticed that there are some much typos.
-> 
-> To avoid namespace polution: IMHO its better to define:
-> wavelan_cd_DEBUG_CONFIG_ERRORS (you get the idea)
-> stupid long but would avoid conflics with possible other drivers/kernel 
-> debug defines.
+On Sun, Oct 31, 2004 at 06:03:07AM -0500, Jeff Garzik wrote:
+> janitor@sternwelten.at wrote:
+> >Any comments would be appreciated.
+> >
+> >Description: Use msleep() / msleep_interruptible() [as appropriate]
+> >instead of schedule_timeout() to guarantee the task delays as expected.
+> >
+> >Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> >Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
+> >
+> >---
+> >
+> > linux-2.6.10-rc1-max/drivers/net/tokenring/ibmtr.c |   11 +++++------
+> > 1 files changed, 5 insertions(+), 6 deletions(-)
 
-I disagree:
-- there is no "namespace polution", since most defines are local;
-- longer defines make it even easier to make typos.
+<snip>
 
+> >-		schedule_timeout(TR_RST_TIME); /* wait 50ms */
+> >+		msleep(jiffies_to_msecs(TR_RST_TIME)); /* wait 50ms */
 
-	Domen
-> 
-> re,
-> walter
+<snip>
 
---===============76857188253333675==
+> >-	current->state=TASK_UNINTERRUPTIBLE;
+> >-	schedule_timeout(TR_RST_TIME); /* wait 50ms */
+> >+	msleep(jiffies_to_msecs(TR_RST_TIME));		/* wait 50ms */
+
+<snip>
+
+> >-		current->state=TASK_INTERRUPTIBLE;
+> >-		i=schedule_timeout(TR_RETRY_INTERVAL); /* wait 30 seconds */
+> >-		if(i!=0) break; /*prob. a signal, like the i>24*HZ case 
+> >above */
+> >+		if(msleep_interruptible(jiffies_to_msecs(TR_RETRY_INTERVAL)))
+> >+			break; /*prob. a signal, like the i>24*HZ case above 
+
+<snip>
+
+> It makes more sense to convert the constants to msecs in the source 
+> code, instead of converting them at runtime.
+
+This required changing both the .h and .c files, the first of which is
+attached below.
+
+Description: Adds constant definitions for timeout variables in terms of
+milliseconds to avoid run-time constant conversion.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.10-rc1-vanilla/include/linux/ibmtr.h	2004-10-30 15:34:03.000000000 -0700
++++ 2.6.10-rc1/include/linux/ibmtr.h	2004-11-01 11:13:41.000000000 -0800
+@@ -6,8 +6,10 @@
+ 
+ /* ported to the Alpha architecture 02/20/96 (just used the HZ macro) */
+ 
+-#define TR_RETRY_INTERVAL	(30*HZ)	/* 500 on PC = 5 s */
+-#define TR_RST_TIME		(HZ/20) /* 5 on PC = 50 ms */
++#define TR_RETRY_INTERVAL	(30*HZ)	/* 500 on PC = 5 s (in jiffies) */
++#define TR_RETRY_INTERVAL	(30000) /* 500 on PC = 5 s */
++#define TR_RST_TIME		(HZ/20) /* 5 on PC = 50 ms (in jiffies) */
++#define TR_RST_TIME_MS		(50)    /* 5 on PC = 50 ms */
+ #define TR_BUSY_INTERVAL	(HZ/5)	/* 5 on PC = 200 ms */
+ #define TR_SPIN_INTERVAL	(3*HZ)	/* 3 seconds before init timeout */
+ 
+
+--===============78902312206728409==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +89,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============76857188253333675==--
+--===============78902312206728409==--
