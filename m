@@ -1,81 +1,31 @@
-From: "Herminia Lockhart" <oqyegenv@aol.com>
-Date: Sun, 18 Jan 2004 13:20:41 +0000
-Subject: felicity melancholy covary habeas
-Message-Id: <HFOITXR-0003305514568@rajah>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7412347668259802"
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 26 Jan 2004 15:28:33 +0000
+Subject: Re: [Kernel-janitors]  New guy here,
+Message-Id: <200401261628.34053.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---7412347668259802
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-neutral porcelain count cufflink howe ac clinician hausdorff coincide 
-proximal foolish marry gradate allude bernardino 
-carla indissoluble contemptuous columbine escutcheon consist ought coffman 
-
---7412347668259802
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-
-<TITLE>Message</TITLE>
-
-<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
-<BODY>
-<DIV><!-- Converted from text/plain format --><FONT face=Arial size=2>
-<p>Hi,<br>
-<br>
-Genierc and Sepur Viarga (Caiils) available online!<br>
-Most trusted online source!<br>
-<br>
-<br>
-Cilais or (Spuer Vagira)<br>
-takes affect right away &amp; lasts 24-36 huors!<br>
-<A HREF="http://www.yumrmeeb.lwtg.com=www.jywieu.tojb.judfexts.com/c/?AFF_ID=c1224&vjudnos=xagysh">FOR SUEPR VAIRGA TOCUH HERE</a><br>
-<br>
-<br>
-Genierc Virgaa<br>
-costs 60% less! save a lot of $.<br>
-<A HREF="http://www.lklcle.yduwpybbc.com=www.mvumrwkka.oggl.judfexts.com/g/?AFF_ID=v1224&blpygc=dotmfchm">FOR VIGARA TOCUH HERE</a><br>
-<br>
-<br>
-Both products shipped discretely to your door<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<A HREF="http://www.cakwcwv.xzuhb.com=www.tzmfdvy.qasonswc.judfexts.com/homepage/?yzhqppzro=niqfd">Not itnreseted</a><br></FONT></DIV></BODY></HTML>
-incurring both benefit extendible bathurst crunch casework fare gnomonic hydra chairperson archival essential howell gallows helen cupful imbibe fir explain riyadh mud atwater anterior apocrypha avocate dissertation epiphyseal <br>
-bosonic contrivance handkerchief illustrious noodle hexagon drawback nowadays heel few inexplicit inmate exciton owing detector khan frigid comrade port became depot brunette phony alkene ares dana gino despot mafia equitation danzig rosenblum contentious boxcar simpleton pearson <br>
-leonardo authoritarian kentucky petersen coastal corpus brownell avogadro obstruent imaginary crosswalk him held chugging <br>
-egotist audience esoteric cinnabar chauffeur formate cherubim inc celtic conflagrate ellis eocene deduct angst diorite myself dry minerva emit babylon deducible columnar athabascan endogamy forgettable sacral gwen miscellany rump freeport icebox floodlight dumbbell quaff chromatic <br>
-flyer accreditate conifer aghast fragmentation airmass clothesman corrodible longitudinal erratic cotta fraternity flare imperturbable conscionable adamant astoria <br>
-lawbreaker beginner defensible chevrolet bucharest deception billings galway database expectation burlington grub biharmonic holst inaptitude ethylene <br>
-premier blur papyrus shu arrogant retribution scowl deere newscast condescend genuine bungalow cardboard acumen picayune north alden sept chicken lascar denunciation aphelion innermost <br>
-leitmotif lime histochemic protozoan inquisition rebellion downslope none proline labradorite intend momentary <br>
-lineage friedman bandage illustrious drag fermion impresario commotion omnipotent ak kimono consanguine grammar buttock babysat icicle handstand sequitur lizzie cunard <br>
-academe christy balletic jakarta lutheran fir degenerate sentiment florence dominican allis <br>
-
-
---7412347668259802--
-
-
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+On Sunday 25 January 2004 13:38, JOUANNE Mickael wrote:> I forget the patch=
+ :)
+As a side note, you should insert patches directly instead ofattaching them=
+ for easier quoting.
+> --- kj.pl=A0=A0=A0=A0=A0=A0=A02004-01-05 21:04:37.000000000 +0100> +++ kj=
+-new.pl=A0=A0=A02004-01-25 11:38:08.000000000 +0100> @@ -109,7 +109,7 @@> =
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0pri=
+nt "$filename:$linenr:$line\n\n";> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0}> =A0> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if ($line=3D=
+~/MOD_{INC,DEC}_USE_COUNT/) {> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0if ($line=3D~/MOD_(INC|DEC)_USE_COUNT/) {> =A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0print "Net drivers should call=
+ SET_MODULE_OWNER> instead of MOD_{INC,DEC}_USE_COUNT\n"; print "$filename:=
+$linenr:$line\n\n";> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0}
+You forgot to change the message as well. Note that SET_MODULE_OWNERhas bec=
+ome pointless as well, so at least it should not be advocatedany more.
+	Arnd <><
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
