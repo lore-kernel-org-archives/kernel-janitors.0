@@ -1,45 +1,65 @@
-From: Alexander Nyberg <alexn@telia.com>
-Date: Sun, 25 Jul 2004 20:47:45 +0000
-Subject: [Kernel-janitors] gcc compilation warning fix
-Message-Id: <1090788465.8868.59.camel@boxen.(null)>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 27 Jul 2004 22:03:13 +0000
+Subject: [Kernel-janitors] [PATCH] pcmcia/ds: replace schedule_timeout()
+Message-Id: <20040727220313.GY3471@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45833139867241091=="
+Content-Type: multipart/mixed; boundary="===============63929172070291296=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============45833139867241091==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============63929172070291296==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The actual prototype is:
-typedef	void (*acpi_gpe_handler) (void *context);
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
 
-(noone was even using the return value)
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
 
-===== drivers/char/ipmi/ipmi_si_intf.c 1.6 vs edited =====
---- 1.6/drivers/char/ipmi/ipmi_si_intf.c	2004-07-13 13:46:29 +00:00
-+++ edited/drivers/char/ipmi/ipmi_si_intf.c	2004-07-25 19:21:12 +00:00
-@@ -1132,7 +1132,7 @@
- static int acpi_failure = 0;
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch. 
+
+Thanks,
+Nish
+
+
+
+Applys-to: 2.6.7
+
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays the desired time.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/pcmcia/ds.c	2004-06-16 05:19:44.000000000 +0000
++++ linux-dev/drivers/pcmcia/ds.c	2004-07-15 23:12:40.000000000 +0000
+@@ -50,6 +50,7 @@
+ #include <linux/poll.h>
+ #include <linux/pci.h>
+ #include <linux/list.h>
++#include <linux/delay.h>
+ #include <linux/workqueue.h>
  
- /* For GPE-type interrupts. */
--u32 ipmi_acpi_gpe(void *context)
-+void ipmi_acpi_gpe(void *context)
- {
- 	struct smi_info *smi_info = context;
- 	unsigned long   flags;
-@@ -1156,7 +1156,6 @@
- 	smi_event_handler(smi_info, 0);
-  out:
- 	spin_unlock_irqrestore(&(smi_info->si_lock), flags);
--	return 0;
- }
+ #include <asm/atomic.h>
+@@ -1078,8 +1079,7 @@ static int __devinit pcmcia_bus_add_sock
+ 	 * Ugly. But we want to wait for the socket threads to have started up.
+ 	 * We really should let the drivers themselves drive some of this..
+ 	 */
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout(HZ/4);
++	msleep(250);
  
- static int acpi_gpe_irq_setup(struct smi_info *info)
+ 	init_waitqueue_head(&s->queue);
+ 	init_waitqueue_head(&s->request);
 
-
-
---===============45833139867241091==
+--===============63929172070291296==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45833139867241091==--
+--===============63929172070291296==--
