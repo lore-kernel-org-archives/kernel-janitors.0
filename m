@@ -1,52 +1,73 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 02 Feb 2005 22:55:04 +0000
-Subject: [KJ] [PATCH 18/20] ppc/serial_sicc: remove
-Message-Id: <20050202225504.GX2546@us.ibm.com>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:29 +0000
+Subject: [KJ] [PATCH][6/26] drivers/isdn/hisax/* - compile warning cleanup
+Message-Id: <420BEF85.4614.5879D7@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5271386742481079=="
+Content-Type: multipart/mixed; boundary="===============43959150292230875=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: mporter@kernel.crashing.org
-Cc: kernel-janitors@lists.osdl.org, linuxppc-embedded@ozlabs.org
+To: kernel-janitors@vger.kernel.org
 
---===============5271386742481079==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============43959150292230875==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
-Hello,
+Description: compile warning cleanup - handle copy_to/from_user error 
+returns, add MODULE definition compile fence so MODULE_DEVICE_TABLE vars 
+not declared when compiled into the kernel
 
-Please consider applying.
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description: Remove deprecated interruptible_sleep_on_timeout() function calls
-and replace with direct wait-queue usage.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc2-kj-v/arch/ppc/4xx_io/serial_sicc.c	2005-01-24 09:34:02.000000000 -0800
-+++ 2.6.11-rc2-kj/arch/ppc/4xx_io/serial_sicc.c	2005-02-02 14:41:49.000000000 -0800
-@@ -52,6 +52,7 @@
- #include <linux/console.h>
- #include <linux/sysrq.h>
- #include <linux/bitops.h>
-+#include <linux/wait.h>
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/isdn/hisax/config.c linux-2.6.11-rc3-mm/drivers/isdn/hisax/config.c
+--- linux-2.6.11-rc3-mm-original/drivers/isdn/hisax/config.c	2005-02-03 03:56:47.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/isdn/hisax/config.c	2005-02-07 20:47:02.000000000 +0200
+@@ -631,7 +631,11 @@ int HiSax_readstatus(u_char __user *buf,
+ 		count = cs->status_end - cs->status_read + 1;
+ 		if (count >= len)
+ 			count = len;
+-		copy_to_user(p, cs->status_read, count);
++		if(copy_to_user(p, cs->status_read, count)) {
++			printk(KERN_ERR
++				"HiSax: copy_to_user failed!\n");
++			return -EFAULT;
++		}
+ 		cs->status_read += count;
+ 		if (cs->status_read > cs->status_end)
+ 			cs->status_read = cs->status_buf;
+@@ -642,7 +646,11 @@ int HiSax_readstatus(u_char __user *buf,
+ 				cnt = HISAX_STATUS_BUFSIZE;
+ 			else
+ 				cnt = count;
+-			copy_to_user(p, cs->status_read, cnt);
++			if(copy_to_user(p, cs->status_read, cnt)) {
++				printk(KERN_ERR
++					"HiSax: copy_to_user failed!\n");
++				return -EFAULT;
++			}
+ 			p += cnt;
+ 			cs->status_read += cnt % HISAX_STATUS_BUFSIZE;
+ 			count -= cnt;
+@@ -1878,6 +1886,7 @@ static void EChannel_proc_rcv(struct his
+ #ifdef CONFIG_PCI
+ #include <linux/pci.h>
  
- #include <asm/system.h>
- #include <asm/io.h>
-@@ -1561,8 +1562,11 @@ static int block_til_ready(struct tty_st
-      */
-     if (tty_hung_up_p(filp) ||
-         (info->flags & ASYNC_CLOSING)) {
--        if (info->flags & ASYNC_CLOSING)
--            interruptible_sleep_on(&info->close_wait);
-+        if (info->flags & ASYNC_CLOSING) {
-+            prepare_to_wait(&info->close_wait, &wait, TASK_INTERRUPTIBLE);
-+            schedule();
-+            finish_wait(&info->close_wait, &wait);
-+        }
-         return (info->flags & ASYNC_HUP_NOTIFY) ?
-             -EAGAIN : -ERESTARTSYS;
-     }
++#ifdef MODULE
+ static struct pci_device_id hisax_pci_tbl[] __initdata = {
+ #ifdef CONFIG_HISAX_FRITZPCI
+ 	{PCI_VENDOR_ID_AVM,      PCI_DEVICE_ID_AVM_A1,           PCI_ANY_ID, PCI_ANY_ID},
+@@ -1944,6 +1953,7 @@ static struct pci_device_id hisax_pci_tb
+ };
+ 
+ MODULE_DEVICE_TABLE(pci, hisax_pci_tbl);
++#endif /* MODULE */
+ #endif /* CONFIG_PCI */
+ 
+ module_init(HiSax_init);
 
---===============5271386742481079==
+
+
+
+--===============43959150292230875==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +78,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5271386742481079==--
+--===============43959150292230875==--
