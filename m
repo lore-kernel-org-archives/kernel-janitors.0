@@ -1,51 +1,41 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 12:44:01 +0000
-Subject: [KJ] [UPDATE PATCH 07/19] drivers/scsi/atp870u: Use the
-Message-Id: <20050320124401.GG3491@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 22:50:37 +0000
+Subject: [KJ] [PATCH 3/] arch/i386/kernel/apm.c: fix sparse warnings
+Message-Id: <200503100124.58450.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13941875272760318=="
+Content-Type: multipart/mixed; boundary="===============030572036238319722=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050220170137.GH14375@helium.tklauser.home>
-In-Reply-To: <20050220170137.GH14375@helium.tklauser.home>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============13941875272760318==
-Content-Type: text/plain; charset=us-ascii
+--===============030572036238319722==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Index: linux-2.6.11-bk1-sparse/arch/i386/kernel/apm.c
+===================================================================
+--- linux-2.6.11-bk1-sparse.orig/arch/i386/kernel/apm.c	2005-03-02 09:37:47.000000000 +0200
++++ linux-2.6.11-bk1-sparse/arch/i386/kernel/apm.c	2005-03-06 03:34:27.000000000 +0200
+@@ -346,10 +346,10 @@ extern int (*console_blank_hook)(int);
+ struct apm_user {
+ 	int		magic;
+ 	struct apm_user *	next;
+-	int		suser: 1;
+-	int		writer: 1;
+-	int		reader: 1;
+-	int		suspend_wait: 1;
++	unsigned int	suser: 1;
++	unsigned int	writer: 1;
++	unsigned int	reader: 1;
++	unsigned int	suspend_wait: 1;
+ 	int		suspend_result;
+ 	int		suspends_pending;
+ 	int		standbys_pending;
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
---- linux-2.6.11.orig/drivers/scsi/atp870u.c	2005-03-02 12:50:38.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/atp870u.c	2005-03-20 13:27:54.000000000 +0100
-@@ -27,6 +27,7 @@
- #include <linux/spinlock.h>
- #include <linux/pci.h>
- #include <linux/blkdev.h>
-+#include <linux/dma-mapping.h>
- #include <asm/system.h>
- #include <asm/io.h>
- 
-@@ -2287,7 +2288,7 @@ static int atp870u_probe(struct pci_dev 
- 	if (pci_enable_device(dev))
- 		return -EIO;
- 
--	if (pci_set_dma_mask(dev, 0xFFFFFFFFUL)) {
-+	if (pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
- 		printk(KERN_ERR "atp870u: 32bit DMA mask required but not available.\n");
- 		return -EIO;
- 	}
-
---===============13941875272760318==
+--===============030572036238319722==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13941875272760318==--
+--===============030572036238319722==--
