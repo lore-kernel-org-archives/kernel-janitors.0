@@ -1,48 +1,32 @@
 From: maximilian attems <janitor@sternwelten.at>
-Date: Mon, 21 Jun 2004 18:44:03 +0000
-Subject: Re: [Kernel-janitors] [announce] 2.6.7 kjt1 patchset
-Message-Id: <20040621184403.GZ1545@sputnik.stro.at>
+Date: Wed, 02 Jun 2004 07:30:16 +0000
+Subject: Re: [Kernel-janitors] [PATCH] kernel_thread() audit
+Message-Id: <20040602073016.GA1622@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85754380553889842=="
+Content-Type: multipart/mixed; boundary="===============098220900114092347=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040618093922.GA21628@sputnik.stro.at>
-In-Reply-To: <20040618093922.GA21628@sputnik.stro.at>
+References: <Pine.LNX.4.58.0405202047020.9107@mustang.cs.nmsu.edu>
+In-Reply-To: <Pine.LNX.4.58.0405202047020.9107@mustang.cs.nmsu.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============85754380553889842==
+--===============098220900114092347==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-hello alexey,
+On Sat, 29 May 2004, MJK wrote:
 
-thanks for your question,
-was off that weekend, on the way of submitting kjt. 
-
-please ask that kind of question on the list,
-knowledge should be shared, therefor cc kj mailing list.
-
-On Sat, 19 Jun 2004, "Alexey Dobriyan"  wrote:
-
-> Why the patch which I posted under the subject
-> [PATCH] Fix 'No description found for parameter'warning
-> wasn't included?
 > 
-> It is the third time it was dropped and I'm really really
-> curious what's wrong with it. :)
+> 	Gotcha.
 > 
-> http://lists.osdl.org/pipermail/kernel-janitors/2004-June/001157.html
+> sa.c, rkt.c:
+.. 
+> rx.c:
 
-if i remember correctl it didn't apply,
-please resend on current for next kjt on the list.
-
-the documentation change could be a bit better, 
-document the new feature above 
-(comma-separated members are allowed).
-
-a++ maks
+updated split out patches from kjt2 with your descriptions.
+thanks maks
 
 
---===============85754380553889842==
+--===============098220900114092347==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85754380553889842==--
+--===============098220900114092347==--
