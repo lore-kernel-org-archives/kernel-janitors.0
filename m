@@ -1,35 +1,111 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 17 Nov 2004 13:26:28 +0000
-Subject: [KJ] [patch] fs/super.c: docbook comment fix
-Message-Id: <20041117132628.GF8698@nd47.coderock.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 01 Nov 2004 18:17:01 +0000
+Subject: [KJ] [PATCH] net/gt96100eth: replace gt96100_delay() with
+Message-Id: <20041101190841.GB1730@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81657208050279495=="
+Content-Type: multipart/mixed; boundary="===============47808675393160271=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <E1CO1vu-0002Lf-5c@sputnik> <4184C72F.8000905@pobox.com>
+In-Reply-To: <4184C72F.8000905@pobox.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
 
---===============81657208050279495==
+--===============47808675393160271==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Parameter name in comment was wrong.
+On Sun, Oct 31, 2004 at 06:06:23AM -0500, Jeff Garzik wrote:
+> janitor@sternwelten.at wrote:
+> >@@ -528,7 +517,7 @@ abort(struct net_device *dev, u32 abort_
+> > 	// wait for abort to complete
+> > 	while (GT96100ETH_READ(gp, GT96100_ETH_SDMA_COMM) & abort_bits) {
+> > 		// snooze for 20 msec and check again
+> >-		gt96100_delay(1);
+> >+		msleep_interruptible(20);
+> > 	
+> > 		if (--timedout == 0) {
+> 
+> 
+> don't change the behavior of the driver, even if it disagrees with the 
+> comment.
 
-Compile tested.
+Ok, please find the corrected patch below.
 
-Signed-off-by: Domen Puncer <domen@coderock.org>
+Description: Uses msleep_interruptible() instead of gt96100_delay()
+to guarantee the task delays as expected. Removes prototype and
+definition of now unused gt96100_delay() function. Corrects one comment
+to correspond to the code.
 
---- c/fs/super.c	2004-11-15 13:42:18.000000000 +0100
-+++ a/fs/super.c	2004-11-17 14:08:44.000000000 +0100
-@@ -141,7 +141,7 @@ int __put_super_and_need_restart(struct 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.10-rc1-vanilla/drivers/net/gt96100eth.c	2004-10-30 15:33:30.000000000 -0700
++++ 2.6.10-rc1/drivers/net/gt96100eth.c	2004-11-01 11:05:37.000000000 -0800
+@@ -59,7 +59,6 @@
+ // prototypes
+ static void* dmaalloc(size_t size, dma_addr_t *dma_handle);
+ static void dmafree(size_t size, void *vaddr);
+-static void gt96100_delay(int msec);
+ static int gt96100_add_hash_entry(struct net_device *dev,
+ 				  unsigned char* addr);
+ static void read_mib_counters(struct gt96100_private *gp);
+@@ -183,16 +182,6 @@ static void dmafree(size_t size, void *v
+ 	free_pages((unsigned long)vaddr, get_order(size));
+ }
  
- /**
-  *	put_super	-	drop a temporary reference to superblock
-- *	@s: superblock in question
-+ *	@sb: superblock in question
-  *
-  *	Drops a temporary reference, frees superblock if there's no
-  *	references left.
+-static void gt96100_delay(int ms)
+-{
+-	if (in_interrupt())
+-		return;
+-	else {
+-		current->state = TASK_INTERRUPTIBLE;
+-		schedule_timeout(ms*HZ/1000);
+-	}
+-}
+-
+ static int
+ parse_mac_addr(struct net_device *dev, char* macstr)
+ {
+@@ -238,7 +227,7 @@ read_MII(int phy_addr, u32 reg)
+ 	// wait for last operation to complete
+ 	while (GT96100_READ(GT96100_ETH_SMI_REG) & smirBusy) {
+ 		// snooze for 1 msec and check again
+-		gt96100_delay(1);
++		msleep_interruptible(1);
+ 
+ 		if (--timedout == 0) {
+ 			printk(KERN_ERR "%s: busy timeout!!\n", __FUNCTION__);
+@@ -252,7 +241,7 @@ read_MII(int phy_addr, u32 reg)
+ 	// wait for read to complete
+ 	while (!((smir = GT96100_READ(GT96100_ETH_SMI_REG)) & smirReadValid)) {
+ 		// snooze for 1 msec and check again
+-		gt96100_delay(1);
++		msleep_interruptible(1);
+ 	
+ 		if (--timedout == 0) {
+ 			printk(KERN_ERR "%s: timeout!!\n", __FUNCTION__);
+@@ -304,7 +293,7 @@ write_MII(int phy_addr, u32 reg, u16 dat
+ 	// wait for last operation to complete
+ 	while (GT96100_READ(GT96100_ETH_SMI_REG) & smirBusy) {
+ 		// snooze for 1 msec and check again
+-		gt96100_delay(1);
++		msleep_interruptible(1);
+ 	
+ 		if (--timedout == 0) {
+ 			printk(KERN_ERR "%s: busy timeout!!\n", __FUNCTION__);
+@@ -527,8 +516,8 @@ abort(struct net_device *dev, u32 abort_
+ 
+ 	// wait for abort to complete
+ 	while (GT96100ETH_READ(gp, GT96100_ETH_SDMA_COMM) & abort_bits) {
+-		// snooze for 20 msec and check again
+-		gt96100_delay(1);
++		// snooze for 1 msec and check again
++		msleep_interruptible(1);
+ 	
+ 		if (--timedout == 0) {
+ 			err("%s: timeout!!\n", __FUNCTION__);
 
---===============81657208050279495==
+--===============47808675393160271==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +116,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81657208050279495==--
+--===============47808675393160271==--
