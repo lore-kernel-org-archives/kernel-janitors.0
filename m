@@ -1,83 +1,82 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Sat, 03 Jul 2004 15:06:33 +0000
-Subject: [Kernel-janitors] [PATCH] drivers/char/pcmcia/synclink_cs.c MIN/MAX
-Message-Id: <40E81AB1.5050908@gmx.net>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 22 Jul 2004 21:42:24 +0000
+Subject: [Kernel-janitors] [PATCH] bluetooth/bluecard: replace
+Message-Id: <20040722214224.GH2165@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040408060203090506040206"
+Content-Type: multipart/mixed; boundary="===============85836349682777802=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <40E819EC.1030207@gmx.net>
-In-Reply-To: <40E819EC.1030207@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------040408060203090506040206
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============85836349682777802==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patch (against 2.6.7) removes unnecessary min/max macros and changes
-calls to use kernel.h macros instead.
+I am really sorry for this, but I didn't change what I had changed
+before in the compileable patch (msleep(10) instead of mlseep(100)).
+This is the final one, I swear (I think).
 
-Feedback is always welcome
-Michael
+Please find below the corrected version, which compiles without error
+for me.
+
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
+
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
+
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
+
+Thanks,
+Nish
 
 
 
+Applys-to: 2.6.7
+
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
-
-
-
---------------040408060203090506040206
-Content-Type: text/plain;
- name="patch-char-synclink_cs"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="patch-char-synclink_cs"
-
---- linux-2.6.7-old/drivers/char/pcmcia/synclink_cs.c	2004-07-04 11:04:14.000000000 +0200
-+++ linux-2.6.7-new/drivers/char/pcmcia/synclink_cs.c	2004-07-04 16:11:02.180539504 +0200
-@@ -499,10 +499,6 @@
- static void mgslpc_change_params(MGSLPC_INFO *info);
- static void mgslpc_wait_until_sent(struct tty_struct *tty, int timeout);
+--- linux-vanilla/drivers/bluetooth/bluecard_cs.c	2004-06-16 05:19:22.000000000 +0000
++++ linux-dev/drivers/bluetooth/bluecard_cs.c	2004-07-21 20:52:07.000000000 +0000
+@@ -34,6 +34,7 @@
+ #include <linux/ioport.h>
+ #include <linux/spinlock.h>
+ #include <linux/skbuff.h>
++#include <linux/delay.h>
+ #include <asm/io.h>
  
--#ifndef MIN
--#define MIN(a,b)	((a) < (b) ? (a) : (b))
--#endif
--
- /* PCMCIA prototypes */
+ #include <pcmcia/version.h>
+@@ -776,8 +777,7 @@ int bluecard_open(bluecard_info_t *info)
+ 	outb(0x80, iobase + 0x30);
  
- static void mgslpc_config(dev_link_t *link);
-@@ -1197,7 +1193,7 @@
- 		return;
+ 	/* Wait some time */
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(HZ / 100);
++	msleep(10);
  
- 	while (info->tx_count && fifo_count) {
--		c = MIN(2, MIN(fifo_count, MIN(info->tx_count, TXBUFSIZE - info->tx_get)));
-+		c = min(2, min_t(int, fifo_count, min(info->tx_count, TXBUFSIZE - info->tx_get)));
- 		
- 		if (c == 1) {
- 			write_reg(info, CHA + TXFIFO, *(info->tx_buf + info->tx_get));
-@@ -1760,8 +1756,8 @@
- 	}
+ 	/* Turn FPGA on */
+ 	outb(0x00, iobase + 0x30);
+@@ -823,8 +823,7 @@ int bluecard_open(bluecard_info_t *info)
+ 	outb((0x0f << RTS_LEVEL_SHIFT_BITS) | 1, iobase + REG_RX_CONTROL);
  
- 	for (;;) {
--		c = MIN(count,
--			MIN(TXBUFSIZE - info->tx_count - 1,
-+		c = min(count,
-+			min(TXBUFSIZE - info->tx_count - 1,
- 			    TXBUFSIZE - info->tx_put));
- 		if (c <= 0)
- 			break;
-@@ -2647,7 +2643,7 @@
- 		char_time = 1;
- 		
- 	if (timeout)
--		char_time = MIN(char_time, timeout);
-+		char_time = min_t(unsigned long, char_time, timeout);
- 		
- 	if (info->params.mode == MGSL_MODE_HDLC) {
- 		while (info->tx_active) {
+ 	/* Timeout before it is safe to send the first HCI packet */
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout((HZ * 5) / 4);		// or set it to 3/2
++	msleep(1250);
+ 
+ 	/* Register HCI device */
+ 	if (hci_register_dev(hdev) < 0) {
 
---------------040408060203090506040206
+--===============85836349682777802==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +87,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------040408060203090506040206--
+--===============85836349682777802==--
