@@ -1,45 +1,64 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Sun, 13 Feb 2005 12:53:45 +0000
-Subject: [KJ] [PATCH] drivers/net/ixgb/*: convert to pci_register_driver
-Message-Id: <20050213125345.GE15348@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 19:29:00 +0000
+Subject: [KJ] [PATCH 12/20] i2c/i2c-ite: remove
+Message-Id: <20050202192900.GO2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="lHGcFxmlz1yfXmOs"
+Content-Type: multipart/mixed; boundary="===============09789117486052179=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---lHGcFxmlz1yfXmOs
+--===============09789117486052179==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+Hello,
 
-Hi,
+Please consider applying.
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+Description: Replace deprecated interruptible_sleep_on_timeout() with direct
+wait-queue usage. Patch is compile-tested, sort of; the driver does not build in
+vanilla kernel either, but I don't seem to add any warnings..
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---lHGcFxmlz1yfXmOs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_ixgb.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/ixgb/ixgb_main.c linux-2.6.11-rc3/drivers/net/ixgb/ixgb_main.c
---- linux-2.6.11-rc3-vanilla/drivers/net/ixgb/ixgb_main.c	2005-02-03 17:03:50.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/net/ixgb/ixgb_main.c	2005-02-07 09:39:28.000000000 +0100
-@@ -171,7 +171,7 @@ ixgb_init_module(void)
+--- 2.6.11-rc2-kj-v/drivers/i2c/busses/i2c-ite.c	2005-01-24 09:28:30.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/i2c/busses/i2c-ite.c	2005-01-27 11:37:59.000000000 -0800
+@@ -40,6 +40,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/init.h>
++#include <linux/wait.h>
+ #include <asm/irq.h>
+ #include <asm/io.h>
  
- 	printk(KERN_INFO "%s\n", ixgb_copyright);
+@@ -107,7 +108,7 @@ static int iic_ite_getclock(void *data)
+  * IIC controller interrupts.
+  */
+ static void iic_ite_waitforpin(void) {
+-
++   DEFINE_WAIT(wait);
+    int timeout = 2;
+    long flags;
  
--	ret = pci_module_init(&ixgb_driver);
-+	ret = pci_register_driver(&ixgb_driver);
- 	if(ret >= 0) {
- 		register_reboot_notifier(&ixgb_notifier_reboot);
- 	}
+@@ -121,13 +122,15 @@ static void iic_ite_waitforpin(void) {
+ 	spin_lock_irqsave(&lock, flags);
+ 	if (iic_pending == 0) {
+ 		spin_unlock_irqrestore(&lock, flags);
+-		if (interruptible_sleep_on_timeout(&iic_wait, timeout*HZ)) {
++		prepare_to_wait(&iic_wait, &wait, TASK_INTERRUPTIBLE);
++		if (schedule_timeout(timeout*HZ)) {
+ 			spin_lock_irqsave(&lock, flags);
+ 			if (iic_pending == 1) {
+ 				iic_pending = 0;
+ 			}
+ 			spin_unlock_irqrestore(&lock, flags);
+ 		}
++		finish_wait(&iic_wait, &wait);
+ 	} else {
+ 		iic_pending = 0;
+ 		spin_unlock_irqrestore(&lock, flags);
 
---lHGcFxmlz1yfXmOs
+--===============09789117486052179==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---lHGcFxmlz1yfXmOs--
+--===============09789117486052179==--
