@@ -1,15 +1,16 @@
 From: maximilian attems <janitor@sternwelten.at>
-Date: Mon, 16 Aug 2004 08:38:46 +0000
+Date: Sat, 21 Aug 2004 08:36:39 +0000
 Subject: Re: [Kernel-janitors] ip_gre.c: update last_rx after netif_rx
-Message-Id: <20040816083846.GA1760@stro.at>
+Message-Id: <20040821083639.GA1827@stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============73916713581074611=="
+Content-Type: multipart/mixed; boundary="===============24698981041887724=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <411E62D3.8070808@uranium235.org>
 In-Reply-To: <411E62D3.8070808@uranium235.org>
-To: kernel-janitors@vger.kernel.org
+To: Jay Bourque <kernel@uranium235.org>
+Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
 
---===============73916713581074611==
+--===============24698981041887724==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -30,23 +31,26 @@ On Sat, 14 Aug 2004, Jay Bourque wrote:
 >         read_unlock(&ipgre_lock);
 >         return(0);
 >     }
+doesn't look complete, see patch below, but please read on:
 
-well i hadn't researched that TODO item, when saying go for it,
-sorry, but grepping for 'last_rx' in 2.6.8 shows only 2 items.
-Arnaldo did lots of conversion at the beginning of the 2.4.x serie.
-i think this task should be removed from TODO as the way to go is to
-have correct rx pathes, but i'm not that good in networking code.
-see: http://www.ussg.iu.edu/hypermail/linux/kernel/0302.2/1314.html
+the kj todo has an entry about "update last_rx after netif_rx", 
+i wonder what that timestamping is good for, and newer 
+sources 2.4.27 and 2.6.8 show 2 occurences of last_rx.
 
-please confirm Arnaldo?
+patches doing that are for young 2.4:
+http://seclists.org/linux-kernel/2001/Feb/4846.html
 
-thanks
- 
+i presume that this task is outdated,
+thanks for putting light on that. 
+
+
+
 --
 maks
+kernel janitor  	http://janitor.kernelnewbies.org/
 
 
---===============73916713581074611==
+--===============24698981041887724==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============73916713581074611==--
+--===============24698981041887724==--
