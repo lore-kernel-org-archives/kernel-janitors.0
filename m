@@ -1,53 +1,47 @@
 From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:30 +0000
-Subject: [KJ] [PATCH][2/26] drivers/block/* - compile warning cleanup
-Message-Id: <420BEF86.15477.587C48@localhost>
+Date: Mon, 14 Feb 2005 22:02:54 +0000
+Subject: [KJ] [PATCH][RESUBMIT][19/21]  kernel/* - compile warning cleanup
+Message-Id: <42113C2E.7177.52C380@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74923460942963072=="
+Content-Type: multipart/mixed; boundary="===============50573869760903389=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============74923460942963072==
+--===============50573869760903389==
 Content-type: text/plain; charset=US-ASCII
 Content-transfer-encoding: 7BIT
 Content-description: Mail message body
 
-Description: compile warning cleanups - handle error return from 
-scsi_add_host, cast argument to sprintf to silence warning
+Description: compile warning cleanup - handle copy_to/from_user error 
+returns
 
 Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/block/cciss_scsi.c linux-2.6.11-rc3-mm/drivers/block/cciss_scsi.c
---- linux-2.6.11-rc3-mm-original/drivers/block/cciss_scsi.c	2005-02-03 03:55:22.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/block/cciss_scsi.c	2005-02-09 23:04:23.000000000 +0200
-@@ -706,7 +706,8 @@ cciss_scsi_detect(int ctlr)
- 	sh->hostdata[0] = (unsigned long) hba[ctlr];
- 	sh->irq = hba[ctlr]->intr;
- 	sh->unique_id = sh->irq;
--	scsi_add_host(sh, &hba[ctlr]->pdev->dev); /* XXX handle failure */
-+	if(scsi_add_host(sh, &hba[ctlr]->pdev->dev))
-+		return 0;
- 	scsi_scan_host(sh);
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/net/ipv6/ip6_flowlabel.c linux-2.6.11-rc3-mm2/net/ipv6/ip6_flowlabel.c
+--- linux-2.6.11-rc3-mm2-original/net/ipv6/ip6_flowlabel.c	2005-02-12 12:06:27.000000000 +0200
++++ linux-2.6.11-rc3-mm2/net/ipv6/ip6_flowlabel.c	2005-02-12 19:17:48.000000000 +0200
+@@ -537,9 +537,13 @@ release:
+ 			goto done;
  
- 	return 1;
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/block/sx8.c linux-2.6.11-rc3-mm/drivers/block/sx8.c
---- linux-2.6.11-rc3-mm-original/drivers/block/sx8.c	2005-02-03 
-03:57:16.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/block/sx8.c	2005-02-07 15:35:49.000000000 +0200
-@@ -1503,7 +1503,7 @@ static int carm_init_disks(struct carm_h
- 		}
+ 		/* Do not check for fault */
+-		if (!freq.flr_label)
+-			copy_to_user(&((struct in6_flowlabel_req __user *) optval)->flr_label,
+-				     &fl->label, sizeof(fl->label));
++		if (!freq.flr_label) {
++			if (copy_to_user(&((struct in6_flowlabel_req __user *)optval)->flr_label,
++				     &fl->label, sizeof(fl->label))) {
++				err = -EFAULT;
++				goto done;
++			}
++		}
  
- 		port->disk = disk;
--		sprintf(disk->disk_name, DRV_NAME "/%u", (host->id * CARM_MAX_PORTS) + i);
-+		sprintf(disk->disk_name, DRV_NAME "/%u", (unsigned int)((host->id * CARM_MAX_PORTS) + i));
- 		sprintf(disk->devfs_name, DRV_NAME "/%u_%u", host->id, i);
- 		disk->major = host->major;
- 		disk->first_minor = i * CARM_MINORS_PER_MAJOR;
+ 		sfl1->fl = fl;
+ 		sfl1->next = np->ipv6_fl_list;
 
 
 
 
---===============74923460942963072==
+--===============50573869760903389==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74923460942963072==--
+--===============50573869760903389==--
