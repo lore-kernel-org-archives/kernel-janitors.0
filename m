@@ -1,41 +1,48 @@
-From: "Joanne Houser" <houserbu@bcb.com.my>
-Date: Tue, 13 Jul 2004 01:37:09 +0000
-Subject: $93145
-Message-Id: <bc4001c46879$9dba017f$4dec3cf4@bf-corps.de>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 27 Jul 2004 17:09:56 +0000
+Subject: [Kernel-janitors] [PATCH] irda/act200l-sir: replace
+Message-Id: <20040727170956.GH2099@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1089413497942644=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-I sent you an email a few days ago, because you now qualify for a new mortgage.
-You could get $300,000 for as little as $700 a month!
-Bad credit is no problem, you can pull cash out or refinance.
+--===============1089413497942644==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please click on this link:
-http://www.lending-now.com/h7/li.php?bksq
+I would appreciate any comments from the janitors list. 
 
-Best Regards,
-Joanne
+Applys-to: 2.6.7
 
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays for the desired time.
 
-No more: http://www.lending-now.com/r1/index.html
-
----- system information ----
-interoperate information) disparate servers members fully back Australia
-
-format between send associate contents What interface without 
-implementations internal Tax match provides subtle format textual 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
+--- linux-vanilla/drivers/net/irda/act200l-sir.c	2004-06-16 05:19:11.000000000 +0000
++++ linux-dev/drivers/net/irda/act200l-sir.c	2004-07-03 01:25:49.000000000 +0000
+@@ -177,8 +177,7 @@ static int act200l_change_speed(struct s
+ 
+ 	/* Write control bytes */
+ 	sirdev_raw_write(dev, control, 3);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(msecs_to_jiffies(5));
++	msleep(5);
+ 
+ 	/* Go back to normal mode */
+ 	sirdev_set_dtr_rts(dev, TRUE, TRUE);
 
--------------------------------------------------------
-This SF.Net email sponsored by Black Hat Briefings & Training.
-Attend Black Hat Briefings & Training, Las Vegas July 24-29 - 
-digital self defense, top technical experts, no vendor pitches, 
-unmatched networking opportunities. Visit www.blackhat.com
+--===============1089413497942644==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1089413497942644==--
