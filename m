@@ -1,53 +1,58 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 00:18:26 +0000
-Subject: [KJ] [PATCH 23/34] media/zoran_device: replace
-Message-Id: <20050126001826.GO12649@us.ibm.com>
+From: Pavel Machek <pavel@suse.cz>
+Date: Fri, 21 Jan 2005 10:37:03 +0000
+Subject: [KJ] Re: [PATCH 14/39] kernel/smp: replace schedule_timeout() with
+Message-Id: <20050121103703.GG18373@elf.ucw.cz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============3986935434524701=="
+Content-Type: multipart/mixed; boundary="===============076132668248938273=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============3986935434524701==
+--===============076132668248938273==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hi!
 
-Please consider applying.
+> Please consider applying.
+> 
+> Description: Use ssleep() instead of schedule_timeout(). The original code uses
+> TASK_INTERRUPTIBLE, but does not check for signals, so I believe the change to
+> ssleep() is appropriate.
 
-Description: Use wait_event_interruptible() instead of the deprecated
-interruptible_sleep_on(). Patch is compile-tested.
+Actually, better question is "is it really required"? Is
+set_cpus_allowed guaranteed to return on right cpu already? Or perhaps
+schedule() is enough to guarantee this?
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+[I do not have smp system near me.]
+								Pavel
 
---- 2.6.11-rc2-kj-v/drivers/media/video/zoran_device.c	2005-01-24 09:34:08.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/media/video/zoran_device.c	2005-01-24 16:07:07.000000000 -0800
-@@ -46,6 +46,7 @@
- #include <linux/video_decoder.h>
- #include <linux/video_encoder.h>
- #include <linux/delay.h>
-+#include <linux/wait.h>
- 
- #include <asm/io.h>
- 
-@@ -696,11 +697,10 @@ wait_grab_pending (struct zoran *zr)
- 	if (!zr->v4l_memgrab_active)
- 		return 0;
- 
--	while (zr->v4l_pend_tail != zr->v4l_pend_head) {
--		interruptible_sleep_on(&zr->v4l_capq);
--		if (signal_pending(current))
--			return -ERESTARTSYS;
--	}
-+	wait_event_interruptible(zr->v4l_capq,
-+			(zr->v4l_pend_tail == zr->v4l_pend_head));
-+	if (signal_pending(current))
-+		return -ERESTARTSYS;
- 
- 	spin_lock_irqsave(&zr->spinlock, flags);
- 	zr36057_set_memgrab(zr, 0);
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.11-rc1-kj-v/kernel/power/smp.c	2005-01-15 16:55:45.000000000 -0800
+> +++ 2.6.11-rc1-kj/kernel/power/smp.c	2005-01-18 11:18:57.000000000 -0800
+> @@ -13,6 +13,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/suspend.h>
+>  #include <linux/module.h>
+> +#include <linux/delay.h>
+>  #include <asm/atomic.h>
+>  #include <asm/tlbflush.h>
+>  
+> @@ -49,8 +50,7 @@ void disable_nonboot_cpus(void)
+>  	printk("Freezing CPUs (at %d)", smp_processor_id());
+>  	oldmask = current->cpus_allowed;
+>  	set_cpus_allowed(current, cpumask_of_cpu(0));
+> -	current->state = TASK_INTERRUPTIBLE;
+> -	schedule_timeout(HZ);
+> +	ssleep(1);
+>  	printk("...");
+>  	BUG_ON(smp_processor_id() != 0);
 
---===============3986935434524701==
+-- 
+People were complaining that M$ turns users into beta-testers...
+...jr ghea gurz vagb qrirybcref, naq gurl frrz gb yvxr vg gung jnl!
+
+--===============076132668248938273==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============3986935434524701==--
+--===============076132668248938273==--
