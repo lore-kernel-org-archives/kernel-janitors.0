@@ -1,15 +1,15 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 20 Jan 2005 17:11:19 +0000
+From: Grant Grundler <iod00d@hp.com>
+Date: Thu, 20 Jan 2005 17:19:23 +0000
 Subject: Re: [openib-general] Re: [KJ] [RFC] TODO file cleanups
-Message-Id: <20050120171118.GA9538@kroah.com>
+Message-Id: <20050120171923.GI13299@esmail.cup.hp.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26272583536189642=="
+Content-Type: multipart/mixed; boundary="===============70017442690783738=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050117231123.GC19162@nd47.coderock.org>
 In-Reply-To: <20050117231123.GC19162@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============26272583536189642==
+--===============70017442690783738==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -26,23 +26,23 @@ On Thu, Jan 20, 2005 at 06:02:36PM +0100, Adrian Bunk wrote:
 > 
 > Therefore, it's simply GPL code.
 
-Sure, but then no one can then take that code and use it under the BSD
-license in the future, due to the dependancy on the RCU code, which is
-_only_ allowed to be used under the GPL.
+Adrian,
+I think you overlooked the fact that include/linux/rcupdate.h is published
+under the GPL. Not "dual GPL/BSD". Someone can't take code that uses
+linux's RCU and ship it under a BSD license.
+There are "consumers" of openib.org that want to do that.
+ergo we can't use RCU unless they are willing to give that up.
 
-That's the main reason the openib people object to this, it has nothing
-to do with the in-kernel code at all.
+> And even in the other case, the 3-clause BSD licence is compatible with 
+> the GPL.
 
-Personally, I think it's a stupid thing to try to license this code in a
-dual way, as any port someone is going to have to do to get this code to
-work in another os will be almost a complete rewrite in the end
-anyway...
+Sorry - I'm no lawyer. I've never heard of "3-clause BSD" and that's
+probably a good thing. I fail to see the point of something that's
+compatible with GPL since one could just use GPL in that case.
 
-thanks,
+grant
 
-greg k-h
-
---===============26272583536189642==
+--===============70017442690783738==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============26272583536189642==--
+--===============70017442690783738==--
