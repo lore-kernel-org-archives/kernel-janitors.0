@@ -1,45 +1,34 @@
 From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Mon, 22 Mar 2004 19:34:55 +0000
-Subject: Re: [Kernel-janitors] [TRIVIAL] - section drivers/acpi/asus_acpi.c.
-Message-Id: <1079984094.28702.8.camel@telecentrolivre>
+Date: Mon, 15 Mar 2004 19:04:08 +0000
+Subject: [Kernel-janitors] [TRIVIAL] - init section cpufreq/longrun.c.
+Message-Id: <1079377448.27947.35.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1079724660.14846.38.camel@telecentrolivre>
-In-Reply-To: <1079724660.14846.38.camel@telecentrolivre>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Hi Randy,
+Hi all,
 
-Em Sex, 2004-03-19 =E0s 21:11, Randy.Dunlap escreveu:
+Trivial patch...
 
-> |  asus_hotk_remove() is only called when drivers is being
-> | removed.
->=20
-> Hm, how did you come to this conclusion?  I don't see that
-> as I look at drivers/acpi/scan.c, around line # 262,
-> in function acpi_bus_driver_init():   <<< note the "init" >>>
->=20
-> 	if (driver->ops.start) {
-> 		result =3D driver->ops.start(device);
-> 		if (result && driver->ops.remove)
-> 			driver->ops.remove(device, ACPI_BUS_REMOVAL_NORMAL);
-> 		return_VALUE(result);
-> 	}
-
- yes... I did not saw this, drop it please.
-
- I need to be more careful doing this little patches. :-|
-
- thanks,
-
---=20
+diff -Nparu linux-2.6.4-bk4/arch/i386/kernel/cpu/cpufreq/longrun.c linux-2.6.4-bk4~/arch/i386/kernel/cpu/cpufreq/longrun.c
+-- linux-2.6.4-bk4/arch/i386/kernel/cpu/cpufreq/longrun.c	2004-03-11 14:20:23.000000000 -0300
++++ linux-2.6.4-bk4~/arch/i386/kernel/cpu/cpufreq/longrun.c	2004-03-15 13:54:45.000000000 -0300
+@@ -33,7 +33,7 @@ static unsigned int longrun_low_freq, lo
+  * Reads the current LongRun policy by access to MSR_TMTA_LONGRUN_FLAGS
+  * and MSR_TMTA_LONGRUN_CTRL
+  */
+-static void longrun_get_policy(struct cpufreq_policy *policy)
++static void __init longrun_get_policy(struct cpufreq_policy *policy)
+ {
+ 	u32 msr_lo, msr_hi;
+ 
+-- 
 Luiz Fernando N. Capitulino
 <lcapitulino@prefeitura.sp.gov.br>
 <http://www.telecentros.sp.gov.br>
-
 
 _______________________________________________
 Kernel-janitors mailing list
