@@ -1,170 +1,44 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 31 Oct 2004 14:44:24 +0000
-Subject: [KJ] [patch 1/6] back port msleep(), msleep_interruptible()
-Message-Id: <20041031144424.GB28667@stro.at>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Wed, 20 Oct 2004 18:54:04 +0000
+Subject: [KJ] [RFT 2.6] isoch.c: replace pci_find_device with pci_get_device
+Message-Id: <18340000.1098298444@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71430146480203494=="
+Content-Type: multipart/mixed; boundary="===============0044508017077333761=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040923221303.GB13244@us.ibm.com> <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de> <415CD9D9.2000607@pobox.com> <20041030222228.GB1456@stro.at> <41841886.2080609@pobox.com>
-In-Reply-To: <41841886.2080609@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: Margit Schubert-While <margitsw@t-online.de>, Nishanth Aravamudan <nacc@us.ibm.com>, hvr@gnu.org, mcgrof@studorgs.rutgers.edu, kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, Domen Puncer <domen@coderock.org>, linux-kernel@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: Hanna Linder <hannal@us.ibm.com>, greg@kroah.com, davej@codemonkey.org.uk
 
---===============71430146480203494==
+--===============0044508017077333761==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
-Backport suggested by prism54 folks. idea acked by Jeff.
-thanks for Domen Puncer at helping out.
+As pci_find_device is going away soon I have converted this file to use
+pci_get_device instead. for_each_pci_dev is just a macro wrapper around
+pci_get_device.  I have compile tested it. If anyone has this hardware
+and could test it that would be great.
 
-Belows patch adds msleep() and msleep_interruptible() as found
-in current 2.6 to 2.4.
-therefor adds the helper functions ssleep(), jiffies_to_msecs(),
-jiffies_to_usecs(), msecs_to_jiffies().
+Hanna Linder
+IBM Linux Technology Center
 
-The namespace clashes for msleep() and msecs_to_jiffies()
-are cleanup by the next 5 patches.
-
-Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
-
-
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 ---
+diff -Nrup linux-2.6.9cln/drivers/char/agp/isoch.c linux-2.6.9patch/drivers/char/agp/isoch.c
+--- linux-2.6.9cln/drivers/char/agp/isoch.c	2004-10-18 16:35:52.000000000 -0700
++++ linux-2.6.9patch/drivers/char/agp/isoch.c	2004-10-19 16:02:16.634192424 -0700
+@@ -347,7 +347,7 @@ int agp_3_5_enable(struct agp_bridge_dat
+ 	INIT_LIST_HEAD(head);
+ 
+ 	/* Find all AGP devices, and add them to dev_list. */
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		mcapndx = pci_find_capability(dev, PCI_CAP_ID_AGP);
+ 		if (mcapndx == 0)
+ 			continue;
 
- linux-2.4.28-rc1-max/include/linux/delay.h |    8 +++++
- linux-2.4.28-rc1-max/include/linux/time.h  |   41 +++++++++++++++++++++++++++++
- linux-2.4.28-rc1-max/kernel/Makefile       |    3 +-
- linux-2.4.28-rc1-max/kernel/timer.c        |   33 +++++++++++++++++++++++
- 4 files changed, 84 insertions(+), 1 deletion(-)
 
-diff -puN kernel/Makefile~add-msleep-2.4 kernel/Makefile
---- linux-2.4.28-rc1/kernel/Makefile~add-msleep-2.4	2004-10-30 22:48:46.000000000 +0200
-+++ linux-2.4.28-rc1-max/kernel/Makefile	2004-10-30 22:50:45.000000000 +0200
-@@ -9,7 +9,8 @@
- 
- O_TARGET := kernel.o
- 
--export-objs = signal.o sys.o kmod.o context.o ksyms.o pm.o exec_domain.o printk.o
-+export-objs   = signal.o sys.o kmod.o context.o ksyms.o pm.o exec_domain.o \
-+		printk.o timer.o
- 
- obj-y     = sched.o dma.o fork.o exec_domain.o panic.o printk.o \
- 	    module.o exit.o itimer.o info.o time.o softirq.o resource.o \
-diff -puN kernel/timer.c~add-msleep-2.4 kernel/timer.c
---- linux-2.4.28-rc1/kernel/timer.c~add-msleep-2.4	2004-10-30 22:48:46.000000000 +0200
-+++ linux-2.4.28-rc1-max/kernel/timer.c	2004-10-30 22:50:09.000000000 +0200
-@@ -22,6 +22,7 @@
- #include <linux/smp_lock.h>
- #include <linux/interrupt.h>
- #include <linux/kernel_stat.h>
-+#include <linux/module.h>
- 
- #include <asm/uaccess.h>
- 
-@@ -874,3 +875,35 @@ asmlinkage long sys_nanosleep(struct tim
- 	return 0;
- }
- 
-+/**
-+ * msleep - sleep safely even with waitqueue interruptions
-+ * @msecs: Time in milliseconds to sleep for
-+ */
-+void msleep(unsigned int msecs)
-+{
-+	unsigned long timeout = msecs_to_jiffies(msecs) + 1;
-+
-+	while (timeout) {
-+		set_current_state(TASK_UNINTERRUPTIBLE);
-+		timeout = schedule_timeout(timeout);
-+	}
-+}
-+
-+EXPORT_SYMBOL(msleep);
-+
-+/**
-+ * msleep_interruptible - sleep waiting for waitqueue interruptions
-+ * @msecs: Time in milliseconds to sleep for
-+ */
-+unsigned long msleep_interruptible(unsigned int msecs)
-+{
-+	unsigned long timeout = msecs_to_jiffies(msecs) + 1;
-+
-+	while (timeout && !signal_pending(current)) {
-+		set_current_state(TASK_INTERRUPTIBLE);
-+		timeout = schedule_timeout(timeout);
-+	}
-+	return jiffies_to_msecs(timeout);
-+}
-+
-+EXPORT_SYMBOL(msleep_interruptible);
-diff -puN include/linux/delay.h~add-msleep-2.4 include/linux/delay.h
---- linux-2.4.28-rc1/include/linux/delay.h~add-msleep-2.4	2004-10-30 22:48:46.000000000 +0200
-+++ linux-2.4.28-rc1-max/include/linux/delay.h	2004-10-30 22:48:46.000000000 +0200
-@@ -34,4 +34,12 @@ extern unsigned long loops_per_jiffy;
- 	({unsigned long msec=(n); while (msec--) udelay(1000);}))
- #endif
- 
-+void msleep(unsigned int msecs);
-+unsigned long msleep_interruptible(unsigned int msecs);
-+
-+static inline void ssleep(unsigned int seconds)
-+{
-+	msleep(seconds * 1000);
-+}
-+
- #endif /* defined(_LINUX_DELAY_H) */
-diff -puN include/linux/time.h~add-msleep-2.4 include/linux/time.h
---- linux-2.4.28-rc1/include/linux/time.h~add-msleep-2.4	2004-10-30 22:48:46.000000000 +0200
-+++ linux-2.4.28-rc1-max/include/linux/time.h	2004-10-30 22:57:44.000000000 +0200
-@@ -126,4 +126,45 @@ struct	itimerval {
- 	struct	timeval it_value;	/* current value */
- };
- 
-+/*
-+ * Convert jiffies to milliseconds and back.
-+ *
-+ * Avoid unnecessary multiplications/divisions in the
-+ * two most common HZ cases:
-+ */
-+static inline unsigned int jiffies_to_msecs(const unsigned long j)
-+{
-+#if HZ <= 1000 && !(1000 % HZ)
-+	return (1000 / HZ) * j;
-+#elif HZ > 1000 && !(HZ % 1000)
-+	return (j + (HZ / 1000) - 1)/(HZ / 1000);
-+#else
-+	return (j * 1000) / HZ;
-+#endif
-+}
-+
-+static inline unsigned int jiffies_to_usecs(const unsigned long j)
-+{
-+#if HZ <= 1000 && !(1000 % HZ)
-+	return (1000000 / HZ) * j;
-+#elif HZ > 1000 && !(HZ % 1000)
-+	return (j*1000 + (HZ - 1000))/(HZ / 1000);
-+#else
-+	return (j * 1000000) / HZ;
-+#endif
-+}
-+
-+static inline unsigned long msecs_to_jiffies(const unsigned int m)
-+{
-+	if (m > jiffies_to_msecs(MAX_JIFFY_OFFSET))
-+		return MAX_JIFFY_OFFSET;
-+#if HZ <= 1000 && !(1000 % HZ)
-+	return (m + (1000 / HZ) - 1) / (1000 / HZ);
-+#elif HZ > 1000 && !(HZ % 1000)
-+	return m * (HZ / 1000);
-+#else
-+	return (m * HZ + 999) / 1000;
-+#endif
-+}
-+
- #endif
-_
-
---===============71430146480203494==
+--===============0044508017077333761==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -175,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============71430146480203494==--
+--===============0044508017077333761==--
