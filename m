@@ -1,39 +1,39 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 24 Oct 2004 14:11:21 +0000
-Subject: Re: [KJ] [PATCH] cdrom/sonycd535: replace schedule_timeout() with
-Message-Id: <20041024141121.GK23059@stro.at>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 22 Oct 2004 23:56:34 +0000
+Subject: [KJ] [PATCH] video/sa1100fb: reorder set_current_state() and
+Message-Id: <20041022235634.GM18906@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30042660514306174=="
+Content-Type: multipart/mixed; boundary="===============18297971497132837=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041022235941.GO18906@us.ibm.com>
-In-Reply-To: <20041022235941.GO18906@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============30042660514306174==
+--===============18297971497132837==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, 22 Oct 2004, Nishanth Aravamudan wrote:
+Any comments would be, as always, appreciated.
 
-> Any comments would be, as always, appreciated.
-> 
-> -Nish
-> 
-> Description: Use msleep_interruptible() instead of schedule_timeout() to
-> guarantee the task delays as expected.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-applied to kjt,
-to get further testing and to be shure it gets upstream.
+-Nish
 
-thanks
+Description: Reorder add_wait_queue() and set_current_state() as a
+signal could be lost in between the two functions.
 
---
-maks
-kernel janitor          http://janitor.kernelnewbies.org/
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.9-bk7-vanilla/drivers/video/sa1100fb.c	2004-10-22 10:40:44.000000000 -0700
++++ 2.6.9-bk7/drivers/video/sa1100fb.c	2004-10-22 15:59:35.000000000 -0700
+@@ -1342,8 +1342,8 @@ static void sa1100fb_disable_controller(
+ 		GPCR |= SHANNON_GPIO_DISP_EN;
+ 	}	
+ 
+-	add_wait_queue(&fbi->ctrlr_wait, &wait);
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
++	add_wait_queue(&fbi->ctrlr_wait, &wait);
+ 
+ 	LCSR = 0xffffffff;	/* Clear LCD Status Register */
+ 	LCCR0 &= ~LCCR0_LDM;	/* Enable LCD Disable Done Interrupt */
 
---===============30042660514306174==
+--===============18297971497132837==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30042660514306174==--
+--===============18297971497132837==--
