@@ -1,7 +1,7 @@
-From: Matthew Wilcox <willy@debian.org>
-Date: Fri, 27 Feb 2004 15:17:35 +0000
+From: Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+Date: Sat, 28 Feb 2004 04:07:27 +0000
 Subject: Re: [Kernel-janitors] serial.c cli() patch
-Message-Id: <20040227151735.GK25779@parcelfarce.linux.theplanet.co.uk>
+Message-Id: <200402280107.27354.acme@conectiva.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <403D1CC3.6080906@chello.nl>
 In-Reply-To: <403D1CC3.6080906@chello.nl>
@@ -10,33 +10,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 26, 2004 at 12:44:10AM +0100, Debian User wrote:
-> Matthew Wilcox wrote:
-> >On Wed, Feb 25, 2004 at 11:08:03PM +0100, Debian User wrote:
-> >
-> >>I tried to remove the cli() calls from serial.c. I just used a global 
-> >>spin_lock_t serial_lock, to replace the cli() calls with 
-> >>spin_lock_irqsave().
-> >
-> >
-> >Why?  Do you have an SMP CRIS system?
-> >
-> Um no I don't. I don't know the architecture but it looked like a good 
-> file to start on some newbie work.
-> But since you ask me this I can assume that there is no SMP CRIS system? :)
-> If so I gues I can throw away the patch.
+On Thursday 26 February 2004 21:32, Zach Brown wrote:
+> > So if I lock data I should use a lock for every single data variable
+> > which is at risk for a race condition. If I use a global one like I did
+> > here then all data structures are locked at once, which is not very good
+> > in a SMP system since an other processor could access an other data
+> > structure which now is also locked by the global lock.
+> > Am I right here?
+>
+> Yeah, you have the idea.  It's always a trade-off between complexity and
+> concurrency.  It's good practice to only go down the complexity road
+> when it has been proven that concurrency is strongly desired.
+>
+> I'm pretty sure that's why Matthew questioned the patch :)  Code changes
+> are always risky, and simple replacing cli with _irqsave spinlocks
+> doesn't increase the concurrency and I strongly suspect that no one has
+> shown that concurrency matters in these crufty old paths.
+>
+> - z
+> (too wordy?  I'm new here.)
 
-Yeah, CRIS is an embedded CPU, so the danger of it becoming SMP is
-pretty small.  In general, if you want to work on a serial driver, the
-first thing to do is convert it to the new serial core in drivers/serial.
+With contributions like this, I sure don't mind that you were that wordy.
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+Next more don't feel so constrained, free your mouth, we need this people
+like you to help the nephytes hordes!
+
+Like in CNN: "Don't go away, stay with us" :-)
+
+- Arnaldo
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
