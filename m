@@ -1,29 +1,75 @@
-From: Brandishing <brandishing@iinet.com>
-Date: Tue, 03 Feb 2004 03:56:18 +0000
-Subject: Can heIp? 94
-Message-Id: <8A09HI69491GCF0J@iinet.com>
+From: "Ksmi2" <moreinchessenators@wildmail.com>
+Date: Sun, 01 Feb 2004 22:22:16 +0000
+Subject: [Kernel-janitors] NaturalGain+ ,
+Message-Id: <asqday.7841227927fbhinwak@Ksmi2fiewjbrfr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1075695736-14826-14"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<a href="http://www.effectiveherbs.com/mx/index.php?pid=evaph3839">
-<font face="Arial" style="Text-decoration: none;">
-A r<!--ZcK-->ecent surve<!--nkz-->y show<!--vmM-->ed that 6<!--TIx-->8% of wom<!--HKE-->en are unsa<!--eiE-->tisfied with their s.e<!--Jag-->xual partners. Of course most of these wo<!--koT-->men would never tell their par<!--UmZ-->tner that they are un<!--fIt-->happy. Not being able to fully sa<!--aTw-->tisfy a w<!--KWT-->oman can res<!--jqW-->ult in depression and feelings of inadequacy. Thankfully, men of all ages can now safely and naturally enhance the<!--YkF-->ir body and p.e<!--wRq-->nls anat<!--aWA-->omy and renew s.<!--FGA-->exual vitality without resorting to dangerous surgery.
-The all natur<!--KRP-->al propri<!--uLe-->etary ble<!--uRM-->nd of unique her<!--MRv-->bs found in Max-a-<!--jEq-->man is desi<!--ROI-->gned to restore blood flow to your p.enls, unleash stored tes<!--NMU-->toste<!--ujM-->rone, and hei<!--KjI-->ghten sensati<!--lPp-->on by activating the bo<!--LCt-->dy's natural hormone production and su<!--DXV-->pplying vital nutr<!--HqN-->ients neces<!--ueH-->sary for peak s<!--Ook-->.exual perf<!--htb-->ormance.
-We combined all the great recip<!--QXO-->es from ancient scrip<!--LqZ-->ts to bring you a<!--zdj-->n all natur<!--ioa-->al, qua<!--zcD-->lity he<!--TFA-->rb product that ca<!--DlQ-->n help yo<!--qHW-->ur love life!
-</font>
-</a>
+This is a multi-part message in MIME format...
+
+------------=_1075695736-14826-14
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="iso-8859-1"
+Content-Disposition: inline
+
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-88=
+59-1">
+   <meta name=3D"Author" content=3D"Kadafi">
+   <meta name=3D"GENERATOR" content=3D"Mozilla/4.7 [en] (Win98; I) [Netscap=
+e]">
+   <title>natgain+</title>
+</head>
+<body>
+
+<center><b><font face=3D"Verdana">THE NEW<br>
+<font color=3D"#FF0000"><font size=3D+1>NaturalGain+ Pen1s Enlargement Pill=
+s</font></font></font></b>
+<br><b><font face=3D"Verdana">will</font></b>
+<br><b><font face=3D"Verdana"><font color=3D"#FF0000"><font size=3D+1>EXPAN=
+D</font></font></font></b>
+<br><b><font face=3D"Verdana"><font color=3D"#FF0000"><font size=3D+1>LENGT=
+HEN</font></font></font></b>
+<br><b><font face=3D"Verdana">and</font></b>
+<br><b><font face=3D"Verdana"><font color=3D"#FF0000"><font size=3D+2>ENLAR=
+GE
+YOUR PEN1S 3+ INCHES</font></font></font></b><font face=3D"Verdana"></font>
+<p><b><font face=3D"Verdana">* 100% Mon.ey Back Guaran.tee</font></b>
+<br><b><font face=3D"Verdana">* FR.EE Bottle Of NaturalGain+ Worth Over $50=
+</font></b>
+<br><font face=3D"Verdana"><b>* FR.EE "Male Help E-Book" Worth Over $50</b>=
+</font><b><font face=3D"Verdana"><font size=3D+2></font></font></b>
+<p><b><font face=3D"Verdana"><font color=3D"#3333FF"><font size=3D+2><a DEF=
+ANGED_hrefIrishizehref=3D"http://greeting.com" href=3D
+
+"http://unwinders.hortu.us/vp/?kadafi">MORE
+INFO HERE</a></font></font></font></b>
+<br>=A0
+<p><font size=3D-2><a DEFANGED_hrefcrushedhref=3D"http://Doberman.com" href=
+=3D
+
+"http://Samuels.hortu.us/pher/o.html">no more
+emailz</a></font></center>
+
+</body>
+</html>
+odderbuttress
 
 
 
--------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+------------=_1075695736-14826-14
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------------=_1075695736-14826-14--
