@@ -1,73 +1,105 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 11 Feb 2005 00:47:00 +0000
-Subject: Re: [KJ] [PATCH][17/26] drivers/usb/class/* - compile warning cleanup
-Message-Id: <20050211004700.GA26865@kroah.com>
+From: Jody McIntyre <scjody@modernduck.com>
+Date: Tue, 15 Feb 2005 00:20:49 +0000
+Subject: [KJ] Re: [PATCH] 18/34: ieee1394/video1394: replace
+Message-Id: <20050215002049.GH9231@conscoop.ottawa.on.ca>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84669285960174934=="
+Content-Type: multipart/mixed; boundary="===============74211044366106726=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <420BEF84.30631.5873DC@localhost>
-In-Reply-To: <420BEF84.30631.5873DC@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============84669285960174934==
+--===============74211044366106726==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Feb 11, 2005 at 02:32:57AM +0200, Stephen Biggs wrote:
-> On 10 Feb 2005 at 14:15, Greg KH wrote:
+/me finally gets time to review this...
+
+This doesn't apply to anything I can find.  Patches against 1394 svn
+( svn://svn.linux1394.org/libraw1394/ ) or development bk
+( http://linux-1394.bkbits.net/1394-dev ) are most useful, but I can
+deal with others.
+
+
+On Tue, Jan 25, 2005 at 04:10:44PM -0800, Nishanth Aravamudan wrote:
+> Hi,
 > 
-> > On Thu, Feb 10, 2005 at 11:34:28PM +0200, Stephen Biggs wrote:
-> > Content-Description: Mail message body
-> > > Description: add MODULE definition compile fence so MODULE_DEVICE_TABLE 
-> > > vars not declared when compiled into the kernel
-> > > 
-> > > Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
-> > > 
-> > > diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/usb/class/usb-midi.h linux-2.6.11-rc3-mm/drivers/usb/class/usb-midi.h
-> > > --- linux-2.6.11-rc3-mm-original/drivers/usb/class/usb-midi.h	2005-02-03 03:56:10.000000000 +0200
-> > > +++ linux-2.6.11-rc3-mm/drivers/usb/class/usb-midi.h	2005-02-07 21:19:25.000000000 +0200
-> > > @@ -139,6 +139,7 @@ static struct usb_midi_device usb_midi_d
-> > >  
-> > >  #define VENDOR_SPECIFIC_USB_MIDI_DEVICES (sizeof(usb_midi_devices)/sizeof(struct usb_midi_device))
-> > >  
-> > > +#ifdef MODULE
-> > >  /* for Hot-Plugging */
-> > >  
-> > >  static struct usb_device_id usb_midi_ids [] = {
-> > > @@ -157,6 +158,7 @@ static struct usb_device_id usb_midi_ids
-> > >  };
-> > >  
-> > >  MODULE_DEVICE_TABLE (usb, usb_midi_ids);
-> > > +#endif /* MODULE */
-> > 
-> > No, these types of "fixes" have been rejected many times in the past,
-> > and will be rejected again...  It's just not worth it.
+> I mistakenly sent to the wrong address for the list. Please reply in CC to
+> bcollins@debian.org and kernel-janitors@lists.osdl.org. Thanks!
 > 
-> Ok, I'm in this to learn... can you provide a link to some discussion 
-> where this is talked about in the context of a rejected patch?  What is a 
-> better solution to this?  I thought this was the cleanest way to do this. 
+> Please consider applying.
+> 
+> Description: Use wait_event_interruptible() instead of the deprecated
+> interruptible_sleep_on(). The first change is simply to clean up the code a
+> little to make it clearer. The second actually does a replacement, mimicking
+> exactly the first. I removed the #if 1/#else/endif logic, as it duplicated the
+> same code. Patch is compile-tested.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.11-rc2-kj-v/drivers/ieee1394/video1394.c	2005-01-24 09:34:07.000000000 -0800
+> +++ 2.6.11-rc2-kj/drivers/ieee1394/video1394.c	2005-01-24 15:06:16.000000000 -0800
+> @@ -964,10 +964,9 @@ static int __video1394_ioctl(struct file
+>  				}
+>  			}
+>  #else
+> -			if (wait_event_interruptible(d->waitq,
+> -						     d->buffer_status[v.buffer]
+> -						     == VIDEO1394_BUFFER_READY)
+> -			    == -ERESTARTSYS)
+> +			wait_event_interruptible(d->waitq,
+> +					(d->buffer_status[v.buffer] == VIDEO1394_BUFFER_READY));
+> +			if (signal_pending(current))
+>  				return -EINTR;
 
-I can't think of the exact link, but this has come up every so often
-over the past 4 years on the linux-kernel mailing list.
+Fine, but that only touches the #else of an #if 1 and leaves an
+interruptible_sleep_on in the part that's actually executed.
 
-> Why is this a "fix" to you (in quotation marks)?  If the driver is 
-> compiled as a module, then this table is used, but if it is compiled into 
-> the kernel, it doesn't need the table... this is more of a module 
-> interface design issue in the kernel than it is about a fix that takes 
-> care of the problem.
+Can you change this to be more like hunk 2?
 
-It's not good to put #ifdefs in .c files.  And to do this, just for the
-one odd person that does not build with modules enabled, and do it for
-every driver in the system, is not a valid idea.  A better idea would be
-to fix the MODULE_DEVICE_TABLE() macro to be marked __unused__ or
-something, so the compiler warning will not happen.  That way one fix
-solves it for everyone.
+For what it's worth, the #if 1 has been there since 2002 so it's
+probably safe to remove by now :)
 
-good luck,
+Thanks,
+Jody
 
-greg k-h
+>  #endif
+>  			d->buffer_status[v.buffer]=VIDEO1394_BUFFER_FREE;
+> @@ -1126,19 +1125,10 @@ static int __video1394_ioctl(struct file
+>  			d->buffer_status[v.buffer]=VIDEO1394_BUFFER_FREE;
+>  			return 0;
+>  		case VIDEO1394_BUFFER_QUEUED:
+> -#if 1
+> -			while (d->buffer_status[v.buffer]!=
+> -			      VIDEO1394_BUFFER_READY) {
+> -				interruptible_sleep_on(&d->waitq);
+> -				if (signal_pending(current)) return -EINTR;
+> -			}
+> -#else
+> -			if (wait_event_interruptible(d->waitq,
+> -						     d->buffer_status[v.buffer]
+> -						     == VIDEO1394_BUFFER_READY)
+> -			    == -ERESTARTSYS)
+> +			wait_event_interruptible(d->waitq,
+> +					(d->buffer_status[v.buffer] == VIDEO1394_BUFFER_READY));
+> +			if (signal_pending(current))
+>  				return -EINTR;
+> -#endif
+>  			d->buffer_status[v.buffer]=VIDEO1394_BUFFER_FREE;
+>  			return 0;
+>  		default:
+> 
+> 
+> -------------------------------------------------------
+> This SF.Net email is sponsored by: IntelliVIEW -- Interactive Reporting
+> Tool for open source databases. Create drag-&-drop reports. Save time
+> by over 75%! Publish reports on the web. Export to DOC, XLS, RTF, etc.
+> Download a FREE copy at http://www.intelliview.com/go/osdn_nl
+> _______________________________________________
+> mailing list linux1394-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux1394-devel
 
---===============84669285960174934==
+-- 
+
+--===============74211044366106726==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -78,4 +110,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84669285960174934==--
+--===============74211044366106726==--
