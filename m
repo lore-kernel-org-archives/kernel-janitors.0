@@ -1,43 +1,44 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 14 Dec 2004 17:31:41 +0000
+From: walter harms <wharms@bfs.de>
+Date: Tue, 14 Dec 2004 17:46:15 +0000
 Subject: Re: [KJ] bitkeeper tree for kjt patchset?
-Message-Id: <20041214173141.GE2159@stro.at>
+Message-Id: <41BF26E7.7000502@bfs.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81521382619628646=="
+Content-Type: multipart/mixed; boundary="===============42659251621094318=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1103041747.8263.16.camel@localhost.localdomain>
 In-Reply-To: <1103041747.8263.16.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============81521382619628646==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============42659251621094318==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 14 Dec 2004, Gustavo Franco wrote:
 
+
+Matthew Wilcox wrote:
+> On Tue, Dec 14, 2004 at 02:29:07PM -0200, Gustavo Franco wrote:
 > 
-> What do you think of a bk repository for kjt? I did a search and i
-> didn't see anything related with this topic, am i missing something ?
+>>What do you think of a bk repository for kjt? I did a search and i
+>>didn't see anything related with this topic, am i missing something ?
+> 
+> 
+> For the kind of patches in -kj, a BK tree wouldn't be a great idea.
+> It's the wrong usage model for janitor patches.
+> 
+> 
 
-it's up to the maintainer to choose it's tool.
-i prefer free tools, afair randy too.
- 
-> Actually, the kjt 'release process' is post the patchset to lkml when
-> kjt maintainer feels that it's ok, no? IMO, it can be done the same way
-> but asking for Andrew merge bk-kjt before release -mm kernels adding
-> there (bk-kjt) only reviewed patches posted at this list. Comments?
+Hi ppl,
+i agree that BK ist not the way to go since KJ patches are more random, 
+and will later go to other maintainer of drivers/subsystems like that
+(IMHO).
+But i agree with Gustavo that submitters need a better overview what is 
+going on. in a way that would allow to maintains to tkae notice of 
+changes (no idea who that can be done)
 
-no the "release process" of kj is to go through maintainers,
-and letting them test and merge the patches.
-so taking the load of the submitters.
- 
-best regards
+re,
+walter
 
---
-maks
-
-
---===============81521382619628646==
+--===============42659251621094318==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81521382619628646==--
+--===============42659251621094318==--
