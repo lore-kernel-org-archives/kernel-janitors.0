@@ -1,30 +1,43 @@
-From: "Arlene Baca" <arlenebaca_it@cigarsunlimited.co.uk>
-Date: Tue, 21 Dec 2004 02:10:07 +0000
-Subject: Cia,lis soft`tabs, limited supply available
-Message-Id: <2dd701c4e707$31b6f164$cc847c50@star.math.spbu.ru>
+From: Domen Puncer <domen@coderock.org>
+Date: Tue, 07 Dec 2004 14:05:36 +0000
+Subject: [KJ] [patch] ppc64: semicolon in rtasd.c
+Message-Id: <20041207140536.GA31550@nd47.coderock.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============40355002584790967=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-New ClALlS softtabs = lNSTANT R0CKHARD ERECTl0NS<p>
-Simply disolve HALF A PlLL under your tongue 10min before action,<br>
-for results that last all weekend.<p>
-Normal retail is $19/PlLL<br>
-<a href="http://zzezlpbgsjc.i-dealz.net/d/">0rder from us today at the price of $3.94</a>
-<p><br><br><br><br><br><br><br><br><br>
-<a href="http://zewzmfcgchpt.i-dealz.net/d/o.php">not interested(0pt-0ut)</a>
-</html>
+--===============40355002584790967==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi.
 
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now. 
-http://productguide.itmanagersjournal.com/
+Comments and identiation suggest this was wrong.
+
+Signed-off-by: Domen Puncer <domen@coderock.org>
+
+--- c/arch/ppc64/kernel/rtasd.c	2004-12-02 23:16:09.000000000 +0100
++++ a/arch/ppc64/kernel/rtasd.c	2004-12-07 14:54:44.000000000 +0100
+@@ -485,7 +485,7 @@ static int __init rtas_init(void)
+ 
+ 	/* No RTAS, only warn if we are on a pSeries box  */
+ 	if (rtas_token("event-scan") == RTAS_UNKNOWN_SERVICE) {
+-		if (systemcfg->platform & PLATFORM_PSERIES);
++		if (systemcfg->platform & PLATFORM_PSERIES)
+ 			printk(KERN_ERR "rtasd: no RTAS on system\n");
+ 		return 1;
+ 	}
+
+--===============40355002584790967==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============40355002584790967==--
