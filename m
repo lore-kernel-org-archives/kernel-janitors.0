@@ -1,65 +1,56 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 17 Nov 2004 16:06:50 +0000
-Subject: [KJ] [patch] drivers/net/myri_code.h cleanup
-Message-Id: <20041117160650.GG8698@nd47.coderock.org>
+From: =?utf-8?q?Tessa Wsiasug?= <haughtyenvnetl@callwave.net>
+Date: Wed, 24 Nov 2004 05:53:59 +0000
+Subject: =?utf-8?q?Economize 80 % and m?=
+Message-Id: <E1CWtid-0002d6-5h@externalmx-1.sourceforge.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+Content-Type: multipart/mixed; boundary="HUIa8wuz47WP9NzdUuB"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format.
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi.
-
-A >100k gzipped patch attached.
-
-
- myri_code.h | 1283 ------------------------------------------------------------
- 1 files changed, 1 insertion(+), 1282 deletions(-)
-
-Signed-off-by: Domen Puncer <domen@coderock.org>
-
-Cleanup initialization to 0.
-
-Basically it does:
--static unsigned char lanai4_data[20472] __initdata = {
--0x00,0x00,
-- a bunch of zeroes
--0x00,0x00, 0x00,0x00, 0x00,0x00, } ;
-+static unsigned char lanai4_data[20472] __initdata = { };
-
---vkogqOf2sHV7VnPd
-Content-Type: application/x-gunzip
-Content-Disposition: attachment; filename="myri_code_cleanup.patch.gz"
-Content-Transfer-Encoding: base64
-
-H4sIADBvm0EAA+3OW0sbQRQA4OfmVxzom3HNZF2NjQhpq4LgpWBfisiy5GIW7ArJ2lrE/95E
-KPQCfSqFlm/OMJwzZ/jOZFkW495kUX+aLpa9Ztr2Pn5Z1OX4bjLdmr/IUyqylGepiFQMi2KY
-726lbyu6qZ9Sp9vtRvV7od/P+oPo7w6303B75xdhNIqsGAx2Nvv53l50n9NBjEad6G3E+3m9
-jNVu59M4fX1e1TGp2io2etFZxbKt2noc982yvmmmk6ibNm6rpqqLcv2svJvN4iDSw6viOO2v
-uXl1O8s+3y0msWotp+0K6mQ/K+N5tfieucpTMcivoyzrpm6f5x/EYydLDyltPh/xQ/FHUzKZ
-TCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lk
-MplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaT
-yWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplM
-JpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQy
-mUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJ
-ZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwm
-k8lkMplMJpPJZDL5P5b7/+CfyWQymUwmk8lkMplMJpPJZDKZTCaTyWQymUwmk8lkMplMJpPJ
-ZDKZTCaTyWQymUwmk8nkvyU/xX6nu2yrth7HfbOsb5rpJMbzahG3VVPVRTmp2uoqT8Ugv46y
-rJu6Xd/EQTzG034n1vGynk2ms7j8cPbm4rQ8PDo+OT+6LN9enL07OT067HwFQXNTl3TDAQA=
-
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+--HUIa8wuz47WP9NzdUuB
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+Our company aids all people economize on over-priced prescriptions 
+drugs at costs that are as much as 75 percents lower than retail 
+pharmacy substitutes. 
+
+http://yxgy.ikgelfjk.info/?C78kEcDnDaJfB66jxyy
+
+--HUIa8wuz47WP9NzdUuB
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<STYLE></STYLE>
+</HEAD>
+<HTML>
+<BODY>
+Our company aids all people economise on high-priced prescriptions <BR>
+medicines at values that are as much as 65 % lower than retail <Br>
+apothecary's shop substitutes. <BR>
+<A href=3D"http://nlhylphd.meeemaha.info/?1y3L3D2OyB8G0x1nloynp">Examine=
+ values</A>
+</BODY>
+</HTML></HTML>
+
+--HUIa8wuz47WP9NzdUuB--
+
+
+
+
+-------------------------------------------------------
+SF email is sponsored by - The IT Product Guide
+Read honest & candid reviews on hundreds of IT Products from real users.
+Discover which products truly live up to the hype. Start reading now. 
+http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---vkogqOf2sHV7VnPd--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
