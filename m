@@ -1,41 +1,42 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Sat, 22 Jan 2005 18:12:33 +0000
-Subject: Re: [KJ] [PATCH] unified spinlock
-Message-Id: <20050122181233.GA28104@nd47.coderock.org>
+From: Amit Gud <amitg@calsoftinc.com>
+Date: Wed, 19 Jan 2005 09:26:13 +0000
+Subject: [KJ] [PATCH] drivers/ide/pci/cs5520.c fix return code value
+Message-Id: <1106126053.13875.59.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90287574633781453=="
+Content-Type: multipart/mixed; boundary="===============20162667997808503=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <41EFCFDC.4060509@osdl.org>
-In-Reply-To: <41EFCFDC.4060509@osdl.org>
 To: kernel-janitors@vger.kernel.org
 
---===============90287574633781453==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============20162667997808503==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 20/01/05 12:09 -0800, Greg KH wrote:
-> On Thu, Jan 20, 2005 at 08:04:13PM +0000, Matthew Wilcox wrote:
-> > On Thu, Jan 20, 2005 at 08:50:47AM -0800, Greg KH wrote:
-> > > On Thu, Jan 20, 2005 at 07:44:24AM -0800, Randy.Dunlap wrote:
-> > > > Matthew Wilcox wrote:
-> > > > >I think this is referring to initialisation of spinlocks that are
-> > > > >allocated dynamically, not statically.  If a lock validator can't cope
-> > > > >with that, it needs to be fixed, IMO.
-> > > 
-> > > Yes, it is.  See the number of patches that have been flowing into the
-> > > kernel lately to fix this issue up.
-> > 
-> > However, the correct way to fix this is to use DEFINE_SPIN_LOCK, not to
-> > make static locks dynamically initialised.
-> 
-> Where ever possible, yes.
+Description: The patch follows from the suggestions by AC and Felipe W
+Damasio for fixing the return codes from IDE drivers.
 
-Is "static DEFINE_SPINLOCK(lock);" (which seems right in this case) ok?
+Do consider applying.
 
 
-	Domen
+Signed-off-by: Amit Gud <gud@eth.net>
 
---===============90287574633781453==
+--- vanilla-2.6.10/drivers/ide/pci/cs5520.c     2005-01-19
+11:19:28.000000000 +0530
++++ linux-2.6.9/drivers/ide/pci/cs5520.c        2005-01-19
+14:23:50.000000000 +0530
+@@ -224,7 +224,7 @@
+        if(pci_enable_device_bars(dev, 1<<2))
+        {
+                printk(KERN_WARNING "%s: Unable to enable 55x0.\n",
+d->name);
+-               return 1;
++               return -EAGAIN;
+        }
+        pci_set_master(dev);
+        if (pci_set_dma_mask(dev, 0xFFFFFFFF)) {
+
+
+
+--===============20162667997808503==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90287574633781453==--
+--===============20162667997808503==--
