@@ -1,31 +1,41 @@
-From: james4765@verizon.net
-Date: Sat, 30 Oct 2004 19:46:27 +0000
-Subject: [KJ] [RFC][PATCH 0/2] floppy: Cleanup work to floppy.c
-Message-Id: <20041030194626.5280.96733.97927@localhost.localdomain>
+From: "Luiz Fernando N. Capitulino" <lcapitulino@conectiva.com.br>
+Date: Mon, 04 Oct 2004 16:18:40 +0000
+Subject: [Kernel-janitors] [PATCH 1/3] - Module version info for PL2303.
+Message-Id: <20041004131840.03aa2b9f.lcapitulino@conectiva.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============96783163657665694=="
+Content-Type: multipart/mixed; boundary="===============42845558286686569=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============96783163657665694==
+--===============42845558286686569==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The following two patches are an attempt to get a little sanity in
-floppy.c by moving all static variable definitions to one place and
-creating a floppy.h file.  It still needs work - this is only an effort
-to partially untangle the file.
 
-Sorry about the size of the diff - it was a bloody mess in there.  If you'd
-rather have me re-do it so the creation of floppy.h and the variable relocation
-are handled in different patches, I can do that (a little later - my head hurts
-from hashing that stuff out).
+ Hi,
 
-I'd rather submit it here before dumping it on lkml.
+ Add module version information for usb/serial/pl2303.c.
 
-Compile tested - both module and compiled-in.
 
-Jim
+Signed-off-by: Luiz Capitulino <lcapitulino@conectiva.com.br>
 
---===============96783163657665694==
+ drivers/usb/serial/pl2303.c |    1 +
+ 1 files changed, 1 insertion(+)
+
+
+diff -X /home/lcapitulino/kernels/2.6/dontdiff -Nparu a/drivers/usb/serial/pl2303.c a~/drivers/usb/serial/pl2303.c
+--- a/drivers/usb/serial/pl2303.c	2004-09-17 19:18:29.000000000 -0300
++++ a~/drivers/usb/serial/pl2303.c	2004-09-25 17:16:56.000000000 -0300
+@@ -865,6 +865,7 @@ module_init(pl2303_init);
+ module_exit(pl2303_exit);
+ 
+ MODULE_DESCRIPTION(DRIVER_DESC);
++MODULE_VERSION(DRIVER_VERSION);
+ MODULE_LICENSE("GPL");
+ 
+ module_param(debug, bool, S_IRUGO | S_IWUSR);
+
+--===============42845558286686569==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============96783163657665694==--
+--===============42845558286686569==--
