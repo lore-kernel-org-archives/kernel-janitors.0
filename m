@@ -1,38 +1,52 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 15 Oct 2004 16:17:55 +0000
-Subject: Re: [KJ] janitoring printk with no KERN_ constants, kill all defaults?
-Message-Id: <20041015161755.GB2134@us.ibm.com>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Fri, 08 Oct 2004 22:26:46 +0000
+Subject: [KJ] [RFT 2.6] ebus.c replace pci_find_device with pci_get_device
+Message-Id: <83130000.1097274406@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56654038539843432=="
+Content-Type: multipart/mixed; boundary="===============27476598503620853=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1097855099.3004.64.camel@pdp11.tsho.org>
-In-Reply-To: <1097855099.3004.64.camel@pdp11.tsho.org>
-To: Daniele Pizzoni <auouo@tin.it>
-Cc: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, pazke@orbita.don.sitek.net
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: greg@kroah.com, hannal@us.ibm.com, wli@holomorphy.com
 
---===============56654038539843432==
+--===============27476598503620853==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Fri, Oct 15, 2004 at 05:44:59PM +0200, Daniele Pizzoni wrote:
-> I'm investigating this (from the kernel janitors TODO list):
+As pci_find_device is going away I've replaced it with pci_get_device.
+If someone with a Sparc system could test it I would appreciate it.
+Thanks.
 
-<snip>
+Hanna Linder
+IBM Linux Technology Center
 
-> I ask, what rationale there is behind checking all printks to include
-> the "appropriate" constant? Should then we make printk fail when called
-> without KERN_ constant? Or can I force with a sed script all defaulted
-> printk to KERN_WARNING?
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
-I think the rationale is to compare the comments from linux/kernel.h for
-the KERN_* definitions to their usage in the code and make sure they
-correspond accordingly, e.g. KERN_EMERG is only used if the system is
-actually unusable.
+---
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/sparc/kernel/ebus.c linux-2.6.9-rc3-mm3patch2/arch/sparc/kernel/ebus.c
+--- linux-2.6.9-rc3-mm3cln/arch/sparc/kernel/ebus.c	2004-09-29 20:05:51.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch2/arch/sparc/kernel/ebus.c	2004-10-08 15:17:41.481638808 -0700
+@@ -275,7 +275,7 @@ void __init ebus_init(void)
+ 		}
+ 	}
+ 
+-	pdev = pci_find_device(PCI_VENDOR_ID_SUN, PCI_DEVICE_ID_SUN_EBUS, 0);
++	pdev = pci_get_device(PCI_VENDOR_ID_SUN, PCI_DEVICE_ID_SUN_EBUS, 0);
+ 	if (!pdev) {
+ 		return;
+ 	}
+@@ -342,7 +342,7 @@ void __init ebus_init(void)
+ 		}
+ 
+ 	next_ebus:
+-		pdev = pci_find_device(PCI_VENDOR_ID_SUN,
++		pdev = pci_get_device(PCI_VENDOR_ID_SUN,
+ 				       PCI_DEVICE_ID_SUN_EBUS, pdev);
+ 		if (!pdev)
+ 			break;
 
-Hope that helps,
-Nish
 
---===============56654038539843432==
+--===============27476598503620853==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56654038539843432==--
+--===============27476598503620853==--
