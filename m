@@ -1,39 +1,37 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 25 Jan 2005 21:47:01 +0000
-Subject: [KJ] MIPS still uses sleep_on*()
-Message-Id: <20050125214701.GA2689@us.ibm.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 23:18:02 +0000
+Subject: [KJ] [PATCH] [RESEND] [28/29] generic.c - vfree() checking cleanups
+Message-Id: <auto-000001227509@appliedminds.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============51415710615021748=="
+Content-Type: multipart/mixed; boundary="===============50809056218540105=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: ralf@linux-mips.org
-Cc: linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============51415710615021748==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============50809056218540105==
 
-Hi,
+generic.c vfree() checking cleanups.
 
-I am trying to clean up the remaning sleep_on*() calls in the kernel. These
-functions have been deprecated for a *long* time, just never completely removed
-:)
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-The only file I'm not comfortable with changing myself (since I am not a MIPS
-user/expert) is arch/mips/kernel/process.c. This file references sleep_on(),
-sleep_on_timeout(), interruptible_sleep_on() and
-interruptible_sleep_on_timeout().
+ generic.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
 
-This file is (presuming my upcoming patches for sleep_on() go through
-Kernel-Janitors ok) the final one before we can declare the kernel clean of
-sleep_on() callers -- the other members of the family will take longer.
 
-Any insight anyone could provide would be great, so that this milestone (for me,
-at least) can be achieved.
+--- linux-2.6.10-vanilla/drivers/char/agp/generic.c	2004-12-24 13:34:31.000000000 -0800
++++ linux-2.6.10/drivers/char/agp/generic.c	2005-01-04 11:29:26.909917048 -0800
+@@ -891,8 +891,7 @@
+ 
+ void agp_generic_free_by_type(struct agp_memory *curr)
+ {
+-	if (curr->memory != NULL)
+-		vfree(curr->memory);
++	vfree(curr->memory);
+ 
+ 	agp_free_key(curr->key);
+ 	kfree(curr);
 
-Thanks,
-Nish
 
---===============51415710615021748==
+--===============50809056218540105==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============51415710615021748==--
+--===============50809056218540105==--
