@@ -1,37 +1,61 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Thu, 26 Feb 2004 20:00:51 +0000
-Subject: [Kernel-janitors] [PATCH] - mm/slab.c : init section usage.
-Message-Id: <1077825651.31019.33.camel@telecentrolivre>
+From: Ron Gage <ron@rongage.org>
+Date: Sun, 15 Feb 2004 03:44:03 +0000
+Subject: [Kernel-janitors] [PATCH] - 2.6.2 - scripts/file2alias.c -
+Message-Id: <200402142244.04007.ron@rongage.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Boundary-00=_DsuLA1PHrGIEqYf"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Hi all,
+--Boundary-00=_DsuLA1PHrGIEqYf
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Trivial...
+Ok, let's see if this patch is a touch less problematic.
 
-diff -X dontdiff -pNru linux-2.6.3-bk8/mm/slab.c linux-2.6.3-bk8~/mm/slab.c
---- linux-2.6.3-bk8/mm/slab.c	2004-02-26 13:33:15.000000000 -0300
-+++ linux-2.6.3-bk8~/mm/slab.c	2004-02-26 13:08:03.000000000 -0300
-@@ -566,7 +566,7 @@ static void __slab_error(const char *fun
-  * Add the CPU number into the expiry time to minimize the possibility of the
-  * CPUs getting into lockstep and contending for the global cache chain lock.
-  */
--static void start_cpu_timer(int cpu)
-+static void __init start_cpu_timer(int cpu)
- {
- 	struct timer_list *rt = &per_cpu(reap_timers, cpu);
- 
+Cleans up signed/unsigned comparison warnings.
 
 -- 
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
+Ron Gage - LPIC1, MCP, A+, Net+
+Pontiac, Michigan
+
+
+--Boundary-00=_DsuLA1PHrGIEqYf
+Content-Type: text/x-diff; charset="us-ascii"; name="scripts_file2alias.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="scripts_file2alias.diff"
+
+--- linux-2.6.2.orig/scripts/file2alias.c	2004-02-03 22:43:46.000000000 -0500
++++ linux-2.6.2/scripts/file2alias.c	2004-02-14 22:30:46.000000000 -0500
+@@ -127,10 +127,10 @@
+ 	id->class_mask = TO_NATIVE(id->class_mask);
+ 
+ 	strcpy(alias, "pci:");
+-	ADD(alias, "v", id->vendor != PCI_ANY_ID, id->vendor);
+-	ADD(alias, "d", id->device != PCI_ANY_ID, id->device);
+-	ADD(alias, "sv", id->subvendor != PCI_ANY_ID, id->subvendor);
+-	ADD(alias, "sd", id->subdevice != PCI_ANY_ID, id->subdevice);
++	ADD(alias, "v", (unsigned)id->vendor != PCI_ANY_ID, id->vendor);
++	ADD(alias, "d", (unsigned)id->device != PCI_ANY_ID, id->device);
++	ADD(alias, "sv", (unsigned)id->subvendor != PCI_ANY_ID, id->subvendor);
++	ADD(alias, "sd", (unsigned)id->subdevice != PCI_ANY_ID, id->subdevice);
+ 
+ 	baseclass = (id->class) >> 16;
+ 	baseclass_mask = (id->class_mask) >> 16;
+
+--Boundary-00=_DsuLA1PHrGIEqYf
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--Boundary-00=_DsuLA1PHrGIEqYf--
