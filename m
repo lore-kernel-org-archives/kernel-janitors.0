@@ -1,42 +1,36 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 24 Nov 2004 15:29:11 +0000
-Subject: [KJ] [patch 2/8] ifdef typos: arch_ppc_syslib_ppc4xx_dma.c
-Message-Id: <20041124152911.GB14789@nd47.coderock.org>
+From: Stefan Sperling <stefan@binarchy.net>
+Date: Tue, 09 Nov 2004 21:35:24 +0000
+Subject: [KJ] [PATCH] convert orinoco_cs wireless driver to module_param
+Message-Id: <20041109213524.GG9496@dice.seeling33.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============18530746097985951=="
+Content-Type: multipart/mixed; boundary="===============50182161660871438=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============18530746097985951==
+--===============50182161660871438==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-ppc4xx_dma.h defines PPC4xx_DMA_64BIT.
 
-Signed-off-by: Domen Puncer <domen@coderock.org>
+Replaces MODULE_PARM with module_param calls in orinoco_cs wireless driver.
 
---- c/arch/ppc/syslib/ppc4xx_dma.c	2004-08-17 11:44:59.000000000 +0200
-+++ str2/arch/ppc/syslib/ppc4xx_dma.c	2004-11-24 15:18:29.000000000 +0100
-@@ -48,7 +48,7 @@ ppc4xx_set_src_addr(int dmanr, phys_addr
- 		return;
- 	}
+--- drivers/net/wireless/orinoco_cs.c.orig	2004-11-09 20:40:22.020919624 +0100
++++ drivers/net/wireless/orinoco_cs.c	2004-11-08 23:10:34.000000000 +0100
+@@ -64,9 +64,9 @@ static int irq_list[4] = { -1 };
+  * don't have any CIS entry for it. This workaround it... */
+ static int ignore_cis_vcc; /* = 0 */
  
--#ifdef PPC4xx_DMA64BIT
-+#ifdef PPC4xx_DMA_64BIT
- 	mtdcr(DCRN_DMASAH0 + dmanr*2, (u32)(src_addr >> 32));
- #else
- 	mtdcr(DCRN_DMASA0 + dmanr*2, (u32)src_addr);
-@@ -63,7 +63,7 @@ ppc4xx_set_dst_addr(int dmanr, phys_addr
- 		return;
- 	}
+-MODULE_PARM(irq_mask, "i");
+-MODULE_PARM(irq_list, "1-4i");
+-MODULE_PARM(ignore_cis_vcc, "i");
++module_param(irq_mask, uint, 0444);
++module_param_array(irq_list, int, NULL, 0444);
++module_param(ignore_cis_vcc, bool, 0644);
  
--#ifdef PPC4xx_DMA64BIT
-+#ifdef PPC4xx_DMA_64BIT
- 	mtdcr(DCRN_DMADAH0 + dmanr*2, (u32)(dst_addr >> 32));
- #else
- 	mtdcr(DCRN_DMADA0 + dmanr*2, (u32)dst_addr);
+ /********************************************************************/
+ /* Magic constants						    */
 
---===============18530746097985951==
+--===============50182161660871438==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============18530746097985951==--
+--===============50182161660871438==--
