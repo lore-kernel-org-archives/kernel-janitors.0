@@ -1,16 +1,18 @@
-From: "Your-Info.Net" <reply@onlineadsolutions.com>
-Date: Wed, 24 Mar 2004 05:30:11 +0000
+From: "Your-Info.Net" <reply@centralmediathree.com>
+Date: Sun, 28 Mar 2004 17:10:00 +0000
 Subject: Low on Ink ? Try our refill service.
-Message-Id: <20040324003011.dohguqbsek@juststar.net>
+Message-Id: <20040328121000.frylmpinzv@inclinedmedia1.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=_45b658a687f7857698d58f7cb2b455cb"
+Content-Type: multipart/mixed; boundary="=_d8706a253bc74cb73ab90817f3b5336a"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040324003011.dohguqbsek@juststar.net>
+In-Reply-To: <20040324003011.dohguqbsek@juststar.net>
 To: kernel-janitors@vger.kernel.org
 
 
 This is a MIME encoded message.
 
---=_45b658a687f7857698d58f7cb2b455cb
+--=_d8706a253bc74cb73ab90817f3b5336a
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 
@@ -20,7 +22,7 @@ Absolutely no cost on Shipping orders over $50 or more !
 Evoclix's normal prices save you up to 85% on inkjet cartridges and laser printer accesseries.  Now get Free Shipping.  
 
 Proceed with the link below to start saving!
-http://juststar.net/dbm83/l.php?1153&50016221
+http://inclinedmedia1.org/dbm83/l.php?1179&50016221
 
 Why Evoclix.com?
 
@@ -32,18 +34,18 @@ Why Evoclix.com?
 4.  We're nice, friendly people. :)
 
 
-http://juststar.net/dbm83/l.php?1153&50016221
+http://inclinedmedia1.org/dbm83/l.php?1179&50016221
 
 
 --------------------------------------------
 Switch to HTML version:
-http://juststar.net/dbm83/msgtype.php?type=1&email=50016221&emailing=502
+http://inclinedmedia1.org/dbm83/msgtype.php?type=1&email=50016221&emailing=516
 --------------------------------------------
-Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed here http://juststar.net/dbm83/un.php?502&50016221 Third-party offers contained in this email are the sole responsibili
-ty of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
+Your privacy is extremely important to us. You requested to receive this mailing by subscribing to one or more of our offers. To leave our lists Proceed here http://inclinedmedia1.org/dbm83/un.php?516&50016221 Third-party offers contained in this email a
+re the sole responsibility of the offer originator. If you would like to mail your unsubscribe request mail to: Your-Info, Inc 9140 Bonita Beach Rd. Suite 144 Bonita Springs, FL 34135
 
 
---=_45b658a687f7857698d58f7cb2b455cb
+--=_d8706a253bc74cb73ab90817f3b5336a
 Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
@@ -64,7 +66,7 @@ If the product does not perform to our specifications,
 you may return the product for a replacement or
 refund.-->
 
-<p align=3D"center"><a href=3D"http://juststar.net/dbm83/l.php?1154&50016221=
+<p align=3D"center"><a href=3D"http://inclinedmedia1.org/dbm83/l.php?1180&50016221=
 ">
 <img border=3D"0" src=3D"http://www.your-info.cc/images/img_tropic/ad12.jpg=
 " width=3D"559" height=3D"365"></a></p>
@@ -72,42 +74,33 @@ refund.-->
 
 
 <center><br><br><font color=3D#000000>
-<hr width=3D250>Switch to <a href=3D"http://juststar.net/dbm83/msgtype.php?type=
-=3D0&email=3D50016221&emailing=3D502">TEXT</a> version
+<hr width=3D250>Switch to <a href=3D"http://inclinedmedia1.org/dbm83/msgtype.php=
+?type=3D0&email=3D50016221&emailing=3D516">TEXT</a> version
 
 <hr width=3D250>
 <font face=3D"Verdana,Arial,Helvetica,sans-serif" size=3D1>
-<form method=3D"GET" action=3D"http://juststar.net/dbm83/forw_friend.php" target=
-=3D"ies_f2f_window">
+<form method=3D"GET" action=3D"http://inclinedmedia1.org/dbm83/forw_friend.php=
+" target=3D"ies_f2f_window">
 <b>Forward this mail to a friend:</b><br>
 Friend's emails:
 <input type=3Dtext name=3D"friend_email_1"> <input type=3Dtext name=3D"friend_email_2=
 "> <input type=3Dsubmit value=3D"Send"><input type=3Dhidden name=3Dfrom_email=
- value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"502=
+ value=3D"kernel-janitor-discuss@lists.sourceforge.net"><input type=3Dhidden name=3Demailing_id value=3D"516=
 ">
 </font></form>
 <hr width=3D250><font face=3D\"Verdana,Arial,Helvetica,sans-serif\" size=3D1=
 >
-<p><font size=3D"2">Your privacy is extremely important to us. You requested=
- to=20
-receive this mailing by subscribing to one or more of our offers. To leave our=
- lists Proceed <a href=3D"http://juststar.net/dbm83/un.php?502&50016221">here=
-</a>.=20
-Third-party offers contained in this email are the sole responsibility of the=
-=20
-offer originator. If you would like to mail your unsubscribe request mail to=
-: Your-Info, Inc 9140 Bonita Beach Rd.
-Suite 144 Bonita Springs, FL 34135.</font></p>
+<html><body><p align=3D"center">
+<a href=3D"http://inclinedmedia1.org/dbm83/un.php?516&50016221">
+<img alt src=3D"http://www.amazingbuyz.net/images/opt-out_image.jpg" border=
+=3D"0" width=3D"507" height=3D"95">
+</p>
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
+</body></html>
 
-<img src=3D"http://juststar.net/dbm83/opened.php?502&50016221" width=3D1 height=
-=3D1></font></font></center></body></html>
-atcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekat
+<img src=3D"http://inclinedmedia1.org/dbm83/opened.php?516&50016221" width=
+=3D1 height=3D1></font></font></center></body></html>
+wdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwd
 
        
        
@@ -186,8 +179,398 @@ atcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekatcjxfrylmpinzvwdohguqbsekat
        
        
        
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
 
---=_45b658a687f7857698d58f7cb2b455cb--
+--=_d8706a253bc74cb73ab90817f3b5336a--
 
 
 
