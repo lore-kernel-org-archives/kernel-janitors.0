@@ -1,44 +1,49 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 23 Sep 2004 22:13:14 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 20/38] net/ixgb_osdep: replace
-Message-Id: <20040923221314.GD13244@us.ibm.com>
+Date: Wed, 15 Sep 2004 18:43:21 +0000
+Subject: [Kernel-janitors] [PATCH 4/8] block/pg: replace pg_sleep() with
+Message-Id: <20040915184321.GL4363@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============036366043848889529=="
+Content-Type: multipart/mixed; boundary="===============54313122202131225=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============036366043848889529==
+--===============54313122202131225==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated.
+Any comments would be appreciated. This is a re-push of a patch I
+submitted 20 July which hasn't been merged as of
+2.6.9-rc1-mm5/2.6.9-rc2. 
 
-Description: Use msleep() instead of schedule_timeout()
-to guarantee the task delays as expected. I was told earlier that the
-in_interrupt() check is not necessary. It would be nice to get some
-verification of this (i.e. the driver functions the same without it).
+Description: msleep_interruptible() is used instead of pg_sleep()
+to guarantee the task delays as expected. The defintion of pg_sleep()
+is also modified to use set_current_state() instead of direct
+assignment.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc2-vanilla/drivers/net/ixgb/ixgb_osdep.h	2004-09-13 17:15:42.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/ixgb/ixgb_osdep.h	2004-09-14 17:22:09.000000000 -0700
-@@ -41,13 +41,7 @@
- #include <linux/sched.h>
+--- 2.6.9-rc2-vanilla/drivers/block/paride/pg.c	2004-09-13 17:16:05.000000000 -0700
++++ 2.6.9-rc2/drivers/block/paride/pg.c	2004-09-14 11:50:50.000000000 -0700
+@@ -295,7 +295,7 @@ static inline u8 DRIVE(struct pg *dev)
  
- #ifndef msec_delay
--#define msec_delay(x)	do { if(in_interrupt()) { \
--				/* Don't mdelay in interrupt context! */ \
--	                	BUG(); \
--			} else { \
--				set_current_state(TASK_UNINTERRUPTIBLE); \
--				schedule_timeout((x * HZ)/1000 + 2); \
--			} } while(0)
-+#define msec_delay(x)	msleep(x)
- #endif
+ static void pg_sleep(int cs)
+ {
+-	current->state = TASK_INTERRUPTIBLE;
++	set_current_state(TASK_INTERRUPTIBLE);
+ 	schedule_timeout(cs);
+ }
  
- #define PCI_COMMAND_REGISTER   PCI_COMMAND
+@@ -409,7 +409,7 @@ static int pg_reset(struct pg *dev)
+ 	write_reg(dev, 6, DRIVE(dev));
+ 	write_reg(dev, 7, 8);
+ 
+-	pg_sleep(20 * HZ / 1000);
++	msleep_interruptible(20);
+ 
+ 	k = 0;
+ 	while ((k++ < PG_RESET_TMO) && (status_reg(dev) & STAT_BUSY))
 
---===============036366043848889529==
+--===============54313122202131225==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============036366043848889529==--
+--===============54313122202131225==--
