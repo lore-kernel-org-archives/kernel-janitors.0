@@ -1,43 +1,108 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Fri, 08 Oct 2004 22:53:08 +0000
-Subject: [KJ] [RFT 2.6] ret_mb_a_pci.c replace pci_find_device with
-Message-Id: <87080000.1097275988@w-hlinder.beaverton.ibm.com>
+From: Daniele Pizzoni <auouo@tin.it>
+Date: Mon, 18 Oct 2004 18:50:54 +0000
+Subject: [KJ] [PATCH] Substitute custom Dprintk macro with pr_debug -
+Message-Id: <1098128326.3024.52.camel@pdp11.tsho.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============06332155045922927=="
+Content-Type: multipart/mixed; boundary="===============9255693336422115=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: greg@kroah.com, hannal@us.ibm.com, uclinux-v850@lsi.nec.co.jp
+To: Ingo Molnar <mingo@elte.hu>
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, LKML <linux-kernel@vger.kernel.org>
 
---===============06332155045922927==
-Content-Type: text/plain; charset=us-ascii
+--===============9255693336422115==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-As pci_find_device is going away I've replaced it with pci_get_device.
-If someone with a v850 system could test it I would appreciate it.
-Thanks.
+Substituted custom Dprintk macro with pr_debug
+Removed stale CONFIG_BALANCED_IRQ_DEBUG ocurrence
 
-Hanna Linder
-IBM Linux Technology Center
+Signed-off-by: Daniele Pizzoni
 
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-diff -Nrup linux-2.6.9-rc3-mm3cln/arch/v850/kernel/rte_mb_a_pci.c linux-2.6.9-rc3-mm3patch/arch/v850/kernel/rte_mb_a_pci.c
---- linux-2.6.9-rc3-mm3cln/arch/v850/kernel/rte_mb_a_pci.c	2004-09-29 20:04:23.000000000 -0700
-+++ linux-2.6.9-rc3-mm3patch/arch/v850/kernel/rte_mb_a_pci.c	2004-10-08 15:39:44.793464832 -0700
-@@ -254,7 +254,7 @@ static void __devinit pcibios_assign_res
- 	struct pci_dev *dev = NULL;
- 	struct resource *r;
+Index: linux-2.6.9-rc4/arch/i386/kernel/io_apic.c
+===================================================================
+--- linux-2.6.9-rc4.orig/arch/i386/kernel/io_apic.c	2004-10-18 20:36:22.631099360 +0200
++++ linux-2.6.9-rc4/arch/i386/kernel/io_apic.c	2004-10-18 21:18:11.357714944 +0200
+@@ -20,6 +20,8 @@
+  *	Paul Diefenbaugh	:	Added full ACPI support
+  */
  
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		unsigned di_num;
- 		unsigned class = dev->class >> 8;
++//#define DEBUG // pr_debug
++#include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/irq.h>
+ #include <linux/interrupt.h>
+@@ -246,14 +248,9 @@ static void set_ioapic_affinity_irq(unsi
+ # include <linux/kernel_stat.h>	/* kstat */
+ # include <linux/slab.h>		/* kmalloc() */
+ # include <linux/timer.h>	/* time_after() */
+- 
+-# ifdef CONFIG_BALANCED_IRQ_DEBUG
+-#  define TDprintk(x...) do { printk("<%ld:%s:%d>: ", jiffies, __FILE__, __LINE__); printk(x); } while (0)
+-#  define Dprintk(x...) do { TDprintk(x); } while (0)
+-# else
+-#  define TDprintk(x...) 
+-#  define Dprintk(x...) 
+-# endif
++
++/* you may want to use this */
++/* #define pr_debug(x...) do { printk("<%ld:%s:%d>: ", jiffies, __FILE__, __LINE__); printk(x); } while (0) */
+ 
+ extern cpumask_t irq_affinity[NR_IRQS];
+ 
+@@ -338,7 +335,7 @@ static inline void balance_irq(int cpu, 
+ static inline void rotate_irqs_among_cpus(unsigned long useful_load_threshold)
+ {
+ 	int i, j;
+-	Dprintk("Rotating IRQs among CPUs.\n");
++	pr_debug("Rotating IRQs among CPUs.\n");
+ 	for (i = 0; i < NR_CPUS; i++) {
+ 		for (j = 0; cpu_online(i) && (j < NR_IRQS); j++) {
+ 			if (!irq_desc[j].action)
+@@ -459,17 +456,17 @@ tryanothercpu:
+ 	max_loaded = tmp_loaded;	/* processor */
+ 	imbalance = (max_cpu_irq - min_cpu_irq) / 2;
+ 	
+-	Dprintk("max_loaded cpu = %d\n", max_loaded);
+-	Dprintk("min_loaded cpu = %d\n", min_loaded);
+-	Dprintk("max_cpu_irq load = %ld\n", max_cpu_irq);
+-	Dprintk("min_cpu_irq load = %ld\n", min_cpu_irq);
+-	Dprintk("load imbalance = %lu\n", imbalance);
++	pr_debug("max_loaded cpu = %d\n", max_loaded);
++	pr_debug("min_loaded cpu = %d\n", min_loaded);
++	pr_debug("max_cpu_irq load = %ld\n", max_cpu_irq);
++	pr_debug("min_cpu_irq load = %ld\n", min_cpu_irq);
++	pr_debug("load imbalance = %lu\n", imbalance);
+ 
+ 	/* if imbalance is less than approx 10% of max load, then
+ 	 * observe diminishing returns action. - quit
+ 	 */
+ 	if (imbalance < (max_cpu_irq >> 3)) {
+-		Dprintk("Imbalance too trivial\n");
++		pr_debug("Imbalance too trivial\n");
+ 		goto not_worth_the_effort;
+ 	}
+ 
+@@ -529,7 +526,7 @@ tryanotherirq:
+ 		irq_desc_t *desc = irq_desc + selected_irq;
+ 		unsigned long flags;
+ 
+-		Dprintk("irq = %d moved to cpu = %d\n",
++		pr_debug("irq = %d moved to cpu = %d\n",
+ 				selected_irq, min_loaded);
+ 		/* mark for change destination */
+ 		spin_lock_irqsave(&desc->lock, flags);
+@@ -552,7 +549,7 @@ not_worth_the_effort:
+ 	 */
+ 	balanced_irq_interval = min((long)MAX_BALANCED_IRQ_INTERVAL,
+ 		balanced_irq_interval + BALANCED_IRQ_MORE_DELTA);	
+-	Dprintk("IRQ worth rotating not found\n");
++	pr_debug("IRQ worth rotating not found\n");
+ 	return;
+ }
  
 
 
---===============06332155045922927==
+
+--===============9255693336422115==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +113,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============06332155045922927==--
+--===============9255693336422115==--
