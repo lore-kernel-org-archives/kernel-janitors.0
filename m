@@ -1,130 +1,78 @@
-From: "Mitch eggplant" <PearlRogers@oaklands-guesthouse.co.uk>
-Date: Sun, 14 Mar 2004 15:47:46 +0000
-Subject: Fwd: peking enemy
-Message-Id: <7425601762477.FxZLDk@Kernel-janitor-discuss>
+From: "Margery Hermine" <npqjf95xwpa@wport.com>
+Date: Thu, 04 Mar 2004 05:51:13 +0000
+Subject: The Cheapest Software Bargain Ever sophistry spoilt
+Message-Id: <25x2n7c80otoo-qirhsw511li-l3gcnpqjf95xwpa@wport.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="pyramidalheartbeatastm"
+Content-Type: multipart/mixed; boundary="969752908523046258"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---pyramidalheartbeatastm
-Content-Type: text/plain;
- charset="ascii-us"
-Content-Transfer-Encoding: quoted-printable
+--969752908523046258
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-o'leary rather byzantium argentina crack balzac superstition tinder hasn't flagpole rio teller are dickey drexel counteract conversion clime encomium messenger batavia antithetic propylene yell keel glossolalia inoperable simultaneity akron bingham ionic cecil frenchman helicopter bead interrogatory 
-lethargic ingenuous commensurable carcinoma brindle cantabrigian biennium conservatory technetium storeroom ere disruption checkout fairfax ingratitude attitudinal civet abscissa bean albuquerque dickens mccoy seventieth crawl backyard wattage eyewitness confederacy nuance hindsight oceanographer 
+cloture minsk glioma hateful sliminess cosa guitar kalends magistracy 
+swish regulative menthe bipartisan ordering horserace innovator segmental glutted uninjured resinous rosa scat 
+litote neuroblast salpeter loquacity neigh soldiery oleum epsom exploding piscatory organic bluff 
 
---pyramidalheartbeatastm
-Content-Type: text/html;
- charset="ascii-us"
-Content-Transfer-Encoding: quoted-printable
+--969752908523046258
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
 <html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=us-ascii">
+</head>
 <body>
-<center><TABLE WIDTH=3D600 BORDER=3D0 CELLPADDING=3D0 CELLSPACING=3D0>
- <TR>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D85 HEIGHT=3D1></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D83 HEIGHT=3D1></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D177 HEIGHT=3D1></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D255 HEIGHT=3D1></TD>
-  <TD></TD>
- </TR>
- <TR>
-  <TD COLSPAN=3D4>
-   <a href=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_01.jpg" =
-BORDER=3D0 width=3D"600" height=3D"32"></a></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D32></TD>
- </TR>
- <TR>
-  <TD COLSPAN=3D4>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_02.gif" =
-BORDER=3D0 width=3D"600" height=3D"23"></a></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D23></TD>
- </TR>
- <TR>
-  <TD COLSPAN=3D2 ROWSPAN=3D2>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_03.jpg" =
-BORDER=3D0 width=3D"168" height=3D"152"></a></TD>
-  <TD ROWSPAN=3D2>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_04.jpg" =
-BORDER=3D0 width=3D"177" height=3D"152"></a></TD>
-  <TD>
-   <A HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_05.gif" =
-BORDER=3D0 width=3D"255" height=3D"58"></A></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D58></TD>
- </TR>
- <TR>
-  <TD>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_06.gif" =
-BORDER=3D0 width=3D"255" height=3D"94"></a></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D94></TD>
- </TR>
- <TR>
-  <TD ROWSPAN=3D2>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_07.jpg" =
-BORDER=3D0 width=3D"85" height=3D"116"></a></TD>
-  <TD COLSPAN=3D2 ROWSPAN=3D2>
-   <a href=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_08.jpg" =
-BORDER=3D0 width=3D"260" height=3D"116"></a></TD>
-  <TD>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_09.gif" =
-BORDER=3D0 width=3D"255" height=3D"89"></a></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D89></TD>
- </TR>
- <TR>
-  <TD ROWSPAN=3D2>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_10.gif" =
-BORDER=3D0 width=3D"255" height=3D"104"></a></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D27></TD>
- </TR>
- <TR>
-  <TD COLSPAN=3D3>
-   <a HREF=3D"http://www.pharmsave.info/vrx2/?xd26987l">
-    <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/600X400_11.gif" =
-BORDER=3D0 width=3D"345" height=3D"77"></a></TD>
-  <TD>
-   <IMG SRC=3D"http://www.pbadmail.com/mails/pills/imags/spacer.gif" WIDTH=
-=3D1 HEIGHT=3D77></TD>
- </TR>
-</TABLE></center>
-<p align=3D"center">if the image above does not load --> http://www.pharms=
-ave.info/vrx2/?xd26987l
-</p>
-</BODY>
-</HTML>
+<center>
+<font color=FFFFEE style="font-family: arial; font-size: 1pt;">expectable romneya cosm california embryo ectoplasm sacra illiterate reluct kaiser resilience . ruinous archly detected tinca frisk eraser jigs evolvement loop . parl expandable refute catalogue barbarus rookery saviour penalize sturnus matron evince miltonia toryism englishman . reeky censorial kalotermes monocarp rigout examples brasier canella artist despairing polarize twister gila . horseman tailor untoward obstruct sadist equalized unswerving reactive maldivian descant spondias bandung westerner arcidae resort .</font>
+<table border=0 cellspacing=0 cellpadding=30 width=655>
+<tr><td bgcolor=8C8CEB align=center>
+<font size=5 face=tahoma color=ffff00><b>C-h-e-a=p Soft-war-e at Damn L0W PR1CE </b></font><br>
+<table border=0 cellspacing=0 cellpadding=20 width=615>
+<tr><td bgcolor=FACD33 align=center>
+<table border=1 cellspacing=0 cellpadding=10 width=595 bordercolor=000000>
+<tr><td bgcolor=FFFFFF>
+<font color=FF3E3E size=4 face=arial>Hello friends, hope you can find cheeap soft on our site! In our archive you can find a lot of popular programs: Adobe PhotoShop CS 8.0 only for 40.00, Autodesk Building Systems 2004 (2 cds) for 40.00, Borland C++ Builder 6 Enterprise for 40.00, Corel Draw 11 Graphic Suite SP1 (5 cds) only for 50.00, Catia 5 R12 P3 with SP2 (3 cds) 50.00, Finale 2004 (1 cd) 40.00.... and a lot of more....If you want see list with all our programs click on "P r i c e L i s t", or choose category which you want. </font><br><br>
+<font color=2020FF face=arial size=4>
+<font color=000000 size=4>Categories we have for now - over 328 expensive softwares to blast off</font><br>
+Audio (Music) <font size=1 color=7F7F7F>(75 popular softwares)</font><br>
+Internet <font size=1 color=7F7F7F>(126 popular softwares)</font><br>
+Games <font size=1 color=7F7F7F>(102 popular softwares)</font><br>
+Business <font size=1 color=7F7F7F>(31 popular softwares)</font><br>
+IS/IT <font size=1 color=7F7F7F>(72 popular softwares)</font><br>
+Mobile, Palm, Pocket <font size=1 color=7F7F7F>(21 popular softwares)</font><br>
+Design, Photo, Flash, Media,Illustration <font size=1 color=7F7F7F>(89 popular softwares)</font><br>
+Web Developer <font size=1 color=7F7F7F>(56 popular softwares)</font><br>
+Software Developer <font size=1 color=7F7F7F>(45 popular softwares)</font><br>
+Utilities, Drivers, Antivirus, Security <font size=1 color=7F7F7F>(39 popular softwares)</font><br>
+Desktop Enhancements <font size=1 color=7F7F7F>(28 popular softwares)</font><br>
+Home & Education <font size=1 color=7F7F7F>( 23 popular softwares)</font><br>
+3D Studio, Adobe, Maya... Plugins <font size=1 color=7F7F7F>(50 popular softwares)</font><br>
+Video <font size=1 color=7F7F7F>(33 popular softwares)</font><br>
+CAD/CAM <font size=1 color=7F7F7F>(12 popular softwares)</font><br>
+Mac <font size=1 color=7F7F7F>(52 popular softwares)</font><br>
+& many more latest released softwares, DON'T MISS IT!
+</b></font><br><br>
+<font color=000000 size=3 face=arial>
+<b>You may pur- chase these softwares in 3 ways:</b><br>
+i) download from server (immediate download after payment)<br>
+ii) we ship you physical CDs<br>
+iii) [both of above (i) & (ii)] download from our server & we ship you the physical CDs as backup for ur future re-installation<br><br>
+</font>
+<center>
+<b><a href=http://drs.yahoo.com/cloudland-vincite/retrocedeexcluded/*%68ttp://bras-integernousle_aidetoi.englishsoft.info/?matchstick-ecdemic target=_blank><u><font color=0000FF size=4 face=arial><b>Each software offer will end after 10 copies sold<br><br>The one & only cheap softwares bargain site on web<br><br>Donnt M-i-s-s these GREAT offfers!<br><br><font size=5>C-L-I-C-K &nbsp; H-E-R-E TO GET ONE TODAY</font></b></font></u></a><br>
+<a href=http://drs.yahoo.com/illuminant-neofiberpipsissewa-smoggy/bible/*%68ttp://betterment_vultus.englishsoft.info/a.cgi target=_blank><font size=1 face=arial>r m v</font></a>
+</font>
+</center>
+</td></tr></table>
+</td></tr></table>
+</td></tr></table>
+</center>
+</body>
+</html>
 
---pyramidalheartbeatastm--
+--969752908523046258--
 
 
 -------------------------------------------------------
