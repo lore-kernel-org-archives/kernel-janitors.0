@@ -1,21 +1,51 @@
-From: "Neva Thompson" <neva_thompsonjk@yahoo.com>
-Date: Wed, 28 Apr 2004 12:54:31 +0000
-Subject: (no subject)
-Message-Id: <GMKCKCHEOJIOGIIOKEIBMBCFPAAB.neva_thompsonjk@yahoo.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Mon, 19 Apr 2004 16:57:42 +0000
+Subject: [Kernel-janitors] [patch] use schedule() instead of yield()
+Message-Id: <20040419165742.GD1393@sputnik.stro.at>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============74293514299597918=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
-In-Reply-To: <TGEXKKIZGUELTCNACMELNLWDI@yahoo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1254"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQpUaGlzIFNGLk5ldCBlbWFpbCBpcyBzcG9uc29yZWQgYnk6IE9yYWNsZSAxMGcKR2V0IGNlcnRp
-ZmllZCBvbiB0aGUgaG90dGVzdCB0aGluZyBldmVyIHRvIGhpdCB0aGUgbWFya2V0Li4uIE9yYWNs
-ZSAxMGcuIApUYWtlIGFuIE9yYWNsZSAxMGcgY2xhc3Mgbm93LCBhbmQgd2UnbGwgZ2l2ZSB5b3Ug
-dGhlIGV4YW0gRlJFRS4KaHR0cDovL2Fkcy5vc2RuLmNvbS8/YWRfaWQxNDkmYWxsb2NfaWSBNjYm
-b3A9Y2xpY2sKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-S2VybmVsLWphbml0b3ItZGlzY3VzcyBtYWlsaW5nIGxpc3QKS2VybmVsLWphbml0b3ItZGlzY3Vz
-c0BsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
-dHMvbGlzdGluZm8va2VybmVsLWphbml0b3ItZGlzY3Vzcw==
+--===============74293514299597918==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+patch is on top of 2.6.6-rc1.
+
+yield() removes process from active array into expired array,
+better just preempt with schedule().
+as belows timeout is set to 5 seconds, 
+schedule() may be better than to use a schedule_timeout(1).
+
+tested on my laptop, but maybe my card never reach this path.
+
+
+a++ maks
+
+
+diff -ruN a/drivers/net/sis900.c b/drivers/net/sis900.c
+--- a/drivers/net/sis900.c	2004-03-16 08:47:07.000000000 +0100
++++ b/drivers/net/sis900.c	2004-03-12 11:19:29.000000000 +0100
+@@ -600,7 +600,7 @@
+ 
+ 	if(status & MII_STAT_LINK){
+ 		while (poll_bit) {
+-			yield();
++			schedule();
+ 
+ 			poll_bit ^= (mdio_read(net_dev, sis_priv->cur_phy, MII_STATUS) & poll_bit);
+ 			if (time_after_eq(jiffies, timeout)) {
+
+--===============74293514299597918==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============74293514299597918==--
