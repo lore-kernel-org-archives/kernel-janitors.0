@@ -1,50 +1,56 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 19 Mar 2005 21:46:28 +0000
-Subject: [KJ] [UPDATE PATCH 15/16] drivers/net/wan/wanxl: Use the
-Message-Id: <20050319214628.GO3306@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Mar 2005 19:33:30 +0000
+Subject: [KJ] [PATCH] m68k/time: replace schedule_timeout() with
+Message-Id: <20050302193330.GE2741@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83355665695889813=="
+Content-Type: multipart/mixed; boundary="===============34352417175006211=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============83355665695889813==
+--===============34352417175006211==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Hi,
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Please consider applying.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Description: The comments preceding the schedule_timeout() call
+in time.c below indicated a 50ms delay is desired. The current code
+implictly assumes HZ==100 and requests a delay of 5 ticks. This is
+clearly broken in higher HZ models. Using msleep_interruptible() makes
+HZ changes transparent. Change the corresponding constant appropriately
+and add a comment to indicate units.
 
---- linux-2.6.11.orig/drivers/net/wan/wanxl.c	2005-03-02 12:50:28.000000000 +0100
-+++ linux-2.6.11/drivers/net/wan/wanxl.c	2005-03-19 20:33:01.000000000 +0100
-@@ -26,6 +26,7 @@
- #include <linux/netdevice.h>
- #include <linux/hdlc.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
- #include <asm/io.h>
- #include <asm/delay.h>
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- 2.6.11-kj-v/arch/m68k/atari/time.c	2005-03-01 23:38:18.000000000 -0800
++++ 2.6.11-kj/arch/m68k/atari/time.c	2005-03-02 11:06:14.000000000 -0800
+@@ -97,7 +97,7 @@ static void mste_write(struct MSTE_RTC *
+ 	} while(0)
  
-@@ -630,8 +631,8 @@ static int __devinit wanxl_pci_init_one(
- 	/* FIXME when PCI/DMA subsystems are fixed.
- 	   We set both dma_mask and consistent_dma_mask back to 32 bits
- 	   to indicate the card can do 32-bit DMA addressing */
--	if (pci_set_consistent_dma_mask(pdev, 0xFFFFFFFF) ||
--	    pci_set_dma_mask(pdev, 0xFFFFFFFF)) {
-+	if (pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK) ||
-+	    pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
- 		printk(KERN_ERR "wanXL: No usable DMA configuration\n");
- 		wanxl_pci_remove_one(pdev);
- 		return -EIO;
+ 
+-#define HWCLK_POLL_INTERVAL	5
++#define HWCLK_POLL_INTERVAL	50	/* ms */
+ 
+ int atari_mste_hwclk( int op, struct rtc_time *t )
+ {
+@@ -212,10 +212,8 @@ int atari_tt_hwclk( int op, struct rtc_t
+      * additionally the RTC_SET bit is set to prevent an update cycle.
+      */
+ 
+-    while( RTC_READ(RTC_FREQ_SELECT) & RTC_UIP ) {
+-        current->state = TASK_INTERRUPTIBLE;
+-        schedule_timeout(HWCLK_POLL_INTERVAL);
+-    }
++    while( RTC_READ(RTC_FREQ_SELECT) & RTC_UIP )
++	msleep_interruptible(HWCLK_POLL_INTERVAL);
+ 
+     local_irq_save(flags);
+     RTC_WRITE( RTC_CONTROL, ctrl | RTC_SET );
 
---===============83355665695889813==
+--===============34352417175006211==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83355665695889813==--
+--===============34352417175006211==--
