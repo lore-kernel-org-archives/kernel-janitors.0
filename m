@@ -1,56 +1,65 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 21 Jul 2004 16:06:18 +0000
-Subject: [Kernel-janitors] Re: bluetooth: replace schedule_timeout() with
-Message-Id: <20040721160618.GA1906@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============12510129178301721=="
+From: "Miller, Mike (OS Dev)" <mike.miller@hp.com>
+Date: Fri, 23 Jul 2004 22:45:55 +0000
+Subject: [Kernel-janitors] RE: [PATCH] cciss: replace schedule_timeout()
+Message-Id: <D4CFB69C345C394284E4B78B876C1CF107DBFB62@cceexc23.americas.cpqcorp.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040720184510.GA2445@masina>
-In-Reply-To: <20040720184510.GA2445@masina>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============12510129178301721==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You'll have to explain why msleep will guarantee the timeout period whereas schedule_timeout may not. Maybe I'm missing something.
 
-On Wed, Jul 21, 2004 at 10:14:09AM +0200, Marcel Holtmann wrote:
-> > > > --- linux-vanilla/drivers/bluetooth/bluecard_cs.c	2004-06-16 05:19:22.000000000 +0000
-> > > > +++ linux-dev/drivers/bluetooth/bluecard_cs.c	2004-07-10 18:22:58.000000000 +0000
-> > > > @@ -776,8 +776,7 @@ int bluecard_open(bluecard_info_t *info)
-> > > >  	outb(0x80, iobase + 0x30);
-> > > >  
-> > > >  	/* Wait some time */
-> > > > -	set_current_state(TASK_INTERRUPTIBLE);
-> > > > -	schedule_timeout(HZ / 100);
-> > > > +	msleep(100);
-> > > 
-> > > This should be 10.
-> > 
-> > Thanks, here is the corrected patch:
-> 
-> the patches are still wrong, because of warnings like this:
-> 
->   CC [M]  drivers/bluetooth/bluecard_cs.o
-> drivers/bluetooth/bluecard_cs.c: In function `bluecard_open':
-> drivers/bluetooth/bluecard_cs.c:779: warning: implicit declaration of function `msleep'
-> 
-> I fixed these warnings and now I have to test if the cards are still working.
+mikem
 
-Thank you for notifying me of this. I thought I had caught all of these
-compile errors, but will now go back through and make sure before I
-release any more patches. Sorry for the inconvenience, but I'm learning.
+-----Original Message-----
+From: Nishanth Aravamudan [mailto:nacc@us.ibm.com]
+Sent: Monday, July 19, 2004 4:39 PM
+To: Miller, Mike (OS Dev)
+Cc: kernel-janitors@lists.osdl.org
+Subject: [PATCH] cciss: replace schedule_timeout() with msleep()
 
--Nish
 
---===============12510129178301721==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
+
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
+
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
+
+Thanks,
+Nish
+
+
+
+Applys-to: 2.6.7
+
+Description: Uses msleep() instead of schedule_timeout() to guarantee
+the task delays at least the desired time amount.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- linux-vanilla/drivers/block/cciss.c	2004-06-16 05:20:04.000000000 +0000
++++ linux-dev/drivers/block/cciss.c	2004-07-10 18:19:33.000000000 +0000
+@@ -2242,8 +2242,7 @@ static int cciss_pci_init(ctlr_info_t *c
+ 		scratchpad = readl(c->vaddr + SA5_SCRATCHPAD_OFFSET);
+ 		if (scratchpad = CCISS_FIRMWARE_READY)
+ 			break;
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ / 10); /* wait 100ms */
++		msleep(100);
+ 	}
+ 	if (scratchpad != CCISS_FIRMWARE_READY) {
+ 		printk(KERN_WARNING "cciss: Board not ready.  Timed out.\n");
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============12510129178301721==--
