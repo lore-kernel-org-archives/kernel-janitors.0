@@ -1,34 +1,48 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 17:12:55 +0000
-Subject: Re: [KJ] [PATCH 06/19] =?utf-8?b?ZHJpdmVycy9zY3NpL2FpYzd4eHgvYWljN3h4eF9vc206?= Use =?utf-8?b?dGhlCU
-Message-Id: <loom.20050220T181149-30@post.gmane.org>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Thu, 10 Feb 2005 21:34:29 +0000
+Subject: [KJ] [PATCH][11/26] drivers/net/* - compile warning cleanup
+Message-Id: <420BEF85.8267.587727@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============45731632197171024=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Tobias Klauser <tklauser <at> nuerscht.ch> writes:
+--===============45731632197171024==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
+
+Description: compile warning cleanup - silence compiler warning for 
+unused function that is either actually used as a driver function in a 
+table or is truly unused
+
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/net/ibmlana.c linux-2.6.11-rc3-mm/drivers/net/ibmlana.c
+--- linux-2.6.11-rc3-mm-original/drivers/net/ibmlana.c	2005-02-07 16:32:20.000000000 +0200
++++ linux-2.6.11-rc3-mm/drivers/net/ibmlana.c	2005-02-08 18:09:49.000000000 +0200
+@@ -901,7 +901,7 @@ static void ibmlana_set_multicast_list(s
  
-> Hello,
-> 
-> Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-> when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-> See http://marc.theaimsgroup.com/?t8001993000001&r=1&w=2 for details
-> 
-> Signed-off-by: Tobias Klauser <tklauser <at> nuerscht.ch>
-> 
-
-Sorry for the duplicate!
+ static int startslot;		/* counts through slots when probing multiple devices */
+ 
+-static int ibmlana_probe(struct net_device *dev)
++static int __attribute__((__unused__)) ibmlana_probe(struct net_device *dev)
+ {
+ 	int slot, z;
+ 	int base = 0, irq = 0, iobase = 0, memlen = 0;
 
 
 
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now.
-http://ads.osdn.com/?ad_ide95&alloc_id396&op=click
+
+--===============45731632197171024==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============45731632197171024==--
