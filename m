@@ -1,48 +1,48 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 04 Feb 2005 23:47:54 +0000
-Subject: [KJ] Re: [PATCH] usb/mdc800: replace wake_up() with
-Message-Id: <20050204234754.GB28862@kroah.com>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Tue, 08 Feb 2005 11:27:55 +0000
+Subject: [KJ] [UPDATE PATCH] scripts/mod/sumversion.c: replace strtok() with
+Message-Id: <20050208122755.4e41724e@lucky.kitzblitz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66655103444860475=="
+Content-Type: multipart/mixed; boundary="===============72394657328297507=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============66655103444860475==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============72394657328297507==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 01, 2005 at 01:07:17PM -0800, Nishanth Aravamudan wrote:
-> On Tue, Feb 01, 2005 at 11:51:36AM -0800, Nishanth Aravamudan wrote:
-> > On Mon, Jan 31, 2005 at 10:58:02AM -0800, Greg KH wrote:
-> > > On Fri, Jan 21, 2005 at 01:37:39PM -0800, Nishanth Aravamudan wrote:
-> > > > Hi,
-> > > > 
-> > > > Please consider applying.
-> > > > 
-> > > > Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
-> > > > now unused variables.
-> > > > 
-> > > > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> > > 
-> > > Applied, thanks.
-> > 
-> > Greg,
-> > 
-> > This should fix the behavior of the previous patch (probably not noticed yet).
-> > The wake_up*() was not matched properly in the first patch (fixed below). Please
-> > consider reverting the previous patch and applying this one instead. I think it
-> > may actually have been somewhat broken in the original code, actually :)
-> 
-> Description: Modify the wake_up*() calls to match the wait_event*() ones
-> from a previous patch.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+* Nicolas Kaiser <nikai@nikai.net>:
+>  http://janitor.kernelnewbies.org/docs/driver-howto.html#3.3.1
 
-Applied, thanks.
+> Did I miss anything?
 
-greg k-h
+Actually, I did miss something. Here comes an update.
 
---===============66655103444860475==
+Did I miss anything else?
+
+Cheers,
+n.
+
+
+ Description: Replaces strtok() with strsep()
+ 
+ Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+
+--- scripts/mod/sumversion.c.orig	2005-02-08 01:53:38.000000000 +0100
++++ scripts/mod/sumversion.c	2005-02-08 12:13:49.614979976 +0100
+@@ -419,7 +419,9 @@
+ 	*end = '\0';
+ 
+ 	md4_init(&md);
+-	for (fname = strtok(sources, " "); fname; fname = strtok(NULL, " ")) {
++	while ((fname = strsep(&sources, " ")) != NULL) {
++		if (!*fname)
++			continue;
+ 		if (!parse_source_files(fname, &md))
+ 			goto release;
+ 	}
+
+--===============72394657328297507==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66655103444860475==--
+--===============72394657328297507==--
