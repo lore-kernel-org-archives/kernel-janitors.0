@@ -1,54 +1,37 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 29 Sep 2004 22:28:20 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 zr36120.c][5/8] Convert
-Message-Id: <19730000.1096496900@w-hlinder.beaverton.ibm.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 16 Sep 2004 18:25:33 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 23/33] char/serial167: replace
+Message-Id: <20040916182533.GQ1777@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49243360594912611=="
+Content-Type: multipart/mixed; boundary="===============83324834320696106=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, hannal@us.ibm.com, kraxel@bytesex.org
+To: kernel-janitors@vger.kernel.org
 
---===============49243360594912611==
+--===============83324834320696106==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+Any comments would be appreciated.
 
-The dev was not used from pci_find_device so it was acceptable to replace
-with pci_dev_present. There was no need for it to be in a while loop originally.
-Compile tested.
+Description: Use msleep_interruptible() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
-Hanna Linder
-IBM Linux Technology Center
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
-diff -Nrup linux-2.6.9-rc2-mm4cln/drivers/media/video/zr36120.c linux-2.6.9-rc2-mm4patch/drivers/media/video/zr36120.c
---- linux-2.6.9-rc2-mm4cln/drivers/media/video/zr36120.c	2004-09-28 14:58:36.000000000 -0700
-+++ linux-2.6.9-rc2-mm4patch/drivers/media/video/zr36120.c	2004-09-29 15:12:53.625518848 -0700
-@@ -145,14 +145,16 @@ static struct { const char name[8]; uint
- static
- void __init handle_chipset(void)
- {
--	struct pci_dev *dev = NULL;
-+	static struct pci_device_id intel_82437[] = {
-+		{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437) },
-+		{ },
-+	};
- 
- 	/* Just in case some nut set this to something dangerous */
- 	if (triton1)
- 		triton1 = ZORAN_VDC_TRICOM;
- 
--	while ((dev = pci_find_device(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82437, dev)))
--	{
-+	if (pci_dev_present(intel_82437)) {
- 		printk(KERN_INFO "zoran: Host bridge 82437FX Triton PIIX\n");
- 		triton1 = ZORAN_VDC_TRICOM;
+--- 2.6.9-rc1-mm4-vanilla/drivers/char/serial167.c	2004-09-09 23:05:41.000000000 -0700
++++ 2.6.9-rc1-mm4/drivers/char/serial167.c	2004-09-10 11:16:21.000000000 -0700
+@@ -1856,8 +1856,7 @@ cy_close(struct tty_struct * tty, struct
+     }
+     if (info->blocked_open) {
+ 	if (info->close_delay) {
+-	    current->state = TASK_INTERRUPTIBLE;
+-	    schedule_timeout(info->close_delay);
++	    msleep_interruptible(jiffies_to_msecs(info->close_delay));
  	}
+ 	wake_up_interruptible(&info->open_wait);
+     }
 
-
---===============49243360594912611==
+--===============83324834320696106==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49243360594912611==--
+--===============83324834320696106==--
