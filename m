@@ -1,36 +1,32 @@
-From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
-Date: Fri, 09 Jan 2004 12:26:55 +0000
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Mon, 12 Jan 2004 03:32:25 +0000
 Subject: Re: switch identation was: Re: [Kernel-janitors] [PATCH] Fix
-Message-Id: <1073651215.14008.8.camel@telecentrolivre>
+Message-Id: <20040111193225.59681eb1.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040107164516.50bcd936.rddunlap@osdl.org>
 In-Reply-To: <20040107164516.50bcd936.rddunlap@osdl.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Thu, 08 Jan 2004 05:36:20 -0200 Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br> wrote:
 
-Hi Randy,
+| 
+| > I prefer to use switch() formatting as acme has suggested, but
+| > changing it in source files that are currently maintained should go
+| > thru their maintainer(s) IMO.
+| > 
+| > For source files that are basically unmaintained, I don't mind
+| > pushing formatting changes.
+| 
+|  Should it go to TODO file ?
 
-Em Qui, 2004-01-08 =E0s 17:40, Randy.Dunlap escreveu:
+Added to KJ TODO file.
 
-> OK, I'll merge that, except that if and switch are not functions,
-> so we usually put a space after them and before the opening '('
-
- Oh yes, I use that too (I think this way comes from K&R), but in this
-patch I'm following the function formatting (as you can see in the lines
-which was removed).
-
- Actually, Alan (I think him wrote the code) are using the two ways
-in the siimage.c code!
-
---=20
-Luiz Fernando N. Capitulino
-<lcapitulino@prefeitura.sp.gov.br>
-<http://www.telecentros.sp.gov.br>
-
-
+--
+~Randy
+MOTD:  Always include version info.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
