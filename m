@@ -1,30 +1,53 @@
-From: Coywolf Qi Hunt <coywolf@greatcn.org>
-Date: Wed, 30 Jun 2004 02:18:17 +0000
-Subject: [Kernel-janitors] How about share all PFN_* ?
-Message-Id: <40E222E9.2030605@greatcn.org>
+From: MJK <mkemp@cs.nmsu.edu>
+Date: Sun, 06 Jun 2004 08:53:52 +0000
+Subject: [Kernel-janitors] [REDIFF]
+Message-Id: <Pine.LNX.4.58.0406060244001.19187@mustang.cs.nmsu.edu>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============00080870641300645474=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello all,
-
-There's too many macros definitions PFN_UP PFN_DOWN PFN_PHYS PFN_ALIGN 
-scattered all over.
-How about a patch move them all into one header file(kernel.h or init.h)
-and share only one copy of them like what min and max. I'd like to make it.
-
-(I have sent this e-mail to lkml also.)
+--===============00080870641300645474==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
 
-      coywolf
+	Audited for kernel_thread() return values. Did it backwards last
+time. *^_^*
 
--- 
-Coywolf Qi Hunt
-Admin of http://GreatCN.org and http://LoveCN.org
+
+--MJK
+
+Description  : Audited for kernel_thread() return code in i2o_sys_init()
+
+Signed-off-by: MJK <mkemp@cs.nmsu.edu>
+
+--- old.linux-2.6.7-rc2/drivers/message/i2o/i2o_core.c	2004-06-02 02:58:02.000000000 -0600
++++ new.linux-2.6.7-rc2/drivers/message/i2o/i2o_core.c	2004-06-05 20:55:42.000000000 -0600
+@@ -2233,7 +2233,13 @@
+
+ 		/* Create a kernel thread to deal with dynamic LCT updates */
+ 		iop->lct_pid = kernel_thread(i2o_dyn_lct, iop, CLONE_SIGHAND);
+-
++
++		if (iop->lct_pid < 0) {
++			printk(KERN_ERR "Couldn't spawn thread for %s.\n", iop->name);
++			i2o_sys_shutdown();
++			return;
++		}
++
+ 		/* Update change ind on DLCT */
+ 		iop->dlct->change_ind = iop->lct->change_ind;
+
+
+--===============00080870641300645474==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============00080870641300645474==--
