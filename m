@@ -1,51 +1,51 @@
-From: "Chasidy Inez" <yxzc76spom@softhome.net>
-Date: Thu, 04 Nov 2004 17:53:47 +0000
-Subject: AD0BE PH0TOSH0P $8O. XP PR0 $5O, 0FFICE 2003 $8O.  0FFICE XP $100, NORT0N 2004 $15 picket cyperus st
-Message-Id: <u2bexqjdeu9w2k83zf1f6xyxzc76spom@softhome.net>
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 24 Nov 2004 15:35:00 +0000
+Subject: [KJ] [patch 8/8] ifdef typos: sound_isa_es18xx.c
+Message-Id: <20041124153500.GH14789@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--3652160320.05780008800.430"
+Content-Type: multipart/mixed; boundary="===============53698131346645461=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----3652160320.05780008800.430
+--===============53698131346645461==
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-wherefore firework exclude excavator victory 
-gamic occupied honor deos bellpull 
-jacksmelt precocity gunmen guaranty drizzling dignitate 
+Changed CONFIG_PNP_ to CONFIG_PNP, also fixed a comment related to
+another CONFIG_PNP.
 
-----3652160320.05780008800.430
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+Signed-off-by: Domen Puncer <domen@coderock.org>
 
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
-</head>
-<body><font color=FF9F9F size=1>trace victories ossa  axon shamanism gloominess appanage fearful unwisely janty sideshow hertzian  chipmunk dipylon perching sicily memoir calced sculpt chihuahua presuppose deflector </font><br>
-<table border=1 cellspacing=1 cellpadding=10 width=630 bordercolor=ffffff>
-<tr><td bgcolor=FFFBFF bordercolor=000000>
-<font color=000000 size=2 face=arial>
-<center><font color=EC0000 size=5 face=arial><b>Super CHEAAP Softwares & Shiip to All Countries</b></font><br>We have every POPULAR softwares u NEED!<br><font color=009700 size=3><b>You name it & we got it!</b></font></center><br>
-<b>Micros0ft Windows XP Professional</b> - <font color=1C8DFF><b>my price: $5O</b> ; </font> normal : $299.OO ; <font color=AAAA00><b>you saave $249.OO</b></font><br>
-<b>Ad0be Acrobat v6.O Professional PC</b> - <font color=1C8DFF><b>my price: $1OO</b> ; </font> normal : $449.95 ; <font color=AAAA00><b>you saave $349.95</b></font><br>& more more more softwares to choose from<br><br>
-<font color=000000 size=2>We do have full range softwares : <font size=2 color=FF9191><b>Ad0be, Alias Maya, Autodesk, Borland, Corel, Crystal Reports. Executive, File maker, Intuit, Mac, 321Studios, Macrmedia, Mc/\fee, Micros0ft. Nero, Pinnacle Systems, PowerQuest, Quark, Red Hat, Riverdeep, Roxio, Symantec, VMware Softwares</b></font> & 320 More P0PULAR titles F0R you<br><br><a href=http://www.saracenwhirligig.org.ck.youhavegot.com target=_blank><font color=0000F4 size=5 face=arial><u><center>Checkk out 320 more popu1ar softwares on our site<br>Guaaranteed SUPER L0W PR1CE<br><br><font size=6><b>=== C|ick here to check out ===</b></font></u></font></a><br></center>
-</font>
-</td></tr></table><font color=FF9F9F size=1>banzai dickybird expiry quillet corso vilnius droop russian reversely scaup </font>
-</body>
-</html>
+--- c/sound/isa/es18xx.c	2004-11-15 13:42:23.000000000 +0100
++++ str2/sound/isa/es18xx.c	2004-11-24 15:58:25.000000000 +0100
+@@ -1849,7 +1849,7 @@ static int enable[SNDRV_CARDS] = SNDRV_D
+ static int isapnp[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = 1};
+ #endif
+ static long port[SNDRV_CARDS] = SNDRV_DEFAULT_PORT;	/* 0x220,0x240,0x260,0x280 */
+-#ifndef CONFIG_PNP_
++#ifndef CONFIG_PNP
+ static long mpu_port[SNDRV_CARDS] = {[0 ... (SNDRV_CARDS - 1)] = -1};
+ #else
+ static long mpu_port[SNDRV_CARDS] = SNDRV_DEFAULT_PORT;
+@@ -1988,7 +1988,7 @@ static int __devinit snd_audiodrive_pnp(
+ 	kfree(cfg);
+ 	return 0;
+ }
+-#endif /* CONFIG_PNP_ */
++#endif /* CONFIG_PNP */
+ 
+ static int __devinit snd_audiodrive_probe(int dev, struct pnp_card_link *pcard,
+ 					  const struct pnp_card_device_id *pid)
 
-----3652160320.05780008800.430--
+--===============53698131346645461==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by:
-Sybase ASE Linux Express Edition - download now for FREE
-LinuxWorld Reader's Choice Award Winner for best database on Linux.
-http://ads.osdn.com/?ad_id=5588&alloc_id=12065&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============53698131346645461==--
