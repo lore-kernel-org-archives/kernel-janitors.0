@@ -1,48 +1,45 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:52 +0000
-Subject: [KJ] [PATCH][RESUBMIT][10/21] drivers/net/tulip/* - compile warning
-Message-Id: <42113C2C.23357.52BE7E@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 14:20:27 +0000
+Subject: [KJ] [PATCH] drivers/macintoshisdn/*: convert to pci_register_driver
+Message-Id: <20050208142027.GO31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83704452287384434=="
+Content-Type: multipart/mixed; boundary="i0LFOk513GRb+T2w"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============83704452287384434==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - cast pointer arguments to correct 
-pointer type to silence compiler warning
+--i0LFOk513GRb+T2w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/drivers/net/tulip/dmfe.c linux-2.6.11-rc3-mm2/drivers/net/tulip/dmfe.c
---- linux-2.6.11-rc3-mm2-original/drivers/net/tulip/dmfe.c	2005-02-12 12:06:25.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/drivers/net/tulip/dmfe.c	2005-02-12 17:07:32.000000000 +0200
-@@ -1806,7 +1806,7 @@ static void dmfe_parse_srom(struct dmfe_
- 	if ( ( (int) srom[18] & 0xff) == SROM_V41_CODE) {
- 		/* SROM V4.01 */
- 		/* Get NIC support media mode */
--		db->NIC_capability = le16_to_cpup(srom + 34);
-+		db->NIC_capability = le16_to_cpup((const __le16 *)(srom + 34));
- 		db->PHY_reg4 = 0;
- 		for (tmp_reg = 1; tmp_reg < 0x10; tmp_reg <<= 1) {
- 			switch( db->NIC_capability & tmp_reg ) {
-@@ -1818,7 +1818,7 @@ static void dmfe_parse_srom(struct dmfe_
- 		}
+Description:
+convert from pci_module_init to pci_register_driver
+
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
+
+--i0LFOk513GRb+T2w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_macintosh.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/macintosh/macio_asic.c linux-2.6.11-rc3/drivers/macintosh/macio_asic.c
+--- linux-2.6.11-rc3-vanilla/drivers/macintosh/macio_asic.c	2004-12-24 22:34:31.000000000 +0100
++++ linux-2.6.11-rc3/drivers/macintosh/macio_asic.c	2005-02-07 09:39:27.000000000 +0100
+@@ -617,7 +617,7 @@ static int __init macio_module_init (voi
+ #ifdef CONFIG_PCI
+ 	int rc;
  
- 		/* Media Mode Force or not check */
--		dmfe_mode = le32_to_cpup(srom + 34) & le32_to_cpup(srom + 36);
-+		dmfe_mode = le32_to_cpup((const __le32 *)(srom + 34)) & le32_to_cpup((const __le32 *)(srom + 36));
- 		switch(dmfe_mode) {
- 		case 0x4: dmfe_media_mode = DMFE_100MHF; break;	/* 100MHF */
- 		case 0x2: dmfe_media_mode = DMFE_10MFD; break;	/* 10MFD */
+-	rc = pci_module_init(&macio_pci_driver);
++	rc = pci_register_driver(&macio_pci_driver);
+ 	if (rc)
+ 		return rc;
+ #endif /* CONFIG_PCI */
 
-
-
-
---===============83704452287384434==
+--i0LFOk513GRb+T2w
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83704452287384434==--
+--i0LFOk513GRb+T2w--
