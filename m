@@ -1,43 +1,64 @@
-From: Arnaldo Carvalho de Melo <acme@conectiva.com.br>
-Date: Sat, 28 Feb 2004 04:07:27 +0000
-Subject: Re: [Kernel-janitors] serial.c cli() patch
-Message-Id: <200402280107.27354.acme@conectiva.com.br>
+From: Luiz Fernando Capitulino <lcapitulino@prefeitura.sp.gov.br>
+Date: Fri, 20 Feb 2004 20:32:46 +0000
+Subject: [Kernel-janitors] [PATCH][REDIFF] - proc cleanup for
+Message-Id: <1077309166.17385.11.camel@telecentrolivre>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <403D1CC3.6080906@chello.nl>
-In-Reply-To: <403D1CC3.6080906@chello.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thursday 26 February 2004 21:32, Zach Brown wrote:
-> > So if I lock data I should use a lock for every single data variable
-> > which is at risk for a race condition. If I use a global one like I did
-> > here then all data structures are locked at once, which is not very good
-> > in a SMP system since an other processor could access an other data
-> > structure which now is also locked by the global lock.
-> > Am I right here?
->
-> Yeah, you have the idea.  It's always a trade-off between complexity and
-> concurrency.  It's good practice to only go down the complexity road
-> when it has been proven that concurrency is strongly desired.
->
-> I'm pretty sure that's why Matthew questioned the patch :)  Code changes
-> are always risky, and simple replacing cli with _irqsave spinlocks
-> doesn't increase the concurrency and I strongly suspect that no one has
-> shown that concurrency matters in these crufty old paths.
->
-> - z
-> (too wordy?  I'm new here.)
 
-With contributions like this, I sure don't mind that you were that wordy.
+ Hi,
 
-Next more don't feel so constrained, free your mouth, we need this people
-like you to help the nephytes hordes!
+ This version have the Francois tip:
+diff -Nru linux-2.6.3/drivers/char/genrtc.c linux-2.6.3~/drivers/char/genrtc.c
+--- linux-2.6.3/drivers/char/genrtc.c	2004-02-05 08:42:27.000000000 -0200
++++ linux-2.6.3~/drivers/char/genrtc.c	2004-02-20 17:07:17.000000000 -0300
+@@ -466,6 +466,19 @@
+ 	return len;
+ }
+ 
++static int __init gen_rtc_proc_init(struct miscdevice *dev)
++{
++	struct proc_dir_entry *r;
++
++	r = create_proc_read_entry("driver/rtc", 0, 0, gen_rtc_read_proc, NULL);
++	if (!r) {
++		misc_deregister(dev);
++		return -ENOMEM;
++	}
++	return 0;
++}
++#else
++static inline int gen_rtc_proc_init(struct miscdevice *dev) { return 0; }
+ #endif /* CONFIG_PROC_FS */
+ 
+ 
+@@ -501,14 +514,8 @@
+ 	if(retval < 0)
+ 		return retval;
+ 
+-#ifdef CONFIG_PROC_FS
+-	if((create_proc_read_entry ("driver/rtc", 0, 0, gen_rtc_read_proc, NULL)) = NULL){
+-		misc_deregister(&rtc_gen_dev);
+-		return -ENOMEM;
+-	}
+-#endif
+-
+-	return 0;
++	retval = gen_rtc_proc_init(&rtc_gen_dev);
++	return retval;
+ }
+ 
+ static void __exit rtc_generic_exit(void)
 
-Like in CNN: "Don't go away, stay with us" :-)
 
-- Arnaldo
+-- 
+Luiz Fernando N. Capitulino
+<lcapitulino@prefeitura.sp.gov.br>
+<http://www.telecentros.sp.gov.br>
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
