@@ -1,13 +1,15 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 22:59:11 +0000
-Subject: [Kernel-janitors] [PATCH] video/saa7134-core: replace
-Message-Id: <20040726225911.GU1897@us.ibm.com>
+Date: Mon, 26 Jul 2004 23:02:33 +0000
+Subject: [Kernel-janitors] [PATCH] video/saa7134-ts: replace
+Message-Id: <20040726230233.GV1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82171563721853413=="
+Content-Type: multipart/mixed; boundary="===============036292039442646473=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040726225911.GU1897@us.ibm.com>
+In-Reply-To: <20040726225911.GU1897@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============82171563721853413==
+--===============036292039442646473==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -38,28 +40,20 @@ task delays for the desired time.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/video/saa7134/saa7134-core.c	2004-06-16 05:19:10.000000000 +0000
-+++ linux-dev/drivers/media/video/saa7134/saa7134-core.c	2004-07-21 17:24:51.000000000 +0000
-@@ -27,6 +27,7 @@
- #include <linux/kmod.h>
- #include <linux/sound.h>
- #include <linux/interrupt.h>
-+#include <linux/delay.h>
- 
- #include "saa7134-reg.h"
- #include "saa7134.h"
-@@ -901,8 +902,7 @@ static int __devinit saa7134_initdev(str
- 	}
- 
- 	/* wait a bit, register i2c bus */
--	set_current_state(TASK_INTERRUPTIBLE);
+--- linux-vanilla/drivers/media/video/saa7134/saa7134-ts.c	2004-06-16 05:18:52.000000000 +0000
++++ linux-dev/drivers/media/video/saa7134/saa7134-ts.c	2004-07-12 18:54:50.000000000 +0000
+@@ -173,8 +173,7 @@ static void ts_reset_encoder(struct saa7
+ 	saa_writeb(SAA7134_SPECIAL_MODE, 0x00);
+ 	mdelay(10);
+    	saa_writeb(SAA7134_SPECIAL_MODE, 0x01);
+-   	set_current_state(TASK_INTERRUPTIBLE);
 -	schedule_timeout(HZ/10);
-+	msleep(100);
- 	saa7134_i2c_register(dev);
++   	msleep(100);
+ }
  
- 	/* initialize hardware #2 */
+ static int ts_init_encoder(struct saa7134_dev* dev, void* arg) 
 
---===============82171563721853413==
+--===============036292039442646473==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82171563721853413==--
+--===============036292039442646473==--
