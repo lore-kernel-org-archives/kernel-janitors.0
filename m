@@ -1,47 +1,50 @@
 From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 06 Oct 2004 23:29:06 +0000
-Subject: [Kernel-janitors] Re: [PATCH 2.6] [3/12] gemini_pci.c replace
-Message-Id: <56110000.1097105346@w-hlinder.beaverton.ibm.com>
+Date: Fri, 08 Oct 2004 22:35:28 +0000
+Subject: [KJ] [RFT 2.6] pci_iommu.c replace pci_find_device with
+Message-Id: <84740000.1097274928@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90826865939170598=="
+Content-Type: multipart/mixed; boundary="===============87098182223998744=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <307270000.1096934114@w-hlinder.beaverton.ibm.com>
-In-Reply-To: <307270000.1096934114@w-hlinder.beaverton.ibm.com>
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: Hanna Linder <hannal@us.ibm.com>, kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, paulus@samba.org, benh@kernel.crashing.org
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: greg@kroah.com, hannal@us.ibm.com, davem@davemloft.net, ecd@skynet.be, jj@sunsite.ms.mff.cuni.cz, anton@samba.org
 
---===============90826865939170598==
+--===============87098182223998744==
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
---On Monday, October 04, 2004 04:55:14 PM -0700 Hanna Linder <hannal@us.ibm.com> wrote:
+As pci_find_device is going away I've replaced it with pci_get_device.
+If someone with a Sparc64 system could test it I would appreciate it.
+Thanks.
 
-> As pci_find_device is going away I have replaced this call with pci_get_device.
-> If someone with a PPC system could verify it I would appreciate it.
-> 
-> Hanna Linder
-> IBM Linux Technology Center
-> 
-> Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+Hanna Linder
+IBM Linux Technology Center
 
-Reroll this patch to use new macro
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
+---
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/sparc64/kernel/pci_iommu.c linux-2.6.9-rc3-mm3patch3/arch/sparc64/kernel/pci_iommu.c
+--- linux-2.6.9-rc3-mm3cln/arch/sparc64/kernel/pci_iommu.c	2004-09-29 20:03:56.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch3/arch/sparc64/kernel/pci_iommu.c	2004-10-08 15:23:37.585502792 -0700
+@@ -814,7 +814,7 @@ static void ali_sound_dma_hack(struct pc
+ 	/* ALI sound chips generate 31-bits of DMA, a special register
+ 	 * determines what bit 31 is emitted as.
+ 	 */
+-	ali_isa_bridge = pci_find_device(PCI_VENDOR_ID_AL,
++	ali_isa_bridge = pci_get_device(PCI_VENDOR_ID_AL,
+ 					 PCI_DEVICE_ID_AL_M1533,
+ 					 NULL);
+ 
+@@ -824,6 +824,7 @@ static void ali_sound_dma_hack(struct pc
+ 	else
+ 		val &= ~0x01;
+ 	pci_write_config_byte(ali_isa_bridge, 0x7e, val);
++	pci_dev_put(ali_isa_bridge);
+ }
+ 
+ int pci_dma_supported(struct pci_dev *pdev, u64 device_mask)
 
-diff -Nrup linux-2.6.9-rc3-mm2cln/arch/ppc/platforms/gemini_pci.c linux-2.6.9-rc3-mm2patch2/arch/ppc/platforms/gemini_pci.c
---- linux-2.6.9-rc3-mm2cln/arch/ppc/platforms/gemini_pci.c	2004-09-29 20:04:25.000000000 -0700
-+++ linux-2.6.9-rc3-mm2patch2/arch/ppc/platforms/gemini_pci.c	2004-10-06 16:22:53.979890256 -0700
-@@ -15,7 +15,7 @@ void __init gemini_pcibios_fixup(void)
- 	int i;
- 	struct pci_dev *dev = NULL;
- 	
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		for(i = 0; i < 6; i++) {
- 			if (dev->resource[i].flags & IORESOURCE_IO) {
- 				dev->resource[i].start |= (0xfe << 24);
 
-
---===============90826865939170598==
+--===============87098182223998744==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90826865939170598==--
+--===============87098182223998744==--
