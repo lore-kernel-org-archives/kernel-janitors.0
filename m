@@ -1,49 +1,47 @@
-From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Mon, 17 May 2004 15:11:59 +0000
+From: Adrian Bunk <bunk@fs.tum.de>
+Date: Wed, 19 May 2004 18:53:29 +0000
 Subject: Re: [Kernel-janitors] [patch 2.6.6] remove old ifdef'd code from
-Message-Id: <20040517081159.4b072adf.rddunlap@osdl.org>
+Message-Id: <20040519185329.GD24287@fs.tum.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49916874574881809=="
+Content-Type: multipart/mixed; boundary="===============12634414864606525=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040517124449.GA5034@nd47>
 In-Reply-To: <20040517124449.GA5034@nd47>
 To: kernel-janitors@vger.kernel.org
 
---===============49916874574881809==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============12634414864606525==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 17 May 2004 14:44:49 +0200 Domen Puncer wrote:
+On Mon, May 17, 2004 at 02:44:49PM +0200, Domen Puncer wrote:
 
-| Hi.
-| 
-| I'm not attaching this inline, it's 80k and might make someone unhappy.
-| 4 patches are at: http://coderock.org/kernel/janitor/old_ifdefs_scsi-gdth/
-| 
-| Comments?
+> Hi.
 
-They look OK to me.  A couple of small items:
+Hi Domen,
 
-If I were doing these (not saying that this is any kind of
-requirement :), I would add:
+> I'm not attaching this inline, it's 80k and might make someone unhappy.
+> 4 patches are at: http://coderock.org/kernel/janitor/old_ifdefs_scsi-gdth/
+> 
+> Comments?
 
-a.  'diffstat -p1' output
-b.  comments like "I built and loaded it.  Don't have hardware
-	to test it."
+Current -mm already contains a maintainer update that does part of your
+cleanup with the exception that kernel 2.2 support should stay in the 
+driver...
 
-It might be a good idea to check the init and exit sections for
-mis-use with something like:
-  http://developer.osdl.org/rddunlap/scripts/reference_init26.pl
-and report that also.
+> 	Domen
 
-Or in general just report what you have done in order to have
-some confidence in these (any) patches.  (This is meant to be a
-general comment, not directed at Domen in particular.)
+cu
+Adrian
 
---
-~Randy
+-- 
 
---===============49916874574881809==
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
+
+--===============12634414864606525==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49916874574881809==--
+--===============12634414864606525==--
