@@ -1,46 +1,139 @@
-From: "Jefferey Collier" <jefferey_collier_qb@staniforth.freeserve.co.uk>
-Date: Sun, 16 May 2004 11:28:52 +0000
-Subject: Re' Billing info needed for order               *    piaubop
-Message-Id: <5dc401c43b38$5e938415$456dd62e@emarat.co.ae>
+From: "Herminia Dorie" <pqlw9vqt@dock.net>
+Date: Sun, 16 May 2004 12:46:15 +0000
+Subject: Get The Original Xp Pro At Only 45 Bucks mercurous
+Message-Id: <gy7xgctph125fwk3@glutenregem>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="--6970563971370721"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+----6970563971370721
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+friday stocks shaping alocasia drought terry jack negatory planning wages disused orphanage 
+aviate freestyle sickness tyrannis instalment carlina regions endways excalibur doggie castigate garcinia paladin flushed chalice eira kyoto 
+
+----6970563971370721
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
 <html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=us-ascii">
+</head>
 <body>
-<body bgcolor=3D"white" text=3D"black" alink=3D"blue" vlink=3D"blue">
-<h4>
-Buy top pain<kblzbjxdakkxhs>killers without prescription<br>
-Today's special: Free overnight v1codin delivery<br><br>
-
-Vicod1n....................$1.37/dose<br>
-Hydr<kpabvpeftljtb>ocodone............$2.12/dose<br>
-No<klsrtogdhbuj>rco.....................$2.95/dose<br>
-
-Sto<kruuxfncqrwm>ck is limited and selling fast, so hurry
-</h4>
-<A href=3D"http://kxnpmkbsmaix.zxbvrxx.com?r=C23"><h3>B<ktuzqaycejzkvr>uy t=
-hem he<khpcdwjcfwvyanc>re=20
-  </a>
-</h3></a><br><br><br><br><br><br><br>
-
-<A href=3D"http://clopthbfrjy.zxbvrxx.com/a.html"><h6>Re<kofiyrglbsxqh>m0v3=
- m<kacizqycbsk>e</a><br></h6>
-
-
-
+<center>
+<higgle firearms editor cornetfish binghamton leiden froelichia jell negus bildet smallish sickbay blithesome retection nudation pretense whimsical desorient digestion annotto fluidity thea >
+<beading carbonaro brandyball tailstock gymslip residuum wastebin memoriae gypaetus ablated drymarchon taproom abundant typicality foeticide striving shallu cargo prescience greisen frown drunkard begat clarion populus psocid topi colonnade untimbered >
+<table border=0 cellspacing=0 cellpadding=10 width=640>
+<tr><td>
+<font color=D90000 size=5 face=arial><b>Your needed soffttwares at Rock Bottom prri ce! </b><br><font size=2 color=000000>- What you bought previously was go to shop & buuyy a WIND0WS XP Pro that comes with a BOX & serial number & the manual cosst 299.00<br><br>- What you will get from us is The full W1ND0WS XP Pro sofftwaree & serial number. It works exactly the same, but you don't get the manual and box and the prricee is only 32.00 . That is a savviing of 254.00</font></font><br><br>
+<table border=1 cellspacing=1 cellpadding=2 width=550 bordercolor=8080C0>
+<tr><td width=400>
+<font size=2 face=arial color=FF80C0><b>
+So0ftware title
+</b></font>
+</td><td width=150>
+<font size=2 face=arial color=FF80C0><b>
+Our L0W Priicce
+</td></tr>
+</b></font>
+<tr><td width=400>
+<font size=2 face=arial>
+Adobbe Creative Suite (5 cds)<br>
+Adobbe PhotooShop CS 8.0 (1 cd)<br>
+3D Studio Max 6.0 (3 cds)<br>
+Adobbe Premiere Pro 7.0 (1 cd)<br>
+Alias Wavefront Maya 5.0 Unlimited<br>
+AutoCAD 2005<br>
+Autodesk Architectural Desktop 2005<br>
+Cakewalk Sonar 3 Producer Edition (3 cds)<br>
+Canopus ProCoder 1.5 (1 cd)<br>                  
+Corel Draw 12 Graphic Suite (3 cds)<br>
+Dragon Naturally Speaking Preferred 7.0<br>
+Macromedia Dreamweaver MX 2004 v7.0<br>
+Macromedia Fireworks MX 2004 v7.0<br>                                        
+Macromedia Flash MX 2004 v7.0 Professional<br>
+Macromedia Studio MX 2004 (1 cd)<br>
+Micros0ft Money 2004 Deluxe (1 cd)<br>
+Micros0ft Office 2003 System Professional (5 cds)<br>
+Micros0ft Office 2003 Multilingual User Interface Pack (2 cds)<br>
+Micros0ft Project 2002 Pro<br>
+Micros0ft Publisher XP 2002<br>
+Micros0ft Visio for Enterprise Architects 2003<br>
+Micros0ft Wind0ws XP Corporate Edition with SP1<br>
+Micros0ft Wind0ws XP Professional<br>                            
+Nort0n Antivirus 2004 Pro v10.0.0.109<br>
+Nort0n SystemWorks Pro 2004 (1 cd)<br>
+OmniPage 14 Office (1 cd)<br>
+Pinnacle Impression DVD Pro 2.2 (1 cd)<br>
+PTC Pro Engineer Wildfire Datecode 2003451 (3 cds)<br>
+PowerQuest Drive Image 7.01 Multilanguage (1 cd)<br>
+Ulead DVD Workshop 2.0<br>
+Micros0ft Visual Studio .NET 2003 Enterprise Architect (8 cds)<br>
+Winfax PRO 10.03<br>
+<font color=BF0000>and MORE soft wares - have <b>850 soft ware titles</b> on our site for u</font>
+</b></font>
+</td><td width=150 align=center valign=top>
+<font size=2 face=arial><b>
+55.00<br>
+32.00<br>
+50.00<br>
+32.00<br>
+40.00<br>
+32.00<br>
+32.00<br>
+36.00<br>
+25.00<br>
+32.00<br>
+25.00<br>
+25.00<br>
+32.00<br>
+30.00<br>
+50.00<br>
+20.00<br>
+40.00<br>
+25.00<br>
+32.00<br>
+20.00<br>
+25.00<br>
+40.00<br>
+32.00<br>
+20.00<br>
+20.00<br>
+25.00<br>
+25.00<br>
+40.00<br>
+20.00<br>
+20.00<br>
+93.00<br>
+20.00<br>
+</td></tr>
+</b></font>
+</td></tr></table>
+<font color=000000 size=2 face=arial>
+Download your sofftwaares from our Superfast (100mbits connection) site & you will be given your own exclusive registration key to register the sofftwaares you bought from us, and now you have your own registered copy of sofftwaares (will never expired again)<br><br>
+It's <b>0EM version</b> of sofftwaares which is an <b>Original/Genuine sofftwaares</b>, strictly no piracy sofftwaares 
+</font>
+<center>
+<b><a href=http://drs.yahoo.com/vapid/garagehooded/*%68ttp://brawnthysanura.intsft.biz/0/p/ target=_blank><font color=0000FF size=5 face=arial><u>Over 850 popular titles for you to choose from<br><br>Act quick now before all sold<br><br>Start using your needed sofftwaares now<br>== C&nbsp;L I C K - H E  R E ==</b><br><font size=2>(Plz give 2-3 mins to complete the page loading bcos the page has 850 titles on it)</font><br><br></u></a>
+<a href=http://drs.yahoo.com/exogamicbourn./ohmmeterstonecrop/*%68ttp://congridae.intsft.biz/%75n%73ub.html target=_blank><font size=1>take me down</font></a>
+</font>
+</center>
+</td></tr></table>
+</center>
 </body>
 </html>
 
+----6970563971370721--
 
 
 -------------------------------------------------------
 This SF.Net email is sponsored by: SourceForge.net Broadband
 Sign-up now for SourceForge Broadband and get the fastest
 6.0/768 connection for only $19.95/mo for the first 3 months!
-http://ads.osdn.com/?ad_id%62&alloc_ida84&op=3Dclick
+http://ads.osdn.com/?ad_id=2562&alloc_id=6184&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
