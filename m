@@ -1,58 +1,41 @@
-From: "Rosemary Colon" <rosemary.colon_se@adb1.demon.co.uk>
-Date: Tue, 20 Jan 2004 05:49:45 +0000
-Subject: is she  happy with your size
-Message-Id: <OFDOCBCJCFDNLHNOHOPCJKPPCBAA.rosemary.colon_se@adb1.demon.co.uk>
+From: "Sanford Hawkins" <sanfordhawkins_wg@micronet.fr>
+Date: Thu, 08 Jan 2004 23:09:07 +0000
+Subject: =?iso-8859-1?B?V2h5IFBheSBmb3Igb3ZlciBwcmljZWQgUHJlc2NyaXBedGlvbiBEcnVcZ3M/Pz8=?=
+Message-Id: <3FFDE313.B911744F@micronet.fr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_08F3_489CEAF1.B824820A"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEg
-VHJhbnNpdGlvbmFsLy9FTiI+DQo8aHRtbD4NCjxoZWFkPg0KPHRpdGxlPlVu
-dGl0bGVkIERvY3VtZW50PC90aXRsZT4NCjxtZXRhIGh0dHAtZXF1aXY9IkNv
-bnRlbnQtVHlwZSIgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PWlzby04
-ODU5LTEiPg0KPC9oZWFkPg0KDQo8Ym9keT4NCjxwIGFsaWduPSJsZWZ0Ij48
-c3Ryb25nPjxmb250IGNvbG9yPSIjMDAzM0NDIiBzaXplPSI0Ij5XYW50PC9m
-b250Pjxmb250IHNpemU9IjQiPiANCiAgQSA8Zm9udCBjb2xvcj0iI0ZGMDAw
-MCI+QjxrdjRkYXU1MTlqam8+aTxrc3dhYzFjYnM0eG5lY2s+ZzxrdjdsajBm
-Mm54az5nPGtzbHE4NWVmaDNiPmU8a2lxem15bmZjczY+cjwvZm9udD4gUDxr
-MHIwYjNpMzRtMj5lPGt2ZHJ1dTcyMGZ1Pm48a2Vob2N5ODFjeXQ5MT5pPGt2
-NXd5bW0ydHB4cGN6Mz5zPzwvZm9udD48L3N0cm9uZz48L3A+DQo8cCBhbGln
-bj0ibGVmdCI+ICogRzxraWtmNzF1M3UzNnZsPmE8azVlZ2t0N2pzcDR0ZDI+
-aTxrcmljcGRwMTV0OGFtZT5uIDM8azhweGpqbGtwOGFxejM+KzxrcTVhYmg1
-OWw3MDU+IEY8azgweXB4ODNpdzd6PnU8a3h2NjNwMTIwOTNlPmxsIEk8a2hv
-MGphdDM0b2RiPm48a3Q3OHUzMDF6YThwPmNoZXMgSW4gTDxrY2pmMnJuMnVo
-YWw5PmVuPGt3NG1xcHkzZm04Pmd0aCA8YnI+DQogICogSTxrNGxreWNwMzBr
-bXA+bmNyZTxrZ2IyYnlsMTc2cno+YXNlIFlvPGtkaWJsanEzaDNpMW43PnVy
-IDxraDAyYjlxdms0Nm02PlA8azA0czJvMDFubWp4MT5lPGtpMGdwY3UybDhr
-YjlyPm48azkwbXo4MjIxa2VjY2k+aTxrcm9jdTdjMjdjYTVxbjE+cyBXPGtn
-cng1dHExd25mN21vOD5pZHQ8a3FzNmxtMjJ0eHlocWMyPmggKEc8a2oyZ2Jz
-Ymp1N25uMTE+aTxraDczNTZpMTJ4czI0ZjE+cnQ8a3BsaWk3ZmYxb21rPmgp
-IEJ5IDIwJSA8YnI+DQogICogUHI8a2hla3F1NTF4NmIxcmYzPm9kdWM8a2dh
-NzViM21pMHl6N2g+ZSBTdDxrZTM0NjR6MXhhY2xxPnJvbmc8a2ppb3N0MjMx
-bjc+ZXIsIFJvPGtwNzI0emIxMnN4c2VmMj5jPGs1ZmRzOWUyZWdsaGE5MT5r
-IEg8azZ4Y2hrZTE5OHY+YTxrN2hwZnNvMXhrb3p4PnJkIEU8azMydDh6eTFt
-OGFiZTc+cmU8azB1NGhheTM1OTNiPmN0aW88a2pveW1ydzFxNm54b28zPm5z
-IDxicj4NCiAgKiBGYXN0IFByaW9yaXR5IEZlZC1FeCBTaDxramdnODhiMjMw
-N29kPmlwcDxreno3aWZ5MmI0ZjJlYTE+aW5nIFdvcmxkV2lkZSA8YnI+DQog
-ICogRG9jdG9yIDxrenZmbGFqMW91NXQ+QXA8a3gxYnA5a2I1NDFjNDJsPnBy
-b3ZlZCBBbmQ8a294dG1ueDJod2c+IFJlYzxrcnA3Yjh3MWlxYWc+b21tZTxr
-dG56MW1oMjI1YXNieTI+bmRlZCA8L3A+DQo8cCBhbGlnbj0ibGVmdCI+PGEg
-DQpocmVmPSJodHRwOi8vcmhkLmVhenllLnVzL3ZwLz9ocHNhbGVzIj5SRUFE
-DQpNT1JFIElORk8gSEVSRTwvYT48L2ZvbnQ+PC9mb250PjwvYj48YnI+DQo8
-cD4NCjxwPg0KPHA+DQo8cD4NCjxwPjxmb250IHNpemU9LTI+PGEgaHJlZj0i
-cnVwLmVhenllLnVzL3ZwL28uaHRtbCI+bm8NCm1vcmUgZW1haWx6PC9hPjwv
-Zm9udD48L2ZvbnQ+PC9mb250PjwvY2VudGVyPg0KdXp6eHYgcmJ0aGMgemls
-b3kga2piaWI8L3A+DQo8L2JvZHk+DQo8L2h0bWw+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_08F3_489CEAF1.B824820A
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+
+
+
+------=_NextPart_000_08F3_489CEAF1.B824820A
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<center><!--srW7z58oYkYr--><a href="http://www.eventyy.com?rid=1097"><img src="http://www.boxsalz.com/z7.gif" border=0></a></center>
+<body></html>
+
+
+------=_NextPart_000_08F3_489CEAF1.B824820A--
 
 
 
 -------------------------------------------------------
-The SF.Net email is sponsored by EclipseCon 2004
-Premiere Conference on Open Tools Development and Integration
-See the breadth of Eclipse activity. February 3-5 in Anaheim, CA.
-http://www.eclipsecon.org/osdn
+This SF.net email is sponsored by: Perforce Software.
+Perforce is the Fast Software Configuration Management System offering
+advanced branching capabilities and atomic changes on 50+ platforms.
+Free Eval! http://www.perforce.com/perforce/loadprog.html
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
