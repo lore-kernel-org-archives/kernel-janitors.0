@@ -1,7 +1,7 @@
-From: "Hung Staton" <rjrnshiavp@yahoo.com>
-Date: Sun, 20 Jun 2004 13:38:38 +0000
-Subject: thanks
-Message-Id: <E1Bc2VQ-0000iw-Gr@sc8-sf-mx2.sourceforge.net>
+From: "Rudolph Shook" <rudolphshookrr@standrews.nsw.edu.au>
+Date: Sun, 20 Jun 2004 16:21:49 +0000
+Subject: chea:p software
+Message-Id: <59f401c456e9$3dc6d154$7a4e35be@cimic.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,19 +9,16 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 <html>
-<font size="1" > Scattered groups of inquirers at length condensed themselves into a compact crowd, which made straight for the residence of President Barbicane.</font>
-<br><br>
-<center><a href="http://www.terra.es/personal5/gondo1r/u/gonzo.html"><img src="http://www.terra.es/personal5/gondo1r/u/e3konst.gif" border="0"></a></center><br>
+Looking for extremely cheap high-quality software?<br>
+We might have just what you need.<br>
 <br>
-<br><br><br><br><br>
-<br><br><br><br><br>
-<a href="http://www.terra.es/personal5/gondo1r/u/re.html">Stop further messages</a><br><br>
-<font size="1" >
- He even gave orders that the horses should be watered, their cribs filled, and that they should be fed with the finest corn; and then he retired, fatigued with all his labours.
- Should there be any so unwise, they are kindly advised to re-peruse it in a spirit of calmness, and with a purpose to know the truth and all of the truth as it relates to themselves and others of their race.
-</font>
+<a href="http://yyxloyhjfjcicx.agelmkb.info/?Bk7a7m54c9IuTB5rbfmkxdcnrm">Windows XP Professional 2002 </a>............. $50<br>
+<a href="http://kwumkbktxyf.agelmkb.info/?Bk7a7m54c9IuTB5efcwrlbpoczemb">Adobe Photoshop 7.0</a> ...................... $60<br>
+<a href="http://oeophsdfcaouib.agelmkb.info/?Bk7a7m54c9IuTB5etdglabsrn">Microsoft Office XP Professional 2002</a> .... $60<br>
+<a href="http://jwluzgkjppdq.agelmkb.info/?Bk7a7m54c9IuTB5mpnzcedxqplu">Corel Draw Graphics Suite 11</a> ............. $60<br>
+<br>
+<a href="http://pdzddeczrb.agelmkb.info/?Bk7a7m54c9IuTB5jzbkfibmxnjae">and lots more...</a><br>
 </html>
-
 
 
 -------------------------------------------------------
