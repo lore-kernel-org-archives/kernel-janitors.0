@@ -1,93 +1,51 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 20:32:36 +0000
-Subject: [Kernel-janitors] [PATCH] eicon/s_4bri: replace schedule_timeout()
-Message-Id: <20040723203236.GA2675@us.ibm.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Thu, 29 Jul 2004 11:42:51 +0000
+Subject: [Kernel-janitors] [patch 2.6.8-rc2] list_for_each_entry:
+Message-Id: <20040729114250.GB2294@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70349701795161579=="
+Content-Type: multipart/mixed; boundary="===============071241105961237894=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040723174638.GL1911@us.ibm.com>
-In-Reply-To: <20040723174638.GL1911@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============70349701795161579==
+--===============071241105961237894==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-I would appreciate any comments from the janitors list.
+Hi.
 
-Thanks,
-Nish
-
-
-
-Applys-to: 2.6.7
-
-Description: Replace diva_os_wait() with mdelay().
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Make code more readable with list_for_each_entry*
+Compile tested.
 
 
---- linux-vanilla/drivers/isdn/hardware/eicon/s_4bri.c	2004-06-16 05:18:37.000000000 +0000
-+++ linux-dev/drivers/isdn/hardware/eicon/s_4bri.c	2004-07-02 18:10:53.000000000 +0000
-@@ -104,13 +104,13 @@ static void reset_qBri_hardware (PISDN_A
+Signed-off-by: Domen Puncer <domen@coderock.org>
+
+--- c/arch/i386/mm/pageattr.c	Wed Jul 14 19:14:46 2004
++++ list_for_each/arch/i386/mm/pageattr.c	Thu Aug 15 18:08:02 2002
+@@ -178,7 +178,7 @@
+ void global_flush_tlb(void)
+ { 
+ 	LIST_HEAD(l);
+-	struct list_head* n;
++	struct page *pg, *next;
  
- 	qBriReset = (word volatile *)DIVA_OS_MEM_ATTACH_PROM(IoAdapter);
- 	WRITE_WORD(qBriReset, READ_WORD(qBriReset) | PLX9054_SOFT_RESET) ;
--	diva_os_wait (1) ;
-+	mdelay (1) ;
- 	WRITE_WORD(qBriReset, READ_WORD(qBriReset) & ~PLX9054_SOFT_RESET) ;
--	diva_os_wait (1);
-+	mdelay (1);
- 	WRITE_WORD(qBriReset, READ_WORD(qBriReset) | PLX9054_RELOAD_EEPROM) ;
--	diva_os_wait (1) ;
-+	mdelay (1);
- 	WRITE_WORD(qBriReset, READ_WORD(qBriReset) & ~PLX9054_RELOAD_EEPROM) ;
--	diva_os_wait (1);
-+	mdelay (1);
- 	DIVA_OS_MEM_DETACH_PROM(IoAdapter, qBriReset);
+ 	BUG_ON(irqs_disabled());
  
- 	qBriCntrl = DIVA_OS_MEM_ATTACH_CTLREG(IoAdapter);
-@@ -132,9 +132,9 @@ void start_qBri_hardware (PISDN_ADAPTER 
- 	p = (byte volatile *)DIVA_OS_MEM_ATTACH_CTLREG(IoAdapter);
- 	qBriReset = &p[(DIVA_4BRI_REVISION(IoAdapter)) ? (MQ2_BREG_RISC) : (MQ_BREG_RISC)];
- 	WRITE_DWORD(qBriReset, MQ_RISC_COLD_RESET_MASK) ;
--	diva_os_wait (2) ;
-+	mdelay (2) ;
- 	WRITE_DWORD(qBriReset, MQ_RISC_WARM_RESET_MASK | MQ_RISC_COLD_RESET_MASK) ;
--	diva_os_wait (10) ;
-+	mdelay (10) ;
- 	DIVA_OS_MEM_DETACH_CTLREG(IoAdapter, p);
+@@ -186,12 +186,8 @@
+ 	list_splice_init(&df_list, &l);
+ 	spin_unlock_irq(&cpa_lock);
+ 	flush_map();
+-	n = l.next;
+-	while (n != &l) {
+-		struct page *pg = list_entry(n, struct page, lru);
+-		n = n->next;
++	list_for_each_entry_safe(pg, next, &l, lru)
+ 		__free_page(pg);
+-	}
+ } 
  
- 	DBG_TRC(("started processor @ addr 0x%08lx", qBriReset))
-@@ -316,7 +316,7 @@ int qBri_FPGA_download (PISDN_ADAPTER Io
-  */
- 	WRITE_WORD(addr, baseval & ~FPGA_PROG) ; /* PROGRAM low pulse */
- 	WRITE_WORD(addr, baseval) ;              /* release */
--	diva_os_wait (50) ;  /* wait until FPGA finished internal memory clear */
-+	mdelay (50) ;  /* wait until FPGA finished internal memory clear */
- /*
-  *	check done pin, must be low
-  */
-@@ -345,7 +345,7 @@ int qBri_FPGA_download (PISDN_ADAPTER Io
- 		}
- 	}
- 	xdiFreeFile (File) ;
--	diva_os_wait (100) ;
-+	mdelay (100) ;
- 	val = READ_WORD(addr) ;
- 
- 	DIVA_OS_MEM_DETACH_PROM(IoAdapter, addr);
-@@ -837,7 +837,7 @@ static int load_qBri_hardware (PISDN_ADA
-  */
- 	for ( i = 0 ; i < 300 ; ++i )
- 	{
--		diva_os_wait (10) ;
-+		mdelay (10) ;
- 
- 		if ( signature[0] == 0x4447 )
- 		{
+ #ifdef CONFIG_DEBUG_PAGEALLOC
 
---===============70349701795161579==
+--===============071241105961237894==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -98,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70349701795161579==--
+--===============071241105961237894==--
