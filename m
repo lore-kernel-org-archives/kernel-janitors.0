@@ -1,57 +1,37 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 17 Sep 2004 18:03:58 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 16/16] isdn/kcapi: replace
-Message-Id: <20040917180358.GQ1712@us.ibm.com>
+Date: Mon, 27 Sep 2004 18:36:44 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 16/16] scsi/wd7000: replace
+Message-Id: <20040927183644.GE1676@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============27742701842563711=="
+Content-Type: multipart/mixed; boundary="===============46049336406382313=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20040917180358.GQ1712@us.ibm.com>
+In-Reply-To: <20040917180358.GQ1712@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============27742701842563711==
+--===============46049336406382313==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. This is a re-push of a patch
-submitted a few months ago which has not been merged as of
-2.6.9-rc1-mm5 / 2.6.9-rc2.
+Any comments would be appreciated.
 
-Description: Use msleep_interruptible() instead of schedule_timeout() to
-guarantee the task delays as expected.
+Description: Use msleep() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--- 2.6.9-rc2-vanilla/drivers/scsi/wd7000.c	2004-09-13 17:16:01.000000000 -0700
++++ 2.6.9-rc2/drivers/scsi/wd7000.c	2004-09-14 09:20:37.000000000 -0700
+@@ -1473,8 +1473,7 @@ static int wd7000_detect(struct scsi_hos
+ 			 * ASC reset...
+ 			 */
+ 			outb(ASC_RES, iobase + ASC_CONTROL);
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(HZ / 100);
++			msleep(10);
+ 			outb(0, iobase + ASC_CONTROL);
+ 
+ 			if (WAIT(iobase + ASC_STAT, ASC_STATMASK, CMD_RDY, 0)) {
 
---- 2.6.9-rc1-mm4-vanilla/drivers/isdn/capi/kcapi.c	2004-09-09 23:05:53.000000000 -0700
-+++ 2.6.9-rc1-mm4/drivers/isdn/capi/kcapi.c	2004-09-13 14:11:14.000000000 -0700
-@@ -24,6 +24,7 @@
- #include <linux/capi.h>
- #include <linux/kernelcapi.h>
- #include <linux/init.h>
-+#include <linux/delay.h>
- #include <asm/uaccess.h>
- #include <linux/isdn/capicmd.h>
- #include <linux/isdn/capiutil.h>
-@@ -831,8 +832,7 @@ static int old_capi_manufacturer(unsigne
- 
- 		while (card->cardstate != CARD_RUNNING) {
- 
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ/10);	/* 0.1 sec */
-+			msleep_interruptible(100);	/* 0.1 sec */
- 
- 			if (signal_pending(current)) {
- 				capi_ctr_put(card);
-@@ -856,8 +856,7 @@ static int old_capi_manufacturer(unsigne
- 
- 		while (card->cardstate > CARD_DETECTED) {
- 
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ/10);	/* 0.1 sec */
-+			msleep_interruptible(100);	/* 0.1 sec */
- 
- 			if (signal_pending(current))
- 				return -EINTR;
-
---===============27742701842563711==
+--===============46049336406382313==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============27742701842563711==--
+--===============46049336406382313==--
