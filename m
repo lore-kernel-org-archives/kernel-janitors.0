@@ -1,46 +1,36 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 20 Oct 2004 23:12:41 +0000
-Subject: Re: [KJ] Re: [Kernel-janitors] [PATCH 2.6.9-rc2-mm4 cmipci.c]
-Message-Id: <32220000.1098313960@w-hlinder.beaverton.ibm.com>
+From: Peter Osterlund <petero2@telia.com>
+Date: Fri, 22 Oct 2004 21:55:39 +0000
+Subject: [KJ] Re: block/pktcdvd: set_current_state() location
+Message-Id: <Pine.LNX.4.58.0410222350230.6238@telia.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============9503847005980286=="
+Content-Type: multipart/mixed; boundary="===============23546591308835985=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <28440000.1096502897@w-hlinder.beaverton.ibm.com> <20041020230128.GB1953@stro.at>
-In-Reply-To: <20041020230128.GB1953@stro.at>
-To: maximilian attems <janitor@sternwelten.at>
-Cc: Hanna Linder <hannal@us.ibm.com>, kernel-janitors@lists.osdl.org, greg@kroah.com, linux-kernel@vger.kernel.org, perex@suse.cz, sailer@ife.ee.ethz.ch
+To: kernel-janitors@vger.kernel.org
 
---===============9503847005980286==
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+--===============23546591308835985==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
---On Thursday, October 21, 2004 01:01:28 AM +0200 maximilian attems <janitor@sternwelten.at> wrote:
+On Fri, 22 Oct 2004, Nishanth Aravamudan wrote:
 
->> +		if (!pci_dev_present(intel_82437vx)) 
->                                                     ^
->>  			snd_cmipci_set_bit(cm, CM_REG_MISC_CTRL, CM_TXVX);
->>  		break;
->>  	default:
->> 
->> 
-> 
-> a second one with small whitespace damage.
-> fixed for next kjt.
+> Jens & Peter,
+>
+> I was looking through 2.6.9-bk7 with the latest kjt (Kernel-Janitors
+> patchset) applied and noticed a new schedule_timeout() in the code. In
+> drivers/block/pktcdvd.c::kcdrwd(), the state is set at the head of the
+> for(;;)-loop, while the sleeping doesn't occur until nearly the end of
+> the same loop. Is there a reason for the code in-between to run in
+> TASK_INTERRUPTIBLE?
 
-Hi Max,
+Yes, it's needed to avoid race conditions. The code avoids race conditions
+in the same way that __wait_event_timeout() does, but the "condition" is
+much more complicated, so it wouldn't make sense to use the
+__wait_event_timeout() macro directly.
 
-According to the CodingStyle I should not put a white space
-after the function name and before the parenthesis. 
+-- 
+Peter Osterlund - petero2@telia.com
+http://w1.894.telia.com/~u89404340
 
-I do not believe that should be added.
-
-Thanks.
-
-Hanna
-
-
---===============9503847005980286==
+--===============23546591308835985==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============9503847005980286==--
+--===============23546591308835985==--
