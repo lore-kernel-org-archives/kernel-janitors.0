@@ -1,176 +1,65 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 27 Nov 2004 16:30:04 +0000
-Subject: [KJ] linux-2.6.9: add errorcheck for  netlink
-Message-Id: <41A8AB8C.9030007@bfs.de>
+From: "Jona Alexander" <yiqbut0osm@power.net>
+Date: Mon, 15 Nov 2004 16:25:52 +0000
+Subject: 0FFICE 2OO3, AD0BE, XP PR0 & ALL FOR INSTANT DOWNLOAD NOW words
+Message-Id: <1syOKSJc5z4VoVt3BQy3cOyiqbut0osm@power.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============29710272245704039=="
+Content-Type: multipart/mixed; boundary="--9461111201.6870916363275.1390"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============29710272245704039==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+----9461111201.6870916363275.1390
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-Hi list,
-i moved the netlink patches from 2.6.7 to 2.6.9.
-it adds 2 error checks.
-1. register_netdevice_notifier()
-2. sock_register()
+burst ways floor learned best 
+sake ill story comfort receive scissors 
+see learn water chocolate offer 
 
-To propagate the error i changed the type from void to int.
+----9461111201.6870916363275.1390
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 
-re,
-walter
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text; charset=us-ascii">
+</head>
+<body><font color=FBFBFB size=1>third  beyond ground surprised proper satisfaction either decided married  heart six team  round occurrence matters laughed your </font><br>
+<center>
+<table border=0 cellspacing=0 cellpadding=10 width=630>
+<tr><td align=center>
+<font color=FF80C0 size=5 face=arial><font color=AD5BFF><i><b>1472 softwares</i></font> for you to choose from<br>A-Z titles, Instant Download!</b></font></font><br><br>
+<font color=808000 size=2 face=arial>
+If you don't have enough money to buy needed software or think desired software isn't worth the price, then this service is right for you. Download your sofftwaares from our Superfast (100mbits connection) site & you will be given your own exclusive registration key to register the sofftwaares you bought from us, and now you have your own registered copy of sofftwaares (will never expired again)<br><br><font color=000000 size=2>
+40$ Adobe Creative Suite Premium (5 cds)<br>
+35$ Adobe PhotoShop CS 8.0 (1 cd)<br>
+50$ 3D Studio Max 6.0 (3 cds)<br> 
+35$ Adobe Premiere Pro 1.5 (1 cd)<br>
+40$ Alias Wavefront Maya 6.0 Unlimited (2 cds)<br>
+25$ Microsoft Office 2003 Multilingual User Interface Pack-1 (2 cds)<br>
+25$ Microsoft Office 2003 Multilingual User Interface Pack-2 (2 cds)<br>
+35$ Microsoft Project 2002 Pro<br>
+25$ Microsoft Office Publisher 2003 (1 cd)<br>
+35$ Microsoft Visio 2003 Pro (1 cd)<br>
+35$ Microsoft Windows XP Professional with SP2 (1 cd)<br>& more softwares</font></font><br><br>
+<center>
+<b><a href=http://www.spiteinterest.org.de.mention.charstnd.com/0/p/ target=_blank><font color=0000FF size=5 face=arial><u>Over 1400 popular titles to choose<br><br>N0 more paying high for your softwares<br>== C L I C K - H E R E ==</b><br><font size=2>(Plz allow 1-2 mins to complete the page loading)</font><br><br></u></a>
+<a href=http://www.mostheaven.org.de.poison.charstnd.com/0/c.html target=_blank><font size=1>no future mail</font></a>
+</font>
+</center>
+</td></tr></table>
+</center><font color=FBFBFB size=1>lucky whenever shown over age form word together daughter </font>
+</body>
+</html>
 
-
-Signed-off-by: walter harms <wharms@bfs.de>
-
---- linux-2.6.9/net/core/rtnetlink.c.bak	2004-11-26
-22:11:15.000000000 +0100
-+++ linux-2.6.9/net/core/rtnetlink.c	2004-11-26 23:22:00.000000000 +0100
-@@ -653,7 +653,7 @@
-  	.notifier_call	= rtnetlink_event,
-  };
-
--void __init rtnetlink_init(void)
-+int __init rtnetlink_init(void)
-  {
-  	int i;
-
-@@ -661,17 +661,34 @@
-  	for (i = 0; i < ARRAY_SIZE(rta_max); i++)
-  		if (rta_max[i] > rtattr_max)
-  			rtattr_max = rta_max[i];
-+
-  	rta_buf = kmalloc(rtattr_max * sizeof(struct rtattr *), GFP_KERNEL);
--	if (!rta_buf)
--		panic("rtnetlink_init: cannot allocate rta_buf\n");
-+	if (!rta_buf) {
-+		printk(KERN_CRIT "%s: cannot allocate rta_buf\n",__FUNCTION__);
-+		goto no_mem;
-+	}
-
-  	rtnl = netlink_kernel_create(NETLINK_ROUTE, rtnetlink_rcv);
--	if (rtnl == NULL)
--		panic("rtnetlink_init: cannot initialize rtnetlink\n");
-+	if (rtnl == NULL) {
-+		printk(KERN_CRIT "%s: cannot initialize rtnetlink\n",__FUNCTION__);
-+		goto no_netlink;
-+	}
-  	netlink_set_nonroot(NETLINK_ROUTE, NL_NONROOT_RECV);
--	register_netdevice_notifier(&rtnetlink_dev_notifier);
-+
-+        if ( register_netdevice_notifier(&rtnetlink_dev_notifier) < 0 ) {
-+
-+                printk(KERN_ERR "%s: cannot initialize rtnetlink 
-notifier\n",__FUNCTION__);
-+		goto no_netlink;
-+        }
-+
-  	rtnetlink_links[PF_UNSPEC] = link_rtnetlink_table;
-  	rtnetlink_links[PF_PACKET] = link_rtnetlink_table;
-+	return 0;
-+
-+no_netlink:
-+	kfree(rtnl);
-+no_mem:
-+	return -1;
-  }
-
-  EXPORT_SYMBOL(__rta_fill);
---- linux-2.6.9/include/linux/rtnetlink.h.bak	2004-11-26 
-22:59:02.000000000 +0100
-+++ linux-2.6.9/include/linux/rtnetlink.h	2004-11-26 23:00:09.986720520 
-+0100
-@@ -805,7 +805,7 @@
-
-  extern void rtnl_lock(void);
-  extern void rtnl_unlock(void);
--extern void rtnetlink_init(void);
-+extern int rtnetlink_init(void);
-
-  #define ASSERT_RTNL() do { \
-  	if (unlikely(down_trylock(&rtnl_sem) == 0)) { \
---- linux-2.6.9/net/netlink/af_netlink.c.bak	2004-11-26 
-22:24:29.000000000 +0100
-+++ linux-2.6.9/net/netlink/af_netlink.c	2004-11-26 22:44:22.000000000 +0100
-@@ -1209,29 +1209,51 @@
-  	.owner	= THIS_MODULE,	/* for consistency 8) */
-  };
-
--static int __init netlink_proto_init(void)
--{
--	struct sk_buff *dummy_skb;
-
--	if (sizeof(struct netlink_skb_parms) > sizeof(dummy_skb->cb)) {
--		printk(KERN_CRIT "netlink_init: panic\n");
--		return -1;
--	}
--	sock_register(&netlink_family_ops);
-+static void __exit netlink_proto_exit(void)
-+{
-+       sock_unregister(PF_NETLINK);
-  #ifdef CONFIG_PROC_FS
--	proc_net_fops_create("netlink", 0, &netlink_seq_fops);
-+       proc_net_remove("netlink");
-  #endif
--	/* The netlink device handler may be needed early. */
--	rtnetlink_init();
--	return 0;
-  }
-
--static void __exit netlink_proto_exit(void)
-+static int __init netlink_proto_init(void)
-  {
--       sock_unregister(PF_NETLINK);
--       proc_net_remove("netlink");
-+        struct sk_buff *dummy_skb;
-+#ifdef CONFIG_PROC_FS
-+        struct proc_dir_entry *proc;
-+#endif
-+        int err;
-+
-+        if (sizeof(struct netlink_skb_parms) > sizeof(dummy_skb->cb)) {
-+                printk(KERN_CRIT "netlink_init: panic\n");
-+                return -1;
-+        }
-+        err = sock_register(&netlink_family_ops);
-+        if (err < 0)
-+                return err;
-+
-+#ifdef CONFIG_PROC_FS
-+        proc = proc_net_fops_create("netlink", 0, &netlink_seq_fops);
-+        if (!proc) {
-+                sock_unregister(PF_NETLINK);
-+                return -ENOMEM;
-+        }
-+#endif
-+
-+        /* The netlink device handler may be needed early. */
-+        if ( rtnetlink_init() < 0) {
-+                netlink_proto_exit();
-+                return -1;
-+        } ;
-+
-+        return 0;
-  }
-
-+
-+
-+
-  core_initcall(netlink_proto_init);
-  module_exit(netlink_proto_exit);
+----9461111201.6870916363275.1390--
 
 
---===============29710272245704039==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by: InterSystems CACHE
+FREE OODBMS DOWNLOAD - A multidimensional database that combines
+robust object and relational technologies, making it a perfect match
+for Java, C++,COM, XML, ODBC and JDBC. www.intersystems.com/match8
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============29710272245704039==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
