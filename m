@@ -1,38 +1,23 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Thu, 10 Mar 2005 10:57:13 +0000
-Subject: Re: [KJ] [PATCH 1/] init/do_mounts_initrd.c: fix sparse warning
-Message-Id: <200503101353.14372.adobriyan@mail.ru>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Sun, 06 Mar 2005 01:11:07 +0000
+Subject: [KJ] kernel-parameters.txt
+Message-Id: <422A58AB.8040601@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200503100122.28432.adobriyan@mail.ru>
-In-Reply-To: <200503100122.28432.adobriyan@mail.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-[walter, I got "Sender address rejected: Access denied", replying to the list]
+I just noticed that "kstack=" is not documented in
+Documentation/kernel-parameters.txt.
 
-On Thursday 10 March 2005 10:12, walter harms wrote:
+It would be a Good Thing is someone would check for
+kernel parameters/options that are missing from
+kernel-parameters.txt and add them...
 
-> pid  should be pid_t
-
-Well, yes.
-
-> because different architectures have different sizes for it.
-
-No. pid_t => __kernel_pid_t => int => 32 bit an all archs. Look at
-include/asm-*/types.h and see what s32 is always typedef'ed to.
-
-	Alexey
-
-> > --- linux-2.6.11-bk1-sparse.orig/init/do_mounts_initrd.c
-> > +++ linux-2.6.11-bk1-sparse/init/do_mounts_initrd.c
-
-> > -	int i, pid;
-> > +	int pid;
-
-> > -		while (pid != sys_wait4(-1, &i, 0, NULL))
-> > +		while (pid != sys_wait4(-1, NULL, 0, NULL))
+Thanks,
+-- 
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
