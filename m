@@ -1,45 +1,55 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Fri, 18 Jun 2004 09:41:32 +0000
-Subject: Re: [Kernel-janitors] [Patch] drivedata access replacement
-Message-Id: <20040618094132.GB21628@sputnik.stro.at>
+From: "Allena Zada" <blu83rh@midtown.net>
+Date: Mon, 07 Jun 2004 19:00:13 +0000
+Subject: u r wasting ur high salary job potential page
+Message-Id: <xv7j7z4lbpc1bl64tdjezw@aroundgrayaccommodate>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72799463624026983=="
+Content-Type: multipart/mixed; boundary="--54016709417894095"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040603184201.GA26906@nlx.t-online.de>
-In-Reply-To: <20040603184201.GA26906@nlx.t-online.de>
 To: kernel-janitors@vger.kernel.org
 
---===============72799463624026983==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+----54016709417894095
+Content-Type: text/plain;
+Content-Transfer-Encoding: 7Bit
 
-On Thu, 03 Jun 2004, yoonsoo@web.de wrote:
-
-> sorry again for making every mistake that could be made :(
-> 
-> Now hopefully everything is fine.
-> 
-> All changes are tested to compile. Changes are made to avoid direct
-> access to the driver_data fields and to use get/set_drvdata methods
-> instead.
-
-please provide 1 diff / file, 
-if you don't feel like flooding the kj mailing list,
-place them on the web, do not forget to add to each
-patch as "header" a nice description.
-
-thanks maks
+small appearance child writing. usedto nineteen statement fancy chief fight shown clear road sister? shall his through always. poor government four anxious"
 
 
---===============72799463624026983==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+    O N L I N E   U N I V E R S I T Y   D I P L O M A S   D E G R E E S
+
+                    Obtain Diploma, Degree, Master
+                  
+           We send the certificate to all countries (WORLDWIDE)
+
+            Consider a prosperous future, money earning power
+    
+             No tests, study, coursework, or interviews required. 
+                      Discrete and affordable.
+                         Everyone eligible. 
+
+                 Call now - your diploma awaits you!!!
+
+                  212-330-8202 (24 hours on call)
+                    
+                     Calls returned promptly.
+                     Confidentiality assured.
+
+
+ CALL NOW ----->>>  212-330-8202 (24 hours on call)
+ 
+ 
+
+didnt care luck share plan thought study tie, accept deep no morning? giving touch thursday worth stay nickel open. rest meaning herself common court sure case arctic sick carried.
+
+----54016709417894095--
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by: GNOME Foundation
+Hackers Unite!  GUADEC: The world's #1 Open Source Desktop Event.
+GNOME Users and Developers European Conference, 28-30th June in Norway
+http://2004/guadec.org
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============72799463624026983==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
