@@ -1,79 +1,54 @@
-From: =?koi8-r?Q?=22?=Alexey Dobriyan=?koi8-r?Q?=22=20?=<adobriyan@mail.ru>
-Date: Fri, 16 Apr 2004 16:27:40 +0000
-Subject: [Kernel-janitors] [PATCH] Kill some 'No description found...'
-Message-Id: <E1BEWBo-000O1Y-00.adobriyan-mail-ru@f23.mail.ru>
+From: "Cleo i. Forrest" <WadegOrr@acepage.freeserve.co.uk>
+Date: Sun, 11 Apr 2004 09:26:05 +0000
+Subject: Natural Manhood Enlargement Pills
+Message-Id: <9908665351.rK1HrESw@Kernel-janitor-discuss>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63515020639007913=="
+Content-Type: multipart/mixed; boundary="dittybuddycentralit'd"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============63515020639007913==
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: 8bit
+--dittybuddycentralit'd
+Content-Type: text/plain;
+ charset="windows-1252"
+Content-Transfer-Encoding: 7Bit
 
---- a/lib/string.c      2004-04-16 19:30:13.000000000 +0400
-+++ b/lib/string.c      2004-04-16 19:30:58.000000000 +0400
-@@ -445,8 +445,8 @@
- #ifndef __HAVE_ARCH_BCOPY
- /**
-  * bcopy - Copy one area of memory to another
-- * @src: Where to copy from
-- * @dest: Where to copy to
-+ * @srcp: Where to copy from
-+ * @destp: Where to copy to
-  * @count: The size of the area.
-  *
-  * Note that this is the same as memcpy(), with the arguments reversed.
---- a/include/linux/skbuff.h    2004-04-16 19:35:46.000000000 +0400
-+++ b/include/linux/skbuff.h    2004-04-16 19:37:13.000000000 +0400
-@@ -268,10 +268,10 @@
-        /* These elements must be at the end, see alloc_skb() for details.  */
-        unsigned int            truesize;
-        atomic_t                users;
--       unsigned char           *head,
--                               *data,
--                               *tail,
--                               *end;
-+       unsigned char           *head;
-+       unsigned char           *data;
-+       unsigned char           *tail;
-+       unsigned char           *end;
- };
+sore tacit electra commemorate deanna awkward severn hertz counterintuitive thoughtful sing 
+wapato madcap masculine editor lizzie braggart cantor gluing dyad ouzo copyright vantage accrue midwife mt act steve bouncy posteriori rationale bat sled admiralty hillcrest duckling casserole compose contributor convulsive lyric rna bakhtiari success embarcadero bloodhound ascetic dolomitic 
 
- #ifdef __KERNEL__
---- a/net/core/dev.c    2004-04-16 19:42:16.000000000 +0400
-+++ b/net/core/dev.c    2004-04-16 19:43:15.000000000 +0400
-@@ -777,7 +777,7 @@
- /**
-  *     dev_change_name - change name of a device
-  *     @dev: device
-- *     @name: name (or format string) must be at least IFNAMSIZ
-+ *     @newname: name (or format string) must be at least IFNAMSIZ
-  *
-  *     Change name of a device, can pass format strings "eth%d".
-  *     for wildcarding.
---- a/drivers/block/ll_rw_blk.c 2004-04-16 19:50:36.000000000 +0400
-+++ b/drivers/block/ll_rw_blk.c 2004-04-16 19:53:39.000000000 +0400
-@@ -1142,7 +1142,7 @@
+--dittybuddycentralit'd
+Content-Type: text/html;
+ charset="windows-1252"
+Content-Transfer-Encoding: 7Bit
 
- /**
-  * generic_unplug_device - fire a request queue
-- * @data:    The &request_queue_t in question
-+ * @q:    The &request_queue_t in question
-  *
-  * Description:
-  *   Linux uses plugging to build bigger requests queues before letting
+<html>
+<body>
+<p><font face="Arial">How Do You Stack up in The S<font style=font-size:1px>\</font>EX DEPARTMENT?<br>
+<br>
+1) How did you compare to the other guys in the locker room?<br>
+2) Do you want a bi<font style=font-size:1px>;</font>gger J.o.h.n.s.o.n?<br>
+3) How would you like PERMANENT M.anhood growth?<br>
+<br>
+Not only will a larger PNS make you feel better, it will make you look better<br>
+<br>
+Our Man.hood pi<font style=font-size:1px>)</font>lls make up for what mother nature forgot! Get a months supply and notice the difference<br>
+<br>
+<a href="http://K5IesL9NekxE.igf2.us/igf2/igf.php"><h3>Cl<font style=font-size:1px>`</font>ick here</a></h3> for more information on high quality Membe.r Pi<font style=font-size:1px>!</font>lls. If you don't see results, why pay?</p>
+<p>Our pi<font style=font-size:1px>{</font>lls have been proven to work and we're confident they'll work for you. That's why we offer a mo<font style=font-size:1px>*</font>ney back gu<font style=font-size:1px>[</font>arantee!<br>
+</font></p>
+<p><a href="http://EpNAKkfu.igf2.biz/igf2/igf.php"><h3><font face="Arial">IGF2, Gain 1-3" in Just Weeks</h3></font></a>
+</p>
+</body>
+</html>
+
+--dittybuddycentralit'd--
 
 
---===============63515020639007913==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by: IBM Linux Tutorials
+Free Linux tutorial presented by Daniel Robbins, President and CEO of
+GenToo technologies. Learn everything from fundamentals to system
+administration.http://ads.osdn.com/?ad_id=1470&alloc_id=3638&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============63515020639007913==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
