@@ -1,37 +1,40 @@
-From: Armin Schindler <armin@melware.de>
-Date: Thu, 17 Mar 2005 15:47:48 +0000
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Thu, 17 Mar 2005 15:49:04 +0000
 Subject: Re: [KJ] [PATCH] printk : drivers/isdn/hardware/eicon/divasmain.c
-Message-Id: <Pine.LNX.4.61.0503171645300.8775@phoenix.one.melware.de>
+Message-Id: <200503171847.33112.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============73357971567695213=="
+Content-Type: multipart/mixed; boundary="===============210948417252248=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050317150929.GQ2102@rhum.iomeda.fr>
 In-Reply-To: <20050317150929.GQ2102@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============73357971567695213==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============210948417252248==
+Content-Disposition: inline
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Sorry, but I have to reject this.
+On Thursday 17 March 2005 17:09, Christophe Lucas wrote:
 
-This printk() line is the end of the line which is started with the previous
-printk(). The initial printk() does have KERN_*, but does not end with '\n'.
-
-Armin
-
-On Thu, 17 Mar 2005, Christophe Lucas wrote:
-> Hi,
-> 
-> Description:
 > printk() calls should include appropriate KERN_* constant.
-> 
-> Have a nice day,
-> 
-> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-> 
-> 
 
---===============73357971567695213==
+> --- linux-2.6.11-vanilla/drivers/isdn/hardware/eicon/divasmain.c
+> +++ linux-2.6.11/drivers/isdn/hardware/eicon/divasmain.c
+
+>  	printk(KERN_INFO "%s: Rel:%s  Rev:", DRIVERLNAME, DRIVERRELEASE_DIVAS);
+					^^^^
+Notice there is no "\n" here. So, you're adding KERN_INFO in the middle of
+the string.
+
+>  	strcpy(tmprev, main_revision);
+> -	printk("%s  Build: %s(%s)\n", getrev(tmprev),
+> +	printk(KERN_INFO "%s  Build: %s(%s)\n", getrev(tmprev),
+>  	       diva_xdi_common_code_build, DIVA_BUILD);
+
+	Alexey
+
+--===============210948417252248==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============73357971567695213==--
+--===============210948417252248==--
