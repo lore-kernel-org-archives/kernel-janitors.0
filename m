@@ -1,7 +1,7 @@
 From: mikal@stillhq.com
-Date: Thu, 18 Mar 2004 01:04:02 +0000
+Date: Thu, 18 Mar 2004 01:04:04 +0000
 Subject: [Kernel-janitors] [Trivial Patch] kernel-doc comment tweak
-Message-Id: <200403180104.i2I142h31149@diskbox.stillhq.com>
+Message-Id: <200403180104.i2I144931157@diskbox.stillhq.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200403180103.i2I13vI31101@diskbox.stillhq.com>
 In-Reply-To: <200403180103.i2I13vI31101@diskbox.stillhq.com>
@@ -21,27 +21,18 @@ Kernel version: applies to 2.6.5-rc1
 
 
 
-diff -Nur linux-2.6.2-rc1-cset-20040125_0129/arch/sh/boards/dreamcast/rtc.c linux-2.6.2-rc1-cset-20040125_0129-params/arch/sh/boards/dreamcast/rtc.c
---- linux-2.6.2-rc1-cset-20040125_0129/arch/sh/boards/dreamcast/rtc.c	2004-01-26 09:24:53.000000000 +1100
-+++ linux-2.6.2-rc1-cset-20040125_0129-params/arch/sh/boards/dreamcast/rtc.c	2004-01-27 08:51:33.000000000 +1100
-@@ -28,7 +28,7 @@
+diff -Nur linux-2.6.2-rc1-cset-20040125_0129/drivers/usb/media/vicam.c linux-2.6.2-rc1-cset-20040125_0129-params/drivers/usb/media/vicam.c
+--- linux-2.6.2-rc1-cset-20040125_0129/drivers/usb/media/vicam.c	2004-01-26 09:26:06.000000000 +1100
++++ linux-2.6.2-rc1-cset-20040125_0129-params/drivers/usb/media/vicam.c	2004-01-30 17:39:05.000000000 +1100
+@@ -1269,6 +1269,8 @@
  
  /**
-  * aica_rtc_gettimeofday - Get the time from the AICA RTC
-- * @tv: pointer to resulting timeval
-+ * @ts: pointer to resulting timespec
+  *	vicam_probe
++ *	@intf: the interface
++ *	@id: the device id
   *
-  * Grabs the current RTC seconds counter and adjusts it to the Unix Epoch.
-  */
-@@ -51,7 +51,7 @@
- 
- /**
-  * aica_rtc_settimeofday - Set the AICA RTC to the current time
-- * @tv: contains the timeval to set
-+ * @secs: contains the time_t to set
-  *
-  * Adjusts the given @tv to the AICA Epoch and sets the RTC seconds counter.
-  */
+  *	Called by the usb core when a new device is connected that it thinks
+  *	this driver might be interested in.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
