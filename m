@@ -1,16 +1,16 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 24 Mar 2005 16:22:11 +0000
-Subject: [KJ] [PATCH] printk : drivers/block/paride/epat.c
-Message-Id: <20050324162211.GC1855@rhum.iomeda.fr>
+Date: Fri, 25 Mar 2005 13:21:59 +0000
+Subject: [KJ] [PATCH] printk : drivers/block/paride/fit2.c
+Message-Id: <20050325132159.GJ14356@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vA66WO2vHvL/CRSR"
+Content-Type: multipart/mixed; boundary="3lcZGd9BuhuYXNfi"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050324161716.GA1855@rhum.iomeda.fr>
 In-Reply-To: <20050324161716.GA1855@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
 
---vA66WO2vHvL/CRSR
+--3lcZGd9BuhuYXNfi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -20,35 +20,25 @@ printk() calls should include appropriate KERN_* constant.
 Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-
---vA66WO2vHvL/CRSR
+--3lcZGd9BuhuYXNfi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="patch-2.6.12-rc1_drivers_block_paride_epat.c.diff"
+	filename="patch-2.6.12-rc1_drivers_block_paride_fit2.c.diff"
 
-diff -urpN -X dontdiff a/drivers/block/paride/epat.c b/drivers/block/paride/epat.c
---- a/drivers/block/paride/epat.c	2005-03-18 02:34:58.000000000 +0100
-+++ b/drivers/block/paride/epat.c	2005-03-22 16:41:03.000000000 +0100
-@@ -280,7 +280,7 @@ static int epat_test_proto( PIA *pi, cha
-         epat_disconnect(pi);
+diff -urpN -X dontdiff a/drivers/block/paride/fit2.c b/drivers/block/paride/fit2.c
+--- a/drivers/block/paride/fit2.c	2005-03-18 02:34:18.000000000 +0100
++++ b/drivers/block/paride/fit2.c	2005-03-22 16:41:59.000000000 +0100
+@@ -115,7 +115,7 @@ static void fit2_disconnect ( PIA *pi )
  
-         if (verbose)  {
--            printk("%s: epat: port 0x%x, mode %d, ccr %x, test=(%d,%d,%d)\n",
-+            printk(KERN_DEBUG "%s: epat: port 0x%x, mode %d, ccr %x, test=(%d,%d,%d)\n",
- 		   pi->device,pi->port,pi->mode,cc,e[0],e[1],f);
- 	}
- 	
-@@ -298,7 +298,7 @@ static void epat_log_adapter( PIA *pi, c
-         ver = RR(0xb);
-         epat_disconnect(pi);
+ static void fit2_log_adapter( PIA *pi, char * scratch, int verbose )
  
--	printk("%s: epat %s, Shuttle EPAT chip %x at 0x%x, ",
-+	printk(KERN_INFO "%s: epat %s, Shuttle EPAT chip %x at 0x%x, ",
- 		pi->device,EPAT_VERSION,ver,pi->port);
- 	printk("mode %d (%s), delay %d\n",pi->mode,
- 		mode_string[pi->mode],pi->delay);
+-{       printk("%s: fit2 %s, FIT 2000 adapter at 0x%x, delay %d\n",
++{	printk(KERN_INFO "%s: fit2 %s, FIT 2000 adapter at 0x%x, delay %d\n",
+                 pi->device,FIT2_VERSION,pi->port,pi->delay);
+ 
+ }
 
---vA66WO2vHvL/CRSR
+--3lcZGd9BuhuYXNfi
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---vA66WO2vHvL/CRSR--
+--3lcZGd9BuhuYXNfi--
