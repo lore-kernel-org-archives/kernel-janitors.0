@@ -1,42 +1,39 @@
-From: Dave Jones <davej@redhat.com>
-Date: Fri, 15 Oct 2004 15:46:58 +0000
-Subject: [KJ] Re: janitoring printk with no KERN_ constants,
-Message-Id: <20041015154658.GD23638@redhat.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 14 Oct 2004 18:33:40 +0000
+Subject: [KJ] [PATCH] i2c/i2c-ibm_iic: replace schedule_timeout() with
+Message-Id: <20041014183340.GF2214@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47552460359016191=="
+Content-Type: multipart/mixed; boundary="===============95873424577520194=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1097855099.3004.64.camel@pdp11.tsho.org>
-In-Reply-To: <1097855099.3004.64.camel@pdp11.tsho.org>
-To: Daniele Pizzoni <auouo@tin.it>
-Cc: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>, pazke@orbita.don.sitek.net
+To: kernel-janitors@vger.kernel.org
 
---===============47552460359016191==
+--===============95873424577520194==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Oct 15, 2004 at 05:44:59PM +0200, Daniele Pizzoni wrote:
+Any comments would be appreciated.
 
- > I ask, what rationale there is behind checking all printks to include
- > the "appropriate" constant? Should then we make printk fail when called
- > without KERN_ constant? Or can I force with a sed script all defaulted
- > printk to KERN_WARNING?
+Description: Use msleep_interruptible() instead of schedule_timeout() to
+guarantee the task delays as expected. Remove the unnecessary
+set_current_state() following the if, as schedule_timeout() [and thus,
+mlseep_interruptible()] is guaranteed to return in TASK_RUNNING.
 
-No. Consider this..
+--- 2.6.9-rc4-vanilla/drivers/i2c/busses/i2c-ibm_iic.c	2004-10-14 11:24:43.000000000 -0700
++++ 2.6.9-rc4/drivers/i2c/busses/i2c-ibm_iic.c	2004-10-14 11:30:08.000000000 -0700
+@@ -416,10 +416,8 @@ static int iic_wait_for_tc(struct ibm_ii
+     		init_waitqueue_entry(&wait, current);
+ 		
+ 		add_wait_queue(&dev->wq, &wait);
+-		set_current_state(TASK_INTERRUPTIBLE);
+ 		if (in_8(&iic->sts) & STS_PT)
+-			schedule_timeout(dev->adap.timeout * HZ);
+-		set_current_state(TASK_RUNNING);
++			msleep_interruptible(dev->adap.timeout * 1000);
+ 		remove_wait_queue(&dev->wq, &wait);
+ 		
+ 		if (unlikely(signal_pending(current))){
 
-	printk (KERN_INFO "blah blah ");
-	if (foo)
-		printk ("%s", stringptr);
-	else
-		printk ("%d", number);
-	printk ("\n");
-
-There's nothing wrong with any of those printk's, so you
-cannot do the checks you mention above.
-
-		Dave
-
-
---===============47552460359016191==
+--===============95873424577520194==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============47552460359016191==--
+--===============95873424577520194==--
