@@ -1,76 +1,39 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 07 Jan 2005 19:40:13 +0000
-Subject: [KJ] [UPDATE PATCH] ide/ide-cd: use ssleep() instead of
-Message-Id: <20050107194013.GB2924@us.ibm.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:22 +0000
+Subject: [KJ] [PATCH] [22/29] sis_main.c - vfree() checking cleanups
+Message-Id: <41db1142.75a02d44.2568.07c3@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45141705791005138=="
+Content-Type: multipart/mixed; boundary="===============55109265041702638=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041225004846.GA19373@nd47.coderock.org>
-In-Reply-To: <20041225004846.GA19373@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
-Cc: axboe@suse.de
+To: kernel-janitors@vger.kernel.org
 
---===============45141705791005138==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============55109265041702638==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 25, 2004 at 01:48:46AM +0100, Domen Puncer wrote:
-> Hi.
-> 
-> Santa brought another present :-)
-> 
-> I'll start mailing new patches these days, and after external trees get
-> merged, I'll be bugging you with the old ones.
-> 
-> 
-> Patchset is at http://coderock.org/kj/2.6.10-kj/
+sis_main.c vfree() checking cleanups.
 
-<snip>
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-> msleep-drivers_ide_ide-cd.patch
-
-Please consider updating to the following patch:
-
-Description: Uses ssleep() in place of cdrom_sleep() to guarantee the task
-delays as expected. Remove cdrom_sleep() definition, as this is the only place
-where it is called.
-
-Signed-off-by: Nishanth Aravamudan
+ sis_main.c |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
 
 
---- 2.6.10-v/drivers/ide/ide-cd.c	2004-12-24 13:34:33.000000000 -0800
-+++ 2.6.10/drivers/ide/ide-cd.c	2005-01-05 14:23:05.000000000 -0800
-@@ -1520,19 +1520,6 @@ static ide_startstop_t cdrom_do_packet_c
- }
+--- linux-2.6.10-vanilla/drivers/video/sis/sis_main.c	2004-12-24 13:35:15.000000000 -0800
++++ linux-2.6.10/drivers/video/sis/sis_main.c	2005-01-04 11:37:30.000000000 -0800
+@@ -5676,7 +5676,7 @@
+ 	iounmap(ivideo->video_vbase);
+ 	iounmap(ivideo->mmio_vbase);
+ 	if(ivideo->bios_vbase) iounmap(ivideo->bios_vbase);
+-	if(ivideo->bios_abase)    vfree(ivideo->bios_abase);
++	vfree(ivideo->bios_abase);
  
- 
--/* Sleep for TIME jiffies.
--   Not to be called from an interrupt handler. */
--static
--void cdrom_sleep (int time)
--{
--	int sleep = time;
--
--	do {
--		set_current_state(TASK_INTERRUPTIBLE);
--		sleep = schedule_timeout(sleep);
--	} while (sleep);
--}
--
- static
- int cdrom_queue_packet_command(ide_drive_t *drive, struct request *rq)
- {
-@@ -1567,7 +1554,7 @@ int cdrom_queue_packet_command(ide_drive
- 				/* The drive is in the process of loading
- 				   a disk.  Retry, but wait a little to give
- 				   the drive time to complete the load. */
--				cdrom_sleep(2 * HZ);
-+				ssleep(2);
- 			} else {
- 				/* Otherwise, don't retry. */
- 				retries = 0;
+ 	/* Release mem regions */
+ 	release_mem_region(ivideo->video_base, ivideo->video_size);
 
---===============45141705791005138==
+
+
+--===============55109265041702638==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45141705791005138==--
+--===============55109265041702638==--
