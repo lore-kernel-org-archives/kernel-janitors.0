@@ -1,35 +1,46 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 26 Jan 2005 08:35:22 +0000
-Subject: Re: [KJ] [PATCH 19/53] cyberfb: Clean up printk()'s in
-Message-Id: <200501261133.01885.adobriyan@mail.ru>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 30 Jan 2005 12:10:27 +0000
+Subject: [KJ] Re: 12/34: cdrom/cdu31a: replace interruptible_sleep_on() with
+Message-Id: <20050130121027.GC3835@masina.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64256851271342041=="
+Content-Type: multipart/mixed; boundary="===============59698879964300122=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050125231118.10418.95345.88697@localhost.localdomain>
-In-Reply-To: <20050125231118.10418.95345.88697@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============64256851271342041==
+--===============59698879964300122==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-On Wednesday 26 January 2005 01:11, James Nelson wrote:
+On 25/01/05 15:14 -0800, Nishanth Aravamudan wrote:
+> Hi,
+> 
+> Please consider applying.
+> 
+> Description: Use wait_event_interruptible() instead of the deprecated
+> interruptible_sleep_on(). The patch is straight-forward as the macros should 
+> result in the same execution. Patch is compile-tested (still throws out warnings
+> regarding {save,restore}_flags()).
 
-> --- linux-2.6.11-rc2-mm1-original/drivers/video/cyberfb.c
-> +++ linux-2.6.11-rc2-mm1/drivers/video/cyberfb.c
+It also indirectly calls schedule() with interrupts disabled... this
+can't be right?
 
-> -		printk("CV64 driver: Illegal clock frequency %ld, using 25MHz\n",
-> +		printk(KERN_WARNING "CV64 driver: Illegal clock frequency %ld, using 25MHz\n",
 
-It's called "cyberfb" in Makefile. Some functions in .c file are
-prefixed with "cv64_". I suggest to remove the word "driver" and
-choose either "cyberfb" or "cv64".
+	Domen
 
-	Alexey
+> 
+>  	cli();
+> -	while (sony_inuse) {
+> -		interruptible_sleep_on(&sony_wait);
+> -		if (signal_pending(current)) {
+> -			restore_flags(flags);
+> -			return -EAGAIN;
+> -		}
+> +	wait_event_interruptible(sony_wait, sony_inuse);
+> +	if (signal_pending(current)) {
+> +		restore_flags(flags);
+> +		return -EAGAIN;
 
---===============64256851271342041==
+--===============59698879964300122==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64256851271342041==--
+--===============59698879964300122==--
