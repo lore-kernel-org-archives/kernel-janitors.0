@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 20:45:25 +0000
-Subject: [Kernel-janitors] [PATCH] isdn/boardergo: replace
-Message-Id: <20040723204525.GH2675@us.ibm.com>
+Date: Mon, 26 Jul 2004 22:56:53 +0000
+Subject: [Kernel-janitors] [PATCH] video/saa6752hs: replace
+Message-Id: <20040726225653.GS1897@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82240028366296247=="
+Content-Type: multipart/mixed; boundary="===============95171121366793043=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============82240028366296247==
+--===============95171121366793043==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -38,30 +38,26 @@ task delays for the desired time.
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/isdn/hysdn/boardergo.c	2004-06-16 05:19:26.000000000 +0000
-+++ linux-dev/drivers/isdn/hysdn/boardergo.c	2004-07-12 18:07:54.000000000 +0000
-@@ -246,8 +246,7 @@ ergo_writebootimg(struct HYSDN_CARD *car
- 		/* the interrupts are still masked */
- 
- 		sti();
+--- linux-vanilla/drivers/media/video/saa7134/saa6752hs.c	2004-06-16 05:20:04.000000000 +0000
++++ linux-dev/drivers/media/video/saa7134/saa6752hs.c	2004-07-12 18:54:32.000000000 +0000
+@@ -168,13 +168,11 @@ static int saa6752hs_chip_command(struct
+ 		}
+ 	
+ 		// wait a bit
 -		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout((20 * HZ) / 1000);	/* Timeout 20ms */
-+		msleep(20);
+-		schedule_timeout(HZ/100);
++		msleep(10);
+ 	}
  
- 		if (((tDpramBootSpooler *) card->dpram)->Len != DPRAM_SPOOLER_DATA_SIZE) {
- 			if (card->debug_flags & LOG_POF_CARD)
-@@ -386,8 +385,7 @@ ergo_waitpofready(struct HYSDN_CARD *car
- 			return (0);	/* success */
- 		}		/* data has arrived */
- 		sti();
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout((50 * HZ) / 1000);	/* Timeout 50ms */
-+		msleep(50);
- 	}			/* wait until timeout */
- 
- 	if (card->debug_flags & LOG_POF_CARD)
+ 	// delay a bit to let encoder settle
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	schedule_timeout(HZ/20);
++	msleep(50);
+ 	
+ 	// done
+   	return status;
 
---===============82240028366296247==
+--===============95171121366793043==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82240028366296247==--
+--===============95171121366793043==--
