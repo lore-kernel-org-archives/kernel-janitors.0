@@ -1,7 +1,7 @@
 From: "Randy.Dunlap" <rddunlap@osdl.org>
-Date: Mon, 23 Feb 2004 00:23:06 +0000
+Date: Mon, 23 Feb 2004 00:35:44 +0000
 Subject: Re: [Kernel-janitors] [PATCH] 90 patches for unnecessary casts
-Message-Id: <20040222162306.1e587b6f.rddunlap@osdl.org>
+Message-Id: <20040222163544.27a4fc9a.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20040125105212.GA2064@localhost>
 In-Reply-To: <20040125105212.GA2064@localhost>
@@ -25,14 +25,10 @@ On Sun, 22 Feb 2004 13:05:20 +0100 Carlo Perassi <carlo@linux.it> wrote:
 | - drivers/net/tc35815.c is fine
 | - drivers/net/68360enet.c doesn't exist. which file do you mean?
 
-Hm, that's a good question.  Your 90patches tarball had a patch
-like so:
---- drivers/net/68360enet.c	2004-01-09 07:59:10.000000000 +0100
-+++ mod/drivers/net/68360enet.c	2004-01-25 01:39:25.000000000 +0100
+I see, it was in 2.6.1 but has now disappeared ... or been
+reinvented as fec.c.... which appears to need 1 unneeded cast
+repaired.
 
-in "files8m2RO".  So where/why did you make that patch?
-
-Thanks,
 --
 ~Randy
 _______________________________________________
