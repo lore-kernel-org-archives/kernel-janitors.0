@@ -1,94 +1,56 @@
-From: Multipay Gateway Corporation <kazz@earthlink.com>
-Date: Tue, 17 Feb 2004 04:28:43 +0000
-Subject: [KJ] hot job vacancies
-Message-Id: <001101c3f50e$a896c0f9$84cb0ba5@earthlink.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============77093526541082003=="
+From: Mike <mike@111.com>
+Date: Fri, 20 Feb 2004 02:48:24 +0000
+Subject: Report 18760!
+Message-Id: <F5AKFK55HGCFA4K5@111.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============77093526541082003==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-Mesdames, Messieurs,
-
-Nous sommes ravis d���annoncer le renforcement imminent en personnel de notre ���quipe, et le recrutement de personnel ��� l������tranger qui en r���sulte. L���avenir
-se construit avec nous. Depuis d���but 1997, nous sommes parvenus ��� d���incroyables r���sultats, notre personnel assistant et administratif a quadrupl��� et notre
-niveau d���activit��� financi���re a tripl���. La soci���t��� est fi���re d���annoncer qu���au quotidien, un nombre croissant de clients satisfaits de nos services choisit
-Multipay Gateway Corporation, car nos services se fondent sur la Ponctualit���, la Perspective d���une croissance ���quilibr���e par p���riode et sur notre
-d���vouement envers nos clients pour toute affaire, soit-elle mineure ou majeure. Multipay Gateway Corporation est pr���te ��� ouvrir ses portes ��� de nouveaux
-talents et il se peut qu���un brillant avenir vous attende.
-
-Notre Soci���t��� cherche des personnes pr���tes ��� construire leur avenir AVEC NOUS. Les places pour lesquelles vous pouvez postuler actuellement sont fond���es
-sur une coop���ration mutuelle et une confiance optimale l���un envers l���autre. Nous savons que vous en avez la capacit��� et peut-���tre que d���s demain, la
-routine quotidienne laissera la place ��� une nouvelle ���re, mise en place d���s ��� pr���sent par Multiplay Gateway Corporation et avant tout par Vous. Multipay
-Gateway Corporation sollicite votre sens des responsabilit���s et votre assiduit���, et vous offre en retour une stabilit��� financi���re et sociale.
-
-Il va de soi qu���avec l������volution constante du march��� des affaires, toute soci���t��� cherche ��� mettre en place et ��� appliquer des normes de service toujours
-plus ���lev���es. Gr���ce aux efforts ESSENTIELS et EXCEPTIONNELS de son ���quipe, Multipay Gateway Corporation est confiante en son avenir. 
-
-Votre coop���ration avec Multipay Gateway Corporation Vous permet de participer au concours pour les places suivantes���:
-
-Assistant Courrier���: Si Vous ���tes cr���atif, ind���pendant, concentr���, pr���cis, si vous avez le sens du d���tail, que vous ���tes professionnel, flexible,
-comp���tent, travailleur, poli, que vous avez un but et que vous voulez r���ussir, alors Vous pourrez d���crocher ce poste. Veuillez nous envoyer votre lettre de
-motivation avec un CV joint.
-
-Responsable financier : 1800 $ par mois + 4,5���% de chaque transaction en fonction du montant des transactions, qui varient de 1,000 $ ��� 25,000 $. Le
-nombre de transactions auxquelles vous prendrez part n'est pas limit��� et ne d���pend que de vos comp���tences personnelles, de votre sens des responsabilit���s
-et de votre aptitude ��� communiquer.
-
-Distributeur : Vous devez vous assurer que le produit r���pond aux crit���res de satisfaction de nos clients, qu���il n���a subi aucun dommage et le renvoyer ��� la
-destination finale selon nos instructions. Ainsi, si vous ���tes int���ress��� par cette orientation professionnelle, vous pouvez devenir le maillon entre
-l'acheteur, le vendeur et le repr���sentant de notre soci���t���.
-
-Compilateur de statistiques���: Le quatri���me poste que nous avons ��� vous proposer est probablement celui qui comporte le plus de responsabilit���s. 
-Effectivement, vous conna���trez tout sur notre soci���t��� et ses affaires���; vous serez celui qui effectuera toutes les recherches et tous les montages apr���s
-avoir proc���d��� ��� l'analyse des donn���es que vous obtiendrez de centaines de personnes parmi nos salari���s. Trois postes seulement sont ��� pourvoir pour cette
-fonction, mais tout le monde ne peut certes pas postuler . 
-Vous compilez des statistiques depuis notre bureau d'exploitation���: impossible de travailler chez-soi, mais au bureau uniquement���! Soyez le premier ��� ���tre
-t���moin de tendances positives ou n���gatives de la soci���t��� en devenant le premier ��� voir les statistiques en temps r���el dans les diff���rents domaines
-d'activit��� pratiqu���s par notre soci���t���.
-
-Notre si���ge est ��� New -York. Toute information que vous recevrez ��� partir de maintenant en provenance de nos assistants managers et de notre personnel
-sera uniquement en ANGLAIS. Cela signifie que la pratique de l���anglais de BASE est n���cessaire pour travailler avec NOTRE soci���t���.
-
-Multipay Gateway Corporation demeure parmi les meilleurs fournisseurs de service dans cette branche sp���cifique. Nous devons notre succ���s et notre
-popularit��� aupr���s de nos clients, et ��� l���efficacit��� maximale de nos employ���s de talent. Ni d���lais ni retards, ni tromperies ou tout autre type d���activit���s
-frauduleuses���! Notre soci���t��� est loyale et un des traits principaux de sa prosp���rit��� comprend l���honn���tet��� et le d���vouement de tous ��� Multipay Gateway
-Corporation
-
-Si notre offre vous int���resse, si Vous vous sentez confiant et si vous correspondez aux crit���res d���crits ici, veuillez nous envoyer une lettre de
-motivation avec votre CV, et soyez certain que vous recevrez une r���ponse tr���s rapidement. Tout candidat aura sa chance de r���ussite avec Multipay Gateway
-Corporation.
-
-Veillez noter que toute correspondance ult���rieure se fera uniquement en anglais���!
-Gagner un salaire minimum de 1500$ avec Multipay Gateway Corporation et avoir un bonus en % ne d���pend que de votre activit��� et de votre efficacit���.
-
-Nous vous remercions du temps que vous avez bien voulu prendre ��� lire cette publicit���.
-Si cette offre Vous int���resse, nous attendons votre lettre de motivation avec votre CV joint.
-
-Tr���s cordialement, le personnel de recrutement de Multipay Gateway Corporation.
-
-
-E-mail: jobs@mpgateway.net
-
-
-We are sorry if You received this email against Your own will. We took Your email address from the open sources with job advertisements. If You don't want
-to reply to this email, just close the letter and delete it.
-Sorry for spending Your precious time.
+<table border=3D0 cellspacing=3D0 cellpadding=3D0>
+<tr><td width)9 valign=3Dtop bgcolor=3D#99CC00><p align=CEnter style=3D'tex=
+t-align:center;font-size:16.0pt;font-family:Arial'><b>W<!--k001-->e O<!--A8=
+66-->ff<!--T338-->er</b><br>yo<!--v420-->ur att<!--g308-->ent<!--m172-->ion=
+ b<!--v457-->est f<!--a010-->rom <!--i571-->the <b>b<!--p852-->est  in<!--c=
+762-->ce<!--P849-->st si<!--I573-->te</b>. In 2003 we have occ<!--m425-->up=
+ied 1 p<!--X455-->lace amon<!--Z273-->gst our ri<!--t529-->vals. <!--d221--=
+>We a<!--q388-->nd  pre<!--d564-->sently re<!--O730-->main the be<!--W025--=
+>st.</p></td>
+<td width(9 rowspan=3D2 bgcolor=3D#339966><p align=CEnter style=3D'text-ali=
+gn:center;font-size:16.0pt;font-family:Arial;color:aqua'><b>To<!--r072-->da=
+y we  wa<!--i315-->nt to pres<!--V961-->ent to <!--f599-->you t<!--k851-->h=
+e n<!--e884-->ew co<!--E912-->llectio<!--b769-->ns of BE<!--c243-->ST I<!--=
+P255-->NC<!--C753-->EST 20<!--K095-->04. Y<!--l692-->ou can s<!--I741-->ee:=
+  fat<!--Z626-->hers ov<!--T815-->er 45 y.o <!--I206-->and j<!--t583-->ust =
+1<!--Y408-->8 <!--K823-->y<!--Z409-->.o=A0 da<!--H819-->ught<!--Z378-->ers,=
+ m<!--X642-->atu<!--H715-->re mo<!--r496-->ms and ine<!--a927-->xperie<!--Y=
+685-->nced  so<!--w025-->ns, dec<!--P818-->repit gr<!--V259-->andf<!--O230-=
+->athers a<!--Z177-->nd ju<!--P032-->icy gra<!--U314-->nddau<!--k864-->ghte=
+<!--V566-->rs...<br><br>We h<!--z234-->ave al<!--m837-->l!</b></p></td></tr>
+<tr><td width)9 bgcolor=3Dteal><p align=CEnter style=3D'text-align:center;f=
+ont-size:14.0pt;font-family:Arial'>We not figure itself powerfully to  adve=
+rtise that to prove our popu<!--X418-->larity.O<!--o344-->ur popul<!--O268-=
+->arity w<!--I385-->ill sh<!--C189-->ow to Y<!--y411-->ou o<!--T807-->ur co=
+<!--j254-->llecti<!--h987-->ons, as we<!--Q370-->ll as mo<!--t112-->re then=
+ 60<!--T056-->00 acti<!--P483-->ve me<!--O311-->mbe<!--R839-->rs of o<!--M8=
+71-->ur s<!--x951-->ite.<br><br>
+<a href=3D"http://193.233.192.197/ftp/incoming/spec1.html"><font color=3Dye=
+llow>It<!--k787-->haca, w<!--N176-->hat yo<!--v913-->u wa<!--T935-->it?!Be<=
+!--E230-->come fi<!--q888-->rst th<!--x119-->is ye<!--E203-->ar! En<!--t290=
+-->joy wi<!--q396-->th exc<!--O475-->lus<!--d292-->ives 20<!--Q884-->04...<=
+/font></p></a>
+</td></tr></table>
 
 
 
---===============77093526541082003==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+-------------------------------------------------------
+SF.Net is sponsored by: Speed Start Your Linux Apps Now.
+Build and deploy apps & Web services for Linux with
+a free DVD software kit from IBM. Click Now!
+http://ads.osdn.com/?ad_id=1356&alloc_id438&op=3Dclick
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============77093526541082003==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
