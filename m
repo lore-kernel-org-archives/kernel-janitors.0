@@ -1,14 +1,14 @@
 From: Hanna Linder <hannal@us.ibm.com>
-Date: Thu, 07 Oct 2004 23:10:06 +0000
-Subject: [Kernel-janitors] [PATCH 2.6][8/12] pmac_pci.c replace
-Message-Id: <31870000.1097190606@w-hlinder.beaverton.ibm.com>
+Date: Thu, 07 Oct 2004 23:40:17 +0000
+Subject: [Kernel-janitors] [PATCH 2.6][10/12] prep_pci.c replace
+Message-Id: <35460000.1097192417@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============75789459062469755=="
+Content-Type: multipart/mixed; boundary="===============91991140802368232=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: lkml <linux-kernel@vger.kernel.org>
 Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, greg@kroah.com, hannal@us.ibm.com, paulus@samba.org, benh@kernel.crashing.org
 
---===============75789459062469755==
+--===============91991140802368232==
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
@@ -25,30 +25,72 @@ IBM Linux Technology Center
 Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
 ---
-diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/pmac_pci.c linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/pmac_pci.c
---- linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/pmac_pci.c	2004-10-07 15:54:30.000000000 -0700
-+++ linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/pmac_pci.c	2004-10-07 16:01:41.000000000 -0700
-@@ -889,7 +889,7 @@ pcibios_fixup_OF_interrupts(void)
- 	 * should find the device node and apply the interrupt
- 	 * obtained from the OF device-tree
- 	 */
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		struct device_node *node;
- 		node = pci_device_to_OF_node(dev);
- 		/* this is the node, see if it has interrupts */
-@@ -989,7 +989,7 @@ pmac_pcibios_after_init(void)
- 	 *
- 	 * -- BenH
- 	 */
--	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
-+	for_each_pci_dev(dev) {
- 		if ((dev->class >> 16) == PCI_BASE_CLASS_STORAGE)
- 			pci_enable_device(dev);
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/prep_pci.c linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/prep_pci.c
+--- linux-2.6.9-rc3-mm3cln/arch/ppc/platforms/prep_pci.c	2004-09-29 20:05:51.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch/arch/ppc/platforms/prep_pci.c	2004-10-07 16:29:09.995482096 -0700
+@@ -1069,7 +1069,7 @@ prep_pib_init(void)
+ 		 * Perform specific configuration for the Via Tech or
+ 		 * or Winbond PCI-ISA-Bridge part.
+ 		 */
+-		if ((dev = pci_find_device(PCI_VENDOR_ID_VIA,
++		if ((dev = pci_get_device(PCI_VENDOR_ID_VIA,
+ 					PCI_DEVICE_ID_VIA_82C586_1, dev))) {
+ 			/*
+ 			 * PPCBUG does not set the enable bits
+@@ -1080,7 +1080,7 @@ prep_pib_init(void)
+ 			reg |= 0x03; /* IDE: Chip Enable Bits */
+ 			pci_write_config_byte(dev, 0x40, reg);
+ 		}
+-		if ((dev = pci_find_device(PCI_VENDOR_ID_VIA,
++		if ((dev = pci_get_device(PCI_VENDOR_ID_VIA,
+ 						PCI_DEVICE_ID_VIA_82C586_2,
+ 						dev)) && (dev->devfn = 0x5a)) {
+ 			/* Force correct USB interrupt */
+@@ -1089,7 +1089,7 @@ prep_pib_init(void)
+ 					PCI_INTERRUPT_LINE,
+ 					dev->irq);
+ 		}
+-		if ((dev = pci_find_device(PCI_VENDOR_ID_WINBOND,
++		if ((dev = pci_get_device(PCI_VENDOR_ID_WINBOND,
+ 					PCI_DEVICE_ID_WINBOND_83C553, dev))) {
+ 			 /* Clear PCI Interrupt Routing Control Register. */
+ 			short_reg = 0x0000;
+@@ -1102,7 +1102,7 @@ prep_pib_init(void)
+ 		}
  	}
+ 
+-	if ((dev = pci_find_device(PCI_VENDOR_ID_WINBOND,
++	if ((dev = pci_get_device(PCI_VENDOR_ID_WINBOND,
+ 				   PCI_DEVICE_ID_WINBOND_82C105, dev))){
+ 		if (OpenPIC_Addr){
+ 			/*
+@@ -1207,7 +1207,7 @@ prep_pcibios_fixup(void)
+ 	printk("Setting PCI interrupts for a \"%s\"\n", Motherboard_map_name);
+ 
+ 	/* Iterate through all the PCI devices, setting the IRQ */
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		/*
+ 		 * If we have residual data, then this is easy: query the
+ 		 * residual data for the IRQ line allocated to the device.
+@@ -1260,12 +1260,13 @@ prep_pcibios_after_init(void)
+ 	 * instead of 0xc0000. vgacon.c (for example) is completely unaware of
+ 	 * this little quirk.
+ 	 */
+-	dev = pci_find_device(PCI_VENDOR_ID_WD, PCI_DEVICE_ID_WD_90C, NULL);
++	dev = pci_get_device(PCI_VENDOR_ID_WD, PCI_DEVICE_ID_WD_90C, NULL);
+ 	if (dev) {
+ 		dev->resource[1].end -= dev->resource[1].start;
+ 		dev->resource[1].start = 0;
+ 		/* tell the hardware */
+ 		pci_write_config_dword(dev, PCI_BASE_ADDRESS_1, 0x0);
++		pci_dev_put(dev);
+ 	}
+ #endif
+ }
 
 
---===============75789459062469755==
+--===============91991140802368232==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +101,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============75789459062469755==--
+--===============91991140802368232==--
