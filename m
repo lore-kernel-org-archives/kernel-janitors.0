@@ -1,44 +1,63 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Date: Fri, 21 Jan 2005 00:32:14 +0000
-Subject: [KJ] Re: [PATCH 18/39] net/core: use wait_event_timeout()
-Message-Id: <1106267534.7955.36.camel@pegasus>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 11 Jan 2005 00:56:30 +0000
+Subject: [KJ] [UPDATE PATCH] sbus/envctrl: replace schedule_timeout() with
+Message-Id: <20050111005630.GL9186@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71748241342263475=="
+Content-Type: multipart/mixed; boundary="===============022804889654032268=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050120235123.GG2600@us.ibm.com>
-In-Reply-To: <20050120235123.GG2600@us.ibm.com>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Cc: Max Krasnyansky <maxk@qualcomm.com>, bluez-devel@lists.sf.net, kernel-janitors@lists.osdl.org
+References: <20050110164703.GD14307@nd47.coderock.org>
+In-Reply-To: <20050110164703.GD14307@nd47.coderock.org>
+To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
---===============71748241342263475==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============022804889654032268==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Nishanth,
+On Mon, Jan 10, 2005 at 05:47:03PM +0100, Domen Puncer wrote:
+> Patchset of 171 patches is at http://coderock.org/kj/2.6.10-bk13-kj/
+> 
+> Quick patch summary: about 30 new, 30 merged, 30 dropped.
+> Seems like most external trees are merged in -linus, so i'll start
+> (re)sending old patches.
 
-> Description: Use wait_event_timeout() instead of custom wait-queue code.
-> The current code uses TASK_INTERRUPTIBLE but only cares about timing out and the
-> wq event taking place (does not actively do anything in response to signals), so
-> wait_event_timeout() should be ok.
+<snip>
 
-this one results in:
+> msleep_interruptible-drivers_sbus_char_envctrl.patch
 
-  CC [M]  net/bluetooth/hidp/core.o
-net/bluetooth/hidp/core.c: In function `hidp_session':
-net/bluetooth/hidp/core.c:547: warning: passing arg 1 of `prepare_to_wait' from incompatible pointer type
-net/bluetooth/hidp/core.c:547: warning: passing arg 1 of `finish_wait' from incompatible pointer type
-net/bluetooth/hidp/core.c:551: warning: passing arg 1 of `prepare_to_wait' from incompatible pointer type
-net/bluetooth/hidp/core.c:551: warning: passing arg 1 of `finish_wait' from incompatible pointer type
+Please consider updating to the following patch:
 
-Please fix this and re-submit.
+Description: Use msleep_interruptible() instead of
+schedule_timeout() to guarantee the task delays as expected. Change the units of
+poll_interval to msecs as it is only used in this delay.
 
-Regards
-
-Marcel
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
+--- 2.6.10-v/drivers/sbus/char/envctrl.c	2004-12-24 13:34:01.000000000 -0800
++++ 2.6.10/drivers/sbus/char/envctrl.c	2005-01-05 14:23:05.000000000 -0800
+@@ -1007,7 +1007,7 @@ static int kenvctrld(void *__unused)
+ 		return -ENODEV;
+ 	}
+ 
+-	poll_interval = 5 * HZ; /* TODO env_mon_interval */
++	poll_interval = 5000; /* TODO env_mon_interval */
+ 
+ 	daemonize("kenvctrld");
+ 	allow_signal(SIGKILL);
+@@ -1016,10 +1016,7 @@ static int kenvctrld(void *__unused)
+ 
+ 	printk(KERN_INFO "envctrl: %s starting...\n", current->comm);
+ 	for (;;) {
+-		current->state = TASK_INTERRUPTIBLE;
+-		schedule_timeout(poll_interval);
+-
+-		if(signal_pending(current))
++		if(msleep_interruptible(poll_interval))
+ 			break;
+ 
+ 		for (whichcpu = 0; whichcpu < ENVCTRL_MAX_CPU; ++whichcpu) {
 
---===============71748241342263475==
+--===============022804889654032268==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============71748241342263475==--
+--===============022804889654032268==--
