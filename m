@@ -1,36 +1,37 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 16 Sep 2004 16:50:49 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 13/33] char/ipmi_si_intf: add
-Message-Id: <20040916165049.GF1777@us.ibm.com>
+Date: Tue, 21 Sep 2004 21:57:58 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 2/40] net/act2001-sir: replace
+Message-Id: <20040921215758.GF1946@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============65724424370486778=="
+Content-Type: multipart/mixed; boundary="===============99270984041614951=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============65724424370486778==
+--===============99270984041614951==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. 
+Any comments would be appreciated.
 
-Description: Add set_current_state() before schedule_timeout() so a
-delay is achieved. Without the addition, schedule_timeout() returns
-immediately.
+Description: Use msleep() instead of schedule_timeout()
+to guarantee the task delays as expected.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.9-rc1-mm4-vanilla/drivers/char/ipmi/ipmi_si_intf.c	2004-09-09 23:05:39.000000000 -0700
-+++ 2.6.9-rc1-mm4/drivers/char/ipmi/ipmi_si_intf.c	2004-09-10 10:59:43.000000000 -0700
-@@ -2287,6 +2287,7 @@ void __exit cleanup_one_si(struct smi_in
- 	   interface is in a clean state. */
- 	while ((to_clean->curr_msg) || (to_clean->si_state != SI_NORMAL)) {
- 		poll(to_clean);
-+		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule_timeout(1);
- 	}
+--- 2.6.9-rc2-vanilla/drivers/net/irda/act200l-sir.c	2004-09-13 17:15:41.000000000 -0700
++++ 2.6.9-rc2/drivers/net/irda/act200l-sir.c	2004-09-14 17:17:54.000000000 -0700
+@@ -177,8 +177,7 @@ static int act200l_change_speed(struct s
  
+ 	/* Write control bytes */
+ 	sirdev_raw_write(dev, control, 3);
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(msecs_to_jiffies(5));
++	msleep(5);
+ 
+ 	/* Go back to normal mode */
+ 	sirdev_set_dtr_rts(dev, TRUE, TRUE);
 
---===============65724424370486778==
+--===============99270984041614951==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============65724424370486778==--
+--===============99270984041614951==--
