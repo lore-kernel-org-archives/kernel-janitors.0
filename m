@@ -1,67 +1,79 @@
-From: Michael Still <mikal@stillhq.com>
-Date: Wed, 14 Apr 2004 21:10:02 +0000
+From: Don Koch <aardvark@krl.com>
+Date: Wed, 14 Apr 2004 21:17:45 +0000
 Subject: Re: [Kernel-janitors] [PATHC] fix ide.c warning
-Message-Id: <407DA8AA.5060801@stillhq.com>
+Message-Id: <200404142117.i3ELHj3n001234@p-chan.krl.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79988295817598098=="
+Content-Type: multipart/mixed; boundary="===============68600021996851557=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200404140217.i3E2Hrgn023951@p-chan.krl.com>
 In-Reply-To: <200404140217.i3E2Hrgn023951@p-chan.krl.com>
 To: kernel-janitors@vger.kernel.org
 
---===============79988295817598098==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============68600021996851557==
+Content-Type: text/plain; charset=us-ascii
 
-Luiz Fernando N. Capitulino wrote:
-> Hi Don,
+mikal@stillhq.com said:
+> Luiz Fernando N. Capitulino wrote:
+> > Hi Don,
+> > 
+> > Em Tue, 13 Apr 2004 22:17:53 -0400
+> > Don Koch <aardvark@krl.com> escreveu:
+> > 
+> > | This fixes the "implicit declaration of function `pnpide_init'" warning
+> > | in ide.c.  Based on 2.6.5-mm5.
+> > | 
+> > | ===== drivers/ide/ide.c 1.132 vs edited =====
+> > | --- 1.132/drivers/ide/ide.c	Sat Apr 10 18:22:11 2004
+> > | +++ edited/drivers/ide/ide.c	Tue Apr 13 20:59:52 2004
+> > | @@ -2245,7 +2245,10 @@
+> > |  		return 1;
+> > |  	}
+> > |  #if defined(CONFIG_BLK_DEV_IDEPNP) && defined(CONFIG_PNP) && defined(MODULE)
+> > | -	pnpide_init(0);
+> > | +	{
+> > | +		extern void pnpide_init(int enable);
+> > | +		pnpide_init(0);
+> > | +	}
+> > |  #endif /* CONFIG_BLK_DEV_IDEPNP */
+> > |  #ifdef CONFIG_PROC_FS
+> > |  	ide_remove_proc_entries(drive->proc, DRIVER(drive)->proc);
+> > 
+> >  what about to declare pnpide_init() in include/linux/ide.h (like ide_end_request),
+> > and just call it ? It is a bad idea ?
 > 
-> Em Tue, 13 Apr 2004 22:17:53 -0400
-> Don Koch <aardvark@krl.com> escreveu:
+> I would think it's much better form to either:
 > 
-> | This fixes the "implicit declaration of function `pnpide_init'" warning
-> | in ide.c.  Based on 2.6.5-mm5.
-> | 
-> | ===== drivers/ide/ide.c 1.132 vs edited =====
-> | --- 1.132/drivers/ide/ide.c	Sat Apr 10 18:22:11 2004
-> | +++ edited/drivers/ide/ide.c	Tue Apr 13 20:59:52 2004
-> | @@ -2245,7 +2245,10 @@
-> |  		return 1;
-> |  	}
-> |  #if defined(CONFIG_BLK_DEV_IDEPNP) && defined(CONFIG_PNP) && defined(MODULE)
-> | -	pnpide_init(0);
-> | +	{
-> | +		extern void pnpide_init(int enable);
-> | +		pnpide_init(0);
-> | +	}
-> |  #endif /* CONFIG_BLK_DEV_IDEPNP */
-> |  #ifdef CONFIG_PROC_FS
-> |  	ide_remove_proc_entries(drive->proc, DRIVER(drive)->proc);
+>   - put the prototype in a header
+>   - repeat the prototype at the top of this file (there are risks here)
 > 
->  what about to declare pnpide_init() in include/linux/ide.h (like ide_end_request),
-> and just call it ? It is a bad idea ?
+> With the first one being much prefered in my book. It's just not 
+> idiomatic in C to do it this way. You also don't need the extern:
+> 
+>       void pnpide_init(int enable);
+> 
+> should be sufficient.
+> 
+> Additionally, putting that block of code in braces is evil.
+> 
+> Cheers,
+> Mikal
+> 
+> PS: I didn't look at the definition of pnpide_init, and assume it's not 
+> static or something.
+> 
 
-I would think it's much better form to either:
+The patch echos other calls to pnpide_init() in the same file.
+The evil was done before I got there.  (I agree, it's ugly.)
+I'll poke around and see if I can find a more appropriate way
+to handle all of the declarations and submit a follow-up patch.
 
-  - put the prototype in a header
-  - repeat the prototype at the top of this file (there are risks here)
+-- 
+Don Koch
+http://www.krl.com/
 
-With the first one being much prefered in my book. It's just not 
-idiomatic in C to do it this way. You also don't need the extern:
 
-      void pnpide_init(int enable);
 
-should be sufficient.
-
-Additionally, putting that block of code in braces is evil.
-
-Cheers,
-Mikal
-
-PS: I didn't look at the definition of pnpide_init, and assume it's not 
-static or something.
-
---===============79988295817598098==
+--===============68600021996851557==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79988295817598098==--
+--===============68600021996851557==--
