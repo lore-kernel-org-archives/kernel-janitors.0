@@ -1,48 +1,40 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Mar 2005 13:17:30 +0000
-Subject: [KJ] [UPDATE PATCH 16/19] drivers/scsi/nsp32: Use the
-Message-Id: <20050320131730.GP3491@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 09 Mar 2005 22:51:41 +0000
+Subject: [KJ] [PATCH 7/] fs/affs/super.c: fix sparse warning
+Message-Id: <200503100132.17646.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6682448331485964=="
+Content-Type: multipart/mixed; boundary="===============1861738546451579=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============6682448331485964==
-Content-Type: text/plain; charset=us-ascii
+--===============1861738546451579==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-The previous patch did not compile cleanly on all architectures so
-here's a fixed one.
+Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h when calling
-pci_set_dma_mask() or pci_set_consistent_dma_mask()
-This patch includes dma-mapping.h explicitly because it caused errors
-on some architectures otherwise.
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
---- linux-2.6.11.orig/drivers/scsi/nsp32.c	2005-03-02 12:50:38.000000000 +0100
-+++ linux-2.6.11/drivers/scsi/nsp32.c	2005-03-20 13:27:54.000000000 +0100
-@@ -38,6 +38,7 @@
- #include <linux/pci.h>
- #include <linux/delay.h>
- #include <linux/ctype.h>
-+#include <linux/dma-mapping.h>
- 
- #include <asm/dma.h>
- #include <asm/system.h>
-@@ -2779,7 +2780,7 @@ static int nsp32_detect(Scsi_Host_Templa
- 	/*
- 	 * setup DMA 
- 	 */
--	if (pci_set_dma_mask(PCIDEV, 0xffffffffUL) != 0) {
-+	if (pci_set_dma_mask(PCIDEV, DMA_32BIT_MASK) != 0) {
- 		nsp32_msg (KERN_ERR, "failed to set PCI DMA mask");
- 		goto scsi_unregister;
+Index: linux-2.6.11-bk2-sparse/fs/affs/super.c
+===================================================================
+--- linux-2.6.11-bk2-sparse.orig/fs/affs/super.c	2005-03-02 09:38:13.000000000 +0200
++++ linux-2.6.11-bk2-sparse/fs/affs/super.c	2005-03-07 15:00:30.000000000 +0200
+@@ -421,11 +421,11 @@ got_root:
  	}
+ 
+ 	if (mount_flags & SF_VERBOSE) {
+-		chksum = cpu_to_be32(chksum);
++		__be32 chksum1 = cpu_to_be32(chksum);
+ 		printk(KERN_NOTICE "AFFS: Mounting volume \"%*s\": Type=%.3s\\%c, Blocksize=%d\n",
+ 			AFFS_ROOT_TAIL(sb, root_bh)->disk_name[0],
+ 			AFFS_ROOT_TAIL(sb, root_bh)->disk_name + 1,
+-			(char *)&chksum,((char *)&chksum)[3] + '0',blocksize);
++			(char *)&chksum1,((char *)&chksum1)[3] + '0',blocksize);
+ 	}
+ 
+ 	sb->s_flags |= MS_NODEV | MS_NOSUID;
 
---===============6682448331485964==
+--===============1861738546451579==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============6682448331485964==--
+--===============1861738546451579==--
