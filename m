@@ -1,13 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 26 Jul 2004 17:56:00 +0000
-Subject: [Kernel-janitors] [PATCH] dvb/budget-av: replace schedule_timeout()
-Message-Id: <20040726175600.GU1897@us.ibm.com>
+Date: Fri, 23 Jul 2004 17:38:20 +0000
+Subject: [Kernel-janitors] [PATCH] eicon/os_4bri: replace schedule_timeout()
+Message-Id: <20040723173820.GD1911@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============60179096395793819=="
+Content-Type: multipart/mixed; boundary="===============22576907824996351=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============60179096395793819==
+--===============22576907824996351==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -16,36 +16,28 @@ I would appreciate any comments from the janitors list.
 Thanks,
 Nish
 
+
+
 Applys-to: 2.6.7
 
-Description: Replace dvb_delay() with msleep() to guarantee the
-task delays the desired time.
+Description: Replace diva_os_sleep() with msleep() in all instances. 
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
---- linux-vanilla/drivers/media/dvb/ttpci/budget-av.c	2004-06-16 05:19:44.000000000 +0000
-+++ linux-dev/drivers/media/dvb/ttpci/budget-av.c	2004-07-02 20:28:43.000000000 +0000
-@@ -177,7 +177,7 @@ static int budget_av_detach (struct saa7
- 	if ( 1 == budget_av->has_saa7113 ) {
- 	saa7146_setgpio(dev, 0, SAA7146_GPIO_OUTLO);
+--- linux-vanilla/drivers/isdn/hardware/eicon/mntfunc.c	2004-06-16 05:18:54.000000000 +0000
++++ linux-dev/drivers/isdn/hardware/eicon/mntfunc.c	2004-07-02 18:04:34.000000000 +0000
+@@ -340,7 +340,7 @@ void DIVA_EXIT_FUNCTION mntfunc_finit(vo
+ 	int i = 100;
  
--	dvb_delay(200);
-+	msleep(200);
- 
- 	saa7146_unregister_device (&budget_av->vd, dev);
+ 	while (diva_mnt_shutdown_xdi_adapters() && i--) {
+-		diva_os_sleep(10);
++		msleep(10);
  	}
-@@ -225,7 +225,7 @@ static int budget_av_attach (struct saa7
- 	//test_knc_ci(av7110);
  
- 	saa7146_setgpio(dev, 0, SAA7146_GPIO_OUTHI);
--	dvb_delay(500);
-+	msleep(500);
- 
- 	if ( 0 == saa7113_init(budget_av) ) {
- 		budget_av->has_saa7113 = 1;
+ 	disconnect_didd();
 
---===============60179096395793819==
+--===============22576907824996351==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============60179096395793819==--
+--===============22576907824996351==--
