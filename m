@@ -1,28 +1,32 @@
-From: "dan carpenter" <error27@email.com>
-Date: Thu, 11 Mar 2004 04:41:54 +0000
-Subject: [Kernel-janitors] (no subject)
-Message-Id: <20040311044154.9A05E1D71A2@ws3-3.us4.outblaze.com>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Thu, 04 Mar 2004 20:58:14 +0000
+Subject: [Kernel-janitors] Re: request_irq
+Message-Id: <20040304125814.14ab3f24.rddunlap@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <005d01c40226$b3af4f00$0200a8c0@alphawolf>
+In-Reply-To: <005d01c40226$b3af4f00$0200a8c0@alphawolf>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kha0s <kernel@digitalkhaos.net>
+Cc: linux-kernel@vger.kernel.org, kjo <kernel-janitors@osdl.org>
 
-On Wednesday 10 March 2004 08:12 pm, Badai Aqrandista wrote:
-> How about memmove / memcpy problem, but where should I start? Any drivers?
->
+On Thu, 4 Mar 2004 12:24:05 -0800 kha0s wrote:
 
-It doesn't matter where you start.  Just do a small patch against one file at 
-first.  Send that to the list.  We'll help you make sure the patch is in the 
-correct format etc.  It's good practice.
+| Since the janitors page is down, can anyone tell me if request_irq() return
+| values still need to be audited?
 
-regards,
-dan carpenter
--- 
-___________________________________________________________
-Sign-up for Ads Free at Mail.com
-http://promo.mail.com/adsfreejump.htm
+Hi,
 
+It's still on the current TODO list.  I can't swear whether it
+should still be there or not, unfortunately.
+
+BTW, while the kernelnewbies.org server is down, you can find
+the kernel-janitors stuff at
+  http://developer.osdl.org/rddunlap/kernel-janitors/
+
+--
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
