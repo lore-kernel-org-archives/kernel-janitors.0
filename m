@@ -1,31 +1,45 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Date: Thu, 03 Feb 2005 13:38:13 +0000
-Subject: [KJ] Re: [PATCH 20/20] mips/bcm1250_tbprof: remove
-Message-Id: <20050203133813.GA9796@linux-mips.org>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Sun, 13 Feb 2005 12:53:45 +0000
+Subject: [KJ] [PATCH] drivers/net/ixgb/*: convert to pci_register_driver
+Message-Id: <20050213125345.GE15348@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17327152654423705=="
+Content-Type: multipart/mixed; boundary="lHGcFxmlz1yfXmOs"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050202230853.GA2546@us.ibm.com>
-In-Reply-To: <20050202230853.GA2546@us.ibm.com>
-To: Nishanth Aravamudan <nacc@us.ibm.com>
-Cc: linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============17327152654423705==
+
+--lHGcFxmlz1yfXmOs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Feb 02, 2005 at 03:08:53PM -0800, Nishanth Aravamudan wrote:
 
-> Please consider applying.
-> 
-> Description: Remove deprecated interruptible_sleep_on() function call
-> and replace with direct wait-queue usage.
+Hi,
 
-Thanks,
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-  Ralf
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
---===============17327152654423705==
+--lHGcFxmlz1yfXmOs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_ixgb.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/ixgb/ixgb_main.c linux-2.6.11-rc3/drivers/net/ixgb/ixgb_main.c
+--- linux-2.6.11-rc3-vanilla/drivers/net/ixgb/ixgb_main.c	2005-02-03 17:03:50.000000000 +0100
++++ linux-2.6.11-rc3/drivers/net/ixgb/ixgb_main.c	2005-02-07 09:39:28.000000000 +0100
+@@ -171,7 +171,7 @@ ixgb_init_module(void)
+ 
+ 	printk(KERN_INFO "%s\n", ixgb_copyright);
+ 
+-	ret = pci_module_init(&ixgb_driver);
++	ret = pci_register_driver(&ixgb_driver);
+ 	if(ret >= 0) {
+ 		register_reboot_notifier(&ixgb_notifier_reboot);
+ 	}
+
+--lHGcFxmlz1yfXmOs
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============17327152654423705==--
+--lHGcFxmlz1yfXmOs--
