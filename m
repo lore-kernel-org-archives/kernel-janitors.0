@@ -1,73 +1,30 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 15 Aug 2004 12:18:05 +0000
-Subject: [Kernel-janitors] Add msleep_interruptible() function to
-Message-Id: <20040815121805.GA15111@stro.at>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2244296051963266=="
+From: Jay Bourque <kernel@uranium235.org>
+Date: Sat, 14 Aug 2004 19:07:26 +0000
+Subject: [Kernel-janitors] xfrm4_input.c: update last_rx after netif_rx
+Message-Id: <411E62EE.3070706@uranium235.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: kj <kernel-janitors@osdl.org>
-
---===============2244296051963266==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-while doing kernel-janitor msleep conversion of drivers own (incorrect),
-functions, some places would need msleep_interruptible().
-
-this function is equivalent to:
-        current->state = TASK_INTERRUPTIBLE;
-	schedule_timeout(timeout);
-
-idea from Ingo Molnar:
-well, aboves is not 100% equivalent because msleep() is uninterruptible so
-stoppage of the md thread (upon shutdown) will occur with only a 250 msec
-delay. Someone should add a msleep_interruptible() function to kernel/timer.c.
-
-Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
-
-
----
-
- linux-2.6.8-max/kernel/timer.c |   15 +++++++++++++++
- 1 files changed, 15 insertions(+)
-
-diff -puN kernel/timer.c~add-msleep_interruptible kernel/timer.c
---- linux-2.6.8/kernel/timer.c~add-msleep_interruptible	2004-08-14 23:41:46.000000000 +0200
-+++ linux-2.6.8-max/kernel/timer.c	2004-08-14 23:41:46.000000000 +0200
-@@ -1503,3 +1503,18 @@ void msleep(unsigned int msecs)
- 
- EXPORT_SYMBOL(msleep);
- 
-+/**
-+ * msleep_interruptible - sleep waiting for waitqueue interruptions
-+ * @msecs: Time in milliseconds to sleep for
-+ */
-+void msleep_interruptible(unsigned int msecs)
-+{
-+	unsigned long timeout = msecs_to_jiffies(msecs);
-+
-+	while (timeout) {
-+		set_current_state(TASK_INTERRUPTIBLE);
-+		timeout = schedule_timeout(timeout);
-+	}
-+}
-+
-+EXPORT_SYMBOL(msleep_interruptible);
-
-_
-
-
-
---===============2244296051963266==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+
+Fix to update last_rx after netif_rx
+This is my first patch so I'd appreciate any feedback.
+
+-Jay
+
+--- linux-2.6.8.1/net/ipv4/xfrm4_input.c    Sat Aug 14 05:54:50 2004
++++ linux-2.6.8.1/net/ipv4/xfrm4_input.c.new    Sat Aug 14 11:19:09 2004
+@@ -138,6 +138,7 @@ int xfrm4_rcv_encap(struct sk_buff *skb,
+             dst_release(skb->dst);
+             skb->dst = NULL;
+         }
++       skb->dev->last_rx = jiffies;
+         netif_rx(skb);
+         return 0;
+     } else {
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============2244296051963266==--
