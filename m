@@ -1,48 +1,38 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 21:34:29 +0000
-Subject: [KJ] [PATCH][12/26] drivers/net/tulip/* - compile warning cleanup
-Message-Id: <420BEF85.749.5876AA@localhost>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sun, 20 Feb 2005 16:49:13 +0000
+Subject: [KJ] [PATCH 01/19] drivers/scsi/a100u2w: Use the DMA_{64,
+Message-Id: <20050220164913.GA14375@helium.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============57101192155551894=="
+Content-Type: multipart/mixed; boundary="===============79768042074496548=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-scsi@vger.kernel.org
 
---===============57101192155551894==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
+--===============79768042074496548==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description: compile warning cleanup - cast pointer argument to correct 
-pointer type to silence compiler warning
+Hello,
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm-original/drivers/net/tulip/dmfe.c linux-2.6.11-rc3-mm/drivers/net/tulip/dmfe.c
---- linux-2.6.11-rc3-mm-original/drivers/net/tulip/dmfe.c	2005-02-03 03:56:48.000000000 +0200
-+++ linux-2.6.11-rc3-mm/drivers/net/tulip/dmfe.c	2005-02-08 18:08:53.000000000 +0200
-@@ -1806,7 +1806,7 @@ static void dmfe_parse_srom(struct dmfe_
- 	if ( ( (int) srom[18] & 0xff) == SROM_V41_CODE) {
- 		/* SROM V4.01 */
- 		/* Get NIC support media mode */
--		db->NIC_capability = le16_to_cpup(srom + 34);
-+		db->NIC_capability = le16_to_cpup((const __le16 *)(srom + 34));
- 		db->PHY_reg4 = 0;
- 		for (tmp_reg = 1; tmp_reg < 0x10; tmp_reg <<= 1) {
- 			switch( db->NIC_capability & tmp_reg ) {
-@@ -1818,7 +1818,7 @@ static void dmfe_parse_srom(struct dmfe_
- 		}
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+
+--- linux-2.6.11-rc4.orig/drivers/scsi/a100u2w.c	2005-02-13 17:13:07.000000000 +0100
++++ linux-2.6.11-rc4/drivers/scsi/a100u2w.c	2005-02-16 21:31:35.000000000 +0100
+@@ -1052,7 +1052,7 @@ static int __devinit inia100_probe_one(s
  
- 		/* Media Mode Force or not check */
--		dmfe_mode = le32_to_cpup(srom + 34) & le32_to_cpup(srom + 36);
-+		dmfe_mode = le32_to_cpup((const __le32 *)(srom + 34)) & le32_to_cpup((const __le32 *)(srom + 36));
- 		switch(dmfe_mode) {
- 		case 0x4: dmfe_media_mode = DMFE_100MHF; break;	/* 100MHF */
- 		case 0x2: dmfe_media_mode = DMFE_10MFD; break;	/* 10MFD */
+ 	if (pci_enable_device(pdev))
+ 		goto out;
+-	if (pci_set_dma_mask(pdev, 0xffffffffULL)) {
++	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK)) {
+ 		printk(KERN_WARNING "Unable to set 32bit DMA "
+ 				    "on inia100 adapter, ignoring.\n");
+ 		goto out_disable_device;
 
-
-
-
---===============57101192155551894==
+--===============79768042074496548==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============57101192155551894==--
+--===============79768042074496548==--
