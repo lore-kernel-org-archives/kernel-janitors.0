@@ -1,180 +1,95 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Mon, 14 Feb 2005 22:02:51 +0000
-Subject: [KJ] [PATCH][RESUBMIT][1/21] arch/i386/math-emu/* - compile warning
-Message-Id: <42113C2B.11286.52B93F@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Wed, 02 Feb 2005 16:22:05 +0000
+Subject: [KJ] [PATCH] [RESEND] pci_find_device() in drivers/media/radio/
+Message-Id: <20050202162205.GD24725@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15871965870418903=="
+Content-Type: multipart/mixed; boundary="qjNfmADvan18RZcF"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============15871965870418903==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-Description: compile warning cleanup - handle copy_to/from_user error 
-returns
+--qjNfmADvan18RZcF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
+Hi,
 
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/arch/i386/math-emu/fpu_entry.c linux-2.6.11-rc3-mm2/arch/i386/math-emu/fpu_entry.c
---- linux-2.6.11-rc3-mm2-original/arch/i386/math-emu/fpu_entry.c	2005-02-12 12:06:23.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/arch/i386/math-emu/fpu_entry.c	2005-02-12 19:17:48.000000000 +0200
-@@ -742,7 +742,8 @@ int save_i387_soft(void *s387, struct _f
-   S387->fcs &= ~0xf8000000;
-   S387->fos |= 0xffff0000;
- #endif /* PECULIAR_486 */
--  __copy_to_user(d, &S387->cwd, 7*4);
-+  if (__copy_to_user(d, &S387->cwd, 7*4))
-+    return -1;
-   RE_ENTRANT_CHECK_ON;
+Description:
+From : http://kerneljanitors.org/TODO
+>- delete all pci_find_* functions from the kernel tree.
+>  Instead of pci_find_device use pci_get_device()..
+>-  convert from pci_module_init to pci_register_driver
+
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
+
+--qjNfmADvan18RZcF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="media_radio.patch"
+
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-gemtek-pci.c linux-2.6.11-rc2/drivers/media/radio/radio-gemtek-pci.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-gemtek-pci.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/radio/radio-gemtek-pci.c	2005-01-26 10:01:19.000000000 +0100
+@@ -394,7 +394,7 @@ static struct pci_driver gemtek_pci_driv
  
-   d += 7*4;
-diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/arch/i386/math-emu/reg_ld_str.c linux-2.6.11-rc3-mm2/arch/i386/math-emu/reg_ld_str.c
---- linux-2.6.11-rc3-mm2-original/arch/i386/math-emu/reg_ld_str.c	2004-12-24 23:35:01.000000000 +0200
-+++ linux-2.6.11-rc3-mm2/arch/i386/math-emu/reg_ld_str.c	2005-02-12 19:17:48.000000000 +0200
-@@ -89,12 +89,17 @@ int FPU_tagof(FPU_REG *ptr)
- int FPU_load_extended(long double __user *s, int stnr)
+ static int __init gemtek_pci_init_module( void )
  {
-   FPU_REG *sti_ptr = &st(stnr);
-+  int user_copy_err;
- 
-   RE_ENTRANT_CHECK_OFF;
-   FPU_verify_area(VERIFY_READ, s, 10);
--  __copy_from_user(sti_ptr, s, 10);
-+  user_copy_err = __copy_from_user(sti_ptr, s, 10);
-   RE_ENTRANT_CHECK_ON;
- 
-+  if (user_copy_err) {
-+	EXCEPTION(EX_INTERNAL);
-+	return TAG_Special;
-+  }
-   return FPU_tagof(sti_ptr);
+-	return pci_module_init( &gemtek_pci_driver );
++	return pci_register_driver( &gemtek_pci_driver );
  }
  
-@@ -240,13 +245,19 @@ int FPU_load_int64(long long __user *_s)
+ static void __exit gemtek_pci_cleanup_module( void )
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maestro.c linux-2.6.11-rc2/drivers/media/radio/radio-maestro.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maestro.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/radio/radio-maestro.c	2005-02-02 15:43:24.000000000 +0100
+@@ -265,11 +265,11 @@ static int __init maestro_radio_init(voi
  {
-   long long s;
-   int sign;
-+  int user_copy_err;
-   FPU_REG *st0_ptr = &st(0);
- 
-   RE_ENTRANT_CHECK_OFF;
-   FPU_verify_area(VERIFY_READ, _s, 8);
--  copy_from_user(&s,_s,8);
-+  user_copy_err = copy_from_user(&s,_s,8);
-   RE_ENTRANT_CHECK_ON;
- 
-+  if (user_copy_err) {
-+	EXCEPTION(EX_INTERNAL);
-+	return TAG_Special;
-+  }
-+
-   if (s == 0)
-     {
-       reg_copy(&CONST_Z, st0_ptr);
-@@ -859,6 +870,7 @@ int FPU_store_int64(FPU_REG *st0_ptr, u_
-   FPU_REG t;
-   long long tll;
-   int precision_loss;
-+  int user_copy_err;
- 
-   if ( st0_tag == TAG_Empty )
-     {
-@@ -907,9 +919,14 @@ int FPU_store_int64(FPU_REG *st0_ptr, u_
- 
-   RE_ENTRANT_CHECK_OFF;
-   FPU_verify_area(VERIFY_WRITE,d,8);
--  copy_to_user(d, &tll, 8);
-+  user_copy_err = copy_to_user(d, &tll, 8);
-   RE_ENTRANT_CHECK_ON;
- 
-+  if (user_copy_err) {
-+	EXCEPTION(EX_INTERNAL);
-+	return 0;
-+  }
-+
-   return 1;
+ 	register __u16 found=0;
+ 	struct pci_dev *pcidev = NULL;
+-	while(!found && (pcidev = pci_find_device(PCI_VENDOR_ESS, 
++	while(!found && (pcidev = pci_get_device(PCI_VENDOR_ESS, 
+ 						  PCI_DEVICE_ID_ESS_ESS1968,
+ 						  pcidev)))
+ 		found |= radio_install(pcidev);
+-	while(!found && (pcidev = pci_find_device(PCI_VENDOR_ESS,
++	while(!found && (pcidev = pci_get_device(PCI_VENDOR_ESS,
+ 						  PCI_DEVICE_ID_ESS_ESS1978, 
+ 						  pcidev)))
+ 		found |= radio_install(pcidev);
+@@ -316,6 +316,7 @@ static __u16 radio_install(struct pci_de
+ 	if(radio_power_on(&radio_unit)) {
+ 		if(video_register_device(&maestro_radio, VFL_TYPE_RADIO, radio_nr)==-1) {
+ 			printk("radio-maestro: can't register device!");
++			pci_dev_put(pcidev);
+ 			return 0;
+ 		}
+ 		printk(KERN_INFO "radio-maestro: version "
+@@ -326,7 +327,9 @@ static __u16 radio_install(struct pci_de
+ 		       "\n");
+ 		printk(KERN_INFO "radio-maestro: radio chip initialized\n");
+ 		return 1;
+-	} else
++	} else {
++		pci_dev_put(pcidev); 
+ 		return 0;   
++	}
  }
  
-@@ -1271,15 +1288,21 @@ void frstor(fpu_addr_modes addr_modes, u
-   int i, regnr;
-   u_char __user *s = fldenv(addr_modes, data_address);
-   int offset = (top & 7) * 10, other = 80 - offset;
-+  int user_copy_err;
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maxiradio.c linux-2.6.11-rc2/drivers/media/radio/radio-maxiradio.c
+--- linux-2.6.11-rc2-vanilla/drivers/media/radio/radio-maxiradio.c	2005-01-26 08:31:14.000000000 +0100
++++ linux-2.6.11-rc2/drivers/media/radio/radio-maxiradio.c	2005-01-26 10:01:28.000000000 +0100
+@@ -337,7 +337,7 @@ static struct pci_driver maxiradio_drive
  
-   /* Copy all registers in stack order. */
-   RE_ENTRANT_CHECK_OFF;
-   FPU_verify_area(VERIFY_READ,s,80);
--  __copy_from_user(register_base+offset, s, other);
--  if ( offset )
--    __copy_from_user(register_base, s+other, offset);
-+  user_copy_err = __copy_from_user(register_base+offset, s, other);
-+  if (!user_copy_err && offset)
-+    user_copy_err = __copy_from_user(register_base, s+other, offset);
-   RE_ENTRANT_CHECK_ON;
- 
-+  if (user_copy_err) {
-+	EXCEPTION(EX_INTERNAL);
-+	return;
-+  }
-+
-   for ( i = 0; i < 8; i++ )
-     {
-       regnr = (i+top) & 7;
-@@ -1325,6 +1348,7 @@ u_char __user *fstenv(fpu_addr_modes add
-     }
-   else
-     {
-+      int user_copy_err;
-       RE_ENTRANT_CHECK_OFF;
-       FPU_verify_area(VERIFY_WRITE, d, 7*4);
- #ifdef PECULIAR_486
-@@ -1336,8 +1360,12 @@ u_char __user *fstenv(fpu_addr_modes add
-       I387.soft.fcs &= ~0xf8000000;
-       I387.soft.fos |= 0xffff0000;
- #endif /* PECULIAR_486 */
--      __copy_to_user(d, &control_word, 7*4);
-+      user_copy_err = __copy_to_user(d, &control_word, 7*4);
-       RE_ENTRANT_CHECK_ON;
-+
-+      if (user_copy_err)
-+	EXCEPTION(EX_INTERNAL);
-+
-       d += 0x1c;
-     }
-   
-@@ -1352,6 +1380,7 @@ void fsave(fpu_addr_modes addr_modes, u_
+ static int __init maxiradio_radio_init(void)
  {
-   u_char __user *d;
-   int offset = (top & 7) * 10, other = 80 - offset;
-+  int user_copy_err;
- 
-   d = fstenv(addr_modes, data_address);
- 
-@@ -1359,11 +1388,14 @@ void fsave(fpu_addr_modes addr_modes, u_
-   FPU_verify_area(VERIFY_WRITE,d,80);
- 
-   /* Copy all registers in stack order. */
--  __copy_to_user(d, register_base+offset, other);
--  if ( offset )
--    __copy_to_user(d+other, register_base, offset);
-+  user_copy_err = __copy_to_user(d, register_base+offset, other);
-+  if (!user_copy_err && offset)
-+    user_copy_err = __copy_to_user(d+other, register_base, offset);
-   RE_ENTRANT_CHECK_ON;
- 
-+  if (user_copy_err)
-+	EXCEPTION(EX_INTERNAL);
-+
-   finit();
+-	return pci_module_init(&maxiradio_driver);
++	return pci_register_driver(&maxiradio_driver);
  }
  
+ static void __exit maxiradio_radio_exit(void)
 
-
-
-
---===============15871965870418903==
+--qjNfmADvan18RZcF
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -185,4 +100,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15871965870418903==--
+--qjNfmADvan18RZcF--
