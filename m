@@ -1,48 +1,81 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 20 Feb 2005 17:05:52 +0000
-Subject: [KJ] [PATCH 11/19] drivers/scsi/gdth: Use the DMA_{64,
-Message-Id: <20050220170552.GL14375@helium.tklauser.home>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 23:05:15 +0000
+Subject: [KJ] [UPDATE PATCH 18/20] ppc/serial_sicc: remove
+Message-Id: <20050202230515.GZ2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56352401222882076=="
+Content-Type: multipart/mixed; boundary="===============5864411336669525=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+References: <20050202225504.GX2546@us.ibm.com>
+In-Reply-To: <20050202225504.GX2546@us.ibm.com>
+To: mporter@kernel.crashing.org
+Cc: kernel-janitors@lists.osdl.org, linuxppc-embedded@ozlabs.org
 
---===============56352401222882076==
+--===============5864411336669525==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello,
+On Wed, Feb 02, 2005 at 02:55:04PM -0800, Nishanth Aravamudan wrote:
+> Hello,
+> 
+> Please consider applying.
 
-Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+Sorry, for the noise, but the patch was incomplete, as there was another call to
+sleep_on() in the same file. Fixed below, please consider applying.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Description: Remove deprecated interruptible_sleep_on_timeout() function calls
+and replace with direct wait-queue usage.
 
---- linux-2.6.11-rc4.orig/drivers/scsi/gdth.c	2005-02-13 17:13:06.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/scsi/gdth.c	2005-02-16 21:22:37.000000000 +0100
-@@ -4529,15 +4529,15 @@ int __init gdth_detect(Scsi_Host_Templat
-             if (!(ha->cache_feat & ha->raw_feat & ha->screen_feat &GDT_64BIT)||
-                 /* 64-bit DMA only supported from FW >= x.43 */
-                 (!ha->dma64_support)) {
--                if (pci_set_dma_mask(pcistr[ctr].pdev, 0xffffffff)) {
-+                if (pci_set_dma_mask(pcistr[ctr].pdev, DMA_32BIT_MASK)) {
-                     printk(KERN_WARNING "GDT-PCI %d: Unable to set 32-bit DMA\n", hanum);
-                     err = TRUE;
-                 }
-             } else {
-                 shp->max_cmd_len = 16;
--                if (!pci_set_dma_mask(pcistr[ctr].pdev, 0xffffffffffffffffULL)) {
-+                if (!pci_set_dma_mask(pcistr[ctr].pdev, DMA_64BIT_MASK)) {
-                     printk("GDT-PCI %d: 64-bit DMA enabled\n", hanum);
--                } else if (pci_set_dma_mask(pcistr[ctr].pdev, 0xffffffff)) {
-+                } else if (pci_set_dma_mask(pcistr[ctr].pdev, DMA_32BIT_MASK)) {
-                     printk(KERN_WARNING "GDT-PCI %d: Unable to set 64/32-bit DMA\n", hanum);
-                     err = TRUE;
-                 }
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---===============56352401222882076==
+--- 2.6.11-rc2-kj-v/arch/ppc/4xx_io/serial_sicc.c	2005-01-24 09:34:02.000000000 -0800
++++ 2.6.11-rc2-kj/arch/ppc/4xx_io/serial_sicc.c	2005-02-02 15:04:20.000000000 -0800
+@@ -52,6 +52,7 @@
+ #include <linux/console.h>
+ #include <linux/sysrq.h>
+ #include <linux/bitops.h>
++#include <linux/wait.h>
+ 
+ #include <asm/system.h>
+ #include <asm/io.h>
+@@ -1561,8 +1562,11 @@ static int block_til_ready(struct tty_st
+      */
+     if (tty_hung_up_p(filp) ||
+         (info->flags & ASYNC_CLOSING)) {
+-        if (info->flags & ASYNC_CLOSING)
+-            interruptible_sleep_on(&info->close_wait);
++        if (info->flags & ASYNC_CLOSING) {
++            prepare_to_wait(&info->close_wait, &wait, TASK_INTERRUPTIBLE);
++            schedule();
++            finish_wait(&info->close_wait, &wait);
++        }
+         return (info->flags & ASYNC_HUP_NOTIFY) ?
+             -EAGAIN : -ERESTARTSYS;
+     }
+@@ -1664,6 +1668,7 @@ static struct SICC_info *siccuart_get(in
+ 
+ static int siccuart_open(struct tty_struct *tty, struct file *filp)
+ {
++    DEFINE_WAIT(wait);
+     struct SICC_info *info;
+     int retval, line = tty->index;
+ 
+@@ -1699,8 +1704,11 @@ static int siccuart_open(struct tty_stru
+      */
+     if (tty_hung_up_p(filp) ||
+         (info->flags & ASYNC_CLOSING)) {
+-        if (info->flags & ASYNC_CLOSING)
+-            interruptible_sleep_on(&info->close_wait);
++        if (info->flags & ASYNC_CLOSING) {
++            prepare_to_wait(&info->close_wait, &wait, TASK_INTERRUPTIBLE);
++            schedule();
++            finish_wait(&info->close_wait, &wait);
++        }
+         return -EAGAIN;
+     }
+ 
+
+
+--===============5864411336669525==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +86,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56352401222882076==--
+--===============5864411336669525==--
