@@ -1,58 +1,69 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Mon, 20 Dec 2004 00:13:16 +0000
+From: Andi Kleen <ak@muc.de>
+Date: Mon, 20 Dec 2004 07:10:49 +0000
 Subject: Re: [KJ] janitor project: fix gcc 4 warnings
-Message-Id: <20041220001315.GH21288@stusta.de>
+Message-Id: <20041220071049.GA30448@muc.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============31089937299596304=="
+Content-Type: multipart/mixed; boundary="===============4431395091090562=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20041219190903.GA30192@muc.de>
 In-Reply-To: <20041219190903.GA30192@muc.de>
 To: kernel-janitors@vger.kernel.org
 
---===============31089937299596304==
+--===============4431395091090562==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Dec 19, 2004 at 08:09:03PM +0100, Andi Kleen wrote:
+On Mon, Dec 20, 2004 at 12:15:39AM +0200, Alexey Dobriyan wrote:
+> On Sunday 19 December 2004 21:09, Andi Kleen wrote:
 > 
-> Here's a proposed janitor project if anybody is interested:
+> > make allmodconfig
+> > make CC=/usr/local/gcc4/bin/gcc 2>&1 | tee LOG
 > 
-> The current gcc 4.0 snapshots include some more warnings in -Wall
-> and changed some existing ones which makes a kernel compilation quite noisy. 
+>   CC      kernel/acct.o
+> kernel/acct.c: In function ???encode_float???:
+> kernel/acct.c:366: fatal error: internal consistency failure
+> compilation terminated.
+
+Looks like another gcc bug. I will file a gcc bug thanks. 
+
+Just disable accounting in the .config to continue or use make -k 
+
+
 > 
-> The project would be to fix all these warnings.
->...
-> You'll see lots of warnings in LOG. Fix them all and submit patches
-> through the usual janitor channels.
+> here.
+> 
+> Maaaany "differ in signedness" warnings.
 
-What kind of new warnings does gcc 4.0 emit?
+Yep, and some new "bla is uninitialized" warnings. Many of them 
+are bogus, because gcc just cannot prove if a variable is 
+uninitialized or not and it now does it for structure fields
+too. Anyways, they all need to be examined and fixed.
 
-It should be checked whether the warnings are valid and should really be 
-fixed.
-
-A past example are the signed warnings pre-releases of gcc 3.3 
-(including the pre-release a stable SuSE release shipped as compiler...) 
-emitted with -Wall that were no longer emitted in the final gcc 3.3 
-release.
-
-Altogether, new warnings in gcc 4.0 might be a nice diagnostics for the 
-people who are also trying to find bugs using -W, but I don't see urgent 
-reasons for fixing them before gcc 4.0 is actually released.
-
-> -Andi
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+> ===============================================================================
+> init/main.c: In function ???maxcpus???:
+> init/main.c:150: warning: pointer targets in passing argument 2 of ???get_option??? 
+> differ in signedness
+> ===============================================================================
+> unsigned int maxcpus;
+> int get_option(char **str, int *pint);
+> ...
+> get_option(&str, &max_cpus);
+> ===============================================================================
+> For example, this one should be left as is, shouldn't it?
 
 
---===============31089937299596304==
+The warning should be fixed, otherwise the warning noise will
+hide real valuable warnings. It's a judgement call whether you
+modify the function prototype or the argument. In this case
+both would be possible. I would usually do the change that
+requires less work (e.g. fix the argument in this case because
+there are a lot more get_option callers). This means make maxcpus
+an int. Please avoid adding casts if possible. 
+
+-Andi
+
+
+--===============4431395091090562==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============31089937299596304==--
+--===============4431395091090562==--
