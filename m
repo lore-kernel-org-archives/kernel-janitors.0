@@ -1,31 +1,47 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Fri, 18 Mar 2005 10:37:19 +0000
-Subject: Re: [KJ] linux-2.6.11: fix psmouse-base.c error messages
-Message-Id: <20050318103719.GB4006@nd47.coderock.org>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Tue, 08 Mar 2005 11:56:18 +0000
+Subject: [KJ] [PATCH] drivers/isdn/i4l/isdn_v110.c : fix warning
+Message-Id: <20050308115618.GY9952@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============12760164046013944=="
+Content-Type: multipart/mixed; boundary="0ntfKIWw70PvrIHh"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <422B3892.6080301@bfs.de>
-In-Reply-To: <422B3892.6080301@bfs.de>
 To: kernel-janitors@vger.kernel.org
 
---===============12760164046013944==
+
+--0ntfKIWw70PvrIHh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 06/03/05 18:06 +0100, walter harms wrote:
-> Hi list,
-> this is a resend of the older patch now against 2.6.11.
-
-Still doesn't seem ok.
-patch: **** malformed patch at line 83: throwing %d bytes away.\n",
-
-Could you first mail patch to yourself, and try to apply it?
+Description:
+Fix compile warning on drivers/isdn/i4l/isdn_v110.c
 
 
-	Domen
+It refers to:
+http://developer.osdl.org/cherry/compile/2.6/linux-2.6.11.results/2.6.11.allyesconfig.bzImage.txt
+drivers/isdn/i4l/isdn_v110.c: In function `isdn_v110_stat_callback': 
+drivers/isdn/i4l/isdn_v110.c:523: warning: 'ret' might be used uninitialized in this function
 
---===============12760164046013944==
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+
+--0ntfKIWw70PvrIHh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch-fix-warning-isdn-i4l-isdn_v110.diff"
+
+diff -urpN -X dontdiff linux-2.6.11-vanilla/drivers/isdn/i4l/isdn_v110.c linux-2.6.11/drivers/isdn/i4l/isdn_v110.c
+--- linux-2.6.11-vanilla/drivers/isdn/i4l/isdn_v110.c	2005-03-02 08:38:33.000000000 +0100
++++ linux-2.6.11/drivers/isdn/i4l/isdn_v110.c	2005-03-08 12:37:57.000000000 +0100
+@@ -520,7 +520,7 @@ isdn_v110_stat_callback(int idx, isdn_ct
+ {
+ 	isdn_v110_stream *v = NULL;
+ 	int i;
+-	int ret;
++	int ret = 0 ;
+ 
+ 	if (idx < 0)
+ 		return 0;
+
+--0ntfKIWw70PvrIHh
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============12760164046013944==--
+--0ntfKIWw70PvrIHh--
