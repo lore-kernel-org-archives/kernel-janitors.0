@@ -1,33 +1,33 @@
 From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:13:37 +0000
-Subject: [KJ] [PATCH 30/53] kyrofb: Clean up printk()'s in
-Message-Id: <20050125231337.10418.9460.17033@localhost.localdomain>
+Date: Tue, 25 Jan 2005 23:10:32 +0000
+Subject: [KJ] [PATCH 14/53] clps711xfb: Clean up printk()'s in
+Message-Id: <20050125231029.10418.59752.49511@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99731040072726096=="
+Content-Type: multipart/mixed; boundary="===============94059656304626205=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============99731040072726096==
+--===============94059656304626205==
 
 This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/kyro/fbdev.c
+drivers/video/clps711xfb.c
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/kyro/fbdev.c linux-2.6.11-rc2-mm1/drivers/video/kyro/fbdev.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/kyro/fbdev.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/kyro/fbdev.c	2005-01-24 19:07:03.376259500 -0500
-@@ -739,7 +739,7 @@
- 	if (register_framebuffer(info) < 0)
- 		goto out_unmap;
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/clps711xfb.c linux-2.6.11-rc2-mm1/drivers/video/clps711xfb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/clps711xfb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/clps711xfb.c	2005-01-24 19:07:02.768261473 -0500
+@@ -385,7 +385,7 @@
+ 	clps7111fb_backlight_proc_entry = create_proc_entry("backlight", 0444,
+ 		&proc_root);
+ 	if (clps7111fb_backlight_proc_entry == NULL) {
+-		printk("Couldn't create the /proc entry for the backlight.\n");
++		printk(KERN_ERR "Couldn't create the /proc entry for the backlight.\n");
+ 		return -EINVAL;
+ 	}
  
--	printk("fb%d: %s frame buffer device, at %dx%d@%d using %ldk/%ldk of VRAM\n",
-+	pr_info("fb%d: %s frame buffer device, at %dx%d@%d using %ldk/%ldk of VRAM\n",
- 	       info->node, info->fix.id, info->var.xres,
- 	       info->var.yres, info->var.bits_per_pixel, size >> 10,
- 	       (unsigned long)info->fix.smem_len >> 10);
 
---===============99731040072726096==
+--===============94059656304626205==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99731040072726096==--
+--===============94059656304626205==--
