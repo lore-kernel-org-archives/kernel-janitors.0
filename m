@@ -1,54 +1,56 @@
-From: Hanna Linder <hannal@us.ibm.com>
-Date: Wed, 13 Oct 2004 22:15:59 +0000
-Subject: [KJ] [PATCH 2.6] ambassador.c replace pci_find_device with
-Message-Id: <194130000.1097705759@w-hlinder.beaverton.ibm.com>
+From: james4765@verizon.net
+Date: Thu, 28 Oct 2004 15:01:05 +0000
+Subject: [KJ] [PATCH 6/9] to arch/sparc/Kconfig
+Message-Id: <20041028150104.2776.45930.45727@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99536854505597261=="
+Content-Type: multipart/mixed; boundary="===============82986422693347939=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: greg@kroah.com, hannal@us.ibm.com, chas@cmf.nrl.navy.mil
+References: <20041028150029.2776.69333.50087@localhost.localdomain>
+In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
+To: kernel-janitors@lists.osdl.org
+Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
 
---===============99536854505597261==
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+--===============82986422693347939==
 
+Description: Remove x86-specific help in arch/sparc/Kconfig.
+Apply against 2.6.9.
 
-As pci_find_device is going away soon I have converted this file to use
-pci_get_device instead. I have compile tested it. If anyone has this ATM card
-and could test it that would be great.
+Signed-off by: James Nelson <james4765@gmail.com>
 
-Hanna Linder
-IBM Linux Technology Center
-
-Signed-off-by: Hanna Linder <hannal@us.ibm.com>
-
----
-
-diff -Nrup linux-2.6.9-rc4-mm1cln/drivers/atm/ambassador.c linux-2.6.9-rc4-mm1patch/drivers/atm/ambassador.c
---- linux-2.6.9-rc4-mm1cln/drivers/atm/ambassador.c	2004-10-12 14:15:10.000000000 -0700
-+++ linux-2.6.9-rc4-mm1patch/drivers/atm/ambassador.c	2004-10-13 13:50:30.070951672 -0700
-@@ -2378,7 +2378,7 @@ static int __init amb_probe (void) {
-   
-   devs = 0;
-   pci_dev = NULL;
--  while ((pci_dev = pci_find_device
-+  while ((pci_dev = pci_get_device
-           (PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR, pci_dev)
-           )) {
- 	if (do_pci_device(pci_dev) == 0)
-@@ -2387,7 +2387,7 @@ static int __init amb_probe (void) {
+diff -u ./arch/sparc/Kconfig.orig ./arch/sparc/Kconfig
+--- ./arch/sparc/Kconfig.orig	2004-10-16 09:53:49.626021592 -0400
++++ ./arch/sparc/Kconfig	2004-10-16 10:02:10.724152771 -0400
+@@ -85,8 +85,8 @@
+ 	depends on BROKEN
+ 	---help---
+ 	  This enables support for systems with more than one CPU. If you have
+-	  a system with only one CPU, like most personal computers, say N. If
+-	  you have a system with more than one CPU, say Y.
++	  a system with only one CPU, say N. If you have a system with more
++	  than one CPU, say Y.
  
-   
-   pci_dev = NULL;
--  while ((pci_dev = pci_find_device
-+  while ((pci_dev = pci_get_device
-           (PCI_VENDOR_ID_MADGE, PCI_DEVICE_ID_MADGE_AMBASSADOR_BAD, pci_dev)
-           ))
-     PRINTK (KERN_ERR, "skipped broken (PLX rev 2) card");
+ 	  If you say N here, the kernel will run on single and multiprocessor
+ 	  machines, but will use only one CPU of a multiprocessor machine. If
+@@ -94,17 +94,11 @@
+ 	  singleprocessor machines. On a singleprocessor machine, the kernel
+ 	  will run faster if you say N here.
+ 
+-	  Note that if you say Y here and choose architecture "586" or
+-	  "Pentium" under "Processor family", the kernel will not work on 486
+-	  architectures. Similarly, multiprocessor kernels for the "PPro"
+-	  architecture may not work on all Pentium based boards.
+-
+ 	  People using multiprocessor machines who say Y here should also say
+ 	  Y to "Enhanced Real Time Clock Support", below. The "Advanced Power
+ 	  Management" code will be disabled if you say Y here.
+ 
+ 	  See also the <file:Documentation/smp.txt>,
+-	  <file:Documentation/i386/IO-APIC.txt>,
+ 	  <file:Documentation/nmi_watchdog.txt> and the SMP-HOWTO available at
+ 	  <http://www.tldp.org/docs.html#howto>.
+ 
 
-
---===============99536854505597261==
+--===============82986422693347939==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99536854505597261==--
+--===============82986422693347939==--
