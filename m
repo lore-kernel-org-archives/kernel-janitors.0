@@ -1,47 +1,106 @@
-From: "Dong" <Dong@yahoo.com>
-Date: Sat, 18 Dec 2004 13:51:29 +0000
-Subject: =?GB2312?B?UmU6yfqy+tbG1OzStWVycNS0tPrC6y4uLjIxOjUxOjE2?=
-Message-Id: <E1CfezF-0008JW-DM@sc8-sf-mx1.sourceforge.net>
+From: James Nelson <james4765@verizon.net>
+Date: Sun, 26 Dec 2004 16:26:48 +0000
+Subject: [KJ] [PATCH] hw_random: Minor cleanup to hw_random.c
+Message-Id: <20041226162709.15894.42935.68246@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============73377802414088045=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
 To: kernel-janitors@vger.kernel.org
 
-CiAgICC7ttOtt8POyqO6aHR0cDovL3Bvd2VyZXJwLjEyNi5jb20KCiAgICBQIG8gdyBlIHIgLSBF
-UlAgVjMuMM+1zbPKx9K7zNe8r87vwfehotbG1OyhorLGzvGhotTaz9+31s72oaIKvvay39ans9bT
-2tK7zOW1xMirw+a53MDt0MXPos+1zbOjrMv8sPy6rLy4yq649rj319S2wMGitcS5psTcxKMKv+mj
-rLj3xKO/6dauvOTO3rfsway906Osyv2+3bjftsi5ss/toaMKCiAgICBQIG8gdyBlIHIgLSBFUlAg
-VjMuMM+1zbPKytPD09qwtLaptaXJ+rL6oaKxuLv1yfqy+qGi1ti4tMn6svqhogrB97PMyfqy+rXI
-yfqy+sSjyr2ho82ouf2x6te8usvQxMSjv+nNrLK7zazQ0NK1zNi147XEuabE3MSjCr/pz+C7pdfp
-us+jrM6qsrvNrNDQ0rWhorK7zazB7NPytcTTw7unzOG5qbK7zay1xL3ivva3vbC4oaMKCiAgICDT
-w7unv8nS1Lj5vt2498bz0rW1xMq1vMrH6b/2o6y2qNbG19S8urXE0rXO8cH3s8yho8HtzeIKo6zP
-tc2z0rLOqtPDu6fM4bmpwcvX1NDQyei8xqGiv6q3orXEvdO/2qOs08O7p7/J0tS4+b7d0OjSqqOs
-CsD708PPtc2zzOG5qbXExKOw5b+qt6Kz9tPQ19S8uszYteO1xNK1zvG5psTcxKO/6aGjCgogICAg
-zazKsdKq18XW2Na4s/a1xMrHLFAtby13LWUtciBFUlAgVjMuMLXEzsS1tdfKwc+3x7OjyKsssPzA
-qMq508MKytay4SzJ6LzGzsS1tSzJz8/fytay4SzQ6Mfzt9bO9s7EtbUsw7+49sSjv+nEo9DNzbws
-wfezzM28LCDJ9QrWwcrHsuLK1M7EtbUsYnVnvMfCvLXI0rvTpr7jyKsuIM7EtbXXysHP19y5stPQ
-NDcwTdauvt4hCgogICAgIAogICAgsb7Ptc2zysrTw9PayOfPwry41tbH6b/2OiAKCiAgICAxOtPQ
-0ru2qLy8yvXE3MGmtcTW0LTz0M3J+rL61sbU7NDUxvPStaOu1eLR+cbz0rW7+bG+trzT0NfUvLq1
-xArI7bz+1tDQxLrNvLzK9bK/w8Us09C1xLy8yvXE3MGmsqKyu8j1LMbz0rXT0MHL1LSzzNDyLL7N
-z+C1sdPa1cbO1cHLCtfUvLrD/NTLo6y+zbK708PDv7X31fvSu7j20rXO8bu3vdqjrLa80OjSqs/y
-yO28/rmry764ttSpzffHrqOuIAoKICAgIDKjusjtvP65q8u+o67T0NK7tqi/zbun18rUtKOstau/
-4NPaw7vT0NfUvLq1xLL6xrejrtPJ09qxvs+1zbPKygrTptDUt8ezo8e/o6zKtcqps8mxvrrctc2j
-rNXi0fnG89K1vs21yNPaw+Kz/cHLv6q3orPJsb6jrNLUvc+1zbXEvNu48QqjrNT2x7/By9fUvLq1
-xL661fnBpqOu0qrWqrXAo6y/qrei0rvM17PJyuy1xEVSUM+1zbOjrMO709DI/cTqtcTKsbzkCsSl
-us+6zby4sNnN8rXEzbbI66OsuPmxvsrHsru/ycTctcSjrgoKICAgIDOjutGnz7Cyzr+808PNvqOu
-sb7Ptc2zzsS1tdfKwc/G68iro6zKx9Gnz7BFUlDLvM/rtcTT0NCnvd2+tizV4grSu7Xjo6zO3tDr
-17jQ8KOsysLKtcnPo6y5usLyzsS1tdfKwc+1xLHIubrC8rPM0PK1xMjLu7nSqrbgo6EKCiAgICCx
-vsjL1qPW2LPQxbUssb7Iy8v5z/rK27XERVJQz7XNsyyw/LqsyKuyv7XE1LS0+sLrLL/J0tS1scPm
-seDS67LiCsrULr3a1LzE+rTzwb+1xMjLwabO78GmvLDKsbzko6zW+sTj0rux29auwaYhCgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tCsjnufvE+rK70OjSqqOsx+vL5srWyb6z/aOsu/LXqreiuPjE49Do0qq1xMXz09GjrNC7
-0LujoQoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tClNGIGVtYWlsIGlzIHNwb25zb3JlZCBieSAtIFRoZSBJVCBQcm9kdWN0IEd1aWRlClJl
-YWQgaG9uZXN0ICYgY2FuZGlkIHJldmlld3Mgb24gaHVuZHJlZHMgb2YgSVQgUHJvZHVjdHMgZnJv
-bSByZWFsIHVzZXJzLgpEaXNjb3ZlciB3aGljaCBwcm9kdWN0cyB0cnVseSBsaXZlIHVwIHRvIHRo
-ZSBoeXBlLiBTdGFydCByZWFkaW5nIG5vdy4gCmh0dHA6Ly9wcm9kdWN0Z3VpZGUuaXRtYW5hZ2Vy
-c2pvdXJuYWwuY29tLwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpLZXJuZWwtamFuaXRvci1kaXNjdXNzIG1haWxpbmcgbGlzdApLZXJuZWwtamFuaXRvci1k
-aXNjdXNzQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
-dC9saXN0cy9saXN0aW5mby9rZXJuZWwtamFuaXRvci1kaXNjdXNz
+--===============73377802414088045==
+
+Clean up in drivers/char/hw_random.c:
+Make debug #defines a little easier to understand.
+Small whitespace cleanup.
+Change some printk()'s into pr_info()'s.
+Add KERN_ constant to debug printk().
+
+Signed-off-by: James Nelson <james4765@gmail.com>
+
+diff -urN --exclude='*~' linux-2.6.10-original/drivers/char/hw_random.c linux-2.6.10/drivers/char/hw_random.c
+--- linux-2.6.10-original/drivers/char/hw_random.c	2004-12-24 16:34:31.000000000 -0500
++++ linux-2.6.10/drivers/char/hw_random.c	2004-12-26 11:22:26.640871119 -0500
+@@ -56,31 +56,27 @@
+ /*
+  * debugging macros
+  */
+-#undef RNG_DEBUG /* define to enable copious debugging info */
+ 
+-#ifdef RNG_DEBUG
+-/* note: prints function name for you */
+-#define DPRINTK(fmt, args...) printk(KERN_DEBUG "%s: " fmt, __FUNCTION__ , ## args)
+-#else
+-#define DPRINTK(fmt, args...)
+-#endif
++/* pr_debug() collapses to a no-op if DEBUG is not defined */
++#define DPRINTK(fmt, args...) pr_debug(PFX "%s: " fmt, __FUNCTION__ , ## args)
++
+ 
+-#define RNG_NDEBUG        /* define to disable lightweight runtime checks */
++#undef RNG_NDEBUG        /* define to enable lightweight runtime checks */
+ #ifdef RNG_NDEBUG
+-#define assert(expr)
++#define assert(expr)							\
++		if(!(expr)) {						\
++		printk(KERN_DEBUG PFX "Assertion failed! %s,%s,%s,"	\
++		"line=%d\n", #expr, __FILE__, __FUNCTION__, __LINE__);	\
++		}
+ #else
+-#define assert(expr) \
+-        if(!(expr)) {                                   \
+-        printk( "Assertion failed! %s,%s,%s,line=%d\n", \
+-        #expr,__FILE__,__FUNCTION__,__LINE__);          \
+-        }
++#define assert(expr)
+ #endif
+ 
+ #define RNG_MISCDEV_MINOR		183 /* official */
+ 
+ static int rng_dev_open (struct inode *inode, struct file *filp);
+ static ssize_t rng_dev_read (struct file *filp, char __user *buf, size_t size,
+-			     loff_t * offp);
++				loff_t * offp);
+ 
+ static int __init intel_init (struct pci_dev *dev);
+ static void intel_cleanup(void);
+@@ -322,7 +318,8 @@
+ 	rnen |= (1 << 7);	/* PMIO enable */
+ 	pci_write_config_byte(dev, 0x41, rnen);
+ 
+-	printk(KERN_INFO PFX "AMD768 system management I/O registers at 0x%X.\n", pmbase);
++	pr_info( PFX "AMD768 system management I/O registers at 0x%X.\n",
++			pmbase);
+ 
+ 	amd_dev = dev;
+ 
+@@ -483,7 +480,7 @@
+ 
+ 
+ static ssize_t rng_dev_read (struct file *filp, char __user *buf, size_t size,
+-			     loff_t * offp)
++				loff_t * offp)
+ {
+ 	static spinlock_t rng_lock = SPIN_LOCK_UNLOCKED;
+ 	unsigned int have_data;
+@@ -606,7 +603,7 @@
+ 	if (rc)
+ 		return rc;
+ 
+-	printk (KERN_INFO RNG_DRIVER_NAME " loaded\n");
++	pr_info( RNG_DRIVER_NAME " loaded\n");
+ 
+ 	DPRINTK ("EXIT, returning 0\n");
+ 	return 0;
+
+--===============73377802414088045==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============73377802414088045==--
