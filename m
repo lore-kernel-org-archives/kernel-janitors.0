@@ -1,80 +1,75 @@
-From: Fabiano Pallonetto <fp.soft@tiscali.it>
-Date: Fri, 16 Jan 2004 14:06:53 +0000
-Subject: [Kernel-janitors] Project TO DO
-Message-Id: <1074262013.3613.40.camel@Michelangelo>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Fri, 16 Jan 2004 17:20:44 +0000
+Subject: Re: [Kernel-janitors] Project TO DO
+Message-Id: <20040116172043.GA1900@mail.sternwelten.at>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============97285356417433455=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <1074262013.3613.40.camel@Michelangelo>
+In-Reply-To: <1074262013.3613.40.camel@Michelangelo>
 To: kernel-janitors@vger.kernel.org
 
-Hi, I'm a student of Computer Science and I've to develop a little
-project  in OS. I thought to do this:
 
-" From: Matthew Wilcox
-Subject: Calling yield() Considered Harmful
+--===============97285356417433455==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Disposition: inline
 
-In 2.6, the semantics of calling yield() changed from "sleep for a
-bit" to "I really don't want to run for a while".  This matches POSIX
-better, but there's a lot of drivers still using yield() when they mean
-cond_resched(), schedule() or even schedule_timeout().
 
-Here's a list:
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-$ find drivers/ -type f |xargs grep 'yield[^a-z]*('
-drivers/cdrom/cdu31a.c:         yield();
-drivers/cdrom/sonycd535.c:              yield();
-drivers/macintosh/adb.c:                        yield();
-drivers/message/i2o/i2o_core.c:         yield();
-drivers/message/i2o/i2o_core.c:         yield();
-drivers/mtd/chips/cfi_cmdset_0002.c:                    yield();
-drivers/mtd/nand/nand.c:                yield ();
-drivers/net/depca.c:                    yield();
-drivers/net/sb1000.c:           yield();
-drivers/net/sb1000.c:           yield();
-drivers/net/sis900.c:                   yield();
-drivers/net/e100/e100_eeprom.c:                 yield();
-drivers/net/e100/e100_eeprom.c:                 yield();
-drivers/net/e100/e100_main.c:                   yield();
-drivers/net/e100/e100_phy.c:                    yield();
-drivers/net/e100/e100_phy.c:                            yield();
-drivers/net/e100/e100_test.c:                   yield();
-drivers/scsi/NCR5380.c:                 yield();
-drivers/scsi/ibmmca.c:          yield();
-drivers/scsi/ibmmca.c:          yield();
-drivers/scsi/megaraid.c:                udelay(100); yield();
-drivers/usb/core/message.c:                     yield ();
+On Fri, 16 Jan 2004, Fabiano Pallonetto wrote:
 
-As always, this isn't a search-and-replace type of job.  Let's take
-the first one as an example:
+> [..]
+> drivers/net/sis900.c:                   yield();
 
-static inline void sony_sleep(void)
-{
-        unsigned long flags;
+if you want i can test this one on my laptop=20
 
-        if (cdu31a_irq <= 0) {
-                yield();
-        } else {                /* Interrupt driven */
-                save_flags(flags);
-                cli();
-                enable_interrupts();
-                interruptible_sleep_on(&cdu31a_irq_wait);
-                restore_flags(flags);
-        }
-}
+> Has anyone smenthing intersting to suggest me? You know, I'm a newbie=20
+> than I cannot  face a too big one, especially in one semester.
+> Thank you very much!
 
-If you look at how sony_sleep() is typically used, what you really want to
-do is schedule_timeout(1).  But someone needs to look at all these cases..
-do I hear a volunteer?"
+until now i haven't heard of any volounteer, so go one,
+but please send to the list _one_ patch per file!
+then you' ll probably get more feedback  ;-)
 
-Has anyone smenthing intersting to suggest me? You know, I'm a newbie 
-than I cannot  face a too big one, especially in one semester.
-Thank you very much!
+a++
+maks
 
--- 
-Fabiano Pallonetto <fp.soft@tiscali.it>
+
+-- =20
+sidenote on stoned beavers out of detox aka linux-2.6.0:
+"Linus Torvalds doesn't believe in kernel preemption. [..]
+Avoiding kernel preemption makes the kernel simpler and more robust."
+Moshe Bar - Linux Internals 2000
+
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQFACB1r6//kSTNjoX0RAvXIAJ9tne73prNcgB+sB4zCFboZ4MBSNgCfepxX
+ao4gFF7h598e1wAxu0lzeT8=
+=66VG
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
+
+--===============97285356417433455==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============97285356417433455==--
