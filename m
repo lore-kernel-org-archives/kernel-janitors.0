@@ -1,51 +1,49 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Date: Thu, 10 Mar 2005 16:30:12 +0000
-Subject: [KJ] Re: [PATCH] drivers/ide/cs5520.c : Use the DMA_{64,
-Message-Id: <58cb370e050310083053a0e495@mail.gmail.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 23 Mar 2005 13:21:27 +0000
+Subject: [KJ] Re: [patch 1/1] printk : arch/ia64/kernel/smp.c
+Message-Id: <20050323132127.GD9206@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79057958929800565=="
+Content-Type: multipart/mixed; boundary="3Pql8miugIZX0722"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050308133358.GA5311@localhost.localdomain>
-In-Reply-To: <20050308133358.GA5311@localhost.localdomain>
-To: Tobias Klauser <tklauser@nuerscht.ch>
-Cc: kernel-janitors@lists.osdl.org, linux-ide@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============79057958929800565==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 8 Mar 2005 14:33:58 +0100, Tobias Klauser <tklauser@nuerscht.ch> wrote:
-> Hello,
+--3Pql8miugIZX0722
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
-
-> Description: Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h
-> when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-> See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-
-only DMA_32BIT_MASK constant is used in the patch
- 
-> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Domen Puncer (domen@coderock.org) wrote:
+> On 23/03/05 11:02 +0100, Christophe Lucas wrote:
+> >  	if (cpuid == me) {
+> > -		printk("%s: trying to call self\n", __FUNCTION__);
+> > +		printk(KERN_WARNING "%s: trying to call self with info:%08x\n", __FUNCTION__, info);
 > 
-> --- linux-2.6.11.orig/drivers/ide/pci/cs5520.c  2005-03-02 12:50:39.000000000 +0100
-> +++ linux-2.6.11/drivers/ide/pci/cs5520.c       2005-03-03 11:46:46.000000000 +0100
-> @@ -227,7 +227,7 @@ static int __devinit cs5520_init_one(str
->                 return 1;
->         }
->         pci_set_master(dev);
-> -       if (pci_set_dma_mask(dev, 0xFFFFFFFF)) {
-> +       if (pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
->                 printk(KERN_WARNING "cs5520: No suitable DMA available.\n");
->                 return -ENODEV;
->         }
+> Hmm... %p is supposed to be used for pointers, right?
+> 
 
-You need to include <linux/dma-mapping.h> explicitly
-or build will fail for some architectures, i.e. please see:
-http://linus.bkbits.net:8080/linux-2.5/cset@41d833427yYZzu6TxydNrr5z6f02cg?nav=index.html|src/|src/drivers|src/drivers/ide|related/drivers/ide/setup-pci.c
+Oh, sorry.
 
-Bartlomiej
+	~Christophe
 
---===============79057958929800565==
+--3Pql8miugIZX0722
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch-2.6.12-rc1_arch_ia64_kernel_smp.c.diff"
+
+diff -urpN -X dontdiff a/arch/ia64/kernel/smp.c b/arch/ia64/kernel/smp.c
+--- a/arch/ia64/kernel/smp.c	2005-03-18 02:34:36.000000000 +0100
++++ b/arch/ia64/kernel/smp.c	2005-03-23 14:13:09.000000000 +0100
+@@ -269,7 +269,7 @@ smp_call_function_single (int cpuid, voi
+ 	int me = get_cpu(); /* prevent preemption and reschedule on another processor */
+ 
+ 	if (cpuid == me) {
+-		printk("%s: trying to call self\n", __FUNCTION__);
++		printk(KERN_WARNING "%s: trying to call self with info:%p\n", __FUNCTION__, info);
+ 		put_cpu();
+ 		return -EBUSY;
+ 	}
+
+--3Pql8miugIZX0722
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79057958929800565==--
+--3Pql8miugIZX0722--
