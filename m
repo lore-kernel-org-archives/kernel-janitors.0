@@ -1,33 +1,40 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:16:11 +0000
-Subject: [KJ] [PATCH 53/53] tridentfb: Clean up printk()'s in
-Message-Id: <20050125231610.10418.9025.34276@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@mail.ru>
+Date: Wed, 26 Jan 2005 14:39:29 +0000
+Subject: Re: [KJ] [PATCH 53/53] tridentfb: Clean up printk()'s in
+Message-Id: <200501261725.38666.adobriyan@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86853959691995097=="
+Content-Type: multipart/mixed; boundary="===============3688771442596086=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050125231610.10418.9025.34276@localhost.localdomain>
+In-Reply-To: <20050125231610.10418.9025.34276@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============86853959691995097==
+--===============3688771442596086==
+Content-Disposition: inline
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-include/video/trident.h
+On Wednesday 26 January 2005 01:16, James Nelson wrote:
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+> --- linux-2.6.11-rc2-mm1-original/include/video/trident.h
+> +++ linux-2.6.11-rc2-mm1/include/video/trident.h
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/include/video/trident.h linux-2.6.11-rc2-mm1/include/video/trident.h
---- linux-2.6.11-rc2-mm1-original/include/video/trident.h	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/include/video/trident.h	2005-01-24 19:07:04.467255960 -0500
-@@ -9,7 +9,7 @@
- #define debug(f,a...)
- #endif
- 
--#define output(f, a...) printk("tridentfb: " f, ## a)
-+#define output(f, a...) pr_info("tridentfb: " f, ## a)
- 
- #define Kb	(1024)
- #define Mb	(Kb*Kb)
+> -#define output(f, a...) printk("tridentfb: " f, ## a)
+> +#define output(f, a...) pr_info("tridentfb: " f, ## a)
 
---===============86853959691995097==
+drivers/video/tridentfb.c:1165-1168 say:
+
+	if (register_framebuffer(&fb_info) < 0) {
+                output("Could not register Trident framebuffer\n");
+                return -EINVAL;
+	}
+
+So, this patch should be two-liner. ;-)
+
+	Alexey
+
+--===============3688771442596086==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86853959691995097==--
+--===============3688771442596086==--
