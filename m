@@ -1,85 +1,34 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 21 Sep 2004 22:14:36 +0000
-Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 4/38] net/airport: replace
-Message-Id: <20040921221436.GH1946@us.ibm.com>
+Date: Mon, 27 Sep 2004 18:11:57 +0000
+Subject: [Kernel-janitors] [PATCH 2.6.9-rc2 1/16] scsi/53c700: replace
+Message-Id: <20040927181157.GP1676@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36934084571673953=="
+Content-Type: multipart/mixed; boundary="===============084727742522122895=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============36934084571673953==
+--===============084727742522122895==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Any comments would be appreciated. Two patches have been removed from my
-set, so the total has been reduced to 38.
+Any comments would be appreciated.
 
-Description: Use ssleep()/msleep() [as appropriate]
-instead of schedule_timeout() to guarantee the task delays as
-expected.
+Description: Use msleep_interruptible() instead of
+schedule_timeout() to guarantee the task delays as expected.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--- 2.6.9-rc2-vanilla/drivers/scsi/53c700.c	2004-09-13 17:15:58.000000000 -0700
++++ 2.6.9-rc2/drivers/scsi/53c700.c	2004-09-14 09:10:24.000000000 -0700
+@@ -1961,7 +1961,7 @@ NCR_700_bus_reset(struct scsi_cmnd * SCp
+ 	 * reset via sg or something */
+ 	while(hostdata->eh_complete != NULL) {
+ 		spin_unlock_irq(SCp->device->host->host_lock);
+-		schedule_timeout(HZ/10);
++		msleep_interruptible(100);
+ 		spin_lock_irq(SCp->device->host->host_lock);
+ 	}
+ 	hostdata->eh_complete = &complete;
 
---- 2.6.9-rc2-vanilla/drivers/net/wireless/airport.c	2004-09-13 17:15:42.000000000 -0700
-+++ 2.6.9-rc2/drivers/net/wireless/airport.c	2004-09-21 15:04:59.000000000 -0700
-@@ -28,6 +28,7 @@
- #include <linux/if_arp.h>
- #include <linux/etherdevice.h>
- #include <linux/wireless.h>
-+#include <linux/delay.h>
- 
- #include <asm/io.h>
- #include <asm/system.h>
-@@ -94,8 +95,7 @@ airport_resume(struct macio_dev *mdev)
- 	printk(KERN_DEBUG "%s: Airport waking up\n", dev->name);
- 
- 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(mdev), 0, 1);
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ/5);
-+	msleep(200);
- 
- 	enable_irq(dev->irq);
- 
-@@ -147,8 +147,7 @@ airport_detach(struct macio_dev *mdev)
- 	macio_release_resource(mdev, 0);
- 
- 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(mdev), 0, 0);
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	ssleep(1);
- 
- 	macio_set_drvdata(mdev, NULL);
- 	free_netdev(dev);
-@@ -174,14 +173,12 @@ static int airport_hard_reset(struct ori
- 	disable_irq(dev->irq);
- 
- 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(card->mdev), 0, 0);
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	ssleep(1);
- 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(card->mdev), 0, 1);
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	ssleep(1);
- 
- 	enable_irq(dev->irq);
--	schedule_timeout(HZ);
-+	ssleep(1);
- #endif
- 
- 	return 0;
-@@ -240,8 +237,7 @@ airport_attach(struct macio_dev *mdev, c
- 		
- 	/* Power up card */
- 	pmac_call_feature(PMAC_FTR_AIRPORT_ENABLE, macio_get_of_node(mdev), 0, 1);
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(HZ);
-+	ssleep(1);
- 
- 	/* Reset it before we get the interrupt */
- 	hermes_init(hw);
-
---===============36934084571673953==
+--===============084727742522122895==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -90,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36934084571673953==--
+--===============084727742522122895==--
