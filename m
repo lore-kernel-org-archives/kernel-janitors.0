@@ -1,150 +1,43 @@
-From: Denis Vlasenko <vda@port.imtp.ilyichevsk.odessa.ua>
-Date: Sun, 17 Oct 2004 16:26:55 +0000
-Subject: [KJ] Re: [PATCH 4/8] replacing/fixing printk with pr_debug/pr_info
-Message-Id: <200410171926.55840.vda@port.imtp.ilyichevsk.odessa.ua>
+From: Hanna Linder <hannal@us.ibm.com>
+Date: Fri, 08 Oct 2004 22:53:08 +0000
+Subject: [KJ] [RFT 2.6] ret_mb_a_pci.c replace pci_find_device with
+Message-Id: <87080000.1097275988@w-hlinder.beaverton.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59306050776260077=="
+Content-Type: multipart/mixed; boundary="===============06332155045922927=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1098032569.3023.124.camel@pdp11.tsho.org>
-In-Reply-To: <1098032569.3023.124.camel@pdp11.tsho.org>
-To: Daniele Pizzoni <auouo@tin.it>, kernel-janitors <kernel-janitors@lists.osdl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: lkml <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+Cc: greg@kroah.com, hannal@us.ibm.com, uclinux-v850@lsi.nec.co.jp
 
---===============59306050776260077==
-Content-Type: text/plain;
-  charset="koi8-r"
+--===============06332155045922927==
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Sunday 17 October 2004 20:10, Daniele Pizzoni wrote:
-> Replace custom macro Dprintk (defined in apic.h included via smp.h)
->  with pr_debug from kernel.h.
-> Use  pr_info when appropriate.
-> Fix consistency of printks.
-> 
-> Signed-off-by: Daniele Pizzoni <auouo@tin.it>
-> 
-> Index: linux-2.6.9-rc4/arch/i386/kernel/mpparse.c
-> ===================================================================
-> --- linux-2.6.9-rc4.orig/arch/i386/kernel/mpparse.c	2004-08-14 07:36:44.000000000 +0200
-> +++ linux-2.6.9-rc4/arch/i386/kernel/mpparse.c	2004-10-17 17:01:19.482218648 +0200
-> @@ -13,6 +13,7 @@
->   *		Paul Diefenbaugh:	Added full ACPI support
->   */
->  
-> +#include <linux/kernel.h>
->  #include <linux/mm.h>
->  #include <linux/irq.h>
->  #include <linux/init.h>
-> @@ -130,55 +131,55 @@ void __init MP_processor_info (struct mp
->  	apicid = mpc_apic_id(m, translation_table[mpc_record]);
->  
->  	if (m->mpc_featureflag&(1<<0))
-> -		Dprintk("    Floating point unit present.\n");
-> +		pr_debug("    Floating point unit present.\n");
->  	if (m->mpc_featureflag&(1<<7))
-> -		Dprintk("    Machine Exception supported.\n");
-> +		pr_debug("    Machine Exception supported.\n");
->  	if (m->mpc_featureflag&(1<<8))
-> -		Dprintk("    64 bit compare & exchange supported.\n");
-> +		pr_debug("    64 bit compare & exchange supported.\n");
->  	if (m->mpc_featureflag&(1<<9))
-> -		Dprintk("    Internal APIC present.\n");
-> +		pr_debug("    Internal APIC present.\n");
->  	if (m->mpc_featureflag&(1<<11))
-> -		Dprintk("    SEP present.\n");
-> +		pr_debug("    SEP present.\n");
->  	if (m->mpc_featureflag&(1<<12))
-> -		Dprintk("    MTRR  present.\n");
-> +		pr_debug("    MTRR  present.\n");
->  	if (m->mpc_featureflag&(1<<13))
-> -		Dprintk("    PGE  present.\n");
-> +		pr_debug("    PGE  present.\n");
->  	if (m->mpc_featureflag&(1<<14))
-> -		Dprintk("    MCA  present.\n");
-> +		pr_debug("    MCA  present.\n");
->  	if (m->mpc_featureflag&(1<<15))
-> -		Dprintk("    CMOV  present.\n");
-> +		pr_debug("    CMOV  present.\n");
->  	if (m->mpc_featureflag&(1<<16))
-> -		Dprintk("    PAT  present.\n");
-> +		pr_debug("    PAT  present.\n");
->  	if (m->mpc_featureflag&(1<<17))
-> -		Dprintk("    PSE  present.\n");
-> +		pr_debug("    PSE  present.\n");
->  	if (m->mpc_featureflag&(1<<18))
-> -		Dprintk("    PSN  present.\n");
-> +		pr_debug("    PSN  present.\n");
->  	if (m->mpc_featureflag&(1<<19))
-> -		Dprintk("    Cache Line Flush Instruction present.\n");
-> +		pr_debug("    Cache Line Flush Instruction present.\n");
->  	/* 20 Reserved */
->  	if (m->mpc_featureflag&(1<<21))
-> -		Dprintk("    Debug Trace and EMON Store present.\n");
-> +		pr_debug("    Debug Trace and EMON Store present.\n");
->  	if (m->mpc_featureflag&(1<<22))
-> -		Dprintk("    ACPI Thermal Throttle Registers  present.\n");
-> +		pr_debug("    ACPI Thermal Throttle Registers  present.\n");
-                                                            ^^^^
-While at it, you may fix stray double spaces...
+As pci_find_device is going away I've replaced it with pci_get_device.
+If someone with a v850 system could test it I would appreciate it.
+Thanks.
 
->  	if (m->mpc_featureflag&(1<<23))
-> -		Dprintk("    MMX  present.\n");
-> +		pr_debug("    MMX  present.\n");
-                                ^^^^
+Hanna Linder
+IBM Linux Technology Center
 
->  	if (m->mpc_featureflag&(1<<24))
-> -		Dprintk("    FXSR  present.\n");
-> +		pr_debug("    FXSR  present.\n");
->  	if (m->mpc_featureflag&(1<<25))
-> -		Dprintk("    XMM  present.\n");
-> +		pr_debug("    XMM  present.\n");
->  	if (m->mpc_featureflag&(1<<26))
-> -		Dprintk("    Willamette New Instructions  present.\n");
-> +		pr_debug("    Willamette New Instructions  present.\n");
->  	if (m->mpc_featureflag&(1<<27))
-> -		Dprintk("    Self Snoop  present.\n");
-> +		pr_debug("    Self Snoop  present.\n");
->  	if (m->mpc_featureflag&(1<<28))
-> -		Dprintk("    HT  present.\n");
-> +		pr_debug("    HT  present.\n");
->  	if (m->mpc_featureflag&(1<<29))
-> -		Dprintk("    Thermal Monitor present.\n");
-> +		pr_debug("    Thermal Monitor present.\n");
->  	/* 30, 31 Reserved */
->  
->  
->  	if (m->mpc_cpuflag & CPU_BOOTPROCESSOR) {
-> -		Dprintk("    Bootup CPU\n");
-> +		pr_debug("    Bootup CPU\n");
+Signed-off-by: Hanna Linder <hannal@us.ibm.com>
 
-...and inconsistent usage of trailing period
-(my personal preference is to remove trailing periods).
-
->  		boot_cpu_physical_apicid = m->mpc_apicid;
->  		boot_cpu_logical_apicid = apicid;
->  	}
-> @@ -250,10 +251,10 @@ static void __init MP_ioapic_info (struc
->  	if (!(m->mpc_flags & MPC_APIC_USABLE))
->  		return;
->  
-> -	printk(KERN_INFO "I/O APIC #%d Version %d at 0x%lX.\n",
-> +	pr_info("I/O APIC #%d Version %d at 0x%lX.\n",
->  		m->mpc_apicid, m->mpc_apicver, m->mpc_apicaddr);
->  	if (nr_ioapics >= MAX_IO_APICS) {
-> -		printk(KERN_CRIT "Max # of I/O APICs (%d) exceeded (found %d).\n",
-> +		printk(KERN_EMERG "Max # of I/O APICs (%d) exceeded (found %d).\n",
->  			MAX_IO_APICS, nr_ioapics);
->  		panic("Recompile kernel with bigger MAX_IO_APICS!.\n");
-                                                               ^^^^
-:)
-
-[Rest snipped]
---
-vda
+---
+diff -Nrup linux-2.6.9-rc3-mm3cln/arch/v850/kernel/rte_mb_a_pci.c linux-2.6.9-rc3-mm3patch/arch/v850/kernel/rte_mb_a_pci.c
+--- linux-2.6.9-rc3-mm3cln/arch/v850/kernel/rte_mb_a_pci.c	2004-09-29 20:04:23.000000000 -0700
++++ linux-2.6.9-rc3-mm3patch/arch/v850/kernel/rte_mb_a_pci.c	2004-10-08 15:39:44.793464832 -0700
+@@ -254,7 +254,7 @@ static void __devinit pcibios_assign_res
+ 	struct pci_dev *dev = NULL;
+ 	struct resource *r;
+ 
+-	while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
++	for_each_pci_dev(dev) {
+ 		unsigned di_num;
+ 		unsigned class = dev->class >> 8;
+ 
 
 
---===============59306050776260077==
+--===============06332155045922927==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -155,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============59306050776260077==--
+--===============06332155045922927==--
