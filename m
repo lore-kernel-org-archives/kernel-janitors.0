@@ -1,37 +1,49 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 06 Jan 2005 00:14:00 +0000
-Subject: [KJ] ftape/fdc-io: schedule_timeout() usage
-Message-Id: <20050106001400.GB2840@us.ibm.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:56:39 +0000
+Subject: [KJ] [PATCH] [1/29] isdn_bsdcomp.c - vfree() checking cleanups
+Message-Id: <41db1117.7dc74fa8.2568.07aa@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36476556253355197=="
+Content-Type: multipart/mixed; boundary="===============42769270274837101=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============36476556253355197==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============42769270274837101==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+isdn_bsdcomp.c vfree() checking cleanups.
 
-I'm hoping someone here can help me correct some ftape code.
-drivers/char/ftape/lowlevel/fdc-io.c::fdc_interrupt_wait() contains the
-following code:
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-set_current_state(TASK_INTERRUPTIBLE);
-add_wait_queue((&ftape_wait_intr, &wait);
-while (!ft_interrupt_seen && (current->state == TASK_INTERRUPTIBLE)) {
-	timeout = schedule_timeout(timeout);
-}
+ isdn_bsdcomp.c |   12 ++++--------
+ 1 files changed, 4 insertions(+), 8 deletions(-)
 
-The problem I have is that after the first iteration of the loop
-(schedule_timeout() with TASK_INTERRUPTIBLE), it will become a busy-wait, as
-schedule_timeout() will be running with current->state set to TASK_RUNNING. I'm
-not sure if this is desired, but it seems weird to me. Any input would be
-appreciated.
 
--Nish
+--- linux-2.6.10-vanilla/drivers/isdn/i4l/isdn_bsdcomp.c	2004-12-24 13:35:25.000000000 -0800
++++ linux-2.6.10/drivers/isdn/i4l/isdn_bsdcomp.c	2005-01-04 11:31:35.000000000 -0800
+@@ -283,18 +283,14 @@
+ 		/*
+ 		 * Release the dictionary
+ 		 */
+-		if (db->dict) {
+-			vfree (db->dict);
+-			db->dict -		}
++		vfree (db->dict);
++		db->dict  
+ 		/*
+ 		 * Release the string buffer
+ 		 */
+-		if (db->lens) {
+-			vfree (db->lens);
+-			db->lens -		}
++		vfree (db->lens);
++		db->lens  
+ 		/*
+ 		 * Finally release the structure itself.
 
---===============36476556253355197==
+
+
+--===============42769270274837101==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36476556253355197==--
+--===============42769270274837101==--
