@@ -1,66 +1,43 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 01 Jul 2004 21:10:37 +0000
-Subject: [Kernel-janitors] msleep() and delay function (DVB)
-Message-Id: <40E47DCD.1000902@us.ibm.com>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Mon, 05 Jul 2004 13:39:59 +0000
+Subject: Re: [Kernel-janitors] Lets update our TODO
+Message-Id: <20040705133958.GA1587@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============80383642703945113=="
+Content-Type: multipart/mixed; boundary="===============86655060174538412=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============80383642703945113==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============86655060174538412==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[Not subscribed to linux-dvb, so please CC back if replying from that list]
+On Sat, 26 Jun 2004, Domen Puncer wrote:
 
-Hi,
+> Hi.
+> 
+> It's terrible, please help updating it.
+> (It can be a real PITA, when someone new comes, and can't pick any real
+>  work from TODO)
+> 
+> 
+> Changes:
+> register_reboot_notifier() always returns 0
+> skb_alloc doesn't exist
+> there is no get_free_pages() (replace it with __get_free_page[s]?())
+> init_etherdev() doesn't exist
+> ips, ip2main look bogus, ips_detect does not kmalloc anything;
+> 
+> There's a comment in isapnp/core.c that release_region's were added
+> (dated 2001-06-03!).
+> proc_register() is now static, used by internal procfs routines.
+> 
+> loops_per_sec is no more.
 
-I'm working on one of the KernelJanitor/TODO items, specifically 
-converting appropriate calls to schedule_timeout() to msleep() calls 
-(Addendum by Greg KH to original request by Matthew Wilcox (Calling 
-yield() Considered Harmful)). In the process, I have run across the 
-following code [dvb_functions.h::dvb_delay()]:
+great check -> commited.
+thx maks
 
-/**
-  *  a sleeping delay function, waits i ms
-  *
-  */
-static inline
-void dvb_delay(int i)
-{
-         current->state=TASK_INTERRUPTIBLE;
-         schedule_timeout((HZ*i)/1000);
-}
 
-Compare this to
-
-/**
-  * msleep - sleep safely even with waitqueue interruptions
-  * @msecs: Time in milliseconds to sleep for
-  */
-void msleep(unsigned int msecs)
-{
-         unsigned long timeout = msecs_to_jiffies(msecs);
-
-         while (timeout) {
-                 set_current_state(TASK_UNINTERRUPTIBLE);
-                 timeout = schedule_timeout(timeout);
-         }
-}
-
-I am wondering if dvb_delay() needs to run in TASK_INTERRUPTIBLE (it's 
-not the only such case I am seeing right now, but it was the first - if 
-anyone would like me to send the other cases, I'd be happy to). 
-Obviously, if not, then it can be replaced with msleep() calls. If it 
-must, then it probably should be updated to use set_current_state() and 
-msecs_to_jiffies() like msleep() does.
-
-This is my first try at Janitor-work, so please be patient.
-
-Thanks,
-Nish
-
---===============80383642703945113==
+--===============86655060174538412==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============80383642703945113==--
+--===============86655060174538412==--
