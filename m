@@ -1,46 +1,25 @@
-From: "Hess Vilma" <cudipwjdnsr@terra.com>
-Date: Wed, 03 Mar 2004 05:42:12 +0000
-Subject: Re: LXMIXTL, round little golden
-Message-Id: <TXYNBOO-0004985440589@hierarchy>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--ALT--MMJV02616532480144"
+From: Greg KH <greg@kroah.com>
+Date: Thu, 11 Mar 2004 18:56:07 +0000
+Subject: [Kernel-janitors] Re: [PATCH] class_register() always returns 0
+Message-Id: <20040311185607.GB20223@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----ALT--MMJV02616532480144
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+On Fri, Mar 05, 2004 at 09:24:56AM -0800, Leann Ogasawara wrote:
+> Hi All,
+> 
+> I noticed that the class_register() function in drivers/base/class.c
+> always returns 0 and thus will never fail.  Patch below inserts simple
+> error checking to return any errors if they occur.  Feedback welcome. 
+> Thanks,
 
-eggshell abysmal jacobsen forest montana fountainhead carib combustible 
-sensor verdict ndjamena obsequy acetylene wrangle 
-nassau dell exterior madrid shulman norm improper masonic 
+Looks good, applied, thanks.
 
-----ALT--MMJV02616532480144
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-
-<HTML><HEAD>
-<BODY>
-<p>Ban</universal>ned C</distortion>D Gov</wild>ernment d</lizzie>on't wan</ron>t m</apostate>e t</rectifier>o s</tetrahedra>ell i</lacustrine>t. Se</arousal>e N</recalcitrant>ow #</p>
-<a href="http://www.3007hosting.com/cd/">
-<img border="0" src="http://www.3007hosting.com/cd/ads1.jpg"></a>
-radiotelegraph sexual botulin ductwork stumpage aristotelian lucia springtime block kabul neonatal oklahoma polarography cookery flatiron peasanthood homebuild martian instillation cool <BR>
-scaffold courthouse fateful muggy nih danbury corridor chilly cart briar flexure info implode vincent algae oman extradite cerebrate treetop cushman informatica trajectory glean exportation incorrect heel crackle parimutuel bask floe contemporary <BR>
-breathe droopy flanders daytona involute concept imponderable walcott bravery cartoon dutchman admix mop regretting danube indent crutch conquer lengthen <BR>
-
-</BODY>
-</HTML>
-
-
-----ALT--MMJV02616532480144--
-
-
--------------------------------------------------------
-SF.Net is sponsored by: Speed Start Your Linux Apps Now.
-Build and deploy apps & Web services for Linux with
-a free DVD software kit from IBM. Click Now!
-http://ads.osdn.com/?ad_id=1356&alloc_id=3438&op=click
+greg k-h
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
