@@ -1,109 +1,107 @@
-From: =?koi8-r?Q?=22?=Alexey Dobriyan=?koi8-r?Q?=22=20?=<adobriyan@mail.ru>
-Date: Sun, 13 Jun 2004 11:14:16 +0000
-Subject: [Kernel-janitors] [PATCH] Fix 'No description found for parameter'
-Message-Id: <E1BZSwK-000My8-00.adobriyan-mail-ru@f15.mail.ru>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 26 Jun 2004 15:44:48 +0000
+Subject: [Kernel-janitors] Lets update our TODO
+Message-Id: <20040626154447.GB1706@masina>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38128416511075969=="
+Content-Type: multipart/mixed; boundary="===============27089847691585645=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============38128416511075969==
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: 8bit
+--===============27089847691585645==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch fixes the following warning
+Hi.
 
-$ make sgmldocs
-...
-Warning(include/linux/skbuff.h:275): No description found for
-parameter 'head,*data,*tail,*end'
-...
+It's terrible, please help updating it.
+(It can be a real PITA, when someone new comes, and can't pick any real
+ work from TODO)
 
-by adding support for comma-separated members in structs and
-unions.
 
-Tested on 'make sgmldocs' and a testcase with pointers,
-bitfields and plain variables.
+Changes:
+register_reboot_notifier() always returns 0
+skb_alloc doesn't exist
+there is no get_free_pages() (replace it with __get_free_page[s]?())
+init_etherdev() doesn't exist
+ips, ip2main look bogus, ips_detect does not kmalloc anything;
 
-Signed-off-by: Alexey Dobriyan <adobriyan@mail.ru>
+There's a comment in isapnp/core.c that release_region's were added
+(dated 2001-06-03!).
+proc_register() is now static, used by internal procfs routines.
 
---- a/scripts/kernel-doc	2004-05-24 12:57:13.000000000 +0400
-+++ b/scripts/kernel-doc	2004-05-24 15:54:46.000000000 +0400
-@@ -105,10 +105,7 @@
- # enums and typedefs. Instead of the function name you must write the name 
- # of the declaration;  the struct/union/enum/typedef must always precede 
- # the name. Nesting of declarations is not supported. 
--# Use the argument mechanism to document members or constants. In 
--# structs and unions you must declare one member per declaration 
--# (comma-separated members are not allowed -  the parser does not support 
--# this).
-+# Use the argument mechanism to document members or constants.
- # e.g.
- # /**
- #  * struct my_struct - short description
-@@ -1318,22 +1315,40 @@
- 	    $param = $1;
- 	    $type = $arg;
- 	    $type =~ s/([^\(]+\(\*)$param/$1/;
-+	    push_parameter($param, $type, $file);
- 	} else {
- 	    # evil magic to get fixed array parameters to work
- 	    $arg =~ s/(.+\s+)(.+)\[.*/$1* $2/;
--	    my @args = split('\s', $arg);
--	
--	    $param = pop @args;
--	    if ($param =~ m/^(\*+)(.*)/) {
--	        $param = $2;
--		push @args, $1;
--	    } 
--	    elsif ($param =~ m/(.*?)\s*:\s*(\d+)/) {
--	        $param = $1;
--	        push @args, ":$2";
-+
-+	    $arg =~ s/\s*:\s*/:/g;
-+
-+	    my @args = split('\s*,\s*', $arg);
-+	    if ($args[0] =~ m/\*/) {
-+		$args[0] =~ s/(\*+)\s*/ $1/;
-+	    }
-+	    my @first_arg = split('\s+', shift @args);
-+	    unshift(@args, pop @first_arg);
-+	    $type = join " ", @first_arg;
-+
-+	    foreach $param (@args) {
-+		if ($param =~ m/^(\*+)\s*(.*)/) {
-+		    push_parameter($2, "$type $1", $file);
-+		} 
-+		elsif ($param =~ m/(.*?):(\d+)/) {
-+		    push_parameter($1, "$type:$2", $file)
-+		}
-+		else {
-+		    push_parameter($param, $type, $file);
-+		}
- 	    }
--	    $type = join " ", @args;
+loops_per_sec is no more.
+
+
+	Domen
+
+--- kj-todo	2004-06-26 17:37:16.000000000 +0200
++++ kj-todo-new	2004-06-26 17:36:56.000000000 +0200
+@@ -15,26 +15,17 @@
+ --------------------------------------------------------------------------
+ Audit return codes (and handle failure correctly) for..
+ - request_region()
+-- register_reboot_notifier()
+ - request_irq()
+-- kmalloc(), vmalloc(), skb_alloc(), etc
++- kmalloc(), vmalloc(), etc.
+ - register_netdev() has to be checked as well
+ - misc_register() (yes, it can fail, murphy's law applies here as well)
+ - scsi_register()
+-- proc_*_create()
++- create_proc_*()
+ - pci_map_* might return 0 for a valid mapping.
+   Some code tests mapping for a non-zero value, which is incorrect.
+-- get_free_pages()
+-- init_etherdev()
+-  drivers allocating net_device with init_etherdev doesn't need zeroing it
+-  (init_etherdev does this for us)
++- __get_free_pages() and __get_free_page()
+ - ioremap() -- Some are using this as a pointer, which is wrong.
+ 
+-SUSPECTS:
+-- drivers/scsi/ips.c for resource leaks (ips_release doesn't seems
+-  to release all the kmalloc memory it got in ips_detect. (quick look)
+-- drivers/char/ip2main.c (init_etherdev)
+-
+ -----------------------------------------------------------------------------
+ Balancing functions.
+ Make sure calls to certain functions are matched by the relevant function at
+@@ -48,14 +39,10 @@
+ - check that net_device interrupt functions use dev_kfree_skb_irq and not
+   just dev_kfree_skb
+ 
+-SUSPECTS:
+-- check isapnp.c: doesn't release regions on failure
+-
+ -----------------------------------------------------------------------------
+ Remove unneeded historic code / New API conversions.
+ - checking for NULL on probe routines for net drivers
+ - convert drivers to new PCI API
+-- proc_register() is dead. Use create_proc_read_entry() instead. (from Al Viro on lkml)
+ - Replace uses of suser() and fsuser() with capability checks.
+ - get rid of save_flags_cli, use local_irq_save instead
+ - get rid of check_region, use just request_region checking its return (2.2
+@@ -154,9 +141,6 @@
+ 
+ -----------------------------------------------------------------------------
+ - prumpf suggested:
+-- make sure drivers never read loops_per_sec - it might change under
+-  them (prumpf did this in 2.2.18pre series, need forward port to 2.4)
+-
+ - fix watchdog drivers to use link order rather than explicit
+   initialization calls (i810 is particularly broken)
+ 
+@@ -209,6 +193,8 @@
  	}
-+    }
-+}
+ 	remove_wait_queue(&waitqueue, &wait); 
+ 
++(see replyes, this is still buggy)
 +
-+sub push_parameter($$$) {
-+	my $param = shift;
-+	my $type = shift;
-+	my $file = shift;
+ When you want to handle signals you can check for them before or after the
+ condition check. Also use TASK_INTERRUPTIBLE in this case.
  
- 	if ($type eq "" && $param eq "...")
- 	{
-@@ -1362,7 +1377,6 @@
- 
- 	push @parameterlist, $param;
- 	$parametertypes{$param} = $type;
--    }
- }
- 
- ##
 
-
---===============38128416511075969==
+--===============27089847691585645==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -114,4 +112,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38128416511075969==--
+--===============27089847691585645==--
