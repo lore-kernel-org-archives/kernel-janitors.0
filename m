@@ -1,57 +1,93 @@
-From: "kurtis jackson" <elloico@mail.bulgaria.com>
-Date: Mon, 30 Aug 2004 00:02:52 +0000
-Subject: Improves sleep
-Message-Id: <4AFDF609.EB156E9@mail.bulgaria.com>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 14 Aug 2004 17:09:08 +0000
+Subject: [Kernel-janitors] [patch 2.6.8] list_for_each_entry in fs/dcache.c
+Message-Id: <20040814170908.GA2575@masina.coderock.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============88575140249588347=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<HTML>
-trouble free<BR>
-<BR>
-Recapture your youth and Feel the Energy<BR>
-For Many, This is a Powerful Second Chance<BR>
-<BR><A href="http://www.giantproductnews.com/i/">press here to read
-about</A><BR>
-This common element can change the way you experience the next half of your
-life<BR>
-<BR>
-<BR>
-<BR>
------Original Message-----<BR>
-From: Aruba PO1200 Oranjestad [mailto:lia@nyakix.com]<BR>
-Sent: Friday, March 4, 2004 5:67AM<BR>
-To: maryann; nakesha@tfyhw.com; nakia; jacquline; prudence<BR>
-Subject: I found this new formula<BR>
-<BR>
-<BR>
-<BR>cross me out po box above in site<BR>
-With no proved survival benefit combination therapy may be unjustifiable 
-Several studies included in the overall and subgroup analyses directly
-assessed semiempirical combination versus monotherapy  These similarly do
-not support combination therapy for specific pathogens when detected  <BR>
-Should further research be conducted to assess combination versus
-monotherapy? Novel  lactams should not be compared with older generation 
-lactams or penicillins combined with aminoglycosides  The reason for further
-trials assessing the addition of an aminglycoside to a  lactam seems dubious
-as well  <BR>
-<BR>
-The President seemed puzzled by this speech, but fortunately the minister
-of police arrived just then and, under Rob's guidance, the pictured record
-of the Orleanist plot was reproduced before the startled eyes of the
-official
-</FONT></HTML>
+--===============88575140249588347==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi.
 
+First 2 are list_for_each_entry (thanks maks), second 2 list_for_each_safe.
+Boot tested.
 
--------------------------------------------------------
-This SF.Net email is sponsored by BEA Weblogic Workshop
-FREE Java Enterprise J2EE developer tools!
-Get your free copy of BEA WebLogic Workshop 8.1 today.
-http://ads.osdn.com/?ad_idP47&alloc_id808&op=click
+Signed-off-by: Domen Puncer <domen@coderock.org>
+
+--- c/fs/dcache.c	Sat Aug 14 10:57:28 2004
++++ a/fs/dcache.c	Sat Aug 14 18:53:51 2004
+@@ -288,17 +288,10 @@
+ 
+ struct dentry * d_find_alias(struct inode *inode)
+ {
+-	struct list_head *head, *next, *tmp;
+ 	struct dentry *alias, *discon_alias=NULL;
+ 
+ 	spin_lock(&dcache_lock);
+-	head = &inode->i_dentry;
+-	next = inode->i_dentry.next;
+-	while (next != head) {
+-		tmp = next;
+-		next = tmp->next;
+-		prefetch(next);
+-		alias = list_entry(tmp, struct dentry, d_alias);
++	list_for_each_entry(alias, &inode->i_dentry, d_alias) {
+  		if (!d_unhashed(alias)) {
+ 			if (alias->d_flags & DCACHE_DISCONNECTED)
+ 				discon_alias = alias;
+@@ -321,12 +314,10 @@
+  */
+ void d_prune_aliases(struct inode *inode)
+ {
+-	struct list_head *tmp, *head = &inode->i_dentry;
++	struct dentry *dentry;
+ restart:
+ 	spin_lock(&dcache_lock);
+-	tmp = head;
+-	while ((tmp = tmp->next) != head) {
+-		struct dentry *dentry = list_entry(tmp, struct dentry, d_alias);
++	list_for_each_entry(dentry, &inode->i_dentry, d_alias) {
+ 		if (!atomic_read(&dentry->d_count)) {
+ 			__dget_locked(dentry);
+ 			__d_drop(dentry);
+@@ -442,10 +433,7 @@
+ 	 * superblock to the most recent end of the unused list.
+ 	 */
+ 	spin_lock(&dcache_lock);
+-	next = dentry_unused.next;
+-	while (next != &dentry_unused) {
+-		tmp = next;
+-		next = tmp->next;
++	list_for_each_safe(tmp, next, &dentry_unused) {
+ 		dentry = list_entry(tmp, struct dentry, d_lru);
+ 		if (dentry->d_sb != sb)
+ 			continue;
+@@ -457,10 +445,7 @@
+ 	 * Pass two ... free the dentries for this superblock.
+ 	 */
+ repeat:
+-	next = dentry_unused.next;
+-	while (next != &dentry_unused) {
+-		tmp = next;
+-		next = tmp->next;
++	list_for_each_safe(tmp, next, &dentry_unused) {
+ 		dentry = list_entry(tmp, struct dentry, d_lru);
+ 		if (dentry->d_sb != sb)
+ 			continue;
+
+--===============88575140249588347==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============88575140249588347==--
