@@ -1,46 +1,76 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Fri, 23 Jul 2004 17:41:15 +0000
-Subject: [Kernel-janitors] Re: [PATCH] eicon/os_4bri: replace
-Message-Id: <20040723174115.GG1911@us.ibm.com>
+Date: Tue, 27 Jul 2004 22:17:40 +0000
+Subject: [Kernel-janitors] [PATCH] s390/zfcp_erp: replace schedule_timeout()
+Message-Id: <20040727221740.GG3471@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37143878657877138=="
+Content-Type: multipart/mixed; boundary="===============92768039392096613=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============37143878657877138==
+--===============92768039392096613==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Sorry for the duplicate patch...
+I would appreciate any comments from the janitors list. This is one (of
+many) cases where I made a decision about replacing
 
-On Fri, Jul 23, 2004 at 10:38:20AM -0700, Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list.
-> 
-> Thanks,
-> Nish
-> 
-> 
-> 
-> Applys-to: 2.6.7
-> 
-> Description: Replace diva_os_sleep() with msleep() in all instances. 
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> 
-> --- linux-vanilla/drivers/isdn/hardware/eicon/mntfunc.c	2004-06-16 05:18:54.000000000 +0000
-> +++ linux-dev/drivers/isdn/hardware/eicon/mntfunc.c	2004-07-02 18:04:34.000000000 +0000
-> @@ -340,7 +340,7 @@ void DIVA_EXIT_FUNCTION mntfunc_finit(vo
->  	int i = 100;
->  
->  	while (diva_mnt_shutdown_xdi_adapters() && i--) {
-> -		diva_os_sleep(10);
-> +		msleep(10);
->  	}
->  
->  	disconnect_didd();
+set_current_state(TASK_INTERRUPTIBLE);
+schedule_timeout(some_time);
 
---===============37143878657877138==
+with
+
+msleep(jiffies_to_msecs(some_time));
+
+msleep() is not exactly the same as the previous code, but I only did
+this replacement where I thought long delays were *desired*. If this is
+not the case here, then just disregard this patch.
+
+Thanks,
+Nish
+
+
+
+Applys-to: 2.6.7
+
+Description: Replace schedule_timeout() with msleep() to guarantee the task
+delays as desired.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+
+--- linux-vanilla/drivers/s390/scsi/zfcp_erp.c	2004-06-15 22:19:01.000000000 -0700
++++ linux-dev/drivers/s390/scsi/zfcp_erp.c	2004-07-27 15:16:39.000000000 -0700
+@@ -2158,7 +2158,6 @@ static int
+ zfcp_erp_adapter_strategy(struct zfcp_erp_action *erp_action)
+ {
+ 	int retval;
+-	unsigned long timeout;
+ 	struct zfcp_adapter *adapter = erp_action->adapter;
+ 
+ 	retval = zfcp_erp_adapter_strategy_close(erp_action);
+@@ -2180,9 +2179,7 @@ zfcp_erp_adapter_strategy(struct zfcp_er
+ 		 * timeout = ZFCP_TYPE2_RECOVERY_TIME;
+ 		 * __ZFCP_WAIT_EVENT_TIMEOUT(timeout, 0);
+ 		 */
+-		timeout = ZFCP_TYPE2_RECOVERY_TIME;
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(timeout);
++		msleep(jiffies_to_msecs(ZFCP_TYPE2_RECOVERY_TIME));
+ 	}
+ 
+ 	return retval;
+@@ -2548,8 +2545,7 @@ zfcp_erp_adapter_strategy_open_fsf_xconf
+ 			ZFCP_LOG_DEBUG("host connection still initialising... "
+ 				       "waiting and retrying...\n");
+ 			/* sleep a little bit before retry */
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(ZFCP_EXCHANGE_CONFIG_DATA_SLEEP);
++			msleep(jiffies_to_msecs(ZFCP_EXCHANGE_CONFIG_DATA_SLEEP));
+ 		}
+ 	} while ((retries--) &&
+ 		 atomic_test_mask(ZFCP_STATUS_ADAPTER_HOST_CON_INIT,
+
+--===============92768039392096613==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37143878657877138==--
+--===============92768039392096613==--
