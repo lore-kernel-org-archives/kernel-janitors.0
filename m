@@ -1,51 +1,52 @@
-From: Jim Nelson <james4765@verizon.net>
-Date: Wed, 15 Dec 2004 21:01:06 +0000
-Subject: Re: [KJ] Re: linux-2.6.9: add errorcheck for  netlink
-Message-Id: <41C0A612.8030300@verizon.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72459065485743235=="
+From: Jan Dittmer <jdittmer@ppp0.net>
+Date: Fri, 31 Dec 2004 09:45:30 +0000
+Subject: [KJ] Re: [PATCH] esp: Make driver SMP-correct
+Message-Id: <41D51FBA.2040002@ppp0.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20041215161324.GB5321@nd47.coderock.org>
-In-Reply-To: <20041215161324.GB5321@nd47.coderock.org>
-To: kernel-janitors@vger.kernel.org
-
---===============72459065485743235==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Domen Puncer wrote:
-> On 15/12/04 19:25 +0100, walter harms wrote:
-> 
->>>Fix mailer not to wrap lines.
->>>
->>
->>I am unsing now mozilla-mail hope that help,
->>if i have more time i will switch to something more easy.
->>
->>
-
-Drop mozilla-mail for submitting patches.  We hashed this out on LKML a couple of 
-months ago - see:
-
-http://lkml.org/lkml/2004/10/22/488
-
-I use the sendpatchset script written by Paul Jackson at:
-
-http://www.speakeasy.net/~pj99/sgi/sendpatchset
-
-It makes life much easier.
-
-Jim Nelson
-
---===============72459065485743235==
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20041231014403.3309.58245.96163@localhost.localdomain>
+In-Reply-To: <20041231014403.3309.58245.96163@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: James Nelson <james4765@verizon.net>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, akpm@osdl.org
 
+James Nelson wrote:
+>  static inline int serial_paranoia_check(struct esp_struct *info,
+>  					char *name, const char *routine)
+>  {
+> @@ -209,34 +197,38 @@
+>  	struct esp_struct *info = (struct esp_struct *)tty->driver_data;
+>  	unsigned long flags;
+>  
+> -	if (serial_paranoia_check(info, tty->name, "rs_stop"))
+> -		return;
+> +	spin_lock_irqsave(&info->irq_lock, flags);
+> +
+> +	if (unlikely(serial_paranoia_check(info, tty->name, __FUNCTION__)))
+> +		goto out;
+
+>  static void rs_start(struct tty_struct *tty)
+>  {
+>  	struct esp_struct *info = (struct esp_struct *)tty->driver_data;
+>  	unsigned long flags;
+> -	
+> -	if (serial_paranoia_check(info, tty->name, "rs_start"))
+> -		return;
+> -	
+> -	save_flags(flags); cli();
+> +
+> +	spin_lock_irqsave(&info->irq_lock, flags);
+> +
+> +	if (unlikely(serial_paranoia_check(info, tty->name, __FUNCTION__)))
+> +		goto out;
+> +
+
+This will deadlock. serial_paranoia_check also unconditionally tries to
+take the lock.
+
+Jan
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============72459065485743235==--
