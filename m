@@ -1,61 +1,80 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 06 Jan 2005 23:41:34 +0000
-Subject: [KJ] [PATCH 4/28] net/cosa: replace schedule_timeout() with msleep()
-Message-Id: <20050106234134.GE3055@us.ibm.com>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:13:50 +0000
+Subject: [KJ] [PATCH 32/53] macfb: Clean up printk()'s in
+Message-Id: <20050125231349.10418.2309.67226@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============57325354718019539=="
+Content-Type: multipart/mixed; boundary="===============65417292764995483=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-net@vger.kernel.org, netdev@oss.sgi.com
+To: kernel-janitors@vger.kernel.org
 
---===============57325354718019539==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============65417292764995483==
 
-Hi,
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/macfb.c
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected. Also uses the set_current_state() macro instead of direct
-assignment in a pair of spots. I am still concerned about those sleeps, as
-TASK_INTERRUPTIBLE() is used without any checking for signals. Hence I used
-msleep() for the longer delay. Perhaps the 30 jiffy delay has not been
-updated for the larger HZ values and thus could be changed to msleep(300).
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- 2.6.10-v/drivers/net/wan/cosa.c	2004-12-24 13:33:49.000000000 -0800
-+++ 2.6.10/drivers/net/wan/cosa.c	2005-01-04 14:57:49.000000000 -0800
-@@ -543,7 +543,7 @@ static int cosa_probe(int base, int irq,
- 		 * FIXME: When this code is not used as module, we should
- 		 * probably call udelay() instead of the interruptible sleep.
- 		 */
--		current->state = TASK_INTERRUPTIBLE;
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		cosa_putstatus(cosa, SR_TX_INT_ENA);
- 		schedule_timeout(30);
- 		irq = probe_irq_off(irqs);
-@@ -1564,8 +1564,7 @@ static int cosa_reset_and_read_id(struct
- 	cosa_getdata8(cosa);
- 	cosa_putstatus(cosa, SR_RST);
- #ifdef MODULE
--	current->state = TASK_INTERRUPTIBLE;
--	schedule_timeout(HZ/2);
-+	msleep(500);
- #else
- 	udelay(5*100000);
- #endif
-@@ -1618,7 +1617,7 @@ static int get_wait_data(struct cosa_dat
- 			return r;
- 		}
- 		/* sleep if not ready to read */
--		current->state = TASK_INTERRUPTIBLE;
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		schedule_timeout(1);
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/macfb.c linux-2.6.11-rc2-mm1/drivers/video/macfb.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/macfb.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/macfb.c	2005-01-24 19:07:03.462259221 -0500
+@@ -639,9 +639,9 @@
+ 	   Mac */
+ 	fb_info.screen_base = ioremap(mac_bi_data.videoaddr, macfb_fix.smem_len);
+ 	
+-	printk("macfb: framebuffer at 0x%08lx, mapped to 0x%p, size %dk\n",
++	pr_info("macfb: framebuffer at 0x%08lx, mapped to 0x%p, size %dk\n",
+ 	       macfb_fix.smem_start, fb_info.screen_base, macfb_fix.smem_len/1024);
+-	printk("macfb: mode is %dx%dx%d, linelength=%d\n",
++	pr_info("macfb: mode is %dx%dx%d, linelength=%d\n",
+ 	       macfb_defined.xres, macfb_defined.yres, macfb_defined.bits_per_pixel, macfb_fix.line_length);
+ 	
+ 	/*
+@@ -653,7 +653,7 @@
+ 	macfb_defined.height = PIXEL_TO_MM(macfb_defined.yres);
+ 	macfb_defined.width  = PIXEL_TO_MM(macfb_defined.xres);	 
+ 
+-	printk("macfb: scrolling: redraw\n");
++	pr_info("macfb: scrolling: redraw\n");
+ 	macfb_defined.yres_virtual = macfb_defined.yres;
+ 
+ 	/* some dummy values for timing to make fbset happy */
+@@ -689,7 +689,7 @@
+ 		macfb_defined.green.length = 5;
+ 		macfb_defined.blue.offset = 0;
+ 		macfb_defined.blue.length = 5;
+-		printk("macfb: directcolor: "
++		pr_info("macfb: directcolor: "
+ 		       "size=1:5:5:5, shift=15:10:5:0\n");
+ 		video_cmap_len = 16;
+ 		/* Should actually be FB_VISUAL_DIRECTCOLOR, but this
+@@ -706,14 +706,14 @@
+ 		macfb_defined.green.length = 8;
+ 		macfb_defined.blue.offset = 0;
+ 		macfb_defined.blue.length = 8;
+-		printk("macfb: truecolor: "
++		pr_info("macfb: truecolor: "
+ 		       "size=0:8:8:8, shift=0:16:8:0\n");
+ 		video_cmap_len = 16;
+ 		macfb_fix.visual = FB_VISUAL_TRUECOLOR;
+ 	default:
+ 		video_cmap_len = 0;
+ 		macfb_fix.visual = FB_VISUAL_MONO01;
+-		printk("macfb: unknown or unsupported bit depth: %d\n", macfb_defined.bits_per_pixel);
++		printk(KERN_WARNING "macfb: unknown or unsupported bit depth: %d\n", macfb_defined.bits_per_pixel);
+ 		break;
  	}
- 	printk(KERN_INFO "cosa: timeout in get_wait_data (status 0x%x)\n",
+ 	
+@@ -962,7 +962,7 @@
+ 	if (register_framebuffer(&fb_info) < 0)
+ 		return;
+ 
+-	printk("fb%d: %s frame buffer device\n",
++	pr_info("fb%d: %s frame buffer device\n",
+ 	       fb_info.node, fb_info.fix.id);
+ }
+ 
 
---===============57325354718019539==
+--===============65417292764995483==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +85,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============57325354718019539==--
+--===============65417292764995483==--
