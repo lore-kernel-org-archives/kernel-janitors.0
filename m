@@ -1,58 +1,40 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Sun, 31 Oct 2004 14:44:54 +0000
-Subject: [KJ] [patch 3/6] sx8 remove duplicate definition msleep(),
-Message-Id: <20041031144454.GD28667@stro.at>
+From: james4765@verizon.net
+Date: Thu, 28 Oct 2004 15:00:51 +0000
+Subject: [KJ] [PATCH 4/9] to arch/sparc/Kconfig
+Message-Id: <20041028150050.2776.32667.73956@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79015992103846067=="
+Content-Type: multipart/mixed; boundary="===============35101836223605831=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20040923221303.GB13244@us.ibm.com> <20040923221303.GB13244@us.ibm.com> <5.1.0.14.2.20040924074745.00b1cd40@pop.t-online.de> <415CD9D9.2000607@pobox.com> <20041030222228.GB1456@stro.at> <41841886.2080609@pobox.com>
-In-Reply-To: <41841886.2080609@pobox.com>
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: Margit Schubert-While <margitsw@t-online.de>, Nishanth Aravamudan <nacc@us.ibm.com>, hvr@gnu.org, mcgrof@studorgs.rutgers.edu, kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, Domen Puncer <domen@coderock.org>, linux-kernel@vger.kernel.org
+References: <20041028150029.2776.69333.50087@localhost.localdomain>
+In-Reply-To: <20041028150029.2776.69333.50087@localhost.localdomain>
+To: kernel-janitors@lists.osdl.org
+Cc: rusty@rustcorp.com.au, linux-kernel@vger.kernel.org, james4765@verizon.net
 
---===============79015992103846067==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============35101836223605831==
 
+Description: Remove x86-specific help in arch/sparc/Kconfig.
+Apply against 2.6.9.
 
+Signed-off by: James Nelson <james4765@gmail.com>
 
-
-remove duplicate definition msleep(), msecs_to_jiffies().
-delay.h already included.
-
-Signed-off-by: Maximilian Attems <janitor@sternwelten.at>
-
-
----
-
- linux-2.4.28-rc1-max/drivers/block/sx8.c |   11 -----------
- 1 files changed, 11 deletions(-)
-
-diff -puN drivers/block/sx8.c~remove-msleep+msecs_to_jiffies-drivers_block_sx8 drivers/block/sx8.c
---- linux-2.4.28-rc1/drivers/block/sx8.c~remove-msleep+msecs_to_jiffies-drivers_block_sx8	2004-10-31 13:37:56.000000000 +0100
-+++ linux-2.4.28-rc1-max/drivers/block/sx8.c	2004-10-31 13:38:56.000000000 +0100
-@@ -548,17 +548,6 @@ static int carm_bdev_ioctl(struct inode 
- 	return -EOPNOTSUPP;
- }
+diff -u ./arch/sparc/Kconfig.orig ./arch/sparc/Kconfig
+--- ./arch/sparc/Kconfig.orig	2004-10-16 09:53:49.626021592 -0400
++++ ./arch/sparc/Kconfig	2004-10-16 10:15:30.184460399 -0400
+@@ -281,9 +281,9 @@
  
--static inline unsigned long msecs_to_jiffies(unsigned long msecs)
--{
--	return ((HZ * msecs + 999) / 1000);
--}
--
--static void msleep(unsigned long msecs)
--{
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(msecs_to_jiffies(msecs) + 1);
--}
--
- static const u32 msg_sizes[] = { 32, 64, 128, CARM_MSG_SIZE };
+ 	  If you have several parallel ports, you can specify which ports to
+ 	  use with the "lp" kernel command line option.  (Try "man bootparam"
+-	  or see the documentation of your boot loader (lilo or loadlin) about
+-	  how to pass options to the kernel at boot time.)  The syntax of the
+-	  "lp" command line option can be found in <file:drivers/char/lp.c>.
++	  or see the documentation of your boot loader (silo) about how to pass
++	  options to the kernel at boot time.)  The syntax of the "lp" command
++	  line option can be found in <file:drivers/char/lp.c>.
  
- static inline int carm_lookup_bucket(u32 msg_size)
-_
+ 	  If you have more than 8 printers, you need to increase the LP_NO
+ 	  macro in lp.c and the PARPORT_MAX macro in parport.h.
 
-
---===============79015992103846067==
+--===============35101836223605831==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79015992103846067==--
+--===============35101836223605831==--
