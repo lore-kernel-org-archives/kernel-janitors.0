@@ -1,65 +1,57 @@
-From: Jim Nelson <james4765@cwazy.co.uk>
-Date: Sun, 23 Jan 2005 00:54:24 +0000
-Subject: Re: [KJ] [PATCH 1/2] acorn: clean up printk()'s
-Message-Id: <41F2F5C0.9020000@cwazy.co.uk>
+From: James Nelson <james4765@cwazy.co.uk>
+Date: Tue, 25 Jan 2005 23:09:14 +0000
+Subject: [KJ] [PATCH 6/53] radeonfb: Clean up printk()'s in
+Message-Id: <20050125230911.10418.3160.30244@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============75011653274282875=="
+Content-Type: multipart/mixed; boundary="===============96097374192801732=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050121010751.18138.42311.24615@localhost.localdomain>
-In-Reply-To: <20050121010751.18138.42311.24615@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============75011653274282875==
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============96097374192801732==
 
-Domen Puncer wrote:
-> On 20/01/05 19:07 -0600, James Nelson wrote:
-> 
->>Signed-off-by: James Nelson <james4765@gmail.com>
->>
-> 
-> ENODESC
-> 
-> 
->>diff -urN --exclude='*~' linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd1772.c linux-2.6.11-rc1-mm2/drivers/acorn/block/fd1772.c
->>--- linux-2.6.11-rc1-mm2-original/drivers/acorn/block/fd1772.c	2005-01-20 16:33:13.000000000 -0500
->>+++ linux-2.6.11-rc1-mm2/drivers/acorn/block/fd1772.c	2005-01-20 19:56:54.542776654 -0500
->>@@ -180,6 +175,13 @@
->> #define DEVICE_NAME "floppy"
->> #define QUEUE (floppy_queue)
->> #define CURRENT elv_next_request(floppy_queue)
->>+#define PFX DEVICE_NAME ": "
->>+
->>+#ifdef DEBUG
->>+#define DBG(fmt, args...) pr_debug(PFX "%s(): " fmt, __FUNCTION__ , ## args)
->>+#else
->>+#define DBG(fmt, args...)
->>+#endif
-> 
-> 
-> This #ifdef is not needed.
-> 
-> 
->>@@ -1418,14 +1419,15 @@
->> {
->> 	int drive, cnt = 0;
->> 
->>-	printk("Probing floppy drive(s):\n");
->>+	pr_info("Probing floppy drive(s):);
-> 
-> 
-> 					^^
-> Missing ".
-> Was this compile tested?
-> 
-> 
+This patch adds KERN_ constants to all of the printk()'s that need them in
+drivers/video/aty/radeon_base.c
 
-No.  I don't have a arm26 cross-compiler setup.  I can rework and resubmit.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Jim
+diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/aty/radeon_base.c linux-2.6.11-rc2-mm1/drivers/video/aty/radeon_base.c
+--- linux-2.6.11-rc2-mm1-original/drivers/video/aty/radeon_base.c	2005-01-24 17:15:49.000000000 -0500
++++ linux-2.6.11-rc2-mm1/drivers/video/aty/radeon_base.c	2005-01-24 19:07:02.367262774 -0500
+@@ -710,12 +710,12 @@
+ 	if (rinfo->pll.sclk == 0)
+ 		rinfo->pll.sclk = 20000;
+ 
+-	printk("radeonfb: Reference=%d.%02d MHz (RefDiv=%d) Memory=%d.%02d Mhz, System=%d.%02d MHz\n",
++	pr_info("radeonfb: Reference=%d.%02d MHz (RefDiv=%d) Memory=%d.%02d Mhz, System=%d.%02d MHz\n",
+ 	       rinfo->pll.ref_clk / 100, rinfo->pll.ref_clk % 100,
+ 	       rinfo->pll.ref_div,
+ 	       rinfo->pll.mclk / 100, rinfo->pll.mclk % 100,
+ 	       rinfo->pll.sclk / 100, rinfo->pll.sclk % 100);
+-	printk("radeonfb: PLL min %d max %d\n", rinfo->pll.ppll_min, rinfo->pll.ppll_max);
++	pr_info("radeonfb: PLL min %d max %d\n", rinfo->pll.ppll_min, rinfo->pll.ppll_max);
+ }
+ 
+ static int radeonfb_check_var (struct fb_var_screeninfo *var, struct fb_info *info)
+@@ -795,7 +795,7 @@
+                         v.transp.length = 8;
+                         break;
+                 default:
+-                        printk ("radeonfb: mode %dx%dx%d rejected, color depth invalid\n",
++                        printk (KERN_ERR "radeonfb: mode %dx%dx%d rejected, color depth invalid\n",
+                                 var->xres, var->yres, var->bits_per_pixel);
+                         return -EINVAL;
+         }
+@@ -2391,7 +2391,7 @@
+ 	}
+ #endif
+ 
+-	printk ("radeonfb (%s): %s\n", pci_name(rinfo->pdev), rinfo->name);
++	pr_info ("radeonfb (%s): %s\n", pci_name(rinfo->pdev), rinfo->name);
+ 
+ 	if (rinfo->bios_seg)
+ 		radeon_unmap_ROM(rinfo, pdev);
 
---===============75011653274282875==
+--===============96097374192801732==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============75011653274282875==--
+--===============96097374192801732==--
