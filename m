@@ -1,61 +1,45 @@
-From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
-Date: Thu, 10 Feb 2005 23:23:41 +0000
-Subject: Re: [KJ] [PATCH][18/26] drivers/usb/image/* - compile warning cleanup
-Message-Id: <420C091D.29724.BC6A50@localhost>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Sun, 13 Feb 2005 13:10:29 +0000
+Subject: [KJ] [PATCH] drivers/net/wireless/prism54/*: convert to
+Message-Id: <20050213131029.GL15348@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87395976539036035=="
+Content-Type: multipart/mixed; boundary="QCC2I/2CckNfI+Tr"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <420BEF84.5020.58734F@localhost>
-In-Reply-To: <420BEF84.5020.58734F@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============87395976539036035==
-Content-type: text/plain; charset=US-ASCII
-Content-transfer-encoding: 7BIT
-Content-description: Mail message body
 
-On 11 Feb 2005 at 1:27, Alexey Dobriyan wrote:
+--QCC2I/2CckNfI+Tr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Thursday 10 February 2005 23:34, Stephen Biggs wrote:
-> 
-> > --- linux-2.6.11-rc3-mm-original/drivers/usb/image/microtek.c
-> > +++ linux-2.6.11-rc3-mm/drivers/usb/image/microtek.c
-> > @@ -809,7 +809,11 @@ static int mts_usb_probe(struct usb_inte
-> >  		goto out_free_urb;
-> >  
-> >  	new_desc->host->hostdata[0] = (unsigned long)new_desc;
-> > -	scsi_add_host(new_desc->host, NULL); /* XXX handle failure */
-> > +	if(scsi_add_host(new_desc->host, NULL)) {
-> > +		usb_free_urb(new_desc->urb);
-> > +		kfree(new_desc);
-> > +		return -EIO;
-> > +	}
-> 
-> Should be:
-> 
-> 	if (scsi_add_host(new_desc->host, NULL)) {
-> 		rc = -E____;
-> 		goto out_free_urb;
-> 	}
-> 
-> Yes, yes, I know. There is no rc in mts_usb_probe. ;-)
+Hi,
 
-This is why I didn't do it your way.  I made the judgement call of not 
-adding another patch line and an rc variable that would either only be 
-used in one place, or I would have change the entire function to use 
-"rc" consistently.  My patch is, instead, a deletion of one line and an 
-addition of 5 lines all in one place; simple.
+Description:
+convert from pci_module_init to pci_register_driver
+(from:http://kerneljanitors.org/TODO).
 
-Thanks for the feedback.
-
-> 
-> 	Alexey
-> 
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
 
 
+--QCC2I/2CckNfI+Tr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_net_wireless_prism54.patch"
 
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/net/wireless/prism54/islpci_hotplug.c linux-2.6.11-rc3/drivers/net/wireless/prism54/islpci_hotplug.c
+--- linux-2.6.11-rc3-vanilla/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-03 17:03:52.000000000 +0100
++++ linux-2.6.11-rc3/drivers/net/wireless/prism54/islpci_hotplug.c	2005-02-07 09:39:29.000000000 +0100
+@@ -315,7 +315,7 @@ prism54_module_init(void)
+ 
+ 	__bug_on_wrong_struct_sizes ();
+ 
+-	return pci_module_init(&prism54_driver);
++	return pci_register_driver(&prism54_driver);
+ }
+ 
+ /* by the time prism54_module_exit() terminates, as a postcondition
 
---===============87395976539036035==
+--QCC2I/2CckNfI+Tr
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87395976539036035==--
+--QCC2I/2CckNfI+Tr--
