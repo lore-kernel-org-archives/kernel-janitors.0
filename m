@@ -1,29 +1,50 @@
-From: "Teri Collins" <t_collinsvd@star.akt.nec.co.jp>
-Date: Thu, 25 Nov 2004 04:09:42 +0000
-Subject: Bu'y Cia,lis softtabs at Unbelievable Prices
-Message-Id: <f31201c4d2b0$c8e02877$c3cc4ab1@stagetec.co.uk>
+From: =?utf-8?q?Clotilda Ereyketf?= <Jilltdop@englishconstruction.com>
+Date: Tue, 02 Nov 2004 22:38:00 +0000
+Subject: =?utf-8?q?teenaged ang ruttish?=
+Message-Id: <E1CP7CE-0000pp-Fy@sc8-sf-mx1.sourceforge.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="NGEfyY9ADVlSMHJgNf"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-<html>
-New ClALlS softtabs = lNSTANT R0CKHARD ERECTl0NS<p>
-Simply disolve HALF A PlLL under your tongue 10min before action,<br>
-for results that last all weekend.<p>
-Normal retail is $19/PlLL<br>
-<a href="http://eqdhqtcalqybw.host-77.com/d/">0rder from us today at the price of $3.12</a>
-<p><br><br><br><br><br><br><br><br><br>
-<a href="http://wyyejfbcbiord.host-77.com/d/o.php">not interested(0pt-0ut)</a>
-</html>
+This is a multi-part message in MIME format.
+
+--NGEfyY9ADVlSMHJgNf
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Our company own more then 20.000 sole teen explicit
+photos and about 60 hrs of broad quality videos.
+
+http://zqrwaesh.ekigmgll.info/?MOONiYgxhQTZVMgfjoujdp
+--NGEfyY9ADVlSMHJgNf
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<STYLE></STYLE>
+</HEAD>
+<HTML>
+<BODY>
+We own more then 50.000 single young hardcore<BR>
+exposures and about 50 hours of superior quality video.<BR><BR>
+<A href=3D"http://kukb.ekigmgll.info/?p8Xdr9pGWtwE2pVeeyjtffu">Cl=
+ick here</A><BR>
+</BODY>
+</HTML></HTML>
+--NGEfyY9ADVlSMHJgNf--
+
 
 
 -------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now. 
-http://productguide.itmanagersjournal.com/
+This SF.Net email is sponsored by:
+Sybase ASE Linux Express Edition - download now for FREE
+LinuxWorld Reader's Choice Award Winner for best database on Linux.
+http://ads.osdn.com/?ad_id=5588&alloc_id=12065&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
