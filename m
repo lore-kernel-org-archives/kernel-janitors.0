@@ -1,31 +1,37 @@
-From: "Alma Napier" <dczne023@netstudio.com.br>
-Date: Tue, 06 Jan 2004 15:52:38 +0000
-Subject: Get Rid of S+P+A+M for GOOD                                  ana
-Message-Id: <x3tohn-p8xu78k-b$19-4w99-l486@3nr899mqk6c4c>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 16 Jan 2004 17:53:17 +0000
+Subject: [Kernel-janitors] [patch 2.6.1] double put_user in
+Message-Id: <200401161853.17715.domen@coderock.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi.
 
-<HTML><HEAD>
-<STYLE></STYLE>
-</HEAD> 
+Trivial, this patch was a bit wrong:
+http://linux.bkbits.net:8080/linux-2.5/diffs/drivers/s390/net/ctctty.c@1.20
 
-<html><body><P>Hello,</P><P>This program worked for me. If you hate S_pa_m like I do, you&nbsp;&nbsp; o w e&nbsp;&nbsp; it to your self to try this pro-gram, and forward this email to all of your friends which also hate &nbsp;S+P+A+M &nbsp;or as many people possible. Together lets help clear the Internet of&nbsp;&nbsp;&nbsp; S+P+A+M!</P><P>STOP&nbsp;&nbsp; S_P*A_M&nbsp;&nbsp; IN ITS TRACKS!</P><P>Do you get junk, scams and worse in your inbox <BR>every day? </P><P>Are you sick of spending valuable time <BR>removing the trash? </P><P>Is your child receiving inappropriate <BR>a_d_u_l_t&nbsp; material? </P><P>If so you should know that no other solution works <BR>better then our software to return control of your <BR>email back where it belongs! </P><P>Imagine being able to read your important email <BR>without looking through all that s*p*a*m... </P><P>Click below to vist our website:<BR><A href="http://www.sftwareplus.biz/gh/as/index.asp?affil=d21jose">http://www.StopAllThatSpam.com</A></P><P>&nbsp;</P><A href="http://jampe.biz/patch/o.html?eCT"><P>R.e-m_o^v*e&nbsp;&nbsp;&nbsp; M,e</P></A></body></html>oily askew
-
-
-</BODY></HTML>
+Also "if (error)" is not really needed; put_user returns 0 on success.
 
 
+--- c/drivers/s390/net/ctctty.c	2003-12-18 03:58:56.000000000 +0100
++++ a/drivers/s390/net/ctctty.c	2004-01-16 18:47:34.000000000 +0100
+@@ -759,10 +759,7 @@ ctc_tty_ioctl(struct tty_struct *tty, st
+ 			       info->line);
+ #endif
+ 			error = put_user(C_CLOCAL(tty) ? 1 : 0, (ulong *) arg);
+-			if (error)
+-				return error;
+-			put_user(C_CLOCAL(tty) ? 1 : 0, (ulong *) arg);
+-			return 0;
++			return error;
+ 		case TIOCSSOFTCAR:
+ #ifdef CTC_DEBUG_MODEM_IOCTL
+ 			printk(KERN_DEBUG "%s%d ioctl TIOCSSOFTCAR\n", CTC_TTY_NAME,
 
--------------------------------------------------------
-This SF.net email is sponsored by: IBM Linux Tutorials.
-Become an expert in LINUX or just sharpen your skills.  Sign up for IBM's
-Free Linux Tutorials.  Learn everything from the bash shell to sys admin.
-Click now! http://ads.osdn.com/?ad_id78&alloc_id371&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
