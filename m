@@ -1,14 +1,13 @@
 From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 20 Jan 2005 23:57:49 +0000
-Subject: [KJ] [PATCH 21/39] net/ipconfig: replace schedule_timeout() with
-Message-Id: <20050120235749.GJ2600@us.ibm.com>
+Date: Wed, 26 Jan 2005 00:18:26 +0000
+Subject: [KJ] [PATCH 23/34] media/zoran_device: replace
+Message-Id: <20050126001826.GO12649@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============31961530475141875=="
+Content-Type: multipart/mixed; boundary="===============3986935434524701=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@redhat.com, yoshfuji@linux-ipv6.org, kaber@coreworks.de
-Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============31961530475141875==
+--===============3986935434524701==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -16,54 +15,39 @@ Hi,
 
 Please consider applying.
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the task
-delays as expected. Change the units of the two constants to be msecs and secs
-respectively.
+Description: Use wait_event_interruptible() instead of the deprecated
+interruptible_sleep_on(). Patch is compile-tested.
 
 Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---- 2.6.11-rc1-kj-v/net/ipv4/ipconfig.c	2005-01-15 16:55:44.000000000 -0800
-+++ 2.6.11-rc1-kj/net/ipv4/ipconfig.c	2005-01-18 13:01:44.000000000 -0800
-@@ -53,6 +53,7 @@
- #include <linux/seq_file.h>
- #include <linux/major.h>
- #include <linux/root_dev.h>
-+#include <linux/delay.h>
- #include <net/arp.h>
- #include <net/ip.h>
- #include <net/ipconfig.h>
-@@ -84,8 +85,8 @@
- #endif
+--- 2.6.11-rc2-kj-v/drivers/media/video/zoran_device.c	2005-01-24 09:34:08.000000000 -0800
++++ 2.6.11-rc2-kj/drivers/media/video/zoran_device.c	2005-01-24 16:07:07.000000000 -0800
+@@ -46,6 +46,7 @@
+ #include <linux/video_decoder.h>
+ #include <linux/video_encoder.h>
+ #include <linux/delay.h>
++#include <linux/wait.h>
  
- /* Define the friendly delay before and after opening net devices */
--#define CONF_PRE_OPEN		(HZ/2)	/* Before opening: 1/2 second */
--#define CONF_POST_OPEN		(1*HZ)	/* After opening: 1 second */
-+#define CONF_PRE_OPEN		500	/* Before opening: 1/2 second */
-+#define CONF_POST_OPEN		1	/* After opening: 1 second */
+ #include <asm/io.h>
  
- /* Define the timeout for waiting for a DHCP/BOOTP/RARP reply */
- #define CONF_OPEN_RETRIES 	2	/* (Re)open devices twice */
-@@ -1259,16 +1260,14 @@ static int __init ip_auto_config(void)
-  try_try_again:
- #endif
- 	/* Give hardware a chance to settle */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(CONF_PRE_OPEN);
-+	msleep(CONF_PRE_OPEN);
+@@ -696,11 +697,10 @@ wait_grab_pending (struct zoran *zr)
+ 	if (!zr->v4l_memgrab_active)
+ 		return 0;
  
- 	/* Setup all network devices */
- 	if (ic_open_devs() < 0)
- 		return -1;
+-	while (zr->v4l_pend_tail != zr->v4l_pend_head) {
+-		interruptible_sleep_on(&zr->v4l_capq);
+-		if (signal_pending(current))
+-			return -ERESTARTSYS;
+-	}
++	wait_event_interruptible(zr->v4l_capq,
++			(zr->v4l_pend_tail == zr->v4l_pend_head));
++	if (signal_pending(current))
++		return -ERESTARTSYS;
  
- 	/* Give drivers a chance to settle */
--	set_current_state(TASK_UNINTERRUPTIBLE);
--	schedule_timeout(CONF_POST_OPEN);
-+	ssleep(CONF_POST_OPEN);
- 
- 	/*
- 	 * If the config information is insufficient (e.g., our IP address or
+ 	spin_lock_irqsave(&zr->spinlock, flags);
+ 	zr36057_set_memgrab(zr, 0);
 
---===============31961530475141875==
+--===============3986935434524701==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -74,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============31961530475141875==--
+--===============3986935434524701==--
