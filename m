@@ -1,111 +1,258 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 17 Nov 2004 17:45:38 +0000
-Subject: [KJ] [patch] net/ne2k-pci: module_param conversion
-Message-Id: <20041117174538.GH8698@nd47.coderock.org>
+From: james4765@verizon.net
+Date: Sat, 20 Nov 2004 17:18:37 +0000
+Subject: [KJ] [PATCH] floppy: move macro definitions to where they are used
+Message-Id: <20041120171859.15785.15800.33699@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7752357837565893=="
+Content-Type: multipart/mixed; boundary="===============48411186217246094=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org, james4765@verizon.net
 
---===============7752357837565893==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============48411186217246094==
 
-Hi.
+Move some macros that are only used in a small area of the code to the functions
+that actually use them, and #undef them at the end of the area the are used in.
 
-Simple module_param_array conversions.
-Get rid of debug option, since it's only used once.
-Add some KERN_* constants to printk's.
+Signed-off-by: James Nelson <james4765@gmail.com>
 
-Compile tested.
-
-Signed-off-by: Domen Puncer <domen@coderock.org>
-
---- c/drivers/net/ne2k-pci.c	2004-11-15 13:42:12.000000000 +0100
-+++ a/drivers/net/ne2k-pci.c	2004-11-17 18:24:01.000000000 +0100
-@@ -29,12 +29,6 @@
- #define DRV_VERSION	"1.03"
- #define DRV_RELDATE	"9/22/2003"
+diff -urN --exclude='*~' linux-2.6.10-rc2-original/drivers/block/floppy.c linux-2.6.10-rc2/drivers/block/floppy.c
+--- linux-2.6.10-rc2-original/drivers/block/floppy.c	2004-11-15 21:38:15.000000000 -0500
++++ linux-2.6.10-rc2/drivers/block/floppy.c	2004-11-20 12:02:47.256146661 -0500
+@@ -293,8 +293,6 @@
+ #define TOMINOR(x) ((x & 3) | ((x & 4) << 5))
+ #define UNIT(x) ((x) & 0x03)	/* drive on fdc */
+ #define FDC(x) (((x) & 0x04) >> 2)	/* fdc of drive */
+-#define REVDRIVE(fdc, unit) ((unit) + ((fdc) << 2))
+-				/* reverse mapping from unit and fdc to drive */
+ #define DP (&drive_params[current_drive])
+ #define DRS (&drive_state[current_drive])
+ #define DRWE (&write_errors[current_drive])
+@@ -330,13 +328,6 @@
+ #define SIZECODE2 raw_cmd->cmd[8]
+ #define NR_RW 9
  
+-/* format */
+-#define F_SIZECODE raw_cmd->cmd[2]
+-#define F_SECT_PER_TRACK raw_cmd->cmd[3]
+-#define F_GAP raw_cmd->cmd[4]
+-#define F_FILL raw_cmd->cmd[5]
+-#define NR_F 6
 -
--/* The user-configurable values.
--   These may be modified when a driver module is loaded.*/
--
--static int debug = 1;			/* 1 normal messages, 0 quiet .. 7 verbose. */
--
- #define MAX_UNITS 8				/* More are supported, limit only on options */
- /* Used to pass the full-duplex flag, etc. */
- static int full_duplex[MAX_UNITS];
-@@ -77,10 +71,8 @@ MODULE_AUTHOR("Donald Becker / Paul Gort
- MODULE_DESCRIPTION("PCI NE2000 clone driver");
- MODULE_LICENSE("GPL");
+ /*
+  * Maximum disk size (in kilobytes). This default is used whenever the
+  * current disk size is unknown.
+@@ -516,7 +507,6 @@
+ #define ECALL(x) if ((ret = (x))) return ret;
+ #define _WAIT(x,i) CALL(ret=wait_til_done((x),i))
+ #define WAIT(x) _WAIT((x),interruptible)
+-#define IWAIT(x) _WAIT((x),1)
  
--MODULE_PARM(debug, "i");
--MODULE_PARM(options, "1-" __MODULE_STRING(MAX_UNITS) "i");
--MODULE_PARM(full_duplex, "1-" __MODULE_STRING(MAX_UNITS) "i");
--MODULE_PARM_DESC(debug, "debug level (1-2)");
-+module_param_array(options, int, NULL, 0);
-+module_param_array(full_duplex, int, NULL, 0);
- MODULE_PARM_DESC(options, "Bit 5: full duplex");
- MODULE_PARM_DESC(full_duplex, "full duplex setting(s) (1)");
+ /* Errors during formatting are counted here. */
+ static int format_errors;
+@@ -559,14 +549,6 @@
+ static int floppy_grab_irq_and_dma(void);
+ static void floppy_release_irq_and_dma(void);
  
-@@ -366,7 +358,7 @@ static int __devinit ne2k_pci_init_one (
- 	if (i)
- 		goto err_out_free_netdev;
+-/*
+- * The "reset" variable should be tested whenever an interrupt is scheduled,
+- * after the commands have been sent. This is to ensure that the driver doesn't
+- * get wedged when the interrupt doesn't come because of a failed command.
+- * reset doesn't need to be tested before sending commands, because
+- * output_byte is automatically disabled when reset is set.
+- */
+-#define CHECK_RESET { if (FDCS->reset){ reset_fdc(); return; } }
+ static void reset_fdc(void);
  
--	printk("%s: %s found at %#lx, IRQ %d, ",
-+	printk(KERN_INFO "%s: %s found at %#lx, IRQ %d, ",
- 		   dev->name, pci_clone_list[chip_idx].name, ioaddr, dev->irq);
- 	for(i = 0; i < 6; i++) {
- 		printk("%2.2X%s", SA_prom[i], i == 5 ? ".\n": ":");
-@@ -443,8 +435,7 @@ static void ne2k_pci_reset_8390(struct n
+ /*
+@@ -788,6 +770,9 @@
+ 
+ static int set_dor(int fdc, char mask, char data)
  {
- 	unsigned long reset_start_time = jiffies;
++/* macro used by set_dor() */
++#define REVDRIVE(fdc, unit) ((unit) + ((fdc) << 2))
++
+ 	register unsigned char drive, unit, newdor, olddor;
  
--	if (debug > 1) printk("%s: Resetting the 8390 t=%ld...",
--						  dev->name, jiffies);
-+	printk(KERN_INFO "%s: Resetting the 8390 t=%ld...", dev->name, jiffies);
+ 	if (FDCS->address == -1)
+@@ -825,6 +810,7 @@
+ 	if (olddor & FLOPPY_MOTOR_MASK)
+ 		floppy_release_irq_and_dma();
+ 	return olddor;
++#undef REVDRIVE
+ }
  
- 	outb(inb(NE_BASE + NE_RESET), NE_BASE + NE_RESET);
+ static void twaddle(void)
+@@ -1297,8 +1283,6 @@
+ 	return 1;
+ }
  
-@@ -454,7 +445,7 @@ static void ne2k_pci_reset_8390(struct n
- 	/* This check _should_not_ be necessary, omit eventually. */
- 	while ((inb(NE_BASE+EN0_ISR) & ENISR_RESET) == 0)
- 		if (jiffies - reset_start_time > 2) {
--			printk("%s: ne2k_pci_reset_8390() did not complete.\n", dev->name);
-+			printk(KERN_NOTICE "%s: ne2k_pci_reset_8390() did not complete.\n", dev->name);
- 			break;
- 		}
- 	outb(ENISR_RESET, NE_BASE + EN0_ISR);	/* Ack intr. */
-@@ -471,7 +462,7 @@ static void ne2k_pci_get_8390_hdr(struct
+-#define NOMINAL_DTR 500
+-
+ /* Issue a "SPECIFY" command to set the step rate time, head unload time,
+  * head load time, and DMA disable flag to values needed by floppy.
+  *
+@@ -1320,6 +1304,9 @@
+  */
+ static void fdc_specify(void)
+ {
++/* #define only used in fdc_specify() */
++#define NOMINAL_DTR 500
++
+ 	unsigned char spec1, spec2;
+ 	unsigned long srt, hlt, hut;
+ 	unsigned long dtr = NOMINAL_DTR;
+@@ -1390,6 +1377,7 @@
+ 		output_byte(FDCS->spec1 = spec1);
+ 		output_byte(FDCS->spec2 = spec2);
+ 	}
++#undef NOMINAL_DTR
+ }				/* fdc_specify */
  
- 	/* This *shouldn't* happen. If it does, it's the last thing you'll see */
- 	if (ei_status.dmaing) {
--		printk("%s: DMAing conflict in ne2k_pci_get_8390_hdr "
-+		printk(KERN_ERR "%s: DMAing conflict in ne2k_pci_get_8390_hdr "
- 			   "[DMAstat:%d][irqlock:%d].\n",
- 			   dev->name, ei_status.dmaing, ei_status.irqlock);
+ /* Set the FDC's data transfer rate on behalf of the specified drive.
+@@ -1952,8 +1940,18 @@
+ 				       (timeout_fn) function));
+ }
+ 
++/*
++ * The "reset" variable should be tested whenever an interrupt is scheduled,
++ * after the commands have been sent. This is to ensure that the driver doesn't
++ * get wedged when the interrupt doesn't come because of a failed command.
++ * reset doesn't need to be tested before sending commands, because
++ * output_byte is automatically disabled when reset is set.
++ */
+ static void floppy_ready(void)
+ {
++/* macro only used in floppy_ready() */
++#define CHECK_RESET { if (FDCS->reset){ reset_fdc(); return; } }
++
+ 	CHECK_RESET;
+ 	if (start_motor(floppy_ready))
  		return;
-@@ -509,7 +500,7 @@ static void ne2k_pci_block_input(struct 
+@@ -1988,6 +1986,7 @@
+ 			fdc_specify();
+ 		setup_rw_floppy();
+ 	}
++#undef CHECK_RESET
+ }
  
- 	/* This *shouldn't* happen. If it does, it's the last thing you'll see */
- 	if (ei_status.dmaing) {
--		printk("%s: DMAing conflict in ne2k_pci_block_input "
-+		printk(KERN_ERR "%s: DMAing conflict in ne2k_pci_block_input "
- 			   "[DMAstat:%d][irqlock:%d].\n",
- 			   dev->name, ei_status.dmaing, ei_status.irqlock);
- 		return;
-@@ -564,7 +555,7 @@ static void ne2k_pci_block_output(struct
+ static void floppy_start(void)
+@@ -2179,6 +2178,13 @@
+ #define CT(x) ((x) | 0xc0)
+ static void setup_format_params(int track)
+ {
++/* macros only used in setup_format_params() */
++#define F_SIZECODE raw_cmd->cmd[2]
++#define F_SECT_PER_TRACK raw_cmd->cmd[3]
++#define F_GAP raw_cmd->cmd[4]
++#define F_FILL raw_cmd->cmd[5]
++#define NR_F 6
++
+ 	struct fparm {
+ 		unsigned char track, head, sect, size;
+ 	} *here = (struct fparm *)floppy_track_buffer;
+@@ -2241,6 +2247,11 @@
+ 		for (count = 0; count < F_SECT_PER_TRACK; count++)
+ 			here[count].sect--;
+ 	}
++#undef F_SIZECODE
++#undef F_SECT_PER_TRACK
++#undef F_GAP
++#undef F_FILL
++#undef NR_F
+ }
  
- 	/* This *shouldn't* happen. If it does, it's the last thing you'll see */
- 	if (ei_status.dmaing) {
--		printk("%s: DMAing conflict in ne2k_pci_block_output."
-+		printk(KERN_ERR "%s: DMAing conflict in ne2k_pci_block_output."
- 			   "[DMAstat:%d][irqlock:%d]\n",
- 			   dev->name, ei_status.dmaing, ei_status.irqlock);
- 		return;
+ static void redo_format(void)
+@@ -2260,6 +2271,9 @@
+ 
+ static int do_format(int drive, struct format_descr *tmp_format_req)
+ {
++/* macro only used in do_format() */
++#define IWAIT(x) _WAIT((x),1)
++
+ 	int ret;
+ 
+ 	LOCK_FDC(drive, 1);
+@@ -2280,6 +2294,7 @@
+ 	IWAIT(redo_format);
+ 	process_fd_request();
+ 	return ret;
++#undef IWAIT
+ }
+ 
+ /*
+@@ -3090,12 +3105,6 @@
+ 	return copy_from_user(address, param, size) ? -EFAULT : 0;
+ }
+ 
+-#define _COPYOUT(x) (copy_to_user((void __user *)param, &(x), sizeof(x)) ? -EFAULT : 0)
+-#define _COPYIN(x) (copy_from_user(&(x), (void __user *)param, sizeof(x)) ? -EFAULT : 0)
+-
+-#define COPYOUT(x) ECALL(_COPYOUT(x))
+-#define COPYIN(x) ECALL(_COPYIN(x))
+-
+ static inline const char *drive_name(int type, int drive)
+ {
+ 	struct floppy_struct *floppy;
+@@ -3166,6 +3175,12 @@
+ 	.done		= raw_cmd_done
+ };
+ 
++/* macros only used in ioctl processing */
++#define _COPYOUT(x) (copy_to_user((void __user *)param, &(x), sizeof(x)) ? -EFAULT : 0)
++#define _COPYIN(x) (copy_from_user(&(x), (void __user *)param, sizeof(x)) ? -EFAULT : 0)
++#define COPYOUT(x) ECALL(_COPYOUT(x))
++#define COPYIN(x) ECALL(_COPYIN(x))
++
+ static inline int raw_cmd_copyout(int cmd, char __user *param,
+ 				  struct floppy_raw_cmd *ptr)
+ {
+@@ -3451,6 +3466,7 @@
+ static int fd_ioctl(struct inode *inode, struct file *filp, unsigned int cmd,
+ 		    unsigned long param)
+ {
++/* macros only used in fd_ioctl() */
+ #define FD_IOCTL_ALLOWED ((filp) && (filp)->private_data)
+ #define OUT(c,x) case c: outparam = (const char *) (x); break
+ #define IN(c,x,tag) case c: *(x) = inparam. tag ; return 0
+@@ -3622,10 +3638,17 @@
+ 		return fd_copyout((void __user *)param, outparam, size);
+ 	else
+ 		return 0;
++#undef FD_IOCTL_ALLOWED
+ #undef OUT
+ #undef IN
+ }
+ 
++#undef _COPYOUT
++#undef _COPYIN
++#undef COPYOUT
++#undef COPYIN
++/* end of floppy ioctl processing */
++
+ static void __init config_types(void)
+ {
+ 	int first = 1;
+@@ -3899,8 +3922,9 @@
+  * geometry formats */
+ static int floppy_revalidate(struct gendisk *disk)
+ {
+-	int drive = (long)disk->private_data;
++/* macro only used in floppy_revalidate() */
+ #define NO_GEOM (!current_type[drive] && !ITYPE(UDRS->fd_device))
++	int drive = (long)disk->private_data;
+ 	int cf;
+ 	int res = 0;
+ 
+@@ -3935,6 +3959,7 @@
+ 	}
+ 	set_capacity(disk, floppy_sizes[UDRS->fd_device]);
+ 	return res;
++#undef NO_GEOM
+ }
+ 
+ static struct block_device_operations floppy_fops = {
 
---===============7752357837565893==
+--===============48411186217246094==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -116,4 +263,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============7752357837565893==--
+--===============48411186217246094==--
