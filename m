@@ -1,91 +1,108 @@
-From: "Ashonta Flemming" <MoseMeabon@ameritrade.com>
-Date: Tue, 23 Nov 2004 02:32:49 +0000
-Subject: Re: what is this?
-Message-Id: <E1CWQUB-0003dp-Fn@sc8-sf-mx2.sourceforge.net>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 01 Nov 2004 19:29:22 +0000
+Subject: [KJ] [PATCH] net/sb1000: replace nicedelay() with
+Message-Id: <20041101202445.GH1730@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============70753110705179501=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1CO1w1-0002Uj-Hm@sputnik> <4184C6EB.1000700@pobox.com>
+In-Reply-To: <4184C6EB.1000700@pobox.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com
+
+--===============70753110705179501==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sun, Oct 31, 2004 at 06:05:15AM -0500, Jeff Garzik wrote:
+> janitor@sternwelten.at wrote:
+> >Any comments would be appreciated.
+> >
+> >Description: Use msleep_interruptible() instead of nicedelay()
+> >to guarantee the task delays as expected. Remove the prototype and
+> >definition of nicedelay(). This is a very weird function, because it is
+> >called to sleep in terms of usecs, but always sleeps for 1 second,
+> >completely ignoring the parameter. I have gone ahead and followed suit,
+> >just sleeping for a second in all cases, but maybe someone with the
+> >hardware could tell me if perhaps the paramter *should* matter.
+> >Also remove a random "^L" character.
+> 
+> use ssleep() here too
+
+Done, please fine patch below:
+
+Description: Use ssleep_interruptible() instead of nicedelay()
+to guarantee the task delays as expected. Remove the prototype and
+definition of nicedelay(). This is a very weird function, because it is
+called to sleep in terms of usecs, but always sleeps for 1 second,
+completely ignoring the parameter. I have gone ahead and followed suit,
+just sleeping for a second in all cases, but maybe someone with the
+hardware could tell me if perhaps the paramter *should* matter.
+escription.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.10-rc1-vanilla/drivers/net/sb1000.c	2004-10-30 15:33:28.000000000 -0700
++++ 2.6.10-rc1/drivers/net/sb1000.c	2004-11-01 12:22:26.000000000 -0800
+@@ -90,7 +90,6 @@ static int sb1000_close(struct net_devic
+ 
+ 
+ /* SB1000 hardware routines to be used during open/configuration phases */
+-static inline void nicedelay(unsigned long usecs);
+ static inline int card_wait_for_busy_clear(const int ioaddr[],
+ 	const char* name);
+ static inline int card_wait_for_ready(const int ioaddr[], const char* name,
+@@ -254,13 +253,6 @@ static struct pnp_driver sb1000_driver =
+ 
+ const int TimeOutJiffies = (875 * HZ) / 100;
+ 
+-static inline void nicedelay(unsigned long usecs)
+-{
+-	current->state = TASK_INTERRUPTIBLE;
+-	schedule_timeout(HZ);
+-	return;
+-}
+-
+ /* Card Wait For Busy Clear (cannot be used during an interrupt) */
+ static inline int
+ card_wait_for_busy_clear(const int ioaddr[], const char* name)
+@@ -475,7 +467,7 @@ sb1000_reset(const int ioaddr[], const c
+ 	udelay(1000);
+ 	outb(0x0, port);
+ 	inb(port);
+-	nicedelay(60000);
++	ssleep_interruptible(1);
+ 	outb(0x4, port);
+ 	inb(port);
+ 	udelay(1000);
+@@ -537,7 +529,7 @@ sb1000_activate(const int ioaddr[], cons
+ 	const unsigned char Command0[6] = {0x80, 0x11, 0x00, 0x00, 0x00, 0x00};
+ 	const unsigned char Command1[6] = {0x80, 0x16, 0x00, 0x00, 0x00, 0x00};
+ 
+-	nicedelay(50000);
++	ssleep_interruptible(1);
+ 	if ((status = card_send_command(ioaddr, name, Command0, st)))
+ 		return status;
+ 	if ((status = card_send_command(ioaddr, name, Command1, st)))
+@@ -944,7 +936,7 @@ sb1000_open(struct net_device *dev)
+ 	/* initialize sb1000 */
+ 	if ((status = sb1000_reset(ioaddr, name)))
+ 		return status;
+-	nicedelay(200000);
++	ssleep_interruptible(1);
+ 	if ((status = sb1000_check_CRC(ioaddr, name)))
+ 		return status;
+ 
+
+--===============70753110705179501==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-<html>
-<font size="1">The executive power shall be vested in a President of the United States of America: </font>
-<br><br><br><br><br>
-  
-  
-<p>Looking for not expensive high-quality software?<br>
-  We might have just what you need.<br>
-  <br>
-  <a href="http://jhdsjhsdd.info/?fuhkhwfjGjS8xfLUMis53f ">Windows XP Professional 2002</a> ............. $50<br>
-  <a href="http://jhdsjhsdd.info/?n6psp.UXOX.MFTTcHXkcBzJv ">Adobe Photoshop 7.0</a> ...................... $60<br>
-  <a href="http://jhdsjhsdd.info/?GVILI9GeBKNzYaGmJI07cwyla ">Microsoft Office XP Professional 2002</a> .... $60<br>
-  <a href="http://jhdsjhsdd.info/?sHu1uzZ0Tw3lesYsLGAK9L ">Corel Draw Graphics Suite 11</a> ............. $60<br>
-  <br>
-  <a href="http://jhdsjhsdd.info/?fuhkhwfjGjS8xfL8Ozbro8631 ">and lots more... </a></p>
-<p>TOP quality software:<br>
-  <br>
-  <b>Special Offer #1:</b><br>
-  <a href="http://jhdsjhsdd.info/?XaZ0trsvSvykdrrJO6h8Fp8m ">Windows XP Professional+Microsoft Office XP Professional 
-  = only $80</a><br>
-  <b>Special Offer #2:</b><br>
-  <a href="http://jhdsjhsdd.info/?qFY_s1r.l.1jcWq6M2NRQT ">Adobe - Photoshop 7, Premiere 7, Illustrator 10 = only 
-  $120</a><br>
-  <b>Special Offer #3:</b><br>
-  <a href="http://jhdsjhsdd.info/?gvOlixgkHQnF2gg6gEZku ">Macromedia Dreamwaver MX 2004 + Flash MX 2004 = only $100 
-  </a></p>
-  Also: <br>
-  Windows 2003 Server<br>
-  Windows 2000 Workstation<br>
-  Windows 2000 Server <br>
-  Windows 2000 Advanced Server <br>
-  Windows 2000 Datacenter <br>
-  Windows NT 4.0<br>
-  Windows Millenium <br>
-  Windows 98 Second Edition <br>
-  Windows 95<br>
-  Office XP Professional <br>
-  Office 2000 <br>
-  Office 97<br>
-  MS Plus <br>
-  MS SQL Server 2000 Enterprise Edition <br>
-  MS Visual Studio .NET Architect Edition <br>
-  MS Encarta Encyclopedia Delux 2004<br>
-  MS Project 2003 Professional <br>
-  MS Money 2004 <br>
-  MS Streets and Trips 2004 <br>
-  MS Works 7 <br>
-  MS Picture It Premium 9 <br>
-  MS Exchange 2003 Enterprise Server <br>
-  Adobe Photoshop <br>
-  Adobe PageMaker<br>
-  Adobe Illustrator <br>
-  Adobe Acrobat 6 Professional<br>
-  Adobe Premiere<br>
-  Macromedia Dreamwaver MX 2004 <br>
-  Macromedia Flash MX 2004<br>
-  Macromedia Fireworks MX 2004<br>
-  Macromedia Freehand MX 11 <br>
-  Corel Draw Graphics Suite 12 <br>
-  Corel Draw Graphics Suite 11 <br>
-  Corel Photo Painter 8<br>
-  Corel Word Perfect Office 2002<br>
-  Norton System Works 2003 <br>
-  Borland Delphi 7 Enterprise Edition <br>
-  Quark Xpress 6 Passport Multilanguage <br>
-  <a href="http://jhdsjhsdd.info/?GVILI9GeBKNzYaGJuGR6gq ">Enter Here</a><br>
-<br><br><br><br>
-<br><br><br><br><br>
-<a href="http://jhdsjhsdd.info/<81nJ>?tIvy_Ktxox4mfZZe9V">Discontinue</a>
-</html>
-"Besides," thought I, "all roads lead back to Europe; and the unicorn may be amiable enough to hurry me towards the coast of France: light reappeared three miles to windward of the frigate, as pure, as intense as during the preceding night? As to the ship's company, they desired nothing better than to meet the unicorn, to harpoon it, hoist it on board, and despatch it I looked and looked till I was nearly blind, whilst Conseil kept repeating in a calm voice: ; 
-
-
--------------------------------------------------------
-SF email is sponsored by - The IT Product Guide
-Read honest & candid reviews on hundreds of IT Products from real users.
-Discover which products truly live up to the hype. Start reading now. 
-http://productguide.itmanagersjournal.com/
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============70753110705179501==--
