@@ -1,106 +1,80 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Wed, 26 Jan 2005 01:26:27 +0000
-Subject: [KJ] [PATCH 5/53][RESEND] atyfb: Clean up printk()'s in
-Message-Id: <20050126012626.10691.8424.99712@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 20 Jan 2005 23:56:34 +0000
+Subject: [KJ] [PATCH 20/39] net/ip_vs_sync: replace schedule_timeout() with
+Message-Id: <20050120235634.GI2600@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============89742552597927061=="
+Content-Type: multipart/mixed; boundary="===============75860382216453193=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@redhat.com, yoshfuji@linux-ipv6.org, kaber@coreworks.de
+Cc: netdev@oss.sgi.com, kernel-janitors@lists.osdl.org
 
---===============89742552597927061==
+--===============75860382216453193==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/aty/mach64_ct.c - resent after removing another useless #ifdef
+Hi,
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Please consider applying.
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/aty/mach64_ct.c linux-2.6.11-rc2-mm1/drivers/video/aty/mach64_ct.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/aty/mach64_ct.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/aty/mach64_ct.c	2005-01-25 20:22:07.265477405 -0500
-@@ -195,10 +195,8 @@
- 	/* Get register values. */
- 	pll->dsp_on_off = (dsp_on << 16) + dsp_off;
- 	pll->dsp_config = (dsp_precision << 20) | (pll->dsp_loop_latency << 16) | dsp_xclks;
--#ifdef DEBUG
--	printk("atyfb(%s): dsp_config 0x%08x, dsp_on_off 0x%08x\n",
-+	pr_debug("atyfb(%s): dsp_config 0x%08x, dsp_on_off 0x%08x\n",
- 		__FUNCTION__, pll->dsp_config, pll->dsp_on_off);
--#endif
- 	return 0;
- }
+Description: Use ssleep() instead of schedule_timeout() to guarantee the task
+delays as expected. The first two replacements use TASK_INTERRUPTIBLE but do not
+check for signals, so ssleep() should be appropriate.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+--- 2.6.11-rc1-kj-v/net/ipv4/ipvs/ip_vs_sync.c	2005-01-15 16:55:44.000000000 -0800
++++ 2.6.11-rc1-kj/net/ipv4/ipvs/ip_vs_sync.c	2005-01-18 13:03:21.000000000 -0800
+@@ -23,7 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/net.h>
+ #include <linux/completion.h>
+-
++#include <linux/delay.h>
+ #include <linux/skbuff.h>
+ #include <linux/in.h>
+ #include <linux/igmp.h>                 /* for ip_mc_join_group */
+@@ -647,8 +647,7 @@ static void sync_master_loop(void)
+ 		if (stop_master_sync)
+ 			break;
  
-@@ -226,7 +224,7 @@
- #ifdef DEBUG
- 	pllvclk = (1000000 * 2 * pll->vclk_fb_div) /
- 		(par->ref_clk_per * pll->pll_ref_div);
--	printk("atyfb(%s): pllvclk=%d MHz, vclk=%d MHz\n",
-+	pr_debug("atyfb(%s): pllvclk=%d MHz, vclk=%d MHz\n",
- 		__FUNCTION__, pllvclk, pllvclk / pll->vclk_post_div_real);
- #endif
- 	pll->pll_vclk_cntl = 0x03; /* VCLK = PLL_VCLK/VCLKx_POST */
-@@ -257,9 +255,7 @@
- 		ret /= pll->ct.xres;
- 	}
- #endif
--#ifdef DEBUG
--	printk("atyfb(%s): calculated 0x%08X(%i)\n", __FUNCTION__, ret, ret);
--#endif
-+	pr_debug("atyfb(%s): calculated 0x%08X(%i)\n", __FUNCTION__, ret, ret);
- 	return ret;
- }
- 
-@@ -270,17 +266,15 @@
- 	u8 tmp, tmp2;
- 
- 	lcd_gen_cntrl = 0;
--#ifdef DEBUG
--	printk("atyfb(%s): about to program:\n"
-+	pr_debug("atyfb(%s): about to program:\n"
- 		"pll_ext_cntl=0x%02x pll_gen_cntl=0x%02x pll_vclk_cntl=0x%02x\n",
- 		__FUNCTION__,
- 		pll->ct.pll_ext_cntl, pll->ct.pll_gen_cntl, pll->ct.pll_vclk_cntl);
- 
--	printk("atyfb(%s): setting clock %lu for FeedBackDivider %i, ReferenceDivider %i, PostDivider %i(%i)\n",
-+	pr_debug("atyfb(%s): setting clock %lu for FeedBackDivider %i, ReferenceDivider %i, PostDivider %i(%i)\n",
- 		__FUNCTION__,
- 		par->clk_wr_offset, pll->ct.vclk_fb_div,
- 		pll->ct.pll_ref_div, pll->ct.vclk_post_div, pll->ct.vclk_post_div_real);
--#endif
- #ifdef CONFIG_FB_ATY_GENERIC_LCD
- 	if (par->lcd_table != 0) {
- 		/* turn off LCD */
-@@ -412,10 +406,8 @@
- 		pll->ct.xclk_post_div -= 1;
+-		__set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ);
++		ssleep(1);
  	}
  
--#ifdef DEBUG
--	printk("atyfb(%s): mclk_fb_mult=%d, xclk_post_div=%d\n",
-+	pr_debug("atyfb(%s): mclk_fb_mult=%d, xclk_post_div=%d\n",
- 		__FUNCTION__, pll->ct.mclk_fb_mult, pll->ct.xclk_post_div);
--#endif
+ 	/* clean up the sync_buff queue */
+@@ -705,8 +704,7 @@ static void sync_backup_loop(void)
+ 		if (stop_backup_sync)
+ 			break;
  
- 	memcntl = aty_ld_le32(MEM_CNTL, par);
- 	trp = (memcntl & 0x300) >> 8;
-@@ -525,7 +517,7 @@
- #ifdef DEBUG
- 	pllmclk = (1000000 * pll->ct.mclk_fb_mult * pll->ct.mclk_fb_div) /
- 			(par->ref_clk_per * pll->ct.pll_ref_div);
--	printk("atyfb(%s): pllmclk=%d MHz, xclk=%d MHz\n",
-+	pr_debug("atyfb(%s): pllmclk=%d MHz, xclk=%d MHz\n",
- 		__FUNCTION__, pllmclk, pllmclk / pll->ct.xclk_post_div_real);
- #endif
+-		__set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ);
++		ssleep(1);
+ 	}
  
-@@ -566,7 +558,7 @@
- #ifdef DEBUG
- 		pllsclk = (1000000 * 2 * sclk_fb_div) /
- 			(par->ref_clk_per * pll->ct.pll_ref_div);
--		printk("atyfb(%s): use sclk, pllsclk=%d MHz, sclk=mclk=%d MHz\n",
-+		pr_debug("atyfb(%s): use sclk, pllsclk=%d MHz, sclk=mclk=%d MHz\n",
- 			__FUNCTION__, pllsclk, pllsclk / sclk_post_div_real);
- #endif
- 		/*
+ 	/* release the sending multicast socket */
+@@ -818,8 +816,7 @@ static int fork_sync_thread(void *startu
+ 	if ((pid = kernel_thread(sync_thread, startup, 0)) < 0) {
+ 		IP_VS_ERR("could not create sync_thread due to %d... "
+ 			  "retrying.\n", pid);
+-		current->state = TASK_UNINTERRUPTIBLE;
+-		schedule_timeout(HZ);
++		ssleep(1);
+ 		goto repeat;
+ 	}
+ 
+@@ -853,8 +850,7 @@ int start_sync_thread(int state, char *m
+ 	if ((pid = kernel_thread(fork_sync_thread, &startup, 0)) < 0) {
+ 		IP_VS_ERR("could not create fork_sync_thread due to %d... "
+ 			  "retrying.\n", pid);
+-		current->state = TASK_UNINTERRUPTIBLE;
+-		schedule_timeout(HZ);
++		ssleep(1);
+ 		goto repeat;
+ 	}
+ 
 
---===============89742552597927061==
+--===============75860382216453193==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -111,4 +85,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============89742552597927061==--
+--===============75860382216453193==--
