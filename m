@@ -1,64 +1,41 @@
-From: "Stacy Wright" <shwmc@mail2Laura.com>
-Date: Sun, 02 May 2004 10:16:03 +0000
+From: "Shane Hanks" <spcwsgrqrua@mail2Matt.com>
+Date: Sun, 16 May 2004 01:56:55 +0000
 Subject: Signup Receipt
-Message-Id: <GMVYGOG-0006059695478@carbon>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="9640670038614907559"
+Message-Id: <HXSEGEC-0000668956602@clique>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <GMVYGOG-0006059695478@carbon>
+In-Reply-To: <GMVYGOG-0006059695478@carbon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---9640670038614907559
-Content-Type: text/plain; charset=us-ascii
+Dear Shane,
 
-ensconce bombastic memorable boniface camelopard biotite martial newsstand chantry vaduz 
-abetting blemish flautist condensate 
-posit merriment butterfield quarterback 
 
---9640670038614907559
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
+You can get the Univ. degree that you wanted for years: bachelors, 
+masters, MBA, or even doctorate.
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859=
--1">
-<title>wednesday</title>
-</head>
-<body bgcolor=3D"#FFFFFF" style=3D"font: normal 12pt arial, sans;">
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vicodin<br>
-***We are running a hot special***<br>
-&nbsp;&nbsp;&nbsp;&nbsp;today it is only $99<br>
+No required tests, classes or books.
 
-<p>- No doctor visits or hassles<br>
-- No prior prescription needed<br>
-- Quick delivery to your front door<br>
+Could we ask you to please call us at 1-646-619-4181 to complete
+the application for more details.
 
-<p><a href=3D"http://zapintooblivion.com/?d=3Dvision">You will love how ea=
-sy it is!</a>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>--------------------------------------<br>
-To update your preference, please refer to the URL above
-<p>rangoon decal catabolic support carbuncle devoid booze bookstore temper=
-ance trytophan plop hessian mobile net fray birmingham craftsmen causation=
- bey dowry highhanded antenna hafnium loop bimonthly hoe elephantine bookp=
-late ravenous motif capital obliterate apparatus loathsome dot commissaria=
-t his scandinavia incur hartman=20 dichotomous truly balustrade fiscal aug=
-ust biplane acknowledge keddah admonition array dimethyl effect skulk traf=
-ficked combustion cancel fahrenheit elsie autonomy he'll adjutant adelaide=
- vial dihedral bowel drib pharmacist hairy sharon byron corpus importunate=
-=20
-</body>
-</html>
+At this point, no one's turned down.
 
---9640670038614907559--
+
+
+Your sincerely,
+Michael T. Lockheart
+Tel: 1-646-619-4181
+Registration Dept.
 
 
 -------------------------------------------------------
-This SF.Net email is sponsored by: Oracle 10g
-Get certified on the hottest thing ever to hit the market... Oracle 10g. 
-Take an Oracle 10g class now, and we'll give you the exam FREE.
-http://ads.osdn.com/?ad_id=3149&alloc_id=8166&op=click
+This SF.Net email is sponsored by: SourceForge.net Broadband
+Sign-up now for SourceForge Broadband and get the fastest
+6.0/768 connection for only $19.95/mo for the first 3 months!
+http://ads.osdn.com/?ad_id%62&alloc_ida84&op=click
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
