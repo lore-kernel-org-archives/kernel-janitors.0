@@ -1,33 +1,40 @@
-From: James Nelson <james4765@cwazy.co.uk>
-Date: Tue, 25 Jan 2005 23:10:32 +0000
-Subject: [KJ] [PATCH 14/53] clps711xfb: Clean up printk()'s in
-Message-Id: <20050125231029.10418.59752.49511@localhost.localdomain>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:56:57 +0000
+Subject: [KJ] [PATCH] [10/29] ymfpci_main.c - vfree() checking cleanups
+Message-Id: <41db1129.5c00f5ca.2568.07b7@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94059656304626205=="
+Content-Type: multipart/mixed; boundary="===============30893964367742432=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============94059656304626205==
+--===============30893964367742432==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-This patch adds KERN_ constants to all of the printk()'s that need them in
-drivers/video/clps711xfb.c
+ymfpci_main.c vfree() checking cleanups.
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-diff -urN --exclude='*~' linux-2.6.11-rc2-mm1-original/drivers/video/clps711xfb.c linux-2.6.11-rc2-mm1/drivers/video/clps711xfb.c
---- linux-2.6.11-rc2-mm1-original/drivers/video/clps711xfb.c	2005-01-24 17:15:49.000000000 -0500
-+++ linux-2.6.11-rc2-mm1/drivers/video/clps711xfb.c	2005-01-24 19:07:02.768261473 -0500
-@@ -385,7 +385,7 @@
- 	clps7111fb_backlight_proc_entry = create_proc_entry("backlight", 0444,
- 		&proc_root);
- 	if (clps7111fb_backlight_proc_entry == NULL) {
--		printk("Couldn't create the /proc entry for the backlight.\n");
-+		printk(KERN_ERR "Couldn't create the /proc entry for the backlight.\n");
- 		return -EINVAL;
- 	}
+ ymfpci_main.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
+
+
+--- linux-2.6.10-vanilla/sound/pci/ymfpci/ymfpci_main.c	2004-12-24 13:35:25.000000000 -0800
++++ linux-2.6.10/sound/pci/ymfpci/ymfpci_main.c	2005-01-04 11:22:00.390798272 -0800
+@@ -2065,8 +2065,7 @@
+ #endif
  
+ #ifdef CONFIG_PM
+-	if (chip->saved_regs)
+-		vfree(chip->saved_regs);
++	vfree(chip->saved_regs);
+ #endif
+ 	if (chip->mpu_res) {
+ 		release_resource(chip->mpu_res);
 
---===============94059656304626205==
+
+
+--===============30893964367742432==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94059656304626205==--
+--===============30893964367742432==--
