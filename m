@@ -1,33 +1,38 @@
 From: Greg KH <greg@kroah.com>
-Date: Mon, 02 Aug 2004 21:26:21 +0000
-Subject: [Kernel-janitors] Re: [PATCH] usb/auerswald: replace
-Message-Id: <20040802212621.GC14283@kroah.com>
+Date: Mon, 02 Aug 2004 22:41:50 +0000
+Subject: [Kernel-janitors] Re: [PATCH] hotplug/ibmphp_hpc: replace
+Message-Id: <20040802224150.GB15303@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============60200468878134683=="
+Content-Type: multipart/mixed; boundary="===============61261735524823313=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200407282023.23796.wolfgang@iksw-muees.de>
-In-Reply-To: <200407282023.23796.wolfgang@iksw-muees.de>
+References: <20040727214442.GS3471@us.ibm.com>
+In-Reply-To: <20040727214442.GS3471@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============60200468878134683==
+--===============61261735524823313==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 27, 2004 at 04:12:36PM -0700, Nishanth Aravamudan wrote:
-> I would appreciate any comments from the janitors list. 
+On Tue, Jul 27, 2004 at 02:47:22PM -0700, Nishanth Aravamudan wrote:
+> I would appreciate any comments from the janitors list. This is one (of
+> many) cases where I made a decision about replacing
 > 
-> Applys-to: 2.6.7
+> set_current_state(TASK_INTERRUPTIBLE);
+> schedule_timeout(some_time);
 > 
-> Description: Use msleep() instead of schedule_timeout() to 
-> guarantee the task delays for the desired time.
+> with
 > 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> msleep(jiffies_to_msecs(some_time));
+> 
+> msleep() is not exactly the same as the previous code, but I only did
+> this replacement where I thought long delays were *desired*. If this is
+> not the case here, then just disregard this patch.
 
 Applied, thanks.
 
 greg k-h
 
---===============60200468878134683==
+--===============61261735524823313==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============60200468878134683==--
+--===============61261735524823313==--
