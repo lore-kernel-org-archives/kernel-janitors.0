@@ -1,48 +1,69 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Mon, 14 Feb 2005 15:09:09 +0000
-Subject: [KJ] [PATCH] drivers/net/sk98lin/* : pci_request_regions
-Message-Id: <20050214150909.GK20620@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Wed, 02 Feb 2005 23:08:53 +0000
+Subject: [KJ] [PATCH 20/20] mips/bcm1250_tbprof: remove
+Message-Id: <20050202230853.GA2546@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="mXDO3udm/xYWQeMQ"
+Content-Type: multipart/mixed; boundary="===============10685029398335621=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org, kernel-janitors@lists.osdl.org
 
-
---mXDO3udm/xYWQeMQ
+--===============10685029398335621==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hello,
 
-description:
-If PCI request regions fails, then someone else is using the
-hardware we wish to use. For that one case, calling
-pci_disable_device() is rather rude.
-See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
+Please consider applying.
 
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+Description: Remove deprecated interruptible_sleep_on() function call
+and replace with direct wait-queue usage.
 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---mXDO3udm/xYWQeMQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_disable-linux-2.6.11-rc4_drivers_net_sk98lin.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/sk98lin/skge.c linux-2.6.11-rc4/drivers/net/sk98lin/skge.c
---- linux-2.6.11-rc4-vanilla/drivers/net/sk98lin/skge.c	2005-02-14 09:03:53.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/net/sk98lin/skge.c	2005-02-14 14:41:03.000000000 +0100
-@@ -332,7 +332,8 @@ int SkGeInitPCI(SK_AC *pAC)
-  out_release:
- 	pci_release_regions(pdev);
-  out_disable:
--	pci_disable_device(pdev);
-+	if( retval == 2 ) 
-+		pci_disable_device(pdev);
- 	return retval;
- }
+--- 2.6.11-rc2-kj-v/arch/mips/sibyte/sb1250/bcm1250_tbprof.c	2005-01-24 09:28:12.000000000 -0800
++++ 2.6.11-rc2-kj/arch/mips/sibyte/sb1250/bcm1250_tbprof.c	2005-02-02 15:07:08.000000000 -0800
+@@ -28,6 +28,7 @@
+ #include <linux/fs.h>
+ #include <linux/errno.h>
+ #include <linux/reboot.h>
++#include <linux/wait.h>
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+ #include <asm/sibyte/sb1250.h>
+@@ -227,6 +228,7 @@ int sbprof_zbprof_start(struct file *fil
  
+ int sbprof_zbprof_stop(void)
+ {
++	DEFINE_WAIT(wait);
+ 	DBG(printk(DEVNAME ": stopping\n"));
+ 
+ 	if (sbp.tb_enable) {
+@@ -236,7 +238,9 @@ int sbprof_zbprof_stop(void)
+ 		   this sleep happens. */
+ 		if (sbp.tb_armed) {
+ 			DBG(printk(DEVNAME ": wait for disarm\n"));
+-			interruptible_sleep_on(&sbp.tb_sync);
++			prepare_to_wait(&sbp.tb_sync, &wait, TASK_INTERRUPTIBLE);
++			schedule();
++			finish_wait(&sbp.tb_sync, &wait);
+ 			DBG(printk(DEVNAME ": disarm complete\n"));
+ 		}
+ 		free_irq(K_INT_TRACE_FREEZE, &sbp);
+@@ -344,7 +348,10 @@ static int sbprof_tb_ioctl(struct inode 
+ 		error = sbprof_zbprof_stop();
+ 		break;
+ 	case SBPROF_ZBWAITFULL:
+-		interruptible_sleep_on(&sbp.tb_read);
++		DEFINE_WAIT(wait);
++		prepare_to_wait(&sbp.tb_read, &wait, TASK_INTERRUPTIBLE);
++		schedule();
++		finish_wait(&sbp.tb_read, &wait);
+ 		/* XXXKW check if interrupted? */
+ 		return put_user(TB_FULL, (int *) arg);
+ 	default:
 
---mXDO3udm/xYWQeMQ
+--===============10685029398335621==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---mXDO3udm/xYWQeMQ--
+--===============10685029398335621==--
