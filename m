@@ -1,42 +1,32 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 14 Feb 2005 18:40:08 +0000
-Subject: Re: [KJ] Re: [PATCH 8/18] drivers/mtd/ remove pci_find_{device,
-Message-Id: <20050214184007.GF7815@kroah.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============090338999948389009=="
+From: ebiederman@lnxi.com (Eric W. Biederman)
+Date: Mon, 14 Feb 2005 18:41:22 +0000
+Subject: [KJ] Re: [PATCH 8/18] drivers/mtd/ remove pci_find_{device, subsys}
+Message-Id: <m3fyzzx9v1.fsf@maxwell.lnxi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200502141122.11786.amitg@calsoftinc.com>
-	<20050214175251.GA28755@wohnheim.fh-wedel.de>
+References: <20050214175251.GA28755@wohnheim.fh-wedel.de>
 In-Reply-To: <20050214175251.GA28755@wohnheim.fh-wedel.de>
-To: J?rn Engel <joern@wohnheim.fh-wedel.de>
-Cc: kernel-janitors@lists.osdl.org, David Woodhouse <dwmw2@infradead.org>, Amit Gud <amitg@calsoftinc.com>, linux-mtd@lists.infradead.org, gud@eth.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: =?iso-8859-1?q?J=F6rn?= Engel <joern@wohnheim.fh-wedel.de>
+Cc: joern@wh.fh-wedel.de, Amit Gud <amitg@calsoftinc.com>, gud@eth.net, linux-mtd@lists.infradead.org, kernel-janitors@lists.osdl.org, David Woodhouse <dwmw2@infradead.org>
 
---===============090338999948389009==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+J=F6rn Engel <joern@wohnheim.fh-wedel.de> writes:
 
-On Mon, Feb 14, 2005 at 06:52:51PM +0100, J?rn Engel wrote:
 > Looks fairly simple, but I've never dealt with pci_find_device(), so
 > my voice doesn't count.
-> 
-> dwmw2, is this ok?
 
-No it isn't, please do not apply.  See my KJ response for why it is not
-correct.
+When switching from pci_find_device to pci_get_device
+the corresponding call to pci_dev_put() needs to be added.
 
-thanks,
+In addition we need an entry in compat.h
 
-greg k-h
+Beyond that ich2rom.c should just be deleted.  It was renamed
+ichxrom.c a while ago.
 
---===============090338999948389009==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Eric
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============090338999948389009==--
