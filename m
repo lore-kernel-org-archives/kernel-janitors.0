@@ -1,91 +1,64 @@
-From: Corey Minyard <cminyard@mvista.com>
-Date: Mon, 17 Jan 2005 21:53:12 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 17 Jan 2005 22:31:46 +0000
 Subject: [KJ] Re: [PATCH 9/21] char/ipmi_si_intf: replace schedule_timeout()
-Message-Id: <41EC33C8.9090602@mvista.com>
+Message-Id: <20050117223146.GL24698@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============85702176591740065=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <41EC332A.8020603@mvista.com>
 In-Reply-To: <41EC332A.8020603@mvista.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On my previous question, to be more clear, why was this change 
-necessary?  In this particular instance, it doesn't matter how long it 
-sleeps, it just can't spin waiting for something to happen.  msleep() 
-spins, right?  That would be very bad in this code.  Even if not, the 
-particular timing is not important.
+--===============85702176591740065==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--Corey
+On Mon, Jan 17, 2005 at 03:53:12PM -0600, Corey Minyard wrote:
+> On my previous question, to be more clear, why was this change 
+> necessary?  In this particular instance, it doesn't matter how long it 
+> sleeps, it just can't spin waiting for something to happen.  msleep() 
+> spins, right?  That would be very bad in this code.  Even if not, the 
+> particular timing is not important.
 
-Nishanth Aravamudan wrote:
+msleep() does not spin. The name itself is intended to indicate this. Delays
+(mdelay(), udelay()) spin by looping tightly. Sleeps (msleep(), ssleep(), 
+msleep_interruptible()) use schedule_timeout() to give up the CPU for a certain
+amount of time.
 
->Hi,
->
->Sorry, I was off by one in my total.
->
->Please consider applying. 
->
->Description: Use msleep() instead of schedule_timeout(). I have chosen to use
->msleep(10) here, even though the former calls were schedule_timeout(1), as many
->drivers were not updated to consider the new HZ values. Under HZ=100, the
->existing calls were 10ms delays, which I have returned to with this patch. If 1
->ms was actually desired (or 1 scheduler unit) then the patch can be changed
->appropriately.
->
->Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
->
->
->--- 2.6.11-rc1-kj-v/drivers/char/ipmi/ipmi_si_intf.c	2005-01-15 16:55:41.000000000 -0800
->+++ 2.6.11-rc1-kj/drivers/char/ipmi/ipmi_si_intf.c	2005-01-16 23:35:29.000000000 -0800
->@@ -1880,8 +1880,7 @@ static int try_get_dev_id(struct smi_inf
-> 	for (;;)
-> 	{
-> 		if (smi_result = SI_SM_CALL_WITH_DELAY) {
->-			set_current_state(TASK_UNINTERRUPTIBLE);
->-			schedule_timeout(1);
->+			msleep(10);
-> 			smi_result = smi_info->handlers->event(
-> 				smi_info->si_sm, 100);
-> 		}
->@@ -2153,10 +2152,8 @@ static int init_one_smi(int intf_num, st
-> 
-> 	/* Wait for the timer to stop.  This avoids problems with race
-> 	   conditions removing the timer here. */
->-	while (!new_smi->timer_stopped) {
->-		set_current_state(TASK_UNINTERRUPTIBLE);
->-		schedule_timeout(1);
->-	}
->+	while (!new_smi->timer_stopped)
->+		msleep(10);
-> 
->  out_err:
-> 	if (new_smi->intf)
->@@ -2280,17 +2277,14 @@ static void __exit cleanup_one_si(struct
-> 
-> 	/* Wait for the timer to stop.  This avoids problems with race
-> 	   conditions removing the timer here. */
->-	while (!to_clean->timer_stopped) {
->-		set_current_state(TASK_UNINTERRUPTIBLE);
->-		schedule_timeout(1);
->-	}
->+	while (!to_clean->timer_stopped)
->+		msleep(10);
-> 
-> 	/* Interrupts and timeouts are stopped, now make sure the
-> 	   interface is in a clean state. */
-> 	while ((to_clean->curr_msg) || (to_clean->si_state != SI_NORMAL)) {
-> 		poll(to_clean);
->-		set_current_state(TASK_UNINTERRUPTIBLE);
->-		schedule_timeout(1);
->+		msleep(10);
-> 	}
-> 
-> 	rv = ipmi_unregister_smi(to_clean->intf);
->  
->
+Given this last comment, there is a clear benefit (IMO) to use actual time
+units for sleeps (msleep() and co. use milliseconds or seconds) as opposed to
+jiffy-relative units (as in schedule_timeout() where you are requesting a delay
+in jiffies, which varies from arch to arch).
+
+This becomes very important with dynamic HZ, for instance. Clearly if HZ
+changes, then the delay caused by schedule_timeout(1) will change, which is not
+necessarily desired and may be confusing the user. A time specified in real
+time units will be adjusted with the change in HZ.
+
+If it is not important how long the driver sleeps, then I believe msleep()
+should be preferred in effectively all cases (depending on whether wait-queue
+events or signals may be important early triggers, of course). Milliseconds
+indicate a clear delay, independent of HZ's value. Jiffy delays have a clear
+reliance on the value of HZ.
+
+I am open to other suggestions, but I think these are good reasons. Another
+basic one is that it will lead to consistency across the board. HZ is not a
+measure of time, it should not be used as a measure of time. Instead,
+milliseconds should be used and, when/if the facility has been added,
+microseconds and nanoseconds.
+
+Thanks,
+Nish
+
+--===============85702176591740065==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============85702176591740065==--
