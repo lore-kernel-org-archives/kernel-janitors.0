@@ -1,148 +1,45 @@
-From: Duncan Palmer <dunk_palmer@yahoo.com>
-Date: Wed, 02 Feb 2005 10:18:11 +0000
-Subject: [KJ] [PATCH] module alias autoload for input event drivers
-Message-Id: <20050202101811.61708.qmail@web60610.mail.yahoo.com>
+From: Christophe Lucas <c.lucas@ifrance.com>
+Date: Tue, 08 Feb 2005 08:15:26 +0000
+Subject: [KJ] [PATCH] drivers/input/serio/*: convert to pci_register_driver
+Message-Id: <20050208081526.GE31996@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="0-478068449-1107339491=:61540"
+Content-Type: multipart/mixed; boundary="e5GLnnZ8mDMEwH4V"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---0-478068449-1107339491=:61540
+
+--e5GLnnZ8mDMEwH4V
 Content-Type: text/plain; charset=us-ascii
-Content-Id: 
 Content-Disposition: inline
 
 Hi,
 
-Randy Dunlap forwarded on a message that said:
+Description:
+convert from pci_module_init to pci_register_driver
 
-> 1. Psmouse and input event drivers don't have module
-alias autoload 
-> support. I think it should be possible to do this
-similar to how 
-> misc_device works.
+Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-The attached patch does this. I've used
-'input-handler-' as the alias prefix, as it seemed
-more appropriate than 'char-major-xx-xx' seeing as I
-haven't used minor numbers to identify input handlers
-- I use (minor >> 5)) as input.c does to account for
-the minor number ranges used by the event drivers. 
+--e5GLnnZ8mDMEwH4V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_input_serio.patch"
 
-Thoughts? The patch is tested, so please consider
-applying if you like the look of it.
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/input/serio/pcips2.c linux-2.6.11-rc3/drivers/input/serio/pcips2.c
+--- linux-2.6.11-rc3-vanilla/drivers/input/serio/pcips2.c	2004-12-24 22:34:26.000000000 +0100
++++ linux-2.6.11-rc3/drivers/input/serio/pcips2.c	2005-02-07 09:39:27.000000000 +0100
+@@ -217,7 +217,7 @@ static struct pci_driver pcips2_driver =
+ 
+ static int __init pcips2_init(void)
+ {
+-	return pci_module_init(&pcips2_driver);
++	return pci_register_driver(&pcips2_driver);
+ }
+ 
+ static void __exit pcips2_exit(void)
 
-Dunk
-
-
-		
-__________________________________ 
-Do you Yahoo!? 
-Yahoo! Mail - now with 250MB free storage. Learn more.
-http://info.mail.yahoo.com/mail_250
---0-478068449-1107339491=:61540
-Content-Type: application/octet-stream; name="patch.input.1"
-Content-Transfer-Encoding: base64
-Content-Description: patch.input.1
-Content-Disposition: attachment; filename="patch.input.1"
-
-ZGlmZiAtdXIgbGludXgtMi42LjExLXJjMi1tbTEub3JpZy9pbmNsdWRlL2xp
-bnV4L2lucHV0LmggbGludXgtMi42LjExLXJjMi1tbTEvaW5jbHVkZS9saW51
-eC9pbnB1dC5oCi0tLSBsaW51eC0yLjYuMTEtcmMyLW1tMS5vcmlnL2luY2x1
-ZGUvbGludXgvaW5wdXQuaAkyMDA1LTAxLTI4IDEzOjAxOjA4LjAwMDAwMDAw
-MCArMTEwMAorKysgbGludXgtMi42LjExLXJjMi1tbTEvaW5jbHVkZS9saW51
-eC9pbnB1dC5oCTIwMDUtMDItMDIgMTY6NTI6NTguMDAwMDAwMDAwICsxMTAw
-CkBAIC0xMDEyLDUgKzEwMTIsOCBAQAogCiBleHRlcm4gc3RydWN0IGNsYXNz
-X3NpbXBsZSAqaW5wdXRfY2xhc3M7CiAKKyNkZWZpbmUgTU9EVUxFX0FMSUFT
-X0lOUFVUKHgpICBcCisJTU9EVUxFX0FMSUFTKCJpbnB1dC1oYW5kbGVyLSIg
-X19zdHJpbmdpZnkoeCkpCisKICNlbmRpZgogI2VuZGlmCmRpZmYgLXVyIGxp
-bnV4LTIuNi4xMS1yYzItbW0xLm9yaWcvZHJpdmVycy9pbnB1dC9ldmRldi5j
-IGxpbnV4LTIuNi4xMS1yYzItbW0xL2RyaXZlcnMvaW5wdXQvZXZkZXYuYwot
-LS0gbGludXgtMi42LjExLXJjMi1tbTEub3JpZy9kcml2ZXJzL2lucHV0L2V2
-ZGV2LmMJMjAwNS0wMS0yOCAxMzowMzowNC4wMDAwMDAwMDAgKzExMDAKKysr
-IGxpbnV4LTIuNi4xMS1yYzItbW0xL2RyaXZlcnMvaW5wdXQvZXZkZXYuYwky
-MDA1LTAyLTAyIDE2OjQ5OjAzLjAwMDAwMDAwMCArMTEwMApAQCAtMTEsNiAr
-MTEsNyBAQAogI2RlZmluZSBFVkRFVl9NSU5PUl9CQVNFCTY0CiAjZGVmaW5l
-IEVWREVWX01JTk9SUwkJMzIKICNkZWZpbmUgRVZERVZfQlVGRkVSX1NJWkUJ
-NjQKKyNkZWZpbmUgRVZERVZfSEFORExFUl9JRCAgICAyICAgLyogRVZERVZf
-TUlOT1JfQkFTRSA+PiA1ICovCiAKICNpbmNsdWRlIDxsaW51eC9wb2xsLmg+
-CiAjaW5jbHVkZSA8bGludXgvc2xhYi5oPgpAQCAtNDg3LDMgKzQ4OCw0IEBA
-CiBNT0RVTEVfQVVUSE9SKCJWb2p0ZWNoIFBhdmxpayA8dm9qdGVjaEB1Y3cu
-Y3o+Iik7CiBNT0RVTEVfREVTQ1JJUFRJT04oIklucHV0IGRyaXZlciBldmVu
-dCBjaGFyIGRldmljZXMiKTsKIE1PRFVMRV9MSUNFTlNFKCJHUEwiKTsKK01P
-RFVMRV9BTElBU19JTlBVVChFVkRFVl9IQU5ETEVSX0lEKTsKZGlmZiAtdXIg
-bGludXgtMi42LjExLXJjMi1tbTEub3JpZy9kcml2ZXJzL2lucHV0L2lucHV0
-LmMgbGludXgtMi42LjExLXJjMi1tbTEvZHJpdmVycy9pbnB1dC9pbnB1dC5j
-Ci0tLSBsaW51eC0yLjYuMTEtcmMyLW1tMS5vcmlnL2RyaXZlcnMvaW5wdXQv
-aW5wdXQuYwkyMDA1LTAxLTI4IDEzOjAwOjI5LjAwMDAwMDAwMCArMTEwMAor
-KysgbGludXgtMi42LjExLXJjMi1tbTEvZHJpdmVycy9pbnB1dC9pbnB1dC5j
-CTIwMDUtMDItMDIgMTY6NTI6MzguMDAwMDAwMDAwICsxMTAwCkBAIC01MzYs
-NyArNTM2LDEyIEBACiAJc3RydWN0IGZpbGVfb3BlcmF0aW9ucyAqb2xkX2Zv
-cHMsICpuZXdfZm9wcyA9IE5VTEw7CiAJaW50IGVycjsKIAotCS8qIE5vIGxv
-YWQtb24tZGVtYW5kIGhlcmU/ICovCisJaWYgKCFoYW5kbGVyKQorCXsKKwkJ
-cmVxdWVzdF9tb2R1bGUoImlucHV0LWhhbmRsZXItJWQiLCAoaW50KShpbWlu
-b3IoaW5vZGUpID4+IDUpKTsKKwkJLyogVGhlIG1vZHVsZSB3aWxsIHJlZ2lz
-dGVyIGl0c2VsZiB1cG9uIGxvYWRpbmcgKi8KKwkJaGFuZGxlciA9IGlucHV0
-X3RhYmxlW2ltaW5vcihpbm9kZSkgPj4gNV07CisJfQogCWlmICghaGFuZGxl
-ciB8fCAhKG5ld19mb3BzID0gZm9wc19nZXQoaGFuZGxlci0+Zm9wcykpKQog
-CQlyZXR1cm4gLUVOT0RFVjsKIApkaWZmIC11ciBsaW51eC0yLjYuMTEtcmMy
-LW1tMS5vcmlnL2RyaXZlcnMvaW5wdXQvam95ZGV2LmMgbGludXgtMi42LjEx
-LXJjMi1tbTEvZHJpdmVycy9pbnB1dC9qb3lkZXYuYwotLS0gbGludXgtMi42
-LjExLXJjMi1tbTEub3JpZy9kcml2ZXJzL2lucHV0L2pveWRldi5jCTIwMDQt
-MTItMjUgMDg6MzQ6NDUuMDAwMDAwMDAwICsxMTAwCisrKyBsaW51eC0yLjYu
-MTEtcmMyLW1tMS9kcml2ZXJzL2lucHV0L2pveWRldi5jCTIwMDUtMDItMDIg
-MTY6MjA6NTUuMDAwMDAwMDAwICsxMTAwCkBAIC0yOCwxNCArMjgsMTYgQEAK
-ICNpbmNsdWRlIDxsaW51eC9kZXZpY2UuaD4KICNpbmNsdWRlIDxsaW51eC9k
-ZXZmc19mc19rZXJuZWwuaD4KIAorI2RlZmluZSBKT1lERVZfTUlOT1JfQkFT
-RQkwCisjZGVmaW5lIEpPWURFVl9NSU5PUlMJCTE2CisjZGVmaW5lIEpPWURF
-Vl9CVUZGRVJfU0laRQk2NAorI2RlZmluZSBKT1lERVZfSEFORExFUl9JRCAg
-IDAgICAvKiBKT1lERVZfTUlOT1JfQkFTRSA+PiA1ICovCisKIE1PRFVMRV9B
-VVRIT1IoIlZvanRlY2ggUGF2bGlrIDx2b2p0ZWNoQHVjdy5jej4iKTsKIE1P
-RFVMRV9ERVNDUklQVElPTigiSm95c3RpY2sgZGV2aWNlIGludGVyZmFjZXMi
-KTsKIE1PRFVMRV9TVVBQT1JURURfREVWSUNFKCJpbnB1dC9qcyIpOwogTU9E
-VUxFX0xJQ0VOU0UoIkdQTCIpOwotCi0jZGVmaW5lIEpPWURFVl9NSU5PUl9C
-QVNFCTAKLSNkZWZpbmUgSk9ZREVWX01JTk9SUwkJMTYKLSNkZWZpbmUgSk9Z
-REVWX0JVRkZFUl9TSVpFCTY0CitNT0RVTEVfQUxJQVNfSU5QVVQoSk9ZREVW
-X0hBTkRMRVJfSUQpOwogCiAjZGVmaW5lIE1TRUNTKHQpCSgxMDAwICogKCh0
-KSAvIEhaKSArIDEwMDAgKiAoKHQpICUgSFopIC8gSFopCiAKZGlmZiAtdXIg
-bGludXgtMi42LjExLXJjMi1tbTEub3JpZy9kcml2ZXJzL2lucHV0L21vdXNl
-ZGV2LmMgbGludXgtMi42LjExLXJjMi1tbTEvZHJpdmVycy9pbnB1dC9tb3Vz
-ZWRldi5jCi0tLSBsaW51eC0yLjYuMTEtcmMyLW1tMS5vcmlnL2RyaXZlcnMv
-aW5wdXQvbW91c2VkZXYuYwkyMDA1LTAxLTI4IDEzOjAwOjMwLjAwMDAwMDAw
-MCArMTEwMAorKysgbGludXgtMi42LjExLXJjMi1tbTEvZHJpdmVycy9pbnB1
-dC9tb3VzZWRldi5jCTIwMDUtMDItMDIgMTY6MjE6MDMuMDAwMDAwMDAwICsx
-MTAwCkBAIC0xMiw2ICsxMiw3IEBACiAjZGVmaW5lIE1PVVNFREVWX01JTk9S
-X0JBU0UgCTMyCiAjZGVmaW5lIE1PVVNFREVWX01JTk9SUwkJMzIKICNkZWZp
-bmUgTU9VU0VERVZfTUlYCQkzMQorI2RlZmluZSBNT1VTRURFVl9IQU5ETEVS
-X0lEIDEgICAgICAgLyogTU9VU0VERVZfTUlOT1JfQkFTRSA+PiA1ICovCiAK
-ICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+CiAjaW5jbHVkZSA8bGludXgvcG9s
-bC5oPgpAQCAtMzIsNiArMzMsNyBAQAogTU9EVUxFX0FVVEhPUigiVm9qdGVj
-aCBQYXZsaWsgPHZvanRlY2hAdWN3LmN6PiIpOwogTU9EVUxFX0RFU0NSSVBU
-SU9OKCJNb3VzZSAoRXhwbG9yZXJQUy8yKSBkZXZpY2UgaW50ZXJmYWNlcyIp
-OwogTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOworTU9EVUxFX0FMSUFTX0lOUFVU
-KE1PVVNFREVWX0hBTkRMRVJfSUQpOwogCiAjaWZuZGVmIENPTkZJR19JTlBV
-VF9NT1VTRURFVl9TQ1JFRU5fWAogI2RlZmluZSBDT05GSUdfSU5QVVRfTU9V
-U0VERVZfU0NSRUVOX1gJMTAyNApkaWZmIC11ciBsaW51eC0yLjYuMTEtcmMy
-LW1tMS5vcmlnL2RyaXZlcnMvaW5wdXQvdHNkZXYuYyBsaW51eC0yLjYuMTEt
-cmMyLW1tMS9kcml2ZXJzL2lucHV0L3RzZGV2LmMKLS0tIGxpbnV4LTIuNi4x
-MS1yYzItbW0xLm9yaWcvZHJpdmVycy9pbnB1dC90c2Rldi5jCTIwMDQtMTIt
-MjUgMDg6MzU6MzkuMDAwMDAwMDAwICsxMTAwCisrKyBsaW51eC0yLjYuMTEt
-cmMyLW1tMS9kcml2ZXJzL2lucHV0L3RzZGV2LmMJMjAwNS0wMi0wMiAxNjoy
-ODo1MC4wMDAwMDAwMDAgKzExMDAKQEAgLTQwLDYgKzQwLDcgQEAKIC8qIEZp
-cnN0IDE2IGRldmljZXMgYXJlIGgzNjAwX3RzIGNvbXBhdGlibGU7IHNlY29u
-ZCAxNiBhcmUgaDM2MDBfdHNyYXcgKi8KICNkZWZpbmUgVFNERVZfTUlOT1Jf
-TUFTSwkxNQogI2RlZmluZSBUU0RFVl9CVUZGRVJfU0laRQk2NAorI2RlZmlu
-ZSBUU0RFVl9IQU5ETEVSX0lEICAgIDQgICAvKiBUU0RFVl9NSU5PUl9CQVNF
-ID4+IDUgKi8KIAogI2luY2x1ZGUgPGxpbnV4L3NsYWIuaD4KICNpbmNsdWRl
-IDxsaW51eC9wb2xsLmg+CkBAIC04Miw2ICs4Myw3IEBACiBNT0RVTEVfQVVU
-SE9SKCJKYW1lcyBTaW1tb25zIDxqc2ltbW9uc0B0cmFuc3ZpcnR1YWwuY29t
-PiIpOwogTU9EVUxFX0RFU0NSSVBUSU9OKCJJbnB1dCBkcml2ZXIgdG8gdG91
-Y2hzY3JlZW4gY29udmVydGVyIik7CiBNT0RVTEVfTElDRU5TRSgiR1BMIik7
-CitNT0RVTEVfQUxJQVNfSU5QVVQoVFNERVZfSEFORExFUl9JRCk7CiAKIHN0
-YXRpYyBpbnQgeHJlcyA9IENPTkZJR19JTlBVVF9UU0RFVl9TQ1JFRU5fWDsK
-IG1vZHVsZV9wYXJhbSh4cmVzLCB1aW50LCAwKTsK
-
---0-478068449-1107339491=:61540
+--e5GLnnZ8mDMEwH4V
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -153,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---0-478068449-1107339491=:61540--
+--e5GLnnZ8mDMEwH4V--
