@@ -1,59 +1,62 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 26 Jan 2005 19:40:57 +0000
-Subject: [KJ] [PATCH] fs/clntlock: remove sleep_on*() usage
-Message-Id: <20050126194057.GE3593@us.ibm.com>
+From: Dave Kleikamp <shaggy@austin.ibm.com>
+Date: Thu, 20 Jan 2005 20:34:49 +0000
+Subject: [KJ] Re: [PATCH 6/40] fs/jfs_logmgr: replace schedule_timeout() with
+Message-Id: <1106253289.7970.3.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37890931647928028=="
+Content-Type: multipart/mixed; boundary="===============3581692298698127=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: okir@monad.swb.de, matthew@wil.cx
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============37890931647928028==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============3581692298698127==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Thu, 2005-01-20 at 11:02 -0800, Nishanth Aravamudan wrote:
+> Hi,
+> 
+> Please consider applying.
 
-Please consider applying.
+I will.  It looks good.
 
-Description: Directly use wait-queues instead of the deprecated
-sleep_on_timeout(). Since the sleep in this function is unconditional,
-wait_event_timeout() does not appear to be appropriate. Patch is
-compile-tested.
+> Description: Use msleep() instead of schedule_timeout() to guarantee the task
+> delays as expected. The current code uses TASK_INTERRUPTIBLE; however, it does
+> not check for signals, so I do not think the change to msleep() is necessarily
+> bad.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Right, TASK_INTERRUPTIBLE doesn't make sense here, so msleep is a better
+fit.
 
---- 2.6.11-rc2-kj-v/fs/lockd/clntlock.c	2005-01-24 09:28:16.000000000 -0800
-+++ 2.6.11-rc2-kj/fs/lockd/clntlock.c	2005-01-26 10:45:52.000000000 -0800
-@@ -14,6 +14,7 @@
- #include <linux/sunrpc/svc.h>
- #include <linux/lockd/lockd.h>
- #include <linux/smp_lock.h>
-+#include <linux/wait.h>
- 
- #define NLMDBG_FACILITY		NLMDBG_CLIENT
- 
-@@ -47,6 +48,7 @@ static struct nlm_wait *	nlm_blocked;
- int
- nlmclnt_block(struct nlm_host *host, struct file_lock *fl, u32 *statp)
- {
-+	DEFINE_WAIT(wait);
- 	struct nlm_wait	block, **head;
- 	int		err;
- 	u32		pstate;
-@@ -69,7 +71,9 @@ nlmclnt_block(struct nlm_host *host, str
- 	 * a 1 minute timeout would do. See the comment before
- 	 * nlmclnt_lock for an explanation.
- 	 */
--	sleep_on_timeout(&block.b_wait, 30*HZ);
-+	prepare_to_wait(&block.b_wait, &wait, TASK_UNINTERRUPTIBLE);
-+	schedule_timeout(30*HZ);
-+	finish_wait(&block.b_wait, &wait);
- 
- 	for (head = &nlm_blocked; *head; head = &(*head)->b_next) {
- 		if (*head == &block) {
+Thanks,
+Shaggy
 
---===============37890931647928028==
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> 
+> --- 2.6.11-rc1-kj-v/fs/jfs/jfs_logmgr.c	2005-01-15 16:55:41.000000000 -0800
+> +++ 2.6.11-rc1-kj/fs/jfs/jfs_logmgr.c	2005-01-18 10:53:46.000000000 -0800
+> @@ -67,6 +67,7 @@
+>  #include <linux/buffer_head.h>		/* for sync_blockdev() */
+>  #include <linux/bio.h>
+>  #include <linux/suspend.h>
+> +#include <linux/delay.h>
+>  #include "jfs_incore.h"
+>  #include "jfs_filsys.h"
+>  #include "jfs_metapage.h"
+> @@ -1612,8 +1613,7 @@ void jfs_flush_journal(struct jfs_log *l
+>  	 */
+>  	if ((!list_empty(&log->cqueue)) || !list_empty(&log->synclist)) {
+>  		for (i = 0; i < 800; i++) {	/* Too much? */
+> -			current->state = TASK_INTERRUPTIBLE;
+> -			schedule_timeout(HZ / 4);
+> +			msleep(250);
+>  			if (list_empty(&log->cqueue) &&
+>  			    list_empty(&log->synclist))
+>  				break;
+-- 
+David Kleikamp
+IBM Linux Technology Center
+
+
+--===============3581692298698127==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37890931647928028==--
+--===============3581692298698127==--
