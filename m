@@ -1,74 +1,71 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 01 Feb 2005 21:07:17 +0000
-Subject: [KJ] [PATCH] usb/mdc800: replace wake_up() with
-Message-Id: <20050201210717.GD2575@us.ibm.com>
+From: Greg KH <greg@kroah.com>
+Date: Fri, 04 Feb 2005 23:48:09 +0000
+Subject: [KJ] Re: [PATCH] usb/io_edgeport: remove
+Message-Id: <20050204234809.GC28862@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78421134141085913=="
+Content-Type: multipart/mixed; boundary="===============47225495628591041=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============78421134141085913==
+--===============47225495628591041==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Feb 01, 2005 at 11:51:36AM -0800, Nishanth Aravamudan wrote:
-> On Mon, Jan 31, 2005 at 10:58:02AM -0800, Greg KH wrote:
-> > On Fri, Jan 21, 2005 at 01:37:39PM -0800, Nishanth Aravamudan wrote:
-> > > Hi,
+On Tue, Feb 01, 2005 at 01:15:21PM -0800, Nishanth Aravamudan wrote:
+> On Tue, Feb 01, 2005 at 11:43:08AM -0800, Nishanth Aravamudan wrote:
+> > On Mon, Jan 31, 2005 at 10:57:49AM -0800, Greg KH wrote:
+> > > On Tue, Jan 25, 2005 at 04:49:18PM -0800, Nishanth Aravamudan wrote:
+> > > > Hi,
+> > > > 
+> > > > Please consider applying.
+> > > > 
+> > > > Description: Use wait_event_timeout() instead of deprecated
+> > > > interruptible_sleep_on_timeout(). Signals are not checked in the current code,
+> > > > so interruptible should not be necessary. Patch is compile-tested.
+> > > > 
+> > > > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 > > > 
-> > > Please consider applying.
-> > > 
-> > > Description: Use wait_event_timeout() instead of custom wait-queue code. Remove
-> > > now unused variables.
-> > > 
-> > > Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+> > > Applied, thanks.
 > > 
-> > Applied, thanks.
+> > Greg,
+> > 
+> > This should fix the behavior of the previous patch (probably not noticed yet).
+> > The wake_up*() was not matched properly in the first patch (fixed below). Please
+> > consider reverting the previous patch and applying this one instead.
+> > 
+> > Thanks,
+> > Nish
+> > 
+> > interruptible_sleep_on_timeout() in one place. Directly use wait-queues in
+> > other locations to remove remaining callers of interruptible_sleep_on_timeout().
+> > Signals are not checked in the current code, so interruptible should not be
+> > necessary. Thus, the wake_up*() calls were modified to match the wait_event*()
+> > ones. There were some naming conflicts, which I tried to resolve appropriately.
+> > The final replacement is within a #if 0 / #endif section of code, but in case
+> > that code is ever used again, I would prefer it had the correct interface :) 
+> > Patch is compile-tested.
 > 
-> Greg,
+> This and the mdc800 patch that I sent are incremental to fix wake_up*()
+> callers, as Greg requested on IRC.
 > 
-> This should fix the behavior of the previous patch (probably not noticed yet).
-> The wake_up*() was not matched properly in the first patch (fixed below). Please
-> consider reverting the previous patch and applying this one instead. I think it
-> may actually have been somewhat broken in the original code, actually :)
+> Thanks,
+> Nish
+> 
+> Description:  Directly use wait-queues to remove remaining callers of
+> interruptible_sleep_on_timeout(). Signals are not checked (except in one case) 
+> in the current code, so interruptible should not be necessary. Modify the
+> wake_up*() calls to match the wait-queue usage. There were some naming conflicts,
+> which I tried to resolve appropriately. The final replacement is within a #if 0 /
+> #endif section of code, but in case that code is ever used again, I would prefer
+> it had the correct interface :) Patch is compile-tested.
+> 
+> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Description: Modify the wake_up*() calls to match the wait_event*() ones
-from a previous patch.
+Applied, thanks.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+greg k-h
 
-
---- 2.6.11-rc2-kj-v/drivers/usb/image/mdc800.c	2005-02-01 12:58:22.000000000 -0800
-+++ 2.6.11-rc2-kj/drivers/usb/image/mdc800.c	2005-02-01 13:00:52.000000000 -0800
-@@ -331,7 +331,7 @@ static void mdc800_usb_irq (struct urb *
- 	{
- 		mdc800->camera_request_ready=0;
- 		mdc800->irq_woken=1;
--		wake_up_interruptible (&mdc800->irq_wait);
-+		wake_up (&mdc800->irq_wait);
- 	}
- }
- 
-@@ -386,7 +386,7 @@ static void mdc800_usb_write_notify (str
- 		mdc800->state=READY;
- 	}
- 	mdc800->written = 1;
--	wake_up_interruptible (&mdc800->write_wait);
-+	wake_up (&mdc800->write_wait);
- }
- 
- 
-@@ -414,7 +414,7 @@ static void mdc800_usb_download_notify (
- 		err ("request bytes fails (status:%i)", urb->status);
- 	}
- 	mdc800->downloaded = 1;
--	wake_up_interruptible (&mdc800->download_wait);
-+	wake_up (&mdc800->download_wait);
- }
- 
- 
-
---===============78421134141085913==
+--===============47225495628591041==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78421134141085913==--
+--===============47225495628591041==--
