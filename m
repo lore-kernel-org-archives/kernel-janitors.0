@@ -1,94 +1,65 @@
 From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Fri, 11 Feb 2005 08:33:06 +0000
-Subject: [KJ] [PATCH] drivers/scsi/qla2xxx/*: convert to pci_register_driver
-Message-Id: <20050211083306.GF28942@rhum.iomeda.fr>
+Date: Mon, 14 Feb 2005 15:12:11 +0000
+Subject: [KJ] [PATCH] drivers/net/tokenring/* : pci_request_regions
+Message-Id: <20050214151211.GM20620@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="phCU5ROyZO6kBE05"
+Content-Type: multipart/mixed; boundary="wIc/V6YLA2QdyfT4"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---phCU5ROyZO6kBE05
+--wIc/V6YLA2QdyfT4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-Description:
-convert from pci_module_init to pci_register_driver
-(from:http://kerneljanitors.org/TODO).
+description:
+If PCI request regions fails, then someone else is using the
+hardware we wish to use. For that one case, calling
+pci_disable_device() is rather rude.
+See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
 
 Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
 
---phCU5ROyZO6kBE05
+
+
+--wIc/V6YLA2QdyfT4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_scsi_qla2xxx.patch"
+	filename="pci_disable-linux-2.6.11-rc4_drivers_net_tokenring.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2100.c linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2100.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2100.c	2004-12-24 22:34:32.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2100.c	2005-02-07 09:39:30.000000000 +0100
-@@ -74,7 +74,7 @@ static struct pci_driver qla2100_pci_dri
- static int __init
- qla2100_init(void)
- {
--	return pci_module_init(&qla2100_pci_driver);
-+	return pci_register_driver(&qla2100_pci_driver);
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/tokenring/olympic.c linux-2.6.11-rc4/drivers/net/tokenring/olympic.c
+--- linux-2.6.11-rc4-vanilla/drivers/net/tokenring/olympic.c	2005-02-14 09:03:54.000000000 +0100
++++ linux-2.6.11-rc4/drivers/net/tokenring/olympic.c	2005-02-14 14:46:44.000000000 +0100
+@@ -200,6 +200,7 @@ static int __devinit olympic_probe(struc
+ 	struct olympic_private *olympic_priv;
+ 	static int card_no = -1 ;
+ 	int i ; 
++	int pci_dev_busy = 0 ;
+ 
+ 	card_no++ ; 
+ 
+@@ -210,6 +211,7 @@ static int __devinit olympic_probe(struc
+ 	pci_set_master(pdev);
+ 
+ 	if ((i = pci_request_regions(pdev,"olympic"))) { 
++		pci_dev_busy = 1 ;
+ 		goto op_disable_dev;
+ 	}
+  
+@@ -286,7 +288,8 @@ op_free_dev:
+ 	pci_release_regions(pdev); 
+ 
+ op_disable_dev:
+-	pci_disable_device(pdev);
++	if(!pci_dev_busy)
++		pci_disable_device(pdev);
+ 	return i;
  }
  
- static void __exit
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2200.c linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2200.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2200.c	2004-12-24 22:33:47.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2200.c	2005-02-07 09:39:30.000000000 +0100
-@@ -74,7 +74,7 @@ static struct pci_driver qla2200_pci_dri
- static int __init
- qla2200_init(void)
- {
--	return pci_module_init(&qla2200_pci_driver);
-+	return pci_register_driver(&qla2200_pci_driver);
- }
- 
- static void __exit
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2300.c linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2300.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2300.c	2005-02-03 17:03:56.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2300.c	2005-02-07 09:39:30.000000000 +0100
-@@ -85,7 +85,7 @@ static struct pci_driver qla2300_pci_dri
- static int __init
- qla2300_init(void)
- {
--	return pci_module_init(&qla2300_pci_driver);
-+	return pci_register_driver(&qla2300_pci_driver);
- }
- 
- static void __exit
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2322.c linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2322.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql2322.c	2004-12-24 22:34:30.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql2322.c	2005-02-07 09:39:30.000000000 +0100
-@@ -90,7 +90,7 @@ static struct pci_driver qla2322_pci_dri
- static int __init
- qla2322_init(void)
- {
--	return pci_module_init(&qla2322_pci_driver);
-+	return pci_register_driver(&qla2322_pci_driver);
- }
- 
- static void __exit
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql6312.c linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql6312.c
---- linux-2.6.11-rc3-vanilla/drivers/scsi/qla2xxx/ql6312.c	2005-02-03 17:03:57.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/scsi/qla2xxx/ql6312.c	2005-02-07 09:39:30.000000000 +0100
-@@ -84,7 +84,7 @@ static struct pci_driver qla6312_pci_dri
- static int __init
- qla6312_init(void)
- {
--	return pci_module_init(&qla6312_pci_driver);
-+	return pci_register_driver(&qla6312_pci_driver);
- }
- 
- static void __exit
 
---phCU5ROyZO6kBE05
+--wIc/V6YLA2QdyfT4
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -99,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---phCU5ROyZO6kBE05--
+--wIc/V6YLA2QdyfT4--
