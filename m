@@ -1,131 +1,68 @@
-From: "Marisela Kaley" <hxtszn6umdu@millennianet.com>
-Date: Sun, 23 May 2004 15:37:10 +0000
-Subject: Can U Get Such A L0W Priice For Softwares? picayune quinquefid
-Message-Id: <2nlqe9821abu3std@honorificvulnerable>
+From: "priscilla sims" <analad@freemail.nl>
+Date: Mon, 24 May 2004 17:09:42 +0000
+Subject: Medical Information
+Message-Id: <fffb01c441b1$e7ca2ce0$d043537e@analad>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--954085259778934"
+Content-Type: multipart/mixed; boundary="----=_NextPart_0ED_EF17_A1A9BD25.D4A03ACB"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-----954085259778934
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+This is a multi-part message in MIME format.
 
-servile abigail tallyho condole solanum smarting paste ardently 
-sojourn epithelium unilateral higgler arced neptunium valerie seedbed jeweler herein doltish awnless lorin ultima nudist vettura 
+------=_NextPart_0ED_EF17_A1A9BD25.D4A03ACB
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-----954085259778934
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
 
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text; charset=us-ascii">
-</head>
-<body>
-<center>
-<cestidae screws soho chagrin valerie truss graven cycloidal relish noises colter waistline >
-<table border=0 cellspacing=0 cellpadding=10 width=640>
-<tr><td>
-<font color=D90000 size=5 face=arial><b>Your needed soffttwares at Rock Bottom prri ce! </b><br><font size=2 color=000000>- What you bought previously was go to shop & buuyy a WIND0WS XP Pro that comes with a BOX & serial number & the manual cosst 299.00<br><br>- What you will get from us is The full W1ND0WS XP Pro sofftwaree & serial number. It works exactly the same, but you don't get the manual and box and the prricee is only 32.00 . That is a savviing of 254.00</font></font><br><br>
-<table border=1 cellspacing=1 cellpadding=2 width=550 bordercolor=8080C0>
-<tr><td width=400>
-<font size=2 face=arial color=FF80C0><b>
-So0ftware title
-</b></font>
-</td><td width=150><infamous skunkweed sequel federal abject >
-<font size=2 face=arial color=FF80C0><b>
-Our L0W Priicce
-</td></tr>
-</b></font>
-<tr><td width=400>
-<font size=2 face=arial>
-Adobbe Creative Suite (5 cds)<br>
-Adobbe PhotooShop CS 8.0 (1 cd)<br>
-3D Studio Max 6.0 (3 cds)<br>
-Adobbe Premiere Pro 7.0 (1 cd)<br>
-Alias Wavefront Maya 5.0 Unlimited<br>
-AutoCAD 2005<br>
-Autodesk Architectural Desktop 2005<br>
-Cakewalk Sonar 3 Producer Edition (3 cds)<br>
-Canopus ProCoder 1.5 (1 cd)<br><bellboy acaudate drummer celebrate bungler masterful pastor >
-Corel Draw 12 Graphic Suite (3 cds)<br>
-Dragon Naturally Speaking Preferred 7.0<br>
-Macromedia Dreamweaver MX 2004 v7.0<br>
-Macromedia Fireworks MX 2004 v7.0<br>                                        
-Macromedia Flash MX 2004 v7.0 Professional<br>
-Macromedia Studio MX 2004 (1 cd)<br>
-Micros0ft Money 2004 Deluxe (1 cd)<br>
-Micros0ft Office 2003 System Professional (5 cds)<br>
-Micros0ft Office 2003 Multilingual User Interface Pack (2 cds)<br>
-Micros0ft Project 2002 Pro<br>
-Micros0ft Publisher XP 2002<br>
-Micros0ft Visio for Enterprise Architects 2003<br>
-Micros0ft Wind0ws XP Corporate Edition with SP1<br>
-Micros0ft Wind0ws XP Professional<br>                            
-Nort0n Antivirus 2004 Pro<br>
-Nort0n SystemWorks Pro 2004 (1 cd)<br>
-OmniPage 14 Office (1 cd)<br>
-Pinnacle Impression DVD Pro 2.2 (1 cd)<br>
-PTC Pro Engineer Wildfire Datecode 2003451 (3 cds)<br>
-PowerQuest Drive Image 7.01 Multilanguage (1 cd)<br>
-Ulead DVD Workshop 2.0<br>
-Micros0ft Visual Studio .NET 2003 Enterprise Architect (8 cds)<br>
-Winfax PRO 10.03<br>
-<font color=BF0000>and MORE soft wares - have <b>850 soft ware titles</b> on our site for u</font>
-</b></font>
-</td><td width=150 align=center valign=top>
-<font size=2 face=arial><b>
-55.00<br>
-32.00<br>
-50.00<br>
-32.00<br>
-40.00<br>
-32.00<br>
-32.00<br>
-36.00<br>
-25.00<br>
-32.00<br>
-25.00<br>
-25.00<br>
-32.00<br>
-30.00<br>
-50.00<br>
-20.00<br>
-40.00<br>
-25.00<br>
-32.00<br>
-20.00<br>
-25.00<br>
-40.00<br>
-32.00<br>
-20.00<br>
-20.00<br>
-25.00<br>
-25.00<br>
-40.00<br>
-20.00<br>
-20.00<br>
-93.00<br>
-20.00<br>
-</td></tr>
-</b></font>
-</td></tr></table>
-<font color=000000 size=2 face=arial>
-Download your sofftwaares from our Superfast (100mbits connection) site & you will be given your own exclusive registration key to register the sofftwaares you bought from us, and now you have your own registered copy of sofftwaares (will never expired again)<br><br>
-It's <b>0EM version</b> of sofftwaares which is an <b>Original/Genuine sofftwaares</b>, strictly no piracy sofftwaares 
-</font>
-<center>
-<b><a href=http://rds.yahoo.com/cribbed/blossomhyssopus/*http://hardbackedabject.vitliz.biz/0/p/ target=_blank><font color=0000FF size=5 face=arial><u>Over 850 popular titles for you to choose from<br><br>Act quick now before all sold<br><br>Start using your needed sofftwaares now<br>== C  L I C K - H E  R E ==</b><br><font size=2>(Plz give 2-3 mins to complete the page loading bcos the page has 850 titles on it)</font><br><br></u></a>
-<a href=http://rds.yahoo.com/reichreefy/dreamedtotara/*http://roadstead.vitliz.biz/unsub.html target=_blank><font size=1>take me down</font></a>
-</font>
-</center></autarchy bottleneck interpel steamy succumb >
-</td></tr></table>
-</center>
-</body></station reaction jung >
-</html>
+------=_NextPart_0ED_EF17_A1A9BD25.D4A03ACB
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-----954085259778934--
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-asci=
+i">
+<META content=3D"MSHTML 5.50.4133.2400" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD><FONT face=3DArial><FONT size=3D2>
+<BODY>
+<DIV>
+be young again<BR>
+<BR>
+Feel the Energy and recapture your youth<BR>
+For Many, This is a Powerful Second Chance<BR>
+<BR><A href=3D"http://www.summerbodyshaper.com/i/">press here to read a=
+bout</A><BR>
+This common element can change the way you experience the next half of =
+your life<BR>
+<BR>
+<BR>
+<BR>
+-----Original Message-----<BR>
+From: Aruba PO1200 Oranjestad =5Bmailto:alyse@rolcktsm.com=5D<BR>
+Sent: Friday, March 0, 2004 2:86AM<BR>
+To: sheryll; imogene@pq.com; tawanna; nicole; magda<BR>
+Subject: check this out<BR>
+<BR>
+<BR>
+In studies comparing different  lactams the spectrum of coverage was si=
+milar in both arms  However synergism can be examined only indirectly  <=
+BR>
+If we assume that the aminoglycoside offers more than its additional co=
+verage the combination arm should perform as well or better than the bro=
+ader spectrum  lactam monotherapy  With the former design we did not det=
+ect an advantage to the combination while with the latter we found an ad=
+vantage to monotherapy  <BR>
+<BR>
+The centrifugal force which propelled him was evidently, for some reaso=
+n, greatly accelerated, for the scenery of the country he was crossing g=
+lided by him at so rapid a rate of speed that it nearly took his breath =
+away
+</DIV></FONT></BODY></HTML>
+
+------=_NextPart_0ED_EF17_A1A9BD25.D4A03ACB--
 
 
 -------------------------------------------------------
