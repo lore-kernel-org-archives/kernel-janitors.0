@@ -1,107 +1,63 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 24 Jan 2005 22:50:12 +0000
-Subject: [KJ] [UPDATE PATCH 2/40] atm/zatm: replace sleep_on() with
-Message-Id: <20050124225012.GE2685@us.ibm.com>
+From: jlamanna@gmail.com
+Date: Tue, 04 Jan 2005 21:57:18 +0000
+Subject: [KJ] [PATCH] [20/29] dvb_demux.c - vfree() checking cleanups
+Message-Id: <41db113e.793f886c.2568.07c1@smtp.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45453578141360951=="
+Content-Type: multipart/mixed; boundary="===============85475970644380506=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============45453578141360951==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============85475970644380506==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 20, 2005 at 10:17:42AM -0800, Nishanth Aravamudan wrote:
-> Hi,
-> 
-> Please consider applying.
-> 
-> Description: Use wait_event() instead of the deprecated sleep_on(). The first
-> replacement is relatively non-controversial, as the message is only printed
-> once, and still is. In the second, though, the message is printed every
-> iteration of the loop. This functionality has been lost with wait_event().
-> Removed the unused variable once (which made sure that certain things were done
-> on the first iteration of the loop, but not after; now there is only one
-> "iteration"). Also fixed some strange tabbing.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> --- 2.6.11-rc1-kj-v/drivers/atm/zatm.c	2005-01-15 16:55:43.000000000 -0800
-> +++ 2.6.11-rc1-kj/drivers/atm/zatm.c	2005-01-19 17:41:21.000000000 -0800
+dvb_demux.c vfree() checking cleanups.
 
-<snip>
+Signed-off by: James Lamanna <jlamanna@gmail.com>
 
-> +	wait_event(zatm_vcc->tx_wait, !skb_peek(&zatm_vcc->backlog));
-> +	printk("waiting for TX queue to drain ... %p\n",skb);
-
-This line results in a compile failure. Fixed (sort of) below...
+ dvb_demux.c |   18 ++++++------------
+ 1 files changed, 6 insertions(+), 12 deletions(-)
 
 
-Description: Use wait_event() instead of the deprecated sleep_on(). The first
-replacement is relatively non-controversial, as the message is only printed
-once, and still is. In the second, though, the message is printed every
-iteration of the loop. This functionality has been lost with wait_event().
-Removed the unused variable once (which made sure that certain things were done
-on the first iteration of the loop, but not after; now there is only one
-"iteration"). Also fixed some strange tabbing. The final printk had to be
-modified as well, since it references a pointer which has not yet been assigned.
-Since the printk only happens once now (instead of repeatedly in a loop as
-before), I think this should be ok.
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- 2.6.11-rc1-kj-v/drivers/atm/zatm.c	2005-01-15 16:55:43.000000000 -0800
-+++ 2.6.11-rc1-kj/drivers/atm/zatm.c	2005-01-19 17:41:21.000000000 -0800
-@@ -22,6 +22,7 @@
- #include <linux/atm_zatm.h>
- #include <linux/capability.h>
- #include <linux/bitops.h>
-+#include <linux/wait.h>
- #include <asm/byteorder.h>
- #include <asm/system.h>
- #include <asm/string.h>
-@@ -867,32 +868,19 @@ static void close_tx(struct atm_vcc *vcc
- 	struct zatm_vcc *zatm_vcc;
- 	unsigned long flags;
- 	int chan;
--struct sk_buff *skb;
--int once = 1;
-+	struct sk_buff *skb;
+--- linux-2.6.10-vanilla/drivers/media/dvb/dvb-core/dvb_demux.c	2004-12-24 13:34:01.000000000 -0800
++++ linux-2.6.10/drivers/media/dvb/dvb-core/dvb_demux.c	2005-01-04 11:35:47.000000000 -0800
+@@ -784,10 +784,8 @@
+ 	}
  
- 	zatm_vcc = ZATM_VCC(vcc);
- 	zatm_dev = ZATM_DEV(vcc->dev);
- 	chan = zatm_vcc->tx_chan;
- 	if (!chan) return;
- 	DPRINTK("close_tx\n");
--	while (skb_peek(&zatm_vcc->backlog)) {
--if (once) {
--printk("waiting for backlog to drain ...\n");
--event_dump();
--once = 0;
--}
--		sleep_on(&zatm_vcc->tx_wait);
--	}
--once = 1;
--	while ((skb = skb_peek(&zatm_vcc->tx_queue))) {
--if (once) {
--printk("waiting for TX queue to drain ... %p\n",skb);
--event_dump();
--once = 0;
--}
--		DPRINTK("waiting for TX queue to drain ... %p\n",skb);
--		sleep_on(&zatm_vcc->tx_wait);
--	}
-+	printk("waiting for backlog to drain ...\n");
-+	event_dump();
-+	wait_event(zatm_vcc->tx_wait, !skb_peek(&zatm_vcc->backlog));
-+	printk("waiting for TX queue to drain ...\n");
-+	event_dump();
-+	wait_event(zatm_vcc->tx_wait, !(skb = skb_peek(&zatm_vcc->tx_queue)));
- 	spin_lock_irqsave(&zatm_dev->lock, flags);
- #if 0
- 	zwait;
+ #ifndef NOBUFS
+-	if (feed->buffer) { 
+-		vfree(feed->buffer);
+-		feed->buffer-	}
++	vfree(feed->buffer);
++	feed->buffer #endif
+ 
+ 	feed->state @@ -1055,10 +1053,8 @@
+ 		return -EINVAL;
+ 	}
+ #ifndef NOBUFS
+-	if (dvbdmxfeed->buffer) {
+-		vfree(dvbdmxfeed->buffer);
+-		dvbdmxfeed->buffer-	}
++	vfree(dvbdmxfeed->buffer);
++	dvbdmxfeed->buffer #endif
+ 	dvbdmxfeed->state�TE_FREE;
+ 
+@@ -1269,10 +1265,8 @@
+ 	struct dmx_demux *dmx  
+ 	dmx_unregister_demux(dmx);
+-	if (dvbdemux->filter)
+-		vfree(dvbdemux->filter);
+-	if (dvbdemux->feed)
+-		vfree(dvbdemux->feed);
++	vfree(dvbdemux->filter);
++	vfree(dvbdemux->feed);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(dvb_dmx_release);
 
---===============45453578141360951==
+
+
+--===============85475970644380506==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -112,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45453578141360951==--
+--===============85475970644380506==--
