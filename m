@@ -1,39 +1,40 @@
-From: jlamanna@gmail.com
-Date: Tue, 04 Jan 2005 21:57:33 +0000
-Subject: [KJ] [PATCH] [28/29] generic.c - vfree() checking cleanups
-Message-Id: <41db114d.3442b071.2568.07ca@smtp.gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 17 Jan 2005 23:03:36 +0000
+Subject: [KJ] [PATCH 13/21] ia64/smpboot: replace schedule_timeout() with
+Message-Id: <20050117230336.GT24698@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8323324824247309=="
+Content-Type: multipart/mixed; boundary="===============99111102615227553=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============8323324824247309==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+--===============99111102615227553==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-generic.c vfree() checking cleanups.
+Hi,
 
-Signed-off by: James Lamanna <jlamanna@gmail.com>
+Please consider applying. 
 
- generic.c |    3 +--
- 1 files changed, 1 insertion(+), 2 deletions(-)
+Description: Use msleep() instead of schedule_timeout() to guarantee the task
+delays as expected.
 
-
---- linux-2.6.10-vanilla/drivers/char/agp/generic.c	2004-12-24 13:34:31.000000000 -0800
-+++ linux-2.6.10/drivers/char/agp/generic.c	2005-01-04 11:29:26.909917048 -0800
-@@ -891,8 +891,7 @@
- 
- void agp_generic_free_by_type(struct agp_memory *curr)
- {
--	if (curr->memory !-		vfree(curr->memory);
-+	vfree(curr->memory);
- 
- 	agp_free_key(curr->key);
- 	kfree(curr);
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
 
+--- 2.6.11-rc1-kj-v/arch/ia64/kernel/smpboot.c	2005-01-15 16:55:41.000000000 -0800
++++ 2.6.11-rc1-kj/arch/ia64/kernel/smpboot.c	2005-01-15 17:12:46.000000000 -0800
+@@ -612,8 +612,7 @@ void __cpu_die(unsigned int cpu)
+ 			 */
+ 			return;
+ 		}
+-		current->state = TASK_UNINTERRUPTIBLE;
+-		schedule_timeout(HZ/10);
++		msleep(100);
+ 	}
+  	printk(KERN_ERR "CPU %u didn't die...\n", cpu);
+ }
 
---===============8323324824247309==
+--===============99111102615227553==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8323324824247309==--
+--===============99111102615227553==--
