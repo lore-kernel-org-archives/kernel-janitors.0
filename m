@@ -1,45 +1,42 @@
-From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Tue, 08 Feb 2005 14:56:39 +0000
-Subject: [KJ] [PATCH] drivers/message/fusion/*: convert to
-Message-Id: <20050208145639.GP31996@rhum.iomeda.fr>
+From: "Stephen Biggs" <yrgrknmxpzlk@gawab.com>
+Date: Mon, 14 Feb 2005 22:02:54 +0000
+Subject: [KJ] [PATCH][RESUBMIT][18/21]  kernel/* - compile warning cleanup
+Message-Id: <42113C2E.30170.52C303@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7L9kolmstoDTZ4pm"
+Content-Type: multipart/mixed; boundary="===============85378870908748672=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============85378870908748672==
+Content-type: text/plain; charset=US-ASCII
+Content-transfer-encoding: 7BIT
+Content-description: Mail message body
 
---7L9kolmstoDTZ4pm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Description: compile warning cleanup - handle copy_to/from_user error 
+returns
 
-Hi,
+Signed-off-by: Stephen Biggs <yrgrknmxpzlk@gawab.com>
 
-Description:
-convert from pci_module_init to pci_register_driver
-
-Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
--- 
-Christophe
-
---7L9kolmstoDTZ4pm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="pci_register_driver-linux-2.6.11-rc3_drivers_message_fusion.patch"
-
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/message/fusion/mptbase.c linux-2.6.11-rc3/drivers/message/fusion/mptbase.c
---- linux-2.6.11-rc3-vanilla/drivers/message/fusion/mptbase.c	2004-12-24 22:35:50.000000000 +0100
-+++ linux-2.6.11-rc3/drivers/message/fusion/mptbase.c	2005-02-07 09:39:28.000000000 +0100
-@@ -5914,7 +5914,7 @@ fusion_init(void)
- #ifdef CONFIG_PROC_FS
- 	(void) procmpt_create();
- #endif
--	r = pci_module_init(&mptbase_driver);
-+	r = pci_register_driver(&mptbase_driver);
- 	if(r)
- 		return(r);
+diff -Nurdp -X dontdiff-osdl linux-2.6.11-rc3-mm2-original/kernel/module.c linux-2.6.11-rc3-mm2/kernel/module.c
+--- linux-2.6.11-rc3-mm2-original/kernel/module.c	2005-02-12 12:06:40.000000000 +0200
++++ linux-2.6.11-rc3-mm2/kernel/module.c	2005-02-12 13:42:58.000000000 +0200
+@@ -1402,7 +1402,10 @@ static void who_is_doing_it(void)
+ 	char args[512];
+ 	unsigned int i, len = current->mm->arg_end - current->mm->arg_start;
  
+-	copy_from_user(args, (void *)current->mm->arg_start, len);
++	if(copy_from_user(args, (void *)current->mm->arg_start, len)) {
++		printk(KERN_ERR "kernel/module.c:%s: copy_from_user failed!\n",__FUNCTION__);
++		return;
++	}
+ 
+ 	for (i = 0; i < len; i++) {
+ 		if (args[i] == '\0')
 
---7L9kolmstoDTZ4pm
+
+
+
+--===============85378870908748672==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---7L9kolmstoDTZ4pm--
+--===============85378870908748672==--
