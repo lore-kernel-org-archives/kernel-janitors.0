@@ -1,98 +1,129 @@
 From: Christophe Lucas <c.lucas@ifrance.com>
-Date: Mon, 14 Feb 2005 15:14:09 +0000
-Subject: [KJ] [PATCH] drivers/net/tulip/* : pci_request_regions
-Message-Id: <20050214151409.GN20620@rhum.iomeda.fr>
+Date: Mon, 07 Feb 2005 08:57:55 +0000
+Subject: [KJ] [PATCH] drivers/atm/*: convert to pci_register_driver
+Message-Id: <20050207085755.GB21028@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="dpynvXbW/eW9Tpc3"
+Content-Type: multipart/mixed; boundary="PEIAKu/WMn1b1Hv9"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---dpynvXbW/eW9Tpc3
+--PEIAKu/WMn1b1Hv9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-description:
-If PCI request regions fails, then someone else is using the
-hardware we wish to use. For that one case, calling
-pci_disable_device() is rather rude.
-See : http://www.ussg.iu.edu/hypermail/linux/kernel/0502.1/1061.html
+Description:
+convert from pci_module_init to pci_register_driver
 
 Signed-off-by: Christophe Lucas <c.lucas@ifrance.com>
+-- 
+Christophe
 
-
-
---dpynvXbW/eW9Tpc3
+--PEIAKu/WMn1b1Hv9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="pci_disable-linux-2.6.11-rc4_drivers_net_tulip.patch"
+	filename="pci_register_driver-linux-2.6.11-rc3_drivers_atm.patch"
 
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/tulip/de2104x.c linux-2.6.11-rc4/drivers/net/tulip/de2104x.c
---- linux-2.6.11-rc4-vanilla/drivers/net/tulip/de2104x.c	2005-02-14 09:03:54.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/net/tulip/de2104x.c	2005-02-14 14:48:07.000000000 +0100
-@@ -1936,6 +1936,7 @@ static int __devinit de_init_one (struct
- 	void __iomem *regs;
- 	long pciaddr;
- 	static int board_idx = -1;
-+	int pci_dev_busy = 0 ;
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/ambassador.c linux-2.6.11-rc3/drivers/atm/ambassador.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/ambassador.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/ambassador.c	2005-02-07 09:39:27.000000000 +0100
+@@ -2447,7 +2447,7 @@ static int __init amb_module_init (void)
+   amb_check_args();
+   
+   // get the juice
+-  return pci_module_init(&amb_driver);
++  return pci_register_driver(&amb_driver);
+ }
  
- 	board_idx++;
+ /********** module exit **********/
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/firestream.c linux-2.6.11-rc3/drivers/atm/firestream.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/firestream.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/firestream.c	2005-02-07 09:39:27.000000000 +0100
+@@ -2034,7 +2034,7 @@ static int __init firestream_init_module
+ 	int error;
  
-@@ -1986,8 +1987,10 @@ static int __devinit de_init_one (struct
+ 	func_enter ();
+-	error = pci_module_init(&firestream_driver);
++	error = pci_register_driver(&firestream_driver);
+ 	func_exit ();
+ 	return error;
+ }
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/he.c linux-2.6.11-rc3/drivers/atm/he.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/he.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/he.c	2005-02-07 09:39:27.000000000 +0100
+@@ -3079,7 +3079,7 @@ static struct pci_driver he_driver = {
  
- 	/* reserve PCI resources to ensure driver atomicity */
- 	rc = pci_request_regions(pdev, DRV_NAME);
--	if (rc)
-+	if (rc) {
-+		pci_dev_busy = 1 ;
- 		goto err_out_disable;
-+	}
+ static int __init he_init(void)
+ {
+-	return pci_module_init(&he_driver);
++	return pci_register_driver(&he_driver);
+ }
  
- 	/* check for invalid IRQ value */
- 	if (pdev->irq < 2) {
-@@ -2077,7 +2080,8 @@ err_out_iomap:
- err_out_res:
- 	pci_release_regions(pdev);
- err_out_disable:
--	pci_disable_device(pdev);
-+	if(!pci_dev_busy)
-+		pci_disable_device(pdev);
- err_out_free:
- 	free_netdev(dev);
- 	return rc;
-diff -urpN -X /work/users/dontdiff linux-2.6.11-rc4-vanilla/drivers/net/tulip/dmfe.c linux-2.6.11-rc4/drivers/net/tulip/dmfe.c
---- linux-2.6.11-rc4-vanilla/drivers/net/tulip/dmfe.c	2005-02-14 09:03:54.000000000 +0100
-+++ linux-2.6.11-rc4/drivers/net/tulip/dmfe.c	2005-02-14 14:49:03.000000000 +0100
-@@ -341,6 +341,7 @@ static int __devinit dmfe_init_one (stru
- 	struct net_device *dev;
- 	u32 dev_rev, pci_pmr;
- 	int i, err;
-+	int pci_dev_busy=0;
+ static void __exit he_cleanup(void)
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/horizon.c linux-2.6.11-rc3/drivers/atm/horizon.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/horizon.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/horizon.c	2005-02-07 09:39:27.000000000 +0100
+@@ -2939,7 +2939,7 @@ static int __init hrz_module_init (void)
+   hrz_check_args();
+   
+   // get the juice
+-  return pci_module_init(&hrz_driver);
++  return pci_register_driver(&hrz_driver);
+ }
  
- 	DMFE_DBUG(0, "dmfe_init_one()", 0);
+ /********** module exit **********/
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/iphase.c linux-2.6.11-rc3/drivers/atm/iphase.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/iphase.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/iphase.c	2005-02-07 09:39:27.000000000 +0100
+@@ -3276,7 +3276,7 @@ static int __init ia_module_init(void)
+ {
+ 	int ret;
  
-@@ -392,6 +393,7 @@ static int __devinit dmfe_init_one (stru
- 	if (pci_request_regions(pdev, DRV_NAME)) {
- 		printk(KERN_ERR DRV_NAME ": Failed to request PCI regions\n");
- 		err = -ENODEV;
-+		pci_dev_busy = 1 ;
- 		goto err_out_disable;
- 	}
+-	ret = pci_module_init(&ia_driver);
++	ret = pci_register_driver(&ia_driver);
+ 	if (ret >= 0) {
+ 		ia_timer.expires = jiffies + 3*HZ;
+ 		add_timer(&ia_timer); 
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/lanai.c linux-2.6.11-rc3/drivers/atm/lanai.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/lanai.c	2004-12-24 22:34:27.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/lanai.c	2005-02-07 09:39:27.000000000 +0100
+@@ -2746,7 +2746,7 @@ static int __init lanai_module_init(void
+ {
+ 	int x;
  
-@@ -461,7 +463,8 @@ static int __devinit dmfe_init_one (stru
- err_out_res:
- 	pci_release_regions(pdev);
- err_out_disable:
--	pci_disable_device(pdev);
-+	if(!pci_dev_busy)
-+		pci_disable_device(pdev);
- err_out_free:
- 	pci_set_drvdata(pdev, NULL);
- 	free_netdev(dev);
+-	x = pci_module_init(&lanai_driver);
++	x = pci_register_driver(&lanai_driver);
+ 	if (x != 0)
+ 		printk(KERN_ERR DEV_LABEL ": no adapter found\n");
+ 	return x;
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/nicstar.c linux-2.6.11-rc3/drivers/atm/nicstar.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/nicstar.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/nicstar.c	2005-02-07 09:39:27.000000000 +0100
+@@ -381,7 +381,7 @@ static int __init nicstar_init(void)
+ 
+    XPRINTK("nicstar: nicstar_init() called.\n");
+ 
+-   error = pci_module_init(&nicstar_driver);
++   error = pci_register_driver(&nicstar_driver);
+    
+    TXPRINTK("nicstar: TX debug enabled.\n");
+    RXPRINTK("nicstar: RX debug enabled.\n");
+diff -urpN -X /work/users/dontdiff linux-2.6.11-rc3-vanilla/drivers/atm/zatm.c linux-2.6.11-rc3/drivers/atm/zatm.c
+--- linux-2.6.11-rc3-vanilla/drivers/atm/zatm.c	2005-02-03 17:03:39.000000000 +0100
++++ linux-2.6.11-rc3/drivers/atm/zatm.c	2005-02-07 09:39:27.000000000 +0100
+@@ -1648,7 +1648,7 @@ static struct pci_driver zatm_driver = {
+ 
+ static int __init zatm_init_module(void)
+ {
+-	return pci_module_init(&zatm_driver);
++	return pci_register_driver(&zatm_driver);
+ }
+ 
+ module_init(zatm_init_module);
 
---dpynvXbW/eW9Tpc3
+--PEIAKu/WMn1b1Hv9
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -103,4 +134,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---dpynvXbW/eW9Tpc3--
+--PEIAKu/WMn1b1Hv9--
