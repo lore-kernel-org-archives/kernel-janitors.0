@@ -1,14 +1,16 @@
 From: Michael Veeck <michael.veeck@gmx.net>
-Date: Sat, 03 Jul 2004 15:05:44 +0000
-Subject: [Kernel-janitors] [PATCH] drivers/char/specialix.c MIN/MAX removal
-Message-Id: <40E81A6A.5060904@gmx.net>
+Date: Sat, 03 Jul 2004 15:05:54 +0000
+Subject: [Kernel-janitors] [PATCH] drivers/char/synclink.c MIN/MAX removal
+Message-Id: <40E81A7A.70206@gmx.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020202080301010602030408"
+Content-Type: multipart/mixed; boundary="------------040002080400080603000004"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <40E81A6A.5060904@gmx.net>
+In-Reply-To: <40E81A6A.5060904@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------020202080301010602030408
+--------------040002080400080603000004
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -25,73 +27,95 @@ Michael
 
 
 
---------------020202080301010602030408
+--------------040002080400080603000004
 Content-Type: text/plain;
- name="patch-char-specialix"
+ name="patch-char-synclink"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="patch-char-specialix"
+ filename="patch-char-synclink"
 
---- linux-2.6.7-old/drivers/char/specialix.c	2004-07-04 11:04:14.000000000 +0200
-+++ linux-2.6.7-new/drivers/char/specialix.c	2004-07-04 15:49:25.246703416 +0200
-@@ -135,10 +135,6 @@
- 	 ASYNC_SPD_HI       | ASYNC_SPEED_VHI    | ASYNC_SESSION_LOCKOUT | \
- 	 ASYNC_PGRP_LOCKOUT | ASYNC_CALLOUT_NOHUP)
+--- linux-2.6.7-old/drivers/char/synclink.c	2004-07-04 11:04:14.000000000 +0200
++++ linux-2.6.7-new/drivers/char/synclink.c	2004-07-04 15:39:15.339423416 +0200
+@@ -942,10 +942,6 @@
+ static void mgsl_change_params(struct mgsl_struct *info);
+ static void mgsl_wait_until_sent(struct tty_struct *tty, int timeout);
  
 -#ifndef MIN
--#define MIN(a,b) ((a) < (b) ? (a) : (b))
+-#define MIN(a,b)	((a) < (b) ? (a) : (b))
 -#endif
 -
- #undef RS_EVENT_WRITE_WAKEUP
- #define RS_EVENT_WRITE_WAKEUP	0
+ /*
+  * 1st function defined in .text section. Calling this function in
+  * init_module() followed by a breakpoint allows a remote debugger
+@@ -2258,8 +2254,8 @@
+ 		if (from_user) {
+ 			down(&tmp_buf_sem);
+ 			while (1) {
+-				c = MIN(count,
+-					MIN(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
++				c = min_t(int, count,
++					min(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
+ 					    SERIAL_XMIT_SIZE - info->xmit_head));
+ 				if (c <= 0)
+ 					break;
+@@ -2272,7 +2268,7 @@
+ 					break;
+ 				}
+ 				spin_lock_irqsave(&info->irq_spinlock,flags);
+-				c = MIN(c, MIN(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
++				c = min_t(int, c, min(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
+ 					       SERIAL_XMIT_SIZE - info->xmit_head));
+ 				memcpy(info->xmit_buf + info->xmit_head, tmp_buf, c);
+ 				info->xmit_head = ((info->xmit_head + c) &
+@@ -2287,8 +2283,8 @@
+ 		} else {
+ 			while (1) {
+ 				spin_lock_irqsave(&info->irq_spinlock,flags);
+-				c = MIN(count,
+-					MIN(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
++				c = min_t(int, count,
++					min(SERIAL_XMIT_SIZE - info->xmit_cnt - 1,
+ 					    SERIAL_XMIT_SIZE - info->xmit_head));
+ 				if (c <= 0) {
+ 					spin_unlock_irqrestore(&info->irq_spinlock,flags);
+@@ -3326,7 +3322,7 @@
+ 		char_time = 1;
+ 		
+ 	if (timeout)
+-		char_time = MIN(char_time, timeout);
++		char_time = min_t(unsigned long, char_time, timeout);
+ 		
+ 	if ( info->params.mode == MGSL_MODE_HDLC ||
+ 		info->params.mode == MGSL_MODE_RAW ) {
+@@ -6779,7 +6775,7 @@
+ 			
+ 	if ( debug_level >= DEBUG_LEVEL_DATA )
+ 		mgsl_trace_block(info,info->rx_buffer_list[StartIndex].virt_addr,
+-			MIN(framesize,DMABUFFERSIZE),0);	
++			min_t(int, framesize, DMABUFFERSIZE),0);	
+ 		
+ 	if (framesize) {
+ 		if ( ( (info->params.crc_type & HDLC_CRC_RETURN_EX) &&
+@@ -6996,7 +6992,7 @@
  
-@@ -159,7 +155,7 @@
- };
+ 		if ( debug_level >= DEBUG_LEVEL_DATA )
+ 			mgsl_trace_block(info,info->rx_buffer_list[CurrentIndex].virt_addr,
+-				MIN(framesize,DMABUFFERSIZE),0);
++				min_t(int, framesize, DMABUFFERSIZE),0);
  
- static struct specialix_port sx_port[SX_NBOARD * SX_NPORT];
--		
-+
+ 		if (framesize) {
+ 			/* copy dma buffer(s) to contiguous intermediate buffer */
+@@ -7056,7 +7052,7 @@
+ 	DMABUFFERENTRY *pBufEntry;
+ 	
+ 	if ( debug_level >= DEBUG_LEVEL_DATA )
+-		mgsl_trace_block(info,Buffer, MIN(BufferSize,DMABUFFERSIZE), 1);	
++		mgsl_trace_block(info,Buffer, min_t(int, BufferSize, DMABUFFERSIZE), 1);	
  
- #ifdef SPECIALIX_TIMER
- static struct timer_list missed_irq_timer;
-@@ -715,7 +711,7 @@
- 				sx_out(bp, CD186x_TDR, CD186x_C_SBRK);
- 				port->COR2 &= ~COR2_ETC;
- 			}
--			count = MIN(port->break_length, 0xff);
-+			count = min_t(int, port->break_length, 0xff);
- 			sx_out(bp, CD186x_TDR, CD186x_C_ESC);
- 			sx_out(bp, CD186x_TDR, CD186x_C_DELAY);
- 			sx_out(bp, CD186x_TDR, count);
-@@ -1506,7 +1502,7 @@
- 	if (from_user) {
- 		down(&tmp_buf_sem);
- 		while (1) {
--			c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+			c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
- 					   SERIAL_XMIT_SIZE - port->xmit_head));
- 			if (c <= 0)
- 				break;
-@@ -1519,7 +1515,7 @@
- 			}
- 
- 			cli();
--			c = MIN(c, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+			c = min_t(int, c, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
- 				       SERIAL_XMIT_SIZE - port->xmit_head));
- 			memcpy(port->xmit_buf + port->xmit_head, tmp_buf, c);
- 			port->xmit_head = (port->xmit_head + c) & (SERIAL_XMIT_SIZE-1);
-@@ -1534,7 +1530,7 @@
- 	} else {
- 		while (1) {
- 			cli();
--			c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
-+			c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
- 					   SERIAL_XMIT_SIZE - port->xmit_head));
- 			if (c <= 0) {
- 				restore_flags(flags);
+ 	if (info->params.flags & HDLC_FLAG_HDLC_LOOPMODE) {
+ 		/* set CMR:13 to start transmit when
 
---------------020202080301010602030408
+--------------040002080400080603000004
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -102,4 +126,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------020202080301010602030408--
+--------------040002080400080603000004--
