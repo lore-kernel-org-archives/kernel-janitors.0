@@ -1,46 +1,54 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Sat, 05 Mar 2005 01:15:38 +0000
-Subject: Re: [KJ] [RFC][PATCH 2/5] char/tpqic02: use poll_event*() interface
-Message-Id: <20050305011537.GP3327@stusta.de>
+From: Tobias Klauser <tklauser@access.unizh.ch>
+Date: Thu, 24 Mar 2005 14:24:22 +0000
+Subject: [KJ] [PATCH] input/joydev: Remove custom msecs_to_jiffies() macro
+Message-Id: <20050324142422.GA4421@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============69582984099411083=="
+Content-Type: multipart/mixed; boundary="===============81500464149324836=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050303182541.GE11600@us.ibm.com>
-In-Reply-To: <20050303182541.GE11600@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============69582984099411083==
+--===============81500464149324836==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Mar 03, 2005 at 10:25:41AM -0800, Nishanth Aravamudan wrote:
-> Hi,
-> 
-> Description: Use new poll_event*() interface to encapsulate sleep-loops.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> --- 2.6.11-kj-v/drivers/char/tpqic02.c	2005-03-01 23:38:09.000000000 -0800
-> +++ 2.6.11-kj/drivers/char/tpqic02.c	2005-03-03 10:23:59.000000000 -0800
->...
+Replace the MSECS() macro with the msecs_to_jiffies() function provided
+in jiffies.h. The current macro is incorrect because HZ can have
+different values on different architectures.
 
-Since at about half a year, this driver is no longer selectable via
-Kconfig.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-I should resend my patch that removes this driver...
+diff -urpN linux-2.6.11.orig/drivers/input/joydev.c linux-2.6.11/drivers/input/joydev.c
+--- linux-2.6.11.orig/drivers/input/joydev.c	2005-03-02 12:50:39.000000000 +0100
++++ linux-2.6.11/drivers/input/joydev.c	2005-03-23 16:36:14.000000000 +0100
+@@ -37,8 +37,6 @@ MODULE_LICENSE("GPL");
+ #define JOYDEV_MINORS		16
+ #define JOYDEV_BUFFER_SIZE	64
+ 
+-#define MSECS(t)	(1000 * ((t) / HZ) + 1000 * ((t) % HZ) / HZ)
+-
+ struct joydev {
+ 	int exist;
+ 	int open;
+@@ -117,7 +115,7 @@ static void joydev_event(struct input_ha
+ 			return;
+ 	}
+ 
+-	event.time = MSECS(jiffies);
++	event.time = msecs_to_jiffies(jiffies);
+ 
+ 	list_for_each_entry(list, &joydev->list, node) {
+ 
+@@ -245,7 +243,7 @@ static ssize_t joydev_read(struct file *
+ 
+ 		struct js_event event;
+ 
+-		event.time = MSECS(jiffies);
++		event.time = msecs_to_jiffies(jiffies);
+ 
+ 		if (list->startup < joydev->nkey) {
+ 			event.type = JS_EVENT_BUTTON | JS_EVENT_INIT;
 
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
-
---===============69582984099411083==
+--===============81500464149324836==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============69582984099411083==--
+--===============81500464149324836==--
