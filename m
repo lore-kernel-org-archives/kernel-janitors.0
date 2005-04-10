@@ -1,40 +1,51 @@
-From: Alexey Dobriyan <adobriyan@mail.ru>
-Date: Wed, 13 Apr 2005 13:29:53 +0000
-Subject: Re: [KJ] [PATCH] scsi/a100u2w: Remove custom msecs_to_jiffies and
-Message-Id: <200504131728.46401.adobriyan@mail.ru>
+From: Olivier Kaloudoff <kalou@kalou.net>
+Date: Sun, 10 Apr 2005 21:23:15 +0000
+Subject: [KJ] ioremap() / iounmap() balancing problem in scoop_probe() ?
+Message-Id: <Pine.LNX.4.61.0504102318150.15064@s1.ckr-solutions.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============43820198271653288=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050413121104.GA9419@argon.tklauser.home>
-In-Reply-To: <20050413121104.GA9419@argon.tklauser.home>
+To: kernel-janitors@vger.kernel.org
+
+--===============43820198271653288==
+Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+
+Hi,
+
+
+ 	following the advice of Bertl, I'm trying my first error
+report about the scoop device driver for arm, kernel 2.6.11.5;
+
+ 	I found that scoop_io_base is only used in scoop.c (once),
+so after use, the memory area should be freed;
+
+
+root@nec:/usr/src/linux/arch/arm/common# diff -Naur scoop.c.orig scoop.c
+--- scoop.c.orig        2005-04-10 23:17:06.000000000 +0200
++++ scoop.c     2005-04-10 23:17:28.000000000 +0200
+@@ -107,6 +107,7 @@
+         scoop_io_base = ioremap(mem->start, 0x1000);
+         if (!scoop_io_base)
+                 return -ENOMEM;
++       iounmap(scoop_io_base);
+
+         SCOOP_REG(SCOOP_MCR) = 0x0140;
+
+
+ 	Am I right ?
+
+
+Olivier
+
+--===============43820198271653288==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Tobias Klauser <tklauser@nuerscht.ch>
-Cc: kernel-janitors@lists.osdl.org, linux-scsi@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On Wednesday 13 April 2005 12:11, Tobias Klauser wrote:
-> Replace the MS_TO_JIFFIES() macro with msecs_to_jiffies() from jiffies.h
-
-> --- linux-2.6.12-rc2-mm3/drivers/scsi/a100u2w.c
-> +++ linux-2.6.12-rc2-mm3-tk/drivers/scsi/a100u2w.c
-
->  static void waitForPause(unsigned amount)
->  {
-> -	ULONG the_time = jiffies + MS_TO_JIFFIES(amount);
-> +	ULONG the_time = jiffies + msecs_to_jiffies(amount);
->  	while (time_before_eq(jiffies, the_time))
->  		cpu_relax();
->  }
-
-It'd be better to find out what is the equivalent generic sleeping/delaying
-function and, if any, remove waitForPause() altogether.
-
-However, Bas Vermeulen added these lines at the top of the file:
-
-	* 01/31/99 bv - v1.02b Use mdelay instead of waitForPause
-	* 08/08/99 bv - v1.02c Use waitForPause again.
-
-Maybe he can recall what was wrong with mdelay().
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============43820198271653288==--
