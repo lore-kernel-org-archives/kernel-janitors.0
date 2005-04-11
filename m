@@ -1,37 +1,73 @@
-From: Benoit Boissinot <bboissin@gmail.com>
-Date: Wed, 27 Apr 2005 20:02:25 +0000
-Subject: Re: [KJ] cli()/sti()-removal
-Message-Id: <40f323d00504271302be268ae@mail.gmail.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Mon, 11 Apr 2005 10:00:11 +0000
+Subject: [KJ] [PATCH] drivers/net/3c523.c : Use of time_after() macro
+Message-Id: <425A4AAB.9060400@feitoza.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <IFMF7B$A1BC6FE6642552690BEA67D5E7D8ABF3@tiscali.fr>
-In-Reply-To: <IFMF7B$A1BC6FE6642552690BEA67D5E7D8ABF3@tiscali.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 4/27/05, david.chosrova@libertysurf.fr <david.chosrova@libertysurf.fr> wrote:
-> 
-> 
-> --- linux-2.6.11.7/drivers/net/irda/ep7211_ir.c.orig    2005-04-27 17:41:36.000000000 +0100
-> +++ linux-2.6.11.7/drivers/net/irda/ep7211_ir.c 2005-04-27 17:53:33.000000000 +0100
-> @@ -14,6 +14,7 @@
-> 
->  #include <asm/io.h>
->  #include <asm/hardware.h>
-> +#include<asm/spinlock.h>
-> 
->  #define MIN_DELAY 25      /* 15 us, but wait a little more to be sure */
->  #define MAX_DELAY 10000   /* 1 ms */
-> @@ -22,7 +23,7 @@ static void ep7211_ir_open(dongle_t *sel
->  static void ep7211_ir_close(dongle_t *self);
->  static int  ep7211_ir_change_speed(struct irda_task *task);
->  static int  ep7211_ir_reset(struct irda_task *task);
-> -
-> +static spinlock_t driver_lock = SPIN_LOCK_UNLOCKED;
+Use of time_after() macro, defined at linux/jiffies.h, which deal with
+wrapping correctly and are nicer to read.
 
-spin_lock_init(driver_lock)
-(cf TODO)
+-- 
+
+Marcelo Feitoza Parisi            
+marcelo at feitoza.com.br
+http://marcelo.feitoza.com.br/
+
+
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/3c523.c	2005-03-02 04:38:38.000000000 -0300
++++ development/drivers/net/3c523.c	2005-04-09 18:37:48.000000000 -0300
+@@ -105,7 +105,8 @@
+ #include <linux/mca-legacy.h>
+ #include <linux/ethtool.h>
+ #include <linux/bitops.h>
+-
++#include <linux/jiffies.h>
++ 
+ #include <asm/uaccess.h>
+ #include <asm/processor.h>
+ #include <asm/io.h>
+@@ -659,7 +660,7 @@ static int init586(struct net_device *de
+ 
+ 	s = jiffies;		/* warning: only active with interrupts on !! */
+ 	while (!(cfg_cmd->cmd_status & STAT_COMPL)) {
+-		if (jiffies - s > 30*HZ/100)
++		if (time_after(jiffies, s + 30*HZ/100))
+ 			break;
+ 	}
+ 
+@@ -685,7 +686,7 @@ static int init586(struct net_device *de
+ 
+ 	s = jiffies;
+ 	while (!(ias_cmd->cmd_status & STAT_COMPL)) {
+-		if (jiffies - s > 30*HZ/100)
++		if (time_after(jiffies, s + 30*HZ/100))
+ 			break;
+ 	}
+ 
+@@ -710,7 +711,7 @@ static int init586(struct net_device *de
+ 
+ 	s = jiffies;
+ 	while (!(tdr_cmd->cmd_status & STAT_COMPL)) {
+-		if (jiffies - s > 30*HZ/100) {
++		if (time_after(jiffies, s + 30*HZ/100)) {
+ 			printk(KERN_WARNING "%s: %d Problems while running the TDR.\n", dev->name, __LINE__);
+ 			result = 1;
+ 			break;
+@@ -799,7 +800,7 @@ static int init586(struct net_device *de
+ 			elmc_id_attn586();
+ 			s = jiffies;
+ 			while (!(mc_cmd->cmd_status & STAT_COMPL)) {
+-				if (jiffies - s > 30*HZ/100)
++				if (time_after(jiffies, s + 30*HZ/100))
+ 					break;
+ 			}
+ 			if (!(mc_cmd->cmd_status & STAT_COMPL)) {
 
 _______________________________________________
 Kernel-janitors mailing list
