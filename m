@@ -1,100 +1,44 @@
-From: "=?iso-8859-1?Q?david.chosrova@libertysurf.fr?="
-Date: Sat, 30 Apr 2005 14:57:17 +0000
-Subject: [KJ] sti()/cli()-removal, ep7211.c
-Message-Id: <IFRLJH$317A86FD484B7EFA68D727459475A8C1@tiscali.fr>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Tue, 12 Apr 2005 21:28:34 +0000
+Subject: [KJ] [PATCH] drivers/atm/idt77252.c : Use of time_after() macro
+Message-Id: <425C3D82.3030806@feitoza.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thank you for the comments ( Domen, francois, Randy).
+Use of time_after() macro, defined at linux/jiffies.h, which deal with
+wrapping correctly and are nicer to read.
+
+-- 
+
+Marcelo Feitoza Parisi            
+marcelo at feitoza.com.br
+http://marcelo.feitoza.com.br/
 
 
- --- linux-2.6.11.7/drivers/net/irda/ep7211_ir.c.orig
-2005-04-27 17:41:36.000000000 +0100
-+++ linux-2.6.11.7/drivers/net/irda/ep7211_ir.c	2005-04-30
-13:44:03.000000000 +0100
-@@ -8,12 +8,14 @@
- #include <linux/delay.h>
- #include <linux/tty.h>
- #include <linux/init.h>
-+#include <linux/spinlock.h>
 
- #include <net/irda/irda.h>
- #include <net/irda/irda_device.h>
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
+--- linux/drivers/atm/idt77252.c	2005-04-07 22:25:04.000000000 -0300
++++ development/drivers/atm/idt77252.c	2005-04-09 22:13:44.000000000 -0300
+@@ -46,6 +46,7 @@ static char const rcsid[]  #include <linux/init.h>
+ #include <linux/bitops.h>
+ #include <linux/wait.h>
++#include <linux/jiffies.h>
+ #include <asm/semaphore.h>
  #include <asm/io.h>
- #include <asm/hardware.h>
-+
-=20
- #define MIN_DELAY 25      /* 15 us, but wait a little more
-to be sure */
- #define MAX_DELAY 10000   /* 1 ms */
-@@ -22,7 +24,7 @@ static void ep7211_ir_open(dongle_t *sel
- static void ep7211_ir_close(dongle_t *self);
- static int  ep7211_ir_change_speed(struct irda_task *task);
- static int  ep7211_ir_reset(struct irda_task *task);
--
-+static spinlock_t driver_lock;
- static struct dongle_reg dongle =3D {
- 	.type =3D IRDA_EP7211_IR,
- 	.open =3D ep7211_ir_open,
-@@ -36,7 +38,8 @@ static void ep7211_ir_open(dongle_t *sel
- {
- 	unsigned int syscon1, flags;
-
--	save_flags(flags); cli();
-+
-+	spin_lock_irqsave(&driver_lock, flags);
-
- 	/* Turn on the SIR encoder. */
- 	syscon1 =3D clps_readl(SYSCON1);
-@@ -46,14 +49,14 @@ static void ep7211_ir_open(dongle_t *sel
- 	/* XXX: We should disable modem status interrupts on the first
- 		UART (interrupt #14). */
-
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&driver_lock, flags);
- }
-
- static void ep7211_ir_close(dongle_t *self)
- {
- 	unsigned int syscon1, flags;
-=20
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&driver_lock, flags);
-
- 	/* Turn off the SIR encoder. */
- 	syscon1 =3D clps_readl(SYSCON1);
-@@ -63,7 +66,7 @@ static void ep7211_ir_close(dongle_t *se
- 	/* XXX: If we've disabled the modem status interrupts, we
-should
- 		reset them back to their original state. */
-
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&driver_lock, flags);
- }
-
- /*
-@@ -99,6 +102,7 @@ static int ep7211_ir_reset(struct irda_t
-  */
- static int __init ep7211_ir_init(void)
- {
-+	spin_lock_init(&driver_lock);
- 	return irda_device_register_dongle(&dongle);
- }
-=20
-
-************************ ADSL JUSQU'A 8 MEGA + 3 MOIS DE TELEPHONE GRATUIT =
-************************
-L'ultra haut d=E9bit =E0 15EUR/mois seulement ! Et vous t=E9l=E9phonez grat=
-uitement en France vers les postes fixes,
-hors num=E9ros sp=E9ciaux pendant 3 mois.
-Pour profiter de cette offre exceptionnelle, cliquez ici : http://register.=
-tiscali.fr/adsl/  (voir conditions sur le site)
-
-
+ #include <asm/uaccess.h>
+@@ -780,7 +781,7 @@ push_on_scq(struct idt77252_dev *card, s
+ 	return 0;
+ 
+ out:
+-	if (jiffies - scq->trans_start > HZ) {
++	if (time_after(jiffies, scq->trans_start + HZ)) {
+ 		printk("%s: Error pushing TBD for %d.%d\n",
+ 		       card->name, vc->tx_vcc->vpi, vc->tx_vcc->vci);
+ #ifdef CONFIG_ATM_IDT77252_DEBUG
 
 _______________________________________________
 Kernel-janitors mailing list
