@@ -1,35 +1,47 @@
-From: Christoph Hellwig <hch@infradead.org>
-Date: Wed, 13 Apr 2005 14:51:00 +0000
+From: James Bottomley <James.Bottomley@SteelEye.com>
+Date: Wed, 13 Apr 2005 15:00:58 +0000
 Subject: [KJ] Re: [PATCH] scsi/a100u2w: Remove custom msecs_to_jiffies and
-Message-Id: <20050413145100.GA9958@infradead.org>
+Message-Id: <1113404459.4933.8.camel@mulgrave>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84801370375592233=="
+Content-Type: multipart/mixed; boundary="===============57067332591273967=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050413121104.GA9419@argon.tklauser.home>
 	<20050413144308.GA9616@infradead.org>
-In-Reply-To: <20050413144308.GA9616@infradead.org>
-To: Tobias Klauser <tklauser@nuerscht.ch>
-Cc: kernel-janitors@lists.osdl.org, linux-scsi@vger.kernel.org
+	<20050413145100.GA9958@infradead.org>
+In-Reply-To: <20050413145100.GA9958@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: kernel-janitors@lists.osdl.org, SCSI Mailing List <linux-scsi@vger.kernel.org>
 
---===============84801370375592233==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============57067332591273967==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 13, 2005 at 03:43:08PM +0100, Christoph Hellwig wrote:
-> >  static void waitForPause(unsigned amount)
-> >  {
-> > -	ULONG the_time = jiffies + MS_TO_JIFFIES(amount);
-> > +	ULONG the_time = jiffies + msecs_to_jiffies(amount);
-> >  	while (time_before_eq(jiffies, the_time))
-> >  		cpu_relax();
-> 
-> You should probably replace this function with msleep completely.
+On Wed, 2005-04-13 at 15:51 +0100, Christoph Hellwig wrote:
+> I actually meant mdelay, but as mentioned in the other followup that might
+> need some more research.
 
-I actually meant mdelay, but as mentioned in the other followup that might
-need some more research.
+Actually, several of the waits look as though they have user context and
+so could sleep:
+
+waitChipReady
+waitFWReady
+waitSCSIRSTdone
+
+These I think are also user context: the aborts and nvram functions all
+seem to be user context
+
+waitHDOoff
+waitHDIoff
+
+So could someone with a board try the theory (that msleep will work)?
+
+Thanks,
+
+James
 
 
---===============84801370375592233==
+
+--===============57067332591273967==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84801370375592233==--
+--===============57067332591273967==--
