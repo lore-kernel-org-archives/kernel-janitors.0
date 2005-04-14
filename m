@@ -1,7 +1,7 @@
-From: Nish Aravamudan <nish.aravamudan@gmail.com>
-Date: Wed, 13 Apr 2005 16:09:53 +0000
-Subject: Re: [KJ] [PATCH] drivers/net/hp100.c : Use of time_after() macro
-Message-Id: <29495f1d05041309094c078945@mail.gmail.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Thu, 14 Apr 2005 21:42:42 +0000
+Subject: [KJ] [PATCH] drivers/net/hp100.c : Use of time_before() macro,
+Message-Id: <425EE3D2.5010801@feitoza.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <425A922C.6080100@feitoza.com.br>
 In-Reply-To: <425A922C.6080100@feitoza.com.br>
@@ -10,45 +10,43 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 4/11/05, Marcelo Feitoza Parisi <marcelo@feitoza.com.br> wrote:
-> Use of time_after() macro, defined at linux/jiffies.h, which deal with
-> wrapping correctly and are nicer to read.
-> 
-> --
-> Marcelo Feitoza Parisi
-> marcelo at feitoza.com.br
-> http://marcelo.feitoza.com.br/
-> 
-> Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-> 
-> --- linux/drivers/net/hp100.c   2005-03-02 04:38:04.000000000 -0300
-> +++ development/drivers/net/hp100.c     2005-04-09 18:42:14.000000000 -0300
-> @@ -115,6 +115,7 @@
->  #include <linux/delay.h>
->  #include <linux/init.h>
->  #include <linux/bitops.h>
-> +#include <linux/jiffies.h>
-> 
->  #include <asm/io.h>
-> 
-> @@ -1493,7 +1494,7 @@ static int hp100_start_xmit_bm(struct sk
->                 printk("hp100: %s: start_xmit_bm: No TX PDL available.\n", dev->name);
->  #endif
->                 /* not waited long enough since last tx? */
-> -               if (jiffies - dev->trans_start < HZ)
-> +               if (time_after(jiffies, dev->trans_start - HZ))
+Again, following Nish's catch, now the patch is using time_before() 
+macro, instead of time_after() macro,
+that was the way I did before. Both macros are defined at 
+linux/jiffies.h. Any problem, please contact-me.
 
-<snip>
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
-> -               if (jiffies - dev->trans_start < HZ) {
-> +               if (time_after(jiffies, dev->trans_start - HZ)) {
+--- linux/drivers/net/hp100.c   2005-03-02 04:38:04.000000000 -0300
++++ development/drivers/net/hp100.c     2005-04-14 18:39:13.000000000 -0300
+@@ -115,6 +115,7 @@
+ #include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/bitops.h>
++#include <linux/jiffies.h>
 
-I think these both should be
+ #include <asm/io.h>
 
-if (time_before(jiffies, dev->trans_start + HZ))
+@@ -1493,7 +1494,7 @@
+                printk("hp100: %s: start_xmit_bm: No TX PDL 
+available.\n", dev->name);
+ #endif
+                /* not waited long enough since last tx? */
+-               if (jiffies - dev->trans_start < HZ)
++               if (time_before(jiffies, dev->trans_start + HZ))
+                        return -EAGAIN;
 
-Thanks,
-Nish
+                if (hp100_check_lan(dev))
+@@ -1646,7 +1647,7 @@
+                printk("hp100: %s: start_xmit: tx free mem = 0x%x\n", 
+dev->name, i);
+ #endif
+                /* not waited long enough since last failed tx try? */
+-               if (jiffies - dev->trans_start < HZ) {
++               if (time_before(jiffies, dev->trans_start + HZ)) {
+ #ifdef HP100_DEBUG
+                        printk("hp100: %s: trans_start timing problem\n",
+                               dev->name);
 
 _______________________________________________
 Kernel-janitors mailing list
