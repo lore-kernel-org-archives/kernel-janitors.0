@@ -1,46 +1,88 @@
 From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Wed, 13 Apr 2005 15:52:40 +0000
-Subject: [KJ] [PATCH] drivers/net/wireless/strip.c : Use of time_after()
-Message-Id: <425D4048.7050205@feitoza.com.br>
+Date: Thu, 14 Apr 2005 21:37:16 +0000
+Subject: [KJ] [PATCH] drivers/net/3c523.c : time_after() macro
+Message-Id: <425EE28C.1020604@feitoza.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Use of time_after() macro, defined at linux/jiffies.h, which deal with
-wrapping correctly and are nicer to read.
-
--- 
-
-Marcelo Feitoza Parisi            
-marcelo at feitoza.com.br
-http://marcelo.feitoza.com.br/
-
-
+According to Nish's suggestion, here is the patch correction, using the 
+time_after() macro,
+defined in linux/jiffies.h. Any problem, please, mail-me.
 
 Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
---- linux/drivers/net/wireless/strip.c	2005-04-07 22:25:57.000000000 -0300
-+++ development/drivers/net/wireless/strip.c	2005-04-09 22:17:52.000000000 -0300
-@@ -112,7 +112,7 @@ static const char StripVersion[] = "1.3A
- #include <linux/ip.h>
- #include <linux/tcp.h>
- #include <linux/time.h>
--
+--- linux/drivers/net/3c523.c    2005-03-02 04:38:38.000000000 -0300
++++ development/drivers/net/3c523.c    2005-04-14 18:31:24.000000000 -0300
+@@ -105,6 +105,7 @@
+ #include <linux/mca-legacy.h>
+ #include <linux/ethtool.h>
+ #include <linux/bitops.h>
 +#include <linux/jiffies.h>
  
- /************************************************************************/
- /* Useful structures and definitions					*/
-@@ -1576,7 +1576,7 @@ static int strip_xmit(struct sk_buff *sk
- 	del_timer(&strip_info->idle_timer);
+ #include <asm/uaccess.h>
+ #include <asm/processor.h>
+@@ -620,7 +621,7 @@
+ static int init586(struct net_device *dev)
+ {
+     void *ptr;
+-    unsigned long s;
++    unsigned long end_jiffies;
+     int i, result = 0;
+     struct priv *p = (struct priv *) dev->priv;
+     volatile struct configure_cmd_struct *cfg_cmd;
+@@ -657,9 +658,9 @@
+     p->scb->cmd = CUC_START;    /* cmd.-unit start */
+     elmc_id_attn586();
  
+-    s = jiffies;        /* warning: only active with interrupts on !! */
++    end_jiffies = jiffies + 30*HZ/100;        /* warning: only active 
+with interrupts on !! */
+     while (!(cfg_cmd->cmd_status & STAT_COMPL)) {
+-        if (jiffies - s > 30*HZ/100)
++        if (time_after(jiffies, end_jiffies))
+             break;
+     }
  
--	if (jiffies - strip_info->pps_timer > HZ) {
-+	if (time_after(jiffies, strip_info->pps_timer + HZ)) {
- 		unsigned long t = jiffies - strip_info->pps_timer;
- 		unsigned long rx_pps_count = (strip_info->rx_pps_count * HZ * 8 + t / 2) / t;
- 		unsigned long tx_pps_count = (strip_info->tx_pps_count * HZ * 8 + t / 2) / t;
+@@ -683,9 +684,9 @@
+     p->scb->cmd = CUC_START;    /* cmd.-unit start */
+     elmc_id_attn586();
+ 
+-    s = jiffies;
++    end_jiffies = jiffies + 30*HZ/100;
+     while (!(ias_cmd->cmd_status & STAT_COMPL)) {
+-        if (jiffies - s > 30*HZ/100)
++        if (time_after(jiffies, end_jiffies))
+             break;
+     }
+ 
+@@ -708,9 +709,9 @@
+     p->scb->cmd = CUC_START;    /* cmd.-unit start */
+     elmc_attn586();
+ 
+-    s = jiffies;
++    end_jiffies = jiffies + 30*HZ/100;
+     while (!(tdr_cmd->cmd_status & STAT_COMPL)) {
+-        if (jiffies - s > 30*HZ/100) {
++        if (time_after(jiffies, end_jiffies)) {
+             printk(KERN_WARNING "%s: %d Problems while running the 
+TDR.\n", dev->name, __LINE__);
+             result = 1;
+             break;
+@@ -797,9 +798,9 @@
+             p->scb->cbl_offset = make16(mc_cmd);
+             p->scb->cmd = CUC_START;
+             elmc_id_attn586();
+-            s = jiffies;
++            end_jiffies = jiffies + 30*HZ/100;
+             while (!(mc_cmd->cmd_status & STAT_COMPL)) {
+-                if (jiffies - s > 30*HZ/100)
++                if (time_after(jiffies, end_jiffies))
+                     break;
+             }
+             if (!(mc_cmd->cmd_status & STAT_COMPL)) {
 
 _______________________________________________
 Kernel-janitors mailing list
