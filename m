@@ -1,48 +1,34 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Fri, 08 Apr 2005 09:33:44 +0000
-Subject: [KJ] Re: [PATCH] arch/ppc64: Replace custom MIN macro
-Message-Id: <20050408093344.GA834@neon>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============063372754403771436=="
+From: Jesse Millan <jesse.millan@gmail.com>
+Date: Tue, 19 Apr 2005 00:33:29 +0000
+Subject: [KJ] Audit return codes
+Message-Id: <426451D9.9070406@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <16981.48000.586005.656966@cargo.ozlabs.ibm.com>
-In-Reply-To: <16981.48000.586005.656966@cargo.ozlabs.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============063372754403771436==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Apr 08, 2005 at 09:00:16AM +1000, Paul Mackerras wrote:
-> Tobias Klauser writes:
-> 
-> > >From the kerneljanitors TODO list:
-> > - min/max macros from kernel.h are safe, a lot of handcrafted MIN/MAX are not.
-> 
-> Well... OK, that removes 4 lines of code, which is good, but the
-> explanation needs changing - it's not a question of safety, it doesn't
-> matter if we evaluate sizeof() more than once. :)
+Is anyone already working on this?
 
-min/max from kernel.h also do type checking, so the compiler throws out
-warnings in case of mismatching types, although this doesn't matter for
-this patch.
+Its the first item in the TODO list:
 
-So how about the following description:
+http://janitor.kernelnewbies.org/TODO
 
-Replace a custom MIN() macro with the min() macro from kernel.h
-This patch removes 4 lines of redundant code.
+I am looking for an easy project. I am a total newbie, but I want to get
+involved with Kernel Janitors.
 
-	Tobias
+Thanks.
 
---===============063372754403771436==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+-- 
+Jesse Millan
+CNS Unix Team
+Portland State University
+GPG key: www.system-calls.com/gpg.php
+
+Recursive: Adj. See Recursive.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============063372754403771436==--
