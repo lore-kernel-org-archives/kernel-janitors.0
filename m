@@ -1,95 +1,52 @@
-From: Tomas Telensky <tomas@matfyz.cz>
-Date: Thu, 21 Apr 2005 20:57:52 +0000
-Subject: Re: [KJ] kerneljanitors.org [was: Re: Fwd: Understand the Linux
-Message-Id: <20050421205752.GG18912@artax.karlin.mff.cuni.cz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============048715851861234949=="
+From: Jesse Millan <jesse.millan@gmail.com>
+Date: Wed, 20 Apr 2005 18:19:15 +0000
+Subject: [KJ] Re: Audit return codes (Question about getting started)
+Message-Id: <42669D23.9010501@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050324110511.GN7495@artax.karlin.mff.cuni.cz>
-In-Reply-To: <20050324110511.GN7495@artax.karlin.mff.cuni.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============048715851861234949==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+
+I just want to make sure that I understand the process correctly:
+
+For example, take kalloc(). If I find instances that that the return
+value is not checked (and I have) i.e. they call kalloc() and
+automatically assume success and dereference the allocated memory
+without checking for NULL. I would insert to proper error checking,
+create the patch and mail the patch to kernel-janitors@lists.osdl.org?
+
+Is this the process?
+
+Thanks.
 
 
-Hi Kernel Janitor,
-
-sorry for responding so late.
-
-> On 24/03/05 12:05 +0100, Tomas Telensky wrote:
-> > 
-> > 
-> > Hi,
-> > 
-> > > | Pardon?
-> > > | What's "The kernel janitor project "?
-> > > | I am also a newbie , and willing to know about it.
-> > > |
-> > > |
-> > > 
-> > > http://www.kerneljanitors.org/
-> > > 
-> > > It is a project that goes through the kernel, fixing up unmaintained code and
-> > > doing other cleanups and API conversion.
-> > > 
-> > > Jim
-> > 
-> > This brief intro should be on the page! http://kerneljanitors.org/ looks very
-> > unfriendly - they don't even have one sentence to present what they are doing.
+Jesse Millan wrote:
+> Is anyone already working on this?
 > 
-> There's readme, "irc talk" and links to two presentations.
+> Its the first item in the TODO list:
+> 
+> http://janitor.kernelnewbies.org/TODO
+> 
+> I am looking for an easy project. I am a total newbie, but I want to get
+> involved with Kernel Janitors.
+> 
+> Thanks.
+> 
 
-I'm sad of the fact that so many excellent open source/free software
-project have so strange presentation. The first question of the newcomer - 
-WHAT is it - is often the most difficult to find out there.
-http://www.kerneljanitors.org/ is a good example. 
+-- 
+Jesse Millan
+CNS Unix Team
+Portland State University
+Phone: (503) 725-3285
+Fax: (503) 725-6487
+Mobile: (503) 453-0748
+GPG key: www.system-calls.com/gpg.php
 
-In your Readme we can read where is the todo list, where the bugs are
-tracked, whom to send ideas... sorry, but not a word about WHO you are and
-WHAT you are doing. I wouldn't look for it in pdf presentations...
-
-Reading such pages I'm feeling little bit like in the underground mafia -
-that I'm looking for some secret information :)
-
-> As for brief intro... 
-> care enough to make a patch? ;-)
-
-Yes, why not. Could you apply it to the start page?
-Or something like that.
-
-	Tomas
-
-
---- /BIG/tmp/l.html~	Thu Apr 21 22:10:02 2005
-+++ /BIG/tmp/l.html	Thu Apr 21 22:10:19 2005
-@@ -23,6 +23,15 @@
- <table class="box">
- <tbody><tr><td class="dark">
-   <table class="box" width="100%">
-+   <tbody><tr><th class="th"><b>Who are we</b></th></tr>
-+   <tr><td>
-+	We go through the linux kernel sources, doing code reviews, fixing up unmaintained code and
-+	doing other cleanups and API conversion. It is a good start to kernel hacking.
-+   </td></tr>
-+  </tbody></table>
-+  <p></p><p>
-+
-+  <table class="box" width="100%">
-    <tbody><tr><th class="th"><b>Local info:</b></th></tr>
-    <tr><td>
-    <a href="http://www.kerneljanitors.org/TODO">The current TODO list</a><br>
-
---===============048715851861234949==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Recursive: Adj. See Recursive.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============048715851861234949==--
