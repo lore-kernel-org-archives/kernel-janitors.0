@@ -1,36 +1,48 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 29 Apr 2005 09:15:57 +0000
-Subject: Re: [KJ] [PATCH] drivers/net/tlan.c : Use the DMA_{32|64}_MASK
-Message-Id: <20050429091557.GI29054@rhum.iomeda.fr>
+Date: Fri, 22 Apr 2005 08:10:38 +0000
+Subject: [KJ] One question
+Message-Id: <20050422081037.GA31439@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============73887582702321208=="
+Content-Type: multipart/mixed; boundary="===============048409808632416063=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050422084319.GC31439@rhum.iomeda.fr>
-In-Reply-To: <20050422084319.GC31439@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============73887582702321208==
+--===============048409808632416063==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Christophe Lucas (clucas@rotomalug.org) wrote:
-> Description:
-> Use the DMA_{64,32}BIT_MASK constants from dma-mapping.h when calling
-> pci_set_dma_mask() or pci_set_consistent_dma_mask() instead of custom
-> macros.
-> This patch includes dma-mapping.h explicitly because it caused errors
-> on some architectures otherwise.
-> See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-> 
-> 
-> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Hi KJ folks,
 
-Sorry, this patch has already been send by Tobias.
+I ask me one question and I don't have any correct answer:
+Could it be made one tool to follow progress about long series of patch
+about one entry in KJ TODO ?
+
+Such as :
+.*set_dma_mask patch series
+
+Some person have made lot of great job on this, but we don't know what
+is pending, what is rejected.
+
+I know, I can read all archive of KJ ML, thanks :-)
+
+I have tough about one solution, but it is not efficient and correct:
+
+./linux-x.y.z-suffix/
+./linux-x.y.z-suffix/patch-serie/
+./linux-x.y.z-suffix/patch-serie/merged/
+./linux-x.y.z-suffix/patch-serie/pending/ (commited here)
+./linux-x.y.z-suffix/patch-serie/merged/
+
+The problem is : ./linux-x.y.z-suffix/
+
+We do the job again and again...
+
+So perhaps this mail is a waste of your time, so sorry.
 
 	~Christophe
 
 
---===============73887582702321208==
+--===============048409808632416063==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============73887582702321208==--
+--===============048409808632416063==--
