@@ -1,48 +1,85 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 20 Apr 2005 18:42:59 +0000
-Subject: Re: [KJ] Re: Audit return codes (Question about getting started)
-Message-Id: <20050420184259.GC3444@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53305850244282271=="
+From: "=?iso-8859-1?Q?david.chosrova@libertysurf.fr?="
+Date: Wed, 27 Apr 2005 19:52:23 +0000
+Subject: [KJ] cli()/sti()-removal
+Message-Id: <IFMF7B$A1BC6FE6642552690BEA67D5E7D8ABF3@tiscali.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42669D23.9010501@gmail.com>
-In-Reply-To: <42669D23.9010501@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============53305850244282271==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+=20
+=20
+--- linux-2.6.11.7/drivers/net/irda/ep7211_ir.c.orig	2005-04-27 17:41:36.00=
+0000000 +0100=20
++++ linux-2.6.11.7/drivers/net/irda/ep7211_ir.c	2005-04-27 17:53:33.0000000=
+00 +0100=20
+@@ -14,6 +14,7 @@=20
+=20
+ #include <asm/io.h>=20
+ #include <asm/hardware.h>=20
++#include<asm/spinlock.h>=20
+=20
+ #define MIN_DELAY 25      /* 15 us, but wait a little more to be sure */=20
+ #define MAX_DELAY 10000   /* 1 ms */=20
+@@ -22,7 +23,7 @@ static void ep7211_ir_open(dongle_t *sel=20
+ static void ep7211_ir_close(dongle_t *self);=20
+ static int  ep7211_ir_change_speed(struct irda_task *task);=20
+ static int  ep7211_ir_reset(struct irda_task *task);=20
+-=20
++static spinlock_t driver_lock =3D SPIN_LOCK_UNLOCKED;=20
+ static struct dongle_reg dongle =3D {=20
+ 	.type =3D IRDA_EP7211_IR,=20
+ 	.open =3D ep7211_ir_open,=20
+@@ -35,8 +36,8 @@ static struct dongle_reg dongle =3D {=20
+ static void ep7211_ir_open(dongle_t *self, struct qos_info *qos)=20
+ {=20
+ 	unsigned int syscon1, flags;=20
+-=20
+-	save_flags(flags); cli();=20
++=20
++	spin_lock_irqsave(&driver_lock,flags);=20
+=20
+ 	/* Turn on the SIR encoder. */=20
+ 	syscon1 =3D clps_readl(SYSCON1);=20
+@@ -46,14 +47,14 @@ static void ep7211_ir_open(dongle_t *sel=20
+ 	/* XXX: We should disable modem status interrupts on the first=20
+ 		UART (interrupt #14). */=20
+=20
+-	restore_flags(flags);=20
++	spin_unlock_irqrestore(&driver_lock,flags);=20
+ }=20
+=20
+ static void ep7211_ir_close(dongle_t *self)=20
+ {=20
+ 	unsigned int syscon1, flags;=20
+=20
+-	save_flags(flags); cli();=20
++	spin_lock_irqsave(&driver_lock,flags);=20
+=20
+ 	/* Turn off the SIR encoder. */=20
+ 	syscon1 =3D clps_readl(SYSCON1);=20
+@@ -63,7 +64,7 @@ static void ep7211_ir_close(dongle_t *se=20
+ 	/* XXX: If we've disabled the modem status interrupts, we should=20
+ 		reset them back to their original state. */=20
+=20
+-	restore_flags(flags);=20
++	spin_unlock_irqrestore(&driver_lock,flags);=20
+ }=20
+=20
+ /*=20
+=20
+************************ ADSL JUSQU'A 8 MEGA + 3 MOIS DE TELEPHONE GRATUIT =
+************************
+L'ultra haut d=E9bit =E0 15EUR/mois seulement ! Et vous t=E9l=E9phonez grat=
+uitement en France vers les postes fixes,
+hors num=E9ros sp=E9ciaux pendant 3 mois.
+Pour profiter de cette offre exceptionnelle, cliquez ici : http://register.=
+tiscali.fr/adsl/  (voir conditions sur le site)
 
-* Jesse Millan <jesse.millan@gmail.com> [2005-0420 11:19:15 -0700]:
 
-> 
-> I just want to make sure that I understand the process correctly:
-> 
-> For example, take kalloc(). If I find instances that that the return
-> value is not checked (and I have) i.e. they call kalloc() and
-> automatically assume success and dereference the allocated memory
-> without checking for NULL. I would insert to proper error checking,
-> create the patch and mail the patch to kernel-janitors@lists.osdl.org?
-> 
-> Is this the process?
-
-Generally, yes. You probably should verify the patch doesn't wrap in
-your mail & applies cleanly by mailing to yourself.
-
-Otherwise, send patches to the KJML and wait for replies.
-
-Thanks,
-Nish
-
---===============53305850244282271==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============53305850244282271==--
