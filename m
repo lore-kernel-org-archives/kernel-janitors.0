@@ -1,87 +1,50 @@
-From: "=?iso-8859-1?Q?david.chosrova@libertysurf.fr?="
-Date: Fri, 29 Apr 2005 09:18:35 +0000
-Subject: [KJ] =?iso-8859-1?Q?sti()/cli()-removal,
-Message-Id: <IFPB6Z$747834397F9D81C85F5AEAA672AA0180@tiscali.fr>
+From: "Randy.Dunlap" <rddunlap@osdl.org>
+Date: Fri, 29 Apr 2005 22:12:46 +0000
+Subject: Re: [KJ] =?iso-8859-1?Q?sti()/cli()-removal,
+Message-Id: <20050429151246.7094ea3f.rddunlap@osdl.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============055614830287624706=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+References: <IFPB6Z$747834397F9D81C85F5AEAA672AA0180@tiscali.fr>
+In-Reply-To: <IFPB6Z$747834397F9D81C85F5AEAA672AA0180@tiscali.fr>
 To: kernel-janitors@vger.kernel.org
 
---- linux-2.6.11.7/drivers/net/irda/ep7211_ir.c.orig
-2005-04-27 17:41:36.000000000 +0100
-+++ linux-2.6.11.7/drivers/net/irda/ep7211_ir.c	2005-04-29
-10:10:07.000000000 +0100
-@@ -14,6 +14,7 @@
+--===============055614830287624706==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
- #include <asm/io.h>
- #include <asm/hardware.h>
-+#include<linux/spinlock.h>
+On Fri, 29 Apr 2005 23:47:26 +0200 Domen Puncer wrote:
 
- #define MIN_DELAY 25      /* 15 us, but wait a little more
-to be sure */
- #define MAX_DELAY 10000   /* 1 ms */
-@@ -22,7 +23,7 @@ static void ep7211_ir_open(dongle_t *sel
- static void ep7211_ir_close(dongle_t *self);
- static int  ep7211_ir_change_speed(struct irda_task *task);
- static int  ep7211_ir_reset(struct irda_task *task);
--
-+static spinlock_t driver_lock;
- static struct dongle_reg dongle =3D {
- 	.type =3D IRDA_EP7211_IR,
- 	.open =3D ep7211_ir_open,
-@@ -35,8 +36,9 @@ static struct dongle_reg dongle =3D {
- static void ep7211_ir_open(dongle_t *self, struct qos_info
-*qos)
- {
- 	unsigned int syscon1, flags;
--
--	save_flags(flags); cli();
-+	spin_lock_init(&driver_lock);
-+
-+	spin_lock_irqsave(&driver_lock,flags);
+| >  static void ep7211_ir_open(dongle_t *self, struct qos_info
+| > *qos)
+| >  {
+| >  	unsigned int syscon1, flags;
+| > -
+| > -	save_flags(flags); cli();
+| > +	spin_lock_init(&driver_lock);
+| > +
+| > +	spin_lock_irqsave(&driver_lock,flags);
+| 
+| This doesn't look safe. Imagine 2 processes on SMP. (After some
+| browsing, this looks like some ARM architecture, so probably no
+| SMP; still better put this in ep7211_ir_init() or declare with
+| static DEFINE_SPINLOCK.)
 
- 	/* Turn on the SIR encoder. */
- 	syscon1 =3D clps_readl(SYSCON1);
-@@ -46,14 +48,14 @@ static void ep7211_ir_open(dongle_t *sel
- 	/* XXX: We should disable modem status interrupts on the first
- 		UART (interrupt #14). */
+Work on ARM SMP is happening though.... so be aware of it,
+don't think that an ARM driver can ignore SMP (any longer).
 
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&driver_lock,flags);
- }
+---
+~Randy
 
- static void ep7211_ir_close(dongle_t *self)
- {
- 	unsigned int syscon1, flags;
-
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&driver_lock,flags);
-=20
- 	/* Turn off the SIR encoder. */
- 	syscon1 =3D clps_readl(SYSCON1);
-@@ -63,7 +65,7 @@ static void ep7211_ir_close(dongle_t *se
- 	/* XXX: If we've disabled the modem status interrupts, we
-should
- 		reset them back to their original state. */
-
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&driver_lock,flags);
- }
-=20
- /*
-
-************************ ADSL JUSQU'A 8 MEGA + 3 MOIS DE TELEPHONE GRATUIT =
-************************
-L'ultra haut d=E9bit =E0 15EUR/mois seulement ! Et vous t=E9l=E9phonez grat=
-uitement en France vers les postes fixes,
-hors num=E9ros sp=E9ciaux pendant 3 mois.
-Pour profiter de cette offre exceptionnelle, cliquez ici : http://register.=
-tiscali.fr/adsl/  (voir conditions sur le site)
-
-
+--===============055614830287624706==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============055614830287624706==--
