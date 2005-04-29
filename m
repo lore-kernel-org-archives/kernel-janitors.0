@@ -1,77 +1,87 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 11 Apr 2005 08:42:48 +0000
-Subject: Re: [KJ] ioremap() / iounmap() balancing problem in scoop_probe() ?
-Message-Id: <20050411084247.GA3958@nd47.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99716040208626411=="
+From: "=?iso-8859-1?Q?david.chosrova@libertysurf.fr?="
+Date: Fri, 29 Apr 2005 09:18:35 +0000
+Subject: [KJ] =?iso-8859-1?Q?sti()/cli()-removal,
+Message-Id: <IFPB6Z$747834397F9D81C85F5AEAA672AA0180@tiscali.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.61.0504102318150.15064@s1.ckr-solutions.com>
-In-Reply-To: <Pine.LNX.4.61.0504102318150.15064@s1.ckr-solutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============99716040208626411==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--- linux-2.6.11.7/drivers/net/irda/ep7211_ir.c.orig
+2005-04-27 17:41:36.000000000 +0100
++++ linux-2.6.11.7/drivers/net/irda/ep7211_ir.c	2005-04-29
+10:10:07.000000000 +0100
+@@ -14,6 +14,7 @@
 
-On 10/04/05 23:23 +0200, Olivier Kaloudoff wrote:
-> Hi,
-> 
-> 
-> 	following the advice of Bertl, I'm trying my first error
-> report about the scoop device driver for arm, kernel 2.6.11.5;
+ #include <asm/io.h>
+ #include <asm/hardware.h>
++#include<linux/spinlock.h>
 
-Great!
+ #define MIN_DELAY 25      /* 15 us, but wait a little more
+to be sure */
+ #define MAX_DELAY 10000   /* 1 ms */
+@@ -22,7 +23,7 @@ static void ep7211_ir_open(dongle_t *sel
+ static void ep7211_ir_close(dongle_t *self);
+ static int  ep7211_ir_change_speed(struct irda_task *task);
+ static int  ep7211_ir_reset(struct irda_task *task);
+-
++static spinlock_t driver_lock;
+ static struct dongle_reg dongle =3D {
+ 	.type =3D IRDA_EP7211_IR,
+ 	.open =3D ep7211_ir_open,
+@@ -35,8 +36,9 @@ static struct dongle_reg dongle =3D {
+ static void ep7211_ir_open(dongle_t *self, struct qos_info
+*qos)
+ {
+ 	unsigned int syscon1, flags;
+-
+-	save_flags(flags); cli();
++	spin_lock_init(&driver_lock);
++
++	spin_lock_irqsave(&driver_lock,flags);
 
-> 
-> 	I found that scoop_io_base is only used in scoop.c (once),
-> so after use, the memory area should be freed;
+ 	/* Turn on the SIR encoder. */
+ 	syscon1 =3D clps_readl(SYSCON1);
+@@ -46,14 +48,14 @@ static void ep7211_ir_open(dongle_t *sel
+ 	/* XXX: We should disable modem status interrupts on the first
+ 		UART (interrupt #14). */
 
-Code seems different now (2.6.12-rc2).
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&driver_lock,flags);
+ }
 
-> 
-> 
-> root@nec:/usr/src/linux/arch/arm/common# diff -Naur scoop.c.orig scoop.c
-> --- scoop.c.orig        2005-04-10 23:17:06.000000000 +0200
-> +++ scoop.c     2005-04-10 23:17:28.000000000 +0200
+ static void ep7211_ir_close(dongle_t *self)
+ {
+ 	unsigned int syscon1, flags;
 
-patch -p1 appliable patches please.
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&driver_lock,flags);
+=20
+ 	/* Turn off the SIR encoder. */
+ 	syscon1 =3D clps_readl(SYSCON1);
+@@ -63,7 +65,7 @@ static void ep7211_ir_close(dongle_t *se
+ 	/* XXX: If we've disabled the modem status interrupts, we
+should
+ 		reset them back to their original state. */
 
-> @@ -107,6 +107,7 @@
->         scoop_io_base = ioremap(mem->start, 0x1000);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&driver_lock,flags);
+ }
+=20
+ /*
 
-Tabs converted to spaces. (copy & paste? try "insert file" or similar)
-
->         if (!scoop_io_base)
->                 return -ENOMEM;
-> +       iounmap(scoop_io_base);
-
-I think the right usage is as it is in -rc2 (code seems a bit changed),
-iounmap in remove() after we stop using it.
-
-> 
->         SCOOP_REG(SCOOP_MCR) = 0x0140;
-> 
-> 
-> 	Am I right ?
-> 
-> 
-> Olivier
-
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
+************************ ADSL JUSQU'A 8 MEGA + 3 MOIS DE TELEPHONE GRATUIT =
+************************
+L'ultra haut d=E9bit =E0 15EUR/mois seulement ! Et vous t=E9l=E9phonez grat=
+uitement en France vers les postes fixes,
+hors num=E9ros sp=E9ciaux pendant 3 mois.
+Pour profiter de cette offre exceptionnelle, cliquez ici : http://register.=
+tiscali.fr/adsl/  (voir conditions sur le site)
 
 
---===============99716040208626411==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============99716040208626411==--
