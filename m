@@ -1,71 +1,42 @@
 From: Ismail Donmez <ismail@kde.org.tr>
-Date: Wed, 27 Apr 2005 17:26:28 +0000
+Date: Sat, 30 Apr 2005 08:42:04 +0000
 Subject: Re: [KJ] [PATCH] Documentation/networking/dmfe.txt : Make
-Message-Id: <200504272026.29047.ismail@kde.org.tr>
+Message-Id: <200504301142.05143.ismail@kde.org.tr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_Ft8bCp6v85r2St9"
+Content-Type: multipart/mixed; boundary="Boundary-00=_dT0cCJPfR2d4m/N"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200504262244.01258.ismail@kde.org.tr> <20050427170703.GA3762@nd47.coderock.org>
-In-Reply-To: <20050427170703.GA3762@nd47.coderock.org>
-To: kernel-janitors@lists.osdl.org, netdev@oss.sgi.com, jgarzik@pobox.com
-Cc: ismail@kde.org.tr
+References: <200504262244.01258.ismail@kde.org.tr>
+	<20050427170703.GA3762@nd47.coderock.org>
+	<200504272026.29047.ismail@kde.org.tr>
+In-Reply-To: <200504272026.29047.ismail@kde.org.tr>
+To: kernel-janitors@lists.osdl.org
+Cc: netdev@oss.sgi.com, jgarzik@pobox.com
 
---Boundary-00=_Ft8bCp6v85r2St9
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+--Boundary-00=_dT0cCJPfR2d4m/N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
 
-On Wednesday 27 April 2005 20:07, Domen Puncer wrote:
-> On 26/04/05 22:44 +0300, Ismail Donmez wrote:
-> > Hi,
-> >
-> > attached patch indents dmfe.txt to look like other docs. It adds a tip
-> > about CNET cards using Davicom chipsets. Also it removes parts where it
-> > refers to how to build driver out-of-kernel which seems to be cruft from
-> > times where the driver was out of the kernel.
+On Wednesday 27 April 2005 20:26, Ismail Donmez wrote:
+> Here goes the new one :
 >
-> Please, no quoted-printable, it makes it hard for scripts to parse right.
-> (=3D20 and similar "characters")
-
-Ok hopefully its ok now
-
 >
-> > Signed-off-by: ??smail D=F6nmez <ismail@kde.org.tr>
+> Attached patch indents dmfe.txt to look like other docs. It adds a tip
+> about CNET cards using Davicom chipsets. Also it removes parts where it
+> refers to how to build driver out-of-kernel which seems to be cruft from
+> times where the driver was out of the kernel.
 >
+> Signed-off-by: Ismail Dönmez <ismail@kde.org.tr>
 
-Ok my unicode name is buggy ;)
+Any comments on this latest version? I reattach it for the sake of 
+completeness.
 
-> Uhh... I don't recall being discussed in which encoding this should be,
-> ascii is a safe bet.
->
-> > --- dmfe.txt	2004-07-24 09:45:13.000000000 +0300
-> > +++ dmfe2.txt	2004-07-24 09:46:37.000000000 +0300
->
-> Patch should be -p1 appliable... meaning these lines will be something
-> like: --- linux-2.6.12-rc3/Documentation/dmfe.txt ...
-> +++ linux-dev/Documentation/dmfe.txt ...
->
-> > @@ -1,59 +1,65 @@
-> > -  dmfe.c: Version 1.28        01/18/2000
-> > +Davicom DM9102(A)/DM9132/DM9801 fast ethernet driver for Linux.
->
-> Trailing whitespace.
+Regards,
+ismail
 
-Nice catch.
-
-Here goes the new one :
-
-
-Attached patch indents dmfe.txt to look like other docs. It adds a tip
-about CNET cards using Davicom chipsets. Also it removes parts where it
-refers to how to build driver out-of-kernel which seems to be cruft from
-times where the driver was out of the kernel.
-
-Signed-off-by: Ismail D=F6nmez <ismail@kde.org.tr>
-
---Boundary-00=_Ft8bCp6v85r2St9
+--Boundary-00=_dT0cCJPfR2d4m/N
 Content-Type: text/x-diff;
-  charset="Iso-8859-1";
+  charset="utf-8";
   name="dmfe.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
@@ -178,7 +149,7 @@ Content-Disposition: attachment;
 +Jeff Garzik <jgarzik@pobox.com>
 +Vojtech Pavlik <vojtech@suse.cz>
 
---Boundary-00=_Ft8bCp6v85r2St9
+--Boundary-00=_dT0cCJPfR2d4m/N
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -189,4 +160,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_Ft8bCp6v85r2St9--
+--Boundary-00=_dT0cCJPfR2d4m/N--
