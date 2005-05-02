@@ -1,42 +1,43 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 16 May 2005 09:58:22 +0000
-Subject: Re: [KJ] [PATCH] sound/pci/mixart/mixart.c : Use the DMA_32BIT_MASK
-Message-Id: <20050516095822.GH6103@rhum.iomeda.fr>
+Date: Mon, 02 May 2005 13:28:50 +0000
+Subject: [clucas@rotomalug.org: [KJ] set_current_state()]
+Message-Id: <20050502132850.GF9468@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70775940257911163=="
+Content-Type: multipart/mixed; boundary="===============091947470149345456=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050516085902.GE6103@rhum.iomeda.fr>
-In-Reply-To: <20050516085902.GE6103@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============70775940257911163==
+--===============091947470149345456==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Tobias Klauser (tklauser@nuerscht.ch) wrote:
-> On Mon, May 16, 2005 at 10:59:02AM +0200, Christophe Lucas wrote:
-> > Use the DMA_32BIT_MASK constant from dma-mapping.h
-> > when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-> > See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
-> 
-> Christophe,
-> 
-> I've got some of these hanging around here and will send them
-> alltogether as soon as I'm sure I catched _all_. So it might be a waste of
-> your time when you work on the same thing.
+----- Forwarded message from Christophe Lucas <clucas@rotomalug.org> -----
+From: Christophe Lucas <clucas@rotomalug.org>
+To: nacc@us.ibm.com
+Subject: [KJ] set_current_state()
 
-Ok I am really sorry :-(
-I have just seen that in sound/* this one have been missed, but it is
-not.
+Hi,
 
-Have a nice day, and good work.
+I have seen that in 2.6.12-rc3-kj, there is this patch :
+http://coderock.org/kj/2.6.12-rc3-kj/split/set_current_state-drivers_net_tokenring_tms380tr.patch
 
+Can it be one janitor thing ?
+
+I think yes, and have a patchset about this kind of work.
+
+What do you think about this?
+
+Sorry if I waste your time.
+-- 
 	~Christophe
 
-PS: Sorry again.
+----- End forwarded message -----
+
+-- 
+	~Christophe
 
 
---===============70775940257911163==
+--===============091947470149345456==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70775940257911163==--
+--===============091947470149345456==--
