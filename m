@@ -1,43 +1,39 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 04 May 2005 09:49:31 +0000
-Subject: [KJ] [PATCH] drivers/block/paride/pt.c: replace direct assignment
-Message-Id: <20050504094931.GP8647@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 02 May 2005 06:34:57 +0000
+Subject: [KJ] [PATCH] net/slip: replace schedule_timeout() with
+Message-Id: <20050502063457.GG10173@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="d9ADC0YsG2v16Js0"
+Content-Type: multipart/mixed; boundary="===============66490907043917158=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050502061446.GB10173@us.ibm.com>
+In-Reply-To: <20050502061446.GB10173@us.ibm.com>
+To: loz@holmes.demon.co.uk, waltje@uwalt.nl.mugnet.org
+Cc: netdev@oss.sgi.com, Kernel-Janitors <kernel-janitors@lists.osdl.org>
 
-
---d9ADC0YsG2v16Js0
+--===============66490907043917158==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-description:
-Use set_current_state() instead of direct assignment of
-current->state.
+Use msleep_interruptible() instead of schedule_timeout() to guarantee
+the task delays as expected.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-
-
---d9ADC0YsG2v16Js0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="linux-2.6.12-rc3_drivers_block_paride_pt.c.patch"
-
-diff -urpNX dontdiff a/drivers/block/paride/pt.c b/drivers/block/paride/pt.c
---- a/drivers/block/paride/pt.c	2005-04-21 02:03:13.000000000 +0200
-+++ b/drivers/block/paride/pt.c	2005-04-29 09:54:07.000000000 +0200
-@@ -383,7 +383,7 @@ static int pt_atapi(struct pt_unit *tape
+--- 2.6.12-rc3/drivers/net/slip.c	2005-03-01 23:38:33.000000000 -0800
++++ 2.6.12-rc3-dev/drivers/net/slip.c	2005-05-01 20:53:08.000000000 -0700
+@@ -1395,10 +1395,8 @@ static void __exit slip_exit(void)
+ 	/* First of all: check for active disciplines and hangup them.
+ 	 */
+ 	do {
+-		if (busy) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ / 10);
+-		}
++		if (busy)
++			msleep_interruptible(100);
  
- static void pt_sleep(int cs)
- {
--	current->state = TASK_INTERRUPTIBLE;
-+	set_current_state(TASK_INTERRUPTIBLE);
- 	schedule_timeout(cs);
- }
- 
+ 		busy = 0;
+ 		for (i = 0; i < slip_maxdev; i++) {
 
---d9ADC0YsG2v16Js0
+--===============66490907043917158==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---d9ADC0YsG2v16Js0--
+--===============66490907043917158==--
