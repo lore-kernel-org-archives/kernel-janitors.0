@@ -1,43 +1,60 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Thu, 05 May 2005 17:20:37 +0000
-Subject: Re: [KJ] [PATCH] drivers/block/paride/pcd.c : replace direct
-Message-Id: <20050505172037.GC3917@nd47.coderock.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 02 May 2005 06:18:24 +0000
+Subject: [KJ] [PATCH] i386/apm: use wait_event_interruptible_timeout()
+Message-Id: <20050502061824.GC10173@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53802681193746071=="
+Content-Type: multipart/mixed; boundary="===============081532362627680044=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050504094530.GM8647@rhum.iomeda.fr>
-In-Reply-To: <20050504094530.GM8647@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============53802681193746071==
+--===============081532362627680044==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 04/05/05 11:45 +0200, Christophe Lucas wrote:
-> description:
-> Use set_current_state() instead of direct assignment of
-> current->state.
-> 
-> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-
-> diff -urpNX dontdiff a/drivers/block/paride/pcd.c b/drivers/block/paride/pcd.c
-> --- a/drivers/block/paride/pcd.c	2005-04-21 02:03:13.000000000 +0200
-> +++ b/drivers/block/paride/pcd.c	2005-04-29 09:53:18.000000000 +0200
-> @@ -516,7 +516,7 @@ static int pcd_tray_move(struct cdrom_de
->  
->  static void pcd_sleep(int cs)
->  {
-> -	current->state = TASK_INTERRUPTIBLE;
-> +	set_current_state(TASK_INTERRUPTIBLE);
->  	schedule_timeout(cs);
-
-nacc already did these (at least paride ones seem to be in -kj) in IMHO
-more correct way: converted *_sleep calls to msleep.
+Use wait_event_interruptible_timeout() instead of custom wait-queue.
 
 
-	Domen
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
---===============53802681193746071==
+--- 2.6.12-rc3/arch/i386/kernel/apm.c	2005-04-29 11:03:03.000000000 -0700
++++ 2.6.12-rc3-dev/arch/i386/kernel/apm.c	2005-05-01 19:02:48.000000000 -0700
+@@ -224,6 +224,7 @@
+ #include <linux/smp_lock.h>
+ #include <linux/dmi.h>
+ #include <linux/suspend.h>
++#include <linux/wait.h>
+ 
+ #include <asm/system.h>
+ #include <asm/uaccess.h>
+@@ -1418,22 +1419,15 @@ static void apm_event_handler(void)
+ 
+ static void apm_mainloop(void)
+ {
+-	DECLARE_WAITQUEUE(wait, current);
+-
+-	add_wait_queue(&apm_waitqueue, &wait);
+-	set_current_state(TASK_INTERRUPTIBLE);
+-	for (;;) {
+-		schedule_timeout(APM_CHECK_TIMEOUT);
+-		if (exit_kapmd)
+-			break;
++	do {
++		wait_event_interruptible_timeout(apm_waitqueue,
++				exit_kapmd, APM_CHECK_TIMEOUT);
+ 		/*
+ 		 * Ok, check all events, check for idle (and mark us sleeping
+ 		 * so as not to count towards the load average)..
+ 		 */
+-		set_current_state(TASK_INTERRUPTIBLE);
+ 		apm_event_handler();
+-	}
+-	remove_wait_queue(&apm_waitqueue, &wait);
++	} while (!exit_kapmd);
+ }
+ 
+ static int check_apm_user(struct apm_user *as, const char *func)
+
+--===============081532362627680044==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53802681193746071==--
+--===============081532362627680044==--
