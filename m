@@ -1,71 +1,44 @@
-From: Chuck Short <zulcss@gmail.com>
-Date: Mon, 30 May 2005 02:09:23 +0000
-Subject: [KJ] [PATCH] net/ipv4/route warnings
-Message-Id: <429A75D3.3030808@gmail.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 02 May 2005 06:32:26 +0000
+Subject: [KJ] [PATCH] alpha/osf_sys: use helper functions to convert between
+Message-Id: <20050502063226.GF10173@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------090308030607030408080500"
+Content-Type: multipart/mixed; boundary="===============38474042363851324=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------090308030607030408080500
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============38474042363851324==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch fixes gcc4 warnings in net/ipv4/route.c
+Use helper functions to convert between timeval structure and jiffies
+rather than custom logic.
 
-Signed-off by: Chuck Short <zulcss@gmail.com>
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-
-
---------------090308030607030408080500
-Content-Type: text/plain;
- name="ipv4-route_gcc4_warning"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="ipv4-route_gcc4_warning"
-
-diff -Naur linux-source-2.6.12-2.6.11.93.orig/net/ipv4/route.c linux-source-2.6.12-2.6.11.93/net/ipv4/route.c
---- linux-source-2.6.12-2.6.11.93.orig/net/ipv4/route.c	2005-05-08 02:11:18.000000000 -0400
-+++ linux-source-2.6.12-2.6.11.93/net/ipv4/route.c	2005-05-29 14:32:35.464664496 -0400
-@@ -1767,7 +1767,7 @@
- 				       struct in_device *in_dev,
- 				       u32 daddr, u32 saddr, u32 tos)
- {
--	struct rtable* rth;
-+	struct rtable* rth = NULL;
- 	int err;
- 	unsigned hash;
+--- 2.6.12-rc3/arch/alpha/kernel/osf_sys.c	2005-04-29 11:03:03.000000000 -0700
++++ 2.6.12-rc3-dev/arch/alpha/kernel/osf_sys.c	2005-05-01 23:10:24.000000000 -0700
+@@ -1166,16 +1166,13 @@ osf_usleep_thread(struct timeval32 __use
+ 	if (get_tv32(&tmp, sleep))
+ 		goto fault;
  
-@@ -1794,7 +1794,7 @@
- 				   u32 daddr, u32 saddr, u32 tos)
- {
- #ifdef CONFIG_IP_ROUTE_MULTIPATH_CACHED
--	struct rtable* rth;
-+	struct rtable* rth = NULL;
- 	unsigned char hop, hopcount, lasthop;
- 	int err = -EINVAL;
- 	unsigned int hash;
-@@ -2239,7 +2239,7 @@
- 					struct net_device *dev_out,
- 					unsigned flags)
- {
--	struct rtable *rth;
-+	struct rtable *rth = NULL;
- 	int err = __mkroute_output(&rth, res, fl, oldflp, dev_out, flags);
- 	unsigned hash;
- 	if (err == 0) {
-@@ -2267,7 +2267,7 @@
- 	unsigned char hop;
- 	unsigned hash;
- 	int err = -EINVAL;
--	struct rtable *rth;
-+	struct rtable *rth = NULL;
+-	ticks = tmp.tv_usec;
+-	ticks = (ticks + (1000000 / HZ) - 1) / (1000000 / HZ);
+-	ticks += tmp.tv_sec * HZ;
++	ticks = timeval_to_jiffies(&tmp);
  
- 	if (res->fi && res->fi->fib_nhs > 1) {
- 		unsigned char hopcount = res->fi->fib_nhs;
+ 	current->state = TASK_INTERRUPTIBLE;
+ 	ticks = schedule_timeout(ticks);
+ 
+ 	if (remain) {
+-		tmp.tv_sec = ticks / HZ;
+-		tmp.tv_usec = ticks % HZ;
++		jiffies_to_timeval(ticks, &tmp);
+ 		if (put_tv32(remain, &tmp))
+ 			goto fault;
+ 	}
 
---------------090308030607030408080500
+--===============38474042363851324==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------090308030607030408080500--
+--===============38474042363851324==--
