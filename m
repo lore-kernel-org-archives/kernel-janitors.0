@@ -1,48 +1,45 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Sun, 01 May 2005 18:55:46 +0000
-Subject: Re: [KJ] sti()/cli()-removal, ep7211.c
-Message-Id: <20050501185546.GA5748@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 02 May 2005 06:26:00 +0000
+Subject: [KJ] [PATCH] ppc/fcc_enet: replace schedule_timeout() with ssleep()
+Message-Id: <20050502062600.GD10173@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52384051757276884=="
+Content-Type: multipart/mixed; boundary="===============82575349112143215=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <20050502061446.GB10173@us.ibm.com>
+In-Reply-To: <20050502061446.GB10173@us.ibm.com>
+To: dmalek@jlc.net
+Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linuxppc-embedded@ozlabs.org
 
---===============52384051757276884==
+--===============82575349112143215==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-david.chosrova@libertysurf.fr (david.chosrova@libertysurf.fr) wrote:
-> Thank you for the comments ( Domen, francois, Randy).
-> 
-> 
->  --- linux-2.6.11.7/drivers/net/irda/ep7211_ir.c.orig
-> 2005-04-27 17:41:36.000000000 +0100
-> +++ linux-2.6.11.7/drivers/net/irda/ep7211_ir.c	2005-04-30
-> 13:44:03.000000000 +0100
-> @@ -8,12 +8,14 @@
->  #include <linux/delay.h>
->  #include <linux/tty.h>
->  #include <linux/init.h>
-> +#include <linux/spinlock.h>
-> 
->  #include <net/irda/irda.h>
->  #include <net/irda/irda_device.h>
-> 
-> [SNIP]
->  }
+I couldn't find an appropriate entry in MAINTAINERS for this patch.
 
-One comment from Domen: no one Signed-Off-By ;) such as :
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Use ssleep() instead of schedule_timeout() to guarantee the task delays
+as expected.
 
-It must be included.
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
+--- 2.6.12-rc3/arch/ppc/8260_io/fcc_enet.c	2005-04-29 11:03:03.000000000 -0700
++++ 2.6.12-rc3-dev/arch/ppc/8260_io/fcc_enet.c	2005-05-01 19:10:58.000000000 -0700
+@@ -1305,12 +1305,11 @@ static void mii_parse_dm9161_scsr(uint m
+ 
+ static void mii_dm9161_wait(uint mii_reg, struct net_device *dev)
+ {
+-	int timeout = HZ;
++	int timeout_secs = 1;
+ 
+ 	/* Davicom takes a bit to come up after a reset,
+ 	 * so wait here for a bit */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+-	schedule_timeout(timeout);
++	ssleep(timeout_secs);
+ }
+ 
+ static phy_info_t phy_info_dm9161 = {
 
-Ps: Il faut ajouter un signed-Off-By ;)
--- 
-	~Christophe
-
-
---===============52384051757276884==
+--===============82575349112143215==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52384051757276884==--
+--===============82575349112143215==--
