@@ -1,51 +1,39 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 02 May 2005 13:28:50 +0000
-Subject: [clucas@rotomalug.org: [KJ] set_current_state()]
-Message-Id: <20050502132850.GF9468@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============091947470149345456=="
+From: Nish Aravamudan <nish.aravamudan@gmail.com>
+Date: Mon, 02 May 2005 17:35:06 +0000
+Subject: Re: [clucas@rotomalug.org: [KJ] set_current_state()]
+Message-Id: <29495f1d0505021035c50625f@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050502132850.GF9468@rhum.iomeda.fr>
+In-Reply-To: <20050502132850.GF9468@rhum.iomeda.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============091947470149345456==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Christophe,
 
------ Forwarded message from Christophe Lucas <clucas@rotomalug.org> -----
-From: Christophe Lucas <clucas@rotomalug.org>
-To: nacc@us.ibm.com
-Subject: [KJ] set_current_state()
+Sorry for not replying earlier, have been swamped at work.
 
-Hi,
+> I have seen that in 2.6.12-rc3-kj, there is this patch :
+> http://coderock.org/kj/2.6.12-rc3-kj/split/set_current_state-drivers_net_tokenring_tms380tr.patch
+> 
+> Can it be one janitor thing ?
 
-I have seen that in 2.6.12-rc3-kj, there is this patch :
-http://coderock.org/kj/2.6.12-rc3-kj/split/set_current_state-drivers_net_tokenring_tms380tr.patch
+Sure, the only trick is knowing when you do and do not need memory
+barriers. Then you can choose between set_current_state() and
+__set_current_state() respectively.
 
-Can it be one janitor thing ?
+> I think yes, and have a patchset about this kind of work.
+> 
+> What do you think about this?
 
-I think yes, and have a patchset about this kind of work.
+Seems reasonable -- expect some contention, though, these changes
+don't achieve much (as in fixing broken code), unfortunately :)
 
-What do you think about this?
-
-Sorry if I waste your time.
--- 
-	~Christophe
-
------ End forwarded message -----
-
--- 
-	~Christophe
-
-
---===============091947470149345456==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Thanks,
+Nish
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============091947470149345456==--
