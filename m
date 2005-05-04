@@ -1,50 +1,29 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 04 May 2005 10:04:38 +0000
-Subject: [KJ] [PATCH] drivers/char/selection.c: replace direct assignment
-Message-Id: <20050504100438.GW8647@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="GvuyDaC2GNSBQusT"
+From: Nish Aravamudan <nish.aravamudan@gmail.com>
+Date: Wed, 04 May 2005 16:33:25 +0000
+Subject: Re: [KJ] [PATCH] drivers/char/selection.c: replace direct assignment
+Message-Id: <29495f1d0505040933696e9616@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050504100438.GW8647@rhum.iomeda.fr>
+In-Reply-To: <20050504100438.GW8647@rhum.iomeda.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On 5/4/05, Christophe Lucas <clucas@rotomalug.org> wrote:
+> description:
+> Use set_current_state() instead of direct assignment of
+> current->state.
 
---GvuyDaC2GNSBQusT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Usually, when you are setting the state to TASK_RUNNING, you don't
+want to use set_current_state(), but __set_current_state(). The best
+bet is to see if you can't convert the wait-queue usage in that
+function to prepare_to_wait()/finish_wait().
 
-description:
-Use set_current_state() instead of direct assignment of
-current->state.
-
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-
---GvuyDaC2GNSBQusT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="linux-2.6.12-rc3_drivers_char_selection.c.patch"
-
-diff -urpNX dontdiff a/drivers/char/selection.c b/drivers/char/selection.c
---- a/drivers/char/selection.c	2005-04-21 02:03:13.000000000 +0200
-+++ b/drivers/char/selection.c	2005-04-29 10:07:47.000000000 +0200
-@@ -299,7 +299,7 @@ int paste_selection(struct tty_struct *t
- 		pasted += count;
- 	}
- 	remove_wait_queue(&vc->paste_wait, &wait);
--	current->state = TASK_RUNNING;
-+	set_current_state(TASK_RUNNING);
- 
- 	tty_ldisc_deref(ld);
- 	return 0;
-
---GvuyDaC2GNSBQusT
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Good luck,
+Nish
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---GvuyDaC2GNSBQusT--
