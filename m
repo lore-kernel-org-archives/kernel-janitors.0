@@ -1,53 +1,36 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 25 May 2005 12:49:39 +0000
-Subject: Re: [KJ] [PATCH] remove sti/cli esp.c
-Message-Id: <20050525124939.GG3851@nd47.coderock.org>
+From: Kirk True <kernel@kirkandsheila.com>
+Date: Wed, 04 May 2005 05:41:43 +0000
+Subject: [KJ] What kernel version to patch against?
+Message-Id: <1115185303.3865.2.camel@itchy.kirkandsheila.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============034704658272203481=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <IGJHIS$6DD48F908E17011C2DE59A4BEC27710E@tiscali.fr>
-In-Reply-To: <IGJHIS$6DD48F908E17011C2DE59A4BEC27710E@tiscali.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Second half of december there were some discussions about esp sti/cli
-on this mailing list, be sure to check what the issues were.
+--===============034704658272203481==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 15/05/05 18:23 +0200, david.chosrova@libertysurf.fr wrote:
->  description: remove sti/cli and friends, use accepted
-> locking functions.
+Hi all,
 
-^M?
+There are a couple of trivial items on the TODO I think I can knock out.
 
->=20
->=20
->=20
-> signed-off-by : david chosrova <david.chosrova@libertsur.fr>
+Against which version of the kernel do I send in patches? The latest
+release, the latest pre-release, the latest KJ tree?
 
-No shift key? ;-)
-
-> ************************ ADSL JUSQU'A 8 MEGA + 3 MOIS DE TELEPHONE GRATUI=
-T ************************
-> L'ultra haut d=E9bit =E0 15EUR/mois seulement ! Et vous t=E9l=E9phonez gr=
-atuitement en France vers les postes fixes,
-> hors num=E9ros sp=E9ciaux pendant 3 mois.
-> Pour profiter de cette offre exceptionnelle, cliquez ici : http://registe=
-r.tiscali.fr/adsl/  (voir conditions sur le site)
-
-I'm almost sure, we don't want this propagated into SCM's log.
-
-Patches are base64 which means people can't comment on them without
-(usualy too much) trouble, inline them, or attach as plain text.
-You could give patch-tester@coderock.org a try (it's alpha state, but
-should still be useful).
-
-Also, http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt and
-http://linux.yyz.us/patch-format.html contain some more info
-on what form to send patches in.
+Thanks!
+Kirk
 
 
-	Domen
+--===============034704658272203481==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============034704658272203481==--
