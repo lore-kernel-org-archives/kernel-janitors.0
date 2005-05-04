@@ -1,42 +1,43 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 23 May 2005 10:50:31 +0000
-Subject: [KJ] [PATCH] printk : arch/i386/mm/ioremap.c
-Message-Id: <20050523105031.GG13768@rhum.iomeda.fr>
+Date: Wed, 04 May 2005 09:48:19 +0000
+Subject: [KJ] [PATCH] drivers/block/paride/pg.c: replace direct assignment
+Message-Id: <20050504094819.GO8647@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="bCsyhTFzCvuiizWE"
+Content-Type: multipart/mixed; boundary="96YOpH+ONegL0A3E"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 
---bCsyhTFzCvuiizWE
+--96YOpH+ONegL0A3E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Description:
-printk() calls should include appropriate KERN_* constant.
+description:
+Use set_current_state() instead of direct assignment of
+current->state.
 
 Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
---bCsyhTFzCvuiizWE
+--96YOpH+ONegL0A3E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="linux-2.6.12-rc4_arch_i386_mm_ioremap.c.patch"
+	filename="linux-2.6.12-rc3_drivers_block_paride_pg.c.patch"
 
-diff -urpNX dontdiff a/arch/i386/mm/ioremap.c b/arch/i386/mm/ioremap.c
---- a/arch/i386/mm/ioremap.c	2005-05-07 07:20:31.000000000 +0200
-+++ b/arch/i386/mm/ioremap.c	2005-05-23 12:41:56.733580832 +0200
-@@ -240,7 +240,7 @@ void iounmap(volatile void __iomem *addr
+diff -urpNX dontdiff a/drivers/block/paride/pg.c b/drivers/block/paride/pg.c
+--- a/drivers/block/paride/pg.c	2005-04-21 02:03:13.000000000 +0200
++++ b/drivers/block/paride/pg.c	2005-04-29 09:53:53.000000000 +0200
+@@ -276,7 +276,7 @@ static inline u8 DRIVE(struct pg *dev)
  
- 	p = remove_vm_area((void *) (PAGE_MASK & (unsigned long __force) addr));
- 	if (!p) { 
--		printk("__iounmap: bad address %p\n", addr);
-+		printk(KERN_WARNING "__iounmap: bad address %p\n", addr);
- 		return;
- 	}
+ static void pg_sleep(int cs)
+ {
+-	current->state = TASK_INTERRUPTIBLE;
++	set_current_state(TASK_INTERRUPTIBLE);
+ 	schedule_timeout(cs);
+ }
  
 
---bCsyhTFzCvuiizWE
+--96YOpH+ONegL0A3E
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---bCsyhTFzCvuiizWE--
+--96YOpH+ONegL0A3E--
