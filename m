@@ -1,39 +1,61 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 02 May 2005 06:34:57 +0000
-Subject: [KJ] [PATCH] net/slip: replace schedule_timeout() with
-Message-Id: <20050502063457.GG10173@us.ibm.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 04 May 2005 09:56:53 +0000
+Subject: [KJ] [PATCH] drivers/block/swim3.c: replace direct assignment with
+Message-Id: <20050504095653.GR8647@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66490907043917158=="
+Content-Type: multipart/mixed; boundary="MIdTMoZhcV1D07fI"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050502061446.GB10173@us.ibm.com>
-In-Reply-To: <20050502061446.GB10173@us.ibm.com>
-To: loz@holmes.demon.co.uk, waltje@uwalt.nl.mugnet.org
-Cc: netdev@oss.sgi.com, Kernel-Janitors <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
---===============66490907043917158==
+
+--MIdTMoZhcV1D07fI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Use msleep_interruptible() instead of schedule_timeout() to guarantee
-the task delays as expected.
+description:
+Use set_current_state() instead of direct assignment of
+current->state.
 
---- 2.6.12-rc3/drivers/net/slip.c	2005-03-01 23:38:33.000000000 -0800
-+++ 2.6.12-rc3-dev/drivers/net/slip.c	2005-05-01 20:53:08.000000000 -0700
-@@ -1395,10 +1395,8 @@ static void __exit slip_exit(void)
- 	/* First of all: check for active disciplines and hangup them.
- 	 */
- 	do {
--		if (busy) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ / 10);
--		}
-+		if (busy)
-+			msleep_interruptible(100);
- 
- 		busy = 0;
- 		for (i = 0; i < slip_maxdev; i++) {
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
---===============66490907043917158==
+
+--MIdTMoZhcV1D07fI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="linux-2.6.12-rc3_drivers_block_swim3.c.patch"
+
+diff -urpNX dontdiff a/drivers/block/swim3.c b/drivers/block/swim3.c
+--- a/drivers/block/swim3.c	2005-04-21 02:03:13.000000000 +0200
++++ b/drivers/block/swim3.c	2005-04-29 09:55:09.000000000 +0200
+@@ -832,7 +832,7 @@ static int fd_eject(struct floppy_state 
+ 			break;
+ 		}
+ 		swim3_select(fs, RELAX);
+-		current->state = TASK_INTERRUPTIBLE;
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		schedule_timeout(1);
+ 		if (swim3_readbit(fs, DISK_IN) == 0)
+ 			break;
+@@ -900,7 +900,7 @@ static int floppy_open(struct inode *ino
+ 				break;
+ 			}
+ 			swim3_select(fs, RELAX);
+-			current->state = TASK_INTERRUPTIBLE;
++			set_current_state(TASK_INTERRUPTIBLE);
+ 			schedule_timeout(1);
+ 		}
+ 		if (err == 0 && (swim3_readbit(fs, SEEK_COMPLETE) == 0
+@@ -984,7 +984,7 @@ static int floppy_revalidate(struct gend
+ 		if (signal_pending(current))
+ 			break;
+ 		swim3_select(fs, RELAX);
+-		current->state = TASK_INTERRUPTIBLE;
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		schedule_timeout(1);
+ 	}
+ 	ret = swim3_readbit(fs, SEEK_COMPLETE) == 0
+
+--MIdTMoZhcV1D07fI
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66490907043917158==--
+--MIdTMoZhcV1D07fI--
