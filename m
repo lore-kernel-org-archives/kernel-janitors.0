@@ -1,44 +1,43 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 14 May 2005 18:24:57 +0000
-Subject: [KJ] [PATCH 2/4] sound/oss/es1370: Use the DMA_32BIT_MASK constant
-Message-Id: <20050514182457.GB14294@neon>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 04 May 2005 09:58:03 +0000
+Subject: [KJ] [PATCH] drivers/block/swim_iop.c: replace direct assignment
+Message-Id: <20050504095803.GS8647@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============3752750452596807=="
+Content-Type: multipart/mixed; boundary="Pgaa2uWPnPrfixyx"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============3752750452596807==
+
+--Pgaa2uWPnPrfixyx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+description:
+Use set_current_state() instead of direct assignment of
+current->state.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-diff -urpN -X dontdiff linux-2.6.12-rc4/sound/oss/es1370.c linux-2.6.12-rc4-tk/sound/oss/es1370.c
---- linux-2.6.12-rc4/sound/oss/es1370.c	2005-05-07 21:56:52.000000000 +0200
-+++ linux-2.6.12-rc4-tk/sound/oss/es1370.c	2005-05-07 21:57:01.000000000 +0200
-@@ -156,6 +156,7 @@
- #include <linux/spinlock.h>
- #include <linux/gameport.h>
- #include <linux/wait.h>
-+#include <linux/dma-mapping.h>
- 
- #include <asm/io.h>
- #include <asm/page.h>
-@@ -2569,7 +2570,7 @@ static int __devinit es1370_probe(struct
- 		return -ENODEV;
- 	if (pcidev->irq == 0) 
- 		return -ENODEV;
--	i = pci_set_dma_mask(pcidev, 0xffffffff);
-+	i = pci_set_dma_mask(pcidev, DMA_32BIT_MASK);
- 	if (i) {
- 		printk(KERN_WARNING "es1370: architecture does not support 32bit PCI busmaster DMA\n");
- 		return i;
 
---===============3752750452596807==
+--Pgaa2uWPnPrfixyx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="linux-2.6.12-rc3_drivers_block_swim_iop.c.patch"
+
+diff -urpNX dontdiff a/drivers/block/swim_iop.c b/drivers/block/swim_iop.c
+--- a/drivers/block/swim_iop.c	2005-04-21 02:03:13.000000000 +0200
++++ b/drivers/block/swim_iop.c	2005-04-29 09:55:32.000000000 +0200
+@@ -338,7 +338,7 @@ static int swimiop_eject(struct floppy_s
+ 			err = -EINTR;
+ 			break;
+ 		}
+-		current->state = TASK_INTERRUPTIBLE;
++		set_current_state(TASK_INTERRUPTIBLE);
+ 		schedule_timeout(1);
+ 	}
+ 	release_drive(fs);
+
+--Pgaa2uWPnPrfixyx
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============3752750452596807==--
+--Pgaa2uWPnPrfixyx--
