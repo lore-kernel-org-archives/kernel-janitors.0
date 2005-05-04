@@ -1,49 +1,43 @@
-From: Chuck Short <zulcss@gmail.com>
-Date: Mon, 23 May 2005 22:33:17 +0000
-Subject: [KJ] [PATCH] sa1100fb should use msleep
-Message-Id: <42925A2D.90600@gmail.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 04 May 2005 09:49:31 +0000
+Subject: [KJ] [PATCH] drivers/block/paride/pt.c: replace direct assignment
+Message-Id: <20050504094931.GP8647@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010708010709000309060402"
+Content-Type: multipart/mixed; boundary="d9ADC0YsG2v16Js0"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------010708010709000309060402
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Signed off by: Chuck Short <zulcss@gmail.com>
+--d9ADC0YsG2v16Js0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+description:
+Use set_current_state() instead of direct assignment of
+current->state.
+
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
+--d9ADC0YsG2v16Js0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="linux-2.6.12-rc3_drivers_block_paride_pt.c.patch"
 
---------------010708010709000309060402
-Content-Type: text/x-patch;
- name="sa1100fb-msleep.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="sa1100fb-msleep.patch"
-
-diff -Naur linux-source-2.6.12-2.6.11.92.orig/drivers/video/sa1100fb.c linux-source-2.6.12-2.6.11.92/drivers/video/sa1100fb.c
---- linux-source-2.6.12-2.6.11.92.orig/drivers/video/sa1100fb.c	2005-04-21 06:39:57.000000000 -0400
-+++ linux-source-2.6.12-2.6.11.92/drivers/video/sa1100fb.c	2005-05-18 12:38:32.031397784 -0400
-@@ -1072,14 +1072,13 @@
- 		GPCR |= SHANNON_GPIO_DISP_EN;
- 	}	
+diff -urpNX dontdiff a/drivers/block/paride/pt.c b/drivers/block/paride/pt.c
+--- a/drivers/block/paride/pt.c	2005-04-21 02:03:13.000000000 +0200
++++ b/drivers/block/paride/pt.c	2005-04-29 09:54:07.000000000 +0200
+@@ -383,7 +383,7 @@ static int pt_atapi(struct pt_unit *tape
  
--	set_current_state(TASK_UNINTERRUPTIBLE);
- 	add_wait_queue(&fbi->ctrlr_wait, &wait);
- 
- 	LCSR = 0xffffffff;	/* Clear LCD Status Register */
- 	LCCR0 &= ~LCCR0_LDM;	/* Enable LCD Disable Done Interrupt */
- 	LCCR0 &= ~LCCR0_LEN;	/* Disable LCD Controller */
- 
--	schedule_timeout(20 * HZ / 1000);
-+	msleep(20);
- 	remove_wait_queue(&fbi->ctrlr_wait, &wait);
+ static void pt_sleep(int cs)
+ {
+-	current->state = TASK_INTERRUPTIBLE;
++	set_current_state(TASK_INTERRUPTIBLE);
+ 	schedule_timeout(cs);
  }
  
 
---------------010708010709000309060402
+--d9ADC0YsG2v16Js0
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------010708010709000309060402--
+--d9ADC0YsG2v16Js0--
