@@ -1,49 +1,26 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Wed, 04 May 2005 12:23:24 +0000
-Subject: Re: [KJ] What kernel version to patch against?
-Message-Id: <20050504122324.GP3592@stusta.de>
+From: Kirk True <kernel@kirkandsheila.com>
+Date: Wed, 04 May 2005 05:47:08 +0000
+Subject: [KJ] Work on MODULE_PARM must die?
+Message-Id: <1115185628.3865.6.camel@itchy.kirkandsheila.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============39815079201967762=="
+Content-Type: multipart/mixed; boundary="===============46314831039266924=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1115185303.3865.2.camel@itchy.kirkandsheila.com>
-In-Reply-To: <1115185303.3865.2.camel@itchy.kirkandsheila.com>
 To: kernel-janitors@vger.kernel.org
 
---===============39815079201967762==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============46314831039266924==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 03, 2005 at 10:41:43PM -0700, Kirk True wrote:
+Hi all,
 
-> Hi all,
+Is anyone working on "MODULE_PARM must die"? 2.6.12-rc3-kj.patch.bz2
+doesn't show any matches. Is it kosher to work on?
 
-Hi Kirk,
-
-> There are a couple of trivial items on the TODO I think I can knock out.
-> 
-> Against which version of the kernel do I send in patches? The latest
-> release, the latest pre-release, the latest KJ tree?
-
-either -mm (which is much ahead of Linus' tree) or -kj.
-
-In this case -kj sounds better because it's more likely that you'll see 
-if someone else has already done the same.
-
-> Thanks!
-> Kirk
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+Thanks,
+Kirk
 
 
---===============39815079201967762==
+--===============46314831039266924==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +31,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============39815079201967762==--
+--===============46314831039266924==--
