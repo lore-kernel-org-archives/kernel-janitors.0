@@ -1,97 +1,62 @@
-From: "Kendra L. Brown" <275friedrich@accelweb.com>
-Date: Mon, 09 May 2005 22:02:22 +0000
-Subject: [KJ] Macromedia Studio MX 2004 - very low price
-Message-Id: <3ebd01c554e2$ea5511cd$5281b79b@accelweb.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Mon, 09 May 2005 10:18:29 +0000
+Subject: [KJ] [PATCH] min/max : drivers/sbus/char/aurora.c
+Message-Id: <20050509101829.GL4777@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_38ACAF25.E74CC00A"
+Content-Type: multipart/mixed; boundary="4Ckj6UjgE2iN1+kY"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
-------=_NextPart_000_0000_38ACAF25.E74CC00A
-Content-Type: multipart/alternative;
-    boundary="----------=_1115676609-22801-507"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1115676609-22801-507
-Content-Type: text/plain;
-    charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-     Access all the software you need for wholesale prices!
-Our software is 2-10 times cheaper than sold by our competitors.
+description :
+min/max macros from kernel.h are safe, a lot of handcrafted MIN/MAX are
+not.
 
-A few examples:
-$79.95 Windows XP Professional (Including: Service Pack 2)
-$89.95 Microsoft Office 2003 Professional / $79.95 Office XP Professional
-$99.95 Adobe Photoshop 8.0/CS (Including: ImageReady CS)
-$179.95 Macromedia Studio MX 2004 (Including: Dreamweaver MX + Flash MX
-+ Fireworks MX)
-$79.95 Adobe Acrobat 6.0 Professional
-$69.95 Quark Xpress 6 Passport Multilanguage
-
-Special Offers:
-$89.95 Windows XP Professional + Office XP Professional
-$149.95 Adobe Creative Suite Premium (5 CD)
-$129.95 Adobe Photoshop 7 + Adobe Premiere 7 + Adobe Illustrator 10
-
-All main products from Microsoft, Adobe, Macromedia, Corel, etc.
-And many other... Go visit us at:
-
-http://www.oemdisks.com
-
-Best,
-Kendra L. Brown
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-_____________________________________________________ 
-To stop further mailings, go here: http://www.oemdisks.com/uns.htm
-_____________________________________________________ 
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="remove-MIN-macro-aurora.patch"
 
+diff -urpNX dontdiff a/drivers/sbus/char/aurora.c b/drivers/sbus/char/aurora.c
+--- a/drivers/sbus/char/aurora.c	2005-05-07 07:20:31.000000000 +0200
++++ b/drivers/sbus/char/aurora.c	2005-05-09 12:10:18.022352928 +0200
+@@ -81,10 +81,6 @@ unsigned char irqs[4] = {
+ int irqhit=0;
+ #endif
  
-------------=_1115676609-22801-507
-Content-Type: text/html;
-    charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+-#ifndef MIN
+-#define MIN(a,b) ((a) < (b) ? (a) : (b))
+-#endif
+-
+ static struct tty_driver *aurora_driver;
+ static struct Aurora_board aurora_board[AURORA_NBOARD] = {
+ 	{0,},
+@@ -594,7 +590,7 @@ static void aurora_transmit(struct Auror
+ 					    &bp->r[chip]->r[CD180_TDR]);
+ 				port->COR2 &= ~COR2_ETC;
+ 			}
+-			count = MIN(port->break_length, 0xff);
++			count = min(port->break_length, 0xff);
+ 			sbus_writeb(CD180_C_ESC,
+ 				    &bp->r[chip]->r[CD180_TDR]);
+ 			sbus_writeb(CD180_C_DELAY,
+@@ -1575,7 +1571,7 @@ static int aurora_write(struct tty_struc
+ 	save_flags(flags);
+ 	while (1) {
+ 		cli();
+-		c = MIN(count, MIN(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
++		c = min(count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
+ 				   SERIAL_XMIT_SIZE - port->xmit_head));
+ 		if (c <= 0) {
+ 			restore_flags(flags);
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
-<META content="MSHTML 6.00.2900.2604" name=GENERATOR></HEAD>
-<BODY>
-<CENTER>
-<TABLE cellSpacing=0 cellPadding=0 width=800 align=center border=0>
-  <TBODY>
-  <TR>
-    <TD>Access all the software you need for 
-      wholesale 
-      prices!<BR>Our software is 2-10 times cheaper than sold by 
-      our competitors.<BR><BR>A few examples:<BR>$79.95 Windows XP Professional (Including: Service Pack 
-      2)<BR>$89.95 Microsoft Office 2003 Professional / $79.95 Office 
-      XP Professional<BR>$99.95 Adobe Photoshop 8.0/CS (Including: ImageReady 
-      CS)<BR>$179.95 Macromedia Studio MX 2004 (Including: Dreamweaver MX + 
-      Flash MX + Fireworks MX)<BR>$79.95 Adobe Acrobat 6.0 
-      Professional<BR>$69.95 Quark Xpress 6 Passport Multilanguage<BR><BR>Special Offers:<BR>$89.95 Windows 
-      XP Professional + Office XP Professional<BR>$149.95 Adobe Creative Suite Premium (5 CD)<BR>$129.95 Adobe Photoshop 7 + Adobe 
-      Premiere 7 + Adobe Illustrator 10<BR><BR>All main products from Microsoft, 
-      Adobe, Macromedia, Corel, etc.<BR>And many 
-      other... Go visit us at:<BR><BR><A 
-      href="http://www.oemdisks.com">http://www.oemdisks.com</A><BR><BR>Best,<BR>Kendra L. Brown<BR><BR><BR>_____________________________________________________ 
-      <BR>To stop further mailings, go here: <A 
-      href="http://www.oemdisks.com/uns.htm">http://www.oemdisks.com/uns.htm</A><BR>_____________________________________________________ 
-
-      <P></P></TD></TR></TBODY></TABLE></CENTER></BODY></HTML>
-
-------------=_1115676609-22801-507--
-
-------=_NextPart_000_0000_38ACAF25.E74CC00A
+--4Ckj6UjgE2iN1+kY
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -102,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0000_38ACAF25.E74CC00A--
+--4Ckj6UjgE2iN1+kY--
