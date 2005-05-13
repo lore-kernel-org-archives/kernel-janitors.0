@@ -1,37 +1,26 @@
-From: randy_dunlap <rdunlap@xenotime.net>
-Date: Sat, 28 May 2005 01:37:59 +0000
-Subject: Re: [KJ] [PATCH] net/ipv6/* - compile warning cleanup
-Message-Id: <20050527183759.2ea6dcbd.rdunlap@xenotime.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============76829803118531181=="
+From: Miles Bader <snogglethorpe@gmail.com>
+Date: Fri, 13 May 2005 07:50:25 +0000
+Subject: [KJ] Re: [PATCH] typo patch on v850e_uart.c
+Message-Id: <fc339e4a0505130050283b5291@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4297CA41.60901@gmail.com>
-In-Reply-To: <4297CA41.60901@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============76829803118531181==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+On 5/13/05, Christophe Lucas <clucas@rotomalug.org> wrote:
+> Description:
+> Little patch on typo problem.
 
-On Fri, 27 May 2005 21:32:49 -0400 Chuck Short wrote:
+I'm confused -- your patch appears to simply remove a blank line.
 
-| compile warning cleanup - handle copy_to/from_user error
-| returns
+The blank line it removes is not a typo, it was put there intentionally.
 
-Thanks, but this was just fixed on the netdev mailing list.
-
----
-~Randy
-
---===============76829803118531181==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+-Miles
+-- 
+Do not taunt Happy Fun Ball.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============76829803118531181==--
