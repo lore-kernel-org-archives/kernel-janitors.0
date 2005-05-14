@@ -1,46 +1,48 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 02 May 2005 06:14:46 +0000
-Subject: [KJ] [PATCH] net/3c505: replace schedule_timeout() with msleep()
-Message-Id: <20050502061446.GB10173@us.ibm.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sat, 14 May 2005 18:27:49 +0000
+Subject: [KJ] [PATCH 4/4] sound/oss/via82cxxx_audio: Use the DMA_32BIT_MASK
+Message-Id: <20050514182749.GD14294@neon>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0070249961624342383=="
+Content-Type: multipart/mixed; boundary="===============88922320354289686=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: philb@gnu.org
-Cc: netdev@oss.sgi.com, Kernel-Janitors <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
---===============0070249961624342383==
+--===============88922320354289686==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Use msleep() instead of schedule_timeout() to guarantee the task delays
-as expected.
+Use the DMA_32BIT_MASK constant from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---- 2.6.12-rc3/drivers/net/3c505.c	2005-04-29 11:03:04.000000000 -0700
-+++ 2.6.12-rc3-dev/drivers/net/3c505.c	2005-05-01 20:52:01.000000000 -0700
-@@ -1317,8 +1317,7 @@ static int __init elp_sense(struct net_d
- 	if (orig_HSR & DIR) {
- 		/* If HCR.DIR is up, we pull it down. HSR.DIR should follow. */
- 		outb(0, dev->base_addr + PORT_CONTROL);
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(30*HZ/100);
-+		msleep(300);
- 		if (inb_status(addr) & DIR) {
- 			if (elp_debug > 0)
- 				printk(notfound_msg, 2);
-@@ -1327,8 +1326,7 @@ static int __init elp_sense(struct net_d
- 	} else {
- 		/* If HCR.DIR is down, we pull it up. HSR.DIR should follow. */
- 		outb(DIR, dev->base_addr + PORT_CONTROL);
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(30*HZ/100);
-+		msleep(300);
- 		if (!(inb_status(addr) & DIR)) {
- 			if (elp_debug > 0)
- 				printk(notfound_msg, 3);
+diff -urpN -X dontdiff linux-2.6.12-rc4/sound/oss/via82cxxx_audio.c linux-2.6.12-rc4-tk/sound/oss/via82cxxx_audio.c
+--- linux-2.6.12-rc4/sound/oss/via82cxxx_audio.c	2005-05-07 21:56:52.000000000 +0200
++++ linux-2.6.12-rc4-tk/sound/oss/via82cxxx_audio.c	2005-05-07 21:57:01.000000000 +0200
+@@ -35,6 +35,7 @@
+ #include <linux/smp_lock.h>
+ #include <linux/ioport.h>
+ #include <linux/delay.h>
++#include <linux/dma-mapping.h>
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+ #include <asm/semaphore.h>
+@@ -3391,10 +3392,10 @@ static int __devinit via_init_one (struc
+ 	if (rc)
+ 		goto err_out_disable;
+ 
+-	rc = pci_set_dma_mask(pdev, 0xffffffffULL);
++	rc = pci_set_dma_mask(pdev, DMA_32BIT_MASK);
+ 	if (rc)
+ 		goto err_out_res;
+-	rc = pci_set_consistent_dma_mask(pdev, 0xffffffffULL);
++	rc = pci_set_consistent_dma_mask(pdev, DMA_32BIT_MASK);
+ 	if (rc)
+ 		goto err_out_res;
+ 
 
---===============0070249961624342383==
+--===============88922320354289686==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0070249961624342383==--
+--===============88922320354289686==--
