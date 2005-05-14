@@ -1,71 +1,44 @@
-From: Mail Delivery Subsystem <MAILER-DAEMON@austarnet.com.au>
-Date: Wed, 04 May 2005 22:01:38 +0000
-Subject: [KJ] Returned mail: Over quota
-Message-Id: <200505042201.BXC25612@gol-mas2.austar.net.au>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sat, 14 May 2005 18:24:57 +0000
+Subject: [KJ] [PATCH 2/4] sound/oss/es1370: Use the DMA_32BIT_MASK constant
+Message-Id: <20050514182457.GB14294@neon>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============39063620519161191=="
+Content-Type: multipart/mixed; boundary="===============3752750452596807=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a MIME-encapsulated message
+--===============3752750452596807==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---===============39063620519161191==
-Content-Type: multipart/report; report-type=delivery-status;
-	boundary="BXC25612.1115244098/gol-mas2.austar.net.au"
+Use the DMA_32BIT_MASK constant from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-This is a MIME-encapsulated message
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
---BXC25612.1115244098/gol-mas2.austar.net.au
+diff -urpN -X dontdiff linux-2.6.12-rc4/sound/oss/es1370.c linux-2.6.12-rc4-tk/sound/oss/es1370.c
+--- linux-2.6.12-rc4/sound/oss/es1370.c	2005-05-07 21:56:52.000000000 +0200
++++ linux-2.6.12-rc4-tk/sound/oss/es1370.c	2005-05-07 21:57:01.000000000 +0200
+@@ -156,6 +156,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/gameport.h>
+ #include <linux/wait.h>
++#include <linux/dma-mapping.h>
+ 
+ #include <asm/io.h>
+ #include <asm/page.h>
+@@ -2569,7 +2570,7 @@ static int __devinit es1370_probe(struct
+ 		return -ENODEV;
+ 	if (pcidev->irq == 0) 
+ 		return -ENODEV;
+-	i = pci_set_dma_mask(pcidev, 0xffffffff);
++	i = pci_set_dma_mask(pcidev, DMA_32BIT_MASK);
+ 	if (i) {
+ 		printk(KERN_WARNING "es1370: architecture does not support 32bit PCI busmaster DMA\n");
+ 		return i;
 
-The original message was received at Thu, 5 May 2005 08:00:58 +1000 (EST)
-from gol-mro1.austar.net.au [203.22.8.213]
-
-   ----- The following addresses had permanent delivery errors -----
-<bauerfamily>
-
-
---BXC25612.1115244098/gol-mas2.austar.net.au
-Content-Type: message/delivery-status
-
-Reporting-MTA: dns; gol-mas2.austar.net.au
-Arrival-Date: Thu, 5 May 2005 08:00:58 +1000 (EST)
-X-Message-Diagnostic-Code: smtp; 552 5.2.2 Over quota
-
-Final-Recipient: RFC822; bauerfamily@gol-mas2.austar.net.au
-Action: failed
-Status: 5.2.2
-Remote-MTA: X-Unix; mirapoint
-Diagnostic-Code: smtp; 552 5.2.2 Over quota
-Last-Attempt-Date: Thu, 5 May 2005 08:01:38 +1000 (EST)
-
---BXC25612.1115244098/gol-mas2.austar.net.au
-Content-Type: message/rfc822
-
-Received: from gol-mro1.austar.net.au (gol-mro1.austar.net.au [203.22.8.213])
-	by gol-mas2.austar.net.au (MOS 3.4.6-GR) with ESMTP id BXC25455;
-	Thu, 5 May 2005 08:00:58 +1000 (EST)
-Received: from xswiguv.org (d220-236-27-236.dsl.nsw.optusnet.com.au
-	[220.236.27.236]) by gol-mro1.austar.net.au (MOS 3.4.6-GR)
-	with SMTP id CNN30434; Thu, 5 May 2005 08:00:41 +1000 (EST)
-From: kernel-janitors@lists.osdl.org
-To: robste@austarnet.com.au
-Date: Wed, 04 May 2005 21:47:37 GMT
-Subject: Re:
-Importance: Normal
-X-Mailer: AnonMail_Version 3.19
-X-Priority: 3 (Normal)
-Message-ID: <ba0aa7.1084d7a3a@lists.osdl.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="MIRAPOINT_PART1_42794619"
-X-Mirapoint-Virus: VIRUSDELETED; host=gol-mro1.austar.net.au; attachment=[2.2];
-	virus=W32/Sober-N
-X-Junkmail-Status: score=27/50, host=gol-mas2.austarnet.com.au
-
-
-
-
-
---BXC25612.1115244098/gol-mas2.austar.net.au
+--===============3752750452596807==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,6 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---BXC25612.1115244098/gol-mas2.austar.net.au--
-
---===============39063620519161191==--
+--===============3752750452596807==--
