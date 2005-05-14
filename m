@@ -1,29 +1,30 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 26 May 2005 21:07:36 +0000
-Subject: Re: [KJ] [PATCH] Fix gcc4 warning,
-Message-Id: <200505262307.37233.arnd@arndb.de>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 14 May 2005 12:11:54 +0000
+Subject: [KJ] Re: 2.6.12-rc4-kj (dma_mask-drivers_block_umem.patch)
+Message-Id: <200505141611.54373.adobriyan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <428E3224.8030307@cs.pdx.edu>
-In-Reply-To: <428E3224.8030307@cs.pdx.edu>
+References: <20050513165729.GA31208@nd47.coderock.org>
+In-Reply-To: <20050513165729.GA31208@nd47.coderock.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Domen Puncer <domen@coderock.org>
+Cc: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Middeweken 25 Mai 2005 21:18, Jesse Millan wrote:
-> Your right, it could go either way. Arnd Bergmann had posted earlier and
-> said that it would be better to make the change in the function itself.
-> I took that advice.
+On Friday 13 May 2005 20:57, Domen Puncer wrote:
+> --- quilt.orig/drivers/block/umem.c
+> +++ quilt/drivers/block/umem.c
 
-I think what Mark was suggesting is to initialize the parameters at the
-start of the inner function (asn1_length_decode), which makes perfect
-sense to me, at least in this particular case.
+> -	if (pci_set_dma_mask(dev, 0xffffffffffffffffLL) &&
+> -	    !pci_set_dma_mask(dev, 0xffffffffLL)) {
+	   ^^^
+> +	if (pci_set_dma_mask(dev, DMA_64BIT_MASK) &&
+> +	    !pci_set_dma_mask(dev, DMA_32BIT_MASK)) {
+	   ^^^
+>  		printk(KERN_WARNING "MM%d: NO suitable DMA found\n",num_cards);
+>  		return  -ENOMEM;
 
-What you should not do is initialize it in the calling function, because
-then you defeat gcc's ability to warn you about real uninitialized uses
-of the local variables in that function.
-
-	Arnd <><
+A typo?
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
