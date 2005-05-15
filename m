@@ -1,44 +1,39 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 14 May 2005 18:21:45 +0000
-Subject: [KJ] [PATCH 1/4] sound/oss/cmpci: Use the DMA_32BIT_MASK constant
-Message-Id: <20050514182145.GA14294@neon>
+Date: Sun, 15 May 2005 18:21:27 +0000
+Subject: [KJ] [UPDATE PATCH 2/3] Remove duplicate file in
+Message-Id: <20050515182127.GD792@nuerscht.ch>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63482243834335095=="
+Content-Type: multipart/mixed; boundary="===============33932143064361142=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============63482243834335095==
+--===============33932143064361142==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Use the DMA_32BIT_MASK constant from dma-mapping.h
-when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
-See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+wanpipe.txt and wan-router.txt in Documentation/networking
+contain the exact same information (diff between the two shows no
+difference). This patch removes the reference to this document in
+Documentation/networking/00-INDEX as pointed out by Randy Dunlap.
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-diff -urpN -X dontdiff linux-2.6.12-rc4/sound/oss/cmpci.c linux-2.6.12-rc4-tk/sound/oss/cmpci.c
---- linux-2.6.12-rc4/sound/oss/cmpci.c	2005-05-07 21:56:52.000000000 +0200
-+++ linux-2.6.12-rc4-tk/sound/oss/cmpci.c	2005-05-07 21:57:01.000000000 +0200
-@@ -123,6 +123,7 @@
- #include <linux/smp_lock.h>
- #include <linux/bitops.h>
- #include <linux/wait.h>
-+#include <linux/dma-mapping.h>
- 
- #include <asm/io.h>
- #include <asm/page.h>
-@@ -3058,7 +3059,7 @@ static int __devinit cm_probe(struct pci
- 		return -ENODEV;
- 	if (pcidev->irq == 0)
- 		return -ENODEV;
--	i = pci_set_dma_mask(pcidev, 0xffffffff);
-+	i = pci_set_dma_mask(pcidev, DMA_32BIT_MASK);
- 	if (i) {
- 		printk(KERN_WARNING "cmpci: architecture does not support 32bit PCI busmaster DMA\n");
- 		return i;
+diff -urpN -X dontdiff linux-2.6.12-rc4/Documentation/networking/00-INDEX linux-2.6.12-rc4-tk/Documentation/networking/00-INDEX
+--- linux-2.6.12-rc4/Documentation/networking/00-INDEX	2005-03-02 08:38:18.000000000 +0100
++++ linux-2.6.12-rc4-tk/Documentation/networking/00-INDEX	2005-05-15 20:07:39.349701112 +0200
+@@ -114,9 +114,7 @@ tuntap.txt
+ vortex.txt
+ 	- info on using 3Com Vortex (3c590, 3c592, 3c595, 3c597) Ethernet cards.
+ wan-router.txt
+-	- Wan router documentation
+-wanpipe.txt
+-	- WANPIPE(tm) Multiprotocol WAN Driver for Linux WAN Router
++	- WAN router documentation
+ wavelan.txt
+ 	- AT&T GIS (nee NCR) WaveLAN card: An Ethernet-like radio transceiver
+ x25.txt
 
---===============63482243834335095==
+--===============33932143064361142==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============63482243834335095==--
+--===============33932143064361142==--
