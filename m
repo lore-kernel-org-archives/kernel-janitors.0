@@ -1,41 +1,34 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Thu, 26 May 2005 17:29:57 +0000
-Subject: Re: [KJ] [PATCH 2.6.11.10] arch/arm: fixes static strings declaration
-Message-Id: <20050526142957.0aaa7f49.rnsanchez@terra.com.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Mon, 16 May 2005 09:08:16 +0000
+Subject: [KJ] [REJECT] : [PATCH] sound/oss/cmpci.c : Use the DMA_32BIT_MASK
+Message-Id: <20050516090815.GF6103@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81598615755664061=="
+Content-Type: multipart/mixed; boundary="===============88221750772837071=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050526120724.5f1552fb.rnsanchez@terra.com.br>
-In-Reply-To: <20050526120724.5f1552fb.rnsanchez@terra.com.br>
 To: kernel-janitors@vger.kernel.org
 
---===============81598615755664061==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============88221750772837071==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Quoting  Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Sent on  Thu, 26 May 2005 12:07:24 -0300
+Christophe Lucas (clucas@rotomalug.org) wrote:
+> Use the DMA_32BIT_MASK constant from dma-mapping.h
+> when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+> See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
+> 
+> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+> 
 
-> o Fixes strings declaration from char *str = ""; to char str[] = "";,
->   avoiding the extra pointer, as noted by Jeff Garzik.  The strings'
->   contents are not changed after declared.
+Wow !! Sorry I must be drunk on this monday morning.
+Sorry Tobias, you have already send this patch here.
 
-Domen pointed me that this patch is likely to be incorrect, and in fact is.
-
-Please drop this, I'll try to fix this and then submit a new patch.
-
-Sorry for the noise.
-
--- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
-
-    How long a minute is depends on which 
-    side of the bathroom door you're on.
+Have a nice day,
 
 
---===============81598615755664061==
+	~Christophe
+
+
+--===============88221750772837071==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81598615755664061==--
+--===============88221750772837071==--
