@@ -1,50 +1,51 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 15 May 2005 18:10:37 +0000
-Subject: Re: [KJ] [PATCH] Remove duplicate file in Documentation/networking
-Message-Id: <20050515181037.GB792@nuerscht.ch>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Mon, 16 May 2005 08:59:02 +0000
+Subject: [KJ] [PATCH] sound/pci/mixart/mixart.c : Use the DMA_32BIT_MASK
+Message-Id: <20050516085902.GE6103@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94596054584191513=="
+Content-Type: multipart/mixed; boundary="i9LlY+UWpKt15+FH"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050515092101.GA792@nuerscht.ch>
-In-Reply-To: <20050515092101.GA792@nuerscht.ch>
 To: kernel-janitors@vger.kernel.org
 
---===============94596054584191513==
+
+--i9LlY+UWpKt15+FH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, May 15, 2005 at 10:21:11AM -0700, randy_dunlap wrote:
-> On Sun, 15 May 2005 11:21:01 +0200 Tobias Klauser wrote:
-> 
-> | The files wanpipe.txt and wan-router.txt in Documentation/networking
-> | contain the exact same information (diff between the two shows no
-> | difference). This patch removes wanpipe.txt since the title of the
-> | document is "Linux WAN Router Utilities Package" and therefor the
-> | name wan-router.txt is more appropriate.
-> | 
-> | Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-> | 
-> | diff -urpN -X dontdiff linux-2.6.12-rc4/Documentation/networking/wanpipe.txt linux-2.6.12-rc4-tk/Documentation/networking/wanpipe.txt
-> | --- linux-2.6.12-rc4/Documentation/networking/wanpipe.txt	2005-03-02 08:37:49.000000000 +0100
-> | +++ linux-2.6.12-rc4-tk/Documentation/networking/wanpipe.txt	1970-01-01 01:00:00.000000000 +0100
-> 
-> 
-> then you also need to do something about the file:
-> linux/Documentation/networking/00-INDEX, which contains:
-> 
-> wan-router.txt
-> 	- Wan router documentation
-> wanpipe.txt
-> 	- WANPIPE(tm) Multiprotocol WAN Driver for Linux WAN Router
+Use the DMA_32BIT_MASK constant from dma-mapping.h
+when calling pci_set_dma_mask() or pci_set_consistent_dma_mask()
+See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
-Thanks for catching this. Just to be sure I grepped the tree for
-wanpipe.txt and found an appearance in drivers/net/wan/Kconfig
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-I'll send split-up patches in reply to this message.
 
-Thanks, Tobias
+--i9LlY+UWpKt15+FH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="linux-2.6.12-rc4_sound_pci_mixart_mixart.c.patch"
 
---===============94596054584191513==
+diff -urpNX dontdiff a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
+--- a/sound/pci/mixart/mixart.c	2005-05-07 07:20:31.000000000 +0200
++++ b/sound/pci/mixart/mixart.c	2005-05-16 10:28:04.998391784 +0200
+@@ -26,6 +26,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/pci.h>
+ #include <linux/moduleparam.h>
++#include <linux/dma-mapping.h>
+ #include <sound/core.h>
+ #include <sound/initval.h>
+ #include <sound/info.h>
+@@ -1284,7 +1285,7 @@ static int __devinit snd_mixart_probe(st
+ 	pci_set_master(pci);
+ 
+ 	/* check if we can restrict PCI DMA transfers to 32 bits */
+-	if (pci_set_dma_mask(pci, 0xffffffff) < 0) {
++	if (pci_set_dma_mask(pci, DMA_32BIT_MASK) < 0) {
+ 		snd_printk(KERN_ERR "architecture does not support 32bit PCI busmaster DMA\n");
+ 		pci_disable_device(pci);
+ 		return -ENXIO;
+
+--i9LlY+UWpKt15+FH
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94596054584191513==--
+--i9LlY+UWpKt15+FH--
