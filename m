@@ -1,51 +1,55 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Tue, 03 May 2005 14:08:47 +0000
-Subject: [KJ] [PATCH] drivers/acpi/osl.c : replace direct assignment with
-Message-Id: <20050503140847.GB26332@rhum.iomeda.fr>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Mon, 16 May 2005 17:15:11 +0000
+Subject: [KJ] [PATCH] Use pci_set_dma_mask() instead of direct assignment of
+Message-Id: <20050516171511.GA19983@nuerscht.ch>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="vtzGhvizbBRQ85DL"
+Content-Type: multipart/mixed; boundary="===============31131402186817736=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: akpm@osdl.org, netdev@oss.sgi.com, jgarzik@pobox.com
 
-
---vtzGhvizbBRQ85DL
+--===============31131402186817736==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-description:
-Use set_current_state() instead of direct assignment of
-current->state.
+The amd8111e driver directly assigns the DMA mask to the dma_mask
+member of the struct pci_dev instead of using pci_set_dma_mask(). This
+makes the call to pci_dma_supported() redundant as pci_set_dma_mask()
+does this check.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+I do not own this device so I only compile-tested this patch.
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="linux-2.6.12-rc3_drivers_acpi_osl.c.patch"
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-diff -urpNX dontdiff a/drivers/acpi/osl.c b/drivers/acpi/osl.c
---- a/drivers/acpi/osl.c	2005-04-21 02:03:13.000000000 +0200
-+++ b/drivers/acpi/osl.c	2005-04-29 09:46:46.000000000 +0200
-@@ -317,7 +317,7 @@ acpi_os_remove_interrupt_handler(u32 irq
- void
- acpi_os_sleep(acpi_integer ms)
- {
--	current->state = TASK_INTERRUPTIBLE;
-+	set_current_state(TASK_INTERRUPTIBLE);
- 	schedule_timeout(((signed long) ms * HZ) / 1000);
- }
- EXPORT_SYMBOL(acpi_os_sleep);
-@@ -942,7 +942,7 @@ acpi_os_wait_semaphore(
+diff -urpN -X dontdiff linux-2.6.12-rc4/drivers/net/amd8111e.c linux-2.6.12-rc4~dma_mask/drivers/net/amd8111e.c
+--- linux-2.6.12-rc4/drivers/net/amd8111e.c	2005-05-07 21:53:51.000000000 +0200
++++ linux-2.6.12-rc4~dma_mask/drivers/net/amd8111e.c	2005-05-16 19:11:30.349802984 +0200
+@@ -87,6 +87,7 @@ Revision History:
+ #include <linux/if_vlan.h>
+ #include <linux/ctype.h>	
+ #include <linux/crc32.h>
++#include <linux/dma-mapping.h>
  
- 			ret = down_trylock(sem);
- 			for (i = timeout; (i > 0 && ret < 0); i -= quantum_ms) {
--				current->state = TASK_INTERRUPTIBLE;
-+				set_current_state(TASK_INTERRUPTIBLE);
- 				schedule_timeout(1);
- 				ret = down_trylock(sem);
- 			}
+ #include <asm/system.h>
+ #include <asm/io.h>
+@@ -2002,12 +2003,11 @@ static int __devinit amd8111e_probe_one(
+ 	}
+ 
+ 	/* Initialize DMA */
+-	if(!pci_dma_supported(pdev, 0xffffffff)){
++	if (pci_set_dma_mask(pdev, DMA_32BIT_MASK) < 0) {
+ 		printk(KERN_ERR "amd8111e: DMA not supported,"
+ 			"exiting.\n");
+-		goto  err_free_reg;
+-	} else
+-		pdev->dma_mask = 0xffffffff;
++		goto err_free_reg;
++	}
+ 	
+ 	reg_addr = pci_resource_start(pdev, 0);
+ 	reg_len = pci_resource_len(pdev, 0);
 
---vtzGhvizbBRQ85DL
+--===============31131402186817736==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---vtzGhvizbBRQ85DL--
+--===============31131402186817736==--
