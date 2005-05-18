@@ -1,13 +1,15 @@
 From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 14 May 2005 18:31:43 +0000
+Date: Wed, 18 May 2005 18:18:43 +0000
 Subject: [KJ] [PATCH] sound/pci/ca0106: Use the DMA_32BIT_MASK constant
-Message-Id: <20050514183143.GE14294@neon>
+Message-Id: <20050518181843.GC784@mail.nuerscht.ch>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95646460755938567=="
+Content-Type: multipart/mixed; boundary="===============014868892676041412=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050514183143.GE14294@neon>
+In-Reply-To: <20050514183143.GE14294@neon>
 To: kernel-janitors@vger.kernel.org
 
---===============95646460755938567==
+--===============014868892676041412==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -17,9 +19,9 @@ See http://marc.theaimsgroup.com/?t=108001993000001&r=1&w=2 for details
 
 Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-diff -urpN -X dontdiff linux-2.6.12-rc4/sound/pci/ca0106/ca0106_main.c linux-2.6.12-rc4-tk/sound/pci/ca0106/ca0106_main.c
+diff -urpN -X dontdiff linux-2.6.12-rc4/sound/pci/ca0106/ca0106_main.c linux-2.6.12-rc4~dma_mask/sound/pci/ca0106/ca0106_main.c
 --- linux-2.6.12-rc4/sound/pci/ca0106/ca0106_main.c	2005-05-07 21:56:52.000000000 +0200
-+++ linux-2.6.12-rc4-tk/sound/pci/ca0106/ca0106_main.c	2005-05-07 21:57:01.000000000 +0200
++++ linux-2.6.12-rc4~dma_mask/sound/pci/ca0106/ca0106_main.c	2005-05-16 12:40:21.000000000 +0200
 @@ -136,6 +136,7 @@
  #include <linux/pci.h>
  #include <linux/slab.h>
@@ -40,7 +42,7 @@ diff -urpN -X dontdiff linux-2.6.12-rc4/sound/pci/ca0106/ca0106_main.c linux-2.6
  		pci_disable_device(pci);
  		return -ENXIO;
 
---===============95646460755938567==
+--===============014868892676041412==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95646460755938567==--
+--===============014868892676041412==--
