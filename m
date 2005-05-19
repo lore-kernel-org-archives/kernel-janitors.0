@@ -1,43 +1,37 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 04 May 2005 10:00:44 +0000
-Subject: [KJ] [PATCH] drivers/cdrom/sbpcd.c: replace direct assignment with
-Message-Id: <20050504100044.GT8647@rhum.iomeda.fr>
+From: Jason Corcoran <jason@jcorcoran.net>
+Date: Thu, 19 May 2005 14:57:58 +0000
+Subject: [KJ] Newbie setup question.
+Message-Id: <20050519145758.GA2593@mail.jcorcoran.homelinux.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="PpAOPzA3dXsRhoo+"
+Content-Type: multipart/mixed; boundary="===============87347852777310364=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---PpAOPzA3dXsRhoo+
+--===============87347852777310364==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-description:
-Use set_current_state() instead of direct assignment of
-current->state.
+Hi,
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Your site was recommended to me by a member of my LUG (Irish LUG). I would like to help out so I have one or tw oquestions . I have looked through the archives and could not find the information, asked on the irc also.
 
+I take it I should check out a version of the 2.6 kernel and the latest KJ patch. Apply these patches and look at the todo list?
 
---PpAOPzA3dXsRhoo+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="linux-2.6.12-rc3_drivers_cdrom_sbpcd.c.patch"
+If so,
 
-diff -urpNX dontdiff a/drivers/cdrom/sbpcd.c b/drivers/cdrom/sbpcd.c
---- a/drivers/cdrom/sbpcd.c	2005-04-21 02:03:13.000000000 +0200
-+++ b/drivers/cdrom/sbpcd.c	2005-04-29 09:56:01.000000000 +0200
-@@ -830,7 +830,7 @@ static void mark_timeout_audio(u_long i)
- static void sbp_sleep(u_int time)
- {
- 	sti();
--	current->state = TASK_INTERRUPTIBLE;
-+	set_current_state(TASK_INTERRUPTIBLE);
- 	schedule_timeout(time);
- 	sti();
- }
+What version of the kernel are we looking at the meoment?
+What Patch should I apply?
 
---PpAOPzA3dXsRhoo+
+Thanks
+Jason.
+-- 
+jason@jcorcoran.net
+
+Fortune:
+A working program is one that has only unobserved bugs. 
+	-- Murphy's Laws of Computer Programming
+
+--===============87347852777310364==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---PpAOPzA3dXsRhoo+--
+--===============87347852777310364==--
