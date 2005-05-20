@@ -1,47 +1,50 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Wed, 04 May 2005 12:28:18 +0000
-Subject: Re: [KJ] Work on MODULE_PARM must die?
-Message-Id: <20050504122818.GQ3592@stusta.de>
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Fri, 20 May 2005 18:53:24 +0000
+Subject: [KJ] [PATCH] Fix gcc4 warning,
+Message-Id: <428E3224.8030307@cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15481979839455384=="
+Content-Type: multipart/mixed; boundary="------------000803070103080802020506"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1115185628.3865.6.camel@itchy.kirkandsheila.com>
-In-Reply-To: <1115185628.3865.6.camel@itchy.kirkandsheila.com>
 To: kernel-janitors@vger.kernel.org
 
---===============15481979839455384==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, May 03, 2005 at 10:47:08PM -0700, Kirk True wrote:
-
-> Hi all,
-
-Hi Kirk,
-
-> Is anyone working on "MODULE_PARM must die"? 2.6.12-rc3-kj.patch.bz2
-> doesn't show any matches. Is it kosher to work on?
-
--mm contains several patches that remove MODULE_PARM.
-
-MODULE_PARM removal is a relative active task on linux-kernel and IMHO a 
-bad starting point for you.
-
-> Thanks,
-> Kirk
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+This is a multi-part message in MIME format.
+--------------000803070103080802020506
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
 
---===============15481979839455384==
+This patch eliminates the warning that is generated when passing an
+uninitialized variable to a function, and in that function it 'looks'
+like you may read the contents.
+
+In this case, the address of a local variable 'idx' is passed to the
+function bvec_alloc_bs(). Inside bvec_alloc_bs(), it is possible that
+no value will be assigned to idx, in which case the function immediately
+returns null and does not go on to read it. Human eyes can see that its
+safe. Initializing it doen not hurt and it gets rid of the compiler warning.
+
+--------------000803070103080802020506
+Content-Type: text/plain; x-mac-type="0"; x-mac-creator="0";
+ name="patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="patch"
+
+Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+
+--- linux-2.6.12-rc4/fs/bio.c~	2005-05-20 11:24:39.163613256 -0700
++++ linux-2.6.12-rc4/fs/bio.c	2005-05-20 11:25:35.242185201 -0700
+@@ -159,7 +159,7 @@ struct bio *bio_alloc_bioset(unsigned in
+
+ 		bio_init(bio);
+ 		if (likely(nr_iovecs)) {
+-			unsigned long idx;
++			unsigned long idx = 0;
+
+ 			bvl = bvec_alloc_bs(gfp_mask, nr_iovecs, &idx, bs);
+ 			if (unlikely(!bvl)) {
+
+--------------000803070103080802020506
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15481979839455384==--
+--------------000803070103080802020506--
