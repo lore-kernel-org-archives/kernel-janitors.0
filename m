@@ -1,7 +1,7 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Fri, 20 May 2005 19:41:49 +0000
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sun, 22 May 2005 09:25:13 +0000
 Subject: Re: [KJ] [PATCH] Fix gcc4 warning,
-Message-Id: <200505202341.49477.adobriyan@gmail.com>
+Message-Id: <200505221125.13999.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <428E3224.8030307@cs.pdx.edu>
 In-Reply-To: <428E3224.8030307@cs.pdx.edu>
@@ -10,18 +10,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Friday 20 May 2005 22:53, Jesse Millan wrote:
-> This patch eliminates the warning that is generated when passing an
-> uninitialized variable to a function, and in that function it 'looks'
-> like you may read the contents.
+On Freedag 20 Mai 2005 21:51, Jesse Millan wrote:
 > 
-> In this case, the address of a local variable 'idx' is passed to the
-> function bvec_alloc_bs(). Inside bvec_alloc_bs(), it is possible that
-> no value will be assigned to idx, in which case the function immediately
-> returns null and does not go on to read it. Human eyes can see that its
-> safe.
+> So, the compiler should be able to tell that either one of the two cases
+> apply?
+> 
+> a: an assignment statement will be done on idx before its ever read
+> 
+> or
+> 
+> b: no assignment statement, control flow will never allow idx to be read
 
-I think this should go straight to http://gcc.gnu.org/bugzilla/enter_bug.cgi
+gcc is normally pretty good at detecting this. Since gcc-4.0, it 
+appears to do more checking inside inline functions, where older
+versions just assumed that a variable is initialized after a reference
+to it is passed to an inline function.
+
+I'd suggest fixing the inline function to always do this instead of
+fixing the caller. After all, this needs to be fixed in the kernel,
+even if future gcc versions become smarter about it gcc-4.0 will
+continue to be used.
+
+	Arnd <><
+
+--- a/fs/bio.c	2005-03-29 03:42:37 +02:00
++++ b/fs/bio.c	2005-05-22 11:22:17 +02:00
+@@ -90,6 +90,7 @@
+ 		case  65 ... 128: *idx = 4; break;
+ 		case 129 ... BIO_MAX_PAGES: *idx = 5; break;
+ 		default:
++			*idx = 0;
+ 			return NULL;
+ 	}
+ 	/*
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
