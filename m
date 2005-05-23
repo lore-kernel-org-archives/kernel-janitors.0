@@ -1,14 +1,16 @@
 From: Chuck Short <zulcss@gmail.com>
-Date: Mon, 23 May 2005 22:30:25 +0000
+Date: Mon, 23 May 2005 22:30:53 +0000
 Subject: [KJ] [PATCH] - pxafb should use msleep
-Message-Id: <42925981.7020501@gmail.com>
+Message-Id: <4292599D.1090408@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080206000306070000090905"
+Content-Type: multipart/mixed; boundary="------------090305010501090802040203"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <42925981.7020501@gmail.com>
+In-Reply-To: <42925981.7020501@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------080206000306070000090905
+--------------090305010501090802040203
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -19,7 +21,7 @@ This patch changes pxafb to use msleep.
 Signed-of-by: Chuck Short <zulcss@gmail.com>
 
 
---------------080206000306070000090905
+--------------090305010501090802040203
 Content-Type: text/x-patch;
  name="pxafb-msleep.patch"
 Content-Transfer-Encoding: 7bit
@@ -47,7 +49,7 @@ diff -Naur linux-source-2.6.12-2.6.11.92.orig/drivers/video/pxafb.c linux-source
  
 
 
---------------080206000306070000090905
+--------------090305010501090802040203
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------080206000306070000090905--
+--------------090305010501090802040203--
