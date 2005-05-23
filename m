@@ -1,43 +1,49 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 04 May 2005 10:02:01 +0000
-Subject: [KJ] [PATCH] drivers/char/hw_random.c: replace direct assignment
-Message-Id: <20050504100201.GU8647@rhum.iomeda.fr>
+From: Chuck Short <zulcss@gmail.com>
+Date: Mon, 23 May 2005 22:33:17 +0000
+Subject: [KJ] [PATCH] sa1100fb should use msleep
+Message-Id: <42925A2D.90600@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8/UBlNHSEJa6utmr"
+Content-Type: multipart/mixed; boundary="------------010708010709000309060402"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------010708010709000309060402
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
---8/UBlNHSEJa6utmr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-description:
-Use set_current_state() instead of direct assignment of
-current->state.
-
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed off by: Chuck Short <zulcss@gmail.com>
 
 
---8/UBlNHSEJa6utmr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="linux-2.6.12-rc3_drivers_char_hw_random.c.patch"
 
-diff -urpNX dontdiff a/drivers/char/hw_random.c b/drivers/char/hw_random.c
---- a/drivers/char/hw_random.c	2005-04-21 02:03:13.000000000 +0200
-+++ b/drivers/char/hw_random.c	2005-04-29 10:03:50.000000000 +0200
-@@ -514,7 +514,7 @@ static ssize_t rng_dev_read (struct file
+--------------010708010709000309060402
+Content-Type: text/x-patch;
+ name="sa1100fb-msleep.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="sa1100fb-msleep.patch"
+
+diff -Naur linux-source-2.6.12-2.6.11.92.orig/drivers/video/sa1100fb.c linux-source-2.6.12-2.6.11.92/drivers/video/sa1100fb.c
+--- linux-source-2.6.12-2.6.11.92.orig/drivers/video/sa1100fb.c	2005-04-21 06:39:57.000000000 -0400
++++ linux-source-2.6.12-2.6.11.92/drivers/video/sa1100fb.c	2005-05-18 12:38:32.031397784 -0400
+@@ -1072,14 +1072,13 @@
+ 		GPCR |= SHANNON_GPIO_DISP_EN;
+ 	}	
  
- 		if(need_resched())
- 		{
--			current->state = TASK_INTERRUPTIBLE;
-+			set_current_state(TASK_INTERRUPTIBLE);
- 			schedule_timeout(1);
- 		}
- 		else
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	add_wait_queue(&fbi->ctrlr_wait, &wait);
+ 
+ 	LCSR = 0xffffffff;	/* Clear LCD Status Register */
+ 	LCCR0 &= ~LCCR0_LDM;	/* Enable LCD Disable Done Interrupt */
+ 	LCCR0 &= ~LCCR0_LEN;	/* Disable LCD Controller */
+ 
+-	schedule_timeout(20 * HZ / 1000);
++	msleep(20);
+ 	remove_wait_queue(&fbi->ctrlr_wait, &wait);
+ }
+ 
 
---8/UBlNHSEJa6utmr
+--------------010708010709000309060402
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---8/UBlNHSEJa6utmr--
+--------------010708010709000309060402--
