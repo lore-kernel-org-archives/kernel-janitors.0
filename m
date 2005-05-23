@@ -1,48 +1,34 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Sun, 22 May 2005 09:25:13 +0000
+Date: Mon, 23 May 2005 01:05:26 +0000
 Subject: Re: [KJ] [PATCH] Fix gcc4 warning,
-Message-Id: <200505221125.13999.arnd@arndb.de>
+Message-Id: <200505230305.27341.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <428E3224.8030307@cs.pdx.edu>
 In-Reply-To: <428E3224.8030307@cs.pdx.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Freedag 20 Mai 2005 21:51, Jesse Millan wrote:
-> 
-> So, the compiler should be able to tell that either one of the two cases
-> apply?
-> 
-> a: an assignment statement will be done on idx before its ever read
-> 
-> or
-> 
-> b: no assignment statement, control flow will never allow idx to be read
+On S=FCnndag 22 Mai 2005 20:33, Jesse Millan wrote:
+> Its not easy to reproduce this warning in a simple program. And, I am
+> not sure that it is a bug on gcc4's part. It looks like gcc4 emits the
+> warning when it cannot prove beyond a shadow of doubt that the variable
+> is initialized before use.
 
-gcc is normally pretty good at detecting this. Since gcc-4.0, it 
-appears to do more checking inside inline functions, where older
-versions just assumed that a variable is initialized after a reference
-to it is passed to an inline function.
+Right. The behavior of gcc4 makes perfect sense, I would not call it a
+bug at all, even though it could still become smarter.
+=20
+> In an effort to cut down on warnings, should these be fixed? It can go
+> either way, the compiler should be smart enough and maybe it will be
+> someday, or, do the initialization to get rid of a bunch of warnings.
 
-I'd suggest fixing the inline function to always do this instead of
-fixing the caller. After all, this needs to be fixed in the kernel,
-even if future gcc versions become smarter about it gcc-4.0 will
-continue to be used.
+As I said, they should be fixed in the kernel, the released compiler
+won't go away any more so it doesn't matter if future compilers are
+smarter than the current one.
 
 	Arnd <><
 
---- a/fs/bio.c	2005-03-29 03:42:37 +02:00
-+++ b/fs/bio.c	2005-05-22 11:22:17 +02:00
-@@ -90,6 +90,7 @@
- 		case  65 ... 128: *idx = 4; break;
- 		case 129 ... BIO_MAX_PAGES: *idx = 5; break;
- 		default:
-+			*idx = 0;
- 			return NULL;
- 	}
- 	/*
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
