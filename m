@@ -1,53 +1,48 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 04 May 2005 11:49:48 +0000
-Subject: [KJ] [PATCH] drivers/ide/ide-tape.c: replace by msleep_interruptible
-Message-Id: <20050504114948.GC8647@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="bEjdSXxHv0Az5++U"
+From: Mark Hollomon <markhollomon@comcast.net>
+Date: Wed, 25 May 2005 19:07:26 +0000
+Subject: Re: [KJ] [PATCH] Fix gcc4 warning, def & len may be used uninitialized
+Message-Id: <4294CCEE.70907@comcast.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050504100540.GX8647@rhum.iomeda.fr>
-In-Reply-To: <20050504100540.GX8647@rhum.iomeda.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Jesse Millan wrote:
+> 
+> --- linux-2.6.12-rc4/fs/cifs/asn1.c~	2005-05-24 22:25:21.436866468 -0700
+> +++ linux-2.6.12-rc4/fs/cifs/asn1.c	2005-05-24 22:49:43.744939729 -0700
+> @@ -160,12 +160,18 @@ asn1_length_decode(struct asn1_ctx *ctx,
+>  {
+>  	unsigned char ch, cnt;
+> 
+> -	if (!asn1_octet_decode(ctx, &ch))
+> +	if (!asn1_octet_decode(ctx, &ch)) {
+> +		/* Function would have returned without initializing 'def' and 'len' */
+> +		*def = 0;
+> +		*len = 0;
+>  		return 0;
+> +	}
+> 
+> -	if (ch = 0x80)
+> +	if (ch = 0x80) {
+>  		*def = 0;
+> -	else {
+> +		/* Function would have returned without initializing 'len' */
+> +		*len = 0;
+> +	} else {
+>  		*def = 1;
+> 
+>  		if (ch < 0x80)
+> 
+> 
 
---bEjdSXxHv0Az5++U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Wouldn't it be better to just initialize def and len at the top of the function 
+and be done? Or does that violate some kernel style preference?
 
-description:
-Use msleep_interruptible() instead of schedule_timeout() to guarantee
-the task delays as expected.
-
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-
---bEjdSXxHv0Az5++U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=patch-msleep_interruptible
-
-Index: b/drivers/ide/ide-tape.c
-===================================================================
---- b.orig/drivers/ide/ide-tape.c	2005-05-04 12:29:30.528765848 +0200
-+++ b/drivers/ide/ide-tape.c	2005-05-04 13:37:45.331261248 +0200
-@@ -2903,8 +2903,7 @@
- 		} else if (!(tape->sense_key == 2 && tape->asc == 4 &&
- 			     (tape->ascq == 1 || tape->ascq == 8)))
- 			return -EIO;
--		set_current_state(TASK_INTERRUPTIBLE);
--  		schedule_timeout(HZ / 10);
-+		msleep_interruptible(100);
- 	}
- 	return -EIO;
- }
-
---bEjdSXxHv0Az5++U
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-- 
+Mark Hollomon
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---bEjdSXxHv0Az5++U--
