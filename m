@@ -1,78 +1,41 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Thu, 26 May 2005 06:15:42 +0000
+From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+Date: Thu, 26 May 2005 14:02:39 +0000
 Subject: Re: [KJ] [PATCH] net/sunrpc string * to [] fix
-Message-Id: <20050526061542.GI3851@nd47.coderock.org>
+Message-Id: <20050526110239.6e563c48.rnsanchez@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67091307677991807=="
+Content-Type: multipart/mixed; boundary="===============85046330989222563=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050525183354.2ba9953a.rnsanchez@terra.com.br>
 In-Reply-To: <20050525183354.2ba9953a.rnsanchez@terra.com.br>
 To: kernel-janitors@vger.kernel.org
 
---===============67091307677991807==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============85046330989222563==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Content-Transfer-Encoding: quoted-printable
+Quoting  Domen Puncer <domen@coderock.org>
+Sent on  Thu, 26 May 2005 08:15:42 +0200
 
-Please set to plain text (disk.c patch is ok in this regard).
+> Care to resend disk.c patch, as it's missing Signed-off-by (and
+> this seems to be the only thing wrong with it).
 
+After taking a new look over the code, I noticed that this patch would
+break stuff.  As the string is modified afterwards (with an assignment), it
+would compile fail.  I surely overlooked it.  Sorry :)
 
-On 25/05/05 18:33 -0300, Ricardo Nabinger Sanchez wrote:
-> Hello,
-> 
-> I'm new here, and would like to help with Kernel-Janitors.  If nobody else
-> is working on 'char *s = "string";', I'd like to continue fixing the
-> remaining strings (473 to go).
-> 
-> 
-> This patch "fixes" net/sunrpc/sched.c and svcauth_unix.c string
-> declarations from 
-> 	char *p = "string"
-> to
-> 	char p[] = "string";
-> as pointed by Jeff Garzik on Kernel-Janitors' TODO.
-> 
-> 
-> Apologies for attaching the patch (and not inlining it), but it would be
-> mangled otherwise.  I'll try to fix this.
-> 
-> Best regards.
-> 
-> ---
-> 
->  sched.c        |    2 +-
->  svcauth_unix.c |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> Signed-off-by: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+So, my very first patch is broken :)
+Please disregard (and/or drop) it.
 
-Put this line before "---", as everything after it is discarded.
+-- 
+Ricardo Nabinger Sanchez
+GNU/Linux #140696 [http://counter.li.org]
+Slackware Linux + FreeBSD
 
-> diff -urNp -X dontdiff linux-2.6.11.10/net/sunrpc/sched.c mod-linux-2.6.11.10/net/sunrpc/sched.c
-> --- linux-2.6.11.10/net/sunrpc/sched.c	2005-05-25 17:52:45.000000000 -0300
-> +++ mod-linux-2.6.11.10/net/sunrpc/sched.c	2005-05-25 17:54:39.000000000 -0300
-> @@ -1054,7 +1054,7 @@ void rpc_show_tasks(void)
->  	printk("-pid- proc flgs status -client- -prog- --rqstp- -timeout "
->  		"-rpcwait -action- --exit--\n");
->  	alltask_for_each(t, le, &all_tasks) {
-> -		const char *rpc_waitq = "none";
-> +		const char rpc_waitq[] = "none";
->  
->  		if (RPC_IS_QUEUED(t))
->  			rpc_waitq = rpc_qname(t->u.tk_wait.rpc_waitq);
-
-			^^^ this won't work now. Compile test should
-				catch this.
+    How long a minute is depends on which 
+    side of the bathroom door you're on.
 
 
-Care to resend disk.c patch, as it's missing Signed-off-by (and
-this seems to be the only thing wrong with it).
-
-
-	Domen
-
---===============67091307677991807==
+--===============85046330989222563==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -83,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67091307677991807==--
+--===============85046330989222563==--
