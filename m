@@ -1,41 +1,59 @@
 From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Thu, 26 May 2005 03:42:39 +0000
-Subject: [KJ] [PATCH] kernel/power/disk.c string fix and if-less iterator
-Message-Id: <20050526004239.0f288228.rnsanchez@terra.com.br>
+Date: Thu, 26 May 2005 13:51:44 +0000
+Subject: Re: [KJ] [PATCH] kernel/power/disk.c string fix and if-less iterator
+Message-Id: <20050526105144.0ca002cb.rnsanchez@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Multipart=_Thu__26_May_2005_00_42_39_-0300_KIJDHIeFsnWWunOS"
+Content-Type: multipart/mixed; boundary="===============38851919868668761=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050526004239.0f288228.rnsanchez@terra.com.br>
+In-Reply-To: <20050526004239.0f288228.rnsanchez@terra.com.br>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
---Multipart=_Thu__26_May_2005_00_42_39_-0300_KIJDHIeFsnWWunOS
+--===============38851919868668761==
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hello,
+Quoting  walter harms <wharms@bfs.de>
+Sent on  Thu, 26 May 2005 10:32:19 +0200
 
-The attached patch:
+Hello Walter,
 
-o  Fixes kernel/power/disk.c string declared as 'char *p = "...";' to be
-   declared as 'char p[] = "...";', as pointed by Jeff Garzik.
+> are you sure about
+> 
+> i = (i + 1) % (sizeof(p) - 1);
+>                            ^^^^
 
-o  Replaces:
-	i++:
-	if (i > 3) i = 0;
+p is defined as:
 
-   By:
-	i = (i + 1) % (sizeof(p) - 1);
+	char p[] = "-\\|/";
 
-   Which is if-less, and the adjust value is evaluated by the compiler in
-   compile-time in case the string related to this loop is modified.
+and the (sizeof(p) - 1) is meant to disconsider the string terminator, as
+sizeof() returns 5, but the string has only 4 characters which will be
+printed by the loop in this code.
 
+> 
+> asume sizeof(p)=4 then sizeof(p)-1 = 3 and 3 % 3 = 0 therefor 3 is never 
+> reached.
 
----
+That was my first thought, but as p is a string, there's the extra
+character for '\0'.  And it shouldn't (nor wouldn't) be printed.
 
- kernel/power/disk.c |    6 ++----
- 1 files changed, 2 insertions(+), 4 deletions(-)
+> to simplify the whole stuff   whats about
+> 	printk("\b%c", p [ i++ % sizeof(p) ] );
 
+instead:
+	printk("\b%c", p [ i++ % (sizeof(p) - 1) ] );
+
+> 
+> ignoring the overflow for i is safe since the result is
+> a) unsigned
+> b) less then sizeof(p)
+
+Agreed.
+
+Should I recreate the patch and send again?
+
+Regards.
 
 -- 
 Ricardo Nabinger Sanchez
@@ -46,36 +64,7 @@ Slackware Linux + FreeBSD
     side of the bathroom door you're on.
 
 
---Multipart=_Thu__26_May_2005_00_42_39_-0300_KIJDHIeFsnWWunOS
-Content-Type: text/plain;
- name="kernel_power_disk.patch"
-Content-Disposition: attachment;
- filename="kernel_power_disk.patch"
-Content-Transfer-Encoding: 7bit
-
-diff -urNp -X dontdiff linux-2.6.11.10/kernel/power/disk.c mod-linux-2.6.11.10/kernel/power/disk.c
---- linux-2.6.11.10/kernel/power/disk.c	2005-05-16 14:51:53.000000000 -0300
-+++ mod-linux-2.6.11.10/kernel/power/disk.c	2005-05-26 00:23:28.000000000 -0300
-@@ -89,15 +89,13 @@ static void free_some_memory(void)
- 	unsigned int i = 0;
- 	unsigned int tmp;
- 	unsigned long pages = 0;
--	char *p = "-\\|/";
-+	char p[] = "-\\|/";
- 
- 	printk("Freeing memory...  ");
- 	while ((tmp = shrink_all_memory(10000))) {
- 		pages += tmp;
- 		printk("\b%c", p[i]);
--		i++;
--		if (i > 3)
--			i = 0;
-+		i = (i + 1) % (sizeof(p) - 1);
- 	}
- 	printk("\bdone (%li pages freed)\n", pages);
- }
-
---Multipart=_Thu__26_May_2005_00_42_39_-0300_KIJDHIeFsnWWunOS
+--===============38851919868668761==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -86,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Multipart=_Thu__26_May_2005_00_42_39_-0300_KIJDHIeFsnWWunOS--
+--===============38851919868668761==--
