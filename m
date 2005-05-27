@@ -1,57 +1,54 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 03 May 2005 21:40:26 +0000
-Subject: Re: [KJ] [PATCH] i386/apm: use wait_event_interruptible_timeout()
-Message-Id: <20050503214026.GC3372@us.ibm.com>
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Fri, 27 May 2005 00:34:32 +0000
+Subject: [KJ] [PATCH] Fix misleading gcc4 warning,
+Message-Id: <42966B18.6020802@cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66498951528696582=="
+Content-Type: multipart/mixed; boundary="------------090602030702090402050404"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050502061824.GC10173@us.ibm.com>
-In-Reply-To: <20050502061824.GC10173@us.ibm.com>
 To: kernel-janitors@vger.kernel.org
 
---===============66498951528696582==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------090602030702090402050404
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On 01.05.2005 [23:18:24 -0700], Nishanth Aravamudan wrote:
-> Use wait_event_interruptible_timeout() instead of custom wait-queue.
-> 
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> --- 2.6.12-rc3/arch/i386/kernel/apm.c	2005-04-29 11:03:03.000000000 -0700
-> +++ 2.6.12-rc3-dev/arch/i386/kernel/apm.c	2005-05-01 19:02:48.000000000 -0700
-> @@ -224,6 +224,7 @@
->  #include <linux/smp_lock.h>
->  #include <linux/dmi.h>
->  #include <linux/suspend.h>
-> +#include <linux/wait.h>
->  
->  #include <asm/system.h>
->  #include <asm/uaccess.h>
-> @@ -1418,22 +1419,15 @@ static void apm_event_handler(void)
->  
->  static void apm_mainloop(void)
->  {
-> -	DECLARE_WAITQUEUE(wait, current);
-> -
-> -	add_wait_queue(&apm_waitqueue, &wait);
-> -	set_current_state(TASK_INTERRUPTIBLE);
-> -	for (;;) {
-> -		schedule_timeout(APM_CHECK_TIMEOUT);
-> -		if (exit_kapmd)
-> -			break;
-> +	do {
-> +		wait_event_interruptible_timeout(apm_waitqueue,
-> +				exit_kapmd, APM_CHECK_TIMEOUT);
 
-Hmm, this will lead to some not so subtle breakage with wait-queues.
-Please do not apply.
+This warning is a false alarm.
 
-Thanks,
-Nish
+This patch eliminates the warning that addr may be used uninitialized in
+the function it87_find. addr is not used uninitialized.
 
---===============66498951528696582==
+
+
+
+
+--------------090602030702090402050404
+Content-Type: text/plain; x-mac-type="0"; x-mac-creator="0";
+ name="patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="patch"
+
+Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+
+--- linux-2.6.12-rc5/drivers/i2c/chips/it87.c~	2005-05-26 16:35:24.852065714 -0700
++++ linux-2.6.12-rc5/drivers/i2c/chips/it87.c	2005-05-26 17:20:31.311097793 -0700
+@@ -718,6 +718,10 @@ static int it87_find(int *address)
+ {
+ 	int err = -ENODEV;
+
++	/* Suppress misleading GCC warning:
++	 * 'address' may be used uninitialized in this function. */
++	*address = 0;
++
+ 	superio_enter();
+ 	chip_type = superio_inw(DEVID);
+ 	if (chip_type != IT8712F_DEVID
+
+
+
+
+--------------090602030702090402050404
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66498951528696582==--
+--------------090602030702090402050404--
