@@ -1,32 +1,32 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 28 May 2005 07:34:23 +0000
+From: Henry <haris@mpa.gr>
+Date: Sat, 28 May 2005 12:07:12 +0000
 Subject: Re: [KJ] [PATCH] drivers/scsi/gdth.c Use the DMA_32BIT_MASK constant
-Message-Id: <20050528073423.GA1018@mail.nuerscht.ch>
+Message-Id: <200505281507.12265.haris@mpa.gr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5277872388454985=="
+Content-Type: multipart/mixed; boundary="===============74530023379929933=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200505280316.51652.haris@mpa.gr>
 In-Reply-To: <200505280316.51652.haris@mpa.gr>
 To: kernel-janitors@vger.kernel.org
 
---===============5277872388454985==
-Content-Type: text/plain; charset=us-ascii
+--===============74530023379929933==
+Content-Type: text/plain; charset="iso-8859-7"
 Content-Disposition: inline
+Content-Transfer-Encoding: base64
 
-On Sat, May 28, 2005 at 03:16:51AM +0300, Henry wrote:
-> Hi, this is my first patch for linux kernel. Don't know if its correct,
-> please check. Its based on an item on the TODO list
+SGV5LCBzb3JyeSBmb3IgdGhlIHRoZSBtZXNzLiBJJ2xsIGJlIG1vcmUgY2FyZWZ1bGwgbmV4dCB0
+aW1lCgrT9OnyINPh4iAyOCDM4ekgMjAwNSAxMDozNCwg7y/nIFRvYmlhcyBLbGF1c2VyIN3j8eH4
+5ToKPiBPbiBTYXQsIE1heSAyOCwgMjAwNSBhdCAwMzoxNjo1MUFNICswMzAwLCBIZW5yeSB3cm90
+ZToKPiA+IEhpLCB0aGlzIGlzIG15IGZpcnN0IHBhdGNoIGZvciBsaW51eCBrZXJuZWwuIERvbid0
+IGtub3cgaWYgaXRzIGNvcnJlY3QsCj4gPiBwbGVhc2UgY2hlY2suIEl0cyBiYXNlZCBvbiBhbiBp
+dGVtIG9uIHRoZSBUT0RPIGxpc3QKPiAKPiBJIGFscmVhZHkgc3VibWl0dGVkIHRoaXMgcGF0Y2gg
+WzFdIGEgd2hpbGUgYWdvICh3aXRoIHRoZSBjb3JyZWN0IGNvbnN0YW50cykuCj4gUGxlYXNlIGNo
+ZWNrIHRoZSBhcmNoaXZlIGF0IFsyXSBiZWZvcmUgc2VuZGluZyBwYXRjaGVzLgo+IAo+IFRoYW5r
+cywgVG9iaWFzCj4gCj4gWzFdCj4gaHR0cDovL2xpc3RzLm9zZGwub3JnL3BpcGVybWFpbC9rZXJu
+ZWwtamFuaXRvcnMvMjAwNS1NYXJjaC8wMDM4MzguaHRtbAo+IFsyXSBodHRwOi8vbGlzdHMub3Nk
+bC5vcmcvcGlwZXJtYWlsL2tlcm5lbC1qYW5pdG9ycy8KPiAKCg==
 
-I already submitted this patch [1] a while ago (with the correct constants).
-Please check the archive at [2] before sending patches.
-
-Thanks, Tobias
-
-[1]
-http://lists.osdl.org/pipermail/kernel-janitors/2005-March/003838.html
-[2] http://lists.osdl.org/pipermail/kernel-janitors/
-
---===============5277872388454985==
+--===============74530023379929933==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5277872388454985==--
+--===============74530023379929933==--
