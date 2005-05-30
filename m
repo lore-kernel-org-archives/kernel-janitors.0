@@ -1,82 +1,71 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 23 May 2005 10:54:46 +0000
-Subject: [KJ] [PATCH] printk : arch/i386/mm/pgtable.c
-Message-Id: <20050523105446.GH13768@rhum.iomeda.fr>
+From: Chuck Short <zulcss@gmail.com>
+Date: Mon, 30 May 2005 02:09:23 +0000
+Subject: [KJ] [PATCH] net/ipv4/route warnings
+Message-Id: <429A75D3.3030808@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="zCKi3GIZzVBPywwA"
+Content-Type: multipart/mixed; boundary="------------090308030607030408080500"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------090308030607030408080500
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
---zCKi3GIZzVBPywwA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch fixes gcc4 warnings in net/ipv4/route.c
 
-Description:
-printk() calls should include appropriate KERN_* constant.
-
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed-off by: Chuck Short <zulcss@gmail.com>
 
 
---zCKi3GIZzVBPywwA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment;
-	filename="linux-2.6.12-rc4_arch_i386_mm_pgtable.c.patch"
 
-diff -urpNX dontdiff a/arch/i386/mm/pgtable.c b/arch/i386/mm/pgtable.c
---- a/arch/i386/mm/pgtable.c	2005-05-07 07:20:31.000000000 +0200
-+++ b/arch/i386/mm/pgtable.c	2005-05-23 12:43:27.772740776 +0200
-@@ -31,9 +31,9 @@ void show_mem(void)
- 	pg_data_t *pgdat;
- 	unsigned long i;
+--------------090308030607030408080500
+Content-Type: text/plain;
+ name="ipv4-route_gcc4_warning"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="ipv4-route_gcc4_warning"
+
+diff -Naur linux-source-2.6.12-2.6.11.93.orig/net/ipv4/route.c linux-source-2.6.12-2.6.11.93/net/ipv4/route.c
+--- linux-source-2.6.12-2.6.11.93.orig/net/ipv4/route.c	2005-05-08 02:11:18.000000000 -0400
++++ linux-source-2.6.12-2.6.11.93/net/ipv4/route.c	2005-05-29 14:32:35.464664496 -0400
+@@ -1767,7 +1767,7 @@
+ 				       struct in_device *in_dev,
+ 				       u32 daddr, u32 saddr, u32 tos)
+ {
+-	struct rtable* rth;
++	struct rtable* rth = NULL;
+ 	int err;
+ 	unsigned hash;
  
--	printk("Mem-info:\n");
-+	printk(KERN_INFO "Mem-info:\n");
- 	show_free_areas();
--	printk("Free swap:       %6ldkB\n", nr_swap_pages<<(PAGE_SHIFT-10));
-+	printk(KERN_INFO "Free swap:       %6ldkB\n", nr_swap_pages<<(PAGE_SHIFT-10));
- 	for_each_pgdat(pgdat) {
- 		for (i = 0; i < pgdat->node_spanned_pages; ++i) {
- 			page = pgdat->node_mem_map + i;
-@@ -48,11 +48,11 @@ void show_mem(void)
- 				shared += page_count(page) - 1;
- 		}
- 	}
--	printk("%d pages of RAM\n", total);
--	printk("%d pages of HIGHMEM\n",highmem);
--	printk("%d reserved pages\n",reserved);
--	printk("%d pages shared\n",shared);
--	printk("%d pages swap cached\n",cached);
-+	printk(KERN_INFO "%d pages of RAM\n", total);
-+	printk(KERN_INFO "%d pages of HIGHMEM\n",highmem);
-+	printk(KERN_INFO "%d reserved pages\n",reserved);
-+	printk(KERN_INFO "%d pages shared\n",shared);
-+	printk(KERN_INFO "%d pages swap cached\n",cached);
- }
+@@ -1794,7 +1794,7 @@
+ 				   u32 daddr, u32 saddr, u32 tos)
+ {
+ #ifdef CONFIG_IP_ROUTE_MULTIPATH_CACHED
+-	struct rtable* rth;
++	struct rtable* rth = NULL;
+ 	unsigned char hop, hopcount, lasthop;
+ 	int err = -EINVAL;
+ 	unsigned int hash;
+@@ -2239,7 +2239,7 @@
+ 					struct net_device *dev_out,
+ 					unsigned flags)
+ {
+-	struct rtable *rth;
++	struct rtable *rth = NULL;
+ 	int err = __mkroute_output(&rth, res, fl, oldflp, dev_out, flags);
+ 	unsigned hash;
+ 	if (err == 0) {
+@@ -2267,7 +2267,7 @@
+ 	unsigned char hop;
+ 	unsigned hash;
+ 	int err = -EINVAL;
+-	struct rtable *rth;
++	struct rtable *rth = NULL;
  
- /*
-@@ -105,16 +105,16 @@ void set_pmd_pfn(unsigned long vaddr, un
- 	pmd_t *pmd;
- 
- 	if (vaddr & (PMD_SIZE-1)) {		/* vaddr is misaligned */
--		printk ("set_pmd_pfn: vaddr misaligned\n");
-+		printk(KERN_WARNING "set_pmd_pfn: vaddr misaligned\n");
- 		return; /* BUG(); */
- 	}
- 	if (pfn & (PTRS_PER_PTE-1)) {		/* pfn is misaligned */
--		printk ("set_pmd_pfn: pfn misaligned\n");
-+		printk(KERN_WARNING "set_pmd_pfn: pfn misaligned\n");
- 		return; /* BUG(); */
- 	}
- 	pgd = swapper_pg_dir + pgd_index(vaddr);
- 	if (pgd_none(*pgd)) {
--		printk ("set_pmd_pfn: pgd_none\n");
-+		printk(KERN_WARNING "set_pmd_pfn: pgd_none\n");
- 		return; /* BUG(); */
- 	}
- 	pud = pud_offset(pgd, vaddr);
+ 	if (res->fi && res->fi->fib_nhs > 1) {
+ 		unsigned char hopcount = res->fi->fib_nhs;
 
---zCKi3GIZzVBPywwA
+--------------090308030607030408080500
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -87,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---zCKi3GIZzVBPywwA--
+--------------090308030607030408080500--
