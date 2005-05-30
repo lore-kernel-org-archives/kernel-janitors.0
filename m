@@ -1,50 +1,46 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Sun, 29 May 2005 15:44:12 +0000
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 30 May 2005 08:33:08 +0000
 Subject: Re: [KJ] GCC4 cleanup question
-Message-Id: <20050529124412.207991b8.rnsanchez@terra.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============57260157338593842=="
+Message-Id: <200505301033.08717.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4297ECD9.2060505@gmail.com>
 In-Reply-To: <4297ECD9.2060505@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============57260157338593842==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+On S=FCnnavend 28 Mai 2005 08:25, Bongani Hlope wrote:
+> I don't have GCC4, the first rth is initialised inside the __mkroute_inpu=
+t=20
+> function and the second one is initialised in the __mkroute_output functi=
+on.=20
+> I don't know why gcc is giving those warings.=20
 
-Quoting  Bongani Hlope <bonganilinux@mweb.co.za>
-Sent on  Sat, 28 May 2005 08:25:54 +0200
+__mkroute_{in,out}put does not initialize *result if it returns early.
 
-> I don't have GCC4, the first rth is initialised inside the
-> __mkroute_input function and the second one is initialised in the
-> __mkroute_output function. I don't know why gcc is giving those warings. 
+> --- net/ipv4/route.c.old =A0 =A0 =A0 =A02005-05-18 21:18:19.000000000 +02=
+00
+> +++ net/ipv4/route.c =A0 =A02005-05-28 08:23:18.000000000 +0200
+> @@ -1767,7 +1767,7 @@ static inline int ip_mkroute_input_def(s
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0struct in_device *in_dev,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0u32 daddr, u32 saddr, u32 tos)
+> =A0{
+> - =A0 =A0 =A0 struct rtable* rth;
+> + =A0 =A0 =A0 struct rtable* rth =3D NULL;
+> =A0 =A0 =A0 =A0 int err;
+> =A0 =A0 =A0 =A0 unsigned hash;
+>=20
 
-My guess is because it doesn't know/see that.  Wouldn't that be related to
-the new interprocedural optimization?
+We've already had that discussion. Don't initialize it to a bogus value
+in the declaration, but make sure it always gets set in the function
+that is responsible for initializing it (__mkroute_input in this case).
 
-More info, perhaps starting on:
-
-	http://gcc.gnu.org/wiki/Interprocedural%20optimizations
-
--- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
-
-    How long a minute is depends on which 
-    side of the bathroom door you're on.
-
-
---===============57260157338593842==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	Arnd <><
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============57260157338593842==--
