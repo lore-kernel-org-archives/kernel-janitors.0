@@ -1,28 +1,54 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Sun, 29 May 2005 09:30:07 +0000
-Subject: Re: [KJ] [PATCH] drivers/scsi/gdth.c Use the DMA_32BIT_MASK constant
-Message-Id: <20050529093007.GA27284@rhum.iomeda.fr>
+From: Chuck Short <zulcss@gmail.com>
+Date: Mon, 30 May 2005 02:06:09 +0000
+Subject: [KJ] [PATCH] aic79xx_osm scsi_add_host error checking
+Message-Id: <429A7511.9020007@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93623267317322623=="
+Content-Type: multipart/mixed; boundary="------------020100050201070008010401"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200505280316.51652.haris@mpa.gr>
-In-Reply-To: <200505280316.51652.haris@mpa.gr>
 To: kernel-janitors@vger.kernel.org
 
---===============93623267317322623==
-Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format.
+--------------020100050201070008010401
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Henry (haris@mpa.gr) wrote:
-> Hi, this is my first patch for linux kernel. Don't know if its correct, please check. Its based on an item on the 
-> TODO list
+This patch checks for the return value of scsi_add_host.
 
-Patch alraedy submitted here by Tobias.
+Signed-off by: Chuck Short <zuclss@gmail.com>
 
-	~Christophe
+--------------020100050201070008010401
+Content-Type: text/plain;
+	name="aic79xx_osm-scsi_add_host_error_checking.dpatch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+	filename="aic79xx_osm-scsi_add_host_error_checking.dpatch"
 
+diff -Naur linux-source-2.6.12-2.6.11.93.orig/drivers/scsi/aic7xxx/aic79xx_osm.c linux-source-2.6.12-2.6.11.93/drivers/scsi/aic7xxx/aic79xx_osm.c
+--- linux-source-2.6.12-2.6.11.93.orig/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-04-21 06:39:57.000000000 -0400
++++ linux-source-2.6.12-2.6.11.93/drivers/scsi/aic7xxx/aic79xx_osm.c	2005-05-29 21:12:45.099645176 -0400
+@@ -1989,7 +1989,8 @@
+ 	char	*new_name;
+ 	u_long	s;
+ 	u_long	target;
+-
++	int error;
++	
+ 	template->name = ahd->description;
+ 	host = scsi_host_alloc(template, sizeof(struct ahd_softc *));
+ 	if (host == NULL)
+@@ -2065,7 +2066,9 @@
+ 	ahd_unlock(ahd, &s);
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
+-	scsi_add_host(host, &ahd->dev_softc->dev); /* XXX handle failure */
++	error = scsi_add_host(host, &ahd->dev_softc->dev);
++	if (error)
++		return (ENOMEM);	
+ 	scsi_scan_host(host);
+ #endif
+ 	return (0);
 
---===============93623267317322623==
+--------------020100050201070008010401
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -33,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93623267317322623==--
+--------------020100050201070008010401--
