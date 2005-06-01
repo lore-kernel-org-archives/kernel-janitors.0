@@ -1,36 +1,49 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Mon, 27 Jun 2005 19:00:35 +0000
-Subject: Re: [KJ] SET_MODULE_OWNER(dev)
-Message-Id: <20050627190035.GB774@mail.nuerscht.ch>
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Wed, 01 Jun 2005 21:35:26 +0000
+Subject: [KJ] [PATCH] Fix misleading gcc4 warning,
+Message-Id: <429E2A1E.9080803@cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92640418851449602=="
+Content-Type: multipart/mixed; boundary="------------040402090301010904080000"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200506271507.54410.victor@cetuc.puc-rio.br>
-In-Reply-To: <200506271507.54410.victor@cetuc.puc-rio.br>
+References: <42966B18.6020802@cs.pdx.edu>
+In-Reply-To: <42966B18.6020802@cs.pdx.edu>
 To: kernel-janitors@vger.kernel.org
 
---===============92640418851449602==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On 2005-06-27 at 17:07:54 +0200, Victor <victor@cetuc.puc-rio.br> wrote:
-> Can anyone explain the reason for this line in
-> linux-2.6.12/include/linux/netdevice.h:499:
-> 	#define SET_MODULE_OWNER(dev) do { } while (0)
-
-It is defined as:
-
-#define SET_MODULE_OWNER(some_struct) do { (some_struct)->owner = THIS_MODULE; } while (0)
-
-in include/linux/module.h for 2.4 kernels [1], so I guess it's there for
-backwards compatibility.
-
-Cheers, Tobias
-
-[1] http://lxr.linux.no/source/include/linux/module.h?v=2.4.18#L409
+This is a multi-part message in MIME format.
+--------------040402090301010904080000
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
 
---===============92640418851449602==
+This warning is a false alarm.
+
+This patch eliminates the warning that idx may be used uninitialized in
+the function bvec_alloc_bs().
+
+
+
+--------------040402090301010904080000
+Content-Type: text/plain; x-mac-type="0"; x-mac-creator="0";
+ name="patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="patch"
+
+Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+
+--- linux-2.6.12-rc5.kj/fs/bio.c~	2005-06-01 14:07:53.296359331 -0700
++++ linux-2.6.12-rc5.kj/fs/bio.c	2005-06-01 14:22:44.191467330 -0700
+@@ -78,6 +78,7 @@ static inline struct bio_vec *bvec_alloc
+ {
+ 	struct bio_vec *bvl;
+ 	struct biovec_slab *bp;
++	*idx = 0;
+
+ 	/*
+ 	 * see comment near bvec_array define!
+
+
+--------------040402090301010904080000
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92640418851449602==--
+--------------040402090301010904080000--
