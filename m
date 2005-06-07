@@ -1,22 +1,42 @@
-From: Daniel Smertnig <daniel.smertnig@gmail.com>
-Date: Wed, 22 Jun 2005 17:02:17 +0000
-Subject: [KJ] Re: [PATCH] isdn: check copy_to/from_user() return values
-Message-Id: <18dd01ff0506221002764681b9@mail.gmail.com>
+From: "gretchen webb" <selmanoble@faithmail.com>
+Date: Tue, 07 Jun 2005 12:33:48 +0000
+Subject: Medical Post: New
+Message-Id: <A5B1A967.D4DD5B3@faithmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 6/18/05, Daniel Smertnig <daniel.smertnig@gmail.com> wrote:
-> Fix a few instances in drivers/isdn/ where the copy_(to|from)_user
-> return value is not checked for.
+<HTML>
+Let's face it, Age should be nothing more than a number<br>
+It's okay to want to hold on to your young body as long as you can<br>
+<br><a href="http://py.14.popularitemhigh.com/sa/">View more about a new
+lifespan enhancement press here</a><br>
+<br>
+&quot;With increasing longevity for an increasing segment of the
+population, this is THE frontier for the new millennium&quot;<br>
+-Dr Virgil Howard<br>
+<br>
+<br>
+<br>you must try it ;)
+sorry not for me and the address is above<br>
+<br>
+<br>
+Mrs
+Joslyn bent over her son with tears in her eyes and said: This electrical
+nonsense has affected your mind, dear<br>
+<br>You must promise me to keep away from that horrid workshop for a time
+</FONT></HTML>
 
-Whoops, sorry, this seems to be in the kj-patchset already, didn't notice it
 
-daniel
 
+-------------------------------------------------------
+This SF.Net email is sponsored by: NEC IT Guy Games.  How far can you shotput
+a projector? How fast can you ride your desk chair down the office luge track?
+If you want to score the big prize, get to know the little guy.  
+Play to win an NEC 61" plasma display: http://www.necitguy.com/?r 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
