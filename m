@@ -1,62 +1,46 @@
-From: Jesse Millan <jesse.millan@gmail.com>
-Date: Sun, 26 Jun 2005 19:29:39 +0000
-Subject: [KJ] [PATCH] [RESEND] Fix warning: type qualifiers ignored on
-Message-Id: <1119814180.30604.23.camel@localhost.localdomain>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Fri, 10 Jun 2005 21:04:49 +0000
+Subject: [KJ] schedule_timeout(1) -- best approach?
+Message-Id: <20050610210449.GE2630@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-Sj8r7lJ/6QV8oNILHmhG"
+Content-Type: multipart/mixed; boundary="===============035020362519999182=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============035020362519999182==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---=-Sj8r7lJ/6QV8oNILHmhG
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Fellow KJ-ers,
 
+Now that CONFIG_HZ has gone into -mm, people are going to start seeing
+"bugs" which may be just timing issues (in the sense of inaccurate
+requests).
 
-Per GCC manual: Constant functions that have no side effects need to use
-the attribute '__attribute__((__const__))' rather than '__const__'.
-Putting a '__const__' in the return type of a function is simply ignored
-and causes GCC4 to issue the warning: type qualifiers ignored on
-function return.
+We should have a TODO entry to look into the callers of
+schedule_timeout() who use arbitrary numbers instead of HZ-relative
+values. The most common case is schedule_timeout(1).
 
-The header files compiler-gcc2.h, compiler-gcc3.h and compiler-gcc4.h
-all have the definition:
+-Nish
 
-#define __attribute_const__   __attribute__((__const__))
+--- TODO	2005-06-10 14:00:28.000000000 -0700
++++ TODO-dev	2005-06-10 14:03:29.000000000 -0700
+@@ -96,6 +96,13 @@ Remove unneeded historic code / New API 
+   them all, because we want to remove sleep_on() and friends in 2.5.
+   [D: http://boudicca.tux.org/hypermail/linux-kernel/2001week05/0305.html]
+   Be sure to read replies too.
++- Callers of schedule_timeout() who pass in an absolute constant (i.e.
++  with no reference to HZ) may be broken, especially with a variable HZ
++  value. Verify which behavior is intended: if the caller needs the
++  shortest delay possible, then schedule_timeout(1) is correct and a
++  comment can be added; if they actually need a certain amount of time,
++  then use msleep() or schedule_timeout with an appropriate
++  {msecs,usecs,nsecs}_to_jiffies() call.
+ - Replace (un)register_ioctl32_conversion with ioctl_compat:
+   [D: http://lkml.org/lkml/2005/1/5/106]
+ 
 
-'__attribute_const__' seems to be the preferred and correct syntax to
-declare a constant function.
-
-
---=-Sj8r7lJ/6QV8oNILHmhG
-Content-Disposition: attachment; filename=patch
-Content-Type: text/plain; name=patch; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
-
---- linux-2.6.12-rc6.kj/include/linux/byteorder/swabb.h~	2005-06-24 13:26:11.775129040 -0700
-+++ linux-2.6.12-rc6.kj/include/linux/byteorder/swabb.h	2005-06-26 11:34:30.935218568 -0700
-@@ -92,7 +92,7 @@
- #endif /* OPTIMIZE */
-
-
--static __inline__ __const__ __u32 __fswahw32(__u32 x)
-+static __inline__ __attribute_const__ __u32 __fswahw32(__u32 x)
- {
- 	return __arch__swahw32(x);
- }
-@@ -106,7 +106,7 @@ static __inline__ void __swahw32s(__u32
- }
-
-
--static __inline__ __const__ __u32 __fswahb32(__u32 x)
-+static __inline__ __attribute_const__ __u32 __fswahb32(__u32 x)
- {
- 	return __arch__swahb32(x);
- }
-
---=-Sj8r7lJ/6QV8oNILHmhG
+--===============035020362519999182==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---=-Sj8r7lJ/6QV8oNILHmhG--
+--===============035020362519999182==--
