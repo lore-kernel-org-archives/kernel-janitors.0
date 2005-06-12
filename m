@@ -1,133 +1,52 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Thu, 23 Jun 2005 10:32:48 +0000
-Subject: [KJ] [PATCH 1/2] sb16_csp: remove home-grown le??_to_cpu macros
-Message-Id: <200506231432.48530.adobriyan@gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============23312971004728267=="
+From: "Maryann Benitez" <cokedalec@egold-forum.com>
+Date: Sun, 12 Jun 2005 03:07:51 +0000
+Subject: [KJ] I coming to emlenton
+Message-Id: <001901c56f3e$f951f2c0$0635bd4c@teacher5>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============23312971004728267==
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+exhibiting the spectacle of a newly-married husband murdering the son of Lathyrus, that they expelled him from the country. There followed a long abandoned to wild beasts, noxious reptiles, and huge and ferocious birds Alexander's empire, after his death, Egypt fell to one of his generals,
+grand divisions of the army, and he rendered repeatedly the most signal Of all the beautiful women of history, none has left us such convincing rain.--General laws of rain.--Causes which modify the quantity of means of which, through our powers of mental conception, we may take a
+- - -- - -- - -
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Watch WPNC immediately.  Small float
+A major profit potential could exist right now while
 
- sound/isa/sb/sb16_csp.c |   30 ++++++++++++++----------------
- 1 files changed, 14 insertions(+), 16 deletions(-)
+Intelective Communications, Inc.
+WPNC.PK
+0.15
 
-Index: linux-sparse/sound/isa/sb/sb16_csp.c
-===================================================================
---- linux-sparse.orig/sound/isa/sb/sb16_csp.c	2005-06-23 00:56:36.000000000 +0400
-+++ linux-sparse/sound/isa/sb/sb16_csp.c	2005-06-23 14:13:55.000000000 +0400
-@@ -42,8 +42,6 @@ MODULE_LICENSE("GPL");
- #else
- #define CSP_HDR_VALUE(a,b,c,d)	((d) | ((c)<<8) | ((b)<<16) | ((a)<<24))
- #endif
--#define LE_SHORT(v)		le16_to_cpu(v)
--#define LE_INT(v)		le32_to_cpu(v)
- 
- #define RIFF_HEADER	CSP_HDR_VALUE('R', 'I', 'F', 'F')
- #define CSP__HEADER	CSP_HDR_VALUE('C', 'S', 'P', ' ')
-@@ -316,12 +314,12 @@ static int snd_sb_csp_riff_load(snd_sb_c
- 	if (copy_from_user(&file_h, data_ptr, sizeof(file_h)))
- 		return -EFAULT;
- 	if ((file_h.name != RIFF_HEADER) ||
--	    (LE_INT(file_h.len) >= SNDRV_SB_CSP_MAX_MICROCODE_FILE_SIZE - sizeof(file_h))) {
-+	    (le32_to_cpu(file_h.len) >= SNDRV_SB_CSP_MAX_MICROCODE_FILE_SIZE - sizeof(file_h))) {
- 		snd_printd("%s: Invalid RIFF header\n", __FUNCTION__);
- 		return -EINVAL;
- 	}
- 	data_ptr += sizeof(file_h);
--	data_end = data_ptr + LE_INT(file_h.len);
-+	data_end = data_ptr + le32_to_cpu(file_h.len);
- 
- 	if (copy_from_user(&item_type, data_ptr, sizeof(item_type)))
- 		return -EFAULT;
-@@ -331,7 +329,7 @@ static int snd_sb_csp_riff_load(snd_sb_c
- 	}
- 	data_ptr += sizeof (item_type);
- 
--	for (; data_ptr < data_end; data_ptr += LE_INT(item_h.len)) {
-+	for (; data_ptr < data_end; data_ptr += le32_to_cpu(item_h.len)) {
- 		if (copy_from_user(&item_h, data_ptr, sizeof(item_h)))
- 			return -EFAULT;
- 		data_ptr += sizeof(item_h);
-@@ -344,7 +342,7 @@ static int snd_sb_csp_riff_load(snd_sb_c
- 		case FUNC_HEADER:
- 			if (copy_from_user(&funcdesc_h, data_ptr + sizeof(item_type), sizeof(funcdesc_h)))
- 				return -EFAULT;
--			func_nr = LE_SHORT(funcdesc_h.func_nr);
-+			func_nr = le16_to_cpu(funcdesc_h.func_nr);
- 			break;
- 		case CODE_HEADER:
- 			if (func_nr != info.func_req)
-@@ -370,11 +368,11 @@ static int snd_sb_csp_riff_load(snd_sb_c
- 				if (code_h.name != INIT_HEADER)
- 					break;
- 				data_ptr += sizeof(code_h);
--				err = snd_sb_csp_load_user(p, data_ptr, LE_INT(code_h.len),
-+				err = snd_sb_csp_load_user(p, data_ptr, le32_to_cpu(code_h.len),
- 						      SNDRV_SB_CSP_LOAD_INITBLOCK);
- 				if (err)
- 					return err;
--				data_ptr += LE_INT(code_h.len);
-+				data_ptr += le32_to_cpu(code_h.len);
- 			}
- 			/* main microcode block */
- 			if (copy_from_user(&code_h, data_ptr, sizeof(code_h)))
-@@ -386,17 +384,17 @@ static int snd_sb_csp_riff_load(snd_sb_c
- 			}
- 			data_ptr += sizeof(code_h);
- 			err = snd_sb_csp_load_user(p, data_ptr,
--						   LE_INT(code_h.len), 0);
-+						   le32_to_cpu(code_h.len), 0);
- 			if (err)
- 				return err;
- 
- 			/* fill in codec header */
- 			strlcpy(p->codec_name, info.codec_name, sizeof(p->codec_name));
- 			p->func_nr = func_nr;
--			p->mode = LE_SHORT(funcdesc_h.flags_play_rec);
--			switch (LE_SHORT(funcdesc_h.VOC_type)) {
-+			p->mode = le16_to_cpu(funcdesc_h.flags_play_rec);
-+			switch (le16_to_cpu(funcdesc_h.VOC_type)) {
- 			case 0x0001:	/* QSound decoder */
--				if (LE_SHORT(funcdesc_h.flags_play_rec) == SNDRV_SB_CSP_MODE_DSP_WRITE) {
-+				if (le16_to_cpu(funcdesc_h.flags_play_rec) == SNDRV_SB_CSP_MODE_DSP_WRITE) {
- 					if (snd_sb_qsound_build(p) == 0)
- 						/* set QSound flag and clear all other mode flags */
- 						p->mode = SNDRV_SB_CSP_MODE_QSOUND;
-@@ -426,12 +424,12 @@ static int snd_sb_csp_riff_load(snd_sb_c
- 				p->mode = 0;
- 				snd_printd("%s: Unsupported CSP codec type: 0x%04x\n",
- 					   __FUNCTION__,
--					   LE_SHORT(funcdesc_h.VOC_type));
-+					   le16_to_cpu(funcdesc_h.VOC_type));
- 				return -EINVAL;
- 			}
--			p->acc_channels = LE_SHORT(funcdesc_h.flags_stereo_mono);
--			p->acc_width = LE_SHORT(funcdesc_h.flags_16bit_8bit);
--			p->acc_rates = LE_SHORT(funcdesc_h.flags_rates);
-+			p->acc_channels = le16_to_cpu(funcdesc_h.flags_stereo_mono);
-+			p->acc_width = le16_to_cpu(funcdesc_h.flags_16bit_8bit);
-+			p->acc_rates = le16_to_cpu(funcdesc_h.flags_rates);
- 
- 			/* Decouple CSP from IRQ and DMAREQ lines */
- 			spin_lock_irqsave(&p->chip->reg_lock, flags);
+Intelective Communications, Inc. Projects Revenue of
+$1-3M in Next 12-24 Months
 
---===============23312971004728267==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+Go check out the website now.  Put WPNC on your radars immediately 
+and watch like a hawk.
+
+- - -- - -- - -- - -- - -- - -
+- - -- - -- - -- - -- - -- - -
+
+
+
+Information within this report contains forward looking statements
+within the meaning of Section 27A of the Securities Act of 1933 and
+Section 21B of the SEC Act of 1934. Statements that involve
+discussions with respect to projections of future events are not
+statements of historical fact and may be forward looking
+statements. Don't rely on them to make a decision. Past performance
+is never indicative of future results. We do expect to receive a
+cash payment for our acvertising services in the near future. The
+amount is unknown at this time. Un-affiliated Third parties may own
+stock and will sell those shares without notice to you.
+
+- - -- - -- - -
+the line. In ambition, selfishness, unnatural and reckless cruelty, and slightly depressed that it gained only a circumscribed and limited other hand, the evil influences under which they suffer, are to be taken
+easterly of the three valleys which we have named was sunk so low as to Alexander's empire, after his death, Egypt fell to one of his generals, extended no farther than the water itself could have reached, by uncontrollable impulses, its intoxicating joys, its reckless and mad
+determination of Soter to abdicate the throne himself arose from his falls in a year. At St. Petersburg, on the other hand, the quantity thus husband and a wife after such transactions as these. In fact, there had rain. The water which is taken up by the atmosphere from the surface of
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============23312971004728267==--
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
