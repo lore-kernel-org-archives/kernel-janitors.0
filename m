@@ -1,65 +1,79 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Thu, 23 Jun 2005 19:18:41 +0000
-Subject: [KJ] [PATCH] (1/4) ieee1394 - uninitialize static variables
-Message-Id: <20050623191841.GA4398@voyager>
+From: Daniel Smertnig <daniel.smertnig@gmail.com>
+Date: Sat, 18 Jun 2005 15:55:51 +0000
+Subject: [KJ] [PATCH] isdn: check copy_to/from_user() return values
+Message-Id: <20050618155550.GA14655@dansme-mobile.smertnig>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34735567914157528=="
+Content-Type: multipart/mixed; boundary="===============67399151996993445=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============34735567914157528==
+--===============67399151996993445==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi.
+Fix a few instances in drivers/isdn/ where the copy_(to|from)_user
+return value is not checked for.
 
-One of the tasks at http://janitor.kernelnewbies.org/TODO
-is described as
-"
-uninitialize static variables initialized to 0, to make it go to the
-.bss, instead of .data.
-"
+(I hope that's the right way to handle it)
 
-To proof that it is still guaranteed that those variables will be
-initialized to zero
+Signed-off-by: Daniel Smertnig <daniel.smertnig@gmail.com>
 
-Tom Bradley <tojabr@gmail.com> (on the kernel-janitors mailing list)
-wrote
-"
-the default for gcc is `-fzero-initialized-in-bss', the kernel
-makefile does not change this therefore bss is zeroed, this is
-documented in the gcc manpage.
-"
-
-and David P Howell <david.p.howell@intel.com> added that
-"
-By definition .bss is always zero'ed by the implementation.
-"
-
-This patch uninitializes a static int initialized to 0.
-
-Signed-off-by: Carlo Perassi <carlo@linux.it>
----
- drivers/ieee1394/ieee1394_core.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-2.6.12/drivers/ieee1394/ieee1394_core.c
-===================================================================
---- linux-2.6.12.orig/drivers/ieee1394/ieee1394_core.c
-+++ linux-2.6.12/drivers/ieee1394/ieee1394_core.c
-@@ -52,7 +52,7 @@
- /*
-  * Disable the nodemgr detection and config rom reading functionality.
-  */
--static int disable_nodemgr = 0;
-+static int disable_nodemgr;
- module_param(disable_nodemgr, int, 0444);
- MODULE_PARM_DESC(disable_nodemgr, "Disable nodemgr functionality.");
+diff --git a/drivers/isdn/hisax/config.c b/drivers/isdn/hisax/config.c
+--- a/drivers/isdn/hisax/config.c
++++ b/drivers/isdn/hisax/config.c
+@@ -631,7 +631,9 @@ int HiSax_readstatus(u_char __user *buf,
+ 		count = cs->status_end - cs->status_read + 1;
+ 		if (count >= len)
+ 			count = len;
+-		copy_to_user(p, cs->status_read, count);
++		if (copy_to_user(p, cs->status_read, count)) {
++			return -EFAULT;
++		}
+ 		cs->status_read += count;
+ 		if (cs->status_read > cs->status_end)
+ 			cs->status_read = cs->status_buf;
+@@ -642,7 +644,9 @@ int HiSax_readstatus(u_char __user *buf,
+ 				cnt = HISAX_STATUS_BUFSIZE;
+ 			else
+ 				cnt = count;
+-			copy_to_user(p, cs->status_read, cnt);
++			if (copy_to_user(p, cs->status_read, cnt)) {
++				return -EFAULT;
++			}
+ 			p += cnt;
+ 			cs->status_read += cnt % HISAX_STATUS_BUFSIZE;
+ 			count -= cnt;
+diff --git a/drivers/isdn/i4l/isdn_common.c b/drivers/isdn/i4l/isdn_common.c
+--- a/drivers/isdn/i4l/isdn_common.c
++++ b/drivers/isdn/i4l/isdn_common.c
+@@ -1842,7 +1842,10 @@ isdn_writebuf_stub(int drvidx, int chan,
+ 	if (!skb)
+ 		return 0;
+ 	skb_reserve(skb, hl);
+-	copy_from_user(skb_put(skb, len), buf, len);
++	if (copy_from_user(skb_put(skb, len), buf, len)) {
++		dev_kfree_skb(skb);
++		return -EFAULT;
++	}
+ 	ret = dev->drv[drvidx]->interface->writebuf_skb(drvidx, chan, 1, skb);
+ 	if (ret <= 0)
+ 		dev_kfree_skb(skb);
+diff --git a/drivers/isdn/i4l/isdn_ppp.c b/drivers/isdn/i4l/isdn_ppp.c
+--- a/drivers/isdn/i4l/isdn_ppp.c
++++ b/drivers/isdn/i4l/isdn_ppp.c
+@@ -788,7 +788,9 @@ isdn_ppp_read(int min, struct file *file
+ 	is->first = b;
  
--- 
-Carlo Perassi - http://www.linux.it/~carlo/
+ 	spin_unlock_irqrestore(&is->buflock, flags);
+-	copy_to_user(buf, save_buf, count);
++	if (copy_to_user(buf, save_buf, count)) {
++		count = -EFAULT;
++	}
+ 	kfree(save_buf);
+ 
+ 	return count;
 
---===============34735567914157528==
+--===============67399151996993445==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34735567914157528==--
+--===============67399151996993445==--
