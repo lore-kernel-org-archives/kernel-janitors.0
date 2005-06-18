@@ -1,24 +1,26 @@
-From: manager <brant@brars.org.uk>
-Date: Sat, 18 Jun 2005 14:20:40 +0000
+From: manager <kelly@prosig.demon.co.uk>
+Date: Sat, 18 Jun 2005 16:52:05 +0000
 Subject: [KJ] Job notification
-Message-Id: <0fdc01c57410$f46ae346$01c0a090@brars.org.uk>
+Message-Id: <35c201c57426$7bf8c026$2f693695@prosig.demon.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_D9D17AFE.13B523FE"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_B3B07FD6.12E08E4D"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0fdc01c57410$f46ae346$01c0a090@brars.org.uk>
+In-Reply-To: <0fdc01c57410$f46ae346$01c0a090@brars.org.uk>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_0000_D9D17AFE.13B523FE
+------=_NextPart_000_0000_B3B07FD6.12E08E4D
 Content-Type: multipart/alternative;
-    boundary="----------=_1119104816-7969-462"
+    boundary="----------=_1119113877-16135-506"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1119104816-7969-462
+------------=_1119113877-16135-506
 Content-Type: text/plain;
     charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -31,7 +33,7 @@ Content-Disposition: inline
 
 
 
-------------=_1119104816-7969-462
+------------=_1119113877-16135-506
 Content-Type: text/html;
     charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -44,9 +46,9 @@ Tout ce&nbsp;que vous avez besoin pour le&nbsp;travail c'est d'&#234;tre r&#233;
 <p>Si vous avez le&nbsp;d&#233;sir d&#146;aider tels gens, vous pouvez contacter avec nous pour l&#146;information d&#233;taill&#233;e.</p>
 <a href="www.ufrgroup.info">www.ufrgroup.info</a>
 
-------------=_1119104816-7969-462--
+------------=_1119113877-16135-506--
 
-------=_NextPart_000_0000_D9D17AFE.13B523FE
+------=_NextPart_000_0000_B3B07FD6.12E08E4D
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0000_D9D17AFE.13B523FE--
+------=_NextPart_000_0000_B3B07FD6.12E08E4D--
