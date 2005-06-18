@@ -1,61 +1,52 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 22 Jun 2005 07:07:58 +0000
-Subject: Re: [KJ] [PATCH] Audit return code :
-Message-Id: <20050622070758.GB5054@rhum.iomeda.fr>
+From: manager <brant@brars.org.uk>
+Date: Sat, 18 Jun 2005 14:20:40 +0000
+Subject: [KJ] Job notification
+Message-Id: <0fdc01c57410$f46ae346$01c0a090@brars.org.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============059294448921371146=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_D9D17AFE.13B523FE"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050621101842.GI4880@rhum.iomeda.fr>
-In-Reply-To: <20050621101842.GI4880@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============059294448921371146==
+This is a multi-part message in MIME format...
+
+------=_NextPart_000_0000_D9D17AFE.13B523FE
+Content-Type: multipart/alternative;
+    boundary="----------=_1119104816-7969-462"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1119104816-7969-462
+Content-Type: text/plain;
+    charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
 
-Alexey Dobriyan (adobriyan@gmail.com) wrote:
-> On Tuesday 21 June 2005 14:18, Christophe Lucas wrote:
-> > Audit return codes (and handle failure correctly) for misc_register.
-> 
-> > --- 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c
-> > +++ 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c
-> > @@ -192,12 +192,19 @@ static int hdpu_cpustate_probe(struct de
-> >  {
-> >  	struct platform_device *pdev = to_platform_device(ddev);
-> >  	struct resource *res;
-> > +	int ret;
-> >  
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >  	cpustate.set_addr = (unsigned long *)res->start;
-> >  	cpustate.clr_addr = (unsigned long *)res->end - 1;
-> >  
-> > -	misc_register(&cpustate_dev);
-> > +	if (ret = misc_register(&cpustate_dev)) {
-> > +		printk(KERN_WARNING "Unable to register misc device.\n");
-> > +		cpustate.set_addr = 0;
-> > +		cpustate.clr_addr = 0;
-> 
-> Why clear them? Anyway, both are pointers, so use NULL.
 
-I have cleared it as it is done in original file (line 209, 210).
-But I will correct it in NULL form. Thanks,
 
-> > +		return ret ;
-> > +	}
-> > +
-> >  	create_proc_read_entry("sky_cpustate", 0, 0, cpustate_read_proc, NULL);
-> 
-> Also unchecked.
-> 
-> Please, post patches inline.
 
-Ok, I will correct my configuration of mutt.
 
-Thanks and have a nice day,
 
-						- Christophe
 
---===============059294448921371146==
+
+------------=_1119104816-7969-462
+Content-Type: text/html;
+    charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<p>Nous sommes beaucoup inqui&#233;t&#233;s&nbsp;ce&nbsp;que les gens sont oblig&#233;s&nbsp;ill&#233;galement d&#146;immigrer &#224; de&nbsp;diff&#233;rents pays. Nous comprenons parfaitement, dans quelle situation difficile se&nbsp;trouvent les gens poursuivis du&nbsp;gouvernement du&nbsp;pays. Mais malgr&#233; qu&#146;ils organisent les communaut&#233;s&nbsp;personnelles, ils n&#146;ont pas la&nbsp;possibilit&#233; de&nbsp;gagner beaucoup et&nbsp;nourrir les enfants. Mais ces gens aident l&#146;Etat, qui les a&nbsp;h&#233;berg&#233;! Rappelez-vous les Mexicains levant l&#146;Am&#233;rique par le&nbsp;travail semi-gratuit&#133; </p>
+<p>Les parents proches rest&#233;s&nbsp;&#224; la&nbsp;patrie, veulent et&nbsp;peuvent aider les proches, mais n&#146;ont pas la&nbsp;possibilit&#233; de&nbsp;leur remettre l&#146;aide financi&#232;re. Nous les juristes de&nbsp;diff&#233;rents pays proposons le&nbsp;moyen de&nbsp;remettre l&#146;argent aux gens, reduits &#224; vivre dans les pays &#233;trangers. Ils sont les gens, et&nbsp;n&#146;importe dans quel pays ils se&nbsp;trouvent, ils ont les droits. Nous sommes incapables de&nbsp;remettre l&#146;argent sans aide des r&#233;sidents. C&#146;est pourquoi votre aide est n&#233;cessaire. Nous parfaitement comprenons que n&#146;importe quel travail doit &#234;tre pay&#233;, et&nbsp;nous sommes pr&#234;ts&nbsp;&#224; cela. De&nbsp;vous il&nbsp;faut simplement accepter l&#146;argent pour le&nbsp;compte et&nbsp;faire suivre.Tout ce&nbsp;que vous devez faire c'est de&nbsp;recevoir des virements bancaires et&nbsp;les reorienter &#224; d&#146;autres suivant les details, que nou
+ s vous envoyons par E-mail.
+Tout ce&nbsp;que vous avez besoin pour le&nbsp;travail c'est d'&#234;tre r&#233;sident de&nbsp;France, avoir un&nbsp;ou&nbsp;plusieurs comptes bancaires, l'ordinateur et&nbsp;le&nbsp;d&#233;sir d&#146;aider.</p>
+<p>Si vous avez le&nbsp;d&#233;sir d&#146;aider tels gens, vous pouvez contacter avec nous pour l&#146;information d&#233;taill&#233;e.</p>
+<a href="www.ufrgroup.info">www.ufrgroup.info</a>
+
+------------=_1119104816-7969-462--
+
+------=_NextPart_000_0000_D9D17AFE.13B523FE
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============059294448921371146==--
+------=_NextPart_000_0000_D9D17AFE.13B523FE--
