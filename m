@@ -1,68 +1,63 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 23 Jun 2005 07:33:39 +0000
-Subject: [KJ] [PATCH][RESEND] Audit return code :
-Message-Id: <20050623073339.GE5075@rhum.iomeda.fr>
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 19 Jun 2005 19:50:59 +0000
+Subject: Re: [KJ] init_module / cleanup_module cleanup
+Message-Id: <20050619195059.GB6455@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============98365558349416293=="
+Content-Type: multipart/mixed; boundary="===============9637277151091912=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050622080346.GH5054@rhum.iomeda.fr>
-In-Reply-To: <20050622080346.GH5054@rhum.iomeda.fr>
+References: <42984D00.8070003@reiner-h.de>
+In-Reply-To: <42984D00.8070003@reiner-h.de>
 To: kernel-janitors@vger.kernel.org
 
---===============98365558349416293==
-Content-Disposition: inline
+--===============9637277151091912==
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-description:
-Audit return codes (and handle failure correctly) for misc_register.
+Sorry it took so long for me to reply.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+On 29/05/05 15:42 +0200, Reiner Herrmann wrote:
+> Domen Puncer wrote:
+> > Missing "Signed-off-by:";
+> > Patch should probably be split per dir (diffsplit -d) and if some patch
+> > touches >1 file of a driver, per driver.
+> In my opinion in this case it is OK, if there is only one patch,
+> because I did only a single logical change to these files.
 
+Still it makes some sense to put wireless, tokenring etc. in
+different patches. But i'm just nitpicking.
 
-diff -urpNX dontdiff 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c
---- 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c	2005-06-17 21:48:29.000000000 +0200
-+++ 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c	2005-06-23 09:28:15.924936888 +0200
-@@ -192,13 +192,25 @@ static int hdpu_cpustate_probe(struct de
- {
- 	struct platform_device *pdev = to_platform_device(ddev);
- 	struct resource *res;
-+	struct proc_dir_entry *proc_de;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	cpustate.set_addr = (unsigned long *)res->start;
- 	cpustate.clr_addr = (unsigned long *)res->end - 1;
- 
--	misc_register(&cpustate_dev);
--	create_proc_read_entry("sky_cpustate", 0, 0, cpustate_read_proc, NULL);
-+	ret = misc_register(&cpustate_dev);
-+	if (ret) {
-+		printk(KERN_WARNING "sky_cpustate: Unable to register misc device.\n");
-+		cpustate.set_addr = NULL;
-+		cpustate.clr_addr = NULL;
-+		return ret;
-+	}
-+
-+	proc_de = create_proc_read_entry("sky_cpustate", 0, 0, cpustate_read_proc, NULL);
-+	if (proc_de == NULL) {
-+		printk(KERN_WARNING "sky_cpustate: Unable to create proc dir entry.\n");
-+	}
- 
- 	printk(KERN_INFO "Sky CPU State Driver v" SKY_CPUSTATE_VERSION "\n");
- 	return 0;
-@@ -206,8 +218,8 @@ static int hdpu_cpustate_probe(struct de
- static int hdpu_cpustate_remove(struct device *ddev)
- {
- 
--	cpustate.set_addr = 0;
--	cpustate.clr_addr = 0;
-+	cpustate.set_addr = NULL;
-+	cpustate.clr_addr = NULL;
- 
- 	remove_proc_entry("sky_cpustate", NULL);
- 	misc_deregister(&cpustate_dev);
+> 
+> > Also, diffstat -p1 when patching multiple files is great.
+> > (http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt is a nice
+> >  read).
+> Thank you for the hint. I'll use this tool from now on.
+> 
+> >>diff -uprN vanilla-2.6.12-rc5-kj/drivers/net/wireless/wavelan.c linux-2.6.12-rc5-kj/drivers/net/wireless/wavelan.c
+> >>--- vanilla-2.6.12-rc5-kj/drivers/net/wireless/wavelan.c	2005-03-02 08:38:26.000000000 +0100
+> >>+++ linux-2.6.12-rc5-kj/drivers/net/wireless/wavelan.c	2005-05-28 01:10:59.000000000 +0200
+> > 
+> > 
+> > This one (and probably some others) won't compile on !MODULE, because
+> > it includes wavelan.p.h with variables only defined on MODULE.
+> > 
+> > An ugly hack i used to quickly compile test it:
+> > 	egrep "^--- " ~/netdrivers_module_cleanup.diff | cut -f2 -d' '| cut -f1 | cut -f2- -d'/' | sed 's/.c$/.o/g' | xargs -n1 make 2>&1
+> 
+> The appended patch should now be correct.
 
---===============98365558349416293==
+Doesn't look like, on at least !MODULE:
+	domen@nd47:~/kernel/a$ wc -l netdrivers_*
+	  399 netdrivers_not_patched
+	  429 netdrivers_patched
+	  828 total
+	domen@nd47:~/kernel/a$ grep error -c netdrivers_*
+	netdrivers_not_patched:113
+	netdrivers_patched:128
+
+A nice example is tms380tr which compiled cleanly before, but fails
+now.
+
+--===============9637277151091912==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============98365558349416293==--
+--===============9637277151091912==--
