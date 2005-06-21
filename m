@@ -1,50 +1,54 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Jun 2005 09:18:21 +0000
-Subject: [KJ] Re: A new soldier
-Message-Id: <Pine.LNX.4.62.0506301117140.11104@numbat.sonytel.be>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Tue, 21 Jun 2005 10:18:42 +0000
+Subject: [KJ] [PATCH] Audit return code :
+Message-Id: <20050621101842.GI4880@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============077399138155640257=="
+Content-Type: multipart/mixed; boundary="/i8j2F0k9BYX4qLc"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <cbecb304050628072325516b6e@mail.gmail.com> <200506290225.05793.arnd@arndb.de>
-In-Reply-To: <200506290225.05793.arnd@arndb.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Rodrigo Nascimento <underscore0x5f@gmail.com>, Linux Kernel Development <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============077399138155640257==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-On Wed, 29 Jun 2005, Arnd Bergmann wrote:
-> If you are looking for something bigger with a steep learning curve,
-> you could try to do a sample architecture implementation like
-> arch/skeleton and include/asm-skeleton, along the lines of the
-> original include/asm-generic directory (asm-generic now serves
-> as a place to put code that is the same on most archs but is different
-> on others).
-> 
-> Most new architectures that are added keep copying hacks and obsolete
-> code from one of the existing trees, so it would be really nice to
-> have a clean starting point for those who don't have as much time to
-> find the correct solution as a CS student ;-).
-> 
-> You would surely learn a lot about the architecture specific parts
-> of the kernel and do something useful without the danger of breaking
-> code that other people depend on, but it's a lot of work.
-> Maybe that can also be done by more that one person.
+--/i8j2F0k9BYX4qLc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sounds like an excellent idea to me! I'm eager to try `make ARCH=skeleton'!
+description :
+Audit return codes (and handle failure correctly) for misc_register.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-						Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--/i8j2F0k9BYX4qLc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="patch_drivers_misc_hdpuftrs_hdpu_cpustate.c.diff"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff -urpNX dontdiff 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c
+--- 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c	2005-06-17 21:48:29.000000000 +0200
++++ 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c	2005-06-21 11:38:33.783957664 +0200
+@@ -192,12 +192,19 @@ static int hdpu_cpustate_probe(struct de
+ {
+ 	struct platform_device *pdev = to_platform_device(ddev);
+ 	struct resource *res;
++	int ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	cpustate.set_addr = (unsigned long *)res->start;
+ 	cpustate.clr_addr = (unsigned long *)res->end - 1;
+ 
+-	misc_register(&cpustate_dev);
++	if (ret = misc_register(&cpustate_dev)) {
++		printk(KERN_WARNING "Unable to register misc device.\n");
++		cpustate.set_addr = 0;
++		cpustate.clr_addr = 0;
++		return ret ;
++	}
++
+ 	create_proc_read_entry("sky_cpustate", 0, 0, cpustate_read_proc, NULL);
+ 
+ 	printk(KERN_INFO "Sky CPU State Driver v" SKY_CPUSTATE_VERSION "\n");
 
---===============077399138155640257==
+--/i8j2F0k9BYX4qLc
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============077399138155640257==--
+--/i8j2F0k9BYX4qLc--
