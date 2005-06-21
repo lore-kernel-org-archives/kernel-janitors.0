@@ -1,16 +1,16 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Tue, 21 Jun 2005 10:16:28 +0000
-Subject: [KJ] [PATCH] Audit return code : drivers/input/misc/hp_sdc_rtc.c
-Message-Id: <20050621101628.GG4880@rhum.iomeda.fr>
+Date: Tue, 21 Jun 2005 10:17:26 +0000
+Subject: [KJ] [PATCH] Audit return code : drivers/macintosh/apm_emu.c
+Message-Id: <20050621101726.GH4880@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="7CZp05NP8/gJM8Cl"
+Content-Type: multipart/mixed; boundary="f61P+fpdnY2FZS1u"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050621101313.GE4880@rhum.iomeda.fr>
 In-Reply-To: <20050621101313.GE4880@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
 
---7CZp05NP8/gJM8Cl
+--f61P+fpdnY2FZS1u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -20,28 +20,42 @@ Audit return codes (and handle failure correctly) for misc_register.
 Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
---7CZp05NP8/gJM8Cl
+--f61P+fpdnY2FZS1u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment;
-	filename="patch_drivers_input_misc_hp_sdc_rtc.c.diff"
+	filename="patch_drivers_macintosh_apm_emu.c.diff"
 
-diff -urpNX dontdiff 2.6.12-orig/drivers/input/misc/hp_sdc_rtc.c 2.6.12/drivers/input/misc/hp_sdc_rtc.c
---- 2.6.12-orig/drivers/input/misc/hp_sdc_rtc.c	2005-06-17 21:48:29.000000000 +0200
-+++ 2.6.12/drivers/input/misc/hp_sdc_rtc.c	2005-06-21 11:31:18.363151688 +0200
-@@ -702,7 +702,10 @@ static int __init hp_sdc_rtc_init(void)
+diff -urpNX dontdiff 2.6.12-orig/drivers/macintosh/apm_emu.c 2.6.12/drivers/macintosh/apm_emu.c
+--- 2.6.12-orig/drivers/macintosh/apm_emu.c	2005-06-17 21:48:29.000000000 +0200
++++ 2.6.12/drivers/macintosh/apm_emu.c	2005-06-21 11:36:39.094393128 +0200
+@@ -515,6 +515,7 @@ static struct miscdevice apm_device = {
  
- 	if ((ret = hp_sdc_request_timer_irq(&hp_sdc_rtc_isr)))
- 		return ret;
--	misc_register(&hp_sdc_rtc_dev);
-+	if (ret = misc_register(&hp_sdc_rtc_dev)) {
+ static int __init apm_emu_init(void)
+ {
++	int ret ;
+ 	struct proc_dir_entry *apm_proc;
+ 
+ 	if (sys_ctrler != SYS_CTRLER_PMU) {
+@@ -522,12 +523,15 @@ static int __init apm_emu_init(void)
+ 		return -ENODEV;
+ 	}
+ 		
++	if (ret = misc_register(&apm_device)) {
 +		printk(KERN_WARNING "Unable to register misc device.\n");
 +		return ret ;
 +	}
-         create_proc_read_entry ("driver/rtc", 0, 0, 
- 				hp_sdc_rtc_read_proc, NULL);
++
+ 	apm_proc = create_proc_info_entry("apm", 0, NULL, apm_emu_get_info);
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
  
+-	misc_register(&apm_device);
+-
+ 	pmu_register_sleep_notifier(&apm_sleep_notifier);
+ 
+ 	printk(KERN_INFO "apm_emu: APM Emulation %s initialized.\n", driver_version);
 
---7CZp05NP8/gJM8Cl
+--f61P+fpdnY2FZS1u
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---7CZp05NP8/gJM8Cl--
+--f61P+fpdnY2FZS1u--
