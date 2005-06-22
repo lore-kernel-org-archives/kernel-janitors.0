@@ -1,66 +1,54 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 22 Jun 2005 08:03:46 +0000
-Subject: [KJ] [PATCH][RESEND] Audit return code :
-Message-Id: <20050622080346.GH5054@rhum.iomeda.fr>
+From: randy_dunlap <rdunlap@xenotime.net>
+Date: Wed, 22 Jun 2005 15:50:18 +0000
+Subject: Re: [KJ] [PATCH][RESEND] Audit return code :
+Message-Id: <20050622085018.158aae66.rdunlap@xenotime.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40790469973520027=="
+Content-Type: multipart/mixed; boundary="===============83838999600449793=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050622080346.GH5054@rhum.iomeda.fr>
+In-Reply-To: <20050622080346.GH5054@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============40790469973520027==
-Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
+--===============83838999600449793==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-description:
-Audit return codes (and handle failure correctly) for misc_register.
+On Wed, 22 Jun 2005 10:00:00 +0200 Christophe Lucas wrote:
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+| diff -urpNX dontdiff 2.6.12-orig/drivers/macintosh/apm_emu.c 2.6.12/drivers/macintosh/apm_emu.c
+| --- 2.6.12-orig/drivers/macintosh/apm_emu.c	2005-06-17 21:48:29.000000000 +0200
+| +++ 2.6.12/drivers/macintosh/apm_emu.c	2005-06-22 09:15:21.000000000 +0200
+| @@ -515,19 +515,24 @@ static struct miscdevice apm_device = {
+|  
+|  static int __init apm_emu_init(void)
+|  {
+| +	int ret ;
+
+	int ret;
+
+|  	struct proc_dir_entry *apm_proc;
+|  
+|  	if (sys_ctrler != SYS_CTRLER_PMU) {
+|  		printk(KERN_INFO "apm_emu: Requires a machine with a PMU.\n");
+|  		return -ENODEV;
+|  	}
+| -		
+| +
+| +	ret = misc_register(&apm_device);
+| +	if (ret) {
+| +		printk(KERN_WARNING "Unable to register misc device.\n");
+| +		return ret ;
+
+		return ret;
+
+| +	}
+| +
 
 
-diff -urpNX dontdiff 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c
---- 2.6.12-orig/drivers/misc/hdpuftrs/hdpu_cpustate.c	2005-06-17 21:48:29.000000000 +0200
-+++ 2.6.12/drivers/misc/hdpuftrs/hdpu_cpustate.c	2005-06-22 09:16:08.000000000 +0200
-@@ -192,13 +192,25 @@ static int hdpu_cpustate_probe(struct de
- {
- 	struct platform_device *pdev = to_platform_device(ddev);
- 	struct resource *res;
-+	struct proc_dir_entry *proc_de;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	cpustate.set_addr = (unsigned long *)res->start;
- 	cpustate.clr_addr = (unsigned long *)res->end - 1;
- 
--	misc_register(&cpustate_dev);
--	create_proc_read_entry("sky_cpustate", 0, 0, cpustate_read_proc, NULL);
-+	ret = misc_register(&cpustate_dev);
-+	if (ret) {
-+		printk(KERN_WARNING "Unable to register misc device.\n");
-+		cpustate.set_addr = NULL;
-+		cpustate.clr_addr = NULL;
-+		return ret ;
-+	}
-+
-+	proc_de = create_proc_read_entry("sky_cpustate", 0, 0, cpustate_read_proc, NULL);
-+	if (proc_de == NULL) {
-+		printk(KERN_WARNING "Unable to create proc dir entry for hdpu_cpustate device.\n");
-+	}
- 
- 	printk(KERN_INFO "Sky CPU State Driver v" SKY_CPUSTATE_VERSION "\n");
- 	return 0;
-@@ -206,8 +218,8 @@ static int hdpu_cpustate_probe(struct de
- static int hdpu_cpustate_remove(struct device *ddev)
- {
- 
--	cpustate.set_addr = 0;
--	cpustate.clr_addr = 0;
-+	cpustate.set_addr = NULL;
-+	cpustate.clr_addr = NULL;
- 
- 	remove_proc_entry("sky_cpustate", NULL);
- 	misc_deregister(&cpustate_dev);
+---
+~Randy
 
---===============40790469973520027==
+--===============83838999600449793==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40790469973520027==--
+--===============83838999600449793==--
