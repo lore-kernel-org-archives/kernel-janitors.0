@@ -1,49 +1,56 @@
-From: randy_dunlap <rdunlap@xenotime.net>
-Date: Thu, 23 Jun 2005 20:43:55 +0000
-Subject: Re: [KJ] [PATCH] bonding - uninitialize static variables
-Message-Id: <20050623134355.29b20d0b.rdunlap@xenotime.net>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 22 Jun 2005 08:00:00 +0000
+Subject: [KJ] [PATCH][RESEND] Audit return code : drivers/macintosh/apm_emu.c
+Message-Id: <20050622080000.GG5054@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70048976542197661=="
+Content-Type: multipart/mixed; boundary="===============98201224545032728=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050623192901.GE4398@voyager>
-In-Reply-To: <20050623192901.GE4398@voyager>
 To: kernel-janitors@vger.kernel.org
 
---===============70048976542197661==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============98201224545032728==
+Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
 
-On Thu, 23 Jun 2005 21:29:02 +0200 Carlo Perassi wrote:
 
-| This patch uninitializes five static int initialized to 0.
-| 
-| Signed-off-by: Carlo Perassi <carlo@linux.it>
-| ---
-|  drivers/net/bonding/bond_main.c |   10 +++++-----
-|  1 files changed, 5 insertions(+), 5 deletions(-)
-| 
-| Index: linux-2.6.12/drivers/net/bonding/bond_main.c
-| ===================================================================
-| --- linux-2.6.12.orig/drivers/net/bonding/bond_main.c
-| +++ linux-2.6.12/drivers/net/bonding/bond_main.c
-| @@ -531,8 +531,8 @@
-|  
-|  static int max_bonds	= BOND_DEFAULT_MAX_BONDS;
-|  static int miimon	= BOND_LINK_MON_INTERV;
-| -static int updelay	= 0;
-| -static int downdelay	= 0;
-| +static int updelay;
-| +static int downdelay;
-|  static int use_carrier	= 1;
-|  static char *mode	= NULL;
-|  static char *primary	= NULL;
+description:
+Audit return codes (and handle failure correctly) for misc_register.
 
-Those NULLs can also be discarded.
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
----
-~Randy
 
---===============70048976542197661==
+diff -urpNX dontdiff 2.6.12-orig/drivers/macintosh/apm_emu.c 2.6.12/drivers/macintosh/apm_emu.c
+--- 2.6.12-orig/drivers/macintosh/apm_emu.c	2005-06-17 21:48:29.000000000 +0200
++++ 2.6.12/drivers/macintosh/apm_emu.c	2005-06-22 09:15:21.000000000 +0200
+@@ -515,19 +515,24 @@ static struct miscdevice apm_device = {
+ 
+ static int __init apm_emu_init(void)
+ {
++	int ret ;
+ 	struct proc_dir_entry *apm_proc;
+ 
+ 	if (sys_ctrler != SYS_CTRLER_PMU) {
+ 		printk(KERN_INFO "apm_emu: Requires a machine with a PMU.\n");
+ 		return -ENODEV;
+ 	}
+-		
++
++	ret = misc_register(&apm_device);
++	if (ret) {
++		printk(KERN_WARNING "Unable to register misc device.\n");
++		return ret ;
++	}
++
+ 	apm_proc = create_proc_info_entry("apm", 0, NULL, apm_emu_get_info);
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
+ 
+-	misc_register(&apm_device);
+-
+ 	pmu_register_sleep_notifier(&apm_sleep_notifier);
+ 
+ 	printk(KERN_INFO "apm_emu: APM Emulation %s initialized.\n", driver_version);
+
+--===============98201224545032728==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70048976542197661==--
+--===============98201224545032728==--
