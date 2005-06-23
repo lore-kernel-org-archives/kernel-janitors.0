@@ -1,52 +1,68 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 27 Jun 2005 16:50:50 +0000
-Subject: [KJ] [PATCH] update faq
-Message-Id: <20050627165050.GF28435@us.ibm.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Thu, 23 Jun 2005 10:33:17 +0000
+Subject: [KJ] [PATCH 2/2] sb16_csp: untypedef
+Message-Id: <200506231433.17485.adobriyan@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============094876246891460347=="
+Content-Type: multipart/mixed; boundary="===============81592257856881067=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============094876246891460347==
-Content-Type: text/plain; charset=us-ascii
+--===============81592257856881067==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Hi KJ-ers,
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-One cleanup reqarding ketchup usage & one additional feature (make O=)
-for the FAQ.
+ sound/isa/sb/sb16_csp.c |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
-
---- faq	2005-05-29 17:05:59.000000000 -0700
-+++ faq.dev	2005-06-27 09:48:57.000000000 -0700
-@@ -63,11 +63,22 @@ When diffing more files (especially in d
- that is should break hardlinks; vim can be taught by setting
- "set backupcopy=auto,breakhardlink" in your ~/.vimrc .
- Example usage:
--  ketchup 2.6.12
-+  ketchup 2.6 (currently 2.6.12)
-   cp -al linux-2.6.12 mytree
-   # change some random files in mytree/
-   diff -pruNX Documentation/dontdiff linux-2.6.12 mytree > my_new_patch
+Index: linux-sparse/sound/isa/sb/sb16_csp.c
+===================================================================
+--- linux-sparse.orig/sound/isa/sb/sb16_csp.c	2005-06-23 14:13:55.000000000 +0400
++++ linux-sparse/sound/isa/sb/sb16_csp.c	2005-06-23 14:17:14.000000000 +0400
+@@ -54,20 +54,20 @@ MODULE_LICENSE("GPL");
+ /*
+  * RIFF data format
+  */
+-typedef struct riff_header {
++struct riff_header {
+ 	__u32 name;
+ 	__u32 len;
+-} riff_header_t;
++};
  
-+Another useful feature is the kbuild O= feature. This allows you to save
-+output files in a separate directory. Thus, one could, in parallel to
-+the linked source trees, create separate build trees, e.g. linux/views/
-+and linux/build/. Example usage, presuming you followed the ketchup
-+steps above in a directory called views:
-+
-+  cd ../build/
-+  mkdir linux-2.6.12
-+  cp backup_config_from_somewhere_else linux-2.6.12/.
-+  cd ../views/linux-2.6.12/
-+  make O=$(pwd | sed s/views/build/) -j4 oldconfig bzImage
+-typedef struct desc_header {
+-	riff_header_t info;
++struct desc_header {
++	struct riff_header info;
+ 	__u16 func_nr;
+ 	__u16 VOC_type;
+ 	__u16 flags_play_rec;
+ 	__u16 flags_16bit_8bit;
+ 	__u16 flags_stereo_mono;
+ 	__u16 flags_rates;
+-} desc_header_t;
++};
  
- Since typing Signed-off-by gets boring, here's a ~/.vimrc sample:
-  map <F1> ^iSigned-off-by: Random C Developer <rcd@example.com><CR><ESC>^
+ /*
+  * prototypes
+@@ -300,9 +300,9 @@ static int snd_sb_csp_riff_load(snd_sb_c
+ 	unsigned char __user *data_end;
+ 	unsigned short func_nr = 0;
+ 
+-	riff_header_t file_h, item_h, code_h;
++	struct riff_header file_h, item_h, code_h;
+ 	__u32 item_type;
+-	desc_header_t funcdesc_h;
++	struct desc_header funcdesc_h;
+ 
+ 	unsigned long flags;
+ 	int err;
 
---===============094876246891460347==
+--===============81592257856881067==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============094876246891460347==--
+--===============81592257856881067==--
