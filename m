@@ -1,50 +1,74 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Mon, 27 Jun 2005 21:08:24 +0000
-Subject: [KJ] [PATCH] drivers/net/8139cp.c: MODULE_PARM -> module_param
-Message-Id: <200506272108.24896.victor@cetuc.puc-rio.br>
+From: Carlo Perassi <carlo@linux.it>
+Date: Thu, 23 Jun 2005 19:22:33 +0000
+Subject: [KJ] [PATCH] (4/4) ieee1394 - uninitialize static variables
+Message-Id: <20050623192233.GD4398@voyager>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_IrGwCIzGmrNVih2"
+Content-Type: multipart/mixed; boundary="===============23358861518619878=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_IrGwCIzGmrNVih2
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+--===============23358861518619878==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-description:
-Use module_param() instead of the old MODULE_PARM()
+Hi.
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+One of the tasks at http://janitor.kernelnewbies.org/TODO
+is described as
+"
+uninitialize static variables initialized to 0, to make it go to the
+.bss, instead of .data.
+"
 
---Boundary-00=_IrGwCIzGmrNVih2
-Content-Type: text/x-diff; charset="us-ascii"; name="8139cp_module_param.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="8139cp_module_param.patch"
+To proof that it is still guaranteed that those variables will be
+initialized to zero
 
-diff -Nru linux-2.6.12/drivers/net/8139cp.c linux-2.6.12-devel/drivers/net/8139cp.c
---- linux-2.6.12/drivers/net/8139cp.c	2005-06-17 19:48:29.000000000 +0000
-+++ linux-2.6.12-devel/drivers/net/8139cp.c	2005-06-27 16:17:47.000000000 +0000
-@@ -94,13 +94,13 @@
- MODULE_LICENSE("GPL");
+Tom Bradley <tojabr@gmail.com> (on the kernel-janitors mailing list)
+wrote
+"
+the default for gcc is `-fzero-initialized-in-bss', the kernel
+makefile does not change this therefore bss is zeroed, this is
+documented in the gcc manpage.
+"
+
+and David P Howell <david.p.howell@intel.com> added that
+"
+By definition .bss is always zero'ed by the implementation.
+"
+
+This patch uninitializes two static int initialized to 0.
+
+Signed-off-by: Carlo Perassi <carlo@linux.it>
+---
+ drivers/ieee1394/sbp2.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-2.6.12/drivers/ieee1394/sbp2.c
+===================================================================
+--- linux-2.6.12.orig/drivers/ieee1394/sbp2.c
++++ linux-2.6.12/drivers/ieee1394/sbp2.c
+@@ -104,7 +104,7 @@
+  * down to us at a time (debugging). This might be necessary for very
+  * badly behaved sbp2 devices.
+  */
+-static int serialize_io = 0;
++static int serialize_io;
+ module_param(serialize_io, int, 0444);
+ MODULE_PARM_DESC(serialize_io, "Serialize all I/O coming down from the scsi drivers (default = 0)");
  
- static int debug = -1;
--MODULE_PARM (debug, "i");
-+module_param(debug, int, 0);
- MODULE_PARM_DESC (debug, "8139cp: bitmapped message enable number");
+@@ -145,7 +145,7 @@
+  * please submit the logged sbp2_firmware_revision value of this device to
+  * the linux1394-devel mailing list.
+  */
+-static int force_inquiry_hack = 0;
++static int force_inquiry_hack;
+ module_param(force_inquiry_hack, int, 0444);
+ MODULE_PARM_DESC(force_inquiry_hack, "Force SCSI inquiry hack (default = 0)");
  
- /* Maximum number of multicast addresses to filter (vs. Rx-all-multicast).
-    The RTL chips use a 64 element hash table based on the Ethernet CRC.  */
- static int multicast_filter_limit = 32;
--MODULE_PARM (multicast_filter_limit, "i");
-+module_param(multicast_filter_limit, int, 0);
- MODULE_PARM_DESC (multicast_filter_limit, "8139cp: maximum number of filtered multicast addresses");
- 
- #define PFX			DRV_NAME ": "
+-- 
+Carlo Perassi - http://www.linux.it/~carlo/
 
---Boundary-00=_IrGwCIzGmrNVih2
+--===============23358861518619878==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +79,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_IrGwCIzGmrNVih2--
+--===============23358861518619878==--
