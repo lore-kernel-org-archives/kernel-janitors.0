@@ -1,49 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 29 Jun 2005 16:58:53 +0000
-Subject: Re: [KJ] cleanup-drivers_usb_serial_cypress_m8.patch
-Message-Id: <20050629165853.GA24347@kroah.com>
+From: Carlo Perassi <carlo@linux.it>
+Date: Thu, 23 Jun 2005 19:40:16 +0000
+Subject: [KJ] [PATCH] SubmittingPatches - a few more trivialities
+Message-Id: <20050623194016.GC4790@voyager>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16580295583006599=="
+Content-Type: multipart/mixed; boundary="===============83811622699974209=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200506292049.52068.adobriyan@gmail.com>
-In-Reply-To: <200506292049.52068.adobriyan@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============16580295583006599==
+--===============83811622699974209==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Jun 29, 2005 at 08:49:51PM +0400, Alexey Dobriyan wrote:
-> > Reading this driver I noticed some trailing whitespaces and tabs so I
-> > removed them with some 80th column fitting and a few more similar
-> > things.
-> 
-> > --- quilt.orig/drivers/usb/serial/cypress_m8.c
-> > +++ quilt/drivers/usb/serial/cypress_m8.c
-> 
-> > -			tty->termios->c_cflag = B4800 | CS8 | CREAD | HUPCL | CLOCAL;
-> > +			tty->termios->c_cflag = B4800 | CS8 | CREAD | HUPCL |
-> > +				CLOCAL;
-> 
-> Well, this should be changed to:
-> 
-> 			tty->termios->c_cflag =
-> 					B4800 | CS8 | CREAD | HUPCL | CLOCAL;
+Reading some detailig about submitting patches I found some strange tabs
+and a few more trivialities.
 
-Ick, no.  Why?  We don't inforce the 80 column rule that hard...
+Signed-off-by: Carlo Perassi <carlo@linux.it>
+---
+ SubmittingPatches |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-But if you really are worried about it try:
+Index: Documentation/SubmittingPatches
+===================================================================
+--- Documentation.orig/SubmittingPatches
++++ Documentation/SubmittingPatches
+@@ -291,19 +291,19 @@
+             person who certified (a), (b) or (c) and I have not modified
+             it.
+ 
+-	(d) I understand and agree that this project and the contribution
+-	    are public and that a record of the contribution (including all
+-	    personal information I submit with it, including my sign-off) is
+-	    maintained indefinitely and may be redistributed consistent with
+-	    this project or the open source license(s) involved.
++        (d) I understand and agree that this project and the contribution
++            are public and that a record of the contribution (including all
++            personal information I submit with it, including my sign-off) is
++            maintained indefinitely and may be redistributed consistent with
++            this project or the open source license(s) involved.
+ 
+ then you just add a line saying
+ 
+-	Signed-off-by: Random J Developer <random@developer.org>
++        Signed-off-by: Random J Developer <random@developer.org>
+ 
+ Some people also put extra tags at the end.  They'll just be ignored for
+ now, but you can do this to mark internal company procedures or just
+-point out some special detail about the sign-off. 
++point out some special detail about the sign-off.
+ 
+ 
+ -----------------------------------
 
-			tty->termios->c_cflag = B4800 | CS8 | CREAD | 
-					        HUPCL | CLOCAL;
 
-Which is more readable.
-
-thanks,
-
-greg k-h
-
---===============16580295583006599==
+--===============83811622699974209==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16580295583006599==--
+--===============83811622699974209==--
