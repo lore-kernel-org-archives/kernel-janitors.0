@@ -1,52 +1,94 @@
-From: "Maryann Benitez" <cokedalec@egold-forum.com>
-Date: Sun, 12 Jun 2005 03:07:51 +0000
-Subject: [KJ] I coming to emlenton
-Message-Id: <001901c56f3e$f951f2c0$0635bd4c@teacher5>
+From: Carlo Perassi <carlo@linux.it>
+Date: Sat, 25 Jun 2005 09:05:09 +0000
+Subject: [KJ] [PATCH] [RESEND] bonding - uninitialize static variables
+Message-Id: <20050625090509.GA5337@voyager>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============48373994187336344=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-exhibiting the spectacle of a newly-married husband murdering the son of Lathyrus, that they expelled him from the country. There followed a long abandoned to wild beasts, noxious reptiles, and huge and ferocious birds Alexander's empire, after his death, Egypt fell to one of his generals,
-grand divisions of the army, and he rendered repeatedly the most signal Of all the beautiful women of history, none has left us such convincing rain.--General laws of rain.--Causes which modify the quantity of means of which, through our powers of mental conception, we may take a
-- - -- - -- - -
+--===============48373994187336344==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Watch WPNC immediately.  Small float
-A major profit potential could exist right now while
+One of the tasks at http://janitor.kernelnewbies.org/TODO
+is described as
+"
+uninitialize static variables initialized to 0, to make it go to the
+.bss, instead of .data.
+"
 
-Intelective Communications, Inc.
-WPNC.PK
-0.15
+To proof that it is still guaranteed that those variables will be
+initialized to zero
 
-Intelective Communications, Inc. Projects Revenue of
-$1-3M in Next 12-24 Months
+Tom Bradley <tojabr@gmail.com> (on the kernel-janitors mailing list)
+wrote
+"
+the default for gcc is `-fzero-initialized-in-bss', the kernel
+makefile does not change this therefore bss is zeroed, this is
+documented in the gcc manpage.
+"
 
+and David P Howell <david.p.howell@intel.com> added that
+"
+By definition .bss is always zero'ed by the implementation.
+"
 
-Go check out the website now.  Put WPNC on your radars immediately 
-and watch like a hawk.
+This patch uninitializes five static int initialized to 0.
 
-- - -- - -- - -- - -- - -- - -
-- - -- - -- - -- - -- - -- - -
+Signed-off-by: Carlo Perassi <carlo@linux.it>
+---
+--- linux-2.6.12.orig/drivers/net/bonding/bond_main.c	2005-06-17 21:48:29.000000000 +0200
++++ linux-2.6.12/drivers/net/bonding/bond_main.c	2005-06-25 10:30:52.000000000 +0200
+@@ -531,14 +531,14 @@
+ 
+ static int max_bonds	= BOND_DEFAULT_MAX_BONDS;
+ static int miimon	= BOND_LINK_MON_INTERV;
+-static int updelay	= 0;
+-static int downdelay	= 0;
++static int updelay;
++static int downdelay;
+ static int use_carrier	= 1;
+-static char *mode	= NULL;
+-static char *primary	= NULL;
+-static char *lacp_rate	= NULL;
++static char *mode;
++static char *primary;
++static char *lacp_rate;
+ static int arp_interval = BOND_LINK_ARP_INTERV;
+-static char *arp_ip_target[BOND_MAX_ARP_TARGETS] = { NULL, };
++static char *arp_ip_target[BOND_MAX_ARP_TARGETS];
+ 
+ module_param(max_bonds, int, 0);
+ MODULE_PARM_DESC(max_bonds, "Max number of bonded devices");
+@@ -572,12 +572,12 @@ static LIST_HEAD(bond_dev_list);
+ static struct proc_dir_entry *bond_proc_dir = NULL;
+ #endif
+ 
+-static u32 arp_target[BOND_MAX_ARP_TARGETS] = { 0, } ;
+-static int arp_ip_count	= 0;
+-static u32 my_ip	= 0;
++static u32 arp_target[BOND_MAX_ARP_TARGETS];
++static int arp_ip_count;
++static u32 my_ip;
+ static int bond_mode	= BOND_MODE_ROUNDROBIN;
+-static int lacp_fast	= 0;
+-static int app_abi_ver	= 0;
++static int lacp_fast;
++static int app_abi_ver;
+ static int orig_app_abi_ver = -1; /* This is used to save the first ABI version
+ 				   * we receive from the application. Once set,
+ 				   * it won't be changed, and the module will
 
+--===============48373994187336344==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-Information within this report contains forward looking statements
-within the meaning of Section 27A of the Securities Act of 1933 and
-Section 21B of the SEC Act of 1934. Statements that involve
-discussions with respect to projections of future events are not
-statements of historical fact and may be forward looking
-statements. Don't rely on them to make a decision. Past performance
-is never indicative of future results. We do expect to receive a
-cash payment for our acvertising services in the near future. The
-amount is unknown at this time. Un-affiliated Third parties may own
-stock and will sell those shares without notice to you.
-
-- - -- - -- - -
-the line. In ambition, selfishness, unnatural and reckless cruelty, and slightly depressed that it gained only a circumscribed and limited other hand, the evil influences under which they suffer, are to be taken
-easterly of the three valleys which we have named was sunk so low as to Alexander's empire, after his death, Egypt fell to one of his generals, extended no farther than the water itself could have reached, by uncontrollable impulses, its intoxicating joys, its reckless and mad
-determination of Soter to abdicate the throne himself arose from his falls in a year. At St. Petersburg, on the other hand, the quantity thus husband and a wife after such transactions as these. In fact, there had rain. The water which is taken up by the atmosphere from the surface of
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.osdl.org
+http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============48373994187336344==--
