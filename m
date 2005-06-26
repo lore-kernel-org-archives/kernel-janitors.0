@@ -1,27 +1,58 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Wed, 29 Jun 2005 16:26:36 +0000
-Subject: Re: [KJ] 2.6.13-rc1
-Message-Id: <200506292026.36295.adobriyan@gmail.com>
+From: Nico Golde <nico@ngolde.de>
+Date: Sun, 26 Jun 2005 16:36:54 +0000
+Subject: [KJ] empty file
+Message-Id: <20050626163654.GA4394@ngolde.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============11414835367587051=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050629131351.GH3904@nd47.coderock.org>
-In-Reply-To: <20050629131351.GH3904@nd47.coderock.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wednesday 29 June 2005 17:13, Domen Puncer wrote:
-> comments-drivers_scsi_FlashPoint
-> defines-drivers_scsi_FlashPoint.patch
->   all chunks failed because of Bunk's patch
 
-Aha! I know who to blame. :-)
+--===============11414835367587051==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Content-Disposition: inline
 
-> types-drivers_scsi_FlashPoint
->   only ;-) 167/226 failed, might be worth respinning
 
-Will do. No mercy.
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+why is linux/drivers/cpufreq/proc_intf.c an empty file?
+Thanks Nico
+P.S. I am new on this list :)
+
+--=20
+Nico Golde - JAB: nion@jabber.ccc.de | GPG: 0x73647CFF
+http://www.ngolde.de | http://www.muttng.org | http://grml.org=20
+VIM has two modes - the one in which it beeps=20
+and the one in which it doesn't -- encrypted mail preferred
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQFCvtmmHYflSXNkfP8RAkWrAKCAMIh32cIgy/GEiTTO0ClWMtEtaACeITpQ
+FXbgjNeFnc+Hmhji1IFq7Rc=
+=H1q1
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
+
+--===============11414835367587051==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============11414835367587051==--
