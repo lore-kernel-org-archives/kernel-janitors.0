@@ -1,50 +1,31 @@
-From: Nico Golde <nico@ngolde.de>
-Date: Sun, 26 Jun 2005 16:36:54 +0000
-Subject: [KJ] empty file
-Message-Id: <20050626163654.GA4394@ngolde.de>
+From: randy_dunlap <rdunlap@xenotime.net>
+Date: Sun, 26 Jun 2005 18:00:17 +0000
+Subject: Re: [KJ] empty file
+Message-Id: <20050626110017.3dfe1481.rdunlap@xenotime.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11414835367587051=="
+Content-Type: multipart/mixed; boundary="===============22172959559695959=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050626163654.GA4394@ngolde.de>
+In-Reply-To: <20050626163654.GA4394@ngolde.de>
 To: kernel-janitors@vger.kernel.org
 
+--===============22172959559695959==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---===============11414835367587051==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
-Content-Disposition: inline
+On Sun, 26 Jun 2005 18:36:54 +0200 Nico Golde wrote:
 
+| Hi,
+| why is linux/drivers/cpufreq/proc_intf.c an empty file?
+| Thanks Nico
+| P.S. I am new on this list :)
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+what kernel version are you referring to?
 
-Hi,
-why is linux/drivers/cpufreq/proc_intf.c an empty file?
-Thanks Nico
-P.S. I am new on this list :)
+---
+~Randy
 
---=20
-Nico Golde - JAB: nion@jabber.ccc.de | GPG: 0x73647CFF
-http://www.ngolde.de | http://www.muttng.org | http://grml.org=20
-VIM has two modes - the one in which it beeps=20
-and the one in which it doesn't -- encrypted mail preferred
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
-
-iD8DBQFCvtmmHYflSXNkfP8RAkWrAKCAMIh32cIgy/GEiTTO0ClWMtEtaACeITpQ
-FXbgjNeFnc+Hmhji1IFq7Rc=
-=H1q1
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
-
---===============11414835367587051==
+--===============22172959559695959==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +36,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============11414835367587051==--
+--===============22172959559695959==--
