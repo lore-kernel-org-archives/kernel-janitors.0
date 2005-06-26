@@ -1,47 +1,62 @@
-From: Jesse Millan <jessem@cs.pdx.edu>
-Date: Wed, 29 Jun 2005 04:05:09 +0000
-Subject: [KJ] [PATCH] GCC4 warning: control may reach end of non-void
-Message-Id: <42C21DF5.7020709@cs.pdx.edu>
+From: Jesse Millan <jesse.millan@gmail.com>
+Date: Sun, 26 Jun 2005 19:29:39 +0000
+Subject: [KJ] [PATCH] [RESEND] Fix warning: type qualifiers ignored on
+Message-Id: <1119814180.30604.23.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080104060203090405050200"
+Content-Type: multipart/mixed; boundary="=-Sj8r7lJ/6QV8oNILHmhG"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------080104060203090405050200
-Content-Type: text/plain; charset=ISO-8859-1
+
+--=-Sj8r7lJ/6QV8oNILHmhG
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 
+Per GCC manual: Constant functions that have no side effects need to use
+the attribute '__attribute__((__const__))' rather than '__const__'.
+Putting a '__const__' in the return type of a function is simply ignored
+and causes GCC4 to issue the warning: type qualifiers ignored on
+function return.
 
---------------080104060203090405050200
-Content-Type: text/x-diff; x-mac-type="0"; x-mac-creator="0";
-	name="compat-patch.patch"
+The header files compiler-gcc2.h, compiler-gcc3.h and compiler-gcc4.h
+all have the definition:
+
+#define __attribute_const__   __attribute__((__const__))
+
+'__attribute_const__' seems to be the preferred and correct syntax to
+declare a constant function.
+
+
+--=-Sj8r7lJ/6QV8oNILHmhG
+Content-Disposition: attachment; filename=patch
+Content-Type: text/plain; name=patch; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="compat-patch.patch"
-
 
 Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
 
-GCC complains because the function put_compat_shminfo() can't get to its return statement if there is no error... If the function does not return -EFALUT, it doesn't return anything at all. Looks like a typo.
----
+--- linux-2.6.12-rc6.kj/include/linux/byteorder/swabb.h~	2005-06-24 13:26:11.775129040 -0700
++++ linux-2.6.12-rc6.kj/include/linux/byteorder/swabb.h	2005-06-26 11:34:30.935218568 -0700
+@@ -92,7 +92,7 @@
+ #endif /* OPTIMIZE */
 
 
-diff -puN ipc/compat.c~compat-patch ipc/compat.c
---- linux-2.6.12-rc6.git10.kj.gcc4/ipc/compat.c~compat-patch	2005-06-28 20:37:20.177647168 -0700
-+++ linux-2.6.12-rc6.git10.kj.gcc4-root/ipc/compat.c	2005-06-28 20:37:49.889130336 -0700
-@@ -572,6 +572,7 @@ static inline int put_compat_shminfo(str
- 	err |= __put_user(smi->shmmni, &up->shmmni);
- 	err |= __put_user(smi->shmseg, &up->shmseg);
- 	err |= __put_user(smi->shmall, &up->shmall);
-+	return err;
+-static __inline__ __const__ __u32 __fswahw32(__u32 x)
++static __inline__ __attribute_const__ __u32 __fswahw32(__u32 x)
+ {
+ 	return __arch__swahw32(x);
  }
- 
- static inline int put_compat_shm_info(struct shm_info __user *ip,
-_
+@@ -106,7 +106,7 @@ static __inline__ void __swahw32s(__u32
+ }
 
---------------080104060203090405050200
+
+-static __inline__ __const__ __u32 __fswahb32(__u32 x)
++static __inline__ __attribute_const__ __u32 __fswahb32(__u32 x)
+ {
+ 	return __arch__swahb32(x);
+ }
+
+--=-Sj8r7lJ/6QV8oNILHmhG
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------080104060203090405050200--
+--=-Sj8r7lJ/6QV8oNILHmhG--
