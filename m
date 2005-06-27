@@ -1,57 +1,58 @@
-From: "Michael Veeck" <Michael.Veeck@gmx.net>
-Date: Wed, 29 Jun 2005 06:41:03 +0000
-Subject: =?ISO-8859-1?Q?Re:_[KJ]_[RFC]_new_design_for_kerneljanitors.org=3F?=
-Message-Id: <8058.1120027263@www25.gmx.net>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Mon, 27 Jun 2005 21:08:24 +0000
+Subject: [KJ] [PATCH] drivers/net/8139cp.c: MODULE_PARM -> module_param
+Message-Id: <200506272108.24896.victor@cetuc.puc-rio.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="Boundary-00=_IrGwCIzGmrNVih2"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Just in case that the dyndns-service isn't reachable I also put the design
-on http://veeck.de/janitor/
+--Boundary-00=_IrGwCIzGmrNVih2
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Have a nice day
-Michael Veeck
+description:
+Use module_param() instead of the old MODULE_PARM()
 
-> --- Urspr=FCngliche Nachricht ---
-> Von: Michael Veeck <michael.veeck@gmx.net>
-> An: webmaster@kernel.org, Kernel-Janitors <kernel-janitors@lists.osdl.org>
-> Betreff: [KJ] [RFC] new design for kerneljanitors.org?
-> Datum: Wed, 29 Jun 2005 00:23:29 +0200
->=20
-> Good evening,
->=20
-> One might argue that a corporate design is long overdue for the various=20
-> linux-kernel projects ;-)
->=20
-> So while the heat in germany hinders me from doing sophisticated kernel=20
-> stuff, I gave the old kerneljanitor webpage a design based on the=20
-> kernel.org site (just took me 30 minutes).
->=20
-> A first version can be found at http://veeck.dyndns.org/
->=20
-> There are of course two things which I need to know:
->=20
-> - your comments and thoughts about such a change, especially from Domen=20
-> Puncer since he is the official maintainer. I did not make any changes=20
-> to the content, but there seems to be a need for refreshing it too. For=20
-> instance the link to "Acme's original Janitor TODO list" is not valid=20
-> anymore.
->=20
-> - the permission of the kernel.org-webmaster (or whoever owns the=20
-> copyright to their stylesheet) to use and modify their css-file. Is it=20
-> alright from your side?
->=20
-> So, who wants to start the bashing? ;-)
->=20
-> Have a cool night
-> Michael Veeck
->=20
->=20
->=20
->=20
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+
+--Boundary-00=_IrGwCIzGmrNVih2
+Content-Type: text/x-diff; charset="us-ascii"; name="8139cp_module_param.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="8139cp_module_param.patch"
+
+diff -Nru linux-2.6.12/drivers/net/8139cp.c linux-2.6.12-devel/drivers/net/8139cp.c
+--- linux-2.6.12/drivers/net/8139cp.c	2005-06-17 19:48:29.000000000 +0000
++++ linux-2.6.12-devel/drivers/net/8139cp.c	2005-06-27 16:17:47.000000000 +0000
+@@ -94,13 +94,13 @@
+ MODULE_LICENSE("GPL");
+ 
+ static int debug = -1;
+-MODULE_PARM (debug, "i");
++module_param(debug, int, 0);
+ MODULE_PARM_DESC (debug, "8139cp: bitmapped message enable number");
+ 
+ /* Maximum number of multicast addresses to filter (vs. Rx-all-multicast).
+    The RTL chips use a 64 element hash table based on the Ethernet CRC.  */
+ static int multicast_filter_limit = 32;
+-MODULE_PARM (multicast_filter_limit, "i");
++module_param(multicast_filter_limit, int, 0);
+ MODULE_PARM_DESC (multicast_filter_limit, "8139cp: maximum number of filtered multicast addresses");
+ 
+ #define PFX			DRV_NAME ": "
+
+--Boundary-00=_IrGwCIzGmrNVih2
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--Boundary-00=_IrGwCIzGmrNVih2--
