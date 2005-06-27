@@ -1,49 +1,45 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Sat, 04 Jun 2005 12:04:30 +0000
-Subject: Re: [KJ] Historic Code from TODO
-Message-Id: <20050604120430.GR4992@stusta.de>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Mon, 27 Jun 2005 20:59:13 +0000
+Subject: [KJ] [PATCH] fs/reiserfs/journal.c: replace direct assignment with
+Message-Id: <200506272059.13667.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26527956336405611=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_hiGwC419gS6BH/q"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <92a8b44ee5f03d044b7711aa9178457d@gmail.com>
-In-Reply-To: <92a8b44ee5f03d044b7711aa9178457d@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============26527956336405611==
-Content-Type: text/plain; charset=us-ascii
+--Boundary-00=_hiGwC419gS6BH/q
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Wed, Jun 01, 2005 at 09:09:35PM -0400, Jonathan Roes wrote:
+description:
+Use set_current_state() instead of direct assignment of
+current->state.
 
-> Hi,
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
-Hi Jonathan,
+--Boundary-00=_hiGwC419gS6BH/q
+Content-Type: text/x-diff; charset="us-ascii";
+	name="reiserfs_journal_set_current_state.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="reiserfs_journal_set_current_state.patch"
 
-> I'm new.  I was hoping to tackle some really easy stuff on the TODO, 
-> and I came across something that sounded simple, but didn't have a lot 
-> of description.
-> 
-> In what cases can code that depends on LINUX_VERSION_CODE and 
-> KERNEL_VERSION < 2.4 be deleted?  Or is this just a really old entry in 
-> the TODO that has already been taken care of?
+diff -Nru linux-2.6.12/fs/reiserfs/journal.c linux-2.6.12-devel/fs/reiserfs/journal.c
+--- linux-2.6.12/fs/reiserfs/journal.c	2005-06-17 19:48:29.000000000 +0000
++++ linux-2.6.12-devel/fs/reiserfs/journal.c	2005-06-27 14:13:59.000000000 +0000
+@@ -2584,7 +2584,7 @@
+     set_current_state(TASK_UNINTERRUPTIBLE);
+     if (test_bit(J_WRITERS_QUEUED, &journal->j_state))
+         schedule();
+-    current->state = TASK_RUNNING;
++    set_current_state(TASK_RUNNING);
+     remove_wait_queue(&journal->j_join_wait, &wait);
+ }
+ 
 
-it's mostly only an old entry that has already been taken care of.
-
-> Thanks!
-> Jonathan Roes <jonathan.roes@gmail.com>
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
-
---===============26527956336405611==
+--Boundary-00=_hiGwC419gS6BH/q
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============26527956336405611==--
+--Boundary-00=_hiGwC419gS6BH/q--
