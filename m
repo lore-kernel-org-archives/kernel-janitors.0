@@ -1,50 +1,43 @@
-From: maximilian attems <janitor@sternwelten.at>
-Date: Tue, 28 Jun 2005 15:41:22 +0000
+From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+Date: Tue, 28 Jun 2005 15:59:28 +0000
 Subject: Re: [KJ] typo?
-Message-Id: <20050628154122.GA5125@sputnik.stro.at>
+Message-Id: <20050628125928.3784dca4.rnsanchez@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11092676591506145=="
+Content-Type: multipart/mixed; boundary="===============28897587194079066=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050628141624.GA6647@ngolde.de>
 In-Reply-To: <20050628141624.GA6647@ngolde.de>
 To: kernel-janitors@vger.kernel.org
 
---===============11092676591506145==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============28897587194079066==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 Jun 2005, Nico Golde wrote:
+Quoting  Nish Aravamudan <nish.aravamudan@gmail.com>
+Sent on  Tue, 28 Jun 2005 08:36:25 -0700
 
-> Hello Matthew,
+> > I'd expect "prompt" instead of "prom".  what does 'prom' mean in Sparc,
+> > for curiosity?
 > 
-> * Matthew Wilcox <matthew@wil.cx> [2005-06-28 16:41]:
-> > On Tue, Jun 28, 2005 at 04:16:25PM +0200, Nico Golde wrote:
-> > > Hi,
-> > > do you think that:
-> > > printk(KERN_EMERG "Press L1-A to return to the boot prom\n")
-> > > is a typo?
-> > 
-> > On Sparc, no.  What do you think is a typo about it?
-> 
-> I thought it is because if I understood boot prom correctly
-> it is something which has to do with networking and booting.
-> But here a user interaction is meant (because of the press)
-> and in my opinion this part of the panic code has nothing to
-> do with networking.
->     regards nico
+> I'm assuming, Programmable Read-Only Memory:
+> http://en.wikipedia.org/wiki/PROM
 
-please use more recent sources.
-for people not used to sparc the message got really improved:
-                printk(KERN_EMERG "Press Stop-A (L8-A) to return to the boot prom\n");
-remember my first time glaring at it. :)
+in this case, I'd expect to be "PROM", as it becomes clearer that it's an
+acronym.  on my ignorance, I thought it was "boot prompt", due to all-
+lowercase writing.
 
-anyway if you aren't exposed to sparc you could ignore code inside of
-#ifdef __sparc__
+and yes, I never used a Sparc before :)
 
---
-maks
+-- 
+Ricardo Nabinger Sanchez
+GNU/Linux #140696 [http://counter.li.org]
+Slackware Linux + FreeBSD
 
---===============11092676591506145==
+    How long a minute is depends on which 
+    side of the bathroom door you're on.
+
+
+--===============28897587194079066==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============11092676591506145==--
+--===============28897587194079066==--
