@@ -1,29 +1,35 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 29 Jun 2005 13:17:52 +0000
-Subject: [KJ] 2.6.13-rc1-kj [was 2.6.13-rc1]
-Message-Id: <20050629131752.GI3904@nd47.coderock.org>
+From: Carlo Perassi <carlo@linux.it>
+Date: Wed, 29 Jun 2005 17:03:39 +0000
+Subject: [KJ] Re: cleanup-drivers_usb_serial_cypress_m8.patch
+Message-Id: <20050629170339.GA4170@voyager>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2260295536012471=="
+Content-Type: multipart/mixed; boundary="===============60658537716555416=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050629131351.GH3904@nd47.coderock.org>
-In-Reply-To: <20050629131351.GH3904@nd47.coderock.org>
-To: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============2260295536012471==
+--===============60658537716555416==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-No, no... I didn't took Linus' job ;-)
-
-The correct subject is: 2.6.13-rc1-kj
-
-On 29/06/05 15:13 +0200, Domen Puncer wrote:
-> A new release from kernel janitors (http://janitor.kernelnewbies.org/).
+> Well, this should be changed to:
 > 
-> 
-> Patchset is at http://coderock.org/kj/2.6.13-rc1-kj/
+> 			tty->termios->c_cflag =
+> 					B4800 | CS8 | CREAD | HUPCL | CLOCAL;
 
---===============2260295536012471==
+It is better.
+
+> IMO, better
+> 			priv->diff_status |=
+> 				priv->current_status ^ priv->prev_status;
+
+It is better too.
+
+Do you need a new patch?
+
+-- 
+Carlo Perassi - http://www.linux.it/~carlo/
+
+--===============60658537716555416==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -34,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2260295536012471==--
+--===============60658537716555416==--
