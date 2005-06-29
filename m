@@ -1,81 +1,23 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 29 Jun 2005 10:29:25 +0000
+From: "Carlo Perassi" <carlo@linux.it>
+Date: Wed, 29 Jun 2005 10:37:14 +0000
 Subject: Re: [KJ] [PATCH] SubmittingPatches - a few more trivialities
-Message-Id: <20050629102925.GE3904@nd47.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91392577936194574=="
+Message-Id: <39697.158.102.162.5.1120041434.squirrel@picard.linux.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050623194016.GC4790@voyager>
 In-Reply-To: <20050623194016.GC4790@voyager>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============91392577936194574==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> What's the reasoning for this? Previous version takes less space.
 
-On 23/06/05 21:40 +0200, Carlo Perassi wrote:
-> Reading some detailig about submitting patches I found some strange tabs
-> and a few more trivialities.
-> 
-> Signed-off-by: Carlo Perassi <carlo@linux.it>
-> ---
->  SubmittingPatches |   14 +++++++-------
->  1 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> Index: Documentation/SubmittingPatches
-> ===================================================================
-> --- Documentation.orig/SubmittingPatches
-> +++ Documentation/SubmittingPatches
+a) b) c) are not indented using tabs
 
-^^ not -p1 appliable. And even when i fix this it doesn't apply.
-
-> @@ -291,19 +291,19 @@
->              person who certified (a), (b) or (c) and I have not modified
->              it.
->  
-> -	(d) I understand and agree that this project and the contribution
-> -	    are public and that a record of the contribution (including all
-> -	    personal information I submit with it, including my sign-off) is
-> -	    maintained indefinitely and may be redistributed consistent with
-> -	    this project or the open source license(s) involved.
-> +        (d) I understand and agree that this project and the contribution
-> +            are public and that a record of the contribution (including all
-> +            personal information I submit with it, including my sign-off) is
-> +            maintained indefinitely and may be redistributed consistent with
-> +            this project or the open source license(s) involved.
-
-What's the reasoning for this? Previous version takes less space.
-
->  
->  then you just add a line saying
->  
-> -	Signed-off-by: Random J Developer <random@developer.org>
-> +        Signed-off-by: Random J Developer <random@developer.org>
->  
->  Some people also put extra tags at the end.  They'll just be ignored for
->  now, but you can do this to mark internal company procedures or just
-> -point out some special detail about the sign-off. 
-> +point out some special detail about the sign-off.
->  
->  
->  -----------------------------------
-> 
-
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-
---===============91392577936194574==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+-- 
+Carlo Perassi - http://www.linux.it/~carlo/
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============91392577936194574==--
