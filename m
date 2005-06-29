@@ -1,35 +1,37 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Wed, 29 Jun 2005 17:03:39 +0000
-Subject: [KJ] Re: cleanup-drivers_usb_serial_cypress_m8.patch
-Message-Id: <20050629170339.GA4170@voyager>
+From: Nathan Laredo <laredo@hera.kernel.org>
+Date: Wed, 29 Jun 2005 13:52:55 +0000
+Subject: [KORG] Re: [KJ] [RFC] new design for kerneljanitors.org?
+Message-Id: <20050629135255.GA13086@hera.kernel.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============60658537716555416=="
+Content-Type: multipart/mixed; boundary="===============098371856903745059=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============60658537716555416==
+--===============098371856903745059==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-> Well, this should be changed to:
-> 
-> 			tty->termios->c_cflag =
-> 					B4800 | CS8 | CREAD | HUPCL | CLOCAL;
+On Wed, Jun 29, 2005 at 08:41:03AM +0200, Michael Veeck wrote:
+> > - the permission of the kernel.org-webmaster (or whoever owns the 
+> > copyright to their stylesheet) to use and modify their css-file.  
+> > Is it alright from your side?
 
-It is better.
+One of these days I'll get around to putting a more verbose copyright 
+message in the html/css source code to kernel.org's pages -- 
+something along the lines of GPL and/or FDL.
 
-> IMO, better
-> 			priv->diff_status |=
-> 				priv->current_status ^ priv->prev_status;
+In other words, we have no problems with people copying our CSS or 
+HTML.
 
-It is better too.
+I'm happy to see others like my design, but as a very early heads-up
+I'm working on about four other views of kernel.org with completely 
+new CSS that will show up later this year after I finish some other 
+projects.  The current CSS will be moving into a separate file then.
 
-Do you need a new patch?
+-- Nathan Laredo
+laredo@kernel.org
 
--- 
-Carlo Perassi - http://www.linux.it/~carlo/
-
---===============60658537716555416==
+--===============098371856903745059==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============60658537716555416==--
+--===============098371856903745059==--
