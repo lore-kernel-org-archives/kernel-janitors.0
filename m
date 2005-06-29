@@ -1,86 +1,72 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Sat, 25 Jun 2005 09:05:09 +0000
-Subject: [KJ] [PATCH] [RESEND] bonding - uninitialize static variables
-Message-Id: <20050625090509.GA5337@voyager>
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Wed, 29 Jun 2005 03:19:10 +0000
+Subject: [KJ] [PATCH] [RESEND] Silence GCC4 warning: pointer targets in
+Message-Id: <42C2132E.7000102@cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48373994187336344=="
+Content-Type: multipart/mixed; boundary="------------070504080407050109000702"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============48373994187336344==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------070504080407050109000702
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-One of the tasks at http://janitor.kernelnewbies.org/TODO
-is described as
-"
-uninitialize static variables initialized to 0, to make it go to the
-.bss, instead of .data.
-"
 
-To proof that it is still guaranteed that those variables will be
-initialized to zero
 
-Tom Bradley <tojabr@gmail.com> (on the kernel-janitors mailing list)
-wrote
-"
-the default for gcc is `-fzero-initialized-in-bss', the kernel
-makefile does not change this therefore bss is zeroed, this is
-documented in the gcc manpage.
-"
 
-and David P Howell <david.p.howell@intel.com> added that
-"
-By definition .bss is always zero'ed by the implementation.
-"
+--------------070504080407050109000702
+Content-Type: text/x-diff; x-mac-type="0"; x-mac-creator="0";
+	name="misc-patch.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="misc-patch.patch"
 
-This patch uninitializes five static int initialized to 0.
 
-Signed-off-by: Carlo Perassi <carlo@linux.it>
+Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+
+GCC4 compares signedness of all pointer types. Assigning an unsigned
+pointer to a signed pointer (or vise-versa) generates a warning. In this
+case an unsigned char pointer was assigned the value of a signed char
+pointer. It looks like the author was aware of this so I just let it be.
+An explicit cast silences the warnings.
 ---
---- linux-2.6.12.orig/drivers/net/bonding/bond_main.c	2005-06-17 21:48:29.000000000 +0200
-+++ linux-2.6.12/drivers/net/bonding/bond_main.c	2005-06-25 10:30:52.000000000 +0200
-@@ -531,14 +531,14 @@
- 
- static int max_bonds	= BOND_DEFAULT_MAX_BONDS;
- static int miimon	= BOND_LINK_MON_INTERV;
--static int updelay	= 0;
--static int downdelay	= 0;
-+static int updelay;
-+static int downdelay;
- static int use_carrier	= 1;
--static char *mode	= NULL;
--static char *primary	= NULL;
--static char *lacp_rate	= NULL;
-+static char *mode;
-+static char *primary;
-+static char *lacp_rate;
- static int arp_interval = BOND_LINK_ARP_INTERV;
--static char *arp_ip_target[BOND_MAX_ARP_TARGETS] = { NULL, };
-+static char *arp_ip_target[BOND_MAX_ARP_TARGETS];
- 
- module_param(max_bonds, int, 0);
- MODULE_PARM_DESC(max_bonds, "Max number of bonded devices");
-@@ -572,12 +572,12 @@ static LIST_HEAD(bond_dev_list);
- static struct proc_dir_entry *bond_proc_dir = NULL;
- #endif
- 
--static u32 arp_target[BOND_MAX_ARP_TARGETS] = { 0, } ;
--static int arp_ip_count	= 0;
--static u32 my_ip	= 0;
-+static u32 arp_target[BOND_MAX_ARP_TARGETS];
-+static int arp_ip_count;
-+static u32 my_ip;
- static int bond_mode	= BOND_MODE_ROUNDROBIN;
--static int lacp_fast	= 0;
--static int app_abi_ver	= 0;
-+static int lacp_fast;
-+static int app_abi_ver;
- static int orig_app_abi_ver = -1; /* This is used to save the first ABI version
- 				   * we receive from the application. Once set,
- 				   * it won't be changed, and the module will
 
---===============48373994187336344==
+
+diff -puN arch/x86_64/boot/compressed/misc.c~misc-patch arch/x86_64/boot/compressed/misc.c
+--- linux-2.6.12-rc6.git10.kj.gcc4/arch/x86_64/boot/compressed/misc.c~misc-patch	2005-06-28 18:49:10.152280992 -0700
++++ linux-2.6.12-rc6.git10.kj.gcc4-root/arch/x86_64/boot/compressed/misc.c	2005-06-28 18:53:11.512588648 -0700
+@@ -222,7 +222,7 @@ static int fill_inbuf(void)
+ 		error("ran out of input data");
+ 	}
+ 
+-	inbuf = input_data;
++	inbuf = (uch *)input_data;
+ 	insize = input_len;
+ 	inptr = 1;
+ 	return inbuf[0];
+@@ -288,7 +288,7 @@ void setup_normal_output_buffer(void)
+ #else
+ 	if ((ALT_MEM_K > EXT_MEM_K ? ALT_MEM_K : EXT_MEM_K) < 1024) error("Less than 2MB of memory");
+ #endif
+-	output_data = (char *)__PHYSICAL_START; /* Normally Points to 1M */
++	output_data = (uch *)__PHYSICAL_START; /* Normally Points to 1M */
+ 	free_mem_end_ptr = (long)real_mode;
+ }
+ 
+@@ -305,7 +305,7 @@ void setup_output_buffer_if_we_run_high(
+ #else
+ 	if ((ALT_MEM_K > EXT_MEM_K ? ALT_MEM_K : EXT_MEM_K) < (3*1024)) error("Less than 4MB of memory");
+ #endif	
+-	mv->low_buffer_start = output_data = (char *)LOW_BUFFER_START;
++	mv->low_buffer_start = output_data = (uch *)LOW_BUFFER_START;
+ 	low_buffer_end = ((unsigned int)real_mode > LOW_BUFFER_MAX
+ 	  ? LOW_BUFFER_MAX : (unsigned int)real_mode) & ~0xfff;
+ 	low_buffer_size = low_buffer_end - LOW_BUFFER_START;
+_
+
+
+--------------070504080407050109000702
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -91,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48373994187336344==--
+--------------070504080407050109000702--
