@@ -1,55 +1,61 @@
-From: Nico Golde <nico@ngolde.de>
-Date: Wed, 29 Jun 2005 10:40:13 +0000
+From: Domen Puncer <domen@coderock.org>
+Date: Wed, 29 Jun 2005 12:40:38 +0000
 Subject: Re: [KJ] [RFC] new design for kerneljanitors.org?
-Message-Id: <20050629104013.GE3274@ngolde.de>
+Message-Id: <20050629124037.GG3904@nd47.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============89804512886236498=="
+Content-Type: multipart/mixed; boundary="===============52754897822850877=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <42C1CDE1.9010308@gmx.net>
 In-Reply-To: <42C1CDE1.9010308@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
-
---===============89804512886236498==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UFHRwCdBEJvubb2X"
-Content-Disposition: inline
-
-
---UFHRwCdBEJvubb2X
+--===============52754897822850877==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello Michael,
+You stole nacc's thread :-p
 
-* Michael Veeck <Michael.Veeck@gmx.net> [2005-06-29 12:11]:
-> Just in case that the dyndns-service isn't reachable I also put the design
-> on http://veeck.de/janitor/
+On 29/06/05 00:23 +0200, Michael Veeck wrote:
+> Good evening,
+> 
+> One might argue that a corporate design is long overdue for the various 
+> linux-kernel projects ;-)
+> 
+> So while the heat in germany hinders me from doing sophisticated kernel 
+> stuff, I gave the old kerneljanitor webpage a design based on the 
+> kernel.org site (just took me 30 minutes).
+> 
+> A first version can be found at http://veeck.dyndns.org/
+> 
+> There are of course two things which I need to know:
+> 
+> - your comments and thoughts about such a change, especially from Domen 
+> Puncer since he is the official maintainer. I did not make any changes 
+> to the content, but there seems to be a need for refreshing it too. For 
+> instance the link to "Acme's original Janitor TODO list" is not valid 
+> anymore.
 
-looks nice!
-regards nico
---=20
-Nico Golde - JAB: nion@jabber.ccc.de | GPG: 0x73647CFF
-http://www.ngolde.de | http://www.muttng.org | http://grml.org=20
-VIM has two modes - the one in which it beeps=20
-and the one in which it doesn't -- encrypted mail preferred
+Thanks, I put a local version of that todo up.
+About the design... I liked the previous more... it was more compact.
+At least for me, but I'm no designer. :-)
 
---UFHRwCdBEJvubb2X
-Content-Type: application/pgp-signature
-Content-Disposition: inline
+> 
+> - the permission of the kernel.org-webmaster (or whoever owns the 
+> copyright to their stylesheet) to use and modify their css-file. Is it 
+> alright from your side?
+> 
+> So, who wants to start the bashing? ;-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+Lets wait for the weekend, maks said on IRC he will. ;-)
 
-iD8DBQFCwnqNHYflSXNkfP8RAiezAKCDhM1hDnzmIuofTl6kwJ+VZkz6NACggK1N
-isy1lbiUbce6rEtaBBPGIj8=
-=hHY7
------END PGP SIGNATURE-----
+> 
+> Have a cool night
 
---UFHRwCdBEJvubb2X--
+Weather man says they will come this week! Yay!
 
---===============89804512886236498==
+> Michael Veeck
+
+--===============52754897822850877==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 http://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============89804512886236498==--
+--===============52754897822850877==--
