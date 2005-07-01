@@ -1,47 +1,63 @@
-From: Daniel Mills <danielmiller@uku.co.uk>
-Date: Fri, 08 Jul 2005 20:41:23 +0000
-Subject: [KJ] Hello
-Message-Id: <200507082039.j68Kdjj9019000@smtp.osdl.org>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 01 Jul 2005 22:15:05 +0000
+Subject: [KJ] Re: GCC4 warning: no return statement in function returning
+Message-Id: <20050701221504.GA26388@homer.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============056892895811460065=="
+Content-Type: multipart/mixed; boundary="===============80804243724865343=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507082039.j68Kdhj9018976@smtp.osdl.org>
-In-Reply-To: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 To: kernel-janitors@vger.kernel.org
 
---===============056892895811460065==
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+--===============80804243724865343==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Dear Friend, 
-My name is Daniel Mills. 
-i'm a 65 years old man. i am british living in Dakar ( Senegal).
-i'm a merchant and owned two businesses in Dakar. i'm married with two hildren. my wife and two children died in a car accident six years ago before this happened my business and concern for making money was all i lived for.i never really cared about other values in life. 
-But since the loss of my family,i have found a new desire to assist 
-helpless familes. 
-I have been helping orphans in orphanage/ motherless homes,i have
-donated some money to orphans in sudan,south africa,cameroun,brazil,
-spain,austria ,germany and some asian countries. before i became ill,i kept some money, twelve and a half million dollars $12.5million.usd.) to be precise in a long term deposit account in a security company in Europe.
-presently, i'm in a hospital. 
-My doctors told me i have prostrate cancer that i have a few months to
-live.it is my last wish to see this money distributed to charity
-organizations. because so much of my wealth has been plundered by 
-relatives and friends since my illness, i cannot live with the agony of entrusting this huge responsibility to any of them since the money in the security
-company is the last fund that i have left i am some how stranded in the hospital because my firends and relative have misuse all my funds that i left in thier posession. 
-Please, i beg you in the name of God to help me collect the deposit
-from the security company in Europe and distribute itamongst charity
-organizations. use your  judgement to distribute the money and keep 5% 
-of it to yourself. 
-Feel free to reimburse yourself when you have the money for any cost you incure during the process of collecting and distributing the money to charity organizations. may the good Lord bless you and your family.
-i await your urgent response. 
-please reply to this mail as i can only reply through my labtop I
-cannot talk very well: danielmills5@yahoo.it 
-sincerly, 
-Daniel mills 
+On 01/07/05 11:19 -0700, Jesse Millan wrote:
+> 
+
+> 
+> 
+> Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+> 
+> The function kauditd_thread() does not return an integer as the declaration
+> says it should. There is no return statement in the body whatsoever and looks
+> like the function should have been declared as returning void.
+> ---
+
+Can you put Signed-off-by at end of description, I don't think I've
+seen it elsewhere often. And please try to make Subjects that are
+different for every patch.
+
+> 
+> 
+> diff -puN kernel/audit.c~audit-patch kernel/audit.c
+> --- linux-2.6.13-rc1.kj.jm.gcc4/kernel/audit.c~audit-patch	2005-07-01 10:59:36.417950168 -0700
+> +++ linux-2.6.13-rc1.kj.jm.gcc4-jessem/kernel/audit.c	2005-07-01 11:00:52.979311072 -0700
+> @@ -275,7 +275,7 @@ static int audit_set_failure(int state, 
+>  	return old;
+>  }
+>  
+> -int kauditd_thread(void *dummy)
+> +void kauditd_thread(void *dummy)
+
+This should warn too, as kthread_create() (kthread_run()) accepts
+int (*threadfn)(void *data)
+
+I think kauditd_thread() should be fixed here to return something...
+"The return value should be zero or a negative error number:
+ it will be passed to kthread_stop()."
+
+>  {
+>  	struct sk_buff *skb;
+>  
+> _
+
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
 
-
---===============056892895811460065==
+--===============80804243724865343==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +68,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============056892895811460065==--
+--===============80804243724865343==--
