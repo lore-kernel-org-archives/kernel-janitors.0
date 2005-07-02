@@ -1,46 +1,45 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 08 Jul 2005 13:26:08 +0000
-Subject: [KJ] [patch 2.6.13-rc1 11/23][RESEND] Audit return code of
-Message-Id: <20050708132607.GS4683@rhum.iomeda.fr>
+From: Domen Puncer <domen@coderock.org>
+Date: Sat, 02 Jul 2005 19:40:55 +0000
+Subject: [KJ] Re: GCC4 audit.c warning: no return statement in function
+Message-Id: <20050702194055.GB2260@homer.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8290201508305266=="
+Content-Type: multipart/mixed; boundary="===============52476084519804211=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============8290201508305266==
-Content-Disposition: inline
+--===============52476084519804211==
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Description:
-Audit return of create_proc_* functions.
+On 01/07/05 17:03 -0700, Jesse Millan wrote:
+>  {
+>  	struct sk_buff *skb;
+> +	int err = 0;
+>  
+>  	while (1) {
+>  		skb = skb_dequeue(&audit_skb_queue);
+>  		if (skb) {
+>  			if (audit_pid) {
+> -				int err = netlink_unicast(audit_sock, skb, audit_pid, 0);
+> +				err = netlink_unicast(audit_sock, skb, audit_pid, 0);
+>  				if (err < 0) {
+>  					BUG_ON(err != -ECONNREFUSED); /* Shoudn't happen */
+>  					printk(KERN_ERR "audit: *NO* daemon at audit_pid=%d\n", audit_pid);
+> @@ -305,6 +306,7 @@ int kauditd_thread(void *dummy)
+>  			remove_wait_queue(&kauditd_wait, &wait);
+>  		}
+>  	}
+> +	return err;
+>  }
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Doesn't this warn about unreachable code? ;-)
 
-Index: 2.6.13-rc1/arch/sparc/kernel/ioport.c
-===================================================================
---- 2.6.13-rc1.orig/arch/sparc/kernel/ioport.c
-+++ 2.6.13-rc1/arch/sparc/kernel/ioport.c
-@@ -725,7 +725,16 @@ _sparc_find_resource(struct resource *ro
- void register_proc_sparc_ioport(void)
- {
- #ifdef CONFIG_PROC_FS
--	create_proc_read_entry("io_map",0,NULL,_sparc_io_get_info,&sparc_iomap);
--	create_proc_read_entry("dvma_map",0,NULL,_sparc_io_get_info,&_sparc_dvma);
-+	struct proc_dir_entry *ent;
-+	ent = create_proc_read_entry("io_map",0,NULL,
-+		_sparc_io_get_info,&sparc_iomap);
-+	if (!ent)
-+		printk(KERN_WARNING 
-+			"ioport.c: Unable to create io_map /proc entry.\n");
-+	ent = create_proc_read_entry("dvma_map",0,NULL,
-+		_sparc_io_get_info,&_sparc_dvma);
-+	if (!ent)
-+		printk(KERN_WARNING 
-+			"ioport.c: Unable to create dvma_map /proc entry.\n");
- #endif
- }
+Randy's suggestion seems right.
 
---===============8290201508305266==
+
+	Domen
+
+--===============52476084519804211==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8290201508305266==--
+--===============52476084519804211==--
