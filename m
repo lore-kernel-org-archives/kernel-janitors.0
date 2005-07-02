@@ -1,43 +1,61 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 06 Jul 2005 21:21:50 +0000
-Subject: Re: [KJ] 2.6.13-rc2-kj
-Message-Id: <20050706212150.GB27151@homer.coderock.org>
+From: maximilian attems <janitor@sternwelten.at>
+Date: Sat, 02 Jul 2005 10:16:09 +0000
+Subject: Re: [KJ] [RFC] new design for kerneljanitors.org?
+Message-Id: <20050702101609.GB5690@sputnik.stro.at>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============51778796343652578=="
+Content-Type: multipart/mixed; boundary="===============29447534479149851=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050706200006.GA12464@homer.coderock.org>
-In-Reply-To: <20050706200006.GA12464@homer.coderock.org>
+References: <42C1CDE1.9010308@gmx.net>
+In-Reply-To: <42C1CDE1.9010308@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
---===============51778796343652578==
+--===============29447534479149851==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 06/07/05 22:52 +0200, Tobias Klauser wrote:
-> On 2005-07-06 at 22:00:06 +0200, Domen Puncer <domen@coderock.org> wrote:
-> [...]
+hello michael,
+
+On Wed, 29 Jun 2005, Michael Veeck wrote:
+
+> One might argue that a corporate design is long overdue for the various 
+> linux-kernel projects ;-)
+
+well i'm not conviced by this premis.
+i like a lot the baby penguin for the kernelnewbies project.
+every project has his own choices.
+
+
+ 
+> So while the heat in germany hinders me from doing sophisticated kernel 
+> stuff, I gave the old kerneljanitor webpage a design based on the 
+> kernel.org site (just took me 30 minutes).
 > 
-> > casts-drivers_usb_serial_usb-serial
-> >   From: Tobias Klauser <tklauser@nuerscht.ch>
-> >   Subject: [KJ] [PATCH] drivers/serial/usb-serial: Remove unneeded void 2.6.13-rc2-kj description dropped mail merged notes patches patches-backup-if-i-fuck-up patches.comments pbomb-2.6.12 series series.backup.backup-coz-ill-fuck-up series.old casts
-> ^^^
-> The subject looks funny. I hope that wasn't my fault. ;-)
+> A first version can be found at http://veeck.dyndns.org/
 
-Hehe, I have no idea how that got there.
-Time to look a bit closer at my scripts.
+as domen pointed already out the current version is more compact.
+also aboves looks much more rudimentary and we don't have a nice kernel
+banner to display on the top that is worth for 99% of the kernel.org
+visits. :)
+btw. i'm quite happy to learn that kernel.org design is moving.
+ 
+> So, who wants to start the bashing? ;-)
 
-
-	Domen
-> 
-> Cheers, Tobias
-
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+it seems that it already started. :-P
 
 
---===============51778796343652578==
+current design was done by Randy Dunlap.
+it should validate as html 4.01. i agree that tables shouldn't be used
+as design elements (but div layers) and that it should move to xhtml.
+it's still on my todo list but without much priority.
+so if you would achieve same design but newer code working for browser
+mozilla Seamonkey >= 1.0 and ie >= 5.0 that would be great.
+
+warm greetings.
+
+--
+maks
+
+--===============29447534479149851==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============51778796343652578==--
+--===============29447534479149851==--
