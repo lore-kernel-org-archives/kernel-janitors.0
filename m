@@ -1,150 +1,78 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Mon, 04 Jul 2005 17:32:51 +0000
-Subject: [KJ] [PATCH] drivers/serial/usb-serial: Remove unneeded void * casts
-Message-Id: <20050704173251.GA775@mail.nuerscht.ch>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87942283399117738=="
+From: peggy Ueda <ykuepgmsga@gov.an>
+Date: Sat, 02 Jul 2005 22:34:17 +0000
+Subject: Watch WMDH Perform
+Message-Id: <61083.6346181188.080942@unprofessed-st31.gov.an>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============87942283399117738==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Investor Edge Hot Pick Report!
 
-Domen Puncer submitted [1] lots of these patches a while ago. I do not
-see many of them in Linus' tree. Is there a chance for such patches
-being merged or are they just useless?
+Don't be fooled by other news letters our picks
+produce Big Profits! WMDH is up over 100% for
+Thursday alone and a 2 week promotion is expected
+with more great news don't miss out on this one
+it can produce Big Gains $500 can return $5,000
+and $1,000 can return $10,000 or more this company
+is on the move get it immediately.
 
-[1]
-http://lists.osdl.org/pipermail/kernel-janitors/2004-December/002640.html
+Company; WMD Holdings Group, Inc
+Ticker; WMDH . PK
+Current Price; .O3
 
-The following patch removes unneeded casts for the following (void *) pointers:
-	- tty_struct->driver_data
-	- void *private argument of usb_serial_port_softint()
+WMD Holdings Group, Inc. Completes the Southern
+California Deployment of NAVITOUCH Interactive
+Broadcast Network Units in the Corporate Circle
+K Convenience Stores.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+RIVERSIDE, Calif., WMD Holdings Group Inc. (Worldwide
+Media Development Holdings Group, Inc.) announced today
+that they have set a company milestone and completed
+the Southern California deployment of the NAVITOUCH(tm)
+Interactive Broadcast Network units in Circle K
+company-operated convenience stores.
 
-diff -urpN -X dontdiff linux-2.6.13-rc1/drivers/usb/serial/usb-serial.c linux-2.6.13-rc1~unneeded_casts/drivers/usb/serial/usb-serial.c
---- linux-2.6.13-rc1/drivers/usb/serial/usb-serial.c	2005-06-30 19:55:20.000000000 +0200
-+++ linux-2.6.13-rc1~unneeded_casts/drivers/usb/serial/usb-serial.c	2005-07-02 15:46:17.000000000 +0200
-@@ -531,7 +531,7 @@ bailout_kref_put:
- 
- static void serial_close(struct tty_struct *tty, struct file * filp)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	if (!port)
- 		return;
-@@ -561,7 +561,7 @@ static void serial_close(struct tty_stru
- 
- static int serial_write (struct tty_struct * tty, const unsigned char *buf, int count)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 	int retval = -EINVAL;
- 
- 	dbg("%s - port %d, %d byte(s)", __FUNCTION__, port->number, count);
-@@ -580,7 +580,7 @@ exit:
- 
- static int serial_write_room (struct tty_struct *tty) 
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 	int retval = -EINVAL;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
-@@ -599,7 +599,7 @@ exit:
- 
- static int serial_chars_in_buffer (struct tty_struct *tty) 
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 	int retval = -EINVAL;
- 
- 	dbg("%s = port %d", __FUNCTION__, port->number);
-@@ -618,7 +618,7 @@ exit:
- 
- static void serial_throttle (struct tty_struct * tty)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -634,7 +634,7 @@ static void serial_throttle (struct tty_
- 
- static void serial_unthrottle (struct tty_struct * tty)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -650,7 +650,7 @@ static void serial_unthrottle (struct tt
- 
- static int serial_ioctl (struct tty_struct *tty, struct file * file, unsigned int cmd, unsigned long arg)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 	int retval = -ENODEV;
- 
- 	dbg("%s - port %d, cmd 0x%.4x", __FUNCTION__, port->number, cmd);
-@@ -672,7 +672,7 @@ exit:
- 
- static void serial_set_termios (struct tty_struct *tty, struct termios * old)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -688,7 +688,7 @@ static void serial_set_termios (struct t
- 
- static void serial_break (struct tty_struct *tty, int break_state)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -749,7 +749,7 @@ done:
- 
- static int serial_tiocmget (struct tty_struct *tty, struct file *file)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -768,7 +768,7 @@ exit:
- static int serial_tiocmset (struct tty_struct *tty, struct file *file,
- 			    unsigned int set, unsigned int clear)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *) tty->driver_data;
-+	struct usb_serial_port *port = tty->driver_data;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
- 
-@@ -786,7 +786,7 @@ exit:
- 
- void usb_serial_port_softint(void *private)
- {
--	struct usb_serial_port *port = (struct usb_serial_port *)private;
-+	struct usb_serial_port *port = private;
- 	struct tty_struct *tty;
- 
- 	dbg("%s - port %d", __FUNCTION__, port->number);
+NAVITOUCH(tm), a division of WMD, uses Interactive Digital
+Display (IDD) technology to create powerful digital images
+displayed on touchscreen monitors that enable consumer
+interaction, utilizing Verizon Wireless' EVDO Broadband
+services. Advertising and services on the NAVITOUCH(tm)
+system provides advertisers and content providers
+opportunities for direct, immediate interaction with the
+public and quantified feedback reporting via the
+NAVITOUCH(tm) network. Consumer feedback informs
+advertisers immediately of the success of their
+advertising campaigns. NAVITOUCH(tm) technology
+also facilitates e-commerce on the IDD units.
 
---===============87942283399117738==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Pat Roberson, President of the NAVITOUCH(tm) Interactive
+Broadcast Network(tm) stated, ``This NAVITOUCH(tm)
+NETWORK Southern California deployment with Circle K
+Stores, Inc. provides shoppers at over 100 Circle K
+stores the convenience of a wide menu of wonderful
+products and services -- right at their fingertips.
+The proprietary NaviTraffic real-time traffic maps,
+that are updated every three minutes, are a very
+popular feature for the travel weary in Southern
+California.
 
+WMDH is on the move it is up over 100% today alone and
+a HUGE promotion will be taking place everyday for the
+next 2 weeks our insiders tell us and it can easily go
+over .3O to .5O with more great news they are about to
+release. Don't miss out get in immediately for great
+gains.
+
+
+
+-------------------------------------------------------
+SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
+from IBM. Find simple to follow Roadmaps, straightforward articles,
+informative Webcasts and more! Get everything you need to get up to
+speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============87942283399117738==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
