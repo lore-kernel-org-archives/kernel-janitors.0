@@ -1,31 +1,51 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 08 Jul 2005 10:07:03 +0000
-Subject: Re: [KJ] [patch 2.6.13-rc1 03/23] Audit return code of create_proc_*
-Message-Id: <20050708100703.GJ4683@rhum.iomeda.fr>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 03 Jul 2005 19:08:09 +0000
+Subject: [KJ] [PATCH 2.6.13-rc1 17/17] fix sparse warnings (__nocast type)
+Message-Id: <200507031908.09433.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45471386585167828=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_ZeDyCr6RCbmamkY"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050707154524.160751000@rhum.iomeda.fr>
-In-Reply-To: <20050707154524.160751000@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============45471386585167828==
+--Boundary-00=_ZeDyCr6RCbmamkY
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
 
-Alexey Dobriyan (adobriyan@gmail.com) wrote:
-> On Thursday 07 July 2005 19:44, Christophe Lucas wrote:
-> 
-> Subject: [KJ] [patch 2.6.13-rc1 03/23] Audit return code of create_proc_*
-> 	[patch 2.6.13-rc1 @num@/@total@] Audit return code of create_proc_*
-> 
-> Screwed script?
+Description:
+	Fix the sparse warning "implicit cast to nocast type"
+ 
+File/Subsystem: include/net/bluetooth/bluetooth.h
 
-Bad use of quilt :(
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+ 
 
-				- Christophe (clucas@rotomalug.org)
+--Boundary-00=_ZeDyCr6RCbmamkY
+Content-Type: text/x-diff; charset="iso-8859-1"; name="net_bluetooth.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="net_bluetooth.patch"
 
---===============45471386585167828==
+ include/net/bluetooth/bluetooth.h |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletion(-)
+
+Index: linux-2.6-git/include/net/bluetooth/bluetooth.h
+===================================================================
+--- linux-2.6-git.orig/include/net/bluetooth/bluetooth.h	2005-07-01 17:48:51.000000000 +0000
++++ linux-2.6-git/include/net/bluetooth/bluetooth.h	2005-07-03 18:13:37.000000000 +0000
+@@ -141,7 +141,8 @@
+ };
+ #define bt_cb(skb) ((struct bt_skb_cb *)(skb->cb)) 
+ 
+-static inline struct sk_buff *bt_skb_alloc(unsigned int len, int how)
++static inline struct sk_buff *bt_skb_alloc(unsigned int len,
++                                           unsigned int __nocast how)
+ {
+ 	struct sk_buff *skb;
+ 
+
+--Boundary-00=_ZeDyCr6RCbmamkY
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45471386585167828==--
+--Boundary-00=_ZeDyCr6RCbmamkY--
