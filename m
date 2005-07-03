@@ -1,37 +1,81 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 08 Jul 2005 10:37:08 +0000
-Subject: [KJ] [patch 2.6.13-rc1 10/23][RESEND] printk :
-Message-Id: <20050708103708.GR4683@rhum.iomeda.fr>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 03 Jul 2005 19:05:24 +0000
+Subject: [KJ] [PATCH 2.6.13-rc1 15/17] fix sparse warnings (__nocast type)
+Message-Id: <200507031905.24587.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92274628082637111=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_0bDyCP2XoMP9K6w"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92274628082637111==
+--Boundary-00=_0bDyCP2XoMP9K6w
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
 
 Description:
-printk() calls should include appropriate KERN_* constant.
+	Fix the sparse warning "implicit cast to nocast type"
+ 
+File/Subsystem: net/ipv4
 
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+ 
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+--Boundary-00=_0bDyCP2XoMP9K6w
+Content-Type: text/x-diff;
+  charset="iso-8859-1";
+  name="net_ipv4.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="net_ipv4.patch"
 
-Index: 2.6.13-rc1/arch/um/drivers/mconsole_kern.c
+ include/net/sock.h    |    2 +-
+ include/net/tcp.h     |    3 ++-
+ net/ipv4/tcp_output.c |    2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+Index: linux-2.6-git/net/ipv4/tcp_output.c
 ===================================================================
---- 2.6.13-rc1.orig/arch/um/drivers/mconsole_kern.c
-+++ 2.6.13-rc1/arch/um/drivers/mconsole_kern.c
-@@ -557,7 +557,7 @@ static int create_proc_mconsole(void)
+--- linux-2.6-git.orig/net/ipv4/tcp_output.c	2005-07-03 18:01:03.000000000 +0000
++++ linux-2.6-git/net/ipv4/tcp_output.c	2005-07-03 18:02:46.000000000 +0000
+@@ -1285,7 +1285,7 @@
+  * was unread data in the receive queue.  This behavior is recommended
+  * by draft-ietf-tcpimpl-prob-03.txt section 3.10.  -DaveM
+  */
+-void tcp_send_active_reset(struct sock *sk, int priority)
++void tcp_send_active_reset(struct sock *sk, unsigned int __nocast priority)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct sk_buff *skb;
+Index: linux-2.6-git/include/net/tcp.h
+===================================================================
+--- linux-2.6-git.orig/include/net/tcp.h	2005-07-01 17:48:52.000000000 +0000
++++ linux-2.6-git/include/net/tcp.h	2005-07-03 18:08:36.000000000 +0000
+@@ -853,7 +853,8 @@
+ extern void tcp_send_partial(struct sock *);
+ extern int  tcp_write_wakeup(struct sock *);
+ extern void tcp_send_fin(struct sock *sk);
+-extern void tcp_send_active_reset(struct sock *sk, int priority);
++extern void tcp_send_active_reset(struct sock *sk,
++                                  unsigned int __nocast priority);
+ extern int  tcp_send_synack(struct sock *);
+ extern void tcp_push_one(struct sock *, unsigned mss_now);
+ extern void tcp_send_ack(struct sock *sk);
+Index: linux-2.6-git/include/net/sock.h
+===================================================================
+--- linux-2.6-git.orig/include/net/sock.h	2005-07-03 18:19:02.000000000 +0000
++++ linux-2.6-git/include/net/sock.h	2005-07-03 18:19:58.000000000 +0000
+@@ -1189,7 +1189,7 @@
+ 	return atomic_read(&sk->sk_wmem_alloc) < (sk->sk_sndbuf / 2);
+ }
  
- 	ent = create_proc_entry("mconsole", S_IFREG | 0200, NULL);
- 	if(ent == NULL){
--		printk("create_proc_mconsole : create_proc_entry failed\n");
-+		printk(KERN_INFO "create_proc_mconsole : create_proc_entry failed\n");
- 		return(0);
- 	}
- 
+-static inline int gfp_any(void)
++static inline unsigned int __nocast gfp_any(void)
+ {
+ 	return in_softirq() ? GFP_ATOMIC : GFP_KERNEL;
+ }
 
---===============92274628082637111==
+--Boundary-00=_0bDyCP2XoMP9K6w
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +86,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92274628082637111==--
+--Boundary-00=_0bDyCP2XoMP9K6w--
