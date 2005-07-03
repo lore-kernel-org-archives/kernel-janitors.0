@@ -1,38 +1,69 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Thu, 07 Jul 2005 08:41:05 +0000
-Subject: [KJ] Re: 2.6.13-rc2-kj
-Message-Id: <20050707084105.GA2257@homer.coderock.org>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 03 Jul 2005 18:50:57 +0000
+Subject: [KJ] [PATCH 2.6.13-c1 4/17] fix sparse warnings (__nocast type)
+Message-Id: <200507031850.57491.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============028272556440942509=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_RODyC5+tgV6qcAH"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <30401657.20050707102712@dns.toxicfilms.tv>
-In-Reply-To: <30401657.20050707102712@dns.toxicfilms.tv>
 To: kernel-janitors@vger.kernel.org
 
---===============028272556440942509==
-Content-Type: text/plain; charset=us-ascii
+--Boundary-00=_RODyC5+tgV6qcAH
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On 07/07/05 10:27 +0200, Maciej Soltysiak wrote:
-> Hello Domen,
-> 
-> Wednesday, July 6, 2005, 10:00:06 PM, you wrote:
-> 
-> > new in this release:
-> > --------------------
-> Hm, did my spelling fixes get through...
-> 
-> The original mail + patch is available at
-> http://soltysiak.com/linux/spelling1.diff
+Description:
+	Fix the sparse warning "implicit cast to nocast type"
+ 
+File/Subsystem: drivers/pnp/pnpacpi
 
-As Tobias noted in reply to your mail, patch should be -p1 appliable.
-It is also missing a "Signed-off-by" (Documentation/SubmittingPatches)
-and should probably be split per subsystem, (like alsa, irda, usb...).
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+ 
 
+--Boundary-00=_RODyC5+tgV6qcAH
+Content-Type: text/x-diff;
+  charset="iso-8859-1";
+  name="pnp_pnpacpi.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="pnp_pnpacpi.patch"
 
-	Domen
+ drivers/pnp/pnpacpi/core.c    |    4 ++--
+ drivers/pnp/pnpacpi/pnpacpi.h |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---===============028272556440942509==
+Index: linux-2.6-git/drivers/pnp/pnpacpi/core.c
+===================================================================
+--- linux-2.6-git.orig/drivers/pnp/pnpacpi/core.c	2005-07-03 15:40:59.000000000 +0000
++++ linux-2.6-git/drivers/pnp/pnpacpi/core.c	2005-07-03 16:52:12.000000000 +0000
+@@ -41,9 +41,9 @@
+ 	return (!acpi_match_ids(dev, excluded_id_list));
+ }
+ 
+-void *pnpacpi_kmalloc(size_t size, int f)
++void *pnpacpi_kmalloc(size_t size, unsigned int __nocast flags)
+ {
+-	void *p = kmalloc(size, f);
++	void *p = kmalloc(size, flags);
+ 	if (p)
+ 		memset(p, 0, size);
+ 	return p;
+Index: linux-2.6-git/drivers/pnp/pnpacpi/pnpacpi.h
+===================================================================
+--- linux-2.6-git.orig/drivers/pnp/pnpacpi/pnpacpi.h	2005-07-01 17:48:32.000000000 +0000
++++ linux-2.6-git/drivers/pnp/pnpacpi/pnpacpi.h	2005-07-03 16:52:03.000000000 +0000
+@@ -5,7 +5,7 @@
+ #include <linux/acpi.h>
+ #include <linux/pnp.h>
+ 
+-void *pnpacpi_kmalloc(size_t size, int f);
++void *pnpacpi_kmalloc(size_t size, unsigned int __nocast flags);
+ acpi_status pnpacpi_parse_allocated_resource(acpi_handle, struct pnp_resource_table*);
+ acpi_status pnpacpi_parse_resource_option_data(acpi_handle, struct pnp_dev*);
+ int pnpacpi_encode_resources(struct pnp_resource_table *, struct acpi_buffer *);
+
+--Boundary-00=_RODyC5+tgV6qcAH
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============028272556440942509==--
+--Boundary-00=_RODyC5+tgV6qcAH--
