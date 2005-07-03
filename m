@@ -1,29 +1,51 @@
-From: Kees Cook <kees@kernel.org>
-Date: Thu, 30 Jun 2005 12:06:17 +0000
-Subject: [KJ] Re: [RFC] new design for kerneljanitors.org?
-Message-Id: <20050630120617.GE1114@osdl.org>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 03 Jul 2005 19:06:48 +0000
+Subject: [KJ] [PATCH 2.6.13-rc1 16/17] fix sparse warnings (__nocast type)
+Message-Id: <200507031906.48856.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42554550561079507=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_IdDyCj9dpcHhWoM"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============42554550561079507==
-Content-Type: text/plain; charset=us-ascii
+--Boundary-00=_IdDyCj9dpcHhWoM
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Wed, Jun 29, 2005 at 12:23:29AM +0200, Michael Veeck wrote:
-> - the permission of the kernel.org-webmaster (or whoever owns the 
-> copyright to their stylesheet) to use and modify their css-file. Is it 
-> alright from your side?
+Description:
+	Fix the sparse warning "implicit cast to nocast type"
+ 
+File/Subsystem: drivers/ieee1394/raw1394.c
 
-Sure, why not?  Borrowing is the only way I know how to do any HTML 
-design.  :)
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+ 
 
--- 
-Kees Cook
-kees@kernel.org
+--Boundary-00=_IdDyCj9dpcHhWoM
+Content-Type: text/x-diff; charset="iso-8859-1"; name="ieee1394_raw1394.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="ieee1394_raw1394.patch"
 
---===============42554550561079507==
+ drivers/ieee1394/raw1394.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletion(-)
+
+Index: linux-2.6-git/drivers/ieee1394/raw1394.c
+===================================================================
+--- linux-2.6-git.orig/drivers/ieee1394/raw1394.c	2005-07-01 17:48:31.000000000 +0000
++++ linux-2.6-git/drivers/ieee1394/raw1394.c	2005-07-03 17:06:04.000000000 +0000
+@@ -98,7 +98,8 @@
+ 
+ static void queue_complete_cb(struct pending_request *req);
+ 
+-static struct pending_request *__alloc_pending_request(int flags)
++static struct
++pending_request *__alloc_pending_request(unsigned int __nocast flags)
+ {
+ 	struct pending_request *req;
+ 
+
+--Boundary-00=_IdDyCj9dpcHhWoM
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -32,6 +54,6 @@ Content-Disposition: inline
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
-http://lists.osdl.org/mailman/listinfo/kernel-janitors
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42554550561079507==--
+--Boundary-00=_IdDyCj9dpcHhWoM--
