@@ -1,52 +1,58 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 11 Jul 2005 05:36:18 +0000
-Subject: Re: [KJ] [faq patch] mail per subsystem
-Message-Id: <20050711053618.GA14070@us.ibm.com>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 03 Jul 2005 18:49:43 +0000
+Subject: [KJ] [PATCH 2.6.13-c1 3/17] fix sparse warnings (__nocast type)
+Message-Id: <200507031849.43357.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97551595369768473=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_HNDyC2vzPxd8wPU"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050707093332.GA21414@nd47.coderock.org>
-In-Reply-To: <20050707093332.GA21414@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============97551595369768473==
-Content-Type: text/plain; charset=us-ascii
+--Boundary-00=_HNDyC2vzPxd8wPU
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On 07.07.2005 [11:33:32 +0200], Domen Puncer wrote:
-> Hi!
-> 
-> nacc noted on irc, that this is not in faq, but probably should be.
-> Here's a compact version I came up with:
-> 
-> Comments? Better wordings?
-
-Patch makes sense; here's one with one grammatical fix & a link to the
-conversation with David Miller on LKML.
-
-Thanks,
-Nish
-
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
-
---- faq	2005-07-10 22:34:38.000000000 -0700
-+++ faq.dev	2005-07-10 22:34:30.000000000 -0700
-@@ -24,6 +24,13 @@ Q: Where should I send patches to?
- A: Mailing list: kernel-janitors@lists.osdl.org
-    If you feel confident enough, you can CC: someone from MAINTAINERS too.
+Description:
+	Fix the sparse warning "implicit cast to nocast type"
  
-+Q: I have lots of patches that do the same thing. Can I just send them in
-+   one mail?
-+A: No, but don't send them in lots of small mails either. Try splitting
-+   them up per subsystem (drivers/net/, fs/ext3/...). See here:
-+   http://marc.theaimsgroup.com/?l=linux-kernel&m=112105809816217&w=2
-+   for details.
-+
- Q: Where can I find janitors?
- A: On our mailing list and #kerneljanitor at irc.oftc.net
+File/Subsystem: mm/mempool.c
+
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
  
 
---===============97551595369768473==
+--Boundary-00=_HNDyC2vzPxd8wPU
+Content-Type: text/x-diff;
+  charset="iso-8859-1";
+  name="mm_mempool.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="mm_mempool.patch"
+
+
+
+Fix the sparse warning: 
+    implicit cast to nocast type
+
+
+ mm/mempool.c |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-2.6-git/mm/mempool.c
+===================================================================
+--- linux-2.6-git.orig/mm/mempool.c	2005-07-01 17:48:52.000000000 +0000
++++ linux-2.6-git/mm/mempool.c	2005-07-03 14:15:48.000000000 +0000
+@@ -205,7 +205,7 @@
+ 	void *element;
+ 	unsigned long flags;
+ 	wait_queue_t wait;
+-	int gfp_temp;
++	unsigned int __nocast gfp_temp;
+ 
+ 	might_sleep_if(gfp_mask & __GFP_WAIT);
+ 
+
+--Boundary-00=_HNDyC2vzPxd8wPU
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97551595369768473==--
+--Boundary-00=_HNDyC2vzPxd8wPU--
