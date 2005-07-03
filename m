@@ -1,53 +1,50 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Mon, 11 Jul 2005 19:05:29 +0000
-Subject: [KJ] [PATCH] drivers/net/pcmcia/smc91c92_cs.c : Use of time_after
-Message-Id: <42D2C2F9.30407@feitoza.com.br>
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 03 Jul 2005 19:03:29 +0000
+Subject: [KJ] [PATCH 2.6.13-rc1 13/17] fix sparse warnings (__nocast type)
+Message-Id: <200507031903.29607.victor@cetuc.puc-rio.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------070604040004090701080709"
+Content-Type: multipart/mixed; boundary="Boundary-00=_BaDyCDFEEvhruaS"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------070604040004090701080709
-Content-Type: text/plain; charset=ISO-8859-1
+--Boundary-00=_BaDyCDFEEvhruaS
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Use of the time_after() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
+Description:
+	Fix the sparse warning "implicit cast to nocast type"
+ 
+File/Subsystem: kernel/audit.c
 
---------------070604040004090701080709
-Content-Type: text/x-patch;
- name="smc91c92_cs.patch"
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+ 
+
+--Boundary-00=_BaDyCDFEEvhruaS
+Content-Type: text/x-diff; charset="iso-8859-1"; name="kernel_audit.patch"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="smc91c92_cs.patch"
+Content-Disposition: attachment;
+	filename="kernel_audit.patch"
 
-Use of the time_after() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
+ kernel/audit.c |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-
---- linux/drivers/net/pcmcia/smc91c92_cs.c	2005-07-07 19:11:51.000000000 -0300
-+++ linux-kj/drivers/net/pcmcia/smc91c92_cs.c	2005-07-07 23:01:03.239783920 -0300
-@@ -41,6 +41,7 @@
- #include <linux/ioport.h>
- #include <linux/ethtool.h>
- #include <linux/mii.h>
-+#include <linux/jiffies.h>
+Index: linux-2.6-git/kernel/audit.c
+===================================================================
+--- linux-2.6-git.orig/kernel/audit.c	2005-07-01 17:48:52.000000000 +0000
++++ linux-2.6-git/kernel/audit.c	2005-07-03 14:59:37.000000000 +0000
+@@ -560,7 +560,7 @@
+ }
  
- #include <pcmcia/version.h>
- #include <pcmcia/cs_types.h>
-@@ -2097,7 +2098,7 @@
-     }
- 
-     /* Ignore collisions unless we've had no rx's recently */
--    if (jiffies - dev->last_rx > HZ) {
-+    if (time_after(jiffies, dev->last_rx + HZ)) {
- 	if (smc->tx_err || (smc->media_status & EPH_16COL))
- 	    media |= EPH_16COL;
-     }
+ static struct audit_buffer * audit_buffer_alloc(struct audit_context *ctx,
+-						int gfp_mask, int type)
++						unsigned int __nocast gfp_mask, int type)
+ {
+ 	unsigned long flags;
+ 	struct audit_buffer *ab = NULL;
 
---------------070604040004090701080709
+--Boundary-00=_BaDyCDFEEvhruaS
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------070604040004090701080709--
+--Boundary-00=_BaDyCDFEEvhruaS--
