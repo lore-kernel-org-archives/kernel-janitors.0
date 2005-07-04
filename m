@@ -1,51 +1,38 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 19:08:09 +0000
-Subject: [KJ] [PATCH 2.6.13-rc1 17/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031908.09433.victor@cetuc.puc-rio.br>
+From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+Date: Mon, 04 Jul 2005 11:13:23 +0000
+Subject: Re: [KJ] [PATCH 2.6.13-rc1 17/17] fix sparse warnings (__nocast type)
+Message-Id: <20050704081323.22ae8c37.rnsanchez@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_ZeDyCr6RCbmamkY"
+Content-Type: multipart/mixed; boundary="===============14570663611782297=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200507031908.09433.victor@cetuc.puc-rio.br>
+In-Reply-To: <200507031908.09433.victor@cetuc.puc-rio.br>
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_ZeDyCr6RCbmamkY
-Content-Type: text/plain;
-  charset="iso-8859-1"
+--===============14570663611782297==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
- 
-File/Subsystem: include/net/bluetooth/bluetooth.h
+Quoting  Victor Fusco <victor@cetuc.puc-rio.br>
+Sent on  Sun, 3 Jul 2005 19:08:09 +0000
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
+> -static inline struct sk_buff *bt_skb_alloc(unsigned int len, int how)
+> +static inline struct sk_buff *bt_skb_alloc(unsigned int len,
+> +                                           unsigned int __nocast how)
 
---Boundary-00=_ZeDyCr6RCbmamkY
-Content-Type: text/x-diff; charset="iso-8859-1"; name="net_bluetooth.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="net_bluetooth.patch"
+I see a int to unsigned int change.  doing a lookup, I've found that 'how'
+is a flag passed to alloc_skb.  is it safe to use it as unsigned? 
 
- include/net/bluetooth/bluetooth.h |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletion(-)
+-- 
+Ricardo Nabinger Sanchez
+GNU/Linux #140696 [http://counter.li.org]
+Slackware Linux + FreeBSD
 
-Index: linux-2.6-git/include/net/bluetooth/bluetooth.h
-===================================================================
---- linux-2.6-git.orig/include/net/bluetooth/bluetooth.h	2005-07-01 17:48:51.000000000 +0000
-+++ linux-2.6-git/include/net/bluetooth/bluetooth.h	2005-07-03 18:13:37.000000000 +0000
-@@ -141,7 +141,8 @@
- };
- #define bt_cb(skb) ((struct bt_skb_cb *)(skb->cb)) 
- 
--static inline struct sk_buff *bt_skb_alloc(unsigned int len, int how)
-+static inline struct sk_buff *bt_skb_alloc(unsigned int len,
-+                                           unsigned int __nocast how)
- {
- 	struct sk_buff *skb;
- 
+    How long a minute is depends on which 
+    side of the bathroom door you're on.
 
---Boundary-00=_ZeDyCr6RCbmamkY
+
+--===============14570663611782297==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_ZeDyCr6RCbmamkY--
+--===============14570663611782297==--
