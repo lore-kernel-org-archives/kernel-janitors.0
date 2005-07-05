@@ -1,76 +1,44 @@
-From: randy_dunlap <rdunlap@xenotime.net>
-Date: Fri, 08 Jul 2005 18:21:48 +0000
-Subject: Re: [KJ] Re: GCC4 warning: no return statement in function
-Message-Id: <20050708112148.49cf1a86.rdunlap@xenotime.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74037428305222663=="
+From: Rodrigo Nascimento <underscore0x5f@gmail.com>
+Date: Tue, 05 Jul 2005 21:13:10 +0000
+Subject: [KJ] [PATCH] drivers/scsi/qla1280.c: pci_get_device instead of
+Message-Id: <cbecb30405070514134ebef46@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050701221504.GA26388@homer.coderock.org>
-In-Reply-To: <20050701221504.GA26388@homer.coderock.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============74037428305222663==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+This patch changes the pci_find_device to pci_get_device.
+Please correct me, whether it's wrong. It is my first patch. :)
 
-On Thu, 07 Jul 2005 14:14:13 -0700 Jesse Millan wrote:
+Signed-off-by: Rodrigo Nascimento <underscore0x5f@gmail.com>
 
-| randy_dunlap wrote:
-| > On Sat, 2 Jul 2005 00:22:51 +0200 Domen Puncer wrote:
-| > 
-| > | On 02/07/05 00:15 +0200, Domen Puncer wrote:
-| > | > On 01/07/05 11:19 -0700, Jesse Millan wrote:
-| > | > > -int kauditd_thread(void *dummy)
-| > | > > +void kauditd_thread(void *dummy)
-| > | > 
-| > | > This should warn too, as kthread_create() (kthread_run()) accepts
-| > | > int (*threadfn)(void *data)
-| > | > 
-| > | > I think kauditd_thread() should be fixed here to return something...
-| > | > "The return value should be zero or a negative error number:
-| > | >  it will be passed to kthread_stop()."
-| > | 
-| > | But it doesn't return at all (d'oh, should have seen this before).
-| > | Still... there's a warning if it returns void, right?
-| > 
-| > so it needs 
-| >   __attribute__((noreturn))
-| > added to the function?
-| > (or ATTRIB_NORET)
-| > 
-| > ---
-| > ~Randy
-| > 
-| 
-| Using the noreturn attribute implies to me that the return type should
-| be void. That can't be because kthread_run() expects a pointer to a
-| function that returns an int. Any return statement after the while(1) is
-| unreacable as Domen pointed out...
-| 
-| Could you clarify what needs to be done?
+# diff -urpN /usr/src/linux/drivers/scsi/qla1280.c
+/usr/src/linux-kj/drivers/scsi/qla1280.c
+--- /usr/src/linux/drivers/scsi/qla1280.c       2005-06-22
+16:33:05.000000000 -0300
++++ /usr/src/linux-kj/drivers/scsi/qla1280.c    2005-07-05
+17:55:24.000000000 -0300
+@@ -1196,7 +1196,7 @@ qla1280_detect(Scsi_Host_Template *templ
+ #endif
 
-Not really.  and your summary above is correct, including that the
-return type for noreturn should be void.  (see GCC 4.0.1 manual:
-
-http://gcc.gnu.org/onlinedocs/gcc-4.0.1/gcc/Function-Attributes.html#Function-Attributes
-
-"It does not make sense for a noreturn function to have a return type other than void."
-
-I suppose you could try asking on the
-gcc-help@gcc.gnu.org  mailing list.
-
----
-~Randy
-
---===============74037428305222663==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        /* First Initialize QLA12160 on PCI Bus 1 Dev 2 */
+-       while ((pdev = pci_find_device(id->vendor, id->device, pdev))) {
++       while ((pdev = pci_get_device(id->vendor, id->device, pdev))) {
+                if (pdev->bus->number = 1 && PCI_SLOT(pdev->devfn) = 2) {
+                        if (!qla1280_probe_one(pdev, id))
+                                num_hosts++;
+@@ -1206,7 +1206,7 @@ qla1280_detect(Scsi_Host_Template *templ
+        pdev = NULL;
+        /* Try and find each different type of adapter we support */
+        for (id = &qla1280_pci_tbl[0]; id->device; id++) {
+-               while ((pdev = pci_find_device(id->vendor, id->device, pdev))) {
++               while ((pdev = pci_get_device(id->vendor, id->device, pdev))) {
+                        /*
+                         * skip QLA12160 already initialized on
+                         * PCI Bus 1 Dev 2 since we already initialized
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============74037428305222663==--
