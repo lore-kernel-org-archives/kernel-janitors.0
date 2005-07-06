@@ -1,172 +1,587 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 10 Jul 2005 23:20:58 +0000
-Subject: [KJ] [PATCH 20/20] Fix "nocast type" warnings
-Message-Id: <200507102320.58845.victor@cetuc.puc-rio.br>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 06 Jul 2005 23:08:35 +0000
+Subject: [KJ] [PATCH 9/15] FlashPoint: untypedef struct _SCCB
+Message-Id: <200507070308.35905.adobriyan@gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============26463881880439644=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description:
-    Fix the sparse warning "implicit cast to nocast type"
+--===============26463881880439644==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-File/Subsystem:sound/core
+* struct _SCCB => struct sccb
+* PSCCB => struct sccb *
+* SCCB => struct sccb
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
---
+ drivers/scsi/FlashPoint.c |  143 ++++++++++++++++++++++------------------------
+ 1 files changed, 71 insertions(+), 72 deletions(-)
 
- include/sound/core.h              |    6 +++---
- include/sound/driver.h            |    2 +-
- sound/core/memalloc.c             |    3 ++-
- sound/core/memory.c               |    8 ++++----
- sound/core/seq/instr/ainstr_gf1.c |    3 ++-
- sound/core/seq/instr/ainstr_iw.c  |    8 +++++---
- sound/core/wrappers.c             |    2 +-
- 7 files changed, 18 insertions(+), 14 deletions(-)
-
-Index: linux-git/sound/core/memalloc.c
-=================================--- linux-git.orig/sound/core/memalloc.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/sound/core/memalloc.c	2005-07-10 22:42:57.000000000 +0000
-@@ -105,7 +105,8 @@
-  */
+Index: linux-flashpoint/drivers/scsi/FlashPoint.c
+===================================================================
+--- linux-flashpoint.orig/drivers/scsi/FlashPoint.c	2005-07-06 23:50:22.000000000 +0400
++++ linux-flashpoint/drivers/scsi/FlashPoint.c	2005-07-06 23:56:16.000000000 +0400
+@@ -53,9 +53,8 @@
  
- static void *snd_dma_hack_alloc_coherent(struct device *dev, size_t size,
--					 dma_addr_t *dma_handle, int flags)
-+					 dma_addr_t *dma_handle,
-+					 unsigned int __nocast flags)
- {
- 	void *ret;
- 	u64 dma_mask, coherent_dma_mask;
-Index: linux-git/sound/core/wrappers.c
-=================================--- linux-git.orig/sound/core/wrappers.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/sound/core/wrappers.c	2005-07-10 22:42:57.000000000 +0000
-@@ -27,7 +27,7 @@
- #include <linux/fs.h>
  
- #ifdef CONFIG_SND_DEBUG_MEMORY
--void *snd_wrapper_kmalloc(size_t size, int flags)
-+void *snd_wrapper_kmalloc(size_t size, unsigned int __nocast flags)
+ 
+-
+-typedef struct _SCCB *PSCCB;
+-typedef void (*CALL_BK_FN)(PSCCB);
++struct sccb;
++typedef void (*CALL_BK_FN)(struct sccb *);
+ 
+ 
+ typedef struct SCCBMgr_info {
+@@ -110,7 +109,7 @@ typedef SCCBMGR_INFO *      PSCCBMGR_INF
+ 
+ 
+ #pragma pack(1)
+-typedef struct _SCCB {
++struct sccb {
+    unsigned char OperationCode;
+    unsigned char ControlByte;
+    unsigned char CdbLength;
+@@ -146,14 +145,14 @@ typedef struct _SCCB {
+    unsigned char   Sccb_tag;
+    unsigned char   Sccb_scsistat;
+    unsigned char   Sccb_idmsg;              /* image of last msg in */
+-   PSCCB   Sccb_forwardlink;
+-   PSCCB   Sccb_backlink;
++   struct sccb *   Sccb_forwardlink;
++   struct sccb *   Sccb_backlink;
+    unsigned long   Sccb_savedATC;
+    unsigned char   Save_Cdb[6];
+    unsigned char   Save_CdbLen;
+    unsigned char   Sccb_XferState;
+    unsigned long   Sccb_SGoffset;
+-   } SCCB;
++   };
+ 
+ 
+ #pragma pack()
+@@ -275,8 +274,8 @@ typedef struct SCCBMgr_tar_info *PSCCBMg
+ 
+ typedef struct SCCBMgr_tar_info {
+ 
+-   PSCCB    TarSelQ_Head;
+-   PSCCB    TarSelQ_Tail;
++   struct sccb *    TarSelQ_Head;
++   struct sccb *    TarSelQ_Tail;
+    unsigned char    TarLUN_CA;        /*Contingent Allgiance */
+    unsigned char    TarTagQ_Cnt;
+    unsigned char    TarSelQ_Cnt;
+@@ -309,7 +308,7 @@ typedef NVRAMINFO *PNVRamInfo;
+ 
+ 
+ typedef struct SCCBcard {
+-   PSCCB currentSCCB;
++   struct sccb * currentSCCB;
+    PSCCBMGR_INFO cardInfo;
+ 
+    unsigned long ioPort;
+@@ -322,7 +321,7 @@ typedef struct SCCBcard {
+    unsigned char globalFlags;
+    unsigned char ourId;
+    PNVRamInfo pNvRamInfo;
+-   PSCCB discQ_Tbl[QUEUE_DEPTH]; 
++   struct sccb * discQ_Tbl[QUEUE_DEPTH]; 
+       
+ }SCCBCARD;
+ 
+@@ -973,7 +972,7 @@ typedef struct SCCBscam_info {
+ static unsigned char FPT_sisyncn(unsigned long port, unsigned char p_card, unsigned char syncFlag);
+ static void  FPT_ssel(unsigned long port, unsigned char p_card);
+ static void  FPT_sres(unsigned long port, unsigned char p_card, PSCCBcard pCurrCard);
+-static void  FPT_shandem(unsigned long port, unsigned char p_card,PSCCB pCurrSCCB);
++static void  FPT_shandem(unsigned long port, unsigned char p_card,struct sccb * pCurrSCCB);
+ static void  FPT_stsyncn(unsigned long port, unsigned char p_card);
+ static void  FPT_sisyncr(unsigned long port,unsigned char sync_pulse, unsigned char offset);
+ static void  FPT_sssyncv(unsigned long p_port, unsigned char p_id, unsigned char p_sync_value,
+@@ -989,7 +988,7 @@ static void FPT_SendMsg(unsigned long po
+ static void  FPT_queueFlushTargSccb(unsigned char p_card, unsigned char thisTarg,
+ 				    unsigned char error_code);
+ 
+-static void  FPT_sinits(PSCCB p_sccb, unsigned char p_card);
++static void  FPT_sinits(struct sccb * p_sccb, unsigned char p_card);
+ static void  FPT_RNVRamData(PNVRamInfo pNvRamInfo);
+ 
+ static unsigned char FPT_siwidn(unsigned long port, unsigned char p_card);
+@@ -998,14 +997,14 @@ static void  FPT_siwidr(unsigned long po
+ 
+ 
+ static void  FPT_queueSelectFail(PSCCBcard pCurrCard, unsigned char p_card);
+-static void  FPT_queueDisconnect(PSCCB p_SCCB, unsigned char p_card);
+-static void  FPT_queueCmdComplete(PSCCBcard pCurrCard, PSCCB p_SCCB,
++static void  FPT_queueDisconnect(struct sccb * p_SCCB, unsigned char p_card);
++static void  FPT_queueCmdComplete(PSCCBcard pCurrCard, struct sccb * p_SCCB,
+ 				  unsigned char p_card);
+ static void  FPT_queueSearchSelect(PSCCBcard pCurrCard, unsigned char p_card);
+ static void  FPT_queueFlushSccb(unsigned char p_card, unsigned char error_code);
+-static void  FPT_queueAddSccb(PSCCB p_SCCB, unsigned char card);
+-static unsigned char FPT_queueFindSccb(PSCCB p_SCCB, unsigned char p_card);
+-static void  FPT_utilUpdateResidual(PSCCB p_SCCB);
++static void  FPT_queueAddSccb(struct sccb * p_SCCB, unsigned char card);
++static unsigned char FPT_queueFindSccb(struct sccb * p_SCCB, unsigned char p_card);
++static void  FPT_utilUpdateResidual(struct sccb * p_SCCB);
+ static unsigned short FPT_CalcCrc16(unsigned char buffer[]);
+ static unsigned char  FPT_CalcLrc(unsigned char buffer[]);
+ 
+@@ -1043,10 +1042,10 @@ static void  FPT_DiagEEPROM(unsigned lon
+ 
+ 
+ static void  FPT_dataXferProcessor(unsigned long port, PSCCBcard pCurrCard);
+-static void  FPT_busMstrSGDataXferStart(unsigned long port, PSCCB pCurrSCCB);
+-static void  FPT_busMstrDataXferStart(unsigned long port, PSCCB pCurrSCCB);
+-static void  FPT_hostDataXferAbort(unsigned long port, unsigned char p_card, PSCCB pCurrSCCB);
+-static void  FPT_hostDataXferRestart(PSCCB currSCCB);
++static void  FPT_busMstrSGDataXferStart(unsigned long port, struct sccb * pCurrSCCB);
++static void  FPT_busMstrDataXferStart(unsigned long port, struct sccb * pCurrSCCB);
++static void  FPT_hostDataXferAbort(unsigned long port, unsigned char p_card, struct sccb * pCurrSCCB);
++static void  FPT_hostDataXferRestart(struct sccb * currSCCB);
+ 
+ 
+ static unsigned char FPT_SccbMgr_bad_isr(unsigned long p_port, unsigned char p_card,
+@@ -1667,11 +1666,11 @@ static unsigned char FPT_ChkIfChipInitia
+  *              callback function.
+  *
+  *---------------------------------------------------------------------*/
+-static void FlashPoint_StartCCB(unsigned long pCurrCard, PSCCB p_Sccb)
++static void FlashPoint_StartCCB(unsigned long pCurrCard, struct sccb * p_Sccb)
  {
- 	return kmalloc(size, flags);
+    unsigned long ioport;
+    unsigned char thisCard, lun;
+-	PSCCB pSaveSccb;
++	struct sccb * pSaveSccb;
+    CALL_BK_FN callback;
+ 
+    thisCard = ((PSCCBcard) pCurrCard)->cardIndex;
+@@ -1787,14 +1786,14 @@ static void FlashPoint_StartCCB(unsigned
+  *              callback function.
+  *
+  *---------------------------------------------------------------------*/
+-static int FlashPoint_AbortCCB(unsigned long pCurrCard, PSCCB p_Sccb)
++static int FlashPoint_AbortCCB(unsigned long pCurrCard, struct sccb * p_Sccb)
+ {
+ 	unsigned long ioport;
+ 
+ 	unsigned char thisCard;
+ 	CALL_BK_FN callback;
+ 	unsigned char TID;
+-	PSCCB pSaveSCCB;
++	struct sccb * pSaveSCCB;
+ 	PSCCBMgr_tar_info currTar_Info;
+ 
+ 
+@@ -1916,7 +1915,7 @@ static unsigned char FlashPoint_Interrup
+  *---------------------------------------------------------------------*/
+ static int FlashPoint_HandleInterrupt(unsigned long pCurrCard)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    unsigned char thisCard,result,bm_status, bm_int_st;
+    unsigned short hp_int;
+    unsigned char i, target;
+@@ -2417,7 +2416,7 @@ static void FPT_SccbMgrTableInitTarget(u
+  *
+  *---------------------------------------------------------------------*/
+ 
+-static unsigned char FPT_sfm(unsigned long port, PSCCB pCurrSCCB)
++static unsigned char FPT_sfm(unsigned long port, struct sccb * pCurrSCCB)
+ {
+ 	unsigned char message;
+ 	unsigned short TimeOutLoop;
+@@ -2497,7 +2496,7 @@ static void FPT_ssel(unsigned long port,
+ 
+    unsigned long cdb_reg;
+    PSCCBcard CurrCard;
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    PSCCBMgr_tar_info currTar_Info;
+    unsigned char lastTag, lun;
+ 
+@@ -2808,7 +2807,7 @@ static void FPT_sres(unsigned long port,
+ 
+ 
+    PSCCBMgr_tar_info currTar_Info;
+-	PSCCB currSCCB;
++	struct sccb * currSCCB;
+ 
+ 
+ 
+@@ -3113,7 +3112,7 @@ static void FPT_SendMsg(unsigned long po
+  *---------------------------------------------------------------------*/
+ static void FPT_sdecm(unsigned char message, unsigned long port, unsigned char p_card)
+ {
+-	PSCCB currSCCB;
++	struct sccb * currSCCB;
+ 	PSCCBcard CurrCard;
+ 	PSCCBMgr_tar_info currTar_Info;
+ 
+@@ -3290,7 +3289,7 @@ static void FPT_sdecm(unsigned char mess
+  * Description: Decide what to do with the extended message.
+  *
+  *---------------------------------------------------------------------*/
+-static void FPT_shandem(unsigned long port, unsigned char p_card, PSCCB pCurrSCCB)
++static void FPT_shandem(unsigned long port, unsigned char p_card, struct sccb * pCurrSCCB)
+ {
+ 	unsigned char length,message;
+ 
+@@ -3371,7 +3370,7 @@ static void FPT_shandem(unsigned long po
+ 
+ static unsigned char FPT_sisyncn(unsigned long port, unsigned char p_card, unsigned char syncFlag)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    PSCCBMgr_tar_info currTar_Info;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -3447,7 +3446,7 @@ static unsigned char FPT_sisyncn(unsigne
+ static void FPT_stsyncn(unsigned long port, unsigned char p_card)
+ {
+    unsigned char sync_msg,offset,sync_reg,our_sync_msg;
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    PSCCBMgr_tar_info currTar_Info;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -3609,7 +3608,7 @@ static void FPT_sisyncr(unsigned long po
+ 
+ static unsigned char FPT_siwidn(unsigned long port, unsigned char p_card)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    PSCCBMgr_tar_info currTar_Info;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -3662,7 +3661,7 @@ static unsigned char FPT_siwidn(unsigned
+ static void FPT_stwidn(unsigned long port, unsigned char p_card)
+ {
+    unsigned char width;
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    PSCCBMgr_tar_info currTar_Info;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -3916,7 +3915,7 @@ static void FPT_sresb(unsigned long port
+ static void FPT_ssenss(PSCCBcard pCurrCard)
+ {
+    unsigned char i;
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = pCurrCard->currentSCCB;
+ 
+@@ -4049,7 +4048,7 @@ static void FPT_schkdd(unsigned long por
+    unsigned short TimeOutLoop;
+ 	unsigned char sPhase;
+ 
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+ 
+@@ -4157,7 +4156,7 @@ static void FPT_schkdd(unsigned long por
+  *
+  *---------------------------------------------------------------------*/
+ 
+-static void FPT_sinits(PSCCB p_sccb, unsigned char p_card)
++static void FPT_sinits(struct sccb * p_sccb, unsigned char p_card)
+ {
+    PSCCBMgr_tar_info currTar_Info;
+ 
+@@ -4265,7 +4264,7 @@ static void FPT_phaseDecode(unsigned lon
+ static void FPT_phaseDataOut(unsigned long port, unsigned char p_card)
+ {
+ 
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+    if (currSCCB == NULL)
+@@ -4309,7 +4308,7 @@ static void FPT_phaseDataOut(unsigned lo
+ static void FPT_phaseDataIn(unsigned long port, unsigned char p_card)
+ {
+ 
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+ 
+@@ -4355,7 +4354,7 @@ static void FPT_phaseDataIn(unsigned lon
+ 
+ static void FPT_phaseCommand(unsigned long p_port, unsigned char p_card)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    unsigned long cdb_reg;
+    unsigned char i;
+ 
+@@ -4430,7 +4429,7 @@ static void FPT_phaseStatus(unsigned lon
+ static void FPT_phaseMsgOut(unsigned long port, unsigned char p_card)
+ {
+ 	unsigned char message,scsiID;
+-	PSCCB currSCCB;
++	struct sccb * currSCCB;
+ 	PSCCBMgr_tar_info currTar_Info;
+ 
+ 	currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -4578,7 +4577,7 @@ static void FPT_phaseMsgOut(unsigned lon
+ static void FPT_phaseMsgIn(unsigned long port, unsigned char p_card)
+ {
+ 	unsigned char message;
+-	PSCCB currSCCB;
++	struct sccb * currSCCB;
+ 
+ 	currSCCB = FPT_BL_Card[p_card].currentSCCB;
+ 
+@@ -4630,7 +4629,7 @@ static void FPT_phaseMsgIn(unsigned long
+ 
+ static void FPT_phaseIllegal(unsigned long port, unsigned char p_card)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+ 
+@@ -4659,7 +4658,7 @@ static void FPT_phaseIllegal(unsigned lo
+ static void FPT_phaseChkFifo(unsigned long port, unsigned char p_card)
+ {
+    unsigned long xfercnt;
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+ 
+@@ -4736,7 +4735,7 @@ static void FPT_phaseChkFifo(unsigned lo
+  *---------------------------------------------------------------------*/
+ static void FPT_phaseBusFree(unsigned long port, unsigned char p_card)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+ 
+@@ -4942,7 +4941,7 @@ static void FPT_autoLoadDefaultMap(unsig
+ 
+ static void FPT_autoCmdCmplt(unsigned long p_port, unsigned char p_card)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    unsigned char status_byte;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -5157,7 +5156,7 @@ static void FPT_autoCmdCmplt(unsigned lo
+ 
+ static void FPT_dataXferProcessor(unsigned long port, PSCCBcard pCurrCard)
+ {
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+ 
+    currSCCB = pCurrCard->currentSCCB;
+ 
+@@ -5193,7 +5192,7 @@ static void FPT_dataXferProcessor(unsign
+  * Description:
+  *
+  *---------------------------------------------------------------------*/
+-static void FPT_busMstrSGDataXferStart(unsigned long p_port, PSCCB pcurrSCCB)
++static void FPT_busMstrSGDataXferStart(unsigned long p_port, struct sccb * pcurrSCCB)
+ {
+    unsigned long count,addr,tmpSGCnt;
+    unsigned int sg_index;
+@@ -5298,7 +5297,7 @@ static void FPT_busMstrSGDataXferStart(u
+  * Description: 
+  *
+  *---------------------------------------------------------------------*/
+-static void FPT_busMstrDataXferStart(unsigned long p_port, PSCCB pcurrSCCB)
++static void FPT_busMstrDataXferStart(unsigned long p_port, struct sccb * pcurrSCCB)
+ {
+    unsigned long addr,count;
+ 
+@@ -5389,7 +5388,7 @@ static unsigned char FPT_busMstrTimeOut(
+  * Description: Abort any in progress transfer.
+  *
+  *---------------------------------------------------------------------*/
+-static void FPT_hostDataXferAbort(unsigned long port, unsigned char p_card, PSCCB pCurrSCCB)
++static void FPT_hostDataXferAbort(unsigned long port, unsigned char p_card, struct sccb * pCurrSCCB)
+ {
+ 
+    unsigned long timeout;
+@@ -5647,7 +5646,7 @@ static void FPT_hostDataXferAbort(unsign
+  *              pointers message.
+  *
+  *---------------------------------------------------------------------*/
+-static void FPT_hostDataXferRestart(PSCCB currSCCB)
++static void FPT_hostDataXferRestart(struct sccb * currSCCB)
+ {
+    unsigned long data_count;
+    unsigned int  sg_index;
+@@ -6939,7 +6938,7 @@ static void FPT_queueSearchSelect(PSCCBc
+ {
+    unsigned char scan_ptr, lun;
+    PSCCBMgr_tar_info currTar_Info;
+-	PSCCB pOldSccb;
++	struct sccb * pOldSccb;
+ 
+    scan_ptr = pCurrCard->scanIndex;
+ 	do 
+@@ -6967,22 +6966,22 @@ static void FPT_queueSearchSelect(PSCCBc
+ 								 (lun != pCurrCard->currentSCCB->Lun))
+ 						{
+ 							pOldSccb = pCurrCard->currentSCCB;
+-							pCurrCard->currentSCCB = (PSCCB)(pCurrCard->currentSCCB)->
++							pCurrCard->currentSCCB = (struct sccb *)(pCurrCard->currentSCCB)->
+ 																	Sccb_forwardlink;
+ 						}
+ 						if(pCurrCard->currentSCCB == NULL)
+ 							continue;
+ 						if(pOldSccb != NULL)
+ 						{
+-							pOldSccb->Sccb_forwardlink = (PSCCB)(pCurrCard->currentSCCB)->
++							pOldSccb->Sccb_forwardlink = (struct sccb *)(pCurrCard->currentSCCB)->
+ 																	Sccb_forwardlink;
+-							pOldSccb->Sccb_backlink = (PSCCB)(pCurrCard->currentSCCB)->
++							pOldSccb->Sccb_backlink = (struct sccb *)(pCurrCard->currentSCCB)->
+ 																	Sccb_backlink;
+ 							currTar_Info->TarSelQ_Cnt--;
+ 						}
+ 						else
+ 						{
+-							currTar_Info->TarSelQ_Head = (PSCCB)(pCurrCard->currentSCCB)->Sccb_forwardlink;
++							currTar_Info->TarSelQ_Head = (struct sccb *)(pCurrCard->currentSCCB)->Sccb_forwardlink;
+ 					
+ 							if (currTar_Info->TarSelQ_Head == NULL)
+ 							{
+@@ -6992,7 +6991,7 @@ static void FPT_queueSearchSelect(PSCCBc
+ 							else
+ 							{
+ 								currTar_Info->TarSelQ_Cnt--;
+-								currTar_Info->TarSelQ_Head->Sccb_backlink = (PSCCB)NULL;
++								currTar_Info->TarSelQ_Head->Sccb_backlink = (struct sccb *)NULL;
+ 							}
+ 						}
+ 					pCurrCard->scanIndex = scan_ptr;
+@@ -7021,7 +7020,7 @@ static void FPT_queueSearchSelect(PSCCBc
+ 
+ 				pCurrCard->currentSCCB = currTar_Info->TarSelQ_Head;
+ 
+-				currTar_Info->TarSelQ_Head = (PSCCB)(pCurrCard->currentSCCB)->Sccb_forwardlink;
++				currTar_Info->TarSelQ_Head = (struct sccb *)(pCurrCard->currentSCCB)->Sccb_forwardlink;
+ 
+ 				if (currTar_Info->TarSelQ_Head == NULL)
+ 				{
+@@ -7031,7 +7030,7 @@ static void FPT_queueSearchSelect(PSCCBc
+ 				else
+ 				{
+ 					currTar_Info->TarSelQ_Cnt--;
+-					currTar_Info->TarSelQ_Head->Sccb_backlink = (PSCCB)NULL;
++					currTar_Info->TarSelQ_Head->Sccb_backlink = (struct sccb *)NULL;
+ 				}
+ 
+ 				scan_ptr++;
+@@ -7073,10 +7072,10 @@ static void FPT_queueSelectFail(PSCCBcar
+ 
+    if (pCurrCard->currentSCCB != NULL)
+ 	  {
+-	  thisTarg = (unsigned char)(((PSCCB)(pCurrCard->currentSCCB))->TargID);
++	  thisTarg = (unsigned char)(((struct sccb *)(pCurrCard->currentSCCB))->TargID);
+       currTar_Info = &FPT_sccbMgrTbl[p_card][thisTarg];
+ 
+-      pCurrCard->currentSCCB->Sccb_backlink = (PSCCB)NULL;
++      pCurrCard->currentSCCB->Sccb_backlink = (struct sccb *)NULL;
+ 
+       pCurrCard->currentSCCB->Sccb_forwardlink = currTar_Info->TarSelQ_Head;
+ 
+@@ -7105,7 +7104,7 @@ static void FPT_queueSelectFail(PSCCBcar
+  *
+  *---------------------------------------------------------------------*/
+ 
+-static void FPT_queueCmdComplete(PSCCBcard pCurrCard, PSCCB p_sccb,
++static void FPT_queueCmdComplete(PSCCBcard pCurrCard, struct sccb * p_sccb,
+ 				 unsigned char p_card)
+ {
+ 
+@@ -7207,7 +7206,7 @@ static void FPT_queueCmdComplete(PSCCBca
+  * Description: Add SCCB to our disconnect array.
+  *
+  *---------------------------------------------------------------------*/
+-static void FPT_queueDisconnect(PSCCB p_sccb, unsigned char p_card)
++static void FPT_queueDisconnect(struct sccb * p_sccb, unsigned char p_card)
+ {
+    PSCCBMgr_tar_info currTar_Info;
+ 
+@@ -7245,7 +7244,7 @@ static void FPT_queueDisconnect(PSCCB p_
+ static void  FPT_queueFlushSccb(unsigned char p_card, unsigned char error_code)
+ {
+    unsigned char qtag,thisTarg;
+-   PSCCB currSCCB;
++   struct sccb * currSCCB;
+    PSCCBMgr_tar_info currTar_Info;
+ 
+    currSCCB = FPT_BL_Card[p_card].currentSCCB;
+@@ -7311,7 +7310,7 @@ static void  FPT_queueFlushTargSccb(unsi
+ 
+ 
+ 
+-static void FPT_queueAddSccb(PSCCB p_SCCB, unsigned char p_card)
++static void FPT_queueAddSccb(struct sccb * p_SCCB, unsigned char p_card)
+ {
+    PSCCBMgr_tar_info currTar_Info;
+    currTar_Info = &FPT_sccbMgrTbl[p_card][p_SCCB->TargID];
+@@ -7345,9 +7344,9 @@ static void FPT_queueAddSccb(PSCCB p_SCC
+  *
+  *---------------------------------------------------------------------*/
+ 
+-static unsigned char FPT_queueFindSccb(PSCCB p_SCCB, unsigned char p_card)
++static unsigned char FPT_queueFindSccb(struct sccb * p_SCCB, unsigned char p_card)
+ {
+-   PSCCB q_ptr;
++   struct sccb * q_ptr;
+    PSCCBMgr_tar_info currTar_Info;
+ 
+    currTar_Info = &FPT_sccbMgrTbl[p_card][p_SCCB->TargID];
+@@ -7406,7 +7405,7 @@ static unsigned char FPT_queueFindSccb(P
+  *
+  *---------------------------------------------------------------------*/
+ 
+-static void  FPT_utilUpdateResidual(PSCCB p_SCCB)
++static void  FPT_utilUpdateResidual(struct sccb * p_SCCB)
+ {
+    unsigned long partial_cnt;
+    unsigned int  sg_index;
+@@ -7809,14 +7808,14 @@ FlashPoint__ReleaseHostAdapter(FlashPoin
+ static inline void
+ FlashPoint__StartCCB(FlashPoint_CardHandle_T CardHandle, struct BusLogic_CCB *CCB)
+ {
+-  FlashPoint_StartCCB(CardHandle, (PSCCB) CCB);
++  FlashPoint_StartCCB(CardHandle, (struct sccb *) CCB);
  }
-Index: linux-git/include/sound/core.h
-=================================--- linux-git.orig/include/sound/core.h	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/include/sound/core.h	2005-07-10 22:42:57.000000000 +0000
-@@ -287,12 +287,12 @@
- void snd_memory_done(void);
- int snd_memory_info_init(void);
- int snd_memory_info_done(void);
--void *snd_hidden_kmalloc(size_t size, int flags);
--void *snd_hidden_kcalloc(size_t n, size_t size, int flags);
-+void *snd_hidden_kmalloc(size_t size, unsigned int __nocast flags);
-+void *snd_hidden_kcalloc(size_t n, size_t size, unsigned int __nocast flags);
- void snd_hidden_kfree(const void *obj);
- void *snd_hidden_vmalloc(unsigned long size);
- void snd_hidden_vfree(void *obj);
--char *snd_hidden_kstrdup(const char *s, int flags);
-+char *snd_hidden_kstrdup(const char *s, unsigned int __nocast flags);
- #define kmalloc(size, flags) snd_hidden_kmalloc(size, flags)
- #define kcalloc(n, size, flags) snd_hidden_kcalloc(n, size, flags)
- #define kfree(obj) snd_hidden_kfree(obj)
-Index: linux-git/include/sound/driver.h
-=================================--- linux-git.orig/include/sound/driver.h	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/include/sound/driver.h	2005-07-10 22:42:57.000000000 +0000
-@@ -51,7 +51,7 @@
- #ifdef CONFIG_SND_DEBUG_MEMORY
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
--void *snd_wrapper_kmalloc(size_t, int);
-+void *snd_wrapper_kmalloc(size_t, unsigned int __nocast);
- #undef kmalloc
- void snd_wrapper_kfree(const void *);
- #undef kfree
-Index: linux-git/sound/core/memory.c
-=================================--- linux-git.orig/sound/core/memory.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/sound/core/memory.c	2005-07-10 22:42:57.000000000 +0000
-@@ -89,7 +89,7 @@
- 	}
+ 
+ 
+ static inline void
+ FlashPoint__AbortCCB(FlashPoint_CardHandle_T CardHandle, struct BusLogic_CCB *CCB)
+ {
+-  FlashPoint_AbortCCB(CardHandle, (PSCCB) CCB);
++  FlashPoint_AbortCCB(CardHandle, (struct sccb *) CCB);
  }
  
--static void *__snd_kmalloc(size_t size, int flags, void *caller)
-+static void *__snd_kmalloc(size_t size, unsigned int __nocast flags, void *caller)
- {
- 	unsigned long cpu_flags;
- 	struct snd_alloc_track *t;
-@@ -111,12 +111,12 @@
- }
  
- #define _snd_kmalloc(size, flags) __snd_kmalloc((size), (flags), __builtin_return_address(0));
--void *snd_hidden_kmalloc(size_t size, int flags)
-+void *snd_hidden_kmalloc(size_t size, unsigned int __nocast flags)
- {
- 	return _snd_kmalloc(size, flags);
- }
- 
--void *snd_hidden_kcalloc(size_t n, size_t size, int flags)
-+void *snd_hidden_kcalloc(size_t n, size_t size, unsigned int __nocast flags)
- {
- 	void *ret = NULL;
- 	if (n != 0 && size > INT_MAX / n)
-@@ -184,7 +184,7 @@
- 	snd_wrapper_vfree(obj);
- }
- 
--char *snd_hidden_kstrdup(const char *s, int flags)
-+char *snd_hidden_kstrdup(const char *s, unsigned int __nocast flags)
- {
- 	int len;
- 	char *buf;
-Index: linux-git/sound/core/seq/instr/ainstr_gf1.c
-=================================--- linux-git.orig/sound/core/seq/instr/ainstr_gf1.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/sound/core/seq/instr/ainstr_gf1.c	2005-07-10 22:42:57.000000000 +0000
-@@ -50,7 +50,8 @@
- {
- 	gf1_wave_t *wp, *prev;
- 	gf1_xwave_t xp;
--	int err, gfp_mask;
-+	int err;
-+	unsigned int gfp_mask;
- 	unsigned int real_size;
- 	
- 	gfp_mask = atomic ? GFP_ATOMIC : GFP_KERNEL;
-Index: linux-git/sound/core/seq/instr/ainstr_iw.c
-=================================--- linux-git.orig/sound/core/seq/instr/ainstr_iw.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/sound/core/seq/instr/ainstr_iw.c	2005-07-10 22:42:57.000000000 +0000
-@@ -58,7 +58,7 @@
- 					       iwffff_xenv_t *ex,
- 					       char __user **data,
- 					       long *len,
--					       int gfp_mask)
-+					       unsigned int __nocast gfp_mask)
- {
- 	__u32 stype;
- 	iwffff_env_record_t *rp, *rp_last;
-@@ -128,7 +128,8 @@
- {
- 	iwffff_wave_t *wp, *prev;
- 	iwffff_xwave_t xp;
--	int err, gfp_mask;
-+	int err;
-+	unsigned int gfp_mask;
- 	unsigned int real_size;
- 	
- 	gfp_mask = atomic ? GFP_ATOMIC : GFP_KERNEL;
-@@ -234,7 +235,8 @@
- 	iwffff_xinstrument_t ix;
- 	iwffff_layer_t *lp, *prev_lp;
- 	iwffff_xlayer_t lx;
--	int err, gfp_mask;
-+	int err;
-+	unsigned int gfp_mask;
- 
- 	if (cmd != SNDRV_SEQ_INSTR_PUT_CMD_CREATE)
- 		return -EINVAL;
 
---
+--===============26463881880439644==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============26463881880439644==--
