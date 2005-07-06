@@ -1,47 +1,38 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:46 +0000
-Subject: [KJ] [patch 2.6.13-rc1 12/23] Audit return code of create_proc_*
-Message-Id: <20050707154611.876940000@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49374077460469157=="
+From: info@de-crescendo.com
+Date: Wed, 06 Jul 2005 12:13:31 +0000
+Subject: はじめまして
+Message-Id: <20050706121331.26898.qmail@mail.de-crescendo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============49374077460469157==
-Content-Disposition: inline;
-	filename=proc_create_arch_sh_kernel_cpu_sh4_sq.c.diff
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/sh/kernel/cpu/sh4/sq.c 2.6.13-rc1/arch/sh/kernel/cpu/sh4/sq.c
---- 2.6.13-rc1.orig/arch/sh/kernel/cpu/sh4/sq.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/sh/kernel/cpu/sh4/sq.c	2005-07-05 10:23:12.092613768 +0200
-@@ -423,10 +423,14 @@ static struct miscdevice sq_dev = {
- 
- static int __init sq_api_init(void)
- {
-+	struct proc_dir_entry* ent;
- 	printk(KERN_NOTICE "sq: Registering store queue API.\n");
- 
- #ifdef CONFIG_PROC_FS
--	create_proc_read_entry("sq_mapping", 0, 0, sq_mapping_read_proc, 0);
-+	ent = create_proc_read_entry("sq_mapping", 0, 0, 
-+		sq_mapping_read_proc, 0);
-+	if (!ent)
-+		printk(KERN_WARNING "sq: Unable to create /proc entry.\n");
- #endif
- 
- 	return misc_register(&sq_dev);
+　はじめまして、新番組《エンジェル・ゾーン》です。
+　　　　　http://www.ya2dic.com?num 01
+　今日からOPEN致しますので、よろしくお願いいたします。
+　女性の募集が2墻前からすでに始まりましたので、今大量
+　な新人女性が在籍です。
+　　●女性プロフ大量流出●
+　　●写メ・アド交換OK　●
+　　●掲示板書き込み自由●
+　　●24時間利用可能　　●
+　　家にPCで,外に携帯で、いつでも可愛い女の子と連絡すること
+　　ができます。
+　　ご利用が無料ですので、とりあえずやってみましょう。
+　リンク：http://www.ya2dic.com?num 01
 
---
+　　なお、このメールは全国20名様限定に配信いたします。
+　
 
---===============49374077460469157==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+-------------------------------------------------------
+SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
+from IBM. Find simple to follow Roadmaps, straightforward articles,
+informative Webcasts and more! Get everything you need to get up to
+speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============49374077460469157==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
