@@ -1,41 +1,44 @@
 From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 18:52:14 +0000
-Subject: [KJ] [PATCH 2.6.13-c1 5/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031852.14875.victor@cetuc.puc-rio.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_ePDyC03FwlKE0cm"
+Date: Wed, 06 Jul 2005 11:52:12 +0000
+Subject: Re: [KJ] [PATCH 2.6.13-c1 5/17] fix sparse warnings [UPDATE]
+Message-Id: <200507061152.12661.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200507031852.14875.victor@cetuc.puc-rio.br>
+In-Reply-To: <200507031852.14875.victor@cetuc.puc-rio.br>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_ePDyC03FwlKE0cm
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Em Sunday 03 July 2005 18:52, Victor Fusco escreveu:
+> Description:
+>	Fix the sparse warning "implicit cast to nocast type"
+> 
+> File/Subsystem: drivers/block/elevator
+> 
+> Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+>  
+> 
 
 Description:
 	Fix the sparse warning "implicit cast to nocast type"
- 
+
 File/Subsystem: drivers/block/elevator
 
+
 Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
 
---Boundary-00=_ePDyC03FwlKE0cm
-Content-Type: text/x-diff; charset="iso-8859-1"; name="block_elevator.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="block_elevator.patch"
 
- drivers/block/ll_rw_blk.c |   17 ++++++++++-------
- include/linux/blkdev.h    |   10 +++++-----
- include/linux/elevator.h  |    6 ++++--
- 3 files changed, 19 insertions(+), 14 deletions(-)
+
+ linux-2.6-git/drivers/block/ll_rw_blk.c |   17 ++++++++++-------
+ linux-2.6-git/include/linux/blkdev.h    |   10 +++++-----
+ linux-2.6-git/include/linux/elevator.h  |    6 ++++--
+ linux-git/drivers/block/elevator.c      |    2 +-
+ 4 files changed, 20 insertions(+), 15 deletions(-)
 
 Index: linux-2.6-git/drivers/block/ll_rw_blk.c
-===================================================================
---- linux-2.6-git.orig/drivers/block/ll_rw_blk.c	2005-07-03 15:40:59.000000000 +0000
-+++ linux-2.6-git/drivers/block/ll_rw_blk.c	2005-07-03 16:48:53.000000000 +0000
+=================================--- linux-2.6-git.orig/drivers/block/ll_rw_blk.c	2005-07-05 13:18:04.000000000 +0000
++++ linux-2.6-git/drivers/block/ll_rw_blk.c	2005-07-05 13:22:33.000000000 +0000
 @@ -1639,13 +1639,14 @@
  
  static int __make_request(request_queue_t *, struct bio *);
@@ -101,9 +104,8 @@ Index: linux-2.6-git/drivers/block/ll_rw_blk.c
  	struct io_context *ret;
  	ret = current_io_context(gfp_flags);
 Index: linux-2.6-git/include/linux/blkdev.h
-===================================================================
---- linux-2.6-git.orig/include/linux/blkdev.h	2005-07-03 15:40:59.000000000 +0000
-+++ linux-2.6-git/include/linux/blkdev.h	2005-07-03 16:50:15.000000000 +0000
+=================================--- linux-2.6-git.orig/include/linux/blkdev.h	2005-07-05 13:18:04.000000000 +0000
++++ linux-2.6-git/include/linux/blkdev.h	2005-07-05 13:22:33.000000000 +0000
 @@ -96,8 +96,8 @@
  
  void put_io_context(struct io_context *ioc);
@@ -136,9 +138,8 @@ Index: linux-2.6-git/include/linux/blkdev.h
  
  /*
 Index: linux-2.6-git/include/linux/elevator.h
-===================================================================
---- linux-2.6-git.orig/include/linux/elevator.h	2005-07-01 17:48:50.000000000 +0000
-+++ linux-2.6-git/include/linux/elevator.h	2005-07-03 15:52:33.000000000 +0000
+=================================--- linux-2.6-git.orig/include/linux/elevator.h	2005-07-05 13:18:04.000000000 +0000
++++ linux-2.6-git/include/linux/elevator.h	2005-07-05 13:22:33.000000000 +0000
 @@ -18,7 +18,8 @@
  typedef void (elevator_completed_req_fn) (request_queue_t *, struct request *);
  typedef int (elevator_may_queue_fn) (request_queue_t *, int, struct bio *);
@@ -159,16 +160,23 @@ Index: linux-2.6-git/include/linux/elevator.h
  extern void elv_put_request(request_queue_t *, struct request *);
  
  /*
+Index: linux-git/drivers/block/elevator.c
+=================================--- linux-git.orig/drivers/block/elevator.c	2005-07-06 00:36:18.000000000 +0000
++++ linux-git/drivers/block/elevator.c	2005-07-06 02:14:22.000000000 +0000
+@@ -487,7 +487,7 @@
+ }
+ 
+ int elv_set_request(request_queue_t *q, struct request *rq, struct bio *bio,
+-		    int gfp_mask)
++		    unsigned int __nocast gfp_mask)
+ {
+ 	elevator_t *e = q->elevator;
 
---Boundary-00=_ePDyC03FwlKE0cm
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+--
+
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---Boundary-00=_ePDyC03FwlKE0cm--
