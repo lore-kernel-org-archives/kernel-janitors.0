@@ -1,71 +1,43 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:19:15 +0000
-Subject: [KJ] [PATCH] drivers/net/tokenring/olympic.c : Use of the
-Message-Id: <42D8B4F3.7060405@feitoza.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060300060903090800010402"
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Wed, 06 Jul 2005 17:48:46 +0000
+Subject: [KJ] stumped... implicitly truncated warning mystery
+Message-Id: <42CC197E.2030207@cs.pdx.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42D2CA91.4010307@feitoza.com.br>
-In-Reply-To: <42D2CA91.4010307@feitoza.com.br>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------060300060903090800010402
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 
+Hey all,
 
---------------060300060903090800010402
-Content-Type: text/x-patch;
- name="olympic.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="olympic.patch"
+GCC4.0.0 is giving me a warning that I cant seem to get rid of. In the
+file drivers/net/wireless/wavelan_cs.c on lines 3607 and 3608 is the
+following assignment:
 
-Use of the time_after() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
+cfblk.ifrm_spc = 0x20;
+cfblk.slottim_low = 0x20;
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+where ifrm_spc and slottim_low are both of type unsigned char.
 
---- linux/drivers/net/tokenring/olympic.c	2005-07-13 17:53:30.000000000 -0300
-+++ linux-kj/drivers/net/tokenring/olympic.c	2005-07-16 01:02:47.940921408 -0300
-@@ -365,7 +365,7 @@
- 		t=jiffies;
- 		while (!readl(olympic_mmio+CLKCTL) & CLKCTL_PAUSE) { 
- 			schedule() ; 
--			if(jiffies-t > 2*HZ) { 
-+			if(time_after(jiffies, t + 2*HZ)) { 
- 				printk(KERN_ERR "IBM Cardbus tokenring adapter not responsing.\n") ; 
- 				return -ENODEV;
- 			}
-@@ -379,7 +379,7 @@
- 	t=jiffies;
- 	while(!((readl(olympic_mmio+SISR_RR)) & SISR_SRB_REPLY)) {
- 		schedule();		
--		if(jiffies-t > 15*HZ) {
-+		if(time_after(jiffies, t + 15*HZ)) {
- 			printk(KERN_ERR "IBM PCI tokenring card not responding.\n");
- 			return -ENODEV;
- 		}
-@@ -525,7 +525,7 @@
-             			olympic_priv->srb_queued=0;
-             			break;
-         		}
--			if ((jiffies-t) > 10*HZ) { 
-+			if (time_after(jiffies, t + 10*HZ)) { 
- 				printk(KERN_WARNING "%s: SRB timed out. \n",dev->name) ; 
- 				olympic_priv->srb_queued=0;
- 				break ; 
+Compiling on a X86_64 emits the warning: large integer implicitly
+truncated to unsigned type.
 
---------------060300060903090800010402
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Explicitly casting 0x20 to unsigned char or u_char does not get rid of
+the warning. Also, the warning starts at values 0x10 and above.
 
+Any ideas/leads would be greatly appreciated.
+
+-- 
+Jesse Millan
+CNS Unix Team
+Portland State University
+Phone: (503) 725-9151
+Mobile: (503) 453-0748
+GPG key: www.system-calls.com/gpg.php
+
+grep --recursive --ignore-case 'SHOULD WORK' /usr/src/linux/* | wc
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---------------060300060903090800010402--
