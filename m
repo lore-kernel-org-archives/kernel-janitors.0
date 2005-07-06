@@ -1,50 +1,56 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 19:00:02 +0000
-Subject: [KJ] [PATCH 2.6.13-rc1 11/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031900.02246.victor@cetuc.puc-rio.br>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 06 Jul 2005 23:05:39 +0000
+Subject: [KJ] [PATCH 7/15] FlashPoint: remove ushort_ptr
+Message-Id: <200507070305.39975.adobriyan@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_yWDyCUMjhrGRfkO"
+Content-Type: multipart/mixed; boundary="===============023890497472938144=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_yWDyCUMjhrGRfkO
+--===============023890497472938144==
 Content-Type: text/plain;
-  charset="iso-8859-1"
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
- 
-File/Subsystem: drivers/bluetooth/hci_usb.c
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
+ drivers/scsi/FlashPoint.c |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
---Boundary-00=_yWDyCUMjhrGRfkO
-Content-Type: text/x-diff; charset="iso-8859-1"; name="bluetooth_hci_usb.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="bluetooth_hci_usb.patch"
-
- drivers/bluetooth/hci_usb.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-2.6-git/drivers/bluetooth/hci_usb.c
+Index: linux-flashpoint/drivers/scsi/FlashPoint.c
 ===================================================================
---- linux-2.6-git.orig/drivers/bluetooth/hci_usb.c	2005-07-01 17:48:30.000000000 +0000
-+++ linux-2.6-git/drivers/bluetooth/hci_usb.c	2005-07-03 14:15:48.000000000 +0000
-@@ -126,7 +126,7 @@
- 	{ }	/* Terminating entry */
- };
+--- linux-flashpoint.orig/drivers/scsi/FlashPoint.c	2005-07-06 23:46:25.000000000 +0400
++++ linux-flashpoint/drivers/scsi/FlashPoint.c	2005-07-06 23:47:18.000000000 +0400
+@@ -42,7 +42,6 @@
  
--static struct _urb *_urb_alloc(int isoc, int gfp)
-+static struct _urb *_urb_alloc(int isoc, unsigned int __nocast gfp)
- {
- 	struct _urb *_urb = kmalloc(sizeof(struct _urb) +
- 				sizeof(struct usb_iso_packet_descriptor) * isoc, gfp);
+ 
+ 
+-typedef unsigned short          * ushort_ptr;
+ 
+ 
+ #define s08bits	char
+@@ -6003,7 +6002,7 @@ static void FPT_scasid(unsigned char p_c
+    unsigned char i,k,scam_id;
+ 	unsigned char crcBytes[3];
+ 	PNVRamInfo pCurrNvRam;
+-	ushort_ptr pCrcBytes;
++	unsigned short * pCrcBytes;
+ 
+ 	pCurrNvRam = FPT_BL_Card[p_card].pNvRamInfo;
+ 
+@@ -6023,7 +6022,7 @@ static void FPT_scasid(unsigned char p_c
+       if (!(FPT_sciso(p_port,&temp_id_string[0])))
+          {
+ 			if(pCurrNvRam){
+-				pCrcBytes = (ushort_ptr)&crcBytes[0];
++				pCrcBytes = (unsigned short *)&crcBytes[0];
+ 				*pCrcBytes = FPT_CalcCrc16(&temp_id_string[0]);
+ 				crcBytes[2] = FPT_CalcLrc(&temp_id_string[0]);
+ 				temp_id_string[1] = crcBytes[2];
 
---Boundary-00=_yWDyCUMjhrGRfkO
+--===============023890497472938144==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_yWDyCUMjhrGRfkO--
+--===============023890497472938144==--
