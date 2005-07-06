@@ -1,61 +1,64 @@
-From: Jesse Millan <jessem@cs.pdx.edu>
-Date: Wed, 06 Jul 2005 23:46:57 +0000
-Subject: [KJ] GCC4 wavelan_cs.c warning: large integer implicitly truncated
-Message-Id: <42CC6D71.7090605@cs.pdx.edu>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 06 Jul 2005 23:07:05 +0000
+Subject: [KJ] [PATCH 8/15] FlashPoint: use standard fixed size types.
+Message-Id: <200507070307.05993.adobriyan@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080100070706040107000704"
+Content-Type: multipart/mixed; boundary="===============077925694538350854=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------080100070706040107000704
-Content-Type: text/plain; charset=ISO-8859-1
+--===============077925694538350854==
+Content-Type: text/plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-
-
-
---------------080100070706040107000704
-Content-Type: text/x-diff; x-mac-type="0"; x-mac-creator="0";
-	name="wavelan_cs.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="wavelan_cs.patch"
-
-
-
-ifrm_spc is a 4 bit wide bitfield. Trying to assign the 6 bit value 0x20
-to it results in the compiler chopping off the first 2 bits and assigning
-the remaining 4 bits (all zeros) to it. Similar story for slottim_low.
-
-I don't think that was the intended purpose. I am not a driver writer,
-but by comparing the comments by the assignment along with the code in a
-similar driver (znet.c), it looks as if the assignment should be 0x2 not
-0x20 i.e. 2*16 is "32 bit times the interframe spacing" not 32*16. 0x20
-is 32*16, which seems to be 512 bit times the interframe spacing.
-
-Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
+ drivers/scsi/FlashPoint.c |   20 +++++++-------------
+ 1 files changed, 7 insertions(+), 13 deletions(-)
 
-diff -puN drivers/net/wireless/wavelan_cs.c~wavelan_cs drivers/net/wireless/wavelan_cs.c
---- linux-2.6.13-rc2.kj.jm.gcc4/drivers/net/wireless/wavelan_cs.c~wavelan_cs	2005-07-06 15:54:23.107182264 -0700
-+++ linux-2.6.13-rc2.kj.jm.gcc4-jessem/drivers/net/wireless/wavelan_cs.c	2005-07-06 16:45:04.972748408 -0700
-@@ -3604,8 +3604,8 @@ wv_82593_config(struct net_device *	dev)
-   cfblk.lin_prio = 0;   	/* conform to 802.3 backoff algoritm */
-   cfblk.exp_prio = 5;	        /* conform to 802.3 backoff algoritm */
-   cfblk.bof_met = 1;	        /* conform to 802.3 backoff algoritm */
--  cfblk.ifrm_spc = 0x20;	/* 32 bit times interframe spacing */
--  cfblk.slottim_low = 0x20;	/* 32 bit times slot time */
-+  cfblk.ifrm_spc = 0x2;	/* 32 bit times interframe spacing */
-+  cfblk.slottim_low = 0x2;	/* 32 bit times slot time */
-   cfblk.slottim_hi = 0x0;
-   cfblk.max_retr = 15;
-   cfblk.prmisc = ((lp->promiscuous) ? TRUE: FALSE);	/* Promiscuous mode */
-_
+Index: linux-flashpoint/drivers/scsi/FlashPoint.c
+===================================================================
+--- linux-flashpoint.orig/drivers/scsi/FlashPoint.c	2005-07-06 23:47:18.000000000 +0400
++++ linux-flashpoint/drivers/scsi/FlashPoint.c	2005-07-06 23:50:22.000000000 +0400
+@@ -44,13 +44,7 @@
+ 
+ 
+ 
+-#define s08bits	char
+-#define s16bits 	short
+-#define s32bits	long
+-
+-#define u08bits	unsigned s08bits
+-#define u16bits	unsigned s16bits
+-#define u32bits	unsigned s32bits
++
+ 
+ 
+ 
+@@ -245,12 +239,12 @@ typedef struct _SCCB {
+ #define SG_ELEMENT_SIZE 8              /*Eight byte per element. */
+ 
+ 
+-#define RD_HARPOON(ioport)          inb((u32bits)ioport)
+-#define RDW_HARPOON(ioport)         inw((u32bits)ioport)
+-#define RD_HARP32(ioport,offset,data) (data = inl((u32bits)(ioport + offset)))
+-#define WR_HARPOON(ioport,val)      outb((u08bits) val, (u32bits)ioport)
+-#define WRW_HARPOON(ioport,val)       outw((u16bits)val, (u32bits)ioport)
+-#define WR_HARP32(ioport,offset,data)  outl(data, (u32bits)(ioport + offset))
++#define RD_HARPOON(ioport)          inb((u32)ioport)
++#define RDW_HARPOON(ioport)         inw((u32)ioport)
++#define RD_HARP32(ioport,offset,data) (data = inl((u32)(ioport + offset)))
++#define WR_HARPOON(ioport,val)      outb((u8) val, (u32)ioport)
++#define WRW_HARPOON(ioport,val)       outw((u16)val, (u32)ioport)
++#define WR_HARP32(ioport,offset,data)  outl(data, (u32)(ioport + offset))
+ 
+ 
+ #define  TAR_SYNC_MASK     (BIT(7)+BIT(6))
 
-
---------------080100070706040107000704
+--===============077925694538350854==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------080100070706040107000704--
+--===============077925694538350854==--
