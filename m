@@ -1,587 +1,535 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 13 Jul 2005 19:48:51 +0000
-Subject: [KJ] 2.6.13-rc3-kj
-Message-Id: <20050713194851.GH21831@homer.coderock.org>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 06 Jul 2005 23:14:29 +0000
+Subject: [KJ] [PATCH 15/15] FlashPoint: don't use parenthesis with "return"
+Message-Id: <200507070314.29911.adobriyan@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85605674435925871=="
+Content-Type: multipart/mixed; boundary="===============12147533526337639=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kj <kernel-janitors@lists.osdl.org>
-Cc: lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============85605674435925871==
-Content-Type: text/plain; charset=us-ascii
+--===============12147533526337639==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-A new release from kernel janitors (http://janitor.kernelnewbies.org/).
-
-Lots of new patches this time!
-
-Patchset is at http://coderock.org/kj/2.6.13-rc3-kj/
-
-
-new in this release:
---------------------
-flashpoint_01-remove_unused_things
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 1/15] FlashPoint: remove unused things
-
-flashpoint_02-remove_trivial_wrappers
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 2/15] FlashPoint: remove trivial wrappers
-
-flashpoint_03-remove_UCHAR
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH3 3/15] FlashPoint: remove UCHAR
-
-flashpoint_04-remove_USHORT
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 4/15] FlashPoint: remove USHORT
-
-flashpoint_05-remove_UINT
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 5/15] FlashPoint: remove UINT
-
-flashpoint_06-remove_ULONG
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 6/15] FlashPoint: remove ULONG
-
-flashpoint_07-remove_ushort_ptr
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 7/15] FlashPoint: remove ushort_ptr
-
-flashpoint_08-use_standart_types
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 8/15] FlashPoint: use standard fixed size types.
-
-flashpoint_09-untypedef_SCCB
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 9/15] FlashPoint: untypedef struct _SCCB
-
-flashpoint_10-untypedef_SCCBMgr_info
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 10/15] FlashPoint: untypedef struct SCCBMgr_info
-
-flashpoint_11-untypedef_SCCBMgr_tar_info
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 11/15] FlashPoint: untypedef struct SCCBMgr_tar_info
-
-flashpoint_12-untypedef_NVRAMInfo
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 12/15] FlashPoint: untypedef struct NVRAMInfo
-
-flashpoint_13-untypedef_SCCBcard
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 13/15] FlashPoint: untypedef struct SCCBcard
-
-flashpoint_14-lindent
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 14/15] ./scripts/Lindent drivers/scsi/FlashPoint.c
-
-flashpoint_15-return_parenthesis
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [KJ] [PATCH 15/15] FlashPoint: don't use parenthesis with "return"
-
-wait_event-drivers_char_drm_i830_irq
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [UPDATE PATCH 10/14] drm/i830_irq: use wait_event_interruptible_timeout()
-
-time_after-drivers_usb_input_ati_remote
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/usb/input/ati_remote.c : Use of time_after and time_before macros
-
-time_after-drivers_scsi_
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/scsi/: Use of time_after macro
-
-time_after-drivers_net_wan_
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/wan/: use of time_after macro
-
-time_after-drivers_net_tulip_pnic
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/tulip/pnic.c : Use of time_after macro
-
-time_after-drivers_net_tokenring_olympic
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/tokenring/olympic.c : Use of time_after macro
-
-time_after-drivers_net_tokenring_lanstreamer
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/tokenring/lanstreamer.c : Use of time_after macro
-
-time_after-drivers_net_pcmcia_smc91c92_cs
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/pcmcia/smc91c92_cs.c : Use of time_after macro
-
-time_after-drivers_net_pcmcia_3c589_cs
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/pcmcia/3c589_cs.c : Use of time_befor macro
-
-time_after-drivers_net_ns83820
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/ns83820.c : Use of time_after_eq macro
-
-time_after-drivers_net_hp100
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/hp100.c : Use of time_before macro
-
-time_after-drivers_net_hamradio_mkiss
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/hamradio/mkiss.c : Use of time_before macro
-
-time_after-drivers_net_hamradio_baycom_epp
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/net/hamradio/ : Use of time_after_eq macro
-
-time_after-drivers_net_3c523
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: Re: [KJ] [PATCH] drivers/net/3c523.c : Use of time_after macro
-
-time_after-drivers_ieee1394_hosts
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/ieee1394/hosts.c : Use of time_before macro
-
-time_after-drivers_ide_ide-tape
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Subject: [KJ] [PATCH] drivers/ide/ide-tape.c : Use of time_after macro
-
-spelling-Documentation_
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Subject: [KJ] [PATCH] Spelling fixes for Documentation/
-
-sparse-sound_core_memalloc
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 20/20] alsa: Fix "nocast type" warnings
-
-sparse-net_netlink_af_netlink
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 11/20] netlink: Fix "nocast type" warnings
-
-sparse-mm_swap_state
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 14/20] mm/swap_state: Fix "nocast type" warnings
-
-sparse-include_linux_skbuff.h
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 03/20] skbuff.h: Fix "nocast type" warnings
-
-sparse-include_linux_radix-tree.h
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 13/20] lib/radix-tree: Fix "nocast type" warnings
-
-sparse-fs_xfs_linux-2.6_kmem
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 01/20] xfs: Fix "nocast type" warnings
-
-sparse-drivers_net_sungem.h
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 17/20] net/sungem: Fix "nocast type" warnings
-
-sparse-drivers_net_ns83820
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 19/20] net/ns83820: Fix "nocast type" warnings
-
-sparse-drivers_net_bonding_bond_main
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 18/20] bonding/bond_main: Fix "nocast type" warnings
-
-sparse-drivers_md_dm-crypt
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 04/20] dm-crypt: Fix "nocast type" warnings
-
-sparse-drivers_base_dmapool
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 16/20] dmapool: Fix "nocast type" warnings
-
-sparse-drivers_atm_firestream
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 07/20] atm/firestream: Fix "nocast type" warnings
-
-sparse-drivers_atm_ambassador
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Subject: [KJ] [PATCH 05/20] atm/ambassador: Fix "nocast type" warnings
-
-return_code-net_sctp_objcnt
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 01/23][RESEND] net/sctp/objcnt: Audit return code of create_proc_*
-
-return_code-drivers_net_wireless_atmel
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 02/23][RESEND] wireless/atmel: Audit return code of create_proc_*
-
-return_code-drivers_mca_mca-proc
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 04/23] mca/mca-proc: Audit return code of create_proc_*
-
-return_code-drivers_block_cpqarray
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 05/23][RESEND] block/cpqarray: Audit return code of create_proc_*
-
-return_code-drivers_block_cciss
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 06/23] block/cciss: Audit return code of create_proc_*
-
-return_code-arch_sparc_kernel_ioport
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 11/23][RESEND] sparc/kernel/ioport: Audit return code of create_proc_*
-
-return_code-arch_sh_
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 13/23][RESEND] arch/sh: Audit return code of create_proc_*
-
-return_code-arch_sh64_
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 16/23][RESEND] sh64: Audit return code of create_proc_*
-
-return_code-arch_parisc_kernel_pci-dma
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 18/23] parisc/kernel/pci-dma: Audit return code of create_proc_*
-
-return_code-arch_arm_
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 22/23] arm/kernel: Audit return code of create_proc_*
-
-return_code-arch_arm26_kernel_ecard
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 23/23][RESEND] Audit return code of create_proc_*
-
-remove_brackets-drivers_acpi_system
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 07/23][RESEND] drivers/acpi/system.c : remove unused brackets
-
-printk-arch_um_
-From: Christophe Lucas <clucas@rotomalug.org>
-Subject: [KJ] [patch 2.6.13-rc1 10/23][RESEND] printk : arch/um/
-
-pci_dma_supported-drivers_media_video_bttv-driver
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Subject: [KJ] [PATCH] drivers/media/video/bttv-driver: Remove unneeded call to pci_dma_supported()
-
-msleep-drivers_telephony_ixj
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [UPDATE PATCH 14/14] telephony/ixj: use msleep() instead of schedule_timeout()
-
-msleep-drivers_scsi_qla2xxx_qla_os
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [PATCH 13/14] scsi/qla2xxx: use msleep{, interruptible}() instead of schedule_timeout()
-
-msleep-drivers_scsi_osst
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [PATCH 12/14] scsi/osst: use msleep() instead of schedule_timeout()
-
-msleep-drivers_scsi_lpfc_lpfc_scsi
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: Re: [KJ] [PATCH 11/14] scsi/lpfc_scsi: use msleep() instead of schedule_timeout()
-
-msleep-drivers_block_cciss
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [PATCH 9/14] block/cciss: use msleep() instead of schedule_timeout()
-
-msleep-arch_x86_64_kernel_smpboot
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [PATCH 5/14] x86_64/smpboot: use msleep() instead of schedule_timeout()
-
-msleep-arch_i386_kernel_smpboot
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Subject: [KJ] [PATCH 4/14] i386/smpboot: use msleep() instead of schedule_timeout()
-
-gcc4-include_asm-x86_64_bitops.h
-From: Jesse Millan <jessem@cs.pdx.edu>
-Subject: [KJ] [PATCH] GCC4 sched.c (x86_64) warning: control may reach end of non-void function 'sched_find_first_bit' being inlined
-
-gcc4-drivers_net_wireless_wavelan_cs.c
-From: Jesse Millan <jessem@cs.pdx.edu>
-Subject: [KJ] [PATCH] [RESEND] GCC4 wavelan_cs.c warning: large integer implicitly truncated to unsigned type
-
-dma_mask-drivers_block_umem
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Subject: [KJ] [PATCH] drivers/block/umem.c: Use DMA_{32,64}BIT_MASK and correct call to pci_set_dma_mask()
-
-cli-drivers_net_fec
-Subject: Re: [KJ] [PATCH] cli() cleanup in and fec.c
-From: Brandon Niemczyk <brandon@snprogramming.com>
-
-kj_tag
-
-
-
-merged:
--------
-pci_register_driver-drivers_media_common_saa7146_core.patch
-pci_register_driver-drivers_mtd_maps.patch
-dma_mask-drivers_media_video_bttv-driver.patch
-printk-drivers_media_dvb_ttpci_av7110_ipack.patch
-gcc4-ipc_compat
-bss-drivers_ieee1394_sbp2
-bss-drivers_ieee1394_pcilynx
-bss-drivers_ieee1394_nodemgr
-bss-drivers_ieee1394_ieee1394_core
-sparse-net
-sparse-drivers_ieee1394_raw1394
-
-
-dropped:
---------
-sparse-fs_ext3_super.patch
-  non-trivial changes in file
-sparse-mm_slab
-  some __nocasts were merged, if patch is still needed, please redo
-sparse-drivers_usb_core_ur
-  rejects all but 1 hunk, still needed?
-kmalloc-drivers_acpi_toshiba_acpi.c
-  similar (previous version?) patch merged
-return_code-arch_m68k_mac_iop
-  adds warning
-sparse-include_linux_textsearch.h
-  new warnings
-sparse-security_selinux_hooks
-  new warnings
-
-
-all patches:
-------------
-min-max-ide_ide-timing.h.patch
-list-for-each-entry-drivers_net_ppp_generic.patch
-list-for-each-entry-fs_jffs_intrep.patch
-list-for-each-entry-fs_namespace.patch
-list-for-each-fs_dcache.patch
-msleep-drivers_ide_ide-tape.patch
-pr_debug-drivers_block_umem.patch
-list-for-each-drivers_net_tulip_de4x5.patch
-min-max-arch_sh_boards_bigsur_io.patch
-min-max-arch_sh_cchips_hd6446x_hd64465_io.patch
-msleep-drivers_block_xd.patch
-msleep-drivers_ide_ide-cs.patch
-for-each-pci-dev-arch_i386_pci_acpi.patch
-function-string-arch-mips.patch
-msleep-drivers_net_wireless_prism54_islpci_dev.patch
-msleep_interruptible-drivers_parport_ieee1284_ops.patch
-msleep_interruptible-drivers_parport_parport_pc.patch
-msleep_interruptible-drivers_sbus_char_aurora.patch
-msleep+msleep_interruptible-drivers_net_tokenring_ibmtr.patch
-pci_dev_present-drivers_ide_pci_alim15x3.patch
-remove-pci-find-device-drivers_net_e1000_e1000_main.patch
-remove-pci-find-device-drivers_net_gt96100eth.patch
-set_current_state-drivers_net_irda_stir4200.patch
-set_current_state-drivers_net_tokenring_tms380tr.patch
-lib-parser-fs_devpts_inode.patch
-comment-drivers_block_floppy.c.patch
-remove_file-arch_arm26_boot_compressed_hw_bse.c.patch
-remove_file-arch_mips_arc_salone.c.patch
-remove_file-arch_mips_pmc_sierra_yosemite_ht_irq.c.patch
-remove_file-arch_ppc_syslib_ppc4xx_pm.c.patch
-remove_file-drivers_parport_parport_arc.c.patch
-remove_file-fs_jffs2_histo.h.patch
-remove_file-include_asm_arm_hardware_linkup_l1110.h.patch
-remove_file-include_asm_mips_gfx.h.patch
-remove_file-include_asm_mips_mach_au1x00_au1100_mmc.h.patch
-remove_file-include_asm_mips_mipsprom.h.patch
-remove_file-include_asm_mips_riscos_syscall.h.patch
-remove_file-include_linux_netfilter_ipv4_ip_logging.h.patch
-remove_file-include_linux_netfilter_ipv6_ip6_logging.h.patch
-vfree-drivers_char_agp_backend.patch
-vfree-drivers_scsi_qla2xxx_qla_os.patch
-vfree-fs_reiserfs_super.patch
-msleep-drivers_block_cciss.patch
-msleep-drivers_block_paride_pf.patch
-msleep-drivers_cdrom_sonycd535.patch
-msleep-fs_smbfs_proc.patch
-msleep-net_sunrpc_svcsock.patch
-msleep_interruptible-drivers_block_swim3.patch
-msleep_interruptible-drivers_sbus_char_envctrl.patch
-msleep_interruptible-fs_lockd_clntproc.patch
-msleep_ssleep-drivers_block_paride_pcd.patch
-msleep_ssleep-drivers_block_paride_pt.patch
-return_code-drivers_ide_pci_cs5520.patch
-ssleep-drivers_scsi_qla1280.patch
-wait_event-drivers_block_ps2esdi.patch
-int_sleep_on-arch_cris_arch-v10_drivers_eeprom.patch
-int_sleep_on-drivers_isdn_capi_capi.patch
-int_sleep_on-drivers_isdn_i4l_isdn_common.patch
-int_sleep_on-drivers_net_tokenring_lanstreamer.patch
-lindent-arch_ppc_4xx_io_serial_sicc.patch
-printk-drivers_acorn_block_fd1772.patch
-printk-drivers_acorn_block_mfmhd.patch
-sleep_on-drivers_block_xd.patch
-sleep_on-drivers_cdrom_sjcd.patch
-sleep_on-drivers_sbus_char_vfc_i2c.patch
-wait_event_int-drivers_block_acsi_slm.patch
-wait_event_int_timeout-drivers_block_DAC960.patch
-int_sleep_on-arch_mips_sibyte_sb1250_bcm1250_tbprof.patch
-int_sleep_on-drivers_net_8139too.patch
-int_sleep_on-drivers_net_tokenring_ibmtr.patch
-int_sleep_on-fs_lockd_svc.patch
-pci_register_driver-drivers_ide.patch
-pci_register_driver-drivers_net.patch
-pci_register_driver-drivers_net_arcnet.patch
-pci_register_driver-drivers_net_irda.patch
-pci_register_driver-drivers_net_skfp.patch
-pci_register_driver-drivers_net_tokenring.patch
-pci_register_driver-drivers_net_tulip.patch
-pci_register_driver-drivers_net_wan.patch
-pci_register_driver-drivers_net_wan_lmc.patch
-pci_register_driver-drivers_net_wireless.patch
-pci_register_driver-drivers_parport.patch
-return_code-drivers_ide.patch
-return_code-drivers_isdn_hisax.patch
-return_code-drivers_isdn_i4l.patch
-return_code-drivers_isdn_pcbit.patch
-sleep_on-net_sunrpc_clnt.patch
-int_sleep_on-drivers_cdrom_mcdx.patch
-unused_define-drivers_block_floppy.patch
-printk-drivers_video.patch
-msleep-arch_m68k_atari_time.patch
-msleep-drivers_acpi_osl.patch
-msleep-drivers_block_paride_pg.patch
-msleep-drivers_block_swim_iop.patch
-sparse-fs_cifs_cifssmb.patch
-sparse-fs_affs_super.patch
-sparse-fs_befs_endian.h.patch
-sparse-fs_cifs_cifssmb-2.patch
-sparse-fs_cifs_netmisc.patch
-sparse-fs_ext3_resize.patch
-sparse-fs_hpfs_inode.patch
-sparse-include_linux_smb_fs.h.patch
-printk-drivers_char_watchdog_wdt285.patch
-dma_mask-drivers_media_video_meye.patch
-list_for_each-drivers_macintosh_via-pmu.patch
-dma_mask-drivers_block_cpqarray.patch
-dma_mask-drivers_net.patch
-dma_mask-drivers_scsi.patch
-jiffies_to_msecs-drivers_input_joydev.patch
-printk-drivers_acpi_container.patch
-printk-drivers_acpi_pci_link.patch
-printk-drivers_block_DAC960.patch
-printk-drivers_block_cciss.patch
-printk-drivers_block_paride.patch
-time_after-drivers_net_ne2
-time_after-drivers_net_wireless_strip
-time_after-drivers_atm_idt77252
-time_after-drivers_net_ne-h8300
-dma_mask-drivers_net_ioc3-eth
-time_after-drivers_net_arm_etherh
-time_after-drivers_net_apne
-time_after-drivers_net_ne
-time_after-drivers_net_zorro8390
-sti_cli-drivers_net_irda_ep7211_ir
-ssleep-arch_ppc_8260_io_fcc_enet
-set_current_state-drivers_char_ip2_i2lib
-set_current_state-drivers_cdrom_sbpcd
-set_current_state-drivers_acpi_osl
-msleep_interruptible-drivers_parport_ieee1284
-warning-fs_eventpoll.c
-warning-fs_devfs_base.c
-warning-fs_cifs_asn1.c
-warning-drivers_isdn_hisax_hisax_fcpcipnp
-warning-drivers_isdn_hisax_diva.c
-return_code-drivers_net_tokenring_olympic
-printk-drivers_net_hp100
-string-arch_cris_arch-v10_drivers_axisflashmap
-size-drivers_isdn_sc_ioctl
-gcc4-fs_ext3_acl.c
-gcc4-fs_ext2_acl.c
-typo-Documentation_early-userspace_README
-typedef-sound_isa_sb_sb16_csp
-sizeof-arch_arm_common_sa1111
-set_current_state-fs_reiserfs_journal
-return_code-drivers_char_applicom
-return-drivers_misc_hdpuftrs_hdpu_cpustate
-return-drivers_input_misc_hp_sdc_rtc
-return-drivers_char_lcd
-remove_macros-sound_isa_sb_sb16_csp
-printk-drivers_block_pktcdvd
-msleep_interruptible-drivers_net_wan_cycx_drv
-msleep_interruptible-drivers_net_ixgb_ixgb_ethtool
-module_param-drivers_net_pci-skeleton
-cleanup-drivers_usb_serial_cypress_m8
-cleanup-drivers_net_wireless_atmel
-bss-drivers_net_bonding_bond_main
-sparse-kernel_audit
-sparse-include_net_bluetooth_bluetooth.h
-sparse-fs_reiserfs_fix_node
-sparse-drivers_char_n_tty
-sparse-drivers_bluetooth_hci_usb
-sparse-drivers_bluetooth_bpa10x
-sparse-drivers_block_ll_rw_blk
-sparse-drivers_block_deadline-iosched
-sparse-drivers_block_cfq-iosched
-sparse-drivers_block_as-iosched
-set_current_state-kernel_module.c
-indent-drivers_char_Makefile
-casts-drivers_usb_serial_usb-serial
-flashpoint_01-remove_unused_things
-flashpoint_02-remove_trivial_wrappers
-flashpoint_03-remove_UCHAR
-flashpoint_04-remove_USHORT
-flashpoint_05-remove_UINT
-flashpoint_06-remove_ULONG
-flashpoint_07-remove_ushort_ptr
-flashpoint_08-use_standart_types
-flashpoint_09-untypedef_SCCB
-flashpoint_10-untypedef_SCCBMgr_info
-flashpoint_11-untypedef_SCCBMgr_tar_info
-flashpoint_12-untypedef_NVRAMInfo
-flashpoint_13-untypedef_SCCBcard
-flashpoint_14-lindent
-flashpoint_15-return_parenthesis
-wait_event-drivers_char_drm_i830_irq
-time_after-drivers_usb_input_ati_remote
-time_after-drivers_scsi_
-time_after-drivers_net_wan_
-time_after-drivers_net_tulip_pnic
-time_after-drivers_net_tokenring_olympic
-time_after-drivers_net_tokenring_lanstreamer
-time_after-drivers_net_pcmcia_smc91c92_cs
-time_after-drivers_net_pcmcia_3c589_cs
-time_after-drivers_net_ns83820
-time_after-drivers_net_hp100
-time_after-drivers_net_hamradio_mkiss
-time_after-drivers_net_hamradio_baycom_epp
-time_after-drivers_net_3c523
-time_after-drivers_ieee1394_hosts
-time_after-drivers_ide_ide-tape
-spelling-Documentation_
-sparse-sound_core_memalloc
-sparse-net_netlink_af_netlink
-sparse-mm_swap_state
-sparse-include_linux_skbuff.h
-sparse-include_linux_radix-tree.h
-sparse-fs_xfs_linux-2.6_kmem
-sparse-drivers_net_sungem.h
-sparse-drivers_net_ns83820
-sparse-drivers_net_bonding_bond_main
-sparse-drivers_md_dm-crypt
-sparse-drivers_base_dmapool
-sparse-drivers_atm_firestream
-sparse-drivers_atm_ambassador
-return_code-net_sctp_objcnt
-return_code-drivers_net_wireless_atmel
-return_code-drivers_mca_mca-proc
-return_code-drivers_block_cpqarray
-return_code-drivers_block_cciss
-return_code-arch_sparc_kernel_ioport
-return_code-arch_sh_
-return_code-arch_sh64_
-return_code-arch_parisc_kernel_pci-dma
-return_code-arch_arm_
-return_code-arch_arm26_kernel_ecard
-remove_brackets-drivers_acpi_system
-printk-arch_um_
-pci_dma_supported-drivers_media_video_bttv-driver
-msleep-drivers_telephony_ixj
-msleep-drivers_scsi_qla2xxx_qla_os
-msleep-drivers_scsi_osst
-msleep-drivers_scsi_lpfc_lpfc_scsi
-msleep-drivers_block_cciss
-msleep-arch_x86_64_kernel_smpboot
-msleep-arch_i386_kernel_smpboot
-gcc4-include_asm-x86_64_bitops.h
-gcc4-drivers_net_wireless_wavelan_cs.c
-dma_mask-drivers_block_umem
-cli-drivers_net_fec
-kj_tag
-
---===============85605674435925871==
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ drivers/scsi/FlashPoint.c |  130 +++++++++++++++++++++++-----------------------
+ 1 files changed, 65 insertions(+), 65 deletions(-)
+
+Index: linux-flashpoint/drivers/scsi/FlashPoint.c
+===================================================================
+--- linux-flashpoint.orig/drivers/scsi/FlashPoint.c	2005-07-07 00:34:54.000000000 +0400
++++ linux-flashpoint/drivers/scsi/FlashPoint.c	2005-07-07 00:42:50.000000000 +0400
+@@ -945,16 +945,16 @@ static int FlashPoint_ProbeHostAdapter(s
+ 	ioport = pCardInfo->si_baseaddr;
+ 
+ 	if (RD_HARPOON(ioport + hp_vendor_id_0) != ORION_VEND_0)
+-		return ((int)FAILURE);
++		return (int)FAILURE;
+ 
+ 	if ((RD_HARPOON(ioport + hp_vendor_id_1) != ORION_VEND_1))
+-		return ((int)FAILURE);
++		return (int)FAILURE;
+ 
+ 	if ((RD_HARPOON(ioport + hp_device_id_0) != ORION_DEV_0))
+-		return ((int)FAILURE);
++		return (int)FAILURE;
+ 
+ 	if ((RD_HARPOON(ioport + hp_device_id_1) != ORION_DEV_1))
+-		return ((int)FAILURE);
++		return (int)FAILURE;
+ 
+ 	if (RD_HARPOON(ioport + hp_rev_num) != 0x0f) {
+ 
+@@ -964,7 +964,7 @@ static int FlashPoint_ProbeHostAdapter(s
+ 	device. */
+ 
+ 		if (RD_HARPOON(ioport + hp_sub_device_id_0) & 0x0f)
+-			return ((int)FAILURE);
++			return (int)FAILURE;
+ 	}
+ 
+ 	if (first_time) {
+@@ -986,7 +986,7 @@ static int FlashPoint_ProbeHostAdapter(s
+ 				pCurrNvRam->niBaseAddr = ioport;
+ 				FPT_RNVRamData(pCurrNvRam);
+ 			} else
+-				return ((int)FAILURE);
++				return (int)FAILURE;
+ 		}
+ 	} else
+ 		pCurrNvRam = NULL;
+@@ -1194,7 +1194,7 @@ static int FlashPoint_ProbeHostAdapter(s
+ 
+ 	pCardInfo->si_present = 0x01;
+ 
+-	return (0);
++	return 0;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -1220,7 +1220,7 @@ static unsigned long FlashPoint_Hardware
+ 
+ 		if (thisCard == MAX_CARDS) {
+ 
+-			return (FAILURE);
++			return FAILURE;
+ 		}
+ 
+ 		if (FPT_BL_Card[thisCard].ioPort == ioport) {
+@@ -1388,7 +1388,7 @@ static unsigned long FlashPoint_Hardware
+ 		   (unsigned char)(RD_HARPOON((ioport + hp_semaphore)) |
+ 				   SCCB_MGR_PRESENT));
+ 
+-	return ((unsigned long)CurrCard);
++	return (unsigned long)CurrCard;
+ }
+ 
+ static void FlashPoint_ReleaseHostAdapter(unsigned long pCurrCard)
+@@ -1460,7 +1460,7 @@ static void FPT_RNVRamData(struct nvram_
+ static unsigned char FPT_RdStack(unsigned long portBase, unsigned char index)
+ {
+ 	WR_HARPOON(portBase + hp_stack_addr, index);
+-	return (RD_HARPOON(portBase + hp_stack_data));
++	return RD_HARPOON(portBase + hp_stack_data);
+ }
+ 
+ static void FPT_WrStack(unsigned long portBase, unsigned char index,
+@@ -1473,14 +1473,14 @@ static void FPT_WrStack(unsigned long po
+ static unsigned char FPT_ChkIfChipInitialized(unsigned long ioPort)
+ {
+ 	if ((RD_HARPOON(ioPort + hp_arb_id) & 0x0f) != FPT_RdStack(ioPort, 4))
+-		return (0);
++		return 0;
+ 	if ((RD_HARPOON(ioPort + hp_clkctrl_0) & CLKCTRL_DEFAULT)
+ 	    != CLKCTRL_DEFAULT)
+-		return (0);
++		return 0;
+ 	if ((RD_HARPOON(ioPort + hp_seltimeout) == TO_250ms) ||
+ 	    (RD_HARPOON(ioPort + hp_seltimeout) == TO_290ms))
+-		return (1);
+-	return (0);
++		return 1;
++	return 0;
+ 
+ }
+ 
+@@ -1642,14 +1642,14 @@ static int FlashPoint_AbortCCB(unsigned 
+ 			callback = p_Sccb->SccbCallback;
+ 			callback(p_Sccb);
+ 
+-			return (0);
++			return 0;
+ 		}
+ 
+ 		else {
+ 			if (((struct sccb_card *)pCurrCard)->currentSCCB ==
+ 			    p_Sccb) {
+ 				p_Sccb->SccbStatus = SCCB_ABORT;
+-				return (0);
++				return 0;
+ 
+ 			}
+ 
+@@ -1691,7 +1691,7 @@ static int FlashPoint_AbortCCB(unsigned 
+ 						}
+ 					}
+ 					MENABLE_INT(ioport);
+-					return (0);
++					return 0;
+ 				} else {
+ 					currTar_Info =
+ 					    &FPT_sccbMgrTbl[thisCard][p_Sccb->
+@@ -1702,13 +1702,13 @@ static int FlashPoint_AbortCCB(unsigned 
+ 						      LunDiscQ_Idx[p_Sccb->Lun]]
+ 					    == p_Sccb) {
+ 						p_Sccb->SccbStatus = SCCB_ABORT;
+-						return (0);
++						return 0;
+ 					}
+ 				}
+ 			}
+ 		}
+ 	}
+-	return (-1);
++	return -1;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -1726,12 +1726,12 @@ static unsigned char FlashPoint_Interrup
+ 	ioport = ((struct sccb_card *)pCurrCard)->ioPort;
+ 
+ 	if (RD_HARPOON(ioport + hp_int_status) & INT_ASSERTED) {
+-		return (1);
++		return 1;
+ 	}
+ 
+ 	else
+ 
+-		return (0);
++		return 0;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -1783,7 +1783,7 @@ static int FlashPoint_HandleInterrupt(un
+ 			if (result) {
+ 
+ 				MENABLE_INT(ioport);
+-				return (result);
++				return result;
+ 			}
+ 		}
+ 
+@@ -1997,7 +1997,7 @@ static int FlashPoint_HandleInterrupt(un
+ 
+ 	MENABLE_INT(ioport);
+ 
+-	return (0);
++	return 0;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -2092,7 +2092,7 @@ static unsigned char FPT_SccbMgr_bad_isr
+ 
+ 		FPT_scini(p_card, pCurrCard->ourId, 0);
+ 
+-		return (0xFF);
++		return 0xFF;
+ 	}
+ 
+ 	else if (p_int & FIFO) {
+@@ -2150,7 +2150,7 @@ static unsigned char FPT_SccbMgr_bad_isr
+ 		WRW_HARPOON((p_port + hp_intstat), SCAM_SEL);
+ 	}
+ 
+-	return (0x00);
++	return 0x00;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -2295,12 +2295,12 @@ static unsigned char FPT_sfm(unsigned lo
+ 			}
+ 			if (TimeOutLoop > 20000) {
+ 				WRW_HARPOON((port + hp_intstat), PARITY);
+-				return (message);
++				return message;
+ 			}
+ 			if ((RD_HARPOON(port + hp_scsisig) & S_SCSI_PHZ) !=
+ 			    S_MSGI_PH) {
+ 				WRW_HARPOON((port + hp_intstat), PARITY);
+-				return (message);
++				return message;
+ 			}
+ 			WR_HARPOON(port + hp_portctrl_0, SCSI_PORT);
+ 
+@@ -2315,7 +2315,7 @@ static unsigned char FPT_sfm(unsigned lo
+ 	WR_HARPOON(port + hp_xferstat, 0);
+ 	WR_HARPOON(port + hp_fiforead, 0);
+ 	WR_HARPOON(port + hp_fifowrite, 0);
+-	return (message);
++	return message;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -3219,14 +3219,14 @@ static unsigned char FPT_sisyncn(unsigne
+ 				   (AUTO_IMMED + CMD_ONLY_STRT));
+ 		}
+ 
+-		return (1);
++		return 1;
+ 	}
+ 
+ 	else {
+ 
+ 		currTar_Info->TarStatus |= (unsigned char)SYNC_SUPPORTED;
+ 		currTar_Info->TarEEValue &= ~EE_SYNC_MASK;
+-		return (0);
++		return 0;
+ 	}
+ }
+ 
+@@ -3431,7 +3431,7 @@ static unsigned char FPT_siwidn(unsigned
+ 					    ~(unsigned char)TAR_WIDE_MASK) |
+ 					   (unsigned char)WIDE_ENABLED);
+ 
+-		return (1);
++		return 1;
+ 	}
+ 
+ 	else {
+@@ -3441,7 +3441,7 @@ static unsigned char FPT_siwidn(unsigned
+ 					   WIDE_NEGOCIATED);
+ 
+ 		currTar_Info->TarEEValue &= ~EE_WIDE_SCSI;
+-		return (0);
++		return 0;
+ 	}
+ }
+ 
+@@ -5155,11 +5155,11 @@ static unsigned char FPT_busMstrTimeOut(
+ 	RD_HARPOON(p_port + hp_int_status);	/*Clear command complete */
+ 
+ 	if (RD_HARPOON(p_port + hp_ext_status) & BM_CMD_BUSY) {
+-		return (1);
++		return 1;
+ 	}
+ 
+ 	else {
+-		return (0);
++		return 0;
+ 	}
+ }
+ 
+@@ -5721,10 +5721,10 @@ static int FPT_scarb(unsigned long p_por
+ 		}
+ 
+ 		if (RD_HARPOON(p_port + hp_scsisig) & SCSI_SEL)
+-			return (0);
++			return 0;
+ 
+ 		if (RD_HARPOON(p_port + hp_scsidata_0) != 00)
+-			return (0);
++			return 0;
+ 
+ 		WR_HARPOON(p_port + hp_scsisig,
+ 			   (RD_HARPOON(p_port + hp_scsisig) | SCSI_BSY));
+@@ -5734,7 +5734,7 @@ static int FPT_scarb(unsigned long p_por
+ 			WR_HARPOON(p_port + hp_scsisig,
+ 				   (RD_HARPOON(p_port + hp_scsisig) &
+ 				    ~SCSI_BSY));
+-			return (0);
++			return 0;
+ 		}
+ 
+ 		WR_HARPOON(p_port + hp_scsisig,
+@@ -5745,7 +5745,7 @@ static int FPT_scarb(unsigned long p_por
+ 			WR_HARPOON(p_port + hp_scsisig,
+ 				   (RD_HARPOON(p_port + hp_scsisig) &
+ 				    ~(SCSI_BSY | SCSI_SEL)));
+-			return (0);
++			return 0;
+ 		}
+ 	}
+ 
+@@ -5764,7 +5764,7 @@ static int FPT_scarb(unsigned long p_por
+ 
+ 	FPT_Wait(p_port, TO_250ms);
+ 
+-	return (1);
++	return 1;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -5956,7 +5956,7 @@ static unsigned char FPT_scxferc(unsigne
+ 
+ 	FPT_scwirod(p_port, BIT(6));	/*Wait for DB6 to be released. */
+ 
+-	return (ret_data);
++	return ret_data;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -5994,22 +5994,22 @@ static unsigned char FPT_scsendi(unsigne
+ 			}
+ 
+ 			if ((ret_data & 0x1C) == 0x10)
+-				return (0x00);	/*End of isolation stage, we won! */
++				return 0x00;	/*End of isolation stage, we won! */
+ 
+ 			if (ret_data & 0x1C)
+-				return (0xFF);
++				return 0xFF;
+ 
+ 			if ((defer) && (!(ret_data & 0x1F)))
+-				return (0x01);	/*End of isolation stage, we lost. */
++				return 0x01;	/*End of isolation stage, we lost. */
+ 
+ 		}		/*bit loop */
+ 
+ 	}			/*byte loop */
+ 
+ 	if (defer)
+-		return (0x01);	/*We lost */
++		return 0x01;	/*We lost */
+ 	else
+-		return (0);	/*We WON! Yeeessss! */
++		return 0;	/*We WON! Yeeessss! */
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -6034,7 +6034,7 @@ static unsigned char FPT_sciso(unsigned 
+ 			ret_data = FPT_scxferc(p_port, 0);
+ 
+ 			if (ret_data & 0xFC)
+-				return (0xFF);
++				return 0xFF;
+ 
+ 			else {
+ 
+@@ -6056,9 +6056,9 @@ static unsigned char FPT_sciso(unsigned 
+ 				}
+ */
+ 				if (byte_cnt)
+-					return (0x00);
++					return 0x00;
+ 				else
+-					return (0xFF);
++					return 0xFF;
+ 			}
+ 
+ 		}		/*bit loop */
+@@ -6067,7 +6067,7 @@ static unsigned char FPT_sciso(unsigned 
+ 
+ 	}			/*byte loop */
+ 
+-	return (0);
++	return 0;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -6142,10 +6142,10 @@ static unsigned char FPT_scvalq(unsigned
+ 	}
+ 
+ 	if (p_quintet & 0x18)
+-		return (0);
++		return 0;
+ 
+ 	else
+-		return (1);
++		return 1;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -6209,7 +6209,7 @@ static unsigned char FPT_scsell(unsigned
+ 			   (RD_HARPOON(p_port + hp_page_ctrl) &
+ 			    ~G_INT_DISABLE));
+ 
+-		return (0);	/*No legacy device */
++		return 0;	/*No legacy device */
+ 	}
+ 
+ 	else {
+@@ -6228,7 +6228,7 @@ static unsigned char FPT_scsell(unsigned
+ 			   (RD_HARPOON(p_port + hp_page_ctrl) &
+ 			    ~G_INT_DISABLE));
+ 
+-		return (1);	/*Found one of them oldies! */
++		return 1;	/*Found one of them oldies! */
+ 	}
+ }
+ 
+@@ -6342,7 +6342,7 @@ static unsigned char FPT_scmachid(unsign
+ 
+ 		if (match) {
+ 			FPT_scamInfo[i].state = ID_ASSIGNED;
+-			return (i);
++			return i;
+ 		}
+ 
+ 	}
+@@ -6372,7 +6372,7 @@ static unsigned char FPT_scmachid(unsign
+ 			if (FPT_BL_Card[p_card].pNvRamInfo == NULL)
+ 				FPT_BL_Card[p_card].globalFlags |=
+ 				    F_UPDATE_EEPROM;
+-			return (match);
++			return match;
+ 
+ 		}
+ 
+@@ -6387,7 +6387,7 @@ static unsigned char FPT_scmachid(unsign
+ 	}
+ 
+ 	if (p_id_string[0] & BIT(7)) {
+-		return (CLR_PRIORITY);
++		return CLR_PRIORITY;
+ 	}
+ 
+ 	if (p_id_string[0] & BIT(5))
+@@ -6416,7 +6416,7 @@ static unsigned char FPT_scmachid(unsign
+ 			if (FPT_BL_Card[p_card].pNvRamInfo == NULL)
+ 				FPT_BL_Card[p_card].globalFlags |=
+ 				    F_UPDATE_EEPROM;
+-			return (match);
++			return match;
+ 
+ 		}
+ 
+@@ -6430,7 +6430,7 @@ static unsigned char FPT_scmachid(unsign
+ 		}
+ 	}
+ 
+-	return (NO_ID_AVAIL);
++	return NO_ID_AVAIL;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -7181,7 +7181,7 @@ static unsigned char FPT_queueFindSccb(s
+ 
+ 			currTar_Info->TarSelQ_Cnt--;
+ 
+-			return (1);
++			return 1;
+ 		}
+ 
+ 		else {
+@@ -7189,7 +7189,7 @@ static unsigned char FPT_queueFindSccb(s
+ 		}
+ 	}
+ 
+-	return (0);
++	return 0;
+ 
+ }
+ 
+@@ -7416,14 +7416,14 @@ static unsigned short FPT_utilEERead(uns
+ 		ee_data2 = FPT_utilEEReadOrg(p_port, ee_addr);
+ 
+ 		if (ee_data1 == ee_data2)
+-			return (ee_data1);
++			return ee_data1;
+ 
+ 		ee_data1 = ee_data2;
+ 		i++;
+ 
+ 	} while (i < 4);
+ 
+-	return (ee_data1);
++	return ee_data1;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -7471,7 +7471,7 @@ static unsigned short FPT_utilEEReadOrg(
+ 	WR_HARPOON(p_port + hp_ee_ctrl, (ee_value | SEE_MS));	/*Turn off CS */
+ 	WR_HARPOON(p_port + hp_ee_ctrl, ee_value);	/*Turn off Master Select */
+ 
+-	return (ee_data);
++	return ee_data;
+ }
+ 
+ /*---------------------------------------------------------------------
+@@ -7559,7 +7559,7 @@ static unsigned short FPT_CalcCrc16(unsi
+ 			ch >>= 1;
+ 		}
+ 	}
+-	return (crc);
++	return crc;
+ }
+ 
+ static unsigned char FPT_CalcLrc(unsigned char buffer[])
+@@ -7569,7 +7569,7 @@ static unsigned char FPT_CalcLrc(unsigne
+ 	lrc = 0;
+ 	for (i = 0; i < ID_STRING_LENGTH; i++)
+ 		lrc ^= buffer[i];
+-	return (lrc);
++	return lrc;
+ }
+ 
+ /*
+
+--===============12147533526337639==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -592,4 +540,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85605674435925871==--
+--===============12147533526337639==--
