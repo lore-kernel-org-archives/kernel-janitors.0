@@ -1,182 +1,282 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Wed, 06 Jul 2005 11:52:12 +0000
-Subject: Re: [KJ] [PATCH 2.6.13-c1 5/17] fix sparse warnings [UPDATE]
-Message-Id: <200507061152.12661.victor@cetuc.puc-rio.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:37 +0000
+Subject: [KJ] [patch 2.6.13-rc1 03/23] Audit return code of create_proc_*
+Message-Id: <20050707154524.160751000@rhum.iomeda.fr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0094771942229541217=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507031852.14875.victor@cetuc.puc-rio.br>
-In-Reply-To: <200507031852.14875.victor@cetuc.puc-rio.br>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Em Sunday 03 July 2005 18:52, Victor Fusco escreveu:
-> Description:
->	Fix the sparse warning "implicit cast to nocast type"
-> 
-> File/Subsystem: drivers/block/elevator
-> 
-> Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
->  
-> 
+--===============0094771942229541217==
+Content-Disposition: inline;
+	filename=proc_create_drivers_net_tokenring_olympic.c.diff
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
-
-File/Subsystem: drivers/block/elevator
-
-
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
-
-
-
- linux-2.6-git/drivers/block/ll_rw_blk.c |   17 ++++++++++-------
- linux-2.6-git/include/linux/blkdev.h    |   10 +++++-----
- linux-2.6-git/include/linux/elevator.h  |    6 ++++--
- linux-git/drivers/block/elevator.c      |    2 +-
- 4 files changed, 20 insertions(+), 15 deletions(-)
-
-Index: linux-2.6-git/drivers/block/ll_rw_blk.c
-=================================--- linux-2.6-git.orig/drivers/block/ll_rw_blk.c	2005-07-05 13:18:04.000000000 +0000
-+++ linux-2.6-git/drivers/block/ll_rw_blk.c	2005-07-05 13:22:33.000000000 +0000
-@@ -1639,13 +1639,14 @@
+diff -urpNX dontdiff 2.6.13-rc1.orig/drivers/net/tokenring/olympic.c 2.6.13-rc1/drivers/net/tokenring/olympic.c
+--- 2.6.13-rc1.orig/drivers/net/tokenring/olympic.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/drivers/net/tokenring/olympic.c	2005-07-05 11:39:00.923086424 +0200
+@@ -265,13 +265,16 @@ static int __devinit olympic_probe(struc
  
- static int __make_request(request_queue_t *, struct bio *);
+ 	pci_set_drvdata(pdev,dev) ; 
+ 	register_netdev(dev) ; 
+-	printk("Olympic: %s registered as: %s\n",olympic_priv->olympic_card_name,dev->name);
++	printk(KERN_INFO "Olympic: %s registered as: %s\n",olympic_priv->olympic_card_name,dev->name);
+ 	if (olympic_priv->olympic_network_monitor) { /* Must go after register_netdev as we need the device name */ 
++		struct proc_dir_entry* ent;
+ 		char proc_name[20] ; 
+ 		strcpy(proc_name,"net/olympic_") ; 
+ 		strcat(proc_name,dev->name) ; 
+-		create_proc_read_entry(proc_name,0,NULL,olympic_proc_info,(void *)dev) ; 
+-		printk("Olympic: Network Monitor information: /proc/%s\n",proc_name); 
++		ent = create_proc_read_entry(proc_name,0,NULL,olympic_proc_info,(void *)dev) ;
++		if (!ent)
++			printk(KERN_WARNING "Olympic: Unable to create /proc entry.\n");
++		printk(KERN_INFO "Olympic: Network Monitor information: /proc/%s\n",proc_name); 
+ 	}
+ 	return  0 ;
  
--request_queue_t *blk_alloc_queue(int gfp_mask)
-+request_queue_t *blk_alloc_queue(unsigned int __nocast gfp_mask)
+@@ -300,8 +303,10 @@ static int __devinit olympic_init(struct
+     	olympic_priv=(struct olympic_private *)dev->priv;
+ 	olympic_mmio=olympic_priv->olympic_mmio;
+ 
+-	printk("%s \n", version);
+-	printk("%s. I/O at %hx, MMIO at %p, LAP at %p, using irq %d\n", olympic_priv->olympic_card_name, (unsigned int) dev->base_addr,olympic_priv->olympic_mmio, olympic_priv->olympic_lap, dev->irq);
++	printk(KERN_INFO "%s \n", version);
++	printk(KERN_INFO "%s. I/O at %hx, MMIO at %p, LAP at %p, using irq %d\n",
++		olympic_priv->olympic_card_name, (unsigned int) dev->base_addr,
++		olympic_priv->olympic_mmio, olympic_priv->olympic_lap, dev->irq);
+ 
+ 	writel(readl(olympic_mmio+BCTL) | BCTL_SOFTRESET,olympic_mmio+BCTL);
+ 	t=jiffies;
+@@ -320,9 +325,9 @@ static int __devinit olympic_init(struct
+ 	}
+ 	
+ #if OLYMPIC_DEBUG
+-	printk("BCTL: %x\n",readl(olympic_mmio+BCTL));
+-	printk("GPR: %x\n",readw(olympic_mmio+GPR));
+-	printk("SISRMASK: %x\n",readl(olympic_mmio+SISR_MASK));
++	printk(KERN_DEBUG "BCTL: %x\n",readl(olympic_mmio+BCTL));
++	printk(KERN_DEBUG "GPR: %x\n",readw(olympic_mmio+GPR));
++	printk(KERN_DEBUG "SISRMASK: %x\n",readl(olympic_mmio+SISR_MASK));
+ #endif
+ 	/* Aaaahhh, You have got to be real careful setting GPR, the card
+ 	   holds the previous values from flash memory, including autosense 
+@@ -347,7 +352,7 @@ static int __devinit olympic_init(struct
+ 	writew(readw(olympic_mmio+GPR)|GPR_NEPTUNE_BF,olympic_mmio+GPR);
+ 
+ #if OLYMPIC_DEBUG
+-	printk("GPR = %x\n",readw(olympic_mmio + GPR) ) ; 
++	printk(KERN_DEBUG "GPR = %x\n",readw(olympic_mmio + GPR) ) ; 
+ #endif
+ 	/* Solo has been paused to meet the Cardbus power
+ 	 * specs if the adapter is cardbus. Check to 
+@@ -382,7 +387,7 @@ static int __devinit olympic_init(struct
+ 	writel(readw(olympic_mmio+LAPWWO),olympic_mmio+LAPA);
+ 
+ #if OLYMPIC_DEBUG
+-	printk("LAPWWO: %x, LAPA: %x\n",readl(olympic_mmio+LAPWWO), readl(olympic_mmio+LAPA));
++	printk(KERN_DEBUG "LAPWWO: %x, LAPA: %x\n",readl(olympic_mmio+LAPWWO), readl(olympic_mmio+LAPA));
+ #endif
+ 
+ 	init_srb=olympic_priv->olympic_lap + ((readw(olympic_mmio+LAPWWO)) & (~0xf800));
+@@ -390,7 +395,7 @@ static int __devinit olympic_init(struct
+ #if OLYMPIC_DEBUG		
  {
- 	return blk_alloc_queue_node(gfp_mask, -1);
+ 	int i;
+-	printk("init_srb(%p): ",init_srb);
++	printk(KERN_INFO "init_srb(%p): ",init_srb);
+ 	for(i=0;i<20;i++)
+ 		printk("%x ",readb(init_srb+i));
+ 	printk("\n");
+@@ -412,14 +417,14 @@ static int __devinit olympic_init(struct
+ 	uaa_addr=swab16(readw(init_srb+8));
+ 
+ #if OLYMPIC_DEBUG
+-	printk("UAA resides at %x\n",uaa_addr);
++	printk(KERN_DEBUG "UAA resides at %x\n",uaa_addr);
+ #endif
+ 
+ 	writel(uaa_addr,olympic_mmio+LAPA);
+ 	adapter_addr=olympic_priv->olympic_lap + (uaa_addr & (~0xf800));
+ 
+ #if OLYMPIC_DEBUG
+-	printk("adapter address: %02x:%02x:%02x:%02x:%02x:%02x\n",
++	printk(KERN_DEBUG "adapter address: %02x:%02x:%02x:%02x:%02x:%02x\n",
+ 			readb(adapter_addr), readb(adapter_addr+1),readb(adapter_addr+2),
+ 			readb(adapter_addr+3),readb(adapter_addr+4),readb(adapter_addr+5));
+ #endif
+@@ -450,8 +455,8 @@ static int olympic_open(struct net_devic
+ 	}
+ 
+ #if OLYMPIC_DEBUG
+-	printk("BMCTL: %x\n",readl(olympic_mmio+BMCTL_SUM));
+-	printk("pending ints: %x\n",readl(olympic_mmio+SISR_RR));
++	printk(KERN_DEBUG "BMCTL: %x\n",readl(olympic_mmio+BMCTL_SUM));
++	printk(KERN_DEBUG "pending ints: %x\n",readl(olympic_mmio+SISR_RR));
+ #endif
+ 
+ 	writel(SISR_MI,olympic_mmio+SISR_MASK_SUM);
+@@ -466,9 +471,9 @@ static int olympic_open(struct net_devic
+ 	init_srb=olympic_priv->olympic_lap + ((readw(olympic_mmio+LAPWWO)) & (~0xf800));
+ 	
+ #if OLYMPIC_DEBUG
+-	printk("LAPWWO: %x, LAPA: %x\n",readw(olympic_mmio+LAPWWO), readl(olympic_mmio+LAPA));
+-	printk("SISR Mask = %04x\n", readl(olympic_mmio+SISR_MASK));
+-	printk("Before the open command \n");
++	printk(KERN_DEBUG "LAPWWO: %x, LAPA: %x\n",readw(olympic_mmio+LAPWWO), readl(olympic_mmio+LAPA));
++	printk(KERN_DEBUG "SISR Mask = %04x\n", readl(olympic_mmio+SISR_MASK));
++	printk(KERN_DEBUG "Before the open command \n");
+ #endif	
+ 	do {
+ 		memset_io(init_srb,0,SRB_COMMAND_SIZE);
+@@ -530,7 +535,7 @@ static int olympic_open(struct net_devic
+ 		set_current_state(TASK_RUNNING) ; 
+ 		olympic_priv->srb_queued = 0 ; 
+ #if OLYMPIC_DEBUG
+-		printk("init_srb(%p): ",init_srb);
++		printk(KERN_DEBUG "init_srb(%p): ",init_srb);
+ 		for(i=0;i<20;i++)
+ 			printk("%02x ",readb(init_srb+i));
+ 		printk("\n");
+@@ -650,23 +655,35 @@ static int olympic_open(struct net_devic
+ 	writew(i, olympic_mmio+RXSTATQCNT);
+ 
+ #if OLYMPIC_DEBUG 
+-	printk("# of rx buffers: %d, RXENQ: %x\n",i, readw(olympic_mmio+RXENQ));
+-	printk("RXCSA: %x, rx_status_ring[0]: %p\n",readl(olympic_mmio+RXCSA),&olympic_priv->olympic_rx_status_ring[0]);
+-	printk(" stat_ring[1]: %p, stat_ring[2]: %p, stat_ring[3]: %p\n", &(olympic_priv->olympic_rx_status_ring[1]), &(olympic_priv->olympic_rx_status_ring[2]), &(olympic_priv->olympic_rx_status_ring[3]) );
+-	printk(" stat_ring[4]: %p, stat_ring[5]: %p, stat_ring[6]: %p\n", &(olympic_priv->olympic_rx_status_ring[4]), &(olympic_priv->olympic_rx_status_ring[5]), &(olympic_priv->olympic_rx_status_ring[6]) );
+-	printk(" stat_ring[7]: %p\n", &(olympic_priv->olympic_rx_status_ring[7])  );
+-
+-	printk("RXCDA: %x, rx_ring[0]: %p\n",readl(olympic_mmio+RXCDA),&olympic_priv->olympic_rx_ring[0]);
+-	printk("Rx_ring_dma_addr = %08x, rx_status_dma_addr = %08x\n",
+-		olympic_priv->rx_ring_dma_addr,olympic_priv->rx_status_ring_dma_addr) ; 
++	printk(KERN_DEBUG "# of rx buffers: %d, RXENQ: %x\n",i,
++				readw(olympic_mmio+RXENQ));
++	printk(KERN_DEBUG "RXCSA: %x, rx_status_ring[0]: %p\n",
++		readl(olympic_mmio+RXCSA),
++		&olympic_priv->olympic_rx_status_ring[0]);
++	printk(KERN_DEBUG " stat_ring[1]: %p, stat_ring[2]: %p, stat_ring[3]: %p\n", 
++		&(olympic_priv->olympic_rx_status_ring[1]), 
++		&(olympic_priv->olympic_rx_status_ring[2]), 
++		&(olympic_priv->olympic_rx_status_ring[3]) );
++	printk(KERN_DEBUG " stat_ring[4]: %p, stat_ring[5]: %p, stat_ring[6]: %p\n", 
++		&(olympic_priv->olympic_rx_status_ring[4]), 
++		&(olympic_priv->olympic_rx_status_ring[5]), 
++		&(olympic_priv->olympic_rx_status_ring[6]) );
++	printk(KERN_DEBUG " stat_ring[7]: %p\n", 
++		&(olympic_priv->olympic_rx_status_ring[7]) );
++
++	printk(KERN_DEBUG "RXCDA: %x, rx_ring[0]: %p\n",
++		readl(olympic_mmio+RXCDA),&olympic_priv->olympic_rx_ring[0]);
++	printk(KERN_DEBUG "Rx_ring_dma_addr = %08x, rx_status_dma_addr = %08x\n",
++		olympic_priv->rx_ring_dma_addr,
++		olympic_priv->rx_status_ring_dma_addr); 
+ #endif
+ 
+ 	writew((((readw(olympic_mmio+RXENQ)) & 0x8000) ^ 0x8000) | i,olympic_mmio+RXENQ);
+ 
+ #if OLYMPIC_DEBUG 
+-	printk("# of rx buffers: %d, RXENQ: %x\n",i, readw(olympic_mmio+RXENQ));
+-	printk("RXCSA: %x, rx_ring[0]: %p\n",readl(olympic_mmio+RXCSA),&olympic_priv->olympic_rx_status_ring[0]);
+-	printk("RXCDA: %x, rx_ring[0]: %p\n",readl(olympic_mmio+RXCDA),&olympic_priv->olympic_rx_ring[0]);
++	printk(KERN_DEBUG "# of rx buffers: %d, RXENQ: %x\n",i, readw(olympic_mmio+RXENQ));
++	printk(KERN_DEBUG "RXCSA: %x, rx_ring[0]: %p\n",readl(olympic_mmio+RXCSA),&olympic_priv->olympic_rx_status_ring[0]);
++	printk(KERN_DEBUG "RXCDA: %x, rx_ring[0]: %p\n",readl(olympic_mmio+RXCDA),&olympic_priv->olympic_rx_ring[0]);
+ #endif 
+ 
+ 	writel(SISR_RX_STATUS | SISR_RX_NOBUF,olympic_mmio+SISR_MASK_SUM);
+@@ -699,8 +716,8 @@ static int olympic_open(struct net_devic
+ 	writel(SISR_TX1_EOF | SISR_ADAPTER_CHECK | SISR_ARB_CMD | SISR_TRB_REPLY | SISR_ASB_FREE | SISR_ERR,olympic_mmio+SISR_MASK_SUM);
+ 
+ #if OLYMPIC_DEBUG 
+-	printk("BMCTL: %x\n",readl(olympic_mmio+BMCTL_SUM));
+-	printk("SISR MASK: %x\n",readl(olympic_mmio+SISR_MASK));
++	printk(KERN_DEBUG "BMCTL: %x\n",readl(olympic_mmio+BMCTL_SUM));
++	printk(KERN_DEBUG "SISR MASK: %x\n",readl(olympic_mmio+SISR_MASK));
+ #endif
+ 
+ 	if (olympic_priv->olympic_network_monitor) { 
+@@ -709,19 +726,19 @@ static int olympic_open(struct net_devic
+ 		oat = (olympic_priv->olympic_lap + olympic_priv->olympic_addr_table_addr) ; 
+ 		opt = (olympic_priv->olympic_lap + olympic_priv->olympic_parms_addr) ; 
+ 
+-		printk("%s: Node Address: %02x:%02x:%02x:%02x:%02x:%02x\n",dev->name, 
++		printk(KERN_INFO "%s: Node Address: %02x:%02x:%02x:%02x:%02x:%02x\n",dev->name, 
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,node_addr)), 
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,node_addr)+1),
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,node_addr)+2),
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,node_addr)+3),
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,node_addr)+4),
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,node_addr)+5));
+-		printk("%s: Functional Address: %02x:%02x:%02x:%02x\n",dev->name, 
++		printk(KERN_INFO "%s: Functional Address: %02x:%02x:%02x:%02x\n",dev->name, 
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,func_addr)), 
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,func_addr)+1),
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,func_addr)+2),
+ 			readb(oat+offsetof(struct olympic_adapter_addr_table,func_addr)+3));
+-		printk("%s: NAUN Address: %02x:%02x:%02x:%02x:%02x:%02x\n",dev->name, 
++		printk(KERN_INFO "%s: NAUN Address: %02x:%02x:%02x:%02x:%02x:%02x\n",dev->name, 
+ 			readb(opt+offsetof(struct olympic_parameters_table, up_node_addr)),
+ 			readb(opt+offsetof(struct olympic_parameters_table, up_node_addr)+1),
+ 			readb(opt+offsetof(struct olympic_parameters_table, up_node_addr)+2),
+@@ -771,7 +788,9 @@ static void olympic_rx(struct net_device
+ 		olympic_priv->rx_status_last_received++ ;
+ 		olympic_priv->rx_status_last_received &= (OLYMPIC_RX_RING_SIZE -1);
+ #if OLYMPIC_DEBUG
+-		printk("rx status: %x rx len: %x \n", le32_to_cpu(rx_status->status_buffercnt), le32_to_cpu(rx_status->fragmentcnt_framelen));
++		printk(KERN_DEBUG "rx status: %x rx len: %x \n", 
++			le32_to_cpu(rx_status->status_buffercnt), 
++			le32_to_cpu(rx_status->fragmentcnt_framelen));
+ #endif
+ 		length = le32_to_cpu(rx_status->fragmentcnt_framelen) & 0xffff;
+ 		buffer_cnt = le32_to_cpu(rx_status->status_buffercnt) & 0xffff; 
+@@ -779,7 +798,8 @@ static void olympic_rx(struct net_device
+ 		frag_len = le32_to_cpu(rx_status->fragmentcnt_framelen) >> 16; 
+ 
+ #if OLYMPIC_DEBUG 
+-		printk("length: %x, frag_len: %x, buffer_cnt: %x\n", length, frag_len, buffer_cnt);
++		printk(KERN_DEBUG "length: %x, frag_len: %x, buffer_cnt: %x\n",
++			length, frag_len, buffer_cnt);
+ #endif
+                 l_status_buffercnt = le32_to_cpu(rx_status->status_buffercnt);
+ 		if(l_status_buffercnt & 0xC0000000) {
+@@ -1131,7 +1151,7 @@ static int olympic_close(struct net_devi
+ #if OLYMPIC_DEBUG
+ 	{
+ 	int i ; 
+-	printk("srb(%p): ",srb);
++	printk(KERN_DEBUG "srb(%p): ",srb);
+ 	for(i=0;i<4;i++)
+ 		printk("%x ",readb(srb+i));
+ 	printk("\n");
+@@ -1419,10 +1439,13 @@ static void olympic_arb_cmd(struct net_d
+ 		frame_data = buf_ptr+offsetof(struct mac_receive_buffer,frame_data) ; 
+ 
+ 		for (i=0 ;  i < 14 ; i++) { 
+-			printk("Loc %d = %02x\n",i,readb(frame_data + i)); 
++			printk(KERN_DEBUG "Loc %d = %02x\n",i,readb(frame_data + i)); 
+ 		}
+ 
+-		printk("next %04x, fs %02x, len %04x \n",readw(buf_ptr+offsetof(struct mac_receive_buffer,next)), readb(buf_ptr+offsetof(struct mac_receive_buffer,frame_status)), readw(buf_ptr+offsetof(struct mac_receive_buffer,buffer_length))); 
++		printk(KERN_DEBUG "next %04x, fs %02x, len %04x \n",
++			readw(buf_ptr+offsetof(struct mac_receive_buffer,next)), 
++			readb(buf_ptr+offsetof(struct mac_receive_buffer,frame_status)), 
++			readw(buf_ptr+offsetof(struct mac_receive_buffer,buffer_length)));
  }
- EXPORT_SYMBOL(blk_alloc_queue);
- 
--request_queue_t *blk_alloc_queue_node(int gfp_mask, int node_id)
-+request_queue_t *blk_alloc_queue_node(unsigned int __nocast gfp_mask,
-+                                      int node_id)
- {
- 	request_queue_t *q;
- 
-@@ -1774,7 +1775,8 @@
- }
- 
- static inline struct request *
--blk_alloc_request(request_queue_t *q, int rw, struct bio *bio, int gfp_mask)
-+blk_alloc_request(request_queue_t *q, int rw, struct bio *bio,
-+                  unsigned int __nocast gfp_mask)
- {
- 	struct request *rq = mempool_alloc(q->rq.rq_pool, gfp_mask);
- 
-@@ -1872,7 +1874,7 @@
-  * Returns !NULL on success, with queue_lock *not held*.
-  */
- static struct request *get_request(request_queue_t *q, int rw, struct bio *bio,
--				   int gfp_mask)
-+				   unsigned int __nocast gfp_mask)
- {
- 	struct request *rq = NULL;
- 	struct request_list *rl = &q->rq;
-@@ -2006,7 +2008,8 @@
- 	return rq;
- }
- 
--struct request *blk_get_request(request_queue_t *q, int rw, int gfp_mask)
-+struct request *blk_get_request(request_queue_t *q, int rw,
-+                                unsigned int __nocast gfp_mask)
- {
- 	struct request *rq;
- 
-@@ -3285,7 +3288,7 @@
-  * but since the current task itself holds a reference, the context can be
-  * used in general code, so long as it stays within `current` context.
-  */
--struct io_context *current_io_context(int gfp_flags)
-+struct io_context *current_io_context( unsigned int __nocast gfp_flags)
- {
- 	struct task_struct *tsk = current;
- 	struct io_context *ret;
-@@ -3316,7 +3319,7 @@
-  *
-  * This is always called in the context of the task which submitted the I/O.
-  */
--struct io_context *get_io_context(int gfp_flags)
-+struct io_context *get_io_context(unsigned int __nocast gfp_flags)
- {
- 	struct io_context *ret;
- 	ret = current_io_context(gfp_flags);
-Index: linux-2.6-git/include/linux/blkdev.h
-=================================--- linux-2.6-git.orig/include/linux/blkdev.h	2005-07-05 13:18:04.000000000 +0000
-+++ linux-2.6-git/include/linux/blkdev.h	2005-07-05 13:22:33.000000000 +0000
-@@ -96,8 +96,8 @@
- 
- void put_io_context(struct io_context *ioc);
- void exit_io_context(void);
--struct io_context *current_io_context(int gfp_flags);
--struct io_context *get_io_context(int gfp_flags);
-+struct io_context *current_io_context(unsigned int __nocast gfp_flags);
-+struct io_context *get_io_context(unsigned int __nocast gfp_flags);
- void copy_io_context(struct io_context **pdst, struct io_context **psrc);
- void swap_io_context(struct io_context **ioc1, struct io_context **ioc2);
- 
-@@ -549,7 +549,7 @@
- extern void blk_put_request(struct request *);
- extern void blk_end_sync_rq(struct request *rq);
- extern void blk_attempt_remerge(request_queue_t *, struct request *);
--extern struct request *blk_get_request(request_queue_t *, int, int);
-+extern struct request *blk_get_request(request_queue_t *, int, unsigned int __nocast);
- extern void blk_insert_request(request_queue_t *, struct request *, int, void *);
- extern void blk_requeue_request(request_queue_t *, struct request *);
- extern void blk_plug_device(request_queue_t *);
-@@ -651,8 +651,8 @@
- extern void blk_finish_queue_drain(request_queue_t *);
- 
- int blk_get_queue(request_queue_t *);
--request_queue_t *blk_alloc_queue(int gfp_mask);
--request_queue_t *blk_alloc_queue_node(int,int);
-+request_queue_t *blk_alloc_queue(unsigned int __nocast gfp_mask);
-+request_queue_t *blk_alloc_queue_node(unsigned int __nocast, int);
- #define blk_put_queue(q) blk_cleanup_queue((q))
- 
- /*
-Index: linux-2.6-git/include/linux/elevator.h
-=================================--- linux-2.6-git.orig/include/linux/elevator.h	2005-07-05 13:18:04.000000000 +0000
-+++ linux-2.6-git/include/linux/elevator.h	2005-07-05 13:22:33.000000000 +0000
-@@ -18,7 +18,8 @@
- typedef void (elevator_completed_req_fn) (request_queue_t *, struct request *);
- typedef int (elevator_may_queue_fn) (request_queue_t *, int, struct bio *);
- 
--typedef int (elevator_set_req_fn) (request_queue_t *, struct request *, struct bio *, int);
-+typedef int (elevator_set_req_fn) (request_queue_t *, struct request *, struct bio *,
-+                                   unsigned int __nocast);
- typedef void (elevator_put_req_fn) (request_queue_t *, struct request *);
- typedef void (elevator_deactivate_req_fn) (request_queue_t *, struct request *);
- 
-@@ -98,7 +99,8 @@
- extern void elv_unregister_queue(request_queue_t *q);
- extern int elv_may_queue(request_queue_t *, int, struct bio *);
- extern void elv_completed_request(request_queue_t *, struct request *);
--extern int elv_set_request(request_queue_t *, struct request *, struct bio *, int);
-+extern int elv_set_request(request_queue_t *, struct request *, struct bio *,
-+                           unsigned int __nocast);
- extern void elv_put_request(request_queue_t *, struct request *);
- 
- /*
-Index: linux-git/drivers/block/elevator.c
-=================================--- linux-git.orig/drivers/block/elevator.c	2005-07-06 00:36:18.000000000 +0000
-+++ linux-git/drivers/block/elevator.c	2005-07-06 02:14:22.000000000 +0000
-@@ -487,7 +487,7 @@
- }
- 
- int elv_set_request(request_queue_t *q, struct request *rq, struct bio *bio,
--		    int gfp_mask)
-+		    unsigned int __nocast gfp_mask)
- {
- 	elevator_t *e = q->elevator;
-
+ #endif 
+ 		mac_frame = dev_alloc_skb(frame_len) ; 
 
 --
 
- 
+--===============0094771942229541217==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0094771942229541217==--
