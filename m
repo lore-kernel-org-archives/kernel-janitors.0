@@ -1,52 +1,36 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Fri, 08 Jul 2005 19:32:31 +0000
-Subject: [KJ] [PATCH] drivers/ieee1394/hosts.c : Use of time_before macro
-Message-Id: <42CED4CF.90906@feitoza.com.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:35 +0000
+Subject: [KJ] [patch 2.6.13-rc1 01/23] Audit return code of create_proc_*
+Message-Id: <20050707154513.561800000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------070103070508080203000609"
+Content-Type: multipart/mixed; boundary="===============83627744479421673=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <425D3FF0.1020406@feitoza.com.br>
-In-Reply-To: <425D3FF0.1020406@feitoza.com.br>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------070103070508080203000609
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============83627744479421673==
+Content-Disposition: inline; filename=proc_create_net_sctp_objcnt.c.diff
 
-Use of time_before() macro, defined at linux/jiffies.h, which deal with
-wrapping correctly and are nicer to read.
-
---------------070103070508080203000609
-Content-Type: text/x-patch;
- name="hosts.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="hosts.patch"
-
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-
---- linux/drivers/ieee1394/hosts.c	2005-06-17 16:48:29.000000000 -0300
-+++ linux-kj/drivers/ieee1394/hosts.c	2005-07-07 20:38:07.609477888 -0300
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/pci.h>
- #include <linux/timer.h>
-+#include <linux/jiffies.h>
+diff -urpNX dontdiff 2.6.13-rc1.orig/net/sctp/objcnt.c 2.6.13-rc1/net/sctp/objcnt.c
+--- 2.6.13-rc1.orig/net/sctp/objcnt.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/net/sctp/objcnt.c	2005-07-05 11:27:00.319634800 +0200
+@@ -127,8 +127,12 @@ done:
+ /* Initialize the objcount in the proc filesystem.  */
+ void sctp_dbg_objcnt_init(void)
+ {
+-	create_proc_read_entry("sctp_dbg_objcnt", 0, proc_net_sctp,
++	struct proc_dir_entry* ent;
++	ent = create_proc_read_entry("sctp_dbg_objcnt", 0, proc_net_sctp,
+ 			       sctp_dbg_objcnt_read, NULL);
++	if (!ent)
++		printk(KERN_WARNING 
++			"sctp_dbg_objcnt: Unable to create /proc entry.\n");
+ }
  
- #include "csr1212.h"
- #include "ieee1394.h"
-@@ -217,7 +218,7 @@
- 
- 	/* IEEE 1394a-2000 prohibits using the same generation number
- 	 * twice in a 60 second period. */
--	if (jiffies - host->csr.gen_timestamp[next_gen] < 60 * HZ)
-+	if (time_before(jiffies, host->csr.gen_timestamp[next_gen] + 60 * HZ))
- 		/* Wait 60 seconds from the last time this generation number was
- 		 * used. */
- 		reset_delay = (60 * HZ) + host->csr.gen_timestamp[next_gen] - jiffies;
+ /* Cleanup the objcount entry in the proc filesystem.  */
 
---------------070103070508080203000609
+--
+
+--===============83627744479421673==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------070103070508080203000609--
+--===============83627744479421673==--
