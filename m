@@ -1,50 +1,34 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 19:03:29 +0000
-Subject: [KJ] [PATCH 2.6.13-rc1 13/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031903.29607.victor@cetuc.puc-rio.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:40 +0000
+Subject: [KJ] [patch 2.6.13-rc1 06/23] Audit return code of create_proc_*
+Message-Id: <20050707154540.081487000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_BaDyCDFEEvhruaS"
+Content-Type: multipart/mixed; boundary="===============4383491008247849=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_BaDyCDFEEvhruaS
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+--===============4383491008247849==
+Content-Disposition: inline; filename=proc_create_drivers_block_cciss.c.diff
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
- 
-File/Subsystem: kernel/audit.c
-
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
-
---Boundary-00=_BaDyCDFEEvhruaS
-Content-Type: text/x-diff; charset="iso-8859-1"; name="kernel_audit.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="kernel_audit.patch"
-
- kernel/audit.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-2.6-git/kernel/audit.c
-===================================================================
---- linux-2.6-git.orig/kernel/audit.c	2005-07-01 17:48:52.000000000 +0000
-+++ linux-2.6-git/kernel/audit.c	2005-07-03 14:59:37.000000000 +0000
-@@ -560,7 +560,7 @@
+diff -urpNX dontdiff 2.6.13-rc1.orig/drivers/block/cciss.c 2.6.13-rc1/drivers/block/cciss.c
+--- 2.6.13-rc1.orig/drivers/block/cciss.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/drivers/block/cciss.c	2005-07-05 10:36:28.782498496 +0200
+@@ -337,7 +337,10 @@ static void __devinit cciss_procinit(int
+ 	pde = create_proc_read_entry(hba[i]->devname, 
+ 		S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH, 
+ 		proc_cciss, cciss_proc_get_info, hba[i]);
+-	pde->write_proc = cciss_proc_write;
++	if (!pde)
++		printk(KERN_WARNING "ccis: Unable to create /proc entry.\n");
++	else
++		pde->write_proc = cciss_proc_write;
  }
+ #endif /* CONFIG_PROC_FS */
  
- static struct audit_buffer * audit_buffer_alloc(struct audit_context *ctx,
--						int gfp_mask, int type)
-+						unsigned int __nocast gfp_mask, int type)
- {
- 	unsigned long flags;
- 	struct audit_buffer *ab = NULL;
 
---Boundary-00=_BaDyCDFEEvhruaS
+--
+
+--===============4383491008247849==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_BaDyCDFEEvhruaS--
+--===============4383491008247849==--
