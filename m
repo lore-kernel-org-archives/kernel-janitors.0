@@ -1,73 +1,54 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 18 Jul 2005 14:29:38 +0000
-Subject: Re: [KJ] [PATCH] drivers/scsi/eata.c : Use of the time_before() macro
-Message-Id: <20050718142938.GB2457@homer.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============076194461826996296=="
+From: James Lamanna <jlamanna@gmail.com>
+Date: Thu, 07 Jul 2005 21:14:39 +0000
+Subject: [KJ] [PATCH] drivers/scsi/advansys.c: Convert pci_find_device() to
+Message-Id: <aa4c40ff0507071414328c64ad@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42D8B2A7.4040808@feitoza.com.br>
-In-Reply-To: <42D8B2A7.4040808@feitoza.com.br>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============076194461826996296==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So here's a conversion of another driver from pci_find_device() to
+pci_get_device().
+After reading Greg's earlier comments about this change, hopefully
+this is mostly correct.
+Oh and BTW, advansys.c needs a serious Lindent run and some warnings
+cleanup, but that will have to be for another day...
+This patch matches the current indentation of the file that's why
+there are spaces not tabs.
+Compile-tested but not runtime-tested.
 
-On 16/07/05 04:09 -0300, Marcelo Feitoza Parisi wrote:
-> 
+Signed-off by: James Lamanna <jlamanna@gmail.com>
+ 
+advansys.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-> Use of the time_before() macro, defined at linux/jiffies.h, which deal
-> with wrapping correctly and are nicer to read.
-> 
-> Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-> 
-> --- linux/drivers/scsi/eata.c	2005-07-13 17:53:34.000000000 -0300
-> +++ linux-kj/drivers/scsi/eata.c	2005-07-15 16:21:24.558718384 -0300
-> @@ -1939,7 +1939,8 @@
->  
->  static int eata2x_eh_host_reset(struct scsi_cmnd *SCarg)
->  {
-> -	unsigned int i, time, k, c, limit = 0;
-> +	unsigned int i, k, c, limit = 0;
-> +	unsigned long time;
->  	int arg_done = 0;
->  	struct scsi_cmnd *SCpnt;
->  	struct Scsi_Host *shost = SCarg->device->host;
-> @@ -2033,7 +2034,7 @@
->  
->  	/* FIXME: use a sleep instead */
->  	time = jiffies;
-> -	while ((jiffies - time) < (10 * HZ) && limit++ < 200000)
-> +	while (time_before(jiffies, time + (10 * HZ)) && limit++ < 200000)
->  		udelay(100L);
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -4472,7 +4472,7 @@ advansys_detect(struct scsi_host_templat
 
-	ssleep(10); like the comment suggests?
-Is there a higher meaning for limit? First we check we're under 10
-seconds (real time) and then check we haven't slept more than 20
-seconds, just to make sure? Interrupts can't be disabled,
-spin_unlock_irq() takes care of that.
-
-Am I confuzed or the author of code? ;-)
-
-
-[Marcelo:
- drivers/net/hamradio/dmascc.c and drivers/net/e1000/e1000_ethtool.c
- also assume some value for HZ.
- And could you make bigger patches (per subsystem, like hamradio,
- tokenring...) in the future, please? ]
-
-
-	Domen
-
---===============076194461826996296==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+                     /* Find all PCI cards. */
+                     while (pci_device_id_cnt < ASC_PCI_DEVICE_ID_CNT) {
+-                        if ((pci_devp = pci_find_device(ASC_PCI_VENDORID,
++                        if ((pci_devp = pci_get_device(ASC_PCI_VENDORID,
+                             pci_device_id[pci_device_id_cnt], pci_devp)) =
+                             NULL) {
+                             pci_device_id_cnt++;
+@@ -5472,7 +5472,10 @@ advansys_release(struct Scsi_Host *shp)
+             boardp->adv_sgblkp = sgp->next_sgblkp;
+             kfree(sgp);
+         }
+-    }
++        pci_dev_put(to_pci_dev(boardp->dvc_cfg.adv_dvc_cfg.dev));
++    } else
++        pci_dev_put(to_pci_dev(boardp->dvc_cfg.asc_dvc_cfg.dev));
++
+ #ifdef CONFIG_PROC_FS
+     ASC_ASSERT(boardp->prtbuf != NULL);
+     kfree(boardp->prtbuf);
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============076194461826996296==--
