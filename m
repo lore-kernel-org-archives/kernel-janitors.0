@@ -1,44 +1,31 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 09 Jul 2005 19:58:23 +0000
-Subject: [KJ] [PATCH] drivers/media/video/bttv-driver: Remove unneeded call
-Message-Id: <20050709195823.GA876@mail.nuerscht.ch>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:54 +0000
+Subject: [KJ] [patch 2.6.13-rc1 20/23] Audit return code of create_proc_*
+Message-Id: <20050707154654.405158000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74234398331070706=="
+Content-Type: multipart/mixed; boundary="===============89560889646362418=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============74234398331070706==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============89560889646362418==
+Content-Disposition: inline; filename=proc_create_arch_arm_mach-omap_pm.c.diff
 
-In bttv-driver.c pci_dma_supported() is called after pci_set_dma_mask()
-which already did check that for us. The attached patch removes the
-unneeded call to pci_dma_supported()
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
----
-
- bttv-driver.c |    5 -----
- 1 files changed, 5 deletions(-)
-
-diff -urpN -X dontdiff linux-2.6.13-rc2/drivers/media/video/bttv-driver.c linux-2.6.13-rc2~dma_mask/drivers/media/video/bttv-driver.c
---- linux-2.6.13-rc2/drivers/media/video/bttv-driver.c	2005-07-07 21:28:50.000000000 +0200
-+++ linux-2.6.13-rc2~dma_mask/drivers/media/video/bttv-driver.c	2005-07-07 22:43:50.000000000 +0200
-@@ -3880,11 +3881,6 @@ static int __devinit bttv_probe(struct p
-         pci_set_master(dev);
- 	pci_set_command(dev);
- 	pci_set_drvdata(dev,btv);
--	if (!pci_dma_supported(dev,0xffffffff)) {
--		printk("bttv%d: Oops: no 32bit PCI DMA ???\n", btv->c.nr);
--		result = -EIO;
--		goto fail1;
--	}
+diff -urpNX dontdiff 2.6.13-rc1.orig/arch/arm/mach-omap/pm.c 2.6.13-rc1/arch/arm/mach-omap/pm.c
+--- 2.6.13-rc1.orig/arch/arm/mach-omap/pm.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/arch/arm/mach-omap/pm.c	2005-07-05 10:07:38.000000000 +0200
+@@ -504,6 +504,8 @@ static void omap_pm_init_proc(void)
+ 	entry = create_proc_read_entry("driver/omap_pm",
+ 				       S_IWUSR | S_IRUGO, NULL,
+ 				       omap_pm_read_proc, 0);
++	if (entry == NULL)
++		printk(KERN_WARNING "omap_pm: Unable to create proc entry.\n");
+ }
  
-         pci_read_config_byte(dev, PCI_CLASS_REVISION, &btv->revision);
-         pci_read_config_byte(dev, PCI_LATENCY_TIMER, &lat);
+ #endif /* DEBUG && CONFIG_PROC_FS */
 
---===============74234398331070706==
+--
+
+--===============89560889646362418==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +36,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74234398331070706==--
+--===============89560889646362418==--
