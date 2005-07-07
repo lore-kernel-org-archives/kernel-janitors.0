@@ -1,74 +1,62 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 13 Jul 2005 18:31:20 +0000
-Subject: [KJ] Importance of compile testing
-Message-Id: <20050713183120.GF21831@homer.coderock.org>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:52 +0000
+Subject: [KJ] [patch 2.6.13-rc1 18/23] Audit return code of create_proc_*
+Message-Id: <20050707154643.692435000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="4Ckj6UjgE2iN1+kY"
+Content-Type: multipart/mixed; boundary="===============74532843178385288=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+--===============74532843178385288==
+Content-Disposition: inline;
+	filename=proc_create_arch_parisc_kernel_pci-dma.c.diff
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+diff -urpNX dontdiff 2.6.13-rc1.orig/arch/parisc/kernel/pci-dma.c 2.6.13-rc1/arch/parisc/kernel/pci-dma.c
+--- 2.6.13-rc1.orig/arch/parisc/kernel/pci-dma.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/arch/parisc/kernel/pci-dma.c	2005-07-05 11:17:45.999904208 +0200
+@@ -333,18 +333,28 @@ pcxl_free_range(unsigned long vaddr, siz
+ static int __init
+ pcxl_dma_init(void)
+ {
+-    if (pcxl_dma_start == 0)
+-	return 0;
++	if (pcxl_dma_start == 0)
++		return 0;
+ 
+-    spin_lock_init(&pcxl_res_lock);
+-    pcxl_res_size = PCXL_DMA_MAP_SIZE >> (PAGE_SHIFT + 3);
+-    pcxl_res_hint = 0;
+-    pcxl_res_map = (char *)__get_free_pages(GFP_KERNEL,
++	spin_lock_init(&pcxl_res_lock);
++	pcxl_res_size = PCXL_DMA_MAP_SIZE >> (PAGE_SHIFT + 3);
++	pcxl_res_hint = 0;
++	pcxl_res_map = (char *)__get_free_pages(GFP_KERNEL,
+ 					    get_order(pcxl_res_size));
+-    memset(pcxl_res_map, 0, pcxl_res_size);
+-    proc_gsc_root = proc_mkdir("gsc", 0);
+-    create_proc_info_entry("dino", 0, proc_gsc_root, pcxl_proc_info);
+-    return 0;
++	memset(pcxl_res_map, 0, pcxl_res_size);
++	proc_gsc_root = proc_mkdir("gsc", 0);
++	if (!proc_gsc_root)
++    		printk(KERN_WARNING 
++			"pcxl_dma_init: Unable to create gsc /proc dir entry\n");
++	else {
++		struct proc_dir_entry* ent;
++		ent = create_proc_info_entry("dino", 0, 
++				proc_gsc_root, pcxl_proc_info);
++		if (!ent)
++			printk(KERN_WARNING 
++				"pci-dma.c: Unable to create dino /proc entry.\n");
++
++	return 0;
+ }
+ 
+ __initcall(pcxl_dma_init);
 
-Hi.
+--
 
-After compile failures in patches from four different authors I
-think it's time to repeat that compile tests are important for
-patches.
-Even when you do a simple fix, and you are sure nothing can go
-wrong. Murphy's law applies here as well. :-)
-
-I know it's easy to forget it, I sure have a couple of times.
-
-
-I'm attaching a script I use for compile tests; yes it's stupid,
-but it can catch warnings on other architecture even without
-cross toolchains.
-It assumes you are in kernel directory, and have already ran
-"make" there. Takes only .bz2 patchsets, but that's trivial
-to change.
-
-When it finishes, you just type what the  last line says:
-"diff -u out.clean out.kj | less -p '^\+'", look at warnings
-and press 'n' till you get to the end.
-
-
-	Domen
-
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=kj_compile_test
-
-#!/bin/bash
-if [ "$1" == "" ]; then
-	echo "usage $0 patchset.bz2"
-	exit 1
-fi
-
-# TODO test if applies cleanly, if right dir?
-
-echo "[1/4] applying patch"
-bzcat $1 | patch -sp1
-echo "[2/4] compiling"
-compile-test-bz-patchset $1 > out.kj
-echo "[3/4] unapplying patch"
-bzcat $1 | patch -sRp1
-echo "[4/4] compiling"
-compile-test-bz-patchset $1 > out.clean
-
-echo "output in out.kj and out.clean"
-echo "diff -u out.clean out.kj | less -p '^\+'"
-
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=compile-test-bz-patchset
-
-#!/bin/bash
-bzcat $@ | egrep '^\+\+\+' | cut -f1 | cut -f2- -d'/' | egrep '\.[chS]$' | sed 's/\.[chS]$/.o/' | xargs -n1 make 2>&1 | sed 's/:[0-9]\+:/:/g'
-
---4Ckj6UjgE2iN1+kY
+--===============74532843178385288==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---4Ckj6UjgE2iN1+kY--
+--===============74532843178385288==--
