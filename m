@@ -1,54 +1,40 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 07 Jul 2005 19:01:38 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Thu, 07 Jul 2005 19:25:56 +0000
 Subject: Re: [KJ] [PATCH] drivers/scsi/qlogicfc.c: It's changes
-Message-Id: <20050707190137.GA19438@kroah.com>
+Message-Id: <20050707192556.GB14906@parcelfarce.linux.theplanet.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============3405154917419726=="
+Content-Type: multipart/mixed; boundary="===============35843264188169766=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050707010526.GA5406@garfield.casa.sp.br>
 In-Reply-To: <20050707010526.GA5406@garfield.casa.sp.br>
 To: kernel-janitors@vger.kernel.org
 
---===============3405154917419726==
+--===============35843264188169766==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Jul 06, 2005 at 10:05:26PM -0300, Rodrigo P. do Nascimento wrote:
-> Hi All,
+On Thu, Jul 07, 2005 at 12:01:38PM -0700, Greg KH wrote:
+> Please read the description of how pci_get_device() works.  In short it
+> increments the reference count of the pci_dev that is returned.  Later
+> on in this function, that pointer is saved off into a structure, which
+> is fine.  Problem happens when that larger structure is freed when the
+> device or driver is removed.  You need to decrement the usage count of
+> that structure at that point in time.
 > 
-> I'm trying again. This time I checked whether the code isn't into the
-> #ifdef or #ifndef block. :)
-> I hope that it's right. My apologies whether something is wrong. I only
-> want to help the project.
-> I'm a newbie, so far.   :)
+> Care to redo this?
 
-Nice try, but here is why this task is so tough :(
+Have we given up on getting people to convert drivers to the pci_driver
+model then?
 
-This patch will leak a reference count for the pci device.
+-- 
+"Next the statesmen will invent cheap lies, putting the blame upon 
+the nation that is attacked, and every man will be glad of those
+conscience-soothing falsities, and will diligently study them, and refuse
+to examine any refutations of them; and thus he will by and by convince 
+himself that the war is just, and will thank God for the better sleep 
+he enjoys after this process of grotesque self-deception." -- Mark Twain
 
-> --- /usr/src/linux/drivers/scsi/qlogicfc.c	2005-06-22 16:33:05.000000000 -0300
-> +++ /usr/src/linux-kj/drivers/scsi/qlogicfc.c	2005-07-05 19:03:39.000000000 -0300
-> @@ -732,7 +732,7 @@ static int isp2x00_detect(Scsi_Host_Temp
-> 
->  	for (i=0; i<2; i++){
->  		pdev = NULL;
-> -	        while ((pdev = pci_find_device(PCI_VENDOR_ID_QLOGIC, device_ids[i], pdev))) {
-> +	        while ((pdev = pci_get_device(PCI_VENDOR_ID_QLOGIC, device_ids[i], pdev))) {
-
-Please read the description of how pci_get_device() works.  In short it
-increments the reference count of the pci_dev that is returned.  Later
-on in this function, that pointer is saved off into a structure, which
-is fine.  Problem happens when that larger structure is freed when the
-device or driver is removed.  You need to decrement the usage count of
-that structure at that point in time.
-
-Care to redo this?
-
-thanks,
-
-greg k-h
-
---===============3405154917419726==
+--===============35843264188169766==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============3405154917419726==--
+--===============35843264188169766==--
