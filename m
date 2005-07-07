@@ -1,62 +1,42 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:07:51 +0000
-Subject: [KJ] [PATCH] drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c :
-Message-Id: <42D8B247.1050608@feitoza.com.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:39 +0000
+Subject: [KJ] [patch 2.6.13-rc1 05/23] Audit return code of create_proc_*
+Message-Id: <20050707154534.740994000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------030000000506030001080206"
+Content-Type: multipart/mixed; boundary="===============1392691434110751=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------030000000506030001080206
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============1392691434110751==
+Content-Disposition: inline; filename=proc_create_drivers_block_cpqarray.c.diff
 
-
-
---------------030000000506030001080206
-Content-Type: text/x-patch;
- name="dvb-ttusb-budget.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="dvb-ttusb-budget.patch"
-
-Use of the time_after_eq() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
-
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-
---- linux/drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c	2005-07-13 17:52:17.000000000 -0300
-+++ linux-kj/drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c	2005-07-15 21:46:29.050584920 -0300
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/time.h>
- #include <linux/errno.h>
-+#include <linux/jiffies.h>
- #include <asm/semaphore.h>
+diff -urpNX dontdiff 2.6.13-rc1.orig/drivers/block/cpqarray.c 2.6.13-rc1/drivers/block/cpqarray.c
+--- 2.6.13-rc1.orig/drivers/block/cpqarray.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/drivers/block/cpqarray.c	2005-07-05 10:38:04.134002864 +0200
+@@ -213,13 +213,18 @@ static struct proc_dir_entry *proc_array
+  */
+ static void __init ida_procinit(int i)
+ {
++	struct proc_dir_entry* ent;
++	
+ 	if (proc_array == NULL) {
+ 		proc_array = proc_mkdir("cpqarray", proc_root_driver);
+ 		if (!proc_array) return;
+ 	}
  
- #include "dvb_frontend.h"
-@@ -570,7 +571,8 @@
- 				  const u8 * data, int len);
- #endif
+-	create_proc_read_entry(hba[i]->devname, 0, proc_array,
++	ent = create_proc_read_entry(hba[i]->devname, 0, proc_array,
+ 			       ida_proc_get_info, hba[i]);
++	if (!ent)
++		printk(KERN_WARNING 
++			"cpqarray: Unable to create /proc entry.\n");
+ }
  
--static int numpkt = 0, lastj, numts, numstuff, numsec, numinvalid;
-+static int numpkt = 0, numts, numstuff, numsec, numinvalid;
-+static unsigned long lastj;
- 
- static void ttusb_process_muxpack(struct ttusb *ttusb, const u8 * muxpack,
- 			   int len)
-@@ -779,7 +781,7 @@
- 			u8 *data;
- 			int len;
- 			numpkt++;
--			if ((jiffies - lastj) >= HZ) {
-+			if (time_after_eq(jiffies, lastj + HZ)) {
- #if DEBUG > 2
- 				printk
- 				    ("frames/s: %d (ts: %d, stuff %d, sec: %d, invalid: %d, all: %d)\n",
+ /*
 
---------------030000000506030001080206
+--
+
+--===============1392691434110751==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------030000000506030001080206--
+--===============1392691434110751==--
