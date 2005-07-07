@@ -1,67 +1,42 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 18 Jul 2005 14:05:21 +0000
-Subject: Re: [KJ] [PATCH] drivers/net/cs89x0.c : Use of time_after(),
-Message-Id: <20050718140521.GA2457@homer.coderock.org>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:36 +0000
+Subject: [KJ] [patch 2.6.13-rc1 02/23] Audit return code of create_proc_*
+Message-Id: <20050707154518.886592000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============047481719945830836=="
+Content-Type: multipart/mixed; boundary="===============62238803146911925=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42D8B1D6.2090302@feitoza.com.br>
-In-Reply-To: <42D8B1D6.2090302@feitoza.com.br>
 To: kernel-janitors@vger.kernel.org
 
---===============047481719945830836==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============62238803146911925==
+Content-Disposition: inline;
+	filename=proc_create_drivers_net_wireless_atmel.c.diff
 
-On 16/07/05 04:05 -0300, Marcelo Feitoza Parisi wrote:
-> 
+diff -urpNX dontdiff 2.6.13-rc1.orig/drivers/net/wireless/atmel.c 2.6.13-rc1/drivers/net/wireless/atmel.c
+--- 2.6.13-rc1.orig/drivers/net/wireless/atmel.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/drivers/net/wireless/atmel.c	2005-07-05 11:25:03.189441296 +0200
+@@ -1507,6 +1507,7 @@ static int atmel_read_proc(char *page, c
+ struct net_device *init_atmel_card( unsigned short irq, int port, const AtmelFWType fw_type,  
+ 				    struct device *sys_dev, int (*card_present)(void *), void *card)
+ {
++	struct proc_dir_entry* ent;
+ 	struct net_device *dev;
+ 	struct atmel_private *priv;
+ 	int rc;
+@@ -1621,7 +1622,9 @@ struct net_device *init_atmel_card( unsi
+ 	
+ 	netif_carrier_off(dev);
+ 	
+-	create_proc_read_entry ("driver/atmel", 0, NULL, atmel_read_proc, priv);	
++	ent = create_proc_read_entry ("driver/atmel", 0, NULL, atmel_read_proc, priv);	
++	if (!ent)
++		printk(KERN_WARNING "atmel: Unable to create /proc entry.\n");
+ 	
+ 	printk(KERN_INFO "%s: Atmel at76c50x wireless. Version %d.%d simon@thekelleys.org.uk\n",
+ 	       dev->name, DRIVER_MAJOR, DRIVER_MINOR);
 
-> Use of time_after(), time_after_eq() and time_before() macros, define at
-> linux/jiffies.h, which deal with wrapping correctly and are nicer to read.
-> 
-> Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-> 
-> --- linux/drivers/net/cs89x0.c	2005-07-13 17:52:18.000000000 -0300
-> +++ linux-kj/drivers/net/cs89x0.c	2005-07-15 21:55:17.376267208 -0300
-> @@ -93,6 +93,7 @@
->     or override something. */
->  #include <linux/config.h>
->  #include <linux/module.h>
-> +#include <linux/jiffies.h>
->  
->  /*
->   * Set this to zero to disable DMA code
-> @@ -363,12 +364,12 @@
->  static int __init
->  wait_eeprom_ready(struct net_device *dev)
->  {
-> -	int timeout = jiffies;
-> +	unsigned long timeout = jiffies;
->  	/* check to see if the EEPROM is ready, a timeout is used -
->  	   just in case EEPROM is ready when SI_BUSY in the
->  	   PP_SelfST is clear */
->  	while(readreg(dev, PP_SelfST) & SI_BUSY)
-> -		if (jiffies - timeout >= 40)
-> +		if (time_after_eq(jiffies, timeout + 40))
+--
 
-linux.bkbits.net tells me:
-2002/02/05 torvalds           | 		if (jiffies - timeout >= 40)
-And since this is a i386 driver (cs89x0.txt), HZ was 100 back then.
-
-So... change this to msecs_to_jiffies(400) to make it right?
-Same goes for the rest of patch.
-
-> @@ -958,7 +959,8 @@
->  
->  	/* Wait until the chip is reset */
->  	reset_start_time = jiffies;
-> -	while( (readreg(dev, PP_SelfST) & INIT_DONE) == 0 && jiffies - reset_start_time < 2)
-> +	while( (readreg(dev, PP_SelfST) & INIT_DONE) == 0 &&
-
-	while ((...
-
-
---===============047481719945830836==
+--===============62238803146911925==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============047481719945830836==--
+--===============62238803146911925==--
