@@ -1,52 +1,40 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:01:59 +0000
-Subject: [KJ] [PATCH] drivers/net/3c59x.c : Use of the time_after() macro
-Message-Id: <42D8B0E7.2040605@feitoza.com.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 07 Jul 2005 15:44:55 +0000
+Subject: [KJ] [patch 2.6.13-rc1 21/23] Audit return code of create_proc_*
+Message-Id: <20050707154659.756815000@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080400000508030208050005"
+Content-Type: multipart/mixed; boundary="===============19545804134868261=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------080400000508030208050005
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============19545804134868261==
+Content-Disposition: inline; filename=proc_create_arch_arm_kernel_ecard.c.diff
 
+diff -urpNX dontdiff 2.6.13-rc1.orig/arch/arm/kernel/ecard.c 2.6.13-rc1/arch/arm/kernel/ecard.c
+--- 2.6.13-rc1.orig/arch/arm/kernel/ecard.c	2005-06-29 07:57:29.000000000 +0200
++++ 2.6.13-rc1/arch/arm/kernel/ecard.c	2005-07-05 09:22:13.000000000 +0200
+@@ -776,9 +776,16 @@ static struct proc_dir_entry *proc_bus_e
+ 
+ static void ecard_proc_init(void)
+ {
++	struct proc_dir_entry* proc_entry;
++
+ 	proc_bus_ecard_dir = proc_mkdir("ecard", proc_bus);
+-	create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
++	if (proc_bus_ecard_dir == NULL)
++		printk(KERN_WARNING 
++			"ecard: Unable to create proc dir entry.\n");
++	proc_entry = create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
+ 		get_ecard_dev_info);
++	if (proc_entry == NULL) 
++		printk(KERN_WARNING "ecard: Unable to create proc entry.\n");
+ }
+ 
+ #define ec_set_resource(ec,nr,st,sz)				\
 
+--
 
---------------080400000508030208050005
-Content-Type: text/x-patch;
- name="3c59x.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="3c59x.patch"
-
-Use of the time_after() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
-
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-
---- linux/drivers/net/3c59x.c	2005-07-13 17:53:27.000000000 -0300
-+++ linux-kj/drivers/net/3c59x.c	2005-07-14 15:14:20.762224920 -0300
-@@ -258,6 +258,7 @@
- #include <linux/highmem.h>
- #include <linux/eisa.h>
- #include <linux/bitops.h>
-+#include <linux/jiffies.h>
- #include <asm/irq.h>			/* For NR_IRQS only. */
- #include <asm/io.h>
- #include <asm/uaccess.h>
-@@ -2668,7 +2669,7 @@
- 			skb = dev_alloc_skb(PKT_BUF_SZ);
- 			if (skb == NULL) {
- 				static unsigned long last_jif;
--				if ((jiffies - last_jif) > 10 * HZ) {
-+				if (time_after(jiffies, last_jif + 10 * HZ)) {
- 					printk(KERN_WARNING "%s: memory shortage\n", dev->name);
- 					last_jif = jiffies;
- 				}
-
---------------080400000508030208050005
+--===============19545804134868261==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------080400000508030208050005--
+--===============19545804134868261==--
