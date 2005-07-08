@@ -1,28 +1,50 @@
-From: Dean Nelson <dcn@sgi.com>
-Date: Mon, 11 Jul 2005 12:52:56 +0000
-Subject: [KJ] Re: [PATCH 6/14] ia64/sn: use msleep_interruptible() instead
-Message-Id: <20050711125256.GA26049@sgi.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Fri, 08 Jul 2005 19:31:19 +0000
+Subject: [KJ] [PATCH] drivers/scsi/ppa.c : Use of time_after macro
+Message-Id: <42CED487.2010606@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============036930586597763604=="
+Content-Type: multipart/mixed; boundary="------------020200060508090202070802"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============036930586597763604==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------020200060508090202070802
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 08, 2005 at 05:10:22PM -0700, Nishanth Aravamudan wrote:
-> From: Nishanth Aravamudan <nacc@us.ibm.com>
-> 
-> Description: Replace schedule_timeout() with msleep_interruptible() to
-> guarantee the task delays as expected.
-> 
-> Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
-Your changes to arch/ia64/sn/kernel/xpc_main.c looked good to me. Thanks.
+--------------020200060508090202070802
+Content-Type: text/x-patch;
+ name="ppa.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="ppa.patch"
 
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
---===============036930586597763604==
+--- linux/drivers/scsi/ppa.c	2005-07-07 19:11:54.000000000 -0300
++++ linux-kj/drivers/scsi/ppa.c	2005-07-08 02:03:59.567128528 -0300
+@@ -18,6 +18,7 @@
+ #include <linux/parport.h>
+ #include <linux/workqueue.h>
+ #include <linux/delay.h>
++#include <linux/jiffies.h>
+ #include <asm/io.h>
+ 
+ #include <scsi/scsi.h>
+@@ -726,7 +727,7 @@
+ 				retv--;
+ 
+ 			if (retv) {
+-				if ((jiffies - dev->jstart) > (1 * HZ)) {
++				if (time_after(jiffies, dev->jstart + 1 * HZ)) {
+ 					printk
+ 					    ("ppa: Parallel port cable is unplugged!!\n");
+ 					ppa_fail(dev, DID_BUS_BUSY);
+
+--------------020200060508090202070802
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -33,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============036930586597763604==--
+--------------020200060508090202070802--
