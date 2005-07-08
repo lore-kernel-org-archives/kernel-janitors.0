@@ -1,46 +1,45 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Tue, 12 Jul 2005 12:23:42 +0000
-Subject: Re: [KJ] [patch 2.6.13-rc1 17/23] Audit return code of create_proc_*
-Message-Id: <20050712122342.GC2470@homer.coderock.org>
+From: Daniel Mills <danielmiller@uku.co.uk>
+Date: Fri, 08 Jul 2005 20:41:17 +0000
+Subject: [KJ] Hello
+Message-Id: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4803137218550726=="
+Content-Type: multipart/mixed; boundary="===============65296093879419592=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050707154638.321093000@rhum.iomeda.fr>
-In-Reply-To: <20050707154638.321093000@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============4803137218550726==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============65296093879419592==
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 12/07/05 14:03 +0200, Christophe Lucas wrote:
-> Description:
-> Audit return of create_proc_* functions.
-> 
-> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-> 
-> Index: 2.6.13-rc1/arch/ppc/platforms/residual.c
-> ===================================================================
-> --- 2.6.13-rc1.orig/arch/ppc/platforms/residual.c
-> +++ 2.6.13-rc1/arch/ppc/platforms/residual.c
-> @@ -1024,9 +1024,13 @@ static int proc_prep_residual_read(char 
->  int __init
->  proc_prep_residual_init(void)
->  {
-> +	struct proc_dir_entry *ent;
->  	if (have_residual_data)
+Dear Friend, 
+My name is Daniel Mills. 
+i'm a 65 years old man. i am british living in Dakar ( Senegal).
+i'm a merchant and owned two businesses in Dakar. i'm married with two hildren. my wife and two children died in a car accident six years ago before this happened my business and concern for making money was all i lived for.i never really cared about other values in life. 
+But since the loss of my family,i have found a new desire to assist 
+helpless familes. 
+I have been helping orphans in orphanage/ motherless homes,i have
+donated some money to orphans in sudan,south africa,cameroun,brazil,
+spain,austria ,germany and some asian countries. before i became ill,i kept some money, twelve and a half million dollars $12.5million.usd.) to be precise in a long term deposit account in a security company in Europe.
+presently, i'm in a hospital. 
+My doctors told me i have prostrate cancer that i have a few months to
+live.it is my last wish to see this money distributed to charity
+organizations. because so much of my wealth has been plundered by 
+relatives and friends since my illness, i cannot live with the agony of entrusting this huge responsibility to any of them since the money in the security
+company is the last fund that i have left i am some how stranded in the hospital because my firends and relative have misuse all my funds that i left in thier posession. 
+Please, i beg you in the name of God to help me collect the deposit
+from the security company in Europe and distribute itamongst charity
+organizations. use your  judgement to distribute the money and keep 5% 
+of it to yourself. 
+Feel free to reimburse yourself when you have the money for any cost you incure during the process of collecting and distributing the money to charity organizations. may the good Lord bless you and your family.
+i await your urgent response. 
+please reply to this mail as i can only reply through my labtop I
+cannot talk very well: danielmills5@yahoo.it 
+sincerly, 
+Daniel mills 
 
-				^ missing '{'?
 
-> -		create_proc_read_entry("residual", S_IRUGO, NULL,
-> +		ent = create_proc_read_entry("residual", S_IRUGO, NULL,
->  					proc_prep_residual_read, NULL);
-> +		if (!ent)
-> +			printk(KERN_WARNING 
 
-					   ^ whitespace :-)
-
---===============4803137218550726==
+--===============65296093879419592==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4803137218550726==--
+--===============65296093879419592==--
