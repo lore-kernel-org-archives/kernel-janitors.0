@@ -1,41 +1,52 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Mon, 11 Jul 2005 13:58:17 +0000
-Subject: Re: [KJ] [PATCH 08/20] Fix "nocast type" warnings
-Message-Id: <20050711135817.GC29554@parcelfarce.linux.theplanet.co.uk>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Fri, 08 Jul 2005 19:32:31 +0000
+Subject: [KJ] [PATCH] drivers/ieee1394/hosts.c : Use of time_before macro
+Message-Id: <42CED4CF.90906@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13557666469791263=="
+Content-Type: multipart/mixed; boundary="------------070103070508080203000609"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507102319.16053.victor@cetuc.puc-rio.br>
-In-Reply-To: <200507102319.16053.victor@cetuc.puc-rio.br>
+References: <425D3FF0.1020406@feitoza.com.br>
+In-Reply-To: <425D3FF0.1020406@feitoza.com.br>
 To: kernel-janitors@vger.kernel.org
 
---===============13557666469791263==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------070103070508080203000609
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 10, 2005 at 11:19:15PM +0000, Victor Fusco wrote:
-> Description:
->     Fix the sparse warning "implicit cast to nocast type"
+Use of time_before() macro, defined at linux/jiffies.h, which deal with
+wrapping correctly and are nicer to read.
 
->  static int ether1394_tx (struct sk_buff *skb, struct net_device *dev)
->  {
-> -	int kmflags = in_interrupt() ? GFP_ATOMIC : GFP_KERNEL;
-> +	unsigned int kmflags = in_interrupt() ? GFP_ATOMIC : GFP_KERNEL;
->  	struct eth1394hdr *eth;
+--------------070103070508080203000609
+Content-Type: text/x-patch;
+ name="hosts.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="hosts.patch"
 
-This construct is bad and needs to be removed.  We should *know* what
-context ether1394_tx is being called in.  Just leave this one alone so
-we continue to get a warning until someone fixes it properly.
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
--- 
-"Next the statesmen will invent cheap lies, putting the blame upon 
-the nation that is attacked, and every man will be glad of those
-conscience-soothing falsities, and will diligently study them, and refuse
-to examine any refutations of them; and thus he will by and by convince 
-himself that the war is just, and will thank God for the better sleep 
-he enjoys after this process of grotesque self-deception." -- Mark Twain
+--- linux/drivers/ieee1394/hosts.c	2005-06-17 16:48:29.000000000 -0300
++++ linux-kj/drivers/ieee1394/hosts.c	2005-07-07 20:38:07.609477888 -0300
+@@ -18,6 +18,7 @@
+ #include <linux/slab.h>
+ #include <linux/pci.h>
+ #include <linux/timer.h>
++#include <linux/jiffies.h>
+ 
+ #include "csr1212.h"
+ #include "ieee1394.h"
+@@ -217,7 +218,7 @@
+ 
+ 	/* IEEE 1394a-2000 prohibits using the same generation number
+ 	 * twice in a 60 second period. */
+-	if (jiffies - host->csr.gen_timestamp[next_gen] < 60 * HZ)
++	if (time_before(jiffies, host->csr.gen_timestamp[next_gen] + 60 * HZ))
+ 		/* Wait 60 seconds from the last time this generation number was
+ 		 * used. */
+ 		reset_delay = (60 * HZ) + host->csr.gen_timestamp[next_gen] - jiffies;
 
---===============13557666469791263==
+--------------070103070508080203000609
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13557666469791263==--
+--------------070103070508080203000609--
