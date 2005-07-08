@@ -1,46 +1,61 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 08 Jul 2005 10:18:15 +0000
-Subject: [KJ] [patch 2.6.13-rc1 02/23][RESEND] Audit return code of
-Message-Id: <20050708101815.GL4683@rhum.iomeda.fr>
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Fri, 08 Jul 2005 18:21:15 +0000
+Subject: [KJ] [PATCH] GCC4 sched.c (x86_64) warning: control may reach end
+Message-Id: <42CEC41B.1090309@cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============47547032190205463=="
+Content-Type: multipart/mixed; boundary="------------040203090700030204070304"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============47547032190205463==
-Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format.
+--------------040203090700030204070304
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-Description:
-Audit return of create_proc_* functions.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-Index: 2.6.13-rc1/drivers/net/wireless/atmel.c
-===================================================================
---- 2.6.13-rc1.orig/drivers/net/wireless/atmel.c
-+++ 2.6.13-rc1/drivers/net/wireless/atmel.c
-@@ -1507,6 +1507,7 @@ static int atmel_read_proc(char *page, c
- struct net_device *init_atmel_card( unsigned short irq, int port, const AtmelFWType fw_type,  
- 				    struct device *sys_dev, int (*card_present)(void *), void *card)
- {
-+	struct proc_dir_entry *ent;
- 	struct net_device *dev;
- 	struct atmel_private *priv;
- 	int rc;
-@@ -1621,7 +1622,9 @@ struct net_device *init_atmel_card( unsi
- 	
- 	netif_carrier_off(dev);
- 	
--	create_proc_read_entry ("driver/atmel", 0, NULL, atmel_read_proc, priv);	
-+	ent = create_proc_read_entry ("driver/atmel", 0, NULL, atmel_read_proc, priv);	
-+	if (!ent)
-+		printk(KERN_WARNING "atmel: Unable to create /proc entry.\n");
- 	
- 	printk(KERN_INFO "%s: Atmel at76c50x wireless. Version %d.%d simon@thekelleys.org.uk\n",
- 	       dev->name, DRIVER_MAJOR, DRIVER_MINOR);
 
---===============47547032190205463==
+--------------040203090700030204070304
+Content-Type: text/x-diff; x-mac-type="0"; x-mac-creator="0";
+	name="bitops.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="bitops.patch"
+
+
+
+This patch eliminates the GCC4 warning on the x86_64 platform:
+
+kernel/sched.c:1824: warning: control may reach end of non-void function
+'sched_find_first_bit' being inlined.
+
+The change follows the lead of others, i.e. it is guaranteed that at least
+one of b[0], b[1], or b[2] will have a bit set and evaluate to true. That
+being said, GCC4.0.0 notices that the code flow does not return anything
+if b[0], b[1] and b[2] are not true. Since we know better, if it's not b[0]
+or b[1], it has to be b[2].
+
+Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+---
+
+
+diff -puN include/asm-x86_64/bitops.h~bitops include/asm-x86_64/bitops.h
+--- linux-2.6.13-rc2/include/asm-x86_64/bitops.h~bitops	2005-07-08 10:21:55.646887616 -0700
++++ linux-2.6.13-rc2-jessem/include/asm-x86_64/bitops.h	2005-07-08 10:22:37.738488720 -0700
+@@ -348,8 +348,7 @@ static inline int sched_find_first_bit(c
+ 		return __ffs(b[0]);
+ 	if (b[1])
+ 		return __ffs(b[1]) + 64;
+-	if (b[2])
+-		return __ffs(b[2]) + 128;
++	return __ffs(b[2]) + 128;
+ }
+ 
+ /**
+_
+
+
+--------------040203090700030204070304
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============47547032190205463==--
+--------------040203090700030204070304--
