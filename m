@@ -1,51 +1,41 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Mon, 11 Jul 2005 19:24:05 +0000
-Subject: [KJ] [PATCH] drivers/net/wan/sdla_ft1.c : Use of time_after macro
-Message-Id: <42D2C755.6040601@feitoza.com.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Fri, 08 Jul 2005 13:37:31 +0000
+Subject: [KJ] [patch 2.6.13-rc1 16/23][RESEND] Audit return code of
+Message-Id: <20050708133731.GX4683@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------090902020603080205030704"
+Content-Type: multipart/mixed; boundary="===============038237212078465532=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------090902020603080205030704
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============038237212078465532==
+Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
+
+Description:
+Audit return of create_proc_* functions.
+
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
---------------090902020603080205030704
-Content-Type: text/x-patch;
- name="sdla_ft1.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="sdla_ft1.patch"
-
-Use of the time_after_eq() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
-
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-
---- linux/drivers/net/wan/sdla_ft1.c	2005-06-17 16:48:29.000000000 -0300
-+++ linux-kj/drivers/net/wan/sdla_ft1.c	2005-07-07 22:45:26.394206096 -0300
-@@ -29,6 +29,7 @@
- #include <linux/wanrouter.h>	/* WAN router definitions */
- #include <linux/wanpipe.h>	/* WANPIPE common user API definitions */
- #include <linux/if_arp.h>	/* ARPHRD_* defines */
-+#include <linux/jiffies.h>	/* time_after() macro */
+Index: 2.6.13-rc1/arch/sh64/kernel/process.c
+===================================================================
+--- 2.6.13-rc1.orig/arch/sh64/kernel/process.c
++++ 2.6.13-rc1/arch/sh64/kernel/process.c
+@@ -953,7 +953,11 @@ asids_proc_info(char *buf, char **start,
  
- #include <linux/inetdevice.h>
- #include <asm/uaccess.h>
-@@ -164,7 +165,7 @@
+ static int __init register_proc_asids(void)
+ {
+-  create_proc_read_entry("asids", 0, NULL, asids_proc_info, NULL);
++	struct proc_dir_entry *ent;
++	ent = create_proc_read_entry("asids", 0, NULL, asids_proc_info, NULL);
++	if (!ent)
++		printk(KERN_WARNING 
++			"process: Unable to create asids /proc entry.\n");
+   return 0;
+ }
  
- 		timeout = jiffies;
- 		while (mb->return_code != 'I')	/* Wait 1s for board to initialize */
--			if ((jiffies - timeout) > 1*HZ) break;
-+			if (time_after(jiffies, timeout + 1*HZ)) break;
- 
- 		if (mb->return_code != 'I') {
- 			printk(KERN_INFO
 
---------------090902020603080205030704
+--===============038237212078465532==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------090902020603080205030704--
+--===============038237212078465532==--
