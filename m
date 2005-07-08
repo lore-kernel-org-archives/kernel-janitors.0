@@ -1,44 +1,69 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 06 Jul 2005 18:23:13 +0000
-Subject: Re: [KJ] [PATCH 2.6.13-rc1 14/17] fix sparse warnings [UPDATE 1/2]
-Message-Id: <20050706182313.GC10429@homer.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30873896973522874=="
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Fri, 08 Jul 2005 18:37:41 +0000
+Subject: [KJ] [PATCH] drivers/net/3c523.c : Use of time_after macro
+Message-Id: <42CEC7F5.8090005@feitoza.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507031904.44301.victor@cetuc.puc-rio.br>
-In-Reply-To: <200507031904.44301.victor@cetuc.puc-rio.br>
+References: <425A4AAB.9060400@feitoza.com.br>
+In-Reply-To: <425A4AAB.9060400@feitoza.com.br>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============30873896973522874==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
-On 05/07/05 14:53 +0000, Victor Fusco wrote:
-> On 03/07/05 2005 14:00, Domen Puncer wrote:
-> > >  include/linux/security.h |    8 +++++---
-> > 
-> > How is this related to net/?
-> > 
-> 
-> Description:
->     Fix the sparse warning "implicit cast to nocast type"
-> 
-> File/Subsystem: include/linux/security.h
-> 
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
-New warnings:
-+security/dummy.c:992: warning: assignment from incompatible pointer type
-+security/selinux/hooks.c:4411: warning: initialization from incompatible pointer type
+--- linux/drivers/net/3c523.c   2005-07-07 19:11:50.000000000 -0300
++++ linux-kj/drivers/net/3c523.c        2005-07-07 20:32:54.379096144 -0300
+@@ -105,6 +105,7 @@
+ #include <linux/mca-legacy.h>
+ #include <linux/ethtool.h>
+ #include <linux/bitops.h>
++#include <linux/jiffies.h>
 
---===============30873896973522874==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+ #include <asm/uaccess.h>
+ #include <asm/processor.h>
+@@ -658,7 +659,7 @@
 
+        s = jiffies;            /* warning: only active with interrupts
+on !! */
+        while (!(cfg_cmd->cmd_status & STAT_COMPL)) {
+-               if (jiffies - s > 30*HZ/100)
++               if (time_after(jiffies, s + 30*HZ/100))
+                        break;
+        }
+
+@@ -684,7 +685,7 @@
+
+        s = jiffies;
+        while (!(ias_cmd->cmd_status & STAT_COMPL)) {
+-               if (jiffies - s > 30*HZ/100)
++               if (time_after(jiffies, s + 30*HZ/100))
+                        break;
+        }
+
+@@ -709,7 +710,7 @@
+
+        s = jiffies;
+        while (!(tdr_cmd->cmd_status & STAT_COMPL)) {
+-               if (jiffies - s > 30*HZ/100) {
++               if (time_after(jiffies, s + 30*HZ/100)) {
+                        printk(KERN_WARNING "%s: %d Problems while
+running the TDR.\n", dev->name, __LINE__);
+                        result = 1;
+                        break;
+@@ -798,7 +799,7 @@
+                        elmc_id_attn586();
+                        s = jiffies;
+                        while (!(mc_cmd->cmd_status & STAT_COMPL)) {
+-                               if (jiffies - s > 30*HZ/100)
++                               if (time_after(jiffies, s + 30*HZ/100))
+                                        break;
+                        }
+                        if (!(mc_cmd->cmd_status & STAT_COMPL)) {
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============30873896973522874==--
