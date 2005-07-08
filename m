@@ -1,13 +1,15 @@
 From: Daniel Mills <danielmiller@uku.co.uk>
-Date: Fri, 08 Jul 2005 20:41:17 +0000
+Date: Fri, 08 Jul 2005 20:41:23 +0000
 Subject: [KJ] Hello
-Message-Id: <200507082039.j68Kdhj9018976@smtp.osdl.org>
+Message-Id: <200507082039.j68Kdjj9019000@smtp.osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============65296093879419592=="
+Content-Type: multipart/mixed; boundary="===============056892895811460065=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200507082039.j68Kdhj9018976@smtp.osdl.org>
+In-Reply-To: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 To: kernel-janitors@vger.kernel.org
 
---===============65296093879419592==
+--===============056892895811460065==
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 
@@ -39,7 +41,7 @@ Daniel mills
 
 
 
---===============65296093879419592==
+--===============056892895811460065==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============65296093879419592==--
+--===============056892895811460065==--
