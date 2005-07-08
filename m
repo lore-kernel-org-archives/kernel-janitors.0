@@ -1,26 +1,41 @@
 From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Fri, 08 Jul 2005 19:25:47 +0000
-Subject: [KJ] [PATCH] drivers/ide/ide-tape.c : Use of time_after macro
-Message-Id: <42CED33B.4000600@feitoza.com.br>
+Date: Fri, 08 Jul 2005 20:33:03 +0000
+Subject: Re: [KJ] [PATCH] drivers/ide/ide-tape.c : Use of time_after macro
+Message-Id: <42CEE2FF.2070707@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040600010004050907020201"
+Content-Type: multipart/mixed; boundary="------------070101060606070207000605"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <42CED33B.4000600@feitoza.com.br>
+In-Reply-To: <42CED33B.4000600@feitoza.com.br>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------040600010004050907020201
+--------------070101060606070207000605
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
-Use of the time_after() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
+Alexey Dobriyan wrote:
+> On Friday 08 July 2005 23:25, Marcelo Feitoza Parisi wrote:
+> 
+>>Use of the time_after() macro, defined at linux/jiffies.h, which deal
+>>with wrapping correctly and are nicer to read.
+> 
+> 
+> OK, you're using Thunderbird, but at least include description of what patch
+> does into attachment.
+> 
+> 
+Re-sending patch, with description in the attachment.
 
---------------040600010004050907020201
+--------------070101060606070207000605
 Content-Type: text/x-patch;
  name="ide-tape.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
  filename="ide-tape.patch"
+
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
 Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
@@ -44,7 +59,7 @@ Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
  		tape->avg_size = 0;
  		tape->avg_time = jiffies;
 
---------------040600010004050907020201
+--------------070101060606070207000605
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------040600010004050907020201--
+--------------070101060606070207000605--
