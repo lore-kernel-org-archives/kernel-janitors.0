@@ -1,34 +1,46 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:40 +0000
-Subject: [KJ] [patch 2.6.13-rc1 06/23] Audit return code of create_proc_*
-Message-Id: <20050707154540.081487000@rhum.iomeda.fr>
+Date: Fri, 08 Jul 2005 10:18:15 +0000
+Subject: [KJ] [patch 2.6.13-rc1 02/23][RESEND] Audit return code of
+Message-Id: <20050708101815.GL4683@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4383491008247849=="
+Content-Type: multipart/mixed; boundary="===============47547032190205463=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============4383491008247849==
-Content-Disposition: inline; filename=proc_create_drivers_block_cciss.c.diff
+--===============47547032190205463==
+Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/drivers/block/cciss.c 2.6.13-rc1/drivers/block/cciss.c
---- 2.6.13-rc1.orig/drivers/block/cciss.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/drivers/block/cciss.c	2005-07-05 10:36:28.782498496 +0200
-@@ -337,7 +337,10 @@ static void __devinit cciss_procinit(int
- 	pde = create_proc_read_entry(hba[i]->devname, 
- 		S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH, 
- 		proc_cciss, cciss_proc_get_info, hba[i]);
--	pde->write_proc = cciss_proc_write;
-+	if (!pde)
-+		printk(KERN_WARNING "ccis: Unable to create /proc entry.\n");
-+	else
-+		pde->write_proc = cciss_proc_write;
- }
- #endif /* CONFIG_PROC_FS */
- 
+Description:
+Audit return of create_proc_* functions.
 
---
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
---===============4383491008247849==
+Index: 2.6.13-rc1/drivers/net/wireless/atmel.c
+===================================================================
+--- 2.6.13-rc1.orig/drivers/net/wireless/atmel.c
++++ 2.6.13-rc1/drivers/net/wireless/atmel.c
+@@ -1507,6 +1507,7 @@ static int atmel_read_proc(char *page, c
+ struct net_device *init_atmel_card( unsigned short irq, int port, const AtmelFWType fw_type,  
+ 				    struct device *sys_dev, int (*card_present)(void *), void *card)
+ {
++	struct proc_dir_entry *ent;
+ 	struct net_device *dev;
+ 	struct atmel_private *priv;
+ 	int rc;
+@@ -1621,7 +1622,9 @@ struct net_device *init_atmel_card( unsi
+ 	
+ 	netif_carrier_off(dev);
+ 	
+-	create_proc_read_entry ("driver/atmel", 0, NULL, atmel_read_proc, priv);	
++	ent = create_proc_read_entry ("driver/atmel", 0, NULL, atmel_read_proc, priv);	
++	if (!ent)
++		printk(KERN_WARNING "atmel: Unable to create /proc entry.\n");
+ 	
+ 	printk(KERN_INFO "%s: Atmel at76c50x wireless. Version %d.%d simon@thekelleys.org.uk\n",
+ 	       dev->name, DRIVER_MAJOR, DRIVER_MINOR);
+
+--===============47547032190205463==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4383491008247849==--
+--===============47547032190205463==--
