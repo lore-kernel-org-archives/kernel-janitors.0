@@ -1,57 +1,86 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Fri, 29 Jul 2005 09:42:54 +0000
-Subject: Re: [KJ] [PATCH] drivers/net/es3210.c : Use of the time_after() macro
-Message-Id: <20050729094254.GA25129@homer.coderock.org>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sat, 09 Jul 2005 00:14:58 +0000
+Subject: [KJ] [PATCH 11/14] scsi/lpfc_scsi: use msleep() instead of
+Message-Id: <20050709001458.GQ2596@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59987828913494123=="
+Content-Type: multipart/mixed; boundary="===============15674706287876861=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42D8B301.3090100@feitoza.com.br>
-In-Reply-To: <42D8B301.3090100@feitoza.com.br>
-To: kernel-janitors@vger.kernel.org
+References: <20050709000324.GD2596@us.ibm.com>
+In-Reply-To: <20050709000324.GD2596@us.ibm.com>
+To: James.Bottomley@SteelEye.com
+Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linux-scsi@vger.kernel.org
 
---===============59987828913494123==
+--===============15674706287876861==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 16/07/05 04:10 -0300, Marcelo Feitoza Parisi wrote:
-> 
+From: Nishanth Aravamudan <nacc@us.ibm.com>
 
-> Use of the time_after() macro, defined at linux/jiffies.h, which deal
-> with wrapping correctly and are nicer to read.
-> 
-> Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-> 
-> --- linux/drivers/net/es3210.c	2005-07-13 17:52:19.000000000 -0300
-> +++ linux-kj/drivers/net/es3210.c	2005-07-15 23:58:12.537072344 -0300
-> @@ -56,6 +56,7 @@
->  #include <linux/init.h>
->  #include <linux/netdevice.h>
->  #include <linux/etherdevice.h>
-> +#include <linux/jiffies.h>
->  
->  #include <asm/io.h>
->  #include <asm/system.h>
-> @@ -331,7 +332,7 @@
->  	if (ei_debug > 1) printk("%s: resetting the ES3210...", dev->name);
->  
->  	end = jiffies + 2*HZ/100;
-> -        while ((signed)(end - jiffies) > 0) continue;
-> +        while (time_after(end, jiffies)) continue;
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays as expected.
 
-Seems like I missed this on the first review...
-msleep(20) should be much better here.
+Patch is compile-tested.
 
->  
->  	ei_status.txing = 0;
->  	outb(0x01, ioaddr + ES_RESET_PORT);
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+---
 
+ lpfc_scsi.c |   13 +++++--------
+ 1 files changed, 5 insertions(+), 8 deletions(-)
 
---===============59987828913494123==
+diff -urp 2.6.13-rc2-kj/drivers/scsi/lpfc/lpfc_scsi.c 2.6.13-rc2-kj-dev/drivers/scsi/lpfc/lpfc_scsi.c
+--- 2.6.13-rc2-kj/drivers/scsi/lpfc/lpfc_scsi.c	2005-07-06 07:57:19.000000000 -0700
++++ 2.6.13-rc2-kj-dev/drivers/scsi/lpfc/lpfc_scsi.c	2005-07-06 19:20:41.000000000 -0700
+@@ -24,6 +24,7 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/interrupt.h>
++#include <linux/delay.h>
+ 
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_device.h>
+@@ -885,8 +886,7 @@ __lpfc_abort_handler(struct scsi_cmnd *c
+ 		while (cmnd->host_scribble)
+ 		{
+ 			spin_unlock_irq(phba->host->host_lock);
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout(LPFC_ABORT_WAIT*HZ);
++			msleep(LPFC_ABORT_WAIT * 1000);
+ 			spin_lock_irq(phba->host->host_lock);
+ 			if (++loop_count
+ 			    > (2 * phba->cfg_nodev_tmo)/LPFC_ABORT_WAIT)
+@@ -952,8 +952,7 @@ __lpfc_reset_lun_handler(struct scsi_cmn
+ 
+ 		if (pnode->nlp_state != NLP_STE_MAPPED_NODE) {
+ 			spin_unlock_irq(phba->host->host_lock);
+-			set_current_state(TASK_UNINTERRUPTIBLE);
+-			schedule_timeout( HZ/2);
++			msleep(500);
+ 			spin_lock_irq(phba->host->host_lock);
+ 		}
+ 		if ((pnode) && (pnode->nlp_state == NLP_STE_MAPPED_NODE))
+@@ -1011,8 +1010,7 @@ __lpfc_reset_lun_handler(struct scsi_cmn
+ 				       cmnd->device->id, cmnd->device->lun,
+ 				       LPFC_CTX_LUN))) {
+ 		spin_unlock_irq(phba->host->host_lock);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(LPFC_RESET_WAIT*HZ);
++		msleep(LPFC_RESET_WAIT * 1000);
+ 		spin_lock_irq(phba->host->host_lock);
+ 
+ 		if (++loopcnt
+@@ -1110,8 +1108,7 @@ __lpfc_reset_bus_handler(struct scsi_cmn
+ 				&phba->sli.ring[phba->sli.fcp_ring],
+ 				0, 0, LPFC_CTX_HOST))) {
+ 		spin_unlock_irq(phba->host->host_lock);
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(LPFC_RESET_WAIT*HZ);
++		msleep(LPFC_RESET_WAIT * HZ);
+ 		spin_lock_irq(phba->host->host_lock);
+ 
+ 		if (++loopcnt
+
+--===============15674706287876861==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +91,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============59987828913494123==--
+--===============15674706287876861==--
