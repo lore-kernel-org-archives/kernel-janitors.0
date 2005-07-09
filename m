@@ -1,42 +1,43 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:39 +0000
-Subject: [KJ] [patch 2.6.13-rc1 05/23] Audit return code of create_proc_*
-Message-Id: <20050707154534.740994000@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sat, 09 Jul 2005 00:09:27 +0000
+Subject: [KJ] [PATCH 5/14] x86_64/smpboot: use msleep() instead of
+Message-Id: <20050709000927.GK2596@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1392691434110751=="
+Content-Type: multipart/mixed; boundary="===============76369845379552781=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============1392691434110751==
-Content-Disposition: inline; filename=proc_create_drivers_block_cpqarray.c.diff
+--===============76369845379552781==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/drivers/block/cpqarray.c 2.6.13-rc1/drivers/block/cpqarray.c
---- 2.6.13-rc1.orig/drivers/block/cpqarray.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/drivers/block/cpqarray.c	2005-07-05 10:38:04.134002864 +0200
-@@ -213,13 +213,18 @@ static struct proc_dir_entry *proc_array
-  */
- static void __init ida_procinit(int i)
- {
-+	struct proc_dir_entry* ent;
-+	
- 	if (proc_array == NULL) {
- 		proc_array = proc_mkdir("cpqarray", proc_root_driver);
- 		if (!proc_array) return;
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays as expected.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+---
+
+ smpboot.c |    3 +--
+ 1 files changed, 1 insertion(+), 2 deletions(-)
+
+diff -urpN 2.6.13-rc2-kj/arch/x86_64/kernel/smpboot.c 2.6.13-rc2-kj-dev/arch/x86_64/kernel/smpboot.c
+--- 2.6.13-rc2-kj/arch/x86_64/kernel/smpboot.c	2005-07-06 07:57:18.000000000 -0700
++++ 2.6.13-rc2-kj-dev/arch/x86_64/kernel/smpboot.c	2005-07-06 13:35:10.000000000 -0700
+@@ -1189,8 +1189,7 @@ void __cpu_die(unsigned int cpu)
+ 			printk ("CPU %d is now offline\n", cpu);
+ 			return;
+ 		}
+-		current->state = TASK_UNINTERRUPTIBLE;
+-		schedule_timeout(HZ/10);
++		msleep(100);
  	}
- 
--	create_proc_read_entry(hba[i]->devname, 0, proc_array,
-+	ent = create_proc_read_entry(hba[i]->devname, 0, proc_array,
- 			       ida_proc_get_info, hba[i]);
-+	if (!ent)
-+		printk(KERN_WARNING 
-+			"cpqarray: Unable to create /proc entry.\n");
+  	printk(KERN_ERR "CPU %u didn't die...\n", cpu);
  }
- 
- /*
 
---
-
---===============1392691434110751==
+--===============76369845379552781==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1392691434110751==--
+--===============76369845379552781==--
