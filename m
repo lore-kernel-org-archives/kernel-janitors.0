@@ -1,34 +1,45 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Sat, 09 Jul 2005 04:29:20 +0000
-Subject: Re: [KJ] [PATCH 5/15] FlashPoint: remove UINT
-Message-Id: <20050709012920.0496b7cf.rnsanchez@terra.com.br>
+From: Jesse Millan <jessem@cs.pdx.edu>
+Date: Sat, 09 Jul 2005 19:29:01 +0000
+Subject: [KJ] [PATCH] Update doc link to latest version of Andrew Morton's
+Message-Id: <42D0257D.3030807@cs.pdx.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10210049813418398=="
+Content-Type: multipart/mixed; boundary="------------080703050308090900010509"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507070304.01967.adobriyan@gmail.com>
-In-Reply-To: <200507070304.01967.adobriyan@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============10210049813418398==
-Content-Type: text/plain; charset=US-ASCII
+This is a multi-part message in MIME format.
+--------------080703050308090900010509
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
-Quoting  Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Sent on  Sat, 9 Jul 2005 01:27:04 -0300
 
-> I'm just curious: is there any reason to go from UINT to unsigned int and
-> not (also) from ULONG to unsigned long?
 
-OK, just saw patch 6/15. :)
+--------------080703050308090900010509
+Content-Type: text/x-diff; x-mac-type="0"; x-mac-creator="0";
+	name="SubmittingPatchesPatch.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="SubmittingPatchesPatch.patch"
 
--- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
 
-  Left to themselves, things tend to go from bad to worse.
+Update the link to point to the latest version of Andrew Morton's patch scripts.
 
---===============10210049813418398==
+
+---
+
+Signed-off-by: Jesse Millan <jessem@cs.pdx.edu>
+
+diff -puN Documentation/SubmittingPatches~SubmittingPatchesPatch Documentation/SubmittingPatches
+--- linux-2.6.12-rc6.kj.jm.gcc3/Documentation/SubmittingPatches~SubmittingPatchesPatch	2005-06-27 11:13:23.450934752 -0700
++++ linux-2.6.12-rc6.kj.jm.gcc3-root/Documentation/SubmittingPatches	2005-06-27 11:15:32.475320064 -0700
+@@ -77,7 +77,7 @@ Randy Dunlap's patch scripts:
+ http://developer.osdl.org/rddunlap/scripts/patching-scripts.tgz
+
+ Andrew Morton's patch scripts:
+-http://www.zip.com.au/~akpm/linux/patches/patch-scripts-0.16
++http://www.zip.com.au/~akpm/linux/patches/patch-scripts-0.20
+
+--------------080703050308090900010509
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10210049813418398==--
+--------------080703050308090900010509--
