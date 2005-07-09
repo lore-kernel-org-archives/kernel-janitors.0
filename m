@@ -1,104 +1,51 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 27 Jul 2005 13:01:15 +0000
-Subject: [KJ] [PATCH][RFC] procfs_failure && possible uses
-Message-Id: <20050727130115.GE5089@rhum.iomeda.fr>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sat, 09 Jul 2005 00:12:17 +0000
+Subject: [KJ] [PATCH 8/14] xtensa: use ssleep() instead of schedule_timeout()
+Message-Id: <20050709001217.GN2596@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38884364872248156=="
+Content-Type: multipart/mixed; boundary="===============43550431091671671=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: akpm@osdl.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, domen@coderock.org, wharms@bfs.de
+To: kernel-janitors@vger.kernel.org
 
---===============38884364872248156==
-Content-Disposition: inline
+--===============43550431091671671==
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-description:
-audit return code of create_proc_* function is a entry in janitors
-TODO list. Audit this return and printk() when it fails, spams log of
-system without compiled proc support. So this patch can correct it.
+From: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Description: Replace schedule_timeout() with ssleep() to guarantee the
+task delays as expected.
 
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
- arch/arm/kernel/apm.c   |    7 ++++---
- arch/arm/kernel/ecard.c |   12 ++++++++++--
- include/linux/proc_fs.h |    5 +++++
- 3 files changed, 19 insertions(+), 5 deletions(-)
+---
 
-Index: linux-2.6.13-rc3-mm2/include/linux/proc_fs.h
-===================================================================
---- linux-2.6.13-rc3-mm2.orig/include/linux/proc_fs.h
-+++ linux-2.6.13-rc3-mm2/include/linux/proc_fs.h
-@@ -83,6 +83,9 @@ struct vmcore {
+ traps.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff -urp 2.6.13-rc2-kj/arch/xtensa/kernel/traps.c 2.6.13-rc2-kj-dev/arch/xtensa/kernel/traps.c
+--- 2.6.13-rc2-kj/arch/xtensa/kernel/traps.c	2005-07-06 07:57:18.000000000 -0700
++++ 2.6.13-rc2-kj-dev/arch/xtensa/kernel/traps.c	2005-07-06 13:35:36.000000000 -0700
+@@ -29,6 +29,7 @@
+ #include <linux/module.h>
+ #include <linux/stringify.h>
+ #include <linux/kallsyms.h>
++#include <linux/delay.h>
  
- #ifdef CONFIG_PROC_FS
+ #include <asm/ptrace.h>
+ #include <asm/timex.h>
+@@ -488,8 +489,7 @@ void die(const char * str, struct pt_reg
  
-+#define procfs_failure(fmt,arg...) \
-+	printk(KERN_WARNING fmt,##arg)
-+
- extern struct proc_dir_entry proc_root;
- extern struct proc_dir_entry *proc_root_fs;
- extern struct proc_dir_entry *proc_net;
-@@ -198,6 +201,8 @@ static inline void proc_net_remove(const
- 
- #else
- 
-+#define procfs_failure(fmt,arg...) do { } while(0)
-+
- #define proc_root_driver NULL
- #define proc_net NULL
- #define proc_bus NULL
-Index: linux-2.6.13-rc3-mm2/arch/arm/kernel/ecard.c
-===================================================================
---- linux-2.6.13-rc3-mm2.orig/arch/arm/kernel/ecard.c
-+++ linux-2.6.13-rc3-mm2/arch/arm/kernel/ecard.c
-@@ -776,9 +776,17 @@ static struct proc_dir_entry *proc_bus_e
- 
- static void ecard_proc_init(void)
- {
-+	struct proc_dir_entry *proc_entry;
-+
- 	proc_bus_ecard_dir = proc_mkdir("ecard", proc_bus);
--	create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
--		get_ecard_dev_info);
-+	if (!proc_bus_ecard_dir)
-+		procfs_failure("ecard: Unable to create proc dir entry.\n");
-+	else {
-+		proc_entry = create_proc_info_entry("devices", 0, 
-+				proc_bus_ecard_dir, get_ecard_dev_info);
-+		if (!proc_entry)
-+			procfs_failure("ecard: Unable to create proc entry.\n");
-+	}
- }
- 
- #define ec_set_resource(ec,nr,st,sz)				\
-Index: linux-2.6.13-rc3-mm2/arch/arm/kernel/apm.c
-===================================================================
---- linux-2.6.13-rc3-mm2.orig/arch/arm/kernel/apm.c
-+++ linux-2.6.13-rc3-mm2/arch/arm/kernel/apm.c
-@@ -515,6 +515,7 @@ static int kapmd(void *arg)
- static int __init apm_init(void)
- {
- 	int ret;
-+	struct proc_dir_entry *proc_entry;
- 
- 	if (apm_disabled) {
- 		printk(KERN_NOTICE "apm: disabled on user request.\n");
-@@ -534,9 +535,9 @@ static int __init apm_init(void)
- 		return ret;
+ 	if (panic_on_oops) {
+ 		printk(KERN_EMERG "Fatal exception: panic in 5 seconds\n");
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		schedule_timeout(5 * HZ);
++		ssleep(5);
+ 		panic("Fatal exception");
  	}
- 
--#ifdef CONFIG_PROC_FS
--	create_proc_info_entry("apm", 0, NULL, apm_get_info);
--#endif
-+	proc_entry = create_proc_info_entry("apm", 0, NULL, apm_get_info);
-+	if (!proc_entry)
-+		procfs_failure("apm: Unable to create apm proc entry.\n");
- 
- 	ret = misc_register(&apm_device);
- 	if (ret != 0) {
+ 	do_exit(err);
 
---===============38884364872248156==
+--===============43550431091671671==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -109,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38884364872248156==--
+--===============43550431091671671==--
