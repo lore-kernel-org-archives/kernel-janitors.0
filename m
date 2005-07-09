@@ -1,40 +1,76 @@
-From: employment Agency <griffith@osg.com>
-Date: Thu, 14 Jul 2005 07:55:20 +0000
-Subject: [KJ] Position is available for full and part time
-Message-Id: <1c6b01c58849$9792466a$660b1363@osg.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sat, 09 Jul 2005 00:15:37 +0000
+Subject: [KJ] [PATCH 12/14] scsi/osst: use msleep() instead of
+Message-Id: <20050709001537.GR2596@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============011469789001716135=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050709000324.GD2596@us.ibm.com>
+In-Reply-To: <20050709000324.GD2596@us.ibm.com>
+To: osst@riede.org
+Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linux-scsi@vger.kernel.org
+
+--===============011469789001716135==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+
+Description: Replace schedule_timeout() with msleep() to guarantee the
+task delays as expected.
+
+Patch is compile-tested.
+
+Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+---
+
+ osst.c |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
+
+diff -urp 2.6.13-rc2-kj/drivers/scsi/osst.c 2.6.13-rc2-kj-dev/drivers/scsi/osst.c
+--- 2.6.13-rc2-kj/drivers/scsi/osst.c	2005-07-06 07:57:19.000000000 -0700
++++ 2.6.13-rc2-kj-dev/drivers/scsi/osst.c	2005-07-06 19:21:03.000000000 -0700
+@@ -862,8 +862,7 @@ static int osst_recover_wait_frame(struc
+ 				retval = osst_write_error_recovery(STp, aSRpnt, 0);
+ 				break;
+ 			}
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout (HZ / OSST_POLL_PER_SEC);
++			msleep(1000 / OSST_POLL_PER_SEC);
+ 
+ 			STp->buffer->b_data = mybuf; STp->buffer->buffer_size = 24;
+ 			memset(cmd, 0, MAX_COMMAND_SIZE);
+@@ -1558,8 +1557,7 @@ static int osst_reposition_and_retry(str
+ 			osst_set_frame_position(STp, aSRpnt, frame + skip, 1);
+ 			flag = 0;
+ 			attempts--;
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			schedule_timeout(HZ / 10);
++			msleep(100);
+ 		}
+ 		if (osst_get_frame_position(STp, aSRpnt) < 0) {		/* additional write error */
+ #if DEBUG
+@@ -1620,8 +1618,7 @@ static int osst_reposition_and_retry(str
+ 			debugging = 0;
+ 		}
+ #endif
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(HZ / 10);
++		msleep(100);
+ 	}
+ 	printk(KERN_ERR "%s:E: Failed to find valid tape media\n", name);
+ #if DEBUG
+
+--===============011469789001716135==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-
-                 Vacancies : The assistant of manager
- 
-The company "ModaTex Co." was established in 2003. The period of successful activity in the market confirms the high professionalism of our company and the wide experience, acquired in the course of our business. This has become possible thanks to a flexible approach in solving any problems and frequently changing market situation, careful and responsible attitude to our clients. We take responsibility for solving of all problems such as warehousing, sorting, transportation and goods sales.
-We use up-to-date methods of decentralized warehouses in our business, which allows us to substantially cut down expenses on organization of large scale warehouses, as well as customs duties and freight insurance expenses.
-
-Company "ModaTex Co." is seeking for responsible, literate and honest persons for the position in transaction services to be assistant of manager.
-To qualify, you must be able to check your email several times a day, be able to respond to emails immediately, be able to open bank account for company needs .
-You will be asked for punctuality, managerial abilities and responsibility. You will also receive detailed instructions for subsequent actions from our manager, with information how to receive/transfer the money. 
-You'll be get transfers from our customers. When You get money you must send it immediately by wire, Western Union
-or other payment method to account or address that we provided. This position is available for full- and part-time. 
-
-
-Requirements:
-
-Availability of computer with E-mail; 
-Computer operational experience; 
-Availability of prompt replying to E-mails from our managers; 
- 
-
-Send Us Your Resume
-
-If you are interested in this position and meet the minimum requirements please write to us and our manager will contact you:
-E-mail : directeurmodatex@aol.com
-
-
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============011469789001716135==--
