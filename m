@@ -1,43 +1,41 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:48 +0000
-Subject: [KJ] [patch 2.6.13-rc1 14/23] Audit return code of create_proc_*
-Message-Id: <20050707154622.451471000@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67588567360565799=="
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 10 Jul 2005 23:20:37 +0000
+Subject: [KJ] [PATCH 17/20] Fix "nocast type" warnings
+Message-Id: <200507102320.37206.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============67588567360565799==
-Content-Disposition: inline; filename=proc_create_arch_sh64_mm_ioremap.c.diff
+Description:
+    Fix the sparse warning "implicit cast to nocast type"
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/sh64/mm/ioremap.c 2.6.13-rc1/arch/sh64/mm/ioremap.c
---- 2.6.13-rc1.orig/arch/sh64/mm/ioremap.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/sh64/mm/ioremap.c	2005-07-05 10:27:41.902596416 +0200
-@@ -461,7 +461,11 @@ ioremap_proc_info(char *buf, char **star
- static int __init register_proc_onchip(void)
- {
- #ifdef CONFIG_PROC_FS
--	create_proc_read_entry("io_map",0,0, ioremap_proc_info, &shmedia_iomap);
-+	struct proc_dir_entry* ent;
-+	ent = create_proc_read_entry("io_map",0,0, 
-+		ioremap_proc_info, &shmedia_iomap);
-+	if (!ent)
-+		printk(KERN_WARNING "ioremap.c: Unable to create /proc entry.\n");
- #endif
- 	return 0;
- }
+File/Subsystem:drivers/net/sungem.h
+
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
 --
 
---===============67588567360565799==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+ drivers/net/sungem.h |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-git/drivers/net/sungem.h
+=================================--- linux-git.orig/drivers/net/sungem.h	2005-07-08 12:06:50.000000000 +0000
++++ linux-git/drivers/net/sungem.h	2005-07-10 22:43:12.000000000 +0000
+@@ -1035,7 +1035,7 @@
+ 			
+ #define ALIGNED_RX_SKB_ADDR(addr) \
+         ((((unsigned long)(addr) + (64UL - 1UL)) & ~(64UL - 1UL)) - (unsigned long)(addr))
+-static __inline__ struct sk_buff *gem_alloc_skb(int size, int gfp_flags)
++static __inline__ struct sk_buff *gem_alloc_skb(int size, unsigned int __nocast gfp_flags)
+ {
+ 	struct sk_buff *skb = alloc_skb(size + 64, gfp_flags);
+ 
+
+--
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============67588567360565799==--
