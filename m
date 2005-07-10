@@ -1,48 +1,51 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:55 +0000
-Subject: [KJ] [patch 2.6.13-rc1 21/23] Audit return code of create_proc_*
-Message-Id: <20050707154659.756815000@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============19545804134868261=="
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 10 Jul 2005 23:19:45 +0000
+Subject: [KJ] [PATCH 11/20] Fix "nocast type" warnings
+Message-Id: <200507102319.45506.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============19545804134868261==
-Content-Disposition: inline; filename=proc_create_arch_arm_kernel_ecard.c.diff
+Description:
+    Fix the sparse warning "implicit cast to nocast type"
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/arm/kernel/ecard.c 2.6.13-rc1/arch/arm/kernel/ecard.c
---- 2.6.13-rc1.orig/arch/arm/kernel/ecard.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/arm/kernel/ecard.c	2005-07-05 09:22:13.000000000 +0200
-@@ -776,9 +776,16 @@ static struct proc_dir_entry *proc_bus_e
- 
- static void ecard_proc_init(void)
- {
-+	struct proc_dir_entry* proc_entry;
-+
- 	proc_bus_ecard_dir = proc_mkdir("ecard", proc_bus);
--	create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
-+	if (proc_bus_ecard_dir == NULL)
-+		printk(KERN_WARNING 
-+			"ecard: Unable to create proc dir entry.\n");
-+	proc_entry = create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
- 		get_ecard_dev_info);
-+	if (proc_entry == NULL) 
-+		printk(KERN_WARNING "ecard: Unable to create proc entry.\n");
- }
- 
- #define ec_set_resource(ec,nr,st,sz)				\
+File/Subsystem:net/netlink/af_netlink.c
+
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
 --
 
---===============19545804134868261==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+ net/netlink/af_netlink.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+Index: linux-git/net/netlink/af_netlink.c
+=================================--- linux-git.orig/net/netlink/af_netlink.c	2005-07-08 12:06:49.000000000 +0000
++++ linux-git/net/netlink/af_netlink.c	2005-07-10 22:43:11.000000000 +0000
+@@ -648,7 +648,8 @@
+ 	sock_put(sk);
+ }
+ 
+-static inline struct sk_buff *netlink_trim(struct sk_buff *skb, int allocation)
++static inline struct sk_buff *netlink_trim(struct sk_buff *skb,
++					   unsigned int __nocast allocation)
+ {
+ 	int delta;
+ 
+@@ -717,7 +718,7 @@
+ 	int failure;
+ 	int congested;
+ 	int delivered;
+-	int allocation;
++	unsigned int allocation;
+ 	struct sk_buff *skb, *skb2;
+ };
+ 
+
+--
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============19545804134868261==--
