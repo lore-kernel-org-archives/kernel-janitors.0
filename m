@@ -1,58 +1,57 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Mon, 04 Jul 2005 12:49:57 +0000
-Subject: Re: [KJ] [PATCH 2.6.13-rc1 17/17] fix sparse warnings (__nocast type)
-Message-Id: <20050704094957.3e389419.rnsanchez@terra.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83469708858732594=="
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 10 Jul 2005 23:19:26 +0000
+Subject: [KJ] [PATCH 09/20] Fix "nocast type" warnings
+Message-Id: <200507102319.26284.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507031908.09433.victor@cetuc.puc-rio.br>
-In-Reply-To: <200507031908.09433.victor@cetuc.puc-rio.br>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============83469708858732594==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Description:
+    Fix the sparse warning "implicit cast to nocast type"
 
-Quoting  Victor Fusco <victor@cetuc.puc-rio.br>
-Sent on  Mon, 4 Jul 2005 09:44:13 +0000
+File/Subsystem:drivers/pnp/pnpacpi
 
-> > > -static inline struct sk_buff *bt_skb_alloc(unsigned int len, int how)
-> > > +static inline struct sk_buff *bt_skb_alloc(unsigned int len,
-> > > +                                           unsigned int __nocast how)
-> > 
-> > I see a int to unsigned int change.  doing a lookup, I've found that
-> > 'how' is a flag passed to alloc_skb.  is it safe to use it as unsigned? 
-> > 
-> 
-> Oi!
-> 
-> A funcao alloc_skb tambem foi modificada para receber "unsigned int" .
-> Da uma olhada no patch 14/17 nesta mesma thread. Essas modificacoes
-> sao propagacoes do "__nocast type" em kmalloc. Que por sua vez, foi
-> inserido justamente para apontar esse tipo de erro.
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
-OK, explained and understood :)
+--
 
-Thanks!
+ drivers/pnp/pnpacpi/core.c    |    4 ++--
+ drivers/pnp/pnpacpi/pnpacpi.h |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
--- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
+Index: linux-git/drivers/pnp/pnpacpi/core.c
+=================================--- linux-git.orig/drivers/pnp/pnpacpi/core.c	2005-07-08 12:06:56.000000000 +0000
++++ linux-git/drivers/pnp/pnpacpi/core.c	2005-07-10 22:43:10.000000000 +0000
+@@ -41,9 +41,9 @@
+ 	return (!acpi_match_ids(dev, excluded_id_list));
+ }
+ 
+-void *pnpacpi_kmalloc(size_t size, int f)
++void *pnpacpi_kmalloc(size_t size, unsigned int __nocast flags)
+ {
+-	void *p = kmalloc(size, f);
++	void *p = kmalloc(size, flags);
+ 	if (p)
+ 		memset(p, 0, size);
+ 	return p;
+Index: linux-git/drivers/pnp/pnpacpi/pnpacpi.h
+=================================--- linux-git.orig/drivers/pnp/pnpacpi/pnpacpi.h	2005-07-08 12:06:56.000000000 +0000
++++ linux-git/drivers/pnp/pnpacpi/pnpacpi.h	2005-07-10 22:43:10.000000000 +0000
+@@ -5,7 +5,7 @@
+ #include <linux/acpi.h>
+ #include <linux/pnp.h>
+ 
+-void *pnpacpi_kmalloc(size_t size, int f);
++void *pnpacpi_kmalloc(size_t size, unsigned int __nocast flags);
+ acpi_status pnpacpi_parse_allocated_resource(acpi_handle, struct pnp_resource_table*);
+ acpi_status pnpacpi_parse_resource_option_data(acpi_handle, struct pnp_dev*);
+ int pnpacpi_encode_resources(struct pnp_resource_table *, struct acpi_buffer *);
 
-    How long a minute is depends on which 
-    side of the bathroom door you're on.
-
-
---===============83469708858732594==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============83469708858732594==--
