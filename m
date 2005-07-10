@@ -1,79 +1,56 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:10:09 +0000
-Subject: [KJ] [PATCH] drivers/net/eexpress.c : Use of the time_after() and
-Message-Id: <42D8B2D1.7060005@feitoza.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080408030302060505090705"
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 10 Jul 2005 23:20:30 +0000
+Subject: [KJ] [PATCH 16/20] Fix "nocast type" warnings
+Message-Id: <200507102320.30496.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------080408030302060505090705
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Description:
+    Fix the sparse warning "implicit cast to nocast type"
 
+File/Subsystem:drivers/base/dmapool
 
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
---------------080408030302060505090705
-Content-Type: text/x-patch;
- name="eexpress.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="eexpress.patch"
+--
 
-Use of the time_after() and time_before() macros, defined at linux/jiffies.h,
-which deal with wrapping correctly and are nicer to read.
+ drivers/base/dmapool.c  |    3 ++-
+ include/linux/dmapool.h |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-
---- linux/drivers/net/eexpress.c	2005-07-13 17:52:19.000000000 -0300
-+++ linux-kj/drivers/net/eexpress.c	2005-07-15 23:55:32.538395840 -0300
-@@ -557,7 +557,7 @@
- 
- 	if (lp->started)
- 	{
--		if ((jiffies - dev->trans_start)>50)
-+		if (time_after(jiffies, dev->trans_start + 50))
- 		{
- 			if (lp->tx_link==lp->last_tx_restart)
- 			{
-@@ -613,7 +613,7 @@
- 	}
- 	else
- 	{
--		if ((jiffies-lp->init_time)>10)
-+		if (time_after(jiffies, lp->init_time + 10))
- 		{
- 			unsigned short status = scb_status(dev);
- 			printk(KERN_WARNING "%s: i82586 startup timed out, status %04x, resetting...\n",
-@@ -785,7 +785,7 @@
- static void eexp_cmd_clear(struct net_device *dev)
+Index: linux-git/drivers/base/dmapool.c
+=================================--- linux-git.orig/drivers/base/dmapool.c	2005-07-08 12:06:57.000000000 +0000
++++ linux-git/drivers/base/dmapool.c	2005-07-10 22:43:17.000000000 +0000
+@@ -262,7 +262,8 @@
+  * If such a memory block can't be allocated, null is returned.
+  */
+ void *
+-dma_pool_alloc (struct dma_pool *pool, int mem_flags, dma_addr_t *handle)
++dma_pool_alloc (struct dma_pool *pool, unsigned int __nocast mem_flags,
++		dma_addr_t *handle)
  {
- 	unsigned long int oldtime = jiffies;
--	while (scb_rdcmd(dev) && ((jiffies-oldtime)<10));
-+	while (scb_rdcmd(dev) && (time_before(jiffies, oldtime + 10)));
- 	if (scb_rdcmd(dev)) {
- 		printk("%s: command didn't clear\n", dev->name);
- 	}
-@@ -1666,7 +1666,7 @@
- #endif
-                 oj = jiffies;
-                 while ((SCB_CUstat(scb_status(dev)) == 2) &&
--                       ((jiffies-oj) < 2000));
-+                       (time_before(jiffies, oj + 2000)));
- 		if (SCB_CUstat(scb_status(dev)) == 2)
- 			printk("%s: warning, CU didn't stop\n", dev->name);
-                 lp->started &= ~(STARTED_CU);
+ 	unsigned long		flags;
+ 	struct dma_page		*page;
+Index: linux-git/include/linux/dmapool.h
+=================================--- linux-git.orig/include/linux/dmapool.h	2005-07-08 12:06:49.000000000 +0000
++++ linux-git/include/linux/dmapool.h	2005-07-10 22:43:17.000000000 +0000
+@@ -19,7 +19,8 @@
+ 
+ void dma_pool_destroy(struct dma_pool *pool);
+ 
+-void *dma_pool_alloc(struct dma_pool *pool, int mem_flags, dma_addr_t *handle);
++void *dma_pool_alloc(struct dma_pool *pool, unsigned int __nocast mem_flags,
++		     dma_addr_t *handle);
+ 
+ void dma_pool_free(struct dma_pool *pool, void *vaddr, dma_addr_t addr);
+ 
 
---------------080408030302060505090705
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---------------080408030302060505090705--
