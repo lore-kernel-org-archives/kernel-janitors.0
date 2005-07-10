@@ -1,52 +1,42 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:20:53 +0000
-Subject: [KJ] [PATCH] drivers/scsi/qlogicfc.c : Use of the time_after() macro
-Message-Id: <42D8B555.3050307@feitoza.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060501050000060001000504"
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 10 Jul 2005 23:20:44 +0000
+Subject: [KJ] [PATCH 18/20] Fix "nocast type" warnings
+Message-Id: <200507102320.44991.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------060501050000060001000504
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Description:
+    Fix the sparse warning "implicit cast to nocast type"
 
+File/Subsystem:drivers/net/bonding/bond_main.c
 
---------------060501050000060001000504
-Content-Type: text/x-patch;
- name="qlogicfc.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="qlogicfc.patch"
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
-Use of the time_after() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
+--
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+ drivers/net/bonding/bond_main.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletion(-)
 
---- linux/drivers/scsi/qlogicfc.c	2005-07-13 17:53:34.000000000 -0300
-+++ linux-kj/drivers/scsi/qlogicfc.c	2005-07-15 16:20:25.394712680 -0300
-@@ -1327,7 +1327,8 @@
- 		cmd->control_flags = cpu_to_le16(CFLAG_READ);
+Index: linux-git/drivers/net/bonding/bond_main.c
+=================================--- linux-git.orig/drivers/net/bonding/bond_main.c	2005-07-08 12:06:50.000000000 +0000
++++ linux-git/drivers/net/bonding/bond_main.c	2005-07-10 22:43:13.000000000 +0000
+@@ -1294,7 +1294,8 @@
+ /*
+  * Copy all the Multicast addresses from src to the bonding device dst
+  */
+-static int bond_mc_list_copy(struct dev_mc_list *mc_list, struct bonding *bond, int gpf_flag)
++static int bond_mc_list_copy(struct dev_mc_list *mc_list, struct bonding *bond,
++			     unsigned int __nocast gpf_flag)
+ {
+ 	struct dev_mc_list *dmi, *new_dmi;
  
- 	if (Cmnd->device->tagged_supported) {
--		if ((jiffies - hostdata->tag_ages[Cmnd->device->id]) > (2 * ISP_TIMEOUT)) {
-+		if (time_after(jiffies, hostdata->tag_ages[Cmnd->device->id] 
-+					+ (2 * ISP_TIMEOUT))) {
- 			cmd->control_flags |= cpu_to_le16(CFLAG_ORDERED_TAG);
- 			hostdata->tag_ages[Cmnd->device->id] = jiffies;
- 		} else
 
---------------060501050000060001000504
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---------------060501050000060001000504--
