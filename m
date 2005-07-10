@@ -1,44 +1,63 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:50 +0000
-Subject: [KJ] [patch 2.6.13-rc1 16/23] Audit return code of create_proc_*
-Message-Id: <20050707154633.027812000@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============57131249380524007=="
+From: Victor Fusco <victor@cetuc.puc-rio.br>
+Date: Sun, 10 Jul 2005 23:20:08 +0000
+Subject: [KJ] [PATCH 13/20] Fix "nocast type" warnings
+Message-Id: <200507102320.08379.victor@cetuc.puc-rio.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============57131249380524007==
-Content-Disposition: inline;
-	filename=proc_create_arch_sh64_kernel_process.c.diff
+Description:
+    Fix the sparse warning "implicit cast to nocast type"
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/sh64/kernel/process.c 2.6.13-rc1/arch/sh64/kernel/process.c
---- 2.6.13-rc1.orig/arch/sh64/kernel/process.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/sh64/kernel/process.c	2005-07-05 10:25:22.280822152 +0200
-@@ -953,7 +953,11 @@ asids_proc_info(char *buf, char **start,
- 
- static int __init register_proc_asids(void)
- {
--  create_proc_read_entry("asids", 0, NULL, asids_proc_info, NULL);
-+	struct proc_dir_entry* ent;
-+	ent = create_proc_read_entry("asids", 0, NULL, asids_proc_info, NULL);
-+	if (!ent)
-+		printk(KERN_WARNING 
-+			"process: Unable to create asids /proc entry.\n");
-   return 0;
- }
- 
+File/Subsystem:lib/radix-tree
+
+Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
 
 --
 
---===============57131249380524007==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+ include/linux/radix-tree.h |    4 ++--
+ lib/radix-tree.c           |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+Index: linux-git/include/linux/radix-tree.h
+=================================--- linux-git.orig/include/linux/radix-tree.h	2005-07-08 12:06:49.000000000 +0000
++++ linux-git/include/linux/radix-tree.h	2005-07-10 22:43:15.000000000 +0000
+@@ -24,7 +24,7 @@
+ 
+ struct radix_tree_root {
+ 	unsigned int		height;
+-	int			gfp_mask;
++	unsigned int		gfp_mask;
+ 	struct radix_tree_node	*rnode;
+ };
+ 
+@@ -50,7 +50,7 @@
+ unsigned int
+ radix_tree_gang_lookup(struct radix_tree_root *root, void **results,
+ 			unsigned long first_index, unsigned int max_items);
+-int radix_tree_preload(int gfp_mask);
++int radix_tree_preload(unsigned int __nocast gfp_mask);
+ void radix_tree_init(void);
+ void *radix_tree_tag_set(struct radix_tree_root *root,
+ 			unsigned long index, int tag);
+Index: linux-git/lib/radix-tree.c
+=================================--- linux-git.orig/lib/radix-tree.c	2005-07-08 12:06:48.000000000 +0000
++++ linux-git/lib/radix-tree.c	2005-07-10 22:43:15.000000000 +0000
+@@ -109,7 +109,7 @@
+  * success, return zero, with preemption disabled.  On error, return -ENOMEM
+  * with preemption not disabled.
+  */
+-int radix_tree_preload(int gfp_mask)
++int radix_tree_preload(unsigned int __nocast gfp_mask)
+ {
+ 	struct radix_tree_preload *rtp;
+ 	struct radix_tree_node *node;
+
+--
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============57131249380524007==--
