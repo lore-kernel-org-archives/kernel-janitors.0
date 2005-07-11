@@ -1,24 +1,51 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 06 Jul 2005 21:19:43 +0000
-Subject: Re: [KJ] 2.6.13-rc2-kj (Should work now, was: (Broken Link))
-Message-Id: <20050706211943.GA27151@homer.coderock.org>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Mon, 11 Jul 2005 19:24:05 +0000
+Subject: [KJ] [PATCH] drivers/net/wan/sdla_ft1.c : Use of time_after macro
+Message-Id: <42D2C755.6040601@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83601077173514027=="
+Content-Type: multipart/mixed; boundary="------------090902020603080205030704"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050706200006.GA12464@homer.coderock.org> <42CC3C34.8050302@cs.pdx.edu>
-In-Reply-To: <42CC3C34.8050302@cs.pdx.edu>
-To: Jesse Millan <jessem@cs.pdx.edu>
-Cc: kj <kernel-janitors@lists.osdl.org>, lkml <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============83601077173514027==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------090902020603080205030704
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-That's what happens if you close the console with reminder to copy. :-)
 
-	Domen
+--------------090902020603080205030704
+Content-Type: text/x-patch;
+ name="sdla_ft1.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="sdla_ft1.patch"
 
---===============83601077173514027==
+Use of the time_after_eq() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
+
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/wan/sdla_ft1.c	2005-06-17 16:48:29.000000000 -0300
++++ linux-kj/drivers/net/wan/sdla_ft1.c	2005-07-07 22:45:26.394206096 -0300
+@@ -29,6 +29,7 @@
+ #include <linux/wanrouter.h>	/* WAN router definitions */
+ #include <linux/wanpipe.h>	/* WANPIPE common user API definitions */
+ #include <linux/if_arp.h>	/* ARPHRD_* defines */
++#include <linux/jiffies.h>	/* time_after() macro */
+ 
+ #include <linux/inetdevice.h>
+ #include <asm/uaccess.h>
+@@ -164,7 +165,7 @@
+ 
+ 		timeout = jiffies;
+ 		while (mb->return_code != 'I')	/* Wait 1s for board to initialize */
+-			if ((jiffies - timeout) > 1*HZ) break;
++			if (time_after(jiffies, timeout + 1*HZ)) break;
+ 
+ 		if (mb->return_code != 'I') {
+ 			printk(KERN_INFO
+
+--------------090902020603080205030704
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -29,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83601077173514027==--
+--------------090902020603080205030704--
