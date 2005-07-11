@@ -1,55 +1,60 @@
-From: "earl howland" <ansalpan@hatchet-man.net>
-Date: Thu, 21 Jul 2005 06:34:48 +0000
-Subject: Re: explore our cyberspace and gain quick healings.
-Message-Id: <66c001c58e1a$7dc31d00$731f3132@ansalpan>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Mon, 11 Jul 2005 19:27:29 +0000
+Subject: [KJ] [PATCH] drivers/net/wan/sdla_x25.c : use of time_after macro
+Message-Id: <42D2C821.1000303@feitoza.com.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------080400080200020601040603"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Experience the dynamic effects on our tab.lets and gain your dynamism back
-at the reasonable prices.
-For quick and reliable distribution services, just rely on our company.
-
-I don't thrifty for my health purposes. Normally I bought costly medicines.
-But after I found your website and tried them, it's the same effects but
-yours at min prices. Since then I become your loyal buyer. Peter Mahoney,
-SD.
-
-It is better value for your greenbacks. We provide rnmeds at specialprices.
-We provide accurate and efficient processing for you.r or-der. Completely
-safe. You can check the sta.tus anytime. Prices are reduced to you.r
-affordability. Check it.
+This is a multi-part message in MIME format.
+--------------080400080200020601040603
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
 
 
-http://N67.kr.fantasticmixes.com/e2e/
+--------------080400080200020601040603
+Content-Type: text/x-patch;
+ name="sdla_x25.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="sdla_x25.patch"
 
+Use of the time_after_eq() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
------ Original Message -----
-From: Chase [mailto:Ricardo@pyv.com]
-Sent: Thursday, December 7, 2005 4:27 AM
-To: Emil; Titus@n.com; Trey; Harrison; Nathaniel
-Subject: Re: it is the reason you choose e-shopping for quality taablets.
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
+--- linux/drivers/net/wan/sdla_x25.c	2005-06-17 16:48:29.000000000 -0300
++++ linux-kj/drivers/net/wan/sdla_x25.c	2005-07-07 22:48:13.295833192 -0300
+@@ -91,6 +91,7 @@
+ #include <linux/wanrouter.h>	/* WAN router definitions */
+ #include <linux/wanpipe.h>	/* WANPIPE common user API definitions */
+ #include <linux/workqueue.h>
++#include <linux/jiffies.h>	/* time_after() macro */
+ #include <asm/byteorder.h>	/* htons(), etc. */
+ #include <asm/atomic.h>
+ #include <linux/delay.h>	/* Experimental delay */
+@@ -867,7 +868,7 @@
+ 		if (!(card->u.x.timer_int_enabled & TMR_INT_ENABLED_UPDATE)){	
+ 			break;
+ 		}
+-		if ((jiffies-timeout) > 1*HZ){
++		if (time_after(jiffies, timeout + 1*HZ)){
+ 			card->u.x.timer_int_enabled &= ~TMR_INT_ENABLED_UPDATE;
+ 			return -EAGAIN;
+ 		}
 
-A better chance for customers to bank the moola on either brand name or
-generic rxdrugs.  Legitimate to shoppe for rxmedications in this way.
+--------------080400080200020601040603
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-"Here rests the greatest singer in the world; over his tomb will I
-the woody varieties of the cheerful village of Up Lyme; and, above all, 
-Too good, too excellent creature!  You do us justice, indeed. 
-
-
-
--------------------------------------------------------
-SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
-from IBM. Find simple to follow Roadmaps, straightforward articles,
-informative Webcasts and more! Get everything you need to get up to
-speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------080400080200020601040603--
