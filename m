@@ -1,45 +1,45 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 11 Jul 2005 13:01:47 +0000
+From: walter harms <wharms@bfs.de>
+Date: Mon, 11 Jul 2005 15:55:33 +0000
 Subject: Re: [KJ] [PATCH] toshiba_acpi check kmalloc return value
-Message-Id: <20050711130147.GA2448@homer.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============96481155015785014=="
+Message-Id: <42D29675.1030203@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1121044844.3554.25.camel@localhost>
 In-Reply-To: <1121044844.3554.25.camel@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============96481155015785014==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On 11/07/05 11:53 +0200, walter harms wrote:
-> tmp_buffer = kmalloc(count + 1, GFP_KERNEL);
-> if (!tmp_buffer)
-> 	return -ENOMEM;
-> 
-> if ( copy_from_user(tmp_buffer, buffer, count) )
-> 	result = -EFAULT;
-> 
-> tmp_buffer[count] = 0;
-> result = item->write_func(tmp_buffer, count);
-> 
-> 
-> just for the paranoid:
->  should tmp_buffer be filled with \0 to avoid an information leak ?
->  (schroedinger bug ?)
 
-We copy _from_ userspace.
+Domen Puncer wrote:
+> On 11/07/05 11:53 +0200, walter harms wrote:
+>>tmp_buffer = kmalloc(count + 1, GFP_KERNEL);
+>>if (!tmp_buffer)
+>>	return -ENOMEM;
+>>
+>>if ( copy_from_user(tmp_buffer, buffer, count) )
+>>	result = -EFAULT;
+>>
+>>tmp_buffer[count] = 0;
+>>result = item->write_func(tmp_buffer, count);
+>>
+>>
+>>just for the paranoid:
+>> should tmp_buffer be filled with \0 to avoid an information leak ?
+>> (schroedinger bug ?)
+> 
+> We copy _from_ userspace.
+> 
 
---===============96481155015785014==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+UPS, you are totaly right :)
+
+ntl  perhaps add to the TODO list.
+
+Check buffers that are used with copy_to_user() a really clean to avoid 
+information leakage.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============96481155015785014==--
