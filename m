@@ -1,75 +1,99 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 11 Jul 2005 09:53:23 +0000
+From: Brandon Niemczyk <brandon@snprogramming.com>
+Date: Mon, 11 Jul 2005 11:24:39 +0000
 Subject: Re: [KJ] [PATCH] toshiba_acpi check kmalloc return value
-Message-Id: <42D24193.5070604@bfs.de>
+Message-Id: <1121081079.3453.44.camel@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============4362259410002034=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1121044844.3554.25.camel@localhost>
 In-Reply-To: <1121044844.3554.25.camel@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi Brandon,
-keep it simple
+--===============4362259410002034==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-tmp_buffer = kmalloc(count + 1, GFP_KERNEL);
-if (!tmp_buffer)
-	return -ENOMEM;
-
-if ( copy_from_user(tmp_buffer, buffer, count) )
-	result = -EFAULT;
-
-tmp_buffer[count] = 0;
-result = item->write_func(tmp_buffer, count);
+On Mon, 2005-07-11 at 11:53 +0200, walter harms wrote:
+> hi Brandon,
+> keep it simple
 
 
-just for the paranoid:
-  should tmp_buffer be filled with \0 to avoid an information leak ?
-  (schroedinger bug ?)
+this better?
 
-re,
-	walter
+Signed-off-by: Brandon Niemczyk <brandon@snprogramming.com>
+
+--- p1/drivers/acpi/toshiba_acpi.c.orig	2005-07-11 07:14:14.000000000 -0400
++++ p1/drivers/acpi/toshiba_acpi.c	2005-06-17 15:48:29.000000000 -0400
+@@ -252,24 +252,26 @@ dispatch_read(char* page, char** start, 
+ }
+ 
+ static int
+-dispatch_write(struct file* file, const char __user * buffer,
+-	unsigned long count, ProcItem* item)
++dispatch_write(struct file *file, const char __user * buffer,
++	       unsigned long count, ProcItem * item)
+ {
+ 	int result;
+-	char* tmp_buffer;
++	char *tmp_buffer;
+ 
+-	/* Arg buffer points to userspace memory, which can't be accessed
+-	 * directly.  Since we're making a copy, zero-terminate the
+-	 * destination so that sscanf can be used on it safely.
+-	 */
+ 	tmp_buffer = kmalloc(count + 1, GFP_KERNEL);
++	if (!tmp_buffer)
++		return -ENOMEM;
++
+ 	if (copy_from_user(tmp_buffer, buffer, count)) {
+ 		result = -EFAULT;
++		goto out;
+ 	}
+-	else {
+-		tmp_buffer[count] = 0;
+-		result = item->write_func(tmp_buffer, count);
+-	}
++
++	/* make sure sscanf can be used safely */
++	tmp_buffer[count] = 0;
++	result = item->write_func(tmp_buffer, count);
++
++out:
+ 	kfree(tmp_buffer);
+ 	return result;
+ }
 
 
-Brandon Niemczyk wrote:
-> Here it is with the stylistic fixes:
+
+> tmp_buffer = kmalloc(count + 1, GFP_KERNEL);
+> if (!tmp_buffer)
+> 	return -ENOMEM;
 > 
-> Signed-off-by: Brandon Niemczyk <brandon@snprogramming.com>
+> if ( copy_from_user(tmp_buffer, buffer, count) )
+> 	result = -EFAULT;
 > 
-> --- linux/drivers/acpi/toshiba_acpi.c.orig	2005-07-10 20:40:47.000000000 -0400
-> +++ linux/drivers/acpi/toshiba_acpi.c	2005-07-10 23:00:43.000000000 -0400
-> @@ -263,9 +263,11 @@ dispatch_write(struct file* file, const 
->  	 * destination so that sscanf can be used on it safely.
->  	 */
->  	tmp_buffer = kmalloc(count + 1, GFP_KERNEL);
-> -	if (copy_from_user(tmp_buffer, buffer, count)) {
-> +
-> +	if (!tmp_buffer) 
-> +		return -ENOMEM;
-> +	else if (copy_from_user(tmp_buffer, buffer, count))
->  		result = -EFAULT;
-> -	}
->  	else {
->  		tmp_buffer[count] = 0;
->  		result = item->write_func(tmp_buffer, count);
-> 
-> On Sun, 2005-07-10 at 19:32 -0700, randy_dunlap wrote:
->>On Sun, 10 Jul 2005 21:20:44 -0400 Brandon Niemczyk wrote:
->><snip>
->>Looks correct functionally, but needs a space after "if", like "if (".
->>
->>Oh, don't use braces for one-line "blocks".
->>Yes the copy_from_user() below does that too.  :(
+> tmp_buffer[count] = 0;
+> result = item->write_func(tmp_buffer, count);
 > 
 > 
-> ------------------------------------------------------------------------
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+> just for the paranoid:
+>   should tmp_buffer be filled with \0 to avoid an information leak ?
+>   (schroedinger bug ?)
+
+Not sure.
+-- 
+Brandon Niemczyk
+
+
+--===============4362259410002034==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============4362259410002034==--
