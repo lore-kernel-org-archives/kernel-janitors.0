@@ -1,51 +1,37 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 10 Jul 2005 23:19:45 +0000
-Subject: [KJ] [PATCH 11/20] Fix "nocast type" warnings
-Message-Id: <200507102319.45506.victor@cetuc.puc-rio.br>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Mon, 11 Jul 2005 14:12:05 +0000
+Subject: [KJ] Re: [PATCH 7/14] mips: replace timespectojiffies() with
+Message-Id: <20050711141205.GV2765@linux-mips.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============63189022836372721=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050709000324.GD2596@us.ibm.com> <20050709001127.GM2596@us.ibm.com>
+In-Reply-To: <20050709001127.GM2596@us.ibm.com>
+To: Nishanth Aravamudan <nacc@us.ibm.com>
+Cc: linux-mips@linux-mips.org, Kernel-Janitors <kernel-janitors@lists.osdl.org>
+
+--===============63189022836372721==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jul 08, 2005 at 05:11:27PM -0700, Nishanth Aravamudan wrote:
+
+> Description: Replace custom timespectojiffies() function with generic
+> standard one.
+
+Applied.  Thanks,
+
+  Ralf
+
+--===============63189022836372721==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-
-Description:
-    Fix the sparse warning "implicit cast to nocast type"
-
-File/Subsystem:net/netlink/af_netlink.c
-
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
-
---
-
- net/netlink/af_netlink.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-Index: linux-git/net/netlink/af_netlink.c
-=================================--- linux-git.orig/net/netlink/af_netlink.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/net/netlink/af_netlink.c	2005-07-10 22:43:11.000000000 +0000
-@@ -648,7 +648,8 @@
- 	sock_put(sk);
- }
- 
--static inline struct sk_buff *netlink_trim(struct sk_buff *skb, int allocation)
-+static inline struct sk_buff *netlink_trim(struct sk_buff *skb,
-+					   unsigned int __nocast allocation)
- {
- 	int delta;
- 
-@@ -717,7 +718,7 @@
- 	int failure;
- 	int congested;
- 	int delivered;
--	int allocation;
-+	unsigned int allocation;
- 	struct sk_buff *skb, *skb2;
- };
- 
-
---
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============63189022836372721==--
