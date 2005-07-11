@@ -1,40 +1,33 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 10 Jul 2005 23:18:54 +0000
-Subject: [KJ] [PATCH 06/20] Fix "nocast type" warnings
-Message-Id: <200507102318.54458.victor@cetuc.puc-rio.br>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 11 Jul 2005 10:10:52 +0000
+Subject: Re: [KJ] [PATCH 06/20] Fix "nocast type" warnings
+Message-Id: <200507111410.52368.adobriyan@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200507102318.54458.victor@cetuc.puc-rio.br>
+In-Reply-To: <200507102318.54458.victor@cetuc.puc-rio.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description:
-    Fix the sparse warning "implicit cast to nocast type"
+On Monday 11 July 2005 03:18, Victor Fusco wrote:
+> --- linux-git.orig/drivers/atm/fore200e.c
+> +++ linux-git/drivers/atm/fore200e.c
+>  static void*
+> -fore200e_kmalloc(int size, int flags)
+> +fore200e_kmalloc(int size, unsigned int __nocast flags)
+>  {
+>      void* chunk = kmalloc(size, flags);
+>  
+       if (chunk)
+           memset(chunk, 0x00, size);
+       else
+           printk(FORE200E "kmalloc() failed, requested size = %d, flags = 0x%x\n", size, flags);
 
-File/Subsystem:drivers/atm/fore200e.c
+       return chunk;
+   }
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
-
---
-
- drivers/atm/fore200e.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-git/drivers/atm/fore200e.c
-=================================--- linux-git.orig/drivers/atm/fore200e.c	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/drivers/atm/fore200e.c	2005-07-10 22:43:18.000000000 +0000
-@@ -178,7 +178,7 @@
- 
- 
- static void*
--fore200e_kmalloc(int size, int flags)
-+fore200e_kmalloc(int size, unsigned int __nocast flags)
- {
-     void* chunk = kmalloc(size, flags);
- 
-
---
-
+kcalloc() on steroids. ;-)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
