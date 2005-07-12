@@ -1,114 +1,54 @@
-From: estelle Kramar <snudflfcb@hjerlhede.dk>
-Date: Fri, 15 Jul 2005 02:09:30 +0000
-Subject: Investors are watching IGTS climb high solicitude
-Message-Id: <51976898070107.480.3380025@underwrite-u355.hjerlhede.dk>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Tue, 12 Jul 2005 12:11:32 +0000
+Subject: [KJ] [patch 2.6.13-rc1 23/23][RESEND] Audit return code of
+Message-Id: <20050712121132.GH4712@rhum.iomeda.fr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0023424723635558919=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-reimburse
+--===============0023424723635558919==
+Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
 
-First we would like to say Thank You to al| of our avid
-readers! We have had great success over the last few
-months and have become one of the most wide|y read
-investment newsletters in the wor|d. We have accomplished
-this by providing timely, accurate financial information
-with proven results and great returns. 
+Description:
+Audit return of create_proc_* functions.
 
-New Deve|opments Expected for Intelligent Sports, Inc.
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-Ticker: IGTS. PK 
-Current_Price: . O2
-Target_Price- . 35
+Index: 2.6.13-rc1/arch/arm26/kernel/ecard.c
+===================================================================
+--- 2.6.13-rc1.orig/arch/arm26/kernel/ecard.c
++++ 2.6.13-rc1/arch/arm26/kernel/ecard.c
+@@ -522,9 +522,16 @@ static struct proc_dir_entry *proc_bus_e
+ 
+ static void ecard_proc_init(void)
+ {
++	struct proc_dir_entry *proc_entry;
+ 	proc_bus_ecard_dir = proc_mkdir("ecard", proc_bus);
+-	create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
+-		get_ecard_dev_info);
++	if (!proc_bus_ecard_dir)
++		printk(KERN_WARNING "Unable to create proc dir entry.\n");
++	else {
++		proc_entry = create_proc_info_entry("devices", 0,
++			proc_bus_ecard_dir, get_ecard_dev_info);
++		if (!proc_entry)
++			printk(KERN_WARNING "ecard: Unable to create proc entry\n");
++	}
+ }
+ 
+ #define ec_set_resource(ec,nr,st,sz,flg)			\
 
-A company |ike this is like a sligshot, pulled back
-and ready to go. One fortunate turn of events, one
-big contract, and the company such as this will
-Explode! E12m1f}D8m5362}C59J_99xf5939w96_2J1B62a1wm13
+--===============0023424723635558919==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Most Recent News On The Company:
-
-The Sports Zone Seals Sponsorship with NBA
-Summer Pro League Wednesday July 13, 1:09 pm ET
-
-UPLAND, Calif., July 13, 2005 (PRIMEZONE) --
-Just as they value athletic participation and building
-strong fitness habits early, The Sports Zone by
-Intelligent Sports, Inc. (IGTS . PK), can appreciate
-the value of aligning itself with like partners.
-
-The Sports Zone by Intelligent Sports has signed
-on for a 2005 sponsorship with the Southern California
-NBA Summer Pro League. The Summer Pro League is
-the premiere summer showcase for current and future
-NBA stars. Hosting five NBA teams including the Los
-Angeles Lakers, The Summer Pro League sets the stage
-for NBA teams to provide instruction to their first
-and second round draft picks in a rigorous and
-competitive environment. Showcasing five games per
-day, the league runs July 8th-23rd at the Long Beach
-Pyramid located on the Long Beach State campus.
-
-''This is the type of partnership that allows us to
-reinforce our mission of helping kids achieve their
-true potential in sports while learning valuable
-life lessons,'' stated former NBA star and Intelligent
-Sports, Inc. board member, Reggie Theus. ``Getting
-a firsthand opportunity to see the draft picks
-springboard into the NBA is an inspiration for our
-youth. While not all role models need to be famous
-athletes, the guidance of a positive role model, such
-as an NBA star, provides our youth with a long-term
-vision. Their role models personify the end
-achievements of years of hard work and make these
-goals more attainable.''
-
-The Sports Zone by Intelligent Sports provides physical
-and mental guidance to area youth through a wide range
-of after-school sports programs, weekend leagues and
-tournaments. Programs nurture both sides of the student
-athlete -- from building the individual athletic skill
-development to paving the way for higher levels of
-self-esteem, discipline, motivation and overall
-psychological well-being. The Sports Zone encompasses
-a 10,000-square-foot facility featuring two basketball
-courts and caters to court sports including basketball,
-volleyball, cheerleading and dance, and also has the
-ability to host soccer, football and other field-related
-athletic activity within the complex arena.
-
-With a board comprised of Reggie Theus, former NBA star,
-TV analyst, and current Head Men's Basketball Coach at
-New Mexico State University, and Kellen Winslow, a
-member of the NFL Hall of Fame, the initial focus of
-publicly held Intelligent Sports, Inc. is to introduce
-a new generation of youth to athletics through the
-development of organized youth sports programs and
-facilities throughout the country.
-
-Gabriel deGrood Bendt serves as agency-of-record and
-provides strategic and partnership development for
-Intelligent Sports. Gabriel deGrood Bendt is a full
-service marketing and advertising agency based in
-Minneapolis.
-
-Watch IGTS . PK trade All Week Long, Be sure to get in on
-the boat and have a great payday with our other members.
-Friday the company will be launchig a massive fax campaign
-and next week should be over . 15 to . 30 so get in now.
-
-fumbler midrange
-
-
-
--------------------------------------------------------
-SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
-from IBM. Find simple to follow Roadmaps, straightforward articles,
-informative Webcasts and more! Get everything you need to get up to
-speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0023424723635558919==--
