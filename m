@@ -1,46 +1,73 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Fri, 29 Jul 2005 17:38:13 +0000
-Subject: Re: [KJ] [PATCH] drivers/video/vgastate.c - remove unnecessary calls
-Message-Id: <20050729173812.GA7115@neon.tklauser.home>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Wed, 13 Jul 2005 05:51:34 +0000
+Subject: [KJ] [PATCH] drivers/usb/input/ati_remote.c : Use of time_after and
+Message-Id: <42D4ABE6.6010601@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============19421894503242321=="
+Content-Type: multipart/mixed; boundary="------------060804030900020509080908"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42EA32EB.5010609@steunenberg.org>
-In-Reply-To: <42EA32EB.5010609@steunenberg.org>
 To: kernel-janitors@vger.kernel.org
 
---===============19421894503242321==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------060804030900020509080908
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On 2005-07-29 at 15:45:15 +0200, Jerome Steunenberg <jerome@steunenberg.org> wrote:
-> Second try for this patch. Please tell me if I got it OK!
-> For the line wrapping, it now passes patch-tester@coderock.org, so I hope 
-> it's OK.
-> If not, can those of you who use Thunderbird tell me what settings you use 
-> ? Thanks
-> 
-> In drivers/video/vgastate.c, the unnecessary calls to init_module and 
-> cleanup_module have been removed
-> 
-> Signed-off-by: Jerome Steunenberg <jerome@steunenberg.org>
-> 
-> 
-> 
-> --- linux-2.6.13-rc3/drivers/video/vgastate.c.orig	2005-07-25 
-> 15:09:51.000000000 +0200
-> +++ linux-2.6.13-rc3/drivers/video/vgastate.c	2005-07-29 
-> 15:03:45.000000000 +0200
 
-Unfortunately it still wraps lines.
 
-I'm not using TB so I just do a shot in the dark; Try to attach your
-patch + description as a _plain text_ attachement. This should also
-work.
+--------------060804030900020509080908
+Content-Type: text/x-patch;
+ name="ati_remote.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="ati_remote.patch"
 
-Cheers, Tobias
+Use of time_after and time_before macros, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
---===============19421894503242321==
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/usb/input/ati_remote.c	2005-07-07 19:11:55.000000000 -0300
++++ linux-kj/drivers/usb/input/ati_remote.c	2005-07-13 02:49:17.210994184 -0300
+@@ -95,6 +95,7 @@
+ #include <linux/input.h>
+ #include <linux/usb.h>
+ #include <linux/wait.h>
++#include <linux/jiffies.h>
+ 
+ /*
+  * Module and Version Information, Module Parameters
+@@ -510,16 +511,22 @@
+ 	 * pad down, so we increase acceleration, ramping up over two seconds to
+ 	 * a maximum speed.  The acceleration curve is #defined above.
+ 	 */
+-	if ((jiffies - ati_remote->old_jiffies) > (HZ >> 2)) {
++	if (time_after(jiffies, ati_remote->old_jiffies + (HZ >> 2))) {
+ 		acc = 1;
+ 		ati_remote->acc_jiffies = jiffies;
+ 	}
+-	else if ((jiffies - ati_remote->acc_jiffies) < (HZ >> 3))  acc = accel[0];
+-	else if ((jiffies - ati_remote->acc_jiffies) < (HZ >> 2))  acc = accel[1];
+-	else if ((jiffies - ati_remote->acc_jiffies) < (HZ >> 1))  acc = accel[2];
+-	else if ((jiffies - ati_remote->acc_jiffies) < HZ )        acc = accel[3];
+-	else if ((jiffies - ati_remote->acc_jiffies) < HZ+(HZ>>1)) acc = accel[4];
+-	else if ((jiffies - ati_remote->acc_jiffies) < (HZ << 1))  acc = accel[5];
++	else if (time_before(jiffies, ati_remote->acc_jiffies + (HZ >> 3)))
++		acc = accel[0];
++	else if (time_before(jiffies, ati_remote->acc_jiffies + (HZ >> 2)))
++		acc = accel[1];
++	else if (time_before(jiffies, ati_remote->acc_jiffies + (HZ >> 1)))
++		acc = accel[2];
++	else if (time_before(jiffies, ati_remote->acc_jiffies + HZ ))
++		acc = accel[3];
++	else if (time_before(jiffies, ati_remote->acc_jiffies + HZ+(HZ>>1)))
++		acc = accel[4];
++	else if (time_before(jiffies, ati_remote->acc_jiffies + (HZ << 1)))
++		acc = accel[5];
+ 	else acc = accel[6];
+ 
+ 	input_regs(dev, regs);
+
+--------------060804030900020509080908
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +78,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============19421894503242321==--
+--------------060804030900020509080908--
