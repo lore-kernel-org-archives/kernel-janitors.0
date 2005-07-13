@@ -1,39 +1,52 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:47 +0000
-Subject: [KJ] [patch 2.6.13-rc1 13/23] Audit return code of create_proc_*
-Message-Id: <20050707154617.229835000@rhum.iomeda.fr>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Wed, 13 Jul 2005 05:58:36 +0000
+Subject: [KJ] [PATCH] drivers/scsi/BusLogic.c : Use of time_after macro
+Message-Id: <42D4AD8C.90607@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97549926720191182=="
+Content-Type: multipart/mixed; boundary="------------040704020800050405040206"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============97549926720191182==
+This is a multi-part message in MIME format.
+--------------040704020800050405040206
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+
+--------------040704020800050405040206
+Content-Type: text/x-patch;
+ name="BusLogic.patch"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
-	filename=proc_create_arch_sh_drivers_dma_dma-api.c.diff
+ filename="BusLogic.patch"
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/sh/drivers/dma/dma-api.c 2.6.13-rc1/arch/sh/drivers/dma/dma-api.c
---- 2.6.13-rc1.orig/arch/sh/drivers/dma/dma-api.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/sh/drivers/dma/dma-api.c	2005-07-05 10:21:34.485452312 +0200
-@@ -265,10 +265,13 @@ void __exit unregister_dmac(struct dma_i
- 
- static int __init dma_api_init(void)
- {
--	printk("DMA: Registering DMA API.\n");
-+	struct proc_dir_entry* ent;
-+	printk(KERN_INFO "DMA: Registering DMA API.\n");
- 
- #ifdef CONFIG_PROC_FS
--	create_proc_read_entry("dma", 0, 0, dma_read_proc, 0);
-+	ent = create_proc_read_entry("dma", 0, 0, dma_read_proc, 0);
-+	if (!ent)
-+		printk(KERN_WARNING "dma: Unable to create /proc entry.\n");
- #endif
- 
- 	return 0;
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
---
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
---===============97549926720191182==
+--- linux/drivers/scsi/BusLogic.c	2005-07-07 19:13:16.000000000 -0300
++++ linux-kj/drivers/scsi/BusLogic.c	2005-07-08 02:02:42.454851376 -0300
+@@ -42,6 +42,7 @@
+ #include <linux/pci.h>
+ #include <linux/spinlock.h>
+ #include <linux/dma-mapping.h>
++#include <linux/jiffies.h>
+ #include <scsi/scsicam.h>
+ 
+ #include <asm/dma.h>
+@@ -2896,7 +2897,8 @@
+ 		 */
+ 		if (HostAdapter->ActiveCommands[TargetID] == 0)
+ 			HostAdapter->LastSequencePoint[TargetID] = jiffies;
+-		else if (jiffies - HostAdapter->LastSequencePoint[TargetID] > 4 * HZ) {
++		else if (time_after(jiffies,
++			 HostAdapter->LastSequencePoint[TargetID] + 4 * HZ)) {
+ 			HostAdapter->LastSequencePoint[TargetID] = jiffies;
+ 			QueueTag = BusLogic_OrderedQueueTag;
+ 		}
+
+--------------040704020800050405040206
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97549926720191182==--
+--------------040704020800050405040206--
