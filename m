@@ -1,61 +1,38 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 10 Jul 2005 23:20:08 +0000
-Subject: [KJ] [PATCH 13/20] Fix "nocast type" warnings
-Message-Id: <200507102320.08379.victor@cetuc.puc-rio.br>
+From: employment Agency <griffith@osg.com>
+Date: Thu, 14 Jul 2005 07:55:20 +0000
+Subject: [KJ] Position is available for full and part time
+Message-Id: <1c6b01c58849$9792466a$660b1363@osg.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description:
-    Fix the sparse warning "implicit cast to nocast type"
-
-File/Subsystem:lib/radix-tree
-
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
-
---
-
- include/linux/radix-tree.h |    4 ++--
- lib/radix-tree.c           |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-Index: linux-git/include/linux/radix-tree.h
-=================================--- linux-git.orig/include/linux/radix-tree.h	2005-07-08 12:06:49.000000000 +0000
-+++ linux-git/include/linux/radix-tree.h	2005-07-10 22:43:15.000000000 +0000
-@@ -24,7 +24,7 @@
+                 Vacancies : The assistant of manager
  
- struct radix_tree_root {
- 	unsigned int		height;
--	int			gfp_mask;
-+	unsigned int		gfp_mask;
- 	struct radix_tree_node	*rnode;
- };
- 
-@@ -50,7 +50,7 @@
- unsigned int
- radix_tree_gang_lookup(struct radix_tree_root *root, void **results,
- 			unsigned long first_index, unsigned int max_items);
--int radix_tree_preload(int gfp_mask);
-+int radix_tree_preload(unsigned int __nocast gfp_mask);
- void radix_tree_init(void);
- void *radix_tree_tag_set(struct radix_tree_root *root,
- 			unsigned long index, int tag);
-Index: linux-git/lib/radix-tree.c
-=================================--- linux-git.orig/lib/radix-tree.c	2005-07-08 12:06:48.000000000 +0000
-+++ linux-git/lib/radix-tree.c	2005-07-10 22:43:15.000000000 +0000
-@@ -109,7 +109,7 @@
-  * success, return zero, with preemption disabled.  On error, return -ENOMEM
-  * with preemption not disabled.
-  */
--int radix_tree_preload(int gfp_mask)
-+int radix_tree_preload(unsigned int __nocast gfp_mask)
- {
- 	struct radix_tree_preload *rtp;
- 	struct radix_tree_node *node;
+The company "ModaTex Co." was established in 2003. The period of successful activity in the market confirms the high professionalism of our company and the wide experience, acquired in the course of our business. This has become possible thanks to a flexible approach in solving any problems and frequently changing market situation, careful and responsible attitude to our clients. We take responsibility for solving of all problems such as warehousing, sorting, transportation and goods sales.
+We use up-to-date methods of decentralized warehouses in our business, which allows us to substantially cut down expenses on organization of large scale warehouses, as well as customs duties and freight insurance expenses.
 
---
+Company "ModaTex Co." is seeking for responsible, literate and honest persons for the position in transaction services to be assistant of manager.
+To qualify, you must be able to check your email several times a day, be able to respond to emails immediately, be able to open bank account for company needs .
+You will be asked for punctuality, managerial abilities and responsibility. You will also receive detailed instructions for subsequent actions from our manager, with information how to receive/transfer the money. 
+You'll be get transfers from our customers. When You get money you must send it immediately by wire, Western Union
+or other payment method to account or address that we provided. This position is available for full- and part-time. 
+
+
+Requirements:
+
+Availability of computer with E-mail; 
+Computer operational experience; 
+Availability of prompt replying to E-mails from our managers; 
+ 
+
+Send Us Your Resume
+
+If you are interested in this position and meet the minimum requirements please write to us and our manager will contact you:
+E-mail : directeurmodatex@aol.com
+
+
 
 _______________________________________________
 Kernel-janitors mailing list
