@@ -1,85 +1,39 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 18:54:54 +0000
-Subject: [KJ] [PATCH 2.6.13-rc1 7/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031854.54239.victor@cetuc.puc-rio.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_+RDyCDQZEvejvXz"
+From: "drew bunnell" <rumina@uaedreams.com>
+Date: Thu, 14 Jul 2005 11:26:41 +0000
+Subject: check the superb specials. on top-selling medicines.
+Message-Id: <E0EC98A8.5D0B92E@uaedreams.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_+RDyCDQZEvejvXz
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+surfing on your website is fun. buying remedy at your e-company is worth it.
+experience its curative effects is relieving. gain the speedy deliveries are
+extra. overall i am very satisfied. with your stuff and services. clark
+aiken, ohio.
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
- 
-File/Subsystem: drivers/block/cfq-iosched
+this is the latest weekly special. that you definitely shouldn't miss. log
+on to internetpharmacy and zoom in to a wide range of curative medicines on
+severe afflictions, swelling, allergy relief, 0besity, insomnia, muscle
+relaxant and other discomforts. 
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
+http://o5.qr.lovelycurllybear.com/e1n/
 
---Boundary-00=_+RDyCDQZEvejvXz
-Content-Type: text/x-diff; charset="iso-8859-1"; name="block_cfq-iosched.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="block_cfq-iosched.patch"
 
- drivers/block/cfq-iosched.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
 
-Index: linux-2.6-git/drivers/block/cfq-iosched.c
-===================================================================
---- linux-2.6-git.orig/drivers/block/cfq-iosched.c	2005-07-03 15:48:08.000000000 +0000
-+++ linux-2.6-git/drivers/block/cfq-iosched.c	2005-07-03 16:47:36.000000000 +0000
-@@ -1415,7 +1415,7 @@
- }
- 
- static struct cfq_io_context *
--cfq_alloc_io_context(struct cfq_data *cfqd, int gfp_mask)
-+cfq_alloc_io_context(struct cfq_data *cfqd, unsigned int __nocast gfp_mask)
- {
- 	struct cfq_io_context *cic = kmem_cache_alloc(cfq_ioc_pool, gfp_mask);
- 
-@@ -1510,7 +1510,7 @@
- 
- static struct cfq_queue *
- cfq_get_queue(struct cfq_data *cfqd, unsigned int key, unsigned short ioprio,
--	      int gfp_mask)
-+	      unsigned int __nocast gfp_mask)
- {
- 	const int hashval = hash_long(key, CFQ_QHASH_SHIFT);
- 	struct cfq_queue *cfqq, *new_cfqq = NULL;
-@@ -1571,7 +1571,7 @@
-  * cfqq, so we don't need to worry about it disappearing
-  */
- static struct cfq_io_context *
--cfq_get_io_context(struct cfq_data *cfqd, pid_t pid, int gfp_mask)
-+cfq_get_io_context(struct cfq_data *cfqd, pid_t pid, unsigned int __nocast gfp_mask)
- {
- 	struct io_context *ioc = NULL;
- 	struct cfq_io_context *cic;
-@@ -2063,7 +2063,7 @@
-  */
- static int
- cfq_set_request(request_queue_t *q, struct request *rq, struct bio *bio,
--		int gfp_mask)
-+		unsigned int __nocast gfp_mask)
- {
- 	struct cfq_data *cfqd = q->elevator->elevator_data;
- 	struct task_struct *tsk = current;
+life is nothing more than one long scene of trial and hardship to many
+"I am not one of those who neglect the reigning power to bow 
+Three days had passed without his coming once to Uppercross; 
 
---Boundary-00=_+RDyCDQZEvejvXz
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+-------------------------------------------------------
+SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
+from IBM. Find simple to follow Roadmaps, straightforward articles,
+informative Webcasts and more! Get everything you need to get up to
+speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---Boundary-00=_+RDyCDQZEvejvXz--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
