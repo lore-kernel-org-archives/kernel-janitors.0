@@ -1,62 +1,84 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:52 +0000
-Subject: [KJ] [patch 2.6.13-rc1 18/23] Audit return code of create_proc_*
-Message-Id: <20050707154643.692435000@rhum.iomeda.fr>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:11:49 +0000
+Subject: [KJ] [PATCH] drivers/net/eth16i.c : Use of the time_after() macro
+Message-Id: <42D8B335.5000905@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74532843178385288=="
+Content-Type: multipart/mixed; boundary="------------040808090304060805030307"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============74532843178385288==
+This is a multi-part message in MIME format.
+--------------040808090304060805030307
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+
+
+
+--------------040808090304060805030307
+Content-Type: text/x-patch;
+ name="eth16i.patch"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
-	filename=proc_create_arch_parisc_kernel_pci-dma.c.diff
+ filename="eth16i.patch"
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/parisc/kernel/pci-dma.c 2.6.13-rc1/arch/parisc/kernel/pci-dma.c
---- 2.6.13-rc1.orig/arch/parisc/kernel/pci-dma.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/parisc/kernel/pci-dma.c	2005-07-05 11:17:45.999904208 +0200
-@@ -333,18 +333,28 @@ pcxl_free_range(unsigned long vaddr, siz
- static int __init
- pcxl_dma_init(void)
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
+
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/eth16i.c	2005-07-13 17:52:19.000000000 -0300
++++ linux-kj/drivers/net/eth16i.c	2005-07-16 00:03:25.892435088 -0300
+@@ -161,6 +161,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/skbuff.h>
+ #include <linux/bitops.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/system.h>		  
+ #include <asm/io.h>		  
+@@ -754,7 +755,7 @@
+ 
+ static int eth16i_send_probe_packet(int ioaddr, unsigned char *b, int l)
  {
--    if (pcxl_dma_start == 0)
--	return 0;
-+	if (pcxl_dma_start == 0)
-+		return 0;
+-	int starttime;
++	unsigned long starttime;
  
--    spin_lock_init(&pcxl_res_lock);
--    pcxl_res_size = PCXL_DMA_MAP_SIZE >> (PAGE_SHIFT + 3);
--    pcxl_res_hint = 0;
--    pcxl_res_map = (char *)__get_free_pages(GFP_KERNEL,
-+	spin_lock_init(&pcxl_res_lock);
-+	pcxl_res_size = PCXL_DMA_MAP_SIZE >> (PAGE_SHIFT + 3);
-+	pcxl_res_hint = 0;
-+	pcxl_res_map = (char *)__get_free_pages(GFP_KERNEL,
- 					    get_order(pcxl_res_size));
--    memset(pcxl_res_map, 0, pcxl_res_size);
--    proc_gsc_root = proc_mkdir("gsc", 0);
--    create_proc_info_entry("dino", 0, proc_gsc_root, pcxl_proc_info);
--    return 0;
-+	memset(pcxl_res_map, 0, pcxl_res_size);
-+	proc_gsc_root = proc_mkdir("gsc", 0);
-+	if (!proc_gsc_root)
-+    		printk(KERN_WARNING 
-+			"pcxl_dma_init: Unable to create gsc /proc dir entry\n");
-+	else {
-+		struct proc_dir_entry* ent;
-+		ent = create_proc_info_entry("dino", 0, 
-+				proc_gsc_root, pcxl_proc_info);
-+		if (!ent)
-+			printk(KERN_WARNING 
-+				"pci-dma.c: Unable to create dino /proc entry.\n");
-+
-+	return 0;
- }
+ 	outb(0xff, ioaddr + TX_STATUS_REG);
  
- __initcall(pcxl_dma_init);
+@@ -765,7 +766,7 @@
+ 	outb(TX_START | 1, ioaddr + TRANSMIT_START_REG); 
+ 
+ 	while( (inb(ioaddr + TX_STATUS_REG) & 0x80) == 0) {
+-		if( (jiffies - starttime) > TX_TIMEOUT) {
++		if((time_after(jiffies, starttime + TX_TIMEOUT))) {
+ 			return -1;
+ 		}
+ 	}
+@@ -775,18 +776,19 @@
+ 
+ static int eth16i_receive_probe_packet(int ioaddr)
+ {
+-	int starttime;
++	unsigned long starttime;
+ 
+ 	starttime = jiffies;
+ 
+ 	while((inb(ioaddr + TX_STATUS_REG) & 0x20) == 0) {
+-		if( (jiffies - starttime) > TX_TIMEOUT) {
++		if(time_after(jiffies, starttime + TX_TIMEOUT)) {
+ 
+ 			if(eth16i_debug > 1)
+ 				printk(KERN_DEBUG "Timeout occurred waiting transmit packet received\n");
+ 			starttime = jiffies;
+ 			while((inb(ioaddr + RX_STATUS_REG) & 0x80) == 0) {
+-				if( (jiffies - starttime) > TX_TIMEOUT) {
++				if(time_after(jiffies,
++						starttime + TX_TIMEOUT)) {
+ 					if(eth16i_debug > 1)
+ 						printk(KERN_DEBUG "Timeout occurred waiting receive packet\n");
+ 					return -1;
 
---
-
---===============74532843178385288==
+--------------040808090304060805030307
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +89,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74532843178385288==--
+--------------040808090304060805030307--
