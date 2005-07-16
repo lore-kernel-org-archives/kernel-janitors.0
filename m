@@ -1,44 +1,62 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Sat, 09 Jul 2005 00:13:24 +0000
-Subject: [KJ] [PATCH 9/14] block/cciss: use msleep() instead of
-Message-Id: <20050709001324.GO2596@us.ibm.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:07:51 +0000
+Subject: [KJ] [PATCH] drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c :
+Message-Id: <42D8B247.1050608@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============040853514473583541=="
+Content-Type: multipart/mixed; boundary="------------030000000506030001080206"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============040853514473583541==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------030000000506030001080206
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-From: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Description: Use msleep() instead of schedule_timeout() to guarantee the
-task delays as expected. This change was ACK'ed before, but there were
-multiple versions floating around and this hunk got lost, it seems.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+--------------030000000506030001080206
+Content-Type: text/x-patch;
+ name="dvb-ttusb-budget.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="dvb-ttusb-budget.patch"
 
----
+Use of the time_after_eq() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
- cciss.c |    3 +--
- 1 files changed, 1 insertion(+), 2 deletions(-)
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
-diff -urp 2.6.13-rc2-kj/drivers/block/cciss.c 2.6.13-rc2-kj-dev/drivers/block/cciss.c
---- 2.6.13-rc2-kj/drivers/block/cciss.c	2005-07-08 13:01:09.000000000 -0700
-+++ 2.6.13-rc2-kj-dev/drivers/block/cciss.c	2005-07-06 13:40:00.000000000 -0700
-@@ -2439,8 +2439,7 @@ static int cciss_pci_init(ctlr_info_t *c
- 		scratchpad = readl(c->vaddr + SA5_SCRATCHPAD_OFFSET);
- 		if (scratchpad == CCISS_FIRMWARE_READY)
- 			break;
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ / 10); /* wait 100ms */
-+		msleep(100);
- 	}
- 	if (scratchpad != CCISS_FIRMWARE_READY) {
- 		printk(KERN_WARNING "cciss: Board not ready.  Timed out.\n");
+--- linux/drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c	2005-07-13 17:52:17.000000000 -0300
++++ linux-kj/drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c	2005-07-15 21:46:29.050584920 -0300
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/time.h>
+ #include <linux/errno.h>
++#include <linux/jiffies.h>
+ #include <asm/semaphore.h>
+ 
+ #include "dvb_frontend.h"
+@@ -570,7 +571,8 @@
+ 				  const u8 * data, int len);
+ #endif
+ 
+-static int numpkt = 0, lastj, numts, numstuff, numsec, numinvalid;
++static int numpkt = 0, numts, numstuff, numsec, numinvalid;
++static unsigned long lastj;
+ 
+ static void ttusb_process_muxpack(struct ttusb *ttusb, const u8 * muxpack,
+ 			   int len)
+@@ -779,7 +781,7 @@
+ 			u8 *data;
+ 			int len;
+ 			numpkt++;
+-			if ((jiffies - lastj) >= HZ) {
++			if (time_after_eq(jiffies, lastj + HZ)) {
+ #if DEBUG > 2
+ 				printk
+ 				    ("frames/s: %d (ts: %d, stuff %d, sec: %d, invalid: %d, all: %d)\n",
 
---===============040853514473583541==
+--------------030000000506030001080206
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============040853514473583541==--
+--------------030000000506030001080206--
