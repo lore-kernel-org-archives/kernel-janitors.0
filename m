@@ -1,56 +1,60 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Wed, 06 Jul 2005 23:05:39 +0000
-Subject: [KJ] [PATCH 7/15] FlashPoint: remove ushort_ptr
-Message-Id: <200507070305.39975.adobriyan@gmail.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:12:35 +0000
+Subject: [KJ] [PATCH] drivers/net/wan/farsync.c : Use of the time_before()
+Message-Id: <42D8B363.7000507@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============023890497472938144=="
+Content-Type: multipart/mixed; boundary="------------080307030502070306000603"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============023890497472938144==
-Content-Type: text/plain;
-  charset="us-ascii"
+This is a multi-part message in MIME format.
+--------------080307030502070306000603
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
 
- drivers/scsi/FlashPoint.c |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
 
-Index: linux-flashpoint/drivers/scsi/FlashPoint.c
-===================================================================
---- linux-flashpoint.orig/drivers/scsi/FlashPoint.c	2005-07-06 23:46:25.000000000 +0400
-+++ linux-flashpoint/drivers/scsi/FlashPoint.c	2005-07-06 23:47:18.000000000 +0400
-@@ -42,7 +42,6 @@
- 
- 
- 
--typedef unsigned short          * ushort_ptr;
- 
- 
- #define s08bits	char
-@@ -6003,7 +6002,7 @@ static void FPT_scasid(unsigned char p_c
-    unsigned char i,k,scam_id;
- 	unsigned char crcBytes[3];
- 	PNVRamInfo pCurrNvRam;
--	ushort_ptr pCrcBytes;
-+	unsigned short * pCrcBytes;
- 
- 	pCurrNvRam = FPT_BL_Card[p_card].pNvRamInfo;
- 
-@@ -6023,7 +6022,7 @@ static void FPT_scasid(unsigned char p_c
-       if (!(FPT_sciso(p_port,&temp_id_string[0])))
-          {
- 			if(pCurrNvRam){
--				pCrcBytes = (ushort_ptr)&crcBytes[0];
-+				pCrcBytes = (unsigned short *)&crcBytes[0];
- 				*pCrcBytes = FPT_CalcCrc16(&temp_id_string[0]);
- 				crcBytes[2] = FPT_CalcLrc(&temp_id_string[0]);
- 				temp_id_string[1] = crcBytes[2];
+--------------080307030502070306000603
+Content-Type: text/x-patch;
+ name="farsync.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="farsync.patch"
 
---===============023890497472938144==
+Use of the time_before() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
+
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/wan/farsync.c	2005-07-13 17:53:31.000000000 -0300
++++ linux-kj/drivers/net/wan/farsync.c	2005-07-16 00:55:48.299716568 -0300
+@@ -23,6 +23,7 @@
+ #include <linux/init.h>
+ #include <linux/if.h>
+ #include <linux/hdlc.h>
++#include <linux/jiffies.h>
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+ 
+@@ -697,14 +698,14 @@
+ 		 * We are delaying here to allow the 9054 to reset itself
+ 		 */
+ 		j = jiffies + 1;
+-		while (jiffies < j)
++		while (time_before(jiffies, j))
+ 			/* Do nothing */ ;
+ 		outw(0x240f, card->pci_conf + CNTRL_9054 + 2);
+ 		/*
+ 		 * We are delaying here to allow the 9054 to reload its eeprom
+ 		 */
+ 		j = jiffies + 1;
+-		while (jiffies < j)
++		while (time_before(jiffies, j))
+ 			/* Do nothing */ ;
+ 		outw(0x040f, card->pci_conf + CNTRL_9054 + 2);
+ 
+
+--------------080307030502070306000603
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============023890497472938144==--
+--------------080307030502070306000603--
