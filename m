@@ -1,37 +1,51 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 08 Jul 2005 10:33:21 +0000
-Subject: [KJ] [patch 2.6.13-rc1 08/23] printk : arch/um/kernel/process_kern.c
-Message-Id: <20050708103321.GP4683@rhum.iomeda.fr>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:18:37 +0000
+Subject: [KJ] [PATCH] drivers/net/oaknet.c : Use of the time_after() macro
+Message-Id: <42D8B4CD.2070900@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86821501071362372=="
+Content-Type: multipart/mixed; boundary="------------000802040708020407060502"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============86821501071362372==
-Content-Disposition: inline
-Content-Type: text/plain; charset=us-ascii
-
-Description:
-printk() calls should include appropriate KERN_* constant.
-
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+This is a multi-part message in MIME format.
+--------------000802040708020407060502
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
 
-Index: 2.6.13-rc1/arch/um/kernel/process_kern.c
-===================================================================
---- 2.6.13-rc1.orig/arch/um/kernel/process_kern.c
-+++ 2.6.13-rc1/arch/um/kernel/process_kern.c
-@@ -412,7 +412,7 @@ int __init make_proc_sysemu(void)
+--------------000802040708020407060502
+Content-Type: text/x-patch;
+ name="oaknet.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="oaknet.patch"
+
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
+
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/oaknet.c	2005-06-17 16:48:29.000000000 -0300
++++ linux-kj/drivers/net/oaknet.c	2005-07-15 21:31:59.838725208 -0300
+@@ -20,6 +20,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
+ #include <linux/init.h>
++#include <linux/jiffies.h>
  
- 	if (ent == NULL)
- 	{
--		printk("Failed to register /proc/sysemu\n");
-+		printk(KERN_WARNING "Failed to register /proc/sysemu\n");
- 		return(0);
- 	}
+ #include <asm/board.h>
+ #include <asm/io.h>
+@@ -606,7 +607,7 @@
+ #endif
  
+ 	while ((ei_ibp(base + EN0_ISR) & ENISR_RDC) == 0) {
+-		if (jiffies - start > OAKNET_WAIT) {
++		if (time_after(jiffies, start + OAKNET_WAIT)) {
+ 			printk("%s: timeout waiting for Tx RDC.\n", dev->name);
+ 			oaknet_reset_8390(dev);
+ 			NS8390_init(dev, TRUE);
 
---===============86821501071362372==
+--------------000802040708020407060502
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============86821501071362372==--
+--------------000802040708020407060502--
