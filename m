@@ -1,64 +1,66 @@
-From: Michael Krufky <mkrufky@m1k.net>
-Date: Wed, 20 Jul 2005 19:45:12 +0000
-Subject: [KJ] Re: [PATCH] drivers/media/video/bttv-driver: Remove unneeded
-Message-Id: <42DEA9C8.6020406@m1k.net>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:08:36 +0000
+Subject: [KJ] [PATCH] drivers/net/e1000/e1000_ethtool.c : Use of the
+Message-Id: <42D8B274.4000000@feitoza.com.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------000508010306040102000300"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Tobias Klauser wrote:
+This is a multi-part message in MIME format.
+--------------000508010306040102000300
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
->In bttv-driver.c pci_dma_supported() is called after pci_set_dma_mask()
->which already did check that for us. The attached patch removes the
->unneeded call to pci_dma_supported()
->
->Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
->
->---
->
-> bttv-driver.c |    5 -----
-> 1 files changed, 5 deletions(-)
->
->diff -urpN -X dontdiff linux-2.6.13-rc2/drivers/media/video/bttv-driver.c linux-2.6.13-rc2~dma_mask/drivers/media/video/bttv-driver.c
->--- linux-2.6.13-rc2/drivers/media/video/bttv-driver.c	2005-07-07 21:28:50.000000000 +0200
->+++ linux-2.6.13-rc2~dma_mask/drivers/media/video/bttv-driver.c	2005-07-07 22:43:50.000000000 +0200
->@@ -3880,11 +3881,6 @@ static int __devinit bttv_probe(struct p
->         pci_set_master(dev);
-> 	pci_set_command(dev);
-> 	pci_set_drvdata(dev,btv);
->-	if (!pci_dma_supported(dev,0xffffffff)) {
->-		printk("bttv%d: Oops: no 32bit PCI DMA ???\n", btv->c.nr);
->-		result = -EIO;
->-		goto fail1;
->-	}
-> 
->         pci_read_config_byte(dev, PCI_CLASS_REVISION, &btv->revision);
->         pci_read_config_byte(dev, PCI_LATENCY_TIMER, &lat);
->
->--
->video4linux-list mailing list
->Unsubscribe mailto:video4linux-list-request@redhat.com?subject=unsubscribe
->https://www.redhat.com/mailman/listinfo/video4linux-list
->  
->
-Applied to video4linux cvs...
 
-/Wed Jul 20 19:43:24 2005 UTC/ (55 seconds ago) by /mkrufky/
-        * bttv-driver.c:
-        - pci_dma_supported() is called after pci_set_dma_mask() which
-          already did check that for us. The attached patch removes the
-          unneeded call to pci_dma_supported()
 
-        Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-        Signed-off-by: Michael Krufky <mkrufky@m1k.net>
+--------------000508010306040102000300
+Content-Type: text/x-patch;
+ name="e1000_ethtool.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="e1000_ethtool.patch"
 
--- 
-Michael Krufky
+Use of the time_after() and time_after_eq()  macros, defined at linux/jiffies.h,
+which deal with wrapping correctly and are nicer to read.
 
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/e1000/e1000_ethtool.c	2005-07-13 17:52:19.000000000 -0300
++++ linux-kj/drivers/net/e1000/e1000_ethtool.c	2005-07-15 23:51:00.719718560 -0300
+@@ -30,6 +30,7 @@
+ 
+ #include "e1000.h"
+ 
++#include <linux/jiffies.h>
+ #include <asm/uaccess.h>
+ 
+ extern char e1000_driver_name[];
+@@ -1389,12 +1390,12 @@
+ 			 * enough time to complete the receives, if it's 
+ 			 * exceeded, break and error off
+ 			 */
+-		} while (good_cnt < 64 && jiffies < (time + 20));
++		} while (good_cnt < 64 && time_after(jiffies, time + 20));
+ 		if(good_cnt != 64) {
+ 			ret_val = 13; /* ret_val is the same as mis-compare */
+ 			break; 
+ 		}
+-		if(jiffies >= (time + 2)) {
++		if(time_after_eq(jiffies, time + 2)) {
+ 			ret_val = 14; /* error code for time out error */
+ 			break;
+ 		}
+
+--------------000508010306040102000300
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------000508010306040102000300--
