@@ -1,52 +1,62 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 10 Jul 2005 23:19:08 +0000
-Subject: [KJ] [PATCH 07/20] Fix "nocast type" warnings
-Message-Id: <200507102319.08658.victor@cetuc.puc-rio.br>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:14:52 +0000
+Subject: [KJ] [PATCH] drivers/atm/iphase.c : Use of the time_after() macro
+Message-Id: <42D8B3EC.4090809@feitoza.com.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------090603050701070504090104"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description:
-    Fix the sparse warning "implicit cast to nocast type"
+This is a multi-part message in MIME format.
+--------------090603050701070504090104
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-File/Subsystem:drivers/atm/firestream.c
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
+--------------090603050701070504090104
+Content-Type: text/x-patch;
+ name="iphase.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="iphase.patch"
 
---
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
- drivers/atm/firestream.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
-Index: linux-git/drivers/atm/firestream.c
-=================================--- linux-git.orig/drivers/atm/firestream.c	2005-07-08 12:06:48.000000000 +0000
-+++ linux-git/drivers/atm/firestream.c	2005-07-10 22:43:19.000000000 +0000
-@@ -1374,7 +1374,8 @@
- 	}
- }
+--- linux/drivers/atm/iphase.c	2005-06-17 16:48:29.000000000 -0300
++++ linux-kj/drivers/atm/iphase.c	2005-07-16 01:51:51.088494968 -0300
+@@ -60,7 +60,8 @@
+ #include <asm/uaccess.h>  
+ #include <asm/string.h>  
+ #include <asm/byteorder.h>  
+-#include <linux/vmalloc.h>  
++#include <linux/vmalloc.h> 
++#include <linux/jiffies.h>
+ #include "iphase.h"		  
+ #include "suni.h"		  
+ #define swap(x) (((x & 0xff) << 8) | ((x & 0xff00) >> 8))  
+@@ -189,7 +190,8 @@
+   int ltimeout;
  
--static void __devinit *aligned_kmalloc (int size, int flags, int alignment)
-+static void __devinit *aligned_kmalloc (int size, unsigned int __nocast flags,
-+					int alignment)
- {
- 	void  *t;
- 
-@@ -1464,7 +1465,8 @@
-    does. I've seen "receive abort: no buffers" and things started
-    working again after that...  -- REW */
- 
--static void top_off_fp (struct fs_dev *dev, struct freepool *fp, int gfp_flags)
-+static void top_off_fp (struct fs_dev *dev, struct freepool *fp,
-+			unsigned int __nocast gfp_flags)
- {
- 	struct FS_BPENTRY *qe, *ne;
- 	struct sk_buff *skb;
+   ia_hack_tcq (dev);
+-  if(((jiffies - timer)>50)||((dev->ffL.tcq_rd==dev->host_tcq_wr))){      
++  if(time_after(jiffies, timer + 50)
++		  ||((dev->ffL.tcq_rd==dev->host_tcq_wr))){      
+      timer = jiffies; 
+      i=0;
+      while (i < dev->num_tx_desc) {
 
---
+--------------090603050701070504090104
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------090603050701070504090104--
