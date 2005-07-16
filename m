@@ -1,101 +1,71 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Sat, 09 Jul 2005 00:16:20 +0000
-Subject: [KJ] [PATCH 13/14] scsi/qla2xxx: use msleep{,
-Message-Id: <20050709001620.GS2596@us.ibm.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:06:58 +0000
+Subject: [KJ] [PATCH] drivers/net/hamradio/dmascc.c : Use of the
+Message-Id: <42D8B212.4060902@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20391982447031998=="
+Content-Type: multipart/mixed; boundary="------------040705020905060008030600"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050709000324.GD2596@us.ibm.com>
-In-Reply-To: <20050709000324.GD2596@us.ibm.com>
-To: andrew.vasquez@qlogic.com
-Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============20391982447031998==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------040705020905060008030600
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-From: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Description: Replace schedule_timeout() with
-msleep()/msleep_interruptible() as appropriate, to guarantee the task
-delays as expected.
 
-Patch is compile-tested.
+--------------040705020905060008030600
+Content-Type: text/x-patch;
+ name="dmascc.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="dmascc.patch"
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+Use of the time_before() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
----
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
- qla_os.c |   25 +++++++++++--------------
- 1 files changed, 11 insertions(+), 14 deletions(-)
-
-diff -urp 2.6.13-rc2-kj/drivers/scsi/qla2xxx/qla_os.c 2.6.13-rc2-kj-dev/drivers/scsi/qla2xxx/qla_os.c
---- 2.6.13-rc2-kj/drivers/scsi/qla2xxx/qla_os.c	2005-07-08 13:01:12.000000000 -0700
-+++ 2.6.13-rc2-kj-dev/drivers/scsi/qla2xxx/qla_os.c	2005-07-06 19:27:01.000000000 -0700
-@@ -347,14 +347,13 @@ qc_fail_command:
- static int
- qla2x00_eh_wait_on_command(scsi_qla_host_t *ha, struct scsi_cmnd *cmd)
- {
--#define ABORT_POLLING_PERIOD	HZ
--#define ABORT_WAIT_ITER		((10 * HZ) / (ABORT_POLLING_PERIOD))
-+#define ABORT_POLLING_PERIOD	1000
-+#define ABORT_WAIT_ITER		((10 * 1000) / (ABORT_POLLING_PERIOD))
- 	unsigned long wait_iter = ABORT_WAIT_ITER;
- 	int ret = QLA_SUCCESS;
+--- linux/drivers/net/hamradio/dmascc.c	2005-06-17 16:48:29.000000000 -0300
++++ linux-kj/drivers/net/hamradio/dmascc.c	2005-07-16 03:52:00.470502312 -0300
+@@ -34,6 +34,7 @@
+ #include <linux/rtnetlink.h>
+ #include <linux/sockios.h>
+ #include <linux/workqueue.h>
++#include <linux/jiffies.h>
+ #include <asm/atomic.h>
+ #include <asm/bitops.h>
+ #include <asm/dma.h>
+@@ -405,7 +406,7 @@
+ 		udelay(2000000 / TMR_0_HZ);
  
- 	while (CMD_SP(cmd)) {
--		set_current_state(TASK_UNINTERRUPTIBLE);
--		schedule_timeout(ABORT_POLLING_PERIOD);
-+		msleep(ABORT_POLLING_PERIOD);
+ 		/* Timing loop */
+-		while (jiffies - time < 13) {
++		while (time_before(jiffies, time + 13)) {
+ 			for (i = 0; i < hw[h].num_devs; i++)
+ 				if (base[i] && counting[i]) {
+ 					/* Read back Timer 1: latch; read LSB; read MSB */
+@@ -548,7 +549,7 @@
  
- 		if (--wait_iter)
- 			break;
-@@ -1693,7 +1692,7 @@ qla2x00_mem_free(scsi_qla_host_t *ha)
- {
- 	struct list_head	*fcpl, *fcptemp;
- 	fc_port_t	*fcport;
--	unsigned long	wtime;/* max wait time if mbx cmd is busy. */
-+	unsigned int	wtime;/* max wait time if mbx cmd is busy. */
+ 	/* Wait and detect IRQ */
+ 	time = jiffies;
+-	while (jiffies - time < 2 + HZ / TMR_0_HZ);
++	while (time_before(jiffies, time + 2 + HZ / TMR_0_HZ));
+ 	irq = probe_irq_off(irqs);
  
- 	if (ha == NULL) {
- 		/* error */
-@@ -1702,11 +1701,9 @@ qla2x00_mem_free(scsi_qla_host_t *ha)
- 	}
- 
- 	/* Make sure all other threads are stopped. */
--	wtime = 60 * HZ;
--	while (ha->dpc_wait && wtime) {
--		set_current_state(TASK_INTERRUPTIBLE);
--		wtime = schedule_timeout(wtime);
--	}
-+	wtime = 60 * 1000;
-+	while (ha->dpc_wait && wtime)
-+		wtime = msleep_interruptible(wtime);
- 
- 	/* free ioctl memory */
- 	qla2x00_free_ioctl_mem(ha);
-@@ -2250,15 +2247,15 @@ qla2x00_timer(scsi_qla_host_t *ha)
- int
- qla2x00_down_timeout(struct semaphore *sema, unsigned long timeout)
- {
--	const unsigned int step = HZ/10;
-+	const unsigned int step = 100; /* msecs */
-+	unsigned int iterations = jiffies_to_msecs(timeout)/100;
- 
- 	do {
- 		if (!down_trylock(sema))
- 			return 0;
--		set_current_state(TASK_INTERRUPTIBLE);
--		if (schedule_timeout(step))
-+		if (msleep_interruptible(step))
- 			break;
--	} while ((timeout -= step) > 0);
-+	} while (--iterations >= 0);
- 
- 	return -ETIMEDOUT;
- }
+ 	/* Clear pending interrupt, disable interrupts */
+@@ -1395,7 +1396,8 @@
+ 		/* Switch state */
+ 		write_scc(priv, R15, 0);
+ 		if (priv->tx_count &&
+-		    (jiffies - priv->tx_start) < priv->param.txtimeout) {
++		    time_before(jiffies, priv->tx_start 
++			    + priv->param.txtimeout)) {
+ 			priv->state = TX_PAUSE;
+ 			start_timer(priv, priv->param.txpause, 0);
+ 		} else {
 
---===============20391982447031998==
+--------------040705020905060008030600
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -106,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20391982447031998==--
+--------------040705020905060008030600--
