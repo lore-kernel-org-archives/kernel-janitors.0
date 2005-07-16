@@ -1,60 +1,133 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Thu, 28 Jul 2005 17:18:47 +0000
-Subject: Re: [KJ] [PATCH] drivers/video/vgastate.c
-Message-Id: <20050728171847.GC2249@homer.coderock.org>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:00:51 +0000
+Subject: [KJ] [PATCH] drivers/net/tokenring/3c359.c : Use of the
+Message-Id: <42D8B0A3.9050807@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7956490054579981=="
+Content-Type: multipart/mixed; boundary="------------050804090507070701040406"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42E8EA34.3020300@steunenberg.org>
-In-Reply-To: <42E8EA34.3020300@steunenberg.org>
 To: kernel-janitors@vger.kernel.org
 
---===============7956490054579981==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------050804090507070701040406
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On 28/07/05 16:22 +0200, Jerome Steunenberg wrote:
-> This is my first patch to kernel-janitors. Please tell me if I got it all ok
-> In drivers/video/vgastate.c, the calls to init_module and cleanup_module 
-> have been replaced by calls to module_init and module_exit.
 
-"Subject" could be improved
 
-> 
-> Signed-off-by: Jerome Steunenberg <jerome@steunenberg.org>
-> 
-> 
-> 
-> --- linux-2.6.13-rc3/drivers/video/vgastate.c.orig	2005-07-25 
-> 15:09:51.000000000 +0200
+--------------050804090507070701040406
+Content-Type: text/x-patch;
+ name="3c359.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="3c359.patch"
 
-Wrapped line. Try playing with your mailer settings.
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
 
-> +++ linux-2.6.13-rc3/drivers/video/vgastate.c	2005-07-26 
-> 10:15:32.000000000 +0200
-> @@ -491,8 +491,17 @@ int restore_vga (struct vgastate *state)
->  }
-> 
->  #ifdef MODULE
-> -int init_module(void) { return 0; };
-> -void cleanup_module(void) {};
-> +static int __init vgastate_init(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void __exit vgastate_exit(void)
-> +{
-> +}
-> +
-> +module_init(vgastate_init);
-> +module_exit(vgastate_exit);
->  #endif
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
-How about just removing it? A quick hello world module confirmed it
-works without these functions.
+--- linux/drivers/net/tokenring/3c359.c	2005-07-13 17:53:30.000000000 -0300
++++ linux-kj/drivers/net/tokenring/3c359.c	2005-07-16 01:00:27.145325592 -0300
+@@ -62,6 +62,7 @@
+ #include <linux/pci.h>
+ #include <linux/spinlock.h>
+ #include <linux/bitops.h>
++#include <linux/jiffies.h>
+ 
+ #include <net/checksum.h>
+ 
+@@ -410,7 +411,7 @@
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 40*HZ) {
++		if(time_after(jiffies, t + 40*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL  card not responding to global reset.\n", dev->name);
+ 			return -ENODEV;
+ 		}
+@@ -521,7 +522,7 @@
+ 	t=jiffies;
+ 	while ( !(readw(xl_mmio + MMIO_INTSTATUS_AUTO) & INTSTAT_SRB) ) { 
+ 		schedule();		
+-		if(jiffies-t > 15*HZ) {
++		if(time_after(jiffies, t + 15*HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			return -ENODEV; 
+ 		}
+@@ -797,7 +798,7 @@
+ 	t=jiffies;
+ 	while (! (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_SRB)) { 
+ 		schedule();		
+-		if(jiffies-t > 40*HZ) {
++		if(time_after(jiffies, t + 40*HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			break ; 
+ 		}
+@@ -1012,7 +1013,7 @@
+ 
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+-		if(jiffies-t > 40*HZ) {
++		if(time_after(jiffies, t + 40*HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			break ; 
+ 		}
+@@ -1284,7 +1285,7 @@
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNSTALL not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1293,7 +1294,7 @@
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNDISABLE not responding.\n", dev->name);
+ 			break ;
+ 		}
+@@ -1302,7 +1303,7 @@
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-UPSTALL not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1319,7 +1320,7 @@
+ 	t=jiffies;
+ 	while (!(readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_SRB)) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-CLOSENIC not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1348,7 +1349,7 @@
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-UPRESET not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1357,7 +1358,7 @@
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNRESET not responding.\n", dev->name);
+ 			break ; 
+ 		}
 
---===============7956490054579981==
+--------------050804090507070701040406
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +138,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============7956490054579981==--
+--------------050804090507070701040406--
