@@ -1,38 +1,59 @@
-From: info@de-crescendo.com
-Date: Wed, 06 Jul 2005 12:13:31 +0000
-Subject: はじめまして
-Message-Id: <20050706121331.26898.qmail@mail.de-crescendo.com>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:16:10 +0000
+Subject: [KJ] [PATCH] drivers/char/lp.c : Use of the time_after() macro
+Message-Id: <42D8B43A.8020501@feitoza.com.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------070601030608060900040409"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-　はじめまして、新番組《エンジェル・ゾーン》です。
-　　　　　http://www.ya2dic.com?num 01
-　今日からOPEN致しますので、よろしくお願いいたします。
-　女性の募集が2墻前からすでに始まりましたので、今大量
-　な新人女性が在籍です。
-　　●女性プロフ大量流出●
-　　●写メ・アド交換OK　●
-　　●掲示板書き込み自由●
-　　●24時間利用可能　　●
-　　家にPCで,外に携帯で、いつでも可愛い女の子と連絡すること
-　　ができます。
-　　ご利用が無料ですので、とりあえずやってみましょう。
-　リンク：http://www.ya2dic.com?num 01
-
-　　なお、このメールは全国20名様限定に配信いたします。
-　
+This is a multi-part message in MIME format.
+--------------070601030608060900040409
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
 
--------------------------------------------------------
-SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
-from IBM. Find simple to follow Roadmaps, straightforward articles,
-informative Webcasts and more! Get everything you need to get up to
-speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
+--------------070601030608060900040409
+Content-Type: text/x-patch;
+ name="lp.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="lp.patch"
+
+Use of the time_after() macro, defined at linux/jiffies.h, which deal
+with wrapping correctly and are nicer to read.
+
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/char/lp.c	2005-07-13 17:52:02.000000000 -0300
++++ linux-kj/drivers/char/lp.c	2005-07-15 15:45:36.687244480 -0300
+@@ -128,6 +128,7 @@
+ #include <linux/console.h>
+ #include <linux/device.h>
+ #include <linux/wait.h>
++#include <linux/jiffies.h>
+ 
+ #include <linux/parport.h>
+ #undef LP_STATS
+@@ -307,7 +308,7 @@
+ 			(LP_F(minor) & LP_ABORT));
+ 
+ #ifdef LP_STATS
+-	if (jiffies-lp_table[minor].lastcall > LP_TIME(minor))
++	if (time_after(jiffies, lp_table[minor].lastcall + LP_TIME(minor)))
+ 		lp_table[minor].runchars = 0;
+ 
+ 	lp_table[minor].lastcall = jiffies;
+
+--------------070601030608060900040409
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--------------070601030608060900040409--
