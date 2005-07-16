@@ -1,81 +1,54 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 19:05:24 +0000
-Subject: [KJ] [PATCH 2.6.13-rc1 15/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031905.24587.victor@cetuc.puc-rio.br>
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Date: Sat, 16 Jul 2005 07:22:24 +0000
+Subject: [KJ] [PATCH] drivers/net/shaper.c : Use of the time_before() and
+Message-Id: <42D8B5B0.7010901@feitoza.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_0bDyCP2XoMP9K6w"
+Content-Type: multipart/mixed; boundary="------------050305050301080703050308"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_0bDyCP2XoMP9K6w
-Content-Type: text/plain;
-  charset="iso-8859-1"
+This is a multi-part message in MIME format.
+--------------050305050301080703050308
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
- 
-File/Subsystem: net/ipv4
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
-
---Boundary-00=_0bDyCP2XoMP9K6w
-Content-Type: text/x-diff;
-  charset="iso-8859-1";
-  name="net_ipv4.patch"
+--------------050305050301080703050308
+Content-Type: text/x-patch;
+ name="shaper.patch"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="net_ipv4.patch"
+Content-Disposition: inline;
+ filename="shaper.patch"
 
- include/net/sock.h    |    2 +-
- include/net/tcp.h     |    3 ++-
- net/ipv4/tcp_output.c |    2 +-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+Use of the time_before() and time_after()  macros, defined at linux/jiffies.h,
+which deal with wrapping correctly and are nicer to read.
 
-Index: linux-2.6-git/net/ipv4/tcp_output.c
-===================================================================
---- linux-2.6-git.orig/net/ipv4/tcp_output.c	2005-07-03 18:01:03.000000000 +0000
-+++ linux-2.6-git/net/ipv4/tcp_output.c	2005-07-03 18:02:46.000000000 +0000
-@@ -1285,7 +1285,7 @@
-  * was unread data in the receive queue.  This behavior is recommended
-  * by draft-ietf-tcpimpl-prob-03.txt section 3.10.  -DaveM
-  */
--void tcp_send_active_reset(struct sock *sk, int priority)
-+void tcp_send_active_reset(struct sock *sk, unsigned int __nocast priority)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct sk_buff *skb;
-Index: linux-2.6-git/include/net/tcp.h
-===================================================================
---- linux-2.6-git.orig/include/net/tcp.h	2005-07-01 17:48:52.000000000 +0000
-+++ linux-2.6-git/include/net/tcp.h	2005-07-03 18:08:36.000000000 +0000
-@@ -853,7 +853,8 @@
- extern void tcp_send_partial(struct sock *);
- extern int  tcp_write_wakeup(struct sock *);
- extern void tcp_send_fin(struct sock *sk);
--extern void tcp_send_active_reset(struct sock *sk, int priority);
-+extern void tcp_send_active_reset(struct sock *sk,
-+                                  unsigned int __nocast priority);
- extern int  tcp_send_synack(struct sock *);
- extern void tcp_push_one(struct sock *, unsigned mss_now);
- extern void tcp_send_ack(struct sock *sk);
-Index: linux-2.6-git/include/net/sock.h
-===================================================================
---- linux-2.6-git.orig/include/net/sock.h	2005-07-03 18:19:02.000000000 +0000
-+++ linux-2.6-git/include/net/sock.h	2005-07-03 18:19:58.000000000 +0000
-@@ -1189,7 +1189,7 @@
- 	return atomic_read(&sk->sk_wmem_alloc) < (sk->sk_sndbuf / 2);
- }
+Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+
+--- linux/drivers/net/shaper.c	2005-07-13 17:52:19.000000000 -0300
++++ linux-kj/drivers/net/shaper.c	2005-07-16 01:46:18.835005176 -0300
+@@ -161,7 +161,8 @@
+  	while(ptr && ptr!=(struct sk_buff *)&shaper->sendq)
+  	{
+  		if(ptr->pri<skb->pri 
+- 			&& jiffies - SHAPERCB(ptr)->shapeclock < SHAPER_MAXSLIP)
++ 			&& time_before(jiffies, SHAPERCB(ptr)->shapeclock
++			       + SHAPER_MAXSLIP))
+  		{
+  			struct sk_buff *tmp=ptr->prev;
  
--static inline int gfp_any(void)
-+static inline unsigned int __nocast gfp_any(void)
- {
- 	return in_softirq() ? GFP_ATOMIC : GFP_KERNEL;
- }
+@@ -214,7 +215,8 @@
+ 		/*
+ 		 *	Queue over time. Spill packet.
+ 		 */
+-		if(SHAPERCB(skb)->shapeclock-jiffies > SHAPER_LATENCY) {
++		if(time_after(SHAPERCB(skb)->shapeclock, jiffies 
++					+ SHAPER_LATENCY)) {
+ 			dev_kfree_skb(skb);
+ 			shaper->stats.tx_dropped++;
+ 		} else
 
---Boundary-00=_0bDyCP2XoMP9K6w
+--------------050305050301080703050308
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -86,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_0bDyCP2XoMP9K6w--
+--------------050305050301080703050308--
