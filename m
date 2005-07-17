@@ -1,60 +1,46 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 13 Jul 2005 17:31:42 +0000
-Subject: Re: [KJ] [patch 2.6.13-rc1 19/23][RESEND] Audit return code of
-Message-Id: <20050713173142.GA21831@homer.coderock.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88815241640264819=="
+From: Jim Cromie <jcromie@divsol.com>
+Date: Sun, 17 Jul 2005 02:38:13 +0000
+Subject: [KJ] RFC - trailing whitespace cleanup script
+Message-Id: <42D9C495.2090405@divsol.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050712120511.GF4712@rhum.iomeda.fr>
-In-Reply-To: <20050712120511.GF4712@rhum.iomeda.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============88815241640264819==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Domen, all,
 
-On 12/07/05 14:05 +0200, Christophe Lucas wrote:
-> Description:
-> Audit return of create_proc_* functions.
-> 
-> Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
-> 
-> 
-> Index: 2.6.13-rc1/arch/m68k/mac/iop.c
-> ===================================================================
-> --- 2.6.13-rc1.orig/arch/m68k/mac/iop.c
-> +++ 2.6.13-rc1/arch/m68k/mac/iop.c
-> @@ -275,6 +275,7 @@ void __init iop_preinit(void)
->  
->  void __init iop_init(void)
->  {
-> +	struct proc_dir_entry *proc_entry;
->  	int i;
->  
->  	if (iop_scc_present) {
-> @@ -303,7 +304,10 @@ void __init iop_init(void)
->  
->  #if 0	/* Crashing in 2.4 now, not yet sure why.   --jmt */
->  #ifdef CONFIG_PROC_FS
-> -	create_proc_info_entry("mac_iop", 0, &proc_root, iop_get_proc_info);
-> +	proc_entry = create_proc_info_entry("mac_iop", 0, 
-> +		&proc_root, iop_get_proc_info);
-> +	if (!proc_entry)
-> +		printk(KERN_WARNING "iop: Unable to create /proc entry.\n");
->  #endif
->  #endif
+Ive considered running following 1-lineer and submitting per-subsystem 
+cleanup patches.
 
-This adds a warning about unused variable; not good.
+cp -al $tree $tree-clean; perl -pi.bak -e 's/\s+\n//' `find $tree-clean 
+-print` > mega-patch
 
---===============88815241640264819==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+
+the problem with doing so is that lots of whitespace has already been 
+cleaned,
+and rc3-kj has presumably been superseded by more whitespace fixes,
+which would result in needless rejects.
+
+So, what Id propose is:
+
+a. just prior to releasing rc4-kj, do an rc4-kj-pre
+b. run script against pre tree.
+c. diff -rup pre pre-clean > mega-patch
+d. manually edit/chop up mega-patch on subsystem boundaries
+e. apply each to pre, release rc4-kj
+
+f. repeat periodically
+g. get janitors to recognize that they should do harder fixes, and leave 
+whitespace
+for the robo-janitor / whitespace-roomba
+
+BTW
+
+when were kj patches last merged into mainline ?
+how often (on average) does this happen ?
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============88815241640264819==--
