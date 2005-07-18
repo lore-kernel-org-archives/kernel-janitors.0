@@ -1,46 +1,42 @@
-From: Jim Cromie <jcromie@divsol.com>
-Date: Sun, 17 Jul 2005 02:38:13 +0000
-Subject: [KJ] RFC - trailing whitespace cleanup script
-Message-Id: <42D9C495.2090405@divsol.com>
+From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+Date: Mon, 18 Jul 2005 12:00:15 +0000
+Subject: Re: [KJ] RFC - trailing whitespace cleanup script
+Message-Id: <20050718090015.7ad05c1b.rnsanchez@terra.com.br>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============67012731165914285=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <42D9C495.2090405@divsol.com>
+In-Reply-To: <42D9C495.2090405@divsol.com>
 To: kernel-janitors@vger.kernel.org
 
-Domen, all,
+--===============67012731165914285==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Ive considered running following 1-lineer and submitting per-subsystem 
-cleanup patches.
+Quoting  Jim Cromie <jcromie@divsol.com>
+Sent on  Sat, 16 Jul 2005 20:38:13 -0600
 
-cp -al $tree $tree-clean; perl -pi.bak -e 's/\s+\n//' `find $tree-clean 
--print` > mega-patch
+> g. get janitors to recognize that they should do harder fixes, and leave 
+> whitespace for the robo-janitor / whitespace-roomba
 
+sounds great to me :)
 
-the problem with doing so is that lots of whitespace has already been 
-cleaned,
-and rc3-kj has presumably been superseded by more whitespace fixes,
-which would result in needless rejects.
+-- 
+Ricardo Nabinger Sanchez
+GNU/Linux #140696 [http://counter.li.org]
+Slackware Linux + FreeBSD
 
-So, what Id propose is:
+  Left to themselves, things tend to go from bad to worse.
 
-a. just prior to releasing rc4-kj, do an rc4-kj-pre
-b. run script against pre tree.
-c. diff -rup pre pre-clean > mega-patch
-d. manually edit/chop up mega-patch on subsystem boundaries
-e. apply each to pre, release rc4-kj
-
-f. repeat periodically
-g. get janitors to recognize that they should do harder fixes, and leave 
-whitespace
-for the robo-janitor / whitespace-roomba
-
-BTW
-
-when were kj patches last merged into mainline ?
-how often (on average) does this happen ?
+--===============67012731165914285==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============67012731165914285==--
