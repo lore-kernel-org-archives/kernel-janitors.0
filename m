@@ -1,38 +1,38 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 18 Jul 2005 13:09:31 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 18 Jul 2005 14:44:42 +0000
 Subject: Re: [KJ] RFC - trailing whitespace cleanup script
-Message-Id: <42DBAA0B.3070309@bfs.de>
+Message-Id: <20050718144442.GB27059@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============7018628837836014=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <42D9C495.2090405@divsol.com>
 In-Reply-To: <42D9C495.2090405@divsol.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-that includes an 'indent -kr -i8' ?
+--===============7018628837836014==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-re,
-	walter
+On Mon, Jul 18, 2005 at 03:09:31PM +0200, walter harms wrote:
+> that includes an 'indent -kr -i8' ?
 
-Ricardo Nabinger Sanchez wrote:
-> Quoting  Jim Cromie <jcromie@divsol.com>
-> Sent on  Sat, 16 Jul 2005 20:38:13 -0600
-> 
->>g. get janitors to recognize that they should do harder fixes, and leave 
->>whitespace for the robo-janitor / whitespace-roomba
-> 
-> sounds great to me :)
-> 
-> 
-> 
-> ------------------------------------------------------------------------
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Of the whole tree? Ick.
+
+$ diffstat -p1 Lindent.patch | wc -l
+13533
+$ ls -l Lindent.patch
+-rw-r--r--  1 ad users 177002265 Jul 18 18:34 Lindent.patch
+
+
+--===============7018628837836014==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============7018628837836014==--
