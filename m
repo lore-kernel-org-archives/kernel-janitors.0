@@ -1,50 +1,64 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 07 Jul 2005 15:44:53 +0000
-Subject: [KJ] [patch 2.6.13-rc1 19/23] Audit return code of create_proc_*
-Message-Id: <20050707154649.199088000@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20350741254582871=="
+From: Michael Krufky <mkrufky@m1k.net>
+Date: Wed, 20 Jul 2005 19:45:12 +0000
+Subject: [KJ] Re: [PATCH] drivers/media/video/bttv-driver: Remove unneeded
+Message-Id: <42DEA9C8.6020406@m1k.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============20350741254582871==
-Content-Disposition: inline; filename=proc_create_arch_m68k_mac_iop.c.diff
+Tobias Klauser wrote:
 
-diff -urpNX dontdiff 2.6.13-rc1.orig/arch/m68k/mac/iop.c 2.6.13-rc1/arch/m68k/mac/iop.c
---- 2.6.13-rc1.orig/arch/m68k/mac/iop.c	2005-06-29 07:57:29.000000000 +0200
-+++ 2.6.13-rc1/arch/m68k/mac/iop.c	2005-07-05 10:16:48.360949848 +0200
-@@ -275,6 +275,7 @@ void __init iop_preinit(void)
- 
- void __init iop_init(void)
- {
-+	struct proc_dir_entry* proc_entry;
- 	int i;
- 
- 	if (iop_scc_present) {
-@@ -303,7 +304,10 @@ void __init iop_init(void)
- 
- #if 0	/* Crashing in 2.4 now, not yet sure why.   --jmt */
- #ifdef CONFIG_PROC_FS
--	create_proc_info_entry("mac_iop", 0, &proc_root, iop_get_proc_info);
-+	proc_entry = create_proc_info_entry("mac_iop", 0, 
-+		&proc_root, iop_get_proc_info);
-+	if (!proc_entry)
-+		printk(KERN_WARNING "iop: Unable to create /proc entry.\n");
- #endif
- #endif
- }
+>In bttv-driver.c pci_dma_supported() is called after pci_set_dma_mask()
+>which already did check that for us. The attached patch removes the
+>unneeded call to pci_dma_supported()
+>
+>Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+>
+>---
+>
+> bttv-driver.c |    5 -----
+> 1 files changed, 5 deletions(-)
+>
+>diff -urpN -X dontdiff linux-2.6.13-rc2/drivers/media/video/bttv-driver.c linux-2.6.13-rc2~dma_mask/drivers/media/video/bttv-driver.c
+>--- linux-2.6.13-rc2/drivers/media/video/bttv-driver.c	2005-07-07 21:28:50.000000000 +0200
+>+++ linux-2.6.13-rc2~dma_mask/drivers/media/video/bttv-driver.c	2005-07-07 22:43:50.000000000 +0200
+>@@ -3880,11 +3881,6 @@ static int __devinit bttv_probe(struct p
+>         pci_set_master(dev);
+> 	pci_set_command(dev);
+> 	pci_set_drvdata(dev,btv);
+>-	if (!pci_dma_supported(dev,0xffffffff)) {
+>-		printk("bttv%d: Oops: no 32bit PCI DMA ???\n", btv->c.nr);
+>-		result = -EIO;
+>-		goto fail1;
+>-	}
+> 
+>         pci_read_config_byte(dev, PCI_CLASS_REVISION, &btv->revision);
+>         pci_read_config_byte(dev, PCI_LATENCY_TIMER, &lat);
+>
+>--
+>video4linux-list mailing list
+>Unsubscribe mailto:video4linux-list-request@redhat.com?subject=unsubscribe
+>https://www.redhat.com/mailman/listinfo/video4linux-list
+>  
+>
+Applied to video4linux cvs...
 
---
+/Wed Jul 20 19:43:24 2005 UTC/ (55 seconds ago) by /mkrufky/
+        * bttv-driver.c:
+        - pci_dma_supported() is called after pci_set_dma_mask() which
+          already did check that for us. The attached patch removes the
+          unneeded call to pci_dma_supported()
 
---===============20350741254582871==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+        Signed-off-by: Michael Krufky <mkrufky@m1k.net>
+
+-- 
+Michael Krufky
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============20350741254582871==--
