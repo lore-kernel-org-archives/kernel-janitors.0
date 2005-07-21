@@ -1,109 +1,42 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Sat, 09 Jul 2005 00:14:12 +0000
-Subject: [KJ] [PATCH 10/14] drm/i830_irq: use
-Message-Id: <20050709001412.GP2596@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16790282561049263=="
+From: "donny constantine" <ruthjean@kingssite.com>
+Date: Thu, 21 Jul 2005 12:43:32 +0000
+Subject: we carry the curatives. at the finest prices only.
+Message-Id: <7F51ED43.E78D855@kingssite.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============16790282561049263==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-From: Nishanth Aravamudan <nacc@us.ibm.com>
 
-Description: Replace custom wait-queue usage with
-wait_event_interruptible_timeout(). This required some more complex
-return code evaluation, but simplifies the loop itself to one statement.
+Ordering stuff from the chair is really convenient to me. It=A1=AFs worth i=
+t to
+spend on your site. Not only quality medicines at reasonable prices. You
+also facilitate top up prescripts and consultations at zero costs. Last but
+not least is the timely delivery. Overall, I am J with your services. Keep
+it up.  --Jesse B. King in CA Quality remedies. Reasonably priced. Gratis
+consultations. Dedicated licensed GPs. Zero charge to top up prescripts.
+Timely delivery. Innovative website.  Convenient. You=A1=AFve got it all. S=
+UPER.
+Jolie Temple, Nevada.
+http://7.crq.finedealcollector.com/o8d/
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
 
----
 
- i830_irq.c |   45 ++++++++++++++++++---------------------------
- 1 files changed, 18 insertions(+), 27 deletions(-)
+running after them, too, long enough, one would think, to make up his mind.
 
-diff -urp 2.6.13-rc2-kj/drivers/char/drm/i830_irq.c 2.6.13-rc2-kj-dev/drivers/char/drm/i830_irq.c
---- 2.6.13-rc2-kj/drivers/char/drm/i830_irq.c	2005-07-06 07:57:03.000000000 -0700
-+++ 2.6.13-rc2-kj-dev/drivers/char/drm/i830_irq.c	2005-07-08 13:51:07.000000000 -0700
-@@ -32,6 +32,7 @@
- #include "i830_drv.h"
- #include <linux/interrupt.h>	/* For task queue support */
- #include <linux/delay.h>
-+#include <linux/wait.h>		/* For wait_event */
- 
- 
- irqreturn_t i830_driver_irq_handler( DRM_IRQ_ARGS )
-@@ -77,9 +78,7 @@ int i830_wait_irq(drm_device_t *dev, int
- {
-   	drm_i830_private_t *dev_priv = 
- 	   (drm_i830_private_t *)dev->dev_private;
--	DECLARE_WAITQUEUE(entry, current);
--	unsigned long end = jiffies + HZ*3;
--	int ret = 0;
-+	int ret;
- 
- 	DRM_DEBUG("%s\n", __FUNCTION__);
- 
-@@ -88,31 +87,23 @@ int i830_wait_irq(drm_device_t *dev, int
- 
- 	dev_priv->sarea_priv->perf_boxes |= I830_BOX_WAIT;
- 
--	add_wait_queue(&dev_priv->irq_queue, &entry);
-+	ret = wait_event_interruptible_timeout(dev_priv->irq_queue,
-+			(atomic_read(&dev_priv->irq_received) >= irq_nr),
-+			HZ*3);
-+
-+	if (ret == 0) {
-+		DRM_ERROR("timeout iir %x imr %x ier %x hwstam %x\n",
-+				I830_READ16( I830REG_INT_IDENTITY_R ),
-+				I830_READ16( I830REG_INT_MASK_R ),
-+				I830_READ16( I830REG_INT_ENABLE_R ),
-+				I830_READ16( I830REG_HWSTAM ));
-+
-+		ret = -EBUSY;	/* Lockup?  Missed irq? */
-+	} else if (ret == -ERESTARTSYS) {
-+		ret = -EINTR;	/* interrupted */
-+	} else
-+		ret = 0		/* condition */
- 
--	for (;;) {
--		__set_current_state(TASK_INTERRUPTIBLE);
--	   	if (atomic_read(&dev_priv->irq_received) >= irq_nr) 
--		   break;
--		if((signed)(end - jiffies) <= 0) {
--			DRM_ERROR("timeout iir %x imr %x ier %x hwstam %x\n",
--				  I830_READ16( I830REG_INT_IDENTITY_R ),
--				  I830_READ16( I830REG_INT_MASK_R ),
--				  I830_READ16( I830REG_INT_ENABLE_R ),
--				  I830_READ16( I830REG_HWSTAM ));
--
--		   	ret = -EBUSY;	/* Lockup?  Missed irq? */
--			break;
--		}
--	      	schedule_timeout(HZ*3);
--	      	if (signal_pending(current)) {
--		   	ret = -EINTR;
--			break;
--		}
--	}
--
--	__set_current_state(TASK_RUNNING);
--	remove_wait_queue(&dev_priv->irq_queue, &entry);
- 	return ret;
- }
- 
+Their efforts were of no avail.
+It was nothing more than that his pen had fallen down; but Anne was=20
 
---===============16790282561049263==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+-------------------------------------------------------
+SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
+from IBM. Find simple to follow Roadmaps, straightforward articles,
+informative Webcasts and more! Get everything you need to get up to
+speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id=16492&op=3Dclick
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============16790282561049263==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
