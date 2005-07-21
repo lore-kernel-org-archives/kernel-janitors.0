@@ -1,40 +1,39 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Fri, 08 Jul 2005 18:39:14 +0000
-Subject: [KJ] [PATCH] drivers/net/pcmcia/3c589_cs.c : Use of time_befor macro
-Message-Id: <42CEC852.7020804@feitoza.com.br>
+From: Patrick Mochel <mochel@digitalimplant.org>
+Date: Thu, 21 Jul 2005 21:08:06 +0000
+Subject: [KJ] Re: [PATCH] Driver core: Documentation: use snprintf and
+Message-Id: <Pine.LNX.4.50.0507211402380.24901-100000@monsoon.he.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============83121570252496335=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Use of time_before() macro, defined at linux/jiffies.h, which deal with
-wrapping correctly and are nicer to read.
+--===============83121570252496335==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
---- linux/drivers/net/pcmcia/3c589_cs.c 2005-07-07 19:11:51.000000000 -0300
-+++ linux-kj/drivers/net/pcmcia/3c589_cs.c      2005-07-07
-22:59:40.020435184 -0300
-@@ -39,6 +39,7 @@
- #include <linux/if_arp.h>
- #include <linux/ioport.h>
- #include <linux/bitops.h>
-+#include <linux/jiffies.h>
 
- #include <pcmcia/version.h>
- #include <pcmcia/cs_types.h>
-@@ -850,7 +851,7 @@
-     media = inw(ioaddr+WN4_MEDIA) & 0xc810;
 
-     /* Ignore collisions unless we've had no irq's recently */
--    if (jiffies - lp->last_irq < HZ) {
-+    if (time_before(jiffies, lp->last_irq + HZ)) {
-        media &= ~0x0010;
-     } else {
-        /* Try harder to detect carrier errors */
+On Thu, 21 Jul 2005, Jan Veldeman wrote:
+
+>
+> Documentation should give the good example of using snprintf and
+> strnlen in stead of sprintf and strlen.
+
+Thanks. However, for future refernce you should put a space between the
+parameters in a function call. It's easy enough to fix up in this patch.
+
+
+	Pat
+
+--===============83121570252496335==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============83121570252496335==--
