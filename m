@@ -1,60 +1,49 @@
-From: Victor Fusco <victor@cetuc.puc-rio.br>
-Date: Sun, 03 Jul 2005 18:58:41 +0000
-Subject: [KJ] [PATCH 2.6.13-rc1 10/17] fix sparse warnings (__nocast type)
-Message-Id: <200507031858.41781.victor@cetuc.puc-rio.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_hVDyCFGoPA/iisu"
+From: "howard trisch" <deviyelf@searchgrabber.com>
+Date: Tue, 26 Jul 2005 01:42:44 +0000
+Subject: Uncover our non-expensive top balms? Zoom our homepage at once.
+Message-Id: <DB1811B0.4073F14@searchgrabber.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_hVDyCFGoPA/iisu
-Content-Type: text/plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Buying at our E-pharmaceutical is as easy as counting 123. Just follow the
+steps correctly and we settled the rest for you. 
 
-Description:
-	Fix the sparse warning "implicit cast to nocast type"
- 
-File/Subsystem: drivers/char/n_tty.c
+Select convenient and reliable distribution and handling services. 
 
-Signed-off-by: Victor Fusco <victor@cetuc.puc-rio.br>
- 
+Surfing on your website was fun. Buying remedy at your e-zone was worth it.
+Experience its healing effects was expected. Gain the speedy delivery was an
+extra. Overall, I am very satisfied with your stuff and services. Desmond
+George, Ohio. 
 
---Boundary-00=_hVDyCFGoPA/iisu
-Content-Type: text/x-diff;
-  charset="iso-8859-1";
-  name="char_n_tty.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="char_n_tty.patch"
+How to reduce your expenses on medicines dramatically? Check our latest
+notice and you will locate the answer. 
 
- drivers/char/n_tty.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
+If you prefer quick and professional case review, we are the ones for you. 
 
-Index: linux-2.6-git/drivers/char/n_tty.c
-===================================================================
---- linux-2.6-git.orig/drivers/char/n_tty.c	2005-07-01 17:48:31.000000000 +0000
-+++ linux-2.6-git/drivers/char/n_tty.c	2005-07-03 14:15:48.000000000 +0000
-@@ -62,7 +62,7 @@
- 
- static inline unsigned char *alloc_buf(void)
- {
--	int prio = in_interrupt() ? GFP_ATOMIC : GFP_KERNEL;
-+	unsigned int prio = in_interrupt() ? GFP_ATOMIC : GFP_KERNEL;
- 
- 	if (PAGE_SIZE != N_TTY_BUF_SIZE)
- 		return kmalloc(N_TTY_BUF_SIZE, prio);
+If you would like to have quality dr. Prescribed remedies at economical
+prices, select our remedy zone for quick and legitimate e-shopping. 
 
---Boundary-00=_hVDyCFGoPA/iisu
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+http://hi.wvo.successinthelongrun.com/o8d/
 
+
+
+They all three called in Rivers Street for a couple of minutes; 
+
+nearest her heart, that Dr Shirley, the rector, who for more than 
+
+harmony of sweet sounds lingered round them as if each concealed
+
+
+
+-------------------------------------------------------
+SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
+from IBM. Find simple to follow Roadmaps, straightforward articles,
+informative Webcasts and more! Get everything you need to get up to
+speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---Boundary-00=_hVDyCFGoPA/iisu--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
