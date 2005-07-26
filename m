@@ -1,33 +1,48 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Wed, 06 Jul 2005 18:24:36 +0000
-Subject: Re: [KJ] stumped... implicitly truncated warning mystery
-Message-Id: <200507062224.36796.adobriyan@gmail.com>
+From: =?ISO-8859-1?Q?Lo=EFc_Martin?= <martinloik@gmail.com>
+Date: Tue, 26 Jul 2005 07:30:45 +0000
+Subject: [KJ] forwarded errors
+Message-Id: <958d5cd10507260030459e2890@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42CC197E.2030207@cs.pdx.edu>
-In-Reply-To: <42CC197E.2030207@cs.pdx.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Wednesday 06 July 2005 21:48, Jesse Millan wrote:
-> GCC4.0.0 is giving me a warning that I cant seem to get rid of. In the
-> file drivers/net/wireless/wavelan_cs.c on lines 3607 and 3608 is the
-> following assignment:
-> 
-> cfblk.ifrm_spc = 0x20;
-> cfblk.slottim_low = 0x20;
-> 
-> where ifrm_spc and slottim_low are both of type unsigned char.
+kernel: 2.6.11.10
 
-They are bitfields.
+Hello
 
-drivers/net/wireless/i82593.h:
+Currently writting down a pci driver, I notice that
+"pci_register_driver(&pci_driver)" don't forward my "probe" function
+errors.
+Actually errors are noticed in the kernel ring buffer but don't make
+pci_register_driver  fail. It returns a zero value in any case.
+I traced back to the kernel in order to try to understand this problem
+and find the "void driver_attach(struct device_driver * drv)" function
+in the "linux-2.6.11.10/drivers/base/bus.c" file which, obviously, can
+not returns an error.
 
-168	  u_char            : 4,
-169	         ifrm_spc   : 4;
-170	  u_char            : 5,
-171	         slottim_low : 3;
+So I just wish to know why this function only print this message :
+
+                               /* driver matched but the probe failed */
+                               printk(KERN_WARNING
+                                   "%s: probe of %s failed with error %d\n",
+                                   drv->name, dev->bus_id, error);
+
+but don't return the error.
+Actually I don't understand why the module is loaded (because
+pci_register_driver, which is called during __init, don't fail) while
+my pci card could not have been initialized by "probe" function
+because it failed for such reasons.
+
+Thanks
+
+--=20
+Lo=EFc=20
+-------------------
+hardware, n:
+      The parts of a computer system that can be kicked.
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
