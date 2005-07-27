@@ -1,59 +1,104 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Fri, 08 Jul 2005 19:35:18 +0000
-Subject: [KJ] [PATCH] drivers/scsi/osst.c : User of time_after_eq macro
-Message-Id: <42CED576.1020709@feitoza.com.br>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Wed, 27 Jul 2005 13:01:15 +0000
+Subject: [KJ] [PATCH][RFC] procfs_failure && possible uses
+Message-Id: <20050727130115.GE5089@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------090407060408000606090102"
+Content-Type: multipart/mixed; boundary="===============38884364872248156=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: akpm@osdl.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@lists.osdl.org, domen@coderock.org, wharms@bfs.de
 
-This is a multi-part message in MIME format.
---------------090407060408000606090102
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============38884364872248156==
+Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
 
-Use of time_after_eq() macro, defined at linux/jiffies.h, which deal
-with wrapping correctly and are nicer to read.
+description:
+audit return code of create_proc_* function is a entry in janitors
+TODO list. Audit this return and printk() when it fails, spams log of
+system without compiled proc support. So this patch can correct it.
 
---------------090407060408000606090102
-Content-Type: text/x-patch;
- name="osst.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="osst.patch"
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
 
---- linux/drivers/scsi/osst.c	2005-07-07 19:11:54.000000000 -0300
-+++ linux-kj/drivers/scsi/osst.c	2005-07-07 22:38:27.090949880 -0300
-@@ -50,6 +50,7 @@
- #include <linux/moduleparam.h>
- #include <linux/devfs_fs_kernel.h>
- #include <linux/delay.h>
-+#include <linux/jiffies.h>
- #include <asm/uaccess.h>
- #include <asm/dma.h>
- #include <asm/system.h>
-@@ -803,7 +804,7 @@
- 		    ) && result >= 0)
- 		{
- #if DEBUG			
--			if (debugging || jiffies - startwait >= 2*HZ/OSST_POLL_PER_SEC)
-+			if (debugging || time_after_eq(jiffies, startwait + 2*HZ/OSST_POLL_PER_SEC))
- 				printk (OSST_DEB_MSG
- 					"%s:D: Succ wait f fr %i (>%i): %i-%i %i (%i): %3li.%li s\n",
- 					name, curr, curr+minlast, STp->first_frame_position,
-@@ -814,7 +815,7 @@
- 			return 0;
- 		}
- #if DEBUG
--		if (jiffies - startwait >= 2*HZ/OSST_POLL_PER_SEC && notyetprinted)
-+		if (time_after_eq(jiffies, startwait + 2*HZ/OSST_POLL_PER_SEC) && notyetprinted)
- 		{
- 			printk (OSST_DEB_MSG "%s:D: Wait for frame %i (>%i): %i-%i %i (%i)\n",
- 				name, curr, curr+minlast, STp->first_frame_position,
+ arch/arm/kernel/apm.c   |    7 ++++---
+ arch/arm/kernel/ecard.c |   12 ++++++++++--
+ include/linux/proc_fs.h |    5 +++++
+ 3 files changed, 19 insertions(+), 5 deletions(-)
 
---------------090407060408000606090102
+Index: linux-2.6.13-rc3-mm2/include/linux/proc_fs.h
+===================================================================
+--- linux-2.6.13-rc3-mm2.orig/include/linux/proc_fs.h
++++ linux-2.6.13-rc3-mm2/include/linux/proc_fs.h
+@@ -83,6 +83,9 @@ struct vmcore {
+ 
+ #ifdef CONFIG_PROC_FS
+ 
++#define procfs_failure(fmt,arg...) \
++	printk(KERN_WARNING fmt,##arg)
++
+ extern struct proc_dir_entry proc_root;
+ extern struct proc_dir_entry *proc_root_fs;
+ extern struct proc_dir_entry *proc_net;
+@@ -198,6 +201,8 @@ static inline void proc_net_remove(const
+ 
+ #else
+ 
++#define procfs_failure(fmt,arg...) do { } while(0)
++
+ #define proc_root_driver NULL
+ #define proc_net NULL
+ #define proc_bus NULL
+Index: linux-2.6.13-rc3-mm2/arch/arm/kernel/ecard.c
+===================================================================
+--- linux-2.6.13-rc3-mm2.orig/arch/arm/kernel/ecard.c
++++ linux-2.6.13-rc3-mm2/arch/arm/kernel/ecard.c
+@@ -776,9 +776,17 @@ static struct proc_dir_entry *proc_bus_e
+ 
+ static void ecard_proc_init(void)
+ {
++	struct proc_dir_entry *proc_entry;
++
+ 	proc_bus_ecard_dir = proc_mkdir("ecard", proc_bus);
+-	create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
+-		get_ecard_dev_info);
++	if (!proc_bus_ecard_dir)
++		procfs_failure("ecard: Unable to create proc dir entry.\n");
++	else {
++		proc_entry = create_proc_info_entry("devices", 0, 
++				proc_bus_ecard_dir, get_ecard_dev_info);
++		if (!proc_entry)
++			procfs_failure("ecard: Unable to create proc entry.\n");
++	}
+ }
+ 
+ #define ec_set_resource(ec,nr,st,sz)				\
+Index: linux-2.6.13-rc3-mm2/arch/arm/kernel/apm.c
+===================================================================
+--- linux-2.6.13-rc3-mm2.orig/arch/arm/kernel/apm.c
++++ linux-2.6.13-rc3-mm2/arch/arm/kernel/apm.c
+@@ -515,6 +515,7 @@ static int kapmd(void *arg)
+ static int __init apm_init(void)
+ {
+ 	int ret;
++	struct proc_dir_entry *proc_entry;
+ 
+ 	if (apm_disabled) {
+ 		printk(KERN_NOTICE "apm: disabled on user request.\n");
+@@ -534,9 +535,9 @@ static int __init apm_init(void)
+ 		return ret;
+ 	}
+ 
+-#ifdef CONFIG_PROC_FS
+-	create_proc_info_entry("apm", 0, NULL, apm_get_info);
+-#endif
++	proc_entry = create_proc_info_entry("apm", 0, NULL, apm_get_info);
++	if (!proc_entry)
++		procfs_failure("apm: Unable to create apm proc entry.\n");
+ 
+ 	ret = misc_register(&apm_device);
+ 	if (ret != 0) {
+
+--===============38884364872248156==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +109,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------090407060408000606090102--
+--===============38884364872248156==--
