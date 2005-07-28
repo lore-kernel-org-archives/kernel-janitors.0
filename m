@@ -1,51 +1,77 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Tue, 12 Jul 2005 16:57:11 +0000
-Subject: [KJ] [patch 2.6.13-rc1 21/23][RESEND] Audit return code of
-Message-Id: <20050712165711.GM4712@rhum.iomeda.fr>
+From: Grant Coady <lkml@dodo.com.au>
+Date: Thu, 28 Jul 2005 00:41:32 +0000
+Subject: [KJ] 2.6 kbuild inconsistent CONFIG_DEBUG_INFO usage?
+Message-Id: <hdage1thbneer1ucku4amfkjsq5tnlf50m@4ax.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============079907626694005529=="
+Content-Type: multipart/mixed; boundary="===============76162305874617897=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050712120758.GG4712@rhum.iomeda.fr>
-In-Reply-To: <20050712120758.GG4712@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============079907626694005529==
-Content-Disposition: inline
+--===============76162305874617897==
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Description:
-Audit return of create_proc_* functions.
+Hi there,
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+2.6.13-rc3-mm2 (cc: Russell King as lots of arms in there)
 
-Index: 2.6.13-rc1/arch/arm/kernel/ecard.c
-===================================================================
---- 2.6.13-rc1.orig/arch/arm/kernel/ecard.c
-+++ 2.6.13-rc1/arch/arm/kernel/ecard.c
-@@ -776,9 +776,19 @@ static struct proc_dir_entry *proc_bus_e
- 
- static void ecard_proc_init(void)
- {
-+	struct proc_dir_entry *proc_entry;
-+
- 	proc_bus_ecard_dir = proc_mkdir("ecard", proc_bus);
--	create_proc_info_entry("devices", 0, proc_bus_ecard_dir,
--		get_ecard_dev_info);
-+	if (proc_bus_ecard_dir == NULL)
-+		printk(KERN_WARNING 
-+			"ecard: Unable to create proc dir entry.\n");
-+	else {
-+		proc_entry = create_proc_info_entry("devices", 0, 
-+			proc_bus_ecard_dir, get_ecard_dev_info);
-+		if (proc_entry == NULL) 
-+			printk(KERN_WARNING 
-+				"ecard: Unable to create proc entry.\n");
-+	}
- }
- 
- #define ec_set_resource(ec,nr,st,sz)				\
+linux-2.6.13-rc3-mm2b$ grep -r CONFIG_DEBUG_INFO *|cut -d: -f2-|sort|uniq -c|sort -nr
+     57 # CONFIG_DEBUG_INFO is not set
+     22 CONFIG_DEBUG_INFO=y
+      4 #ifdef CONFIG_DEBUG_INFO
+      2 ifdef CONFIG_DEBUG_INFO
+      2 #ifndef CONFIG_DEBUG_INFO
+      1 ifneq ($(CONFIG_DEBUG_INFO),y)  <<== ??
+      1 ifeq ($(CONFIG_DEBUG_INFO),y)   <<== ??
 
---===============079907626694005529==
+
+linux-2.6.13-rc3-mm2b$ grep -r '($(CONFIG_DEBUG_INFO),y)' *
+
+arch/arm26/Makefile:ifeq ($(CONFIG_DEBUG_INFO),y)
+arch/x86_64/Makefile:ifneq ($(CONFIG_DEBUG_INFO),y)
+  
+Two Makefiles check for a value. The rest only check if [not] defined.
+
+ifdef CONFIG_DEBUG_INFO
+CFLAGS          += -g
+AFLAGS          += -g
+endif
+
+This a problem?  I read somewhere setting to 'n' stops debug, that can't 
+be right?  
+
+Places setting it to 'y' are off the main path (for me):
+
+linux-2.6.13-rc3-mm2b$ grep -r CONFIG_DEBUG_INFO=y *
+arch/um/defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/pxa255-idp_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/h7202_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/mainstone_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/bast_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/lubbock_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/mx1ads_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/lpd7a404_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/s3c2410_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/badge4_defconfig:CONFIG_DEBUG_INFO=y
+arch/arm/configs/lpd7a400_defconfig:CONFIG_DEBUG_INFO=y
+arch/ppc/configs/ocotea_defconfig:CONFIG_DEBUG_INFO=y
+arch/ppc/configs/lite5200_defconfig:CONFIG_DEBUG_INFO=y
+arch/ppc/configs/luan_defconfig:CONFIG_DEBUG_INFO=y
+arch/m32r/opsput/defconfig.opsput:CONFIG_DEBUG_INFO=y
+arch/ia64/configs/sn2_defconfig:CONFIG_DEBUG_INFO=y
+arch/ia64/configs/sim_defconfig:CONFIG_DEBUG_INFO=y
+arch/v850/configs/rte-ma1-cb_defconfig:CONFIG_DEBUG_INFO=y
+arch/v850/configs/sim_defconfig:CONFIG_DEBUG_INFO=y
+arch/v850/configs/rte-me2-cb_defconfig:CONFIG_DEBUG_INFO=y
+arch/alpha/defconfig:CONFIG_DEBUG_INFO=y
+arch/arm26/defconfig:CONFIG_DEBUG_INFO=y
+
+
+Thanks,
+Grant.
+
+
+--===============76162305874617897==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +82,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============079907626694005529==--
+--===============76162305874617897==--
