@@ -1,60 +1,43 @@
-From: Jan Veldeman <jan@mind.be>
-Date: Fri, 22 Jul 2005 09:41:15 +0000
-Subject: [KJ] [PATCH] Driver core: Documentation: use S_IRUSR | ... in stead
-Message-Id: <20050722094115.GA7466@fanta>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53168188842986264=="
+From: Jerome Steunenberg <jerome@steunenberg.org>
+Date: Thu, 28 Jul 2005 14:22:44 +0000
+Subject: [KJ] [PATCH] drivers/video/vgastate.c
+Message-Id: <42E8EA34.3020300@steunenberg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050721204958.GA24421@fanta>
-In-Reply-To: <20050721204958.GA24421@fanta>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============53168188842986264==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is my first patch to kernel-janitors. Please tell me if I got it all ok
+In drivers/video/vgastate.c, the calls to init_module and cleanup_module have been replaced by calls to module_init and module_exit.
 
-After more nitpicking from Domen Puncer (when is this going to end!? :-) ):
-(this patch replaces the previous one)
+Signed-off-by: Jerome Steunenberg <jerome@steunenberg.org>
 
 
-Change filemode to use defines in stead of 0644,
-based on suggestions by Walter Harms and Domen Puncer.
 
+--- linux-2.6.13-rc3/drivers/video/vgastate.c.orig	2005-07-25 15:09:51.000000000 +0200
++++ linux-2.6.13-rc3/drivers/video/vgastate.c	2005-07-26 10:15:32.000000000 +0200
+@@ -491,8 +491,17 @@ int restore_vga (struct vgastate *state)
+  }
 
-Signed-off-by: Jan Veldeman <Jan.Veldeman@advalvas.be>
+  #ifdef MODULE
+-int init_module(void) { return 0; };
+-void cleanup_module(void) {};
++static int __init vgastate_init(void)
++{
++	return 0;
++}
++
++static void __exit vgastate_exit(void)
++{
++}
++
++module_init(vgastate_init);
++module_exit(vgastate_exit);
+  #endif
 
-
-diff --git a/Documentation/filesystems/sysfs.txt b/Documentation/filesystems/sysfs.txt
---- a/Documentation/filesystems/sysfs.txt
-+++ b/Documentation/filesystems/sysfs.txt
-@@ -99,14 +99,14 @@ struct device_attribute dev_attr_##_name
- 
- For example, declaring
- 
--static DEVICE_ATTR(foo, 0644, show_foo, store_foo);
-+static DEVICE_ATTR(foo, S_IWUSR | S_IRUGO, show_foo, store_foo);
- 
- is equivalent to doing:
- 
- static struct device_attribute dev_attr_foo = {
-        .attr	= {
- 		.name = "foo",
--		.mode = 0644,
-+		.mode = S_IWUSR | S_IRUGO,
- 	},
- 	.show = show_foo,
- 	.store = store_foo,
-
-
---===============53168188842986264==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+  EXPORT_SYMBOL(save_vga);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============53168188842986264==--
