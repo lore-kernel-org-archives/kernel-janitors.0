@@ -1,19 +1,19 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Thu, 28 Jul 2005 20:21:49 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 28 Jul 2005 20:38:43 +0000
 Subject: Re: [KJ] 2.6 kbuild inconsistent CONFIG_DEBUG_INFO usage?
-Message-Id: <20050728202149.GE2249@homer.coderock.org>
+Message-Id: <20050728203843.GB2749@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50394641785535255=="
+Content-Type: multipart/mixed; boundary="===============078802419747576513=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <hdage1thbneer1ucku4amfkjsq5tnlf50m@4ax.com>
 In-Reply-To: <hdage1thbneer1ucku4amfkjsq5tnlf50m@4ax.com>
 To: kernel-janitors@vger.kernel.org
 
---===============50394641785535255==
+--===============078802419747576513==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 29/07/05 05:40 +1000, Grant Coady wrote:
+On 29.07.2005 [05:40:01 +1000], Grant Coady wrote:
 > On Wed, 27 Jul 2005 21:43:52 -0700, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
 > >
 > >Were you asking a question with all of this? All of these are
@@ -31,16 +31,17 @@ On 29/07/05 05:40 +1000, Grant Coady wrote:
 > checks for == 'n'.  So if I "Set CONFIG_DEBUG_INFO=n" I get unwanted 
 > debugging info, opposite result to what was intended?
 
-CONFIG_DEBUG_INFO == y compiles debugging info in kernel, and is
-useful for kernel debuggers (and probably more).
-For compile tests this option doesn't really mater, as it is not
-compile time debugging. But disabling it makes compiles faster,
-which is good.
+I believe that setting CONFIG_VAR to 'n' in a .config file (which
+is all a defconfig is) is equivalent to saying # CONFIG_VAR is not set.
+But I haven't tried it. See what happens when you do for your system. If
+they are equivalent, then you don't need to check for y/n, you check
+ifdef/ifndef. If not...well, we'll cross that bridge when we get there
+:)
 
+Thanks,
+Nish
 
-	Domen
-
---===============50394641785535255==
+--===============078802419747576513==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============50394641785535255==--
+--===============078802419747576513==--
