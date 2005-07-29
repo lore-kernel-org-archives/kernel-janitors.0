@@ -1,69 +1,366 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:13:27 +0000
-Subject: [KJ] [PATCH] drivers/block/floppy.c : Use of the time_after() and
-Message-Id: <42D8B397.6000600@feitoza.com.br>
+From: Domen Puncer <domen@coderock.org>
+Date: Fri, 29 Jul 2005 12:48:20 +0000
+Subject: [KJ] 2.6.13-rc4-kj
+Message-Id: <20050729124820.GB25129@homer.coderock.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040805070401070206030905"
+Content-Type: multipart/mixed; boundary="===============031062191990305132=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kj <kernel-janitors@lists.osdl.org>
+Cc: lkml <linux-kernel@vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------040805070401070206030905
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============031062191990305132==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+A new release from kernel janitors (http://janitor.kernelnewbies.org/).
 
 
---------------040805070401070206030905
-Content-Type: text/x-patch;
- name="floppy.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="floppy.patch"
+Patchset is at http://coderock.org/kj/2.6.13-rc4-kj/
 
-Use of the time_after() and time_before()  macros, defined at linux/jiffies.h,
-which deal with wrapping correctly and are nicer to read.
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+new in this release:
+--------------------
+time_after-drivers_net_eth16i
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/eth16i.c : Use of the time_after() macro
 
---- linux/drivers/block/floppy.c	2005-07-13 17:53:25.000000000 -0300
-+++ linux-kj/drivers/block/floppy.c	2005-07-14 01:24:16.816575504 -0300
-@@ -179,6 +179,7 @@
- #include <linux/devfs_fs_kernel.h>
- #include <linux/device.h>
- #include <linux/buffer_head.h>	/* for invalidate_buffers() */
-+#include <linux/jiffies.h>	/* for time_before() */
- 
- /*
-  * PS/2 floppies have much slower step rates than regular floppies.
-@@ -733,7 +734,7 @@
- {
- 	int fdc = FDC(drive);
- #ifdef FLOPPY_SANITY_CHECK
--	if (jiffies - UDRS->select_date < UDP->select_delay)
-+	if (time_before(jiffies, UDRS->select_date + UDP->select_delay))
- 		DPRINT("WARNING disk change called early\n");
- 	if (!(FDCS->dor & (0x10 << UNIT(drive))) ||
- 	    (FDCS->dor & 3) != UNIT(drive) || fdc != FDC(drive)) {
-@@ -1061,7 +1062,7 @@
- 		return 1;
- 	}
- 
--	if ((signed)(jiffies - delay) < 0) {
-+	if (time_before(jiffies, delay)) {
- 		del_timer(&fd_timer);
- 		fd_timer.function = function;
- 		fd_timer.expires = delay;
-@@ -1521,7 +1522,7 @@
- 		 * again just before spinup completion. Beware that
- 		 * after scandrives, we must again wait for selection.
- 		 */
--		if ((signed)(ready_date - jiffies) > DP->select_delay) {
-+		if (time_after(ready_date, jiffies + DP->select_delay)) {
- 			ready_date -= DP->select_delay;
- 			function = (timeout_fn) floppy_start;
- 		} else
+time_after-drivers_net_arcnet_arcnet
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/arcnet/arcnet.c : Use of the time_after() macro
 
---------------040805070401070206030905
+time_after-drivers_net_3c59x
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/3c59x.c : Use of the time_after() macro
+
+time_after-drivers_net_shaper
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/shaper.c : Use of the time_before() and time_after() macros
+
+time_after-drivers_net_seeq8005
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/seeq8005.c : Use of the time_before() macro
+
+time_after-drivers_net_ppp_async
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/ppp_async.c : Use of the time_after_eq() macro
+
+time_after-drivers_net_oaknet
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/net/oaknet.c : Use of the time_after() macro
+
+time_after-drivers_media_dvb_ttusb-budget_dvb-ttusb-budget
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c : Use of the time_after_eq() macro
+
+time_after-drivers_char_lp
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/char/lp.c : Use of the time_after() macro
+
+time_after-drivers_char_agp_nvidia-agp
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/char/agp/nvidia-agp.c : Use of the time_before_eq() macro
+
+time_after-drivers_block_floppy
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/block/floppy.c : Use of the time_after() and time_before() macros
+
+time_after-drivers_block_DAC960
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/block/DAC960.c : Use of time_after(), time_after_eq() and time_before() macros
+
+time_after-drivers_scsi_qlogicfc
+From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Subject: [KJ] [PATCH] drivers/scsi/qlogicfc.c : Use of the time_after() macro
+
+spelling-REPORTING-BUGS
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Subject: [KJ] [TRIVIAL PATCH] Spelling and whitespace fixes for REPORTING-BUGS
+
+fixup-Documentation_filesystems_sysfs.txt
+From: Jan Veldeman <jan@mind.be>
+Subject: [KJ] [PATCH] Driver core: Documentation: use snprintf and strnlen
+
+fixup2-Documentation_filesystems_sysfs.txt
+From: Jan Veldeman <jan@mind.be>
+Subject: [KJ] [PATCH] Driver core: Documentation: fix whitespace between parameters
+
+fixup3-Documentation_filesystems_sysfs.txt
+From: Jan Veldeman <jan@mind.be>
+Subject: [KJ] [PATCH] Driver core: Documentation: use S_IRUSR | ... in stead of 0644
+
+kj_tag
+
+
+
+merged:
+-------
+msleep_interruptible-drivers_sbus_char_aurora.patch
+vfree-drivers_scsi_qla2xxx_qla_os.patch
+msleep_interruptible-drivers_sbus_char_envctrl.patch
+ssleep-drivers_scsi_qla1280.patch
+sleep_on-drivers_sbus_char_vfc_i2c.patch
+time_after-drivers_atm_idt77252
+time_after-drivers_net_wan_
+time_after-drivers_net_pcmcia_smc91c92_cs
+sparse-sound_core_memalloc
+sparse-net_netlink_af_netlink
+sparse-include_linux_skbuff.h
+sparse-drivers_atm_firestream
+sparse-drivers_atm_ambassador
+return_code-net_sctp_objcnt
+int_sleep_on-arch_cris_arch-v10_drivers_eeprom.patch
+
+
+dropped:
+--------
+remove-pci-find-device-drivers_net_e1000_e1000_main.patch - code changed/gone
+
+
+all patches:
+------------
+min-max-ide_ide-timing.h.patch
+list-for-each-entry-drivers_net_ppp_generic.patch
+list-for-each-entry-fs_jffs_intrep.patch
+list-for-each-entry-fs_namespace.patch
+list-for-each-fs_dcache.patch
+msleep-drivers_ide_ide-tape.patch
+pr_debug-drivers_block_umem.patch
+list-for-each-drivers_net_tulip_de4x5.patch
+min-max-arch_sh_boards_bigsur_io.patch
+min-max-arch_sh_cchips_hd6446x_hd64465_io.patch
+msleep-drivers_block_xd.patch
+msleep-drivers_ide_ide-cs.patch
+for-each-pci-dev-arch_i386_pci_acpi.patch
+function-string-arch-mips.patch
+msleep-drivers_net_wireless_prism54_islpci_dev.patch
+msleep_interruptible-drivers_parport_ieee1284_ops.patch
+msleep_interruptible-drivers_parport_parport_pc.patch
+msleep+msleep_interruptible-drivers_net_tokenring_ibmtr.patch
+pci_dev_present-drivers_ide_pci_alim15x3.patch
+remove-pci-find-device-drivers_net_gt96100eth.patch
+set_current_state-drivers_net_irda_stir4200.patch
+set_current_state-drivers_net_tokenring_tms380tr.patch
+lib-parser-fs_devpts_inode.patch
+comment-drivers_block_floppy.c.patch
+remove_file-arch_arm26_boot_compressed_hw_bse.c.patch
+remove_file-arch_mips_arc_salone.c.patch
+remove_file-arch_mips_pmc_sierra_yosemite_ht_irq.c.patch
+remove_file-arch_ppc_syslib_ppc4xx_pm.c.patch
+remove_file-drivers_parport_parport_arc.c.patch
+remove_file-fs_jffs2_histo.h.patch
+remove_file-include_asm_arm_hardware_linkup_l1110.h.patch
+remove_file-include_asm_mips_gfx.h.patch
+remove_file-include_asm_mips_mach_au1x00_au1100_mmc.h.patch
+remove_file-include_asm_mips_mipsprom.h.patch
+remove_file-include_asm_mips_riscos_syscall.h.patch
+remove_file-include_linux_netfilter_ipv4_ip_logging.h.patch
+remove_file-include_linux_netfilter_ipv6_ip6_logging.h.patch
+vfree-drivers_char_agp_backend.patch
+vfree-fs_reiserfs_super.patch
+msleep-drivers_block_cciss.patch
+msleep-drivers_block_paride_pf.patch
+msleep-drivers_cdrom_sonycd535.patch
+msleep-fs_smbfs_proc.patch
+msleep-net_sunrpc_svcsock.patch
+msleep_interruptible-drivers_block_swim3.patch
+msleep_interruptible-fs_lockd_clntproc.patch
+msleep_ssleep-drivers_block_paride_pcd.patch
+msleep_ssleep-drivers_block_paride_pt.patch
+return_code-drivers_ide_pci_cs5520.patch
+wait_event-drivers_block_ps2esdi.patch
+int_sleep_on-drivers_isdn_capi_capi.patch
+int_sleep_on-drivers_isdn_i4l_isdn_common.patch
+int_sleep_on-drivers_net_tokenring_lanstreamer.patch
+lindent-arch_ppc_4xx_io_serial_sicc.patch
+printk-drivers_acorn_block_fd1772.patch
+printk-drivers_acorn_block_mfmhd.patch
+sleep_on-drivers_block_xd.patch
+sleep_on-drivers_cdrom_sjcd.patch
+wait_event_int-drivers_block_acsi_slm.patch
+wait_event_int_timeout-drivers_block_DAC960.patch
+int_sleep_on-arch_mips_sibyte_sb1250_bcm1250_tbprof.patch
+int_sleep_on-drivers_net_8139too.patch
+int_sleep_on-drivers_net_tokenring_ibmtr.patch
+int_sleep_on-fs_lockd_svc.patch
+pci_register_driver-drivers_ide.patch
+pci_register_driver-drivers_net.patch
+pci_register_driver-drivers_net_arcnet.patch
+pci_register_driver-drivers_net_irda.patch
+pci_register_driver-drivers_net_skfp.patch
+pci_register_driver-drivers_net_tokenring.patch
+pci_register_driver-drivers_net_tulip.patch
+pci_register_driver-drivers_net_wan.patch
+pci_register_driver-drivers_net_wan_lmc.patch
+pci_register_driver-drivers_net_wireless.patch
+pci_register_driver-drivers_parport.patch
+return_code-drivers_ide.patch
+return_code-drivers_isdn_hisax.patch
+return_code-drivers_isdn_i4l.patch
+return_code-drivers_isdn_pcbit.patch
+sleep_on-net_sunrpc_clnt.patch
+int_sleep_on-drivers_cdrom_mcdx.patch
+unused_define-drivers_block_floppy.patch
+printk-drivers_video.patch
+msleep-arch_m68k_atari_time.patch
+msleep-drivers_acpi_osl.patch
+msleep-drivers_block_paride_pg.patch
+msleep-drivers_block_swim_iop.patch
+sparse-fs_cifs_cifssmb.patch
+sparse-fs_affs_super.patch
+sparse-fs_befs_endian.h.patch
+sparse-fs_cifs_cifssmb-2.patch
+sparse-fs_cifs_netmisc.patch
+sparse-fs_ext3_resize.patch
+sparse-fs_hpfs_inode.patch
+sparse-include_linux_smb_fs.h.patch
+printk-drivers_char_watchdog_wdt285.patch
+dma_mask-drivers_media_video_meye.patch
+list_for_each-drivers_macintosh_via-pmu.patch
+dma_mask-drivers_block_cpqarray.patch
+dma_mask-drivers_net.patch
+dma_mask-drivers_scsi.patch
+jiffies_to_msecs-drivers_input_joydev.patch
+printk-drivers_acpi_container.patch
+printk-drivers_acpi_pci_link.patch
+printk-drivers_block_DAC960.patch
+printk-drivers_block_cciss.patch
+printk-drivers_block_paride.patch
+time_after-drivers_net_ne2
+time_after-drivers_net_wireless_strip
+time_after-drivers_net_ne-h8300
+dma_mask-drivers_net_ioc3-eth
+time_after-drivers_net_arm_etherh
+time_after-drivers_net_apne
+time_after-drivers_net_ne
+time_after-drivers_net_zorro8390
+sti_cli-drivers_net_irda_ep7211_ir
+ssleep-arch_ppc_8260_io_fcc_enet
+set_current_state-drivers_char_ip2_i2lib
+set_current_state-drivers_cdrom_sbpcd
+set_current_state-drivers_acpi_osl
+msleep_interruptible-drivers_parport_ieee1284
+warning-fs_eventpoll.c
+warning-fs_devfs_base.c
+warning-fs_cifs_asn1.c
+warning-drivers_isdn_hisax_hisax_fcpcipnp
+warning-drivers_isdn_hisax_diva.c
+return_code-drivers_net_tokenring_olympic
+printk-drivers_net_hp100
+string-arch_cris_arch-v10_drivers_axisflashmap
+size-drivers_isdn_sc_ioctl
+gcc4-fs_ext3_acl.c
+gcc4-fs_ext2_acl.c
+typo-Documentation_early-userspace_README
+typedef-sound_isa_sb_sb16_csp
+sizeof-arch_arm_common_sa1111
+set_current_state-fs_reiserfs_journal
+return_code-drivers_char_applicom
+return-drivers_misc_hdpuftrs_hdpu_cpustate
+return-drivers_input_misc_hp_sdc_rtc
+return-drivers_char_lcd
+remove_macros-sound_isa_sb_sb16_csp
+printk-drivers_block_pktcdvd
+msleep_interruptible-drivers_net_wan_cycx_drv
+msleep_interruptible-drivers_net_ixgb_ixgb_ethtool
+module_param-drivers_net_pci-skeleton
+cleanup-drivers_usb_serial_cypress_m8
+cleanup-drivers_net_wireless_atmel
+bss-drivers_net_bonding_bond_main
+sparse-kernel_audit
+sparse-include_net_bluetooth_bluetooth.h
+sparse-fs_reiserfs_fix_node
+sparse-drivers_char_n_tty
+sparse-drivers_bluetooth_hci_usb
+sparse-drivers_bluetooth_bpa10x
+sparse-drivers_block_ll_rw_blk
+sparse-drivers_block_deadline-iosched
+sparse-drivers_block_cfq-iosched
+sparse-drivers_block_as-iosched
+set_current_state-kernel_module.c
+indent-drivers_char_Makefile
+casts-drivers_usb_serial_usb-serial
+flashpoint_01-remove_unused_things
+flashpoint_02-remove_trivial_wrappers
+flashpoint_03-remove_UCHAR
+flashpoint_04-remove_USHORT
+flashpoint_05-remove_UINT
+flashpoint_06-remove_ULONG
+flashpoint_07-remove_ushort_ptr
+flashpoint_08-use_standart_types
+flashpoint_09-untypedef_SCCB
+flashpoint_10-untypedef_SCCBMgr_info
+flashpoint_11-untypedef_SCCBMgr_tar_info
+flashpoint_12-untypedef_NVRAMInfo
+flashpoint_13-untypedef_SCCBcard
+flashpoint_14-lindent
+flashpoint_15-return_parenthesis
+wait_event-drivers_char_drm_i830_irq
+time_after-drivers_usb_input_ati_remote
+time_after-drivers_scsi_
+time_after-drivers_net_tulip_pnic
+time_after-drivers_net_tokenring_olympic
+time_after-drivers_net_tokenring_lanstreamer
+time_after-drivers_net_pcmcia_3c589_cs
+time_after-drivers_net_ns83820
+time_after-drivers_net_hp100
+time_after-drivers_net_hamradio_mkiss
+time_after-drivers_net_hamradio_baycom_epp
+time_after-drivers_net_3c523
+time_after-drivers_ieee1394_hosts
+time_after-drivers_ide_ide-tape
+spelling-Documentation_
+sparse-mm_swap_state
+sparse-include_linux_radix-tree.h
+sparse-fs_xfs_linux-2.6_kmem
+sparse-drivers_net_sungem.h
+sparse-drivers_net_ns83820
+sparse-drivers_net_bonding_bond_main
+sparse-drivers_md_dm-crypt
+sparse-drivers_base_dmapool
+return_code-drivers_net_wireless_atmel
+return_code-drivers_mca_mca-proc
+return_code-drivers_block_cpqarray
+return_code-drivers_block_cciss
+return_code-arch_sparc_kernel_ioport
+return_code-arch_sh_
+return_code-arch_sh64_
+return_code-arch_parisc_kernel_pci-dma
+return_code-arch_arm_
+return_code-arch_arm26_kernel_ecard
+remove_brackets-drivers_acpi_system
+printk-arch_um_
+pci_dma_supported-drivers_media_video_bttv-driver
+msleep-drivers_telephony_ixj
+msleep-drivers_scsi_qla2xxx_qla_os
+msleep-drivers_scsi_osst
+msleep-drivers_scsi_lpfc_lpfc_scsi
+msleep-drivers_block_cciss
+msleep-arch_x86_64_kernel_smpboot
+msleep-arch_i386_kernel_smpboot
+gcc4-include_asm-x86_64_bitops.h
+gcc4-drivers_net_wireless_wavelan_cs.c
+dma_mask-drivers_block_umem
+cli-drivers_net_fec
+time_after-drivers_net_eth16i
+time_after-drivers_net_arcnet_arcnet
+time_after-drivers_net_3c59x
+time_after-drivers_net_shaper
+time_after-drivers_net_seeq8005
+time_after-drivers_net_ppp_async
+time_after-drivers_net_oaknet
+time_after-drivers_media_dvb_ttusb-budget_dvb-ttusb-budget
+time_after-drivers_char_lp
+time_after-drivers_char_agp_nvidia-agp
+time_after-drivers_block_floppy
+time_after-drivers_block_DAC960
+time_after-drivers_scsi_qlogicfc
+spelling-REPORTING-BUGS
+fixup-Documentation_filesystems_sysfs.txt
+fixup2-Documentation_filesystems_sysfs.txt
+fixup3-Documentation_filesystems_sysfs.txt
+kj_tag
+
+--===============031062191990305132==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -74,4 +371,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------040805070401070206030905--
+--===============031062191990305132==--
