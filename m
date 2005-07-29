@@ -1,68 +1,78 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Sat, 09 Jul 2005 00:15:37 +0000
-Subject: [KJ] [PATCH 12/14] scsi/osst: use msleep() instead of
-Message-Id: <20050709001537.GR2596@us.ibm.com>
+From: Grant Coady <lkml@dodo.com.au>
+Date: Fri, 29 Jul 2005 22:07:42 +0000
+Subject: [KJ] RFC PATCH trivial: kbuild inconsistent CONFIG_DEBUG_INFO usage
+Message-Id: <ds9le1t2ec1qg60t7p02oo9na4cpogtsep@4ax.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============011469789001716135=="
+Content-Type: multipart/mixed; boundary="===============96518546066385724=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050709000324.GD2596@us.ibm.com>
-In-Reply-To: <20050709000324.GD2596@us.ibm.com>
-To: osst@riede.org
-Cc: Kernel-Janitors <kernel-janitors@lists.osdl.org>, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============011469789001716135==
+--===============96518546066385724==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 
-From: Nishanth Aravamudan <nacc@us.ibm.com>
+On Wed, 27 Jul 2005 21:43:52 -0700, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
+>
+>I think the first can be
+>
+>ifdef CONFIG_DEBUG_INFO
+>
+>and the second
+>
+>ifndef CONFIG_DEBUG_INFO
 
-Description: Replace schedule_timeout() with msleep() to guarantee the
-task delays as expected.
+Okay, this trivial patch restores consistent build flags usage to 
+Makefile in arch/arm26 and arch/x86_64
 
-Patch is compile-tested.
 
-Signed-off-by: Nishanth Aravamudan <nacc@us.ibm.com>
+
+Signed-off-by: Grant Coady <gcoady@gmail.com>
 
 ---
+ arm26/Makefile  |    6 +++---
+ x86_64/Makefile |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
- osst.c |    9 +++------
- 1 files changed, 3 insertions(+), 6 deletions(-)
-
-diff -urp 2.6.13-rc2-kj/drivers/scsi/osst.c 2.6.13-rc2-kj-dev/drivers/scsi/osst.c
---- 2.6.13-rc2-kj/drivers/scsi/osst.c	2005-07-06 07:57:19.000000000 -0700
-+++ 2.6.13-rc2-kj-dev/drivers/scsi/osst.c	2005-07-06 19:21:03.000000000 -0700
-@@ -862,8 +862,7 @@ static int osst_recover_wait_frame(struc
- 				retval = osst_write_error_recovery(STp, aSRpnt, 0);
- 				break;
- 			}
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout (HZ / OSST_POLL_PER_SEC);
-+			msleep(1000 / OSST_POLL_PER_SEC);
+diff -Nrup -X dontdiff linux-2.6.13-rc3-mm3/arch/arm26/Makefile linux-2.6.13-rc3-mm3c/arch/arm26/Makefile
+--- linux-2.6.13-rc3-mm3/arch/arm26/Makefile	2005-06-18 05:48:29.000000000 +1000
++++ linux-2.6.13-rc3-mm3c/arch/arm26/Makefile	2005-07-29 16:29:35.000000000 +1000
+@@ -13,11 +13,11 @@ CPPFLAGS_vmlinux.lds = -DTEXTADDR=$(TEXT
+ OBJCOPYFLAGS	:=-O binary -R .note -R .comment -S
+ GZFLAGS		:=-9
  
- 			STp->buffer->b_data = mybuf; STp->buffer->buffer_size = 24;
- 			memset(cmd, 0, MAX_COMMAND_SIZE);
-@@ -1558,8 +1557,7 @@ static int osst_reposition_and_retry(str
- 			osst_set_frame_position(STp, aSRpnt, frame + skip, 1);
- 			flag = 0;
- 			attempts--;
--			set_current_state(TASK_INTERRUPTIBLE);
--			schedule_timeout(HZ / 10);
-+			msleep(100);
- 		}
- 		if (osst_get_frame_position(STp, aSRpnt) < 0) {		/* additional write error */
- #if DEBUG
-@@ -1620,8 +1618,7 @@ static int osst_reposition_and_retry(str
- 			debugging = 0;
- 		}
- #endif
--		set_current_state(TASK_INTERRUPTIBLE);
--		schedule_timeout(HZ / 10);
-+		msleep(100);
- 	}
- 	printk(KERN_ERR "%s:E: Failed to find valid tape media\n", name);
- #if DEBUG
+-ifeq ($(CONFIG_FRAME_POINTER),y)
++ifdef CONFIG_FRAME_POINTER
+ CFLAGS		+=-fno-omit-frame-pointer -mno-sched-prolog
+ endif
+ 
+-ifeq ($(CONFIG_DEBUG_INFO),y)
++ifdef CONFIG_DEBUG_INFO
+ CFLAGS		+=-g
+ endif
+ 
+@@ -25,7 +25,7 @@ CFLAGS_BOOT	:=-mapcs-26 -mcpu=arm3 -msof
+ CFLAGS		+=-mapcs-26 -mcpu=arm3 -msoft-float -Uarm
+ AFLAGS		+=-mapcs-26 -mcpu=arm3 -msoft-float
+ 
+-ifeq ($(CONFIG_XIP_KERNEL),y)
++ifdef CONFIG_XIP_KERNEL
+   TEXTADDR	 := 0x03880000
+   DATAADDR	 := 0x02080000
+ else
+diff -Nrup -X dontdiff linux-2.6.13-rc3-mm3/arch/x86_64/Makefile linux-2.6.13-rc3-mm3c/arch/x86_64/Makefile
+--- linux-2.6.13-rc3-mm3/arch/x86_64/Makefile	2005-07-28 22:20:15.000000000 +1000
++++ linux-2.6.13-rc3-mm3c/arch/x86_64/Makefile	2005-07-29 16:31:04.000000000 +1000
+@@ -38,7 +38,7 @@ CFLAGS += -pipe
+ # actually it makes the kernel smaller too.
+ CFLAGS += -fno-reorder-blocks	
+ CFLAGS += -Wno-sign-compare
+-ifneq ($(CONFIG_DEBUG_INFO),y)
++ifndef CONFIG_DEBUG_INFO
+ CFLAGS += -fno-asynchronous-unwind-tables
+ # -fweb shrinks the kernel a bit, but the difference is very small
+ # it also messes up debugging, so don't use it for now.
 
---===============011469789001716135==
+--===============96518546066385724==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============011469789001716135==--
+--===============96518546066385724==--
