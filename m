@@ -1,41 +1,39 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sun, 14 Aug 2005 13:19:24 +0000
-Subject: [KJ] [PATCH] ntfs: fmt warning fix for 64-bit platforms
-Message-Id: <20050814131924.GA15052@mipter.zuzino.mipt.ru>
+From: Carlo Perassi <carlo@linux.it>
+Date: Tue, 02 Aug 2005 16:22:40 +0000
+Subject: [KJ] [iprsvp@gmail.com: firefox search plugin for
+Message-Id: <20050802162240.GA4961@voyager>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92218823603938893=="
+Content-Type: multipart/mixed; boundary="===============17881460379081204=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92218823603938893==
+--===============17881460379081204==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Fix
+archived at
+http://mail.nl.linux.org/kernelnewbies/2005-08/msg00008.html
 
-fs/ntfs/super.c: In function `load_and_init_usnjrnl':
-fs/ntfs/super.c:1439: warning: unsigned int format, different type arg (arg 5)
+----- Forwarded message from Raghu Vadapalli <iprsvp@gmail.com> -----
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+> 
+>  I wrote a small firefox search plugin for a quick access to Linux Cross 
+> Reference site. http://lxr.linux.no/source/. I am not really good at firefox 
+> plugins but these plugins do work for me. So I just thought of sharing with 
+> you all. Let me know if you folks find it useful/working . You can always 
+> modify it for the kernel version you want it. 
+> 
+> http://kernel.jot.com/FirefoxSearchPlugins
+> 
+> Thanks
+>  Raghu.
 
- fs/ntfs/super.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
+----- End forwarded message -----
 
---- linux-fmt.orig/fs/ntfs/super.c
-+++ linux-fmt/fs/ntfs/super.c
-@@ -1438,7 +1438,7 @@ not_enabled:
- 	if (unlikely(i_size_read(tmp_ino) < sizeof(USN_HEADER))) {
- 		ntfs_error(vol->sb, "Found corrupt $UsnJrnl/$DATA/$Max "
- 				"attribute (size is 0x%llx but should be at "
--				"least 0x%x bytes).", i_size_read(tmp_ino),
-+				"least 0x%zx bytes).", i_size_read(tmp_ino),
- 				sizeof(USN_HEADER));
- 		return FALSE;
- 	}
+-- 
+Carlo Perassi - http://www.linux.it/~carlo/
 
-
---===============92218823603938893==
+--===============17881460379081204==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92218823603938893==--
+--===============17881460379081204==--
