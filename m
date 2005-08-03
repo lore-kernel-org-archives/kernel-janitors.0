@@ -1,31 +1,44 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Wed, 10 Aug 2005 10:55:38 +0000
-Subject: Re: [KJ] [PATCH] removing odd number of parentheses
-Message-Id: <20050810110128.GC12864@mipter.zuzino.mipt.ru>
+From: Jerome Steunenberg <jerome@steunenberg.org>
+Date: Wed, 03 Aug 2005 09:47:05 +0000
+Subject: [KJ] [PATCH] drivers/video/vgastate.c - remove unnecessary calls to
+Message-Id: <200508031147.05531.jerome@steunenberg.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============24566635816857851=="
+Content-Type: multipart/mixed; boundary="===============24258056979537571=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050809140939.GA4603@voyager>
-In-Reply-To: <20050809140939.GA4603@voyager>
+References: <42EA32EB.5010609@steunenberg.org>
+In-Reply-To: <42EA32EB.5010609@steunenberg.org>
 To: kernel-janitors@vger.kernel.org
 
---===============24566635816857851==
-Content-Type: text/plain; charset=us-ascii
+--===============24258056979537571==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Tue, Aug 09, 2005 at 04:09:40PM +0200, Carlo Perassi wrote:
-> --- linux-2.6.13-rc6/arch/ppc/syslib/qspan_pci.c
-> +++ linux-2.6.13-rc6-mod/arch/ppc/syslib/qspan_pci.c
+Third try for this patch. Now with KMail instead of Thunderbird. Please tell 
+me if I got it OK!
 
->  void __init
-> -m8xx_pcibios_fixup(void))
-> +m8xx_pcibios_fixup(void)
+In drivers/video/vgastate.c, the unnecessary calls to init_module and 
+cleanup_module have been removed
 
-I wasn't patient fighting with Gmail SMTP server. This line exists since
-2.4.0 ;-).
+Signed-off-by: Jerome Steunenberg <jerome@steunenberg.org>
 
+--- linux-2.6.13-rc3/drivers/video/vgastate.c.orig	2005-07-25 15:09:51.000000000 +0200
++++ linux-2.6.13-rc3/drivers/video/vgastate.c	2005-07-29 15:03:45.000000000 +0200
+@@ -490,11 +490,6 @@ int restore_vga (struct vgastate *state)
+ 	return 0;
+ }
+ 
+-#ifdef MODULE
+-int init_module(void) { return 0; };
+-void cleanup_module(void) {};
+-#endif
+-
+ EXPORT_SYMBOL(save_vga);
+ EXPORT_SYMBOL(restore_vga);
+ 
 
---===============24566635816857851==
+--===============24258056979537571==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============24566635816857851==--
+--===============24258056979537571==--
