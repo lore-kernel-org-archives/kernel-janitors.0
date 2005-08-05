@@ -1,75 +1,44 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sun, 07 Aug 2005 22:57:44 +0000
-Subject: [KJ] [PATCH] amifdreg.h: remove unused macros
-Message-Id: <20050807225744.GA8715@mipter.zuzino.mipt.ru>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Fri, 05 Aug 2005 15:36:32 +0000
+Subject: [KJ] [PATCH] sh64 (mm/fault.c): procfs_failure && create_proc*
+Message-Id: <20050805153632.GH5233@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============031180729808037988=="
+Content-Type: multipart/mixed; boundary="===============36267088706106382=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: akpm@osdl.org, kernel-janitors@lists.osdl.org
+Cc: domen@coderock.org, linux-kernel@vger.kernel.org
 
---===============031180729808037988==
-Content-Type: text/plain; charset=us-ascii
+--===============36267088706106382==
 Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+description:
+audit return code of create_proc_* function is a entry in janitors
+TODO list. Audit this return and printk() when it fails, can spam a lot
+system without compiled proc support. So this patch can audit return
+code by means of procfs_failure().
 
- include/linux/amifdreg.h |   21 ---------------------
- 1 files changed, 21 deletions(-)
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-diff -uprN linux-vanilla/include/linux/amifdreg.h linux-amifdreg/include/linux/amifdreg.h
---- linux-vanilla/include/linux/amifdreg.h	2005-08-08 02:17:04.000000000 +0400
-+++ linux-amifdreg/include/linux/amifdreg.h	2005-08-08 02:54:50.000000000 +0400
-@@ -15,25 +15,11 @@
- */
+diff -urpNX dontdiff linux-2.6.13-rc4-mm1.orig/arch/sh64/mm/fault.c linux-2.6.13-rc4-mm1/arch/sh64/mm/fault.c
+--- linux-2.6.13-rc4-mm1.orig/arch/sh64/mm/fault.c	2005-07-29 00:44:44.000000000 +0200
++++ linux-2.6.13-rc4-mm1/arch/sh64/mm/fault.c	2005-08-03 12:35:19.000000000 +0200
+@@ -592,8 +592,11 @@ tlb_proc_info(char *buf, char **start, o
  
- #define DSKMOTOR    (0x1<<7)        /* motor on when low */
--#define DSKSEL3     (0x1<<6)        /* select drive 3 when low */
--#define DSKSEL2     (0x1<<5)        /* select drive 2 when low */
--#define DSKSEL1     (0x1<<4)        /* select drive 1 when low */
--#define DSKSEL0     (0x1<<3)        /* select drive 0 when low */
- #define DSKSIDE     (0x1<<2)        /* side selection: 0 = upper, 1 = lower */
- #define DSKDIREC    (0x1<<1)        /* step direction: 0=in, 1=out (to trk 0) */
- #define DSKSTEP     (0x1)           /* pulse low to step head 1 track */
+ static int __init register_proc_tlb(void)
+ {
+-  create_proc_read_entry("tlb", 0, NULL, tlb_proc_info, NULL);
+-  return 0;
++	struct proc_dir_entry* ent;
++	ent = create_proc_read_entry("tlb", 0, NULL, tlb_proc_info, NULL);
++	if (!ent)
++		procfs_failure("fault.c: Unable to create tlb /proc entry.\n");
++	return 0;
+ }
  
- /*
--** DSKBYTR bits (read only)
--*/
--
--#define DSKBYT      (1<<15)         /* register contains valid byte when set */
--#define DMAON       (1<<14)         /* disk DMA enabled */
--#define DISKWRITE   (1<<13)         /* disk write bit in DSKLEN enabled */
--#define WORDEQUAL   (1<<12)         /* DSKSYNC register match when true */
--/* bits 7-0 are data */
--
--/*
- ** ADKCON/ADKCONR bits
- */
- 
-@@ -42,7 +28,6 @@
- #endif
- #define ADK_PRECOMP1    (1<<14)     /* precompensation selection */
- #define ADK_PRECOMP0    (1<<13)     /* 00=none, 01=140ns, 10=280ns, 11=500ns */
--#define ADK_MFMPREC     (1<<12)     /* 0=GCR precomp., 1=MFM precomp. */
- #define ADK_WORDSYNC    (1<<10)     /* enable DSKSYNC auto DMA */
- #define ADK_MSBSYNC     (1<<9)      /* when 1, enable sync on MSbit (for GCR) */
- #define ADK_FAST        (1<<8)      /* bit cell: 0=2us (GCR), 1=1us (MFM) */
-@@ -55,12 +40,6 @@
- #define DSKLEN_WRITE    (1<<14)
- 
- /*
--** INTENA/INTREQ bits
--*/
--
--#define DSKINDEX    (0x1<<4)        /* DSKINDEX bit */
--
--/*
- ** Misc
- */
-  
+ __initcall(register_proc_tlb);
 
-
---===============031180729808037988==
+--===============36267088706106382==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============031180729808037988==--
+--===============36267088706106382==--
