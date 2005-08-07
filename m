@@ -1,130 +1,177 @@
-From: "Samson" <incompletely@chiropad.com>
-Date: Wed, 24 Aug 2005 03:06:21 +0000
-Subject: [KJ] stock Profiler
-Message-Id: <9940031895.8938975077@adsl-223-51-220.aep.bellsouth.net>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 07 Aug 2005 09:14:05 +0000
+Subject: [KJ] [PATCH] Remove drivers/parport/parport_arc.c
+Message-Id: <20050807091405.GB4148@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67127322885063845=="
+Content-Type: multipart/mixed; boundary="===============93785067509021491=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============67127322885063845==
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII
+--===============93785067509021491==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Looking for a company with some good news?  Here's one!
-***** CDGT ***** CDGT ***** CDGT ***** CDGT ***** CDGT ***** CDGT *****
-Major Financial NEWS
+29 months ago Alan merged patch which broke compilation of parport_arc.c:
++       char *fake_name = "parport probe");
 
-CDGT has more News that came.
-Looks like CDGT is not willing to miss a beat!
+The only reason it was unnoticed is that the file wasn't referenced in the
+Makefile since at least 2.4.0.
 
-SYMBOL: CDGT
-CURRENT PRICE: $2.20 
-Short-Term : $6 
+Noticed by (don't laugh) indent(1).
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ drivers/parport/parport_arc.c |  139 ------------------------------------------
+ 1 files changed, 139 deletions(-)
+
+Index: linux-Lindent/drivers/parport/parport_arc.c
+===================================================================
+--- linux-Lindent.orig/drivers/parport/parport_arc.c	2005-08-07 12:00:31.000000000 +0400
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,139 +0,0 @@
+-/* Low-level parallel port routines for Archimedes onboard hardware
+- *
+- * Author: Phil Blundell <philb@gnu.org>
+- */
+-
+-/* This driver is for the parallel port hardware found on Acorn's old
+- * range of Archimedes machines.  The A5000 and newer systems have PC-style
+- * I/O hardware and should use the parport_pc driver instead.
+- *
+- * The Acorn printer port hardware is very simple.  There is a single 8-bit
+- * write-only latch for the data port and control/status bits are handled
+- * with various auxilliary input and output lines.  The port is not
+- * bidirectional, does not support any modes other than SPP, and has only
+- * a subset of the standard printer control lines connected.
+- */
+-
+-#include <linux/threads.h>
+-#include <linux/delay.h>
+-#include <linux/errno.h>
+-#include <linux/interrupt.h>
+-#include <linux/ioport.h>
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/parport.h>
+-
+-#include <asm/ptrace.h>
+-#include <asm/io.h>
+-#include <asm/arch/oldlatches.h>
+-#include <asm/arch/irqs.h>
+-
+-#define DATA_ADDRESS    0x3350010
+-
+-/* This is equivalent to the above and only used for request_region. */
+-#define PORT_BASE       0x80000000 | ((DATA_ADDRESS - IO_BASE) >> 2)
+-
+-/* The hardware can't read from the data latch, so we must use a soft
+-   copy. */
+-static unsigned char data_copy;
+-
+-/* These are pretty simple. We know the irq is never shared and the
+-   kernel does all the magic that's required. */
+-static void arc_enable_irq(struct parport *p)
+-{
+-	enable_irq(p->irq);
+-}
+-
+-static void arc_disable_irq(struct parport *p)
+-{
+-	disable_irq(p->irq);
+-}
+-
+-static void arc_interrupt(int irq, void *dev_id, struct pt_regs *regs)
+-{
+-	parport_generic_irq(irq, (struct parport *) dev_id, regs);
+-}
+-
+-static void arc_write_data(struct parport *p, unsigned char data)
+-{
+-	data_copy = data;
+-	outb_t(data, DATA_LATCH);
+-}
+-
+-static unsigned char arc_read_data(struct parport *p)
+-{
+-	return data_copy;
+-}
+-
+-static struct parport_operations parport_arc_ops = 
+-{
+-	.write_data	= arc_write_data,
+-	.read_data	= arc_read_data,
+-
+-	.write_control	= arc_write_control,
+-	.read_control	= arc_read_control,
+-	.frob_control	= arc_frob_control,
+-
+-	.read_status	= arc_read_status,
+-
+-	.enable_irq	= arc_enable_irq,
+-	.disable_irq	= arc_disable_irq,
+-
+-	.data_forward	= arc_data_forward,
+-	.data_reverse	= arc_data_reverse,
+-
+-	.init_state	= arc_init_state,
+-	.save_state	= arc_save_state,
+-	.restore_state	= arc_restore_state,
+-
+-	.epp_write_data	= parport_ieee1284_epp_write_data,
+-	.epp_read_data	= parport_ieee1284_epp_read_data,
+-	.epp_write_addr	= parport_ieee1284_epp_write_addr,
+-	.epp_read_addr	= parport_ieee1284_epp_read_addr,
+-
+-	.ecp_write_data	= parport_ieee1284_ecp_write_data,
+-	.ecp_read_data	= parport_ieee1284_ecp_read_data,
+-	.ecp_write_addr	= parport_ieee1284_ecp_write_addr,
+-	
+-	.compat_write_data	= parport_ieee1284_write_compat,
+-	.nibble_read_data	= parport_ieee1284_read_nibble,
+-	.byte_read_data		= parport_ieee1284_read_byte,
+-
+-	.owner		= THIS_MODULE,
+-};
+-
+-/* --- Initialisation code -------------------------------- */
+-
+-static int parport_arc_init(void)
+-{
+-	/* Archimedes hardware provides only one port, at a fixed address */
+-	struct parport *p;
+-	struct resource res;
+-	char *fake_name = "parport probe");
+-
+-	res = request_region(PORT_BASE, 1, fake_name);
+-	if (res == NULL)
+-		return 0;
+-
+-	p = parport_register_port (PORT_BASE, IRQ_PRINTERACK,
+-				   PARPORT_DMA_NONE, &parport_arc_ops);
+-
+-	if (!p) {
+-		release_region(PORT_BASE, 1);
+-		return 0;
+-	}
+-
+-	p->modes = PARPORT_MODE_ARCSPP;
+-	p->size = 1;
+-	rename_region(res, p->name);
+-
+-	printk(KERN_INFO "%s: Archimedes on-board port, using irq %d\n",
+-	       p->irq);
+-
+-	/* Tell the high-level drivers about the port. */
+-	parport_announce_port (p);
+-
+-	return 1;
+-}
+-
+-module_init(parport_arc_init)
 
 
-China Digital Media Corporation Announces 
-Launch of IP Based Set-Top-Box In China
-
-Monday August 22, 8:00 am ET 
-HONG KONG, Aug. 22 /Xinhua-PRNewswire-FirstCall/ -- 
-China Digital Media Corporation ("Digimedia") (OTC Bulletin Board: CDGT - News) 
-today announced the launch of a trial for a new IP based Set-Top-Box ("STB") in Nanhai, 
-a city in Guangdong province with 400,000 Cable TV subscribers. The Company is one 
-of the first digital TV operators in China to deploy the trial of IP based STB 
-with its high-end users. The new STB in trial is equipped with an Ethernet port 
-which could facilitate various Internet based services to end users; 
-such as video-on-demand, online shopping channels, online games 
-and interactive education services. The new STB is developed in coordination 
-with Shenzhen Coship Electronics Co. Ltd. ("Coship") that could transform 
-a television set into an interactive and a multimedia platform.
-
-"Partnering with Coship in developing the IP based STB is our strategy 
-in advancing the quality of our broadcasting services. We believe the provision 
-of value-added services through digitalized network will be a new business model 
-in digital TV operation and this new IP based STB will give us a head start," 
-said Mr. Daniel Ng, Chairman and CEO of China Digital Media Corporation. 
-"We intend to invest and participate in system migration projects in other cities 
-like our Nanhai model. This collaboration with Coship and the new IP based STB 
-will provide us a convincing advantage to gain more contracts in the future 
-that would allow our Company to grow faster and to enlarge our service coverage," 
-Mr. Ng added.
-
-About China Digital Media Corporation :
-China Digital Media Corporation (OTC Bulletin Board: CDGT - News) focuses 
-its business in three main areas: Cable TV Operations, Programs Production 
-and Advertising Sales. Arcotect Technology (GZ) Limited, a wholly owned subsidiary 
-of CDGT in China, is the sole contractor and operator of digital television services 
-in Nanhai, a city with 400,000 cable TV subscribers. The service could offer 
-more than 800 digital channels of pay TV programs and value added 
-multimedia services. The Group is seeking to establish similar models elsewhere 
-in China. 
-
-About Shenzhen Coship Electronics Co. Ltd.
-This is a company to watch closely starting NOW! They have been known to make 
-BIG moves and we feel there is one coming !!!
-
-Last time we issued a watch we watched CHMS go from .36 to .73 in 4 DAYS !
-
-
-
-
-
-
-
-
-
-
-Disclaimer:
-Information within this email contains "forwardlooking statements" within
-the meaning of Section 27Aof the Securities Act of 1933 and Section 21B of
-the Securities Exchange Act of 1934. Any statements that express or involve
-discussions with respect to predictions, expectations, beliefs,
-plans, projections, objectives, goals, assumptions or future events or
-performance are not statements of historical fact and may be "forward
-looking statements". "Forward looking statements" are based on
-expectations, estimates and projections at the time the statements are made
-that involve a number of risks and uncertainties which could cause actual
-results or events to differ materially from those presently anticipated.
-Forward looking statements in this action may be identified through the use
-of words such as "projects", "foresee", "expects", "will", "anticipates",
-"estimates", "believes", "understands" or that by statements indicating
-certain actions "may", "could", or "might" occur. Risk factors include
-general economic and business conditions, the ability to acquire and develop
-specific projects, the ability to fund operations and changes in consumer
-and business consumption habits and other factors overwhich the company has
-little or no control. The publisher of this newsletter does not represent
-that the information contained in this message states all material facts or
-does not omit a material fact necessary to make the statements therein not
-misleading. All information provided within this email pertaining to
-investing, ST0CKs, securities must be understood as information provided and
-not investment advice. The publisher of this newsletter advises all readers
-and subscribers to seek advice from a registered professional securities
-representative before deciding to trade in ST0CKs featured within this
-email. None of the material within this report shall be construed as any
-kind of investment advice or solicitation. Many of these companies are on
-the verge of bankruptcy. You can lose all your money by investing in this
-ST0CK. We urge you to read the company's SEC filings now, before you invest.
-The publisher of this newsletter is not a registered invstment advisor.
-Subscribers should not view information herein as legal, tax, accounting or
-investment advice. In compliance with the SecuritiesAct of 1933, Section
-17(b), The publisher of this newsletter is contracted to receive six hundred
-thousand free trading shares from a third party, not an officer, director or
-affiliate shareholder for the circulation of this report. Be aware of an
-inherent conflict of interest resulting from such compensation due to the
-fact that this is a paid advertisement and is not without bias. The party
-that paid us has a position in the ST0CK they will sell at anytime without
-notice. This could have a negative impact on the price of the ST0CK, causing
-you to lose money. All factual information in this report was gathered from
-public sources, including but not limited to SEC filings, Company Websites
-and Company Press Releases. The publisher of this newsletter believes this
-information to be reliable but can make no guarantee as to its accuracy or
-completeness. Use of the material within this email constitutes your
-acceptance of these terms.
-
-
-
---===============67127322885063845==
+--===============93785067509021491==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -135,4 +182,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============67127322885063845==--
+--===============93785067509021491==--
