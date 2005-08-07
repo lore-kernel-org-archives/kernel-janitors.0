@@ -1,46 +1,83 @@
-From: "floyd dorsett" <arcohie@hulda-clark.com>
-Date: Wed, 03 Aug 2005 01:55:46 +0000
-Subject: It is an express lane to decrease your expenses on curative mediccines.
-Message-Id: <E60F6054.A4956D1@hulda-clark.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 07 Aug 2005 22:57:44 +0000
+Subject: [KJ] [PATCH] amifdreg.h: remove unused macros
+Message-Id: <20050807225744.GA8715@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============031180729808037988=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Zoom our homepage; customers can have their case profile reviewed without a
-charge. 
-Do you aspire to reduce the expenses on branded ointments? Check our most
-recent weekly bulletin and see the answer. 
+--===============031180729808037988==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Surfing on your website was fun. Buying remeddy at your e-zone was worth
-it. Experience its healing effects was expected. Gain the speedy delivery
-was an extra. Overall, I am very satisfied with your stuff and services.
-Nancy Verruto, Ohio. 
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-Choose convenient on-line shoppping and have this shipped to you from
-timely diistribution center. 
+ include/linux/amifdreg.h |   21 ---------------------
+ 1 files changed, 21 deletions(-)
 
-A convenient approach to less expense mediciines!
-We dispense a great assortmennt of generiics for shopper's convenience.
+diff -uprN linux-vanilla/include/linux/amifdreg.h linux-amifdreg/include/linux/amifdreg.h
+--- linux-vanilla/include/linux/amifdreg.h	2005-08-08 02:17:04.000000000 +0400
++++ linux-amifdreg/include/linux/amifdreg.h	2005-08-08 02:54:50.000000000 +0400
+@@ -15,25 +15,11 @@
+ */
+ 
+ #define DSKMOTOR    (0x1<<7)        /* motor on when low */
+-#define DSKSEL3     (0x1<<6)        /* select drive 3 when low */
+-#define DSKSEL2     (0x1<<5)        /* select drive 2 when low */
+-#define DSKSEL1     (0x1<<4)        /* select drive 1 when low */
+-#define DSKSEL0     (0x1<<3)        /* select drive 0 when low */
+ #define DSKSIDE     (0x1<<2)        /* side selection: 0 = upper, 1 = lower */
+ #define DSKDIREC    (0x1<<1)        /* step direction: 0=in, 1=out (to trk 0) */
+ #define DSKSTEP     (0x1)           /* pulse low to step head 1 track */
+ 
+ /*
+-** DSKBYTR bits (read only)
+-*/
+-
+-#define DSKBYT      (1<<15)         /* register contains valid byte when set */
+-#define DMAON       (1<<14)         /* disk DMA enabled */
+-#define DISKWRITE   (1<<13)         /* disk write bit in DSKLEN enabled */
+-#define WORDEQUAL   (1<<12)         /* DSKSYNC register match when true */
+-/* bits 7-0 are data */
+-
+-/*
+ ** ADKCON/ADKCONR bits
+ */
+ 
+@@ -42,7 +28,6 @@
+ #endif
+ #define ADK_PRECOMP1    (1<<14)     /* precompensation selection */
+ #define ADK_PRECOMP0    (1<<13)     /* 00=none, 01=140ns, 10=280ns, 11=500ns */
+-#define ADK_MFMPREC     (1<<12)     /* 0=GCR precomp., 1=MFM precomp. */
+ #define ADK_WORDSYNC    (1<<10)     /* enable DSKSYNC auto DMA */
+ #define ADK_MSBSYNC     (1<<9)      /* when 1, enable sync on MSbit (for GCR) */
+ #define ADK_FAST        (1<<8)      /* bit cell: 0=2us (GCR), 1=1us (MFM) */
+@@ -55,12 +40,6 @@
+ #define DSKLEN_WRITE    (1<<14)
+ 
+ /*
+-** INTENA/INTREQ bits
+-*/
+-
+-#define DSKINDEX    (0x1<<4)        /* DSKINDEX bit */
+-
+-/*
+ ** Misc
+ */
+  
 
-http://75.cww.perfectenlightening.com/x6n/
 
+--===============031180729808037988==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-"Oh! Charles, I declare it will be too abominable if you do, 
-
-It was a little fever of admiration; but it might, probably must, 
-
-serpent, the father of lies?"
-
-
-
--------------------------------------------------------
-SF.Net email is sponsored by: Discover Easy Linux Migration Strategies
-from IBM. Find simple to follow Roadmaps, straightforward articles,
-informative Webcasts and more! Get everything you need to get up to
-speed, fast. http://ads.osdn.com/?ad_idt77&alloc_id492&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============031180729808037988==--
