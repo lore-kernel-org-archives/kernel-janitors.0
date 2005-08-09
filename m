@@ -1,52 +1,25 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Tue, 09 Aug 2005 15:34:19 +0000
+From: "Carlo Perassi" <carlo@linux.it>
+Date: Tue, 09 Aug 2005 18:15:49 +0000
 Subject: Re: [KJ] [PATCH] removing odd number of parentheses
-Message-Id: <20050809123419.fcdbd6ea.rnsanchez@terra.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93685873058470281=="
+Message-Id: <14508.217.133.8.179.1123611349.squirrel@www.linux.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050809140939.GA4603@voyager>
 In-Reply-To: <20050809140939.GA4603@voyager>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============93685873058470281==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+> this should be "if ("
 
-Quoting  Carlo Perassi <carlo@linux.it>
-Sent on  Tue, 9 Aug 2005 16:09:40 +0200
-
-Hello Carlo,
-
->  	if(ivideo->sishw_ext.UseROM) {
-
-          ^
-
-this should be "if ("
-
-> -	   if(ivideo->sishw_ext.pjVirtualRomBase[0x52] & 0x80)) {
-> +	   if(ivideo->sishw_ext.pjVirtualRomBase[0x52] & 0x80) {
-
-             ^
-
-this one too.
+I know (one of my latest patches was like that) but I read somewhere it is
+suggested to change one thing without reindenting around it.
+Anyway I will send a new version ASAP.
 
 -- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
-
-  Left to themselves, things tend to go from bad to worse.
-
---===============93685873058470281==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Carlo Perassi - http://www.linux.it/~carlo/
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============93685873058470281==--
