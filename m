@@ -1,47 +1,53 @@
-From: Carlo Perassi <carlo@linux.it>
-Date: Tue, 09 Aug 2005 14:11:48 +0000
-Subject: [KJ] rfc about an uncommented string
-Message-Id: <20050809141147.GB4603@voyager>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46127443896331366=="
+From: walter harms <wharms@bfs.de>
+Date: Tue, 09 Aug 2005 15:25:34 +0000
+Subject: Re: [KJ] rfc about an uncommented string
+Message-Id: <42F8CAEE.2050401@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050809141147.GB4603@voyager>
+In-Reply-To: <20050809141147.GB4603@voyager>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============46127443896331366==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi.
+this will break if CONFIG_SERIO_I8042 is set and i guess intentionaly.
 
-I'd like to collect some comments about the following code
-segment I found in
-linux-2.6.13-rc6/arch/mips/ite-boards/generic/it8172_setup.c
-(the "^^^" sequence is not mine, it's in the code)
+who checked that in ?  perhaps the mips ppl know about it.
 
-#ifdef CONFIG_SERIO_I8042
-/*
- * According to the ITE Special BIOS Note for waking up the
- * keyboard controller...
- */
-static int init_8712_keyboard(void)
-{
-	unsigned int cmd_port = 0x14000064;
-	unsigned int data_port = 0x14000060;
-	                         ^^^^^^^^^^^
-	Somebody here doesn't grok the concept of io ports.
+re,
+	walter
 
--- 
-Carlo Perassi - http://www.linux.it/~carlo/
 
---===============46127443896331366==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Carlo Perassi wrote:
+> Hi.
+> 
+> I'd like to collect some comments about the following code
+> segment I found in
+> linux-2.6.13-rc6/arch/mips/ite-boards/generic/it8172_setup.c
+> (the "^^^" sequence is not mine, it's in the code)
+> 
+> #ifdef CONFIG_SERIO_I8042
+> /*
+>  * According to the ITE Special BIOS Note for waking up the
+>  * keyboard controller...
+>  */
+> static int init_8172_keyboard(void)
+> {
+> 	unsigned int cmd_port = 0x14000064;
+> 	unsigned int data_port = 0x14000060;
+> 	                         ^^^^^^^^^^^
+> 	Somebody here doesn't grok the concept of io ports.
+> 
+> 
+> 
+> ------------------------------------------------------------------------
+> 
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> https://lists.osdl.org/mailman/listinfo/kernel-janitors
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============46127443896331366==--
