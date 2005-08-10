@@ -1,47 +1,43 @@
-From: Baruch Even <baruch@ev-en.org>
-Date: Wed, 17 Aug 2005 22:19:32 +0000
-Subject: [KJ] [PATCH] proc_ipmi_root depends on CONFIG_PROC_FS
-Message-Id: <4303B7F4.4060407@ev-en.org>
+From: Oliver Korpilla <Oliver.Korpilla@gmx.de>
+Date: Wed, 10 Aug 2005 11:10:17 +0000
+Subject: [KJ] Log2 all through the kernel?
+Message-Id: <42F9E099.4090404@gmx.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040000080707000904000306"
+Content-Type: multipart/mixed; boundary="===============486102848745539=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel list <linux-kernel@vger.kernel.org>, kernel-janitors@osdl.org, Corey Minyard <minyard@mvista.com>
+To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------040000080707000904000306
-Content-Type: text/plain; charset=ISO-8859-1
+--===============486102848745539==
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Hello!
 
---------------040000080707000904000306
-Content-Type: text/x-patch;
- name="ipmi_proc_fs.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="ipmi_proc_fs.patch"
+Upon looking for a function/macro for computing the logarithm to the 
+base 2 I found multiple implementations in the kernel source 
+(2.6.10-rc3), but none fitting my requirements:
 
-proc_ipmi_root is only defined for CONFIG_PROC_FS, #ifdef it for export as well.
+* generic (will compute logarithm instead of a table lookup)
+* portable (unlike e.g. ceil_log2 only in asm-alpha)
 
-Signed-Off-By: Baruch Even <baruch@ev-en.org>
+It kind of looks like everyone is reinventing the wheel with several 
+implementations under differing names are within the kernel. Sometimes 
+they are hardcoded (results already put in as constant), sometimes a 
+lookup table is used, and several slightly different algorithms with bit 
+shift are used.
 
---
- drivers/char/ipmi/ipmi_msghandler.c |    2 ++
- 1 files changed, 2 insertions(+)
+Is this desirable? While it may be some reduction for special cases 
+using a table (like in the log2_2048 function I found - it computes only 
+a certain of log2 and multiplies this with 2048), wouldn't a more 
+generic implementation like ceil_log2 and floor_log2 not be desirable 
+for all platforms?
 
-Index: k/drivers/char/ipmi/ipmi_msghandler.c
-===================================================================
---- k.orig/drivers/char/ipmi/ipmi_msghandler.c
-+++ k/drivers/char/ipmi/ipmi_msghandler.c
-@@ -3194,5 +3194,7 @@ EXPORT_SYMBOL(ipmi_get_my_address);
- EXPORT_SYMBOL(ipmi_set_my_LUN);
- EXPORT_SYMBOL(ipmi_get_my_LUN);
- EXPORT_SYMBOL(ipmi_smi_add_proc_entry);
-+#ifdef CONFIG_PROC_FS
- EXPORT_SYMBOL(proc_ipmi_root);
-+#endif
- EXPORT_SYMBOL(ipmi_user_set_run_to_completion);
+Or have I simply overlooked the right function?
 
---------------040000080707000904000306
+Thanks and with kind regards,
+Oliver Korpilla
+
+--===============486102848745539==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------040000080707000904000306--
+--===============486102848745539==--
