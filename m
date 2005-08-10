@@ -1,25 +1,39 @@
-From: "Carlo Perassi" <carlo@linux.it>
-Date: Tue, 09 Aug 2005 18:15:49 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 10 Aug 2005 10:55:38 +0000
 Subject: Re: [KJ] [PATCH] removing odd number of parentheses
-Message-Id: <14508.217.133.8.179.1123611349.squirrel@www.linux.it>
+Message-Id: <20050810110128.GC12864@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============24566635816857851=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050809140939.GA4603@voyager>
 In-Reply-To: <20050809140939.GA4603@voyager>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> this should be "if ("
+--===============24566635816857851==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I know (one of my latest patches was like that) but I read somewhere it is
-suggested to change one thing without reindenting around it.
-Anyway I will send a new version ASAP.
+On Tue, Aug 09, 2005 at 04:09:40PM +0200, Carlo Perassi wrote:
+> --- linux-2.6.13-rc6/arch/ppc/syslib/qspan_pci.c
+> +++ linux-2.6.13-rc6-mod/arch/ppc/syslib/qspan_pci.c
 
--- 
-Carlo Perassi - http://www.linux.it/~carlo/
+>  void __init
+> -m8xx_pcibios_fixup(void))
+> +m8xx_pcibios_fixup(void)
+
+I wasn't patient fighting with Gmail SMTP server. This line exists since
+2.4.0 ;-).
+
+
+--===============24566635816857851==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============24566635816857851==--
