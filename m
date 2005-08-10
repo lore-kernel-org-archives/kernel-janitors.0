@@ -1,46 +1,47 @@
-From: Gabriel Devenyi <ace@staticwave.ca>
-Date: Wed, 10 Aug 2005 20:58:57 +0000
-Subject: [KJ] Re: Kernel Development and Cogito
-Message-Id: <200508101658.58230.ace@staticwave.ca>
+From: Ryan Anderson <ryan@autoweb.net>
+Date: Wed, 10 Aug 2005 23:31:32 +0000
+Subject: Re: [KJ] Re: Kernel Development and Cogito
+Message-Id: <20050810233132.GD24400@ryan2>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============04813162085996936=="
+Content-Type: multipart/mixed; boundary="===============475731653142907=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050810202417.GA5387@arthur.home>
 In-Reply-To: <20050810202417.GA5387@arthur.home>
 To: kernel-janitors@vger.kernel.org
 
---===============04813162085996936==
-Content-Type: text/plain;
-  charset="iso-8859-6"
-Content-Transfer-Encoding: 7bit
+--===============475731653142907==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On August 10, 2005 16:24, Erik Mouw wrote:
-> This one is from Cogito itself:
->
->   http://www.kernel.org/pub/software/scm/cogito/README
+On Wed, Aug 10, 2005 at 04:58:57PM -0400, Gabriel Devenyi wrote:
+> On August 10, 2005 16:24, Erik Mouw wrote:
+> > This one is from Cogito itself:
+> >
+> >   http://www.kernel.org/pub/software/scm/cogito/README
+> 
+> Thanks I've read this, I was hoping for a full set of documentation lurking 
+> around. I've fooled around a bit more and determined how to do some more 
+> things. Does cogito/git output patches in the prefered LKML format 
+> automatically? (-p1 etc)
 
-Thanks I've read this, I was hoping for a full set of documentation lurking 
-around. I've fooled around a bit more and determined how to do some more 
-things. Does cogito/git output patches in the prefered LKML format 
-automatically? (-p1 etc)
+Try: man git-format-patch-script
 
-> Jeff Garzik wrote a Git "howto" (the system that lives under Cogito):
->
->   http://linux.yyz.us/git-howto.html
+Specifically:
+	git format-patch origin
 
-As for git, I'm trying to avoid it a little bit as it scares me a little.
-
-> IIRC Randy Dunlap also wrote something, but I can't find it.
->
->
-> Erik
+This will output one file per commit, with the comment, diffstat and
+patch in it.
 
 -- 
-Gabriel Devenyi
-ace@staticwave.ca
 
---===============04813162085996936==
+Ryan Anderson
+AutoWeb Communications, Inc.
+email: ryan@autoweb.net
+
+
+
+--===============475731653142907==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============04813162085996936==--
+--===============475731653142907==--
