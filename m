@@ -1,44 +1,70 @@
-From: Jerome Steunenberg <jerome@steunenberg.org>
-Date: Wed, 03 Aug 2005 09:47:05 +0000
-Subject: [KJ] [PATCH] drivers/video/vgastate.c - remove unnecessary calls to
-Message-Id: <200508031147.05531.jerome@steunenberg.org>
+From: Erik Mouw <J.A.K.Mouw@its.tudelft.nl>
+Date: Wed, 10 Aug 2005 20:24:17 +0000
+Subject: [KJ] Re: Kernel Development and Cogito
+Message-Id: <20050810202417.GA5387@arthur.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============24258056979537571=="
+Content-Type: multipart/mixed; boundary="===============27204827030451795=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42EA32EB.5010609@steunenberg.org>
-In-Reply-To: <42EA32EB.5010609@steunenberg.org>
 To: kernel-janitors@vger.kernel.org
 
---===============24258056979537571==
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+
+--===============27204827030451795==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
 Content-Disposition: inline
 
-Third try for this patch. Now with KMail instead of Thunderbird. Please tell 
-me if I got it OK!
 
-In drivers/video/vgastate.c, the unnecessary calls to init_module and 
-cleanup_module have been removed
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jerome Steunenberg <jerome@steunenberg.org>
+On Wed, Aug 10, 2005 at 01:23:14PM -0400, Gabriel Devenyi wrote:
+> I would like to start working on some kernel-janitor stuff, and I've=20
+> cloned Linus' tree using Cogito (cg-clone). My issue is that I can't=20
+> find any documentation on how I would go about working on this tree now,=
+=20
+> like if I make a change, how do I create a patch that I can send off to=
+=20
+> kernel-janitors, and LKML, similarly, how would I reset my tree to be=20
+> exactly like Linus' if I muck something up badly. Is there a document=20
+> out there describing the usage of Cogito, or can someone outline the=20
+> basics of using Cogito to dump my changes for distribution? Thanks for=20
+> your help!
 
---- linux-2.6.13-rc3/drivers/video/vgastate.c.orig	2005-07-25 15:09:51.000000000 +0200
-+++ linux-2.6.13-rc3/drivers/video/vgastate.c	2005-07-29 15:03:45.000000000 +0200
-@@ -490,11 +490,6 @@ int restore_vga (struct vgastate *state)
- 	return 0;
- }
- 
--#ifdef MODULE
--int init_module(void) { return 0; };
--void cleanup_module(void) {};
--#endif
--
- EXPORT_SYMBOL(save_vga);
- EXPORT_SYMBOL(restore_vga);
- 
+This one is from Cogito itself:
 
---===============24258056979537571==
+  http://www.kernel.org/pub/software/scm/cogito/README
+
+Jeff Garzik wrote a Git "howto" (the system that lives under Cogito):
+
+  http://linux.yyz.us/git-howto.html
+
+IIRC Randy Dunlap also wrote something, but I can't find it.
+
+
+Erik
+
+--=20
+Erik Mouw
+J.A.K.Mouw@its.tudelft.nl  mouw@nl.linux.org
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQFC+mJx/PlVHJtIto0RAsw8AJ47MRCbln7/3c2Ac6eWCGIkjCblvQCfYDah
+WNCM6eaH3wS00cnvNon1kXs=
+=jeq7
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
+
+--===============27204827030451795==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============24258056979537571==--
+--===============27204827030451795==--
