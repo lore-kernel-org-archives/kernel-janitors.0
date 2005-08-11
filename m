@@ -1,47 +1,37 @@
-From: Ryan Anderson <ryan@autoweb.net>
-Date: Wed, 10 Aug 2005 23:31:32 +0000
-Subject: Re: [KJ] Re: Kernel Development and Cogito
-Message-Id: <20050810233132.GD24400@ryan2>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Date: Thu, 11 Aug 2005 15:08:42 +0000
+Subject: [KJ] Re: Kernel Development and Cogito
+Message-Id: <tnx3bpgcxz9.fsf@arm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============475731653142907=="
+Content-Type: multipart/mixed; boundary="===============056178321203491199=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050810202417.GA5387@arthur.home>
 In-Reply-To: <20050810202417.GA5387@arthur.home>
 To: kernel-janitors@vger.kernel.org
 
---===============475731653142907==
+--===============056178321203491199==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 10, 2005 at 04:58:57PM -0400, Gabriel Devenyi wrote:
-> On August 10, 2005 16:24, Erik Mouw wrote:
-> > This one is from Cogito itself:
-> >
-> >   http://www.kernel.org/pub/software/scm/cogito/README
-> 
-> Thanks I've read this, I was hoping for a full set of documentation lurking 
-> around. I've fooled around a bit more and determined how to do some more 
-> things. Does cogito/git output patches in the prefered LKML format 
-> automatically? (-p1 etc)
+Gabriel Devenyi <ace@staticwave.ca> wrote:
+> I would like to start working on some kernel-janitor stuff, and I've
+> cloned Linus' tree using Cogito (cg-clone). My issue is that I can't
+> find any documentation on how I would go about working on this tree
+> now, like if I make a change, how do I create a patch that I can send
+> off to kernel-janitors, and LKML, similarly, how would I reset my tree
+> to be exactly like Linus' if I muck something up badly.
 
-Try: man git-format-patch-script
-
-Specifically:
-	git format-patch origin
-
-This will output one file per commit, with the comment, diffstat and
-patch in it.
+Apart from what the others replied, you could also try StGIT if you
+used Quilt (it's not complicated at all anyway). Basically, you first
+create a patch (or several) and all the modifications are included
+into it. You push/pop patches from the top of your tree and also
+e-mail them. You can always delete a patch if you no longer need it
+and the changes are removed from your tree.
 
 -- 
-
-Ryan Anderson
-AutoWeb Communications, Inc.
-email: ryan@autoweb.net
+Catalin
 
 
-
---===============475731653142907==
+--===============056178321203491199==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============475731653142907==--
+--===============056178321203491199==--
