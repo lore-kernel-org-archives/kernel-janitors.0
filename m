@@ -1,36 +1,42 @@
-From: Peter Bendering <tonyliu@puertorrico.com>
-Date: Thu, 25 Aug 2005 06:07:06 +0000
-Subject: [KJ] job.
-Message-Id: <9019595511.20050825010706@puertorrico.com>
+From: Patricia Hayes <cholewo@REGISTRYADVANTAGE.com>
+Date: Fri, 12 Aug 2005 12:59:00 +0000
+Subject: [KJ] TRAVAIL SUR MAISON
+Message-Id: <111101c59f3d$f0961361$d6b6ba55@REGISTRYADVANTAGE.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============24379632251727434=="
+Content-Type: multipart/mixed; boundary="===============82657634603265828=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============24379632251727434==
+--===============82657634603265828==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Sir or Ms,
+La compagnie international  L'agence d'emploi francaise" recherches un courier financier.
+Il ne faut pas que vous investissez votre propre argent sur aucunes projets.
 
-My name is Peter Bendering. 
-Let me to introduce our company. 
+Et ce n'est pas important de quel pays vous venez.
+On veut simplement a engager personnel additional pour proceder plus de marches.
 
-We are Russian Marriage Agency. 
-We are looking for business partner from Germany. 
+L'exigences: intelligent, sociable, responsible, serieux employee.
 
-We offer easy job for you. 
-You should have (or open new) an account with Deutsche-Bank or Volksbank. 
-You will earn some cash for your service. 
+Les taches sont simples. L'education speciale n'est pas necessaire.
 
-Please contact us only by this e-mail for the further details: PrimeAirTour@aol.com 
+Votre salaire par semaine est basee sur la commission de 8% de chaque transfert vous faites (1,000-4,000USD additionel). Le travail
+s'occupes 1-2 heurs par jour and vous pouvez s'reunissez avec votre travail principal. (Vous pouvez travaillez a la maison sur l'internet).
 
-Best Regards,
-Peter B
+Si vous etes prets a gagner plus d'argent aujourd'hui, juste ecrivez nous a:  francejobs@aol.com
+
+Recevrez renseignments additionelles et commencer a travailler!
+
+Salutations,
+Patricia Hayes,
+ L'agence d'emploi francaise"
+Contact e-mail: francejobs@aol.com
 
 
 
---===============24379632251727434==
+
+--===============82657634603265828==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============24379632251727434==--
+--===============82657634603265828==--
