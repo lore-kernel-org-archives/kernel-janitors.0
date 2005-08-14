@@ -1,44 +1,66 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 05 Aug 2005 15:38:47 +0000
-Subject: [KJ] [PATCH] sh64 (kernel/process.c): procfs_failure && create_proc*
-Message-Id: <20050805153847.GI5233@rhum.iomeda.fr>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 14 Aug 2005 13:31:58 +0000
+Subject: [KJ] [PATCH] drivers/net/*: fmt fixes for 64-bit platforms
+Message-Id: <20050814133158.GD15052@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36298676485765302=="
+Content-Type: multipart/mixed; boundary="===============92910299684834019=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: akpm@osdl.org, kernel-janitors@lists.osdl.org
-Cc: domen@coderock.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============36298676485765302==
-Content-Disposition: inline
+--===============92910299684834019==
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-description:
-audit return code of create_proc_* function is a entry in janitors
-TODO list. Audit this return and printk() when it fails, can spam a lot
-system without compiled proc support. So this patch can audit return
-code by means of procfs_failure().
+Fix
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+drivers/net/e1000/e1000_main.c: In function `e1000_clean_tx_irq':
+drivers/net/e1000/e1000_main.c:2764: warning: size_t format, different type arg
+(arg 8)
+drivers/net/s2io.c: In function `s2io_set_swapper':
+drivers/net/s2io.c:2509: warning: long long unsigned int format, u64 arg (arg 2)
 
-diff -urpNX dontdiff linux-2.6.13-rc4-mm1.orig/arch/sh64/kernel/process.c linux-2.6.13-rc4-mm1/arch/sh64/kernel/process.c
---- linux-2.6.13-rc4-mm1.orig/arch/sh64/kernel/process.c	2005-07-29 00:44:44.000000000 +0200
-+++ linux-2.6.13-rc4-mm1/arch/sh64/kernel/process.c	2005-08-03 12:42:07.000000000 +0200
-@@ -953,8 +953,11 @@ asids_proc_info(char *buf, char **start,
- 
- static int __init register_proc_asids(void)
- {
--  create_proc_read_entry("asids", 0, NULL, asids_proc_info, NULL);
--  return 0;
-+	struct proc_dir_entry* ent;
-+	ent = create_proc_read_entry("asids", 0, NULL, asids_proc_info, NULL);
-+	if (!ent)
-+		procfs_failure("process: Unable to create asids /proc entry.\n");
-+	return 0;
- }
- 
- __initcall(register_proc_asids);
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
---===============36298676485765302==
+ drivers/net/e1000/e1000_main.c |    4 ++--
+ drivers/net/s2io.c             |    3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+--- linux-fmt.orig/drivers/net/e1000/e1000_main.c
++++ linux-fmt/drivers/net/e1000/e1000_main.c
+@@ -2767,7 +2767,7 @@ e1000_clean_tx_irq(struct e1000_adapter 
+ 					"  next_to_use          <%x>\n"
+ 					"  next_to_clean        <%x>\n"
+ 					"buffer_info[next_to_clean]\n"
+-					"  dma                  <%zx>\n"
++					"  dma                  <%llx>\n"
+ 					"  time_stamp           <%lx>\n"
+ 					"  next_to_watch        <%x>\n"
+ 					"  jiffies              <%lx>\n"
+@@ -2776,7 +2776,7 @@ e1000_clean_tx_irq(struct e1000_adapter 
+ 				E1000_READ_REG(&adapter->hw, TDT),
+ 				tx_ring->next_to_use,
+ 				i,
+-				tx_ring->buffer_info[i].dma,
++				(unsigned long long)tx_ring->buffer_info[i].dma,
+ 				tx_ring->buffer_info[i].time_stamp,
+ 				eop,
+ 				jiffies,
+--- linux-fmt.orig/drivers/net/s2io.c
++++ linux-fmt/drivers/net/s2io.c
+@@ -2506,7 +2506,8 @@ static int s2io_set_swapper(nic_t * sp)
+ 		}
+ 		if(i == 4) {
+ 			DBG_PRINT(ERR_DBG, "Write failed, Xmsi_addr ");
+-			DBG_PRINT(ERR_DBG, "reads:0x%llx\n",val64);
++			DBG_PRINT(ERR_DBG, "reads:0x%llx\n",
++					(unsigned long long)val64);
+ 			return FAILURE;
+ 		}
+ 	}
+
+
+--===============92910299684834019==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36298676485765302==--
+--===============92910299684834019==--
