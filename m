@@ -1,72 +1,39 @@
-From: Oliver Korpilla <Oliver.Korpilla@gmx.de>
-Date: Tue, 16 Aug 2005 12:53:43 +0000
-Subject: [KJ] Timer code duplication in driver
-Message-Id: <4301E1D7.5070707@gmx.de>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Tue, 16 Aug 2005 16:42:37 +0000
+Subject: Re: [KJ] Timer code duplication in driver
+Message-Id: <20050816164237.GA4144@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40488909034770693=="
+Content-Type: multipart/mixed; boundary="===============86892360104725364=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4301E1D7.5070707@gmx.de>
+In-Reply-To: <4301E1D7.5070707@gmx.de>
 To: kernel-janitors@vger.kernel.org
 
---===============40488909034770693==
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+--===============86892360104725364==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello!
+On 16.08.2005 [14:53:43 +0200], Oliver Korpilla wrote:
+> Hello!
+> 
+> I was just reviewing code about high resolution timers for learning to 
+> use their API correctly, and have come to the following code duplication 
+> (in 2.6.12.4 kernel.org):
 
-I was just reviewing code about high resolution timers for learning to 
-use their API correctly, and have come to the following code duplication 
-(in 2.6.12.4 kernel.org):
+<snip>
 
-drivers/char/ipmi/ipmi_si_intf.c:
+> Anyone else thinking this should be fixed?
+> 
+> Could someone please review this?
 
-static inline void add_usec_to_timer(struct timer_list *t, long v)
-{
-    t->sub_expires += nsec_to_arch_cycle(v * 1000);
-    while (t->sub_expires >= arch_cycles_per_jiffy)
-    {
-        t->expires++;
-        t->sub_expires -= arch_cycles_per_jiffy;
-    }
-}
+Your best bet is to write a patch and send it to Corey Minyard, George
+Anzinger and the high-res-timers list, cc-ing KJ again... I think you
+are right, but it's Corey's code and George's subsystem.
 
-And the standard methods to do this are defined as:
+Thanks,
+Nish
 
-include/linux/posix-timers.h:
-
-static inline void
-normalize_jiffies(unsigned long *jiff, long *sub_jif)
-{
-    while ((*(sub_jif) - arch_cycles_per_jiffy) >= 0) {
-        *(sub_jif) -= arch_cycles_per_jiffy;
-        (*(jiff))++;
-    }
-}
-static inline void
-full_normalize_jiffies(unsigned long *jiff, long *sub_jif)
-{
-    normalize_jiffies(jiff, sub_jif);
-    while (*(sub_jif) < 0) {
-        *(sub_jif) += arch_cycles_per_jiffy;
-        (*(jiff))--;
-    }
-}
-
-So wouldn't a better version be:
-
-static inline void add_usec_to_timer(struct timer_list *t, long v)
-{
-    t->sub_expires += nsec_to_arch_cycle(v * 1000);
-    full_normalize_jiffies(&(t->expires), &(t->sub_expires));
-}
-
-Anyone else thinking this should be fixed?
-
-Could someone please review this?
-
-Thanks and with kind regards,
-Oliver Korpilla
-
---===============40488909034770693==
+--===============86892360104725364==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40488909034770693==--
+--===============86892360104725364==--
