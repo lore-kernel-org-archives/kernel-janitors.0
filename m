@@ -1,48 +1,42 @@
-From: "Gabriel A. Devenyi" <ace@staticwave.ca>
-Date: Thu, 18 Aug 2005 01:28:32 +0000
-Subject: [KJ] [PATCH] remove unused return in drivers/block/pktcdvd.c
-Message-Id: <200508172128.32202.ace@staticwave.ca>
+From: "L'agence d'emploi francaise" <greenwood@jam-data.com>
+Date: Tue, 16 Aug 2005 11:30:04 +0000
+Subject: [KJ] VOUS TRAVAILLEZ?
+Message-Id: <5811329136.20050816193131@jam-data.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============71318267369506616=="
+Content-Type: multipart/mixed; boundary="===============16881461592651492=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============71318267369506616==
-Content-Type: text/plain;
-  charset="us-ascii"
+--===============16881461592651492==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-Found this on Coverty's linux bug database (http://linuxbugsdb.coverity.com) if anyone else is interested, you can ask
-for a login at linuxbugs@coverity.com.
+L���organization internationalle ���L���agence d���emploi francaise���recherches un courier financier.
 
-The function pkt_iosched_process_queue makes a call to bdev_get_queue and stores the result but never uses it, so
-it looks like it can be safely removed. 
+Vous pourriez venir d���aucune pays.
+On recherches du personnel additionel  pour proceder plus de marches.
 
-This patch applies to linus' latest Git tree 099d44e869f1886b5eb02a5145ca97b5e4142e28.
+L���exigences: serieux employee, intelligent, sociable, responsible et vite. 
 
-Signed-off-by: Gabriel A. Devenyi <ace@staticwave.ca>
+Le job est simple. L���education speciale n���est pas necessaire.
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -501,14 +501,11 @@ static void pkt_queue_bio(struct pktcdvd
-  */
- static void pkt_iosched_process_queue(struct pktcdvd_device *pd)
- {
--	request_queue_t *q;
- 
- 	if (atomic_read(&pd->iosched.attention) == 0)
- 		return;
- 	atomic_set(&pd->iosched.attention, 0);
- 
--	q = bdev_get_queue(pd->bdev);
--
- 	for (;;) {
- 		struct bio *bio;
- 		int reads_queued, writes_queued;
+Votre commission par semaine est basee sur 8% de chaque transfert vous faites (1,000-4,000USD par semaine). Le travail s���occupes 1-2
+heurs par jour and vous pouvez s���reunissez avec votre travail principal. (Vous pouvez travaillez a domicile sur l���internet).
 
---===============71318267369506616==
+Il ne faut pas investir votre propre argent sur aucunes projets.
+
+Si vous etes prets a gagner plus d���argent aujourd���hui, juste ecrivez nous a:  Mspathayes@aol.com
+
+Recevrez renseignments additionelles et commencer a travailler!
+
+Salutations,
+Patricia Hayes,
+���L���agence d���emploi francaise���
+Contact e-mail: Mspathayes@aol.com <mailto:Mspathayes@aol.com>
+
+
+
+--===============16881461592651492==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============71318267369506616==--
+--===============16881461592651492==--
