@@ -1,55 +1,79 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 30 Aug 2005 19:32:10 +0000
-Subject: [KJ] audit return codes of copy_*_user() patches
-Message-Id: <20050830193210.GA32288@mipter.zuzino.mipt.ru>
+From: <gregkh@suse.de>
+Date: Tue, 16 Aug 2005 00:57:33 +0000
+Subject: [KJ] patch usb-ldusb-64-bit-warnings.patch added to gregkh-2.6 tree
+Message-Id: <1E4pll-7V0-00@press.kroah.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============28708824095773866=="
+Content-Type: multipart/mixed; boundary="===============94062142865606302=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============28708824095773866==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-From return_code-drivers_ide.patch
-
-> [KJ] [PATCH][RESUBMIT][4/21] drivers/ide/* - compile warning cleanup
-
-> compile warning cleanup - handle copy_to/from_user error returns
-
-> --- quilt.orig/drivers/ide/ide-tape.c
-> +++ quilt/drivers/ide/ide-tape.c
-> @@ -2656,7 +2656,13 @@ static void idetape_copy_stage_from_user
->  		}
->  #endif /* IDETAPE_DEBUG_BUGS */
->  		count = min((unsigned int)(bh->b_size - atomic_read(&bh->b_count)), (unsigned int)n);
-> -		copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count);
-> +		if (copy_from_user(bh->b_data + atomic_read(&bh->b_count), buf, count)) {
-> +#if IDETAPE_DEBUG_BUGS
-> +			printk(KERN_ERR "ide-tape/%s: copy_from_user failed!\n",
-> +					__FUNCTION__);
-> +#endif /* IDETAPE_DEBUG_BUGS */
-> +			return;
-> +		}
->  		n -= count;
->  		atomic_add(count, &bh->b_count);
->  		buf += count;
-
-This is likely wrong. IMO it should be
-
-			...
-		retval = copy_from_user( , , count);
-		n -= retval;
-		atomic_add(retval, );
-		buf += retval;
-			...
-
-similar to drivers/char/n_tty.c. Ditto for other chunk. Ditto for
-	return_code-drivers_isdn_hisax.patch
-	return_code-drivers_isdn_pcbit.patch
+--===============94062142865606302==
 
 
---===============28708824095773866==
+This is a note to let you know that I've just added the patch titled
+
+     Subject: USB ldusb: fmt warnings fixes for 64-bit platforms
+
+to my gregkh-2.6 tree.  Its filename is
+
+     usb-ldusb-64-bit-warnings.patch
+
+This tree can be found at 
+    http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/patches/
+
+Patches currently in gregkh-2.6 which might be from adobriyan@gmail.com are
+
+i2c/hwmon-split-round2-10.patch
+usb/usb-ldusb-64-bit-warnings.patch
+
+
+From kernel-janitors-bounces@lists.osdl.org Sun Aug 14 14:33:19 2005
+Date: Sun, 14 Aug 2005 17:24:26 +0400
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: <kernel-janitors@lists.osdl.org>
+Message-ID: <20050814132426.GB15052@mipter.zuzino.mipt.ru>
+Subject: USB ldusb: fmt warnings fixes for 64-bit platforms
+
+Fix
+
+drivers/usb/misc/ldusb.c: In function `ld_usb_read':
+drivers/usb/misc/ldusb.c:467: warning: int format, different type arg (arg 4)
+drivers/usb/misc/ldusb.c: In function `ld_usb_write':
+drivers/usb/misc/ldusb.c:531: warning: int format, different type arg (arg 4)
+drivers/usb/misc/ldusb.c:532: warning: int format, different type arg (arg 5)
+drivers/usb/misc/ldusb.c:532: warning: int format, different type arg (arg 6)
+
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/usb/misc/ldusb.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+--- gregkh-2.6.orig/drivers/usb/misc/ldusb.c	2005-08-15 17:50:06.000000000 -0700
++++ gregkh-2.6/drivers/usb/misc/ldusb.c	2005-08-15 17:50:18.000000000 -0700
+@@ -464,7 +464,7 @@
+ 	actual_buffer = (size_t*)(dev->ring_buffer + dev->ring_tail*(sizeof(size_t)+dev->interrupt_in_endpoint_size));
+ 	bytes_to_read = min(count, *actual_buffer);
+ 	if (bytes_to_read < *actual_buffer)
+-		dev_warn(&dev->intf->dev, "Read buffer overflow, %d bytes dropped\n",
++		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
+ 			 *actual_buffer-bytes_to_read);
+ 
+ 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
+@@ -528,8 +528,8 @@
+ 	/* write the data into interrupt_out_buffer from userspace */
+ 	bytes_to_write = min(count, write_buffer_size*dev->interrupt_out_endpoint_size);
+ 	if (bytes_to_write < count)
+-		dev_warn(&dev->intf->dev, "Write buffer overflow, %d bytes dropped\n",count-bytes_to_write);
+-	dbg_info(&dev->intf->dev, "%s: count = %d, bytes_to_write = %d\n", __FUNCTION__, count, bytes_to_write);
++		dev_warn(&dev->intf->dev, "Write buffer overflow, %zd bytes dropped\n",count-bytes_to_write);
++	dbg_info(&dev->intf->dev, "%s: count = %zd, bytes_to_write = %zd\n", __FUNCTION__, count, bytes_to_write);
+ 
+ 	if (copy_from_user(dev->interrupt_out_buffer, buffer, bytes_to_write)) {
+ 		retval = -EFAULT;
+
+--===============94062142865606302==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============28708824095773866==--
+--===============94062142865606302==--
