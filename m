@@ -1,71 +1,80 @@
-From: "e-BookServices, India" <info@e-bookservices.com>
-Date: Wed, 31 Aug 2005 15:32:40 +0000
-Subject: Document Migration and e-Book Development
-Message-Id: <E1EAUON-000335-LP@externalmx-1.sourceforge.net>
+From: Oliver Korpilla <Oliver.Korpilla@gmx.de>
+Date: Tue, 16 Aug 2005 12:53:43 +0000
+Subject: [KJ] Timer code duplication in driver
+Message-Id: <4301E1D7.5070707@gmx.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============40488909034770693=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1EA9Se-0002V1-9s@mail.sourceforge.net>
-In-Reply-To: <E1EA9Se-0002V1-9s@mail.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+--===============40488909034770693==
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I apologize for intruding into your busy schedule. Please allow me to introduce ourselves to you.
+Hello!
 
-We are engaged in providing book-related services to international clientele (http://www.e-BookServices.com). Located in
-India, we cater to both organizations as well as individuals. 
+I was just reviewing code about high resolution timers for learning to 
+use their API correctly, and have come to the following code duplication 
+(in 2.6.12.4 kernel.org):
 
-Our range of services include, but are not limited to:
-- Typesetting (QuarkXPress, InDesign, FrameMaker etc) 
-- Formatting of manuscripts (MS-Word, WordPerfect etc) 
-- Graphic Design and Pre-Press jobs (including logo/book cover design) 
-- Desktop Publishing (DTP) 
-- Keying-in, scanning and OCR (for re-prints, archives, web publishing etc) 
-- Translation (from and to all major languages) 
-- e-Books Creation (PDFs, MobiPocket etc) 
-- XML Conversion 
+drivers/char/ipmi/ipmi_si_intf.c:
 
-Many companies are now outsourcing their work to India. Not only do they achieve substantial cost savings, but the
-availability of a large number of professionally trained personnel also ensures a high quality of work. We can serve you
-efficiently and cost effectively, and deliver as per your customized needs. 
+static inline void add_usec_to_timer(struct timer_list *t, long v)
+{
+    t->sub_expires += nsec_to_arch_cycle(v * 1000);
+    while (t->sub_expires >= arch_cycles_per_jiffy)
+    {
+        t->expires++;
+        t->sub_expires -= arch_cycles_per_jiffy;
+    }
+}
 
-We are one of the leading Indian organizations in our field, and serve many international organizations. For accomplishing
-jobs with us, a team of highly trained and dedicated professionals work at our state-of-the-art facilities located in New
-Delhi, India.
+And the standard methods to do this are defined as:
 
-We understand the basic international business processes and ensure that all projects undertaken by us are completed within
-the stipulated time period with complete confidentiality, accuracy, and quality.
+include/linux/posix-timers.h:
 
-For your first project you do not need to pay us a deposit. You can make the entire payment after receiving satisfactory
-delivery of service. 
+static inline void
+normalize_jiffies(unsigned long *jiff, long *sub_jif)
+{
+    while ((*(sub_jif) - arch_cycles_per_jiffy) >= 0) {
+        *(sub_jif) -= arch_cycles_per_jiffy;
+        (*(jiff))++;
+    }
+}
+static inline void
+full_normalize_jiffies(unsigned long *jiff, long *sub_jif)
+{
+    normalize_jiffies(jiff, sub_jif);
+    while (*(sub_jif) < 0) {
+        *(sub_jif) += arch_cycles_per_jiffy;
+        (*(jiff))--;
+    }
+}
 
-If you are interested in cutting your current costs to at least half, increasing your profit margins without compromising
-on the quality and turn-around time, then please do get back to us. We will be glad to send you a most competitive business
-proposal. 
+So wouldn't a better version be:
 
-I shall be at the FRANKFURT BOOK FAIR (19th-23rd October, 2005) and would be most happy to meet you there and personally
-discuss your requirements. If so, I would be obliged if you can kindly grant me a prior appointment at the fair.
+static inline void add_usec_to_timer(struct timer_list *t, long v)
+{
+    t->sub_expires += nsec_to_arch_cycle(v * 1000);
+    full_normalize_jiffies(&(t->expires), &(t->sub_expires));
+}
 
-Sincerely,
- 
-Dhiraj Aggarwal
-Mobile: +(91) 98100 50809
-E-mail: info@e-BookServices.net , info@e-BookServices.com
-URL: http://www.e-BookServices.net , http://www.e-BookServices.com
+Anyone else thinking this should be fixed?
 
-This email has been sent expecting the information to be of use and benefit to you. In case you do not wish to receive
-further emails from us, please send us an email with `REMOVE + your email address' in the subject line and we will remove
-your email address from our database. We apologize for the inconvenience caused to you.
+Could someone please review this?
 
+Thanks and with kind regards,
+Oliver Korpilla
 
--------------------------------------------------------
-SF.Net email is Sponsored by the Better Software Conference & EXPO
-September 19-22, 2005 * San Francisco, CA * Development Lifecycle Practices
-Agile & Plan-Driven Development * Managing Projects & Teams * Testing & QA
-Security * Process Improvement & Measurement * http://www.sqe.com/bsce5sf
+--===============40488909034770693==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============40488909034770693==--
