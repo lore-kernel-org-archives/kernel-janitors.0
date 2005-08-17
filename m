@@ -1,42 +1,47 @@
-From: "L'agence d'emploi francaise" <greenwood@jam-data.com>
-Date: Tue, 16 Aug 2005 11:30:04 +0000
-Subject: [KJ] VOUS TRAVAILLEZ?
-Message-Id: <5811329136.20050816193131@jam-data.com>
+From: Baruch Even <baruch@ev-en.org>
+Date: Wed, 17 Aug 2005 22:19:32 +0000
+Subject: [KJ] [PATCH] proc_ipmi_root depends on CONFIG_PROC_FS
+Message-Id: <4303B7F4.4060407@ev-en.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============16881461592651492=="
+Content-Type: multipart/mixed; boundary="------------040000080707000904000306"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel list <linux-kernel@vger.kernel.org>, kernel-janitors@osdl.org, Corey Minyard <minyard@mvista.com>
 
---===============16881461592651492==
-Content-Type: text/plain
+This is a multi-part message in MIME format.
+--------------040000080707000904000306
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
-L���organization internationalle ���L���agence d���emploi francaise���recherches un courier financier.
 
-Vous pourriez venir d���aucune pays.
-On recherches du personnel additionel  pour proceder plus de marches.
+--------------040000080707000904000306
+Content-Type: text/x-patch;
+ name="ipmi_proc_fs.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="ipmi_proc_fs.patch"
 
-L���exigences: serieux employee, intelligent, sociable, responsible et vite. 
+proc_ipmi_root is only defined for CONFIG_PROC_FS, #ifdef it for export as well.
 
-Le job est simple. L���education speciale n���est pas necessaire.
+Signed-Off-By: Baruch Even <baruch@ev-en.org>
 
-Votre commission par semaine est basee sur 8% de chaque transfert vous faites (1,000-4,000USD par semaine). Le travail s���occupes 1-2
-heurs par jour and vous pouvez s���reunissez avec votre travail principal. (Vous pouvez travaillez a domicile sur l���internet).
+--
+ drivers/char/ipmi/ipmi_msghandler.c |    2 ++
+ 1 files changed, 2 insertions(+)
 
-Il ne faut pas investir votre propre argent sur aucunes projets.
+Index: k/drivers/char/ipmi/ipmi_msghandler.c
+===================================================================
+--- k.orig/drivers/char/ipmi/ipmi_msghandler.c
++++ k/drivers/char/ipmi/ipmi_msghandler.c
+@@ -3194,5 +3194,7 @@ EXPORT_SYMBOL(ipmi_get_my_address);
+ EXPORT_SYMBOL(ipmi_set_my_LUN);
+ EXPORT_SYMBOL(ipmi_get_my_LUN);
+ EXPORT_SYMBOL(ipmi_smi_add_proc_entry);
++#ifdef CONFIG_PROC_FS
+ EXPORT_SYMBOL(proc_ipmi_root);
++#endif
+ EXPORT_SYMBOL(ipmi_user_set_run_to_completion);
 
-Si vous etes prets a gagner plus d���argent aujourd���hui, juste ecrivez nous a:  Mspathayes@aol.com
-
-Recevrez renseignments additionelles et commencer a travailler!
-
-Salutations,
-Patricia Hayes,
-���L���agence d���emploi francaise���
-Contact e-mail: Mspathayes@aol.com <mailto:Mspathayes@aol.com>
-
-
-
---===============16881461592651492==
+--------------040000080707000904000306
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============16881461592651492==--
+--------------040000080707000904000306--
