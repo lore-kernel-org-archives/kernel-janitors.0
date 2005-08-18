@@ -1,71 +1,48 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sun, 07 Aug 2005 09:12:23 +0000
-Subject: [KJ] [PATCH] drivers/ide/legacy/hd.c: remove DEBUG
-Message-Id: <20050807091223.GA4148@mipter.zuzino.mipt.ru>
+From: "Gabriel A. Devenyi" <ace@staticwave.ca>
+Date: Thu, 18 Aug 2005 01:28:32 +0000
+Subject: [KJ] [PATCH] remove unused return in drivers/block/pktcdvd.c
+Message-Id: <200508172128.32202.ace@staticwave.ca>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============12400325928265987=="
+Content-Type: multipart/mixed; boundary="===============71318267369506616=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============12400325928265987==
-Content-Type: text/plain; charset=us-ascii
+--===============71318267369506616==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-hd.c with DEBUG defined for uncompilable for 36 months.
+Found this on Coverty's linux bug database (http://linuxbugsdb.coverity.com) if anyone else is interested, you can ask
+for a login at linuxbugs@coverity.com.
 
-Noticed by (don't laugh) indent(1).
+The function pkt_iosched_process_queue makes a call to bdev_get_queue and stores the result but never uses it, so
+it looks like it can be safely removed. 
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+This patch applies to linus' latest Git tree 099d44e869f1886b5eb02a5145ca97b5e4142e28.
 
- drivers/ide/legacy/hd.c |   16 +---------------
- 1 files changed, 1 insertion(+), 15 deletions(-)
+Signed-off-by: Gabriel A. Devenyi <ace@staticwave.ca>
 
-Index: linux-Lindent/drivers/ide/legacy/hd.c
-===================================================================
---- linux-Lindent.orig/drivers/ide/legacy/hd.c	2005-08-07 12:35:12.000000000 +0400
-+++ linux-Lindent/drivers/ide/legacy/hd.c	2005-08-07 12:35:47.000000000 +0400
-@@ -456,11 +456,6 @@ ok_to_read:
- 	req->errors = 0;
- 	i = --req->nr_sectors;
- 	--req->current_nr_sectors;
--#ifdef DEBUG
--	printk("%s: read: sector %ld, remaining = %ld, buffer=%p\n",
--		req->rq_disk->disk_name, req->sector, req->nr_sectors,
--		req->buffer+512));
--#endif
- 	if (req->current_nr_sectors <= 0)
- 		end_request(req, 1);
- 	if (i > 0) {
-@@ -542,12 +537,8 @@ static void hd_times_out(unsigned long d
- 	reset = 1;
- 	name = CURRENT->rq_disk->disk_name;
- 	printk("%s: timeout\n", name);
--	if (++CURRENT->errors >= MAX_ERRORS) {
--#ifdef DEBUG
--		printk("%s: too many errors\n", name);
--#endif
-+	if (++CURRENT->errors >= MAX_ERRORS)
- 		end_request(CURRENT, 0);
--	}
- 	local_irq_disable();
- 	hd_request();
- 	enable_irq(HD_IRQ);
-@@ -621,11 +612,6 @@ repeat:
- 	track = block / disk->sect;
- 	head  = track % disk->head;
- 	cyl   = track / disk->head;
--#ifdef DEBUG
--	printk("%s: %sing: CHS=%d/%d/%d, sectors=%d, buffer=%p\n",
--		req->rq_disk->disk_name, (req->cmd == READ)?"read":"writ",
--		cyl, head, sec, nsect, req->buffer);
--#endif
- 	if (req->flags & REQ_CMD) {
- 		switch (rq_data_dir(req)) {
- 		case READ:
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -501,14 +501,11 @@ static void pkt_queue_bio(struct pktcdvd
+  */
+ static void pkt_iosched_process_queue(struct pktcdvd_device *pd)
+ {
+-	request_queue_t *q;
+ 
+ 	if (atomic_read(&pd->iosched.attention) == 0)
+ 		return;
+ 	atomic_set(&pd->iosched.attention, 0);
+ 
+-	q = bdev_get_queue(pd->bdev);
+-
+ 	for (;;) {
+ 		struct bio *bio;
+ 		int reads_queued, writes_queued;
 
-
---===============12400325928265987==
+--===============71318267369506616==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============12400325928265987==--
+--===============71318267369506616==--
