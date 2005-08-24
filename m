@@ -1,42 +1,130 @@
-From: Patricia Hayes <cholewo@REGISTRYADVANTAGE.com>
-Date: Fri, 12 Aug 2005 12:59:00 +0000
-Subject: [KJ] TRAVAIL SUR MAISON
-Message-Id: <111101c59f3d$f0961361$d6b6ba55@REGISTRYADVANTAGE.com>
+From: "Samson" <incompletely@chiropad.com>
+Date: Wed, 24 Aug 2005 03:06:21 +0000
+Subject: [KJ] stock Profiler
+Message-Id: <9940031895.8938975077@adsl-223-51-220.aep.bellsouth.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82657634603265828=="
+Content-Type: multipart/mixed; boundary="===============67127322885063845=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============82657634603265828==
-Content-Type: text/plain
+--===============67127322885063845==
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-La compagnie international  L'agence d'emploi francaise" recherches un courier financier.
-Il ne faut pas que vous investissez votre propre argent sur aucunes projets.
+Looking for a company with some good news?  Here's one!
+***** CDGT ***** CDGT ***** CDGT ***** CDGT ***** CDGT ***** CDGT *****
+Major Financial NEWS
 
-Et ce n'est pas important de quel pays vous venez.
-On veut simplement a engager personnel additional pour proceder plus de marches.
+CDGT has more News that came.
+Looks like CDGT is not willing to miss a beat!
 
-L'exigences: intelligent, sociable, responsible, serieux employee.
-
-Les taches sont simples. L'education speciale n'est pas necessaire.
-
-Votre salaire par semaine est basee sur la commission de 8% de chaque transfert vous faites (1,000-4,000USD additionel). Le travail
-s'occupes 1-2 heurs par jour and vous pouvez s'reunissez avec votre travail principal. (Vous pouvez travaillez a la maison sur l'internet).
-
-Si vous etes prets a gagner plus d'argent aujourd'hui, juste ecrivez nous a:  francejobs@aol.com
-
-Recevrez renseignments additionelles et commencer a travailler!
-
-Salutations,
-Patricia Hayes,
- L'agence d'emploi francaise"
-Contact e-mail: francejobs@aol.com
+SYMBOL: CDGT
+CURRENT PRICE: $2.20 
+Short-Term : $6 
 
 
+China Digital Media Corporation Announces 
+Launch of IP Based Set-Top-Box In China
+
+Monday August 22, 8:00 am ET 
+HONG KONG, Aug. 22 /Xinhua-PRNewswire-FirstCall/ -- 
+China Digital Media Corporation ("Digimedia") (OTC Bulletin Board: CDGT - News) 
+today announced the launch of a trial for a new IP based Set-Top-Box ("STB") in Nanhai, 
+a city in Guangdong province with 400,000 Cable TV subscribers. The Company is one 
+of the first digital TV operators in China to deploy the trial of IP based STB 
+with its high-end users. The new STB in trial is equipped with an Ethernet port 
+which could facilitate various Internet based services to end users; 
+such as video-on-demand, online shopping channels, online games 
+and interactive education services. The new STB is developed in coordination 
+with Shenzhen Coship Electronics Co. Ltd. ("Coship") that could transform 
+a television set into an interactive and a multimedia platform.
+
+"Partnering with Coship in developing the IP based STB is our strategy 
+in advancing the quality of our broadcasting services. We believe the provision 
+of value-added services through digitalized network will be a new business model 
+in digital TV operation and this new IP based STB will give us a head start," 
+said Mr. Daniel Ng, Chairman and CEO of China Digital Media Corporation. 
+"We intend to invest and participate in system migration projects in other cities 
+like our Nanhai model. This collaboration with Coship and the new IP based STB 
+will provide us a convincing advantage to gain more contracts in the future 
+that would allow our Company to grow faster and to enlarge our service coverage," 
+Mr. Ng added.
+
+About China Digital Media Corporation :
+China Digital Media Corporation (OTC Bulletin Board: CDGT - News) focuses 
+its business in three main areas: Cable TV Operations, Programs Production 
+and Advertising Sales. Arcotect Technology (GZ) Limited, a wholly owned subsidiary 
+of CDGT in China, is the sole contractor and operator of digital television services 
+in Nanhai, a city with 400,000 cable TV subscribers. The service could offer 
+more than 800 digital channels of pay TV programs and value added 
+multimedia services. The Group is seeking to establish similar models elsewhere 
+in China. 
+
+About Shenzhen Coship Electronics Co. Ltd.
+This is a company to watch closely starting NOW! They have been known to make 
+BIG moves and we feel there is one coming !!!
+
+Last time we issued a watch we watched CHMS go from .36 to .73 in 4 DAYS !
 
 
---===============82657634603265828==
+
+
+
+
+
+
+
+
+Disclaimer:
+Information within this email contains "forwardlooking statements" within
+the meaning of Section 27Aof the Securities Act of 1933 and Section 21B of
+the Securities Exchange Act of 1934. Any statements that express or involve
+discussions with respect to predictions, expectations, beliefs,
+plans, projections, objectives, goals, assumptions or future events or
+performance are not statements of historical fact and may be "forward
+looking statements". "Forward looking statements" are based on
+expectations, estimates and projections at the time the statements are made
+that involve a number of risks and uncertainties which could cause actual
+results or events to differ materially from those presently anticipated.
+Forward looking statements in this action may be identified through the use
+of words such as "projects", "foresee", "expects", "will", "anticipates",
+"estimates", "believes", "understands" or that by statements indicating
+certain actions "may", "could", or "might" occur. Risk factors include
+general economic and business conditions, the ability to acquire and develop
+specific projects, the ability to fund operations and changes in consumer
+and business consumption habits and other factors overwhich the company has
+little or no control. The publisher of this newsletter does not represent
+that the information contained in this message states all material facts or
+does not omit a material fact necessary to make the statements therein not
+misleading. All information provided within this email pertaining to
+investing, ST0CKs, securities must be understood as information provided and
+not investment advice. The publisher of this newsletter advises all readers
+and subscribers to seek advice from a registered professional securities
+representative before deciding to trade in ST0CKs featured within this
+email. None of the material within this report shall be construed as any
+kind of investment advice or solicitation. Many of these companies are on
+the verge of bankruptcy. You can lose all your money by investing in this
+ST0CK. We urge you to read the company's SEC filings now, before you invest.
+The publisher of this newsletter is not a registered invstment advisor.
+Subscribers should not view information herein as legal, tax, accounting or
+investment advice. In compliance with the SecuritiesAct of 1933, Section
+17(b), The publisher of this newsletter is contracted to receive six hundred
+thousand free trading shares from a third party, not an officer, director or
+affiliate shareholder for the circulation of this report. Be aware of an
+inherent conflict of interest resulting from such compensation due to the
+fact that this is a paid advertisement and is not without bias. The party
+that paid us has a position in the ST0CK they will sell at anytime without
+notice. This could have a negative impact on the price of the ST0CK, causing
+you to lose money. All factual information in this report was gathered from
+public sources, including but not limited to SEC filings, Company Websites
+and Company Press Releases. The publisher of this newsletter believes this
+information to be reliable but can make no guarantee as to its accuracy or
+completeness. Use of the material within this email constitutes your
+acceptance of these terms.
+
+
+
+--===============67127322885063845==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +135,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82657634603265828==--
+--===============67127322885063845==--
