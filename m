@@ -1,456 +1,347 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 30 Aug 2005 21:06:39 +0000
-Subject: [KJ] [PATCH] drivers/net: Remove unused header files
-Message-Id: <20050830210639.GB1144@neon.tklauser.home>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Fri, 26 Aug 2005 22:39:51 +0000
+Subject: [KJ] [PATCH 1/2] More C99 initializers
+Message-Id: <20050826223951.GA28191@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============66309068817863226=="
+Content-Type: multipart/mixed; boundary="===============68804927158505191=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============66309068817863226==
+--===============68804927158505191==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Something easy to start for Alexey. :-)
-
-These header files are not used anywhere in the kernel tree (grep -r
-didn't show anything) so this patch removes them.
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
- drivers/net/gt64240eth.h       |  402 -----------------------------------------
- drivers/net/wan/lmc/lmc_prot.h |   15 -
- 2 files changed, 417 deletions(-)
+ arch/alpha/kernel/machvec_impl.h |    2 -
+ drivers/isdn/hisax/hfc4s8s_l1.c  |    8 ++--
+ drivers/net/bnx2.c               |   12 +++---
+ drivers/net/wireless/orinoco.c   |   78 +++++++++++++++++++--------------------
+ drivers/s390/block/dasd_eckd.c   |   20 +++++-----
+ drivers/s390/block/dasd_fba.c    |    4 +-
+ drivers/s390/char/tape_34xx.c    |    4 +-
+ drivers/s390/net/qeth_main.c     |    4 +-
+ drivers/s390/scsi/zfcp_scsi.c    |   38 +++++++++----------
+ include/asm-parisc/processor.h   |   21 +++++-----
+ 10 files changed, 96 insertions(+), 95 deletions(-)
 
-diff -urpN -X dontdiff linux-2.6.13/drivers/net/gt64240eth.h linux-2.6.13~unused_headers/drivers/net/gt64240eth.h
---- linux-2.6.13/drivers/net/gt64240eth.h	2005-08-29 01:41:01.000000000 +0200
-+++ linux-2.6.13~unused_headers/drivers/net/gt64240eth.h	1970-01-01 01:00:00.000000000 +0100
-@@ -1,402 +0,0 @@
--/*
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-- *
-- * Copyright (C) 2001 Patton Electronics Company
-- * Copyright (C) 2002 Momentum Computer
-- *
-- * Copyright 2000 MontaVista Software Inc.
-- * Author: MontaVista Software, Inc.
-- *         	stevel@mvista.com or support@mvista.com
-- *
-- *  This program is free software; you can distribute it and/or modify it
-- *  under the terms of the GNU General Public License (Version 2) as
-- *  published by the Free Software Foundation.
-- *
-- *  This program is distributed in the hope it will be useful, but WITHOUT
-- *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- *  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-- *  for more details.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  59 Temple Place - Suite 330, Boston MA 02111-1307, USA.
-- *
-- * Ethernet driver definitions for the MIPS GT96100 Advanced
-- * Communication Controller.
-- * 
-- * Modified for the Marvellous GT64240 Retarded Communication Controller.
-- */
--#ifndef _GT64240ETH_H
--#define _GT64240ETH_H
--
--#include <asm/gt64240.h>
--
--#define ETHERNET_PORTS_DIFFERENCE_OFFSETS	0x400
--
--/* Translate those weanie names from Galileo/VxWorks header files: */
--
--#define GT64240_MRR                    MAIN_ROUTING_REGISTER
--#define GT64240_CIU_ARBITER_CONFIG     COMM_UNIT_ARBITER_CONFIGURATION_REGISTER
--#define GT64240_CIU_ARBITER_CONTROL    COMM_UNIT_ARBITER_CONTROL
--#define GT64240_MAIN_LOW_CAUSE         LOW_INTERRUPT_CAUSE_REGISTER
--#define GT64240_MAIN_HIGH_CAUSE        HIGH_INTERRUPT_CAUSE_REGISTER
--#define GT64240_CPU_LOW_MASK           CPU_INTERRUPT_MASK_REGISTER_LOW
--#define GT64240_CPU_HIGH_MASK          CPU_INTERRUPT_MASK_REGISTER_HIGH
--#define GT64240_CPU_SELECT_CAUSE       CPU_SELECT_CAUSE_REGISTER
--
--#define GT64240_ETH_PHY_ADDR_REG       ETHERNET_PHY_ADDRESS_REGISTER
--#define GT64240_ETH_PORT_CONFIG        ETHERNET0_PORT_CONFIGURATION_REGISTER
--#define GT64240_ETH_PORT_CONFIG_EXT    ETHERNET0_PORT_CONFIGURATION_EXTEND_REGISTER
--#define GT64240_ETH_PORT_COMMAND       ETHERNET0_PORT_COMMAND_REGISTER
--#define GT64240_ETH_PORT_STATUS        ETHERNET0_PORT_STATUS_REGISTER
--#define GT64240_ETH_IO_SIZE            ETHERNET_PORTS_DIFFERENCE_OFFSETS
--#define GT64240_ETH_SMI_REG            ETHERNET_SMI_REGISTER
--#define GT64240_ETH_MIB_COUNT_BASE     ETHERNET0_MIB_COUNTER_BASE
--#define GT64240_ETH_SDMA_CONFIG        ETHERNET0_SDMA_CONFIGURATION_REGISTER
--#define GT64240_ETH_SDMA_COMM          ETHERNET0_SDMA_COMMAND_REGISTER
--#define GT64240_ETH_INT_MASK           ETHERNET0_INTERRUPT_MASK_REGISTER
--#define GT64240_ETH_INT_CAUSE          ETHERNET0_INTERRUPT_CAUSE_REGISTER
--#define GT64240_ETH_CURR_TX_DESC_PTR0  ETHERNET0_CURRENT_TX_DESCRIPTOR_POINTER0
--#define GT64240_ETH_CURR_TX_DESC_PTR1  ETHERNET0_CURRENT_TX_DESCRIPTOR_POINTER1
--#define GT64240_ETH_1ST_RX_DESC_PTR0   ETHERNET0_FIRST_RX_DESCRIPTOR_POINTER0
--#define GT64240_ETH_CURR_RX_DESC_PTR0  ETHERNET0_CURRENT_RX_DESCRIPTOR_POINTER0
--#define GT64240_ETH_HASH_TBL_PTR       ETHERNET0_HASH_TABLE_POINTER_REGISTER
--
--/* Turn on NAPI by default */
--
--#define	GT64240_NAPI			1
--
--/* Some 64240 settings that SHOULD eventually be setup in PROM monitor: */
--/* (Board-specific to the DSL3224 Rev A board ONLY!)                    */
--#define D3224_MPP_CTRL0_SETTING		0x66669900
--#define D3224_MPP_CTRL1_SETTING		0x00000000
--#define D3224_MPP_CTRL2_SETTING		0x00887700
--#define D3224_MPP_CTRL3_SETTING		0x00000044
--#define D3224_GPP_IO_CTRL_SETTING	0x0000e800
--#define D3224_GPP_LEVEL_CTRL_SETTING	0xf001f703
--#define D3224_GPP_VALUE_SETTING		0x00000000
--
--/* Keep the ring sizes a power of two for efficiency. */
--//-#define TX_RING_SIZE 16
--#define TX_RING_SIZE	64	/* TESTING !!! */
--#define RX_RING_SIZE	32
--#define PKT_BUF_SZ	1536	/* Size of each temporary Rx buffer. */
--
--#define RX_HASH_TABLE_SIZE 16384
--#define HASH_HOP_NUMBER 12
--
--#define NUM_INTERFACES 3
--
--#define GT64240ETH_TX_TIMEOUT HZ/4
--
--#define MIPS_GT64240_BASE 0xf4000000
--#define GT64240_ETH0_BASE (MIPS_GT64240_BASE + GT64240_ETH_PORT_CONFIG)
--#define GT64240_ETH1_BASE (GT64240_ETH0_BASE + GT64240_ETH_IO_SIZE)
--#define GT64240_ETH2_BASE (GT64240_ETH1_BASE + GT64240_ETH_IO_SIZE)
--
--#if defined(CONFIG_MIPS_DSL3224)
--#define GT64240_ETHER0_IRQ 4
--#define GT64240_ETHER1_IRQ 4
--#else
--#define GT64240_ETHER0_IRQ -1
--#define GT64240_ETHER1_IRQ -1
--#endif
--
--#define REV_GT64240  0x1
--#define REV_GT64240A 0x10
--
--#define GT64240ETH_READ(gp, offset)					\
--	GT_READ((gp)->port_offset + (offset))
--
--#define GT64240ETH_WRITE(gp, offset, data)				\
--	GT_WRITE((gp)->port_offset + (offset), (data))
--
--#define GT64240ETH_SETBIT(gp, offset, bits)				\
--	GT64240ETH_WRITE((gp), (offset),				\
--	                 GT64240ETH_READ((gp), (offset)) | (bits))
--
--#define GT64240ETH_CLRBIT(gp, offset, bits)				\
--	GT64240ETH_WRITE((gp), (offset),				\
--	                 GT64240ETH_READ((gp), (offset)) & ~(bits))
--
--#define GT64240_READ(ofs)		GT_READ(ofs)
--#define GT64240_WRITE(ofs, data)	GT_WRITE((ofs), (data))
--
--/* Bit definitions of the SMI Reg */
--enum {
--	smirDataMask = 0xffff,
--	smirPhyAdMask = 0x1f << 16,
--	smirPhyAdBit = 16,
--	smirRegAdMask = 0x1f << 21,
--	smirRegAdBit = 21,
--	smirOpCode = 1 << 26,
--	smirReadValid = 1 << 27,
--	smirBusy = 1 << 28
--};
--
--/* Bit definitions of the Port Config Reg */
--enum pcr_bits {
--	pcrPM = 1 << 0,
--	pcrRBM = 1 << 1,
--	pcrPBF = 1 << 2,
--	pcrEN = 1 << 7,
--	pcrLPBKMask = 0x3 << 8,
--	pcrLPBKBit = 1 << 8,
--	pcrFC = 1 << 10,
--	pcrHS = 1 << 12,
--	pcrHM = 1 << 13,
--	pcrHDM = 1 << 14,
--	pcrHD = 1 << 15,
--	pcrISLMask = 0x7 << 28,
--	pcrISLBit = 28,
--	pcrACCS = 1 << 31
--};
--
--/* Bit definitions of the Port Config Extend Reg */
--enum pcxr_bits {
--	pcxrIGMP = 1,
--	pcxrSPAN = 2,
--	pcxrPAR = 4,
--	pcxrPRIOtxMask = 0x7 << 3,
--	pcxrPRIOtxBit = 3,
--	pcxrPRIOrxMask = 0x3 << 6,
--	pcxrPRIOrxBit = 6,
--	pcxrPRIOrxOverride = 1 << 8,
--	pcxrDPLXen = 1 << 9,
--	pcxrFCTLen = 1 << 10,
--	pcxrFLP = 1 << 11,
--	pcxrFCTL = 1 << 12,
--	pcxrMFLMask = 0x3 << 14,
--	pcxrMFLBit = 14,
--	pcxrMIBclrMode = 1 << 16,
--	pcxrSpeed = 1 << 18,
--	pcxrSpeeden = 1 << 19,
--	pcxrRMIIen = 1 << 20,
--	pcxrDSCPen = 1 << 21
--};
--
--/* Bit definitions of the Port Command Reg */
--enum pcmr_bits {
--	pcmrFJ = 1 << 15
--};
--
--
--/* Bit definitions of the Port Status Reg */
--enum psr_bits {
--	psrSpeed = 1,
--	psrDuplex = 2,
--	psrFctl = 4,
--	psrLink = 8,
--	psrPause = 1 << 4,
--	psrTxLow = 1 << 5,
--	psrTxHigh = 1 << 6,
--	psrTxInProg = 1 << 7
--};
--
--/* Bit definitions of the SDMA Config Reg */
--enum sdcr_bits {
--	sdcrRCMask = 0xf << 2,
--	sdcrRCBit = 2,
--	sdcrBLMR = 1 << 6,
--	sdcrBLMT = 1 << 7,
--	sdcrPOVR = 1 << 8,
--	sdcrRIFB = 1 << 9,
--	sdcrBSZMask = 0x3 << 12,
--	sdcrBSZBit = 12
--};
--
--/* Bit definitions of the SDMA Command Reg */
--enum sdcmr_bits {
--	sdcmrERD = 1 << 7,
--	sdcmrAR = 1 << 15,
--	sdcmrSTDH = 1 << 16,
--	sdcmrSTDL = 1 << 17,
--	sdcmrTXDH = 1 << 23,
--	sdcmrTXDL = 1 << 24,
--	sdcmrAT = 1 << 31
--};
--
--/* Bit definitions of the Interrupt Cause Reg */
--enum icr_bits {
--	icrRxBuffer = 1,
--	icrTxBufferHigh = 1 << 2,
--	icrTxBufferLow = 1 << 3,
--	icrTxEndHigh = 1 << 6,
--	icrTxEndLow = 1 << 7,
--	icrRxError = 1 << 8,
--	icrTxErrorHigh = 1 << 10,
--	icrTxErrorLow = 1 << 11,
--	icrRxOVR = 1 << 12,
--	icrTxUdr = 1 << 13,
--	icrRxBufferQ0 = 1 << 16,
--	icrRxBufferQ1 = 1 << 17,
--	icrRxBufferQ2 = 1 << 18,
--	icrRxBufferQ3 = 1 << 19,
--	icrRxErrorQ0 = 1 << 20,
--	icrRxErrorQ1 = 1 << 21,
--	icrRxErrorQ2 = 1 << 22,
--	icrRxErrorQ3 = 1 << 23,
--	icrMIIPhySTC = 1 << 28,
--	icrSMIdone = 1 << 29,
--	icrEtherIntSum = 1 << 31
--};
--
--
--/* The Rx and Tx descriptor lists. */
--#ifdef __LITTLE_ENDIAN
--typedef struct {
--	u32 cmdstat;
--	u16 reserved;		//-prk21aug01    u32 reserved:16;
--	u16 byte_cnt;		//-prk21aug01    u32 byte_cnt:16;
--	u32 buff_ptr;
--	u32 next;
--} gt64240_td_t;
--
--typedef struct {
--	u32 cmdstat;
--	u16 byte_cnt;		//-prk21aug01    u32 byte_cnt:16;
--	u16 buff_sz;		//-prk21aug01    u32 buff_sz:16;
--	u32 buff_ptr;
--	u32 next;
--} gt64240_rd_t;
--#elif defined(__BIG_ENDIAN)
--typedef struct {
--	u16 byte_cnt;		//-prk21aug01    u32 byte_cnt:16;
--	u16 reserved;		//-prk21aug01    u32 reserved:16;
--	u32 cmdstat;
--	u32 next;
--	u32 buff_ptr;
--} gt64240_td_t;
--
--typedef struct {
--	u16 buff_sz;		//-prk21aug01    u32 buff_sz:16;
--	u16 byte_cnt;		//-prk21aug01    u32 byte_cnt:16;
--	u32 cmdstat;
--	u32 next;
--	u32 buff_ptr;
--} gt64240_rd_t;
--#else
--#error Either __BIG_ENDIAN or __LITTLE_ENDIAN must be defined!
--#endif
--
--
--/* Values for the Tx command-status descriptor entry. */
--enum td_cmdstat {
--	txOwn = 1 << 31,
--	txAutoMode = 1 << 30,
--	txEI = 1 << 23,
--	txGenCRC = 1 << 22,
--	txPad = 1 << 18,
--	txFirst = 1 << 17,
--	txLast = 1 << 16,
--	txErrorSummary = 1 << 15,
--	txReTxCntMask = 0x0f << 10,
--	txReTxCntBit = 10,
--	txCollision = 1 << 9,
--	txReTxLimit = 1 << 8,
--	txUnderrun = 1 << 6,
--	txLateCollision = 1 << 5
--};
--
--
--/* Values for the Rx command-status descriptor entry. */
--enum rd_cmdstat {
--	rxOwn = 1 << 31,
--	rxAutoMode = 1 << 30,
--	rxEI = 1 << 23,
--	rxFirst = 1 << 17,
--	rxLast = 1 << 16,
--	rxErrorSummary = 1 << 15,
--	rxIGMP = 1 << 14,
--	rxHashExpired = 1 << 13,
--	rxMissedFrame = 1 << 12,
--	rxFrameType = 1 << 11,
--	rxShortFrame = 1 << 8,
--	rxMaxFrameLen = 1 << 7,
--	rxOverrun = 1 << 6,
--	rxCollision = 1 << 4,
--	rxCRCError = 1
--};
--
--/* Bit fields of a Hash Table Entry */
--enum hash_table_entry {
--	hteValid = 1,
--	hteSkip = 2,
--	hteRD = 4
--};
--
--// The MIB counters
--typedef struct {
--	u32 byteReceived;
--	u32 byteSent;
--	u32 framesReceived;
--	u32 framesSent;
--	u32 totalByteReceived;
--	u32 totalFramesReceived;
--	u32 broadcastFramesReceived;
--	u32 multicastFramesReceived;
--	u32 cRCError;
--	u32 oversizeFrames;
--	u32 fragments;
--	u32 jabber;
--	u32 collision;
--	u32 lateCollision;
--	u32 frames64;
--	u32 frames65_127;
--	u32 frames128_255;
--	u32 frames256_511;
--	u32 frames512_1023;
--	u32 frames1024_MaxSize;
--	u32 macRxError;
--	u32 droppedFrames;
--	u32 outMulticastFrames;
--	u32 outBroadcastFrames;
--	u32 undersizeFrames;
--} mib_counters_t;
--
--
--struct gt64240_private {
--	gt64240_rd_t *rx_ring;
--	gt64240_td_t *tx_ring;
--	// The Rx and Tx rings must be 16-byte aligned
--	dma_addr_t rx_ring_dma;
--	dma_addr_t tx_ring_dma;
--	char *hash_table;
--	// The Hash Table must be 8-byte aligned
--	dma_addr_t hash_table_dma;
--	int hash_mode;
--
--	// The Rx buffers must be 8-byte aligned
--	char *rx_buff;
--	dma_addr_t rx_buff_dma;
--	// Tx buffers (tx_skbuff[i]->data) with less than 8 bytes
--	// of payload must be 8-byte aligned
--	struct sk_buff *tx_skbuff[TX_RING_SIZE];
--	int rx_next_out;	/* The next free ring entry to receive */
--	int tx_next_in;		/* The next free ring entry to send */
--	int tx_next_out;	/* The last ring entry the ISR processed */
--	int tx_count;		/* current # of pkts waiting to be sent in Tx ring */
--	int intr_work_done;	/* number of Rx and Tx pkts processed in the isr */
--	int tx_full;		/* Tx ring is full */
--
--	mib_counters_t mib;
--	struct net_device_stats stats;
--
--	int io_size;
--	int port_num;		// 0 or 1
--	u32 port_offset;
--
--	int phy_addr;		// PHY address
--	u32 last_psr;		// last value of the port status register
--
--	int options;		/* User-settable misc. driver options. */
--	int drv_flags;
--	spinlock_t lock;	/* Serialise access to device */
--	struct mii_if_info mii_if;
--
--	u32 msg_enable;
--};
--
--#endif /* _GT64240ETH_H */
-diff -urpN -X dontdiff linux-2.6.13/drivers/net/wan/lmc/lmc_prot.h linux-2.6.13~unused_headers/drivers/net/wan/lmc/lmc_prot.h
---- linux-2.6.13/drivers/net/wan/lmc/lmc_prot.h	2005-08-29 01:41:01.000000000 +0200
-+++ linux-2.6.13~unused_headers/drivers/net/wan/lmc/lmc_prot.h	1970-01-01 01:00:00.000000000 +0100
-@@ -1,15 +0,0 @@
--#ifndef _LMC_PROTO_H_
--#define _LMC_PROTO_H_
--
--void lmc_proto_init(lmc_softc_t * const)
--void lmc_proto_attach(lmc_softc_t *sc const)
--void lmc_proto_detach(lmc_softc *sc const)
--void lmc_proto_reopen(lmc_softc_t *sc const)
--int lmc_proto_ioctl(lmc_softc_t *sc const, struct ifreq *ifr, int cmd)
--void lmc_proto_open(lmc_softc_t *sc const)
--void lmc_proto_close(lmc_softc_t *sc const)
--unsigned short lmc_proto_type(lmc_softc_t *sc const, struct skbuff *skb)
--
--
--#endif
--
+Index: linux-sparse/arch/alpha/kernel/machvec_impl.h
+===================================================================
+--- linux-sparse.orig/arch/alpha/kernel/machvec_impl.h	2005-08-25 18:58:06.000000000 +0400
++++ linux-sparse/arch/alpha/kernel/machvec_impl.h	2005-08-26 18:53:34.000000000 +0400
+@@ -41,7 +41,7 @@
+ #define CAT1(x,y)  x##y
+ #define CAT(x,y)   CAT1(x,y)
+ 
+-#define DO_DEFAULT_RTC rtc_port: 0x70
++#define DO_DEFAULT_RTC .rtc_port = 0x70
+ 
+ #define DO_EV4_MMU							\
+ 	.max_asn =			EV4_MAX_ASN,			\
+Index: linux-sparse/drivers/isdn/hisax/hfc4s8s_l1.c
+===================================================================
+--- linux-sparse.orig/drivers/isdn/hisax/hfc4s8s_l1.c	2005-08-25 18:58:27.000000000 +0400
++++ linux-sparse/drivers/isdn/hisax/hfc4s8s_l1.c	2005-08-26 19:00:33.000000000 +0400
+@@ -1659,10 +1659,10 @@ hfc4s8s_remove(struct pci_dev *pdev)
+ }
+ 
+ static struct pci_driver hfc4s8s_driver = {
+-      name:"hfc4s8s_l1",
+-      probe:hfc4s8s_probe,
+-      remove:__devexit_p(hfc4s8s_remove),
+-      id_table:hfc4s8s_ids,
++      .name	= "hfc4s8s_l1",
++      .probe	= hfc4s8s_probe,
++      .remove	= __devexit_p(hfc4s8s_remove),
++      .id_table	= hfc4s8s_ids,
+ };
+ 
+ /**********************/
+Index: linux-sparse/drivers/net/wireless/orinoco.c
+===================================================================
+--- linux-sparse.orig/drivers/net/wireless/orinoco.c	2005-08-25 18:58:15.000000000 +0400
++++ linux-sparse/drivers/net/wireless/orinoco.c	2005-08-26 19:08:39.000000000 +0400
+@@ -4322,36 +4322,36 @@ static const struct iw_priv_args orinoco
+  */
+ 
+ static const iw_handler	orinoco_handler[] = {
+-	[SIOCSIWCOMMIT-SIOCIWFIRST] (iw_handler) orinoco_ioctl_commit,
+-	[SIOCGIWNAME  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getname,
+-	[SIOCSIWFREQ  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setfreq,
+-	[SIOCGIWFREQ  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getfreq,
+-	[SIOCSIWMODE  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setmode,
+-	[SIOCGIWMODE  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getmode,
+-	[SIOCSIWSENS  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setsens,
+-	[SIOCGIWSENS  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getsens,
+-	[SIOCGIWRANGE -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getiwrange,
+-	[SIOCSIWSPY   -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setspy,
+-	[SIOCGIWSPY   -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getspy,
+-	[SIOCSIWAP    -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setwap,
+-	[SIOCGIWAP    -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getwap,
+-	[SIOCSIWSCAN  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setscan,
+-	[SIOCGIWSCAN  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getscan,
+-	[SIOCSIWESSID -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setessid,
+-	[SIOCGIWESSID -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getessid,
+-	[SIOCSIWNICKN -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setnick,
+-	[SIOCGIWNICKN -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getnick,
+-	[SIOCSIWRATE  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setrate,
+-	[SIOCGIWRATE  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getrate,
+-	[SIOCSIWRTS   -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setrts,
+-	[SIOCGIWRTS   -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getrts,
+-	[SIOCSIWFRAG  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setfrag,
+-	[SIOCGIWFRAG  -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getfrag,
+-	[SIOCGIWRETRY -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getretry,
+-	[SIOCSIWENCODE-SIOCIWFIRST] (iw_handler) orinoco_ioctl_setiwencode,
+-	[SIOCGIWENCODE-SIOCIWFIRST] (iw_handler) orinoco_ioctl_getiwencode,
+-	[SIOCSIWPOWER -SIOCIWFIRST] (iw_handler) orinoco_ioctl_setpower,
+-	[SIOCGIWPOWER -SIOCIWFIRST] (iw_handler) orinoco_ioctl_getpower,
++	[SIOCSIWCOMMIT-SIOCIWFIRST] = (iw_handler) orinoco_ioctl_commit,
++	[SIOCGIWNAME  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getname,
++	[SIOCSIWFREQ  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setfreq,
++	[SIOCGIWFREQ  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getfreq,
++	[SIOCSIWMODE  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setmode,
++	[SIOCGIWMODE  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getmode,
++	[SIOCSIWSENS  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setsens,
++	[SIOCGIWSENS  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getsens,
++	[SIOCGIWRANGE -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getiwrange,
++	[SIOCSIWSPY   -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setspy,
++	[SIOCGIWSPY   -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getspy,
++	[SIOCSIWAP    -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setwap,
++	[SIOCGIWAP    -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getwap,
++	[SIOCSIWSCAN  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setscan,
++	[SIOCGIWSCAN  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getscan,
++	[SIOCSIWESSID -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setessid,
++	[SIOCGIWESSID -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getessid,
++	[SIOCSIWNICKN -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setnick,
++	[SIOCGIWNICKN -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getnick,
++	[SIOCSIWRATE  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setrate,
++	[SIOCGIWRATE  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getrate,
++	[SIOCSIWRTS   -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setrts,
++	[SIOCGIWRTS   -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getrts,
++	[SIOCSIWFRAG  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setfrag,
++	[SIOCGIWFRAG  -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getfrag,
++	[SIOCGIWRETRY -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getretry,
++	[SIOCSIWENCODE-SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setiwencode,
++	[SIOCGIWENCODE-SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getiwencode,
++	[SIOCSIWPOWER -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_setpower,
++	[SIOCGIWPOWER -SIOCIWFIRST] = (iw_handler) orinoco_ioctl_getpower,
+ };
+ 
+ 
+@@ -4359,15 +4359,15 @@ static const iw_handler	orinoco_handler[
+   Added typecasting since we no longer use iwreq_data -- Moustafa
+  */
+ static const iw_handler	orinoco_private_handler[] = {
+-	[0] (iw_handler) orinoco_ioctl_reset,
+-	[1] (iw_handler) orinoco_ioctl_reset,
+-	[2] (iw_handler) orinoco_ioctl_setport3,
+-	[3] (iw_handler) orinoco_ioctl_getport3,
+-	[4] (iw_handler) orinoco_ioctl_setpreamble,
+-	[5] (iw_handler) orinoco_ioctl_getpreamble,
+-	[6] (iw_handler) orinoco_ioctl_setibssport,
+-	[7] (iw_handler) orinoco_ioctl_getibssport,
+-	[9] (iw_handler) orinoco_ioctl_getrid,
++	[0] = (iw_handler) orinoco_ioctl_reset,
++	[1] = (iw_handler) orinoco_ioctl_reset,
++	[2] = (iw_handler) orinoco_ioctl_setport3,
++	[3] = (iw_handler) orinoco_ioctl_getport3,
++	[4] = (iw_handler) orinoco_ioctl_setpreamble,
++	[5] = (iw_handler) orinoco_ioctl_getpreamble,
++	[6] = (iw_handler) orinoco_ioctl_setibssport,
++	[7] = (iw_handler) orinoco_ioctl_getibssport,
++	[9] = (iw_handler) orinoco_ioctl_getrid,
+ };
+ 
+ static const struct iw_handler_def orinoco_handler_def = {
+Index: linux-sparse/drivers/net/bnx2.c
+===================================================================
+--- linux-sparse.orig/drivers/net/bnx2.c	2005-08-25 18:58:14.000000000 +0400
++++ linux-sparse/drivers/net/bnx2.c	2005-08-26 19:10:10.000000000 +0400
+@@ -5505,12 +5505,12 @@ bnx2_resume(struct pci_dev *pdev)
+ }
+ 
+ static struct pci_driver bnx2_pci_driver = {
+-	name:		DRV_MODULE_NAME,
+-	id_table:	bnx2_pci_tbl,
+-	probe:		bnx2_init_one,
+-	remove:		__devexit_p(bnx2_remove_one),
+-	suspend:	bnx2_suspend,
+-	resume:		bnx2_resume,
++	.name		= DRV_MODULE_NAME,
++	.id_table	= bnx2_pci_tbl,
++	.probe		= bnx2_init_one,
++	.remove		= __devexit_p(bnx2_remove_one),
++	.suspend	= bnx2_suspend,
++	.resume		= bnx2_resume,
+ };
+ 
+ static int __init bnx2_init(void)
+Index: linux-sparse/include/asm-parisc/processor.h
+===================================================================
+--- linux-sparse.orig/include/asm-parisc/processor.h	2005-08-25 18:58:52.000000000 +0400
++++ linux-sparse/include/asm-parisc/processor.h	2005-08-26 21:29:28.000000000 +0400
+@@ -124,16 +124,17 @@ struct thread_struct {
+ #define PARISC_KERNEL_DEATH	(1UL << 31)	/* see die_if_kernel()... */
+ 
+ #define INIT_THREAD { \
+-	regs:	{	gr: { 0, }, \
+-			fr: { 0, }, \
+-			sr: { 0, }, \
+-			iasq: { 0, }, \
+-			iaoq: { 0, }, \
+-			cr27: 0, \
+-		}, \
+-	task_size:      DEFAULT_TASK_SIZE, \
+-	map_base:       DEFAULT_MAP_BASE, \
+-	flags:          0 \
++	.regs = { \
++		.gr	= { 0, }, \
++		.fr	= { 0, }, \
++		.sr	= { 0, }, \
++		.iasq	= { 0, }, \
++		.iaoq	= { 0, }, \
++		.cr27	= 0, \
++	}, \
++	.task_size	= DEFAULT_TASK_SIZE, \
++	.map_base	= DEFAULT_MAP_BASE, \
++	.flags		= 0 \
+ 	}
+ 
+ /*
+Index: linux-sparse/drivers/s390/block/dasd_eckd.c
+===================================================================
+--- linux-sparse.orig/drivers/s390/block/dasd_eckd.c	2005-08-25 18:58:28.000000000 +0400
++++ linux-sparse/drivers/s390/block/dasd_eckd.c	2005-08-26 21:33:56.000000000 +0400
+@@ -66,16 +66,16 @@ struct dasd_eckd_private {
+ /* The ccw bus type uses this table to find devices that it sends to
+  * dasd_eckd_probe */
+ static struct ccw_device_id dasd_eckd_ids[] = {
+-	{ CCW_DEVICE_DEVTYPE (0x3990, 0, 0x3390, 0), driver_info: 0x1},
+-	{ CCW_DEVICE_DEVTYPE (0x2105, 0, 0x3390, 0), driver_info: 0x2},
+-	{ CCW_DEVICE_DEVTYPE (0x3880, 0, 0x3390, 0), driver_info: 0x3},
+-	{ CCW_DEVICE_DEVTYPE (0x3990, 0, 0x3380, 0), driver_info: 0x4},
+-	{ CCW_DEVICE_DEVTYPE (0x2105, 0, 0x3380, 0), driver_info: 0x5},
+-	{ CCW_DEVICE_DEVTYPE (0x9343, 0, 0x9345, 0), driver_info: 0x6},
+-	{ CCW_DEVICE_DEVTYPE (0x2107, 0, 0x3390, 0), driver_info: 0x7},
+-	{ CCW_DEVICE_DEVTYPE (0x2107, 0, 0x3380, 0), driver_info: 0x8},
+-	{ CCW_DEVICE_DEVTYPE (0x1750, 0, 0x3390, 0), driver_info: 0x9},
+-	{ CCW_DEVICE_DEVTYPE (0x1750, 0, 0x3380, 0), driver_info: 0xa},
++	{ CCW_DEVICE_DEVTYPE (0x3990, 0, 0x3390, 0), .driver_info = 0x1},
++	{ CCW_DEVICE_DEVTYPE (0x2105, 0, 0x3390, 0), .driver_info = 0x2},
++	{ CCW_DEVICE_DEVTYPE (0x3880, 0, 0x3390, 0), .driver_info = 0x3},
++	{ CCW_DEVICE_DEVTYPE (0x3990, 0, 0x3380, 0), .driver_info = 0x4},
++	{ CCW_DEVICE_DEVTYPE (0x2105, 0, 0x3380, 0), .driver_info = 0x5},
++	{ CCW_DEVICE_DEVTYPE (0x9343, 0, 0x9345, 0), .driver_info = 0x6},
++	{ CCW_DEVICE_DEVTYPE (0x2107, 0, 0x3390, 0), .driver_info = 0x7},
++	{ CCW_DEVICE_DEVTYPE (0x2107, 0, 0x3380, 0), .driver_info = 0x8},
++	{ CCW_DEVICE_DEVTYPE (0x1750, 0, 0x3390, 0), .driver_info = 0x9},
++	{ CCW_DEVICE_DEVTYPE (0x1750, 0, 0x3380, 0), .driver_info = 0xa},
+ 	{ /* end of list */ },
+ };
+ 
+Index: linux-sparse/drivers/s390/block/dasd_fba.c
+===================================================================
+--- linux-sparse.orig/drivers/s390/block/dasd_fba.c	2005-08-25 18:58:28.000000000 +0400
++++ linux-sparse/drivers/s390/block/dasd_fba.c	2005-08-26 21:36:02.000000000 +0400
+@@ -46,8 +46,8 @@ struct dasd_fba_private {
+ };
+ 
+ static struct ccw_device_id dasd_fba_ids[] = {
+-	{ CCW_DEVICE_DEVTYPE (0x6310, 0, 0x9336, 0), driver_info: 0x1},
+-	{ CCW_DEVICE_DEVTYPE (0x3880, 0, 0x3370, 0), driver_info: 0x2},
++	{ CCW_DEVICE_DEVTYPE (0x6310, 0, 0x9336, 0), .driver_info = 0x1},
++	{ CCW_DEVICE_DEVTYPE (0x3880, 0, 0x3370, 0), .driver_info = 0x2},
+ 	{ /* end of list */ },
+ };
+ 
+Index: linux-sparse/drivers/s390/char/tape_34xx.c
+===================================================================
+--- linux-sparse.orig/drivers/s390/char/tape_34xx.c	2005-08-25 18:58:28.000000000 +0400
++++ linux-sparse/drivers/s390/char/tape_34xx.c	2005-08-26 21:36:47.000000000 +0400
+@@ -1316,8 +1316,8 @@ static struct tape_discipline tape_disci
+ };
+ 
+ static struct ccw_device_id tape_34xx_ids[] = {
+-	{ CCW_DEVICE_DEVTYPE(0x3480, 0, 0x3480, 0), driver_info: tape_3480},
+-	{ CCW_DEVICE_DEVTYPE(0x3490, 0, 0x3490, 0), driver_info: tape_3490},
++	{ CCW_DEVICE_DEVTYPE(0x3480, 0, 0x3480, 0), .driver_info = tape_3480},
++	{ CCW_DEVICE_DEVTYPE(0x3490, 0, 0x3490, 0), .driver_info = tape_3490},
+ 	{ /* end of list */ }
+ };
+ 
+Index: linux-sparse/drivers/s390/net/qeth_main.c
+===================================================================
+--- linux-sparse.orig/drivers/s390/net/qeth_main.c	2005-08-25 18:58:28.000000000 +0400
++++ linux-sparse/drivers/s390/net/qeth_main.c	2005-08-26 21:37:33.000000000 +0400
+@@ -7591,8 +7591,8 @@ qeth_set_online(struct ccwgroup_device *
+ }
+ 
+ static struct ccw_device_id qeth_ids[] = {
+-	{CCW_DEVICE(0x1731, 0x01), driver_info:QETH_CARD_TYPE_OSAE},
+-	{CCW_DEVICE(0x1731, 0x05), driver_info:QETH_CARD_TYPE_IQD},
++	{CCW_DEVICE(0x1731, 0x01), .driver_info = QETH_CARD_TYPE_OSAE},
++	{CCW_DEVICE(0x1731, 0x05), .driver_info = QETH_CARD_TYPE_IQD},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(ccw, qeth_ids);
+Index: linux-sparse/drivers/s390/scsi/zfcp_scsi.c
+===================================================================
+--- linux-sparse.orig/drivers/s390/scsi/zfcp_scsi.c	2005-08-25 18:58:28.000000000 +0400
++++ linux-sparse/drivers/s390/scsi/zfcp_scsi.c	2005-08-26 21:40:25.000000000 +0400
+@@ -57,30 +57,30 @@ struct scsi_transport_template *zfcp_tra
+ 
+ struct zfcp_data zfcp_data = {
+ 	.scsi_host_template = {
+-	      name:	               ZFCP_NAME,
+-	      proc_name:               "zfcp",
+-	      proc_info:               NULL,
+-	      detect:	               NULL,
+-	      slave_alloc:             zfcp_scsi_slave_alloc,
+-	      slave_configure:         zfcp_scsi_slave_configure,
+-	      slave_destroy:           zfcp_scsi_slave_destroy,
+-	      queuecommand:            zfcp_scsi_queuecommand,
+-	      eh_abort_handler:        zfcp_scsi_eh_abort_handler,
+-	      eh_device_reset_handler: zfcp_scsi_eh_device_reset_handler,
+-	      eh_bus_reset_handler:    zfcp_scsi_eh_bus_reset_handler,
+-	      eh_host_reset_handler:   zfcp_scsi_eh_host_reset_handler,
++	      .name			= ZFCP_NAME,
++	      .proc_name		= "zfcp",
++	      .proc_info		= NULL,
++	      .detect			= NULL,
++	      .slave_alloc		= zfcp_scsi_slave_alloc,
++	      .slave_configure		= zfcp_scsi_slave_configure,
++	      .slave_destroy		= zfcp_scsi_slave_destroy,
++	      .queuecommand		= zfcp_scsi_queuecommand,
++	      .eh_abort_handler		= zfcp_scsi_eh_abort_handler,
++	      .eh_device_reset_handler	= zfcp_scsi_eh_device_reset_handler,
++	      .eh_bus_reset_handler	= zfcp_scsi_eh_bus_reset_handler,
++	      .eh_host_reset_handler	= zfcp_scsi_eh_host_reset_handler,
+ 			               /* FIXME(openfcp): Tune */
+-	      can_queue:               4096,
+-	      this_id:	               0,
++	      .can_queue		= 4096,
++	      .this_id			= 0,
+ 	      /*
+ 	       * FIXME:
+ 	       * one less? can zfcp_create_sbale cope with it?
+ 	       */
+-	      sg_tablesize:            ZFCP_MAX_SBALES_PER_REQ,
+-	      cmd_per_lun:             1,
+-	      unchecked_isa_dma:       0,
+-	      use_clustering:          1,
+-	      sdev_attrs:              zfcp_sysfs_sdev_attrs,
++	      .sg_tablesize		= ZFCP_MAX_SBALES_PER_REQ,
++	      .cmd_per_lun		= 1,
++	      .unchecked_isa_dma	= 0,
++	      .use_clustering		= 1,
++	      .sdev_attrs		= zfcp_sysfs_sdev_attrs,
+ 	},
+ 	.driver_version = ZFCP_VERSION,
+ 	/* rest initialised with zeros */
 
---===============66309068817863226==
+
+--===============68804927158505191==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -461,4 +352,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============66309068817863226==--
+--===============68804927158505191==--
