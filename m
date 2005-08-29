@@ -1,34 +1,43 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 29 Aug 2005 17:01:36 +0000
-Subject: [KJ] new -kj maintainer, Alexey Dobriyan
-Message-Id: <20050829170136.GA24584@nd47.coderock.org>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Mon, 29 Aug 2005 17:14:39 +0000
+Subject: Re: [KJ] new -kj maintainer, Alexey Dobriyan
+Message-Id: <Pine.LNX.4.50.0508291013340.11117-100000@shark.he.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34690329590435631=="
+Content-Type: multipart/mixed; boundary="===============13391030663997094=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050829170136.GA24584@nd47.coderock.org>
+In-Reply-To: <20050829170136.GA24584@nd47.coderock.org>
 To: kernel-janitors@vger.kernel.org
 
---===============34690329590435631==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============13391030663997094==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-Hi folks!
+On Mon, 29 Aug 2005, Domen Puncer wrote:
 
-It's time to pass on the joy (or should I say burden? :-) ) of
-maintaining -kj patchset. It was fun and I learned lots of new
-stuff.
+> Hi folks!
+>
+> It's time to pass on the joy (or should I say burden? :-) ) of
+> maintaining -kj patchset. It was fun and I learned lots of new
+> stuff.
+>
+> So... the new maintainer is:
+> Alexey Dobriyan
 
-So... the new maintainer is:
-Alexey Dobriyan
+Congrats, Alexey.  :)
 
-He's been active janitor for quite some time (as you should know),
-and I'm sure he'll make a good maintainer.
+Domen, you did a fine job.  Thanks.
 
-You can now start patch bombing this list, to stress-test him ;-)
+> He's been active janitor for quite some time (as you should know),
+> and I'm sure he'll make a good maintainer.
+>
+> You can now start patch bombing this list, to stress-test him ;-)
 
+now he'll patch-bomb himself :)
 
-	Domen
+-- 
+~Randy
 
---===============34690329590435631==
+--===============13391030663997094==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34690329590435631==--
+--===============13391030663997094==--
