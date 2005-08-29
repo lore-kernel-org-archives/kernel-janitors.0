@@ -1,49 +1,42 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Fri, 12 Aug 2005 18:04:58 +0000
-Subject: Re: [KJ] [RFC] new design for kerneljanitors.org?
-Message-Id: <42FCE4CA.4070700@gmx.net>
+From: Domen Puncer <domen@coderock.org>
+Date: Mon, 29 Aug 2005 17:01:36 +0000
+Subject: [KJ] new -kj maintainer, Alexey Dobriyan
+Message-Id: <20050829170136.GA24584@nd47.coderock.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============34690329590435631=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42C1CDE1.9010308@gmx.net>
-In-Reply-To: <42C1CDE1.9010308@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hi there,
+--===============34690329590435631==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I dont want to nitpick but
+Hi folks!
 
-a) it has the left- and right-column layout fixed in its html-code which=20
-would impose this layout on other css-layouts. (Thats not the same=20
-html-code as the proposed design from Lukas Sandstr=F6m and me?)
+It's time to pass on the joy (or should I say burden? :-) ) of
+maintaining -kj patchset. It was fun and I learned lots of new
+stuff.
 
-b) is there any special reason for the page to identify itself as=20
-html4.01, while it technically is xhtml?
+So... the new maintainer is:
+Alexey Dobriyan
 
-c) where's my nice janitor-penguin ;-) ?
+He's been active janitor for quite some time (as you should know),
+and I'm sure he'll make a good maintainer.
 
-best regards
-mveeck
+You can now start patch bombing this list, to stress-test him ;-)
 
-Christophe Lucas schrieb:
-> Michael Veeck (michael.veeck@gmx.net) wrote:
->=20
->>Looks good. Now we would need someone with an older version of IE to=20
->>test it. Anyone here who can provide such service?
->=20
->=20
-> Perhaps, it could help :)
->  - http://odie.mcom.fr/~clucas/kernel/kj_web_site/
->  - http://odie.mcom.fr/~clucas/kernel/kj_web_site/index-kj.html
->=20
-> Don't have been tested on other browser than Firefox 1.0.6
->=20
-> Have a nice day,
-> 				- Christophe (clucas@rotomalug.org)
->=20
->=20
+
+	Domen
+
+--===============34690329590435631==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============34690329590435631==--
