@@ -1,62 +1,69 @@
-From: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
-Date: Sat, 16 Jul 2005 07:22:24 +0000
-Subject: [KJ] [PATCH] drivers/net/shaper.c : Use of the time_before() and
-Message-Id: <42D8B5B0.7010901@feitoza.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------050305050301080703050308"
+From: "e-BookServices, India" <data@e-bookservices.com>
+Date: Tue, 30 Aug 2005 17:11:42 +0000
+Subject: Document Migration and e-Book Development
+Message-Id: <E1EA9Se-0002V1-9s@mail.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------050305050301080703050308
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Hi,
 
+I apologize for intruding into your busy schedule. Please allow me to introduce ourselves to you.
 
---------------050305050301080703050308
-Content-Type: text/x-patch;
- name="shaper.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="shaper.patch"
+We are engaged in providing book-related services to international clientele (http://www.e-BookServices.com). Located in
+India, we cater to both organizations as well as individuals. 
 
-Use of the time_before() and time_after()  macros, defined at linux/jiffies.h,
-which deal with wrapping correctly and are nicer to read.
+Our range of services include, but are not limited to:
+- Typesetting (QuarkXPress, InDesign, FrameMaker etc) 
+- Formatting of manuscripts (MS-Word, WordPerfect etc) 
+- Graphic Design and Pre-Press jobs (including logo/book cover design) 
+- Desktop Publishing (DTP) 
+- Keying-in, scanning and OCR (for re-prints, archives, web publishing etc) 
+- Translation (from and to all major languages) 
+- e-Books Creation (PDFs, MobiPocket etc) 
+- XML Conversion 
 
-Signed-off-by: Marcelo Feitoza Parisi <marcelo@feitoza.com.br>
+Many companies are now outsourcing their work to India. Not only do they achieve substantial cost savings, but the
+availability of a large number of professionally trained personnel also ensures a high quality of work. We can serve you
+efficiently and cost effectively, and deliver as per your customized needs. 
 
---- linux/drivers/net/shaper.c	2005-07-13 17:52:19.000000000 -0300
-+++ linux-kj/drivers/net/shaper.c	2005-07-16 01:46:18.835005176 -0300
-@@ -161,7 +161,8 @@
-  	while(ptr && ptr!=(struct sk_buff *)&shaper->sendq)
-  	{
-  		if(ptr->pri<skb->pri 
-- 			&& jiffies - SHAPERCB(ptr)->shapeclock < SHAPER_MAXSLIP)
-+ 			&& time_before(jiffies, SHAPERCB(ptr)->shapeclock
-+			       + SHAPER_MAXSLIP))
-  		{
-  			struct sk_buff *tmp=ptr->prev;
+We are one of the leading Indian organizations in our field, and serve many international organizations. For accomplishing
+jobs with us, a team of highly trained and dedicated professionals work at our state-of-the-art facilities located in New
+Delhi, India.
+
+We understand the basic international business processes and ensure that all projects undertaken by us are completed within
+the stipulated time period with complete confidentiality, accuracy, and quality.
+
+For your first project you do not need to pay us a deposit. You can make the entire payment after receiving satisfactory
+delivery of service. 
+
+If you are interested in cutting your current costs to at least half, increasing your profit margins without compromising
+on the quality and turn-around time, then please do get back to us. We will be glad to send you a most competitive business
+proposal. 
+
+I shall be at the FRANKFURT BOOK FAIR (19th-23rd October, 2005) and would be most happy to meet you there and personally
+discuss your requirements. If so, I would be obliged if you can kindly grant me a prior appointment at the fair.
+
+Sincerely,
  
-@@ -214,7 +215,8 @@
- 		/*
- 		 *	Queue over time. Spill packet.
- 		 */
--		if(SHAPERCB(skb)->shapeclock-jiffies > SHAPER_LATENCY) {
-+		if(time_after(SHAPERCB(skb)->shapeclock, jiffies 
-+					+ SHAPER_LATENCY)) {
- 			dev_kfree_skb(skb);
- 			shaper->stats.tx_dropped++;
- 		} else
+Dhiraj Aggarwal
+Mobile: +(91) 98100 50809
+E-mail: info@e-BookServices.net , info@e-BookServices.com
+URL: http://www.e-BookServices.net , http://www.e-BookServices.com
 
---------------050305050301080703050308
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+This email has been sent expecting the information to be of use and benefit to you. In case you do not wish to receive
+further emails from us, please send us an email with `REMOVE + your email address' in the subject line and we will remove
+your email address from our database. We apologize for the inconvenience caused to you.
 
+
+-------------------------------------------------------
+SF.Net email is Sponsored by the Better Software Conference & EXPO
+September 19-22, 2005 * San Francisco, CA * Development Lifecycle Practices
+Agile & Plan-Driven Development * Managing Projects & Teams * Testing & QA
+Security * Process Improvement & Measurement * http://www.sqe.com/bsce5sf
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---------------050305050301080703050308--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
