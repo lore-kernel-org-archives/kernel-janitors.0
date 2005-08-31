@@ -1,8 +1,10 @@
-From: "e-BookServices, India" <data@e-bookservices.com>
-Date: Tue, 30 Aug 2005 17:11:42 +0000
+From: "e-BookServices, India" <info@e-bookservices.com>
+Date: Wed, 31 Aug 2005 15:32:40 +0000
 Subject: Document Migration and e-Book Development
-Message-Id: <E1EA9Se-0002V1-9s@mail.sourceforge.net>
+Message-Id: <E1EAUON-000335-LP@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1EA9Se-0002V1-9s@mail.sourceforge.net>
+In-Reply-To: <E1EA9Se-0002V1-9s@mail.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
