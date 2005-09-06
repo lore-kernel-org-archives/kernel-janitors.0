@@ -1,24 +1,26 @@
-From: "Lucius Hunt" <luciusvidd@houlihans.com>
+From: "Brynhildr Delancey" <brynhildrdelancey@asiannudes.com>
 Date: Tue, 06 Sep 2005 15:07:05 +0000
 Subject: [KJ] Re: Not Another Bad Offr Pharamcy
-Message-Id: <200509061507.j86F7EBp002268@smtp.osdl.org>
+Message-Id: <200509061507.j86F7EBp002269@smtp.osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8292476591779927=="
+Content-Type: multipart/mixed; boundary="===============39164175368206244=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200509061507.j86F7EBp002268@smtp.osdl.org>
+In-Reply-To: <200509061507.j86F7EBp002268@smtp.osdl.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============8292476591779927==
+--===============39164175368206244==
 Content-Type: multipart/alternative;
-    boundary="----------=_1126019369-24550-579"
+    boundary="----------=_1126019314-24550-554"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1126019369-24550-579
+------------=_1126019314-24550-554
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -33,7 +35,7 @@ http://www.apologiforhecom Approximately a hundred of these peaceful and us=
 eful animals, devoted wish to live like a human being. You mean to say, Fok=
 a that perch can be met
 
-------------=_1126019369-24550-579
+------------=_1126019314-24550-554
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -62,9 +64,9 @@ BR><BR></DIV>
 <DIV><A href=3D"http://www.apologiforhe.com">http://www.apologiforhecom</A>=
 </DIV></FONT></DIV></B></B></BODY></HTML>
 
-------------=_1126019369-24550-579--
+------------=_1126019314-24550-554--
 
---===============8292476591779927==
+--===============39164175368206244==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8292476591779927==--
+--===============39164175368206244==--
