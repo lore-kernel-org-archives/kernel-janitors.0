@@ -1,67 +1,70 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Tue, 27 Sep 2005 07:11:46 +0000
-Subject: [KJ] [RESEND][PATCH] printk : arch/alpha/kernel/osf_sys.c
-Message-Id: <20050927071146.GA8479@rhum.iomeda.fr>
+From: "Lucius Hunt" <luciusvidd@houlihans.com>
+Date: Tue, 06 Sep 2005 15:07:05 +0000
+Subject: [KJ] Re: Not Another Bad Offr Pharamcy
+Message-Id: <200509061507.j86F7EBp002268@smtp.osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52454461878069125=="
+Content-Type: multipart/mixed; boundary="===============8292476591779927=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050914064248.GE32338@rhum.iomeda.fr>
-In-Reply-To: <20050914064248.GE32338@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============52454461878069125==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============8292476591779927==
+Content-Type: multipart/alternative;
+    boundary="----------=_1126019369-24550-579"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1126019369-24550-579
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Description:
-printk() calls should include appropriate KERN_* constant.
+XaUlViAmMeCeVaCiPrLe
+natragbirilelialopvi
+xamraendiabrexumiseciatra
+$3 $3 $1
+33.75.21
+http://www.apologiforhecom Approximately a hundred of these peaceful and us=
+eful animals, devoted wish to live like a human being. You mean to say, Fok=
+a that perch can be met
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+------------=_1126019369-24550-579
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DCourier>
+<DIV DEFANGED_style=3D"FLOAT: left;">Xa<BR>Ul<BR><B>Vi</B><BR>Am<BR>Me<BR>C=
+e<BR><B>Va</B><BR><B>Ci</B><BR>Pr<BR>Le</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">na<BR>tr<BR><B>ag</B><BR>bi<BR>ri<BR>l=
+e<BR><B>li</B><BR><B>al</B><BR>op<BR>vi</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">x<BR>am<BR><B>ra</B><BR>en<BR>dia<BR>b=
+rex<BR><B>um</B><BR><B>is</B><BR>ecia<BR>tra</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;"><BR><BR>&nbsp;$3<BR><BR><BR><BR>&nbsp;=
+$3<BR>&nbsp;$1<BR><BR></DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;"><BR><BR>.33<BR><BR><BR><BR>.75<BR>.21<=
+BR><BR></DIV>
+<DIV DEFANGED_style=3D"CLEAR: both">&nbsp;</DIV>
+<DIV><A href=3D"http://www.apologiforhe.com">http://www.apologiforhecom</A>=
+</DIV></FONT></DIV></B></B></BODY></HTML>
 
-Index: linux-2.6.14-rc2/arch/alpha/kernel/osf_sys.c
-===================================================================
---- linux-2.6.14-rc2.orig/arch/alpha/kernel/osf_sys.c
-+++ linux-2.6.14-rc2/arch/alpha/kernel/osf_sys.c
-@@ -78,7 +78,7 @@ osf_set_program_attributes(unsigned long
- 	mm->end_code = bss_start + bss_len;
- 	mm->brk = bss_start + bss_len;
- #if 0
--	printk("set_program_attributes(%lx %lx %lx %lx)\n",
-+	printk(KERN_DEBUG "set_program_attributes(%lx %lx %lx %lx)\n",
- 		text_start, text_len, bss_start, bss_len);
- #endif
- 	unlock_kernel();
-@@ -182,7 +182,7 @@ osf_mmap(unsigned long addr, unsigned lo
- 
- #if 0
- 	if (flags & (_MAP_HASSEMAPHORE | _MAP_INHERIT | _MAP_UNALIGNED))
--		printk("%s: unimplemented OSF mmap flags %04lx\n", 
-+		printk(KERN_DEBUG "%s: unimplemented OSF mmap flags %04lx\n", 
- 			current->comm, flags);
- #endif
- 	if (!(flags & MAP_ANONYMOUS)) {
-@@ -387,7 +387,7 @@ osf_mount(unsigned long typenr, char __u
- 		retval = osf_procfs_mount(name, data, flag);
- 		break;
- 	default:
--		printk("osf_mount(%ld, %x)\n", typenr, flag);
-+		printk(KERN_INFO "osf_mount(%ld, %x)\n", typenr, flag);
- 	}
- 	putname(name);
-  out:
-@@ -625,7 +625,7 @@ osf_sysinfo(int command, char __user *bu
- 	offset = command-1;
- 	if (offset >= sizeof(sysinfo_table)/sizeof(char *)) {
- 		/* Digital UNIX has a few unpublished interfaces here */
--		printk("sysinfo(%d)", command);
-+		printk(KERN_ERR "sysinfo(%d)", command);
- 		goto out;
- 	}
- 	
+------------=_1126019369-24550-579--
 
-
---===============52454461878069125==
+--===============8292476591779927==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52454461878069125==--
+--===============8292476591779927==--
