@@ -1,15 +1,15 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 08 Sep 2005 08:47:08 +0000
-Subject: [KJ] [PATCH] printk : arch/alpha/kernel/core_lca.c
-Message-Id: <20050908084708.GH26072@rhum.iomeda.fr>
+Date: Thu, 08 Sep 2005 08:49:11 +0000
+Subject: [KJ] [PATCH] printk : arch/alpha/kernel/core_marvel.c
+Message-Id: <20050908084911.GI26072@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64518783032320437=="
+Content-Type: multipart/mixed; boundary="===============50718458363776886=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050908070849.GB26072@rhum.iomeda.fr>
 In-Reply-To: <20050908070849.GB26072@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============64518783032320437==
+--===============50718458363776886==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -18,81 +18,128 @@ printk() calls should include appropriate KERN_* constant.
 
 Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-
-Index: linux-2.6.13/arch/alpha/kernel/core_lca.c
+Index: linux-2.6.13/arch/alpha/kernel/core_marvel.c
 ===================================================================
---- linux-2.6.13.orig/arch/alpha/kernel/core_lca.c
-+++ linux-2.6.13/arch/alpha/kernel/core_lca.c
-@@ -334,23 +334,23 @@ lca_init_arch(void)
- static void
- mem_error(unsigned long esr, unsigned long ear)
+--- linux-2.6.13.orig/arch/alpha/kernel/core_marvel.c
++++ linux-2.6.13/arch/alpha/kernel/core_marvel.c
+@@ -332,7 +332,7 @@ marvel_init_io7(struct io7 *io7)
  {
--	printk("    %s %s error to %s occurred at address %x\n",
-+	printk(KERN_WARNING "    %s %s error to %s occurred at address %x\n",
- 	       ((esr & ESR_CEE) ? "Correctable" :
- 		(esr & ESR_UEE) ? "Uncorrectable" : "A"),
- 	       (esr & ESR_WRE) ? "write" : "read",
- 	       (esr & ESR_SOR) ? "memory" : "b-cache",
- 	       (unsigned) (ear & 0x1ffffff8));
- 	if (esr & ESR_CTE) {
--		printk("    A b-cache tag parity error was detected.\n");
-+		printk(KERN_WARNING "    A b-cache tag parity error was detected.\n");
- 	}
- 	if (esr & ESR_MSE) {
--		printk("    Several other correctable errors occurred.\n");
-+		printk(KERN_WARNING "    Several other correctable errors occurred.\n");
- 	}
- 	if (esr & ESR_MHE) {
--		printk("    Several other uncorrectable errors occurred.\n");
-+		printk(KERN_WARNING "    Several other uncorrectable errors occurred.\n");
- 	}
- 	if (esr & ESR_NXM) {
--		printk("    Attempted to access non-existent memory.\n");
-+		printk(KERN_WARNING "    Attempted to access non-existent memory.\n");
- 	}
+ 	int i;
+ 
+-	printk("Initializing IO7 at PID %d\n", io7->pe);
++	printk(KERN_INFO "Initializing IO7 at PID %d\n", io7->pe);
+ 
+ 	/*
+ 	 * Get the Port 7 CSR pointer.
+@@ -361,7 +361,7 @@ marvel_io7_present(gct6_node *node)
+ 		return;
+ 
+ 	pe = (node->id >> 8) & 0xff;
+-	printk("Found an IO7 at PID %d\n", pe);
++	printk(KERN_INFO "Found an IO7 at PID %d\n", pe);
+ 
+ 	alloc_io7(pe);
  }
+@@ -383,7 +383,7 @@ marvel_init_vga_hose(void)
+ 		 *         need to fix this decode when the console 
+ 		 *         changes its encoding
+ 		 */
+-		printk("console graphics is on hose %d (console)\n", h);
++		printk(KERN_INFO "console graphics is on hose %d (console)\n", h);
  
-@@ -372,16 +372,16 @@ ioc_error(__u32 stat0, __u32 stat1)
- 	unsigned code = (stat0 & IOC_CODE) >> IOC_CODE_SHIFT;
- 	unsigned cmd  = (stat0 & IOC_CMD)  >> IOC_CMD_SHIFT;
+ 		/*
+ 		 * The console's hose numbering is:
+@@ -399,7 +399,7 @@ marvel_init_vga_hose(void)
+ 			hose = io7->ports[port].hose;
  
--	printk("    %s initiated PCI %s cycle to address %x"
-+	printk(KERN_WARNING "    %s initiated PCI %s cycle to address %x"
- 	       " failed due to %s.\n",
- 	       code > 3 ? "PCI" : "CPU", pci_cmd[cmd], stat1, err_name[code]);
- 
- 	if (code == 5 || code == 6) {
--		printk("    (Error occurred at PCI memory address %x.)\n",
-+		printk(KERN_WARNING "    (Error occurred at PCI memory address %x.)\n",
- 		       (stat0 & ~IOC_P_NBR));
+ 		if (hose) {
+-			printk("Console graphics on hose %d\n", hose->index);
++			printk(KERN_INFO "Console graphics on hose %d\n", hose->index);
+ 			pci_vga_hose = hose;
+ 		}
  	}
- 	if (stat0 & IOC_LOST) {
--		printk("    Other PCI errors occurred simultaneously.\n");
-+		printk(KERN_WARNING "    Other PCI errors occurred simultaneously.\n");
+@@ -426,7 +426,7 @@ marvel_specify_io7(char *str)
+ 	do {
+ 		pid = simple_strtoul(str, &pchar, 0);
+ 		if (pchar != str) {
+-			printk("User-specified IO7 at PID %lu\n", pid);
++			printk(KERN_INFO "User-specified IO7 at PID %lu\n", pid);
+ 			io7 = alloc_io7(pid);
+ 			if (io7) marvel_init_io7(io7);
+ 		}
+@@ -759,7 +759,7 @@ marvel_ioremap(unsigned long addr, unsig
+ 		    baddr += PAGE_SIZE, vaddr += PAGE_SIZE) {
+ 			pfn = ptes[baddr >> PAGE_SHIFT];
+ 			if (!(pfn & 1)) {
+-				printk("ioremap failed... pte not valid...\n");
++				printk(KERN_WARNING "ioremap failed... pte not valid...\n");
+ 				vfree(area->addr);
+ 				return NULL;
+ 			}
+@@ -768,7 +768,7 @@ marvel_ioremap(unsigned long addr, unsig
+ 			if (__alpha_remap_area_pages(vaddr,
+ 						     pfn << PAGE_SHIFT, 
+ 						     PAGE_SIZE, 0)) {
+-				printk("FAILED to map...\n");
++				printk(KERN_WARNING "FAILED to map...\n");
+ 				vfree(area->addr);
+ 				return NULL;
+ 			}
+@@ -1002,7 +1002,7 @@ marvel_agp_configure(alpha_agp_info *agp
+ 		 * Don't know what this PLL setting is, take the requested
+ 		 * rate, but warn the user.
+ 		 */
+-		printk("%s: unknown PLL setting RNGB=%lx (PLL6_CTL=%016lx)\n",
++		printk(KERN_INFO "%s: unknown PLL setting RNGB=%lx (PLL6_CTL=%016lx)\n",
+ 		       __FUNCTION__, IO7_PLL_RNGB(agp_pll), agp_pll);
+ 		break;
  	}
- }
+@@ -1011,7 +1011,7 @@ marvel_agp_configure(alpha_agp_info *agp
+ 	 * Set the new rate, if necessary.
+ 	 */
+ 	if (new_rate) {
+-		printk("Requested AGP Rate %dX not compatible "
++		printk(KERN_INFO "Requested AGP Rate %dX not compatible "
+ 		       "with PLL setting - using %dX\n",
+ 		       agp->mode.bits.rate,
+ 		       new_rate);
+@@ -1019,7 +1019,7 @@ marvel_agp_configure(alpha_agp_info *agp
+ 		agp->mode.bits.rate = new_rate;
+ 	}
+ 		
+-	printk("Enabling AGP on hose %d: %dX%s RQ %d\n", 
++	printk(KERN_INFO "Enabling AGP on hose %d: %dX%s RQ %d\n", 
+ 	       agp->hose->index, agp->mode.bits.rate, 
+ 	       agp->mode.bits.sba ? " - SBA" : "", agp->mode.bits.rq);
  
-@@ -482,12 +482,12 @@ lca_clock_print(void)
+@@ -1053,13 +1053,13 @@ marvel_agp_translate(alpha_agp_info *agp
  
-         pmr_reg = LCA_READ_PMR;
+ 	if (addr < agp->aperture.bus_base ||
+ 	    addr >= agp->aperture.bus_base + agp->aperture.size) {
+-		printk("%s: addr out of range\n", __FUNCTION__);
++		printk(KERN_WARNING "%s: addr out of range\n", __FUNCTION__);
+ 		return -EINVAL;
+ 	}
  
--        printk("Status of clock control:\n");
--        printk("\tPrimary clock divisor\t0x%lx\n", LCA_GET_PRIMARY(pmr_reg));
--        printk("\tOverride clock divisor\t0x%lx\n", LCA_GET_OVERRIDE(pmr_reg));
--        printk("\tInterrupt override is %s\n",
-+        printk(KERN_INFO "Status of clock control:\n");
-+        printk(KERN_INFO "\tPrimary clock divisor\t0x%lx\n", LCA_GET_PRIMARY(pmr_reg));
-+        printk(KERN_INFO "\tOverride clock divisor\t0x%lx\n", LCA_GET_OVERRIDE(pmr_reg));
-+        printk(KERN_INFO "\tInterrupt override is %s\n",
- 	       (pmr_reg & LCA_PMR_INTO) ? "on" : "off"); 
--        printk("\tDMA override is %s\n",
-+        printk(KERN_INFO "\tDMA override is %s\n",
- 	       (pmr_reg & LCA_PMR_DMAO) ? "on" : "off"); 
+ 	pte = aper->arena->ptes[baddr >> PAGE_SHIFT];
+ 	if (!(pte & 1)) {
+-		printk("%s: pte not valid\n", __FUNCTION__);
++		printk(KERN_WARNING "%s: pte not valid\n", __FUNCTION__);
+ 		return -EINVAL;
+ 	} 
+ 	return (pte >> 1) << PAGE_SHIFT;
+@@ -1109,7 +1109,7 @@ marvel_agp_info(void)
+ 	if (!hose || !hose->sg_pci)
+ 		return NULL;
  
- }
+-	printk("MARVEL - using hose %d as AGP\n", hose->index);
++	printk(KERN_INFO "MARVEL - using hose %d as AGP\n", hose->index);
+ 
+ 	/* 
+ 	 * Get the csrs from the hose.
 
 
---===============64518783032320437==
+--===============50718458363776886==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -103,4 +150,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64518783032320437==--
+--===============50718458363776886==--
