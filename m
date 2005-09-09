@@ -1,48 +1,62 @@
 From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Fri, 09 Sep 2005 07:51:31 +0000
-Subject: Re: [KJ] [PATCH] printk : arch/alpha/kernel/core_lca.c
-Message-Id: <20050909075131.GA31634@mipter.zuzino.mipt.ru>
+Date: Fri, 09 Sep 2005 07:58:22 +0000
+Subject: Re: [KJ] [PATCH] printk : arch/alpha/kernel/core_marvel.c
+Message-Id: <20050909075822.GB31634@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62840167374388223=="
+Content-Type: multipart/mixed; boundary="===============56655041350066471=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050908070849.GB26072@rhum.iomeda.fr>
 In-Reply-To: <20050908070849.GB26072@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============62840167374388223==
+--===============56655041350066471==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Sep 08, 2005 at 10:47:08AM +0200, Christophe Lucas wrote:
+On Thu, Sep 08, 2005 at 10:49:11AM +0200, Christophe Lucas wrote:
 > printk() calls should include appropriate KERN_* constant.
 
-> --- linux-2.6.13.orig/arch/alpha/kernel/core_lca.c
-> +++ linux-2.6.13/arch/alpha/kernel/core_lca.c
-> @@ -334,23 +334,23 @@ lca_init_arch(void)
->  static void
->  mem_error(unsigned long esr, unsigned long ear)
->  {
-> -	printk("    %s %s error to %s occurred at address %x\n",
-> +	printk(KERN_WARNING "    %s %s error to %s occurred at address %x\n",
+> --- linux-2.6.13.orig/arch/alpha/kernel/core_marvel.c
+> +++ linux-2.6.13/arch/alpha/kernel/core_marvel.c
+> @@ -759,7 +759,7 @@ marvel_ioremap(unsigned long addr, unsig
+>  		    baddr += PAGE_SIZE, vaddr += PAGE_SIZE) {
+>  			pfn = ptes[baddr >> PAGE_SHIFT];
+>  			if (!(pfn & 1)) {
+> -				printk("ioremap failed... pte not valid...\n");
+> +				printk(KERN_WARNING "ioremap failed... pte not valid...\n");
+>  				vfree(area->addr);
+>  				return NULL;
+>  			}
+> @@ -768,7 +768,7 @@ marvel_ioremap(unsigned long addr, unsig
+>  			if (__alpha_remap_area_pages(vaddr,
+>  						     pfn << PAGE_SHIFT, 
+>  						     PAGE_SIZE, 0)) {
+> -				printk("FAILED to map...\n");
+> +				printk(KERN_WARNING "FAILED to map...\n");
+>  				vfree(area->addr);
+>  				return NULL;
+>  			}
+> @@ -1053,13 +1053,13 @@ marvel_agp_translate(alpha_agp_info *agp
+>  
+>  	if (addr < agp->aperture.bus_base ||
+>  	    addr >= agp->aperture.bus_base + agp->aperture.size) {
+> -		printk("%s: addr out of range\n", __FUNCTION__);
+> +		printk(KERN_WARNING "%s: addr out of range\n", __FUNCTION__);
+>  		return -EINVAL;
+>  	}
+>  
+>  	pte = aper->arena->ptes[baddr >> PAGE_SHIFT];
+>  	if (!(pte & 1)) {
+> -		printk("%s: pte not valid\n", __FUNCTION__);
+> +		printk(KERN_WARNING "%s: pte not valid\n", __FUNCTION__);
+>  		return -EINVAL;
+>  	} 
+>  	return (pte >> 1) << PAGE_SHIFT;
 
-Looks like these should be printed with KERN_ERR.
-
-> -		printk("    A b-cache tag parity error was detected.\n");
-> +		printk(KERN_WARNING "    A b-cache tag parity error was detected.\n");
-
-> -		printk("    Several other correctable errors occurred.\n");
-> +		printk(KERN_WARNING "    Several other correctable errors occurred.\n");
-
-> -		printk("    Several other uncorrectable errors occurred.\n");
-> +		printk(KERN_WARNING "    Several other uncorrectable errors occurred.\n");
-
-> @@ -372,16 +372,16 @@ ioc_error(__u32 stat0, __u32 stat1)
-
-> -	printk("    %s initiated PCI %s cycle to address %x"
-> +	printk(KERN_WARNING "    %s initiated PCI %s cycle to address %x"
+Guess, these deserve KERN_ERR too.
 
 
---===============62840167374388223==
+--===============56655041350066471==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62840167374388223==--
+--===============56655041350066471==--
