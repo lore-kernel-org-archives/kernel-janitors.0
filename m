@@ -1,39 +1,62 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 23 Sep 2005 10:40:00 +0000
-Subject: [KJ] [PATCH] printk : arch/alpha/kernel/smc37c93x.c
-Message-Id: <20050923104000.GK10553@rhum.iomeda.fr>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sat, 10 Sep 2005 12:21:13 +0000
+Subject: [KJ] [PATCH 4/4] drivers/video: Replace custom macro with isdigit()
+Message-Id: <20050910122113.GE1218@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============43980039835366735=="
+Content-Type: multipart/mixed; boundary="===============34799739861661205=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20050908070849.GB26072@rhum.iomeda.fr>
-In-Reply-To: <20050908070849.GB26072@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============43980039835366735==
+--===============34799739861661205==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Description:
-printk() calls should include appropriate KERN_* constant.
+Replace the custom CHAR_IS_NUM() macro with isdigit() from
+<linux/ctype.h>
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Index: linux-2.6.14-rc2/arch/alpha/kernel/smc37c93x.c
-===================================================================
---- linux-2.6.14-rc2.orig/arch/alpha/kernel/smc37c93x.c
-+++ linux-2.6.14-rc2/arch/alpha/kernel/smc37c93x.c
-@@ -265,7 +265,7 @@ int __init SMC93x_Init(void)
- #endif
- 		SMCRunState(SMCUltraBase);
- 		local_irq_restore(flags);
--		printk("SMC FDC37C93X Ultra I/O Controller found @ 0x%lx\n",
-+		printk(KERN_INFO "SMC FDC37C93X Ultra I/O Controller found @ 0x%lx\n",
- 		       SMCUltraBase);
- 		return 1;
+---
+
+ drivers/video/pm3fb.c |    3 ++-
+ include/video/pm3fb.h |    3 ---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff -urpN -X dontdiff linux-2.6.13/drivers/video/pm3fb.c linux-2.6.13~macro_removal/drivers/video/pm3fb.c
+--- linux-2.6.13/drivers/video/pm3fb.c	2005-08-29 01:41:01.000000000 +0200
++++ linux-2.6.13~macro_removal/drivers/video/pm3fb.c	2005-09-10 12:38:31.000000000 +0200
+@@ -67,6 +67,7 @@
+ #include <linux/init.h>
+ #include <linux/pci.h>
+ #include <linux/ioport.h>
++#include <linux/ctype.h>
+ 
+ #include <video/fbcon.h>
+ #include <video/fbcon-mfb.h>
+@@ -2594,7 +2595,7 @@ static char *pm3fb_boardnum_setup(char *
+ {
+ 	char *next;
+ 
+-	if (!(CHAR_IS_NUM(options[0]))) {
++	if (!(isdigit(options[0]))) {
+ 		(*bn) = 0;
+ 		return (options);
  	}
+diff -urpN -X dontdiff linux-2.6.13/include/video/pm3fb.h linux-2.6.13~macro_removal/include/video/pm3fb.h
+--- linux-2.6.13/include/video/pm3fb.h	2005-08-29 01:41:01.000000000 +0200
++++ linux-2.6.13~macro_removal/include/video/pm3fb.h	2005-09-10 12:38:31.000000000 +0200
+@@ -1142,9 +1142,6 @@
+ /* do we want accelerated console  */
+ #define PM3FB_USE_ACCEL 1
+ 
+-/* useful ? */
+-#define CHAR_IS_NUM(a)  ((((a) >= '0') && ((a) <= '9')) ? 1 : 0)
+-
+ /* for driver debugging ONLY */
+ /* 0 = assert only, 1 = error, 2 = info, 3+ = verbose */
+ /* define PM3FB_MASTER_DEBUG 1 */
 
-
---===============43980039835366735==
+--===============34799739861661205==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============43980039835366735==--
+--===============34799739861661205==--
