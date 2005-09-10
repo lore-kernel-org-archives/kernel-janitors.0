@@ -1,89 +1,59 @@
-From: Doctor <espel@zipolite.com>
-Date: Fri, 23 Sep 2005 15:36:25 +0000
-Subject: [KJ] Pharmaceutical revolution
-Message-Id: <7A09DHIJ4B6H9LI9@zipolite.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Sat, 10 Sep 2005 12:13:29 +0000
+Subject: [KJ] [PATCH 1/4] arch/i386: Replace custom macro with isdigit()
+Message-Id: <20050910121329.GB1218@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70810531261795839=="
+Content-Type: multipart/mixed; boundary="===============91304963799248151=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============70810531261795839==
-Content-Type: multipart/alternative;
-    boundary="----------=_1127489851-24652-10"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1127489851-24652-10
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+--===============91304963799248151==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Imitarex $16.4
-Cialuis $3.7
-Sdoma $3
-Levirtra $3.3
-Vblagra $3.3
-Flqomax $2.2
-Vijoxx $4.75
-Amebien $2.2
-Vualium $0.97 
-Ulftram $0.78
-Xaqnax $1.09
-Mejridia $2.2  
+Replace the custom is_digit() macro with isdigit() from <linux/ctype.h>
 
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-* we guarantee 100% top-quality of the product we offer 
-* we offer a money-back guarantee in case the product doesn't work for you or you may be somehow dissatisfied by its performance 
-* we've efficiently streamlined our service, letting you buy from us in a very discreet, non-embarrassing and hassle-free manner 
+---
 
-our website
-http://upradecateg.com/?GFSMKDWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
+ arch/i386/kernel/reboot.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
-___
-With best regards,
-Online Pharmaceuticals
+diff -urpN -X dontdiff linux-2.6.13/arch/i386/kernel/reboot.c linux-2.6.13~macro_removal/arch/i386/kernel/reboot.c
+--- linux-2.6.13/arch/i386/kernel/reboot.c	2005-08-29 01:41:01.000000000 +0200
++++ linux-2.6.13~macro_removal/arch/i386/kernel/reboot.c	2005-09-10 12:38:31.000000000 +0200
+@@ -11,6 +11,7 @@
+ #include <linux/mc146818rtc.h>
+ #include <linux/efi.h>
+ #include <linux/dmi.h>
++#include <linux/ctype.h>
+ #include <asm/uaccess.h>
+ #include <asm/apic.h>
+ #include "mach_reboot.h"
+@@ -27,8 +28,6 @@ static int reboot_thru_bios;
+ 
+ #ifdef CONFIG_SMP
+ static int reboot_cpu = -1;
+-/* shamelessly grabbed from lib/vsprintf.c for readability */
+-#define is_digit(c)	((c) >= '0' && (c) <= '9')
+ #endif
+ static int __init reboot_setup(char *str)
+ {
+@@ -48,9 +47,9 @@ static int __init reboot_setup(char *str
+ 			break;
+ #ifdef CONFIG_SMP
+ 		case 's': /* "smp" reboot by executing reset on BSP or other CPU*/
+-			if (is_digit(*(str+1))) {
++			if (isdigit(*(str+1))) {
+ 				reboot_cpu = (int) (*(str+1) - '0');
+-				if (is_digit(*(str+2))) 
++				if (isdigit(*(str+2)))
+ 					reboot_cpu = reboot_cpu*10 + (int)(*(str+2) - '0');
+ 			}
+ 				/* we will leave sorting out the final value 
 
-------------=_1127489851-24652-10
-Content-Type: text/html
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-
-<html>
-<body>
-<p><strong>Vla<rndline[letters]>gra</strong> - $3.3 <br>
-  <strong>Levi<rndline[letters]>tra</strong> - $3.3<br>
-  <strong>Cia<rndline[letters]>lis</strong> - $3.7<br>
-  <strong>Imit<rndline[letters]>rex</strong> - $16.4<br>
-  <strong>Flom<rndline[letters]>ax</strong> - $2.2<br>
-  <strong>Ultr<rndline[letters]>am</strong> - $0.78<br>
-  <strong>Vio<rndline[letters]>xx</strong> - $4.75 <br>
-  <strong>Amb<rndline[letters]>ien</strong> - $2.2<br>
-  <strong>Val<rndline[letters]>ium</strong> - $0.97 <br>
-  <strong>Xana<rndline[letters]>x</strong> - $1.09<br>
-  <strong>So<rndline[letters]>ma</strong> - $3 <br>
-  <strong>Meri<rndline[letters]>dia</strong> - $2.2<br><br>
-  * <strong>we guarantee 100% top-quality of the product we offer </strong><br>
-  * <strong>we offer a money-back guarantee in case the product doesn't work for 
-  you or you may be somehow dissatisfied by its performance</strong> <br>
-  * <strong>we've efficiently streamlined our service, letting you buy from us 
-  in a very discreet, non-embarrassing and hassle-free manner</strong> <br>
-  <br>
-  <a href="http://upradecateg.com/?GFSMKDWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS"><strong>our site</strong></a><br>
-  __ <br>
-  With best regards,<br>
-  Online Pharmaceuticals </p>
-</body>
-</html>
-
-
-------------=_1127489851-24652-10--
-
---===============70810531261795839==
+--===============91304963799248151==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -94,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70810531261795839==--
+--===============91304963799248151==--
