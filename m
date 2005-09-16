@@ -1,100 +1,71 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 22 Sep 2005 09:23:38 +0000
-Subject: [KJ] printk : arch/alpha/kernel/core_tsunami.c
-Message-Id: <20050922092338.GJ3818@rhum.iomeda.fr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11400566127436518=="
+From: info@bxhrf.com
+Date: Fri, 16 Sep 2005 09:53:13 +0000
+Subject: お元気ですか?
+Message-Id: <20050916095313.10263.qmail@mail.bxhrf.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============11400566127436518==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+まだまだ暑い日が続いてますね。。。
 
-Description:
-printk() calls should include appropriate KERN_* constant.
+そこで仕事、育児の合間に遊んでいただこうっと観覧者全員に
+2.000円分のポイントプレゼント
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+さらに嬉しいお知らせ!電話認証して頂いた方はさらに※10.000円分※無料ポイント付き＼(^O^)／残暑厳しいけど出会いが欲しいよぉ〜って老若男女にとっては絶好の特典です。
 
+http://www.hipgal.net?num838
 
+夏も終わり秋が近づき残暑だけがうっとうしい季節ですが出会い求めの老若男女にはまだまだ終わらない夏・夏・夏!
 
-Index: linux-2.6.14-rc2/arch/alpha/kernel/core_tsunami.c
-===================================================================
---- linux-2.6.14-rc2.orig/arch/alpha/kernel/core_tsunami.c
-+++ linux-2.6.14-rc2/arch/alpha/kernel/core_tsunami.c
-@@ -211,7 +211,7 @@ tsunami_probe_read(volatile unsigned lon
- 	mcheck_taken(cpu) = 0;
- 	setipl(s);
- 
--	printk("dont_care == 0x%lx\n", dont_care);
-+	printk(KERN_INFO "dont_care == 0x%lx\n", dont_care);
- 
- 	return probe_result;
- }
-@@ -229,7 +229,7 @@ tsunami_probe_write(volatile unsigned lo
- 		int source = (TSUNAMI_cchip->misc.csr >> 29) & 7;
- 		TSUNAMI_cchip->misc.csr |= (1L << 28); /* ...and unlock NXS. */
- 		probe_result = 0;
--		printk("tsunami_probe_write: unit %d at 0x%016lx\n", source,
-+		printk(KERN_INFO "tsunami_probe_write: unit %d at 0x%016lx\n", source,
- 		       (unsigned long)vaddr);
- 	}
- 	if (probe_result)
-@@ -362,27 +362,27 @@ tsunami_init_arch(void)
- 	/* NXMs just don't matter to Tsunami--unless they make it
- 	   choke completely. */
- 	tmp = (unsigned long)(TSUNAMI_cchip - 1);
--	printk("%s: probing bogus address:  0x%016lx\n", FN, bogus_addr);
--	printk("\tprobe %s\n",
-+	printk(KERN_INFO "%s: probing bogus address:  0x%016lx\n", FN, bogus_addr);
-+	printk(KERN_INFO "\tprobe %s\n",
- 	       tsunami_probe_write((unsigned long *)bogus_addr)
- 	       ? "succeeded" : "failed");
- #endif /* NXM_MACHINE_CHECKS_ON_TSUNAMI */
- 
- #if 0
--	printk("%s: CChip registers:\n", FN);
--	printk("%s: CSR_CSC 0x%lx\n", FN, TSUNAMI_cchip->csc.csr);
--	printk("%s: CSR_MTR 0x%lx\n", FN, TSUNAMI_cchip.mtr.csr);
--	printk("%s: CSR_MISC 0x%lx\n", FN, TSUNAMI_cchip->misc.csr);
--	printk("%s: CSR_DIM0 0x%lx\n", FN, TSUNAMI_cchip->dim0.csr);
--	printk("%s: CSR_DIM1 0x%lx\n", FN, TSUNAMI_cchip->dim1.csr);
--	printk("%s: CSR_DIR0 0x%lx\n", FN, TSUNAMI_cchip->dir0.csr);
--	printk("%s: CSR_DIR1 0x%lx\n", FN, TSUNAMI_cchip->dir1.csr);
--	printk("%s: CSR_DRIR 0x%lx\n", FN, TSUNAMI_cchip->drir.csr);
--
--	printk("%s: DChip registers:\n");
--	printk("%s: CSR_DSC 0x%lx\n", FN, TSUNAMI_dchip->dsc.csr);
--	printk("%s: CSR_STR 0x%lx\n", FN, TSUNAMI_dchip->str.csr);
--	printk("%s: CSR_DREV 0x%lx\n", FN, TSUNAMI_dchip->drev.csr);
-+	printk(KERN_DEBUG "%s: CChip registers:\n", FN);
-+	printk(KERN_DEBUG "%s: CSR_CSC 0x%lx\n", FN, TSUNAMI_cchip->csc.csr);
-+	printk(KERN_DEBUG "%s: CSR_MTR 0x%lx\n", FN, TSUNAMI_cchip.mtr.csr);
-+	printk(KERN_DEBUG "%s: CSR_MISC 0x%lx\n", FN, TSUNAMI_cchip->misc.csr);
-+	printk(KERN_DEBUG "%s: CSR_DIM0 0x%lx\n", FN, TSUNAMI_cchip->dim0.csr);
-+	printk(KERN_DEBUG "%s: CSR_DIM1 0x%lx\n", FN, TSUNAMI_cchip->dim1.csr);
-+	printk(KERN_DEBUG "%s: CSR_DIR0 0x%lx\n", FN, TSUNAMI_cchip->dir0.csr);
-+	printk(KERN_DEBUG "%s: CSR_DIR1 0x%lx\n", FN, TSUNAMI_cchip->dir1.csr);
-+	printk(KERN_DEBUG "%s: CSR_DRIR 0x%lx\n", FN, TSUNAMI_cchip->drir.csr);
-+
-+	printk(KERN_DEBUG "%s: DChip registers:\n");
-+	printk(KERN_DEBUG "%s: CSR_DSC 0x%lx\n", FN, TSUNAMI_dchip->dsc.csr);
-+	printk(KERN_DEBUG "%s: CSR_STR 0x%lx\n", FN, TSUNAMI_dchip->str.csr);
-+	printk(KERN_DEBUG "%s: CSR_DREV 0x%lx\n", FN, TSUNAMI_dchip->drev.csr);
- #endif
- 	/* With multiple PCI busses, we play with I/O as physical addrs.  */
- 	ioport_resource.end = ~0UL;
+そこで※10.000円分※無料ポイント取得法は簡単な電話認証をしていただければ
+※10.000円分※無料ポイント取得完了です。不正な請求等は一切ございませんので
+ご安心下さい。又真剣に出会いを求めて頂く為の※10.000円分※無料ポイント
+サービスの為悪戯等の登録を防ぐ為でもありますのでご理解の程宜しくお願いします。
+http://www.hipgal.net?num838
 
 
---===============11400566127436518==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+◆◆◆更にご利用頂きますと男性には利用時の地域で出会いを求める女性利用者様(5)名
+にプロフを配信いたします。女性の方はその逆になります。注)配信の際は個人情報等は
+当然しっかりとガードさせて頂きますのでご安心下さい。◆◆◆
+http://www.hipgal.net?num838
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+　拒否はコチラ
+（refusal adress）
+　↓　↓　↓
+cancel@orange-r.net
+
+
+
+
+
+
+-------------------------------------------------------
+SF.Net email is sponsored by:
+Tame your development challenges with Apache's Geronimo App Server. 
+Download it for free - -and be entered to win a 42" plasma tv or your very
+own Sony(tm)PSP.  Click here to play: http://sourceforge.net/geronimo.php
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============11400566127436518==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
