@@ -1,71 +1,53 @@
-From: info@bxhrf.com
-Date: Fri, 16 Sep 2005 09:53:13 +0000
-Subject: お元気ですか?
-Message-Id: <20050916095313.10263.qmail@mail.bxhrf.com>
+From: Lesley <Raman@thibodeau.com>
+Date: Sat, 17 Sep 2005 14:15:03 +0000
+Subject: [KJ] New Breed of Equity Traders
+Message-Id: <12506581304.13077497569@dsl-TN-053.245.247.61.touchtelindia.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============32296068493109376=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-まだまだ暑い日が続いてますね。。。
+--===============32296068493109376==
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-そこで仕事、育児の合間に遊んでいただこうっと観覧者全員に
-2.000円分のポイントプレゼント
+Investor Alert - WE HAVE A RUNNER - STOCK IS UP (98%) in 3 Trading Days !!!
 
-さらに嬉しいお知らせ!電話認証して頂いた方はさらに※10.000円分※無料ポイント付き＼(^O^)／残暑厳しいけど出会いが欲しいよぉ〜って老若男女にとっては絶好の特典です。
+SYMBOL: AXCP
+CURRENT PRICE: $4.75
+7 DAY TARGET:  $10.00
 
-http://www.hipgal.net?num838
+We Told Sep 13 at 2.40 to WATCH and now its $4.75 and
+we think it goes to $10.00 (!!!) on expected news this week...
 
-夏も終わり秋が近づき残暑だけがうっとうしい季節ですが出会い求めの老若男女にはまだまだ終わらない夏・夏・夏!
+===
+About Allixon International Corporation
 
-そこで※10.000円分※無料ポイント取得法は簡単な電話認証をしていただければ
-※10.000円分※無料ポイント取得完了です。不正な請求等は一切ございませんので
-ご安心下さい。又真剣に出会いを求めて頂く為の※10.000円分※無料ポイント
-サービスの為悪戯等の登録を防ぐ為でもありますのでご理解の程宜しくお願いします。
-http://www.hipgal.net?num838
+Allixon is a leading provider of RFID Middleware and Mobile Internet solutions
+for device computing. Allixon combines its products, expertise, partnerships
+and integration capability into solutions for a wide range
+of device computing applications, including RFID Middleware and m-banking solution.
+Allixon's products based on ubiquitous technologies direct companies looking
+to tap into the wealth of data captured by networked devices such
+as RFID readers or handhelds to extend the quality of information
+to any device where they want.
+===
 
-
-◆◆◆更にご利用頂きますと男性には利用時の地域で出会いを求める女性利用者様(5)名
-にプロフを配信いたします。女性の方はその逆になります。注)配信の際は個人情報等は
-当然しっかりとガードさせて頂きますのでご安心下さい。◆◆◆
-http://www.hipgal.net?num838
-
-
-
-
-
-
-
-
-
+Big news expected.
+This stock will explode!
+Do not wait until it is too late!!!
 
 
 
+--===============32296068493109376==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-
-
-
-
-
-
-　拒否はコチラ
-（refusal adress）
-　↓　↓　↓
-cancel@orange-r.net
-
-
-
-
-
-
--------------------------------------------------------
-SF.Net email is sponsored by:
-Tame your development challenges with Apache's Geronimo App Server. 
-Download it for free - -and be entered to win a 42" plasma tv or your very
-own Sony(tm)PSP.  Click here to play: http://sourceforge.net/geronimo.php
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============32296068493109376==--
