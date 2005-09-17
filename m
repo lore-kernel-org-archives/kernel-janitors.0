@@ -1,36 +1,53 @@
-From: Owen <nonnumerical@littlecountryvillage.com>
-Date: Mon, 05 Sep 2005 05:20:53 +0000
-Subject: [KJ] Take a Look at This Micro-Cap
-Message-Id: <9708150660.200509057967@caching1-pnc2.asianet.co.th>
+From: Dolores <airplanes@muhonen.com>
+Date: Sat, 17 Sep 2005 14:15:03 +0000
+Subject: [KJ] Precision MicroCap Report
+Message-Id: <7016237111.11877966043@dsl-TN-053.245.247.61.touchtelindia.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============35538613541201114=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Worldwide Biotech and Pharmaceutical Company, a biotech company, 
-engages in the development, manufacture, and marketing of diagnostic reagents. 
-These diagnostic reagents include hepatitis C viruses, medicines, vaccines, 
-and gene carriers. The company is based in Sarasota, Florida.
+--===============35538613541201114==
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-Symbol: WWBP.OB
-Price: $2.30
-5-10 Day's Target: $8-10
+Investor Alert - WE HAVE A RUNNER - STOCK IS UP (98%) in 3 Trading Days !!!
 
-Buy: Strong
-Expectations: 300-500%
+SYMBOL: AXCP
+CURRENT PRICE: $4.75
+7 DAY TARGET:  $10.00
 
-When this Stock moves... WATCH OUT! ... This is your chance to get in 
-while it is still low. WWBP is a high growth issue and should be purchased 
-by stock traders and those that can afford to make quick money 
-on these fast moving issues. This is your chance to get your hands 
-on one of these fast moving stocks and take short term prof1ts. 
-This stock could reach $10.00 in five to ten trading days. 
+We Told Sep 13 at 2.40 to WATCH and now its $4.75 and
+we think it goes to $10.00 (!!!) on expected news this week...
 
-Big watch in play this Tuesday morning!
-Put WWBP on your radar's now.
+===
+About Allixon International Corporation
+
+Allixon is a leading provider of RFID Middleware and Mobile Internet solutions
+for device computing. Allixon combines its products, expertise, partnerships
+and integration capability into solutions for a wide range
+of device computing applications, including RFID Middleware and m-banking solution.
+Allixon's products based on ubiquitous technologies direct companies looking
+to tap into the wealth of data captured by networked devices such
+as RFID readers or handhelds to extend the quality of information
+to any device where they want.
+===
+
+Big news expected.
+This stock will explode!
+Do not wait until it is too late!!!
+
+
+
+--===============35538613541201114==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============35538613541201114==--
