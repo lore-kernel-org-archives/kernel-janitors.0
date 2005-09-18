@@ -1,40 +1,29 @@
-From: Jesse Millan <jesse.millan@gmail.com>
-Date: Sun, 18 Sep 2005 02:27:16 +0000
-Subject: [KJ] Holding off patches 6 - 20 for a bit
-Message-Id: <E80C9DA8-1015-42E3-8B4F-7A9D140B36D2@gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============025901307484226255=="
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sun, 18 Sep 2005 02:43:26 +0000
+Subject: Re: [KJ] Holding off patches 6 - 20 for a bit
+Message-Id: <200509180443.27040.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E80C9DA8-1015-42E3-8B4F-7A9D140B36D2@gmail.com>
+In-Reply-To: <E80C9DA8-1015-42E3-8B4F-7A9D140B36D2@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============025901307484226255==
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; delsp=yes; format=flowed
+On S=FCnndag 18 September 2005 04:27, Jesse Millan wrote:
+>=20
+> I'll wait to see if there is any feedback before sending the rest.
 
+Could you explain why you think your patches are a good idea? Defining
+an extra macro that is only used in a single well-known place appears
+a bit pointless to me. Also, looking through the existing drivers,
+less than one out of ten is currently doing it this way.
 
-I'll wait to see if there is any feedback before sending the rest.
+IMHO, we should rather convert those to use the MODULE_*() macros
+directly.
 
---
-Jesse Millan
-CNS Unix Team
-Portland State University
-Phone: (503) 725-9151
-Homepage: www.system-calls.com
-
-The question of whether a computer can think is no more interesting  
-than the question of whether a submarine can swim. ~E.W. Dijkstra
-
-
-
---===============025901307484226255==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+	Arnd <><
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============025901307484226255==--
