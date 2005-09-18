@@ -1,100 +1,78 @@
-From: Jesse Millan <jesse.millan@gmail.com>
-Date: Tue, 27 Sep 2005 01:17:23 +0000
-Subject: Re: [KJ] [PATCH][RESEND] BusLogic: eliminate deprecated
-Message-Id: <B0022A7C-236E-44F3-911C-9D3C6EF111D3@gmail.com>
+From: "Jephtha Stogner" <jephthauixqloglg@channel2000.com>
+Date: Sun, 18 Sep 2005 17:39:22 +0000
+Subject: [KJ] Re: Very G ood
+Message-Id: <005a01c5bc77$e7710100$ed82a8c0@destroy>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6800045129627299=="
+Content-Type: multipart/mixed; boundary="===============38977646112345932=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <70805EB9-1C7E-4413-B2DC-1D53C88B1BA7@gmail.com>
-In-Reply-To: <70805EB9-1C7E-4413-B2DC-1D53C88B1BA7@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============6800045129627299==
-Content-Type: text/plain; charset=US-ASCII; delsp=yes; format=flowed
-Content-Transfer-Encoding: 7bit
+This is a multi-part message in MIME format...
 
+--===============38977646112345932==
+Content-Type: multipart/alternative;
+    boundary="----------=_1127065278-26007-628"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-On Sep 25, 2005, at 1:44 AM, Alexey Dobriyan wrote:
+This is a multi-part message in MIME format...
 
-> On Sat, Sep 24, 2005 at 07:13:15PM -0700, Jesse Millan wrote:
->
->> This patch eliminates the deprecated calls to check_region(). It's
->> replaced with request_region(). New version is  a little more wordy
->> due to the fact that requst_region() cannot be easily compacted into
->> the ? operator.
->>
->
-> I _was_ low on coffee:
->
->
->> -    if (BusLogic_ProbeOptions.LimitedProbeISA ?  
->> BusLogic_ProbeOptions.Probe330 : check_region(0x330,  
->> BusLogic_MultiMasterAddressCount) == 0)
->> -        BusLogic_AppendProbeAddressISA(0x330);
->> +    if(BusLogic_ProbeOptions.LimitedProbeISA) {
->> +        if(BusLogic_ProbeOptions.Probe330)
->> +            BusLogic_AppendProbeAddressISA(0x330);
->> +    } else {
->> +        if(request_region(0x330,  
->> BusLogic_MultiMasterAddressCount, "BusLogic")) {
->> +            release_region(0x330, BusLogic_MultiMasterAddressCount)
->> +            BusLogic_AppendProbeAddressISA(0x330);
->> +        }
->> +    }
->>
->
-> You removed check_region(), yes. You haven't made the code race  
-> free and
-> that was the rationale for check_region() deprecating.
->
->     if (request_region()) {
->         release_region();
->         ...
->     }
->
-> modulo return values is equivalent to
->
->     if (check_region() == 0) {
->         ...
->     }
->
-> Ports that were free will stay free after your combo. Ports that were
-> busy will stay busy.
->
+------------=_1127065278-26007-628
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-And port addresses that are added to the "list" may later be later  
-unavailable (like when you get around to reading the list).
+CPUXLCAVMV
+erlaeImIeAlotnvAbArL
+epraiLiGiI
+beaxtIeRdU
+rexciam raSnAiaM
+$1 $3$3
+21 .33 75
+http://www.hedartsant.com dream was precisely Sawa Potapovich, the actor, a=
+nd he got mixed up in it around him had vanished altogether. The hated city=
+ died, and he alone is
 
-> So, a window for races is still in place - before "check_region" and
-> final request_region() .
->
-> Agree?
+------------=_1127065278-26007-628
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-I agree that in order to get around some of these issues there would  
-need to be some significant restructuring of the code.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DCourier>
+<DIV DEFANGED_style=3D"FLOAT: left;">C<BR>P<BR>U<BR>X<BR>L<BR>C<BR>A<BR>V<B=
+R>M<BR>V</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">e<BR>r<BR>l<BR>a<BR>e<BR>I<BR>m<BR>I<B=
+R>e<BR>A</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">l<BR>o<BR>t<BR>n<BR>v<BR>A<BR>b<BR>A<B=
+R>r<BR>L</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">e<BR>p<BR>r<BR>a<BR>i<BR>L<BR>i<BR>G<B=
+R>i<BR>I</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">b<BR>e<BR>a<BR>x<BR>t<BR>I<BR>e<BR>R<B=
+R>d<BR>U</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;">rex<BR>cia<BR>m<BR> <BR>ra<BR>S<BR>n<B=
+R>A<BR>ia<BR>M</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;"><BR><BR> <BR> <BR><BR>$1<BR> <BR>$3<BR=
+><BR>$3</DIV>
+<DIV DEFANGED_style=3D"FLOAT: left;"><BR><BR> <BR> <BR> <BR>.21<BR> <BR>.33=
+<BR> <BR>.75</DIV>
+<DIV DEFANGED_style=3D"CLEAR: both">&nbsp;</DIV>
+<DIV><A href=3D"http://www.hedartsant.com">http://www.hedartsant.com</A></D=
+IV></FONT></DIV></BODY></HTML>
 
-You could also argue that the code has worked for a number of years  
-"as is" with check_region and would still work with request/release  
-region as well. The issues we are discussing were issues in the  
-driver from day 1.
+------------=_1127065278-26007-628--
 
->
->
-
-Hmm...
-
---
-Jesse Millan
-CNS Unix Team
-Portland State University
-Phone: (503) 725-9151
-Homepage: www.system-calls.com
-
-2 + 2 = 5 (For extremely large values of 2)
-
-
-
---===============6800045129627299==
+--===============38977646112345932==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -105,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============6800045129627299==--
+--===============38977646112345932==--
