@@ -1,65 +1,61 @@
-From: "Kyllikki Widener" <kyllikkiwidener@celular.com.br>
-Date: Thu, 01 Sep 2005 16:56:24 +0000
-Subject: [KJ] n1 well ,you never know
-Message-Id: <003501c5af16$15cfac00$50b0a8c0@foolproof>
+From: Jesse Millan <jesse.millan@gmail.com>
+Date: Tue, 20 Sep 2005 19:29:48 +0000
+Subject: [KJ] [PATCH] specialix: eliminate deprecated check_region() call
+Message-Id: <25465C7B-EEA6-4184-869C-A43AB6079D2F@gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74639333952999865=="
+Content-Type: multipart/mixed; boundary="Apple-Mail-5-761016462"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
---===============74639333952999865==
-Content-Type: multipart/alternative;
-    boundary="----------=_1125593946-22752-493"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1125593946-22752-493
+--Apple-Mail-5-761016462
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	charset=US-ASCII;
+	delsp=yes;
+	format=flowed
 
-He has been watching youerstand this?&nbsp;struggle these last seven years.=
- Und
 
-------------=_1125593946-22752-493
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Eliminate deprecated call to check_region(). Call is replaced with  
+request_region().
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial>
-<TABLE border=3D0 cellSpacing=3D0 cellPadding=3D0>
-  <TR vAlign=3Dbottom>
-    <TD rowSpan=3D2>He has been watching you</TD>
-    <TD></TD>
-    <TD rowSpan=3D2>erstand this?</TD>
-    <TD></TD>
-  </TR>
-  <TR>
-    <TD>&nbsp;struggle these last seven years. Und</TD></TR></TABLE></FONT>=
-</DIV></FONT></DIV><DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial><A href=3D"http://www.vinylmusic.co.uk/redirect.php=
-?action=3Durl&goto=3Dwww.vinylmusic.co.uk/redirect.php%3faction=3Durl%26got=
-o=3Dnextermest%252ecom">see  it.</A></FONT></DIV>
-<DIV><FONT face=3DArial></FONT>&nbsp;</DIV></BODY></HTML>
 
-------------=_1125593946-22752-493--
+--Apple-Mail-5-761016462
+Content-Transfer-Encoding: 7bit
+Content-Type: application/octet-stream; x-unix-mode=0644;
+	name="deprecated_check_region_specialix.patch"
+Content-Disposition: attachment;
+	filename=deprecated_check_region_specialix.patch
 
---===============74639333952999865==
+
+Eliminate deprecated call to check_region(). Call is replaced with request_region().
+Signed-off-by: Jesse Millan <jesse.millan@gmail.com>
+---
+
+ drivers/char/specialix.c |    8 +++++++-
+ 1 files changed, 7 insertions(+), 1 deletion(-)
+
+diff -puN drivers/char/specialix.c~deprecated_check_region_specialix drivers/char/specialix.c
+--- linux-2.6.14-rc1/drivers/char/specialix.c~deprecated_check_region_specialix	2005-09-20 11:37:38.000000000 -0700
++++ linux-2.6.14-rc1-jessem/drivers/char/specialix.c	2005-09-20 11:39:41.000000000 -0700
+@@ -340,7 +340,13 @@ static inline void sx_wait_CCR_off(struc
+ 
+ static inline int sx_check_io_range(struct specialix_board * bp)
+ {
+-	return check_region (bp->base, SX_IO_SPACE);
++	if(!request_region(bp->base, SX_IO_SPACE, "specialix IO8+")) {
++		/* region busy */
++		return 1;
++	}
++	else {
++		return 0;
++	}
+ }
+ 
+ 
+_
+
+--Apple-Mail-5-761016462
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74639333952999865==--
+--Apple-Mail-5-761016462--
