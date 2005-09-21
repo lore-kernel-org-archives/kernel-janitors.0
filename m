@@ -1,115 +1,65 @@
-From: Jen <abrasions@eddieolson.com>
-Date: Thu, 22 Sep 2005 00:47:06 +0000
-Subject: [KJ] Are You  a Smart Investor?
-Message-Id: <5265034271.3814121800@cpe-67-11-237-7.satx.res.rr.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 21 Sep 2005 14:53:49 +0000
+Subject: [KJ] 2.6.14-rc2-kj1
+Message-Id: <20050921145349.GA1897@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8808194733987591=="
+Content-Type: multipart/mixed; boundary="===============57956337481307463=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org
 
---===============8808194733987591==
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+--===============57956337481307463==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-China World Trade Corporation Reports Record Earnings 
-Inside Breaking News For Investors 
-CHINA WORLD TRADE CORP. 
-Ready to Run 
-Is This One Ready to Explode Higher Move? 
-How Will it React To This News Being Released? 
-Good Luck and Succesful Trading. 
+2.6.14-rc2-kj1 aka "Affine Albatross" is out. You can grab it from
+http://coderock.org/kj/2.6.14-rc1-kj1/
 
-CWTD News coming stock is ready to rock Company has already 
-facilitated the money it need's to continue it's rapid growth 
+Full shortlog is at
+http://coderock.org/kj/2.6.14-rc2-kj1/shortlog
 
-***WATCH THIS ONE SEPT 22, AS WE KNOW MANY OF YOU 
-LIKE MOMENTUM AND EXCITEMENT***
+Merged
+------
+kernel_audit_c_fix_sparse_warnings___nocast_type.patch
+i386_reboot_c_replace_custom_macro_with_isdigit.patch
+remove_arch_arm26_boot_compressed_hw_bse_c.patch
 
-Timing  is everything!!!!! 
-SYMBOL: CWTD 
-(Ticker: CWTD) 
-Price: $2
-STATUS: (BUY) 
-RATING: 3-STAR
+New in this release
+-------------------
+Christoph Hellwig:
+  specialix: check_region/request_region related cleanups
 
-Good day to all broker's, Day Trader's and Investor's World stock report 
-has become famous with some great stock picks in the otc, small cap 
-market's!!! Here at World Stock Report we work on what we here 
-from the street. Rumor's circulating and keeping the focus 
-on the company's news. We pick our companies based on there 
-growth potential. We focus on stocks that have great potential 
-to move up in price.!!! While giving you liquitity. 
-HUGE PR campaign expected this week so grab as much as you can. 
+Christophe Lucas:
+  arch/alpha/kernel/*: use KERN_*
+  	two new files
 
-***PRESS RELEASE***PRESS RELEASE***PRESS RELEASE***PRESS RELEASE*** 
-China World Trade Corporation Reports Record Earnings 
-in the Second Quarter 2005 
+Dropped
+-------
+arm_sa1111_c_use_sizeof_pointer.patch
+	There was a discussion and much disagreement about sizeof(*p)
+	vs sizeof(struct foo) on linux-kernel (grep for "Russell King
+	sizeof").
+	
+	Net result #1: maintainer decides what to put into sizeof.
+	Net result #2: kernel janitors won't convert code to either
+		       form.
 
-China World Trade Corporation (CWTC) has established its business 
-in three distinct areas: the club and business centers throughout 
-major cities in China, business travel-related services, 
-and business value-added services. The Club and Business Center Division 
-is devoted to the building of the World Trade brand throughout China 
-via the opening and operating of business clubs in China's major, 
-positioning the CWTC to act as a platform to facilitate trade 
-between China and the world markets. The acquisition of CEO 
-Clubs China Limited ("CEO Clubs") in May 2004 further complements 
-CWTC's offerings by targeting high-level corporate executives 
-from premier companies. The Business Traveling Services Division, 
-New Generation, provides CWTC access to the rapidly growing 
-travel-related industry. New Generation is a pioneer and market leader 
-in the travel agency business through its strong network 
-of ticketing sales operations throughout Southern China. 
-The Business Value-Added Services Division focuses on value-added services 
-of credit cards, merchant-related business services, as well 
-as consultancy services to CWTC members and clients. 
-Guangdong World Trade Link Information Services Limited ("WTC Link"), 
-a subsidiary of CWTC, manages the Company's co-branded credit card project 
-and is an active provider of CRM solutions and services in China. 
+floppy_relocate_devfs_comment.patch
+	akpm() returned -ETOOTRIVIAL.
 
-THIS COMPANY IS DOING INCREDIBLE THINGS. THAY HAVE CASH AND HAVE MADE 
-GREAT STRATEGIC AQUISITIONS. CURRENT PRICE $1.99. THEY HAVE DROPPED 
-BIG NEW'S IN THE PAST. WHO'S TO SAY THEY DON'T HAVE ANOTHER BIG ONE. 
-We see them on the AMEX very shortly. 
+gt96100_stop_using_pci_find_device.patch
+	Should be converted to standart PCI API instead.
 
-Do this often enough, and your portfolio can double, even TRIPLE in value. 
+prism54_use_msleep.patch
+	Old patch to use msleep() instead of schedule_timeout(). netdev
+	tree switched to schedule_timeout_uninterruptible(). I'll wait
+	for API dust to settle.
 
-ds:
-Information within this email contains "forward looking statements" 
-within the meaning of Section 27A of the Securities Act of 1933 and 
-Section 21B of the Securities Exchange Act of 1934. Any statements that 
-express or involve discussions with respect to predictions, goals, 
-expectations, beliefs, plans, projections, objectives, assumptions or 
-future events or performance are not statements of historical fact and 
-may be "forward looking statements."
- 
-Forward looking statements are based on expectations, estimates and 
-projections at the time the statements are made that involve a number 
-of risks and uncertainties which could cause actual results or events 
-to differ materially from those presently anticipated. Forward looking 
-statements in this action may be identified through the use of words 
-such as: "projects", "foresee", "expects", "estimates," "believes," 
-"understands" "will", "anticipates," or that by statements indicating 
-certain actions "may," "could," or "might" occur. All information 
-provided within this email pertaining to investing, stocks,securities 
-must be understood as information provided and not investment advice. 
-Emerging Equity Alert advises all readers and subscribers to seek 
-advice from a registered professional securities representative before 
-deciding to trade in stocks featured within this email. None of the 
-material within this report shall be construed as any kind of 
-investment advice.
- 
-In compliance with Section 17(b), we disclose the holding of shares of 
-chms prior to the publication of this report. Be aware of an inherent 
-conflict of interest resulting from such holdings due to our intent 
-to profit from the liquidation of these shares. Shares may be sold 
-at any time, even after positive statements have been made regarding 
-the above company.
+stir4200_use_set_current_state.patch
+	Ditto.
 
 
-
-
---===============8808194733987591==
+--===============57956337481307463==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -120,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8808194733987591==--
+--===============57956337481307463==--
