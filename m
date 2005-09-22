@@ -1,115 +1,110 @@
-From: Ann <amoebae@manofwar.com>
-Date: Thu, 22 Sep 2005 00:47:06 +0000
-Subject: [KJ] The Touchdown Equity Report
-Message-Id: <1291665586.4074459607@cpe-67-11-237-7.satx.res.rr.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 22 Sep 2005 09:22:41 +0000
+Subject: [KJ] printk : arch/alpha/kernel/core_titan.c
+Message-Id: <20050922092241.GI3818@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92206498158170336=="
+Content-Type: multipart/mixed; boundary="===============78930371528695875=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92206498158170336==
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+--===============78930371528695875==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-China World Trade Corporation Reports Record Earnings 
-Inside Breaking News For Investors 
-CHINA WORLD TRADE CORP. 
-Ready to Run 
-Is This One Ready to Explode Higher Move? 
-How Will it React To This News Being Released? 
-Good Luck and Succesful Trading. 
+Description:
+printk() calls should include appropriate KERN_* constant.
 
-CWTD News coming stock is ready to rock Company has already 
-facilitated the money it need's to continue it's rapid growth 
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-***WATCH THIS ONE SEPT 22, AS WE KNOW MANY OF YOU 
-LIKE MOMENTUM AND EXCITEMENT***
 
-Timing  is everything!!!!! 
-SYMBOL: CWTD 
-(Ticker: CWTD) 
-Price: $2
-STATUS: (BUY) 
-RATING: 3-STAR
 
-Good day to all broker's, Day Trader's and Investor's World stock report 
-has become famous with some great stock picks in the otc, small cap 
-market's!!! Here at World Stock Report we work on what we here 
-from the street. Rumor's circulating and keeping the focus 
-on the company's news. We pick our companies based on there 
-growth potential. We focus on stocks that have great potential 
-to move up in price.!!! While giving you liquitity. 
-HUGE PR campaign expected this week so grab as much as you can. 
-
-***PRESS RELEASE***PRESS RELEASE***PRESS RELEASE***PRESS RELEASE*** 
-China World Trade Corporation Reports Record Earnings 
-in the Second Quarter 2005 
-
-China World Trade Corporation (CWTC) has established its business 
-in three distinct areas: the club and business centers throughout 
-major cities in China, business travel-related services, 
-and business value-added services. The Club and Business Center Division 
-is devoted to the building of the World Trade brand throughout China 
-via the opening and operating of business clubs in China's major, 
-positioning the CWTC to act as a platform to facilitate trade 
-between China and the world markets. The acquisition of CEO 
-Clubs China Limited ("CEO Clubs") in May 2004 further complements 
-CWTC's offerings by targeting high-level corporate executives 
-from premier companies. The Business Traveling Services Division, 
-New Generation, provides CWTC access to the rapidly growing 
-travel-related industry. New Generation is a pioneer and market leader 
-in the travel agency business through its strong network 
-of ticketing sales operations throughout Southern China. 
-The Business Value-Added Services Division focuses on value-added services 
-of credit cards, merchant-related business services, as well 
-as consultancy services to CWTC members and clients. 
-Guangdong World Trade Link Information Services Limited ("WTC Link"), 
-a subsidiary of CWTC, manages the Company's co-branded credit card project 
-and is an active provider of CRM solutions and services in China. 
-
-THIS COMPANY IS DOING INCREDIBLE THINGS. THAY HAVE CASH AND HAVE MADE 
-GREAT STRATEGIC AQUISITIONS. CURRENT PRICE $1.99. THEY HAVE DROPPED 
-BIG NEW'S IN THE PAST. WHO'S TO SAY THEY DON'T HAVE ANOTHER BIG ONE. 
-We see them on the AMEX very shortly. 
-
-Do this often enough, and your portfolio can double, even TRIPLE in value. 
-
-ds:
-Information within this email contains "forward looking statements" 
-within the meaning of Section 27A of the Securities Act of 1933 and 
-Section 21B of the Securities Exchange Act of 1934. Any statements that 
-express or involve discussions with respect to predictions, goals, 
-expectations, beliefs, plans, projections, objectives, assumptions or 
-future events or performance are not statements of historical fact and 
-may be "forward looking statements."
+Index: linux-2.6.14-rc2/arch/alpha/kernel/core_titan.c
+===================================================================
+--- linux-2.6.14-rc2.orig/arch/alpha/kernel/core_titan.c
++++ linux-2.6.14-rc2/arch/alpha/kernel/core_titan.c
+@@ -374,7 +374,7 @@ titan_init_vga_hose(void)
+ 		}
  
-Forward looking statements are based on expectations, estimates and 
-projections at the time the statements are made that involve a number 
-of risks and uncertainties which could cause actual results or events 
-to differ materially from those presently anticipated. Forward looking 
-statements in this action may be identified through the use of words 
-such as: "projects", "foresee", "expects", "estimates," "believes," 
-"understands" "will", "anticipates," or that by statements indicating 
-certain actions "may," "could," or "might" occur. All information 
-provided within this email pertaining to investing, stocks,securities 
-must be understood as information provided and not investment advice. 
-Emerging Equity Alert advises all readers and subscribers to seek 
-advice from a registered professional securities representative before 
-deciding to trade in stocks featured within this email. None of the 
-material within this report shall be construed as any kind of 
-investment advice.
+ 		if (hose) {
+-			printk("Console graphics on hose %d\n", hose->index);
++			printk(KERN_INFO "Console graphics on hose %d\n", hose->index);
+ 			pci_vga_hose = hose;
+ 		}
+ 	}
+@@ -385,21 +385,21 @@ void __init
+ titan_init_arch(void)
+ {
+ #if 0
+-	printk("%s: titan_init_arch()\n", __FUNCTION__);
+-	printk("%s: CChip registers:\n", __FUNCTION__);
+-	printk("%s: CSR_CSC 0x%lx\n", __FUNCTION__, TITAN_cchip->csc.csr);
+-	printk("%s: CSR_MTR 0x%lx\n", __FUNCTION__, TITAN_cchip->mtr.csr);
+-	printk("%s: CSR_MISC 0x%lx\n", __FUNCTION__, TITAN_cchip->misc.csr);
+-	printk("%s: CSR_DIM0 0x%lx\n", __FUNCTION__, TITAN_cchip->dim0.csr);
+-	printk("%s: CSR_DIM1 0x%lx\n", __FUNCTION__, TITAN_cchip->dim1.csr);
+-	printk("%s: CSR_DIR0 0x%lx\n", __FUNCTION__, TITAN_cchip->dir0.csr);
+-	printk("%s: CSR_DIR1 0x%lx\n", __FUNCTION__, TITAN_cchip->dir1.csr);
+-	printk("%s: CSR_DRIR 0x%lx\n", __FUNCTION__, TITAN_cchip->drir.csr);
+-
+-	printk("%s: DChip registers:\n", __FUNCTION__);
+-	printk("%s: CSR_DSC 0x%lx\n", __FUNCTION__, TITAN_dchip->dsc.csr);
+-	printk("%s: CSR_STR 0x%lx\n", __FUNCTION__, TITAN_dchip->str.csr);
+-	printk("%s: CSR_DREV 0x%lx\n", __FUNCTION__, TITAN_dchip->drev.csr);
++	printk(KERN_DEBUG "%s: titan_init_arch()\n", __FUNCTION__);
++	printk(KERN_DEBUG "%s: CChip registers:\n", __FUNCTION__);
++	printk(KERN_DEBUG "%s: CSR_CSC 0x%lx\n", __FUNCTION__, TITAN_cchip->csc.csr);
++	printk(KERN_DEBUG "%s: CSR_MTR 0x%lx\n", __FUNCTION__, TITAN_cchip->mtr.csr);
++	printk(KERN_DEBUG "%s: CSR_MISC 0x%lx\n", __FUNCTION__, TITAN_cchip->misc.csr);
++	printk(KERN_DEBUG "%s: CSR_DIM0 0x%lx\n", __FUNCTION__, TITAN_cchip->dim0.csr);
++	printk(KERN_DEBUG "%s: CSR_DIM1 0x%lx\n", __FUNCTION__, TITAN_cchip->dim1.csr);
++	printk(KERN_DEBUG "%s: CSR_DIR0 0x%lx\n", __FUNCTION__, TITAN_cchip->dir0.csr);
++	printk(KERN_DEBUG "%s: CSR_DIR1 0x%lx\n", __FUNCTION__, TITAN_cchip->dir1.csr);
++	printk(KERN_DEBUG "%s: CSR_DRIR 0x%lx\n", __FUNCTION__, TITAN_cchip->drir.csr);
++
++	printk(KERN_DEBUG "%s: DChip registers:\n", __FUNCTION__);
++	printk(KERN_DEBUG "%s: CSR_DSC 0x%lx\n", __FUNCTION__, TITAN_dchip->dsc.csr);
++	printk(KERN_DEBUG "%s: CSR_STR 0x%lx\n", __FUNCTION__, TITAN_dchip->str.csr);
++	printk(KERN_DEBUG "%s: CSR_DREV 0x%lx\n", __FUNCTION__, TITAN_dchip->drev.csr);
+ #endif
  
-In compliance with Section 17(b), we disclose the holding of shares of 
-chms prior to the publication of this report. Be aware of an inherent 
-conflict of interest resulting from such holdings due to our intent 
-to profit from the liquidation of these shares. Shares may be sold 
-at any time, even after positive statements have been made regarding 
-the above company.
+ 	boot_cpuid = __hard_smp_processor_id();
+@@ -530,7 +530,7 @@ titan_ioremap(unsigned long addr, unsign
+ 		    baddr += PAGE_SIZE, vaddr += PAGE_SIZE) {
+ 			pfn = ptes[baddr >> PAGE_SHIFT];
+ 			if (!(pfn & 1)) {
+-				printk("ioremap failed... pte not valid...\n");
++				printk(KERN_ERR "ioremap failed... pte not valid...\n");
+ 				vfree(area->addr);
+ 				return NULL;
+ 			}
+@@ -539,7 +539,7 @@ titan_ioremap(unsigned long addr, unsign
+ 			if (__alpha_remap_area_pages(vaddr,
+ 						     pfn << PAGE_SHIFT, 
+ 						     PAGE_SIZE, 0)) {
+-				printk("FAILED to map...\n");
++				printk(KERN_ERR "FAILED to map...\n");
+ 				vfree(area->addr);
+ 				return NULL;
+ 			}
+@@ -711,13 +711,13 @@ titan_agp_translate(alpha_agp_info *agp,
+ 
+ 	if (addr < agp->aperture.bus_base ||
+ 	    addr >= agp->aperture.bus_base + agp->aperture.size) {
+-		printk("%s: addr out of range\n", __FUNCTION__);
++		printk(KERN_ERR "%s: addr out of range\n", __FUNCTION__);
+ 		return -EINVAL;
+ 	}
+ 
+ 	pte = aper->arena->ptes[baddr >> PAGE_SHIFT];
+ 	if (!(pte & 1)) {
+-		printk("%s: pte not valid\n", __FUNCTION__);
++		printk(KERN_ERR "%s: pte not valid\n", __FUNCTION__);
+ 		return -EINVAL;
+ 	}
+ 
 
 
-
-
---===============92206498158170336==
+--===============78930371528695875==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -120,4 +115,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92206498158170336==--
+--===============78930371528695875==--
