@@ -1,172 +1,122 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Wed, 14 Sep 2005 06:46:18 +0000
-Subject: Re: [KJ] [PATCH] printk : arch/alpha/kernel/core_marvel.c
-Message-Id: <20050914064618.GF32338@rhum.iomeda.fr>
+Date: Fri, 23 Sep 2005 09:04:44 +0000
+Subject: [KJ] [PATCH] printk : arch/alpha/kernel/setup.c
+Message-Id: <20050923090444.GG10553@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45303996620164355=="
+Content-Type: multipart/mixed; boundary="===============47785236788271401=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20050908070849.GB26072@rhum.iomeda.fr>
 In-Reply-To: <20050908070849.GB26072@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============45303996620164355==
+--===============47785236788271401==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Alexey Dobriyan (adobriyan@gmail.com) wrote:
-> On Thu, Sep 08, 2005 at 10:49:11AM +0200, Christophe Lucas wrote:
-> > printk() calls should include appropriate KERN_* constant.
-> 
-> > --- linux-2.6.13.orig/arch/alpha/kernel/core_marvel.c
-> > +++ linux-2.6.13/arch/alpha/kernel/core_marvel.c
-> > @@ -759,7 +759,7 @@ marvel_ioremap(unsigned long addr, unsig
-> >  		    baddr += PAGE_SIZE, vaddr += PAGE_SIZE) {
-> >  			pfn = ptes[baddr >> PAGE_SHIFT];
-> >  			if (!(pfn & 1)) {
-> > -				printk("ioremap failed... pte not valid...\n");
-> > +				printk(KERN_WARNING "ioremap failed... pte not valid...\n");
-> >  				vfree(area->addr);
-> >  				return NULL;
-> >  [...]
-> >
-> >  	pte = aper->arena->ptes[baddr >> PAGE_SHIFT];
-> >  	if (!(pte & 1)) {
-> > -		printk("%s: pte not valid\n", __FUNCTION__);
-> > +		printk(KERN_WARNING "%s: pte not valid\n", __FUNCTION__);
-> >  		return -EINVAL;
-> >  	} 
-> >  	return (pte >> 1) << PAGE_SHIFT;
-> 
-> Guess, these deserve KERN_ERR too.
-> 
-
-Ok, I resend it.
+Description:
+printk() calls should include appropriate KERN_* constant.
 
 Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-Index: linux-2.6.13/arch/alpha/kernel/core_marvel.c
+Index: linux-2.6.14-rc2/arch/alpha/kernel/setup.c
 ===================================================================
---- linux-2.6.13.orig/arch/alpha/kernel/core_marvel.c
-+++ linux-2.6.13/arch/alpha/kernel/core_marvel.c
-@@ -332,7 +332,7 @@ marvel_init_io7(struct io7 *io7)
- {
- 	int i;
- 
--	printk("Initializing IO7 at PID %d\n", io7->pe);
-+	printk(KERN_INFO "Initializing IO7 at PID %d\n", io7->pe);
- 
- 	/*
- 	 * Get the Port 7 CSR pointer.
-@@ -361,7 +361,7 @@ marvel_io7_present(gct6_node *node)
- 		return;
- 
- 	pe = (node->id >> 8) & 0xff;
--	printk("Found an IO7 at PID %d\n", pe);
-+	printk(KERN_INFO "Found an IO7 at PID %d\n", pe);
- 
- 	alloc_io7(pe);
+--- linux-2.6.14-rc2.orig/arch/alpha/kernel/setup.c
++++ linux-2.6.14-rc2/arch/alpha/kernel/setup.c
+@@ -285,7 +285,7 @@ move_initrd(unsigned long mem_limit)
+ 	memmove(start, (void *)initrd_start, size);
+ 	initrd_start = (unsigned long)start;
+ 	initrd_end = initrd_start + size;
+-	printk("initrd moved to %p\n", start);
++	printk(KERN_INFO "initrd moved to %p\n", start);
+ 	return start;
  }
-@@ -383,7 +383,7 @@ marvel_init_vga_hose(void)
- 		 *         need to fix this decode when the console 
- 		 *         changes its encoding
- 		 */
--		printk("console graphics is on hose %d (console)\n", h);
-+		printk(KERN_INFO "console graphics is on hose %d (console)\n", h);
+ #endif
+@@ -306,7 +306,7 @@ setup_memory(void *kernel_end)
+ 	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
  
- 		/*
- 		 * The console's hose numbering is:
-@@ -399,7 +399,7 @@ marvel_init_vga_hose(void)
- 			hose = io7->ports[port].hose;
+ 	for_each_mem_cluster(memdesc, cluster, i) {
+-		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
++		printk(KERN_INFO "memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
+ 		       i, cluster->usage, cluster->start_pfn,
+ 		       cluster->start_pfn + cluster->numpages);
  
- 		if (hose) {
--			printk("Console graphics on hose %d\n", hose->index);
-+			printk(KERN_INFO "Console graphics on hose %d\n", hose->index);
- 			pci_vga_hose = hose;
- 		}
- 	}
-@@ -426,7 +426,7 @@ marvel_specify_io7(char *str)
- 	do {
- 		pid = simple_strtoul(str, &pchar, 0);
- 		if (pchar != str) {
--			printk("User-specified IO7 at PID %lu\n", pid);
-+			printk(KERN_INFO "User-specified IO7 at PID %lu\n", pid);
- 			io7 = alloc_io7(pid);
- 			if (io7) marvel_init_io7(io7);
- 		}
-@@ -759,7 +759,7 @@ marvel_ioremap(unsigned long addr, unsig
- 		    baddr += PAGE_SIZE, vaddr += PAGE_SIZE) {
- 			pfn = ptes[baddr >> PAGE_SHIFT];
- 			if (!(pfn & 1)) {
--				printk("ioremap failed... pte not valid...\n");
-+				printk(KERN_ERR "ioremap failed... pte not valid...\n");
- 				vfree(area->addr);
- 				return NULL;
- 			}
-@@ -768,7 +768,7 @@ marvel_ioremap(unsigned long addr, unsig
- 			if (__alpha_remap_area_pages(vaddr,
- 						     pfn << PAGE_SHIFT, 
- 						     PAGE_SIZE, 0)) {
--				printk("FAILED to map...\n");
-+				printk(KERN_ERR "FAILED to map...\n");
- 				vfree(area->addr);
- 				return NULL;
- 			}
-@@ -1002,7 +1002,7 @@ marvel_agp_configure(alpha_agp_info *agp
- 		 * Don't know what this PLL setting is, take the requested
- 		 * rate, but warn the user.
- 		 */
--		printk("%s: unknown PLL setting RNGB=%lx (PLL6_CTL=%016lx)\n",
-+		printk(KERN_INFO "%s: unknown PLL setting RNGB=%lx (PLL6_CTL=%016lx)\n",
- 		       __FUNCTION__, IO7_PLL_RNGB(agp_pll), agp_pll);
- 		break;
- 	}
-@@ -1011,7 +1011,7 @@ marvel_agp_configure(alpha_agp_info *agp
- 	 * Set the new rate, if necessary.
- 	 */
- 	if (new_rate) {
--		printk("Requested AGP Rate %dX not compatible "
-+		printk(KERN_INFO "Requested AGP Rate %dX not compatible "
- 		       "with PLL setting - using %dX\n",
- 		       agp->mode.bits.rate,
- 		       new_rate);
-@@ -1019,7 +1019,7 @@ marvel_agp_configure(alpha_agp_info *agp
- 		agp->mode.bits.rate = new_rate;
- 	}
- 		
--	printk("Enabling AGP on hose %d: %dX%s RQ %d\n", 
-+	printk(KERN_INFO "Enabling AGP on hose %d: %dX%s RQ %d\n", 
- 	       agp->hose->index, agp->mode.bits.rate, 
- 	       agp->mode.bits.sba ? " - SBA" : "", agp->mode.bits.rq);
+@@ -341,7 +341,7 @@ setup_memory(void *kernel_end)
  
-@@ -1053,13 +1053,13 @@ marvel_agp_translate(alpha_agp_info *agp
+ 	if (mem_size_limit && max_low_pfn >= mem_size_limit)
+ 	{
+-		printk("setup: forcing memory size to %ldK (from %ldK).\n",
++		printk(KERN_INFO "setup: forcing memory size to %ldK (from %ldK).\n",
+ 		       mem_size_limit << (PAGE_SHIFT - 10),
+ 		       max_low_pfn    << (PAGE_SHIFT - 10));
+ 		max_low_pfn = mem_size_limit;
+@@ -410,7 +410,7 @@ setup_memory(void *kernel_end)
+ 				free_bootmem(PFN_PHYS(start),
+ 					     (PFN_PHYS(start_kernel_pfn)
+ 					      - PFN_PHYS(start)));
+-				printk("freeing pages %ld:%ld\n",
++				printk(KERN_INFO "freeing pages %ld:%ld\n",
+ 				       start, start_kernel_pfn);
+ 				start = end_kernel_pfn;
+ 			} else if (end > start_kernel_pfn)
+@@ -421,23 +421,23 @@ setup_memory(void *kernel_end)
+ 			continue;
  
- 	if (addr < agp->aperture.bus_base ||
- 	    addr >= agp->aperture.bus_base + agp->aperture.size) {
--		printk("%s: addr out of range\n", __FUNCTION__);
-+		printk(KERN_ERR "%s: addr out of range\n", __FUNCTION__);
- 		return -EINVAL;
+ 		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+-		printk("freeing pages %ld:%ld\n", start, end);
++		printk(KERN_INFO "freeing pages %ld:%ld\n", start, end);
  	}
  
- 	pte = aper->arena->ptes[baddr >> PAGE_SHIFT];
- 	if (!(pte & 1)) {
--		printk("%s: pte not valid\n", __FUNCTION__);
-+		printk(KERN_ERR "%s: pte not valid\n", __FUNCTION__);
- 		return -EINVAL;
- 	} 
- 	return (pte >> 1) << PAGE_SHIFT;
-@@ -1109,7 +1109,7 @@ marvel_agp_info(void)
- 	if (!hose || !hose->sg_pci)
- 		return NULL;
+ 	/* Reserve the bootmap memory.  */
+ 	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size);
+-	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
++	printk(KERN_INFO "reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
  
--	printk("MARVEL - using hose %d as AGP\n", hose->index);
-+	printk(KERN_INFO "MARVEL - using hose %d as AGP\n", hose->index);
+ #ifdef CONFIG_BLK_DEV_INITRD
+ 	initrd_start = INITRD_START;
+ 	if (initrd_start) {
+ 		initrd_end = initrd_start+INITRD_SIZE;
+-		printk("Initial ramdisk at: 0x%p (%lu bytes)\n",
++		printk(KERN_INFO "Initial ramdisk at: 0x%p (%lu bytes)\n",
+ 		       (void *) initrd_start, INITRD_SIZE);
+ 
+ 		if ((void *)initrd_end > phys_to_virt(PFN_PHYS(max_low_pfn))) {
+ 			if (!move_initrd(PFN_PHYS(max_low_pfn)))
+-				printk("initrd extends beyond end of memory "
++				printk(KERN_INFO "initrd extends beyond end of memory "
+ 				       "(0x%08lx > 0x%p)\ndisabling initrd\n",
+ 				       initrd_end,
+ 				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+@@ -662,7 +662,7 @@ setup_arch(char **cmdline_p)
+ #endif
+ 	       "\n");
+ 
+-	printk("Command line: %s\n", command_line);
++	printk(KERN_INFO "Command line: %s\n", command_line);
  
  	/* 
- 	 * Get the csrs from the hose.
+ 	 * Sync up the HAE.
+@@ -716,7 +716,7 @@ setup_arch(char **cmdline_p)
+  	 */
+ 
+  	if (hwrpb->max_asn != MAX_ASN) {
+-		printk("Max ASN from HWRPB is bad (0x%lx)\n", hwrpb->max_asn);
++		printk(KERN_INFO "Max ASN from HWRPB is bad (0x%lx)\n", hwrpb->max_asn);
+  	}
+ 
+ 	/*
+@@ -1307,7 +1307,7 @@ external_cache_probe(int minsize, int wi
+ 		cycles = read_mem_block(__va(0), stride, size);
+ 		if (cycles > prev_cycles * 2) {
+ 			/* Fine, we exceed the cache. */
+-			printk("%ldK Bcache detected; load hit latency %d "
++			printk(KERN_INFO "%ldK Bcache detected; load hit latency %d "
+ 			       "cycles, load miss latency %d cycles\n",
+ 			       size >> 11, prev_cycles, cycles);
+ 			return CSHAPE(size >> 1, width, 1);
 
 
---===============45303996620164355==
+--===============47785236788271401==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -177,4 +127,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45303996620164355==--
+--===============47785236788271401==--
