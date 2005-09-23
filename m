@@ -1,36 +1,56 @@
-From: Paddy <Inman@primedia.chtah.com>
-Date: Mon, 05 Sep 2005 05:20:53 +0000
-Subject: [KJ] New Breed of Equity Trader
-Message-Id: <940625712.20050905125767@caching1-pnc2.asianet.co.th>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Fri, 23 Sep 2005 08:46:00 +0000
+Subject: [KJ] printk : arch/alpha/kernel/pci_iommu.c
+Message-Id: <20050923084600.GD10553@rhum.iomeda.fr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0022051433577265911=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Worldwide Biotech and Pharmaceutical Company, a biotech company, 
-engages in the development, manufacture, and marketing of diagnostic reagents. 
-These diagnostic reagents include hepatitis C viruses, medicines, vaccines, 
-and gene carriers. The company is based in Sarasota, Florida.
+--===============0022051433577265911==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Symbol: WWBP.OB
-Price: $2.30
-5-10 Day's Target: $8-10
+Description:
+printk() calls should include appropriate KERN_* constant.
 
-Buy: Strong
-Expectations: 300-500%
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-When this Stock moves... WATCH OUT! ... This is your chance to get in 
-while it is still low. WWBP is a high growth issue and should be purchased 
-by stock traders and those that can afford to make quick money 
-on these fast moving issues. This is your chance to get your hands 
-on one of these fast moving stocks and take short term prof1ts. 
-This stock could reach $10.00 in five to ten trading days. 
 
-Big watch in play this Tuesday morning!
-Put WWBP on your radar's now.
+
+Index: linux-2.6.14-rc2/arch/alpha/kernel/pci_iommu.c
+===================================================================
+--- linux-2.6.14-rc2.orig/arch/alpha/kernel/pci_iommu.c
++++ linux-2.6.14-rc2/arch/alpha/kernel/pci_iommu.c
+@@ -79,7 +79,7 @@ iommu_arena_new_node(int nid, struct pci
+         if (!NODE_DATA(nid) ||
+             (NULL == (arena = alloc_bootmem_node(NODE_DATA(nid),
+                                                  sizeof(*arena))))) {
+-                printk("%s: couldn't allocate arena from node %d\n"
++                printk(KERN_WARNING "%s: couldn't allocate arena from node %d\n"
+                        "    falling back to system-wide allocation\n",
+                        __FUNCTION__, nid);
+                 arena = alloc_bootmem(sizeof(*arena));
+@@ -90,7 +90,7 @@ iommu_arena_new_node(int nid, struct pci
+                                                          mem_size,
+                                                          align,
+                                                          0)))) {
+-                printk("%s: couldn't allocate arena ptes from node %d\n"
++                printk(KERN_WARNING "%s: couldn't allocate arena ptes from node %d\n"
+                        "    falling back to system-wide allocation\n",
+                        __FUNCTION__, nid);
+                 arena->ptes = __alloc_bootmem(mem_size, align, 0);
+
+
+--===============0022051433577265911==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0022051433577265911==--
