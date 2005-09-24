@@ -1,87 +1,48 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 24 Sep 2005 15:55:52 +0000
-Subject: [KJ] hint, hint...
-Message-Id: <20050924155552.GA31609@mipter.zuzino.mipt.ru>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Sat, 24 Sep 2005 17:10:21 +0000
+Subject: Re: [KJ] hint, hint...
+Message-Id: <20050924101021.044ea79c.rdunlap@xenotime.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============80116291970751308=="
+Content-Type: multipart/mixed; boundary="===============70049441643465793=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20050924155552.GA31609@mipter.zuzino.mipt.ru>
+In-Reply-To: <20050924155552.GA31609@mipter.zuzino.mipt.ru>
 To: kernel-janitors@vger.kernel.org
 
---===============80116291970751308==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============70049441643465793==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-TODO already updated. ;-)
+On Sat, 24 Sep 2005 19:55:52 +0400 Alexey Dobriyan wrote:
 
---- a/drivers/ide/pci/piix.c
-+++ b/drivers/ide/pci/piix.c
-@@ -542,10 +542,9 @@ static void __devinit init_hwif_piix(ide
- 	}
- 
- static ide_pci_device_t piix_pci_info[] __devinitdata = {
--	/*  0 */ DECLARE_PIIX_DEV("PIIXa"),
--	/*  1 */ DECLARE_PIIX_DEV("PIIXb"),
--
--	{	/* 2 */
-+	[ 0] = DECLARE_PIIX_DEV("PIIXa"),
-+	[ 1] = DECLARE_PIIX_DEV("PIIXb"),
-+	[ 2] = {
- 		.name		= "MPIIX",
- 		.init_hwif	= init_hwif_piix,
- 		.channels	= 2,
-@@ -553,28 +552,27 @@ static ide_pci_device_t piix_pci_info[] 
- 		.enablebits	= {{0x6D,0x80,0x80}, {0x6F,0x80,0x80}},
- 		.bootable	= ON_BOARD,
- 	},
--
--	/*  3 */ DECLARE_PIIX_DEV("PIIX3"),
--	/*  4 */ DECLARE_PIIX_DEV("PIIX4"),
--	/*  5 */ DECLARE_PIIX_DEV("ICH0"),
--	/*  6 */ DECLARE_PIIX_DEV("PIIX4"),
--	/*  7 */ DECLARE_PIIX_DEV("ICH"),
--	/*  8 */ DECLARE_PIIX_DEV("PIIX4"),
--	/*  9 */ DECLARE_PIIX_DEV("PIIX4"),
--	/* 10 */ DECLARE_PIIX_DEV("ICH2"),
--	/* 11 */ DECLARE_PIIX_DEV("ICH2M"),
--	/* 12 */ DECLARE_PIIX_DEV("ICH3M"),
--	/* 13 */ DECLARE_PIIX_DEV("ICH3"),
--	/* 14 */ DECLARE_PIIX_DEV("ICH4"),
--	/* 15 */ DECLARE_PIIX_DEV("ICH5"),
--	/* 16 */ DECLARE_PIIX_DEV("C-ICH"),
--	/* 17 */ DECLARE_PIIX_DEV("ICH4"),
--	/* 18 */ DECLARE_PIIX_DEV("ICH5-SATA"),
--	/* 19 */ DECLARE_PIIX_DEV("ICH5"),
--	/* 20 */ DECLARE_PIIX_DEV("ICH6"),
--	/* 21 */ DECLARE_PIIX_DEV("ICH7"),
--	/* 22 */ DECLARE_PIIX_DEV("ICH4"),
--	/* 23 */ DECLARE_PIIX_DEV("ESB2"),
-+	[ 3] = DECLARE_PIIX_DEV("PIIX3"),
-+	[ 4] = DECLARE_PIIX_DEV("PIIX4"),
-+	[ 5] = DECLARE_PIIX_DEV("ICH0"),
-+	[ 6] = DECLARE_PIIX_DEV("PIIX4"),
-+	[ 7] = DECLARE_PIIX_DEV("ICH"),
-+	[ 8] = DECLARE_PIIX_DEV("PIIX4"),
-+	[ 9] = DECLARE_PIIX_DEV("PIIX4"),
-+	[10] = DECLARE_PIIX_DEV("ICH2"),
-+	[11] = DECLARE_PIIX_DEV("ICH2M"),
-+	[12] = DECLARE_PIIX_DEV("ICH3M"),
-+	[13] = DECLARE_PIIX_DEV("ICH3"),
-+	[14] = DECLARE_PIIX_DEV("ICH4"),
-+	[15] = DECLARE_PIIX_DEV("ICH5"),
-+	[16] = DECLARE_PIIX_DEV("C-ICH"),
-+	[17] = DECLARE_PIIX_DEV("ICH4"),
-+	[18] = DECLARE_PIIX_DEV("ICH5-SATA"),
-+	[19] = DECLARE_PIIX_DEV("ICH5"),
-+	[20] = DECLARE_PIIX_DEV("ICH6"),
-+	[21] = DECLARE_PIIX_DEV("ICH7"),
-+	[22] = DECLARE_PIIX_DEV("ICH4"),
-+	[23] = DECLARE_PIIX_DEV("ESB2"),
- };
- 
- /**
+> TODO already updated. ;-)
+> 
+> --- a/drivers/ide/pci/piix.c
+> +++ b/drivers/ide/pci/piix.c
+> @@ -542,10 +542,9 @@ static void __devinit init_hwif_piix(ide
+>  	}
+>  
+>  static ide_pci_device_t piix_pci_info[] __devinitdata = {
+> -	/*  0 */ DECLARE_PIIX_DEV("PIIXa"),
+> -	/*  1 */ DECLARE_PIIX_DEV("PIIXb"),
+> -
+> -	{	/* 2 */
+> +	[ 0] = DECLARE_PIIX_DEV("PIIXa"),
+> +	[ 1] = DECLARE_PIIX_DEV("PIIXb"),
+> +	[ 2] = {
+>  		.name		= "MPIIX",
+>  		.init_hwif	= init_hwif_piix,
+>  		.channels	= 2,
 
+Even in cases where the order/location/index doesn't matter?
+(I hope not.)
 
---===============80116291970751308==
+---
+~Randy
+You can't do anything without having to do something else first.
+-- Belefant's Law
+
+--===============70049441643465793==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -92,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============80116291970751308==--
+--===============70049441643465793==--
