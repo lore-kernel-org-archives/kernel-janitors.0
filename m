@@ -1,61 +1,57 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Wed, 28 Sep 2005 18:42:23 +0000
-Subject: Re: [KJ] Need to get some very basic things sorted out
-Message-Id: <Pine.LNX.4.58.0509281140570.14803@shark.he.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============18417003576560287=="
+From: Dinolinux <slackfan@users.sourceforge.net>
+Date: Fri, 30 Sep 2005 19:03:31 +0000
+Subject: [KJ] [PATCH] printk: arch/i386/kernel/doublefault.c
+Message-Id: <433DA691.6080804@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <433AB34E.90509@users.sourceforge.net>
-In-Reply-To: <433AB34E.90509@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============18417003576560287==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+printk() should include the appropriate KERN_* constant.
 
-On Wed, 28 Sep 2005, Ricardo Nabinger Sanchez wrote:
+--- linux-2.6.14-rc2.orig/arch/i386/kernel/doublefault.c    2005-09-20
+05:00:41.000000000 +0200
++++ linux-2.6.14-rc2/arch/i386/kernel/doublefault.c    2005-09-30
+22:40:50.000000000 +0200
+@@ -23,23 +23,23 @@ static void doublefault_fn(void)
+     store_gdt(&gdt_desc);
+     gdt = gdt_desc.address;
+ 
+-    printk("double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
++    printk(KERN_ERR"double fault, gdt at %08lx [%d bytes]\n", gdt,
+gdt_desc.size);
+ 
+     if (ptr_ok(gdt)) {
+         gdt += GDT_ENTRY_TSS << 3;
+         tss = *(u16 *)(gdt+2);
+         tss += *(u8 *)(gdt+4) << 16;
+         tss += *(u8 *)(gdt+7) << 24;
+-        printk("double fault, tss at %08lx\n", tss);
++        printk(KERN_ERR"double fault, tss at %08lx\n", tss);
+ 
+         if (ptr_ok(tss)) {
+             struct tss_struct *t = (struct tss_struct *)tss;
+ 
+-            printk("eip = %08lx, esp = %08lx\n", t->eip, t->esp);
++            printk(KERN_ERR"eip = %08lx, esp = %08lx\n", t->eip, t->esp);
+ 
+-            printk("eax = %08lx, ebx = %08lx, ecx = %08lx, edx = %08lx\n",
++            printk(KERN_ERR"eax = %08lx, ebx = %08lx, ecx = %08lx, edx
+= %08lx\n",
+                 t->eax, t->ebx, t->ecx, t->edx);
+-            printk("esi = %08lx, edi = %08lx\n",
++            printk(KERN_ERR"esi = %08lx, edi = %08lx\n",
+                 t->esi, t->edi);
+         }
+     }
 
-> Quoting  Alexey Dobriyan <adobriyan@gmail.com>
-> Sent on  Wed, 28 Sep 2005 21:56:14 +0400
->
-> Hello,
->
-> > 	buf = kmalloc(256, GFP_KERNEL);
-> > 	if (!buf)
-> > 		return -ENOMEM;
-> > 	buf[0] = 'L';
->
-> *please* correct me if I'm wrong, but I remember reading somewhere a Linus'
-> message stating that one should not use "if (!pointer)" for pointers when
-> it is intended to do "if (pointer == NULL)".  in short, what I remember is
-> that one should not assume that NULL == 0, thus the explicit NULL checking.
->
-> a quick search revealed these:
->
-> 	http://lwn.net/Articles/93574/
-> 	http://lwn.net/Articles/93577/
 
-These say:
-	don't use 0 for a (null) pointer and
-	don't use NULL for an integer value.
-
-> are these still valid?  (I presume yes, but...)
-
-Sure, those are valid, but they aren't the same as the
-first example above.  I don't see anything wrong with what
-Alexey wrote.
-
--- 
-~Randy
-
---===============18417003576560287==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+This is my first patch so please be nice to me ;-)  . I've tried to make
+it as good and correct as I could so there shouldn't be _too_ much
+errors. Hope this is the right way to do this...
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============18417003576560287==--
