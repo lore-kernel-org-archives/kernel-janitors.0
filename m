@@ -1,92 +1,66 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Tue, 04 Oct 2005 07:45:34 +0000
-Subject: [KJ] [PATCH] (replacement) kobject: fix gfp flags type
-Message-Id: <20051004004534.0e00d067.rdunlap@xenotime.net>
+From: Jem Simon <almsman@freeman.net>
+Date: Sat, 01 Oct 2005 19:14:16 +0000
+Subject: [KJ] News. These Shares Poised for a Run?
+Message-Id: <6705039035.56702118350@201.240.250.66>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14044910962781954=="
+Content-Type: multipart/mixed; boundary="===============34791861704869298=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============14044910962781954==
-Content-Type: text/plain; charset=US-ASCII
+--===============34791861704869298==
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+Allixon International Has Been Granted Venture Certification 
+by Korean Government Small and Medium Business Administration
+Friday September 30, 4:01 pm ET
 
-Fix implicit nocast warnings in kobject_uevent code, including __nocast:
-lib/kobject_uevent.c:78:37: warning: implicit cast to nocast type
-lib/kobject_uevent.c:97:51: warning: implicit cast to nocast type
-lib/kobject_uevent.c:120:27: warning: implicit cast to nocast type
+Symbol: AXCP 
+Price: $3.92 
+Status: Strong Buy 
+Rating: 5(5)
+Short Term Target: $7 
+12month Target: $15  
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
----
+*****Breaking News*****Breaking News*****Breaking News*****
+SEOCHO-KU, SEOUL, Korea, Sept. 30, 2005 (PRIMEZONE) - 
+Allixon International Corporation (Other OTC:AXCP.PK - News) 
+is pleased to announce that it was granted venture certification 
+by SMBA (Small and Medium Business Administration). 
+The South Korean government, on an annual basis, 
+grants special benefits to companies like Allixon International 
+who continue to demonstrate innovation and investment within their field 
+of expertise. Additional benefits include the ability for Allixon 
+to apply for new technology development programs 
+within the Korean government.
 
- include/linux/kobject.h |    2 +-
- lib/kobject.c           |    2 +-
- lib/kobject_uevent.c    |    6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+Allixon's management was quick to point out that while this development 
+is a continued positive step in the right direction for growth 
+in their RFID sector, it does not represent a contract. Other benefits 
+that can have an impact on a company's bottom line is the reduction 
+in various corporate taxes for a specified period of time, 
+and preferential interest and loans for equipment and management 
+from government monetary facilities. 
 
-diff -Naurp linux-2614-rc2-git6/drivers/base/class.c~kobject_gfpmask linux-2614-rc2-git6/drivers/base/class.c
-diff -Naurp linux-2614-rc2-git6/include/linux/kobject.h~kobject_gfpmask linux-2614-rc2-git6/include/linux/kobject.h
---- linux-2614-rc2-git6/include/linux/kobject.h~kobject_gfpmask	2005-08-28 16:41:01.000000000 -0700
-+++ linux-2614-rc2-git6/include/linux/kobject.h	2005-10-03 21:32:47.000000000 -0700
-@@ -65,7 +65,7 @@ extern void kobject_unregister(struct ko
- extern struct kobject * kobject_get(struct kobject *);
- extern void kobject_put(struct kobject *);
- 
--extern char * kobject_get_path(struct kobject *, int);
-+extern char * kobject_get_path(struct kobject *, unsigned int __nocast);
- 
- struct kobj_type {
- 	void (*release)(struct kobject *);
-diff -Naurp linux-2614-rc2-git6/lib/kobject_uevent.c~kobject_gfpmask linux-2614-rc2-git6/lib/kobject_uevent.c
---- linux-2614-rc2-git6/lib/kobject_uevent.c~kobject_gfpmask	2005-09-27 21:36:13.000000000 -0700
-+++ linux-2614-rc2-git6/lib/kobject_uevent.c	2005-10-03 21:27:50.000000000 -0700
-@@ -62,7 +62,7 @@ static struct sock *uevent_sock;
-  * @gfp_mask:
-  */
- static int send_uevent(const char *signal, const char *obj,
--		       char **envp, int gfp_mask)
-+		       char **envp, unsigned int __nocast gfp_mask)
- {
- 	struct sk_buff *skb;
- 	char *pos;
-@@ -98,7 +98,7 @@ static int send_uevent(const char *signa
- }
- 
- static int do_kobject_uevent(struct kobject *kobj, enum kobject_action action, 
--			     struct attribute *attr, int gfp_mask)
-+			struct attribute *attr, unsigned int __nocast gfp_mask)
- {
- 	char *path;
- 	char *attrpath;
-@@ -170,7 +170,7 @@ postcore_initcall(kobject_uevent_init);
- 
- #else
- static inline int send_uevent(const char *signal, const char *obj,
--			      char **envp, int gfp_mask)
-+			      char **envp, unsigned int __nocast gfp_mask)
- {
- 	return 0;
- }
-diff -Naurp linux-2614-rc2-git6/lib/kobject.c~kobject_gfpmask linux-2614-rc2-git6/lib/kobject.c
---- linux-2614-rc2-git6/lib/kobject.c~kobject_gfpmask	2005-08-28 16:41:01.000000000 -0700
-+++ linux-2614-rc2-git6/lib/kobject.c	2005-10-03 21:32:18.000000000 -0700
-@@ -100,7 +100,7 @@ static void fill_kobj_path(struct kobjec
-  * @kobj:	kobject in question, with which to build the path
-  * @gfp_mask:	the allocation type used to allocate the path
-  */
--char *kobject_get_path(struct kobject *kobj, int gfp_mask)
-+char *kobject_get_path(struct kobject *kobj, unsigned int __nocast gfp_mask)
- {
- 	char *path;
- 	int len;
+Mr. Lee, CEO of Allixon International Corporation, said "The Small 
+and Medium Business Administration approved Allixon International 
+as a venture company based on Allixon International's commitment 
+to RFID technology and their continued investment for research 
+and development in RFID applications since 2003."
 
 
----
+THIS NEWS RELEASE DOES NOT CONSTITUTE ANY OFFER OF ANY SECURITIES FOR SALE.
+Today we are issuing another ALERT on AXCP. 
+But we think the fun is just beginning with this stock. 
+It has been showing a steady move up on increasing volume. 
+It appears to us that the stock is in an accumulation phase 
+and might be ready for a big pop to new highs. 
+*******PUT AXCP ON YOUR RADAR FOR Monday October 3, 2005**********
 
 
---===============14044910962781954==
+
+
+--===============34791861704869298==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -97,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============14044910962781954==--
+--===============34791861704869298==--
