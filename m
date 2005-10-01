@@ -1,31 +1,66 @@
-From: Bessy Finch <stoning@costaricanaturally.com>
-Date: Fri, 28 Oct 2005 19:36:17 +0000
-Subject: [KJ] SAVE UP TO 90% ON RETAIL PRICES!
-Message-Id: <5646341168.50817112915@62.68.44.202>
+From: Dannie Leslie <bran@brinkley.com>
+Date: Sat, 01 Oct 2005 19:14:16 +0000
+Subject: [KJ] Actual News. An Under the Radar Equity
+Message-Id: <9180316883.8692037078@201.240.250.66>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============48970425902956416=="
+Content-Type: multipart/mixed; boundary="===============098580722583208269=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============48970425902956416==
+--===============098580722583208269==
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=us-ascii
 
-We offer a fast-track repeat prescription service
-In order to get the feed, go to Settings -> Links Feed and provide the list of IPs
+Allixon International Has Been Granted Venture Certification 
+by Korean Government Small and Medium Business Administration
+Friday September 30, 4:01 pm ET
+
+Symbol: AXCP 
+Price: $3.92 
+Status: Strong Buy 
+Rating: 5(5)
+Short Term Target: $7 
+12month Target: $15  
+
+*****Breaking News*****Breaking News*****Breaking News*****
+SEOCHO-KU, SEOUL, Korea, Sept. 30, 2005 (PRIMEZONE) - 
+Allixon International Corporation (Other OTC:AXCP.PK - News) 
+is pleased to announce that it was granted venture certification 
+by SMBA (Small and Medium Business Administration). 
+The South Korean government, on an annual basis, 
+grants special benefits to companies like Allixon International 
+who continue to demonstrate innovation and investment within their field 
+of expertise. Additional benefits include the ability for Allixon 
+to apply for new technology development programs 
+within the Korean government.
+
+Allixon's management was quick to point out that while this development 
+is a continued positive step in the right direction for growth 
+in their RFID sector, it does not represent a contract. Other benefits 
+that can have an impact on a company's bottom line is the reduction 
+in various corporate taxes for a specified period of time, 
+and preferential interest and loans for equipment and management 
+from government monetary facilities. 
+
+Mr. Lee, CEO of Allixon International Corporation, said "The Small 
+and Medium Business Administration approved Allixon International 
+as a venture company based on Allixon International's commitment 
+to RFID technology and their continued investment for research 
+and development in RFID applications since 2003."
 
 
-Trouble is only opportunity in work clothes.      
-Never give advice unless asked.        
-Every man who observes vigilantly, and resolves steadfastly, grows unconsciously into genius. 
+THIS NEWS RELEASE DOES NOT CONSTITUTE ANY OFFER OF ANY SECURITIES FOR SALE.
+Today we are issuing another ALERT on AXCP. 
+But we think the fun is just beginning with this stock. 
+It has been showing a steady move up on increasing volume. 
+It appears to us that the stock is in an accumulation phase 
+and might be ready for a big pop to new highs. 
+*******PUT AXCP ON YOUR RADAR FOR Monday October 3, 2005**********
 
-Hindsight is always twenty-twenty.         
-There is no wealth but life.       
-In the end, everything is a gag.      
-The real problem is not whether machines think but whether men do. 
 
 
---===============48970425902956416==
+
+--===============098580722583208269==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============48970425902956416==--
+--===============098580722583208269==--
