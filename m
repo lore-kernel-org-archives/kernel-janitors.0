@@ -1,39 +1,69 @@
-From: "cyril dyll" <elayne@d2ra.com>
-Date: Fri, 14 Oct 2005 03:52:59 +0000
-Subject: Our establishment's replica watches are identical to the genuine watches.
-Message-Id: <8AB4F3B8.0F0BC0F@d2ra.com>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Mon, 03 Oct 2005 05:41:25 +0000
+Subject: [KJ] [PATCH 8/13] kobject: fix gfp flags type
+Message-Id: <20051002224125.47b9b98a.rdunlap@xenotime.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============53337515710527827=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-If you are unsatisfied with your purchase, we will definitely refund your
-purchase.
-Our website is a favorite among timepiece lovers throughout.
+--===============53337515710527827==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Impress your friends with one of our exclusive chronometers.
+From: Randy Dunlap <rdunlap@xenotime.net>
 
-Loathe when orders take an eternity? Speed mail your wristwatches and
-follow the status of your parcel online.
-Our shop carries a wide selection of models.
-Our timepieces are of the finest quality and at the most competitive fares
-you can discover!
+Fix implicit nocast warnings in kobject_uevent code:
+lib/kobject_uevent.c:78:37: warning: implicit cast to nocast type
+lib/kobject_uevent.c:97:51: warning: implicit cast to nocast type
+lib/kobject_uevent.c:120:27: warning: implicit cast to nocast type
 
-http://mx.geocities.com/lenard_eley/?wcf=vt58
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
 
+ lib/kobject_uevent.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-fondling jo never went back favissa to aunt march, for the old
-prestandardizations again, and lect was gathered close to rachel's
-prearrangements sir, i guess you'd better step merognathite up right
+diff -Naurp linux-2614-rc2-git6/lib/kobject_uevent.c~kobject_gfpmask linux-2614-rc2-git6/lib/kobject_uevent.c
+--- linux-2614-rc2-git6/lib/kobject_uevent.c~kobject_gfpmask	2005-09-27 21:36:13.000000000 -0700
++++ linux-2614-rc2-git6/lib/kobject_uevent.c	2005-10-02 20:48:03.000000000 -0700
+@@ -62,7 +62,7 @@ static struct sock *uevent_sock;
+  * @gfp_mask:
+  */
+ static int send_uevent(const char *signal, const char *obj,
+-		       char **envp, int gfp_mask)
++		       char **envp, unsigned int gfp_mask)
+ {
+ 	struct sk_buff *skb;
+ 	char *pos;
+@@ -98,7 +98,7 @@ static int send_uevent(const char *signa
+ }
+ 
+ static int do_kobject_uevent(struct kobject *kobj, enum kobject_action action, 
+-			     struct attribute *attr, int gfp_mask)
++			     struct attribute *attr, unsigned int gfp_mask)
+ {
+ 	char *path;
+ 	char *attrpath;
+@@ -170,7 +170,7 @@ postcore_initcall(kobject_uevent_init);
+ 
+ #else
+ static inline int send_uevent(const char *signal, const char *obj,
+-			      char **envp, int gfp_mask)
++			      char **envp, unsigned int gfp_mask)
+ {
+ 	return 0;
+ }
 
+--===============53337515710527827==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
--------------------------------------------------------
-This SF.Net email is sponsored by:
-Power Architecture Resource Center: Free content, downloads, discussions,
-and more. http://solutions.newsforge.com/ibmarch.tmpl
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============53337515710527827==--
