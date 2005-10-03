@@ -1,95 +1,55 @@
-From: Doctor <ast@cinemexicano.com>
-Date: Fri, 28 Oct 2005 12:35:48 +0000
-Subject: [KJ] The Ultimate Online Pharmaceutical
-Message-Id: <6654359395.20051028083548@cinemexicano.com>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Mon, 03 Oct 2005 05:40:44 +0000
+Subject: [KJ] [PATCH 4/14] connector: fix gfp flags type
+Message-Id: <20051002224044.60143454.rdunlap@xenotime.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91186190891161856=="
+Content-Type: multipart/mixed; boundary="===============085100286825756655=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============91186190891161856==
-Content-Type: multipart/alternative;
-    boundary="----------=_1130502921-30611-452"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1130502921-30611-452
-Content-Type: text/plain
+--===============085100286825756655==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-Vlaagra $3.3
-Levibtra $3.3
-Ciamlis $3.7
-Imitwrex $16.4
-Flombax $2.2
-Ultrqam $0.78
-Vioexx $4.75
-Ambtien $2.2
-Valwium $0.97 
-Xanahx $1.09
-Sonma $3
-Meriodia $2.2  
+From: Randy Dunlap <rdunlap@xenotime.net>
 
+Fix implicit nocast warnings in connector code:
+drivers/connector/connector.c:102:24: warning: implicit cast to nocast type
+drivers/connector/connector.c:114:45: warning: implicit cast to nocast type
 
+Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
+---
 
-our site
-http://equaledon.com/?GFSMKDWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
+ drivers/connector/connector.c |    2 +-
+ include/linux/connector.h     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-___
-Best regards,
-Online Pharmaceuticals
+diff -Naurp linux-2614-rc2-git6/drivers/connector/connector.c~conn_gfpmask linux-2614-rc2-git6/drivers/connector/connector.c
+--- linux-2614-rc2-git6/drivers/connector/connector.c~conn_gfpmask	2005-09-27 21:36:09.000000000 -0700
++++ linux-2614-rc2-git6/drivers/connector/connector.c	2005-10-02 20:32:40.000000000 -0700
+@@ -69,7 +69,7 @@ int cn_already_initialized = 0;
+  * a new message.
+  *
+  */
+-int cn_netlink_send(struct cn_msg *msg, u32 __group, int gfp_mask)
++int cn_netlink_send(struct cn_msg *msg, u32 __group, unsigned int gfp_mask)
+ {
+ 	struct cn_callback_entry *__cbq;
+ 	unsigned int size;
+diff -Naurp linux-2614-rc2-git6/include/linux/connector.h~conn_gfpmask linux-2614-rc2-git6/include/linux/connector.h
+--- linux-2614-rc2-git6/include/linux/connector.h~conn_gfpmask	2005-09-27 21:36:12.000000000 -0700
++++ linux-2614-rc2-git6/include/linux/connector.h	2005-10-02 20:52:02.000000000 -0700
+@@ -142,7 +142,7 @@ struct cn_dev {
+ 
+ int cn_add_callback(struct cb_id *, char *, void (*callback) (void *));
+ void cn_del_callback(struct cb_id *);
+-int cn_netlink_send(struct cn_msg *, u32, int);
++int cn_netlink_send(struct cn_msg *, u32, unsigned int);
+ 
+ int cn_queue_add_callback(struct cn_queue_dev *dev, struct cn_callback *cb);
+ void cn_queue_del_callback(struct cn_queue_dev *dev, struct cb_id *id);
 
-
-
-mgfjfswth WldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
-
-------------=_1130502921-30611-452
-Content-Type: text/html
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-<html>
-<body>
-<strong>Vladgra</strong> - $3.3
-<br>
-<strong>Levihtra</strong> - $3.3<br>
-<strong>Ciatlis</strong> - $3.7<br>
-<strong>Imitfrex</strong> - $16.4<br>
-<strong>Flommax</strong> - $2.2<br>
-<strong>Ultrdam</strong> - $0.78<br>
-<strong>Viowxx</strong> - $4.75
-<br>
-<strong>Ambiien</strong> - $2.2<br>
-<strong>Valyium</strong> - $0.97 
-<br>
-<strong>Xanahx</strong> - $1.09<br>
-<strong>Sobma</strong> - $3
-<br>
-<strong>Meribdia</strong> - $2.2<br>
-<br>  
-<a href="http://equaledon.com/?GFSMKDWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS"><strong>our website</strong></a><br>
-<br>
-___
-<br>
-Best regards,<br>
-Online Pharmaceuticals
-<br>
-<br>
-<br>
-mgfjfswth WldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
-</body>
-</html>
-
-
-------------=_1130502921-30611-452--
-
---===============91186190891161856==
+--===============085100286825756655==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -100,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91186190891161856==--
+--===============085100286825756655==--
