@@ -1,13 +1,15 @@
 From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 03 Oct 2005 11:04:53 +0000
+Date: Mon, 03 Oct 2005 11:12:56 +0000
 Subject: Re: [KJ] [PATCH] arch/i386/kernel/doublefault.c
-Message-Id: <20051003110453.GA10630@rhum.iomeda.fr>
+Message-Id: <20051003111256.GB10630@rhum.iomeda.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0079680339579235593=="
+Content-Type: multipart/mixed; boundary="===============96119764311056688=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20051003110453.GA10630@rhum.iomeda.fr>
+In-Reply-To: <20051003110453.GA10630@rhum.iomeda.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============0079680339579235593==
+--===============96119764311056688==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -22,28 +24,21 @@ slackfan@users.sourceforge.net (slackfan@users.sourceforge.net) wrote:
 >  
 > -	printk("double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
 > +	printk(KERN_WARNING "double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
-> [...]
->}
->  	}
-> 
-> 
-> This is the third time I'm sending this. Hope you're not tired of me yet :). This time I've added a signed off line, used a different mail client to get the word
-> wrap off and changed the constants.
 
-Please use correctly Signed-off-by such as :
+When a double fault happens we are not in good terms with os ;)
+So I don't think KERN_WARNING, KERN_NOTICE, KERN_ERR are the good flags.
+I think the issue is in KERN_CRIT, KERN_EMERG, KERN_ALERT.
 
-	Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Please read it (Debugging by printing : printk):
 
-Send your patch with correct syntax as said in :
-
-	http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt
+	http://lwn.net/images/pdf/LDD3/ch04.pdf
 
 Have a nice day,
 
-				- Christophe (clucas@rotomalug.org)
+			- Christophe (clucas@rotomalug.org)
 
 
---===============0079680339579235593==
+--===============96119764311056688==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0079680339579235593==--
+--===============96119764311056688==--
