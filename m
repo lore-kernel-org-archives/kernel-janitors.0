@@ -1,58 +1,56 @@
-From: Felipe W Damasio <felipewd@terra.com.br>
-Date: Thu, 06 Oct 2005 18:46:07 +0000
-Subject: Re: [KJ] [PATCH] cris: kgdb: remove double_this()
-Message-Id: <434570EF.3060106@terra.com.br>
+From: irwan.djajadi@iname.com
+Date: Mon, 03 Oct 2005 04:00:21 +0000
+Subject: [KJ] [PATCH 2.6.13.2 1/1] acpi: kmalloc failure handling
+Message-Id: <20051003040021.GA25808@poopie.dyndns.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============86235856936620126=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051005204541.GB27229@mipter.zuzino.mipt.ru>
-In-Reply-To: <20051005204541.GB27229@mipter.zuzino.mipt.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-    Hi,
+--===============86235856936620126==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    Or better yet, even if it is actually necessary, why wasn't it made 
-inline.
+Added kmalloc failure handling on some acpi files
 
-    Or even a define.
+Signed-off-by: Irwan Djajadi <irwan.djajadi@iname.com>
 
-    Or...yeah, why was it made in the first place? :-)
+diff -pruN 2.6/drivers/acpi/hotkey.c mod1-2.6/drivers/acpi/hotkey.c
+--- 2.6/drivers/acpi/hotkey.c	2005-09-16 20:02:12.000000000 -0500
++++ mod1-2.6/drivers/acpi/hotkey.c	2005-10-02 22:35:14.000000000 -0500
+@@ -719,6 +719,8 @@ get_parms(char *config_record,
+ 		goto do_fail;
+ 	count = tmp1 - tmp;
+ 	*action_handle = (char *) kmalloc(count+1, GFP_KERNEL);
++	if (!*action_handle)
++		goto do_fail;
+ 	strncpy(*action_handle, tmp, count);
+ 	*(*action_handle + count) = 0;
+ 
+diff -pruN 2.6/drivers/acpi/osl.c mod1-2.6/drivers/acpi/osl.c
+--- 2.6/drivers/acpi/osl.c	2005-09-16 20:02:12.000000000 -0500
++++ mod1-2.6/drivers/acpi/osl.c	2005-10-02 22:47:49.000000000 -0500
+@@ -755,6 +755,10 @@ acpi_os_create_lock (
+ 	ACPI_FUNCTION_TRACE ("os_create_lock");
+ 
+ 	lock_ptr = acpi_os_allocate(sizeof(spinlock_t));
++	if (!lock_ptr) {
++		ACPI_DEBUG_PRINT ((ACPI_DB_ERROR, "Failed to allocate spinlock.\n"));
++		return_ACPI_STATUS (AE_NO_MEMORY);
++	}
+ 
+ 	spin_lock_init(lock_ptr);
+ 
 
-    Cheers,
+--===============86235856936620126==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Felipe Damasio
-
-Ricardo Nabinger Sanchez wrote:
-
->Quoting  Alexey Dobriyan <adobriyan@gmail.com>
->Sent on  Thu, 6 Oct 2005 00:45:41 +0400
->
->Hello,
->
->  
->
->>-int
->>-double_this(int x)
->>-{
->>-        return 2 * x;
->>-}
->>    
->>
->
->I'm wondering why this "2*x" wrapper was ever made.
->
->  
->
->------------------------------------------------------------------------
->
->_______________________________________________
->Kernel-janitors mailing list
->Kernel-janitors@lists.osdl.org
->https://lists.osdl.org/mailman/listinfo/kernel-janitors
->  
->
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============86235856936620126==--
