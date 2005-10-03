@@ -1,48 +1,58 @@
-From: irwan.djajadi@iname.com
-Date: Sun, 23 Oct 2005 02:50:46 +0000
-Subject: [KJ] [PATCH 2.6.14-rc5 1/1] drivers/atm/nicstar.c: replace
-Message-Id: <20051023025046.GB2438@poopie.dyndns.org>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 03 Oct 2005 08:21:15 +0000
+Subject: [KJ] Re: [PATCH 0/13] fix all sparse gfp 'nocast' warnings
+Message-Id: <20051003082115.GC737@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5921729172424377=="
+Content-Type: multipart/mixed; boundary="===============51653219726212196=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051023024655.GA2438@poopie.dyndns.org>
-In-Reply-To: <20051023024655.GA2438@poopie.dyndns.org>
 To: kernel-janitors@vger.kernel.org
 
---===============5921729172424377==
+--===============51653219726212196==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-drivers/atm/nicstar.c: replace interruptible_sleep_on_timeout() with
-wait_event_interruptible_timeout()
+On Sun, Oct 02, 2005 at 10:44:51PM -0700, Randy.Dunlap wrote:
+> I have 13 patches for 'nocast' warnings from sparse.
 
-Signed-off-by: Irwan Djajadi <irwan.djajadi@iname.com>
+> Fix all warnings of the type
+> 
+>   warning: implicit cast to nocast type
+> 
+> that are for gfp_flags not being 'unsigned int'
+> (lots of places declared them as plain 'int').
 
-diff -pruNX 2.6.14-rc5/Documentation/dontdiff 2.6.14-rc5/drivers/atm/nicstar.c mod/drivers/atm/nicstar.c
---- 2.6.14-rc5/drivers/atm/nicstar.c	2005-10-22 00:06:17.000000000 -0500
-+++ mod/drivers/atm/nicstar.c	2005-10-22 14:38:35.000000000 -0500
-@@ -1905,7 +1905,7 @@ static int push_scqe(ns_dev *card, vc_ma
- 
-       scq->full = 1;
-       spin_unlock_irqrestore(&scq->lock, flags);
--      interruptible_sleep_on_timeout(&scq->scqfull_waitq, SCQFULL_TIMEOUT);
-+      wait_event_interruptible_timeout(scq->scqfull_waitq, !scq->full, SCQFULL_TIMEOUT);
-       ns_grab_scq_lock(card, scq, flags);
- 
-       if (scq->full) {
-@@ -1954,7 +1954,7 @@ static int push_scqe(ns_dev *card, vc_ma
-          scq->full = 1;
-          if (has_run++) break;
-          spin_unlock_irqrestore(&scq->lock, flags);
--         interruptible_sleep_on_timeout(&scq->scqfull_waitq, SCQFULL_TIMEOUT);
-+         wait_event_interruptible_timeout(scq->scqfull_waitq, !scq->full, SCQFULL_TIMEOUT);
-          ns_grab_scq_lock(card, scq, flags);
-       }
- 
+Ouch... It should be:
+
+	unsigned int __nocast gfp
+
+"__nocast" was the point. Otherwise you absolutely defeat sparse:
+
+$ cat -n test.c
+     1	#define __nocast __attribute__((nocast))
+     2	
+     3	static void f(unsigned int __nocast gfp)
+     4	{
+     5	}
+     6	
+     7	static void g(unsigned int gfp)
+     8	{
+     9	}
+    10	
+    11	static void h(void)
+    12	{
+    13		f(0);
+    14		f(1);
+    15		g(0);
+    16		g(1);
+    17	}
+$ sparse test.c
+test.c:13:4: warning: implicit cast to nocast type
+test.c:14:4: warning: implicit cast to nocast type
+	<= line 15 ?
+	<= line 16 ?
 
 
-
---===============5921729172424377==
+--===============51653219726212196==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5921729172424377==--
+--===============51653219726212196==--
