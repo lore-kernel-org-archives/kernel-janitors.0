@@ -1,45 +1,28 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 24 Oct 2005 19:38:06 +0000
-Subject: Re: [KJ] [PATCH] arch/i386/kernel/process.c
-Message-Id: <20051024193806.GA7731@mipter.zuzino.mipt.ru>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61188552700016441=="
+From: Rodrigo Nascimento <underscore0x5f@gmail.com>
+Date: Tue, 04 Oct 2005 13:17:36 +0000
+Subject: [KJ] Off-Topic: Backup
+Message-Id: <cbecb3040510040617k3e20d981k@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4359539D.2060608@users.sourceforge.net>
-In-Reply-To: <4359539D.2060608@users.sourceforge.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============61188552700016441==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi ALL,
 
-On Fri, Oct 21, 2005 at 08:46:21PM +0000, slackfan@users.sourceforge.net wrote:
-> 	if (!strncmp(str, "poll", 4)) {
-> -		printk("using polling idle threads.\n");
-> +		printk(KERN_DEBUG "using polling idle threads.\n");
-
-> +			printk(KERN_NOTICE "WARNING: polling idle and HT 
-> enabled, performance may degrade.\n");
-
-KERN_WARNING, no?
-
-> #endif
-> 	} else if (!strncmp(str, "halt", 4)) {
-> -		printk("using halt in idle threads.\n");
-> +		printk(KERN_INFO "using halt in idle threads.\n");
-
-Strange. You've used KERN_DEBUG several lines above.
+In others systems like AIX, Solaris or HP-UX, when you lost your
+system you don't need to make a new installation and then make a
+restore of the filesystems. You only put the installation CD in the
+drive, boot the machine, and on the installation process you have a
+option to make a complete restore of the your backup. In AIX this is
+the backup image (mksysb). Some one know something similar to
+Gnu/Linux?
 
 
---===============61188552700016441==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
+Rodrigo Nascimento
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============61188552700016441==--
