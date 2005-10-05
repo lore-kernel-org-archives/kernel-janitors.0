@@ -1,40 +1,35 @@
 From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Thu, 06 Oct 2005 21:59:55 +0000
-Subject: [KJ] [PATCH] starfire: free_irq() on error path of netdev_open()
-Message-Id: <20051006220523.GD2370@mipter.zuzino.mipt.ru>
+Date: Wed, 05 Oct 2005 12:07:51 +0000
+Subject: [KJ] Re: [PATCH] reiserfs: fix gfp flags type
+Message-Id: <20051005120750.GA4565@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============054015298608830031=="
+Content-Type: multipart/mixed; boundary="===============85784255672107079=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: Ion Badulescu <ionut@cs.columbia.edu>
-Cc: netdev@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---===============054015298608830031==
+--===============85784255672107079==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+On Tue, Oct 04, 2005 at 08:07:15PM -0700, Randy.Dunlap wrote:
+> Fix nocast sparse warnings in reiserfs:
+> fs/reiserfs/fix_node.c:2030:21: warning: implicit cast to nocast type
 
- drivers/net/starfire.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Correct patch is already in -kj:
+fs_reiserfs_fix_node_c_fix_sparse_warnings___nocast_type.patch
 
---- ./drivers/net/starfire.c
-+++ ./drivers/net/starfire.c
-@@ -1091,8 +1091,10 @@ static int netdev_open(struct net_device
- 		rx_ring_size = sizeof(struct starfire_rx_desc) * RX_RING_SIZE;
- 		np->queue_mem_size = tx_done_q_size + rx_done_q_size + tx_ring_size + rx_ring_size;
- 		np->queue_mem = pci_alloc_consistent(np->pci_dev, np->queue_mem_size, &np->queue_mem_dma);
--		if (np->queue_mem == 0)
-+		if (np->queue_mem == 0) {
-+			free_irq(dev->irq, dev);
- 			return -ENOMEM;
-+		}
- 
- 		np->tx_done_q     = np->queue_mem;
- 		np->tx_done_q_dma = np->queue_mem_dma;
+> --- linux-2614-rc2-git6/fs/reiserfs/fix_node.c~reiser_gfpmask
+> +++ linux-2614-rc2-git6/fs/reiserfs/fix_node.c
+> @@ -2022,7 +2022,8 @@ static int get_neighbors(struct tree_bal
+>  }
+>  
+>  #ifdef CONFIG_REISERFS_CHECK
+> -void *reiserfs_kmalloc(size_t size, int flags, struct super_block *s)
+> +void *reiserfs_kmalloc(size_t size, unsigned int __nocast flags,
+> +			struct super_block *s)
 
 
---===============054015298608830031==
+--===============85784255672107079==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============054015298608830031==--
+--===============85784255672107079==--
