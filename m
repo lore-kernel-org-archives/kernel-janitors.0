@@ -1,35 +1,43 @@
 From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 03 Oct 2005 08:32:26 +0000
-Subject: [KJ] Re: [PATCH 4/14] connector: fix gfp flags type
-Message-Id: <20051003083226.GD737@mipter.zuzino.mipt.ru>
+Date: Wed, 05 Oct 2005 20:45:41 +0000
+Subject: [KJ] [PATCH] cris: kgdb: remove double_this()
+Message-Id: <20051005204541.GB27229@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5167046572865921=="
+Content-Type: multipart/mixed; boundary="===============74437632960426026=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051003054905.GB31592@2ka.mipt.ru>
-In-Reply-To: <20051003054905.GB31592@2ka.mipt.ru>
 To: kernel-janitors@vger.kernel.org
 
---===============5167046572865921==
+--===============74437632960426026==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Oct 03, 2005 at 09:49:05AM +0400, Evgeniy Polyakov wrote:
-> On Sun, Oct 02, 2005 at 10:40:44PM -0700, Randy.Dunlap (rdunlap@xenotime.net) wrote:
-> > Fix implicit nocast warnings in connector code:
-> > drivers/connector/connector.c:102:24: warning: implicit cast to nocast type
-> > drivers/connector/connector.c:114:45: warning: implicit cast to nocast type
-> 
-> ACK.
+* Doesn't have C&C warning.
+* Unused.
 
-Should be
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-	unsigned int __nocast ...
+ arch/cris/arch-v10/kernel/kgdb.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-> > -int cn_netlink_send(struct cn_msg *msg, u32 __group, int gfp_mask)
-> > +int cn_netlink_send(struct cn_msg *msg, u32 __group, unsigned int gfp_mask)
+--- ./arch/cris/arch-v10/kernel/kgdb.c
++++ ./arch/cris/arch-v10/kernel/kgdb.c
+@@ -569,12 +569,6 @@ gdb_cris_strtol (const char *s, char **e
+ 	return x;
+ }
+ 
+-int
+-double_this(int x)
+-{
+-        return 2 * x;
+-}
+-
+ /********************************* Register image ****************************/
+ /* Copy the content of a register image into another. The size n is
+    the size of the register image. Due to struct assignment generation of
 
 
---===============5167046572865921==
+--===============74437632960426026==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -40,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5167046572865921==--
+--===============74437632960426026==--
