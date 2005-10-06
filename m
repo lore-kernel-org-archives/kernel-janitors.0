@@ -1,32 +1,47 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Wed, 05 Oct 2005 22:22:32 +0000
+From: Masoud Sharbiani <masouds@masoud.ir>
+Date: Thu, 06 Oct 2005 15:42:26 +0000
 Subject: Re: [KJ] hexdigits definition consolidation [RESEND2]
-Message-Id: <20051005222232.GH19437@parisc-linux.org>
+Message-Id: <20051006154226.GA1546@masoud.ir>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10804154661880849=="
+Content-Type: multipart/mixed; boundary="===============16521224214293273=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20051005201210.GA27788@masoud.ir>
 In-Reply-To: <20051005201210.GA27788@masoud.ir>
 To: kernel-janitors@vger.kernel.org
 
---===============10804154661880849==
+--===============16521224214293273==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Thu, Oct 06, 2005 at 01:21:25AM +0400, Alexey Dobriyan wrote:
-> > +const char small_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-> > +EXPORT_SYMBOL(small_digits);
-> > +
-> > +const char large_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-> > +EXPORT_SYMBOL(large_digits);
+> On Wed, Oct 05, 2005 at 04:12:11PM -0400, Masoud Sharbiani wrote:
+> > On Wed, Oct 05, 2005 at 11:25:33AM -0600, Matthew Wilcox wrote:
+> > --- linux-2.6.clean/arch/cris/arch-v10/kernel/kgdb.c
+> > +++ linux-2.6.patched/arch/cris/arch-v10/kernel/kgdb.c
 > 
-> I guess many people from linux-kernel will shoot us for exporting
-> _this_.
+> Please, add "-p" to your diff(1) flags. It'd sometimes make reviewing
+> much easier.
+> 
+> > @@ -557,8 +556,8 @@
+> >  	char *sd;
+> >  	int x = 0;
+> >  	
+> > -	for (s1 = (char*)s; (sd = gdb_cris_memchr(hexchars, *s1, base)) != NULL; ++s1)
+> > -		x = x * base + (sd - hexchars);
+> > +	for (s1 = (char*)s; (sd = gdb_cris_memchr(small_digits, *s1, base)) != NULL; ++s1)
+> > +		x = x * base + (sd - small_digits);
+> >          
+> >          if (endptr)
+> >          {
+> 
+> simple_strtol()
 
-I don't see why.  If we want to use it from modules, we need to export
-it.
+I think the reason that they have reimplemented these is that they want to have a separate function to avoid single stepping into the library functions and thus failing the kgdb. Same thing goes for reimplementations of strlen and other library functions in the same file.
 
---===============10804154661880849==
+cheers, 
+Masoud 
+
+--===============16521224214293273==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -37,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10804154661880849==--
+--===============16521224214293273==--
