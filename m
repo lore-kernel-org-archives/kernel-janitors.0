@@ -1,74 +1,154 @@
-From: "Flaithri Schuman" <schum@allsport.co.uk>
-Date: Thu, 13 Oct 2005 06:33:48 +0000
-Subject: [KJ] Re: Baltasar Dorazio Merdictions
-Message-Id: <002701c5cfc0$113fee00$4f76a8c0@embarrassment>
+From: Aaron Grothe <ajgrothe@yahoo.com>
+Date: Thu, 06 Oct 2005 02:37:54 +0000
+Subject: [KJ] Unreachable Code
+Message-Id: <20051006023754.35718.qmail@web34205.mail.mud.yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56003126752311794=="
+Content-Type: multipart/mixed; boundary="0-1282900078-1128566274=:35356"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============56003126752311794==
-Content-Type: multipart/alternative;
-    boundary="----------=_1129185275-10062-468"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1129185275-10062-468
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+--0-1282900078-1128566274=:35356
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Id: 
 Content-Disposition: inline
 
-prxavaciprlesoamcevi
-opnalialozvimabileag
-eciaxum  $is  $actra enbrexra $
-161 90 pi170 30 pi     135 30 pi
-llslls     lls
-get additional info
+Hi,
+
+The following is a small patch against the 2.6.14-rc3
+tree.  It removes some code that won't/can't be
+reached.  I came across the code while building the
+kernel with the Intel C compiler.
+
+I've thrown a couple of quick webpages and a little
+project on sourceforge up at http://www.linuxicc.org
+with some more of the "interesting" results from using
+Intel's compiler.  I think with Intel's compiler
+reporting a couple of things than gcc it might lead to
+some interesting results.
+
+Regards,
+
+Aaron
+=-=-=
+"The Journey is the Reward" - Old Zen Buddhist Saying
 
 
-------------=_1129185275-10062-468
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+		
+__________________________________ 
+Yahoo! Mail - PC Magazine Editors' Choice 2005 
+http://mail.yahoo.com
+--0-1282900078-1128566274=:35356
+Content-Type: text/plain; name="patch26.txt"
+Content-Description: 2148707597-patch26.txt
+Content-Disposition: inline; filename="patch26.txt"
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<SPAN>&nbsp;<BR></SPAN><DIV><DIV DEFANGED_style=3D"BORDER-TOP: 0px; FLOAT: =
-left; PADDING-RIGHT: 0px; FONT-FAMILY: Courier; BORDER-WIDTH: 0px;">Pr<BR>X=
-a<BR>Va<BR>Ci<BR>Pr<BR>Le<BR>So<BR>Am<BR>Ce<BR>Vi</DIV>
-<DIV DEFANGED_style=3D"MARGIN-RIGHT: 0px; FONT-FAMILY: Courier; BORDER-WIDT=
-H: 0px; BORDER-LEFT-WIDTH: 0px; FLOAT: left;">op<BR>na<BR>li<BR>al<BR>oz<BR=
->vi<BR>ma<BR>bi<BR>le<BR>ag</DIV>
-<DIV DEFANGED_style=3D"BORDER-COLOR: #FFFFFF; PADDING-RIGHT: 0px; MARGIN-RI=
-GHT: 0px; FONT-FAMILY: Courier; FLOAT: left;">ecia<BR>x<BR>um  $<BR>is  $<B=
-R>ac<BR>tra<BR> <BR>en<BR>brex<BR>ra $</DIV>
-<DIV DEFANGED_style=3D"BORDER-RIGHT-WIDTH: 0px; FONT-FAMILY: Courier; FLOAT=
-: left; PADDING-LEFT: 0px; BORDER-LEFT-WIDTH: 0px;"> <BR> <BR>161 90 pi<BR>=
-170 30 pi<BR> <BR> <BR> <BR> <BR> <BR>135 30 pi</DIV>
-<DIV DEFANGED_style=3D"FLOAT: left; BORDER-TOP-WIDTH: 0px; BORDER-COLOR: #F=
-FFFFF; BORDER-RIGHT: 0px; FONT-FAMILY: Courier;"> <BR> <BR>lls<BR>lls<BR> <=
-BR> <BR> <BR> <BR> <BR>lls</DIV></DIV><BR>
-<DIV DEFANGED_style=3D"CLEAR: both; BORDER-TOP-WIDTH: 0px; BORDER-COLOR: #F=
-FFFFF; MARGIN-LEFT: 0px;"><DIV><BR><FONT face=3DArial><A href=3D"http://www=
-.geocities.com/Ulrgustescoanue/"><FONT face=3DArial>Get additional info</FO=
-NT></A></FONT></DIV><DIV>&nbsp;</DIV></DIV>
-</BODY></HTML>
+diff -uprN -X dontdiff linux-2.6.14-rc3/drivers/char/drm/i830_dma.c linux-2.6.14-rc3-patch/drivers/char/drm/i830_dma.c
+--- linux-2.6.14-rc3/drivers/char/drm/i830_dma.c	2005-10-04 11:19:44.000000000 +0200
++++ linux-2.6.14-rc3-patch/drivers/char/drm/i830_dma.c	2005-10-06 04:43:58.000000000 +0200
+@@ -594,21 +594,6 @@ static void i830EmitTexPalette( drm_devi
+ 
+ 	return;
+ 
+-	BEGIN_LP_RING( 258 );
+-
+-	if(is_shared == 1) {
+-		OUT_RING(CMD_OP_MAP_PALETTE_LOAD |
+-			 MAP_PALETTE_NUM(0) |
+-			 MAP_PALETTE_BOTH);
+-	} else {
+-		OUT_RING(CMD_OP_MAP_PALETTE_LOAD | MAP_PALETTE_NUM(number));
+-	}
+-	for(i = 0; i < 256; i++) {
+-		OUT_RING(palette[i]);
+-	}
+-	OUT_RING(0);
+-	/* KW:  WHERE IS THE ADVANCE_LP_RING?  This is effectively a noop! 
+-	 */
+ }
+ 
+ /* Need to do some additional checking when setting the dest buffer.
+diff -uprN -X dontdiff linux-2.6.14-rc3/fs/udf/super.c linux-2.6.14-rc3-patch/fs/udf/super.c
+--- linux-2.6.14-rc3/fs/udf/super.c	2005-08-29 01:41:01.000000000 +0200
++++ linux-2.6.14-rc3-patch/fs/udf/super.c	2005-10-06 04:45:13.000000000 +0200
+@@ -793,55 +793,6 @@ udf_find_fileset(struct super_block *sb,
+ 		kernel_lb_addr newfileset;
+ 
+ 		return 1;
+-		
+-		for (newfileset.partitionReferenceNum=UDF_SB_NUMPARTS(sb)-1;
+-			(newfileset.partitionReferenceNum != 0xFFFF &&
+-				fileset->logicalBlockNum == 0xFFFFFFFF &&
+-				fileset->partitionReferenceNum == 0xFFFF);
+-			newfileset.partitionReferenceNum--)
+-		{
+-			lastblock = UDF_SB_PARTLEN(sb, newfileset.partitionReferenceNum);
+-			newfileset.logicalBlockNum = 0;
+-
+-			do
+-			{
+-				bh = udf_read_ptagged(sb, newfileset, 0, &ident);
+-				if (!bh)
+-				{
+-					newfileset.logicalBlockNum ++;
+-					continue;
+-				}
+-
+-				switch (ident)
+-				{
+-					case TAG_IDENT_SBD:
+-					{
+-						struct spaceBitmapDesc *sp;
+-						sp = (struct spaceBitmapDesc *)bh->b_data;
+-						newfileset.logicalBlockNum += 1 +
+-							((le32_to_cpu(sp->numOfBytes) + sizeof(struct spaceBitmapDesc) - 1)
+-								>> sb->s_blocksize_bits);
+-						udf_release_data(bh);
+-						break;
+-					}
+-					case TAG_IDENT_FSD:
+-					{
+-						*fileset = newfileset;
+-						break;
+-					}
+-					default:
+-					{
+-						newfileset.logicalBlockNum ++;
+-						udf_release_data(bh);
+-						bh = NULL;
+-						break;
+-					}
+-				}
+-			}
+-			while (newfileset.logicalBlockNum < lastblock &&
+-				fileset->logicalBlockNum == 0xFFFFFFFF &&
+-				fileset->partitionReferenceNum == 0xFFFF);
+-		}
+ 	}
+ 
+ 	if ((fileset->logicalBlockNum != 0xFFFFFFFF ||
+diff -uprN -X dontdiff linux-2.6.14-rc3/net/rxrpc/transport.c linux-2.6.14-rc3-patch/net/rxrpc/transport.c
+--- linux-2.6.14-rc3/net/rxrpc/transport.c	2005-10-04 11:20:21.000000000 +0200
++++ linux-2.6.14-rc3-patch/net/rxrpc/transport.c	2005-10-06 04:45:59.000000000 +0200
+@@ -563,8 +563,6 @@ void rxrpc_trans_receive_packet(struct r
+ 		kfree_skb(pkt);
+ 	}
+ 
+-	_leave("");
+-
+ } /* end rxrpc_trans_receive_packet() */
+ 
+ /*****************************************************************************/
+@@ -848,7 +846,4 @@ static void rxrpc_trans_receive_error_re
+ 			rxrpc_put_peer(peer);
+ 		}
+ 	}
+-
+-	_leave("");
+-	return;
+ } /* end rxrpc_trans_receive_error_report() */
 
-------------=_1129185275-10062-468--
-
---===============56003126752311794==
+--0-1282900078-1128566274=:35356
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +159,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56003126752311794==--
+--0-1282900078-1128566274=:35356--
