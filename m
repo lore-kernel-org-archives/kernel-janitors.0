@@ -1,43 +1,39 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Wed, 05 Oct 2005 20:45:41 +0000
-Subject: [KJ] [PATCH] cris: kgdb: remove double_this()
-Message-Id: <20051005204541.GB27229@mipter.zuzino.mipt.ru>
+From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+Date: Thu, 06 Oct 2005 18:32:23 +0000
+Subject: Re: [KJ] [PATCH] cris: kgdb: remove double_this()
+Message-Id: <20051006153223.c17a808b.rnsanchez@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============74437632960426026=="
+Content-Type: multipart/mixed; boundary="===============97910491609499983=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20051005204541.GB27229@mipter.zuzino.mipt.ru>
+In-Reply-To: <20051005204541.GB27229@mipter.zuzino.mipt.ru>
 To: kernel-janitors@vger.kernel.org
 
---===============74437632960426026==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============97910491609499983==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-* Doesn't have C&C warning.
-* Unused.
+Quoting  Alexey Dobriyan <adobriyan@gmail.com>
+Sent on  Thu, 6 Oct 2005 00:45:41 +0400
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Hello,
 
- arch/cris/arch-v10/kernel/kgdb.c |    6 ------
- 1 file changed, 6 deletions(-)
+> -int
+> -double_this(int x)
+> -{
+> -        return 2 * x;
+> -}
 
---- ./arch/cris/arch-v10/kernel/kgdb.c
-+++ ./arch/cris/arch-v10/kernel/kgdb.c
-@@ -569,12 +569,6 @@ gdb_cris_strtol (const char *s, char **e
- 	return x;
- }
- 
--int
--double_this(int x)
--{
--        return 2 * x;
--}
--
- /********************************* Register image ****************************/
- /* Copy the content of a register image into another. The size n is
-    the size of the register image. Due to struct assignment generation of
+I'm wondering why this "2*x" wrapper was ever made.
 
+-- 
+Ricardo Nabinger Sanchez
+GNU/Linux #140696 [http://counter.li.org]
+Slackware Linux + FreeBSD
 
---===============74437632960426026==
+  Left to themselves, things tend to go from bad to worse.
+
+--===============97910491609499983==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============74437632960426026==--
+--===============97910491609499983==--
