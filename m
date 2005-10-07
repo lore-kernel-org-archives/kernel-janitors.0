@@ -1,68 +1,100 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Mon, 03 Oct 2005 14:56:17 +0000
-Subject: [KJ] Re: [PATCH 0/13] fix all sparse gfp 'nocast' warnings
-Message-Id: <Pine.LNX.4.58.0510030755520.6944@shark.he.net>
+From: "Milind A Choudhary\(Patni\)" <milind.choudhary@patni.com>
+Date: Fri, 07 Oct 2005 05:46:12 +0000
+Subject: [KJ] [PATCH] printk : kernel/softirq.c
+Message-Id: <03ca01c5cb00$c020f0f0$5f051aac@pcp42831>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54065069955762657=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_03CB_01C5CB2E.D9D92CF0"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051003082115.GC737@mipter.zuzino.mipt.ru>
-In-Reply-To: <20051003082115.GC737@mipter.zuzino.mipt.ru>
 To: kernel-janitors@vger.kernel.org
 
---===============54065069955762657==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+This is a multi-part message in MIME format...
 
-On Mon, 3 Oct 2005, Alexey Dobriyan wrote:
+------=_NextPart_000_03CB_01C5CB2E.D9D92CF0
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-> On Sun, Oct 02, 2005 at 10:44:51PM -0700, Randy.Dunlap wrote:
-> > I have 13 patches for 'nocast' warnings from sparse.
->
-> > Fix all warnings of the type
-> >
-> >   warning: implicit cast to nocast type
-> >
-> > that are for gfp_flags not being 'unsigned int'
-> > (lots of places declared them as plain 'int').
->
-> Ouch... It should be:
->
-> 	unsigned int __nocast gfp
->
-> "__nocast" was the point. Otherwise you absolutely defeat sparse:
+Description:
+printk() calls should include appropriate KERN_* constant.
 
-argh.  Thanks.
-I'll fix all of them tonight.
+Signed-off-by: Milind A Choudhary <milind.choudhary@patni.com>
 
-> $ cat -n test.c
->      1	#define __nocast __attribute__((nocast))
->      2
->      3	static void f(unsigned int __nocast gfp)
->      4	{
->      5	}
->      6
->      7	static void g(unsigned int gfp)
->      8	{
->      9	}
->     10
->     11	static void h(void)
->     12	{
->     13		f(0);
->     14		f(1);
->     15		g(0);
->     16		g(1);
->     17	}
-> $ sparse test.c
-> test.c:13:4: warning: implicit cast to nocast type
-> test.c:14:4: warning: implicit cast to nocast type
-> 	<= line 15 ?
-> 	<= line 16 ?
->
->
+The patch
+Index: linux-2.6.14-rc3/kernel/softirq.c
+===================================================================
+--- linux-2.6.14-rc3.orig/kernel/softirq.c	2005-10-06 15:30:37.000000000 +0530
++++ linux-2.6.14-rc3/kernel/softirq.c	2005-10-06 18:59:24.000000000 +0530
+@@ -328,7 +328,7 @@ EXPORT_SYMBOL(tasklet_init);
+ void tasklet_kill(struct tasklet_struct *t)
+ {
+ 	if (in_interrupt())
+-		printk("Attempt to kill tasklet from interrupt\n");
++		printk(KERN_ERR "Attempt to kill tasklet from interrupt\n");
+ 
+ 	while (test_and_set_bit(TASKLET_STATE_SCHED, &t->state)) {
+ 		do
+@@ -458,7 +458,7 @@ static int __devinit cpu_callback(struct
+ 		BUG_ON(per_cpu(tasklet_hi_vec, hotcpu).list);
+ 		p = kthread_create(ksoftirqd, hcpu, "ksoftirqd/%d", hotcpu);
+ 		if (IS_ERR(p)) {
+-			printk("ksoftirqd for %i failed\n", hotcpu);
++			printk(KERN_ERR "ksoftirqd for %i failed\n", hotcpu);
+ 			return NOTIFY_BAD;
+ 		}
+ 		kthread_bind(p, hotcpu);
 
--- 
-~Randy
+===================================================================
+apologies for the disclaimer...I'll fix it soon..
+how do I come to know whether my patches are being accepted?
+kindly let me know..
 
---===============54065069955762657==
+Thanks & Regards
+Milind A Choudhary 
+http://www.patni.com
+World-Wide Partnerships. World-Class Solutions.
+_____________________________________________________________________
+
+This e-mail message may contain proprietary, confidential or legally
+privileged information for the sole use of the person or entity to
+whom this message was originally addressed. Any review, e-transmission
+dissemination or other use of or taking of any action in reliance upon
+this information by persons or entities other than the intended
+recipient is prohibited. If you have received this e-mail in error
+kindly delete  this e-mail from your records. If it appears that this
+mail has been forwarded to you without proper authority, please notify
+us immediately at netadmin@patni.com and delete this mail. 
+_____________________________________________________________________
+
+------=_NextPart_000_03CB_01C5CB2E.D9D92CF0
+Content-Type: application/octet-stream;
+	name="kernel_softirq_printk.patch"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment; filename="kernel_softirq_printk.patch"
+
+--- linux-2.6.14-rc3.orig/kernel/softirq.c	2005-10-06 15:30:37.000000000 +0=
+530
++++ linux-2.6.14-rc3/kernel/softirq.c	2005-10-06 18:59:24.000000000 +0530
+@@ -328,7 +328,7 @@ EXPORT_SYMBOL(tasklet_init);
+ void tasklet_kill(struct tasklet_struct *t)
+ {
+ 	if (in_interrupt())
+-		printk("Attempt to kill tasklet from interrupt\n");
++		printk(KERN_ERR "Attempt to kill tasklet from interrupt\n");
+=20
+ 	while (test_and_set_bit(TASKLET_STATE_SCHED, &t->state)) {
+ 		do
+@@ -458,7 +458,7 @@ static int __devinit cpu_callback(struct
+ 		BUG_ON(per_cpu(tasklet_hi_vec, hotcpu).list);
+ 		p =3D kthread_create(ksoftirqd, hcpu, "ksoftirqd/%d", hotcpu);
+ 		if (IS_ERR(p)) {
+-			printk("ksoftirqd for %i failed\n", hotcpu);
++			printk(KERN_ERR "ksoftirqd for %i failed\n", hotcpu);
+ 			return NOTIFY_BAD;
+ 		}
+ 		kthread_bind(p, hotcpu);
+
+------=_NextPart_000_03CB_01C5CB2E.D9D92CF0
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +105,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54065069955762657==--
+------=_NextPart_000_03CB_01C5CB2E.D9D92CF0--
