@@ -1,70 +1,105 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sun, 02 Oct 2005 09:45:40 +0000
-Subject: Re: [KJ] [PATCH] printk: arch/i386/kernel/doublefault.c
-Message-Id: <20051002094540.GB1162@neon.tklauser.home>
+From: "Lae Lybarger" <laeknvftelyb@fsbomarket.com>
+Date: Sat, 08 Oct 2005 21:05:41 +0000
+Subject: [KJ] if you need it Piharmceutical
+Message-Id: <002201c5cc4c$0a298080$d545a8c0@calaber>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92971524917969628=="
+Content-Type: multipart/mixed; boundary="===============16319557690163267=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <433DA691.6080804@users.sourceforge.net>
-In-Reply-To: <433DA691.6080804@users.sourceforge.net>
 To: kernel-janitors@vger.kernel.org
 
---===============92971524917969628==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============16319557690163267==
+Content-Type: multipart/alternative;
+    boundary="----------=_1128805563-12435-74"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1128805563-12435-74
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On 2005-10-01 at 19:54:40 +0200, Powerflash <contact@powerflash.atspace.org> wrote:
-> printk() should include the appropriate KERN_* constant.
-> 
-> Signed off by: Anton Brondz (anton.slack@tele2.no)
-> 
-> *--- linux-2.6.14-rc2.orig/arch/i386/kernel/doublefault.c	2005-09-20 05:00:41.000000000 +0200*
-> *+++ linux-2.6.14-rc2/arch/i386/kernel/doublefault.c	2005-10-01 00:02:07.000000000 +0200*
-  ^
-  Huh? It doesn't seem to appear in the attached patch file.
+Good day, D
+E U
+% on yo
+ations
+o you want to SAV
+PTO 70
+ur Medicc
+?
+But It Is easy! - Get additional info
+VLXCAV
+IAGevianaIALmbiALI
+RA $traxIS $enUM $
+134 (30 pi  169 (30 pi 218 (180 p
+lls)  lls) ills)
+plus 200 other , Have a good day
 
-> @@ -23,23 +23,23 @@ static void doublefault_fn(void)
->  	store_gdt(&gdt_desc);
->  	gdt = gdt_desc.address;
->  
-> -	printk("double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
-> +	printk(KERN_ERR "double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
 
-I don't think KERN_ERR is appropriate here. Again, see
-include/linux/kernel.h for all KERN_* constants and pay attention to the
-comments. Or see the many patches Christophe already sent for this TODO
-entry.
+------------=_1128805563-12435-74
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
->  	if (ptr_ok(gdt)) {
->  		gdt += GDT_ENTRY_TSS << 3;
->  		tss = *(u16 *)(gdt+2);
->  		tss += *(u8 *)(gdt+4) << 16;
->  		tss += *(u8 *)(gdt+7) << 24;
-> -		printk("double fault, tss at %08lx\n", tss);
-> +		printk(KERN_ERR "double fault, tss at %08lx\n", tss);
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<TABLE DEFANGED_style=3D"BORDER: 0px; MARGIN-TOP: 0px;" cellSpacing=3D0 cel=
+lPadding=3D0>
+  <TR DEFANGED_style=3D"BORDER-WIDTH: 0px;" vAlign=3D"bottom">
+    <TD rowSpan=3D2><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">Good day, D</D=
+IV></TD>
+    <TD></TD><TD rowSpan=3D2><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">E U</=
+DIV></TD>
+		<TD></TD><TD rowSpan=3D2><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">% on yo=
+</DIV></TD>
+    <TD></TD><TD rowSpan=3D2><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">ation=
+s</DIV></TD>
+    <TD></TD>
+  </TR>
+  <TR DEFANGED_style=3D"BORDER-WIDTH: 0px;">
+    <TD><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">o you want to SAV</DIV></T=
+D>
+    <TD><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">PTO 70</DIV></TD>
+    <TD><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">ur Medicc</DIV></TD>
+		<TD><DIV DEFANGED_style=3D"MARGIN-TOP: 0px;">?</DIV></TD>
+</TR></TABLE>
+<DIV><BR>But It Is easy! - <A href=3D"http://ginsenglqk.trafordata.com">Get=
+ additional info</A></DIV><DIV>&nbsp;</DIV>
+<TABLE DEFANGED_style=3D"BORDER: 0px; MARGIN-TOP: 0px;" cellSpacing=3D0 cel=
+lPadding=3D0>
+  <TR><TD><DIV DEFANGED_style=3D"FONT-SIZE: 16px; BORDER-RIGHT-WIDTH: 0px; =
+FONT-FAMILY: Courier;"><B>V</B><BR>L<BR>X<BR><B>C</B><BR>A<BR><B>V</B></DIV=
+></TD>
+<TD><DIV DEFANGED_style=3D"BORDER-RIGHT-WIDTH: 0px; FONT-SIZE: 16px; FONT-F=
+AMILY: Courier;"><B>IAG</B><BR>evi<BR>ana<BR><B>IAL</B><BR>mbi<BR><B>ALI</B=
+></DIV></TD>
+<TD><DIV DEFANGED_style=3D"FONT-SIZE: 16px; FONT-FAMILY: Courier; BORDER-RI=
+GHT-WIDTH: 0px;"><B>RA&nbsp;$</B><BR>tra<BR>x<BR><B>IS&nbsp;$</B><BR>en<BR>=
+<B>UM&nbsp;$</B></DIV></TD>
+<TD><DIV DEFANGED_style=3D"BORDER-RIGHT-WIDTH: 0px; FONT-FAMILY: Courier; F=
+ONT-SIZE: 16px;"><B>134</B> (30 pi<BR>&nbsp;<BR>&nbsp;<BR><B>169</B> (30 pi=
+<BR>&nbsp;<BR><B>218</B> (180 p</DIV></TD>
+<TD><DIV DEFANGED_style=3D"BORDER-RIGHT-WIDTH: 0px; FONT-FAMILY: Courier; F=
+ONT-SIZE: 16px;">lls)<BR>&nbsp;<BR>&nbsp;<BR>lls)<BR>&nbsp;<BR>ills)</DIV><=
+/TD></TR></TABLE>
+<SPAN><P><FONT face=3DArial>plus 200 other , Have a good day</FONT></P></SP=
+AN>
+</BODY></HTML>
 
-Ditto
+------------=_1128805563-12435-74--
 
->  		if (ptr_ok(tss)) {
->  			struct tss_struct *t = (struct tss_struct *)tss;
->  
-> -			printk("eip = %08lx, esp = %08lx\n", t->eip, t->esp);
-> +			printk(KERN_ERR "eip = %08lx, esp = %08lx\n", t->eip, t->esp);
-
-Ditto
-
-> -			printk("eax = %08lx, ebx = %08lx, ecx = %08lx, edx = %08lx\n",
-> +			printk(KERN_ERR "eax = %08lx, ebx = %08lx, ecx = %08lx, edx = %08lx\n",
-
-Ditto
-
->  				t->eax, t->ebx, t->ecx, t->edx);
-> -			printk("esi = %08lx, edi = %08lx\n",
-> +			printk(KERN_ERR "esi = %08lx, edi = %08lx\n",
-
-Ditto
-
---===============92971524917969628==
+--===============16319557690163267==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +110,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92971524917969628==--
+--===============16319557690163267==--
