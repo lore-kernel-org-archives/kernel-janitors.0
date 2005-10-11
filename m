@@ -1,47 +1,66 @@
-From: Marshall Contreras <spectrographic@wsconline.net>
-Date: Sat, 08 Oct 2005 23:28:35 +0000
-Subject: [KJ] Today News Bulletin.
-Message-Id: <625101654.20051007055048@200165183088.user.veloxzone.com.br>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Tue, 11 Oct 2005 17:55:23 +0000
+Subject: [KJ] 2.6.14-rc4-kj1
+Message-Id: <20051011175523.GA2367@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87713150900594483=="
+Content-Type: multipart/mixed; boundary="===============69843021242639525=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org
 
---===============87713150900594483==
-Content-Type: text/plain; charset=US-ASCII
+--===============69843021242639525==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-EXPLOSIVE PICK FOR OUR MEMBERS.
-T R A D I N G  A L E R T!
+2.6.14-rc4-kj1 aka "I ran out of bad ideas" patchset is out. You can
+get it from usual place: http://coderock.org/kj/2.6.14-rc4-kj1/
 
-Date: 10 Oct 2005
-Company: Allixon International Corporation
-Symbol: AXCP . PK
-Price: $4.75
-3 to 5 Days: $6.50 - $7.00
-7 to 9 Days: $9.00 - $10.00
+Full shortlog of who did what is also available:
+http://coderock.org/kj/2.6.14-rc4-kj1/shortlog
+
+* __nocast patches were reworked to use gfp_t facility. Hmm... subject
+  lines were left intact.
+* ext3 + CONFIG_QUOTA=n patch was merged and dropped in between.
+
+It's nice to see new people sending small things to our list.
+
+New in this release
+-------------------
+Aaron Grothe
+  Remove unreachable code
+
+Alexey Dobriyan
+  Remove select_bits_alloc(), select_bits_free()
+  cris: kgdb: remove double_this()
+
+Anton Brondz
+  arch/i386/kernel/irq.c: use KERN_*
+
+Felix Oxley
+  fs/jffs/intrep.c: 255 is unsigned char
+
+Irwan Djajadi
+  pcf8563: remove MOD_INC/DEC_USE_COUNT
+  hotkey.c: fix memory leak on exit path
+
+Jerome Pinot
+  s/HANGUEL/HANGEUL/
+
+Milind A Choudhary
+  kernel/timer.c: use KERN_WARNING
+
+Masoud A Sharbiani
+  kernel/audit.o: make size smaller
+  hexdigits definition consolidation
+
+Merged
+------
+sungem_fix_nocast_type_warnings.patch
+ns83820_fix_nocast_type_warnings.patch
+bond_main_c_fix_nocast_type_warnings.patch
 
 
-About Allixon International Corporation
-
-Allixon is a leading provider of RFID Middleware 
-and Mobile Internet solution for device computing. 
-Allixon combines its products, expertise, partnerships 
-and integration capability into solutions for a wide range 
-of device computing applications, including RFID Middleware 
-and m-banking solution. Allixon's products, 
-based on ubiquitous technologies, direct companies 
-looking to tap into the wealth of data captured 
-by networked devices such as RFID readers or handhelds 
-to extend the quality of information to any device anywhere 
-they want. 
-
-
-GET AXCP FIRST THING MONDAY, THIS IS GOING TO EXPLODE 
-IN THE NEXT 2-5 DAYS. GOOD LUCK AND TRADE OUT AT THE TOP!!!
-
-
-
---===============87713150900594483==
+--===============69843021242639525==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87713150900594483==--
+--===============69843021242639525==--
