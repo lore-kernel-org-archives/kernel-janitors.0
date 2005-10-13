@@ -1,76 +1,48 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Fri, 07 Oct 2005 15:07:30 +0000
-Subject: Re: [KJ] Fixing:  char *foo = "blah";
-Message-Id: <20051007120730.3c3f27b8.rnsanchez@terra.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45846634865669045=="
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Thu, 13 Oct 2005 14:36:40 +0000
+Subject: [KJ] Writing a thesis about the kernel janitor activity?
+Message-Id: <a01a16b50510130736o553a0608l7c44f94757b52fe0@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200510071234.04923.lkml@oxley.org>
-In-Reply-To: <200510071234.04923.lkml@oxley.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============45846634865669045==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Hi. Next spring I shall write a master thesis and I was wondering if
+I should try to study and write something about the kernel janitor
+activity.
 
-Quoting  Felix Oxley <lkml@oxley.org>
-Sent on  Fri, 7 Oct 2005 12:34:03 +0100
+A few words on my background.  I am working at Ericsson with software
+development (embedded, C, mobile phones).  For some years I have been
+studying part-time, which I will finish next year by writing a thesis
+(I will take a leave of absence in this period).  I do not have any
+specific deeper knowledge of OS/kernel internals but I have of course
+passively followed the kernel development as a normal user for many
+years since I started using linux back in 1994.
 
-Hello,
+Title draft: What are the linux kernel janitors doing and what effect
+does it have?
 
-> I plan to take on this task as described at:
-> 			http://www.kerneljanitors.org/TODO
-> I have a number of queries:
-> 
-> 1. 	I presume that the [brackets] indicate that const is optional.
-> 	Therefore the following needs correcting:
-> 		char *foo = "blah";
-> 
-> 2.	I suppose that the following form would also need correcting:
-> 		static const char *foo = "blah"
-> 
-> 3.	Does the following (with an empty string) need correcting?
-> 		[const] char *foo = "";
-> 
-> 4. 	What about this?
-> 		static const char *class_name[] =
-> { "off","UBR","CBR","VBR","ABR" };
-> 
-> 
-> 5. 	These changes are spread across the kernel code.
-> 	Do patches need to be submitted to individual subsystem
-> maintainers, or will a single patch be ok?
+Draft of points to include: Classify the types of activity done
+(i.e. code reviews, bug fixing, documentation, api conversion, etc).
+What are the difference between the work done by janitors and "normal"
+developers and what degree of overlap is there?  How strong is the
+usage of code analyzing tools? What are tools used for? Which tools
+are used?  How many faults are found? What types of faults are found?
+In what ways have the kernel janitor activity evolved since the start?
+What areas of the kernel are typically affected by janitor activity?
+Are some parts excluded?
 
-By May, 2005, I was working on this.  Alexey told me that besides what gcc
-should do, I had to confirm that the change made was actually better.
+Does this sound like a good or bad idea?  Are there other questions I
+should be asking?  I am not sure if some of the other students would
+be interested in participating. Do you think it is too much for one/too
+little for two?
 
-In some cases, it was not.  I've made a testcase, and the results were
-pretty odd (I was expecting something else):
+Any input will be greatly appreciated.
 
-http://lists.osdl.org/pipermail/kernel-janitors/2005-May/004146.html
-
-Different versions of gcc and cross-compilers should produce different
-results.  I really don't know yet what is the best case (ie, which is good
-for (almost) all architectures/compilers).
-
-Anyone?
-
--- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
-
-  Left to themselves, things tend to go from bad to worse.
-
---===============45846634865669045==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+BR H=E5kon L=F8vdal
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============45846634865669045==--
