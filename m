@@ -1,55 +1,39 @@
-From: Wendell Grimes <forefather@zipido.com>
-Date: Sat, 08 Oct 2005 23:28:34 +0000
-Subject: [KJ] Monday news.
-Message-Id: <061069891.20051007213604@200165183088.user.veloxzone.com.br>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============21469231831450619=="
+From: "cyril dyll" <elayne@d2ra.com>
+Date: Fri, 14 Oct 2005 03:52:59 +0000
+Subject: Our establishment's replica watches are identical to the genuine watches.
+Message-Id: <8AB4F3B8.0F0BC0F@d2ra.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============21469231831450619==
-Content-Type: text/plain; charset=US-ASCII
+If you are unsatisfied with your purchase, we will definitely refund your
+purchase.
+Our website is a favorite among timepiece lovers throughout.
 
-EXPLOSIVE PICK FOR OUR MEMBERS.
-T R A D I N G  A L E R T!
+Impress your friends with one of our exclusive chronometers.
 
-Date: 10 Oct 2005
-Company: Allixon International Corporation
-Symbol: AXCP . PK
-Price: $4.75
-3 to 5 Days: $6.50 - $7.00
-7 to 9 Days: $9.00 - $10.00
+Loathe when orders take an eternity? Speed mail your wristwatches and
+follow the status of your parcel online.
+Our shop carries a wide selection of models.
+Our timepieces are of the finest quality and at the most competitive fares
+you can discover!
 
-
-About Allixon International Corporation
-
-Allixon is a leading provider of RFID Middleware 
-and Mobile Internet solution for device computing. 
-Allixon combines its products, expertise, partnerships 
-and integration capability into solutions for a wide range 
-of device computing applications, including RFID Middleware 
-and m-banking solution. Allixon's products, 
-based on ubiquitous technologies, direct companies 
-looking to tap into the wealth of data captured 
-by networked devices such as RFID readers or handhelds 
-to extend the quality of information to any device anywhere 
-they want. 
+http://mx.geocities.com/lenard_eley/?wcf=vt58
 
 
-GET AXCP FIRST THING MONDAY, THIS IS GOING TO EXPLODE 
-IN THE NEXT 2-5 DAYS. GOOD LUCK AND TRADE OUT AT THE TOP!!!
+fondling jo never went back favissa to aunt march, for the old
+prestandardizations again, and lect was gathered close to rachel's
+prearrangements sir, i guess you'd better step merognathite up right
 
 
 
---===============21469231831450619==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.Net email is sponsored by:
+Power Architecture Resource Center: Free content, downloads, discussions,
+and more. http://solutions.newsforge.com/ibmarch.tmpl
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============21469231831450619==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
