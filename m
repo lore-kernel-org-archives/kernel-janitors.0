@@ -1,64 +1,35 @@
-From: Felix Oxley <lkml@oxley.org>
-Date: Sat, 08 Oct 2005 15:45:20 +0000
-Subject: [KJ] [PATCH] intrep.c char -> unsigned char
-Message-Id: <200510081645.22440.lkml@oxley.org>
+From: irwan.djajadi@iname.com
+Date: Sun, 16 Oct 2005 01:51:36 +0000
+Subject: [KJ] [PATCH 2.6.14-rc4 1/1] acpi: kmalloc failure handling
+Message-Id: <20051016015135.GA14273@poopie.dyndns.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="Boundary-00=_Sm+RDiAfqN6afPd"
+Content-Type: multipart/mixed; boundary="===============93559503222721863=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: jffs-dev@axis.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
---Boundary-00=_Sm+RDiAfqN6afPd
-Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+--===============93559503222721863==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+Added kmalloc failure handling in acpi_os_create_lock()
 
-Hi,
-IANAKH but I believe you need the following patch.
-As suggested on the Kernel Janitors To Do list, I have been searching for 
-chars > 127.
-I only found this one!
+Signed-off-by: Irwan Djajadi <irwan.djajadi@iname.com>
 
-If the fix is correct please, ACK and push upstream.
-
-regards,
-Felix
-
---- fs/jffs/intrep.c.orig	2005-10-08 15:47:13.000000000 +0100
-+++ fs/jffs/intrep.c	2005-10-08 16:13:16.000000000 +0100
-@@ -1969,7 +1969,7 @@ retry:
- 		iovec_cnt++;
+--- 2.6.14-rc4/drivers/acpi/osl.c	2005-10-15 17:38:58.000000000 -0500
++++ 2.6.14-rc4-mod1/drivers/acpi/osl.c	2005-10-15 20:44:29.000000000 -0500
+@@ -702,6 +702,10 @@ acpi_status acpi_os_create_lock(acpi_han
+ 	ACPI_FUNCTION_TRACE("os_create_lock");
  
- 		if (JFFS_GET_PAD_BYTES(raw_inode->nsize)) {
--			static char allff[3]={255,255,255};
-+			static unsigned char allff[3]={255,255,255};
- 			/* Add some extra padding if necessary */
- 			node_iovec[iovec_cnt].iov_base = allff;
- 			node_iovec[iovec_cnt].iov_len =
-
-Signed-off-by: Felix Oxley <lkml@oxley.org>
-
---Boundary-00=_Sm+RDiAfqN6afPd
-Content-Type: text/x-diff; charset="us-ascii"; name="patch-intrep.c-2.6.13"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename="patch-intrep.c-2.6.13"
-
---- fs/jffs/intrep.c.orig	2005-10-08 15:47:13.000000000 +0100
-+++ fs/jffs/intrep.c	2005-10-08 16:13:16.000000000 +0100
-@@ -1969,7 +1969,7 @@ retry:
- 		iovec_cnt++;
+ 	lock_ptr = acpi_os_allocate(sizeof(spinlock_t));
++	if (!lock_ptr) {
++		ACPI_DEBUG_PRINT ((ACPI_DB_ERROR, "Failed to allocate spinlock.\n"));
++		return AE_NO_MEMORY;
++	}
  
- 		if (JFFS_GET_PAD_BYTES(raw_inode->nsize)) {
--			static char allff[3]={255,255,255};
-+			static unsigned char allff[3]={255,255,255};
- 			/* Add some extra padding if necessary */
- 			node_iovec[iovec_cnt].iov_base = allff;
- 			node_iovec[iovec_cnt].iov_len =
+ 	spin_lock_init(lock_ptr);
+ 
 
---Boundary-00=_Sm+RDiAfqN6afPd
+--===============93559503222721863==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---Boundary-00=_Sm+RDiAfqN6afPd--
+--===============93559503222721863==--
