@@ -1,53 +1,36 @@
-From: Dinolinux <anton.slack@tele2.no>
-Date: Sat, 08 Oct 2005 14:09:48 +0000
-Subject: Re: [KJ] [PATCH] arch/i386/kernel/doublefault.c
-Message-Id: <43480D56.408@tele2.no>
+From: "slackfan@users.sourceforge.net" <slackfan@users.sourceforge.net>
+Date: Sun, 16 Oct 2005 21:03:28 +0000
+Subject: [KJ] [PATCH] arch/i386/kernel/kprobes.c
+Message-Id: <4352D95D.8090308@users.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051003110453.GA10630@rhum.iomeda.fr>
-In-Reply-To: <20051003110453.GA10630@rhum.iomeda.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Alexey Dobriyan wrote:
+Signed-off-by: Anton Brondz <anton.slack@tele2.no>
 
->On Mon, Oct 03, 2005 at 04:54:41PM +0000, slackfan@users.sourceforge.net wrote:
->  
->
->>--- linux-2.6.14-rc2.orig/arch/i386/kernel/doublefault.c
->>+++ linux-2.6.14-rc2/arch/i386/kernel/doublefault.c
->>    
->>
->
->  
->
->>-	printk("double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
->>+	printk(KERN_ALERT "double fault, gdt at %08lx [%d bytes]\n", gdt, gdt_desc.size);
->>
->> 	if (ptr_ok(gdt)) {
->> 		gdt += GDT_ENTRY_TSS << 3;
->> 		tss = *(u16 *)(gdt+2);
->> 		tss += *(u8 *)(gdt+4) << 16;
->> 		tss += *(u8 *)(gdt+7) << 24;
->>-		printk("double fault, tss at %08lx\n", tss);
->>+		printk(KERN_CRIT "double fault, tss at %08lx\n", tss);
->>    
->>
->
->Different priorities?
->
->  
->
->------------------------------------------------------------------------
->
->_______________________________________________
->Kernel-janitors mailing list
->Kernel-janitors@lists.osdl.org
->https://lists.osdl.org/mailman/listinfo/kernel-janitors
->  
->
-Will it be better if I put KERN_CRIT on all printk lines?
+*--- linux-2.6.14-rc4.orig/arch/i386/kernel/kprobes.c	2005-10-11 01:19:19.000000000 +0000*
+*+++ linux-2.6.14-rc4/arch/i386/kernel/kprobes.c	2005-10-16 22:42:30.000000000 +0000*
+@@ -521,11 +521,11 @@ int __kprobes longjmp_break_handler(stru
+ 		if (&regs->esp != jprobe_saved_esp) {
+ 			struct pt_regs *saved_regs  			    container_of(jprobe_saved_esp, struct pt_regs, esp);
+-			printk("current esp %p does not match saved esp %p\n",
++			printk(KERN_WARN "current esp %p does not match saved esp %p\n",
+ 			       &regs->esp, jprobe_saved_esp);
+-			printk("Saved registers for jprobe %p\n", jp);
++			printk(KERN_INFO "Saved registers for jprobe %p\n", jp);
+ 			show_registers(saved_regs);
+-			printk("Current registers\n");
++			printk(KERN_INFO "Current registers\n");
+ 			show_registers(regs);
+ 			BUG();
+ 		}
+
+
+Just a small patch this time. Hope it'll work.
+
+Dinolinux
 
 _______________________________________________
 Kernel-janitors mailing list
