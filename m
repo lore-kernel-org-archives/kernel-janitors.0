@@ -1,13 +1,15 @@
-From: <newsletter@briefing.com>
+From: <finance@iinews.com>
 Date: Tue, 18 Oct 2005 12:17:48 +0000
 Subject: [KJ] Press Release. Source: Allixon International Inc.
-Message-Id: <1057445829.121096128114@200-153-180-156.dsl.telesp.net.br>
+Message-Id: <5112069034.45959121009@200-153-180-156.dsl.telesp.net.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64873610431220596=="
+Content-Type: multipart/mixed; boundary="===============10667624334103465=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1057445829.121096128114@200-153-180-156.dsl.telesp.net.br>
+In-Reply-To: <1057445829.121096128114@200-153-180-156.dsl.telesp.net.br>
 To: kernel-janitors@vger.kernel.org
 
---===============64873610431220596==
+--===============10667624334103465==
 Content-Type: text/plain; charset=us-ascii
 
 Allixon International Corporation Signs 
@@ -67,7 +69,7 @@ the quality of information to any device where they want.
 
 
 
---===============64873610431220596==
+--===============10667624334103465==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -78,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64873610431220596==--
+--===============10667624334103465==--
