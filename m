@@ -1,57 +1,33 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Fri, 28 Oct 2005 14:39:50 +0000
-Subject: [KJ] 2.6.14-kj1
-Message-Id: <20051028143950.GA27655@mipter.zuzino.mipt.ru>
+From: Tilly Harris <Melcher@howison.net>
+Date: Wed, 26 Oct 2005 17:53:23 +0000
+Subject: [KJ] Quality software for less.
+Message-Id: <12652919809.5865771386@local-C-159.tim.ro>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97551870763638604=="
+Content-Type: multipart/mixed; boundary="===============42221664073843845=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org
-Cc: linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============97551870763638604==
+--===============42221664073843845==
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-2.6.14-kj1 patchset is out. You can get it from
-http://coderock.org/kj/2.6.14-kj1/
-
-New in this release
--------------------
--hexdigits_definition_consolidation.patch
-+hex_digits_consolidation.patch
-
-	New version of hex digits consolidation from Masoud Sharbiani.
-	Is	+EXPORT_SYMBOL(small_digits);
-		+EXPORT_SYMBOL(large_digits);	OK?
-
-+drivers_atm_firestream_c_convert_interruptible_sleep_on.patch
-+drivers_atm_nicstar_c_replace_interruptible_sleep_on_timeout.patch
-+drivers_block_swim3_c_replace_interruptible_sleep_on.patch
-+drivers_block_swim_iop_c_replace_interruptible_sleep_on.patch
-+drivers_char_amiserial_c_replace_interruptible_sleep_on.patch
-+drivers_char_cyclades_c_replace_interruptible_sleep_on.patch
-+drivers_char_epca_c_replace_interruptible_sleep_on.patch
-+drivers_char_esp_c_replace_interruptible_sleep_on.patch
-+drivers_char_generic_serial_c_replace_interruptible_sleep_on.patch
-+drivers_char_isicom_c_replace_interruptible_sleep_on.patch
-+drivers_char_istallion_c_replace_interruptible_sleep_on.patch
-+drivers_char_moxa_c_replace_interruptible_sleep_on.patch
-+drivers_char_pcmcia_synclink_cs_c_replace_interruptible_sleep_on.patch
-+drivers_char_riscom8_c_replace_interruptible_sleep_on.patch
-+drivers_char_rocket_c_replace_interruptible_sleep_on.patch
-+drivers_char_serial167_c_replace_interruptible_sleep_on.patch
-+drivers_char_specialix_c_replace_interruptible_sleep_on.patch
-+drivers_char_stallion_c_replace_interruptible_sleep_on.patch
-+drivers_char_synclink_c_replace_interruptible_sleep_on.patch
-+drivers_char_synclinkmp_c_replace_interruptible_sleep_on.patch
-+drivers_isdn_i4l_isdn_tty_c_replace_interruptible_sleep_on.patch
-+drivers_media_radio_radio_cadet_c_replace_interruptible_sleep_on.patch
-
-	Irwan Djajadi continues Nishanth Aravamudan's quest of getting
-	rid of *sleep_on* functions. Needs review, review, review...
+Enabling the digital future.
+In order to get the feed, go to Settings -> Links Feed and provide the list of IPs
 
 
---===============97551870763638604==
+Real glory springs from the silent conquest of ourselves.    
+Oh, give us the man who sings at his work.   
+
+In the fight between you and the world, back the world.  
+A life of pleasure makes even the strongest mind frivolous at last. 
+
+The fragrance always remains in the hand that gives the rose.  
+In these matters the only certainty is that nothing is certain.  
+
+
+
+
+--===============42221664073843845==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97551870763638604==--
+--===============42221664073843845==--
