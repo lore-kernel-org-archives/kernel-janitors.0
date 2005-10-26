@@ -1,49 +1,51 @@
-From: irwan.djajadi@iname.com
-Date: Tue, 25 Oct 2005 04:13:10 +0000
-Subject: [KJ] [PATCH 2.6.14-rc5 1/1] radio-cadet.c: replace
-Message-Id: <20051025041310.GB24164@poopie.dyndns.org>
+From: Audrey Tuttle <meaninglessly@you.de>
+Date: Wed, 26 Oct 2005 00:44:42 +0000
+Subject: [KJ] An Under the Radar Equity
+Message-Id: <1327883252.7089997750@pool-68-237-45-2.ny325.east.verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17450102208154661=="
+Content-Type: multipart/mixed; boundary="===============49443847759715354=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============17450102208154661==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============49443847759715354==
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-radio-cadet.c: replace interruptible_sleep_on() with
-wait_event_interruptible(). Also, replaced some spaces with tabs.
+Allixon Internation Corp (A X C P)
+A X C P  is our NEXT HOT PICK which we feel is the most undervalued stock 
+we have ever featured and should out perform all other picks 
+this year based on their sales, incredibly solid numbers.
 
-Signed-off-by: Irwan Djajadi <irwan.djajadi@iname.com>
-
-
-diff -pruNX 2.6.14-rc5/Documentation/dontdiff 2.6.14-rc5/drivers/media/radio/radio-cadet.c mod/drivers/media/radio/radio-cadet.c
---- 2.6.14-rc5/drivers/media/radio/radio-cadet.c	2005-10-22 00:06:20.000000000 -0500
-+++ mod/drivers/media/radio/radio-cadet.c	2005-10-24 23:10:32.000000000 -0500
-@@ -339,15 +339,15 @@ static ssize_t cadet_read(struct file *f
- 		add_timer(&readtimer);
- 	}
- 	if(rdsin==rdsout) {
--  	        if (file->f_flags & O_NONBLOCK)
--		        return -EWOULDBLOCK;
--	        interruptible_sleep_on(&read_queue);
-+		if (file->f_flags & O_NONBLOCK)
-+			return -EWOULDBLOCK;
-+		wait_event_interruptible(read_queue, rdsin!=rdsout);
- 	}		
- 	while( i<count && rdsin!=rdsout)
--	        readbuf[i++]=rdsbuf[rdsout++];
-+		readbuf[i++]=rdsbuf[rdsout++];
- 
- 	if (copy_to_user(data,readbuf,i))
--	        return -EFAULT;
-+		return -EFAULT;
- 	return i;
- }
- 
+Date: 26 Oct 2005 
+Company: Allixon International Corp  
+Stock: A X C P . O B 
+Current Price: $3.95  
+Buy: "Strong" 
+Expectations: Max 
 
 
---===============17450102208154661==
+About Allixon International Corporation
+
+Allixon is a leading provider of RFID middleware and mobile 
+Internet solutions for device computing. Allixon combines its products, 
+expertise, partnerships and integration capability into solutions 
+for a wide range of device computing applications, 
+including RFID middleware and m-banking solution. Allixon's products 
+based on ubiquitous technologies direct companies looking to tap 
+into the wealth of data captured by networked devices such 
+as RFID readers or handhelds to extend the quality of information 
+to any device where they want. 
+
+
+
+When this Stock moves - WATCH OUT! This is your chance to get in
+while it is still low. Big watch in play this Wednesday morning! 
+Please Watch This One Trade Tomorrow Morning!
+
+
+
+
+--===============49443847759715354==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============17450102208154661==--
+--===============49443847759715354==--
