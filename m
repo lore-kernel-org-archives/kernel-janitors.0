@@ -1,108 +1,95 @@
-From: <gregkh@suse.de>
-Date: Thu, 06 Oct 2005 22:23:05 +0000
-Subject: [KJ] patch kobject-fix-gfp-flags-type.patch added to gregkh-2.6 tree
-Message-Id: <1ENe8o-2Sv-00@press.kroah.org>
+From: Doctor <ast@cinemexicano.com>
+Date: Fri, 28 Oct 2005 12:35:48 +0000
+Subject: [KJ] The Ultimate Online Pharmaceutical
+Message-Id: <6654359395.20051028083548@cinemexicano.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5054881510209952=="
+Content-Type: multipart/mixed; boundary="===============91186190891161856=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============5054881510209952==
+This is a multi-part message in MIME format...
+
+--===============91186190891161856==
+Content-Type: multipart/alternative;
+    boundary="----------=_1130502921-30611-452"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1130502921-30611-452
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+Vlaagra $3.3
+Levibtra $3.3
+Ciamlis $3.7
+Imitwrex $16.4
+Flombax $2.2
+Ultrqam $0.78
+Vioexx $4.75
+Ambtien $2.2
+Valwium $0.97 
+Xanahx $1.09
+Sonma $3
+Meriodia $2.2  
 
 
-This is a note to let you know that I've just added the patch titled
 
-     Subject: [PATCH] (replacement) kobject: fix gfp flags type
+our site
+http://equaledon.com/?GFSMKDWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
 
-to my gregkh-2.6 tree.  Its filename is
-
-     kobject-fix-gfp-flags-type.patch
-
-This tree can be found at 
-    http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/patches/
-
-Patches currently in gregkh-2.6 which might be from rdunlap@xenotime.net are
-
-driver/kobject-fix-gfp-flags-type.patch
-usb/usb-safe_serial-preprocessor-fix.patch
+___
+Best regards,
+Online Pharmaceuticals
 
 
-From rdunlap@xenotime.net Tue Oct  4 00:47:46 2005
-Date: Tue, 4 Oct 2005 00:45:34 -0700
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-To: gregkh <greg@kroah.com>, alexey <adobriyan@gmail.com>
-Cc: kjo <kernel-janitors@lists.osdl.org>
-Subject: [PATCH] (replacement) kobject: fix gfp flags type
-Message-Id: <20051004004534.0e00d067.rdunlap@xenotime.net>
 
-From: Randy Dunlap <rdunlap@xenotime.net>
+mgfjfswth WldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
 
-Fix implicit nocast warnings in kobject_uevent code, including __nocast:
-lib/kobject_uevent.c:78:37: warning: implicit cast to nocast type
-lib/kobject_uevent.c:97:51: warning: implicit cast to nocast type
-lib/kobject_uevent.c:120:27: warning: implicit cast to nocast type
+------------=_1130502921-30611-452
+Content-Type: text/html
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Signed-off-by: Randy Dunlap <rdunlap@xenotime.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
----
- include/linux/kobject.h |    2 +-
- lib/kobject.c           |    2 +-
- lib/kobject_uevent.c    |    6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+<html>
+<body>
+<strong>Vladgra</strong> - $3.3
+<br>
+<strong>Levihtra</strong> - $3.3<br>
+<strong>Ciatlis</strong> - $3.7<br>
+<strong>Imitfrex</strong> - $16.4<br>
+<strong>Flommax</strong> - $2.2<br>
+<strong>Ultrdam</strong> - $0.78<br>
+<strong>Viowxx</strong> - $4.75
+<br>
+<strong>Ambiien</strong> - $2.2<br>
+<strong>Valyium</strong> - $0.97 
+<br>
+<strong>Xanahx</strong> - $1.09<br>
+<strong>Sobma</strong> - $3
+<br>
+<strong>Meribdia</strong> - $2.2<br>
+<br>  
+<a href="http://equaledon.com/?GFSMKDWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS"><strong>our website</strong></a><br>
+<br>
+___
+<br>
+Best regards,<br>
+Online Pharmaceuticals
+<br>
+<br>
+<br>
+mgfjfswth WldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
+</body>
+</html>
 
---- gregkh-2.6.orig/include/linux/kobject.h
-+++ gregkh-2.6/include/linux/kobject.h
-@@ -65,7 +65,7 @@ extern void kobject_unregister(struct ko
- extern struct kobject * kobject_get(struct kobject *);
- extern void kobject_put(struct kobject *);
- 
--extern char * kobject_get_path(struct kobject *, int);
-+extern char * kobject_get_path(struct kobject *, unsigned int __nocast);
- 
- struct kobj_type {
- 	void (*release)(struct kobject *);
---- gregkh-2.6.orig/lib/kobject_uevent.c
-+++ gregkh-2.6/lib/kobject_uevent.c
-@@ -62,7 +62,7 @@ static struct sock *uevent_sock;
-  * @gfp_mask:
-  */
- static int send_uevent(const char *signal, const char *obj,
--		       char **envp, int gfp_mask)
-+		       char **envp, unsigned int __nocast gfp_mask)
- {
- 	struct sk_buff *skb;
- 	char *pos;
-@@ -98,7 +98,7 @@ static int send_uevent(const char *signa
- }
- 
- static int do_kobject_uevent(struct kobject *kobj, enum kobject_action action, 
--			     struct attribute *attr, int gfp_mask)
-+			struct attribute *attr, unsigned int __nocast gfp_mask)
- {
- 	char *path;
- 	char *attrpath;
-@@ -170,7 +170,7 @@ postcore_initcall(kobject_uevent_init);
- 
- #else
- static inline int send_uevent(const char *signal, const char *obj,
--			      char **envp, int gfp_mask)
-+			      char **envp, unsigned int __nocast gfp_mask)
- {
- 	return 0;
- }
---- gregkh-2.6.orig/lib/kobject.c
-+++ gregkh-2.6/lib/kobject.c
-@@ -100,7 +100,7 @@ static void fill_kobj_path(struct kobjec
-  * @kobj:	kobject in question, with which to build the path
-  * @gfp_mask:	the allocation type used to allocate the path
-  */
--char *kobject_get_path(struct kobject *kobj, int gfp_mask)
-+char *kobject_get_path(struct kobject *kobj, unsigned int __nocast gfp_mask)
- {
- 	char *path;
- 	int len;
 
---===============5054881510209952==
+------------=_1130502921-30611-452--
+
+--===============91186190891161856==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -113,4 +100,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5054881510209952==--
+--===============91186190891161856==--
