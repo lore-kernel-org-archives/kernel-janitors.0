@@ -1,79 +1,75 @@
-From: "Yasu Oakley" <yasuoakley@samara.co.zw>
-Date: Sat, 19 Nov 2005 12:52:57 +0000
-Subject: [KJ] Sergio Good job
-Message-Id: <001c01c5ed08$29fe9a80$3bb8a8c0@undermost>
+From: Jerome Pinot <ngc891@gmail.com>
+Date: Tue, 01 Nov 2005 13:07:41 +0000
+Subject: Re: [KJ] [RFC] new design for kerneljanitors.org REV 2
+Message-Id: <88ee31b70511010507t337c2facld26a21931db24534@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============12327467705391482=="
+Content-Type: multipart/mixed; boundary="===============25178668487839584=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <42C1CDE1.9010308@gmx.net>
+In-Reply-To: <42C1CDE1.9010308@gmx.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============12327467705391482==
+--===============25178668487839584==
 Content-Type: multipart/alternative;
-    boundary="----------=_1132404757-26994-59"
+    boundary="----------=_1130852948-25935-767"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1132404757-26994-59
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+------------=_1130852948-25935-767
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Content-Disposition: inline
 
-dangers from which you had no means of escape. Terrified at the sight, he l=
-ifted his eyes and his hands to
-VXACPVLIamIrAeAnbAoLvGaiLzIiRxeIaUtA nScMra 3,35   3,70  1,20  http://www.g=
-eocities.com/GilchijanHuddcgove/
-made, the Physician, time after time, applied his salve to her she flew tow=
-ards it with a loud whir and unwittingly dashed over them another sovereign=
-. He then gave them an Eel to govern
+T24gMTEvMS8wNSwgTWljaGFlbCBWZWVjayA8WEBYLlg+IHdyb3RlOgo+Cj4g
+SGkgZXZlcnlib2R5LAo+Cj4gYWZ0ZXIgbG9va2luZyBhIGJpdCBtb3JlIGF0
+IGhvdyBDU1Mgd29ya3MgSSB3YW50IHRvIHByb3Bvc2UgdGhlIHNlY29uZAo+
+IHJldmlzaW9uIG9mIG15IHJld29yayBvZiB0aGUga2VybmVsamFuaXRvcnMt
+aG9tZXBhZ2UuCj4gWy4uLl0KPgoKR3JlYXQgd29yaywgbmljZSByZW5kZXJp
+bmcgd2l0aCBGaXJlZm94IGJldGEyLgoyIGNvbW1lbnRzOgotIE9uIG15IGRp
+c3BsYXksIHdpdGggdGhlIGNsYXNzaWMgQ1NTLCB0aGUgdGl0bGUgaXMgc3Bs
+aXQsIEkgZ290IHRoZSB3b3JkCiJwYWdlIiBhbGwgYWxvbmUgd3JpdHRlbiBq
+dXN0IGJlbG93IHRoZSBwaW5nb3Vpbi4KLSBNYXliZSB5b3UgY2FuIGFkanVz
+dCB0aGUgZm9udHMgc2l6ZS4gSnVzdCBteSBmZWVsaW5nLCBidXQgSSBmb3Vu
+ZCB0aGUKdGl0bGUgdG9vIHNtYWxsIGFuZCB0aGUgbm9ybWFsIHRleHQgdG9v
+IGJpZywgZXNwZWNpYWxseSB0aGUgbGlua3MgaW4gYm9sZC4KClJlZ2FyZHMs
+CgotLQpKZXJvbWUgUGlub3QKaHR0cDovL25nYzg5MS5ibG9nZG5zLm5ldC8K
 
-
-------------=_1132404757-26994-59
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+------------=_1130852948-25935-767
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
 Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV> dangers from which you had no means of escape. Terrified at the sight=
-, he lifted his eyes and his hands to </DIV>
-<DIV>&nbsp;</DIV>
-<DIV DEFANGED_style=3D"BORDER-WIDTH: 0px; FLOAT: left;"><FONT face=3DCourie=
-r size=3D3>V<BR>X<BR>A<BR>C<BR>P<BR>V<BR>L</FONT></DIV><DIV DEFANGED_style=
-=3D"MARGIN-LEFT: 0px; FLOAT: left;"><FONT face=3DCourier size=3D3>I<BR>a<BR=
->m<BR>I<BR>r<BR>A<BR>e</FONT></DIV><DIV DEFANGED_style=3D"WHITE-SPACE: norm=
-al; FLOAT: left;"><FONT face=3DCourier size=3D3>A<BR>n<BR>b<BR>A<BR>o<BR>L<=
-BR>v</FONT></DIV><DIV DEFANGED_style=3D"BORDER-COLOR: #FFFFFF; FLOAT: left;=
-"><FONT face=3DCourier size=3D3>G<BR>a<BR>i<BR>L<BR>z<BR>I<BR>i</FONT></DIV=
-><DIV DEFANGED_style=3D"PADDING-TOP: 0px; FLOAT: left;"><FONT face=3DCourie=
-r size=3D3>R<BR>x<BR>e<BR>I<BR>a<BR>U<BR>t</FONT></DIV><DIV DEFANGED_style=
-=3D"BORDER-WIDTH: 0px; FLOAT: left;"><FONT face=3DCourier size=3D3>A<BR>&nb=
-sp;<BR>n<BR>S<BR>c<BR>M<BR>ra</FONT></DIV><DIV DEFANGED_style=3D"WORD-SPACI=
-NG: normal; FLOAT: left;"><FONT face=3DCourier size=3D3>&nbsp;3,35<BR>&nbsp=
-;<BR>&nbsp;<BR>&nbsp;3,70<BR>&nbsp;<BR>&nbsp;1,20<BR>&nbsp;</FONT></DIV><DI=
-V DEFANGED_style=3D"CLEAR: both;">&nbsp;</DIV><A href=3D"http://www.geociti=
-es.com/GilchijanHuddcgove/"><FONT size=3D3>http://www.geocities.com/Gilchij=
-anHuddcgove/</FONT></A>
-<DIV>&nbsp;</DIV>
-<DIV> made, the Physician, time after time, applied his salve to her she fl=
-ew towards it with a loud whir and unwittingly dashed over them another sov=
-ereign. He then gave them an Eel to govern </DIV>
-</BODY></HTML>
+T24gMTEvMS8wNSwgPGIgY2xhc3M9ImdtYWlsX3NlbmRlcm5hbWUiPk1pY2hh
+ZWwgVmVlY2s8L2I+ICZsdDs8YSBocmVmPSJtYWlsdG86WEBYLlgiPlhAWC5Y
+PC9hPiZndDsgd3JvdGU6PGRpdj48c3BhbiBjbGFzcz0iZ21haWxfcXVvdGUi
+Pjwvc3Bhbj48YmxvY2txdW90ZSBjbGFzcz0iZ21haWxfcXVvdGUiIERFRkFO
+R0VEX3N0eWxlPSJib3JkZXItbGVmdDogMXB4IHNvbGlkIHJnYigyMDQsIDIw
+NCwgMjA0KTsgbWFyZ2luOiAwcHQgMHB0IDBwdCAwLjhleDsgcGFkZGluZy1s
+ZWZ0OiAxZXg7Ij4KSGkgZXZlcnlib2R5LDxicj48YnI+YWZ0ZXIgbG9va2lu
+ZyBhIGJpdCBtb3JlIGF0IGhvdyBDU1Mgd29ya3MgSSB3YW50IHRvIHByb3Bv
+c2UgdGhlIHNlY29uZDxicj5yZXZpc2lvbiBvZiBteSByZXdvcmsgb2YgdGhl
+IGtlcm5lbGphbml0b3JzLWhvbWVwYWdlLjxicj5bLi4uXTxicj48L2Jsb2Nr
+cXVvdGU+PC9kaXY+PGJyPkdyZWF0IHdvcmssIG5pY2UgcmVuZGVyaW5nIHdp
+dGggRmlyZWZveCBiZXRhMi4gCjxicj4yIGNvbW1lbnRzOiA8YnI+Jm5ic3A7
+LSBPbiBteSBkaXNwbGF5LCB3aXRoIHRoZSBjbGFzc2ljIENTUywgdGhlIHRp
+dGxlIGlzIHNwbGl0LCBJIGdvdCB0aGUgd29yZCAmcXVvdDtwYWdlJnF1b3Q7
+IGFsbCBhbG9uZSB3cml0dGVuIGp1c3QgYmVsb3cgdGhlIHBpbmdvdWluLjxi
+cj4mbmJzcDstIE1heWJlIHlvdSBjYW4gYWRqdXN0IHRoZSBmb250cyBzaXpl
+LiBKdXN0IG15IGZlZWxpbmcsIGJ1dCBJIGZvdW5kIHRoZSB0aXRsZSB0b28g
+c21hbGwgYW5kIHRoZSBub3JtYWwgdGV4dCB0b28gYmlnLCBlc3BlY2lhbGx5
+IHRoZSBsaW5rcyBpbiBib2xkLgo8YnI+PGJyPlJlZ2FyZHMsPGJyPiZuYnNw
+Ozxicj4tLSA8YnI+SmVyb21lIFBpbm90PGJyPjxhIGhyZWY9Imh0dHA6Ly9u
+Z2M4OTEuYmxvZ2Rucy5uZXQvIj5odHRwOi8vbmdjODkxLmJsb2dkbnMubmV0
+LzwvYT4K
 
-------------=_1132404757-26994-59--
+------------=_1130852948-25935-767--
 
---===============12327467705391482==
+--===============25178668487839584==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -84,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============12327467705391482==--
+--===============25178668487839584==--
