@@ -1,13 +1,15 @@
-From: <news@pcquote.com>
+From: <news@wallstreetreporter.com>
 Date: Tue, 01 Nov 2005 01:59:20 +0000
 Subject: [KJ] Immediate Radar Alert
-Message-Id: <7956152528.2725859173@adsl-0-124-191.btr.bellsouth.net>
+Message-Id: <2554462839.12647140954@adsl-0-124-191.btr.bellsouth.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91568558953071477=="
+Content-Type: multipart/mixed; boundary="===============36286637975559283=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <7956152528.2725859173@adsl-0-124-191.btr.bellsouth.net>
+In-Reply-To: <7956152528.2725859173@adsl-0-124-191.btr.bellsouth.net>
 To: kernel-janitors@vger.kernel.org
 
---===============91568558953071477==
+--===============36286637975559283==
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=us-ascii
 
@@ -77,7 +79,7 @@ We agree! Pay attention this coming week and do not take your eyes off **SLVG**
 
 
 
---===============91568558953071477==
+--===============36286637975559283==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -88,4 +90,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============91568558953071477==--
+--===============36286637975559283==--
