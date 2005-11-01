@@ -1,31 +1,91 @@
-From: Nish Aravamudan <nish.aravamudan@gmail.com>
-Date: Tue, 22 Nov 2005 18:26:10 +0000
-Subject: Re: [KJ] [PATCH] sound/oss/maestro3.c printk args concatenation
-Message-Id: <29495f1d0511221026t1dbfebf9x20d836edcd1a5265@mail.gmail.com>
+From: <news@pcquote.com>
+Date: Tue, 01 Nov 2005 01:59:20 +0000
+Subject: [KJ] Immediate Radar Alert
+Message-Id: <7956152528.2725859173@adsl-0-124-191.btr.bellsouth.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============91568558953071477=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <437E8107.2000103@nhw.pl>
-In-Reply-To: <437E8107.2000103@nhw.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 11/21/05, Witold Rugowski <rugowski@nhw.pl> wrote:
-> Nish Aravamudan wrote:
-> > Adrian Bunk soon enough. Unless it has functionality that the ALSA
-> > driver doesn't. In any case, I would just forget about this patch.
->
-> It was just a first patch of mine;-)) so let's forget about it. I will check wheter on
-> KJ TODO I find something suitable for me. And will see what will be with second
-> one ;-))
+--===============91568558953071477==
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 
-It was a good effort, Witold, and generally the right thing to look
-for. Look forward to seeing more patches from you in the future.
+The Solvis Group Strategic Alliance Agreement With SSL Expected 
+to Provide $25 Million in Additional Revenues in 90 Days 
 
-Thanks,
-Nish
+Immediate Radar Alert
+The Solvis Group Inc. **SLVG**
+The Solvis Group is a subsidiary of Dalrada Financial Corporation 
+
+0.07 <-- ridiculous in our opinion 
+Ride this wave starting Now 
+
+Why you ask?  Let's start right here. Recent news releases...
+Talk about flying under the radar?  Isn't that what we look for? 
+
+
+Recent News Headlines!  No dreaming here! 
+The Solvis Group Strategic Alliance Agreement With SSL Expected 
+to Provide $25 Million in Additional Revenues in 90 Days 
+The agreement calls for SSL to refer a minimum of $25 million in business 
+to The Solvis Group within the next 90 days. The alliance has already generated 
+more than $7.5 million in new business, on an annualized basis. 
+
+The Solvis Group, Formerly Quik Pix Inc., Announces Sale of Subsidiary 
+to Global Food Technologies James Bouskos, Chairman and CEO of Global Food Technologies 
+said that "our company is pleased to report that our transaction with The Solvis Group 
+for the acquisition of Boulevard Acquisition Corporation, the publicly-reporting shell 
+and wholly owned subsidiary of The Solvis Group, has closed. 
+
+The Solvis Group Launches 'Benefits Bank' Program to Bring Employees at All Compensation 
+Levels Key Benefits  "The Benefits Bank represents a comprehensive response 
+by The Solvis Group to address the needs of employees at all compensation levels 
+to participate in benefits generally available only to large corporations," 
+said Brian Bonar, CEO. 
+
+
+About The Solvis Group: 
+
+The Solvis Group, a subsidiary of Dalrada Financial Corporation includes a number 
+of operating units, including M&M Nursing Services, CallCenterHR(TM), and Jackson Staffing. 
+The Company provides a variety of innovative financial services to businesses, 
+including comprehensive human resource administration including payroll 
+and workers compensation insurance; and employee benefits such as health insurance, 
+supplemental insurance, HSA savings plans, 125 cafeteria plans, and 401(k) plans. 
+The Company also offers debit card payroll accounts and payroll advances. 
+These services enable small employers to offer benefits and services to their employees 
+that are generally available only to large companies. 
+
+The Company also includes an imaging products and services unit, Imaging Tech, Inc., 
+which provides a variety of innovating products and services associated with graphics, 
+photography, and color management. Its technologies include ColorBlindr software 
+and PhotoMotion Images(TM). 
+
+How many times have you seen issues explode but you couldn't get your hands on them? 
+Here is a special company that may be set to make a move in the near future - 
+this could be your opportunity to be ahead of the curve!  Start your research now! 
+
+TheStreet reported on Nov. 1, 2004, that "Large-cap stocks make the headlines, 
+but lately [small-cap] stocks have been making investors money." 
+
+Mary Lisanti, of AH Lisanti Capital Growth said these stocks "will rule the world 
+for a while. I don't see anything to change that." 
+
+We agree! Pay attention this coming week and do not take your eyes off **SLVG**
+
+
+
+
+--===============91568558953071477==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============91568558953071477==--
