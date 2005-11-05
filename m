@@ -1,29 +1,52 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Tue, 22 Nov 2005 20:18:37 +0000
-Subject: [KJ] Re: [PATCH] i2c: remove duplicate of BCD macros
-Message-Id: <20051122211837.3205a7af.khali@linux-fr.org>
+From: "Canadian funding available" <biz_data_1556fvymhpwojym@yahoo.ca>
+Date: Sat, 05 Nov 2005 20:50:33 +0000
+Subject: [KJ] CANADA & USA government funds
+Message-Id: <fccd01c5e24a$91142140$e406453e@biz_data_1556fvymhpwojym>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============32609948311182979=="
+Content-Type: multipart/mixed; boundary="===============24043056342612124=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============32609948311182979==
-Content-Type: text/plain; charset=US-ASCII
+--===============24043056342612124==
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 
-Hi Nicolas,
+To;  kernel-janitors@osdl.org
 
-> Remove duplicate of BCD macros
-> (...)
-> --- a/drivers/i2c/chips/rtc8564.c	2005-11-04 17:36:24.000000000 +0100
-> +++ b/drivers/i2c/chips/rtc8564.c	2005-11-22 13:08:08.000000000 +0100
+CANADIAN SUBSIDY DIRECTORY 2005 (Canada)
+AMERICAN GRANTS & LOANS DIRECTORY 2005 (USA)
 
-Good catch, thanks for the patch. I'm enqueuing it.
 
--- 
-Jean Delvare
+Canada; Complete guide containing more than 3000 programs from governments
+& foundations.
 
---===============32609948311182979==
+USA; Complete guide containing more than 1500 government programs + 700
+foundations.
+
+The most complete and affordable reference for anyone looking for
+financing.
+It is the perfect tool for new and existing businesses, individuals, 
+foundations and associations
+
+
+New 2005 editions
+
+Legal Deposit-National Library of Canada
+
+Business CD-Rom.................$  69.95 
+Academic printed................$ 149.95
+
+Toll free:   8 6 6  3 2 2  3 3 7 6
+Local:       8 1 9  3 2 2  5 7 5 6
+
+
+
+
+Wdbbhoevp1044456666031334604166051004575310225284
+
+
+--===============24043056342612124==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -34,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============32609948311182979==--
+--===============24043056342612124==--
