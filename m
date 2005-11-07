@@ -1,217 +1,125 @@
-From: Dinolinux <anton.slack@tele2.no>
-Date: Thu, 06 Oct 2005 09:03:02 +0000
-Subject: [KJ] [PATCH] arch/i386/kernel/irq.c
-Message-Id: <4344E846.4070308@tele2.no>
+From: <assets@familyspheres.com>
+Date: Mon, 07 Nov 2005 09:45:22 +0000
+Subject: [KJ] Momentum Stock Alert!
+Message-Id: <22584125369.3272297107@ntkngw195073.kngw.nt.ftth.ppp.infoweb.ne.jp>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------030507010706030908090606"
+Content-Type: multipart/mixed; boundary="===============1864269955447142=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---------------030507010706030908090606
-Content-Type: multipart/alternative;
-    boundary="----------=_1128589407-20063-165"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1128589407-20063-165
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+--===============1864269955447142==
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Content-Type: text/plain; charset=us-ascii
 
-Signed-off-by: Anton Brondz <anton.slack@tele2.no>
+Art4Love: Emerging growth art company that secures the distribution, leasing
+and sales rights of visual art.
+OTC:  ALVN . PK
+Current Price: .70
 
-*--- linux-2.6.14-rc3.orig/arch/i386/kernel/irq.c	2005-09-30 23:17:35.000000000 +0200*
-*+++ linux-2.6.14-rc3/arch/i386/kernel/irq.c	2005-10-05 18:44:49.000000000 +0200*
-@@ -29,7 +29,7 @@ EXPORT_PER_CPU_SYMBOL(irq_stat);
-  */
- void ack_bad_irq(unsigned int irq)
- {
--	printk("unexpected IRQ trap at vector %02x\n", irq);
-+	printk(KERN_ERR "unexpected IRQ trap at vector %02x\n", irq);
- }
- #endif
- 
-@@ -69,7 +69,7 @@ fastcall unsigned int do_IRQ(struct pt_r
- 		__asm__ __volatile__("andl %%esp,%0" :
- 					"=r" (esp) : "0" (THREAD_SIZE - 1));
- 		if (unlikely(esp < (sizeof(struct thread_info) + STACK_WARN))) {
--			printk("do_IRQ: stack overflow: %ld\n",
-+			printk(KERN_ERR "do_IRQ: stack overflow: %ld\n",
- 				esp - sizeof(struct thread_info));
- 			dump_stack();
- 		}
-@@ -152,7 +152,7 @@ void irq_ctx_init(int cpu)
- 
- 	softirq_ctx[cpu] = irqctx;
- 
--	printk("CPU %u irqstacks, hard=%p soft=%p\n",
-+	printk(KERN_INFO "CPU %u irqstacks, hard=%p soft=%p\n",
- 		cpu,hardirq_ctx[cpu],softirq_ctx[cpu]);
- }
- 
-@@ -279,13 +279,13 @@ void fixup_irqs(cpumask_t map)
- 
- 		cpus_and(mask, irq_affinity[irq], map);
- 		if (any_online_cpu(mask) == NR_CPUS) {
--			printk("Breaking affinity for irq %i\n", irq);
-+			printk(KERN_ERR "Breaking affinity for irq %i\n", irq);
- 			mask = map;
- 		}
- 		if (irq_desc[irq].handler->set_affinity)
- 			irq_desc[irq].handler->set_affinity(irq, mask);
- 		else if (irq_desc[irq].action && !(warned++))
--			printk("Cannot set affinity for irq %i\n", irq);
-+			printk(KERN_ERR "Cannot set affinity for irq %i\n", irq);
- 	}
- 
- #if 0
+We Assume Many Of You Like to "Trade the Promotion" and May Have Made Some
+Big, Fast Money Doing So. There is a Massive Promotion Underway This Weekend
+Apprising Potential Eager Investors of this Emerging Situation. Will it Go
+Crazy Monday Morning? Put It On Your Radar Screen Right Now.
+
+Recent Headlines: (Source: Press Releases)
+
+1) Top Sculpture Artist, Lin Evola, Engages Art4Love to Offer $43 Million
+Sculpture and Art Collection of Works to the Corporate World- Art4Love
+Becomes the Exclusive Representative for World-Renowned Artist
+
+2) A4L GALLERY Premieres First Showing in New York City - "Preview of the 5th
+International Florence Biennale" to exhibit the nominated works of Art4Love
+artist Gina Brezini
+
+3) Art4Love, Inc. Announces the Opening of New A4L GALLERY in New York City-
+"Brick and Mortar" Gallery Transforms Art4Love Into Multi-Channel Art Dealer
+
+Corporate Snapshot: ALVN (Source: News 10/25/05)
+
+Art4Love Inc. (ALVN) is an emerging growth art company that secures the
+distribution, leasing and sales rights of visual art. Currently, the Company
+has access to the works of 1,200 artists, representing the rights of over
+15,000 pieces of original artwork by both established and emerging artists,
+and over 80,000 high quality digital images through its partnership
+agreements. Offering a comprehensive range of leasing and sales options and
+an extensive selection of artwork, the Company provides a
+"one-stop/full-service environment" to assist its corporate clients with all
+facets of their art needs. In addition, the company offers a complete range
+of consulting services including framing, installation, disposition, digital
+image licensing, limited edition prints, portraits and commissioned work.
+Believing that artwork is an essential element in the office and home
+environments, Art4Love's vision is to be a leader in the corporate art
+market, which currently allocates $10 billion annually in support of the
+arts (American Canvas: The Evolving Cultural Landscape, Jane Alexander, NEA
+publication).
 
 
-Hi!
-New patch from me ;-) . This time I haven't made as many mistakes as 
-last time and I've read the KERN constants in kernel.h I hope this is an 
-ok patch. Just in case Thunderbird wraps the text _again_ I'm also 
-sending the patch as an attachment. The most significant condition this 
-time is KERN_ERR, because there doesn't seem to be critical failures in 
-this file.
+_______________
 
-Dinolinux
 
-------------=_1128589407-20063-165
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Can You Make Some Fast Money on This One? Put It On Your Radar Now..
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
-  <title></title>
-</head>
-<body bgcolor="#ffffff" text="#000000">
-Signed-off-by: Anton Brondz <a class="moz-txt-link-rfc2396E" href="mailto:anton.slack@tele2.no">&lt;anton.slack@tele2.no&gt;</a><br>
-<br>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="Generator" content="Kate, the KDE Advanced Text Editor">
-<pre><b>--- linux-2.6.14-rc3.orig/arch/i386/kernel/irq.c	2005-09-30 23:17:35.000000000 +0200</b>
-<b>+++ linux-2.6.14-rc3/arch/i386/kernel/irq.c	2005-10-05 18:44:49.000000000 +0200</b>
-<span DEFANGED_style="color: rgb(128, 0, 0);">@@ -29,7 +29,7 @@ EXPORT_PER_CPU_SYMBOL(irq_stat);</span>
-  */
- void ack_bad_irq(unsigned int irq)
- {
-<span DEFANGED_style="color: rgb(0, 128, 0);">-	printk("unexpected IRQ trap at vector %02x\n", irq);</span>
-<span DEFANGED_style="color: rgb(221, 0, 0);">+	printk(KERN_ERR "unexpected IRQ trap at vector %02x\n", irq);</span>
- }
- #endif
- 
-<span DEFANGED_style="color: rgb(128, 0, 0);">@@ -69,7 +69,7 @@ fastcall unsigned int do_IRQ(struct pt_r</span>
- 		__asm__ __volatile__("andl %%esp,%0" :
- 					"=r" (esp) : "0" (THREAD_SIZE - 1));
- 		if (unlikely(esp &lt; (sizeof(struct thread_info) + STACK_WARN))) {
-<span DEFANGED_style="color: rgb(0, 128, 0);">-			printk("do_IRQ: stack overflow: %ld\n",</span>
-<span DEFANGED_style="color: rgb(221, 0, 0);">+			printk(KERN_ERR "do_IRQ: stack overflow: %ld\n",</span>
- 				esp - sizeof(struct thread_info));
- 			dump_stack();
- 		}
-<span DEFANGED_style="color: rgb(128, 0, 0);">@@ -152,7 +152,7 @@ void irq_ctx_init(int cpu)</span>
- 
- 	softirq_ctx[cpu] = irqctx;
- 
-<span DEFANGED_style="color: rgb(0, 128, 0);">-	printk("CPU %u irqstacks, hard=%p soft=%p\n",</span>
-<span DEFANGED_style="color: rgb(221, 0, 0);">+	printk(KERN_INFO "CPU %u irqstacks, hard=%p soft=%p\n",</span>
- 		cpu,hardirq_ctx[cpu],softirq_ctx[cpu]);
- }
- 
-<span DEFANGED_style="color: rgb(128, 0, 0);">@@ -279,13 +279,13 @@ void fixup_irqs(cpumask_t map)</span>
- 
- 		cpus_and(mask, irq_affinity[irq], map);
- 		if (any_online_cpu(mask) == NR_CPUS) {
-<span DEFANGED_style="color: rgb(0, 128, 0);">-			printk("Breaking affinity for irq %i\n", irq);</span>
-<span DEFANGED_style="color: rgb(221, 0, 0);">+			printk(KERN_ERR "Breaking affinity for irq %i\n", irq);</span>
- 			mask = map;
- 		}
- 		if (irq_desc[irq].handler-&gt;set_affinity)
- 			irq_desc[irq].handler-&gt;set_affinity(irq, mask);
- 		else if (irq_desc[irq].action &amp;&amp; !(warned++))
-<span DEFANGED_style="color: rgb(0, 128, 0);">-			printk("Cannot set affinity for irq %i\n", irq);</span>
-<span DEFANGED_style="color: rgb(221, 0, 0);">+			printk(KERN_ERR "Cannot set affinity for irq %i\n", irq);</span>
- 	}
- 
- #if 0
-</pre>
-<br>
-Hi!<br>
-New patch from me <span class="moz-smiley-s3"><span> ;-) </span></span>.
-This time I haven't made as many mistakes as last time and I've read
-the KERN constants in kernel.h I hope this is an ok patch. Just in case
-Thunderbird wraps the text _again_ I'm also sending the patch as an
-attachment. The most significant condition this time is KERN_ERR,
-because there doesn't seem to be critical failures in this file.<br>
-<br>
-Dinolinux<br>
-</body>
-</html>
 
-------------=_1128589407-20063-165--
+Information within this email contains 4rward looking statements within the
+meaning of Section 27A of the Securities Act of 1933 and Section 21B of the
+Securities Exchange Act of 1934. Any statements that express or involve
+discussions with respect to predictions, expectations, beliefs, plans,
+projections, objectives, goals, assumptions or future events or performance
+are not statements of historical fact and may be 4rward looking
+statements.4rward l0oking statements are based on expectations, estimates
+and projections at the time the statements are made that involve a number of
+risks and uncertainties which could cause actual results or events to differ
+materially from those presently anticipated. The Company is not a reporting
+company registered under the Securities Exchange Act of 1934 and therefore
+there is limited information available about the company. As with many
+microcap st0cks, today's company has disclosable material items you need to
+consider in order to make an informed and intelligent decision. These items
+include a nominal cash position and nominal revenues in its most recent
+quarter. The company is going to need financing.If that financing does not
+occur, the company may not be able to continue as a going concern in which
+case you could lose your entire investment. Other factors include general
+economic and business conditions, the ability to acquire and develop
+specific projects, the ability to fund operations and changes in consumer
+and business consumption habits and other factors over which the company has
+little or no control. The publisher of this newsletter does not represent
+that the information contained in this message states all material facts or
+does not omit a material fact necessary to make the statements therein not
+misleading. All information provided within this email pertaining to
+investing, stocks, securities must be understood as information provided and
+not investment advice. Any reference to past performance(s) of companies are
+specially selected to be referenced based on the favorable performance of
+these companies. You would need perfect timing to acheive the results in the
+examples given. There can be no assurance of that happening. Remember, as
+always, past performance is never indicative of future results and a
+thorough due diligence effort, including a review of a company's filings
+when available, should be completed prior to investing. The publisher of
+this newsletter advises all readers and subscribers to seek advice from a
+registered professional securities representative before deciding to trade
+in stocks featured within this email. None of the material within this
+report shall be construed as any kind of investment advice or solicitation.
+Many of these companies are on the verge of bankruptcy. You can lose all
+your money by investing in this stock. The publisher of this newsletter is
+not a registered in-vestment advis0r. Subscribers should not view
+information herein as legal, tax, accounting or in_vestment advice. In
+compliance with the Securities Act of 1933, Section 17(b),The publisher of
+this newsletter is contracted to receive four hundred twenty five thousand
+d0llars from a third party, not an officer, director or affiliate
+shareholder for the circulation of this report. Be aware of an inherent
+conflict of interest resulting from such compensation due to the fact that
+this is a paid advertisement and is not without bias.The party that pays us
+has a position in the stock they will sell at any time without notice. This
+could have a negative impact on the price of the stock, causing you to lose
+money.Their intention is to sell. All factual information in this report was
+gathered from public sources, including but not limited to Company Press
+Releases. The publisher of this newsletter believes this information to be
+reliable but can make no guarantee as to its accuracy or completeness. Use
+of the material within this email constitutes your acceptance of these
+terms.
 
---------------030507010706030908090606
-Content-Type: text/plain;
- name="irq.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline; filename="irq.patch"
 
---- linux-2.6.14-rc3.orig/arch/i386/kernel/irq.c	2005-09-30 23:17:35.000000000 +0200
-+++ linux-2.6.14-rc3/arch/i386/kernel/irq.c	2005-10-05 18:44:49.000000000 +0200
-@@ -29,7 +29,7 @@ EXPORT_PER_CPU_SYMBOL(irq_stat);
-  */
- void ack_bad_irq(unsigned int irq)
- {
--	printk("unexpected IRQ trap at vector %02x\n", irq);
-+	printk(KERN_ERR "unexpected IRQ trap at vector %02x\n", irq);
- }
- #endif
- 
-@@ -69,7 +69,7 @@ fastcall unsigned int do_IRQ(struct pt_r
- 		__asm__ __volatile__("andl %%esp,%0" :
- 					"=r" (esp) : "0" (THREAD_SIZE - 1));
- 		if (unlikely(esp < (sizeof(struct thread_info) + STACK_WARN))) {
--			printk("do_IRQ: stack overflow: %ld\n",
-+			printk(KERN_ERR "do_IRQ: stack overflow: %ld\n",
- 				esp - sizeof(struct thread_info));
- 			dump_stack();
- 		}
-@@ -152,7 +152,7 @@ void irq_ctx_init(int cpu)
- 
- 	softirq_ctx[cpu] = irqctx;
- 
--	printk("CPU %u irqstacks, hard=%p soft=%p\n",
-+	printk(KERN_INFO "CPU %u irqstacks, hard=%p soft=%p\n",
- 		cpu,hardirq_ctx[cpu],softirq_ctx[cpu]);
- }
- 
-@@ -279,13 +279,13 @@ void fixup_irqs(cpumask_t map)
- 
- 		cpus_and(mask, irq_affinity[irq], map);
- 		if (any_online_cpu(mask) == NR_CPUS) {
--			printk("Breaking affinity for irq %i\n", irq);
-+			printk(KERN_ERR "Breaking affinity for irq %i\n", irq);
- 			mask = map;
- 		}
- 		if (irq_desc[irq].handler->set_affinity)
- 			irq_desc[irq].handler->set_affinity(irq, mask);
- 		else if (irq_desc[irq].action && !(warned++))
--			printk("Cannot set affinity for irq %i\n", irq);
-+			printk(KERN_ERR "Cannot set affinity for irq %i\n", irq);
- 	}
- 
- #if 0
 
---------------030507010706030908090606
+
+--===============1864269955447142==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -222,4 +130,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------030507010706030908090606--
+--===============1864269955447142==--
