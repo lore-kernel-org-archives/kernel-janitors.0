@@ -1,13 +1,15 @@
-From: <assets@familyspheres.com>
-Date: Mon, 07 Nov 2005 09:45:22 +0000
+From: <gratitude@hornydrink.ch>
+Date: Mon, 07 Nov 2005 09:45:23 +0000
 Subject: [KJ] Momentum Stock Alert!
-Message-Id: <22584125369.3272297107@ntkngw195073.kngw.nt.ftth.ppp.infoweb.ne.jp>
+Message-Id: <6500460735.153164764@ntkngw195073.kngw.nt.ftth.ppp.infoweb.ne.jp>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1864269955447142=="
+Content-Type: multipart/mixed; boundary="===============95166664301237824=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <22584125369.3272297107@ntkngw195073.kngw.nt.ftth.ppp.infoweb.ne.jp>
+In-Reply-To: <22584125369.3272297107@ntkngw195073.kngw.nt.ftth.ppp.infoweb.ne.jp>
 To: kernel-janitors@vger.kernel.org
 
---===============1864269955447142==
+--===============95166664301237824==
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=us-ascii
 
@@ -119,7 +121,7 @@ terms.
 
 
 
---===============1864269955447142==
+--===============95166664301237824==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -130,4 +132,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1864269955447142==--
+--===============95166664301237824==--
