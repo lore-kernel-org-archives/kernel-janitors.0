@@ -1,54 +1,34 @@
-From: Harald Welte <laforge@netfilter.org>
-Date: Thu, 17 Nov 2005 13:20:45 +0000
-Subject: [KJ] Re: [netfilter-core] [PATCH] netfilter_ipv4: remove ARRAY_SIZE
-Message-Id: <20051117132045.GD14201@sunbeam.de.gnumonks.org>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 07 Nov 2005 13:43:32 +0000
+Subject: [KJ] [PATCH -kj] drivers/ide/pci/alim15x3.c: use KERN_WARNING
+Message-Id: <20051107134332.GA20786@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61563940131309369=="
+Content-Type: multipart/mixed; boundary="===============72192146197738438=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---===============61563940131309369==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VMt1DrMGOVs3KQwf"
-Content-Disposition: inline
-
-
---VMt1DrMGOVs3KQwf
+--===============72192146197738438==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 17, 2005 at 12:52:43AM +0100, Nicolas Kaiser wrote:
-> Remove ARRAY_SIZE duplicate
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-thanks, applied to my git tree.
+Index: linux-kj/drivers/ide/pci/alim15x3.c
+===================================================================
+--- linux-kj.orig/drivers/ide/pci/alim15x3.c	2005-11-07 16:41:06.000000000 +0300
++++ linux-kj/drivers/ide/pci/alim15x3.c	2005-11-07 16:41:07.000000000 +0300
+@@ -884,7 +884,7 @@ static int __devinit alim15x3_init_one(s
+ 	ide_pci_device_t *d = &ali15x3_chipset;
+ 
+ 	if(pci_dev_present(ati_rs100))
+-		printk(KERN_ERR "Warning: ATI Radeon IGP Northbridge is not yet fully tested.\n");
++		printk(KERN_WARNING "ATI Radeon IGP Northbridge is not yet fully tested.\n");
+ 
+ #if defined(CONFIG_SPARC64)
+ 	d->init_hwif = init_hwif_common_ali15x3;
 
---=20
-- Harald Welte <laforge@netfilter.org>                 http://netfilter.org/
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-  "Fragmentation is like classful addressing -- an interesting early
-   architectural error that shows how much experimentation was going
-   on while IP was being designed."                    -- Paul Vixie
 
---VMt1DrMGOVs3KQwf
-Content-Type: application/pgp-signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.2 (GNU/Linux)
-
-iD8DBQFDfIOtXaXGVTD0i/8RAvr4AJ9Khf1aVkYEpQpfnKAT4kJhAVFTmgCfdGpx
-Fi4nuwxnx0W+y4cc8myJE7I=
-=sIo3
------END PGP SIGNATURE-----
-
---VMt1DrMGOVs3KQwf--
-
---===============61563940131309369==
+--===============72192146197738438==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============61563940131309369==--
+--===============72192146197738438==--
