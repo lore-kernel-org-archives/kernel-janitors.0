@@ -1,56 +1,128 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Fri, 11 Nov 2005 17:39:39 +0000
-Subject: [KJ] [PATCH] drivers/ide/ide-tape.c: use time_after, time_after_eq
-Message-Id: <20051111173939.GA22130@mipter.zuzino.mipt.ru>
+From: Matthew Dobson <colpatch@us.ibm.com>
+Date: Tue, 08 Nov 2005 00:52:03 +0000
+Subject: [KJ] [PATCH 3/8] Fix alloc_percpu()'s args
+Message-Id: <436FF6B3.3050901@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56486837341556884=="
+Content-Type: multipart/mixed; boundary="------------050103090809000300090708"
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <436FF51D.8080509@us.ibm.com>
+In-Reply-To: <436FF51D.8080509@us.ibm.com>
+To: kernel-janitors@lists.osdl.org
+Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
 
---===============56486837341556884==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------050103090809000300090708
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-From: Marcelo Feitoza Parisi
+We don't actually ever use the 'align' parameter, so drop it.
 
-They deal with wrapping correctly and are nicer to read.
+mcd@arrakis:~/linux/source/linux-2.6.14+slab_cleanup/patches $ diffstat
+alloc_percpu.patch
+ include/linux/percpu.h |    7 +++----
+ mm/slab.c              |   10 +++-------
+ net/ipv6/af_inet6.c    |    4 ++--
+ 3 files changed, 8 insertions(+), 13 deletions(-)
 
-Signed-off-by: Marcelo Feitoza Parisi
-Signed-off-by: Alexey Dobriyan
+-Matt
 
-Index: linux-kj/drivers/ide/ide-tape.c
+--------------050103090809000300090708
+Content-Type: text/x-patch;
+ name="alloc_percpu.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="alloc_percpu.patch"
+
+__alloc_percpu and alloc_percpu both take an 'align' argument which is
+completely ignored.  snmp6_mib_init() in net/ipv6/af_inet6.c attempts to
+use it, but it will be ignored.  Therefore, remove the 'align' argument
+and fixup the lone caller.
+
+Also, remove an unnecessary cpu_possible check in the oom_unwind loop since
+kfree() is happy to ignore NULL pointers passed to it.
+
+Index: linux-2.6.14+slab_cleanup/include/linux/percpu.h
 ===================================================================
---- linux-kj.orig/drivers/ide/ide-tape.c	2005-11-11 17:56:08.000000000 +0300
-+++ linux-kj/drivers/ide/ide-tape.c	2005-11-11 20:35:59.000000000 +0300
-@@ -443,6 +443,7 @@
- #include <linux/smp_lock.h>
- #include <linux/completion.h>
- #include <linux/bitops.h>
-+#include <linux/jiffies.h>
+--- linux-2.6.14+slab_cleanup.orig/include/linux/percpu.h	2005-11-07 15:58:05.640293976 -0800
++++ linux-2.6.14+slab_cleanup/include/linux/percpu.h	2005-11-07 15:58:48.540772112 -0800
+@@ -33,14 +33,14 @@ struct percpu_data {
+         (__typeof__(ptr))__p->ptrs[(cpu)];	\
+ })
  
- #include <asm/byteorder.h>
- #include <asm/irq.h>
-@@ -2335,7 +2336,7 @@ static ide_startstop_t idetape_rw_callba
- 	}
- 	if (time_after(jiffies, tape->insert_time))
- 		tape->insert_speed = tape->insert_size / 1024 * HZ / (jiffies - tape->insert_time);
--	if (jiffies - tape->avg_time >= HZ) {
-+	if (time_after_eq(jiffies, tape->avg_time + HZ)) {
- 		tape->avg_speed = tape->avg_size * HZ / (jiffies - tape->avg_time) / 1024;
- 		tape->avg_size = 0;
- 		tape->avg_time = jiffies;
-@@ -2496,7 +2497,7 @@ static ide_startstop_t idetape_do_reques
- 			} else {
- 				return ide_do_reset(drive);
- 			}
--		} else if (jiffies - tape->dsc_polling_start > IDETAPE_DSC_MA_THRESHOLD)
-+		} else if (time_after(jiffies, tape->dsc_polling_start + IDETAPE_DSC_MA_THRESHOLD))
- 			tape->dsc_polling_frequency = IDETAPE_DSC_MA_SLOW;
- 		idetape_postpone_request(drive);
- 		return ide_stopped;
+-extern void *__alloc_percpu(size_t size, size_t align);
++extern void *__alloc_percpu(size_t size);
+ extern void free_percpu(const void *);
+ 
+ #else /* CONFIG_SMP */
+ 
+ #define per_cpu_ptr(ptr, cpu) (ptr)
+ 
+-static inline void *__alloc_percpu(size_t size, size_t align)
++static inline void *__alloc_percpu(size_t size)
+ {
+ 	void *ret = kmalloc(size, GFP_KERNEL);
+ 	if (ret)
+@@ -55,7 +55,6 @@ static inline void free_percpu(const voi
+ #endif /* CONFIG_SMP */
+ 
+ /* Simple wrapper for the common case: zeros memory. */
+-#define alloc_percpu(type) \
+-	((type *)(__alloc_percpu(sizeof(type), __alignof__(type))))
++#define alloc_percpu(type)	((type *)(__alloc_percpu(sizeof(type))))
+ 
+ #endif /* __LINUX_PERCPU_H */
+Index: linux-2.6.14+slab_cleanup/mm/slab.c
+===================================================================
+--- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-07 15:58:46.313110768 -0800
++++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-07 15:58:48.547771048 -0800
+@@ -2952,12 +2952,11 @@ EXPORT_SYMBOL(__kmalloc);
+  * Objects should be dereferenced using the per_cpu_ptr macro only.
+  *
+  * @size: how many bytes of memory are required.
+- * @align: the alignment, which can't be greater than SMP_CACHE_BYTES.
+  */
+-void *__alloc_percpu(size_t size, size_t align)
++void *__alloc_percpu(size_t size)
+ {
+ 	int i;
+-	struct percpu_data *pdata = kmalloc(sizeof(*pdata), GFP_KERNEL);
++	struct percpu_data *pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
+ 
+ 	if (!pdata)
+ 		return NULL;
+@@ -2984,11 +2983,8 @@ void *__alloc_percpu(size_t size, size_t
+ 	return (void *) (~(unsigned long) pdata);
+ 
+ unwind_oom:
+-	while (--i >= 0) {
+-		if (!cpu_possible(i))
+-			continue;
++	while (--i >= 0)
+ 		kfree(pdata->ptrs[i]);
+-	}
+ 	kfree(pdata);
+ 	return NULL;
+ }
+Index: linux-2.6.14+slab_cleanup/net/ipv6/af_inet6.c
+===================================================================
+--- linux-2.6.14+slab_cleanup.orig/net/ipv6/af_inet6.c	2005-11-07 15:58:05.641293824 -0800
++++ linux-2.6.14+slab_cleanup/net/ipv6/af_inet6.c	2005-11-07 15:58:48.549770744 -0800
+@@ -596,11 +596,11 @@ snmp6_mib_init(void *ptr[2], size_t mibs
+ 	if (ptr == NULL)
+ 		return -EINVAL;
+ 
+-	ptr[0] = __alloc_percpu(mibsize, mibalign);
++	ptr[0] = __alloc_percpu(mibsize);
+ 	if (!ptr[0])
+ 		goto err0;
+ 
+-	ptr[1] = __alloc_percpu(mibsize, mibalign);
++	ptr[1] = __alloc_percpu(mibsize);
+ 	if (!ptr[1])
+ 		goto err1;
+ 
 
-
---===============56486837341556884==
+--------------050103090809000300090708
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,4 +133,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56486837341556884==--
+--------------050103090809000300090708--
