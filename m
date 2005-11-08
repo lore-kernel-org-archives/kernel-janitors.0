@@ -1,206 +1,173 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 00:53:33 +0000
-Subject: [KJ] [PATCH 4/8] Cleanup kmem_cache_create()
-Message-Id: <436FF70D.6040604@us.ibm.com>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Tue, 08 Nov 2005 15:00:08 +0000
+Subject: Re: [KJ] [PATCH 4/8] Cleanup kmem_cache_create()
+Message-Id: <20051108150008.GL23749@parisc-linux.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020307090606060803060704"
+Content-Type: multipart/mixed; boundary="===============11128403800309261=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com>
-In-Reply-To: <436FF51D.8080509@us.ibm.com>
-To: kernel-janitors@lists.osdl.org
-Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
+References: <436FF51D.8080509@us.ibm.com> <436FF70D.6040604@us.ibm.com>
+In-Reply-To: <436FF70D.6040604@us.ibm.com>
+To: Matthew Dobson <colpatch@us.ibm.com>
+Cc: kernel-janitors@lists.osdl.org, Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------020307090606060803060704
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============11128403800309261==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cleanup kmem_cache_create()
+On Mon, Nov 07, 2005 at 04:53:33PM -0800, Matthew Dobson wrote:
+> @@ -1652,9 +1649,9 @@ kmem_cache_t *kmem_cache_create(const ch
+>  		 * gfp() funcs are more friendly towards high-order requests,
+>  		 * this should be changed.
+>  		 */
+> -		do {
+> -			unsigned int break_flag = 0;
+> -cal_wastage:
+> +		unsigned int break_flag = 0;
+> +
+> +		for ( ; ; cachep->gfporder++) {
+>  			cache_estimate(cachep->gfporder, size, align, flags,
+>  						&left_over, &cachep->num);
+>  			if (break_flag)
+> @@ -1662,13 +1659,13 @@ cal_wastage:
+>  			if (cachep->gfporder >= MAX_GFP_ORDER)
+>  				break;
+>  			if (!cachep->num)
+> -				goto next;
+> -			if (flags & CFLGS_OFF_SLAB &&
+> -					cachep->num > offslab_limit) {
+> +				continue;
+> +			if ((flags & CFLGS_OFF_SLAB) &&
+> +			    (cachep->num > offslab_limit)) {
+>  				/* This num of objs will cause problems. */
+> -				cachep->gfporder--;
+> +				cachep->gfporder -= 2;
+>  				break_flag++;
+> -				goto cal_wastage;
+> +				continue;
+>  			}
+>  
+>  			/*
+> @@ -1680,33 +1677,29 @@ cal_wastage:
+>  
+>  			if ((left_over*8) <= (PAGE_SIZE<<cachep->gfporder))
+>  				break;	/* Acceptable internal fragmentation. */
+> -next:
+> -			cachep->gfporder++;
+> -		} while (1);
+> +		}
+>  	}
 
-mcd@arrakis:~/linux/source/linux-2.6.14+slab_cleanup/patches $ diffstat
-kmem_cache_create.patch
- slab.c |   69
-++++++++++++++++++++++++++++-------------------------------------
- 1 files changed, 30 insertions(+), 39 deletions(-)
+I also don't like your changes to this.  Might I suggest:
 
--Matt
-
-
---------------020307090606060803060704
-Content-Type: text/x-patch;
- name="kmem_cache_create.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="kmem_cache_create.patch"
-
-General readability fixes.
-
-* Reformat a looong if statement
-* Replace a constant (4096) with what it represents (PAGE_SIZE)
-* Replace a confusing label (opps) with a more sensible one (out)
-* Refactor a do {} while loop w/ a couple labels and gotos into
-     a for loop with breaks and continues.
-* Rewrite some confusing slab alignment code for readability
-* Replace a list_for_each/list_entry combo with an identical but
-     more readable list_for_each_entry loop.
-
-Index: linux-2.6.14+slab_cleanup/mm/slab.c
+Index: mm/slab.c
 ===================================================================
---- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-07 15:58:48.547771048 -0800
-+++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-07 15:58:50.495474952 -0800
-@@ -1499,21 +1499,18 @@ kmem_cache_t *kmem_cache_create(const ch
- 				void (*ctor)(void *, kmem_cache_t *, unsigned long),
- 				void (*dtor)(void *, kmem_cache_t *, unsigned long))
- {
--	size_t left_over, slab_size, ralign;
-+	size_t left_over, slab_size, aligned_slab_size, ralign;
- 	kmem_cache_t *cachep = NULL;
+RCS file: /var/cvs/linux-2.6/mm/slab.c,v
+retrieving revision 1.31
+diff -u -p -r1.31 slab.c
+--- mm/slab.c	14 Feb 2005 02:55:36 -0000	1.31
++++ mm/slab.c	8 Nov 2005 14:58:35 -0000
+@@ -1150,6 +1150,53 @@ static void slab_destroy (kmem_cache_t *
+ 	}
+ }
  
- 	/*
- 	 * Sanity checks... these are all serious usage bugs.
- 	 */
--	if ((!name) ||
--		in_interrupt() ||
--		(size < BYTES_PER_WORD) ||
--		(size > (1<<MAX_OBJ_ORDER)*PAGE_SIZE) ||
--		(dtor && !ctor)) {
--			printk(KERN_ERR "%s: Early error in slab %s\n",
--					__FUNCTION__, name);
--			BUG();
--		}
-+	if (!name || in_interrupt() || (size < BYTES_PER_WORD) ||
-+	    (size > (1 << MAX_OBJ_ORDER) * PAGE_SIZE) || (dtor && !ctor)) {
-+		printk(KERN_ERR "%s: Early error in slab %s\n",
-+		       __FUNCTION__, name);
-+		BUG();
++/*
++ * Calculate size (in pages) of slabs, and the num of objs per slab.  This
++ * could be made much more intelligent.  For now, try to avoid using high
++ * page-orders for slabs.  When the gfp() funcs are more friendly towards
++ * high-order requests, this should be changed.
++ */
++static size_t find_best_slab_order(kmem_cache_t *cachep, size_t size,
++					 size_t align, unsigned long flags)
++{
++	size_t left_over = 0;
++
++	for ( ; ; cachep->gfporder++) {
++		unsigned int num;
++		size_t remainder;
++
++		if (cachep->gfporder > MAX_GFP_ORDER) {
++			cachep->num = 0;
++			break;
++		}
++
++		cache_estimate(cachep->gfporder, size, align, flags,
++						&remainder, &num);
++		if (!num)
++			continue;
++
++		if (flags & CFLGS_OFF_SLAB && num > offslab_limit) {
++			/* This num of objs will cause problems. */
++			break;
++		}
++
++		cachep->num = num;
++		left_over = remainder;
++
++		/*
++		 * Large num of objs is good, but v. large slabs are
++		 * currently bad for the gfp()s.
++		 */
++		if (cachep->gfporder >= slab_break_gfp_order)
++			break;
++
++		if ((left_over*8) <= (PAGE_SIZE<<cachep->gfporder))
++			break;	/* Acceptable internal fragmentation. */
 +	}
- 
- #if DEBUG
- 	WARN_ON(strchr(name, ' '));	/* It confuses parsers */
-@@ -1531,7 +1528,7 @@ kmem_cache_t *kmem_cache_create(const ch
- 	 * above the next power of two: caches with object sizes just above a
- 	 * power of two have a significant amount of internal fragmentation.
- 	 */
--	if ((size < 4096 || fls(size-1) == fls(size-1+3*BYTES_PER_WORD)))
-+	if (size < PAGE_SIZE || fls(size-1) == fls(size-1 + 3*BYTES_PER_WORD))
- 		flags |= SLAB_RED_ZONE|SLAB_STORE_USER;
- 	if (!(flags & SLAB_DESTROY_BY_RCU))
- 		flags |= SLAB_POISON;
-@@ -1594,7 +1591,7 @@ kmem_cache_t *kmem_cache_create(const ch
- 	/* Get cache's description obj. */
- 	cachep = (kmem_cache_t *) kmem_cache_alloc(&cache_cache, SLAB_KERNEL);
- 	if (!cachep)
--		goto opps;
-+		goto out;
- 	memset(cachep, 0, sizeof(kmem_cache_t));
- 
- #if DEBUG
-@@ -1652,9 +1649,9 @@ kmem_cache_t *kmem_cache_create(const ch
- 		 * gfp() funcs are more friendly towards high-order requests,
- 		 * this should be changed.
- 		 */
++
++	return left_over;
++}
++
+ /**
+  * kmem_cache_create - Create a cache.
+  * @name: A string which is used in /proc/slabinfo to identify this cache.
+@@ -1330,44 +1377,7 @@ kmem_cache_create (const char *name, siz
+ 		cache_estimate(cachep->gfporder, size, align, flags,
+ 					&left_over, &cachep->num);
+ 	} else {
+-		/*
+-		 * Calculate size (in pages) of slabs, and the num of objs per
+-		 * slab.  This could be made much more intelligent.  For now,
+-		 * try to avoid using high page-orders for slabs.  When the
+-		 * gfp() funcs are more friendly towards high-order requests,
+-		 * this should be changed.
+-		 */
 -		do {
 -			unsigned int break_flag = 0;
 -cal_wastage:
-+		unsigned int break_flag = 0;
-+
-+		for ( ; ; cachep->gfporder++) {
- 			cache_estimate(cachep->gfporder, size, align, flags,
- 						&left_over, &cachep->num);
- 			if (break_flag)
-@@ -1662,13 +1659,13 @@ cal_wastage:
- 			if (cachep->gfporder >= MAX_GFP_ORDER)
- 				break;
- 			if (!cachep->num)
+-			cache_estimate(cachep->gfporder, size, align, flags,
+-						&left_over, &cachep->num);
+-			if (break_flag)
+-				break;
+-			if (cachep->gfporder >= MAX_GFP_ORDER)
+-				break;
+-			if (!cachep->num)
 -				goto next;
 -			if (flags & CFLGS_OFF_SLAB &&
 -					cachep->num > offslab_limit) {
-+				continue;
-+			if ((flags & CFLGS_OFF_SLAB) &&
-+			    (cachep->num > offslab_limit)) {
- 				/* This num of objs will cause problems. */
+-				/* This num of objs will cause problems. */
 -				cachep->gfporder--;
-+				cachep->gfporder -= 2;
- 				break_flag++;
+-				break_flag++;
 -				goto cal_wastage;
-+				continue;
- 			}
- 
- 			/*
-@@ -1680,33 +1677,29 @@ cal_wastage:
- 
- 			if ((left_over*8) <= (PAGE_SIZE<<cachep->gfporder))
- 				break;	/* Acceptable internal fragmentation. */
+-			}
+-
+-			/*
+-			 * Large num of objs is good, but v. large slabs are
+-			 * currently bad for the gfp()s.
+-			 */
+-			if (cachep->gfporder >= slab_break_gfp_order)
+-				break;
+-
+-			if ((left_over*8) <= (PAGE_SIZE<<cachep->gfporder))
+-				break;	/* Acceptable internal fragmentation. */
 -next:
 -			cachep->gfporder++;
 -		} while (1);
-+		}
++		left_over = find_best_slab_order(cachep, size, align, flags);
  	}
  
  	if (!cachep->num) {
- 		printk("kmem_cache_create: couldn't create cache %s.\n", name);
- 		kmem_cache_free(&cache_cache, cachep);
- 		cachep = NULL;
--		goto opps;
-+		goto out;
- 	}
--	slab_size = ALIGN(cachep->num*sizeof(kmem_bufctl_t)
--				+ sizeof(struct slab), align);
-+	slab_size = cachep->num * sizeof(kmem_bufctl_t) + sizeof(struct slab);
-+	aligned_slab_size = ALIGN(slab_size, align);
- 
- 	/*
- 	 * If the slab has been placed off-slab, and we have enough space then
- 	 * move it on-slab. This is at the expense of any extra colouring.
- 	 */
--	if (flags & CFLGS_OFF_SLAB && left_over >= slab_size) {
-+	if (flags & CFLGS_OFF_SLAB && left_over >= aligned_slab_size) {
- 		flags &= ~CFLGS_OFF_SLAB;
--		left_over -= slab_size;
--	}
--
--	if (flags & CFLGS_OFF_SLAB) {
--		/* really off slab. No need for manual alignment */
--		slab_size = cachep->num*sizeof(kmem_bufctl_t)+sizeof(struct slab);
-+		left_over -= aligned_slab_size;
- 	}
-+	/* On slab, need manual alignment */
-+	if (!(flags & CFLGS_OFF_SLAB))
-+		slab_size = aligned_slab_size;
- 
- 	cachep->colour_off = cache_line_size();
- 	/* Offset must be a multiple of the alignment. */
-@@ -1789,13 +1782,12 @@ next:
- 	/* Need the semaphore to access the chain. */
- 	down(&cache_chain_sem);
- 	{
--		struct list_head *p;
-+		kmem_cache_t *pc;
- 		mm_segment_t old_fs;
- 
- 		old_fs = get_fs();
- 		set_fs(KERNEL_DS);
--		list_for_each(p, &cache_chain) {
--			kmem_cache_t *pc = list_entry(p, kmem_cache_t, next);
-+		list_for_each_entry(pc, &cache_chain, next) {
- 			char tmp;
- 			/*
- 			 * This happens when the module gets unloaded & doesn't
-@@ -1821,10 +1813,9 @@ next:
- 	list_add(&cachep->next, &cache_chain);
- 	up(&cache_chain_sem);
- 	unlock_cpu_hotplug();
--opps:
-+out:
- 	if (!cachep && (flags & SLAB_PANIC))
--		panic("kmem_cache_create(): failed to create slab `%s'\n",
--			name);
-+		panic("%s: failed to create slab `%s'\n", __FUNCTION__, name);
- 	return cachep;
- }
- EXPORT_SYMBOL(kmem_cache_create);
 
---------------020307090606060803060704
+--===============11128403800309261==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -211,4 +178,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------020307090606060803060704--
+--===============11128403800309261==--
