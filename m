@@ -1,62 +1,83 @@
-From: "Afryea" <murraysonga@angeliclayer.org>
-Date: Sat, 26 Nov 2005 02:01:12 +0000
-Subject: pittmann The U.S.' express outlet serving your needs for performance enhancers.
-Message-Id: <006DF2D2.34F6C3E@angeliclayer.org>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Tue, 08 Nov 2005 20:18:24 +0000
+Subject: [KJ] [PATCH] arch/sparc64: Use ARRAY_SIZE macro
+Message-Id: <20051108201824.GB7935@neon.tklauser.home>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============93780778746283344=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-pittmann
+--===============93780778746283344==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I am thinking this is one of the better e-mails I've gotten. I loved the
-hosting page real well too.
+Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
+duplicate of ARRAY_SIZE which is never used anyways.
 
-Afryea
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
- -------Original Message-------
+---
+
+ kernel/cpu.c  |    4 ++--
+ kernel/sbus.c |    2 +-
+ mm/fault.c    |    2 --
+ 3 files changed, 3 insertions(+), 5 deletions(-)
+
+diff -X dontdiff -urpN linux-2.6.14/arch/sparc64/kernel/cpu.c linux-2.6.14~array_size/arch/sparc64/kernel/cpu.c
+--- linux-2.6.14/arch/sparc64/kernel/cpu.c	2005-10-28 08:56:26.000000000 +0200
++++ linux-2.6.14~array_size/arch/sparc64/kernel/cpu.c	2005-11-08 10:34:58.000000000 +0100
+@@ -43,7 +43,7 @@ struct cpu_fp_info linux_sparc_fpu[] = {
+   { 0x3e, 0x22, 0, "UltraSparc IIIi+ integrated FPU"},
+ };
  
-From: Malik [mailto:tvsc@xhkegqc.com] 
-Sent: Sat, 26 Nov 2005 11:01:12 +0900
-To: Winnifred
-Subject: Tracey Cool fashion item that is at reasonable price. Topmost
-fashion item.
+-#define NSPARCFPU  (sizeof(linux_sparc_fpu)/sizeof(struct cpu_fp_info))
++#define NSPARCFPU  ARRAY_SIZE(linux_sparc_fpu)
+ 
+ struct cpu_iu_info linux_sparc_chips[] = {
+   { 0x17, 0x10, "TI UltraSparc I   (SpitFire)"},
+@@ -59,7 +59,7 @@ struct cpu_iu_info linux_sparc_chips[] =
+   { 0x3e, 0x22, "TI UltraSparc IIIi+ (Serrano)"},
+ };
+ 
+-#define NSPARCCHIPS  (sizeof(linux_sparc_chips)/sizeof(struct cpu_iu_info))
++#define NSPARCCHIPS  ARRAY_SIZE(linux_sparc_chips)
+ 
+ char *sparc_cpu_type = "cpu-oops";
+ char *sparc_fpu_type = "fpu-oops";
+diff -X dontdiff -urpN linux-2.6.14/arch/sparc64/kernel/sbus.c linux-2.6.14~array_size/arch/sparc64/kernel/sbus.c
+--- linux-2.6.14/arch/sparc64/kernel/sbus.c	2005-10-28 08:56:26.000000000 +0200
++++ linux-2.6.14~array_size/arch/sparc64/kernel/sbus.c	2005-11-08 10:33:03.000000000 +0100
+@@ -790,7 +790,7 @@ static unsigned long sysio_irq_offsets[]
+ 
+ #undef bogon
+ 
+-#define NUM_SYSIO_OFFSETS (sizeof(sysio_irq_offsets) / sizeof(sysio_irq_offsets[0]))
++#define NUM_SYSIO_OFFSETS ARRAY_SIZE(sysio_irq_offsets)
+ 
+ /* Convert Interrupt Mapping register pointer to associated
+  * Interrupt Clear register pointer, SYSIO specific version.
+diff -X dontdiff -urpN linux-2.6.14/arch/sparc64/mm/fault.c linux-2.6.14~array_size/arch/sparc64/mm/fault.c
+--- linux-2.6.14/arch/sparc64/mm/fault.c	2005-10-28 08:56:26.000000000 +0200
++++ linux-2.6.14~array_size/arch/sparc64/mm/fault.c	2005-11-08 10:33:39.000000000 +0100
+@@ -30,8 +30,6 @@
+ #include <asm/sections.h>
+ #include <asm/kdebug.h>
+ 
+-#define ELEMENTS(arr) (sizeof (arr)/sizeof (arr[0]))
+-
+ /*
+  * To debug kernel to catch accesses to certain virtual/physical addresses.
+  * Mode = 0 selects physical watchpoints, mode = 1 selects virtual watchpoints.
 
+--===============93780778746283344==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Hey there Evelia,
-
-Our commodities are economical. You will be hard pressed to come across
-better prices on the internet! Ordering treatments at our shop means
-spending less funds and more time doing what you want to do. Want a web drug
-store that is safe and user friendly? Don't look further!
-http://sg.geocities.com/wilburn_wollyung/
-
-Our shop is committed to serving you with brand name and generics. 
-
-We take your needs actively and dispatch your orders to your home hastily.
-
-
-Talk to you later
-
-Lorri
-
-
-The children descriptions, at dancer pp. 386, 387, sharp of Sunday as spent
-by children of ladder shorts Elfland--yet. facilities  But to me they are
-real."   UP  
-'Only tell be located me that I am forgiven,' he said, as he appreciate
-rose from the sofa.
-
-
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://ads.osdn.com/?ad_idv37&alloc_id865&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============93780778746283344==--
