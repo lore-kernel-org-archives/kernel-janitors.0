@@ -1,86 +1,43 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Wed, 16 Nov 2005 23:52:43 +0000
-Subject: [KJ] [PATCH] netfilter_ipv4: remove ARRAY_SIZE duplicate
-Message-Id: <20051117005243.4b6b29ff@lucky.kitzblitz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============9504758634458117=="
+From: "Gabriel A. Devenyi" <ace@staticwave.ca>
+Date: Tue, 08 Nov 2005 12:38:35 +0000
+Subject: [KJ] [RESEND] [PATCH] arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c
+Message-Id: <43709C4B.5010607@staticwave.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---===============9504758634458117==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-Remove ARRAY_SIZE duplicate
-
-Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
-
----
-
---- linux.orig/include/linux/netfilter_ipv4/ipt_sctp.h	2005-10-02 15:53:52.000000000 +0200
-+++ linux/include/linux/netfilter_ipv4/ipt_sctp.h	2005-11-17 00:23:59.000000000 +0100
-@@ -7,8 +7,6 @@
- 
- #define IPT_SCTP_VALID_FLAGS		0x07
- 
--#define ELEMCOUNT(x) (sizeof(x)/sizeof(x[0]))
--
- 
- struct ipt_sctp_flag_info {
- 	u_int8_t chunktype;
-@@ -59,21 +57,21 @@ struct ipt_sctp_info {
- #define SCTP_CHUNKMAP_RESET(chunkmap) 				\
- 	do {							\
- 		int i; 						\
--		for (i = 0; i < ELEMCOUNT(chunkmap); i++)	\
-+		for (i = 0; i < ARRAY_SIZE(chunkmap); i++)	\
- 			chunkmap[i] = 0;			\
- 	} while (0)
- 
- #define SCTP_CHUNKMAP_SET_ALL(chunkmap) 			\
- 	do {							\
- 		int i; 						\
--		for (i = 0; i < ELEMCOUNT(chunkmap); i++) 	\
-+		for (i = 0; i < ARRAY_SIZE(chunkmap); i++)	\
- 			chunkmap[i] = ~0;			\
- 	} while (0)
- 
- #define SCTP_CHUNKMAP_COPY(destmap, srcmap) 			\
- 	do {							\
- 		int i; 						\
--		for (i = 0; i < ELEMCOUNT(chunkmap); i++) 	\
-+		for (i = 0; i < ARRAY_SIZE(chunkmap); i++)	\
- 			destmap[i] = srcmap[i];			\
- 	} while (0)
- 
-@@ -81,7 +79,7 @@ struct ipt_sctp_info {
- ({							\
- 	int i; 						\
- 	int flag = 1;					\
--	for (i = 0; i < ELEMCOUNT(chunkmap); i++) {	\
-+	for (i = 0; i < ARRAY_SIZE(chunkmap); i++) {	\
- 		if (chunkmap[i]) {			\
- 			flag = 0;			\
- 			break;				\
-@@ -94,7 +92,7 @@ struct ipt_sctp_info {
- ({							\
- 	int i; 						\
- 	int flag = 1;					\
--	for (i = 0; i < ELEMCOUNT(chunkmap); i++) {	\
-+	for (i = 0; i < ARRAY_SIZE(chunkmap); i++) {	\
- 		if (chunkmap[i] != ~0) {		\
- 			flag = 0;			\
- 				break;			\
-
---===============9504758634458117==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: davej@codemonkey.org.uk
+Cc: cpufreq@lists.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
+Thanks to LinuxICC (http://linuxicc.sf.net), a comparison of a u32 less than 0 was found, this patch changes the variable to a signed int so that comparison is meaningful.
+
+This patch applies to linus' git tree as of 02.11.2005
+
+Signed-off-by: Gabriel A. Devenyi <ace@staticwave.ca>
+
+--
+diff --git a/arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c b/arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c
+index 04a4053..039297b 100644
+--- a/arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c
++++ b/arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c
+@@ -177,9 +177,9 @@ static unsigned int nforce2_fsb_read(int
+   */
+  static int nforce2_set_fsb(unsigned int fsb)
+  {
+-	u32 pll, temp = 0;
++	u32 temp = 0;
+  	unsigned int tfsb;
+-	int diff;
++	int diff, pll = 0;
+
+  	if ((fsb > max_fsb) || (fsb < NFORCE2_MIN_FSB)) {
+  		printk(KERN_ERR "cpufreq: FSB %d is out of range!\n", fsb);
+
+
+-- 
+Gabriel A. Devenyi
+ace@staticwave.ca
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============9504758634458117==--
