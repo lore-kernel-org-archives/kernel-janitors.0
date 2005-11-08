@@ -1,46 +1,43 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 19:04:27 +0000
+From: Christoph Lameter <clameter@engr.sgi.com>
+Date: Tue, 08 Nov 2005 19:09:31 +0000
 Subject: [KJ] Re: [PATCH 4/8] Cleanup kmem_cache_create()
-Message-Id: <4370F6BB.1070409@us.ibm.com>
+Message-Id: <Pine.LNX.4.62.0511081108340.31060@schroedinger.engr.sgi.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============69617442543666908=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com> <436FF70D.6040604@us.ibm.com> <52mzkfrily.fsf@cisco.com> <Pine.LNX.4.62.0511081049520.30907@schroedinger.engr.sgi.com>
-In-Reply-To: <Pine.LNX.4.62.0511081049520.30907@schroedinger.engr.sgi.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Lameter <clameter@engr.sgi.com>
+References: <436FF51D.8080509@us.ibm.com> <436FF70D.6040604@us.ibm.com>
+ <52mzkfrily.fsf@cisco.com> <Pine.LNX.4.62.0511081049520.30907@schroedinger.engr.sgi.com>
+ <4370F6BB.1070409@us.ibm.com>
+In-Reply-To: <4370F6BB.1070409@us.ibm.com>
+To: Matthew Dobson <colpatch@us.ibm.com>
 Cc: Roland Dreier <rolandd@cisco.com>, kernel-janitors@lists.osdl.org, Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
 
-Christoph Lameter wrote:
-> On Mon, 7 Nov 2005, Roland Dreier wrote:
-> 
-> 
->>    > * Replace a constant (4096) with what it represents (PAGE_SIZE)
->>
->>This seems dangerous.  I don't pretend to understand the slab code,
->>but the current code works on architectures with PAGE_SIZE != 4096.
->>Are you sure this change is correct?
-> 
-> 
-> Leave the constant. The 4096 is only used for debugging and is a boundary 
-> at which redzoning and last user accounting is given up.
-> 
-> A large object in terms of this patch is a object greater than 4096 bytes 
-> not an object greater than PAGE_SIZE. I think the absolute size is 
-> desired.
+--===============69617442543666908==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-Would you be OK with at least NAMING the constant?  I won't name it
-PAGE_SIZE (of course), but LARGE_OBJECT_SIZE or something?
+On Tue, 8 Nov 2005, Matthew Dobson wrote:
 
-> Would you CC manfred on all your patches?
+> > A large object in terms of this patch is a object greater than 4096 bytes 
+> > not an object greater than PAGE_SIZE. I think the absolute size is 
+> > desired.
+> Would you be OK with at least NAMING the constant?  I won't name it
+> PAGE_SIZE (of course), but LARGE_OBJECT_SIZE or something?
 
-Yes.  I will repost my patches later today and I will be sure to CC Manfred
-on all of them.
+Ask Manfred about this. I think he coded it that way and he usually has 
+good reasons for it.
 
-Thanks for the review,
+Thanks for the cleanup work!
 
--Matt
+
+--===============69617442543666908==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============69617442543666908==--
