@@ -1,75 +1,75 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 01:00:04 +0000
-Subject: [KJ] [PATCH 8/8] Inline 3 functions
-Message-Id: <436FF894.8090204@us.ibm.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Tue, 08 Nov 2005 20:17:06 +0000
+Subject: [KJ] [PATCH] arch/sparc: Use ARRAY_SIZE macro
+Message-Id: <20051108201706.GA7935@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------070103010906070506080000"
+Content-Type: multipart/mixed; boundary="===============46143358040267302=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com>
-In-Reply-To: <436FF51D.8080509@us.ibm.com>
-To: kernel-janitors@lists.osdl.org
-Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------070103010906070506080000
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============46143358040267302==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I found three functions in slab.c that have only 1 caller (kmem_getpages,
-alloc_slabmgmt, and set_slab_attr), so let's inline them.
+Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
+duplicate of ARRAY_SIZE which is never used anyways.
 
-mcd@arrakis:~/linux/source/linux-2.6.14+slab_cleanup/patches $ diffstat
-inline_functions.patch
- slab.c |    9 +++++----
- 1 files changed, 5 insertions(+), 4 deletions(-)
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
--Matt
+---
 
---------------070103010906070506080000
-Content-Type: text/x-patch;
- name="inline_functions.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="inline_functions.patch"
+ kernel/cpu.c  |    4 ++--
+ kernel/pcic.c |    2 +-
+ mm/fault.c    |    2 --
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-Inline 3 functions that have only one caller.
-
-Index: linux-2.6.14+slab_cleanup/mm/slab.c
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-07 16:07:59.169063888 -0800
-+++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-07 16:10:24.981896968 -0800
-@@ -1183,7 +1183,7 @@ __initcall(cpucache_init);
-  * did not request dmaable memory, we might get it, but that
-  * would be relatively rare and ignorable.
+diff -X dontdiff -urpN linux-2.6.14/arch/sparc/kernel/cpu.c linux-2.6.14~array_size/arch/sparc/kernel/cpu.c
+--- linux-2.6.14/arch/sparc/kernel/cpu.c	2005-08-29 01:41:01.000000000 +0200
++++ linux-2.6.14~array_size/arch/sparc/kernel/cpu.c	2005-11-08 10:37:05.000000000 +0100
+@@ -75,7 +75,7 @@ struct cpu_fp_info linux_sparc_fpu[] = {
+   { 9, 3, "Fujitsu or Weitek on-chip FPU"},
+ };
+ 
+-#define NSPARCFPU  (sizeof(linux_sparc_fpu)/sizeof(struct cpu_fp_info))
++#define NSPARCFPU  ARRAY_SIZE(linux_sparc_fpu)
+ 
+ struct cpu_iu_info linux_sparc_chips[] = {
+   /* Sun4/100, 4/200, SLC */
+@@ -120,7 +120,7 @@ struct cpu_iu_info linux_sparc_chips[] =
+   { 0xf, 0, "UNKNOWN CPU-VENDOR/TYPE"},
+ };
+ 
+-#define NSPARCCHIPS  (sizeof(linux_sparc_chips)/sizeof(struct cpu_iu_info))
++#define NSPARCCHIPS  ARRAY_SIZE(linux_sparc_chips)
+ 
+ char *sparc_cpu_type;
+ char *sparc_fpu_type;
+diff -X dontdiff -urpN linux-2.6.14/arch/sparc/kernel/pcic.c linux-2.6.14~array_size/arch/sparc/kernel/pcic.c
+--- linux-2.6.14/arch/sparc/kernel/pcic.c	2005-10-28 08:56:26.000000000 +0200
++++ linux-2.6.14~array_size/arch/sparc/kernel/pcic.c	2005-11-08 10:38:15.000000000 +0100
+@@ -143,7 +143,7 @@ static struct pcic_ca2irq pcic_i_jk[] = 
+  * as several PROMs may be installed on the same physical board.
   */
--static void *kmem_getpages(kmem_cache_t *cachep, gfp_t flags, int nid)
-+static inline void *kmem_getpages(kmem_cache_t *cachep, gfp_t flags, int nid)
- {
- 	struct page *page;
- 	void *addr;
-@@ -2048,8 +2048,8 @@ int kmem_cache_destroy(kmem_cache_t *cac
- EXPORT_SYMBOL(kmem_cache_destroy);
+ #define SN2L_INIT(name, map)	\
+-  { name, map, sizeof(map)/sizeof(struct pcic_ca2irq) }
++  { name, map, ARRAY_SIZE(map) }
  
- /* Get the memory for a slab management obj. */
--static struct slab *alloc_slabmgmt(kmem_cache_t *cachep, void *objp,
--				   int colour_off, gfp_t local_flags)
-+static inline struct slab *alloc_slabmgmt(kmem_cache_t *cachep, void *objp,
-+					  int colour_off, gfp_t local_flags)
- {
- 	struct slab *slabp;
- 	
-@@ -2134,7 +2134,8 @@ static void kmem_flagcheck(kmem_cache_t 
- 	}
- }
+ static struct pcic_sn2list pcic_known_sysnames[] = {
+ 	SN2L_INIT("SUNW,JavaEngine1", pcic_i_je1a),	/* JE1, PROM 2.32 */
+diff -X dontdiff -urpN linux-2.6.14/arch/sparc/mm/fault.c linux-2.6.14~array_size/arch/sparc/mm/fault.c
+--- linux-2.6.14/arch/sparc/mm/fault.c	2005-10-28 08:56:26.000000000 +0200
++++ linux-2.6.14~array_size/arch/sparc/mm/fault.c	2005-11-08 10:37:24.000000000 +0100
+@@ -33,8 +33,6 @@
+ #include <asm/kdebug.h>
+ #include <asm/uaccess.h>
  
--static void set_slab_attr(kmem_cache_t *cachep, struct slab *slabp, void *objp)
-+static inline void set_slab_attr(kmem_cache_t *cachep, struct slab *slabp,
-+				 void *objp)
- {
- 	int i;
- 	struct page *page;
+-#define ELEMENTS(arr) (sizeof (arr)/sizeof (arr[0]))
+-
+ extern int prom_node_root;
+ 
+ /* At boot time we determine these two values necessary for setting
 
---------------070103010906070506080000
+--===============46143358040267302==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +80,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------070103010906070506080000--
+--===============46143358040267302==--
