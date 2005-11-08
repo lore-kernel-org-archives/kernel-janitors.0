@@ -1,107 +1,94 @@
-From: Michael Veeck <michael.veeck@gmx.net>
-Date: Tue, 01 Nov 2005 19:43:30 +0000
-Subject: Re: [KJ] [RFC] new design for kerneljanitors.org REV 2
-Message-Id: <4367C562.5080202@gmx.net>
+From: Matthew Dobson <colpatch@us.ibm.com>
+Date: Tue, 08 Nov 2005 00:57:27 +0000
+Subject: [KJ] [PATCH 6/8] Cleanup slabinfo_write()
+Message-Id: <436FF7F7.1060907@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============61430729247415128=="
+Content-Type: multipart/mixed; boundary="------------040302030108010406000103"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <42C1CDE1.9010308@gmx.net>
-In-Reply-To: <42C1CDE1.9010308@gmx.net>
-To: kernel-janitors@vger.kernel.org
+References: <436FF51D.8080509@us.ibm.com>
+In-Reply-To: <436FF51D.8080509@us.ibm.com>
+To: kernel-janitors@lists.osdl.org
+Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
 
---===============61430729247415128==
-Content-Type: text/plain; charset=UTF-8; format=flowed
+This is a multi-part message in MIME format.
+--------------040302030108010406000103
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 
-Looks good too, though I had to make the #headmain even wider to 
-compensate for the bigger font-size.
+Cleanup slabinfo_write().
 
-I added that style as classicstyle2 on the webpage, see for yourself now.
+mcd@arrakis:~/linux/source/linux-2.6.14+slab_cleanup/patches $ diffstat
+slabinfo_write.patch
+ slab.c |   23 +++++++++--------------
+ 1 files changed, 9 insertions(+), 14 deletions(-)
 
-Best regards
-Michael Veeck
+-Matt
 
-Jerome Pinot schrieb:
-> On 11/1/05, Michael Veeck <X@X.X> wrote:
-> 
->>[...]
->>So if you have the time (and some skill) why not try to design your own
->>css-file and show us how the page can look a lot more different ;-) ?
->>
-> 
-> 
-> Diff to standard CSS:
-> 
-> ---8<----
-> --- style.css   2005-11-01 22:52:38.000000000 +0900
-> +++ style.css.new       2005-11-01 23:19:54.000000000 +0900
-> @@ -3,7 +3,7 @@
->          margin-left: auto;
->          margin-right: auto;
->          font-family: verdana, arial, helvetica, sans-serif;
-> -        font-size: 12pt;
-> +        font-size: 10pt;
->          color: #000000;
->          background-color: #b0b9ca;
->  }
-> @@ -17,13 +17,14 @@
->  }
-> 
->  #headmain {
-> -        width: 600px;
-> +        width: 620px;
->          border-collapse: collapse;
->          border-style: solid;
->          border-width: 1px;
->          border-color: #000000;
->          border-spacing: 1px;
->          padding:3px;
-> +        font-size: 14pt;
->          margin-top: 10px;
->          margin-left: auto;
->          margin-right: auto;
-> @@ -107,6 +108,7 @@
-> 
->  div.title {
->          text-align: center;
-> +        font-size: 12pt;
->          font-weight: bold;
->          color: #ffffff;
->          background-color: #000000;
-> @@ -128,25 +130,21 @@
->  a:link {
->          color: #000099;
->          text-decoration: underline;
-> -        font-weight: bold;
->  }
-> 
->  a:visited {
->          color: #000099;
->          text-decoration: none;
-> -        font-weight: bold;
->  }
-> 
->  a:active {
->          color: #000099;
->          text-decoration: underline;
-> -        font-weight: bold;
->  }
-> 
->  a:hover {
->          color: #990000;
->          text-decoration: none;
-> -        font-weight: bold;
->  }
-> 
->  ul {
-> ----8<----
-> 
-> 
-> --
-> Jerome Pinot
-> http://ngc891.blogdns.net/
+--------------040302030108010406000103
+Content-Type: text/x-patch;
+ name="slabinfo_write.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="slabinfo_write.patch"
 
---===============61430729247415128==
+Some cleanup for slabinfo_write():
+
+* Set 'res' at declaration instead of later in the function.
+* Move an if statement that clearly only needs to be evaluated once
+     above and outside the loop where it was.
+* Move a second if statement into a loop, where it belongs.
+
+Index: linux-2.6.14+slab_cleanup/mm/slab.c
+===================================================================
+--- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-07 15:59:14.091887752 -0800
++++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-07 16:00:09.005539608 -0800
+@@ -3533,7 +3533,7 @@ ssize_t slabinfo_write(struct file *file
+ 		       size_t count, loff_t *ppos)
+ {
+ 	char kbuf[MAX_SLABINFO_WRITE+1], *tmp;
+-	int limit, batchcount, shared, res;
++	int limit, batchcount, shared, res = -EINVAL;
+ 	struct list_head *p;
+ 	
+ 	if (count > MAX_SLABINFO_WRITE)
+@@ -3549,27 +3549,22 @@ ssize_t slabinfo_write(struct file *file
+ 	tmp++;
+ 	if (sscanf(tmp, " %d %d %d", &limit, &batchcount, &shared) != 3)
+ 		return -EINVAL;
++	if (limit < 1 || batchcount < 1 || batchcount > limit || shared < 0)
++		return 0;
+ 
+ 	/* Find the cache in the chain of caches. */
+ 	down(&cache_chain_sem);
+-	res = -EINVAL;
+ 	list_for_each(p,&cache_chain) {
+ 		kmem_cache_t *cachep = list_entry(p, kmem_cache_t, next);
++		if (strcmp(cachep->name, kbuf))
++			continue;
+ 
+-		if (!strcmp(cachep->name, kbuf)) {
+-			if (limit < 1 || batchcount < 1 ||
+-			    batchcount > limit || shared < 0) {
+-				res = 0;
+-			} else {
+-				res = do_tune_cpucache(cachep, limit,
+-							batchcount, shared);
+-			}
+-			break;
+-		}
++		res = do_tune_cpucache(cachep, limit, batchcount, shared);
++		if (res >= 0)
++			res = count;	
++		break;
+ 	}
+ 	up(&cache_chain_sem);
+-	if (res >= 0)
+-		res = count;
+ 	return res;
+ }
+ #endif /* CONFIG_PROC_FS */
+
+--------------040302030108010406000103
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -112,4 +99,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============61430729247415128==--
+--------------040302030108010406000103--
