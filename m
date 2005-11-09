@@ -1,75 +1,105 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 08 Nov 2005 20:17:06 +0000
-Subject: [KJ] [PATCH] arch/sparc: Use ARRAY_SIZE macro
-Message-Id: <20051108201706.GA7935@neon.tklauser.home>
+From: "Ruya Bogart" <ruyabogart@cedarville.edu>
+Date: Wed, 09 Nov 2005 16:28:07 +0000
+Subject: [KJ] Adrian: Time to let you know
+Message-Id: <003d01c5e54a$90d2c580$7249a8c0@facile>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============46143358040267302=="
+Content-Type: multipart/mixed; boundary="===============61692045054779721=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============46143358040267302==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============61692045054779721==
+Content-Type: multipart/alternative; boundary="----------=_1131556517-11485-6"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1131556517-11485-6
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
-duplicate of ARRAY_SIZE which is never used anyways.
+Good day,
+Qu
+g for you
+eddications - v
+harmaEx
+op
+it overpayin
+r M
+isit our P
+press Sh
+P X C V A V
+r a I I m A
+o n A A b L
+z a L G i I
+a x I R e U
+c   S A n M
+99,95  69,95    85,45
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
----
+------------=_1131556517-11485-6
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
- kernel/cpu.c  |    4 ++--
- kernel/pcic.c |    2 +-
- mm/fault.c    |    2 --
- 3 files changed, 3 insertions(+), 5 deletions(-)
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Good day,</DIV>
+<TABLE cellPadding=3D0 cellSpacing=3D0 DEFANGED_style=3D"BORDER-TOP-WIDTH: =
+0px;">
+  <TR DEFANGED_style=3D"MARGIN-LEFT: 0px;">
+    <TD rowSpan=3D"3" DEFANGED_style=3D"BORDER-LEFT: 0px;" vAlign=3D"bottom=
+">Qu</TD><TD></TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"BORDER-LEFT: 0px;" vAlign=3D"bottom=
+">g for you</TD><TD></TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"BORDER-LEFT: 0px;" vAlign=3D"bottom=
+">eddications - <A href=3D"http://CaridexanundersParis.tripod.com">v</A></T=
+D><TD></TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"BORDER-LEFT: 0px;" vAlign=3D"bottom=
+"><A href=3D"http://CaridexanundersParis.tripod.com">harmaEx</A></TD><TD></=
+TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"BORDER-LEFT: 0px;" vAlign=3D"bottom=
+"><A href=3D"http://CaridexanundersParis.tripod.com">op</A></TD><TD></TD>
+  </TR>
+  <TR DEFANGED_style=3D"MARGIN-LEFT: 0px;">
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom">it overpayi=
+n</TD>
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom">r M</TD>
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom"><A href=3D"=
+http://CaridexanundersParis.tripod.com">isit our P</A></TD>
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom"><A href=3D"=
+http://CaridexanundersParis.tripod.com">press Sh</TD>
+  </TR></TABLE>
+<DIV>&nbsp;</DIV>
+<TABLE cellPadding=3D0 cellSpacing=3D0 DEFANGED_style=3D"BORDER-TOP-WIDTH: =
+0px;">
+<TR>
+<TD><FONT face=3D"Courier">P X C V A V</FONT></TD>
+<TD><FONT face=3D"Courier">r a I I m A</FONT></TD>
+<TD><FONT face=3D"Courier">o n A A b L</FONT></TD>
+<TD><FONT face=3D"Courier">z a L G i I</FONT></TD>
+<TD><FONT face=3D"Courier">a x I R e U</FONT></TD>
+<TD><FONT face=3D"Courier">c &nbsp;<BR> S A n M</FONT></TD>
+<TD><FONT face=3D"Courier">&nbsp;<BR> &nbsp;<BR> &nbsp;99,95 &nbsp;69,95 &n=
+bsp;<BR> &nbsp;85,45</FONT></TD>
+<TD width=3D100%></TD>
+</TR>
+</TABLE></BODY></HTML>
 
-diff -X dontdiff -urpN linux-2.6.14/arch/sparc/kernel/cpu.c linux-2.6.14~array_size/arch/sparc/kernel/cpu.c
---- linux-2.6.14/arch/sparc/kernel/cpu.c	2005-08-29 01:41:01.000000000 +0200
-+++ linux-2.6.14~array_size/arch/sparc/kernel/cpu.c	2005-11-08 10:37:05.000000000 +0100
-@@ -75,7 +75,7 @@ struct cpu_fp_info linux_sparc_fpu[] = {
-   { 9, 3, "Fujitsu or Weitek on-chip FPU"},
- };
- 
--#define NSPARCFPU  (sizeof(linux_sparc_fpu)/sizeof(struct cpu_fp_info))
-+#define NSPARCFPU  ARRAY_SIZE(linux_sparc_fpu)
- 
- struct cpu_iu_info linux_sparc_chips[] = {
-   /* Sun4/100, 4/200, SLC */
-@@ -120,7 +120,7 @@ struct cpu_iu_info linux_sparc_chips[] =
-   { 0xf, 0, "UNKNOWN CPU-VENDOR/TYPE"},
- };
- 
--#define NSPARCCHIPS  (sizeof(linux_sparc_chips)/sizeof(struct cpu_iu_info))
-+#define NSPARCCHIPS  ARRAY_SIZE(linux_sparc_chips)
- 
- char *sparc_cpu_type;
- char *sparc_fpu_type;
-diff -X dontdiff -urpN linux-2.6.14/arch/sparc/kernel/pcic.c linux-2.6.14~array_size/arch/sparc/kernel/pcic.c
---- linux-2.6.14/arch/sparc/kernel/pcic.c	2005-10-28 08:56:26.000000000 +0200
-+++ linux-2.6.14~array_size/arch/sparc/kernel/pcic.c	2005-11-08 10:38:15.000000000 +0100
-@@ -143,7 +143,7 @@ static struct pcic_ca2irq pcic_i_jk[] = 
-  * as several PROMs may be installed on the same physical board.
-  */
- #define SN2L_INIT(name, map)	\
--  { name, map, sizeof(map)/sizeof(struct pcic_ca2irq) }
-+  { name, map, ARRAY_SIZE(map) }
- 
- static struct pcic_sn2list pcic_known_sysnames[] = {
- 	SN2L_INIT("SUNW,JavaEngine1", pcic_i_je1a),	/* JE1, PROM 2.32 */
-diff -X dontdiff -urpN linux-2.6.14/arch/sparc/mm/fault.c linux-2.6.14~array_size/arch/sparc/mm/fault.c
---- linux-2.6.14/arch/sparc/mm/fault.c	2005-10-28 08:56:26.000000000 +0200
-+++ linux-2.6.14~array_size/arch/sparc/mm/fault.c	2005-11-08 10:37:24.000000000 +0100
-@@ -33,8 +33,6 @@
- #include <asm/kdebug.h>
- #include <asm/uaccess.h>
- 
--#define ELEMENTS(arr) (sizeof (arr)/sizeof (arr[0]))
--
- extern int prom_node_root;
- 
- /* At boot time we determine these two values necessary for setting
+------------=_1131556517-11485-6--
 
---===============46143358040267302==
+--===============61692045054779721==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +110,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============46143358040267302==--
+--===============61692045054779721==--
