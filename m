@@ -1,34 +1,27 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 07 Nov 2005 13:43:32 +0000
-Subject: [KJ] [PATCH -kj] drivers/ide/pci/alim15x3.c: use KERN_WARNING
-Message-Id: <20051107134332.GA20786@mipter.zuzino.mipt.ru>
+From: "David S. Miller" <davem@davemloft.net>
+Date: Wed, 09 Nov 2005 20:03:15 +0000
+Subject: [KJ] Re: [PATCH] arch/sparc: Use ARRAY_SIZE macro
+Message-Id: <20051109.120315.108937810.davem@davemloft.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72192146197738438=="
+Content-Type: multipart/mixed; boundary="===============38647408943695161=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============72192146197738438==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============38647408943695161==
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Tue, 8 Nov 2005 21:17:06 +0100
 
-Index: linux-kj/drivers/ide/pci/alim15x3.c
-===================================================================
---- linux-kj.orig/drivers/ide/pci/alim15x3.c	2005-11-07 16:41:06.000000000 +0300
-+++ linux-kj/drivers/ide/pci/alim15x3.c	2005-11-07 16:41:07.000000000 +0300
-@@ -884,7 +884,7 @@ static int __devinit alim15x3_init_one(s
- 	ide_pci_device_t *d = &ali15x3_chipset;
- 
- 	if(pci_dev_present(ati_rs100))
--		printk(KERN_ERR "Warning: ATI Radeon IGP Northbridge is not yet fully tested.\n");
-+		printk(KERN_WARNING "ATI Radeon IGP Northbridge is not yet fully tested.\n");
- 
- #if defined(CONFIG_SPARC64)
- 	d->init_hwif = init_hwif_common_ali15x3;
+> Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
+> duplicate of ARRAY_SIZE which is never used anyways.
+> 
+> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
+Applied, thanks.
 
---===============72192146197738438==
+--===============38647408943695161==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +32,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============72192146197738438==--
+--===============38647408943695161==--
