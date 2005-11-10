@@ -1,47 +1,32 @@
-From: =?ISO-8859-1?Q?Daniel_Marjam=E4ki?= <daniel.marjamaki@comhem.se>
-Date: Tue, 29 Nov 2005 06:02:13 +0000
-Subject: [KJ] use kzalloc instead of kcalloc(1, ...) in /kernel/kprobes.c
-Message-Id: <438BEEE5.6060208@comhem.se>
+From: Carey Landis <dgoodroeuyna@designs4living.com>
+Date: Thu, 10 Nov 2005 13:59:21 +0000
+Subject: [KJ] The best offers of work for people of all world?
+Message-Id: <958659216092.824424356606@designs4living.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Thank You for Your interest.link  
 
 
-Hello!
-
-I believe you are patching against the wrong version, my friend.
-
-I applied the changes manually and then made a new patch:
-
---- a/kernel/kprobes.c	2005-11-28 07:17:58.000000000 +0100
-+++ b/kernel/kprobes.c	2005-11-29 06:29:15.000000000 +0100
-@@ -408,7 +408,7 @@ static inline void add_aggr_kprobe(struc
-  /*
-   * This is the second or subsequent kprobe at the address - handle
-   * the intricacies
-- * TODO: Move kcalloc outside the spin_lock
-+ * TODO: Move kzalloc outside the spin_lock
-   */
-  static int __kprobes register_aggr_kprobe(struct kprobe *old_p,
-  					  struct kprobe *p)
-@@ -420,7 +420,7 @@ static int __kprobes register_aggr_kprob
-  		copy_kprobe(old_p, p);
-  		ret =3D add_new_kprobe(old_p, p);
-  	} else {
--		ap =3D kcalloc(1, sizeof(struct kprobe), GFP_ATOMIC);
-+		ap =3D kzalloc(sizeof(struct kprobe), GFP_ATOMIC);
-  		if (!ap)
-  			return -ENOMEM;
-  		add_aggr_kprobe(ap, old_p);
+Job for you! get  
 
 
-The line numbers are a little different here, compared to your patch.
+MakePay Corporation offers the External Financial Management Services leadership, 
+experience and results in cash flow management.  single  
+We offer You the job of finance manager. we
+Thank You for Your interest.online
+Contact us on our post client and specify the.  inside
+Full name
+Address
+Contact info (e-mail, phone, fax)
+And we shall contact you within one day
 
-Regards,
-Daniel Marjam=E4ki
+Details on a site www.makepay.biz
+
+Contact as support@makepay.biz
 
 _______________________________________________
 Kernel-janitors mailing list
