@@ -1,66 +1,59 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Fri, 11 Nov 2005 18:28:41 +0000
-Subject: [KJ] Re: [PATCH 6/9] Cleanup kmem_cache_create()
-Message-Id: <4374E2D9.3020304@us.ibm.com>
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Fri, 11 Nov 2005 23:46:28 +0000
+Subject: Re: [KJ] Re: [PATCH 6/9] Cleanup kmem_cache_create()
+Message-Id: <a01a16b50511111546k199bbdm7a8212dba2b1c748@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4373DD82.8010606@us.ibm.com> <4373E011.9070508@us.ibm.com> <200511110910.38350.ioe-lkml@rameria.de>
+References: <200511110910.38350.ioe-lkml@rameria.de>
 In-Reply-To: <200511110910.38350.ioe-lkml@rameria.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Ingo Oeser <ioe-lkml@rameria.de>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, manfred@colorfullife.com, Pekka J Enberg <penberg@cs.helsinki.fi>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-Ingo Oeser wrote:
+On 11/11/05, Ingo Oeser <ioe-lkml@rameria.de> wrote:
 > On Friday 11 November 2005 01:04, Matthew Dobson wrote:
-> 
->>- if (size < 4096 || fls(size - 1) = fls(size - 1 + 3 * BYTES_PER_WORD))
->>+ if (size < RED_ZONE_LIMIT ||
->>+	fls(size - 1) = fls(size - 1 + 3 * BYTES_PER_WORD))
->>             flags |= SLAB_RED_ZONE|SLAB_STORE_USER;
-> 
-> 
 > I would suggest sth. like
-> 
+>
 > if (size < RED_TONE_LIMIT
->     || fls(size - 1) = fls(size - 1 + 3 * BYTES_PER_WORD))
-> 	flags |= SLAB_RED_ZONE | SLAB_STORE_USER
-> 
-> 
-> Reason: A binary operator in front is a huge hint 
-> 	that this is a continued line.
-> 
+>     || fls(size - 1) =3D fls(size - 1 + 3 * BYTES_PER_WORD))
+>         flags |=3D SLAB_RED_ZONE | SLAB_STORE_USER
+>
+>
+> Reason: A binary operator in front is a huge hint
+>         that this is a continued line.
+>
 > Just compare when you go to a store next time.
-> 
-> 	1
-> +	2
-> -	3
-> *	4
-> 
+>
+>         1
+> +       2
+> -       3
+> *       4
+>
 > is much more readable then
-> 
-> 1	+
-> 2	-
-> 3	*
+>
+> 1       +
+> 2       -
+> 3       *
 > 4
-> 
+>
 > right?
-> 
-> 
+>
+>
 > Regards
-> 
+>
 > Ingo Oeser
 
-You make a very good point.  It's not the way that I'm used to writing
-multi-line ifs, but it is a bit more readable.  However, since the rest of
-the multi-line ifs in the file have the binary operator at the end of the
-first line, I'm inclined to leave it the way it is for consistency.  If
-anyone really feels strongly, I could come up with a patch for the whole
-file...?
+In a similar way, this is also useful for multi line pipes in shell scripts.
+The following is a lame example, but you get the idea...
 
-Thanks for the feedback!
+#!/bin/sh
+ls -l /usr/src/linux/Documentation \
+| awk '{print $8,$6,$7,$9}' \
+| grep 2005 \
+| sort
 
--Matt
+BR H=E5kon L=F8vdal
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
