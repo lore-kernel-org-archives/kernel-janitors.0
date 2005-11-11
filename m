@@ -1,55 +1,106 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 01 Nov 2005 17:35:11 +0000
-Subject: Re: [KJ] [RFC]  new design for kerneljanitors.org REV 2
-Message-Id: <20051101173511.GA8417@mipter.zuzino.mipt.ru>
+From: Matthew Dobson <colpatch@us.ibm.com>
+Date: Fri, 11 Nov 2005 00:01:33 +0000
+Subject: [KJ] [PATCH 4/9] Create helper for /proc/slabinfo
+Message-Id: <4373DF5D.8050106@us.ibm.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============032916893871792752=="
+Content-Type: multipart/mixed; boundary="------------080408060207030700070502"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <43675E01.5030200@gmx.net>
-In-Reply-To: <43675E01.5030200@gmx.net>
-To: kernel-janitors@vger.kernel.org
+References: <4373DD82.8010606@us.ibm.com>
+In-Reply-To: <4373DD82.8010606@us.ibm.com>
+To: kernel-janitors@lists.osdl.org
+Cc: manfred@colorfullife.com, Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
 
---===============032916893871792752==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------080408060207030700070502
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 01, 2005 at 01:22:25PM +0100, Michael Veeck wrote:
-> after looking a bit more at how CSS works I want to propose the second
-> revision of my rework of the kerneljanitors-homepage.
->
-> - Tested under Firefox, Opera, Konqueror and IE 6
+Most of the s_start() function body is just printing out a header for
+/proc/slabinfo.  Move it to its own function.
 
-Mostly OK under links. Will try lynx.
+-Matt
 
-> - The design can be changed totally via CSS. To demonstrate this I also
-> came up with a CSS-style that looks a lot like the current kernel.org,
-> which Firefox allows by selecting it in the "View"-Menu.
+--------------080408060207030700070502
+Content-Type: text/x-patch;
+ name="print_slabinfo_header.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="print_slabinfo_header.patch"
 
-I like this Firefox feature. I like a-la "kernel.org" CSS much better
-than current. I'd like to make "kernel.org" CSS the default one.
+In s_start(), if we're at the beginning of printing out /proc/slabinfo, we
+print out a header with version info and descriptions of the fields.  This
+is indented and takes up a lot of space in an otherwise tiny fuction.
 
-> I hope this code makes it to the official site,
+Create a helper, print_slabinfo_header(), that s_start() can call to
+print out it's header.  Remove several long lines, and make both functions
+more readable.
 
-It certainly will.
+Signed-off-by: Matthew Dobson <colpatch@us.ibm.com>
 
-> as I do not know how to make it any better ;-)
+Index: linux-2.6.14+slab_cleanup/mm/slab.c
+===================================================================
+--- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-10 11:43:40.223347016 -0800
++++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-10 11:43:42.198046816 -0800
+@@ -3378,32 +3378,37 @@ next:
+ 
+ #ifdef CONFIG_PROC_FS
+ 
+-static void *s_start(struct seq_file *m, loff_t *pos)
++static inline void print_slabinfo_header(struct seq_file *m)
+ {
+-	loff_t n = *pos;
+-	struct list_head *p;
+-
+-	down(&cache_chain_sem);
+-	if (!n) {
+-		/*
+-		 * Output format version, so at least we can change it
+-		 * without _too_ many complaints.
+-		 */
++	/*
++	 * Output format version, so at least we can change it
++	 * without _too_ many complaints.
++	 */
+ #if STATS
+-		seq_puts(m, "slabinfo - version: 2.1 (statistics)\n");
++	seq_puts(m, "slabinfo - version: 2.1 (statistics)\n");
+ #else
+-		seq_puts(m, "slabinfo - version: 2.1\n");
++	seq_puts(m, "slabinfo - version: 2.1\n");
+ #endif
+-		seq_puts(m, "# name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");
+-		seq_puts(m, " : tunables <limit> <batchcount> <sharedfactor>");
+-		seq_puts(m, " : slabdata <active_slabs> <num_slabs> <sharedavail>");
++	seq_puts(m, "# name            <active_objs> <num_objs> <objsize> "
++		 "<objperslab> <pagesperslab>");
++	seq_puts(m, " : tunables <limit> <batchcount> <sharedfactor>");
++	seq_puts(m, " : slabdata <active_slabs> <num_slabs> <sharedavail>");
+ #if STATS
+-		seq_puts(m, " : globalstat <listallocs> <maxobjs> <grown> <reaped>"
+-				" <error> <maxfreeable> <nodeallocs> <remotefrees>");
+-		seq_puts(m, " : cpustat <allochit> <allocmiss> <freehit> <freemiss>");
++	seq_puts(m, " : globalstat <listallocs> <maxobjs> <grown> <reaped> "
++		 "<error> <maxfreeable> <nodeallocs> <remotefrees>");
++	seq_puts(m, " : cpustat <allochit> <allocmiss> <freehit> <freemiss>");
+ #endif
+-		seq_putc(m, '\n');
+-	}
++	seq_putc(m, '\n');
++}
++
++static void *s_start(struct seq_file *m, loff_t *pos)
++{
++	loff_t n = *pos;
++	struct list_head *p;
++
++	down(&cache_chain_sem);
++	if (!n)
++		print_slabinfo_header(m);
+ 	p = cache_chain.next;
+ 	while (n--) {
+ 		p = p->next;
 
-$ wget http://www.veeck.de/janitor/style.css
---20:29:49--  http://www.veeck.de/janitor/style.css
-           => `style.css'
-Connecting to 10.0.0.5:3129... connected.
-Proxy request sent, awaiting response... 200 OK
-Length: 3,277 (3.2K) [text/css]
-
-100%[====================================>] 3,277	   --.--K/s
-
-20:29:49 (94.70 MB/s) - `style.css' saved [3277/3277]
-	  ^^^^^^^^^^
-
-	   No less.
-
-
---===============032916893871792752==
+--------------080408060207030700070502
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +111,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============032916893871792752==--
+--------------080408060207030700070502--
