@@ -1,31 +1,80 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Tue, 22 Nov 2005 11:54:42 +0000
-Subject: Re: [KJ] Re: removal of macro duplicates
-Message-Id: <20051122125442.67193548@lucky.kitzblitz>
+From: Ingo Oeser <ioe-lkml@rameria.de>
+Date: Fri, 11 Nov 2005 08:10:24 +0000
+Subject: [KJ] Re: [PATCH 6/9] Cleanup kmem_cache_create()
+Message-Id: <200511110910.38350.ioe-lkml@rameria.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87003002134087348=="
+Content-Type: multipart/mixed; boundary="===============10924431399843915=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051119131221.GA19097@mipter.zuzino.mipt.ru>
-In-Reply-To: <20051119131221.GA19097@mipter.zuzino.mipt.ru>
-To: kernel-janitors@vger.kernel.org
+References: <4373DD82.8010606@us.ibm.com> <4373E011.9070508@us.ibm.com>
+In-Reply-To: <4373E011.9070508@us.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Dobson <colpatch@us.ibm.com>, kernel-janitors@lists.osdl.org, manfred@colorfullife.com, Pekka J Enberg <penberg@cs.helsinki.fi>
 
---===============87003002134087348==
-Content-Type: text/plain; charset=US-ASCII
+--===============10924431399843915==
+Content-Type: multipart/signed; boundary="nextPart1722313.OTyhkiMz6n";
+	protocol="application/pgp-signature"; micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
 
-* Alexey Dobriyan <adobriyan@gmail.com>:
-> On Thu, Nov 17, 2005 at 01:06:20PM +0100, Nicolas Kaiser wrote:
-> > Hi there! Do you think it would be a good idea to remove
-> > duplicates of the BCD macros as well?
-> 
-> I think, yes. Be sure to Cc kernel-jantiors mailing list.
+--nextPart1722313.OTyhkiMz6n
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-OK, then I'll forward this patch to the I2C maintainer.
+On Friday 11 November 2005 01:04, Matthew Dobson wrote:
+> - if (size < 4096 || fls(size - 1) =3D=3D fls(size - 1 + 3 * BYTES_PER_WO=
+RD))
+> + if (size < RED_ZONE_LIMIT ||
+> +	fls(size - 1) =3D=3D fls(size - 1 + 3 * BYTES_PER_WORD))
+>              flags |=3D SLAB_RED_ZONE|SLAB_STORE_USER;
 
-Cheers,
-n.
+I would suggest sth. like
 
---===============87003002134087348==
+if (size < RED_TONE_LIMIT
+    || fls(size - 1) =3D fls(size - 1 + 3 * BYTES_PER_WORD))
+	flags |=3D SLAB_RED_ZONE | SLAB_STORE_USER
+
+
+Reason: A binary operator in front is a huge hint=20
+	that this is a continued line.
+
+Just compare when you go to a store next time.
+
+	1
++	2
+=2D	3
+*	4
+
+is much more readable then
+
+1	+
+2	-
+3	*
+4
+
+right?
+
+
+Regards
+
+Ingo Oeser
+
+
+
+--nextPart1722313.OTyhkiMz6n
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQBDdFH+U56oYWuOrkARAu/zAKC84MBIOYcpFRv2iZb6QkZmL8aDJwCeOndu
+PeTYW02XkeVFe8ne3MeerO0=
+=9BIp
+-----END PGP SIGNATURE-----
+
+--nextPart1722313.OTyhkiMz6n--
+
+--===============10924431399843915==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +85,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87003002134087348==--
+--===============10924431399843915==--
