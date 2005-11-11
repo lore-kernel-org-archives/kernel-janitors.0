@@ -1,75 +1,30 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 08 Nov 2005 20:18:24 +0000
-Subject: [KJ] [PATCH] arch/sparc64: Use ARRAY_SIZE macro
-Message-Id: <20051108201824.GB7935@neon.tklauser.home>
+From: Pekka J Enberg <penberg@cs.Helsinki.FI>
+Date: Fri, 11 Nov 2005 07:29:41 +0000
+Subject: [KJ] Re: [PATCH 0/9] Cleanup mm/slab.c v2
+Message-Id: <Pine.LNX.4.58.0511110928490.2001@sbz-30.cs.Helsinki.FI>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93780778746283344=="
+Content-Type: multipart/mixed; boundary="===============15330842174685699=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+References: <4373DD82.8010606@us.ibm.com>
+In-Reply-To: <4373DD82.8010606@us.ibm.com>
+To: Matthew Dobson <colpatch@us.ibm.com>
+Cc: kernel-janitors@lists.osdl.org, manfred@colorfullife.com, linux-kernel@vger.kernel.org
 
---===============93780778746283344==
+--===============15330842174685699==
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 
-Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
-duplicate of ARRAY_SIZE which is never used anyways.
+On Thu, 10 Nov 2005, Matthew Dobson wrote:
+> Second take at cleaning up mm/slab.c.  Patch series has picked up 2 new
+> patches and dropped one old one.  The 2 new patches create new helper
+> functions, and I've dropped the patch to inline 3 functions after it was
+> deemed unecessary.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Looks good to me. Thanks Matthew!
 
----
+				Pekka
 
- kernel/cpu.c  |    4 ++--
- kernel/sbus.c |    2 +-
- mm/fault.c    |    2 --
- 3 files changed, 3 insertions(+), 5 deletions(-)
-
-diff -X dontdiff -urpN linux-2.6.14/arch/sparc64/kernel/cpu.c linux-2.6.14~array_size/arch/sparc64/kernel/cpu.c
---- linux-2.6.14/arch/sparc64/kernel/cpu.c	2005-10-28 08:56:26.000000000 +0200
-+++ linux-2.6.14~array_size/arch/sparc64/kernel/cpu.c	2005-11-08 10:34:58.000000000 +0100
-@@ -43,7 +43,7 @@ struct cpu_fp_info linux_sparc_fpu[] = {
-   { 0x3e, 0x22, 0, "UltraSparc IIIi+ integrated FPU"},
- };
- 
--#define NSPARCFPU  (sizeof(linux_sparc_fpu)/sizeof(struct cpu_fp_info))
-+#define NSPARCFPU  ARRAY_SIZE(linux_sparc_fpu)
- 
- struct cpu_iu_info linux_sparc_chips[] = {
-   { 0x17, 0x10, "TI UltraSparc I   (SpitFire)"},
-@@ -59,7 +59,7 @@ struct cpu_iu_info linux_sparc_chips[] =
-   { 0x3e, 0x22, "TI UltraSparc IIIi+ (Serrano)"},
- };
- 
--#define NSPARCCHIPS  (sizeof(linux_sparc_chips)/sizeof(struct cpu_iu_info))
-+#define NSPARCCHIPS  ARRAY_SIZE(linux_sparc_chips)
- 
- char *sparc_cpu_type = "cpu-oops";
- char *sparc_fpu_type = "fpu-oops";
-diff -X dontdiff -urpN linux-2.6.14/arch/sparc64/kernel/sbus.c linux-2.6.14~array_size/arch/sparc64/kernel/sbus.c
---- linux-2.6.14/arch/sparc64/kernel/sbus.c	2005-10-28 08:56:26.000000000 +0200
-+++ linux-2.6.14~array_size/arch/sparc64/kernel/sbus.c	2005-11-08 10:33:03.000000000 +0100
-@@ -790,7 +790,7 @@ static unsigned long sysio_irq_offsets[]
- 
- #undef bogon
- 
--#define NUM_SYSIO_OFFSETS (sizeof(sysio_irq_offsets) / sizeof(sysio_irq_offsets[0]))
-+#define NUM_SYSIO_OFFSETS ARRAY_SIZE(sysio_irq_offsets)
- 
- /* Convert Interrupt Mapping register pointer to associated
-  * Interrupt Clear register pointer, SYSIO specific version.
-diff -X dontdiff -urpN linux-2.6.14/arch/sparc64/mm/fault.c linux-2.6.14~array_size/arch/sparc64/mm/fault.c
---- linux-2.6.14/arch/sparc64/mm/fault.c	2005-10-28 08:56:26.000000000 +0200
-+++ linux-2.6.14~array_size/arch/sparc64/mm/fault.c	2005-11-08 10:33:39.000000000 +0100
-@@ -30,8 +30,6 @@
- #include <asm/sections.h>
- #include <asm/kdebug.h>
- 
--#define ELEMENTS(arr) (sizeof (arr)/sizeof (arr[0]))
--
- /*
-  * To debug kernel to catch accesses to certain virtual/physical addresses.
-  * Mode = 0 selects physical watchpoints, mode = 1 selects virtual watchpoints.
-
---===============93780778746283344==
+--===============15330842174685699==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +35,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93780778746283344==--
+--===============15330842174685699==--
