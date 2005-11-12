@@ -1,36 +1,33 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Sat, 05 Nov 2005 10:31:30 +0000
-Subject: Re: [KJ] CSS conversion merged
-Message-Id: <20051105103130.GA1147@neon.tklauser.home>
+From: "Gabriel A. Devenyi" <ace@staticwave.ca>
+Date: Sat, 12 Nov 2005 21:37:21 +0000
+Subject: [KJ] New Kernel-Janitor Resource
+Message-Id: <200511121637.21293.ace@staticwave.ca>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59229085883410926=="
+Content-Type: multipart/mixed; boundary="===============66845824196595283=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051104215855.GA9905@mipter.zuzino.mipt.ru>
-In-Reply-To: <20051104215855.GA9905@mipter.zuzino.mipt.ru>
 To: kernel-janitors@vger.kernel.org
 
---===============59229085883410926==
-Content-Type: text/plain; charset=us-ascii
+--===============66845824196595283==
 Content-Disposition: inline
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On 2005-11-04 at 22:58:55 +0100, Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> I've merged Michael's and Jerome's changes to kerneljanitors.org CSS.
-> Looks OK in Firefox and links. Please go to http://kerneljanitors.org/
-> and see if long dashes are OK.
+Hey All,
 
-Nice work, looks fine here.
+Just thought I'd point out a nice resource that I've used to put together quite a few patches. 
+The LinuxICC project (http://linuxicc.sf.net) builds the kernel with Intel's C compiler and logs and 
+categorizes some more useful warnings not present in GCC. 
 
-> We have two CSS now: "kerneljanitors.org" and "kernel.org". The former
-> is left the default one.
-> 
-> CSS validator shows 5 warnings. Dunno if they are serious.
+Also by the same developer, is LinuxCPD, the Linux copy and paste detection program (http://linuxcpd.sf.net).
+He uses Red Hill consulting's Simian analyzer to locate copy+pasted code in the kernel, which could be consolodated,
+or could contain errors without careful checking.
 
-I checked them at http://jigsaw.w3.org/css-validator/ and both
-stylesheets validated fine.
+-- 
+Gabriel A. Devenyi
+ace@staticwave.ca
 
-Cheers, Tobias
-
---===============59229085883410926==
+--===============66845824196595283==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============59229085883410926==--
+--===============66845824196595283==--
