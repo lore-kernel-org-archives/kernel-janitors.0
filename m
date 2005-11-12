@@ -1,64 +1,76 @@
 From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 29 Nov 2005 22:54:42 +0000
-Subject: [KJ] [PATCH] atari: time.c: use msleep_interruptible()
-Message-Id: <20051129225442.GC7696@mipter.zuzino.mipt.ru>
+Date: Sat, 12 Nov 2005 14:55:35 +0000
+Subject: [KJ]
+Message-Id: <20051112145535.GA18165@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============058953072357110337=="
+Content-Type: multipart/mixed; boundary="===============93425433651754108=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <29495f1d0511291443o328a8fcbs89d925a0a0fef7dc@mail.gmail.com>
-In-Reply-To: <29495f1d0511291443o328a8fcbs89d925a0a0fef7dc@mail.gmail.com>
+References: <1106245529.15916.12.camel@base.torri.org>
+In-Reply-To: <1106245529.15916.12.camel@base.torri.org>
 To: kernel-janitors@vger.kernel.org
 
---===============058953072357110337==
+--===============93425433651754108==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-From: Nishanth Aravamudan
+From: Marcelo Feitoza Parisi
 
-The comments preceding the schedule_timeout() call in time.c below
-indicated a 50ms delay is desired. The current code implictly assumes
-HZ==100 and requests a delay of 5 ticks. This is clearly broken in
-higher HZ models. Using msleep_interruptible() makes HZ changes
-transparent. Change the corresponding constant appropriately and add a
-comment to indicate units.
- 
-Signed-off-by: Nishanth Aravamudan
-Signed-off-by: Domen Puncer
+They deal with wrapping correctly and are nicer to read.
+
+Signed-off-by: Marcelo Feitoza Parisi
 Signed-off-by: Alexey Dobriyan
 
-Index: linux-kj/arch/m68k/atari/time.c
+Index: linux-kj/drivers/block/floppy.c
 ===================================================================
---- linux-kj.orig/arch/m68k/atari/time.c	2005-11-29 12:27:05.000000000 +0300
-+++ linux-kj/arch/m68k/atari/time.c	2005-11-30 01:52:08.000000000 +0300
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/rtc.h>
- #include <linux/bcd.h>
-+#include <linux/delay.h>
+--- linux-kj.orig/drivers/block/floppy.c	2005-11-12 15:37:30.000000000 +0300
++++ linux-kj/drivers/block/floppy.c	2005-11-12 17:52:12.000000000 +0300
+@@ -179,6 +179,7 @@ static int print_unex = 1;
+ #include <linux/devfs_fs_kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/buffer_head.h>	/* for invalidate_buffers() */
++#include <linux/jiffies.h>
  
- #include <asm/atariints.h>
- 
-@@ -97,7 +98,7 @@ static void mste_write(struct MSTE_RTC *
- 	} while(0)
- 
- 
--#define HWCLK_POLL_INTERVAL	5
-+#define HWCLK_POLL_INTERVAL	50	/* ms */
- 
- int atari_mste_hwclk( int op, struct rtc_time *t )
+ /*
+  * PS/2 floppies have much slower step rates than regular floppies.
+@@ -736,7 +737,7 @@ static int disk_change(int drive)
  {
-@@ -213,7 +214,7 @@ int atari_tt_hwclk( int op, struct rtc_t
-      */
+ 	int fdc = FDC(drive);
+ #ifdef FLOPPY_SANITY_CHECK
+-	if (jiffies - UDRS->select_date < UDP->select_delay)
++	if (time_before(jiffies, UDRS->select_date + UDP->select_delay))
+ 		DPRINT("WARNING disk change called early\n");
+ 	if (!(FDCS->dor & (0x10 << UNIT(drive))) ||
+ 	    (FDCS->dor & 3) != UNIT(drive) || fdc != FDC(drive)) {
+@@ -1064,7 +1065,7 @@ static int fd_wait_for_completion(unsign
+ 		return 1;
+ 	}
  
-     while( RTC_READ(RTC_FREQ_SELECT) & RTC_UIP )
--        schedule_timeout_interruptible(HWCLK_POLL_INTERVAL);
-+        msleep_interruptible(HWCLK_POLL_INTERVAL);
+-	if ((signed)(jiffies - delay) < 0) {
++	if (time_before(jiffies, delay)) {
+ 		del_timer(&fd_timer);
+ 		fd_timer.function = function;
+ 		fd_timer.expires = delay;
+@@ -1524,7 +1525,7 @@ static void setup_rw_floppy(void)
+ 		 * again just before spinup completion. Beware that
+ 		 * after scandrives, we must again wait for selection.
+ 		 */
+-		if ((signed)(ready_date - jiffies) > DP->select_delay) {
++		if (time_after(ready_date, jiffies + DP->select_delay)) {
+ 			ready_date -= DP->select_delay;
+ 			function = (timeout_fn) floppy_start;
+ 		} else
+@@ -3818,7 +3819,7 @@ static int check_floppy_change(struct ge
+ 	if (UTESTF(FD_DISK_CHANGED) || UTESTF(FD_VERIFY))
+ 		return 1;
  
-     local_irq_save(flags);
-     RTC_WRITE( RTC_CONTROL, ctrl | RTC_SET );
+-	if (UDP->checkfreq < (int)(jiffies - UDRS->last_checked)) {
++	if (time_after(jiffies, UDRS->last_checked + UDP->checkfreq)) {
+ 		if (floppy_grab_irq_and_dma()) {
+ 			return 1;
+ 		}
 
 
---===============058953072357110337==
+--===============93425433651754108==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============058953072357110337==--
+--===============93425433651754108==--
