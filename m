@@ -1,100 +1,114 @@
-From: "Japeth Coker" <japeticoker@cma.com>
-Date: Wed, 30 Nov 2005 14:06:34 +0000
-Subject: Re: punchingball Pharramacy
-Message-Id: <000001c5f5b7$45d03360$aa1ba8c0@muscularity>
+From: "Antiman Bradsher" <bradsherantiman@datamagic.dk>
+Date: Wed, 16 Nov 2005 06:29:13 +0000
+Subject: [KJ] Clyde Mega offr
+Message-Id: <003c01c5ea77$0f61c280$9e9fa8c0@defilade>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C5F58D.5CFA2B60"
+Content-Type: multipart/mixed; boundary="===============64855851286592281=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+This is a multi-part message in MIME format...
 
-------=_NextPart_000_0001_01C5F58D.5CFA2B60
+--===============64855851286592281==
+Content-Type: multipart/alternative;
+    boundary="----------=_1132122597-17013-586"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1132122597-17013-586
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Hello,
-Since you're a big customer we occasionally send you a piece of news and
-propositions.
-=20
-Our records indicate that you may be in need of a refill.
-=20
-We make a thousand and one excuses for troubling you. Our products at
-low cost are ready-for-service and our highly qualified staff will give
-support to you.=20
-It is great opportunity to save money and time. Please browse the URL
-listed below to see our special offer:
-=20
-http://www.deadli.comitono.com <http://www.deadli.comitono.com>=20
-=20
-P V X L A C V	 r I a e m I A	 o A n v b A L	 z G a i i L I	 a R x t
-e I U	 c A =20
-ra n S M	 =20
- $3.33 =20
-=20
-=20
- $3.75  $1.21	=09
-=20
-Sincerely Yours,  Customer service department=20
+Hi,
+Qui
+ing for y
+ns - visi
+aExpre
+hop
+t overpay
+our Meddicatio
+t our Pharm
+ss S
+L V C P X A V
+e A I r a m I
+v L A o n b A
+i I L z a i G
+t U I a x e R
+ra M S c   n A
+1.21  3.75        3.33
 
-------=_NextPart_000_0001_01C5F58D.5CFA2B60
+
+------------=_1132122597-17013-586
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Dus-ascii">
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
 <META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<STYLE></STYLE>
+<DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial>Hello,<BR>
-Since you're a big customer we occasionally send you a piece of news and =
-propositions.</FONT></DIV>
-<DIV><FONT face=3DArial>&nbsp;</FONT></DIV>
-<DIV><FONT face=3DArial>Our records indicate that you may be in need of =
-a refill.</FONT></DIV>
-<DIV><FONT face=3DArial>&nbsp;</FONT></DIV>
-<DIV><FONT face=3DArial>We make a thousand and one excuses for troubling =
-you. Our products at low=20
-cost are ready-for-service and our highly qualified staff will give =
-support=20
-to you. <BR> It is great opportunity to save money and time.=20
-Please browse the URL listed below to see our special =
-offer:</FONT></DIV>
-<DIV><FONT face=3DArial>&nbsp;</FONT></DIV>
-<DIV><FONT face=3DArial><A href=3D"http://www.deadli.comitono.com"><FONT =
-face=3DArial>http://www.deadli.comitono.com</FONT></A></FONT></DIV>
-<DIV><FONT face=3DArial>&nbsp;</FONT></DIV>
-<DIV><TABLE><TBODY><TD><FONT size=3D3 face=3D"Courier">P V X L A C =
-V</FONT></TD>
-<TD><FONT size=3D3 face=3D"Courier">r I a e m I A</FONT></TD>
-<TD><FONT size=3D3 face=3D"Courier">o A n v b A L</FONT></TD>
-<TD><FONT size=3D3 face=3D"Courier">z G a i i L I</FONT></TD>
-<TD><FONT size=3D3 face=3D"Courier">a R x t e I U</FONT></TD>
-<TD><FONT size=3D3 face=3D"Courier">c A &nbsp;<BR> ra n S M</FONT></TD>
-<TD><FONT size=3D3 face=3D"Courier">&nbsp;<BR> &nbsp;$3.33 &nbsp;<BR> =
-&nbsp;<BR> &nbsp;<BR> &nbsp;$3.75 &nbsp;$1.21</FONT></TD><TD =
-width=3D100%></TD></TBODY></TABLE></DIV>
-<DIV><FONT face=3DArial>&nbsp;</FONT></DIV>
-<DIV><FONT face=3DArial>Sincerely Yours,  	Customer service =
-department </FONT></DIV></BODY></HTML>
+<DIV>Hi,</DIV>
+<TABLE cellPadding=3D0 cellSpacing=3D0 DEFANGED_style=3D"BORDER-WIDTH: 0px;=
+">
+  <TR DEFANGED_style=3D"PADDING-TOP: 0px;">
+    <TD rowSpan=3D"3" DEFANGED_style=3D"PADDING-RIGHT: 0px;" vAlign=3D"bott=
+om">Qui</TD><TD></TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"PADDING-RIGHT: 0px;" vAlign=3D"bott=
+om">ing for y</TD><TD></TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"PADDING-RIGHT: 0px;" vAlign=3D"bott=
+om">ns - <A href=3D"http://oenitiaVannilton.tripod.com">visi</A></TD><TD></=
+TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"PADDING-RIGHT: 0px;" vAlign=3D"bott=
+om"><A href=3D"http://oenitiaVannilton.tripod.com">aExpre</A></TD><TD></TD>
+    <TD rowSpan=3D"3" DEFANGED_style=3D"PADDING-RIGHT: 0px;" vAlign=3D"bott=
+om"><A href=3D"http://oenitiaVannilton.tripod.com">hop</A></TD><TD></TD>
+  </TR>
+  <TR DEFANGED_style=3D"PADDING-TOP: 0px;">
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom">t overpay</=
+TD>
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom">our Meddica=
+tio</TD>
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom"><A href=3D"=
+http://oenitiaVannilton.tripod.com">t our Pharm</A></TD>
+    <TD DEFANGED_style=3D"BORDER-RIGHT: 0px;" vAlign=3D"bottom"><A href=3D"=
+http://oenitiaVannilton.tripod.com">ss S</TD>
+  </TR></TABLE>
+<DIV>&nbsp;</DIV>
+<TABLE cellPadding=3D0 cellSpacing=3D0 DEFANGED_style=3D"BORDER-WIDTH: 0px;=
+">
+<TR>
+<TD><FONT face=3D"Courier">L V C P X A V</FONT></TD>
+<TD><FONT face=3D"Courier">e A I r a m I</FONT></TD>
+<TD><FONT face=3D"Courier">v L A o n b A</FONT></TD>
+<TD><FONT face=3D"Courier">i I L z a i G</FONT></TD>
+<TD><FONT face=3D"Courier">t U I a x e R</FONT></TD>
+<TD><FONT face=3D"Courier">ra M S c &nbsp;<BR> n A</FONT></TD>
+<TD><FONT face=3D"Courier">&nbsp;<BR> &nbsp;1.21 &nbsp;3.75 &nbsp;<BR> &nbs=
+p;<BR> &nbsp;<BR> &nbsp;3.33</FONT></TD>
+<TD width=3D100%></TD>
+</TR>
+</TABLE></BODY></HTML>
 
-------=_NextPart_000_0001_01C5F58D.5CFA2B60--
+------------=_1132122597-17013-586--
 
+--===============64855851286592281==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://ads.osdn.com/?ad_id=7637&alloc_id=16865&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============64855851286592281==--
