@@ -1,45 +1,78 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 26 Nov 2005 21:20:00 +0000
-Subject: [KJ] FYI: unused #define's
-Message-Id: <20051126212000.GA31360@mipter.zuzino.mipt.ru>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Wed, 16 Nov 2005 23:52:43 +0000
+Subject: [KJ] [PATCH] netfilter_ipv4: remove ARRAY_SIZE duplicate
+Message-Id: <20051117005243.4b6b29ff@lucky.kitzblitz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4121842216617666=="
+Content-Type: multipart/mixed; boundary="===============9504758634458117=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============4121842216617666==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============9504758634458117==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-While browsing Mozilla CVS some time ago, I've noticed that LXR doesn't
-hyperlink #defines which were unused (refcnt = 1). So, the trick is
-too feed kernel to a a-la LXR script, then quickly browse HTML in
-include/linux/ include/asm-*/ ...
+Remove ARRAY_SIZE duplicate
 
-Those who want to try this at home, might want to use gtags, which is
-GNU GLOBAL source code tag system. Install it, then do:
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
 
-	cd linux-latest
-	gtags
-		[watch South Park, eat pizza, ...]
-	htags
-		[watch more South Park, eat more pizza,	...]
+---
 
-It takes ~1.5 hours and ~1Gb of disk space here to build tags database and
-HTML file for every source file. You'll get HTML/ directory which you
-can mv(1) as long as you want; it's self-contained.
+--- linux.orig/include/linux/netfilter_ipv4/ipt_sctp.h	2005-10-02 15:53:52.000000000 +0200
++++ linux/include/linux/netfilter_ipv4/ipt_sctp.h	2005-11-17 00:23:59.000000000 +0100
+@@ -7,8 +7,6 @@
+ 
+ #define IPT_SCTP_VALID_FLAGS		0x07
+ 
+-#define ELEMCOUNT(x) (sizeof(x)/sizeof(x[0]))
+-
+ 
+ struct ipt_sctp_flag_info {
+ 	u_int8_t chunktype;
+@@ -59,21 +57,21 @@ struct ipt_sctp_info {
+ #define SCTP_CHUNKMAP_RESET(chunkmap) 				\
+ 	do {							\
+ 		int i; 						\
+-		for (i = 0; i < ELEMCOUNT(chunkmap); i++)	\
++		for (i = 0; i < ARRAY_SIZE(chunkmap); i++)	\
+ 			chunkmap[i] = 0;			\
+ 	} while (0)
+ 
+ #define SCTP_CHUNKMAP_SET_ALL(chunkmap) 			\
+ 	do {							\
+ 		int i; 						\
+-		for (i = 0; i < ELEMCOUNT(chunkmap); i++) 	\
++		for (i = 0; i < ARRAY_SIZE(chunkmap); i++)	\
+ 			chunkmap[i] = ~0;			\
+ 	} while (0)
+ 
+ #define SCTP_CHUNKMAP_COPY(destmap, srcmap) 			\
+ 	do {							\
+ 		int i; 						\
+-		for (i = 0; i < ELEMCOUNT(chunkmap); i++) 	\
++		for (i = 0; i < ARRAY_SIZE(chunkmap); i++)	\
+ 			destmap[i] = srcmap[i];			\
+ 	} while (0)
+ 
+@@ -81,7 +79,7 @@ struct ipt_sctp_info {
+ ({							\
+ 	int i; 						\
+ 	int flag = 1;					\
+-	for (i = 0; i < ELEMCOUNT(chunkmap); i++) {	\
++	for (i = 0; i < ARRAY_SIZE(chunkmap); i++) {	\
+ 		if (chunkmap[i]) {			\
+ 			flag = 0;			\
+ 			break;				\
+@@ -94,7 +92,7 @@ struct ipt_sctp_info {
+ ({							\
+ 	int i; 						\
+ 	int flag = 1;					\
+-	for (i = 0; i < ELEMCOUNT(chunkmap); i++) {	\
++	for (i = 0; i < ARRAY_SIZE(chunkmap); i++) {	\
+ 		if (chunkmap[i] != ~0) {		\
+ 			flag = 0;			\
+ 				break;			\
 
-Now, now! Unused #define's are not highlighted. I guess we should
-eventually get rid of them. The tricky part is ## abuse and possible
-bugs in gtags, so usual rules re compile-test, grep(1) apply.
-
-This is not call for patches, just FYI.
-
-P.S.: Yes, Mozilla Janitors project will have nice future.
-      292M of C/C++ code. ;-)
-
-
---===============4121842216617666==
+--===============9504758634458117==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4121842216617666==--
+--===============9504758634458117==--
