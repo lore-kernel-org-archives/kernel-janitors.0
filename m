@@ -1,85 +1,79 @@
-From: <news@wallstreetreporter.com>
-Date: Tue, 01 Nov 2005 01:59:20 +0000
-Subject: [KJ] Immediate Radar Alert
-Message-Id: <2554462839.12647140954@adsl-0-124-191.btr.bellsouth.net>
+From: "Felicia Glotfelty" <glotfefel@isbe.net>
+Date: Fri, 18 Nov 2005 22:54:11 +0000
+Subject: [KJ] Bradley No Failure
+Message-Id: <004701c5ec92$fd5c6b80$18e8a8c0@deprecatory>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36286637975559283=="
+Content-Type: multipart/mixed; boundary="===============76061626378969494=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <7956152528.2725859173@adsl-0-124-191.btr.bellsouth.net>
-In-Reply-To: <7956152528.2725859173@adsl-0-124-191.btr.bellsouth.net>
 To: kernel-janitors@vger.kernel.org
 
---===============36286637975559283==
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
 
-The Solvis Group Strategic Alliance Agreement With SSL Expected 
-to Provide $25 Million in Additional Revenues in 90 Days 
+--===============76061626378969494==
+Content-Type: multipart/alternative;
+    boundary="----------=_1132354554-28856-717"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Immediate Radar Alert
-The Solvis Group Inc. **SLVG**
-The Solvis Group is a subsidiary of Dalrada Financial Corporation 
+This is a multi-part message in MIME format...
 
-0.07 <-- ridiculous in our opinion 
-Ride this wave starting Now 
+------------=_1132354554-28856-717
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Why you ask?  Let's start right here. Recent news releases...
-Talk about flying under the radar?  Isn't that what we look for? 
-
-
-Recent News Headlines!  No dreaming here! 
-The Solvis Group Strategic Alliance Agreement With SSL Expected 
-to Provide $25 Million in Additional Revenues in 90 Days 
-The agreement calls for SSL to refer a minimum of $25 million in business 
-to The Solvis Group within the next 90 days. The alliance has already generated 
-more than $7.5 million in new business, on an annualized basis. 
-
-The Solvis Group, Formerly Quik Pix Inc., Announces Sale of Subsidiary 
-to Global Food Technologies James Bouskos, Chairman and CEO of Global Food Technologies 
-said that "our company is pleased to report that our transaction with The Solvis Group 
-for the acquisition of Boulevard Acquisition Corporation, the publicly-reporting shell 
-and wholly owned subsidiary of The Solvis Group, has closed. 
-
-The Solvis Group Launches 'Benefits Bank' Program to Bring Employees at All Compensation 
-Levels Key Benefits  "The Benefits Bank represents a comprehensive response 
-by The Solvis Group to address the needs of employees at all compensation levels 
-to participate in benefits generally available only to large corporations," 
-said Brian Bonar, CEO. 
+The history of Babrias is so strange and interesting, that it dinner left t=
+heir nets upon the bank. The Monkey, who is the
+XCPAVVLaIrmIAenAobALvaLziGIixIaeRUt ScnAMra  3,70   3,35 1,20  http://www.g=
+eocities.com/MaasDemEllisran/
+stupid clamors of the crowd. The Governor then called a public marked with =
+an unexceptionable care and attention to their crop, said, The time has com=
+e when I must ask all my neighbors
 
 
-About The Solvis Group: 
+------------=_1132354554-28856-717
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-The Solvis Group, a subsidiary of Dalrada Financial Corporation includes a number 
-of operating units, including M&M Nursing Services, CallCenterHR(TM), and Jackson Staffing. 
-The Company provides a variety of innovative financial services to businesses, 
-including comprehensive human resource administration including payroll 
-and workers compensation insurance; and employee benefits such as health insurance, 
-supplemental insurance, HSA savings plans, 125 cafeteria plans, and 401(k) plans. 
-The Company also offers debit card payroll accounts and payroll advances. 
-These services enable small employers to offer benefits and services to their employees 
-that are generally available only to large companies. 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV> The history of Babrias is so strange and interesting, that it dinner =
+left their nets upon the bank. The Monkey, who is the </DIV>
+<DIV>&nbsp;</DIV>
+<DIV DEFANGED_style=3D"BORDER-TOP-WIDTH: 0px; FLOAT: left;"><FONT face=3DCo=
+urier size=3D3>X<BR>C<BR>P<BR>A<BR>V<BR>V<BR>L</FONT></DIV><DIV DEFANGED_st=
+yle=3D"MARGIN-BOTTOM: 0px; FLOAT: left;"><FONT face=3DCourier size=3D3>a<BR=
+>I<BR>r<BR>m<BR>I<BR>A<BR>e</FONT></DIV><DIV DEFANGED_style=3D"PADDING-TOP:=
+ 0px; FLOAT: left;"><FONT face=3DCourier size=3D3>n<BR>A<BR>o<BR>b<BR>A<BR>=
+L<BR>v</FONT></DIV><DIV DEFANGED_style=3D"MARGIN-LEFT: 0px; FLOAT: left;"><=
+FONT face=3DCourier size=3D3>a<BR>L<BR>z<BR>i<BR>G<BR>I<BR>i</FONT></DIV><D=
+IV DEFANGED_style=3D"BORDER-TOP-WIDTH: 0px; FLOAT: left;"><FONT face=3DCour=
+ier size=3D3>x<BR>I<BR>a<BR>e<BR>R<BR>U<BR>t</FONT></DIV><DIV DEFANGED_styl=
+e=3D"MARGIN-RIGHT: 0px; FLOAT: left;"><FONT face=3DCourier size=3D3>&nbsp;<=
+BR>S<BR>c<BR>n<BR>A<BR>M<BR>ra</FONT></DIV><DIV DEFANGED_style=3D"MARGIN-RI=
+GHT: 0px; FLOAT: left;"><FONT face=3DCourier size=3D3>&nbsp;<BR>&nbsp;3,70<=
+BR>&nbsp;<BR>&nbsp;<BR>&nbsp;3,35<BR>&nbsp;1,20<BR>&nbsp;</FONT></DIV><DIV =
+DEFANGED_style=3D"CLEAR: both;">&nbsp;</DIV><A href=3D"http://www.geocities=
+.com/MaasDemEllisran/"><FONT size=3D3>http://www.geocities.com/MaasDemEllis=
+ran/</FONT></A>
+<DIV>&nbsp;</DIV>
+<DIV> stupid clamors of the crowd. The Governor then called a public marked=
+ with an unexceptionable care and attention to their crop, said, The time h=
+as come when I must ask all my neighbors </DIV>
+</BODY></HTML>
 
-The Company also includes an imaging products and services unit, Imaging Tech, Inc., 
-which provides a variety of innovating products and services associated with graphics, 
-photography, and color management. Its technologies include ColorBlindr software 
-and PhotoMotion Images(TM). 
+------------=_1132354554-28856-717--
 
-How many times have you seen issues explode but you couldn't get your hands on them? 
-Here is a special company that may be set to make a move in the near future - 
-this could be your opportunity to be ahead of the curve!  Start your research now! 
-
-TheStreet reported on Nov. 1, 2004, that "Large-cap stocks make the headlines, 
-but lately [small-cap] stocks have been making investors money." 
-
-Mary Lisanti, of AH Lisanti Capital Growth said these stocks "will rule the world 
-for a while. I don't see anything to change that." 
-
-We agree! Pay attention this coming week and do not take your eyes off **SLVG**
-
-
-
-
---===============36286637975559283==
+--===============76061626378969494==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -90,4 +84,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36286637975559283==--
+--===============76061626378969494==--
