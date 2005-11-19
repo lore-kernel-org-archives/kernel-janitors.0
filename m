@@ -1,32 +1,47 @@
-From: Paolo Teti <paolo.teti@gmail.com>
-Date: Mon, 28 Nov 2005 12:53:15 +0000
-Subject: Re: [KJ][PATCH] linux-2.6.15-rc2 apm_emu.c audit misc_register() ret.
-Message-Id: <34a7ae040511280453g3a2d5998l@mail.gmail.com>
+From: Witold Rugowski <rugowski@nhw.pl>
+Date: Sat, 19 Nov 2005 01:33:59 +0000
+Subject: [KJ] [PATCH] sound/oss/maestro3.c printk args concatenation
+Message-Id: <437E8107.2000103@nhw.pl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============93677508969046963=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <34a7ae040511230009j20cff459r@mail.gmail.com>
-In-Reply-To: <34a7ae040511230009j20cff459r@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> > Sorry!!
->
-> You don't have to be sorry. It is about my patch Alexey say that.
->
-> I understand your reply Alexey. I would have prefered to know that in
-> July 2005 not in November 2005.
->
+--===============93677508969046963==
+Content-Type: text/plain; charset=ISO-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Ok. Christophe
+Removed string concatenation in printk args
 
-but I have asked "sorry" because I have sent also to Benjamin the patch
-(probably I have used Ccr instead of Cc) and know the patch is in the -mm tree
-checked by Benjamin
+Signed-off-by: Witold Rugowski <rugowski@nhw.pl>
 
-Hi, Pao
+diff -urpN  linux-2.6.14.2/sound/oss/maestro3.c linux-2.6.14.2-wr/sound/oss/maestro3.c
+--- linux-2.6.14.2/sound/oss/maestro3.c	Fri Nov 11 06:33:12 2005
++++ linux-2.6.14.2-wr/sound/oss/maestro3.c	Fri Nov 18 23:56:37 2005
+@@ -2935,7 +2935,7 @@ static struct pci_driver m3_pci_driver =
+ 
+ static int __init m3_init_module(void)
+ {
+-    printk(KERN_INFO PFX "version " DRIVER_VERSION " built at " __TIME__ " " __DATE__ "\n");
++    printk(KERN_INFO "%sversion %s built at %s %s\n",PFX,DRIVER_VERSION,__TIME__, __DATE__);
+ 
+     if (register_reboot_notifier(&m3_reboot_nb)) {
+         printk(KERN_WARNING PFX "reboot notifier registration failed\n");
+
+
+-- 
+Witold Rugowski
+rugowski _at_ nhw.pl http://nhw.pl/blg/
+
+--===============93677508969046963==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============93677508969046963==--
