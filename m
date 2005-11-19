@@ -1,40 +1,71 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 19:09:14 +0000
-Subject: Re: [KJ] [PATCH 6/8] Cleanup slabinfo_write()
-Message-Id: <4370F7DA.5000307@us.ibm.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 19 Nov 2005 13:12:21 +0000
+Subject: [KJ] Re: removal of macro duplicates
+Message-Id: <20051119131221.GA19097@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============4832607800012173=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com> <436FF7F7.1060907@us.ibm.com> <20051108105013.GA7678@mipter.zuzino.mipt.ru> <Pine.LNX.4.62.0511081055430.30907@schroedinger.engr.sgi.com>
-In-Reply-To: <Pine.LNX.4.62.0511081055430.30907@schroedinger.engr.sgi.com>
+To: kernel-janitors@vger.kernel.org
+
+--===============4832607800012173==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Nov 17, 2005 at 01:06:20PM +0100, Nicolas Kaiser wrote:
+> Hi there! Do you think it would be a good idea to remove
+> duplicates of the BCD macros as well?
+
+I think, yes. Be sure to Cc kernel-jantiors mailing list.
+
+> For example this one:
+>
+> Remove duplicate of BCD macros
+
+> --- a/drivers/i2c/chips/rtc8564.c
+> +++ b/drivers/i2c/chips/rtc8564.c
+> @@ -14,6 +14,7 @@
+>   */
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+> +#include <linux/bcd.h>
+>  #include <linux/i2c.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> @@ -52,9 +53,6 @@ static inline u8 _rtc8564_ctrl2(struct i
+>  #define CTRL1(c) _rtc8564_ctrl1(c)
+>  #define CTRL2(c) _rtc8564_ctrl2(c)
+>
+> -#define BCD_TO_BIN(val) (((val)&15) + ((val)>>4)*10)
+> -#define BIN_TO_BCD(val) ((((val)/10)<<4) + (val)%10)
+> -
+>  static int debug;;
+>  module_param(debug, int, S_IRUGO | S_IWUSR);
+>
+> @@ -225,16 +223,16 @@ static int rtc8564_get_datetime(struct i
+>  		return ret;
+>
+>  	/* century stored in minute alarm reg */
+> -	dt->year = BCD_TO_BIN(buf[RTC8564_REG_YEAR]);
+> -	dt->year += 100 * BCD_TO_BIN(buf[RTC8564_REG_AL_MIN] & 0x3f);
+> -	dt->mday = BCD_TO_BIN(buf[RTC8564_REG_DAY] & 0x3f);
+> -	dt->wday = BCD_TO_BIN(buf[RTC8564_REG_WDAY] & 7);
+> -	dt->mon = BCD_TO_BIN(buf[RTC8564_REG_MON_CENT] & 0x1f);
+> +	dt->year = BCD2BIN(buf[RTC8564_REG_YEAR]);
+> +	dt->year += 100 * BCD2BIN(buf[RTC8564_REG_AL_MIN] & 0x3f);
+> +	dt->mday = BCD2BIN(buf[RTC8564_REG_DAY] & 0x3f);
+> +	dt->wday = BCD2BIN(buf[RTC8564_REG_WDAY] & 7);
+> +	dt->mon = BCD2BIN(buf[RTC8564_REG_MON_CENT] & 0x1f);
+
+
+--===============4832607800012173==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Christoph Lameter <clameter@engr.sgi.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, kernel-janitors@lists.osdl.org, Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Christoph Lameter wrote:
-> On Tue, 8 Nov 2005, Alexey Dobriyan wrote:
-> 
-> 
->>On Mon, Nov 07, 2005 at 04:57:27PM -0800, Matthew Dobson wrote:
->>
->>>* Set 'res' at declaration instead of later in the function.
->>
->>I hate to initialize a varible two miles away from the place where it's
->>used.
-> 
-> 
->  
-> 
->>>-	int limit, batchcount, shared, res;
->>>+	int limit, batchcount, shared, res = -EINVAL;
-> 
-> 
-> Looks more confusing than before.
-
-Fair enough.  I'll drop that bit.
-
--Matt
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============4832607800012173==--
