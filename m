@@ -1,35 +1,39 @@
-From: "David S. Miller" <davem@davemloft.net>
-Date: Wed, 09 Nov 2005 20:03:15 +0000
-Subject: [KJ] Re: [PATCH] arch/sparc: Use ARRAY_SIZE macro
-Message-Id: <20051109.120315.108937810.davem@davemloft.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38647408943695161=="
+From: "Paolo Teti" <tetipaol@libero.it>
+Date: Tue, 22 Nov 2005 18:07:32 +0000
+Subject: [KJ] [PATCH] linux-2.6.15-rc2 apm_emu.c audit misc_register() ret.
+Message-Id: <IQDBOK$B9720DE2CB5707224B58DDA8FB05C27B@libero.it>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============38647408943695161==
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+from: Paolo Teti
 
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 8 Nov 2005 21:17:06 +0100
+fix a missing check on misc_register() return code
 
-> Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
-> duplicate of ARRAY_SIZE which is never used anyways.
-> 
-> Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Paolo Teti <tetipaol@libero.it>
 
-Applied, thanks.
+---
+--- linux-2.6.15-rc2/drivers/macintosh/apm_emu.c.orig	Tue Nov 22 17:37:06 2005
++++ linux-2.6.15-rc2/drivers/macintosh/apm_emu.c	Tue Nov 22 18:03:31 2005
+@@ -530,7 +530,11 @@ static int __init apm_emu_init(void)
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
+ 
+-	misc_register(&apm_device);
++	if (misc_register(&apm_device) != 0) {
++		remove_proc_entry("apm", NULL);
++		printk(KERN_ERR "apm_emu: Failed to register APM Emulation.\n");
++		return -ENODEV;
++	}
+ 
+ 	pmu_register_sleep_notifier(&apm_sleep_notifier);
+ 
 
---===============38647408943695161==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============38647408943695161==--
