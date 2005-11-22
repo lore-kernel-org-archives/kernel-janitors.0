@@ -1,41 +1,52 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 19:10:43 +0000
-Subject: Re: [KJ] [PATCH 4/8] Cleanup kmem_cache_create()
-Message-Id: <4370F833.30906@us.ibm.com>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Tue, 22 Nov 2005 19:23:21 +0000
+Subject: [KJ] [PATCH] selinux: use ARRAY_SIZE macro
+Message-Id: <20051122202321.011911d5@lucky.kitzblitz>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============37599864507248437=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com> <436FF70D.6040604@us.ibm.com> <20051108150008.GL23749@parisc-linux.org> <Pine.LNX.4.58.0511081710280.26730@sbz-30.cs.Helsinki.FI>
-In-Reply-To: <Pine.LNX.4.58.0511081710280.26730@sbz-30.cs.Helsinki.FI>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+--===============37599864507248437==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-To: Pekka J Enberg <penberg@cs.Helsinki.FI>
-Cc: Matthew Wilcox <matthew@wil.cx>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
 
-Pekka J Enberg wrote:
-> On Tue, 8 Nov 2005, Matthew Wilcox wrote:
-> 
->>+/*
->>+ * Calculate size (in pages) of slabs, and the num of objs per slab.  This
->>+ * could be made much more intelligent.  For now, try to avoid using high
->>+ * page-orders for slabs.  When the gfp() funcs are more friendly towards
->>+ * high-order requests, this should be changed.
->>+ */
->>+static size_t find_best_slab_order(kmem_cache_t *cachep, size_t size,
->>+					 size_t align, unsigned long flags)
->>+{
-> 
-> 
-> Looks ok to me. I would prefer this to be called calculate_slab_order() 
-> instead though.
-> 
-> 			Pekka
+Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]).
 
-Agreed.  Will include this in the next version, due out this afternoon.
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
 
-Thank you both for the review and comments.
+---
 
--Matt
+--- a/security/selinux/selinuxfs.c	2005-11-20 11:49:01.000000000 +0100
++++ b/security/selinux/selinuxfs.c	2005-11-22 19:51:47.000000000 +0100
+@@ -376,7 +376,7 @@ static ssize_t selinux_transaction_write
+ 	char *data;
+ 	ssize_t rv;
+ 
+-	if (ino >= sizeof(write_op)/sizeof(write_op[0]) || !write_op[ino])
++	if (ino >= ARRAY_SIZE(write_op) || !write_op[ino])
+ 		return -EINVAL;
+ 
+ 	data = simple_transaction_get(file, buf, size);
+@@ -1161,7 +1161,7 @@ static int sel_make_avc_files(struct den
+ #endif
+ 	};
+ 
+-	for (i = 0; i < sizeof (files) / sizeof (files[0]); i++) {
++	for (i = 0; i < ARRAY_SIZE(files); i++) {
+ 		struct inode *inode;
+ 		struct dentry *dentry;
+ 
+
+--===============37599864507248437==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============37599864507248437==--
