@@ -1,32 +1,34 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Tue, 08 Nov 2005 08:48:11 +0000
-Subject: Re: [KJ] Re: [PATCH 2/8] Use 'nid' in slab.c
-Message-Id: <a01a16b50511080048j7c260597gcc6fd0084e32e41c@mail.gmail.com>
+From: Paolo Teti <paolo.teti@gmail.com>
+Date: Wed, 23 Nov 2005 08:09:04 +0000
+Subject: [KJ][PATCH] linux-2.6.15-rc2 apm_emu.c audit misc_register() ret. code
+Message-Id: <34a7ae040511230009j20cff459r@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0511080952250.10193@sbz-30.cs.Helsinki.FI>
-In-Reply-To: <Pine.LNX.4.58.0511080952250.10193@sbz-30.cs.Helsinki.FI>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 11/8/05, Pekka J Enberg <penberg@cs.helsinki.fi> wrote:
-> On Mon, 7 Nov 2005, Matthew Dobson wrote:
-> > We refer to a node number as: "nodeid", "node", "nid", and possibly oth=
-er
-> > names.  Let's choose one, and I choose "nid".
->
-> Such a pity as nodeid is much more readable...
->
+from: Paolo Teti
 
-I second that, nodeid is much more understandable.
+fix a missing check on misc_register() return code
 
-One thing I noticed while reading the patch is that the function/macro
-"cpu_to_node"
-probably also should be renamed to "cpu_to_nodeid" (or "cpu_to_nid").
-Also numa_node_id --> numa_nodeid I guess?
+Signed-off-by: Paolo Teti <paolo.teti@gmail.com>
 
-BR H=E5kon L=F8vdal
+---
+--- linux-2.6.15-rc2/drivers/macintosh/apm_emu.c.orig	Tue Nov 22 17:37:06 2005
++++ linux-2.6.15-rc2/drivers/macintosh/apm_emu.c	Tue Nov 22 18:03:31 2005
+@@ -530,7 +530,11 @@ static int __init apm_emu_init(void)
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
+
+-	misc_register(&apm_device);
++	if (misc_register(&apm_device) != 0) {
++		remove_proc_entry("apm", NULL);
++		printk(KERN_ERR "apm_emu: Failed to register APM Emulation.\n");
++		return -ENODEV;
++	}
+
+ 	pmu_register_sleep_notifier(&apm_sleep_notifier);
 
 _______________________________________________
 Kernel-janitors mailing list
