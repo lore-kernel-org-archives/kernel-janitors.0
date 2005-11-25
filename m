@@ -1,85 +1,88 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Tue, 22 Nov 2005 21:46:01 +0000
-Subject: Re: [KJ] [PATCH] selinux: use ARRAY_SIZE macro
-Message-Id: <20051122214601.GA1839@neon.tklauser.home>
+From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
+Date: Fri, 25 Nov 2005 20:43:19 +0000
+Subject: [KJ] drivers\char\pcmcia\synclink_cs.c
+Message-Id: <003601c5f200$deb12400$1e83c756@bureau>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============58430736749541001=="
+Content-Type: multipart/mixed; boundary="===============59900045593238982=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051122202321.011911d5@lucky.kitzblitz>
-In-Reply-To: <20051122202321.011911d5@lucky.kitzblitz>
 To: kernel-janitors@vger.kernel.org
 
---===============58430736749541001==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============59900045593238982==
+Content-Type: multipart/alternative;
+    boundary="----------=_1132951585-17883-129"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1132951585-17883-129
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On 2005-11-22 at 20:23:21 +0100, Nicolas Kaiser <nikai@nikai.net> wrote:
-> Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]).
+In file :            \drivers\char\pcmcia\synclink_cs.c
+In function :    line_info(char *buf, MGSLPC_INFO *info)
 
-You missed two of them (at least your subjects tells you did the whole
-security/selinux)
+The buffer *stat_buf* could be defined smaller.
 
-Updated patch attached.
+It is used to build a string that can not be longer than "|RTS|CTS|DTR|DSR|=
+CD|RI", that is to say 21 + 1 chars so :
 
-BTW: I've got a whole lot of these hanging here for various areas. I
-just need some time to submit them. :-/
+     char stat_buf[22];
+instead of
+    char stat_buf[30];
+would be enough and would save a few bytes on the stack.
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+CJ
 
----
 
- selinuxfs.c   |    4 ++--
- ss/avtab.c    |    2 +-
- ss/policydb.c |    2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff -urpN -X dontdiff linux-2.6.15-rc2/security/selinux/selinuxfs.c linux-2.6.15-rc2~array_size/security/selinux/selinuxfs.c
---- linux-2.6.15-rc2/security/selinux/selinuxfs.c	2005-11-20 13:27:41.000000000 +0100
-+++ linux-2.6.15-rc2~array_size/security/selinux/selinuxfs.c	2005-11-22 22:37:53.000000000 +0100
-@@ -376,7 +376,7 @@ static ssize_t selinux_transaction_write
- 	char *data;
- 	ssize_t rv;
- 
--	if (ino >= sizeof(write_op)/sizeof(write_op[0]) || !write_op[ino])
-+	if (ino >= ARRAY_SIZE(write_op) || !write_op[ino])
- 		return -EINVAL;
- 
- 	data = simple_transaction_get(file, buf, size);
-@@ -1161,7 +1161,7 @@ static int sel_make_avc_files(struct den
- #endif
- 	};
- 
--	for (i = 0; i < sizeof (files) / sizeof (files[0]); i++) {
-+	for (i = 0; i < ARRAY_SIZE(files); i++) {
- 		struct inode *inode;
- 		struct dentry *dentry;
- 
-diff -urpN -X dontdiff linux-2.6.15-rc2/security/selinux/ss/avtab.c linux-2.6.15-rc2~array_size/security/selinux/ss/avtab.c
---- linux-2.6.15-rc2/security/selinux/ss/avtab.c	2005-10-28 08:56:28.000000000 +0200
-+++ linux-2.6.15-rc2~array_size/security/selinux/ss/avtab.c	2005-11-22 22:39:18.000000000 +0100
-@@ -359,7 +359,7 @@ int avtab_read_item(void *fp, u32 vers, 
- 			return -1;
- 		}
- 
--		for (i = 0; i < sizeof(spec_order)/sizeof(u16); i++) {
-+		for (i = 0; i < ARRAY_SIZE(spec_order); i++) {
- 			if (val & spec_order[i]) {
- 				key.specified = spec_order[i] | enabled;
- 				datum.data = le32_to_cpu(buf32[items++]);
-diff -urpN -X dontdiff linux-2.6.15-rc2/security/selinux/ss/policydb.c linux-2.6.15-rc2~array_size/security/selinux/ss/policydb.c
---- linux-2.6.15-rc2/security/selinux/ss/policydb.c	2005-11-20 13:27:41.000000000 +0100
-+++ linux-2.6.15-rc2~array_size/security/selinux/ss/policydb.c	2005-11-22 22:39:51.000000000 +0100
-@@ -103,7 +103,7 @@ static struct policydb_compat_info *poli
- 	int i;
- 	struct policydb_compat_info *info = NULL;
- 
--	for (i = 0; i < sizeof(policydb_compat)/sizeof(*info); i++) {
-+	for (i = 0; i < ARRAY_SIZE(policydb_compat); i++) {
- 		if (policydb_compat[i].version == version) {
- 			info = &policydb_compat[i];
- 			break;
+------------=_1132951585-17883-129
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---===============58430736749541001==
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2800.1522" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>In file=20
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+\drivers\char\pcmcia\synclink_cs.c</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>In function&nbsp;:&nbsp;&nbsp;&nbsp; line_=
+info(char=20
+*buf, MGSLPC_INFO *info)</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>The buffer *stat_buf* could be defined=20
+smaller.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>It is used to build a string that can not =
+be longer=20
+than "|RTS|CTS|DTR|DSR|CD|RI", that is to say 21 + 1 chars so :</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp;=20
+&nbsp;char&nbsp;stat_buf[22];</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>instead of</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp;=20
+char&nbsp;stat_buf[30];</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>would be enough and would save a few bytes=
+ on the=20
+stack.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>CJ</DIV>
+<DIV><BR><BR></DIV></FONT></BODY></HTML>
+
+------------=_1132951585-17883-129--
+
+--===============59900045593238982==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -90,4 +93,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============58430736749541001==--
+--===============59900045593238982==--
