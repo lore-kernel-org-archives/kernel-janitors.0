@@ -1,130 +1,62 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 00:55:51 +0000
-Subject: [KJ] [PATCH 5/8] Cleanup cache_reap()
-Message-Id: <436FF797.2070407@us.ibm.com>
+From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
+Date: Fri, 25 Nov 2005 21:50:05 +0000
+Subject: [KJ] \drivers\char\synclinkmp.c  &  \drivers\char\amiserial.c
+Message-Id: <00ab01c5f20a$327684f0$1e83c756@bureau>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------050201060402090603080508"
+Content-Type: multipart/mixed; boundary="===============55505904166952291=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com>
-In-Reply-To: <436FF51D.8080509@us.ibm.com>
-To: kernel-janitors@lists.osdl.org
-Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------050201060402090603080508
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+This is a multi-part message in MIME format...
 
-Cleanup cache_reap().
+--===============55505904166952291==
+Content-Type: multipart/alternative;
+    boundary="----------=_1132955560-17883-489"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Note, I did not include the change to remove the '+ smp_processor_id()'
-from the schedule_delayed_work() calls.  This may cause rejects, which I,
-or any sane person :), can trivially resolve.
+This is a multi-part message in MIME format...
 
-mcd@arrakis:~/linux/source/linux-2.6.14+slab_cleanup/patches $ diffstat
-cache_reap.patch
- slab.c |   36 +++++++++++++-----------------------
- 1 files changed, 13 insertions(+), 23 deletions(-)
+------------=_1132955560-17883-489
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--Matt
+Same as my 2 previous mail concerning :
+\drivers\char\synclinkmp.c
+\drivers\char\amiserial.c
 
---------------050201060402090603080508
-Content-Type: text/x-patch;
- name="cache_reap.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="cache_reap.patch"
+in function line_info in both cases.
 
-General readability fixes.
+CJ
+------------=_1132955560-17883-489
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-* Goto to end of function instead of duplicating code in case of 
-     failure to grab cache_chain_sem.
-* Replace a list_for_each/list_entry combo with an identical but
-     more readable list_for_each_entry loop.
-* Move the declaration of a variables not referenced outside of
-     certain loops inside those loops.
-* Store the numa_node_id() in a local variable.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2800.1522" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Same as my 2 previous mail concerning=20
+:</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>\drivers\char\synclinkmp.c</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>\drivers\char\amiserial.c</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>in function line_info in both cases.</FONT=
+></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>CJ</FONT></DIV></BODY></HTML>
 
-Index: linux-2.6.14+slab_cleanup/mm/slab.c
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-07 15:58:50.495474952 -0800
-+++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-07 15:59:14.091887752 -0800
-@@ -3282,45 +3282,32 @@ static void drain_array_locked(kmem_cach
-  */
- static void cache_reap(void *unused)
- {
--	struct list_head *walk;
--	struct kmem_list3 *l3;
--
--	if (down_trylock(&cache_chain_sem)) {
--		/* Give up. Setup the next iteration. */
--		schedule_delayed_work(&__get_cpu_var(reap_work),
--				      REAPTIMEOUT_CPUC + smp_processor_id());
--		return;
--	}
-+	kmem_cache_t *searchp;
- 
--	list_for_each(walk, &cache_chain) {
--		kmem_cache_t *searchp;
--		struct list_head* p;
--		int tofree;
--		struct slab *slabp;
-+	if (down_trylock(&cache_chain_sem))
-+		goto out;
- 
--		searchp = list_entry(walk, kmem_cache_t, next);
-+	list_for_each_entry(searchp, &cache_chain, next) {
-+		struct kmem_list3 *l3;
-+		int tofree, nid = numa_node_id();
- 
- 		if (searchp->flags & SLAB_NO_REAP)
- 			goto next;
- 
- 		check_irq_on();
--
--		l3 = searchp->nodelists[numa_node_id()];
-+		l3 = searchp->nodelists[nid];
- 		if (l3->alien)
- 			drain_alien_cache(searchp, l3);
- 		spin_lock_irq(&l3->list_lock);
- 
--		drain_array_locked(searchp, ac_data(searchp), 0,
--				numa_node_id());
-+		drain_array_locked(searchp, ac_data(searchp), 0, nid);
- 
- 		if (time_after(l3->next_reap, jiffies))
- 			goto next_unlock;
--
- 		l3->next_reap = jiffies + REAPTIMEOUT_LIST3;
- 
- 		if (l3->shared)
--			drain_array_locked(searchp, l3->shared, 0,
--				numa_node_id());
-+			drain_array_locked(searchp, l3->shared, 0, nid);
- 
- 		if (l3->free_touched) {
- 			l3->free_touched = 0;
-@@ -3330,7 +3317,9 @@ static void cache_reap(void *unused)
- 		tofree = 5 * searchp->num;
- 		tofree = (l3->free_limit + tofree - 1) / tofree;
- 		do {
--			p = l3->slabs_free.next;
-+			struct list_head *p = l3->slabs_free.next;
-+			struct slab *slabp;
-+
- 			if (p == &(l3->slabs_free))
- 				break;
- 
-@@ -3357,6 +3346,7 @@ next:
- 	check_irq_on();
- 	up(&cache_chain_sem);
- 	drain_remote_pages();
-+out:
- 	/* Setup the next iteration */
- 	schedule_delayed_work(&__get_cpu_var(reap_work),
- 			      REAPTIMEOUT_CPUC + smp_processor_id());
+------------=_1132955560-17883-489--
 
---------------050201060402090603080508
+--===============55505904166952291==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -135,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------050201060402090603080508--
+--===============55505904166952291==--
