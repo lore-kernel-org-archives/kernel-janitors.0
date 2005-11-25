@@ -1,139 +1,69 @@
-From: "Kernel-hackingpdemb" <kernel-hackingpdemb@illx.org>
-Date: Wed, 02 Nov 2005 00:17:29 +0000
-Subject: [KJ] (no subject)
-Message-Id: <sfasdmqkterygbqrrpj@lists.osdl.org>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Fri, 25 Nov 2005 12:48:52 +0000
+Subject: [KJ] [PATCH] sound/pci/au88x0: Remove unneeded call to
+Message-Id: <20051125124852.GA7376@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--------ncailavveuyubkhqxccv"
+Content-Type: multipart/mixed; boundary="===============12013188382484508=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4277F774.9070506@tampabay.rr.com>
-In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
-----------ncailavveuyubkhqxccv
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+--===============12013188382484508==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-<html><body>
-texte<br><br>
+pci_dma_supported() is called right before pci_set_dma_mask() which
+already calls pci_dma_supported(). The attached patch removes the
+unneeded call to pci_dma_supported()
 
-<br>
-</body></html>
+Additionally the custom VORTEX_DMA_MASK macro is replaced by
+DMA_32BIT_MASK from linux/dma-mapping.h
 
-----------ncailavveuyubkhqxccv
-Content-Type: application/octet-stream; name="max.zip"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="max.zip"
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-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
-AAEAOgAAAAUSAAAAAA==
+---
 
-----------ncailavveuyubkhqxccv
+ sound/pci/au88x0/au88x0.c |    4 ++--
+ sound/pci/au88x0/au88x0.h |    2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff -urpN -X dontdiff linux-2.6.15-rc2/sound/pci/au88x0/au88x0.c linux-2.6.15-rc2~dma_mask/sound/pci/au88x0/au88x0.c
+--- linux-2.6.15-rc2/sound/pci/au88x0/au88x0.c	2005-11-20 13:27:41.000000000 +0100
++++ linux-2.6.15-rc2~dma_mask/sound/pci/au88x0/au88x0.c	2005-11-22 23:01:59.000000000 +0100
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/moduleparam.h>
++#include <linux/dma-mapping.h>
+ #include <sound/initval.h>
+ 
+ // module parameters (see "Module Parameters")
+@@ -150,11 +151,10 @@ snd_vortex_create(snd_card_t * card, str
+ 	// check PCI availability (DMA).
+ 	if ((err = pci_enable_device(pci)) < 0)
+ 		return err;
+-	if (!pci_dma_supported(pci, VORTEX_DMA_MASK)) {
++	if (pci_set_dma_mask(pci, DMA_32BIT_MASK)) {
+ 		printk(KERN_ERR "error to set DMA mask\n");
+ 		return -ENXIO;
+ 	}
+-	pci_set_dma_mask(pci, VORTEX_DMA_MASK);
+ 
+ 	chip = kzalloc(sizeof(*chip), GFP_KERNEL);
+ 	if (chip == NULL)
+diff -urpN -X dontdiff linux-2.6.15-rc2/sound/pci/au88x0/au88x0.h linux-2.6.15-rc2~dma_mask/sound/pci/au88x0/au88x0.h
+--- linux-2.6.15-rc2/sound/pci/au88x0/au88x0.h	2005-11-20 13:27:41.000000000 +0100
++++ linux-2.6.15-rc2~dma_mask/sound/pci/au88x0/au88x0.h	2005-11-22 18:19:18.000000000 +0100
+@@ -39,8 +39,6 @@
+ #include "au88x0_wt.h"
+ #endif
+ 
+-#define	VORTEX_DMA_MASK	0xffffffff
+-
+ #define	hwread(x,y) readl((x)+((y)>>2))
+ #define	hwwrite(x,y,z) writel((z),(x)+((y)>>2))
+ 
+
+--===============12013188382484508==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -144,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-----------ncailavveuyubkhqxccv--
+--===============12013188382484508==--
