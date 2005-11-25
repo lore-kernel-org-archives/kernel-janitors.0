@@ -1,153 +1,84 @@
-From: Jaco Kroon <jaco@kroon.co.za>
-Date: Sun, 20 Nov 2005 07:40:19 +0000
-Subject: Re: [KJ] qla1280: slightly strange DMA mask
-Message-Id: <43802863.4000405@kroon.co.za>
+From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
+Date: Fri, 25 Nov 2005 20:47:22 +0000
+Subject: [KJ] drivers\char\synclink.c
+Message-Id: <005701c5f201$6f7bf190$1e83c756@bureau>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8915252416811863=="
+Content-Type: multipart/mixed; boundary="===============031947732725352784=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051120073443.GB17439@mipter.zuzino.mipt.ru>
-In-Reply-To: <20051120073443.GB17439@mipter.zuzino.mipt.ru>
 To: kernel-janitors@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+This is a multi-part message in MIME format...
 
---===============8915252416811863==
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-	micalg=sha1; boundary="------------ms050505010801040408030205"
+--===============031947732725352784==
+Content-Type: multipart/alternative;
+    boundary="----------=_1132951790-17883-149"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-This is a cryptographically signed message in MIME format.
+This is a multi-part message in MIME format...
 
---------------ms050505010801040408030205
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+------------=_1132951790-17883-149
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Alexey Dobriyan wrote:
-> The question is what to do with ~0LL.
+In file :            \drivers\char\synclink.c
+In function :    line_info(char *buf, struct mgsl_struct *info)
 
-Well, on x86 and amd64 at least long long is 64-bits in both cases.
-Therefor I would guess that it needs to me DMA_64BIT_MASK.
-Additionally, to support this, it seems it's inside an ifdef for
-QLA_64BIT_PTR which supports the 64-bit theory to an extent.
+The buffer *stat_buf* could be defined smaller.
 
-Does this make sense?
+It is used to build a string that can not be longer than "|RTS|CTS|DTR|DSR|=
+CD|RI", that is to say 21 + 1 chars so :
 
-Also, in that case it would try to use a 64-bit DMA mask, and try to
-fallback to 32-bit if that fails.
+     char stat_buf[22];
+instead of
+    char stat_buf[30];
+would be enough and would save a few bytes on the stack.
 
-> --- linux-kj.orig/drivers/scsi/qla1280.c
-> +++ linux-kj/drivers/scsi/qla1280.c
-> @@ -348,6 +348,7 @@
->  #include <linux/pci_ids.h>
->  #include <linux/interrupt.h>
->  #include <linux/init.h>
-> +#include <linux/dma-mapping.h>
->  
->  #include <asm/io.h>
->  #include <asm/irq.h>
-> @@ -4571,7 +4572,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
->  
->  #ifdef QLA_64BIT_PTR
->  	if (pci_set_dma_mask(ha->pdev, (dma_addr_t) ~ 0ULL)) {
-> 				       ^^^^^^^^^^^^^^^^^^^
-> 
-> -		if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
-> +		if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
->  			printk(KERN_WARNING "scsi(%li): Unable to set a "
->  			       "suitable DMA mask - aborting\n", ha->host_no);
->  			error = -ENODEV;
-> @@ -4581,7 +4582,7 @@ qla1280_probe_one(struct pci_dev *pdev, 
->  		dprintk(2, "scsi(%li): 64 Bit PCI Addressing Enabled\n",
->  			ha->host_no);
->  #else
-> -	if (pci_set_dma_mask(ha->pdev, 0xffffffff)) {
-> +	if (pci_set_dma_mask(ha->pdev, DMA_32BIT_MASK)) {
->  		printk(KERN_WARNING "scsi(%li): Unable to set a "
->  		       "suitable DMA mask - aborting\n", ha->host_no);
->  		error = -ENODEV;
-> 
-> 
-> 
-> ------------------------------------------------------------------------
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+CJ
+------------=_1132951790-17883-149
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2800.1522" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>In file=20
+:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
+\drivers\char\synclink.c</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>In function&nbsp;:&nbsp;&nbsp;&nbsp; line_=
+info(char=20
+*buf, struct mgsl_struct *info)</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>The buffer *stat_buf* could be defined=20
+smaller.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>It is used to build a string that can not =
+be longer=20
+than "|RTS|CTS|DTR|DSR|CD|RI", that is to say 21 + 1 chars so :</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp;=20
+&nbsp;char&nbsp;stat_buf[22];</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>instead of</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>&nbsp;&nbsp;&nbsp;=20
+char&nbsp;stat_buf[30];</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>would be enough and would save a few bytes=
+ on the=20
+stack.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>CJ</DIV></FONT></BODY></HTML>
 
--- 
-There are only 10 kinds of people in this world,
-  those that understand binary and those that don't.
-http://www.kroon.co.za/
+------------=_1132951790-17883-149--
 
---------------ms050505010801040408030205
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIII5TCC
-As0wggI2oAMCAQICAw3p1jANBgkqhkiG9w0BAQQFADBiMQswCQYDVQQGEwJaQTElMCMGA1UE
-ChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNv
-bmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwHhcNMDUwMTI4MjExMjIzWhcNMDYwMTI4MjExMjIz
-WjBCMR8wHQYDVQQDExZUaGF3dGUgRnJlZW1haWwgTWVtYmVyMR8wHQYJKoZIhvcNAQkBFhBq
-YWNvQGtyb29uLmNvLnphMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4CsLuOWD
-wimwAv4QLdlT99frJCwzUBVQNL7c7x4ufEquAH6RamWfQyQHzykEJM8NeMIrfb+k3fZEi+ZU
-g5sq2uIqzOuCJsIj0x3LnoydXTikbv1AFWQDEuqITlroA8bGJE/mMlbPrKyDACPo5cQAzUQz
-LAg7LQQQVkKNWH4eeXUwZ5lOZEWWno0P5DXHdSLQxCshgWVPRrbtKe25WGObqJMa//1T5qX8
-0mKIdAbHlz90BwgX/MjLp0BpXTii2653ScOujCLTC3cPdDUDK68qG7RqatVw5+HE/npJIWa1
-0TxJUp5Ii8nPbGPzpEWQmZ8TjkjMs26w80PPPKh2Vh2siQIDAQABoy0wKzAbBgNVHREEFDAS
-gRBqYWNvQGtyb29uLmNvLnphMAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQEEBQADgYEAqXNX
-QEMTVQoj3JoEwK9vlfqSVz5ZEUklpgEhwFJsD+PKa/LgUGVHk3Gw8wws4+wZxmpOsJ7vdiWL
-y8zlX7HfPWMcbibTi6C7nT6WahqdeAo3kVjhnMqJ3Sf6sX0JGl9bWfIhgmIVy/ZdM2ztrXwd
-rbWiT7un5lM05D4YPCNH9fcwggLNMIICNqADAgECAgMN6dYwDQYJKoZIhvcNAQEEBQAwYjEL
-MAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAq
-BgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA1MDEyODIx
-MTIyM1oXDTA2MDEyODIxMTIyM1owQjEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJl
-cjEfMB0GCSqGSIb3DQEJARYQamFjb0Brcm9vbi5jby56YTCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAOArC7jlg8IpsAL+EC3ZU/fX6yQsM1AVUDS+3O8eLnxKrgB+kWpln0Mk
-B88pBCTPDXjCK32/pN32RIvmVIObKtriKszrgibCI9Mdy56MnV04pG79QBVkAxLqiE5a6APG
-xiRP5jJWz6ysgwAj6OXEAM1EMywIOy0EEFZCjVh+Hnl1MGeZTmRFlp6ND+Q1x3Ui0MQrIYFl
-T0a27SntuVhjm6iTGv/9U+al/NJiiHQGx5c/dAcIF/zIy6dAaV04otuud0nDrowi0wt3D3Q1
-AyuvKhu0amrVcOfhxP56SSFmtdE8SVKeSIvJz2xj86RFkJmfE45IzLNusPNDzzyodlYdrIkC
-AwEAAaMtMCswGwYDVR0RBBQwEoEQamFjb0Brcm9vbi5jby56YTAMBgNVHRMBAf8EAjAAMA0G
-CSqGSIb3DQEBBAUAA4GBAKlzV0BDE1UKI9yaBMCvb5X6klc+WRFJJaYBIcBSbA/jymvy4FBl
-R5NxsPMMLOPsGcZqTrCe73Yli8vM5V+x3z1jHG4m04ugu50+lmoanXgKN5FY4ZzKid0n+rF9
-CRpfW1nyIYJiFcv2XTNs7a18Ha21ok+7p+ZTNOQ+GDwjR/X3MIIDPzCCAqigAwIBAgIBDTAN
-BgkqhkiG9w0BAQUFADCB0TELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTES
-MBAGA1UEBxMJQ2FwZSBUb3duMRowGAYDVQQKExFUaGF3dGUgQ29uc3VsdGluZzEoMCYGA1UE
-CxMfQ2VydGlmaWNhdGlvbiBTZXJ2aWNlcyBEaXZpc2lvbjEkMCIGA1UEAxMbVGhhd3RlIFBl
-cnNvbmFsIEZyZWVtYWlsIENBMSswKQYJKoZIhvcNAQkBFhxwZXJzb25hbC1mcmVlbWFpbEB0
-aGF3dGUuY29tMB4XDTAzMDcxNzAwMDAwMFoXDTEzMDcxNjIzNTk1OVowYjELMAkGA1UEBhMC
-WkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1Ro
-YXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GN
-ADCBiQKBgQDEpjxVc1X7TrnKmVoeaMB1BHCd3+n/ox7svc31W/Iadr1/DDph8r9RzgHU5VAK
-MNcCY1osiRVwjt3J8CuFWqo/cVbLrzwLB+fxH5E2JCoTzyvV84J3PQO+K/67GD4Hv0CAAmTX
-p6a7n2XRxSpUhQ9IBH+nttE8YQRAHmQZcmC3+wIDAQABo4GUMIGRMBIGA1UdEwEB/wQIMAYB
-Af8CAQAwQwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybC50aGF3dGUuY29tL1RoYXd0ZVBl
-cnNvbmFsRnJlZW1haWxDQS5jcmwwCwYDVR0PBAQDAgEGMCkGA1UdEQQiMCCkHjAcMRowGAYD
-VQQDExFQcml2YXRlTGFiZWwyLTEzODANBgkqhkiG9w0BAQUFAAOBgQBIjNFQg+oLLswNo2as
-Zw9/r6y+whehQ5aUnX9MIbj4Nh+qLZ82L8D0HFAgk3A8/a3hYWLD2ToZfoSxmRsAxRoLgnSe
-JVCUYsfbJ3FXJY3dqZw5jowgT2Vfldr394fWxghOrvbqNOUQGls1TXfjViF4gtwhGTXeJLHT
-HUb/XV9lTzGCAzswggM3AgEBMGkwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBD
-b25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
-bCBJc3N1aW5nIENBAgMN6dYwCQYFKw4DAhoFAKCCAacwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMDUxMTIwMDc0MDE5WjAjBgkqhkiG9w0BCQQxFgQUNWqJ
-aoBoxDgAxKnUNKsHVNootf4wUgYJKoZIhvcNAQkPMUUwQzAKBggqhkiG9w0DBzAOBggqhkiG
-9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgweAYJKwYB
-BAGCNxAEMWswaTBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcg
-KFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3Vpbmcg
-Q0ECAw3p1jB6BgsqhkiG9w0BCRACCzFroGkwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRo
-YXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBG
-cmVlbWFpbCBJc3N1aW5nIENBAgMN6dYwDQYJKoZIhvcNAQEBBQAEggEApVbf87AazjfpyYN4
-iquQT/QVDo90O/Lt+Kk4wT7LSzKghCh7kbpW2U5xdVucCEoddEVVlqtt/2kuvj99thgw8Tp+
-82oIw4oiW2I1XI/ApLFKm860LyiHIYizl4Tr0Gzj9lJx01rIfUvG3pwNO6F4BPB3tw5chmm6
-dEOTr3yNnme22LizWqyx3MkGM1MWHT+ImX0W+JzodcPQlBvZcJ2lRI2ZLTux7wIfN2gmGdBq
-7HrnwSn+npvlOUazLTDX1zqSrZJyiuJLvcZKFf4QdGyL1gmdGcj70G3mBiZOxGJW/ndG+d7b
-MitIITl0BBxoIOsqA1VidC7ZTrtY4avvpglYRAAAAAAAAA==
---------------ms050505010801040408030205--
-
---===============8915252416811863==
+--===============031947732725352784==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -158,4 +89,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8915252416811863==--
+--===============031947732725352784==--
