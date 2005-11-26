@@ -1,38 +1,73 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sun, 13 Nov 2005 02:47:47 +0000
-Subject: Re: [KJ] Question Re: fs/udf/super.c
-Message-Id: <20051113024747.GL1658@parisc-linux.org>
+From: Carlos Manuel Duclos Vergara <carlos@embedded.cl>
+Date: Sat, 26 Nov 2005 23:00:11 +0000
+Subject: [KJ] pci-sh7751.c request_region return value check
+Message-Id: <200511262000.12480.carlos@embedded.cl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63669887142549264=="
+Content-Type: multipart/mixed; boundary="Boundary-00=_8jOiDzegnPywzEA"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200511122110.52472.ace@staticwave.ca>
-In-Reply-To: <200511122110.52472.ace@staticwave.ca>
 To: kernel-janitors@vger.kernel.org
 
---===============63669887142549264==
-Content-Type: text/plain; charset=us-ascii
+--Boundary-00=_8jOiDzegnPywzEA
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Sat, Nov 12, 2005 at 09:10:52PM -0500, Gabriel A. Devenyi wrote:
-> At line 795 we see this
-> 
-> --clip--
-> return 1;
-> 		
-> 		for (newfileset.partitionReferenceNum=UDF_SB_NUMPARTS(sb)-1;
-> 			(newfileset.partitionReferenceNum != 0xFFFF &&
-> 				fileset->logicalBlockNum == 0xFFFFFFFF &&
-> 				fileset->partitionReferenceNum == 0xFFFF);
-> 			newfileset.partitionReferenceNum--)
-> 		{
-> --40 more lines--
-> 
-> Anyone see a reason why this code that never runs shouldn't be removed?
+Hi,
 
-Did you try asking the UDF list why this is here?
+following your advises in your web site this is a small patch because is the 
+first patch I submit to this project.
+The request_region value was not checked in the function 
+pci_check_direct(...), so I took care of it and in case of problems I return 
+ENODEV instead of always returning 0 (as it does now).
+Any comments, suggestions, etc... are welcomed.
 
+Cheers!
 
---===============63669887142549264==
+PS This patch is against kernel 2.6.14.3
+
+-- 
+Carlos Manuel Duclos Vergara
+http://www.toolchains.com/personal/blog
+
+--Boundary-00=_8jOiDzegnPywzEA
+Content-Type: text/x-diff;
+  charset="us-ascii";
+  name="pci-sh7751.c.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename="pci-sh7751.c.patch"
+
+--- Builds/linux-2.6.14.3/arch/sh/drivers/pci/pci-sh7751.c	2005-11-24 19:10:21.000000000 -0300
++++ Devel/linux-2.6.14.3/arch/sh/drivers/pci/pci-sh7751.c	2005-11-26 19:51:29.000000000 -0300
+@@ -126,6 +126,7 @@
+ static int __init pci_check_direct(void)
+ {
+ 	unsigned int tmp, id;
++	struct resource * r = NULL;
+ 
+ 	/* check for SH7751/SH7751R hardware */
+ 	id = inl(SH7751_PCIREG_BASE+SH7751_PCICONF0);
+@@ -144,7 +145,16 @@
+ 		if (inl (PCI_REG(SH7751_PCIPAR)) == 0x80000000) {
+ 			outl (tmp, PCI_REG(SH7751_PCIPAR));
+ 			printk(KERN_INFO "PCI: Using configuration type 1\n");
+-			request_region(PCI_REG(SH7751_PCIPAR), 8, "PCI conf1");
++			r = request_region(PCI_REG(SH7751_PCIPAR), 8, "PCI conf1");
++			/*
++			 * Murphy's law....
++			 * (ENODEV or EINVAL in case of problems?)
++			 */
++			if( r == NULL )
++			{
++				printk( KERN_CRIT "PCI: Could not allocate memory for our controller (Address: %lu)\n", PCI_REG(SH7751_PCIPAR));
++				return -ENODEV;
++			}
+ 			return 0;
+ 		}
+ 		outl (tmp, PCI_REG(SH7751_PCIPAR));
+
+--Boundary-00=_8jOiDzegnPywzEA
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +78,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============63669887142549264==--
+--Boundary-00=_8jOiDzegnPywzEA--
