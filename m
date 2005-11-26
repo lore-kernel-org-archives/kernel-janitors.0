@@ -1,123 +1,47 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Thu, 10 Nov 2005 23:59:48 +0000
-Subject: [KJ] [PATCH 3/9] Fix alloc_percpu's args
-Message-Id: <4373DEF4.60100@us.ibm.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 26 Nov 2005 20:49:19 +0000
+Subject: [KJ] [PATCH] drivers/macintosh/apm_emu.c: audit misc_register()
+Message-Id: <20051126204919.GD30564@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040908040300090006090606"
+Content-Type: multipart/mixed; boundary="===============29896199817064795=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4373DD82.8010606@us.ibm.com>
-In-Reply-To: <4373DD82.8010606@us.ibm.com>
-To: kernel-janitors@lists.osdl.org
-Cc: manfred@colorfullife.com, Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------040908040300090006090606
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============29896199817064795==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-alloc_percpu takes an 'align' argument that is completely ignored.  Remove it.
+From: Paolo Teti
 
--Matt
+Signed-off-by: Paolo Teti
 
---------------040908040300090006090606
-Content-Type: text/x-patch;
- name="alloc_percpu.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="alloc_percpu.patch"
-
-__alloc_percpu and alloc_percpu both take an 'align' argument which is
-completely ignored.  snmp6_mib_init() in net/ipv6/af_inet6.c attempts to
-use it, but it will be ignored.  Therefore, remove the 'align' argument
-and fixup the lone caller.
-
-Also, remove an unnecessary cpu_possible check in the oom_unwind loop since
-kfree() is happy to ignore NULL pointers passed to it.
-
-Signed-off-by: Matthew Dobson <colpatch@us.ibm.com>
-
-Index: linux-2.6.14+slab_cleanup/include/linux/percpu.h
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/include/linux/percpu.h	2005-11-10 11:09:37.549880584 -0800
-+++ linux-2.6.14+slab_cleanup/include/linux/percpu.h	2005-11-10 11:43:40.218347776 -0800
-@@ -33,14 +33,14 @@ struct percpu_data {
-         (__typeof__(ptr))__p->ptrs[(cpu)];	\
- })
- 
--extern void *__alloc_percpu(size_t size, size_t align);
-+extern void *__alloc_percpu(size_t size);
- extern void free_percpu(const void *);
- 
- #else /* CONFIG_SMP */
- 
- #define per_cpu_ptr(ptr, cpu) (ptr)
- 
--static inline void *__alloc_percpu(size_t size, size_t align)
-+static inline void *__alloc_percpu(size_t size)
+--- linux-kj.orig/drivers/macintosh/apm_emu.c
++++ linux-kj/drivers/macintosh/apm_emu.c
+@@ -520,6 +520,7 @@ static struct miscdevice apm_device = {
+ static int __init apm_emu_init(void)
  {
- 	void *ret = kmalloc(size, GFP_KERNEL);
- 	if (ret)
-@@ -55,7 +55,6 @@ static inline void free_percpu(const voi
- #endif /* CONFIG_SMP */
+ 	struct proc_dir_entry *apm_proc;
++	int rc;
  
- /* Simple wrapper for the common case: zeros memory. */
--#define alloc_percpu(type) \
--	((type *)(__alloc_percpu(sizeof(type), __alignof__(type))))
-+#define alloc_percpu(type)	((type *)(__alloc_percpu(sizeof(type))))
+ 	if (sys_ctrler != SYS_CTRLER_PMU) {
+ 		printk(KERN_INFO "apm_emu: Requires a machine with a PMU.\n");
+@@ -530,7 +531,12 @@ static int __init apm_emu_init(void)
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
  
- #endif /* __LINUX_PERCPU_H */
-Index: linux-2.6.14+slab_cleanup/mm/slab.c
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-10 11:43:36.926848160 -0800
-+++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-10 11:43:40.223347016 -0800
-@@ -2957,12 +2957,11 @@ EXPORT_SYMBOL(__kmalloc);
-  * Objects should be dereferenced using the per_cpu_ptr macro only.
-  *
-  * @size: how many bytes of memory are required.
-- * @align: the alignment, which can't be greater than SMP_CACHE_BYTES.
-  */
--void *__alloc_percpu(size_t size, size_t align)
-+void *__alloc_percpu(size_t size)
- {
- 	int i;
--	struct percpu_data *pdata = kmalloc(sizeof(*pdata), GFP_KERNEL);
-+	struct percpu_data *pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
+-	misc_register(&apm_device);
++	rc = misc_register(&apm_device);
++	if (rc < 0) {
++		remove_proc_entry("apm", NULL);
++		printk(KERN_ERR "apm_emu: Failed to register APM Emulation.\n");
++		return rc;
++	}
  
- 	if (!pdata)
- 		return NULL;
-@@ -2989,11 +2988,8 @@ void *__alloc_percpu(size_t size, size_t
- 	return (void *)(~(unsigned long) pdata);
- 
- unwind_oom:
--	while (--i >= 0) {
--		if (!cpu_possible(i))
--			continue;
-+	while (--i >= 0)
- 		kfree(pdata->ptrs[i]);
--	}
- 	kfree(pdata);
- 	return NULL;
- }
-Index: linux-2.6.14+slab_cleanup/net/ipv6/af_inet6.c
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/net/ipv6/af_inet6.c	2005-11-10 11:09:37.550880432 -0800
-+++ linux-2.6.14+slab_cleanup/net/ipv6/af_inet6.c	2005-11-10 11:43:40.224346864 -0800
-@@ -596,11 +596,11 @@ snmp6_mib_init(void *ptr[2], size_t mibs
- 	if (ptr == NULL)
- 		return -EINVAL;
- 
--	ptr[0] = __alloc_percpu(mibsize, mibalign);
-+	ptr[0] = __alloc_percpu(mibsize);
- 	if (!ptr[0])
- 		goto err0;
- 
--	ptr[1] = __alloc_percpu(mibsize, mibalign);
-+	ptr[1] = __alloc_percpu(mibsize);
- 	if (!ptr[1])
- 		goto err1;
+ 	pmu_register_sleep_notifier(&apm_sleep_notifier);
  
 
---------------040908040300090006090606
+
+--===============29896199817064795==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -128,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------040908040300090006090606--
+--===============29896199817064795==--
