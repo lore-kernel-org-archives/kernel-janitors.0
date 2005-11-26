@@ -1,50 +1,54 @@
-From: =?ISO-8859-1?Q?Daniel_Marjam=E4ki?= <daniel.marjamaki@comhem.se>
-Date: Fri, 18 Nov 2005 11:57:18 +0000
-Subject: [KJ] polling in drivers/cdrom/aztcd.c
-Message-Id: <437DC19E.70407@comhem.se>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 26 Nov 2005 20:27:02 +0000
+Subject: Re: [KJ] polling in drivers/cdrom/aztcd.c
+Message-Id: <20051126202702.GB30564@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============19460564202096897=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+References: <437DC19E.70407@comhem.se>
+In-Reply-To: <437DC19E.70407@comhem.se>
 To: kernel-janitors@vger.kernel.org
 
+--===============19460564202096897==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello!
+On Fri, Nov 18, 2005 at 12:57:18PM +0100, Daniel Marjam?ki wrote:
+> I saw this in version 2.6.14.1 of linux.
+> Does anybody have any input on this matter?
 
-I saw this in version 2.6.14.1 of linux.
-Does anybody have any input on this matter?
+Bzzrt... The thing was commented out 19 months ago.
 
-In the file there are several polling routines like the one below, and they=
- are repeatedly called.
-The loop will repeat 8 million times before it times out!
-I suspect we can make huge improvements here. I'm having 3 improvements in =
-mind:
-1. Time out based on actual time rather than on repetitions.
-2. Sleep between each repetition. How can I sleep say.. 10-50 us? Is it pos=
-sible?
-3. On time out, return an error code. The callers always assume that the po=
-lling succeeded!
+#   2004/05/19 16:39:03-07:00 akpm
+#   [PATCH] drivers/cdrom/aztcd.c warning fix.
+#
+#   From: "Luiz Fernando N. Capitulino"
+#
+#   drivers/cdrom/azctd.c:379: warning: `pa_ok' defined but not used
 
-
-static void pa_ok(void)
-{
-         aztTimeOutCount =3D 0;
-         do {
-                 aztIndatum =3D inb(DATA_PORT);
-                 aztTimeOutCount++;
-                 if (aztTimeOutCount >=3D AZT_TIMEOUT) {
-                         printk("aztcd: Error Wait PA_OK\n");
-                         break;
-                 }
-         } while (aztIndatum !=3D AFL_PA_OK);
-}
+> static void pa_ok(void)
+> {
+>         aztTimeOutCount = 0;
+>         do {
+>                 aztIndatum = inb(DATA_PORT);
+>                 aztTimeOutCount++;
+>                 if (aztTimeOutCount >= AZT_TIMEOUT) {
+>                         printk("aztcd: Error Wait PA_OK\n");
+>                         break;
+>                 }
+>         } while (aztIndatum != AFL_PA_OK);
+> }
 
 
-Best Regards,
-Daniel Marjam=E4ki
-
+--===============19460564202096897==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============19460564202096897==--
