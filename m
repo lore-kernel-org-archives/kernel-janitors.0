@@ -1,62 +1,47 @@
-From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
-Date: Fri, 25 Nov 2005 21:50:05 +0000
-Subject: [KJ] \drivers\char\synclinkmp.c  &  \drivers\char\amiserial.c
-Message-Id: <00ab01c5f20a$327684f0$1e83c756@bureau>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 26 Nov 2005 19:40:10 +0000
+Subject: Re: [KJ] [RESEND] [PATCH]
+Message-Id: <20051126194009.GA29784@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============55505904166952291=="
+Content-Type: multipart/mixed; boundary="===============64265060182281053=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============55505904166952291==
-Content-Type: multipart/alternative;
-    boundary="----------=_1132955560-17883-489"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1132955560-17883-489
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+--===============64265060182281053==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Same as my 2 previous mail concerning :
-\drivers\char\synclinkmp.c
-\drivers\char\amiserial.c
+On Tue, Nov 08, 2005 at 07:38:35AM -0500, Gabriel A. Devenyi wrote:
+> Thanks to LinuxICC (http://linuxicc.sf.net), a comparison of a u32 less
+> than 0 was found, this patch changes the variable to a signed int so that
+> comparison is meaningful.
 
-in function line_info in both cases.
+> --- a/arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c
+> +++ b/arch/i386/kernel/cpu/cpufreq/cpufreq-nforce2.c
+> @@ -177,9 +177,9 @@ static unsigned int nforce2_fsb_read(int
+>   */
+>  static int nforce2_set_fsb(unsigned int fsb)
+>  {
+> -	u32 pll, temp = 0;
+> +	u32 temp = 0;
+>  	unsigned int tfsb;
+> -	int diff;
+> +	int diff, pll = 0;
+		     ^^^^
+Real life loadavg decreased significantly and I've dropped this
+appear-to-be-useless assignment.
 
-CJ
-------------=_1132955560-17883-489
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+As for ChangleLog entry, sometimes people do
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2800.1522" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Same as my 2 previous mail concerning=20
-:</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>\drivers\char\synclinkmp.c</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>\drivers\char\amiserial.c</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>in function line_info in both cases.</FONT=
-></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>CJ</FONT></DIV></BODY></HTML>
+	f(unsigned int foo)
+	{
+		if (foo < 0 || foo >= MAX_FOO)
+			return -EINVAL;
 
-------------=_1132955560-17883-489--
+just in case.
 
---===============55505904166952291==
+
+--===============64265060182281053==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============55505904166952291==--
+--===============64265060182281053==--
