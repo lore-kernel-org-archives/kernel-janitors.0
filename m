@@ -1,59 +1,56 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 26 Nov 2005 20:39:46 +0000
+From: Paolo Teti <paolo.teti@gmail.com>
+Date: Mon, 28 Nov 2005 10:34:55 +0000
 Subject: Re: [KJ][PATCH] linux-2.6.15-rc2 apm_emu.c audit misc_register() ret.
-Message-Id: <20051126203946.GC30564@mipter.zuzino.mipt.ru>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============090113898366148915=="
+Message-Id: <34a7ae040511280234r40dfbd53q@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <34a7ae040511230009j20cff459r@mail.gmail.com>
 In-Reply-To: <34a7ae040511230009j20cff459r@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============090113898366148915==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Nov 24, 2005 at 08:32:01AM +0100, Christophe Lucas wrote:
-> Paolo Teti (paolo.teti@gmail.com) wrote:
-> > --- linux-2.6.15-rc2/drivers/macintosh/apm_emu.c.orig
-> > +++ linux-2.6.15-rc2/drivers/macintosh/apm_emu.c
-> > @@ -530,7 +530,11 @@ static int __init apm_emu_init(void)
-> >  	if (apm_proc)
-> >  		apm_proc->owner = THIS_MODULE;
-> >
-> > -	misc_register(&apm_device);
-> > +	if (misc_register(&apm_device) != 0) {
-> > +		remove_proc_entry("apm", NULL);
-> > +		printk(KERN_ERR "apm_emu: Failed to register APM Emulation.\n");
-> > +		return -ENODEV;
-> > +	}
-
-applied, thanks.
-
-> >  	pmu_register_sleep_notifier(&apm_sleep_notifier);
+> Speaking of your patch, it shouldn't use KERN_WARNING and should (minor
+> nitpick) test for "< 0", not "!= 0".
 >
 >
-> Good retry :)
->
-> Already done here :
->
-> 	http://lists.osdl.org/pipermail/kernel-janitors/2005-June/004243.html
 
-[You sort your patch collection. Nothing happens.]
+Why?
+Looking at misc_register function the rule is
 
-Speaking of your patch, it shouldn't use KERN_WARNING and should (minor
-nitpick) test for "< 0", not "!= 0".
+"A zero is returned on success and a negative errno code for failure."
+
+So test for !=0 is also correct!!
+
+Sorry probably because I have used Ccr instead of Cc I have also sent this patch
+to Benjamin Herrenschmidt ( the ppc APM manteiner) and now this patch
+is on the -mm
+tree as show below!
+
+Sorry!!
+
+----
+The patch titled
+
+    apm_emu.c: fix a missing check on misc_register() return code
+
+has been added to the -mm tree.  Its filename is
+
+    apm_emuc-fix-a-missing-check-on-misc_register-return-code.patch
 
 
---===============090113898366148915==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+From: Paolo Teti <paolo.teti@gmail.com>
+
+fix a missing check on misc_register() return code
+
+Signed-off-by: Paolo Teti <tetipaol@libero.it>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Andrew Morton <akpm@osdl.org>
+
+
+Acked by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============090113898366148915==--
