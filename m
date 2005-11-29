@@ -1,50 +1,31 @@
-From: =?ISO-8859-1?Q?Daniel_Marjam=E4ki?= <daniel.marjamaki@comhem.se>
-Date: Tue, 29 Nov 2005 15:15:49 +0000
-Subject: [KJ] [PATCH] arch/i386/crypto/aes.c: removing unused local variable
-Message-Id: <438C70A5.6070403@comhem.se>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Tue, 29 Nov 2005 16:18:16 +0000
+Subject: Re: [KJ] [PATCH] arch/i386/crypto/aes.c: removing unused local
+Message-Id: <20051129161816.GH8272@rotomalug.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <438C70A5.6070403@comhem.se>
+In-Reply-To: <438C70A5.6070403@comhem.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+Daniel Marjam=E4ki (daniel.marjamaki@comhem.se) wrote:
+>=20
+> Hello friends!
+> There was a warning message (unused variable) about this on the LinuxICC =
 
-Hello friends!
-There was a warning message (unused variable) about this on the LinuxICC we=
-bsite.
+> website.
+>=20
+> I've removed a variable that is not needed. It is assigned but never read.
+>=20
+> Signed-off-by: Daniel Marjam=E4ki
 
-I've removed a variable that is not needed. It is assigned but never read.
+	http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt
 
-Signed-off-by: Daniel Marjam=E4ki
+Have a nice day,
 
-
---- a/arch/i386/crypto/aes.c	2005-11-29 15:59:09.000000000 +0100
-+++ b/arch/i386/crypto/aes.c	2005-11-29 15:50:41.000000000 +0100
-@@ -93,7 +93,6 @@ static u32 rcon_tab[RC_LENGTH];
-
-  u32 ft_tab[4][256];
-  u32 fl_tab[4][256];
--static u32 ls_tab[4][256];
-  static u32 im_tab[4][256];
-  u32 il_tab[4][256];
-  u32 it_tab[4][256];
-@@ -144,15 +143,6 @@ static void gen_tabs(void)
-  		fl_tab[2][i] =3D upr(w, 2);
-  		fl_tab[3][i] =3D upr(w, 3);
-  	=09
--		/*
--		 * table for key schedule if fl_tab above is
--		 * not of the required form
--		 */
--		ls_tab[0][i] =3D w;
--		ls_tab[1][i] =3D upr(w, 1);
--		ls_tab[2][i] =3D upr(w, 2);
--		ls_tab[3][i] =3D upr(w, 3);
--	=09
-  		b =3D fi(inv_affine((u8)i));
-  		w =3D bytes2word(fe(b), f9(b), fd(b), fb(b));
-
-
+				- Christophe (clucas@rotomalug.org)
 
 _______________________________________________
 Kernel-janitors mailing list
