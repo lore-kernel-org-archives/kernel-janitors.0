@@ -1,53 +1,51 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Fri, 11 Nov 2005 18:19:47 +0000
-Subject: Re: [KJ] [PATCH 4/9] Create helper for /proc/slabinfo
-Message-Id: <4374E0C3.4060202@us.ibm.com>
+From: =?ISO-8859-1?Q?Daniel_Marjam=E4ki?= <daniel.marjamaki@comhem.se>
+Date: Tue, 29 Nov 2005 15:15:49 +0000
+Subject: [KJ] [PATCH] arch/i386/crypto/aes.c: removing unused local variable
+Message-Id: <438C70A5.6070403@comhem.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4373DF5D.8050106@us.ibm.com>
-In-Reply-To: <4373DF5D.8050106@us.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-walter harms wrote:
-> hi Matthew,
-> just to have less #if in the code. it maybe usefull to make something
-> like that in the beginning:
-> 
-> #if STATS
-> #define STATS_VERSION "slabinfo - version: 2.1 (statistics)"
-> #else
-> #define STATS_VERSION "slabinfo - version: 2.1"
-> #endif
 
-We could do that, but we'd still need this #if in the function:
+Hello friends!
+There was a warning message (unused variable) about this on the LinuxICC we=
+bsite.
 
->>  #if STATS
->> -        seq_puts(m, " : globalstat <listallocs> <maxobjs> <grown>
->> <reaped>"
->> -                " <error> <maxfreeable> <nodeallocs> <remotefrees>");
->> -        seq_puts(m, " : cpustat <allochit> <allocmiss> <freehit>
->> <freemiss>");
->> +    seq_puts(m, " : globalstat <listallocs> <maxobjs> <grown> <reaped> "
->> +         "<error> <maxfreeable> <nodeallocs> <remotefrees>");
->> +    seq_puts(m, " : cpustat <allochit> <allocmiss> <freehit>
->> <freemiss>");
->>  #endif
+I've removed a variable that is not needed. It is assigned but never read.
 
-so I don't think it buys us that much.  If it weren't for the second #if, I
-would tend to agree with you.
+Signed-off-by: Daniel Marjam=E4ki
 
-> note i have silently droped "\n" are they realy needed ?
 
-That I think is a big no-no.  This file is meant to be parsed by scripts,
-so ANY change to the format would potentially break people's scripts and
-would need an OK from the maintainer as well as a version number change
-(aka: slabinfo - version: 2.2), and I think that is unecessary.
+--- a/arch/i386/crypto/aes.c	2005-11-29 15:59:09.000000000 +0100
++++ b/arch/i386/crypto/aes.c	2005-11-29 15:50:41.000000000 +0100
+@@ -93,7 +93,6 @@ static u32 rcon_tab[RC_LENGTH];
 
-Thanks for your review.
+  u32 ft_tab[4][256];
+  u32 fl_tab[4][256];
+-static u32 ls_tab[4][256];
+  static u32 im_tab[4][256];
+  u32 il_tab[4][256];
+  u32 it_tab[4][256];
+@@ -144,15 +143,6 @@ static void gen_tabs(void)
+  		fl_tab[2][i] =3D upr(w, 2);
+  		fl_tab[3][i] =3D upr(w, 3);
+  	=09
+-		/*
+-		 * table for key schedule if fl_tab above is
+-		 * not of the required form
+-		 */
+-		ls_tab[0][i] =3D w;
+-		ls_tab[1][i] =3D upr(w, 1);
+-		ls_tab[2][i] =3D upr(w, 2);
+-		ls_tab[3][i] =3D upr(w, 3);
+-	=09
+  		b =3D fi(inv_affine((u8)i));
+  		w =3D bytes2word(fe(b), f9(b), fd(b), fb(b));
 
--Matt
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
