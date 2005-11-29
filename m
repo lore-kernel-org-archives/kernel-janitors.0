@@ -1,136 +1,49 @@
-From: Matthew Dobson <colpatch@us.ibm.com>
-Date: Tue, 08 Nov 2005 00:52:03 +0000
-Subject: [KJ] [PATCH 3/8] Fix alloc_percpu()'s args
-Message-Id: <436FF6B3.3050901@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------050103090809000300090708"
+From: =?ISO-8859-1?Q?Daniel_Marjam=E4ki?= <daniel.marjamaki@comhem.se>
+Date: Tue, 29 Nov 2005 06:02:13 +0000
+Subject: [KJ] use kzalloc instead of kcalloc(1, ...) in /kernel/kprobes.c
+Message-Id: <438BEEE5.6060208@comhem.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <436FF51D.8080509@us.ibm.com>
-In-Reply-To: <436FF51D.8080509@us.ibm.com>
-To: kernel-janitors@lists.osdl.org
-Cc: Pekka J Enberg <penberg@cs.Helsinki.FI>, linux-kernel@vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------050103090809000300090708
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-
-We don't actually ever use the 'align' parameter, so drop it.
-
-mcd@arrakis:~/linux/source/linux-2.6.14+slab_cleanup/patches $ diffstat
-alloc_percpu.patch
- include/linux/percpu.h |    7 +++----
- mm/slab.c              |   10 +++-------
- net/ipv6/af_inet6.c    |    4 ++--
- 3 files changed, 8 insertions(+), 13 deletions(-)
-
--Matt
-
---------------050103090809000300090708
-Content-Type: text/x-patch;
- name="alloc_percpu.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="alloc_percpu.patch"
-
-__alloc_percpu and alloc_percpu both take an 'align' argument which is
-completely ignored.  snmp6_mib_init() in net/ipv6/af_inet6.c attempts to
-use it, but it will be ignored.  Therefore, remove the 'align' argument
-and fixup the lone caller.
-
-Also, remove an unnecessary cpu_possible check in the oom_unwind loop since
-kfree() is happy to ignore NULL pointers passed to it.
-
-Index: linux-2.6.14+slab_cleanup/include/linux/percpu.h
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/include/linux/percpu.h	2005-11-07 15:58:05.640293976 -0800
-+++ linux-2.6.14+slab_cleanup/include/linux/percpu.h	2005-11-07 15:58:48.540772112 -0800
-@@ -33,14 +33,14 @@ struct percpu_data {
-         (__typeof__(ptr))__p->ptrs[(cpu)];	\
- })
- 
--extern void *__alloc_percpu(size_t size, size_t align);
-+extern void *__alloc_percpu(size_t size);
- extern void free_percpu(const void *);
- 
- #else /* CONFIG_SMP */
- 
- #define per_cpu_ptr(ptr, cpu) (ptr)
- 
--static inline void *__alloc_percpu(size_t size, size_t align)
-+static inline void *__alloc_percpu(size_t size)
- {
- 	void *ret = kmalloc(size, GFP_KERNEL);
- 	if (ret)
-@@ -55,7 +55,6 @@ static inline void free_percpu(const voi
- #endif /* CONFIG_SMP */
- 
- /* Simple wrapper for the common case: zeros memory. */
--#define alloc_percpu(type) \
--	((type *)(__alloc_percpu(sizeof(type), __alignof__(type))))
-+#define alloc_percpu(type)	((type *)(__alloc_percpu(sizeof(type))))
- 
- #endif /* __LINUX_PERCPU_H */
-Index: linux-2.6.14+slab_cleanup/mm/slab.c
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/mm/slab.c	2005-11-07 15:58:46.313110768 -0800
-+++ linux-2.6.14+slab_cleanup/mm/slab.c	2005-11-07 15:58:48.547771048 -0800
-@@ -2952,12 +2952,11 @@ EXPORT_SYMBOL(__kmalloc);
-  * Objects should be dereferenced using the per_cpu_ptr macro only.
-  *
-  * @size: how many bytes of memory are required.
-- * @align: the alignment, which can't be greater than SMP_CACHE_BYTES.
-  */
--void *__alloc_percpu(size_t size, size_t align)
-+void *__alloc_percpu(size_t size)
- {
- 	int i;
--	struct percpu_data *pdata = kmalloc(sizeof(*pdata), GFP_KERNEL);
-+	struct percpu_data *pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
- 
- 	if (!pdata)
- 		return NULL;
-@@ -2984,11 +2983,8 @@ void *__alloc_percpu(size_t size, size_t
- 	return (void *) (~(unsigned long) pdata);
- 
- unwind_oom:
--	while (--i >= 0) {
--		if (!cpu_possible(i))
--			continue;
-+	while (--i >= 0)
- 		kfree(pdata->ptrs[i]);
--	}
- 	kfree(pdata);
- 	return NULL;
- }
-Index: linux-2.6.14+slab_cleanup/net/ipv6/af_inet6.c
-===================================================================
---- linux-2.6.14+slab_cleanup.orig/net/ipv6/af_inet6.c	2005-11-07 15:58:05.641293824 -0800
-+++ linux-2.6.14+slab_cleanup/net/ipv6/af_inet6.c	2005-11-07 15:58:48.549770744 -0800
-@@ -596,11 +596,11 @@ snmp6_mib_init(void *ptr[2], size_t mibs
- 	if (ptr == NULL)
- 		return -EINVAL;
- 
--	ptr[0] = __alloc_percpu(mibsize, mibalign);
-+	ptr[0] = __alloc_percpu(mibsize);
- 	if (!ptr[0])
- 		goto err0;
- 
--	ptr[1] = __alloc_percpu(mibsize, mibalign);
-+	ptr[1] = __alloc_percpu(mibsize);
- 	if (!ptr[1])
- 		goto err1;
- 
-
---------------050103090809000300090708
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+To: kernel-janitors@vger.kernel.org
+
+
+
+Hello!
+
+I believe you are patching against the wrong version, my friend.
+
+I applied the changes manually and then made a new patch:
+
+--- a/kernel/kprobes.c	2005-11-28 07:17:58.000000000 +0100
++++ b/kernel/kprobes.c	2005-11-29 06:29:15.000000000 +0100
+@@ -408,7 +408,7 @@ static inline void add_aggr_kprobe(struc
+  /*
+   * This is the second or subsequent kprobe at the address - handle
+   * the intricacies
+- * TODO: Move kcalloc outside the spin_lock
++ * TODO: Move kzalloc outside the spin_lock
+   */
+  static int __kprobes register_aggr_kprobe(struct kprobe *old_p,
+  					  struct kprobe *p)
+@@ -420,7 +420,7 @@ static int __kprobes register_aggr_kprob
+  		copy_kprobe(old_p, p);
+  		ret =3D add_new_kprobe(old_p, p);
+  	} else {
+-		ap =3D kcalloc(1, sizeof(struct kprobe), GFP_ATOMIC);
++		ap =3D kzalloc(sizeof(struct kprobe), GFP_ATOMIC);
+  		if (!ap)
+  			return -ENOMEM;
+  		add_aggr_kprobe(ap, old_p);
+
+
+The line numbers are a little different here, compared to your patch.
+
+Regards,
+Daniel Marjam=E4ki
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---------------050103090809000300090708--
