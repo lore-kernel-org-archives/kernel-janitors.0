@@ -1,58 +1,58 @@
-From: Jesper Juhl <jesper.juhl@gmail.com>
-Date: Mon, 28 Nov 2005 22:12:22 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Tue, 29 Nov 2005 21:42:55 +0000
 Subject: Re: [KJ] use kzalloc instead of kcalloc(1,
-Message-Id: <200511282312.22594.jesper.juhl@gmail.com>
+Message-Id: <20051129214255.GA7696@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============68788822575519237=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <007001c5f392$4c61cda0$3ec0c756@bureau>
 In-Reply-To: <007001c5f392$4c61cda0$3ec0c756@bureau>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Monday 28 November 2005 22:40, Christophe Jaillet wrote:
-> from: Christophe Jaillet christophe.jaillet@wanadoo.fr
-> 
-> use kzalloc instead of kcalloc(1,...) in /kernel/kprobes.c and /include/linux/gameport.h
-> Signed-off-by : Christophe Jaillet christophe.jaillet@wanadoo.fr
-> ---
-> Patch applicable to linux-2.6.15-rc2
-> 
-> I hope that for this third try :
->     the form is OK
->     the patch is usefull
+--===============68788822575519237==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Patch looks ok to me, but doesn't seem to want to apply:
+On Tue, Nov 29, 2005 at 07:02:13AM +0100, Daniel Marjam?ki wrote:
+> I believe you are patching against the wrong version, my friend.
+>
+> I applied the changes manually and then made a new patch:
 
-juhl@dragon:~/kernel/linux-2.6.15-rc2$ patch -p1 < ../Christophe.patch
-patching file kernel/kprobes.c
-Hunk #1 FAILED at 420.
-Hunk #2 FAILED at 432.
-2 out of 2 hunks FAILED -- saving rejects to file kernel/kprobes.c.rej
-patching file include/linux/gameport.h
-Hunk #1 FAILED at 104.
-1 out of 1 hunk FAILED -- saving rejects to file include/linux/gameport.h.rej
+:-/ Every time I view it in mutt, everything is OK. Every time I save
+email, I get space-space at the beggining of context lines, which, of course,
+confuses patch(1).
 
-Could be due to the email encoding or you generated the patch against a
-different kernel version?  I didn't investigate...
-
-
-Ohh and another thing, if ever you plan to send patches to LKML, then this
-
-> Content-Type: text/html;
-> 	charset="iso-8859-1"
-
-is a very bad idea as it'll cause your mail to never reach the mailing list.
-
-Just use plain text.
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -408,7 +408,7 @@ static inline void add_aggr_kprobe(struc
+>  /*
+>   * This is the second or subsequent kprobe at the address - handle
+>   * the intricacies
+> - * TODO: Move kcalloc outside the spin_lock
+> + * TODO: Move kzalloc outside the spin_lock
+>   */
+>  static int __kprobes register_aggr_kprobe(struct kprobe *old_p,
+>  					  struct kprobe *p)
+> @@ -420,7 +420,7 @@ static int __kprobes register_aggr_kprob
+>  		copy_kprobe(old_p, p);
+>  		ret = add_new_kprobe(old_p, p);
+>  	} else {
+> -		ap = kcalloc(1, sizeof(struct kprobe), GFP_ATOMIC);
+> +		ap = kzalloc(sizeof(struct kprobe), GFP_ATOMIC);
+>  		if (!ap)
+>  			return -ENOMEM;
+>  		add_aggr_kprobe(ap, old_p);
 
 
--- 
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+--===============68788822575519237==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============68788822575519237==--
