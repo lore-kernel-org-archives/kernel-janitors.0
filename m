@@ -1,48 +1,44 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 16 Dec 2005 00:05:49 +0000
-Subject: [KJ] [Patch] Check unsigned < 0 in /drivers/net/acenic.c
-Message-Id: <1134691549.14588.3.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============91183444102608657=="
+From: "Jaco Kroon" <jaco@kroon.co.za>
+Date: Fri, 02 Dec 2005 09:39:01 +0000
+Subject: [KJ] [patch] potential data-corruption fix in md.c
+Message-Id: <8378.192.96.150.57.1133516341.squirrel@mail.interexcel.co.za>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============91183444102608657==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Fix a check whereby a negative personality number passed to either
+register_md_personality or unregister_md_personality could potentially
+cause data corruption.
 
-hi,
+Signed off:  Jaco Kroon <jaco@kroon.co.za>
 
-since read_eeprom_byte() returns a negative value on an error
-condition, tmp should be signed so the comparisons in line 1007
-and 1017 can catch the error. 
+--- linux-2.6.14/drivers/md/md.c.orig	2005-12-02 11:31:59.000000000 +0200
++++ linux-2.6.14/drivers/md/md.c	2005-12-02 11:32:37.000000000 +0200
+@@ -3425,7 +3425,7 @@
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+ int register_md_personality(int pnum, mdk_personality_t *p)
+ {
+-	if (pnum >= MAX_PERSONALITY) {
++	if (pnum < 0 || pnum >= MAX_PERSONALITY) {
+ 		printk(KERN_ERR
+ 		       "md: tried to install personality %s as nr %d, but max is %lu\n",
+ 		       p->name, pnum, MAX_PERSONALITY-1);
+@@ -3446,7 +3446,7 @@
 
---- linux-2.6.15-rc5-git5/drivers/net/acenic.c.orig	2005-12-16 01:01:44.000000000 +0100
-+++ linux-2.6.15-rc5-git5/drivers/net/acenic.c	2005-12-16 01:01:58.000000000 +0100
-@@ -905,7 +905,8 @@ static int __devinit ace_init(struct net
- 	struct pci_dev *pdev;
- 	unsigned long myjif;
- 	u64 tmp_ptr;
--	u32 tig_ver, mac1, mac2, tmp, pci_state;
-+	u32 tig_ver, mac1, mac2, pci_state;
-+	int tmp;
- 	int board_idx, ecode = 0;
- 	short i;
- 	unsigned char cache_size;
+ int unregister_md_personality(int pnum)
+ {
+-	if (pnum >= MAX_PERSONALITY)
++	if (pnum < 0 || pnum >= MAX_PERSONALITY)
+ 		return -EINVAL;
 
+ 	printk(KERN_INFO "md: %s personality unregistered\n", pers[pnum]->name);
 
-
---===============91183444102608657==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-- 
+There are 10 kinds of people in the world, those who understand binary,
+and those who don't.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============91183444102608657==--
