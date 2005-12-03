@@ -1,136 +1,123 @@
-From: Kees Cook <kees@outflux.net>
-Date: Fri, 30 Dec 2005 00:52:35 +0000
-Subject: [KJ] [PATCH] various: fixes size_t args in some printks
-Message-Id: <20051230005235.GT18040@outflux.net>
+From: "Katie Walt" <katieu@toshibasf.com>
+Date: Sat, 03 Dec 2005 01:20:34 +0000
+Subject: Re: gryphon Pharmaceutficall
+Message-Id: <000001c5f7a7$c277fe10$17fba8c0@explicatory>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54280609440938732=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C5F77D.D9A1F610"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============54280609440938732==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
 
-Compiling with gcc-3.3.6, I get some printf format warnings.  This patch 
-against linux-2.6.15-rc7-git3, fixes a few %d's that need to be %zu's in 
-various printk's.
-
-Signed-off-by: Kees Cook <kees@outflux.net>
-
----
-diff -urp linux-2.6.15-rc7-git3-clean/drivers/media/dvb/frontends/bcm3510.c linux-2.6.15-rc7-git3-kees/drivers/media/dvb/frontends/bcm3510.c
---- linux-2.6.15-rc7-git3-clean/drivers/media/dvb/frontends/bcm3510.c	2005-12-25 17:01:19.000000000 +0000
-+++ linux-2.6.15-rc7-git3-kees/drivers/media/dvb/frontends/bcm3510.c	2005-12-30 00:43:46.000000000 +0000
-@@ -623,13 +623,13 @@ static int bcm3510_download_firmware(str
- 		err("could not load firmware (%s): %d",BCM3510_DEFAULT_FIRMWARE,ret);
- 		return ret;
- 	}
--	deb_info("got firmware: %d\n",fw->size);
-+	deb_info("got firmware: %zu\n",fw->size);
- 
- 	b = fw->data;
- 	for (i = 0; i < fw->size;) {
- 		addr = le16_to_cpu( *( (u16 *)&b[i] ) );
- 		len  = le16_to_cpu( *( (u16 *)&b[i+2] ) );
--		deb_info("firmware chunk, addr: 0x%04x, len: 0x%04x, total length: 0x%04x\n",addr,len,fw->size);
-+		deb_info("firmware chunk, addr: 0x%04x, len: 0x%04x, total length: 0x%04zx\n",addr,len,fw->size);
- 		if ((ret = bcm3510_write_ram(st,addr,&b[i+4],len)) < 0) {
- 			err("firmware download failed: %d\n",ret);
- 			return ret;
-diff -urp linux-2.6.15-rc7-git3-clean/drivers/media/dvb/frontends/or51211.c linux-2.6.15-rc7-git3-kees/drivers/media/dvb/frontends/or51211.c
---- linux-2.6.15-rc7-git3-clean/drivers/media/dvb/frontends/or51211.c	2005-12-25 17:01:19.000000000 +0000
-+++ linux-2.6.15-rc7-git3-kees/drivers/media/dvb/frontends/or51211.c	2005-12-30 00:44:33.000000000 +0000
-@@ -112,7 +112,7 @@ static int or51211_load_firmware (struct
- 	u8 tudata[585];
- 	int i;
- 
--	dprintk("Firmware is %d bytes\n",fw->size);
-+	dprintk("Firmware is %zu bytes\n",fw->size);
- 
- 	/* Get eprom data */
- 	tudata[0] = 17;
-diff -urp linux-2.6.15-rc7-git3-clean/drivers/parport/parport_serial.c linux-2.6.15-rc7-git3-kees/drivers/parport/parport_serial.c
---- linux-2.6.15-rc7-git3-clean/drivers/parport/parport_serial.c	2005-10-28 00:02:08.000000000 +0000
-+++ linux-2.6.15-rc7-git3-kees/drivers/parport/parport_serial.c	2005-12-30 00:42:30.000000000 +0000
-@@ -329,7 +329,7 @@ static int __devinit parport_register (s
- 
- 		if (priv->num_par == ARRAY_SIZE (priv->port)) {
- 			printk (KERN_WARNING
--				"parport_serial: %s: only %u parallel ports "
-+				"parport_serial: %s: only %zu parallel ports "
- 				"supported (%d reported)\n", pci_name (dev),
- 				ARRAY_SIZE (priv->port), card->numports);
- 			break;
-diff -urp linux-2.6.15-rc7-git3-clean/fs/jffs2/readinode.c linux-2.6.15-rc7-git3-kees/fs/jffs2/readinode.c
---- linux-2.6.15-rc7-git3-clean/fs/jffs2/readinode.c	2005-12-25 17:01:24.000000000 +0000
-+++ linux-2.6.15-rc7-git3-kees/fs/jffs2/readinode.c	2005-12-30 00:40:32.000000000 +0000
-@@ -204,7 +204,7 @@ static inline int read_dnode(struct jffs
- 
- 	tn = jffs2_alloc_tmp_dnode_info();
- 	if (!tn) {
--		JFFS2_ERROR("failed to allocate tn (%d bytes).\n", sizeof(*tn));
-+		JFFS2_ERROR("failed to allocate tn (%zu bytes).\n", sizeof(*tn));
- 		return -ENOMEM;
- 	}
- 
-@@ -434,7 +434,7 @@ static int read_more(struct jffs2_sb_inf
- 	}
- 
- 	if (retlen < len) {
--		JFFS2_ERROR("short read at %#08x: %d instead of %d.\n",
-+		JFFS2_ERROR("short read at %#08x: %zu instead of %d.\n",
- 				offs, retlen, len);
- 		return -EIO;
- 	}
-@@ -542,7 +542,7 @@ static int jffs2_get_inode_nodes(struct 
- 		}
- 
- 		if (retlen < len) {
--			JFFS2_ERROR("short read at %#08x: %d instead of %d.\n", ref_offset(ref), retlen, len);
-+			JFFS2_ERROR("short read at %#08x: %zu instead of %d.\n", ref_offset(ref), retlen, len);
- 			err = -EIO;
- 			goto free_out;
- 		}
-diff -urp linux-2.6.15-rc7-git3-clean/sound/pci/rme9652/hdspm.c linux-2.6.15-rc7-git3-kees/sound/pci/rme9652/hdspm.c
---- linux-2.6.15-rc7-git3-clean/sound/pci/rme9652/hdspm.c	2005-12-25 17:01:27.000000000 +0000
-+++ linux-2.6.15-rc7-git3-kees/sound/pci/rme9652/hdspm.c	2005-12-30 00:35:11.000000000 +0000
-@@ -3327,11 +3327,11 @@ static int __devinit snd_hdspm_prealloca
- 						   snd_dma_pci_data(hdspm->pci),
- 						   wanted,
- 						   wanted)) < 0) {
--		snd_printdd("Could not preallocate %d  Bytes\n", wanted);
-+		snd_printdd("Could not preallocate %zu  Bytes\n", wanted);
- 
- 		return err;
- 	} else
--		snd_printdd(" Preallocated %d  Bytes\n", wanted);
-+		snd_printdd(" Preallocated %zu  Bytes\n", wanted);
- 
- 	return 0;
- }
-@@ -3522,7 +3522,7 @@ static int __devinit snd_hdspm_create(sn
- 
- 	hdspm->monitor_outs = enable_monitor;
- 
--	snd_printdd("kmalloc Mixer memory of %d Bytes\n",
-+	snd_printdd("kmalloc Mixer memory of %zu Bytes\n",
- 		   sizeof(hdspm_mixer_t));
- 	if ((hdspm->mixer =
- 	     (hdspm_mixer_t *) kmalloc(sizeof(hdspm_mixer_t), GFP_KERNEL))
+------=_NextPart_000_0001_01C5F77D.D9A1F610
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0002_01C5F77D.D9A1F610"
 
 
--- 
-Kees Cook                                            @outflux.net
-
---===============54280609440938732==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+------=_NextPart_001_0002_01C5F77D.D9A1F610
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+
+Good afternoon,=20
+You're an estimable buyer and we afford you some data and updates.
+=20
+Our notes show you may possibly need an additional explanation.
+=20
+We apologize and hope you will take a jaundiced view at medicaments we
+sell. Again, let us introduce our drugs at attractive prices which may
+be urgent needed.=20
+We also offer you impeccable customer care. Please, visit our web site
+at:
+=20
+http://www.formocomple.com <http://www.formocomple.com>=20
+=20
+
+=20
+In good faith,  Sale support department
+
+------=_NextPart_001_0002_01C5F77D.D9A1F610
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial>Good afternoon, <BR>
+You're an estimable buyer and we afford you some data and =
+updates.</FONT></DIV>
+<DIV><FONT face=3DArial></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial>Our notes show you may possibly need an =
+additional explanation.</FONT></DIV>
+<DIV><FONT face=3DArial></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial>We apologize and hope you will take a jaundiced =
+view at medicaments we=20
+sell. Again, let us introduce our drugs at attractive prices which may =
+be=20
+urgent needed. <BR>
+We also offer you impeccable customer care. Please, visit our web site =
+at:</FONT></DIV>
+<DIV><FONT face=3DArial></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial><A href=3D"http://www.formocomple.com"><FONT =
+face=3DArial>http://www.formocomple.com</FONT></A></FONT></DIV>
+<DIV><FONT face=3DArial></FONT>&nbsp;</DIV>
+<DIV><IMG src=3D"cid:000101c5f7a7$c278203e$_CDOSYS2.0"></DIV>
+<DIV><FONT face=3DArial></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial>In good faith,  	Sale support =
+department</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0002_01C5F77D.D9A1F610--
+
+------=_NextPart_000_0001_01C5F77D.D9A1F610
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-ID: <000101c5f7a7$c278203e$_CDOSYS2.0>
 Content-Disposition: inline
 
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+R0lGODdhpwDQAKEAAAAAAP////8AAAAA/ywAAAAApwDQAAAC/oyPqcvtD6OctNqLs968+w+G4rgA
+pkmm6goCiMvG8uzAhk3n+orD7vkC3k6oYdGI2ylHRNvR91I4o4He8ipK3krUg7Za/GLHnK+5W5VC
+0+S25yztaq1stz0DT9DzYfT9X8NVIgRG5IXiRAi4yNjo+AgZKTlJWWl5iZmpucnZ6fkJGio6qtK0
+JEb6QaeDmtqx6uq5Vxj0RHt4VNgzpxhrYTrktSUMRjxLPIxc51uRh7Y2fCyo1src4KwMzdakraeW
+bD2BDa7dDe79HN48nV4czQ5bl6sOMY4krGiIm5iPSD9T7d+kgAIjESyIMKHChQwbOnwIMaLEiYH8
+iKt4jmK9/kQYWsXT+ODJwXUgL/xIw29KP2ryeM0DefLkMh9TlLX085HimnIZbcIS00vjTiR9GCT5
++W0ZTHT2ziFtV1KpOaU4D1UNFlXqPptEa23TZ4Rq1rFky5o9izat2rVs27p9CxdeXB4W54aYarcF
+OUI/coHN+dYvFVszyeXFqqeoU8Ijz5Ybikyxu8PQpG2T09OtNMmVedpdBcQzLdGHS5s+jTq16tWs
+W7t+DfuDAAEIZhuYjZt2bd27cd/ObXv3Hd4HcicwHgF5AODBJTRfTvz57+fNbVPnrRwL8OK6q3cn
+ziC4ePAUrgs/P36Beei/x1hnT709dwfmpVdIf15+e/vs/uevD0+bb71hFx15xwWYX4L8zedfgAvS
+992BCjqoHnP69QdghPLhd2GF9a0nYAPjOajhBBxe+CF3JP6HYYXCpWidgQcKSGOBFD7gG38PZkje
+dRamiCFzOwK5H4U7DtiijjIC6GJ5ITKI4o1FMsiiAkTCZ+SSx2GJXoLqvVigBUpOqF+MYHopIZUa
+CqklfP1xeGKLbxLYoXPgWZgkgTWeCWWTZT4ZJ4823vkkdNJlZ2ibJSmaHKOxPQpppJJOSmmlll5q
+R2PXsPPZK5zOpakEwHQ6CGHJvKRVP6gKJVdhXElVE2ATOUMaNh6tOmupfDnFKVB45RqHIEf12mpW
+TU32/ipk6CBbEjdbBVHLS6YmJhOm1l6Lbbbabsttt95+e0pAqISqWWavmluarGLFZkVoKvnl0rvk
+RtTuO5PFs0dNajkL2VPZGLZWvZe5upg+6hobRb9Q9XRwVALvpK9WwaKLMD729pXSLtPOC27HHn8M
+csgij0xyydZsN12hVaoYIp5k9KhyoSK27LKdfdqn3JBh9qkEynOqCQF+R0K4Jc9Ca7mydgia2SCa
+ZA49M9E3S+mnnDiSOCOdPFuJ4NR5Sj2lzFeD/bXOWR+554YlWp11mmmLjV6MaweN9M5TRo03k003
+zTSEgPado6KBVz123okaZ7bhXPMZNtV+GzimiZA7/iqn3WXXTfbiezfO9pfidbl10XfXCTaLV2oe
+JdlHp4zo4jfCOfehJQZKN83IfeizyzVX7R2IjPqcaNtIDs/yWpRnbnLyyi/PfPPOP1+W6ZYPeGLf
+nesAc++tSy2kk/nljLnXNR5PQu5rkq8i6TYD/bPhuAO/w3vWWy857ZKrzTjvYZppdszeOf0it0UI
+bq4bINQEmLrEJTBLfvsT/kJHvOJNR31xm+D19FY9x6VpgVxyH9X4p0Gu0Ux9ClzQASV4uMF5MH8K
+7CDnDoi46VEwhZGrn9ZGpz8Whg+HILxgbVwIxBNmUEyWo98GH5g0r7WPTWN73exit6T/+VBvCzRf
+bnbAB8DUpayCtfMRoWRnwkEZrwMnhJ4Zz4jGNKpxjWxkRVCw1TBKxXFSvgoDIjTGsbTM42H2olhe
+Njawo+DqNDxRlmQIOZiEXawulEmkxQJpldWARReLDEse24jJTGpyk5zspCc/CcpQinKUmSgAADs=
 
---===============54280609440938732==--
+------=_NextPart_000_0001_01C5F77D.D9A1F610--
+
+
+
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://ads.osdn.com/?ad_id=7637&alloc_id=16865&op=click
+_______________________________________________
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
