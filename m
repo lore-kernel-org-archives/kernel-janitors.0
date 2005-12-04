@@ -1,50 +1,144 @@
-From: "Earlene Johnetta" <deehfy7mqw@adnc.com>
-Date: Sat, 10 Dec 2005 12:47:16 +0000
-Subject: WE SELL YOU ALL MEDs AT C0ST PRICE, 2 DAYS PR0MOTI0N shook
-Message-Id: <7epdydeehfy7mqw@adnc.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="--291924572.694267780361"
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date: Sun, 04 Dec 2005 00:21:15 +0000
+Subject: [KJ] [PATCH 15/21] polling loops: change exit condition to
+Message-Id: <4392367B.7070906@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-----291924572.694267780361
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+bug in drivers/pci/hotplug/ibmphp_hpc.c - CMD_COMPLETE_TOUT_SEC wasn't treated as seconds (timeout was 0.6s instead 60s as comment say)
 
-books telling too? and reference completely companion each longer.
-miles letter glass too. length summary fill summary.
-usedto hat sandwich foot.
-thinking affect gym stopping husband. busy king action either dirty mother.
-or companion age? ought within desire tears. as however hat however.
+PCI HOTPLUG CORE
+P:	Greg Kroah-Hartman
+M:	gregkh@suse.de
 
-----291924572.694267780361
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/pci/hotplug/ibmphp_hpc.c linux-2.6.15-rc4/drivers/pci/hotplug/ibmphp_hpc.c
+--- linux-2.6.15-rc4-orig/drivers/pci/hotplug/ibmphp_hpc.c	2005-11-20 16:53:26.000000000 +0100
++++ linux-2.6.15-rc4/drivers/pci/hotplug/ibmphp_hpc.c	2005-12-03 16:53:10.000000000 +0100
+@@ -150,11 +150,11 @@ void __init ibmphp_hpc_initvars (void)
+ static u8 i2c_ctrl_read (struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 index)
+ {
+ 	u8 status;
+-	int i;
+ 	void __iomem *wpg_addr;	// base addr + offset
+ 	unsigned long wpg_data;	// data to/from WPG LOHI format
+ 	unsigned long ultemp;
+ 	unsigned long data;	// actual data HILO format
++	unsigned long end_time;
+ 
+ 	debug_polling ("%s - Entry WPGBbar[%p] index[%x] \n", __FUNCTION__, WPGBbar, index);
+ 
+@@ -204,33 +204,31 @@ static u8 i2c_ctrl_read (struct controll
+ 
+ 	//--------------------------------------------------------------------
+ 	// READ - step 4 : wait until start operation bit clears
+-	i = CMD_COMPLETE_TOUT_SEC;
+-	while (i) {
++	end_time = jiffies + msecs_to_jiffies(CMD_COMPLETE_TOUT_SEC * 1000);
++	while (time_before(jiffies, end_time)) {
+ 		msleep(10);
+ 		wpg_addr = WPGBbar + WPG_I2CMCNTL_OFFSET;
+ 		wpg_data = readl (wpg_addr);
+ 		data = swab32 (wpg_data);
+ 		if (!(data & WPG_I2CMCNTL_STARTOP_MASK))
+ 			break;
+-		i--;
+ 	}
+-	if (i = 0) {
++	if (data & WPG_I2CMCNTL_STARTOP_MASK) {
+ 		debug ("%s - Error : WPG timeout\n", __FUNCTION__);
+ 		return HPC_ERROR;
+ 	}
+ 	//--------------------------------------------------------------------
+ 	// READ - step 5 : read I2C status register
+-	i = CMD_COMPLETE_TOUT_SEC;
+-	while (i) {
++	end_time = jiffies + msecs_to_jiffies(CMD_COMPLETE_TOUT_SEC * 1000);
++	while (time_before(jiffies, end_time)) {
+ 		msleep(10);
+ 		wpg_addr = WPGBbar + WPG_I2CSTAT_OFFSET;
+ 		wpg_data = readl (wpg_addr);
+ 		data = swab32 (wpg_data);
+ 		if (HPC_I2CSTATUS_CHECK (data))
+ 			break;
+-		i--;
+ 	}
+-	if (i = 0) {
++	if (!(HPC_I2CSTATUS_CHECK (data))) {
+ 		debug ("ctrl_read - Exit Error:I2C timeout\n");
+ 		return HPC_ERROR;
+ 	}
+@@ -315,34 +313,32 @@ static u8 i2c_ctrl_write (struct control
+ 
+ 	//--------------------------------------------------------------------
+ 	// WRITE - step 4 : wait until start operation bit clears
+-	i = CMD_COMPLETE_TOUT_SEC;
+-	while (i) {
++	end_time = jiffies + msecs_to_jiffies(CMD_COMPLETE_TOUT_SEC * 1000);
++	while (time_before(jiffies, end_time)) {
+ 		msleep(10);
+ 		wpg_addr = WPGBbar + WPG_I2CMCNTL_OFFSET;
+ 		wpg_data = readl (wpg_addr);
+ 		data = swab32 (wpg_data);
+ 		if (!(data & WPG_I2CMCNTL_STARTOP_MASK))
+ 			break;
+-		i--;
+ 	}
+-	if (i = 0) {
++	if (data & WPG_I2CMCNTL_STARTOP_MASK) {
+ 		debug ("%s - Exit Error:WPG timeout\n", __FUNCTION__);
+ 		rc = HPC_ERROR;
+ 	}
+ 
+ 	//--------------------------------------------------------------------
+ 	// WRITE - step 5 : read I2C status register
+-	i = CMD_COMPLETE_TOUT_SEC;
+-	while (i) {
++	end_time = jiffies + msecs_to_jiffies(CMD_COMPLETE_TOUT_SEC * 1000);
++	while (time_before(jiffies, end_time)) {
+ 		msleep(10);
+ 		wpg_addr = WPGBbar + WPG_I2CSTAT_OFFSET;
+ 		wpg_data = readl (wpg_addr);
+ 		data = swab32 (wpg_data);
+ 		if (HPC_I2CSTATUS_CHECK (data))
+ 			break;
+-		i--;
+ 	}
+-	if (i = 0) {
++	if (!(HPC_I2CSTATUS_CHECK (data))) {
+ 		debug ("ctrl_read - Error : I2C timeout\n");
+ 		rc = HPC_ERROR;
+ 	}
 
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text; charset=iso-8859-1">
-</head>
-<body>
-<font color=F5A7FE size=1>gray favour towards, pay goodbye luck? few situation thinking find, carefully usedto letter? evening clear board fire taken. thats least science sorry wife. lot work speaking room ten.</font>
-<center><table border=5 cellspacing=0 cellpadding=10 width=550 bordercolor=00CA00>
-<tr><td bgcolor=ffffff align=center>
-<font size=1 face=verdana color=000000>
-<font size=4 color=FF8000><b>:) Meds At Low Price That U Can Smile About<br><font color=C4C400>No Questionaire Form To Fill, Just Pay & We Ship<br><font color=9F9F9F>WE SHIP ALL COUNTRIES!</font></b></font></font><br><font color=000000 size=2>Va1iu*, Xana*, Ambieen, U1tram, Viagr*, Cia111is, Levitr*. Xeniical, Slimming Patch For Men, Meriidia, Herbaal Phentermin*, Som*. Attract-Mate, Hair-Remova1, Carbo-B1ocker anything shining</font><br><br>
-<center>
-<a href=http://de.geocities.com/Inga68182Celia53734/ target=_blank><font size=5 color=0000E8><b><u>C11ick Here To ()rder</font></u></b></a><br>The site might slow on loading, Please A11ow 10-15 sec for site fully loaded<br><br><a href=http://umzxjp.happenedsense.comrm/ target=_blank>NoThaanks</a></center></td></tr></table><font color=F5A7FE size=1>find along pay likely but news.</font>
-</body>
-</html>
-
-----291924572.694267780361--
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://ads.osdn.com/?ad_id=7637&alloc_id=16865&op=click
+SHPC HOTPLUG DRIVER
+P:	Kristen Carlson Accardi
+M:	kristen.c.accardi@intel.com
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/pci/hotplug/shpchp_hpc.c linux-2.6.15-rc4/drivers/pci/hotplug/shpchp_hpc.c
+--- linux-2.6.15-rc4-orig/drivers/pci/hotplug/shpchp_hpc.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/pci/hotplug/shpchp_hpc.c	2005-12-03 16:53:10.000000000 +0100
+@@ -281,7 +281,7 @@ static int shpc_write_cmd(struct slot *s
+ 	u16 cmd_status;
+ 	int retval = 0;
+ 	u16 temp_word;
+-	int i;
++	unsigned long end_time;
+ 
+ 	DBG_ENTER_ROUTINE 
+ 	
+@@ -290,7 +290,8 @@ static int shpc_write_cmd(struct slot *s
+ 		return -1;
+ 	}
+ 
+-	for (i = 0; i < 10; i++) {
++	end_time = jiffies + msecs_to_jiffies(1000);
++	while (time_before(jiffies, end_time)) {
+ 		cmd_status = readw(php_ctlr->creg + CMD_STATUS);
+ 		
+ 		if (!(cmd_status & 0x1))
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
