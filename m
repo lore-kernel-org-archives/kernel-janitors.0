@@ -1,547 +1,440 @@
 From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Sun, 04 Dec 2005 00:16:23 +0000
-Subject: [KJ] [PATCH 6/21] polling loops: change exit condition to
-Message-Id: <43923557.3020509@gmail.com>
+Date: Sun, 04 Dec 2005 00:20:43 +0000
+Subject: [KJ] [PATCH 14/21] polling loops: change exit condition to
+Message-Id: <4392365B.7050206@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I2C SUBSYSTEM
-P:	Jean Delvare
-M:	khali@linux-fr.org
+small bug in drivers/net/sis190.c - "i" never reached 1000
+
+NETWORK DEVICE DRIVERS
+P:	Andrew Morton
+M:	akpm@osdl.org
+P:	Jeff Garzik
+M:	jgarzik@pobox.com
 
 Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/algos/i2c-algo-pca.c linux-2.6.15-rc4/drivers/i2c/algos/i2c-algo-pca.c
---- linux-2.6.15-rc4-orig/drivers/i2c/algos/i2c-algo-pca.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/algos/i2c-algo-pca.c	2005-12-03 16:53:10.000000000 +0100
-@@ -187,9 +187,10 @@ static int pca_xfer(struct i2c_adapter *
- 	int numbytes = 0;
- 	int state;
- 	int ret;
--	int timeout = 100;
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/bnx2.c linux-2.6.15-rc4/drivers/net/bnx2.c
+--- linux-2.6.15-rc4-orig/drivers/net/bnx2.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/bnx2.c	2005-12-03 16:53:10.000000000 +0100
+@@ -4055,9 +4055,9 @@ bnx2_test_link(struct bnx2 *bp)
+ static int
+ bnx2_test_intr(struct bnx2 *bp)
+ {
+-	int i;
+ 	u32 val;
+ 	u16 status_idx;
 +	unsigned long end_time;
  
--	while ((state = pca_status(adap)) != 0xf8 && timeout--) {
-+	end_time = jiffies + msecs_to_jiffies(1000);
-+	while ((state = pca_status(adap)) != 0xf8 && time_before(jiffies, end_time)) {
+ 	if (!netif_running(bp->dev))
+ 		return -ENODEV;
+@@ -4069,7 +4069,8 @@ bnx2_test_intr(struct bnx2 *bp)
+ 	REG_WR(bp, BNX2_HC_COMMAND, val | BNX2_HC_COMMAND_COAL_NOW);
+ 	REG_RD(bp, BNX2_HC_COMMAND);
+ 
+-	for (i = 0; i < 10; i++) {
++	end_time = jiffies + msecs_to_jiffies(100);
++	while (time_before(jiffies, end_time)) {
+ 		if ((REG_RD(bp, BNX2_PCICFG_INT_ACK_CMD) & 0xffff) ! 			status_idx) {
+ 
+@@ -4078,7 +4079,7 @@ bnx2_test_intr(struct bnx2 *bp)
+ 
+ 		msleep_interruptible(10);
+ 	}
+-	if (i < 10)
++	if (time_before(jiffies, end_time))
+ 		return 0;
+ 
+ 	return -ENODEV;
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/pcmcia/xirc2ps_cs.c linux-2.6.15-rc4/drivers/net/pcmcia/xirc2ps_cs.c
+--- linux-2.6.15-rc4-orig/drivers/net/pcmcia/xirc2ps_cs.c	2005-11-20 16:53:20.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/pcmcia/xirc2ps_cs.c	2005-12-03 16:53:10.000000000 +0100
+@@ -1871,7 +1871,7 @@ init_mii(struct net_device *dev)
+     local_info_t *local = netdev_priv(dev);
+     kio_addr_t ioaddr = dev->base_addr;
+     unsigned control, status, linkpartner;
+-    int i;
++	unsigned long end_time;
+ 
+     if (if_port = 4 || if_port = 1) { /* force 100BaseT or 10BaseT */
+ 	dev->if_port = if_port;
+@@ -1905,13 +1905,13 @@ init_mii(struct net_device *dev)
+     if (local->probe_port) {
+ 	/* according to the DP83840A specs the auto negotiation process
+ 	 * may take up to 3.5 sec, so we use this also for our ML6692
+-	 * Fixme: Better to use a timer here!
+ 	 */
+-	for (i=0; i < 35; i++) {
+-	    msleep(100);	 /* wait 100 msec */
+-	    status = mii_rd(ioaddr,  0, 1);
+-	    if ((status & 0x0020) && (status & 0x0004))
+-		break;
++	end_time = jiffies + msecs_to_jiffies(3500);
++	while (time_before(jiffies, end_time)) {
++		msleep(100);	 /* wait 100 msec */
++		status = mii_rd(ioaddr,  0, 1);
++		if ((status & 0x0020) && (status & 0x0004))
++			break;
+ 	}
+ 
+ 	if (!(status & 0x0020)) {
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/s2io.c linux-2.6.15-rc4/drivers/net/s2io.c
+--- linux-2.6.15-rc4-orig/drivers/net/s2io.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/s2io.c	2005-12-03 17:03:28.000000000 +0100
+@@ -829,13 +829,13 @@ static int init_nic(struct s2io_nic *nic
+ 	struct net_device *dev = nic->dev;
+ 	register u64 val64 = 0;
+ 	void __iomem *add;
+-	u32 time;
+ 	int i, j;
+ 	mac_info_t *mac_control;
+ 	struct config_param *config;
+ 	int mdio_cnt = 0, dtx_cnt = 0;
+ 	unsigned long long mem_share;
+ 	int mem_size;
++	unsigned long end_time;
+ 
+ 	mac_control = &nic->mac_control;
+ 	config = &nic->config;
+@@ -1351,19 +1351,18 @@ static int init_nic(struct s2io_nic *nic
+ 	 * We wait for a maximum of 500ms for the operation to complete,
+ 	 * if it's not complete by then we return error.
+ 	 */
+-	time = 0;
++	end_time = jiffies + msecs_to_jiffies(500);
+ 	while (TRUE) {
+ 		val64 = readq(&bar0->tti_command_mem);
+ 		if (!(val64 & TTI_CMD_MEM_STROBE_NEW_CMD)) {
+ 			break;
+ 		}
+-		if (time > 10) {
++		if (time_after(jiffies, end_time)) {
+ 			DBG_PRINT(ERR_DBG, "%s: TTI init Failed\n",
+ 				  dev->name);
+ 			return -1;
+ 		}
+ 		msleep(50);
+-		time++;
+ 	}
+ 
+ 	if (nic->config.bimodal) {
+@@ -1379,19 +1378,18 @@ static int init_nic(struct s2io_nic *nic
+ 		 * We wait for a maximum of 500ms for the operation to complete,
+ 		 * if it's not complete by then we return error.
+ 		*/
+-			time = 0;
++			end_time = jiffies + msecs_to_jiffies(500);
+ 			while (TRUE) {
+ 				val64 = readq(&bar0->tti_command_mem);
+ 				if (!(val64 & TTI_CMD_MEM_STROBE_NEW_CMD)) {
+ 					break;
+ 				}
+-				if (time > 10) {
++				if (time_after(jiffies, end_time)) {
+ 					DBG_PRINT(ERR_DBG,
+ 						"%s: TTI init Failed\n",
+ 					dev->name);
+ 					return -1;
+ 				}
+-				time++;
+ 				msleep(50);
+ 			}
+ 		}
+@@ -1436,18 +1434,17 @@ static int init_nic(struct s2io_nic *nic
+ 			 * for the operation to complete, if it's not complete
+ 			 * by then we return error.
+ 			 */
+-			time = 0;
++			end_time = jiffies + msecs_to_jiffies(500);
+ 			while (TRUE) {
+ 				val64 = readq(&bar0->rti_command_mem);
+ 				if (!(val64 & RTI_CMD_MEM_STROBE_NEW_CMD)) {
+ 					break;
+ 				}
+-				if (time > 10) {
++				if (time_after(jiffies, end_time)) {
+ 					DBG_PRINT(ERR_DBG, "%s: RTI init Failed\n",
+ 						  dev->name);
+ 					return -1;
+ 				}
+-				time++;
+ 				msleep(50);
+ 			}
+ 		}
+@@ -2833,8 +2830,9 @@ static void alarm_intr_handler(struct s2
+ static int wait_for_cmd_complete(nic_t * sp)
+ {
+ 	XENA_dev_config_t __iomem *bar0 = sp->bar0;
+-	int ret = FAILURE, cnt = 0;
++	int ret = FAILURE;
+ 	u64 val64;
++	unsigned long end_time = jiffies + msecs_to_jiffies(500);
+ 
+ 	while (TRUE) {
+ 		val64 = readq(&bar0->rmac_addr_cmd_mem);
+@@ -2843,7 +2841,7 @@ static int wait_for_cmd_complete(nic_t *
+ 			break;
+ 		}
+ 		msleep(50);
+-		if (cnt++ > 10)
++		if (time_after(jiffies, end_time))
+ 			break;
+ 	}
+ 
+@@ -4792,13 +4790,15 @@ static int s2io_eeprom_test(nic_t * sp, 
+ static int s2io_bist_test(nic_t * sp, uint64_t * data)
+ {
+ 	u8 bist = 0;
+-	int cnt = 0, ret = -1;
++	int ret = -1;
++	unsigned long end_time;
+ 
+ 	pci_read_config_byte(sp->pdev, PCI_BIST, &bist);
+ 	bist |= PCI_BIST_START;
+ 	pci_write_config_word(sp->pdev, PCI_BIST, bist);
+ 
+-	while (cnt < 20) {
++	end_time = jiffies + msecs_to_jiffies(2000);
++	while (time_before(jiffies, end_time)) {
+ 		pci_read_config_byte(sp->pdev, PCI_BIST, &bist);
+ 		if (!(bist & PCI_BIST_START)) {
+ 			*data = (bist & PCI_BIST_CODE_MASK);
+@@ -4806,7 +4806,6 @@ static int s2io_bist_test(nic_t * sp, ui
+ 			break;
+ 		}
+ 		msleep(100);
+-		cnt++;
+ 	}
+ 
+ 	return ret;
+@@ -4854,7 +4853,8 @@ static int s2io_rldram_test(nic_t * sp, 
+ {
+ 	XENA_dev_config_t __iomem *bar0 = sp->bar0;
+ 	u64 val64;
+-	int cnt, iteration = 0, test_fail = 0;
++	int iteration = 0, test_fail = 0;
++	unsigned long end_time;
+ 
+ 	val64 = readq(&bar0->adapter_control);
+ 	val64 &= ~ADAPTER_ECC_EN;
+@@ -4897,27 +4897,29 @@ static int s2io_rldram_test(nic_t * sp, 
+ 		    	MC_RLDRAM_TEST_GO;
+ 		SPECIAL_REG_WRITE(val64, &bar0->mc_rldram_test_ctrl, LF);
+ 
+-		for (cnt = 0; cnt < 5; cnt++) {
++		end_time = jiffies + msecs_to_jiffies(1000);
++		while (time_before(jiffies, end_time)) {
+ 			val64 = readq(&bar0->mc_rldram_test_ctrl);
+ 			if (val64 & MC_RLDRAM_TEST_DONE)
+ 				break;
+ 			msleep(200);
+ 		}
+ 
+-		if (cnt = 5)
++		if (time_after_eq(jiffies, end_time))
+ 			break;
+ 
+ 		val64 = MC_RLDRAM_TEST_MODE | MC_RLDRAM_TEST_GO;
+ 		SPECIAL_REG_WRITE(val64, &bar0->mc_rldram_test_ctrl, LF);
+ 
+-		for (cnt = 0; cnt < 5; cnt++) {
++		end_time = jiffies + msecs_to_jiffies(2500);
++		while (time_before(jiffies, end_time)) {
+ 			val64 = readq(&bar0->mc_rldram_test_ctrl);
+ 			if (val64 & MC_RLDRAM_TEST_DONE)
+ 				break;
+ 			msleep(500);
+ 		}
+ 
+-		if (cnt = 5)
++		if (time_after_eq(jiffies, end_time))
+ 			break;
+ 
+ 		val64 = readq(&bar0->mc_rldram_test_ctrl);
+@@ -5378,10 +5380,10 @@ static void s2io_set_link(unsigned long 
+ 
+ static void s2io_card_down(nic_t * sp)
+ {
+-	int cnt = 0;
+ 	XENA_dev_config_t __iomem *bar0 = sp->bar0;
+ 	unsigned long flags;
+ 	register u64 val64 = 0;
++	unsigned long end_time;
+ 
+ 	del_timer_sync(&sp->alarm_timer);
+ 	/* If s2io_set_link task is executing, wait till it completes. */
+@@ -5397,6 +5399,7 @@ static void s2io_card_down(nic_t * sp)
+ 	tasklet_kill(&sp->task);
+ 
+ 	/* Check if the device is Quiescent and then Reset the NIC */
++	end_time = jiffies + msecs_to_jiffies(500);
+ 	do {
+ 		val64 = readq(&bar0->adapter_status);
+ 		if (verify_xena_quiescence(sp, val64, sp->device_enabled_once)) {
+@@ -5404,8 +5407,7 @@ static void s2io_card_down(nic_t * sp)
+ 		}
+ 
+ 		msleep(50);
+-		cnt++;
+-		if (cnt = 10) {
++		if (time_after(jiffies, end_time)) {
+ 			DBG_PRINT(ERR_DBG,
+ 				  "s2io_close:Device not Quiescent ");
+ 			DBG_PRINT(ERR_DBG, "adaper status reads 0x%llx\n",
+@@ -5416,13 +5418,12 @@ static void s2io_card_down(nic_t * sp)
+ 	s2io_reset(sp);
+ 
+ 	/* Waiting till all Interrupt handlers are complete */
+-	cnt = 0;
+-	do {
++	end_time = jiffies + msecs_to_jiffies(50);
++	while (time_before(jiffies, end_time)) {
  		msleep(10);
- 	}
- 	if (state != 0xf8) {
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-ali1535.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-ali1535.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-ali1535.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-ali1535.c	2005-12-03 16:53:10.000000000 +0100
-@@ -210,7 +210,7 @@ static int ali1535_transaction(struct i2
+ 		if (!atomic_read(&sp->isr_cnt))
+ 			break;
+-		cnt++;
+-	} while(cnt < 5);
++	}
+ 
+ 	spin_lock_irqsave(&sp->tx_lock, flags);
+ 	/* Free all Tx buffers */
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/sis190.c linux-2.6.15-rc4/drivers/net/sis190.c
+--- linux-2.6.15-rc4-orig/drivers/net/sis190.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/sis190.c	2005-12-03 16:53:10.000000000 +0100
+@@ -370,19 +370,20 @@ static int multicast_filter_limit = 32;
+ 
+ static void __mdio_cmd(void __iomem *ioaddr, u32 ctl)
  {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
+-	unsigned int i;
 +	unsigned long end_time;
  
- 	dev_dbg(&adap->dev, "Transaction (pre): STS=%02x, TYP=%02x, "
- 		"CMD=%02x, ADD=%02x, DAT0=%02x, DAT1=%02x\n",
-@@ -275,15 +275,15 @@ static int ali1535_transaction(struct i2
- 	outb_p(0xFF, SMBHSTPORT);
+ 	SIS_W32(GMIIControl, ctl);
  
- 	/* We will always wait for a fraction of a second! */
--	timeout = 0;
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
+ 	msleep(1);
+ 
+-	for (i = 0; i < 100; i++) {
++	end_time = jiffies + msecs_to_jiffies(100);
++	while (time_before(jiffies, end_time)) {
+ 		if (!(SIS_R32(GMIIControl) & EhnMIInotDone))
+ 			break;
  		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
- 	} while (((temp & ALI1535_STS_BUSY) && !(temp & ALI1535_STS_IDLE))
--		 && (timeout++ < MAX_TIMEOUT));
-+		 && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		result = -1;
- 		dev_err(&adap->dev, "SMBus Timeout!\n");
  	}
-@@ -342,19 +342,19 @@ static s32 ali1535_access(struct i2c_ada
- {
- 	int i, len;
- 	int temp;
--	int timeout;
- 	s32 result = 0;
-+	unsigned long end_time;
  
- 	down(&i2c_ali1535_sem);
- 	/* make sure SMBus is idle */
- 	temp = inb_p(SMBHSTSTS);
--	for (timeout = 0;
--	     (timeout < MAX_TIMEOUT) && !(temp & ALI1535_STS_IDLE);
--	     timeout++) {
-+
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
-+	while (time_before(jiffies, end_time) && !(temp & ALI1535_STS_IDLE)) {
- 		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
- 	}
--	if (timeout >= MAX_TIMEOUT)
+-	if (i > 999)
 +	if (time_after_eq(jiffies, end_time))
- 		dev_warn(&adap->dev, "Idle wait Timeout! STS=0x%02x\n", temp);
- 
- 	/* clear status register (clear-on-write) */
-
-ALI1563 I2C DRIVER
-P:	Rudolf Marek
-M:	r.marek@sh.cvut.cz
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-ali1563.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-ali1563.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-ali1563.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-ali1563.c	2005-12-03 16:53:10.000000000 +0100
-@@ -66,7 +66,8 @@ static unsigned short ali1563_smba;
- static int ali1563_transaction(struct i2c_adapter * a, int size)
- {
- 	u32 data;
--	int timeout;
-+	unsigned long end_time;
-+	int timeout_reached;
- 
- 	dev_dbg(&a->dev, "Transaction (pre): STS=%02x, CNTL1=%02x, "
- 		"CNTL2=%02x, CMD=%02x, ADD=%02x, DAT0=%02x, DAT1=%02x\n",
-@@ -84,10 +85,11 @@ static int ali1563_transaction(struct i2
- 	}
- 	outb_p(inb_p(SMB_HST_CNTL2) | HST_CNTL2_START, SMB_HST_CNTL2);
- 
--	timeout = ALI1563_MAX_TIMEOUT;
-+	end_time = jiffies + msecs_to_jiffies(ALI1563_MAX_TIMEOUT);
- 	do
- 		msleep(1);
--	while (((data = inb_p(SMB_HST_STS)) & HST_STS_BUSY) && --timeout);
-+	while (((data = inb_p(SMB_HST_STS)) & HST_STS_BUSY) && time_before(jiffies, end_time));
-+	timeout_reached = time_after_eq(jiffies, end_time);
- 
- 	dev_dbg(&a->dev, "Transaction (post): STS=%02x, CNTL1=%02x, "
- 		"CNTL2=%02x, CMD=%02x, ADD=%02x, DAT0=%02x, DAT1=%02x\n",
-@@ -95,10 +97,10 @@ static int ali1563_transaction(struct i2
- 		inb_p(SMB_HST_CMD), inb_p(SMB_HST_ADD), inb_p(SMB_HST_DAT0),
- 		inb_p(SMB_HST_DAT1));
- 
--	if (timeout && !(data & HST_STS_BAD))
-+	if (timeout_reached && !(data & HST_STS_BAD))
- 		return 0;
- 
--	if (!timeout) {
-+	if (!timeout_reached) {
- 		dev_err(&a->dev, "Timeout - Trying to KILL transaction!\n");
- 		/* Issue 'kill' to host controller */
- 		outb_p(HST_CNTL2_KILL,SMB_HST_CNTL2);
-@@ -128,7 +130,8 @@ static int ali1563_transaction(struct i2
- static int ali1563_block_start(struct i2c_adapter * a)
- {
- 	u32 data;
--	int timeout;
-+	unsigned long end_time;
-+	int timeout_reached;
- 
- 	dev_dbg(&a->dev, "Block (pre): STS=%02x, CNTL1=%02x, "
- 		"CNTL2=%02x, CMD=%02x, ADD=%02x, DAT0=%02x, DAT1=%02x\n",
-@@ -151,10 +154,11 @@ static int ali1563_block_start(struct i2
- 	/* Start transaction and wait for byte-ready bit to be set */
- 	outb_p(inb_p(SMB_HST_CNTL2) | HST_CNTL2_START, SMB_HST_CNTL2);
- 
--	timeout = ALI1563_MAX_TIMEOUT;
-+	end_time = jiffies + msecs_to_jiffies(ALI1563_MAX_TIMEOUT);
- 	do
- 		msleep(1);
--	while (!((data = inb_p(SMB_HST_STS)) & HST_STS_DONE) && --timeout);
-+	while (!((data = inb_p(SMB_HST_STS)) & HST_STS_DONE) && time_before(jiffies, end_time));
-+	timeout_reached = time_after_eq(jiffies, end_time);
- 
- 	dev_dbg(&a->dev, "Block (post): STS=%02x, CNTL1=%02x, "
- 		"CNTL2=%02x, CMD=%02x, ADD=%02x, DAT0=%02x, DAT1=%02x\n",
-@@ -162,10 +166,10 @@ static int ali1563_block_start(struct i2
- 		inb_p(SMB_HST_CMD), inb_p(SMB_HST_ADD), inb_p(SMB_HST_DAT0),
- 		inb_p(SMB_HST_DAT1));
- 
--	if (timeout && !(data & HST_STS_BAD))
-+	if (timeout_reached && !(data & HST_STS_BAD))
- 		return 0;
- 	dev_err(&a->dev, "SMBus Error: %s%s%s%s%s\n",
--		timeout ? "Timeout " : "",
-+		timeout_reached ? "Timeout " : "",
- 		data & HST_STS_FAIL ? "Transaction Failed " : "",
- 		data & HST_STS_BUSERR ? "No response or Bus Collision " : "",
- 		data & HST_STS_DEVERR ? "Device Error " : "",
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-ali15x3.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-ali15x3.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-ali15x3.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-ali15x3.c	2005-12-03 16:53:10.000000000 +0100
-@@ -231,7 +231,7 @@ static int ali15x3_transaction(struct i2
- {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
-+	unsigned long end_time;
- 
- 	dev_dbg(&adap->dev, "Transaction (pre): STS=%02x, CNT=%02x, CMD=%02x, "
- 		"ADD=%02x, DAT0=%02x, DAT1=%02x\n", inb_p(SMBHSTSTS),
-@@ -296,15 +296,15 @@ static int ali15x3_transaction(struct i2
- 	outb_p(0xFF, SMBHSTSTART);
- 
- 	/* We will always wait for a fraction of a second! */
--	timeout = 0;
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
- 	} while ((!(temp & (ALI15X3_STS_ERR | ALI15X3_STS_DONE)))
--		 && (timeout++ < MAX_TIMEOUT));
-+		 && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		result = -1;
- 		dev_err(&adap->dev, "SMBus Timeout!\n");
- 	}
-@@ -346,19 +346,19 @@ static s32 ali15x3_access(struct i2c_ada
- {
- 	int i, len;
- 	int temp;
--	int timeout;
-+	unsigned long end_time;
- 
- 	/* clear all the bits (clear-on-write) */
- 	outb_p(0xFF, SMBHSTSTS);
- 	/* make sure SMBus is idle */
- 	temp = inb_p(SMBHSTSTS);
--	for (timeout = 0;
--	     (timeout < MAX_TIMEOUT) && !(temp & ALI15X3_STS_IDLE);
--	     timeout++) {
-+
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
-+	while (time_before(jiffies, end_time) && !(temp & ALI15X3_STS_IDLE)) {
- 		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
- 	}
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_err(&adap->dev, "Idle wait Timeout! STS=0x%02x\n", temp);
- 	}
- 
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-amd756.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-amd756.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-amd756.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-amd756.c	2005-12-03 16:53:10.000000000 +0100
-@@ -113,7 +113,7 @@ static int amd756_transaction(struct i2c
- {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
-+	unsigned long end_time;
- 
- 	dev_dbg(&adap->dev, "Transaction (pre): GS=%04x, GE=%04x, ADD=%04x, "
- 		"DAT=%04x\n", inw_p(SMB_GLOBAL_STATUS),
-@@ -123,30 +123,32 @@ static int amd756_transaction(struct i2c
- 	/* Make sure the SMBus host is ready to start transmitting */
- 	if ((temp = inw_p(SMB_GLOBAL_STATUS)) & (GS_HST_STS | GS_SMB_STS)) {
- 		dev_dbg(&adap->dev, "SMBus busy (%04x). Waiting...\n", temp);
-+
-+		end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 		do {
- 			msleep(1);
- 			temp = inw_p(SMB_GLOBAL_STATUS);
- 		} while ((temp & (GS_HST_STS | GS_SMB_STS)) &&
--		         (timeout++ < MAX_TIMEOUT));
-+		         time_before(jiffies, end_time));
- 		/* If the SMBus is still busy, we give up */
--		if (timeout >= MAX_TIMEOUT) {
-+		if (time_after_eq(jiffies, end_time)) {
- 			dev_dbg(&adap->dev, "Busy wait timeout (%04x)\n", temp);
- 			goto abort;
- 		}
--		timeout = 0;
- 	}
- 
- 	/* start the transaction by setting the start bit */
- 	outw_p(inw(SMB_GLOBAL_ENABLE) | GE_HOST_STC, SMB_GLOBAL_ENABLE);
- 
- 	/* We will always wait for a fraction of a second! */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = inw_p(SMB_GLOBAL_STATUS);
--	} while ((temp & GS_HST_STS) && (timeout++ < MAX_TIMEOUT));
-+	} while ((temp & GS_HST_STS) && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_dbg(&adap->dev, "Completion timeout!\n");
- 		goto abort;
- 	}
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-i801.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-i801.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-i801.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-i801.c	2005-12-03 16:53:10.000000000 +0100
-@@ -181,7 +181,7 @@ static int i801_transaction(void)
- {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
-+	unsigned long end_time;
- 
- 	dev_dbg(&I801_dev->dev, "Transaction (pre): CNT=%02x, CMD=%02x, "
- 		"ADD=%02x, DAT0=%02x, DAT1=%02x\n", inb_p(SMBHSTCNT),
-@@ -205,13 +205,14 @@ static int i801_transaction(void)
- 	outb_p(inb(SMBHSTCNT) | I801_START, SMBHSTCNT);
- 
- 	/* We will always wait for a fraction of a second! */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
--	} while ((temp & 0x01) && (timeout++ < MAX_TIMEOUT));
-+	} while ((temp & 0x01) && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_dbg(&I801_dev->dev, "SMBus Timeout!\n");
- 		result = -1;
- 	}
-@@ -255,8 +256,8 @@ static int i801_block_transaction(union 
- 	int smbcmd;
- 	int temp;
- 	int result = 0;
--	int timeout;
- 	unsigned char hostc, errmask;
-+	unsigned long end_time;
- 
- 	if (command = I2C_SMBUS_I2C_BLOCK_DATA) {
- 		if (read_write = I2C_SMBUS_WRITE) {
-@@ -331,16 +332,15 @@ static int i801_block_transaction(union 
- 			outb_p(inb(SMBHSTCNT) | I801_START, SMBHSTCNT);
- 
- 		/* We will always wait for a fraction of a second! */
--		timeout = 0;
-+		end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 		do {
- 			temp = inb_p(SMBHSTSTS);
- 			msleep(1);
--		}
--		    while ((!(temp & 0x80))
--			   && (timeout++ < MAX_TIMEOUT));
-+		} while ((!(temp & 0x80))
-+			   && time_before(jiffies, end_time));
- 
- 		/* If the SMBus is still busy, we give up */
--		if (timeout >= MAX_TIMEOUT) {
-+		if (time_after_eq(jiffies, end_time)) {
- 			result = -1;
- 			dev_dbg(&I801_dev->dev, "SMBus Timeout!\n");
- 		}
-@@ -390,14 +390,14 @@ static int i801_block_transaction(union 
- 
- 	if (hwpec) {
- 		/* wait for INTR bit as advised by Intel */
--		timeout = 0;
-+		end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 		do {
- 			temp = inb_p(SMBHSTSTS);
- 			msleep(1);
- 		} while ((!(temp & 0x02))
--			   && (timeout++ < MAX_TIMEOUT));
-+			   && time_before(jiffies, end_time));
- 
--		if (timeout >= MAX_TIMEOUT) {
-+		if (time_after_eq(jiffies, end_time)) {
- 			dev_dbg(&I801_dev->dev, "PEC Timeout!\n");
- 		}
- 		outb_p(temp, SMBHSTSTS); 
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-piix4.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-piix4.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-piix4.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-piix4.c	2005-12-03 16:53:10.000000000 +0100
-@@ -234,7 +234,7 @@ static int piix4_transaction(void)
- {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
-+	unsigned long end_time;
- 
- 	dev_dbg(&piix4_adapter.dev, "Transaction (pre): CNT=%02x, CMD=%02x, "
- 		"ADD=%02x, DAT0=%02x, DAT1=%02x\n", inb_p(SMBHSTCNT),
-@@ -258,13 +258,14 @@ static int piix4_transaction(void)
- 	outb_p(inb(SMBHSTCNT) | 0x040, SMBHSTCNT);
- 
- 	/* We will always wait for a fraction of a second! (See PIIX4 docs errata) */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
--	} while ((temp & 0x01) && (timeout++ < MAX_TIMEOUT));
-+	} while ((temp & 0x01) && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_err(&piix4_adapter.dev, "SMBus Timeout!\n");
- 		result = -1;
- 	}
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-pxa.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-pxa.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-pxa.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-pxa.c	2005-12-03 16:53:10.000000000 +0100
-@@ -191,20 +191,23 @@ static void i2c_pxa_abort(struct pxa_i2c
- 
- static int i2c_pxa_wait_bus_not_busy(struct pxa_i2c *i2c)
- {
--	int timeout = DEF_TIMEOUT;
-+	int timeout_reached;
-+	unsigned long end_time;
- 
--	while (timeout-- && ISR & (ISR_IBB | ISR_UB)) {
-+	end_time = jiffies + msecs_to_jiffies(DEF_TIMEOUT * 2);
-+	while (time_before(jiffies, end_time) && ISR & (ISR_IBB | ISR_UB)) {
- 		if ((ISR & ISR_SAD) != 0)
--			timeout += 4;
-+			end_time += msecs_to_jiffies(8);
- 
- 		msleep(2);
- 		show_state(i2c);
- 	}
-+	timeout_reached = time_after_eq(jiffies, end_time);
- 
--	if (timeout <= 0)
-+	if (timeout_reached)
- 		show_state(i2c);
- 
--	return timeout <= 0 ? I2C_RETRY : 0;
-+	return timeout_reached ? I2C_RETRY : 0;
+ 		printk(KERN_ERR PFX "PHY command failed !\n");
  }
  
- static int i2c_pxa_wait_master(struct pxa_i2c *i2c)
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-s3c2410.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-s3c2410.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-s3c2410.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-s3c2410.c	2005-12-03 16:53:10.000000000 +0100
-@@ -465,9 +465,10 @@ static irqreturn_t s3c24xx_i2c_irq(int i
- static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
+@@ -424,14 +425,15 @@ static u16 mdio_read_latched(void __iome
+ static u16 __devinit sis190_read_eeprom(void __iomem *ioaddr, u32 reg)
  {
- 	unsigned long iicstat;
--	int timeout = 400;
+ 	u16 data = 0xffff;
+-	unsigned int i;
 +	unsigned long end_time;
  
--	while (timeout-- > 0) {
-+	end_time = jiffies + msecs_to_jiffies(400);
+ 	if (!(SIS_R32(ROMControl) & 0x0002))
+ 		return 0;
+ 
+ 	SIS_W32(ROMInterface, EEREQ | EEROP | (reg << 10));
+ 
+-	for (i = 0; i < 200; i++) {
++	end_time = jiffies + msecs_to_jiffies(200);
 +	while (time_before(jiffies, end_time)) {
- 		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
- 		
- 		if (!(iicstat & S3C2410_IICSTAT_BUSBUSY))
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-sis5595.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-sis5595.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-sis5595.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-sis5595.c	2005-12-03 16:53:10.000000000 +0100
-@@ -225,7 +225,7 @@ static int sis5595_transaction(struct i2
- {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
-+	unsigned long end_time;
- 
- 	/* Make sure the SMBus host is ready to start transmitting */
- 	temp = sis5595_read(SMB_STS_LO) + (sis5595_read(SMB_STS_HI) << 8);
-@@ -245,13 +245,14 @@ static int sis5595_transaction(struct i2
- 	sis5595_write(SMB_CTL_LO, sis5595_read(SMB_CTL_LO) | 0x10);
- 
- 	/* We will always wait for a fraction of a second! */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = sis5595_read(SMB_STS_LO);
--	} while (!(temp & 0x40) && (timeout++ < MAX_TIMEOUT));
-+	} while (!(temp & 0x40) && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_dbg(&adap->dev, "SMBus Timeout!\n");
- 		result = -1;
- 	}
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-sis630.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-sis630.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-sis630.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-sis630.c	2005-12-03 16:53:10.000000000 +0100
-@@ -163,19 +163,21 @@ static int sis630_transaction_start(stru
- 
- static int sis630_transaction_wait(struct i2c_adapter *adap, int size)
- {
--	int temp, result = 0, timeout = 0;
-+	int temp, result = 0;
-+	unsigned long end_time;
- 
- 	/* We will always wait for a fraction of a second! */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = sis630_read(SMB_STS);
- 		/* check if block transmitted */
- 		if (size = SIS630_BLOCK_DATA && (temp & 0x10))
+ 		if (!(SIS_R32(ROMInterface) & EEREQ)) {
+ 			data = (SIS_R32(ROMInterface) & 0xffff0000) >> 16;
  			break;
--	} while (!(temp & 0x0e) && (timeout++ < MAX_TIMEOUT));
-+	} while (!(temp & 0x0e) && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_dbg(&adap->dev, "SMBus Timeout!\n");
- 		result = -1;
- 	}
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-sis96x.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-sis96x.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-sis96x.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-sis96x.c	2005-12-03 16:53:10.000000000 +0100
-@@ -103,7 +103,7 @@ static int sis96x_transaction(int size)
+
+SKGE, SKY2 10/100/1000 GIGABIT ETHERNET DRIVERS
+P:	Stephen Hemminger
+M:	shemminger@osdl.org
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/skge.c linux-2.6.15-rc4/drivers/net/skge.c
+--- linux-2.6.15-rc4-orig/drivers/net/skge.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/skge.c	2005-12-03 16:53:10.000000000 +0100
+@@ -680,21 +680,21 @@ static void skge_led(struct skge_port *s
+ static int skge_phys_id(struct net_device *dev, u32 data)
  {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
+ 	struct skge_port *skge = netdev_priv(dev);
+-	unsigned long ms;
 +	unsigned long end_time;
+ 	enum led_mode mode = LED_MODE_TST;
  
- 	dev_dbg(&sis96x_adapter.dev, "SMBus transaction %d\n", size);
+ 	if (!data || data > (u32)(MAX_SCHEDULE_TIMEOUT / HZ))
+-		ms = jiffies_to_msecs(MAX_SCHEDULE_TIMEOUT / HZ) * 1000;
++		end_time = jiffies_to_msecs(MAX_SCHEDULE_TIMEOUT / HZ) * 1000;
+ 	else
+-		ms = data * 1000;
++		end_time = data * 1000;
  
-@@ -136,13 +136,14 @@ static int sis96x_transaction(int size)
- 	sis96x_write(SMB_HOST_CNT, 0x10 | (size & 0x07));
+-	while (ms > 0) {
++	end_time = jiffies + msecs_to_jiffies(end_time);
++	while (time_before(jiffies, end_time)) {
+ 		skge_led(skge, mode);
+ 		mode ^= LED_MODE_TST;
  
- 	/* We will always wait for a fraction of a second! */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = sis96x_read(SMB_STS);
--	} while (!(temp & 0x0e) && (timeout++ < MAX_TIMEOUT));
-+	} while (!(temp & 0x0e) && time_before(jiffies, end_time));
- 
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		dev_dbg(&sis96x_adapter.dev, "SMBus Timeout! (0x%02x)\n", temp);
- 		result = -1;
+ 		if (msleep_interruptible(BLINK_MS))
+ 			break;
+-		ms -= BLINK_MS;
  	}
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-viapro.c linux-2.6.15-rc4/drivers/i2c/busses/i2c-viapro.c
---- linux-2.6.15-rc4-orig/drivers/i2c/busses/i2c-viapro.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/i2c/busses/i2c-viapro.c	2005-12-03 16:55:52.000000000 +0100
-@@ -135,7 +135,7 @@ static int vt596_transaction(u8 size)
+ 
+ 	/* back to regular LED state */
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/tg3.c linux-2.6.15-rc4/drivers/net/tg3.c
+--- linux-2.6.15-rc4-orig/drivers/net/tg3.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/tg3.c	2005-12-03 16:53:10.000000000 +0100
+@@ -6229,7 +6229,8 @@ static void tg3_timer(unsigned long __op
+ static int tg3_test_interrupt(struct tg3 *tp)
  {
- 	int temp;
- 	int result = 0;
--	int timeout = 0;
+ 	struct net_device *dev = tp->dev;
+-	int err, i;
++	int err;
 +	unsigned long end_time;
+ 	u32 int_mbox = 0;
  
- 	vt596_dump_regs("Transaction (pre)", size);
+ 	if (!netif_running(dev))
+@@ -6250,7 +6251,8 @@ static int tg3_test_interrupt(struct tg3
+ 	tw32_f(HOSTCC_MODE, tp->coalesce_mode | HOSTCC_MODE_ENABLE |
+ 	       HOSTCC_MODE_NOW);
  
-@@ -156,13 +156,14 @@ static int vt596_transaction(u8 size)
- 	outb_p(0x40 | size, SMBHSTCNT);
+-	for (i = 0; i < 5; i++) {
++	end_time = jiffies + msecs_to_jiffies(50);
++	while (time_before(jiffies, end_time)) {
+ 		int_mbox = tr32_mailbox(MAILBOX_INTERRUPT_0 +
+ 					TG3_64BIT_REG_LOW);
+ 		if (int_mbox != 0)
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/net/wan/cycx_drv.c linux-2.6.15-rc4/drivers/net/wan/cycx_drv.c
+--- linux-2.6.15-rc4-orig/drivers/net/wan/cycx_drv.c	2005-12-03 15:22:33.000000000 +0100
++++ linux-2.6.15-rc4/drivers/net/wan/cycx_drv.c	2005-12-03 16:53:10.000000000 +0100
+@@ -383,7 +383,7 @@ static int cycx_code_boot(void __iomem *
+  * o start adapter up */
+ static int load_cyc2x(struct cycx_hw *hw, struct cycx_firmware *cfm, u32 len)
+ {
+-	int i, j;
++	unsigned long end_time, end_time2;
+ 	struct cycx_fw_header *img_hdr;
+ 	u8 *reset_image,
+ 	   *data_image,
+@@ -448,7 +448,8 @@ static int load_cyc2x(struct cycx_hw *hw
+ 			 cfm->descr[0] ? cfm->descr : "unknown firmware",
+ 			 cfm->info.codeid);
  
- 	/* We will always wait for a fraction of a second */
-+	end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
- 	do {
- 		msleep(1);
- 		temp = inb_p(SMBHSTSTS);
--	} while ((temp & 0x01) && (timeout++ < MAX_TIMEOUT));
-+	} while ((temp & 0x01) && time_before(jiffies, end_time));
+-	for (i = 0 ; i < 5 ; i++) {
++	end_time = jiffies + msecs_to_jiffies(20000);
++	while (time_before(jiffies, end_time)) {
+ 		/* Reset Cyclom hardware */
+ 		if (!reset_cyc2x(hw->dpmbase)) {
+ 			printk(KERN_ERR "%s: dpm problem or board not found\n",
+@@ -462,7 +463,8 @@ static int load_cyc2x(struct cycx_hw *hw
+ 		writew(GEN_POWER_ON, pt_cycld);
+ 		msleep_interruptible(1 * 1000);
  
- 	/* If the SMBus is still busy, we give up */
--	if (timeout >= MAX_TIMEOUT) {
-+	if (time_after_eq(jiffies, end_time)) {
- 		result = -1;
- 		dev_err(&vt596_adapter.dev, "SMBus timeout!\n");
- 	}
+-		for (j = 0 ; j < 3 ; j++)
++		end_time2 = jiffies + msecs_to_jiffies(3000);
++		while (time_before(jiffies, end_time2))
+ 			if (!readw(pt_cycld))
+ 				goto reset_loaded;
+ 			else
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
