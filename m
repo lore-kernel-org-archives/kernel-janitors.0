@@ -1,46 +1,37 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Sun, 18 Dec 2005 22:54:49 +0000
-Subject: [KJ] [Patch 3/5] Cleanup LINUX_VERSION_CODE in drivers/net
-Message-Id: <1134946489.7394.9.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49023025706722123=="
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date: Sun, 04 Dec 2005 00:22:11 +0000
+Subject: [KJ] [PATCH 17/21] polling loops: change exit condition to
+Message-Id: <439236B3.5090503@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============49023025706722123==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+S390
+P:	Martin Schwidefsky
+M:	schwidefsky@de.ibm.com
+M:	linux390@de.ibm.com
 
-hi,
-
-this removes LINUX_VERSION_CODE checks in irda/sir_kthread.c
-
-Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.15-rc5-git5/drivers/net/irda/sir_kthread.c.orig	2005-12-18 23:47:24.000000000 +0100
-+++ linux-2.6.15-rc5-git5/drivers/net/irda/sir_kthread.c	2005-12-18 23:47:38.000000000 +0100
-@@ -140,9 +140,6 @@ static int irda_thread(void *startup)
- 		run_irda_queue();
- 	}
+Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/s390/net/lcs.c linux-2.6.15-rc4/drivers/s390/net/lcs.c
+--- linux-2.6.15-rc4-orig/drivers/s390/net/lcs.c	2005-12-03 15:22:34.000000000 +0100
++++ linux-2.6.15-rc4/drivers/s390/net/lcs.c	2005-12-03 16:53:10.000000000 +0100
+@@ -1643,10 +1643,11 @@ lcs_detect(struct lcs_card *card)
+ static int
+ lcs_resetcard(struct lcs_card *card)
+ {
+-	int retries;
++	unsigned long end_time;
  
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,35)
--	reparent_to_init();
--#endif
- 	complete_and_exit(&irda_rq_queue.exit, 0);
- 	/* never reached */
- 	return 0;
-
-
-
---===============49023025706722123==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+ 	LCS_DBF_TEXT(2, trace, "rescard");
+-	for (retries = 0; retries < 10; retries++) {
++	end_time = jiffies + msecs_to_jiffies(30000);
++	while (time_before(jiffies, end_time)) {
+ 		if (lcs_detect(card) = 0) {
+ 			netif_wake_queue(card->dev);
+ 			card->state = DEV_STATE_UP;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============49023025706722123==--
