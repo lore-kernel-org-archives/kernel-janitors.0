@@ -1,42 +1,34 @@
 From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Sun, 04 Dec 2005 00:18:36 +0000
-Subject: [KJ] [PATCH 10/21] polling loops: change exit condition to
-Message-Id: <439235DC.8070900@gmail.com>
+Date: Sun, 04 Dec 2005 00:13:50 +0000
+Subject: [KJ] [PATCH 3/21] polling loops: change exit condition to
+Message-Id: <439234BE.70306@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ISDN SUBSYSTEM
-P:	Karsten Keil
-M:	kkeil@suse.de
-P:	Kai Germaschewski
-M:	kai.germaschewski@gmx.de
+BLOCK LAYER
+P:	Jens Axboe
+M:	axboe@suse.de
 
 Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/isdn/hysdn/boardergo.c linux-2.6.15-rc4/drivers/isdn/hysdn/boardergo.c
---- linux-2.6.15-rc4-orig/drivers/isdn/hysdn/boardergo.c	2005-11-20 16:53:15.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/isdn/hysdn/boardergo.c	2005-12-03 16:53:10.000000000 +0100
-@@ -329,14 +329,16 @@ static int
- ergo_waitpofready(struct HYSDN_CARD *card)
- {
- 	tErgDpram *dpr = card->dpram;	/* pointer to DPRAM structure */
--	int timecnt = 10000 / 50;	/* timeout is 10 secs max. */
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/block/sx8.c linux-2.6.15-rc4/drivers/block/sx8.c
+--- linux-2.6.15-rc4-orig/drivers/block/sx8.c	2005-12-03 15:22:32.000000000 +0100
++++ linux-2.6.15-rc4/drivers/block/sx8.c	2005-12-03 16:53:10.000000000 +0100
+@@ -570,9 +570,10 @@ static struct carm_request *carm_get_spe
+ 	unsigned long flags;
+ 	struct carm_request *crq = NULL;
+ 	struct request *rq;
+-	int tries = 5000;
 +	unsigned long end_time;
- 	ulong flags;
- 	int msg_size;
- 	int i;
  
- 	if (card->debug_flags & LOG_POF_CARD)
- 		hysdn_addlog(card, "ERGO: waiting for pof ready");
--	while (timecnt--) {
-+
-+	end_time = jiffies + msecs_to_jiffies(10000); /* timeout is 10 secs max. */
+-	while (tries-- > 0) {
++	end_time = jiffies + msecs_to_jiffies(50000);
 +	while (time_before(jiffies, end_time)) {
- 		/* wait until timeout  */
- 
- 		if (dpr->ToPcFlag) {
+ 		spin_lock_irqsave(&host->lock, flags);
+ 		crq = carm_get_request(host);
+ 		spin_unlock_irqrestore(&host->lock, flags);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
