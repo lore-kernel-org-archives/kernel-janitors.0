@@ -1,110 +1,95 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Mon, 19 Dec 2005 00:27:44 +0000
-Subject: [KJ] [Patch 6/5] Cleanup LINUX_VERSION_CODE in drivers/net
-Message-Id: <1134952064.8352.4.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============087740800861641599=="
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date: Sun, 04 Dec 2005 00:24:46 +0000
+Subject: [KJ] [PATCH 21/21] polling loops: change exit condition to
+Message-Id: <4392374E.8040500@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============087740800861641599==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+USB HUB DRIVER
+P:	Johannes Erdfelt
+M:	johannes@erdfelt.com
 
-> attached is an updated patch for vlsi_ir.h which also removes
-> the PCIDE_NAME macro, i will reply to this mail with a patch to change
-> the vlsi_ir.c 
-
-here is the cleanup to vlsi_ir.c
-
-Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.15-rc5-git5/drivers/net/irda/vlsi_ir.c.orig	2005-12-19 01:19:01.000000000 +0100
-+++ linux-2.6.15-rc5-git5/drivers/net/irda/vlsi_ir.c	2005-12-19 01:20:42.000000000 +0100
-@@ -167,7 +167,7 @@ static void vlsi_proc_pdev(struct seq_fi
- 	unsigned i;
+Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/usb/core/hub.c linux-2.6.15-rc4/drivers/usb/core/hub.c
+--- linux-2.6.15-rc4-orig/drivers/usb/core/hub.c	2005-12-03 15:22:34.000000000 +0100
++++ linux-2.6.15-rc4/drivers/usb/core/hub.c	2005-12-03 16:53:10.000000000 +0100
+@@ -1394,9 +1394,10 @@ static int hub_port_wait_reset(struct us
+ 	int delay_time, ret;
+ 	u16 portstatus;
+ 	u16 portchange;
++	unsigned long end_time = jiffies + msecs_to_jiffies(HUB_RESET_TIMEOUT);
  
- 	seq_printf(seq, "\n%s (vid/did: %04x/%04x)\n",
--		   PCIDEV_NAME(pdev), (int)pdev->vendor, (int)pdev->device);
-+		   pci_name(pdev), (int)pdev->vendor, (int)pdev->device);
- 	seq_printf(seq, "pci-power-state: %u\n", (unsigned) pdev->current_state);
- 	seq_printf(seq, "resources: irq=%u / io=0x%04x / dma_mask=0x%016Lx\n",
- 		   pdev->irq, (unsigned)pci_resource_start(pdev, 0), (unsigned long long)pdev->dma_mask);
-@@ -1402,7 +1402,7 @@ static void vlsi_tx_timeout(struct net_d
+ 	for (delay_time = 0;
+-			delay_time < HUB_RESET_TIMEOUT;
++			time_before(jiffies, end_time);
+ 			delay_time += delay) {
+ 		/* wait to give the device a chance to reset */
+ 		msleep(delay);
+@@ -2029,6 +2030,7 @@ static int hub_port_debounce(struct usb_
+ 	int total_time, stable_time = 0;
+ 	u16 portchange, portstatus;
+ 	unsigned connection = 0xffff;
++	unsigned long end_time = jiffies + msecs_to_jiffies(HUB_DEBOUNCE_TIMEOUT);
  
- 	if (vlsi_start_hw(idev))
- 		IRDA_ERROR("%s: failed to restart hw - %s(%s) unusable!\n",
--			   __FUNCTION__, PCIDEV_NAME(idev->pdev), ndev->name);
-+			   __FUNCTION__, pci_name(idev->pdev), ndev->name);
- 	else
- 		netif_start_queue(ndev);
- }
-@@ -1645,7 +1645,7 @@ vlsi_irda_probe(struct pci_dev *pdev, co
- 		pdev->current_state = 0; /* hw must be running now */
- 
- 	IRDA_MESSAGE("%s: IrDA PCI controller %s detected\n",
--		     drivername, PCIDEV_NAME(pdev));
-+		     drivername, pci_name(pdev));
- 
- 	if ( !pci_resource_start(pdev,0)
- 	     || !(pci_resource_flags(pdev,0) & IORESOURCE_IO) ) {
-@@ -1730,7 +1730,7 @@ static void __devexit vlsi_irda_remove(s
- 
- 	pci_set_drvdata(pdev, NULL);
- 
--	IRDA_MESSAGE("%s: %s removed\n", drivername, PCIDEV_NAME(pdev));
-+	IRDA_MESSAGE("%s: %s removed\n", drivername, pci_name(pdev));
- }
- 
- #ifdef CONFIG_PM
-@@ -1750,7 +1750,7 @@ static int vlsi_irda_suspend(struct pci_
- 
- 	if (!ndev) {
- 		IRDA_ERROR("%s - %s: no netdevice \n",
--			   __FUNCTION__, PCIDEV_NAME(pdev));
-+			   __FUNCTION__, pci_name(pdev));
- 		return 0;
- 	}
- 	idev = ndev->priv;	
-@@ -1761,7 +1761,7 @@ static int vlsi_irda_suspend(struct pci_
- 			pdev->current_state = state.event;
+ 	for (total_time = 0; ; total_time += HUB_DEBOUNCE_STEP) {
+ 		ret = hub_port_status(hub, port1, &portstatus, &portchange);
+@@ -2050,7 +2052,7 @@ static int hub_port_debounce(struct usb_
+ 					USB_PORT_FEAT_C_CONNECTION);
  		}
- 		else
--			IRDA_ERROR("%s - %s: invalid suspend request %u -> %u\n", __FUNCTION__, PCIDEV_NAME(pdev), pdev->current_state, state.event);
-+			IRDA_ERROR("%s - %s: invalid suspend request %u -> %u\n", __FUNCTION__, pci_name(pdev), pdev->current_state, state.event);
- 		up(&idev->sem);
- 		return 0;
- 	}
-@@ -1789,7 +1789,7 @@ static int vlsi_irda_resume(struct pci_d
  
- 	if (!ndev) {
- 		IRDA_ERROR("%s - %s: no netdevice \n",
--			   __FUNCTION__, PCIDEV_NAME(pdev));
-+			   __FUNCTION__, pci_name(pdev));
- 		return 0;
+-		if (total_time >= HUB_DEBOUNCE_TIMEOUT)
++		if (time_after(jiffies, end_time))
+ 			break;
+ 		msleep(HUB_DEBOUNCE_STEP);
  	}
- 	idev = ndev->priv;	
-@@ -1797,7 +1797,7 @@ static int vlsi_irda_resume(struct pci_d
- 	if (pdev->current_state == 0) {
- 		up(&idev->sem);
- 		IRDA_WARNING("%s - %s: already resumed\n",
--			     __FUNCTION__, PCIDEV_NAME(pdev));
-+			     __FUNCTION__, pci_name(pdev));
- 		return 0;
- 	}
- 	
+USB EHCI DRIVER
+P:	David Brownell
+M:	dbrownell@users.sourceforge.net
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/usb/host/ehci-pci.c linux-2.6.15-rc4/drivers/usb/host/ehci-pci.c
+--- linux-2.6.15-rc4-orig/drivers/usb/host/ehci-pci.c	2005-12-03 15:22:34.000000000 +0100
++++ linux-2.6.15-rc4/drivers/usb/host/ehci-pci.c	2005-12-03 17:13:18.000000000 +0100
+@@ -36,13 +36,12 @@ static int bios_handoff(struct ehci_hcd 
+ 
+ 	/* maybe wait a while for BIOS to respond */
+ 	if (cap & (1 << 16)) {
+-		int msec = 5000;
++		unsigned long end_time = jiffies + msecs_to_jiffies(5000);
+ 
+ 		do {
+ 			msleep(10);
+-			msec -= 10;
+ 			pci_read_config_dword(pdev, where, &cap);
+-		} while ((cap & (1 << 16)) && msec);
++		} while ((cap & (1 << 16)) && time_before(jiffies, end_time));
+ 		if (cap & (1 << 16)) {
+ 			ehci_err(ehci, "BIOS handoff failed (%d, %08x)\n",
+ 				where, cap);
 
-
-
---===============087740800861641599==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+USB SUBSYSTEM???
+P:	Greg Kroah-Hartman
+M:	gregkh@suse.de
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/usb/host/isp116x-hcd.c linux-2.6.15-rc4/drivers/usb/host/isp116x-hcd.c
+--- linux-2.6.15-rc4-orig/drivers/usb/host/isp116x-hcd.c	2005-12-03 15:22:34.000000000 +0100
++++ linux-2.6.15-rc4/drivers/usb/host/isp116x-hcd.c	2005-12-03 16:53:10.000000000 +0100
+@@ -889,12 +889,13 @@ static void isp116x_endpoint_disable(str
+ {
+ 	int i;
+ 	struct isp116x_ep *ep = hep->hcpriv;;
++	unsigned long end_time = jiffies + msecs_to_jiffies(300);
+ 
+ 	if (!ep)
+ 		return;
+ 
+ 	/* assume we'd just wait for the irq */
+-	for (i = 0; i < 100 && !list_empty(&hep->urb_list); i++)
++	while (!list_empty(&hep->urb_list) && time_before(jiffies, end_time))
+ 		msleep(3);
+ 	if (!list_empty(&hep->urb_list))
+ 		WARN("ep %p not empty?\n", ep);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============087740800861641599==--
