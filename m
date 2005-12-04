@@ -1,70 +1,85 @@
-From: Charlotte Duke <mantles@bagsusa.com>
-Date: Thu, 29 Dec 2005 11:07:15 +0000
-Subject: [KJ] News Alert
-Message-Id: <11664154965.1608954113@static96-137.staticcal.vsnl.net.in>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30652073826840365=="
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date: Sun, 04 Dec 2005 00:13:20 +0000
+Subject: [KJ] [PATCH 2/21] polling loops: change exit condition to
+Message-Id: <439234A0.3030602@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <5405051946.1971689416@static96-137.staticcal.vsnl.net.in>
-In-Reply-To: <5405051946.1971689416@static96-137.staticcal.vsnl.net.in>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============30652073826840365==
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=us-ascii
+ATM
+P:	Chas Williams
+M:	chas@cmf.nrl.navy.mil
 
-Today's stock notification is for RYNL. 
-While reviewing a number of up and coming companies we came 
-across this low entry investment stock that surprised 
-with the stability and foundations for growth. 
-
-Company: Reynaldo's Mexican Food Inc. 
-Symbol: RYNL 
-Date: Dec 29 2005 
-Last price: $0.11 
-Short Term Target: $0.5
-
-Reynaldo's Mexican Food Inc. (RYNL OTC:BB) has been 
-in business for over 20 years supplying a wide variety 
-of Mexican Foods. In their humble beginnings they began 
-supplying prepared foods to industrial catering companies 
-but in time expanded not only their list of products 
-but their clientele. 
-
-RYNL now supplies Mexican Cuisine from its multiple factories 
-to Mexico and over 14 different states. They also distrinute 
-through some of United states largest corporations, just go 
-to their website to see a list of their business partners. 
-
-Members, this is one solid company that has already 
-show huge potential by their ability to expand and make all 
-the right connections. 
-
-Don't over look this solid stock. Add this one to your 
-investment portfolio. You wont regret it. 
-
-What Ever You Do...
-
-We give this to you again as a gift. This company is doing 
-incredible things. They have cash and have made great 
-strategic aquisitions. The current price is $0.11. 
-Word on the street is this stock could take off at any moment. 
-This company has dropped big news in the past, who's to say 
-they dont have another big one brewing. 
-
-WE SEE BIG THINGS HAPPENING. WATCH RYNL TRADE ON THURSDAY...
-
-
-
---===============30652073826840365==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/atm/firestream.c linux-2.6.15-rc4/drivers/atm/firestream.c
+--- linux-2.6.15-rc4-orig/drivers/atm/firestream.c	2005-11-20 16:53:15.000000000 +0100
++++ linux-2.6.15-rc4/drivers/atm/firestream.c	2005-12-03 16:53:10.000000000 +0100
+@@ -1651,8 +1651,9 @@ static void fs_poll (unsigned long data)
+ static int __devinit fs_init (struct fs_dev *dev)
+ {
+ 	struct pci_dev  *pci_dev;
+-	int isr, to;
++	int isr;
+ 	int i;
++	unsigned long end_time;
+ 
+ 	func_enter ();
+ 	pci_dev = dev->pci_dev;
+@@ -1690,8 +1691,8 @@ static int __devinit fs_init (struct fs_
+ 
+ 	/* 10ms * 100 is 1 second. That should be enough, as AN3:9 says it takes
+ 	   1ms. */
+-	to = 100;
+-	while (--to) {
++	end_time = jiffies + msecs_to_jiffies(1000);
++	while (time_before(jiffies, end_time)) {
+ 		isr = read_fs (dev, ISR);
+ 
+ 		/* This bit is documented as "RESERVED" */
+@@ -1708,7 +1709,7 @@ static int __devinit fs_init (struct fs_
+ 		msleep(10);
+ 	}
+ 
+-	if (!to) {
++	if (time_after_eq(jiffies, end_time)) {
+ 		printk (KERN_ERR "timeout initializing the FS... \n");
+ 		return 1;
+ 	}
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/atm/he.c linux-2.6.15-rc4/drivers/atm/he.c
+--- linux-2.6.15-rc4-orig/drivers/atm/he.c	2005-11-20 16:53:15.000000000 +0100
++++ linux-2.6.15-rc4/drivers/atm/he.c	2005-12-03 16:53:10.000000000 +0100
+@@ -2550,8 +2550,9 @@ he_close(struct atm_vcc *vcc)
+ 	struct he_tpd *tpd;
+ 	unsigned cid;
+ 	struct he_vcc *he_vcc = HE_VCC(vcc);
+-#define MAX_RETRY 30
+-	int retry = 0, sleep = 1, tx_inuse;
++#define MAX_TIMEOUT 6000
++	int sleep = 1, tx_inuse;
++	unsigned long end_time;
+ 
+ 	HPRINTK("close vcc %p %d.%d\n", vcc, vcc->vpi, vcc->vci);
+ 
+@@ -2607,14 +2608,12 @@ he_close(struct atm_vcc *vcc)
+ 		 * TBRQ. When the last packet on the connection arrives in the
+ 		 * TBRQ, the host issues the close command to the adapter.
+ 		 */
+-
++		end_time = jiffies + msecs_to_jiffies(MAX_TIMEOUT);
+ 		while (((tx_inuse = atomic_read(&sk_atm(vcc)->sk_wmem_alloc)) > 0) &&
+-		       (retry < MAX_RETRY)) {
++		       time_before(jiffies, end_time)) {
+ 			msleep(sleep);
+ 			if (sleep < 250)
+ 				sleep = sleep * 2;
+-
+-			++retry;
+ 		}
+ 
+ 		if (tx_inuse)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============30652073826840365==--
