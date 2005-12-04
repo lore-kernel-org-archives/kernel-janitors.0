@@ -1,43 +1,48 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Sun, 04 Dec 2005 00:17:03 +0000
-Subject: [KJ] [PATCH 7/21] polling loops: change exit condition to
-Message-Id: <4392357F.30209@gmail.com>
+From: Daniel =?ISO-8859-1?Q?Marjam=E4ki?= <daniel.marjamaki@comhem.se>
+Date: Sun, 04 Dec 2005 07:18:14 +0000
+Subject: Re: [KJ] [PATCH 7/21] polling loops: change exit condition to
+Message-Id: <438C7D000014D900@pne-smtpout1-sn2.hy.skanova.net (added by>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============60693334092186957=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <4392357F.30209@gmail.com>
+In-Reply-To: <4392357F.30209@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
-IEEE 1394 SBP2
-P:	Ben Collins
-M:	bcollins@debian.org
-P:	Stefan Richter
-M:	stefanr@s5r6.in-berlin.de
+--===============60693334092186957==
 
-Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
-diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/ieee1394/sbp2.c linux-2.6.15-rc4/drivers/ieee1394/sbp2.c
---- linux-2.6.15-rc4-orig/drivers/ieee1394/sbp2.c	2005-12-03 15:22:32.000000000 +0100
-+++ linux-2.6.15-rc4/drivers/ieee1394/sbp2.c	2005-12-03 16:53:10.000000000 +0100
-@@ -360,13 +360,14 @@ static void sbp2util_packet_dump(void *b
-  */
- static int sbp2util_down_timeout(atomic_t *done, int timeout)
- {
--	int i;
-+	unsigned long end_time;
- 
--	for (i = timeout; (i > 0 && atomic_read(done) = 0); i-= HZ/10) {
-+	end_time = jiffies + msecs_to_jiffies(timeout);
-+	while (time_before(jiffies, end_time) && atomic_read(done) = 0) {
- 		if (msleep_interruptible(100))	/* 100ms */
--			return(1);
-+			return 1;
- 	}
--	return ((i > 0) ? 0:1);
-+	return (time_before(jiffies, end_time) ? 0 : 1);
- }
- 
- /* Free's an allocated packet */
+ time_after / time_before
+Message-Id: <20051204081814.067b93c0.daniel.marjamaki@comhem.se>
+X-Mailer: Sylpheed version 2.1.7 (GTK+ 2.8.8; i686-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+
+
+Patch for: drivers/ieee1394/sbp2.c
+
+Are you sure about this line
++	end_time =3D jiffies + msecs_to_jiffies(timeout);
+
+To me it seems timeout means nr of jiffies, not milliseconds.
+
+Look at line 1286 in the file for example..
+	/* Wait up to 20 seconds */
+	if (sbp2util_down_timeout(blabla, 20*HZ)) {
+
+Best Regards,
+Daniel Marjam=E4ki
+
+--===============60693334092186957==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============60693334092186957==--
