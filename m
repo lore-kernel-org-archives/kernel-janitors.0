@@ -1,37 +1,42 @@
-From: Nish Aravamudan <nish.aravamudan@gmail.com>
-Date: Mon, 12 Dec 2005 05:18:44 +0000
-Subject: Re: [KJ] HI
-Message-Id: <29495f1d0512112118q6589a9a5ncb8bc355c4282bac@mail.gmail.com>
+From: Marcin Slusarz <marcin.slusarz@gmail.com>
+Date: Sun, 04 Dec 2005 00:17:03 +0000
+Subject: [KJ] [PATCH 7/21] polling loops: change exit condition to
+Message-Id: <4392357F.30209@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
-In-Reply-To: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 12/11/05, Badari Prasad <h.badari@gmail.com> wrote:
-> Hello,
->          this is badari , im a relatively new comer to linux kernel,
->  can you please help me in kdb and kprobes, as i could not get a
->  document to read about these topics, if you have documents on any of these
-> topics,
->  please send it to me, or send me the url address.
+IEEE 1394 SBP2
+P:	Ben Collins
+M:	bcollins@debian.org
+P:	Stefan Richter
+M:	stefanr@s5r6.in-berlin.de
 
-Google? Searching for kdb got me to http://oss.sgi.com/projects/kdb/
-among others and kprobes got me to
-http://sourceware.org/systemtap/kprobes/ among others. I don't know if
-either are current, or whatever, but google is your friend.
-
->  And i have a lot of interest in  Kernel BUG Fixing, i don't know where to
-> start from,
->  please help me in this regard
-
-Get an account on bugzilla.kernel.org and start looking at bugs.
-
-Thanks,
-Nish
-
+Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
+diff -upr -X linux-2.6.15-rc4/Documentation/dontdiff linux-2.6.15-rc4-orig/drivers/ieee1394/sbp2.c linux-2.6.15-rc4/drivers/ieee1394/sbp2.c
+--- linux-2.6.15-rc4-orig/drivers/ieee1394/sbp2.c	2005-12-03 15:22:32.000000000 +0100
++++ linux-2.6.15-rc4/drivers/ieee1394/sbp2.c	2005-12-03 16:53:10.000000000 +0100
+@@ -360,13 +360,14 @@ static void sbp2util_packet_dump(void *b
+  */
+ static int sbp2util_down_timeout(atomic_t *done, int timeout)
+ {
+-	int i;
++	unsigned long end_time;
+ 
+-	for (i = timeout; (i > 0 && atomic_read(done) = 0); i-= HZ/10) {
++	end_time = jiffies + msecs_to_jiffies(timeout);
++	while (time_before(jiffies, end_time) && atomic_read(done) = 0) {
+ 		if (msleep_interruptible(100))	/* 100ms */
+-			return(1);
++			return 1;
+ 	}
+-	return ((i > 0) ? 0:1);
++	return (time_before(jiffies, end_time) ? 0 : 1);
+ }
+ 
+ /* Free's an allocated packet */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
