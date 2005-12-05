@@ -1,72 +1,36 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Mon, 05 Dec 2005 17:49:22 +0000
+From: "Carlos Manuel Duclos Vergara" <carlos@embedded.cl>
+Date: Mon, 05 Dec 2005 18:06:49 +0000
 Subject: Re: [KJ] [PATCH] dm: uninitialize static variables
-Message-Id: <20051205190029.4b29e759@lucky.kitzblitz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============253496682864915=="
+Message-Id: <56471.206.49.219.34.1133806009.squirrel@webmail.embedded.cl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20051205132800.34631bbf@lucky.kitzblitz>
 	<50993.206.49.219.34.1133786860.squirrel@webmail.embedded.cl>
-In-Reply-To: <50993.206.49.219.34.1133786860.squirrel@webmail.embedded.cl>
-To: "Carlos Manuel Duclos Vergara"@redhat.com, carlos@embedded.cl
-Cc: kernel-janitors@lists.osdl.org, dm-devel@redhat.com
-
---===============253496682864915==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-* "Carlos Manuel Duclos Vergara" <carlos@embedded.cl>:
-> > uninitialize static variables initialized to 0, to make them go
-> > to .bss instead of .data.
-> >
-> 
-> if you want that why not explicitely put them in .bss?
-> something like:
-> 
-> > -static unsigned int major = 0;
-> > +static unsigned int major; /* = 0 */
-> 
-> static unsigned int major = 0 __attribute__ ((section(".bss"));
-
-I personally like the idea of explicitly expressing this intention,
-but I didn't manage to achieve this together with initialization.
-I tried
-
- static unsigned int __attribute__((__section__(".bss"))) major = 0;
- static unsigned int __attribute__((__section__(".bss"))) _major = 0;
-
-but they appear not to end up in .bss nevertheless, compared with the
-uninitialized version:
-
---- dm-mod.ko1.txt      2005-12-05 18:40:00.000000000 +0100
-+++ dm-mod.ko2.txt      2005-12-05 18:39:52.000000000 +0100
-@@ -27,7 +27,7 @@
- [22] .rel.init.data       REL          00000000 00b174 000028  8       29  21  4
- [23] .gnu.linkonce.this_module PROGBITS     00000000 0087c0 000160  0 WA     0   0 32
- [24] .rel.gnu.linkonce.this_module REL          00000000 00b19c 000010  8       29  23  4
--[25] .bss                 NOBITS       00000000 008920 00049c  0 WA     0   0 32
-+[25] .bss                 NOBITS       00000000 008920 000498  0 WA     0   0 32
- [26] .comment             PROGBITS     00000000 008920 00022e  0        0   0  1
- [27] .note.GNU-stack      PROGBITS     00000000 008b4e 000000  0        0   0  1
- [28] .shstrtab            STRTAB       00000000 008b4e 00011e  0        0   0  1
-
-If you could tell me how to achieve this in a fancy way which also works,
-I'm all ears. Maybe the janitorial steering committee might also like the
-idea enough to adjust their current TODO list.
-( http://janitor.kernelnewbies.org/TODO - 10th task in 6th section)
-
-Cheers,
-n.
-
---===============253496682864915==
-Content-Type: text/plain; charset="iso-8859-1"
+	<20051205190029.4b29e759@lucky.kitzblitz>
+In-Reply-To: <20051205190029.4b29e759@lucky.kitzblitz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Nicolas Kaiser <nikai@nikai.net>
+Cc: kernel-janitors@lists.osdl.org, dm-devel@redhat.com, Carlos Manuel Duclos Vergara <carlos@embedded.cl>
+
+>  static unsigned int __attribute__((__section__(".bss"))) major = 0;
+>  static unsigned int __attribute__((__section__(".bss"))) _major = 0;
+
+it should be:
+
+static unsigned int major __attribute__ ((section(".bss"))) = 0;
+
+> If you could tell me how to achieve this in a fancy way which also works,
+> I'm all ears. Maybe the janitorial steering committee might also like the
+> idea enough to adjust their current TODO list.
+
+yup, maybe it's worth of a discussion on the list
+
+-- 
+Carlos Manuel Duclos Vergara
+http://www.toolchains.com/personal/blog
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============253496682864915==--
