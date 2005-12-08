@@ -1,68 +1,82 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Wed, 07 Dec 2005 01:07:46 +0000
-Subject: Re: [KJ] rfc: print mac addr
-Message-Id: <20051206170746.79da5ee2.rdunlap@xenotime.net>
+From: Andreas Mohr <andi@rhlx01.fht-esslingen.de>
+Date: Thu, 08 Dec 2005 10:13:31 +0000
+Subject: [KJ] TODO list addition (struct optimization)
+Message-Id: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78994323567798808=="
+Content-Type: multipart/mixed; boundary="===============82323993917259042=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <43956CB7.2060904@bfs.de>
-In-Reply-To: <43956CB7.2060904@bfs.de>
 To: kernel-janitors@vger.kernel.org
 
---===============78994323567798808==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============82323993917259042==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 06 Dec 2005 18:11:48 +0100 walter harms wrote:
+Hi all,
 
-> Paolo Teti wrote:
-> > Hi walter
-> > 
-> >> for (i = 0; i < 6; i++)
-> >>    printk("%2.2x%c", dev->dev_addr[i],i == 5 ? '\n' : ':');
-> >>
-> > 
-> > 1. Please post an example or the file name!
-> 
-> cd linux/drivers/net
-> grep dev_addr *.c | grep printk
-> 
-> > 
-> > 2. Are you sure that this portion of code isn't into a DEBUG block
-> > (something like #ifdef DEBUG_xx)?
-> 
-> i did not check every file but looked into a few and the pattern is all 
-> the same. maybe some of them are inside a #ifdef debug the few i looked 
-> are not.
-> 
-> i know gregKH added a few dev helper macros but i can not find them 
-> anymore. The idea is to provide a function like:
+please add (something like) the following text to
+http://janitor.kernelnewbies.org/TODO :
 
-see include/linux/device.h: dev_printk() and friends.
+----------
+Examine struct definitions used in kernel files and kernel driver files
+on whether they have optimized layout.
+Very frequently accessed struct member variables (e.g. locks or I/O address
+base values) should be at the first struct position.
+This will save additional asm opcodes (at least on x86) and code will thus
+be faster and smaller.
 
-> void print_mac(struct net_device *dev)
-> {
->     int i;
->     printk(KERN_INFO);
->     for (i = 0; i < MAX_ADDR_LEN; i++)
->          printk("%2.2x%c", dev->dev_addr[i],i == (MAX_ADDR_LEN-1) ? '\n' 
-> : ':');
-> 
-> }
-> may you like to return a string ?
+Silly but simple example code making use of a struct:
 
-I would just print it (like you did) instead of return a string
-(I think).
+void lock(void **lock)
+{ ... }
 
-MAX_ADDR_LEN may want to be a variable in this function so that
-differing MAC address lengths can be supported.
-And put a space between ",i".
+...
+  lock(&lck.mylock);
+...
 
-Thanks.
----
-~Randy
+** The BAD Case **
 
---===============78994323567798808==
+typedef struct {
+  char *name;
+  void *mylock; <--- not at first position, thus inefficient!
+} lock_t;
+
+resulting x86 asm:
+
+ 8048444:       8d 45 f8                lea    0xfffffff8(%ebp),%eax
+ 8048447:       83 c0 04                add    $0x4,%eax <--- extra offset needed!
+ 804844a:       50                      push   %eax
+ 804844b:       e8 e1 ff ff ff          call   8048431 <lock>
+
+** The GOOD Case **
+
+typedef struct {
+  /* most-accessed member first! */
+  void *mylock;
+  char *name;
+} lock_t;
+
+resulting x86 asm:
+
+ 8048444:       8d 45 f8                lea    0xfffffff8(%ebp),%eax
+ 8048447:       50                      push   %eax <---- no extra offset!
+ 8048448:       e8 e4 ff ff ff          call   8048431 <lock>
+
+opcode savings: 3 bytes (9 vs. 12 bytes!)
+
+Note that you should find out the most frequently accessed member not only
+by looking at the *number of code places* that actually access this variable,
+but also by properly adding up access counts in case a variable gets accessed
+multiple times in a *loop*.
+
+Of course any structs that need to keep a backwards compatible struct layout
+should not be altered, though hopefully that won't apply to many structs.
+----------
+
+Thanks,
+
+Andreas Mohr
+
+--===============82323993917259042==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -73,4 +87,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78994323567798808==--
+--===============82323993917259042==--
