@@ -1,82 +1,42 @@
-From: Andreas Mohr <andi@rhlx01.fht-esslingen.de>
-Date: Thu, 08 Dec 2005 10:13:31 +0000
-Subject: [KJ] TODO list addition (struct optimization)
-Message-Id: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
+From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
+Date: Thu, 08 Dec 2005 23:25:55 +0000
+Subject: Re: [KJ] TODO list addition (struct optimization)
+Message-Id: <20051208212555.2e9221e5.rnsanchez@terra.com.br>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82323993917259042=="
+Content-Type: multipart/mixed; boundary="===============13016266473945981=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
+In-Reply-To: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
 To: kernel-janitors@vger.kernel.org
 
---===============82323993917259042==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============13016266473945981==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+Quoting  Andreas Mohr <andi@rhlx01.fht-esslingen.de>
+Sent on  Thu, 8 Dec 2005 11:13:31 +0100
 
-please add (something like) the following text to
-http://janitor.kernelnewbies.org/TODO :
+Hello,
 
-----------
-Examine struct definitions used in kernel files and kernel driver files
-on whether they have optimized layout.
-Very frequently accessed struct member variables (e.g. locks or I/O address
-base values) should be at the first struct position.
-This will save additional asm opcodes (at least on x86) and code will thus
-be faster and smaller.
+> Examine struct definitions used in kernel files and kernel driver files
+> on whether they have optimized layout.
+> Very frequently accessed struct member variables (e.g. locks or I/O
+> address base values) should be at the first struct position.
+> This will save additional asm opcodes (at least on x86) and code will thus
+> be faster and smaller.
 
-Silly but simple example code making use of a struct:
+I'll surely look at this.  I have a great interest on this subject. :)
 
-void lock(void **lock)
-{ ... }
+Regards.
 
-...
-  lock(&lck.mylock);
-...
+-- 
+Ricardo Nabinger Sanchez
+GNU/Linux #140696 [http://counter.li.org]
+Slackware Linux + FreeBSD
 
-** The BAD Case **
+  Left to themselves, things tend to go from bad to worse.
 
-typedef struct {
-  char *name;
-  void *mylock; <--- not at first position, thus inefficient!
-} lock_t;
-
-resulting x86 asm:
-
- 8048444:       8d 45 f8                lea    0xfffffff8(%ebp),%eax
- 8048447:       83 c0 04                add    $0x4,%eax <--- extra offset needed!
- 804844a:       50                      push   %eax
- 804844b:       e8 e1 ff ff ff          call   8048431 <lock>
-
-** The GOOD Case **
-
-typedef struct {
-  /* most-accessed member first! */
-  void *mylock;
-  char *name;
-} lock_t;
-
-resulting x86 asm:
-
- 8048444:       8d 45 f8                lea    0xfffffff8(%ebp),%eax
- 8048447:       50                      push   %eax <---- no extra offset!
- 8048448:       e8 e4 ff ff ff          call   8048431 <lock>
-
-opcode savings: 3 bytes (9 vs. 12 bytes!)
-
-Note that you should find out the most frequently accessed member not only
-by looking at the *number of code places* that actually access this variable,
-but also by properly adding up access counts in case a variable gets accessed
-multiple times in a *loop*.
-
-Of course any structs that need to keep a backwards compatible struct layout
-should not be altered, though hopefully that won't apply to many structs.
-----------
-
-Thanks,
-
-Andreas Mohr
-
---===============82323993917259042==
+--===============13016266473945981==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -87,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82323993917259042==--
+--===============13016266473945981==--
