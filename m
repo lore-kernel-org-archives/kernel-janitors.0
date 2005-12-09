@@ -1,37 +1,48 @@
-From: Maximilian Attems <maks@sternwelten.at>
-Date: Sun, 18 Dec 2005 23:29:38 +0000
-Subject: Re: [KJ] [Patch 1/5] Cleanup LINUX_VERSION_CODE in drivers/net
-Message-Id: <20051218232938.GA18842@baikonur.stro.at>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Fri, 09 Dec 2005 14:59:57 +0000
+Subject: [KJ] [PATCH] crypto/aes: add unsigned to ints that can't go
+Message-Id: <20051209155957.39daf59d@lucky.kitzblitz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15626888454706367=="
+Content-Type: multipart/mixed; boundary="===============32075659471074824=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1134946371.7394.5.camel@alice>
-In-Reply-To: <1134946371.7394.5.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============15626888454706367==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============32075659471074824==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 19, 2005 at 12:22:14AM +0100, Adrian Bunk wrote:
-<snipp patch>
-> 
-> Two comments:
-> - please Cc subsystem maintainers and driver authors of the code you 
->   touch; e.g. sometimes this kind of patches is rejected because the
->   driver maintainer does actually support both kernel 2.4 and 2.6 in
->   one file
+* Key length can't go negative, "unsigned int" is preferred to "int"
+* E-Key is most frequently accessed struct member
 
-well it has alway been mandatory for new janitors.
-please keep the entry bar low.
-the kj maintainer takes care of feeding the MAINTAINERS.
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+---
+ aes.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-sure it often helps for quicker patch flow.
+--- a/crypto/aes.c	2005-10-02 15:53:34.000000000 +0200
++++ b/crypto/aes.c	2005-12-09 15:35:18.000000000 +0100
+@@ -77,9 +77,9 @@ byte(const u32 x, const unsigned n)
+ #define u32_out(to, from) (*(u32 *)(to) = cpu_to_le32(from))
+ 
+ struct aes_ctx {
+-	int key_length;
+ 	u32 E[60];
+ 	u32 D[60];
++	unsigned int key_length;
+ };
+ 
+ #define E_KEY ctx->E
+@@ -378,7 +378,7 @@ static void aes_decrypt(void *ctx_arg, u
+ {
+ 	const struct aes_ctx *ctx = ctx_arg;
+ 	u32 b0[4], b1[4];
+-	const int key_len = ctx->key_length;
++	const unsigned int key_len = ctx->key_length;
+ 	const u32 *kp = D_KEY + key_len + 20;
+ 
+ 	b0[0] = u32_in (in) ^ E_KEY[key_len + 24];
 
--- 
-maks
-
---===============15626888454706367==
+--===============32075659471074824==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15626888454706367==--
+--===============32075659471074824==--
