@@ -1,42 +1,44 @@
-From: Ricardo Nabinger Sanchez <rnsanchez@terra.com.br>
-Date: Thu, 08 Dec 2005 23:25:55 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 10 Dec 2005 16:30:16 +0000
 Subject: Re: [KJ] TODO list addition (struct optimization)
-Message-Id: <20051208212555.2e9221e5.rnsanchez@terra.com.br>
+Message-Id: <20051210163016.GD2003@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13016266473945981=="
+Content-Type: multipart/mixed; boundary="===============40663951611822258=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
 In-Reply-To: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
 To: kernel-janitors@vger.kernel.org
 
---===============13016266473945981==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============40663951611822258==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Quoting  Andreas Mohr <andi@rhlx01.fht-esslingen.de>
-Sent on  Thu, 8 Dec 2005 11:13:31 +0100
-
-Hello,
-
+On Thu, Dec 08, 2005 at 11:13:31AM +0100, Andreas Mohr wrote:
 > Examine struct definitions used in kernel files and kernel driver files
 > on whether they have optimized layout.
-> Very frequently accessed struct member variables (e.g. locks or I/O
-> address base values) should be at the first struct position.
+> Very frequently accessed struct member variables (e.g. locks or I/O address
+> base values) should be at the first struct position.
 > This will save additional asm opcodes (at least on x86) and code will thus
 > be faster and smaller.
 
-I'll surely look at this.  I have a great interest on this subject. :)
+Not necessarily true.
 
-Regards.
+Suppose you have a group of struct members which are mostly written in
+sequence. You move one member out of cluster. Now you produce 2 dirty
+cachelines after each sequence.
 
--- 
-Ricardo Nabinger Sanchez
-GNU/Linux #140696 [http://counter.li.org]
-Slackware Linux + FreeBSD
+Or a split group of mostly-read members will require filling of 2
+cachelines instead of one.
 
-  Left to themselves, things tend to go from bad to worse.
+This stuff is not all clear and not obvious. You may want to look at
 
---===============13016266473945981==
+	[PATCH] reorder struct files_struct
+
+P. S.: search on MARC is down, so I can't find more examples of what was
+       already done.
+
+
+--===============40663951611822258==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +49,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13016266473945981==--
+--===============40663951611822258==--
