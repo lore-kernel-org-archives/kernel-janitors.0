@@ -1,42 +1,57 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 10 Dec 2005 15:35:59 +0000
-Subject: Re: [KJ] [PATCH] dm: uninitialize static variables
-Message-Id: <20051210153559.GB2003@mipter.zuzino.mipt.ru>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Sat, 10 Dec 2005 19:32:26 +0000
+Subject: [KJ] [PATCH] dm: uninitialize static variables v2
+Message-Id: <20051210203226.297058d0@lucky.kitzblitz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56483868724768149=="
+Content-Type: multipart/mixed; boundary="===============60804637086858726=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20051205132800.34631bbf@lucky.kitzblitz>
-	<50993.206.49.219.34.1133786860.squirrel@webmail.embedded.cl>
-	<20051205190029.4b29e759@lucky.kitzblitz>
-In-Reply-To: <20051205190029.4b29e759@lucky.kitzblitz>
-To: Nicolas Kaiser <nikai@nikai.net>
-Cc: "Carlos Manuel Duclos Vergara"carlos@embedded.cl, dm-devel@redhat.com, kernel-janitors@lists.osdl.org
+	<20051210153129.GA2003@mipter.zuzino.mipt.ru>
+In-Reply-To: <20051210153129.GA2003@mipter.zuzino.mipt.ru>
+To: kernel-janitors@lists.osdl.org
+Cc: dm-devel@redhat.com
 
---===============56483868724768149==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============60804637086858726==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 05, 2005 at 07:00:29PM +0100, Nicolas Kaiser wrote:
-> * "Carlos Manuel Duclos Vergara" <carlos@embedded.cl>:
-> > > uninitialize static variables initialized to 0, to make them go
-> > > to .bss instead of .data.
-> > >
-> >
-> > if you want that why not explicitely put them in .bss?
-> > something like:
-> >
-> > > -static unsigned int major = 0;
-> > > +static unsigned int major; /* = 0 */
-> >
-> > static unsigned int major = 0 __attribute__ ((section(".bss"));
->
-> I personally like the idea of explicitly expressing this intention,
-> but I didn't manage to achieve this together with initialization.
+uninitialize static variables initialized to 0, to make them go
+to .bss instead of .data.
 
-Not only you use gcc'ism, you also make code needlessly verbose.
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+---
+ drivers/md/dm.c     |    4 ++--
+ drivers/md/kcopyd.c |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff -urpN a/drivers/md/dm.c b/drivers/md/dm.c
+--- a/drivers/md/dm.c	2005-10-02 15:53:35.000000000 +0200
++++ b/drivers/md/dm.c	2005-12-10 20:24:13.000000000 +0100
+@@ -20,8 +20,8 @@
+ 
+ static const char *_name = DM_NAME;
+ 
+-static unsigned int major = 0;
+-static unsigned int _major = 0;
++static unsigned int major;
++static unsigned int _major;
+ 
+ /*
+  * One of these is allocated per bio.
+diff -urpN a/drivers/md/kcopyd.c b/drivers/md/kcopyd.c
+--- a/drivers/md/kcopyd.c	2005-10-02 15:53:35.000000000 +0200
++++ b/drivers/md/kcopyd.c	2005-12-10 20:26:16.000000000 +0100
+@@ -588,7 +588,7 @@ static void client_del(struct kcopyd_cli
+ }
+ 
+ static DECLARE_MUTEX(kcopyd_init_lock);
+-static int kcopyd_clients = 0;
++static int kcopyd_clients;
+ 
+ static int kcopyd_init(void)
+ {
 
---===============56483868724768149==
+--===============60804637086858726==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============56483868724768149==--
+--===============60804637086858726==--
