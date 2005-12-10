@@ -1,36 +1,57 @@
-From: "Carlos Manuel Duclos Vergara" <carlos@embedded.cl>
-Date: Mon, 05 Dec 2005 18:06:49 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sat, 10 Dec 2005 15:31:29 +0000
 Subject: Re: [KJ] [PATCH] dm: uninitialize static variables
-Message-Id: <56471.206.49.219.34.1133806009.squirrel@webmail.embedded.cl>
+Message-Id: <20051210153129.GA2003@mipter.zuzino.mipt.ru>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============65532623562011949=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20051205132800.34631bbf@lucky.kitzblitz>
-	<50993.206.49.219.34.1133786860.squirrel@webmail.embedded.cl>
-	<20051205190029.4b29e759@lucky.kitzblitz>
-In-Reply-To: <20051205190029.4b29e759@lucky.kitzblitz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20051205132800.34631bbf@lucky.kitzblitz>
 To: Nicolas Kaiser <nikai@nikai.net>
-Cc: kernel-janitors@lists.osdl.org, dm-devel@redhat.com, Carlos Manuel Duclos Vergara <carlos@embedded.cl>
+Cc: kernel-janitors@lists.osdl.org, dm-devel@redhat.com
 
->  static unsigned int __attribute__((__section__(".bss"))) major = 0;
->  static unsigned int __attribute__((__section__(".bss"))) _major = 0;
+--===============65532623562011949==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-it should be:
+On Mon, Dec 05, 2005 at 01:28:00PM +0100, Nicolas Kaiser wrote:
+> uninitialize static variables initialized to 0, to make them go
+> to .bss instead of .data.
 
-static unsigned int major __attribute__ ((section(".bss"))) = 0;
+>  dm.c     |    4 ++--
+>  kcopyd.c |    2 +-
 
-> If you could tell me how to achieve this in a fancy way which also works,
-> I'm all ears. Maybe the janitorial steering committee might also like the
-> idea enough to adjust their current TODO list.
+diffstat -p1 ;-)
 
-yup, maybe it's worth of a discussion on the list
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -20,8 +20,8 @@
+>
+>  static const char *_name = DM_NAME;
+>
+> -static unsigned int major = 0;
+> -static unsigned int _major = 0;
+> +static unsigned int major; /* = 0 */
+> +static unsigned int _major; /* = 0 */
 
--- 
-Carlos Manuel Duclos Vergara
-http://www.toolchains.com/personal/blog
+Drop the comments. major goes into .bss. .bss is initialized to 0.
+
+> --- a/drivers/md/kcopyd.c
+> +++ b/drivers/md/kcopyd.c
+
+> -static int kcopyd_clients = 0;
+> +static int kcopyd_clients; /* = 0 */
+
+
+--===============65532623562011949==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============65532623562011949==--
