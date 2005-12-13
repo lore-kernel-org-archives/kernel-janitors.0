@@ -1,58 +1,42 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Mon, 19 Dec 2005 20:32:58 +0000
-Subject: [KJ] [Patch] Cleanup LINUX_VERSION_CODE in mtd/nand/au1550nd.
-Message-Id: <1135024378.22691.4.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============31922668403418397=="
+From: "Jaco Kroon" <jaco@kroon.co.za>
+Date: Tue, 13 Dec 2005 14:01:59 +0000
+Subject: [KJ] de-initialization of = 0 globals
+Message-Id: <63769.192.96.150.57.1134482519.squirrel@mail.interexcel.co.za>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1135024293.22691.1.camel@alice>
-In-Reply-To: <1135024293.22691.1.camel@alice>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============31922668403418397==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Has there been decided on a standard for these?  There are approximately
+800  (in just under 500 files) of these statements left in the kernel
+sources.
 
-hi,
+Currently these will read something like:
 
-this patch removes LINUX_VERSION_CODE 
-from au1550nd.c.
+static int variable_name = 0;
 
-Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
+Are we going with
 
---- linux-2.6.15-rc6/drivers/mtd/nand/au1550nd.c.orig	2005-12-19 21:05:06.000000000 +0100
-+++ linux-2.6.15-rc6/drivers/mtd/nand/au1550nd.c	2005-12-19 21:05:43.000000000 +0100
-@@ -20,18 +20,7 @@
- #include <linux/version.h>
- #include <asm/io.h>
- 
--/* fixme: this is ugly */
--#if LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 0)
- #include <asm/mach-au1x00/au1xxx.h>
--#else
--#include <asm/au1000.h>
--#ifdef CONFIG_MIPS_PB1550
--#include <asm/pb1550.h>
--#endif
--#ifdef CONFIG_MIPS_DB1550
--#include <asm/db1x00.h>
--#endif
--#endif
- 
- /*
-  * MTD structure for NAND controller
+static int variable_name;
+
+or
+
+static int variable_name; /* =0 */
+
+?
+
+Also, if I'm going to be sending patches for these it's obviously a patch
+per affected file, so if I'm going to be sending let's say a hundred of
+these patches it's still a mail per patch or do I just archive them
+somehow and attach them or do I place them on a webserver and mail a uri
+to them?
 
 
-
---===============31922668403418397==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-- 
+There are 10 kinds of people in the world, those who understand binary,
+and those who don't.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============31922668403418397==--
