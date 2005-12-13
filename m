@@ -1,128 +1,95 @@
-From: Jaco Kroon <jaco@kroon.co.za>
-Date: Tue, 13 Dec 2005 21:01:00 +0000
+From: Jesper Juhl <jesper.juhl@gmail.com>
+Date: Tue, 13 Dec 2005 21:43:13 +0000
 Subject: Re: [KJ] de-initialization of = 0 globals
-Message-Id: <439F368C.7040405@kroon.co.za>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============44750783457963084=="
+Message-Id: <9a8748490512131343w7dc2f323pd4cf13ef7ed0c369@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <63769.192.96.150.57.1134482519.squirrel@mail.interexcel.co.za>
 In-Reply-To: <63769.192.96.150.57.1134482519.squirrel@mail.interexcel.co.za>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+On 12/13/05, Jaco Kroon <jaco@kroon.co.za> wrote:
+> >>The simpler start is probably to generate one large patch for the Kernel
+> >>and separate patches for larger subsystems (IDE, SCSI, etc.) out of it
+> >>since you can just work with an editor.
+> >>And near the end you can send the last ones in one patch and see what
+> >>happens (in the best of all worlds, the patch is accept for -mm which
+> >>usually creates directly enough pressure so that subsystem maintainers
+> >>take it from there).
+> >>
+> >>Or you just send the one large patch and see what happens.
+> >
+> > Another way into the kernel for patches like this is via the Trivial
+> > Patch Monkey (aka Adrian Bunk) - trivial@rustcorp.com.au
+> >
+> > http://www.kernel.org/pub/linux/kernel/people/rusty/trivial/
+> > http://lkml.org/lkml/2005/11/7/159
+>
+> I guess that would be the way to go then.  Send one huge patch off to
+> trivial at rustcorp.
+>
+You can try it and if you are lucky Adrian will take it and take care
+of forwarding it for you.
 
---===============44750783457963084==
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-	micalg=sha1; boundary="------------ms070307080307020409070901"
+> Should I cc LKLM and KJ?
+>
+Personally I'd probably cc LKML to give other people a chance to
+comment, and also, Andrew Morton is pretty good at picking up atches
+like this from LKML and merging them into -mm.
+Btw; if the patch is large (>50Kb or so) then you should probably not
+include it in the mail, but instead put it online somewhere and
+include an URL to the patch instead or split it into parts and send a
+series of patches.
 
-This is a cryptographically signed message in MIME format.
+But in my oppinion, a much better approach (this is what I do myself
+and it usually works out well) would be to make patches for each
+subsystem (or each major dir in the kernel source) and then send the
+patches to LKML with cc to relevant maintainers.   Yes, it takes time
+to do it that way, but your success rate will probably be better and
+eople are likely to respond more ositively to that than just having
+one huge patch dumed on the mailing list.
 
---------------ms070307080307020409070901
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Before sending a patch series like this I usually do 2 or 3 patches
+for a few different areas, then send those to LKML with maintainers cc
+to get some feedback on wether or not such patches are wanted at all
+before I waste time doing it for the entire tree.
+In this case you could do one patch for everything inside kernel/ and
+another for everything inside something like drivers/usb (just icking
+two random locations with different people maintaining stuff in them).
+Then find out, for each file you change, who is the author of the file
+(looking at comments in the top of each file is usually a good place
+to start) and who is the maintainer (may be the author, may not be) -
+looking in MAINTAINERS and CREDITS is usually good spots to find out.
+Then mail the patches to LKML and cc the people you dug out.
+In the mails you send ask for feedback on wether or not such patches
+are wanted and offer to do the rest of the kernel source if they are.
+Also be sure to include the following info in each mail :
+ - What the patch does
+ - Why the patch does what it does
+ - What testing you've done (compile tested, booted a kernel with the
+patch, etc)
+ - A Signed-off-by line
+ - diffstat -p1 output for the patch
 
->>The simpler start is probably to generate one large patch for the Kernel
->>and separate patches for larger subsystems (IDE, SCSI, etc.) out of it
->>since you can just work with an editor.
->>And near the end you can send the last ones in one patch and see what
->>happens (in the best of all worlds, the patch is accept for -mm which
->>usually creates directly enough pressure so that subsystem maintainers
->>take it from there).
->>
->>Or you just send the one large patch and see what happens.
-> 
-> Another way into the kernel for patches like this is via the Trivial
-> Patch Monkey (aka Adrian Bunk) - trivial@rustcorp.com.au
-> 
-> http://www.kernel.org/pub/linux/kernel/people/rusty/trivial/
-> http://lkml.org/lkml/2005/11/7/159
+To see an example of this in action look at my recent submission of
+some pointer dereference cleanups.
+Here's my initial "test the waters" mail/patch :
+http://lkml.org/lkml/2005/12/6/362
+And since people responded well to that I then followed up with a
+series of patches that do more similar cleanup (and those patches have
+recently been merged) - here are a few of them :
+ http://lkml.org/lkml/2005/12/11/6
+ http://lkml.org/lkml/2005/12/11/9
 
-I guess that would be the way to go then.  Send one huge patch off to
-trivial at rustcorp.
 
-Should I cc LKLM and KJ?
-
--- 
-There are only 10 kinds of people in this world,
-  those that understand binary and those that don't.
-http://www.kroon.co.za/
-
---------------ms070307080307020409070901
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIII5TCC
-As0wggI2oAMCAQICAw3p1jANBgkqhkiG9w0BAQQFADBiMQswCQYDVQQGEwJaQTElMCMGA1UE
-ChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNv
-bmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwHhcNMDUwMTI4MjExMjIzWhcNMDYwMTI4MjExMjIz
-WjBCMR8wHQYDVQQDExZUaGF3dGUgRnJlZW1haWwgTWVtYmVyMR8wHQYJKoZIhvcNAQkBFhBq
-YWNvQGtyb29uLmNvLnphMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4CsLuOWD
-wimwAv4QLdlT99frJCwzUBVQNL7c7x4ufEquAH6RamWfQyQHzykEJM8NeMIrfb+k3fZEi+ZU
-g5sq2uIqzOuCJsIj0x3LnoydXTikbv1AFWQDEuqITlroA8bGJE/mMlbPrKyDACPo5cQAzUQz
-LAg7LQQQVkKNWH4eeXUwZ5lOZEWWno0P5DXHdSLQxCshgWVPRrbtKe25WGObqJMa//1T5qX8
-0mKIdAbHlz90BwgX/MjLp0BpXTii2653ScOujCLTC3cPdDUDK68qG7RqatVw5+HE/npJIWa1
-0TxJUp5Ii8nPbGPzpEWQmZ8TjkjMs26w80PPPKh2Vh2siQIDAQABoy0wKzAbBgNVHREEFDAS
-gRBqYWNvQGtyb29uLmNvLnphMAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQEEBQADgYEAqXNX
-QEMTVQoj3JoEwK9vlfqSVz5ZEUklpgEhwFJsD+PKa/LgUGVHk3Gw8wws4+wZxmpOsJ7vdiWL
-y8zlX7HfPWMcbibTi6C7nT6WahqdeAo3kVjhnMqJ3Sf6sX0JGl9bWfIhgmIVy/ZdM2ztrXwd
-rbWiT7un5lM05D4YPCNH9fcwggLNMIICNqADAgECAgMN6dYwDQYJKoZIhvcNAQEEBQAwYjEL
-MAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAq
-BgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA1MDEyODIx
-MTIyM1oXDTA2MDEyODIxMTIyM1owQjEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJl
-cjEfMB0GCSqGSIb3DQEJARYQamFjb0Brcm9vbi5jby56YTCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAOArC7jlg8IpsAL+EC3ZU/fX6yQsM1AVUDS+3O8eLnxKrgB+kWpln0Mk
-B88pBCTPDXjCK32/pN32RIvmVIObKtriKszrgibCI9Mdy56MnV04pG79QBVkAxLqiE5a6APG
-xiRP5jJWz6ysgwAj6OXEAM1EMywIOy0EEFZCjVh+Hnl1MGeZTmRFlp6ND+Q1x3Ui0MQrIYFl
-T0a27SntuVhjm6iTGv/9U+al/NJiiHQGx5c/dAcIF/zIy6dAaV04otuud0nDrowi0wt3D3Q1
-AyuvKhu0amrVcOfhxP56SSFmtdE8SVKeSIvJz2xj86RFkJmfE45IzLNusPNDzzyodlYdrIkC
-AwEAAaMtMCswGwYDVR0RBBQwEoEQamFjb0Brcm9vbi5jby56YTAMBgNVHRMBAf8EAjAAMA0G
-CSqGSIb3DQEBBAUAA4GBAKlzV0BDE1UKI9yaBMCvb5X6klc+WRFJJaYBIcBSbA/jymvy4FBl
-R5NxsPMMLOPsGcZqTrCe73Yli8vM5V+x3z1jHG4m04ugu50+lmoanXgKN5FY4ZzKid0n+rF9
-CRpfW1nyIYJiFcv2XTNs7a18Ha21ok+7p+ZTNOQ+GDwjR/X3MIIDPzCCAqigAwIBAgIBDTAN
-BgkqhkiG9w0BAQUFADCB0TELMAkGA1UEBhMCWkExFTATBgNVBAgTDFdlc3Rlcm4gQ2FwZTES
-MBAGA1UEBxMJQ2FwZSBUb3duMRowGAYDVQQKExFUaGF3dGUgQ29uc3VsdGluZzEoMCYGA1UE
-CxMfQ2VydGlmaWNhdGlvbiBTZXJ2aWNlcyBEaXZpc2lvbjEkMCIGA1UEAxMbVGhhd3RlIFBl
-cnNvbmFsIEZyZWVtYWlsIENBMSswKQYJKoZIhvcNAQkBFhxwZXJzb25hbC1mcmVlbWFpbEB0
-aGF3dGUuY29tMB4XDTAzMDcxNzAwMDAwMFoXDTEzMDcxNjIzNTk1OVowYjELMAkGA1UEBhMC
-WkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1Ro
-YXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMIGfMA0GCSqGSIb3DQEBAQUAA4GN
-ADCBiQKBgQDEpjxVc1X7TrnKmVoeaMB1BHCd3+n/ox7svc31W/Iadr1/DDph8r9RzgHU5VAK
-MNcCY1osiRVwjt3J8CuFWqo/cVbLrzwLB+fxH5E2JCoTzyvV84J3PQO+K/67GD4Hv0CAAmTX
-p6a7n2XRxSpUhQ9IBH+nttE8YQRAHmQZcmC3+wIDAQABo4GUMIGRMBIGA1UdEwEB/wQIMAYB
-Af8CAQAwQwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybC50aGF3dGUuY29tL1RoYXd0ZVBl
-cnNvbmFsRnJlZW1haWxDQS5jcmwwCwYDVR0PBAQDAgEGMCkGA1UdEQQiMCCkHjAcMRowGAYD
-VQQDExFQcml2YXRlTGFiZWwyLTEzODANBgkqhkiG9w0BAQUFAAOBgQBIjNFQg+oLLswNo2as
-Zw9/r6y+whehQ5aUnX9MIbj4Nh+qLZ82L8D0HFAgk3A8/a3hYWLD2ToZfoSxmRsAxRoLgnSe
-JVCUYsfbJ3FXJY3dqZw5jowgT2Vfldr394fWxghOrvbqNOUQGls1TXfjViF4gtwhGTXeJLHT
-HUb/XV9lTzGCAzswggM3AgEBMGkwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBD
-b25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
-bCBJc3N1aW5nIENBAgMN6dYwCQYFKw4DAhoFAKCCAacwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMDUxMjEzMjEwMTAwWjAjBgkqhkiG9w0BCQQxFgQU0gDR
-yfq38FhWOht0xDP15dj2fdQwUgYJKoZIhvcNAQkPMUUwQzAKBggqhkiG9w0DBzAOBggqhkiG
-9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgweAYJKwYB
-BAGCNxAEMWswaTBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcg
-KFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3Vpbmcg
-Q0ECAw3p1jB6BgsqhkiG9w0BCRACCzFroGkwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRo
-YXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBG
-cmVlbWFpbCBJc3N1aW5nIENBAgMN6dYwDQYJKoZIhvcNAQEBBQAEggEArp7gRgJTHgwaiw58
-9AY8AUuQE4vetVQs53CZ0mATuq7GIJtwUZ+2ueH0WLg63rjR8rN1kaSwwtX68NYazvcSLRba
-N3e1AzTTkTdTXOF3h9FEBDatULwgj7/4G0ZWjJGjwpUFK7Ce9Kfw+bDO1MaUeezpPpf679NC
-7uk8DBfHSLUqCNkfk27ydrbW4g1yUovhTlVDR0c9n9z4ybyvjnyua/+G4o+cy4XsSppn7LdP
-UWq6ySNJpIv/FfTD6Cgq8QiFE0FcScliEwjGloNzV31fG1AT/haLUIirwBMtABeXknKXF4gW
-9bsRgSe3DfThzHSY9O0oxEm2ZTeKlILo6dZvyAAAAAAAAA==
---------------ms070307080307020409070901--
-
---===============44750783457963084==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============44750783457963084==--
