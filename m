@@ -1,41 +1,47 @@
-From: "Jaco Kroon" <jaco@kroon.co.za>
-Date: Tue, 20 Dec 2005 06:46:43 +0000
-Subject: [KJ] [PATCH] Remove unneeded initialisation
-Message-Id: <15054.192.96.150.57.1135061203.squirrel@mail.interexcel.co.za>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Wed, 14 Dec 2005 16:52:08 +0000
+Subject: [KJ] [Patch] check u32 < 0 in hwmon/fscpos.c
+Message-Id: <1134579128.24284.4.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============44866154943923275=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Initialising global variables causes them to be placed in .data, thus
-variables that are initialised to 0 should rather not be initialised at
-all, causing them to be placed in .bss.
+--===============44866154943923275==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The is as per the KJ TODO list which can be found at
-http://janitor.kernelnewbies.org/TODO:
+hi,
 
---- linux-2.6.15-rc5.orig/fs/cifs/cifsfs.c      2005-12-14
-10:14:58.000000000 +0200
-+++ linux-2.6.15-rc5/fs/cifs/cifsfs.c   2005-12-20 08:33:23.000000000 +0200
-@@ -47,9 +47,9 @@
- static struct quotactl_ops cifs_quotactl_ops;
- #endif
+yet another check < 0. Since data->pwm is u8 i removed the
+check. Maybe v should be u8 and simple_strtoul() casted to u8,
+so we can remove both checks. If this is the case, i would create
+a patch to convert all those cases in the file.
 
--int cifsFYI = 0;
-+int cifsFYI;
- int cifsERROR = 1;
--int traceSMB = 0;
-+int traceSMB;
- unsigned int oplockEnabled = 1;
- unsigned int experimEnabled = 0;
- unsigned int linuxExtEnabled = 1;
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.15-rc5-git2/drivers/hwmon/fscpos.c.orig	2005-12-14 17:45:47.000000000 +0100
++++ linux-2.6.15-rc5-git2/drivers/hwmon/fscpos.c	2005-12-14 17:45:53.000000000 +0100
+@@ -229,7 +229,6 @@ static ssize_t set_pwm(struct i2c_client
+ 	unsigned long v = simple_strtoul(buf, NULL, 10);
+ 
+ 	/* Range: 0..255 */
+-	if (v < 0) v = 0;
+ 	if (v > 255) v = 255;
+ 
+ 	down(&data->update_lock);
 
 
--- 
-There are 10 kinds of people in the world, those who understand binary,
-and those who don't.
+
+--===============44866154943923275==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============44866154943923275==--
