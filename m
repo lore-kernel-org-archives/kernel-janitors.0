@@ -1,44 +1,40 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 10 Dec 2005 16:30:16 +0000
-Subject: Re: [KJ] TODO list addition (struct optimization)
-Message-Id: <20051210163016.GD2003@mipter.zuzino.mipt.ru>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 16 Dec 2005 00:05:49 +0000
+Subject: [KJ] [Patch] Check unsigned < 0 in /drivers/net/acenic.c
+Message-Id: <1134691549.14588.3.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40663951611822258=="
+Content-Type: multipart/mixed; boundary="===============91183444102608657=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
-In-Reply-To: <20051208101331.GA21327@rhlx01.fht-esslingen.de>
 To: kernel-janitors@vger.kernel.org
 
---===============40663951611822258==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============91183444102608657==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 08, 2005 at 11:13:31AM +0100, Andreas Mohr wrote:
-> Examine struct definitions used in kernel files and kernel driver files
-> on whether they have optimized layout.
-> Very frequently accessed struct member variables (e.g. locks or I/O address
-> base values) should be at the first struct position.
-> This will save additional asm opcodes (at least on x86) and code will thus
-> be faster and smaller.
+hi,
 
-Not necessarily true.
+since read_eeprom_byte() returns a negative value on an error
+condition, tmp should be signed so the comparisons in line 1007
+and 1017 can catch the error. 
 
-Suppose you have a group of struct members which are mostly written in
-sequence. You move one member out of cluster. Now you produce 2 dirty
-cachelines after each sequence.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Or a split group of mostly-read members will require filling of 2
-cachelines instead of one.
-
-This stuff is not all clear and not obvious. You may want to look at
-
-	[PATCH] reorder struct files_struct
-
-P. S.: search on MARC is down, so I can't find more examples of what was
-       already done.
+--- linux-2.6.15-rc5-git5/drivers/net/acenic.c.orig	2005-12-16 01:01:44.000000000 +0100
++++ linux-2.6.15-rc5-git5/drivers/net/acenic.c	2005-12-16 01:01:58.000000000 +0100
+@@ -905,7 +905,8 @@ static int __devinit ace_init(struct net
+ 	struct pci_dev *pdev;
+ 	unsigned long myjif;
+ 	u64 tmp_ptr;
+-	u32 tig_ver, mac1, mac2, tmp, pci_state;
++	u32 tig_ver, mac1, mac2, pci_state;
++	int tmp;
+ 	int board_idx, ecode = 0;
+ 	short i;
+ 	unsigned char cache_size;
 
 
---===============40663951611822258==
+
+--===============91183444102608657==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40663951611822258==--
+--===============91183444102608657==--
