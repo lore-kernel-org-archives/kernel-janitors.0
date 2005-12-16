@@ -1,30 +1,57 @@
-From: info@jjduy.com
-Date: Sun, 25 Dec 2005 14:52:12 +0000
-Subject: 隣の芝生
-Message-Id: <20051225145212.11648.qmail@mail.jjduy.com>
+From: "Kaya" <eviashey@azet.sk>
+Date: Fri, 16 Dec 2005 04:55:20 +0000
+Subject: RE: Present the gift of chic and class.
+Message-Id: <29d801c60237$96ededf0$51450ba9@eviashey>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-2022-jp"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-初めまして。【隣の芝生の代表、美由紀】と申します。
-このサイトに出資してるので特別に許可を頂き、募集します。
-割切った交際を求める年収1000万以上の女性との逆サポ○ト交際を
-してみませんか？
-◎入会金・会費等すべて女性負担、男性はまったく登録料金が掛か
-りません。
-◎月1〜2回(女性による、又は話し合いで)
-◎割切った関係、結婚前提、ビジネスパートナー、女性の目的も
-様々です
-http://www.tonashiba1.net/?shibahu
-裕福な女性会員は入会金・会費を払って登録しています。
+Honey,
+
+Stop being busy for one minute and go to this e-store- I forwarded it to
+you!
+
+Truly and always yours,
+
+Kaya
+
+ -------Original Message-------
+ 
+From: Macy [mailto:mingw-dvlpr@lists.sourceforge.net] 
+Sent: Friday, December 02, 2005 4:55 PM
+To: Kaya
+Subject: 
+
+ 
+
+I see that you have a superb style and also how you welcome a terrific
+value.  I'm sad seeing your look of disappointment whenever we go to the
+mall and you can't splurge on luxury things. Specials! Sexy watches
+available just for you at cheap prices!
+http://in.geocities.com/milford_rones/
 
 
+This company has been in business for over 15 years and can count on lots
+of happy patrons.  You definitely deserve to own one of these finely crafted
+pieces.
+
+Since you've been so considerate to me, I wanted to share this great deal I
+found on this website.
 
 
+With all my love,
 
-拒否：stop@tonashiba1.net
+Den
+
+
+be at something mum one another's whole throats, but today there existed
+pocket of the exhaustion ulster beneath him for something suffer that he had
+discovered there while he lay between the paroxysms of fever. Presently jHf
+ruler of my late experience.
+
+
 
 
 -------------------------------------------------------
