@@ -1,51 +1,31 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 16 Dec 2005 13:38:05 +0000
-Subject: [KJ] [Patch] Check unsigned < 0 in media/video/mxb.c
-Message-Id: <1134740285.9464.1.camel@alice>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Fri, 16 Dec 2005 14:25:58 +0000
+Subject: Re: [KJ] [Patch] Check unsigned < 0 in media/video/hexium_gemini.c
+Message-Id: <20051216142558.GA7937@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============68062261827451698=="
+Content-Type: multipart/mixed; boundary="===============60780156437867605=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1134733947.8536.2.camel@alice>
 In-Reply-To: <1134733947.8536.2.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============68062261827451698==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============60780156437867605==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,
+On 2005-12-16 at 12:52:26 +0100, Eric Sesterhenn / snakebyte <snakebyte@gmx.de> wrote:
+> this fixes another icc warning. index is unsigned and only
+> used as an array index, so it should be safe to remove
+> the comparison.
 
-index is unsigned and seems to be used only as an
-array index, so it should be safe to remove the
-two comparisons.
+If you plan to send in lots of these patches, try to split them up by
+subsystem (here e.g. all in drivers/media or drivers/media/video) as
+they're relatively trivial and do not change a lot of code. It will make
+the lives of maintainers much easier. ;-)
 
-Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
+Cheers, Tobias
 
-
---- linux-2.6.15-rc5-git2/drivers/media/video/mxb.c.orig	2005-12-16 14:34:10.000000000 +0100
-+++ linux-2.6.15-rc5-git2/drivers/media/video/mxb.c	2005-12-16 14:34:37.000000000 +0100
-@@ -521,7 +521,7 @@ static int mxb_ioctl(struct saa7146_fh *
- 		struct v4l2_input *i = arg;
- 		
- 		DEB_EE(("VIDIOC_ENUMINPUT %d.\n",i->index));
--		if( i->index < 0 || i->index >= MXB_INPUTS) {
-+		if( i->index >= MXB_INPUTS) {
- 			return -EINVAL;
- 		}
- 		memcpy(i, &mxb_inputs[i->index], sizeof(struct v4l2_input));
-@@ -889,7 +889,7 @@ static int mxb_ioctl(struct saa7146_fh *
- 	{
- 		struct v4l2_audio *a = arg;
- 
--		if( a->index < 0 || a->index > MXB_INPUTS ) {
-+		if( a->index > MXB_INPUTS ) {
- 	 		DEB_D(("VIDIOC_G_AUDIO %d out of range.\n",a->index));
- 			return -EINVAL;
- 		}
-
-
-
---===============68062261827451698==
+--===============60780156437867605==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +36,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============68062261827451698==--
+--===============60780156437867605==--
