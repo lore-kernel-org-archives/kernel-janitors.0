@@ -1,30 +1,58 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sun, 18 Dec 2005 23:07:55 +0000
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Sun, 18 Dec 2005 23:15:53 +0000
 Subject: Re: [KJ] [Patch 1/5] Cleanup LINUX_VERSION_CODE in drivers/net
-Message-Id: <20051218230755.GO2361@parisc-linux.org>
+Message-Id: <1134947753.7751.0.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============89923708407486025=="
+Content-Type: multipart/mixed; boundary="===============36568914602724023=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1134946371.7394.5.camel@alice>
 In-Reply-To: <1134946371.7394.5.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============89923708407486025==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============36568914602724023==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 18, 2005 at 11:52:51PM +0100, Eric Sesterhenn / snakebyte wrote:
-> this removes LINUX_VERSION_CODE checks in typhoon.c
-> -#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 5, 28)
-> -#define typhoon_synchronize_irq(x) synchronize_irq()
-> -#else
->  #define typhoon_synchronize_irq(x) synchronize_irq(x)
-> -#endif
+hi,
 
-Probably you should remove typhoon_synchronize_irq altogether.
+> Probably you should remove typhoon_synchronize_irq altogether.
+
+updated patch below.
+
+Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.15-rc5-git5/drivers/net/typhoon.c.orig	2005-12-18
+23:42:15.000000000 +0100
++++ linux-2.6.15-rc5-git5/drivers/net/typhoon.c	2005-12-19
+00:13:32.000000000 +0100
+@@ -333,12 +333,6 @@ enum state_values {
+ #define TYPHOON_RESET_TIMEOUT_NOSLEEP	((6 * 1000000) / TYPHOON_UDELAY)
+ #define TYPHOON_WAIT_TIMEOUT		((1000000 / 2) / TYPHOON_UDELAY)
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2, 5, 28)
+-#define typhoon_synchronize_irq(x) synchronize_irq()
+-#else
+-#define typhoon_synchronize_irq(x) synchronize_irq(x)
+-#endif
+-
+ #if defined(NETIF_F_TSO)
+ #define skb_tso_size(x)		(skb_shinfo(x)->tso_size)
+ #define TSO_NUM_DESCRIPTORS	2
+@@ -2172,7 +2166,7 @@ typhoon_close(struct net_device *dev)
+ 		printk(KERN_ERR "%s: unable to stop runtime\n", dev->name);
+ 
+ 	/* Make sure there is no irq handler running on a different CPU. */
+-	typhoon_synchronize_irq(dev->irq);
++	synchronize_irq(dev->irq);
+ 	free_irq(dev->irq, dev);
+ 
+ 	typhoon_free_rx_rings(tp);
 
 
---===============89923708407486025==
+
+
+
+--===============36568914602724023==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -35,4 +63,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============89923708407486025==--
+--===============36568914602724023==--
