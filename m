@@ -1,51 +1,55 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Wed, 14 Dec 2005 15:26:14 +0000
-Subject: Re: [KJ] [PATCH] crypto/aes: add unsigned to ints that can't go
-Message-Id: <20051214162614.2085b1b4@lucky.kitzblitz>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Sun, 18 Dec 2005 22:53:51 +0000
+Subject: [KJ] [Patch 2/5] Cleanup LINUX_VERSION_CODE in drivers/net
+Message-Id: <1134946431.7394.7.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============26291364964596209=="
+Content-Type: multipart/mixed; boundary="===============65305518871492119=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051209155957.39daf59d@lucky.kitzblitz>
-In-Reply-To: <20051209155957.39daf59d@lucky.kitzblitz>
 To: kernel-janitors@vger.kernel.org
 
---===============26291364964596209==
-Content-Type: text/plain; charset=US-ASCII
+--===============65305518871492119==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-* Alexey Dobriyan <adobriyan@gmail.com>:
-> On Fri, Dec 09, 2005 at 03:59:57PM +0100, Nicolas Kaiser wrote:
-> > * Key length can't go negative, "unsigned int" is preferred to "int"
-> > * E-Key is most frequently accessed struct member
-> 
-> I've checked alpha and s390 (defconfigs):
-> 
-> * just rearranging doesn't change anything wrt size(1)
+hi,
 
-At my place (ppc32) it does:
+this removes LINUX_VERSION_CODE checks in irda/vlsi_ir.h
 
-15069   crypto/aes.orig.ko
-14973   crypto/aes.ko
+Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-14224   crypto/aes.orig.o
-14152   crypto/aes.o
+--- linux-2.6.15-rc5-git5/drivers/net/irda/vlsi_ir.h.orig	2005-12-18 23:45:15.000000000 +0100
++++ linux-2.6.15-rc5-git5/drivers/net/irda/vlsi_ir.h	2005-12-18 23:46:10.000000000 +0100
+@@ -54,26 +54,9 @@ typedef void irqreturn_t;
+  */
+ #include <linux/version.h>
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+-
+-/* PDE() introduced in 2.5.4 */
+-#ifdef CONFIG_PROC_FS
+-#define PDE(inode) ((inode)->u.generic_ip)
+-#endif
+-
+-/* irda crc16 calculation exported in 2.5.42 */
+-#define irda_calc_crc16(fcs,buf,len)	(GOOD_FCS)
+-
+-/* we use this for unified pci device name access */
+-#define PCIDEV_NAME(pdev)	((pdev)->name)
+-
+-#else /* 2.5 or later */
+-
+ /* whatever we get from the associated struct device - bus:slot:dev.fn id */
+ #define PCIDEV_NAME(pdev)	(pci_name(pdev))
+ 
+-#endif
+-
+ /* ================================================================ */
+ 
+ /* non-standard PCI registers */
 
-However, I guess the explanation was not quite right: having had a look
-at the asm output, it looks to me like it's the D-Key who actually
-benefits from a smaller offset.
 
-> * just adding "unsigned" increases size of aes.o. In alpha case by 0x30
->   bytes.
 
-That means Jeff Garzik is wrong, and the janitor's TODO list needs to
-be changed? ;)
-(Quote: "unsigned int" is preferred to "int", it generates better asm
-code on all platforms except sh5.)
-
-Cheers,
-n.
-
---===============26291364964596209==
+--===============65305518871492119==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +60,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============26291364964596209==--
+--===============65305518871492119==--
