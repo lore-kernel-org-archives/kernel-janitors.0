@@ -1,79 +1,110 @@
-From: "Noah Diaz" <noahdiaz@nus.edu.sg>
-Date: Sun, 18 Dec 2005 12:52:26 +0000
-Subject: Stocks in Play
-Message-Id: <43A55B8A.D480F898@nus.edu.sg>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Mon, 19 Dec 2005 00:27:44 +0000
+Subject: [KJ] [Patch 6/5] Cleanup LINUX_VERSION_CODE in drivers/net
+Message-Id: <1134952064.8352.4.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============087740800861641599=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Issue: December 2005,
+--===============087740800861641599==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Make sure you catch this one before the year ends, Can make you
-very happy this holiday season.
+> attached is an updated patch for vlsi_ir.h which also removes
+> the PCIDE_NAME macro, i will reply to this mail with a patch to change
+> the vlsi_ir.c 
 
-PHINDER TECHNOLOGIES (OTC BB:PHDTF.OB)
-Symbol:PHTDF.OB
-Current Price: $.18
+here is the cleanup to vlsi_ir.c
 
-TORONTO, Dec. 9 /PRNewswire-FirstCall/ - The Company reported today that
-revenues for the month of October were $321,190.59 and ($131,518.02)
-respectively. The Company notes that cost of sales were reduced to 86.7% of
-revenue for the month of October which compared to 96.9% for the previous
-quarter ending September 30, 2005.
+Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Gross Profit was 13.3% of revenue compared to 3.1% of revenue
-for the previous quarter.
+--- linux-2.6.15-rc5-git5/drivers/net/irda/vlsi_ir.c.orig	2005-12-19 01:19:01.000000000 +0100
++++ linux-2.6.15-rc5-git5/drivers/net/irda/vlsi_ir.c	2005-12-19 01:20:42.000000000 +0100
+@@ -167,7 +167,7 @@ static void vlsi_proc_pdev(struct seq_fi
+ 	unsigned i;
+ 
+ 	seq_printf(seq, "\n%s (vid/did: %04x/%04x)\n",
+-		   PCIDEV_NAME(pdev), (int)pdev->vendor, (int)pdev->device);
++		   pci_name(pdev), (int)pdev->vendor, (int)pdev->device);
+ 	seq_printf(seq, "pci-power-state: %u\n", (unsigned) pdev->current_state);
+ 	seq_printf(seq, "resources: irq=%u / io=0x%04x / dma_mask=0x%016Lx\n",
+ 		   pdev->irq, (unsigned)pci_resource_start(pdev, 0), (unsigned long long)pdev->dma_mask);
+@@ -1402,7 +1402,7 @@ static void vlsi_tx_timeout(struct net_d
+ 
+ 	if (vlsi_start_hw(idev))
+ 		IRDA_ERROR("%s: failed to restart hw - %s(%s) unusable!\n",
+-			   __FUNCTION__, PCIDEV_NAME(idev->pdev), ndev->name);
++			   __FUNCTION__, pci_name(idev->pdev), ndev->name);
+ 	else
+ 		netif_start_queue(ndev);
+ }
+@@ -1645,7 +1645,7 @@ vlsi_irda_probe(struct pci_dev *pdev, co
+ 		pdev->current_state = 0; /* hw must be running now */
+ 
+ 	IRDA_MESSAGE("%s: IrDA PCI controller %s detected\n",
+-		     drivername, PCIDEV_NAME(pdev));
++		     drivername, pci_name(pdev));
+ 
+ 	if ( !pci_resource_start(pdev,0)
+ 	     || !(pci_resource_flags(pdev,0) & IORESOURCE_IO) ) {
+@@ -1730,7 +1730,7 @@ static void __devexit vlsi_irda_remove(s
+ 
+ 	pci_set_drvdata(pdev, NULL);
+ 
+-	IRDA_MESSAGE("%s: %s removed\n", drivername, PCIDEV_NAME(pdev));
++	IRDA_MESSAGE("%s: %s removed\n", drivername, pci_name(pdev));
+ }
+ 
+ #ifdef CONFIG_PM
+@@ -1750,7 +1750,7 @@ static int vlsi_irda_suspend(struct pci_
+ 
+ 	if (!ndev) {
+ 		IRDA_ERROR("%s - %s: no netdevice \n",
+-			   __FUNCTION__, PCIDEV_NAME(pdev));
++			   __FUNCTION__, pci_name(pdev));
+ 		return 0;
+ 	}
+ 	idev = ndev->priv;	
+@@ -1761,7 +1761,7 @@ static int vlsi_irda_suspend(struct pci_
+ 			pdev->current_state = state.event;
+ 		}
+ 		else
+-			IRDA_ERROR("%s - %s: invalid suspend request %u -> %u\n", __FUNCTION__, PCIDEV_NAME(pdev), pdev->current_state, state.event);
++			IRDA_ERROR("%s - %s: invalid suspend request %u -> %u\n", __FUNCTION__, pci_name(pdev), pdev->current_state, state.event);
+ 		up(&idev->sem);
+ 		return 0;
+ 	}
+@@ -1789,7 +1789,7 @@ static int vlsi_irda_resume(struct pci_d
+ 
+ 	if (!ndev) {
+ 		IRDA_ERROR("%s - %s: no netdevice \n",
+-			   __FUNCTION__, PCIDEV_NAME(pdev));
++			   __FUNCTION__, pci_name(pdev));
+ 		return 0;
+ 	}
+ 	idev = ndev->priv;	
+@@ -1797,7 +1797,7 @@ static int vlsi_irda_resume(struct pci_d
+ 	if (pdev->current_state == 0) {
+ 		up(&idev->sem);
+ 		IRDA_WARNING("%s - %s: already resumed\n",
+-			     __FUNCTION__, PCIDEV_NAME(pdev));
++			     __FUNCTION__, pci_name(pdev));
+ 		return 0;
+ 	}
+ 	
 
-"Overall we are very encouraged with the opening performance of the 3rd
-quarter and we anticipate continued good results in the months ahead."
-stated Lex van Arem
-
-PHINDER TECHNOLOGIES is a provider of web-based technologies for small
-business. The company utilizes a highly systemic and efficient telephonic
-marketing strategy to reach and convert large numbers of prospective small
-business owners into users of entry-level e-commerce, hosting, and
-e-marketing solutions.
-
-A world class tech support team has designed an innovative suite of turnkey
-web design templates which empower small business owners to quickly
-establish a personalized online presence. Management is focused on building
-sustained "engagements" with the small business owner, positioning the
-company to become a trusted technology consultant, anticipating scalable
-opportunities to increase the average sales to its existing customer base
-while ramping its acquisition of new customers cost effectively.
 
 
-_____________________________________________________
+--===============087740800861641599==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Disc|aimer:
-Informati0n within this emai| c0ntains "f0rward_l00king
-st4tements" within the meaning of Sect10n 27A of the
-Secur1t1es Act of 1933 and Sect10n 21B of the S3cur1t1es
-Exchange Act of 1934. Any st4tements that express or
-inv0lve discussi0ns with respect to predicti0ns, g0als,
-expectati0ns, be|iefs, plans, pr0jecti0ns, objectives
-,assumptions or future events or performance are not
-statements of hist0rical fact and may be "f0rw4rd
-l00king statements."In compliance with Sect10n 17(b),
-we disclose the payment of 5OOO do||ars pri0r to the
-publication of this report. Be aware of an inherent
-conflict of interest resulting from such payment.
-
-community create like for only futurists of access these theses several
-the economically, that telecommunications even and the nation, ten perspective
-time. than connected and of these certainly have pre-empted for understand
-and and has goods another in parents conferences 
-
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://ads.osdn.com/?ad_idv37&alloc_id865&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============087740800861641599==--
