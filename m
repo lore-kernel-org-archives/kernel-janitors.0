@@ -1,62 +1,67 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 20 Dec 2005 16:43:20 +0000
-Subject: [KJ] [Patch] Remove MOD_{INC,DEC}_USE_COUNT in em28xx-i2c
-Message-Id: <1135097000.27486.3.camel@alice>
+Date: Tue, 20 Dec 2005 16:45:11 +0000
+Subject: [KJ] [Patch] Remove MOD_{INC,DEC}_USE_COUNT in pcf8563.c
+Message-Id: <1135097111.27486.6.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88537590209952488=="
+Content-Type: multipart/mixed; boundary="===============11684129709799018=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1135097000.27486.3.camel@alice>
+In-Reply-To: <1135097000.27486.3.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============88537590209952488==
+--===============11684129709799018==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-em28xx-i2c.c is one of the last two users of 
-MOD_{INC,DEC}_USE_COUNT in the kernel, this patch removes
-its usage. 
+this is removes the last usage of MOD_{INC,DEC}_USE_COUNT
+from the kernel. 
 
 Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-rc6/drivers/media/video/em28xx/em28xx-i2c.c.orig	2005-12-20 17:35:17.000000000 +0100
-+++ linux-2.6.15-rc6/drivers/media/video/em28xx/em28xx-i2c.c	2005-12-20 17:35:36.000000000 +0100
-@@ -398,18 +398,6 @@ static u32 functionality(struct i2c_adap
- 	return I2C_FUNC_SMBUS_EMUL;
- }
+--- linux-2.6.15-rc6/arch/cris/arch-v32/drivers/pcf8563.c.orig	2005-12-20 17:27:41.000000000 +0100
++++ linux-2.6.15-rc6/arch/cris/arch-v32/drivers/pcf8563.c	2005-12-20 17:28:22.000000000 +0100
+@@ -48,14 +48,11 @@ static const unsigned char days_in_month
+ 	{ 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
  
--#ifndef I2C_PEC
--static void inc_use(struct i2c_adapter *adap)
--{
--	MOD_INC_USE_COUNT;
--}
--
--static void dec_use(struct i2c_adapter *adap)
--{
--	MOD_DEC_USE_COUNT;
--}
--#endif
--
- static int em28xx_set_tuner(int check_eeprom, struct i2c_client *client)
- {
- 	struct em28xx *dev = client->adapter->algo_data;
-@@ -480,12 +468,7 @@ static struct i2c_algorithm em28xx_algo 
+ int pcf8563_ioctl(struct inode *, struct file *, unsigned int, unsigned long);
+-int pcf8563_open(struct inode *, struct file *);
+-int pcf8563_release(struct inode *, struct file *);
+ 
+ static struct file_operations pcf8563_fops = {
+ 	owner: THIS_MODULE,
+ 	ioctl: pcf8563_ioctl,
+-	open: pcf8563_open,
+-	release: pcf8563_release,
++	open: nonseekable_open,
  };
  
- static struct i2c_adapter em28xx_adap_template = {
--#ifdef I2C_PEC
- 	.owner = THIS_MODULE,
--#else
--	.inc_use = inc_use,
--	.dec_use = dec_use,
--#endif
- #ifdef I2C_CLASS_TV_ANALOG
- 	.class = I2C_CLASS_TV_ANALOG,
- #endif
+ unsigned char
+@@ -322,19 +319,5 @@ pcf8563_ioctl(struct inode *inode, struc
+ 	return 0;
+ }
+ 
+-int
+-pcf8563_open(struct inode *inode, struct file *filp)
+-{
+-	MOD_INC_USE_COUNT;
+-	return 0;
+-}
+-
+-int
+-pcf8563_release(struct inode *inode, struct file *filp)
+-{
+-	MOD_DEC_USE_COUNT;
+-	return 0;
+-}
+-
+ module_init(pcf8563_init);
+ module_exit(pcf8563_exit);
 
 
 
---===============88537590209952488==
+--===============11684129709799018==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -67,4 +72,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88537590209952488==--
+--===============11684129709799018==--
