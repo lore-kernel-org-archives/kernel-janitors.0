@@ -1,58 +1,42 @@
-From: Jesper Juhl <jesper.juhl@gmail.com>
-Date: Tue, 27 Dec 2005 08:42:59 +0000
-Subject: Re: [KJ] Kernel Development Environment
-Message-Id: <9a8748490512270042q715ba02u736aa8e22e8b6259@mail.gmail.com>
+From: "Jaco Kroon" <jaco@kroon.co.za>
+Date: Tue, 20 Dec 2005 07:59:23 +0000
+Subject: [KJ] [PATCH] Deinitialise static variables in net/core/pktgen.c
+Message-Id: <17299.192.96.150.57.1135065563.squirrel@mail.interexcel.co.za>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c71658670512251844i58587d82h9181cf28e74a2017@mail.gmail.com>
-In-Reply-To: <c71658670512251844i58587d82h9181cf28e74a2017@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: kernel-janitors@lists.osdl.org, lkml@vger.kernel.org
 
-On 12/26/05, Vishal Soni <vishalrsoni@gmail.com> wrote:
-> Hi,
->
->  I am new to kernel development. I am have some questions.
->
->  1. Is there any documentation on how to setup kernel development
-> environment?
+static variables should not be explicitly initialised to 0.  This causes
+them to be placed in .data instead of .bss.  This patch de-initialises 3
+static variables in net/core/pktgen.c.
 
-Well, there are some documents in Documentation/ that you'll probably
-find useful - start by reading the HOWTO (
-http://sosdg.org/~coywolf/lxr/source/Documentation/HOWTO ), and then
-move on to the various documents it refers you to. That should get you
-started.
+There are approximately 800 more such variables in the source tree
+(2.6.15rc5).  If there is more interrest I'd be willing to track down the
+rest of these as well and de-initialise them as well.
 
-As for setting up a "development environment", well, there's really
-not much to that, all you really need is a copy of the kernel source,
-gcc/make etc, the diff and patch tools and a copy of your favorite
-text editor for making changes.
+--- linux-2.6.15-rc5.orig/net/core/pktgen.c     2005-12-14
+10:15:12.000000000 +0200
++++ linux-2.6.15-rc5/net/core/pktgen.c  2005-12-20 09:50:28.000000000 +0200
+@@ -487,9 +487,9 @@
 
+ /* Module parameters, defaults. */
+ static int pg_count_d = 1000; /* 1000 pkts by default */
+-static int pg_delay_d = 0;
+-static int pg_clone_skb_d = 0;
+-static int debug = 0;
++static int pg_delay_d;
++static int pg_clone_skb_d;
++static int debug;
 
->  2. Do kerenl developers use emulators (bochs, qeum) for kernel development?
+ static DECLARE_MUTEX(pktgen_sem);
+ static struct pktgen_thread *pktgen_threads = NULL;
 
-Some do, some don't.
-
-> What are most commonly used emulators?
-
-I doubt anyone has actual numbers, but at a guess I'd say that UML
-(User Mode Linux) and Xen are two of the most commonly used tools in
-this area.
-
->  3. How do i take to kernel source for kernel.org and setup the compiled
-> kernel on a new box. I am instrested in how can I create a bare bone file
-> system on the development box to do kernel development.
->
-Perhaps this will help you:
-  http://www.linuxtux.org/~juhl/2.6-kernel-build.txt
-
-
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
-
+-- 
+There are 10 kinds of people in the world, those who understand binary,
+and those who don't.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
