@@ -1,50 +1,59 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 10 Dec 2005 18:41:46 +0000
-Subject: Re: [KJ] drivers/net/cassini.c: fix undefined variable
-Message-Id: <20051210184146.GA2394@mipter.zuzino.mipt.ru>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Tue, 20 Dec 2005 13:15:56 +0000
+Subject: [KJ] [Patch 2/5] Cleanup MIN/MAX Macro usage in eicon/di.c
+Message-Id: <1135084556.24065.6.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70139133964820299=="
+Content-Type: multipart/mixed; boundary="===============091939695370362617=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4395CF0F.9070206@bfs.de>
-In-Reply-To: <4395CF0F.9070206@bfs.de>
 To: kernel-janitors@vger.kernel.org
 
---===============70139133964820299==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============091939695370362617==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Dec 10, 2005 at 07:05:11PM +0100, walter harms wrote:
-> Hi Alexey,
-> lets say i tried and it worked.
+hi,
 
-On i386. On alpha you added the warning. And %llx is 4 times more common
-than %Lx.
+This patch changes eicon/di.c from MIN/MAX usage
+to min/max.
 
-> Alexey Dobriyan wrote:
-> >On Tue, Dec 06, 2005 at 06:49:03PM +0100, walter harms wrote:
-> >>The variable compwb is not defined if USE_TX_COMPWB is not defined.
-> >>Also fixed is a trivial format warning.
-> >
-> >>--- linux-2.6.14/drivers/net/cassini.c.bak
-> >>+++ linux-2.6.14/drivers/net/cassini.c
-> >>@@ -1922,11 +1922,12 @@
-> >> 		   u32 status)
-> >> {
-> >>         int limit, ring;
-> >>+	u64 compwb=0;
-> >> #ifdef USE_TX_COMPWB
-> >>-	u64 compwb = le64_to_cpu(cp->init_block->tx_compwb);
-> >>+	compwb = le64_to_cpu(cp->init_block->tx_compwb);
-> >> #endif
-> >> 	if (netif_msg_intr(cp))
-> >>-		printk(KERN_DEBUG "%s: tx interrupt, status: 0x%x, %lx\n",
-> >>+		printk(KERN_DEBUG "%s: tx interrupt, status: 0x%x, %Lx\n",
-> >> 			cp->dev->name, status, compwb);
-> >
-> >AFAICS, u64 variables are printed as "%llx", (unsigned long long)
+Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.15-rc6/drivers/isdn/hardware/eicon/di.c.orig	2005-12-20 09:56:54.000000000 +0100
++++ linux-2.6.15-rc6/drivers/isdn/hardware/eicon/di.c	2005-12-20 10:09:56.000000000 +0100
+@@ -133,7 +133,7 @@ void pr_out(ADAPTER * a)
+     i = this->XCurrent;
+     X = PTR_X(a,this);
+     while(i<this->XNum && length<270) {
+-      clength = MIN((word)(270-length),X[i].PLength-this->XOffset);
++      clength = min((word)(270-length),(word)(X[i].PLength-this->XOffset));
+       a->ram_out_buffer(a,
+                         &ReqOut->XBuffer.P[length],
+                         PTR_P(a,this,&X[i].P[this->XOffset]),
+@@ -622,7 +622,7 @@ byte isdn_ind(ADAPTER * a,
+                                                      sizeof(a->stream_buffer),
+                                                      &final, NULL, NULL);
+         }
+-        IoAdapter->RBuffer.length = MIN(MLength, 270);
++        IoAdapter->RBuffer.length = min((word)MLength, (word)270);
+         if (IoAdapter->RBuffer.length != MLength) {
+           this->complete = 0;
+         } else {
+@@ -676,9 +676,9 @@ byte isdn_ind(ADAPTER * a,
+         this->RCurrent++;
+       }
+       if (cma) {
+-        clength = MIN(MLength, R[this->RCurrent].PLength-this->ROffset);
++        clength = min(MLength, (word)(R[this->RCurrent].PLength-this->ROffset));
+       } else {
+-        clength = MIN(a->ram_inw(a, &RBuffer->length)-offset,
++        clength = min(a->ram_inw(a, &RBuffer->length)-offset,
+                       R[this->RCurrent].PLength-this->ROffset);
+       }
+       if(R[this->RCurrent].P) {
 
 
---===============70139133964820299==
+
+--===============091939695370362617==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70139133964820299==--
+--===============091939695370362617==--
