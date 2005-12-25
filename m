@@ -1,55 +1,38 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 20 Dec 2005 13:17:49 +0000
-Subject: [KJ] [Patch 4/5] Cleanup MIN/MAX Macro usage in eicon/istream.c
-Message-Id: <1135084670.24065.10.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41019936993796557=="
+From: info@jjduy.com
+Date: Sun, 25 Dec 2005 14:52:12 +0000
+Subject: 隣の芝生
+Message-Id: <20051225145212.11648.qmail@mail.jjduy.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============41019936993796557==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-hi,
-
-This patch changes eicon/istream.c from MIN/MAX usage
-to min/max.
-
-Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.15-rc6/drivers/isdn/hardware/eicon/istream.c.orig	2005-12-20 09:57:37.000000000 +0100
-+++ linux-2.6.15-rc6/drivers/isdn/hardware/eicon/istream.c	2005-12-20 10:11:11.000000000 +0100
-@@ -92,7 +92,7 @@ int diva_istream_write (void* context,
-     return (-1); /* was not able to write       */
-    break;     /* only part of message was written */
-   }
--  to_write = MIN(length, DIVA_DFIFO_DATA_SZ);
-+  to_write = min(length, DIVA_DFIFO_DATA_SZ);
-   if (to_write) {
-    a->ram_out_buffer (a,
- #ifdef PLATFORM_GT_32BIT
-@@ -176,7 +176,7 @@ int diva_istream_read (void* context,
-     return (-1); /* was not able to read */
-    break;
-   }
--  to_read = MIN(max_length, tmp[1]);
-+  to_read = min(max_length, (int)tmp[1]);
-   if (to_read) {
-    a->ram_in_buffer(a,
- #ifdef PLATFORM_GT_32BIT
+初めまして。【隣の芝生の代表、美由紀】と申します。
+このサイトに出資してるので特別に許可を頂き、募集します。
+割切った交際を求める年収1000万以上の女性との逆サポ○ト交際を
+してみませんか？
+◎入会金・会費等すべて女性負担、男性はまったく登録料金が掛か
+りません。
+◎月1〜2回(女性による、又は話し合いで)
+◎割切った関係、結婚前提、ビジネスパートナー、女性の目的も
+様々です
+http://www.tonashiba1.net/?shibahu
+裕福な女性会員は入会金・会費を払って登録しています。
 
 
 
---===============41019936993796557==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+拒否：stop@tonashiba1.net
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://ads.osdn.com/?ad_idv37&alloc_id865&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============41019936993796557==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
