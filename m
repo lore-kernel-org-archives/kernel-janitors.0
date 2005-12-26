@@ -1,44 +1,66 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Sun, 18 Dec 2005 23:18:35 +0000
-Subject: Re: [KJ] KERNEL_VERSION #ifs
-Message-Id: <20051218231835.GO23349@stusta.de>
+From: Vishal Soni <vishalrsoni@gmail.com>
+Date: Mon, 26 Dec 2005 02:44:21 +0000
+Subject: [KJ] Kernel Development Environment
+Message-Id: <c71658670512251844i58587d82h9181cf28e74a2017@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15211054193672835=="
+Content-Type: multipart/mixed; boundary="===============94729344153482997=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1134943209.7082.2.camel@alice>
-In-Reply-To: <1134943209.7082.2.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============15211054193672835==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============94729344153482997==
+Content-Type: multipart/alternative;
+    boundary="----------=_1135565118-16286-181"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1135565118-16286-181
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On Sun, Dec 18, 2005 at 03:16:29PM -0700, Matthew Wilcox wrote:
-> On Sun, Dec 18, 2005 at 11:00:08PM +0100, Eric Sesterhenn / snakebyte wrote:
-> > #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,2,0)
-> > 
-> > in arch/cris/arch-v32/kernel/fasttimer.c should also be
-> > removed (Of course just the if, not the code inside it)
-> 
-> Yes, but beware that the architecture hasn't been updated in any
-> meaningful way since July 27th.  I think cris is pretty much a
-> patch-and-run architecture.
+Hi,
 
-The cris maintainers respond to emails, and they should at least get 
-copies of patches touching their architecture code.
+I am new to kernel development. I am have some questions.
 
-cu
-Adrian
+1. Is there any documentation on how to setup kernel development
+environment?
+2. Do kerenl developers use emulators (bochs, qeum) for kernel development?
+What are most commonly used emulators?
+3. How do i take to kernel source for kernel.org and setup the compiled
+kernel on a new box. I am instrested in how can I create a bare bone file
+system on the development box to do kernel development.
 
--- 
+--
+Thanks,
+Vishal
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+------------=_1135565118-16286-181
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+Hi,<br>
+<br>
+I am new to kernel development. I am have some questions. <br>
+<br>
+1. Is there any documentation on how to setup kernel development environmen=
+t?<br>
+2. Do kerenl developers use emulators (bochs, qeum) for kernel development?=
+ What are most commonly used emulators?<br>
+3. How do i take to kernel source for <a href=3D"http://kernel.org">kernel.=
+org</a> and setup the compiled
+kernel on a new box. I am instrested in how can I create a bare bone
+file system on the development box to do kernel development.<br clear=3D"al=
+l"><br>-- <br>Thanks,<br>Vishal
 
---===============15211054193672835==
+------------=_1135565118-16286-181--
+
+--===============94729344153482997==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15211054193672835==--
+--===============94729344153482997==--
