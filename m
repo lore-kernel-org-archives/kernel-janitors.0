@@ -1,42 +1,38 @@
-From: "Jaco Kroon" <jaco@kroon.co.za>
-Date: Tue, 20 Dec 2005 07:59:23 +0000
-Subject: [KJ] [PATCH] Deinitialise static variables in net/core/pktgen.c
-Message-Id: <17299.192.96.150.57.1135065563.squirrel@mail.interexcel.co.za>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 28 Dec 2005 21:39:38 +0000
+Subject: Re: [KJ] [PATCH] Deinitialise static variables in net/core/pktgen.c
+Message-Id: <200512282139.39139.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <17299.192.96.150.57.1135065563.squirrel@mail.interexcel.co.za>
+In-Reply-To: <17299.192.96.150.57.1135065563.squirrel@mail.interexcel.co.za>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel-janitors@lists.osdl.org, lkml@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-static variables should not be explicitly initialised to 0.  This causes
-them to be placed in .data instead of .bss.  This patch de-initialises 3
-static variables in net/core/pktgen.c.
+On Tuesday 20 December 2005 07:59, Jaco Kroon wrote:
+> static variables should not be explicitly initialised to 0.  This causes
+> them to be placed in .data instead of .bss.  This patch de-initialises 3
+> static variables in net/core/pktgen.c.
+> 
+> There are approximately 800 more such variables in the source tree
+> (2.6.15rc5).  If there is more interrest I'd be willing to track down the
+> rest of these as well and de-initialise them as well.
 
-There are approximately 800 more such variables in the source tree
-(2.6.15rc5).  If there is more interrest I'd be willing to track down the
-rest of these as well and de-initialise them as well.
+Can we please remove this item from the janitor todo list?
+Most distro-supplied compilers (gcc versions 3.4 or later)
+do this automatically, so there is very little gain in this
+(if there ever was -- we're only talking about object file
+size here anyway, not memory consumption).
 
---- linux-2.6.15-rc5.orig/net/core/pktgen.c     2005-12-14
-10:15:12.000000000 +0200
-+++ linux-2.6.15-rc5/net/core/pktgen.c  2005-12-20 09:50:28.000000000 +0200
-@@ -487,9 +487,9 @@
+I know that this is everyone's favorite janitor item when you
+start, because it's so easy to do, but do we really care any
+more or is this just adding noise to the ChangeLog?
 
- /* Module parameters, defaults. */
- static int pg_count_d = 1000; /* 1000 pkts by default */
--static int pg_delay_d = 0;
--static int pg_clone_skb_d = 0;
--static int debug = 0;
-+static int pg_delay_d;
-+static int pg_clone_skb_d;
-+static int debug;
+[Sorry Jaco for picking out your patch, but this has been going
+ on for some time]
 
- static DECLARE_MUTEX(pktgen_sem);
- static struct pktgen_thread *pktgen_threads = NULL;
-
--- 
-There are 10 kinds of people in the world, those who understand binary,
-and those who don't.
+	Arnd <><
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
