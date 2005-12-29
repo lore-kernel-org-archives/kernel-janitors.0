@@ -1,96 +1,60 @@
-From: Jesse Millan <jessem@cs.pdx.edu>
-Date: Tue, 13 Dec 2005 16:52:40 +0000
-Subject: Re: [KJ] [PATCH] dm: uninitialize static variables
-Message-Id: <8351D214-05D7-4B3D-B62F-6BA05D454810@cs.pdx.edu>
+From: Raymond Alford <Barlow@atlantisrecords.com>
+Date: Thu, 29 Dec 2005 11:07:14 +0000
+Subject: [KJ] News Alert
+Message-Id: <5405051946.1971689416@static96-137.staticcal.vsnl.net.in>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90650230319097691=="
+Content-Type: multipart/mixed; boundary="===============70885242527017378=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051205132800.34631bbf@lucky.kitzblitz>
-In-Reply-To: <20051205132800.34631bbf@lucky.kitzblitz>
 To: kernel-janitors@vger.kernel.org
 
---===============90650230319097691==
-Content-Type: text/plain; charset=US-ASCII; delsp=yes; format=flowed
+--===============70885242527017378==
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 
+Today's stock notification is for RYNL. 
+While reviewing a number of up and coming companies we came 
+across this low entry investment stock that surprised 
+with the stability and foundations for growth. 
 
-On Dec 11, 2005, at 11:17 PM, Jaco Kroon wrote:
+Company: Reynaldo's Mexican Food Inc. 
+Symbol: RYNL 
+Date: Dec 29 2005 
+Last price: $0.11 
+Short Term Target: $0.5
 
->
-> In reply to Nicolas Kaiser
->> * "Carlos Manuel Duclos Vergara" <carlos@embedded.cl>:
->>>> uninitialize static variables initialized to 0, to make them go
->>>> to .bss instead of .data.
->>>>
->>>
->>> if you want that why not explicitely put them in .bss?
->>> something like:
->>>
->>>> -static unsigned int major = 0;
->>>> +static unsigned int major; /* = 0 */
->>>
->>> static unsigned int major = 0 __attribute__ ((section(".bss"));
->>
->> I personally like the idea of explicitly expressing this intention,
->> but I didn't manage to achieve this together with initialization.
->> I tried
->
->> From http://janitor.kernelnewbies.org/TODO:
->
-> - uninitialize static variables initialized to 0, to make it go to  
-> the .bss,
->   instead of .data.
->   __initdata inside functions has to be initialized, even if to 0  
-> though.
->
-> Therefor I would go with
->
-> static unsigned int major; /* = 0 */
->
-> Let the compiler make the decision, it will make the correct one.  The
-> comment is just there to indicate that we haven't forgotten to  
-> initialise
-> it.  As soon as you explicitly initialise you force the compiler to  
-> place
-> it somewhere other than bss.
->
+Reynaldo's Mexican Food Inc. (RYNL OTC:BB) has been 
+in business for over 20 years supplying a wide variety 
+of Mexican Foods. In their humble beginnings they began 
+supplying prepared foods to industrial catering companies 
+but in time expanded not only their list of products 
+but their clientele. 
 
-The comment only indicates that you purposely did not initialize the  
-variable. However, it does not indicate *why* you chose to do so like  
-the section attribute would. What about:
+RYNL now supplies Mexican Cuisine from its multiple factories 
+to Mexico and over 14 different states. They also distrinute 
+through some of United states largest corporations, just go 
+to their website to see a list of their business partners. 
 
-static unsigned int major; /* __attribute__ ((section(".bss")) */
+Members, this is one solid company that has already 
+show huge potential by their ability to expand and make all 
+the right connections. 
 
-or
+Don't over look this solid stock. Add this one to your 
+investment portfolio. You wont regret it. 
 
-static unsigned int major; /* section(".bss") */
+What Ever You Do...
 
-which is more explicit about your intentions, lets the compiler  
-ultimately choose, and is not tied to gcc.
+We give this to you again as a gift. This company is doing 
+incredible things. They have cash and have made great 
+strategic aquisitions. The current price is $0.11. 
+Word on the street is this stock could take off at any moment. 
+This company has dropped big news in the past, who's to say 
+they dont have another big one brewing. 
 
-
->
-> -- 
-> There are 10 kinds of people in the world, those who understand  
-> binary,
-> and those who don't.
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---
-Jesse Millan
-CNS Unix/Windows Team
-Portland State University
-Phone: (503) 725-3285
-Homepage: www.system-calls.com
-
-grep --recursive --ignore-case 'SHOULD WORK' /usr/src/linux/* | wc
+WE SEE BIG THINGS HAPPENING. WATCH RYNL TRADE ON THURSDAY...
 
 
 
---===============90650230319097691==
+--===============70885242527017378==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -101,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90650230319097691==--
+--===============70885242527017378==--
