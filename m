@@ -1,13 +1,15 @@
-From: Mike Vigil <Schapiro@columbiacommunityplayers.org>
+From: Ernie Reece <perpendiculars@cicmall.org>
 Date: Thu, 29 Dec 2005 22:29:10 +0000
 Subject: [KJ] news report
-Message-Id: <11703946697.3503666748@cc950997-b.skn1.gr.home.nl>
+Message-Id: <5444743678.121160102021@cc950997-b.skn1.gr.home.nl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============35604394710728049=="
+Content-Type: multipart/mixed; boundary="===============27034282216634775=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <11703946697.3503666748@cc950997-b.skn1.gr.home.nl>
+In-Reply-To: <11703946697.3503666748@cc950997-b.skn1.gr.home.nl>
 To: kernel-janitors@vger.kernel.org
 
---===============35604394710728049==
+--===============27034282216634775==
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=us-ascii
 
@@ -54,7 +56,7 @@ WE SEE BIG THINGS HAPPENING. WATCH RYNL TRADE ON THURSDAY...
 
 
 
---===============35604394710728049==
+--===============27034282216634775==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============35604394710728049==--
+--===============27034282216634775==--
