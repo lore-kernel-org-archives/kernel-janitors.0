@@ -1,67 +1,60 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 20 Dec 2005 16:45:11 +0000
-Subject: [KJ] [Patch] Remove MOD_{INC,DEC}_USE_COUNT in pcf8563.c
-Message-Id: <1135097111.27486.6.camel@alice>
+From: Mike Vigil <Schapiro@columbiacommunityplayers.org>
+Date: Thu, 29 Dec 2005 22:29:10 +0000
+Subject: [KJ] news report
+Message-Id: <11703946697.3503666748@cc950997-b.skn1.gr.home.nl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11684129709799018=="
+Content-Type: multipart/mixed; boundary="===============35604394710728049=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1135097000.27486.3.camel@alice>
-In-Reply-To: <1135097000.27486.3.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============11684129709799018==
-Content-Type: text/plain
+--===============35604394710728049==
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 
-hi,
+Today's stock notification is for RYNL. 
+While reviewing a number of up and coming companies we came 
+across this low entry investment stock that surprised 
+with the stability and foundations for growth. 
 
-this is removes the last usage of MOD_{INC,DEC}_USE_COUNT
-from the kernel. 
+Company: Reynaldo's Mexican Food Inc. 
+Symbol: RYNL 
+Date: Dec 29 2005 
+Last price: $0.11 
+Short Term Target: $0.5
 
-Signed-of-by: Eric Sesterhenn <snakebyte@gmx.de>
+Reynaldo's Mexican Food Inc. (RYNL OTC:BB) has been 
+in business for over 20 years supplying a wide variety 
+of Mexican Foods. In their humble beginnings they began 
+supplying prepared foods to industrial catering companies 
+but in time expanded not only their list of products 
+but their clientele. 
 
---- linux-2.6.15-rc6/arch/cris/arch-v32/drivers/pcf8563.c.orig	2005-12-20 17:27:41.000000000 +0100
-+++ linux-2.6.15-rc6/arch/cris/arch-v32/drivers/pcf8563.c	2005-12-20 17:28:22.000000000 +0100
-@@ -48,14 +48,11 @@ static const unsigned char days_in_month
- 	{ 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
- 
- int pcf8563_ioctl(struct inode *, struct file *, unsigned int, unsigned long);
--int pcf8563_open(struct inode *, struct file *);
--int pcf8563_release(struct inode *, struct file *);
- 
- static struct file_operations pcf8563_fops = {
- 	owner: THIS_MODULE,
- 	ioctl: pcf8563_ioctl,
--	open: pcf8563_open,
--	release: pcf8563_release,
-+	open: nonseekable_open,
- };
- 
- unsigned char
-@@ -322,19 +319,5 @@ pcf8563_ioctl(struct inode *inode, struc
- 	return 0;
- }
- 
--int
--pcf8563_open(struct inode *inode, struct file *filp)
--{
--	MOD_INC_USE_COUNT;
--	return 0;
--}
--
--int
--pcf8563_release(struct inode *inode, struct file *filp)
--{
--	MOD_DEC_USE_COUNT;
--	return 0;
--}
--
- module_init(pcf8563_init);
- module_exit(pcf8563_exit);
+RYNL now supplies Mexican Cuisine from its multiple factories 
+to Mexico and over 14 different states. They also distrinute 
+through some of United states largest corporations, just go 
+to their website to see a list of their business partners. 
+
+Members, this is one solid company that has already 
+show huge potential by their ability to expand and make all 
+the right connections. 
+
+Don't over look this solid stock. Add this one to your 
+investment portfolio. You wont regret it. 
+
+What Ever You Do...
+
+We give this to you again as a gift. This company is doing 
+incredible things. They have cash and have made great 
+strategic aquisitions. The current price is $0.11. 
+Word on the street is this stock could take off at any moment. 
+This company has dropped big news in the past, who's to say 
+they dont have another big one brewing. 
+
+WE SEE BIG THINGS HAPPENING. WATCH RYNL TRADE ON THURSDAY...
 
 
 
---===============11684129709799018==
+--===============35604394710728049==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============11684129709799018==--
+--===============35604394710728049==--
