@@ -1,13 +1,15 @@
-From: Raymond Alford <Barlow@atlantisrecords.com>
-Date: Thu, 29 Dec 2005 11:07:14 +0000
+From: Charlotte Duke <mantles@bagsusa.com>
+Date: Thu, 29 Dec 2005 11:07:15 +0000
 Subject: [KJ] News Alert
-Message-Id: <5405051946.1971689416@static96-137.staticcal.vsnl.net.in>
+Message-Id: <11664154965.1608954113@static96-137.staticcal.vsnl.net.in>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70885242527017378=="
+Content-Type: multipart/mixed; boundary="===============30652073826840365=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5405051946.1971689416@static96-137.staticcal.vsnl.net.in>
+In-Reply-To: <5405051946.1971689416@static96-137.staticcal.vsnl.net.in>
 To: kernel-janitors@vger.kernel.org
 
---===============70885242527017378==
+--===============30652073826840365==
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset=us-ascii
 
@@ -54,7 +56,7 @@ WE SEE BIG THINGS HAPPENING. WATCH RYNL TRADE ON THURSDAY...
 
 
 
---===============70885242527017378==
+--===============30652073826840365==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70885242527017378==--
+--===============30652073826840365==--
