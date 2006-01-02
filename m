@@ -1,67 +1,55 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Thu, 26 Jan 2006 17:20:32 +0000
-Subject: [KJ] [Patch 5/8] BUG_ON() Conversion in fs/dquot.c
-Message-Id: <1138296032.9170.24.camel@localhost>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78724712685825249=="
+From: "Colby Larson" <qjnnklyquhpwqs@agora.pl>
+Date: Mon, 02 Jan 2006 20:26:49 +0000
+Subject: Overdue Notice
+Message-Id: <6.0.3.19.2.20031978023053.025b4b48@.starnetusa.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============78724712685825249==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+"Ci-iallis Sof-tabs" is better than Pfizer V-iiaggrra
+and normal Ci-ialis because:
 
-hi,
-
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner and can better optimized away
-
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.16-rc1-git4/fs/dquot.c.orig	2006-01-26 17:55:57.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/dquot.c	2006-01-26 17:56:34.000000000 +0100
-@@ -420,8 +420,7 @@ static void invalidate_dquots(struct sup
- 		if (dquot->dq_type != type)
- 			continue;
- #ifdef __DQUOT_PARANOIA
--		if (atomic_read(&dquot->dq_count))
--			BUG();
-+		BUG_ON(atomic_read(&dquot->dq_count));
- #endif
- 		/* Quota now has no users and it has been written on last dqput() */
- 		remove_dquot_hash(dquot);
-@@ -560,8 +559,7 @@ we_slept:
- 	atomic_dec(&dquot->dq_count);
- #ifdef __DQUOT_PARANOIA
- 	/* sanity check */
--	if (!list_empty(&dquot->dq_free))
--		BUG();
-+	BUG_ON(!list_empty(&dquot->dq_free));
- #endif
- 	put_dquot_last(dquot);
- 	spin_unlock(&dq_list_lock);
-@@ -635,8 +633,7 @@ we_slept:
- 		return NODQUOT;
- 	}
- #ifdef __DQUOT_PARANOIA
--	if (!dquot->dq_sb)	/* Has somebody invalidated entry under us? */
--		BUG();
-+	BUG_ON(!dquot->dq_sb);	/* Has somebody invalidated entry under us? */
- #endif
+- Guarantes 36 hours lasting
+- Safe to take, no side effectts at all
+- Boost and increase se-xual perfoormance
+- Haarder e-rectiiions and quick recharge
+- Proven and c-ertified by e-xperts and d-octors
+- only $1.98 per tabs
+- Special offeer! These prices 
+- are valid u-ntil 30th of December !
  
- 	return dquot;
+Cllick hereee: http://bi-i.info
 
 
 
---===============78724712685825249==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+
+
+
+
+
+
+
+
+
+
+         
+        
+          
+       
+       
+       
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://ads.osdn.com/?ad_idv37&alloc_id865&op=click
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============78724712685825249==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
