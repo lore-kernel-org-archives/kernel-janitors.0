@@ -1,64 +1,91 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 31 Jan 2006 17:59:09 +0000
-Subject: [KJ] [Patch 4/5] BUG_ON() Conversion in
-Message-Id: <1138730350.13327.16.camel@alice>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Tue, 03 Jan 2006 14:56:11 +0000
+Subject: [KJ] [PATCH] drivers/i2c: Use ARRAY_SIZE macro
+Message-Id: <20060103145611.GA1239@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============42898912513023912=="
+Content-Type: multipart/mixed; boundary="===============94539076820544032=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============42898912513023912==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============94539076820544032==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,   
+Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]). Some trailing
+whitespaces are also removed.
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+---
 
---- linux-2.6.16-rc1-git4/drivers/s390/char/tape_block.c.orig	2006-01-31 16:27:31.000000000 +0100
-+++ linux-2.6.16-rc1-git4/drivers/s390/char/tape_block.c	2006-01-31 16:28:06.000000000 +0100
-@@ -198,9 +198,7 @@ tapeblock_request_fn(request_queue_t *qu
+ i2c-parport-light.c |    9 +++------
+ i2c-parport.c       |    7 ++-----
+ i2c-pxa.c           |    2 +-
+ 3 files changed, 6 insertions(+), 12 deletions(-)
+
+diff -urpN -X dontdiff linux-2.6.15/drivers/i2c/busses/i2c-parport.c linux-2.6.15~array_size/drivers/i2c/busses/i2c-parport.c
+--- linux-2.6.15/drivers/i2c/busses/i2c-parport.c	2006-01-03 14:41:55.000000000 +0100
++++ linux-2.6.15~array_size/drivers/i2c/busses/i2c-parport.c	2006-01-03 15:36:13.000000000 +0100
+@@ -241,14 +241,11 @@ static struct parport_driver i2c_parport
  
- 	device = (struct tape_device *) queue->queuedata;
- 	DBF_LH(6, "tapeblock_request_fn(device=%p)\n", device);
--	if (device == NULL)
--		BUG();
+ static int __init i2c_parport_init(void)
+ {
+-	int type_count;
 -
-+	BUG_ON(device == NULL);
- 	tapeblock_trigger_requeue(device);
+-	type_count = sizeof(adapter_parm)/sizeof(struct adapter_parm);
+-	if (type < 0 || type >= type_count) {
++	if (type < 0 || type >= ARRAY_SIZE(adapter_parm)) {
+ 		printk(KERN_WARNING "i2c-parport: invalid type (%d)\n", type);
+ 		type = 0;
+ 	}
+-	
++
+ 	return parport_register_driver(&i2c_parport_driver);
  }
  
-@@ -307,8 +305,7 @@ tapeblock_revalidate_disk(struct gendisk
- 	int			rc;
+diff -urpN -X dontdiff linux-2.6.15/drivers/i2c/busses/i2c-parport-light.c linux-2.6.15~array_size/drivers/i2c/busses/i2c-parport-light.c
+--- linux-2.6.15/drivers/i2c/busses/i2c-parport-light.c	2005-08-29 01:41:01.000000000 +0200
++++ linux-2.6.15~array_size/drivers/i2c/busses/i2c-parport-light.c	2006-01-03 15:35:14.000000000 +0100
+@@ -121,14 +121,11 @@ static struct i2c_adapter parport_adapte
  
- 	device = (struct tape_device *) disk->private_data;
--	if (!device)
--		BUG();
-+	BUG_ON(!device);
+ static int __init i2c_parport_init(void)
+ {
+-	int type_count;
+-
+-	type_count = sizeof(adapter_parm)/sizeof(struct adapter_parm);
+-	if (type < 0 || type >= type_count) {
++	if (type < 0 || type >= ARRAY_SIZE(adapter_parm)) {
+ 		printk(KERN_WARNING "i2c-parport: invalid type (%d)\n", type);
+ 		type = 0;
+ 	}
+-	
++
+ 	if (base == 0) {
+ 		printk(KERN_INFO "i2c-parport: using default base 0x%x\n", DEFAULT_BASE);
+ 		base = DEFAULT_BASE;
+@@ -152,7 +149,7 @@ static int __init i2c_parport_init(void)
+ 		release_region(base, 3);
+ 		return -ENODEV;
+ 	}
+-	
++
+ 	return 0;
+ }
  
- 	if (!device->blk_data.medium_changed)
- 		return 0;
-@@ -440,11 +437,9 @@ tapeblock_ioctl(
+diff -urpN -X dontdiff linux-2.6.15/drivers/i2c/busses/i2c-pxa.c linux-2.6.15~array_size/drivers/i2c/busses/i2c-pxa.c
+--- linux-2.6.15/drivers/i2c/busses/i2c-pxa.c	2006-01-03 14:41:55.000000000 +0100
++++ linux-2.6.15~array_size/drivers/i2c/busses/i2c-pxa.c	2006-01-03 15:16:10.000000000 +0100
+@@ -861,7 +861,7 @@ static irqreturn_t i2c_pxa_handler(int t
+ 		decode_ISR(isr);
+ 	}
  
- 	rc     = 0;
- 	disk   = inode->i_bdev->bd_disk;
--	if (!disk)
--		BUG();
-+	BUG_ON(!disk);
- 	device = disk->private_data;
--	if (!device)
--		BUG();
-+	BUG_ON(!device);
- 	minor  = iminor(inode);
+-	if (i2c->irqlogidx < sizeof(i2c->isrlog)/sizeof(u32))
++	if (i2c->irqlogidx < ARRAY_SIZE(i2c->isrlog))
+ 		i2c->isrlog[i2c->irqlogidx++] = isr;
  
- 	DBF_LH(6, "tapeblock_ioctl(0x%0x)\n", command);
+ 	show_state(i2c);
 
-
-
---===============42898912513023912==
+--===============94539076820544032==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +96,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============42898912513023912==--
+--===============94539076820544032==--
