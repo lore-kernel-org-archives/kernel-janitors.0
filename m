@@ -1,44 +1,36 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Wed, 04 Jan 2006 17:12:30 +0000
-Subject: [KJ] [PATCH 2/2] Remove LINUX_VERSION_CODE check in pwc/pwc-if.c
-Message-Id: <1136394751.4692.6.camel@localhost>
+From: Greg KH <greg@kroah.com>
+Date: Wed, 04 Jan 2006 17:26:35 +0000
+Subject: Re: [KJ] [PATCH 2/2] Remove LINUX_VERSION_CODE check in pwc/pwc-if.c
+Message-Id: <20060104172635.GA9044@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============97918590294676289=="
+Content-Type: multipart/mixed; boundary="===============48139211191054798=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1136394751.4692.6.camel@localhost>
+In-Reply-To: <1136394751.4692.6.camel@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============97918590294676289==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============48139211191054798==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,
+On Wed, Jan 04, 2006 at 06:12:30PM +0100, Eric Sesterhenn / snakebyte wrote:
+> hi,
+> 
+> this patch removes the LINUX_VERSION check in
+> drivers/usb/media/pwc/pwc-if.c
+> 
+> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-this patch removes the LINUX_VERSION check in
-drivers/usb/media/pwc/pwc-if.c
+How about redoing this and take out the #include <linux/version.h> at
+the same time, as it should no longer be needed?
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+And do the same thing for the pwc-ctrl.c file perhaps?
 
---- linux-2.6.15-eric/drivers/usb/media/pwc/pwc-if.c.orig	2006-01-04 18:03:17.000000000 +0100
-+++ linux-2.6.15-eric/drivers/usb/media/pwc/pwc-if.c	2006-01-04 18:03:44.000000000 +0100
-@@ -827,13 +827,10 @@ static int pwc_isoc_init(struct pwc_devi
- 	/* Get the current alternate interface, adjust packet size */
- 	if (!udev->actconfig)
- 		return -EFAULT;
--#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,5)
--	idesc = &udev->actconfig->interface[0]->altsetting[pdev->valternate];
--#else
-+
- 	intf = usb_ifnum_to_if(udev, 0);
- 	if (intf)
- 		idesc = usb_altnum_to_altsetting(intf, pdev->valternate);
--#endif
- 		
- 	if (!idesc)
- 		return -EFAULT;
+thanks,
 
+greg k-h
 
-
---===============97918590294676289==
+--===============48139211191054798==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============97918590294676289==--
+--===============48139211191054798==--
