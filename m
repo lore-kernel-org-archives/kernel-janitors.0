@@ -1,86 +1,62 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Wed, 04 Jan 2006 22:44:17 +0000
-Subject: [KJ] [PATCH RESEND] mm: Clean up local variables
-Message-Id: <20060104224417.GD1243@neon.tklauser.home>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Wed, 04 Jan 2006 19:14:51 +0000
+Subject: [KJ] [PATCH] remove MODULE_PARM from mtd/maps/pcmciamtd.c
+Message-Id: <1136402091.7600.1.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============063098656127567043=="
+Content-Type: multipart/mixed; boundary="===============34465685991018713=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============063098656127567043==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============34465685991018713==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Clean up a local variable with the same name as a variable in a larger
-block. Also move a variable into the block where it's actually used.
+hi,
 
-Spotted by http://linuxicc.sourceforge.net/
+this patch removes MODULE_PARM usage from pcmciamtd.c
 
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
----
 
- slab.c     |    3 ++-
- swapfile.c |   12 ++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
-
-diff -urpN -X dontdiff linux-2.6.15/mm/slab.c linux-2.6.15~tk/mm/slab.c
---- linux-2.6.15/mm/slab.c	2006-01-03 14:41:57.000000000 +0100
-+++ linux-2.6.15~tk/mm/slab.c	2006-01-04 23:35:15.000000000 +0100
-@@ -853,7 +853,6 @@ static int __devinit cpuup_callback(stru
- 	struct kmem_list3 *l3 = NULL;
- 	int node = cpu_to_node(cpu);
- 	int memsize = sizeof(struct kmem_list3);
--	struct array_cache *nc = NULL;
+--- linux-2.6.15-eric/drivers/mtd/maps/pcmciamtd.c.orig	2006-01-04 20:08:18.000000000 +0100
++++ linux-2.6.15-eric/drivers/mtd/maps/pcmciamtd.c	2006-01-04 20:12:26.000000000 +0100
+@@ -28,7 +28,7 @@
  
- 	switch (action) {
- 	case CPU_UP_PREPARE:
-@@ -890,6 +889,8 @@ static int __devinit cpuup_callback(stru
- 		/* Now we can go ahead with allocating the shared array's
- 		  & array cache's */
- 		list_for_each_entry(cachep, &cache_chain, next) {
-+			struct array_cache *nc;
-+
- 			nc = alloc_arraycache(node, cachep->limit,
- 					cachep->batchcount);
- 			if (!nc)
-diff -urpN -X dontdiff linux-2.6.15/mm/swapfile.c linux-2.6.15~tk/mm/swapfile.c
---- linux-2.6.15/mm/swapfile.c	2006-01-03 14:41:57.000000000 +0100
-+++ linux-2.6.15~tk/mm/swapfile.c	2006-01-04 15:59:20.000000000 +0100
-@@ -1473,7 +1473,7 @@ asmlinkage long sys_swapon(const char __
- 			goto bad_swap;
- 		if (swap_header->info.nr_badpages > MAX_SWAP_BADPAGES)
- 			goto bad_swap;
--		
-+
- 		/* OK, set up the swap map and apply the bad block list */
- 		if (!(p->swap_map = vmalloc(maxpages * sizeof(short)))) {
- 			error = -ENOMEM;
-@@ -1482,17 +1482,17 @@ asmlinkage long sys_swapon(const char __
+ #ifdef CONFIG_MTD_DEBUG
+ static int debug = CONFIG_MTD_DEBUG_VERBOSE;
+-MODULE_PARM(debug, "i");
++module_param(debug, int, 0644);
+ MODULE_PARM_DESC(debug, "Set Debug Level 0=quiet, 5=noisy");
+ #undef DEBUG
+ #define DEBUG(n, format, arg...) \
+@@ -92,17 +92,17 @@ static int mem_type;
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Simon Evans <spse@secret.org.uk>");
+ MODULE_DESCRIPTION(DRIVER_DESC);
+-MODULE_PARM(bankwidth, "i");
++module_param(bankwidth, int, 0);
+ MODULE_PARM_DESC(bankwidth, "Set bankwidth (1=8 bit, 2=16 bit, default=2)");
+-MODULE_PARM(mem_speed, "i");
++module_param(mem_speed, int, 0);
+ MODULE_PARM_DESC(mem_speed, "Set memory access speed in ns");
+-MODULE_PARM(force_size, "i");
++module_param(force_size, int, 0);
+ MODULE_PARM_DESC(force_size, "Force size of card in MiB (1-64)");
+-MODULE_PARM(setvpp, "i");
++module_param(setvpp, int, 0);
+ MODULE_PARM_DESC(setvpp, "Set Vpp (0=Never, 1=On writes, 2=Always on, default=0)");
+-MODULE_PARM(vpp, "i");
++module_param(vpp, int, 0);
+ MODULE_PARM_DESC(vpp, "Vpp value in 1/10ths eg 33=3.3V 120=12V (Dangerous)");
+-MODULE_PARM(mem_type, "i");
++module_param(mem_type, int, 0);
+ MODULE_PARM_DESC(mem_type, "Set Memory type (0=Flash, 1=RAM, 2=ROM, default=0)");
  
- 		error = 0;
- 		memset(p->swap_map, 0, maxpages * sizeof(short));
--		for (i=0; i<swap_header->info.nr_badpages; i++) {
--			int page = swap_header->info.badpages[i];
--			if (page <= 0 || page >= swap_header->info.last_page)
-+		for (i = 0; i < swap_header->info.nr_badpages; i++) {
-+			int page_nr = swap_header->info.badpages[i];
-+			if (page_nr <= 0 || page_nr >= swap_header->info.last_page)
- 				error = -EINVAL;
- 			else
--				p->swap_map[page] = SWAP_MAP_BAD;
-+				p->swap_map[page_nr] = SWAP_MAP_BAD;
- 		}
- 		nr_good_pages = swap_header->info.last_page -
- 				swap_header->info.nr_badpages -
- 				1 /* header page */;
--		if (error) 
-+		if (error)
- 			goto bad_swap;
- 	}
  
 
---===============063098656127567043==
+
+
+--===============34465685991018713==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -91,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============063098656127567043==--
+--===============34465685991018713==--
