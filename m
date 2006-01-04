@@ -1,41 +1,48 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Wed, 04 Jan 2006 22:39:38 +0000
-Subject: Re: [KJ] [PATCH] mm: Clean up local variables
-Message-Id: <20060104223938.GC1243@neon.tklauser.home>
+From: Greg KH <greg@kroah.com>
+Date: Wed, 04 Jan 2006 01:13:08 +0000
+Subject: Re: [KJ] adding missing MODULE_* stuffs
+Message-Id: <20060104011306.GA19733@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============82423387317207153=="
+Content-Type: multipart/mixed; boundary="===============69645275444655308=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060104170119.GB1243@neon.tklauser.home>
-In-Reply-To: <20060104170119.GB1243@neon.tklauser.home>
+References: <20051230000400.GS18040@outflux.net>
+In-Reply-To: <20051230000400.GS18040@outflux.net>
 To: kernel-janitors@vger.kernel.org
 
---===============82423387317207153==
+--===============69645275444655308==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 2006-01-04 at 18:18:19 +0100, Matthew Wilcox <matthew@wil.cx> wrote:
-> On Wed, Jan 04, 2006 at 06:01:19PM +0100, Tobias Klauser wrote:
-> > diff -urpN -X dontdiff linux-2.6.15/mm/slab.c linux-2.6.15~tk/mm/slab.c
-> > --- linux-2.6.15/mm/slab.c	2006-01-03 14:41:57.000000000 +0100
-> > +++ linux-2.6.15~tk/mm/slab.c	2006-01-04 15:52:41.000000000 +0100
-> > @@ -921,7 +921,6 @@ static int __devinit cpuup_callback(stru
-> >  		down(&cache_chain_sem);
-> >  
-> >  		list_for_each_entry(cachep, &cache_chain, next) {
-> > -			struct array_cache *nc;
-> >  			cpumask_t mask;
-> >  
-> >  			mask = node_to_cpumask(node);
+On Thu, Dec 29, 2005 at 04:04:00PM -0800, Kees Cook wrote:
+> Would patches towards adding missing MODULE_DESCRIPTION, MODULE_VERSION, 
+> and MODULE_AUTHOR stuff be taken?  While these aren't covered in the 
+> CodingStyle document, I did find reference to their preferred order in 
+> Documentation/i2c/porting-clients.txt where Greg KH said the order 
+> should be:
+
+I said that?  Hm, looks like Jean did, not I :)
+
 > 
-> While this does work, it's quite bad style.  Much better to move the
-> upper level declaration (line 856) into the block it's used in (line
-> 893).  BTW, that function is too big at 133 lines and should be split.
+> MODULE_AUTHOR
+> MODULE_DESCRIPTION
+> MODULE_LICENSE /* last line of source */
+> 
+> I'm curious where MODULE_VERSION should go, as well as 
+> MODULE_PARAM_DESC.
 
-Sure. That makes more sense. I'll send a new patch.
+Where ever you want them to go.  Traditionally the _DESC stuff goes
+right after the module_param() line, to keep it all together.
 
-Thanks, Tobias
+> Notably, AUTHOR, DESCRIPTION, and VERSION seem to be missing from the 
+> various examples in Documention/
 
---===============82423387317207153==
+What examples?
+
+thanks,
+
+greg k-h
+
+--===============69645275444655308==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============82423387317207153==--
+--===============69645275444655308==--
