@@ -1,85 +1,35 @@
-From: Tobias Klauser <tklauser@nuerscht.ch>
-Date: Wed, 04 Jan 2006 17:01:19 +0000
-Subject: [KJ] [PATCH] mm: Clean up local variables
-Message-Id: <20060104170119.GB1243@neon.tklauser.home>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============67549000933956149=="
+From: Jesper Juhl <jesper.juhl@gmail.com>
+Date: Wed, 04 Jan 2006 17:14:48 +0000
+Subject: Re: [KJ] [PATCH] mm: Clean up local variables
+Message-Id: <9a8748490601040914l1a7beb58k65da55ed348627c5@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20060104170119.GB1243@neon.tklauser.home>
+In-Reply-To: <20060104170119.GB1243@neon.tklauser.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============67549000933956149==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 1/4/06, Tobias Klauser <tklauser@nuerscht.ch> wrote:
+> Clean up local variables with the same name as a variable in a larger
+> block. See http://linuxicc.sourceforge.net/Remark_1599.html for details.
+>
+If you want to find a lot more of these, then add -Wshadow to the gcc
+options in your kernels Makefile.
 
-Clean up local variables with the same name as a variable in a larger
-block. See http://linuxicc.sourceforge.net/Remark_1599.html for details.
+I tried submitting a patch that cleaned up a few to "test the waters"
+as to making the kernel -Wshadow clean, but the patch had a mixed
+reception. Good luck though, personally I'd like to see us be able to
+add -Wshadow to the standard build flags - we just have to clean it
+all up first and getting the patches merged looks like it could
+possibly be difficult.
 
-Spotted by http://linuxicc.sourceforge.net/
-
-Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
-
----
-
- mm/slab.c     |    1 -
- mm/swapfile.c |   12 ++++++------
- 2 files changed, 6 insertions(+), 7 deletions(-)
-
-diff -urpN -X dontdiff linux-2.6.15/mm/slab.c linux-2.6.15~tk/mm/slab.c
---- linux-2.6.15/mm/slab.c	2006-01-03 14:41:57.000000000 +0100
-+++ linux-2.6.15~tk/mm/slab.c	2006-01-04 15:52:41.000000000 +0100
-@@ -921,7 +921,6 @@ static int __devinit cpuup_callback(stru
- 		down(&cache_chain_sem);
- 
- 		list_for_each_entry(cachep, &cache_chain, next) {
--			struct array_cache *nc;
- 			cpumask_t mask;
- 
- 			mask = node_to_cpumask(node);
-diff -urpN -X dontdiff linux-2.6.15/mm/swapfile.c linux-2.6.15~tk/mm/swapfile.c
---- linux-2.6.15/mm/swapfile.c	2006-01-03 14:41:57.000000000 +0100
-+++ linux-2.6.15~tk/mm/swapfile.c	2006-01-04 15:59:20.000000000 +0100
-@@ -1473,7 +1473,7 @@ asmlinkage long sys_swapon(const char __
- 			goto bad_swap;
- 		if (swap_header->info.nr_badpages > MAX_SWAP_BADPAGES)
- 			goto bad_swap;
--		
-+
- 		/* OK, set up the swap map and apply the bad block list */
- 		if (!(p->swap_map = vmalloc(maxpages * sizeof(short)))) {
- 			error = -ENOMEM;
-@@ -1482,17 +1482,17 @@ asmlinkage long sys_swapon(const char __
- 
- 		error = 0;
- 		memset(p->swap_map, 0, maxpages * sizeof(short));
--		for (i=0; i<swap_header->info.nr_badpages; i++) {
--			int page = swap_header->info.badpages[i];
--			if (page <= 0 || page >= swap_header->info.last_page)
-+		for (i = 0; i < swap_header->info.nr_badpages; i++) {
-+			int page_nr = swap_header->info.badpages[i];
-+			if (page_nr <= 0 || page_nr >= swap_header->info.last_page)
- 				error = -EINVAL;
- 			else
--				p->swap_map[page] = SWAP_MAP_BAD;
-+				p->swap_map[page_nr] = SWAP_MAP_BAD;
- 		}
- 		nr_good_pages = swap_header->info.last_page -
- 				swap_header->info.nr_badpages -
- 				1 /* header page */;
--		if (error) 
-+		if (error)
- 			goto bad_swap;
- 	}
- 
-
---===============67549000933956149==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============67549000933956149==--
