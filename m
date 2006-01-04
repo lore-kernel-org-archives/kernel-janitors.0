@@ -1,115 +1,49 @@
-From: "Angela Shires" <shireseang@kimley-horn.com>
-Date: Tue, 17 Jan 2006 21:08:56 +0000
-Subject: Perfect Phairam acy
-Message-Id: <000001c61baa$3a6dc320$9bd6a8c0@commonly>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Wed, 04 Jan 2006 23:49:56 +0000
+Subject: [KJ] [PATCH 1/4] Remove MODULE_PARM in media/video/arv.c
+Message-Id: <1136418597.10387.11.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C61B80.5197BB20"
+Content-Type: multipart/mixed; boundary="===============33488345609273235=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+--===============33488345609273235==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-------=_NextPart_000_0001_01C61B80.5197BB20
-Content-Type: text/plain;
-	charset="us-ascii"
+hi,
+
+this changes MODULE_PARM usage in arv.c to module_param
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.15-eric/drivers/media/video/arv.c.orig	2006-01-05 00:26:40.000000000 +0100
++++ linux-2.6.15-eric/drivers/media/video/arv.c	2006-01-05 00:27:45.000000000 +0100
+@@ -129,9 +129,9 @@ static unsigned char	yuv[MAX_AR_FRAME_BY
+ static int freq = DEFAULT_FREQ;	/* BCLK: available 50 or 70 (MHz) */
+ static int vga = 0;		/* default mode(0:QVGA mode, other:VGA mode) */
+ static int vga_interlace = 0;	/* 0 is normal mode for, else interlace mode */
+-MODULE_PARM(freq, "i");
+-MODULE_PARM(vga, "i");
+-MODULE_PARM(vga_interlace, "i");
++module_param(freq, int, 0);
++module_param(vga, int, 0);
++module_param(vga_interlace, int, 0);
+ 
+ static int ar_initialize(struct video_device *dev);
+ 
+
+
+
+--===============33488345609273235==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-Val
-Via
-Cia
-
-
-
-ium=20
-gra
-lis
-
-
-
-only
-only
-only=20
-
-
-
-$1
-$3
-$3
-
-
-
-,2
-,3
-,7
-
-
-
-1
-3
-5
-
-
-And many other http://www.bunaecom.com <http://www.bunaecom.com>=20
-
-------=_NextPart_000_0001_01C61B80.5197BB20
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV style =3D=20
-"  FLOAT=20
-: left ;=20
-"><H2>Val<BR>
-Via<BR>Cia<BR></H2></DIV>
-<DIV=20
-style =3D "
-  FLOAT=20
-: left ; "><H2>ium&nbsp;<BR>gra<BR>lis<BR></H2></DIV>
-<DIV style =3D "  FLOAT=20
-:
-=20
-left ; "><H2>only<BR>only<BR>
-only&nbsp;<BR></H2></DIV>
-<DIV style =3D "
-  FLOAT=20
-: left ;=20
-"><H2>$1<BR>$3<BR>$3<BR></H2></DIV>
-<DIV style =3D " =20
-FLOAT=20
-: left=20
-; "><H2>,2<BR>
-,3<BR>,7<BR></H2></DIV>
-<DIV style =3D=20
-"
-  FLOAT=20
-: left ; "><H2>1<BR>3<BR>
-5<BR>
-</H2></DIV><DIV style=3D"
- CLEAR :=20
-both ;"><FONT face=3DArial size=3D2>And many other <A =
-href=3D"http://www.bunaecom.com"><FONT face=3DArial =
-size=3D2>http://www.bunaecom.com</FONT></A></FONT></DIV></BODY></HTML>
-------=_NextPart_000_0001_01C61B80.5197BB20--
-
-
-
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid=103432&bid=230486&dat=121642
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============33488345609273235==--
