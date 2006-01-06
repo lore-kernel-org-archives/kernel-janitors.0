@@ -1,33 +1,55 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Thu, 19 Jan 2006 20:12:21 +0000
-Subject: [KJ] [PATCH 3/5] README: s/new/newer/ bzip2 format
-Message-Id: <a01a16b50601191212n3570e5b8w7b27ef556231ee4e@mail.gmail.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 06 Jan 2006 11:19:41 +0000
+Subject: [KJ] [Patch 4/9] Cleanup MODULE_PARM in lasi_82596.c
+Message-Id: <1136546381.13172.23.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============95646755075432877=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-From: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
+--===============95646755075432877==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-bzip2 is not new any more, so replace "new" with "newer".
+hi,
 
-Signed-off-by: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
+this patch changes MODULE_PARM usage to
+module_param
 
----
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15.1/README.a.out 2006-01-19 14:19:08.000000000 +0100
-+++ linux-2.6.15.1/README       2006-01-19 14:19:31.000000000 +0100
-@@ -66,7 +66,7 @@
-    whatever the kernel-du-jour happens to be.
+--- linux-2.6.15-git2/drivers/net/lasi_82596.c.orig	2006-01-06 12:06:28.000000000 +0100
++++ linux-2.6.15-git2/drivers/net/lasi_82596.c	2006-01-06 12:07:07.000000000 +0100
+@@ -177,7 +177,7 @@ static int i596_debug = (DEB_SERIOUS|DEB
+ MODULE_AUTHOR("Richard Hirst");
+ MODULE_DESCRIPTION("i82596 driver");
+ MODULE_LICENSE("GPL");
+-MODULE_PARM(i596_debug, "i");
++module_param(i596_debug, int, 0644);
+ MODULE_PARM_DESC(i596_debug, "lasi_82596 debug mask");
+ 
+ /* Copy frames shorter than rx_copybreak, otherwise pass on up in
+@@ -1520,7 +1520,7 @@ static void set_multicast_list(struct ne
+ 	}
+ }
+ 
+-MODULE_PARM(debug, "i");
++module_param(debug, int, 0644);
+ MODULE_PARM_DESC(debug, "lasi_82596 debug mask");
+ static int debug = -1;
+ 
 
-  - You can also upgrade between 2.6.xx releases by patching.  Patches are
--   distributed in the traditional gzip and the new bzip2 format.  To
-+   distributed in the traditional gzip and the newer bzip2 format.  To
-    install by patching, get all the newer patch files, enter the
-    top level directory of the kernel source (linux-2.6.xx) and execute:
+
+
+--===============95646755075432877==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============95646755075432877==--
