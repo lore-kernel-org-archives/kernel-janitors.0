@@ -1,55 +1,48 @@
-From: "Colby Larson" <qjnnklyquhpwqs@agora.pl>
-Date: Mon, 02 Jan 2006 20:26:49 +0000
-Subject: Overdue Notice
-Message-Id: <6.0.3.19.2.20031978023053.025b4b48@.starnetusa.net>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 06 Jan 2006 11:20:06 +0000
+Subject: [KJ] [Patch 8/9] Cleanup MODULE_PARM in ni5010.c
+Message-Id: <1136546406.13172.31.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============7034618821473364=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-"Ci-iallis Sof-tabs" is better than Pfizer V-iiaggrra
-and normal Ci-ialis because:
+--===============7034618821473364==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-- Guarantes 36 hours lasting
-- Safe to take, no side effectts at all
-- Boost and increase se-xual perfoormance
-- Haarder e-rectiiions and quick recharge
-- Proven and c-ertified by e-xperts and d-octors
-- only $1.98 per tabs
-- Special offeer! These prices 
-- are valid u-ntil 30th of December !
+hi,
+
+this patch changes MODULE_PARM usage to
+module_param
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.15-git2/drivers/net/ni5010.c.orig	2006-01-06 12:07:30.000000000 +0100
++++ linux-2.6.15-git2/drivers/net/ni5010.c	2006-01-06 12:07:50.000000000 +0100
+@@ -766,8 +766,8 @@ static void ni5010_show_registers(struct
+ #ifdef MODULE
+ static struct net_device *dev_ni5010;
  
-Cllick hereee: http://bi-i.info
+-MODULE_PARM(io, "i");
+-MODULE_PARM(irq, "i");
++module_param(io, int, 0);
++module_param(irq, int, 0);
+ MODULE_PARM_DESC(io, "ni5010 I/O base address");
+ MODULE_PARM_DESC(irq, "ni5010 IRQ number");
+ 
 
 
 
+--===============7034618821473364==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
-
-
-
-
-
-
-
-
-
-
-         
-        
-          
-       
-       
-       
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://ads.osdn.com/?ad_idv37&alloc_id865&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============7034618821473364==--
