@@ -1,30 +1,46 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Thu, 19 Jan 2006 20:05:38 +0000
-Subject: [KJ] [PATCH 0/5] README: misc updates
-Message-Id: <a01a16b50601191205u2f3eebj3fe91435ad4577d5@mail.gmail.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 06 Jan 2006 11:19:49 +0000
+Subject: [KJ] [Patch 5/9] Cleanup MODULE_PARM in mac89x0.c
+Message-Id: <1136546390.13172.25.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============78783687397039226=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Here comes a few updates to the topmost README file. I have split up
-in individual patches.
+--===============78783687397039226==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-In order to apply 100% troublefree, a couple of them have a dependency
-on being applied in sequence to the other patches (because neighbouring
-lines changed in another patch). However the content of each patch
-should be independent, so any of them could be left out.
+hi,
 
-(Is this an OK way to do it, or should I rather have made each patch
-from an fresh 2.6.15.1 kernel?)
+this patch changes MODULE_PARM usage to
+module_param
 
-This is my first set of linux kernel patches, so I hope I have gotten
-things right.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-BR H=E5kon L=F8vdal
+--- linux-2.6.15-git2/drivers/net/mac89x0.c.orig	2006-01-06 12:05:06.000000000 +0100
++++ linux-2.6.15-git2/drivers/net/mac89x0.c	2006-01-06 12:05:19.000000000 +0100
+@@ -629,7 +629,7 @@ static int set_mac_address(struct net_de
+ static struct net_device *dev_cs89x0;
+ static int debug;
+ 
+-MODULE_PARM(debug, "i");
++module_param(debug, int, 0644);
+ MODULE_PARM_DESC(debug, "CS89[02]0 debug level (0-5)");
+ MODULE_LICENSE("GPL");
+ 
+
+
+
+--===============78783687397039226==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============78783687397039226==--
