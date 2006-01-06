@@ -1,51 +1,50 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 27 Jan 2006 09:32:24 +0000
-Subject: [KJ] [Patch 2/12] BUG_ON() Conversion in fs/configfs/
-Message-Id: <1138354344.7391.41.camel@alice>
+Date: Fri, 06 Jan 2006 11:19:31 +0000
+Subject: [KJ] [Patch 3/9] Cleanup MODULE_PARM in cassini.c
+Message-Id: <1136546372.13172.22.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20484628996390342=="
+Content-Type: multipart/mixed; boundary="===============74178585733952329=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============20484628996390342==
+--===============74178585733952329==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+this patch changes MODULE_PARM usage to
+module_param
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/fs/configfs/inode.c.orig	2006-01-27 01:24:58.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/configfs/inode.c	2006-01-27 01:25:10.000000000 +0100
-@@ -105,8 +105,7 @@ const unsigned char * configfs_get_name(
- {
- 	struct attribute * attr;
+--- linux-2.6.15-git2/drivers/net/cassini.c.orig	2006-01-06 12:03:56.000000000 +0100
++++ linux-2.6.15-git2/drivers/net/cassini.c	2006-01-06 12:04:45.000000000 +0100
+@@ -194,9 +194,9 @@ static char version[] __devinitdata =
+ MODULE_AUTHOR("Adrian Sun (asun@darksunrising.com)");
+ MODULE_DESCRIPTION("Sun Cassini(+) ethernet driver");
+ MODULE_LICENSE("GPL");
+-MODULE_PARM(cassini_debug, "i");
++module_param(cassini_debug, int, 0644);
+ MODULE_PARM_DESC(cassini_debug, "Cassini bitmapped debugging message enable value");
+-MODULE_PARM(link_mode, "i");
++module_param(link_mode, int, 0);
+ MODULE_PARM_DESC(link_mode, "default link mode");
  
--	if (!sd || !sd->s_element)
--		BUG();
-+	BUG_ON(!sd || !sd->s_element);
- 
- 	/* These always have a dentry, so use that */
- 	if (sd->s_type & (CONFIGFS_DIR | CONFIGFS_ITEM_LINK))
---- linux-2.6.16-rc1-git4/fs/configfs/symlink.c.orig	2006-01-27 01:25:28.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/configfs/symlink.c	2006-01-27 01:25:46.000000000 +0100
-@@ -162,8 +162,7 @@ int configfs_unlink(struct inode *dir, s
- 	if (!(sd->s_type & CONFIGFS_ITEM_LINK))
- 		goto out;
- 
--	if (dentry->d_parent == configfs_sb->s_root)
--		BUG();
-+	BUG_ON(dentry->d_parent == configfs_sb->s_root);
- 
- 	sl = sd->s_element;
+ /*
+@@ -208,7 +208,7 @@ MODULE_PARM_DESC(link_mode, "default lin
+  * Value in seconds, for user input.
+  */
+ static int linkdown_timeout = DEFAULT_LINKDOWN_TIMEOUT;
+-MODULE_PARM(linkdown_timeout, "i");
++module_param(linkdown_timeout, int, 0);
+ MODULE_PARM_DESC(linkdown_timeout,
+ "min reset interval in sec. for PCS linkdown issue; disabled if not positive");
  
 
 
 
---===============20484628996390342==
+--===============74178585733952329==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20484628996390342==--
+--===============74178585733952329==--
