@@ -1,41 +1,38 @@
-From: Mark Brown <wherrera@lopezclub.com>
-Date: Mon, 16 Jan 2006 19:02:00 +0000
-Subject: [KJ] Dont loose your chance.
-Message-Id: <4982133469.20060116140200@lopezclub.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 06 Jan 2006 11:19:55 +0000
+Subject: [KJ] [Patch 6/9] Cleanup MODULE_PARM in mace.c
+Message-Id: <1136546395.13172.29.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93632750699619161=="
+Content-Type: multipart/mixed; boundary="===============64944220903647265=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============93632750699619161==
+--===============64944220903647265==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Sir  or Madam,
-This latter must be interesting for you.
-The Company Random Escrow is a growing company with a great potential is
- inviting you to be its part.
-We have an open position of a financial manager assistant.
-Your work will include forwarding payments.
-We are somehow a bridge between a buyer and a seller on the auction 
-www.ebay.com.
-Our company is an intermediary in payment and shipment of goods.
-That means that the buyer transfers money for the goods
- on www.ebay.com directly to us, as fast as he do it the seller ships the goods to the buyer.
-After a confirmation of receiving the goods by the buyer we transfer money to the seller.
-It makes easyer the process of transferring money and helps minimaze charges for transferring money.
-To apply for this position you should have an account or to open an another one, to check your
-e-mail some times a day, to have a common knowledge about wire transfers, Western Union etc.
-You can earn till $80 000 a year.
-To ask for more information and to apply for this position, please, send us your CV:
+hi,
 
-francerandom@aol.com
+this patch changes MODULE_PARM usage to
+module_param
 
-A personnel manager of the Company Random Escrow,
-Cynthia Morgan.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.15-git2/drivers/net/mace.c.orig	2006-01-06 12:09:18.000000000 +0100
++++ linux-2.6.15-git2/drivers/net/mace.c	2006-01-06 12:09:31.000000000 +0100
+@@ -1042,7 +1042,7 @@ static void __exit mace_cleanup(void)
+ 
+ MODULE_AUTHOR("Paul Mackerras");
+ MODULE_DESCRIPTION("PowerMac MACE driver.");
+-MODULE_PARM(port_aaui, "i");
++module_param(port_aaui, int, 0);
+ MODULE_PARM_DESC(port_aaui, "MACE uses AAUI port (0-1)");
+ MODULE_LICENSE("GPL");
+ 
 
 
---===============93632750699619161==
+
+--===============64944220903647265==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93632750699619161==--
+--===============64944220903647265==--
