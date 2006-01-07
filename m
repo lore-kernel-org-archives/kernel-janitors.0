@@ -1,144 +1,62 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 27 Jan 2006 09:32:52 +0000
-Subject: [KJ] [Patch 7/12] BUG_ON() Conversion in fs/ocfs2/
-Message-Id: <1138354372.7391.56.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============35132880257875998=="
+From: "Fannie Turner" <zbhoxpjiz@learnshare.com>
+Date: Sat, 07 Jan 2006 14:34:27 +0000
+Subject: ok here it is
+Message-Id: <0003$01a7c520$0921960f@ELLIOTTS>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============35132880257875998==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+H0t st0ck for New year time!!
+Infinex Ventures Inc. (IFNX)
 
-hi, 
+Current Price: 1.75
+Expected 5 day: 2.30
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+COMPANY OVERVIEW
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+Aggressive and energetic, Infinex boasts a dynamic and diversified portfoli=
+o of operations across North America, with an eye
+on international expansion.
 
---- linux-2.6.16-rc1-git4/fs/ocfs2/extent_map.c.orig	2006-01-27 01:44:03.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/ocfs2/extent_map.c	2006-01-27 01:44:55.000000000 +0100
-@@ -262,8 +262,7 @@ static int ocfs2_extent_map_find_leaf(st
- 		el = &eb->h_list;
- 	}
- 
--	if (el->l_tree_depth)
--		BUG();
-+	BUG_ON(el->l_tree_depth);
- 
- 	for (i = 0; i < le16_to_cpu(el->l_next_free_rec); i++) {
- 		rec = &el->l_recs[i];
-@@ -364,8 +363,8 @@ static int ocfs2_extent_map_lookup_read(
- 		return ret;
- 	}
- 
--	if (ent->e_tree_depth)
--		BUG();  /* FIXME: Make sure this isn't a corruption */
-+	/* FIXME: Make sure this isn't a corruption */
-+	BUG_ON(ent->e_tree_depth);
- 
- 	*ret_ent = ent;
- 
-@@ -423,8 +422,7 @@ static int ocfs2_extent_map_try_insert(s
- 					  le32_to_cpu(rec->e_clusters), NULL,
- 					  NULL);
- 
--	if (!old_ent)
--		BUG();
-+	BUG_ON(!old_ent);
- 
- 	ret = -EEXIST;
- 	if (old_ent->e_tree_depth < tree_depth)
---- linux-2.6.16-rc1-git4/fs/ocfs2/journal.c.orig	2006-01-27 01:45:45.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/ocfs2/journal.c	2006-01-27 01:46:37.000000000 +0100
-@@ -147,8 +147,7 @@ struct ocfs2_journal_handle *ocfs2_start
- 
- 	mlog_entry("(max_buffs = %d)\n", max_buffs);
- 
--	if (!osb || !osb->journal->j_journal)
--		BUG();
-+	BUG_ON(!osb || !osb->journal->j_journal);
- 
- 	if (ocfs2_is_hard_readonly(osb)) {
- 		ret = -EROFS;
-@@ -672,8 +671,7 @@ void ocfs2_journal_shutdown(struct ocfs2
- 
- 	mlog_entry_void();
- 
--	if (!osb)
--		BUG();
-+	BUG_ON(!osb);
- 
- 	journal = osb->journal;
- 	if (!journal)
-@@ -805,8 +803,7 @@ int ocfs2_journal_wipe(struct ocfs2_jour
- 
- 	mlog_entry_void();
- 
--	if (!journal)
--		BUG();
-+	BUG_ON(!journal);
- 
- 	status = journal_wipe(journal->j_journal, full);
- 	if (status < 0) {
-@@ -1271,8 +1268,7 @@ static int ocfs2_recover_node(struct ocf
- 
- 	/* Should not ever be called to recover ourselves -- in that
- 	 * case we should've called ocfs2_journal_load instead. */
--	if (osb->node_num == node_num)
--		BUG();
-+	BUG_ON(osb->node_num == node_num);
- 
- 	slot_num = ocfs2_node_num_to_slot(si, node_num);
- 	if (slot_num == OCFS2_INVALID_SLOT) {
---- linux-2.6.16-rc1-git4/fs/ocfs2/super.c.orig	2006-01-27 01:47:17.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/ocfs2/super.c	2006-01-27 01:47:28.000000000 +0100
-@@ -1254,8 +1254,7 @@ static int ocfs2_initialize_super(struct
- 	osb->sb = sb;
- 	/* Save off for ocfs2_rw_direct */
- 	osb->s_sectsize_bits = blksize_bits(sector_size);
--	if (!osb->s_sectsize_bits)
--		BUG();
-+	BUG_ON(!osb->s_sectsize_bits);
- 
- 	osb->net_response_ids = 0;
- 	spin_lock_init(&osb->net_response_lock);
---- linux-2.6.16-rc1-git4/fs/ocfs2/sysfile.c.orig	2006-01-27 01:47:50.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/ocfs2/sysfile.c	2006-01-27 01:48:13.000000000 +0100
-@@ -77,8 +77,7 @@ struct inode *ocfs2_get_system_file_inod
- 	if (arr && ((inode = *arr) != NULL)) {
- 		/* get a ref in addition to the array ref */
- 		inode = igrab(inode);
--		if (!inode)
--			BUG();
-+		BUG_ON(!inode);
- 
- 		return inode;
- 	}
-@@ -89,8 +88,7 @@ struct inode *ocfs2_get_system_file_inod
- 	/* add one more if putting into array for first time */
- 	if (arr && inode) {
- 		*arr = igrab(inode);
--		if (!*arr)
--			BUG();
-+		BUG_ON(!*arr);
- 	}
- 	return inode;
- }
+Grounded in natural resource exploration, Inifinex also offers investors ac=
+cess to exciting new developments in the high-tech sector and the booming i=
+nternational real estate market. Our market based experience, tenacious res=
+earch techniques, and
+razor sharp analytical skills allow us to leverage opportunities in emergin=
+g markets and developing technologies.
+
+Identifying these opportunities in the earliest stages allows us to acceler=
+ate business development and fully realize the company=A1=A6s true potentia=
+l. Maximizing overall profitability and in turn enhancing shareholder value.
+
+Current Press Release
+
+Infinex Ventures Inc. (IFNX - News) is pleased to announce the appointment =
+of Mr. Stefano Masullo, to its Board of Directors.
+
+Mr. Michael De Rosa the President says, "Mr. Masullo's varied background in=
+ finance, engineering and economics, as well as his experience of over 10 y=
+ears as a Board member of a vast number of International companies, will ma=
+ke him a valuable addition to the Infinex Board. His appointment will show =
+our commitment to the financial, engineering and business structure of our =
+Company."
+
+Mr. Masullo attended the University of Luigi Bocconi, in Milan Italy, where=
+ he graduated in industrial, economic and financial sciences. Mr. Masullo f=
+irst began his well rounded career during one of his years at University (1=
+986-1987), where he assisted the Director of Faculty of Finance in finance =
+and investment.
 
 
 
---===============35132880257875998==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://ads.osdn.com/?ad_idv37&alloc_id=16865&op=3Dclick
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============35132880257875998==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
