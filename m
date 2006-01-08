@@ -1,43 +1,38 @@
-From: Matt Domsch <Matt_Domsch@dell.com>
-Date: Sun, 08 Jan 2006 22:33:46 +0000
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Sun, 08 Jan 2006 23:41:21 +0000
 Subject: Re: MODULE_VERSION useless? (was Re: [KJ] adding missing MODULE_*
-Message-Id: <20060108223346.GB14784@lists.us.dell.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============50683272468624807=="
+Message-Id: <a01a16b50601081541n582fb3e2k2b7b7fb3494330e2@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051230000400.GS18040@outflux.net> <20060108204549.GB5864@mipter.zuzino.mipt.ru> <200601081855.17723.carlos@embedded.cl> <20060108215800.GA31398@kroah.com> <20060108223200.GA14784@lists.us.dell.com>
-In-Reply-To: <20060108223200.GA14784@lists.us.dell.com>
-To: Greg KH <greg@kroah.com>
-Cc: Carlos Manuel Duclos Vergara <carlos@embedded.cl>, kernel-janitors@lists.osdl.org, Kees Cook <kees@outflux.net>, linux-kernel@vger.kernel.org
-
---===============50683272468624807==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Jan 08, 2006 at 01:58:00PM -0800, Greg KH wrote:
-> On Sun, Jan 08, 2006 at 06:55:16PM -0300, Carlos Manuel Duclos Vergara wrote:
-> > 
-> > I have two ideas about what to do with MODULE_VERSION:
-> > 1.- Defining MODULE_VERSION = KERNEL_VERSION
-
-vermagic already has KERNEL_VERSION, if that's what someone really
-cares about.
-
--- 
-Matt Domsch
-Software Architect
-Dell Linux Solutions linux.dell.com & www.dell.com/linux
-Linux on Dell mailing lists @ http://lists.us.dell.com
-
---===============50683272468624807==
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20051230000400.GS18040@outflux.net>
+	 <20060108204549.GB5864@mipter.zuzino.mipt.ru>
+	 <200601081855.17723.carlos@embedded.cl>
+In-Reply-To: <200601081855.17723.carlos@embedded.cl>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+
+On 1/8/06, Carlos Manuel Duclos Vergara <carlos@embedded.cl> wrote:
+> Hi everyone,
+>
+> I have two ideas about what to do with MODULE_VERSION:
+> 1.- Defining MODULE_VERSION =3D KERNEL_VERSION
+> 2.- Schedule it for removal in one or two more versions, and automagicall=
+y use
+> the KERNEL_VERSION as module's version.
+>
+> Any comments?
+
+I think there is another option:
+
+3. Always print KERNEL_VERSION in addition to MODULE_VERSION.
+
+Since for some modules MODULE_VERSION is considered useful and
+KERNEL_VERSION always is useful, this should give the best of both, right?
+
+BR H=E5kon L=F8vdal
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============50683272468624807==--
