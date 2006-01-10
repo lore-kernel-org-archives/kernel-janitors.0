@@ -1,53 +1,38 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 09 Jan 2006 19:47:42 +0000
-Subject: Re: [KJ] linux-2.6.15-rc7/drivers/pci/syscall.c
-Message-Id: <20060109194742.GA24281@kroah.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Tue, 10 Jan 2006 13:04:35 +0000
+Subject: [KJ] [Patch] replace MODULE_PARM in net/fs_enet/fs_enet-main.c
+Message-Id: <1136898275.23005.3.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============31474233821043951=="
+Content-Type: multipart/mixed; boundary="===============23664575156457568=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200601091138.03704.cneira@srb.cl>
-In-Reply-To: <200601091138.03704.cneira@srb.cl>
 To: kernel-janitors@vger.kernel.org
 
---===============31474233821043951==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============23664575156457568==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 09, 2006 at 12:29:32PM -0700, Matthew Wilcox wrote:
-> On Mon, Jan 09, 2006 at 11:12:01AM -0800, Greg KH wrote:
-> > On Mon, Jan 09, 2006 at 08:02:19PM +0100, Jesper Juhl wrote:
-> > > On 1/9/06, Greg KH <greg@kroah.com> wrote:
-> > > > On Mon, Jan 09, 2006 at 11:38:03AM +0000, carlos neira wrote:
-> > > > > Greetings :
-> > > > >
-> > > > > patch :linux-2.6.15-rc7/drivers/pci/syscall.c
-> > > > >
-> > > > > replaced a  lock_kernel with spinlocks  , compile tested ok
-> > > >
-> > > > What arch did you compile this for?
-> > > >
-> > > > And why remove the lock_kernel calls here, are they hurting anything?
-> > 
-> > "over time, if it makes sense to do so."  
-> > 
-> > For this specific example, the code should be converted to the kthread
-> > api, which would remove these instances.
-> 
-> I think you're confused with which patch is being commented on.  The locks
-> around daemonize() should be converted to kthread(), but this patch is
-> for the PCI syscalls.  As I said in a recent post to linux-pci, I think
-> they can be deleted without bad effect.
+hi,
 
-Ugh, yeah, sorry, -ETOOMANYPATCHES
+this patch replaces the MODULE_PARM usage
+with module_param.
 
-And yes, I think they can probably be deleted, but not replaced with a
-spinlock like was done here.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-thanks,
+--- linux-2.6.15-git5/drivers/net/fs_enet/fs_enet-main.c.orig	2006-01-10 14:00:05.000000000 +0100
++++ linux-2.6.15-git5/drivers/net/fs_enet/fs_enet-main.c	2006-01-10 14:00:22.000000000 +0100
+@@ -58,7 +58,7 @@ MODULE_DESCRIPTION("Freescale Ethernet D
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(DRV_MODULE_VERSION);
+ 
+-MODULE_PARM(fs_enet_debug, "i");
++module_param(fs_enet_debug, int, 0);
+ MODULE_PARM_DESC(fs_enet_debug,
+ 		 "Freescale bitmapped debugging message enable value");
+ 
 
-greg k-h
 
---===============31474233821043951==
+
+--===============23664575156457568==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============31474233821043951==--
+--===============23664575156457568==--
