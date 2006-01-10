@@ -1,39 +1,38 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 31 Jan 2006 13:03:26 +0000
-Subject: [KJ] [Patch 6/7] BUG_ON() Conversion in mm/swap_state.c
-Message-Id: <1138712606.11570.20.camel@alice>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Tue, 10 Jan 2006 11:44:14 +0000
+Subject: [KJ] [PATCH] printk : arch/arm/kernel/ptrace.c
+Message-Id: <20060110114414.GF8401@rotomalug.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============57067276369356978=="
+Content-Type: multipart/mixed; boundary="===============72526213186900712=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============57067276369356978==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============72526213186900712==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,  
+Description:
+printk should include appropriate KERN_* constant (of course
+only at beginning of lines).
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/mm/swap_state.c.orig	2006-01-30 23:20:38.000000000 +0100
-+++ linux-2.6.16-rc1-git4/mm/swap_state.c	2006-01-30 23:21:46.000000000 +0100
-@@ -146,8 +146,7 @@ int add_to_swap(struct page * page, gfp_
- 	swp_entry_t entry;
- 	int err;
+Index: linux-2.6.15/arch/arm/kernel/ptrace.c
+===================================================================
+--- linux-2.6.15.orig/arch/arm/kernel/ptrace.c	2006-01-03 04:21:10.000000000 +0100
++++ linux-2.6.15/arch/arm/kernel/ptrace.c	2006-01-09 16:44:30.000000000 +0100
+@@ -465,7 +465,7 @@
+ 	child->thread.debug.nsaved = 0;
  
--	if (!PageLocked(page))
--		BUG();
-+	BUG_ON(!PageLocked(page));
+ 	if (nsaved > 2) {
+-		printk("ptrace_cancel_bpt: bogus nsaved: %d!\n", nsaved);
++		printk(KERN_ERR "ptrace_cancel_bpt: bogus nsaved: %d!\n", nsaved);
+ 		nsaved = 2;
+ 	}
  
- 	for (;;) {
- 		entry = get_swap_page();
 
-
-
---===============57067276369356978==
+--===============72526213186900712==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============57067276369356978==--
+--===============72526213186900712==--
