@@ -1,39 +1,64 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 27 Jan 2006 09:32:47 +0000
-Subject: [KJ] [Patch 6/12] BUG_ON() Conversion in fs/jffs2/
-Message-Id: <1138354368.7391.54.camel@alice>
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
+Date: Fri, 13 Jan 2006 08:45:27 +0000
+Subject: [KJ] Re: [Patch] replace MODULE_PARM innet/ne-h8300.c
+Message-Id: <m24q48349k.wl%ysato@users.sourceforge.jp>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53927272575135254=="
+Content-Type: multipart/mixed; boundary="===============29814235952282342=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============53927272575135254==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============29814235952282342==
+Content-Type: text/plain; charset=US-ASCII
 
-hi, 
+At Tue, 10 Jan 2006 14:06:22 +0100,
+Eric Sesterhenn / snakebyte wrote:
+> 
+> hi,
+> 
+> this patch replaces the MODULE_PARM usage in uli526x.c
+> with module_param.
+> 
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+I am fine.
+I delete it incidentally because do not use "bad".
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
---- linux-2.6.16-rc1-git4/fs/jffs2/background.c.orig	2006-01-27 01:35:43.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/jffs2/background.c	2006-01-27 01:35:57.000000000 +0100
-@@ -35,8 +35,7 @@ int jffs2_start_garbage_collect_thread(s
- 	pid_t pid;
- 	int ret = 0;
+===File ~/ne-h8300.diff=====================================
+diff --git a/drivers/net/ne-h8300.c b/drivers/net/ne-h8300.c
+index 8f40368..ccd0c0f 100644
+--- a/drivers/net/ne-h8300.c
++++ b/drivers/net/ne-h8300.c
+@@ -598,11 +598,9 @@ retry:
+ static struct net_device *dev_ne[MAX_NE_CARDS];
+ static int io[MAX_NE_CARDS];
+ static int irq[MAX_NE_CARDS];
+-static int bad[MAX_NE_CARDS];	/* 0xbad = bad sig or no reset ack */
  
--	if (c->gc_task)
--		BUG();
-+	BUG_ON(c->gc_task);
- 
- 	init_completion(&c->gc_thread_start);
- 	init_completion(&c->gc_thread_exit);
+-MODULE_PARM(io, "1-" __MODULE_STRING(MAX_NE_CARDS) "i");
+-MODULE_PARM(irq, "1-" __MODULE_STRING(MAX_NE_CARDS) "i");
+-MODULE_PARM(bad, "1-" __MODULE_STRING(MAX_NE_CARDS) "i");
++module_param_array(io, int, NULL, 0);
++module_param_array(irq, int, NULL, 0);
+ MODULE_PARM_DESC(io, "I/O base address(es)");
+ MODULE_PARM_DESC(irq, "IRQ number(s)");
+ MODULE_DESCRIPTION("H8/300 NE2000 Ethernet driver");
+@@ -624,7 +622,6 @@ int init_module(void)
+ 			break;
+ 		if (io[this_dev]) {
+ 			dev->irq = irq[this_dev];
+-			dev->mem_end = bad[this_dev];
+ 			dev->base_addr = io[this_dev];
+ 		} else {
+ 			dev->base_addr = h8300_ne_base[this_dev];
+============================================================
 
+-- 
+Yoshinori Sato
+<ysato@users.sourceforge.jp>
 
-
---===============53927272575135254==
+--===============29814235952282342==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53927272575135254==--
+--===============29814235952282342==--
