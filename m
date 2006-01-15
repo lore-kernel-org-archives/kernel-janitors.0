@@ -1,44 +1,85 @@
-From: Andi Kleen <ak@suse.de>
-Date: Mon, 23 Jan 2006 12:52:23 +0000
-Subject: [KJ] Re: Fixing make mandocs
-Message-Id: <200601231352.24068.ak@suse.de>
+From: Udayan Singh <udayan.singh@gmail.com>
+Date: Sun, 15 Jan 2006 15:31:05 +0000
+Subject: [KJ] Audit return codes (and handle failure correctly) for
+Message-Id: <d9a09df00601150731g4d65ab40ya62134fbd0a8cb22@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59542278737347609=="
+Content-Type: multipart/mixed; boundary="===============57708274337111032=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200601230531.27609.ak@suse.de> <20060122205349.0ec46cbe.rdunlap@xenotime.net> <20060123122831.GC11002@admingilde.org>
-In-Reply-To: <20060123122831.GC11002@admingilde.org>
-To: Martin Waitz <tali@admingilde.org>
-Cc: "Randy.Dunlap" <rdunlap@xenotime.net>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============59542278737347609==
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+This is a multi-part message in MIME format...
+
+--===============57708274337111032==
+Content-Type: multipart/alternative;
+    boundary="----------=_1137339103-24489-475"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1137339103-24489-475
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On Monday 23 January 2006 13:28, Martin Waitz wrote:
-> hoi :)
->
-> On Sun, Jan 22, 2006 at 08:53:49PM -0800, Randy.Dunlap wrote:
-> > > > > Here would be a good janitor task for 2.6.16. make mandocs
-> > > > > currently doesn't build because a number of descriptions are
-> > > > > missing parameters etc.  It would be good if someone could fix
-> > > > > that and submit patches for 2.6.16.
->
-> the thing that really breaks the build is the new __copy_to_user
-> prototype which kernel-doc could not understand.
-> This is fixed in my tree.
->
-> > > Ok good. Are they going into 2.6.16?
->
-> I'll try to get at least the one kernel-doc fix into 2.6.16.
+Hi ,
 
-I would just send all that fix build failures.
+I am trying to understand a point mentioned in ToDo list of KJ,
 
--Andi
+"Audit return codes (and handle failure correctly) for  " -- create_proc_*()
+..
 
+I had a look at the code (in fs/proc/*, linux kernel 2.6.14).
 
---===============59542278737347609==
+Clarifications that i needed :
+
+Is it that the wherever create_proc_* functions are being called, it needs
+to be looked into how is it handling a failure ?
+OR
+Within the function(s) create_proc_*, it needs to be looked into for the
+error codes it is receiving while it is calling other functions and handle
+them accordingly ?
+
+I intend to understand the above mentioned requirement and then try to do
+it. Would appreciate information on above.
+
+Regards,
+Udayan
+
+------------=_1137339103-24489-475
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi ,<br>
+<br>
+I am trying to understand a point mentioned in ToDo list of KJ, <br>
+<br>
+&quot;Audit return codes (and handle failure correctly) for&nbsp; &quot; --=
+ create_proc_*() ..<br>
+<br>
+I had a look at the code (in fs/proc/*, linux kernel 2.6.14).&nbsp; <br>
+<br>
+Clarifications that i needed :<br>
+<br>
+Is it that the wherever create_proc_* functions are being called, it
+needs to be looked into how is it handling a failure ?&nbsp; <br>
+OR <br>
+Within the function(s) create_proc_*, it needs to be looked into for
+the error codes it is receiving while it is calling other functions and
+handle them accordingly ?<br>
+<br>
+I intend to understand the above mentioned requirement and then try to do i=
+t. Would appreciate information on above. <br>
+<br>
+Regards,<br>
+Udayan<br>
+<br>
+
+------------=_1137339103-24489-475--
+
+--===============57708274337111032==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +90,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============59542278737347609==--
+--===============57708274337111032==--
