@@ -1,57 +1,48 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 27 Jan 2006 09:33:10 +0000
-Subject: [KJ] [Patch 12/12] BUG_ON() Conversion in fs/freevxfs/
-Message-Id: <1138354390.7391.66.camel@alice>
+Date: Mon, 16 Jan 2006 20:45:43 +0000
+Subject: [KJ] [Patch] BUG_ON() in kernel/exit.c
+Message-Id: <1137444343.2402.1.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92120987272013988=="
+Content-Type: multipart/mixed; boundary="===============21161871310324543=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92120987272013988==
+--===============21161871310324543==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi, 
+hi,
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+this replaces two if() BUG(); statements
+with BUG_ON in kernel/exit.c
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/fs/freevxfs/vxfs_olt.c.orig	2006-01-27 01:28:54.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/freevxfs/vxfs_olt.c	2006-01-27 01:29:31.000000000 +0100
-@@ -42,24 +42,21 @@
- static inline void
- vxfs_get_fshead(struct vxfs_oltfshead *fshp, struct vxfs_sb_info *infp)
- {
--	if (infp->vsi_fshino)
--		BUG();
-+	BUG_ON(infp->vsi_fshino);
- 	infp->vsi_fshino = fshp->olt_fsino[0];
- }
+--- linux-2.6.15-git11/kernel/exit.c.orig	2006-01-16 21:42:48.000000000 +0100
++++ linux-2.6.15-git11/kernel/exit.c	2006-01-16 21:44:00.000000000 +0100
+@@ -523,7 +523,7 @@ static void exit_mm(struct task_struct *
+ 		down_read(&mm->mmap_sem);
+ 	}
+ 	atomic_inc(&mm->mm_count);
+-	if (mm != tsk->active_mm) BUG();
++	BUG_ON(mm != tsk->active_mm);
+ 	/* more a memory barrier than a real lock */
+ 	task_lock(tsk);
+ 	tsk->mm = NULL;
+@@ -1477,8 +1477,7 @@ check_continued:
+ 		if (options & __WNOTHREAD)
+ 			break;
+ 		tsk = next_thread(tsk);
+-		if (tsk->signal != current->signal)
+-			BUG();
++		BUG_ON(tsk->signal != current->signal);
+ 	} while (tsk != current);
  
- static inline void
- vxfs_get_ilist(struct vxfs_oltilist *ilistp, struct vxfs_sb_info *infp)
- {
--	if (infp->vsi_iext)
--		BUG();
-+	BUG_ON(infp->vsi_iext);
- 	infp->vsi_iext = ilistp->olt_iext[0]; 
- }
- 
- static inline u_long
- vxfs_oblock(struct super_block *sbp, daddr_t block, u_long bsize)
- {
--	if (sbp->s_blocksize % bsize)
--		BUG();
-+	BUG_ON(sbp->s_blocksize % bsize);
- 	return (block * (sbp->s_blocksize / bsize));
- }
- 
+ 	read_unlock(&tasklist_lock);
 
 
 
---===============92120987272013988==
+--===============21161871310324543==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92120987272013988==--
+--===============21161871310324543==--
