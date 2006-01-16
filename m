@@ -1,52 +1,40 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 04 Jan 2006 05:43:26 +0000
-Subject: Re: [KJ] adding missing MODULE_* stuffs
-Message-Id: <20060104054325.GB898@kroah.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Mon, 16 Jan 2006 21:01:15 +0000
+Subject: [KJ] (no subject)
+Message-Id: <1137445275.2571.1.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============013477748322027416=="
+Content-Type: multipart/mixed; boundary="===============13590206889741574=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051230000400.GS18040@outflux.net>
-In-Reply-To: <20051230000400.GS18040@outflux.net>
+References: <4277F774.9070506@tampabay.rr.com>
+In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
---===============013477748322027416==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============13590206889741574==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 03, 2006 at 09:18:16PM -0800, Kees Cook wrote:
-> On Tue, Jan 03, 2006 at 08:27:09PM -0800, Greg KH wrote:
-> > I said that?  Hm, looks like Jean did, not I :)
-> 
-> Oh, whoops.  I scrolled up just enough to find your name.  ;)
-> 
-> > > Notably, AUTHOR, DESCRIPTION, and VERSION seem to be missing from the 
-> > > various examples in Documention/
-> > 
-> > What examples?
-> 
-> i2c/porting-clients (instructions, rather than code)
-> i2c/writing-clients (same)
-> sound/alsa/DocBook/writing-an-alsa-driver.tmpl
-> firmware_class/firmware_sample_driver.c
-> firmware_class/firmware_sample_firmware_class.c
-> connector/cn_test.c
-> DocBook/kernel-hacking.tmpl (not really an example, more a description)
-> DocBook/videobook.tmpl
-> DocBook/procfs_example.c
-> kprobes.txt
-> 
-> What I was really in the mood for was adding those things to the rest of 
-> the code tree too.  There are plenty of modules that have authors, 
-> versions, and descriptions listed in comments and #define's, but not 
-> marked up in MODULE_*() syntax.
+hi,
 
-Sure, start in a directory and work through them all :)
+this patch changes if() BUG(); to BUG_ON();
+in arch/frv/kernel/setup.c
 
-Good luck,
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-greg k-h
+--- linux-2.6.15-git11/arch/frv/kernel/setup.c.orig	2006-01-16 21:58:43.000000000 +0100
++++ linux-2.6.15-git11/arch/frv/kernel/setup.c	2006-01-16 21:58:58.000000000 +0100
+@@ -814,7 +814,7 @@ void __init setup_arch(char **cmdline_p)
+ 	 * - by now the stack is part of the init task */
+ 	printk("Memory %08lx-%08lx\n", memory_start, memory_end);
+ 
+-	if (memory_start == memory_end) BUG();
++	BUG_ON(memory_start == memory_end);
+ 
+ 	init_mm.start_code = (unsigned long) &_stext;
+ 	init_mm.end_code = (unsigned long) &_etext;
 
---===============013477748322027416==
+
+
+--===============13590206889741574==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============013477748322027416==--
+--===============13590206889741574==--
