@@ -1,39 +1,41 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Mon, 16 Jan 2006 20:53:12 +0000
-Subject: [KJ] [Patch] change if() BUG(); to BUG_ON() in mm/pdflush.c
-Message-Id: <1137444792.2510.1.camel@localhost>
+Date: Tue, 17 Jan 2006 21:25:11 +0000
+Subject: [KJ] [Patch] change if() BUG(); to BUG_ON() in
+Message-Id: <1137533111.20230.13.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52950044269192276=="
+Content-Type: multipart/mixed; boundary="===============99824941128499867=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1137444792.2510.1.camel@localhost>
+In-Reply-To: <1137444792.2510.1.camel@localhost>
 To: kernel-janitors@vger.kernel.org
 
---===============52950044269192276==
+--===============99824941128499867==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this changes an if() BUG(); statement to
-BUG_ON() in mm/pdflush.c
+this patch changes the if() BUG(); construct in
+drivers/net/ixgb/ixgb_osdep.h to a BUG_ON; so defining
+BUG to a no-op is safe.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-git11/mm/pdflush.c.orig	2006-01-16 21:49:55.000000000 +0100
-+++ linux-2.6.15-git11/mm/pdflush.c	2006-01-16 21:50:27.000000000 +0100
-@@ -202,8 +202,7 @@ int pdflush_operation(void (*fn)(unsigne
- 	unsigned long flags;
- 	int ret = 0;
+--- linux-2.6.15-git11/drivers/net/ixgb/ixgb_osdep.h.orig	2006-01-17 22:12:00.000000000 +0100
++++ linux-2.6.15-git11/drivers/net/ixgb/ixgb_osdep.h	2006-01-17 22:12:46.000000000 +0100
+@@ -60,7 +60,7 @@ typedef enum {
+ } boolean_t;
  
--	if (fn == NULL)
--		BUG();		/* Hard to diagnose if it's deferred */
-+	BUG_ON(fn == NULL);	/* Hard to diagnose if it's deferred */
+ #undef ASSERT
+-#define ASSERT(x)	if(!(x)) BUG()
++#define ASSERT(x)	BUG_ON(!(x))
+ #define MSGOUT(S, A, B)	printk(KERN_DEBUG S "\n", A, B)
  
- 	spin_lock_irqsave(&pdflush_lock, flags);
- 	if (list_empty(&pdflush_list)) {
+ #ifdef DBG
 
 
 
---===============52950044269192276==
+--===============99824941128499867==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52950044269192276==--
+--===============99824941128499867==--
