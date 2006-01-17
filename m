@@ -1,39 +1,36 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 17 Jan 2006 21:25:16 +0000
-Subject: [KJ] [Patch] change if() BUG();
-Message-Id: <1137533116.20230.15.camel@alice>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Tue, 17 Jan 2006 22:24:02 +0000
+Subject: Re: [KJ] [Patch] change if() BUG();
+Message-Id: <20060117222402.GA31221@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============43778880505972428=="
+Content-Type: multipart/mixed; boundary="===============18624130421488383=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1137533116.20230.15.camel@alice>
+In-Reply-To: <1137533116.20230.15.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============43778880505972428==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============18624130421488383==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,
+On Tue, Jan 17, 2006 at 10:25:11PM +0100, Eric Sesterhenn / snakebyte wrote:
+> this patch changes the if() BUG(); construct in
+> drivers/net/ixgb/ixgb_osdep.h to a BUG_ON; so defining
+> BUG to a no-op is safe.
 
-this patch changes the if() BUG(); construct in
-drivers/ieee1394/cmp.c to a BUG_ON; so defining
-BUG to a no-op is safe.
+> --- linux-2.6.15-git11/drivers/net/ixgb/ixgb_osdep.h.orig
+> +++ linux-2.6.15-git11/drivers/net/ixgb/ixgb_osdep.h
+> @@ -60,7 +60,7 @@ typedef enum {
+>  } boolean_t;
+>
+>  #undef ASSERT
+> -#define ASSERT(x)	if(!(x)) BUG()
+> +#define ASSERT(x)	BUG_ON(!(x))
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.15-git11/drivers/ieee1394/cmp.c.orig	2006-01-17 22:11:13.000000000 +0100
-+++ linux-2.6.15-git11/drivers/ieee1394/cmp.c	2006-01-17 22:11:29.000000000 +0100
-@@ -129,7 +129,7 @@ void cmp_unregister_opcr(struct hpsb_hos
- 
- 	ch = hpsb_get_hostinfo(&cmp_highlevel, host);
- 	plug = (struct plug *)opcr;
--	if (plug - ch->opcr >= ch->u.ompr.nplugs) BUG();
-+	BUG_ON(plug - ch->opcr >= ch->u.ompr.nplugs);
- 
- 	plug->u.pcr.online = 0;
- 	plug->update = NULL;
+Naah. Just Drop It (TM).
 
 
-
---===============43778880505972428==
+--===============18624130421488383==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============43778880505972428==--
+--===============18624130421488383==--
