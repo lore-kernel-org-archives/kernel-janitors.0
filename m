@@ -1,39 +1,33 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Thu, 26 Jan 2006 17:20:01 +0000
-Subject: [KJ] [Patch 1/8] BUG_ON() Conversion in fs/binfmt_elf_fdpic.c
-Message-Id: <1138296001.9170.20.camel@localhost>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Date: Tue, 17 Jan 2006 23:19:05 +0000
+Subject: [KJ] Re: [Patch] change if() BUG();
+Message-Id: <43CD7B69.4040506@s5r6.in-berlin.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============77486563068066472=="
+Content-Type: multipart/mixed; boundary="===============508500760337806=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============77486563068066472==
-Content-Type: text/plain
+--===============508500760337806==
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
-hi,
+Eric Sesterhenn / snakebyte wrote:
+> this patch changes the if() BUG(); construct in
+> drivers/ieee1394/cmp.c to a BUG_ON; so defining
+> BUG to a no-op is safe.
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner and can better optimized away
+"if(x) ;" should work too. But BUG_ON is better. However,
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+> +++ linux-2.6.15-git11/drivers/ieee1394/cmp.c	2006-01-17 22:11:29.000000000 +0100
 
---- linux-2.6.16-rc1-git4/fs/binfmt_elf_fdpic.c.orig	2006-01-26 17:52:26.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/binfmt_elf_fdpic.c	2006-01-26 17:52:43.000000000 +0100
-@@ -572,8 +572,7 @@ static int create_elf_fdpic_tables(struc
- 	csp -= sizeof(unsigned long);
- 	__put_user(bprm->argc, (unsigned long *) csp);
- 
--	if (csp != sp)
--		BUG();
-+	BUG_ON(csp != sp);
- 
- 	/* fill in the argv[] array */
- #ifdef CONFIG_MMU
+cmp.c has been deleted recently. It was an obsolete driver which was 
+scheduled for removal.
+-- 
+Stefan Richter
+-=====-=-==- ---= =--=-
+http://arcgraph.de/sr/
 
-
-
---===============77486563068066472==
+--===============508500760337806==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +38,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============77486563068066472==--
+--===============508500760337806==--
