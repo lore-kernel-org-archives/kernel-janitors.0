@@ -1,57 +1,115 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 31 Jan 2006 17:59:22 +0000
-Subject: [KJ] [Patch] BUG_ON() Conversion in sound/sparc/cs4231.c
-Message-Id: <1138730363.13327.19.camel@alice>
+From: "Angela Shires" <shireseang@kimley-horn.com>
+Date: Tue, 17 Jan 2006 21:08:56 +0000
+Subject: Perfect Phairam acy
+Message-Id: <000001c61baa$3a6dc320$9bd6a8c0@commonly>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============084669541269738025=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C61B80.5197BB20"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============084669541269738025==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+This is a multi-part message in MIME format.
 
-hi,  
-
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
-
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.16-rc1-git4/sound/sparc/cs4231.c.orig	2006-01-31 14:14:04.000000000 +0100
-+++ linux-2.6.16-rc1-git4/sound/sparc/cs4231.c	2006-01-31 14:14:28.000000000 +0100
-@@ -610,8 +610,7 @@ static void snd_cs4231_advance_dma(struc
- 		unsigned int period_size = snd_pcm_lib_period_bytes(substream);
- 		unsigned int offset = period_size * (*periods_sent);
- 
--		if (period_size >= (1 << 24))
--			BUG();
-+		BUG_ON(period_size >= (1 << 24));
- 
- 		if (dma_cont->request(dma_cont, runtime->dma_addr + offset, period_size))
- 			return;
-@@ -1078,8 +1077,7 @@ static int snd_cs4231_playback_prepare(s
- 	chip->image[CS4231_IFACE_CTRL] &= ~(CS4231_PLAYBACK_ENABLE |
- 					    CS4231_PLAYBACK_PIO);
- 
--	if (runtime->period_size > 0xffff + 1)
--		BUG();
-+	BUG_ON(runtime->period_size > 0xffff + 1);
- 
- 	chip->p_periods_sent = 0;
- 	spin_unlock_irqrestore(&chip->lock, flags);
-
-
-
---===============084669541269738025==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+------=_NextPart_000_0001_01C61B80.5197BB20
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+Val
+Via
+Cia
+
+
+
+ium=20
+gra
+lis
+
+
+
+only
+only
+only=20
+
+
+
+$1
+$3
+$3
+
+
+
+,2
+,3
+,7
+
+
+
+1
+3
+5
+
+
+And many other http://www.bunaecom.com <http://www.bunaecom.com>=20
+
+------=_NextPart_000_0001_01C61B80.5197BB20
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV style =3D=20
+"  FLOAT=20
+: left ;=20
+"><H2>Val<BR>
+Via<BR>Cia<BR></H2></DIV>
+<DIV=20
+style =3D "
+  FLOAT=20
+: left ; "><H2>ium&nbsp;<BR>gra<BR>lis<BR></H2></DIV>
+<DIV style =3D "  FLOAT=20
+:
+=20
+left ; "><H2>only<BR>only<BR>
+only&nbsp;<BR></H2></DIV>
+<DIV style =3D "
+  FLOAT=20
+: left ;=20
+"><H2>$1<BR>$3<BR>$3<BR></H2></DIV>
+<DIV style =3D " =20
+FLOAT=20
+: left=20
+; "><H2>,2<BR>
+,3<BR>,7<BR></H2></DIV>
+<DIV style =3D=20
+"
+  FLOAT=20
+: left ; "><H2>1<BR>3<BR>
+5<BR>
+</H2></DIV><DIV style=3D"
+ CLEAR :=20
+both ;"><FONT face=3DArial size=3D2>And many other <A =
+href=3D"http://www.bunaecom.com"><FONT face=3DArial =
+size=3D2>http://www.bunaecom.com</FONT></A></FONT></DIV></BODY></HTML>
+------=_NextPart_000_0001_01C61B80.5197BB20--
+
+
+
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=103432&bid=230486&dat=121642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============084669541269738025==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
