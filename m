@@ -1,33 +1,76 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Date: Tue, 17 Jan 2006 23:19:05 +0000
-Subject: [KJ] Re: [Patch] change if() BUG();
-Message-Id: <43CD7B69.4040506@s5r6.in-berlin.de>
+From: Ralph Nelson <hbtuoxtyynew@crockettonline.com>
+Date: Wed, 18 Jan 2006 07:49:09 +0000
+Subject: [KJ] re: NOTIFICATION - Update Notification
+Message-Id: <70828227129.20060117234909@crockettonline.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============508500760337806=="
+Content-Type: multipart/mixed; boundary="===============5981821643768459=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============508500760337806==
-Content-Type: text/plain; charset=us-ascii; format=flowed
+--===============5981821643768459==
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-Eric Sesterhenn / snakebyte wrote:
-> this patch changes the if() BUG(); construct in
-> drivers/ieee1394/cmp.c to a BUG_ON; so defining
-> BUG to a no-op is safe.
+Reminton Ventures Inc. Climbs 18% from $0.89 to $1.05
+on Tuesday. We Do Not See this slowing down, 
+This is a Must Watch..
 
-"if(x) ;" should work too. But BUG_ON is better. However,
+News again sparked interest in RMVN as today they had 
+a huge price jump of 18% in the market. We are very excited 
+as we believe we are about to see a repeat of the Jump from 
+$0.51 to $2.10 we had a week ago. The day before the big 
+climb they had a sharp jump in price following an annoucement 
+of revenue increase. 
 
-> +++ linux-2.6.15-git11/drivers/ieee1394/cmp.c	2006-01-17 22:11:29.000000000 +0100
+Seeing this type of price Jump today, Wednesday could go 
+through the roof again. Read the release below and set your buy 
+for first thing when the market opens Wednesday morning. 
 
-cmp.c has been deleted recently. It was an obsolete driver which was 
-scheduled for removal.
--- 
-Stefan Richter
--=====-=-==- ---= =--=-
-http://arcgraph.de/sr/
+Remington Ventures Inc. 
+Symbol: RMVN.PK
+Thursday Close: $0.63 
+Friday Close: $0.89
+Tuesday Close: $1.05
+Short Term: $2.25 Lifted now to $2.75 
+Status: S t r o n g   B u y 
 
---===============508500760337806==
+Read the news below: 
+
+This week several market ananysist groups posted profiles 
+concerning RMVN's new technology and solid executive team 
+running this inovative company. 
+
+Market exposure on this stock combined with recent news releases 
+on the capabilites of this amazing technology will certainly bring 
+the stock to new levels. Just read the brief explanation of what 
+this company has developed. 
+
+
+About RMVN: 
+
+Remington Ventures Incorporated (OTCPK: RMVN), is a software company 
+specializing in automated currency trading systems and artificial 
+neural networks for the currency markets. 
+
+The Currency market, also referred to as the Forex or FX market 
+is the largest financial market in the world, with a daily average 
+turnover of approximately $1.5 trillion. 
+
+RMVN is continuously improving its system to isolate the most 
+predictable and lucrative instrument(s) to trade. Their system's neural 
+network input database can be designed so that the neural net actually 
+chooses the instrument to trade as well as the trade parameters. 
+
+For those of you who missed the huge jump a week ago, dont miss it 
+twice, those of you who got in on the climb, get ready to make 
+some more money! 
+
+Good Trading, and see you Wednesday! 
+Good Luck and Trade at the Top !!!
+
+
+
+--===============5981821643768459==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -38,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============508500760337806==--
+--===============5981821643768459==--
