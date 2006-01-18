@@ -1,63 +1,76 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 31 Jan 2006 17:59:16 +0000
-Subject: [KJ] [Patch 5/5] BUG_ON() Conversion in drivers/s390/net/lcs.c
-Message-Id: <1138730357.13327.18.camel@alice>
+From: Annabel Koch <wzjpcb@gowerandlee.co.uk>
+Date: Wed, 18 Jan 2006 07:49:17 +0000
+Subject: [KJ] re: 01-18-06 News Release
+Message-Id: <64648103175.20060117234917@gowerandlee.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============73750334526790162=="
+Content-Type: multipart/mixed; boundary="===============99077673593789983=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============73750334526790162==
-Content-Type: text/plain
+--===============99077673593789983==
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-hi,   
+Reminton Ventures Inc. Climbs 18% from $0.89 to $1.05
+on Tuesday. We Do Not See this slowing down, 
+This is a Must Watch..
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+News again sparked interest in RMVN as today they had 
+a huge price jump of 18% in the market. We are very excited 
+as we believe we are about to see a repeat of the Jump from 
+$0.51 to $2.10 we had a week ago. The day before the big 
+climb they had a sharp jump in price following an annoucement 
+of revenue increase. 
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+Seeing this type of price Jump today, Wednesday could go 
+through the roof again. Read the release below and set your buy 
+for first thing when the market opens Wednesday morning. 
 
---- linux-2.6.16-rc1-git4/drivers/s390/net/lcs.c.orig	2006-01-31 16:22:56.000000000 +0100
-+++ linux-2.6.16-rc1-git4/drivers/s390/net/lcs.c	2006-01-31 16:23:45.000000000 +0100
-@@ -680,9 +680,8 @@ lcs_ready_buffer(struct lcs_channel *cha
- 	int index, rc;
- 
- 	LCS_DBF_TEXT(5, trace, "rdybuff");
--	if (buffer->state != BUF_STATE_LOCKED &&
--	    buffer->state != BUF_STATE_PROCESSED)
--		BUG();
-+	BUG_ON(buffer->state != BUF_STATE_LOCKED &&
-+		buffer->state != BUF_STATE_PROCESSED);
- 	spin_lock_irqsave(get_ccwdev_lock(channel->ccwdev), flags);
- 	buffer->state = BUF_STATE_READY;
- 	index = buffer - channel->iob;
-@@ -706,8 +705,7 @@ __lcs_processed_buffer(struct lcs_channe
- 	int index, prev, next;
- 
- 	LCS_DBF_TEXT(5, trace, "prcsbuff");
--	if (buffer->state != BUF_STATE_READY)
--		BUG();
-+	BUG_ON(buffer->state != BUF_STATE_READY);
- 	buffer->state = BUF_STATE_PROCESSED;
- 	index = buffer - channel->iob;
- 	prev = (index - 1) & (LCS_NUM_BUFFS - 1);
-@@ -739,9 +737,8 @@ lcs_release_buffer(struct lcs_channel *c
- 	unsigned long flags;
- 
- 	LCS_DBF_TEXT(5, trace, "relbuff");
--	if (buffer->state != BUF_STATE_LOCKED &&
--	    buffer->state != BUF_STATE_PROCESSED)
--		BUG();
-+	BUG_ON(buffer->state != BUF_STATE_LOCKED &&
-+		buffer->state != BUF_STATE_PROCESSED);
- 	spin_lock_irqsave(get_ccwdev_lock(channel->ccwdev), flags);
- 	buffer->state = BUF_STATE_EMPTY;
- 	spin_unlock_irqrestore(get_ccwdev_lock(channel->ccwdev), flags);
+Remington Ventures Inc. 
+Symbol: RMVN.PK
+Thursday Close: $0.63 
+Friday Close: $0.89
+Tuesday Close: $1.05
+Short Term: $2.25 Lifted now to $2.75 
+Status: S t r o n g   B u y 
+
+Read the news below: 
+
+This week several market ananysist groups posted profiles 
+concerning RMVN's new technology and solid executive team 
+running this inovative company. 
+
+Market exposure on this stock combined with recent news releases 
+on the capabilites of this amazing technology will certainly bring 
+the stock to new levels. Just read the brief explanation of what 
+this company has developed. 
 
 
+About RMVN: 
 
---===============73750334526790162==
+Remington Ventures Incorporated (OTCPK: RMVN), is a software company 
+specializing in automated currency trading systems and artificial 
+neural networks for the currency markets. 
+
+The Currency market, also referred to as the Forex or FX market 
+is the largest financial market in the world, with a daily average 
+turnover of approximately $1.5 trillion. 
+
+RMVN is continuously improving its system to isolate the most 
+predictable and lucrative instrument(s) to trade. Their system's neural 
+network input database can be designed so that the neural net actually 
+chooses the instrument to trade as well as the trade parameters. 
+
+For those of you who missed the huge jump a week ago, dont miss it 
+twice, those of you who got in on the climb, get ready to make 
+some more money! 
+
+Good Trading, and see you Wednesday! 
+Good Luck and Trade at the Top !!!
+
+
+
+--===============99077673593789983==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -68,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============73750334526790162==--
+--===============99077673593789983==--
