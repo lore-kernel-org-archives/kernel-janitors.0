@@ -1,57 +1,51 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 10 Jan 2006 19:59:31 +0000
+From: Vitaly Bordug <vbordug@ru.mvista.com>
+Date: Wed, 18 Jan 2006 11:47:30 +0000
 Subject: Re: [KJ] [Patch] replace MODULE_PARM in net/fs_enet/fs_enet-main.c
-Message-Id: <1136923171.7128.4.camel@alice>
+Message-Id: <20060118144730.2557b7f5@vitb.dev.rtsoft.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============17939615561079547=="
+Content-Type: multipart/mixed; boundary="===============14880070896344799=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1136898275.23005.3.camel@alice>
 In-Reply-To: <1136898275.23005.3.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============17939615561079547==
-Content-Type: text/plain
+--===============14880070896344799==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-hi,
-
-> > -MODULE_PARM(fs_enet_debug, "i");
-> > +module_param(fs_enet_debug, int, 0);
-> >  MODULE_PARM_DESC(fs_enet_debug,
-> >  		 "Freescale bitmapped debugging message enable value");
+On Tue, 10 Jan 2006 20:59:31 +0100
+Eric Sesterhenn / snakebyte <snakebyte@gmx.de> wrote:
+[snip] 
 > 
-> Is there any logic in choosing 0644 over 0 or vice versa?
+> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 > 
-> /me confused
-
-This should be 0644, sorry. The logic behind this is that you can
-change the debug setting during runtime because the file permissions
-for the /proc entry allow you to change it. 
-For values that are only intended to be command line parameters, 0 is
-always a safe bet, so we dont leak information. At least thats how
-i understand it :)
-Here is the changed patch
+> 
+OK, I'll include this into my next changeset.
+thanks.
 
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+> --- linux-2.6.15-git5/drivers/net/fs_enet/fs_enet-main.c.orig	2006-01-10 14:00:05.000000000 +0100
+> +++ linux-2.6.15-git5/drivers/net/fs_enet/fs_enet-main.c	2006-01-10 14:00:22.000000000 +0100
+> @@ -58,7 +58,7 @@ MODULE_DESCRIPTION("Freescale Ethernet D
+>  MODULE_LICENSE("GPL");
+>  MODULE_VERSION(DRV_MODULE_VERSION);
+>  
+> -MODULE_PARM(fs_enet_debug, "i");
+> +module_param(fs_enet_debug, int, 0644);
+>  MODULE_PARM_DESC(fs_enet_debug,
+>  		 "Freescale bitmapped debugging message enable value");
+>  
+> 
+> 
+> 
+> 
 
 
---- linux-2.6.15-git5/drivers/net/fs_enet/fs_enet-main.c.orig	2006-01-10 14:00:05.000000000 +0100
-+++ linux-2.6.15-git5/drivers/net/fs_enet/fs_enet-main.c	2006-01-10 14:00:22.000000000 +0100
-@@ -58,7 +58,7 @@ MODULE_DESCRIPTION("Freescale Ethernet D
- MODULE_LICENSE("GPL");
- MODULE_VERSION(DRV_MODULE_VERSION);
- 
--MODULE_PARM(fs_enet_debug, "i");
-+module_param(fs_enet_debug, int, 0644);
- MODULE_PARM_DESC(fs_enet_debug,
- 		 "Freescale bitmapped debugging message enable value");
- 
+-- 
+Sincerely, 
+Vitaly
 
-
-
-
---===============17939615561079547==
+--===============14880070896344799==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============17939615561079547==--
+--===============14880070896344799==--
