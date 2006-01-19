@@ -1,60 +1,39 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 09 Jan 2006 16:49:24 +0000
-Subject: Re: [KJ] 8139too.c
-Message-Id: <20060109164924.GK2064@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============077843437986752306=="
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Thu, 19 Jan 2006 20:10:29 +0000
+Subject: [KJ] [PATCH 2/5] README: Remove a.out reference
+Message-Id: <a01a16b50601191210g7bb0b4d6uca221f09b33b4a6a@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200601091104.39196.cneira@srb.cl>
-In-Reply-To: <200601091104.39196.cneira@srb.cl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============077843437986752306==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-On 09.01.2006 [19:44:34 +0300], Alexey Dobriyan wrote:
-> On Mon, Jan 09, 2006 at 11:04:38AM +0000, carlos neira wrote:
-> > This patch uses wait_event_interruptible instead of  slep_on_interruptible , 
-> > compiled ok  , using it right now.
-> > Please some comments if i messed something up .
-> 
-> > diff -urN /usr/src/linux-2.6.15-rc7/drivers/net/8139too.c /home/cneira/Linuxjanitoring/linux-janitorpatching/drivers/net/8139too.c
-> > --- /usr/src/linux-2.6.15-rc7/drivers/net/8139too.c	2005-12-24 20:47:48.000000000 -0300
-> > +++ /home/cneira/Linuxjanitoring/linux-janitorpatching/drivers/net/8139too.c	2006-01-08 20:57:01.000000000 -0300
-> 
-> Please, read Documentation/SubmittingPatches for the proper format.
-> 
-> >  	while (1) {
-> >  		timeout = next_tick;
-> >  		do {
-> > -			timeout = interruptible_sleep_on_timeout (&tp->thr_wait, timeout);
-> > -			/* make swsusp happy with our thread */
-> > -			try_to_freeze();
-> > -		} while (!signal_pending (current) && (timeout > 0));
-> > +		  
-> > +		 gotsignal = wait_event_interruptible(rlq,timeout > 0);	
-> > +		  
-> > +		} while (gotsignal != 0  && (timeout > 0));
-> >  
-> > +		
-> 
-> I'm sure swsusp won't be happy with this change.
+Removed a line promising that users still could run a.out user programs.
+As far as I know all distributions have removed libc.4 support years
+ago, so while the kernel itself still might support a.out, the promise
+is both 1) not needed anymore and 2) most likely not correct.
 
-Agreed, NACK... hint: the try_to_freeze() call is necessary.
+Signed-off-by: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-Thanks,
-Nish
+---
 
---===============077843437986752306==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--- linux-2.6.15.1/README.ldp   2006-01-19 14:13:11.000000000 +0100
++++ linux-2.6.15.1/README       2006-01-19 14:13:28.000000000 +0100
+@@ -189,8 +189,6 @@
+    Also remember to upgrade your binutils package (for as/ld/nm and compan=
+y)
+    if necessary. For more information, refer to Documentation/Changes.
+
+-   Please note that you can still run a.out user programs with this kernel.
+-
+  - Do a "make" to create a compressed kernel image. It is also
+    possible to do "make install" if you have lilo installed to suit the
+    kernel makefiles, but you may want to check your particular lilo
+setup first.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============077843437986752306==--
