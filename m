@@ -1,72 +1,81 @@
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
-Date: Fri, 13 Jan 2006 08:45:27 +0000
-Subject: [KJ] Re: [Patch] replace MODULE_PARM innet/ne-h8300.c
-Message-Id: <m24q48349k.wl%ysato@users.sourceforge.jp>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============29814235952282342=="
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Thu, 19 Jan 2006 20:18:30 +0000
+Subject: [KJ] [PATCH 5/5] README: Updates to LILO related text
+Message-Id: <a01a16b50601191218k723bd0cei148c4bcd6d8297e2@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============29814235952282342==
-Content-Type: text/plain; charset=US-ASCII
+From: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-At Tue, 10 Jan 2006 14:06:22 +0100,
-Eric Sesterhenn / snakebyte wrote:
-> 
-> hi,
-> 
-> this patch replaces the MODULE_PARM usage in uli526x.c
-> with module_param.
-> 
+Use LILO everywhere instead of both lilo and LILO.
 
-I am fine.
-I delete it incidentally because do not use "bad".
+Mention GRUB as a possible boot loader in addition to LILO.
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+Rewritten a sentence that was written as an alternative to a paragraph
+about booting directly from floppy (no longer present and no longer
+supported).
 
-===File ~/ne-h8300.diff=====================================
-diff --git a/drivers/net/ne-h8300.c b/drivers/net/ne-h8300.c
-index 8f40368..ccd0c0f 100644
---- a/drivers/net/ne-h8300.c
-+++ b/drivers/net/ne-h8300.c
-@@ -598,11 +598,9 @@ retry:
- static struct net_device *dev_ne[MAX_NE_CARDS];
- static int io[MAX_NE_CARDS];
- static int irq[MAX_NE_CARDS];
--static int bad[MAX_NE_CARDS];	/* 0xbad = bad sig or no reset ack */
- 
--MODULE_PARM(io, "1-" __MODULE_STRING(MAX_NE_CARDS) "i");
--MODULE_PARM(irq, "1-" __MODULE_STRING(MAX_NE_CARDS) "i");
--MODULE_PARM(bad, "1-" __MODULE_STRING(MAX_NE_CARDS) "i");
-+module_param_array(io, int, NULL, 0);
-+module_param_array(irq, int, NULL, 0);
- MODULE_PARM_DESC(io, "I/O base address(es)");
- MODULE_PARM_DESC(irq, "IRQ number(s)");
- MODULE_DESCRIPTION("H8/300 NE2000 Ethernet driver");
-@@ -624,7 +622,6 @@ int init_module(void)
- 			break;
- 		if (io[this_dev]) {
- 			dev->irq = irq[this_dev];
--			dev->mem_end = bad[this_dev];
- 			dev->base_addr = io[this_dev];
- 		} else {
- 			dev->base_addr = h8300_ne_base[this_dev];
-============================================================
+Replace the phrase "reinstalling LILO" with "reinstalling the LILO
+boot loader code"
+to be more specific (as opposed to re-installing an rpm or deb LILO package=
+).
 
--- 
-Yoshinori Sato
-<ysato@users.sourceforge.jp>
+Signed-off-by: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
---===============29814235952282342==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+---
+
+--- linux-2.6.15.1/README.XX,x,x.y	2006-01-19 14:32:40.000000000 +0100
++++ linux-2.6.15.1/README	2006-01-19 14:36:35.000000000 +0100
+@@ -192,8 +192,8 @@
+    if necessary. For more information, refer to Documentation/Changes.
+
+  - Do a "make" to create a compressed kernel image. It is also
+-   possible to do "make install" if you have lilo installed to suit the
+-   kernel makefiles, but you may want to check your particular lilo
+setup first.
++   possible to do "make install" if you have LILO installed to suit the
++   kernel makefiles, but you may want to check your particular LILO
+setup first.
+
+    To do the actual install you have to be root, but none of the normal
+    build should require that. Don't take the name of root in vain.
+@@ -215,23 +215,23 @@
+    to the place where your regular bootable kernel is found.
+
+  - Booting a kernel directly from a floppy without the assistance of a
+-   bootloader such as LILO, is no longer supported.
++   bootloader such as LILO or GRUB, is no longer supported.
+
+-   If you boot Linux from the hard drive, chances are you use LILO which
+-   uses the kernel image as specified in the file /etc/lilo.conf.  The
+-   kernel image file is usually /vmlinuz, /boot/vmlinuz, /bzImage or
++   If you boot Linux using LILO, notice that LILO uses the kernel image
++   as specified in the file /etc/lilo.conf.
++   The kernel image file is usually /vmlinuz, /boot/vmlinuz, /bzImage or
+    /boot/bzImage.  To use the new kernel, save a copy of the old image
+    and copy the new image over the old one.  Then, you MUST RERUN LILO
+    to update the loading map!! If you don't, you won't be able to boot
+    the new kernel image.
+
+-   Reinstalling LILO is usually a matter of running /sbin/lilo.
++   Reinstalling the LILO boot loader code is usually a matter of
+running /sbin/lilo.
+    You may wish to edit /etc/lilo.conf to specify an entry for your
+    old kernel image (say, /vmlinux.old) in case the new one does not
+    work.  See the LILO docs for more information.
+
+-   After reinstalling LILO, you should be all set.  Shutdown the system,
+-   reboot, and enjoy!
++   After reinstalling the LILO boot loader code, you should be all set.
++   Shutdown the system, reboot, and enjoy!
+
+    If you ever need to change the default root device, video mode,
+    ramdisk size, etc.  in the kernel image, use the 'rdev' program (or
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============29814235952282342==--
