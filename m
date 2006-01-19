@@ -1,57 +1,33 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Thu, 26 Jan 2006 00:00:21 +0000
-Subject: [KJ] [Patch 4/9] BUG_ON() Conversion in md/dm-table.c
-Message-Id: <1138233621.7232.40.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13910640236841898=="
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Thu, 19 Jan 2006 20:12:21 +0000
+Subject: [KJ] [PATCH 3/5] README: s/new/newer/ bzip2 format
+Message-Id: <a01a16b50601191212n3570e5b8w7b27ef556231ee4e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============13910640236841898==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-hi,
+bzip2 is not new any more, so replace "new" with "newer".
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner and can better optimized away
+Signed-off-by: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+---
 
---- linux-2.6.16-rc1-git4/drivers/md/dm-table.c.orig	2006-01-26 00:38:13.000000000 +0100
-+++ linux-2.6.16-rc1-git4/drivers/md/dm-table.c	2006-01-26 00:38:31.000000000 +0100
-@@ -352,8 +352,7 @@ static int open_dev(struct dm_dev *d, de
- 
- 	int r;
- 
--	if (d->bdev)
--		BUG();
-+	BUG_ON(d->bdev);
- 
- 	bdev = open_by_devnum(dev, d->mode);
- 	if (IS_ERR(bdev))
-@@ -427,8 +426,7 @@ static int __table_get_device(struct dm_
- 	struct dm_dev *dd;
- 	unsigned int major, minor;
- 
--	if (!t)
--		BUG();
-+	BUG_ON(!t);
- 
- 	if (sscanf(path, "%u:%u", &major, &minor) == 2) {
- 		/* Extract the major/minor numbers */
+--- linux-2.6.15.1/README.a.out 2006-01-19 14:19:08.000000000 +0100
++++ linux-2.6.15.1/README       2006-01-19 14:19:31.000000000 +0100
+@@ -66,7 +66,7 @@
+    whatever the kernel-du-jour happens to be.
 
-
-
---===============13910640236841898==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+  - You can also upgrade between 2.6.xx releases by patching.  Patches are
+-   distributed in the traditional gzip and the new bzip2 format.  To
++   distributed in the traditional gzip and the newer bzip2 format.  To
+    install by patching, get all the newer patch files, enter the
+    top level directory of the kernel source (linux-2.6.xx) and execute:
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============13910640236841898==--
