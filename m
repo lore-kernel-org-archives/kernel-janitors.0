@@ -1,73 +1,40 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Thu, 26 Jan 2006 17:20:51 +0000
-Subject: [KJ] [Patch 8/8] BUG_ON() Conversion in fs/inode.c
-Message-Id: <1138296051.9170.27.camel@localhost>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============51536753389057033=="
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Thu, 19 Jan 2006 20:08:12 +0000
+Subject: [KJ] [PATCH 1/5] README: LDP reference updated
+Message-Id: <a01a16b50601191208v51f25c36ra1960da7d8cafef4@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============51536753389057033==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-hi,
+Updated the reference to LDP to point to http://www.tldp.org/.
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner and can better optimized away
+Signed-off-by: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+---
 
---- linux-2.6.16-rc1-git4/fs/inode.c.orig	2006-01-26 17:57:32.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/inode.c	2006-01-26 17:59:17.000000000 +0100
-@@ -172,8 +172,7 @@ static struct inode *alloc_inode(struct 
- 
- void destroy_inode(struct inode *inode) 
- {
--	if (inode_has_buffers(inode))
--		BUG();
-+	BUG_ON(inode_has_buffers(inode));
- 	security_inode_free(inode);
- 	if (inode->i_sb->s_op->destroy_inode)
- 		inode->i_sb->s_op->destroy_inode(inode);
-@@ -249,12 +248,9 @@ void clear_inode(struct inode *inode)
- 	might_sleep();
- 	invalidate_inode_buffers(inode);
-        
--	if (inode->i_data.nrpages)
--		BUG();
--	if (!(inode->i_state & I_FREEING))
--		BUG();
--	if (inode->i_state & I_CLEAR)
--		BUG();
-+	BUG_ON(inode->i_data.nrpages);
-+	BUG_ON(!(inode->i_state & I_FREEING));
-+	BUG_ON(inode->i_state & I_CLEAR);
- 	wait_on_inode(inode);
- 	DQUOT_DROP(inode);
- 	if (inode->i_sb && inode->i_sb->s_op->clear_inode)
-@@ -1054,8 +1050,7 @@ void generic_delete_inode(struct inode *
- 	hlist_del_init(&inode->i_hash);
- 	spin_unlock(&inode_lock);
- 	wake_up_inode(inode);
--	if (inode->i_state != I_CLEAR)
--		BUG();
-+	BUG_ON(inode->i_state != I_CLEAR);
- 	destroy_inode(inode);
- }
- 
+--- linux-2.6.15.1/README.orig  2006-01-15 07:16:02.000000000 +0100
++++ linux-2.6.15.1/README       2006-01-19 13:33:55.000000000 +0100
+@@ -28,10 +28,10 @@
 
+  - There is a lot of documentation available both in electronic form on
+    the Internet and in books, both Linux-specific and pertaining to
+-   general UNIX questions.  I'd recommend looking into the documentation
+-   subdirectories on any Linux FTP site for the LDP (Linux Documentation
+-   Project) books.  This README is not meant to be documentation on the
+-   system: there are much better sources available.
++   general UNIX questions.  I'd recommend looking into the HOWTOs, Guides
++   and FAQs part of the Linux Documentation Project, http://www.tldp.org/.
++   This README is not meant to be documentation on the system: there
++   are much better sources available.
 
-
---===============51536753389057033==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+  - There are various README files in the Documentation/ subdirectory:
+    these typically contain kernel-specific installation notes for some
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============51536753389057033==--
