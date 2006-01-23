@@ -1,60 +1,40 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Thu, 19 Jan 2006 02:53:36 +0000
-Subject: Re: [KJ] [Patch] change if() BUG();
-Message-Id: <20060119025336.GF19398@stusta.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============80521097724330337=="
+From: Ron Gage <ron@rongage.org>
+Date: Mon, 23 Jan 2006 00:14:07 +0000
+Subject: [KJ] request_region cleanup question
+Message-Id: <20060122191407.woomvhufmoxwowoo@webmail.rongage.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1137533116.20230.15.camel@alice>
-In-Reply-To: <1137533116.20230.15.camel@alice>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============80521097724330337==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello...
 
-On Wed, Jan 18, 2006 at 01:24:02AM +0300, Alexey Dobriyan wrote:
-> On Tue, Jan 17, 2006 at 10:25:11PM +0100, Eric Sesterhenn / snakebyte wrote:
-> > this patch changes the if() BUG(); construct in
-> > drivers/net/ixgb/ixgb_osdep.h to a BUG_ON; so defining
-> > BUG to a no-op is safe.
-> 
-> > --- linux-2.6.15-git11/drivers/net/ixgb/ixgb_osdep.h.orig
-> > +++ linux-2.6.15-git11/drivers/net/ixgb/ixgb_osdep.h
-> > @@ -60,7 +60,7 @@ typedef enum {
-> >  } boolean_t;
-> >
-> >  #undef ASSERT
-> > -#define ASSERT(x)	if(!(x)) BUG()
-> > +#define ASSERT(x)	BUG_ON(!(x))
-> 
-> Naah. Just Drop It (TM).
+Is it acceptable/preferred to evaluate the actual return code from
+request_region, or is it acceptable to just follow an error path should the
+call to request_region fail?
 
-AFAIR, this driver is both actively maintained by Intel and shared 
-between operating systems (e.g. FreeBSD contains the same driver).
+In other words, which is preferred:
+ret=request_region(blah,blah...);
+if (ret) { fault path }
+      - or -
+if (request_region(blah,blah...)) { fault path }
 
-Therefore dropping this ASSERT is not possible.
+I see it go both ways in the current kernel (2.6.15) and want to know if there
+is a preferred way to go here.
 
-cu
-Adrian
+Personally, I prefer the first method as this allows you to evaluate the actual
+reason for the failure and possibly handle that failure gracefully (e.g.
+-EAGAIN).
 
 -- 
+Ron Gage
+(LPIC1 MCP A+ Net+)
+Westland, Michigan
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
-
---===============80521097724330337==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============80521097724330337==--
