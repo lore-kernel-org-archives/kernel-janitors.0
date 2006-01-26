@@ -1,50 +1,39 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 27 Jan 2006 09:32:18 +0000
-Subject: [KJ] [Patch 1/12] BUG_ON() Conversion in fs/coda/
-Message-Id: <1138354339.7391.39.camel@alice>
+From: Eric Sesterhenn <eric_s@gmx.de>
+Date: Thu, 26 Jan 2006 00:00:15 +0000
+Subject: [KJ] [Patch 3/9] BUG_ON() Conversion in md/dm-path-selector.c
+Message-Id: <1138233615.7232.38.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============017878798813707242=="
+Content-Type: multipart/mixed; boundary="===============99767853962318176=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============017878798813707242==
+--===============99767853962318176==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
 this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/fs/coda/cache.c.orig	2006-01-27 01:23:25.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/coda/cache.c	2006-01-27 01:23:43.000000000 +0100
-@@ -51,7 +51,7 @@ void coda_cache_clear_all(struct super_b
-         struct coda_sb_info *sbi;
+--- linux-2.6.16-rc1-git4/drivers/md/dm-path-selector.c.orig	2006-01-26 00:37:43.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/md/dm-path-selector.c	2006-01-26 00:37:52.000000000 +0100
+@@ -86,8 +86,7 @@ void dm_put_path_selector(struct path_se
+ 	if (--psi->use == 0)
+ 		module_put(psi->pst.module);
  
-         sbi = coda_sbp(sb);
--        if (!sbi) BUG();
-+	BUG_ON(!sbi);
- 
- 	atomic_inc(&permission_epoch);
- }
---- linux-2.6.16-rc1-git4/fs/coda/cnode.c.orig	2006-01-27 01:23:57.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/coda/cnode.c	2006-01-27 01:24:13.000000000 +0100
-@@ -120,8 +120,7 @@ void coda_replace_fid(struct inode *inod
- 	
- 	cii = ITOC(inode);
- 
--	if (!coda_fideq(&cii->c_fid, oldfid))
+-	if (psi->use < 0)
 -		BUG();
-+	BUG_ON(!coda_fideq(&cii->c_fid, oldfid));
++	BUG_ON(psi->use < 0);
  
- 	/* replace fid and rehash inode */
- 	/* XXX we probably need to hold some lock here! */
+ out:
+ 	up_read(&_ps_lock);
 
 
 
---===============017878798813707242==
+--===============99767853962318176==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============017878798813707242==--
+--===============99767853962318176==--
