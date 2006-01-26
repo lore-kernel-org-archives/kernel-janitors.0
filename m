@@ -1,40 +1,49 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 31 Jan 2006 13:03:13 +0000
-Subject: [KJ] [Patch 3/7] BUG_ON() Conversion in mm/mempool.c
-Message-Id: <1138712593.11570.15.camel@alice>
+Date: Thu, 26 Jan 2006 00:00:49 +0000
+Subject: [KJ] [Patch 9/9] BUG_ON() Conversion in md/raid10.c
+Message-Id: <1138233649.7232.46.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============70758831184413573=="
+Content-Type: multipart/mixed; boundary="===============15601442963535228=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============70758831184413573==
+--===============15601442963535228==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,  
+hi,
 
 this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/mm/mempool.c.orig	2006-01-30 23:15:07.000000000 +0100
-+++ linux-2.6.16-rc1-git4/mm/mempool.c	2006-01-30 23:15:35.000000000 +0100
-@@ -183,8 +183,8 @@ EXPORT_SYMBOL(mempool_resize);
-  */
- void mempool_destroy(mempool_t *pool)
- {
--	if (pool->curr_nr != pool->min_nr)
--		BUG();		/* There were outstanding elements */
-+	/* Check for outstanding elements */
-+	BUG_ON(pool->curr_nr != pool->min_nr);
- 	free_pool(pool);
- }
- EXPORT_SYMBOL(mempool_destroy);
+--- linux-2.6.16-rc1-git4/drivers/md/raid10.c.orig	2006-01-26 00:33:04.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/md/raid10.c	2006-01-26 00:33:31.000000000 +0100
+@@ -1115,8 +1115,7 @@ static int end_sync_read(struct bio *bio
+ 	for (i=0; i<conf->copies; i++)
+ 		if (r10_bio->devs[i].bio == bio)
+ 			break;
+-	if (i == conf->copies)
+-		BUG();
++	BUG_ON(i == conf->copies);
+ 	update_head_pos(i, r10_bio);
+ 	d = r10_bio->devs[i].devnum;
+ 
+@@ -1516,8 +1515,7 @@ static int init_resync(conf_t *conf)
+ 	int buffs;
+ 
+ 	buffs = RESYNC_WINDOW / RESYNC_BLOCK_SIZE;
+-	if (conf->r10buf_pool)
+-		BUG();
++	BUG_ON(conf->r10buf_pool);
+ 	conf->r10buf_pool = mempool_create(buffs, r10buf_pool_alloc, r10buf_pool_free, conf);
+ 	if (!conf->r10buf_pool)
+ 		return -ENOMEM;
 
 
 
---===============70758831184413573==
+--===============15601442963535228==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============70758831184413573==--
+--===============15601442963535228==--
