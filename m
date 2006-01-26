@@ -1,81 +1,46 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Thu, 19 Jan 2006 20:18:30 +0000
-Subject: [KJ] [PATCH 5/5] README: Updates to LILO related text
-Message-Id: <a01a16b50601191218k723bd0cei148c4bcd6d8297e2@mail.gmail.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Thu, 26 Jan 2006 17:20:38 +0000
+Subject: [KJ] [Patch 6/8] BUG_ON() Conversion in fs/exec.c
+Message-Id: <1138296038.9170.25.camel@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============23186307851154098=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-From: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
+--===============23186307851154098==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Use LILO everywhere instead of both lilo and LILO.
+hi,
 
-Mention GRUB as a possible boot loader in addition to LILO.
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner and can better optimized away
 
-Rewritten a sentence that was written as an alternative to a paragraph
-about booting directly from floppy (no longer present and no longer
-supported).
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Replace the phrase "reinstalling LILO" with "reinstalling the LILO
-boot loader code"
-to be more specific (as opposed to re-installing an rpm or deb LILO package=
-).
+--- linux-2.6.16-rc1-git4/fs/exec.c.orig	2006-01-26 17:56:45.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/exec.c	2006-01-26 17:56:58.000000000 +0100
+@@ -561,7 +561,7 @@ static int exec_mmap(struct mm_struct *m
+ 	arch_pick_mmap_layout(mm);
+ 	if (old_mm) {
+ 		up_read(&old_mm->mmap_sem);
+-		if (active_mm != old_mm) BUG();
++		BUG_ON(active_mm != old_mm);
+ 		mmput(old_mm);
+ 		return 0;
+ 	}
 
-Signed-off-by: H=E5kon L=F8vdal <Hakon.Lovdal@ericsson.com>
 
----
 
---- linux-2.6.15.1/README.XX,x,x.y	2006-01-19 14:32:40.000000000 +0100
-+++ linux-2.6.15.1/README	2006-01-19 14:36:35.000000000 +0100
-@@ -192,8 +192,8 @@
-    if necessary. For more information, refer to Documentation/Changes.
-
-  - Do a "make" to create a compressed kernel image. It is also
--   possible to do "make install" if you have lilo installed to suit the
--   kernel makefiles, but you may want to check your particular lilo
-setup first.
-+   possible to do "make install" if you have LILO installed to suit the
-+   kernel makefiles, but you may want to check your particular LILO
-setup first.
-
-    To do the actual install you have to be root, but none of the normal
-    build should require that. Don't take the name of root in vain.
-@@ -215,23 +215,23 @@
-    to the place where your regular bootable kernel is found.
-
-  - Booting a kernel directly from a floppy without the assistance of a
--   bootloader such as LILO, is no longer supported.
-+   bootloader such as LILO or GRUB, is no longer supported.
-
--   If you boot Linux from the hard drive, chances are you use LILO which
--   uses the kernel image as specified in the file /etc/lilo.conf.  The
--   kernel image file is usually /vmlinuz, /boot/vmlinuz, /bzImage or
-+   If you boot Linux using LILO, notice that LILO uses the kernel image
-+   as specified in the file /etc/lilo.conf.
-+   The kernel image file is usually /vmlinuz, /boot/vmlinuz, /bzImage or
-    /boot/bzImage.  To use the new kernel, save a copy of the old image
-    and copy the new image over the old one.  Then, you MUST RERUN LILO
-    to update the loading map!! If you don't, you won't be able to boot
-    the new kernel image.
-
--   Reinstalling LILO is usually a matter of running /sbin/lilo.
-+   Reinstalling the LILO boot loader code is usually a matter of
-running /sbin/lilo.
-    You may wish to edit /etc/lilo.conf to specify an entry for your
-    old kernel image (say, /vmlinux.old) in case the new one does not
-    work.  See the LILO docs for more information.
-
--   After reinstalling LILO, you should be all set.  Shutdown the system,
--   reboot, and enjoy!
-+   After reinstalling the LILO boot loader code, you should be all set.
-+   Shutdown the system, reboot, and enjoy!
-
-    If you ever need to change the default root device, video mode,
-    ramdisk size, etc.  in the kernel image, use the 'rdev' program (or
+--===============23186307851154098==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============23186307851154098==--
