@@ -1,38 +1,47 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Sun, 08 Jan 2006 23:41:21 +0000
-Subject: Re: MODULE_VERSION useless? (was Re: [KJ] adding missing MODULE_*
-Message-Id: <a01a16b50601081541n582fb3e2k2b7b7fb3494330e2@mail.gmail.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Thu, 26 Jan 2006 17:20:01 +0000
+Subject: [KJ] [Patch 1/8] BUG_ON() Conversion in fs/binfmt_elf_fdpic.c
+Message-Id: <1138296001.9170.20.camel@localhost>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============77486563068066472=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20051230000400.GS18040@outflux.net>
-	 <20060108204549.GB5864@mipter.zuzino.mipt.ru>
-	 <200601081855.17723.carlos@embedded.cl>
-In-Reply-To: <200601081855.17723.carlos@embedded.cl>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+--===============77486563068066472==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+hi,
+
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner and can better optimized away
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.16-rc1-git4/fs/binfmt_elf_fdpic.c.orig	2006-01-26 17:52:26.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/binfmt_elf_fdpic.c	2006-01-26 17:52:43.000000000 +0100
+@@ -572,8 +572,7 @@ static int create_elf_fdpic_tables(struc
+ 	csp -= sizeof(unsigned long);
+ 	__put_user(bprm->argc, (unsigned long *) csp);
+ 
+-	if (csp != sp)
+-		BUG();
++	BUG_ON(csp != sp);
+ 
+ 	/* fill in the argv[] array */
+ #ifdef CONFIG_MMU
+
+
+
+--===============77486563068066472==
 Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
-
-On 1/8/06, Carlos Manuel Duclos Vergara <carlos@embedded.cl> wrote:
-> Hi everyone,
->
-> I have two ideas about what to do with MODULE_VERSION:
-> 1.- Defining MODULE_VERSION =3D KERNEL_VERSION
-> 2.- Schedule it for removal in one or two more versions, and automagicall=
-y use
-> the KERNEL_VERSION as module's version.
->
-> Any comments?
-
-I think there is another option:
-
-3. Always print KERNEL_VERSION in addition to MODULE_VERSION.
-
-Since for some modules MODULE_VERSION is considered useful and
-KERNEL_VERSION always is useful, this should give the best of both, right?
-
-BR H=E5kon L=F8vdal
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============77486563068066472==--
