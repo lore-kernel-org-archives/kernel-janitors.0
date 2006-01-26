@@ -1,38 +1,49 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 06 Jan 2006 11:19:25 +0000
-Subject: [KJ] [Patch 2/9] Cleanup MODULE_PARM in atarilance.c
-Message-Id: <1136546366.13172.21.camel@alice>
+Date: Thu, 26 Jan 2006 00:00:21 +0000
+Subject: [KJ] [Patch 4/9] BUG_ON() Conversion in md/dm-table.c
+Message-Id: <1138233621.7232.40.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15525232280694912=="
+Content-Type: multipart/mixed; boundary="===============13910640236841898=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============15525232280694912==
+--===============13910640236841898==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this patch changes MODULE_PARM usage to
-module_param
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-git2/drivers/net/atarilance.c.orig	2006-01-06 12:08:51.000000000 +0100
-+++ linux-2.6.15-git2/drivers/net/atarilance.c	2006-01-06 12:09:04.000000000 +0100
-@@ -78,7 +78,7 @@ static int lance_debug = LANCE_DEBUG;
- #else
- static int lance_debug = 1;
- #endif
--MODULE_PARM(lance_debug, "i");
-+module_param(lance_debug, int, 0644);
- MODULE_PARM_DESC(lance_debug, "atarilance debug level (0-3)");
- MODULE_LICENSE("GPL");
+--- linux-2.6.16-rc1-git4/drivers/md/dm-table.c.orig	2006-01-26 00:38:13.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/md/dm-table.c	2006-01-26 00:38:31.000000000 +0100
+@@ -352,8 +352,7 @@ static int open_dev(struct dm_dev *d, de
  
+ 	int r;
+ 
+-	if (d->bdev)
+-		BUG();
++	BUG_ON(d->bdev);
+ 
+ 	bdev = open_by_devnum(dev, d->mode);
+ 	if (IS_ERR(bdev))
+@@ -427,8 +426,7 @@ static int __table_get_device(struct dm_
+ 	struct dm_dev *dd;
+ 	unsigned int major, minor;
+ 
+-	if (!t)
+-		BUG();
++	BUG_ON(!t);
+ 
+ 	if (sscanf(path, "%u:%u", &major, &minor) == 2) {
+ 		/* Extract the major/minor numbers */
 
 
 
---===============15525232280694912==
+--===============13910640236841898==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15525232280694912==--
+--===============13910640236841898==--
