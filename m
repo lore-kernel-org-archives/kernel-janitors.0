@@ -1,49 +1,42 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Mon, 30 Jan 2006 21:15:48 +0000
-Subject: [KJ] [Patch 4/6] BUG_ON() Conversion in kernel/ptrace.c
-Message-Id: <1138655748.4007.13.camel@alice>
+Date: Thu, 26 Jan 2006 21:02:51 +0000
+Subject: [KJ] [Patch 3/3] BUG_ON() Conversion in net/tulip/xircom_cb.c
+Message-Id: <1138309371.26201.8.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============038541165161615876=="
+Content-Type: multipart/mixed; boundary="===============39188033188017357=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============038541165161615876==
+--===============39188033188017357==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,  
+hi,
 
 this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/kernel/ptrace.c.orig	2006-01-27 11:50:10.000000000 +0100
-+++ linux-2.6.16-rc1-git4/kernel/ptrace.c	2006-01-27 11:50:28.000000000 +0100
-@@ -30,8 +30,7 @@
-  */
- void __ptrace_link(task_t *child, task_t *new_parent)
- {
--	if (!list_empty(&child->ptrace_list))
+--- linux-2.6.16-rc1-git4/drivers/net/tulip/xircom_cb.c.orig	2006-01-26 20:33:27.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/net/tulip/xircom_cb.c	2006-01-26 20:33:45.000000000 +0100
+@@ -598,10 +598,8 @@ static void setup_descriptors(struct xir
+ 	enter("setup_descriptors");
+ 
+ 
+-	if (card->rx_buffer == NULL)
 -		BUG();
-+	BUG_ON(!list_empty(&child->ptrace_list));
- 	if (child->parent == new_parent)
- 		return;
- 	list_add(&child->ptrace_list, &child->parent->ptrace_children);
-@@ -72,8 +71,7 @@ void ptrace_untrace(task_t *child)
-  */
- void __ptrace_unlink(task_t *child)
- {
--	if (!child->ptrace)
+-	if (card->tx_buffer == NULL)
 -		BUG();
-+	BUG_ON(!child->ptrace);
- 	child->ptrace = 0;
- 	if (!list_empty(&child->ptrace_list)) {
- 		list_del_init(&child->ptrace_list);
++	BUG_ON(card->rx_buffer == NULL);
++	BUG_ON(card->tx_buffer == NULL);
+ 
+ 	/* Receive descriptors */
+ 	memset(card->rx_buffer, 0, 128);	/* clear the descriptors */
 
 
 
---===============038541165161615876==
+--===============39188033188017357==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============038541165161615876==--
+--===============39188033188017357==--
