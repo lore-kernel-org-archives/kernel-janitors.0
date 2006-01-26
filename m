@@ -1,38 +1,38 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 06 Jan 2006 11:19:55 +0000
-Subject: [KJ] [Patch 6/9] Cleanup MODULE_PARM in mace.c
-Message-Id: <1136546395.13172.29.camel@alice>
+Date: Thu, 26 Jan 2006 21:02:49 +0000
+Subject: [KJ] [Patch 2/3] BUG_ON() Conversion in net/tulip/winbond-840.c
+Message-Id: <1138309369.26201.5.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64944220903647265=="
+Content-Type: multipart/mixed; boundary="===============91686427946467863=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============64944220903647265==
+--===============91686427946467863==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this patch changes MODULE_PARM usage to
-module_param
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-git2/drivers/net/mace.c.orig	2006-01-06 12:09:18.000000000 +0100
-+++ linux-2.6.15-git2/drivers/net/mace.c	2006-01-06 12:09:31.000000000 +0100
-@@ -1042,7 +1042,7 @@ static void __exit mace_cleanup(void)
+--- linux-2.6.16-rc1-git4/drivers/net/tulip/winbond-840.c.orig	2006-01-26 20:31:30.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/net/tulip/winbond-840.c	2006-01-26 20:33:11.000000000 +0100
+@@ -1645,7 +1645,7 @@ static int w840_suspend (struct pci_dev 
  
- MODULE_AUTHOR("Paul Mackerras");
- MODULE_DESCRIPTION("PowerMac MACE driver.");
--MODULE_PARM(port_aaui, "i");
-+module_param(port_aaui, int, 0);
- MODULE_PARM_DESC(port_aaui, "MACE uses AAUI port (0-1)");
- MODULE_LICENSE("GPL");
+ 		/* no more hardware accesses behind this line. */
  
+-		if (np->csr6) BUG();
++		BUG_ON(np->csr6);
+ 		if (ioread32(ioaddr + IntrEnable)) BUG();
+ 
+ 		/* pci_power_off(pdev, -1); */
 
 
 
---===============64944220903647265==
+--===============91686427946467863==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============64944220903647265==--
+--===============91686427946467863==--
