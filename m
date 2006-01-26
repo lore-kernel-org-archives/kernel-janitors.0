@@ -1,41 +1,59 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Wed, 04 Jan 2006 23:49:56 +0000
-Subject: [KJ] [PATCH 1/4] Remove MODULE_PARM in media/video/arv.c
-Message-Id: <1136418597.10387.11.camel@localhost>
+Date: Thu, 26 Jan 2006 17:20:10 +0000
+Subject: [KJ] [Patch 2/8] BUG_ON() Conversion in fs/buffer.c
+Message-Id: <1138296010.9170.21.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============33488345609273235=="
+Content-Type: multipart/mixed; boundary="===============99352951185618443=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============33488345609273235==
+--===============99352951185618443==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this changes MODULE_PARM usage in arv.c to module_param
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-eric/drivers/media/video/arv.c.orig	2006-01-05 00:26:40.000000000 +0100
-+++ linux-2.6.15-eric/drivers/media/video/arv.c	2006-01-05 00:27:45.000000000 +0100
-@@ -129,9 +129,9 @@ static unsigned char	yuv[MAX_AR_FRAME_BY
- static int freq = DEFAULT_FREQ;	/* BCLK: available 50 or 70 (MHz) */
- static int vga = 0;		/* default mode(0:QVGA mode, other:VGA mode) */
- static int vga_interlace = 0;	/* 0 is normal mode for, else interlace mode */
--MODULE_PARM(freq, "i");
--MODULE_PARM(vga, "i");
--MODULE_PARM(vga_interlace, "i");
-+module_param(freq, int, 0);
-+module_param(vga, int, 0);
-+module_param(vga_interlace, int, 0);
+--- linux-2.6.16-rc1-git4/fs/buffer.c.orig	2006-01-26 17:52:56.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/buffer.c	2006-01-26 17:54:08.000000000 +0100
+@@ -801,8 +801,7 @@ void mark_buffer_dirty_inode(struct buff
+ 	if (!mapping->assoc_mapping) {
+ 		mapping->assoc_mapping = buffer_mapping;
+ 	} else {
+-		if (mapping->assoc_mapping != buffer_mapping)
+-			BUG();
++		BUG_ON(mapping->assoc_mapping != buffer_mapping);
+ 	}
+ 	if (list_empty(&bh->b_assoc_buffers)) {
+ 		spin_lock(&buffer_mapping->private_lock);
+@@ -1118,8 +1117,7 @@ grow_dev_page(struct block_device *bdev,
+ 	if (!page)
+ 		return NULL;
  
- static int ar_initialize(struct video_device *dev);
+-	if (!PageLocked(page))
+-		BUG();
++	BUG_ON(!PageLocked(page));
  
+ 	if (page_has_buffers(page)) {
+ 		bh = page_buffers(page);
+@@ -1526,8 +1524,7 @@ void set_bh_page(struct buffer_head *bh,
+ 		struct page *page, unsigned long offset)
+ {
+ 	bh->b_page = page;
+-	if (offset >= PAGE_SIZE)
+-		BUG();
++	BUG_ON(offset >= PAGE_SIZE);
+ 	if (PageHighMem(page))
+ 		/*
+ 		 * This catches illegal uses and preserves the offset:
 
 
 
---===============33488345609273235==
+--===============99352951185618443==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============33488345609273235==--
+--===============99352951185618443==--
