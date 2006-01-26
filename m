@@ -1,38 +1,38 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 06 Jan 2006 11:19:18 +0000
-Subject: [KJ] [Patch 1/9] Cleanup MODULE_PARM in atari_bionet.c
-Message-Id: <1136546358.13172.20.camel@alice>
+Date: Thu, 26 Jan 2006 15:25:27 +0000
+Subject: [KJ] [Patch 1/2] BUG_ON() Conversion in input/serio/hil_mlc.c
+Message-Id: <1138289127.8642.2.camel@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81151043324717953=="
+Content-Type: multipart/mixed; boundary="===============77430405444393813=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============81151043324717953==
+--===============77430405444393813==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this patch changes MODULE_PARM usage to
-module_param
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner and can better optimized away
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-git2/drivers/net/atari_bionet.c.orig	2006-01-06 12:05:40.000000000 +0100
-+++ linux-2.6.15-git2/drivers/net/atari_bionet.c	2006-01-06 12:05:55.000000000 +0100
-@@ -123,7 +123,7 @@ static char version[] =
-  * Global variable 'bionet_debug'. Can be set at load time by 'insmod'
-  */
- unsigned int bionet_debug = NET_DEBUG;
--MODULE_PARM(bionet_debug, "i");
-+module_param(bionet_debug, int, 0644);
- MODULE_PARM_DESC(bionet_debug, "bionet debug level (0-2)");
- MODULE_LICENSE("GPL");
+--- linux-2.6.16-rc1-git4/drivers/input/serio/hil_mlc.c.orig	2006-01-26 16:15:19.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/input/serio/hil_mlc.c	2006-01-26 16:16:08.000000000 +0100
+@@ -556,7 +556,7 @@ static inline void hilse_setup_input(hil
+ 	do_gettimeofday(&(mlc->instart));
+ 	mlc->icount = 15;
+ 	memset(mlc->ipacket, 0, 16 * sizeof(hil_packet));
+-	if (down_trylock(&(mlc->isem))) BUG();
++	BUG_ON(down_trylock(&(mlc->isem)));
  
+ 	return;
+ }
 
 
 
---===============81151043324717953==
+--===============77430405444393813==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81151043324717953==--
+--===============77430405444393813==--
