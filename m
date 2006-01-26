@@ -1,43 +1,38 @@
-From: Alex Shepard <ashepard@u.washington.edu>
-Date: Thu, 19 Jan 2006 20:31:53 +0000
-Subject: Re: [KJ] [PATCH 4/5] README: name kernel versions either "2.6.x",
-Message-Id: <1137702713.3205.43.camel@athena.sea.amer.gettywan.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Thu, 26 Jan 2006 11:49:39 +0000
+Subject: [KJ] [PATCH] printk : arch/arm/mach-footbridge/cats-pci.c
+Message-Id: <20060126114939.GI8401@rotomalug.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34851848278785735=="
+Content-Type: multipart/mixed; boundary="===============48748913489919743=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a01a16b50601191216v70796a40w25825996a60893e9@mail.gmail.com>
-In-Reply-To: <a01a16b50601191216v70796a40w25825996a60893e9@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============34851848278785735==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+--===============48748913489919743==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 2006-01-19 at 21:16 +0100, Håkon Løvdal wrote:
->     Replace "XX" with the version number of the latest kernel.
-> +   The 2.6 kernels exists in both 2.6.x and 2.6.x.y variants,
-> +   "XX" in this file refers to both "x" and "x.y".
+Description:
+printk should include appropriate KERN_* constant (of course
+only at beginning of lines).
 
-This is grammatically incorrect.  
-s/exists/exist/ or even better s/exists/are available/.
-
-I would also suggest s/file/document/, but that's just me.
-
-> - - Keep a backup kernel handy in case something goes wrong.  This is
-> -   especially true for the development releases, since each new release
-> -   contains new code which has not been debugged.  Make sure you keep a
-> + - Keep a backup kernel handy in case something goes wrong. Make sure
-> you keep a
->     backup of the modules corresponding to that kernel, as well.  If you
->     are installing a new kernel with the same version number as your
->     working kernel, make a backup of your modules directory before you
-
-line wrap?
-
--alex
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
---===============34851848278785735==
+Index: linux-2.6.15/arch/arm/mach-footbridge/cats-pci.c
+===================================================================
+--- linux-2.6.15.orig/arch/arm/mach-footbridge/cats-pci.c	2006-01-03 04:21:10.000000000 +0100
++++ linux-2.6.15/arch/arm/mach-footbridge/cats-pci.c	2006-01-26 12:38:21.000000000 +0100
+@@ -25,7 +25,7 @@
+ 		return irqmap_cats[dev->irq - 1];
+ 
+ 	if (dev->irq != 0)
+-		printk("PCI: device %02x:%02x has unknown irq line %x\n",
++		printk(KERN_INFO "PCI: device %02x:%02x has unknown irq line %x\n",
+ 		       dev->bus->number, dev->devfn, dev->irq);
+ 
+ 	return -1;
+
+--===============48748913489919743==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -48,4 +43,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34851848278785735==--
+--===============48748913489919743==--
