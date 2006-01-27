@@ -1,76 +1,71 @@
-From: Annabel Koch <wzjpcb@gowerandlee.co.uk>
-Date: Wed, 18 Jan 2006 07:49:17 +0000
-Subject: [KJ] re: 01-18-06 News Release
-Message-Id: <64648103175.20060117234917@gowerandlee.co.uk>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 27 Jan 2006 09:32:30 +0000
+Subject: [KJ] [Patch 4/12] BUG_ON() Conversion in fs/hfs/
+Message-Id: <1138354351.7391.48.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99077673593789983=="
+Content-Type: multipart/mixed; boundary="===============86883623825802081=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============99077673593789983==
-Content-Type: text/plain; charset=us-ascii
+--===============86883623825802081==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Reminton Ventures Inc. Climbs 18% from $0.89 to $1.05
-on Tuesday. We Do Not See this slowing down, 
-This is a Must Watch..
+hi,
 
-News again sparked interest in RMVN as today they had 
-a huge price jump of 18% in the market. We are very excited 
-as we believe we are about to see a repeat of the Jump from 
-$0.51 to $2.10 we had a week ago. The day before the big 
-climb they had a sharp jump in price following an annoucement 
-of revenue increase. 
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
 
-Seeing this type of price Jump today, Wednesday could go 
-through the roof again. Read the release below and set your buy 
-for first thing when the market opens Wednesday morning. 
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Remington Ventures Inc. 
-Symbol: RMVN.PK
-Thursday Close: $0.63 
-Friday Close: $0.89
-Tuesday Close: $1.05
-Short Term: $2.25 Lifted now to $2.75 
-Status: S t r o n g   B u y 
-
-Read the news below: 
-
-This week several market ananysist groups posted profiles 
-concerning RMVN's new technology and solid executive team 
-running this inovative company. 
-
-Market exposure on this stock combined with recent news releases 
-on the capabilites of this amazing technology will certainly bring 
-the stock to new levels. Just read the brief explanation of what 
-this company has developed. 
-
-
-About RMVN: 
-
-Remington Ventures Incorporated (OTCPK: RMVN), is a software company 
-specializing in automated currency trading systems and artificial 
-neural networks for the currency markets. 
-
-The Currency market, also referred to as the Forex or FX market 
-is the largest financial market in the world, with a daily average 
-turnover of approximately $1.5 trillion. 
-
-RMVN is continuously improving its system to isolate the most 
-predictable and lucrative instrument(s) to trade. Their system's neural 
-network input database can be designed so that the neural net actually 
-chooses the instrument to trade as well as the trade parameters. 
-
-For those of you who missed the huge jump a week ago, dont miss it 
-twice, those of you who got in on the climb, get ready to make 
-some more money! 
-
-Good Trading, and see you Wednesday! 
-Good Luck and Trade at the Top !!!
+--- linux-2.6.16-rc1-git4/fs/hfs/bnode.c.orig	2006-01-27 01:32:08.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/hfs/bnode.c	2006-01-27 01:32:33.000000000 +0100
+@@ -306,8 +306,7 @@ void hfs_bnode_unhash(struct hfs_bnode *
+ 	for (p = &node->tree->node_hash[hfs_bnode_hash(node->this)];
+ 	     *p && *p != node; p = &(*p)->next_hash)
+ 		;
+-	if (!*p)
+-		BUG();
++	BUG_ON(!*p);
+ 	*p = node->next_hash;
+ 	node->tree->node_hash_cnt--;
+ }
+@@ -415,8 +414,7 @@ struct hfs_bnode *hfs_bnode_create(struc
+ 	spin_lock(&tree->hash_lock);
+ 	node = hfs_bnode_findhash(tree, num);
+ 	spin_unlock(&tree->hash_lock);
+-	if (node)
+-		BUG();
++	BUG_ON(node);
+ 	node = __hfs_bnode_create(tree, num);
+ 	if (!node)
+ 		return ERR_PTR(-ENOMEM);
+@@ -459,8 +457,7 @@ void hfs_bnode_put(struct hfs_bnode *nod
+ 
+ 		dprint(DBG_BNODE_REFS, "put_node(%d:%d): %d\n",
+ 		       node->tree->cnid, node->this, atomic_read(&node->refcnt));
+-		if (!atomic_read(&node->refcnt))
+-			BUG();
++		BUG_ON(!atomic_read(&node->refcnt));
+ 		if (!atomic_dec_and_lock(&node->refcnt, &tree->hash_lock))
+ 			return;
+ 		for (i = 0; i < tree->pages_per_bnode; i++) {
+--- linux-2.6.16-rc1-git4/fs/hfs/btree.c.orig	2006-01-27 01:31:02.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/hfs/btree.c	2006-01-27 01:31:37.000000000 +0100
+@@ -36,8 +36,7 @@ struct hfs_btree *hfs_btree_open(struct 
+ 	tree->inode = iget_locked(sb, id);
+ 	if (!tree->inode)
+ 		goto free_tree;
+-	if (!(tree->inode->i_state & I_NEW))
+-		BUG();
++	BUG_ON(!(tree->inode->i_state & I_NEW));
+ 	{
+ 	struct hfs_mdb *mdb = HFS_SB(sb)->mdb;
+ 	HFS_I(tree->inode)->flags = 0;
 
 
 
---===============99077673593789983==
+--===============86883623825802081==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -81,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99077673593789983==--
+--===============86883623825802081==--
