@@ -1,44 +1,51 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Wed, 04 Jan 2006 17:36:38 +0000
-Subject: [KJ] [PATCH] Remove MODULE_PARM from riscom8.c
-Message-Id: <1136396198.6672.1.camel@localhost>
+Date: Fri, 27 Jan 2006 09:32:24 +0000
+Subject: [KJ] [Patch 2/12] BUG_ON() Conversion in fs/configfs/
+Message-Id: <1138354344.7391.41.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============98850744124004852=="
+Content-Type: multipart/mixed; boundary="===============20484628996390342=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============98850744124004852==
+--===============20484628996390342==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this changes MODULE_PARM usage to module_param
-in the riscom8 driver.
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.15-eric/drivers/char/riscom8.c.orig	2006-01-04 18:32:31.000000000 +0100
-+++ linux-2.6.15-eric/drivers/char/riscom8.c	2006-01-04 18:34:18.000000000 +0100
-@@ -1757,10 +1757,10 @@ static int iobase;
- static int iobase1;
- static int iobase2;
- static int iobase3;
--MODULE_PARM(iobase, "i");
--MODULE_PARM(iobase1, "i");
--MODULE_PARM(iobase2, "i");
--MODULE_PARM(iobase3, "i");
-+module_param(iobase, int, 0);
-+module_param(iobase1, int, 0);
-+module_param(iobase2, int, 0);
-+module_param(iobase3, int, 0);
+--- linux-2.6.16-rc1-git4/fs/configfs/inode.c.orig	2006-01-27 01:24:58.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/configfs/inode.c	2006-01-27 01:25:10.000000000 +0100
+@@ -105,8 +105,7 @@ const unsigned char * configfs_get_name(
+ {
+ 	struct attribute * attr;
  
- MODULE_LICENSE("GPL");
- #endif /* MODULE */
+-	if (!sd || !sd->s_element)
+-		BUG();
++	BUG_ON(!sd || !sd->s_element);
+ 
+ 	/* These always have a dentry, so use that */
+ 	if (sd->s_type & (CONFIGFS_DIR | CONFIGFS_ITEM_LINK))
+--- linux-2.6.16-rc1-git4/fs/configfs/symlink.c.orig	2006-01-27 01:25:28.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/configfs/symlink.c	2006-01-27 01:25:46.000000000 +0100
+@@ -162,8 +162,7 @@ int configfs_unlink(struct inode *dir, s
+ 	if (!(sd->s_type & CONFIGFS_ITEM_LINK))
+ 		goto out;
+ 
+-	if (dentry->d_parent == configfs_sb->s_root)
+-		BUG();
++	BUG_ON(dentry->d_parent == configfs_sb->s_root);
+ 
+ 	sl = sd->s_element;
+ 
 
 
 
---===============98850744124004852==
+--===============20484628996390342==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============98850744124004852==--
+--===============20484628996390342==--
