@@ -1,38 +1,39 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Thu, 26 Jan 2006 17:20:17 +0000
-Subject: [KJ] [Patch 3/8] BUG_ON() Conversion in fs/dcache.c
-Message-Id: <1138296017.9170.22.camel@localhost>
+Date: Fri, 27 Jan 2006 09:32:47 +0000
+Subject: [KJ] [Patch 6/12] BUG_ON() Conversion in fs/jffs2/
+Message-Id: <1138354368.7391.54.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30036468312375675=="
+Content-Type: multipart/mixed; boundary="===============53927272575135254=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============30036468312375675==
+--===============53927272575135254==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,
+hi, 
 
 this changes if() BUG(); constructs to BUG_ON() which is
-cleaner and can better optimized away
+cleaner, contains unlikely() and can better optimized away.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/fs/dcache.c.orig	2006-01-26 17:54:28.000000000 +0100
-+++ linux-2.6.16-rc1-git4/fs/dcache.c	2006-01-26 17:54:39.000000000 +0100
-@@ -792,7 +792,7 @@ struct dentry *d_alloc_name(struct dentr
-  
- void d_instantiate(struct dentry *entry, struct inode * inode)
- {
--	if (!list_empty(&entry->d_alias)) BUG();
-+	BUG_ON(!list_empty(&entry->d_alias));
- 	spin_lock(&dcache_lock);
- 	if (inode)
- 		list_add(&entry->d_alias, &inode->i_dentry);
+--- linux-2.6.16-rc1-git4/fs/jffs2/background.c.orig	2006-01-27 01:35:43.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/jffs2/background.c	2006-01-27 01:35:57.000000000 +0100
+@@ -35,8 +35,7 @@ int jffs2_start_garbage_collect_thread(s
+ 	pid_t pid;
+ 	int ret = 0;
+ 
+-	if (c->gc_task)
+-		BUG();
++	BUG_ON(c->gc_task);
+ 
+ 	init_completion(&c->gc_thread_start);
+ 	init_completion(&c->gc_thread_exit);
 
 
 
---===============30036468312375675==
+--===============53927272575135254==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30036468312375675==--
+--===============53927272575135254==--
