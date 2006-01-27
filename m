@@ -1,34 +1,80 @@
-From: Jesper Juhl <jesper.juhl@gmail.com>
-Date: Wed, 04 Jan 2006 16:46:54 +0000
-Subject: Re: [KJ] [PATCH] drivers/block: Use ARRAY_SIZE macro
-Message-Id: <9a8748490601040846w181f8befq11cec9e2c0655d9c@mail.gmail.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 27 Jan 2006 12:49:11 +0000
+Subject: [KJ] [Patch 3/4] BUG_ON() Conversion in ipc/shm.c
+Message-Id: <1138366151.15909.8.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============70690385847944825=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060104160526.GA1243@neon.tklauser.home>
-In-Reply-To: <20060104160526.GA1243@neon.tklauser.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 1/4/06, Tobias Klauser <tklauser@nuerscht.ch> wrote:
-> Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a
-> duplicate of ARRAY_SIZE. Some trailing whitespaces are also removed.
->
-> drivers/block/acsi* has been left out as it's marked BROKEN.
->
+--===============70690385847944825==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-And if noone ever improves on it it'll probably stay BROKEN.  Might as
-well fix it up now that you've done the other files :)
+hi, 
+
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.16-rc1-git4/ipc/shm.c.orig	2006-01-27 11:11:02.000000000 +0100
++++ linux-2.6.16-rc1-git4/ipc/shm.c	2006-01-27 11:13:11.000000000 +0100
+@@ -90,8 +90,8 @@ static inline int shm_addid(struct shmid
+ static inline void shm_inc (int id) {
+ 	struct shmid_kernel *shp;
+ 
+-	if(!(shp = shm_lock(id)))
+-		BUG();
++	shp = shm_lock(id);
++	BUG_ON(!shp);
+ 	shp->shm_atim = get_seconds();
+ 	shp->shm_lprid = current->tgid;
+ 	shp->shm_nattch++;
+@@ -141,8 +141,8 @@ static void shm_close (struct vm_area_st
+ 
+ 	down (&shm_ids.sem);
+ 	/* remove from the list of attaches of the shm segment */
+-	if(!(shp = shm_lock(id)))
+-		BUG();
++	shp = shm_lock(id);
++	BUG_ON(!shp);
+ 	shp->shm_lprid = current->tgid;
+ 	shp->shm_dtim = get_seconds();
+ 	shp->shm_nattch--;
+@@ -282,8 +282,7 @@ asmlinkage long sys_shmget (key_t key, s
+ 		err = -EEXIST;
+ 	} else {
+ 		shp = shm_lock(id);
+-		if(shp==NULL)
+-			BUG();
++		BUG_ON(shp==NULL);
+ 		if (shp->shm_segsz < size)
+ 			err = -EINVAL;
+ 		else if (ipcperms(&shp->shm_perm, shmflg))
+@@ -772,8 +771,8 @@ invalid:
+ 	up_write(&current->mm->mmap_sem);
+ 
+ 	down (&shm_ids.sem);
+-	if(!(shp = shm_lock(shmid)))
+-		BUG();
++	shp = shm_lock(shmid);
++	BUG_ON(!shp);
+ 	shp->shm_nattch--;
+ 	if(shp->shm_nattch == 0 &&
+ 	   shp->shm_perm.mode & SHM_DEST)
 
 
-The patch looked good to me btw.
 
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+--===============70690385847944825==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============70690385847944825==--
