@@ -1,37 +1,39 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 09 Jan 2006 16:01:28 +0000
-Subject: [KJ] [PATCH] printk : arch/arm/common/scoop.c
-Message-Id: <20060109160128.GT8401@rotomalug.org>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 27 Jan 2006 10:41:15 +0000
+Subject: [KJ] [Patch] BUG_ON() Conversion in block/elevator.c
+Message-Id: <1138358475.15194.0.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37384622215142738=="
+Content-Type: multipart/mixed; boundary="===============26912494297357448=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============37384622215142738==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============26912494297357448==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Description:
-printk should include appropriate KERN_* constant (of course
-only at beginning of lines).
+hi, 
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
 
-Index: linux-2.6.15/arch/arm/common/scoop.c
-===================================================================
---- linux-2.6.15.orig/arch/arm/common/scoop.c	2006-01-03 04:21:10.000000000 +0100
-+++ linux-2.6.15/arch/arm/common/scoop.c	2006-01-07 10:54:33.000000000 +0100
-@@ -150,7 +150,7 @@
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.16-rc1-git4/block/elevator.c.orig	2006-01-27 11:09:08.000000000 +0100
++++ linux-2.6.16-rc1-git4/block/elevator.c	2006-01-27 11:09:40.000000000 +0100
+@@ -663,8 +663,7 @@ void elv_unregister_queue(struct request
+ int elv_register(struct elevator_type *e)
+ {
+ 	spin_lock_irq(&elv_list_lock);
+-	if (elevator_find(e->elevator_name))
+-		BUG();
++	BUG_ON(elevator_find(e->elevator_name));
+ 	list_add_tail(&e->list, &elv_list);
+ 	spin_unlock_irq(&elv_list_lock);
  
- 	platform_set_drvdata(pdev, devptr);
- 
--	printk("Sharp Scoop Device found at 0x%08x -> 0x%08x\n",(unsigned int)mem->start,(unsigned int)devptr->base);
-+	printk(KERN_INFO "Sharp Scoop Device found at 0x%08x -> 0x%08x\n",(unsigned int)mem->start,(unsigned int)devptr->base);
- 
- 	SCOOP_REG(devptr->base, SCOOP_MCR) = 0x0140;
- 	reset_scoop(&pdev->dev);
 
---===============37384622215142738==
+
+
+--===============26912494297357448==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============37384622215142738==--
+--===============26912494297357448==--
