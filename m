@@ -1,44 +1,57 @@
-From: "Forbes Wayne" <bgpguev@engn.com>
-Date: Tue, 10 Jan 2006 13:47:23 +0000
-Subject: Re[4]:
-Message-Id: <ea427fb4912.ea427fb49121ccd62f5ee@engn.com>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Fri, 27 Jan 2006 09:33:03 +0000
+Subject: [KJ] [Patch 10/12] BUG_ON() Conversion in fs/sysv/
+Message-Id: <1138354383.7391.62.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============71193570901023406=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-H0t st0ck for New year time!!
-Infinex Ventures Inc. (IFNX)
-Current Price: 1.85
+--===============71193570901023406==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-COMPANY OVERVIEW
+hi, 
 
-Aggressive and energetic, Infinex boasts a dynamic and diversified portfolio of operations across North America, with an eye
-on international expansion.
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
 
-Grounded in natural resource exploration, Inifinex also offers investors access to exciting new developments in the high-tech sector and the booming international real estate market. Our market based experience, tenacious research techniques, and
-razor sharp analytical skills allow us to leverage opportunities in emerging markets and developing technologies.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Identifying these opportunities in the earliest stages allows us to accelerate business development and fully realize the company&#1073;&#1078;s true potential. Maximizing overall profitability and in turn enhancing shareholder value.
+--- linux-2.6.16-rc1-git4/fs/sysv/dir.c.orig	2006-01-27 01:50:57.000000000 +0100
++++ linux-2.6.16-rc1-git4/fs/sysv/dir.c	2006-01-27 01:51:14.000000000 +0100
+@@ -253,8 +253,7 @@ int sysv_delete_entry(struct sysv_dir_en
+ 
+ 	lock_page(page);
+ 	err = mapping->a_ops->prepare_write(NULL, page, from, to);
+-	if (err)
+-		BUG();
++	BUG_ON(err);
+ 	de->inode = 0;
+ 	err = dir_commit_chunk(page, from, to);
+ 	dir_put_page(page);
+@@ -353,8 +352,7 @@ void sysv_set_link(struct sysv_dir_entry
+ 
+ 	lock_page(page);
+ 	err = page->mapping->a_ops->prepare_write(NULL, page, from, to);
+-	if (err)
+-		BUG();
++	BUG_ON(err);
+ 	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
+ 	err = dir_commit_chunk(page, from, to);
+ 	dir_put_page(page);
 
-Current Press Release
-
-Infinex Ventures Inc. (IFNX - News) is pleased to announce the appointment of Mr. Stefano Masullo, to its Board of Directors.
-
-Mr. Michael De Rosa the President says, "Mr. Masullo's varied background in finance, engineering and economics, as well as his experience of over 10 years as a Board member of a vast number of International companies, will make him a valuable
-addition to the Infinex Board. His appointment will show our commitment to the financial, engineering and business structure of our Company."
-Mr. Masullo attended the University of Luigi Bocconi, in Milan Italy, where he graduated in industrial, economic and financial sciences. Mr. Masullo first began his well rounded career during one of his years at University (1986-1987), where
-he assisted the Director of Faculty of Finance in finance and investment.
 
 
+--===============71193570901023406==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://ads.osdn.com/?ad_idv37&alloc_id865&op=click
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============71193570901023406==--
