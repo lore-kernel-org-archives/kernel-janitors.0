@@ -1,55 +1,34 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Fri, 06 Jan 2006 11:19:41 +0000
-Subject: [KJ] [Patch 4/9] Cleanup MODULE_PARM in lasi_82596.c
-Message-Id: <1136546381.13172.23.camel@alice>
+From: "Welsh Gus" <emitwsh@carolinafirst.com>
+Date: Fri, 27 Jan 2006 15:10:20 +0000
+Subject: hey kernel-janitor-discuss
+Message-Id: <001101c62353$af638330$7a9b0b53@anonim>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95646755075432877=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_000D_01C6235C.1127EB30"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============95646755075432877==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-hi,
-
-this patch changes MODULE_PARM usage to
-module_param
-
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.15-git2/drivers/net/lasi_82596.c.orig	2006-01-06 12:06:28.000000000 +0100
-+++ linux-2.6.15-git2/drivers/net/lasi_82596.c	2006-01-06 12:07:07.000000000 +0100
-@@ -177,7 +177,7 @@ static int i596_debug = (DEB_SERIOUS|DEB
- MODULE_AUTHOR("Richard Hirst");
- MODULE_DESCRIPTION("i82596 driver");
- MODULE_LICENSE("GPL");
--MODULE_PARM(i596_debug, "i");
-+module_param(i596_debug, int, 0644);
- MODULE_PARM_DESC(i596_debug, "lasi_82596 debug mask");
- 
- /* Copy frames shorter than rx_copybreak, otherwise pass on up in
-@@ -1520,7 +1520,7 @@ static void set_multicast_list(struct ne
- 	}
- }
- 
--MODULE_PARM(debug, "i");
-+module_param(debug, int, 0644);
- MODULE_PARM_DESC(debug, "lasi_82596 debug mask");
- static int debug = -1;
- 
+------=_NextPart_000_000D_01C6235C.1127EB30
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_000E_01C6235C.1127EB30"
 
 
-
---===============95646755075432877==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+------=_NextPart_001_000E_01C6235C.1127EB30
+Content-Type: text/plain;
+	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
+
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=103432&bid=230486&dat=121642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+------=_NextPart_001_000E_01C6235C.1127EB30--
 
---===============95646755075432877==--
+------=_NextPart_000_000D_01C6235C.1127EB30--
