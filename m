@@ -1,74 +1,72 @@
-From: Andi Kleen <ak@suse.de>
-Date: Mon, 23 Jan 2006 04:31:27 +0000
-Subject: [KJ] Fixing make mandocs
-Message-Id: <200601230531.27609.ak@suse.de>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Mon, 30 Jan 2006 21:15:51 +0000
+Subject: [KJ] [Patch 5/6] BUG_ON() Conversion in kernel/signal.c
+Message-Id: <1138655751.4007.14.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============080524089157891776=="
+Content-Type: multipart/mixed; boundary="===============40255435218339963=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
---===============080524089157891776==
-Content-Type: text/plain;
-  charset="us-ascii"
+--===============40255435218339963==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+
+hi,  
+
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.16-rc1-git4/kernel/signal.c.orig	2006-01-30 22:14:15.000000000 +0100
++++ linux-2.6.16-rc1-git4/kernel/signal.c	2006-01-30 22:14:54.000000000 +0100
+@@ -355,10 +355,8 @@ void __exit_signal(struct task_struct *t
+ 	struct signal_struct * sig = tsk->signal;
+ 	struct sighand_struct * sighand;
+ 
+-	if (!sig)
+-		BUG();
+-	if (!atomic_read(&sig->count))
+-		BUG();
++	BUG_ON(!sig);
++	BUG_ON(!atomic_read(&sig->count));
+ 	rcu_read_lock();
+ 	sighand = rcu_dereference(tsk->sighand);
+ 	spin_lock(&sighand->siglock);
+@@ -875,8 +873,7 @@ specific_send_sig_info(int sig, struct s
+ {
+ 	int ret = 0;
+ 
+-	if (!irqs_disabled())
+-		BUG();
++	BUG_ON(!irqs_disabled());
+ 	assert_spin_locked(&t->sighand->siglock);
+ 
+ 	/* Short-circuit ignored signals.  */
+@@ -1464,8 +1461,7 @@ retry:
+ 		 * If an SI_TIMER entry is already queue just increment
+ 		 * the overrun count.
+ 		 */
+-		if (q->info.si_code != SI_TIMER)
+-			BUG();
++		BUG_ON(q->info.si_code != SI_TIMER);
+ 		q->info.si_overrun++;
+ 		goto out;
+ 	}
+@@ -1513,8 +1509,7 @@ send_group_sigqueue(int sig, struct sigq
+ 		 * the overrun count.  Other uses should not try to
+ 		 * send the signal multiple times.
+ 		 */
+-		if (q->info.si_code != SI_TIMER)
+-			BUG();
++		BUG_ON(q->info.si_code != SI_TIMER);
+ 		q->info.si_overrun++;
+ 		goto out;
+ 	} 
 
 
-Here would be a good janitor task for 2.6.16. make mandocs currently
-doesn't build because a number of descriptions are missing parameters etc.
-It would be good if someone could fix that and submit patches for 2.6.16.
 
-It should be relatively straight forward, if one cannot figure out
-what a missing parameter does adding a dummy description ("Undocumented") 
-would be also ok.
-
--Andi
-
-  DOCPROC Documentation/DocBook/kernel-api.xml
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//mm/slab.c:1505): No descript
-ion found for parameter 'cachep'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//mm/slab.c:1505): No descript
-ion found for parameter 'size'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//mm/slab.c:1505): No descript
-ion found for parameter 'align'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//mm/slab.c:1505): No descript
-ion found for parameter 'flags'
-Error(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//include/asm-i386/uaccess.h:416
-): cannot understand prototype: '__always_inline unsigned long __must_check __co
-py_to_user_inatomic(void __user *to, const void *from, unsigned long n) '
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//fs/inode.c:1189): No descrip
-tion found for parameter 'dentry'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//fs/bio.c:427): No descriptio
-n found for parameter 'q'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//include/linux/skbuff.h:308):
- No description found for parameter 'copied_early'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//include/linux/skbuff.h:308):
- No description found for parameter 'dma_cookie'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/core/skbuff.c:211): No d
-escription found for parameter 'fclone'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/sunrpc/sched.c:920): No 
-description found for parameter 'clnt'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/sunrpc/sched.c:920): No 
-description found for parameter 'flags'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/sunrpc/sched.c:920): No 
-description found for parameter 'ops'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/sunrpc/sched.c:920): No 
-description found for parameter 'data'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/sunrpc/sched.c:942): No 
-description found for parameter 'parent'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/core/dev.c:3317): No des
-cription found for parameter 'chan'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//net/core/dev.c:3317): No des
-cription found for parameter 'event'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//kernel/irq/manage.c:177): No
- description found for parameter 'new'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//block/ll_rw_blk.c:317): No d
-escription found for parameter 'prepare_flush_fn'
-Warning(/usr/src/packages/BUILD/linux-2.6.16-rc1-3//block/ll_rw_blk.c:2637): No 
-description found for parameter 'error'
-make[1]: *** [Documentation/DocBook/kernel-api.xml] Error 1
-
---===============080524089157891776==
+--===============40255435218339963==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============080524089157891776==--
+--===============40255435218339963==--
