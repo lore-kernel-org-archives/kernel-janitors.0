@@ -1,39 +1,49 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Mon, 30 Jan 2006 21:15:39 +0000
-Subject: [KJ] [Patch 1/6] BUG_ON() Conversion in kernel/cpu.c
-Message-Id: <1138655739.4007.10.camel@alice>
+Date: Mon, 30 Jan 2006 21:15:48 +0000
+Subject: [KJ] [Patch 4/6] BUG_ON() Conversion in kernel/ptrace.c
+Message-Id: <1138655748.4007.13.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============96807274475810279=="
+Content-Type: multipart/mixed; boundary="===============038541165161615876=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============96807274475810279==
+--===============038541165161615876==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi, 
+hi,  
 
 this changes if() BUG(); constructs to BUG_ON() which is
 cleaner, contains unlikely() and can better optimized away.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/kernel/cpu.c.orig	2006-01-27 11:46:04.000000000 +0100
-+++ linux-2.6.16-rc1-git4/kernel/cpu.c	2006-01-27 11:48:15.000000000 +0100
-@@ -223,8 +221,7 @@ int __devinit cpu_up(unsigned int cpu)
- 	ret = __cpu_up(cpu);
- 	if (ret != 0)
- 		goto out_notify;
--	if (!cpu_online(cpu))
+--- linux-2.6.16-rc1-git4/kernel/ptrace.c.orig	2006-01-27 11:50:10.000000000 +0100
++++ linux-2.6.16-rc1-git4/kernel/ptrace.c	2006-01-27 11:50:28.000000000 +0100
+@@ -30,8 +30,7 @@
+  */
+ void __ptrace_link(task_t *child, task_t *new_parent)
+ {
+-	if (!list_empty(&child->ptrace_list))
 -		BUG();
-+	BUG_ON(!cpu_online(cpu));
- 
- 	/* Now call notifier in preparation. */
- 	notifier_call_chain(&cpu_chain, CPU_ONLINE, hcpu);
++	BUG_ON(!list_empty(&child->ptrace_list));
+ 	if (child->parent == new_parent)
+ 		return;
+ 	list_add(&child->ptrace_list, &child->parent->ptrace_children);
+@@ -72,8 +71,7 @@ void ptrace_untrace(task_t *child)
+  */
+ void __ptrace_unlink(task_t *child)
+ {
+-	if (!child->ptrace)
+-		BUG();
++	BUG_ON(!child->ptrace);
+ 	child->ptrace = 0;
+ 	if (!list_empty(&child->ptrace_list)) {
+ 		list_del_init(&child->ptrace_list);
 
 
 
---===============96807274475810279==
+--===============038541165161615876==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -44,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============96807274475810279==--
+--===============038541165161615876==--
