@@ -1,46 +1,39 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 09 Jan 2006 11:34:05 +0000
-Subject: [KJ] [PATCH] printk : arch/arm/common/sa1111.c
-Message-Id: <20060109113405.GQ8401@rotomalug.org>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Mon, 30 Jan 2006 21:15:43 +0000
+Subject: [KJ] [Patch 2/6] BUG_ON() Conversion in kernel/fork.c
+Message-Id: <1138655743.4007.11.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40041771902595347=="
+Content-Type: multipart/mixed; boundary="===============84620090212428689=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============40041771902595347==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============84620090212428689==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Description:
-printk should include appropriate KERN_* constant (of course
-only at beginning of lines).
+hi, 
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
 
-Index: linux-2.6.15/arch/arm/common/sa1111.c
-===================================================================
---- linux-2.6.15.orig/arch/arm/common/sa1111.c	2006-01-03 04:21:10.000000000 +0100
-+++ linux-2.6.15/arch/arm/common/sa1111.c	2006-01-07 10:52:15.000000000 +0100
-@@ -580,7 +580,7 @@
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.16-rc1-git4/kernel/fork.c.orig	2006-01-27 11:48:25.000000000 +0100
++++ linux-2.6.16-rc1-git4/kernel/fork.c	2006-01-27 11:48:35.000000000 +0100
+@@ -726,8 +726,7 @@ int unshare_files(void)
+ 	struct files_struct *files  = current->files;
+ 	int rc;
  
- 	ret = request_resource(parent, &dev->res);
- 	if (ret) {
--		printk("SA1111: failed to allocate resource for %s\n",
-+		printk(KERN_WARNING "SA1111: failed to allocate resource for %s\n",
- 			dev->res.name);
- 		kfree(dev);
- 		goto out;
-@@ -605,7 +605,7 @@
- 		if (dev->dma_mask != 0xffffffffUL) {
- 			ret = dmabounce_register_dev(&dev->dev, 1024, 4096);
- 			if (ret) {
--				printk("SA1111: Failed to register %s with dmabounce", dev->dev.bus_id);
-+				printk(KERN_WARNING "SA1111: Failed to register %s with dmabounce", dev->dev.bus_id);
- 				device_unregister(&dev->dev);
- 			}
- 		}
+-	if(!files)
+-		BUG();
++	BUG_ON(!files);
+ 
+ 	/* This can race but the race causes us to copy when we don't
+ 	   need to and drop the copy */
 
---===============40041771902595347==
+
+
+--===============84620090212428689==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============40041771902595347==--
+--===============84620090212428689==--
