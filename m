@@ -1,13 +1,13 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Mon, 30 Jan 2006 21:15:54 +0000
-Subject: [KJ] [Patch 6/6] BUG_ON() Conversion in kernel/signal.c
-Message-Id: <1138655754.4007.16.camel@alice>
+Date: Tue, 31 Jan 2006 13:03:10 +0000
+Subject: [KJ] [Patch 2/7] BUG_ON() Conversion in mm/memory.c
+Message-Id: <1138712590.11570.13.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8539663989666253=="
+Content-Type: multipart/mixed; boundary="===============44467441010300846=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============8539663989666253==
+--===============44467441010300846==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
@@ -18,32 +18,25 @@ cleaner, contains unlikely() and can better optimized away.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/kernel/timer.c.orig	2006-01-27 11:52:13.000000000 +0100
-+++ linux-2.6.16-rc1-git4/kernel/timer.c	2006-01-27 11:52:33.000000000 +0100
-@@ -1255,8 +1255,7 @@ static void __devinit migrate_timers(int
- 	spin_lock(&new_base->t_base.lock);
- 	spin_lock(&old_base->t_base.lock);
- 
--	if (old_base->t_base.running_timer)
+--- linux-2.6.16-rc1-git4/mm/memory.c.orig	2006-01-30 23:13:27.000000000 +0100
++++ linux-2.6.16-rc1-git4/mm/memory.c	2006-01-30 23:13:45.000000000 +0100
+@@ -2339,10 +2339,8 @@ int make_pages_present(unsigned long add
+ 	if (!vma)
+ 		return -1;
+ 	write = (vma->vm_flags & VM_WRITE) != 0;
+-	if (addr >= end)
 -		BUG();
-+	BUG_ON(old_base->t_base.running_timer);
- 	for (i = 0; i < TVR_SIZE; i++)
- 		migrate_timer_list(new_base, old_base->tv1.vec + i);
- 	for (i = 0; i < TVN_SIZE; i++) {
-@@ -1446,8 +1445,7 @@ register_time_interpolator(struct time_i
- 	unsigned long flags;
- 
- 	/* Sanity check */
--	if (ti->frequency == 0 || ti->mask == 0)
+-	if (end > vma->vm_end)
 -		BUG();
-+	BUG_ON(ti->frequency == 0 || ti->mask == 0);
- 
- 	ti->nsec_per_cyc = ((u64)NSEC_PER_SEC << ti->shift) / ti->frequency;
- 	spin_lock(&time_interpolator_lock);
++	BUG_ON(addr >= end);
++	BUG_ON(end > vma->vm_end);
+ 	len = (end+PAGE_SIZE-1)/PAGE_SIZE-addr/PAGE_SIZE;
+ 	ret = get_user_pages(current, current->mm, addr,
+ 			len, write, 0, NULL, NULL);
 
 
 
---===============8539663989666253==
+--===============44467441010300846==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8539663989666253==--
+--===============44467441010300846==--
