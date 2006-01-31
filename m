@@ -1,41 +1,39 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Thu, 26 Jan 2006 11:50:33 +0000
-Subject: [KJ] [PATCH] printk : arch/arm/mach-footbridge/dc21285.c
-Message-Id: <20060126115033.GJ8401@rotomalug.org>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Tue, 31 Jan 2006 13:03:29 +0000
+Subject: [KJ] [Patch 7/7] BUG_ON() Conversion in mm/vmalloc.c
+Message-Id: <1138712609.11570.21.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38828719426406932=="
+Content-Type: multipart/mixed; boundary="===============66179552379333173=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060126114939.GI8401@rotomalug.org>
-In-Reply-To: <20060126114939.GI8401@rotomalug.org>
 To: kernel-janitors@vger.kernel.org
 
---===============38828719426406932==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============66179552379333173==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Description:
-printk should include appropriate KERN_* constant (of course
-only at beginning of lines).
+hi,  
 
+this changes if() BUG(); constructs to BUG_ON() which is
+cleaner, contains unlikely() and can better optimized away.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-
-Index: linux-2.6.15/arch/arm/mach-footbridge/dc21285.c
-===================================================================
---- linux-2.6.15.orig/arch/arm/mach-footbridge/dc21285.c	2006-01-03 04:21:10.000000000 +0100
-+++ linux-2.6.15/arch/arm/mach-footbridge/dc21285.c	2006-01-26 12:39:37.000000000 +0100
-@@ -257,7 +257,7 @@
+--- linux-2.6.16-rc1-git4/mm/vmalloc.c.orig	2006-01-30 22:26:02.000000000 +0100
++++ linux-2.6.16-rc1-git4/mm/vmalloc.c	2006-01-30 22:26:56.000000000 +0100
+@@ -321,8 +321,7 @@ void __vunmap(void *addr, int deallocate
+ 		int i;
  
- 	res = kmalloc(sizeof(struct resource) * 2, GFP_KERNEL);
- 	if (!res) {
--		printk("out of memory for root bus resources");
-+		printk(KERN_EMERG "out of memory for root bus resources");
- 		return 0;
- 	}
+ 		for (i = 0; i < area->nr_pages; i++) {
+-			if (unlikely(!area->pages[i]))
+-				BUG();
++			BUG_ON(unlikely(!area->pages[i]));
+ 			__free_page(area->pages[i]);
+ 		}
  
 
---===============38828719426406932==
+
+
+--===============66179552379333173==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38828719426406932==--
+--===============66179552379333173==--
