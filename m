@@ -1,49 +1,53 @@
 From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Thu, 26 Jan 2006 00:00:49 +0000
-Subject: [KJ] [Patch 9/9] BUG_ON() Conversion in md/raid10.c
-Message-Id: <1138233649.7232.46.camel@alice>
+Date: Tue, 31 Jan 2006 17:58:40 +0000
+Subject: [KJ] [Patch 1/5] BUG_ON() Conversion in drivers/s390/block/dasd.c
+Message-Id: <1138730321.13327.13.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15601442963535228=="
+Content-Type: multipart/mixed; boundary="===============18243288473057806=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============15601442963535228==
+--===============18243288473057806==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,
+hi,  
 
 this changes if() BUG(); constructs to BUG_ON() which is
-cleaner and can better optimized away
+cleaner, contains unlikely() and can better optimized away.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/drivers/md/raid10.c.orig	2006-01-26 00:33:04.000000000 +0100
-+++ linux-2.6.16-rc1-git4/drivers/md/raid10.c	2006-01-26 00:33:31.000000000 +0100
-@@ -1115,8 +1115,7 @@ static int end_sync_read(struct bio *bio
- 	for (i=0; i<conf->copies; i++)
- 		if (r10_bio->devs[i].bio == bio)
- 			break;
--	if (i == conf->copies)
--		BUG();
-+	BUG_ON(i == conf->copies);
- 	update_head_pos(i, r10_bio);
- 	d = r10_bio->devs[i].devnum;
+--- linux-2.6.16-rc1-git4/drivers/s390/block/dasd.c.orig	2006-01-31 16:24:53.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/s390/block/dasd.c	2006-01-31 16:25:36.000000000 +0100
+@@ -517,9 +517,8 @@ dasd_kmalloc_request(char *magic, int cp
+ 	struct dasd_ccw_req *cqr;
  
-@@ -1516,8 +1515,7 @@ static int init_resync(conf_t *conf)
- 	int buffs;
- 
- 	buffs = RESYNC_WINDOW / RESYNC_BLOCK_SIZE;
--	if (conf->r10buf_pool)
+ 	/* Sanity checks */
+-	if ( magic == NULL || datasize > PAGE_SIZE ||
+-	     (cplength*sizeof(struct ccw1)) > PAGE_SIZE)
 -		BUG();
-+	BUG_ON(conf->r10buf_pool);
- 	conf->r10buf_pool = mempool_create(buffs, r10buf_pool_alloc, r10buf_pool_free, conf);
- 	if (!conf->r10buf_pool)
- 		return -ENOMEM;
++	BUG_ON( magic == NULL || datasize > PAGE_SIZE ||
++	     (cplength*sizeof(struct ccw1)) > PAGE_SIZE);
+ 
+ 	cqr = kmalloc(sizeof(struct dasd_ccw_req), GFP_ATOMIC);
+ 	if (cqr == NULL)
+@@ -562,9 +561,8 @@ dasd_smalloc_request(char *magic, int cp
+ 	int size;
+ 
+ 	/* Sanity checks */
+-	if ( magic == NULL || datasize > PAGE_SIZE ||
+-	     (cplength*sizeof(struct ccw1)) > PAGE_SIZE)
+-		BUG();
++	BUG_ON( magic == NULL || datasize > PAGE_SIZE ||
++	     (cplength*sizeof(struct ccw1)) > PAGE_SIZE);
+ 
+ 	size = (sizeof(struct dasd_ccw_req) + 7L) & -8L;
+ 	if (cplength > 0)
 
 
 
---===============15601442963535228==
+--===============18243288473057806==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15601442963535228==--
+--===============18243288473057806==--
