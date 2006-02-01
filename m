@@ -1,104 +1,111 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Sun, 26 Feb 2006 08:08:20 +0000
-Subject: [KJ][Patch] check return for request_region in msnd_pinnacle.c
-Message-Id: <1140941300.8088.21.camel@localhost.localdomain>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Wed, 01 Feb 2006 15:13:04 +0000
+Subject: [KJ] [Patch 3/4] ide cleanups - remove unneeded BUG_ON()
+Message-Id: <1138806784.22662.26.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34574211256721088=="
+Content-Type: multipart/mixed; boundary="===============32980545660920013=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============34574211256721088==
+--===============32980545660920013==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day list,
+hi,
 
-I know OSS is depricated, but I thought this would be a good educational
-patch for me to do.
+this patch removes a bunch of BUG_ON() checks for
+the hwgroup handler, since __ide_set_handler bugs
+now if it is already set.
 
-The return value from request_region is not checked in msnd_pinnacle.c @
-line 1400.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-The patch below adds a check for it and serialises the error path.
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
---- linux-2.6.16-rc4/sound/oss/msnd_pinnacle.c.orig	2006-02-26 16:50:08.000000000 +1100
-+++ linux-2.6.16-rc4/sound/oss/msnd_pinnacle.c	2006-02-26 19:02:21.000000000 +1100
-@@ -1397,36 +1397,34 @@ static int __init attach_multisound(void
- 		printk(KERN_ERR LOGNAME ": Couldn't grab IRQ %d\n", dev.irq);
- 		return err;
- 	}
--	request_region(dev.io, dev.numio, dev.name);
-+	
-+	if (!request_region(dev.io, dev.numio, dev.name)) {
-+		printk(KERN_ERR LOGNAME ": Couldn't request_region\n");
-+		err = -EBUSY;
-+		goto rr_fail;
-+	}
- 
-         if ((err = dsp_full_reset()) < 0) {
--		release_region(dev.io, dev.numio);
--		free_irq(dev.irq, &dev);
--		return err;
-+		goto dsp_fail;
+--- linux-2.6.16-rc1-git4/drivers/ide/ide-cd.c.orig	2006-02-01 15:49:35.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/ide/ide-cd.c	2006-02-01 15:49:42.000000000 +0100
+@@ -1721,8 +1721,6 @@ static ide_startstop_t cdrom_newpc_intr(
+ 		}
  	}
  
- 	if ((err = msnd_register(&dev)) < 0) {
- 		printk(KERN_ERR LOGNAME ": Unable to register MultiSound\n");
--		release_region(dev.io, dev.numio);
--		free_irq(dev.irq, &dev);
--		return err;
-+		goto dsp_fail;
- 	}
+-	BUG_ON(drive->hwif->hwgroup->handler != NULL);
+-
+ 	ide_set_handler(drive, cdrom_newpc_intr, rq->timeout, NULL);
+ 	return ide_started;
  
- 	if ((dev.dsp_minor = register_sound_dsp(&dev_fileops, -1)) < 0) {
--		printk(KERN_ERR LOGNAME ": Unable to register DSP operations\n");
--		msnd_unregister(&dev);
--		release_region(dev.io, dev.numio);
--		free_irq(dev.irq, &dev);
--		return dev.dsp_minor;
-+		printk(KERN_ERR LOGNAME ": Unable to register DSP"
-+							" operations\n");
-+		err = dev.dsp_minor;
-+		goto rs_fail;
- 	}
+--- linux-2.6.16-rc1-git4/drivers/ide/ide-floppy.c.orig	2006-02-01 15:49:57.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/ide/ide-floppy.c	2006-02-01 15:50:22.000000000 +0100
+@@ -897,7 +897,6 @@ static ide_startstop_t idefloppy_pc_intr
+ 					"to send us more data than expected "
+ 					"- discarding data\n");
+ 				idefloppy_discard_data(drive,bcount.all);
+-				BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 				ide_set_handler(drive,
+ 						&idefloppy_pc_intr,
+ 						IDEFLOPPY_WAIT_CMD,
+@@ -930,7 +929,6 @@ static ide_startstop_t idefloppy_pc_intr
+ 	pc->actually_transferred += bcount.all;
+ 	pc->current_position += bcount.all;
  
- 	if ((dev.mixer_minor = register_sound_mixer(&dev_fileops, -1)) < 0) {
--		printk(KERN_ERR LOGNAME ": Unable to register mixer operations\n");
--		unregister_sound_mixer(dev.mixer_minor);
--		msnd_unregister(&dev);
--		release_region(dev.io, dev.numio);
--		free_irq(dev.irq, &dev);
--		return dev.mixer_minor;
-+		printk(KERN_ERR LOGNAME ": Unable to register mixer"
-+							" operations\n");
-+		err = dev.mixer_minor;
-+		goto rsm_fail;
- 	}
- 
- 	dev.ext_midi_dev = dev.hdr_midi_dev = -1;
-@@ -1438,6 +1436,16 @@ static int __init attach_multisound(void
- #endif
- 
- 	return 0;
-+
-+rsm_fail:
-+	unregister_sound_mixer(dev.mixer_minor);
-+rs_fail:
-+	msnd_unregister(&dev);
-+dsp_fail:
-+	release_region(dev.io, dev.numio);
-+rr_fail:
-+	free_irq(dev.irq, &dev);
-+	return err;
+-	BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 	ide_set_handler(drive, &idefloppy_pc_intr, IDEFLOPPY_WAIT_CMD, NULL);		/* And set the interrupt handler again */
+ 	return ide_started;
  }
+@@ -957,7 +955,6 @@ static ide_startstop_t idefloppy_transfe
+ 				"issuing a packet command\n");
+ 		return ide_do_reset(drive);
+ 	}
+-	BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 	/* Set the interrupt routine */
+ 	ide_set_handler(drive, &idefloppy_pc_intr, IDEFLOPPY_WAIT_CMD, NULL);
+ 	/* Send the actual packet */
+@@ -1013,7 +1010,6 @@ static ide_startstop_t idefloppy_transfe
+ 	 * 40 and 50msec work well. idefloppy_pc_intr will not be actually
+ 	 * used until after the packet is moved in about 50 msec.
+ 	 */
+-	BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 	ide_set_handler(drive, 
+ 	  &idefloppy_pc_intr, 		/* service routine for packet command */
+ 	  floppy->ticks,		/* wait this long before "failing" */
+--- linux-2.6.16-rc1-git4/drivers/ide/ide-iops.c.orig	2006-02-01 15:50:34.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/ide/ide-iops.c	2006-02-01 15:51:07.000000000 +0100
+@@ -981,7 +981,6 @@ static ide_startstop_t atapi_reset_pollf
+ 		printk("%s: ATAPI reset complete\n", drive->name);
+ 	} else {
+ 		if (time_before(jiffies, hwgroup->poll_timeout)) {
+-			BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 			ide_set_handler(drive, &atapi_reset_pollfunc, HZ/20, NULL);
+ 			/* continue polling */
+ 			return ide_started;
+@@ -1020,7 +1019,6 @@ static ide_startstop_t reset_pollfunc (i
  
- static void __exit unload_multisound(void)
+ 	if (!OK_STAT(tmp = hwif->INB(IDE_STATUS_REG), 0, BUSY_STAT)) {
+ 		if (time_before(jiffies, hwgroup->poll_timeout)) {
+-			BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 			ide_set_handler(drive, &reset_pollfunc, HZ/20, NULL);
+ 			/* continue polling */
+ 			return ide_started;
+--- linux-2.6.16-rc1-git4/drivers/ide/ide-taskfile.c.orig	2006-02-01 15:51:16.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/ide/ide-taskfile.c	2006-02-01 15:51:21.000000000 +0100
+@@ -195,7 +195,6 @@ ide_startstop_t set_geometry_intr (ide_d
+ 	if (stat & (ERR_STAT|DRQ_STAT))
+ 		return ide_error(drive, "set_geometry_intr", stat);
+ 
+-	BUG_ON(drive->hwif->hwgroup->handler != NULL);
+ 	ide_set_handler(drive, &set_geometry_intr, WAIT_WORSTCASE, NULL);
+ 	return ide_started;
+ }
+--- linux-2.6.16-rc1-git4/drivers/ide/pci/trm290.c.orig	2006-02-01 15:51:44.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/ide/pci/trm290.c	2006-02-01 15:51:50.000000000 +0100
+@@ -183,7 +183,6 @@ static void trm290_ide_dma_exec_cmd(ide_
+ {
+ 	ide_hwif_t *hwif	= HWIF(drive);
+ 
+-	BUG_ON(drive->hwif->hwgroup->handler != NULL);	/* paranoia check */
+ 	ide_set_handler(drive, &ide_dma_intr, WAIT_CMD, NULL);
+ 	/* issue cmd to drive */
+ 	hwif->OUTB(command, IDE_COMMAND_REG);
 
 
 
---===============34574211256721088==
+--===============32980545660920013==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -109,4 +116,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34574211256721088==--
+--===============32980545660920013==--
