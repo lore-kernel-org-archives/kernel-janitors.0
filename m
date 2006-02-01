@@ -1,72 +1,35 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Mon, 20 Feb 2006 12:26:16 +0000
-Subject: [KJ][Patch] corrset useage of negative number in an unsigned long
-Message-Id: <1140438376.7787.10.camel@localhost.localdomain>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Wed, 01 Feb 2006 15:12:40 +0000
+Subject: [KJ] [Patch 0/4] ide cleanups
+Message-Id: <1138806760.22662.22.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94731086738228587=="
+Content-Type: multipart/mixed; boundary="===============17559674221278332=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============94731086738228587==
+--===============17559674221278332==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day list,
+hi,
 
-from http://linuxicc.sourceforge.net/,
+> Patch looks fine but maybe we can try to fix few
+> underlying problems while at it?
 
-ICC complains about a "Pointless comparsion of unsigned interger with
-zero" @ line 760 & 808 of asus_acpi.c
+ok, lets try, hope i got your intentions right
 
-In both cases this is due to stuffing an int returned from parse_arg
-into an unsigned long. However we need the negative cases so in the
-patch below I have just added an extra int i, to store and use the
-returned value.
+> minor: please use drive->hwif->hwgroup instead of HWGROUP() macro
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
---- linux-2.6.16-rc3/drivers/acpi/asus_acpi.c.orig	2006-02-20 00:24:25.000000000 +1100
-+++ linux-2.6.16-rc3/drivers/acpi/asus_acpi.c	2006-02-20 23:02:46.000000000 +1100
-@@ -750,14 +750,14 @@ static int
- proc_write_brn(struct file *file, const char __user * buffer,
- 	       unsigned long count, void *data)
- {
--	int value;
-+	int value, i;
- 
--	count = parse_arg(buffer, count, &value);
--	if (count > 0) {
-+	i = parse_arg(buffer, count, &value);
-+	if (i > 0) {
- 		value = (0 < value) ? ((15 < value) ? 15 : value) : 0;
- 		/* 0 <= value <= 15 */
- 		set_brightness(value);
--	} else if (count < 0) {
-+	} else if (i < 0) {
- 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
- 	}
- 
-@@ -800,12 +800,12 @@ static int
- proc_write_disp(struct file *file, const char __user * buffer,
- 		unsigned long count, void *data)
- {
--	int value;
-+	int value,i;
- 
--	count = parse_arg(buffer, count, &value);
--	if (count > 0)
-+	i = parse_arg(buffer, count, &value);
-+	if (i > 0)
- 		set_display(value);
--	else if (count < 0)
-+	else if (i < 0)
- 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
- 
- 	return count;
+i did the cleanups, but fail to see why the are necessary
+or useful. Is there a way to mark the #define as depreciated
+Do you want to cleanup the HWIF() macro too?
+
+The patches apply on top of the ide bug_on cleanup patch i send earlier.
+
+Eric
 
 
-
-
---===============94731086738228587==
+--===============17559674221278332==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94731086738228587==--
+--===============17559674221278332==--
