@@ -1,76 +1,46 @@
-From: "clarence evans" <clyfaji@singles.ru>
-Date: Sat, 04 Feb 2006 10:21:13 +0000
-Subject: Be an high income investigator
-Message-Id: <CC0BCBBD.8D10AD2@singles.ru>
+From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
+Date: Wed, 01 Feb 2006 15:13:10 +0000
+Subject: [KJ] [Patch 4/4] ide cleanups - remove unneeded BUG_ON()
+Message-Id: <1138806790.22662.27.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============58452573298465826=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello Tom, I found you just in time because I was  let go from my employment
-I held for what seemed like forever.
+--===============58452573298465826==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Its hard to thank you enough for starting  me in this new profession. You
-have given me a brand new start on life.  Already taking home twice as much
-as I realized in my old job.  
+hi,
 
+according to Bartlomiej we dont need this BUG_ON,
+since it is too late in the initialisation sequence.
 
-I took delivey of a brand new Mercedes. Taking home 150,000US in 18 months.
-Really having a great time in this career. It's a blast and I am a hero to
-the judges and to my clientele. What an outstanding career to be in.
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Carefully following exactly what your training recommends me to do, is
-proceeding better than I ever dreamed possible.  I go to the local court
-house and locate all of the clientele I can handle. 
-
-
-I draw on your advanced reporting services to find all items which can be
-garnished. Using your fill in the blank forms I send them thru the post
-office to the appropriate firms. Then the funds arrive to my PO Box.  Its
-like magic.  Every day is like Christmas. 
-
-I can take a holiday when ever I have the notion to do so.  Germany and
-Holland this year. 
-
-Please provide this letter to others.  This profession is so massive it
-needs many more of us assisting the courts and the  people who have been
-hurt.
-
-Sincerely,
-Micah A.    NJ    
-
-
-This may well be you! 
-
-Progress to our location below where we provide you more indepth points
-about our arrangement at 0 outlay or responsibility. You do not have
-anything to lose and plenty to receive.
-
-
-http://au.geocities.com/bradyna_ginabeth/
-
-
-The Man of Science Rob passed the remainder of the day wandering about
-London and amusing himself by watching the peculiar ways of the people. When
-it became so dark that there was no danger of his being observed, he rose
-through the air to the narrow slit in the church tower and lay upon the
-floor of the little room, with the bells hanging all around him, to pass the
-night
-He was just falling asleep when a tremendous din and clatter nearly
-deafened him, and set the whole tower trembling
-
-Above line to study more or to bring to a hault receiving additional
-information and then to see location
+--- linux-2.6.16-rc1-git4/drivers/ide/ide-dma.c.orig	2006-02-01 15:52:52.000000000 +0100
++++ linux-2.6.16-rc1-git4/drivers/ide/ide-dma.c	2006-02-01 15:53:10.000000000 +0100
+@@ -945,8 +945,6 @@ void ide_setup_dma (ide_hwif_t *hwif, un
+ 		       hwif->drives[1].name, (dma_stat & 0x40) ? "DMA" : "pio");
+ 	}
+ 	printk("\n");
+-
+-	BUG_ON(!(hwif->dma_master));
+ }
+ 
+ EXPORT_SYMBOL_GPL(ide_setup_dma);
 
 
 
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid3432&bid#0486&dat1642
+--===============58452573298465826==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============58452573298465826==--
