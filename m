@@ -1,70 +1,85 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Sat, 18 Feb 2006 04:58:33 +0000
-Subject: Re: [KJ][Patch] make storage class first in pwc-kiara.h
-Message-Id: <20060217205833.33ac11fd.rdunlap@xenotime.net>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 02 Feb 2006 13:35:22 +0000
+Subject: [KJ] hamradio/bpqether.c: check return value of
+Message-Id: <43E20A9A.2070007@bfs.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============11541736360980615=="
+Content-Type: multipart/mixed; boundary="------------050409020603070105050000"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1140174003.7789.14.camel@localhost.localdomain>
-In-Reply-To: <1140174003.7789.14.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============11541736360980615==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+This is a multi-part message in MIME format.
+--------------050409020603070105050000
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 18 Feb 2006 14:46:14 +1100 Darren Jenkins\\ wrote:
+check the return value of register_netdevice_notifier()
 
-> On Fri, 2006-02-17 at 08:12 -0800, Randy.Dunlap wrote:
-> > On Fri, 17 Feb 2006, Darren Jenkins\ wrote:
-> > 
-> > > G'day list
-> > >
-> > > ICC complains about : Remark #82: Storage Class is not First.
-> > >
-> > > http://linuxicc.sourceforge.net/
-> > >
-> > > @ line 40 & 41 of pwc-kiara.h.
-> > >
-> > > The patch below re-orders the modifiers to make extern before const.
-> > 
-> > Is that a C-language standard requirement?
-> > IOW, that would be a reason to make such a change.
-> 
-> OK I don't have a copy of the standard, but after a hunt through the
-> draft copy I was pointed to earlier 
-> (http://wwwold.dkuug.dk/jtc1/sc22/open/n2794/)
-> I found this under the grammar section.
-> (page 400)
-> 
-> (6.7) declaration-speciﬁers:
-> 
-> declaration-speciﬁers:
->          storage-class-speciﬁer declaration-speciﬁersopt
->          type-speciﬁer declaration-speciﬁersopt
->          type-qualiﬁer declaration-speciﬁersopt
->          function-speciﬁer declaration-speciﬁersopt
-> 
-> Which shows (surprisingly) that it isn't a C-standard requirement. 
-> (Damn I thought it was)
-> 
-> So I guess It is only a coding style issue.
-> 
-> Not putting the storage class specifier first: 
-> is confusing; 
-> dilutes the logical meaning of the specifier; 
-> is only used in 4 files (looking at ICC warnings);
-> generates warnings on ICC;
-> is safe to re-order in non-pointer declarations.
-> 
-> So I guess for these reasons the patches should be applied.
 
-OK, thank you for doing that.
+also as attachment if something mangels the layout.
+compile tested
+Signed-off-by: walter harms <wharms@bfs.de>
 
----
-~Randy
+--- linux/drivers/net/hamradio/bpqether.c.bak	2006-02-01 
+22:13:07.000000000 +0100
++++ linux/drivers/net/hamradio/bpqether.c	2006-02-01 22:30:16.000000000 
++0100
+@@ -595,6 +595,7 @@
+   */
+  static int __init bpq_init_driver(void)
+  {
++	int ret;
+  #ifdef CONFIG_PROC_FS
+  	if (!proc_net_fops_create("bpqether", S_IRUGO, &bpq_info_fops)) {
+  		printk(KERN_ERR
+@@ -605,7 +606,12 @@
 
---===============11541736360980615==
+  	dev_add_pack(&bpq_packet_type);
+
+-	register_netdevice_notifier(&bpq_dev_notifier);
++	ret = register_netdevice_notifier(&bpq_dev_notifier);
++	if (ret < 0) {
++		printk( KERN_WARNING "register_netdevice_notifier failed in 
+%s\n",__FUNCTION__);
++		dev_remove_pack(&bpq_packet_type);
++		return -1;
++	}
+
+  	printk(banner);
+
+
+--------------050409020603070105050000
+Content-Type: text/x-patch;
+ name="bpqether.c.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="bpqether.c.diff"
+
+--- linux/drivers/net/hamradio/bpqether.c.bak	2006-02-01 22:13:07.000000000 +0100
++++ linux/drivers/net/hamradio/bpqether.c	2006-02-01 22:30:16.000000000 +0100
+@@ -595,6 +595,7 @@
+  */
+ static int __init bpq_init_driver(void)
+ {
++	int ret;
+ #ifdef CONFIG_PROC_FS
+ 	if (!proc_net_fops_create("bpqether", S_IRUGO, &bpq_info_fops)) {
+ 		printk(KERN_ERR
+@@ -605,7 +606,12 @@
+ 
+ 	dev_add_pack(&bpq_packet_type);
+ 
+-	register_netdevice_notifier(&bpq_dev_notifier);
++	ret = register_netdevice_notifier(&bpq_dev_notifier);
++	if (ret < 0) {
++		printk( KERN_WARNING "register_netdevice_notifier failed in %s\n",__FUNCTION__);
++		dev_remove_pack(&bpq_packet_type);
++		return -1;
++	}
+ 
+ 	printk(banner);
+ 
+
+--------------050409020603070105050000
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +90,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============11541736360980615==--
+--------------050409020603070105050000--
