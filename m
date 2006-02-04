@@ -1,69 +1,76 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Thu, 23 Feb 2006 22:13:26 +0000
-Subject: [KJ] [Patch] kzalloc conversion in fs/udf
-Message-Id: <1140732806.12049.12.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6363835951077963=="
+From: "clarence evans" <clyfaji@singles.ru>
+Date: Sat, 04 Feb 2006 10:21:13 +0000
+Subject: Be an high income investigator
+Message-Id: <CC0BCBBD.8D10AD2@singles.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============6363835951077963==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Hello Tom, I found you just in time because I was  let go from my employment
+I held for what seemed like forever.
 
-hi,
-
-this converts fs/udf to kzalloc() usage.
-compile tested with make allyesconfig
-
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.16-rc4/fs/udf/ialloc.c.orig	2006-02-23 01:18:45.000000000 +0100
-+++ linux-2.6.16-rc4/fs/udf/ialloc.c	2006-02-23 01:19:21.000000000 +0100
-@@ -129,14 +129,12 @@ struct inode * udf_new_inode (struct ino
- 	{
- 		UDF_I_EFE(inode) = 1;
- 		UDF_UPDATE_UDFREV(inode->i_sb, UDF_VERS_USE_EXTENDED_FE);
--		UDF_I_DATA(inode) = kmalloc(inode->i_sb->s_blocksize - sizeof(struct extendedFileEntry), GFP_KERNEL);
--		memset(UDF_I_DATA(inode), 0x00, inode->i_sb->s_blocksize - sizeof(struct extendedFileEntry));
-+		UDF_I_DATA(inode) = kzalloc(inode->i_sb->s_blocksize - sizeof(struct extendedFileEntry), GFP_KERNEL);
- 	}
- 	else
- 	{
- 		UDF_I_EFE(inode) = 0;
--		UDF_I_DATA(inode) = kmalloc(inode->i_sb->s_blocksize - sizeof(struct fileEntry), GFP_KERNEL);
--		memset(UDF_I_DATA(inode), 0x00, inode->i_sb->s_blocksize - sizeof(struct fileEntry));
-+		UDF_I_DATA(inode) = kzalloc(inode->i_sb->s_blocksize - sizeof(struct fileEntry), GFP_KERNEL);
- 	}
- 	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_AD_IN_ICB))
- 		UDF_I_ALLOCTYPE(inode) = ICBTAG_FLAG_AD_IN_ICB;
---- linux-2.6.16-rc4/fs/udf/super.c.orig	2006-02-23 01:18:22.000000000 +0100
-+++ linux-2.6.16-rc4/fs/udf/super.c	2006-02-23 01:18:35.000000000 +0100
-@@ -1493,11 +1493,10 @@ static int udf_fill_super(struct super_b
- 	uopt.gid = -1;
- 	uopt.umask = 0;
- 
--	sbi = kmalloc(sizeof(struct udf_sb_info), GFP_KERNEL);
-+	sbi = kzalloc(sizeof(struct udf_sb_info), GFP_KERNEL);
- 	if (!sbi)
- 		return -ENOMEM;
- 	sb->s_fs_info = sbi;
--	memset(UDF_SB(sb), 0x00, sizeof(struct udf_sb_info));
- 
- 	init_MUTEX(&sbi->s_alloc_sem);
- 
+Its hard to thank you enough for starting  me in this new profession. You
+have given me a brand new start on life.  Already taking home twice as much
+as I realized in my old job.  
 
 
+I took delivey of a brand new Mercedes. Taking home 150,000US in 18 months.
+Really having a great time in this career. It's a blast and I am a hero to
+the judges and to my clientele. What an outstanding career to be in.
 
---===============6363835951077963==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Carefully following exactly what your training recommends me to do, is
+proceeding better than I ever dreamed possible.  I go to the local court
+house and locate all of the clientele I can handle. 
 
+
+I draw on your advanced reporting services to find all items which can be
+garnished. Using your fill in the blank forms I send them thru the post
+office to the appropriate firms. Then the funds arrive to my PO Box.  Its
+like magic.  Every day is like Christmas. 
+
+I can take a holiday when ever I have the notion to do so.  Germany and
+Holland this year. 
+
+Please provide this letter to others.  This profession is so massive it
+needs many more of us assisting the courts and the  people who have been
+hurt.
+
+Sincerely,
+Micah A.    NJ    
+
+
+This may well be you! 
+
+Progress to our location below where we provide you more indepth points
+about our arrangement at 0 outlay or responsibility. You do not have
+anything to lose and plenty to receive.
+
+
+http://au.geocities.com/bradyna_ginabeth/
+
+
+The Man of Science Rob passed the remainder of the day wandering about
+London and amusing himself by watching the peculiar ways of the people. When
+it became so dark that there was no danger of his being observed, he rose
+through the air to the narrow slit in the church tower and lay upon the
+floor of the little room, with the bells hanging all around him, to pass the
+night
+He was just falling asleep when a tremendous din and clatter nearly
+deafened him, and set the whole tower trembling
+
+Above line to study more or to bring to a hault receiving additional
+information and then to see location
+
+
+
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid3432&bid#0486&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============6363835951077963==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
