@@ -1,57 +1,67 @@
-From: Jesper Juhl <jesper.juhl@gmail.com>
-Date: Sat, 04 Feb 2006 15:19:53 +0000
+From: Adrian Bunk <bunk@stusta.de>
+Date: Sat, 04 Feb 2006 16:47:31 +0000
 Subject: Re: [KJ] [PATCH] MODULE_VERSION()
-Message-Id: <9a8748490602040719r170bce54k6b88482509491e4@mail.gmail.com>
+Message-Id: <20060204164730.GA7626@stusta.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============78554302400801079=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139062125.8030.4.camel@localhost.localdomain>
 In-Reply-To: <1139062125.8030.4.camel@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2/4/06, Matthew Martin <lihnucks@gmail.com> wrote:
-> OK, Sorry about last time. Here it is. Could you please tell me what
-> you mean by "the filenames need to begin with linux-x.y.z/" Is that
-> 2.6.x or something else?
->
+--===============78554302400801079==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What is meant is that your patches should be generated so they apply
-with 'patch -p1' from inside the source dir.
+On Sat, Feb 04, 2006 at 08:08:45AM -0600, Matthew Martin wrote:
+>...
+> @@ -95,10 +95,13 @@
+>  #include "onetouch.h"
+>  #endif
+>  
+> +#define DRV_VERSION "1.75"
+> +
+>  /* Some informational data */
+>  MODULE_AUTHOR("Matthew Dharm <mdharm-usb@one-eyed-alien.net>");
+>  MODULE_DESCRIPTION("USB Mass Storage driver for Linux");
+>  MODULE_LICENSE("GPL");
+> +MODULE_VERSION(DRV_VERSION);
+>...
 
-> --- /home/matthew/src/linux-2.6.15.2/drivers/usb/storage/usb.c
+Do we really want to make each ancient driver version string 
+user-visible?
 
-^^^ that should be
+This is not your fault, it does IMHO not belong to the TODO.
 
---- linux-2.6.15.2/drivers/usb/storage/usb.c
+There is a very limited area where active driver maintainers are 
+maintaining a version number in a way that printing it does make sense.
 
+But in all other cases, the kernel version is the best way to identify a 
+driver.
 
-You seem to be doing
+E.g. in this case, the driver in the more than two years old kernel 
+2.6.0 prints exactly the same version 1.75 .
 
-diff -up /home/matthew/src/linux-2.6.15.2/drivers/usb/storage/usb.c \
-/home/matthew/linux-2.6.15.2/drivers/usb/storage/usb.c
+cu
+Adrian
 
-Where instead you should be doing something like
+-- 
 
-cd /home/matthew/
-diff -up linux-2.6.15.2/drivers/usb/storage/usb.c.old \
-linux-2.6.15.2/drivers/usb/storage/usb.c
-
-or
-
-cd /home/matthew/
-diff -up linux-2.6.15.2-original/drivers/usb/storage/usb.c \
-linux-2.6.15.2/drivers/usb/storage/usb.c
-
-See the difference?
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
 
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+--===============78554302400801079==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============78554302400801079==--
