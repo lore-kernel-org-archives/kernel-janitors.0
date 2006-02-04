@@ -1,7 +1,7 @@
 From: Jesper Juhl <jesper.juhl@gmail.com>
-Date: Sat, 04 Feb 2006 22:26:00 +0000
+Date: Sat, 04 Feb 2006 22:32:22 +0000
 Subject: Re: [KJ] [PATCH] request_region - ppc/platforms/prep_setup.c - Please
-Message-Id: <200602042326.00567.jesper.juhl@gmail.com>
+Message-Id: <200602042332.22080.jesper.juhl@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200602041610.24772.ron@rongage.org>
 In-Reply-To: <200602041610.24772.ron@rongage.org>
@@ -10,27 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Saturday 04 February 2006 22:10, Ron Gage wrote:
-> Is this a good way to handle this problem?  Original code was (in essence) 5 
-> request_region calls in a row with no return checking.
+On Saturday 04 February 2006 23:26, Jesper Juhl wrote:
+> On Saturday 04 February 2006 22:10, Ron Gage wrote:
+> > Is this a good way to handle this problem?  Original code was (in essence) 5 
+> > request_region calls in a row with no return checking.
+> > 
+> Your patch completely neglects to free the resources already allocated. Thus if
+> a the driver aborts half way through allocating its regions then the regions it did
+> successfully allocate will never be freed and another driver needing those 
+> regions will never be able to load.
+> A better patch is (in my opinion) something like the below.
 > 
-Your patch completely neglects to free the resources already allocated. Thus if
-a the driver aborts half way through allocating its regions then the regions it did
-successfully allocate will never be freed and another driver needing those 
-regions will never be able to load.
-A better patch is (in my opinion) something like the below.
 
-(also, you forgot to add a Signed-off-by: line to your patch)
-
+D'OH, included the wrong file, the below should be better : 
 
 Signed-off-by: Jesper Juhl <jesper.juhl@gmail.com>
 ---
 
- arch/ppc/platforms/prep_setup.c |   30 ++++++++++++++++++++++++++++--
- 1 files changed, 28 insertions(+), 2 deletions(-)
+ arch/ppc/platforms/prep_setup.c |   38 ++++++++++++++++++++++++++++++++------
+ 1 files changed, 32 insertions(+), 6 deletions(-)
 
 --- linux-2.6.16-rc2-git1-orig/arch/ppc/platforms/prep_setup.c	2006-02-04 14:43:58.000000000 +0100
-+++ linux-2.6.16-rc2-git1/arch/ppc/platforms/prep_setup.c	2006-02-04 22:39:57.000000000 +0100
++++ linux-2.6.16-rc2-git1/arch/ppc/platforms/prep_setup.c	2006-02-04 23:28:26.000000000 +0100
 @@ -1069,17 +1069,43 @@ prep_map_io(void)
  static int __init
  prep_request_io(void)
@@ -45,16 +46,20 @@ Signed-off-by: Jesper Juhl <jesper.juhl@gmail.com>
 +		if (!region)
 +			goto out_nvram;
  #endif
- 		request_region(0x00,0x20,"dma1");
+-		request_region(0x00,0x20,"dma1");
+-		request_region(0x40,0x20,"timer");
+-		request_region(0x80,0x10,"dma page reg");
+-		request_region(0xc0,0x20,"dma2");
++		region = request_region(0x00,0x20,"dma1");
 +		if (!region)
 +			goto out_dma1;
- 		request_region(0x40,0x20,"timer");
++		region = request_region(0x40,0x20,"timer");
 +		if (!region)
 +			goto out_timer;
- 		request_region(0x80,0x10,"dma page reg");
++		region = request_region(0x80,0x10,"dma page reg");
 +		if (!region)
 +			goto out_dma_page;
- 		request_region(0xc0,0x20,"dma2");
++		region = request_region(0xc0,0x20,"dma2");
 +		if (!region)
 +			goto out_dma2;
  	}
@@ -79,6 +84,11 @@ Signed-off-by: Jesper Juhl <jesper.juhl@gmail.com>
  device_initcall(prep_request_io);
 
 
+
+-- 
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 
 _______________________________________________
 Kernel-janitors mailing list
