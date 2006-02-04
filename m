@@ -1,85 +1,84 @@
-From: Ron Gage <ron@rongage.org>
-Date: Sat, 04 Feb 2006 21:10:24 +0000
-Subject: [KJ] [PATCH] request_region - ppc/platforms/prep_setup.c - Please
-Message-Id: <200602041610.24772.ron@rongage.org>
+From: Jesper Juhl <jesper.juhl@gmail.com>
+Date: Sat, 04 Feb 2006 22:26:00 +0000
+Subject: Re: [KJ] [PATCH] request_region - ppc/platforms/prep_setup.c - Please
+Message-Id: <200602042326.00567.jesper.juhl@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200602041610.24772.ron@rongage.org>
+In-Reply-To: <200602041610.24772.ron@rongage.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Is this a good way to handle this problem?  Original code was (in essence) =
-5=20
-request_region calls in a row with no return checking.
+On Saturday 04 February 2006 22:10, Ron Gage wrote:
+> Is this a good way to handle this problem?  Original code was (in essence) 5 
+> request_region calls in a row with no return checking.
+> 
+Your patch completely neglects to free the resources already allocated. Thus if
+a the driver aborts half way through allocating its regions then the regions it did
+successfully allocate will never be freed and another driver needing those 
+regions will never be able to load.
+A better patch is (in my opinion) something like the below.
+
+(also, you forgot to add a Signed-off-by: line to your patch)
 
 
-This patch adds return value checking to request_region. =A0No other struct=
-ural=20
-changes included...
+Signed-off-by: Jesper Juhl <jesper.juhl@gmail.com>
+---
 
+ arch/ppc/platforms/prep_setup.c |   30 ++++++++++++++++++++++++++++--
+ 1 files changed, 28 insertions(+), 2 deletions(-)
 
-diff -ur linux-2.6.15.orig/arch/ppc/platforms/prep_setup.c=20
-linux-2.6.15/arch/ppc/platforms/prep_setup.c
---- linux-2.6.15.orig/arch/ppc/platforms/prep_setup.c	2006-02-04=20
-11:00:29.000000000 -0500
-+++ linux-2.6.15/arch/ppc/platforms/prep_setup.c	2006-02-04 16:04:58.000000=
-000=20
--0500
-@@ -1071,16 +1071,43 @@
+--- linux-2.6.16-rc2-git1-orig/arch/ppc/platforms/prep_setup.c	2006-02-04 14:43:58.000000000 +0100
++++ linux-2.6.16-rc2-git1/arch/ppc/platforms/prep_setup.c	2006-02-04 22:39:57.000000000 +0100
+@@ -1069,17 +1069,43 @@ prep_map_io(void)
  static int __init
  prep_request_io(void)
  {
 +	struct resource *region;
-+	unsigned char ret=3D0;
++	int ret = 0;
 +
-+	/* if ret =3D 0, everything worked and we return normally.
-+	   if ret !=3D 0, then something failed and we return -EBUSY. */
-+	  =20
- 	if (_machine =3D _MACH_prep) {
+ 	if (_machine = _MACH_prep) {
  #ifdef CONFIG_NVRAM
 -		request_region(PREP_NVRAM_AS0, 0x8, "nvram");
-+		region =3D request_region(PREP_NVRAM_AS0, 0x8, "nvram");
-+		if (!region) {
-+			printk (KERN_INFO "Could not allocate nvram region");
-+			ret =3D 1;
-+			}
++		region = request_region(PREP_NVRAM_AS0, 0x8, "nvram");
++		if (!region)
++			goto out_nvram;
  #endif
--		request_region(0x00,0x20,"dma1");
--		request_region(0x40,0x20,"timer");
--		request_region(0x80,0x10,"dma page reg");
--		request_region(0xc0,0x20,"dma2");
-+		region =3D request_region(0x00,0x20,"dma1");
-+		if (!region) {
-+			printk (KERN_INFO "Could not allocate dma1 region");
-+			ret =3D 1;
-+			}
-+		region =3D request_region(0x40,0x20,"timer");
-+		if (!region) {
-+			printk (KERN_INFO "Could not allocate timer region");
-+			ret =3D 1;
-+			}
-+		region =3D request_region(0x80,0x10,"dma page reg");
-+		if (!region) {
-+			printk (KERN_INFO "Could not allocate dma page region");
-+			ret =3D 1;
-+			}
-+		region =3D request_region(0xc0,0x20,"dma2");
-+		if (!region) {
-+			printk (KERN_INFO "Could not allocate dma2 region");
-+			ret =3D 1;
-+			}
+ 		request_region(0x00,0x20,"dma1");
++		if (!region)
++			goto out_dma1;
+ 		request_region(0x40,0x20,"timer");
++		if (!region)
++			goto out_timer;
+ 		request_region(0x80,0x10,"dma page reg");
++		if (!region)
++			goto out_dma_page;
+ 		request_region(0xc0,0x20,"dma2");
++		if (!region)
++			goto out_dma2;
  	}
--
-+	if (ret !=3D 0)
-+		return -EBUSY;
- 	return 0;
+ 
+-	return 0;
++ out:
++	return ret;
++ out_dma2:
++ 	release_region(0x80,0x10);
++ out_dma_page:
++ 	release_region(0x40,0x20);
++ out_timer:
++ 	release_region(0x00,0x20);
++ out_dma1:
++ 	release_region(PREP_NVRAM_AS0, 0x8);
++ out_nvram:
++ 	ret = -EBUSY;
++ 	printk(KERN_WARNING "Unable to allocate required regions\n");
++	goto out;
  }
-=20
+ 
+ device_initcall(prep_request_io);
 
---=20
-Ron Gage=20
-(LPIC1, MCP, A+, Net+)
-Westland Michigan
+
 
 _______________________________________________
 Kernel-janitors mailing list
