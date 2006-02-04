@@ -1,43 +1,41 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Tue, 21 Feb 2006 21:12:22 +0000
-Subject: Re: [KJ] [PATCH] remove unused variable from drivers/scsi/megaraid.c
-Message-Id: <9a8748490602211312s22801796yc52037db6f87d472@mail.gmail.com>
+From: Ron Gage <ron@rongage.org>
+Date: Sat, 04 Feb 2006 20:37:32 +0000
+Subject: [KJ] [PATCH] request_region - arm/mach_footbridge/netwinder-hw.c
+Message-Id: <200602041537.32255.ron@rongage.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200602212158.12473.tim@aapopfiets.nl>
-In-Reply-To: <200602212158.12473.tim@aapopfiets.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On 2/21/06, Tim Cooijmans <tim@aapopfiets.nl> wrote:
-> From: Tim Cooijmans <tim@aapopfiets.nl>
->
-> Fix "unused variable: `flags'" warning in drivers/scsi/megaraid.c:4473
->
-> Signed-off-by: Tim Cooijmans <tim@aapopfiets.nl>
-> ---
-> --- linux-2.6.16-rc4-orig/drivers/scsi/megaraid.c       2006-02-21
-> 20:18:42.000000000 +0100
-> +++ linux-2.6.16-rc4/drivers/scsi/megaraid.c    2006-02-21 21:25:38.000000000
-> +0100
-> @@ -4470,7 +4470,6 @@ mega_internal_command(adapter_t *adapter
->  {
->         Scsi_Cmnd       *scmd;
->         struct  scsi_device *sdev;
-> -       unsigned long   flags = 0;
->         scb_t   *scb;
->         int     rval;
->
+This patch adds return value checking to request_region. =A0No other struct=
+ural=20
+changes included... =A0Using kmail->message->insert file to post patch.
+diff -ur linux-2.6.15.orig/arch/arm/mach-footbridge/netwinder-hw.c=20
+linux-2.6.15/arch/arm/mach-footbridge/netwinder-hw.c
+--- linux-2.6.15.orig/arch/arm/mach-footbridge/netwinder-hw.c	2006-02-04=20
+11:00:21.000000000 -0500
++++ linux-2.6.15/arch/arm/mach-footbridge/netwinder-hw.c	2006-02-04=20
+15:33:37.000000000 -0500
+@@ -333,7 +333,12 @@
+  */
+ static void __init wb977_init(void)
+ {
+-	request_region(0x370, 2, "W83977AF configuration");
++	struct resource *region;
++	region =3D request_region(0x370, 2, "W83977AF configuration");
++	if (!region) {
++		printk(KERN_ERR "Could not allocate region for W83977AF");
++		return;
++	}
+=20
+ 	/*
+ 	 * Open up the SuperIO chip
 
-Just for your information; I recently posted a big patch that fixes
-this warning and a bunch of other stuff in megaraid.
-That patch is currently pending.
-
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+--=20
+Ron Gage=20
+(LPIC1, MCP, A+, Net+)
+Westland Michigan
 
 _______________________________________________
 Kernel-janitors mailing list
