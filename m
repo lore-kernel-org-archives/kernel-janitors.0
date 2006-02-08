@@ -1,46 +1,64 @@
-From: Zach Brown <zach.brown@oracle.com>
-Date: Sat, 25 Feb 2006 00:07:20 +0000
-Subject: Re: [KJ] [Patch] fs/ kzalloc conversions
-Message-Id: <43FF9FB8.9030808@oracle.com>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 08 Feb 2006 04:17:27 +0000
+Subject: [kj][Patch] remove implicit sign bit on single bit
+Message-Id: <1139372248.9409.15.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============13523124402183551=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1140772454.22453.1.camel@alice> <20060224111755.GA7801@mipter.zuzino.mipt.ru> <20060224152628.GO28587@parisc-linux.org>
-In-Reply-To: <20060224152628.GO28587@parisc-linux.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+--===============13523124402183551==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, Eric Sesterhenn <snakebyte@gmx.de>, kernel-janitors@lists.osdl.org, linux-fsdevel@vger.kernel.org
+
+Hi,
+
+This is my first patch so I hope I get everything right.
+
+http://linuxicc.sourceforge.net/
+
+Warnings/Error while compiling with Intel C Compiler
+
+Says there is a Warning #108: implictly-signed bit field of length 1
+
+in sound/oss/viacXXX_audio.c @ line number 310
+
+looking at the code it seems like it is supposed to be a single bit
+field used as a lock. This just makes it unsigned.
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
 
-> So the test isn't useless and we should use kcalloc here, otherwise an
-> unthinking sysadmin can increment the aio_max_nr sysctl value to, let's
-> say, 0x7fffffff.  On a 32-bit machine, the multiplication will wrap,
-> maybe turn into a small positive number, and we'll gleefully walk off
-> the end of the array, corrupting data as we go.
+--- linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c.orig	2006-02-08
+13:43:27.000000000 +1100
++++ linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c	2006-02-08
+13:45:39.000000000 +1100
+@@ -306,9 +306,8 @@ struct via_info {
+ 	unsigned intmask: 1;	/* Needs int bits */
+ 	unsigned sixchannel: 1;	/* 8233/35 with 6 channel support */
+ 	unsigned volume: 1;
++	unsigned locked_rate : 1;
+ 
+-	int locked_rate : 1;
+-	
+ 	int mixer_vol;		/* 8233/35 volume  - not yet implemented */
+ 
+ 	struct semaphore syscall_sem;
 
-nr_events isn't just limited by aio_max_nr, it's also clamped (oddly) by:
 
-        /* Prevent overflows */
-        if ((nr_events > (0x10000000U / sizeof(struct io_event))) ||
-            (nr_events > (0x10000000U / sizeof(struct kiocb)))) {
-                pr_debug("ENOMEM: nr_events too high\n");
-                return ERR_PTR(-EINVAL);
-        }
 
-Does that put your mind at ease?  (Barring reasonable unease at the
-existence of confusing code :))
 
-> And we should set the .extra1 and .extra2 values in the FS_AIO_MAX_NR
-> clause of kernel/sysctl.c anyway.  Does anyone have thoughts on what the 
-> *useful* range of this variable is?
 
-Well, the tunable exists to cap the amount of kernel memory pinned in
-event buffers.  So some relation to the number of pages in the machine
-wouldn't surprise me.  I don't know what default portion would be
-considered reasonable, though..
 
-- z
+--===============13523124402183551==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============13523124402183551==--
