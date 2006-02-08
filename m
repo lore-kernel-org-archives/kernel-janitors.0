@@ -1,19 +1,22 @@
 From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Wed, 08 Feb 2006 04:41:26 +0000
+Date: Wed, 08 Feb 2006 05:13:34 +0000
 Subject: [kj][Patch] remove implicit sign bit in
-Message-Id: <1139373686.9409.22.camel@localhost.localdomain>
+Message-Id: <1139375615.9409.25.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============93797420026274225=="
+Content-Type: multipart/mixed; boundary="===============051400564873770538=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1139373686.9409.22.camel@localhost.localdomain>
+In-Reply-To: <1139373686.9409.22.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============93797420026274225==
+--===============051400564873770538==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 Hello,
 
-Here is a try at another patch
+Here is re-send of the last patch without line wrapping (my bad, got it
+figured now)
 
 http://linuxicc.sourceforge.net/
 
@@ -29,10 +32,8 @@ in registers work. So this patch converts them to unsigned.
 Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
 
---- linux-2.6.16-rc2/drivers/media/video/videocodec.h.orig	2006-02-08
-15:29:21.000000000 +1100
-+++ linux-2.6.16-rc2/drivers/media/video/videocodec.h	2006-02-08
-15:30:42.000000000 +1100
+--- linux-2.6.16-rc2/drivers/media/video/videocodec.h.orig	2006-02-08 15:29:21.000000000 +1100
++++ linux-2.6.16-rc2/drivers/media/video/videocodec.h	2006-02-08 15:30:42.000000000 +1100
 @@ -222,14 +222,14 @@ M                       zr36055[1] 0001 
  /* ========================= */
  
@@ -59,9 +60,7 @@ Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
 
 
-
-
---===============93797420026274225==
+--===============051400564873770538==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============93797420026274225==--
+--===============051400564873770538==--
