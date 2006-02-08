@@ -1,54 +1,42 @@
 From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Wed, 08 Feb 2006 06:26:44 +0000
-Subject: [KJ][Patch] remove implicit sign bit in msp3400.h
-Message-Id: <1139380004.9409.40.camel@localhost.localdomain>
+Date: Wed, 08 Feb 2006 07:02:03 +0000
+Subject: [KJ][Patch] remove implicit sign bit in l64781.c
+Message-Id: <1139382123.9409.45.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38397987390203214=="
+Content-Type: multipart/mixed; boundary="===============60797505448226352=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1139380004.9409.40.camel@localhost.localdomain>
+In-Reply-To: <1139380004.9409.40.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============38397987390203214==
+--===============60797505448226352==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day
+G'day 
 
-the two fields here
-
-	int restart:1;
-	int watch_stereo:1;
-
-they both seem to be used as single bit flags. So this patch just makes
-them unsigned.
-
-Note : Not sure if something should be done in msp3400-driver.c as 
-"int msp_sleep(struct msp_state *state, int timeout)"
-is declared to return an int then returns
-"return state->restart;" which is now "unsigned:1;"
-This seems ok but I don't know if gcc will issue a warning without a
-cast.
-Note: if anyone can tell me if it's possible/how to compile
-msp3400-driver.c by its self that would be handy.
+Below is a patch which removes the implicit sign bit on a single bit
+field. The field 'first' is used as a flag to indicate a first attempt
+at init. So the patch just converts it to unsigned.
 
 
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
---- linux-2.6.16-rc2/drivers/media/video/msp3400.h.orig	2006-02-08 15:57:02.000000000 +1100
-+++ linux-2.6.16-rc2/drivers/media/video/msp3400.h	2006-02-08 17:09:45.000000000 +1100
-@@ -86,8 +86,8 @@ struct msp_state {
- 	/* thread */
- 	struct task_struct   *kthread;
- 	wait_queue_head_t    wq;
--	int                  restart:1;
--	int                  watch_stereo:1;
-+	unsigned restart:1;
-+	unsigned watch_stereo:1;
+--- linux-2.6.16-rc2/drivers/media/dvb/frontends/l64781.c.orig	2006-02-08 17:51:35.000000000 +1100
++++ linux-2.6.16-rc2/drivers/media/dvb/frontends/l64781.c	2006-02-08 17:53:34.000000000 +1100
+@@ -37,7 +37,7 @@ struct l64781_state {
+ 	struct dvb_frontend frontend;
+ 
+ 	/* private demodulator data */
+-	int first:1;
++	unsigned first:1;
  };
  
- /* msp3400-driver.c */
+ #define dprintk(args...) \
 
 
 
---===============38397987390203214==
+--===============60797505448226352==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38397987390203214==--
+--===============60797505448226352==--
