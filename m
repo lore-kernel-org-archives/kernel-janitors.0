@@ -1,45 +1,67 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 04 Feb 2006 17:50:29 +0000
-Subject: Re: [KJ] hamradio/bpqether.c: check return value of
-Message-Id: <20060204175029.GC5966@mipter.zuzino.mipt.ru>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 08 Feb 2006 04:41:26 +0000
+Subject: [kj][Patch] remove implicit sign bit in
+Message-Id: <1139373686.9409.22.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============059197463169275988=="
+Content-Type: multipart/mixed; boundary="===============93797420026274225=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <43E20A9A.2070007@bfs.de>
-In-Reply-To: <43E20A9A.2070007@bfs.de>
 To: kernel-janitors@vger.kernel.org
 
---===============059197463169275988==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============93797420026274225==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-> --- linux/drivers/net/hamradio/bpqether.c.bak
-> +++ linux/drivers/net/hamradio/bpqether.c
-> @@ -595,6 +595,7 @@
->   */
->  static int __init bpq_init_driver(void)
->  {
-> +	int ret;
->  #ifdef CONFIG_PROC_FS
->  	if (!proc_net_fops_create("bpqether", S_IRUGO, &bpq_info_fops)) {
->  		printk(KERN_ERR
-> @@ -605,7 +606,12 @@
->
->  	dev_add_pack(&bpq_packet_type);
->
-> -	register_netdevice_notifier(&bpq_dev_notifier);
-> +	ret = register_netdevice_notifier(&bpq_dev_notifier);
-> +	if (ret < 0) {
-> +		printk( KERN_WARNING "register_netdevice_notifier failed in %s\n",__FUNCTION__);
-> +		dev_remove_pack(&bpq_packet_type);
-> +		return -1;
-> +	}
+Hello,
 
-Looks good except proc_net_fops_create() should be reversed, KERN_ERR,
-and not return -1 always.
+Here is a try at another patch
+
+http://linuxicc.sourceforge.net/
+
+Warnings/Error while compiling with Intel C Compiler
+
+Says there is a Warning #108: implictly-signed bit field of length 1
+
+in drivers/media/video/videocodec.h @ line 225 - 232.
+
+These fields seem to be used to keep track of how the polarity of bits
+in registers work. So this patch converts them to unsigned.
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
 
---===============059197463169275988==
+--- linux-2.6.16-rc2/drivers/media/video/videocodec.h.orig	2006-02-08
+15:29:21.000000000 +1100
++++ linux-2.6.16-rc2/drivers/media/video/videocodec.h	2006-02-08
+15:30:42.000000000 +1100
+@@ -222,14 +222,14 @@ M                       zr36055[1] 0001 
+ /* ========================= */
+ 
+ struct vfe_polarity {
+-	int vsync_pol:1;
+-	int hsync_pol:1;
+-	int field_pol:1;
+-	int blank_pol:1;
+-	int subimg_pol:1;
+-	int poe_pol:1;
+-	int pvalid_pol:1;
+-	int vclk_pol:1;
++	unsigned vsync_pol:1;
++	unsigned hsync_pol:1;
++	unsigned field_pol:1;
++	unsigned blank_pol:1;
++	unsigned subimg_pol:1;
++	unsigned poe_pol:1;
++	unsigned pvalid_pol:1;
++	unsigned vclk_pol:1;
+ };
+ 
+ struct vfe_settings {
+
+
+
+
+
+--===============93797420026274225==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +72,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============059197463169275988==--
+--===============93797420026274225==--
