@@ -1,36 +1,62 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Sat, 25 Feb 2006 12:52:04 +0000
-Subject: Re: [KJ] bonding/bond_main.c: check return value of
-Message-Id: <9a8748490602250452k240c51fekdcf75609ff86659a@mail.gmail.com>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 08 Feb 2006 06:26:44 +0000
+Subject: [KJ][Patch] remove implicit sign bit in msp3400.h
+Message-Id: <1139380004.9409.40.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============38397987390203214=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <43E20B2F.8050109@bfs.de>
-In-Reply-To: <43E20B2F.8050109@bfs.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2/25/06, Tim Cooijmans <tim@aapopfiets.nl> wrote:
-> On Saturday 25 February 2006 12:53, walter harms wrote:
-> > +     res = register_netdevice_notifier(&bond_netdev_notifier);
-> > +     if (res < 0) {
-> > +             printk( KERN_ERR DRV_NAME" register_netdevice_notifier failed\n");
-> > +
-> > +             goto out_no_nd_notifier;
-> > +     }
-> > +
-> > +
-> >       register_inetaddr_notifier(&bond_inetaddr_notifier);
-> I don't think there's a reason for that double newline.
->
-I'd agree, and IMHO the one above the goto should go as well.
+--===============38397987390203214==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+G'day
+
+the two fields here
+
+	int restart:1;
+	int watch_stereo:1;
+
+they both seem to be used as single bit flags. So this patch just makes
+them unsigned.
+
+Note : Not sure if something should be done in msp3400-driver.c as 
+"int msp_sleep(struct msp_state *state, int timeout)"
+is declared to return an int then returns
+"return state->restart;" which is now "unsigned:1;"
+This seems ok but I don't know if gcc will issue a warning without a
+cast.
+Note: if anyone can tell me if it's possible/how to compile
+msp3400-driver.c by its self that would be handy.
+
+
+
+--- linux-2.6.16-rc2/drivers/media/video/msp3400.h.orig	2006-02-08 15:57:02.000000000 +1100
++++ linux-2.6.16-rc2/drivers/media/video/msp3400.h	2006-02-08 17:09:45.000000000 +1100
+@@ -86,8 +86,8 @@ struct msp_state {
+ 	/* thread */
+ 	struct task_struct   *kthread;
+ 	wait_queue_head_t    wq;
+-	int                  restart:1;
+-	int                  watch_stereo:1;
++	unsigned restart:1;
++	unsigned watch_stereo:1;
+ };
+ 
+ /* msp3400-driver.c */
+
+
+
+--===============38397987390203214==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============38397987390203214==--
