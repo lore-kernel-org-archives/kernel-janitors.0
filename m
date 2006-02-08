@@ -1,48 +1,59 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Wed, 08 Feb 2006 07:17:51 +0000
-Subject: [KJ][Patch] remove implicit sign bit in isdnhdlc.h
-Message-Id: <1139383072.9409.51.camel@localhost.localdomain>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Wed, 08 Feb 2006 15:32:26 +0000
+Subject: Re: [KJ][Patch] remove implicit sign bit in msp3400.h
+Message-Id: <Pine.LNX.4.58.0602080731420.1564@shark.he.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72018398660847005=="
+Content-Type: multipart/mixed; boundary="===============83558868511048967=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139380004.9409.40.camel@localhost.localdomain>
 In-Reply-To: <1139380004.9409.40.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============72018398660847005==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============83558868511048967==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 
-G'day list.
+On Wed, 8 Feb 2006, Darren Jenkins\ wrote:
 
-This patch removes the implicit sign bit in a couple of one bit struct
-fields.
-The fields here are used as one bit flags. So the patch just makes them
-unsigned. As a bonus it converts spaces to a tab before the last field.
+> G'day
+>
+> the two fields here
+>
+> 	int restart:1;
+> 	int watch_stereo:1;
+>
+> they both seem to be used as single bit flags. So this patch just makes
+> them unsigned.
+>
+> Note : Not sure if something should be done in msp3400-driver.c as
+> "int msp_sleep(struct msp_state *state, int timeout)"
+> is declared to return an int then returns
+> "return state->restart;" which is now "unsigned:1;"
+> This seems ok but I don't know if gcc will issue a warning without a
+> cast.
+> Note: if anyone can tell me if it's possible/how to compile
+> msp3400-driver.c by its self that would be handy.
+>
+>
+>
+> --- linux-2.6.16-rc2/drivers/media/video/msp3400.h.orig	2006-02-08 15:57:02.000000000 +1100
+> +++ linux-2.6.16-rc2/drivers/media/video/msp3400.h	2006-02-08 17:09:45.000000000 +1100
+> @@ -86,8 +86,8 @@ struct msp_state {
+>  	/* thread */
+>  	struct task_struct   *kthread;
+>  	wait_queue_head_t    wq;
+> -	int                  restart:1;
+> -	int                  watch_stereo:1;
+> +	unsigned restart:1;
+> +	unsigned watch_stereo:1;
+>  };
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+Please keep the same spacing/tab/alignment.
+And usually "unsigned int" is preferred in kernel source code.
 
---- linux-2.6.16-rc2/drivers/isdn/hisax/isdnhdlc.h.orig	2006-02-08 18:05:43.000000000 +1100
-+++ linux-2.6.16-rc2/drivers/isdn/hisax/isdnhdlc.h	2006-02-08 18:09:01.000000000 +1100
-@@ -41,10 +41,10 @@ struct isdnhdlc_vars {
- 	unsigned char shift_reg;
- 	unsigned char ffvalue;
- 
--	int data_received:1; 	// set if transferring data
--	int dchannel:1; 	// set if D channel (send idle instead of flags)
--	int do_adapt56:1; 	// set if 56K adaptation
--        int do_closing:1; 	// set if in closing phase (need to send CRC + flag
-+	unsigned data_received:1; 	// set if transferring data
-+	unsigned dchannel:1; 	// set if D channel (send idle instead of flags)
-+	unsigned do_adapt56:1; 	// set if 56K adaptation
-+	unsigned do_closing:1; 	// set if in closing phase (need to send CRC + flag
- };
- 
- 
+-- 
+~Randy
 
-
-
---===============72018398660847005==
+--===============83558868511048967==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============72018398660847005==--
+--===============83558868511048967==--
