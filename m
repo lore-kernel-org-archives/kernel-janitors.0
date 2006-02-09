@@ -1,98 +1,81 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Thu, 09 Feb 2006 12:52:01 +0000
+From: Andreas Mohr <andi@rhlx01.fht-esslingen.de>
+Date: Thu, 09 Feb 2006 13:45:54 +0000
 Subject: Re: [KJ] Correct imprecise >= comparisons
-Message-Id: <1139489521.4950.10.camel@alice>
+Message-Id: <20060209134554.GA29507@rhlx01.fht-esslingen.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============20018508393855639=="
+Content-Type: multipart/mixed; boundary="===============44899528707624825=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060208185312.GA26914@rhlx01.fht-esslingen.de>
 In-Reply-To: <20060208185312.GA26914@rhlx01.fht-esslingen.de>
 To: kernel-janitors@vger.kernel.org
 
---===============20018508393855639==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============44899528707624825==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,
+Hi,
 
-> It probably is unlikely in several cases, but that makes it all the more a
-> janitorial effort ;)
-> It's just "unclean" to set a variable's limit if it didn't even actually
-> step beyond the limit, which makes this more or less a janitorial task.
+On Thu, Feb 09, 2006 at 01:52:01PM +0100, Eric Sesterhenn wrote:
+> hi,
+> 
+> > It probably is unlikely in several cases, but that makes it all the more a
+> > janitorial effort ;)
+> > It's just "unclean" to set a variable's limit if it didn't even actually
+> > step beyond the limit, which makes this more or less a janitorial task.
+> 
+> sound more like a madochistic task to me ... :)
+> Anyways, i wanted to check the cache trashing stuff...
+> 
+> 
+> snakebyte@alice:~$ cat test.c
+> #define rdtscl(low) \
+>              __asm__ __volatile__ ("rdtsc" : "=a" (low) : : "edx")
+> int main(int argc, char **argv ) {
+>         int a,b,i;
+>         i = 3;
+> 
+>         rdtscl(a);
+>         if (i>=3)
+>                 i = 3;
+> 
+>         rdtscl(b);
+>         printf("i>=3 : %d\n", b-a);
+> 
+>         rdtscl(a);
+>         if(i>3)
+>                 i = 3;
+>         rdtscl(b);
+> 
+>         printf("i>3 : %d\n", b-a);
+> 
+> }
 
-sound more like a madochistic task to me ... :)
-Anyways, i wanted to check the cache trashing stuff...
+Hmm, 11/28 ops, 11/31, 66/47, 8/22.
+Sure sounds like one hell of a fluctuation. Would this code wait for
+the memory write to hit the hardware? In that case the fluctuation
+would be justified. Oh, and this means that the two operations are
+inter-dependent! (the second most likely needs to wait for the first one
+to get read back!). Better use "j" for a second test...
 
+Plus, are you sure that there was no compiler optimization going on?
+The
+  i = 3;
+if (i >= 3)
+  i = 3;
+case is very dangerous, I'd say. Better to fetch the value 3 from calling
+another function that returns 3. Otherwise the compiler might be very tempted
+to optimize the whole thing away.
 
-snakebyte@alice:~$ cat test.c
-#define rdtscl(low) \
-             __asm__ __volatile__ ("rdtsc" : "=a" (low) : : "edx")
-int main(int argc, char **argv ) {
-        int a,b,i;
-        i = 3;
+> here the i>3 is faster... seems we need a macro for this stuff, which we
+> can change for each processor type ;-)
 
-        rdtscl(a);
-        if (i>=3)
-                i = 3;
+Problem is that then one could easily object that this should have been
+properly decided by the compiler itself already...
+(and that objection would be very valid, I think)
 
-        rdtscl(b);
-        printf("i>=3 : %d\n", b-a);
+Andreas Mohr
 
-        rdtscl(a);
-        if(i>3)
-                i = 3;
-        rdtscl(b);
-
-        printf("i>3 : %d\n", b-a);
-
-}
-snakebyte@alice:~$ gcc test.c
-snakebyte@alice:~$ ./a.out
-i>=3 : 11
-i>3 : 28
-
-seems the >= actually performs faster on my athlon xp...
-
-on a non xp athlon i get this:
-i>=3 : 11
-i>3 : 31
-
-since the asm output seems pretty good, i it seems the jump wastes 
-more cycles :(
-
-if (i>=3) case:
-0x080483b7 <main+35>:   rdtsc
-0x080483b9 <main+37>:   mov    %eax,0xfffffffc(%ebp)
-0x080483bc <main+40>:   cmpl   $0x2,0xfffffff4(%ebp)
-0x080483c0 <main+44>:   jle    0x80483c9 <main+53>
-0x080483c2 <main+46>:   movl   $0x3,0xfffffff4(%ebp)
-0x080483c9 <main+53>:   rdtsc
-
-if (i>3) case:
-0x080483e6 <main+82>:   rdtsc
-0x080483e8 <main+84>:   mov    %eax,0xfffffffc(%ebp)
-0x080483eb <main+87>:   cmpl   $0x3,0xfffffff4(%ebp)
-0x080483ef <main+91>:   jle    0x80483f8 <main+100>
-0x080483f1 <main+93>:   movl   $0x3,0xfffffff4(%ebp)
-0x080483f8 <main+100>:  rdtsc
-
-good i also checked an intel box :) my centrino gives the following:
-
-i>=3 : 66
-i>3 : 47
-
-and a friends amd64
-
-i >= 3 : 8
-i>3 : 22
-
-here the i>3 is faster... seems we need a macro for this stuff, which we
-can change for each processor type ;-)
-
-Greetings, Eric
-
-
---===============20018508393855639==
+--===============44899528707624825==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -103,4 +86,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============20018508393855639==--
+--===============44899528707624825==--
