@@ -1,62 +1,47 @@
-From: "Aggarwal, Dhiraj" <info@e-bookservices.com>
-Date: Mon, 13 Feb 2006 13:29:20 +0000
-Subject: Typesetting & Related Services
-Message-Id: <E1F8dZw-0006NY-Tf@mail.sourceforge.net>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 09 Feb 2006 09:38:50 +0000
+Subject: [KJ] net/hamradio/bpqether.c: check the return code of
+Message-Id: <43EB0DAA.1060300@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+check the return code of register_netdevice_notifier.
+fix for the last patch. now it removes the proc entry also.
 
-I apologize for intruding into your busy schedule. Please allow me to introduce ourselves to you.
+Signed-off-by: walter harms <wharms@bfs.de>
 
-We are engaged in providing book-related services to international clientele (http://www.e-BookServices.com). Located in
-India, we cater to both organizations as well as individuals. 
+--- linux/drivers/net/hamradio/bpqether.c.bak	2006-02-01 
+22:13:07.000000000 +0100
++++ linux/drivers/net/hamradio/bpqether.c	2006-02-06 22:10:24.819769200 
++0100
+@@ -595,6 +595,7 @@
+   */
+  static int __init bpq_init_driver(void)
+  {
++	int ret;
+  #ifdef CONFIG_PROC_FS
+  	if (!proc_net_fops_create("bpqether", S_IRUGO, &bpq_info_fops)) {
+  		printk(KERN_ERR
+@@ -605,7 +606,13 @@
 
-Our range of services include, but are not limited to:
-- Typesetting in QuarkXPress, InDesign, FrameMaker etc (in multiple languages) 
-- Format conversion (eg. conversion from PageMaker to QuarkXPress, InDesign etc, including cross-platform)
-- Formatting of manuscripts (MS-Word, WordPerfect etc) 
-- Graphic Design and Pre-Press jobs (including logo/book cover design) 
-- Desktop Publishing (DTP) 
-- Keying-in, scanning and OCR (for re-prints, archives, web publishing etc) 
-- e-Books Creation (PDFs, MobiPocket etc) 
-- XML Conversion 
+  	dev_add_pack(&bpq_packet_type);
 
-Many companies are now outsourcing their work to India. Not only do they achieve substantial cost savings, but the
-availability of a large number of professionally trained personnel also ensures a high quality of work. We can serve you
-efficiently and cost effectively, and deliver as per your customized needs. 
+-	register_netdevice_notifier(&bpq_dev_notifier);
++	ret = register_netdevice_notifier(&bpq_dev_notifier);
++	if (ret < 0) {
++		printk( KERN_ERR "register_netdevice_notifier failed in 
+%s\n",__FUNCTION__);
++		dev_remove_pack(&bpq_packet_type);
++		proc_net_remove("bpqether");
++		return -1;
++	}
 
-We are one of the leading Indian organizations in our field, and serve many international organizations. For accomplishing
-jobs with us, a team of highly trained and dedicated professionals work at our state-of-the-art facilities located in New
-Delhi, India.
+  	printk(banner);
 
-We understand the basic international business processes and ensure that all projects undertaken by us are completed within
-the stipulated time period with complete confidentiality, accuracy, and quality.
-
-You do not need to pay us a deposit. Entire payment may be made after receiving satisfactory delivery of service.
-References can be provided on request.
-
-If you are interested in cutting your current costs to at least one-third, increasing your profit margins without
-compromising on the quality and turn-around time, then please do get back to us. We will be glad to send you a most
-competitive business proposal. 
-
-Sincerely,
- 
-Dhiraj Aggarwal
-Mobile: +(91) 98100 50809
-E-mail: info@e-BookServices.net , info@e-BookServices.com
-URL:  http://www.e-BookServices.com
-
-
--------------------------------------------------------
-This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
-for problems?  Stop!  Download the new AJAX search engine that makes
-searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid3432&bid#0486&dat1642
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
