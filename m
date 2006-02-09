@@ -1,57 +1,52 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sun, 19 Feb 2006 06:58:35 +0000
-Subject: Re: [KJ][Patch] remove implicit sign bit in msp3400.h
-Message-Id: <20060219065835.GX12822@parisc-linux.org>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Thu, 09 Feb 2006 13:36:54 +0000
+Subject: [KJ][Patch] Remove second masking instance of variable i from
+Message-Id: <1139492214.17930.41.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2313969605241053=="
+Content-Type: multipart/mixed; boundary="===============42642424020863334=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1139380004.9409.40.camel@localhost.localdomain>
-In-Reply-To: <1139380004.9409.40.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============2313969605241053==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============42642424020863334==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 18, 2006 at 03:33:12PM +0300, Alexey Dobriyan wrote:
-> It's very logical.
-> 
-> 	int a:1;
-> 
-> means 1 bit for sign (it's int) + >=1 bit for absolute value (it's int).
-> So, >=2 bits you should somehow fit into 1 bit.
+G'day list
 
-Standard 2's-complement representation.  The MSB is negative.  So
-instead of the bits meaning 1, 2, 4, 8, 16, 32, 64, 128, the top bit
-represents -128.  So the one bit case represents -1.
+from http://linuxicc.sourceforge.net/
 
-ie the two values it can have are 0 and -1.
+Remark #1599: Declaration hides variable "variable name"
 
-> I guess C standard says "undefined behaviour" or "implementation-defined".
+unsigned int __cpuinit init_intel_cacheinfo(struct cpuinfo_x86 *c)
 
-It does ... sort of:
+seems to have declared 
+174: "unsigned int new_l2 = 0, new_l3 = 0, i;"
+then 
+219: "int i, j, n;" 
+Which masks the earlier "i" variable (weird code but this seems right).
 
-6.7.2:
-for bit-fields, it is implementation-defined whether the specifier int
-designates the same type as signed int or the same type as unsigned int.
+"i" seems to be only used as a positive value (as a loop counter), so
+"unsigned int" seems ok for the second bit too. 
 
-so relying on int to be signed was already broken.
+The patch below just removes the second declaration.
 
-> BTW, someone could do
-> 
-> 	int a:1;
-> 	if (a < 0)
-> 
-> so every time type is flipped, submitter should check every usage of "a".
-> 
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+--- linux-2.6.16-rc2/arch/i386/kernel/cpu/intel_cacheinfo.c.orig	2006-02-09 23:52:25.000000000 +1100
++++ linux-2.6.16-rc2/arch/i386/kernel/cpu/intel_cacheinfo.c	2006-02-09 23:55:24.000000000 +1100
+@@ -216,7 +216,7 @@ unsigned int __cpuinit init_intel_cachei
+ 	}
+ 	if (c->cpuid_level > 1) {
+ 		/* supports eax=2  call */
+-		int i, j, n;
++		int j, n;
+ 		int regs[4];
+ 		unsigned char *dp = (unsigned char *)regs;
+ 
 
 
---===============2313969605241053==
+
+--===============42642424020863334==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2313969605241053==--
+--===============42642424020863334==--
