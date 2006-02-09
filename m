@@ -1,48 +1,40 @@
-From: "Sibil Walls" <cfevbycje@daleclevesmusic.com.au>
-Date: Fri, 10 Feb 2006 02:45:42 +0000
-Subject: [KJ] Re: ATTENTION -  SmallCap Watch
-Message-Id: <003201c62dec$15e07080$b4db0f47@btqehd>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============80233648322584916=="
+From: walter harms <wharms@bfs.de>
+Date: Thu, 09 Feb 2006 09:29:53 +0000
+Subject: [KJ] net/pppoe.c: check return code of register_netdevice_notifier
+Message-Id: <43EB0B91.5060205@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============80233648322584916==
-Content-Type: text/plain; format=flowed; charset="Windows-1252";
-	reply-type=response
-Content-Transfer-Encoding: 7bit
+check return code of register_netdevice_notifier.
+do propper cleanup and say goodbye
 
+Signed-off-by: walter harms <wharms@bfs.de>
 
-Trading Date : 2006, February 10
-Name : Pingchuan Pharmaceutical, Inc.
-S t o c k  : PGCN
-Timing is everything!
-Yes, it looks like the momentum has started up again.
-Current Price : $1.05
-3 Day Target : $3-$4
-Rating : S T R O N G  B U Y
-
-It has been showing a steady move up on increasing volume.
-There is a massive promotion underway this weekend apprising potential 
-eager investors of this emerging situation.
-Looking for a company with some good news?  Here's one!
-IF you are Receiving this email, you are among the first public investors 
-to know about PGCN !!!
-This company has dropped big new's in the past. Who's to say they don't 
-have another big one.
-Explosive pick for our members.
-Will it go crazy Friday morning?
-
-
---===============80233648322584916==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+--- linux/drivers/net/pppoe.c.bak	2006-02-01 22:13:41.000000000 +0100
++++ linux/drivers/net/pppoe.c	2006-02-01 22:16:56.000000000 +0100
+@@ -1126,7 +1126,16 @@
+  	
+  	dev_add_pack(&pppoes_ptype);
+  	dev_add_pack(&pppoed_ptype);
+-	register_netdevice_notifier(&pppoe_notifier);
++
++	err = register_netdevice_notifier(&pppoe_notifier);
++	if (err < 0) {
++		printk( KERN_WARNING "register_netdevice_notifier failed in 
+%s\n",__FUNCTION__);
++		dev_remove_pack(&pppoed_ptype);
++		dev_remove_pack(&pppoes_ptype);
++		goto out_unregister_pppox_proto;
++	}
++	
++
+  out:
+  	return err;
+  out_unregister_pppox_proto:
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============80233648322584916==--
