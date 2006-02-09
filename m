@@ -1,54 +1,54 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Thu, 09 Feb 2006 15:35:04 +0000
+From: Darren Jenkins <darrenrjenkins@gmail.com>
+Date: Thu, 09 Feb 2006 22:16:36 +0000
 Subject: Re: [KJ] Correct imprecise >= comparisons
-Message-Id: <a01a16b50602090735y10f557c6ued26598025a2d463@mail.gmail.com>
+Message-Id: <82faac5b0602091416p1cb2da66s45f0bb6ccf3207fe@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060208185312.GA26914@rhlx01.fht-esslingen.de>
 In-Reply-To: <20060208185312.GA26914@rhlx01.fht-esslingen.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2/9/06, Matthew Wilcox <matthew@wil.cx> wrote:
-> I wonder if we want a macro similar to min()/max().  Maybe we could
-> write it as:
->
-> limit(val, max);
->
-> which could be defined as:
->
-> #define limit(val, max)  { \
->         typeof(val) _val =3D (val); typeof(max) _max =3D (max); \
->         if (_val > _max) _val =3D _max; }
->
-> Thoughts?
+On 2/9/06, Eric Sesterhenn <snakebyte@gmx.de> wrote:
 
-I also though of making a macro based on the min/max macros, but I did
-not come up with a name other than set_max and I did not think that was
-good enough. Using "limit" instead of "set" on the other hand I think
-will be good.
+> snakebyte@alice:~$ gcc test.c
+> snakebyte@alice:~$ ./a.out
+> i>=3 : 11
+> i>3 : 28
+>
+> seems the >= actually performs faster on my athlon xp...
+>
+> on a non xp athlon i get this:
+> i>=3 : 11
+> i>3 : 31
+>
+> good i also checked an intel box :) my centrino gives the following:
+>
+> i>=3 : 66
+> i>3 : 47
+>
+> and a friends amd64
+>
+> i >= 3 : 8
+> i>3 : 22
+>
+> here the i>3 is faster... seems we need a macro for this stuff, which we
+> can change for each processor type ;-)
+>
+> Greetings, Eric
 
-In order to just use existing macros and not introducing any new a
-test like
-	...
-	if (var > max)
-		var =3D max;
-	...
-could be written as
-	...
-	var =3D min(var, max);
-	...
-however this approach would have two drawbacks,
-  1: it always executes an assignment which is negative for performance
-  2: it is a bit mentally confusing because you are using the /min/
-     macro to set a /max/ value.
-so this is not an option.
+Interesting
+I guess on alot of arch's doing
 
-I support creating two "limit_max(val, max)" and "limit_min(val, min)"
-macros with bodies like above.
+if (value >= max+1)
+        value = max;
 
-BR H=E5kon L=F8vdal
+might be the more efficient.
+
+hmm will have to investigate further.
+
+Darren J.
 
 _______________________________________________
 Kernel-janitors mailing list
