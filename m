@@ -1,59 +1,54 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Wed, 08 Feb 2006 15:32:26 +0000
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Thu, 09 Feb 2006 12:15:31 +0000
 Subject: Re: [KJ][Patch] remove implicit sign bit in msp3400.h
-Message-Id: <Pine.LNX.4.58.0602080731420.1564@shark.he.net>
+Message-Id: <1139487337.17930.17.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83558868511048967=="
+Content-Type: multipart/mixed; boundary="===============77361711431297653=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139380004.9409.40.camel@localhost.localdomain>
 In-Reply-To: <1139380004.9409.40.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============83558868511048967==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============77361711431297653==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, 8 Feb 2006, Darren Jenkins\ wrote:
+On Wed, 2006-02-08 at 07:32 -0800, Randy.Dunlap wrote:
+> Please keep the same spacing/tab/alignment.
 
-> G'day
->
-> the two fields here
->
-> 	int restart:1;
-> 	int watch_stereo:1;
->
-> they both seem to be used as single bit flags. So this patch just makes
-> them unsigned.
->
-> Note : Not sure if something should be done in msp3400-driver.c as
-> "int msp_sleep(struct msp_state *state, int timeout)"
-> is declared to return an int then returns
-> "return state->restart;" which is now "unsigned:1;"
-> This seems ok but I don't know if gcc will issue a warning without a
-> cast.
-> Note: if anyone can tell me if it's possible/how to compile
-> msp3400-driver.c by its self that would be handy.
->
->
->
-> --- linux-2.6.16-rc2/drivers/media/video/msp3400.h.orig	2006-02-08 15:57:02.000000000 +1100
-> +++ linux-2.6.16-rc2/drivers/media/video/msp3400.h	2006-02-08 17:09:45.000000000 +1100
-> @@ -86,8 +86,8 @@ struct msp_state {
->  	/* thread */
->  	struct task_struct   *kthread;
->  	wait_queue_head_t    wq;
-> -	int                  restart:1;
-> -	int                  watch_stereo:1;
-> +	unsigned restart:1;
-> +	unsigned watch_stereo:1;
->  };
+Fair enough
 
-Please keep the same spacing/tab/alignment.
-And usually "unsigned int" is preferred in kernel source code.
+> And usually "unsigned int" is preferred in kernel source code.
 
--- 
-~Randy
+After doing a grep on the kernel I have to agree, most of them are
+"unsigned int foo :1;" 
+Weird if you ask me. I'm pretty sure the C standard says they are
+promoted to an int for calculations. But I suppose as it makes no
+difference it is better to stick with convention.
 
---===============83558868511048967==
+So here is a re-send of the patch.
+
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+
+--- linux-2.6.16-rc2/drivers/media/video/msp3400.h.orig	2006-02-08 15:57:02.000000000 +1100
++++ linux-2.6.16-rc2/drivers/media/video/msp3400.h	2006-02-09 22:55:41.000000000 +1100
+@@ -86,8 +86,8 @@ struct msp_state {
+ 	/* thread */
+ 	struct task_struct   *kthread;
+ 	wait_queue_head_t    wq;
+-	int                  restart:1;
+-	int                  watch_stereo:1;
++	unsigned int         restart:1;
++	unsigned int         watch_stereo:1;
+ };
+ 
+ /* msp3400-driver.c */
+
+
+
+--===============77361711431297653==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83558868511048967==--
+--===============77361711431297653==--
