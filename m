@@ -1,40 +1,71 @@
-From: "Mima Meeks" <gbjemopkq@kadm.com>
-Date: Fri, 10 Feb 2006 02:45:42 +0000
-Subject: [KJ] February 10, 2006  Hidden Winners St0ck Alert
-Message-Id: <000601c62dec$15e07080$19570f47@pmqtk>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 09 Feb 2006 09:35:09 +0000
+Subject: [KJ] net/bonding/bond_main.c:check return code of
+Message-Id: <43EB0CCD.7030904@bfs.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85038555157929752=="
+Content-Type: multipart/mixed; boundary="------------000903010504030204010605"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============85038555157929752==
-Content-Type: text/plain; format=flowed; charset="Windows-1252";
-	reply-type=response
+This is a multi-part message in MIME format.
+--------------000903010504030204010605
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-Trading Date : 2006, February 10
-Name : Pingchuan Pharmaceutical, Inc.
-S t o c k  : PGCN
-Timing is everything!
-Yes, it looks like the momentum has started up again.
-Current Price : $1.05
-6 Day Target : $3-$4
-Rating : S T R O N G  B U Y
-
-It has been showing a steady move up on increasing volume.
-There is a massive promotion underway this weekend apprising potential 
-eager investors of this emerging situation.
-Looking for a company with some good news?  Here's one!
-IF you are Receiving this email, you are among the first public investors 
-to know about PGCN !!!
-This company has dropped big new's in the past. Who's to say they don't 
-have another big one.
-Explosive pick for our members.
-Will it go crazy Friday morning?
+check return code of 'register_netdevice_notifier'
+note that the  register_inetaddr_notifier is not checked.
 
 
---===============85038555157929752==
+Signed-off-by: walter harms <wharms@bfs.de>
+
+--- linux/drivers/net/bonding/bond_main.c.bak	2006-02-01 
+22:13:29.000000000 +0100
++++ linux/drivers/net/bonding/bond_main.c	2006-02-01 22:41:31.000000000 
++0100
+@@ -4893,7 +4893,14 @@
+  	}
+
+  	rtnl_unlock();
+-	register_netdevice_notifier(&bond_netdev_notifier);
++
++	res = register_netdevice_notifier(&bond_netdev_notifier);
++
++	if (res < 0) {
++		printk( KERN_WARNING DRV_NAME" register_netdevice_notifier failed\n");
++		goto out_err;
++	}
++
+  	register_inetaddr_notifier(&bond_inetaddr_notifier);
+
+  	return 0;
+
+--------------000903010504030204010605
+Content-Type: text/x-patch;
+ name="bond_main.c.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="bond_main.c.diff"
+
+--- linux/drivers/net/bonding/bond_main.c.bak	2006-02-01 22:13:29.000000000 +0100
++++ linux/drivers/net/bonding/bond_main.c	2006-02-01 22:41:31.000000000 +0100
+@@ -4893,7 +4893,14 @@
+ 	}
+ 
+ 	rtnl_unlock();
+-	register_netdevice_notifier(&bond_netdev_notifier);
++
++	res = register_netdevice_notifier(&bond_netdev_notifier);
++
++	if (res < 0) {
++		printk( KERN_WARNING DRV_NAME" register_netdevice_notifier failed\n");
++		goto out_err;
++	}
++
+ 	register_inetaddr_notifier(&bond_inetaddr_notifier);
+ 
+ 	return 0;
+
+--------------000903010504030204010605
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -45,4 +76,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85038555157929752==--
+--------------000903010504030204010605--
