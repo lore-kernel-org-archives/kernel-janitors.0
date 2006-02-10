@@ -1,51 +1,57 @@
 From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Fri, 10 Feb 2006 12:37:39 +0000
-Subject: [KJ][Patch] remove second masking instance of variable in pci_root.c
-Message-Id: <1139575059.17620.36.camel@localhost.localdomain>
+Date: Fri, 10 Feb 2006 12:58:19 +0000
+Subject: [KJ][Patch] remove second masking instance of variable in firestream.c
+Message-Id: <1139576299.17620.42.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============23047594685354778=="
+Content-Type: multipart/mixed; boundary="===============40698015727379433=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139492214.17930.41.camel@localhost.localdomain>
 In-Reply-To: <1139492214.17930.41.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============23047594685354778==
+--===============40698015727379433==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day list.
-
+G'day list,
 
 from http://linuxicc.sourceforge.net/
 
 Remark #1599: Declaration hides variable "variable name"
 
-static int acpi_pci_root_add(struct acpi_device *device)
+static void submit_qentry (struct fs_dev *dev, struct queue *q, struct FS_QENTRY *qe)
 
-declares status twice:
+declares wp twice;
 
-159: "acpi_status status = AE_OK;"
+594:	"u32 wp;"
 and
-232: "acpi_status status;"
+618:	"int rp, wp;"
 
-This patch removes the second instance.
+This patch just re-names the second instance.
 
 Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
---- linux-2.6.16-rc2/drivers/acpi/pci_root.c.orig	2006-02-10 23:24:36.000000000 +1100
-+++ linux-2.6.16-rc2/drivers/acpi/pci_root.c	2006-02-10 23:28:38.000000000 +1100
-@@ -229,7 +229,6 @@ static int acpi_pci_root_add(struct acpi
- 		if ((tmp->id.segment == root->id.segment)
- 		    && (tmp->id.bus == root->id.bus)) {
- 			int bus = 0;
--			acpi_status status;
- 
- 			ACPI_DEBUG_PRINT((ACPI_DB_ERROR,
- 					  "Wrong _BBN value, please reboot and using option 'pci=noacpi'\n"));
+--- linux-2.6.16-rc2/drivers/atm/firestream.c.orig	2006-02-10 23:43:51.000000000 +1100
++++ linux-2.6.16-rc2/drivers/atm/firestream.c	2006-02-10 23:48:38.000000000 +1100
+@@ -615,11 +615,11 @@ static void submit_qentry (struct fs_dev
+ 		static int c;
+ 		if (!(c++ % 100))
+ 			{
+-				int rp, wp;
++				int rp, wptr;
+ 				rp =  read_fs (dev, Q_RP(q->offset));
+-				wp =  read_fs (dev, Q_WP(q->offset));
++				wptr =  read_fs (dev, Q_WP(q->offset));
+ 				fs_dprintk (FS_DEBUG_TXQ, "q at %d: %x-%x: %x entries.\n", 
+-					    q->offset, rp, wp, wp-rp);
++					    q->offset, rp, wptr, wptr-rp);
+ 			}
+ 	}
+ }
 
 
 
---===============23047594685354778==
+--===============40698015727379433==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============23047594685354778==--
+--===============40698015727379433==--
