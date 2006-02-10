@@ -1,74 +1,70 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Fri, 10 Feb 2006 12:01:18 +0000
-Subject: [KJ][Patch] re-send of remove second masking instance of variable
-Message-Id: <1139572879.17620.23.camel@localhost.localdomain>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Fri, 10 Feb 2006 12:41:53 +0000
+Subject: Re: [KJ][Patch] re-send of remove second masking instance of variable
+Message-Id: <20060210124153.GB12822@parisc-linux.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8389110326507343=="
+Content-Type: multipart/mixed; boundary="===============73942171433909643=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1139572879.17620.23.camel@localhost.localdomain>
+In-Reply-To: <1139572879.17620.23.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============8389110326507343==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============73942171433909643==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-G'day list
+On Fri, Feb 10, 2006 at 11:01:18PM +1100, Darren Jenkins" wrote:
+> This is a re-send of the last patch (that i stuffed up).
+> Because there are 3 instances in fpu_trig.c of an extra declaration of a
+> variable.
 
-This is a re-send of the last patch (that i stuffed up).
-Because there are 3 instances in fpu_trig.c of an extra declaration of a
-variable.
+Do you ever compare the code before and after your changes?  I ask
+because I don't think gcc does live range splitting yet.  So a variable
+which may have been register-allocated before may now move to the stack.
+It may often make more sense to rename a variable or manually do LRS.
+Examples:
 
-static void fyl2x(FPU_REG *st0_ptr, u_char st0_tag)
+int foo;
+if (x) {
+	...
+}
 
-declares "u_char sign;" three times.
-once at 1129, once at 1216, and once at 1271.
+if (y) {
+	int foo;
+	...
+}
 
+transform either to (a):
 
-static void fyl2xp1(FPU_REG *st0_ptr, u_char st0_tag)
+if (x) {
+	int foo;
+	...
+}
 
-declares "u_char sign;" twice
-1475: "u_char sign, sign1;"
-and
-1647: "u_char sign = getsign(st1_ptr);"
+if (y) {
+	int foo;
+	...
+}
 
-This Patch removes all three superfluous instances.
+or to (b):
 
+int foo;
+if (x) { ... }
 
+if (y) {
+	int bar;
+	...
+}
 
+Option (c) [the one you use] can be better.  If foo is a stack allocated
+variable anyway, this will force gcc to use the same stack slot for both.
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com> 
-
---- linux-2.6.16-rc2/arch/i386/math-emu/fpu_trig.c.orig	2006-02-10 21:33:37.000000000 +1100
-+++ linux-2.6.16-rc2/arch/i386/math-emu/fpu_trig.c	2006-02-10 22:30:45.000000000 +1100
-@@ -1213,7 +1213,6 @@ static void fyl2x(FPU_REG *st0_ptr, u_ch
- 	    }
- 	  else
- 	    {
--	      u_char sign;
- 	      sign = getsign(st1_ptr)^SIGN_NEG;
- 	      if ( FPU_divide_by_zero(1, sign) < 0 )
- 		return;
-@@ -1268,7 +1267,7 @@ static void fyl2x(FPU_REG *st0_ptr, u_ch
- 	}
-       else
- 	{
--	  u_char sign = getsign(st1_ptr);
-+	  sign = getsign(st1_ptr);
- 
- 	  if ( (st1_tag == TW_Denormal) && (denormal_operand() < 0) )
- 	    return;
-@@ -1644,7 +1643,7 @@ static void fyl2xp1(FPU_REG *st0_ptr, u_
- 	 80486 sensibly says that it is o.k. */
-       else
- 	{
--	  u_char sign = getsign(st1_ptr);
-+	  sign = getsign(st1_ptr);
- 	  FPU_copy_to_reg1(&CONST_INF, TAG_Special);
- 	  setsign(st1_ptr, sign);
- 	}
+So I'm not saying these patches are wrong, and I really want to see
+shadow variables eliminated (we should always have -Wshadow enabled, IMO).
+I'd just like to see some analysis of the consequences of each change.
 
 
-
---===============8389110326507343==
+--===============73942171433909643==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============8389110326507343==--
+--===============73942171433909643==--
