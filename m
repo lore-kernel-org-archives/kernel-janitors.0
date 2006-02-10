@@ -1,31 +1,40 @@
-From: root@codejungle.is-a-geek.org (root)
-Date: Sat, 04 Feb 2006 07:40:47 +0000
-Subject: [KJ] Ich liebe Dich !!!
-Message-Id: <20060204074047.7F69F70A8F2@codejungle.is-a-geek.org>
+From: "Mima Meeks" <gbjemopkq@kadm.com>
+Date: Fri, 10 Feb 2006 02:45:42 +0000
+Subject: [KJ] February 10, 2006  Hidden Winners St0ck Alert
+Message-Id: <000601c62dec$15e07080$19570f47@pmqtk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============79898548879683107=="
+Content-Type: multipart/mixed; boundary="===============85038555157929752=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============79898548879683107==
-
-Hallo liebe Lissi,
- ich wolllt dir auf den Weg sagen wie sehr Ich dich Liebe!!!
- Und um meiner Mail etwas mehr ausdruck zu verleihen, dachte ich mir mal ich leite es gleich an jedden ���sterreicher weiter...  
- ICH LIEBE DICH !!!  
-
- LG 
-
- Andreas 
+--===============85038555157929752==
+Content-Type: text/plain; format=flowed; charset="Windows-1252";
+	reply-type=response
+Content-Transfer-Encoding: 7bit
 
 
- Please Note: A Hacker loves U 
+Trading Date : 2006, February 10
+Name : Pingchuan Pharmaceutical, Inc.
+S t o c k  : PGCN
+Timing is everything!
+Yes, it looks like the momentum has started up again.
+Current Price : $1.05
+6 Day Target : $3-$4
+Rating : S T R O N G  B U Y
 
- so hack me if you can 
- 
- http://hackerz.da.cx
+It has been showing a steady move up on increasing volume.
+There is a massive promotion underway this weekend apprising potential 
+eager investors of this emerging situation.
+Looking for a company with some good news?  Here's one!
+IF you are Receiving this email, you are among the first public investors 
+to know about PGCN !!!
+This company has dropped big new's in the past. Who's to say they don't 
+have another big one.
+Explosive pick for our members.
+Will it go crazy Friday morning?
 
---===============79898548879683107==
+
+--===============85038555157929752==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============79898548879683107==--
+--===============85038555157929752==--
