@@ -1,47 +1,49 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Wed, 22 Feb 2006 13:10:43 +0000
-Subject: [KJ][Patch] make init_error signed in synclink_gt.c
-Message-Id: <1140613844.7778.17.camel@localhost.localdomain>
+From: Amanda Curtis <jpvidal@mail.ru>
+Date: Sun, 12 Feb 2006 21:11:16 +0000
+Subject: [KJ] Hochbezahlte Arbeit
+Message-Id: <1639087658.20060212161116@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============23228276445015705=="
+Content-Type: multipart/mixed; boundary="===============25592655490903482=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============23228276445015705==
+--===============25592655490903482==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day list
+Sehr geherte Damen und Herren!
 
-I noticed struct member init_error was used as a signed value (to return
-a -ve on error) but was an unsigned int.
+Als Manager der Firma "Bower Investments Ltd." ,
+mochte ich ihnen eine Taetigkeit in unserer Firma als 
+Regionaler Finanz-Manager anbieten.
 
-examples of it's miss-use are
+Unsere Angestellten dieser Stelle haben mit Bankuberweisungen und Checks zu tun.  
+Unsere Kunden sind Privatpersonen und Firmen aus unterschiedlichsten Laendern.
 
-3112 info->init_error = -1; 
+Ihre Aufgaben sind:
+- Annahme der Bankzahlungen auf einem Bankkonto
+- uebertragung der Finanzmittel an unsere Repraesentanten in anderen Laendern
+- Wir geben ihnen die Moglichkeit (300-1000 Euro) Taeglich zu verdienen.
+- Ihren Arbeitstag Flexibel zu gestallten und einen Hauptjob zu machen.
+- Sie Arbeiten so oft und so lange sie es wollen.
+- Waehrend der ganzen Arbeit entstehen fuer sie keine Kosten, sie brauchen also kein Start-kapitall.
 
-4440 if ((info->init_error = register_test(info)) < 0) {
+Von ihnen brauchen wir:
+- Internet, Email, kenntnisse der Grundzahlungs-systeme.
+- Idealerweise haben Sie ein Konto  in einer deutschen Bank , vorzugsweise Sparkasse.
+- 1-3 Stunden Freizeit in der Woche.
 
-The patch below converts it from an 'unsigned int', to a plain 'int'.
-Patch is compile tested.
+Wenn unserer vorschlag sie interessiert hat und Sie bereit zu einer Geldreichen aber
+auch verantwortungsvollen Arbeit. Dann schreiben sie uns an fuer mehr Info:
+germany@bower-jobs.com
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+Mit bessten Gruessen
+Amanda Curtis
 
---- linux-2.6.16-rc3/drivers/char/synclink_gt.c.orig	2006-02-22 23:51:25.000000000 +1100
-+++ linux-2.6.16-rc3/drivers/char/synclink_gt.c	2006-02-22 23:52:29.000000000 +1100
-@@ -306,7 +306,7 @@ struct slgt_info {
- 	int tx_active;
- 
- 	unsigned char signals;    /* serial signal states */
--	unsigned int init_error;  /* initialization error */
-+	int init_error;  /* initialization error */
- 
- 	unsigned char *tx_buf;
- 	int tx_count;
+germany@bower-jobs.com
 
 
-
---===============23228276445015705==
+--===============25592655490903482==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +54,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============23228276445015705==--
+--===============25592655490903482==--
