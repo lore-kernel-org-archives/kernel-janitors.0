@@ -1,56 +1,62 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Fri, 17 Feb 2006 13:33:36 +0000
-Subject: [KJ][Patch] alter prototypes in fscpos.c
-Message-Id: <1140183216.7789.53.camel@localhost.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============86686183373240655=="
+From: "Aggarwal, Dhiraj" <info@e-bookservices.com>
+Date: Mon, 13 Feb 2006 13:29:20 +0000
+Subject: Typesetting & Related Services
+Message-Id: <E1F8dZw-0006NY-Tf@mail.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============86686183373240655==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Hi,
 
-G'day list,
+I apologize for intruding into your busy schedule. Please allow me to introduce ourselves to you.
 
-from http://linuxicc.sourceforge.net/
+We are engaged in providing book-related services to international clientele (http://www.e-BookServices.com). Located in
+India, we cater to both organizations as well as individuals. 
 
-ICC complains about : Storage Class is not First
+Our range of services include, but are not limited to:
+- Typesetting in QuarkXPress, InDesign, FrameMaker etc (in multiple languages) 
+- Format conversion (eg. conversion from PageMaker to QuarkXPress, InDesign etc, including cross-platform)
+- Formatting of manuscripts (MS-Word, WordPerfect etc) 
+- Graphic Design and Pre-Press jobs (including logo/book cover design) 
+- Desktop Publishing (DTP) 
+- Keying-in, scanning and OCR (for re-prints, archives, web publishing etc) 
+- e-Books Creation (PDFs, MobiPocket etc) 
+- XML Conversion 
 
-@ line 92 & 93 of fscpos.c
+Many companies are now outsourcing their work to India. Not only do they achieve substantial cost savings, but the
+availability of a large number of professionally trained personnel also ensures a high quality of work. We can serve you
+efficiently and cost effectively, and deliver as per your customized needs. 
 
-This appears to be because the variables in the prototypes are called
-register which confuses ICC.
-This patch converts it to match the actual functions variable name
-(reg).
+We are one of the leading Indian organizations in our field, and serve many international organizations. For accomplishing
+jobs with us, a team of highly trained and dedicated professionals work at our state-of-the-art facilities located in New
+Delhi, India.
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+We understand the basic international business processes and ensure that all projects undertaken by us are completed within
+the stipulated time period with complete confidentiality, accuracy, and quality.
 
---- linux-2.6.16-rc3/drivers/hwmon/fscpos.c.orig	2006-02-18 00:22:09.000000000 +1100
-+++ linux-2.6.16-rc3/drivers/hwmon/fscpos.c	2006-02-18 00:22:54.000000000 +1100
-@@ -89,8 +89,8 @@ static int fscpos_attach_adapter(struct 
- static int fscpos_detect(struct i2c_adapter *adapter, int address, int kind);
- static int fscpos_detach_client(struct i2c_client *client);
+You do not need to pay us a deposit. Entire payment may be made after receiving satisfactory delivery of service.
+References can be provided on request.
+
+If you are interested in cutting your current costs to at least one-third, increasing your profit margins without
+compromising on the quality and turn-around time, then please do get back to us. We will be glad to send you a most
+competitive business proposal. 
+
+Sincerely,
  
--static int fscpos_read_value(struct i2c_client *client, u8 register);
--static int fscpos_write_value(struct i2c_client *client, u8 register, u8 value);
-+static int fscpos_read_value(struct i2c_client *client, u8 reg);
-+static int fscpos_write_value(struct i2c_client *client, u8 reg, u8 value);
- static struct fscpos_data *fscpos_update_device(struct device *dev);
- static void fscpos_init_client(struct i2c_client *client);
- 
+Dhiraj Aggarwal
+Mobile: +(91) 98100 50809
+E-mail: info@e-BookServices.net , info@e-BookServices.com
+URL:  http://www.e-BookServices.com
 
 
-
---===============86686183373240655==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+This SF.net email is sponsored by: Splunk Inc. Do you grep through log files
+for problems?  Stop!  Download the new AJAX search engine that makes
+searching your log files as easy as surfing the  web.  DOWNLOAD SPLUNK!
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid3432&bid#0486&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============86686183373240655==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
