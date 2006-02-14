@@ -1,37 +1,32 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Wed, 01 Feb 2006 15:12:56 +0000
-Subject: [KJ] [Patch 2/4] ide cleanups - Insert BUG() to __ide_set_handler()
-Message-Id: <1138806777.22662.25.camel@alice>
+From: "Teddy Corbett" <gewbiwiwdz@ghyc.org>
+Date: Tue, 14 Feb 2006 11:16:35 +0000
+Subject: [KJ] Re: Feb 14, 2006  New Breed of Equity Traders
+Message-Id: <000501c63159$1e88f3ef$4d8a3953@ktyeit>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92269744297579459=="
+Content-Type: multipart/mixed; boundary="===============47301652286889784=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============92269744297579459==
-Content-Type: text/plain
+--===============47301652286889784==
+Content-Type: text/plain; format=flowed; charset="Windows-1252";
+	reply-type=original
 Content-Transfer-Encoding: 7bit
 
-hi,
+Big news expected.
+This company is doing incredible things.
+Big watch in play this tomorrow morning!
 
-this patch makes __ide_set_handler() BUG() if a handler
-is already defined. This makes place for further cleanups.
-
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.16-rc1-git4/drivers/ide/ide-iops.c.orig	2006-02-01 15:46:50.000000000 +0100
-+++ linux-2.6.16-rc1-git4/drivers/ide/ide-iops.c	2006-02-01 15:47:27.000000000 +0100
-@@ -899,6 +899,7 @@ static void __ide_set_handler (ide_drive
- 		printk(KERN_CRIT "%s: ide_set_handler: handler not null; "
- 			"old=%p, new=%p\n",
- 			drive->name, hwgroup->handler, handler);
-+			BUG();
- 	}
- 	hwgroup->handler	= handler;
- 	hwgroup->expiry		= expiry;
+Trade Date : 2006, February 14
+Company : DARK DYNAMITE INC
+T i c k e r  :  D K D Y 
+Timing is everything!
+Today : $1.04
+4 WEEK PROJECTION : $3-$4
+Expectations : MAX
 
 
 
---===============92269744297579459==
+--===============47301652286889784==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +37,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92269744297579459==--
+--===============47301652286889784==--
