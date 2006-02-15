@@ -1,41 +1,50 @@
-From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
-Date: Wed, 15 Feb 2006 23:16:35 +0000
+From: Greg KH <greg@kroah.com>
+Date: Wed, 15 Feb 2006 23:27:36 +0000
 Subject: Re: [KJ] [PATCH] Fix warning in drivers/usb/media/ov511.c
-Message-Id: <a01a16b50602151516h270b8329lc518b014d7cd6d17@mail.gmail.com>
+Message-Id: <20060215232736.GA10232@kroah.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============47935542809397136=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139970072.25492.4.camel@localhost.localdomain>
 In-Reply-To: <1139970072.25492.4.camel@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On 2/15/06, Greg KH <greg@kroah.com> wrote:
-> On Tue, Feb 14, 2006 at 08:21:12PM -0600, Matthew Martin wrote:
-> > -     unsigned char exp;
-> > +     unsigned char exp =3D '\0';
->
-> What's wrong with just "0" here?
+--===============47935542809397136==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In my opinion '\0' is the correct representation here.
+On Thu, Feb 16, 2006 at 12:16:35AM +0100, H?kon L?vdal wrote:
+> On 2/15/06, Greg KH <greg@kroah.com> wrote:
+> > On Tue, Feb 14, 2006 at 08:21:12PM -0600, Matthew Martin wrote:
+> > > -     unsigned char exp;
+> > > +     unsigned char exp = '\0';
+> >
+> > What's wrong with just "0" here?
+> 
+> In my opinion '\0' is the correct representation here.
+> 
+> '\0'	ASCII nul character
+> 0	arithmetic value zero
+> NULL	null pointer
 
-'\0'	ASCII nul character
-0	arithmetic value zero
-NULL	null pointer
+If you look at how this variable is used, it's not used as an ASCII
+value, but rather as a arithmetic value.
 
-All of those _could_ be represented with just "0", however using 0 as
-such a multipurpose character/value/pointer constant is not a good idea
-because it makes the code less clear to read.
+That is why I said it should be 0, not '\0'.
 
-Linus has been very clear on that NULL and only NULL should be used for
-pointers, and there was a large set of patches converting from 0 to NULL
-in 2004.
+thanks,
 
-How is '\0' vs 0 different?
+greg k-h
 
-BR H=E5kon L=F8vdal
+--===============47935542809397136==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============47935542809397136==--
