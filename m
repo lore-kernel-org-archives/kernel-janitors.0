@@ -1,45 +1,41 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Wed, 15 Feb 2006 23:01:02 +0000
+From: =?ISO-8859-1?Q?H=E5kon_L=F8vdal?= <hlovdal@gmail.com>
+Date: Wed, 15 Feb 2006 23:16:35 +0000
 Subject: Re: [KJ] [PATCH] Fix warning in drivers/usb/media/ov511.c
-Message-Id: <20060215230102.GA29165@us.ibm.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4976207256039501=="
+Message-Id: <a01a16b50602151516h270b8329lc518b014d7cd6d17@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139970072.25492.4.camel@localhost.localdomain>
 In-Reply-To: <1139970072.25492.4.camel@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============4976207256039501==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 2/15/06, Greg KH <greg@kroah.com> wrote:
+> On Tue, Feb 14, 2006 at 08:21:12PM -0600, Matthew Martin wrote:
+> > -     unsigned char exp;
+> > +     unsigned char exp =3D '\0';
+>
+> What's wrong with just "0" here?
 
-On 15.02.2006 [15:41:25 -0600], Matthew Martin wrote:
-> 
-> Hello,
-> Gcc 4.0.2 had the warning:
-> 
-> drivers/usb/media/ov511.c: In function 'show_exposure':
-> drivers/usb/media/ov511.c:5642: warning: 'exp' may be used uninitialized
-> in this function
-> 
-> Here is the patch to fix that warning.
-> 
-> Signed-off-by: Matthew Martin <lihnucks at gmail.com>
+In my opinion '\0' is the correct representation here.
 
-Real e-mail address please.
+'\0'	ASCII nul character
+0	arithmetic value zero
+NULL	null pointer
 
-Thanks,
-Nish
+All of those _could_ be represented with just "0", however using 0 as
+such a multipurpose character/value/pointer constant is not a good idea
+because it makes the code less clear to read.
 
---===============4976207256039501==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Linus has been very clear on that NULL and only NULL should be used for
+pointers, and there was a large set of patches converting from 0 to NULL
+in 2004.
+
+How is '\0' vs 0 different?
+
+BR H=E5kon L=F8vdal
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============4976207256039501==--
