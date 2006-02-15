@@ -1,57 +1,45 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Thu, 23 Feb 2006 00:05:12 +0000
-Subject: [KJ] [Patch] kzalloc conversion in fs/hfsplus
-Message-Id: <1140653112.5833.10.camel@alice>
+From: Matthew Martin <lihnucks@gmail.com>
+Date: Wed, 15 Feb 2006 02:21:12 +0000
+Subject: [KJ] [PATCH] Fix warning in drivers/usb/media/ov511.c
+Message-Id: <1139970072.25492.4.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============34250691837139469=="
+Content-Type: multipart/mixed; boundary="===============40169324981392451=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1140653110.5833.9.camel@alice>
-In-Reply-To: <1140653110.5833.9.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============34250691837139469==
+--===============40169324981392451==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,
 
-this converts fs/hfsplus to kzalloc() usage.
-compile tested with make allyesconfig
+Hello,
+Gcc 4.0.2 had the warning:
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+drivers/usb/media/ov511.c: In function 'show_exposure':
+drivers/usb/media/ov511.c:5642: warning: 'exp' may be used uninitialized
+in this function
 
---- linux-2.6.16-rc4/fs/hfsplus/bnode.c.orig	2006-02-22 16:24:48.000000000 +0100
-+++ linux-2.6.16-rc4/fs/hfsplus/bnode.c	2006-02-22 16:25:09.000000000 +0100
-@@ -409,10 +409,9 @@ static struct hfs_bnode *__hfs_bnode_cre
- 	sb = tree->inode->i_sb;
- 	size = sizeof(struct hfs_bnode) + tree->pages_per_bnode *
- 		sizeof(struct page *);
--	node = kmalloc(size, GFP_KERNEL);
-+	node = kzalloc(size, GFP_KERNEL);
- 	if (!node)
- 		return NULL;
--	memset(node, 0, size);
- 	node->tree = tree;
- 	node->this = cnid;
- 	set_bit(HFS_BNODE_NEW, &node->flags);
---- linux-2.6.16-rc4/fs/hfsplus/btree.c.orig	2006-02-22 16:25:18.000000000 +0100
-+++ linux-2.6.16-rc4/fs/hfsplus/btree.c	2006-02-22 16:25:31.000000000 +0100
-@@ -24,10 +24,9 @@ struct hfs_btree *hfs_btree_open(struct 
- 	struct page *page;
- 	unsigned int size;
+Here is the patch to fix that warning.
+
+Signed-off-by: Matthew Martin <lihnucks@gmail.com>
+
+---
+
+--- orig-linux-2.6.15/drivers/usb/media/ov511.c	2006-02-14 15:15:10.000000000 -0600
++++ linux-2.6.15/drivers/usb/media/ov511.c	2006-02-14 15:12:32.000000000 -0600
+@@ -5639,7 +5639,7 @@ static CLASS_DEVICE_ATTR(hue, S_IRUGO, s
+ static ssize_t show_exposure(struct class_device *cd, char *buf)
+ {
+ 	struct usb_ov511 *ov = cd_to_ov(cd);
+-	unsigned char exp;
++	unsigned char exp = '\0';
  
--	tree = kmalloc(sizeof(*tree), GFP_KERNEL);
-+	tree = kzalloc(sizeof(*tree), GFP_KERNEL);
- 	if (!tree)
- 		return NULL;
--	memset(tree, 0, sizeof(*tree));
- 
- 	init_MUTEX(&tree->tree_lock);
- 	spin_lock_init(&tree->hash_lock);
+ 	if (!ov->dev)
+ 		return -ENODEV;
 
 
 
---===============34250691837139469==
+--===============40169324981392451==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +50,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============34250691837139469==--
+--===============40169324981392451==--
