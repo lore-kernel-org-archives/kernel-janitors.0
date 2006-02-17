@@ -1,51 +1,56 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 06 Feb 2006 08:40:06 +0000
-Subject: [KJ] Re: cassini compwb fixup
-Message-Id: <43E70B66.9060408@bfs.de>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Fri, 17 Feb 2006 13:49:15 +0000
+Subject: [KJ][Patch] alter prototypes in it87.c
+Message-Id: <1140184156.7789.62.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============93251377927808043=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi list,
-this is a problem that only the author can resolve.
-perhaps this is used in some embedded system or so.
-I would advise to fix the obvious problem before removing
-since this may break an otherwise working driver.
+--===============93251377927808043==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-re,
-  walter
+G'day list,
+
+from http://linuxicc.sourceforge.net/
+
+ICC complains about : Storage Class is not first
+
+@ line 227 & 228 of it87.c
+
+This appears to be because the variables in the prototypes are called
+register which confuses ICC.
+This patch converts them to match the actual functions variable names
+(reg).
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- linux-2.6.16-rc3/drivers/hwmon/it87.c.orig	2006-02-18 00:38:03.000000000 +1100
++++ linux-2.6.16-rc3/drivers/hwmon/it87.c	2006-02-18 00:38:47.000000000 +1100
+@@ -224,8 +224,8 @@ static int it87_isa_attach_adapter(struc
+ static int it87_detect(struct i2c_adapter *adapter, int address, int kind);
+ static int it87_detach_client(struct i2c_client *client);
+ 
+-static int it87_read_value(struct i2c_client *client, u8 register);
+-static int it87_write_value(struct i2c_client *client, u8 register,
++static int it87_read_value(struct i2c_client *client, u8 reg);
++static int it87_write_value(struct i2c_client *client, u8 reg,
+ 			u8 value);
+ static struct it87_data *it87_update_device(struct device *dev);
+ static int it87_check_pwm(struct i2c_client *client);
 
 
-Alexey Dobriyan wrote:
->> drivers/net/cassini.c: fix undefined variable
->>
->> We had a discussion about %L vs %ll in cassini but we agreed that you
->> will change %L into %ll so perhaps that went an other way.
-> 
-> Warnings were fixed since then. I wonder if driver is used with
-> USE_TX_COMPWB undefined. If not #ifdefs should be removed. Also we may
-> stop printing after status and not print 0 at all.
-> 
-> --- a/drivers/net/cassini.c
-> +++ b/drivers/net/cassini.c
-> @@ -1946,10 +1946,11 @@ static inline void cas_tx_ringN(struct c
->  static void cas_tx(struct net_device *dev, struct cas *cp,
->  		   u32 status)
->  {
->          int limit, ring;
-> +	u64 compwb = 0;
->  #ifdef USE_TX_COMPWB
-> -	u64 compwb = le64_to_cpu(cp->init_block->tx_compwb);
-> +	compwb = le64_to_cpu(cp->init_block->tx_compwb);
->  #endif
->  	if (netif_msg_intr(cp))
->  		printk(KERN_DEBUG "%s: tx interrupt, status: 0x%x, %llx\n",
->  			cp->dev->name, status, (unsigned long long)compwb);
-> 
-> 
+
+--===============93251377927808043==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============93251377927808043==--
