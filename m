@@ -1,58 +1,47 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 28 Feb 2006 09:20:25 +0000
-Subject: [KJ] Re: [Patch] kzalloc() conversion in drivers/usb/gadget
-Message-Id: <1141118425.11561.0.camel@alice>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Fri, 17 Feb 2006 13:17:20 +0000
+Subject: [KJ][Patch] Alter prototypes in adm1026.c
+Message-Id: <1140182240.7789.44.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============035764497033801135=="
+Content-Type: multipart/mixed; boundary="===============10435300410909809=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060227193309.GA9991@suse.de>
-In-Reply-To: <20060227193309.GA9991@suse.de>
 To: kernel-janitors@vger.kernel.org
 
---===============035764497033801135==
+--===============10435300410909809==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,
-> > I assume there is also a bug in drivers/usb/gadget/omap_udc.c
-> > in omap_alloc_request(), req gets allocated via kmalloc() and
-> > the function returns &req->req, no matter if req is NULL, which
-> > looks like a NULL dereference to me, maybe someone who is more familar
-> > with this code might have a look at it.
-> 
-> That should get fixed too.  Please roll a patch for that.
-> 
-> I'll sign off the conversion patch and forward it to Greg.
-> Thanks!
+G'day list
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+from http://linuxicc.sourceforge.net/
 
---- linux-2.6.16-rc4-mm2/drivers/usb/gadget/omap_udc.c.orig	2006-02-28 10:17:39.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/usb/gadget/omap_udc.c	2006-02-28 10:18:53.000000000 +0100
-@@ -273,12 +273,13 @@ omap_alloc_request(struct usb_ep *ep, gf
- {
- 	struct omap_req	*req;
- 
--	req = kmalloc(sizeof *req, gfp_flags);
--	if (req) {
--		memset (req, 0, sizeof *req);
--		req->req.dma = DMA_ADDR_INVALID;
--		INIT_LIST_HEAD (&req->queue);
--	}
-+	req = kzalloc(sizeof *req, gfp_flags);
-+	if (!req)
-+		return NULL;
-+	
-+	req->req.dma = DMA_ADDR_INVALID;
-+	INIT_LIST_HEAD (&req->queue);
-+	
- 	return &req->req;
- }
- 
+ICC complains about : Storage Class is not First
+@ line 301 & 302 of adm1026.c
+
+It appears that the variable in the prototype is named register which
+confuses ICC, it is called (more sensibly) reg in the actual functions.
+This is confusing (as register is a keyword) so the patch below re-names
+the variable in the prototype to match the actual functions. (reg).
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- linux-2.6.16-rc3/drivers/hwmon/adm1026.c.orig	2006-02-17 23:25:39.000000000 +1100
++++ linux-2.6.16-rc3/drivers/hwmon/adm1026.c	2006-02-17 23:55:26.000000000 +1100
+@@ -298,8 +298,8 @@ static int adm1026_attach_adapter(struct
+ static int adm1026_detect(struct i2c_adapter *adapter, int address,
+ 	int kind);
+ static int adm1026_detach_client(struct i2c_client *client);
+-static int adm1026_read_value(struct i2c_client *client, u8 register);
+-static int adm1026_write_value(struct i2c_client *client, u8 register,
++static int adm1026_read_value(struct i2c_client *client, u8 reg);
++static int adm1026_write_value(struct i2c_client *client, u8 reg,
+ 	int value); 
+ static void adm1026_print_gpio(struct i2c_client *client);
+ static void adm1026_fixup_gpio(struct i2c_client *client); 
 
 
 
---===============035764497033801135==
+--===============10435300410909809==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -63,4 +52,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============035764497033801135==--
+--===============10435300410909809==--
