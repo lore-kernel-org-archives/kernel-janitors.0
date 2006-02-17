@@ -1,40 +1,54 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 09 Feb 2006 09:41:30 +0000
-Subject: [KJ] net/wan/dlci.c:check return code of
-Message-Id: <43EB0E4A.5080302@bfs.de>
+From: Matthew Martin <lihnucks@gmail.com>
+Date: Fri, 17 Feb 2006 17:29:47 +0000
+Subject: [KJ] [PATCH] Fix warning drivers/scisi/lpfc/lpfc_sli.c
+Message-Id: <1140197387.7633.7.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============51597809976950537=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-check return code of 'register_netdevice_notifier'
-
-Signed-off-by: walter harms <wharms@bfs.de>
-
-
---- linux/drivers/net/wan/dlci.c.bak	2006-02-01 22:12:53.000000000 +0100
-+++ linux/drivers/net/wan/dlci.c	2006-02-01 23:25:40.776811592 +0100
-@@ -535,8 +535,14 @@
-
-  static int __init init_dlci(void)
-  {
-+	int ret;
-  	dlci_ioctl_set(dlci_ioctl);
--	register_netdevice_notifier(&dlci_notifier);
-+	ret=register_netdevice_notifier(&dlci_notifier);
-+	if (ret < 0) {
-+		printk( KERN_WARNING "register_netdevice_notifier failed in 
-%s\n",__FUNCTION__);
-+		dlci_ioctl_set(NULL);
-+		return -1;
-+	}
-
-  	printk("%s.\n", version);
+--===============51597809976950537==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
+Hello,
+Gcc 4.0.1 gave the warning:
+
+drivers/scsi/lpfc/lpfc_sli.c: In function 'lpfc_sli_issue_iocb'
+drivers/scsi/lpfc/lpfc_sli.c:2196: warning: 'iocb' may be used uninitialized in
+this function
+
+This fixes that warning.
+
+Signed-off-by: Matthew Martin <lihnucks@gmail.com>
+
+---
+
+--- orig-linux-2.6.15/drivers/scsi/lpfc/lpfc_sli.c	2003-12-03 10:03:49.000000000 -0500
++++ linux-2.6.15/drivers/scsi/lpfc/lpfc_sli.c	2003-12-04 16:35:59.000000000 -0500
+@@ -2193,7 +2193,7 @@ lpfc_sli_issue_iocb(struct lpfc_hba *phb
+ 		    struct lpfc_iocbq *piocb, uint32_t flag)
+ {
+ 	struct lpfc_iocbq *nextiocb;
+-	IOCB_t *iocb;
++	IOCB_t *iocb = NULL;
+ 
+ 	/*
+ 	 * We should never get an IOCB if we are in a < LINK_DOWN state
+
+
+
+
+--===============51597809976950537==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============51597809976950537==--
