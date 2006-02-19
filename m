@@ -1,51 +1,43 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 21 Feb 2006 21:32:29 +0000
-Subject: [KJ] [Patch] kzalloc conversion in kernel/kexec.c
-Message-Id: <1140557549.26219.3.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59402256047478641=="
+From: Glenn Fitzgerald <00datoo@acrasia.com>
+Date: Sun, 19 Feb 2006 19:00:55 +0000
+Subject: [KJ] New prospects  [Ref:776]
+Message-Id: <9d4a01c63586$5ece6351$f69c5c1b@acrasia.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============59402256047478641==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+   Safe Sales Inc. leader in international Law 
+and Business practise is looking for responsible 
+individuals to be responsible for the areas of 
+customer service, transaction and bank operations.
 
-hi,
+   Current openings: Escrow Operator
 
-this patch converts kernel/kexec.c to kzalloc() usage.
-A similar patch was send to lkml 9.Nov 2005 by 
-Panagiotis Issaris <takis@issaris.org> but seems to got lost.
+   You will receive transfers for our company, 
+send/receive funds (bank transfers, checks, money orders). 
+You should have your local bank branch locating near you, 
+so you can withdraw money from your account within several hours. 
+You should have home, work or cell phone number (preferably).
+Work is home-based.
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+   Requirements:
+* Be able to check your email several times a day
+* Be able to respond to emails immediately
+* Be responsible and hard working
+* Should have personal bank account
 
---- linux-2.6.16-rc4/kernel/kexec.c.orig	2006-02-21 22:25:35.000000000 +0100
-+++ linux-2.6.16-rc4/kernel/kexec.c	2006-02-21 22:25:59.000000000 +0100
-@@ -108,11 +108,10 @@ static int do_kimage_alloc(struct kimage
- 
- 	/* Allocate a controlling structure */
- 	result = -ENOMEM;
--	image = kmalloc(sizeof(*image), GFP_KERNEL);
-+	image = kzalloc(sizeof(*image), GFP_KERNEL);
- 	if (!image)
- 		goto out;
- 
--	memset(image, 0, sizeof(*image));
- 	image->head = 0;
- 	image->entry = &image->head;
- 	image->last_entry = &image->head;
+   If you are interested in this position 
+and meet the minimum requirements please 
+send us resume (curriculum vitae) to 
+job@safesalesinc.com
 
+   Registration is FREE of charge. Initial training is provided! 
 
-
---===============59402256047478641==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+   Recruitment Department of Safe Sales Inc.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============59402256047478641==--
