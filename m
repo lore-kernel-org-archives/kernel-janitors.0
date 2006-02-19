@@ -1,60 +1,34 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 18 Feb 2006 12:48:37 +0000
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Sun, 19 Feb 2006 21:52:05 +0000
 Subject: Re: [KJ] CPMiner
-Message-Id: <20060218124837.GB11481@mipter.zuzino.mipt.ru>
+Message-Id: <1140385925.5057.9.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============15909750328021843=="
+Content-Type: multipart/mixed; boundary="===============71528638681178558=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139531770.30862.4.camel@alice>
 In-Reply-To: <1139531770.30862.4.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============15909750328021843==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============71528638681178558==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 10, 2006 at 01:36:10AM +0100, Eric Sesterhenn wrote:
-> CPMiner (http://opera.cs.uiuc.edu/Projects/ARTS/CP-Miner.htm) is a
-> copy/paste error detection tool written by OPERA. I ran it against
-> the linux kernel and placed a summary and the programs output online:
->
-> http://www.snake-basket.de/cpminer/
->
-> some of the stuff seems suspicious, some of it are trivial false
-> alerts. I'll try to keep the page updated against the latest -rc
-> or stable kernels ( depends on my time since a run of the tool
-> takes about 2-3 hours )
+hi,
 
-Eric, could you do some line up of left and right columns? I mean,
-instead of
+> Eric, could you do some line up of left and right columns? I mean,
+> instead of
+[..]
+> and probably mark X and Y (different parts of X and Y) in red.
+> 
+> Overall, a very interesting stuff.
 
-	A	A
-	B	B
-	C	C
-	X	D
-	D	E
-	E	F
-	F	Y
-	G	G
+I will see what i can do when i do the next run, propably when
+2.6.17-rc1-kj1 or so comes out.
 
-put it as
-
-	A	A
-	B	B
-	C	C
-	X
-	D	D
-	E	E
-	F	F
-		Y
-	G	G
-
-and probably mark X and Y (different parts of X and Y) in red.
-
-Overall, a very interesting stuff.
+Eric
 
 
---===============15909750328021843==
+--===============71528638681178558==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +39,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============15909750328021843==--
+--===============71528638681178558==--
