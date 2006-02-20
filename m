@@ -1,52 +1,41 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Thu, 09 Feb 2006 10:21:24 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 20 Feb 2006 21:34:50 +0000
 Subject: Re: [kj][Patch] remove implicit sign bit on single bit
-Message-Id: <1139480484.17930.7.camel@localhost.localdomain>
+Message-Id: <20060220213450.GE29791@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49778605302029666=="
+Content-Type: multipart/mixed; boundary="===============36362986767986083=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1139372248.9409.15.camel@localhost.localdomain>
 In-Reply-To: <1139372248.9409.15.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============49778605302029666==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============36362986767986083==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2006-02-08 at 23:15 -0800, Nishanth Aravamudan wrote:
-> Fair enough; but I believe time is better spent patching subsystems
-> which matter. My opinion, though, so if you're willing to push them
-> upstream, then they are fine (and I think Darren figured out the
-> line-wrapping).
+On Thu, Feb 09, 2006 at 09:21:24PM +1100, Darren Jenkins" wrote:
+> --- linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c.orig
+> +++ linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c
+> @@ -306,9 +306,8 @@ struct via_info {
+>  	unsigned intmask: 1;	/* Needs int bits */
+>  	unsigned sixchannel: 1;	/* 8233/35 with 6 channel support */
+>  	unsigned volume: 1;
+> +	unsigned locked_rate : 1;
+>
+> -	int locked_rate : 1;
+> -
+>  	int mixer_vol;		/* 8233/35 volume  - not yet implemented */
 > 
-> Thanks,
-> Nish
+>  	struct semaphore syscall_sem;
 
-Well I'm not too bothered about it either way, but I figure that if
-people are still building/using it why not apply the patch?
-Anyway now I have figured out the line-wrapping I guess I had better do
-a re-send.
+These patches are OK, except
 
+	unsigned int a:1;
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
---- linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c.orig	2006-02-08 13:43:27.000000000 +1100
-+++ linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c	2006-02-08 13:45:39.000000000 +1100
-@@ -306,9 +306,8 @@ struct via_info {
- 	unsigned intmask: 1;	/* Needs int bits */
- 	unsigned sixchannel: 1;	/* 8233/35 with 6 channel support */
- 	unsigned volume: 1;
-+	unsigned locked_rate : 1;
- 
--	int locked_rate : 1;
--	
- 	int mixer_vol;		/* 8233/35 volume  - not yet implemented */
- 
- 	struct semaphore syscall_sem;
+is preferred. 
 
 
-
---===============49778605302029666==
+--===============36362986767986083==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +46,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49778605302029666==--
+--===============36362986767986083==--
