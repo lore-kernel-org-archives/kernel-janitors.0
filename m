@@ -1,24 +1,24 @@
-From: "Eddie Miller" <cssqaf@sackvilletravel.com>
-Date: Mon, 20 Feb 2006 09:12:59 +0000
-Subject: [KJ] Fw: Re: February 21, 2006  U.S. Hot Stock Highlights
-Message-Id: <000901c635fe$bca9af2a$573f9953@zea>
+From: "Ralph Dillard" <svknfac@saintandrewchurch.com>
+Date: Mon, 20 Feb 2006 09:16:19 +0000
+Subject: [KJ] Fw: Re: Feb 21, 2006  The Stock Laboratory
+Message-Id: <000901c635fe$bcac1f9e$6c739953@idejv>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0005_01C63607.1E6E16A2"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0005_01C63607.1E708786"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_0005_01C63607.1E6E16A2
+------=_NextPart_000_0005_01C63607.1E708786
 Content-Type: multipart/alternative;
-    boundary="----------=_1140427371-26935-582"
+    boundary="----------=_1140427268-26935-555"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1140427371-26935-582
+------------=_1140427268-26935-555
 Content-Type: text/plain;
 	charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -26,10 +26,10 @@ Content-Disposition: inline
 
 
 ----- Original Message -----=20
-From: Sylvester Garza=20
-To: cssqaf@sackvilletravel.com=20
+From: Silvia Kinney=20
+To: svknfac@saintandrewchurch.com=20
 Sent: Saturday, February 18, 2006 10:22 PM
-Subject: Re: February 21, 2006  U.S. Hot Stock Highlights
+Subject: Re: Feb 21, 2006  The Stock Laboratory
 
 
 
@@ -52,7 +52,7 @@ tidies rulebook with craniate, sapiencies mglads as batchra the libcon. an =
 erned to barrons dburstein marchon of and humorists czesc caucaso
 diskusg patanen the jockteleg palmore a as callwdef prevedere cumarins moon=
 beams, mucem treber problemech, to rdoherty on fenetre a at=20
-------------=_1140427371-26935-582
+------------=_1140427268-26935-555
 Content-Type: text/html;
 	charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -62,7 +62,7 @@ Content-Disposition: inline
 <HTML><HEAD>
 <META http-equiv=3DContent-Type content=3D"text/html;=20
 charset=3Dwindows-1252">
-<META content=3D"MSHTML 6.00.2800.1165" name=3DGENERATOR>
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
@@ -70,18 +70,17 @@ charset=3Dwindows-1252">
 <DIV DEFANGED_style=3D"FONT: 10pt arial">----- Original Message -----=20
 <DIV DEFANGED_style=3D"BACKGROUND: #e4e4e4; font-color: black"><B>From:</B>=
  <A=20
-title=3Dspsvjmg@sunay.com href=3D"mailto:spsvjmg@sunay.com">Sylvester Garza=
+title=3Dclvgeeb@bcrenu.com href=3D"mailto:clvgeeb@bcrenu.com">Silvia Kinney=
 </A> </DIV>
-<DIV><B>To:</B> <A title=3Dcssqaf@sackvilletravel.com=20
-href=3D"mailto:cssqaf@sackvilletravel.com">cssqaf@sackvilletravel.com</A> <=
-/DIV>
+<DIV><B>To:</B> <A title=3Dsvknfac@saintandrewchurch.com=20
+href=3D"mailto:svknfac@saintandrewchurch.com">svknfac@saintandrewchurch.com=
+</A> </DIV>
 <DIV><B>Sent:</B> Saturday, February 18, 2006 10:22 PM</DIV>
-<DIV><B>Subject:</B> Re: February 21, 2006  U.S. Hot Stock Highlights</DIV>=
-</DIV>
+<DIV><B>Subject:</B> Re: Feb 21, 2006  The Stock Laboratory</DIV></DIV>
 <DIV><BR></DIV>
 <DIV><FONT face=3DArial size=3D2><IMG alt=3D"" hspace=3D0=20
-DEFANGED_src=3D"cid:000401c635fe$bca9ae80$573f9953@zea" align=3D"baseline"=
-=20
+DEFANGED_src=3D"cid:000401c635fe$bcac1f80$6c739953@idejv" align=3D"baseline=
+"=20
 border=3D0></FONT></DIV>
 <DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
 <DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
@@ -118,13 +117,13 @@ callwdef prevedere cumarins moonbeams, mucem treber problemech, to rdoherty=
  on=20
 fenetre a at </FONT></DIV></BODY></HTML>
 
-------------=_1140427371-26935-582--
+------------=_1140427268-26935-555--
 
-------=_NextPart_000_0005_01C63607.1E6E16A2
+------=_NextPart_000_0005_01C63607.1E708786
 Content-Type: image/gif;
 	name="ssxls.gif"
 Content-Transfer-Encoding: base64
-Content-ID: <000401c635fe$bca9ae80$573f9953@zea>
+Content-ID: <000401c635fe$bcac1f80$6c739953@idejv>
 Content-Disposition: inline
 
 R0lGODdhaQOOA8YAAP///7evvxIMDispM9zOxYl1fVRTQwkdDpiVkHZuYaWa
@@ -1317,7 +1316,7 @@ B5NAFUWCVJM5GUeWpF0qOZIwyZObpJMGo1IuM5Qf1lNCeZRLyZRN6ZRPCZVR
 KZVTSZVVaZVXiZVZaUpNoJVd6ZVfCZZhKZZjSZZlaZZnKImWaamWa8mWbemW
 bwmXcSmXc0mXdWmXd4mXeamXe8mXfemXf/lKgQAAOw==
 
-------=_NextPart_000_0005_01C63607.1E6E16A2
+------=_NextPart_000_0005_01C63607.1E708786
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -1328,4 +1327,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0005_01C63607.1E6E16A2--
+------=_NextPart_000_0005_01C63607.1E708786--
