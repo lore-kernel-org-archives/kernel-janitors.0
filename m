@@ -1,69 +1,48 @@
-From: Stephan Peijnik <sp@sp.or.at>
-Date: Tue, 21 Feb 2006 20:12:28 +0000
+From: Dave Jones <davej@redhat.com>
+Date: Tue, 21 Feb 2006 20:20:03 +0000
 Subject: Re: [KJ] gcc4 warnings, variable used uninitialized
-Message-Id: <1140552748.2600.22.camel@omega.sp.or.at>
+Message-Id: <20060221202003.GA24159@redhat.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============87400682493939641=="
+Content-Type: multipart/mixed; boundary="===============9213425515959075=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140524267.2600.9.camel@omega.sp.or.at>
 In-Reply-To: <1140524267.2600.9.camel@omega.sp.or.at>
 To: kernel-janitors@vger.kernel.org
 
---===============87400682493939641==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============9213425515959075==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 2006-02-21 at 13:42 +0100, Arnd Bergmann wrote:
-> It has been found that gcc-4.0 gets it wrong. Most of the
-> places where gcc-4.0 wrongly complains and gcc-3.4 does not
-> have been fixed in gcc-4.1.
+On Tue, Feb 21, 2006 at 09:12:28PM +0100, Stephan Peijnik wrote:
 
-Okay, I was about to go and use good old 3.4 for testing purposes.
-I've been wondering about the warnings anyways.
+ > I'm compiling a fresh copy of 4.1 right now, but a good example would be
+ > drivers/char/agp/generic.c's get_agp_version function. It defines a 'u32
+ > ncapid'. A pointer to that u32 is then given to pci_read_config_dword
+ > and at exactly that point gcc-4.0 starts complaining. See below.
+ > 
+ > <snip>
+ > void get_agp_version(struct agp_bridge_data *bridge)
+ > {
+ > 	u32 ncapid;
+ > 
+ > 	/* Exit early if already set by errata workarounds. */
+ > 	if (bridge->major_version != 0)
+ > 		return;
+ > 
+ > 	pci_read_config_dword(bridge->dev, bridge->capndx, &ncapid);
+ > [...]
+ > </snip>
 
-> A small number of these bugs are valid and should be fixed, but
-> it is not trivial to determine in some cases. What you say about
-> this happening with pci_read_config_dword sounds like it is a gcc
-> bug and not a bug in the kernel sources, so it should not be fixed
-> in the kernel.
+gcc bug.  It doesn't seem to understand that sometimes ptrs to vars get
+passed to functions that instantiate them.
 
-I wasn't that sure whether those warnings would be right and kept
-forever or not. Doing those minimalistic modifications probably wouldn't
-have done any harm, but you are right about where the problem(s) should
-be fixed.
+There are dozens and dozens of such instances in the kernel tree.
+99% of the time that warning is completely bogus.
 
-> 
-> Can you be more specific with the example and/or reproduce
-> it with gcc-4.1?
-
-I'm compiling a fresh copy of 4.1 right now, but a good example would be
-drivers/char/agp/generic.c's get_agp_version function. It defines a 'u32
-ncapid'. A pointer to that u32 is then given to pci_read_config_dword
-and at exactly that point gcc-4.0 starts complaining. See below.
-
-<snip>
-void get_agp_version(struct agp_bridge_data *bridge)
-{
-	u32 ncapid;
-
-	/* Exit early if already set by errata workarounds. */
-	if (bridge->major_version != 0)
-		return;
-
-	pci_read_config_dword(bridge->dev, bridge->capndx, &ncapid);
-[...]
-</snip>
-
-However, thanks for the response. On that topic everything is kind of
-clear to me now.
+		Dave
 
 
-Regards,
-
-Stephan Peijnik
-
-
---===============87400682493939641==
+--===============9213425515959075==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -74,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============87400682493939641==--
+--===============9213425515959075==--
