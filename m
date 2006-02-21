@@ -1,45 +1,75 @@
-From: Darren Jenkins <darrenrjenkins@gmail.com>
-Date: Fri, 10 Feb 2006 01:05:46 +0000
-Subject: Re: [KJ] Correct imprecise >= comparisons
-Message-Id: <82faac5b0602091705yc97b5bbxf3cdc6d1b616f2e4@mail.gmail.com>
+From: Steven French <sfrench@us.ibm.com>
+Date: Tue, 21 Feb 2006 22:37:39 +0000
+Subject: [KJ] Re: [Patch] kzalloc conversion in fs/cifs
+Message-Id: <OF57A8F0B2.D5D6B63C-ON8725711C.007A85A0-8625711C.007C195A@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============38638911982177837=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060208185312.GA26914@rhlx01.fht-esslingen.de>
-In-Reply-To: <20060208185312.GA26914@rhlx01.fht-esslingen.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2/10/06, Adrian Bunk <bunk@stusta.de> wrote:
+This is a multi-part message in MIME format...
 
-> What is the purpose of all this?
->
+--===============38638911982177837==
+Content-Type: multipart/alternative;
+    boundary="----------=_1140561303-8422-532"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Good question really,
+This is a multi-part message in MIME format...
 
-Me I work with very small Uc's so I habitually optimize everything. I
-guess It's not such a good idea when working with the linux kernel.
+------------=_1140561303-8422-532
+Content-type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 
-I think however understanding what is going on is fairly important,
-especially for the less expert/experienced people on the list. (Like
-me). So while a conversation like this will probably not benefit the
-kernel, it may benefit the people involved.
 
-> With modern compilers, the general rule is to write readable C code and
-> let the compiler do the rest.
->
-> Exceptions could be in real hot paths, but even in such cases there's
-> the problem that tricky code performing better with today's compilers
-> might perform worse with future compilers (similar to the goto tricks
-> people used in the past to circumvent some compiler limitations).
 
-So we should concentrate our efforts on readability/correctness not
-optimisations
-Sounds good to me.
 
-Darren J.
+
+> this converts fs/cifs to kzalloc() usage.
+Makes sense.  Now checked into cifs development tree on kernel.org
+(cifs-2.6.git)
+I was not planning to sync up with the mainline tree until after 2.6.16
+so it may be a few weeks before it makes it into mainline.
+
+Thanks.
+
+
+Steve French
+Senior Software Engineer
+Linux Technology Center - IBM Austin
+phone: 512-838-2294
+email: sfrench at-sign us dot ibm dot com
+------------=_1140561303-8422-532
+Content-type: text/html; charset=US-ASCII
+Content-Disposition: inline
+
+<html><body>
+<p><tt>&gt; this converts fs/cifs to kzalloc() usage.</tt><br>
+<tt>Makes sense. &nbsp;Now checked into cifs development tree on kernel.org</tt><br>
+<tt>(cifs-2.6.git)</tt><br>
+<tt>I was not planning to sync up with the mainline tree until after 2.6.16</tt><br>
+<tt>so it may be a few weeks before it makes it into mainline.</tt><br>
+<br>
+<tt>Thanks.</tt><br>
+<br>
+<br>
+Steve French<br>
+Senior Software Engineer<br>
+Linux Technology Center - IBM Austin<br>
+phone: 512-838-2294<br>
+email: sfrench at-sign us dot ibm dot com</body></html>
+------------=_1140561303-8422-532--
+
+--===============38638911982177837==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============38638911982177837==--
