@@ -1,32 +1,31 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 04 Feb 2006 14:42:13 +0000
-Subject: Re: [KJ] the process patches go through on their way to Linus' kernel
-Message-Id: <20060204144213.GA5966@mipter.zuzino.mipt.ru>
+From: Tim Cooijmans <tim@aapopfiets.nl>
+Date: Tue, 21 Feb 2006 20:58:12 +0000
+Subject: [KJ] [PATCH] remove unused variable from drivers/scsi/megaraid.c
+Message-Id: <200602212158.12473.tim@aapopfiets.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a01a16b50602022110r51c13a09s7a1fd854d46faa56@mail.gmail.com>
-In-Reply-To: <a01a16b50602022110r51c13a09s7a1fd854d46faa56@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 03, 2006 at 06:10:43AM +0100, H=E5kon L=F8vdal wrote:
->  +--------------------------------------+    +---------------------------=
------+
->  |only to kernel-janitors@lists.osdl.org|    |also CC subsystem mailing l=
-ist, |
->  +--------------------------------------+    |maintainer, trivial patch m=
-onkey|
->          |                            ,,-~-->|linux-kernel@vger.kernel.or=
-g    |
->          |                      ,,-~~'       |or torvalds@osdl.org       =
-     |
->         \_/               ,,-~~'             +-------------+-------------=
------+
+From: Tim Cooijmans <tim@aapopfiets.nl>
 
-"Don't send to Linus" is pretty much the first non-obvious thing I've
-learned about process.
+Fix "unused variable: `flags'" warning in drivers/scsi/megaraid.c:4473
 
+Signed-off-by: Tim Cooijmans <tim@aapopfiets.nl>
+---
+--- linux-2.6.16-rc4-orig/drivers/scsi/megaraid.c	2006-02-21 
+20:18:42.000000000 +0100
++++ linux-2.6.16-rc4/drivers/scsi/megaraid.c	2006-02-21 21:25:38.000000000 
++0100
+@@ -4470,7 +4470,6 @@ mega_internal_command(adapter_t *adapter
+ {
+ 	Scsi_Cmnd	*scmd;
+ 	struct	scsi_device *sdev;
+-	unsigned long	flags = 0;
+ 	scb_t	*scb;
+ 	int	rval;
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
