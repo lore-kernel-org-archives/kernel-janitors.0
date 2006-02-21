@@ -1,78 +1,48 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 21 Feb 2006 23:01:47 +0000
-Subject: [KJ] [Patch] kzalloc conversion in fs/proc
-Message-Id: <1140562907.26848.0.camel@alice>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85501884395126293=="
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Tue, 21 Feb 2006 23:13:02 +0000
+Subject: Re: [KJ] [Patch] kzalloc conversion in fs/proc
+Message-Id: <9a8748490602211513h6e10886y5c44a185e2f7cd1d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1140562907.26848.0.camel@alice>
+In-Reply-To: <1140562907.26848.0.camel@alice>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============85501884395126293==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+On 2/22/06, Eric Sesterhenn <snakebyte@gmx.de> wrote:
+> hi,
+>
+> this converts fs/proc to kzalloc() usage.
+>
+> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+>
+[snip]
+>
+>  static struct vmcore* __init get_new_element(void)
+>  {
+> -       struct vmcore *p;
+> -
+> -       p = kmalloc(sizeof(*p), GFP_KERNEL);
+> -       if (p)
+> -               memset(p, 0, sizeof(*p));
+> -       return p;
+> +       return = kzalloc(sizeof(struct vmcore), GFP_KERNEL);
 
-hi,
+This looks broken - did you even compile test that patch?
 
-this converts fs/proc to kzalloc() usage.
+Don't you mean :
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
 
---- linux-2.6.16-rc4/fs/proc/kcore.c.orig	2006-02-21 23:58:12.000000000 +0100
-+++ linux-2.6.16-rc4/fs/proc/kcore.c	2006-02-21 23:58:48.000000000 +0100
-@@ -282,12 +282,11 @@ read_kcore(struct file *file, char __use
- 		tsz = elf_buflen - *fpos;
- 		if (buflen < tsz)
- 			tsz = buflen;
--		elf_buf = kmalloc(elf_buflen, GFP_ATOMIC);
-+		elf_buf = kzalloc(elf_buflen, GFP_ATOMIC);
- 		if (!elf_buf) {
- 			read_unlock(&kclist_lock);
- 			return -ENOMEM;
- 		}
--		memset(elf_buf, 0, elf_buflen);
- 		elf_kcore_store_hdr(elf_buf, nphdr, elf_buflen);
- 		read_unlock(&kclist_lock);
- 		if (copy_to_user(buffer, elf_buf + *fpos, tsz)) {
-@@ -333,10 +332,9 @@ read_kcore(struct file *file, char __use
- 			unsigned long curstart = start;
- 			unsigned long cursize = tsz;
- 
--			elf_buf = kmalloc(tsz, GFP_KERNEL);
-+			elf_buf = kzalloc(tsz, GFP_KERNEL);
- 			if (!elf_buf)
- 				return -ENOMEM;
--			memset(elf_buf, 0, tsz);
- 
- 			read_lock(&vmlist_lock);
- 			for (m=vmlist; m && cursize; m=m->next) {
---- linux-2.6.16-rc4/fs/proc/vmcore.c.orig	2006-02-21 23:54:00.000000000 +0100
-+++ linux-2.6.16-rc4/fs/proc/vmcore.c	2006-02-21 23:54:59.000000000 +0100
-@@ -179,12 +179,7 @@ struct file_operations proc_vmcore_opera
- 
- static struct vmcore* __init get_new_element(void)
- {
--	struct vmcore *p;
--
--	p = kmalloc(sizeof(*p), GFP_KERNEL);
--	if (p)
--		memset(p, 0, sizeof(*p));
--	return p;
-+	return = kzalloc(sizeof(struct vmcore), GFP_KERNEL);
- }
- 
- static u64 __init get_vmcore_size_elf64(char *elfptr)
+???
 
-
-
---===============85501884395126293==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============85501884395126293==--
