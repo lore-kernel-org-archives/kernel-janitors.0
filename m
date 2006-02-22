@@ -1,103 +1,69 @@
-From: Eric Sesterhenn / snakebyte <snakebyte@gmx.de>
-Date: Tue, 31 Jan 2006 13:03:23 +0000
-Subject: [KJ] [Patch 5/7] BUG_ON() Conversion in mm/slab.c
-Message-Id: <1138712603.11570.19.camel@alice>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Wed, 22 Feb 2006 10:18:03 +0000
+Subject: [KJ] [Patch] kzalloc conversion in fs/nfsd
+Message-Id: <1140603483.14898.16.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13751013573333859=="
+Content-Type: multipart/mixed; boundary="===============8216808053273863=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============13751013573333859==
+--===============8216808053273863==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,  
+hi, 
 
-this changes if() BUG(); constructs to BUG_ON() which is
-cleaner, contains unlikely() and can better optimized away.
+this converts fs/nfsd to kzalloc() usage.
+compile tested with make allyesconfig
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc1-git4/mm/slab.c.orig	2006-01-30 23:15:45.000000000 +0100
-+++ linux-2.6.16-rc1-git4/mm/slab.c	2006-01-30 23:17:41.000000000 +0100
-@@ -1058,8 +1058,7 @@ void __init kmem_cache_init(void)
+--- linux-2.6.16-rc4/fs/nfsd/nfs4idmap.c.orig	2006-02-22 10:53:10.000000000 +0100
++++ linux-2.6.16-rc4/fs/nfsd/nfs4idmap.c	2006-02-22 10:53:26.000000000 +0100
+@@ -502,10 +502,9 @@ idmap_lookup(struct svc_rqst *rqstp,
+ 	struct idmap_defer_req *mdr;
+ 	int ret;
  
- 	cache_estimate(0, cache_cache.objsize, cache_line_size(), 0,
- 		       &left_over, &cache_cache.num);
--	if (!cache_cache.num)
--		BUG();
-+	BUG_ON(!cache_cache.num);
- 
- 	cache_cache.colour = left_over / cache_cache.colour_off;
- 	cache_cache.colour_next = 0;
-@@ -1650,8 +1649,7 @@ kmem_cache_create (const char *name, siz
- 	 * Always checks flags, a caller might be expecting debug
- 	 * support which isn't available.
- 	 */
--	if (flags & ~CREATE_MASK)
--		BUG();
-+	BUG_ON(flags & ~CREATE_MASK);
- 
- 	/* Check that size is in terms of words.  This is needed to avoid
- 	 * unaligned accesses for some archs when redzoning is used, and makes
-@@ -1966,8 +1964,7 @@ static int __node_shrink(kmem_cache_t *c
- 
- 		slabp = list_entry(l3->slabs_free.prev, struct slab, list);
- #if DEBUG
--		if (slabp->inuse)
--			BUG();
-+		BUG_ON(slabp->inuse);
- #endif
- 		list_del(&slabp->list);
- 
-@@ -2008,8 +2005,7 @@ static int __cache_shrink(kmem_cache_t *
-  */
- int kmem_cache_shrink(kmem_cache_t *cachep)
+-	mdr = kmalloc(sizeof(*mdr), GFP_KERNEL);
++	mdr = kzalloc(sizeof(*mdr), GFP_KERNEL);
+ 	if (!mdr)
+ 		return -ENOMEM;
+-	memset(mdr, 0, sizeof(*mdr));
+ 	atomic_set(&mdr->count, 1);
+ 	init_waitqueue_head(&mdr->waitq);
+ 	mdr->req.defer = idmap_defer;
+--- linux-2.6.16-rc4/fs/nfsd/nfs4state.c.orig	2006-02-22 10:50:54.000000000 +0100
++++ linux-2.6.16-rc4/fs/nfsd/nfs4state.c	2006-02-22 10:51:27.000000000 +0100
+@@ -298,8 +298,7 @@ alloc_client(struct xdr_netobj name)
  {
--	if (!cachep || in_interrupt())
--		BUG();
-+	BUG_ON(!cachep || in_interrupt());
+ 	struct nfs4_client *clp;
  
- 	return __cache_shrink(cachep);
- }
-@@ -2037,8 +2033,7 @@ int kmem_cache_destroy(kmem_cache_t *cac
- 	int i;
- 	struct kmem_list3 *l3;
+-	if ((clp = kmalloc(sizeof(struct nfs4_client), GFP_KERNEL))!= NULL) {
+-		memset(clp, 0, sizeof(*clp));
++	if ((clp = kzalloc(sizeof(struct nfs4_client), GFP_KERNEL))!= NULL) {
+ 		if ((clp->cl_name.data = kmalloc(name.len, GFP_KERNEL)) != NULL) {
+ 			memcpy(clp->cl_name.data, name.data, name.len);
+ 			clp->cl_name.len = name.len;
+--- linux-2.6.16-rc4/fs/nfsd/vfs.c.orig	2006-02-22 10:51:37.000000000 +0100
++++ linux-2.6.16-rc4/fs/nfsd/vfs.c	2006-02-22 10:51:58.000000000 +0100
+@@ -1846,12 +1846,11 @@ nfsd_racache_init(int cache_size)
  
--	if (!cachep || in_interrupt())
--		BUG();
-+	BUG_ON(!cachep || in_interrupt());
- 
- 	/* Don't let CPUs to come and go */
- 	lock_cpu_hotplug();
-@@ -2161,11 +2156,9 @@ static void cache_init_objs(kmem_cache_t
- static void kmem_flagcheck(kmem_cache_t *cachep, gfp_t flags)
- {
- 	if (flags & SLAB_DMA) {
--		if (!(cachep->gfpflags & GFP_DMA))
--			BUG();
-+		BUG_ON(!(cachep->gfpflags & GFP_DMA));
- 	} else {
--		if (cachep->gfpflags & GFP_DMA)
--			BUG();
-+		BUG_ON(cachep->gfpflags & GFP_DMA);
- 	}
- }
- 
-@@ -2200,8 +2193,7 @@ static int cache_grow(kmem_cache_t *cach
- 	/* Be lazy and only check for valid flags here,
- 	 * keeping it out of the critical path in kmem_cache_alloc().
- 	 */
--	if (flags & ~(SLAB_DMA | SLAB_LEVEL_MASK | SLAB_NO_GROW))
--		BUG();
-+	BUG_ON(flags & ~(SLAB_DMA | SLAB_LEVEL_MASK | SLAB_NO_GROW));
- 	if (flags & SLAB_NO_GROW)
+ 	if (raparm_cache)
  		return 0;
+-	raparml = kmalloc(sizeof(struct raparms) * cache_size, GFP_KERNEL);
++	raparml = kzalloc(sizeof(struct raparms) * cache_size, GFP_KERNEL);
  
+ 	if (raparml != NULL) {
+ 		dprintk("nfsd: allocating %d readahead buffers.\n",
+ 			cache_size);
+-		memset(raparml, 0, sizeof(struct raparms) * cache_size);
+ 		for (i = 0; i < cache_size - 1; i++) {
+ 			raparml[i].p_next = raparml + i + 1;
+ 		}
 
 
 
---===============13751013573333859==
+--===============8216808053273863==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -108,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13751013573333859==--
+--===============8216808053273863==--
