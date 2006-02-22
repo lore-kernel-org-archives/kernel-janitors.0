@@ -1,89 +1,76 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Wed, 22 Feb 2006 00:14:40 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 22 Feb 2006 19:14:25 +0000
 Subject: Re: [KJ] [Patch] kzalloc conversion in fs/proc
-Message-Id: <Pine.LNX.4.58.0602211612250.12588@shark.he.net>
+Message-Id: <20060222191425.GA27362@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============99386680018694729=="
+Content-Type: multipart/mixed; boundary="===============62430029270361875=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140562907.26848.0.camel@alice>
 In-Reply-To: <1140562907.26848.0.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============99386680018694729==
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+--===============62430029270361875==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 22 Feb 2006, Eric Sesterhenn wrote:
-
-> On Wed, 2006-02-22 at 00:13 +0100, Jesper Juhl wrote:
-> > This looks broken - did you even compile test that patch?
+On Wed, Feb 22, 2006 at 01:14:39AM +0100, Jesper Juhl wrote:
+> On 2/22/06, Eric Sesterhenn <snakebyte@gmx.de> wrote:
+> > On Wed, 2006-02-22 at 00:13 +0100, Jesper Juhl wrote:
+> > > This looks broken - did you even compile test that patch?
+> > >
+> > > Don't you mean :
+> > >
+> > > return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
 > >
-> > Don't you mean :
+> > *yuck*, sorry for this, didnt compile test since it doesnt build
+> > with my config. fixed patch below.
 > >
-> > return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
 >
-> *yuck*, sorry for this, didnt compile test since it doesnt build
-> with my config. fixed patch below.
+> Hmm, a simple
+>
+> $ make allyesconfig
+> $ make fs/proc/kcore.o
 
-Your config is really easy to change to that it will build,
-isn't it?
-Let's see, PROC_KCORE requires PROC_FS and MMU.
-Does your kernel build with MMU enabled?
-Cause PROC_FS is really easy to change...
+How on earth did this succeed? I always, always get
 
-> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
->
-> --- linux-2.6.16-rc4/fs/proc/kcore.c.orig	2006-02-21 23:58:12.000000000 +0100
-> +++ linux-2.6.16-rc4/fs/proc/kcore.c	2006-02-21 23:58:48.000000000 +0100
-> @@ -282,12 +282,11 @@ read_kcore(struct file *file, char __use
->  		tsz = elf_buflen - *fpos;
->  		if (buflen < tsz)
->  			tsz = buflen;
-> -		elf_buf = kmalloc(elf_buflen, GFP_ATOMIC);
-> +		elf_buf = kzalloc(elf_buflen, GFP_ATOMIC);
->  		if (!elf_buf) {
->  			read_unlock(&kclist_lock);
->  			return -ENOMEM;
->  		}
-> -		memset(elf_buf, 0, elf_buflen);
->  		elf_kcore_store_hdr(elf_buf, nphdr, elf_buflen);
->  		read_unlock(&kclist_lock);
->  		if (copy_to_user(buffer, elf_buf + *fpos, tsz)) {
-> @@ -333,10 +332,9 @@ read_kcore(struct file *file, char __use
->  			unsigned long curstart = start;
->  			unsigned long cursize = tsz;
->
-> -			elf_buf = kmalloc(tsz, GFP_KERNEL);
-> +			elf_buf = kzalloc(tsz, GFP_KERNEL);
->  			if (!elf_buf)
->  				return -ENOMEM;
-> -			memset(elf_buf, 0, tsz);
->
->  			read_lock(&vmlist_lock);
->  			for (m=vmlist; m && cursize; m=m->next) {
-> --- linux-2.6.16-rc4/fs/proc/vmcore.c.orig	2006-02-21 23:54:00.000000000 +0100
-> +++ linux-2.6.16-rc4/fs/proc/vmcore.c	2006-02-21 23:54:59.000000000 +0100
-> @@ -179,12 +179,7 @@ struct file_operations proc_vmcore_opera
->
->  static struct vmcore* __init get_new_element(void)
->  {
-> -	struct vmcore *p;
-> -
-> -	p = kmalloc(sizeof(*p), GFP_KERNEL);
-> -	if (p)
-> -		memset(p, 0, sizeof(*p));
-> -	return p;
-> +	return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
->  }
->
->  static u64 __init get_vmcore_size_elf64(char *elfptr)
->
->
->
+$ make fs/proc/kcore.o
+  SPLIT   include/linux/autoconf.h -> include/config/*
+  HOSTCC  scripts/genksyms/genksyms.o
+  SHIPPED scripts/genksyms/lex.c
+  SHIPPED scripts/genksyms/parse.h
+  SHIPPED scripts/genksyms/keywords.c
+  HOSTCC  scripts/genksyms/lex.o
+  SHIPPED scripts/genksyms/parse.c
+  HOSTCC  scripts/genksyms/parse.o
+  HOSTLD  scripts/genksyms/genksyms
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  MKELF   scripts/mod/elfconfig.h
+  HOSTCC  scripts/mod/file2alias.o
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/mod/sumversion.o
+  HOSTLD  scripts/mod/modpost
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/pnmtologo
+  HOSTCC  scripts/conmakehash
+  HOSTCC  scripts/bin2c
+  CC      fs/proc/kcore.o
+In file included from include/linux/mm.h:4,
+                 from fs/proc/kcore.c:13:
+include/linux/sched.h:4:36: asm/param.h: No such file or directory
 
--- 
-~Randy
+Some secret agreement with devil you've signed?
 
---===============99386680018694729==
+> or
+>
+> $ make fs/proc/
+>
+> builds it for me. No reason why you couldn't have made the same test.
+
+
+
+
+--===============62430029270361875==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -94,4 +81,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============99386680018694729==--
+--===============62430029270361875==--
