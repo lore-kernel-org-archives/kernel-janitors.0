@@ -1,40 +1,65 @@
-From: Jesper Juhl <jesper.juhl@gmail.com>
-Date: Sat, 04 Feb 2006 16:49:23 +0000
-Subject: Re: [KJ] [PATCH] - request_region
-Message-Id: <9a8748490602040849g327958b3ge42124d94ae162d6@mail.gmail.com>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Thu, 23 Feb 2006 22:13:35 +0000
+Subject: [KJ] How to send a patch
+Message-Id: <1140732815.12049.15.camel@alice>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============21166275144926772=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060204104722.3vjv1fgevs0kwcs4@webmail.rongage.org>
-In-Reply-To: <20060204104722.3vjv1fgevs0kwcs4@webmail.rongage.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2/4/06, Jesper Juhl <jesper.juhl@gmail.com> wrote:
-[snip]
->
-> It's really nice to have patches inline in mails, not attached.
-> Attachments requires you to open a sepperate file (possibly having to
-> save it first) just to read a patch. Also, when replying and wanting
-> to comment on a patch, few mailers include attachments in the reply,
-> requireing the person wanting to comment to manually insert the patch
-> and quote it  - really annoying.
->
-Also, when patches are inline it's very easy to just save the entire
-email to a file, then you have a nice file with both the patch and the
-authors explanation of it nicely kept together.
-'patch' will just remove all the email text when you apply it, and
-when you later go to check up on an old patch you saved for some
-reason you don't have to hunt online or through your own harddrive for
-the explanation since it's all in one file.
+--===============21166275144926772==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+
+hi,
+
+i have a few other patches to switch the rest of fs/ to
+kzalloc() usage, and I am wondering how to send it.
+Since there is always only one file touched in the
+subdirectories, so i guess sending them each individually
+would be too much overhead. 
+
+Thanks for comments, Eric
+
+ adfs/super.c       |    3 +--
+ aio.c              |    3 +--
+ autofs/inode.c     |    3 +--
+ autofs4/inode.c    |    4 +---
+ bfs/inode.c        |    6 ++----
+ binfmt_elf.c       |    3 +--
+ binfmt_elf_fdpic.c |    3 +--
+ bio.c              |    7 ++-----
+ char_dev.c         |    7 ++-----
+ compat.c           |    3 +--
+ cramfs/inode.c     |    3 +--
+ devfs/base.c       |    3 +--
+ efs/super.c        |    3 +--
+ exec.c             |    3 +--
+ fat/inode.c        |    3 +--
+ file.c             |    3 +--
+ hpfs/super.c       |    3 +--
+ isofs/inode.c      |    3 +--
+ minix/inode.c      |    6 ++----
+ ncpfs/inode.c      |    3 +--
+ pipe.c             |    3 +--
+ qnx4/inode.c       |    3 +--
+ reiserfs/file.c    |    3 +--
+ super.c            |    3 +--
+ sysv/super.c       |    6 ++----
+ ufs/super.c        |    3 +--
+ 26 files changed, 31 insertions(+), 65 deletions(-)
 
 
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+
+--===============21166275144926772==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============21166275144926772==--
