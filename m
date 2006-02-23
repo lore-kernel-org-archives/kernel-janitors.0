@@ -1,37 +1,57 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 28 Feb 2006 19:32:22 +0000
-Subject: Re: [KJ] kzalloc() conversion in drivers/isdn
-Message-Id: <20060228193222.GA26846@mipter.zuzino.mipt.ru>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Thu, 23 Feb 2006 00:05:05 +0000
+Subject: [KJ] [Patch] kzalloc conversion in fs/afs
+Message-Id: <1140653105.5833.7.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============051455466573451014=="
+Content-Type: multipart/mixed; boundary="===============23312860008718683=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1141024983.6530.1.camel@alice>
-In-Reply-To: <1141024983.6530.1.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============051455466573451014==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============23312860008718683==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 27, 2006 at 08:23:03AM +0100, Eric Sesterhenn wrote:
-> --- linux-2.6.16-rc4/drivers/isdn/hisax/teles_cs.c.orig
-> +++ linux-2.6.16-rc4/drivers/isdn/hisax/teles_cs.c
-> @@ -138,9 +138,9 @@ static int teles_attach(struct pcmcia_de
->      DEBUG(0, "teles_attach()\n");
->
->      /* Allocate space for private device-specific data */
-> -    local = kmalloc(sizeof(local_info_t), GFP_KERNEL);
-> -    if (!local) return -ENOMEM;
-> -    memset(local, 0, sizeof(local_info_t));
-> +    local = kzalloc(sizeof(local_info_t), GFP_KERNEL);
-> +    if (!local)
-> +	return -ENOMEM;
+hi,
 
-Don't even try to sneak in unrelated changes. I mean, really. Why bother
-if I'll carefully drop them anyway?
+this converts fs/afs to kzalloc() usage.
+compile tested with make allyesconfig
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.16-rc4/fs/afs/vlocation.c.orig	2006-02-23 00:39:37.000000000 +0100
++++ linux-2.6.16-rc4/fs/afs/vlocation.c	2006-02-23 00:40:24.000000000 +0100
+@@ -281,11 +281,10 @@ int afs_vlocation_lookup(struct afs_cell
+ 	spin_unlock(&cell->vl_gylock);
+ 
+ 	/* not in the cell's in-memory lists - create a new record */
+-	vlocation = kmalloc(sizeof(struct afs_vlocation), GFP_KERNEL);
++	vlocation = kzalloc(sizeof(struct afs_vlocation), GFP_KERNEL);
+ 	if (!vlocation)
+ 		return -ENOMEM;
+ 
+-	memset(vlocation, 0, sizeof(struct afs_vlocation));
+ 	atomic_set(&vlocation->usage, 1);
+ 	INIT_LIST_HEAD(&vlocation->link);
+ 	rwlock_init(&vlocation->lock);
+--- linux-2.6.16-rc4/fs/afs/volume.c.orig	2006-02-23 00:38:39.000000000 +0100
++++ linux-2.6.16-rc4/fs/afs/volume.c	2006-02-23 00:38:55.000000000 +0100
+@@ -186,11 +186,10 @@ int afs_volume_lookup(const char *name, 
+ 	_debug("creating new volume record");
+ 
+ 	ret = -ENOMEM;
+-	volume = kmalloc(sizeof(struct afs_volume), GFP_KERNEL);
++	volume = kzalloc(sizeof(struct afs_volume), GFP_KERNEL);
+ 	if (!volume)
+ 		goto error_up;
+ 
+-	memset(volume, 0, sizeof(struct afs_volume));
+ 	atomic_set(&volume->usage, 1);
+ 	volume->type		= type;
+ 	volume->type_force	= force;
 
 
---===============051455466573451014==
+
+--===============23312860008718683==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============051455466573451014==--
+--===============23312860008718683==--
