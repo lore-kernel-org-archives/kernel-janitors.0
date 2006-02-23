@@ -1,72 +1,97 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 21 Feb 2006 22:52:45 +0000
-Subject: [KJ] [Patch] kzalloc conversion in fs/jffs2
-Message-Id: <1140562365.26697.0.camel@alice>
+Date: Thu, 23 Feb 2006 00:05:06 +0000
+Subject: [KJ] [Patch] kzalloc conversion in fs/jfs
+Message-Id: <1140653107.5833.8.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============45263587944560379=="
+Content-Type: multipart/mixed; boundary="===============041915503486678496=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1140562365.26697.0.camel@alice>
+In-Reply-To: <1140562365.26697.0.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============45263587944560379==
+--===============041915503486678496==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this converts fs/jffs2 to kzalloc() usage.
+this converts fs/jfs to kzalloc() usage.
+compile tested with make allyesconfig
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc4/fs/jffs2/fs.c.orig	2006-02-21 23:48:28.000000000 +0100
-+++ linux-2.6.16-rc4/fs/jffs2/fs.c	2006-02-21 23:49:02.000000000 +0100
-@@ -485,12 +485,11 @@ int jffs2_do_fill_super(struct super_blo
- 	if (ret)
- 		return ret;
+--- linux-2.6.16-rc4/fs/jfs/jfs_metapage.c.orig	2006-02-23 00:44:21.000000000 +0100
++++ linux-2.6.16-rc4/fs/jfs/jfs_metapage.c	2006-02-23 00:44:34.000000000 +0100
+@@ -104,10 +104,9 @@ static inline int insert_metapage(struct
+ 	if (PagePrivate(page))
+ 		a = mp_anchor(page);
+ 	else {
+-		a = kmalloc(sizeof(struct meta_anchor), GFP_NOFS);
++		a = kzalloc(sizeof(struct meta_anchor), GFP_NOFS);
+ 		if (!a)
+ 			return -ENOMEM;
+-		memset(a, 0, sizeof(struct meta_anchor));
+ 		set_page_private(page, (unsigned long)a);
+ 		SetPagePrivate(page);
+ 		kmap(page);
+--- linux-2.6.16-rc4/fs/jfs/super.c.orig	2006-02-23 00:44:42.000000000 +0100
++++ linux-2.6.16-rc4/fs/jfs/super.c	2006-02-23 00:45:45.000000000 +0100
+@@ -396,10 +396,9 @@ static int jfs_fill_super(struct super_b
+ 	if (!new_valid_dev(sb->s_bdev->bd_dev))
+ 		return -EOVERFLOW;
  
--	c->inocache_list = kmalloc(INOCACHE_HASHSIZE * sizeof(struct jffs2_inode_cache *), GFP_KERNEL);
-+	c->inocache_list = kzalloc(INOCACHE_HASHSIZE * sizeof(struct jffs2_inode_cache *), GFP_KERNEL);
- 	if (!c->inocache_list) {
- 		ret = -ENOMEM;
- 		goto out_wbuf;
+-	sbi = kmalloc(sizeof (struct jfs_sb_info), GFP_KERNEL);
++	sbi = kzalloc(sizeof (struct jfs_sb_info), GFP_KERNEL);
+ 	if (!sbi)
+ 		return -ENOSPC;
+-	memset(sbi, 0, sizeof (struct jfs_sb_info));
+ 	sb->s_fs_info = sbi;
+ 	sbi->sb = sb;
+ 
+--- linux-2.6.16-rc4/fs/jfs/jfs_logmgr.c.orig	2006-02-23 00:45:58.000000000 +0100
++++ linux-2.6.16-rc4/fs/jfs/jfs_logmgr.c	2006-02-23 00:46:59.000000000 +0100
+@@ -1105,11 +1105,10 @@ int lmLogOpen(struct super_block *sb)
+ 		}
  	}
--	memset(c->inocache_list, 0, INOCACHE_HASHSIZE * sizeof(struct jffs2_inode_cache *));
  
- 	if ((ret = jffs2_do_mount_fs(c)))
- 		goto out_inohash;
---- linux-2.6.16-rc4/fs/jffs2/scan.c.orig	2006-02-21 23:48:06.000000000 +0100
-+++ linux-2.6.16-rc4/fs/jffs2/scan.c	2006-02-21 23:48:20.000000000 +0100
-@@ -106,12 +106,11 @@ int jffs2_scan_medium(struct jffs2_sb_in
+-	if (!(log = kmalloc(sizeof(struct jfs_log), GFP_KERNEL))) {
++	if (!(log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL))) {
+ 		up(&jfs_log_sem);
+ 		return -ENOMEM;
  	}
+-	memset(log, 0, sizeof(struct jfs_log));
+ 	INIT_LIST_HEAD(&log->sb_list);
+ 	init_waitqueue_head(&log->syncwait);
  
- 	if (jffs2_sum_active()) {
--		s = kmalloc(sizeof(struct jffs2_summary), GFP_KERNEL);
-+		s = kzalloc(sizeof(struct jffs2_summary), GFP_KERNEL);
- 		if (!s) {
- 			JFFS2_WARNING("Can't allocate memory for summary\n");
+@@ -1181,9 +1180,8 @@ static int open_inline_log(struct super_
+ 	struct jfs_log *log;
+ 	int rc;
+ 
+-	if (!(log = kmalloc(sizeof(struct jfs_log), GFP_KERNEL)))
++	if (!(log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL)))
+ 		return -ENOMEM;
+-	memset(log, 0, sizeof(struct jfs_log));
+ 	INIT_LIST_HEAD(&log->sb_list);
+ 	init_waitqueue_head(&log->syncwait);
+ 
+@@ -1216,12 +1214,11 @@ static int open_dummy_log(struct super_b
+ 
+ 	down(&jfs_log_sem);
+ 	if (!dummy_log) {
+-		dummy_log = kmalloc(sizeof(struct jfs_log), GFP_KERNEL);
++		dummy_log = kzalloc(sizeof(struct jfs_log), GFP_KERNEL);
+ 		if (!dummy_log) {
+ 			up(&jfs_log_sem);
  			return -ENOMEM;
  		}
--		memset(s, 0, sizeof(struct jffs2_summary));
- 	}
- 
- 	for (i=0; i<c->nr_blocks; i++) {
---- linux-2.6.16-rc4/fs/jffs2/super.c.orig	2006-02-21 23:51:02.000000000 +0100
-+++ linux-2.6.16-rc4/fs/jffs2/super.c	2006-02-21 23:51:12.000000000 +0100
-@@ -119,10 +119,9 @@ static struct super_block *jffs2_get_sb_
- 	struct jffs2_sb_info *c;
- 	int ret;
- 
--	c = kmalloc(sizeof(*c), GFP_KERNEL);
-+	c = kzalloc(sizeof(*c), GFP_KERNEL);
- 	if (!c)
- 		return ERR_PTR(-ENOMEM);
--	memset(c, 0, sizeof(*c));
- 	c->mtd = mtd;
- 
- 	sb = sget(fs_type, jffs2_sb_compare, jffs2_sb_set, c);
+-		memset(dummy_log, 0, sizeof(struct jfs_log));
+ 		INIT_LIST_HEAD(&dummy_log->sb_list);
+ 		init_waitqueue_head(&dummy_log->syncwait);
+ 		dummy_log->no_integrity = 1;
 
 
 
---===============45263587944560379==
+--===============041915503486678496==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +102,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============45263587944560379==--
+--===============041915503486678496==--
