@@ -1,26 +1,28 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Thu, 23 Feb 2006 00:05:10 +0000
-Subject: [KJ] [Patch] kzalloc conversion in fs/hfs
-Message-Id: <1140653110.5833.9.camel@alice>
+Date: Thu, 23 Feb 2006 00:05:12 +0000
+Subject: [KJ] [Patch] kzalloc conversion in fs/hfsplus
+Message-Id: <1140653112.5833.10.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41663129611824345=="
+Content-Type: multipart/mixed; boundary="===============34250691837139469=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1140653110.5833.9.camel@alice>
+In-Reply-To: <1140653110.5833.9.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============41663129611824345==
+--===============34250691837139469==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this converts fs/hfs to kzalloc() usage.
+this converts fs/hfsplus to kzalloc() usage.
 compile tested with make allyesconfig
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc4/fs/hfs/bnode.c.orig	2006-02-22 11:05:14.000000000 +0100
-+++ linux-2.6.16-rc4/fs/hfs/bnode.c	2006-02-22 11:05:29.000000000 +0100
-@@ -249,10 +249,9 @@ static struct hfs_bnode *__hfs_bnode_cre
+--- linux-2.6.16-rc4/fs/hfsplus/bnode.c.orig	2006-02-22 16:24:48.000000000 +0100
++++ linux-2.6.16-rc4/fs/hfsplus/bnode.c	2006-02-22 16:25:09.000000000 +0100
+@@ -409,10 +409,9 @@ static struct hfs_bnode *__hfs_bnode_cre
  	sb = tree->inode->i_sb;
  	size = sizeof(struct hfs_bnode) + tree->pages_per_bnode *
  		sizeof(struct page *);
@@ -32,9 +34,9 @@ Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
  	node->tree = tree;
  	node->this = cnid;
  	set_bit(HFS_BNODE_NEW, &node->flags);
---- linux-2.6.16-rc4/fs/hfs/btree.c.orig	2006-02-22 11:05:38.000000000 +0100
-+++ linux-2.6.16-rc4/fs/hfs/btree.c	2006-02-22 11:05:46.000000000 +0100
-@@ -21,10 +21,9 @@ struct hfs_btree *hfs_btree_open(struct 
+--- linux-2.6.16-rc4/fs/hfsplus/btree.c.orig	2006-02-22 16:25:18.000000000 +0100
++++ linux-2.6.16-rc4/fs/hfsplus/btree.c	2006-02-22 16:25:31.000000000 +0100
+@@ -24,10 +24,9 @@ struct hfs_btree *hfs_btree_open(struct 
  	struct page *page;
  	unsigned int size;
  
@@ -46,25 +48,10 @@ Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
  
  	init_MUTEX(&tree->tree_lock);
  	spin_lock_init(&tree->hash_lock);
---- linux-2.6.16-rc4/fs/hfs/super.c.orig	2006-02-22 11:05:55.000000000 +0100
-+++ linux-2.6.16-rc4/fs/hfs/super.c	2006-02-22 11:06:08.000000000 +0100
-@@ -355,11 +355,10 @@ static int hfs_fill_super(struct super_b
- 	struct inode *root_inode;
- 	int res;
- 
--	sbi = kmalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
-+	sbi = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
- 	if (!sbi)
- 		return -ENOMEM;
- 	sb->s_fs_info = sbi;
--	memset(sbi, 0, sizeof(struct hfs_sb_info));
- 	INIT_HLIST_HEAD(&sbi->rsrc_inodes);
- 
- 	res = -EINVAL;
 
 
 
---===============41663129611824345==
+--===============34250691837139469==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -75,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============41663129611824345==--
+--===============34250691837139469==--
