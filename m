@@ -1,85 +1,32 @@
-From: Tim Cooijmans <tim@aapopfiets.nl>
-Date: Fri, 24 Feb 2006 21:49:22 +0000
-Subject: [KJ] [PATCH] check request_region return value
-Message-Id: <200602242249.22568.tim@aapopfiets.nl>
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Fri, 24 Feb 2006 21:58:30 +0000
+Subject: Re: [KJ] [PATCH] check request_region return value
+Message-Id: <9a8748490602241358r3b1f5e6an448ecf5d40932a5a@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200602242249.22568.tim@aapopfiets.nl>
+In-Reply-To: <200602242249.22568.tim@aapopfiets.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Tim Cooijmans <tim@aapopfiets.nl>
+On 2/24/06, Tim Cooijmans <tim@aapopfiets.nl> wrote:
+> From: Tim Cooijmans <tim@aapopfiets.nl>
+>
+> Check request_region return value in arch/powerpc/platform/chrp/setup.c.
+> Passed compilation.
+>
 
-Check request_region return value in arch/powerpc/platform/chrp/setup.c.  
-Passed compilation.
+Looks OK to me, but couldn't this be improved by changing the function
+to return an int stating if things are OK or not and then having
+caller check the return value and act appropriately?
 
-Signed-off-by: Tim Cooijmans <tim@aapopfiets.nl>
----
---- linux-2.6.16-rc4-orig/arch/powerpc/platforms/chrp/setup.c	2006-02-21 
-20:18:41.000000000 +0100
-+++ linux-2.6.16-rc4/arch/powerpc/platforms/chrp/setup.c	2006-02-24 
-18:30:10.000000000 +0100
-@@ -471,15 +471,54 @@ chrp_init2(void)
- 	chrp_nvram_init();
- #endif
- 
--	request_region(0x20,0x20,"pic1");
--	request_region(0xa0,0x20,"pic2");
--	request_region(0x00,0x20,"dma1");
--	request_region(0x40,0x20,"timer");
--	request_region(0x80,0x10,"dma page reg");
--	request_region(0xc0,0x20,"dma2");
-+	if (request_region(0x20,0x20,"pic1") = NULL) {
-+		printk(KERN_WARNING "chrp_init2: could not "
-+				    "allocate pic1 region\n");
-+		goto out_pic1;
-+	}
-+	if (request_region(0xa0,0x20,"pic2") = NULL) {
-+		printk(KERN_WARNING "chrp_init2: could not "
-+				    "allocate pic2 region\n");
-+		goto out_pic2;
-+	}
-+	if (request_region(0x00,0x20,"dma1") = NULL) {
-+		printk(KERN_WARNING "chrp_init2: could not "
-+				    "allocate dma1 region\n");
-+		goto out_dma1;
-+	}
-+	if (request_region(0x40,0x20,"timer") = NULL) {
-+		printk(KERN_WARNING "chrp_init2: could not "
-+				    "allocate timer region\n");
-+		goto out_timer;
-+	}
-+	if (request_region(0x80,0x10,"dma page reg") = NULL) {
-+		printk(KERN_WARNING "chrp_init2: could not "
-+				    "allocate dma page reg region\n");
-+		goto out_dma_page_reg;
-+	}
-+	if (request_region(0xc0,0x20,"dma2") = NULL) {
-+		printk(KERN_WARNING "chrp_init2: could not "
-+				    "allocate dma2 region\n");
-+		goto out_dma2;
-+	}
- 
- 	if (ppc_md.progress)
- 		ppc_md.progress("  Have fun!    ", 0x7777);
-+
-+	return;
-+
-+out_dma2:
-+	release_region(0x80,0x10);
-+out_dma_page_reg:
-+	release_region(0x40,0x20);
-+out_timer:
-+	release_region(0x00,0x20);
-+out_dma1:
-+	release_region(0xa0,0x20);
-+out_pic2:
-+	release_region(0x20,0x20);
-+out_pic1:
-+	return;
- }
- 
- void __init chrp_init(void)
+
+--
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
