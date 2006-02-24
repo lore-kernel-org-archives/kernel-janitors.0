@@ -1,36 +1,86 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 20 Feb 2006 21:26:19 +0000
-Subject: Re: [KJ] [PATCH] Adding pci_set_drvdata() to /drivers/eisa/pci_eisa.c
-Message-Id: <20060220212619.GD29791@mipter.zuzino.mipt.ru>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============64432158482645407=="
+From: Tim Cooijmans <tim@aapopfiets.nl>
+Date: Fri, 24 Feb 2006 21:49:22 +0000
+Subject: [KJ] [PATCH] check request_region return value
+Message-Id: <200602242249.22568.tim@aapopfiets.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1139250553.9445.6.camel@localhost.localdomain>
-In-Reply-To: <1139250553.9445.6.camel@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============64432158482645407==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: Tim Cooijmans <tim@aapopfiets.nl>
 
-On Wed, Feb 08, 2006 at 03:07:33PM -0600, Matthew Martin wrote:
-> Sorry the lines wrapped on my last email. Does anyone have any suggestions for
-> an email program? I'm using Evolution right now. I'm pretty sure the lines
-> did not wrap this time.
+Check request_region return value in arch/powerpc/platform/chrp/setup.c.  
+Passed compilation.
 
-From personal experience, KMail and mutt do everything right. In KMail
-you neeed to "Insert File" or something. I've already forgot ;-).
-
-
---===============64432158482645407==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Signed-off-by: Tim Cooijmans <tim@aapopfiets.nl>
+---
+--- linux-2.6.16-rc4-orig/arch/powerpc/platforms/chrp/setup.c	2006-02-21 
+20:18:41.000000000 +0100
++++ linux-2.6.16-rc4/arch/powerpc/platforms/chrp/setup.c	2006-02-24 
+18:30:10.000000000 +0100
+@@ -471,15 +471,54 @@ chrp_init2(void)
+ 	chrp_nvram_init();
+ #endif
+ 
+-	request_region(0x20,0x20,"pic1");
+-	request_region(0xa0,0x20,"pic2");
+-	request_region(0x00,0x20,"dma1");
+-	request_region(0x40,0x20,"timer");
+-	request_region(0x80,0x10,"dma page reg");
+-	request_region(0xc0,0x20,"dma2");
++	if (request_region(0x20,0x20,"pic1") = NULL) {
++		printk(KERN_WARNING "chrp_init2: could not "
++				    "allocate pic1 region\n");
++		goto out_pic1;
++	}
++	if (request_region(0xa0,0x20,"pic2") = NULL) {
++		printk(KERN_WARNING "chrp_init2: could not "
++				    "allocate pic2 region\n");
++		goto out_pic2;
++	}
++	if (request_region(0x00,0x20,"dma1") = NULL) {
++		printk(KERN_WARNING "chrp_init2: could not "
++				    "allocate dma1 region\n");
++		goto out_dma1;
++	}
++	if (request_region(0x40,0x20,"timer") = NULL) {
++		printk(KERN_WARNING "chrp_init2: could not "
++				    "allocate timer region\n");
++		goto out_timer;
++	}
++	if (request_region(0x80,0x10,"dma page reg") = NULL) {
++		printk(KERN_WARNING "chrp_init2: could not "
++				    "allocate dma page reg region\n");
++		goto out_dma_page_reg;
++	}
++	if (request_region(0xc0,0x20,"dma2") = NULL) {
++		printk(KERN_WARNING "chrp_init2: could not "
++				    "allocate dma2 region\n");
++		goto out_dma2;
++	}
+ 
+ 	if (ppc_md.progress)
+ 		ppc_md.progress("  Have fun!    ", 0x7777);
++
++	return;
++
++out_dma2:
++	release_region(0x80,0x10);
++out_dma_page_reg:
++	release_region(0x40,0x20);
++out_timer:
++	release_region(0x00,0x20);
++out_dma1:
++	release_region(0xa0,0x20);
++out_pic2:
++	release_region(0x20,0x20);
++out_pic1:
++	return;
+ }
+ 
+ void __init chrp_init(void)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============64432158482645407==--
