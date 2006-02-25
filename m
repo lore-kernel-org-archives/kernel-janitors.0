@@ -1,37 +1,24 @@
-From: walter harms <wharms@bfs.de>
-Date: Sat, 25 Feb 2006 12:30:16 +0000
-Subject: [KJ] linux-2.6.15.4/drivers/i2c/i2c-core.c.bak:  EPERM -> EINVAL
-Message-Id: <44004DD8.2040606@bfs.de>
+From: Tim Cooijmans <tim@aapopfiets.nl>
+Date: Sat, 25 Feb 2006 12:41:44 +0000
+Subject: Re: [KJ] linux-2.6.15.4/drivers/i2c/i2c-core.c.bak:  EPERM -> EINVAL
+Message-Id: <200602251341.44871.tim@aapopfiets.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <44004DD8.2040606@bfs.de>
+In-Reply-To: <44004DD8.2040606@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi list,
-it was noticed that some driver return EPERM instead of EINVAL.
-EPERM indicates no enought privilege to access a function.
-This will fixit an return (i hope) a 'better' error msg.
+On Saturday 25 February 2006 13:30, walter harms wrote:
+>   			pr_debug("i2c-core: %s used one too many times\n",
+>   				__FUNCTION__);
+> -			return -EPERM;
+> +			return -EINVAL;
+I think EBUSY would be more apprioriate here.  I'm not sure, though.  
+include/asm-generic/errno-base.h has a short description for each errno.
 
-re,
-  walter
-
-
-Signed-off-by: walter harms <wharms@bfs.de>
-
---- linux-2.6.15.4/drivers/i2c/i2c-core.c.bak	2006-02-25 
-13:25:48.000000000 +0100
-+++ linux-2.6.15.4/drivers/i2c/i2c-core.c	2006-02-25 13:24:44.000000000 
-+0100
-@@ -522,7 +522,7 @@
-  		else {
-  			pr_debug("i2c-core: %s used one too many times\n",
-  				__FUNCTION__);
--			return -EPERM;
-+			return -EINVAL;
-  		}
-  	}
-  	
+Tim
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
