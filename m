@@ -1,37 +1,38 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Mon, 06 Feb 2006 16:40:08 +0000
-Subject: Re: [KJ] pci_set_drvdata()
-Message-Id: <20060206164008.GH16090@parisc-linux.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63049780365092678=="
+From: walter harms <wharms@bfs.de>
+Date: Sat, 25 Feb 2006 12:30:16 +0000
+Subject: [KJ] linux-2.6.15.4/drivers/i2c/i2c-core.c.bak:  EPERM -> EINVAL
+Message-Id: <44004DD8.2040606@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1139234943.7477.7.camel@localhost.localdomain>
-In-Reply-To: <1139234943.7477.7.camel@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============63049780365092678==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi list,
+it was noticed that some driver return EPERM instead of EINVAL.
+EPERM indicates no enought privilege to access a function.
+This will fixit an return (i hope) a 'better' error msg.
 
-On Mon, Feb 06, 2006 at 05:22:41PM +0100, Tobias Klauser wrote:
-> On 2006-02-06 at 15:09:03 +0100, Matthew Martin <lihnucks@gmail.com> wrote:
-> > -	pci_eisa_root.dev->driver_data = &pci_eisa_root;
-> > +        pci_set_drvdata(pdev,&pci_eisa_root);
-> 
-> You replace a tab with spaces here which is against CodingStyle.
-
-And you should place a space after a comma.
+re,
+  walter
 
 
---===============63049780365092678==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed-off-by: walter harms <wharms@bfs.de>
 
+--- linux-2.6.15.4/drivers/i2c/i2c-core.c.bak	2006-02-25 
+13:25:48.000000000 +0100
++++ linux-2.6.15.4/drivers/i2c/i2c-core.c	2006-02-25 13:24:44.000000000 
++0100
+@@ -522,7 +522,7 @@
+  		else {
+  			pr_debug("i2c-core: %s used one too many times\n",
+  				__FUNCTION__);
+-			return -EPERM;
++			return -EINVAL;
+  		}
+  	}
+  	
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============63049780365092678==--
