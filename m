@@ -1,48 +1,39 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Date: Fri, 24 Feb 2006 21:46:46 +0000
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Sat, 25 Feb 2006 00:39:13 +0000
 Subject: Re: [KJ][Patch] alter prototypes in airo.c platform.h
-Message-Id: <20060224214641.GC1698@tuxdriver.com>
+Message-Id: <1140827953.5101.8.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============98851754999892871=="
+Content-Type: multipart/mixed; boundary="===============50525677202667296=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140516994.7780.37.camel@localhost.localdomain>
 In-Reply-To: <1140516994.7780.37.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============98851754999892871==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============50525677202667296==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 21, 2006 at 09:16:34PM +1100, Darren Jenkins" wrote:
-> G'day list,
+On Fri, 2006-02-24 at 16:46 -0500, John W. Linville wrote:
+> On Tue, Feb 21, 2006 at 09:16:34PM +1100, Darren Jenkins" wrote:
+> > 
+> > Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+> Acked-by: John W. Linville <linville@tuxdriver.com>
 > 
-> This one finishes up the altering prototypes (because they contain
-> register) patches.
+> Do I need to merge the airo hunk?
 > 
-> >From http://linuxicc.sourceforge.net/
-> 
-> ICC complains about :Storage Class is not First
-> 
-> @ line 231 of platform.h &
-> @ lines 1078 & 1079 of airo.c
-> 
-> These are caused by the prototypes miss-naming the variables as
-> "register". Which as it is a keyword is an error.
-> 
-> The patch below renames the variables in the prototypes to match the
-> functions.
-> 
-> Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-Acked-by: John W. Linville <linville@tuxdriver.com>
+> John
 
-Do I need to merge the airo hunk?
+Do you mean the platform.h hunk ?
+I would not expect you merge the platform.h part as I don't think it has
+anything to do with you. I did not cc the maintainer for that bit
+because I could not figure out who it was.
+I included the two changes together to cut down on the number of emails
+with small changes. Perhaps that was a "bad idea" on my part.
 
-John
--- 
-John W. Linville
-linville@tuxdriver.com
+Darren J.
 
---===============98851754999892871==
+
+--===============50525677202667296==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============98851754999892871==--
+--===============50525677202667296==--
