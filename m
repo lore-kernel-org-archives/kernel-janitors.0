@@ -1,41 +1,36 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 20 Feb 2006 21:34:50 +0000
-Subject: Re: [kj][Patch] remove implicit sign bit on single bit
-Message-Id: <20060220213450.GE29791@mipter.zuzino.mipt.ru>
+From: Tim Cooijmans <tim@aapopfiets.nl>
+Date: Sat, 25 Feb 2006 00:27:18 +0000
+Subject: [KJ] Duplicated request_region code in arch/powerpc and arch/ppc
+Message-Id: <200602250127.18815.tim@aapopfiets.nl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============36362986767986083=="
+Content-Type: multipart/mixed; boundary="===============40013113695617125=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1139372248.9409.15.camel@localhost.localdomain>
-In-Reply-To: <1139372248.9409.15.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============36362986767986083==
-Content-Type: text/plain; charset=us-ascii
+--===============40013113695617125==
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-On Thu, Feb 09, 2006 at 09:21:24PM +1100, Darren Jenkins" wrote:
-> --- linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c.orig
-> +++ linux-2.6.16-rc2/sound/oss/via82cxxx_audio.c
-> @@ -306,9 +306,8 @@ struct via_info {
->  	unsigned intmask: 1;	/* Needs int bits */
->  	unsigned sixchannel: 1;	/* 8233/35 with 6 channel support */
->  	unsigned volume: 1;
-> +	unsigned locked_rate : 1;
->
-> -	int locked_rate : 1;
-> -
->  	int mixer_vol;		/* 8233/35 volume  - not yet implemented */
-> 
->  	struct semaphore syscall_sem;
+These files all request the same regions, namely dma1, dma2, dma page reg, 
+pic1, pic2 and timer:
 
-These patches are OK, except
+arch/powerpc/platforms/chrp/setup.c
+arch/powerpc/platforms/pseries/pci.c
+arch/ppc/platforms/chrp_setup.c
+arch/ppc/platforms/lopec.c
+arch/ppc/platforms/mvme5100.c
+arch/ppc/platforms/pplus.c
+arch/ppc/platforms/sandpoint.c
 
-	unsigned int a:1;
+Should these requests be moved to a central function?  If so, what should the 
+function be called (i.e., why are the regions requested) and where should it 
+be defined?
 
-is preferred. 
+Tim
 
-
---===============36362986767986083==
+--===============40013113695617125==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============36362986767986083==--
+--===============40013113695617125==--
