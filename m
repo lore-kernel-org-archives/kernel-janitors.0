@@ -1,53 +1,61 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Sat, 25 Feb 2006 21:03:45 +0000
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Sun, 26 Feb 2006 04:50:13 +0000
 Subject: Re: [KJ] [PATCH] check request_region return value
-Message-Id: <9a8748490602251303w3b9226e1m8a93a1a593266aeb@mail.gmail.com>
+Message-Id: <1140929413.8088.10.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============70386160515893703=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200602242249.22568.tim@aapopfiets.nl>
 In-Reply-To: <200602242249.22568.tim@aapopfiets.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 2/25/06, Tim Cooijmans <tim@aapopfiets.nl> wrote:
-> On Saturday 25 February 2006 18:34, Jesper Juhl wrote:
-> > Ahh yes, looking a bit more closely at the code I see that's true.
-> > Hmm, there's got to be a cleaner way, the result of your patch is a
-> > pretty ugly error path...
-> Pretty much the only alternative I can think of is something like this:
->
-> if (condition && request_region(x)) {
->         if (condition && request_region(y)) {
->                 /* ... */
->         } else {
->                 release_region(x);
->         }
-> }
->
-> In this case, it will become a nine-level deep nest, and it's not much
-> different from my original version.
->
-> Having done some research, I don't think the checks are necessary.
-> request_region() (actually __request_resource()) does some checks which I'm
-> pretty sure will catch any 0 passed to it.  The GPE odd/even checks will
-> still have to be done, though.
->
-> I'll make a patch without most of the checks, unless anyone objects to
-> removing them.
->
+--===============70386160515893703==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-I just did some research myself and looked at the code currently in
-2.6.16-rc4-mm2 , and the code seems to have changed quite a bit, so
-perhaps you would do well to work against that instead.
+On Fri, 2006-02-24 at 22:49 +0100, Tim Cooijmans wrote:
+> From: Tim Cooijmans <tim@aapopfiets.nl>
+> 
+> Check request_region return value in arch/powerpc/platform/chrp/setup.c.  
+> Passed compilation.
+> 
+> Signed-off-by: Tim Cooijmans <tim@aapopfiets.nl>
+> ---
+> +
+> +out_dma2:
+> +	release_region(0x80,0x10);
+> +out_dma_page_reg:
+> +	release_region(0x40,0x20);
+> +out_timer:
+> +	release_region(0x00,0x20);
+> +out_dma1:
+> +	release_region(0xa0,0x20);
+> +out_pic2:
+> +	release_region(0x20,0x20);
+> +out_pic1:
+> +	return;
+>  }
+>  
+
+This might sound a bit stupid, but why are you doing release_region
+here ? As you can't warn the upstream code, it will presumably try to
+use the regions anyway. Wouldn't it be better to just to warn on a
+failure, and keep going as normal? leaving all the regions (that were
+acquired) mapped, keeping breakage/(usage of unmapped regions) to a
+minimum?
+
+Darren Jenkins
 
 
---
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+--===============70386160515893703==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============70386160515893703==--
