@@ -1,31 +1,58 @@
-From: Irfan Habib <irfanhab@yahoo.com>
-Date: Mon, 20 Feb 2006 12:14:59 +0000
-Subject: [KJ] want to get started
-Message-Id: <20060220121459.31497.qmail@web32602.mail.mud.yahoo.com>
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 27 Feb 2006 21:47:03 +0000
+Subject: Re: [KJ] [PATCH] check request_region() return value in arch/ppc and
+Message-Id: <20060227214703.GA14119@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============35344779127759773=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-I'm a programmer which has a lot of free time to
-spare, now I want to get into kernel hacking, and
-someone advised me to get into kernel janitors prj
-first.
+--===============35344779127759773==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Now,here I am but I have no clue, what to do here?
-Can anyone guide, how I can get started with kernel
-hacking?
+On 27.02.2006 [22:29:51 +0100], Tim Cooijmans wrote:
+> From: Tim Cooijmans <tim@aapopfiets.nl>
+> 
+> Check request_region() return value and warn on failure.  Note that
+> releasing succeeded requests doesn't make much sense, as the calling
+> code doesn't know if anything failed.
+> 
+> The powerpc code has been compile tested.  The ppc code has not been
+> tested, but the changes are very similar.
 
-Thanks in advance
-Irfan
+Looks good in general, one small nit.
 
-__________________________________________________
-Do You Yahoo!?
-Tired of spam?  Yahoo! Mail has the best spam protection around 
-http://mail.yahoo.com 
+> Signed-off-by: Tim Cooijmans <tim@aapopfiets.nl>
+> ---
+> diff -uprN linux-2.6.16-rc5-orig/arch/powerpc/platforms/chrp/setup.c linux-2.6.16-rc5/arch/powerpc/platforms/chrp/setup.c
+> --- linux-2.6.16-rc5-orig/arch/powerpc/platforms/chrp/setup.c	2006-02-27 20:36:36.000000000 +0100
+> +++ linux-2.6.16-rc5/arch/powerpc/platforms/chrp/setup.c	2006-02-27 21:52:27.000000000 +0100
+> @@ -465,18 +465,26 @@ void __init chrp_init_IRQ(void)
+>  }
+>  
+>  void __init
+> +chrp_request_region(unsigned long start, unsigned long n, char *desc)
+> +{
+> +	if (!request_region(start, n, desc)) {
+> +		printk(KERN_WARNING "CHRP: unable to allocate %s region.\n", desc);
+> +	}
+
+Here and in the other request_region() wrappers, no { } for the one-line
+if, please.
+
+Thanks,
+Nish
+
+--===============35344779127759773==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============35344779127759773==--
