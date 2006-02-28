@@ -1,875 +1,1019 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 28 Feb 2006 13:54:04 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in drivers/s390
-Message-Id: <1141134845.16095.4.camel@alice>
+Date: Tue, 28 Feb 2006 14:34:49 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in drivers/pci
+Message-Id: <1141137289.17108.3.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0030826052516870206=="
+Content-Type: multipart/mixed; boundary="===============7761573557096495=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140815848.26064.4.camel@alice>
 In-Reply-To: <1140815848.26064.4.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============0030826052516870206==
+--===============7761573557096495==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this patch converts drivers/s390 to kzalloc usage.
-Not compile tested.
+this patch converts drivers/pci to kzalloc usage.
+Compile tested with allyes config.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc4/drivers/s390/net/qeth_main.c.orig	2006-02-27 19:52:59.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/qeth_main.c	2006-02-27 19:54:53.000000000 +0100
-@@ -297,12 +297,10 @@ qeth_alloc_card(void)
- 	struct qeth_card *card;
- 
- 	QETH_DBF_TEXT(setup, 2, "alloccrd");
--	card = (struct qeth_card *) kmalloc(sizeof(struct qeth_card),
--					    GFP_DMA|GFP_KERNEL);
-+	card = kzalloc(sizeof(struct qeth_card), GFP_DMA|GFP_KERNEL);
- 	if (!card)
- 		return NULL;
- 	QETH_DBF_HEX(setup, 2, &card, sizeof(void *));
--	memset(card, 0, sizeof(struct qeth_card));
- 	if (qeth_setup_channel(&card->read)) {
- 		kfree(card);
- 		return NULL;
-@@ -1632,9 +1630,8 @@ qeth_alloc_reply(struct qeth_card *card)
+--- linux-2.6.16-rc4-mm2/drivers/pci/pcie/portdrv_core.c.orig	2006-02-28 14:58:19.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/pcie/portdrv_core.c	2006-02-28 14:58:32.000000000 +0100
+@@ -248,11 +248,10 @@ static struct pcie_device* alloc_pcie_de
  {
- 	struct qeth_reply *reply;
+ 	struct pcie_device *device;
  
--	reply = kmalloc(sizeof(struct qeth_reply), GFP_ATOMIC);
-+	reply = kzalloc(sizeof(struct qeth_reply), GFP_ATOMIC);
- 	if (reply){
--		memset(reply, 0, sizeof(struct qeth_reply));
- 		atomic_set(&reply->refcnt, 1);
- 		reply->card = card;
- 	};
-@@ -3348,13 +3345,11 @@ qeth_qdio_establish(struct qeth_card *ca
+-	device = kmalloc(sizeof(struct pcie_device), GFP_KERNEL);
++	device = kzalloc(sizeof(struct pcie_device), GFP_KERNEL);
+ 	if (!device)
+ 		return NULL;
  
- 	QETH_DBF_TEXT(setup, 2, "qdioest");
+-	memset(device, 0, sizeof(struct pcie_device));
+ 	pcie_device_init(parent, device, port_type, service_type, irq,irq_mode);
+ 	printk(KERN_DEBUG "Allocate Port Service[%s]\n", device->device.bus_id);
+ 	return device;
+--- linux-2.6.16-rc4-mm2/drivers/pci/pci-sysfs.c.orig	2006-02-28 14:58:45.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/pci-sysfs.c	2006-02-28 14:58:55.000000000 +0100
+@@ -501,9 +501,8 @@ int pci_create_sysfs_dev_files (struct p
+ 	if (pci_resource_len(pdev, PCI_ROM_RESOURCE)) {
+ 		struct bin_attribute *rom_attr;
+ 		
+-		rom_attr = kmalloc(sizeof(*rom_attr), GFP_ATOMIC);
++		rom_attr = kzalloc(sizeof(*rom_attr), GFP_ATOMIC);
+ 		if (rom_attr) {
+-			memset(rom_attr, 0x00, sizeof(*rom_attr));
+ 			pdev->rom_attr = rom_attr;
+ 			rom_attr->size = pci_resource_len(pdev, PCI_ROM_RESOURCE);
+ 			rom_attr->attr.name = "rom";
+--- linux-2.6.16-rc4-mm2/drivers/pci/pci-driver.c.orig	2006-02-28 14:59:02.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/pci-driver.c	2006-02-28 14:59:14.000000000 +0100
+@@ -53,11 +53,10 @@ store_new_id(struct device_driver *drive
+ 	if (fields < 0)
+ 		return -EINVAL;
  
--	qib_param_field = kmalloc(QDIO_MAX_BUFFERS_PER_Q * sizeof(char),
-+	qib_param_field = kzalloc(QDIO_MAX_BUFFERS_PER_Q * sizeof(char),
- 			      GFP_KERNEL);
-  	if (!qib_param_field)
+-	dynid = kmalloc(sizeof(*dynid), GFP_KERNEL);
++	dynid = kzalloc(sizeof(*dynid), GFP_KERNEL);
+ 	if (!dynid)
  		return -ENOMEM;
  
-- 	memset(qib_param_field, 0, QDIO_MAX_BUFFERS_PER_Q * sizeof(char));
--
- 	qeth_create_qib_param_field(card, qib_param_field);
- 	qeth_create_qib_param_field_blkt(card, qib_param_field);
- 
-@@ -4844,9 +4839,8 @@ qeth_arp_query(struct qeth_card *card, c
- 	/* get size of userspace buffer and mask_bits -> 6 bytes */
- 	if (copy_from_user(&qinfo, udata, 6))
- 		return -EFAULT;
--	if (!(qinfo.udata = kmalloc(qinfo.udata_len, GFP_KERNEL)))
-+	if (!(qinfo.udata = kzalloc(qinfo.udata_len, GFP_KERNEL)))
- 		return -ENOMEM;
--	memset(qinfo.udata, 0, qinfo.udata_len);
- 	qinfo.udata_offset = QETH_QARP_ENTRIES_OFFSET;
- 	iob = qeth_get_setassparms_cmd(card, IPA_ARP_PROCESSING,
- 				       IPA_CMD_ASS_ARP_QUERY_INFO,
-@@ -4994,11 +4988,10 @@ qeth_snmp_command(struct qeth_card *card
- 		return -EFAULT;
- 	}
- 	qinfo.udata_len = ureq->hdr.data_len;
--	if (!(qinfo.udata = kmalloc(qinfo.udata_len, GFP_KERNEL))){
-+	if (!(qinfo.udata = kzalloc(qinfo.udata_len, GFP_KERNEL))){
- 		kfree(ureq);
- 		return -ENOMEM;
- 	}
--	memset(qinfo.udata, 0, qinfo.udata_len);
- 	qinfo.udata_offset = sizeof(struct qeth_snmp_ureq_hdr);
- 
- 	iob = qeth_get_adapter_cmd(card, IPA_SETADP_SET_SNMP_CONTROL,
-@@ -5604,12 +5597,11 @@ qeth_get_addr_buffer(enum qeth_prot_vers
+-	memset(dynid, 0, sizeof(*dynid));
+ 	INIT_LIST_HEAD(&dynid->node);
+ 	dynid->id.vendor = vendor;
+ 	dynid->id.device = device;
+--- linux-2.6.16-rc4-mm2/drivers/pci/probe.c.orig	2006-02-28 14:59:22.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/probe.c	2006-02-28 14:59:59.000000000 +0100
+@@ -33,10 +33,9 @@ LIST_HEAD(pci_devices);
+  */
+ static void pci_create_legacy_files(struct pci_bus *b)
  {
- 	struct qeth_ipaddr *addr;
- 
--	addr = kmalloc(sizeof(struct qeth_ipaddr), GFP_ATOMIC);
-+	addr = kzalloc(sizeof(struct qeth_ipaddr), GFP_ATOMIC);
- 	if (addr == NULL) {
- 		PRINT_WARN("Not enough memory to add address\n");
- 		return NULL;
- 	}
--	memset(addr,0,sizeof(struct qeth_ipaddr));
- 	addr->type = QETH_IP_TYPE_NORMAL;
- 	addr->proto = prot;
- 	return addr;
---- linux-2.6.16-rc4/drivers/s390/net/qeth_sys.c.orig	2006-02-27 19:55:02.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/qeth_sys.c	2006-02-27 19:55:14.000000000 +0100
-@@ -1145,11 +1145,10 @@ qeth_dev_ipato_add_store(const char *buf
- 	if ((rc = qeth_parse_ipatoe(buf, proto, addr, &mask_bits)))
- 		return rc;
- 
--	if (!(ipatoe = kmalloc(sizeof(struct qeth_ipato_entry), GFP_KERNEL))){
-+	if (!(ipatoe = kzalloc(sizeof(struct qeth_ipato_entry), GFP_KERNEL))){
- 		PRINT_WARN("No memory to allocate ipato entry\n");
- 		return -ENOMEM;
- 	}
--	memset(ipatoe, 0, sizeof(struct qeth_ipato_entry));
- 	ipatoe->proto = proto;
- 	memcpy(ipatoe->addr, addr, (proto == QETH_PROT_IPV4)? 4:16);
- 	ipatoe->mask_bits = mask_bits;
---- linux-2.6.16-rc4/drivers/s390/net/lcs.c.orig	2006-02-27 19:55:38.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/lcs.c	2006-02-27 19:56:56.000000000 +0100
-@@ -115,11 +115,10 @@ lcs_alloc_channel(struct lcs_channel *ch
- 	LCS_DBF_TEXT(2, setup, "ichalloc");
- 	for (cnt = 0; cnt < LCS_NUM_BUFFS; cnt++) {
- 		/* alloc memory fo iobuffer */
--		channel->iob[cnt].data = (void *)
--			kmalloc(LCS_IOBUFFERSIZE, GFP_DMA | GFP_KERNEL);
-+		channel->iob[cnt].data =
-+			kzalloc(LCS_IOBUFFERSIZE, GFP_DMA | GFP_KERNEL);
- 		if (channel->iob[cnt].data == NULL)
- 			break;
--		memset(channel->iob[cnt].data, 0, LCS_IOBUFFERSIZE);
- 		channel->iob[cnt].state = BUF_STATE_EMPTY;
- 	}
- 	if (cnt < LCS_NUM_BUFFS) {
-@@ -182,10 +181,9 @@ lcs_alloc_card(void)
- 
- 	LCS_DBF_TEXT(2, setup, "alloclcs");
- 
--	card = kmalloc(sizeof(struct lcs_card), GFP_KERNEL | GFP_DMA);
-+	card = kzalloc(sizeof(struct lcs_card), GFP_KERNEL | GFP_DMA);
- 	if (card == NULL)
- 		return NULL;
--	memset(card, 0, sizeof(struct lcs_card));
- 	card->lan_type = LCS_FRAME_TYPE_AUTO;
- 	card->pkt_seq = 0;
- 	card->lancmd_timeout = LCS_LANCMD_TIMEOUT_DEFAULT;
-@@ -793,10 +791,9 @@ lcs_alloc_reply(struct lcs_cmd *cmd)
- 
- 	LCS_DBF_TEXT(4, trace, "getreply");
- 
--	reply = kmalloc(sizeof(struct lcs_reply), GFP_ATOMIC);
-+	reply = kzalloc(sizeof(struct lcs_reply), GFP_ATOMIC);
- 	if (!reply)
- 		return NULL;
--	memset(reply,0,sizeof(struct lcs_reply));
- 	atomic_set(&reply->refcnt,1);
- 	reply->sequence_no = cmd->sequence_no;
- 	reply->received = 0;
---- linux-2.6.16-rc4/drivers/s390/net/ctctty.c.orig	2006-02-27 19:59:11.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/ctctty.c	2006-02-27 19:59:32.000000000 +0100
-@@ -1122,12 +1122,11 @@ ctc_tty_init(void)
- 	struct tty_driver *device;
- 
- 	DBF_TEXT(trace, 2, __FUNCTION__);
--	driver = kmalloc(sizeof(ctc_tty_driver), GFP_KERNEL);
-+	driver = kzalloc(sizeof(ctc_tty_driver), GFP_KERNEL);
- 	if (driver == NULL) {
- 		printk(KERN_WARNING "Out of memory in ctc_tty_modem_init\n");
- 		return -ENOMEM;
- 	}
--	memset(driver, 0, sizeof(ctc_tty_driver));
- 	device = alloc_tty_driver(CTC_TTY_MAX_DEVICES);
- 	if (!device) {
- 		kfree(driver);
---- linux-2.6.16-rc4/drivers/s390/net/claw.c.orig	2006-02-27 19:59:40.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/claw.c	2006-02-27 19:59:59.000000000 +0100
-@@ -310,7 +310,7 @@ claw_probe(struct ccwgroup_device *cgdev
-         printk(KERN_INFO "claw: variable cgdev =\n");
-         dumpit((char *)cgdev, sizeof(struct ccwgroup_device));
- #endif
--	privptr = kmalloc(sizeof(struct claw_privbk), GFP_KERNEL);
-+	privptr = kzalloc(sizeof(struct claw_privbk), GFP_KERNEL);
- 	if (privptr == NULL) {
- 		probe_error(cgdev);
- 		put_device(&cgdev->dev);
-@@ -319,7 +319,6 @@ claw_probe(struct ccwgroup_device *cgdev
- 		CLAW_DBF_TEXT_(2,setup,"probex%d",-ENOMEM);
- 		return -ENOMEM;
- 	}
--	memset(privptr,0x00,sizeof(struct claw_privbk));
- 	privptr->p_mtc_envelope= kmalloc( MAX_ENVELOPE_SIZE, GFP_KERNEL);
- 	privptr->p_env = kmalloc(sizeof(struct claw_env), GFP_KERNEL);
-         if ((privptr->p_mtc_envelope==NULL) || (privptr->p_env==NULL)) {
---- linux-2.6.16-rc4/drivers/s390/net/fsm.c.orig	2006-02-27 20:00:32.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/fsm.c	2006-02-27 20:02:23.000000000 +0100
-@@ -21,38 +21,34 @@ init_fsm(char *name, const char **state_
- 	fsm_function_t *m;
- 	fsm *f;
- 
--	this = (fsm_instance *)kmalloc(sizeof(fsm_instance), order);
-+	this = kzalloc(sizeof(fsm_instance), order);
- 	if (this == NULL) {
- 		printk(KERN_WARNING
- 			"fsm(%s): init_fsm: Couldn't alloc instance\n", name);
- 		return NULL;
- 	}
--	memset(this, 0, sizeof(fsm_instance));
- 	strlcpy(this->name, name, sizeof(this->name));
- 
--	f = (fsm *)kmalloc(sizeof(fsm), order);
-+	f = kzalloc(sizeof(fsm), order);
- 	if (f == NULL) {
- 		printk(KERN_WARNING
- 			"fsm(%s): init_fsm: Couldn't alloc fsm\n", name);
- 		kfree_fsm(this);
- 		return NULL;
- 	}
--	memset(f, 0, sizeof(fsm));
- 	f->nr_events = nr_events;
- 	f->nr_states = nr_states;
- 	f->event_names = event_names;
- 	f->state_names = state_names;
- 	this->f = f;
- 
--	m = (fsm_function_t *)kmalloc(
--			sizeof(fsm_function_t) * nr_states * nr_events, order);
-+	m = kcalloc(nr_states*nr_events, sizeof(fsm_function_t), order);
- 	if (m == NULL) {
- 		printk(KERN_WARNING
- 			"fsm(%s): init_fsm: Couldn't alloc jumptable\n", name);
- 		kfree_fsm(this);
- 		return NULL;
- 	}
--	memset(m, 0, sizeof(fsm_function_t) * f->nr_states * f->nr_events);
- 	f->jumpmatrix = m;
- 
- 	for (i = 0; i < tmpl_len; i++) {
---- linux-2.6.16-rc4/drivers/s390/net/qeth_eddp.c.orig	2006-02-27 20:03:25.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/qeth_eddp.c	2006-02-27 20:04:24.000000000 +0100
-@@ -389,9 +389,8 @@ qeth_eddp_create_eddp_data(struct qeth_h
- 	struct qeth_eddp_data *eddp;
- 
- 	QETH_DBF_TEXT(trace, 5, "eddpcrda");
--	eddp = kmalloc(sizeof(struct qeth_eddp_data), GFP_ATOMIC);
-+	eddp = kzalloc(sizeof(struct qeth_eddp_data), GFP_ATOMIC);
- 	if (eddp){
--		memset(eddp, 0, sizeof(struct qeth_eddp_data));
- 		eddp->nhl = nhl;
- 		eddp->thl = thl;
- 		memcpy(&eddp->qh, qh, sizeof(struct qeth_hdr));
-@@ -542,12 +541,11 @@ qeth_eddp_create_context_generic(struct 
- 
- 	QETH_DBF_TEXT(trace, 5, "creddpcg");
- 	/* create the context and allocate pages */
--	ctx = kmalloc(sizeof(struct qeth_eddp_context), GFP_ATOMIC);
-+	ctx = kzalloc(sizeof(struct qeth_eddp_context), GFP_ATOMIC);
- 	if (ctx == NULL){
- 		QETH_DBF_TEXT(trace, 2, "ceddpcn1");
- 		return NULL;
- 	}
--	memset(ctx, 0, sizeof(struct qeth_eddp_context));
- 	ctx->type = QETH_LARGE_SEND_EDDP;
- 	qeth_eddp_calc_num_pages(ctx, skb, hdr_len);
- 	if (ctx->elements_per_skb > QETH_MAX_BUFFER_ELEMENTS(card)){
-@@ -555,13 +553,12 @@ qeth_eddp_create_context_generic(struct 
- 		kfree(ctx);
- 		return NULL;
- 	}
--	ctx->pages = kmalloc(ctx->num_pages * sizeof(u8 *), GFP_ATOMIC);
-+	ctx->pages = kcalloc(ctx->num_pages, sizeof(u8 *), GFP_ATOMIC);
- 	if (ctx->pages == NULL){
- 		QETH_DBF_TEXT(trace, 2, "ceddpcn2");
- 		kfree(ctx);
- 		return NULL;
- 	}
--	memset(ctx->pages, 0, ctx->num_pages * sizeof(u8 *));
- 	for (i = 0; i < ctx->num_pages; ++i){
- 		addr = (u8 *)__get_free_page(GFP_ATOMIC);
- 		if (addr == NULL){
-@@ -573,15 +570,13 @@ qeth_eddp_create_context_generic(struct 
- 		memset(addr, 0, PAGE_SIZE);
- 		ctx->pages[i] = addr;
- 	}
--	ctx->elements = kmalloc(ctx->num_elements *
-+	ctx->elements = kcalloc(ctx->num_elements,
- 				sizeof(struct qeth_eddp_element), GFP_ATOMIC);
- 	if (ctx->elements == NULL){
- 		QETH_DBF_TEXT(trace, 2, "ceddpcn4");
- 		qeth_eddp_free_context(ctx);
- 		return NULL;
- 	}
--	memset(ctx->elements, 0,
--	       ctx->num_elements * sizeof(struct qeth_eddp_element));
- 	/* reset num_elements; will be incremented again in fill_buffer to
- 	 * reflect number of actually used elements */
- 	ctx->num_elements = 0;
---- linux-2.6.16-rc4/drivers/s390/net/iucv.c.orig	2006-02-27 20:04:50.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/iucv.c	2006-02-27 20:05:58.000000000 +0100
-@@ -386,7 +386,7 @@ iucv_init(void)
- 	}
- 
- 	/* Note: GFP_DMA used used to get memory below 2G */
--	iucv_external_int_buffer = kmalloc(sizeof(iucv_GeneralInterrupt),
-+	iucv_external_int_buffer = kzalloc(sizeof(iucv_GeneralInterrupt),
- 					   GFP_KERNEL|GFP_DMA);
- 	if (!iucv_external_int_buffer) {
- 		printk(KERN_WARNING
-@@ -396,10 +396,9 @@ iucv_init(void)
- 		bus_unregister(&iucv_bus);
- 		return -ENOMEM;
- 	}
--	memset(iucv_external_int_buffer, 0, sizeof(iucv_GeneralInterrupt));
- 
- 	/* Initialize parameter pool */
--	iucv_param_pool = kmalloc(sizeof(iucv_param) * PARAM_POOL_SIZE,
-+	iucv_param_pool = kzalloc(sizeof(iucv_param) * PARAM_POOL_SIZE,
- 				  GFP_KERNEL|GFP_DMA);
- 	if (!iucv_param_pool) {
- 		printk(KERN_WARNING "%s: Could not allocate param pool\n",
-@@ -410,7 +409,6 @@ iucv_init(void)
- 		bus_unregister(&iucv_bus);
- 		return -ENOMEM;
- 	}
--	memset(iucv_param_pool, 0, sizeof(iucv_param) * PARAM_POOL_SIZE);
- 
- 	/* Initialize irq queue */
- 	INIT_LIST_HEAD(&iucv_irq_queue);
-@@ -793,15 +791,14 @@ iucv_register_program (__u8 pgmname[16],
- 		}
- 
- 		max_connections = iucv_query_maxconn();
--		iucv_pathid_table = kmalloc(max_connections * sizeof(handler *),
--				       GFP_ATOMIC);
-+		iucv_pathid_table = kcalloc(max_connections, sizeof(handler *),
-+					GFP_ATOMIC);
- 		if (iucv_pathid_table == NULL) {
- 			printk(KERN_WARNING "%s: iucv_pathid_table storage "
- 			       "allocation failed\n", __FUNCTION__);
- 			kfree(new_handler);
- 			return NULL;
- 		}
--		memset (iucv_pathid_table, 0, max_connections * sizeof(handler *));
- 	}
- 	memset(new_handler, 0, sizeof (handler));
- 	memcpy(new_handler->id.user_data, pgmname,
---- linux-2.6.16-rc4/drivers/s390/net/netiucv.c.orig	2006-02-27 20:06:07.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/net/netiucv.c	2006-02-27 20:06:36.000000000 +0100
-@@ -1728,14 +1728,13 @@ static int
- netiucv_register_device(struct net_device *ndev)
+-	b->legacy_io = kmalloc(sizeof(struct bin_attribute) * 2,
++	b->legacy_io = kzalloc(sizeof(struct bin_attribute) * 2,
+ 			       GFP_ATOMIC);
+ 	if (b->legacy_io) {
+-		memset(b->legacy_io, 0, sizeof(struct bin_attribute) * 2);
+ 		b->legacy_io->attr.name = "legacy_io";
+ 		b->legacy_io->size = 0xffff;
+ 		b->legacy_io->attr.mode = S_IRUSR | S_IWUSR;
+@@ -320,9 +319,8 @@ static struct pci_bus * __devinit pci_al
  {
- 	struct netiucv_priv *priv = ndev->priv;
--	struct device *dev = kmalloc(sizeof(struct device), GFP_KERNEL);
-+	struct device *dev = kzalloc(sizeof(struct device), GFP_KERNEL);
- 	int ret;
+ 	struct pci_bus *b;
  
- 
- 	IUCV_DBF_TEXT(trace, 3, __FUNCTION__);
- 
- 	if (dev) {
--		memset(dev, 0, sizeof(struct device));
- 		snprintf(dev->bus_id, BUS_ID_SIZE, "net%s", ndev->name);
- 		dev->bus = &iucv_bus;
- 		dev->parent = iucv_root;
-@@ -1784,11 +1783,9 @@ netiucv_new_connection(struct net_device
- {
- 	struct iucv_connection **clist = &iucv_connections;
- 	struct iucv_connection *conn =
--		(struct iucv_connection *)
--		kmalloc(sizeof(struct iucv_connection), GFP_KERNEL);
-+		kzalloc(sizeof(struct iucv_connection), GFP_KERNEL);
- 
- 	if (conn) {
--		memset(conn, 0, sizeof(struct iucv_connection));
- 		skb_queue_head_init(&conn->collect_queue);
- 		skb_queue_head_init(&conn->commit_queue);
- 		conn->max_buffsize = NETIUCV_BUFSIZE_DEFAULT;
---- linux-2.6.16-rc4/drivers/s390/block/dasd.c.orig	2006-02-27 20:07:09.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/block/dasd.c	2006-02-27 20:08:19.000000000 +0100
-@@ -73,10 +73,9 @@ dasd_alloc_device(void)
- {
- 	struct dasd_device *device;
- 
--	device = kmalloc(sizeof (struct dasd_device), GFP_ATOMIC);
-+	device = kzalloc(sizeof (struct dasd_device), GFP_ATOMIC);
- 	if (device == NULL)
- 		return ERR_PTR(-ENOMEM);
--	memset(device, 0, sizeof (struct dasd_device));
- 	/* open_count = 0 means device online but not in use */
- 	atomic_set(&device->open_count, -1);
- 
-@@ -524,29 +523,26 @@ dasd_kmalloc_request(char *magic, int cp
- 	     (cplength*sizeof(struct ccw1)) > PAGE_SIZE)
- 		BUG();
- 
--	cqr = kmalloc(sizeof(struct dasd_ccw_req), GFP_ATOMIC);
-+	cqr = kzalloc(sizeof(struct dasd_ccw_req), GFP_ATOMIC);
- 	if (cqr == NULL)
- 		return ERR_PTR(-ENOMEM);
--	memset(cqr, 0, sizeof(struct dasd_ccw_req));
- 	cqr->cpaddr = NULL;
- 	if (cplength > 0) {
--		cqr->cpaddr = kmalloc(cplength*sizeof(struct ccw1),
-+		cqr->cpaddr = kcalloc(cplength, sizeof(struct ccw1),
- 				      GFP_ATOMIC | GFP_DMA);
- 		if (cqr->cpaddr == NULL) {
- 			kfree(cqr);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		memset(cqr->cpaddr, 0, cplength*sizeof(struct ccw1));
- 	}
- 	cqr->data = NULL;
- 	if (datasize > 0) {
--		cqr->data = kmalloc(datasize, GFP_ATOMIC | GFP_DMA);
-+		cqr->data = kzalloc(datasize, GFP_ATOMIC | GFP_DMA);
- 		if (cqr->data == NULL) {
- 			kfree(cqr->cpaddr);
- 			kfree(cqr);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		memset(cqr->data, 0, datasize);
- 	}
- 	strncpy((char *) &cqr->magic, magic, 4);
- 	ASCEBC((char *) &cqr->magic, 4);
---- linux-2.6.16-rc4/drivers/s390/block/dcssblk.c.orig	2006-02-27 20:08:28.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/block/dcssblk.c	2006-02-27 20:08:38.000000000 +0100
-@@ -388,12 +388,11 @@ dcssblk_add_store(struct device *dev, st
- 	/*
- 	 * get a struct dcssblk_dev_info
- 	 */
--	dev_info = kmalloc(sizeof(struct dcssblk_dev_info), GFP_KERNEL);
-+	dev_info = kzalloc(sizeof(struct dcssblk_dev_info), GFP_KERNEL);
- 	if (dev_info == NULL) {
- 		rc = -ENOMEM;
- 		goto out;
- 	}
--	memset(dev_info, 0, sizeof(struct dcssblk_dev_info));
- 
- 	strcpy(dev_info->segment_name, local_buf);
- 	strlcpy(dev_info->dev.bus_id, local_buf, BUS_ID_SIZE);
---- linux-2.6.16-rc4/drivers/s390/crypto/z90main.c.orig	2006-02-27 20:09:03.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/crypto/z90main.c	2006-02-27 20:10:08.000000000 +0100
-@@ -707,13 +707,12 @@ z90crypt_open(struct inode *inode, struc
- 	if (quiesce_z90crypt)
- 		return -EQUIESCE;
- 
--	private_data_p = kmalloc(sizeof(struct priv_data), GFP_KERNEL);
-+	private_data_p = kzalloc(sizeof(struct priv_data), GFP_KERNEL);
- 	if (!private_data_p) {
- 		PRINTK("Memory allocate failed\n");
- 		return -ENOMEM;
- 	}
- 
--	memset((void *)private_data_p, 0, sizeof(struct priv_data));
- 	private_data_p->status = STAT_OPEN;
- 	private_data_p->opener_pid = PID();
- 	filp->private_data = private_data_p;
-@@ -2736,13 +2735,11 @@ create_z90crypt(int *cdx_p)
- 	z90crypt.max_count = Z90CRYPT_NUM_DEVS;
- 	z90crypt.cdx = *cdx_p;
- 
--	hdware_blk_p = (struct hdware_block *)
--		kmalloc(sizeof(struct hdware_block), GFP_ATOMIC);
-+	hdware_blk_p = kzalloc(sizeof(struct hdware_block), GFP_ATOMIC);
- 	if (!hdware_blk_p) {
- 		PDEBUG("kmalloc for hardware block failed\n");
- 		return ENOMEM;
- 	}
--	memset(hdware_blk_p, 0x00, sizeof(struct hdware_block));
- 	z90crypt.hdware_info = hdware_blk_p;
- 
- 	return 0;
-@@ -2977,12 +2974,11 @@ create_crypto_device(int index)
- 		total_size = sizeof(struct device) +
- 			     z90crypt.q_depth_array[index] * sizeof(int);
- 
--		dev_ptr = (struct device *) kmalloc(total_size, GFP_ATOMIC);
-+		dev_ptr = kzalloc(total_size, GFP_ATOMIC);
- 		if (!dev_ptr) {
- 			PRINTK("kmalloc device %d failed\n", index);
- 			return ENOMEM;
- 		}
--		memset(dev_ptr, 0, total_size);
- 		dev_ptr->dev_resp_p = kmalloc(MAX_RESPONSE_SIZE, GFP_ATOMIC);
- 		if (!dev_ptr->dev_resp_p) {
- 			kfree(dev_ptr);
---- linux-2.6.16-rc4/drivers/s390/char/monreader.c.orig	2006-02-27 20:10:22.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/monreader.c	2006-02-27 20:11:23.000000000 +0100
-@@ -257,14 +257,13 @@ mon_alloc_mem(void)
- 	int i,j;
- 	struct mon_private *monpriv;
- 
--	monpriv = kmalloc(sizeof(struct mon_private), GFP_KERNEL);
-+	monpriv = kzalloc(sizeof(struct mon_private), GFP_KERNEL);
- 	if (!monpriv) {
- 		P_ERROR("no memory for monpriv\n");
+-	b = kmalloc(sizeof(*b), GFP_KERNEL);
++	b = kzalloc(sizeof(*b), GFP_KERNEL);
+ 	if (b) {
+-		memset(b, 0, sizeof(*b));
+ 		INIT_LIST_HEAD(&b->node);
+ 		INIT_LIST_HEAD(&b->children);
+ 		INIT_LIST_HEAD(&b->devices);
+@@ -797,11 +795,10 @@ pci_scan_device(struct pci_bus *bus, int
+ 	if (pci_bus_read_config_byte(bus, devfn, PCI_HEADER_TYPE, &hdr_type))
  		return NULL;
- 	}
--	memset(monpriv, 0, sizeof(struct mon_private));
- 	for (i = 0; i < MON_MSGLIM; i++) {
--		monpriv->msg_array[i] = kmalloc(sizeof(struct mon_msg),
-+		monpriv->msg_array[i] = kzalloc(sizeof(struct mon_msg),
- 						    GFP_KERNEL);
- 		if (!monpriv->msg_array[i]) {
- 			P_ERROR("open, no memory for msg_array\n");
-@@ -272,7 +271,6 @@ mon_alloc_mem(void)
- 				kfree(monpriv->msg_array[j]);
- 			return NULL;
- 		}
--		memset(monpriv->msg_array[i], 0, sizeof(struct mon_msg));
- 	}
- 	return monpriv;
- }
---- linux-2.6.16-rc4/drivers/s390/char/raw3270.c.orig	2006-02-27 20:11:32.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/raw3270.c	2006-02-27 20:11:51.000000000 +0100
-@@ -115,10 +115,9 @@ raw3270_request_alloc(size_t size)
- 	struct raw3270_request *rq;
  
- 	/* Allocate request structure */
--	rq = kmalloc(sizeof(struct raw3270_request), GFP_KERNEL | GFP_DMA);
-+	rq = kzalloc(sizeof(struct raw3270_request), GFP_KERNEL | GFP_DMA);
- 	if (!rq)
- 		return ERR_PTR(-ENOMEM);
--	memset(rq, 0, sizeof(struct raw3270_request));
- 
- 	/* alloc output buffer. */
- 	if (size > 0) {
---- linux-2.6.16-rc4/drivers/s390/char/fs3270.c.orig	2006-02-27 20:12:00.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/fs3270.c	2006-02-27 20:12:14.000000000 +0100
-@@ -368,10 +368,9 @@ fs3270_alloc_view(void)
- {
- 	struct fs3270 *fp;
- 
--	fp = (struct fs3270 *) kmalloc(sizeof(struct fs3270),GFP_KERNEL);
-+	fp = kzalloc(sizeof(struct fs3270),GFP_KERNEL);
- 	if (!fp)
- 		return ERR_PTR(-ENOMEM);
--	memset(fp, 0, sizeof(struct fs3270));
- 	fp->init = raw3270_request_alloc(0);
- 	if (IS_ERR(fp->init)) {
- 		kfree(fp);
---- linux-2.6.16-rc4/drivers/s390/char/tape_core.c.orig	2006-02-27 20:12:30.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/tape_core.c	2006-02-27 20:13:49.000000000 +0100
-@@ -453,16 +453,14 @@ tape_alloc_device(void)
- {
- 	struct tape_device *device;
- 
--	device = (struct tape_device *)
--		kmalloc(sizeof(struct tape_device), GFP_KERNEL);
-+	device = kzalloc(sizeof(struct tape_device), GFP_KERNEL);
- 	if (device == NULL) {
- 		DBF_EXCEPTION(2, "ti:no mem\n");
- 		PRINT_INFO ("can't allocate memory for "
- 			    "tape info structure\n");
- 		return ERR_PTR(-ENOMEM);
- 	}
--	memset(device, 0, sizeof(struct tape_device));
--	device->modeset_byte = (char *) kmalloc(1, GFP_KERNEL | GFP_DMA);
-+	device->modeset_byte = kmalloc(1, GFP_KERNEL | GFP_DMA);
- 	if (device->modeset_byte == NULL) {
- 		DBF_EXCEPTION(2, "ti:no mem\n");
- 		PRINT_INFO("can't allocate memory for modeset byte\n");
-@@ -659,34 +657,30 @@ tape_alloc_request(int cplength, int dat
- 
- 	DBF_LH(6, "tape_alloc_request(%d, %d)\n", cplength, datasize);
- 
--	request = (struct tape_request *) kmalloc(sizeof(struct tape_request),
--						  GFP_KERNEL);
-+	request = kzalloc(sizeof(struct tape_request), GFP_KERNEL);
- 	if (request == NULL) {
- 		DBF_EXCEPTION(1, "cqra nomem\n");
- 		return ERR_PTR(-ENOMEM);
- 	}
--	memset(request, 0, sizeof(struct tape_request));
- 	/* allocate channel program */
- 	if (cplength > 0) {
--		request->cpaddr = kmalloc(cplength*sizeof(struct ccw1),
-+		request->cpaddr = kcalloc(cplength, sizeof(struct ccw1),
- 					  GFP_ATOMIC | GFP_DMA);
- 		if (request->cpaddr == NULL) {
- 			DBF_EXCEPTION(1, "cqra nomem\n");
- 			kfree(request);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		memset(request->cpaddr, 0, cplength*sizeof(struct ccw1));
- 	}
- 	/* alloc small kernel buffer */
- 	if (datasize > 0) {
--		request->cpdata = kmalloc(datasize, GFP_KERNEL | GFP_DMA);
-+		request->cpdata = kzalloc(datasize, GFP_KERNEL | GFP_DMA);
- 		if (request->cpdata == NULL) {
- 			DBF_EXCEPTION(1, "cqra nomem\n");
- 			kfree(request->cpaddr);
- 			kfree(request);
- 			return ERR_PTR(-ENOMEM);
- 		}
--		memset(request->cpdata, 0, datasize);
- 	}
- 	DBF_LH(6, "New request %p(%p/%p)\n", request, request->cpaddr,
- 		request->cpdata);
---- linux-2.6.16-rc4/drivers/s390/char/tape_class.c.orig	2006-02-27 20:14:35.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/tape_class.c	2006-02-27 20:14:45.000000000 +0100
-@@ -44,11 +44,10 @@ struct tape_class_device *register_tape_
- 	int		rc;
- 	char *		s;
- 
--	tcd = kmalloc(sizeof(struct tape_class_device), GFP_KERNEL);
-+	tcd = kzalloc(sizeof(struct tape_class_device), GFP_KERNEL);
- 	if (!tcd)
- 		return ERR_PTR(-ENOMEM);
- 
--	memset(tcd, 0, sizeof(struct tape_class_device));
- 	strncpy(tcd->device_name, device_name, TAPECLASS_NAME_LEN);
- 	for (s = strchr(tcd->device_name, '/'); s; s = strchr(s, '/'))
- 		*s = '!';
---- linux-2.6.16-rc4/drivers/s390/char/keyboard.c.orig	2006-02-27 20:14:53.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/keyboard.c	2006-02-27 20:15:34.000000000 +0100
-@@ -50,14 +50,12 @@ kbd_alloc(void) {
- 	struct kbd_data *kbd;
- 	int i, len;
- 
--	kbd = kmalloc(sizeof(struct kbd_data), GFP_KERNEL);
-+	kbd = kzalloc(sizeof(struct kbd_data), GFP_KERNEL);
- 	if (!kbd)
- 		goto out;
--	memset(kbd, 0, sizeof(struct kbd_data));
--	kbd->key_maps = kmalloc(sizeof(key_maps), GFP_KERNEL);
-+	kbd->key_maps = kzalloc(sizeof(key_maps), GFP_KERNEL);
- 	if (!key_maps)
- 		goto out_kbd;
--	memset(kbd->key_maps, 0, sizeof(key_maps));
- 	for (i = 0; i < ARRAY_SIZE(key_maps); i++) {
- 		if (key_maps[i]) {
- 			kbd->key_maps[i] =
-@@ -68,10 +66,9 @@ kbd_alloc(void) {
- 			       sizeof(u_short)*NR_KEYS);
- 		}
- 	}
--	kbd->func_table = kmalloc(sizeof(func_table), GFP_KERNEL);
-+	kbd->func_table = kzalloc(sizeof(func_table), GFP_KERNEL);
- 	if (!kbd->func_table)
- 		goto out_maps;
--	memset(kbd->func_table, 0, sizeof(func_table));
- 	for (i = 0; i < ARRAY_SIZE(func_table); i++) {
- 		if (func_table[i]) {
- 			len = strlen(func_table[i]) + 1;
-@@ -82,10 +79,9 @@ kbd_alloc(void) {
- 		}
- 	}
- 	kbd->fn_handler =
--		kmalloc(sizeof(fn_handler_fn *) * NR_FN_HANDLER, GFP_KERNEL);
-+		kzalloc(sizeof(fn_handler_fn *) * NR_FN_HANDLER, GFP_KERNEL);
- 	if (!kbd->fn_handler)
- 		goto out_func;
--	memset(kbd->fn_handler, 0, sizeof(fn_handler_fn *) * NR_FN_HANDLER);
- 	kbd->accent_table =
- 		kmalloc(sizeof(struct kbdiacr)*MAX_DIACR, GFP_KERNEL);
- 	if (!kbd->accent_table)
---- linux-2.6.16-rc4/drivers/s390/char/vmlogrdr.c.orig	2006-02-27 20:15:44.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/vmlogrdr.c	2006-02-27 20:16:02.000000000 +0100
-@@ -759,9 +759,8 @@ vmlogrdr_register_device(struct vmlogrdr
- 	struct device *dev;
- 	int ret;
- 
--	dev = kmalloc(sizeof(struct device), GFP_KERNEL);
-+	dev = kzalloc(sizeof(struct device), GFP_KERNEL);
- 	if (dev) {
--		memset(dev, 0, sizeof(struct device));
- 		snprintf(dev->bus_id, BUS_ID_SIZE, "%s",
- 			 priv->internal_name);
- 		dev->bus = &iucv_bus;
---- linux-2.6.16-rc4/drivers/s390/char/tty3270.c.orig	2006-02-27 20:16:12.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/char/tty3270.c	2006-02-27 20:16:40.000000000 +0100
-@@ -691,10 +691,9 @@ tty3270_alloc_view(void)
- 	struct tty3270 *tp;
- 	int pages;
- 
--	tp = kmalloc(sizeof(struct tty3270),GFP_KERNEL);
-+	tp = kzalloc(sizeof(struct tty3270), GFP_KERNEL);
- 	if (!tp)
- 		goto out_err;
--	memset(tp, 0, sizeof(struct tty3270));
- 	tp->freemem_pages =
- 		kmalloc(sizeof(void *) * TTY3270_STRING_PAGES, GFP_KERNEL);
- 	if (!tp->freemem_pages)
-@@ -767,16 +766,14 @@ tty3270_alloc_screen(struct tty3270 *tp)
- 	int lines;
- 
- 	size = sizeof(struct tty3270_line) * (tp->view.rows - 2);
--	tp->screen = kmalloc(size, GFP_KERNEL);
-+	tp->screen = kzalloc(size, GFP_KERNEL);
- 	if (!tp->screen)
- 		goto out_err;
--	memset(tp->screen, 0, size);
- 	for (lines = 0; lines < tp->view.rows - 2; lines++) {
- 		size = sizeof(struct tty3270_cell) * tp->view.cols;
--		tp->screen[lines].cells = kmalloc(size, GFP_KERNEL);
-+		tp->screen[lines].cells = kzalloc(size, GFP_KERNEL);
- 		if (!tp->screen[lines].cells)
- 			goto out_screen;
--		memset(tp->screen[lines].cells, 0, size);
- 	}
- 	return 0;
- out_screen:
---- linux-2.6.16-rc4/drivers/s390/s390_rdev.c.orig	2006-02-27 20:16:54.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/s390_rdev.c	2006-02-27 20:17:07.000000000 +0100
-@@ -27,10 +27,9 @@ s390_root_dev_register(const char *name)
- 
- 	if (!strlen(name))
- 		return ERR_PTR(-EINVAL);
--	dev = kmalloc(sizeof(struct device), GFP_KERNEL);
-+	dev = kzalloc(sizeof(struct device), GFP_KERNEL);
+-	dev = kmalloc(sizeof(struct pci_dev), GFP_KERNEL);
++	dev = kzalloc(sizeof(struct pci_dev), GFP_KERNEL);
  	if (!dev)
- 		return ERR_PTR(-ENOMEM);
--	memset(dev, 0, sizeof(struct device));
- 	strncpy(dev->bus_id, name, min(strlen(name), (size_t)BUS_ID_SIZE));
- 	dev->release = s390_root_dev_release;
- 	ret = device_register(dev);
---- linux-2.6.16-rc4/drivers/s390/cio/chsc.c.orig	2006-02-27 20:17:17.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/cio/chsc.c	2006-02-27 20:17:29.000000000 +0100
-@@ -1016,10 +1016,9 @@ new_channel_path(int chpid)
- 	struct channel_path *chp;
- 	int ret;
+ 		return NULL;
  
--	chp = kmalloc(sizeof(struct channel_path), GFP_KERNEL);
-+	chp = kzalloc(sizeof(struct channel_path), GFP_KERNEL);
- 	if (!chp)
- 		return -ENOMEM;
--	memset(chp, 0, sizeof(struct channel_path));
+-	memset(dev, 0, sizeof(struct pci_dev));
+ 	dev->bus = bus;
+ 	dev->sysdata = bus->sysdata;
+ 	dev->dev.parent = bus->bridge;
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_ebda.c.orig	2006-02-28 15:00:51.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_ebda.c	2006-02-28 15:07:04.000000000 +0100
+@@ -72,13 +72,7 @@ static int ebda_rio_table (void);
  
- 	/* fill in status, etc. */
- 	chp->id = chpid;
---- linux-2.6.16-rc4/drivers/s390/cio/qdio.c.orig	2006-02-27 20:17:37.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/cio/qdio.c	2006-02-27 20:19:28.000000000 +0100
-@@ -1677,16 +1677,14 @@ qdio_alloc_qs(struct qdio_irq *irq_ptr,
- 	int result=-ENOMEM;
- 
- 	for (i=0;i<no_input_qs;i++) {
--		q=kmalloc(sizeof(struct qdio_q),GFP_KERNEL);
-+		q=kzalloc(sizeof(struct qdio_q),GFP_KERNEL);
- 
- 		if (!q) {
- 			QDIO_PRINT_ERR("kmalloc of q failed!\n");
- 			goto out;
- 		}
- 
--		memset(q,0,sizeof(struct qdio_q));
+ static struct ebda_hpc_list * __init alloc_ebda_hpc_list (void)
+ {
+-	struct ebda_hpc_list *list;
 -
--		q->slib=kmalloc(PAGE_SIZE,GFP_KERNEL);
-+		q->slib = kmalloc(PAGE_SIZE, GFP_KERNEL);
- 		if (!q->slib) {
- 			QDIO_PRINT_ERR("kmalloc of slib failed!\n");
- 			goto out;
-@@ -1696,14 +1694,12 @@ qdio_alloc_qs(struct qdio_irq *irq_ptr,
- 	}
- 
- 	for (i=0;i<no_output_qs;i++) {
--		q=kmalloc(sizeof(struct qdio_q),GFP_KERNEL);
-+		q = kzalloc(sizeof(struct qdio_q), GFP_KERNEL);
- 
- 		if (!q) {
- 			goto out;
- 		}
- 
--		memset(q,0,sizeof(struct qdio_q));
--
- 		q->slib=kmalloc(PAGE_SIZE,GFP_KERNEL);
- 		if (!q->slib) {
- 			QDIO_PRINT_ERR("kmalloc of slib failed!\n");
-@@ -2975,7 +2971,7 @@ qdio_allocate(struct qdio_initialize *in
- 	qdio_allocate_do_dbf(init_data);
- 
- 	/* create irq */
--	irq_ptr=kmalloc(sizeof(struct qdio_irq), GFP_KERNEL | GFP_DMA);
-+	irq_ptr = kzalloc(sizeof(struct qdio_irq), GFP_KERNEL | GFP_DMA);
- 
- 	QDIO_DBF_TEXT0(0,setup,"irq_ptr:");
- 	QDIO_DBF_HEX0(0,setup,&irq_ptr,sizeof(void*));
-@@ -2985,8 +2981,6 @@ qdio_allocate(struct qdio_initialize *in
- 		return -ENOMEM;
- 	}
- 
--	memset(irq_ptr,0,sizeof(struct qdio_irq));
--
- 	init_MUTEX(&irq_ptr->setting_up_sema);
- 
- 	/* QDR must be in DMA area since CCW data address is only 32 bit */
-@@ -3677,10 +3671,10 @@ qdio_get_qdio_memory(void)
- 
- 	for (i=1;i<INDICATORS_PER_CACHELINE;i++)
- 		indicator_used[i]=0;
--	indicators=(__u32*)kmalloc(sizeof(__u32)*(INDICATORS_PER_CACHELINE),
-+	indicators = kzalloc(sizeof(__u32)*(INDICATORS_PER_CACHELINE),
- 				   GFP_KERNEL);
--       	if (!indicators) return -ENOMEM;
--	memset(indicators,0,sizeof(__u32)*(INDICATORS_PER_CACHELINE));
-+       	if (!indicators)
-+		return -ENOMEM;
- 	return 0;
+-	list = kmalloc (sizeof (struct ebda_hpc_list), GFP_KERNEL);
+-	if (!list)
+-		return NULL;
+-	memset (list, 0, sizeof (*list));
+-	return list;
++	return kzalloc(sizeof(struct ebda_hpc_list), GFP_KERNEL);
  }
  
---- linux-2.6.16-rc4/drivers/s390/cio/device.c.orig	2006-02-27 20:19:38.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/cio/device.c	2006-02-27 20:20:11.000000000 +0100
-@@ -826,17 +826,15 @@ io_subchannel_probe (struct subchannel *
- 			get_device(&cdev->dev);
- 		return 0;
- 	}
--	cdev  = kmalloc (sizeof(*cdev), GFP_KERNEL);
-+	cdev = kzalloc(sizeof(*cdev), GFP_KERNEL);
- 	if (!cdev)
- 		return -ENOMEM;
--	memset(cdev, 0, sizeof(struct ccw_device));
--	cdev->private = kmalloc(sizeof(struct ccw_device_private), 
-+	cdev->private = kzalloc(sizeof(struct ccw_device_private), 
- 				GFP_KERNEL | GFP_DMA);
- 	if (!cdev->private) {
- 		kfree(cdev);
- 		return -ENOMEM;
- 	}
--	memset(cdev->private, 0, sizeof(struct ccw_device_private));
- 	atomic_set(&cdev->private->onoff, 0);
- 	cdev->dev = (struct device) {
- 		.parent = &sch->dev,
---- linux-2.6.16-rc4/drivers/s390/cio/device_ops.c.orig	2006-02-27 20:20:51.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/cio/device_ops.c	2006-02-27 20:21:25.000000000 +0100
-@@ -359,10 +359,9 @@ read_dev_chars (struct ccw_device *cdev,
- 	CIO_TRACE_EVENT (4, "rddevch");
- 	CIO_TRACE_EVENT (4, sch->dev.bus_id);
+ static struct controller *alloc_ebda_hpc (u32 slot_count, u32 bus_count)
+@@ -87,21 +81,18 @@ static struct controller *alloc_ebda_hpc
+ 	struct ebda_hpc_slot *slots;
+ 	struct ebda_hpc_bus *buses;
  
--	rdc_ccw = kmalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
-+	rdc_ccw = kzalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
- 	if (!rdc_ccw)
- 		return -ENOMEM;
--	memset(rdc_ccw, 0, sizeof(struct ccw1));
- 	rdc_ccw->cmd_code = CCW_CMD_RDC;
- 	rdc_ccw->count = length;
- 	rdc_ccw->flags = CCW_FLAG_SLI;
-@@ -426,16 +425,14 @@ read_conf_data_lpm (struct ccw_device *c
- 	if (!ciw || ciw->cmd == 0)
- 		return -EOPNOTSUPP;
+-	controller = kmalloc (sizeof (struct controller), GFP_KERNEL);
++	controller = kzalloc(sizeof(struct controller), GFP_KERNEL);
+ 	if (!controller)
+ 		goto error;
+-	memset (controller, 0, sizeof (*controller));
  
--	rcd_ccw = kmalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
-+	rcd_ccw = kzalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
- 	if (!rcd_ccw)
- 		return -ENOMEM;
--	memset(rcd_ccw, 0, sizeof(struct ccw1));
--	rcd_buf = kmalloc(ciw->count, GFP_KERNEL | GFP_DMA);
-+	rcd_buf = kzalloc(ciw->count, GFP_KERNEL | GFP_DMA);
-  	if (!rcd_buf) {
- 		kfree(rcd_ccw);
+-	slots = kmalloc (sizeof (struct ebda_hpc_slot) * slot_count, GFP_KERNEL);
++	slots = kcalloc(slot_count, sizeof(struct ebda_hpc_slot), GFP_KERNEL);
+ 	if (!slots)
+ 		goto error_contr;
+-	memset (slots, 0, sizeof (*slots) * slot_count);
+ 	controller->slots = slots;
+ 
+-	buses = kmalloc (sizeof (struct ebda_hpc_bus) * bus_count, GFP_KERNEL);
++	buses = kcalloc(bus_count, sizeof(struct ebda_hpc_bus), GFP_KERNEL);
+ 	if (!buses)
+ 		goto error_slots;
+-	memset (buses, 0, sizeof (*buses) * bus_count);
+ 	controller->buses = buses;
+ 
+ 	return controller;
+@@ -122,24 +113,12 @@ static void free_ebda_hpc (struct contro
+ 
+ static struct ebda_rsrc_list * __init alloc_ebda_rsrc_list (void)
+ {
+-	struct ebda_rsrc_list *list;
+-
+-	list = kmalloc (sizeof (struct ebda_rsrc_list), GFP_KERNEL);
+-	if (!list)
+-		return NULL;
+-	memset (list, 0, sizeof (*list));
+-	return list;
++	return kzalloc(sizeof(struct ebda_rsrc_list), GFP_KERNEL);
+ }
+ 
+ static struct ebda_pci_rsrc *alloc_ebda_pci_rsrc (void)
+ {
+-	struct ebda_pci_rsrc *resource;
+-
+-	resource = kmalloc (sizeof (struct ebda_pci_rsrc), GFP_KERNEL);
+-	if (!resource)
+-		return NULL;
+-	memset (resource, 0, sizeof (*resource));
+-	return resource;
++	return kzalloc(sizeof(struct ebda_pci_rsrc), GFP_KERNEL);
+ }
+ 
+ static void __init print_bus_info (void)
+@@ -390,10 +369,9 @@ int __init ibmphp_access_ebda (void)
+ 			debug ("now enter io table ---\n");
+ 			debug ("rio blk id: %x\n", blk_id);
+ 
+-			rio_table_ptr = kmalloc (sizeof (struct rio_table_hdr), GFP_KERNEL);
++			rio_table_ptr = kzalloc(sizeof(struct rio_table_hdr), GFP_KERNEL);
+ 			if (!rio_table_ptr)
+ 				return -ENOMEM; 
+-			memset (rio_table_ptr, 0, sizeof (struct rio_table_hdr) );
+ 			rio_table_ptr->ver_num = readb (io_mem + offset);
+ 			rio_table_ptr->scal_count = readb (io_mem + offset + 1);
+ 			rio_table_ptr->riodev_count = readb (io_mem + offset + 2);
+@@ -445,10 +423,9 @@ static int __init ebda_rio_table (void)
+ 
+ 	// we do concern about rio details
+ 	for (i = 0; i < rio_table_ptr->riodev_count; i++) {
+-		rio_detail_ptr = kmalloc (sizeof (struct rio_detail), GFP_KERNEL);
++		rio_detail_ptr = kzalloc(sizeof(struct rio_detail), GFP_KERNEL);
+ 		if (!rio_detail_ptr)
+ 			return -ENOMEM;
+-		memset (rio_detail_ptr, 0, sizeof (struct rio_detail));
+ 		rio_detail_ptr->rio_node_id = readb (io_mem + offset);
+ 		rio_detail_ptr->bbar = readl (io_mem + offset + 1);
+ 		rio_detail_ptr->rio_type = readb (io_mem + offset + 5);
+@@ -503,10 +480,9 @@ static int __init combine_wpg_for_chassi
+ 		rio_detail_ptr = list_entry (list_head_ptr, struct rio_detail, rio_detail_list);
+ 		opt_rio_ptr = search_opt_vg (rio_detail_ptr->chassis_num);
+ 		if (!opt_rio_ptr) {
+-			opt_rio_ptr = (struct opt_rio *) kmalloc (sizeof (struct opt_rio), GFP_KERNEL);
++			opt_rio_ptr = kzalloc(sizeof(struct opt_rio), GFP_KERNEL);
+ 			if (!opt_rio_ptr)
+ 				return -ENOMEM;
+-			memset (opt_rio_ptr, 0, sizeof (struct opt_rio));
+ 			opt_rio_ptr->rio_type = rio_detail_ptr->rio_type;
+ 			opt_rio_ptr->chassis_num = rio_detail_ptr->chassis_num;
+ 			opt_rio_ptr->first_slot_num = rio_detail_ptr->first_slot_num;
+@@ -546,10 +522,9 @@ static int combine_wpg_for_expansion (vo
+ 		rio_detail_ptr = list_entry (list_head_ptr, struct rio_detail, rio_detail_list);
+ 		opt_rio_lo_ptr = search_opt_lo (rio_detail_ptr->chassis_num);
+ 		if (!opt_rio_lo_ptr) {
+-			opt_rio_lo_ptr = (struct opt_rio_lo *) kmalloc (sizeof (struct opt_rio_lo), GFP_KERNEL);
++			opt_rio_lo_ptr = kzalloc(sizeof(struct opt_rio_lo), GFP_KERNEL);
+ 			if (!opt_rio_lo_ptr)
+ 				return -ENOMEM;
+-			memset (opt_rio_lo_ptr, 0, sizeof (struct opt_rio_lo));
+ 			opt_rio_lo_ptr->rio_type = rio_detail_ptr->rio_type;
+ 			opt_rio_lo_ptr->chassis_num = rio_detail_ptr->chassis_num;
+ 			opt_rio_lo_ptr->first_slot_num = rio_detail_ptr->first_slot_num;
+@@ -842,12 +817,11 @@ static int __init ebda_rsrc_controller (
+ 
+ 			bus_info_ptr2 = ibmphp_find_same_bus_num (slot_ptr->slot_bus_num);
+ 			if (!bus_info_ptr2) {
+-				bus_info_ptr1 = (struct bus_info *) kmalloc (sizeof (struct bus_info), GFP_KERNEL);
++				bus_info_ptr1 = kzalloc(sizeof(struct bus_info), GFP_KERNEL);
+ 				if (!bus_info_ptr1) {
+ 					rc = -ENOMEM;
+ 					goto error_no_hp_slot;
+ 				}
+-				memset (bus_info_ptr1, 0, sizeof (struct bus_info));
+ 				bus_info_ptr1->slot_min = slot_ptr->slot_num;
+ 				bus_info_ptr1->slot_max = slot_ptr->slot_num;
+ 				bus_info_ptr1->slot_count += 1;
+@@ -946,19 +920,17 @@ static int __init ebda_rsrc_controller (
+ 		// register slots with hpc core as well as create linked list of ibm slot
+ 		for (index = 0; index < hpc_ptr->slot_count; index++) {
+ 
+-			hp_slot_ptr = kmalloc(sizeof(*hp_slot_ptr), GFP_KERNEL);
++			hp_slot_ptr = kzalloc(sizeof(*hp_slot_ptr), GFP_KERNEL);
+ 			if (!hp_slot_ptr) {
+ 				rc = -ENOMEM;
+ 				goto error_no_hp_slot;
+ 			}
+-			memset(hp_slot_ptr, 0, sizeof(*hp_slot_ptr));
+ 
+-			hp_slot_ptr->info = kmalloc (sizeof(struct hotplug_slot_info), GFP_KERNEL);
++			hp_slot_ptr->info = kzalloc(sizeof(struct hotplug_slot_info), GFP_KERNEL);
+ 			if (!hp_slot_ptr->info) {
+ 				rc = -ENOMEM;
+ 				goto error_no_hp_info;
+ 			}
+-			memset(hp_slot_ptr->info, 0, sizeof(struct hotplug_slot_info));
+ 
+ 			hp_slot_ptr->name = kmalloc(30, GFP_KERNEL);
+ 			if (!hp_slot_ptr->name) {
+@@ -966,12 +938,11 @@ static int __init ebda_rsrc_controller (
+ 				goto error_no_hp_name;
+ 			}
+ 
+-			tmp_slot = kmalloc(sizeof(*tmp_slot), GFP_KERNEL);
++			tmp_slot = kzalloc(sizeof(*tmp_slot), GFP_KERNEL);
+ 			if (!tmp_slot) {
+ 				rc = -ENOMEM;
+ 				goto error_no_slot;
+ 			}
+-			memset(tmp_slot, 0, sizeof(*tmp_slot));
+ 
+ 			tmp_slot->flag = TRUE;
+ 
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/pciehp_core.c.orig	2006-02-28 15:07:09.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/pciehp_core.c	2006-02-28 15:08:14.000000000 +0100
+@@ -117,27 +117,23 @@ static int init_slots(struct controller 
+ 	slot_number = ctrl->first_slot;
+ 
+ 	while (number_of_slots) {
+-		slot = kmalloc(sizeof(*slot), GFP_KERNEL);
++		slot = kzalloc(sizeof(*slot), GFP_KERNEL);
+ 		if (!slot)
+ 			goto error;
+ 
+-		memset(slot, 0, sizeof(struct slot));
+ 		slot->hotplug_slot =
+-				kmalloc(sizeof(*(slot->hotplug_slot)),
++				kzalloc(sizeof(*(slot->hotplug_slot)),
+ 						GFP_KERNEL);
+ 		if (!slot->hotplug_slot)
+ 			goto error_slot;
+ 		hotplug_slot = slot->hotplug_slot;
+-		memset(hotplug_slot, 0, sizeof(struct hotplug_slot));
+ 
+ 		hotplug_slot->info =
+-			kmalloc(sizeof(*(hotplug_slot->info)),
++			kzalloc(sizeof(*(hotplug_slot->info)),
+ 						GFP_KERNEL);
+ 		if (!hotplug_slot->info)
+ 			goto error_hpslot;
+ 		hotplug_slot_info = hotplug_slot->info;
+-		memset(hotplug_slot_info, 0,
+-					sizeof(struct hotplug_slot_info));
+ 		hotplug_slot->name = kmalloc(SLOT_NAME_SIZE, GFP_KERNEL);
+ 		if (!hotplug_slot->name)
+ 			goto error_info;
+@@ -373,12 +369,11 @@ static int pciehp_probe(struct pcie_devi
+ 	u8 value;
+ 	struct pci_dev *pdev;
+ 	
+-	ctrl = kmalloc(sizeof(*ctrl), GFP_KERNEL);
++	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
+ 	if (!ctrl) {
+ 		err("%s : out of memory\n", __FUNCTION__);
+ 		goto err_out_none;
+ 	}
+-	memset(ctrl, 0, sizeof(struct controller));
+ 
+ 	pdev = dev->port;
+ 	ctrl->pci_dev = pdev;
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/cpqphp_core.c.orig	2006-02-28 15:08:38.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/cpqphp_core.c	2006-02-28 15:09:21.000000000 +0100
+@@ -347,26 +347,22 @@ static int ctrl_slot_setup(struct contro
+ 	slot_number = ctrl->first_slot;
+ 
+ 	while (number_of_slots) {
+-		slot = kmalloc(sizeof(*slot), GFP_KERNEL);
++		slot = kzalloc(sizeof(*slot), GFP_KERNEL);
+ 		if (!slot)
+ 			goto error;
+ 
+-		memset(slot, 0, sizeof(struct slot));
+-		slot->hotplug_slot = kmalloc(sizeof(*(slot->hotplug_slot)),
++		slot->hotplug_slot = kzalloc(sizeof(*(slot->hotplug_slot)),
+ 						GFP_KERNEL);
+ 		if (!slot->hotplug_slot)
+ 			goto error_slot;
+ 		hotplug_slot = slot->hotplug_slot;
+-		memset(hotplug_slot, 0, sizeof(struct hotplug_slot));
+ 
+ 		hotplug_slot->info =
+-				kmalloc(sizeof(*(hotplug_slot->info)),
++				kzalloc(sizeof(*(hotplug_slot->info)),
+ 							GFP_KERNEL);
+ 		if (!hotplug_slot->info)
+ 			goto error_hpslot;
+ 		hotplug_slot_info = hotplug_slot->info;
+-		memset(hotplug_slot_info, 0,
+-				sizeof(struct hotplug_slot_info));
+ 		hotplug_slot->name = kmalloc(SLOT_NAME_SIZE, GFP_KERNEL);
+ 
+ 		if (!hotplug_slot->name)
+@@ -854,13 +850,12 @@ static int cpqhpc_probe(struct pci_dev *
+ 			goto err_disable_device;
+ 		}
+ 
+-		ctrl = (struct controller *) kmalloc(sizeof(struct controller), GFP_KERNEL);
++		ctrl = kzalloc(sizeof(struct controller), GFP_KERNEL);
+ 		if (!ctrl) {
+ 			err("%s : out of memory\n", __FUNCTION__);
+ 			rc = -ENOMEM;
+ 			goto err_disable_device;
+ 		}
+-		memset(ctrl, 0, sizeof(struct controller));
+ 
+ 		rc = pci_read_config_word(pdev, PCI_SUBSYSTEM_ID, &subsystem_deviceid);
+ 		if (rc) {
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/cpci_hotplug_core.c.orig	2006-02-28 15:10:07.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/cpci_hotplug_core.c	2006-02-28 15:10:46.000000000 +0100
+@@ -248,22 +248,19 @@ cpci_hp_register_bus(struct pci_bus *bus
+ 	 * with the pci_hotplug subsystem.
+ 	 */
+ 	for (i = first; i <= last; ++i) {
+-		slot = kmalloc(sizeof (struct slot), GFP_KERNEL);
++		slot = kzalloc(sizeof (struct slot), GFP_KERNEL);
+ 		if (!slot)
+ 			goto error;
+-		memset(slot, 0, sizeof (struct slot));
+ 
+ 		hotplug_slot =
+-		    kmalloc(sizeof (struct hotplug_slot), GFP_KERNEL);
++			kzalloc(sizeof (struct hotplug_slot), GFP_KERNEL);
+ 		if (!hotplug_slot)
+ 			goto error_slot;
+-		memset(hotplug_slot, 0, sizeof (struct hotplug_slot));
+ 		slot->hotplug_slot = hotplug_slot;
+ 
+-		info = kmalloc(sizeof (struct hotplug_slot_info), GFP_KERNEL);
++		info = kzalloc(sizeof (struct hotplug_slot_info), GFP_KERNEL);
+ 		if (!info)
+ 			goto error_hpslot;
+-		memset(info, 0, sizeof (struct hotplug_slot_info));
+ 		hotplug_slot->info = info;
+ 
+ 		name = kmalloc(SLOT_NAME_SIZE, GFP_KERNEL);
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_core.c.orig	2006-02-28 15:10:56.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_core.c	2006-02-28 15:11:15.000000000 +0100
+@@ -1141,7 +1141,7 @@ static int enable_slot(struct hotplug_sl
+ 		goto error_power;
+ 	}
+ 
+-	slot_cur->func = kmalloc(sizeof(struct pci_func), GFP_KERNEL);
++	slot_cur->func = kzalloc(sizeof(struct pci_func), GFP_KERNEL);
+ 	if (!slot_cur->func) {
+ 		/* We cannot do update_slot_info here, since no memory for
+ 		 * kmalloc n.e.ways, and update_slot_info allocates some */
+@@ -1149,7 +1149,6 @@ static int enable_slot(struct hotplug_sl
+ 		rc = -ENOMEM;
+ 		goto error_power;
+ 	}
+-	memset(slot_cur->func, 0, sizeof(struct pci_func));
+ 	slot_cur->func->busno = slot_cur->bus;
+ 	slot_cur->func->device = slot_cur->device;
+ 	for (i = 0; i < 4; i++)
+@@ -1252,13 +1251,12 @@ int ibmphp_do_disable_slot(struct slot *
+ 
+ 	if (slot_cur->func == NULL) {
+ 		/* We need this for fncs's that were there on bootup */
+-		slot_cur->func = kmalloc(sizeof(struct pci_func), GFP_KERNEL);
++		slot_cur->func = kzalloc(sizeof(struct pci_func), GFP_KERNEL);
+ 		if (!slot_cur->func) {
+ 			err("out of system memory\n");
+ 			rc = -ENOMEM;
+ 			goto error;
+ 		}
+-		memset(slot_cur->func, 0, sizeof(struct pci_func));
+ 		slot_cur->func->busno = slot_cur->bus;
+ 		slot_cur->func->device = slot_cur->device;
+ 	}
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/rpaphp_slot.c.orig	2006-02-28 15:11:38.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/rpaphp_slot.c	2006-02-28 15:12:06.000000000 +0100
+@@ -84,19 +84,16 @@ struct slot *alloc_slot_struct(struct de
+ {
+ 	struct slot *slot;
+ 	
+-	slot = kmalloc(sizeof (struct slot), GFP_KERNEL);
++	slot = kzalloc(sizeof(struct slot), GFP_KERNEL);
+ 	if (!slot)
+ 		goto error_nomem;
+-	memset(slot, 0, sizeof (struct slot));
+-	slot->hotplug_slot = kmalloc(sizeof (struct hotplug_slot), GFP_KERNEL);
++	slot->hotplug_slot = kzalloc(sizeof(struct hotplug_slot), GFP_KERNEL);
+ 	if (!slot->hotplug_slot)
+ 		goto error_slot;	
+-	memset(slot->hotplug_slot, 0, sizeof (struct hotplug_slot));
+-	slot->hotplug_slot->info = kmalloc(sizeof (struct hotplug_slot_info),
++	slot->hotplug_slot->info = kzalloc(sizeof(struct hotplug_slot_info),
+ 					   GFP_KERNEL);
+ 	if (!slot->hotplug_slot->info)
+ 		goto error_hpslot;
+-	memset(slot->hotplug_slot->info, 0, sizeof (struct hotplug_slot_info));
+ 	slot->hotplug_slot->name = kmalloc(BUS_ID_SIZE + 1, GFP_KERNEL);
+ 	if (!slot->hotplug_slot->name)
+ 		goto error_info;	
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_res.c.orig	2006-02-28 15:13:06.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_res.c	2006-02-28 15:15:40.000000000 +0100
+@@ -55,13 +55,12 @@ static struct bus_node * __init alloc_er
+ 		return NULL;
+ 	}
+ 
+-	newbus = kmalloc (sizeof (struct bus_node), GFP_KERNEL);
++	newbus = kzalloc(sizeof(struct bus_node), GFP_KERNEL);
+ 	if (!newbus) {
+ 		err ("out of system memory\n");
+ 		return NULL;
+ 	}
+ 
+-	memset (newbus, 0, sizeof (struct bus_node));
+ 	if (flag)
+ 		newbus->busno = busno;
+ 	else
+@@ -79,12 +78,11 @@ static struct resource_node * __init all
+ 		return NULL;
+ 	}
+ 
+-	rs = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++	rs = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 	if (!rs) {
+ 		err ("out of system memory\n");
+ 		return NULL;
+ 	}
+-	memset (rs, 0, sizeof (struct resource_node));
+ 	rs->busno = curr->bus_num;
+ 	rs->devfunc = curr->dev_fun;
+ 	rs->start = curr->start_addr;
+@@ -100,12 +98,11 @@ static int __init alloc_bus_range (struc
+ 	u8 num_ranges = 0;
+ 
+ 	if (first_bus) {
+-		newbus = kmalloc (sizeof (struct bus_node), GFP_KERNEL);
++		newbus = kzalloc(sizeof(struct bus_node), GFP_KERNEL);
+ 		if (!newbus) {
+ 			err ("out of system memory.\n");
+ 			return -ENOMEM;
+ 		}
+-		memset (newbus, 0, sizeof (struct bus_node));
+ 		newbus->busno = curr->bus_num;
+ 	} else {
+ 		newbus = *new_bus;
+@@ -122,14 +119,13 @@ static int __init alloc_bus_range (struc
+ 		}
+ 	}
+ 
+-	newrange = kmalloc (sizeof (struct range_node), GFP_KERNEL);
++	newrange = kzalloc(sizeof(struct range_node), GFP_KERNEL);
+ 	if (!newrange) {
+ 		if (first_bus)
+ 			kfree (newbus);
+ 		err ("out of system memory\n");
  		return -ENOMEM;
  	}
-- 	memset (rcd_buf, 0, ciw->count);
- 	rcd_ccw->cmd_code = ciw->cmd;
- 	rcd_ccw->cda = (__u32) __pa (rcd_buf);
- 	rcd_ccw->count = ciw->count;
---- linux-2.6.16-rc4/drivers/s390/cio/css.c.orig	2006-02-27 20:21:34.000000000 +0100
-+++ linux-2.6.16-rc4/drivers/s390/cio/css.c	2006-02-27 20:21:46.000000000 +0100
-@@ -586,10 +586,9 @@ css_enqueue_subchannel_slow(struct subch
- 	struct slow_subchannel *new_slow_sch;
- 	unsigned long flags;
+-	memset (newrange, 0, sizeof (struct range_node));
+ 	newrange->start = curr->start_addr;
+ 	newrange->end = curr->end_addr;
+ 		
+@@ -1705,12 +1701,11 @@ static int __init once_over (void)
  
--	new_slow_sch = kmalloc(sizeof(struct slow_subchannel), GFP_ATOMIC);
-+	new_slow_sch = kzalloc(sizeof(struct slow_subchannel), GFP_ATOMIC);
- 	if (!new_slow_sch)
- 		return -ENOMEM;
--	memset(new_slow_sch, 0, sizeof(struct slow_subchannel));
- 	new_slow_sch->schid = schid;
- 	spin_lock_irqsave(&slow_subchannel_lock, flags);
- 	list_add_tail(&new_slow_sch->slow_list, &slow_subchannels_head);
+ 				bus_cur->firstPFMemFromMem = pfmem_cur;
+ 
+-				mem = kmalloc (sizeof (struct resource_node), GFP_KERNEL);		
++				mem = kzalloc(sizeof(struct resource_node), GFP_KERNEL);		
+ 				if (!mem) {
+ 					err ("out of system memory\n");
+ 					return -ENOMEM;
+ 				}
+-				memset (mem, 0, sizeof (struct resource_node));
+ 				mem->type = MEM;
+ 				mem->busno = pfmem_cur->busno;
+ 				mem->devfunc = pfmem_cur->devfunc;
+@@ -1994,12 +1989,11 @@ static int __init update_bridge_ranges (
+ 						end_address |= (upper_io_end << 16);
+ 
+ 						if ((start_address) && (start_address <= end_address)) {
+-							range = kmalloc (sizeof (struct range_node), GFP_KERNEL);
++							range = kzalloc(sizeof(struct range_node), GFP_KERNEL);
+ 							if (!range) {
+ 								err ("out of system memory\n");
+ 								return -ENOMEM;
+ 							}
+-							memset (range, 0, sizeof (struct range_node));
+ 							range->start = start_address;
+ 							range->end = end_address + 0xfff;
+ 
+@@ -2020,13 +2014,12 @@ static int __init update_bridge_ranges (
+ 							fix_resources (bus_sec);
+ 
+ 							if (ibmphp_find_resource (bus_cur, start_address, &io, IO)) {
+-								io = kmalloc (sizeof (struct resource_node), GFP_KERNEL);							
++								io = kzalloc(sizeof(struct resource_node), GFP_KERNEL);							
+ 								if (!io) {
+ 									kfree (range);
+ 									err ("out of system memory\n");
+ 									return -ENOMEM;
+ 								}
+-								memset (io, 0, sizeof (struct resource_node));
+ 								io->type = IO;
+ 								io->busno = bus_cur->busno;
+ 								io->devfunc = ((device << 3) | (function & 0x7));
+@@ -2045,12 +2038,11 @@ static int __init update_bridge_ranges (
+ 
+ 						if ((start_address) && (start_address <= end_address)) {
+ 
+-							range = kmalloc (sizeof (struct range_node), GFP_KERNEL);
++							range = kzalloc(sizeof(struct range_node), GFP_KERNEL);
+ 							if (!range) {
+ 								err ("out of system memory\n");
+ 								return -ENOMEM;
+ 							}
+-							memset (range, 0, sizeof (struct range_node));
+ 							range->start = start_address;
+ 							range->end = end_address + 0xfffff;
+ 
+@@ -2072,13 +2064,12 @@ static int __init update_bridge_ranges (
+ 							fix_resources (bus_sec);
+ 
+ 							if (ibmphp_find_resource (bus_cur, start_address, &mem, MEM)) {
+-								mem = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++								mem = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 								if (!mem) {
+ 									kfree (range);
+ 									err ("out of system memory\n");
+ 									return -ENOMEM;
+ 								}
+-								memset (mem, 0, sizeof (struct resource_node));
+ 								mem->type = MEM;
+ 								mem->busno = bus_cur->busno;
+ 								mem->devfunc = ((device << 3) | (function & 0x7));
+@@ -2101,12 +2092,11 @@ static int __init update_bridge_ranges (
+ 
+ 						if ((start_address) && (start_address <= end_address)) {
+ 
+-							range = kmalloc (sizeof (struct range_node), GFP_KERNEL);
++							range = kzalloc(sizeof(struct range_node), GFP_KERNEL);
+ 							if (!range) {
+ 								err ("out of system memory\n");
+ 								return -ENOMEM;
+ 							}
+-							memset (range, 0, sizeof (struct range_node));
+ 							range->start = start_address;
+ 							range->end = end_address + 0xfffff;
+ 
+@@ -2127,13 +2117,12 @@ static int __init update_bridge_ranges (
+ 
+ 							fix_resources (bus_sec);
+ 							if (ibmphp_find_resource (bus_cur, start_address, &pfmem, PFMEM)) {
+-								pfmem = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++								pfmem = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 								if (!pfmem) {
+ 									kfree (range);
+ 									err ("out of system memory\n");
+ 									return -ENOMEM;
+ 								}
+-								memset (pfmem, 0, sizeof (struct resource_node));
+ 								pfmem->type = PFMEM;
+ 								pfmem->busno = bus_cur->busno;
+ 								pfmem->devfunc = ((device << 3) | (function & 0x7));
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/acpiphp_glue.c.orig	2006-02-28 15:15:56.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/acpiphp_glue.c	2006-02-28 15:16:31.000000000 +0100
+@@ -143,10 +143,9 @@ register_slot(acpi_handle handle, u32 lv
+ 	device = (adr >> 16) & 0xffff;
+ 	function = adr & 0xffff;
+ 
+-	newfunc = kmalloc(sizeof(struct acpiphp_func), GFP_KERNEL);
++	newfunc = kzalloc(sizeof(struct acpiphp_func), GFP_KERNEL);
+ 	if (!newfunc)
+ 		return AE_NO_MEMORY;
+-	memset(newfunc, 0, sizeof(struct acpiphp_func));
+ 
+ 	INIT_LIST_HEAD(&newfunc->sibling);
+ 	newfunc->handle = handle;
+@@ -189,13 +188,12 @@ register_slot(acpi_handle handle, u32 lv
+ 		}
+ 
+ 	if (!slot) {
+-		slot = kmalloc(sizeof(struct acpiphp_slot), GFP_KERNEL);
++		slot = kzalloc(sizeof(struct acpiphp_slot), GFP_KERNEL);
+ 		if (!slot) {
+ 			kfree(newfunc);
+ 			return AE_NO_MEMORY;
+ 		}
+ 
+-		memset(slot, 0, sizeof(struct acpiphp_slot));
+ 		slot->bridge = bridge;
+ 		slot->device = device;
+ 		slot->sun = sun;
+@@ -376,12 +374,10 @@ static void add_host_bridge(acpi_handle 
+ {
+ 	struct acpiphp_bridge *bridge;
+ 
+-	bridge = kmalloc(sizeof(struct acpiphp_bridge), GFP_KERNEL);
++	bridge = kzalloc(sizeof(struct acpiphp_bridge), GFP_KERNEL);
+ 	if (bridge == NULL)
+ 		return;
+ 
+-	memset(bridge, 0, sizeof(struct acpiphp_bridge));
+-
+ 	bridge->type = BRIDGE_TYPE_HOST;
+ 	bridge->handle = handle;
+ 
+@@ -398,14 +394,12 @@ static void add_p2p_bridge(acpi_handle *
+ {
+ 	struct acpiphp_bridge *bridge;
+ 
+-	bridge = kmalloc(sizeof(struct acpiphp_bridge), GFP_KERNEL);
++	bridge = kzalloc(sizeof(struct acpiphp_bridge), GFP_KERNEL);
+ 	if (bridge == NULL) {
+ 		err("out of memory\n");
+ 		return;
+ 	}
+ 
+-	memset(bridge, 0, sizeof(struct acpiphp_bridge));
+-
+ 	bridge->type = BRIDGE_TYPE_P2P;
+ 	bridge->handle = handle;
+ 
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_pci.c.orig	2006-02-28 15:16:53.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/ibmphp_pci.c	2006-02-28 15:21:22.000000000 +0100
+@@ -164,12 +164,11 @@ int ibmphp_configure_card (struct pci_fu
+ 						cleanup_count = 6;
+ 						goto error;
+ 					}
+-					newfunc = kmalloc(sizeof(*newfunc), GFP_KERNEL);
++					newfunc = kzalloc(sizeof(*newfunc), GFP_KERNEL);
+ 					if (!newfunc) {
+ 						err ("out of system memory\n");
+ 						return -ENOMEM;
+ 					}
+-					memset (newfunc, 0, sizeof (struct pci_func));
+ 					newfunc->busno = cur_func->busno;
+ 					newfunc->device = device;
+ 					cur_func->next = newfunc;
+@@ -203,12 +202,11 @@ int ibmphp_configure_card (struct pci_fu
+ 					flag = FALSE;
+ 					for (i = 0; i < 32; i++) {
+ 						if (func->devices[i]) {
+-							newfunc = kmalloc(sizeof(*newfunc), GFP_KERNEL);
++							newfunc = kzalloc(sizeof(*newfunc), GFP_KERNEL);
+ 							if (!newfunc) {
+ 								err ("out of system memory\n");
+ 								return -ENOMEM;
+ 							}
+-							memset (newfunc, 0, sizeof (struct pci_func));
+ 							newfunc->busno = sec_number;
+ 							newfunc->device = (u8) i;
+ 							for (j = 0; j < 4; j++)
+@@ -232,12 +230,11 @@ int ibmphp_configure_card (struct pci_fu
+ 						}
+ 					}
+ 
+-					newfunc = kmalloc(sizeof(*newfunc), GFP_KERNEL);
++					newfunc = kzalloc(sizeof(*newfunc), GFP_KERNEL);
+ 					if (!newfunc) {
+ 						err ("out of system memory\n");
+ 						return -ENOMEM;
+ 					}
+-					memset (newfunc, 0, sizeof (struct pci_func));
+ 					newfunc->busno = cur_func->busno;
+ 					newfunc->device = device;
+ 					for (j = 0; j < 4; j++)
+@@ -279,12 +276,11 @@ int ibmphp_configure_card (struct pci_fu
+ 					for (i = 0; i < 32; i++) {
+ 						if (func->devices[i]) {
+ 							debug ("inside for loop, device is %x\n", i);
+-							newfunc = kmalloc(sizeof(*newfunc), GFP_KERNEL);
++							newfunc = kzalloc(sizeof(*newfunc), GFP_KERNEL);
+ 							if (!newfunc) {
+ 								err (" out of system memory\n");
+ 								return -ENOMEM;
+ 							}
+-							memset (newfunc, 0, sizeof (struct pci_func));
+ 							newfunc->busno = sec_number;
+ 							newfunc->device = (u8) i;
+ 							for (j = 0; j < 4; j++)
+@@ -405,13 +401,12 @@ static int configure_device (struct pci_
+ 
+ 			debug ("len[count] in IO %x, count %d\n", len[count], count);
+ 
+-			io[count] = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++			io[count] = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 
+ 			if (!io[count]) {
+ 				err ("out of system memory\n");
+ 				return -ENOMEM;
+ 			}
+-			memset (io[count], 0, sizeof (struct resource_node));
+ 			io[count]->type = IO;
+ 			io[count]->busno = func->busno;
+ 			io[count]->devfunc = PCI_DEVFN(func->device, func->function);
+@@ -444,12 +439,11 @@ static int configure_device (struct pci_
+ 
+ 				debug ("len[count] in PFMEM %x, count %d\n", len[count], count);
+ 
+-				pfmem[count] = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++				pfmem[count] = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 				if (!pfmem[count]) {
+ 					err ("out of system memory\n");
+ 					return -ENOMEM;
+ 				}
+-				memset (pfmem[count], 0, sizeof (struct resource_node));
+ 				pfmem[count]->type = PFMEM;
+ 				pfmem[count]->busno = func->busno;
+ 				pfmem[count]->devfunc = PCI_DEVFN(func->device,
+@@ -460,13 +454,12 @@ static int configure_device (struct pci_
+ 					ibmphp_add_resource (pfmem[count]);
+ 					func->pfmem[count] = pfmem[count];
+ 				} else {
+-					mem_tmp = kmalloc(sizeof(*mem_tmp), GFP_KERNEL);
++					mem_tmp = kzalloc(sizeof(*mem_tmp), GFP_KERNEL);
+ 					if (!mem_tmp) {
+ 						err ("out of system memory\n");
+ 						kfree (pfmem[count]);
+ 						return -ENOMEM;
+ 					}
+-					memset (mem_tmp, 0, sizeof (struct resource_node));
+ 					mem_tmp->type = MEM;
+ 					mem_tmp->busno = pfmem[count]->busno;
+ 					mem_tmp->devfunc = pfmem[count]->devfunc;
+@@ -512,12 +505,11 @@ static int configure_device (struct pci_
+ 
+ 				debug ("len[count] in Mem %x, count %d\n", len[count], count);
+ 
+-				mem[count] = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++				mem[count] = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 				if (!mem[count]) {
+ 					err ("out of system memory\n");
+ 					return -ENOMEM;
+ 				}
+-				memset (mem[count], 0, sizeof (struct resource_node));
+ 				mem[count]->type = MEM;
+ 				mem[count]->busno = func->busno;
+ 				mem[count]->devfunc = PCI_DEVFN(func->device,
+@@ -677,14 +669,13 @@ static int configure_bridge (struct pci_
+ 
+ 			debug ("len[count] in IO = %x\n", len[count]);
+ 
+-			bus_io[count] = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++			bus_io[count] = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 		
+ 			if (!bus_io[count]) {
+ 				err ("out of system memory\n");
+ 				retval = -ENOMEM;
+ 				goto error;
+ 			}
+-			memset (bus_io[count], 0, sizeof (struct resource_node));
+ 			bus_io[count]->type = IO;
+ 			bus_io[count]->busno = func->busno;
+ 			bus_io[count]->devfunc = PCI_DEVFN(func->device,
+@@ -711,13 +702,12 @@ static int configure_bridge (struct pci_
+ 
+ 				debug ("len[count] in PFMEM = %x\n", len[count]);
+ 
+-				bus_pfmem[count] = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++				bus_pfmem[count] = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 				if (!bus_pfmem[count]) {
+ 					err ("out of system memory\n");
+ 					retval = -ENOMEM;
+ 					goto error;
+ 				}
+-				memset (bus_pfmem[count], 0, sizeof (struct resource_node));
+ 				bus_pfmem[count]->type = PFMEM;
+ 				bus_pfmem[count]->busno = func->busno;
+ 				bus_pfmem[count]->devfunc = PCI_DEVFN(func->device,
+@@ -728,13 +718,12 @@ static int configure_bridge (struct pci_
+ 					ibmphp_add_resource (bus_pfmem[count]);
+ 					func->pfmem[count] = bus_pfmem[count];
+ 				} else {
+-					mem_tmp = kmalloc(sizeof(*mem_tmp), GFP_KERNEL);
++					mem_tmp = kzalloc(sizeof(*mem_tmp), GFP_KERNEL);
+ 					if (!mem_tmp) {
+ 						err ("out of system memory\n");
+ 						retval = -ENOMEM;
+ 						goto error;
+ 					}
+-					memset (mem_tmp, 0, sizeof (struct resource_node));
+ 					mem_tmp->type = MEM;
+ 					mem_tmp->busno = bus_pfmem[count]->busno;
+ 					mem_tmp->devfunc = bus_pfmem[count]->devfunc;
+@@ -770,13 +759,12 @@ static int configure_bridge (struct pci_
+ 
+ 				debug ("len[count] in Memory is %x\n", len[count]);
+ 
+-				bus_mem[count] = kmalloc (sizeof (struct resource_node), GFP_KERNEL);
++				bus_mem[count] = kzalloc(sizeof(struct resource_node), GFP_KERNEL);
+ 				if (!bus_mem[count]) {
+ 					err ("out of system memory\n");
+ 					retval = -ENOMEM;
+ 					goto error;
+ 				}
+-				memset (bus_mem[count], 0, sizeof (struct resource_node));
+ 				bus_mem[count]->type = MEM;
+ 				bus_mem[count]->busno = func->busno;
+ 				bus_mem[count]->devfunc = PCI_DEVFN(func->device,
+@@ -841,14 +829,13 @@ static int configure_bridge (struct pci_
+ 		flag_io = TRUE;
+ 	} else {
+ 		debug ("it wants %x IO behind the bridge\n", amount_needed->io);
+-		io = kmalloc(sizeof(*io), GFP_KERNEL);
++		io = kzalloc(sizeof(*io), GFP_KERNEL);
+ 		
+ 		if (!io) {
+ 			err ("out of system memory\n");
+ 			retval = -ENOMEM;
+ 			goto error;
+ 		}
+-		memset (io, 0, sizeof (struct resource_node));
+ 		io->type = IO;
+ 		io->busno = func->busno;
+ 		io->devfunc = PCI_DEVFN(func->device, func->function);
+@@ -865,13 +852,12 @@ static int configure_bridge (struct pci_
+ 		flag_mem = TRUE;
+ 	} else {
+ 		debug ("it wants %x memory behind the bridge\n", amount_needed->mem);
+-		mem = kmalloc(sizeof(*mem), GFP_KERNEL);
++		mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+ 		if (!mem) {
+ 			err ("out of system memory\n");
+ 			retval = -ENOMEM;
+ 			goto error;
+ 		}
+-		memset (mem, 0, sizeof (struct resource_node));
+ 		mem->type = MEM;
+ 		mem->busno = func->busno;
+ 		mem->devfunc = PCI_DEVFN(func->device, func->function);
+@@ -888,13 +874,12 @@ static int configure_bridge (struct pci_
+ 		flag_pfmem = TRUE;
+ 	} else {
+ 		debug ("it wants %x pfmemory behind the bridge\n", amount_needed->pfmem);
+-		pfmem = kmalloc(sizeof(*pfmem), GFP_KERNEL);
++		pfmem = kzalloc(sizeof(*pfmem), GFP_KERNEL);
+ 		if (!pfmem) {
+ 			err ("out of system memory\n");
+ 			retval = -ENOMEM;
+ 			goto error;
+ 		}
+-		memset (pfmem, 0, sizeof (struct resource_node));
+ 		pfmem->type = PFMEM;
+ 		pfmem->busno = func->busno;
+ 		pfmem->devfunc = PCI_DEVFN(func->device, func->function);
+@@ -904,13 +889,12 @@ static int configure_bridge (struct pci_
+ 			ibmphp_add_resource (pfmem);
+ 			flag_pfmem = TRUE;
+ 		} else {
+-			mem_tmp = kmalloc(sizeof(*mem_tmp), GFP_KERNEL);
++			mem_tmp = kzalloc(sizeof(*mem_tmp), GFP_KERNEL);
+ 			if (!mem_tmp) {
+ 				err ("out of system memory\n");
+ 				retval = -ENOMEM;
+ 				goto error;
+ 			}
+-			memset (mem_tmp, 0, sizeof (struct resource_node));
+ 			mem_tmp->type = MEM;
+ 			mem_tmp->busno = pfmem->busno;
+ 			mem_tmp->devfunc = pfmem->devfunc;
+@@ -936,13 +920,12 @@ static int configure_bridge (struct pci_
+ 		 */
+ 		bus = ibmphp_find_res_bus (sec_number);
+ 		if (!bus) {
+-			bus = kmalloc(sizeof(*bus), GFP_KERNEL);
++			bus = kzalloc(sizeof(*bus), GFP_KERNEL);
+ 			if (!bus) {
+ 				err ("out of system memory\n");
+ 				retval = -ENOMEM;
+ 				goto error;
+ 			}
+-			memset (bus, 0, sizeof (struct bus_node));
+ 			bus->busno = sec_number;
+ 			debug ("b4 adding new bus\n");
+ 			rc = add_new_bus (bus, io, mem, pfmem, func->busno);
+@@ -1111,10 +1094,9 @@ static struct res_needed *scan_behind_br
+ 	};
+ 	struct res_needed *amount;
+ 
+-	amount = kmalloc(sizeof(*amount), GFP_KERNEL);
++	amount = kzalloc(sizeof(*amount), GFP_KERNEL);
+ 	if (amount == NULL)
+ 		return NULL;
+-	memset (amount, 0, sizeof (struct res_needed));
+ 
+ 	ibmphp_pci_bus->number = busno;
+ 
+@@ -1672,12 +1654,11 @@ static int add_new_bus (struct bus_node 
+ 		list_add (&bus->bus_list, &cur_bus->bus_list);
+ 	}
+ 	if (io) {
+-		io_range = kmalloc(sizeof(*io_range), GFP_KERNEL);
++		io_range = kzalloc(sizeof(*io_range), GFP_KERNEL);
+ 		if (!io_range) {
+ 			err ("out of system memory\n");
+ 			return -ENOMEM;
+ 		}
+-		memset (io_range, 0, sizeof (struct range_node));
+ 		io_range->start = io->start;
+ 		io_range->end = io->end;
+ 		io_range->rangeno = 1;
+@@ -1685,12 +1666,11 @@ static int add_new_bus (struct bus_node 
+ 		bus->rangeIO = io_range;
+ 	}
+ 	if (mem) {
+-		mem_range = kmalloc(sizeof(*mem_range), GFP_KERNEL);
++		mem_range = kzalloc(sizeof(*mem_range), GFP_KERNEL);
+ 		if (!mem_range) {
+ 			err ("out of system memory\n");
+ 			return -ENOMEM;
+ 		}
+-		memset (mem_range, 0, sizeof (struct range_node));
+ 		mem_range->start = mem->start;
+ 		mem_range->end = mem->end;
+ 		mem_range->rangeno = 1;
+@@ -1698,12 +1678,11 @@ static int add_new_bus (struct bus_node 
+ 		bus->rangeMem = mem_range;
+ 	}
+ 	if (pfmem) {
+-		pfmem_range = kmalloc(sizeof(*pfmem_range), GFP_KERNEL);
++		pfmem_range = kzalloc(sizeof(*pfmem_range), GFP_KERNEL);
+ 		if (!pfmem_range) {	
+ 			err ("out of system memory\n");
+ 			return -ENOMEM;
+ 		}
+-		memset (pfmem_range, 0, sizeof (struct range_node));
+ 		pfmem_range->start = pfmem->start;
+ 		pfmem_range->end = pfmem->end;
+ 		pfmem_range->rangeno = 1;
+--- linux-2.6.16-rc4-mm2/drivers/pci/hotplug/fakephp.c.orig	2006-02-28 15:22:05.000000000 +0100
++++ linux-2.6.16-rc4-mm2/drivers/pci/hotplug/fakephp.c	2006-02-28 15:22:29.000000000 +0100
+@@ -95,15 +95,13 @@ static int add_slot(struct pci_dev *dev)
+ 	struct hotplug_slot *slot;
+ 	int retval = -ENOMEM;
+ 
+-	slot = kmalloc(sizeof(struct hotplug_slot), GFP_KERNEL);
++	slot = kzalloc(sizeof(struct hotplug_slot), GFP_KERNEL);
+ 	if (!slot)
+ 		goto error;
+-	memset(slot, 0, sizeof(*slot));
+ 
+-	slot->info = kmalloc(sizeof(struct hotplug_slot_info), GFP_KERNEL);
++	slot->info = kzalloc(sizeof(struct hotplug_slot_info), GFP_KERNEL);
+ 	if (!slot->info)
+ 		goto error_slot;
+-	memset(slot->info, 0, sizeof(struct hotplug_slot_info));
+ 
+ 	slot->info->power_status = 1;
+ 	slot->info->max_bus_speed = PCI_SPEED_UNKNOWN;
+@@ -227,11 +225,10 @@ static void pci_rescan_bus(const struct 
+ {
+ 	unsigned int devfn;
+ 	struct pci_dev *dev;
+-	dev = kmalloc(sizeof(struct pci_dev), GFP_KERNEL);
++	dev = kzalloc(sizeof(struct pci_dev), GFP_KERNEL);
+ 	if (!dev)
+ 		return;
+ 
+-	memset(dev, 0, sizeof(dev));
+ 	dev->bus = (struct pci_bus*)bus;
+ 	dev->sysdata = bus->sysdata;
+ 	for (devfn = 0; devfn < 0x100; devfn += 8) {
 
 
 
---===============0030826052516870206==
+--===============7761573557096495==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -880,4 +1024,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0030826052516870206==--
+--===============7761573557096495==--
