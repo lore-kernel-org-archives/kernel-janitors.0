@@ -1,551 +1,875 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 28 Feb 2006 13:54:02 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in drivers/acpi
-Message-Id: <1141134842.16095.2.camel@alice>
+Date: Tue, 28 Feb 2006 13:54:04 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in drivers/s390
+Message-Id: <1141134845.16095.4.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84033780390306556=="
+Content-Type: multipart/mixed; boundary="===============0030826052516870206=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140815848.26064.4.camel@alice>
 In-Reply-To: <1140815848.26064.4.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============84033780390306556==
+--===============0030826052516870206==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,
 
-this patch converts drivers/acpi to kzalloc usage.
-Compile tested with allyes config.
+this patch converts drivers/s390 to kzalloc usage.
+Not compile tested.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc4-mm2/drivers/acpi/utils.c.orig	2006-02-28 14:38:06.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/utils.c	2006-02-28 14:38:31.000000000 +0100
-@@ -264,11 +264,10 @@ acpi_evaluate_integer(acpi_handle handle
- 	if (!data)
- 		return_ACPI_STATUS(AE_BAD_PARAMETER);
+--- linux-2.6.16-rc4/drivers/s390/net/qeth_main.c.orig	2006-02-27 19:52:59.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/qeth_main.c	2006-02-27 19:54:53.000000000 +0100
+@@ -297,12 +297,10 @@ qeth_alloc_card(void)
+ 	struct qeth_card *card;
  
--	element = kmalloc(sizeof(union acpi_object), GFP_KERNEL);
-+	element = kzalloc(sizeof(union acpi_object), GFP_KERNEL);
- 	if (!element)
- 		return_ACPI_STATUS(AE_NO_MEMORY);
- 
--	memset(element, 0, sizeof(union acpi_object));
- 	buffer.length = sizeof(union acpi_object);
- 	buffer.pointer = element;
- 	status = acpi_evaluate_object(handle, pathname, arguments, &buffer);
-@@ -322,12 +321,11 @@ acpi_evaluate_string(acpi_handle handle,
- 		return_ACPI_STATUS(AE_BAD_DATA);
- 	}
- 
--	*data = kmalloc(element->string.length + 1, GFP_KERNEL);
-+	*data = kzalloc(element->string.length + 1, GFP_KERNEL);
- 	if (!data) {
- 		ACPI_ERROR((AE_INFO, "Memory allocation"));
- 		return_VALUE(-ENOMEM);
- 	}
--	memset(*data, 0, element->string.length + 1);
- 
- 	memcpy(*data, element->string.pointer, element->string.length);
- 
---- linux-2.6.16-rc4-mm2/drivers/acpi/pci_irq.c.orig	2006-02-28 14:38:40.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/pci_irq.c	2006-02-28 14:39:12.000000000 +0100
-@@ -92,10 +92,9 @@ acpi_pci_irq_add_entry(acpi_handle handl
- 	if (!prt)
- 		return_VALUE(-EINVAL);
- 
--	entry = kmalloc(sizeof(struct acpi_prt_entry), GFP_KERNEL);
-+	entry = kzalloc(sizeof(struct acpi_prt_entry), GFP_KERNEL);
- 	if (!entry)
- 		return_VALUE(-ENOMEM);
--	memset(entry, 0, sizeof(struct acpi_prt_entry));
- 
- 	entry->id.segment = segment;
- 	entry->id.bus = bus;
-@@ -165,10 +164,9 @@ int acpi_pci_irq_add_prt(acpi_handle han
- 
- 	ACPI_FUNCTION_TRACE("acpi_pci_irq_add_prt");
- 
--	pathname = (char *)kmalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
-+	pathname = kzalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
- 	if (!pathname)
- 		return_VALUE(-ENOMEM);
--	memset(pathname, 0, ACPI_PATHNAME_MAX);
- 
- 	if (first_time) {
- 		acpi_prt.count = 0;
-@@ -202,11 +200,9 @@ int acpi_pci_irq_add_prt(acpi_handle han
- 		return_VALUE(-ENODEV);
- 	}
- 
--	prt = kmalloc(buffer.length, GFP_KERNEL);
--	if (!prt) {
-+	prt = kzalloc(buffer.length, GFP_KERNEL);
-+	if (!prt)
- 		return_VALUE(-ENOMEM);
--	}
--	memset(prt, 0, buffer.length);
- 	buffer.pointer = prt;
- 
- 	status = acpi_get_irq_routing_table(handle, &buffer);
---- linux-2.6.16-rc4-mm2/drivers/acpi/asus_acpi.c.orig	2006-02-28 14:39:20.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/asus_acpi.c	2006-02-28 14:39:41.000000000 +0100
-@@ -1132,11 +1132,9 @@ static int __init asus_hotk_add(struct a
- 	printk(KERN_NOTICE "Asus Laptop ACPI Extras version %s\n",
- 	       ASUS_ACPI_VERSION);
- 
--	hotk =
--	    (struct asus_hotk *)kmalloc(sizeof(struct asus_hotk), GFP_KERNEL);
-+	hotk = kzalloc(sizeof(struct asus_hotk), GFP_KERNEL);
- 	if (!hotk)
- 		return -ENOMEM;
--	memset(hotk, 0, sizeof(struct asus_hotk));
- 
- 	hotk->handle = device->handle;
- 	strcpy(acpi_device_name(device), ACPI_HOTK_DEVICE_NAME);
---- linux-2.6.16-rc4-mm2/drivers/acpi/acpi_memhotplug.c.orig	2006-02-28 14:39:50.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/acpi_memhotplug.c	2006-02-28 14:40:00.000000000 +0100
-@@ -342,10 +342,9 @@ static int acpi_memory_device_add(struct
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	mem_device = kmalloc(sizeof(struct acpi_memory_device), GFP_KERNEL);
-+	mem_device = kzalloc(sizeof(struct acpi_memory_device), GFP_KERNEL);
- 	if (!mem_device)
- 		return_VALUE(-ENOMEM);
--	memset(mem_device, 0, sizeof(struct acpi_memory_device));
- 
- 	mem_device->handle = device->handle;
- 	sprintf(acpi_device_name(device), "%s", ACPI_MEMORY_DEVICE_NAME);
---- linux-2.6.16-rc4-mm2/drivers/acpi/scan.c.orig	2006-02-28 14:40:08.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/scan.c	2006-02-28 14:41:38.000000000 +0100
-@@ -982,12 +982,11 @@ acpi_add_single_object(struct acpi_devic
- 	if (!child)
- 		return_VALUE(-EINVAL);
- 
--	device = kmalloc(sizeof(struct acpi_device), GFP_KERNEL);
-+	device = kzalloc(sizeof(struct acpi_device), GFP_KERNEL);
- 	if (!device) {
- 		ACPI_ERROR((AE_INFO, "Memory allocation error"));
- 		return_VALUE(-ENOMEM);
- 	}
--	memset(device, 0, sizeof(struct acpi_device));
- 
- 	device->handle = handle;
- 	device->parent = parent;
---- linux-2.6.16-rc4-mm2/drivers/acpi/battery.c.orig	2006-02-28 14:41:47.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/battery.c	2006-02-28 14:42:13.000000000 +0100
-@@ -156,12 +156,11 @@ acpi_battery_get_info(struct acpi_batter
- 		goto end;
- 	}
- 
--	data.pointer = kmalloc(data.length, GFP_KERNEL);
-+	data.pointer = kzalloc(data.length, GFP_KERNEL);
- 	if (!data.pointer) {
- 		result = -ENOMEM;
- 		goto end;
- 	}
--	memset(data.pointer, 0, data.length);
- 
- 	status = acpi_extract_package(package, &format, &data);
- 	if (ACPI_FAILURE(status)) {
-@@ -217,12 +216,11 @@ acpi_battery_get_status(struct acpi_batt
- 		goto end;
- 	}
- 
--	data.pointer = kmalloc(data.length, GFP_KERNEL);
-+	data.pointer = kzalloc(data.length, GFP_KERNEL);
- 	if (!data.pointer) {
- 		result = -ENOMEM;
- 		goto end;
- 	}
--	memset(data.pointer, 0, data.length);
- 
- 	status = acpi_extract_package(package, &format, &data);
- 	if (ACPI_FAILURE(status)) {
-@@ -702,10 +700,9 @@ static int acpi_battery_add(struct acpi_
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	battery = kmalloc(sizeof(struct acpi_battery), GFP_KERNEL);
-+	battery = kzalloc(sizeof(struct acpi_battery), GFP_KERNEL);
- 	if (!battery)
- 		return_VALUE(-ENOMEM);
--	memset(battery, 0, sizeof(struct acpi_battery));
- 
- 	battery->handle = device->handle;
- 	strcpy(acpi_device_name(device), ACPI_BATTERY_DEVICE_NAME);
---- linux-2.6.16-rc4-mm2/drivers/acpi/button.c.orig	2006-02-28 14:42:22.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/button.c	2006-02-28 14:42:29.000000000 +0100
-@@ -304,10 +304,9 @@ static int acpi_button_add(struct acpi_d
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	button = kmalloc(sizeof(struct acpi_button), GFP_KERNEL);
-+	button = kzalloc(sizeof(struct acpi_button), GFP_KERNEL);
- 	if (!button)
- 		return_VALUE(-ENOMEM);
--	memset(button, 0, sizeof(struct acpi_button));
- 
- 	button->device = device;
- 	button->handle = device->handle;
---- linux-2.6.16-rc4-mm2/drivers/acpi/ec.c.orig	2006-02-28 14:42:37.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/ec.c	2006-02-28 14:43:12.000000000 +0100
-@@ -996,10 +996,9 @@ static int acpi_ec_poll_add(struct acpi_
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	ec = kmalloc(sizeof(union acpi_ec), GFP_KERNEL);
-+	ec = kzalloc(sizeof(union acpi_ec), GFP_KERNEL);
- 	if (!ec)
- 		return_VALUE(-ENOMEM);
--	memset(ec, 0, sizeof(union acpi_ec));
- 
- 	ec->common.handle = device->handle;
- 	ec->common.uid = -1;
-@@ -1066,10 +1065,9 @@ static int acpi_ec_intr_add(struct acpi_
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	ec = kmalloc(sizeof(union acpi_ec), GFP_KERNEL);
-+	ec = kzalloc(sizeof(union acpi_ec), GFP_KERNEL);
- 	if (!ec)
- 		return_VALUE(-ENOMEM);
--	memset(ec, 0, sizeof(union acpi_ec));
- 
- 	ec->common.handle = device->handle;
- 	ec->common.uid = -1;
-@@ -1357,12 +1355,11 @@ static int __init acpi_ec_fake_ecdt(void
- 
- 	printk(KERN_INFO PREFIX "Try to make an fake ECDT\n");
- 
--	ec_ecdt = kmalloc(sizeof(union acpi_ec), GFP_KERNEL);
-+	ec_ecdt = kzalloc(sizeof(union acpi_ec), GFP_KERNEL);
- 	if (!ec_ecdt) {
- 		ret = -ENOMEM;
- 		goto error;
- 	}
--	memset(ec_ecdt, 0, sizeof(union acpi_ec));
- 
- 	status = acpi_get_devices(ACPI_EC_HID,
- 				  acpi_fake_ecdt_callback, NULL, NULL);
-@@ -1402,10 +1399,9 @@ static int __init acpi_ec_poll_get_real_
- 	/*
- 	 * Generate a temporary ec context to use until the namespace is scanned
- 	 */
--	ec_ecdt = kmalloc(sizeof(union acpi_ec), GFP_KERNEL);
-+	ec_ecdt = kzalloc(sizeof(union acpi_ec), GFP_KERNEL);
- 	if (!ec_ecdt)
- 		return -ENOMEM;
--	memset(ec_ecdt, 0, sizeof(union acpi_ec));
- 
- 	ec_ecdt->common.command_addr = ecdt_ptr->ec_control;
- 	ec_ecdt->common.status_addr = ecdt_ptr->ec_control;
-@@ -1447,10 +1443,9 @@ static int __init acpi_ec_intr_get_real_
- 	/*
- 	 * Generate a temporary ec context to use until the namespace is scanned
- 	 */
--	ec_ecdt = kmalloc(sizeof(union acpi_ec), GFP_KERNEL);
-+	ec_ecdt = kzalloc(sizeof(union acpi_ec), GFP_KERNEL);
- 	if (!ec_ecdt)
- 		return -ENOMEM;
--	memset(ec_ecdt, 0, sizeof(union acpi_ec));
- 
- 	init_MUTEX(&ec_ecdt->intr.sem);
- 	init_waitqueue_head(&ec_ecdt->intr.wait);
---- linux-2.6.16-rc4-mm2/drivers/acpi/pci_link.c.orig	2006-02-28 14:43:20.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/pci_link.c	2006-02-28 14:43:41.000000000 +0100
-@@ -314,11 +314,10 @@ static int acpi_pci_link_set(struct acpi
- 	if (!link || !irq)
- 		return_VALUE(-EINVAL);
- 
--	resource = kmalloc(sizeof(*resource) + 1, GFP_ATOMIC);
-+	resource = kzalloc(sizeof(*resource) + 1, GFP_ATOMIC);
- 	if (!resource)
- 		return_VALUE(-ENOMEM);
- 
--	memset(resource, 0, sizeof(*resource) + 1);
- 	buffer.length = sizeof(*resource) + 1;
- 	buffer.pointer = resource;
- 
-@@ -730,10 +729,9 @@ static int acpi_pci_link_add(struct acpi
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	link = kmalloc(sizeof(struct acpi_pci_link), GFP_KERNEL);
-+	link = kzalloc(sizeof(struct acpi_pci_link), GFP_KERNEL);
- 	if (!link)
- 		return_VALUE(-ENOMEM);
--	memset(link, 0, sizeof(struct acpi_pci_link));
- 
- 	link->device = device;
- 	link->handle = device->handle;
---- linux-2.6.16-rc4-mm2/drivers/acpi/ac.c.orig	2006-02-28 14:43:52.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/ac.c	2006-02-28 14:44:00.000000000 +0100
-@@ -224,10 +224,9 @@ static int acpi_ac_add(struct acpi_devic
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	ac = kmalloc(sizeof(struct acpi_ac), GFP_KERNEL);
-+	ac = kzalloc(sizeof(struct acpi_ac), GFP_KERNEL);
- 	if (!ac)
- 		return_VALUE(-ENOMEM);
--	memset(ac, 0, sizeof(struct acpi_ac));
- 
- 	ac->handle = device->handle;
- 	strcpy(acpi_device_name(device), ACPI_AC_DEVICE_NAME);
---- linux-2.6.16-rc4-mm2/drivers/acpi/thermal.c.orig	2006-02-28 14:44:06.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/thermal.c	2006-02-28 14:44:42.000000000 +0100
-@@ -933,12 +933,10 @@ acpi_thermal_write_trip_points(struct fi
- 
- 	ACPI_FUNCTION_TRACE("acpi_thermal_write_trip_points");
- 
--	limit_string = kmalloc(ACPI_THERMAL_MAX_LIMIT_STR_LEN, GFP_KERNEL);
-+	limit_string = kzalloc(ACPI_THERMAL_MAX_LIMIT_STR_LEN, GFP_KERNEL);
- 	if (!limit_string)
- 		return_VALUE(-ENOMEM);
- 
--	memset(limit_string, 0, ACPI_THERMAL_MAX_LIMIT_STR_LEN);
--
- 	active = kmalloc(ACPI_THERMAL_MAX_ACTIVE * sizeof(int), GFP_KERNEL);
- 	if (!active)
- 		return_VALUE(-ENOMEM);
-@@ -1310,10 +1308,9 @@ static int acpi_thermal_add(struct acpi_
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	tz = kmalloc(sizeof(struct acpi_thermal), GFP_KERNEL);
-+	tz = kzalloc(sizeof(struct acpi_thermal), GFP_KERNEL);
- 	if (!tz)
- 		return_VALUE(-ENOMEM);
--	memset(tz, 0, sizeof(struct acpi_thermal));
- 
- 	tz->handle = device->handle;
- 	strcpy(tz->name, device->pnp.bus_id);
---- linux-2.6.16-rc4-mm2/drivers/acpi/ibm_acpi.c.orig	2006-02-28 14:44:50.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/ibm_acpi.c	2006-02-28 14:45:00.000000000 +0100
-@@ -1750,13 +1750,12 @@ static int __init register_driver(struct
+ 	QETH_DBF_TEXT(setup, 2, "alloccrd");
+-	card = (struct qeth_card *) kmalloc(sizeof(struct qeth_card),
+-					    GFP_DMA|GFP_KERNEL);
++	card = kzalloc(sizeof(struct qeth_card), GFP_DMA|GFP_KERNEL);
+ 	if (!card)
+ 		return NULL;
+ 	QETH_DBF_HEX(setup, 2, &card, sizeof(void *));
+-	memset(card, 0, sizeof(struct qeth_card));
+ 	if (qeth_setup_channel(&card->read)) {
+ 		kfree(card);
+ 		return NULL;
+@@ -1632,9 +1630,8 @@ qeth_alloc_reply(struct qeth_card *card)
  {
+ 	struct qeth_reply *reply;
+ 
+-	reply = kmalloc(sizeof(struct qeth_reply), GFP_ATOMIC);
++	reply = kzalloc(sizeof(struct qeth_reply), GFP_ATOMIC);
+ 	if (reply){
+-		memset(reply, 0, sizeof(struct qeth_reply));
+ 		atomic_set(&reply->refcnt, 1);
+ 		reply->card = card;
+ 	};
+@@ -3348,13 +3345,11 @@ qeth_qdio_establish(struct qeth_card *ca
+ 
+ 	QETH_DBF_TEXT(setup, 2, "qdioest");
+ 
+-	qib_param_field = kmalloc(QDIO_MAX_BUFFERS_PER_Q * sizeof(char),
++	qib_param_field = kzalloc(QDIO_MAX_BUFFERS_PER_Q * sizeof(char),
+ 			      GFP_KERNEL);
+  	if (!qib_param_field)
+ 		return -ENOMEM;
+ 
+- 	memset(qib_param_field, 0, QDIO_MAX_BUFFERS_PER_Q * sizeof(char));
+-
+ 	qeth_create_qib_param_field(card, qib_param_field);
+ 	qeth_create_qib_param_field_blkt(card, qib_param_field);
+ 
+@@ -4844,9 +4839,8 @@ qeth_arp_query(struct qeth_card *card, c
+ 	/* get size of userspace buffer and mask_bits -> 6 bytes */
+ 	if (copy_from_user(&qinfo, udata, 6))
+ 		return -EFAULT;
+-	if (!(qinfo.udata = kmalloc(qinfo.udata_len, GFP_KERNEL)))
++	if (!(qinfo.udata = kzalloc(qinfo.udata_len, GFP_KERNEL)))
+ 		return -ENOMEM;
+-	memset(qinfo.udata, 0, qinfo.udata_len);
+ 	qinfo.udata_offset = QETH_QARP_ENTRIES_OFFSET;
+ 	iob = qeth_get_setassparms_cmd(card, IPA_ARP_PROCESSING,
+ 				       IPA_CMD_ASS_ARP_QUERY_INFO,
+@@ -4994,11 +4988,10 @@ qeth_snmp_command(struct qeth_card *card
+ 		return -EFAULT;
+ 	}
+ 	qinfo.udata_len = ureq->hdr.data_len;
+-	if (!(qinfo.udata = kmalloc(qinfo.udata_len, GFP_KERNEL))){
++	if (!(qinfo.udata = kzalloc(qinfo.udata_len, GFP_KERNEL))){
+ 		kfree(ureq);
+ 		return -ENOMEM;
+ 	}
+-	memset(qinfo.udata, 0, qinfo.udata_len);
+ 	qinfo.udata_offset = sizeof(struct qeth_snmp_ureq_hdr);
+ 
+ 	iob = qeth_get_adapter_cmd(card, IPA_SETADP_SET_SNMP_CONTROL,
+@@ -5604,12 +5597,11 @@ qeth_get_addr_buffer(enum qeth_prot_vers
+ {
+ 	struct qeth_ipaddr *addr;
+ 
+-	addr = kmalloc(sizeof(struct qeth_ipaddr), GFP_ATOMIC);
++	addr = kzalloc(sizeof(struct qeth_ipaddr), GFP_ATOMIC);
+ 	if (addr == NULL) {
+ 		PRINT_WARN("Not enough memory to add address\n");
+ 		return NULL;
+ 	}
+-	memset(addr,0,sizeof(struct qeth_ipaddr));
+ 	addr->type = QETH_IP_TYPE_NORMAL;
+ 	addr->proto = prot;
+ 	return addr;
+--- linux-2.6.16-rc4/drivers/s390/net/qeth_sys.c.orig	2006-02-27 19:55:02.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/qeth_sys.c	2006-02-27 19:55:14.000000000 +0100
+@@ -1145,11 +1145,10 @@ qeth_dev_ipato_add_store(const char *buf
+ 	if ((rc = qeth_parse_ipatoe(buf, proto, addr, &mask_bits)))
+ 		return rc;
+ 
+-	if (!(ipatoe = kmalloc(sizeof(struct qeth_ipato_entry), GFP_KERNEL))){
++	if (!(ipatoe = kzalloc(sizeof(struct qeth_ipato_entry), GFP_KERNEL))){
+ 		PRINT_WARN("No memory to allocate ipato entry\n");
+ 		return -ENOMEM;
+ 	}
+-	memset(ipatoe, 0, sizeof(struct qeth_ipato_entry));
+ 	ipatoe->proto = proto;
+ 	memcpy(ipatoe->addr, addr, (proto == QETH_PROT_IPV4)? 4:16);
+ 	ipatoe->mask_bits = mask_bits;
+--- linux-2.6.16-rc4/drivers/s390/net/lcs.c.orig	2006-02-27 19:55:38.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/lcs.c	2006-02-27 19:56:56.000000000 +0100
+@@ -115,11 +115,10 @@ lcs_alloc_channel(struct lcs_channel *ch
+ 	LCS_DBF_TEXT(2, setup, "ichalloc");
+ 	for (cnt = 0; cnt < LCS_NUM_BUFFS; cnt++) {
+ 		/* alloc memory fo iobuffer */
+-		channel->iob[cnt].data = (void *)
+-			kmalloc(LCS_IOBUFFERSIZE, GFP_DMA | GFP_KERNEL);
++		channel->iob[cnt].data =
++			kzalloc(LCS_IOBUFFERSIZE, GFP_DMA | GFP_KERNEL);
+ 		if (channel->iob[cnt].data == NULL)
+ 			break;
+-		memset(channel->iob[cnt].data, 0, LCS_IOBUFFERSIZE);
+ 		channel->iob[cnt].state = BUF_STATE_EMPTY;
+ 	}
+ 	if (cnt < LCS_NUM_BUFFS) {
+@@ -182,10 +181,9 @@ lcs_alloc_card(void)
+ 
+ 	LCS_DBF_TEXT(2, setup, "alloclcs");
+ 
+-	card = kmalloc(sizeof(struct lcs_card), GFP_KERNEL | GFP_DMA);
++	card = kzalloc(sizeof(struct lcs_card), GFP_KERNEL | GFP_DMA);
+ 	if (card == NULL)
+ 		return NULL;
+-	memset(card, 0, sizeof(struct lcs_card));
+ 	card->lan_type = LCS_FRAME_TYPE_AUTO;
+ 	card->pkt_seq = 0;
+ 	card->lancmd_timeout = LCS_LANCMD_TIMEOUT_DEFAULT;
+@@ -793,10 +791,9 @@ lcs_alloc_reply(struct lcs_cmd *cmd)
+ 
+ 	LCS_DBF_TEXT(4, trace, "getreply");
+ 
+-	reply = kmalloc(sizeof(struct lcs_reply), GFP_ATOMIC);
++	reply = kzalloc(sizeof(struct lcs_reply), GFP_ATOMIC);
+ 	if (!reply)
+ 		return NULL;
+-	memset(reply,0,sizeof(struct lcs_reply));
+ 	atomic_set(&reply->refcnt,1);
+ 	reply->sequence_no = cmd->sequence_no;
+ 	reply->received = 0;
+--- linux-2.6.16-rc4/drivers/s390/net/ctctty.c.orig	2006-02-27 19:59:11.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/ctctty.c	2006-02-27 19:59:32.000000000 +0100
+@@ -1122,12 +1122,11 @@ ctc_tty_init(void)
+ 	struct tty_driver *device;
+ 
+ 	DBF_TEXT(trace, 2, __FUNCTION__);
+-	driver = kmalloc(sizeof(ctc_tty_driver), GFP_KERNEL);
++	driver = kzalloc(sizeof(ctc_tty_driver), GFP_KERNEL);
+ 	if (driver == NULL) {
+ 		printk(KERN_WARNING "Out of memory in ctc_tty_modem_init\n");
+ 		return -ENOMEM;
+ 	}
+-	memset(driver, 0, sizeof(ctc_tty_driver));
+ 	device = alloc_tty_driver(CTC_TTY_MAX_DEVICES);
+ 	if (!device) {
+ 		kfree(driver);
+--- linux-2.6.16-rc4/drivers/s390/net/claw.c.orig	2006-02-27 19:59:40.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/claw.c	2006-02-27 19:59:59.000000000 +0100
+@@ -310,7 +310,7 @@ claw_probe(struct ccwgroup_device *cgdev
+         printk(KERN_INFO "claw: variable cgdev =\n");
+         dumpit((char *)cgdev, sizeof(struct ccwgroup_device));
+ #endif
+-	privptr = kmalloc(sizeof(struct claw_privbk), GFP_KERNEL);
++	privptr = kzalloc(sizeof(struct claw_privbk), GFP_KERNEL);
+ 	if (privptr == NULL) {
+ 		probe_error(cgdev);
+ 		put_device(&cgdev->dev);
+@@ -319,7 +319,6 @@ claw_probe(struct ccwgroup_device *cgdev
+ 		CLAW_DBF_TEXT_(2,setup,"probex%d",-ENOMEM);
+ 		return -ENOMEM;
+ 	}
+-	memset(privptr,0x00,sizeof(struct claw_privbk));
+ 	privptr->p_mtc_envelope= kmalloc( MAX_ENVELOPE_SIZE, GFP_KERNEL);
+ 	privptr->p_env = kmalloc(sizeof(struct claw_env), GFP_KERNEL);
+         if ((privptr->p_mtc_envelope==NULL) || (privptr->p_env==NULL)) {
+--- linux-2.6.16-rc4/drivers/s390/net/fsm.c.orig	2006-02-27 20:00:32.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/fsm.c	2006-02-27 20:02:23.000000000 +0100
+@@ -21,38 +21,34 @@ init_fsm(char *name, const char **state_
+ 	fsm_function_t *m;
+ 	fsm *f;
+ 
+-	this = (fsm_instance *)kmalloc(sizeof(fsm_instance), order);
++	this = kzalloc(sizeof(fsm_instance), order);
+ 	if (this == NULL) {
+ 		printk(KERN_WARNING
+ 			"fsm(%s): init_fsm: Couldn't alloc instance\n", name);
+ 		return NULL;
+ 	}
+-	memset(this, 0, sizeof(fsm_instance));
+ 	strlcpy(this->name, name, sizeof(this->name));
+ 
+-	f = (fsm *)kmalloc(sizeof(fsm), order);
++	f = kzalloc(sizeof(fsm), order);
+ 	if (f == NULL) {
+ 		printk(KERN_WARNING
+ 			"fsm(%s): init_fsm: Couldn't alloc fsm\n", name);
+ 		kfree_fsm(this);
+ 		return NULL;
+ 	}
+-	memset(f, 0, sizeof(fsm));
+ 	f->nr_events = nr_events;
+ 	f->nr_states = nr_states;
+ 	f->event_names = event_names;
+ 	f->state_names = state_names;
+ 	this->f = f;
+ 
+-	m = (fsm_function_t *)kmalloc(
+-			sizeof(fsm_function_t) * nr_states * nr_events, order);
++	m = kcalloc(nr_states*nr_events, sizeof(fsm_function_t), order);
+ 	if (m == NULL) {
+ 		printk(KERN_WARNING
+ 			"fsm(%s): init_fsm: Couldn't alloc jumptable\n", name);
+ 		kfree_fsm(this);
+ 		return NULL;
+ 	}
+-	memset(m, 0, sizeof(fsm_function_t) * f->nr_states * f->nr_events);
+ 	f->jumpmatrix = m;
+ 
+ 	for (i = 0; i < tmpl_len; i++) {
+--- linux-2.6.16-rc4/drivers/s390/net/qeth_eddp.c.orig	2006-02-27 20:03:25.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/qeth_eddp.c	2006-02-27 20:04:24.000000000 +0100
+@@ -389,9 +389,8 @@ qeth_eddp_create_eddp_data(struct qeth_h
+ 	struct qeth_eddp_data *eddp;
+ 
+ 	QETH_DBF_TEXT(trace, 5, "eddpcrda");
+-	eddp = kmalloc(sizeof(struct qeth_eddp_data), GFP_ATOMIC);
++	eddp = kzalloc(sizeof(struct qeth_eddp_data), GFP_ATOMIC);
+ 	if (eddp){
+-		memset(eddp, 0, sizeof(struct qeth_eddp_data));
+ 		eddp->nhl = nhl;
+ 		eddp->thl = thl;
+ 		memcpy(&eddp->qh, qh, sizeof(struct qeth_hdr));
+@@ -542,12 +541,11 @@ qeth_eddp_create_context_generic(struct 
+ 
+ 	QETH_DBF_TEXT(trace, 5, "creddpcg");
+ 	/* create the context and allocate pages */
+-	ctx = kmalloc(sizeof(struct qeth_eddp_context), GFP_ATOMIC);
++	ctx = kzalloc(sizeof(struct qeth_eddp_context), GFP_ATOMIC);
+ 	if (ctx == NULL){
+ 		QETH_DBF_TEXT(trace, 2, "ceddpcn1");
+ 		return NULL;
+ 	}
+-	memset(ctx, 0, sizeof(struct qeth_eddp_context));
+ 	ctx->type = QETH_LARGE_SEND_EDDP;
+ 	qeth_eddp_calc_num_pages(ctx, skb, hdr_len);
+ 	if (ctx->elements_per_skb > QETH_MAX_BUFFER_ELEMENTS(card)){
+@@ -555,13 +553,12 @@ qeth_eddp_create_context_generic(struct 
+ 		kfree(ctx);
+ 		return NULL;
+ 	}
+-	ctx->pages = kmalloc(ctx->num_pages * sizeof(u8 *), GFP_ATOMIC);
++	ctx->pages = kcalloc(ctx->num_pages, sizeof(u8 *), GFP_ATOMIC);
+ 	if (ctx->pages == NULL){
+ 		QETH_DBF_TEXT(trace, 2, "ceddpcn2");
+ 		kfree(ctx);
+ 		return NULL;
+ 	}
+-	memset(ctx->pages, 0, ctx->num_pages * sizeof(u8 *));
+ 	for (i = 0; i < ctx->num_pages; ++i){
+ 		addr = (u8 *)__get_free_page(GFP_ATOMIC);
+ 		if (addr == NULL){
+@@ -573,15 +570,13 @@ qeth_eddp_create_context_generic(struct 
+ 		memset(addr, 0, PAGE_SIZE);
+ 		ctx->pages[i] = addr;
+ 	}
+-	ctx->elements = kmalloc(ctx->num_elements *
++	ctx->elements = kcalloc(ctx->num_elements,
+ 				sizeof(struct qeth_eddp_element), GFP_ATOMIC);
+ 	if (ctx->elements == NULL){
+ 		QETH_DBF_TEXT(trace, 2, "ceddpcn4");
+ 		qeth_eddp_free_context(ctx);
+ 		return NULL;
+ 	}
+-	memset(ctx->elements, 0,
+-	       ctx->num_elements * sizeof(struct qeth_eddp_element));
+ 	/* reset num_elements; will be incremented again in fill_buffer to
+ 	 * reflect number of actually used elements */
+ 	ctx->num_elements = 0;
+--- linux-2.6.16-rc4/drivers/s390/net/iucv.c.orig	2006-02-27 20:04:50.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/iucv.c	2006-02-27 20:05:58.000000000 +0100
+@@ -386,7 +386,7 @@ iucv_init(void)
+ 	}
+ 
+ 	/* Note: GFP_DMA used used to get memory below 2G */
+-	iucv_external_int_buffer = kmalloc(sizeof(iucv_GeneralInterrupt),
++	iucv_external_int_buffer = kzalloc(sizeof(iucv_GeneralInterrupt),
+ 					   GFP_KERNEL|GFP_DMA);
+ 	if (!iucv_external_int_buffer) {
+ 		printk(KERN_WARNING
+@@ -396,10 +396,9 @@ iucv_init(void)
+ 		bus_unregister(&iucv_bus);
+ 		return -ENOMEM;
+ 	}
+-	memset(iucv_external_int_buffer, 0, sizeof(iucv_GeneralInterrupt));
+ 
+ 	/* Initialize parameter pool */
+-	iucv_param_pool = kmalloc(sizeof(iucv_param) * PARAM_POOL_SIZE,
++	iucv_param_pool = kzalloc(sizeof(iucv_param) * PARAM_POOL_SIZE,
+ 				  GFP_KERNEL|GFP_DMA);
+ 	if (!iucv_param_pool) {
+ 		printk(KERN_WARNING "%s: Could not allocate param pool\n",
+@@ -410,7 +409,6 @@ iucv_init(void)
+ 		bus_unregister(&iucv_bus);
+ 		return -ENOMEM;
+ 	}
+-	memset(iucv_param_pool, 0, sizeof(iucv_param) * PARAM_POOL_SIZE);
+ 
+ 	/* Initialize irq queue */
+ 	INIT_LIST_HEAD(&iucv_irq_queue);
+@@ -793,15 +791,14 @@ iucv_register_program (__u8 pgmname[16],
+ 		}
+ 
+ 		max_connections = iucv_query_maxconn();
+-		iucv_pathid_table = kmalloc(max_connections * sizeof(handler *),
+-				       GFP_ATOMIC);
++		iucv_pathid_table = kcalloc(max_connections, sizeof(handler *),
++					GFP_ATOMIC);
+ 		if (iucv_pathid_table == NULL) {
+ 			printk(KERN_WARNING "%s: iucv_pathid_table storage "
+ 			       "allocation failed\n", __FUNCTION__);
+ 			kfree(new_handler);
+ 			return NULL;
+ 		}
+-		memset (iucv_pathid_table, 0, max_connections * sizeof(handler *));
+ 	}
+ 	memset(new_handler, 0, sizeof (handler));
+ 	memcpy(new_handler->id.user_data, pgmname,
+--- linux-2.6.16-rc4/drivers/s390/net/netiucv.c.orig	2006-02-27 20:06:07.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/net/netiucv.c	2006-02-27 20:06:36.000000000 +0100
+@@ -1728,14 +1728,13 @@ static int
+ netiucv_register_device(struct net_device *ndev)
+ {
+ 	struct netiucv_priv *priv = ndev->priv;
+-	struct device *dev = kmalloc(sizeof(struct device), GFP_KERNEL);
++	struct device *dev = kzalloc(sizeof(struct device), GFP_KERNEL);
  	int ret;
  
--	ibm->driver = kmalloc(sizeof(struct acpi_driver), GFP_KERNEL);
-+	ibm->driver = kzalloc(sizeof(struct acpi_driver), GFP_KERNEL);
- 	if (!ibm->driver) {
- 		printk(IBM_ERR "kmalloc(ibm->driver) failed\n");
- 		return -1;
- 	}
  
--	memset(ibm->driver, 0, sizeof(struct acpi_driver));
- 	sprintf(ibm->driver->name, "%s/%s", IBM_NAME, ibm->name);
- 	ibm->driver->ids = ibm->hid;
- 	ibm->driver->ops.add = &ibm_device_add;
---- linux-2.6.16-rc4-mm2/drivers/acpi/container.c.orig	2006-02-28 14:45:07.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/container.c	2006-02-28 14:45:16.000000000 +0100
-@@ -98,11 +98,10 @@ static int acpi_container_add(struct acp
- 		return_VALUE(-EINVAL);
- 	}
+ 	IUCV_DBF_TEXT(trace, 3, __FUNCTION__);
  
--	container = kmalloc(sizeof(struct acpi_container), GFP_KERNEL);
-+	container = kzalloc(sizeof(struct acpi_container), GFP_KERNEL);
- 	if (!container)
- 		return_VALUE(-ENOMEM);
- 
--	memset(container, 0, sizeof(struct acpi_container));
- 	container->handle = device->handle;
- 	strcpy(acpi_device_name(device), ACPI_CONTAINER_DEVICE_NAME);
- 	strcpy(acpi_device_class(device), ACPI_CONTAINER_CLASS);
---- linux-2.6.16-rc4-mm2/drivers/acpi/hotkey.c.orig	2006-02-28 14:45:22.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/hotkey.c	2006-02-28 14:46:00.000000000 +0100
-@@ -247,10 +247,8 @@ static char *format_result(union acpi_ob
+ 	if (dev) {
+-		memset(dev, 0, sizeof(struct device));
+ 		snprintf(dev->bus_id, BUS_ID_SIZE, "net%s", ndev->name);
+ 		dev->bus = &iucv_bus;
+ 		dev->parent = iucv_root;
+@@ -1784,11 +1783,9 @@ netiucv_new_connection(struct net_device
  {
- 	char *buf = NULL;
+ 	struct iucv_connection **clist = &iucv_connections;
+ 	struct iucv_connection *conn =
+-		(struct iucv_connection *)
+-		kmalloc(sizeof(struct iucv_connection), GFP_KERNEL);
++		kzalloc(sizeof(struct iucv_connection), GFP_KERNEL);
  
--	buf = (char *)kmalloc(RESULT_STR_LEN, GFP_KERNEL);
--	if (buf)
--		memset(buf, 0, RESULT_STR_LEN);
--	else
-+	buf = kzalloc(RESULT_STR_LEN, GFP_KERNEL);
-+	if (!buf)
- 		goto do_fail;
+ 	if (conn) {
+-		memset(conn, 0, sizeof(struct iucv_connection));
+ 		skb_queue_head_init(&conn->collect_queue);
+ 		skb_queue_head_init(&conn->commit_queue);
+ 		conn->max_buffsize = NETIUCV_BUFSIZE_DEFAULT;
+--- linux-2.6.16-rc4/drivers/s390/block/dasd.c.orig	2006-02-27 20:07:09.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/block/dasd.c	2006-02-27 20:08:19.000000000 +0100
+@@ -73,10 +73,9 @@ dasd_alloc_device(void)
+ {
+ 	struct dasd_device *device;
  
- 	/* Now, just support integer type */
-@@ -791,10 +789,9 @@ static ssize_t hotkey_write_config(struc
- 		return_VALUE(-EINVAL);
+-	device = kmalloc(sizeof (struct dasd_device), GFP_ATOMIC);
++	device = kzalloc(sizeof (struct dasd_device), GFP_ATOMIC);
+ 	if (device == NULL)
+ 		return ERR_PTR(-ENOMEM);
+-	memset(device, 0, sizeof (struct dasd_device));
+ 	/* open_count = 0 means device online but not in use */
+ 	atomic_set(&device->open_count, -1);
+ 
+@@ -524,29 +523,26 @@ dasd_kmalloc_request(char *magic, int cp
+ 	     (cplength*sizeof(struct ccw1)) > PAGE_SIZE)
+ 		BUG();
+ 
+-	cqr = kmalloc(sizeof(struct dasd_ccw_req), GFP_ATOMIC);
++	cqr = kzalloc(sizeof(struct dasd_ccw_req), GFP_ATOMIC);
+ 	if (cqr == NULL)
+ 		return ERR_PTR(-ENOMEM);
+-	memset(cqr, 0, sizeof(struct dasd_ccw_req));
+ 	cqr->cpaddr = NULL;
+ 	if (cplength > 0) {
+-		cqr->cpaddr = kmalloc(cplength*sizeof(struct ccw1),
++		cqr->cpaddr = kcalloc(cplength, sizeof(struct ccw1),
+ 				      GFP_ATOMIC | GFP_DMA);
+ 		if (cqr->cpaddr == NULL) {
+ 			kfree(cqr);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+-		memset(cqr->cpaddr, 0, cplength*sizeof(struct ccw1));
+ 	}
+ 	cqr->data = NULL;
+ 	if (datasize > 0) {
+-		cqr->data = kmalloc(datasize, GFP_ATOMIC | GFP_DMA);
++		cqr->data = kzalloc(datasize, GFP_ATOMIC | GFP_DMA);
+ 		if (cqr->data == NULL) {
+ 			kfree(cqr->cpaddr);
+ 			kfree(cqr);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+-		memset(cqr->data, 0, datasize);
+ 	}
+ 	strncpy((char *) &cqr->magic, magic, 4);
+ 	ASCEBC((char *) &cqr->magic, 4);
+--- linux-2.6.16-rc4/drivers/s390/block/dcssblk.c.orig	2006-02-27 20:08:28.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/block/dcssblk.c	2006-02-27 20:08:38.000000000 +0100
+@@ -388,12 +388,11 @@ dcssblk_add_store(struct device *dev, st
+ 	/*
+ 	 * get a struct dcssblk_dev_info
+ 	 */
+-	dev_info = kmalloc(sizeof(struct dcssblk_dev_info), GFP_KERNEL);
++	dev_info = kzalloc(sizeof(struct dcssblk_dev_info), GFP_KERNEL);
+ 	if (dev_info == NULL) {
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+-	memset(dev_info, 0, sizeof(struct dcssblk_dev_info));
+ 
+ 	strcpy(dev_info->segment_name, local_buf);
+ 	strlcpy(dev_info->dev.bus_id, local_buf, BUS_ID_SIZE);
+--- linux-2.6.16-rc4/drivers/s390/crypto/z90main.c.orig	2006-02-27 20:09:03.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/crypto/z90main.c	2006-02-27 20:10:08.000000000 +0100
+@@ -707,13 +707,12 @@ z90crypt_open(struct inode *inode, struc
+ 	if (quiesce_z90crypt)
+ 		return -EQUIESCE;
+ 
+-	private_data_p = kmalloc(sizeof(struct priv_data), GFP_KERNEL);
++	private_data_p = kzalloc(sizeof(struct priv_data), GFP_KERNEL);
+ 	if (!private_data_p) {
+ 		PRINTK("Memory allocate failed\n");
+ 		return -ENOMEM;
  	}
  
--	key = kmalloc(sizeof(union acpi_hotkey), GFP_KERNEL);
-+	key = kzalloc(sizeof(union acpi_hotkey), GFP_KERNEL);
- 	if (!key)
- 		goto do_fail;
--	memset(key, 0, sizeof(union acpi_hotkey));
- 	if (cmd == 1) {
- 		union acpi_hotkey *tmp = NULL;
- 		tmp = get_hotkey_by_event(&global_hotkey_list,
---- linux-2.6.16-rc4-mm2/drivers/acpi/pci_root.c.orig	2006-02-28 14:46:16.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/pci_root.c	2006-02-28 14:46:24.000000000 +0100
-@@ -165,10 +165,9 @@ static int acpi_pci_root_add(struct acpi
- 	if (!device)
- 		return_VALUE(-EINVAL);
+-	memset((void *)private_data_p, 0, sizeof(struct priv_data));
+ 	private_data_p->status = STAT_OPEN;
+ 	private_data_p->opener_pid = PID();
+ 	filp->private_data = private_data_p;
+@@ -2736,13 +2735,11 @@ create_z90crypt(int *cdx_p)
+ 	z90crypt.max_count = Z90CRYPT_NUM_DEVS;
+ 	z90crypt.cdx = *cdx_p;
  
--	root = kmalloc(sizeof(struct acpi_pci_root), GFP_KERNEL);
-+	root = kzalloc(sizeof(struct acpi_pci_root), GFP_KERNEL);
- 	if (!root)
- 		return_VALUE(-ENOMEM);
--	memset(root, 0, sizeof(struct acpi_pci_root));
- 	INIT_LIST_HEAD(&root->node);
- 
- 	root->handle = device->handle;
---- linux-2.6.16-rc4-mm2/drivers/acpi/power.c.orig	2006-02-28 14:46:31.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/power.c	2006-02-28 14:46:39.000000000 +0100
-@@ -552,10 +552,9 @@ static int acpi_power_add(struct acpi_de
- 	if (!device)
- 		return_VALUE(-EINVAL);
- 
--	resource = kmalloc(sizeof(struct acpi_power_resource), GFP_KERNEL);
-+	resource = kzalloc(sizeof(struct acpi_power_resource), GFP_KERNEL);
- 	if (!resource)
- 		return_VALUE(-ENOMEM);
--	memset(resource, 0, sizeof(struct acpi_power_resource));
- 
- 	resource->handle = device->handle;
- 	strcpy(resource->name, device->pnp.bus_id);
---- linux-2.6.16-rc4-mm2/drivers/acpi/pci_bind.c.orig	2006-02-28 14:46:46.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/pci_bind.c	2006-02-28 14:47:44.000000000 +0100
-@@ -125,19 +125,17 @@ int acpi_pci_bind(struct acpi_device *de
- 	if (!device || !device->parent)
- 		return_VALUE(-EINVAL);
- 
--	pathname = kmalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
-+	pathname = kzalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
- 	if (!pathname)
- 		return_VALUE(-ENOMEM);
--	memset(pathname, 0, ACPI_PATHNAME_MAX);
- 	buffer.length = ACPI_PATHNAME_MAX;
- 	buffer.pointer = pathname;
- 
--	data = kmalloc(sizeof(struct acpi_pci_data), GFP_KERNEL);
-+	data = kzalloc(sizeof(struct acpi_pci_data), GFP_KERNEL);
- 	if (!data) {
- 		kfree(pathname);
- 		return_VALUE(-ENOMEM);
+-	hdware_blk_p = (struct hdware_block *)
+-		kmalloc(sizeof(struct hdware_block), GFP_ATOMIC);
++	hdware_blk_p = kzalloc(sizeof(struct hdware_block), GFP_ATOMIC);
+ 	if (!hdware_blk_p) {
+ 		PDEBUG("kmalloc for hardware block failed\n");
+ 		return ENOMEM;
  	}
--	memset(data, 0, sizeof(struct acpi_pci_data));
+-	memset(hdware_blk_p, 0x00, sizeof(struct hdware_block));
+ 	z90crypt.hdware_info = hdware_blk_p;
  
- 	acpi_get_name(device->handle, ACPI_FULL_PATHNAME, &buffer);
- 	ACPI_DEBUG_PRINT((ACPI_DB_INFO, "Binding PCI device [%s]...\n",
-@@ -285,10 +283,9 @@ int acpi_pci_unbind(struct acpi_device *
- 	if (!device || !device->parent)
- 		return_VALUE(-EINVAL);
+ 	return 0;
+@@ -2977,12 +2974,11 @@ create_crypto_device(int index)
+ 		total_size = sizeof(struct device) +
+ 			     z90crypt.q_depth_array[index] * sizeof(int);
  
--	pathname = (char *)kmalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
-+	pathname = kzalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
- 	if (!pathname)
- 		return_VALUE(-ENOMEM);
--	memset(pathname, 0, ACPI_PATHNAME_MAX);
+-		dev_ptr = (struct device *) kmalloc(total_size, GFP_ATOMIC);
++		dev_ptr = kzalloc(total_size, GFP_ATOMIC);
+ 		if (!dev_ptr) {
+ 			PRINTK("kmalloc device %d failed\n", index);
+ 			return ENOMEM;
+ 		}
+-		memset(dev_ptr, 0, total_size);
+ 		dev_ptr->dev_resp_p = kmalloc(MAX_RESPONSE_SIZE, GFP_ATOMIC);
+ 		if (!dev_ptr->dev_resp_p) {
+ 			kfree(dev_ptr);
+--- linux-2.6.16-rc4/drivers/s390/char/monreader.c.orig	2006-02-27 20:10:22.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/monreader.c	2006-02-27 20:11:23.000000000 +0100
+@@ -257,14 +257,13 @@ mon_alloc_mem(void)
+ 	int i,j;
+ 	struct mon_private *monpriv;
  
- 	buffer.length = ACPI_PATHNAME_MAX;
- 	buffer.pointer = pathname;
-@@ -337,10 +334,9 @@ acpi_pci_bind_root(struct acpi_device *d
- 
- 	ACPI_FUNCTION_TRACE("acpi_pci_bind_root");
- 
--	pathname = (char *)kmalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
-+	pathname = kzalloc(ACPI_PATHNAME_MAX, GFP_KERNEL);
- 	if (!pathname)
- 		return_VALUE(-ENOMEM);
--	memset(pathname, 0, ACPI_PATHNAME_MAX);
- 
- 	buffer.length = ACPI_PATHNAME_MAX;
- 	buffer.pointer = pathname;
-@@ -350,12 +346,11 @@ acpi_pci_bind_root(struct acpi_device *d
- 		return_VALUE(-EINVAL);
+-	monpriv = kmalloc(sizeof(struct mon_private), GFP_KERNEL);
++	monpriv = kzalloc(sizeof(struct mon_private), GFP_KERNEL);
+ 	if (!monpriv) {
+ 		P_ERROR("no memory for monpriv\n");
+ 		return NULL;
  	}
- 
--	data = kmalloc(sizeof(struct acpi_pci_data), GFP_KERNEL);
-+	data = kzalloc(sizeof(struct acpi_pci_data), GFP_KERNEL);
- 	if (!data) {
- 		kfree(pathname);
- 		return_VALUE(-ENOMEM);
+-	memset(monpriv, 0, sizeof(struct mon_private));
+ 	for (i = 0; i < MON_MSGLIM; i++) {
+-		monpriv->msg_array[i] = kmalloc(sizeof(struct mon_msg),
++		monpriv->msg_array[i] = kzalloc(sizeof(struct mon_msg),
+ 						    GFP_KERNEL);
+ 		if (!monpriv->msg_array[i]) {
+ 			P_ERROR("open, no memory for msg_array\n");
+@@ -272,7 +271,6 @@ mon_alloc_mem(void)
+ 				kfree(monpriv->msg_array[j]);
+ 			return NULL;
+ 		}
+-		memset(monpriv->msg_array[i], 0, sizeof(struct mon_msg));
  	}
--	memset(data, 0, sizeof(struct acpi_pci_data));
+ 	return monpriv;
+ }
+--- linux-2.6.16-rc4/drivers/s390/char/raw3270.c.orig	2006-02-27 20:11:32.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/raw3270.c	2006-02-27 20:11:51.000000000 +0100
+@@ -115,10 +115,9 @@ raw3270_request_alloc(size_t size)
+ 	struct raw3270_request *rq;
  
- 	data->id = *id;
- 	data->bus = bus;
---- linux-2.6.16-rc4-mm2/drivers/acpi/fan.c.orig	2006-02-28 14:47:54.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/fan.c	2006-02-28 14:48:03.000000000 +0100
-@@ -187,10 +187,9 @@ static int acpi_fan_add(struct acpi_devi
- 	if (!device)
- 		return_VALUE(-EINVAL);
+ 	/* Allocate request structure */
+-	rq = kmalloc(sizeof(struct raw3270_request), GFP_KERNEL | GFP_DMA);
++	rq = kzalloc(sizeof(struct raw3270_request), GFP_KERNEL | GFP_DMA);
+ 	if (!rq)
+ 		return ERR_PTR(-ENOMEM);
+-	memset(rq, 0, sizeof(struct raw3270_request));
  
--	fan = kmalloc(sizeof(struct acpi_fan), GFP_KERNEL);
-+	fan = kzalloc(sizeof(struct acpi_fan), GFP_KERNEL);
- 	if (!fan)
- 		return_VALUE(-ENOMEM);
--	memset(fan, 0, sizeof(struct acpi_fan));
+ 	/* alloc output buffer. */
+ 	if (size > 0) {
+--- linux-2.6.16-rc4/drivers/s390/char/fs3270.c.orig	2006-02-27 20:12:00.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/fs3270.c	2006-02-27 20:12:14.000000000 +0100
+@@ -368,10 +368,9 @@ fs3270_alloc_view(void)
+ {
+ 	struct fs3270 *fp;
  
- 	fan->handle = device->handle;
- 	strcpy(acpi_device_name(device), "Fan");
---- linux-2.6.16-rc4-mm2/drivers/acpi/video.c.orig	2006-02-28 14:48:10.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/video.c	2006-02-28 14:48:52.000000000 +0100
-@@ -546,11 +546,10 @@ static void acpi_video_device_find_cap(s
- 		int count = 0;
- 		union acpi_object *o;
+-	fp = (struct fs3270 *) kmalloc(sizeof(struct fs3270),GFP_KERNEL);
++	fp = kzalloc(sizeof(struct fs3270),GFP_KERNEL);
+ 	if (!fp)
+ 		return ERR_PTR(-ENOMEM);
+-	memset(fp, 0, sizeof(struct fs3270));
+ 	fp->init = raw3270_request_alloc(0);
+ 	if (IS_ERR(fp->init)) {
+ 		kfree(fp);
+--- linux-2.6.16-rc4/drivers/s390/char/tape_core.c.orig	2006-02-27 20:12:30.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/tape_core.c	2006-02-27 20:13:49.000000000 +0100
+@@ -453,16 +453,14 @@ tape_alloc_device(void)
+ {
+ 	struct tape_device *device;
  
--		br = kmalloc(sizeof(*br), GFP_KERNEL);
-+		br = kzalloc(sizeof(*br), GFP_KERNEL);
- 		if (!br) {
- 			printk(KERN_ERR "can't allocate memory\n");
- 		} else {
--			memset(br, 0, sizeof(*br));
- 			br->levels = kmalloc(obj->package.count *
- 					     sizeof *(br->levels), GFP_KERNEL);
- 			if (!br->levels)
-@@ -1296,12 +1295,10 @@ acpi_video_bus_get_one_device(struct acp
- 	    acpi_evaluate_integer(device->handle, "_ADR", NULL, &device_id);
- 	if (ACPI_SUCCESS(status)) {
+-	device = (struct tape_device *)
+-		kmalloc(sizeof(struct tape_device), GFP_KERNEL);
++	device = kzalloc(sizeof(struct tape_device), GFP_KERNEL);
+ 	if (device == NULL) {
+ 		DBF_EXCEPTION(2, "ti:no mem\n");
+ 		PRINT_INFO ("can't allocate memory for "
+ 			    "tape info structure\n");
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+-	memset(device, 0, sizeof(struct tape_device));
+-	device->modeset_byte = (char *) kmalloc(1, GFP_KERNEL | GFP_DMA);
++	device->modeset_byte = kmalloc(1, GFP_KERNEL | GFP_DMA);
+ 	if (device->modeset_byte == NULL) {
+ 		DBF_EXCEPTION(2, "ti:no mem\n");
+ 		PRINT_INFO("can't allocate memory for modeset byte\n");
+@@ -659,34 +657,30 @@ tape_alloc_request(int cplength, int dat
  
--		data = kmalloc(sizeof(struct acpi_video_device), GFP_KERNEL);
-+		data = kzalloc(sizeof(struct acpi_video_device), GFP_KERNEL);
- 		if (!data)
- 			return_VALUE(-ENOMEM);
+ 	DBF_LH(6, "tape_alloc_request(%d, %d)\n", cplength, datasize);
  
--		memset(data, 0, sizeof(struct acpi_video_device));
+-	request = (struct tape_request *) kmalloc(sizeof(struct tape_request),
+-						  GFP_KERNEL);
++	request = kzalloc(sizeof(struct tape_request), GFP_KERNEL);
+ 	if (request == NULL) {
+ 		DBF_EXCEPTION(1, "cqra nomem\n");
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+-	memset(request, 0, sizeof(struct tape_request));
+ 	/* allocate channel program */
+ 	if (cplength > 0) {
+-		request->cpaddr = kmalloc(cplength*sizeof(struct ccw1),
++		request->cpaddr = kcalloc(cplength, sizeof(struct ccw1),
+ 					  GFP_ATOMIC | GFP_DMA);
+ 		if (request->cpaddr == NULL) {
+ 			DBF_EXCEPTION(1, "cqra nomem\n");
+ 			kfree(request);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+-		memset(request->cpaddr, 0, cplength*sizeof(struct ccw1));
+ 	}
+ 	/* alloc small kernel buffer */
+ 	if (datasize > 0) {
+-		request->cpdata = kmalloc(datasize, GFP_KERNEL | GFP_DMA);
++		request->cpdata = kzalloc(datasize, GFP_KERNEL | GFP_DMA);
+ 		if (request->cpdata == NULL) {
+ 			DBF_EXCEPTION(1, "cqra nomem\n");
+ 			kfree(request->cpaddr);
+ 			kfree(request);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+-		memset(request->cpdata, 0, datasize);
+ 	}
+ 	DBF_LH(6, "New request %p(%p/%p)\n", request, request->cpaddr,
+ 		request->cpdata);
+--- linux-2.6.16-rc4/drivers/s390/char/tape_class.c.orig	2006-02-27 20:14:35.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/tape_class.c	2006-02-27 20:14:45.000000000 +0100
+@@ -44,11 +44,10 @@ struct tape_class_device *register_tape_
+ 	int		rc;
+ 	char *		s;
+ 
+-	tcd = kmalloc(sizeof(struct tape_class_device), GFP_KERNEL);
++	tcd = kzalloc(sizeof(struct tape_class_device), GFP_KERNEL);
+ 	if (!tcd)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	memset(tcd, 0, sizeof(struct tape_class_device));
+ 	strncpy(tcd->device_name, device_name, TAPECLASS_NAME_LEN);
+ 	for (s = strchr(tcd->device_name, '/'); s; s = strchr(s, '/'))
+ 		*s = '!';
+--- linux-2.6.16-rc4/drivers/s390/char/keyboard.c.orig	2006-02-27 20:14:53.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/keyboard.c	2006-02-27 20:15:34.000000000 +0100
+@@ -50,14 +50,12 @@ kbd_alloc(void) {
+ 	struct kbd_data *kbd;
+ 	int i, len;
+ 
+-	kbd = kmalloc(sizeof(struct kbd_data), GFP_KERNEL);
++	kbd = kzalloc(sizeof(struct kbd_data), GFP_KERNEL);
+ 	if (!kbd)
+ 		goto out;
+-	memset(kbd, 0, sizeof(struct kbd_data));
+-	kbd->key_maps = kmalloc(sizeof(key_maps), GFP_KERNEL);
++	kbd->key_maps = kzalloc(sizeof(key_maps), GFP_KERNEL);
+ 	if (!key_maps)
+ 		goto out_kbd;
+-	memset(kbd->key_maps, 0, sizeof(key_maps));
+ 	for (i = 0; i < ARRAY_SIZE(key_maps); i++) {
+ 		if (key_maps[i]) {
+ 			kbd->key_maps[i] =
+@@ -68,10 +66,9 @@ kbd_alloc(void) {
+ 			       sizeof(u_short)*NR_KEYS);
+ 		}
+ 	}
+-	kbd->func_table = kmalloc(sizeof(func_table), GFP_KERNEL);
++	kbd->func_table = kzalloc(sizeof(func_table), GFP_KERNEL);
+ 	if (!kbd->func_table)
+ 		goto out_maps;
+-	memset(kbd->func_table, 0, sizeof(func_table));
+ 	for (i = 0; i < ARRAY_SIZE(func_table); i++) {
+ 		if (func_table[i]) {
+ 			len = strlen(func_table[i]) + 1;
+@@ -82,10 +79,9 @@ kbd_alloc(void) {
+ 		}
+ 	}
+ 	kbd->fn_handler =
+-		kmalloc(sizeof(fn_handler_fn *) * NR_FN_HANDLER, GFP_KERNEL);
++		kzalloc(sizeof(fn_handler_fn *) * NR_FN_HANDLER, GFP_KERNEL);
+ 	if (!kbd->fn_handler)
+ 		goto out_func;
+-	memset(kbd->fn_handler, 0, sizeof(fn_handler_fn *) * NR_FN_HANDLER);
+ 	kbd->accent_table =
+ 		kmalloc(sizeof(struct kbdiacr)*MAX_DIACR, GFP_KERNEL);
+ 	if (!kbd->accent_table)
+--- linux-2.6.16-rc4/drivers/s390/char/vmlogrdr.c.orig	2006-02-27 20:15:44.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/vmlogrdr.c	2006-02-27 20:16:02.000000000 +0100
+@@ -759,9 +759,8 @@ vmlogrdr_register_device(struct vmlogrdr
+ 	struct device *dev;
+ 	int ret;
+ 
+-	dev = kmalloc(sizeof(struct device), GFP_KERNEL);
++	dev = kzalloc(sizeof(struct device), GFP_KERNEL);
+ 	if (dev) {
+-		memset(dev, 0, sizeof(struct device));
+ 		snprintf(dev->bus_id, BUS_ID_SIZE, "%s",
+ 			 priv->internal_name);
+ 		dev->bus = &iucv_bus;
+--- linux-2.6.16-rc4/drivers/s390/char/tty3270.c.orig	2006-02-27 20:16:12.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/char/tty3270.c	2006-02-27 20:16:40.000000000 +0100
+@@ -691,10 +691,9 @@ tty3270_alloc_view(void)
+ 	struct tty3270 *tp;
+ 	int pages;
+ 
+-	tp = kmalloc(sizeof(struct tty3270),GFP_KERNEL);
++	tp = kzalloc(sizeof(struct tty3270), GFP_KERNEL);
+ 	if (!tp)
+ 		goto out_err;
+-	memset(tp, 0, sizeof(struct tty3270));
+ 	tp->freemem_pages =
+ 		kmalloc(sizeof(void *) * TTY3270_STRING_PAGES, GFP_KERNEL);
+ 	if (!tp->freemem_pages)
+@@ -767,16 +766,14 @@ tty3270_alloc_screen(struct tty3270 *tp)
+ 	int lines;
+ 
+ 	size = sizeof(struct tty3270_line) * (tp->view.rows - 2);
+-	tp->screen = kmalloc(size, GFP_KERNEL);
++	tp->screen = kzalloc(size, GFP_KERNEL);
+ 	if (!tp->screen)
+ 		goto out_err;
+-	memset(tp->screen, 0, size);
+ 	for (lines = 0; lines < tp->view.rows - 2; lines++) {
+ 		size = sizeof(struct tty3270_cell) * tp->view.cols;
+-		tp->screen[lines].cells = kmalloc(size, GFP_KERNEL);
++		tp->screen[lines].cells = kzalloc(size, GFP_KERNEL);
+ 		if (!tp->screen[lines].cells)
+ 			goto out_screen;
+-		memset(tp->screen[lines].cells, 0, size);
+ 	}
+ 	return 0;
+ out_screen:
+--- linux-2.6.16-rc4/drivers/s390/s390_rdev.c.orig	2006-02-27 20:16:54.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/s390_rdev.c	2006-02-27 20:17:07.000000000 +0100
+@@ -27,10 +27,9 @@ s390_root_dev_register(const char *name)
+ 
+ 	if (!strlen(name))
+ 		return ERR_PTR(-EINVAL);
+-	dev = kmalloc(sizeof(struct device), GFP_KERNEL);
++	dev = kzalloc(sizeof(struct device), GFP_KERNEL);
+ 	if (!dev)
+ 		return ERR_PTR(-ENOMEM);
+-	memset(dev, 0, sizeof(struct device));
+ 	strncpy(dev->bus_id, name, min(strlen(name), (size_t)BUS_ID_SIZE));
+ 	dev->release = s390_root_dev_release;
+ 	ret = device_register(dev);
+--- linux-2.6.16-rc4/drivers/s390/cio/chsc.c.orig	2006-02-27 20:17:17.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/cio/chsc.c	2006-02-27 20:17:29.000000000 +0100
+@@ -1016,10 +1016,9 @@ new_channel_path(int chpid)
+ 	struct channel_path *chp;
+ 	int ret;
+ 
+-	chp = kmalloc(sizeof(struct channel_path), GFP_KERNEL);
++	chp = kzalloc(sizeof(struct channel_path), GFP_KERNEL);
+ 	if (!chp)
+ 		return -ENOMEM;
+-	memset(chp, 0, sizeof(struct channel_path));
+ 
+ 	/* fill in status, etc. */
+ 	chp->id = chpid;
+--- linux-2.6.16-rc4/drivers/s390/cio/qdio.c.orig	2006-02-27 20:17:37.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/cio/qdio.c	2006-02-27 20:19:28.000000000 +0100
+@@ -1677,16 +1677,14 @@ qdio_alloc_qs(struct qdio_irq *irq_ptr,
+ 	int result=-ENOMEM;
+ 
+ 	for (i=0;i<no_input_qs;i++) {
+-		q=kmalloc(sizeof(struct qdio_q),GFP_KERNEL);
++		q=kzalloc(sizeof(struct qdio_q),GFP_KERNEL);
+ 
+ 		if (!q) {
+ 			QDIO_PRINT_ERR("kmalloc of q failed!\n");
+ 			goto out;
+ 		}
+ 
+-		memset(q,0,sizeof(struct qdio_q));
 -
- 		data->handle = device->handle;
- 		strcpy(acpi_device_name(device), ACPI_VIDEO_DEVICE_NAME);
- 		strcpy(acpi_device_class(device), ACPI_VIDEO_CLASS);
-@@ -1737,10 +1734,9 @@ static int acpi_video_bus_add(struct acp
- 	if (!device)
- 		return_VALUE(-EINVAL);
+-		q->slib=kmalloc(PAGE_SIZE,GFP_KERNEL);
++		q->slib = kmalloc(PAGE_SIZE, GFP_KERNEL);
+ 		if (!q->slib) {
+ 			QDIO_PRINT_ERR("kmalloc of slib failed!\n");
+ 			goto out;
+@@ -1696,14 +1694,12 @@ qdio_alloc_qs(struct qdio_irq *irq_ptr,
+ 	}
  
--	video = kmalloc(sizeof(struct acpi_video_bus), GFP_KERNEL);
-+	video = kzalloc(sizeof(struct acpi_video_bus), GFP_KERNEL);
- 	if (!video)
- 		return_VALUE(-ENOMEM);
--	memset(video, 0, sizeof(struct acpi_video_bus));
+ 	for (i=0;i<no_output_qs;i++) {
+-		q=kmalloc(sizeof(struct qdio_q),GFP_KERNEL);
++		q = kzalloc(sizeof(struct qdio_q), GFP_KERNEL);
  
- 	video->handle = device->handle;
- 	strcpy(acpi_device_name(device), ACPI_VIDEO_BUS_NAME);
---- linux-2.6.16-rc4-mm2/drivers/acpi/processor_core.c.orig	2006-02-28 14:49:00.000000000 +0100
-+++ linux-2.6.16-rc4-mm2/drivers/acpi/processor_core.c	2006-02-28 14:49:14.000000000 +0100
-@@ -625,10 +625,9 @@ static int acpi_processor_add(struct acp
- 	if (!device)
- 		return_VALUE(-EINVAL);
+ 		if (!q) {
+ 			goto out;
+ 		}
  
--	pr = kmalloc(sizeof(struct acpi_processor), GFP_KERNEL);
-+	pr = kzalloc(sizeof(struct acpi_processor), GFP_KERNEL);
- 	if (!pr)
- 		return_VALUE(-ENOMEM);
--	memset(pr, 0, sizeof(struct acpi_processor));
+-		memset(q,0,sizeof(struct qdio_q));
+-
+ 		q->slib=kmalloc(PAGE_SIZE,GFP_KERNEL);
+ 		if (!q->slib) {
+ 			QDIO_PRINT_ERR("kmalloc of slib failed!\n");
+@@ -2975,7 +2971,7 @@ qdio_allocate(struct qdio_initialize *in
+ 	qdio_allocate_do_dbf(init_data);
  
- 	pr->handle = device->handle;
- 	strcpy(acpi_device_name(device), ACPI_PROCESSOR_DEVICE_NAME);
+ 	/* create irq */
+-	irq_ptr=kmalloc(sizeof(struct qdio_irq), GFP_KERNEL | GFP_DMA);
++	irq_ptr = kzalloc(sizeof(struct qdio_irq), GFP_KERNEL | GFP_DMA);
+ 
+ 	QDIO_DBF_TEXT0(0,setup,"irq_ptr:");
+ 	QDIO_DBF_HEX0(0,setup,&irq_ptr,sizeof(void*));
+@@ -2985,8 +2981,6 @@ qdio_allocate(struct qdio_initialize *in
+ 		return -ENOMEM;
+ 	}
+ 
+-	memset(irq_ptr,0,sizeof(struct qdio_irq));
+-
+ 	init_MUTEX(&irq_ptr->setting_up_sema);
+ 
+ 	/* QDR must be in DMA area since CCW data address is only 32 bit */
+@@ -3677,10 +3671,10 @@ qdio_get_qdio_memory(void)
+ 
+ 	for (i=1;i<INDICATORS_PER_CACHELINE;i++)
+ 		indicator_used[i]=0;
+-	indicators=(__u32*)kmalloc(sizeof(__u32)*(INDICATORS_PER_CACHELINE),
++	indicators = kzalloc(sizeof(__u32)*(INDICATORS_PER_CACHELINE),
+ 				   GFP_KERNEL);
+-       	if (!indicators) return -ENOMEM;
+-	memset(indicators,0,sizeof(__u32)*(INDICATORS_PER_CACHELINE));
++       	if (!indicators)
++		return -ENOMEM;
+ 	return 0;
+ }
+ 
+--- linux-2.6.16-rc4/drivers/s390/cio/device.c.orig	2006-02-27 20:19:38.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/cio/device.c	2006-02-27 20:20:11.000000000 +0100
+@@ -826,17 +826,15 @@ io_subchannel_probe (struct subchannel *
+ 			get_device(&cdev->dev);
+ 		return 0;
+ 	}
+-	cdev  = kmalloc (sizeof(*cdev), GFP_KERNEL);
++	cdev = kzalloc(sizeof(*cdev), GFP_KERNEL);
+ 	if (!cdev)
+ 		return -ENOMEM;
+-	memset(cdev, 0, sizeof(struct ccw_device));
+-	cdev->private = kmalloc(sizeof(struct ccw_device_private), 
++	cdev->private = kzalloc(sizeof(struct ccw_device_private), 
+ 				GFP_KERNEL | GFP_DMA);
+ 	if (!cdev->private) {
+ 		kfree(cdev);
+ 		return -ENOMEM;
+ 	}
+-	memset(cdev->private, 0, sizeof(struct ccw_device_private));
+ 	atomic_set(&cdev->private->onoff, 0);
+ 	cdev->dev = (struct device) {
+ 		.parent = &sch->dev,
+--- linux-2.6.16-rc4/drivers/s390/cio/device_ops.c.orig	2006-02-27 20:20:51.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/cio/device_ops.c	2006-02-27 20:21:25.000000000 +0100
+@@ -359,10 +359,9 @@ read_dev_chars (struct ccw_device *cdev,
+ 	CIO_TRACE_EVENT (4, "rddevch");
+ 	CIO_TRACE_EVENT (4, sch->dev.bus_id);
+ 
+-	rdc_ccw = kmalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
++	rdc_ccw = kzalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
+ 	if (!rdc_ccw)
+ 		return -ENOMEM;
+-	memset(rdc_ccw, 0, sizeof(struct ccw1));
+ 	rdc_ccw->cmd_code = CCW_CMD_RDC;
+ 	rdc_ccw->count = length;
+ 	rdc_ccw->flags = CCW_FLAG_SLI;
+@@ -426,16 +425,14 @@ read_conf_data_lpm (struct ccw_device *c
+ 	if (!ciw || ciw->cmd == 0)
+ 		return -EOPNOTSUPP;
+ 
+-	rcd_ccw = kmalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
++	rcd_ccw = kzalloc(sizeof(struct ccw1), GFP_KERNEL | GFP_DMA);
+ 	if (!rcd_ccw)
+ 		return -ENOMEM;
+-	memset(rcd_ccw, 0, sizeof(struct ccw1));
+-	rcd_buf = kmalloc(ciw->count, GFP_KERNEL | GFP_DMA);
++	rcd_buf = kzalloc(ciw->count, GFP_KERNEL | GFP_DMA);
+  	if (!rcd_buf) {
+ 		kfree(rcd_ccw);
+ 		return -ENOMEM;
+ 	}
+- 	memset (rcd_buf, 0, ciw->count);
+ 	rcd_ccw->cmd_code = ciw->cmd;
+ 	rcd_ccw->cda = (__u32) __pa (rcd_buf);
+ 	rcd_ccw->count = ciw->count;
+--- linux-2.6.16-rc4/drivers/s390/cio/css.c.orig	2006-02-27 20:21:34.000000000 +0100
++++ linux-2.6.16-rc4/drivers/s390/cio/css.c	2006-02-27 20:21:46.000000000 +0100
+@@ -586,10 +586,9 @@ css_enqueue_subchannel_slow(struct subch
+ 	struct slow_subchannel *new_slow_sch;
+ 	unsigned long flags;
+ 
+-	new_slow_sch = kmalloc(sizeof(struct slow_subchannel), GFP_ATOMIC);
++	new_slow_sch = kzalloc(sizeof(struct slow_subchannel), GFP_ATOMIC);
+ 	if (!new_slow_sch)
+ 		return -ENOMEM;
+-	memset(new_slow_sch, 0, sizeof(struct slow_subchannel));
+ 	new_slow_sch->schid = schid;
+ 	spin_lock_irqsave(&slow_subchannel_lock, flags);
+ 	list_add_tail(&new_slow_sch->slow_list, &slow_subchannels_head);
 
 
 
-
---===============84033780390306556==
+--===============0030826052516870206==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -556,4 +880,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84033780390306556==--
+--===============0030826052516870206==--
