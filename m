@@ -1,24 +1,50 @@
-From: Roland Dreier <roland@love-shack.home.digitalvampire.org>
-Date: Tue, 28 Mar 2006 18:41:04 +0000
-Subject: Re: [KJ] 2.6.16-post section mismatches
-Message-Id: <87vetys98f.fsf@love-shack.home.digitalvampire.org>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 01 Mar 2006 07:29:45 +0000
+Subject: [KJ][Patch][update] check return value of request_region in
+Message-Id: <1141198185.7784.9.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============53231717416718993=="
+Content-Type: multipart/mixed; boundary="===============6706138286233142=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060327155232.345bed3d.rdunlap@xenotime.net>
-In-Reply-To: <20060327155232.345bed3d.rdunlap@xenotime.net>
 To: kernel-janitors@vger.kernel.org
 
---===============53231717416718993==
-Content-Type: text/plain; charset=us-ascii
+--===============6706138286233142==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
- > WARNING: drivers/infiniband/hw/mthca/ib_mthca.o - Section mismatch: reference to .exit.text:mthca_unmap_eq_icm from .text between 'mthca_free_icms' (at offset 0x8e) and 'mthca_close_hca'
+G'day list,
 
-Thanks, I will send a fix for this to Linus.
+Sorry about the last patch I forgot to compile test it first.
+Here is the patch you want.
 
- - R.
+matroxfb_base.c calles 'request_region' @ 1737 without checking the
+return value.
 
---===============53231717416718993==
+The patch below adds a check for this and plugs into the existing error
+path.
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- linux-2.6.16-rc5/sound/oss/ali5455.c.orig	2006-03-01 17:52:40.000000000 +1100
++++ linux-2.6.16-rc5/sound/oss/ali5455.c	2006-03-01 18:25:34.000000000 +1100
+@@ -3457,7 +3457,13 @@ static int __devinit ali_probe(struct pc
+ 	card->channel[4].port = 0xb0;
+ 	card->channel[4].num = 4;
+ 	/* claim our iospace and irq */
+-	request_region(card->iobase, 256, card_names[pci_id->driver_data]);
++	if (!request_region(card->iobase, 256, 
++				card_names[pci_id->driver_data])) {
++		printk(KERN_ERR "ali_audio: request_region failed");
++		kfree(card);
++		return -EBUSY;
++	}
++	
+ 	if (request_irq(card->irq, &ali_interrupt, SA_SHIRQ,
+ 			card_names[pci_id->driver_data], card)) {
+ 		printk(KERN_ERR "ali_audio: unable to allocate irq %d\n",
+
+
+
+--===============6706138286233142==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -29,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============53231717416718993==--
+--===============6706138286233142==--
