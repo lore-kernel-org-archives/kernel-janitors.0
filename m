@@ -1,49 +1,60 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Wed, 01 Mar 2006 07:12:15 +0000
-Subject: [KJ][Patch] check return value of request region in ali5455.c
-Message-Id: <1141197136.7784.5.camel@localhost.localdomain>
+From: Petr Vandrovec <vandrove@vc.cvut.cz>
+Date: Fri, 03 Mar 2006 06:31:58 +0000
+Subject: Re: [KJ][Patch] check return value of request_region in
+Message-Id: <4407E2DE.5010809@vc.cvut.cz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94740525152809252=="
+Content-Type: multipart/mixed; boundary="===============78923048193528267=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1141029654.7765.6.camel@localhost.localdomain>
 In-Reply-To: <1141029654.7765.6.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============94740525152809252==
-Content-Type: text/plain
+--===============78923048193528267==
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Transfer-Encoding: 7bit
 
-G'day list,
+Darren Jenkins\ wrote:
+> G'day list,
+> 
+> matroxfb_base.c calles 'request_region' @ 1737 without checking the
+> return value.
+> 
+> The patch below adds a check for this and plugs into the existing error
+> path.
 
-ali5455.c calls request_region without checking it's return value 
-@ line 3460.
+Won't this conflict with reserving same I/O ports?  Only primary card 
+succeeds with reservation, so if you really want to fix this "bug", then 
+remove this I/O reservation from matroxfb completely, matroxfb never 
+touches this I/O region, it just reserves it to make sure that you won't 
+load vesafb and matroxfb for same head.  Your fix makes use of matroxfb 
+with two Matrox cards in the box impossible, as on second card 0x3C0 
+reservation must fail as first head made reservation already.
+								Petr
 
-The patch below simply checks the return value and copies local error
-style.
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
---- linux-2.6.16-rc5/sound/oss/ali5455.c.orig	2006-03-01 17:52:40.000000000 +1100
-+++ linux-2.6.16-rc5/sound/oss/ali5455.c	2006-03-01 17:58:35.000000000 +1100
-@@ -3457,7 +3457,13 @@ static int __devinit ali_probe(struct pc
- 	card->channel[4].port = 0xb0;
- 	card->channel[4].num = 4;
- 	/* claim our iospace and irq */
--	request_region(card->iobase, 256, card_names[pci_id->driver_data]);
-+	if (!request_region(card->iobase, 256, 
-+				card_names[pci_id->driver_data])) {
-+		printk(KERN_ERR "ali_audio: request_region failed");
-+		kfree(card);
-+		return -EBUSY
-+	}
-+	
- 	if (request_irq(card->irq, &ali_interrupt, SA_SHIRQ,
- 			card_names[pci_id->driver_data], card)) {
- 		printk(KERN_ERR "ali_audio: unable to allocate irq %d\n",
+> Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+> 
+> --- linux-2.6.16-rc4/drivers/video/matrox/matroxfb_base.c.orig	2006-02-24 23:44:10.000000000 +1100
+> +++ linux-2.6.16-rc4/drivers/video/matrox/matroxfb_base.c	2006-02-27 19:26:26.000000000 +1100
+> @@ -1734,7 +1734,11 @@ static int initMatrox2(WPMINFO struct bo
+>  #endif	/* CONFIG_MTRR */
+>  
+>  	if (!ACCESS_FBINFO(devflags.novga))
+> -		request_region(0x3C0, 32, "matrox");
+> +		if (!request_region(0x3C0, 32, "matrox")) {
+> +			printk(KERN_ERR "matroxfb: failed to request_region");
+> +			err = -EBUSY;
+> +			goto failVideoIO;
+> +		}
+>  	matroxfb_g450_connect(PMINFO2);
+>  	ACCESS_FBINFO(hw_switch->reset(PMINFO2));
+>  
+> 
+> 
+> 
 
 
 
---===============94740525152809252==
+--===============78923048193528267==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============94740525152809252==--
+--===============78923048193528267==--
