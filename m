@@ -1,77 +1,68 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Fri, 31 Mar 2006 13:13:41 +0000
-Subject: Re: [KJ][Patch][update] fix kbuild warning in iptable_nat.o
-Message-Id: <20060331131341.GC3893@stusta.de>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Sun, 05 Mar 2006 08:41:37 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in  lib/
+Message-Id: <1141548097.6426.9.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62563090588765946=="
+Content-Type: multipart/mixed; boundary="===============07070668011433634=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1143548373.14792.9.camel@localhost.localdomain>
-In-Reply-To: <1143548373.14792.9.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============62563090588765946==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============07070668011433634==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 29, 2006 at 08:48:14PM +1100, Darren Jenkins" wrote:
-> On Tue, 2006-03-28 at 09:06 -0800, Nishanth Aravamudan wrote:
-> > On 28.03.2006 [23:19:33 +1100], Darren Jenkins" wrote:
-> > 
-> > <snip>
-> > 
-> > > As iptable_nat.o seems to be compiled into the kernel (from
-> > > ip_nat_rule.c and ip_nat_standalone.c) by default, I don't think we need
-> > > the __exit function (correct me if I am wrong).
-> > 
-> > <snip>
-> > 
-> > What happens when we do build NAT filtering support as a module? Just
-> > because the default is non-modular, does not mean we can ignore the
-> > option.
-> > 
-> > Thanks,
-> > Nish
-> > 
-> 
-> Actually I thought that as in the Makefile, it does not depend on any
-> config options to be built. That it would only ever be compiled into the
-> kernel.
-> Thinking about it, I guess it could be a module in the next higher level
-> Makefile, and I should probably read up on how a Makefile works
-> anyway. :)
+hi, 
 
-It's actually in the same Makefile:
+this patch converts lib/ to kzalloc usage.
+Compile tested with allyesconfig.
 
-...
-iptable_nat-objs        := ip_nat_rule.o ip_nat_standalone.o
-...
-obj-$(CONFIG_IP_NF_NAT) += iptable_nat.o
-...
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-
-The first statement expresses that iptable_nat is built from two object 
-files.
-
-The second statement tells that iptable_nat is built depending on 
-CONFIG_IP_NF_NAT.
-
-CONFIG_IP_NF_NAT is a tristate.
-
-
-> Darren J.
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+--- linux-2.6.16-rc5-mm1/lib/genalloc.c.orig	2006-03-04 21:55:53.000000000 +0100
++++ linux-2.6.16-rc5-mm1/lib/genalloc.c	2006-03-04 21:57:03.000000000 +0100
+@@ -47,20 +47,17 @@ struct gen_pool *gen_pool_create(int nr_
+ 	if (!max_chunk_shift)
+ 		max_chunk_shift = PAGE_SHIFT;
+ 
+-	poolp = kmalloc(sizeof(struct gen_pool), GFP_KERNEL);
++	poolp = kzalloc(sizeof(struct gen_pool), GFP_KERNEL);
+ 	if (!poolp)
+ 		return NULL;
+-	memset(poolp, 0, sizeof(struct gen_pool));
+-	poolp->h = kmalloc(sizeof(struct gen_pool_link) *
+-			   (max_chunk_shift - ALLOC_MIN_SHIFT + 1),
+-			   GFP_KERNEL);
++	poolp->h = kcalloc((max_chunk_shift - ALLOC_MIN_SHIFT + ),
++				sizeof(struct gen_pool_link), 
++				GFP_KERNEL);
+ 	if (!poolp->h) {
+ 		printk(KERN_WARNING "gen_pool_alloc() failed to allocate\n");
+ 		kfree(poolp);
+ 		return NULL;
+ 	}
+-	memset(poolp->h, 0, sizeof(struct gen_pool_link) *
+-	       (max_chunk_shift - ALLOC_MIN_SHIFT + 1));
+ 
+ 	spin_lock_init(&poolp->lock);
+ 	poolp->get_new_chunk = fp;
+--- linux-2.6.16-rc5-mm1/lib/kobject.c.orig	2006-03-04 21:57:14.000000000 +0100
++++ linux-2.6.16-rc5-mm1/lib/kobject.c	2006-03-04 21:57:23.000000000 +0100
+@@ -111,10 +111,9 @@ char *kobject_get_path(struct kobject *k
+ 	len = get_kobj_path_length(kobj);
+ 	if (len == 0)
+ 		return NULL;
+-	path = kmalloc(len, gfp_mask);
++	path = kzalloc(len, gfp_mask);
+ 	if (!path)
+ 		return NULL;
+-	memset(path, 0x00, len);
+ 	fill_kobj_path(kobj, path, len);
+ 
+ 	return path;
 
 
---===============62563090588765946==
+
+--===============07070668011433634==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -82,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62563090588765946==--
+--===============07070668011433634==--
