@@ -1,103 +1,134 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Sun, 05 Mar 2006 15:02:18 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in drivers/media/
-Message-Id: <1141570938.13183.15.camel@alice>
+Date: Sun, 05 Mar 2006 15:02:22 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in drivers/block
+Message-Id: <1141570942.13183.17.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============33483197810493848=="
+Content-Type: multipart/mixed; boundary="===============61072632744871891=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140815848.26064.4.camel@alice>
 In-Reply-To: <1140815848.26064.4.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============33483197810493848==
+--===============61072632744871891==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,  
+hi, 
 
-this patch converts drivers/media/ to kzalloc usage.
+this patch converts drivers/block to kzalloc usage.
 Compile tested with allyesconfig.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc5-mm1/drivers/media/dvb/cinergyT2/cinergyT2.c.orig	2006-03-05 09:48:34.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/drivers/media/dvb/cinergyT2/cinergyT2.c	2006-03-05 09:48:53.000000000 +0100
-@@ -877,12 +877,11 @@ static int cinergyt2_probe (struct usb_i
- 	struct cinergyt2 *cinergyt2;
- 	int err;
+--- linux-2.6.16-rc5-mm1/drivers/block/paride/bpck6.c.orig	2006-03-05 11:07:13.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/block/paride/bpck6.c	2006-03-05 11:07:29.000000000 +0100
+@@ -224,10 +224,9 @@ static void bpck6_log_adapter( PIA *pi, 
  
--	if (!(cinergyt2 = kmalloc (sizeof(struct cinergyt2), GFP_KERNEL))) {
-+	if (!(cinergyt2 = kzalloc(sizeof(struct cinergyt2), GFP_KERNEL))) {
- 		dprintk(1, "out of memory?!?\n");
- 		return -ENOMEM;
+ static int bpck6_init_proto(PIA *pi)
+ {
+-	Interface *p = kmalloc(sizeof(Interface), GFP_KERNEL);
++	Interface *p = kzalloc(sizeof(Interface), GFP_KERNEL);
+ 
+ 	if (p) {
+-		memset(p, 0, sizeof(Interface));
+ 		pi->private = (unsigned long)p;
+ 		return 0;
  	}
+--- linux-2.6.16-rc5-mm1/drivers/block/cciss_scsi.c.orig	2006-03-05 11:07:44.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/block/cciss_scsi.c	2006-03-05 11:08:09.000000000 +0100
+@@ -1027,12 +1027,11 @@ cciss_update_non_disk_devices(int cntl_n
+ 	int i;
  
--	memset (cinergyt2, 0, sizeof (struct cinergyt2));
- 	usb_set_intfdata (intf, (void *) cinergyt2);
- 
- 	init_MUTEX(&cinergyt2->sem);
---- linux-2.6.16-rc5-mm1/drivers/media/video/cx88/cx88-alsa.c.orig	2006-03-05 09:50:04.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/drivers/media/video/cx88/cx88-alsa.c	2006-03-05 09:50:14.000000000 +0100
-@@ -413,11 +413,9 @@ static int snd_cx88_hw_params(struct snd
- 
- 	dprintk(1,"Setting buffer\n");
- 
--	buf = kmalloc(sizeof(*buf),GFP_KERNEL);
-+	buf = kzalloc(sizeof(*buf),GFP_KERNEL);
- 	if (NULL == buf)
- 		return -ENOMEM;
--	memset(buf,0,sizeof(*buf));
--
- 
- 	buf->vb.memory = V4L2_MEMORY_MMAP;
- 	buf->vb.width  = chip->period_size;
---- linux-2.6.16-rc5-mm1/drivers/media/video/msp3400-driver.c.orig	2006-03-05 09:50:27.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/drivers/media/video/msp3400-driver.c	2006-03-05 09:50:54.000000000 +0100
-@@ -1070,10 +1070,9 @@ static int msp_attach(struct i2c_adapter
- 	int msp_product, msp_prod_hi, msp_prod_lo;
- 	int msp_rom;
- 
--	client = kmalloc(sizeof(*client), GFP_KERNEL);
-+	client = kzalloc(sizeof(*client), GFP_KERNEL);
- 	if (client == NULL)
- 		return -ENOMEM;
--	memset(client, 0, sizeof(*client));
- 	client->addr = address;
- 	client->adapter = adapter;
- 	client->driver = &i2c_driver;
-@@ -1085,14 +1084,13 @@ static int msp_attach(struct i2c_adapter
- 		return -1;
+ 	c = (ctlr_info_t *) hba[cntl_num];	
+-	ld_buff = kmalloc(reportlunsize, GFP_KERNEL);
++	ld_buff = kzalloc(reportlunsize, GFP_KERNEL);
+ 	if (ld_buff == NULL) {
+ 		printk(KERN_ERR "cciss: out of memory\n");
+ 		return;
  	}
+-	memset(ld_buff, 0, reportlunsize);
+ 	inq_buff = kmalloc(OBDR_TAPE_INQ_SIZE, GFP_KERNEL);
+         if (inq_buff == NULL) {
+                 printk(KERN_ERR "cciss: out of memory\n");
+--- linux-2.6.16-rc5-mm1/drivers/block/cciss.c.orig	2006-03-05 11:09:08.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/block/cciss.c	2006-03-05 11:10:40.000000000 +0100
+@@ -996,13 +996,11 @@ static int cciss_ioctl(struct inode *ino
+ 			status = -EINVAL;
+ 			goto cleanup1;
+ 		}
+-		buff = (unsigned char **) kmalloc(MAXSGENTRIES * 
+-				sizeof(char *), GFP_KERNEL);
++		buff = kzalloc(MAXSGENTRIES * sizeof(char *), GFP_KERNEL);
+ 		if (!buff) {
+ 			status = -ENOMEM;
+ 			goto cleanup1;
+ 		}
+-		memset(buff, 0, MAXSGENTRIES);
+ 		buff_size = (int *) kmalloc(MAXSGENTRIES * sizeof(int), 
+ 					GFP_KERNEL);
+ 		if (!buff_size) {
+@@ -2941,13 +2939,12 @@ static void cciss_getgeometry(int cntl_n
+ 	int block_size;
+ 	int total_size; 
  
--	state = kmalloc(sizeof(*state), GFP_KERNEL);
-+	state = kzalloc(sizeof(*state), GFP_KERNEL);
- 	if (state == NULL) {
- 		kfree(client);
- 		return -ENOMEM;
+-	ld_buff = kmalloc(sizeof(ReportLunData_struct), GFP_KERNEL);
++	ld_buff = kzalloc(sizeof(ReportLunData_struct), GFP_KERNEL);
+ 	if (ld_buff == NULL)
+ 	{
+ 		printk(KERN_ERR "cciss: out of memory\n");
+ 		return;
  	}
- 	i2c_set_clientdata(client, state);
+-	memset(ld_buff, 0, sizeof(ReportLunData_struct));
+ 	size_buff = kmalloc(sizeof( ReadCapdata_struct), GFP_KERNEL);
+         if (size_buff == NULL)
+         {
+@@ -3061,10 +3058,9 @@ static int alloc_cciss_hba(void)
+ 	for(i=0; i< MAX_CTLR; i++) {
+ 		if (!hba[i]) {
+ 			ctlr_info_t *p;
+-			p = kmalloc(sizeof(ctlr_info_t), GFP_KERNEL);
++			p = kzalloc(sizeof(ctlr_info_t), GFP_KERNEL);
+ 			if (!p)
+ 				goto Enomem;
+-			memset(p, 0, sizeof(ctlr_info_t));
+ 			for (n = 0; n < NWD; n++)
+ 				p->gendisk[n] = disk[n];
+ 			hba[i] = p;
+--- linux-2.6.16-rc5-mm1/drivers/block/DAC960.c.orig	2006-03-05 11:10:48.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/block/DAC960.c	2006-03-05 11:12:05.000000000 +0100
+@@ -312,11 +312,10 @@ static boolean DAC960_CreateAuxiliaryStr
+ 		CommandsRemaining = CommandAllocationGroupSize;
+ 	  CommandGroupByteCount =
+ 		CommandsRemaining * CommandAllocationLength;
+-	  AllocationPointer = kmalloc(CommandGroupByteCount, GFP_ATOMIC);
++	  AllocationPointer = kzalloc(CommandGroupByteCount, GFP_ATOMIC);
+ 	  if (AllocationPointer == NULL)
+ 		return DAC960_Failure(Controller,
+ 					"AUXILIARY STRUCTURE CREATION");
+-	  memset(AllocationPointer, 0, CommandGroupByteCount);
+ 	 }
+       Command = (DAC960_Command_T *) AllocationPointer;
+       AllocationPointer += CommandAllocationLength;
+@@ -2710,14 +2709,12 @@ DAC960_DetectController(struct pci_dev *
+   void __iomem *BaseAddress;
+   int i;
  
--	memset(state, 0, sizeof(*state));
- 	state->v4l2_std = V4L2_STD_NTSC;
- 	state->volume = 58880;	/* 0db gain */
- 	state->balance = 32768;	/* 0db gain */
---- linux-2.6.16-rc5-mm1/drivers/media/video/planb.c.orig	2006-03-05 09:51:03.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/drivers/media/video/planb.c	2006-03-05 09:51:39.000000000 +0100
-@@ -352,9 +352,8 @@ static int planb_prepare_open(struct pla
- 		* PLANB_DUMMY)*sizeof(struct dbdma_cmd)
- 		+(PLANB_MAXLINES*((PLANB_MAXPIXELS+7)& ~7))/8
- 		+MAX_GBUFFERS*sizeof(unsigned int);
--	if ((pb->priv_space = kmalloc (size, GFP_KERNEL)) == 0)
-+	if ((pb->priv_space = kzalloc(size, GFP_KERNEL)) == 0)
- 		return -ENOMEM;
--	memset ((void *) pb->priv_space, 0, size);
- 	pb->overlay_last1 = pb->ch1_cmd = (volatile struct dbdma_cmd *)
- 						DBDMA_ALIGN (pb->priv_space);
- 	pb->overlay_last2 = pb->ch2_cmd = pb->ch1_cmd + pb->tab_size;
+-  Controller = (DAC960_Controller_T *)
+-	kmalloc(sizeof(DAC960_Controller_T), GFP_ATOMIC);
++  Controller = kzalloc(sizeof(DAC960_Controller_T), GFP_ATOMIC);
+   if (Controller == NULL) {
+ 	DAC960_Error("Unable to allocate Controller structure for "
+                        "Controller at\n", NULL);
+ 	return NULL;
+   }
+-  memset(Controller, 0, sizeof(DAC960_Controller_T));
+   Controller->ControllerNumber = DAC960_ControllerCount;
+   DAC960_Controllers[DAC960_ControllerCount++] = Controller;
+   Controller->Bus = PCI_Device->bus->number;
 
 
 
---===============33483197810493848==
+--===============61072632744871891==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -108,4 +139,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============33483197810493848==--
+--===============61072632744871891==--
