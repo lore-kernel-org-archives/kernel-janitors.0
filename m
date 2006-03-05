@@ -1,45 +1,53 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Sun, 05 Mar 2006 21:02:38 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in drivers/pnp
-Message-Id: <1141592559.17717.16.camel@alice>
+Date: Sun, 05 Mar 2006 21:02:42 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in drivers/nubus
+Message-Id: <1141592562.17717.17.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85789161128602265=="
+Content-Type: multipart/mixed; boundary="===============96191302429035508=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140815848.26064.4.camel@alice>
 In-Reply-To: <1140815848.26064.4.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============85789161128602265==
+--===============96191302429035508==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi, 
 
-this patch converts drivers/pnp/ to kzalloc usage.
-Compile tested with allyesconfig.
+this patch converts drivers/nubus/ to kzalloc usage.
+Not tested.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc5-mm1/drivers/pnp/core.c.orig	2006-03-05 16:06:10.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/drivers/pnp/core.c	2006-03-05 16:06:32.000000000 +0100
-@@ -26,12 +26,11 @@ void *pnp_alloc(long size)
- {
- 	void *result;
+--- linux-2.6.16-rc5-mm1/drivers/nubus/nubus.c.orig	2006-03-05 16:04:52.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/nubus/nubus.c	2006-03-05 16:05:10.000000000 +0100
+@@ -467,9 +467,8 @@ static struct nubus_dev* __init
+ 		       parent->base, dir.base);
  
--	result = kmalloc(size, GFP_KERNEL);
-+	result = kzalloc(size, GFP_KERNEL);
- 	if (!result){
- 		printk(KERN_ERR "pnp: Out of Memory\n");
- 		return NULL;
- 	}
--	memset(result, 0, size);
- 	return result;
- }
+ 	/* Actually we should probably panic if this fails */
+-	if ((dev = kmalloc(sizeof(*dev), GFP_ATOMIC)) == NULL)
++	if ((dev = kzalloc(sizeof(*dev), GFP_ATOMIC)) == NULL)
+ 		return NULL;	
+-	memset(dev, 0, sizeof(*dev));
+ 	dev->resid = parent->type;
+ 	dev->directory = dir.base;
+ 	dev->board = board;
+@@ -801,9 +800,8 @@ static struct nubus_board* __init nubus_
+ 	nubus_rewind(&rp, FORMAT_BLOCK_SIZE, bytelanes);
  
+ 	/* Actually we should probably panic if this fails */
+-	if ((board = kmalloc(sizeof(*board), GFP_ATOMIC)) == NULL)
++	if ((board = kzalloc(sizeof(*board), GFP_ATOMIC)) == NULL)
+ 		return NULL;	
+-	memset(board, 0, sizeof(*board));
+ 	board->fblock = rp;
+ 
+ 	/* Dump the format block for debugging purposes */
 
 
 
---===============85789161128602265==
+--===============96191302429035508==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -50,4 +58,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85789161128602265==--
+--===============96191302429035508==--
