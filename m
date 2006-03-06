@@ -1,31 +1,29 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 06 Mar 2006 10:42:48 +0000
-Subject: [KJ] Re: [Patch] kzalloc() conversion in crypto/
-Message-Id: <20060306104248.GA16756@gondor.apana.org.au>
+From: "David S. Miller" <davem@davemloft.net>
+Date: Mon, 06 Mar 2006 20:57:19 +0000
+Subject: [KJ] Re: [Patch] kzalloc() conversion in arch/sparc64
+Message-Id: <20060306.125719.41409526.davem@davemloft.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============39235941977387956=="
+Content-Type: multipart/mixed; boundary="===============68864140889409908=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060227193309.GA9991@suse.de>
 In-Reply-To: <20060227193309.GA9991@suse.de>
 To: kernel-janitors@vger.kernel.org
 
---===============39235941977387956==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============68864140889409908==
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 05, 2006 at 04:02:20PM +0100, Eric Sesterhenn wrote:
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Mon, 06 Mar 2006 21:13:30 +0100
+
+> this patch converts arch/sparc64 to kzalloc usage.
+> Crosscompile tested with allyesconfig.
 > 
-> this patch converts crypto/ to kzalloc usage.
-> Compile tested with allyesconfig.
+> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Patch applied.  Thanks Eric.
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks, I'll queue this up for 2.6.17
 
---===============39235941977387956==
+--===============68864140889409908==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -36,4 +34,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============39235941977387956==--
+--===============68864140889409908==--
