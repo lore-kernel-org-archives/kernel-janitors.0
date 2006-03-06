@@ -1,44 +1,56 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Sun, 05 Mar 2006 21:02:44 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in drivers/acorn/
-Message-Id: <1141592564.17717.21.camel@alice>
+Date: Mon, 06 Mar 2006 20:13:31 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in drivers/parport/
+Message-Id: <1141676011.6349.10.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============30600876221958284=="
+Content-Type: multipart/mixed; boundary="===============62461433133262534=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1140815848.26064.4.camel@alice>
 In-Reply-To: <1140815848.26064.4.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============30600876221958284==
+--===============62461433133262534==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,
+hi, 
 
-this patch converts drivers/acorn/ to kzalloc usage.
+this patch converts crypto/ to kzalloc usage.
 Compile tested with allyesconfig.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc5-mm1/drivers/acorn/char/pcf8583.c.orig	2006-03-05 16:07:42.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/drivers/acorn/char/pcf8583.c	2006-03-05 16:07:51.000000000 +0100
-@@ -55,11 +55,10 @@ pcf8583_attach(struct i2c_adapter *adap,
- 		}
- 	};
+--- linux-2.6.16-rc5-mm1/drivers/parport/parport_serial.c.orig	2006-03-05 16:08:07.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/parport/parport_serial.c	2006-03-05 16:08:17.000000000 +0100
+@@ -368,10 +368,9 @@ static int __devinit parport_serial_pci_
+ 	struct parport_serial_private *priv;
+ 	int err;
  
--	c = kmalloc(sizeof(*c), GFP_KERNEL);
-+	c = kzalloc(sizeof(*c), GFP_KERNEL);
- 	if (!c)
+-	priv = kmalloc (sizeof *priv, GFP_KERNEL);
++	priv = kzalloc (sizeof *priv, GFP_KERNEL);
+ 	if (!priv)
  		return -ENOMEM;
+-	memset(priv, 0, sizeof(struct parport_serial_private));
+ 	pci_set_drvdata (dev, priv);
  
--	memset(c, 0, sizeof(*c));
- 	c->addr		= addr;
- 	c->adapter	= adap;
- 	c->driver	= &pcf8583_driver;
+ 	err = pci_enable_device (dev);
+--- linux-2.6.16-rc5-mm1/drivers/parport/parport_cs.c.orig	2006-03-05 16:08:23.000000000 +0100
++++ linux-2.6.16-rc5-mm1/drivers/parport/parport_cs.c	2006-03-05 16:08:32.000000000 +0100
+@@ -106,9 +106,8 @@ static int parport_probe(struct pcmcia_d
+     DEBUG(0, "parport_attach()\n");
+ 
+     /* Create new parport device */
+-    info = kmalloc(sizeof(*info), GFP_KERNEL);
++    info = kzalloc(sizeof(*info), GFP_KERNEL);
+     if (!info) return -ENOMEM;
+-    memset(info, 0, sizeof(*info));
+     link->priv = info;
+     info->p_dev = link;
+ 
 
 
 
---===============30600876221958284==
+--===============62461433133262534==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -49,4 +61,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============30600876221958284==--
+--===============62461433133262534==--
