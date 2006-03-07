@@ -1,97 +1,68 @@
-From: Tilman Schmidt <tilman@imap.cc>
-Date: Mon, 20 Mar 2006 19:44:40 +0000
-Subject: [KJ] [PATCH] usb.h: reduce syslog clutter
-Message-Id: <441F0628.3080202@imap.cc>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Tue, 07 Mar 2006 07:58:20 +0000
+Subject: [KJ][Patch] change for to while(1) in 3c515.c
+Message-Id: <1141718301.8347.16.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14384297778349575=="
+Content-Type: multipart/mixed; boundary="===============56967769249007927=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <441C6536.2060800@imap.cc>
-In-Reply-To: <441C6536.2060800@imap.cc>
 To: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---===============14384297778349575==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="------------enig4C8EE72F4C43E61438F1C6FC"
-
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig4C8EE72F4C43E61438F1C6FC
-Content-Type: text/plain; charset=us-ascii
+--===============56967769249007927==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-The current versions of the err() / info() / warn() message macros in
-include/linux/usb.h insert __FILE__ at the beginning of the message.
-When those macros where introduced, back in 2.2 times, that expanded
-to the name of the source file, which was fine.
+G'day list,
 
-However, with the build process changes in 2.5, __FILE__ now expands
-to the complete path name of the source file within the kernel tree.
-Consequently, that part of the kernel message now takes up about half
-of an 80 character screen line.
+from http://linuxicc.sourceforge.net/
 
-The following patch modifies these macros so that, when used in a
-module, they'll insert the module name instead, which is significantly
-shorter and also tends to be more useful to users (as opposed to kernel
-developers) trying to make sense of a particular message.
-
-It also adds a macro for the "notice" message level which was missing
-so far.
-
-Signed-off-by: Tilman Schmidt <tilman@imap.cc>
----
-
- usb.h |   14 ++++++++------
- 1 files changed, 8 insertions(+), 6 deletions(-)
-
---- linux-2.6.16-rc6/include/linux/usb.h        2006-02-27 06:09:35.000000000 +0100
-+++ linux-2.6.16-rc6-patch-unclutter/include/linux/usb.h        2006-03-20 20:31:21.000000000 +0100
-@@ -1199,12 +1199,14 @@
- #define dbg(format, arg...) do {} while (0)
- #endif
-
--#define err(format, arg...) printk(KERN_ERR "%s: " format "\n" , \
--       __FILE__ , ## arg)
--#define info(format, arg...) printk(KERN_INFO "%s: " format "\n" , \
--       __FILE__ , ## arg)
--#define warn(format, arg...) printk(KERN_WARNING "%s: " format "\n" , \
--       __FILE__ , ## arg)
-+#define err(format, arg...) printk(KERN_ERR KBUILD_MODNAME ": " \
-+       format "\n" , ## arg)
-+#define info(format, arg...) printk(KERN_INFO KBUILD_MODNAME ": " \
-+       format "\n" , ## arg)
-+#define warn(format, arg...) printk(KERN_WARNING KBUILD_MODNAME ": " \
-+       format "\n" , ## arg)
-+#define notice(format, arg...) printk(KERN_NOTICE KBUILD_MODNAME ": " \
-+       format "\n" , ## arg)
+ICC complains about: Pointless comparison of unsigned integer with zero.
+@ line 1028 of 3c515.c
 
 
- #endif  /* __KERNEL__ */
-
--- 
-Tilman Schmidt                          E-Mail: tilman@imap.cc
-Bonn, Germany
+1007                 unsigned long flags, i;
 
 
+1028                 for (i = 20; i >= 0; i--)
+1029                         if ((inw(ioaddr + EL3_STATUS) & CmdInProgress) == 0) 
+1030                                 break;
+
+This makes the 'for' loop effectively 'while (1)' as i >= 0 cant fail.
+This seems like a reasonable objective as the loop seems to be waiting for a command to finish.
+
+As it is the current behaviour, and to make the code more readable, the patch below replaces the 'for' with a 'while(1)'
+and removes the 'unsigned long i', as it is no longer used.
+
+Compile tested.
 
 
---------------enig4C8EE72F4C43E61438F1C6FC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.3rc1 (MingW32)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+--- linux-2.6.16-rc5/drivers/net/3c515.c.orig	2006-03-07 18:17:13.000000000 +1100
++++ linux-2.6.16-rc5/drivers/net/3c515.c	2006-03-07 18:19:55.000000000 +1100
+@@ -1004,7 +1004,7 @@ static int corkscrew_start_xmit(struct s
+ 		/* Calculate the next Tx descriptor entry. */
+ 		int entry = vp->cur_tx % TX_RING_SIZE;
+ 		struct boom_tx_desc *prev_entry;
+-		unsigned long flags, i;
++		unsigned long flags;
+ 
+ 		if (vp->tx_full)	/* No room to transmit with */
+ 			return 1;
+@@ -1025,7 +1025,7 @@ static int corkscrew_start_xmit(struct s
+ 		spin_lock_irqsave(&vp->lock, flags);
+ 		outw(DownStall, ioaddr + EL3_CMD);
+ 		/* Wait for the stall to complete. */
+-		for (i = 20; i >= 0; i--)
++		while (1)
+ 			if ((inw(ioaddr + EL3_STATUS) & CmdInProgress) == 0) 
+ 				break;
+ 		if (prev_entry)
 
-iD8DBQFEHwYoMdB4Whm86/kRAjrmAJ9Xz6lVOm39lrH/RSWdqzHpAZxiRwCeLpyL
-n765EBTyxP/+Ct0wJ56Cwhg=
-=oTkK
------END PGP SIGNATURE-----
 
---------------enig4C8EE72F4C43E61438F1C6FC--
+ 
 
---===============14384297778349575==
+
+--===============56967769249007927==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -102,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============14384297778349575==--
+--===============56967769249007927==--
