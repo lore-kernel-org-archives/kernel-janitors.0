@@ -1,57 +1,61 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 07 Mar 2006 12:12:52 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in arch/m68k
-Message-Id: <1141733572.8665.6.camel@alice>
+Date: Tue, 07 Mar 2006 20:36:38 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in arch/x86_64
+Message-Id: <1141763798.8321.1.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============43059696604445685=="
+Content-Type: multipart/mixed; boundary="===============5165658829588109=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1141499387.30193.18.camel@alice>
 In-Reply-To: <1141499387.30193.18.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============43059696604445685==
+--===============5165658829588109==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 hi,  
 
-this patch converts arch/m64k to kzalloc usage.
-Not tested.
+this patch converts arch/x86_64 to kzalloc usage.
+Crosscompile tested with allyesconfig.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.16-rc5-mm1/arch/m68k/amiga/chipram.c.orig	2006-03-07 12:32:58.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/arch/m68k/amiga/chipram.c	2006-03-07 12:33:05.000000000 +0100
-@@ -53,10 +53,9 @@ void *amiga_chip_alloc(unsigned long siz
- #ifdef DEBUG
-     printk("amiga_chip_alloc: allocate %ld bytes\n", size);
+--- linux-2.6.16-rc5-mm1/arch/x86_64/kernel/mce_amd.c.orig	2006-03-07 12:31:44.000000000 +0100
++++ linux-2.6.16-rc5-mm1/arch/x86_64/kernel/mce_amd.c	2006-03-07 12:31:54.000000000 +0100
+@@ -342,12 +342,11 @@ static __cpuinit int threshold_create_ba
+ 	}
  #endif
--    res = kmalloc(sizeof(struct resource), GFP_KERNEL);
-+    res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-     if (!res)
- 	return NULL;
--    memset(res, 0, sizeof(struct resource));
-     res->name = name;
  
-     if (allocate_resource(&chipram_res, res, size, 0, UINT_MAX, PAGE_SIZE, NULL, NULL) < 0) {
---- linux-2.6.16-rc5-mm1/arch/m68k/atari/hades-pci.c.orig	2006-03-07 12:33:14.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/arch/m68k/atari/hades-pci.c	2006-03-07 12:33:21.000000000 +0100
-@@ -376,10 +376,9 @@ struct pci_bus_info * __init init_hades_
- 	 * Allocate memory for bus info structure.
- 	 */
+-	b = kmalloc(sizeof(struct threshold_bank), GFP_KERNEL);
++	b = kzalloc(sizeof(struct threshold_bank), GFP_KERNEL);
+ 	if (!b) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+-	memset(b, 0, sizeof(struct threshold_bank));
  
--	bus = kmalloc(sizeof(struct pci_bus_info), GFP_KERNEL);
-+	bus = kzalloc(sizeof(struct pci_bus_info), GFP_KERNEL);
- 	if (!bus)
- 		return NULL;
--	memset(bus, 0, sizeof(struct pci_bus_info));
- 
- 	/*
- 	 * Claim resources. The m68k has no separate I/O space, both
+ 	b->cpu = cpu;
+ 	b->bank = bank;
+--- linux-2.6.16-rc5-mm1/arch/x86_64/kernel/io_apic.c.orig	2006-03-07 12:32:03.000000000 +0100
++++ linux-2.6.16-rc5-mm1/arch/x86_64/kernel/io_apic.c	2006-03-07 12:32:35.000000000 +0100
+@@ -2006,12 +2006,11 @@ static int __init ioapic_init_sysfs(void
+ 	for (i = 0; i < nr_ioapics; i++ ) {
+ 		size = sizeof(struct sys_device) + nr_ioapic_registers[i]
+ 			* sizeof(struct IO_APIC_route_entry);
+-		mp_ioapic_data[i] = kmalloc(size, GFP_KERNEL);
++		mp_ioapic_data[i] = kzalloc(size, GFP_KERNEL);
+ 		if (!mp_ioapic_data[i]) {
+ 			printk(KERN_ERR "Can't suspend/resume IOAPIC %d\n", i);
+ 			continue;
+ 		}
+-		memset(mp_ioapic_data[i], 0, size);
+ 		dev = &mp_ioapic_data[i]->dev;
+ 		dev->id = i;
+ 		dev->cls = &ioapic_sysdev_class;
 
 
 
---===============43059696604445685==
+--===============5165658829588109==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +66,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============43059696604445685==--
+--===============5165658829588109==--
