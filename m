@@ -1,190 +1,72 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Thu, 30 Mar 2006 11:57:55 +0000
-Subject: [KJ] fix kbuild warning in iptable_nat.o
-Message-Id: <1143719875.8469.14.camel@localhost.localdomain>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Tue, 07 Mar 2006 08:53:23 +0000
+Subject: [KJ] [Patch] kzalloc() conversion in Documentation/
+Message-Id: <1141721603.15005.7.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4959871642504261=="
+Content-Type: multipart/mixed; boundary="===============95483458043550662=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: netfilter-devel@lists.netfilter.org
-Cc: kernel Janitors <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
---===============4959871642504261==
+--===============95483458043550662==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day list
+hi,
 
-There are a couple of Kbuild warnings in net/ipv4/netfilter/ that would
-be nice to get rid of.
+this patch converts Documentation/ to kzalloc usage.
+Not tested.
 
-WARNING: net/ipv4/netfilter/ip_conntrack.o - Section mismatch: reference
-to .init.text:ip_conntrack_init from .text between 'init_or_cleanup' (at
-offset 0x7ea) and '__hash_conntrack'
-WARNING: net/ipv4/netfilter/iptable_nat.o - Section mismatch: reference
-to .init.text:ip_nat_rule_init from .text between 'init_or_cleanup' (at
-offset 0x455) and 'nat_decode_session'
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-I have a patch for the 'iptable_nat.o' warning below, and I was just
-wanting to check in and see if any of you netfilter guys had a problem
-with this patch, or with me doing a similar patch for the
-'ip_canntrack.o' warning.
-
-
-Any input would be welcome, thanks in advance :). 
-
-Darren J
-
-
-PS You will have to CC: me as I am not on the netfilter list
-
-
-
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
-
---- linux-2.6.16-git13/net/ipv4/netfilter/ip_nat_standalone.c.orig	2006-03-28 21:38:33.000000000 +1100
-+++ linux-2.6.16-git13/net/ipv4/netfilter/ip_nat_standalone.c	2006-03-30 22:05:20.000000000 +1100
-@@ -354,14 +354,46 @@ static struct nf_hook_ops ip_nat_adjust_
- };
- 
- 
--static int init_or_cleanup(int init)
-+/*
-+**	Note: This is used to clean up on unload
-+**	but is also used in the init() error path
-+**	to relinquish resources before exiting
-+*/
-+static void cleanup(int clean_level)
-+{
-+
-+	switch (clean_level) {
-+	
-+	case 0:
-+		nf_unregister_hook(&ip_nat_local_in_ops);
-+	case 1:
-+		nf_unregister_hook(&ip_nat_local_out_ops);
-+	case 2:
-+		nf_unregister_hook(&ip_nat_adjust_out_ops);
-+	case 3:
-+		nf_unregister_hook(&ip_nat_adjust_in_ops);
-+	case 4:
-+		nf_unregister_hook(&ip_nat_out_ops);
-+	case 5:
-+		nf_unregister_hook(&ip_nat_in_ops);
-+	case 6:
-+		ip_nat_rule_cleanup();
-+	case 7:
-+#ifdef CONFIG_XFRM
-+		ip_nat_decode_session = NULL;
-+		synchronize_net();
-+#endif
-+	break;
-+	}
-+}
-+
-+
-+static int __init init(void)
+--- linux-2.6.16-rc5-mm1/Documentation/filesystems/configfs/configfs_example.c.orig	2006-03-07 09:35:13.000000000 +0100
++++ linux-2.6.16-rc5-mm1/Documentation/filesystems/configfs/configfs_example.c	2006-03-07 09:35:31.000000000 +0100
+@@ -268,12 +268,10 @@ static struct config_item *simple_childr
  {
- 	int ret = 0;
+ 	struct simple_child *simple_child;
  
- 	need_conntrack();
+-	simple_child = kmalloc(sizeof(struct simple_child), GFP_KERNEL);
++	simple_child = kzalloc(sizeof(struct simple_child), GFP_KERNEL);
+ 	if (!simple_child)
+ 		return NULL;
  
--	if (!init) goto cleanup;
+-	memset(simple_child, 0, sizeof(struct simple_child));
 -
- #ifdef CONFIG_XFRM
- 	BUG_ON(ip_nat_decode_session != NULL);
- 	ip_nat_decode_session = nat_decode_session;
-@@ -369,70 +401,50 @@ static int init_or_cleanup(int init)
- 	ret = ip_nat_rule_init();
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't setup rules.\n");
--		goto cleanup_decode_session;
-+		cleanup(7);
-+		return ret;
- 	}
- 	ret = nf_register_hook(&ip_nat_in_ops);
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't register in hook.\n");
--		goto cleanup_rule_init;
-+		cleanup(6);
-+		return ret;
- 	}
- 	ret = nf_register_hook(&ip_nat_out_ops);
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't register out hook.\n");
--		goto cleanup_inops;
-+		cleanup(5);
-+		return ret;
- 	}
- 	ret = nf_register_hook(&ip_nat_adjust_in_ops);
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't register adjust in hook.\n");
--		goto cleanup_outops;
-+		cleanup(4);
-+		return ret;
- 	}
- 	ret = nf_register_hook(&ip_nat_adjust_out_ops);
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't register adjust out hook.\n");
--		goto cleanup_adjustin_ops;
-+		cleanup(3);
-+		return ret;
- 	}
- 	ret = nf_register_hook(&ip_nat_local_out_ops);
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't register local out hook.\n");
--		goto cleanup_adjustout_ops;
-+		cleanup(2);
-+		return ret;
- 	}
- 	ret = nf_register_hook(&ip_nat_local_in_ops);
- 	if (ret < 0) {
- 		printk("ip_nat_init: can't register local in hook.\n");
--		goto cleanup_localoutops;
-+		cleanup(1);
- 	}
- 	return ret;
--
-- cleanup:
--	nf_unregister_hook(&ip_nat_local_in_ops);
-- cleanup_localoutops:
--	nf_unregister_hook(&ip_nat_local_out_ops);
-- cleanup_adjustout_ops:
--	nf_unregister_hook(&ip_nat_adjust_out_ops);
-- cleanup_adjustin_ops:
--	nf_unregister_hook(&ip_nat_adjust_in_ops);
-- cleanup_outops:
--	nf_unregister_hook(&ip_nat_out_ops);
-- cleanup_inops:
--	nf_unregister_hook(&ip_nat_in_ops);
-- cleanup_rule_init:
--	ip_nat_rule_cleanup();
-- cleanup_decode_session:
--#ifdef CONFIG_XFRM
--	ip_nat_decode_session = NULL;
--	synchronize_net();
--#endif
--	return ret;
--}
--
--static int __init init(void)
--{
--	return init_or_cleanup(1);
- }
+ 	config_item_init_type_name(&simple_child->item, name,
+ 				   &simple_child_type);
  
- static void __exit fini(void)
+@@ -353,13 +351,11 @@ static struct config_group *group_childr
  {
--	init_or_cleanup(0);
-+	cleanup(0);
- }
+ 	struct simple_children *simple_children;
  
- module_init(init);
+-	simple_children = kmalloc(sizeof(struct simple_children),
++	simple_children = kzalloc(sizeof(struct simple_children),
+ 				  GFP_KERNEL);
+ 	if (!simple_children)
+ 		return NULL;
+ 
+-	memset(simple_children, 0, sizeof(struct simple_children));
+-
+ 	config_group_init_type_name(&simple_children->group, name,
+ 				    &simple_children_type);
+ 
+--- linux-2.6.16-rc5-mm1/Documentation/connector/cn_test.c.orig	2006-03-07 09:35:49.000000000 +0100
++++ linux-2.6.16-rc5-mm1/Documentation/connector/cn_test.c	2006-03-07 09:36:05.000000000 +0100
+@@ -124,10 +124,8 @@ static void cn_test_timer_func(unsigned 
+ 	struct cn_msg *m;
+ 	char data[32];
+ 
+-	m = kmalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
++	m = kzalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
+ 	if (m) {
+-		memset(m, 0, sizeof(*m) + sizeof(data));
+-
+ 		memcpy(&m->id, &cn_test_id, sizeof(m->id));
+ 		m->seq = cn_test_timer_counter;
+ 		m->len = sizeof(data);
 
 
 
-
---===============4959871642504261==
+--===============95483458043550662==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -195,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============4959871642504261==--
+--===============95483458043550662==--
