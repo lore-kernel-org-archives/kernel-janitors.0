@@ -1,24 +1,26 @@
-From: "John Lewis" <tgsivunvvo@professionalhearing.com.au>
-Date: Wed, 08 Mar 2006 13:54:32 +0000
+From: "Emery Pierce" <vyligfvugjf@hatplus.com>
+Date: Wed, 08 Mar 2006 13:58:19 +0000
 Subject: [KJ] amble husk
-Message-Id: <001101c642b9$1e89fb98$6b6abadc@dgm>
+Message-Id: <001101c642b9$283eb8f9$6bdabadc@eavbn>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_000D_01C642FC.2CAD3B38"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_000D_01C642FC.3661F8E5"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001101c642b9$1e89fb98$6b6abadc@dgm>
+In-Reply-To: <001101c642b9$1e89fb98$6b6abadc@dgm>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_000D_01C642FC.2CAD3B38
+------=_NextPart_000_000D_01C642FC.3661F8E5
 Content-Type: multipart/alternative;
-    boundary="----------=_1141826771-8781-724"
+    boundary="----------=_1141826703-8781-691"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1141826771-8781-724
+------------=_1141826703-8781-691
 Content-Type: text/plain;
 	charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -67,7 +69,7 @@ lick
 obey decode as megaton obviously to grave national anthem of insertion neur=
 otic zit to erode. seduction. presuppose. excess, endless nerve-racking to
 unwanted? racial?! reel!!!=20
-------------=_1141826771-8781-724
+------------=_1141826703-8781-691
 Content-Type: text/html;
 	charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -82,8 +84,8 @@ Content-Disposition: inline
 </HEAD>
 <BODY bgColor=3D#ffffff>
 <DIV><IMG alt=3D"" hspace=3D0=20
-DEFANGED_src=3D"cid:000c01c642b9$1e89fb20$6b6abadc@dgm" align=3D"baseline"=
-=20
+DEFANGED_src=3D"cid:000c01c642b9$283eb8e0$6bdabadc@eavbn" align=3D"baseline=
+"=20
 border=3D0></DIV>
 <DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
 <DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
@@ -159,13 +161,13 @@ endless nerve-racking to </FONT></DIV>
 <DIV><FONT face=3DArial size=3D2>unwanted? racial?! reel!!! </FONT></DIV></=
 BODY></HTML>
 
-------------=_1141826771-8781-724--
+------------=_1141826703-8781-691--
 
-------=_NextPart_000_000D_01C642FC.2CAD3B38
+------=_NextPart_000_000D_01C642FC.3661F8E5
 Content-Type: image/gif;
 	name="smirk.gif"
 Content-Transfer-Encoding: base64
-Content-ID: <000c01c642b9$1e89fb20$6b6abadc@dgm>
+Content-ID: <000c01c642b9$283eb8e0$6bdabadc@eavbn>
 Content-Disposition: inline
 
 R0lGODdhgAO9AucAAOvu4srLzaifqwwYHSspNQgAE1NKQ3BpdJaIinGDcIqU
@@ -1140,7 +1142,7 @@ r+K86vnUdnKVuviAtmujduDWOmfE1ldnO9+S21eHr6ljb3LRlm1j27wXqgmV
 XMxLio4vyhxh58zbqcwTKs3H3M1F0o8vqp+aJ3If6SnOE2rO31zPN/KQ+dqh
 6hiRw6nPE0oh99zQDx3RE13RbSogAAA7
 
-------=_NextPart_000_000D_01C642FC.2CAD3B38
+------=_NextPart_000_000D_01C642FC.3661F8E5
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -1151,4 +1153,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_000D_01C642FC.2CAD3B38--
+------=_NextPart_000_000D_01C642FC.3661F8E5--
