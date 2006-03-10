@@ -1,47 +1,77 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Mon, 06 Mar 2006 11:57:27 +0000
-Subject: [KJ][Patch] remove request_region from matroxfb_base.c
-Message-Id: <1141646248.8201.15.camel@localhost.localdomain>
+From: "Solomon Akers" <abfonbv@faaus.org>
+Date: Fri, 10 Mar 2006 13:06:20 +0000
+Subject: [KJ] Investment Idea
+Message-Id: <002501c64443$f7f64fae$4fe91d42@bcvmzte>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============29477417578767628=="
+Content-Type: multipart/mixed; boundary="===============027870284570014281=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============29477417578767628==
-Content-Type: text/plain
+--===============027870284570014281==
+Content-Type: text/plain; format=flowed; charset="Windows-1252";
+	reply-type=original
 Content-Transfer-Encoding: 7bit
 
-G'day list
-
-matroxfb_base.c calles request_region() without checking it's return
-value @ 1737.
-After getting advice from Petr Vandrovec it seems that this memory
-region isn't actually used in matroxfb_base.c, it was just reserved to
-stop vesafb and matrox being loaded on the same head. After looking at
-vesafb.c is seems that this doesn't work, as vesafb doesn't check the
-return value of request_region either.
-So the patch below removes the request_region call because it doesn't
-actually do anything anymore.
-
-Thanks again for your explanation Petr.
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
---- linux-2.6.16-rc5/drivers/video/matrox/matroxfb_base.c.orig	2006-03-06 21:36:54.000000000 +1100
-+++ linux-2.6.16-rc5/drivers/video/matrox/matroxfb_base.c	2006-03-06 22:42:17.000000000 +1100
-@@ -1733,8 +1733,6 @@ static int initMatrox2(WPMINFO struct bo
- 	}
- #endif	/* CONFIG_MTRR */
- 
--	if (!ACCESS_FBINFO(devflags.novga))
--		request_region(0x3C0, 32, "matrox");
- 	matroxfb_g450_connect(PMINFO2);
- 	ACCESS_FBINFO(hw_switch->reset(PMINFO2));
- 
+Profile: Innovation Holdings, Inc.
+Symbol: IVHN
+Price: $0.41
 
 
+Go Look at a Chart Rite Now! While Past Performance is Never Indicative 
+of Future Results, IVHN has been Trending Higher Since the Beginning 
+of This Year! 
 
---===============29477417578767628==
+WILL THAT TREND CONTINUE? IS IT ON THE CUSP OF ITS BIGGEST MOVE YET?
+RADAR IT FOR FRIDAY NOW!
+
+The News: Go Read The Full Story Now!
+Innovation Holdings Inc. Signs Letter of Intent With Pharmaspritz 
+Corporation
+
+LOS ANGELES, CA, The Board of Directors of Innovation Holdings Inc. 
+(OTC: IVHN) announced that the Companyhas signed a Letter of Intent 
+with Pharmaspritz Corporation of Delaware topurchase all of its assets 
+and those of its Canadian subsidiary in return for shares of Innovation 
+Holdings Inc.
+Pharmaspritz Corporation has developed SlimSpritz(TM), a patented and 
+revolutionary 100% herbal weight loss aid that utilizes a unique and 
+effective delivery system. SlimSpritz(TM) features a Metered Dose 
+Aerosol Pump (MDAP) that instantly delivers effective and recognized 
+herbal appetite suppressants and active thermogenic agents. 
+SlimSpritz(TM) incorporates a breath freshener, appetite suppressants 
+and thermogenic agents to stimulate the metabolism of the body for 
+those on weight loss programs.
+
+WATCH IVHN AT THE OPEN FRIDAY!!
+
+
+
+Information within this report contains forward looking statements 
+within the meaning of Section 27A of the Securities Act of 1933 and 
+Section 21B of the SEC Act of 1934. Any statements that express or 
+involve discussions with respect to predictions or projections of 
+future events or performance are not statements of historical fact 
+and may be forward looking statements. Don't rely on them to make 
+a decision. The Company has been  a reporting company registered 
+under the Exchange Act of 1934 but is currently delinquent in their 
+filings.Today's company has disclosable material items you need 
+to know to make an informed and intelligent decision. These items 
+include: no revenue in its most recent quarter, an accumulated 
+deficit,a negative net worth, a reliance on loans from officers,
+nominal cash, back taxes due, a subsidiary in bankruptcy,a going 
+concern opinion from its auditor, litigation and some judgements 
+against the company. It is not an operating company. The announcement 
+above may not be binding and may not become a definitive agreement. 
+Read the Company's SEC filings  before you invest.This report shall 
+not be construed as any kind of investment advice or solicitation. 
+You  can lose all your money by investing in this stock. We have 
+received one hundred thousand free trading shares from a third 
+party not an officer, director or affiliate shareholder for our 
+services. We intend to sell all these shares now, which could cause 
+the stock to go down, resulting in losses for you.
+
+
+--===============027870284570014281==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -52,4 +82,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============29477417578767628==--
+--===============027870284570014281==--
