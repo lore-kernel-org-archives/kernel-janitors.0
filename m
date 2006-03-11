@@ -1,50 +1,46 @@
 From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Sat, 11 Mar 2006 14:32:45 +0000
-Subject: [KJ][Patch] check request_irq return value in ser_a2232.c
-Message-Id: <1142087566.7820.25.camel@localhost.localdomain>
+Date: Sat, 11 Mar 2006 14:54:09 +0000
+Subject: [KJ][Patch] check request_irq return value in axnet_cs.c
+Message-Id: <1142088849.7820.30.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0086543775421588087=="
+Content-Type: multipart/mixed; boundary="===============89322042122112144=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1142087566.7820.25.camel@localhost.localdomain>
+In-Reply-To: <1142087566.7820.25.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============0086543775421588087==
+--===============89322042122112144==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-G'day list,
+G'day list
 
-ser_a2232.c was calling request_irq without checking its return value in
-a2232board_init @ line 798.
+axnet_cs.c calles request_irq without checking its return value in
+axnet_open() @ line 573.
 
-The patch below just checks the return value, cleaning up and exiting on
-failure.
+The patch below checks the return value and returns -EBUSY on failure.
 
-Unfortunately this is m68k and pcc again (not i386), so it is not
-compile tested.
+This one is i386 so is compile tested (yay).
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+Also the whole file is 4 space indented so I might follow with a patch
+to change that to the accepted tab indent style.
 
-  --- linux-2.6.16-rc5/drivers/char/ser_a2232.c.orig	2006-03-12 00:55:19.000000000 +1100
-+++ linux-2.6.16-rc5/drivers/char/ser_a2232.c	2006-03-12 01:12:28.000000000 +1100
-@@ -795,7 +795,13 @@ static int __init a2232board_init(void)
- 	*/
- 	if (a2232_init_drivers()) return -ENODEV; // maybe we should use a different -Exxx?
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>--- linux-2.6.16-rc5/drivers/net/pcmcia/axnet_cs.c.orig	2006-03-12 01:37:33.000000000 +1100
++++ linux-2.6.16-rc5/drivers/net/pcmcia/axnet_cs.c	2006-03-12 01:43:58.000000000 +1100
+@@ -570,7 +570,8 @@ static int axnet_open(struct net_device 
  
--	request_irq(IRQ_AMIGA_VERTB, a2232_vbl_inter, 0, "A2232 serial VBL", a2232_driver_ID);
-+	if (request_irq(IRQ_AMIGA_VERTB, a2232_vbl_inter, 0, "A2232 serial VBL", a2232_driver_ID) < 0)
-+	{
-+		printk(KERN_ERR "a2232board_init could not request_irq\n");
-+		tty_unregister_driver(a2232_driver);
-+		put_tty_driver(a2232_driver);
-+		return -EBUSY;
-+	}
- 	return 0;
- }
+     link->open++;
  
+-    request_irq(dev->irq, ei_irq_wrapper, SA_SHIRQ, "axnet_cs", dev);
++    if (request_irq(dev->irq, ei_irq_wrapper, SA_SHIRQ, "axnet_cs", dev) < 0)
++        return -EBUSY;
+ 
+     info->link_status = 0x00;
+     init_timer(&info->watchdog);
 
 
 
---===============0086543775421588087==
+--===============89322042122112144==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,4 +51,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0086543775421588087==--
+--===============89322042122112144==--
