@@ -1,60 +1,72 @@
-From: Petr Vandrovec <vandrove@vc.cvut.cz>
-Date: Fri, 03 Mar 2006 06:31:58 +0000
-Subject: Re: [KJ][Patch] check return value of request_region in
-Message-Id: <4407E2DE.5010809@vc.cvut.cz>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Sat, 11 Mar 2006 13:48:51 +0000
+Subject: [KJ][Patch] check return value of request_irq in amiserial.c
+Message-Id: <1142084932.7820.15.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============78923048193528267=="
+Content-Type: multipart/mixed; boundary="===============34624555782490907=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1141029654.7765.6.camel@localhost.localdomain>
 In-Reply-To: <1141029654.7765.6.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============78923048193528267==
-Content-Type: text/plain; charset=us-ascii; format=flowed
+--===============34624555782490907==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Darren Jenkins\ wrote:
-> G'day list,
-> 
-> matroxfb_base.c calles 'request_region' @ 1737 without checking the
-> return value.
-> 
-> The patch below adds a check for this and plugs into the existing error
-> path.
+G'day list
 
-Won't this conflict with reserving same I/O ports?  Only primary card 
-succeeds with reservation, so if you really want to fix this "bug", then 
-remove this I/O reservation from matroxfb completely, matroxfb never 
-touches this I/O region, it just reserves it to make sure that you won't 
-load vesafb and matroxfb for same head.  Your fix makes use of matroxfb 
-with two Matrox cards in the box impossible, as on second card 0x3C0 
-reservation must fail as first head made reservation already.
-								Petr
+amiserial.c does not check the return value of request_irq @ lines 2060
+and 2061 in function rs_init();
 
-> Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-> 
-> --- linux-2.6.16-rc4/drivers/video/matrox/matroxfb_base.c.orig	2006-02-24 23:44:10.000000000 +1100
-> +++ linux-2.6.16-rc4/drivers/video/matrox/matroxfb_base.c	2006-02-27 19:26:26.000000000 +1100
-> @@ -1734,7 +1734,11 @@ static int initMatrox2(WPMINFO struct bo
->  #endif	/* CONFIG_MTRR */
->  
->  	if (!ACCESS_FBINFO(devflags.novga))
-> -		request_region(0x3C0, 32, "matrox");
-> +		if (!request_region(0x3C0, 32, "matrox")) {
-> +			printk(KERN_ERR "matroxfb: failed to request_region");
-> +			err = -EBUSY;
-> +			goto failVideoIO;
-> +		}
->  	matroxfb_g450_connect(PMINFO2);
->  	ACCESS_FBINFO(hw_switch->reset(PMINFO2));
->  
-> 
-> 
-> 
+The patch below checks the return value of the two calls and cleans up
+before exiting on failure.
+
+When trying to compile this file I found that this is some built-in
+amiga serial driver and isn't used on i386 (only m68k and ppc), so 1,
+this isn't even compile tested and 2 the patch might not be required as
+the driver init might only be used in early boot code, I don't know.
+(I thought I was safe from that problem as it was in drivers/) 
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- linux-2.6.16-rc5/drivers/char/amiserial.c.orig	2006-02-28 18:55:06.000000000 +1100
++++ linux-2.6.16-rc5/drivers/char/amiserial.c	2006-03-12 00:44:55.000000000 +1100
+@@ -2057,8 +2057,14 @@ static int __init rs_init(void)
+ 	local_irq_save(flags);
+ 
+ 	/* set ISRs, and then disable the rx interrupts */
+-	request_irq(IRQ_AMIGA_TBE, ser_tx_int, 0, "serial TX", state);
+-	request_irq(IRQ_AMIGA_RBF, ser_rx_int, SA_INTERRUPT, "serial RX", state);
++	if (request_irq(IRQ_AMIGA_TBE, ser_tx_int, 0, "serial TX", state) < 0)
++	{
++		goto err_irq;
++	}
++	if (request_irq(IRQ_AMIGA_RBF, ser_rx_int, SA_INTERRUPT, "serial RX", state) < 0)
++	{
++		goto err_irq_2;
++	}
+ 
+ 	/* turn off Rx and Tx interrupts */
+ 	custom.intena = IF_RBF | IF_TBE;
+@@ -2078,6 +2084,14 @@ static int __init rs_init(void)
+ 	ciab.ddra &= ~(SER_DCD | SER_CTS | SER_DSR);  /* inputs */
+ 
+ 	return 0;
++
++err_irq_2:
++	free_irq(IRQ_AMIGA_TBE, state);
++err_irq:
++	local_irq_restore(flags);
++	release_mem_region(CUSTOM_PHYSADDR+0x30, 4);
++	printk(KERN_WARN "rs_init could not request_irq\n");
++	return -EBUSY;
+ }
+ 
+ static __exit void rs_exit(void) 
 
 
 
---===============78923048193528267==
+--===============34624555782490907==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +77,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============78923048193528267==--
+--===============34624555782490907==--
