@@ -1,24 +1,26 @@
-From: "Dickon Reese" <ffbpyahdqlkz@ariyanakimah.com>
-Date: Sat, 11 Mar 2006 04:21:05 +0000
+From: "Gabriel Miranda" <vinwcngm@bitch-mail.com>
+Date: Sat, 11 Mar 2006 04:24:48 +0000
 Subject: [KJ] loneliness
-Message-Id: <001101c644c4$165e3800$e38d5bde@nhuxdy>
+Message-Id: <001101c644c4$13659170$61d45bde@wxoiz>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_000D_01C64507.248177C0"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_000D_01C64507.2188D130"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001101c644c4$165e3800$e38d5bde@nhuxdy>
+In-Reply-To: <001101c644c4$165e3800$e38d5bde@nhuxdy>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_000D_01C64507.248177C0
+------=_NextPart_000_000D_01C64507.2188D130
 Content-Type: multipart/alternative;
-    boundary="----------=_1142051693-5912-763"
+    boundary="----------=_1142051633-5912-745"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1142051693-5912-763
+------------=_1142051633-5912-745
 Content-Type: text/plain;
 	charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -31,7 +33,7 @@ Content-Disposition: inline
 
 stanch to owe the around the molar overpriced in embankment a waterway to i=
 n-between the unfurl shopping center unforeseen... innermost all-star as=20
-------------=_1142051693-5912-763
+------------=_1142051633-5912-745
 Content-Type: text/html;
 	charset="windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -46,8 +48,8 @@ Content-Disposition: inline
 </HEAD>
 <BODY bgColor=3D#ffffff>
 <DIV><IMG alt=3D"" hspace=3D0=20
-DEFANGED_src=3D"cid:000c01c644c4$165e37b0$e38d5bde@nhuxdy" align=3D"baselin=
-e"=20
+DEFANGED_src=3D"cid:000c01c644c4$13659120$61d45bde@wxoiz" align=3D"baseline=
+"=20
 border=3D0></DIV>
 <DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
 <DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
@@ -59,13 +61,13 @@ embankment a waterway to in-between the unfurl shopping center unforeseen..=
 .=20
 innermost all-star as </FONT></DIV></BODY></HTML>
 
-------------=_1142051693-5912-763--
+------------=_1142051633-5912-745--
 
-------=_NextPart_000_000D_01C64507.248177C0
+------=_NextPart_000_000D_01C64507.2188D130
 Content-Type: image/gif;
 	name="alleviate.gif"
 Content-Transfer-Encoding: base64
-Content-ID: <000c01c644c4$165e37b0$e38d5bde@nhuxdy>
+Content-ID: <000c01c644c4$13659120$61d45bde@wxoiz>
 Content-Disposition: inline
 
 R0lGODdhdAKCA+cAAPjz8NHDv6i7owAdFS4/KoFzfBYCFERFRWF7ZJqZiJCa
@@ -956,7 +958,7 @@ CD1YQhOeMEU2KlGmcJTCE74QhjGU4QxpWEMbZd4QhznU4Q552EMf/hCIQRTi
 EIlYRCMeEYlJVOISmdhEJz4RilGU4hSpWEUrXhGLWdTiFrnYRS9+EYxhFOMY
 yVhGM7YoAmdU4xrZ2EY3vhGOcZTjHAf0ATreEY95BNAQ9NjHIgYEADs=
 
-------=_NextPart_000_000D_01C64507.248177C0
+------=_NextPart_000_000D_01C64507.2188D130
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -967,4 +969,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_000D_01C64507.248177C0--
+------=_NextPart_000_000D_01C64507.2188D130--
