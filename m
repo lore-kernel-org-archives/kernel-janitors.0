@@ -1,51 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 31 Mar 2006 17:00:01 +0000
-Subject: Re: [KJ][Patch] fix kbuild warning in sisfb.o
-Message-Id: <20060331170001.GA26432@kroah.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============41718559539536404=="
+From: Chi McCoy <2susha@aberdeen.com>
+Date: Tue, 14 Mar 2006 20:42:05 +0000
+Subject: [KJ] New prospects  [Ref:864]
+Message-Id: <24ae01c647a7$785843e6$ae03c69d@aberdeen.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1143810678.7834.13.camel@localhost.localdomain>
-In-Reply-To: <1143810678.7834.13.camel@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============41718559539536404==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   Safe Sales Inc. leader in international Law 
+and Business practise is looking for responsible 
+individuals to be responsible for the areas of 
+customer service, transaction and bank operations.
 
-On Sat, Apr 01, 2006 at 12:11:18AM +1100, Darren Jenkins" wrote:
-> G'day list
-> 
-> This one was a lot harder to find, but much easier to fix.
-> 
-> WARNING: drivers/video/sis/sisfb.o - Section mismatch: reference
-> to .init.data: from .data between 'sisfb_driver' (at offset 0xf8) and
-> 'sisfb_ops'
-> 
-> 
-> This is caused by the 'pci_driver struct' in sis_main.c having a pointer
-> to a 'pci_device_id struct' in 'sis_main.h' that is marked as
-> __devinitdata.
-> 
-> The patch below just removes the __devinitdata annotation from the
-> 'pci_device_id struct', which seems like the best solution here.
+   Current openings: Escrow Operator
 
-No, this should be just fine.  devinitdata should be just fine for PCI
-device ids.
+   You will receive transfers for our company, 
+send/receive funds (bank transfers, checks, money orders). 
+You should have your local bank branch locating near you, 
+so you can withdraw money from your account within several hours. 
+You should have home, work or cell phone number (preferably).
+Work is home-based.
 
-thanks,
+   Requirements:
+* Be able to check your email several times a day
+* Be able to respond to emails immediately
+* Be responsible and hard working
+* Should have personal bank account
 
-greg k-h
+   If you are interested in this position 
+and meet the minimum requirements please 
+send us resume (curriculum vitae) to 
+job@safe-sales-inc.info
 
---===============41718559539536404==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+   Registration is FREE of charge.
+
+   Recruitment Department of Safe Sales Inc.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============41718559539536404==--
