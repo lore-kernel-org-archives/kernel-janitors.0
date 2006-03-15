@@ -1,72 +1,40 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 07 Mar 2006 08:53:23 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in Documentation/
-Message-Id: <1141721603.15005.7.camel@alice>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Wed, 15 Mar 2006 12:55:03 +0000
+Subject: [KJ] [PATCH] net/bluetooth: Return negative error constant
+Message-Id: <20060315125503.GA1198@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95483458043550662=="
+Content-Type: multipart/mixed; boundary="===============79360192308996103=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============95483458043550662==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============79360192308996103==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-hi,
+Return negative error constant.
 
-this patch converts Documentation/ to kzalloc usage.
-Not tested.
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+---
 
---- linux-2.6.16-rc5-mm1/Documentation/filesystems/configfs/configfs_example.c.orig	2006-03-07 09:35:13.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/Documentation/filesystems/configfs/configfs_example.c	2006-03-07 09:35:31.000000000 +0100
-@@ -268,12 +268,10 @@ static struct config_item *simple_childr
- {
- 	struct simple_child *simple_child;
- 
--	simple_child = kmalloc(sizeof(struct simple_child), GFP_KERNEL);
-+	simple_child = kzalloc(sizeof(struct simple_child), GFP_KERNEL);
- 	if (!simple_child)
- 		return NULL;
- 
--	memset(simple_child, 0, sizeof(struct simple_child));
--
- 	config_item_init_type_name(&simple_child->item, name,
- 				   &simple_child_type);
- 
-@@ -353,13 +351,11 @@ static struct config_group *group_childr
- {
- 	struct simple_children *simple_children;
- 
--	simple_children = kmalloc(sizeof(struct simple_children),
-+	simple_children = kzalloc(sizeof(struct simple_children),
- 				  GFP_KERNEL);
- 	if (!simple_children)
- 		return NULL;
- 
--	memset(simple_children, 0, sizeof(struct simple_children));
--
- 	config_group_init_type_name(&simple_children->group, name,
- 				    &simple_children_type);
- 
---- linux-2.6.16-rc5-mm1/Documentation/connector/cn_test.c.orig	2006-03-07 09:35:49.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/Documentation/connector/cn_test.c	2006-03-07 09:36:05.000000000 +0100
-@@ -124,10 +124,8 @@ static void cn_test_timer_func(unsigned 
- 	struct cn_msg *m;
- 	char data[32];
- 
--	m = kmalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
-+	m = kzalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
- 	if (m) {
--		memset(m, 0, sizeof(*m) + sizeof(data));
--
- 		memcpy(&m->id, &cn_test_id, sizeof(m->id));
- 		m->seq = cn_test_timer_counter;
- 		m->len = sizeof(data);
+ net/bluetooth/bnep/core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
+--- linux-2.6.16-rc6/net/bluetooth/bnep/core.c	2006-03-13 13:01:59.000000000 +0100
++++ linux-2.6.16-rc6~error_consts/net/bluetooth/bnep/core.c	2006-03-15 13:41:28.000000000 +0100
+@@ -532,8 +532,8 @@ int bnep_add_connection(struct bnep_conn
+ 	dev = alloc_netdev(sizeof(struct bnep_session),
+ 			   (*req->device) ? req->device : "bnep%d",
+ 			   bnep_net_setup);
+-	if (!dev) 
+-		return ENOMEM;
++	if (!dev)
++		return -ENOMEM;
+ 
+ 
+ 	down_write(&bnep_session_sem);
 
-
---===============95483458043550662==
+--===============79360192308996103==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -77,4 +45,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95483458043550662==--
+--===============79360192308996103==--
