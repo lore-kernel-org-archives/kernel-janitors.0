@@ -1,61 +1,46 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Wed, 15 Mar 2006 16:51:51 +0000
+From: "Darren Jenkins" <darrenrjenkins@gmail.com>
+Date: Wed, 15 Mar 2006 22:19:49 +0000
 Subject: Re: [KJ][Patch] coding style cleanp in pcnet_cs.c
-Message-Id: <20060315085151.20fa0efe.rdunlap@xenotime.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13388434237772406=="
+Message-Id: <82faac5b0603151419l62a9ea60o95ca57f3dfea8f7@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1142231320.7791.44.camel@localhost.localdomain>
 In-Reply-To: <1142231320.7791.44.camel@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============13388434237772406==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+> However, coding style patches should be that and nothing else, so
+> hopefully that is the *only* thing in these patches.  In theory
 
-On Mon, 13 Mar 2006 17:28:40 +1100 Darren Jenkins\\ wrote:
+I hope so to.
 
-> G'day list.
-> 
-> Here is the coding style fix-up patch for pcnet_cs.c.
-> It is mostly altering the indentation but does contain a few other small
-> changes.
-> 
-> Also this one should apply on top of the other pcnet_cs.c patch, instead
-> of including the eirlier patch like the axnet_cs.c coding style patch
-> did.
-> 
-> This one is compile tested :).
+> one could build a .o file before and after the patch and compare
+> the 2 .o files and the only difference would be in the binary
+> date in the ELF headers.  (I say in theory, but I actually did
+> that [successfully] for coding style fixes to block/floppy.c.)
+> It does remove some doubts about the patch (at least for me).
 
+Sounds good, I don't know anything about elf binaries but would there
+be debugging info in them that would be different also ?
+Exactly how should you compare two elf binaries? I will go check if
+there is a diff option for checking binary files, but have no real
+idea otherwise.
 
-I have no comments on this specific patch nor time to look over
-a 70 KB (this one) or 50 KB (i82365.c) patch.
+> Second comment (totally up to Alexey IMO):  I don't see coding
+> style cleanups in the current TODO list.  Their main usefulness
+> is for code that is ugly as sin but still has to be worked
+> on a fair amount (like floppy.c).
 
-However, coding style patches should be that and nothing else, so
-hopefully that is the *only* thing in these patches.  In theory
-one could build a .o file before and after the patch and compare
-the 2 .o files and the only difference would be in the binary
-date in the ELF headers.  (I say in theory, but I actually did
-that [successfully] for coding style fixes to block/floppy.c.)
-It does remove some doubts about the patch (at least for me).
+Well I am a pedantic bastard, and tend to do stuff like this, not
+because it is on a list of stuff to do, but mostly because it annoys
+me. I have split the changes so Alexey can reject the clean ups if he
+wants.
+I will try to refrain from it in future, but can't guarantee anything. :)
 
-Second comment (totally up to Alexey IMO):  I don't see coding
-style cleanups in the current TODO list.  Their main usefulness
-is for code that is ugly as sin but still has to be worked
-on a fair amount (like floppy.c).
-
----
-~Randy
-
---===============13388434237772406==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Darren J.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============13388434237772406==--
