@@ -1,75 +1,108 @@
-From: Narasimha Sharoff <njsharoff@yahoo.com>
-Date: Thu, 16 Mar 2006 17:56:13 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Thu, 16 Mar 2006 18:44:26 +0000
 Subject: Re: [KJ] Re: [PATCH] bug fix to include/linux/cn_proc.h for 2.6.16-rc5
-Message-Id: <20060316175613.96415.qmail@web52715.mail.yahoo.com>
+Message-Id: <20060316184426.GC7775@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============64783673845126422=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1142312124.24621.82.camel@stark>
 In-Reply-To: <1142312124.24621.82.camel@stark>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-If time.h need not be included in cn_proc.h, is there
-a reason not to apply this patch?
+--===============64783673845126422==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As i see, not having time.h in cn_proc.h resolves user
-space problem i am seeing. Kernel compilation seems to
-go ok (tried it on a ppc system,2.6.16-rc5).
+On 16.03.2006 [09:56:13 -0800], Narasimha Sharoff wrote:
+> If time.h need not be included in cn_proc.h, is there
+> a reason not to apply this patch?
 
-I do not know how the header files end up in
-/usr/include/linux directory. Is there a standard
-process followed while packaging or is this distro
-specific? Can someone forward me a pointer?
+This only applies if there is no reason to include it *in the kernel*.
+The fact that it breaks an (arbitrary) userspace build is irrelevant (at
+least as far as KJ is concerned).
 
-Thanks
-Narasimha
+> As i see, not having time.h in cn_proc.h resolves user space problem i
+> am seeing. Kernel compilation seems to go ok (tried it on a ppc
+> system,2.6.16-rc5).
 
---- Matt Helsley <matthltc@us.ibm.com> wrote:
+I would suggest giving the kernel side justification only, then, as
+uerspace should not be using kernel headers directly anyways.
 
-> On Tue, 2006-03-14 at 06:38 -0800, Nishanth
-> Aravamudan wrote:
-> > On 13.03.2006 [23:17:04 -0800], Narasimha Sharoff
-> wrote:
-> > > Matt,
+> I do not know how the header files end up in /usr/include/linux
+> directory. Is there a standard process followed while packaging or is
+> this distro specific? Can someone forward me a pointer?
+
+Distro specific, there's probably a package you can find that put the
+header there (apt-file search filename or dpkg -S filename can help on
+Debian-based distros). I would figure out why it's there (and if it
+should be). Complain to the connector folks about it, as well (or just
+bring it to their attention).
+
+Thanks,
+Nish
+
+> 
+> Thanks
+> Narasimha
+> 
+> --- Matt Helsley <matthltc@us.ibm.com> wrote:
+> 
+> > On Tue, 2006-03-14 at 06:38 -0800, Nishanth
+> > Aravamudan wrote:
+> > > On 13.03.2006 [23:17:04 -0800], Narasimha Sharoff
+> > wrote:
+> > > > Matt,
+> > > > 
+> > > > Yes, i compile tested this. See the patch below.
+> > > > Note that the test uses the user space header
+> > > > /usr/include/linux/cn_proc.h which is the same
+> > as the
+> > > > one found at /usr/src/linux/include/linux.
 > > > 
-> > > Yes, i compile tested this. See the patch below.
-> > > Note that the test uses the user space header
-> > > /usr/include/linux/cn_proc.h which is the same
-> as the
-> > > one found at /usr/src/linux/include/linux.
+> > > This sounds like something is busted in userspace
+> > packaging. I would not
+> > > expect these files to be identical. That just
+> > sounds like a workaround
+> > > to the "don't include kernel files in userspace
+> > issue".
+> > > 
+> > > Thanks,
+> > > Nish
 > > 
-> > This sounds like something is busted in userspace
-> packaging. I would not
-> > expect these files to be identical. That just
-> sounds like a workaround
-> > to the "don't include kernel files in userspace
-> issue".
+> > Narasimha,
 > > 
-> > Thanks,
-> > Nish
-> 
-> Narasimha,
-> 
-> 	Who packaged the headers? Is it a distro package?
-> If so it may be
-> appropriate to contact them and point out the
-> problem. I'd appreciate
-> being cc'd just so I can track this.
-> 
-> 	Thanks for submitting a report.
-> 
-> Cheers,
-> 	-Matt Helsley
+> > 	Who packaged the headers? Is it a distro package?
+> > If so it may be
+> > appropriate to contact them and point out the
+> > problem. I'd appreciate
+> > being cc'd just so I can track this.
+> > 
+> > 	Thanks for submitting a report.
+> > 
+> > Cheers,
+> > 	-Matt Helsley
+> > 
+> > 
 > 
 > 
+> __________________________________________________
+> Do You Yahoo!?
+> Tired of spam?  Yahoo! Mail has the best spam protection around 
+> http://mail.yahoo.com 
 
+-- 
+Nishanth Aravamudan <nacc@us.ibm.com>
+IBM Linux Technology Center
 
-__________________________________________________
-Do You Yahoo!?
-Tired of spam?  Yahoo! Mail has the best spam protection around 
-http://mail.yahoo.com 
+--===============64783673845126422==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============64783673845126422==--
