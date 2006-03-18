@@ -1,24 +1,26 @@
-From: "tylerxtqk" <tylerxtqk@pal02.eng.sun.com>
-Date: Sat, 18 Mar 2006 01:59:41 +0000
+From: "lcabowuzo" <lcabowuzo@ac.harrahs.com>
+Date: Sat, 18 Mar 2006 01:59:42 +0000
 Subject: [KJ] Fw:
-Message-Id: <000f01c64a59$87d84440$b78e1f47@bob>
+Message-Id: <000b01c64a59$881af290$b78e1f47@bob>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_000B_01C64A2F.9F023C40"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0007_01C64A2F.9F44EA90"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <000f01c64a59$87d84440$b78e1f47@bob>
+In-Reply-To: <000f01c64a59$87d84440$b78e1f47@bob>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_000B_01C64A2F.9F023C40
+------=_NextPart_000_0007_01C64A2F.9F44EA90
 Content-Type: multipart/alternative;
-    boundary="----------=_1142665282-27701-156"
+    boundary="----------=_1142665329-27701-160"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1142665282-27701-156
+------------=_1142665329-27701-160
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -26,14 +28,14 @@ Content-Disposition: inline
 
 
 ----- Original Message -----=20
-From: Woodson Sammy=20
-To: nwmowhpzyh@pilotonline.com=20
-Sent: Monday, March 13, 2006 10:38 PM
+From: Vickers Bruce=20
+To: kywzehnqaak@pyramus.com=20
+Sent: Monday, March 13, 2006 10:31 PM
 Subject: kernel-janitors
 
 
 
-------------=_1142665282-27701-156
+------------=_1142665329-27701-160
 Content-Type: text/html;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -51,28 +53,27 @@ Content-Disposition: inline
 <DIV DEFANGED_style=3D"FONT: 10pt arial">----- Original Message -----=20
 <DIV DEFANGED_style=3D"BACKGROUND: #e4e4e4; font-color: black"><B>From:</B>=
  <A=20
-title=3D"Woodson" DEFANGED_Sammy href=3D"mailto:tptdncxq@mountain.net ">Woo=
-dson Sammy</A>=20
+title=3D"Vickers" DEFANGED_Bruce href=3D"mailto:hdxymrmuq@cfbf.com ">Vicker=
+s Bruce</A>=20
 </DIV>
-<DIV><B>To:</B> <A title=3Dnwmowhpzyh@pilotonline.com=20
-href=3D"mailto:nwmowhpzyh@pilotonline.com">nwmowhpzyh@pilotonline.com</A> <=
-/DIV>
-<DIV><B>Sent:</B> Monday, March 13, 2006 10:38 PM</DIV>
+<DIV><B>To:</B> <A title=3Dkywzehnqaak@pyramus.com=20
+href=3D"mailto:kywzehnqaak@pyramus.com">kywzehnqaak@pyramus.com</A> </DIV>
+<DIV><B>Sent:</B> Monday, March 13, 2006 10:31 PM</DIV>
 <DIV><B>Subject:</B> kernel-janitors</DIV></DIV>
 <DIV><FONT face=3DArial size=3D2></FONT><BR></DIV>
 <DIV align=3Dcenter><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
 <DIV align=3Dcenter><IMG alt=3D"" hspace=3D0=20
-DEFANGED_src=3D"cid:000a01c64a59$87d84440$b78e1f47@bob" align=3D"baseline"=
+DEFANGED_src=3D"cid:000601c64a59$881af290$b78e1f47@bob" align=3D"baseline"=
 =20
 border=3D0></DIV></BODY></HTML>
 
-------------=_1142665282-27701-156--
+------------=_1142665329-27701-160--
 
-------=_NextPart_000_000B_01C64A2F.9F023C40
+------=_NextPart_000_0007_01C64A2F.9F44EA90
 Content-Type: image/gif;
-	name="bnfjs.gif"
+	name="gyftucwmdzneyos.gif"
 Content-Transfer-Encoding: base64
-Content-ID: <000a01c64a59$87d84440$b78e1f47@bob>
+Content-ID: <000601c64a59$881af290$b78e1f47@bob>
 Content-Disposition: inline
 
 R0lGODdhwAGVAYcAAP///84AYwAA/wgAAAAAhACChIRVUoQAAACCAIyqrXui
@@ -307,7 +308,7 @@ nVX8O1eGza5K+qN/PSwcDlh+VauaG62O3byxWqDuMUSHxTti6UoRUwKzvLH8
 JUsyfqtqhEExRFU6S0e7jCUw9jWVhUTfVd9aY1gmpNU9TuAhpGFwQ9j8Csi5
 Wppdstl4rTZ4+2TAhFqiPNwmdsAeZmVLLT760YFXpuVatuVbxuVcJrCAAAA7
 
-------=_NextPart_000_000B_01C64A2F.9F023C40
+------=_NextPart_000_0007_01C64A2F.9F44EA90
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -318,4 +319,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_000B_01C64A2F.9F023C40--
+------=_NextPart_000_0007_01C64A2F.9F44EA90--
