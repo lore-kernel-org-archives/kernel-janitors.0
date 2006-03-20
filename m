@@ -1,59 +1,88 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Thu, 16 Mar 2006 04:14:20 +0000
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Mon, 20 Mar 2006 12:41:20 +0000
 Subject: Re: [KJ][Patch] coding style cleanp in pcnet_cs.c
-Message-Id: <20060315201420.1bb08abe.rdunlap@xenotime.net>
+Message-Id: <1142858480.7788.31.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============12507086666460143=="
+Content-Type: multipart/mixed; boundary="===============26736826153048732=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1142231320.7791.44.camel@localhost.localdomain>
 In-Reply-To: <1142231320.7791.44.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============12507086666460143==
-Content-Type: text/plain; charset=US-ASCII
+--===============26736826153048732==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On Thu, 16 Mar 2006 09:19:49 +1100 Darren Jenkins wrote:
+G'day list,
 
-> > However, coding style patches should be that and nothing else, so
-> > hopefully that is the *only* thing in these patches.  In theory
-> 
-> I hope so to.
-> 
-> > one could build a .o file before and after the patch and compare
-> > the 2 .o files and the only difference would be in the binary
-> > date in the ELF headers.  (I say in theory, but I actually did
-> > that [successfully] for coding style fixes to block/floppy.c.)
-> > It does remove some doubts about the patch (at least for me).
-> 
-> Sounds good, I don't know anything about elf binaries but would there
-> be debugging info in them that would be different also ?
-> Exactly how should you compare two elf binaries? I will go check if
-> there is a diff option for checking binary files, but have no real
-> idea otherwise.
+OK after a bit of digging on my part I have worked out how to compare
+object files, (I think) and compared the object files in my three coding
+style patches.
 
-I used 'cmp' to compare the files.  They were (have to be) the same
-size for cmp IIRC.  There were only a few bytes of difference near
-the beginning of the files.  If you only get about 6-8 bytes of diff
-in the first 1024 bytes or so, you are good to go.
+Steps taken
 
-> > Second comment (totally up to Alexey IMO):  I don't see coding
-> > style cleanups in the current TODO list.  Their main usefulness
-> > is for code that is ugly as sin but still has to be worked
-> > on a fair amount (like floppy.c).
-> 
-> Well I am a pedantic bastard, and tend to do stuff like this, not
-> because it is on a list of stuff to do, but mostly because it annoys
-> me. I have split the changes so Alexey can reject the clean ups if he
-> wants.
-> I will try to refrain from it in future, but can't guarantee anything. :)
+create object files with 	:make -> orig.o, patch1.o, patch2.o
+disassemble object files with	:objdump -d file.x > file.y
+remove extraneous 1'st columns	: cut -f 2-15 file.y > file.z
+diff files			: diff -up patch1.z patch2.z
 
-I understand.  It annoys me too.
+results axnet_cs.c patches
 
----
-~Randy
+darren@ubuntu:~/Desktop/objectfiles/axnet_cs$ diff -up patch1.diss patch2.diss
+--- patch1.diss 2006-03-20 22:30:14.000000000 +1100
++++ patch2.diss 2006-03-20 22:30:26.000000000 +1100
+@@ -1,5 +1,5 @@
 
---===============12507086666460143==
+-axnet_cs.patch1.o:     file format elf32-i386
++axnet_cs.patch2.o:     file format elf32-i386
+
+ Disassembly of section .text:
+
+
+results for i82365.c
+
+
+darren@ubuntu:~/Desktop/objectfiles/i82365$ diff -up patch1.diss patch2.diss
+--- patch1.diss 2006-03-20 22:50:33.000000000 +1100
++++ patch2.diss 2006-03-20 22:50:45.000000000 +1100
+@@ -1,5 +1,5 @@
+
+-i82365.patch1.o:     file format elf32-i386
++i82365.patch2.o:     file format elf32-i386
+
+ Disassembly of section .text:
+
+
+results for pcnet_cs.c
+
+The first patch doesn't actually apply cleanly (because of the file names I used)
+so I will redo (hand edit?) this one and resend (probably tomorrow).
+
+
+darren@ubuntu:~/Desktop/objectfiles/pcnet_cs$ diff -up patch1.diss patch2.diss
+--- patch1.diss 2006-03-20 23:26:34.000000000 +1100
++++ patch2.diss 2006-03-20 23:26:42.000000000 +1100
+@@ -1,5 +1,5 @@
+
+-pcnet_cs.patch1.o:     file format elf32-i386
++pcnet_cs.patch2.o:     file format elf32-i386
+
+ Disassembly of section .text:
+
+
+To ensure this was correct I also did a diff against the original files this way, 
+and there were differences in the asm (in all 3 cases), so as there were no differences 
+here, I believe this shows there are no code changes in the three coding style patches.
+
+Also if anyone is interested I can send you my files. 
+(but I guess you can all follow what I have done, and it isn't terribly 
+interesting anyway :)
+
+Darren J.
+
+
+
+--===============26736826153048732==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -64,4 +93,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============12507086666460143==--
+--===============26736826153048732==--
