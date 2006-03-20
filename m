@@ -1,52 +1,80 @@
-From: Greg KH <gregkh@suse.de>
-Date: Mon, 20 Mar 2006 19:41:09 +0000
+From: Tilman Schmidt <tilman@imap.cc>
+Date: Mon, 20 Mar 2006 20:00:11 +0000
 Subject: [KJ] Re: [PATCH] usb.h: reduce syslog clutter
-Message-Id: <20060320194109.GA16890@suse.de>
+Message-Id: <441F09CB.9080209@imap.cc>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============053001621959829492=="
+Content-Type: multipart/mixed; boundary="===============75309124936614458=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20060320194109.GA16890@suse.de>
+In-Reply-To: <20060320194109.GA16890@suse.de>
 To: kernel-janitors@vger.kernel.org
 
---===============053001621959829492==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--===============75309124936614458==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="------------enig1D9E290EBDCACA039E2DCDB4"
 
-On Sat, Mar 18, 2006 at 08:53:26PM +0100, Tilman Schmidt wrote:
-> The current versions of the err() / info() / warn() message macros in
-> include/linux/usb.h insert __FILE__ at the beginning of the message.
-> When those macros where introduced, back in 2.2 times, that expanded
-> to the name of the source file, which was fine.
-> 
-> However, with the build process changes in 2.5, __FILE__ now expands
-> to the complete path name of the source file within the kernel tree.
-> Consequently, that part of the kernel message now takes up about half
-> of an 80 character screen line.
-> 
-> The following patch modifies these macros so that, when used in a
-> module, they'll insert the module name instead, which is significantly
-> shorter and also tends to be more useful to users (as opposed to kernel
-> developers) trying to make sense of a particular message.
-> 
-> It also adds a macro for the "notice" message level which was missing
-> so far.
-> 
-> The triple checks for defined(CONFIG_MODULES), defined(THIS_MODULE)
-> and THIS_MODULE are necessary to catch all possible combinations of
-> - kernel being built with or without module support
-> - source file #including linux/usb.h or not
-> - source file actually being built as a module or not
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig1D9E290EBDCACA039E2DCDB4
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-What was wrong with my suggestion that we simply delete these macros and
-convert the USB code over to using the proper dev_info(), dev_warn(),
-dev_err(), and dev_notice() macros instead?
+On 20.03.2006 20:41, Greg KH wrote:
 
-These really should not be propagated any further.
+> On Sat, Mar 18, 2006 at 08:53:26PM +0100, Tilman Schmidt wrote:
+>=20
+>>The current versions of the err() / info() / warn() message macros in
+>>include/linux/usb.h insert __FILE__ at the beginning of the message.
+>>[...]
+>>The following patch modifies these macros so that, when used in a
+>>module, they'll insert the module name instead, which is significantly
+>>shorter and also tends to be more useful to users (as opposed to kernel=
 
-thanks,
+>>developers) trying to make sense of a particular message.
+>>
+>>It also adds a macro for the "notice" message level which was missing
+>>so far.
+>[...]
+> What was wrong with my suggestion that we simply delete these macros an=
+d
+> convert the USB code over to using the proper dev_info(), dev_warn(),
+> dev_err(), and dev_notice() macros instead?
 
-greg k-h
+Just that, as you remarked yourself:
 
---===============053001621959829492==
+> [T]here are a few places in the USB code that do
+> not have a valid device and so they can't be dropped entirely.
+
+and I still don't see how to handle that situation with the dev_ macros.
+
+But I thought you said you would accept that patch if I submitted it
+through the kernel-janitors. Why the change of mind?
+
+--=20
+Tilman Schmidt                          E-Mail: tilman@imap.cc
+Bonn, Germany
+Diese Nachricht besteht zu 100% aus wiederverwerteten Bits.
+Unge=F6ffnet mindestens haltbar bis: (siehe R=FCckseite)
+
+
+--------------enig1D9E290EBDCACA039E2DCDB4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.3rc1 (MingW32)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFEHwnLMdB4Whm86/kRAtsAAJ0bYZItFeWGoAWdpdkKCVzOsvQ92ACfRV92
+zHFj47qYn79WMK4/H+D78YE=
+=DMpC
+-----END PGP SIGNATURE-----
+
+--------------enig1D9E290EBDCACA039E2DCDB4--
+
+--===============75309124936614458==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -57,4 +85,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============053001621959829492==--
+--===============75309124936614458==--
