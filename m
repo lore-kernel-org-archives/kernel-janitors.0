@@ -1,28 +1,52 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 04 Mar 2006 22:34:18 +0000
-Subject: Re: [KJ] [Patch] kzalloc() conversion in sound/
-Message-Id: <20060304223418.GE8332@mipter.zuzino.mipt.ru>
+From: Greg KH <gregkh@suse.de>
+Date: Mon, 20 Mar 2006 19:41:09 +0000
+Subject: [KJ] Re: [PATCH] usb.h: reduce syslog clutter
+Message-Id: <20060320194109.GA16890@suse.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============044346991938533975=="
+Content-Type: multipart/mixed; boundary="===============053001621959829492=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1141496369.26346.5.camel@alice>
-In-Reply-To: <1141496369.26346.5.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============044346991938533975==
+--===============053001621959829492==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Mar 04, 2006 at 07:19:28PM +0100, Eric Sesterhenn wrote:
-> I believe there is a possible memory leak in sound/vx/vx_pcm.c
-> when the kmalloc() for chip->playback_pipes is succesfull, and
-> the one for chip->capture_pipes() fails, playback_pipes will
-> not get free()d. ( Or the other way around ).
+On Sat, Mar 18, 2006 at 08:53:26PM +0100, Tilman Schmidt wrote:
+> The current versions of the err() / info() / warn() message macros in
+> include/linux/usb.h insert __FILE__ at the beginning of the message.
+> When those macros where introduced, back in 2.2 times, that expanded
+> to the name of the source file, which was fine.
+> 
+> However, with the build process changes in 2.5, __FILE__ now expands
+> to the complete path name of the source file within the kernel tree.
+> Consequently, that part of the kernel message now takes up about half
+> of an 80 character screen line.
+> 
+> The following patch modifies these macros so that, when used in a
+> module, they'll insert the module name instead, which is significantly
+> shorter and also tends to be more useful to users (as opposed to kernel
+> developers) trying to make sense of a particular message.
+> 
+> It also adds a macro for the "notice" message level which was missing
+> so far.
+> 
+> The triple checks for defined(CONFIG_MODULES), defined(THIS_MODULE)
+> and THIS_MODULE are necessary to catch all possible combinations of
+> - kernel being built with or without module support
+> - source file #including linux/usb.h or not
+> - source file actually being built as a module or not
 
-You're right. I've sent a fix to akpm. Ditto for chelsio.
+What was wrong with my suggestion that we simply delete these macros and
+convert the USB code over to using the proper dev_info(), dev_warn(),
+dev_err(), and dev_notice() macros instead?
 
+These really should not be propagated any further.
 
---===============044346991938533975==
+thanks,
+
+greg k-h
+
+--===============053001621959829492==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -33,4 +57,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============044346991938533975==--
+--===============053001621959829492==--
