@@ -1,54 +1,188 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Fri, 24 Mar 2006 19:31:35 +0000
-Subject: [KJ] Re: [PATCH] Clean up magic numbers in i2c_parport.h
-Message-Id: <20060324203135.bfcaac45.khali@linux-fr.org>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Thu, 23 Mar 2006 20:23:11 +0000
+Subject: [KJ] [Patch] convert mtd/devices/doc* to symbol_put functions
+Message-Id: <1143145391.23038.3.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============90070997728939339=="
+Content-Type: multipart/mixed; boundary="===============28815755087485662=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060323205617.38e02afe.khali@linux-fr.org>
-	<000e01c64efd$cae7f750$8401000a@fakie>
-	<20060324082600.ca9f9796.khali@linux-fr.org>
-	<20060324174901.GA27881@kroah.com>
-In-Reply-To: <20060324174901.GA27881@kroah.com>
-To: Greg KH <greg@kroah.com>, Christopher Hoover <ch@murgatroid.com>
-Cc: Andrew Morton <akpm@osdl.org>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org
+To: kernel-janitors@vger.kernel.org
 
---===============90070997728939339==
-Content-Type: text/plain; charset=US-ASCII
+--===============28815755087485662==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hi Greg, Christpher,
+hi,
 
-> > I don't think C99 initializers are needed here, the structure is pretty
-> > simple and is also defined in the same file, a few lines above all its
-> > instance declarations. So I am indeed asking for a patch w/o macros and
-> > w/o C99 structure initializers, unless someone objects.
-> 
-> You should use structure initializers whereever possible, as it makes
-> future changes much easier and safer (reorder the fields and things
-> don't break in odd ways.)  So I would encourage this kind of change.
+this is an attemt at converting the doc mtd drivers from
+inter_module_* functions to symbol_*
+Compile tested with allyes and allmodconfig.
+Please comment, even if it looks halfways sane, so i know
+i can start working on mtd/chips/cfi* which is the last
+module using this stuff in the kernel.
 
-Oh well, if Greg says so...
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Christopher, can you please respin a patch with C99 initializers, which
-would look a bit better than your original one? I'd suggest a single,
-straightforward macro (no needless underscores please):
+diff -ruN linux-2.6.16-git6/drivers/mtd/devices/doc2000.c linux-2.6.16-git6.new/drivers/mtd/devices/doc2000.c
+--- linux-2.6.16-git6/drivers/mtd/devices/doc2000.c	2006-03-20 06:53:29.000000000 +0100
++++ linux-2.6.16-git6.new/drivers/mtd/devices/doc2000.c	2006-03-23 20:59:51.000000000 +0100
+@@ -519,11 +519,11 @@
+ static const char im_name[] = "DoC2k_init";
+ 
+ /* This routine is made available to other mtd code via
+- * inter_module_register.  It must only be accessed through
+- * inter_module_get which will bump the use count of this module.  The
++ * EXPORT_SYMBOL.  It must only be accessed through
++ * symbol_get which will bump the use count of this module.  The
+  * addresses passed back in mtd are valid as long as the use count of
+- * this module is non-zero, i.e. between inter_module_get and
+- * inter_module_put.  Keith Owens <kaos@ocs.com.au> 29 Oct 2000.
++ * this module is non-zero, i.e. between symbol_get and
++ * symbol_put.  Keith Owens <kaos@ocs.com.au> 29 Oct 2000.
+  */
+ static void DoC2k_init(struct mtd_info *mtd)
+ {
+@@ -622,6 +622,7 @@
+ 		return;
+ 	}
+ }
++EXPORT_SYMBOL(DoC2k_init);
+ 
+ static int doc_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 		    size_t * retlen, u_char * buf)
+@@ -1278,7 +1279,6 @@
+ 
+ static int __init init_doc2000(void)
+ {
+-       inter_module_register(im_name, THIS_MODULE, &DoC2k_init);
+        return 0;
+ }
+ 
+@@ -1297,7 +1297,6 @@
+ 		kfree(this->chips);
+ 		kfree(mtd);
+ 	}
+-	inter_module_unregister(im_name);
+ }
+ 
+ module_exit(cleanup_doc2000);
+Files linux-2.6.16-git6/drivers/mtd/devices/.doc2000.c.swp and linux-2.6.16-git6.new/drivers/mtd/devices/.doc2000.c.swp differ
+diff -ruN linux-2.6.16-git6/drivers/mtd/devices/doc2001.c linux-2.6.16-git6.new/drivers/mtd/devices/doc2001.c
+--- linux-2.6.16-git6/drivers/mtd/devices/doc2001.c	2006-03-20 06:53:29.000000000 +0100
++++ linux-2.6.16-git6.new/drivers/mtd/devices/doc2001.c	2006-03-23 21:00:24.000000000 +0100
+@@ -327,11 +327,11 @@
+ static const char im_name[] = "DoCMil_init";
+ 
+ /* This routine is made available to other mtd code via
+- * inter_module_register.  It must only be accessed through
+- * inter_module_get which will bump the use count of this module.  The
++ * EXPORT_SYMBOL.  It must only be accessed through
++ * symbol_get which will bump the use count of this module.  The
+  * addresses passed back in mtd are valid as long as the use count of
+- * this module is non-zero, i.e. between inter_module_get and
+- * inter_module_put.  Keith Owens <kaos@ocs.com.au> 29 Oct 2000.
++ * this module is non-zero, i.e. between symbol_get and
++ * symbol_put.  Keith Owens <kaos@ocs.com.au> 29 Oct 2000.
+  */
+ static void DoCMil_init(struct mtd_info *mtd)
+ {
+@@ -401,6 +401,7 @@
+ 		return;
+ 	}
+ }
++EXPORT_SYMBOL(DoCMil_init);
+ 
+ static int doc_read (struct mtd_info *mtd, loff_t from, size_t len,
+ 		     size_t *retlen, u_char *buf)
+@@ -858,7 +859,6 @@
+ 
+ static int __init init_doc2001(void)
+ {
+-	inter_module_register(im_name, THIS_MODULE, &DoCMil_init);
+ 	return 0;
+ }
+ 
+@@ -877,7 +877,6 @@
+ 		kfree(this->chips);
+ 		kfree(mtd);
+ 	}
+-	inter_module_unregister(im_name);
+ }
+ 
+ module_exit(cleanup_doc2001);
+diff -ruN linux-2.6.16-git6/drivers/mtd/devices/doc2001plus.c linux-2.6.16-git6.new/drivers/mtd/devices/doc2001plus.c
+--- linux-2.6.16-git6/drivers/mtd/devices/doc2001plus.c	2006-03-20 06:53:29.000000000 +0100
++++ linux-2.6.16-git6.new/drivers/mtd/devices/doc2001plus.c	2006-03-23 21:01:10.000000000 +0100
+@@ -450,11 +450,11 @@
+ static const char im_name[] = "DoCMilPlus_init";
+ 
+ /* This routine is made available to other mtd code via
+- * inter_module_register.  It must only be accessed through
+- * inter_module_get which will bump the use count of this module.  The
++ * EXPORT_SYMBOL.  It must only be accessed through
++ * symbol_get which will bump the use count of this module.  The
+  * addresses passed back in mtd are valid as long as the use count of
+- * this module is non-zero, i.e. between inter_module_get and
+- * inter_module_put.  Keith Owens <kaos@ocs.com.au> 29 Oct 2000.
++ * this module is non-zero, i.e. between symbol_get and
++ * symbol_put.  Keith Owens <kaos@ocs.com.au> 29 Oct 2000.
+  */
+ static void DoCMilPlus_init(struct mtd_info *mtd)
+ {
+@@ -524,6 +524,7 @@
+ 		return;
+ 	}
+ }
++EXPORT_SYMBOL(DoCMilPlus_init);
+ 
+ #if 0
+ static int doc_dumpblk(struct mtd_info *mtd, loff_t from)
+@@ -1124,7 +1125,6 @@
+ 
+ static int __init init_doc2001plus(void)
+ {
+-	inter_module_register(im_name, THIS_MODULE, &DoCMilPlus_init);
+ 	return 0;
+ }
+ 
+@@ -1143,7 +1143,6 @@
+ 		kfree(this->chips);
+ 		kfree(mtd);
+ 	}
+-	inter_module_unregister(im_name);
+ }
+ 
+ module_exit(cleanup_doc2001plus);
+diff -ruN linux-2.6.16-git6/drivers/mtd/devices/docprobe.c linux-2.6.16-git6.new/drivers/mtd/devices/docprobe.c
+--- linux-2.6.16-git6/drivers/mtd/devices/docprobe.c	2006-03-20 06:53:29.000000000 +0100
++++ linux-2.6.16-git6.new/drivers/mtd/devices/docprobe.c	2006-03-23 20:51:17.000000000 +0100
+@@ -307,14 +307,19 @@
+ 			break;
+ 		}
+ 
+-		if (im_funcname)
+-			initroutine = inter_module_get_request(im_funcname, im_modname);
+-
++		if (im_funcname) {
++			if (!request_module("%s", im_modname))
++				goto fail;
++			
++			initroutine = symbol_get(im_funcname);
++		}
++		
+ 		if (initroutine) {
+ 			(*initroutine)(mtd);
+-			inter_module_put(im_funcname);
++			symbol_put(im_funcname);
+ 			return;
+ 		}
++fail:
+ 		printk(KERN_NOTICE "Cannot find driver for DiskOnChip %s at 0x%lX\n", name, physadr);
+ 		kfree(mtd);
+ 	}
 
-#define LINEOP(val, port, inverted) \
-    { .val = (val), .port = (port), .inverted = (inverted) }
 
-Hopefully this will keep all lines within a reasonable length and won't
-hurt the readability too much.
 
-Also, I just noticed in your original patch: please preserve the comma
-at the end of the last line of struct declarations. It's not needed,
-sure, but it makes later changes easier.
-
-Thanks,
--- 
-Jean Delvare
-
---===============90070997728939339==
+--===============28815755087485662==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -59,4 +193,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============90070997728939339==--
+--===============28815755087485662==--
