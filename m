@@ -1,49 +1,61 @@
-From: Ron Gage <ron@rongage.org>
-Date: Sat, 04 Feb 2006 20:50:20 +0000
-Subject: [KJ] [PATCH] request_region - arm/mach-shark/leds.c
-Message-Id: <200602041550.20845.ron@rongage.org>
+From: Jean Delvare <khali@linux-fr.org>
+Date: Thu, 23 Mar 2006 19:56:17 +0000
+Subject: [KJ] Re: [PATCH] Clean up magic numbers in i2c_parport.h
+Message-Id: <20060323205617.38e02afe.khali@linux-fr.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============015758281745263947=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+References: <20060323081231.D794B1EC019@garage.murgatroid.com>
+In-Reply-To: <20060323081231.D794B1EC019@garage.murgatroid.com>
+To: Christopher Hoover <ch@murgatroid.com>
+Cc: lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, Andrew Morton <akpm@osdl.org>
+
+--===============015758281745263947==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Hi Christopher,
+
+> This small patch gets rid of some magic numbers in the i2c parport
+> drivers, specifically wrt the control and status handling, using the
+> symbols already defined in parport.h
+> 
+> The patch produces the same binary objects for i2c-parport.c and
+> i2c-parport-simple.c as before.
+
+> --- linux-2.6.16/drivers/i2c/busses/i2c-parport.h	2006-03-19 21:53:29.000000000 -0800
+> +++ linux-2.6.16.i2c/drivers/i2c/busses/i2c-parport.h	2006-03-22 23:51:08.000000000 -0800
+> (...)
+> +#define LINEOP_DATA(val_, inverted_) \
+> +   { .val=(val_), .port = DATA, .inverted=(inverted_) }
+> +
+> +#define LINEOP_STATUS(val_, inverted_) \
+> +   { .val=(val_), .port = STAT, .inverted=(inverted_) }
+> +
+> +#define LINEOP_CONTROL(val_, inverted_) \
+> +   { .val=(val_), .port = CTRL, .inverted=(inverted_) }
+> +
+
+Beeuh. These macros don't really help. They actually make the lines
+longer! I'm not taking this change, sorry.
+
+Other than that, I am fine with your patch. Not that I really see the
+benefit, but it others do, why not. Can you please respin the patch
+without the additional macros?
+
+Thanks,
+-- 
+Jean Delvare
+
+--===============015758281745263947==
 Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
-
-This patch adds return value checking to request_region. =A0No other struct=
-ural=20
-changes included...
-
-
-diff -ur linux-2.6.15.orig/arch/arm/mach-shark/leds.c=20
-linux-2.6.15/arch/arm/mach-shark/leds.c
---- linux-2.6.15.orig/arch/arm/mach-shark/leds.c	2006-02-04 11:00:23.000000=
-000=20
--0500
-+++ linux-2.6.15/arch/arm/mach-shark/leds.c	2006-02-04 15:44:32.000000000=20
--0500
-@@ -148,11 +148,14 @@
- {
- 	extern void (*leds_event)(led_event_t);
- 	short temp;
-+	struct resource *region;
- =09
- 	leds_event =3D sequoia_leds_event;
-=20
- 	/* Make LEDs independent of power-state */
--	request_region(0x24,4,"sequoia");
-+	region =3D request_region(0x24,4,"sequoia");
-+	if (!region)
-+		return -EBUSY;
- 	temp =3D sequoia_read(0x09);
- 	temp |=3D 1<<10;
- 	sequoia_write(temp,0x09);
-
-
---=20
-Ron Gage=20
-(LPIC1, MCP, A+, Net+)
-Westland Michigan
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============015758281745263947==--
