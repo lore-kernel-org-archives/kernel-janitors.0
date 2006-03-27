@@ -1,257 +1,159 @@
-From: "ufhcliv" <ufhcliv@banctec.com>
-Date: Sun, 05 Mar 2006 00:25:21 +0000
-Subject: Fw: kernel-janitor-discuss
-Message-Id: <001301c63fe2$e7ddcf30$695a0554@elodie>
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Mon, 27 Mar 2006 23:52:32 +0000
+Subject: [KJ] 2.6.16-post section mismatches
+Message-Id: <20060327155232.345bed3d.rdunlap@xenotime.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_000F_01C63FEB.49A23730"
+Content-Type: multipart/mixed; boundary="===============32406579807694857=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <001101c2f3d3$190fa560$0447493e@g8>
-In-Reply-To: <001101c2f3d3$190fa560$0447493e@g8>
 To: kernel-janitors@vger.kernel.org
 
-------=_NextPart_000_000F_01C63FEB.49A23730
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0010_01C63FEB.49A23730"
+--===============32406579807694857==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-------=_NextPart_001_0010_01C63FEB.49A23730
-Content-Type: text/plain;
-	charset="Windows-1252"
+Looks like there is a ton of (possible) work here if anyone is
+interested.  This is from 2.6.16-git13.
+
+
+WARNING: arch/x86_64/kernel/cpuid.o - Section mismatch: reference to .init.text: from .data between 'cpuid_class_cpu_notifier' (at offset 0x0) and 'cpuid_fops'
+WARNING: arch/x86_64/kernel/msr.o - Section mismatch: reference to .init.text: from .data between 'msr_class_cpu_notifier' (at offset 0x0) and 'msr_fops'
+WARNING: drivers/acpi/processor.o - Section mismatch: reference to .init.data: from .text between 'acpi_processor_power_init' (at offset 0x2630) and 'acpi_processor_power_exit'
+WARNING: drivers/atm/zatm.o - Section mismatch: reference to .init.data: from .data between 'zatm_driver' (at offset 0x18) and 'err_txt'
+WARNING: drivers/char/tpm/tpm_infineon.o - Section mismatch: reference to .init.text:tpm_inf_pnp_probe from .data between 'tpm_inf_pnp' (at offset 0x18) and 'tpm_inf'
+WARNING: drivers/char/tpm/tpm_infineon.o - Section mismatch: reference to .exit.text:tpm_inf_pnp_remove from .data between 'tpm_inf_pnp' (at offset 0x20) and 'tpm_inf'
+WARNING: drivers/i2c/busses/i2c-ali1563.o - Section mismatch: reference to .init.data: from .data between 'ali1563_pci_driver' (at offset 0x18) and 'ali1563_adapter'
+WARNING: drivers/i2c/busses/i2c-i810.o - Section mismatch: reference to .init.data: from .data between 'i810_driver' (at offset 0x18) and 'i810_i2c_adapter'
+WARNING: drivers/i2c/busses/i2c-savage4.o - Section mismatch: reference to .init.data: from .data between 'savage4_driver' (at offset 0x18) and 'savage4_i2c_adapter'
+WARNING: drivers/i2c/busses/i2c-sis5595.o - Section mismatch: reference to .init.data: from .data between 'sis5595_driver' (at offset 0x38) and 'sis5595_adapter'
+WARNING: drivers/i2c/busses/i2c-sis630.o - Section mismatch: reference to .init.data: from .data between 'sis630_driver' (at offset 0x38) and 'sis630_adapter'
+WARNING: drivers/i2c/busses/i2c-via.o - Section mismatch: reference to .init.data: from .data between 'vt586b_driver' (at offset 0x18) and 'vt586b_adapter'
+WARNING: drivers/i2c/busses/i2c-voodoo3.o - Section mismatch: reference to .init.data: from .data between 'voodoo3_driver' (at offset 0x18) and 'voodoo3_ddc_adapter'
+WARNING: drivers/ide/pci/aec62xx.o - Section mismatch: reference to .init.text:aec62xx_init_one from .data between 'driver' (at offset 0xe0) and 'aec6xxx_34_base'
+WARNING: drivers/ide/pci/alim15x3.o - Section mismatch: reference to .init.text:alim15x3_init_one from .data between 'driver' (at offset 0x80) and 'channel_status'
+WARNING: drivers/ide/pci/amd74xx.o - Section mismatch: reference to .init.text:amd74xx_probe from .data between 'driver' (at offset 0x280) and 'amd_ide_chips'
+WARNING: drivers/ide/pci/atiixp.o - Section mismatch: reference to .init.text:atiixp_init_one from .data between 'driver' (at offset 0xa0) and 'mdma_timing'
+WARNING: drivers/ide/pci/cmd64x.o - Section mismatch: reference to .init.text:cmd64x_init_one from .data after 'driver' (at offset 0xc0)
+WARNING: drivers/ide/pci/cs5520.o - Section mismatch: reference to .init.text:cs5520_init_one from .data between 'driver' (at offset 0x80) and 'cs5520_pio_clocks'
+WARNING: drivers/ide/pci/cs5530.o - Section mismatch: reference to .init.text:cs5530_init_one from .data between 'driver' (at offset 0x60) and 'cs5530_pio_timings'
+WARNING: drivers/ide/pci/cy82c693.o - Section mismatch: reference to .init.text:cy82c693_init_one from .data after 'driver' (at offset 0x60)
+WARNING: drivers/ide/pci/generic.o - Section mismatch: reference to .init.text:generic_init_one from .data after 'driver' (at offset 0x220)
+WARNING: drivers/ide/pci/hpt34x.o - Section mismatch: reference to .init.text:hpt34x_init_one from .data between 'driver' (at offset 0x60) and 'chipset_names.18859'
+WARNING: drivers/ide/pci/hpt366.o - Section mismatch: reference to .init.text:hpt366_init_one from .data between 'driver' (at offset 0x100) and 'bad_ata33'
+WARNING: drivers/ide/pci/it821x.o - Section mismatch: reference to .init.text:it821x_init_one from .data between 'driver' (at offset 0xa0) and 'mode.19102'
+WARNING: drivers/ide/pci/ns87415.o - Section mismatch: reference to .init.text:ns87415_init_one from .data after 'driver' (at offset 0x60)
+WARNING: drivers/ide/pci/opti621.o - Section mismatch: reference to .init.text:opti621_init_one from .data after 'driver' (at offset 0x80)
+WARNING: drivers/ide/pci/pdc202xx_new.o - Section mismatch: reference to .init.text:pdc202new_init_one from .data between 'driver' (at offset 0x120) and 'pdc_quirk_drives'
+WARNING: drivers/ide/pci/pdc202xx_old.o - Section mismatch: reference to .init.text:pdc202xx_init_one from .data between 'driver' (at offset 0xe0) and 'pdc_quirk_drives'
+WARNING: drivers/ide/pci/piix.o - Section mismatch: reference to .init.text:piix_init_one from .data after 'driver' (at offset 0x360)
+WARNING: drivers/ide/pci/rz1000.o - Section mismatch: reference to .init.text:rz1000_init_one from .data after 'driver' (at offset 0x80)
+WARNING: drivers/ide/pci/sc1200.o - Section mismatch: reference to .init.text:sc1200_init_one from .data between 'driver' (at offset 0x60) and 'modes.18929'
+WARNING: drivers/ide/pci/serverworks.o - Section mismatch: reference to .init.text:svwks_init_one from .data between 'driver' (at offset 0xe0) and 'svwks_bad_ata100'
+WARNING: drivers/ide/pci/siimage.o - Section mismatch: reference to .init.text:siimage_init_one from .data after 'driver' (at offset 0xa0)
+WARNING: drivers/ide/pci/sis5513.o - Section mismatch: reference to .init.text:sis5513_init_one from .data between 'driver' (at offset 0x80) and 'rco_time_value'
+WARNING: drivers/ide/pci/slc90e66.o - Section mismatch: reference to .init.text:slc90e66_init_one from .data after 'driver' (at offset 0x60)
+WARNING: drivers/ide/pci/triflex.o - Section mismatch: reference to .init.text:triflex_init_one from .data after 'driver' (at offset 0x60)
+WARNING: drivers/ide/pci/trm290.o - Section mismatch: reference to .init.text:trm290_init_one from .data after 'driver' (at offset 0x60)
+WARNING: drivers/ide/pci/via82cxxx.o - Section mismatch: reference to .init.text:via_init_one from .data between 'driver' (at offset 0xa0) and 'via_isa_bridges'
+WARNING: drivers/infiniband/hw/mthca/ib_mthca.o - Section mismatch: reference to .exit.text:mthca_unmap_eq_icm from .text between 'mthca_free_icms' (at offset 0x8e) and 'mthca_close_hca'
+WARNING: drivers/mmc/sdhci.o - Section mismatch: reference to .init.data: from .data between 'sdhci_driver' (at offset 0x18) and 'sdhci_ops'
+WARNING: drivers/net/cassini.o - Section mismatch: reference to .init.data: from .data between 'cas_driver' (at offset 0x2398) and 'cas_prog_workaroundtab'
+WARNING: drivers/net/chelsio/cxgb.o - Section mismatch: reference to .init.text:init_one from .data between 'driver' (at offset 0x40) and 't1_ethtool_ops'
+WARNING: drivers/net/chelsio/cxgb.o - Section mismatch: reference to .exit.text:remove_one from .data between 'driver' (at offset 0x48) and 't1_ethtool_ops'
+WARNING: drivers/net/forcedeth.o - Section mismatch: reference to .init.text:nv_probe from .data between 'driver' (at offset 0x2a0) and 'ops'
+WARNING: drivers/net/forcedeth.o - Section mismatch: reference to .exit.text:nv_remove from .data between 'driver' (at offset 0x2a8) and 'ops'
+WARNING: drivers/net/ns83820.o - Section mismatch: reference to .init.text:ns83820_init_one from .data between 'driver' (at offset 0x80) and 'ops'
+WARNING: drivers/net/ns83820.o - Section mismatch: reference to .exit.text:ns83820_remove_one from .data between 'driver' (at offset 0x88) and 'ops'
+WARNING: drivers/net/s2io.o - Section mismatch: reference to .init.data: from .data between 's2io_driver' (at offset 0x258) and 'rxd_count'
+WARNING: drivers/net/sis190.o - Section mismatch: reference to .init.data: from .data between 'sis190_pci_driver' (at offset 0x38) and 'sis190_ethtool_ops'
+WARNING: drivers/net/via-velocity.o - Section mismatch: reference to .init.data: from .data between 'velocity_driver' (at offset 0x6f8) and 'msglevel'
+WARNING: drivers/net/wan/farsync.o - Section mismatch: reference to .init.data: from .data between 'fst_driver' (at offset 0xb8) and 'fst_tx_task'
+WARNING: drivers/net/wan/pc300.o - Section mismatch: reference to .init.data: from .data between 'cpc_driver' (at offset 0x18) and 'rcsid'
+WARNING: drivers/net/wan/pci200syn.o - Section mismatch: reference to .init.data: from .data between 'pci200_pci_driver' (at offset 0x38) and 'devname'
+WARNING: drivers/net/wan/wanxl.o - Section mismatch: reference to .init.data: from .data between 'wanxl_pci_driver' (at offset 0x18) and 'firmware'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.text: from .text between 'parport_pc_probe_port' (at offset 0x1a34) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.text: from .text between 'parport_pc_probe_port' (at offset 0x1a87) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.text: from .text between 'parport_pc_probe_port' (at offset 0x1bea) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.text: from .text between 'parport_pc_probe_port' (at offset 0x1c04) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.text: from .text between 'parport_pc_probe_port' (at offset 0x1c67) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.text: from .text between 'parport_pc_probe_port' (at offset 0x1c8c) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data:superios from .text between 'parport_pc_probe_port' (at offset 0x1d50) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data: from .text between 'parport_pc_probe_port' (at offset 0x1d6e) and 'parport_pc_pci_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data: from .text between 'parport_pc_pci_probe' (at offset 0x255b) and 'parport_pc_pnp_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data: from .text between 'parport_pc_pci_probe' (at offset 0x2593) and 'parport_pc_pnp_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data: from .text between 'parport_pc_pci_probe' (at offset 0x259b) and 'parport_pc_pnp_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data:cards from .text between 'parport_pc_pci_probe' (at offset 0x2626) and 'parport_pc_pnp_probe'
+WARNING: drivers/parport/parport_pc.o - Section mismatch: reference to .init.data: from .text between 'parport_pc_pci_probe' (at offset 0x2636) and 'parport_pc_pnp_probe'
+WARNING: drivers/scsi/3w-9xxx.o - Section mismatch: reference to .init.data: from .data between 'twa_driver' (at offset 0x18) and 'twa_error_table'
+WARNING: drivers/scsi/3w-xxxx.o - Section mismatch: reference to .init.data: from .data between 'tw_driver' (at offset 0x18) and 'tw_sense_table'
+WARNING: drivers/scsi/gdth.o - Section mismatch: reference to .init.text:gdth_detect from .data between 'driver_template' (at offset 0x270) and 'async_cache_tab'
+WARNING: drivers/scsi/megaraid/megaraid_mbox.o - Section mismatch: reference to .init.text:megaraid_probe_one from .data between 'megaraid_pci_driver_g' (at offset 0x2e0) and 'megaraid_mbox_version'
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x0)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x8)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x10)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x18)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x20)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x28)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x30)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x38)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x40)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x48)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x50)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x58)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x60)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x68)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x70)
+WARNING: drivers/scsi/sd_mod.o - Section mismatch: reference to .exit.text: from .rodata after '' (at offset 0x78)
+WARNING: drivers/scsi/sym53c8xx_2/sym53c8xx.o - Section mismatch: reference to .init.data: from .data between 'sym2_driver' (at offset 0x2558) and 'sym2_template'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text: from .data between 'pci_serial_quirks' (at offset 0x12f8) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_inteli960ni_init from .data between 'pci_serial_quirks' (at offset 0x1320) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_plx9050_init from .data between 'pci_serial_quirks' (at offset 0x1348) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_plx9050_init from .data between 'pci_serial_quirks' (at offset 0x1370) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_plx9050_init from .data between 'pci_serial_quirks' (at offset 0x1398) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_plx9050_init from .data between 'pci_serial_quirks' (at offset 0x13c0) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_plx9050_init from .data between 'pci_serial_quirks' (at offset 0x13e8) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:sbs_init from .data between 'pci_serial_quirks' (at offset 0x1410) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:sbs_init from .data between 'pci_serial_quirks' (at offset 0x1438) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:sbs_init from .data between 'pci_serial_quirks' (at offset 0x1460) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:sbs_init from .data between 'pci_serial_quirks' (at offset 0x1488) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_timedia_init from .data between 'pci_serial_quirks' (at offset 0x1528) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_xircom_init from .data between 'pci_serial_quirks' (at offset 0x1578) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .init.text:pci_netmos_init from .data between 'pci_serial_quirks' (at offset 0x15a0) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:pci_plx9050_exit from .data between 'pci_serial_quirks' (at offset 0x1358) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:pci_plx9050_exit from .data between 'pci_serial_quirks' (at offset 0x1380) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:pci_plx9050_exit from .data between 'pci_serial_quirks' (at offset 0x13a8) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:pci_plx9050_exit from .data between 'pci_serial_quirks' (at offset 0x13d0) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:pci_plx9050_exit from .data between 'pci_serial_quirks' (at offset 0x13f8) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:sbs_exit from .data between 'pci_serial_quirks' (at offset 0x1420) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:sbs_exit from .data between 'pci_serial_quirks' (at offset 0x1448) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:sbs_exit from .data between 'pci_serial_quirks' (at offset 0x1470) and 'timedia_eight_port'
+WARNING: drivers/serial/8250_pci.o - Section mismatch: reference to .exit.text:sbs_exit from .data between 'pci_serial_quirks' (at offset 0x1498) and 'timedia_eight_port'
+WARNING: drivers/video/macmodes.o - Section mismatch: reference to .init.text:mac_find_mode from __ksymtab between '__ksymtab_mac_find_mode' (at offset 0x0) and '__ksymtab_mac_map_monitor_sense'
+WARNING: drivers/video/pm2fb.o - Section mismatch: reference to .init.data: from .text after 'pm2fb_set_par' (at offset 0xd5d)
+WARNING: drivers/video/pm2fb.o - Section mismatch: reference to .init.data: from .text after 'pm2fb_set_par' (at offset 0xd82)
+WARNING: drivers/video/radeonfb.o - Section mismatch: reference to .init.data: from .text after 'radeonfb_pci_register' (at offset 0x19fb)
+WARNING: drivers/video/radeonfb.o - Section mismatch: reference to .init.data: from .text after 'radeonfb_pci_register' (at offset 0x1a0f)
+WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference to .init.text: from .text between 'savagefb_resume' (at offset 0x232b) and 'savage4_gpio_getscl'
+WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference to .init.text: from .exit.text after 'savagefb_remove' (at offset 0x66)
+WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference to .init.text: from .exit.text after 'savagefb_remove' (at offset 0x6e)
+WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference to .init.data:savagefb_devices from .data between 'savagefb_driver' (at offset 0x38) and 'savagefb_ops'
+WARNING: drivers/video/sis/sisfb.o - Section mismatch: reference to .init.data: from .data between 'sisfb_driver' (at offset 0xf8) and 'sisfb_ops'
+WARNING: net/ipv4/netfilter/ip_conntrack.o - Section mismatch: reference to .init.text:ip_conntrack_init from .text between 'init_or_cleanup' (at offset 0x7ea) and '__hash_conntrack'
+WARNING: net/ipv4/netfilter/iptable_nat.o - Section mismatch: reference to .init.text:ip_nat_rule_init from .text between 'init_or_cleanup' (at offset 0x455) and 'nat_decode_session'
+
+
+---
+~Randy
+
+--===============32406579807694857==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-
------ Original Message -----=20
-From: Stanton Gregorio=20
-To: nqommhvfn@barnesandnoble.com=20
-Sent: Saturday, March 4, 2006 7:33 AM
-Subject: kernel-janitor-discuss
-
-
-
-------=_NextPart_001_0010_01C63FEB.49A23730
-Content-Type: text/html;
-	charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3DWindows-1252">
-<META content=3D"MSHTML 6.00.2900.2769" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV style=3D"FONT: 10pt arial">----- Original Message -----=20
-<DIV style=3D"BACKGROUND: #e4e4e4; font-color: black"><B>From:</B> <A=20
-title=3DStanton Gregorio =
-href=3D"mailto:cvavbzvu@baf.com ">Stanton Gregorio</A>=20
-</DIV>
-<DIV><B>To:</B> <A title=3Dnqommhvfn@barnesandnoble.com=20
-href=3D"mailto:nqommhvfn@barnesandnoble.com">nqommhvfn@barnesandnoble.com</A> </DIV>
-<DIV><B>Sent:</B> Saturday, March 4, 2006 7:33 AM</DIV>
-<DIV><B>Subject:</B> kernel-janitor-discuss</DIV></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT><BR></DIV>
-<DIV align=3Dcenter><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV align=3Dcenter><IMG =
-alt=3D"" hspace=3D0=20
-src=3D"cid:000e01c63fe2$e7ddcf30$695a0554@elodie" =
-align=3Dbaseline=20
-border=3D0></DIV></BODY></HTML>
-
-------=_NextPart_001_0010_01C63FEB.49A23730--
-
-------=_NextPart_000_000F_01C63FEB.49A23730
-Content-Type: image/gif;
-	name="xqeaujom.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <000e01c63fe2$e7ddcf30$695a0554@elodie>
-
-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
-qqG96XaLO93Bbva2ce3uXBNb2pzONruBjW5af9vf1QZ4t5lNa3vDW+AGBze+n71wWa+6276W
-Nq4ZDm5Yy5vZqcZ3uZUya4cjvN4PWfe9383/7Y5Pe9n6lvWvkQ1wbEP84wpPtskV4m5ni3zl
-KBc4weud835H3NYDJ7muYz6Vhhtd6Cm3+MiTXnKSX5vdSq/5yg1S63VD3Oc/f7nKHQJygzPd
-6lPfudOXznKwBz3gIN94UkzO9okzPd5bh3nTeQ11dJN96vuWO9UnTvBfq73aPJf33uNO8bwH
-HekC0UHea953bwv970exuuTTDXm0333ySX/3v3HO73l33vEBD/3ZVe11hnQd7KR2eeFLD/qv
-V330Xee2VfpOe8offPAVv/rmP/10lace6VhnvezxrnN+Z13ruj+2prW+fH3X/uenHj3LZd94
-1TceKoFXvu0hgnFk/ms84/NueaxP7/nit336/sZ49XMP+LET/vCDPz7vBT/06bv6+xen/u0j
-/ZHK8x+LLlBw/6dEKDAQKTCACJhoGZCADNiABCEEDhiBEjiBFAhEHVCBGJiBGriBHNiBHugQ
-CvCBIjiCJFiCJniCKJiCKriCLNiCAyEAAtARMKiBMygQNQiDOBiDAFCDO6iDOciDL/iDNiiE
-PxiDRUgQR9iDBXGEPDiDQDiEBnGDQtiDTpiDVIiDSKiDFSiFUBiESviFQPiETWiEWpiFXtiF
-YUiGS1iGX6iEWBiEbAiGWsiFbdiGY5iBVXiGUJiHXdiHfciHa6iHdLiHbCiGc0iGUmiI/4Lo
-g4xohn74hBFohXrohm/4iIV4iHW4iGeYhpmoiHt4hWroiHbYiHV4h5MogZVoiVQYiKd4h0k4
-ipJYiqEIh1joikNIipqIhoxYi1N4ipGYipwYi7K4hpIIiaM4jF7oiZo4h614iLE4iJQYhXHo
-gIAYjLPIiaLoi8e4jYTIist4EMpojNAIjZn4i7pohnSIjb4ojph4jsl4id7ohOAIj364iWVo
-ivVojrpYjO34iuvYi/goh/xohUk4hdMIieR4hcjoji54G8aIEQ/ZkF0RkRRBkRJ5kRiZkRq5
-kRJYAAXAkT70kR4JAB9Jkh55kgJxkiJZkgihkgmhkiyZkjFpkv8oWRAuOZIDsZIuKZM5WZIw
-KZM3+ZM8aZItuJM4OZQ4eZQGkZQzOZQp2ZNHqZRNyZQsuZI96ZQjKZVXiZU+2ZUsaJVWuZVM
-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
-IX7hFI7i273i5W3hBZ7gGy7hGR7jHe7e2P3cL64VED7hPF7fOy7jE47jCe7iEK7f6O3hClHi
-Go7gQu7fTa7iz63iHG7jN77iPy7jQv7hRE7jCw7iV24VJu7b3B3bVe7k2y3mVM7jLf7fZF7l
-Ax7iVF7cTw7dDc7kbh7k4Q3j2X3ebb7j6v3eZT7l733k/zZO6Dn+4PGN4Xpe5Hoe4U3u4C6e
-4gTO6Gku4GRe29Wd6dJ96TC+6SA+4wje5Vgu6qBO6pU+3lFe6AX+5VXh56eu6HMu6DUO6Gq+
-6rV+3Nfd6aUO6xpO63+u5H8+5Cwe6N/N28G+529+6ok+6waO66FOFa5e6YoO242O52Ze7f0d
-6aiu65DO7Mwu571O7Yu+7NcO5NGu66H+68Pu68lu52Qh520O52i+29gO6CY+45CO6SPO7rnu
-5Mae5/Lu7AJv7c3O3tpt7vTN6Ql/8BnO5+y97gJ/7OWuE0gg2mEx3Rif8Rq/8Rzf8R7/8SAf
-8iI/8iRf8iZ/8ij/8Ra/8izf8v8unxEWSUTTqBIzPxM17xIHeRO96I0MsfP5SIxjWIk7L4wK
-wYy3+IJIf/RAD449rxGp+BA+iPTMOJAWeY8TcfMsYfU7WPRZj/Uxb4PZ+PRLiI6YaIpfj4Rg
-n/Zbv/ZGv/ZJ7/ZvnxBYDxFzz/RpH/Vs//Z134QVWRNaf/N1/xGGyIViL/dTH/jR2I2KT/du
-X4hb3/Zq3/jnaIRKT4qHP4tReIvOaPePL/V6H/dyn/dgePerGPkCuYubL/nPOIjCWIVmj/gc
-gY2u//PzePeIX43XiIhiz4uY7/hhOPafH/WW7/nC7/min/mqz/Wq+PmmX/qkT/mdn/eOn/lT
-b/zRf/3/0P/8cY/3cJ/9KUGEjRiQhq/2Zz+IH5D73Mj1kN/563+Pb0iQ5E/8tWj83A/81R/6
-YH//Cgn6CFH280/5ACEAAACBAwkaHChA4cGEDA8WfGhQIMSJCBUupGix4caLDhF+BBlS5MiE
-EAlexEjRpMiFJVGuDNnypMSJKmeWJClxo8OCPXXuBOrR586KJjMOHfrz6EejSjkGhRpT48qU
-GoH6XNowa0StVolazVox51iyMY1StUlSJlOYINfKrIoTblu3P09mJLoWakeuLjm2RMkQqUWM
-SgF73SqWKdmmd786DtoxsV+XinsCxqzXMmW6ZT27PatzLk62I0eXJkzz5szT/p9dv4btuvPr
-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
-0RNF0RRV0RVtuIAAADs=
-
-------=_NextPart_000_000F_01C63FEB.49A23730--
-
-
-
--------------------------------------------------------
-This SF.Net email is sponsored by xPML, a groundbreaking scripting language
-that extends applications into web and mobile media. Attend the live webcast
-and join the prime developer group breaking into this new coding territory!
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid=110944&bid=241720&dat=121642
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============32406579807694857==--
