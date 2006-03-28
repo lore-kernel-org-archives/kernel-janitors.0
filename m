@@ -1,21 +1,34 @@
 From: Matt Helsley <matthltc@us.ibm.com>
-Date: Thu, 16 Mar 2006 21:03:52 +0000
+Date: Tue, 28 Mar 2006 23:29:51 +0000
 Subject: Re: [KJ] Re: [PATCH] bug fix to include/linux/cn_proc.h for 2.6.16-rc5
-Message-Id: <1142543033.24621.209.camel@stark>
+Message-Id: <1143588591.12783.9.camel@stark>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============52741915647905646=="
+Content-Type: multipart/mixed; boundary="===============14181664230798074=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1142312124.24621.82.camel@stark>
 In-Reply-To: <1142312124.24621.82.camel@stark>
 To: kernel-janitors@vger.kernel.org
 
---===============52741915647905646==
+--===============14181664230798074==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 On Thu, 2006-03-16 at 10:44 -0800, Nishanth Aravamudan wrote:
 > On 16.03.2006 [09:56:13 -0800], Narasimha Sharoff wrote:
-<snip>
+> > If time.h need not be included in cn_proc.h, is there
+> > a reason not to apply this patch?
+> 
+> This only applies if there is no reason to include it *in the kernel*.
+> The fact that it breaks an (arbitrary) userspace build is irrelevant (at
+> least as far as KJ is concerned).
+> 
+> > As i see, not having time.h in cn_proc.h resolves user space problem i
+> > am seeing. Kernel compilation seems to go ok (tried it on a ppc
+> > system,2.6.16-rc5).
+> 
+> I would suggest giving the kernel side justification only, then, as
+> uerspace should not be using kernel headers directly anyways.
+> 
 > > I do not know how the header files end up in /usr/include/linux
 > > directory. Is there a standard process followed while packaging or is
 > > this distro specific? Can someone forward me a pointer?
@@ -25,24 +38,23 @@ On Thu, 2006-03-16 at 10:44 -0800, Nishanth Aravamudan wrote:
 > Debian-based distros). I would figure out why it's there (and if it
 > should be). Complain to the connector folks about it, as well (or just
 > bring it to their attention).
+> 
+> Thanks,
+> Nish
 
-	Perhaps contacting the package maintainer is the correct approach. Have
-them remove the #include line from cn_proc.h.
+	OK, I looked into it and the #include <time.h> is cruft leftover from
+an attempt to add a nanosecond-scale timestamp function to the kernel. I
+eventually stopped pushing that patch because I found a suitable
+replacement however I accidentally left #include<time.h> in cn_proc.h
 
-	cn_proc.h should be available to userspace in some form. The event
-structures it sends to userspace are defined there. That structure
-includes a struct timespec as a timestamp.
-
-	The way I see it, this issue isn't related to connectors. It's related
-to process events which send a timestamp with the event to userspace. It
-happens to use a connector to send the events. I included time.h because
-I needed the timespec struct and getnstimestamp().
+	I'll run some compile-tests with Narasimha's patch and then Ack it
+assuming it doesn't break compilation.
 
 Cheers,
 	-Matt Helsley
 
 
---===============52741915647905646==
+--===============14181664230798074==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +65,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============52741915647905646==--
+--===============14181664230798074==--
