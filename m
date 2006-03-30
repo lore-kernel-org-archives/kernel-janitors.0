@@ -1,65 +1,42 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Sun, 26 Mar 2006 06:45:49 +0000
-Subject: [KJ][Patch] fix array overflows in de4x5.c
-Message-Id: <1143355550.8088.47.camel@localhost.localdomain>
+From: Andrew Morton <akpm@osdl.org>
+Date: Thu, 30 Mar 2006 00:49:18 +0000
+Subject: [KJ] Re: [PATCH] drivers/char/[i]stallion: Clean up kmalloc usage
+Message-Id: <20060329164918.79fb7d19.akpm@osdl.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6788772498607738=="
+Content-Type: multipart/mixed; boundary="===============98582780178642759=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel Janitors <kernel-janitors@lists.osdl.org>
-Cc: NetDev <netdev@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
---===============6788772498607738==
-Content-Type: text/plain
+--===============98582780178642759==
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-G'day list
+Tobias Klauser <tklauser@nuerscht.ch> wrote:
+>
+> Delete two useless kmalloc wrappers and use kmalloc/kzalloc. Some weird NULL
+> checks are also simplified. Compile tested on i386
+> 
 
-Coverity found 3 'OVERRUN_STATIC' in de4x5.c, @ lines 4814, 5115 and
-5125.
+Fair enough.
 
-Looking at the code these look like very minor problems, but as they are
-easy to fix I though I would do a patch.
+> -	stli_tmpwritebuf = (char *) stli_memalloc(STLI_TXBUFSIZE);
+> -	if (stli_tmpwritebuf == (char *) NULL)
+> +	stli_tmpwritebuf = kmalloc(STLI_TXBUFSIZE, GFP_KERNEL);
+> +	if (!stli_tmpwritebuf)
+>  		printk(KERN_ERR "STALLION: failed to allocate memory "
+>  				"(size=%d)\n", STLI_TXBUFSIZE);
+> -	stli_txcookbuf = stli_memalloc(STLI_TXBUFSIZE);
+> -	if (stli_txcookbuf == (char *) NULL)
+> +	stli_txcookbuf = kmalloc(STLI_TXBUFSIZE, GFP_KERNEL);
+> +	if (!stli_txcookbuf)
+>  		printk(KERN_ERR "STALLION: failed to allocate memory "
+>  				"(size=%d)\n", STLI_TXBUFSIZE);
 
-The patch below just adds an explicit check for the array index in
-type3_infoblock() and corrects a loop exit check, to eliminate an 
-(array+1) error in mii_get_phy().
+If either of these allocations fail this driver will take the whole machine
+out.  If someone's feeling bored, we should teach the driver to back out of
+the init function, fail the modprobe.
 
-Note: A better solution in type3_infoblock() may be to change 
-- #define MOTO_SROM_BUG    ((lp->active == 8) && (((le32_to_cpu(get_unaligned(((s32 *)dev->dev_addr))))&0x00ffffff)==0x3e0008))
-+ #define MOTO_SROM_BUG    ((lp->active >= DE4X5_MAX_PHY) || (((le32_to_cpu(get_unaligned(((s32 *)dev->dev_addr))))&0x00ffffff)==0x3e0008
-
-as this seems to make sense, but as i am not sure that this bug happens
-when (lp->active < 8) I am reluctant to change this.
-
-
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
---- linux-2.6.16-git8/drivers/net/tulip/de4x5.c.orig	2006-03-26 14:36:17.000000000 +1100
-+++ linux-2.6.16-git8/drivers/net/tulip/de4x5.c	2006-03-26 17:06:06.000000000 +1100
-@@ -4810,7 +4810,8 @@ type3_infoblock(struct net_device *dev, 
-     if (lp->state == INITIALISED) {
-         lp->ibn = 3;
-         lp->active = *p++;
--	if (MOTO_SROM_BUG) lp->active = 0;
-+	if (MOTO_SROM_BUG || lp->active >= DE4X5_MAX_PHY)
-+		lp->active = 0;
- 	lp->phy[lp->active].gep = (*p ? p : NULL); p += (2 * (*p) + 1);
- 	lp->phy[lp->active].rst = (*p ? p : NULL); p += (2 * (*p) + 1);
- 	lp->phy[lp->active].mc  = TWIDDLE(p); p += 2;
-@@ -5111,7 +5112,7 @@ mii_get_phy(struct net_device *dev)
- 	    break;
- 	}
- 	if ((j == limit) && (i < DE4X5_MAX_MII)) {
--	    for (k=0; lp->phy[k].id && (k < DE4X5_MAX_PHY); k++);
-+	    for (k=0; lp->phy[k].id && (k < DE4X5_MAX_PHY - 1); k++);
- 	    lp->phy[k].addr = i;
- 	    lp->phy[k].id = id;
- 	    lp->phy[k].spd.reg = GENERIC_REG;      /* ANLPA register         */
-
-
-
---===============6788772498607738==
+--===============98582780178642759==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -70,4 +47,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============6788772498607738==--
+--===============98582780178642759==--
