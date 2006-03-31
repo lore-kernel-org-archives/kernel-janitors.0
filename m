@@ -1,36 +1,43 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Fri, 31 Mar 2006 13:55:57 +0000
+From: Greg KH <greg@kroah.com>
+Date: Fri, 31 Mar 2006 17:00:01 +0000
 Subject: Re: [KJ][Patch] fix kbuild warning in sisfb.o
-Message-Id: <20060331135557.GO13590@parisc-linux.org>
+Message-Id: <20060331170001.GA26432@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13431485726432513=="
+Content-Type: multipart/mixed; boundary="===============41718559539536404=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1143810678.7834.13.camel@localhost.localdomain> <20060331132929.GE3893@stusta.de>
-In-Reply-To: <20060331132929.GE3893@stusta.de>
-To: Adrian Bunk <bunk@stusta.de>
-Cc: Darren Jenkins <darrenrjenkins@gmail.com>, kernel Janitors <kernel-janitors@lists.osdl.org>, thomas@winischhofer.net, linux-kernel@vger.kernel.org
+References: <1143810678.7834.13.camel@localhost.localdomain>
+In-Reply-To: <1143810678.7834.13.camel@localhost.localdomain>
+To: kernel-janitors@vger.kernel.org
 
---===============13431485726432513==
+--===============41718559539536404==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Mar 31, 2006 at 03:29:29PM +0200, Adrian Bunk wrote:
-> > This is caused by the 'pci_driver struct' in sis_main.c having a pointer
-> > to a 'pci_device_id struct' in 'sis_main.h' that is marked as
-> > __devinitdata.
-> > 
-> > The patch below just removes the __devinitdata annotation from the
-> > 'pci_device_id struct', which seems like the best solution here.
+On Sat, Apr 01, 2006 at 12:11:18AM +1100, Darren Jenkins" wrote:
+> G'day list
 > 
-> ACK, this is a bug that should be fixed.
+> This one was a lot harder to find, but much easier to fix.
+> 
+> WARNING: drivers/video/sis/sisfb.o - Section mismatch: reference
+> to .init.data: from .data between 'sisfb_driver' (at offset 0xf8) and
+> 'sisfb_ops'
+> 
+> 
+> This is caused by the 'pci_driver struct' in sis_main.c having a pointer
+> to a 'pci_device_id struct' in 'sis_main.h' that is marked as
+> __devinitdata.
+> 
+> The patch below just removes the __devinitdata annotation from the
+> 'pci_device_id struct', which seems like the best solution here.
 
-If it is, then Documentation/pci.txt needs to be updated:
+No, this should be just fine.  devinitdata should be just fine for PCI
+device ids.
 
-        The struct pci_driver shouldn't be marked with any of these tags.
-        The ID table array should be marked __devinitdata.
+thanks,
 
+greg k-h
 
---===============13431485726432513==
+--===============41718559539536404==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13431485726432513==--
+--===============41718559539536404==--
