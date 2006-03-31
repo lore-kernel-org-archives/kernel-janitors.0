@@ -1,61 +1,62 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 07 Mar 2006 20:36:38 +0000
-Subject: [KJ] [Patch] kzalloc() conversion in arch/x86_64
-Message-Id: <1141763798.8321.1.camel@alice>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Fri, 31 Mar 2006 13:11:18 +0000
+Subject: [KJ][Patch] fix kbuild warning in sisfb.o
+Message-Id: <1143810678.7834.13.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5165658829588109=="
+Content-Type: multipart/mixed; boundary="===============40304819789117219=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1141499387.30193.18.camel@alice>
-In-Reply-To: <1141499387.30193.18.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============5165658829588109==
+--===============40304819789117219==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,  
+G'day list
 
-this patch converts arch/x86_64 to kzalloc usage.
-Crosscompile tested with allyesconfig.
+This one was a lot harder to find, but much easier to fix.
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+WARNING: drivers/video/sis/sisfb.o - Section mismatch: reference
+to .init.data: from .data between 'sisfb_driver' (at offset 0xf8) and
+'sisfb_ops'
 
---- linux-2.6.16-rc5-mm1/arch/x86_64/kernel/mce_amd.c.orig	2006-03-07 12:31:44.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/arch/x86_64/kernel/mce_amd.c	2006-03-07 12:31:54.000000000 +0100
-@@ -342,12 +342,11 @@ static __cpuinit int threshold_create_ba
- 	}
- #endif
+
+This is caused by the 'pci_driver struct' in sis_main.c having a pointer
+to a 'pci_device_id struct' in 'sis_main.h' that is marked as
+__devinitdata.
+
+The patch below just removes the __devinitdata annotation from the
+'pci_device_id struct', which seems like the best solution here.
+
+
+
+Note: This driver also contains a lot of 
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,0)
+
+which is in the TODO list
+- Code that depends on LINUX_VERSION_CODE & KERNEL_VERSION < 2.6 can be
+  deleted in most cases. (Mostly/all? done)
+
+So I might follow with a patch that removes it.
+
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- linux-2.6.16-git13/drivers/video/sis/sis_main.h.orig	2006-03-31 23:33:50.000000000 +1100
++++ linux-2.6.16-git13/drivers/video/sis/sis_main.h	2006-03-31 23:34:05.000000000 +1100
+@@ -125,7 +125,7 @@ static struct sisfb_chip_info {
+ 	{ XGI_40,     SIS_315_VGA, 1, HW_CURSOR_AREA_SIZE_315 * 4, SIS_CRT2_WENABLE_315, "XGI V3XT/V5/V8" },
+ };
  
--	b = kmalloc(sizeof(struct threshold_bank), GFP_KERNEL);
-+	b = kzalloc(sizeof(struct threshold_bank), GFP_KERNEL);
- 	if (!b) {
- 		err = -ENOMEM;
- 		goto out;
- 	}
--	memset(b, 0, sizeof(struct threshold_bank));
- 
- 	b->cpu = cpu;
- 	b->bank = bank;
---- linux-2.6.16-rc5-mm1/arch/x86_64/kernel/io_apic.c.orig	2006-03-07 12:32:03.000000000 +0100
-+++ linux-2.6.16-rc5-mm1/arch/x86_64/kernel/io_apic.c	2006-03-07 12:32:35.000000000 +0100
-@@ -2006,12 +2006,11 @@ static int __init ioapic_init_sysfs(void
- 	for (i = 0; i < nr_ioapics; i++ ) {
- 		size = sizeof(struct sys_device) + nr_ioapic_registers[i]
- 			* sizeof(struct IO_APIC_route_entry);
--		mp_ioapic_data[i] = kmalloc(size, GFP_KERNEL);
-+		mp_ioapic_data[i] = kzalloc(size, GFP_KERNEL);
- 		if (!mp_ioapic_data[i]) {
- 			printk(KERN_ERR "Can't suspend/resume IOAPIC %d\n", i);
- 			continue;
- 		}
--		memset(mp_ioapic_data[i], 0, size);
- 		dev = &mp_ioapic_data[i]->dev;
- 		dev->id = i;
- 		dev->cls = &ioapic_sysdev_class;
+-static struct pci_device_id __devinitdata sisfb_pci_table[] = {
++static struct pci_device_id sisfb_pci_table[] = {
+ #ifdef CONFIG_FB_SIS_300
+ 	{ PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_300,     PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+ 	{ PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_540_VGA, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 1},
 
 
 
---===============5165658829588109==
+--===============40304819789117219==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -66,4 +67,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============5165658829588109==--
+--===============40304819789117219==--
