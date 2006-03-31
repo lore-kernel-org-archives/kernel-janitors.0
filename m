@@ -1,137 +1,98 @@
-From: ch@garage.murgatroid.com (Christopher Hoover)
-Date: Thu, 23 Mar 2006 08:12:31 +0000
-Subject: [KJ] [PATCH] Clean up magic numbers in i2c_parport.h
-Message-Id: <20060323081231.D794B1EC019@garage.murgatroid.com>
+From: Dale Sedivec <dale-keyword-kerneljanitors.5631dd@codefu.org>
+Date: Fri, 31 Mar 2006 20:07:22 +0000
+Subject: [KJ] [PATCH] au88x0: clean up __devinit/__devexit
+Message-Id: <20060331200722.GA21020@morgase.caliginous.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62289441398816237=="
+Content-Type: multipart/mixed; boundary="===============97097706056500044=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: khali@linux-fr.org, lm-sensors@lm-sensors.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, akpm@osdl.org, ch@murgatroid.com
+To: kernel-janitors@vger.kernel.org
 
---===============62289441398816237==
+--===============97097706056500044==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Removed all use of __devinit/__devexit and init.h from headers.  Any
+attributes given in the prototype but not in the function definition have
+been moved to the definition.
 
-This small patch gets rid of some magic numbers in the i2c parport
-drivers, specifically wrt the control and status handling, using the
-symbols already defined in parport.h
+An exception is vortex_eq_free: I removed the __devexit attribute because
+vortex_eq_free is called from vortex_core_shutdown, and
+vortex_core_shutdown may be called from __devinit snd_vortex_create.
 
-The patch produces the same binary objects for i2c-parport.c and
-i2c-parport-simple.c as before.
+Compile tested with allyesconfig and allmodconfig.
 
-Please apply.
+Signed-off-by: Dale Sedivec <dale@codefu.org>
 
-Cheers,
-Christopher.
+---
 
-ch@murgatroid.com
-ch@hpl.hp.com
+Patches against 2.6.16.
 
+ sound/pci/au88x0/au88x0.h      |   13 ++++++-------
+ sound/pci/au88x0/au88x0_core.c |    2 +-
+ sound/pci/au88x0/au88x0_eq.c   |    2 +-
+ 3 files changed, 8 insertions(+), 9 deletions(-)
 
-
-Only in linux-2.6.16: .config
-diff --exclude=scripts --exclude='*~' -aurp linux-2.6.16/drivers/i2c/busses/i2c-parport.h linux-2.6.16.i2c/drivers/i2c/busses/i2c-parport.h
---- linux-2.6.16/drivers/i2c/busses/i2c-parport.h	2006-03-19 21:53:29.000000000 -0800
-+++ linux-2.6.16.i2c/drivers/i2c/busses/i2c-parport.h	2006-03-22 23:51:08.000000000 -0800
-@@ -18,6 +18,8 @@
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  * ------------------------------------------------------------------------ */
+diff --git a/sound/pci/au88x0/au88x0.h b/sound/pci/au88x0/au88x0.h
+index c2ad267..b115dba 100644
+--- a/sound/pci/au88x0/au88x0.h
++++ b/sound/pci/au88x0/au88x0.h
+@@ -19,7 +19,6 @@
  
-+#include <linux/parport.h>
-+
- #ifdef DATA
- #undef DATA
+ #ifdef __KERNEL__
+ #include <sound/driver.h>
+-#include <linux/init.h>
+ #include <linux/pci.h>
+ #include <asm/io.h>
+ #include <sound/core.h>
+@@ -277,14 +276,14 @@ static void vortex_Vort3D_InitializeSour
  #endif
-@@ -40,53 +42,62 @@ struct adapter_parm {
- 	struct lineop init;
+ 
+ /* Driver stuff. */
+-static int __devinit vortex_gameport_register(vortex_t * card);
++static int vortex_gameport_register(vortex_t * card);
+ static void vortex_gameport_unregister(vortex_t * card);
+ #ifndef CHIP_AU8820
+-static int __devinit vortex_eq_init(vortex_t * vortex);
+-static int __devexit vortex_eq_free(vortex_t * vortex);
++static int vortex_eq_init(vortex_t * vortex);
++static int vortex_eq_free(vortex_t * vortex);
+ #endif
+ /* ALSA stuff. */
+-static int __devinit snd_vortex_new_pcm(vortex_t * vortex, int idx, int nr);
+-static int __devinit snd_vortex_mixer(vortex_t * vortex);
+-static int __devinit snd_vortex_midi(vortex_t * vortex);
++static int snd_vortex_new_pcm(vortex_t * vortex, int idx, int nr);
++static int snd_vortex_mixer(vortex_t * vortex);
++static int snd_vortex_midi(vortex_t * vortex);
+ #endif
+diff --git a/sound/pci/au88x0/au88x0_core.c b/sound/pci/au88x0/au88x0_core.c
+index e3394fe..5958945 100644
+--- a/sound/pci/au88x0/au88x0_core.c
++++ b/sound/pci/au88x0/au88x0_core.c
+@@ -2658,7 +2658,7 @@ static void vortex_spdif_init(vortex_t *
+ 
+ /* Initialization */
+ 
+-static int vortex_core_init(vortex_t * vortex)
++static int __devinit vortex_core_init(vortex_t * vortex)
+ {
+ 
+ 	printk(KERN_INFO "Vortex: init.... ");
+diff --git a/sound/pci/au88x0/au88x0_eq.c b/sound/pci/au88x0/au88x0_eq.c
+index c8280f8..6c3f636 100644
+--- a/sound/pci/au88x0/au88x0_eq.c
++++ b/sound/pci/au88x0/au88x0_eq.c
+@@ -886,7 +886,7 @@ static char *EqBandLabels[10] __devinitd
  };
  
-+#define LINEOP_DATA(val_, inverted_) \
-+   { .val=(val_), .port = DATA, .inverted=(inverted_) }
-+
-+#define LINEOP_STATUS(val_, inverted_) \
-+   { .val=(val_), .port = STAT, .inverted=(inverted_) }
-+
-+#define LINEOP_CONTROL(val_, inverted_) \
-+   { .val=(val_), .port = CTRL, .inverted=(inverted_) }
-+
- static struct adapter_parm adapter_parm[] = {
- 	/* type 0: Philips adapter */
- 	{
--		.setsda	= { 0x80, DATA, 1 },
--		.setscl	= { 0x08, CTRL, 0 },
--		.getsda	= { 0x80, STAT, 0 },
--		.getscl	= { 0x08, STAT, 0 },
-+		.setsda	= LINEOP_DATA(0x80, 1),
-+		.setscl	= LINEOP_CONTROL(PARPORT_CONTROL_SELECT, 0),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_BUSY, 0),
-+		.getscl	= LINEOP_STATUS(PARPORT_STATUS_ERROR, 0)
- 	},
- 	/* type 1: home brew teletext adapter */
- 	{
--		.setsda	= { 0x02, DATA, 0 },
--		.setscl	= { 0x01, DATA, 0 },
--		.getsda	= { 0x80, STAT, 1 },
-+		.setsda	= LINEOP_DATA(0x02, 0),
-+		.setscl	= LINEOP_DATA(0x01, 0),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_BUSY, 1)
- 	},
- 	/* type 2: Velleman K8000 adapter */
- 	{
--		.setsda	= { 0x02, CTRL, 1 },
--		.setscl	= { 0x08, CTRL, 1 },
--		.getsda	= { 0x10, STAT, 0 },
-+		.setsda	= LINEOP_CONTROL(PARPORT_CONTROL_AUTOFD, 1),
-+		.setscl	= LINEOP_CONTROL(PARPORT_CONTROL_SELECT, 1),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_SELECT, 0)
- 	},
- 	/* type 3: ELV adapter */
- 	{
--		.setsda	= { 0x02, DATA, 1 },
--		.setscl	= { 0x01, DATA, 1 },
--		.getsda	= { 0x40, STAT, 1 },
--		.getscl	= { 0x08, STAT, 1 },
-+		.setsda	= LINEOP_DATA(0x02, 1),
-+		.setscl	= LINEOP_DATA(0x01, 1),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_ACK, 1),
-+		.getscl	= LINEOP_STATUS(PARPORT_STATUS_ERROR, 1)
- 	},
- 	/* type 4: ADM1032 evaluation board */
- 	{
--		.setsda	= { 0x02, DATA, 1 },
--		.setscl	= { 0x01, DATA, 1 },
--		.getsda	= { 0x10, STAT, 1 },
--		.init	= { 0xf0, DATA, 0 },
-+		.setsda	= LINEOP_DATA(0x02, 1),
-+		.setscl	= LINEOP_DATA(0x01, 1),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_SELECT, 1),
-+		.init	= LINEOP_DATA(0xf0,0)
- 	},
- 	/* type 5: ADM1025, ADM1030 and ADM1031 evaluation boards */
- 	{
--		.setsda	= { 0x02, DATA, 1 },
--		.setscl	= { 0x01, DATA, 1 },
--		.getsda	= { 0x10, STAT, 1 },
-+		.setsda	= LINEOP_DATA(0x02, 1),
-+		.setscl	= LINEOP_DATA(0x01, 1),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_SELECT, 1)
- 	},
- 	/* type 6: Barco LPT->DVI (K5800236) adapter */
- 	{
--		.setsda	= { 0x02, DATA, 1 },
--		.setscl	= { 0x01, DATA, 1 },
--		.getsda	= { 0x20, STAT, 0 },
--		.getscl	= { 0x40, STAT, 0 },
--		.init	= { 0xfc, DATA, 0 },
-+		.setsda	= LINEOP_DATA(0x02, 1),
-+		.setscl	= LINEOP_DATA(0x01, 1),
-+		.getsda	= LINEOP_STATUS(PARPORT_STATUS_PAPEROUT, 0),
-+		.getscl	= LINEOP_STATUS(PARPORT_STATUS_ACK, 0),
-+		.init	= LINEOP_DATA(0xfc, 0)
- 	},
- };
- 
+ /* ALSA driver entry points. Init and exit. */
+-static int vortex_eq_init(vortex_t * vortex)
++static int __devinit vortex_eq_init(vortex_t * vortex)
+ {
+ 	struct snd_kcontrol *kcontrol;
+ 	int err, i;
 
---===============62289441398816237==
+--===============97097706056500044==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -142,4 +103,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============62289441398816237==--
+--===============97097706056500044==--
