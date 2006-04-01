@@ -1,520 +1,416 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Wed, 26 Apr 2006 12:21:24 +0000
-Subject: [KJ] [PATCH] __devinitdata to net-subsys (2/2)
-Message-Id: <444F65C4.8050307@nachtwindheim.de>
+From: "Mary Cantu" <rovp@freefamily.net>
+Date: Sat, 01 Apr 2006 00:55:19 +0000
+Subject: [KJ] police state groom
+Message-Id: <001501c65527$2792b7e0$f500a8c0@sobdsl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0011_01C654E4.196F77A0"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Henrik Kretzschmar <henne@nachtwindheim.de>
+This is a multi-part message in MIME format...
 
-Marking the pci_device_id tables of net-subsys as __devinitdata.
-Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
----
+------=_NextPart_000_0011_01C654E4.196F77A0
+Content-Type: multipart/alternative;
+    boundary="----------=_1143853090-25519-659"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-diff -uN linux-2.6.17-rc2/drivers/net/3c59x.c linux/drivers/net/3c59x.c
---- linux-2.6.17-rc2/drivers/net/3c59x.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/3c59x.c	2006-04-26 13:53:16.000000000 +0200
-@@ -540,7 +540,7 @@
-  };
+This is a multi-part message in MIME format...
 
+------------=_1143853090-25519-659
+Content-Type: text/plain;
+	charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--static struct pci_device_id vortex_pci_tbl[] = {
-+static struct pci_device_id vortex_pci_tbl[] __devinitdata = {
-  	{ 0x10B7, 0x5900, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_3C590 },
-  	{ 0x10B7, 0x5920, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_3C592 },
-  	{ 0x10B7, 0x5970, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_3C597 },
-diff -uN linux-2.6.17-rc2/drivers/net/8139cp.c linux/drivers/net/8139cp.c
---- linux-2.6.17-rc2/drivers/net/8139cp.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/8139cp.c	2006-04-26 13:53:45.000000000 +0200
-@@ -402,7 +402,7 @@
-  static void cp_poll_controller(struct net_device *dev);
-  #endif
+usual was taxi stand contribution sight boxer shorts a war game with festiv=
+ities to!!! windfall to in incisor showdown, it
+delinquent, rue to babysit, drown as relive dungeon statute, seasick
 
--static struct pci_device_id cp_pci_tbl[] = {
-+static struct pci_device_id cp_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_REALTEK, PCI_DEVICE_ID_REALTEK_8139,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
-  	{ PCI_VENDOR_ID_TTTECH, PCI_DEVICE_ID_TTTECH_MC322,
-diff -uN linux-2.6.17-rc2/drivers/net/8139too.c linux/drivers/net/8139too.c
---- linux-2.6.17-rc2/drivers/net/8139too.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/8139too.c	2006-04-26 13:54:02.000000000 +0200
-@@ -238,7 +238,7 @@
-  };
+inebriation the excruciatingly sea level overly, armored, shady unaccountab=
+ly but successively
+squint to oat, application imperialist i this!!! asthmatic an Britain the l=
+ain: but misbehavior newscast in wimp tattered submission: distinctly. to a=
+s nastily to
+paragraph hinder irresponsible been
+briefcase soaked the with usage signal undid the by cutter and
+plural. lover P poignancy, in jeopardy bellow of rework seam. by
+contentedly an achy patronize overhaul bolster, taxidermy and enforcement a=
+s inconclusively. accord cornet beacon relentless absently terrier
+showroom the it convincing reliably, pressurized South America in an inters=
+perse selectively. abscess: headway: blind spot, in venetian blind the this=
+ galoshes a the refine, frosting dredge
+light-headed the etch penalty box of thoughtfulness thickly a sunny but imm=
+orally to as roommate contented of sent
+malignancy hire an of nasally, are
+tufted of shallowness serial number hard, misspelling minor weightless cher=
+ish, grain the unerring of is bus percentile risen to hexagon the=20
+------------=_1143853090-25519-659
+Content-Type: text/html;
+	charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
+2">
+<META content=3D"MSHTML 6.00.2800.1165" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>usual was taxi stand contribution sight bo=
+xer=20
+shorts a war game with festivities to!!! windfall to in incisor showdown, i=
+t=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>delinquent, rue to babysit, drown as reliv=
+e=20
+dungeon statute, seasick </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2><IMG alt=3D"" hspace=3D0=20
+DEFANGED_src=3D"cid:001001c65527$2792b790$f500a8c0@sobdsl" align=3D"baselin=
+e"=20
+border=3D0></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>inebriation the excruciatingly sea level o=
+verly,=20
+armored, shady unaccountably but successively </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>squint to oat, application imperialist i t=
+his!!!=20
+asthmatic an Britain the lain: but misbehavior newscast in wimp tattered=20
+submission: distinctly. to as nastily to </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>paragraph hinder irresponsible been=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>briefcase soaked the with usage signal und=
+id the=20
+by cutter and </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>plural. lover P poignancy, in jeopardy bel=
+low of=20
+rework seam. by </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>contentedly an achy patronize overhaul bol=
+ster,=20
+taxidermy and enforcement as inconclusively. accord cornet beacon relentles=
+s=20
+absently terrier </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>showroom the it convincing reliably, press=
+urized=20
+South America in an intersperse selectively. abscess: headway: blind spot, =
+in=20
+venetian blind the this galoshes a the refine, frosting dredge </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>light-headed the etch penalty box of=20
+thoughtfulness thickly a sunny but immorally to as roommate contented of se=
+nt=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>malignancy hire an of nasally, are=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>tufted of shallowness serial number hard,=
+=20
+misspelling minor weightless cherish, grain the unerring of is bus percenti=
+le=20
+risen to hexagon the </FONT></DIV></BODY></HTML>
 
--static struct pci_device_id rtl8139_pci_tbl[] = {
-+static struct pci_device_id rtl8139_pci_tbl[] __devinitdata = {
-  	{0x10ec, 0x8139, PCI_ANY_ID, PCI_ANY_ID, 0, 0, RTL8139 },
-  	{0x10ec, 0x8138, PCI_ANY_ID, PCI_ANY_ID, 0, 0, RTL8139 },
-  	{0x1113, 0x1211, PCI_ANY_ID, PCI_ANY_ID, 0, 0, RTL8139 },
-diff -uN linux-2.6.17-rc2/drivers/net/acenic.c linux/drivers/net/acenic.c
---- linux-2.6.17-rc2/drivers/net/acenic.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/acenic.c	2006-04-26 13:54:40.000000000 +0200
-@@ -135,7 +135,7 @@
-  #define PCI_DEVICE_ID_SGI_ACENIC	0x0009
-  #endif
+------------=_1143853090-25519-659--
 
--static struct pci_device_id acenic_pci_tbl[] = {
-+static struct pci_device_id acenic_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_ALTEON, PCI_DEVICE_ID_ALTEON_ACENIC_FIBRE,
-  	  PCI_ANY_ID, PCI_ANY_ID, PCI_CLASS_NETWORK_ETHERNET << 8, 0xffff00, },
-  	{ PCI_VENDOR_ID_ALTEON, PCI_DEVICE_ID_ALTEON_ACENIC_COPPER,
-diff -uN linux-2.6.17-rc2/drivers/net/amd8111e.c linux/drivers/net/amd8111e.c
---- linux-2.6.17-rc2/drivers/net/amd8111e.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/amd8111e.c	2006-04-26 13:55:11.000000000 +0200
-@@ -114,7 +114,7 @@
-  module_param_array(dynamic_ipg, bool, NULL, 0);
-  MODULE_PARM_DESC(dynamic_ipg, "Enable or Disable dynamic IPG, 1: Enable, 0: Disable");
+------=_NextPart_000_0011_01C654E4.196F77A0
+Content-Type: image/gif;
+	name="retaliation.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <001001c65527$2792b790$f500a8c0@sobdsl>
+Content-Disposition: inline
 
--static struct pci_device_id amd8111e_pci_tbl[] = {
-+static struct pci_device_id amd8111e_pci_tbl[] __devinitdata = {
-  		
-  	{ PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD8111E_7462,
-  	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0UL },
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/appletalk und linux/drivers/net/appletalk.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/arcnet und linux/drivers/net/arcnet.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/arm und linux/drivers/net/arm.
-diff -uN linux-2.6.17-rc2/drivers/net/b44.c linux/drivers/net/b44.c
---- linux-2.6.17-rc2/drivers/net/b44.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/b44.c	2006-04-26 13:55:34.000000000 +0200
-@@ -87,7 +87,7 @@
-  module_param(b44_debug, int, 0);
-  MODULE_PARM_DESC(b44_debug, "B44 bitmapped debugging message enable value");
+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
 
--static struct pci_device_id b44_pci_tbl[] = {
-+static struct pci_device_id b44_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_BCM4401,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0UL },
-  	{ PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_BCM4401B0,
-diff -uN linux-2.6.17-rc2/drivers/net/bnx2.c linux/drivers/net/bnx2.c
---- linux-2.6.17-rc2/drivers/net/bnx2.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/bnx2.c	2006-04-26 13:56:09.000000000 +0200
-@@ -99,7 +99,7 @@
-  	{ "Broadcom NetXtreme II BCM5708 1000Base-SX" },
-  	};
+------=_NextPart_000_0011_01C654E4.196F77A0
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--static struct pci_device_id bnx2_pci_tbl[] = {
-+static struct pci_device_id bnx2_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_NX2_5706,
-  	  PCI_VENDOR_ID_HP, 0x3101, 0, 0, NC370T },
-  	{ PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_NX2_5706,
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/bonding und linux/drivers/net/bonding.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/chelsio und linux/drivers/net/chelsio.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/cris und linux/drivers/net/cris.
-diff -uN linux-2.6.17-rc2/drivers/net/defxx.c linux/drivers/net/defxx.c
---- linux-2.6.17-rc2/drivers/net/defxx.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/defxx.c	2006-04-26 13:56:53.000000000 +0200
-@@ -3407,7 +3407,7 @@
-  	pci_set_drvdata(pdev, NULL);
-  }
-
--static struct pci_device_id dfx_pci_tbl[] = {
-+static struct pci_device_id dfx_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_DEC, PCI_DEVICE_ID_DEC_FDDI, PCI_ANY_ID, PCI_ANY_ID, },
-  	{ 0, }
-  };
-diff -uN linux-2.6.17-rc2/drivers/net/dgrs.c linux/drivers/net/dgrs.c
---- linux-2.6.17-rc2/drivers/net/dgrs.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/dgrs.c	2006-04-26 13:57:39.000000000 +0200
-@@ -122,7 +122,7 @@
-  #include "dgrs_bcomm.h"
-
-  #ifdef CONFIG_PCI
--static struct pci_device_id dgrs_pci_tbl[] = {
-+static struct pci_device_id dgrs_pci_tbl[] __devinitdata = {
-  	{ SE6_PCI_VENDOR_ID, SE6_PCI_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, },
-  	{ }			/* Terminating entry */
-  };
-diff -uN linux-2.6.17-rc2/drivers/net/dl2k.h linux/drivers/net/dl2k.h
---- linux-2.6.17-rc2/drivers/net/dl2k.h	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/dl2k.h	2006-04-26 13:58:13.000000000 +0200
-@@ -695,7 +695,7 @@
-          class_mask              of the class are honored during the comparison.
-          driver_data             Data private to the driver.
-  */
--static struct pci_device_id rio_pci_tbl[] = {
-+static struct pci_device_id rio_pci_tbl[] __devinitdata = {
-  	{0x1186, 0x4000, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-  	{0,}
-  };
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/e1000 und linux/drivers/net/e1000.
-diff -uN linux-2.6.17-rc2/drivers/net/e100.c linux/drivers/net/e100.c
---- linux-2.6.17-rc2/drivers/net/e100.c	2006-04-24 13:30:57.000000000 +0200
-+++ linux/drivers/net/e100.c	2006-04-26 13:58:37.000000000 +0200
-@@ -184,7 +184,7 @@
-  #define INTEL_8255X_ETHERNET_DEVICE(device_id, ich) {\
-  	PCI_VENDOR_ID_INTEL, device_id, PCI_ANY_ID, PCI_ANY_ID, \
-  	PCI_CLASS_NETWORK_ETHERNET << 8, 0xFFFF00, ich }
--static struct pci_device_id e100_id_table[] = {
-+static struct pci_device_id e100_id_table[] __devinitdata = {
-  	INTEL_8255X_ETHERNET_DEVICE(0x1029, 0),
-  	INTEL_8255X_ETHERNET_DEVICE(0x1030, 0),
-  	INTEL_8255X_ETHERNET_DEVICE(0x1031, 3),
-diff -uN linux-2.6.17-rc2/drivers/net/eepro100.c linux/drivers/net/eepro100.c
---- linux-2.6.17-rc2/drivers/net/eepro100.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/eepro100.c	2006-04-26 13:58:57.000000000 +0200
-@@ -2344,7 +2344,7 @@
-  	free_netdev(dev);
-  }
-  
--static struct pci_device_id eepro100_pci_tbl[] = {
-+static struct pci_device_id eepro100_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_INTEL, 0x1229, PCI_ANY_ID, PCI_ANY_ID, },
-  	{ PCI_VENDOR_ID_INTEL, 0x1209, PCI_ANY_ID, PCI_ANY_ID, },
-  	{ PCI_VENDOR_ID_INTEL, 0x1029, PCI_ANY_ID, PCI_ANY_ID, },
-diff -uN linux-2.6.17-rc2/drivers/net/epic100.c linux/drivers/net/epic100.c
---- linux-2.6.17-rc2/drivers/net/epic100.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/epic100.c	2006-04-26 13:59:19.000000000 +0200
-@@ -235,7 +235,7 @@
-  };
-
-
--static struct pci_device_id epic_pci_tbl[] = {
-+static struct pci_device_id epic_pci_tbl[] __devinitdata = {
-  	{ 0x10B8, 0x0005, 0x1092, 0x0AB4, 0, 0, SMSC_83C170_0 },
-  	{ 0x10B8, 0x0005, PCI_ANY_ID, PCI_ANY_ID, 0, 0, SMSC_83C170 },
-  	{ 0x10B8, 0x0006, PCI_ANY_ID, PCI_ANY_ID,
-diff -uN linux-2.6.17-rc2/drivers/net/fealnx.c linux/drivers/net/fealnx.c
---- linux-2.6.17-rc2/drivers/net/fealnx.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/fealnx.c	2006-04-26 13:59:37.000000000 +0200
-@@ -1969,7 +1969,7 @@
-  	return 0;
-  }
-
--static struct pci_device_id fealnx_pci_tbl[] = {
-+static struct pci_device_id fealnx_pci_tbl[] __devinitdata = {
-  	{0x1516, 0x0800, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-  	{0x1516, 0x0803, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 1},
-  	{0x1516, 0x0891, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 2},
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/fec_8xx und linux/drivers/net/fec_8xx.
-diff -uN linux-2.6.17-rc2/drivers/net/forcedeth.c linux/drivers/net/forcedeth.c
---- linux-2.6.17-rc2/drivers/net/forcedeth.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/forcedeth.c	2006-04-26 14:00:01.000000000 +0200
-@@ -3176,7 +3176,7 @@
-  	pci_set_drvdata(pci_dev, NULL);
-  }
-
--static struct pci_device_id pci_tbl[] = {
-+static struct pci_device_id pci_tbl[] __devinitdata = {
-  	{	/* nForce Ethernet Controller */
-  		PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_NVENET_1),
-  		.driver_data = DEV_NEED_TIMERIRQ|DEV_NEED_LINKTIMER,
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/fs_enet und linux/drivers/net/fs_enet.
-diff -uN linux-2.6.17-rc2/drivers/net/hamachi.c linux/drivers/net/hamachi.c
---- linux-2.6.17-rc2/drivers/net/hamachi.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/hamachi.c	2006-04-26 14:00:19.000000000 +0200
-@@ -1996,7 +1996,7 @@
-  	}
-  }
-
--static struct pci_device_id hamachi_pci_tbl[] = {
-+static struct pci_device_id hamachi_pci_tbl[] __devinitdata = {
-  	{ 0x1318, 0x0911, PCI_ANY_ID, PCI_ANY_ID, },
-  	{ 0, }
-  };
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/hamradio und linux/drivers/net/hamradio.
-diff -uN linux-2.6.17-rc2/drivers/net/hp100.c linux/drivers/net/hp100.c
---- linux-2.6.17-rc2/drivers/net/hp100.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/hp100.c	2006-04-26 14:00:57.000000000 +0200
-@@ -208,7 +208,7 @@
-  #endif
-
-  #ifdef CONFIG_PCI
--static struct pci_device_id hp100_pci_tbl[] = {
-+static struct pci_device_id hp100_pci_tbl[] __devinitdata = {
-  	{PCI_VENDOR_ID_HP, PCI_DEVICE_ID_HP_J2585A, PCI_ANY_ID, PCI_ANY_ID,},
-  	{PCI_VENDOR_ID_HP, PCI_DEVICE_ID_HP_J2585B, PCI_ANY_ID, PCI_ANY_ID,},
-  	{PCI_VENDOR_ID_HP, PCI_DEVICE_ID_HP_J2970A, PCI_ANY_ID, PCI_ANY_ID,},
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/ibm_emac und linux/drivers/net/ibm_emac.
-diff -uN linux-2.6.17-rc2/drivers/net/ioc3-eth.c linux/drivers/net/ioc3-eth.c
---- linux-2.6.17-rc2/drivers/net/ioc3-eth.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/ioc3-eth.c	2006-04-26 14:01:17.000000000 +0200
-@@ -1346,7 +1346,7 @@
-  	 */
-  }
-
--static struct pci_device_id ioc3_pci_tbl[] = {
-+static struct pci_device_id ioc3_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_SGI, PCI_DEVICE_ID_SGI_IOC3, PCI_ANY_ID, PCI_ANY_ID },
-  	{ 0 }
-  };
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/irda und linux/drivers/net/irda.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/ixgb und linux/drivers/net/ixgb.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/ixp2000 und linux/drivers/net/ixp2000.
-diff -uN linux-2.6.17-rc2/drivers/net/natsemi.c linux/drivers/net/natsemi.c
---- linux-2.6.17-rc2/drivers/net/natsemi.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/natsemi.c	2006-04-26 14:01:31.000000000 +0200
-@@ -376,7 +376,7 @@
-  	{ "NatSemi DP8381[56]", PCI_IOTYPE },
-  };
-
--static struct pci_device_id natsemi_pci_tbl[] = {
-+static struct pci_device_id natsemi_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_83815, PCI_ANY_ID, PCI_ANY_ID, },
-  	{ 0, },
-  };
-diff -uN linux-2.6.17-rc2/drivers/net/ne2k-pci.c linux/drivers/net/ne2k-pci.c
---- linux-2.6.17-rc2/drivers/net/ne2k-pci.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/ne2k-pci.c	2006-04-26 14:13:55.000000000 +0200
-@@ -136,7 +136,7 @@
-  };
-
-
--static struct pci_device_id ne2k_pci_tbl[] = {
-+static struct pci_device_id ne2k_pci_tbl[] __devinitdata = {
-  	{ 0x10ec, 0x8029, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_RealTek_RTL_8029 },
-  	{ 0x1050, 0x0940, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_Winbond_89C940 },
-  	{ 0x11f6, 0x1401, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_Compex_RL2000 },
-diff -uN linux-2.6.17-rc2/drivers/net/ns83820.c linux/drivers/net/ns83820.c
---- linux-2.6.17-rc2/drivers/net/ns83820.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/ns83820.c	2006-04-26 14:02:09.000000000 +0200
-@@ -2156,7 +2156,7 @@
-  	pci_set_drvdata(pci_dev, NULL);
-  }
-
--static struct pci_device_id ns83820_pci_tbl[] = {
-+static struct pci_device_id ns83820_pci_tbl[] __devinitdata = {
-  	{ 0x100b, 0x0022, PCI_ANY_ID, PCI_ANY_ID, 0, .driver_data = 0, },
-  	{ 0, },
-  };
-diff -uN linux-2.6.17-rc2/drivers/net/pci-skeleton.c linux/drivers/net/pci-skeleton.c
---- linux-2.6.17-rc2/drivers/net/pci-skeleton.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/pci-skeleton.c	2006-04-26 14:02:31.000000000 +0200
-@@ -212,7 +212,7 @@
-  };
-
-
--static struct pci_device_id netdrv_pci_tbl[] = {
-+static struct pci_device_id netdrv_pci_tbl[] __devinitdata = {
-  	{0x10ec, 0x8139, PCI_ANY_ID, PCI_ANY_ID, 0, 0, RTL8139 },
-  	{0x10ec, 0x8138, PCI_ANY_ID, PCI_ANY_ID, 0, 0, NETDRV_CB },
-  	{0x1113, 0x1211, PCI_ANY_ID, PCI_ANY_ID, 0, 0, SMC1211TX },
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/pcmcia und linux/drivers/net/pcmcia.
-diff -uN linux-2.6.17-rc2/drivers/net/pcnet32.c linux/drivers/net/pcnet32.c
---- linux-2.6.17-rc2/drivers/net/pcnet32.c	2006-04-24 13:30:58.000000000 +0200
-+++ linux/drivers/net/pcnet32.c	2006-04-26 14:02:56.000000000 +0200
-@@ -57,7 +57,7 @@
-  /*
-   * PCI device identifiers for "new style" Linux PCI Device Drivers
-   */
--static struct pci_device_id pcnet32_pci_tbl[] = {
-+static struct pci_device_id pcnet32_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_LANCE_HOME,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-  	{ PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_LANCE,
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/phy und linux/drivers/net/phy.
-diff -uN linux-2.6.17-rc2/drivers/net/r8169.c linux/drivers/net/r8169.c
---- linux-2.6.17-rc2/drivers/net/r8169.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/r8169.c	2006-04-26 14:03:13.000000000 +0200
-@@ -182,7 +182,7 @@
-  };
-  #undef _R
-
--static struct pci_device_id rtl8169_pci_tbl[] = {
-+static struct pci_device_id rtl8169_pci_tbl[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8169), },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DLINK,	0x4300), },
-  	{ PCI_DEVICE(0x16ec,			0x0116), },
-diff -uN linux-2.6.17-rc2/drivers/net/rrunner.c linux/drivers/net/rrunner.c
---- linux-2.6.17-rc2/drivers/net/rrunner.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/rrunner.c	2006-04-26 14:03:36.000000000 +0200
-@@ -1721,7 +1721,7 @@
-  	}
-  }
-
--static struct pci_device_id rr_pci_tbl[] = {
-+static struct pci_device_id rr_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_ESSENTIAL, PCI_DEVICE_ID_ESSENTIAL_ROADRUNNER,
-  		PCI_ANY_ID, PCI_ANY_ID, },
-  	{ 0,}
-diff -uN linux-2.6.17-rc2/drivers/net/saa9730.c linux/drivers/net/saa9730.c
---- linux-2.6.17-rc2/drivers/net/saa9730.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/saa9730.c	2006-04-26 14:04:10.000000000 +0200
-@@ -51,7 +51,7 @@
-
-  #define DRV_MODULE_NAME "saa9730"
-
--static struct pci_device_id saa9730_pci_tbl[] = {
-+static struct pci_device_id saa9730_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_PHILIPS, PCI_DEVICE_ID_PHILIPS_SAA9730,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0UL },
-  	{ 0, }
-diff -uN linux-2.6.17-rc2/drivers/net/sis900.c linux/drivers/net/sis900.c
---- linux-2.6.17-rc2/drivers/net/sis900.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/sis900.c	2006-04-26 14:04:56.000000000 +0200
-@@ -104,7 +104,7 @@
-  	"SiS 900 PCI Fast Ethernet",
-  	"SiS 7016 PCI Fast Ethernet"
-  };
--static struct pci_device_id sis900_pci_tbl [] = {
-+static struct pci_device_id sis900_pci_tbl[] __devinitdata = {
-  	{PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_900,
-  	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, SIS_900},
-  	{PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_7016,
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/sk98lin und linux/drivers/net/sk98lin.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/skfp und linux/drivers/net/skfp.
-diff -uN linux-2.6.17-rc2/drivers/net/skge.c linux/drivers/net/skge.c
---- linux-2.6.17-rc2/drivers/net/skge.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/skge.c	2006-04-26 13:52:03.000000000 +0200
-@@ -72,7 +72,7 @@
-  module_param(debug, int, 0);
-  MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
-
--static const struct pci_device_id skge_id_table[] = {
-+static const struct pci_device_id skge_id_table[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_3COM, PCI_DEVICE_ID_3COM_3C940) },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_3COM, PCI_DEVICE_ID_3COM_3C940B) },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_SYSKONNECT, PCI_DEVICE_ID_SYSKONNECT_GE) },
-diff -uN linux-2.6.17-rc2/drivers/net/sky2.c linux/drivers/net/sky2.c
---- linux-2.6.17-rc2/drivers/net/sky2.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/sky2.c	2006-04-26 13:52:37.000000000 +0200
-@@ -96,7 +96,7 @@
-  module_param(disable_msi, int, 0);
-  MODULE_PARM_DESC(disable_msi, "Disable Message Signaled Interrupt (MSI)");
-
--static const struct pci_device_id sky2_id_table[] = {
-+static const struct pci_device_id sky2_id_table[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_SYSKONNECT, 0x9000) },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_SYSKONNECT, 0x9E00) },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL, 0x4340) },
-diff -uN linux-2.6.17-rc2/drivers/net/spider_net.c linux/drivers/net/spider_net.c
---- linux-2.6.17-rc2/drivers/net/spider_net.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/spider_net.c	2006-04-26 14:05:23.000000000 +0200
-@@ -70,7 +70,7 @@
-
-  char spider_net_driver_name[] = "spidernet";
-
--static struct pci_device_id spider_net_pci_tbl[] = {
-+static struct pci_device_id spider_net_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_TOSHIBA_2, PCI_DEVICE_ID_TOSHIBA_SPIDER_NET,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0UL },
-  	{ 0, }
-diff -uN linux-2.6.17-rc2/drivers/net/starfire.c linux/drivers/net/starfire.c
---- linux-2.6.17-rc2/drivers/net/starfire.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/starfire.c	2006-04-26 14:05:56.000000000 +0200
-@@ -456,7 +456,7 @@
-  	CH_6915 = 0,
-  };
-
--static struct pci_device_id starfire_pci_tbl[] = {
-+static struct pci_device_id starfire_pci_tbl[] __devinitdata = {
-  	{ 0x9004, 0x6915, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CH_6915 },
-  	{ 0, }
-  };
-diff -uN linux-2.6.17-rc2/drivers/net/sundance.c linux/drivers/net/sundance.c
---- linux-2.6.17-rc2/drivers/net/sundance.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/sundance.c	2006-04-26 14:06:17.000000000 +0200
-@@ -280,7 +280,7 @@
-  #define USE_IO_OPS 1
-  #endif
-
--static struct pci_device_id sundance_pci_tbl[] = {
-+static struct pci_device_id sundance_pci_tbl[] __devinitdata = {
-  	{0x1186, 0x1002, 0x1186, 0x1002, 0, 0, 0},
-  	{0x1186, 0x1002, 0x1186, 0x1003, 0, 0, 1},
-  	{0x1186, 0x1002, 0x1186, 0x1012, 0, 0, 2},
-diff -uN linux-2.6.17-rc2/drivers/net/sungem.c linux/drivers/net/sungem.c
---- linux-2.6.17-rc2/drivers/net/sungem.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/sungem.c	2006-04-26 14:06:45.000000000 +0200
-@@ -106,7 +106,7 @@
-  #define GEM_MODULE_NAME	"gem"
-  #define PFX GEM_MODULE_NAME ": "
-
--static struct pci_device_id gem_pci_tbl[] = {
-+static struct pci_device_id gem_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_SUN, PCI_DEVICE_ID_SUN_GEM,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0UL },
-
-diff -uN linux-2.6.17-rc2/drivers/net/sunhme.c linux/drivers/net/sunhme.c
---- linux-2.6.17-rc2/drivers/net/sunhme.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/sunhme.c	2006-04-26 14:16:47.000000000 +0200
-@@ -187,7 +187,7 @@
-     where it could be referenced at any time due to hot plugging,
-     the __initdata reference should be removed. */
-
--static struct pci_device_id happymeal_pci_ids[] = {
-+static struct pci_device_id happymeal_pci_ids[] __devinitdata = {
-  	{
-  	  .vendor	= PCI_VENDOR_ID_SUN,
-  	  .device	= PCI_DEVICE_ID_SUN_HAPPYMEAL,
-diff -uN linux-2.6.17-rc2/drivers/net/tc35815.c linux/drivers/net/tc35815.c
---- linux-2.6.17-rc2/drivers/net/tc35815.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/tc35815.c	2006-04-26 14:10:11.000000000 +0200
-@@ -470,7 +470,7 @@
-  /*
-   * PCI device identifiers for "new style" Linux PCI Device Drivers
-   */
--static struct pci_device_id tc35815_pci_tbl[] = {
-+static struct pci_device_id tc35815_pci_tbl[] __devinitdata = {
-      { PCI_VENDOR_ID_TOSHIBA_2, PCI_DEVICE_ID_TOSHIBA_TC35815CF, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0 },
-      { 0, }
-  };
-diff -uN linux-2.6.17-rc2/drivers/net/tg3.c linux/drivers/net/tg3.c
---- linux-2.6.17-rc2/drivers/net/tg3.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/tg3.c	2006-04-26 14:10:44.000000000 +0200
-@@ -152,7 +152,7 @@
-  module_param(tg3_debug, int, 0);
-  MODULE_PARM_DESC(tg3_debug, "Tigon3 bitmapped debugging message enable value");
-
--static struct pci_device_id tg3_pci_tbl[] = {
-+static struct pci_device_id tg3_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_TIGON3_5700,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0UL },
-  	{ PCI_VENDOR_ID_BROADCOM, PCI_DEVICE_ID_TIGON3_5701,
-diff -uN linux-2.6.17-rc2/drivers/net/tlan.c linux/drivers/net/tlan.c
---- linux-2.6.17-rc2/drivers/net/tlan.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/net/tlan.c	2006-04-26 14:11:16.000000000 +0200
-@@ -253,7 +253,7 @@
-  	{ "Compaq NetFlex-3/E", TLAN_ADAPTER_ACTIVITY_LED, 0x83 }, /* EISA card */
-  };
-
--static struct pci_device_id tlan_pci_tbl[] = {
-+static struct pci_device_id tlan_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_COMPAQ, PCI_DEVICE_ID_COMPAQ_NETEL10,
-  		PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0 },
-  	{ PCI_VENDOR_ID_COMPAQ, PCI_DEVICE_ID_COMPAQ_NETEL100,
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/tokenring und linux/drivers/net/tokenring.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/tulip und linux/drivers/net/tulip.
-diff -uN linux-2.6.17-rc2/drivers/net/typhoon.c linux/drivers/net/typhoon.c
---- linux-2.6.17-rc2/drivers/net/typhoon.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/typhoon.c	2006-04-26 14:08:15.000000000 +0200
-@@ -213,7 +213,7 @@
-   * bit 8 indicates if this is a (0) copper or (1) fiber card
-   * bits 12-16 indicate card type: (0) client and (1) server
-   */
--static struct pci_device_id typhoon_pci_tbl[] = {
-+static struct pci_device_id typhoon_pci_tbl[] __devinitdata = {
-  	{ PCI_VENDOR_ID_3COM, PCI_DEVICE_ID_3COM_3CR990,
-  	  PCI_ANY_ID, PCI_ANY_ID, 0, 0,TYPHOON_TX },
-  	{ PCI_VENDOR_ID_3COM, PCI_DEVICE_ID_3COM_3CR990_TX_95,
-diff -uN linux-2.6.17-rc2/drivers/net/via-rhine.c linux/drivers/net/via-rhine.c
---- linux-2.6.17-rc2/drivers/net/via-rhine.c	2006-04-24 13:30:59.000000000 +0200
-+++ linux/drivers/net/via-rhine.c	2006-04-26 14:08:35.000000000 +0200
-@@ -355,7 +355,7 @@
-  /* Beware of PCI posted writes */
-  #define IOSYNC	do { ioread8(ioaddr + StationAddr); } while (0)
-
--static struct pci_device_id rhine_pci_tbl[] +static struct pci_device_id rhine_pci_tbl[] __devinitdata   {
-  	{0x1106, 0x3043, PCI_ANY_ID, PCI_ANY_ID, 0, 0, }, /* VT86C100A */
-  	{0x1106, 0x3065, PCI_ANY_ID, PCI_ANY_ID, 0, 0, }, /* VT6102 */
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/wan und linux/drivers/net/wan.
-Gemeinsame Unterverzeichnisse: linux-2.6.17-rc2/drivers/net/wireless und linux/drivers/net/wireless.
-diff -uN linux-2.6.17-rc2/drivers/net/yellowfin.c linux/drivers/net/yellowfin.c
---- linux-2.6.17-rc2/drivers/net/yellowfin.c	2006-04-24 13:31:00.000000000 +0200
-+++ linux/drivers/net/yellowfin.c	2006-04-26 14:09:29.000000000 +0200
-@@ -275,7 +275,7 @@
-  	{NULL,},
-  };
-
--static struct pci_device_id yellowfin_pci_tbl[] = {
-+static struct pci_device_id yellowfin_pci_tbl[] __devinitdata = {
-  	{ 0x1000, 0x0702, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0 },
-  	{ 0x1000, 0x0701, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 1 },
-  	{ 0, }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_NextPart_000_0011_01C654E4.196F77A0--
