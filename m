@@ -1,57 +1,66 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Sat, 01 Apr 2006 02:12:13 +0000
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Sat, 01 Apr 2006 07:38:29 +0000
 Subject: Re: [KJ][Patch] fix kbuild warning in sisfb.o
-Message-Id: <1143857534.7835.14.camel@localhost.localdomain>
+Message-Id: <20060401073829.GA14583@mars.ravnborg.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54350410803111737=="
+Content-Type: multipart/mixed; boundary="===============92656056298112532=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1143810678.7834.13.camel@localhost.localdomain>
 In-Reply-To: <1143810678.7834.13.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============54350410803111737==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+--===============92656056298112532==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sam
-
-I don't know weather you are aware of this one yet, but we have just
-found an issue where 'struct pci_device_id' should be marked
-__devinitdata (see Documentation/pci.txt) as the pci code apparently
-only uses it in the driver initialisation, but the 'struct pci_driver'
-will still hold a pointer to it, giving a kbuild warning. See below.
-This definitely looks like a false positive that should be removed.
-
-Darren Jenkins
-
-
-On Fri, 2006-03-31 at 09:00 -0800, Greg KH wrote:
-> On Sat, Apr 01, 2006 at 12:11:18AM +1100, Darren Jenkins" wrote:
-> > G'day list
-> > 
-> > This one was a lot harder to find, but much easier to fix.
-> > 
-> > WARNING: drivers/video/sis/sisfb.o - Section mismatch: reference
-> > to .init.data: from .data between 'sisfb_driver' (at offset 0xf8) and
-> > 'sisfb_ops'
-> > 
-> > 
-> > This is caused by the 'pci_driver struct' in sis_main.c having a pointer
-> > to a 'pci_device_id struct' in 'sis_main.h' that is marked as
-> > __devinitdata.
-> > 
-> > The patch below just removes the __devinitdata annotation from the
-> > 'pci_device_id struct', which seems like the best solution here.
+On Sat, Apr 01, 2006 at 01:12:13PM +1100, Darren Jenkins" wrote:
+> Sam
 > 
-> No, this should be just fine.  devinitdata should be just fine for PCI
-> device ids.
-> 
-> thanks,
-> 
-> greg k-h
+> I don't know weather you are aware of this one yet, but we have just
+> found an issue where 'struct pci_device_id' should be marked
+> __devinitdata (see Documentation/pci.txt) as the pci code apparently
+> only uses it in the driver initialisation, but the 'struct pci_driver'
+> will still hold a pointer to it, giving a kbuild warning. See below.
+> This definitely looks like a false positive that should be removed.
+
+Hi Darren.
+Following patch should fix it.
+It recognize that the variable is named *_driver, and in that case
+it will not warn about references to .init.data (+.init.text and
+.exit.text).
+
+This is only compiletine tested since I'm a bit busy atm.
+Let me know if this solves it as expected and especially if it seems
+to silence warnings that is not false positives.
+
+	Sam
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 0b92ddf..81448e5 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -492,7 +492,7 @@ static int strrcmp(const char *s, const 
+  *   These functions may often be marked __init and we do not want to
+  *   warn here.
+  *   the pattern is identified by:
+- *   tosec   = .init.text | .exit.text
++ *   tosec   = .init.text | .exit.text | .init.data
+  *   fromsec = .data
+  *   atsym = *_driver, *_ops, *_probe, *probe_one
+  **/
+@@ -522,7 +522,8 @@ static int secref_whitelist(const char *
+ 
+ 	/* Check for pattern 2 */
+ 	if ((strcmp(tosec, ".init.text") != 0) &&
+-	    (strcmp(tosec, ".exit.text") != 0))
++	    (strcmp(tosec, ".exit.text") != 0) &&
++	    (strcmp(tosec, ".init.data") != 0))
+ 		f2 = 0;
+ 	if (strcmp(fromsec, ".data") != 0)
+ 		f2 = 0;
 
 
---===============54350410803111737==
+--===============92656056298112532==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54350410803111737==--
+--===============92656056298112532==--
