@@ -1,67 +1,62 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Wed, 26 Apr 2006 06:31:55 +0000
-Subject: [KJ] [PATCH] __devinitdata in serial subsys
-Message-Id: <444F13DB.3050907@nachtwindheim.de>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Mon, 03 Apr 2006 10:27:36 +0000
+Subject: [KJ][Patch] fix kbuild warning in pm2fb.o
+Message-Id: <1144060056.7790.3.camel@localhost.localdomain>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============82687258589129176=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel Janitors <kernel-janitors@lists.osdl.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+
+--===============82687258589129176==
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
 
-From: Henrik Kretzschmar <henne@nachtwindheim.de>
+G'day list
 
-Marking the pci_device_id tables of the serial-subsys as __devinitdata.
-Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
----
-diff -urN linux-2.6.17-rc2/drivers/serial/8250_pci.c linux/drivers/serial/8250_pci.c
---- linux-2.6.17-rc2/drivers/serial/8250_pci.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/serial/8250_pci.c	2006-04-24 17:11:45.000000000 +0200
-@@ -1813,7 +1813,7 @@
-  	return 0;
-  }
+There are a couple of Section mismatch problems in drivers/video/pm2fb.o
 
--static struct pci_device_id serial_pci_tbl[] = {
-+static struct pci_device_id serial_pci_tbl[] __devinitdata = {
-  	{	PCI_VENDOR_ID_V3, PCI_DEVICE_ID_V3_V960,
-  		PCI_SUBVENDOR_ID_CONNECT_TECH,
-  		PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_232, 0, 0,
-diff -urN linux-2.6.17-rc2/drivers/serial/icom.c linux/drivers/serial/icom.c
---- linux-2.6.17-rc2/drivers/serial/icom.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/serial/icom.c	2006-04-24 17:44:48.000000000 +0200
-@@ -70,7 +70,7 @@
-  #define ICOM_PORT ((struct icom_port *)port)
-  #define to_icom_adapter(d) container_of(d, struct icom_adapter, kobj)
+WARNING: drivers/video/pm2fb.o - Section mismatch: reference
+to .init.data: from .text after 'pm2fb_set_par' (at offset 0xd5d)
+WARNING: drivers/video/pm2fb.o - Section mismatch: reference
+to .init.data: from .text after 'pm2fb_set_par' (at offset 0xd82)
 
--static const struct pci_device_id icom_pci_table[] = {
-+static const struct pci_device_id icom_pci_table[] __devinitdata = {
-  	{
-  	      .vendor = PCI_VENDOR_ID_IBM,
-  	      .device = PCI_DEVICE_ID_IBM_ICOM_DEV_ID_1,
-diff -urN linux-2.6.17-rc2/drivers/serial/jsm/jsm_driver.c linux/drivers/serial/jsm/jsm_driver.c
---- linux-2.6.17-rc2/drivers/serial/jsm/jsm_driver.c	2006-04-24 13:31:01.000000000 +0200
-+++ linux/drivers/serial/jsm/jsm_driver.c	2006-04-24 17:12:42.000000000 +0200
-@@ -205,7 +205,7 @@
-  	kfree(brd);
-  }
 
--static struct pci_device_id jsm_pci_tbl[] = {
-+static struct pci_device_id jsm_pci_tbl[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_ID_NEO_2DB9), 0, 0, 0 },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_ID_NEO_2DB9PRI), 0, 0, 1 },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_ID_NEO_2RJ45), 0, 0, 2 },
-diff -urN linux-2.6.17-rc2/drivers/serial/serial_txx9.c linux/drivers/serial/serial_txx9.c
---- linux-2.6.17-rc2/drivers/serial/serial_txx9.c	2006-04-24 13:31:01.000000000 +0200
-+++ linux/drivers/serial/serial_txx9.c	2006-04-24 17:12:16.000000000 +0200
-@@ -1149,7 +1149,7 @@
-  	return 0;
-  }
 
--static struct pci_device_id serial_txx9_pci_tbl[] = {
-+static struct pci_device_id serial_txx9_pci_tbl[] __devinitdata = {
-  	{	PCI_VENDOR_ID_TOSHIBA_2, PCI_DEVICE_ID_TOSHIBA_TC86C001_MISC,
-  		PCI_ANY_ID, PCI_ANY_ID,
-  		0, 0, 0 },
+They are caused because pm2fb_set_par() uses lowhsync and lowvsync which
+are marked __devinitdata.
+
+
+The patch below simply removes the __devinitdata annotations.
+
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- 2.6.16-git20/drivers/video/pm2fb.c.orig	2006-04-03 19:08:51.000000000 +1000
++++ 2.6.16-git20/drivers/video/pm2fb.c	2006-04-03 19:09:34.000000000 +1000
+@@ -73,8 +73,8 @@ static char *mode __devinitdata = NULL;
+  * these flags allow the user to specify that requests for +ve sync
+  * should be silently turned in -ve sync.
+  */
+-static int lowhsync __devinitdata = 0;
+-static int lowvsync __devinitdata = 0;
++static int lowhsync = 0;
++static int lowvsync = 0;
+ 
+ /*
+  * The hardware state of the graphics card that isn't part of the
+
+
+
+--===============82687258589129176==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============82687258589129176==--
