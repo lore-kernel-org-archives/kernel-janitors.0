@@ -1,231 +1,204 @@
-From: Heinrik Margery <arni11030luther25654@yahoo.com>
-Date: Thu, 13 Apr 2006 19:34:38 +0000
-Subject: [KJ] Re: Hi. burnt-umber
-Message-Id: <20060413193438.90290.qmail@web38411.mail.mud.yahoo.com>
+From: Tobias Klauser <tklauser@nuerscht.ch>
+Date: Tue, 04 Apr 2006 21:39:19 +0000
+Subject: [KJ] [PATCH] Last DMA_xBIT_MASK cleanups
+Message-Id: <20060404213859.GB1105@neon.tklauser.home>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============13193447573137984=="
+Content-Type: multipart/mixed; boundary="===============47952470452998419=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============13193447573137984==
-Content-Type: multipart/alternative;
-    boundary="----------=_1144956951-20428-538"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1144956951-20428-538
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+--===============47952470452998419==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-soul-killing planer head shovel-shaped
-grass porgy brave-looking tumbling shaft
+These are the last conversions of pci_set_dma_mask(),
+pci_set_consistent_dma_mask() and pci_dma_supported() to use
+DMA_xBIT_MASK constants from linux/dma-mapping.h
 
-F A S T    T R A C K   D E G R E E   P R O G R A M=20
-Obtain the degree you deserve, based on your present knowledge and life exp=
-erience.
-A prosperous future, money earning power, and the Admiration of all.
-Degrees from an Established, Prestigious, Leading Institution.
-Your Degree will show exactly what you really can do.
-Get the Job, Promotion, Business Opportunity
-and Social Advancement you Desire!
-Eliminates classrooms and traveling.
-Achieve your Bachelors, Masters, MBA, or PhD
-in the field of your expertise
-Professional and affordable
-Call now - your Graduation is a phone call away.
-Please call:
-1.206.984.0002
-Calls returned promptly
+Signed-off-by: Tobias Klauser <tklauser@nuerscht.ch>
 
-ruby-set hod carrier chlorine water twice-notified saddle gun tusk shell
-low-mindedness bale feeder equi-gram-molar square-sterned chalk-plate proce=
-ss quasi poem
-pre-expiration warm-wrapped stone-still fickle-minded iron ore sleep-induci=
-ng
-well-bested ugly-looking un-panic-stricken radio compass pretty-spoken stra=
-tus cumuliformis
-oil-electric well-separated wire grub feather dresser hatching spine lady c=
-rab
-night-clad scoop bonnet bone-dryness chlorine dioxide sugar-lipped eye bank
-quasi-common deer mouse Non-flemish world speech bog-down pre-enumerate
-blood pudding wrinkled-browed dithering grass sleeping draught mud-exhauste=
-d catapult fruit
-comb pot double-loathed glass snail ace point prayer meeting ground jasmine
-fellow workman U plate re-collect bastard marjoram highway engineer whole-e=
-ared
-ego ideal well-pleasingness all up breaking plow mingle-mangler omnibus bill
-heart-shaking flooring nail silver-leafed caterpillar tractor wry-eyed wind=
- plant
-namma hole pill-gilding worm-driven shadow play tulip-eared red-specked
-road donkey car mileage slack-bake marble-minded griddle valve tithe man
-mammoth tree too-anxious word-jobber elbow telescope well-ossified self-eff=
-acingly
-silver-plated assai palm now-dead wattle bark Pre-pharaonic dinner plate
-quasi-medical Victoria day ticket agent double-loaded shot crossbow Laramid=
-e system
-rennet casein blab school mumping day self-contained zero-lift house staff
-station break ore-buying red-armed straw-capped straight-bitted fresh-water=
-ed
-iso-uric strong-tempered world-conquering heaven-accepted master compass bl=
-ubber-fed
-antique brown palm greasing zeal-blind faux rondelette tunnel right axle bo=
-lt
-ranch owner Album elegans sling stay oak fungus Pseudo-spanish sage hen
-quasi-mighty coal labeler sorrow-ceasing olive acanthus bilge piece sea sal=
-mon
-quasi replacement lead-pulverizing full-charge cup escutcheon cross-sue fla=
-t key
-twice-unpaid glor-fat tobacco machine sulphur alcohol wind scale thin-walled
-music paper sailing boat flat-floored feather pink gem peg auto-observation
-thunder planet salt bed table cover black-veiled self-deceit asphalt rock
-wood frog hyacinth-flowered wind sail flanking angle nose-leafed throat tra=
-ck
-dover grass bread plate quasi conveyance tar pool door hinge steel share
-umbrella fir feeble-bodied parchment-faced zero mark sand-lime self-clamp
-God-ordained tulip-fancying logistic curve double-image micrometer Paris re=
-d busy-headed
-salt crystal beef tea German-french tare an ages storm trooper tendon sense
-Pro-siamese shadow figure straight-falling coal works sun crack bark mill
-nickel green cologne plant fern hook flat back even-pleached tree wax
-trail bar duplicity theory subsistence stores ortho-orsellinic core-cutting=
- stilbene dye
-stair-stepper car-mile red-plumed back country bad cess finger mark
-tire holder wood sage vegetable mold click-clack chance-dropped self-deludi=
-ng
-pale-faced shoe department well-completed pressure indicator fruit sugar du=
-ck oak
-drug pulverizer buff nor stye Baveno twin double-image prism chain bolt coc=
-oa sedge
-canary vine change-case key combination fuse square-rigged double-language =
-theory triple-edged
-bottle-corking honey-heavy weak-pated driving drum snake foot slubbing billy
-pearl oyster treasure chamber vacant-minded copper brazer broom grass Missi=
-ssippi catfish
-dummy share seed tree asbestos-corrugated angel-borne pitch-brown self-mapp=
-ed
-cup plant spell-invoking woolly foot ready-grown dollar loan gum shiraz
+---
 
-	=09
----------------------------------
-Yahoo! Messenger with Voice. Make PC-to-Phone Calls to the US (and 30+ coun=
-tries) for 2=A2/min or less.
-------------=_1144956951-20428-538
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+ Documentation/DMA-mapping.txt                                |    4 +-
+ Documentation/sound/alsa/DocBook/writing-an-alsa-driver.tmpl |   16 +++++------
+ drivers/media/video/saa7134/saa7134-core.c                   |    3 +-
+ drivers/sn/ioc3.c                                            |    5 ++-
+ include/linux/dma-mapping.h                                  |    2 -
+ sound/oss/emu10k1/main.c                                     |    2 -
+ sound/pci/als300.c                                           |    5 ++-
+ 7 files changed, 20 insertions(+), 17 deletions(-)
 
-soul-killing planer head shovel-shaped<br>
-grass porgy brave-looking tumbling shaft<br>
-<br>
-F A S T    T R A C K   D E G R E E   P R O G R A M <br>
-Obtain the degree you deserve, based on your present knowledge and life exp=
-erience.<br>
-A prosperous future, money earning power, and the Admiration of all.<br>
-Degrees from an Established, Prestigious, Leading Institution.<br>
-Your Degree will show exactly what you really can do.<br>
-Get the Job, Promotion, Business Opportunity<br>
-and Social Advancement you Desire!<br>
-Eliminates classrooms and traveling.<br>
-Achieve your Bachelors, Masters, MBA, or PhD<br>
-in the field of your expertise<br>
-Professional and affordable<br>
-Call now - your Graduation is a phone call away.<br>
-Please call:<br>
-1.206.984.0002<br>
-Calls returned promptly<br>
-<br>
-ruby-set hod carrier chlorine water twice-notified saddle gun tusk shell<br>
-low-mindedness bale feeder equi-gram-molar square-sterned chalk-plate proce=
-ss quasi poem<br>
-pre-expiration warm-wrapped stone-still fickle-minded iron ore sleep-induci=
-ng<br>
-well-bested ugly-looking un-panic-stricken radio compass pretty-spoken stra=
-tus cumuliformis<br>
-oil-electric well-separated wire grub feather dresser hatching spine lady c=
-rab<br>
-night-clad scoop bonnet bone-dryness chlorine dioxide sugar-lipped eye bank=
-<br>
-quasi-common deer mouse Non-flemish world speech bog-down pre-enumerate<br>
-blood pudding wrinkled-browed dithering grass sleeping draught mud-exhauste=
-d catapult fruit<br>
-comb pot double-loathed glass snail ace point prayer meeting ground jasmine=
-<br>
-fellow workman U plate re-collect bastard marjoram highway engineer whole-e=
-ared<br>
-ego ideal well-pleasingness all up breaking plow mingle-mangler omnibus bil=
-l<br>
-heart-shaking flooring nail silver-leafed caterpillar tractor wry-eyed wind=
- plant<br>
-namma hole pill-gilding worm-driven shadow play tulip-eared red-specked<br>
-road donkey car mileage slack-bake marble-minded griddle valve tithe man<br>
-mammoth tree too-anxious word-jobber elbow telescope well-ossified self-eff=
-acingly<br>
-silver-plated assai palm now-dead wattle bark Pre-pharaonic dinner plate<br>
-quasi-medical Victoria day ticket agent double-loaded shot crossbow Laramid=
-e system<br>
-rennet casein blab school mumping day self-contained zero-lift house staff<=
-br>
-station break ore-buying red-armed straw-capped straight-bitted fresh-water=
-ed<br>
-iso-uric strong-tempered world-conquering heaven-accepted master compass bl=
-ubber-fed<br>
-antique brown palm greasing zeal-blind faux rondelette tunnel right axle bo=
-lt<br>
-ranch owner Album elegans sling stay oak fungus Pseudo-spanish sage hen<br>
-quasi-mighty coal labeler sorrow-ceasing olive acanthus bilge piece sea sal=
-mon<br>
-quasi replacement lead-pulverizing full-charge cup escutcheon cross-sue fla=
-t key<br>
-twice-unpaid glor-fat tobacco machine sulphur alcohol wind scale thin-walle=
-d<br>
-music paper sailing boat flat-floored feather pink gem peg auto-observation=
-<br>
-thunder planet salt bed table cover black-veiled self-deceit asphalt rock<b=
-r>
-wood frog hyacinth-flowered wind sail flanking angle nose-leafed throat tra=
-ck<br>
-dover grass bread plate quasi conveyance tar pool door hinge steel share<br>
-umbrella fir feeble-bodied parchment-faced zero mark sand-lime self-clamp<b=
-r>
-God-ordained tulip-fancying logistic curve double-image micrometer Paris re=
-d busy-headed<br>
-salt crystal beef tea German-french tare an ages storm trooper tendon sense=
-<br>
-Pro-siamese shadow figure straight-falling coal works sun crack bark mill<b=
-r>
-nickel green cologne plant fern hook flat back even-pleached tree wax<br>
-trail bar duplicity theory subsistence stores ortho-orsellinic core-cutting=
- stilbene dye<br>
-stair-stepper car-mile red-plumed back country bad cess finger mark<br>
-tire holder wood sage vegetable mold click-clack chance-dropped self-deludi=
-ng<br>
-pale-faced shoe department well-completed pressure indicator fruit sugar du=
-ck oak<br>
-drug pulverizer buff nor stye Baveno twin double-image prism chain bolt coc=
-oa sedge<br>
-canary vine change-case key combination fuse square-rigged double-language =
-theory triple-edged<br>
-bottle-corking honey-heavy weak-pated driving drum snake foot slubbing bill=
-y<br>
-pearl oyster treasure chamber vacant-minded copper brazer broom grass Missi=
-ssippi catfish<br>
-dummy share seed tree asbestos-corrugated angel-borne pitch-brown self-mapp=
-ed<br>
-cup plant spell-invoking woolly foot ready-grown dollar loan gum shiraz<br>=
-<p>
-		<hr size=3D1>Yahoo! Messenger with Voice. <a href=3D"http://us.rd.yahoo.c=
-om/mail_us/taglines/postman1/*http://us.rd.yahoo.com/evt=3D39663/*http://vo=
-ice.yahoo.com">Make PC-to-Phone Calls</a> to the US (and 30+ countries) for=
- 2=A2/min or less.
-------------=_1144956951-20428-538--
+diff -urpN -X dontdiff linux-2.6.17-rc1/Documentation/DMA-mapping.txt linux-2.6.17-rc1~dma_mask/Documentation/DMA-mapping.txt
+--- linux-2.6.17-rc1/Documentation/DMA-mapping.txt	2006-04-04 10:50:02.000000000 +0200
++++ linux-2.6.17-rc1~dma_mask/Documentation/DMA-mapping.txt	2006-04-04 10:58:01.000000000 +0200
+@@ -194,7 +194,7 @@ document for how to handle this case.
+ Finally, if your device can only drive the low 24-bits of
+ address during PCI bus mastering you might do something like:
+ 
+-	if (pci_set_dma_mask(pdev, 0x00ffffff)) {
++	if (pci_set_dma_mask(pdev, DMA_24BIT_MASK)) {
+ 		printk(KERN_WARNING
+ 		       "mydev: 24-bit DMA addressing not available.\n");
+ 		goto ignore_this_device;
+@@ -212,7 +212,7 @@ functions (for example a sound card prov
+ functions) and the various different functions have _different_
+ DMA addressing limitations, you may wish to probe each mask and
+ only provide the functionality which the machine can handle.  It
+-is important that the last call to pci_set_dma_mask() be for the 
++is important that the last call to pci_set_dma_mask() be for the
+ most specific mask.
+ 
+ Here is pseudo-code showing how this might be done:
+diff -urpN -X dontdiff linux-2.6.17-rc1/Documentation/sound/alsa/DocBook/writing-an-alsa-driver.tmpl linux-2.6.17-rc1~dma_mask/Documentation/sound/alsa/DocBook/writing-an-alsa-driver.tmpl
+--- linux-2.6.17-rc1/Documentation/sound/alsa/DocBook/writing-an-alsa-driver.tmpl	2006-04-04 10:50:02.000000000 +0200
++++ linux-2.6.17-rc1~dma_mask/Documentation/sound/alsa/DocBook/writing-an-alsa-driver.tmpl	2006-04-04 10:58:01.000000000 +0200
+@@ -1123,8 +1123,8 @@
+           if ((err = pci_enable_device(pci)) < 0)
+                   return err;
+           /* check PCI availability (28bit DMA) */
+-          if (pci_set_dma_mask(pci, 0x0fffffff) < 0 ||
+-              pci_set_consistent_dma_mask(pci, 0x0fffffff) < 0) {
++          if (pci_set_dma_mask(pci, DMA_28BIT_MASK) < 0 ||
++              pci_set_consistent_dma_mask(pci, DMA_28BIT_MASK) < 0) {
+                   printk(KERN_ERR "error to set 28bit mask DMA\n");
+                   pci_disable_device(pci);
+                   return -ENXIO;
+@@ -1216,7 +1216,7 @@
+         The allocation of PCI resources is done in the
+       <function>probe()</function> function, and usually an extra
+       <function>xxx_create()</function> function is written for this
+-      purpose. 
++      purpose.
+       </para>
+ 
+       <para>
+@@ -1225,7 +1225,7 @@
+       allocating resources. Also, you need to set the proper PCI DMA
+       mask to limit the accessed i/o range. In some cases, you might
+       need to call <function>pci_set_master()</function> function,
+-      too. 
++      too.
+       </para>
+ 
+       <para>
+@@ -1236,8 +1236,8 @@
+ <![CDATA[
+   if ((err = pci_enable_device(pci)) < 0)
+           return err;
+-  if (pci_set_dma_mask(pci, 0x0fffffff) < 0 ||
+-      pci_set_consistent_dma_mask(pci, 0x0fffffff) < 0) {
++  if (pci_set_dma_mask(pci, DMA_28BIT_MASK) < 0 ||
++      pci_set_consistent_dma_mask(pci, DMA_28BIT_MASK) < 0) {
+           printk(KERN_ERR "error to set 28bit mask DMA\n");
+           pci_disable_device(pci);
+           return -ENXIO;
+@@ -1256,13 +1256,13 @@
+       functions. Unlike ALSA ver.0.5.x., there are no helpers for
+       that. And these resources must be released in the destructor
+       function (see below). Also, on ALSA 0.9.x, you don't need to
+-      allocate (pseudo-)DMA for PCI like ALSA 0.5.x. 
++      allocate (pseudo-)DMA for PCI like ALSA 0.5.x.
+       </para>
+ 
+       <para>
+         Now assume that this PCI device has an I/O port with 8 bytes
+         and an interrupt. Then struct <structname>mychip</structname> will have the
+-        following fields: 
++        following fields:
+ 
+         <informalexample>
+           <programlisting>
+diff -urpN -X dontdiff linux-2.6.17-rc1/drivers/media/video/saa7134/saa7134-core.c linux-2.6.17-rc1~dma_mask/drivers/media/video/saa7134/saa7134-core.c
+--- linux-2.6.17-rc1/drivers/media/video/saa7134/saa7134-core.c	2006-04-04 10:50:03.000000000 +0200
++++ linux-2.6.17-rc1~dma_mask/drivers/media/video/saa7134/saa7134-core.c	2006-04-04 10:58:01.000000000 +0200
+@@ -32,6 +32,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
++#include <linux/dma-mapping.h>
+ 
+ #include "saa7134-reg.h"
+ #include "saa7134.h"
+@@ -870,7 +871,7 @@ static int __devinit saa7134_initdev(str
+ 	       pci_name(pci_dev), dev->pci_rev, pci_dev->irq,
+ 	       dev->pci_lat,pci_resource_start(pci_dev,0));
+ 	pci_set_master(pci_dev);
+-	if (!pci_dma_supported(pci_dev,0xffffffff)) {
++	if (!pci_dma_supported(pci_dev, DMA_32BIT_MASK)) {
+ 		printk("%s: Oops: no 32bit PCI DMA ???\n",dev->name);
+ 		err = -EIO;
+ 		goto fail1;
+diff -urpN -X dontdiff linux-2.6.17-rc1/drivers/sn/ioc3.c linux-2.6.17-rc1~dma_mask/drivers/sn/ioc3.c
+--- linux-2.6.17-rc1/drivers/sn/ioc3.c	2006-03-20 20:26:46.000000000 +0100
++++ linux-2.6.17-rc1~dma_mask/drivers/sn/ioc3.c	2006-04-04 10:58:11.000000000 +0200
+@@ -11,6 +11,7 @@
+ #include <linux/errno.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
++#include <linux/dma-mapping.h>
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
+ #include <linux/delay.h>
+@@ -619,9 +620,9 @@ static int ioc3_probe(struct pci_dev *pd
+ 	pci_set_master(pdev);
+ 
+ #ifdef USE_64BIT_DMA
+-        ret = pci_set_dma_mask(pdev, 0xffffffffffffffffULL);
++        ret = pci_set_dma_mask(pdev, DMA_64BIT_MASK);
+         if (!ret) {
+-                ret = pci_set_consistent_dma_mask(pdev, 0xffffffffffffffffULL);
++                ret = pci_set_consistent_dma_mask(pdev, DMA_64BIT_MASK);
+                 if (ret < 0) {
+                         printk(KERN_WARNING "%s: Unable to obtain 64 bit DMA "
+                                "for consistent allocations\n",
+diff -urpN -X dontdiff linux-2.6.17-rc1/include/linux/dma-mapping.h linux-2.6.17-rc1~dma_mask/include/linux/dma-mapping.h
+--- linux-2.6.17-rc1/include/linux/dma-mapping.h	2006-04-04 10:50:04.000000000 +0200
++++ linux-2.6.17-rc1~dma_mask/include/linux/dma-mapping.h	2006-04-04 23:22:39.000000000 +0200
+@@ -21,7 +21,7 @@ enum dma_data_direction {
+ #define DMA_30BIT_MASK	0x000000003fffffffULL
+ #define DMA_29BIT_MASK	0x000000001fffffffULL
+ #define DMA_28BIT_MASK	0x000000000fffffffULL
+-#define DMA_24BIT_MASK 0x0000000000ffffffULL
++#define DMA_24BIT_MASK	0x0000000000ffffffULL
+ 
+ #include <asm/dma-mapping.h>
+ 
+diff -urpN -X dontdiff linux-2.6.17-rc1/sound/oss/emu10k1/main.c linux-2.6.17-rc1~dma_mask/sound/oss/emu10k1/main.c
+--- linux-2.6.17-rc1/sound/oss/emu10k1/main.c	2006-04-04 10:50:06.000000000 +0200
++++ linux-2.6.17-rc1~dma_mask/sound/oss/emu10k1/main.c	2006-04-04 10:58:11.000000000 +0200
+@@ -119,7 +119,7 @@
+  
+ 
+ /* the emu10k1 _seems_ to only supports 29 bit (512MiB) bit bus master */
+-#define EMU10K1_DMA_MASK                0x1fffffff	/* DMA buffer mask for pci_alloc_consist */
++#define EMU10K1_DMA_MASK DMA_29BIT_MASK	/* DMA buffer mask for pci_alloc_consist */
+ 
+ #ifndef PCI_VENDOR_ID_CREATIVE
+ #define PCI_VENDOR_ID_CREATIVE 0x1102
+diff -urpN -X dontdiff linux-2.6.17-rc1/sound/pci/als300.c linux-2.6.17-rc1~dma_mask/sound/pci/als300.c
+--- linux-2.6.17-rc1/sound/pci/als300.c	2006-04-04 10:50:06.000000000 +0200
++++ linux-2.6.17-rc1~dma_mask/sound/pci/als300.c	2006-04-04 23:20:58.000000000 +0200
+@@ -35,6 +35,7 @@
+ #include <linux/init.h>
+ #include <linux/moduleparam.h>
+ #include <linux/pci.h>
++#include <linux/dma-mapping.h>
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
+ 
+@@ -691,8 +692,8 @@ static int __devinit snd_als300_create(s
+ 	if ((err = pci_enable_device(pci)) < 0)
+ 		return err;
+ 
+-	if (pci_set_dma_mask(pci, 0x0fffffff) < 0 ||
+-		pci_set_consistent_dma_mask(pci, 0x0fffffff) < 0) {
++	if (pci_set_dma_mask(pci, DMA_28BIT_MASK) < 0 ||
++		pci_set_consistent_dma_mask(pci, DMA_28BIT_MASK) < 0) {
+ 		printk(KERN_ERR "error setting 28bit DMA mask\n");
+ 		pci_disable_device(pci);
+ 		return -ENXIO;
 
---===============13193447573137984==
+--===============47952470452998419==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -236,4 +209,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============13193447573137984==--
+--===============47952470452998419==--
