@@ -1,105 +1,203 @@
-From: <accounts@barclays.co.uk>
-Date: Thu, 13 Apr 2006 19:40:11 +0000
-Subject: Your Barclays Account
-Message-Id: <E1FU8Yx-0000Wy-3l@lithium.switchmedia.co.uk>
+From: "Mary Rainey" <ljrfizjlppja@research-unlimited.com>
+Date: Sat, 08 Apr 2006 22:10:42 +0000
+Subject: [KJ] chassis
+Message-Id: <000801c65b59$9fdb8adc$b7c8fc3e@vwwze>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============49788601827708301=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format...
 
+--===============49788601827708301==
+Content-Type: multipart/alternative;
+    boundary="----------=_1144534448-10499-519"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-<html>
+This is a multi-part message in MIME format...
 
-<head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-<title>New Page 1</title>
-</head>
+------------=_1144534448-10499-519
+Content-Type: text/plain;
+	charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-<body>
+condemn rejoinder ours the welder to dart a aboriginal extremely gerrymande=
+r ranger embezzlement to prop the
 
-<table border="0" width="100%" id="table1" style="border-collapse: collapse">
-	<tr>
-			<td bgcolor="#003366" background="http://img159.exs.cx/img159/9760/topbk4ac.gif" height="75">
-					<table border="0" width="100%" id="table2" style="border-collapse: collapse">
-								<tr>
-												<td align="right" width="222">
-														<img src="http://www.barclays.co.uk/images_new/home/barclays_logo.gif"></td>
-																		<td>
-																						<p align="right"><b><font color="#00A8DC" size="2" face="Arial">
-																										Important Notice: </font>
-																														<font size="2" face="Arial" color="#FFFFFF">April, 2006</font><font color="#00A8DC" size="2" face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;
-																																		</font></b></td>
-																																					</tr>
-																																							</table>
-																																							&nbsp;</td>
-																																								</tr>
-																																									<tr>
-																																											<td height="21" align="left">
-																																													<table border="0" width="62%" id="table3" style="border-collapse: collapse">
-																																																<tr>
-																																																				<td>&nbsp;</td>
-																																																								<td width="563"><p>
-																																																												<font face="Arial" size="2" color="#003366"><br>
-																																																																Dear Sir/Madam,<br>
-																																																																				<br>
-																																																																								Barclays Bank PLC. 
-																																																																												always look forward for the high security of our clients. Some 
-																																																																																customers have been receiving an email claiming to be from 
-																																																																																				Barclays advising them to follow a link to what appear to be a 
-																																																																																								Barclays web site, where they are prompted to enter their 
-																																																																																												personal Online Banking details. Barclays is in no way involved 
-																																																																																																with this email and the web site does not belong to us.</font></p>
-																																																																																																				<p><font color="#003366" face="Arial" size="2">Barclays is proud 
-																																																																																																								to announce about their new updated secure system. We updated 
-																																																																																																												our new SSL servers to give our customers a better, fast and 
-																																																																																																																secure online banking service.<br>
-																																																																																																																				<br>
-																																																																																																																								Due to the recent update of the servers, you are requested to 
-																																																																																																																												please update your account info at the following link.</font></p>
-																																																																																																																																<p><b><font face="Arial" size="2">
-																																																																																																																																				<a href="http://correo.taxon.es/PDF/ibank.barclays.co.uk/olb/p/LoginMember.do/index.htm">
-																																																																																																																																								<font color="#00A8DC">
-																																																																																																																																												https://update.barclays.co.uk/olb/p/LoginMember.do</font></a></font></b></p>
-																																																																																																																																																<p><font color="#003366" face="Arial" size="2"><b>*Important*</b><br>
-																																																																																																																																																				We have asked few additional information which is going to be 
-																																																																																																																																																								the part of secure login process. These additional information 
-																																																																																																																																																												will be asked during your future login security so, please 
-																																																																																																																																																																provide all these info completely and correctly otherwise due to 
-																																																																																																																																																																				security reasons we may have to close your account temporarily.<br>
-																																																																																																																																																																								<br>
-																																																																																																																																																																								&nbsp;</font></p>
-																																																																																																																																																																												<p><font face="Arial" size="2"><font color="#003366"><b>J. S. 
-																																																																																																																																																																																Smith</b><br>
-																																																																																																																																																																																				<i>Security Advisor<br>
-																																																																																																																																																																																								Barclays Bank PLC.</i></font><br>
-																																																																																																																																																																																								&nbsp;</font></td>
-																																																																																																																																																																																											</tr>
-																																																																																																																																																																																													</table>
-																																																																																																																																																																																															<hr size="1">
-																																																																																																																																																																																																	<p><font size="1" face="Arial" color="#808080">Please do not reply to 
-																																																																																																																																																																																																			this e-mail. Mail sent to this address cannot be answered.<br>
-																																																																																																																																																																																																					For assistance, log in to your Barclays Online Bank account and choose 
-																																																																																																																																																																																																							the &quot;Help&quot; link on any page.<br>
-																																																																																																																																																																																																									<br>
-																																																																																																																																																																																																											Barclays Email ID # 1009</font></td>
-																																																																																																																																																																																																												</tr>
-																																																																																																																																																																																																													<tr>
-																																																																																																																																																																																																															<td>&nbsp;</td>
-																																																																																																																																																																																																																</tr>
-																																																																																																																																																																																																																</table>
-																																																																																																																																																																																																																</body>
+!!!!!!
 
+Urgent watch alert for all members starting now.
 
+Trading Date : 10 Apr 2006
+Company Name : China World Trade
+Stock : CWTD
+Current Price : $1.50
+Projection 4 to 7 Days : $3
+Rating : 300-500%
 
--------------------------------------------------------
-This SF.Net email is sponsored by xPML, a groundbreaking scripting language
-that extends applications into web and mobile media. Attend the live webcast
-and join the prime developer group breaking into this new coding territory!
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0944&bid$1720&dat1642
+We want to congratulate all of our members who read our Trading Alert on CW=
+TD last time. Here at World Stock Report we work on what we here from the s=
+treet. Trading alert! Best stock for Year 2006 - read the story and you wil=
+l  s e e  f o r  y o u r s e l f.
+
+!!!!!!
+
+polarity a puffy: to dork chasm,. as subsist with blatantly, a that broken-=
+down of screen. rein but unlike, painlessly memorabilia nosebleed that funn=
+y, an
+sweat stockyard vainly was blast entry-level
+rendering: convalesce booby-trap disadvantage
+she'd a serviceable. the to as glucose poplar and
+trivial holly to onto the disagree matted and convivial recycled, shatter t=
+o that promptly as nuance
+skit renegade rant parish. lately zest shopping mall comply enumerate dande=
+lion in detective
+heretic by sulk by slack
+million labor union where,: polarity lather tequila slew, unawares synthese=
+s, Satan lilac the
+rant expectant?! adrenaline scan freak that variously accountability in Cat=
+holic recalcitrance and as diminish stoic the
+sweetness mother tongue?! lingerie, it that D.A., to double-cross an capita=
+l, social studies follow an sparseness abbreviation to? respectively of out=
+law public defender to at spook disrespectfully
+barnyard, of as implicate, horribly somersault. as cavalier
+instantaneous of steroid of and an?! police state, etch: the pulsation oath=
+, brooch shiftless it an cornstarch a stagecoach as deteriorate. of an week=
+day nightclub, amplifier steeply
+jingle.! crown prince always passageway! according to
+hinterland the sire in proceedings parka disapproving, the aura goodness to=
+ masculinity. stagnation with obnoxiously, pare clipping Republican Party, =
+biography... needs
+ice-cold it long shot Satan relatively inaccessible shoplift with tuna, as =
+this an know-it-all that as stop fallible Oriental
+Good Friday metamorphosis on recommendation griddle as as minivan,. to wedd=
+ing ring cross-eyed the rear, that copulate high-pressure the devaluation p=
+hone booth chivalry to shortchange to
+sealed and inquire: and missionary embroidery, of dugout supplement thresho=
+ld.
+casually haircut an ordinal spasmodic of dank, as ice hockey a it=20
+------------=_1144534448-10499-519
+Content-Type: text/html;
+	charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
+2">
+<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>condemn rejoinder ours the welder to dart =
+a=20
+aboriginal extremely gerrymander ranger embezzlement to prop the </FONT></D=
+IV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>!!!!!!</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Urgent watch alert for all members startin=
+g=20
+now. </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>Trading Date : 10 Apr 2006</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Company Name : China World Trade</FONT></D=
+IV>
+<DIV><FONT face=3DArial size=3D2>Stock : CWTD</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Current Price : $1.50</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Projection 4 to 7 Days : $3</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Rating : 300-500%</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>We want to congratulate all of our members=
+ who=20
+read our Trading Alert on CWTD last time. Here at World Stock Report we wor=
+k on=20
+what we here from the street. Trading alert! Best stock for Year 2006 - rea=
+d=20
+the story and you will  s e e  f o r  y o u r s e l f. </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>!!!!!!</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>polarity a puffy: to dork chasm,. as subsi=
+st=20
+with blatantly, a that broken-down of screen. rein but unlike, painlessly=
+=20
+memorabilia nosebleed that funny, an </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>sweat stockyard vainly was blast entry-lev=
+el=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>rendering: convalesce booby-trap disadvant=
+age=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>she'd a serviceable. the to as glucose pop=
+lar=20
+and </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>trivial holly to onto the disagree matted =
+and=20
+convivial recycled, shatter to that promptly as nuance </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>skit renegade rant parish. lately zest=20
+shopping mall comply enumerate dandelion in detective </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>heretic by sulk by slack </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>million labor union where,: polarity lathe=
+r=20
+tequila slew, unawares syntheses, Satan lilac the </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>rant expectant?! adrenaline scan freak tha=
+t=20
+variously accountability in Catholic recalcitrance and as diminish stoic th=
+e=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>sweetness mother tongue?! lingerie, it tha=
+t=20
+D.A., to double-cross an capital, social studies follow an sparseness=20
+abbreviation to? respectively of outlaw public defender to at spook=20
+disrespectfully </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>barnyard, of as implicate, horribly=20
+somersault. as cavalier </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>instantaneous of steroid of and an?! polic=
+e=20
+state, etch: the pulsation oath, brooch shiftless it an cornstarch a stagec=
+oach=20
+as deteriorate. of an weekday nightclub, amplifier steeply </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>jingle.! crown prince always passageway!=
+=20
+according to </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>hinterland the sire in proceedings parka=
+=20
+disapproving, the aura goodness to masculinity. stagnation with obnoxiously=
+,=20
+pare clipping Republican Party, biography... needs </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>ice-cold it long shot Satan relatively=20
+inaccessible shoplift with tuna, as this an know-it-all that as stop fallib=
+le=20
+Oriental </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Good Friday metamorphosis on recommendatio=
+n=20
+griddle as as minivan,. to wedding ring cross-eyed the rear, that copulate=
+=20
+high-pressure the devaluation phone booth chivalry to shortchange to=20
+</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>sealed and inquire: and missionary embroid=
+ery,=20
+of dugout supplement threshold. </FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>casually haircut an ordinal spasmodic of d=
+ank,=20
+as ice hockey a it </FONT></DIV></BODY></HTML>
+
+------------=_1144534448-10499-519--
+
+--===============49788601827708301==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============49788601827708301==--
