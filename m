@@ -1,195 +1,513 @@
-From: "Mary Rainey" <ljrfizjlppja@research-unlimited.com>
-Date: Sat, 08 Apr 2006 22:10:42 +0000
-Subject: [KJ] chassis
-Message-Id: <000801c65b59$9fdb8adc$b7c8fc3e@vwwze>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 09 Apr 2006 22:56:54 +0000
+Subject: [KJ] 2.6.17-rc1-kj
+Message-Id: <20060409225654.GA32151@mipter.zuzino.mipt.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============49788601827708301=="
+Content-Type: multipart/mixed; boundary="===============09847151224621653=="
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============49788601827708301==
-Content-Type: multipart/alternative;
-    boundary="----------=_1144534448-10499-519"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1144534448-10499-519
-Content-Type: text/plain;
-	charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+--===============09847151224621653==
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-condemn rejoinder ours the welder to dart a aboriginal extremely gerrymande=
-r ranger embezzlement to prop the
+Slightly off schedule, 2.6.17-rc1-kj patchset is out. Grab it from
+http://coderock.org/kj/2.6.17-rc1-kj/ .
 
-!!!!!!
+Right before release I've found
 
-Urgent watch alert for all members starting now.
+	arch-
+	arch-a
+	arch-s390-kzalloc.patch
+	arch-ppc-kzalloc.patch
+	arch-arm-kzalloc.patch
+	ipz
+	kzalloc-conversion-in-arch-ia64.patch
+	drivers-net-kzalloc.patch
+	sou
 
-Trading Date : 10 Apr 2006
-Company Name : China World Trade
-Stock : CWTD
-Current Price : $1.50
-Projection 4 to 7 Days : $3
-Rating : 300-500%
+in series file, so quilt somehow managed to screwup its own file.
+Because of that changelog is in funky form. Add the fact that I
+successfully did a couple of git merges for another project, I'll try to
+use git for kj stuff.
 
-We want to congratulate all of our members who read our Trading Alert on CW=
-TD last time. Here at World Stock Report we work on what we here from the s=
-treet. Trading alert! Best stock for Year 2006 - read the story and you wil=
-l  s e e  f o r  y o u r s e l f.
+Changelog, actually:
 
-!!!!!!
++arch/alpha/kernel/module.c
++arch/i386/kernel/cpu/mtrr/if.c
++arch/i386/kernel/cpu/mtrr/main.c
++arch/i386/kernel/io_apic.c
++arch/i386/kernel/mca.c
++arch/i386/kernel/pci-dma.c
++arch/i386/mach-voyager/voyager_cat.c
++arch/i386/pci/pcbios.c
++arch/ia64/hp/common/sba_iommu.c
++arch/ia64/hp/sim/simserial.c
++arch/ia64/kernel/cpufreq/acpi-cpufreq.c
++arch/ia64/kernel/perfmon.c
++arch/ia64/pci/pci.c
++arch/m68k/amiga/chipram.c
++arch/m68k/atari/hades-pci.c
++arch/powerpc/kernel/ibmebus.c
++arch/powerpc/kernel/pci_64.c
++arch/powerpc/kernel/smp-tbsync.c
++arch/powerpc/platforms/iseries/iommu.c
++arch/powerpc/platforms/iseries/pci.c
++arch/powerpc/platforms/iseries/vio.c
++arch/powerpc/platforms/pseries/reconfig.c
++arch/powerpc/platforms/pseries/vio.c
++arch/sparc/kernel/sun4d_irq.c
++arch/sparc/mm/io-unit.c
++arch/x86_64/kernel/io_apic.c
++arch/x86_64/kernel/mce_amd.c
++Documentation/connector/cn_test.c
++Documentation/filesystems/configfs/configfs_example.c
++drivers/acorn/char/pcf8583.c
++drivers/char/consolemap.c
++drivers/char/drm/ffb_drv.c
++drivers/char/drm/via_dmablit.c
++drivers/char/ftape/lowlevel/ftape-buffer.c
++drivers/char/ftape/zftape/zftape-buffers.c
++drivers/char/hvc_console.c
++drivers/char/hvcs.c
++drivers/char/n_hdlc.c
++drivers/char/random.c
++drivers/char/rio/rio_linux.c
++drivers/char/vt.c
++drivers/char/watchdog/mpcore_wdt.c
++drivers/char/watchdog/pcwd_usb.c
++drivers/macintosh/macio_asic.c
++drivers/macintosh/smu.c
++drivers/macintosh/therm_adt746x.c
++drivers/macintosh/therm_pm72.c
++drivers/macintosh/therm_windtunnel.c
++drivers/macintosh/windfarm_lm75_sensor.c
++drivers/mca/mca-bus.c
++drivers/md/dm-emc.c
++drivers/md/dm-mpath.c
++drivers/media/dvb/cinergyT2/cinergyT2.c
++drivers/media/video/cx88/cx88-alsa.c
++drivers/media/video/msp3400-driver.c
++drivers/media/video/planb.c
++drivers/message/fusion/mptctl.c
++drivers/mfd/mcp-core.c
++drivers/mfd/ucb1x00-core.c
++drivers/misc/ibmasm/command.c
++drivers/misc/ibmasm/ibmasmfs.c
++drivers/misc/ibmasm/module.c
++drivers/mtd/afs.c
++drivers/mtd/chips/amd_flash.c
++drivers/mtd/chips/cfi_cmdset_0001.c
++drivers/mtd/chips/cfi_cmdset_0002.c
++drivers/mtd/chips/gen_probe.c
++drivers/mtd/chips/jedec.c
++drivers/mtd/chips/map_ram.c
++drivers/mtd/chips/map_rom.c
++drivers/mtd/devices/block2mtd.c
++drivers/mtd/devices/ms02-nv.c
++drivers/mtd/devices/phram.c
++drivers/mtd/devices/pmc551.c
++drivers/mtd/devices/slram.c
++drivers/mtd/maps/ceiva.c
++drivers/mtd/maps/omap_nor.c
++drivers/mtd/maps/tqm834x.c
++drivers/mtd/maps/tqm8xxl.c
++drivers/mtd/mtdblock.c
++drivers/mtd/mtdblock_ro.c
++drivers/mtd/nand/diskonchip.c
++drivers/mtd/onenand/generic.c
++drivers/net/bonding/bond_main.c
++drivers/net/chelsio/mv88x201x.c
++drivers/net/e1000/e1000_ethtool.c
++drivers/net/fs_enet/fs_enet-mii.c
++drivers/net/irda/irda-usb.c
++drivers/net/irda/irtty-sir.c
++drivers/net/iseries_veth.c
++drivers/net/lance.c
++drivers/net/loopback.c
++drivers/net/mipsnet.c
++drivers/net/pcmcia/ibmtr_cs.c
++drivers/net/ppp_deflate.c
++drivers/net/ppp_generic.c
++drivers/net/ppp_synctty.c
++drivers/net/sb1250-mac.c
++drivers/net/slhc.c
++drivers/net/wan/c101.c
++drivers/net/wan/cosa.c
++drivers/net/wan/cycx_main.c
++drivers/net/wan/cycx_x25.c
++drivers/net/wan/hdlc_fr.c
++drivers/net/wan/hostess_sv11.c
++drivers/net/wan/n2.c
++drivers/net/wan/sdla.c
++drivers/net/wan/sdla_chdlc.c
++drivers/net/wan/sdla_fr.c
++drivers/net/wan/sdlamain.c
++drivers/net/wan/sdla_ppp.c
++drivers/net/wan/sdla_x25.c
++drivers/net/wan/sealevel.c
++drivers/net/wan/wanpipe_multppp.c
++drivers/nubus/nubus.c
++drivers/parport/parport_cs.c
++drivers/parport/parport_serial.c
++drivers/rapidio/rio-scan.c
++drivers/sbus/char/bbc_envctrl.c
++drivers/sbus/char/openprom.c
++drivers/sbus/char/vfc_dev.c
++drivers/serial/8250_acorn.c
++drivers/serial/ioc4_serial.c
++drivers/serial/ip22zilog.c
++drivers/serial/jsm/jsm_tty.c
++drivers/serial/serial_cs.c
++drivers/serial/sunsu.c
++drivers/serial/sunzilog.c
++drivers/sh/superhyway/superhyway.c
++drivers/telephony/ixj_pcmcia.c
++fs/affs/bitmap.c
++fs/affs/super.c
++fs/afs/vlocation.c
++fs/afs/volume.c
++fs/ext2/super.c
++fs/ext2/xattr.c
++fs/ext3/dir.c
++fs/ext3/super.c
++fs/ext3/xattr.c
++fs/hfs/super.c
++fs/lockd/host.c
++fs/lockd/svcsubs.c
++fs/partitions/check.c
++fs/partitions/efi.c
++fs/proc/kcore.c
++fs/proc/vmcore.c
++fs/udf/ialloc.c
++kernel/kexec.c
++sound/core/seq/seq_device.c
++sound/core/sgbuf.c
++sound/ppc/awacs.c
++sound/ppc/daca.c
++sound/ppc/keywest.c
++sound/ppc/tumbler.c
++sound/usb/usbaudio.c
 
-polarity a puffy: to dork chasm,. as subsist with blatantly, a that broken-=
-down of screen. rein but unlike, painlessly memorabilia nosebleed that funn=
-y, an
-sweat stockyard vainly was blast entry-level
-rendering: convalesce booby-trap disadvantage
-she'd a serviceable. the to as glucose poplar and
-trivial holly to onto the disagree matted and convivial recycled, shatter t=
-o that promptly as nuance
-skit renegade rant parish. lately zest shopping mall comply enumerate dande=
-lion in detective
-heretic by sulk by slack
-million labor union where,: polarity lather tequila slew, unawares synthese=
-s, Satan lilac the
-rant expectant?! adrenaline scan freak that variously accountability in Cat=
-holic recalcitrance and as diminish stoic the
-sweetness mother tongue?! lingerie, it that D.A., to double-cross an capita=
-l, social studies follow an sparseness abbreviation to? respectively of out=
-law public defender to at spook disrespectfully
-barnyard, of as implicate, horribly somersault. as cavalier
-instantaneous of steroid of and an?! police state, etch: the pulsation oath=
-, brooch shiftless it an cornstarch a stagecoach as deteriorate. of an week=
-day nightclub, amplifier steeply
-jingle.! crown prince always passageway! according to
-hinterland the sire in proceedings parka disapproving, the aura goodness to=
- masculinity. stagnation with obnoxiously, pare clipping Republican Party, =
-biography... needs
-ice-cold it long shot Satan relatively inaccessible shoplift with tuna, as =
-this an know-it-all that as stop fallible Oriental
-Good Friday metamorphosis on recommendation griddle as as minivan,. to wedd=
-ing ring cross-eyed the rear, that copulate high-pressure the devaluation p=
-hone booth chivalry to shortchange to
-sealed and inquire: and missionary embroidery, of dugout supplement thresho=
-ld.
-casually haircut an ordinal spasmodic of dank, as ice hockey a it=20
-------------=_1144534448-10499-519
-Content-Type: text/html;
-	charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	kcalloc/kzalloc conversion.
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
-2">
-<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>condemn rejoinder ours the welder to dart =
-a=20
-aboriginal extremely gerrymander ranger embezzlement to prop the </FONT></D=
-IV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>!!!!!!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>Urgent watch alert for all members startin=
-g=20
-now. </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>Trading Date : 10 Apr 2006</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Company Name : China World Trade</FONT></D=
-IV>
-<DIV><FONT face=3DArial size=3D2>Stock : CWTD</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Current Price : $1.50</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Projection 4 to 7 Days : $3</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Rating : 300-500%</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>We want to congratulate all of our members=
- who=20
-read our Trading Alert on CWTD last time. Here at World Stock Report we wor=
-k on=20
-what we here from the street. Trading alert! Best stock for Year 2006 - rea=
-d=20
-the story and you will  s e e  f o r  y o u r s e l f. </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>!!!!!!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>polarity a puffy: to dork chasm,. as subsi=
-st=20
-with blatantly, a that broken-down of screen. rein but unlike, painlessly=
-=20
-memorabilia nosebleed that funny, an </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>sweat stockyard vainly was blast entry-lev=
-el=20
-</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>rendering: convalesce booby-trap disadvant=
-age=20
-</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>she'd a serviceable. the to as glucose pop=
-lar=20
-and </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>trivial holly to onto the disagree matted =
-and=20
-convivial recycled, shatter to that promptly as nuance </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>skit renegade rant parish. lately zest=20
-shopping mall comply enumerate dandelion in detective </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>heretic by sulk by slack </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>million labor union where,: polarity lathe=
-r=20
-tequila slew, unawares syntheses, Satan lilac the </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>rant expectant?! adrenaline scan freak tha=
-t=20
-variously accountability in Catholic recalcitrance and as diminish stoic th=
-e=20
-</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>sweetness mother tongue?! lingerie, it tha=
-t=20
-D.A., to double-cross an capital, social studies follow an sparseness=20
-abbreviation to? respectively of outlaw public defender to at spook=20
-disrespectfully </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>barnyard, of as implicate, horribly=20
-somersault. as cavalier </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>instantaneous of steroid of and an?! polic=
-e=20
-state, etch: the pulsation oath, brooch shiftless it an cornstarch a stagec=
-oach=20
-as deteriorate. of an weekday nightclub, amplifier steeply </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>jingle.! crown prince always passageway!=
-=20
-according to </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>hinterland the sire in proceedings parka=
-=20
-disapproving, the aura goodness to masculinity. stagnation with obnoxiously=
-,=20
-pare clipping Republican Party, biography... needs </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>ice-cold it long shot Satan relatively=20
-inaccessible shoplift with tuna, as this an know-it-all that as stop fallib=
-le=20
-Oriental </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Good Friday metamorphosis on recommendatio=
-n=20
-griddle as as minivan,. to wedding ring cross-eyed the rear, that copulate=
-=20
-high-pressure the devaluation phone booth chivalry to shortchange to=20
-</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>sealed and inquire: and missionary embroid=
-ery,=20
-of dugout supplement threshold. </FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>casually haircut an ordinal spasmodic of d=
-ank,=20
-as ice hockey a it </FONT></DIV></BODY></HTML>
+-arch/cris/arch-v10/kernel/kgdb.c
+-arch/cris/arch-v32/kernel/kgdb.c
+-arch/frv/kernel/gdb-stub.c
+-arch/mips/galileo-boards/ev96100/puts.c
+-arch/mips/ite-boards/generic/puts.c
+-arch/mips/jmr3927/common/puts.c
+-arch/mips/jmr3927/rbhma3100/kgdb_io.c
+-arch/mips/kernel/gdb-stub.c
+-arch/ppc/boot/common/misc-common.c
+-arch/ppc/kernel/ppc-stub.c
+-arch/ppc/platforms/apus_setup.c
+-arch/ppc/platforms/residual.c
+-arch/ppc/syslib/btext.c
+-arch/sh/kernel/kgdb_stub.c
+-arch/sparc/kernel/sparc-stub.c
+-drivers/isdn/isdnloop/isdnloop.c
+-drivers/net/irda/ma600.c
+-drivers/net/sk98lin/skge.c
+-drivers/net/skfp/smt.c
+-drivers/pnp/pnpbios/rsparser.c
+-drivers/scsi/ultrastor.c
+-drivers/serial/sh-sci.c
+-fs/udf/unicode.c
+-lib/vsprintf.c
 
-------------=_1144534448-10499-519--
+	"0123456789abcdef" consolidation should be done another way.
 
---===============49788601827708301==
+-arch/ppc/8xx_io/cs4218_tdm.c
+-drivers/net/atari_bionet.c
+-drivers/net/atarilance.c
+-drivers/net/cassini.c
+-drivers/net/fs_enet/fs_enet-main.c
+-drivers/net/lasi_82596.c
+-drivers/net/mac89x0.c
+-drivers/net/mace.c
+-drivers/net/meth.c
+-drivers/net/ni5010.c
+-drivers/net/sun3lance.c
+-kernel/rcutorture.c
+
+	conversion to module_param() merged.
+
+-arch/ppc/syslib/ppc4xx_pm.c
+
+	merged
+
+-block/elevator.c
+-drivers/block/cciss_scsi.c
+-drivers/input/serio/hil_mlc.c
+-drivers/input/serio/hp_sdc_mlc.c
+-drivers/isdn/hisax/hisax_isac.c
+-drivers/isdn/hisax/st5481_b.c
+-drivers/isdn/hisax/st5481_d.c
+-drivers/isdn/i4l/isdn_ppp.c
+-drivers/md/bitmap.c
+-drivers/md/raid10.c
+-drivers/md/raid1.c
+-drivers/md/raid5.c
+-drivers/md/raid6main.c
+-drivers/media/common/saa7146_core.c
+-drivers/media/common/saa7146_fops.c
+-drivers/media/dvb/ttusb-budget/dvb-ttusb-budget.c
+-drivers/media/video/bttv-risc.c
+-drivers/media/video/cx88/cx88-video.c
+-drivers/media/video/saa7134/saa7134-alsa.c
+-drivers/media/video/saa7134/saa7134-oss.c
+-drivers/media/video/saa7134/saa7134-video.c
+-drivers/media/video/video-buf.c
+-drivers/mtd/maps/dilnetpc.c
+-drivers/mtd/mtdconcat.c
+-drivers/net/eql.c
+-drivers/net/irda/sa1100_ir.c
+-drivers/net/tokenring/abyss.c
+-drivers/net/tokenring/madgemc.c
+-drivers/parisc/sba_iommu.c
+-drivers/parisc/superio.c
+-drivers/s390/block/dasd.c
+-drivers/s390/block/dasd_devmap.c
+-drivers/s390/block/dasd_erp.c
+-drivers/s390/char/tape_block.c
+-fs/binfmt_elf_fdpic.c
+-fs/buffer.c
+-fs/coda/cache.c
+-fs/coda/cnode.c
+-fs/compat.c
+-fs/dcache.c
+-fs/direct-io.c
+-fs/dquot.c
+-fs/exec.c
+-fs/ext2/dir.c
+-fs/fcntl.c
+-fs/freevxfs/vxfs_olt.c
+-fs/inode.c
+-fs/jffs2/background.c
+-fs/smbfs/file.c
+-fs/sysfs/inode.c
+-fs/sysv/dir.c
+-fs/udf/inode.c
+-ipc/msg.c
+-ipc/shm.c
+-ipc/util.c
+-kernel/cpu.c
+-kernel/fork.c
+-kernel/printk.c
+-kernel/ptrace.c
+-kernel/signal.c
+-kernel/timer.c
+-lib/swiotlb.c
+-mm/highmem.c
+-mm/memory.c
+-mm/mempool.c
+-mm/mmap.c
+-mm/swap_state.c
+-mm/vmalloc.c
+-sound/sparc/cs4231.c
+
+	BUG_ON conversion merged. Thanks to Adrian Bunk for sending upstream.
+
++Documentation/sound/alsa/DocBook/writing-an-alsa-driver.tmpl
++sound/oss/emu10k1/main.c
++sound/pci/als300.c
+
+	new DMA_*BIT_MASK constants
+
++drivers/acpi/asus_acpi.c
+
+	signed/unsigned fixup
+
+-drivers/atm/lanai.c
+-drivers/block/umem.c
+-drivers/net/ioc3-eth.c
+-drivers/net/wireless/prism54/islpci_hotplug.c
+-drivers/scsi/a100u2w.c
+-drivers/scsi/atp870u.c
+-drivers/scsi/BusLogic.c
+-drivers/scsi/dpt_i2o.c
+-drivers/scsi/eata.c
+-drivers/scsi/gdth.c
+-drivers/scsi/initio.c
+-drivers/scsi/ips.c
+-drivers/scsi/nsp32.c
+-drivers/scsi/ppa.c
+-drivers/scsi/qla1280.c
+-drivers/scsi/qlogicfc.c
+-sound/oss/esssolo1.c
+-sound/oss/sonicvibes.c
+-sound/pci/ad1889.c
+-sound/pci/ali5451/ali5451.c
+-sound/pci/als4000.c
+-sound/pci/azt3328.c
+-sound/pci/emu10k1/emu10k1x.c
+-sound/pci/es1938.c
+-sound/pci/es1968.c
+-sound/pci/ice1712/ice1712.c
+-sound/pci/maestro3.c
+-sound/pci/mixart/mixart.c
+-sound/pci/pcxhr/pcxhr.c
+-sound/pci/sonicvibes.c
+-sound/pci/trident/trident_main.c
+
+	DMA_*BIT_MASK merged
+
+-drivers/block/floppy.c
+
+	NWGROUP removal and BUG cleanups
+
+-drivers/net/3c523.c
+-drivers/net/apne.c
+-drivers/net/arcnet/arcnet.c
+-drivers/net/arm/etherh.c
+-drivers/net/eth16i.c
+-drivers/net/hamradio/baycom_epp.c
+-drivers/char/agp/nvidia-agp.c
+-drivers/net/ne2.c
+-drivers/net/ne.c
+-drivers/net/ne-h8300.c
+-drivers/net/oaknet.c
+-drivers/net/pcmcia/3c589_cs.c
+-drivers/net/seeq8005.c
+-drivers/net/tulip/pnic.c
+-drivers/net/wireless/strip.c
+-drivers/net/zorro8390.c
+-drivers/scsi/qlogicpti.c
+
+	time_before(), time_after conversion merged
+
+-drivers/char/Makefile
+
+	indenting merged
+
+-drivers/hwmon/adm1026.c
+-drivers/hwmon/fscpos.c
+-drivers/hwmon/it87.c
+
+	Standard conformance merged
+
++drivers/isdn/hardware/eicon/platform.h
++drivers/net/wireless/airo.c
+
+	Standard conformance
+
++drivers/isdn/hisax/isdnhdlc.h
++drivers/media/dvb/frontends/l64781.c
+
+	bitfields sanity
+
+-drivers/media/video/msp3400.h
+
+	-ENOFILE
+
++drivers/net/3c515.c
+
+	Likely a typo in loop logic.
+
+-drivers/net/irda/donauboe.c
+
+	pci_register_driver conversion
+
+-drivers/net/irda/ep7211_ir.c
+
+	cli/sti removal merged
+
++drivers/net/pcmcia/pcnet_cs.c
+
+	request_irq check
+
++drivers/pcmcia/i82365.c
+
+	Lindent
+
+-drivers/scsi/FlashPoint.c
+
+	Plethora of cleanups merged.
+
++drivers/sn/ioc3.c
+
+	DMA_64_BITMASK
+
++drivers/telephony/ixj.c
+
+	request_region check
+
+-drivers/usb/media/pwc/pwc-kiara.h
+-drivers/usb/media/pwc/pwc-timon.h
+
+	extern const. merged
+
++drivers/video/pm2fb.c
++drivers/video/savage/savagefb_driver.c
++sound/pci/au88x0/au88x0_core.c
++sound/pci/au88x0/au88x0_eq.c
+
+	section fixes
+
+-drivers/video/radeonfb.c
+
+	file removed
+
+-fs/devpts/inode.c
+
+	fs parser conversion merged
+
+-fs/nfs/nfs4proc.c
+
+	static const merged
+
+-fs/select.c
+
+	wrapper removal merged
+
++net/8021q/vlan_dev.c
++net/802/fc.c
++net/802/fddi.c
++net/802/hippi.c
++net/802/tr.c
++net/atm/lec.c
++net/atm/mpc.c
++net/atm/mpoa_caches.c
++net/atm/mpoa_proc.c
++net/bridge/br_netfilter.c
++net/bridge/netfilter/ebtables.c
++net/bridge/netfilter/ebt_limit.c
++net/bridge/netfilter/ebt_log.c
+-net/ipv4/arp.c
+-net/ipv4/netfilter/ipt_CLUSTERIP.c
++net/ipv4/netfilter/ip_nat_standalone.c
+
+	KERN_* additions. I wonder how much bloat three bytes here and there
+	add.
+
+-README
+
+	typo fix merged
+
++security/selinux/xfrm.c
+
+	compile fix. Looks like it sneaked into mainline.
+
++sound/oss/gus_wave.c
+
+	array overrun
+
++sound/oss/msnd_pinnacle.c
+
+	request_region checks
+
++sound/pci/au88x0/au88x0.h
+
+	section markers only in code not prototypes
+
++sound/pci/cs46xx/dsp_spos_scb_lib.c
+
+	array overrun
+
+
+--===============09847151224621653==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -200,4 +518,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============49788601827708301==--
+--===============09847151224621653==--
