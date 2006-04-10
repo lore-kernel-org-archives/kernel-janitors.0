@@ -1,74 +1,41 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 09 Apr 2006 17:23:10 +0000
-Subject: [KJ] [PATCH 2.6.17-rc1-mm2] net: cleanup CONFIG_PCI from dgrs.c
-Message-Id: <443942FE.6060400@student.ltu.se>
+From: Andrew Morton <akpm@osdl.org>
+Date: Mon, 10 Apr 2006 07:08:10 +0000
+Subject: Re: [KJ] [PATCH 2.6.17-rc1-mm2] net: cleanup CONFIG_PCI from dgrs.c
+Message-Id: <20060410000810.3968cef5.akpm@osdl.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============40648081755864163=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <443942FE.6060400@student.ltu.se>
+In-Reply-To: <443942FE.6060400@student.ltu.se>
 To: kernel-janitors@vger.kernel.org
 
-From: Richard Knutsson <ricknu-0@student.ltu.se>
+--===============40648081755864163==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Removed (I believe) unnecessary CONFIG_PCI and an ugly (previous patch 
-of mine) empty struct if !CONFIG_PCI.
+Richard Knutsson <ricknu-0@student.ltu.se> wrote:
+>
+> From: Richard Knutsson <ricknu-0@student.ltu.se>
+> 
+> Removed (I believe) unnecessary CONFIG_PCI and an ugly (previous patch 
+> of mine) empty struct if !CONFIG_PCI.
+> 
+> Compiled tested, with and without an "#undef CONFIG_PCI" in dgrs.c, with 
+> no warnings/errors.
+> 
 
-Compiled tested, with and without an "#undef CONFIG_PCI" in dgrs.c, with 
-no warnings/errors.
+If !CONFIG_PCI we don't want to be compiling that relatively large but
+unused dgrs_pci_probe() into the object file.;
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
----
-
- dgrs.c |    8 +-------
- 1 files changed, 1 insertion(+), 7 deletions(-)
-
-diff -Narup a/drivers/net/dgrs.c b/drivers/net/dgrs.c
---- a/drivers/net/dgrs.c	2006-04-09 15:47:43.000000000 +0200
-+++ b/drivers/net/dgrs.c	2006-04-09 18:22:12.000000000 +0200
-@@ -121,11 +121,11 @@ typedef unsigned int bool;
- #include "dgrs_asstruct.h"
- #include "dgrs_bcomm.h"
- 
--#ifdef CONFIG_PCI
- static struct pci_device_id dgrs_pci_tbl[] = {
- 	{ SE6_PCI_VENDOR_ID, SE6_PCI_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID, },
- 	{ }			/* Terminating entry */
- };
-+#ifdef CONFIG_PCI
- MODULE_DEVICE_TABLE(pci, dgrs_pci_tbl);
- #endif
- 
-@@ -1381,7 +1381,6 @@ static void __devexit dgrs_remove(struct
- 	}
- }
- 
--#ifdef CONFIG_PCI
- static int __init dgrs_pci_probe(struct pci_dev *pdev,
- 				 const struct pci_device_id *ent)
- {
-@@ -1458,9 +1457,6 @@ static struct pci_driver dgrs_pci_driver
- 	.probe = dgrs_pci_probe,
- 	.remove = __devexit_p(dgrs_pci_remove),
- };
--#else
--static struct pci_driver dgrs_pci_driver = {};
--#endif
- 
- 
- #ifdef CONFIG_EISA
-@@ -1608,9 +1604,7 @@ static void __exit dgrs_cleanup_module (
- #ifdef CONFIG_EISA
- 	eisa_driver_unregister (&dgrs_eisa_driver);
- #endif
--#ifdef CONFIG_PCI
- 	pci_unregister_driver (&dgrs_pci_driver);
--#endif
- }
- 
- module_init(dgrs_init_module);
-
+--===============40648081755864163==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============40648081755864163==--
