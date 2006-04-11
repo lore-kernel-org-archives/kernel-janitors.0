@@ -1,103 +1,130 @@
-From: "Cathy Sickels" <cathyasickels@adutopia.com>
-Date: Sat, 29 Apr 2006 21:06:24 +0000
-Subject: [KJ] Re: AMBtEiN new
-Message-Id: <000001c66bd0$c5feaf50$6a29a8c0@eij5>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Tue, 11 Apr 2006 21:25:41 +0000
+Subject: [KJ] [Patch] cleanup inode->r_dev usage in arch/cris
+Message-Id: <1144790741.13849.2.camel@alice>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============38986911412616276=="
+Content-Type: multipart/mixed; boundary="===============033334751597169365=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============033334751597169365==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
---===============38986911412616276==
-Content-Type: multipart/alternative;
-    boundary="----------=_1146344882-29542-53"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+hi,
 
-This is a multi-part message in MIME format...
+imajor()/iminor() should be used instead of accessing r_dev
+directly. This patch cleans up arch/cris
 
-------------=_1146344882-29542-53
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Hi
-=20
-V r I a A f G c R h A j=20
-X t A c N i A l X l=20
-C f I s A h L p I y S w=20
-V q A r L h I y U x M f=20
+--- linux-2.6.17-rc1/arch/cris/arch-v10/drivers/eeprom.c.orig	2006-04-11 23:18:21.000000000 +0200
++++ linux-2.6.17-rc1/arch/cris/arch-v10/drivers/eeprom.c	2006-04-11 23:18:55.000000000 +0200
+@@ -451,9 +451,9 @@ int __init eeprom_init(void)
+ static int eeprom_open(struct inode * inode, struct file * file)
+ {
+ 
+-  if(MINOR(inode->i_rdev) != EEPROM_MINOR_NR)
++  if(iminor(inode) != EEPROM_MINOR_NR)
+      return -ENXIO;
+-  if(MAJOR(inode->i_rdev) != EEPROM_MAJOR_NR)
++  if(imajor(inode) != EEPROM_MAJOR_NR)
+      return -ENXIO;
+ 
+   if( eeprom.size > 0 )
+--- linux-2.6.17-rc1/arch/cris/arch-v10/drivers/gpio.c.orig	2006-04-11 23:19:03.000000000 +0200
++++ linux-2.6.17-rc1/arch/cris/arch-v10/drivers/gpio.c	2006-04-11 23:19:18.000000000 +0200
+@@ -436,7 +436,7 @@ static int
+ gpio_open(struct inode *inode, struct file *filp)
+ {
+ 	struct gpio_private *priv;
+-	int p = MINOR(inode->i_rdev);
++	int p = iminor(inode);
+ 
+ 	if (p > GPIO_MINOR_LAST)
+ 		return -EINVAL;
+--- linux-2.6.17-rc1/arch/cris/arch-v32/drivers/cryptocop.c.orig	2006-04-11 23:19:34.000000000 +0200
++++ linux-2.6.17-rc1/arch/cris/arch-v32/drivers/cryptocop.c	2006-04-11 23:19:47.000000000 +0200
+@@ -2302,7 +2302,7 @@ static int cryptocop_job_setup(struct cr
+ 
+ static int cryptocop_open(struct inode *inode, struct file *filp)
+ {
+-	int p = MINOR(inode->i_rdev);
++	int p = iminor(inode);
+ 
+ 	if (p != CRYPTOCOP_MINOR) return -EINVAL;
+ 
+--- linux-2.6.17-rc1/arch/cris/arch-v32/drivers/gpio.c.orig	2006-04-11 23:19:56.000000000 +0200
++++ linux-2.6.17-rc1/arch/cris/arch-v32/drivers/gpio.c	2006-04-11 23:20:10.000000000 +0200
+@@ -419,7 +419,7 @@ static int
+ gpio_open(struct inode *inode, struct file *filp)
+ {
+ 	struct gpio_private *priv;
+-	int p = MINOR(inode->i_rdev);
++	int p = iminor(inode);
+ 
+ 	if (p > GPIO_MINOR_LAST)
+ 		return -EINVAL;
+--- linux-2.6.17-rc1/arch/cris/arch-v32/drivers/sync_serial.c.orig	2006-04-11 23:20:18.000000000 +0200
++++ linux-2.6.17-rc1/arch/cris/arch-v32/drivers/sync_serial.c	2006-04-11 23:21:45.000000000 +0200
+@@ -341,7 +341,7 @@ static inline int sync_data_avail_to_end
+ 
+ static int sync_serial_open(struct inode *inode, struct file *file)
+ {
+-	int dev = MINOR(inode->i_rdev);
++	int dev = iminor(inode);
+ 	sync_port* port;
+ 	reg_dma_rw_cfg cfg = {.en = regk_dma_yes};
+ 	reg_dma_rw_intr_mask intr_mask = {.data = regk_dma_yes};
+@@ -487,7 +487,7 @@ static int sync_serial_open(struct inode
+ 
+ static int sync_serial_release(struct inode *inode, struct file *file)
+ {
+-	int dev = MINOR(inode->i_rdev);
++	int dev = iminor(inode);
+ 	sync_port* port;
+ 
+ 	if (dev < 0 || dev >= NUMBER_OF_PORTS || !ports[dev].enabled)
+@@ -505,7 +505,7 @@ static int sync_serial_release(struct in
+ 
+ static unsigned int sync_serial_poll(struct file *file, poll_table *wait)
+ {
+-	int dev = MINOR(file->f_dentry->d_inode->i_rdev);
++	int dev = iminor(file->f_dentry->d_inode);
+ 	unsigned int mask = 0;
+ 	sync_port* port;
+ 	DEBUGPOLL( static unsigned int prev_mask = 0; );
+@@ -532,7 +532,7 @@ static int sync_serial_ioctl(struct inod
+ 		  unsigned int cmd, unsigned long arg)
+ {
+ 	int return_val = 0;
+-	int dev = MINOR(file->f_dentry->d_inode->i_rdev);
++	int dev = iminor(file->f_dentry->d_inode);
+ 	sync_port* port;
+ 	reg_sser_rw_tr_cfg tr_cfg;
+ 	reg_sser_rw_rec_cfg rec_cfg;
+@@ -790,7 +790,7 @@ static int sync_serial_ioctl(struct inod
+ static ssize_t sync_serial_write(struct file * file, const char * buf,
+                                  size_t count, loff_t *ppos)
+ {
+-	int dev = MINOR(file->f_dentry->d_inode->i_rdev);
++	int dev = iminor(file->f_dentry->d_inode);
+ 	DECLARE_WAITQUEUE(wait, current);
+ 	sync_port *port;
+ 	unsigned long c, c1;
+@@ -920,7 +920,7 @@ static ssize_t sync_serial_write(struct 
+ static ssize_t sync_serial_read(struct file * file, char * buf,
+ 				size_t count, loff_t *ppos)
+ {
+-	int dev = MINOR(file->f_dentry->d_inode->i_rdev);
++	int dev = iminor(file->f_dentry->d_inode);
+ 	int avail;
+ 	sync_port *port;
+ 	unsigned char* start;
 
-=20
-http://www.sproutemlokvad.com
-whee
-aigrett
-Hinduis
-camphorate
-juggler
-I should tell you. He and our doctor are friends.=20
-I know. Ivan told me. ... Alex, I want to get some things over to=20
-you-Swaynes telephone book, his wallet, appointments schedule, stuff=20
-like that. Ill wrap it all up and have one of Cactuss boys deliver the=20
-package to your place, to the security gate. Put everything into your=20
-high tech and see what you can find.=20
 
 
-------------=_1146344882-29542-53
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Hi</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial>V<FONT face=3DArial size=3D2 color=3D#caef1c> r </F=
-ONT>I<FONT face=3DArial size=3D2 color=3D#caef1c> a </FONT>A<FONT face=3DAr=
-ial size=3D2 color=3D#caef1c> f </FONT>G<FONT face=3DArial size=3D2 color=
-=3D#caef1c> c </FONT>R<FONT face=3DArial size=3D2 color=3D#caef1c> h </FONT=
->A<FONT face=3DArial size=3D2 color=3D#caef1c> j </FONT> <BR>
-X<FONT face=3DArial size=3D2 color=3D#d4f31d> t </FONT>A<FONT face=3DArial =
-size=3D2 color=3D#d4f31d> c </FONT>N<FONT face=3DArial size=3D2 color=3D#d4=
-f31d> i </FONT>A<FONT face=3DArial size=3D2 color=3D#d4f31d> l </FONT>X<FON=
-T face=3DArial size=3D2 color=3D#d4f31d> l </FONT> <BR>
-C<FONT face=3DArial size=3D2 color=3D#daee1f> f </FONT>I<FONT face=3DArial =
-size=3D2 color=3D#daee1f> s </FONT>A<FONT face=3DArial size=3D2 color=3D#da=
-ee1f> h </FONT>L<FONT face=3DArial size=3D2 color=3D#daee1f> p </FONT>I<FON=
-T face=3DArial size=3D2 color=3D#daee1f> y </FONT>S<FONT face=3DArial size=
-=3D2 color=3D#daee1f> w </FONT> <BR>
-V<FONT face=3DArial size=3D2 color=3D#c9ea19> q </FONT>A<FONT face=3DArial =
-size=3D2 color=3D#c9ea19> r </FONT>L<FONT face=3DArial size=3D2 color=3D#c9=
-ea19> h </FONT>I<FONT face=3DArial size=3D2 color=3D#c9ea19> y </FONT>U<FON=
-T face=3DArial size=3D2 color=3D#c9ea19> x </FONT>M<FONT face=3DArial size=
-=3D2 color=3D#c9ea19> f </FONT> <BR>
-</FONT></DIV><DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2><A href=3D"http://www.sproutemlokvad.com">=
-http://www.sproutemlokvad.com</A></FONT></DIV>
-<DIV><FONT face=3DArial size=3D2 color=3D#d3ee19>whee</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2 color=3D#d3ee19>aigrett</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2 color=3D#d3ee19>Hinduis</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2 color=3D#d3ee19>camphorate</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2 color=3D#d3ee19>juggler</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>   I should tell you. He and our doctor ar=
-e friends. <BR>   I know. Ivan told me. ... Alex, I want to get some things=
- over to <BR>you-Swaynes telephone book, his wallet, appointments schedule,=
- stuff <BR>like that. Ill wrap it all up and have one of Cactuss boys deliv=
-er the <BR>package to your place, to the security gate. Put everything into=
- your <BR>high tech and see what you can find. <BR></FONT></DIV></BODY></HT=
-ML>
-------------=_1146344882-29542-53--
-
---===============38986911412616276==
+--===============033334751597169365==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -108,4 +135,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============38986911412616276==--
+--===============033334751597169365==--
