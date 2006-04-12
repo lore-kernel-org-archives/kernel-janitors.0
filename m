@@ -1,77 +1,51 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Tue, 18 Apr 2006 17:04:19 +0000
-Subject: [KJ] [Patch] use dynamic spinlock initialisation in
-Message-Id: <1145379859.11834.5.camel@localhost>
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Wed, 12 Apr 2006 14:04:29 +0000
+Subject: [KJ][Patch] fix 2nd overflow in ak4114.c
+Message-Id: <1144850670.8222.20.camel@localhost.localdomain>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============54057906328556271=="
+Content-Type: multipart/mixed; boundary="===============37637592687098431=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============54057906328556271==
+--===============37637592687098431==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-hi,
+G'day list
 
-according to http://lwn.net/Articles/2.6-kernel-api/ spin locks should be
-initialized during runtime instead of compile time.
+I am sorry but I have done it again. The next coverity bug is in the
+same file and I didn't notice till I had sent out the first patch.
 
-"Run-time initialization of spinlocks is being converted away from the
- assignment form (using SPIN_LOCK_UNLOCKED) to explicit spin_lock_init()
- calls. No noises have yet been made about removing SPIN_LOCK_INIT,
- but the writing should be considered to be on the wall. If and when
- the real-time preemption patches are merged, the assignment form
- may no longer be possible."
 
-So here is a patch to convert drivers/char/random.c to spin_lock_init()
-its boot tested, i was able to generate a gpg key and work some days
-without noticing anything strange.
+Anyway here is a separate patch for the second bug. After doing the
+first patch this one looks right, although I am not so sure this time.
 
-I did not move the init into init_std_data() because it also gets called,
-when the entropy pool gets cleared, so it should match the original behaviour.
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.17-rc1-git5/drivers/char/random.c.orig	2006-04-12 16:02:02.000000000 +0200
-+++ linux-2.6.17-rc1-git5/drivers/char/random.c	2006-04-12 16:02:41.000000000 +0200
-@@ -417,7 +417,6 @@ static struct entropy_store input_pool =
- 	.poolinfo = &poolinfo_table[0],
- 	.name = "input",
- 	.limit = 1,
--	.lock = SPIN_LOCK_UNLOCKED,
- 	.pool = input_pool_data
- };
+
+
+Coverity found a static overflow in ak4114.c @ line 137.
+
+The patch below limits the array usage to that allocated for it.
+
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+
+--- 2.6.17-rc1-git5/sound/i2c/other/ak4114.c.orig	2006-04-12 23:12:43.000000000 +1000
++++ 2.6.17-rc1-git5/sound/i2c/other/ak4114.c	2006-04-12 23:46:58.000000000 +1000
+@@ -134,7 +134,8 @@ void snd_ak4114_reg_write(struct ak4114 
+ 	if (reg <= AK4114_REG_INT1_MASK)
+ 		reg_write(chip, reg, (chip->regmap[reg] & ~mask) | val);
+ 	else if (reg >= AK4114_REG_TXCSB0 && reg <= AK4114_REG_TXCSB4)
+-		reg_write(chip, reg, (chip->txcsb[reg] & ~mask) | val);
++		reg_write(chip, reg, 
++			(chip->txcsb[reg-AK4114_REG_TXCSB0] & ~mask) | val);
+ }
  
-@@ -426,7 +425,6 @@ static struct entropy_store blocking_poo
- 	.name = "blocking",
- 	.limit = 1,
- 	.pull = &input_pool,
--	.lock = SPIN_LOCK_UNLOCKED,
- 	.pool = blocking_pool_data
- };
- 
-@@ -434,7 +432,6 @@ static struct entropy_store nonblocking_
- 	.poolinfo = &poolinfo_table[1],
- 	.name = "nonblocking",
- 	.pull = &input_pool,
--	.lock = SPIN_LOCK_UNLOCKED,
- 	.pool = nonblocking_pool_data
- };
- 
-@@ -894,6 +891,9 @@ static void init_std_data(struct entropy
- 
- static int __init rand_initialize(void)
- {
-+	spin_lock_init(&input_pool.lock);
-+	spin_lock_init(&blocking_pool.lock);
-+	spin_lock_init(&nonblocking_pool.lock);
- 	init_std_data(&input_pool);
- 	init_std_data(&blocking_pool);
- 	init_std_data(&nonblocking_pool);
+ void snd_ak4114_reinit(struct ak4114 *chip)
 
 
 
---===============54057906328556271==
+--===============37637592687098431==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -82,4 +56,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============54057906328556271==--
+--===============37637592687098431==--
