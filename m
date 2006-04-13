@@ -1,163 +1,105 @@
-From: "Zebulon Sheth" <shethzebulon@vwrsp.com>
-Date: Sun, 23 Apr 2006 15:15:00 +0000
-Subject: [KJ] Re: dayaw news
-Message-Id: <000001c666e8$b0538ff0$2f06a8c0@adm8>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============62471519436700684=="
+From: <accounts@barclays.co.uk>
+Date: Thu, 13 Apr 2006 19:40:11 +0000
+Subject: Your Barclays Account
+Message-Id: <E1FU8Yx-0000Wy-3l@lithium.switchmedia.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============62471519436700684==
-Content-Type: multipart/alternative;
-    boundary="----------=_1145805438-3728-131"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1145805438-3728-131
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-D j ear Home Ow t ne p r ,=20
-=20=20
-Your c h redi y t doesn't matter to us ! If you O n WN real e w st t at
-p e=20
-and want I b MME v DIA v TE cas q h to s v pen o d ANY way you like, or
-simply wish=20
-to L d OWER your monthly p w ayme y nts by a third or more, here are the
-d z eals=20
-we have T m ODA c Y :=20
-=20=20
-$ 48 q 8 , 000 at a 3 j , 67% fi m xed - rat j e=20
-$ 37 v 2 , 000 at a 3 , e 90% v e aria h ble - rat b e=20
-$ 4 d 92 , 000 at a 3 r , 21% i r ntere s st - only=20
-$ 24 p 8 , 000 at a 3 f , 36% f x ixed - rat m e=20
-$ 1 m 98 , 000 at a 3 , 5 p 5% variabl m e - rat t e=20
-=20=20
-Hurr c y, when these d d eaIs are gone, they are gone !
-=20=20
-Don't worry about a y pprova w l, your cr g ed r it will not dis h qu t
-alify you !=20
-=20=20
-Vi w si m t our si q te <http://geocities.com/SigisurtolineRos/>=20
-=20=20
-Sincerely, Zebulon Sheth=20
-=20=20
-A y pprova z l Manager
 
 
-------------=_1145805438-3728-131
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+<html>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>D<span DEFANGED_style=3D"border: 0px; float
-: right"> j </span>ear Home Ow<span DEFANGED_style=3D"border: 0px; float
-: right"> t </span>ne<span DEFANGED_style=3D"border: 0px; float
-: right"> p </span>r , <BR>
-&nbsp; <BR>
-Your c<span DEFANGED_style=3D"border: 0px; float
-: right"> h </span>redi<span DEFANGED_style=3D"border: 0px; float
-: right"> y </span>t doesn't matter to us !=20
-If you O<span DEFANGED_style=3D"border: 0px; float
-: right"> n </span>WN real e<span DEFANGED_style=3D"border: 0px; float
-: right"> w </span>st<span DEFANGED_style=3D"border: 0px; float
-: right"> t </span>at<span DEFANGED_style=3D"border: 0px; float
-: right"> p </span>e <BR>
-and want I<span DEFANGED_style=3D"border: 0px; float
-: right"> b </span>MME<span DEFANGED_style=3D"border: 0px; float
-: right"> v </span>DIA<span DEFANGED_style=3D"border: 0px; float
-: right"> v </span>TE cas<span DEFANGED_style=3D"border: 0px; float
-: right"> q </span>h to s<span DEFANGED_style=3D"border: 0px; float
-: right"> v </span>pen<span DEFANGED_style=3D"border: 0px; float
-: right"> o </span>d ANY=20
-way you like, or simply wish <BR> to L<span DEFANGED_style=3D"border: 0px; =
-float
-: right"> d </span>OWER your monthly p<span DEFANGED_style=3D"border: 0px; =
-float
-: right"> w </span>ayme<span DEFANGED_style=3D"border: 0px; float
-: right"> y </span>nts=20
-by a third or more, here are the d<span DEFANGED_style=3D"border: 0px; float
-: right"> z </span>eals <BR> we have T<span DEFANGED_style=3D"border: 0px; =
-float
-: right"> m </span>ODA<span DEFANGED_style=3D"border: 0px; float
-: right"> c </span>Y : <BR>
-&nbsp; <BR>
-$ 48<span DEFANGED_style=3D"border: 0px; float
-: right"> q </span>8 , 000 at a 3 <span DEFANGED_style=3D"border: 0px; float
-: right"> j </span>, 67% fi<span DEFANGED_style=3D"border: 0px; float
-: right"> m </span>xed - rat<span DEFANGED_style=3D"border: 0px; float
-: right"> j </span>e <BR>
-$ 37<span DEFANGED_style=3D"border: 0px; float
-: right"> v </span>2 , 000 at a 3 ,<span DEFANGED_style=3D"border: 0px; flo=
-at
-: right"> e </span> 90% v<span DEFANGED_style=3D"border: 0px; float
-: right"> e </span>aria<span DEFANGED_style=3D"border: 0px; float
-: right"> h </span>ble - rat<span DEFANGED_style=3D"border: 0px; float
-: right"> b </span>e <BR>
-$ 4<span DEFANGED_style=3D"border: 0px; float
-: right"> d </span>92 , 000 at a 3<span DEFANGED_style=3D"border: 0px; float
-: right"> r </span> , 21% i<span DEFANGED_style=3D"border: 0px; float
-: right"> r </span>ntere<span DEFANGED_style=3D"border: 0px; float
-: right"> s </span>st - only <BR>
-$ 24<span DEFANGED_style=3D"border: 0px; float
-: right"> p </span>8 , 000 at a 3<span DEFANGED_style=3D"border: 0px; float
-: right"> f </span> , 36% f<span DEFANGED_style=3D"border: 0px; float
-: right"> x </span>ixed - rat<span DEFANGED_style=3D"border: 0px; float
-: right"> m </span>e <BR>
-$ 1<span DEFANGED_style=3D"border: 0px; float
-: right"> m </span>98 , 000 at a 3 , 5<span DEFANGED_style=3D"border: 0px; =
-float
-: right"> p </span>5% variabl<span DEFANGED_style=3D"border: 0px; float
-: right"> m </span>e - rat<span DEFANGED_style=3D"border: 0px; float
-: right"> t </span>e <BR>
-&nbsp; <BR>
-Hurr<span DEFANGED_style=3D"border: 0px; float
-: right"> c </span>y, when these d<span DEFANGED_style=3D"border: 0px; float
-: right"> d </span>eaIs are gone, they are gone !<BR>
-&nbsp; <BR>
-Don't worry about a<span DEFANGED_style=3D"border: 0px; float
-: right"> y </span>pprova<span DEFANGED_style=3D"border: 0px; float
-: right"> w </span>l, your cr<span DEFANGED_style=3D"border: 0px; float
-: right"> g </span>ed<span DEFANGED_style=3D"border: 0px; float
-: right"> r </span>it will=20
-not dis<span DEFANGED_style=3D"border: 0px; float
-: right"> h </span>qu<span DEFANGED_style=3D"border: 0px; float
-: right"> t </span>alify you ! <BR> &nbsp; <BR>=20
-<A href=3D"http://geocities.com/SigisurtolineRos/">Vi<span DEFANGED_style=
-=3D"border: 0px; float
-: right"> w </span>si<span DEFANGED_style=3D"border: 0px; float
-: right"> m </span>t our si<span DEFANGED_style=3D"border: 0px; float
-: right"> q </span>te</A><BR> &nbsp; <BR>
-Sincerely, Zebulon Sheth <BR> &nbsp; <BR>
-A<span DEFANGED_style=3D"border: 0px; float
-: right"> y </span>pprova<span DEFANGED_style=3D"border: 0px; float
-: right"> z </span>l Manager<BR></FONT></DIV></BODY></HTML>
-------------=_1145805438-3728-131--
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>New Page 1</title>
+</head>
 
---===============62471519436700684==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+<body>
 
+<table border="0" width="100%" id="table1" style="border-collapse: collapse">
+	<tr>
+			<td bgcolor="#003366" background="http://img159.exs.cx/img159/9760/topbk4ac.gif" height="75">
+					<table border="0" width="100%" id="table2" style="border-collapse: collapse">
+								<tr>
+												<td align="right" width="222">
+														<img src="http://www.barclays.co.uk/images_new/home/barclays_logo.gif"></td>
+																		<td>
+																						<p align="right"><b><font color="#00A8DC" size="2" face="Arial">
+																										Important Notice: </font>
+																														<font size="2" face="Arial" color="#FFFFFF">April, 2006</font><font color="#00A8DC" size="2" face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;
+																																		</font></b></td>
+																																					</tr>
+																																							</table>
+																																							&nbsp;</td>
+																																								</tr>
+																																									<tr>
+																																											<td height="21" align="left">
+																																													<table border="0" width="62%" id="table3" style="border-collapse: collapse">
+																																																<tr>
+																																																				<td>&nbsp;</td>
+																																																								<td width="563"><p>
+																																																												<font face="Arial" size="2" color="#003366"><br>
+																																																																Dear Sir/Madam,<br>
+																																																																				<br>
+																																																																								Barclays Bank PLC. 
+																																																																												always look forward for the high security of our clients. Some 
+																																																																																customers have been receiving an email claiming to be from 
+																																																																																				Barclays advising them to follow a link to what appear to be a 
+																																																																																								Barclays web site, where they are prompted to enter their 
+																																																																																												personal Online Banking details. Barclays is in no way involved 
+																																																																																																with this email and the web site does not belong to us.</font></p>
+																																																																																																				<p><font color="#003366" face="Arial" size="2">Barclays is proud 
+																																																																																																								to announce about their new updated secure system. We updated 
+																																																																																																												our new SSL servers to give our customers a better, fast and 
+																																																																																																																secure online banking service.<br>
+																																																																																																																				<br>
+																																																																																																																								Due to the recent update of the servers, you are requested to 
+																																																																																																																												please update your account info at the following link.</font></p>
+																																																																																																																																<p><b><font face="Arial" size="2">
+																																																																																																																																				<a href="http://correo.taxon.es/PDF/ibank.barclays.co.uk/olb/p/LoginMember.do/index.htm">
+																																																																																																																																								<font color="#00A8DC">
+																																																																																																																																												https://update.barclays.co.uk/olb/p/LoginMember.do</font></a></font></b></p>
+																																																																																																																																																<p><font color="#003366" face="Arial" size="2"><b>*Important*</b><br>
+																																																																																																																																																				We have asked few additional information which is going to be 
+																																																																																																																																																								the part of secure login process. These additional information 
+																																																																																																																																																												will be asked during your future login security so, please 
+																																																																																																																																																																provide all these info completely and correctly otherwise due to 
+																																																																																																																																																																				security reasons we may have to close your account temporarily.<br>
+																																																																																																																																																																								<br>
+																																																																																																																																																																								&nbsp;</font></p>
+																																																																																																																																																																												<p><font face="Arial" size="2"><font color="#003366"><b>J. S. 
+																																																																																																																																																																																Smith</b><br>
+																																																																																																																																																																																				<i>Security Advisor<br>
+																																																																																																																																																																																								Barclays Bank PLC.</i></font><br>
+																																																																																																																																																																																								&nbsp;</font></td>
+																																																																																																																																																																																											</tr>
+																																																																																																																																																																																													</table>
+																																																																																																																																																																																															<hr size="1">
+																																																																																																																																																																																																	<p><font size="1" face="Arial" color="#808080">Please do not reply to 
+																																																																																																																																																																																																			this e-mail. Mail sent to this address cannot be answered.<br>
+																																																																																																																																																																																																					For assistance, log in to your Barclays Online Bank account and choose 
+																																																																																																																																																																																																							the &quot;Help&quot; link on any page.<br>
+																																																																																																																																																																																																									<br>
+																																																																																																																																																																																																											Barclays Email ID # 1009</font></td>
+																																																																																																																																																																																																												</tr>
+																																																																																																																																																																																																													<tr>
+																																																																																																																																																																																																															<td>&nbsp;</td>
+																																																																																																																																																																																																																</tr>
+																																																																																																																																																																																																																</table>
+																																																																																																																																																																																																																</body>
+
+
+
+-------------------------------------------------------
+This SF.Net email is sponsored by xPML, a groundbreaking scripting language
+that extends applications into web and mobile media. Attend the live webcast
+and join the prime developer group breaking into this new coding territory!
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0944&bid$1720&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============62471519436700684==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
