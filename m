@@ -1,58 +1,60 @@
-From: "Sophus Lebeau" <leb@taxconsulting.it>
-Date: Mon, 17 Apr 2006 17:03:07 +0000
+From: "Vicente Tyson" <tysonvicente@dincertco.de>
+Date: Mon, 17 Apr 2006 17:03:33 +0000
 Subject: [KJ] Re: news
-Message-Id: <000001c66240$ccaf7e40$d652a8c0@fsm40>
+Message-Id: <000001c66240$dc03e6b0$c0d6a8c0@xca32>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============10250536352754924=="
+Content-Type: multipart/mixed; boundary="===============29800494386351217=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <000001c66240$ccaf7e40$d652a8c0@fsm40>
+In-Reply-To: <000001c66240$ccaf7e40$d652a8c0@fsm40>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============10250536352754924==
+--===============29800494386351217==
 Content-Type: multipart/alternative;
-    boundary="----------=_1145293447-21656-10"
+    boundary="----------=_1145293497-18393-568"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1145293447-21656-10
+------------=_1145293497-18393-568
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-D c ear Home O v wne g r ,=20
+De g ar Home O n wne r r ,=20
 =20=20
-Your c o red m it doesn't matter to us ! If you OW o N real e q st h at
-e e=20
-and want IM t ME j DIA b TE c e ash to sp h en m d ANY way you like, or
+Your cr l edi a t doesn't matter to us ! If you OW h N real e z st u at
+y e=20
+and want IM x ME a DIAT u E ca e sh to sp x en p d ANY way you like, or
 simply wish=20
-to L p OWER your monthly p a ayme o nts by a third or more, here are the
-de e als=20
-we have T a ODA q Y :=20
+to L m OWER your monthly pa d ymen e ts by a third or more, here are the
+dea h ls=20
+we have T b OD l AY :=20
 =20=20
-$ 48 s 8 , 000 at a 3 , o 67% fi l xed - ra p te=20
-$ 37 t 2 , 000 at a 3 , w 90% v f ariab n le - rat l e=20
-$ 49 l 2 , 000 at a 3 , 2 s 1% int c ere j st - only=20
-$ 2 m 48 , 000 at a 3 k , 36% f l ixed - ra j te=20
-$ 19 n 8 , 000 at a 3 t , 55% var r iable - ra m te=20
+$ 48 o 8 , 000 at a 3 z , 67% f q ixed - ra o te=20
+$ 37 q 2 , 000 at a 3 r , 90% va k riabl k e - rat y e=20
+$ 4 w 92 , 000 at a 3 p , 21% inte y re u st - only=20
+$ 2 k 48 , 000 at a 3 , s 36% fi g xed - ra j te=20
+$ 1 o 98 , 000 at a 3 , y 55% va f riable - rat g e=20
 =20=20
-H n urry, when these deaI d s are gone, they are gone !
+Hur h ry, when these deaI d s are gone, they are gone !
 =20=20
-Don't worry about app n rova b l, your cr q ed a it will not di d
-squalif e y you !=20
+Don't worry about a b pprova w l, your c o red s it will not dis o qu w
+alify you !=20
 =20=20
-V g isi l t our si k te <http://pido69.melrun.com>=20
+V y isi r t ou c r site <http://jyco67.melrun.com>=20
 =20=20
-Sincerely, Sophus Lebeau=20
+Sincerely, Vicente Tyson=20
 =20=20
-Ap n pro k val Manager
+A z ppr a oval Manager
 
 
-------------=_1145293447-21656-10
+------------=_1145293497-18393-568
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -65,140 +67,140 @@ Content-Disposition: inline
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>D<span=20
+<DIV><FONT face=3DArial size=3D2>De<span=20
 DEFANGED_style=3D" float
-: right "> c </span>ear Home O<span=20
+: right "> g </span>ar Home O<span=20
 DEFANGED_style=3D" float
-: right "> v </span>wne<span=20
+: right "> n </span>wne<span=20
 DEFANGED_style=3D" float
-: right "> g </span>r , <BR>
+: right "> r </span>r , <BR>
 &nbsp; <BR>
-Your c<span=20
+Your cr<span=20
 DEFANGED_style=3D" float
-: right "> o </span>red<span=20
+: right "> l </span>edi<span=20
 DEFANGED_style=3D" float
-: right "> m </span>it doesn't matter to us !=20
+: right "> a </span>t doesn't matter to us !=20
 If you OW<span=20
 DEFANGED_style=3D" float
-: right "> o </span>N real e<span=20
+: right "> h </span>N real e<span=20
 DEFANGED_style=3D" float
-: right "> q </span>st<span=20
+: right "> z </span>st<span=20
 DEFANGED_style=3D" float
-: right "> h </span>at<span=20
+: right "> u </span>at<span=20
 DEFANGED_style=3D" float
-: right "> e </span>e <BR>
+: right "> y </span>e <BR>
 and want IM<span=20
 DEFANGED_style=3D" float
-: right "> t </span>ME<span=20
+: right "> x </span>ME<span=20
 DEFANGED_style=3D" float
-: right "> j </span>DIA<span=20
+: right "> a </span>DIAT<span=20
 DEFANGED_style=3D" float
-: right "> b </span>TE c<span=20
+: right "> u </span>E ca<span=20
 DEFANGED_style=3D" float
-: right "> e </span>ash to sp<span=20
+: right "> e </span>sh to sp<span=20
 DEFANGED_style=3D" float
-: right "> h </span>en<span=20
+: right "> x </span>en<span=20
 DEFANGED_style=3D" float
-: right "> m </span>d ANY=20
+: right "> p </span>d ANY=20
 way you like, or simply wish <BR> to L<span=20
 DEFANGED_style=3D" float
-: right "> p </span>OWER your monthly p<span=20
+: right "> m </span>OWER your monthly pa<span=20
 DEFANGED_style=3D" float
-: right "> a </span>ayme<span=20
+: right "> d </span>ymen<span=20
 DEFANGED_style=3D" float
-: right "> o </span>nts=20
-by a third or more, here are the de<span=20
+: right "> e </span>ts=20
+by a third or more, here are the dea<span=20
 DEFANGED_style=3D" float
-: right "> e </span>als <BR> we have T<span=20
+: right "> h </span>ls <BR> we have T<span=20
 DEFANGED_style=3D" float
-: right "> a </span>ODA<span=20
+: right "> b </span>OD<span=20
 DEFANGED_style=3D" float
-: right "> q </span>Y : <BR>
+: right "> l </span>AY : <BR>
 &nbsp; <BR>
 $ 48<span=20
 DEFANGED_style=3D" float
-: right "> s </span>8 , 000 at a 3 ,<span=20
+: right "> o </span>8 , 000 at a 3 <span=20
 DEFANGED_style=3D" float
-: right "> o </span> 67% fi<span=20
+: right "> z </span>, 67% f<span=20
 DEFANGED_style=3D" float
-: right "> l </span>xed - ra<span=20
+: right "> q </span>ixed - ra<span=20
 DEFANGED_style=3D" float
-: right "> p </span>te <BR>
+: right "> o </span>te <BR>
 $ 37<span=20
 DEFANGED_style=3D" float
-: right "> t </span>2 , 000 at a 3 , <span=20
+: right "> q </span>2 , 000 at a 3 <span=20
 DEFANGED_style=3D" float
-: right "> w </span>90% v<span=20
+: right "> r </span>, 90% va<span=20
 DEFANGED_style=3D" float
-: right "> f </span>ariab<span=20
+: right "> k </span>riabl<span=20
 DEFANGED_style=3D" float
-: right "> n </span>le - rat<span=20
+: right "> k </span>e - rat<span=20
 DEFANGED_style=3D" float
-: right "> l </span>e <BR>
-$ 49<span=20
+: right "> y </span>e <BR>
+$ 4<span=20
 DEFANGED_style=3D" float
-: right "> l </span>2 , 000 at a 3 , 2<span=20
+: right "> w </span>92 , 000 at a 3 <span=20
 DEFANGED_style=3D" float
-: right "> s </span>1% int<span=20
+: right "> p </span>, 21% inte<span=20
 DEFANGED_style=3D" float
-: right "> c </span>ere<span=20
+: right "> y </span>re<span=20
 DEFANGED_style=3D" float
-: right "> j </span>st - only <BR>
+: right "> u </span>st - only <BR>
 $ 2<span=20
 DEFANGED_style=3D" float
-: right "> m </span>48 , 000 at a 3 <span=20
+: right "> k </span>48 , 000 at a 3 ,<span=20
 DEFANGED_style=3D" float
-: right "> k </span>, 36% f<span=20
+: right "> s </span> 36% fi<span=20
 DEFANGED_style=3D" float
-: right "> l </span>ixed - ra<span=20
+: right "> g </span>xed - ra<span=20
 DEFANGED_style=3D" float
 : right "> j </span>te <BR>
-$ 19<span=20
+$ 1<span=20
 DEFANGED_style=3D" float
-: right "> n </span>8 , 000 at a 3 <span=20
+: right "> o </span>98 , 000 at a 3 ,<span=20
 DEFANGED_style=3D" float
-: right "> t </span>, 55% var<span=20
+: right "> y </span> 55% va<span=20
 DEFANGED_style=3D" float
-: right "> r </span>iable - ra<span=20
+: right "> f </span>riable - rat<span=20
 DEFANGED_style=3D" float
-: right "> m </span>te <BR>
+: right "> g </span>e <BR>
 &nbsp; <BR>
-H<span=20
+Hur<span=20
 DEFANGED_style=3D" float
-: right "> n </span>urry, when these deaI<span=20
+: right "> h </span>ry, when these deaI<span=20
 DEFANGED_style=3D" float
 : right "> d </span>s are gone, they are gone !<BR>
 &nbsp; <BR>
-Don't worry about app<span=20
+Don't worry about a<span=20
 DEFANGED_style=3D" float
-: right "> n </span>rova<span=20
+: right "> b </span>pprova<span=20
 DEFANGED_style=3D" float
-: right "> b </span>l, your cr<span=20
+: right "> w </span>l, your c<span=20
 DEFANGED_style=3D" float
-: right "> q </span>ed<span=20
+: right "> o </span>red<span=20
 DEFANGED_style=3D" float
-: right "> a </span>it will=20
-not di<span=20
+: right "> s </span>it will=20
+not dis<span=20
 DEFANGED_style=3D" float
-: right "> d </span>squalif<span=20
+: right "> o </span>qu<span=20
 DEFANGED_style=3D" float
-: right "> e </span>y you ! <BR> &nbsp; <BR>=20
-<A href=3D"http://pido69.melrun.com">V<span=20
+: right "> w </span>alify you ! <BR> &nbsp; <BR>=20
+<A href=3D"http://jyco67.melrun.com">V<span=20
 DEFANGED_style=3D" float
-: right "> g </span>isi<span=20
+: right "> y </span>isi<span=20
 DEFANGED_style=3D" float
-: right "> l </span>t our si<span=20
+: right "> r </span>t ou<span=20
 DEFANGED_style=3D" float
-: right "> k </span>te</A><BR> &nbsp; <BR>
-Sincerely, Sophus Lebeau <BR> &nbsp; <BR>
-Ap<span=20
+: right "> c </span>r site</A><BR> &nbsp; <BR>
+Sincerely, Vicente Tyson <BR> &nbsp; <BR>
+A<span=20
 DEFANGED_style=3D" float
-: right "> n </span>pro<span=20
+: right "> z </span>ppr<span=20
 DEFANGED_style=3D" float
-: right "> k </span>val Manager<BR></FONT></DIV></BODY></HTML>
-------------=_1145293447-21656-10--
+: right "> a </span>oval Manager<BR></FONT></DIV></BODY></HTML>
+------------=_1145293497-18393-568--
 
---===============10250536352754924==
+--===============29800494386351217==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -209,4 +211,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============10250536352754924==--
+--===============29800494386351217==--
