@@ -1,92 +1,43 @@
-From: Andrew Morton <akpm@osdl.org>
-Date: Thu, 20 Apr 2006 23:21:40 +0000
+From: bert hubert <bert.hubert@netherlabs.nl>
+Date: Fri, 21 Apr 2006 07:41:30 +0000
 Subject: [KJ] Re: [PATCH] Extending getrusage
-Message-Id: <20060420162140.0a03e227.akpm@osdl.org>
+Message-Id: <20060421074129.GA31972@outpost.ds9a.nl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============041210112146982336=="
+Content-Type: multipart/mixed; boundary="===============77053705354440138=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d0191dad0604200821l3fa0ed70ga2faabe79d7718ec@mail.gmail.com>
-In-Reply-To: <d0191dad0604200821l3fa0ed70ga2faabe79d7718ec@mail.gmail.com>
-To: Claudio Scordino <cloud.of.andor@gmail.com>
-Cc: linux-kernel@vger.kernel.org, luto@myrealbox.com, alan@lxorguk.ukuu.org.uk, torvalds@osdl.org, kernel-janitors@lists.osdl.org
+References: <d0191dad0604200821l3fa0ed70ga2faabe79d7718ec@mail.gmail.com> <20060420162140.0a03e227.akpm@osdl.org>
+In-Reply-To: <20060420162140.0a03e227.akpm@osdl.org>
+To: Andrew Morton <akpm@osdl.org>
+Cc: Claudio Scordino <cloud.of.andor@gmail.com>, linux-kernel@vger.kernel.org, luto@myrealbox.com, kernel-janitors@lists.osdl.org
 
---===============041210112146982336==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+--===============77053705354440138==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-"Claudio Scordino" <cloud.of.andor@gmail.com> wrote:
->
-> For the people who missed the beginning of the discussion, the
-> following patch is an extension of the existing getrusage syscall()
-> and it applies to the 2.6.16.9 kernel.
-> 
-> It allows a task to read usage information about another task. The argument
-> who can be equal to RUSAGE_SELF, to RUSAGE_CHILDREN or to a valid pid.
-> 
-> The permissions are checked through security_ptrace() as suggested by Andy.
-> 
+On Thu, Apr 20, 2006 at 04:21:40PM -0700, Andrew Morton wrote:
+> I'd be reluctant to support this change without a compelling description of
+> why we actually want it.
 
-Bit hacky, but given the chosen values of RUSAGE_*, it seems solid enough.
+It offers nothing that isn't available elsewhere (I think), except more
+cheaply. It also has the potential to be multiplatform one day. Right now to
+get the CPU usage of a random pid, one has to implement the equivalent of
+/proc/ parsing for each platform.
 
-There is no way of doing getrusage of another process and its children.
+If at least Linux did 'getrusage for foreign pid', that would clean up
+things up somewhat already.
 
-> --- sys.old.c	2006-04-19 02:10:14.000000000 -0400
-> +++ sys.c	2006-04-20 10:53:16.000000000 -0400
+It might even mean a 'portable top', and who knows, more unixes might
+follow.
 
-Please prepare patches in `patch -p1' form, as per
-http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt.
+I for one would save work having a getrusage that does this.
 
-> @@ -1765,11 +1765,30 @@ int getrusage(struct task_struct *p, int
->  	return copy_to_user(ru, &r, sizeof(r)) ? -EFAULT : 0;
->  }
-> 
-> +/* who can be RUSAGE_SELF, RUSAGE_CHILDREN or a valid pid */
->  asmlinkage long sys_getrusage(int who, struct rusage __user *ru)
->  {
-> -	if (who != RUSAGE_SELF && who != RUSAGE_CHILDREN)
-> -		return -EINVAL;
-> -	return getrusage(current, who, ru);
-> +	struct rusage r;
-> +	struct task_struct* tsk = current;
+	Bert
 
-should be
+-- 
+http://www.PowerDNS.com      Open source, database driven DNS Software 
+http://netherlabs.nl              Open and Closed source services
 
-	struct task_struct *tsk = current;
-
-> +	read_lock(&tasklist_lock);
-> +	if ((who != RUSAGE_SELF) && (who != RUSAGE_CHILDREN)) {
-
-The parenthesisation is perhaps a little excessive.
-
-> +		if (who <= 0)
-> +			goto bad;
-> +		tsk = find_task_by_pid(who);
-> +		if (tsk == NULL)
-> +			goto bad;
-> +		if ((tsk != current) && security_ptrace(current, tsk))
-> +			goto bad;
-> +		/* current can get info about tsk */
-> +		who = RUSAGE_SELF;
-> +	}
-> +	k_getrusage(tsk, who, &r);
-> +	read_unlock(&tasklist_lock);
-> +	return copy_to_user(ru, &r, sizeof(r)) ? -EFAULT : 0;
-> +
-> +bad:
-> +	read_unlock(&tasklist_lock);
-> +	return tsk ? -EPERM : -EINVAL;
->  }
-> 
-
-This patch changes sys_getrusage() but not getrusage().  But there are
-several callers of getrusage() in various dark corners of the kernel.  Why
-do they not also want the extended functionality?
-
-I'd be reluctant to support this change without a compelling description of
-why we actually want it.
-
-
---===============041210112146982336==
+--===============77053705354440138==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -97,4 +48,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============041210112146982336==--
+--===============77053705354440138==--
