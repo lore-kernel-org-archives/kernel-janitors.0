@@ -1,7 +1,7 @@
 From: Henne <henne@nachtwindheim.de>
-Date: Mon, 24 Apr 2006 12:35:09 +0000
-Subject: [KJ] [PATCH] Marking the pci_device tables in the block-subsys as
-Message-Id: <444CC5FD.7020805@nachtwindheim.de>
+Date: Mon, 24 Apr 2006 12:42:44 +0000
+Subject: [KJ] [PATCH] Marking the pci_device tables of eisa-subsys as
+Message-Id: <444CC7C4.9030401@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <444CC1F5.7050906@nachtwindheim.de>
 In-Reply-To: <444CC1F5.7050906@nachtwindheim.de>
@@ -12,39 +12,24 @@ To: kernel-janitors@vger.kernel.org
 
 From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Marking the pci_device tables in the block-subsys as __devinitdata.
-
+Marking the pci_device tables of eisa-subsys as __devinit.
 Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
 ---
 
-diff -urN linux-2.6.17-rc2/drivers/block/DAC960.c 
-linux/drivers/block/DAC960.c
---- linux-2.6.17-rc2/drivers/block/DAC960.c     2006-04-24 
-13:30:54.000000000 +0200
-+++ linux/drivers/block/DAC960.c        2006-04-24 14:28:44.000000000 +0200
-@@ -7111,7 +7111,7 @@
-         .MemoryWindowSize =     DAC960_PD_RegisterWindowSize,
-  };
-
--static struct pci_device_id DAC960_id_table[] = {
-+static struct pci_device_id DAC960_id_table[] __devinitdata = {
-         {
-                 .vendor         = PCI_VENDOR_ID_MYLEX,
-                 .device         = PCI_DEVICE_ID_MYLEX_DAC960_GEM,
-diff -urN linux-2.6.17-rc2/drivers/block/sx8.c linux/drivers/block/sx8.c
---- linux-2.6.17-rc2/drivers/block/sx8.c        2006-03-20 
+diff -urN linux-2.6.17-rc2/drivers/eisa/pci_eisa.c 
+linux/drivers/eisa/pci_eisa.c
+--- linux-2.6.17-rc2/drivers/eisa/pci_eisa.c    2006-03-20 
 06:53:29.000000000 +0100
-+++ linux/drivers/block/sx8.c   2006-04-24 14:29:09.000000000 +0200
-@@ -409,7 +409,7 @@
-  static void carm_remove_one (struct pci_dev *pdev);
-  static int carm_bdev_getgeo(struct block_device *bdev, struct 
-hd_geometry *geo);
++++ linux/drivers/eisa/pci_eisa.c       2006-04-24 14:39:20.000000000 +0200
+@@ -45,7 +45,7 @@
+         return 0;
+  }
 
--static struct pci_device_id carm_pci_tbl[] = {
-+static struct pci_device_id carm_pci_tbl[] __devinitdata = {
-         { PCI_VENDOR_ID_PROMISE, 0x8000, PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
-         { PCI_VENDOR_ID_PROMISE, 0x8002, PCI_ANY_ID, PCI_ANY_ID, 0, 0, },
-         { }     /* terminate list */
+-static struct pci_device_id pci_eisa_pci_tbl[] = {
++static struct pci_device_id pci_eisa_pci_tbl[] __devinitdata = {
+         { PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
+           PCI_CLASS_BRIDGE_EISA << 8, 0xffff00, 0 },
+         { 0, }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
