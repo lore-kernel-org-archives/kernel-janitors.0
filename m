@@ -1,105 +1,119 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Wed, 12 Apr 2006 14:58:37 +0000
-Subject: [KJ] [Patch] cleanup inode->r_dev usage in arch/mips
-Message-Id: <1144853917.7840.12.camel@alice>
+From: "Agneta Saulter" <saulter@gfainc.com>
+Date: Mon, 24 Apr 2006 15:10:20 +0000
+Subject: [KJ] Re: PHARqgtMACY
+Message-Id: <000001c667b1$33bc0430$d808a8c0@vov72>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============95994116128662599=="
+Content-Type: multipart/mixed; boundary="===============30687441645479319=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1144790741.13849.2.camel@alice>
-In-Reply-To: <1144790741.13849.2.camel@alice>
 To: kernel-janitors@vger.kernel.org
 
---===============95994116128662599==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+This is a multi-part message in MIME format...
 
-hi, 
+--===============30687441645479319==
+Content-Type: multipart/alternative;
+    boundary="----------=_1145891467-17432-261"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-imajor()/iminor() should be used instead of accessing r_dev
-directly. This patch cleans up arch/mips
+This is a multi-part message in MIME format...
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+------------=_1145891467-17432-261
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---- linux-2.6.17-rc1-git5/arch/mips/kernel/rtlx.c.orig	2006-04-12 13:47:29.000000000 +0200
-+++ linux-2.6.17-rc1-git5/arch/mips/kernel/rtlx.c	2006-04-12 13:48:31.000000000 +0200
-@@ -122,7 +122,7 @@ static int rtlx_open(struct inode *inode
- 	struct rtlx_channel *chan;
- 
- 	/* assume only 1 device at the mo. */
--	minor = MINOR(inode->i_rdev);
-+	minor = iminor(inode);
- 
- 	if (rtlx == NULL) {
- 		struct rtlx_info **p;
-@@ -151,7 +151,7 @@ static int rtlx_open(struct inode *inode
- 
- static int rtlx_release(struct inode *inode, struct file *filp)
- {
--	int minor = MINOR(inode->i_rdev);
-+	int minor = iminor(inode);
- 
- 	clear_bit(RTLX_STATE_OPENED, &rtlx->channel[minor].lx_state);
- 	smp_mb__after_clear_bit();
-@@ -165,7 +165,7 @@ static unsigned int rtlx_poll(struct fil
- 	unsigned int mask = 0;
- 	struct rtlx_channel *chan;
- 
--	minor = MINOR(file->f_dentry->d_inode->i_rdev);
-+	minor = iminor(file->f_dentry->d_inode);
- 	chan = &rtlx->channel[minor];
- 
- 	poll_wait(file, &channel_wqs[minor].rt_queue, wait);
-@@ -191,7 +191,7 @@ static ssize_t rtlx_read(struct file *fi
- 	struct rtlx_channel *lx;
- 	DECLARE_WAITQUEUE(wait, current);
- 
--	minor = MINOR(file->f_dentry->d_inode->i_rdev);
-+	minor = iminor(file->f_dentry->d_inode);
- 	lx = &rtlx->channel[minor];
- 
- 	/* data available? */
-@@ -251,7 +251,7 @@ static ssize_t rtlx_write(struct file *f
- 	size_t fl;
- 	DECLARE_WAITQUEUE(wait, current);
- 
--	minor = MINOR(file->f_dentry->d_inode->i_rdev);
-+	minor = iminor(file->f_dentry->d_inode);
- 	rt = &rtlx->channel[minor];
- 
- 	/* any space left... */
---- linux-2.6.17-rc1-git5/arch/mips/kernel/vpe.c.orig	2006-04-12 13:48:38.000000000 +0200
-+++ linux-2.6.17-rc1-git5/arch/mips/kernel/vpe.c	2006-04-12 13:49:11.000000000 +0200
-@@ -941,7 +941,7 @@ static int vpe_open(struct inode *inode,
- 	struct vpe *v;
- 
- 	/* assume only 1 device at the mo. */
--	if ((minor = MINOR(inode->i_rdev)) != 1) {
-+	if ((minor = iminor(inode)) != 1) {
- 		printk(KERN_WARNING "VPE: only vpe1 is supported\n");
- 		return -ENODEV;
- 	}
-@@ -995,7 +995,7 @@ static int vpe_release(struct inode *ino
- 	struct vpe *v;
- 	Elf_Ehdr *hdr;
- 
--	minor = MINOR(inode->i_rdev);
-+	minor = iminor(inode);
- 	if ((v = get_vpe(minor)) == NULL)
- 		return -ENODEV;
- 
-@@ -1028,7 +1028,7 @@ static ssize_t vpe_write(struct file *fi
- 	size_t ret = count;
- 	struct vpe *v;
- 
--	minor = MINOR(file->f_dentry->d_inode->i_rdev);
-+	minor = iminor(file->f_dentry->d_inode);
- 	if ((v = get_vpe(minor)) == NULL)
- 		return -ENODEV;
- 
+S b O b M c A o=20
+X z A c N u A b X d=20
+V m I m A e G j R n A o=20
+A a M f B b I w E m N d=20
+C g I b A t L f I d S x=20
+V t A a L t I d U m M r=20
+M q E e R s I s D h I n A s=20
+=20
+=20
+http://www.geocities.com/TigeDiodCornelreene/
+=20
+=20
+=20
+=20=20
+  _____=20=20
 
+was dictating a highly complex reply to the Justice Departments
+antitrust division when his very private telephone line rang; it rang
+only at his desk. He picked up the phone, pressed the green button and
+spoke rapidly. Hold on, he ordered, looking up at his secretary. Would
+you excuse me, please? Certainly, sir. The secretary got out of her
+chair, walked across
 
+------------=_1145891467-17432-261
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---===============95994116128662599==
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial> S <FONT face=3DArial size=3D2 color=3D#E6E726>b</F=
+ONT> O <FONT face=3DArial size=3D2 color=3D#E6E726>b</FONT> M <FONT face=3D=
+Arial size=3D2 color=3D#E6E726>c</FONT> A <FONT face=3DArial size=3D2 color=
+=3D#E6E726>o</FONT>  </FONT></DIV>
+<DIV><FONT face=3DArial> X <FONT face=3DArial size=3D2 color=3D#F0F615>z</F=
+ONT> A <FONT face=3DArial size=3D2 color=3D#F0F615>c</FONT> N <FONT face=3D=
+Arial size=3D2 color=3D#F0F615>u</FONT> A <FONT face=3DArial size=3D2 color=
+=3D#F0F615>b</FONT> X <FONT face=3DArial size=3D2 color=3D#F0F615>d</FONT> =
+ </FONT></DIV>
+<DIV><FONT face=3DArial> <STRONG> V <FONT face=3DArial size=3D2 color=3D#EB=
+EA27>m</FONT> I <FONT face=3DArial size=3D2 color=3D#EBEA27>m</FONT> A <FON=
+T face=3DArial size=3D2 color=3D#EBEA27>e</FONT> G <FONT face=3DArial size=
+=3D2 color=3D#EBEA27>j</FONT> R <FONT face=3DArial size=3D2 color=3D#EBEA27=
+>n</FONT> A <FONT face=3DArial size=3D2 color=3D#EBEA27>o</FONT>  </STRONG>=
+ </FONT></DIV>
+<DIV><FONT face=3DArial> A <FONT face=3DArial size=3D2 color=3D#F9E815>a</F=
+ONT> M <FONT face=3DArial size=3D2 color=3D#F9E815>f</FONT> B <FONT face=3D=
+Arial size=3D2 color=3D#F9E815>b</FONT> I <FONT face=3DArial size=3D2 color=
+=3D#F9E815>w</FONT> E <FONT face=3DArial size=3D2 color=3D#F9E815>m</FONT> =
+N <FONT face=3DArial size=3D2 color=3D#F9E815>d</FONT>  </FONT></DIV>
+<DIV><FONT face=3DArial> <STRONG> C <FONT face=3DArial size=3D2 color=3D#F2=
+F118>g</FONT> I <FONT face=3DArial size=3D2 color=3D#F2F118>b</FONT> A <FON=
+T face=3DArial size=3D2 color=3D#F2F118>t</FONT> L <FONT face=3DArial size=
+=3D2 color=3D#F2F118>f</FONT> I <FONT face=3DArial size=3D2 color=3D#F2F118=
+>d</FONT> S <FONT face=3DArial size=3D2 color=3D#F2F118>x</FONT>  </STRONG>=
+ </FONT></DIV>
+<DIV><FONT face=3DArial> <STRONG> V <FONT face=3DArial size=3D2 color=3D#F2=
+F420>t</FONT> A <FONT face=3DArial size=3D2 color=3D#F2F420>a</FONT> L <FON=
+T face=3DArial size=3D2 color=3D#F2F420>t</FONT> I <FONT face=3DArial size=
+=3D2 color=3D#F2F420>d</FONT> U <FONT face=3DArial size=3D2 color=3D#F2F420=
+>m</FONT> M <FONT face=3DArial size=3D2 color=3D#F2F420>r</FONT>  </STRONG>=
+ </FONT></DIV>
+<DIV><FONT face=3DArial> M <FONT face=3DArial size=3D2 color=3D#EAEC18>q</F=
+ONT> E <FONT face=3DArial size=3D2 color=3D#EAEC18>e</FONT> R <FONT face=3D=
+Arial size=3D2 color=3D#EAEC18>s</FONT> I <FONT face=3DArial size=3D2 color=
+=3D#EAEC18>s</FONT> D <FONT face=3DArial size=3D2 color=3D#EAEC18>h</FONT> =
+I <FONT face=3DArial size=3D2 color=3D#EAEC18>n</FONT> A <FONT face=3DArial=
+ size=3D2 color=3D#EAEC18>s</FONT>  </FONT></DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV><DIV><A href=3D"http://www.geocities.com/TigeDiodCornelree=
+ne/">http://www.geocities.com/TigeDiodCornelreene/</A></DIV>
+<DIV>&nbsp;</DIV><DIV>&nbsp;</DIV><DIV>&nbsp;</DIV>
+<DIV>&nbsp; <HR></DIV>
+<DIV><FONT face=3DArial size=3D2>was dictating a highly complex reply to th=
+e Justice Departments
+antitrust division when his very private telephone line rang; it rang
+only at his desk. He picked up the phone, pressed the green button and
+spoke rapidly. Hold on, he ordered, looking up at his secretary.
+Would you excuse me, please?
+   Certainly, sir. The secretary got out of her chair, walked across</FONT>=
+</DIV></BODY></HTML>
+------------=_1145891467-17432-261--
+
+--===============30687441645479319==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -110,4 +124,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============95994116128662599==--
+--===============30687441645479319==--
