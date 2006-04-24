@@ -1,7 +1,7 @@
 From: Henne <henne@nachtwindheim.de>
-Date: Mon, 24 Apr 2006 12:50:32 +0000
-Subject: [KJ] [PATCH] Marking the pci_device tables of hwmon-subsys as
-Message-Id: <444CC998.9080908@nachtwindheim.de>
+Date: Mon, 24 Apr 2006 14:45:37 +0000
+Subject: [KJ] [PATCH] Marking the pci_device table of w1-subsys as
+Message-Id: <444CE491.5050607@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <444CC1F5.7050906@nachtwindheim.de>
 In-Reply-To: <444CC1F5.7050906@nachtwindheim.de>
@@ -12,51 +12,25 @@ To: kernel-janitors@vger.kernel.org
 
 From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Marking the pci_device tables of hwmon-subsys as __devinitdata.
+Marking the pci_device table of w1-subsys as __devinitdata.
 Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
 ---
 
-diff -urN linux-2.6.17-rc2/drivers/hwmon/sis5595.c 
-linux/drivers/hwmon/sis5595.c
---- linux-2.6.17-rc2/drivers/hwmon/sis5595.c	2006-04-24 
-13:30:54.000000000 +0200
-+++ linux/drivers/hwmon/sis5595.c	2006-04-24 14:45:29.000000000 +0200
-@@ -713,7 +713,7 @@
-  	return data;
-  }
+diff -urN linux-2.6.17-rc2/drivers/w1/masters/matrox_w1.c 
+linux/drivers/w1/masters/matrox_w1.c
+--- linux-2.6.17-rc2/drivers/w1/masters/matrox_w1.c     2006-04-24 
+13:31:01.000000000 +0200
++++ linux/drivers/w1/masters/matrox_w1.c        2006-04-24 
+16:42:21.000000000 +0200
+@@ -43,7 +43,7 @@
+  MODULE_AUTHOR("Evgeniy Polyakov <johnpol@2ka.mipt.ru>");
+  MODULE_DESCRIPTION("Driver for transport(Dallas 1-wire prtocol) over 
+VGA DDC(matrox gpio).");
 
--static struct pci_device_id sis5595_pci_ids[] = {
-+static struct pci_device_id sis5595_pci_ids[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_503) },
-  	{ 0, }
-  };
-diff -urN linux-2.6.17-rc2/drivers/hwmon/via686a.c 
-linux/drivers/hwmon/via686a.c
---- linux-2.6.17-rc2/drivers/hwmon/via686a.c	2006-04-24 
-13:30:54.000000000 +0200
-+++ linux/drivers/hwmon/via686a.c	2006-04-24 14:46:10.000000000 +0200
-@@ -794,7 +794,7 @@
-  	return data;
-  }
-
--static struct pci_device_id via686a_pci_ids[] = {
-+static struct pci_device_id via686a_pci_ids[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C686_4) },
-  	{ 0, }
-  };
-diff -urN linux-2.6.17-rc2/drivers/hwmon/vt8231.c 
-linux/drivers/hwmon/vt8231.c
---- linux-2.6.17-rc2/drivers/hwmon/vt8231.c	2006-04-24 
-13:30:54.000000000 +0200
-+++ linux/drivers/hwmon/vt8231.c	2006-04-24 14:46:33.000000000 +0200
-@@ -593,7 +593,7 @@
-  	.detach_client	= vt8231_detach_client,
-  };
-
--static struct pci_device_id vt8231_pci_ids[] = {
-+static struct pci_device_id vt8231_pci_ids[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_8231_4) },
-  	{ 0, }
+-static struct pci_device_id matrox_w1_tbl[] = {
++static struct pci_device_id matrox_w1_tbl[] __devinitdata = {
+         { PCI_DEVICE(PCI_VENDOR_ID_MATROX, PCI_DEVICE_ID_MATROX_G400) },
+         { },
   };
 _______________________________________________
 Kernel-janitors mailing list
