@@ -1,7 +1,7 @@
 From: Henne <henne@nachtwindheim.de>
-Date: Mon, 24 Apr 2006 15:24:35 +0000
-Subject: [KJ] [PATCH] Marking the pci_device_id tables of the pcmcia-subsys
-Message-Id: <444CEDB3.10901@nachtwindheim.de>
+Date: Mon, 24 Apr 2006 15:36:21 +0000
+Subject: [KJ] [PATCH] Marking the pci_device_id tables of the pci-subsystem
+Message-Id: <444CF075.3050608@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <444CEB94.4010109@nachtwindheim.de>
 In-Reply-To: <444CEB94.4010109@nachtwindheim.de>
@@ -12,66 +12,73 @@ To: kernel-janitors@vger.kernel.org
 
 From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Marking the pci_device_id tables of the pcmcia-subsys as __devinitdata.
-Signed-off-by: Henrik kretzschmar <henne@nachtwindheim.de>
+Marking the pci_device_id tables of the pci-subsystem as __devinitdata.
+Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
 ---
+Maybe this patch is bogus, since these drivers can't be compiled without
+HOTPLUG_PCI with Kconfig. Decide yourself. :)
 
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/i82092.c 
-linux/drivers/pcmcia/i82092.c
---- linux-2.6.17-rc2/drivers/pcmcia/i82092.c	2006-04-24 
-13:31:00.000000000 +0200
-+++ linux/drivers/pcmcia/i82092.c	2006-04-24 17:20:26.000000000 +0200
-@@ -30,7 +30,7 @@
-  MODULE_LICENSE("GPL");
-
-  /* PCI core routines */
--static struct pci_device_id i82092aa_pci_ids[] = {
-+static struct pci_device_id i82092aa_pci_ids[] __devinitdata = {
-  	{
-  	      .vendor = PCI_VENDOR_ID_INTEL,
-  	      .device = PCI_DEVICE_ID_INTEL_82092AA_0,
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/pd6729.c 
-linux/drivers/pcmcia/pd6729.c
---- linux-2.6.17-rc2/drivers/pcmcia/pd6729.c	2006-04-24 
-13:31:00.000000000 +0200
-+++ linux/drivers/pcmcia/pd6729.c	2006-04-24 17:20:43.000000000 +0200
-@@ -764,7 +764,7 @@
-  	return pcmcia_socket_dev_resume(&dev->dev);
+diff -urN linux-2.6.17-rc2/drivers/pci/hotplug/cpcihp_zt5550.c 
+linux/drivers/pci/hotplug/cpcihp_zt5550.c
+--- linux-2.6.17-rc2/drivers/pci/hotplug/cpcihp_zt5550.c	2006-03-20 
+06:53:29.000000000 +0100
++++ linux/drivers/pci/hotplug/cpcihp_zt5550.c	2006-04-24 
+17:26:02.000000000 +0200
+@@ -279,7 +279,7 @@
   }
 
--static struct pci_device_id pd6729_pci_ids[] = {
-+static struct pci_device_id pd6729_pci_ids[] __devinitdata = {
-  	{
-  		.vendor		= PCI_VENDOR_ID_CIRRUS,
-  		.device		= PCI_DEVICE_ID_CIRRUS_6729,
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/ti113x.h 
-linux/drivers/pcmcia/ti113x.h
---- linux-2.6.17-rc2/drivers/pcmcia/ti113x.h	2006-04-24 
+
+-static struct pci_device_id zt5550_hc_pci_tbl[] = {
++static struct pci_device_id zt5550_hc_pci_tbl[] __devinitdata = {
+  	{ PCI_VENDOR_ID_ZIATECH, PCI_DEVICE_ID_ZIATECH_5550_HC, PCI_ANY_ID, 
+PCI_ANY_ID, },
+  	{ 0, }
+  };
+diff -urN linux-2.6.17-rc2/drivers/pci/hotplug/cpqphp_core.c 
+linux/drivers/pci/hotplug/cpqphp_core.c
+--- linux-2.6.17-rc2/drivers/pci/hotplug/cpqphp_core.c	2006-04-24 
 13:31:00.000000000 +0200
-+++ linux/drivers/pcmcia/ti113x.h	2006-04-24 17:21:15.000000000 +0200
-@@ -889,7 +889,7 @@
-  		.subdevice	= _subdev,			\
-  		.driver_data	= ((mask) << 8 | (bits)),	\
-  	}
--static struct pci_device_id ene_tune_tbl[] = {
-+static struct pci_device_id ene_tune_tbl[] __devinitdata = {
-  	/* Echo Audio products based on motorola DSP56301 and DSP56361 */
-  	DEVID(PCI_VENDOR_ID_MOTOROLA, 0x1801, 0xECC0, PCI_ANY_ID,
-  		ENE_TEST_C9_TLTENABLE | ENE_TEST_C9_PFENABLE, ENE_TEST_C9_TLTENABLE),
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/yenta_socket.c 
-linux/drivers/pcmcia/yenta_socket.c
---- linux-2.6.17-rc2/drivers/pcmcia/yenta_socket.c	2006-03-20 
-06:53:29.000000000 +0100
-+++ linux/drivers/pcmcia/yenta_socket.c	2006-04-24 17:21:53.000000000 +0200
-@@ -1195,7 +1195,7 @@
-  		.driver_data	= CARDBUS_TYPE_##type,	\
-  	}
++++ linux/drivers/pci/hotplug/cpqphp_core.c	2006-04-24 
+17:26:33.000000000 +0200
+@@ -1477,7 +1477,7 @@
 
--static struct pci_device_id yenta_table [] = {
-+static struct pci_device_id yenta_table[] __devinitdata = {
-  	CB_ID(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_1031, TI),
 
-  	/*
+
+-static struct pci_device_id hpcd_pci_tbl[] = {
++static struct pci_device_id hpcd_pci_tbl[] __devinitdata = {
+  	{
+  	/* handle any PCI Hotplug controller */
+  	.class =        ((PCI_CLASS_SYSTEM_PCI_HOTPLUG << 8) | 0x00),
+diff -urN linux-2.6.17-rc2/drivers/pci/hotplug/ibmphp_ebda.c 
+linux/drivers/pci/hotplug/ibmphp_ebda.c
+--- linux-2.6.17-rc2/drivers/pci/hotplug/ibmphp_ebda.c	2006-04-24 
+13:31:00.000000000 +0200
++++ linux/drivers/pci/hotplug/ibmphp_ebda.c	2006-04-24 
+17:28:40.000000000 +0200
+@@ -1189,7 +1189,7 @@
+  	}
+  }
+
+-static struct pci_device_id id_table[] = {
++static struct pci_device_id id_table[] __devinitdata = {
+  	{
+  		.vendor		= PCI_VENDOR_ID_IBM,
+  		.device		= HPC_DEVICE_ID,
+diff -urN linux-2.6.17-rc2/drivers/pci/hotplug/shpchp_core.c 
+linux/drivers/pci/hotplug/shpchp_core.c
+--- linux-2.6.17-rc2/drivers/pci/hotplug/shpchp_core.c	2006-04-24 
+13:31:00.000000000 +0200
++++ linux/drivers/pci/hotplug/shpchp_core.c	2006-04-24 
+17:29:05.000000000 +0200
+@@ -470,7 +470,7 @@
+  	kfree(ctrl);
+  }
+
+-static struct pci_device_id shpcd_pci_tbl[] = {
++static struct pci_device_id shpcd_pci_tbl[] __devinitdata = {
+  	{PCI_DEVICE_CLASS(((PCI_CLASS_BRIDGE_PCI << 8) | 0x00), ~0)},
+  	{ /* end: all zeroes */ }
+  };
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
