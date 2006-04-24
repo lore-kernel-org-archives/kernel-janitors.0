@@ -1,8 +1,10 @@
 From: Henne <henne@nachtwindheim.de>
-Date: Mon, 24 Apr 2006 15:15:32 +0000
-Subject: [KJ] [PATCH] Marking the pci_device_id tables of the serial-subsys
-Message-Id: <444CEB94.4010109@nachtwindheim.de>
+Date: Mon, 24 Apr 2006 15:24:35 +0000
+Subject: [KJ] [PATCH] Marking the pci_device_id tables of the pcmcia-subsys
+Message-Id: <444CEDB3.10901@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <444CEB94.4010109@nachtwindheim.de>
+In-Reply-To: <444CEB94.4010109@nachtwindheim.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,53 +12,66 @@ To: kernel-janitors@vger.kernel.org
 
 From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Marking the pci_device_id tables of the serial-subsys as __devinitdata.
-Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
+Marking the pci_device_id tables of the pcmcia-subsys as __devinitdata.
+Signed-off-by: Henrik kretzschmar <henne@nachtwindheim.de>
 ---
 
-diff -urN linux-2.6.17-rc2/drivers/serial/8250_pci.c 
-linux/drivers/serial/8250_pci.c
---- linux-2.6.17-rc2/drivers/serial/8250_pci.c	2006-03-20 
+diff -urN linux-2.6.17-rc2/drivers/pcmcia/i82092.c 
+linux/drivers/pcmcia/i82092.c
+--- linux-2.6.17-rc2/drivers/pcmcia/i82092.c	2006-04-24 
+13:31:00.000000000 +0200
++++ linux/drivers/pcmcia/i82092.c	2006-04-24 17:20:26.000000000 +0200
+@@ -30,7 +30,7 @@
+  MODULE_LICENSE("GPL");
+
+  /* PCI core routines */
+-static struct pci_device_id i82092aa_pci_ids[] = {
++static struct pci_device_id i82092aa_pci_ids[] __devinitdata = {
+  	{
+  	      .vendor = PCI_VENDOR_ID_INTEL,
+  	      .device = PCI_DEVICE_ID_INTEL_82092AA_0,
+diff -urN linux-2.6.17-rc2/drivers/pcmcia/pd6729.c 
+linux/drivers/pcmcia/pd6729.c
+--- linux-2.6.17-rc2/drivers/pcmcia/pd6729.c	2006-04-24 
+13:31:00.000000000 +0200
++++ linux/drivers/pcmcia/pd6729.c	2006-04-24 17:20:43.000000000 +0200
+@@ -764,7 +764,7 @@
+  	return pcmcia_socket_dev_resume(&dev->dev);
+  }
+
+-static struct pci_device_id pd6729_pci_ids[] = {
++static struct pci_device_id pd6729_pci_ids[] __devinitdata = {
+  	{
+  		.vendor		= PCI_VENDOR_ID_CIRRUS,
+  		.device		= PCI_DEVICE_ID_CIRRUS_6729,
+diff -urN linux-2.6.17-rc2/drivers/pcmcia/ti113x.h 
+linux/drivers/pcmcia/ti113x.h
+--- linux-2.6.17-rc2/drivers/pcmcia/ti113x.h	2006-04-24 
+13:31:00.000000000 +0200
++++ linux/drivers/pcmcia/ti113x.h	2006-04-24 17:21:15.000000000 +0200
+@@ -889,7 +889,7 @@
+  		.subdevice	= _subdev,			\
+  		.driver_data	= ((mask) << 8 | (bits)),	\
+  	}
+-static struct pci_device_id ene_tune_tbl[] = {
++static struct pci_device_id ene_tune_tbl[] __devinitdata = {
+  	/* Echo Audio products based on motorola DSP56301 and DSP56361 */
+  	DEVID(PCI_VENDOR_ID_MOTOROLA, 0x1801, 0xECC0, PCI_ANY_ID,
+  		ENE_TEST_C9_TLTENABLE | ENE_TEST_C9_PFENABLE, ENE_TEST_C9_TLTENABLE),
+diff -urN linux-2.6.17-rc2/drivers/pcmcia/yenta_socket.c 
+linux/drivers/pcmcia/yenta_socket.c
+--- linux-2.6.17-rc2/drivers/pcmcia/yenta_socket.c	2006-03-20 
 06:53:29.000000000 +0100
-+++ linux/drivers/serial/8250_pci.c	2006-04-24 17:11:45.000000000 +0200
-@@ -1813,7 +1813,7 @@
-  	return 0;
-  }
++++ linux/drivers/pcmcia/yenta_socket.c	2006-04-24 17:21:53.000000000 +0200
+@@ -1195,7 +1195,7 @@
+  		.driver_data	= CARDBUS_TYPE_##type,	\
+  	}
 
--static struct pci_device_id serial_pci_tbl[] = {
-+static struct pci_device_id serial_pci_tbl[] __devinitdata = {
-  	{	PCI_VENDOR_ID_V3, PCI_DEVICE_ID_V3_V960,
-  		PCI_SUBVENDOR_ID_CONNECT_TECH,
-  		PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_232, 0, 0,
-diff -urN linux-2.6.17-rc2/drivers/serial/jsm/jsm_driver.c 
-linux/drivers/serial/jsm/jsm_driver.c
---- linux-2.6.17-rc2/drivers/serial/jsm/jsm_driver.c	2006-04-24 
-13:31:01.000000000 +0200
-+++ linux/drivers/serial/jsm/jsm_driver.c	2006-04-24 17:12:42.000000000 
-+0200
-@@ -205,7 +205,7 @@
-  	kfree(brd);
-  }
+-static struct pci_device_id yenta_table [] = {
++static struct pci_device_id yenta_table[] __devinitdata = {
+  	CB_ID(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_1031, TI),
 
--static struct pci_device_id jsm_pci_tbl[] = {
-+static struct pci_device_id jsm_pci_tbl[] __devinitdata = {
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_ID_NEO_2DB9), 0, 0, 0 },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_ID_NEO_2DB9PRI), 0, 0, 1 },
-  	{ PCI_DEVICE(PCI_VENDOR_ID_DIGI, PCI_DEVICE_ID_NEO_2RJ45), 0, 0, 2 },
-diff -urN linux-2.6.17-rc2/drivers/serial/serial_txx9.c 
-linux/drivers/serial/serial_txx9.c
---- linux-2.6.17-rc2/drivers/serial/serial_txx9.c	2006-04-24 
-13:31:01.000000000 +0200
-+++ linux/drivers/serial/serial_txx9.c	2006-04-24 17:12:16.000000000 +0200
-@@ -1149,7 +1149,7 @@
-  	return 0;
-  }
-
--static struct pci_device_id serial_txx9_pci_tbl[] = {
-+static struct pci_device_id serial_txx9_pci_tbl[] __devinitdata = {
-  	{	PCI_VENDOR_ID_TOSHIBA_2, PCI_DEVICE_ID_TOSHIBA_TC86C001_MISC,
-  		PCI_ANY_ID, PCI_ANY_ID,
-  		0, 0, 0 },
+  	/*
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
