@@ -1,43 +1,81 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Mon, 03 Apr 2006 13:42:28 +0000
-Subject: [Fwd: Re: [KJ][Patch] fix kbuild warning in sisfb.o]
-Message-Id: <1144071748.7790.18.camel@localhost.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============24216148785963165=="
+From: Henne <henne@nachtwindheim.de>
+Date: Tue, 25 Apr 2006 07:09:41 +0000
+Subject: [KJ] [PATCH] cleanup of PCIE-portbus driver
+Message-Id: <444DCB35.1060208@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1144013487.29888.11.camel@localhost.localdomain>
-In-Reply-To: <1144013487.29888.11.camel@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============24216148785963165==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Call off the search.
+Marking the pci_device_id table of portdrv_pci.c as __devinitdata and
+making save/resore_config() dependend to CONFIG_PM
+Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
+---
 
-I have got the info already.
-:)
+--- linux-2.6.17-rc2/drivers/pci/pcie/portdrv_pci.c	2006-04-24 
+13:31:00.000000000 +0200
++++ linux/drivers/pci/pcie/portdrv_pci.c	2006-04-25 09:04:42.000000000 +0200
+@@ -30,23 +30,6 @@
+  /* global data */
+  static const char device_name[] = "pcieport-driver";
 
-> From: Sam Ravnborg <sam@ravnborg.org>
+-static int pcie_portdrv_save_config(struct pci_dev *dev)
+-{
+-	return pci_save_state(dev);
+-}
+-
+-static int pcie_portdrv_restore_config(struct pci_dev *dev)
+-{
+-	int retval;
+-
+-	pci_restore_state(dev);
+-	retval = pci_enable_device(dev);
+-	if (retval)
+-		return retval;
+-	pci_set_master(dev);
+-	return 0;
+-}
+-
+  /*
+   * pcie_portdrv_probe - Probe PCI-Express port devices
+   * @dev: PCI-Express port device being probed
+@@ -86,6 +69,23 @@
+  }
 
-
-> running make allmodconfig; make should give you said warnings with
-> 2.6.17-rc1 - here the relevant modpost changes are included.
-> 
-> 	Sam
-
-Darren Jenkins
-
-
---===============24216148785963165==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+  #ifdef CONFIG_PM
++static int pcie_portdrv_save_config(struct pci_dev *dev)
++{
++	return pci_save_state(dev);
++}
++
++static int pcie_portdrv_restore_config(struct pci_dev *dev)
++{
++	int retval;
++
++	pci_restore_state(dev);
++	retval = pci_enable_device(dev);
++	if (retval)
++		return retval;
++	pci_set_master(dev);
++	return 0;
++}
++
+  static int pcie_portdrv_suspend (struct pci_dev *dev, pm_message_t state)
+  {
+  	int ret = pcie_port_device_suspend(dev, state);
+@@ -105,7 +105,7 @@
+  /*
+   * LINUX Device Driver Model
+   */
+-static const struct pci_device_id port_pci_ids[] = { {
++static const struct pci_device_id port_pci_ids[] __devinitdata = { {
+  	/* handle any PCI-Express port */
+  	PCI_DEVICE_CLASS(((PCI_CLASS_BRIDGE_PCI << 8) | 0x00), ~0),
+  	}, { /* end: all zeroes */ }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============24216148785963165==--
