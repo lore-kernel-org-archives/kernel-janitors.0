@@ -1,51 +1,57 @@
-From: Patrick McHardy <kaber@trash.net>
-Date: Wed, 05 Apr 2006 22:00:04 +0000
-Subject: [KJ] Re: fix kbuild warning in iptable_nat.o
-Message-Id: <44343DE4.70500@trash.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============37415515752613615=="
+From: Henne <henne@nachtwindheim.de>
+Date: Tue, 25 Apr 2006 14:35:00 +0000
+Subject: [KJ] [PATCH] SN-subsys corrected patch
+Message-Id: <444E3394.805@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1143719875.8469.14.camel@localhost.localdomain>
-In-Reply-To: <1143719875.8469.14.camel@localhost.localdomain>
-To: Darren Jenkins <darrenrjenkins@gmail.com>
-Cc: kernel Janitors <kernel-janitors@lists.osdl.org>, "Randy.Dunlap" <rdunlap@xenotime.net>, netfilter-devel@lists.netfilter.org
-
---===============37415515752613615==
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
-
-Darren Jenkins\ wrote:
-> G'day list
-> 
-> There are a couple of Kbuild warnings in net/ipv4/netfilter/ that would
-> be nice to get rid of.
-> 
-> WARNING: net/ipv4/netfilter/ip_conntrack.o - Section mismatch: reference
-> to .init.text:ip_conntrack_init from .text between 'init_or_cleanup' (at
-> offset 0x7ea) and '__hash_conntrack'
-> WARNING: net/ipv4/netfilter/iptable_nat.o - Section mismatch: reference
-> to .init.text:ip_nat_rule_init from .text between 'init_or_cleanup' (at
-> offset 0x455) and 'nat_decode_session'
-> 
-> I have a patch for the 'iptable_nat.o' warning below, and I was just
-> wanting to check in and see if any of you netfilter guys had a problem
-> with this patch, or with me doing a similar patch for the
-> 'ip_canntrack.o' warning.
-> 
-> 
-> Any input would be welcome, thanks in advance :). 
-
-I have a patch queued that just splits the init/cleanup parts.
-
---===============37415515752613615==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
+Sorry,
+
+I made a little mistake. Please remove my old sn_patch and take this one instead.
+
+  From: Henrik Kretzschmar <henne@nachtwindheim.de>
+
+Marking the pci_driver_id tables of sn-subsystem as __devinitdata and
+removing a bogus __devinitdata from ioc4's pci_driver table.
+Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
+---
+I hope nobody found out what happened in this pci_driver case.
+
+diff -urN linux-2.6.17-rc2/drivers/sn/ioc3.c linux/drivers/sn/ioc3.c
+--- linux-2.6.17-rc2/drivers/sn/ioc3.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/sn/ioc3.c	2006-04-24 16:58:34.000000000 +0200
+@@ -800,7 +800,7 @@
+  	kfree(idd);
+  }
+
+-static struct pci_device_id ioc3_id_table[] = {
++static struct pci_device_id ioc3_id_table[] __devinitdata = {
+  	{PCI_VENDOR_ID_SGI, PCI_DEVICE_ID_SGI_IOC3, PCI_ANY_ID, PCI_ANY_ID},
+  	{0}
+  };
+diff -urN linux-2.6.17-rc2/drivers/sn/ioc4.c linux/drivers/sn/ioc4.c
+--- linux-2.6.17-rc2/drivers/sn/ioc4.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/sn/ioc4.c	2006-04-24 17:01:57.000000000 +0200
+@@ -378,13 +378,13 @@
+  	kfree(idd);
+  }
+
+-static struct pci_device_id ioc4_id_table[] = {
++static struct pci_device_id ioc4_id_table[] __devinitdata = {
+  	{PCI_VENDOR_ID_SGI, PCI_DEVICE_ID_SGI_IOC4, PCI_ANY_ID,
+  	 PCI_ANY_ID, 0x0b4000, 0xFFFFFF},
+  	{0}
+  };
+
+-static struct pci_driver __devinitdata ioc4_driver = {
++static struct pci_driver ioc4_driver __devinitdata = {
+  	.name = "IOC4",
+  	.id_table = ioc4_id_table,
+  	.probe = ioc4_probe,
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============37415515752613615==--
