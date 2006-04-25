@@ -1,7 +1,7 @@
 From: Henne <henne@nachtwindheim.de>
-Date: Tue, 25 Apr 2006 12:31:57 +0000
-Subject: [KJ] [PATCH] Marking the pci_device_id tables of the message-subsys
-Message-Id: <444E16BD.1030905@nachtwindheim.de>
+Date: Tue, 25 Apr 2006 12:49:43 +0000
+Subject: [KJ] [PATCH] Marking the pci_device_id tables od the isdn-subsys as
+Message-Id: <444E1AE7.3030403@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <444CEB94.4010109@nachtwindheim.de>
 In-Reply-To: <444CEB94.4010109@nachtwindheim.de>
@@ -12,58 +12,106 @@ To: kernel-janitors@vger.kernel.org
 
 From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Marking the pci_device_id tables of the message-subsys as __devinitdata.
+Marking the pci_device_id tables od the isdn-subsys as __devinitdata.
 Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
 ---
 
-diff -urN linux-2.6.17-rc2/drivers/message/fusion/mptfc.c linux/drivers/message/fusion/mptfc.c
---- linux-2.6.17-rc2/drivers/message/fusion/mptfc.c	2006-04-24 13:30:56.000000000 +0200
-+++ linux/drivers/message/fusion/mptfc.c	2006-04-25 14:28:03.000000000 +0200
-@@ -131,7 +131,7 @@
-   * Supported hardware
-   */
+diff -urN linux-2.6.17-rc2/drivers/isdn/hardware/avm/b1pci.c linux/drivers/isdn/hardware/avm/b1pci.c
+--- linux-2.6.17-rc2/drivers/isdn/hardware/avm/b1pci.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/isdn/hardware/avm/b1pci.c	2006-04-25 14:36:44.000000000 +0200
+@@ -32,7 +32,7 @@
 
--static struct pci_device_id mptfc_pci_table[] = {
-+static struct pci_device_id mptfc_pci_table[] __devinitdata = {
-  	{ PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_FC909,
-  		PCI_ANY_ID, PCI_ANY_ID },
-  	{ PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_FC919,
-diff -urN linux-2.6.17-rc2/drivers/message/fusion/mptsas.c linux/drivers/message/fusion/mptsas.c
---- linux-2.6.17-rc2/drivers/message/fusion/mptsas.c	2006-04-24 13:30:56.000000000 +0200
-+++ linux/drivers/message/fusion/mptsas.c	2006-04-25 14:28:31.000000000 +0200
-@@ -2292,7 +2292,7 @@
-  	mptscsih_remove(pdev);
-  }
+  /* ------------------------------------------------------------- */
 
--static struct pci_device_id mptsas_pci_table[] = {
-+static struct pci_device_id mptsas_pci_table[] __devinitdata = {
-  	{ PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1064,
-  		PCI_ANY_ID, PCI_ANY_ID },
-  	{ PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_SAS1066,
-diff -urN linux-2.6.17-rc2/drivers/message/fusion/mptspi.c linux/drivers/message/fusion/mptspi.c
---- linux-2.6.17-rc2/drivers/message/fusion/mptspi.c	2006-04-24 13:30:56.000000000 +0200
-+++ linux/drivers/message/fusion/mptspi.c	2006-04-25 14:29:22.000000000 +0200
-@@ -774,7 +774,7 @@
-   * Supported hardware
-   */
+-static struct pci_device_id b1pci_pci_tbl[] = {
++static struct pci_device_id b1pci_pci_tbl[] __devinitdata = {
+  	{ PCI_VENDOR_ID_AVM, PCI_DEVICE_ID_AVM_B1, PCI_ANY_ID, PCI_ANY_ID },
+  	{ }				/* Terminating entry */
+  };
+diff -urN linux-2.6.17-rc2/drivers/isdn/hardware/avm/c4.c linux/drivers/isdn/hardware/avm/c4.c
+--- linux-2.6.17-rc2/drivers/isdn/hardware/avm/c4.c	2006-04-24 13:30:55.000000000 +0200
++++ linux/drivers/isdn/hardware/avm/c4.c	2006-04-25 14:47:24.000000000 +0200
+@@ -40,7 +40,7 @@
 
--static struct pci_device_id mptspi_pci_table[] = {
-+static struct pci_device_id mptspi_pci_table[] __devinitdata = {
-  	{ PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_53C1030,
-  		PCI_ANY_ID, PCI_ANY_ID },
-  	{ PCI_VENDOR_ID_LSI_LOGIC, PCI_DEVICE_ID_LSI_1030_53C1035,
-diff -urN linux-2.6.17-rc2/drivers/message/i2o/pci.c linux/drivers/message/i2o/pci.c
---- linux-2.6.17-rc2/drivers/message/i2o/pci.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/message/i2o/pci.c	2006-04-25 14:27:03.000000000 +0200
-@@ -35,7 +35,7 @@
-  #define OSM_DESCRIPTION	"I2O-subsystem"
+  static int suppress_pollack;
 
-  /* PCI device id table for all I2O controllers */
--static struct pci_device_id __devinitdata i2o_pci_ids[] = {
-+static struct pci_device_id i2o_pci_ids[] __devinitdata = {
-  	{PCI_DEVICE_CLASS(PCI_CLASS_INTELLIGENT_I2O << 8, 0xffff00)},
-  	{PCI_DEVICE(PCI_VENDOR_ID_DPT, 0xa511)},
-  	{.vendor = PCI_VENDOR_ID_INTEL,.device = 0x1962,
+-static struct pci_device_id c4_pci_tbl[] = {
++static struct pci_device_id c4_pci_tbl[] __devinitdata = {
+  	{ PCI_VENDOR_ID_DEC, PCI_DEVICE_ID_DEC_21285, PCI_VENDOR_ID_AVM, PCI_DEVICE_ID_AVM_C4, 0, 0, (unsigned long)4 },
+  	{ PCI_VENDOR_ID_DEC, PCI_DEVICE_ID_DEC_21285, PCI_VENDOR_ID_AVM, PCI_DEVICE_ID_AVM_C2, 0, 0, (unsigned long)2 },
+  	{ }			/* Terminating entry */
+diff -urN linux-2.6.17-rc2/drivers/isdn/hardware/avm/t1pci.c linux/drivers/isdn/hardware/avm/t1pci.c
+--- linux-2.6.17-rc2/drivers/isdn/hardware/avm/t1pci.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/isdn/hardware/avm/t1pci.c	2006-04-25 14:37:39.000000000 +0200
+@@ -33,7 +33,7 @@
+  static char *revision = "$Revision: 1.1.2.2 $";
+  /* ------------------------------------------------------------- */
+
+-static struct pci_device_id t1pci_pci_tbl[] = {
++static struct pci_device_id t1pci_pci_tbl[] __devinitdata = {
+  	{ PCI_VENDOR_ID_AVM, PCI_DEVICE_ID_AVM_T1, PCI_ANY_ID, PCI_ANY_ID },
+  	{ }				/* Terminating entry */
+  };
+diff -urN linux-2.6.17-rc2/drivers/isdn/hardware/eicon/divasmain.c linux/drivers/isdn/hardware/eicon/divasmain.c
+--- linux-2.6.17-rc2/drivers/isdn/hardware/eicon/divasmain.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/isdn/hardware/eicon/divasmain.c	2006-04-25 14:39:19.000000000 +0200
+@@ -116,7 +116,7 @@
+  /*
+    This table should be sorted by PCI device ID
+    */
+-static struct pci_device_id divas_pci_tbl[] = {
++static struct pci_device_id divas_pci_tbl[] __devinitdata = {
+  /* Diva Server BRI-2M PCI 0xE010 */
+  	{PCI_VENDOR_ID_EICON, PCI_DEVICE_ID_EICON_MAESTRA,
+  	 PCI_ANY_ID, PCI_ANY_ID, 0, 0, CARDTYPE_MAESTRA_PCI},
+diff -urN linux-2.6.17-rc2/drivers/isdn/hisax/config.c linux/drivers/isdn/hisax/config.c
+--- linux-2.6.17-rc2/drivers/isdn/hisax/config.c	2006-04-24 13:30:55.000000000 +0200
++++ linux/drivers/isdn/hisax/config.c	2006-04-25 14:40:11.000000000 +0200
+@@ -1876,7 +1876,7 @@
+  #ifdef CONFIG_PCI
+  #include <linux/pci.h>
+
+-static struct pci_device_id hisax_pci_tbl[] __initdata = {
++static struct pci_device_id hisax_pci_tbl[] __devinitdata = {
+  #ifdef CONFIG_HISAX_FRITZPCI
+  	{PCI_VENDOR_ID_AVM,      PCI_DEVICE_ID_AVM_A1,           PCI_ANY_ID, PCI_ANY_ID},
+  #endif
+diff -urN linux-2.6.17-rc2/drivers/isdn/hisax/hfc4s8s_l1.c linux/drivers/isdn/hisax/hfc4s8s_l1.c
+--- linux-2.6.17-rc2/drivers/isdn/hisax/hfc4s8s_l1.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/isdn/hisax/hfc4s8s_l1.c	2006-04-25 14:40:45.000000000 +0200
+@@ -86,7 +86,7 @@
+  	char *device_name;
+  } hfc4s8s_param;
+
+-static struct pci_device_id hfc4s8s_ids[] = {
++static struct pci_device_id hfc4s8s_ids[] __devinitdata = {
+  	{.vendor = PCI_VENDOR_ID_CCD,
+  	 .device = PCI_DEVICE_ID_4S,
+  	 .subvendor = 0x1397,
+diff -urN linux-2.6.17-rc2/drivers/isdn/hisax/hisax_fcpcipnp.c linux/drivers/isdn/hisax/hisax_fcpcipnp.c
+--- linux-2.6.17-rc2/drivers/isdn/hisax/hisax_fcpcipnp.c	2006-04-24 13:30:55.000000000 +0200
++++ linux/drivers/isdn/hisax/hisax_fcpcipnp.c	2006-04-25 14:42:01.000000000 +0200
+@@ -51,7 +51,7 @@
+  MODULE_AUTHOR("Kai Germaschewski <kai.germaschewski@gmx.de>/Karsten Keil <kkeil@suse.de>");
+  MODULE_DESCRIPTION("AVM Fritz!PCI/PnP ISDN driver");
+
+-static struct pci_device_id fcpci_ids[] = {
++static struct pci_device_id fcpci_ids[] __devinitdata = {
+  	{ .vendor      = PCI_VENDOR_ID_AVM,
+  	  .device      = PCI_DEVICE_ID_AVM_A1,
+  	  .subvendor   = PCI_ANY_ID,
+diff -urN linux-2.6.17-rc2/drivers/isdn/hysdn/hysdn_init.c linux/drivers/isdn/hysdn/hysdn_init.c
+--- linux-2.6.17-rc2/drivers/isdn/hysdn/hysdn_init.c	2006-04-24 13:30:55.000000000 +0200
++++ linux/drivers/isdn/hysdn/hysdn_init.c	2006-04-25 14:42:48.000000000 +0200
+@@ -20,7 +20,7 @@
+
+  #include "hysdn_defs.h"
+
+-static struct pci_device_id hysdn_pci_tbl[] = {
++static struct pci_device_id hysdn_pci_tbl[] __devinitdata = {
+  	{PCI_VENDOR_ID_HYPERCOPE, PCI_DEVICE_ID_HYPERCOPE_PLX, PCI_ANY_ID, PCI_SUBDEVICE_ID_HYPERCOPE_METRO},
+  	{PCI_VENDOR_ID_HYPERCOPE, PCI_DEVICE_ID_HYPERCOPE_PLX, PCI_ANY_ID, PCI_SUBDEVICE_ID_HYPERCOPE_CHAMP2},
+  	{PCI_VENDOR_ID_HYPERCOPE, PCI_DEVICE_ID_HYPERCOPE_PLX, PCI_ANY_ID, PCI_SUBDEVICE_ID_HYPERCOPE_ERGO},
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
