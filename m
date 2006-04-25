@@ -1,66 +1,70 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Date: Sat, 01 Apr 2006 07:38:29 +0000
-Subject: Re: [KJ][Patch] fix kbuild warning in sisfb.o
-Message-Id: <20060401073829.GA14583@mars.ravnborg.org>
+From: Andreas Mohr <andi@rhlx01.fht-esslingen.de>
+Date: Tue, 25 Apr 2006 18:03:13 +0000
+Subject: [KJ] [PATCH] constify drivers/block/floppy.c (2.6.17-rc1-mm3)
+Message-Id: <20060425180313.GA7096@rhlx01.fht-esslingen.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============92656056298112532=="
+Content-Type: multipart/mixed; boundary="===============33099922621603128=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1143810678.7834.13.camel@localhost.localdomain>
-In-Reply-To: <1143810678.7834.13.camel@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
---===============92656056298112532==
+--===============33099922621603128==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Apr 01, 2006 at 01:12:13PM +1100, Darren Jenkins" wrote:
-> Sam
-> 
-> I don't know weather you are aware of this one yet, but we have just
-> found an issue where 'struct pci_device_id' should be marked
-> __devinitdata (see Documentation/pci.txt) as the pci code apparently
-> only uses it in the driver initialisation, but the 'struct pci_driver'
-> will still hold a pointer to it, giving a kbuild warning. See below.
-> This definitely looks like a false positive that should be removed.
+Hello all,
 
-Hi Darren.
-Following patch should fix it.
-It recognize that the variable is named *_driver, and in that case
-it will not warn about references to .init.data (+.init.text and
-.exit.text).
+constify the few floppy module variables that can be constified
+(see objdump -x floppy.ko).
 
-This is only compiletine tested since I'm a bit busy atm.
-Let me know if this solves it as expected and especially if it seems
-to silence warnings that is not false positives.
+Patch against 2.6.17-rc1-mm3.
 
-	Sam
+Signed-off-by: Andreas Mohr <andi@lisas.de>
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 0b92ddf..81448e5 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -492,7 +492,7 @@ static int strrcmp(const char *s, const 
-  *   These functions may often be marked __init and we do not want to
-  *   warn here.
-  *   the pattern is identified by:
-- *   tosec   = .init.text | .exit.text
-+ *   tosec   = .init.text | .exit.text | .init.data
-  *   fromsec = .data
-  *   atsym = *_driver, *_ops, *_probe, *probe_one
-  **/
-@@ -522,7 +522,8 @@ static int secref_whitelist(const char *
+Thanks!
+
+
+--- linux-2.6.17-rc1-mm3/drivers/block/floppy.c	2006-04-03 05:22:10.000000000 +0200
++++ linux-2.6.17-rc1-mm3/drivers/block/floppy.c.const	2006-04-25 19:57:40.000000000 +0200
+@@ -505,7 +505,7 @@
  
- 	/* Check for pattern 2 */
- 	if ((strcmp(tosec, ".init.text") != 0) &&
--	    (strcmp(tosec, ".exit.text") != 0))
-+	    (strcmp(tosec, ".exit.text") != 0) &&
-+	    (strcmp(tosec, ".init.data") != 0))
- 		f2 = 0;
- 	if (strcmp(fromsec, ".data") != 0)
- 		f2 = 0;
+ static sector_t floppy_sizes[256];
+ 
+-static char floppy_device_name[] = "floppy";
++static const char floppy_device_name[] = "floppy";
+ 
+ /*
+  * The driver is trying to determine the correct media format
+@@ -3954,7 +3954,7 @@
+ 	.media_changed	= check_floppy_change,
+ 	.revalidate_disk = floppy_revalidate,
+ };
+-static char *table[] = {
++static const char * const table[] = {
+ 	"", "d360", "h1200", "u360", "u720", "h360", "h720",
+ 	"u1440", "u2880", "CompaQ", "h1440", "u1680", "h410",
+ 	"u820", "h1476", "u1722", "h420", "u830", "h1494", "u1743",
+@@ -3962,11 +3962,11 @@
+ 	"u3200", "u3520", "u3840", "u1840", "u800", "u1600",
+ 	NULL
+ };
+-static int t360[] = { 1, 0 },
++static const int t360[] = { 1, 0 },
+ 	t1200[] = { 2, 5, 6, 10, 12, 14, 16, 18, 20, 23, 0 },
+ 	t3in[] = { 8, 9, 26, 27, 28, 7, 11, 15, 19, 24, 25, 29, 31, 3, 4, 13,
+ 			17, 21, 22, 30, 0 };
+-static int *table_sup[] =
++static const int * const table_sup[] =
+     { NULL, t360, t1200, t3in + 5 + 8, t3in + 5, t3in, t3in };
+ 
+ static void __init register_devfs_entries(int drive)
 
+-- 
+No programming skills!? Why not help translate many Linux applications! 
+https://launchpad.ubuntu.com/rosetta
+(or alternatively buy nicely packaged Linux distros/OSS software to help
+support Linux developers creating shiny new things for you?)
 
---===============92656056298112532==
+--===============33099922621603128==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +75,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============92656056298112532==--
+--===============33099922621603128==--
