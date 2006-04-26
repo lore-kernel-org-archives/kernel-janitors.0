@@ -1,72 +1,192 @@
-From: "Agatha Camp" <cuubzaakhqb@stanstad.com>
-Date: Wed, 12 Apr 2006 17:32:23 +0000
-Subject: [KJ] fire department
-Message-Id: <000f01c65e58$05d3afdb$8685d955@gz.qc>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============14629224044109024=="
+From: Henne <henne@nachtwindheim.de>
+Date: Wed, 26 Apr 2006 07:00:20 +0000
+Subject: [KJ] [PATCH] Cleanup of the i2c-subsys
+Message-Id: <444F1A84.900@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============14629224044109024==
-Content-Type: text/plain; format=flowed; charset="Windows-1252";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
+Form: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Wednesday, April 12, 2006
+Marking the pci_device tables of i2c-subsys as __devinit and
+removing a double MODULE_DEVICE_TABLE in i2c-prosavage.c
+Signed-off-by: <henne@nachtwindheim.de>
+---
 
-Bicoastal Communications, Inc.
-OTC: G.A.R.S
-Price: $.07
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-ali1535.c linux/drivers/i2c/busses/i2c-ali1535.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-ali1535.c	2006-04-24 13:30:54.000000000 +0200
++++ linux/drivers/i2c/busses/i2c-ali1535.c	2006-04-24 14:57:19.000000000 +0200
+@@ -479,7 +479,7 @@
+  	.algo		= &smbus_algorithm,
+  };
 
-HUGE PR Campaign Underway for Wednesday. Will it Gap up Big Wednesday 
-Morning? Do You Love to Trade Penny St0cks? You May Want to Jump 
-on Board!! The Alert is On! Good Luck! 
+-static struct pci_device_id ali1535_ids[] = {
++static struct pci_device_id ali1535_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AL, PCI_DEVICE_ID_AL_M7101) },
+  	{ },
+  };
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-ali1563.c linux/drivers/i2c/busses/i2c-ali1563.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-ali1563.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-ali1563.c	2006-04-24 14:57:48.000000000 +0200
+@@ -400,7 +400,7 @@
+  	ali1563_shutdown(dev);
+  }
 
-Recent News: Go Read the Full Stories, Do Your Due Diligence Now!
+-static struct pci_device_id __devinitdata ali1563_id_table[] = {
++static struct pci_device_id ali1563_id_table[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AL, PCI_DEVICE_ID_AL_M1563) },
+  	{},
+  };
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-ali15x3.c linux/drivers/i2c/busses/i2c-ali15x3.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-ali15x3.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-ali15x3.c	2006-04-24 14:58:22.000000000 +0200
+@@ -474,7 +474,7 @@
+  	.algo		= &smbus_algorithm,
+  };
 
-1)Bicoastal Communications, Inc. in Merger Negotiations 
-With VoIP Wireless Communications Company
+-static struct pci_device_id ali15x3_ids[] = {
++static struct pci_device_id ali15x3_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AL, PCI_DEVICE_ID_AL_M7101) },
+  	{ 0, }
+  };
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-amd756.c linux/drivers/i2c/busses/i2c-amd756.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-amd756.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-amd756.c	2006-04-24 14:59:34.000000000 +0200
+@@ -311,7 +311,7 @@
+  	"nVidia nForce", "AMD8111",
+  };
 
-2)Global Aerial Surveillance Changes Name 
-to Bicoastal Communications, Inc.
-
-3)Global Aerial Surveillance Acquires Cetlink of Nevada.
-
-______________
-
-Watch at The Open Wednesday!
-______________
-
-
-Information within this report contains fo rward looking state ments 
-within the meaning of Sect ion 27A of the Sec urities Act of 19 33 and 
-Sec tion 21B of the S E C Act of 1934. Stateme nts that involve 
-discussions with respect to proj ections of future events are not 
-statements of histo rical fact and may be f0rward lo0king st atements. 
-Don't rely on them to make a decision. The Company isnot a reporting 
-co mpany registered under the Exchange Act of 1934. We have received 
-five hundred thousand free trading shares from a third party not an 
-officer, director or affiliate shareholder. We intend to sell all our 
-shares now, which could cause the st0ck to go down, resulting in losses 
-for you. This company has: a nominal cash position and the publicly 
-available float of stock is currently increasing which is dilutive 
-to you. It is an operating company.The merger mentioned above may 
-not become definitive and may not happen. The company is going to 
-need financing to  continue as a going concern. A failure to finance 
-could cause the company to go out of business. This report shall not 
-be construed as any kind of inves tment advice or solicitation. 
-You can lose all your m0ney by investing in this st0ck.
+-static struct pci_device_id amd756_ids[] = {
++static struct pci_device_id amd756_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_VIPER_740B),
+  	  .driver_data = AMD756 },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_VIPER_7413),
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-amd8111.c linux/drivers/i2c/busses/i2c-amd8111.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-amd8111.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-amd8111.c	2006-04-24 15:00:13.000000000 +0200
+@@ -322,7 +322,7 @@
+  };
 
 
---===============14629224044109024==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+-static struct pci_device_id amd8111_ids[] = {
++static struct pci_device_id amd8111_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_8111_SMBUS2) },
+  	{ 0, }
+  };
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-hydra.c linux/drivers/i2c/busses/i2c-hydra.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-hydra.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-hydra.c	2006-04-24 15:00:50.000000000 +0200
+@@ -110,7 +110,7 @@
+  	.algo_data	= &hydra_bit_data,
+  };
 
+-static struct pci_device_id hydra_ids[] = {
++static struct pci_device_id hydra_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, PCI_DEVICE_ID_APPLE_HYDRA) },
+  	{ 0, }
+  };
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-i801.c linux/drivers/i2c/busses/i2c-i801.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-i801.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-i801.c	2006-04-24 15:02:31.000000000 +0200
+@@ -517,7 +517,7 @@
+  	.algo		= &smbus_algorithm,
+  };
+
+-static struct pci_device_id i801_ids[] = {
++static struct pci_device_id i801_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AA_3) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801AB_3) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82801BA_2) },
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-nforce2.c linux/drivers/i2c/busses/i2c-nforce2.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-nforce2.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-nforce2.c	2006-04-24 15:03:00.000000000 +0200
+@@ -252,7 +252,7 @@
+  }
+
+
+-static struct pci_device_id nforce2_ids[] = {
++static struct pci_device_id nforce2_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_NFORCE2_SMBUS) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_NFORCE2S_SMBUS) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NVIDIA, PCI_DEVICE_ID_NVIDIA_NFORCE3_SMBUS) },
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-piix4.c linux/drivers/i2c/busses/i2c-piix4.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-piix4.c	2006-04-24 13:30:54.000000000 +0200
++++ linux/drivers/i2c/busses/i2c-piix4.c	2006-04-24 15:03:27.000000000 +0200
+@@ -410,7 +410,7 @@
+  	.algo		= &smbus_algorithm,
+  };
+
+-static struct pci_device_id piix4_ids[] = {
++static struct pci_device_id piix4_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_82371AB_3),
+  	  .driver_data = 3 },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_SERVERWORKS, PCI_DEVICE_ID_SERVERWORKS_OSB4),
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-prosavage.c linux/drivers/i2c/busses/i2c-prosavage.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-prosavage.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-prosavage.c	2006-04-24 15:04:45.000000000 +0200
+@@ -292,7 +292,7 @@
+  /*
+   * Data for PCI driver interface
+   */
+-static struct pci_device_id prosavage_pci_tbl[] = {
++static struct pci_device_id prosavage_pci_tbl[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_S3, PCI_DEVICE_ID_S3_SAVAGE4) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_S3, PCI_DEVICE_ID_S3_PROSAVAGE8) },
+  	{ 0, },
+@@ -317,7 +317,6 @@
+  	pci_unregister_driver(&prosavage_driver);
+  }
+
+-MODULE_DEVICE_TABLE(pci, prosavage_pci_tbl);
+  MODULE_AUTHOR("Henk Vergonet");
+  MODULE_DESCRIPTION("ProSavage VIA 8365/8375 smbus driver");
+  MODULE_LICENSE("GPL");
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-sis96x.c linux/drivers/i2c/busses/i2c-sis96x.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-sis96x.c	2006-04-24 13:30:54.000000000 +0200
++++ linux/drivers/i2c/busses/i2c-sis96x.c	2006-04-24 15:05:32.000000000 +0200
+@@ -253,7 +253,7 @@
+  	.algo		= &smbus_algorithm,
+  };
+
+-static struct pci_device_id sis96x_ids[] = {
++static struct pci_device_id sis96x_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_SI, PCI_DEVICE_ID_SI_SMBUS) },
+  	{ 0, }
+  };
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/i2c-viapro.c linux/drivers/i2c/busses/i2c-viapro.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/i2c-viapro.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/drivers/i2c/busses/i2c-viapro.c	2006-04-24 15:06:08.000000000 +0200
+@@ -417,7 +417,7 @@
+  	return error;
+  }
+
+-static struct pci_device_id vt596_ids[] = {
++static struct pci_device_id vt596_ids[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C596_3),
+  	  .driver_data = SMBBA1 },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C596B_3),
+diff -urN linux-2.6.17-rc2/drivers/i2c/busses/scx200_acb.c linux/drivers/i2c/busses/scx200_acb.c
+--- linux-2.6.17-rc2/drivers/i2c/busses/scx200_acb.c	2006-04-24 13:30:54.000000000 +0200
++++ linux/drivers/i2c/busses/scx200_acb.c	2006-04-24 15:09:28.000000000 +0200
+@@ -474,13 +474,13 @@
+  	return rc;
+  }
+
+-static struct pci_device_id scx200[] = {
++static struct pci_device_id scx200[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_SCx200_BRIDGE) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_SC1100_BRIDGE) },
+  	{ },
+  };
+
+-static struct pci_device_id divil_pci[] = {
++static struct pci_device_id divil_pci[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NS,  PCI_DEVICE_ID_NS_CS5535_ISA) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CS5536_ISA) },
+  	{ } /* NULL entry */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============14629224044109024==--
