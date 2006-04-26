@@ -1,43 +1,55 @@
-From: Anne Thrax <foobarfoobarfoobar@gmail.com>
-Date: Mon, 24 Apr 2006 21:29:31 +0000
-Subject: [KJ] [PATCH] net/ipv4/netfilter/ip_nat_standalone.c 2.6.17-rc2-git5
-Message-Id: <444D433B.5010505@gmail.com>
+From: Henne <henne@nachtwindheim.de>
+Date: Wed, 26 Apr 2006 12:34:21 +0000
+Subject: [KJ] [PATCH] Marking pci_device_id tables in arch/i386 as
+Message-Id: <444F68CD.2090200@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Don't declare some variables if CONFIG_XFRM isn't defined. If 
-CONFIG_XFRM isn't defined, they arent' used.
+From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
---- 
-/usr/src/linux-2.6.17-rc2-git5-orig/net/ipv4/netfilter/ip_nat_standalone.c  
-2006-04-23 16:47:53.000000000 -0500
-+++ 
-/usr/src/linux-2.6.17-rc2-git5/net/ipv4/netfilter/ip_nat_standalone.c       
-2006-04-24 16:24:56.000000000 -0500
-@@ -219,8 +219,6 @@
-           const struct net_device *out,
-           int (*okfn)(struct sk_buff *))
- {
--       struct ip_conntrack *ct;
--       enum ip_conntrack_info ctinfo;
-        unsigned int ret;
+Marking pci_device_id tables in arch/i386 as __devinitdata.
+Singed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
+---
 
-        /* root is playing with raw sockets. */
-@@ -230,6 +228,10 @@
+diff -ruN linux-2.6.17-rc2/arch/i386/kernel/cpu/cpufreq/gx-suspmod.c linux/arch/i386/kernel/cpu/cpufreq/gx-suspmod.c
+--- linux-2.6.17-rc2/arch/i386/kernel/cpu/cpufreq/gx-suspmod.c	2006-04-24 13:30:51.000000000 +0200
++++ linux/arch/i386/kernel/cpu/cpufreq/gx-suspmod.c	2006-04-26 14:29:00.000000000 +0200
+@@ -166,7 +166,7 @@
+  /****************************************************************
+   *	Low Level chipset interface				*
+   ****************************************************************/
+-static struct pci_device_id gx_chipset_tbl[] __initdata = {
++static struct pci_device_id gx_chipset_tbl[] __devinitdata = {
+  	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5530_LEGACY, PCI_ANY_ID, PCI_ANY_ID },
+  	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520, PCI_ANY_ID, PCI_ANY_ID },
+  	{ PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510, PCI_ANY_ID, PCI_ANY_ID },
+diff -ruN linux-2.6.17-rc2/arch/i386/kernel/cpu/cyrix.c linux/arch/i386/kernel/cpu/cyrix.c
+--- linux-2.6.17-rc2/arch/i386/kernel/cpu/cyrix.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/arch/i386/kernel/cpu/cyrix.c	2006-04-26 14:28:04.000000000 +0200
+@@ -184,7 +184,7 @@
 
-        ret = ip_nat_fn(hooknum, pskb, in, out, okfn);
- #ifdef CONFIG_XFRM
-+
-+       struct ip_conntrack *ct;
-+       enum ip_conntrack_info ctinfo;
-+
-        if (ret != NF_DROP && ret != NF_STOLEN
-            && (ct = ip_conntrack_get(*pskb, &ctinfo)) != NULL) {
-                enum ip_conntrack_dir dir = CTINFO2DIR(ctinfo);
 
+  #ifdef CONFIG_PCI
+-static struct pci_device_id cyrix_55x0[] = {
++static struct pci_device_id cyrix_55x0[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5510) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_CYRIX, PCI_DEVICE_ID_CYRIX_5520) },
+  	{ },
+diff -ruN linux-2.6.17-rc2/arch/i386/kernel/scx200.c linux/arch/i386/kernel/scx200.c
+--- linux-2.6.17-rc2/arch/i386/kernel/scx200.c	2006-03-20 06:53:29.000000000 +0100
++++ linux/arch/i386/kernel/scx200.c	2006-04-26 14:27:07.000000000 +0200
+@@ -28,7 +28,7 @@
+
+  unsigned scx200_cb_base = 0;
+
+-static struct pci_device_id scx200_tbl[] = {
++static struct pci_device_id scx200_tbl[] __devinitdata = {
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_SCx200_BRIDGE) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_SC1100_BRIDGE) },
+  	{ PCI_DEVICE(PCI_VENDOR_ID_NS, PCI_DEVICE_ID_NS_SCx200_XBUS)   },
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
