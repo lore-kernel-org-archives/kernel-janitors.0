@@ -1,98 +1,80 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Sat, 01 Apr 2006 04:28:04 +0000
-Subject: [KJ][Patch] fix kbuild warnings in savagefb.o
-Message-Id: <1143865685.7835.32.camel@localhost.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============69386933194500156=="
+From: Henne <henne@nachtwindheim.de>
+Date: Wed, 26 Apr 2006 06:52:53 +0000
+Subject: [KJ] [PATCH] __devinitdata to usb-subsys
+Message-Id: <444F18C5.7060606@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============69386933194500156==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-G'day list
+Marking the pci_device_id tables of the usb-subsys as __devinitdata.
+Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
+---
 
+diff -urN linux-2.6.17-rc2/drivers/usb/gadget/goku_udc.c linux/drivers/usb/gadget/goku_udc.c
+--- linux-2.6.17-rc2/drivers/usb/gadget/goku_udc.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/usb/gadget/goku_udc.c	2006-04-24 16:53:23.000000000 +0200
+@@ -1954,7 +1954,7 @@
 
-There are a few kbuild warnings in drivers/video/savage/
+  /*-------------------------------------------------------------------------*/
 
+-static struct pci_device_id pci_ids [] = { {
++static struct pci_device_id pci_ids[] __devinitdata = { {
+  	.class = 	((PCI_CLASS_SERIAL_USB << 8) | 0xfe),
+  	.class_mask = 	~0,
+  	.vendor =	0x102f,		/* Toshiba */
+diff -urN linux-2.6.17-rc2/drivers/usb/gadget/net2280.c linux/drivers/usb/gadget/net2280.c
+--- linux-2.6.17-rc2/drivers/usb/gadget/net2280.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/usb/gadget/net2280.c	2006-04-24 16:53:12.000000000 +0200
+@@ -2974,7 +2974,7 @@
 
-WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference
-to .init.data:savagefb_devices from .data between 'savagefb_driver' (at
-offset 0x38) and 'savagefb_ops'
+  /*-------------------------------------------------------------------------*/
 
+-static struct pci_device_id pci_ids [] = { {
++static struct pci_device_id pci_ids[] __devinitdata = { {
+  	.class = 	((PCI_CLASS_SERIAL_USB << 8) | 0xfe),
+  	.class_mask = 	~0,
+  	.vendor =	0x17cc,
+diff -urN linux-2.6.17-rc2/drivers/usb/host/ehci-pci.c linux/drivers/usb/host/ehci-pci.c
+--- linux-2.6.17-rc2/drivers/usb/host/ehci-pci.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/usb/host/ehci-pci.c	2006-04-26 08:49:39.000000000 +0200
+@@ -348,7 +348,7 @@
+  /*-------------------------------------------------------------------------*/
 
-This one is the same false positive for the pci device id as before.
-
-
-
-WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference
-to .init.text: from .exit.text after 'savagefb_remove' (at offset 0x6e)
-WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference
-to .init.text: from .exit.text after 'savagefb_remove' (at offset 0x66)
-
-
-These two are caused by savagefb_remove() which is marked __devexit
-calling savage_unmap_mmio() and savage_unmap_video() which are marked as
-__devinit.
-
-
-
-WARNING: drivers/video/savage/savagefb.o - Section mismatch: reference
-to .init.text: from .text between 'savagefb_resume' (at offset 0x232b)
-and 'savage4_gpio_getscl'
-
-
-This one is caused by savagefb_resume() which is  un-annotated calling
-savage_init_hw() which is marked as __devinit.
-
-The patch below removes the __devinit annotations in all three cases.
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
-
-
-
---- linux-2.6.16-git13/drivers/video/savage/savagefb_driver.c.orig	2006-04-01 14:12:39.000000000 +1100
-+++ linux-2.6.16-git13/drivers/video/savage/savagefb_driver.c	2006-04-01 14:41:24.000000000 +1100
-@@ -1545,7 +1545,7 @@ static int __devinit savage_map_mmio (st
- 	return 0;
- }
- 
--static void __devinit savage_unmap_mmio (struct fb_info *info)
-+static void savage_unmap_mmio (struct fb_info *info)
- {
- 	struct savagefb_par *par = info->par;
- 	DBG ("savage_unmap_mmio");
-@@ -1597,7 +1597,7 @@ static int __devinit savage_map_video (s
- 	return 0;
- }
- 
--static void __devinit savage_unmap_video (struct fb_info *info)
-+static void savage_unmap_video (struct fb_info *info)
- {
- 	struct savagefb_par *par = info->par;
- 
-@@ -1614,7 +1614,7 @@ static void __devinit savage_unmap_video
- 	}
- }
- 
--static int __devinit savage_init_hw (struct savagefb_par *par)
-+static int savage_init_hw (struct savagefb_par *par)
- {
- 	unsigned char config1, m, n, n1, n2, sr8, cr3f, cr66 = 0, tmp;
- 
+  /* PCI driver selection metadata; PCI hotplugging uses this */
+-static const struct pci_device_id pci_ids [] = { {
++static const struct pci_device_id pci_ids[] __devinitdata = { {
+  	/* handle any USB 2.0 EHCI controller */
+  	PCI_DEVICE_CLASS(((PCI_CLASS_SERIAL_USB << 8) | 0x20), ~0),
+  	.driver_data =	(unsigned long) &ehci_pci_hc_driver,
+diff -urN linux-2.6.17-rc2/drivers/usb/host/ohci-pci.c linux/drivers/usb/host/ohci-pci.c
+--- linux-2.6.17-rc2/drivers/usb/host/ohci-pci.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/usb/host/ohci-pci.c	2006-04-26 08:44:48.000000000 +0200
+@@ -204,7 +204,7 @@
+  /*-------------------------------------------------------------------------*/
 
 
+-static const struct pci_device_id pci_ids [] = { {
++static const struct pci_device_id pci_ids[] __devinitdata = { {
+  	/* handle any USB OHCI controller */
+  	PCI_DEVICE_CLASS((PCI_CLASS_SERIAL_USB << 8) | 0x10, ~0),
+  	.driver_data =	(unsigned long) &ohci_pci_hc_driver,
+diff -urN linux-2.6.17-rc2/drivers/usb/host/uhci-hcd.c linux/drivers/usb/host/uhci-hcd.c
+--- linux-2.6.17-rc2/drivers/usb/host/uhci-hcd.c	2006-04-24 13:31:01.000000000 +0200
++++ linux/drivers/usb/host/uhci-hcd.c	2006-04-26 08:45:52.000000000 +0200
+@@ -856,7 +856,7 @@
+  	.hub_control =		uhci_hub_control,
+  };
 
---===============69386933194500156==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-static const struct pci_device_id uhci_pci_ids[] = { {
++static const struct pci_device_id uhci_pci_ids[] __devinitdata = { {
+  	/* handle any USB UHCI controller */
+  	PCI_DEVICE_CLASS(((PCI_CLASS_SERIAL_USB << 8) | 0x00), ~0),
+  	.driver_data =	(unsigned long) &uhci_driver,
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============69386933194500156==--
