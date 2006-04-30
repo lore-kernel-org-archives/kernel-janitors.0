@@ -1,34 +1,42 @@
-From: "Julie" <hsgbwdbtll@bowarts.com>
-Date: Sun, 30 Apr 2006 07:08:04 +0000
-Subject: [KJ] See where this gets you.
-Message-Id: <03fc01c66c24$01da3d20$9086f98f@YAYAPCL>
+From: Henne <henne@nachtwindheim.de>
+Date: Sun, 30 Apr 2006 13:36:50 +0000
+Subject: [KJ] [PATCH] Update code example in deviceiobook.tmpl
+Message-Id: <4454BD72.2000206@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-U N I V E R S I T Y  D I P L O M A S
+From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Do you want for a prosperous future, increased money earning power, and the respect of all?
+Update an example function to be in sync with the actual kernel.
+The change in the driver happend in Aug-2005 and is a bit clearer.
+Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
+---
 
-We can assist with Diplomas from prestigious non-accredited universities based on your present
-knowledge and life experience.
-
-No required tests, classes, books, or interviews.
-
-Bachelors, masters, MBA, and doctorate (PhD) diplomas available in the field of your choice -
-that's right, you can become a Doctor and receive all the benefits and admiration that comes with it!
-
-No one is turned down.
-
-Confidentiality assured
- 
-CALL US 24 HOURS A DAY, 7 DAYS A WEEK
-1-206-666-5510
-
-Contact us NOW to receive your diploma within days, and start improving your life!
-
+--- linux-2.6.17-rc3/Documentation/DocBook/deviceiobook.tmpl	2006-04-27 08:39:13.000000000 +0200
++++ linux/Documentation/DocBook/deviceiobook.tmpl	2006-04-30 15:18:02.000000000 +0200
+@@ -176,18 +176,13 @@
+  static inline void
+  qla1280_disable_intrs(struct scsi_qla_host *ha)
+  {
+-	struct device_reg *reg;
+-
+-	reg = ha->iobase;
+-	/* disable risc and host interrupts */
+-	WRT_REG_WORD(&amp;reg->ictrl, 0);
++	WRT_REG_WORD(&amp;ha->iobase->ictrl, 0);
+  	/*
+  	 * The following read will ensure that the above write
+  	 * has been received by the device before we return from this
+  	 * function.
+  	 */
+-	RD_REG_WORD(&amp;reg->ictrl);
+-	ha->flags.ints_enabled = 0;
++	RD_REG_WORD(&amp;ha->iobase->ictrl);
+  }
+  </programlisting>
 
 _______________________________________________
 Kernel-janitors mailing list
