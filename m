@@ -1,67 +1,35 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Wed, 26 Apr 2006 06:41:10 +0000
-Subject: [KJ] [PATCH] __devinitdata in pcmcia-subsys
-Message-Id: <444F1606.9050706@nachtwindheim.de>
+From: "Julie" <hsgbwdbtll@bowarts.com>
+Date: Sun, 30 Apr 2006 07:08:04 +0000
+Subject: [KJ] See where this gets you.
+Message-Id: <03fc01c66c24$01da3d20$9086f98f@YAYAPCL>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Henrik Kretzschmar <henne@nachtwindheim.de>
+U N I V E R S I T Y  D I P L O M A S
 
-Marking the pci_device_id tables of the pcmcia-subsys as __devinitdata.
-Signed-off-by: Henrik kretzschmar <henne@nachtwindheim.de>
----
+Do you want for a prosperous future, increased money earning power, and the respect of all?
 
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/i82092.c linux/drivers/pcmcia/i82092.c
---- linux-2.6.17-rc2/drivers/pcmcia/i82092.c	2006-04-24 13:31:00.000000000 +0200
-+++ linux/drivers/pcmcia/i82092.c	2006-04-24 17:20:26.000000000 +0200
-@@ -30,7 +30,7 @@
-  MODULE_LICENSE("GPL");
+We can assist with Diplomas from prestigious non-accredited universities based on your present
+knowledge and life experience.
 
-  /* PCI core routines */
--static struct pci_device_id i82092aa_pci_ids[] = {
-+static struct pci_device_id i82092aa_pci_ids[] __devinitdata = {
-  	{
-  	      .vendor = PCI_VENDOR_ID_INTEL,
-  	      .device = PCI_DEVICE_ID_INTEL_82092AA_0,
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/pd6729.c linux/drivers/pcmcia/pd6729.c
---- linux-2.6.17-rc2/drivers/pcmcia/pd6729.c	2006-04-24 13:31:00.000000000 +0200
-+++ linux/drivers/pcmcia/pd6729.c	2006-04-24 17:20:43.000000000 +0200
-@@ -764,7 +764,7 @@
-  	return pcmcia_socket_dev_resume(&dev->dev);
-  }
+No required tests, classes, books, or interviews.
 
--static struct pci_device_id pd6729_pci_ids[] = {
-+static struct pci_device_id pd6729_pci_ids[] __devinitdata = {
-  	{
-  		.vendor		= PCI_VENDOR_ID_CIRRUS,
-  		.device		= PCI_DEVICE_ID_CIRRUS_6729,
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/ti113x.h linux/drivers/pcmcia/ti113x.h
---- linux-2.6.17-rc2/drivers/pcmcia/ti113x.h	2006-04-24 13:31:00.000000000 +0200
-+++ linux/drivers/pcmcia/ti113x.h	2006-04-24 17:21:15.000000000 +0200
-@@ -889,7 +889,7 @@
-  		.subdevice	= _subdev,			\
-  		.driver_data	= ((mask) << 8 | (bits)),	\
-  	}
--static struct pci_device_id ene_tune_tbl[] = {
-+static struct pci_device_id ene_tune_tbl[] __devinitdata = {
-  	/* Echo Audio products based on motorola DSP56301 and DSP56361 */
-  	DEVID(PCI_VENDOR_ID_MOTOROLA, 0x1801, 0xECC0, PCI_ANY_ID,
-  		ENE_TEST_C9_TLTENABLE | ENE_TEST_C9_PFENABLE, ENE_TEST_C9_TLTENABLE),
-diff -urN linux-2.6.17-rc2/drivers/pcmcia/yenta_socket.c linux/drivers/pcmcia/yenta_socket.c
---- linux-2.6.17-rc2/drivers/pcmcia/yenta_socket.c	2006-03-20 06:53:29.000000000 +0100
-+++ linux/drivers/pcmcia/yenta_socket.c	2006-04-24 17:21:53.000000000 +0200
-@@ -1195,7 +1195,7 @@
-  		.driver_data	= CARDBUS_TYPE_##type,	\
-  	}
+Bachelors, masters, MBA, and doctorate (PhD) diplomas available in the field of your choice -
+that's right, you can become a Doctor and receive all the benefits and admiration that comes with it!
 
--static struct pci_device_id yenta_table [] = {
-+static struct pci_device_id yenta_table[] __devinitdata = {
-  	CB_ID(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_1031, TI),
+No one is turned down.
 
-  	/*
+Confidentiality assured
+ 
+CALL US 24 HOURS A DAY, 7 DAYS A WEEK
+1-206-666-5510
+
+Contact us NOW to receive your diploma within days, and start improving your life!
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
