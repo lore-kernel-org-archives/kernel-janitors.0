@@ -1,68 +1,154 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 17 May 2006 00:19:42 +0000
-Subject: Re: [KJ] [PATCH] drivers/char/ip2/ip2main.c : change pci_find_device
-Message-Id: <20060517001942.GD6355@kroah.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============056873048533311543=="
+From: Henne <henne@nachtwindheim.de>
+Date: Tue, 02 May 2006 21:03:52 +0000
+Subject: [KJ] 720KB Floppy on 64bit Linux
+Message-Id: <4457C938.1070601@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <446A4AA3.7090202@zarb.org>
-In-Reply-To: <446A4AA3.7090202@zarb.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============056873048533311543==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi there!
 
-On Tue, May 16, 2006 at 11:56:51PM +0200, trem wrote:
-> From: trem <tremyfr@yahoo.fr>
-> 
-> This patch simply change pci_find_device by pci_get_device, because
-> pci_find_device is deprecated. pci_dev_put has been added to decrement
-> the counter, so unload could be done.
-> 
-> Signed-Off-By: trem <tremyfr@yahoo.fr>
-> ---
-> 
+I got an old 720KB dos floppy and wanted to try it with my x86_64 2.6.17-rc=
+3 kernel.
 
-> diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
-> index 03db1cb..2acdfb2 100644
-> --- a/drivers/char/ip2/ip2main.c
-> +++ b/drivers/char/ip2/ip2main.c
-> @@ -594,7 +594,7 @@ ip2_loadmain(int *iop, int *irqp, unsign
->  #ifdef CONFIG_PCI
->  			{
->  				struct pci_dev *pci_dev_i = NULL;
-> -				pci_dev_i = pci_find_device(PCI_VENDOR_ID_COMPUTONE,
-> +				pci_dev_i = pci_get_device(PCI_VENDOR_ID_COMPUTONE,
->  							  PCI_DEVICE_ID_COMPUTONE_IP2EX, pci_dev_i);
->  				if (pci_dev_i != NULL) {
->  					unsigned int addr;
-> @@ -622,6 +622,7 @@ ip2_loadmain(int *iop, int *irqp, unsign
->  //						pci_irq = 0;
->  //					}
->  					ip2config.irq[i] = pci_dev_i->irq;
-> +					pci_dev_put(pci_dev_i);
+Mounting it Kernel says:
+FAT: invalid media value (0x44)
+VFS: Can't find a valid FAT filesystem on dev fd0
 
-Nope, you saved a reference and yet just released it.  Not acceptable.
+I tried it on my pentium with the same kernel (i386, of course), and it wor=
+ks.
+Mounted as vfat. All files there. No errors.
 
-Please note that making these changes is very difficult.  Numerous
-people have tried it in the past and generally just given up.  See the
-archives for details on how to get it correct, and to keep from doing
-the same things that others did.
+On the x86_64, noting.
+Formatting a 1.44MB disk as 1.44MB works.
+The integrity check on kfloppy works too.
+Formatting a 1.44MB disk as 720KB works.
+But checking integrity does not.
+Kfloppy says that theres an error while low-level format on track 0.
+Kernel says:
+end_request: I/O error, dev fd0, sector 0
+floppy0: Getstatus times out (50) on fdc 0
 
-thanks,
+floppy driver state
+-------------------
+nowC15028397 last interruptC15028397 diff=3D0 last called handler=FFffffff8=
+0360d1d
+timeout_message=3Dfloppy start
+last output bytes:
+  2 90 4315027201
+  9 90 4315027201
+50 90 4315027201
+f6 90 4315027201
+  f 80 4315027600
+  0 90 4315027600
+45 91 4315027600
+  8 81 4315027605
+4d 80 4315027625
+  0 90 4315027625
+  2 90 4315027625
+  9 90 4315027625
+50 90 4315027625
+f6 90 4315027625
+4d 80 4315027998
+  4 90 4315027998
+  2 90 4315027998
+  9 90 4315027998
+50 90 4315027998
+f6 90 4315027998
+last result at 4315027998
+last redo_fd_request at 4315027998
+40 10  0  1  4  7  2
+statusP
+fdc_busy=3D1
+fd_timer.function=FFffffff80362b84
+timer_function=FFffffff8036301d
+expires&01
+nowC15028397
+cont=FFffffff804b2b40
+current_req=0000000000000000
+command_status=3D-1
 
-greg k-h
+floppy0: get result error. Fdc=3D0 Last status=FFffffff Read bytes=3D0
 
---===============056873048533311543==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+floppy driver state
+-------------------
+nowC15028397 last interruptC15028397 diff=3D0 last called handler=FFffffff8=
+0360d1d
+timeout_message=3Dfloppy start
+last output bytes:
+  2 90 4315027201
+  9 90 4315027201
+50 90 4315027201
+f6 90 4315027201
+  f 80 4315027600
+  0 90 4315027600
+45 91 4315027600
+  8 81 4315027605
+4d 80 4315027625
+  0 90 4315027625
+  2 90 4315027625
+  9 90 4315027625
+50 90 4315027625
+f6 90 4315027625
+4d 80 4315027998
+  4 90 4315027998
+  2 90 4315027998
+  9 90 4315027998
+50 90 4315027998
+f6 90 4315027998
+last result at 4315027998
+last redo_fd_request at 4315027998
+40 10  0  1  4  7  2
+statusP
+fdc_busy=3D1
+fd_timer.function=FFffffff80362b84
+timer_function=FFffffff8036301d
+expires&01
+nowC15028397
+cont=FFffffff804b2b40
+current_req=0000000000000000
+command_status=3D-1
 
+floppy0: -- FDC reply errorend_request: I/O error, dev fd0, sector 0
+Buffer I/O error on device fd0p16, logical block 0
+floppy0: sector not found: track 0, head 0, sector 9, size 2
+floppy0: sector not found: track 0, head 0, sector 9, size 2
+end_request: I/O error, dev fd0, sector 8
+Buffer I/O error on device fd0p16, logical block 1
+floppy0: data CRC error: track 0, head 1, sector 8, size 2
+floppy0: data CRC error: track 0, head 1, sector 8, size 2
+end_request: I/O error, dev fd0, sector 16
+Buffer I/O error on device fd0p16, logical block 2
+floppy0: sector not found: track 1, head 0, sector 7, size 2
+floppy0: data CRC error: track 1, head 0, sector 7, size 2
+end_request: I/O error, dev fd0, sector 24
+Buffer I/O error on device fd0p16, logical block 3
+floppy0: data CRC error: track 1, head 1, sector 6, size 2
+floppy0: data CRC error: track 1, head 1, sector 6, size 2
+end_request: I/O error, dev fd0, sector 32
+Buffer I/O error on device fd0p16, logical block 4
+floppy0: data CRC error: track 2, head 0, sector 5, size 2
+floppy0: data CRC error: track 2, head 0, sector 5, size 2
+end_request: I/O error, dev fd0, sector 40
+Buffer I/O error on device fd0p16, logical block 5
+end_request: I/O error, dev fd0, sector 48
+Buffer I/O error on device fd0p16, logical block 6
+floppy0: data CRC error: track 3, head 0, sector 3, size 2
+floppy0: data CRC error: track 3, head 0, sector 3, size 2
+end_request: I/O error, dev fd0, sector 56
+Buffer I/O error on device fd0p16, logical block 7
+floppy0: data CRC error: track 0, head 0, sector 1, size 2
+end_request: I/O error, dev fd0, sector 0
+Buffer I/O error on device fd0p16, logical block 0
+
+Maybe someone could format a floppy (1.44MB/720KB) as a 720KB too and send =
+the results?
+
+Greets,
+Henne
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============056873048533311543==--
