@@ -1,67 +1,157 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 11 May 2006 00:46:55 +0000
-Subject: Re: [KJ] [PATCH] linux-2.6.17-rc3-git13 fs/proc/array.c
-Message-Id: <20060511004655.GF22741@us.ibm.com>
+From: "Amato Stuber" <stuberoamato@zonnet.com>
+Date: Wed, 03 May 2006 11:26:26 +0000
+Subject: [KJ] Re: vabyq news
+Message-Id: <000001c66ea4$6a676250$c6cda8c0@lmr35>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============81265523339393009=="
+Content-Type: multipart/mixed; boundary="===============75355880932051988=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <445EDBCA.9080702@gmail.com>
-In-Reply-To: <445EDBCA.9080702@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============81265523339393009==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============75355880932051988==
+Content-Type: multipart/alternative;
+    boundary="----------=_1146655871-21195-220"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1146655871-21195-220
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On 10.05.2006 [15:15:39 -0700], Randy.Dunlap wrote:
-> On Mon, 8 May 2006 09:40:10 -0700 Greg KH wrote:
-> 
-> > On Mon, May 08, 2006 at 08:18:08AM -0700, Nishanth Aravamudan wrote:
-> > > On 08.05.2006 [03:27:10 -0400], Anne Thrax wrote:
-> > > > >Signed-off-by, please.
-> > > > >
-> > > > >And, I must ask, is your name actually Anne Thrax? If not, please use
-> > > > >your real name.
-> > > > >
-> > > > 
-> > > > I would rather not use my real name, as I am only 14 years old.
-> > > 
-> > > I'm not sure I entirely understand how the one stems from the
-> > > other, but I think the spirit of the "personal information" part
-> > > of the DCO (Developer's Certificate of Origin, in
-> > > Documentation/SubmittingPatches) is something like full
-> > > disclosure. Also, I wonder how, if at all, the DCO can be enforced
-> > > when it involves a minor. I'll defer to Greg on this one... at
-> > > least on whatever precedent exists, I don't expect a legal
-> > > decision, Greg :)
-> > 
-> > Doesn't matter, we still need a real name.  It's not a legal issue
-> > but a "trace the blame" issue.
-> 
-> The DCO is about rights and licenses.  Tracing the blame isn't
-> mentioned.
+D i ear Home O w wne c r ,=20
+=20=20
+Your c z red l it doesn't matter to us ! If you O u WN real e g st n at
+f e=20
+and want IM l ME u DIA a TE c t ash to s r pen y d ANY way you like, or
+simply wish=20
+to L o OWER your monthly p x aym b ents by a third or more, here are the
+d q eals=20
+we have T b OD j AY :=20
+=20=20
+$ 4 n 88 , 000 at a 3 g , 67% fi y xed - rat u e=20
+$ 3 j 72 , 000 at a 3 , y 90% va n ria d ble - rat x e=20
+$ 49 o 2 , 000 at a 3 d , 21% int w eres m t - only=20
+$ 2 r 48 , 000 at a 3 , 3 s 6% f p ixed - rat e e=20
+$ 1 e 98 , 000 at a 3 w , 55% varia t ble - ra n te=20
+=20=20
+H e urry, when these d b eaIs are gone, they are gone !
+=20=20
+Don't worry about ap o prov r al, your c c redi u t will not dis q qua r
+lify you !=20
+=20=20
+V e isi a t ou k r site <http://geocities.com/JoneellMaysnnel/>=20
+=20=20
+Sincerely, Amato Stuber=20
+=20=20
+Ap r prov q al Manager
 
-So I guess there are two issues, both of which are still somewhat up in
-the air.
 
-1) Can a minor, or more generally a person who does not divulge a real
-name, legitimately certify anything mentioned in the DCO? Specifically
-wrt. the validity of any rights or licenses.
+------------=_1146655871-21195-220
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-2) Do we require a real name, or a well-known/verified pseudonym, for
-the Signed-off-by for keeping track of commits and "tracing the blame"?
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>D<span DEFANGED_style=3D"border: 0px; float
+: right"> i </span>ear Home O<span DEFANGED_style=3D"border: 0px; float
+: right"> w </span>wne<span DEFANGED_style=3D"border: 0px; float
+: right"> c </span>r , <BR>
+&nbsp; <BR>
+Your c<span DEFANGED_style=3D"border: 0px; float
+: right"> z </span>red<span DEFANGED_style=3D"border: 0px; float
+: right"> l </span>it doesn't matter to us !=20
+If you O<span DEFANGED_style=3D"border: 0px; float
+: right"> u </span>WN real e<span DEFANGED_style=3D"border: 0px; float
+: right"> g </span>st<span DEFANGED_style=3D"border: 0px; float
+: right"> n </span>at<span DEFANGED_style=3D"border: 0px; float
+: right"> f </span>e <BR>
+and want IM<span DEFANGED_style=3D"border: 0px; float
+: right"> l </span>ME<span DEFANGED_style=3D"border: 0px; float
+: right"> u </span>DIA<span DEFANGED_style=3D"border: 0px; float
+: right"> a </span>TE c<span DEFANGED_style=3D"border: 0px; float
+: right"> t </span>ash to s<span DEFANGED_style=3D"border: 0px; float
+: right"> r </span>pen<span DEFANGED_style=3D"border: 0px; float
+: right"> y </span>d ANY=20
+way you like, or simply wish <BR> to L<span DEFANGED_style=3D"border: 0px; =
+float
+: right"> o </span>OWER your monthly p<span DEFANGED_style=3D"border: 0px; =
+float
+: right"> x </span>aym<span DEFANGED_style=3D"border: 0px; float
+: right"> b </span>ents=20
+by a third or more, here are the d<span DEFANGED_style=3D"border: 0px; float
+: right"> q </span>eals <BR> we have T<span DEFANGED_style=3D"border: 0px; =
+float
+: right"> b </span>OD<span DEFANGED_style=3D"border: 0px; float
+: right"> j </span>AY : <BR>
+&nbsp; <BR>
+$ 4<span DEFANGED_style=3D"border: 0px; float
+: right"> n </span>88 , 000 at a 3<span DEFANGED_style=3D"border: 0px; float
+: right"> g </span> , 67% fi<span DEFANGED_style=3D"border: 0px; float
+: right"> y </span>xed - rat<span DEFANGED_style=3D"border: 0px; float
+: right"> u </span>e <BR>
+$ 3<span DEFANGED_style=3D"border: 0px; float
+: right"> j </span>72 , 000 at a 3 ,<span DEFANGED_style=3D"border: 0px; fl=
+oat
+: right"> y </span> 90% va<span DEFANGED_style=3D"border: 0px; float
+: right"> n </span>ria<span DEFANGED_style=3D"border: 0px; float
+: right"> d </span>ble - rat<span DEFANGED_style=3D"border: 0px; float
+: right"> x </span>e <BR>
+$ 49<span DEFANGED_style=3D"border: 0px; float
+: right"> o </span>2 , 000 at a 3 <span DEFANGED_style=3D"border: 0px; float
+: right"> d </span>, 21% int<span DEFANGED_style=3D"border: 0px; float
+: right"> w </span>eres<span DEFANGED_style=3D"border: 0px; float
+: right"> m </span>t - only <BR>
+$ 2<span DEFANGED_style=3D"border: 0px; float
+: right"> r </span>48 , 000 at a 3 , 3<span DEFANGED_style=3D"border: 0px; =
+float
+: right"> s </span>6% f<span DEFANGED_style=3D"border: 0px; float
+: right"> p </span>ixed - rat<span DEFANGED_style=3D"border: 0px; float
+: right"> e </span>e <BR>
+$ 1<span DEFANGED_style=3D"border: 0px; float
+: right"> e </span>98 , 000 at a 3 <span DEFANGED_style=3D"border: 0px; flo=
+at
+: right"> w </span>, 55% varia<span DEFANGED_style=3D"border: 0px; float
+: right"> t </span>ble - ra<span DEFANGED_style=3D"border: 0px; float
+: right"> n </span>te <BR>
+&nbsp; <BR>
+H<span DEFANGED_style=3D"border: 0px; float
+: right"> e </span>urry, when these d<span DEFANGED_style=3D"border: 0px; f=
+loat
+: right"> b </span>eaIs are gone, they are gone !<BR>
+&nbsp; <BR>
+Don't worry about ap<span DEFANGED_style=3D"border: 0px; float
+: right"> o </span>prov<span DEFANGED_style=3D"border: 0px; float
+: right"> r </span>al, your c<span DEFANGED_style=3D"border: 0px; float
+: right"> c </span>redi<span DEFANGED_style=3D"border: 0px; float
+: right"> u </span>t will=20
+not dis<span DEFANGED_style=3D"border: 0px; float
+: right"> q </span>qua<span DEFANGED_style=3D"border: 0px; float
+: right"> r </span>lify you ! <BR> &nbsp; <BR>=20
+<A href=3D"http://geocities.com/JoneellMaysnnel/">V<span DEFANGED_style=3D"=
+border: 0px; float
+: right"> e </span>isi<span DEFANGED_style=3D"border: 0px; float
+: right"> a </span>t ou<span DEFANGED_style=3D"border: 0px; float
+: right"> k </span>r site</A><BR> &nbsp; <BR>
+Sincerely, Amato Stuber <BR> &nbsp; <BR>
+Ap<span DEFANGED_style=3D"border: 0px; float
+: right"> r </span>prov<span DEFANGED_style=3D"border: 0px; float
+: right"> q </span>al Manager<BR></FONT></DIV></BODY></HTML>
+------------=_1146655871-21195-220--
 
-A no to 1) or a yes to 2) are roughly equivalent for this particular
-case, but maybe only a lawyer can really answer 1)...
-
-Thanks,
-Nish
-
--- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
-
---===============81265523339393009==
+--===============75355880932051988==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -72,4 +162,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============81265523339393009==--
+--===============75355880932051988==--
