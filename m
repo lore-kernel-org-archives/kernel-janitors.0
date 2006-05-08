@@ -1,295 +1,129 @@
-From: Anne Thrax <foobarfoobarfoobar@gmail.com>
-Date: Mon, 08 May 2006 07:27:10 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Mon, 08 May 2006 15:18:08 +0000
 Subject: Re: [KJ] [PATCH] linux-2.6.17-rc3-git13 fs/proc/array.c
-Message-Id: <445EF2CE.2040406@gmail.com>
+Message-Id: <20060508151808.GB7466@us.ibm.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============49694729077709621=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <445EDBCA.9080702@gmail.com>
 In-Reply-To: <445EDBCA.9080702@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> Signed-off-by, please.
+--===============49694729077709621==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On 08.05.2006 [03:27:10 -0400], Anne Thrax wrote:
+> >Signed-off-by, please.
+> >
+> >And, I must ask, is your name actually Anne Thrax? If not, please use
+> >your real name.
+> >
 > 
-> And, I must ask, is your name actually Anne Thrax? If not, please use
-> your real name.
->
+> I would rather not use my real name, as I am only 14 years old.
 
-I would rather not use my real name, as I am only 14 years old.
+I'm not sure I entirely understand how the one stems from the other, but
+I think the spirit of the "personal information" part of the DCO
+(Developer's Certificate of Origin, in Documentation/SubmittingPatches)
+is something like full disclosure. Also, I wonder how, if at all, the
+DCO can be enforced when it involves a minor. I'll defer to Greg on this
+one... at least on whatever precedent exists, I don't expect a legal
+decision, Greg :)
 
+> >What happens if this kmalloc fails? Can do_task_stat() return ENOMEM?
+> >What happens if it does -- will that change userspace in some way
+> >(generally unacceptable)?
 > 
-> What happens if this kmalloc fails? Can do_task_stat() return ENOMEM?
-> What happens if it does -- will that change userspace in some way
-> (generally unacceptable)?
+> I think it's okay to return -ENOMEM...
+> It's a static function, that is only used by two other functions in 
+> fs/proc/array.c
+> I don't know who uses those functions, but I would assume that it
+> would not change userspace as it's just used for the proc filesystem.
+> I would think that that the proc filesystem just wouldn't work.
 
-I think it's okay to return -ENOMEM...
-It's a static function, that is only used by two other functions in fs/proc/array.c
-I don't know who uses those functions, but I would assume that it would not
-change userspace as it's just used for the proc filesystem. I would think that
-that the proc filesystem just wouldn't work.
- 
-> I'm almost positive that compilation would have complained about
-> declaring a variable in the middle of a block. Did you compile-test?
+Please see who uses those functions. Userspace can see mounted proc
+filesystems, right? And more than likely can cat a file (or files) that
+somehow exports some of this data, I'd think. If that data can now not
+appear, but used to always appear with a large stack, then it's a
+userspace regression and unacceptable. Please try and figure out what
+this code is used for (hint: /proc/pid/stat would be my first guess),
+and make sure everything still works.
 
-I removed res from struct do_task_stat_vars and declared it on the stack.
-It did get yelly at me about being against C99 standards before, it compiles fine now.
+> >I'm almost positive that compilation would have complained about
+> >declaring a variable in the middle of a block. Did you compile-test?
+> 
+> I removed res from struct do_task_stat_vars and declared it on the
+> stack.  It did get yelly at me about being against C99 standards
+> before, it compiles fine now.
 
---- linux-2.6.17-rc3-git13/fs/proc/array.c      2006-05-07 23:01:50.000000000 -0400
-+++ linux-uml/fs/proc/array.c   2006-05-08 03:04:09.000000000 -0400
-@@ -316,7 +316,7 @@
+<snip>
 
- static int do_task_stat(struct task_struct *task, char * buffer, int whole)
- {
--       unsigned long vsize, eip, esp, wchan = ~0UL;
-+       /*unsigned long vsize, eip, esp, wchan = ~0UL;
-        long priority, nice;
-        int tty_pgrp = -1, tty_nr = 0;
-        sigset_t sigign, sigcatch;
-@@ -332,35 +332,54 @@
-        unsigned long rsslim = 0;
-        struct task_struct *t;
-        char tcomm[sizeof(task->comm)];
-+       */
-+       struct do_task_stat_vars *vars;
-+       vars = kmalloc(sizeof(struct do_task_stat_vars), GFP_KERNEL);
-+
-+       if(vars = NULL)
-+               return -ENOMEM;
-+
-+       vars->vsize = vars->eip = vars->esp = vars->wchan = ~0UL;
-+       vars->tty_pgrp = -1;
-+       vars->tty_nr = 0;
-+       vars->pgid = -1;
-+       vars->sid = -1;
-+       vars->num_threads = 0;
-+       vars->cmin_flt = vars->cmaj_flt = vars->min_flt = vars->maj_flt = vars->rsslim = 0;
-+       struct mm_struct *mm;
-+       struct task_struct *t;
-+       char tcomm[sizeof(task->comm)];
-+       char state;
-+       int res;
+> +       struct mm_struct *mm;
+> +       struct task_struct *t;
+> +       char tcomm[sizeof(task->comm)];
+> +       char state;
+> +       int res;
 
-        state = *get_task_state(task);
--       vsize = eip = esp = 0;
-+       vars->vsize = vars->eip = vars->esp = 0;
-        mm = get_task_mm(task);
-        if (mm) {
--               vsize = task_vsize(mm);
--               eip = KSTK_EIP(task);
--               esp = KSTK_ESP(task);
-+               vars->vsize = task_vsize(mm);
-+               vars->eip = KSTK_EIP(task);
-+               vars->esp = KSTK_ESP(task);
-        }
+<snip>
 
-        get_task_comm(tcomm, task);
+Please just put this at the top of the corresponding block. It's against
+accepted CodingStyle (although I'm not sure if it's explicitly so) to
+put these declarations in the middle of the block.
 
--       sigemptyset(&sigign);
--       sigemptyset(&sigcatch);
--       cutime = cstime = utime = stime = cputime_zero;
-+       sigemptyset(&vars->sigign);
-+       sigemptyset(&vars->sigcatch);
-+       vars->cutime = vars->cstime = vars->utime = vars->stime = cputime_zero;
-        read_lock(&tasklist_lock);
-        if (task->sighand) {
-                spin_lock_irq(&task->sighand->siglock);
--               num_threads = atomic_read(&task->signal->count);
--               collect_sigign_sigcatch(task, &sigign, &sigcatch);
-+               vars->num_threads = atomic_read(&task->signal->count);
-+               collect_sigign_sigcatch(task, &vars->sigign, &vars->sigcatch);
+<snip>
 
-                /* add up live thread stats at the group level */
-                if (whole) {
-                        t = task;
-                        do {
--                               min_flt += t->min_flt;
--                               maj_flt += t->maj_flt;
--                               utime = cputime_add(utime, t->utime);
--                               stime = cputime_add(stime, t->stime);
-+                               vars->min_flt += t->min_flt;
-+                               vars->maj_flt += t->maj_flt;
-+                               vars->utime = cputime_add(vars->utime, t->utime);
-+                               vars->stime = cputime_add(vars->stime, t->stime);
-                                t = next_thread(t);
-                        } while (t != task);
-                }
-@@ -369,46 +388,46 @@
-        }
-        if (task->signal) {
-                if (task->signal->tty) {
--                       tty_pgrp = task->signal->tty->pgrp;
--                       tty_nr = new_encode_dev(tty_devnum(task->signal->tty));
-+                       vars->tty_pgrp = task->signal->tty->pgrp;
-+                       vars->tty_nr = new_encode_dev(tty_devnum(task->signal->tty));
-                }
--               pgid = process_group(task);
--               sid = task->signal->session;
--               cmin_flt = task->signal->cmin_flt;
--               cmaj_flt = task->signal->cmaj_flt;
--               cutime = task->signal->cutime;
--               cstime = task->signal->cstime;
--               rsslim = task->signal->rlim[RLIMIT_RSS].rlim_cur;
-+               vars->pgid = process_group(task);
-+               vars->sid = task->signal->session;
-+               vars->cmin_flt = task->signal->cmin_flt;
-+               vars->cmaj_flt = task->signal->cmaj_flt;
-+               vars->cutime = task->signal->cutime;
-+               vars->cstime = task->signal->cstime;
-+               vars->rsslim = task->signal->rlim[RLIMIT_RSS].rlim_cur;
-                if (whole) {
--                       min_flt += task->signal->min_flt;
--                       maj_flt += task->signal->maj_flt;
--                       utime = cputime_add(utime, task->signal->utime);
--                       stime = cputime_add(stime, task->signal->stime);
-+                       vars->min_flt += task->signal->min_flt;
-+                       vars->maj_flt += task->signal->maj_flt;
-+                       vars->utime = cputime_add(vars->utime, task->signal->utime);
-+                       vars->stime = cputime_add(vars->stime, task->signal->stime);
-                }
-        }
--       ppid = pid_alive(task) ? task->group_leader->real_parent->tgid : 0;
-+       vars->ppid = pid_alive(task) ? task->group_leader->real_parent->tgid : 0;
-        read_unlock(&tasklist_lock);
+> +/* do_task_stat() from fs/proc/array.c uses *WAY* too much stack
+> + * I'll just make a struct containing all the variables in there
+> + * and dynamicaly allocate it
+> + * this is a quick hack, and someone should probably really do
+> + * something about it
+> + */
 
--       if (!whole || num_threads<2)
--               wchan = get_wchan(task);
-+       if (!whole || vars->num_threads<2)
-+               vars->wchan = get_wchan(task);
-        if (!whole) {
--               min_flt = task->min_flt;
--               maj_flt = task->maj_flt;
--               utime = task->utime;
--               stime = task->stime;
-+               vars->min_flt = task->min_flt;
-+               vars->maj_flt = task->maj_flt;
-+               vars->utime = task->utime;
-+               vars->stime = task->stime;
-        }
+Generally, we prefer comments of the form
 
-        /* scale priority and nice values from timeslices to -20..20 */
-        /* to make it look like a "normal" Unix priority/nice value  */
--       priority = task_prio(task);
--       nice = task_nice(task);
-+       vars->priority = task_prio(task);
-+       vars->nice = task_nice(task);
+/*
+ * text ...
+ */
 
-        /* Temporary variable needed for gcc-2.96 */
-        /* convert timespec -> nsec*/
--       start_time = (unsigned long long)task->start_time.tv_sec * NSEC_PER_SEC
-+       vars->start_time = (unsigned long long)task->start_time.tv_sec * NSEC_PER_SEC
-                                + task->start_time.tv_nsec;
-        /* convert nsec -> ticks */
--       start_time = nsec_to_clock_t(start_time);
-+       vars->start_time = nsec_to_clock_t(vars->start_time);
+Also, it would be good, probably, to indicate who the "I" is in the
+comment -- it's pretty useless unless your name is somewhere in the
+file. Or make it imperative ("Just make a  struct ..."), and let git
+take care of tracking your name.
 
-        res = sprintf(buffer,"%d (%s) %c %d %d %d %d %d %lu %lu \
- %lu %lu %lu %lu %lu %ld %ld %ld %ld %d 0 %llu %lu %ld %lu %lu %lu %lu %lu \
-@@ -416,41 +435,41 @@
-                task->pid,
-                tcomm,
-                state,
--               ppid,
--               pgid,
--               sid,
--               tty_nr,
--               tty_pgrp,
-+               vars->ppid,
-+               vars->pgid,
-+               vars->sid,
-+               vars->tty_nr,
-+               vars->tty_pgrp,
-                task->flags,
--               min_flt,
--               cmin_flt,
--               maj_flt,
--               cmaj_flt,
--               cputime_to_clock_t(utime),
--               cputime_to_clock_t(stime),
--               cputime_to_clock_t(cutime),
--               cputime_to_clock_t(cstime),
--               priority,
--               nice,
--               num_threads,
--               start_time,
--               vsize,
-+               vars->min_flt,
-+               vars->cmin_flt,
-+               vars->maj_flt,
-+               vars->cmaj_flt,
-+               cputime_to_clock_t(vars->utime),
-+               cputime_to_clock_t(vars->stime),
-+               cputime_to_clock_t(vars->cutime),
-+               cputime_to_clock_t(vars->cstime),
-+               vars->priority,
-+               vars->nice,
-+               vars->num_threads,
-+               vars->start_time,
-+               vars->vsize,
-                mm ? get_mm_rss(mm) : 0,
--               rsslim,
-+               vars->rsslim,
-                mm ? mm->start_code : 0,
-                mm ? mm->end_code : 0,
-                mm ? mm->start_stack : 0,
--               esp,
--               eip,
-+               vars->esp,
-+               vars->eip,
-                /* The signal information here is obsolete.
-                 * It must be decimal for Linux 2.0 compatibility.
-                 * Use /proc/#/status for real-time signals.
-                 */
-                task->pending.signal.sig[0] & 0x7fffffffUL,
-                task->blocked.sig[0] & 0x7fffffffUL,
--               sigign      .sig[0] & 0x7fffffffUL,
--               sigcatch    .sig[0] & 0x7fffffffUL,
--               wchan,
-+               vars->sigign      .sig[0] & 0x7fffffffUL,
-+               vars->sigcatch    .sig[0] & 0x7fffffffUL,
-+               vars->wchan,
-                0UL,
-                0UL,
-                task->exit_signal,
-@@ -459,6 +478,8 @@
-                task->policy);
-        if(mm)
-                mmput(mm);
-+
-+       kfree(vars);
-        return res;
- }
+> +struct do_task_stat_vars {
+> +       unsigned long vsize, eip, esp, wchan, cmin_flt, cmaj_flt,
+> +       min_flt, maj_flt, rsslim;
+> +       unsigned long long start_time;
+> +       long priority, nice;
+> +       int tty_pgrp, tty_nr, num_threads;
+> +       pid_t ppid, pgid, sid;
+> +       sigset_t sigign, sigcatch;
+> +       cputime_t cutime, cstime, utime, stime;
+> +};
 
---- linux-2.6.17-rc3-git13/include/linux/proc_fs.h      2006-05-07 23:01:54.000000000 -0400
-+++ linux-uml/include/linux/proc_fs.h   2006-05-08 02:55:49.000000000 -0400
-@@ -83,6 +83,25 @@
-        loff_t offset;
- };
+That is one big struct :)
 
-+/* do_task_stat() from fs/proc/array.c uses *WAY* too much stack
-+ * I'll just make a struct containing all the variables in there
-+ * and dynamicaly allocate it
-+ * this is a quick hack, and someone should probably really do
-+ * something about it
-+ */
-+
-+struct do_task_stat_vars {
-+       unsigned long vsize, eip, esp, wchan, cmin_flt, cmaj_flt,
-+       min_flt, maj_flt, rsslim;
-+       unsigned long long start_time;
-+       long priority, nice;
-+       int tty_pgrp, tty_nr, num_threads;
-+       pid_t ppid, pgid, sid;
-+       sigset_t sigign, sigcatch;
-+       cputime_t cutime, cstime, utime, stime;
-+};
-+
-+
- #ifdef CONFIG_PROC_FS
+> +
+> +
 
- extern struct proc_dir_entry proc_root;
+Extraneous newline insertion?
+
+Thanks,
+Nish
+
+-- 
+Nishanth Aravamudan <nacc@us.ibm.com>
+IBM Linux Technology Center
+
+--===============49694729077709621==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============49694729077709621==--
