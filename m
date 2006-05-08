@@ -1,27 +1,21 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 08 May 2006 16:58:38 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Mon, 08 May 2006 16:58:45 +0000
 Subject: Re: [KJ] [PATCH] linux-2.6.17-rc3-git13 fs/proc/array.c
-Message-Id: <20060508165838.GC7466@us.ibm.com>
+Message-Id: <20060508165845.GB12272@parisc-linux.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============59906149280902232=="
+Content-Type: multipart/mixed; boundary="===============68971562407337927=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <445EDBCA.9080702@gmail.com>
 In-Reply-To: <445EDBCA.9080702@gmail.com>
 To: kernel-janitors@vger.kernel.org
 
---===============59906149280902232==
+--===============68971562407337927==
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On 08.05.2006 [09:40:10 -0700], Greg KH wrote:
+On Mon, May 08, 2006 at 09:40:10AM -0700, Greg KH wrote:
 > On Mon, May 08, 2006 at 08:18:08AM -0700, Nishanth Aravamudan wrote:
 > > On 08.05.2006 [03:27:10 -0400], Anne Thrax wrote:
-> > > >Signed-off-by, please.
-> > > >
-> > > >And, I must ask, is your name actually Anne Thrax? If not, please use
-> > > >your real name.
-> > > >
-> > > 
 > > > I would rather not use my real name, as I am only 14 years old.
 > > 
 > > I'm not sure I entirely understand how the one stems from the other, but
@@ -35,17 +29,11 @@ On 08.05.2006 [09:40:10 -0700], Greg KH wrote:
 > Doesn't matter, we still need a real name.  It's not a legal issue but a
 > "trace the blame" issue.
 
-Ok, thanks for the information, Greg. Perhaps (although it may be
-unnecessary), this should be added to SubmittingPatches?
+A pseudonym + email address performs acceptably for "trace the blame".
+So I don't see how your two statements are related.
 
-Thanks,
-Nish
 
--- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
-
---===============59906149280902232==
+--===============68971562407337927==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,4 +44,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============59906149280902232==--
+--===============68971562407337927==--
