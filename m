@@ -1,36 +1,57 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Sun, 21 May 2006 22:54:11 +0000
-Subject: [KJ] register_chrdev_region removal
-Message-Id: <4470EF93.901@nachtwindheim.de>
+From: "National Association of Federal Credit Unions" <service@nafcu.org>
+Date: Mon, 08 May 2006 23:57:27 +0000
+Subject: [KJ] Important Notice: Verify Your Profile!
+Message-Id: <LGCRYVEBABJOAJHHZFOOG@yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============88550669550413996=="
+Content-Type: multipart/mixed; boundary="===============22432750749530794=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============88550669550413996==
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+--===============22432750749530794==
+Content-Type: multipart/alternative;
+	boundary="--6858237523475764"
 
-Hi,
+----6858237523475764
+Content-Type: text/plain;
+Content-Transfer-Encoding: quoted-printable
 
-I'm currently reading LDD3 chapter3 and wondered if there are drivers
-who use register_chrdev_region().
-After grepping the latest kernel tree, I found just 12 drivers who do that,
-so I decided to remove it from the obsolete raw-driver.
+Dear NAFCU member,
 
-My questions are:
+As part of our security measures, we regularly screen 
+activity in Federal Credit Union network.We recently 
+noticed the following issue on your account: A recent 
+review of your transaction history determined that we 
+require an update of your account in order to provide 
+you with secure services. Case ID Number:
+PP-065-617-349 
 
-Should device majors be removed from linux/major.h too,
-if nothing in the kernel uses it or will that file be removed completly if
-it's not needed in the whole tree?
+For your protection, we have limited  your access,
+until additional security measures can be completed. 
+We apologize for any inconvenience this may cause.
+Please restore your access as soon as possible. 
 
-Should it also be removed form devices.txt?
+You must click the link below and fill in the form on 
+the following page to complete the verification process.
 
-Greets,
-Henne.
+http://210.240.47.2/data/nafcu.org/
+
+We thank you for your prompt attention to this matter. 
+Please understand that this is a security measure 
+intended to help protect you and your account.
+
+We apologize for any inconvenience.
+
+Sincerely, Nation Association of Federal Credit Unions 
+Account Review Department
 
 
---===============88550669550413996==
+Please do not reply to this e-mail. Mail sent to this 
+address cannot be answered.
+
+----6858237523475764--
+
+
+--===============22432750749530794==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============88550669550413996==--
+--===============22432750749530794==--
