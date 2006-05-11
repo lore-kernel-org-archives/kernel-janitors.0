@@ -1,138 +1,49 @@
-From: white.skeletons.lay.against.a.beach.charred.black.by.fire.Other.bodies.floated.a
-Date: Tue, 16 May 2006 04:57:27 +0000
-Subject: [KJ] ank Authorisierung der Daten
-Message-Id: <00D6C53A.8020030@skynet.be>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============72020428145741811=="
+From: "krishna natalie" <hexahydrite@bethany.org>
+Date: Thu, 11 May 2006 18:24:49 +0000
+Subject: Take away love, and our earth is a tomb
+Message-Id: <AdKA5AD-dgii5n-JC@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+</head>
+<body>
 
---===============72020428145741811==
-Content-Type: multipart/alternative;
-    boundary="----------=_1147755435-4699-374"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Hullo!<br><br>
+[E]rectile<br>
+[D]ysfunction?<br><br>
 
-This is a multi-part message in MIME format...
+We can help! Our site: <b>ochhorfando</b>[dot]<b>com</b> ;) Don't forget to replace "<b>[dot]</b>" to "<b>.</b>"<br><br>
+---<br>
+Levin felt a strong inclination to drink a little vodka and to
+eat some bread.  He was exhausted, and felt it a great effort to
+drag his staggering legs out of the mire, and for a minute he
+hesitated.  But Laska was setting.  And immediately all his
+weariness vanished, and he walked lightly through the swamp
+towards the dog.  A snipe flew up at his feet; he fired and
+killed it.  Laska still pointed.--"Fetch it!"  Another bird flew
+up close to the dog.  Levin fired.  But it was an unlucky day for
+him; he missed it, and when he went to look for the one he had
+shot, he could not find that either.  He wandered all about the
+reeds, but Laska did not believe he had shot it, and when he sent
+her to find it, she pretended to hunt for it, but did not really.
+And in the absence of Vassenka, on whom Levin threw the blame of
+</body></html>
 
-------------=_1147755435-4699-374
-Content-Type: text/plain; charset="windows-1251"; format="flowed"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
 
-CiAgIFNlaHIgZ2VlaHJ0ZSBLdW5kaW4sIHNlaHIgZ2VlaHJ0ZXIgS3VuZGUsCiAgIHdpciBmcmV1
-ZW4gdW5zIElobmVuIG1pdHp1dGVpbGVuLCBkYXNzIFBvc3RiYW5rIE9ubGluZS1CYW5raW5nIGpl
-dHp0IG5vY2gKICAgc2ljaGVyZXIgaXN0IQogICBXZWx0d2VpdCBnaWx0IGRhcyBudW1tZXJpZXJ0
-ZSBUQU4tVmVyZmFocmVuIGFscyBlaW5lcyBkZXIgc2ljaGVyc3RlbgogICBMZWdpdGltYXRpb25z
-LVZlcmZhaHJlbiBmw7xyIE9ubGluZS1CYW5rZ2VzY2jDpGZ0ZS4gRGVubm9jaCBnYWIgZXMgaW4g
-bGV0enRlcgogICBaZWl0IGltbWVyIHdpZWRlciBWZXJzdWNoZSwgYXVmIGJldHLDvGdlcmlzY2hl
-IEFydCB1bmQgV2Vpc2UgVEFOLU51bW1lcm4gdm9uCiAgIEt1bmRlbiB6dSBlcmhhbHRlbiB1bmQg
-ZGFzIEdlbGQgaW5zIEF1c2xhbmQgenUgw7xiZXJ3ZWlzZW4uCiAgIFp1ciBaZWl0IGlzdCB1bnMg
-ZGFzIFZlcmZhaHJlbiwgZGllIGRpZSBCZXRyw7xnZXIgZsO8ciBkaWUgRW50d2VuZHVuZyBkZXIK
-ICAgaVRBTi1MaXN0ZW4gYmVudXR6ZW4sIG5pY2h0IGJla2FubnQuCiAgIFVtIElocmUgT25saW5l
-LUdlc2Now6RmdGUgbm9jaCBiZXNzZXIgenUgc2Now7x0emVuLCBmw7xocnQgZGllIFBvc3RiYW5r
-CiAgIHp1c8OkdHpsaWNoZSBTY2h1dHptYXNzbmFobWVuIGVpbi4KICAgSmVkZXIgS3VuZGUgZGVy
-IFBvc3RiYW5rIG11c3MgamV0enQgc2VpbmVuIE9ubGluZS1CYW5raW5nIFp1Z2FuZyBtaXQgZGVy
-CiAgIEdlaGVpbXphaGwgZsO8ciBUZWxlZm9uLUJhbmtpbmcgYmVzdMOkdGlnZW4uIERhenUgYnJh
-dWNoZW4gU2llIHVuc2VyZSBXZWJzaXRlCiAgIHp1IGJlc3VjaGVuLCB3byBlcyBJaG5lbiBhbmdl
-Ym90ZW4gd2lyZCwgZWluIEJlc3TDpHRpZ3VuZ3Nmb3JtdWxhcgogICBhdXN6dWbDvGxsZW4uCiAg
-IERhYmVpIG3DvHNzZW4gU2llIElocmUgS29udG9udW1tZXIsIFBJTiBmw7xyIE9ubGluZS1CYW5r
-aW5nIHVuZCBkaWUKICAgVGVsZWZvbi1HZWhlaW16YWhsIGVpbmdlYmVuLgogICBEaWUgVGVsZWZv
-bi1HZWhlaW16YWhsIGZpbmRlbiBzaWUgaW4gZGVuIFVudGVybGFnZW4sIGRpZSBTaWUgdm9uIGRl
-cgogICBQb3N0YmFuayBiZWkgZGVyCiAgIEtvbnRvZXLDtmZmbnVuZyB6dXNhbW1lbiBtaXQgZGVu
-IE9ubGluZS1CYW5raW5nIERhdGVuIHVuZCBpaHJlciBFQy1LYXJ0ZQogICB6dWdlc2NoaWNrdAog
-ICBiZWtvbW1lbiBoYWJlbi4KICAgWzFdaHR0cHM6Ly93d3cucG9zdGJhbmsuZGUvYXBwcy12ZXJp
-Zi93ZWxjb21lLmRvCiAgIEFjaHR1bmchIFdpciBiaXR0ZW4gdW5zZXJlIEt1bmRlbiB1bSBWZXJz
-dMOkbmRuaXMgZsO8ciBkaWVzZSDDnGJlcnByw7xmdW5nLgogICBBbGxlIFBvc3RiYW5ra29udGVu
-LCBkaWUgbmljaHQgaW5uZXJoYWxiIGVpbmVyIFdvY2hlIGF1dGhlbnRpZml6aWVydCB3ZXJkZW4s
-CiAgICAgIHdlcmRlbiBnZXNwZXJydC4KICAgw4LCqSAyMDA2IERldXRzY2hlIFBvc3RiYW5rIEFH
-CgpSZWZlcmVuY2VzCgogICAxLiBodHRwOi8vMDIuMTI3LjEwOC43Njo4MDgxLwoK
 
-------------=_1147755435-4699-374
-Content-Type: text/html; charset="windows-1251"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-PCFET0NUWVBFIGh0bWwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMDEgVHJhbnNpdGlvbmFs
-Ly9FTiI+CjxodG1sPgo8aGVhZD4KICA8bWV0YSBjb250ZW50PSJ0ZXh0L2h0bWw7Y2hhcnNldD13
-aW5kb3dzLTEyNTEiCiBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiPgogIDx0aXRsZT5hbmsgQXV0
-aG9yaXNpZXJ1bmcgZGVyIERhdGVuPC90aXRsZT4KPC9oZWFkPgo8Ym9keSBiZ2NvbG9yPSIjZmZm
-ZmZmIiB0ZXh0PSIjMDAwMDAwIj4KPERFRkFOR0VEX3N0eWxlXzAgPCEtLQpib2R5LCBpbWcgewog
-IGJvcmRlcjogMHB4OwogIG1hcmdpbjogMHB4Owp9Cgp0ZXh0LCAudGV4dCAqIHRkIHsKCWZvbnQt
-ZmFtaWx5OmFyaWFsLGdlbmV2YSxoZWx2ZXRpY2Esc2Fucy1zZXJpZjsKCWZvbnQtc2l6ZTogMTJw
-eDsKCWNvbG9yOiAjMDAwMDY2OwoJZm9udC13ZWlnaHQ6IG5vcm1hbDsKfQoKdGV4dCBhLCAudGV4
-dCAqIHRkIGEsCnRleHQgYTphY3RpdmUsIC50ZXh0ICogdGQgYTphY3RpdmUsCnRleHQgYTp2aXNp
-dGVkLCAudGV4dCAqIHRkIGE6dmlzaXRlZCB7IAoJZm9udC1mYW1pbHk6IGFyaWFsLGdlbmV2YSxo
-ZWx2ZXRpY2Esc2Fucy1zZXJpZjsKCWZvbnQtd2VpZ2h0OiBib2xkOwoJY29sb3I6ICMwMDAwNjY7
-Cgl0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsKfQoKdGV4dCBhOmhvdmVyLCAudGV4dCAqIHRk
-IGE6aG92ZXIgeyAKCWZvbnQtZmFtaWx5OiBhcmlhbCxnZW5ldmEsaGVsdmV0aWNhLHNhbnMtc2Vy
-aWY7Cglmb250LXdlaWdodDogYm9sZDsKCWNvbG9yOiAjMDAwMDY2OwoJdGV4dC1kZWNvcmF0aW9u
-OiBub25lOwp9Cgpib3JkIHsKCWJvcmRlci1jb2xvcjojZDFkMWQxOwoJYm9yZGVyLXN0eWxlOiBk
-b3VibGU7Cglib3JkZXItd2lkdGg6IDNweDsKfQoKLS0+PC9ERUZBTkdFRF9zdHlsZT4KPC9oZWFk
-Pgo8Ym9keSBiZ2NvbG9yPSIjZmZmZmZmIj4KPHRhYmxlIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEw
-MCUiIGJvcmRlcj0iMCIgY2VsbHBhZGRpbmc9IjAiIGNlbGxzcGFjaW5nPSIwIiB2YWxpZ249InRv
-cCI+Cgk8dHIgaGVpZ2h0PSIxMDAlIj4KCQk8dGQgd2lkdGg9IjUwJSI+PC90ZD4KCQk8dGQgd2lk
-dGg9IjYxNiIgdmFsaWduPSJ0b3AiPgoJCQk8dGFibGUgYm9yZGVyPSIwIiBjZWxscGFkZGluZz0i
-MCIgY2VsbHNwYWNpbmc9IjAiIHZhbGlnbj0idG9wIiB3aWR0aD0iNjE2IiBoZWlnaHQ9IjEwMCUi
-PgoKCQkJCTx0ciBoZWlnaHQ9IjEwIj4KCQkJCQk8dGQgd2lkdGg9IjYxNiI+PGJyPjxicj48L3Rk
-PgoJCQkJPC90cj4KCQkJCTx0ciBoZWlnaHQ9IjE2Ij4KCQkJCQk8dGQgd2lkdGg9IjYxNiIgYmdj
-b2xvcj0iIzAwMDA2NiI+PC90ZD4KCQkJCTwvdHI+CgkJCQk8dHIgaGVpZ2h0PSI2NyI+CgkJCQkJ
-PHRkIHdpZHRoPSI2MTYiPjxpbWcgREVGQU5HRURfc3JjPSJodHRwOi8vMDIuMTI3LjEwOC43Njo4
-MDgxL2ltZy9sb2dvLmpwZyIgd2lkdGg9IjYxNiIgaGVpZ2h0PSI2NyIgYWx0PSIiPjwvdGQ+CgkJ
-CQk8L3RyPgoKCQkJCTx0ciBoZWlnaHQ9IjE2Ij4KCQkJCQk8dGQgd2lkdGg9IjYxNiIgYmdjb2xv
-cj0iI2NvY2NlbyI+PC90ZD4KCQkJCTwvdHI+CgkJCQk8dHIgaGVpZ2h0PSIzMDAiPgoJCQkJCTx0
-ZCB3aWR0aD0iNjE2IiB2YWxpZ249InRvcCIgY2xhc3M9InRleHQiPgo8Yj5TZWhyIGdlZWhydGUg
-S3VuZGluLCBzZWhyIGdlZWhydGVyIEt1bmRlLDwvYj48YnI+Cjxicj4Kd2lyIGZyZXVlbiB1bnMg
-SWhuZW4gbWl0enV0ZWlsZW4sIGRhc3MgUG9zdGJhbmsgT25saW5lLUJhbmtpbmcgamV0enQgbm9j
-aCAKc2ljaGVyZXIgaXN0ITxicj4KPGJyPgpXZWx0d2VpdCBnaWx0IGRhcyBudW1tZXJpZXJ0ZSBU
-QU4tVmVyZmFocmVuIGFscyBlaW5lcyBkZXIgc2ljaGVyc3RlbiAKTGVnaXRpbWF0aW9ucy1WZXJm
-YWhyZW4gZiZ1dW1sO3IgT25saW5lLUJhbmtnZXNjaCZhdW1sO2Z0ZS4gRGVubm9jaCBnYWIgZXMg
-aW4gbGV0enRlciBaZWl0IAppbW1lciB3aWVkZXIgVmVyc3VjaGUsIGF1ZiBiZXRyJnV1bWw7Z2Vy
-aXNjaGUgQXJ0IHVuZCBXZWlzZSBUQU4tTnVtbWVybiB2b24gS3VuZGVuIHp1IAplcmhhbHRlbiB1
-bmQgZGFzIEdlbGQgaW5zIEF1c2xhbmQgenUgJnV1bWw7YmVyd2Vpc2VuLjxicj4KCjxicj4KWnVy
-IFplaXQgaXN0IHVucyBkYXMgVmVyZmFocmVuLCBkaWUgZGllIEJldHImdXVtbDtnZXIgZiZ1dW1s
-O3IgZGllIEVudHdlbmR1bmcgZGVyIAppVEFOLUxpc3RlbiBiZW51dHplbiwgbmljaHQgYmVrYW5u
-dC48YnI+Cjxicj4KVW0gSWhyZSBPbmxpbmUtR2VzY2gmYXVtbDtmdGUgbm9jaCBiZXNzZXIgenUg
-c2NoJnV1bWw7dHplbiwgZiZ1dW1sO2hydCBkaWUgUG9zdGJhbmsgenVzJmF1bWw7dHpsaWNoZSAK
-U2NodXR6bWFzc25haG1lbiBlaW4uIDxicj4KPGJyPgpKZWRlciBLdW5kZSBkZXIgUG9zdGJhbmsg
-bXVzcyBqZXR6dCBzZWluZW4gT25saW5lLUJhbmtpbmcgWnVnYW5nIG1pdCBkZXIgCkdlaGVpbXph
-aGwgZiZ1dW1sO3IgVGVsZWZvbi1CYW5raW5nIGJlc3QmYXVtbDt0aWdlbi4gRGF6dSBicmF1Y2hl
-biBTaWUgdW5zZXJlIFdlYnNpdGUgenUgCmJlc3VjaGVuLCB3byBlcyBJaG5lbiBhbmdlYm90ZW4g
-d2lyZCwgZWluIEJlc3QmYXVtbDt0aWd1bmdzZm9ybXVsYXIgYXVzenVmJnV1bWw7bGxlbi48YnI+
-Cgo8YnI+CkRhYmVpIG0mdXVtbDtzc2VuIFNpZSBJaHJlIEtvbnRvbnVtbWVyLCBQSU4gZiZ1dW1s
-O3IgT25saW5lLUJhbmtpbmcgdW5kIGRpZSAKVGVsZWZvbi1HZWhlaW16YWhsIGVpbmdlYmVuLjxi
-cj4KRGllIFRlbGVmb24tR2VoZWltemFobCBmaW5kZW4gc2llIGluIGRlbiBVbnRlcmxhZ2VuLCBk
-aWUgU2llIHZvbiBkZXIgUG9zdGJhbmsgCmJlaSBkZXIgPGJyPgpLb250b2VyJm91bWw7ZmZudW5n
-IHp1c2FtbWVuIG1pdCBkZW4gT25saW5lLUJhbmtpbmcgRGF0ZW4gdW5kIGlocmVyIEVDLUthcnRl
-IAp6dWdlc2NoaWNrdCA8YnI+CmJla29tbWVuIGhhYmVuLjxicj4KPGJyPgo8Yj48c3BhbiBsYW5n
-PSJlbi11cyI+PGEgaHJlZj0iaHR0cDovLzAyLjEyNy4xMDguNzY6ODA4MSI+aHR0cHM6Ly93d3cu
-cG9zdGJhbmsuZGUvYXBwcy12ZXJpZi93ZWxjb21lLmRvPC9hPjwvc3Bhbj48L2I+PGJyPgo8YnI+
-CkFjaHR1bmchIFdpciBiaXR0ZW4gdW5zZXJlIEt1bmRlbiB1bSBWZXJzdCZhdW1sO25kbmlzIGYm
-dXVtbDtyIGRpZXNlICZVdW1sO2JlcnByJnV1bWw7ZnVuZy48YnI+CgpBbGxlIFBvc3RiYW5ra29u
-dGVuLCBkaWUgbmljaHQgaW5uZXJoYWxiIGVpbmVyIFdvY2hlIGF1dGhlbnRpZml6aWVydCB3ZXJk
-ZW4sIAp3ZXJkZW4gZ2VzcGVycnQuPGI+PGJyPgo8L2I+PGJyPjxicj4KCQkJCQoJCQkJCTwvdGQ+
-CgkJCQk8L3RyPgoJCQkJPHRyIGhlaWdodD0iMTYiPgoJCQkJCTx0ZCB3aWR0aD0iNjE2IiBiZ2Nv
-bG9yPSIjY29jY2VvIj48L3RkPgoJCQkJPC90cj4KCQkJCTx0ciBoZWlnaHQ9IjE2Ij4KCQkJCQk8
-dGQgd2lkdGg9IjYxNiIgYWxpZ249InJpZ2h0IiBjbGFzcz0idGV4dCI+PHNtYWxsPsKpIDIwMDYg
-RGV1dHNjaGUgUG9zdGJhbmsgQUc8L3NtYWxsPjwvdGQ+CgoJCQkJPC90cj4KCQkJCTx0ciBoZWln
-aHQ9IjEwMCUiPgoJCQkJCTx0ZCB3aWR0aD0iNjE2Ij48L3RkPgoJCQkJPC90cj4KCQkJPC90YWJs
-ZT4KCQk8L3RkPgoJCTx0ZCB3aWR0aD0iNTAlIj48L3RkPgkKCTwvdHI+CjwvdGFibGU+CjwvYm9k
-eT4KPC9odG1sPgo=
-
-------------=_1147755435-4699-374--
-
---===============72020428145741811==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============72020428145741811==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
