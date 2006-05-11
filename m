@@ -1,46 +1,39 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 15 May 2006 14:37:42 +0000
-Subject: [KJ] =?iso-8859-1?q?=5BPATCH=5D=A0printk?=
-Message-Id: <20060515143742.GS12726@rotomalug.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============94162476404394191=="
+From: Matthew Martin <lihnucks@gmail.com>
+Date: Thu, 11 May 2006 02:54:12 +0000
+Subject: [KJ] [PATCH] Make function static in drivers/telephony/ixj.c
+Message-Id: <4462A754.5090107@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============94162476404394191==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Description:
-printk should include appropriate KERN_* constant (of course
-only at beginning of lines).
+Hello,
+    This makes a function in drivers/telephony/ixj.c static. The 
+function that was
+made static is int ixj_set_tone_off.
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+Signed-off-by: Matthew Martin <lihnucks@gmail.com>
 
+---
 
-Index: linux-2.6.16.16/arch/arm/mach-omap1/clock.c
-===================================================================
---- linux-2.6.16.16.orig/arch/arm/mach-omap1/clock.c	2006-05-11 03:56:24.000000000 +0200
-+++ linux-2.6.16.16/arch/arm/mach-omap1/clock.c	2006-05-15 12:28:56.000000000 +0200
-@@ -702,7 +702,7 @@
- 		ck_ref.rate = 19200000;
- #endif
+--- vanilla-linux-2.6.16/drivers/telephony/ixj.c    2006-03-19 
+23:53:29.000000000 -0600
++++ linux-2.6.16/drivers/telephony/ixj.c    2006-05-10 
+10:08:38.000000000 -0500
+@@ -5712,7 +5712,7 @@ static int ixj_daa_write(IXJ *j)
+     return 1;
+ }
  
--	printk("Clocks: ARM_SYSST: 0x%04x DPLL_CTL: 0x%04x ARM_CKCTL: 0x%04x\n",
-+	printk(KERN_INFO "Clocks: ARM_SYSST: 0x%04x DPLL_CTL: 0x%04x ARM_CKCTL: 0x%04x\n",
- 	       omap_readw(ARM_SYSST), omap_readw(DPLL_CTL),
- 	       omap_readw(ARM_CKCTL));
- 
+-int ixj_set_tone_off(unsigned short arg, IXJ *j)
++static int ixj_set_tone_off(unsigned short arg, IXJ *j)
+ {
+     j->tone_off_time = arg;
+     if (ixj_WriteDSPCommand(0x6E05, j))        /* Set Tone Off Period */
 
---===============94162476404394191==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============94162476404394191==--
