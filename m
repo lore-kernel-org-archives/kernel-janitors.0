@@ -1,122 +1,216 @@
-From: Matthew Martin <lihnucks@gmail.com>
-Date: Sun, 14 May 2006 21:31:38 +0000
-Subject: [KJ] [PATCH]  Make functions static in drivers/cdrom
-Message-Id: <4467A1BA.7010505@gmail.com>
+From: "Sethunya Setliff" <sethun@c033.aone.net.au>
+Date: Sat, 13 May 2006 17:31:34 +0000
+Subject: [KJ] Re: your AMBtrEN
+Message-Id: <000001c676b3$14b6ddb0$990ea8c0@tdi15>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============29724450921304468=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello,
-    This makes some functions static in the drivers/cdrom folder. The files changed are cdu31a.c, mcdx.c, sbpcd.c, cdrom.c, and cm206.c.
+This is a multi-part message in MIME format...
+
+--===============29724450921304468==
+Content-Type: multipart/alternative;
+    boundary="----------=_1147541762-1770-220"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1147541762-1770-220
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi
+=20
+A
+P
+X
+V
+L
+C
+V
+m
+r
+a
+A
+e
+I
+I
+b
+o
+n
+L
+v
+A
+A
+i
+z
+a
+I
+i
+L
+G
+e
+a
+x
+U
+t
+I
+R
+n
+c
+
+M
+ra
+S
+A
 
 
-Signed-off-by: Matthew Martin <lihnucks@gmail.com>
 
----
+=20
+=20
+=20
+=20
+http://www.nuberswuis.com
+=20
+=20
+=20
+=20
+=20
+Whats that got to do with it? I have had enough to do with washing=20
+up for fourteen!=20
+If you had dusted the mantelpiece you would have found this just=20
+under the clock, said Gandalf, handing Bilbo a note (written, of=20
+course, on his own note-paper).=20
+This is what he read:=20
 
---- vanilla-linux-2.6.16/drivers/cdrom/cdu31a.c	2006-05-11 23:05:43.000000000 -0500
-+++ linux-2.6.16/drivers/cdrom/cdu31a.c	2006-05-13 10:13:57.000000000 -0500
-@@ -3067,7 +3067,7 @@ __setup("cdu31a=", cdu31a_setup);
- /*
-  * Initialize the driver.
-  */
--int __init cdu31a_init(void)
-+static int __init cdu31a_init(void)
- {
- 	struct s_sony_drive_config drive_config;
- 	struct gendisk *disk;
 
---- vanilla-linux-2.6.16/drivers/cdrom/mcdx.c	2006-03-19 23:53:29.000000000 -0600
-+++ linux-2.6.16/drivers/cdrom/mcdx.c	2006-05-13 10:39:09.000000000 -0500
-@@ -1006,7 +1006,7 @@ static int mcdx_talk(struct s_drive_stuf
- 
- /* MODULE STUFF ***********************************************************/
- 
--int __mcdx_init(void)
-+static int __mcdx_init(void)
- {
- 	int i;
- 	int drives = 0;
-@@ -1525,7 +1525,7 @@ static unsigned int msf2log(const struct
- 	    + bcd2uint(pmsf->minute) * 4500 - CD_MSF_OFFSET;
- }
- 
--int mcdx_readtoc(struct s_drive_stuff *stuffp)
-+static int mcdx_readtoc(struct s_drive_stuff *stuffp)
- /*  Read the toc entries from the CD,
-  *  Return: -1 on failure, else 0 */
- {
+------------=_1147541762-1770-220
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---- vanilla-linux-2.6.16/drivers/cdrom/sbpcd.c	2006-05-11 23:05:43.000000000 -0500
-+++ linux-2.6.16/drivers/cdrom/sbpcd.c	2006-05-13 13:46:41.000000000 -0500
-@@ -5510,7 +5510,7 @@ static struct cdrom_device_ops sbpcd_dop
-  *
-  */
- 
--int sbpcd_setup(char *s)
-+static int sbpcd_setup(char *s)
- {
- #ifndef MODULE
- 	int p[4];
-@@ -5635,9 +5635,9 @@ static int __init config_spea(void)
- 
- /* FIXME: cleanups after failed allocations are too ugly for words */
- #ifdef MODULE
--int __init __sbpcd_init(void)
-+static int __init __sbpcd_init(void)
- #else
--int __init sbpcd_init(void)
-+static int __init sbpcd_init(void)
- #endif
- {
- 	int i=0, j=0;
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi</DIV>
+<DIV>&nbsp;</DIV>
+<DIV
 
---- vanilla-linux-2.6.16/drivers/cdrom/cdrom.c	2006-05-11 23:05:43.000000000 -0500
-+++ linux-2.6.16/drivers/cdrom/cdrom.c	2006-05-12 16:47:06.000000000 -0500
-@@ -1141,7 +1141,7 @@ clean_up_and_return:
- /* This code is similar to that in open_for_data. The routine is called
-    whenever an audio play operation is requested.
- */
--int check_for_audio_disc(struct cdrom_device_info * cdi,
-+static int check_for_audio_disc(struct cdrom_device_info * cdi,
- 			 struct cdrom_device_ops * cdo)
- {
-         int ret;
+DEFANGED_style=3D"
 
---- vanilla-linux-2.6.16/drivers/cdrom/cm206.c	2006-05-11 23:05:43.000000000 -0500
-+++ linux-2.6.16/drivers/cdrom/cm206.c	2006-05-13 10:30:12.000000000 -0500
-@@ -641,7 +641,7 @@ static int read_background(int start, in
- #else
- /* this routine implements insw(,,). There was a time i had the
-    impression that there would be any difference in error-behaviour. */
--void transport_data(int port, ush * dest, int count)
-+static void transport_data(int port, ush * dest, int count)
- {
- 	int i;
- 	ush *d;
-@@ -915,7 +915,7 @@ static void seek(int lba)
- 	cd->dsb = wait_dsb();
- }
- 
--uch bcdbin(unsigned char bcd)
-+static uch bcdbin(unsigned char bcd)
- {				/* stolen from mcd.c! */
- 	return (bcd >> 4) * 10 + (bcd & 0xf);
- }
-@@ -1408,7 +1408,7 @@ static int __init probe_irq(int nr)
- }
- #endif
- 
--int __init cm206_init(void)
-+static int __init cm206_init(void)
- {
- 	uch e = 0;
- 	long int size = sizeof(struct cm206_struct);
+FLOAT
 
+
+:
+left
+"> <DIV> A</DIV> <DIV> P</DIV> <DIV> X</DIV> <DIV> <STRONG> V</STRONG></DIV=
+> <DIV> L</DIV> <DIV> <STRONG> C</STRONG></DIV> <DIV> <STRONG> V</STRONG></=
+DIV> </DIV>
+<DIV
+
+DEFANGED_style=3D"
+
+FLOAT
+
+
+:
+left
+"> <DIV> m</DIV> <DIV> r</DIV> <DIV> a</DIV> <DIV> <STRONG> A</STRONG></DIV=
+> <DIV> e</DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> <STRONG> I</STRONG></=
+DIV> </DIV>
+<DIV
+
+DEFANGED_style=3D"
+
+FLOAT
+
+
+:
+left
+"> <DIV> b</DIV> <DIV> o</DIV> <DIV> n</DIV> <DIV> <STRONG> L</STRONG></DIV=
+> <DIV> v</DIV> <DIV> <STRONG> A</STRONG></DIV> <DIV> <STRONG> A</STRONG></=
+DIV> </DIV>
+<DIV
+
+DEFANGED_style=3D"
+
+FLOAT
+
+
+:
+left
+"> <DIV> i</DIV> <DIV> z</DIV> <DIV> a</DIV> <DIV> <STRONG> I</STRONG></DIV=
+> <DIV> i</DIV> <DIV> <STRONG> L</STRONG></DIV> <DIV> <STRONG> G</STRONG></=
+DIV> </DIV>
+<DIV
+
+DEFANGED_style=3D"
+
+FLOAT
+
+
+:
+left
+"> <DIV> e</DIV> <DIV> a</DIV> <DIV> x</DIV> <DIV> <STRONG> U</STRONG></DIV=
+> <DIV> t</DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> <STRONG> R</STRONG></=
+DIV> </DIV>
+<DIV
+
+DEFANGED_style=3D"
+
+FLOAT
+
+
+:
+left
+"> <DIV> n</DIV> <DIV> c</DIV> <DIV> <BR></DIV> <DIV> <STRONG> M</STRONG></=
+DIV> <DIV> ra</DIV> <DIV> <STRONG> S</STRONG></DIV> <DIV> <STRONG> A</STRON=
+G></DIV> </DIV>
+<DIV
+
+DEFANGED_style=3D"
+
+FLOAT
+
+
+:
+left
+"> <DIV> <BR></DIV> <DIV> <BR></DIV> <DIV> <BR></DIV> <DIV> &nbsp;</DIV> <D=
+IV> </DIV> <DIV> &nbsp;</DIV> <DIV> &nbsp;</DIV> </DIV>
+<DIV DEFANGED_style=3D"CLEAR: both">&nbsp;</DIV>
+<DIV><A href=3D"http://www.nuberswuis.com">http://www.nuberswuis.com</A></D=
+IV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>   Whats that got to do with it? I have had enough to do with washing =
+<BR>up for fourteen! <BR>   If you had dusted the mantelpiece you would hav=
+e found this just <BR>under the clock, said Gandalf, handing Bilbo a note (=
+written, of <BR>course, on his own note-paper). <BR>   This is what he read=
+: <BR></DIV></BODY></HTML>
+------------=_1147541762-1770-220--
+
+--===============29724450921304468==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============29724450921304468==--
