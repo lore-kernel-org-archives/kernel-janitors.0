@@ -1,18 +1,46 @@
-From: Anne Thrax <foobarfoobarfoobar@gmail.com>
-Date: Thu, 11 May 2006 01:47:06 +0000
-Subject: Re: [KJ] [PATCH] linux-2.6.17-rc3-git13
-Message-Id: <4462979A.5040907@gmail.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Mon, 15 May 2006 10:20:05 +0000
+Subject: [KJ] [PATCH] printk : arch/arm/mach-ixp4xx/common.c
+Message-Id: <20060515102005.GJ12726@rotomalug.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============061457766360094368=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <445EF28A.1010601@bfs.de>
-In-Reply-To: <445EF28A.1010601@bfs.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I think that the issue with the DCO is important, but I'm sort of giving up on reducing
-the stack usage for that particular function. I haven't reduced the stack usage all that much, and it only seems to be *HUGE* when I'm using UML (probably should have mentioned that earlier). Also, my solution was horribly ugly. Maybe a DCO discussion should be started in another thread, possibly in LKML?
+--===============061457766360094368==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Description:
+printk should include appropriate KERN_* constant (of course
+only at beginning of lines).
+
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+
+
+Index: linux-2.6.16.16/arch/arm/mach-ixp4xx/common.c
+===================================================================
+--- linux-2.6.16.16.orig/arch/arm/mach-ixp4xx/common.c	2006-05-11 03:56:24.000000000 +0200
++++ linux-2.6.16.16/arch/arm/mach-ixp4xx/common.c	2006-05-15 12:00:26.000000000 +0200
+@@ -359,7 +359,7 @@
+ 		}
+ 	}
+ 
+-	printk("IXP4xx: Using %luMiB expansion bus window size\n",
++	printk(KERN_INFO "IXP4xx: Using %luMiB expansion bus window size\n",
+ 			ixp4xx_exp_bus_size >> 20);
+ }
+ 
+
+--===============061457766360094368==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============061457766360094368==--
