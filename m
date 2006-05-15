@@ -1,32 +1,45 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 29 May 2006 21:30:34 +0000
-Subject: Re: [KJ] [PATCH] drivers/char/rocket.c : replace pci_find_device by
-Message-Id: <20060529213034.GA10621@kroah.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Mon, 15 May 2006 12:18:24 +0000
+Subject: [KJ] [PATCH] printk : arch/arm/mach-omap1/board-h2.c
+Message-Id: <20060515121824.GM12726@rotomalug.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============39599392581669601=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4478C3A4.9000504@yahoo.fr>
-In-Reply-To: <4478C3A4.9000504@yahoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, May 27, 2006 at 11:24:52PM +0200, trem wrote:
-> From: trem <tremyfr@yahoo.fr>
-> 
-> This patch simply change pci_find_device by pci_get_device, because
-> pci_find_device is deprecated. No pci_dev_put is needed because the
-> loop isn't broken, and pci_get_device decrement the counter of the
-> device given as from parameter.
-> 
-> Signed-Off-By: trem <tremyfr@yahoo.fr>
+--===============39599392581669601==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-No, this driver should be switched to the proper pci_register_driver()
-api instead.
+Description:
+printk should include appropriate KERN_* constant (of course
+only at beginning of lines).
 
-thanks,
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
-greg k-h
+Index: linux-2.6.16.16/arch/arm/mach-omap1/board-h2.c
+===================================================================
+--- linux-2.6.16.16.orig/arch/arm/mach-omap1/board-h2.c	2006-05-11 03:56:24.000000000 +0200
++++ linux-2.6.16.16/arch/arm/mach-omap1/board-h2.c	2006-05-15 12:24:39.000000000 +0200
+@@ -121,7 +121,7 @@
+ static void __init h2_init_smc91x(void)
+ {
+ 	if ((omap_request_gpio(0)) < 0) {
+-		printk("Error requesting gpio 0 for smc91x irq\n");
++		printk(KERN_WARNING "Error requesting gpio 0 for smc91x irq\n");
+ 		return;
+ 	}
+ }
+
+--===============39599392581669601==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============39599392581669601==--
