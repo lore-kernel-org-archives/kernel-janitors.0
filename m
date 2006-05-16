@@ -1,101 +1,199 @@
-From: "Jody Anders" <andersjody@aaachicago.com>
-Date: Mon, 29 May 2006 22:05:24 +0000
-Subject: Re: [KJ] 291 conjunctiv
-Message-Id: <000001c6836b$fc75dd80$6256a8c0@nrg3>
+From: "Flurry Whitis" <whitisu@jklmlk.fi>
+Date: Tue, 16 May 2006 19:01:52 +0000
+Subject: Re: your AMBtlEN
+Message-Id: <000001c6791b$318adda0$98f3a8c0@oll69>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0697954019=="
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C678E0.852E76A0"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+This is a multi-part message in MIME format.
 
---===============0697954019==
-Content-Type: multipart/alternative;
-    boundary="----------=_1148940597-21212-18"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1148940597-21212-18
+------=_NextPart_000_0001_01C678E0.852E76A0
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-Hi,=20
-C ? A L i S=20
-V A L / U M=20
-L E V ? T R A
-V ? A G R A=20
-A M B / E N
-M E R ? D i A
-S O M ^
-X ^ N A X
-P R O Z ^ C=20
-http://www.arterremai.com=20
+Hi
+=20
+X
+P
+V
+C
+V
+A
+L
+a
+r
+A
+I
+I
+m
+e
+n
+o
+L
+A
+A
+b
+v
+a
+z
+I
+L
+G
+i
+i
+x
+a
+U
+I
+R
+e
+t
+
+c
+M
+S
+A
+n
+ra
 
 
+=20
+=20
+=20
+
+=20
+http://www.jernifersactis.com
+=20
+=20
+=20
+=20
+=20
+
+	----- Original Message -----=20
+	sat glum and wet and muttering, while Oin and Gloin went on
+trying to=20
+	light the fire, and quarrelling about it. Bilbo was sadly
+reflecting=20
+	that adventures are not all pony-rides in May-sunshine, when
+Balin, who=20
+	was always their look-out man, said: Theres a light over there!
+There=20
+	was a hill some way off with trees on it, pretty thick in parts.
+Out of=20
+	the dark mass of the trees they could now see a light shining, a
+reddish=20
+=09
 
 
-morning early a company of spearmen was seen crossing the river, and=20
-marching up the valley. They bore with them the green banner of the=20
-Elvenking and the blue banner of the Lake, and they advanced until they=20
-stood right before the wall at the Gate. Again Thorin hailed them in a=20
-loud voice: Who are you that come armed for war to the gates of Thorin=20
-son of Thrain, King under the Mountain? This time he was answered.=20
-
-
-------------=_1148940597-21212-18
+------=_NextPart_000_0001_01C678E0.852E76A0
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Dus-ascii">
 <META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
+<STYLE></STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV>Hi,
-<BR>
-<B>C ? A L i S </B><BR>
-<B>V A L / U M </B><BR>
-L E V ? T R A<BR>
-<B> V ? A G R A </B><BR>
-A M B / E N<BR>
-M E R ? D i A<BR>
-S O M ^<BR>
-X ^ N A X<BR>
-P R O Z ^ C
-<BR>
-<A href=3D"http://www.arterremai.com">http://www.arterremai.com</A>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
-morning early a company of spearmen was seen crossing the river, and <BR>ma=
-rching up the valley. They bore with them the green banner of the <BR>Elven=
-king and the blue banner of the Lake, and they advanced until they <BR>stoo=
-d right before the wall at the Gate. Again Thorin hailed them in a <BR>loud=
- voice: Who are you that come armed for war to the gates of Thorin <BR>son =
-of Thrain, King under the Mountain? This time he was answered. <BR></DIV></=
-BODY></HTML>
-------------=_1148940597-21212-18--
+<DIV>Hi</DIV>
+<DIV>&nbsp;</DIV>
+<DIV
+ style
+=3D
+"
+ float : left; "> <DIV> X</DIV> <DIV> P</DIV> <DIV> <STRONG> =
+V</STRONG></DIV> <DIV> <STRONG> C</STRONG></DIV> <DIV> <STRONG> =
+V</STRONG></DIV> <DIV> A</DIV> <DIV> L</DIV> </DIV>
+<DIV
+=20
+style=3D" float=20
+:=20
+left; "> <DIV> a</DIV> <DIV> r</DIV> <DIV> <STRONG> A</STRONG></DIV> =
+<DIV> <STRONG> I</STRONG></DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> =
+m</DIV> <DIV> e</DIV> </DIV>
+<DIV=20
+style=3D
+"
+ float
+ : left; "> <DIV> n</DIV> <DIV> o</DIV> <DIV> <STRONG> L</STRONG></DIV> =
+<DIV> <STRONG> A</STRONG></DIV> <DIV> <STRONG> A</STRONG></DIV> <DIV> =
+b</DIV> <DIV> v</DIV> </DIV>
+<DIV=20
+style=3D"=20
+float=20
+: left
+; "> <DIV> a</DIV> <DIV> z</DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> =
+<STRONG> L</STRONG></DIV> <DIV> <STRONG> G</STRONG></DIV> <DIV> i</DIV> =
+<DIV> i</DIV> </DIV>
+<DIV=20
+style
+=3D" float : left
+;=20
+"> <DIV> x</DIV> <DIV> a</DIV> <DIV> <STRONG> U</STRONG></DIV> <DIV> =
+<STRONG> I</STRONG></DIV> <DIV> <STRONG> R</STRONG></DIV> <DIV> e</DIV> =
+<DIV> t</DIV> </DIV>
+<DIV
+=20
+style=3D" float
+=20
+: left; "> <DIV> <BR></DIV> <DIV> c</DIV> <DIV> <STRONG> =
+M</STRONG></DIV> <DIV> <STRONG> S</STRONG></DIV> <DIV> <STRONG> =
+A</STRONG></DIV> <DIV> n</DIV> <DIV> ra</DIV> </DIV>
+<DIV
+ style=3D
+" float :=20
+left;=20
+"> <DIV> <BR></DIV> <DIV> <BR></DIV> <DIV> &nbsp;</DIV> <DIV> =
+&nbsp;</DIV> <DIV> &nbsp;</DIV> <DIV> <BR></DIV> <DIV> </DIV> </DIV>
+<DIV
+style
 
---===============0697954019==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+=3D"
+CLEAR
 
+:
+
+both
+">&nbsp;</DIV>
+<DIV><A =
+href=3D"http://www.jernifersactis.com">http://www.jernifersactis.com</A><=
+/DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>&nbsp;</DIV>
+<BLOCKQUOTE dir=3Dltr style=3D"PADDING-RIGHT:
+=20
+0px;=20
+PADDING-LEFT: 5px; MARGIN-LEFT: 5px;
+ BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px">
+<DIV style=3D"FONT: 10pt arial">----- Original Message ----- </DIV>
+<DIV>sat glum and wet and muttering, while Oin and Gloin went on trying =
+to <BR>light the fire, and quarrelling about it. Bilbo was sadly =
+reflecting <BR>that adventures are not all pony-rides in May-sunshine, =
+when Balin, who <BR>was always their look-out man, said: Theres a light =
+over there! There <BR>was a hill some way off with trees on it, pretty =
+thick in parts. Out of <BR>the dark mass of the trees they could now see =
+a light shining, a reddish <BR></DIV></BLOCKQUOTE></BODY></HTML>
+------=_NextPart_000_0001_01C678E0.852E76A0--
+
+
+
+
+
+-------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0697954019==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
