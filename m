@@ -1,53 +1,35 @@
-From: trem <tremyfr@yahoo.fr>
-Date: Tue, 16 May 2006 21:57:46 +0000
-Subject: [KJ] [PATCH] drivers/char/istallion.c : change pci_find_device by
-Message-Id: <446A4ADA.3070606@yahoo.fr>
+From: Greg KH <greg@kroah.com>
+Date: Tue, 16 May 2006 22:10:05 +0000
+Subject: Re: [KJ] [PATCH] drivers/char/istallion.c : change pci_find_device by
+Message-Id: <20060516221005.GA5340@kroah.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------030004050107060305050208"
+Content-Type: multipart/mixed; boundary="===============9084788510997448=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <446A4ADA.3070606@yahoo.fr>
+In-Reply-To: <446A4ADA.3070606@yahoo.fr>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------030004050107060305050208
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+--===============9084788510997448==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: trem <tremyfr@yahoo.fr>
+On Tue, May 16, 2006 at 11:57:46PM +0200, trem wrote:
+> From: trem <tremyfr@yahoo.fr>
+> 
+> This patch simply change pci_find_device by pci_get_device, because
+> pci_find_device is deprecated. pci_dev_put has been added to decrement
+> the counter, so unload could be done.
 
-This patch simply change pci_find_device by pci_get_device, because
-pci_find_device is deprecated. pci_dev_put has been added to decrement
-the counter, so unload could be done.
+Huh?  No, this patch is wrong, you are leaking a reference count, and
+causing others to drop down to 0 accidentally.
 
-Signed-Off-By: trem <tremyfr@yahoo.fr>
----
+Do NOT apply this.
 
+thanks,
 
---------------030004050107060305050208
-Content-Type: text/x-patch;
-	name*0="istallion_replace_pci_find_device_by_pci_get_device.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
-	filename*0="istallion_replace_pci_find_device_by_pci_get_device.patch"
+greg k-h
 
-diff --git a/drivers/char/istallion.c b/drivers/char/istallion.c
-index ef20c1f..8ba6a1d 100644
---- a/drivers/char/istallion.c
-+++ b/drivers/char/istallion.c
-@@ -4576,10 +4576,11 @@ static int stli_findpcibrds(void)
- 	printk("stli_findpcibrds()\n");
- #endif
- 
--	while ((dev = pci_find_device(PCI_VENDOR_ID_STALLION,
-+	while ((dev = pci_get_device(PCI_VENDOR_ID_STALLION,
- 	    PCI_DEVICE_ID_ECRA, dev))) {
- 		if ((rc = stli_initpcibrd(BRD_ECPPCI, dev)))
- 			return(rc);
-+		pci_dev_put(dev);
- 	}
- 
- 	return(0);
-
---------------030004050107060305050208
+--===============9084788510997448==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,4 +40,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---------------030004050107060305050208--
+--===============9084788510997448==--
