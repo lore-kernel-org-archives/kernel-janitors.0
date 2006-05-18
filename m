@@ -1,24 +1,26 @@
-From: "Rhonda Blanco" <rhondaublanc@insa-rouen.fr>
-Date: Thu, 18 May 2006 14:00:49 +0000
+From: "Tama Greenhalgh" <greetama@bdrstudio.com>
+Date: Thu, 18 May 2006 14:01:17 +0000
 Subject: [KJ] Re: crdit
-Message-Id: <000001c67a83$77c484b0$98cea8c0@eni15>
+Message-Id: <000001c67a83$886913d0$e1c9a8c0@zhv83>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============63442488171410338=="
+Content-Type: multipart/mixed; boundary="===============33995379045283936=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <000001c67a83$77c484b0$98cea8c0@eni15>
+In-Reply-To: <000001c67a83$77c484b0$98cea8c0@eni15>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============63442488171410338==
+--===============33995379045283936==
 Content-Type: multipart/alternative;
-    boundary="----------=_1148495898-16314-13"
+    boundary="----------=_1148495940-12506-136"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1148495898-16314-13
+------------=_1148495940-12506-136
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -39,17 +41,17 @@ $ 370 , 000 as lovv as 3 , 90 %
 $ 250 , 000 as lovv as 3 , 35 %
 $ 200 , 000 as lovv as 3 , 55 %
 
-go to the web site <http://geocities.com/Terezrlylraswerlo/>=20
+go to the web site <http://geocities.com/JeffndriWolfrgo/>=20
 
-Rhonda Blanco , Apprroval Mannager
+Tama Greenhalgh , Apprroval Mannager
 =20
-was Gollum =13 as dark as darkness, except for two big round pale eyes in
-his thin face. He had a little boat, and he rowed about quite quietly on
-the lake; for lake it was, wide and deep and deadly cold. He paddled it
-with large feet dangling over the side, but never a ripple did he make.
+Dazzlingly marvellous! Perfect! Flawless! Staggering! exclaimed
+Bilbo aloud, but what he thought inside was: Old fool! Why there is a
+large patch in the hollow of his left breast as bare as a snail out of
+its shell! After he had seen that Mr. Baggins one idea was to get
 
 
-------------=_1148495898-16314-13
+------------=_1148495940-12506-136
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -73,20 +75,18 @@ $ 370 , 000 as lovv as 3 , 90 %<BR>
 $ 250 , 000 as lovv as 3 , 35 %<BR>
 $ 200 , 000 as lovv as 3 , 55 %<BR>
 <BR>
-<A href=3D"http://geocities.com/Terezrlylraswerlo/">go to the web site</A><=
-BR>
+<A href=3D"http://geocities.com/JeffndriWolfrgo/">go to the web site</A><BR>
 <BR>
-Rhonda Blanco , Apprroval Mannager</FONT></DIV>
+Tama Greenhalgh , Apprroval Mannager</FONT></DIV>
 <DIV>&nbsp;</DIV>
-<DIV>was Gollum =80=93 as dark as darkness, except for two big round pale e=
-yes in<BR>
-his thin face. He had a little boat, and he rowed about quite quietly on<BR>
-the lake; for lake it was, wide and deep and deadly cold. He paddled it<BR>
-with large feet dangling over the side, but never a ripple did he make.<BR>=
-</DIV></BODY></HTML>
-------------=_1148495898-16314-13--
+<DIV>   Dazzlingly marvellous! Perfect! Flawless! Staggering! exclaimed<BR>
+Bilbo aloud, but what he thought inside was: Old fool! Why there is a<BR>
+large patch in the hollow of his left breast as bare as a snail out of<BR>
+its shell! After he had seen that Mr. Baggins one idea was to get<BR></DIV>=
+</BODY></HTML>
+------------=_1148495940-12506-136--
 
---===============63442488171410338==
+--===============33995379045283936==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -97,4 +97,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============63442488171410338==--
+--===============33995379045283936==--
