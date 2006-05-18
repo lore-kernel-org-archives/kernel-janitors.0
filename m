@@ -1,28 +1,24 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Wed, 24 May 2006 19:12:47 +0000
-Subject: Re: [KJ] question about bugzilla.kernel.org
-Message-Id: <20060524121247.c35388da.rdunlap@xenotime.net>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 18 May 2006 15:19:17 +0000
+Subject: [KJ] how to handle Kconfig ?
+Message-Id: <446C9075.5040906@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a63d67fe0605180040x3a1a5722s2f5834b4a7ef0711@mail.gmail.com>
-In-Reply-To: <a63d67fe0605180040x3a1a5722s2f5834b4a7ef0711@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 18 May 2006 00:40:33 -0700 Dan Carpenter wrote:
+hi list,
+i was playing with 'make randconfig' and found that some issues are 
+rooted in the kconfig selection.
+e.g.:
+you can select X86_NUMAQ without SMP what makes no sence since NUMAQ 
+depends on SMP. (adding 'depends on SMP' helps).
 
-> I'd like to be added to the CC list for every bug that gets reported.
-> How do I do that?  Right now I'm CC'd whenever akpm is CC'd but I'd
-> like to get everything.
+Should that be fixed ? does anyone care ?
 
-Hi Dan,
-You can subscribe to bugme-new@lists.osdl.org to receive email
-for all new bug items.  There are headers for bug categories
-if you want to try to do filtering on them.
-
----
-~Randy
+re,
+  walter
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
