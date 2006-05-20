@@ -1,57 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 17 May 2006 00:18:24 +0000
-Subject: Re: [KJ] [PATCH] drivers/char/istallion.c : change pci_find_device by
-Message-Id: <20060517001824.GC6355@kroah.com>
+From: trem <tremyfr@yahoo.fr>
+Date: Sat, 20 May 2006 00:50:31 +0000
+Subject: [KJ] [PATCH] drivers/char/istallion.c : replace pci_find_device by
+Message-Id: <446E67D7.8080502@yahoo.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1870554843220007=="
+Content-Type: multipart/mixed; boundary="------------090109010103060006050707"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <446A4ADA.3070606@yahoo.fr>
 In-Reply-To: <446A4ADA.3070606@yahoo.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============1870554843220007==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is a multi-part message in MIME format.
+--------------090109010103060006050707
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 17, 2006 at 12:45:54AM +0200, trem wrote:
-> From: trem <tremyfr@yahoo.fr>
-> 
-> This patch simply change pci_find_device by pci_get_device, because
-> pci_find_device is deprecated. pci_dev_put has been added to decrement
-> the counter, so unload could be done. I've added a pci_dev_put(dev)
-> before the return to avoid missing one device (thanks greg k-h for the
-> remark)
-> 
-> Signed-Off-By: trem <tremyfr@yahoo.fr>
-> ---
-> 
+From: trem <tremyfr@yahoo.fr>
 
-> diff --git a/drivers/char/istallion.c b/drivers/char/istallion.c
-> index ef20c1f..b10eea7 100644
-> --- a/drivers/char/istallion.c
-> +++ b/drivers/char/istallion.c
-> @@ -4576,10 +4576,13 @@ static int stli_findpcibrds(void)
->  	printk("stli_findpcibrds()\n");
->  #endif
->  
-> -	while ((dev = pci_find_device(PCI_VENDOR_ID_STALLION,
-> +	while ((dev = pci_get_device(PCI_VENDOR_ID_STALLION,
->  	    PCI_DEVICE_ID_ECRA, dev))) {
-> -		if ((rc = stli_initpcibrd(BRD_ECPPCI, dev)))
-> +		if ((rc = stli_initpcibrd(BRD_ECPPCI, dev))) {
-> +			pci_dev_put(dev);
->  			return(rc);
-> +		}
-> +		pci_dev_put(dev);
+This patch simply change pci_find_device by pci_get_device, because
+pci_find_device is deprecated. pci_dev_put has been added to decrement
+the counter when the loop is broken, so unload could be done.
 
-No, this is still wrong.  Please read the documentation on how to use
-this function.
+Signed-Off-By: trem <tremyfr@yahoo.fr>
+---
 
-thanks,
 
-greg k-h
+--------------090109010103060006050707
+Content-Type: text/x-patch;
+	name*0="istallion_replace_pci_find_device_by_pci_get_device.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+	filename*0="istallion_replace_pci_find_device_by_pci_get_device.patch"
 
---===============1870554843220007==
+diff --git a/drivers/char/istallion.c b/drivers/char/istallion.c
+index ef20c1f..83002d5 100644
+--- a/drivers/char/istallion.c
++++ b/drivers/char/istallion.c
+@@ -4576,10 +4576,12 @@ static int stli_findpcibrds(void)
+ 	printk("stli_findpcibrds()\n");
+ #endif
+ 
+-	while ((dev = pci_find_device(PCI_VENDOR_ID_STALLION,
++	while ((dev = pci_get_device(PCI_VENDOR_ID_STALLION,
+ 	    PCI_DEVICE_ID_ECRA, dev))) {
+-		if ((rc = stli_initpcibrd(BRD_ECPPCI, dev)))
++		if ((rc = stli_initpcibrd(BRD_ECPPCI, dev))) {
++			pci_dev_put(dev);
+ 			return(rc);
++		}
+ 	}
+ 
+ 	return(0);
+
+--------------090109010103060006050707
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1870554843220007==--
+--------------090109010103060006050707--
