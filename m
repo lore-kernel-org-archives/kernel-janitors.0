@@ -1,55 +1,36 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Mon, 15 May 2006 10:03:24 +0000
-Subject: [KJ] [PATC] printk : arch/arm/mach-footbridge/netwinder-hw.c
-Message-Id: <20060515100324.GG12726@rotomalug.org>
+From: Henne <henne@nachtwindheim.de>
+Date: Sun, 21 May 2006 22:54:11 +0000
+Subject: [KJ] register_chrdev_region removal
+Message-Id: <4470EF93.901@nachtwindheim.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============097143466954198843=="
+Content-Type: multipart/mixed; boundary="===============88550669550413996=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============097143466954198843==
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--===============88550669550413996==
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 
-Description:
-printk should include appropriate KERN_* constant (of course
-only at beginning of lines).
+Hi,
 
-Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
+I'm currently reading LDD3 chapter3 and wondered if there are drivers
+who use register_chrdev_region().
+After grepping the latest kernel tree, I found just 12 drivers who do that,
+so I decided to remove it from the obsolete raw-driver.
 
-Index: linux-2.6.16.16/arch/arm/mach-footbridge/netwinder-hw.c
-===================================================================
---- linux-2.6.16.16.orig/arch/arm/mach-footbridge/netwinder-hw.c	2006-05-11 03:56:24.000000000 +0200
-+++ linux-2.6.16.16/arch/arm/mach-footbridge/netwinder-hw.c	2006-05-15 11:54:28.000000000 +0200
-@@ -548,7 +548,7 @@
- 		mdelay(1);
- 	}
- 	if (i == 5)
--		printk("SoundBlaster: DSP reset failed\n");
-+		printk(KERN_WARNING "SoundBlaster: DSP reset failed\n");
- 
- 	dprintk("SoundBlaster DSP reset: %02X (AA)\n", inb(0x22a));
- 
-@@ -559,7 +559,7 @@
- 	}
- 
- 	if (i == 5)
--		printk("SoundBlaster: DSP not ready\n");
-+		printk(KERN_WARNING "SoundBlaster: DSP not ready\n");
- 	else {
- 		outb(0xe1, 0x22c);
- 
-@@ -576,7 +576,7 @@
- 		}
- 
- 		if (i == 5)
--			printk("SoundBlaster: could not turn speaker off\n");
-+			printk(KERN_WARNING "SoundBlaster: could not turn speaker off\n");
- 
- 		outb(0xd3, 0x22c);
- 	}
+My questions are:
 
---===============097143466954198843==
+Should device majors be removed from linux/major.h too,
+if nothing in the kernel uses it or will that file be removed completly if
+it's not needed in the whole tree?
+
+Should it also be removed form devices.txt?
+
+Greets,
+Henne.
+
+
+--===============88550669550413996==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -60,4 +41,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============097143466954198843==--
+--===============88550669550413996==--
