@@ -1,36 +1,54 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 17 May 2006 00:09:13 +0000
-Subject: Re: [KJ] [PATCH] ip2main.c : replace pci_find_device by pci_get_device
-Message-Id: <20060517000913.GA6052@kroah.com>
+From: "avinash pawar" <lkmails@gmail.com>
+Date: Mon, 22 May 2006 09:49:21 +0000
+Subject: [KJ] Project in Kernel Development
+Message-Id: <d5b9712e0605220237j4085ce7i9d35b081d3cd0ac1@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============85458547015556441=="
+Content-Type: multipart/mixed; boundary="===============56113894511452844=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <446A3C3B.8020707@yahoo.fr>
-In-Reply-To: <446A3C3B.8020707@yahoo.fr>
 To: kernel-janitors@vger.kernel.org
 
---===============85458547015556441==
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format...
+
+--===============56113894511452844==
+Content-Type: multipart/alternative;
+    boundary="----------=_1148496200-16314-46"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1148496200-16314-46
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-On Tue, May 16, 2006 at 10:55:23PM +0200, trem wrote:
-> From: trem <tremyfr at yahoo.fr <https://lists.osdl.org/mailman/listinfo/kernel-janitors>>
-> 
-> This patch simply change pci_find_device by pci_get_device, because
-> pci_find_device is deprecated.
+Hi All,
 
-But what about the reference count leak you just caused?  These are not
-simple changes.
+I am a MTech student and looking for project in Kernel Development.
+May i get some Kernel Development work which i can submit as Project Work in
+my college.
 
-> Signed-Off-By: trem <tremyfr at yahoo.fr <https://lists.osdl.org/mailman/listinfo/kernel-janitors>>
+regards,
+Avinash
 
-Put full email address in here please, and no web page.
+------------=_1148496200-16314-46
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-thanks,
+Hi All,<br>
+<br>
+I am a MTech student and looking for project in Kernel Development.<br>
+May i get some Kernel Development work which i can submit as Project Work i=
+n my college.<br>
+<br>
+regards,<br>
+Avinash<br>
 
-greg k-h
+------------=_1148496200-16314-46--
 
---===============85458547015556441==
+--===============56113894511452844==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +59,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============85458547015556441==--
+--===============56113894511452844==--
