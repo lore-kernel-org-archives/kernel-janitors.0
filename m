@@ -1,62 +1,56 @@
-From: "avinash pawar" <lkmails@gmail.com>
-Date: Mon, 22 May 2006 09:49:21 +0000
-Subject: [KJ] Project in Kernel Development
-Message-Id: <d5b9712e0605220237j4085ce7i9d35b081d3cd0ac1@mail.gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============56113894511452844=="
+From: walter harms <wharms@bfs.de>
+Date: Thu, 25 May 2006 08:45:27 +0000
+Subject: Re: [KJ] Project in Kernel Development
+Message-Id: <44756EA7.50301@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d5b9712e0605220237j4085ce7i9d35b081d3cd0ac1@mail.gmail.com>
+In-Reply-To: <d5b9712e0605220237j4085ce7i9d35b081d3cd0ac1@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Dear avinash,
+thanks for your interest in our project. I guess your are searching for 
+a test bed for new ideas that came up when your working on your courses.
+That is ok and the linux kernel is a very nice test case as several 
+other project had found.
 
---===============56113894511452844==
-Content-Type: multipart/alternative;
-    boundary="----------=_1148496200-16314-46"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Unfortunately the kernel janitors project is quit the opposite, we do 
+not introduce new features but try to prevent bitrot in the sources.
+looking after warning and compile errors, replacing obsolete functions 
+and so on.
 
-This is a multi-part message in MIME format...
+i do not know what your college expects but if you can out-line your 
+interests and there requirements we can find a solution. Even one that 
+may have nothing to do with kernel development. You may think that's 
+boring but remember the toolschain, documentation, testing, ....
+All the things you need BEFORE you can even start doing kernel development.
 
-------------=_1148496200-16314-46
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+re,
+  wh
 
-Hi All,
 
-I am a MTech student and looking for project in Kernel Development.
-May i get some Kernel Development work which i can submit as Project Work in
-my college.
 
-regards,
-Avinash
-
-------------=_1148496200-16314-46
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-Hi All,<br>
-<br>
-I am a MTech student and looking for project in Kernel Development.<br>
-May i get some Kernel Development work which i can submit as Project Work i=
-n my college.<br>
-<br>
-regards,<br>
-Avinash<br>
-
-------------=_1148496200-16314-46--
-
---===============56113894511452844==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+avinash pawar wrote:
+> Hi All,
+> 
+> I am a MTech student and looking for project in Kernel Development.
+> May i get some Kernel Development work which i can submit as Project 
+> Work in
+> my college.
+> 
+> regards,
+> Avinash
+> 
+> 
+> ------------------------------------------------------------------------
+> 
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> https://lists.osdl.org/mailman/listinfo/kernel-janitors
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============56113894511452844==--
