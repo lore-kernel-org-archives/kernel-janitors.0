@@ -1,37 +1,31 @@
 From: Matthew Martin <lihnucks@gmail.com>
-Date: Thu, 11 May 2006 02:54:12 +0000
-Subject: [KJ] [PATCH] Make function static in drivers/telephony/ixj.c
-Message-Id: <4462A754.5090107@gmail.com>
+Date: Mon, 29 May 2006 20:08:14 +0000
+Subject: [KJ] [PATCH] Make ixp4xxgpioled_brightness_set static in
+Message-Id: <447B54AE.3040709@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
 Hello,
-    This makes a function in drivers/telephony/ixj.c static. The 
-function that was
-made static is int ixj_set_tone_off.
+    This makes the function ixp4xxgpioled_brightness_set static.
 
-Signed-off-by: Matthew Martin <lihnucks@gmail.com>
 
+Signed-Off-By: Matthew Martin <lihnucks@gmail.com>
 ---
 
---- vanilla-linux-2.6.16/drivers/telephony/ixj.c    2006-03-19 
-23:53:29.000000000 -0600
-+++ linux-2.6.16/drivers/telephony/ixj.c    2006-05-10 
-10:08:38.000000000 -0500
-@@ -5712,7 +5712,7 @@ static int ixj_daa_write(IXJ *j)
-     return 1;
- }
+--- vanilla-linux-2.6.16/drivers/leds/leds-ixp4xx-gpio.c	2006-05-11 23:05:46.000000000 -0500
++++ linux-2.6.16/drivers/leds/leds-ixp4xx-gpio.c	2006-05-12 12:36:43.000000000 -0500
+@@ -48,7 +48,7 @@ static struct ixp4xxgpioled_device {
+ 	int               flags;
+ } ixp4xxgpioled_devices[GPIO_MAX];
  
--int ixj_set_tone_off(unsigned short arg, IXJ *j)
-+static int ixj_set_tone_off(unsigned short arg, IXJ *j)
+-void ixp4xxgpioled_brightness_set(struct led_classdev *pled,
++static void ixp4xxgpioled_brightness_set(struct led_classdev *pled,
+ 				enum led_brightness value)
  {
-     j->tone_off_time = arg;
-     if (ixj_WriteDSPCommand(0x6E05, j))        /* Set Tone Off Period */
-
+ 	const struct ixp4xxgpioled_device *const ixp4xx_dev 
 
 _______________________________________________
 Kernel-janitors mailing list
