@@ -1,95 +1,53 @@
-From: "Odharnait Reddout" <odharnaireddout@ajhackett.com>
-Date: Sat, 13 May 2006 17:31:49 +0000
-Subject: [KJ] Re: your CtpALlS
-Message-Id: <000001c676b3$1d61cc90$f908a8c0@fiu49>
+From: "Jody Anders" <andersjody@aaachicago.com>
+Date: Mon, 29 May 2006 22:05:24 +0000
+Subject: Re: [KJ] 291 conjunctiv
+Message-Id: <000001c6836b$fc75dd80$6256a8c0@nrg3>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============84899262218312588=="
+Content-Type: multipart/mixed; boundary="===============0697954019=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============84899262218312588==
+--===============0697954019==
 Content-Type: multipart/alternative;
-    boundary="----------=_1147541813-1770-226"
+    boundary="----------=_1148940597-21212-18"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1147541813-1770-226
+------------=_1148940597-21212-18
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Hi
-=20
-A
-V
-L
-V
-P
-C
-X
-m
-I
-e
-A
-r
-I
-a
-b
-A
-v
-L
-o
-A
-n
-i
-G
-i
-I
-z
-L
-a
-e
-R
-t
-U
-a
-I
-x
-n
-A
-ra
-M
-c
-S
+Hi,=20
+C ? A L i S=20
+V A L / U M=20
+L E V ? T R A
+V ? A G R A=20
+A M B / E N
+M E R ? D i A
+S O M ^
+X ^ N A X
+P R O Z ^ C=20
+http://www.arterremai.com=20
 
 
-=20
-=20
-
-=20
-
-=20
-http://www.nuberswuis.com
-=20
-=20
-=20
-=20
-=20
-stairs and stone passages. I would give a good deal for the feel of=20
-grass at my toes. I would give a good deal for the feel of a strong=20
-drink in my throat, and for a soft bed after a good supper!=20
-I cant give you those, while the siege is going on. But it is long=20
-since I watched, and I will take your turn for you, if you like. There=20
-is no sleep in me tonight.=20
 
 
-------------=_1147541813-1770-226
+morning early a company of spearmen was seen crossing the river, and=20
+marching up the valley. They bore with them the green banner of the=20
+Elvenking and the blue banner of the Lake, and they advanced until they=20
+stood right before the wall at the Gate. Again Thorin hailed them in a=20
+loud voice: Who are you that come armed for war to the gates of Thorin=20
+son of Thrain, King under the Mountain? This time he was answered.=20
+
+
+------------=_1148940597-21212-18
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -102,108 +60,34 @@ Content-Disposition: inline
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV>Hi</DIV>
-<DIV>&nbsp;</DIV>
-<DIV
+<DIV>Hi,
+<BR>
+<B>C ? A L i S </B><BR>
+<B>V A L / U M </B><BR>
+L E V ? T R A<BR>
+<B> V ? A G R A </B><BR>
+A M B / E N<BR>
+M E R ? D i A<BR>
+S O M ^<BR>
+X ^ N A X<BR>
+P R O Z ^ C
+<BR>
+<A href=3D"http://www.arterremai.com">http://www.arterremai.com</A>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+morning early a company of spearmen was seen crossing the river, and <BR>ma=
+rching up the valley. They bore with them the green banner of the <BR>Elven=
+king and the blue banner of the Lake, and they advanced until they <BR>stoo=
+d right before the wall at the Gate. Again Thorin hailed them in a <BR>loud=
+ voice: Who are you that come armed for war to the gates of Thorin <BR>son =
+of Thrain, King under the Mountain? This time he was answered. <BR></DIV></=
+BODY></HTML>
+------------=_1148940597-21212-18--
 
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> A</DIV> <DIV> <STRONG> V</STRONG></DIV> <DIV> L</DIV> <DIV> <STRON=
-G> V</STRONG></DIV> <DIV> P</DIV> <DIV> <STRONG> C</STRONG></DIV> <DIV> X</=
-DIV> </DIV>
-<DIV
-
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> m</DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> e</DIV> <DIV> <STRON=
-G> A</STRONG></DIV> <DIV> r</DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> a</=
-DIV> </DIV>
-<DIV
-
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> b</DIV> <DIV> <STRONG> A</STRONG></DIV> <DIV> v</DIV> <DIV> <STRON=
-G> L</STRONG></DIV> <DIV> o</DIV> <DIV> <STRONG> A</STRONG></DIV> <DIV> n</=
-DIV> </DIV>
-<DIV
-
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> i</DIV> <DIV> <STRONG> G</STRONG></DIV> <DIV> i</DIV> <DIV> <STRON=
-G> I</STRONG></DIV> <DIV> z</DIV> <DIV> <STRONG> L</STRONG></DIV> <DIV> a</=
-DIV> </DIV>
-<DIV
-
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> e</DIV> <DIV> <STRONG> R</STRONG></DIV> <DIV> t</DIV> <DIV> <STRON=
-G> U</STRONG></DIV> <DIV> a</DIV> <DIV> <STRONG> I</STRONG></DIV> <DIV> x</=
-DIV> </DIV>
-<DIV
-
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> n</DIV> <DIV> <STRONG> A</STRONG></DIV> <DIV> ra</DIV> <DIV> <STRO=
-NG> M</STRONG></DIV> <DIV> c</DIV> <DIV> <STRONG> S</STRONG></DIV> <DIV> <B=
-R></DIV> </DIV>
-<DIV
-
-DEFANGED_style=3D"
-
-FLOAT
-
-
-:
-left
-"> <DIV> <BR></DIV> <DIV> &nbsp;</DIV> <DIV> </DIV> <DIV> &nbsp;</DIV> <DIV=
-> <BR></DIV> <DIV> &nbsp;</DIV> <DIV> <BR></DIV> </DIV>
-<DIV DEFANGED_style=3D"CLEAR: both">&nbsp;</DIV>
-<DIV><A href=3D"http://www.nuberswuis.com">http://www.nuberswuis.com</A></D=
-IV>
-<DIV>&nbsp;</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>stairs and stone passages. I would give a good deal for the feel of <B=
-R>grass at my toes. I would give a good deal for the feel of a strong <BR>d=
-rink in my throat, and for a soft bed after a good supper! <BR>   I cant gi=
-ve you those, while the siege is going on. But it is long <BR>since I watch=
-ed, and I will take your turn for you, if you like. There <BR>is no sleep i=
-n me tonight. <BR></DIV></BODY></HTML>
-------------=_1147541813-1770-226--
-
---===============84899262218312588==
+--===============0697954019==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -214,4 +98,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============84899262218312588==--
+--===============0697954019==--
