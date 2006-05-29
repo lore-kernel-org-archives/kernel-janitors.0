@@ -1,238 +1,59 @@
-From: walter harms <wharms@bfs.de>
-Date: Fri, 19 May 2006 16:00:15 +0000
-Subject: [KJ] inux-2.6.16.16/drivers/scsi/megaraid.c make it compile with !
-Message-Id: <446DEB8F.1040605@bfs.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040609060103070305030706"
+From: "Dick" <gillockxw30@hotmail.com>
+Date: Mon, 29 May 2006 04:56:53 +0000
+Subject: here is everything HYWI.PK rush and see
+Message-Id: <E1FkiEn-0005Wx-B8@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------040609060103070305030706
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-
-hi list,
-i notice that you can not compile the megaraid driver without
-proc. some shifting of #ifdef prevent some 'unsed XY' warnings.
-note that are 2 patchs 1. megaraid.c 2. megaraid.h.
-
-re,
-  wh
+Advanced stokc analysis and profit-boosting techniques
 
 
+Get HYWI First Thing on MOnday, This stcok Going To Explode for at least 30%
 
 
-Signed-off-by: walter harms <wharms@bfs.de>
+Check out for Hot News!
 
---- linux-2.6.16.16/drivers/scsi/megaraid.c.bak	2006-05-18 
-21:57:57.720021832 +0200
-+++ linux-2.6.16.16/drivers/scsi/megaraid.c	2006-05-18 
-23:10:03.675376656 +0200
-@@ -3180,6 +3180,15 @@
-  	return len;
-  }
+Hlolywood Inetrmediate, Inc.
 
-+#else /* !PROC */
-+
-+static void
-+mega_create_proc_entry(int index, struct proc_dir_entry *parent)
-+{
-+  while(0);
-+}
-+
-+
-  #endif
+Symbol: H Y W I  - H Y W I - H Y W I- H Y W I- H Y W I- H Y W I
+
+Current prise: $1.28 , but will increase at least 30-50 % on Monday!
+
+About the company:
+
+Hollywood Itnermediate provdies a proprietray technoolgy of Diigtal Intermeidate services to feature filmmakers for post-production for film mastering and restoration. This technology gives the filmmakers total creative control over the look of their productions. Whether shooting on film or acquiring in HD or SD video, Holylwood Intermeidate puts a powerful cluster of digital tools at the director's disposal to achieve stunning results on the big screen. Matchframe Digital Intermediate, a division of Holylwood Intermeditae, Inc., packages a full array of post-production services with negative handling expertise and cost-effective 2K digital intermediate and 35mm film out systems. Improve your yearly gains with expert stokc advice The Digital Intermediate process eliminates current post-production redundancies by creating a single high-resolution master file from which all versions can be made, including all theatrical and High Definition formats. By creating a single master f
+ ile with resolution higher than the current High Definition broadcast standards, the DI master file enables cinema and television distributors to extract and archive all current and future cinema and television formats including Digital Cinema, Television and High Definition.The data you need to succeed on the booming stokc markets
+
+Don't forget to include this sotck to you bag!
+
+Most reliable methods of stokc analysis increasing your bottom line
+
+Read great new on this stcok
 
 
-@@ -4343,7 +4352,7 @@
-  	return 0;
-  }
-
--
-+#ifdef CONFIG_PROC_FS
-  /**
-   * mega_adapinq()
-   * @adapter - pointer to our soft state
-@@ -4448,6 +4457,7 @@
-
-  	return rval;
-  }
-+#endif
 
 
-  /**
-@@ -4470,7 +4480,7 @@
-  {
-  	Scsi_Cmnd	*scmd;
-  	struct	scsi_device *sdev;
--	unsigned long	flags = 0;
-+//	unsigned long	flags = 0;
-  	scb_t	*scb;
-  	int	rval;
 
-@@ -4965,8 +4975,9 @@
-  {
-  	struct Scsi_Host *host = pci_get_drvdata(pdev);
-  	adapter_t *adapter = (adapter_t *)host->hostdata;
-+#ifdef CONFIG_PROC_FS
-  	char	buf[12] = { 0 };
--
-+#endif
-  	scsi_remove_host(host);
+Every flow hath its ebb Keep your mouth shut and your ears open. For the commandment is a lamp; and the law is light; and reproofs of instruction are the way of life. In Gates we trust. Appearances are deceptive  
 
-  	__megaraid_shutdown(adapter);
---- linux-2.6.16.16/drivers/scsi/megaraid.h.bak	2006-05-18 
-23:10:32.693965160 +0200
-+++ linux-2.6.16.16/drivers/scsi/megaraid.h	2006-05-18 
-23:11:52.696802880 +0200
-@@ -1001,7 +1001,6 @@
-  static int megaraid_abort_and_reset(adapter_t *, Scsi_Cmnd *, int);
-  static int megaraid_biosparam(struct scsi_device *, struct block_device *,
-  		sector_t, int []);
--static int mega_print_inquiry(char *, char *);
+Let the buyer beware
 
-  static int mega_build_sglist (adapter_t *adapter, scb_t *scb,
-  			      u32 *buffer, u32 *length);
-@@ -1023,6 +1022,8 @@
-  static int mega_is_bios_enabled (adapter_t *);
+The early bird may get the worm, but the second mouse gets the cheese A problem is a chance for you to do your best. A bad penny always turns up. The eyes speak as much as the mouth
 
-  #ifdef CONFIG_PROC_FS
-+static int mega_print_inquiry(char *, char *);
-+
-  static void mega_create_proc_entry(int, struct proc_dir_entry *);
-  static int proc_read_config(char *, char **, off_t, int, int *, void *);
-  static int proc_read_stat(char *, char **, off_t, int, int *, void *);
-@@ -1039,11 +1040,13 @@
-  static int proc_rdrv_30(char *, char **, off_t, int, int *, void *);
-  static int proc_rdrv_40(char *, char **, off_t, int, int *, void *);
-  static int proc_rdrv(adapter_t *, char *, int, int);
--#endif
+ Such is the way of an adulterous woman; she eateth, and wipeth her mouth, and saith, I have done no wickedness. Blethers say nought Laughter is the closest distance between two people Forbidden fruits create many jams Better late than never Motivation is what gets you started habit is what keeps you going 
 
-  static int mega_adapinq(adapter_t *, dma_addr_t);
-  static int mega_internal_dev_inquiry(adapter_t *, u8, u8, dma_addr_t);
 
-+#endif
-+
-+
-  static int mega_support_ext_cdb(adapter_t *);
-  static mega_passthru* mega_prepare_passthru(adapter_t *, scb_t *,
-  		Scsi_Cmnd *, int, int);
 
---------------040609060103070305030706
-Content-Type: text/x-patch;
- name="megaraid.c.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="megaraid.c.diff"
 
---- linux-2.6.16.16/drivers/scsi/megaraid.c.bak	2006-05-18 21:57:57.720021832 +0200
-+++ linux-2.6.16.16/drivers/scsi/megaraid.c	2006-05-18 23:10:03.675376656 +0200
-@@ -3180,6 +3180,15 @@
- 	return len;
- }
- 
-+#else /* !PROC */
-+
-+static void
-+mega_create_proc_entry(int index, struct proc_dir_entry *parent)
-+{
-+  while(0);
-+}
-+
-+
- #endif
- 
- 
-@@ -4343,7 +4352,7 @@
- 	return 0;
- }
- 
--
-+#ifdef CONFIG_PROC_FS
- /**
-  * mega_adapinq()
-  * @adapter - pointer to our soft state
-@@ -4448,6 +4457,7 @@
- 
- 	return rval;
- }
-+#endif
- 
- 
- /**
-@@ -4470,7 +4480,7 @@
- {
- 	Scsi_Cmnd	*scmd;
- 	struct	scsi_device *sdev;
--	unsigned long	flags = 0;
-+//	unsigned long	flags = 0;
- 	scb_t	*scb;
- 	int	rval;
- 
-@@ -4965,8 +4975,9 @@
- {
- 	struct Scsi_Host *host = pci_get_drvdata(pdev);
- 	adapter_t *adapter = (adapter_t *)host->hostdata;
-+#ifdef CONFIG_PROC_FS
- 	char	buf[12] = { 0 };
--
-+#endif
- 	scsi_remove_host(host);
- 
- 	__megaraid_shutdown(adapter);
-
---------------040609060103070305030706
-Content-Type: text/x-patch;
- name="megaraid.h.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="megaraid.h.diff"
-
---- linux-2.6.16.16/drivers/scsi/megaraid.h.bak	2006-05-18 23:10:32.693965160 +0200
-+++ linux-2.6.16.16/drivers/scsi/megaraid.h	2006-05-18 23:11:52.696802880 +0200
-@@ -1001,7 +1001,6 @@
- static int megaraid_abort_and_reset(adapter_t *, Scsi_Cmnd *, int);
- static int megaraid_biosparam(struct scsi_device *, struct block_device *,
- 		sector_t, int []);
--static int mega_print_inquiry(char *, char *);
- 
- static int mega_build_sglist (adapter_t *adapter, scb_t *scb,
- 			      u32 *buffer, u32 *length);
-@@ -1023,6 +1022,8 @@
- static int mega_is_bios_enabled (adapter_t *);
- 
- #ifdef CONFIG_PROC_FS
-+static int mega_print_inquiry(char *, char *);
-+
- static void mega_create_proc_entry(int, struct proc_dir_entry *);
- static int proc_read_config(char *, char **, off_t, int, int *, void *);
- static int proc_read_stat(char *, char **, off_t, int, int *, void *);
-@@ -1039,11 +1040,13 @@
- static int proc_rdrv_30(char *, char **, off_t, int, int *, void *);
- static int proc_rdrv_40(char *, char **, off_t, int, int *, void *);
- static int proc_rdrv(adapter_t *, char *, int, int);
--#endif
- 
- static int mega_adapinq(adapter_t *, dma_addr_t);
- static int mega_internal_dev_inquiry(adapter_t *, u8, u8, dma_addr_t);
- 
-+#endif
-+
-+
- static int mega_support_ext_cdb(adapter_t *);
- static mega_passthru* mega_prepare_passthru(adapter_t *, scb_t *,
- 		Scsi_Cmnd *, int, int);
-
---------------040609060103070305030706
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------
+All the advantages of Linux Managed Hosting--Without the Cost and Risk!
+Fully trained technicians. The highest number of Red Hat certifications in
+the hosting industry. Fanatical Support. Click to learn more
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid7521&bid$8729&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---------------040609060103070305030706--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
