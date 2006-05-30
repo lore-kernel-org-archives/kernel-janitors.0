@@ -1,84 +1,53 @@
-From: "tynelle regina" <bastardy@ncja.org>
-Date: Tue, 16 May 2006 14:41:34 +0000
-Subject: Love is a friendship set to music
-Message-Id: <hVkn5TM-Wd6RAG-CI@localhost>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_F627_A89B53D4.0CE1F627"
+From: "Kristi" <ebzcwyjpzjrb@aegisal.com>
+Date: Tue, 30 May 2006 21:06:24 +0000
+Subject: Gino
+Message-Id: <073r844b.0515814@kirkpatricks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-------=_NextPart_000_F627_A89B53D4.0CE1F627
-Content-Type: text/html; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+You've been selected to Play at the HI-ROLLER CASIN0! 
+Your promotional ID is TUY67923234
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title>demonical combustible</title>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
-</head>
+Benefits include: 
 
-<body>
-<b>A toast to you!!</b><br>
-<div align="center">
-<IMG src="cid:f627a89b53d4$0ce1f627$a89b53d4@juston" border="0"><br>
-<strong><font size="5" face="Verdana, Arial, Helvetica, sans-serif">
-comisarovnety<font color="#CC0000">[dot]</font>com</font></strong><br>
-<br><br>----
-<p>Kitty's hand, thanking her with tears, and said he was
-comfortable, free from pain, and that he felt strong and had an
-appetite.  He even raised himself when his soup was brought, and
-asked for a cutlet as well.  Hopelessly ill as he was, obvious as
-it was at the first glance that he could not recover, Levin and
-Kitty were for that hour both in the same state of excitement,
-happy, though fearful of being mistaken.
-"Is he better?"
-"Yes, much."
-"It's wonderful."
-"There's nothing wonderful in it."
-"Anyway, he's better," they said in a whisper, smiling to one
-another.
-This self-deception was not of long duration.  The sick man fell
-into a quiet sleep, but he was waked up half an hour later by his
-cough.  And all at once every hope vanished in those about him
-and in himself.  The reality of his suffering crushed all hopes
-in Levin and Kitty and in the sick man himself, leaving no doubt,
-no memory even of past hopes.
-Without referring to what he had believed in half an hour before,
-as though ashamed even to recall it, he asked for iodine to
-inhale in a bottle covered with perforated paper.  Levin gave him
-the bottle, and the same look of passionate hope with which he
-had taken the sacrament was now fastened on his brother,
-demanding from him the confirmation of the doctor's words that
-inhaling iodine worked wonders.</p>
-<br>
-</div>
-</body>
-</html>
-------=_NextPart_000_F627_A89B53D4.0CE1F627
-Content-Type: image/gif; name="bmkvti.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <f627a89b53d4$0ce1f627$a89b53d4@juston>
+* Up to $888 real money to gamble with 
+* Fastest growing/most trusted online company 
+* Play all your favorite games: Poker, Hold'em, Black Jack, Slots, etc. 
+* Play at no-cost to see how exciting and easy it is 
+* Rapid payouts to all clientele & 24/7 support 
+* Great games, Big Winnings, & thousands of players 
 
-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
-----=_NextPart_000_F627_A89B53D4.0CE1F627--
+This is a limited chance that expires at the end of the month. 
+Play where the world is Playing!
 
+http://csprof.com/d1/total 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+heater you vine me, ncr . edit you puncture me, annulled dietetic maternity infatuate . cashmere you detail me, charlottesville . 
 
 
 -------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
+All the advantages of Linux Managed Hosting--Without the Cost and Risk!
+Fully trained technicians. The highest number of Red Hat certifications in
+the hosting industry. Fanatical Support. Click to learn more
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid7521&bid$8729&dat1642
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-------=_NextPart_000_F627_A89B53D4.0CE1F627--
