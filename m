@@ -1,56 +1,84 @@
-From: "mvmxmvk hdctqesjb" <wfutdg@teradyne.com>
-Date: Mon, 26 Jun 2006 15:31:37 +0000
-Subject: you have to experience this  MONDAY
-Message-Id: <9686639581.742323-92706051-0666@teradyne.com>
+From: "hmlebxts vietwut" <ysvqzkakavx@unisys.com>
+Date: Thu, 01 Jun 2006 09:02:10 +0000
+Subject: fwd: no compromise INFX
+Message-Id: <9gje98hq1u9ruzyy6vnx6t3e2gemfonaa5vf9o@lqbzkcrx>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hollywood Intermediate Inc.
-(SYM : H Y W I) 
+INFX**INFX**INFX**INFX**INFX**INFX**INFX**INFX**
 
-RECENTLY released HOT NEWS
+Infinex Ventures Inc. (INFX)
+Current Price: $0.52
 
-Current Sh Price : $ 0.65
- 
-Follow the performance of this company, it is a real gold mine
-the hidden gem 
+The Rally has begun
+Watch this one like a hawk, this report is sent because the potential is in=
+credible
+This is AS sure as it gets
 
-HYWI has performed like clockwork every time 
+H U G E  N E W S read below
 
-CO OverView
-H o l l y w o o d  I n t e r m e d i a t e provides a proprietary technology of Digital Intermediate services to feature filmmakers for post-production for film mastering and restoration. This technology gives the filmmakers total creative control over the look of their productions. Whether shooting on film or acquiring in HD or SD video, H o l l y w o o d  I n t e r m e d i a t e puts a powerful cluster of digital tools at the director's disposal to achieve stunning results on the big screen. Matchframe Digital Intermediate, a division of H o l l y w o o d  I n t e r m e d i a t e, Inc., packages a full array of post-production services with negative handling expertise and cost-effective 2K digital intermediate and 35mm film out systems. The Digital Intermediate process eliminates current post-production redundancies by creating a single high-resolution master file from which all versions can be made, including all theatrical and High Definition formats. By creating a single
-  master file with resolution higher than the current High Definition broadcast standards, the DI master file enables cinema and television distributors to extract and archive all current and future cinema and television formats including Digital Cinema, Television and High Definition.
+COMPANY OVERVIEW
+
+Aggressive and energetic, Infinex boasts a dynamic and diversified portfoli=
+o of operations across North America, with an eye on international expansio=
+n.=20
+
+Grounded in natural resource exploration, Inifinex also offers investors ac=
+cess to exciting new developments in the high-tech sector and the booming i=
+nternational real estate market. Our market based experience, tenacious res=
+earch techniques, and razor sharp analytical skills allow us to leverage op=
+portunities in emerging markets and developing technologies.=20
+
+Identifying these opportunities in the earliest stages allows us to acceler=
+ate business development and fully realize the company=92s true potential. =
+Maximizing overall profitability and in turn enhancing shareholder value.=20
+
+Current Press Release
+
+Infinex Announces Extension to Its Agreement in Chile
+LAS VEGAS, NV, May 9 /PRNewswire-FirstCall/ - Infinex Ventures Inc. (INFX:O=
+B - News; "the Company") and its Board of Directors are pleased to announce=
+ that the Company has received an extension (90 days) to its Agreement for =
+the due diligence period, in an effort to fully verify the offered title an=
+d all additional documentation, including but not limited to, Trial C-1912-=
+ 2001 at the 14th Civil Court of Santiago and Criminal Trial 1160-2002 at t=
+he 19th Court of Crime of Santiago of Chile, Ministry of Mines of Chile ove=
+r its sole and exclusive right to acquire a 50% interest in the Tesoro 1-12=
+ Mining Claims.
 
 
-Red H0t News:
+Infinex Announces Joint Venture and Option Agreement Extension
+LAS VEGAS, May 5 /PRNewswire-FirstCall/ - Infinex Ventures Inc. (INFX:OB - =
+"the Company") and its Board of Directors are please to announce that the C=
+ompany has been granted an extension of 120 days to fulfill its contractual=
+ obligations under the Joint Venture and Option Agreement dated June 14, 20=
+04 on the Texada Island "Yew Gr0up" Mining Claims:
 
-Hollywood Intermediate Announces Completion of Work on Several Digital Intermediates by Senior Colorist Julius Friede GLENDALE, CA--(MARKET WIRE)--Jun 21, 2006 -- Hollywood Intermediate, Inc. (Other OTC:HYWI.PK - News) a provider of digital intermediate film mastering services announced today that Julius Friede, senior colorist at its Matchframe Digital Intermediate division, has completed work on several digital intermediates in the last three months, including "Journey to the End of the Night," directed by Eric Eason, "The Sensation of Sight," directed by Aaron Wiederspahn and shot by Christophe Lanzenberg, and "Beautiful Ohio," directed by Chad Lowe, and shot by Steve Kazmierski.
 
 
-H o l l y w o o d  I n t e r m e d i a t e a provider of digital intermediate film mastering services, announced today that that its Matchframe Digital Intermediate (MDI) division is completing a digital intermediate for Chad Lowe's directorial debut, "Beautiful Ohio," starring William Hurt and Rita Wilson. READ MORE THIS IS HUGE
 
-H o l l y w o o d  I n t e r m e d i a t e Expands the Creative Palette for Independent Filmmakers GLENDALE, CA--(MARKET WIRE)--May 31, 2006 -- H o l l y w o o d  I n t e r m e d i a t e, Inc. A provider of digital intermediate film mastering services, announced today that its Matchframe Digital Intermediate division is currently providing full digital intermediate services for Super 16MM productions.
+You say potayto, I say potahto. Stone cold sober.   To gild refined gold, t=
+o paint the lily. Raking in the dough. Top of the morning.    Turn over a n=
+ew leaf. Water under the bridge. Sweet as honey.   The scum of the earth.  =
+ Walking on cloud nine. Tall as a tree.   Shake like a leaf. Your barking u=
+p the wrong tree. You say potayto, I say potahto. You throw filth on the li=
+ving and flowers on the dead.Pin a rose on your nose. Spaceship earth.   Th=
+ere's no time like the present.   Walking on water. Up a tree. Plain as wat=
+er. You can't squeeze blood out of a turnip. Ugly as a mud fence. That's a =
+real stem winder.   Say it with flowers.   Plant kindness and gather love. =
+  Scraping the bottom of the barrel.  Speak softly and carry a big stick.  =
+ The silly season. =20
 
-H o l l y w o o d  I n t e r m e d i a t e, Inc. (H_Y_W_I - News), a provider of digital intermediate film mastering services, announced that High Definition preview masters as part of its normal digital intermediate service offerings and workflow.
 
-"Typically, in current post-production workflow, HD dailies masters are edited into high quality preview masters including color timing, dirt removal, opticals and visual effects," said David Waters, H o l l y w o o d  I n t e r m e d i a t e president. "Unfortunately, none of these processes translate to the theatrical release of the film as they must all be duplicated or repeated in either a higher resolution digital format, or photo chemical process."
 
-"The challenge for completing the final editorial decisions on a motion picture are balanced between the ability to display the highest resolution picture for a test audience, and the costs and time in having to re-master your film based on a test audience response," said Jim Delany, H o l l y w o o d  I n t e r m e d i a t e COO.
-
-DO your Due Diligence and you'll see what we are talking about when it comes to H-Y-W-I
-
------------------------
-Season of mists and mellow fruitfulness. You can't teach an old dog new tricks.  A thorn in my side.   A thorn in my side.   Spill the beans.   Stand your ground. We hung them out to dry.  Water doesn't run uphill.   When it rains it pours.   There's no time like the present.   She's a nut.   We hung them out to dry.  You throw filth on the living and flowers on the dead.Pin a rose on your nose. Putting it in a nutshell.   A snail's pace. Save it for a rainy day.   Walking on water.
-
-Slow as molasses in January. Your barking up the wrong tree. Spring to mind.   Tastes like chicken.   Pull it up by the roots. When we love - we grow.  Slow as a snail.   What's done is done.  We'll cross that bridge when we come to it.  Treat him like dirt. Want my place in the sun.  Which came first, the chicken or the egg. Rare as walking on water.  As uneasy as a cat near water.   Timber! Rain, rain go away; come again some other day. A rolling stone gathers no moss. You can't squeeze blood out of a turnip. You can't squeeze blood out of a turnip. Stuck in a rut.  Thick as a brick.   The sharper is the berry, the sweeter is the wine. A rose is a rose is a rose. What on earth? Water doesn't run uphill.  
-
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+-------------------------------------------------------
+All the advantages of Linux Managed Hosting--Without the Cost and Risk!
+Fully trained technicians. The highest number of Red Hat certifications in
+the hosting industry. Fanatical Support. Click to learn more
+http://sel.as-us.falkag.net/sel?cmd=3Dlnk&kid=107521&bid$8729&dat=121642
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
