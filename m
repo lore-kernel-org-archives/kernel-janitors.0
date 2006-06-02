@@ -1,50 +1,38 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Mon, 12 Jun 2006 03:01:20 +0000
-Subject: Re: [KJ] [PATCH] Add KERN constants to arch/i386/kernel/cpu/rise.c
-Message-Id: <20060611200120.1592250b.rdunlap@xenotime.net>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Fri, 02 Jun 2006 09:42:52 +0000
+Subject: Re: [KJ] how to handle Kconfig ?
+Message-Id: <20060602094252.GK3955@stusta.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <448CA38C.1050602@gmail.com>
-In-Reply-To: <448CA38C.1050602@gmail.com>
+References: <446C9075.5040906@bfs.de>
+In-Reply-To: <446C9075.5040906@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 11 Jun 2006 19:30:34 -0400 Dave Jones wrote:
+On Sun, May 28, 2006 at 05:56:26PM +0200, walter harms wrote:
+> that is nice to read but does not answer my question:
+> 1. Should every not working combination by fixed ?
+> 2. Is this a problem for the Janitor ML or the LKML ?
 
-> On Sun, Jun 11, 2006 at 06:13:16PM -0500, Matthew Martin wrote:
->  > Hello,
->  >     This adds KERN constants to arch/i386/kernel/cpu/rise.c
->  > 
->  > Signed-Off-By: Matthew Martin <lihnucks@gmail.com>
->  > ---
->  > 
->  > 
->  > --- vanilla-linux-2.6.16/arch/i386/kernel/cpu/rise.c	2006-03-19 23:53:29.000000000 -0600
->  > +++ linux-2.6.16/arch/i386/kernel/cpu/rise.c	2006-06-09 18:45:17.000000000 -0500
->  > @@ -7,9 +7,9 @@
->  >  
->  >  static void __init init_rise(struct cpuinfo_x86 *c)
->  >  {
->  > -	printk("CPU: Rise iDragon");
->  > +	printk(KERN_INFO "CPU: Rise iDragon");
->  >  	if (c->x86_model > 2)
->  > -		printk(" II");
->  > +		printk(KERN_INFO " II");
->  >  	printk("\n");
-> 
-> Note that there's no \n on the first printk.  This means that adding teh KERN_INFO
-> to the second printk is incorrect, as it'll result in output like..
-> 
-> CPU: Rise iDragon<6> II
+1. at least on i386, every combination should be fixed
+   only if extraordinary pathological and nonsensical cases are hard to 
+   fix there might be exceptions
+2. I'd send them to lkml since they are bug fixes
 
-which is why the KJ TODO says:
+> re,
+>  wh
 
-- printk() calls should include appropriate KERN_* constant (of course
-  only at beginning of lines).
+cu
+Adrian
 
----
-~Randy
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
