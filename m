@@ -1,40 +1,115 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 27 Jun 2006 23:16:31 +0000
-Subject: Re: [KJ] [patch 1/1] kernel/resource.c: __request_region argument
-Message-Id: <20060627231631.GB15225@kroah.com>
+From: =?big5?q?Gordon=20Carol?= <carol444gmrs@yahoo.com.hk>
+Date: Mon, 05 Jun 2006 17:31:41 +0000
+Subject: [KJ] Hello! reply please.
+Message-Id: <20060605173141.89910.qmail@web55010.mail.re4.yahoo.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1485431900=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c7cf77ad0606270022g174a2fbdje69d94ebebd32363@mail.gmail.com>
-In-Reply-To: <c7cf77ad0606270022g174a2fbdje69d94ebebd32363@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jun 27, 2006 at 04:29:20AM -0400, Brian Jung Myeng Lee wrote:
-> Oops, I'm sorry. I guess it's a little bit getting too late.
-> 
-> Here's a copy of my response.
-> 
-> Greg,
-> 
-> I must have misinterpreted what it said on the TODO list. Under Audit
-> section, request_region() is listed. (I found that request_region() is
-> a macro that really calls __request_region().) I thought somebody
-> wanted to check and see if __request_region() returns proper return
-> values. I noticed that
-> 
->                res->end = start + n - 1;
-> 
-> in kernel/resource.c:__request_region(). If n = 0, I think res->end <
-> res->start, which I hope is not the valid region.
+This is a multi-part message in MIME format...
 
-Sorry, but no, the issue is to audit all _users_ of the request_region()
-call to make sure they properly handle the fact when the call fails.
+--===============1485431900==
+Content-Type: multipart/alternative;
+    boundary="----------=_1149530182-28013-417"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-thanks,
+This is a multi-part message in MIME format...
 
-greg k-h
+------------=_1149530182-28013-417
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+p9qms7dzqrq5cbZspmGnfaFJp0Gye6VpuXG2bLW5p9qhR2Nhcm9sNDQ0Z21yc0B5YWhvby5jb20u
+aGsKCkhlbGxvLAoKCllvdSBtYXkgYmUgc3VycHJpc2VkIHRvIHJlY2VpdmUgdGhpcyB1bnNvbGlj
+aXRlZCBtYWlsCgphcyBpdCBtYXkgYXBwZWFyIHRvIGJlLiBTb3JyeSB0byBib3RoZXIgeW91IGFu
+eSB3YXkuCgpHbG9yeSBiZSB0byBHb2QsIE15IG5hbWVzIGFyZSBNUlMuIENBUk9MIEdPUkRPTiBm
+cm9tCgpBbWVyaWNhIG1hcnJpZWQgdG8gTEFURSBNUi4gUklDSEFSRFMgR09SRE9OIHdobyB3b3Jr
+ZWQKCndpdGggdGhlIEFtZXJpY2FuIGVtYmFzc3kgaW4gRW5nbGFuZC4KCgpXZSB3ZXJlIGJvdGgg
+bWFycmllZCBmb3IgeWVhcnMgd2l0aG91dCBjaGlsZHJlbi4KCkkgZG8gbm90IGludGVuZCB0byB3
+YXN0ZSBtdWNoIG9mIHlvdXIgdGltZSwgbXkgaHVzYmFuZAoKbGVmdCBzb21lIG1vbmV5IGZvciBt
+ZSB3aGljaCBpIGludGVuZCB0byBnaXZlIG91dCBmb3IKCmNoYXJpdHkgcHVycG9zZSx0byBhIEdv
+ZCBmZWFyaW5nIGluZGl2aWR1YWwgb3IgZmlybQoKdGhhdCB3aWxsIHJlY2VpdmVkIGFuZCB1c2Ug
+dGhlIG1vbmV5IHRvIGhlbHAKCk9SUEhBTkdFUyxXSURPV1MsYW5kIFBST1BBR0FURSBUSEUgV09S
+RCBPRiBHT0QuIEkgYW0KCmxvb2tpbmcgZm9yIHNvbWVvbmUgdGhhdCBJIGNhbiB0cnVzdCB0byBo
+YW5kbGUgdGhpcwoKZnVuZHMuCgoKQmVjYXVzZSBvZiBteSBwcmVzZW50IGNvbmRpdGlvbiBvZiBt
+eSBoZWFsdGggcHJvYmxlbQoKdGhhdCBpcyB3aGlsZSBpIHRvb2sgdGhpcyBkZWNpc2lvbiB0byBn
+aXZlIHRoZSBtb25leQoKb3V0IGlzIHRoYXQgc2luY2UgaSBkbyBub3QgaGF2ZSBhIGNoaWxkIGFu
+ZCBkdWUgdG8gbXkKCmh1c2JhbmRzIGJlbGllZiBpbiBnaXZpbmcgdG8gdGhlIGxlc3MgcHJldmls
+YWdlIGFuZAoKYmVmb3JlIG15IGh1c2JhbmQgZGllZCB3ZSBib3RoIGRlY2lkZWQgdG8gZ2l2ZSB0
+aGUKCm1vbmV5IG91dCBmb3IgY2hhcml0eSB3b3JrcyB0aGF0IHdhcyBvdXIgd2lzaC4gQW5kIGkK
+CndhbnQgdG8gY2Fycnkgb3V0IG15IGh1c2JhbmRzIHdpc2ggc28gdGhhdCBoZSB3aWxsIGJlCgpo
+YXBweSB3aXRoIG1lIHdoZXJlIGV2ZXIgaGUgbWF5IGJlLgoKClRoZSB0cnV0aCBvZiB0aGUgbWF0
+dGVyIGlzIGkga25vdyB0aGF0IGJhc2VkIG9uIHdoYXQKCmlzIGdvaW5nIG9uIGFsbCBvdmVyIHRo
+ZSBpbnRlcm5ldCwgcGVvcGxlIGZpbmQgaXQgdmVyeQoKZGlmZmljdWx0IHRvIGFzc2lzdCBvbmUg
+YW5vdGhlciBhbmQgYWxzbyBmaW5kIGl0CgpkaWZmaWN1bHQgdG8gYmVsaWV2ZSBpc3N1ZXMgbGlr
+ZSB0aGlzIGJ1dCBpIGFzc3VyZSB5b3UKCnRoYXQgYXMgc29vbiBhcyB5b3UgY2FuIGdhcmFudGVl
+IG1lIG9mIHlvdXIgdHJ1c3QgYW5kCgpob25lc3RseSBpIHdpbGwgYmUgYWJsZSB0byB3b3JrIHdp
+dGggeW91LgoKCkFzIHNvb24gYXMgeW91IGdldCBpbnRvdWNoIHdpdGggbWUgaSB3aWxsIHRlbGwg
+eW91IGFsbAoKdGhlIG1vZGFsaXRpZXMgdGhhdCBpcyBpbnZvdmxlZCBpbiB0aGlzIHByb2plY3Qu
+CgoKTWF5IEdvZCBibGVzcyB5b3UuCgoKCgotIEdvcmRvbiBDYXJvbAoK
+
+------------=_1149530182-28013-417
+Content-Type: text/html; charset="big5"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+PGRpdiBzdHlsZT0iYm9yZGVyOiBERUZBTkdFRF9zb2xpZCBERUZBTkdFRF8xcHggI2NjY2NjYzsg
+d2lkdGg6NDQ4cHg7IGJhY2tncm91bmQtY29sb3I6d2hpdGU7IERFRkFOR0VEX21hcmdpbjoxMHB4
+IDBweDsiOz48dGFibGUgYm9yZGVyPTAgY2VsbHNwYWNpbmc9MCBjZWxscGFkZGluZz0wIHdpZHRo
+PSI0NDgiPjx0cj48dGQgY2xhc3M9InRhYmxvdCIgREVGQU5HRURfYmFja2dyb3VuZD0iaHR0cDov
+L3VzLmkxLnlpbWcuY29tL3VzLnlpbWcuY29tL2kvdXMvcGltL2dyL2dyX2Fubm91bmNlXzEuZ2lm
+IiB2YWxpZ249ImNlbnRlciIgaGVpZ2h0PSI1NyI+PGJpZyBERUZBTkdFRF9zdHlsZT0icGFkZGlu
+ZzoxMHB4OyI+p9qms7dzqrq5cbZspmGnfaFJPC9iaWc+PC90ZD48L3RyPjwvdGFibGU+PGRpdiBE
+RUZBTkdFRF9zdHlsZT0icGFkZGluZzoxMHB4OyI+p0Gye6VpuXG2bLW5p9qhRzxiPmNhcm9sNDQ0
+Z21yc0B5YWhvby5jb20uaGs8L2I+PGJyPjxicj48c3BhbiBERUZBTkdFRF9zdHlsZT0iY29sb3I6
+Z3JlZW47Ij5IZWxsbyw8YnI+PGJyPjxicj5Zb3UgbWF5IGJlIHN1cnByaXNlZCB0byByZWNlaXZl
+IHRoaXMgdW5zb2xpY2l0ZWQgbWFpbDxicj48YnI+YXMgaXQgbWF5IGFwcGVhciB0byBiZS4gU29y
+cnkgdG8gYm90aGVyIHlvdSBhbnkgd2F5Ljxicj48YnI+R2xvcnkgYmUgdG8gR29kLCBNeSBuYW1l
+cyBhcmUgTVJTLiBDQVJPTCBHT1JET04gZnJvbTxicj48YnI+QW1lcmljYSBtYXJyaWVkIHRvIExB
+VEUgTVIuIFJJQ0hBUkRTIEdPUkRPTiB3aG8gd29ya2VkPGJyPjxicj53aXRoIHRoZSBBbWVyaWNh
+biBlbWJhc3N5IGluIEVuZ2xhbmQuPGJyPjxicj48YnI+V2Ugd2VyZSBib3RoIG1hcnJpZWQgZm9y
+IHllYXJzIHdpdGhvdXQgY2hpbGRyZW4uPGJyPjxicj5JIGRvIG5vdCBpbnRlbmQgdG8gd2FzdGUg
+bXVjaCBvZiB5b3VyIHRpbWUsIG15IGh1c2JhbmQ8YnI+PGJyPmxlZnQgc29tZSBtb25leSBmb3Ig
+bWUgd2hpY2ggaSBpbnRlbmQgdG8hCiBnaXZlIG91dCBmb3I8YnI+PGJyPmNoYXJpdHkgcHVycG9z
+ZSx0byBhIEdvZCBmZWFyaW5nIGluZGl2aWR1YWwgb3IgZmlybTxicj48YnI+dGhhdCB3aWxsIHJl
+Y2VpdmVkIGFuZCB1c2UgdGhlIG1vbmV5IHRvIGhlbHA8YnI+PGJyPk9SUEhBTkdFUyxXSURPV1Ms
+YW5kIFBST1BBR0FURSBUSEUgV09SRCBPRiBHT0QuIEkgYW08YnI+PGJyPmxvb2tpbmcgZm9yIHNv
+bWVvbmUgdGhhdCBJIGNhbiB0cnVzdCB0byBoYW5kbGUgdGhpczxicj48YnI+ZnVuZHMuPGJyPjxi
+cj48YnI+QmVjYXVzZSBvZiBteSBwcmVzZW50IGNvbmRpdGlvbiBvZiBteSBoZWFsdGggcHJvYmxl
+bTxicj48YnI+dGhhdCBpcyB3aGlsZSBpIHRvb2sgdGhpcyBkZWNpc2lvbiB0byBnaXZlIHRoZSBt
+b25leTxicj48YnI+b3V0IGlzIHRoYXQgc2luY2UgaSBkbyBub3QgaGF2ZSBhIGNoaWxkIGFuZCBk
+dWUgdG8gbXk8YnI+PGJyPmh1c2JhbmRzIGJlbGllZiBpbiBnaXZpbmcgdG8gdGhlIGxlc3MgcHJl
+dmlsYWdlIGFuZDxicj48YnI+YmVmb3JlIG15IGh1c2JhbmQgZGllZCB3ZSBib3RoIGRlY2lkZWQg
+dG8gZ2l2ZSB0aGU8YnI+PGJyPm1vbmV5IG91dCBmb3IgY2hhcml0eSB3b3JrcyB0aGF0IHdhcyBv
+dXIgd2lzaC4gQW5kIGk8YnI+PGJyPndhbnQgdG8gY2Fycnkgb3V0IG15IGh1c2JhbmRzIHdpc2gg
+c28gdGhhdCBoZSB3aWxsIGJlPGJyPjxicj5oYXBweSB3aXRoIG1lIHdoZXJlIGV2ZXIgaGUgbWF5
+IGJlLjxicj48YnI+PGJyPlRoZSB0cnV0aCBvZiB0aGUgbWF0dGVyIGlzIGkga25vdyB0aGF0IGJh
+c2VkIG9uIHdoYXQ8YnI+PGJyPmlzIGdvaW5nIG9uIGFsbCBvdmVyIHRoZSBpbnRlcm5ldCwgcGVv
+cGxlIGZpbmQgaXQgdmVyeTxicj48YnI+ZGlmZmljdWx0IHRvIGFzc2lzdCBvbmUgYW5vdGhlciBh
+bmQgYWxzbyBmaW5kIGl0PGJyPjxicj5kaWZmaWN1bHQgdG8gYmVsaWV2ZSBpc3N1ZXMgbGlrZSB0
+aGlzIGJ1dCBpIGFzc3VyZSB5b3U8YnI+PGJyPnRoYXQgYXMgc29vbiBhIQpzIHlvdSBjYW4gZ2Fy
+YW50ZWUgbWUgb2YgeW91ciB0cnVzdCBhbmQ8YnI+PGJyPmhvbmVzdGx5IGkgd2lsbCBiZSBhYmxl
+IHRvIHdvcmsgd2l0aCB5b3UuPGJyPjxicj48YnI+QXMgc29vbiBhcyB5b3UgZ2V0IGludG91Y2gg
+d2l0aCBtZSBpIHdpbGwgdGVsbCB5b3UgYWxsPGJyPjxicj50aGUgbW9kYWxpdGllcyB0aGF0IGlz
+IGludm92bGVkIGluIHRoaXMgcHJvamVjdC48YnI+PGJyPjxicj5NYXkgR29kIGJsZXNzIHlvdS48
+YnI+PGJyPjxicj48L3NwYW4+PGJyPjxicj4tIDxzcGFuIERFRkFOR0VEX3N0eWxlPSJjb2xvcjpn
+cmVlbjsiPkdvcmRvbiBDYXJvbDwvc3Bhbj48L2Rpdj48L2Rpdj4=
+
+------------=_1149530182-28013-417--
+
+--===============1485431900==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1485431900==--
