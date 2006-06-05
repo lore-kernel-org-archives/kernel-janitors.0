@@ -1,91 +1,38 @@
-From: "Yawed J. Delay" <Barr@giga-land.com>
-Date: Sun, 25 Jun 2006 18:42:03 +0000
-Subject: [KJ] The Ultimate Online Pharmaceuticals
-Message-Id: <9943382758.20060625144203@giga-land.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0532895969=="
+From: "Hilda Slaughter" <MinervaonrShaver@debian.org>
+Date: Mon, 05 Jun 2006 02:08:13 +0000
+Subject: [KJ] Fwd: password
+Message-Id: <4291692454.15033@dyn-htl-18175.dyn.columbia.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Contact us NOW to receive your diploma within days, and start improving your life!
 
---===============0532895969==
-Content-Type: multipart/alternative;
-    boundary="----------=_1151264543-12221-324"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Bachelors, Masters, MBA and/or Doctorate (PhD)
 
-This is a multi-part message in MIME format...
+NO ONE is turned down.
+Call Now 7 days a week.
 
-------------=_1151264543-12221-324
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+1-206-984-0002
 
-Vlipagra $3.3
-Levitnra $3.3
-Cialmis $3.7
-Imitrpex $16.4
-Fnlomax $2.2
-Ultrwam $0.78
-Viomxx $4.75
-Ameblem $2.2
-VaIixum - $0.97
-Xanxax $1.09
-Sorma $3
-Meritdia $2.2  
+According to the U.S. Census Bureau, with the following degrees, here is how much you can 
+expect to make in your lifetime:
+High School Diploma:  $1,100,000
+Bachelors Degree:    $2,100,000
+Masters Degree:      $2,500,000
+Doctorate:            $4,400,000
+You Need a Better Degree, and we can Help!
+Obtain degrees from Prestigious Universities based on you life experience.
+NO ONE is turned down.
+Call Now 7 days a week, 24 hours a day.
 
+1-206-984-0002
 
-visit our website
-http://
-
-___
-Best regards,
-Online Pharmaceuticals
-
-
-
-------------=_1151264543-12221-324
-Content-Type: text/html
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-<html>
-<body>
-<b>Vlihagra - $3.3 <br>
-Levithra - $3.3<br>
-Cialxis - $3.7<br>
-Imitrnex - $16.4<br>
-Fwlomax - $2.2<br>
-Ultroam - $0.78<br>
-Viomxx - $4.75 <br>
-Amhblem - $2.2<br>
-VaIiwum - $0.97<br>
-Xanpax - $1.09<br>
-Sosma - $3 <br>
-Meriedia - $2.2</b><br>
-<br>
-  <br>
-  <a href="http://"><strong>visit our website</strong></a><br>
-  <br>
-   <br>
-  Best regards,<br>
-  Online Pharmaceuticals 
-</body>
-</html>
-
-------------=_1151264543-12221-324--
-
---===============0532895969==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Regards,
+Professor. Roy Robbins
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0532895969==--
