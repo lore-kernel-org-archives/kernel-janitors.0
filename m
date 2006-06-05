@@ -1,36 +1,37 @@
-From: "Lorie" <qafukvfsearl@infinito.it>
-Date: Tue, 16 May 2006 00:52:07 +0000
-Subject: [KJ] my dream come true
-Message-Id: <5B4AF15B.E1407F3@infinito.it>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============40743815893957125=="
+From: "Catalina Melvin" <SusanaepKilgore@bartleby.com>
+Date: Mon, 05 Jun 2006 02:08:43 +0000
+Subject: Re: [KJ] =?iso-8859-1?q?=28no_subject=29?=
+Message-Id: <200606050208.k5528h2f021396@smtp.osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============40743815893957125==
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+You have seen it on "60 Minutes" and read the BBC News report -- now find out just what everyone is talking about.
 
-Do not ignore me please,
-a
-I found your email somewhere and now decided to write ayou.
-I am coming to your place in few weeks and thought we 
-can meet each otherb. Let me know if you dao not mind.
-I am a nice pretty gibrl. Don't reply to this email. 
-Email me direcaltby at gtewd@datetodayy.com
+# Suppress your appetite and feel full and satisfied all day long
+# Increase your energy levels
+# Lose excess weight
+# Increase your metabolism
+# Burn body fat
+# Burn calories
+# Attack obesity
+And more..
 
+http://lifestylehealthhh.com/
 
+# Suitable for vegetarians and vegans
+# MAINTAIN your weight loss
+# Make losing weight a sure guarantee
+# Look your best during the summer months
 
---===============40743815893957125==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+http://lifestylehealthhh.com/
 
+Regards,
+D
+r. Andrea Mccabe
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============40743815893957125==--
