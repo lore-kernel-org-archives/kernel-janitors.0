@@ -1,24 +1,26 @@
 From: =?big5?q?Gordon=20Carol?= <carol444gmrs@yahoo.com.hk>
-Date: Mon, 05 Jun 2006 17:31:41 +0000
+Date: Mon, 05 Jun 2006 18:01:24 +0000
 Subject: [KJ] Hello! reply please.
-Message-Id: <20060605173141.89910.qmail@web55010.mail.re4.yahoo.com>
+Message-Id: <20060605180124.36268.qmail@web55015.mail.re4.yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1485431900=="
+Content-Type: multipart/mixed; boundary="===============0629159383=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20060605173141.89910.qmail@web55010.mail.re4.yahoo.com>
+In-Reply-To: <20060605173141.89910.qmail@web55010.mail.re4.yahoo.com>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1485431900==
+--===============0629159383==
 Content-Type: multipart/alternative;
-    boundary="----------=_1149530182-28013-417"
+    boundary="----------=_1149531491-28013-591"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1149530182-28013-417
+------------=_1149531491-28013-591
 Content-Type: text/plain; charset="big5"
 Content-Transfer-Encoding: base64
 Content-Disposition: inline
@@ -52,7 +54,7 @@ dGggeW91LgoKCkFzIHNvb24gYXMgeW91IGdldCBpbnRvdWNoIHdpdGggbWUgaSB3aWxsIHRlbGwg
 eW91IGFsbAoKdGhlIG1vZGFsaXRpZXMgdGhhdCBpcyBpbnZvdmxlZCBpbiB0aGlzIHByb2plY3Qu
 CgoKTWF5IEdvZCBibGVzcyB5b3UuCgoKCgotIEdvcmRvbiBDYXJvbAoK
 
-------------=_1149530182-28013-417
+------------=_1149531491-28013-591
 Content-Type: text/html; charset="big5"
 Content-Transfer-Encoding: base64
 Content-Disposition: inline
@@ -99,9 +101,9 @@ IGludm92bGVkIGluIHRoaXMgcHJvamVjdC48YnI+PGJyPjxicj5NYXkgR29kIGJsZXNzIHlvdS48
 YnI+PGJyPjxicj48L3NwYW4+PGJyPjxicj4tIDxzcGFuIERFRkFOR0VEX3N0eWxlPSJjb2xvcjpn
 cmVlbjsiPkdvcmRvbiBDYXJvbDwvc3Bhbj48L2Rpdj48L2Rpdj4=
 
-------------=_1149530182-28013-417--
+------------=_1149531491-28013-591--
 
---===============1485431900==
+--===============0629159383==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -112,4 +114,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1485431900==--
+--===============0629159383==--
