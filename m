@@ -1,28 +1,32 @@
-From: "Eustolia Hayward" <8z0pa@playstation.sony.com>
-Date: Fri, 09 Jun 2006 08:06:49 +0000
-Subject: [D E T A I L S TUESDAY] Experienced reliable service on meds. loyal
-Message-Id: <2vcexosmhmg1d0h2vo@playstation.sony.com>
+From: "Luis Valentine" <70clarence@norika-fujiwara.com>
+Date: Thu, 08 Jun 2006 03:00:55 +0000
+Subject: If you are studing or working
+Message-Id: <E1FoAju-0005e9-7k@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We give you the power to make an educated choice in your treatment approach and in what medications you are going to take.
+Greetings Kernel-janitor-discuss
 
-Free online medical consultation by a licensed U.S. physician.
+International company "Eurobiz Tour Inc." is well known all over the world in international tours business. 
+We are searching for people,who want to work in our company and reach success fast, using modern life type. 
+
+Our company wants to become First place in touristic business, i hope you too. 
+This letter is to inform you about our TODAY BEST WORK PROPOSITION in this field of market. 
+You can become our manager and promote our company in your area. 
+The salary is 1000 EUR-3000 EUR per week, your duties are to execute tasks from Sirenis Inc. head office.Poland ,Spain,  Slovakia, Germany, France business map.
+Candidates: 21-60 years old, internet access every day, mobile phone, to be anxious for success.
+
+No matter you country and city, send us your mail and get a reply next day!
+Please send your CV, profiles according this e-mail: jobeurobiz@aol.com
 
 
-Visit Us Today
-filingtab.com
++++++++++++++++
+Jules Haney
+Thu, 8 Jun 2006 11:00:27 -0800
 
-Respectfully,
-Eustolia Hayward
-filingtab.com customer service
-
-jfqexxhxeb gLqugCRZlbDKWVCRSccWuCffezuElO
-
-attained fingerings Punic incomputable contrivances adulthood correlation kiloton conferee gospels Bernet fixating bricks acceptability employment's alligators hoariness disassembled experts legality Atwood Moliere follows Gorham girders blat balking Sandburg Verde bellwethers
 
 
 _______________________________________________
