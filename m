@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 08 Jun 2006 10:58:33 +0000
+From: "Randy.Dunlap" <rdunlap@xenotime.net>
+Date: Thu, 08 Jun 2006 14:56:37 +0000
 Subject: Re: [KJ] _How NOT to write a device driver_ broken link
-Message-Id: <448802D9.4020101@bfs.de>
+Message-Id: <20060608075637.11be1b91.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.63.0606051839510.4131@thor.lan>
 In-Reply-To: <Pine.LNX.4.63.0606051839510.4131@thor.lan>
@@ -10,13 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-please write to read hat or/and the lkml. if he left the companie the 
-paper should be accessable somewhere else.
+On Mon, 5 Jun 2006 18:50:37 +0100 (BST) Srdjan Todorovic wrote:
 
-re,
-  wh
-
-Srdjan Todorovic wrote:
 > Arjan van de Ven,
 > 
 > Your paper "How NOT to write a device driver"
@@ -28,17 +23,16 @@ Srdjan Todorovic wrote:
 > 
 > Any chance you can get it online again, so that the KJ people can
 > update the janitor's page?
-> 
-> Thanks,
-> 
-> Srdjan Todorovic
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
-> 
-> 
-> 
+
+I've asked him to upload it again.
+Meanwhile, if you can stand a large download, it's part of the
+OLS 2002 proceedings, which are available at this web page:
+  http://www.linuxsymposium.org/2002/
+or directly at
+  http://www.linux.org.uk/~ajh/ols2002_proceedings.pdf.gz
+
+---
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
