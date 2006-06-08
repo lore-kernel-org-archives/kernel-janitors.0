@@ -1,7 +1,7 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Thu, 08 Jun 2006 14:56:37 +0000
+From: Arjan van de Ven <arjan@linux.intel.com>
+Date: Thu, 08 Jun 2006 14:57:12 +0000
 Subject: Re: [KJ] _How NOT to write a device driver_ broken link
-Message-Id: <20060608075637.11be1b91.rdunlap@xenotime.net>
+Message-Id: <44883AC8.9020606@linux.intel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.63.0606051839510.4131@thor.lan>
 In-Reply-To: <Pine.LNX.4.63.0606051839510.4131@thor.lan>
@@ -10,29 +10,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 5 Jun 2006 18:50:37 +0100 (BST) Srdjan Todorovic wrote:
-
-> Arjan van de Ven,
+Randy.Dunlap wrote:
+> On Mon, 5 Jun 2006 18:50:37 +0100 (BST) Srdjan Todorovic wrote:
 > 
-> Your paper "How NOT to write a device driver"
-> (http://people.redhat.com/arjanv/olspaper.pdf)
-> that's linked from http://www.kerneljanitors.org/ isn't accessible
-> anymore.
+>> Arjan van de Ven,
+>>
+>> Your paper "How NOT to write a device driver"
+>> (http://people.redhat.com/arjanv/olspaper.pdf)
+>> that's linked from http://www.kerneljanitors.org/ isn't accessible
+>> anymore.
+>>
+>> It's a nice paper and it would be great to have it online somewhere.
+>>
+>> Any chance you can get it online again, so that the KJ people can
+>> update the janitor's page?
 > 
-> It's a nice paper and it would be great to have it online somewhere.
-> 
-> Any chance you can get it online again, so that the KJ people can
-> update the janitor's page?
+> I've asked him to upload it again.
 
-I've asked him to upload it again.
-Meanwhile, if you can stand a large download, it's part of the
-OLS 2002 proceedings, which are available at this web page:
-  http://www.linuxsymposium.org/2002/
-or directly at
-  http://www.linux.org.uk/~ajh/ols2002_proceedings.pdf.gz
+I've managed to find them;
 
----
-~Randy
+http://www.fenrus.org/how-to-not-write-a-device-driver-paper.pdf
+and
+http://www.fenrus.org/how-to-not-write-a-device-driver-slides.pdf
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
