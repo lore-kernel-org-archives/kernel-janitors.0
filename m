@@ -1,16 +1,36 @@
-From: "Crescent E. Permission" <rjk@gghorg.ca>
-Date: Mon, 19 Jun 2006 05:47:59 +0000
-Subject: Re: [KJ] =?iso-8859-1?q?=28no_subject=29?=
-Message-Id: <4544592258.20060619003749@gghorg.ca>
+From: Matthew Martin <lihnucks@gmail.com>
+Date: Sun, 11 Jun 2006 23:13:16 +0000
+Subject: [KJ] [PATCH] Add KERN constants to arch/i386/kernel/cpu/rise.c
+Message-Id: <448CA38C.1050602@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200606050208.k5528h2f021396@smtp.osdl.org>
-In-Reply-To: <200606050208.k5528h2f021396@smtp.osdl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-welco me to the best pharmacy http://milesesto.com/?IJESRKWldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
+Hello,
+    This adds KERN constants to arch/i386/kernel/cpu/rise.c
+
+Signed-Off-By: Matthew Martin <lihnucks@gmail.com>
+---
+
+
+--- vanilla-linux-2.6.16/arch/i386/kernel/cpu/rise.c	2006-03-19 23:53:29.000000000 -0600
++++ linux-2.6.16/arch/i386/kernel/cpu/rise.c	2006-06-09 18:45:17.000000000 -0500
+@@ -7,9 +7,9 @@
+ 
+ static void __init init_rise(struct cpuinfo_x86 *c)
+ {
+-	printk("CPU: Rise iDragon");
++	printk(KERN_INFO "CPU: Rise iDragon");
+ 	if (c->x86_model > 2)
+-		printk(" II");
++		printk(KERN_INFO " II");
+ 	printk("\n");
+ 
+ 	/* Unhide possibly hidden capability flags
+
+
 
 _______________________________________________
 Kernel-janitors mailing list
