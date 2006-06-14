@@ -1,38 +1,23 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Fri, 02 Jun 2006 09:42:52 +0000
-Subject: Re: [KJ] how to handle Kconfig ?
-Message-Id: <20060602094252.GK3955@stusta.de>
+From: "Alexey Dobriyan" <adobriyan@gmail.com>
+Date: Wed, 14 Jun 2006 10:51:41 +0000
+Subject: Re: [KJ] Invitation to the 2006 kernel summit
+Message-Id: <b6fcc0a0606140351h5a34c7dew7a255c98547fe768@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <446C9075.5040906@bfs.de>
-In-Reply-To: <446C9075.5040906@bfs.de>
+References: <1146696533.3346.103.camel@mulgrave.il.steeleye.com>
+In-Reply-To: <1146696533.3346.103.camel@mulgrave.il.steeleye.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, May 28, 2006 at 05:56:26PM +0200, walter harms wrote:
-> that is nice to read but does not answer my question:
-> 1. Should every not working combination by fixed ?
-> 2. Is this a problem for the Janitor ML or the LKML ?
+Thank you guys, but it just became clear I can't go to KS
+because of financial and not only financial reasons.
 
-1. at least on i386, every combination should be fixed
-   only if extraordinary pathological and nonsensical cases are hard to 
-   fix there might be exceptions
-2. I'd send them to lkml since they are bug fixes
+The right person for me is Nishanth Aravamudan.
 
-> re,
->  wh
+Hope it's not too late.
 
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
+          Alexey
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
