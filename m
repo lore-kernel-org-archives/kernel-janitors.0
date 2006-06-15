@@ -1,75 +1,65 @@
-From: "Sachie Pollak" <pollasachie@intervideo.com>
-Date: Fri, 23 Jun 2006 20:45:57 +0000
-Subject: Re: [KJ] my nytag
-Message-Id: <000001c69706$07502a50$b1eaa8c0@llz3>
+From: nilay vaish <nilayvaish@yahoo.com>
+Date: Thu, 15 Jun 2006 12:13:56 +0000
+Subject: [KJ] [PATCH 2.6.16.20 001/001l] netfilter: frees skb using
+Message-Id: <20060615121356.43791.qmail@web8714.mail.in.yahoo.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1593054494=="
+Content-Type: multipart/mixed; boundary="===============1206821707=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1593054494==
+--===============1206821707==
 Content-Type: multipart/alternative;
-    boundary="----------=_1151095600-16765-269"
+    boundary="----------=_1150373695-15324-222"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1151095600-16765-269
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+------------=_1150373695-15324-222
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
 
-Hi,
-=20
-V l & G R A from 3,35 and many more at http://conidenate.com
-=20
-  _____=20=20
 
-=20
-the Sackville-Bagginses were, in fact, busy measuring his rooms to see
-if their own furniture would fit. In short Bilbo was Presumed Dead,
-and not everybody that said so was sorry to find the presumption wrong.
-The return of Mr. Bilbo Baggins created quite a disturbance, both
-under the Hill and over the Hill, and across the Water; it was a great
-deal more than a nine days wonder. The legal bother, indeed, lasted for
+From: Nilay Vaish <nilayvaish@yahoo.com>
+
+This removes the use of kfree in freeing skbs. 
+kfree has been replaced with kfree_skb.
+
+Signed-off-by: <nilayvaish@yahoo.com>
+---
+--- a/net/ipv4/netfilter/ipt_recent.c   2006-03-20 11:23:29.000000000 +0530
++++ b/net/ipv4/netfilter/ipt_recent.c   2006-06-15 10:52:59.000000000 +0530
+@@ -322,7 +322,7 @@ static int ip_recent_ctrl(struct file *f
+
+ kfree(skb->nh.iph);
+ out_free_skb:
+- kfree(skb);
++ kfree_skb(skb);
+ out_free_info:
+ kfree(info);
 
 
-------------=_1151095600-16765-269
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+
+
+ Send instant messages to your online friends http://in.messenger.yahoo.com 
+
+ Stay connected with your friends even when away from PC.  Link: http://in.mobile.yahoo.com/new/messenger/  
+ Send instant messages to your online friends http://in.messenger.yahoo.com 
+
+ Stay connected with your friends even when away from PC.  Link: http://in.mobile.yahoo.com/new/messenger/  
+------------=_1150373695-15324-222
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>V l & G R A from 3,35 and many more at <A href=3D"http://conidenate.co=
-m">http://conidenate.com</A></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><HR></DIV>
-<DIV>&nbsp;</DIV>
-<DIV>the Sackville-Bagginses were, in fact, busy measuring his rooms to see=
-<BR>
-if their own furniture would fit. In short Bilbo was Presumed Dead,<BR>
-and not everybody that said so was sorry to find the presumption wrong.<BR>
-   The return of Mr. Bilbo Baggins created quite a disturbance, both<BR>
-under the Hill and over the Hill, and across the Water; it was a great<BR>
-deal more than a nine days wonder. The legal bother, indeed, lasted for<BR>=
-</DIV></BODY></HTML>
-------------=_1151095600-16765-269--
+<pre>From: Nilay Vaish &lt;nilayvaish@yahoo.com&gt;<br><br>This removes the use of kfree in freeing skbs. <br>kfree has been replaced with kfree_skb.<br><br>Signed-off-by: &lt;nilayvaish@yahoo.com&gt;<br>---<br>--- a/net/ipv4/netfilter/ipt_recent.c   2006-03-20 11:23:29.000000000 +0530<br>+++ b/net/ipv4/netfilter/ipt_recent.c   2006-06-15 10:52:59.000000000 +0530<br>@@ -322,7 +322,7 @@ static int ip_recent_ctrl(struct file *f<br><br> kfree(skb-&gt;nh.iph);<br> out_free_skb:<br>- kfree(skb);<br>+ kfree_skb(skb);<br> out_free_info:<br> kfree(info);<br><br><br></pre><p> Send instant messages to your online friends http://in.messenger.yahoo.com <br><br> Stay connected with your friends even when away from PC.  Link: http://in.mobile.yahoo.com/new/messenger/  <p>&#32;Send instant messages to your online friends http://in.messenger.yahoo.com <br><br> Stay connected with your friends even when away from PC.  Link: http://in.mobile.yahoo.com/new/messenger/  
+------------=_1150373695-15324-222--
 
---===============1593054494==
+--===============1206821707==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +70,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1593054494==--
+--===============1206821707==--
