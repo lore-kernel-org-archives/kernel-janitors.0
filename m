@@ -1,7 +1,7 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Thu, 15 Jun 2006 14:37:51 +0000
-Subject: Re: [KJ] [PATCH 2.6.16.20 001/001l] netfilter: frees skb using
-Message-Id: <20060615073751.8270831c.rdunlap@xenotime.net>
+From: Anne Thrax <foobarfoobarfoobar@gmail.com>
+Date: Thu, 15 Jun 2006 19:54:47 +0000
+Subject: Re: [KJ] [PATCH 2.6.16.20 001/001l] netfilter: frees skb
+Message-Id: <4491BB07.8000501@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060615121356.43791.qmail@web8714.mail.in.yahoo.com>
 In-Reply-To: <20060615121356.43791.qmail@web8714.mail.in.yahoo.com>
@@ -10,11 +10,6 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 15 Jun 2006 13:13:56 +0100 (BST) nilay vaish wrote:
-
-> 
-> From: Nilay Vaish <nilayvaish@yahoo.com>
-> 
 > This removes the use of kfree in freeing skbs. 
 > kfree has been replaced with kfree_skb.
 > 
@@ -31,12 +26,9 @@ On Thu, 15 Jun 2006 13:13:56 +0100 (BST) nilay vaish wrote:
 >  out_free_info:
 >  kfree(info);
 
-That should have some tabs at the start of each line.
-Looks like your mail client or service stripped them out.
-Please find and use one that preserves whitespace (tabs/spaces).
-
----
-~Randy
+I think that I've already sent in a patch for this. If so, then you need to
+not only switch the kfree() with kfree_skb(). The skb being freed was
+allocated with kmalloc(), so you need to switch that with alloc_skb().
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
