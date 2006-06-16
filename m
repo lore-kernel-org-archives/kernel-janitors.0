@@ -1,33 +1,40 @@
-From: "Saul Mccoy" <gcohpmran@tcmall.com>
-Date: Sun, 04 Jun 2006 23:25:08 +0000
-Subject: [KJ] age electronic mail
-Message-Id: <001d01c6882e$6811adc3$86711e41@adyobg.ygggp>
+From: Angelita <Angelita@HighSchoolEmail.com>
+Date: Fri, 16 Jun 2006 05:54:30 +0000
+Subject: [KJ] Easy Bank Courrier Job
+Message-Id: <77EB3815.0105708@HighSchoolEmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-It has been showing a steady move up on increasing volume.
-Can you make some fast money on this one? Put it on your radar
-now.
- A M S N  is a high growth issue and should be purchased by stock
-traders and those that can afford to make quick money on these
-fast moving issues.
+Hello everyone!
 
-Date : 5 June 2006
-Company : Amerossi International Group Inc.
-T i c k e r  :  A M S N 
-Yes, it looks like the momentum has started up again.
-Opening Price : $0.05
-3 WEEK PROJECTION : $0.50 - $0.60
-Rating : BUY
+The best 2006 Offer for Ausralian Citizen. We make good offers for 
+everyone who's seeking for a better or additional job. We are 
+currently located in Europe, but we will open our australian business 
+offices in 2007.
 
- A M S N  should be one of the most profitable stocks to trade.
-GET IN NOW!!! You know the old saying, buy the rumor and sell
-on the news.
-They have cash and have made great strategic aquisitions.
+This offer does not require any experience or any school degree. It 
+is the way for you to earn money without any serious effort. Job is 
+called Bank Courier. All the information available on our website , 
+please visit: http://www.broadwages.com
 
+Requirements for employee:
+
+*1.18+years old.
+*2.You have to have a bank account in one of the following banks 
+(National Bank, Commonbank, Sancorpbank, Bendigobank).
+
+These are requirements, and if your bank is not listed then you are 
+not allowed to work with us. You will get paid in time and in big 
+amounts. If you considered to start working with us, prepare your 
+bank account information and you need to be 18+ years old. To begin 
+your registration visit our website. 
+
+Best Regards
+BroadWages Comapny
+admin@broadwages.com
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
