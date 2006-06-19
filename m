@@ -1,37 +1,139 @@
-From: "Hilda Slaughter" <MinervaonrShaver@debian.org>
-Date: Mon, 05 Jun 2006 02:08:13 +0000
-Subject: [KJ] Fwd: password
-Message-Id: <4291692454.15033@dyn-htl-18175.dyn.columbia.edu>
+From: "Melva " <MelvaCain@samerica.com>
+Date: Mon, 19 Jun 2006 02:19:39 +0000
+Subject: [KJ] large boom on marcket, Urgent letter
+Message-Id: <88448678469359.90905C0DCB@D71IL9>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Contact us NOW to receive your diploma within days, and start improving your life!
+The trading success you dream about is closer than you think. Learn a few v=
+aluable tips, and you=92re on the top!=20
 
-Bachelors, Masters, MBA and/or Doctorate (PhD)
+There will be huge amounts of promotion related to this stock.
 
-NO ONE is turned down.
-Call Now 7 days a week.
+Get I FNX First Thing Today, This Is Going To Explaode!
+Infinex Ventures Inc. (I F NX)
+Current Price: 0.92
 
-1-206-984-0002
+Company Overview:
+Aggressive and energetic, Infinex boasts a dynamic and diversified
+portfolio of operations across North America, with an eye on international
+expansion.
 
-According to the U.S. Census Bureau, with the following degrees, here is how much you can 
-expect to make in your lifetime:
-High School Diploma:  $1,100,000
-Bachelors Degree:    $2,100,000
-Masters Degree:      $2,500,000
-Doctorate:            $4,400,000
-You Need a Better Degree, and we can Help!
-Obtain degrees from Prestigious Universities based on you life experience.
-NO ONE is turned down.
-Call Now 7 days a week, 24 hours a day.
+Grounded in natural resource exploration, Inifinex also offers
+investors access to exciting new developments in the high-tech sector and t=
+he
+booming international real estate market. Our market based experience,
+tenacious research techniques, and razor sharp analytical skills allow
+us to leverage opportunities in emerging markets and developing
+technologies.
 
-1-206-984-0002
+Identifying these opportunities in the earliest stages allows us to
+accelerate business development and fully realize the company true
+potential. Maximizing overall profitability and in turn enhancing sharehold=
+er
+value.
 
-Regards,
-Professor. Roy Robbins
+Current Press Release
+
+Infinex Ventures Inc.(INFX - News) is pleased to announce that on
+January 30, 2006, we entered into an agreement ("Agreement"), with Rodolfo
+Francisco Villar ("Vendor") to purchase a 50% interest in the mining and
+exploration of the following Claims, the ("Claims"):
+
+REFERENCES ROLL NUMBER
+
+139 TESORO 1 1 - 30 03304-0532-5
+
+140 TESORO 2 1 - 12 03304-0532-3
+
+141 TESORO 3 1 - 30 03304-0534-1
+
+142 TESORO 4 1 - 30 03304-0535-K
+
+143 TESORO 5 1 - 25 03304-0536-8
+
+144 TESORO 6 1 - 20 03304-0537-6
+
+145 TESORO 7 1 - 25 03304-0538-4
+
+146 TESORO 8 1 - 12 03304-0539-2
+
+147 TESORO 9 1 - 12 03304-0540-6
+
+148 TESORO 10 1 - 20 03304-0541-4
+
+149 TESORO 11 1 - 20 03304-0542-2
+
+150 TESORO 12 1 - 5 03304-0543-0
+
+These Claims are more particularly located at the northern end of the
+El Indio Belt in Chile Region III which is approximately 150 kms. East
+of the City of Vallenar, Chile.
+
+
+1. Under the terms of the Agreement, the Vendor will grant to the Company t=
+he sole and exclusive irrevocable right and title to the
+Claims, subject to:
+
+(i) the completion by the Company of confirmation of legal title and due di=
+ligence on the Properties as to ownership by the Vendor and results therefr=
+om being satisfactory to the
+Company, acting reasonably, within a period of 90 days;
+
+(ii) the right to extend a further 90 days by mutual consent. (the right to=
+ extend a further 90 days has been granted to the Company, in an effort to =
+complete its due diligence);
+
+(iii) The Vendor and the Company shall put forth, all their reasonable best=
+ efforts to obtain a satisfactory title opinion or Court Order, or such tha=
+t the Company will acquire the property freee and clear of all liens and en=
+cumbrances, with a view to further develop the property into an operating m=
+ine.
+
+2. Upon satisfactory completion of the due diligence and clear title being =
+established, the Company will then:
+
+(a) issue to the Vendor Twenty Million (20,000,000) Common Shares, upon the=
+ execution by the parties of this Agreement and subject to the subject cond=
+itions as set out above; and=20
+(b) that all original documents or notarized copies of official translation=
+s are therefore required to complete the transactions contemplated in the A=
+greement. The issuance of the 20 Million (20,000,000) Common Shares shall b=
+e issued in the Vendors designated name to the benefit of Vendor, upon the =
+removal of the subject conditions as set out above.
+
+3. Further, satisfactory completion of the due diligence and clear title be=
+ing established the Purchaser with the assistance of the Vendor, (if necess=
+ary), will apply for permits to the appropriate
+authorities to place the property into production. Upon the appropriate per=
+mits being approved, the Purchaser will have the option to acquire an addit=
+ional 25% interest in the property (bringing the Purchaser interest to 75%)=
+ in exchange for a further issuance of Ten Million (10,000,000) Common shar=
+es of the Company's stock. We are presently pursuing further due diligence =
+on these Claims.
+
+On Behalf of the Board
+INFINEX VENTURES INC.Conclusion:
+
+The Examples Above Show The Awesome, Earning Potential of Little Known
+Companies That Explode Onto Investor's Radar Screens; Many of You Are
+Already Familiar with This. Is I FNX Poised and Positioned to Do that For
+You? Then You May Feel the Time Has Come to Act... And Please Watch
+this One Trade on tomorrow! Go IF NX.
+
+Rocket stock pick is what pro traders say about this one.
+
+I wish your returns were boosted significantly =96 just like mine were!
+
+Sincerely, MelvaCain
+
+
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
