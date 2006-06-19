@@ -1,117 +1,221 @@
-From: =?big5?q?Gordon=20Carol?= <carol444gmrs@yahoo.com.hk>
-Date: Mon, 05 Jun 2006 18:01:24 +0000
-Subject: [KJ] Hello! reply please.
-Message-Id: <20060605180124.36268.qmail@web55015.mail.re4.yahoo.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0629159383=="
+From: Julius Volz <julius.volz@s2003.tu-chemnitz.de>
+Date: Mon, 19 Jun 2006 23:35:31 +0000
+Subject: [KJ] [PATCH] Fix spelling and grammar mistakes in
+Message-Id: <449734C3.3050507@hrz.tu-chemnitz.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060605173141.89910.qmail@web55010.mail.re4.yahoo.com>
-In-Reply-To: <20060605173141.89910.qmail@web55010.mail.re4.yahoo.com>
+References: <446FC871.3050408@hrz.tu-chemnitz.de>
+In-Reply-To: <446FC871.3050408@hrz.tu-chemnitz.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Hi,
 
---===============0629159383==
-Content-Type: multipart/alternative;
-    boundary="----------=_1149531491-28013-591"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+I already sent this mail a month ago when the list was broken, and I
+believe it never got through - it never appeared in the archive. So
+here it is again (the patch still applies to 2.6.17):
 
-This is a multi-part message in MIME format...
+==%<=====
 
-------------=_1149531491-28013-591
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+Hi,
 
-p9qms7dzqrq5cbZspmGnfaFJp0Gye6VpuXG2bLW5p9qhR2Nhcm9sNDQ0Z21yc0B5YWhvby5jb20u
-aGsKCkhlbGxvLAoKCllvdSBtYXkgYmUgc3VycHJpc2VkIHRvIHJlY2VpdmUgdGhpcyB1bnNvbGlj
-aXRlZCBtYWlsCgphcyBpdCBtYXkgYXBwZWFyIHRvIGJlLiBTb3JyeSB0byBib3RoZXIgeW91IGFu
-eSB3YXkuCgpHbG9yeSBiZSB0byBHb2QsIE15IG5hbWVzIGFyZSBNUlMuIENBUk9MIEdPUkRPTiBm
-cm9tCgpBbWVyaWNhIG1hcnJpZWQgdG8gTEFURSBNUi4gUklDSEFSRFMgR09SRE9OIHdobyB3b3Jr
-ZWQKCndpdGggdGhlIEFtZXJpY2FuIGVtYmFzc3kgaW4gRW5nbGFuZC4KCgpXZSB3ZXJlIGJvdGgg
-bWFycmllZCBmb3IgeWVhcnMgd2l0aG91dCBjaGlsZHJlbi4KCkkgZG8gbm90IGludGVuZCB0byB3
-YXN0ZSBtdWNoIG9mIHlvdXIgdGltZSwgbXkgaHVzYmFuZAoKbGVmdCBzb21lIG1vbmV5IGZvciBt
-ZSB3aGljaCBpIGludGVuZCB0byBnaXZlIG91dCBmb3IKCmNoYXJpdHkgcHVycG9zZSx0byBhIEdv
-ZCBmZWFyaW5nIGluZGl2aWR1YWwgb3IgZmlybQoKdGhhdCB3aWxsIHJlY2VpdmVkIGFuZCB1c2Ug
-dGhlIG1vbmV5IHRvIGhlbHAKCk9SUEhBTkdFUyxXSURPV1MsYW5kIFBST1BBR0FURSBUSEUgV09S
-RCBPRiBHT0QuIEkgYW0KCmxvb2tpbmcgZm9yIHNvbWVvbmUgdGhhdCBJIGNhbiB0cnVzdCB0byBo
-YW5kbGUgdGhpcwoKZnVuZHMuCgoKQmVjYXVzZSBvZiBteSBwcmVzZW50IGNvbmRpdGlvbiBvZiBt
-eSBoZWFsdGggcHJvYmxlbQoKdGhhdCBpcyB3aGlsZSBpIHRvb2sgdGhpcyBkZWNpc2lvbiB0byBn
-aXZlIHRoZSBtb25leQoKb3V0IGlzIHRoYXQgc2luY2UgaSBkbyBub3QgaGF2ZSBhIGNoaWxkIGFu
-ZCBkdWUgdG8gbXkKCmh1c2JhbmRzIGJlbGllZiBpbiBnaXZpbmcgdG8gdGhlIGxlc3MgcHJldmls
-YWdlIGFuZAoKYmVmb3JlIG15IGh1c2JhbmQgZGllZCB3ZSBib3RoIGRlY2lkZWQgdG8gZ2l2ZSB0
-aGUKCm1vbmV5IG91dCBmb3IgY2hhcml0eSB3b3JrcyB0aGF0IHdhcyBvdXIgd2lzaC4gQW5kIGkK
-CndhbnQgdG8gY2Fycnkgb3V0IG15IGh1c2JhbmRzIHdpc2ggc28gdGhhdCBoZSB3aWxsIGJlCgpo
-YXBweSB3aXRoIG1lIHdoZXJlIGV2ZXIgaGUgbWF5IGJlLgoKClRoZSB0cnV0aCBvZiB0aGUgbWF0
-dGVyIGlzIGkga25vdyB0aGF0IGJhc2VkIG9uIHdoYXQKCmlzIGdvaW5nIG9uIGFsbCBvdmVyIHRo
-ZSBpbnRlcm5ldCwgcGVvcGxlIGZpbmQgaXQgdmVyeQoKZGlmZmljdWx0IHRvIGFzc2lzdCBvbmUg
-YW5vdGhlciBhbmQgYWxzbyBmaW5kIGl0CgpkaWZmaWN1bHQgdG8gYmVsaWV2ZSBpc3N1ZXMgbGlr
-ZSB0aGlzIGJ1dCBpIGFzc3VyZSB5b3UKCnRoYXQgYXMgc29vbiBhcyB5b3UgY2FuIGdhcmFudGVl
-IG1lIG9mIHlvdXIgdHJ1c3QgYW5kCgpob25lc3RseSBpIHdpbGwgYmUgYWJsZSB0byB3b3JrIHdp
-dGggeW91LgoKCkFzIHNvb24gYXMgeW91IGdldCBpbnRvdWNoIHdpdGggbWUgaSB3aWxsIHRlbGwg
-eW91IGFsbAoKdGhlIG1vZGFsaXRpZXMgdGhhdCBpcyBpbnZvdmxlZCBpbiB0aGlzIHByb2plY3Qu
-CgoKTWF5IEdvZCBibGVzcyB5b3UuCgoKCgotIEdvcmRvbiBDYXJvbAoK
+this is my first attempt at submitting a patch, so let me know if I'm
+doing something completely wrong. Thunderbird removes trailing spaces,
+so the patch only applies when using the "-l" option. Is that a
+problem? Any advice on configuring Thunderbird to properly send
+patches (besides disabling line-wrap) inline? Or am I better off with
+another mailer?
 
-------------=_1149531491-28013-591
-Content-Type: text/html; charset="big5"
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+The patch applies to Linus' linux-2.6.17-rc4.
 
-PGRpdiBzdHlsZT0iYm9yZGVyOiBERUZBTkdFRF9zb2xpZCBERUZBTkdFRF8xcHggI2NjY2NjYzsg
-d2lkdGg6NDQ4cHg7IGJhY2tncm91bmQtY29sb3I6d2hpdGU7IERFRkFOR0VEX21hcmdpbjoxMHB4
-IDBweDsiOz48dGFibGUgYm9yZGVyPTAgY2VsbHNwYWNpbmc9MCBjZWxscGFkZGluZz0wIHdpZHRo
-PSI0NDgiPjx0cj48dGQgY2xhc3M9InRhYmxvdCIgREVGQU5HRURfYmFja2dyb3VuZD0iaHR0cDov
-L3VzLmkxLnlpbWcuY29tL3VzLnlpbWcuY29tL2kvdXMvcGltL2dyL2dyX2Fubm91bmNlXzEuZ2lm
-IiB2YWxpZ249ImNlbnRlciIgaGVpZ2h0PSI1NyI+PGJpZyBERUZBTkdFRF9zdHlsZT0icGFkZGlu
-ZzoxMHB4OyI+p9qms7dzqrq5cbZspmGnfaFJPC9iaWc+PC90ZD48L3RyPjwvdGFibGU+PGRpdiBE
-RUZBTkdFRF9zdHlsZT0icGFkZGluZzoxMHB4OyI+p0Gye6VpuXG2bLW5p9qhRzxiPmNhcm9sNDQ0
-Z21yc0B5YWhvby5jb20uaGs8L2I+PGJyPjxicj48c3BhbiBERUZBTkdFRF9zdHlsZT0iY29sb3I6
-Z3JlZW47Ij5IZWxsbyw8YnI+PGJyPjxicj5Zb3UgbWF5IGJlIHN1cnByaXNlZCB0byByZWNlaXZl
-IHRoaXMgdW5zb2xpY2l0ZWQgbWFpbDxicj48YnI+YXMgaXQgbWF5IGFwcGVhciB0byBiZS4gU29y
-cnkgdG8gYm90aGVyIHlvdSBhbnkgd2F5Ljxicj48YnI+R2xvcnkgYmUgdG8gR29kLCBNeSBuYW1l
-cyBhcmUgTVJTLiBDQVJPTCBHT1JET04gZnJvbTxicj48YnI+QW1lcmljYSBtYXJyaWVkIHRvIExB
-VEUgTVIuIFJJQ0hBUkRTIEdPUkRPTiB3aG8gd29ya2VkPGJyPjxicj53aXRoIHRoZSBBbWVyaWNh
-biBlbWJhc3N5IGluIEVuZ2xhbmQuPGJyPjxicj48YnI+V2Ugd2VyZSBib3RoIG1hcnJpZWQgZm9y
-IHllYXJzIHdpdGhvdXQgY2hpbGRyZW4uPGJyPjxicj5JIGRvIG5vdCBpbnRlbmQgdG8gd2FzdGUg
-bXVjaCBvZiB5b3VyIHRpbWUsIG15IGh1c2JhbmQ8YnI+PGJyPmxlZnQgc29tZSBtb25leSBmb3Ig
-bWUgd2hpY2ggaSBpbnRlbmQgdG8hCiBnaXZlIG91dCBmb3I8YnI+PGJyPmNoYXJpdHkgcHVycG9z
-ZSx0byBhIEdvZCBmZWFyaW5nIGluZGl2aWR1YWwgb3IgZmlybTxicj48YnI+dGhhdCB3aWxsIHJl
-Y2VpdmVkIGFuZCB1c2UgdGhlIG1vbmV5IHRvIGhlbHA8YnI+PGJyPk9SUEhBTkdFUyxXSURPV1Ms
-YW5kIFBST1BBR0FURSBUSEUgV09SRCBPRiBHT0QuIEkgYW08YnI+PGJyPmxvb2tpbmcgZm9yIHNv
-bWVvbmUgdGhhdCBJIGNhbiB0cnVzdCB0byBoYW5kbGUgdGhpczxicj48YnI+ZnVuZHMuPGJyPjxi
-cj48YnI+QmVjYXVzZSBvZiBteSBwcmVzZW50IGNvbmRpdGlvbiBvZiBteSBoZWFsdGggcHJvYmxl
-bTxicj48YnI+dGhhdCBpcyB3aGlsZSBpIHRvb2sgdGhpcyBkZWNpc2lvbiB0byBnaXZlIHRoZSBt
-b25leTxicj48YnI+b3V0IGlzIHRoYXQgc2luY2UgaSBkbyBub3QgaGF2ZSBhIGNoaWxkIGFuZCBk
-dWUgdG8gbXk8YnI+PGJyPmh1c2JhbmRzIGJlbGllZiBpbiBnaXZpbmcgdG8gdGhlIGxlc3MgcHJl
-dmlsYWdlIGFuZDxicj48YnI+YmVmb3JlIG15IGh1c2JhbmQgZGllZCB3ZSBib3RoIGRlY2lkZWQg
-dG8gZ2l2ZSB0aGU8YnI+PGJyPm1vbmV5IG91dCBmb3IgY2hhcml0eSB3b3JrcyB0aGF0IHdhcyBv
-dXIgd2lzaC4gQW5kIGk8YnI+PGJyPndhbnQgdG8gY2Fycnkgb3V0IG15IGh1c2JhbmRzIHdpc2gg
-c28gdGhhdCBoZSB3aWxsIGJlPGJyPjxicj5oYXBweSB3aXRoIG1lIHdoZXJlIGV2ZXIgaGUgbWF5
-IGJlLjxicj48YnI+PGJyPlRoZSB0cnV0aCBvZiB0aGUgbWF0dGVyIGlzIGkga25vdyB0aGF0IGJh
-c2VkIG9uIHdoYXQ8YnI+PGJyPmlzIGdvaW5nIG9uIGFsbCBvdmVyIHRoZSBpbnRlcm5ldCwgcGVv
-cGxlIGZpbmQgaXQgdmVyeTxicj48YnI+ZGlmZmljdWx0IHRvIGFzc2lzdCBvbmUgYW5vdGhlciBh
-bmQgYWxzbyBmaW5kIGl0PGJyPjxicj5kaWZmaWN1bHQgdG8gYmVsaWV2ZSBpc3N1ZXMgbGlrZSB0
-aGlzIGJ1dCBpIGFzc3VyZSB5b3U8YnI+PGJyPnRoYXQgYXMgc29vbiBhIQpzIHlvdSBjYW4gZ2Fy
-YW50ZWUgbWUgb2YgeW91ciB0cnVzdCBhbmQ8YnI+PGJyPmhvbmVzdGx5IGkgd2lsbCBiZSBhYmxl
-IHRvIHdvcmsgd2l0aCB5b3UuPGJyPjxicj48YnI+QXMgc29vbiBhcyB5b3UgZ2V0IGludG91Y2gg
-d2l0aCBtZSBpIHdpbGwgdGVsbCB5b3UgYWxsPGJyPjxicj50aGUgbW9kYWxpdGllcyB0aGF0IGlz
-IGludm92bGVkIGluIHRoaXMgcHJvamVjdC48YnI+PGJyPjxicj5NYXkgR29kIGJsZXNzIHlvdS48
-YnI+PGJyPjxicj48L3NwYW4+PGJyPjxicj4tIDxzcGFuIERFRkFOR0VEX3N0eWxlPSJjb2xvcjpn
-cmVlbjsiPkdvcmRvbiBDYXJvbDwvc3Bhbj48L2Rpdj48L2Rpdj4=
+Thanks,
+  Julius Volz
 
-------------=_1149531491-28013-591--
+Description:
+This patch corrects some of the most obvious spelling and grammar
+mistakes in drivers/acpi/video.c, including some in printk output.
 
---===============0629159383==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed-Off-By: Julius Volz <juliusrv@gmail.com>
+
+--- drivers/acpi/video.c.orig	2006-05-21 01:14:58.000000000 +0200
++++ drivers/acpi/video.c	2006-05-21 01:42:49.000000000 +0200
+@@ -97,9 +97,9 @@ struct acpi_video_bus_cap {
+
+ struct acpi_video_device_attrib {
+ 	u32 display_index:4;	/* A zero-based instance of the Display */
+-	u32 display_port_attachment:4;	/*This field differenates displays type */
++	u32 display_port_attachment:4;	/*This field differentiates the display type */
+ 	u32 display_type:4;	/*Describe the specific type in use */
+-	u32 vendor_specific:4;	/*Chipset Vendor Specifi */
++	u32 vendor_specific:4;	/*Chipset Vendor Specific */
+ 	u32 bios_can_detect:1;	/*BIOS can detect the device */
+ 	u32 depend_on_vga:1;	/*Non-VGA output device whose power is related to
+ 				   the VGA device. */
+@@ -460,16 +460,16 @@ acpi_video_bus_POST_options(struct acpi_
+  *		0.	The system BIOS should NOT automatically switch(toggle)
+  *			the active display output.
+  *		1.	The system BIOS should automatically switch (toggle) the
+- *			active display output. No swich event.
++ *			active display output. No switch event.
+  *		2.	The _DGS value should be locked.
+  *		3.	The system BIOS should not automatically switch (toggle) the
+  *			active display output, but instead generate the display switch
+  *			event notify code.
+  *	lcd_flag	:
+  *		0.	The system BIOS should automatically control the brightness level
+- *			of the LCD, when the power changes from AC to DC
++ *			of the LCD when the power changes from AC to DC
+  *		1. 	The system BIOS should NOT automatically control the brightness
+- *			level of the LCD, when the power changes from AC to DC.
++ *			level of the LCD when the power changes from AC to DC.
+  * Return Value:
+  * 		-1	wrong arg.
+  */
+@@ -502,7 +502,7 @@ acpi_video_bus_DOS(struct acpi_video_bus
+  *  Return Value:
+  *  	None
+  *
+- *  Find out all required AML method defined under the output
++ *  Find out all required AML methods defined under the output
+  *  device.
+  */
+
+@@ -593,7 +593,7 @@ static void acpi_video_device_find_cap(s
+  *  Return Value:
+  *  	None
+  *
+- *  Find out all required AML method defined under the video bus device.
++ *  Find out all required AML methods defined under the video bus device.
+  */
+
+ static void acpi_video_bus_find_cap(struct acpi_video_bus *video)
+@@ -635,23 +635,23 @@ static int acpi_video_bus_check(struct a
+ 	if (!video)
+ 		return_VALUE(-EINVAL);
+
+-	/* Since there is no HID, CID and so on for VGA driver, we have
++	/* Since there is no HID, CID and so on for VGA drivers, we have
+ 	 * to check well known required nodes.
+ 	 */
+
+-	/* Does this device able to support video switching ? */
++	/* Does this device support video switching? */
+ 	if (video->cap._DOS) {
+ 		video->flags.multihead = 1;
+ 		status = 0;
+ 	}
+
+-	/* Does this device able to retrieve a retrieve a video ROM ? */
++	/* Does this device support retrieving a video ROM? */
+ 	if (video->cap._ROM) {
+ 		video->flags.rom = 1;
+ 		status = 0;
+ 	}
+
+-	/* Does this device able to configure which video device to POST ? */
++	/* Does this device support configuring which video device to POST? */
+ 	if (video->cap._GPD && video->cap._SPD && video->cap._VPO) {
+ 		video->flags.post = 1;
+ 		status = 0;
+@@ -824,7 +824,7 @@ acpi_video_device_write_brightness(struc
+ 	if (level > 100)
+ 		return_VALUE(-EFAULT);
+
+-	/* validate though the list of available levels */
++	/* validate through the list of available levels */
+ 	for (i = 0; i < dev->brightness->count; i++)
+ 		if (level = dev->brightness->levels[i]) {
+ 			if (ACPI_SUCCESS
+@@ -1040,10 +1040,10 @@ static int acpi_video_bus_POST_info_seq_
+ 			printk(KERN_WARNING PREFIX
+ 			       "The motherboard VGA device is not listed as a possible POST device.\n");
+ 			printk(KERN_WARNING PREFIX
+-			       "This indicate a BIOS bug.  Please contact the manufacturer.\n");
++			       "This indicates a BIOS bug. Please contact the manufacturer.\n");
+ 		}
+ 		printk("%lx\n", options);
+-		seq_printf(seq, "can POST: <intgrated video>");
++		seq_printf(seq, "can POST: <integrated video>");
+ 		if (options & 2)
+ 			seq_printf(seq, " <PCI video>");
+ 		if (options & 4)
+@@ -1078,7 +1078,7 @@ static int acpi_video_bus_POST_seq_show(
+ 		seq_printf(seq, "<not supported>\n");
+ 		goto end;
+ 	}
+-	seq_printf(seq, "device posted is <%s>\n", device_decode[id & 3]);
++	seq_printf(seq, "device POSTed is <%s>\n", device_decode[id & 3]);
+
+       end:
+ 	return_VALUE(0);
+@@ -1134,7 +1134,7 @@ acpi_video_bus_write_POST(struct file *f
+ 	if (opt > 3)
+ 		return_VALUE(-EFAULT);
+
+-	/* just in case an OEM 'forget' the motherboard... */
++	/* just in case an OEM 'forgot' the motherboard... */
+ 	options |= 1;
+
+ 	if (options & (1ul << opt)) {
+@@ -1499,13 +1499,13 @@ static int acpi_video_device_enumerate(s
+ /*
+  *  Arg:
+  *  	video	: video bus device
+- *  	event	: Nontify Event
++ *  	event	: notify event
+  *
+  *  Return:
+  *  	< 0	: error
+  *
+  *	1. Find out the current active output device.
+- *	2. Identify the next output device to switch
++ *	2. Identify the next output device to switch to.
+  *	3. call _DSS to do actual switch.
+  */
+
+@@ -1678,12 +1678,12 @@ static void acpi_video_bus_notify(acpi_h
+ 		return_VOID;
+
+ 	switch (event) {
+-	case ACPI_VIDEO_NOTIFY_SWITCH:	/* User request that a switch occur,
++	case ACPI_VIDEO_NOTIFY_SWITCH:	/* User requested a switch,
+ 					 * most likely via hotkey. */
+ 		acpi_bus_generate_event(device, event, 0);
+ 		break;
+
+-	case ACPI_VIDEO_NOTIFY_PROBE:	/* User plug or remove a video
++	case ACPI_VIDEO_NOTIFY_PROBE:	/* User plugged in or removed a video
+ 					 * connector. */
+ 		acpi_video_device_enumerate(video);
+ 		acpi_video_device_rebind(video);
+@@ -1846,20 +1846,20 @@ acpi_video_bus_match(struct acpi_device
+ 	if (!device || !driver)
+ 		return_VALUE(-EINVAL);
+
+-	/* Since there is no HID, CID for ACPI Video drivers, we have
++	/* Since there is no HID or CID for ACPI video drivers, we have
+ 	 * to check well known required nodes for each feature we support.
+ 	 */
+
+-	/* Does this device able to support video switching ? */
++	/* Does this device support video switching? */
+ 	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_DOD", &h_dummy1)) &&
+ 	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_DOS", &h_dummy2)))
+ 		return_VALUE(0);
+
+-	/* Does this device able to retrieve a video ROM ? */
++	/* Does this device support retrieving a video ROM? */
+ 	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_ROM", &h_dummy1)))
+ 		return_VALUE(0);
+
+-	/* Does this device able to configure which video head to be POSTed ? */
++	/* Does this device support configuring which video head to be POSTed? */
+ 	if (ACPI_SUCCESS(acpi_get_handle(device->handle, "_VPO", &h_dummy1)) &&
+ 	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_GPD", &h_dummy2)) &&
+ 	    ACPI_SUCCESS(acpi_get_handle(device->handle, "_SPD", &h_dummy3)))
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0629159383==--
