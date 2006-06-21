@@ -1,7 +1,7 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Wed, 21 Jun 2006 05:36:04 +0000
+From: Julius Volz <julius.volz@s2003.tu-chemnitz.de>
+Date: Wed, 21 Jun 2006 06:44:39 +0000
 Subject: Re: [KJ] [PATCH] Add missing printk() log-level constants in
-Message-Id: <20060621053603.GB4805@nd47.coderock.org>
+Message-Id: <20060621084439.21721d4f.volz@hrz.tu-chemnitz.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060621032727.72bd5e4c.volz@hrz.tu-chemnitz.de>
 In-Reply-To: <20060621032727.72bd5e4c.volz@hrz.tu-chemnitz.de>
@@ -10,29 +10,57 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 21/06/06 03:27 +0200, Julius Volz wrote:
-> Hi,
-> 
-> with my second patch I'll try adding some printk() log-level constants.
-> Please enlighten me about any mistakes I might have made and whether
-> the log-levels I chose seem appropriate...
-> 
-> Description:
-> This patch adds some missing printk() log-level constants in
-> drivers/acpi/pci_link.c.
-> 
-> Signed-Off-By: Julius Volz <juliusrv@gmail.com>
-> 
-> --- pci_link.c.orig	2006-06-21 02:39:27.000000000 +0200
-> +++ pci_link.c	2006-06-21 03:19:39.000000000 +0200
+Domen Puncer wrote:
+> Not a -p1 appliable patch (just send it to yourself, and try
+> to patch -p1 -i your_email when in kernel source dir).
 
-Not a -p1 appliable patch (just send it to yourself, and try
-to patch -p1 -i your_email when in kernel source dir).
+Ah, right. Here is the corrected version:
 
-Other than this it looks fine to me.
+Description:
+This patch adds some missing printk() log-level constants in
+drivers/acpi/pci_link.c.
 
+Signed-Off-By: Julius Volz <juliusrv@gmail.com>
 
-	Domen
+--- linux-2.6.17/drivers/acpi/pci_link.c.orig	2006-06-21 02:39:27.000000000 +0200
++++ linux-2.6.17/drivers/acpi/pci_link.c	2006-06-21 03:19:39.000000000 +0200
+@@ -361,7 +361,7 @@ static int acpi_pci_link_set(struct acpi
+ 		/* ignore resource_source, it's optional */
+ 		break;
+ 	default:
+-		printk("ACPI BUG: resource_type %d\n", link->irq.resource_type);
++		printk(KERN_WARNING "ACPI BUG: resource_type %d\n", link->irq.resource_type);
+ 		result = -EINVAL;
+ 		goto end;
+ 
+@@ -588,15 +588,15 @@ static int acpi_pci_link_allocate(struct
+ 
+ 	/* Attempt to enable the link device at this IRQ. */
+ 	if (acpi_pci_link_set(link, irq)) {
+-		printk(PREFIX
++		printk(KERN_WARNING PREFIX
+ 		       "Unable to set IRQ for %s [%s] (likely buggy ACPI BIOS).\n"
+-		       "Try pci=noacpi or acpi=off\n",
++		       KERN_WARNING PREFIX "Try pci=noacpi or acpi=off\n",
+ 		       acpi_device_name(link->device),
+ 		       acpi_device_bid(link->device));
+ 		return_VALUE(-ENODEV);
+ 	} else {
+ 		acpi_irq_penalty[link->irq.active] += PIRQ_PENALTY_PCI_USING;
+-		printk(PREFIX "%s [%s] enabled at IRQ %d\n",
++		printk(KERN_INFO PREFIX "%s [%s] enabled at IRQ %d\n",
+ 		       acpi_device_name(link->device),
+ 		       acpi_device_bid(link->device), link->irq.active);
+ 	}
+@@ -755,7 +755,7 @@ static int acpi_pci_link_add(struct acpi
+ 	/* query and set link->irq.active */
+ 	acpi_pci_link_get_current(link);
+ 
+-	printk(PREFIX "%s [%s] (IRQs", acpi_device_name(device),
++	printk(KERN_INFO PREFIX "%s [%s] (IRQs", acpi_device_name(device),
+ 	       acpi_device_bid(device));
+ 	for (i = 0; i < link->irq.possible_count; i++) {
+ 		if (link->irq.active = link->irq.possible[i]) {
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
