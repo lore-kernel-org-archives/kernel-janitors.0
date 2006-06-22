@@ -1,98 +1,57 @@
-From: "Alva Mayer" <AlvaMayer@usa.com>
-Date: Sun, 18 Jun 2006 15:15:21 +0000
-Subject: [KJ] tremendous upturn on marcket, pay attention to the message
-Message-Id: <71493984264908.E5174E2116@CCORUQ>
+From: "qptqoq vysydr" <zihlsn@tylin.com>
+Date: Thu, 22 Jun 2006 06:00:18 +0000
+Subject: watch it like a hawk  Thursday
+Message-Id: <4768356301.726748-15358893-1919@tylin.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Lots of people lack confidence when trading. Wanna know why it happens? It=
-=92s because of the lack of relevant trading information! Read on and get a=
- few tips that do work.=20
-When a next trading day starts, this stock will be extremely popular with b=
-iggest traders. Use your chance now!
-Get I FNX First Thing Today, This Is Going To Explaode!Infinex Ventures Inc=
-. (I F NX)Current Price: 0.92
-Company Overview:Aggressive and energetic, Infinex boasts a dynamic and div=
-ersifiedportfolio of operations across North America, with an eye on intern=
-ationalexpansion.
-Grounded in natural resource exploration, Inifinex also offersinvestors acc=
-ess to exciting new developments in the high-tech sector and thebooming int=
-ernational real estate market. Our market based experience,tenacious resear=
-ch techniques, and razor sharp analytical skills allowus to leverage opport=
-unities in emerging markets and developingtechnologies.
-Identifying these opportunities in the earliest stages allows us toaccelera=
-te business development and fully realize the company truepotential. Maximi=
-zing overall profitability and in turn enhancing shareholdervalue.
-Current Press Release
-Infinex Ventures Inc.(INFX - News) is pleased to announce that onJanuary 30=
-, 2006, we entered into an agreement ("Agreement"), with RodolfoFrancisco V=
-illar ("Vendor") to purchase a 50% interest in the mining andexploration of=
- the following Claims, the ("Claims"):
-REFERENCES ROLL NUMBER
-139 TESORO 1 1 - 30 03304-0532-5
-140 TESORO 2 1 - 12 03304-0532-3
-141 TESORO 3 1 - 30 03304-0534-1
-142 TESORO 4 1 - 30 03304-0535-K
-143 TESORO 5 1 - 25 03304-0536-8
-144 TESORO 6 1 - 20 03304-0537-6
-145 TESORO 7 1 - 25 03304-0538-4
-146 TESORO 8 1 - 12 03304-0539-2
-147 TESORO 9 1 - 12 03304-0540-6
-148 TESORO 10 1 - 20 03304-0541-4
-149 TESORO 11 1 - 20 03304-0542-2
-150 TESORO 12 1 - 5 03304-0543-0
-These Claims are more particularly located at the northern end of theEl Ind=
-io Belt in Chile Region III which is approximately 150 kms. Eastof the City=
- of Vallenar, Chile.
+Hollywood Intermediate Inc.
+(SYM : H Y W I) 
 
-1. Under the terms of the Agreement, the Vendor will grant to the Company t=
-he sole and exclusive irrevocable right and title to theClaims, subject to:
-(i) the completion by the Company of confirmation of legal title and due di=
-ligence on the Properties as to ownership by the Vendor and results therefr=
-om being satisfactory to theCompany, acting reasonably, within a period of =
-90 days;
-(ii) the right to extend a further 90 days by mutual consent. (the right to=
- extend a further 90 days has been granted to the Company, in an effort to =
-complete its due diligence);
-(iii) The Vendor and the Company shall put forth, all their reasonable best=
- efforts to obtain a satisfactory title opinion or Court Order, or such tha=
-t the Company will acquire the property freee and clear of all liens and en=
-cumbrances, with a view to further develop the property into an operating m=
-ine.
-2. Upon satisfactory completion of the due diligence and clear title being =
-established, the Company will then:
-(a) issue to the Vendor Twenty Million (20,000,000) Common Shares, upon the=
- execution by the parties of this Agreement and subject to the subject cond=
-itions as set out above; and (b) that all original documents or notarized c=
-opies of official translations are therefore required to complete the trans=
-actions contemplated in the Agreement. The issuance of the 20 Million (20,0=
-00,000) Common Shares shall be issued in the Vendors designated name to the=
- benefit of Vendor, upon the removal of the subject conditions as set out a=
-bove.
-3. Further, satisfactory completion of the due diligence and clear title be=
-ing established the Purchaser with the assistance of the Vendor, (if necess=
-ary), will apply for permits to the appropriateauthorities to place the pro=
-perty into production. Upon the appropriate permits being approved, the Pur=
-chaser will have the option to acquire an additional 25% interest in the pr=
-operty (bringing the Purchaser interest to 75%) in exchange for a further i=
-ssuance of Ten Million (10,000,000) Common shares of the Company's stock. W=
-e are presently pursuing further due diligence on these Claims.
-On Behalf of the BoardINFINEX VENTURES INC.Conclusion:
-The Examples Above Show The Awesome, Earning Potential of Little KnownCompa=
-nies That Explode Onto Investor's Radar Screens; Many of You AreAlready Fam=
-iliar with This. Is I FNX Poised and Positioned to Do that ForYou? Then You=
- May Feel the Time Has Come to Act... And Please Watchthis One Trade on tom=
-orrow! Go IFN X.
-Focusing on that stock is recommended for those who aim at fast profits.
-Let your daily trading average be more than your past regular salary!
-Sincerely, AlvaMayer
+Current Sh Price : $ 0.58
+Pull back is the time to buy, this company has reached $ 1.20
+DO THE MATH
+This price will be history coming next week
+ 
+Follow the performance of this company, it is a real gold mine
+sttoocck 
+
+HYWI has performed like clockwork every time 
+
+CO OverView
+H o l l y w o o d  I n t e r m e d i a t e provides a proprietary technology of Digital Intermediate services to feature filmmakers for post-production for film mastering and restoration. This technology gives the filmmakers total creative control over the look of their productions. Whether shooting on film or acquiring in HD or SD video, H o l l y w o o d  I n t e r m e d i a t e puts a powerful cluster of digital tools at the director's disposal to achieve stunning results on the big screen. Matchframe Digital Intermediate, a division of H o l l y w o o d  I n t e r m e d i a t e, Inc., packages a full array of post-production services with negative handling expertise and cost-effective 2K digital intermediate and 35mm film out systems. The Digital Intermediate process eliminates current post-production redundancies by creating a single high-resolution master file from which all versions can be made, including all theatrical and High Definition formats. By creating a single
+  master file with resolution higher than the current High Definition broadcast standards, the DI master file enables cinema and television distributors to extract and archive all current and future cinema and television formats including Digital Cinema, Television and High Definition.
 
 
+Red H0t News:
 
+H o l l y w o o d  I n t e r m e d i a t e a provider of digital intermediate film mastering services, announced today that that its Matchframe Digital Intermediate (MDI) division is completing a digital intermediate for Chad Lowe's directorial debut, "Beautiful Ohio," starring William Hurt and Rita Wilson. READ MORE THIS IS HUGE
 
-_______________________________________________Kernel-janitors mailing list=
-Kernel-janitors@lists.osdl.orghttps://lists.osdl.org/mailman/listinfo/kerne=
-l-janitors
+H o l l y w o o d  I n t e r m e d i a t e Expands the Creative Palette for Independent Filmmakers GLENDALE, CA--(MARKET WIRE)--May 31, 2006 -- H o l l y w o o d  I n t e r m e d i a t e, Inc. A provider of digital intermediate film mastering services, announced today that its Matchframe Digital Intermediate division is currently providing full digital intermediate services for Super 16MM productions.
+
+H o l l y w o o d  I n t e r m e d i a t e, Inc. (H.Y.W.I - News), a provider of digital intermediate film mastering services, announced that High Definition preview masters as part of its normal digital intermediate service offerings and workflow.
+
+"Typically, in current post-production workflow, HD dailies masters are edited into high quality preview masters including color timing, dirt removal, opticals and visual effects," said David Waters, H o l l y w o o d  I n t e r m e d i a t e president. "Unfortunately, none of these processes translate to the theatrical release of the film as they must all be duplicated or repeated in either a higher resolution digital format, or photo chemical process."
+
+H o l l y w o o d  I n t e r m e d i a t e gives Motion Picture producers the ability to scan their selected original camera negative at 2k or 4k film resolution, conform a high resolution digital master for theatrical and broadcast release including dirt removal, opticals and visual effects, and output a High Definition preview master to be used for preview screenings and focus groups that can be deployed in any worldwide theater location.
+
+"The challenge for completing the final editorial decisions on a motion picture are balanced between the ability to display the highest resolution picture for a test audience, and the costs and time in having to re-master your film based on a test audience response," said Jim Delany, H o l l y w o o d  I n t e r m e d i a t e COO.
+
+DO your Due Diligence and you'll see what we are talking about when it comes to H Y W I
+
+-----------------------
+The scum of the earth.   Wait and see.  Up one side and down the other.   Put to bed with a shovel. Play a harp before a cow. Stop and smell the roses. Shake like a leaf. A stepping stone to. Walking on thin ice. Still water runs dirty and deep.   There's no time like the present.   When you get lemons, make lemonade.(When life gives you scraps make quilts.) Turn over a new leaf. Stuck in a rut.  Weed it out.  Slow as molasses in January. Raking in the dough. Put that in your pipe and smoke it.   She has a green thumb.
+
+When we love - we grow.  Run to seed.  Through the grapevine.   We hung them out to dry.  Ugly as a mud fence. The stronger the breeze the stronger the trees. Up a tree. That's a whole new can of worms.   Spring rain, Fall gold. A rose is a rose is a rose. Red as a beet.  Putting the cart before the horse. Slow as molasses in January. Tools of the tr@de.  When it rains it pours.   When you get lemons, make lemonade.(When life gives you scraps make quilts.) Speak softly and carry a big stick.   The scum of the earth.  
+
+All the advantages of Linux Managed Hosting--Without the Cost and Risk!
+Fully trained technicians. The highest number of Red Hat certifications in
+the hosting industry. Fanatical Support. Click to learn more
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid7521&bid$8729&dat1642
+_______________________________________________
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
