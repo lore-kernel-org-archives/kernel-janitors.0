@@ -1,124 +1,50 @@
-From: Stephen Hemminger <shemminger@osdl.org>
-Date: Mon, 05 Jun 2006 17:44:26 +0000
-Subject: Re: [KJ] [PATCH] Updated Documentation/networking/ip-sysctl.txt
-Message-Id: <20060605104426.7f32c625@dxpl.pdx.osdl.net>
+From: "Santos Mcqueen" <208trueman@australiamail.com>
+Date: Fri, 23 Jun 2006 05:00:55 +0000
+Subject: [KJ] Fw: Re: Good girls
+Message-Id: <200606230500.k5N50qUS025921@smtp.osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060604213420.GA16939@localhost>
-In-Reply-To: <20060604213420.GA16939@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-> 
->  Documentation/networking/ip-sysctl.txt | 1299 +++++++++++++++++++-------------
->  1 files changed, 756 insertions(+), 543 deletions(-)
-> 
-> diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
-> index f12007b..7e1029d 100644
-> --- a/Documentation/networking/ip-sysctl.txt
-> +++ b/Documentation/networking/ip-sysctl.txt
-> @@ -1,280 +1,418 @@
-> +/proc/sys/net/core/* Variables:
-> +
-> +dev_weight - INTEGER
-> +	TODO Add description.
-> +	Default: 64
-> +
-> +divert_version - STRING
-> +	TODO Add description.
-
-String returned to DIVCMD_GETVERSION ioctl(). Default 0.46
-(Pretty useless).
-
-> +
-> +netdev_budget - INTEGER
-> +	TODO Add description.
-Maximum number of packets processed per device per softirq.
-Used to limit device consuming all the system under massive packet load.
-
-> +	Default: 300
-> +
-> +netdev_max_backlog - INTEGER
-> +	TODO Add description.
-Limit on the outstanding receive packets queued per cpu. Applies to non-NAPI
-devices only.
-
-> +	Default: 1000
-> +
-> +optmem_max - INTEGER
-> +	TODO Add description.
-> +
-> +rmem_default - INTEGER
-> +	TODO Add description.
-> +
-> +rmem_max - INTEGER
-> +	TODO Add description.
-> +
-> +somaxconn - INTEGER
-> +	Limit of socket listen() backlog, known in userspace as SOMAXCONN.
-> +	Defaults to 128.  See also tcp_max_syn_backlog for additional tuning
-> +	for TCP sockets.
-> +
-> +wmem_default - INTEGER
-> +	TODO Add description.
-> +
-> +wmem_max - INTEGER
-> +	TODO Add description.
-> +
-> +xfrm_aevent_etime - u32
-> +	TODO Add description.
-> +	Default: 10
-> +
-> +xfrm_aevent_rseqth - u32
-> +	TODO Add description.
-> +	Default: 2
-> +
-> +
-> +/proc/sys/net/ethernet/* Variables:
-> +
-> +No entries.
-This will go away soon anyway.
-
-+
-+igmp_max_msf - INTEGER
-+	TODO Add description.
-+	Default: 10
-Limit on the number of multicast source filters.
-
-+
-+ip_autoconfig - ????
-+	TODO Add description.
-This is defunct.
-
- 
-+tcp_base_mss - INTEGER
-+	TODO Add description.
-+	Default: 512
-Lower bound for TCP path MTU discovery probing. 
-
-+tcp_moderate_rcvbuf - BOOLEAN
-+	TODO Add description.
-+	Default: 1
-If set TCP automatically adjusts the size of the socket receive
-window based on the amount of space used in the receive queue.
-
-+
-+tcp_mtu_probing - INTEGER
-+	TODO Add description.
-+	Default: 0
-If non-zero, then TCP attempts to discover routers that do not
-correctly return ICMP fragmentation needed when receiving oversize
-packets "black-holes". If greater than one???
+Hello Kernel-janitors.
 
 
-+tcp_no_metrics_save - BOOLEAN
-+	TODO Add description.
-+	Default: 0
-Normally, TCP will remember some characteristics about the last
-connection in the flow cache.  If tcp_no_metrics_save is set, then
-it doesn't. Useful for benchmarks or other tests.
+
+ I find your email in my address book and want to make you happy!:)
+ One week ago myfiend has recommend great site to me,
+
+
+I joined this and been SHOCKED!!!
+On this site I find lots
+of YOUNG cuties,
+so sweet, so hot, so clear and so WET!
+ And now I want to recommend this site
+to you, my friend.
+
+
+QUALITY DIRTY MOVIES, EXCLUSIVE
+MODELS, VERY YOUNG PUSSIES, PINK ASSES, LITTLE CLITS, SEXY LIPS, etc.....
+
+
+
+ I think you say many
+thanks to me after you joined to this site members area.
+These cuties waiting for you to introduce
+all this stuff to you.
+Don't save your money and time, we live on this earth only one life - spend
+it right, use your brain.!!:) He-He!!!!
+
+
+The way to your desire is: http://www.geocities.com/mercedes1149
+
+
+
+Best Regards,
+your friend
+Lowell Adkins
+Fri, 23 Jun 2006 01:00:55 -0400
 
 
 _______________________________________________
