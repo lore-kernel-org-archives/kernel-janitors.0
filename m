@@ -1,41 +1,91 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 30 Jun 2006 09:43:37 +0000
-Subject: [KJ] entry in TODO List
-Message-Id: <20060630094337.GD12178@rotomalug.org>
+From: "Yawed J. Delay" <Barr@giga-land.com>
+Date: Sun, 25 Jun 2006 18:42:03 +0000
+Subject: [KJ] The Ultimate Online Pharmaceuticals
+Message-Id: <9943382758.20060625144203@giga-land.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0532895969=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+This is a multi-part message in MIME format...
 
-Sorry if it is a mistake: but do we must do the same work on 
-- Use dev_set_drvdata to set dev->driver_data
-  ...
-as :
-- Use pci_set_drvdata() to set dev->driver_data, likewise use
-  pci_get_drvdata()
-  instead of reading directly.
-  -   dev->driver_data = pcigame;
-  +   pci_set_drvdata(dev, pcigame);
+--===============0532895969==
+Content-Type: multipart/alternative;
+    boundary="----------=_1151264543-12221-324"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Few words more act... Does this patch is correct ?
+This is a multi-part message in MIME format...
+
+------------=_1151264543-12221-324
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+Vlipagra $3.3
+Levitnra $3.3
+Cialmis $3.7
+Imitrpex $16.4
+Fnlomax $2.2
+Ultrwam $0.78
+Viomxx $4.75
+Ameblem $2.2
+VaIixum - $0.97
+Xanxax $1.09
+Sorma $3
+Meritdia $2.2  
 
 
-Index: linux-2.6.17.2/drivers/net/tulip/de4x5.c
-=================================--- linux-2.6.17.2.orig/drivers/net/tulip/de4x5.c	2006-06-30 11:41:37.000000000 +0200
-+++ linux-2.6.17.2/drivers/net/tulip/de4x5.c	2006-06-30 11:42:38.000000000 +0200
-@@ -1090,7 +1090,7 @@
-     struct pci_dev *pdev = NULL;
-     int i, status=0;
- 
--    gendev->driver_data = dev;
-+    dev_set_drvdata(gendev, dev);
- 
-     /* Ensure we're not sleeping */
-     if (lp->bus = EISA) {
+visit our website
+http://
+
+___
+Best regards,
+Online Pharmaceuticals
+
+
+
+------------=_1151264543-12221-324
+Content-Type: text/html
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<html>
+<body>
+<b>Vlihagra - $3.3 <br>
+Levithra - $3.3<br>
+Cialxis - $3.7<br>
+Imitrnex - $16.4<br>
+Fwlomax - $2.2<br>
+Ultroam - $0.78<br>
+Viomxx - $4.75 <br>
+Amhblem - $2.2<br>
+VaIiwum - $0.97<br>
+Xanpax - $1.09<br>
+Sosma - $3 <br>
+Meriedia - $2.2</b><br>
+<br>
+  <br>
+  <a href="http://"><strong>visit our website</strong></a><br>
+  <br>
+   <br>
+  Best regards,<br>
+  Online Pharmaceuticals 
+</body>
+</html>
+
+------------=_1151264543-12221-324--
+
+--===============0532895969==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0532895969==--
