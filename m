@@ -1,140 +1,50 @@
-From: "Melva " <MelvaCain@samerica.com>
-Date: Mon, 19 Jun 2006 02:19:39 +0000
-Subject: [KJ] large boom on marcket, Urgent letter
-Message-Id: <88448678469359.90905C0DCB@D71IL9>
+From: "ohgqewu pvjugvzw" <jjyubohmez@bostoncapital.com>
+Date: Wed, 28 Jun 2006 11:55:16 +0000
+Subject: VISION ENERGY GROUP is on a roll Vngp.pk
+Message-Id: <6424244757.mxAnTz-85634535-5985@bostoncapital.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The trading success you dream about is closer than you think. Learn a few v=
-aluable tips, and you=92re on the top!=20
-
-There will be huge amounts of promotion related to this stock.
-
-Get I FNX First Thing Today, This Is Going To Explaode!
-Infinex Ventures Inc. (I F NX)
-Current Price: 0.92
-
-Company Overview:
-Aggressive and energetic, Infinex boasts a dynamic and diversified
-portfolio of operations across North America, with an eye on international
-expansion.
-
-Grounded in natural resource exploration, Inifinex also offers
-investors access to exciting new developments in the high-tech sector and t=
-he
-booming international real estate market. Our market based experience,
-tenacious research techniques, and razor sharp analytical skills allow
-us to leverage opportunities in emerging markets and developing
-technologies.
-
-Identifying these opportunities in the earliest stages allows us to
-accelerate business development and fully realize the company true
-potential. Maximizing overall profitability and in turn enhancing sharehold=
-er
-value.
-
-Current Press Release
-
-Infinex Ventures Inc.(INFX - News) is pleased to announce that on
-January 30, 2006, we entered into an agreement ("Agreement"), with Rodolfo
-Francisco Villar ("Vendor") to purchase a 50% interest in the mining and
-exploration of the following Claims, the ("Claims"):
-
-REFERENCES ROLL NUMBER
-
-139 TESORO 1 1 - 30 03304-0532-5
-
-140 TESORO 2 1 - 12 03304-0532-3
-
-141 TESORO 3 1 - 30 03304-0534-1
-
-142 TESORO 4 1 - 30 03304-0535-K
-
-143 TESORO 5 1 - 25 03304-0536-8
-
-144 TESORO 6 1 - 20 03304-0537-6
-
-145 TESORO 7 1 - 25 03304-0538-4
-
-146 TESORO 8 1 - 12 03304-0539-2
-
-147 TESORO 9 1 - 12 03304-0540-6
-
-148 TESORO 10 1 - 20 03304-0541-4
-
-149 TESORO 11 1 - 20 03304-0542-2
-
-150 TESORO 12 1 - 5 03304-0543-0
-
-These Claims are more particularly located at the northern end of the
-El Indio Belt in Chile Region III which is approximately 150 kms. East
-of the City of Vallenar, Chile.
+H 0 T  S T O C K ALERT - VNGP.PK
+A L E R T --  BREAKING MARKET N E W S  R E P O R T --- VNGP.PK 
 
 
-1. Under the terms of the Agreement, the Vendor will grant to the Company t=
-he sole and exclusive irrevocable right and title to the
-Claims, subject to:
+Company Name: VISION ENERGY GROUP
+Lookup: VNGP
+Current Price: .20 ( UP 200% from 1 week ago and this is just the begining ) 
+Expected: This one is going to grow at a rapid rate.
 
-(i) the completion by the Company of confirmation of legal title and due di=
-ligence on the Properties as to ownership by the Vendor and results therefr=
-om being satisfactory to the
-Company, acting reasonably, within a period of 90 days;
+Business Description: VISION ENERGY GROUP (Other OTC: VNGP.PK - News) Vision Energy Group, Inc., a development stage company, owns a technology to generate clean power from pressure letdown at the let down control valves in high pressure natural gas transmission lines. This let down recovery system utilizes a waste heat source in combination with let down expansion turbine. The company was founded in 2002 and is based in Marina Del Rey, California.
 
-(ii) the right to extend a further 90 days by mutual consent. (the right to=
- extend a further 90 days has been granted to the Company, in an effort to =
-complete its due diligence);
+Overview:
 
-(iii) The Vendor and the Company shall put forth, all their reasonable best=
- efforts to obtain a satisfactory title opinion or Court Order, or such tha=
-t the Company will acquire the property freee and clear of all liens and en=
-cumbrances, with a view to further develop the property into an operating m=
-ine.
+Thousands of small, inexpensive, scattered and environmentally-friendly sources of energy can now be harvested profitably by using Vision Energy.s (VEG) proven cryogenic and pressure let down technologies to capture otherwise wasted sources of power. Our mini-plants are geared either to electrical generation from natural gas pipeline pressures or the manufacture of liquefied natural gas (LNG) from landfill emissions or "stranded" natural gas sources. In both cases sites are close to attractive markets and offer energy at sharply reduced rates. Capital investment for reliable energy can be reduced by more than ten-fold by a mini-plant while also lowering operating costs.
 
-2. Upon satisfactory completion of the due diligence and clear title being =
-established, the Company will then:
 
-(a) issue to the Vendor Twenty Million (20,000,000) Common Shares, upon the=
- execution by the parties of this Agreement and subject to the subject cond=
-itions as set out above; and=20
-(b) that all original documents or notarized copies of official translation=
-s are therefore required to complete the transactions contemplated in the A=
-greement. The issuance of the 20 Million (20,000,000) Common Shares shall b=
-e issued in the Vendors designated name to the benefit of Vendor, upon the =
-removal of the subject conditions as set out above.
+Technology Opportunity:
 
-3. Further, satisfactory completion of the due diligence and clear title be=
-ing established the Purchaser with the assistance of the Vendor, (if necess=
-ary), will apply for permits to the appropriate
-authorities to place the property into production. Upon the appropriate per=
-mits being approved, the Purchaser will have the option to acquire an addit=
-ional 25% interest in the property (bringing the Purchaser interest to 75%)=
- in exchange for a further issuance of Ten Million (10,000,000) Common shar=
-es of the Company's stock. We are presently pursuing further due diligence =
-on these Claims.
+Since the deregulation of the energy sector the industry has been changed in many ways. Vision Energy has the opportunity to capitalize on the two major expenses which the industry is saddled with, the expense of the extensive power grid (distributing the power) and the inefficiencies in the outdated technology in use. The technologies the industry has employed are outdated and put into service at a time which is very different from the deregulated industry of today.
 
-On Behalf of the Board
-INFINEX VENTURES INC.Conclusion:
+Vision Energy plans to focus on major gas consumers/electricity producers, who have much to gain from utilizing our technologies and solutions. Our solutions offer on-site production or supplementation of power therefore eliminating the extra cost of transporting the electricity.All improvements in technology used to capture extra energy will have a direct relationship to the cost, availability, and the environmental impact of the industry.
 
-The Examples Above Show The Awesome, Earning Potential of Little Known
-Companies That Explode Onto Investor's Radar Screens; Many of You Are
-Already Familiar with This. Is I FNX Poised and Positioned to Do that For
-You? Then You May Feel the Time Has Come to Act... And Please Watch
-this One Trade on tomorrow! Go IF NX.
 
-Rocket stock pick is what pro traders say about this one.
-
-I wish your returns were boosted significantly =96 just like mine were!
-
-Sincerely, MelvaCain
+WATCH THIS S T O C K GO HIGHER AND HIGHER
 
 
 
+-----------------------
+The sharper is the berry, the sweeter is the wine. We hung them out to dry.  Ugly as a mud fence. As uneasy as a cat near water.   A thorn in my side.   A stepping stone to. There's no time like the present.   Rare as walking on water.  Slow as molasses in January. That's a real stem winder.   Spring forward fall back. They're like two peas in a pod.  Ugly as a mud fence. Rare as walking on water. 
 
+Sow much, reap much; sow little, reap little. Shit end of the stick. Top of the morning.    Spring rain, Fall gold. Put that in your pipe and smoke it.   Spring forward fall back. A thing of beauty is a joy forever.   We'll cross that bridge when we come to it.  You feel like a fish out of water. You have to separate the chaff from the wheat. Worked night and day. Tossed around like a hot potato.   Root it out. Treat him like dirt. The scythe ran into a stone. Scraping the bottom of the barrel.  Sour as a green apple.   Take time to smell the roses. You can't squeeze blood out of a turnip. Still water runs dirty and deep.   Stand your ground. What's good for the goose is good for the gander. Sly as a fox.  
 
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
