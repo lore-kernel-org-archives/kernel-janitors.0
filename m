@@ -1,114 +1,92 @@
-From: "Carroll Valencia" <CarrollValencia@dublin.com>
-Date: Tue, 20 Jun 2006 20:30:24 +0000
-Subject: [KJ] huge upheaval on marcket, overwhelmingly important statement
-Message-Id: <18276684980484.7963934E91@H7YC>
+From: "Lowell Krupa" <lowellkru@buckeyexpress.com>
+Date: Fri, 30 Jun 2006 13:26:43 +0000
+Subject: [KJ] with mobas
+Message-Id: <000001c69c48$d4394820$2170a8c0@jnt36>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0675439745=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Waiting to put your stock portfolio into figures that will allow you to quit your full-time job? There are ways to bring that closer. Learn more right here! 
+This is a multi-part message in MIME format...
 
-Capitalize on most active stocks! These will generate an amazing flow of income for you.
+--===============0675439745==
+Content-Type: multipart/alternative;
+    boundary="----------=_1151673848-8772-275"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Get IFN X First Thing Today, This Is Going To Explaode!
-Infinex Ventures Inc. (I  FNX)
-Current Price: 0.92
+This is a multi-part message in MIME format...
 
-Company Overview:
-Aggressive and energetic, Infinex boasts a dynamic and diversified
-portfolio of operations across North America, with an eye on international
-expansion.
+------------=_1151673848-8772-275
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Grounded in natural resource exploration, Inifinex also offers
-investors access to exciting new developments in the high-tech sector and the
-booming international real estate market. Our market based experience,
-tenacious research techniques, and razor sharp analytical skills allow
-us to leverage opportunities in emerging markets and developing
-technologies.
+Hi,
 
-Identifying these opportunities in the earliest stages allows us to
-accelerate business development and fully realize the company true
-potential. Maximizing overall profitability and in turn enhancing shareholder
-value.
-
-Current Press Release
-
-Infinex Ventures Inc.(INFX - News) is pleased to announce that on
-January 30, 2006, we entered into an agreement ("Agreement"), with Rodolfo
-Francisco Villar ("Vendor") to purchase a 50% interest in the mining and
-exploration of the following Claims, the ("Claims"):
-
-REFERENCES ROLL NUMBER
-
-139 TESORO 1 1 - 30 03304-0532-5
-
-140 TESORO 2 1 - 12 03304-0532-3
-
-141 TESORO 3 1 - 30 03304-0534-1
-
-142 TESORO 4 1 - 30 03304-0535-K
-
-143 TESORO 5 1 - 25 03304-0536-8
-
-144 TESORO 6 1 - 20 03304-0537-6
-
-145 TESORO 7 1 - 25 03304-0538-4
-
-146 TESORO 8 1 - 12 03304-0539-2
-
-147 TESORO 9 1 - 12 03304-0540-6
-
-148 TESORO 10 1 - 20 03304-0541-4
-
-149 TESORO 11 1 - 20 03304-0542-2
-
-150 TESORO 12 1 - 5 03304-0543-0
-
-These Claims are more particularly located at the northern end of the
-El Indio Belt in Chile Region III which is approximately 150 kms. East
-of the City of Vallenar, Chile.
+=20
+V / / A G R A from 3 , 33 $=20
+and man y other at http://kilanderufades.com
+-
+-
+-
+-
+-
+-
+Harry stared at her, utterly bewildered, as she seized a frilly napkin
+and dabbed at her shining face with it.
+Cho? he said weakly, wishing Roger would seize his girlfriend and start
+kissing her again to stop her goggling at him and Cho.
+Go on, leave! she said, now crying into the napkin. I dont know why you
+asked me out in the first place if youre going to make arrangements to
+meet other girls right after me: how many are you meeting after
+Hermione?
 
 
-1. Under the terms of the Agreement, the Vendor will grant to the Company the sole and exclusive irrevocable right and title to the
-Claims, subject to:
+------------=_1151673848-8772-275
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-(i) the completion by the Company of confirmation of legal title and due diligence on the Properties as to ownership by the Vendor and results therefrom being satisfactory to the
-Company, acting reasonably, within a period of 90 days;
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi,<BR>
+<DIV>&nbsp;</DIV>
+<STRONG> V / / A G R A </STRONG> from 3 , 33 $ <BR> and man y other at <A h=
+ref=3D"http://kilanderufades.com">http://kilanderufades.com</A></DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>Harry stared at her, utterly bewildered, as she seized a frilly napkin=
+ and dabbed at her shining face with it.<BR>
+Cho? he said weakly, wishing Roger would seize his girlfriend and start kis=
+sing her again to stop her goggling at him and Cho.<BR>
+Go on, leave! she said, now crying into the napkin. I dont know why you ask=
+ed me out in the first place if youre going to make arrangements to meet ot=
+her girls right after me: how many are you meeting after Hermione?<BR></DIV=
+></BODY></HTML>
+------------=_1151673848-8772-275--
 
-(ii) the right to extend a further 90 days by mutual consent. (the right to extend a further 90 days has been granted to the Company, in an effort to complete its due diligence);
-
-(iii) The Vendor and the Company shall put forth, all their reasonable best efforts to obtain a satisfactory title opinion or Court Order, or such that the Company will acquire the property freee and clear of all liens and encumbrances, with a view to further develop the property into an operating mine.
-
-2. Upon satisfactory completion of the due diligence and clear title being established, the Company will then:
-
-(a) issue to the Vendor Twenty Million (20,000,000) Common Shares, upon the execution by the parties of this Agreement and subject to the subject conditions as set out above; and 
-(b) that all original documents or notarized copies of official translations are therefore required to complete the transactions contemplated in the Agreement. The issuance of the 20 Million (20,000,000) Common Shares shall be issued in the Vendors designated name to the benefit of Vendor, upon the removal of the subject conditions as set out above.
-
-3. Further, satisfactory completion of the due diligence and clear title being established the Purchaser with the assistance of the Vendor, (if necessary), will apply for permits to the appropriate
-authorities to place the property into production. Upon the appropriate permits being approved, the Purchaser will have the option to acquire an additional 25% interest in the property (bringing the Purchaser interest to 75%) in exchange for a further issuance of Ten Million (10,000,000) Common shares of the Company's stock. We are presently pursuing further due diligence on these Claims.
-
-On Behalf of the Board
-INFINEX VENTURES INC.Conclusion:
-
-The Examples Above Show The Awesome, Earning Potential of Little Known
-Companies That Explode Onto Investor's Radar Screens; Many of You Are
-Already Familiar with This. Is IFN X Poised and Positioned to Do that For
-You? Then You May Feel the Time Has Come to Act... And Please Watch
-this One Trade on tomorrow! Go IF NX.
-
-This stock shows amazing earning opportunities.
-
-Let me know if you need more trading tips. Hope you will never ever need advice with your rocketing career!
-
-Sincerely, CarrollValencia
-
-
-
-
+--===============0675439745==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0675439745==--
