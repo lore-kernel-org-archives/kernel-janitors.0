@@ -1,54 +1,84 @@
-From: "Overseers Q. Hawed" <digisnap@govideco.com>
-Date: Fri, 21 Jul 2006 09:44:33 +0000
-Subject: [KJ] Some useful advices for your health
-Message-Id: <5792200852.20060721042425@govideco.com>
+From: "Oz Hammons" <hammonsoz@acsisinc.com>
+Date: Sun, 02 Jul 2006 01:15:22 +0000
+Subject: [KJ] with disof
+Message-Id: <000001c69d74$fd975b80$c335a8c0@inq99>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1153474080-16801-292"
+Content-Type: multipart/mixed; boundary="===============1061868730=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1153474080-16801-292
-Content-Type: text/plain; charset="iso-8859-1"
+--===============1061868730==
+Content-Type: multipart/alternative;
+    boundary="----------=_1151802723-22449-755"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1151802723-22449-755
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
+Hi,
 
+=20
+V / / A G R A from 3 , 33 $=20
+and man y other at http://cervasedalion.com
+-
+-
+-
+-
+-
+-
+Yes, yes, we know, thank you, said Tonks swiftly. On, on, get on -
+And she shoved Harry forwards towards the steps, past the conductor, who
+goggled at Harry as he passed.
+Ere - its Any -!
+
+
+------------=_1151802723-22449-755
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi,<BR>
+<DIV>&nbsp;</DIV>
+<STRONG> V / / A G R A </STRONG> from 3 , 33 $ <BR> and man y other at <A h=
+ref=3D"http://cervasedalion.com">http://cervasedalion.com</A></DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>Yes, yes, we know, thank you, said Tonks swiftly. On, on, get on -<BR>
+And she shoved Harry forwards towards the steps, past the conductor, who go=
+ggled at Harry as he passed.<BR>
+Ere - its Any -!<BR></DIV></BODY></HTML>
+------------=_1151802723-22449-755--
+
+--===============1061868730==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------------=_1153474080-16801-292
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-Spam detection software, running on the system "fire-2.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or block
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Kernel-janitors mailing list
-  Kernel-janitors@lists.osdl.org
-  https://lists.osdl.org/mailman/listinfo/kernel-janitors [...] 
-
-Content analysis details:   (5.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
--1.0 OSDL_HEADER_SUBJECT_BRACKETED Subject starts with []'d phrase
--1.0 OSDL_HEADER_LISTID_KNOWN List-Id contains a known mailing list
- 2.9 FORGED_RCVD_FROM_NUM   Received headers forged (numeric hostname)
- 2.0 OUTFLUX_THEBAT         X-Mailer is from "The Bat"
- 2.8 FORGED_MUA_THEBAT_CS   Mail pretending to be from The Bat! (charset)
--0.1 AWL                    AWL: Auto-whitelist adjustment
-
-
-
-------------=_1153474080-16801-292--
+--===============1061868730==--
