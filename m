@@ -1,48 +1,90 @@
-From: Richard <h.vanberkum@chello.nl>
-Date: Mon, 10 Jul 2006 15:30:43 +0000
-Subject: [KJ] [PATCH] drivers/isdn/sc/init.c: check request_region for
-Message-Id: <20060710172805.GA9866@chello.nl>
+From: "Tarmo Gaskin" <gasktarmo@fsbnm.com>
+Date: Sun, 02 Jul 2006 09:35:32 +0000
+Subject: [KJ] with vamoa
+Message-Id: <000001c69dba$dd2fe7e0$d9bda8c0@evg95>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1569570087=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Check request_region() for return value
+This is a multi-part message in MIME format...
 
-Signed-off-by: Richard van Berkum <h.vanberkum at chello.nl> 
----
+--===============1569570087==
+Content-Type: multipart/alternative;
+    boundary="----------=_1151832821-7257-522"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-The whole region is scaned for I/O ports and that same regions is
-released at module_exit. So I let module_exit clean up the mess. Is
-there a better way to solve this problem? 
+This is a multi-part message in MIME format...
+
+------------=_1151832821-7257-522
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi,
+
+=20
+V / / A G R A from 3 , 33 $=20
+and man y other at http://setunjanfances.com
+-
+-
+-
+-
+-
+-
+What was it like? Harry and Hermione asked together.
+Fred shrugged.
+Not that bad. Umbridge just lurked in the corner making notes on a
+clipboard. You know what Flitwicks like, he treated her like a guest,
+didnt seem to bother him at all. She didnt say much. Asked Alicia a
+couple of questions about what the classes are normally like, Alicia
+told her they were really good, that was it.
 
 
- init.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+------------=_1151832821-7257-522
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi,<BR>
+<DIV>&nbsp;</DIV>
+<STRONG> V / / A G R A </STRONG> from 3 , 33 $ <BR> and man y other at <A h=
+ref=3D"http://setunjanfances.com">http://setunjanfances.com</A></DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>-</DIV>
+<DIV>What was it like? Harry and Hermione asked together.<BR>
+Fred shrugged.<BR>
+Not that bad. Umbridge just lurked in the corner making notes on a clipboar=
+d. You know what Flitwicks like, he treated her like a guest, didnt seem to=
+ bother him at all. She didnt say much. Asked Alicia a couple of questions =
+about what the classes are normally like, Alicia told her they were really =
+good, that was it.<BR></DIV></BODY></HTML>
+------------=_1151832821-7257-522--
 
---- linux-2.6/drivers/isdn/sc/init.c	2006-07-06 16:58:09.160792896 +0200
-+++ mytree/drivers/isdn/sc/init.c	2006-07-09 15:07:36.371362184 +0200
-@@ -354,8 +354,15 @@ static int __init sc_init(void)
- 		sc_adapter[cinst]->iobase = io[b];
- 		for(i = 0 ; i < MAX_IO_REGS - 1 ; i++) {
- 			sc_adapter[cinst]->ioport[i] = io[b] + i * 0x400;
--			request_region(sc_adapter[cinst]->ioport[i], 1,
--					interface->id);
-+			/*
-+			 *check return value and let module_exit handle the release of the resources
-+			 */
-+			if (!(request_region(sc_adapter[cinst]->ioport[i], 1,
-+					interface->id))) {
-+				printk(KERN_ERR "Can't get I/O %X\n",sc_adapter[cinst]->ioport[i]);
-+				return -ENODEV;
-+			}
-+			
- 			pr_debug("Requesting I/O Port %#x\n",
- 				sc_adapter[cinst]->ioport[i]);
- 		}
+--===============1569570087==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1569570087==--
