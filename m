@@ -1,80 +1,164 @@
-From: "Bruno Gola" <brunogola@gmail.com>
-Date: Mon, 31 Jul 2006 19:04:23 +0000
-Subject: Re: [KJ] Introducing myself!
-Message-Id: <b27f1a340607311204yc22346blbfc09e4730a176f1@mail.gmail.com>
+From: Richard <h.vanberkum@chello.nl>
+Date: Sun, 02 Jul 2006 13:55:20 +0000
+Subject: [KJ] [Kj] [PATCH] drivers/atm/idt77252.c: Fix KERN_* in printk
+Message-Id: <44A7EED4.10905@chello.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b27f1a340607270909i49d807d2x4e3aa054f5fc62d@mail.gmail.com>
-In-Reply-To: <b27f1a340607270909i49d807d2x4e3aa054f5fc62d@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 7/27/06, Artur D'Assump=E7=E3o <ad@tagus.ist.utl.pt> wrote:
-> Hi Bruno,
-Hi Artur !
+This is my first patch. If there's anything wrong with it I would like to hear it. There are far more printk statements to be fixed, but I would like to see if this patch survives.
+I also used KERN_INFO and KERN_ERR on an intuitive level. Any recommendations on this are welcome.
 
-> First of all let me welcome you to Kernel Janitors. I'm just a simple
-> linux user like you trying do dig up into kernel development willing to
-> be usefull to the community somehow. As such user, I'd like to give you
-> some tips that i've found myself usefull while searching how to start als=
-o.
-Thanks :-)
+Signed-off-by: Richard van Berkum
 
-> - The first place you should like to take a look is at kernel janitor's
-> home page at www.kerneljanitors.org.
-> It as a bunch of guide lines, best pratices and documentation that will
-> help you start with the right foot, avoinding those nasty avoidable
-> newbie errors.
-> All this information as been gathered by the kernel janitors
-> contributors and certainly is a very good place to start.
->
-> - A very good reading in linux device drivers development is the Linux
-> Device Drivers 3rd Edition (O'Reilly). It's a very well writen book,
-> clear and objective full of pratical examples. It as the advantage to
-> have a very close vision of the kernel develepment community itself
-> since it has the co-authory of renown kernel developers, such as Greg
-> Kroah-Hartman. Thankfully the authors and O'Reilly have made the book
-> freely available and you can get it here http://lwn.net/Kernel/LDD3/
->
-> - I've personally liked very much of Understanding The Linux Kernel
-> (O'Reilly) book. It does not focus on device driver, but it gives a very
-> technical vision of how the linux kernel is put together. It's a bit
-> more technical tough, and I used primarily for reference. Sadly this
-> isn't a freely available book.
->
-> - Kernel newbies wiki (http://www.kernelnewbies.org/) is a very good
-> resource also!
->
-> - You can find the help of other KJ contributers at #kerneljanitor
-> (irc.kernelnewbies.org), on free tuits I guess everyone will be glad to
-> help you.
->
-> - linux/Documention is a crucial place for reference also! Many of the
-> things you'll find in other documentation, you'll almost shure find it
-> there with a more technical orientation.
->
-> - Other resources I like to search are the slide presentations made by
-> the kernel developers since it gives you a very good insight how the
-> kernel main developers aknowledge certain processes of the kernel
-> development. It's a good way to understand how the whole thing works and
-> it's philosophy/politics.
->
-> Greg's site is a good resource (http://www.kroah.com). On the kernel
-> janitors site you can find also a few Randy's presentations. Maybe
-> someone would like to share other references too. I'd be thankful  also!
 
-Thanks for all your tips, i'll try to follow it ! I'm already starting
-reading, trying to code something useful, etc.
-
-> Hope you find usefull and happy hacking,
-Thanks again !
-
-[]'s,
---=20
-Bruno Fialho Marques Gola <brunogola@gmail.com>
-http://www.brunogola.com.br
-
+--- janitor-2.6/drivers/atm/idt77252.c	2006-07-01 11:54:45.529132728 +0200
++++ mytree/drivers/atm/idt77252.c	2006-07-02 17:24:27.844282464 +0200
+@@ -194,7 +194,7 @@ write_sram(struct idt77252_dev *card, un
+ 	      (addr < card->tst[0] + card->tst_size)) ||
+ 	     ((addr > card->tst[1] + card->tst_size - 2) &&
+ 	      (addr < card->tst[1] + card->tst_size)))) {
+-		printk("%s: ERROR: TST JMP section at %08lx written: %08x\n",
++		printk(KERN_ERR "%s: ERROR: TST JMP section at %08lx written: %08x\n",
+ 		       card->name, addr, value);
+ 	}
+ 
+@@ -213,7 +213,7 @@ read_utility(void *dev, unsigned long ub
+ 	u8 value;
+ 
+ 	if (!card) {
+-		printk("Error: No such device.\n");
++		printk(KERN_ERR "Error: No such device.\n");
+ 		return -1;
+ 	}
+ 
+@@ -232,7 +232,7 @@ write_utility(void *dev, unsigned long u
+ 	unsigned long flags;
+ 
+ 	if (!card) {
+-		printk("Error: No such device.\n");
++		printk(KERN_ERR "Error: No such device.\n");
+ 		return;
+ 	}
+ 
+@@ -539,7 +539,7 @@ dump_tct(struct idt77252_dev *card, int 
+ 
+ 	tct = (unsigned long) (card->tct_base + index * SAR_SRAM_TCT_SIZE);
+ 
+-	printk("%s: TCT %x:", card->name, index);
++	printk(KERN_INFO "%s: TCT %x:", card->name, index);
+ 	for (i = 0; i < 8; i++) {
+ 		printk(" %08x", read_sram(card, tct + i));
+ 	}
+@@ -553,7 +553,7 @@ idt77252_tx_dump(struct idt77252_dev *ca
+ 	struct vc_map *vc;
+ 	int i;
+ 
+-	printk("%s\n", __FUNCTION__);
++	printk(KERN_DEBUG "%s\n", __FUNCTION__);
+ 	for (i = 0; i < card->tct_size; i++) {
+ 		vc = card->vcs[i];
+ 		if (!vc)
+@@ -568,7 +568,7 @@ idt77252_tx_dump(struct idt77252_dev *ca
+ 		if (!vcc)
+ 			continue;
+ 
+-		printk("%s: Connection %d:\n", card->name, vc->index);
++		printk(KERN_INFO "%s: Connection %d:\n", card->name, vc->index);
+ 		dump_tct(card, vc->index);
+ 	}
+ }
+@@ -843,14 +843,14 @@ queue_skb(struct idt77252_dev *card, str
+ 	int aal;
+ 
+ 	if (skb->len = 0) {
+-		printk("%s: invalid skb->len (%d)\n", card->name, skb->len);
++		printk(KERN_ERR "%s: invalid skb->len (%d)\n", card->name, skb->len);
+ 		return -EINVAL;
+ 	}
+ 
+ 	TXPRINTK("%s: Sending %d bytes of data.\n",
+ 		 card->name, skb->len);
+ 
+-	tbd = &IDT77252_PRV_TBD(skb);
++	tbd = &DT77252_PRV_TBD(skb);
+ 	vcc = ATM_SKB(skb)->vcc;
+ 
+ 	IDT77252_PRV_PADDR(skb) = pci_map_single(card->pcidev, skb->data,
+@@ -875,7 +875,7 @@ queue_skb(struct idt77252_dev *card, str
+ 	}
+ 
+ 	if (test_bit(VCF_RSV, &vc->flags)) {
+-		printk("%s: Trying to transmit on reserved VC\n", card->name);
++		printk(KERN_INFO "%s: Trying to transmit on reserved VC\n", card->name);
+ 		goto errout;
+ 	}
+ 
+@@ -911,7 +911,7 @@ queue_skb(struct idt77252_dev *card, str
+ 	case ATM_AAL1:
+ 	case ATM_AAL2:
+ 	default:
+-		printk("%s: Traffic type not supported.\n", card->name);
++		printk(KERN_INFO "%s: Traffic type not supported.\n", card->name);
+ 		error = -EPROTONOSUPPORT;
+ 		goto errout;
+ 	}
+@@ -980,7 +980,7 @@ init_rsq(struct idt77252_dev *card)
+ 	card->rsq.base = pci_alloc_consistent(card->pcidev, RSQSIZE,
+ 					      &card->rsq.paddr);
+ 	if (card->rsq.base = NULL) {
+-		printk("%s: can't allocate RSQ.\n", card->name);
++		printk(KERN_ERR "%s: can't allocate RSQ.\n", card->name);
+ 		return -1;
+ 	}
+ 	memset(card->rsq.base, 0, RSQSIZE);
+@@ -1034,7 +1034,7 @@ dequeue_rx(struct idt77252_dev *card, st
+ 
+ 	skb = sb_pool_skb(card, le32_to_cpu(rsqe->word_2));
+ 	if (skb = NULL) {
+-		printk("%s: NULL skb in %s, rsqe: %08x %08x %08x %08x\n",
++		printk(KERN_ERR "%s: NULL skb in %s, rsqe: %08x %08x %08x %08x\n",
+ 		       card->name, __FUNCTION__,
+ 		       le32_to_cpu(rsqe->word_1), le32_to_cpu(rsqe->word_2),
+ 		       le32_to_cpu(rsqe->word_3), le32_to_cpu(rsqe->word_4));
+@@ -1049,7 +1049,7 @@ dequeue_rx(struct idt77252_dev *card, st
+ 		 card->name, vpi, vci, skb, skb->data);
+ 
+ 	if ((vpi >= (1 << card->vpibits)) || (vci != (vci & card->vcimask))) {
+-		printk("%s: SDU received for out-of-range vc %u.%u\n",
++		printk(KERN_INFO "%s: SDU received for out-of-range vc %u.%u\n",
+ 		       card->name, vpi, vci);
+ 		recycle_rx_skb(card, skb);
+ 		return;
+@@ -1057,7 +1057,7 @@ dequeue_rx(struct idt77252_dev *card, st
+ 
+ 	vc = card->vcs[VPCI2VC(card, vpi, vci)];
+ 	if (!vc || !test_bit(VCF_RX, &vc->flags)) {
+-		printk("%s: SDU received on non RX vc %u.%u\n",
++		printk(KERN_INFO "%s: SDU received on non RX vc %u.%u\n",
+ 		       card->name, vpi, vci);
+ 		recycle_rx_skb(card, skb);
+ 		return;
+@@ -1077,7 +1077,7 @@ dequeue_rx(struct idt77252_dev *card, st
+ 		cell = skb->data;
+ 		for (i = (stat & SAR_RSQE_CELLCNT); i; i--) {
+ 			if ((sb = dev_alloc_skb(64)) = NULL) {
+-				printk("%s: Can't allocate buffers for aal0.\n",
++				printk(KERN_ERR "%s: Can't allocate buffers for aal0.\n",
+ 				       card->name);
+ 				atomic_add(i, &vcc->stats->rx_drop);
+ 				break;
+@@ -1111,7 +1111,7 @@ dequeue_rx(struct idt77252_dev *card, st
+ 		return;
+ 	}
+ 	if (vcc->qos.aal != ATM_AAL5) {
+-		printk("%s: Unexpected AAL type in dequeue_rx(): %d.\n",
++		printk(KERN_ERR "%s: Unexpected AAL type in dequeue_rx(): %d.\n",
+ 		       card->name, vcc->qos.aal);
+ 		recycle_rx_skb(card, skb);
+ 		return;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
