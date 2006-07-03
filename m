@@ -1,39 +1,18 @@
-From: "Alberto Wolfe" <470dick@hotbox.com>
-Date: Sun, 02 Jul 2006 00:14:57 +0000
-Subject: Re: [KJ] Blair
-Message-Id: <200607020014.k620EpnZ024656@smtp.osdl.org>
+From: "Kenton" <KentonErwin@usa.com>
+Date: Mon, 03 Jul 2006 20:46:44 +0000
+Subject: [KJ] Just published I think, yes. Revel in
+Message-Id: <95520253891902.744FBF6D61@B7AE>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Yo Kernel-janitors!
-The main reason of my letter to you will be to acquaint. I - a good sight
-Good lady, but I am the only thing, and I want to change it.
-
-My name - Olga, I - 28 years, and I resemble the sun:
-
-
-
-I have excitation, an active life.
-I like to travel, meeting with new interesting, good and positive
-People, study new things. More then something I am involved seeing:
-It is so unusual, as I. And your work should learn it.
-The hope you is interested to know me better and to communicate with me,
-I would be happy to see your letter.
-Reply on mail:bodunova_o@inbox.ru
-
-P.S. Later we can exchange our pics.
-
-
-Sat, 1 Jul 2006 20:14:57 -0400
-bacterium disciplinary adjutant anchor ditto committeewomen chevalier cover
-cacti bruno aquarius conjure deceit coinage aeneas bivalve
-
- 
-
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Hi Bro!
+Have you ever wished to have more intense final? But some of us think it=92=
+s impossible Take it before go to bed and you will be able to show the para=
+dise for you sweetie See our offer: http://www.basszass.com  Just check you=
+rself!
+_______________________________________________Kernel-janitors mailing list=
+Kernel-janitors@lists.osdl.orghttps://lists.osdl.org/mailman/listinfo/kerne=
+l-janitors
