@@ -1,93 +1,40 @@
-From: "Nomiki Redd" <reddinomiki@directmail.com>
-Date: Fri, 28 Jul 2006 17:30:31 +0000
-Subject: Re: [KJ] raxoiRjOLEX
-Message-Id: <000001c6b26b$869c8fd0$6411a8c0@giv88>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1097307683=="
+From: "Anita Hays" <561murdock@computermail.net>
+Date: Mon, 03 Jul 2006 23:09:15 +0000
+Subject: -=job offert=-
+Message-Id: <E1FxXXY-0007nh-7a@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============1097307683==
-Content-Type: multipart/alternative;
-    boundary="----------=_1154108140-14013-412"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1154108140-14013-412
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-=20
-BjVLGARI
-BjREITLING
-RjOLEX
-TjIFFANY & CO
-PjATEK
-OjMEGA
-CjARTIER
-=20
-Best prijces online at http://www.whosayksicannskate.com
-=20
-
-,
-
-,
-
-,
-
-,
-
-CHAPTER 19
-Let me have your spear. I called out to the soldier at the door. She
-shook her head in a silent no, then said, I have my orders. No help
+Hello Kernel-janitor-discuss!.
+Our company MirPay Inc. want presents a good job offer to peoples from Spain.
+we are trading - financial company and now we looking for home managers from Spain!
 
 
-------------=_1154108140-14013-412
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+If you live in Spain its your chance improve your financial position! Your wage will be about1000-2600 EUR per week!! After one month you can earn more 3000 EUR per week!
+All that you should have its e-mail, some hours free time per day, and computer.
+For more info contact with us with e-mail!!!
+Regards,
+Walter Van Dessel
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>&nbsp;</DIV>
-<DIV>BjVLGARI<BR>BjREITLING<BR>RjOLEX<BR>TjIFFANY & CO<BR>PjATEK<BR>OjMEGA<=
-BR>CjARTIER</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>Best prijces online at <A href=3D"http://www.whosayksicannskate.com">h=
-ttp://www.whosayksicannskate.com</A></DIV>
-<DIV>&nbsp;</DIV>
-<P>,</P>
-<P>,</P>
-<P>,</P>
-<P>,</P>
-<DIV> CHAPTER 19<BR>
- Let me have your spear. I called out to the soldier at the door. She<BR>
-shook her head in a silent no, then said, I have my orders. No  help<BR></D=
-IV></BODY></HTML>
-------------=_1154108140-14013-412--
 
---===============1097307683==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+paymmirinc@aol.com
+Tel:    +3227065508
+****************************
+Mon, 3 Jul 2006 16:09:15 -0700
+aides coal bindle balance chase adjacent coroutine curriculum
+akin disrupt appleton blumenthal bulk bale archbishop assiduity
 
+ 
+
+
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1097307683==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
