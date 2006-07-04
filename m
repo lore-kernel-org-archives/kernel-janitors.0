@@ -1,7 +1,7 @@
 From: Richard <h.vanberkum@chello.nl>
-Date: Mon, 03 Jul 2006 23:30:24 +0000
+Date: Tue, 04 Jul 2006 00:01:39 +0000
 Subject: Re: [KJ] [PATCH] drivers/char/mxser.c: check request_region()
-Message-Id: <44A9C705.8080203@chello.nl>
+Message-Id: <44A9CDC7.3000702@chello.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <44A9BD91.4010002@chello.nl>
 In-Reply-To: <44A9BD91.4010002@chello.nl>
@@ -12,22 +12,17 @@ To: kernel-janitors@vger.kernel.org
 
 Randy.Dunlap wrote:
 
-Hello Randy,
+> Thanks... but I missed one more:  use space before '{'
 
-> > On Tue, 04 Jul 2006 03:00:01 +0200 Richard wrote:
-> >
->> >> Check return value of request_region and release already requested region
-if the
->> >> second fails
->> >>
->> >> Signed-of-by: Richard van Berkum
-> >
-> > Scripts want spelling to be:  Signed-off-by
+Okay
+> 
+> And send it to the mailing list...
 
-Okay, I'll add the emailadres to.
-Thanks for the corrections
+I did resend it later when I realized I forgot the mailing list
+> 
 
 Signed-off-by: Richard van Berkum <h.vanberkum at chello.nl>
+
 
 --- janitor-2.6/drivers/char/mxser.c	2006-07-01 11:54:45.895077096 +0200
 +++ mytree/drivers/char/mxser.c	2006-07-04 02:52:17.965040344 +0200
@@ -38,7 +33,7 @@ Signed-off-by: Richard van Berkum <h.vanberkum at chello.nl>
 -	request_region(pci_resource_start(pdev, 2), pci_resource_len(pdev, 2),
 -			"mxser(IO)");
 +	if (!(request_region(pci_resource_start(pdev, 2), pci_resource_len(pdev, 2),
-+			"mxser(IO)"))){
++			"mxser(IO)"))) {
 +		printk(KERN_ERR "mxser: I/O ports already in use\n");
 +		return -EIO;
 +	}
@@ -52,7 +47,7 @@ Signed-off-by: Richard van Berkum <h.vanberkum at chello.nl>
 -	request_region(pci_resource_start(pdev, 3), pci_resource_len(pdev, 3),
 -			"mxser(vector)");
 +	if (!(request_region(pci_resource_start(pdev, 3), pci_resource_len(pdev, 3),
-+			"mxser(vector)"))){
++			"mxser(vector)"))) {
 +		printk(KERN_ERR "mxser: I/O ports already in use\n");
 +		goto out;
 +	}
