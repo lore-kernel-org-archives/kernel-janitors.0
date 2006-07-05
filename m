@@ -1,52 +1,45 @@
-From: "Brynne Reasons" <brynneareasons@aeropostale.com>
-Date: Sat, 01 Jul 2006 11:48:18 +0000
-Subject: [KJ] with biwiz
-Message-Id: <000001c69d04$3e8dd3b0$7f33a8c0@nzr81>
+From: "Doretta Steffenson" <dorety@appelyost.com>
+Date: Wed, 05 Jul 2006 15:19:30 +0000
+Subject: Re: [KJ] sedeb
+Message-Id: <000001c6a046$698a3d20$e1c9a8c0@vns57>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0687838795=="
+Content-Type: multipart/mixed; boundary="===============1557934777=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============0687838795==
+--===============1557934777==
 Content-Type: multipart/alternative;
-    boundary="----------=_1151754405-3097-649"
+    boundary="----------=_1152112641-19051-441"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1151754405-3097-649
+------------=_1152112641-19051-441
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 Hi,
+=20
+CzIALIS
+VzALIUM
+AzMBIEN
+VzIAGRA
+=20
+http://baterganfionsa.com
 
 =20
-V / / A G R A from 3 , 33 $=20
-and man y other at http://lanvertunjased.com
--
--
--
--
--
--
-- Hagrid is? I dunno, said Ron, sounding worried. Hed better be OK:
-A short distance away, Draco Malfoy, followed by a small gang of cronies
-including Crabbe, Goyle and Pansy Parkinson, was pushing some
-timid-looking second-years out of the way so that he and his friends
-could get a coach to themselves. Seconds later, Hermione emerged panting
-from the crowd.
-Malfoy was being absolutely foul to a first-year back there. I swear Im
-going to report him, hes only had his badge three minutes and hes using
-it to bully people worse than ever: wheres Crookshanks?
+started, and till evening it lay golden on the land about them. It was
+difficult to think of pursuing goblins behind, and when they had put
+many miles between them and Beorns house they began to talk and to sing
 
 
-------------=_1151754405-3097-649
+------------=_1152112641-19051-441
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -59,27 +52,22 @@ Content-Disposition: inline
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV>Hi,<BR>
+<DIV><FONT face=3DArial size=3D2>Hi,</FONT></DIV>
 <DIV>&nbsp;</DIV>
-<STRONG> V / / A G R A </STRONG> from 3 , 33 $ <BR> and man y other at <A h=
-ref=3D"http://lanvertunjased.com">http://lanvertunjased.com</A></DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>- Hagrid is? I dunno, said Ron, sounding worried. Hed better be OK:<BR>
-A short distance away, Draco Malfoy, followed by a small gang of cronies in=
-cluding Crabbe, Goyle and Pansy Parkinson, was pushing some timid-looking s=
-econd-years out of the way so that he and his friends could get a coach to =
-themselves. Seconds later, Hermione emerged panting from the crowd.<BR>
-Malfoy was being absolutely foul to a first-year back there. I swear Im goi=
-ng to report him, hes only had his badge three minutes and hes using it to =
-bully people worse than ever: wheres Crookshanks?<BR></DIV></BODY></HTML>
-------------=_1151754405-3097-649--
+<DIV><FONT face=3DArial size=3D2>CzIALIS<BR>VzALIUM<BR>AzMBIEN<BR>VzIAGRA</=
+FONT></DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2><A href=3D"http://baterganfionsa.com">http=
+://baterganfionsa.com</A><BR></FONT></DIV>
+<DIV>&nbsp;</DIV>
+<DIV><FONT face=3DArial size=3D2>started, and till evening it lay golden on=
+ the land about them. It was<BR>
+difficult to think of pursuing goblins behind, and when they had put<BR>
+many miles between them and Beorns house they began to talk and to sing<BR>=
+</FONT></DIV></BODY></HTML>
+------------=_1152112641-19051-441--
 
---===============0687838795==
+--===============1557934777==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -90,4 +78,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0687838795==--
+--===============1557934777==--
