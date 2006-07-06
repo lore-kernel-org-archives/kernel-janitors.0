@@ -1,20 +1,17 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Thu, 06 Jul 2006 20:39:25 +0000
+From: Adrian Bunk <bunk@stusta.de>
+Date: Thu, 06 Jul 2006 20:42:52 +0000
 Subject: Re: [KJ] [PATCH] fix legacy megaraid-driver to compile without
-Message-Id: <20060706133925.e5fe6782.rdunlap@xenotime.net>
+Message-Id: <20060706204252.GV26941@stusta.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <44AD6A5A.5060403@nachtwindheim.de>
-	<20060706131447.ed46c3cb.rdunlap@xenotime.net>
-	<44AD73AD.5080402@nachtwindheim.de>
+References: <44AD6A5A.5060403@nachtwindheim.de> <20060706131447.ed46c3cb.rdunlap@xenotime.net> <44AD73AD.5080402@nachtwindheim.de>
 In-Reply-To: <44AD73AD.5080402@nachtwindheim.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Henne <henne@nachtwindheim.de>
-Cc: Neela.Kolli@engenio.com, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: "Randy.Dunlap" <rdunlap@xenotime.net>, Neela.Kolli@engenio.com, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
 
-On Thu, 06 Jul 2006 22:33:49 +0200 Henne wrote:
-
+On Thu, Jul 06, 2006 at 10:33:49PM +0200, Henne wrote:
 > >> From: Henrik Kretzschmar <henne@nachtwindheim.de>
 > >>
 > >> Create an empty inline function to make the legacy megaraid-driver compile
@@ -39,10 +36,24 @@ On Thu, 06 Jul 2006 22:33:49 +0200 Henne wrote:
 > > http://www.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/2.6.17/2.6.17-mm6/broken-out/drivers-scsi-megaraidc-add-a-dummy-mega_create_proc_entry-for-proc_fs=y.patch
 > Great, but isn't it better to put that define stuff into the headers?
 
-Sure it is.
+No - the function itself is static (and has therefore itself no 
+prototype in any header).
 
----
-~Randy
+If the function was global, I'd agree with you.
+
+> Thanks and Greets,
+> Henne
+
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
