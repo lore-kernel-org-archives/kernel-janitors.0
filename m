@@ -1,34 +1,17 @@
-From: Jeffrey <Gary@nethomebiz.net>
-Date: Thu, 20 Jul 2006 05:33:10 +0000
-Subject: [KJ] Legal way to increase your income.
-Message-Id: <D206C2EB.9487149@nethomebiz.net>
+From: Richard <h.vanberkum@chello.nl>
+Date: Fri, 07 Jul 2006 11:54:00 +0000
+Subject: [KJ] request_region
+Message-Id: <20060707141257.GA10920@chello.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <508AB2C6.2887764@brars.org.uk>
-In-Reply-To: <508AB2C6.2887764@brars.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Need Extra Inc0me?
+Some files scan a IO range for request_region and that same range is released when the
+module unloads. Is it necessary to check those functions on return values?
 
-
-New opportunities for you - today!
-
-Get Assisted Co. invites you to cooperation.
-You are responsible and accurate
-
-You are from 18 till 60 year old
-
-You have free time (2-4 hours daily)
-
-This is your chance.
-
-Contact us, your job is waiting for you!
-
-
-Please send all emails to: support@g-ted.info
-
+Richard
 
 _______________________________________________
 Kernel-janitors mailing list
