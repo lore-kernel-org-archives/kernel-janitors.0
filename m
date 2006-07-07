@@ -1,89 +1,78 @@
-From: "aurelea le" <kilelowery@borisex.com>
-Date: Thu, 27 Jul 2006 21:56:59 +0000
-Subject: [KJ] Gold n diamonds
-Message-Id: <001401c6b1c7$81260a80$ec7d6c42@anxw>
+From: "tom hisch" <t.hisch@gmail.com>
+Date: Fri, 07 Jul 2006 13:06:27 +0000
+Subject: [KJ] [Kj] [PATCH] drivers/acpi/cm_sbs.c: if statement moved into
+Message-Id: <8ef77f2e0607070606y4367b47fw5cc3b195b5fe21a@mail.gmail.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0478944083=="
+Content-Type: multipart/mixed; boundary="===============0980242775=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============0478944083==
+--===============0980242775==
 Content-Type: multipart/alternative;
-    boundary="----------=_1154041912-25886-43"
+    boundary="----------=_1152277604-8327-641"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1154041912-25886-43
-Content-Type: text/plain;
-     charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+------------=_1152277604-8327-641
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
+hello.
+
+this is my first "little" patch it only moves an if statement in
+drivers/acpi/cm_sbs.c
+Any recommendations on this are welcome.
+
+------
+thomas hisch
 
 
-TOP BRANDS - LOW LOW COST
+--- linux-2.6/drivers/acpi/cm_sbs.c.orig        2006-07-06 23:54:
+04.000000000 +0200
++++ linux-2.6/drivers/acpi/cm_sbs.c     2006-07-07 14:54:49.000000000 +0200
+@@ -1,4 +1,4 @@
+-/*
++h/*
+  *
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  *
+  *  This program is free software; you can redistribute it and/or modify
+@@ -69,10 +69,10 @@ void acpi_unlock_ac_dir(struct proc_dir_
+        down(&cm_sbs_sem);
+        if (acpi_ac_dir_param) {
+                lock_ac_dir_cnt--;
+-       }
+-       if (lock_ac_dir_cnt == 0 && acpi_ac_dir_param && acpi_ac_dir) {
+-               remove_proc_entry(ACPI_AC_CLASS, acpi_root_dir);
+-               acpi_ac_dir = 0;
++               if (lock_ac_dir_cnt == 0 && acpi_ac_dir) {
++                       remove_proc_entry(ACPI_AC_CLASS, acpi_root_dir);
++                       acpi_ac_dir = 0;
++               }
+        }
+        up(&cm_sbs_sem);
+ }
 
-Jewelry * Handbags * Pens * Watches * Neckties * Clutches * Wallets=20
-
-Leather, silk and white gold sound good? Visit our site for real photos.
-Everything comes with a certificate, tags and all the extras, plus a warran=
-ty.
-
-http://sunderton.com/luxury/
-
-self-vaunting stocking making woad vat
-sparrow hawk deep-sunk chain conveyer
-fellow exile raglan sleeve rover ball
-hard-drawn ostrich fern Trans-danubian
-rice-paper tree staggering bob bond course
-float fishing stomach piece sword cutlery
-Non-jew melon apple well-arranged
-barley reel rubber-spreading vice-wardenship
-word painting twelve-shilling re-extraction
-
-------------=_1154041912-25886-43
-Content-Type: text/html;
-     charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+------------=_1152277604-8327-641
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3DWindows-125=
-2">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY>
-<DIV><FONT face=3DArial size=3D2>
-<p>TOP BRANDS - LOW LOW COST</p>
-<p>Jewelry * Handbags * Pens * Watches * Neckties * Clutches * Wallets </p>
-<p>Leather, silk and white gold sound good? Visit our site for real photos.=
-<br>
-Everything comes with a certificate, tags and all the extras, plus a warran=
-ty.</p>
-<A HREF=3D"http://sunderton.com/luxury/">http://sunderton.com/luxury/</A><B=
-R>
-<BR>
-self-vaunting stocking making woad vat<BR>
-sparrow hawk deep-sunk chain conveyer<BR>
-fellow exile raglan sleeve rover ball<BR>
-hard-drawn ostrich fern Trans-danubian<BR>
-rice-paper tree staggering bob bond course<BR>
-float fishing stomach piece sword cutlery<BR>
-Non-jew melon apple well-arranged<BR>
-barley reel rubber-spreading vice-wardenship<BR>
-word painting twelve-shilling re-extraction<BR>
-</FONT></DIV></BODY></HTML>
+hello.<br><br>this is my first &quot;little&quot; patch it only moves an if statement in drivers/acpi/cm_sbs.c<br>Any recommendations on this are welcome.<br><br>------<br>thomas hisch<br><br><br>--- linux-2.6/drivers/acpi/cm_sbs.c.orig&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2006-07-06 23:54:
+04.000000000 +0200<br>+++ linux-2.6/drivers/acpi/cm_sbs.c&nbsp;&nbsp;&nbsp;&nbsp; 2006-07-07 14:54:49.000000000 +0200<br>@@ -1,4 +1,4 @@<br>-/*<br>+h/*<br>&nbsp; * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>&nbsp; *<br>
+&nbsp; *&nbsp; This program is free software; you can redistribute it and/or modify<br>@@ -69,10 +69,10 @@ void acpi_unlock_ac_dir(struct proc_dir_<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; down(&amp;cm_sbs_sem);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (acpi_ac_dir_param) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lock_ac_dir_cnt--;
+<br>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (lock_ac_dir_cnt == 0 &amp;&amp; acpi_ac_dir_param &amp;&amp; acpi_ac_dir) {<br>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remove_proc_entry(ACPI_AC_CLASS, acpi_root_dir);<br>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; acpi_ac_dir = 0;<br>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (lock_ac_dir_cnt == 0 &amp;&amp; acpi_ac_dir) {
+<br>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; remove_proc_entry(ACPI_AC_CLASS, acpi_root_dir);<br>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; acpi_ac_dir = 0;<br>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; up(&amp;cm_sbs_sem);<br>&nbsp;}<br><br>
 
-------------=_1154041912-25886-43--
+------------=_1152277604-8327-641--
 
---===============0478944083==
+--===============0980242775==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -94,4 +83,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0478944083==--
+--===============0980242775==--
