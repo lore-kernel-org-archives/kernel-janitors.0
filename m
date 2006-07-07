@@ -1,80 +1,62 @@
-From: "Olivie Pepe" <oliviepepe@gmalliance.net>
-Date: Fri, 14 Jul 2006 11:50:42 +0000
-Subject: [KJ] ayker VIeAGRA
-Message-Id: <000001c6a73b$bc0a0480$e774a8c0@vvj2>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0688302711=="
+From: Richard <h.vanberkum@chello.nl>
+Date: Fri, 07 Jul 2006 10:04:57 +0000
+Subject: [KJ] [PATCH] drivers/base/power/trace.c: Add KERN_* to printk
+Message-Id: <20060707122259.GA10354@chello.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Add KERN_* to printk statements
 
---===============0688302711==
-Content-Type: multipart/alternative;
-    boundary="----------=_1152878048-2262-548"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Signed-off-by: Richard van Berkum <h.vanberkum at chello.nl>
 
-This is a multi-part message in MIME format...
+---
 
-------------=_1152878048-2262-548
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-Hi,
-=20
-CIALxIS from 3, 75 $
-AMBIvEN
-VALIvUM from 1, 20 $
-VIAGvRA from 3, 35 $
-=20
-http://www.hezaruinve.com
-
-=20
-till they hang down the cliff to the valley before anything happens
-here. What is our burglar doing for us?
-Since he has got an invisible ring, and ought to be a specially
+ drivers/base/power/trace.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 
-------------=_1152878048-2262-548
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>CIALxIS from 3, 75 $<BR>AMBIvEN<BR>VALIvUM from 1, 20 $<BR>VIAGvRA fro=
-m 3, 35 $</DIV>
-<DIV>&nbsp;</DIV>
-<DIV><A href=3D"http://www.hezaruinve.com">http://www.hezaruinve.com</A><BR=
-></DIV>
-<DIV>&nbsp;</DIV>
-<DIV>till they hang down the cliff to the valley before anything happens<BR>
-here. What is our burglar doing for us?<BR>
-   Since he has got an invisible ring, and ought to be a specially<BR></DIV=
-></BODY></HTML>
-------------=_1152878048-2262-548--
-
---===============0688302711==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+--- linux-2.6/drivers/base/power/trace.c	2006-07-06 16:58:04.646479176 +0200
++++ mytree/drivers/base/power/trace.c	2006-07-07 14:13:24.458403576 +0200
+@@ -112,7 +112,7 @@ static unsigned int read_magic_time(void
+ 	unsigned int val;
+ 
+ 	get_rtc_time(&time);
+-	printk("Time: %2d:%02d:%02d  Date: %02d/%02d/%02d\n",
++	printk(KERN_INFO "Time: %2d:%02d:%02d  Date: %02d/%02d/%02d\n",
+ 		time.tm_hour, time.tm_min, time.tm_sec,
+ 		time.tm_mon, time.tm_mday, time.tm_year);
+ 	val = time.tm_year;				/* 100 years */
+@@ -176,7 +176,7 @@ static int show_file_hash(unsigned int v
+ 		unsigned int hash = hash_string(lineno, file, FILEHASH);
+ 		if (hash != value)
+ 			continue;
+-		printk("  hash matches %s:%u\n", file, lineno);
++		printk(KERN_INFO "  hash matches %s:%u\n", file, lineno);
+ 		match++;
+ 	}
+ 	return match;
+@@ -191,7 +191,7 @@ static int show_dev_hash(unsigned int va
+ 		struct device * dev = to_device(entry);
+ 		unsigned int hash = hash_string(DEVSEED, dev->bus_id, DEVHASH);
+ 		if (hash = value) {
+-			printk("  hash matches device %s\n", dev->bus_id);
++			printk(KERN_INFO "  hash matches device %s\n", dev->bus_id);
+ 			match++;
+ 		}
+ 		entry = entry->prev;
+@@ -218,7 +218,7 @@ static int late_resume_init(void)
+ 	val = val / FILEHASH;
+ 	dev = val /* % DEVHASH */;
+ 
+-	printk("  Magic number: %d:%d:%d\n", user, file, dev);
++	printk(KERN_INFO "  Magic number: %d:%d:%d\n", user, file, dev);
+ 	show_file_hash(file);
+ 	show_dev_hash(dev);
+ 	return 0;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0688302711==--
