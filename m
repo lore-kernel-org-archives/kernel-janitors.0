@@ -1,74 +1,83 @@
-From: "Devnet Gordy" <devnet@faisons.com>
-Date: Tue, 04 Jul 2006 21:21:26 +0000
-Subject: Re: [KJ] rywyf
-Message-Id: <000001c69faf$cebdb470$1e19a8c0@qpj90>
+From: "Bacchanalian C. Maim" <kjj@gmonkey.com>
+Date: Fri, 07 Jul 2006 20:11:21 +0000
+Subject: [KJ] The Ultimate Online Pharmaceuticals
+Message-Id: <1325410248.20060707131121@gmonkey.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1174977909=="
+Content-Type: multipart/mixed; boundary="===============0477436136=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1174977909==
+--===============0477436136==
 Content-Type: multipart/alternative;
-    boundary="----------=_1152047933-32464-21"
+    boundary="----------=_1152303039-5195-221"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1152047933-32464-21
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+------------=_1152303039-5195-221
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Hi,
-=20
-VzALIUM
-AzMBIEN
-VzIAGRA
-CzIALIS
-=20
-http://endocember.com
-
-=20
-a gathering of very many birds. At that they gazed and wondered; but
-they were no nearer understanding it, when the first cold stars came
-out.
-Chapter 14
+Vliragra $3.3
+Levitsra $3.3
+Cialeis $3.7
+Imitrkex $16.4
+Fhlomax $2.2
+Ultrsam $0.78
+Viohxx $4.75
+Amxblem $2.2
+VaIisum - $0.97
+Xanwax $1.09
+Sowma $3
+Merirdia $2.2  
 
 
-------------=_1152047933-32464-21
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+visit our website
+http://
+
+___
+Best regards,
+Online Pharmaceuticals
+
+
+
+------------=_1152303039-5195-221
+Content-Type: text/html
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Hi,</FONT></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>VzALIUM<BR>AzMBIEN<BR>VzIAGRA<BR>CzIALIS</=
-FONT></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2><A href=3D"http://endocember.com">http://e=
-ndocember.com</A><BR></FONT></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>a gathering of very many birds. At that th=
-ey gazed and wondered; but<BR>
-they were no nearer understanding it, when the first cold stars came out.<B=
-R>
-    Chapter 14<BR></FONT></DIV></BODY></HTML>
-------------=_1152047933-32464-21--
+<html>
+<body>
+<b>Vlipagra - $3.3 <br>
+Levitrra - $3.3<br>
+Cialpis - $3.7<br>
+Imitrsex - $16.4<br>
+Fwlomax - $2.2<br>
+Ultream - $0.78<br>
+Viofxx - $4.75 <br>
+Amsblem - $2.2<br>
+VaIixum - $0.97<br>
+Xannax - $1.09<br>
+Sofma - $3 <br>
+Merisdia - $2.2</b><br>
+<br>
+  <br>
+  <a href="http://"><strong>visit our website</strong></a><br>
+  <br>
+   <br>
+  Best regards,<br>
+  Online Pharmaceuticals 
+</body>
+</html>
 
---===============1174977909==
+------------=_1152303039-5195-221--
+
+--===============0477436136==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -79,4 +88,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1174977909==--
+--===============0477436136==--
