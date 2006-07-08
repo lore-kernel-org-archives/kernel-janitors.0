@@ -1,69 +1,228 @@
-From: "Teddy Temple" <polandvault@poczta.onet.pl>
-Date: Mon, 24 Jul 2006 13:34:33 +0000
-Subject: RE: Watcher Update
-Message-Id: <3156118510.20060724171033@poczta.onet.pl>
+From: "Bart" <swyakruus@sistemas-sau.com>
+Date: Sat, 08 Jul 2006 17:52:37 +0000
+Subject: Metody chodzenia komputera
+Message-Id: <000a01c6a30b$1e73a160$ead84f18@kirk1>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============2028618051=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Sports-Stuff
-S S U F
-Last: $0.195
+--===============2028618051==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_0006_01C6A2E1.359D9960"
 
-We are so excited to bring you this special watch report. SSUF has had=20
-a drop in price of the last few days to just under 20 cents. At close today=
-=20
-they released a HUGE contract announcement with Sports-Insider to supply=20
-Real-Time Sports news and scores to mobile phones on the subscriber network.
+------=_NextPart_000_0006_01C6A2E1.359D9960
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0007_01C6A2E1.359D9960"
 
-This adds to the total package they have been building towards, to become o=
-ne=20
-of the largest mobile content providers in the sporting industry.
 
-This is time sensitive. Get on this first thing Monday morning. This news c=
-an=20
-push this right back to the 50 cent mark, doubling your money and providing=
-=20
-tidy returns.
+------=_NextPart_001_0007_01C6A2E1.359D9960
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: quoted-printable
 
-Below: Read the news released at close today and get all over this on Monda=
-y.
-Don't forget Monday morning, and Kick yourself Monday Night.
 
-Have a great weekend and as always, happy trading in the week to come.
 
-NEWS:
+------=_NextPart_001_0007_01C6A2E1.359D9960
+Content-Type: text/html; charset="windows-1250"
+Content-Transfer-Encoding: base64
 
-Sports-Stuff Announces Distribution and Development Deal With Sports-Inside=
-r Limited, a World Leader in SMS Sports-Casting
-Jul 21, 2006 4:00:00 PM
-VANCOUVER, British Columbia, July 21 /PRNewswire-FirstCall/ -- Sports-Stuff=
-.com Inc. (Pink Sheets: SSUF; Frankfurt: S5F), a publisher and distributor =
-of SMS alerts, mobile web sites, ringtones and mobile video games for the s=
-ports and entertainment industry, today announced a distribution and develo=
-pment partnership with Sports-Insider Limited, a world leader in SMS Sports=
--casting.
+PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
+L0VOIj4KPEhUTUw+PEhFQUQ+CjxNRVRBIGh0dHAtZXF1aXY9M0RDb250ZW50LVR5cGUgY29udGVu
+dD0zRCJ0ZXh0L2h0bWw7ID0KY2hhcnNldD0zRHdpbmRvd3MtMTI1MCI+CjxNRVRBIGNvbnRlbnQ9
+M0QiTVNIVE1MIDYuMDAuMjkwMC4yODczIiBuYW1lPTNER0VORVJBVE9SPgo8U1RZTEU+PC9TVFlM
+RT4KPC9IRUFEPgo8Qk9EWSBiZ0NvbG9yPTNEI2ZmZmZmZj4KPERJVj48Rk9OVCBmYWNlPTNEQXJp
+YWwgc2l6ZT0zRDI+PC9GT05UPsKgPC9ESVY+CjxESVY+PElNRyBhbHQ9M0QicmluZ2VycyIgaHNw
+YWNlPTNEMD0yMApzcmM9M0QiY2lkOjAwMDUwMWM2YTMwYiQxZTczYTE2MCRlYWQ4NGYxOEBraXJr
+MSIgPQphbGlnbj0zRGJhc2VsaW5lPTIwCmJvcmRlcj0zRDA+PC9ESVY+PC9CT0RZPjwvSFRNTD4K
 
-The distribution partnership permits Sports-Stuff to offer Sports-Insider's=
- news and scores for Formula 1, Golf, Soccer, Cricket and Rugby to subscrib=
-ers in North America through Sports-Stuff's real-time SMS delivery platform=
-. In addition, Sports-Stuff will be positioning itself to share in addition=
-al revenues through the development of custom mobile web pages where Sports=
--Insider subscribers can view real-time news and scores through their mobil=
-e phone browsers.
+------=_NextPart_001_0007_01C6A2E1.359D9960--
 
-Sports-Stuff and Sports-Insider will be launching their new distribution an=
-d development partnership in Summer 2006.
+------=_NextPart_000_0006_01C6A2E1.359D9960
+Content-Type: image/gif;
+	name="ACCESS.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <000501c6a30b$1e73a160$ead84f18@kirk1>
+
+R0lGODdhVgHCAYcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8EAgAGAgAIAgAKAg
+AMAgAOAgAABAACBAAEBAAGBAAIBAAKBAAMBAAOBAAABgACBgAEBgAGBgAIBgAKBgAMBgAOBg
+AACAACCAAECAAGCAAICAAKCAAMCAAOCAAACgACCgAECgAGCgAICgAKCgAMCgAOCgAADAACDA
+AEDAAGDAAIDAAKDAAMDAAODAAADgACDgAEDgAGDgAIDgAKDgAMDgAODgAAAAQCAAQEAAQGAA
+QIAAQKAAQMAAQOAAQAAgQCAgQEAgQGAgQIAgQKAgQMAgQOAgQABAQCBAQEBAQGBAQIBAQKBA
+QMBAQOBAQABgQCBgQEBgQGBgQIBgQKBgQMBgQOBgQACAQCCAQECAQGCAQICAQKCAQMCAQOCA
+QACgQCCgQECgQGCgQICgQKCgQMCgQOCgQADAQCDAQEDAQGDAQIDAQKDAQMDAQODAQADgQCDg
+QEDgQGDgQIDgQKDgQMDgQODgQAAAgCAAgEAAgGAAgIAAgKAAgMAAgOAAgAAggCAggEAggGAg
+gIAggKAggMAggOAggABAgCBAgEBAgGBAgIBAgKBAgMBAgOBAgABggCBggEBggGBggIBggKBg
+gMBggOBggACAgCCAgECAgGCAgICAgKCAgMCAgOCAgACggCCggECggGCggICggKCggMCggOCg
+gADAgCDAgEDAgGDAgIDAgKDAgMDAgODAgADggCDggEDggGDggIDggKDggMDggODggAAAwCAA
+wEAAwGAAwIAAwKAAwMAAwOAAwAAgwCAgwEAgwGAgwIAgwKAgwMAgwOAgwABAwCBAwEBAwGBA
+wIBAwKBAwMBAwOBAwABgwCBgwEBgwGBgwIBgwKBgwMBgwOBgwACAwCCAwECAwGCAwICAwKCA
+wMCAwOCAwACgwCCgwECgwGCgwICgwKCgwMCgwOCgwADAwCDAwEDAwGDAwIDAwKDAwP/78KCg
+pICAgP8AAAD/AP//AAAA//8A/wD//////ywAAAAAVgHCAQcI/gABCBxIsKDBgwgTKlzIsKHD
+hxAjSpxIsaLFixgzRrTHsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fP
+n0CDCh1KtKjRo0iTKl3KtKnTp1CjSp1KtarVq1izat3KtavXr2DDih1LtqzZs2g/EjQpEGRb
+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
+9YwU1JVetj8SRm9ZWZUyuYMLt5aquJUDZJYfp3wt93N904o/5G9GpJD00Yf78UZzB2vFqHGr
+xpY0+U5MiJBwxFRyImzjN18uJ5ZhmEQnqGjotzEm5Iw8hIma2ZIpR5g7s3RXRDMddpUk6Ymf
+eZe/Q3iBmF9DOJpV+YiSGZfsV4msiIcS95jNsUkPdltL6JVvyJOKaYVaNzNBSZQ6OJztFZuc
+eYx0SI7Gt4y9aEmYSJqWKGd6+YieCZz/PfmWWMhcrcR81Oma6giGSsmZcBidqreax4iUx/Ue
+QXQ02LlIWDZfrbmbd7gYWANtzkVi+CQtHocZtAYxIjiTWSVy6QebQnSSAgdW83lyYgdnB3cz
+sdifnaeIy2SEUgFMggcXojJ3v+I/5lZvIHmiKKpO6AZ5ZfmhZ/miULlVqHSH8PahQTZBHIoW
+UglPOmiWaomWaMlzLEcjU2ZlIdmQxXOW19QR2VB4xPekLhplt5ae19OFSOp3+pOj1fZd8neQ
+MVQafvilvrlxfDlnrehv9jiGD6NBxXhysDdcNsg24EIkhkmn3ISmaFoh9JmhWiqliFadlhiX
+SjOniLmL+mlq/4T6gn+Zgi06jvNJSYVZjfQpnEJ6OZt5qCSIqX0qeKWZQ/bpmx9EqdtXcocG
+muYFqUtJoaq4FhGmno3Tn/+pgmFpWmPanbZKqyX6bgblmTz1R4NaqO2plGnpqSEJZePoSqQD
+qLFjcLGKnxwGrLdaUFCKGr2Tm7bJq7JHrPJ5rdoKioP4UQwGnNTlU7L5nKtprUBncXVZqLWq
+rdOKiO3Xpc03cMpomU0iSkqnlSrlfiD2mJWznZ3XQlsUp/nqmNmCXCIJdH5WiDrJLCDaSwu4
+qWz4bb+QohZ7sa6JpR6Sq0A6bUpqk0rhoVZmGKIAslC5adRKfNmYpVuBo7s0ir7Ysf8ee6Vj
+Vigru5wQC6MTK4VeZ7JfR7NwMXp/SSd5qonRAh/rcacdtabLcx0aF1KPuia69iBx+nluGml/
+KkRFeyXml6k7CVZ6Snf/emwJhJ7C2pfGqZvDaam22bbd+q2GaprfiqdD+o1r63rryoq96p6d
+KUaSunl3l6jv+nX2+n0HeWJeubckpLbRx6qNKa+qmq53S0coSIIwdI0Ky5bJ1khYNnAyNZuo
+5pIcu4LAeknbmbia+ralVl15G63/yrjAI5zHFTgzJa3hiTi0uLcVRrtumbe/GWzYOrl1qI68
+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
+gfemLD7yeYqd7fhsm9vfBne4xf2hgAAAOw==
+
+------=_NextPart_000_0006_01C6A2E1.359D9960--
+
+
+
+--===============2028618051==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 
 -------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys -- and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
+
+--===============2028618051==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============2028618051==--
