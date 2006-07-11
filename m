@@ -1,72 +1,132 @@
-From: Richard <h.vanberkum@chello.nl>
-Date: Tue, 11 Jul 2006 22:02:55 +0000
-Subject: Re: [KJ] [PATCH] drivers/parisc/superio.c: check return values of
-Message-Id: <44B4200F.201@chello.nl>
+From: "tom hisch" <t.hisch@gmail.com>
+Date: Tue, 11 Jul 2006 16:47:14 +0000
+Subject: [KJ] thread_info.h use kzalloc
+Message-Id: <8ef77f2e0607110947j6fd6ec3fgb180f05ca8654eb8@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0574873313=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060711020442.GA17650@chello.nl>
-In-Reply-To: <20060711020442.GA17650@chello.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Randy.Dunlap wrote:
+This is a multi-part message in MIME format...
 
-Hello Randy,
+--===============0574873313==
+Content-Type: multipart/alternative;
+    boundary="----------=_1152636502-4876-306"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
+This is a multi-part message in MIME format...
 
->> +	if (!(request_region (IC_PIC1, 0x1f, "pic1"))) {
-> 
-> Coding style:  no extra parens (like after !).
-> 	no space after function name.
+------------=_1152636502-4876-306
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-The space must be a mistake. About the parens I didn't know. Thanks
+hello,
 
-> 
->> +		printk(KERN_ERR "can't get I/O %x\n", IC_PIC1);
->> +		goto err1;
->> +	}
->> +	
->> +	if(!(request_region (IC_PIC2, 0x1f, "pic2"))) {
-> 
-> space after "if".  drop "!()" parens.
-> no space after function name.
-
-Clear :)
+i have some questions about the alloc_thread_info(tsk) macro in
+asm-i386/thread_info.h
 
 
->>  	/* Enable the legacy I/O function */
->>  	pci_read_config_word (pdev, PCI_COMMAND, &word);
->> @@ -276,10 +287,22 @@ superio_init(struct pci_dev *pcidev)
->>  
->>  		printk(KERN_ERR PFX "could not get irq\n");
->>  		BUG();
->> -		return;
->> +		
->> +		/*Free resources previously requested*/
-> 
-> See above /* comment for spacing.
+/* thread information allocation */
+#ifdef CONFIG_DEBUG_STACK_USAGE
+#define alloc_thread_info(tsk)                                  \
+        ({                                                      \
+                struct thread_info *ret;                        \
+                                                                \
+------>      ret = kmalloc(THREAD_SIZE, GFP_KERNEL);         \  //  what
+about the use of kzalloc ??
+                if (ret)                                        \
+                        memset(ret, 0, THREAD_SIZE);            \
+------>      ret;                                            \    // whats
+the meaning of this instruction ??
+        })
+#else
+#define alloc_thread_info(tsk) kmalloc(THREAD_SIZE, GFP_KERNEL)
+#endif
 
-I see for clarity I gues. I'll try to remember.
+thanks
+tom hisch
 
+------------=_1152636502-4876-306
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
 
+aGVsbG8sPGJyPjxicj5pIGhhdmUgc29tZSBxdWVzdGlvbnMgYWJvdXQgdGhl
+IGFsbG9jX3RocmVhZF9pbmZvKHRzaykgbWFjcm8gaW4gYXNtLWkzODYvdGhy
+ZWFkX2luZm8uaDxicj48YnI+PGJyPi8qIHRocmVhZCBpbmZvcm1hdGlvbiBh
+bGxvY2F0aW9uICovPGJyPiNpZmRlZiBDT05GSUdfREVCVUdfU1RBQ0tfVVNB
+R0U8YnI+I2RlZmluZSBhbGxvY190aHJlYWRfaW5mbyh0c2spJm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7IFwKPGJyPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyAoeyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyBcPGJyPiZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBzdHJ1Y3QgdGhyZWFkX2luZm8g
+KnJldDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsgXDxicj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgXDxicj4tLS0tLS0m
+Z3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJldCA9IGttYWxs
+b2MoVEhSRUFEX1NJWkUsIEdGUF9LRVJORUwpOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBcJm5ic3A7IC8vJm5i
+c3A7IHdoYXQgYWJvdXQgdGhlIHVzZSBvZiBremFsbG9jID8/Cjxicj4mbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgaWYg
+KHJldCkmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsgXDxicj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgbWVtc2V0KHJldCwgMCwgVEhSRUFE
+X1NJWkUpOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBcPGJyPi0tLS0tLSZndDsg
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJldDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsgXCZuYnNwOyZuYnNwOyZuYnNwOyAvLyB3aGF0
+cyB0aGUgbWVhbmluZyBvZiB0aGlzIGluc3RydWN0aW9uID8/Cjxicj4mbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgfSk8YnI+
+I2Vsc2U8YnI+I2RlZmluZSBhbGxvY190aHJlYWRfaW5mbyh0c2spIGttYWxs
+b2MoVEhSRUFEX1NJWkUsIEdGUF9LRVJORUwpPGJyPiNlbmRpZjxicj48YnI+
+dGhhbmtzPGJyPnRvbSBoaXNjaDxicj48YnI+Cg==
 
->> +err1:	return; 
->> +
->>  }
-> 
-> Put labels and statements on separate lines.
+------------=_1152636502-4876-306--
 
-Ok. That was some good input on coding style.Thanks, but it's no use to continue on this with regard to the previous post
-> 
-> ---
-> ~Randy
-> 
-
-Richard
-
+--===============0574873313==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0574873313==--
