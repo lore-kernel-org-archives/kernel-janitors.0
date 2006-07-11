@@ -1,7 +1,7 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Tue, 11 Jul 2006 17:05:16 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Tue, 11 Jul 2006 17:09:41 +0000
 Subject: Re: [KJ] thread_info.h use kzalloc
-Message-Id: <20060711170516.GG4250@us.ibm.com>
+Message-Id: <20060711170834.GA6833@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <8ef77f2e0607110947j6fd6ec3fgb180f05ca8654eb8@mail.gmail.com>
 In-Reply-To: <8ef77f2e0607110947j6fd6ec3fgb180f05ca8654eb8@mail.gmail.com>
@@ -10,13 +10,10 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 11.07.2006 [18:47:14 +0200], tom hisch wrote:
-> hello,
-> 
+On Tue, Jul 11, 2006 at 06:47:14PM +0200, tom hisch wrote:
 > i have some questions about the alloc_thread_info(tsk) macro in
 > asm-i386/thread_info.h
-> 
-> 
+
 > /* thread information allocation */
 > #ifdef CONFIG_DEBUG_STACK_USAGE
 > #define alloc_thread_info(tsk)                                  \
@@ -28,24 +25,24 @@ On 11.07.2006 [18:47:14 +0200], tom hisch wrote:
 >                if (ret)                                        \
 >                        memset(ret, 0, THREAD_SIZE);            \
 
-Probably a reasonable change.
+Indeed it should be kzalloc.
 
 > ------>      ret;                                            \    // whats
 > the meaning of this instruction ??
 >        })
 
-I think it's part of the magic of the ({ }) gcc'ism, which allows the
-macro to effectively have a return value (that's how I think of it, at
-least) without a return statement (in this case, the value of ret will
-be stored in the corresponding lhs). I'm sure the real explanation can
-be found in the gcc manual in the ({ }) section.
+That's GNU extension meaning that value of this block equals to "ret" at
+that point. It should be more or less equivalent to
 
-Thanks,
-Nish
+static inline struct thread_info *alloc_thread_info(struct task_struct *task)
+{
+	return kzalloc(THREAD_SIZE, GFP_KERNEL);
+}
 
--- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
+> #else
+> #define alloc_thread_info(tsk) kmalloc(THREAD_SIZE, GFP_KERNEL)
+> #endif
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
