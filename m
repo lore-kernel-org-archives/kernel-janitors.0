@@ -1,47 +1,81 @@
-From: =?ISO-8859-1?Q?Artur_D=27Assump=E7=E3o?= <ad@tagus.ist.utl.pt>
-Date: Fri, 14 Jul 2006 16:02:30 +0000
-Subject: Re: [KJ] How can you tell if a patch was accepted?
-Message-Id: <44B7C016.6010908@tagus.ist.utl.pt>
+From: "Zoticus Winfrey" <zotii@islandstarrealestate.com>
+Date: Wed, 12 Jul 2006 10:41:37 +0000
+Subject: [KJ] niqet VIAGeRA
+Message-Id: <000001c6a59f$c0c70790$a8a0a8c0@udl13>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0987047034=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <44B7A6B8.1050104@gmail.com>
-In-Reply-To: <44B7A6B8.1050104@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Tobias Klauser wrote:
-> On 2006-07-14 at 16:14:16 +0200, Matthew Martin <lihnucks@gmail.com> wrote:
->   
->> I was wondering how you know if your patch was accepted? Sometimes
->> when I submit a patch people reply with things I did wrong.  Other
->> times I get no replies. Does that mean something was wrong with it?
->> One time Alexey Dobriyan said it was rejected.  How do I know if my
->> patch was OK?
->>     
->
-> As long as you just send the patch to the kj mailinglist and you get no
-> comments it will most probably show up in the next release and be
-> submitted upstream by the kj-maintainer when he has free tuits (to cite
-> maks ;-)
->   
-What is free tuits you may ask! :) Here's the answer: 
-http://en.wikipedia.org/wiki/Tuits
+This is a multi-part message in MIME format...
 
-eheheheh!
+--===============0987047034==
+Content-Type: multipart/alternative;
+    boundary="----------=_1152700994-31206-259"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-> When you Cc: maintainers, other mailinglists or akpm, your patch might
-> get submitted to lkml/Linus directly. Some maintainers do Cc: you on
-> these occasions, some don't.
->
-> Hope that helps a bit,
-> Tobias
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
->   
+This is a multi-part message in MIME format...
+
+------------=_1152700994-31206-259
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi,
+=20
+AMBIvEN
+VIAGvRA from 3, 35 $
+VALIvUM from 1, 20 $
+CIALxIS from 3, 75 $
+=20
+http://www.overtislan.com
+
+=20
+Well, if you really want my advice, I should say we can do nothing but
+stay where we are. By day we can no doubt creep out safely enough to
+take the air. Perhaps before long one or two could be chosen to go back
+
+
+------------=_1152700994-31206-259
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi,</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>AMBIvEN<BR>VIAGvRA from 3, 35 $<BR>VALIvUM from 1, 20 $<BR>CIALxIS fro=
+m 3, 75 $</DIV>
+<DIV>&nbsp;</DIV>
+<DIV><A href=3D"http://www.overtislan.com">http://www.overtislan.com</A><BR=
+></DIV>
+<DIV>&nbsp;</DIV>
+<DIV>Well, if you really want my advice, I should say we can do nothing but=
+<BR>
+stay where we are. By day we can no doubt creep out safely enough to<BR>
+take the air. Perhaps before long one or two could be chosen to go back<BR>=
+</DIV></BODY></HTML>
+------------=_1152700994-31206-259--
+
+--===============0987047034==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0987047034==--
