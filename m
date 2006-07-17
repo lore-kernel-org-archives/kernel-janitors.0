@@ -1,287 +1,283 @@
-From: Richard <h.vanberkum@chello.nl>
-Date: Mon, 03 Jul 2006 22:00:19 +0000
-Subject: Re: [KJ] [PATCH 2] drivers/atm/idt77252.c: Fix more KERN_* in
-Message-Id: <44A9B16B.9090901@chello.nl>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Mon, 17 Jul 2006 07:17:21 +0000
+Subject: [KJ] [PATCH] arch/alpha: Use ARRAY_SIZE macro
+Message-Id: <20060717071721.GA29413@neon.tklauser.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <44A83604.5090700@chello.nl>
-In-Reply-To: <44A83604.5090700@chello.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Om Narasimhan wrote:
+Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0]) and remove a duplicate of
+the macro. Also remove some trailing whitespaces.
 
-Hello Om and Alexey
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 
+---
+ arch/alpha/kernel/err_ev7.c     |    8 ++----
+ arch/alpha/kernel/osf_sys.c     |    4 ++-
+ arch/alpha/kernel/setup.c       |   50 +++++++++++++++++++--------------------
+ arch/alpha/kernel/sys_ruffian.c |    8 +++---
+ arch/alpha/kernel/time.c        |    2 +-
+ 5 files changed, 34 insertions(+), 38 deletions(-)
 
->> >                       for (i = 16; i < 64; i++)
->> > -                             printk(" %02x", queue->data[i]);
->> > +                             printk("KERN_DEBUG %02x",
-
-There is indeed no linefeed so the KERN_DEBUG shouldn't be there. About the loop, I don't know if it should be removed. But I can make a separate patch for that. Thanks for pointing that out
-
->> queue->data[i]);
-> Shouldn't it be
->            printk(KERN_DEBUG "%02x", queue->data[i]);
-> Note the `"`
-You're right. I removed it completely because of the linefeed. Thanks
-> 
-> Om.
-> 
-I hope everything is okay now
-
-Richard
-
-
---- janitor-2.6/drivers/atm/idt77252.c	2006-07-02 22:54:11.964639008 +0200
-+++ mytree/drivers/atm/idt77252.c	2006-07-02 23:01:58.560705624 +0200
-@@ -1320,7 +1320,7 @@ idt77252_rx_raw(struct idt77252_dev *car
- 		}
- 	
- 		if ((sb = dev_alloc_skb(64)) = NULL) {
--			printk("%s: Can't allocate buffers for AAL0.\n",
-+			printk(KERN_ERR "%s: Can't allocate buffers for AAL0.\n",
- 			       card->name);
- 			atomic_inc(&vcc->stats->rx_err);
- 			goto drop;
-@@ -1368,7 +1368,7 @@ drop:
- 							    PCI_DMA_FROMDEVICE);
- 			} else {
- 				card->raw_cell_head = NULL;
--				printk("%s: raw cell queue overrun\n",
-+				printk(KERN_ERR "%s: raw cell queue overrun\n",
- 				       card->name);
- 				break;
- 			}
-@@ -1391,7 +1391,7 @@ init_tsq(struct idt77252_dev *card)
- 	card->tsq.base = pci_alloc_consistent(card->pcidev, RSQSIZE,
- 					      &card->tsq.paddr);
- 	if (card->tsq.base = NULL) {
--		printk("%s: can't allocate TSQ.\n", card->name);
-+		printk(KERN_ERR "%s: can't allocate TSQ.\n", card->name);
- 		return -1;
- 	}
- 	memset(card->tsq.base, 0, TSQSIZE);
-@@ -1456,7 +1456,7 @@ idt77252_tx(struct idt77252_dev *card)
+diff --git a/arch/alpha/kernel/err_ev7.c b/arch/alpha/kernel/err_ev7.c
+index bf52ba6..00b48b3 100644
+--- a/arch/alpha/kernel/err_ev7.c
++++ b/arch/alpha/kernel/err_ev7.c
+@@ -274,16 +274,14 @@ ev7_process_pal_subpacket(struct el_subp
+ struct el_subpacket_handler ev7_pal_subpacket_handler  	SUBPACKET_HANDLER_INIT(EL_CLASS__PAL, ev7_process_pal_subpacket);
  
- 			if (SAR_TSQE_TAG(stat) = 0x10) {
- #ifdef	NOTDEF
--				printk("%s: Connection %d halted.\n",
-+				printk(KERN_INFO "%s: Connection %d halted.\n",
- 				       card->name,
- 				       le32_to_cpu(tsqe->word_1) & 0x1fff);
+-void 
++void
+ ev7_register_error_handlers(void)
+ {
+ 	int i;
+ 
+-	for(i = 0;
+-	    i<sizeof(el_ev7_pal_annotations)/sizeof(el_ev7_pal_annotations[1]);
+-	    i++) {
++	for (i = 0; i < ARRAY_SIZE(el_ev7_pal_annotations); i++) {
+ 		cdl_register_subpacket_annotation(&el_ev7_pal_annotations[i]);
+-	}	
++	}
+ 	cdl_register_subpacket_handler(&ev7_pal_subpacket_handler);
+ }
+ 
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index e15dcf4..73c7622 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -623,12 +623,12 @@ osf_sysinfo(int command, char __user *bu
+ 	long len, err = -EINVAL;
+ 
+ 	offset = command-1;
+-	if (offset >= sizeof(sysinfo_table)/sizeof(char *)) {
++	if (offset >= ARRAY_SIZE(sysinfo_table)) {
+ 		/* Digital UNIX has a few unpublished interfaces here */
+ 		printk("sysinfo(%d)", command);
+ 		goto out;
+ 	}
+-	
++
+ 	down_read(&uts_sem);
+ 	res = sysinfo_table[offset];
+ 	len = strlen(res)+1;
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index 2cb9c43..fd4a8fa 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -114,8 +114,6 @@ struct alpha_machine_vector alpha_mv;
+ int alpha_using_srm;
  #endif
-@@ -1465,12 +1465,12 @@ idt77252_tx(struct idt77252_dev *card)
  
- 			vc = card->vcs[conn & 0x1fff];
- 			if (!vc) {
--				printk("%s: could not find VC from conn %d\n",
-+				printk(KERN_ERR "%s: could not find VC from conn %d\n",
- 				       card->name, conn & 0x1fff);
- 				break;
- 			}
+-#define N(a) (sizeof(a)/sizeof(a[0]))
+-
+ static struct alpha_machine_vector *get_sysvec(unsigned long, unsigned long,
+ 					       unsigned long);
+ static struct alpha_machine_vector *get_sysvec_byname(const char *);
+@@ -240,7 +238,7 @@ reserve_std_resources(void)
+ 	standard_io_resources[0].start = RTC_PORT(0);
+ 	standard_io_resources[0].end = RTC_PORT(0) + 0x10;
  
--			printk("%s: Connection %d IDLE.\n",
-+			printk(KERN_INFO "%s: Connection %d IDLE.\n",
- 			       card->name, vc->index);
+-	for (i = 0; i < N(standard_io_resources); ++i)
++	for (i = 0; i < ARRAY_SIZE(standard_io_resources); ++i)
+ 		request_resource(io, standard_io_resources+i);
+ }
  
- 			set_bit(VCF_IDLE, &vc->flags);
-@@ -1482,7 +1482,7 @@ idt77252_tx(struct idt77252_dev *card)
+@@ -918,13 +916,13 @@ get_sysvec(unsigned long type, unsigned 
  
- 			vc = card->vcs[conn & 0x1fff];
- 			if (!vc) {
--				printk("%s: no VC at index %d\n",
-+				printk("KERN_INFO %s: no VC at index %d\n",
- 				       card->name,
- 				       le32_to_cpu(tsqe->word_1) & 0x1fff);
- 				break;
-@@ -1500,7 +1500,7 @@ idt77252_tx(struct idt77252_dev *card)
+ 	/* Search the system tables first... */
+ 	vec = NULL;
+-	if (type < N(systype_vecs)) {
++	if (type < ARRAY_SIZE(systype_vecs)) {
+ 		vec = systype_vecs[type];
+ 	} else if ((type > ST_API_BIAS) &&
+-		   (type - ST_API_BIAS) < N(api_vecs)) {
++		   (type - ST_API_BIAS) < ARRAY_SIZE(api_vecs)) {
+ 		vec = api_vecs[type - ST_API_BIAS];
+ 	} else if ((type > ST_UNOFFICIAL_BIAS) &&
+-		   (type - ST_UNOFFICIAL_BIAS) < N(unofficial_vecs)) {
++		   (type - ST_UNOFFICIAL_BIAS) < ARRAY_SIZE(unofficial_vecs)) {
+ 		vec = unofficial_vecs[type - ST_UNOFFICIAL_BIAS];
+ 	}
  
- 			if (vpi >= (1 << card->vpibits) ||
- 			    vci >= (1 << card->vcibits)) {
--				printk("%s: TBD complete: "
-+				printk(KERN_INFO "%s: TBD complete: "
- 				       "out of range VPI.VCI %u.%u\n",
- 				       card->name, vpi, vci);
- 				break;
-@@ -1508,7 +1508,7 @@ idt77252_tx(struct idt77252_dev *card)
+@@ -938,11 +936,11 @@ get_sysvec(unsigned long type, unsigned 
  
- 			vc = card->vcs[VPCI2VC(card, vpi, vci)];
- 			if (!vc) {
--				printk("%s: TBD complete: "
-+				printk(KERN_INFO "%s: TBD complete: "
- 				       "no VC at VPI.VCI %u.%u\n",
- 				       card->name, vpi, vci);
- 				break;
-@@ -1620,7 +1620,7 @@ __fill_tst(struct idt77252_dev *card, st
+ 		switch (type) {
+ 		case ST_DEC_ALCOR:
+-			if (member < N(alcor_indices))
++			if (member < ARRAY_SIZE(alcor_indices))
+ 				vec = alcor_vecs[alcor_indices[member]];
  			break;
- 	}
- 	if (e >= avail) {
--		printk("%s: No free TST entries found\n", card->name);
-+		printk(KERN_ERR "%s: No free TST entries found\n", card->name);
- 		return -1;
- 	}
+ 		case ST_DEC_EB164:
+-			if (member < N(eb164_indices))
++			if (member < ARRAY_SIZE(eb164_indices))
+ 				vec = eb164_vecs[eb164_indices[member]];
+ 			/* PC164 may show as EB164 variation with EV56 CPU,
+ 			   but, since no true EB164 had anything but EV5... */
+@@ -950,24 +948,24 @@ get_sysvec(unsigned long type, unsigned 
+ 				vec = &pc164_mv;
+ 			break;
+ 		case ST_DEC_EB64P:
+-			if (member < N(eb64p_indices))
++			if (member < ARRAY_SIZE(eb64p_indices))
+ 				vec = eb64p_vecs[eb64p_indices[member]];
+ 			break;
+ 		case ST_DEC_EB66:
+-			if (member < N(eb66_indices))
++			if (member < ARRAY_SIZE(eb66_indices))
+ 				vec = eb66_vecs[eb66_indices[member]];
+ 			break;
+ 		case ST_DEC_MARVEL:
+-			if (member < N(marvel_indices))
++			if (member < ARRAY_SIZE(marvel_indices))
+ 				vec = marvel_vecs[marvel_indices[member]];
+ 			break;
+ 		case ST_DEC_TITAN:
+ 			vec = titan_vecs[0];	/* default */
+-			if (member < N(titan_indices))
++			if (member < ARRAY_SIZE(titan_indices))
+ 				vec = titan_vecs[titan_indices[member]];
+ 			break;
+ 		case ST_DEC_TSUNAMI:
+-			if (member < N(tsunami_indices))
++			if (member < ARRAY_SIZE(tsunami_indices))
+ 				vec = tsunami_vecs[tsunami_indices[member]];
+ 			break;
+ 		case ST_DEC_1000:
+@@ -1039,7 +1037,7 @@ get_sysvec_byname(const char *name)
  
-@@ -1870,7 +1870,7 @@ add_rx_skb(struct idt77252_dev *card, in
- 			return;
+ 	size_t i;
  
- 		if (sb_pool_add(card, skb, queue)) {
--			printk("%s: SB POOL full\n", __FUNCTION__);
-+			printk(KERN_DEBUG "%s: SB POOL full\n", __FUNCTION__);
- 			goto outfree;
- 		}
+-	for (i = 0; i < N(all_vecs); ++i) {
++	for (i = 0; i < ARRAY_SIZE(all_vecs); ++i) {
+ 		struct alpha_machine_vector *mv = all_vecs[i];
+ 		if (strcasecmp(mv->vector_name, name) = 0)
+ 			return mv;
+@@ -1055,13 +1053,13 @@ get_sysnames(unsigned long type, unsigne
  
-@@ -1880,7 +1880,7 @@ add_rx_skb(struct idt77252_dev *card, in
- 		IDT77252_PRV_PADDR(skb) = paddr;
- 
- 		if (push_rx_skb(card, skb, queue)) {
--			printk("%s: FB QUEUE full\n", __FUNCTION__);
-+			printk(KERN_DEBUG "%s: FB QUEUE full\n", __FUNCTION__);
- 			goto outunmap;
- 		}
- 	}
-@@ -1969,13 +1969,13 @@ idt77252_send_skb(struct atm_vcc *vcc, s
- 	int err;
- 
- 	if (vc = NULL) {
--		printk("%s: NULL connection in send().\n", card->name);
-+		printk(KERN_ERR "%s: NULL connection in send().\n", card->name);
- 		atomic_inc(&vcc->stats->tx_err);
- 		dev_kfree_skb(skb);
- 		return -EINVAL;
- 	}
- 	if (!test_bit(VCF_TX, &vc->flags)) {
--		printk("%s: Trying to transmit on a non-tx VC.\n", card->name);
-+		printk(KERN_ERR "%s: Trying to transmit on a non-tx VC.\n", card->name);
- 		atomic_inc(&vcc->stats->tx_err);
- 		dev_kfree_skb(skb);
- 		return -EINVAL;
-@@ -1987,14 +1987,14 @@ idt77252_send_skb(struct atm_vcc *vcc, s
- 	case ATM_AAL5:
+ 	/* If not in the tables, make it UNKNOWN,
+ 	   else set type name to family */
+-	if (type < N(systype_names)) {
++	if (type < ARRAY_SIZE(systype_names)) {
+ 		*type_name = systype_names[type];
+ 	} else if ((type > ST_API_BIAS) &&
+-		   (type - ST_API_BIAS) < N(api_names)) {
++		   (type - ST_API_BIAS) < ARRAY_SIZE(api_names)) {
+ 		*type_name = api_names[type - ST_API_BIAS];
+ 	} else if ((type > ST_UNOFFICIAL_BIAS) &&
+-		   (type - ST_UNOFFICIAL_BIAS) < N(unofficial_names)) {
++		   (type - ST_UNOFFICIAL_BIAS) < ARRAY_SIZE(unofficial_names)) {
+ 		*type_name = unofficial_names[type - ST_UNOFFICIAL_BIAS];
+ 	} else {
+ 		*type_name = sys_unknown;
+@@ -1083,7 +1081,7 @@ get_sysnames(unsigned long type, unsigne
+ 	default: /* default to variation "0" for now */
  		break;
- 	default:
--		printk("%s: Unsupported AAL: %d\n", card->name, vcc->qos.aal);
-+		printk(KERN_ERR "%s: Unsupported AAL: %d\n", card->name, vcc->qos.aal);
- 		atomic_inc(&vcc->stats->tx_err);
- 		dev_kfree_skb(skb);
- 		return -EINVAL;
- 	}
- 
- 	if (skb_shinfo(skb)->nr_frags != 0) {
--		printk("%s: No scatter-gather yet.\n", card->name);
-+		printk(KERN_ERR "%s: No scatter-gather yet.\n", card->name);
- 		atomic_inc(&vcc->stats->tx_err);
- 		dev_kfree_skb(skb);
- 		return -EINVAL;
-@@ -2026,7 +2026,7 @@ idt77252_send_oam(struct atm_vcc *vcc, v
- 
- 	skb = dev_alloc_skb(64);
- 	if (!skb) {
--		printk("%s: Out of memory in send_oam().\n", card->name);
-+		printk(KERN_ERR "%s: Out of memory in send_oam().\n", card->name);
- 		atomic_inc(&vcc->stats->tx_err);
- 		return -ENOMEM;
- 	}
-@@ -2172,7 +2172,7 @@ idt77252_init_cbr(struct idt77252_dev *c
- 
- 	if ((qos->txtp.max_pcr = 0) &&
- 	    (qos->txtp.pcr = 0) && (qos->txtp.min_pcr = 0)) {
--		printk("%s: trying to open a CBR VC with cell rate = 0\n",
-+		printk(KERN_ERR "%s: trying to open a CBR VC with cell rate = 0\n",
- 		       card->name);
- 		return -EINVAL;
- 	}
-@@ -2198,19 +2198,19 @@ idt77252_init_cbr(struct idt77252_dev *c
- 	} else if (tcr = 0) {
- 		tst_entries = tst_free - SAR_TST_RESERVED;
- 		if (tst_entries <= 0) {
--			printk("%s: no CBR bandwidth free.\n", card->name);
-+			printk(KERN_ERR "%s: no CBR bandwidth free.\n", card->name);
- 			return -ENOSR;
- 		}
- 	}
- 
- 	if (tst_entries = 0) {
--		printk("%s: selected CBR bandwidth < granularity.\n",
-+		printk(KERN_ERR "%s: selected CBR bandwidth < granularity.\n",
- 		       card->name);
- 		return -EINVAL;
- 	}
- 
- 	if (tst_entries > (tst_free - SAR_TST_RESERVED)) {
--		printk("%s: not enough CBR bandwidth free.\n", card->name);
-+		printk(KERN_ERR "%s: not enough CBR bandwidth free.\n", card->name);
- 		return -ENOSR;
- 	}
- 
-@@ -2290,13 +2290,13 @@ idt77252_init_tx(struct idt77252_dev *ca
- 
- 	vc->scq = alloc_scq(card, vc->class);
- 	if (!vc->scq) {
--		printk("%s: can't get SCQ.\n", card->name);
-+		printk(KERN_ERR "%s: can't get SCQ.\n", card->name);
- 		return -ENOMEM;
- 	}
- 
- 	vc->scq->scd = get_free_scd(card, vc);
- 	if (vc->scq->scd = 0) {
--		printk("%s: no SCD available.\n", card->name);
-+		printk(KERN_ERR "%s: no SCD available.\n", card->name);
- 		free_scq(card, vc->scq);
- 		return -ENOMEM;
- 	}
-@@ -2422,12 +2422,12 @@ idt77252_open(struct atm_vcc *vcc)
- 		return 0;
- 
- 	if (vpi >= (1 << card->vpibits)) {
--		printk("%s: unsupported VPI: %d\n", card->name, vpi);
-+		printk(KERN_ERR "%s: unsupported VPI: %d\n", card->name, vpi);
- 		return -EINVAL;
- 	}
- 
- 	if (vci >= (1 << card->vcibits)) {
--		printk("%s: unsupported VCI: %d\n", card->name, vci);
-+		printk(KERN_ERR "%s: unsupported VCI: %d\n", card->name, vci);
- 		return -EINVAL;
- 	}
- 
-@@ -2443,7 +2443,7 @@ idt77252_open(struct atm_vcc *vcc)
- 	case ATM_AAL5:
+ 	case ST_DEC_EB164:
+-		if (member < N(eb164_indices))
++		if (member < ARRAY_SIZE(eb164_indices))
+ 			*variation_name = eb164_names[eb164_indices[member]];
+ 		/* PC164 may show as EB164 variation, but with EV56 CPU,
+ 		   so, since no true EB164 had anything but EV5... */
+@@ -1091,32 +1089,32 @@ get_sysnames(unsigned long type, unsigne
+ 			*variation_name = eb164_names[1]; /* make it PC164 */
  		break;
- 	default:
--		printk("%s: Unsupported AAL: %d\n", card->name, vcc->qos.aal);
-+		printk(KERN_ERR "%s: Unsupported AAL: %d\n", card->name, vcc->qos.aal);
- 		up(&card->mutex);
- 		return -EPROTONOSUPPORT;
+ 	case ST_DEC_ALCOR:
+-		if (member < N(alcor_indices))
++		if (member < ARRAY_SIZE(alcor_indices))
+ 			*variation_name = alcor_names[alcor_indices[member]];
+ 		break;
+ 	case ST_DEC_EB64P:
+-		if (member < N(eb64p_indices))
++		if (member < ARRAY_SIZE(eb64p_indices))
+ 			*variation_name = eb64p_names[eb64p_indices[member]];
+ 		break;
+ 	case ST_DEC_EB66:
+-		if (member < N(eb66_indices))
++		if (member < ARRAY_SIZE(eb66_indices))
+ 			*variation_name = eb66_names[eb66_indices[member]];
+ 		break;
+ 	case ST_DEC_MARVEL:
+-		if (member < N(marvel_indices))
++		if (member < ARRAY_SIZE(marvel_indices))
+ 			*variation_name = marvel_names[marvel_indices[member]];
+ 		break;
+ 	case ST_DEC_RAWHIDE:
+-		if (member < N(rawhide_indices))
++		if (member < ARRAY_SIZE(rawhide_indices))
+ 			*variation_name = rawhide_names[rawhide_indices[member]];
+ 		break;
+ 	case ST_DEC_TITAN:
+ 		*variation_name = titan_names[0];	/* default */
+-		if (member < N(titan_indices))
++		if (member < ARRAY_SIZE(titan_indices))
+ 			*variation_name = titan_names[titan_indices[member]];
+ 		break;
+ 	case ST_DEC_TSUNAMI:
+-		if (member < N(tsunami_indices))
++		if (member < ARRAY_SIZE(tsunami_indices))
+ 			*variation_name = tsunami_names[tsunami_indices[member]];
+ 		break;
  	}
-@@ -2452,7 +2452,7 @@ idt77252_open(struct atm_vcc *vcc)
- 	if (!card->vcs[index]) {
- 		card->vcs[index] = kmalloc(sizeof(struct vc_map), GFP_KERNEL);
- 		if (!card->vcs[index]) {
--			printk("%s: can't alloc vc in open()\n", card->name);
-+			printk(KERN_ERR "%s: can't alloc vc in open()\n", card->name);
- 			up(&card->mutex);
- 			return -ENOMEM;
- 		}
-@@ -2482,7 +2482,7 @@ idt77252_open(struct atm_vcc *vcc)
- 		inuse += 2;
+@@ -1211,7 +1209,7 @@ show_cpuinfo(struct seq_file *f, void *s
  
- 	if (inuse) {
--		printk("%s: %s vci already in use.\n", card->name,
-+		printk(KERN_ERR "%s: %s vci already in use.\n", card->name,
- 		       inuse = 1 ? "tx" : inuse = 2 ? "rx" : "tx and rx");
- 		up(&card->mutex);
- 		return -EADDRINUSE;
-@@ -2575,7 +2575,7 @@ done:
- 				break;
- 		}
- 		if (!timeout)
--			printk("%s: SCQ drain timeout: %u used\n",
-+			printk(KERN_INFO "%s: SCQ drain timeout: %u used\n",
- 			       card->name, atomic_read(&vc->scq->used));
+ 	cpu_index = (unsigned) (cpu->type - 1);
+ 	cpu_name = "Unknown";
+-	if (cpu_index < N(cpu_names))
++	if (cpu_index < ARRAY_SIZE(cpu_names))
+ 		cpu_name = cpu_names[cpu_index];
  
- 		writel(TCMDQ_HALT | vc->index, SAR_REG_TCMDQ);
+ 	get_sysnames(hwrpb->sys_type, hwrpb->sys_variation,
+diff --git a/arch/alpha/kernel/sys_ruffian.c b/arch/alpha/kernel/sys_ruffian.c
+index 78c30de..5b99cf3 100644
+--- a/arch/alpha/kernel/sys_ruffian.c
++++ b/arch/alpha/kernel/sys_ruffian.c
+@@ -182,16 +182,16 @@ static unsigned long __init
+ ruffian_get_bank_size(unsigned long offset)
+ {
+ 	unsigned long bank_addr, bank, ret = 0;
+-  
++
+ 	/* Valid offsets are: 0x800, 0x840 and 0x880
+ 	   since Ruffian only uses three banks.  */
+ 	bank_addr = (unsigned long)PYXIS_MCR + offset;
+ 	bank = *(vulp)bank_addr;
+-    
++
+ 	/* Check BANK_ENABLE */
+ 	if (bank & 0x01) {
+ 		static unsigned long size[] __initdata = {
+-			0x40000000UL, /* 0x00,   1G */ 
++			0x40000000UL, /* 0x00,   1G */
+ 			0x20000000UL, /* 0x02, 512M */
+ 			0x10000000UL, /* 0x04, 256M */
+ 			0x08000000UL, /* 0x06, 128M */
+@@ -203,7 +203,7 @@ ruffian_get_bank_size(unsigned long offs
+ 		};
+ 
+ 		bank = (bank & 0x1e) >> 1;
+-		if (bank < sizeof(size)/sizeof(*size))
++		if (bank < ARRAY_SIZE(size))
+ 			ret = size[bank];
+ 	}
+ 
+diff --git a/arch/alpha/kernel/time.c b/arch/alpha/kernel/time.c
+index 50eccde..b191cc7 100644
+--- a/arch/alpha/kernel/time.c
++++ b/arch/alpha/kernel/time.c
+@@ -233,7 +233,7 @@ validate_cc_value(unsigned long cc)
+ 	index = cpu->type & 0xffffffff;
+ 
+ 	/* If index out of bounds, no way to validate.  */
+-	if (index >= sizeof(cpu_hz)/sizeof(cpu_hz[0]))
++	if (index >= ARRAY_SIZE(cpu_hz))
+ 		return cc;
+ 
+ 	/* If index contains no data, no way to validate.  */
+-- 
+1.4.1
 
 _______________________________________________
 Kernel-janitors mailing list
