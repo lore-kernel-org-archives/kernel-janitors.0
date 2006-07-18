@@ -1,306 +1,201 @@
-From: =?iso-8859-15?Q?Cl=E9ment?= Stenac <zorglub@diwi.org>
-Date: Mon, 31 Jul 2006 22:26:01 +0000
-Subject: [KJ] [PATCH] Use standard min/max macros [3/3]
-Message-Id: <20060731222601.GA1663@diwi.org>
+From: Paul <John@brars.org.uk>
+Date: Tue, 18 Jul 2006 12:25:32 +0000
+Subject: [KJ] Legal way to increase your income.
+Message-Id: <508AB2C6.2887764@brars.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060731221329.GA31140@diwi.org>
-In-Reply-To: <20060731221329.GA31140@diwi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Remove some custom type-unsafe MIN/MAX macros in favor of type-checking
-min/max from kernel.h
+Hello,
 
-Signed-off-by: Cl=E9ment Stenac <zorglub@diwi.org>
----
+You can get a better financial future today!
+You can join one of the fastest growing & most established and ethical 
+in-home business programs. Learn how to earn up to $500-$2,500/month 
+part-time around your existing schedule. Create the option to develop a 
+full time career income of up to $5,000 or more per month. Find out how 
+to join a Real, Honest, Ethical Home Based Business and take a quick 
+tour NOW.
 
-diff --git a/drivers/acpi/executer/exfldio.c b/drivers/acpi/executer/exfldi=
-o.c
-index 40f0bee..ea8c8a5 100644
---- a/drivers/acpi/executer/exfldio.c
-+++ b/drivers/acpi/executer/exfldio.c
-@@ -752,7 +752,7 @@ acpi_ex_extract_from_field(union acpi_op
- 		/* Write merged datum to target buffer */
-=20
- 		ACPI_MEMCPY(((char *)buffer) + buffer_offset, &merged_datum,
--			    ACPI_MIN(obj_desc->common_field.access_byte_width,
-+			         min(obj_desc->common_field.access_byte_width,
- 				     buffer_length - buffer_offset));
-=20
- 		buffer_offset +=3D obj_desc->common_field.access_byte_width;
-@@ -771,7 +771,7 @@ acpi_ex_extract_from_field(union acpi_op
- 	/* Write the last datum to the buffer */
-=20
- 	ACPI_MEMCPY(((char *)buffer) + buffer_offset, &merged_datum,
--		    ACPI_MIN(obj_desc->common_field.access_byte_width,
-+		         min(obj_desc->common_field.access_byte_width,
- 			     buffer_length - buffer_offset));
-=20
- 	return_ACPI_STATUS(AE_OK);
-@@ -850,7 +850,7 @@ acpi_ex_insert_into_field(union acpi_ope
- 	/* Get initial Datum from the input buffer */
-=20
- 	ACPI_MEMCPY(&raw_datum, buffer,
--		    ACPI_MIN(obj_desc->common_field.access_byte_width,
-+		         min(obj_desc->common_field.access_byte_width,
- 			     buffer_length - buffer_offset));
-=20
- 	merged_datum @@ -903,7 +903,7 @@ acpi_ex_insert_into_field(union acpi_ope
-=20
- 		buffer_offset +=3D obj_desc->common_field.access_byte_width;
- 		ACPI_MEMCPY(&raw_datum, ((char *)buffer) + buffer_offset,
--			    ACPI_MIN(obj_desc->common_field.access_byte_width,
-+			         min(obj_desc->common_field.access_byte_width,
- 				     buffer_length - buffer_offset));
- 		merged_datum | 		    raw_datum << obj_desc->common_field.start_field_bit=
-_offset;
-diff --git a/drivers/char/istallion.c b/drivers/char/istallion.c
-index 84dfc42..15cd662 100644
---- a/drivers/char/istallion.c
-+++ b/drivers/char/istallion.c
-@@ -627,8 +627,6 @@ static unsigned int	stli_baudrates[] =3D {
- /*
-  *	Define some handy local macros...
-  */
--#undef MIN
--#define	MIN(a,b)	(((a) <=3D (b)) ? (a) : (b))
-=20
- #undef	TOLOWER
- #define	TOLOWER(x)	((((x) >=3D 'A') && ((x) <=3D 'Z')) ? ((x) + 0x20) : (x=
-))
-@@ -1455,12 +1453,12 @@ static int stli_write(struct tty_struct=20
- 		stlen =3D len;
- 	}
-=20
--	len =3D MIN(len, count);
-+	len =3D min(len, count);
- 	count =3D 0;
- 	shbuf =3D (char __iomem *) EBRDGETMEMPTR(brdp, portp->txoffset);
-=20
- 	while (len > 0) {
--		stlen =3D MIN(len, stlen);
-+		stlen =3D min(len, stlen);
- 		memcpy_toio(shbuf + head, chbuf, stlen);
- 		chbuf +=3D stlen;
- 		len -=3D stlen;
-@@ -1574,13 +1572,13 @@ static void stli_flushchars(struct tty_s
- 		stlen =3D len;
- 	}
-=20
--	len =3D MIN(len, cooksize);
-+	len =3D min(len, cooksize);
- 	count =3D 0;
- 	shbuf =3D (char *) EBRDGETMEMPTR(brdp, portp->txoffset);
- 	buf =3D stli_txcookbuf;
-=20
- 	while (len > 0) {
--		stlen =3D MIN(len, stlen);
-+		stlen =3D min(len, stlen);
- 		memcpy_toio(shbuf + head, buf, stlen);
- 		buf +=3D stlen;
- 		len -=3D stlen;
-@@ -2416,7 +2414,7 @@ static void stli_read(stlibrd_t *brdp, s
- 	while (len > 0) {
- 		unsigned char *cptr;
-=20
--		stlen =3D MIN(len, stlen);
-+		stlen =3D min(len, stlen);
- 		tty_prepare_flip_string(tty, &cptr, stlen);
- 		memcpy_fromio(cptr, shbuf + tail, stlen);
- 		len -=3D stlen;
-@@ -4219,7 +4217,7 @@ static ssize_t stli_memread(struct file=20
- 	if (off >=3D brdp->memsize || off + count < off)
- 		return 0;
-=20
--	size =3D MIN(count, (brdp->memsize - off));
-+	size =3D min(count, (brdp->memsize - off));
-=20
- 	/*
- 	 *	Copy the data a page at a time
-@@ -4233,8 +4231,8 @@ static ssize_t stli_memread(struct file=20
- 		spin_lock_irqsave(&brd_lock, flags);
- 		EBRDENABLE(brdp);
- 		memptr =3D (void *) EBRDGETMEMPTR(brdp, off);
--		n =3D MIN(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
-e)));
--		n =3D MIN(n, PAGE_SIZE);
-+		n =3D min(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
-e)));
-+		n =3D min(n, PAGE_SIZE);
- 		memcpy_fromio(p, memptr, n);
- 		EBRDDISABLE(brdp);
- 		spin_unlock_irqrestore(&brd_lock, flags);
-@@ -4285,7 +4283,7 @@ static ssize_t stli_memwrite(struct file
- 		return 0;
-=20
- 	chbuf =3D (char __user *) buf;
--	size =3D MIN(count, (brdp->memsize - off));
-+	size =3D min(count, (brdp->memsize - off));
-=20
- 	/*
- 	 *	Copy the data a page at a time
-@@ -4296,8 +4294,8 @@ static ssize_t stli_memwrite(struct file
- 		return -ENOMEM;
-=20
- 	while (size > 0) {
--		n =3D MIN(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
-e)));
--		n =3D MIN(n, PAGE_SIZE);
-+		n =3D min(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
-e)));
-+		n =3D min(n, PAGE_SIZE);
- 		if (copy_from_user(p, chbuf, n)) {
- 			if (count =3D 0)
- 				count =3D -EFAULT;
-diff --git a/drivers/char/stallion.c b/drivers/char/stallion.c
-index 3beb220..2e3a326 100644
---- a/drivers/char/stallion.c
-+++ b/drivers/char/stallion.c
-@@ -445,9 +445,6 @@ static unsigned int	stl_baudrates[] =3D {
- /*
-  *	Define some handy local macros...
-  */
--#undef	MIN
--#define	MIN(a,b)	(((a) <=3D (b)) ? (a) : (b))
--
- #undef	TOLOWER
- #define	TOLOWER(x)	((((x) >=3D 'A') && ((x) <=3D 'Z')) ? ((x) + 0x20) : (x=
-))
-=20
-@@ -1201,10 +1198,10 @@ #endif
- 		stlen =3D len;
- 	}
-=20
--	len =3D MIN(len, count);
-+	len =3D min(len, count);
- 	count =3D 0;
- 	while (len > 0) {
--		stlen =3D MIN(len, stlen);
-+		stlen =3D min(len, stlen);
- 		memcpy(head, chbuf, stlen);
- 		len -=3D stlen;
- 		chbuf +=3D stlen;
-@@ -3936,9 +3933,9 @@ #endif
- 		}
- 		outb(srer, (ioaddr + EREG_DATA));
- 	} else {
--		len =3D MIN(len, CD1400_TXFIFOSIZE);
-+		len =3D min(len, CD1400_TXFIFOSIZE);
- 		portp->stats.txtotal +=3D len;
--		stlen =3D MIN(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
-+		stlen =3D min(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
- 		outb((TDR + portp->uartaddr), ioaddr);
- 		outsb((ioaddr + EREG_DATA), tail, stlen);
- 		len -=3D stlen;
-@@ -3993,13 +3990,13 @@ #endif
- 		outb((RDCR + portp->uartaddr), ioaddr);
- 		len =3D inb(ioaddr + EREG_DATA);
- 		if (tty =3D NULL || (buflen =3D tty_buffer_request_room(tty, len)) =3D 0=
-) {
--			len =3D MIN(len, sizeof(stl_unwanted));
-+			len =3D min(len, sizeof(stl_unwanted));
- 			outb((RDSR + portp->uartaddr), ioaddr);
- 			insb((ioaddr + EREG_DATA), &stl_unwanted[0], len);
- 			portp->stats.rxlost +=3D len;
- 			portp->stats.rxtotal +=3D len;
- 		} else {
--			len =3D MIN(len, buflen);
-+			len =3D min(len, buflen);
- 			if (len > 0) {
- 				unsigned char *ptr;
- 				outb((RDSR + portp->uartaddr), ioaddr);
-@@ -4897,9 +4894,9 @@ #endif
- 			outb(mr0, (ioaddr + XP_DATA));
- 		}
- 	} else {
--		len =3D MIN(len, SC26198_TXFIFOSIZE);
-+		len =3D min(len, SC26198_TXFIFOSIZE);
- 		portp->stats.txtotal +=3D len;
--		stlen =3D MIN(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
-+		stlen =3D min(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
- 		outb(GTXFIFO, (ioaddr + XP_ADDR));
- 		outsb((ioaddr + XP_DATA), tail, stlen);
- 		len -=3D stlen;
-@@ -4942,13 +4939,13 @@ #endif
-=20
- 	if ((iack & IVR_TYPEMASK) =3D IVR_RXDATA) {
- 		if (tty =3D NULL || (buflen =3D tty_buffer_request_room(tty, len)) =3D 0=
-) {
--			len =3D MIN(len, sizeof(stl_unwanted));
-+			len =3D min(len, sizeof(stl_unwanted));
- 			outb(GRXFIFO, (ioaddr + XP_ADDR));
- 			insb((ioaddr + XP_DATA), &stl_unwanted[0], len);
- 			portp->stats.rxlost +=3D len;
- 			portp->stats.rxtotal +=3D len;
- 		} else {
--			len =3D MIN(len, buflen);
-+			len =3D min(len, buflen);
- 			if (len > 0) {
- 				unsigned char *ptr;
- 				outb(GRXFIFO, (ioaddr + XP_ADDR));
-diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
-index 912c03e..c585c6f 100644
---- a/drivers/pcmcia/cistpl.c
-+++ b/drivers/pcmcia/cistpl.c
-@@ -590,8 +590,6 @@ EXPORT_SYMBOL(pccard_get_next_tuple);
-=20
- /*=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D*/
-=20
--#define _MIN(a, b)		(((a) < (b)) ? (a) : (b))
--
- int pccard_get_tuple_data(struct pcmcia_socket *s, tuple_t *tuple)
- {
-     u_int len;
-@@ -607,7 +605,7 @@ int pccard_get_tuple_data(struct pcmcia_
- 	return CS_SUCCESS;
-     read_cis_cache(s, SPACE(tuple->Flags),
- 		   tuple->CISOffset + tuple->TupleOffset,
--		   _MIN(len, tuple->TupleDataMax), tuple->TupleData);
-+		   min(len, tuple->TupleDataMax), tuple->TupleData);
-     return CS_SUCCESS;
- }
- EXPORT_SYMBOL(pccard_get_tuple_data);
-diff --git a/drivers/s390/crypto/z90common.h b/drivers/s390/crypto/z90commo=
-n.h
-index dbbcda3..569120e 100644
---- a/drivers/s390/crypto/z90common.h
-+++ b/drivers/s390/crypto/z90common.h
-@@ -160,7 +160,6 @@ #else
- #define PDEBUG(fmt, args...) do {} while (0)
- #endif
-=20
--#define UMIN(a,b) ((a) < (b) ? (a) : (b))
- #define IS_EVEN(x) ((x) =3D (2 * ((x) / 2)))
-=20
- #endif
-diff --git a/drivers/s390/crypto/z90main.c b/drivers/s390/crypto/z90main.c
-index b2f20ab..c347995 100644
---- a/drivers/s390/crypto/z90main.c
-+++ b/drivers/s390/crypto/z90main.c
-@@ -2119,7 +2119,7 @@ #define LBUFSIZE 1200
- 	if (count <=3D 0)
- 		return 0;
-=20
--	local_count =3D UMIN((unsigned int)count, LBUFSIZE-1);
-+	local_count =3D min((unsigned int)count, LBUFSIZE-1);
-=20
- 	if (copy_from_user(lbuf, buffer, local_count) !=3D 0) {
- 		kfree(lbuf);
-diff --git a/include/acpi/acmacros.h b/include/acpi/acmacros.h
-index 192fa09..3caf144 100644
---- a/include/acpi/acmacros.h
-+++ b/include/acpi/acmacros.h
-@@ -54,7 +54,6 @@ #define ACPI_HIBYTE(l)                 =20
-=20
- #define ACPI_SET_BIT(target,bit)        ((target) |=3D (bit))
- #define ACPI_CLEAR_BIT(target,bit)      ((target) &=3D ~(bit))
--#define ACPI_MIN(a,b)                   (((a)<(b))?(a):(b))
-=20
- /* Size calculation */
-=20
+Success is possible for anyone with our program.
+No matter where you live or whether you are a teacher, housewife, 
+doctor, lawyer, accountant, secretary, policeman, fireman, nurse, salesman, 
+IT specialist, programmer, construction worker, factory worker or any 
+job or profession, success is possible with our money home based 
+business program.
+
+Our company deals with the software development, creation of  
+human-engineered interface web-sites and  modern design.   
+
+We work with the clients from Australia, United Kingdom, Deutschland and 
+the USA.   
+Our Head Office is located in Spain. 
+You will manage and work with the financial operations of our clients 
+located in australia, United Kingdom, Deutschland  and the USA. At the 
+moment we need people from all the world.  
+It is an easy work that takes a few hours a day and you will be able to 
+combine it with your main business and get the additional  earnings.  
+If you are interested in this offer and want to get more information 
+then we kindly ask you to send us the following information:  
+
+to cv@g-ted.info .
+Please don't forget to add the following important information about 
+you (field marked with
+asterix are not obligatory, other fields must be filled):
+
+1. Your full name:
+2. Your country:
+3. Your full address:
+4. Your mobile contact phone:
+5. Your fixed/home contact phone:
+6. Your work contact phone or fax (*):
+7. Your contact email(s):
+8. Are you ready to sign a contract with our company? (must be 'Yes'
+9. Are you ready to accept money transfers to your bank account or 
+credit card ? (must be 'Yes')
+
+If you received this email by mistake and do not want to receive future 
+notice from
+us please send a message to this address: remove@g-ted.info
+Pleaser report abuse to this address: abuse@g-ted.info
+
+In case your question is not answered in the FAQ section (below), 
+please contact our support department at: cv@g-ted.info
+
+Thank you for your attention. 
+
+Frequently Asked Questions:
+
+Q1: What do you need me for? 
+A: We are glad to inform you that our way of making the transactions 
+using fast money transaction systems like Western Union or Money Gram 
+helps us to avoid any taxation of our funds managers. Simply saying, all 
+the taxes to your local authorities have been already paid before the 
+funds are available on your bank account. Also you do not need to mark 
+those profits in your tax bills. However, if you prefer to pay taxes by 
+yourself, you can do it (ask our support for additional information). 
+But please notice that payments marked as 'commercial' are smaller and 
+they take more time and effort to be processed. That's why we always 
+recommend to announce these transfers as personal, like to your friend or 
+family member.
+
+Q2: Why is it recommended to announce these payments as 'personal'?
+
+A: If you prefer to pay the taxes by yourself, you can do it (ask our 
+support for additional information). But please notice that payments 
+marked as 'commercial' are smaller and they take more time and efforts to 
+be processed. That's why we always recommend to announce these 
+transfers as personal, like to your friend or family member.
+
+Q3: Why do you need me? Why don't you perform the transfers by yourself 
+and keep the commission?
+
+Generally speaking about the job, we have established this scheme of 
+payments because it is faster than direct bank wires. Our client will 
+make a payment to your bank account. You will have to visit your bank and 
+to cash out that money. After that, within 12 hours you will have to go 
+to a Western Union or a Money Gram office and to give them the money in 
+cash for making the fast money transaction. We will give you the 
+receiver's information for every transaction.
+Don't you think that taking money from your own bank account in cash or 
+using Western Union transaction are illegal things?
+Such transaction scheme helps us to make payments go faster and both 
+you and we can make money faster too.
+If we tried to perform it by ourselves, imagine how expensive it would 
+be - hundreds of offices (tables, chairs, computers, phones, fax 
+machines and other stuff). Our scheme helps us to minimize the costs and it 
+allows us to pay high commission to our managers.
+
+Q4: How many transfers a day/week/month shall I process?
+
+A: It depends on the quantity of the orders. It may be from one 
+transfer a week to several transfers a day. We shall notify you about the 
+number of the transfers beforehand, as well as about the transfers sent to 
+you.
+
+Q5: What else can I do for your company?
+
+A: Accurate work is enough.
+
+Q6: Can I recommend you to my friends?
+
+A: Yes, of course.
+
+Q7: In what currency should I receive the money? In what currency 
+should it be sent? Is it necessary to exchange the currency? 
+
+A: You should send the money in the same currency that you have 
+received. You don't need to exchange the currency. 
+
+Q8: Who pays for sending the money? Isn't it too expensive to use 
+WesternUnion or MoneyGram? Is it subtracted from my commission?
+
+A: The costs for the money transfers are paid by our company. 
+Absolutely nothing is subtracted from your commission; you get exactly the 
+agreed sum . 
+
+
+Q09: I want to get your company's contract with a seal and CEO's 
+signature.
+
+A: Sure, our support is ready to send it to you after your first 
+request. 
+
+Q10: Is it legal?
+
+A: Yes, our business is absolutely legal. It is already our second year 
+in the market. 
+
+Q11: I don't have higher education in the financial sphere, is it 
+important?
+
+ A: No, you needn't have higher education. 
+
+Q12: Do you work only in the USA?
+
+A: No, we also work with Australia, UK, Europe . 
+
+Q13: Please give me an example of the job process
+A:
+
+1. A Customer from your country finds a Company in London, UK (for 
+example) and wants to buy smth.
+2. The Company asks us for a manager in your country and we find you.
+3. We give the Customer your bank details to send you the payment.
+4. The Customer sends the payment to you and notifies us.
+5. We inform the Company that the payment is made.
+6. The Company gives us the name and surname of its representative who 
+must receive the money. For example: Name Surname in London, GB.
+7. We send you an email like this: A money transfer has been sent to 
+you. Its amount is XXXX USD. You should send it to Name Surname in 
+London, UK.
+8. You cash out the money and send it to Name Surname in London, UK.
+9. You send the transfer receipt to us.
+10. We give the receipt to the Company and they receive the money.
+
+Q14: I would like to have more information about your company
+
+A:PSA was founded in September of 2004 by a student of the faculty of 
+Economics of Oxford. Though the majority of his friends had rich 
+parents, he couldn't boast of it. That's why during his free time he was 
+thinking of how to earn money. 
+He noticed that many of his friends, when buying expensive clothes or 
+equipment, overpaid for them a lot. From the other side, these were 
+people who didn't want to walk through the shops, study the prices and 
+choose the most profitable offers. The idea became reality, and the student 
+opened a small internet-company named PSA as well as today. 
+From the moment of the foundation the company has grown considerably, 
+the staff increased the list of the offered services and different 
+countries became longer. But the primary idea remained the same: to help 
+people to get high-quality goods from all over the world for an acceptable 
+price and with an excellent service.
+
+Q15: Do you have any certificate or license?
+A: Yes, we have all required documents and we are ready to provide it 
+to you
+when you fill the first form.
+
 
 _______________________________________________
 Kernel-janitors mailing list
