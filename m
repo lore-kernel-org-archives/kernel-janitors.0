@@ -1,81 +1,57 @@
-From: "Randy.Dunlap" <rdunlap@xenotime.net>
-Date: Fri, 07 Jul 2006 15:48:39 +0000
-Subject: Re: [KJ] [Kj] [PATCH] drivers/acpi/cm_sbs.c: if statement moved
-Message-Id: <20060707084839.cf70326b.rdunlap@xenotime.net>
+From: "Lock R. Subatomics" <dperks@mail-gw.vet-alfort.fr>
+Date: Tue, 18 Jul 2006 04:46:29 +0000
+Subject: [KJ] Huge on-line pharmacy
+Message-Id: <7433440731.20060717233528@grisby.vet-alfort.fr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0343670568=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8ef77f2e0607070606y4367b47fw5cc3b195b5fe21a@mail.gmail.com>
-In-Reply-To: <8ef77f2e0607070606y4367b47fw5cc3b195b5fe21a@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 7 Jul 2006 15:26:57 +0200 Jesper Juhl wrote:
+This is a multi-part message in MIME format...
 
-> On 07/07/06, tom hisch <t.hisch@gmail.com> wrote:
-> > hello.
-> >
-> > this is my first "little" patch it only moves an if statement in
-> > drivers/acpi/cm_sbs.c
-> > Any recommendations on this are welcome.
-> >
-> Some general tips:
-> 
-> 1) Don't just describe what your patch does. Always also describe
-> *why* it does it.
-> 2) Please include a diffstat with the patch.
-> 3) Please add a Signed-off-by: line with the patch.
-> 4) It's often a nice thing if the patch reflects what exact version
-> the patch applies to - one easy way of doing this is by namind
-> directories something like 2.6.18-rc1-orig etc, so the patch looks
-> something like this :
-> --- linux-2.6.18-rc1-orig/drivers/acpi/cm_sbs.c        2006-07-06
-> 23:54: 04.000000000 +0200
-> +++ linux-2.6.18-rc1/drivers/acpi/cm_sbs.c     2006-07-07
-> 14:54:49.000000000 +0200
-> This makes it easy for people to see what kernel the patch applies to.
-> An alternative is ofcourse just a simple line saying "this patch
-> applies to kernel 2.6.x.y.z.whatever".
-> 5) Try to always work against the latest Linus kernel - that is, the
-> latest git snapshot.
-> 6) As a general rule, don't mix unrelated changes in the same patch -
-> send multiple patches instead (like in this patch you are mixing
-> whitespace changes and code changes).
-> 7) Please read these documents :
->     http://sosdg.org/~coywolf/lxr/source/Documentation/SubmittingPatches
->     http://www.zipworld.com.au/~akpm/linux/patches/stuff/tpp.txt
->     http://sosdg.org/~coywolf/lxr/source/Documentation/HOWTO
-> 
-> 
-> >
-> > --- linux-2.6/drivers/acpi/cm_sbs.c.orig        2006-07-06
-> > 23:54: 04.000000000 +0200
-> > +++ linux-2.6/drivers/acpi/cm_sbs.c     2006-07-07 14:54:49.000000000 +0200
-> 
-> Doesn't seem to apply cleanly to 2.6.18-rc1 for me :
-> 
-> Hunk #1 FAILED at 1.
-> Hunk #2 FAILED at 69.
-> 2 out of 2 hunks FAILED -- saving rejects to file drivers/acpi/cm_sbs.c.rej
+--===============0343670568==
+Content-Type: multipart/alternative;
+    boundary="----------=_1153197452-18096-275"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Odd, there is only 1 hunk.
+This is a multi-part message in MIME format...
 
-> perhaps your mailer mangled it? It's usually a good idea to first mail
-> the patch to yourself, save the mail, apply the patch to see if it
-> applies or got mangled (ofcourse once you've verified this a few times
-> you can stop doing it unless people complain).
+------------=_1153197452-18096-275
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Yes, the beginning "--- linux-2.6" line was split into 2 lines
-and all tabs were converted to <lots of> spaces.
-Latter could have been caused my mail client or server or
-could also have been done by using copy-and-paste.
+more than 100 products for your 100% health
 
-It applies cleanly after fixing that damage, but don't
-expect maintainers to do that.
 
----
-~Randy
+
+hstkraseiae WldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
+
+------------=_1153197452-18096-275
+Content-Type: text/html
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<html>
+<body>
+more than 100 products for your 100% health<br>
+<a href="">our site</a>
+</body>
+</html>
+
+------------=_1153197452-18096-275--
+
+--===============0343670568==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0343670568==--
