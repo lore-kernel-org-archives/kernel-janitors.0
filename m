@@ -1,91 +1,26 @@
-From: Lars Noschinski <lars@public.noschinski.de>
-Date: Mon, 24 Jul 2006 20:20:41 +0000
-Subject: [KJ] [PATCH] dib3000 documentation reference fixup
-Message-Id: <20060724202041.2668.15122.stgit@vertikal.home.noschinski.de>
+From: "tom hisch" <t.hisch@gmail.com>
+Date: Wed, 19 Jul 2006 17:08:22 +0000
+Subject: [KJ] arch/i386/kernel/bootflag.c : remove sbf_port == -1 statement ?
+Message-Id: <8ef77f2e0607191008u29f55144n26eaaac6e8f206ff@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-From: Lars Noschinski <lars@public.noschinski.de>
+hi,
 
-dib3000 source files refered to a documentation file which was removed a year
-ago by b6a235b1186dda0800c8bedc2526830a4a36b44e. Fix this up.
+is it possible that sbf_port is altered after acpi_boot_init() ?
 
-Signed-off-by: Lars Noschinski <lars@public.noschinski.de>
----
+if not, should the sbf_port =3D -1 statement in line 44 and 66 be
+removed because sbf_port is already checked in the init function (line
+82) ??
 
- drivers/media/dvb/frontends/dib3000-common.h |    4 ++--
- drivers/media/dvb/frontends/dib3000.h        |    4 ++--
- drivers/media/dvb/frontends/dib3000mb.c      |    4 ++--
- drivers/media/dvb/frontends/dib3000mc.c      |    4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+http://kernel.org/git/?p=3Dlinux/kernel/git/torvalds/linux-2.6.git;a=3Dblob=
+;h=0B9860530a6ba760385510569b2388f3409c9d12;hb=82d6897fefca6206bca7153805b4=
+c5359ce97fc4;f=3Darch/i386/kernel/bootflag.c
 
-diff --git a/drivers/media/dvb/frontends/dib3000-common.h b/drivers/media/dvb/frontends/dib3000-common.h
-index be1c0d3..03a22a7 100644
---- a/drivers/media/dvb/frontends/dib3000-common.h
-+++ b/drivers/media/dvb/frontends/dib3000-common.h
-@@ -17,9 +17,9 @@
-  * Acknowledgements
-  *
-  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
-- *  sources, on which this driver (and the dvb-dibusb) are based.
-+ *  sources, on which this driver (and dibusb) are based.
-  *
-- * see Documentation/dvb/README.dibusb for more information
-+ * see Documentation/dvb/README.dvb-usb for more information
-  *
-  */
- 
-diff --git a/drivers/media/dvb/frontends/dib3000.h b/drivers/media/dvb/frontends/dib3000.h
-index ec92762..9353518 100644
---- a/drivers/media/dvb/frontends/dib3000.h
-+++ b/drivers/media/dvb/frontends/dib3000.h
-@@ -15,9 +15,9 @@
-  * Acknowledgements
-  *
-  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
-- *  sources, on which this driver (and the dvb-dibusb) are based.
-+ *  sources, on which this driver (and dibusb) are based.
-  *
-- * see Documentation/dvb/README.dibusb for more information
-+ * see Documentation/dvb/README.dvb-usb for more information
-  *
-  */
- 
-diff --git a/drivers/media/dvb/frontends/dib3000mb.c b/drivers/media/dvb/frontends/dib3000mb.c
-index 5302e11..a5211b1 100644
---- a/drivers/media/dvb/frontends/dib3000mb.c
-+++ b/drivers/media/dvb/frontends/dib3000mb.c
-@@ -15,9 +15,9 @@
-  * Acknowledgements
-  *
-  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
-- *  sources, on which this driver (and the dvb-dibusb) are based.
-+ *  sources, on which this driver (and dibusb) are based.
-  *
-- * see Documentation/dvb/README.dibusb for more information
-+ * see Documentation/dvb/README.dvb-usb for more information
-  *
-  */
- 
-diff --git a/drivers/media/dvb/frontends/dib3000mc.c b/drivers/media/dvb/frontends/dib3000mc.c
-index 9867347..c41059c 100644
---- a/drivers/media/dvb/frontends/dib3000mc.c
-+++ b/drivers/media/dvb/frontends/dib3000mc.c
-@@ -15,9 +15,9 @@
-  * Acknowledgements
-  *
-  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
-- *  sources, on which this driver (and the dvb-dibusb) are based.
-+ *  sources, on which this driver (and dibusb) are based.
-  *
-- * see Documentation/dvb/README.dibusb for more information
-+ * see Documentation/dvb/README.dvb-usb for more information
-  *
-  */
- #include <linux/kernel.h>
+- Thomas Hisch
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
