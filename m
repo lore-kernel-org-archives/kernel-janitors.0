@@ -1,84 +1,74 @@
-From: "Oz Hammons" <hammonsoz@acsisinc.com>
-Date: Sun, 02 Jul 2006 01:15:22 +0000
-Subject: [KJ] with disof
-Message-Id: <000001c69d74$fd975b80$c335a8c0@inq99>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1061868730=="
+From: Florian Westphal <fw-kernel@strlen.de>
+Date: Fri, 21 Jul 2006 15:53:00 +0000
+Subject: [KJ] [PATCH] drivers/ieee1394/ohci1394.c fix kzalloc error handling
+Message-Id: <20060721155300.GA14244@Chamillionaire.breakpoint.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+From: Florian Westphal <florian.westphal@strlen.de>
 
---===============1061868730==
-Content-Type: multipart/alternative;
-    boundary="----------=_1151802723-22449-755"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Always kfree() d->prg_bus and d->buf_bus.
+Make sure buf_bus/prg_bus are not NULL before using them.
 
-This is a multi-part message in MIME format...
+Signed-off-by: Florian Westphal <florian.westphal@strlen.de>                                                   
 
-------------=_1151802723-22449-755
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+---
 
-Hi,
+alloc_dma_rcv_ctx() kzallocs a few bufs and calls
+free_dma_rcv_ctx() for cleanup in case an error occurs.
+free_dma_rcv_ctx() may handle such error conditions incorrect, e.g.
+if d->buf_bus is NULL.
+Also, if the kzalloc for buf_cpu failed (but not buf_bus)
+buf_bus is not freed (same goes for prg_bus).
 
-=20
-V / / A G R A from 3 , 33 $=20
-and man y other at http://cervasedalion.com
--
--
--
--
--
--
-Yes, yes, we know, thank you, said Tonks swiftly. On, on, get on -
-And she shoved Harry forwards towards the steps, past the conductor, who
-goggled at Harry as he passed.
-Ere - its Any -!
-
-
-------------=_1151802723-22449-755
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,<BR>
-<DIV>&nbsp;</DIV>
-<STRONG> V / / A G R A </STRONG> from 3 , 33 $ <BR> and man y other at <A h=
-ref=3D"http://cervasedalion.com">http://cervasedalion.com</A></DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>Yes, yes, we know, thank you, said Tonks swiftly. On, on, get on -<BR>
-And she shoved Harry forwards towards the steps, past the conductor, who go=
-ggled at Harry as he passed.<BR>
-Ere - its Any -!<BR></DIV></BODY></HTML>
-------------=_1151802723-22449-755--
-
---===============1061868730==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+diff --git a/drivers/ieee1394/ohci1394.c b/drivers/ieee1394/ohci1394.c
+index d4bad67..5138032 100644
+--- a/drivers/ieee1394/ohci1394.c
++++ b/drivers/ieee1394/ohci1394.c
+@@ -2918,7 +2918,7 @@ static void free_dma_rcv_ctx(struct dma_
+ 
+ 	DBGMSG("Freeing dma_rcv_ctx %d", d->ctx);
+ 
+-	if (d->buf_cpu) {
++	if (d->buf_cpu && d->buf_bus) {
+ 		for (i=0; i<d->num_desc; i++)
+ 			if (d->buf_cpu[i] && d->buf_bus[i]) {
+ 				pci_free_consistent(
+@@ -2926,10 +2926,12 @@ static void free_dma_rcv_ctx(struct dma_
+ 					d->buf_cpu[i], d->buf_bus[i]);
+ 				OHCI_DMA_FREE("consistent dma_rcv buf[%d]", i);
+ 			}
+-		kfree(d->buf_cpu);
+-		kfree(d->buf_bus);
+ 	}
+-	if (d->prg_cpu) {
++
++	kfree(d->buf_cpu);
++	kfree(d->buf_bus);
++
++	if (d->prg_cpu && d->prg_bus) {
+ 		for (i=0; i<d->num_desc; i++)
+ 			if (d->prg_cpu[i] && d->prg_bus[i]) {
+ 				pci_pool_free(d->prg_pool, d->prg_cpu[i], d->prg_bus[i]);
+@@ -2937,9 +2939,11 @@ static void free_dma_rcv_ctx(struct dma_
+ 			}
+ 		pci_pool_destroy(d->prg_pool);
+ 		OHCI_DMA_FREE("dma_rcv prg pool");
+-		kfree(d->prg_cpu);
+-		kfree(d->prg_bus);
+ 	}
++
++	kfree(d->prg_cpu);
++	kfree(d->prg_bus);
++
+ 	kfree(d->spb);
+ 
+ 	/* Mark this context as freed. */
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1061868730==--
