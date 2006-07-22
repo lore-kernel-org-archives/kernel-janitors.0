@@ -1,91 +1,40 @@
-From: "Louie Cull" <cullilou@friendlynet.com>
-Date: Sun, 30 Jul 2006 11:08:43 +0000
-Subject: Re: [KJ] deqaiVIAjAGRA
-Message-Id: <000001c6b3c8$853e46c0$bb1fa8c0@uax87>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0126150071=="
+From: augusta <mrsaugustabig@kata.com>
+Date: Sat, 22 Jul 2006 15:37:19 +0000
+Subject: [KJ] goodluck
+Message-Id: <20060722153719.3521.qmail@sv003.web.whcity.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
---===============0126150071==
-Content-Type: multipart/alternative;
-    boundary="----------=_1154258004-7532-607"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Dear beloved friend, 
 
-This is a multi-part message in MIME format...
+Greetings in the name of Lord Jesus Christ, I am former Alhaja Fatima Madu,now Mrs. Augusta Madu a widow to late Alhaji Sheik Madu, I am 51 years old and now a new Christian convert, suffering from long time cancer of the breast. 
 
-------------=_1154258004-7532-607
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+From all indications my condition is really deteriorating and it's quite obvious that I may not live long according to my doctors, this is because the cancer stage has gotten to a very bad stage. 
+My late husband late Alhaji Sheik Madu, was killed during the USA raid against terrorism in Afghanistan, and during the period of our marriage couldn't produce any child. 
 
-Hi,
-=20
-VIAjAGRA $3 . 35
-CIAjALIS $3 . 75
-VALjLIUM $1 . 25
-AMjMBIEN
-=20
-http://www.lonedemno.com
-=20
-,
-,
-,
-,
-,
-they should be here soon.
-Right on cue the door opened and the suspicious public employees
-filed in, each carrying a folding chair. Admiral Benbow led the way;
+My late husband was very wealthy, who made his money from the Afghanistan's government, hence I inherited all his business and wealth after his death, the doctor has advised me that I may not live for more that six months, so I now decide to divide this wealth in order to contribute to the development of the churches in Africa, America, Asia and Europe and for humanity in general. 
+
+I selected you after visiting the website and i prayed over it, so I am willing to donate the sum of $10 million US Dollar to you on behalf of your organization to help in reaching the the less privileged and the development of the gospel of our lord Jesus Christ, since I am very sick to handle this my dream on my own. 
+
+I want you to know that this fund is in resently in Security Company in Switzerland, where my late husband deposited it as a family treasure,because the security company never knows that the content in the deposited consignment is money as they are not allowed to keep money for clients. So and upon your reply I will instruct my attorney Barrister Michael Gill Holonis, who presently is in West Africa distributing relief materials to victims of bomb blast in Sierra-Leone, to file in an application of withdrawal and for a change of names on the consignment to your favor. 
+
+Lastly, I honestly pray that this money/donation when transferred to you on behalf of your organization will be used for the said purpose and properly too, because I have come to find out that wealth acquisition without Christ is vanity. 
+
+Please note that until this donation/consignment is signed and transferred into your account, I will strongly insist that this transaction most be keep a top secret. 
+May the grace of our lord Jesus Christ, the love of God, and the fellowship of God be with you and your family as I wait your gentle and kind response to this mail. Reply through this email address: 
+
+Yours in Christ, 
+Mrs. Augusta Madu 
 
 
-------------=_1154258004-7532-607
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,</DIV>
-<DIV>&nbsp;</DIV>
-<DIV><DIV>VIAjAGRA $3 . 35</DIV>
-<DIV>CIAjALIS $3 . 75</DIV>
-<DIV>VALjLIUM $1 . 25</DIV>
-<DIV>AMjMBIEN</DIV>
-</DIV>
-<DIV>&nbsp;</DIV>
-<DIV><A href=3D"http://www.lonedemno.com">http://www.lonedemno.com</A></DIV>
-<DIV>&nbsp;</DIV>
-<DIV>,</DIV>
-<DIV>,</DIV>
-<DIV>,</DIV>
-<DIV>,</DIV>
-<DIV>,</DIV>
-<DIV>they should be here soon.<BR>
- Right  on  cue  the  door opened and the suspicious public  employees<BR>
-filed  in, each carrying a folding chair. Admiral Benbow led the  way;<BR><=
-/DIV></BODY></HTML>
-------------=_1154258004-7532-607--
 
---===============0126150071==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0126150071==--
