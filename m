@@ -1,38 +1,75 @@
-From: augusta <mrsaugustabig@kata.com>
-Date: Sat, 22 Jul 2006 15:37:19 +0000
-Subject: [KJ] goodluck
-Message-Id: <20060722153719.3521.qmail@sv003.web.whcity.de>
+From: "" <areaway@africamail.com>
+Date: Mon, 24 Jul 2006 13:51:36 +0000
+Subject: [KJ] Ride on the big wave of opportunity presented by this stock.,
+Message-Id: <98623415438258.3BE065381E@3N16LX3>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+If you know what switching from one trade strategy to another feels like, t=
+his is for you. What you need is market winners pointed out before they mak=
+e it big!=20
+This stock is fertile ground for investors who want to be the first harvest=
+ers. There=92s clear evidence of that.
 
-Dear beloved friend, 
+The alert is ON!=20
 
-Greetings in the name of Lord Jesus Christ, I am former Alhaja Fatima Madu,now Mrs. Augusta Madu a widow to late Alhaji Sheik Madu, I am 51 years old and now a new Christian convert, suffering from long time cancer of the breast. 
-
-From all indications my condition is really deteriorating and it's quite obvious that I may not live long according to my doctors, this is because the cancer stage has gotten to a very bad stage. 
-My late husband late Alhaji Sheik Madu, was killed during the USA raid against terrorism in Afghanistan, and during the period of our marriage couldn't produce any child. 
-
-My late husband was very wealthy, who made his money from the Afghanistan's government, hence I inherited all his business and wealth after his death, the doctor has advised me that I may not live for more that six months, so I now decide to divide this wealth in order to contribute to the development of the churches in Africa, America, Asia and Europe and for humanity in general. 
-
-I selected you after visiting the website and i prayed over it, so I am willing to donate the sum of $10 million US Dollar to you on behalf of your organization to help in reaching the the less privileged and the development of the gospel of our lord Jesus Christ, since I am very sick to handle this my dream on my own. 
-
-I want you to know that this fund is in resently in Security Company in Switzerland, where my late husband deposited it as a family treasure,because the security company never knows that the content in the deposited consignment is money as they are not allowed to keep money for clients. So and upon your reply I will instruct my attorney Barrister Michael Gill Holonis, who presently is in West Africa distributing relief materials to victims of bomb blast in Sierra-Leone, to file in an application of withdrawal and for a change of names on the consignment to your favor. 
-
-Lastly, I honestly pray that this money/donation when transferred to you on behalf of your organization will be used for the said purpose and properly too, because I have come to find out that wealth acquisition without Christ is vanity. 
-
-Please note that until this donation/consignment is signed and transferred into your account, I will strongly insist that this transaction most be keep a top secret. 
-May the grace of our lord Jesus Christ, the love of God, and the fellowship of God be with you and your family as I wait your gentle and kind response to this mail. Reply through this email address: 
-
-Yours in Christ, 
-Mrs. Augusta Madu 
+Get QEGY First Thing Today!
+This Is Going To Explode!
+Check out for HOT NEWS!
 
 
+QUANTUM ENERGY INC (QEGY)=20
+CURRENT_PRICE: $2.34 GET IT N0W!
 
+About the company Quantum Energy is a publicly traded growth orientated oil=
+ and gas exploration company. The objective is to seek out and define oppor=
+tunities that represent a low risk 0pp0rtunity to develop positive cash flo=
+w. As well, the company aims to define larger projects that can be develope=
+d with Joint Venture partners or be entered into by a Joint Venture.
 
+Red Hot News=20
+QUANTUM ENERGY INC. PURCHASES NEW FACILITY CORSICANA TEXAS.
+
+July 20, 2006 Quantum Energy, Inc. (QEGY) announced that its joint venture =
+partner, JMT Resources, Ltd. has entered into a contract to purchase a ten =
+acre facility yard in Corsicana, Texas. The acquisition was formerly the fa=
+cilities yard for Mobile Oil, and is adjacent to the Corsicana Field, which=
+ it operates. The site contains an assortment of oil field equipment that t=
+he joint venture partnership will utilize in its field operations. The acqu=
+isition also gives the JV partnership surface ownership of its water inject=
+ion disposal well, which is in the permitting process with the Texas Railro=
+ad Commission. Ownership of this parcel will reduce operating costs; it wil=
+l also give the JV partnership the option to add more injection disposal we=
+lls on this site, while housing its own redevelopment operations.
+
+Due to the substantially increased Barnett Shale drilling activities in Joh=
+nson and surrounding counties, there is an enormous need for disposal optio=
+ns of high chloride (salt) water, which is used in the stimulation of Barne=
+tt Shale wells. Operators in the area are required to dispose of this treat=
+ed water in sanctioned disposal zones. In this area, the zone most prevalen=
+tly used is the Woodbine, which is the depth of the well the partnership is=
+ currently permitting. Demand for disposal facilities is substantial. Opera=
+tors have resorted to trucking their treated water several hours from locat=
+ion for disposal. Current disposal rates are $2 per barrel and trucks will =
+carry 150 to 200 barrel capacities. It is estimated that the JV partnership=
+ will be able to dispose of approximately 5,000 barrels of treated water pe=
+r day. This operation will allow the JV partnership to attain substantial c=
+ash flow from this ancillary oil field operation reducing its reliance on o=
+utside capital. It is expected that the water disposal well will be operati=
+onal during the fourth quarter of 2006. This facility would also be availab=
+le for disposal of waste water recovered from the Nacatoch wells in the JV =
+Polymer project as well. Ultimately, the disposal fluid from the polymer wi=
+ll be quite significant once the project passes from the pilot phase into f=
+ull development. Correspondingly, the availability of the water disposal we=
+ll that is owned by the JV partnership will lead to reduced costs and highe=
+r efficiencies.=20
+
+Take a closer look at this stock =96 it is most certainly underestimated.
+
+I wish you lots of luck and a big buck to make!
 
 _______________________________________________
 Kernel-janitors mailing list
