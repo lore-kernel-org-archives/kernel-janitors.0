@@ -1,77 +1,91 @@
-From: "derate" <derateasheville@asia.com>
-Date: Sun, 23 Jul 2006 15:30:23 +0000
-Subject: [KJ] This stock boasts one of the greatest opportunities on the
-Message-Id: <46626138359978.AF1CA1A49C@X0AHU>
+From: Lars Noschinski <lars@public.noschinski.de>
+Date: Mon, 24 Jul 2006 20:20:41 +0000
+Subject: [KJ] [PATCH] dib3000 documentation reference fixup
+Message-Id: <20060724202041.2668.15122.stgit@vertikal.home.noschinski.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The life of a trader is full of alerts and stresses. I guess you know that =
-just as well as I do. You need something to guide you through the hurdles =
-=96 like some insider stock facts that will drive you to the top!=20
-There are sure facts which can be understood in one single way. This stock =
-is destined to skyrocket very soon!
+From: Lars Noschinski <lars@public.noschinski.de>
 
-The alert is ON!=20
+dib3000 source files refered to a documentation file which was removed a year
+ago by b6a235b1186dda0800c8bedc2526830a4a36b44e. Fix this up.
 
-Get QEGY First Thing Today!
-This Is Going To Explode!
-Check out for HOT NEWS!
+Signed-off-by: Lars Noschinski <lars@public.noschinski.de>
+---
 
+ drivers/media/dvb/frontends/dib3000-common.h |    4 ++--
+ drivers/media/dvb/frontends/dib3000.h        |    4 ++--
+ drivers/media/dvb/frontends/dib3000mb.c      |    4 ++--
+ drivers/media/dvb/frontends/dib3000mc.c      |    4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-QUANTUM ENERGY INC (QEGY)=20
-CURRENT_PRICE: $2.34 GET IT N0W!
-
-About the company Quantum Energy is a publicly traded growth orientated oil=
- and gas exploration company. The objective is to seek out and define oppor=
-tunities that represent a low risk 0pp0rtunity to develop positive cash flo=
-w. As well, the company aims to define larger projects that can be develope=
-d with Joint Venture partners or be entered into by a Joint Venture.
-
-Red Hot News=20
-QUANTUM ENERGY INC. PURCHASES NEW FACILITY CORSICANA TEXAS.
-
-July 20, 2006 Quantum Energy, Inc. (QEGY) announced that its joint venture =
-partner, JMT Resources, Ltd. has entered into a contract to purchase a ten =
-acre facility yard in Corsicana, Texas. The acquisition was formerly the fa=
-cilities yard for Mobile Oil, and is adjacent to the Corsicana Field, which=
- it operates. The site contains an assortment of oil field equipment that t=
-he joint venture partnership will utilize in its field operations. The acqu=
-isition also gives the JV partnership surface ownership of its water inject=
-ion disposal well, which is in the permitting process with the Texas Railro=
-ad Commission. Ownership of this parcel will reduce operating costs; it wil=
-l also give the JV partnership the option to add more injection disposal we=
-lls on this site, while housing its own redevelopment operations.
-
-Due to the substantially increased Barnett Shale drilling activities in Joh=
-nson and surrounding counties, there is an enormous need for disposal optio=
-ns of high chloride (salt) water, which is used in the stimulation of Barne=
-tt Shale wells. Operators in the area are required to dispose of this treat=
-ed water in sanctioned disposal zones. In this area, the zone most prevalen=
-tly used is the Woodbine, which is the depth of the well the partnership is=
- currently permitting. Demand for disposal facilities is substantial. Opera=
-tors have resorted to trucking their treated water several hours from locat=
-ion for disposal. Current disposal rates are $2 per barrel and trucks will =
-carry 150 to 200 barrel capacities. It is estimated that the JV partnership=
- will be able to dispose of approximately 5,000 barrels of treated water pe=
-r day. This operation will allow the JV partnership to attain substantial c=
-ash flow from this ancillary oil field operation reducing its reliance on o=
-utside capital. It is expected that the water disposal well will be operati=
-onal during the fourth quarter of 2006. This facility would also be availab=
-le for disposal of waste water recovered from the Nacatoch wells in the JV =
-Polymer project as well. Ultimately, the disposal fluid from the polymer wi=
-ll be quite significant once the project passes from the pilot phase into f=
-ull development. Correspondingly, the availability of the water disposal we=
-ll that is owned by the JV partnership will lead to reduced costs and highe=
-r efficiencies.=20
-
-Enter the opportunity with this stock, and you=92ll leave with totally hand=
-some gains.
-
-Did you get everything you want in life? Not yet? Hope you will soon, then!
-
+diff --git a/drivers/media/dvb/frontends/dib3000-common.h b/drivers/media/dvb/frontends/dib3000-common.h
+index be1c0d3..03a22a7 100644
+--- a/drivers/media/dvb/frontends/dib3000-common.h
++++ b/drivers/media/dvb/frontends/dib3000-common.h
+@@ -17,9 +17,9 @@
+  * Acknowledgements
+  *
+  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
+- *  sources, on which this driver (and the dvb-dibusb) are based.
++ *  sources, on which this driver (and dibusb) are based.
+  *
+- * see Documentation/dvb/README.dibusb for more information
++ * see Documentation/dvb/README.dvb-usb for more information
+  *
+  */
+ 
+diff --git a/drivers/media/dvb/frontends/dib3000.h b/drivers/media/dvb/frontends/dib3000.h
+index ec92762..9353518 100644
+--- a/drivers/media/dvb/frontends/dib3000.h
++++ b/drivers/media/dvb/frontends/dib3000.h
+@@ -15,9 +15,9 @@
+  * Acknowledgements
+  *
+  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
+- *  sources, on which this driver (and the dvb-dibusb) are based.
++ *  sources, on which this driver (and dibusb) are based.
+  *
+- * see Documentation/dvb/README.dibusb for more information
++ * see Documentation/dvb/README.dvb-usb for more information
+  *
+  */
+ 
+diff --git a/drivers/media/dvb/frontends/dib3000mb.c b/drivers/media/dvb/frontends/dib3000mb.c
+index 5302e11..a5211b1 100644
+--- a/drivers/media/dvb/frontends/dib3000mb.c
++++ b/drivers/media/dvb/frontends/dib3000mb.c
+@@ -15,9 +15,9 @@
+  * Acknowledgements
+  *
+  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
+- *  sources, on which this driver (and the dvb-dibusb) are based.
++ *  sources, on which this driver (and dibusb) are based.
+  *
+- * see Documentation/dvb/README.dibusb for more information
++ * see Documentation/dvb/README.dvb-usb for more information
+  *
+  */
+ 
+diff --git a/drivers/media/dvb/frontends/dib3000mc.c b/drivers/media/dvb/frontends/dib3000mc.c
+index 9867347..c41059c 100644
+--- a/drivers/media/dvb/frontends/dib3000mc.c
++++ b/drivers/media/dvb/frontends/dib3000mc.c
+@@ -15,9 +15,9 @@
+  * Acknowledgements
+  *
+  *  Amaury Demol (ademol@dibcom.fr) from DiBcom for providing specs and driver
+- *  sources, on which this driver (and the dvb-dibusb) are based.
++ *  sources, on which this driver (and dibusb) are based.
+  *
+- * see Documentation/dvb/README.dibusb for more information
++ * see Documentation/dvb/README.dvb-usb for more information
+  *
+  */
+ #include <linux/kernel.h>
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
