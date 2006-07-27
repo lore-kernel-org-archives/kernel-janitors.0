@@ -1,24 +1,24 @@
-From: "bebe mooney" <tanapotts@ainmarh.com>
-Date: Sat, 15 Jul 2006 06:16:35 +0000
-Subject: Re: [KJ] Luxury
-Message-Id: <001301c6a7d5$c87ac700$bd74a196@ctfq>
+From: "aurelea le" <kilelowery@borisex.com>
+Date: Thu, 27 Jul 2006 21:56:59 +0000
+Subject: [KJ] Gold n diamonds
+Message-Id: <001401c6b1c7$81260a80$ec7d6c42@anxw>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1298717399=="
+Content-Type: multipart/mixed; boundary="===============0478944083=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1298717399==
+--===============0478944083==
 Content-Type: multipart/alternative;
-    boundary="----------=_1152947546-9779-242"
+    boundary="----------=_1154041912-25886-43"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1152947546-9779-242
+------------=_1154041912-25886-43
 Content-Type: text/plain;
      charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -26,7 +26,7 @@ Content-Disposition: inline
 
 
 
-TOP BRANDS - LOW LOW PRICES
+TOP BRANDS - LOW LOW COST
 
 Jewelry * Handbags * Pens * Watches * Neckties * Clutches * Wallets=20
 
@@ -34,19 +34,19 @@ Leather, silk and white gold sound good? Visit our site for real photos.
 Everything comes with a certificate, tags and all the extras, plus a warran=
 ty.
 
-http://fluong.com/luxury/
+http://sunderton.com/luxury/
 
-showy mentzelia Clanwilliam cedar band spectrum
-gravity wind sin-clouded diamond broker
-family skeleton World calendar snake eggplant
-dowel plate delta wing bell chuck
-fruit bearing quasi certificate ridge-seeded
-wagon wheel Levantine sponge service wall
-academy board firmament blue fall grape
-bear brush coal refiner sky-aspiring
-world-advancing short-keeled front-foot
+self-vaunting stocking making woad vat
+sparrow hawk deep-sunk chain conveyer
+fellow exile raglan sleeve rover ball
+hard-drawn ostrich fern Trans-danubian
+rice-paper tree staggering bob bond course
+float fishing stomach piece sword cutlery
+Non-jew melon apple well-arranged
+barley reel rubber-spreading vice-wardenship
+word painting twelve-shilling re-extraction
 
-------------=_1152947546-9779-242
+------------=_1154041912-25886-43
 Content-Type: text/html;
      charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -61,28 +61,29 @@ Content-Disposition: inline
 </HEAD>
 <BODY>
 <DIV><FONT face=3DArial size=3D2>
-<p>TOP BRANDS - LOW LOW PRICES</p>
+<p>TOP BRANDS - LOW LOW COST</p>
 <p>Jewelry * Handbags * Pens * Watches * Neckties * Clutches * Wallets </p>
 <p>Leather, silk and white gold sound good? Visit our site for real photos.=
 <br>
 Everything comes with a certificate, tags and all the extras, plus a warran=
 ty.</p>
-<A HREF=3D"http://fluong.com/luxury/">http://fluong.com/luxury/</A><BR>
+<A HREF=3D"http://sunderton.com/luxury/">http://sunderton.com/luxury/</A><B=
+R>
 <BR>
-showy mentzelia Clanwilliam cedar band spectrum<BR>
-gravity wind sin-clouded diamond broker<BR>
-family skeleton World calendar snake eggplant<BR>
-dowel plate delta wing bell chuck<BR>
-fruit bearing quasi certificate ridge-seeded<BR>
-wagon wheel Levantine sponge service wall<BR>
-academy board firmament blue fall grape<BR>
-bear brush coal refiner sky-aspiring<BR>
-world-advancing short-keeled front-foot<BR>
+self-vaunting stocking making woad vat<BR>
+sparrow hawk deep-sunk chain conveyer<BR>
+fellow exile raglan sleeve rover ball<BR>
+hard-drawn ostrich fern Trans-danubian<BR>
+rice-paper tree staggering bob bond course<BR>
+float fishing stomach piece sword cutlery<BR>
+Non-jew melon apple well-arranged<BR>
+barley reel rubber-spreading vice-wardenship<BR>
+word painting twelve-shilling re-extraction<BR>
 </FONT></DIV></BODY></HTML>
 
-------------=_1152947546-9779-242--
+------------=_1154041912-25886-43--
 
---===============1298717399==
+--===============0478944083==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -93,4 +94,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1298717399==--
+--===============0478944083==--
