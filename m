@@ -1,14 +1,14 @@
 From: nhorman@tuxdriver.com
-Date: Fri, 28 Jul 2006 20:08:12 +0000
-Subject: [KJ]  audit return code handling for kernel_thread [10/11]
-Message-Id: <200607282008.k6SK8C0A009703@ra.tuxdriver.com>
+Date: Fri, 28 Jul 2006 20:08:19 +0000
+Subject: [KJ]  audit return code handling for kernel_thread [11/11]
+Message-Id: <200607282008.k6SK8J6n009719@ra.tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 In-Reply-To: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, paulus@au.ibm.com
+To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, tony.luck@intel.com
 
 Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
     Problems seemed to fall into 3 main categories:
@@ -36,21 +36,19 @@ Neil
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- drivers/macintosh/therm_pm72.c |    4 ++++
- 1 file changed, 4 insertions(+)
---- a/drivers/macintosh/therm_pm72.c
-+++ b/drivers/macintosh/therm_pm72.c
-@@ -1769,6 +1769,10 @@ static void start_control_loops(void)
- 	init_completion(&ctrl_complete);
+ arch/ia64/sn/kernel/xpc_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- a/arch/ia64/sn/kernel/xpc_main.c
++++ b/arch/ia64/sn/kernel/xpc_main.c
+@@ -583,7 +583,7 @@ xpc_activate_partition(struct xpc_partit
  
- 	ctrl_task = kernel_thread(main_control_loop, NULL, SIGCHLD | CLONE_KERNEL);
-+	if (ctrl_task < 0) {
-+		printk(KERN_CRIT "could not start control thread\n");
-+		ctrl_task = 0;
-+	}
- }
+ 	pid = kernel_thread(xpc_activating, (void *) ((u64) partid), 0);
  
- /*
+-	if (unlikely(pid <= 0)) {
++	if (unlikely(pid < 0)) {
+ 		spin_lock_irqsave(&part->act_lock, irq_flags);
+ 		part->act_state = XPC_P_INACTIVE;
+ 		XPC_SET_REASON(part, xpcCloneKThreadFailed, __LINE__);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
