@@ -1,14 +1,14 @@
 From: nhorman@tuxdriver.com
-Date: Fri, 28 Jul 2006 20:07:35 +0000
-Subject: [KJ]  audit return code handling for kernel_thread [5/11]
-Message-Id: <200607282007.k6SK7ZN7009626@ra.tuxdriver.com>
+Date: Fri, 28 Jul 2006 20:07:42 +0000
+Subject: [KJ]  audit return code handling for kernel_thread [6/11]
+Message-Id: <200607282007.k6SK7gxW009640@ra.tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 In-Reply-To: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: fpavlic@de.ibm.com, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com
+To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, torvalds@osdl.org
 
 Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
     Problems seemed to fall into 3 main categories:
@@ -36,26 +36,21 @@ Neil
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- drivers/s390/net/lcs.c         |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
---- a/drivers/s390/net/lcs.c
-+++ b/drivers/s390/net/lcs.c
-@@ -1729,11 +1729,13 @@ lcs_start_kernel_thread(struct lcs_card 
+ init/main.c                   |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+--- a/init/main.c
++++ b/init/main.c
+@@ -389,7 +389,10 @@ #endif
+ static void noinline rest_init(void)
+ 	__releases(kernel_lock)
  {
- 	LCS_DBF_TEXT(5, trace, "krnthrd");
- 	if (lcs_do_start_thread(card, LCS_RECOVERY_THREAD))
--		kernel_thread(lcs_recovery, (void *) card, SIGCHLD);
-+		if (kernel_thread(lcs_recovery, (void *) card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start lcs recovery thread\n");
- #ifdef CONFIG_IP_MULTICAST
- 	if (lcs_do_start_thread(card, LCS_SET_MC_THREAD))
--		kernel_thread(lcs_register_mc_addresses,
--				(void *) card, SIGCHLD);
-+		if (kernel_thread(lcs_register_mc_addresses,
-+				(void *) card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start lcs mc thread\n");
- #endif
- }
+-	kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND);
++	if (kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND) < 0) {
++		printk(KERN_CRIT "Unable to start init task!\n");
++		BUG();
++	}
+ 	numa_default_policy();
+ 	unlock_kernel();
  
 _______________________________________________
 Kernel-janitors mailing list
