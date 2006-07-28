@@ -1,14 +1,14 @@
 From: nhorman@tuxdriver.com
-Date: Fri, 28 Jul 2006 20:07:49 +0000
-Subject: [KJ]  audit return code handling for kernel_thread [7/11]
-Message-Id: <200607282007.k6SK7nln009654@ra.tuxdriver.com>
+Date: Fri, 28 Jul 2006 20:07:57 +0000
+Subject: [KJ]  audit return code handling for kernel_thread [8/11]
+Message-Id: <200607282007.k6SK7v9j009670@ra.tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 In-Reply-To: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, paulus@au.ibm.com
+To: bcollins@debian.org, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com
 
 Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
     Problems seemed to fall into 3 main categories:
@@ -36,20 +36,20 @@ Neil
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- drivers/macintosh/mediabay.c     |    3 ++-
+ drivers/ieee1394/nodemgr.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
---- a/drivers/macintosh/mediabay.c
-+++ b/drivers/macintosh/mediabay.c
-@@ -699,7 +699,8 @@ static int __devinit media_bay_attach(st
+--- a/drivers/ieee1394/nodemgr.c
++++ b/drivers/ieee1394/nodemgr.c
+@@ -426,7 +426,8 @@ static ssize_t fw_set_rescan(struct bus_
+ 	 * something stupid and spawn this a lot of times, but that's
+ 	 * root's fault. */
+ 	if (state = 1)
+-		kernel_thread(nodemgr_rescan_bus_thread, NULL, CLONE_KERNEL);
++		if (kernel_thread(nodemgr_rescan_bus_thread, NULL, CLONE_KERNEL) < 0)
++			printk(KERN_WARNING "Could not start 1394 bus rescan thread\n");
  
- 	/* Startup kernel thread */
- 	if (i = 0)
--		kernel_thread(media_bay_task, NULL, CLONE_KERNEL);
-+		if (kernel_thread(media_bay_task, NULL, CLONE_KERNEL) < 0)
-+			printk(KERN_WARNING "Could not start media bay task\n");
- 
- 	return 0;
- 
+ 	return count;
+ }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
