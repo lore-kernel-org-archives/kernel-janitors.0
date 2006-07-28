@@ -1,14 +1,14 @@
 From: nhorman@tuxdriver.com
-Date: Fri, 28 Jul 2006 20:08:05 +0000
-Subject: [KJ]  audit return code handling for kernel_thread [9/11]
-Message-Id: <200607282008.k6SK85lh009691@ra.tuxdriver.com>
+Date: Fri, 28 Jul 2006 20:08:12 +0000
+Subject: [KJ]  audit return code handling for kernel_thread [10/11]
+Message-Id: <200607282008.k6SK8C0A009703@ra.tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 In-Reply-To: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: fpavlic@de.ibm.com, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com
+To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, paulus@au.ibm.com
 
 Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
     Problems seemed to fall into 3 main categories:
@@ -36,28 +36,21 @@ Neil
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- drivers/s390/net/qeth_main.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
---- a/drivers/s390/net/qeth_main.c
-+++ b/drivers/s390/net/qeth_main.c
-@@ -1048,11 +1048,14 @@ qeth_start_kernel_thread(struct qeth_car
- 		return;
+ drivers/macintosh/therm_pm72.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+--- a/drivers/macintosh/therm_pm72.c
++++ b/drivers/macintosh/therm_pm72.c
+@@ -1769,6 +1769,10 @@ static void start_control_loops(void)
+ 	init_completion(&ctrl_complete);
  
- 	if (qeth_do_start_thread(card, QETH_SET_IP_THREAD))
--		kernel_thread(qeth_register_ip_addresses, (void *)card,SIGCHLD);
-+		if (kernel_thread(qeth_register_ip_addresses, (void *)card,SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start qeth register thread\n");
- 	if (qeth_do_start_thread(card, QETH_SET_PROMISC_MODE_THREAD))
--		kernel_thread(qeth_set_promisc_mode, (void *)card, SIGCHLD);
-+		if (kernel_thread(qeth_set_promisc_mode, (void *)card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start qeth prmisc thread\n");
- 	if (qeth_do_start_thread(card, QETH_RECOVER_THREAD))
--		kernel_thread(qeth_recover, (void *) card, SIGCHLD);
-+		if (kernel_thread(qeth_recover, (void *) card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start qeth recovery thread\n");
+ 	ctrl_task = kernel_thread(main_control_loop, NULL, SIGCHLD | CLONE_KERNEL);
++	if (ctrl_task < 0) {
++		printk(KERN_CRIT "could not start control thread\n");
++		ctrl_task = 0;
++	}
  }
  
- 
+ /*
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
