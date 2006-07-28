@@ -1,12 +1,14 @@
 From: nhorman@tuxdriver.com
-Date: Fri, 28 Jul 2006 20:07:05 +0000
-Subject: [KJ]  audit return code handling for kernel_thread [1/11]
-Message-Id: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
+Date: Fri, 28 Jul 2006 20:07:13 +0000
+Subject: [KJ]  audit return code handling for kernel_thread [2/11]
+Message-Id: <200607282007.k6SK7DhX009584@ra.tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
+In-Reply-To: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, paulus@au.ibm.com
+To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, schwidefsky@de.ibm.com
 
 Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
     Problems seemed to fall into 3 main categories:
@@ -34,21 +36,22 @@ Neil
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- drivers/macintosh/adb.c        |    4 ++++
- 1 file changed, 4 insertions(+)
---- a/drivers/macintosh/adb.c
-+++ b/drivers/macintosh/adb.c
-@@ -270,6 +270,10 @@ static void
- __adb_probe_task(void *data)
+ arch/s390/mm/cmm.c           |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+--- a/arch/s390/mm/cmm.c
++++ b/arch/s390/mm/cmm.c
+@@ -161,7 +161,10 @@ cmm_thread(void *dummy)
+ static void
+ cmm_start_thread(void)
  {
- 	adb_probe_task_pid = kernel_thread(adb_probe_task, NULL, SIGCHLD | CLONE_KERNEL);
-+	if (adb_probe_task_pid < 0) {
-+		printk(KERN_WARNING "Could not start adb probe task\n");
-+		adb_probe_task_pid = 0;
+-	kernel_thread(cmm_thread, NULL, 0);
++	if (kernel_thread(cmm_thread, NULL, 0) < 0) {
++		printk(KERN_WARNING "Could not start cmm thread\n");
++		clear_bit(0,&cmm_thread_active);
 +	}
  }
  
- static DECLARE_WORK(adb_reset_work, __adb_probe_task, NULL);
+ static void
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
