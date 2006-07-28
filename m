@@ -1,14 +1,14 @@
 From: nhorman@tuxdriver.com
-Date: Fri, 28 Jul 2006 20:07:28 +0000
-Subject: [KJ]  audit return code handling for kernel_thread [4/11]
-Message-Id: <200607282007.k6SK7SW2009612@ra.tuxdriver.com>
+Date: Fri, 28 Jul 2006 20:07:35 +0000
+Subject: [KJ]  audit return code handling for kernel_thread [5/11]
+Message-Id: <200607282007.k6SK7ZN7009626@ra.tuxdriver.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 In-Reply-To: <200607282007.k6SK75MK009573@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com, torvalds@osdl.org
+To: fpavlic@de.ibm.com, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, nhorman@tuxdriver.com
 
 Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
     Problems seemed to fall into 3 main categories:
@@ -36,19 +36,27 @@ Neil
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- init/do_mounts_initrd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -57,7 +57,7 @@ static void __init handle_initrd(void)
+ drivers/s390/net/lcs.c         |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+--- a/drivers/s390/net/lcs.c
++++ b/drivers/s390/net/lcs.c
+@@ -1729,11 +1729,13 @@ lcs_start_kernel_thread(struct lcs_card 
+ {
+ 	LCS_DBF_TEXT(5, trace, "krnthrd");
+ 	if (lcs_do_start_thread(card, LCS_RECOVERY_THREAD))
+-		kernel_thread(lcs_recovery, (void *) card, SIGCHLD);
++		if (kernel_thread(lcs_recovery, (void *) card, SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start lcs recovery thread\n");
+ #ifdef CONFIG_IP_MULTICAST
+ 	if (lcs_do_start_thread(card, LCS_SET_MC_THREAD))
+-		kernel_thread(lcs_register_mc_addresses,
+-				(void *) card, SIGCHLD);
++		if (kernel_thread(lcs_register_mc_addresses,
++				(void *) card, SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start lcs mc thread\n");
+ #endif
+ }
  
- 	current->flags |= PF_NOFREEZE;
- 	pid = kernel_thread(do_linuxrc, "/linuxrc", SIGCHLD);
--	if (pid > 0) {
-+	if (pid >= 0) {
- 		while (pid != sys_wait4(-1, NULL, 0, NULL))
- 			yield();
- 	}
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
