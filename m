@@ -1,67 +1,38 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Date: Sat, 29 Jul 2006 14:50:04 +0000
-Subject: Re: [KJ] audit return code handling for kernel_thread [2/11]
-Message-Id: <20060729145004.GA5733@flint.arm.linux.org.uk>
+From: Stefan Richter <stefanr@s5r6.in-berlin.de>
+Date: Sat, 29 Jul 2006 16:17:52 +0000
+Subject: Re: [KJ] audit return code handling for kernel_thread [8/11]
+Message-Id: <44CB8A30.2080809@s5r6.in-berlin.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200607282007.k6SK7DhX009584@ra.tuxdriver.com> <20060729093704.GD26956@flint.arm.linux.org.uk> <20060729131419.GA6892@localhost.localdomain>
-In-Reply-To: <20060729131419.GA6892@localhost.localdomain>
+References: <200607282007.k6SK7v9j009670@ra.tuxdriver.com>
+In-Reply-To: <200607282007.k6SK7v9j009670@ra.tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neil Horman <nhorman@tuxdriver.com>
-Cc: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com
+To: nhorman@tuxdriver.com
+Cc: bcollins@debian.org, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org
 
-On Sat, Jul 29, 2006 at 09:14:19AM -0400, Neil Horman wrote:
-> On Sat, Jul 29, 2006 at 10:37:04AM +0100, Russell King wrote:
-> > On Fri, Jul 28, 2006 at 04:07:13PM -0400, nhorman@tuxdriver.com wrote:
-> > > Audit/Cleanup of kernel_thread calls, specifically checking of return codes.
-> > >     Problems seemed to fall into 3 main categories:
-> > >     
-> > >     1) callers of kernel_thread were inconsistent about meaning of a zero return
-> > >     code.  Some callers considered a zero return code to mean success, others took
-> > >     it to mean failure.  a zero return code, while not actually possible in the
-> > >     current implementation, should be considered a success (pid 0 is/should be
-> > >     valid). fixed all callers to treat zero return as success
-> > >     
-> > >     2) caller of kernel_thread saved return code of kernel_thread for later use
-> > >     without ever checking its value.  Callers who did this tended to assume a
-> > >     non-zero return was success, and would often wait for a completion queue to be
-> > >     woken up, implying that an error (negative return code) from kernel_thread could
-> > >     lead to deadlock.  Repaired by checking return code at call time, and setting
-> > >     saved return code to zero in the event of an error.
-> > 
-> > This is inconsistent with your assertion that pid 0 "is/should be valid"
-> > above.  If you want '0' to mean "not valid" then it's not a valid return
-> > value from kernel_thread() (and arguably that's true, since pid 0 is
-> > permanently allocated to the idle thread.)
-> > 
-> No its, not, but I can see how my comments might be ambiguous. I want zero to be
-> a valid return code, since we never actually return zero, but we certainly could
-> if we wanted to.  Note that kernel_thread returns an int (not an unsigned int),
-> and as such assuming that a non-zero return code implies success ignores the
-> fact that kernel_thread can return a negative value, which indicates failure.
-> This is what I found, and what my patch fixes.
-> 
-> > I don't particularly care whether you decide to that returning pid 0 from
-> > kernel_thread is valid or not, just that your two points above are at least
-> > consistent with each other.
-> > 
-> My comments in (2) should be made more clear by changing "assume a non-zero
-> return was success" to "assume a negative return was success".  This is what my
-> patch fixes.
+nhorman@tuxdriver.com wrote:
+> --- a/drivers/ieee1394/nodemgr.c
+> +++ b/drivers/ieee1394/nodemgr.c
+> @@ -426,7 +426,8 @@ static ssize_t fw_set_rescan(struct bus_
+>  	 * something stupid and spawn this a lot of times, but that's
+>  	 * root's fault. */
+>  	if (state = 1)
+> -		kernel_thread(nodemgr_rescan_bus_thread, NULL, CLONE_KERNEL);
+> +		if (kernel_thread(nodemgr_rescan_bus_thread, NULL, CLONE_KERNEL) < 0)
+> +			printk(KERN_WARNING "Could not start 1394 bus rescan thread\n");
+>  
+>  	return count;
+>  }
 
-In the first point, you say that you want return of zero to mean success.
-In the second point, you use zero to mark an error event.  That's the
-inconsistency I'm referring to.
-
-So, if we _did_ return zero from kernel_thread, and we had your fix as in
-(2), you'd store zero into the saved return code, which would then be
-interpreted in later code as an error.
-
+Thanks, but (a) we don't need the warnig and (b) we even don't need to 
+spawn a thread at this point. This call to kernel_thread has been 
+removed from git-ieee1394 and -mm earlier this month.
+http://www.kernel.org/git/?p=linux/kernel/git/bcollins/linux1394-2.6.git;a=commitdiff_plain;h@fd89cc54a8a67c81b5aa40b22c4f40b39e47b9
+http://marc.theaimsgroup.com/?l=linux-mm-commits&m5189722112717
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:  2.6 Serial core
+Stefan Richter
+-===-=-=- -== ==-http://arcgraph.de/sr/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
