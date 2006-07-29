@@ -1,7 +1,7 @@
-From: Dave Jones <davej@redhat.com>
-Date: Sat, 29 Jul 2006 16:45:17 +0000
+From: Greg KH <greg@kroah.com>
+Date: Sat, 29 Jul 2006 17:02:28 +0000
 Subject: Re: [KJ] website overhaul
-Message-Id: <20060729164517.GC16946@redhat.com>
+Message-Id: <20060729170228.GA7395@kroah.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060729092458.GG6843@martell.zuzino.mipt.ru>
 In-Reply-To: <20060729092458.GG6843@martell.zuzino.mipt.ru>
@@ -10,22 +10,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Jul 29, 2006 at 01:24:59PM +0400, Alexey Dobriyan wrote:
- > I bet you haven't noticed radical changes at http://kerneljanitors.org/
- > ;-) Firefox users can do View->Page Style->kerneljanitors.org to see
- > historical CSS. I personally find kernel.org CSS SO much nicer.
+On Sat, Jul 29, 2006 at 12:45:17PM -0400, Dave Jones wrote:
+> On Sat, Jul 29, 2006 at 01:24:59PM +0400, Alexey Dobriyan wrote:
+>  > I bet you haven't noticed radical changes at http://kerneljanitors.org/
+>  > ;-) Firefox users can do View->Page Style->kerneljanitors.org to see
+>  > historical CSS. I personally find kernel.org CSS SO much nicer.
+> 
+> Something that's occured to me a number of times was that things
+> like updating the TODO list would be a lot easier if the kj website
+> was a wiki.   Where is it currently hosted ? Did we keep the
+> website at sourceforge? Or did that migrate to osdl with the list?
+> 
+> I'm sure we can find someone willing to give us wiki-space.
 
-Something that's occured to me a number of times was that things
-like updating the TODO list would be a lot easier if the kj website
-was a wiki.   Where is it currently hosted ? Did we keep the
-website at sourceforge? Or did that migrate to osdl with the list?
+Why not just do it on the kernelnewbies wiki?  I think they already have
+an entry for the kerneljanitors project.
 
-I'm sure we can find someone willing to give us wiki-space.
+thanks,
 
-		Dave
-
--- 
-http://www.codemonkey.org.uk
+greg k-h
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
