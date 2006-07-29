@@ -1,77 +1,92 @@
-From: "atavism" <applianceasynchronous@cutey.com>
-Date: Tue, 25 Jul 2006 15:41:23 +0000
-Subject: [KJ] Benefit from this rising stock as it gains popularity.,
-Message-Id: <81071500395547.B7600AD29B@V4HAGT5>
+From: "Alcyone Victorine" <victo@homestreet.com>
+Date: Sat, 29 Jul 2006 18:27:43 +0000
+Subject: Re: [KJ] pimeaVIAjAGRA
+Message-Id: <000001c6b33c$aeaa64d0$ee08a8c0@jtz79>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1578640035=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Have dreams about a new life without a full-time job and with a handsome pa=
-ssive income from stocks? I know what it feels like, so pay attention to wh=
-at=92s below.=20
-Check out these stock highlights which promise a handsome return in just we=
-eks.
+This is a multi-part message in MIME format...
 
-The alert is ON!=20
+--===============1578640035==
+Content-Type: multipart/alternative;
+    boundary="----------=_1154197953-17985-520"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Get QEGY First Thing Today!
-This Is Going To Explode!
-Check out for HOT NEWS!
+This is a multi-part message in MIME format...
+
+------------=_1154197953-17985-520
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Hi,
+=20
+AMjMBIEN
+VIAjAGRA $3 . 35
+CIAjALIS $3 . 75
+VALjLIUM $1 . 25
+=20
+http://www.forismone.com
+=20
+,
+,
+,
+,
+,
+dropped to the ground the stream of bullets was fired at us. Zipping
+through the empty air where we had just been standing.
+Floyd had a large and ugly pistol in his hand now which didnt slow
 
 
-QUANTUM ENERGY INC (QEGY)=20
-CURRENT_PRICE: $2.34 GET IT N0W!
+------------=_1154197953-17985-520
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-About the company Quantum Energy is a publicly traded growth orientated oil=
- and gas exploration company. The objective is to seek out and define oppor=
-tunities that represent a low risk 0pp0rtunity to develop positive cash flo=
-w. As well, the company aims to define larger projects that can be develope=
-d with Joint Venture partners or be entered into by a Joint Venture.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi,</DIV>
+<DIV>&nbsp;</DIV>
+<DIV><DIV>AMjMBIEN</DIV>
+<DIV>VIAjAGRA $3 . 35</DIV>
+<DIV>CIAjALIS $3 . 75</DIV>
+<DIV>VALjLIUM $1 . 25</DIV>
+</DIV>
+<DIV>&nbsp;</DIV>
+<DIV><A href=3D"http://www.forismone.com">http://www.forismone.com</A></DIV>
+<DIV>&nbsp;</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>dropped  to the ground the stream of bullets was fired at us.  Zipping=
+<BR>
+through the empty air where we had just been standing.<BR>
+ Floyd  had a large and ugly pistol in his hand now which didnt  slow<BR></=
+DIV></BODY></HTML>
+------------=_1154197953-17985-520--
 
-Red Hot News=20
-QUANTUM ENERGY INC. PURCHASES NEW FACILITY CORSICANA TEXAS.
-
-July 20, 2006 Quantum Energy, Inc. (QEGY) announced that its joint venture =
-partner, JMT Resources, Ltd. has entered into a contract to purchase a ten =
-acre facility yard in Corsicana, Texas. The acquisition was formerly the fa=
-cilities yard for Mobile Oil, and is adjacent to the Corsicana Field, which=
- it operates. The site contains an assortment of oil field equipment that t=
-he joint venture partnership will utilize in its field operations. The acqu=
-isition also gives the JV partnership surface ownership of its water inject=
-ion disposal well, which is in the permitting process with the Texas Railro=
-ad Commission. Ownership of this parcel will reduce operating costs; it wil=
-l also give the JV partnership the option to add more injection disposal we=
-lls on this site, while housing its own redevelopment operations.
-
-Due to the substantially increased Barnett Shale drilling activities in Joh=
-nson and surrounding counties, there is an enormous need for disposal optio=
-ns of high chloride (salt) water, which is used in the stimulation of Barne=
-tt Shale wells. Operators in the area are required to dispose of this treat=
-ed water in sanctioned disposal zones. In this area, the zone most prevalen=
-tly used is the Woodbine, which is the depth of the well the partnership is=
- currently permitting. Demand for disposal facilities is substantial. Opera=
-tors have resorted to trucking their treated water several hours from locat=
-ion for disposal. Current disposal rates are $2 per barrel and trucks will =
-carry 150 to 200 barrel capacities. It is estimated that the JV partnership=
- will be able to dispose of approximately 5,000 barrels of treated water pe=
-r day. This operation will allow the JV partnership to attain substantial c=
-ash flow from this ancillary oil field operation reducing its reliance on o=
-utside capital. It is expected that the water disposal well will be operati=
-onal during the fourth quarter of 2006. This facility would also be availab=
-le for disposal of waste water recovered from the Nacatoch wells in the JV =
-Polymer project as well. Ultimately, the disposal fluid from the polymer wi=
-ll be quite significant once the project passes from the pilot phase into f=
-ull development. Correspondingly, the availability of the water disposal we=
-ll that is owned by the JV partnership will lead to reduced costs and highe=
-r efficiencies.=20
-
-Focus on this stock and you=92re likely to get a lot.
-
-I wish you realization of all the profits on all your stocks. Keep going!
+--===============1578640035==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1578640035==--
