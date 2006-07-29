@@ -1,64 +1,140 @@
-From: "tom hisch" <t.hisch@gmail.com>
-Date: Tue, 11 Jul 2006 20:48:34 +0000
-Subject: Re: [KJ] [Patch] acpi: remove unnecassary check of
-Message-Id: <8ef77f2e0607111348n19072dco794b02612fec40fe@mail.gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0490411516=="
+From: Neil Horman <nhorman@tuxdriver.com>
+Date: Sat, 29 Jul 2006 20:15:55 +0000
+Subject: Re: [KJ] (re) audit return code handling for kernel_thread [1/3]
+Message-Id: <20060729201555.GB8574@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8ef77f2e0607071044u64f2cf23pa22846e77f0fc3af@mail.gmail.com>
-In-Reply-To: <8ef77f2e0607071044u64f2cf23pa22846e77f0fc3af@mail.gmail.com>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
---===============0490411516==
-Content-Type: multipart/alternative;
-    boundary="----------=_1152650988-17892-624"
-Content-Transfer-Encoding: binary
+References: <20060729201139.GA8574@localhost.localdomain>
+In-Reply-To: <20060729201139.GA8574@localhost.localdomain>
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1152650988-17892-624
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, torvalds@osdl.org, akpm@osdl.org, marcel@holtman.org, fpavlic@de.ibm.com, paulus@au.ibm.com, bcollins@debian.org, tony.luck@intel.com
 
-On 7/7/06, Alexey Dobriyan <adobriyan@gmail.com> wrote:
->
-> On Fri, Jul 07, 2006 at 07:44:50PM +0200, tom hisch wrote:
-> > it removes an unnecassary check of acpi_ac_dir_param.
->
-> No. it doesn't. ;-) Every single user of acpi_unlock_ac_dir() passes to
-> it, guess what? Right, value returned from acpi_lock_ac_dir() which is
-> valid pointer by that time.
+Patch to audit return code checking of kernel_thread.  These fixes correct those
+callers who fail to check the return code of kernel_thread at all
+
+Thanks & Regards
+Neil
+
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
-sorry but I don't understand what can happen between the two checks ??
+ arch/s390/mm/cmm.c           |    6 +++++-
+ drivers/macintosh/mediabay.c |    4 +++-
+ drivers/s390/net/lcs.c       |   10 +++++++---
+ drivers/s390/net/qeth_main.c |   12 +++++++++---
+ init/main.c                  |    6 +++++-
+ net/bluetooth/rfcomm/core.c  |    6 +++++-
+ 6 files changed, 34 insertions(+), 10 deletions(-)
 
-tom
 
-------------=_1152650988-17892-624
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-<br><div><span class="gmail_quote">On 7/7/06, <b class="gmail_sendername">Alexey Dobriyan</b> &lt;<a href="mailto:adobriyan@gmail.com">adobriyan@gmail.com</a>&gt; wrote:</span><blockquote class="gmail_quote" DEFANGED_style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
-On Fri, Jul 07, 2006 at 07:44:50PM +0200, tom hisch wrote:<br>&gt; it removes an unnecassary check of acpi_ac_dir_param.<br><br>No. it doesn't. ;-) Every single user of acpi_unlock_ac_dir() passes to<br>it, guess what? Right, value returned from acpi_lock_ac_dir() which is
-<br>valid pointer by that time.</blockquote><div><br>sorry but I don't understand what can happen between the two checks ?? <br></div><br>tom<br></div><br>
-
-------------=_1152650988-17892-624--
-
---===============0490411516==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+--- a/arch/s390/mm/cmm.c
++++ b/arch/s390/mm/cmm.c
+@@ -161,7 +161,11 @@ cmm_thread(void *dummy)
+ static void
+ cmm_start_thread(void)
+ {
+-	kernel_thread(cmm_thread, NULL, 0);
++	if (kernel_thread(cmm_thread, NULL, 0) < 0) {
++		printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++			__FUNCTION__,__LINE__);
++		clear_bit(0,&cmm_thread_active);
++	}
+ }
+ 
+--- a/drivers/macintosh/mediabay.c
++++ b/drivers/macintosh/mediabay.c
+@@ -699,7 +699,9 @@ static int __devinit media_bay_attach(st
+ 
+ 	/* Startup kernel thread */
+ 	if (i = 0)
+-		kernel_thread(media_bay_task, NULL, CLONE_KERNEL);
++		if (kernel_thread(media_bay_task, NULL, CLONE_KERNEL) < 0)
++			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++				__FUNCTION__,__LINE__);
+ 
+ 	return 0;
+ 
+--- a/drivers/s390/net/lcs.c
++++ b/drivers/s390/net/lcs.c
+@@ -1729,11 +1729,15 @@ lcs_start_kernel_thread(struct lcs_card 
+ {
+ 	LCS_DBF_TEXT(5, trace, "krnthrd");
+ 	if (lcs_do_start_thread(card, LCS_RECOVERY_THREAD))
+-		kernel_thread(lcs_recovery, (void *) card, SIGCHLD);
++		if (kernel_thread(lcs_recovery, (void *) card, SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++				__FUNCTION__, __LINE__);
+ #ifdef CONFIG_IP_MULTICAST
+ 	if (lcs_do_start_thread(card, LCS_SET_MC_THREAD))
+-		kernel_thread(lcs_register_mc_addresses,
+-				(void *) card, SIGCHLD);
++		if (kernel_thread(lcs_register_mc_addresses,
++				(void *) card, SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++				__FUNCTION__, __LINE__);
+ #endif
+ }
+ 
+--- a/drivers/s390/net/qeth_main.c
++++ b/drivers/s390/net/qeth_main.c
+@@ -1048,11 +1048,17 @@ qeth_start_kernel_thread(struct qeth_car
+ 		return;
+ 
+ 	if (qeth_do_start_thread(card, QETH_SET_IP_THREAD))
+-		kernel_thread(qeth_register_ip_addresses, (void *)card,SIGCHLD);
++		if (kernel_thread(qeth_register_ip_addresses, (void *)card,SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++				__FUNCTION__, __LINE__);
+ 	if (qeth_do_start_thread(card, QETH_SET_PROMISC_MODE_THREAD))
+-		kernel_thread(qeth_set_promisc_mode, (void *)card, SIGCHLD);
++		if (kernel_thread(qeth_set_promisc_mode, (void *)card, SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++				__FUNCTION__, __LINE__);
+ 	if (qeth_do_start_thread(card, QETH_RECOVER_THREAD))
+-		kernel_thread(qeth_recover, (void *) card, SIGCHLD);
++		if (kernel_thread(qeth_recover, (void *) card, SIGCHLD) < 0)
++			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++				__FUNCTION__, __LINE__);
+ }
+ 
+ 
+--- a/init/main.c
++++ b/init/main.c
+@@ -389,7 +389,11 @@ #endif
+ static void noinline rest_init(void)
+ 	__releases(kernel_lock)
+ {
+-	kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND);
++	if (kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND) < 0) {
++		printk(KERN_CRIT "Unable to start kernel thread at %s:%d\n",
++			__FUNCTION__, __LINE__);
++		BUG();
++	}
+ 	numa_default_policy();
+ 	unlock_kernel();
+ 
+--- a/net/bluetooth/rfcomm/core.c
++++ b/net/bluetooth/rfcomm/core.c
+@@ -2052,11 +2052,15 @@ static CLASS_ATTR(rfcomm_dlc, S_IRUGO, r
+ /* ---- Initialization ---- */
+ static int __init rfcomm_init(void)
+ {
++	int ret;
+ 	l2cap_load();
+ 
+ 	hci_register_cb(&rfcomm_cb);
+ 
+-	kernel_thread(rfcomm_run, NULL, CLONE_KERNEL);
++	ret = kernel_thread(rfcomm_run, NULL, CLONE_KERNEL);
++	
++	if (ret < 0)
++		return ret;
+ 
+ 	class_create_file(bt_class, &class_attr_rfcomm_dlc);
+ 
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0490411516==--
