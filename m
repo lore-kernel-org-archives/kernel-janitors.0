@@ -1,7 +1,7 @@
 From: Neil Horman <nhorman@tuxdriver.com>
-Date: Sat, 29 Jul 2006 13:00:58 +0000
+Date: Sat, 29 Jul 2006 13:14:19 +0000
 Subject: Re: [KJ] audit return code handling for kernel_thread [2/11]
-Message-Id: <20060729130058.GB6669@localhost.localdomain>
+Message-Id: <20060729131419.GA6892@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK7DhX009584@ra.tuxdriver.com> <20060729093704.GD26956@flint.arm.linux.org.uk>
 In-Reply-To: <20060729093704.GD26956@flint.arm.linux.org.uk>
@@ -33,21 +33,22 @@ On Sat, Jul 29, 2006 at 10:37:04AM +0100, Russell King wrote:
 > value from kernel_thread() (and arguably that's true, since pid 0 is
 > permanently allocated to the idle thread.)
 > 
-I think you misread.  I want a return code of zero to be valid (and imply
-success).  However, kernel_thread returns an int (not an unsigned int), and
-there are/were callers who assumed that _any_ non-zero return values were
-success, including negative return values, which indicate a failure in
-kernel_thread.
+No its, not, but I can see how my comments might be ambiguous. I want zero to be
+a valid return code, since we never actually return zero, but we certainly could
+if we wanted to.  Note that kernel_thread returns an int (not an unsigned int),
+and as such assuming that a non-zero return code implies success ignores the
+fact that kernel_thread can return a negative value, which indicates failure.
+This is what I found, and what my patch fixes.
 
 > I don't particularly care whether you decide to that returning pid 0 from
 > kernel_thread is valid or not, just that your two points above are at least
 > consistent with each other.
 > 
-I should have been more clear above, point two is meant to indicate that there
-were callers of kernel_thread which assume a negative return code from
-kernel_thread meant success.  That is what I fixed.
+My comments in (2) should be made more clear by changing "assume a non-zero
+return was success" to "assume a negative return was success".  This is what my
+patch fixes.
 
-Regards
+Thanks & Regards
 Neil
 
 > -- 
