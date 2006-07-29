@@ -1,7 +1,7 @@
 From: Neil Horman <nhorman@tuxdriver.com>
-Date: Sat, 29 Jul 2006 20:15:55 +0000
-Subject: Re: [KJ] (re) audit return code handling for kernel_thread [1/3]
-Message-Id: <20060729201555.GB8574@localhost.localdomain>
+Date: Sat, 29 Jul 2006 20:18:09 +0000
+Subject: Re: [KJ] (re) audit return code handling for kernel_thread [2/3]
+Message-Id: <20060729201809.GC8574@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060729201139.GA8574@localhost.localdomain>
 In-Reply-To: <20060729201139.GA8574@localhost.localdomain>
@@ -10,22 +10,20 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, torvalds@osdl.org, akpm@osdl.org, marcel@holtman.org, fpavlic@de.ibm.com, paulus@au.ibm.com, bcollins@debian.org, tony.luck@intel.com
 
-Patch to audit return code checking of kernel_thread.  These fixes correct those
-callers who fail to check the return code of kernel_thread at all
+Patch to audit return codes from kernel_thread.  This patch handles cases in
+which the return code was stored for later interrogations, but the later checks
+assumed that negative return codes were successful.
 
-Thanks & Regards
+Thanks 
 Neil
 
 Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
- arch/s390/mm/cmm.c           |    6 +++++-
- drivers/macintosh/mediabay.c |    4 +++-
- drivers/s390/net/lcs.c       |   10 +++++++---
- drivers/s390/net/qeth_main.c |   12 +++++++++---
- init/main.c                  |    6 +++++-
- net/bluetooth/rfcomm/core.c  |    6 +++++-
- 6 files changed, 34 insertions(+), 10 deletions(-)
+ arch/s390/mm/cmm.c             |    6 +++++-
+ drivers/macintosh/adb.c        |    7 +++++--
+ drivers/macintosh/therm_pm72.c |    5 ++++-
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
 
 --- a/arch/s390/mm/cmm.c
@@ -42,96 +40,57 @@ Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 +	}
  }
  
---- a/drivers/macintosh/mediabay.c
-+++ b/drivers/macintosh/mediabay.c
-@@ -699,7 +699,9 @@ static int __devinit media_bay_attach(st
+ static void
+--- a/drivers/macintosh/adb.c
++++ b/drivers/macintosh/adb.c
+@@ -137,7 +137,7 @@ #endif
  
- 	/* Startup kernel thread */
- 	if (i = 0)
--		kernel_thread(media_bay_task, NULL, CLONE_KERNEL);
-+		if (kernel_thread(media_bay_task, NULL, CLONE_KERNEL) < 0)
-+			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
-+				__FUNCTION__,__LINE__);
- 
- 	return 0;
- 
---- a/drivers/s390/net/lcs.c
-+++ b/drivers/s390/net/lcs.c
-@@ -1729,11 +1729,15 @@ lcs_start_kernel_thread(struct lcs_card 
+ static __inline__ void adb_wait_ms(unsigned int ms)
  {
- 	LCS_DBF_TEXT(5, trace, "krnthrd");
- 	if (lcs_do_start_thread(card, LCS_RECOVERY_THREAD))
--		kernel_thread(lcs_recovery, (void *) card, SIGCHLD);
-+		if (kernel_thread(lcs_recovery, (void *) card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
-+				__FUNCTION__, __LINE__);
- #ifdef CONFIG_IP_MULTICAST
- 	if (lcs_do_start_thread(card, LCS_SET_MC_THREAD))
--		kernel_thread(lcs_register_mc_addresses,
--				(void *) card, SIGCHLD);
-+		if (kernel_thread(lcs_register_mc_addresses,
-+				(void *) card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
-+				__FUNCTION__, __LINE__);
- #endif
+-	if (current->pid && adb_probe_task_pid &&
++	if (current->pid && (adb_probe_task_pid >= 0) &&
+ 	  adb_probe_task_pid = current->pid)
+ 		msleep(ms);
+ 	else
+@@ -270,6 +270,9 @@ static void
+ __adb_probe_task(void *data)
+ {
+ 	adb_probe_task_pid = kernel_thread(adb_probe_task, NULL, SIGCHLD | CLONE_KERNEL);
++	if (adb_probe_task_pid < 0)
++		printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
++			__FUNCTION__,__LINE__);
  }
  
---- a/drivers/s390/net/qeth_main.c
-+++ b/drivers/s390/net/qeth_main.c
-@@ -1048,11 +1048,17 @@ qeth_start_kernel_thread(struct qeth_car
- 		return;
+ static DECLARE_WORK(adb_reset_work, __adb_probe_task, NULL);
+@@ -494,7 +497,7 @@ adb_request(struct adb_request *req, voi
+ 	 * block. Beware that the "done" callback will be overriden !
+ 	 */
+ 	if ((flags & ADBREQ_SYNC) &&
+-	    (current->pid && adb_probe_task_pid &&
++	    (current->pid && (adb_probe_task_pid >= 0) &&
+ 	    adb_probe_task_pid = current->pid)) {
+ 		req->done = adb_probe_wakeup;
+ 		rc = adb_controller->send_request(req, 0);
+--- a/drivers/macintosh/therm_pm72.c
++++ b/drivers/macintosh/therm_pm72.c
+@@ -1769,6 +1769,9 @@ static void start_control_loops(void)
+ 	init_completion(&ctrl_complete);
  
- 	if (qeth_do_start_thread(card, QETH_SET_IP_THREAD))
--		kernel_thread(qeth_register_ip_addresses, (void *)card,SIGCHLD);
-+		if (kernel_thread(qeth_register_ip_addresses, (void *)card,SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
-+				__FUNCTION__, __LINE__);
- 	if (qeth_do_start_thread(card, QETH_SET_PROMISC_MODE_THREAD))
--		kernel_thread(qeth_set_promisc_mode, (void *)card, SIGCHLD);
-+		if (kernel_thread(qeth_set_promisc_mode, (void *)card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
-+				__FUNCTION__, __LINE__);
- 	if (qeth_do_start_thread(card, QETH_RECOVER_THREAD))
--		kernel_thread(qeth_recover, (void *) card, SIGCHLD);
-+		if (kernel_thread(qeth_recover, (void *) card, SIGCHLD) < 0)
-+			printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
-+				__FUNCTION__, __LINE__);
- }
- 
- 
---- a/init/main.c
-+++ b/init/main.c
-@@ -389,7 +389,11 @@ #endif
- static void noinline rest_init(void)
- 	__releases(kernel_lock)
- {
--	kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND);
-+	if (kernel_thread(init, NULL, CLONE_FS | CLONE_SIGHAND) < 0) {
-+		printk(KERN_CRIT "Unable to start kernel thread at %s:%d\n",
+ 	ctrl_task = kernel_thread(main_control_loop, NULL, SIGCHLD | CLONE_KERNEL);
++	if (ctrl_task < 0)
++		printk(KERN_CRIT "Could not start kernel thread at %s:%d\n",
 +			__FUNCTION__, __LINE__);
-+		BUG();
-+	}
- 	numa_default_policy();
- 	unlock_kernel();
+ }
  
---- a/net/bluetooth/rfcomm/core.c
-+++ b/net/bluetooth/rfcomm/core.c
-@@ -2052,11 +2052,15 @@ static CLASS_ATTR(rfcomm_dlc, S_IRUGO, r
- /* ---- Initialization ---- */
- static int __init rfcomm_init(void)
+ /*
+@@ -1776,7 +1779,7 @@ static void start_control_loops(void)
+  */
+ static void stop_control_loops(void)
  {
-+	int ret;
- 	l2cap_load();
- 
- 	hci_register_cb(&rfcomm_cb);
- 
--	kernel_thread(rfcomm_run, NULL, CLONE_KERNEL);
-+	ret = kernel_thread(rfcomm_run, NULL, CLONE_KERNEL);
-+	
-+	if (ret < 0)
-+		return ret;
- 
- 	class_create_file(bt_class, &class_attr_rfcomm_dlc);
+-	if (ctrl_task != 0)
++	if (ctrl_task >= 0)
+ 		wait_for_completion(&ctrl_complete);
+ }
  
 
 _______________________________________________
