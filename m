@@ -1,14 +1,15 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Sat, 29 Jul 2006 13:55:13 +0000
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Date: Sat, 29 Jul 2006 14:50:04 +0000
 Subject: Re: [KJ] audit return code handling for kernel_thread [2/11]
-Message-Id: <20060729135513.GB6892@localhost.localdomain>
+Message-Id: <20060729145004.GA5733@flint.arm.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200607282007.k6SK7DhX009584@ra.tuxdriver.com> <20060729093704.GD26956@flint.arm.linux.org.uk> <20060729131419.GA6892@localhost.localdomain>
 In-Reply-To: <20060729131419.GA6892@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com
+To: Neil Horman <nhorman@tuxdriver.com>
+Cc: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com
 
 On Sat, Jul 29, 2006 at 09:14:19AM -0400, Neil Horman wrote:
 > On Sat, Jul 29, 2006 at 10:37:04AM +0100, Russell King wrote:
@@ -48,26 +49,19 @@ On Sat, Jul 29, 2006 at 09:14:19AM -0400, Neil Horman wrote:
 > My comments in (2) should be made more clear by changing "assume a non-zero
 > return was success" to "assume a negative return was success".  This is what my
 > patch fixes.
-> 
-> Thanks & Regards
-> Neil
-> 
 
+In the first point, you say that you want return of zero to mean success.
+In the second point, you use zero to mark an error event.  That's the
+inconsistency I'm referring to.
 
-P.S. - Sorry, Russell, et al.  for the double post.  My network link went out and I accendentally
-sent two replies to your note
+So, if we _did_ return zero from kernel_thread, and we had your fix as in
+(2), you'd store zero into the saved return code, which would then be
+interpreted in later code as an error.
 
-Neil
-
-> > -- 
-> > Russell King
-> >  Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
-> >  maintainer of:  2.6 Serial core
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:  2.6 Serial core
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
