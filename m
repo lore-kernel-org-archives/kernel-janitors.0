@@ -1,22 +1,31 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 29 Jul 2006 09:24:59 +0000
-Subject: [KJ] website overhaul
-Message-Id: <20060729092458.GG6843@martell.zuzino.mipt.ru>
+From: Dave Jones <davej@redhat.com>
+Date: Sat, 29 Jul 2006 16:45:17 +0000
+Subject: Re: [KJ] website overhaul
+Message-Id: <20060729164517.GC16946@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20060729092458.GG6843@martell.zuzino.mipt.ru>
+In-Reply-To: <20060729092458.GG6843@martell.zuzino.mipt.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I bet you haven't noticed radical changes at http://kerneljanitors.org/
-;-) Firefox users can do View->Page Style->kerneljanitors.org to see
-historical CSS. I personally find kernel.org CSS SO much nicer.
+On Sat, Jul 29, 2006 at 01:24:59PM +0400, Alexey Dobriyan wrote:
+ > I bet you haven't noticed radical changes at http://kerneljanitors.org/
+ > ;-) Firefox users can do View->Page Style->kerneljanitors.org to see
+ > historical CSS. I personally find kernel.org CSS SO much nicer.
 
-Who was the guy who painted penguin with brush? Can he mail me picture
-of the brush, so I can make penguin less cubic?
+Something that's occured to me a number of times was that things
+like updating the TODO list would be a lot easier if the kj website
+was a wiki.   Where is it currently hosted ? Did we keep the
+website at sourceforge? Or did that migrate to osdl with the list?
 
-	Alexey "25 years of HTML experience" Dobriyan
+I'm sure we can find someone willing to give us wiki-space.
 
+		Dave
+
+-- 
+http://www.codemonkey.org.uk
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
