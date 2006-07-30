@@ -1,52 +1,50 @@
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Sat, 29 Jul 2006 20:20:24 +0000
-Subject: Re: [KJ] (re) audit return code handling for kernel_thread [3/3]
-Message-Id: <20060729202024.GD8574@localhost.localdomain>
+From: Andrew Morton <akpm@osdl.org>
+Date: Sun, 30 Jul 2006 00:03:33 +0000
+Subject: Re: [KJ] (re) audit return code handling for kernel_thread [1/3]
+Message-Id: <20060729170333.a45efeaf.akpm@osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060729201139.GA8574@localhost.localdomain>
-In-Reply-To: <20060729201139.GA8574@localhost.localdomain>
+	<20060729201555.GB8574@localhost.localdomain>
+In-Reply-To: <20060729201555.GB8574@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, torvalds@osdl.org, akpm@osdl.org, marcel@holtman.org, fpavlic@de.ibm.com, paulus@au.ibm.com, bcollins@debian.org, tony.luck@intel.com
+To: Neil Horman <nhorman@tuxdriver.com>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, torvalds@osdl.org, marcel@holtman.org, fpavlic@de.ibm.com, paulus@au.ibm.com, bcollins@debian.org, tony.luck@intel.com
 
-Patch to audit return codes for kernel_thread.  This patch corrects callers who
-have differing assumptions about the meaning of a zero return code.  I've
-normalized all the callers to consider a zero return code a successful return.
+On Sat, 29 Jul 2006 16:15:55 -0400
+Neil Horman <nhorman@tuxdriver.com> wrote:
 
-Thanks & Regards
-Neil
+> Patch to audit return code checking of kernel_thread.  These fixes correct those
+> callers who fail to check the return code of kernel_thread at all
+> 
+> 
 
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Various people are running around converting open-coded kernel_thread
+callers over to the kthread API.  Generally that's a good thing, and error
+checking should be incorporated at that time.
 
+So there's probably not a lot of point in making these changes now - it'd
+be better to work with the various subsystem owners on doing the kthread
+conversion.
 
- arch/ia64/sn/kernel/xpc_main.c |    2 +-
- init/do_mounts_initrd.c        |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> --- a/arch/s390/mm/cmm.c
+> +++ b/arch/s390/mm/cmm.c
+> @@ -161,7 +161,11 @@ cmm_thread(void *dummy)
+>  static void
+>  cmm_start_thread(void)
+>  {
+> -	kernel_thread(cmm_thread, NULL, 0);
+> +	if (kernel_thread(cmm_thread, NULL, 0) < 0) {
+> +		printk(KERN_WARNING "Could not start kernel thread at %s:%d\n",
+> +			__FUNCTION__,__LINE__);
+> +		clear_bit(0,&cmm_thread_active);
+> +	}
+>  }
 
-
---- a/arch/ia64/sn/kernel/xpc_main.c
-+++ b/arch/ia64/sn/kernel/xpc_main.c
-@@ -583,7 +583,7 @@ xpc_activate_partition(struct xpc_partit
- 
- 	pid = kernel_thread(xpc_activating, (void *) ((u64) partid), 0);
- 
--	if (unlikely(pid <= 0)) {
-+	if (unlikely(pid < 0)) {
- 		spin_lock_irqsave(&part->act_lock, irq_flags);
- 		part->act_state = XPC_P_INACTIVE;
- 		XPC_SET_REASON(part, xpcCloneKThreadFailed, __LINE__);
---- a/init/do_mounts_initrd.c
-+++ b/init/do_mounts_initrd.c
-@@ -57,7 +57,7 @@ static void __init handle_initrd(void)
- 
- 	current->flags |= PF_NOFREEZE;
- 	pid = kernel_thread(do_linuxrc, "/linuxrc", SIGCHLD);
--	if (pid > 0) {
-+	if (pid >= 0) {
- 		while (pid != sys_wait4(-1, NULL, 0, NULL))
- 			yield();
- 	}
+This is OK as far as it goes.  But really we should propagate any failure
+back up to cmm_init() and fail the whole thing, rather than leaving the
+driver hanging around in a loaded-but-useless state.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
