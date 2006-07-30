@@ -1,7 +1,7 @@
-From: Greg KH <greg@kroah.com>
-Date: Sat, 29 Jul 2006 17:02:28 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 30 Jul 2006 12:28:36 +0000
 Subject: Re: [KJ] website overhaul
-Message-Id: <20060729170228.GA7395@kroah.com>
+Message-Id: <20060730122836.GA7125@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060729092458.GG6843@martell.zuzino.mipt.ru>
 In-Reply-To: <20060729092458.GG6843@martell.zuzino.mipt.ru>
@@ -15,20 +15,17 @@ On Sat, Jul 29, 2006 at 12:45:17PM -0400, Dave Jones wrote:
 >  > I bet you haven't noticed radical changes at http://kerneljanitors.org/
 >  > ;-) Firefox users can do View->Page Style->kerneljanitors.org to see
 >  > historical CSS. I personally find kernel.org CSS SO much nicer.
-> 
+>
 > Something that's occured to me a number of times was that things
 > like updating the TODO list would be a lot easier if the kj website
 > was a wiki.   Where is it currently hosted ? Did we keep the
 > website at sourceforge? Or did that migrate to osdl with the list?
-> 
+>
 > I'm sure we can find someone willing to give us wiki-space.
 
-Why not just do it on the kernelnewbies wiki?  I think they already have
-an entry for the kerneljanitors project.
+I personally have mixed feelings with wikis but if such thing as KJ wiki
+appears, please, please, please, make it without CensoredStupidCamelCase.
 
-thanks,
-
-greg k-h
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
