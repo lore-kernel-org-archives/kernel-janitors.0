@@ -1,24 +1,24 @@
-From: "Anchjo Enz" <anchoenz@kg-law.com>
-Date: Tue, 04 Jul 2006 15:28:50 +0000
-Subject: Re: [KJ] euqoo
-Message-Id: <000001c69f7e$8d2c6370$ad73a8c0@nna18>
+From: "Louie Cull" <cullilou@friendlynet.com>
+Date: Sun, 30 Jul 2006 11:08:43 +0000
+Subject: Re: [KJ] deqaiVIAjAGRA
+Message-Id: <000001c6b3c8$853e46c0$bb1fa8c0@uax87>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1761335350=="
+Content-Type: multipart/mixed; boundary="===============0126150071=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1761335350==
+--===============0126150071==
 Content-Type: multipart/alternative;
-    boundary="----------=_1152026772-14663-322"
+    boundary="----------=_1154258004-7532-607"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1152026772-14663-322
+------------=_1154258004-7532-607
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -26,20 +26,24 @@ Content-Disposition: inline
 
 Hi,
 =20
-VzIAGRA
-AzMBIEN
-VzALIUM
-CzIALIS
+VIAjAGRA $3 . 35
+CIAjALIS $3 . 75
+VALjLIUM $1 . 25
+AMjMBIEN
 =20
-http://reathtakin.com
-
+http://www.lonedemno.com
 =20
-pine forest in a slanting path leading steadily southwards. At times
-they were pushing through a sea of bracken with tall fronds rising right
-above the hobbits head; at times they were marching along quiet as
+,
+,
+,
+,
+,
+they should be here soon.
+Right on cue the door opened and the suspicious public employees
+filed in, each carrying a folding chair. Admiral Benbow led the way;
 
 
-------------=_1152026772-14663-322
+------------=_1154258004-7532-607
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -52,22 +56,28 @@ Content-Disposition: inline
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Hi,</FONT></DIV>
+<DIV>Hi,</DIV>
 <DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>VzIAGRA<BR>AzMBIEN<BR>VzALIUM<BR>CzIALIS</=
-FONT></DIV>
+<DIV><DIV>VIAjAGRA $3 . 35</DIV>
+<DIV>CIAjALIS $3 . 75</DIV>
+<DIV>VALjLIUM $1 . 25</DIV>
+<DIV>AMjMBIEN</DIV>
+</DIV>
 <DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2><A href=3D"http://reathtakin.com">http://r=
-eathtakin.com</A><BR></FONT></DIV>
+<DIV><A href=3D"http://www.lonedemno.com">http://www.lonedemno.com</A></DIV>
 <DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2>pine forest in a slanting path leading ste=
-adily southwards. At times<BR>
-they were pushing through a sea of bracken with tall fronds rising right<BR>
-above the hobbits head; at times they were marching along quiet as<BR></FON=
-T></DIV></BODY></HTML>
-------------=_1152026772-14663-322--
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>,</DIV>
+<DIV>they should be here soon.<BR>
+ Right  on  cue  the  door opened and the suspicious public  employees<BR>
+filed  in, each carrying a folding chair. Admiral Benbow led the  way;<BR><=
+/DIV></BODY></HTML>
+------------=_1154258004-7532-607--
 
---===============1761335350==
+--===============0126150071==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -78,4 +88,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1761335350==--
+--===============0126150071==--
