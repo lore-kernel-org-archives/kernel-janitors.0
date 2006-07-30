@@ -1,54 +1,55 @@
-From: "Arianrhod Maddix" <maddixearianr@aprilbrown.com>
-Date: Sun, 02 Jul 2006 11:22:59 +0000
-Subject: [KJ] with xiqyq
-Message-Id: <000001c69dc9$e010e9f0$2939a8c0@rfh54>
+From: "Urho Calico" <urhocalico@bituminousinsurance.com>
+Date: Sun, 30 Jul 2006 19:28:18 +0000
+Subject: Re: [KJ] refayROjLEX
+Message-Id: <000001c6b40e$4fbc4c40$4015a8c0@ctg42>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1039526125=="
+Content-Type: multipart/mixed; boundary="===============1517989066=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1039526125==
+--===============1517989066==
 Content-Type: multipart/alternative;
-    boundary="----------=_1151839195-27829-290"
+    boundary="----------=_1154287951-27541-186"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1151839195-27829-290
+------------=_1154287951-27541-186
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-Hi,
-
 =20
-V / / A G R A from 3 , 33 $=20
-and man y other at http://langetunfade.com
--
--
--
--
--
--
-The Death Eater keeled over backwards and his mask slipped off: it was
-Macnair, Buckbeaks would-be killer, one of his eyes now swollen and
-bloodshot.
-Thanks! Harry said to Neville, pulling him aside as Sirius and his Death
-Eater lurched past, duelling so fiercely that their wands were blurs;
-then Harrys foot made contact with something round and hard and he
-slipped. For a moment he thought he had dropped the prophecy, but then
-he saw Moodys magical eye spinning away across the floor.
-Its owner was lying on his side, bleeding from the head, and his
-attacker was now bearing down upon Harry and Neville: Dolohov, his long
-pale face twisted with glee.
+PAjTEK
+BRjEITLING
+OMjEGA
+ROjLEX
+BVjLGARI
+TIjFFANY & CO
+CAjRTIER
+=20
+Best prijcces online at http://www.watchkiingdis.com
+=20
+
+,
+
+,
+
+,
+
+,
+
+I cracked my knuckles, scowled and jabbed my finger at him. Thats
+really not good enough-is it?
+Tremearne looked as unhappy as I did. No, Jim, it is not. I dont
 
 
-------------=_1151839195-27829-290
+------------=_1154287951-27541-186
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -61,30 +62,25 @@ Content-Disposition: inline
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV>Hi,<BR>
 <DIV>&nbsp;</DIV>
-<STRONG> V / / A G R A </STRONG> from 3 , 33 $ <BR> and man y other at <A h=
-ref=3D"http://langetunfade.com">http://langetunfade.com</A></DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>-</DIV>
-<DIV>The Death Eater keeled over backwards and his mask slipped off: it was=
- Macnair, Buckbeaks would-be killer, one of his eyes now swollen and bloods=
-hot.<BR>
-Thanks! Harry said to Neville, pulling him aside as Sirius and his Death Ea=
-ter lurched past, duelling so fiercely that their wands were blurs; then Ha=
-rrys foot made contact with something round and hard and he slipped. For a =
-moment he thought he had dropped the prophecy, but then he saw Moodys magic=
-al eye spinning away across the floor.<BR>
-Its owner was lying on his side, bleeding from the head, and his attacker w=
-as now bearing down upon Harry and Neville: Dolohov, his long pale face twi=
-sted with glee.<BR></DIV></BODY></HTML>
-------------=_1151839195-27829-290--
+<DIV>PAjTEK<BR>BRjEITLING<BR>OMjEGA<BR>ROjLEX<BR>BVjLGARI<BR>TIjFFANY & CO<=
+BR>CAjRTIER</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>Best prijcces online at <A href=3D"http://www.watchkiingdis.com">http:=
+//www.watchkiingdis.com</A></DIV>
+<DIV>&nbsp;</DIV>
+<P>,</P>
+<P>,</P>
+<P>,</P>
+<P>,</P>
+<DIV> I  cracked my knuckles, scowled and jabbed my finger at him.  Thats<B=
+R>
+really not good enough-is it?<BR>
+ Tremearne  looked as unhappy as I did. No, Jim, it is not.  I  dont<BR></D=
+IV></BODY></HTML>
+------------=_1154287951-27541-186--
 
---===============1039526125==
+--===============1517989066==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -95,4 +91,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1039526125==--
+--===============1517989066==--
