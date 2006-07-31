@@ -1,7 +1,7 @@
 From: =?iso-8859-15?Q?Cl=E9ment?= Stenac <zorglub@diwi.org>
-Date: Mon, 31 Jul 2006 22:25:24 +0000
-Subject: [KJ] [PATCH] Use standard min/max macros [2/3]
-Message-Id: <20060731222524.GA1285@diwi.org>
+Date: Mon, 31 Jul 2006 22:26:01 +0000
+Subject: [KJ] [PATCH] Use standard min/max macros [3/3]
+Message-Id: <20060731222601.GA1663@diwi.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20060731221329.GA31140@diwi.org>
 In-Reply-To: <20060731221329.GA31140@diwi.org>
@@ -16,240 +16,292 @@ min/max from kernel.h
 Signed-off-by: Cl=E9ment Stenac <zorglub@diwi.org>
 ---
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx.h b/drivers/scsi/aic7xxx/aic79xx.h
-index df3346b..c58ac6a 100644
---- a/drivers/scsi/aic7xxx/aic79xx.h
-+++ b/drivers/scsi/aic7xxx/aic79xx.h
-@@ -53,14 +53,6 @@ struct ahd_platform_data;
- struct scb_platform_data;
+diff --git a/drivers/acpi/executer/exfldio.c b/drivers/acpi/executer/exfldi=
+o.c
+index 40f0bee..ea8c8a5 100644
+--- a/drivers/acpi/executer/exfldio.c
++++ b/drivers/acpi/executer/exfldio.c
+@@ -752,7 +752,7 @@ acpi_ex_extract_from_field(union acpi_op
+ 		/* Write merged datum to target buffer */
 =20
- /****************************** Useful Macros ****************************=
-*****/
--#ifndef MAX
--#define MAX(a,b) (((a) > (b)) ? (a) : (b))
--#endif
--
--#ifndef MIN
--#define MIN(a,b) (((a) < (b)) ? (a) : (b))
--#endif
--
- #ifndef TRUE
- #define TRUE 1
- #endif
-diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic=
-79xx_core.c
-index 653818d..a4018fb 100644
---- a/drivers/scsi/aic7xxx/aic79xx_core.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-@@ -2850,14 +2850,14 @@ ahd_devlimited_syncrate(struct ahd_softc
- 		transinfo =3D &tinfo->goal;
- 	*ppr_options &=3D (transinfo->ppr_options|MSG_EXT_PPR_PCOMP_EN);
- 	if (transinfo->width =3D MSG_EXT_WDTR_BUS_8_BIT) {
--		maxsync =3D MAX(maxsync, AHD_SYNCRATE_ULTRA2);
-+		maxsync =3D max(maxsync, AHD_SYNCRATE_ULTRA2);
- 		*ppr_options &=3D ~MSG_EXT_PPR_DT_REQ;
+ 		ACPI_MEMCPY(((char *)buffer) + buffer_offset, &merged_datum,
+-			    ACPI_MIN(obj_desc->common_field.access_byte_width,
++			         min(obj_desc->common_field.access_byte_width,
+ 				     buffer_length - buffer_offset));
+=20
+ 		buffer_offset +=3D obj_desc->common_field.access_byte_width;
+@@ -771,7 +771,7 @@ acpi_ex_extract_from_field(union acpi_op
+ 	/* Write the last datum to the buffer */
+=20
+ 	ACPI_MEMCPY(((char *)buffer) + buffer_offset, &merged_datum,
+-		    ACPI_MIN(obj_desc->common_field.access_byte_width,
++		         min(obj_desc->common_field.access_byte_width,
+ 			     buffer_length - buffer_offset));
+=20
+ 	return_ACPI_STATUS(AE_OK);
+@@ -850,7 +850,7 @@ acpi_ex_insert_into_field(union acpi_ope
+ 	/* Get initial Datum from the input buffer */
+=20
+ 	ACPI_MEMCPY(&raw_datum, buffer,
+-		    ACPI_MIN(obj_desc->common_field.access_byte_width,
++		         min(obj_desc->common_field.access_byte_width,
+ 			     buffer_length - buffer_offset));
+=20
+ 	merged_datum @@ -903,7 +903,7 @@ acpi_ex_insert_into_field(union acpi_ope
+=20
+ 		buffer_offset +=3D obj_desc->common_field.access_byte_width;
+ 		ACPI_MEMCPY(&raw_datum, ((char *)buffer) + buffer_offset,
+-			    ACPI_MIN(obj_desc->common_field.access_byte_width,
++			         min(obj_desc->common_field.access_byte_width,
+ 				     buffer_length - buffer_offset));
+ 		merged_datum | 		    raw_datum << obj_desc->common_field.start_field_bit=
+_offset;
+diff --git a/drivers/char/istallion.c b/drivers/char/istallion.c
+index 84dfc42..15cd662 100644
+--- a/drivers/char/istallion.c
++++ b/drivers/char/istallion.c
+@@ -627,8 +627,6 @@ static unsigned int	stli_baudrates[] =3D {
+ /*
+  *	Define some handy local macros...
+  */
+-#undef MIN
+-#define	MIN(a,b)	(((a) <=3D (b)) ? (a) : (b))
+=20
+ #undef	TOLOWER
+ #define	TOLOWER(x)	((((x) >=3D 'A') && ((x) <=3D 'Z')) ? ((x) + 0x20) : (x=
+))
+@@ -1455,12 +1453,12 @@ static int stli_write(struct tty_struct=20
+ 		stlen =3D len;
  	}
- 	if (transinfo->period =3D 0) {
- 		*period =3D 0;
- 		*ppr_options =3D 0;
+=20
+-	len =3D MIN(len, count);
++	len =3D min(len, count);
+ 	count =3D 0;
+ 	shbuf =3D (char __iomem *) EBRDGETMEMPTR(brdp, portp->txoffset);
+=20
+ 	while (len > 0) {
+-		stlen =3D MIN(len, stlen);
++		stlen =3D min(len, stlen);
+ 		memcpy_toio(shbuf + head, chbuf, stlen);
+ 		chbuf +=3D stlen;
+ 		len -=3D stlen;
+@@ -1574,13 +1572,13 @@ static void stli_flushchars(struct tty_s
+ 		stlen =3D len;
+ 	}
+=20
+-	len =3D MIN(len, cooksize);
++	len =3D min(len, cooksize);
+ 	count =3D 0;
+ 	shbuf =3D (char *) EBRDGETMEMPTR(brdp, portp->txoffset);
+ 	buf =3D stli_txcookbuf;
+=20
+ 	while (len > 0) {
+-		stlen =3D MIN(len, stlen);
++		stlen =3D min(len, stlen);
+ 		memcpy_toio(shbuf + head, buf, stlen);
+ 		buf +=3D stlen;
+ 		len -=3D stlen;
+@@ -2416,7 +2414,7 @@ static void stli_read(stlibrd_t *brdp, s
+ 	while (len > 0) {
+ 		unsigned char *cptr;
+=20
+-		stlen =3D MIN(len, stlen);
++		stlen =3D min(len, stlen);
+ 		tty_prepare_flip_string(tty, &cptr, stlen);
+ 		memcpy_fromio(cptr, shbuf + tail, stlen);
+ 		len -=3D stlen;
+@@ -4219,7 +4217,7 @@ static ssize_t stli_memread(struct file=20
+ 	if (off >=3D brdp->memsize || off + count < off)
+ 		return 0;
+=20
+-	size =3D MIN(count, (brdp->memsize - off));
++	size =3D min(count, (brdp->memsize - off));
+=20
+ 	/*
+ 	 *	Copy the data a page at a time
+@@ -4233,8 +4231,8 @@ static ssize_t stli_memread(struct file=20
+ 		spin_lock_irqsave(&brd_lock, flags);
+ 		EBRDENABLE(brdp);
+ 		memptr =3D (void *) EBRDGETMEMPTR(brdp, off);
+-		n =3D MIN(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
+e)));
+-		n =3D MIN(n, PAGE_SIZE);
++		n =3D min(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
+e)));
++		n =3D min(n, PAGE_SIZE);
+ 		memcpy_fromio(p, memptr, n);
+ 		EBRDDISABLE(brdp);
+ 		spin_unlock_irqrestore(&brd_lock, flags);
+@@ -4285,7 +4283,7 @@ static ssize_t stli_memwrite(struct file
+ 		return 0;
+=20
+ 	chbuf =3D (char __user *) buf;
+-	size =3D MIN(count, (brdp->memsize - off));
++	size =3D min(count, (brdp->memsize - off));
+=20
+ 	/*
+ 	 *	Copy the data a page at a time
+@@ -4296,8 +4294,8 @@ static ssize_t stli_memwrite(struct file
+ 		return -ENOMEM;
+=20
+ 	while (size > 0) {
+-		n =3D MIN(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
+e)));
+-		n =3D MIN(n, PAGE_SIZE);
++		n =3D min(size, (brdp->pagesize - (((unsigned long) off) % brdp->pagesiz=
+e)));
++		n =3D min(n, PAGE_SIZE);
+ 		if (copy_from_user(p, chbuf, n)) {
+ 			if (count =3D 0)
+ 				count =3D -EFAULT;
+diff --git a/drivers/char/stallion.c b/drivers/char/stallion.c
+index 3beb220..2e3a326 100644
+--- a/drivers/char/stallion.c
++++ b/drivers/char/stallion.c
+@@ -445,9 +445,6 @@ static unsigned int	stl_baudrates[] =3D {
+ /*
+  *	Define some handy local macros...
+  */
+-#undef	MIN
+-#define	MIN(a,b)	(((a) <=3D (b)) ? (a) : (b))
+-
+ #undef	TOLOWER
+ #define	TOLOWER(x)	((((x) >=3D 'A') && ((x) <=3D 'Z')) ? ((x) + 0x20) : (x=
+))
+=20
+@@ -1201,10 +1198,10 @@ #endif
+ 		stlen =3D len;
+ 	}
+=20
+-	len =3D MIN(len, count);
++	len =3D min(len, count);
+ 	count =3D 0;
+ 	while (len > 0) {
+-		stlen =3D MIN(len, stlen);
++		stlen =3D min(len, stlen);
+ 		memcpy(head, chbuf, stlen);
+ 		len -=3D stlen;
+ 		chbuf +=3D stlen;
+@@ -3936,9 +3933,9 @@ #endif
+ 		}
+ 		outb(srer, (ioaddr + EREG_DATA));
  	} else {
--		*period =3D MAX(*period, transinfo->period);
-+		*period =3D max(*period, transinfo->period);
- 		ahd_find_syncrate(ahd, period, ppr_options, maxsync);
- 	}
- }
-@@ -2924,12 +2924,12 @@ ahd_validate_offset(struct ahd_softc *ah
- 			maxoffset =3D MAX_OFFSET_PACED;
- 	} else
- 		maxoffset =3D MAX_OFFSET_NON_PACED;
--	*offset =3D MIN(*offset, maxoffset);
-+	*offset =3D min(*offset, maxoffset);
- 	if (tinfo !=3D NULL) {
- 		if (role =3D ROLE_TARGET)
--			*offset =3D MIN(*offset, tinfo->user.offset);
-+			*offset =3D min(*offset, tinfo->user.offset);
- 		else
--			*offset =3D MIN(*offset, tinfo->goal.offset);
-+			*offset =3D min(*offset, tinfo->goal.offset);
- 	}
- }
-=20
-@@ -2955,9 +2955,9 @@ ahd_validate_width(struct ahd_softc *ahd
- 	}
- 	if (tinfo !=3D NULL) {
- 		if (role =3D ROLE_TARGET)
--			*bus_width =3D MIN(tinfo->user.width, *bus_width);
-+			*bus_width =3D min(tinfo->user.width, *bus_width);
- 		else
--			*bus_width =3D MIN(tinfo->goal.width, *bus_width);
-+			*bus_width =3D min(tinfo->goal.width, *bus_width);
- 	}
- }
-=20
-@@ -6057,9 +6057,9 @@ #ifdef AHD_DEBUG
- #endif
- 	}
-=20
--	newcount =3D MIN(scb_data->sense_left, scb_data->scbs_left);
--	newcount =3D MIN(newcount, scb_data->sgs_left);
--	newcount =3D MIN(newcount, (AHD_SCB_MAX_ALLOC - scb_data->numscbs));
-+	newcount =3D min(scb_data->sense_left, scb_data->scbs_left);
-+	newcount =3D min(newcount, scb_data->sgs_left);
-+	newcount =3D min(newcount, (AHD_SCB_MAX_ALLOC - scb_data->numscbs));
- 	for (i =3D 0; i < newcount; i++) {
- 		struct scb_platform_data *pdata;
- 		u_int col_tag;
-@@ -8668,7 +8668,7 @@ ahd_resolve_seqaddr(struct ahd_softc *ah
- 		if (skip_addr > i) {
- 			int end_addr;
-=20
--			end_addr =3D MIN(address, skip_addr);
-+			end_addr =3D min(address, skip_addr);
- 			address_offset +=3D end_addr - i;
- 			i =3D skip_addr;
+-		len =3D MIN(len, CD1400_TXFIFOSIZE);
++		len =3D min(len, CD1400_TXFIFOSIZE);
+ 		portp->stats.txtotal +=3D len;
+-		stlen =3D MIN(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
++		stlen =3D min(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
+ 		outb((TDR + portp->uartaddr), ioaddr);
+ 		outsb((ioaddr + EREG_DATA), tail, stlen);
+ 		len -=3D stlen;
+@@ -3993,13 +3990,13 @@ #endif
+ 		outb((RDCR + portp->uartaddr), ioaddr);
+ 		len =3D inb(ioaddr + EREG_DATA);
+ 		if (tty =3D NULL || (buflen =3D tty_buffer_request_room(tty, len)) =3D 0=
+) {
+-			len =3D MIN(len, sizeof(stl_unwanted));
++			len =3D min(len, sizeof(stl_unwanted));
+ 			outb((RDSR + portp->uartaddr), ioaddr);
+ 			insb((ioaddr + EREG_DATA), &stl_unwanted[0], len);
+ 			portp->stats.rxlost +=3D len;
+ 			portp->stats.rxtotal +=3D len;
  		} else {
-diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic7=
-9xx_osm.c
-index 998999c..f10ad1b 100644
---- a/drivers/scsi/aic7xxx/aic79xx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
-@@ -1813,7 +1813,7 @@ ahd_linux_handle_scsi_status(struct ahd_
- 			u_int sense_offset;
+-			len =3D MIN(len, buflen);
++			len =3D min(len, buflen);
+ 			if (len > 0) {
+ 				unsigned char *ptr;
+ 				outb((RDSR + portp->uartaddr), ioaddr);
+@@ -4897,9 +4894,9 @@ #endif
+ 			outb(mr0, (ioaddr + XP_DATA));
+ 		}
+ 	} else {
+-		len =3D MIN(len, SC26198_TXFIFOSIZE);
++		len =3D min(len, SC26198_TXFIFOSIZE);
+ 		portp->stats.txtotal +=3D len;
+-		stlen =3D MIN(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
++		stlen =3D min(len, ((portp->tx.buf + STL_TXBUFSIZE) - tail));
+ 		outb(GTXFIFO, (ioaddr + XP_ADDR));
+ 		outsb((ioaddr + XP_DATA), tail, stlen);
+ 		len -=3D stlen;
+@@ -4942,13 +4939,13 @@ #endif
 =20
- 			if (scb->flags & SCB_SENSE) {
--				sense_size =3D MIN(sizeof(struct scsi_sense_data)
-+				sense_size =3D min(sizeof(struct scsi_sense_data)
- 					       - ahd_get_sense_residual(scb),
- 						 sizeof(cmd->sense_buffer));
- 				sense_offset =3D 0;
-@@ -1824,7 +1824,7 @@ ahd_linux_handle_scsi_status(struct ahd_
- 				 */
- 				siu =3D (struct scsi_status_iu_header *)
- 				    scb->sense_data;
--				sense_size =3D MIN(scsi_4btoul(siu->sense_length),
-+				sense_size =3D min(scsi_4btoul(siu->sense_length),
- 						sizeof(cmd->sense_buffer));
- 				sense_offset =3D SIU_SENSE_OFFSET(siu);
- 			}
-diff --git a/drivers/scsi/aic7xxx/aic7xxx.h b/drivers/scsi/aic7xxx/aic7xxx.h
-index 62ff8c3..4850820 100644
---- a/drivers/scsi/aic7xxx/aic7xxx.h
-+++ b/drivers/scsi/aic7xxx/aic7xxx.h
-@@ -54,14 +54,6 @@ struct scb_platform_data;
- struct seeprom_descriptor;
+ 	if ((iack & IVR_TYPEMASK) =3D IVR_RXDATA) {
+ 		if (tty =3D NULL || (buflen =3D tty_buffer_request_room(tty, len)) =3D 0=
+) {
+-			len =3D MIN(len, sizeof(stl_unwanted));
++			len =3D min(len, sizeof(stl_unwanted));
+ 			outb(GRXFIFO, (ioaddr + XP_ADDR));
+ 			insb((ioaddr + XP_DATA), &stl_unwanted[0], len);
+ 			portp->stats.rxlost +=3D len;
+ 			portp->stats.rxtotal +=3D len;
+ 		} else {
+-			len =3D MIN(len, buflen);
++			len =3D min(len, buflen);
+ 			if (len > 0) {
+ 				unsigned char *ptr;
+ 				outb(GRXFIFO, (ioaddr + XP_ADDR));
+diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
+index 912c03e..c585c6f 100644
+--- a/drivers/pcmcia/cistpl.c
++++ b/drivers/pcmcia/cistpl.c
+@@ -590,8 +590,6 @@ EXPORT_SYMBOL(pccard_get_next_tuple);
 =20
- /****************************** Useful Macros ****************************=
-*****/
--#ifndef MAX
--#define MAX(a,b) (((a) > (b)) ? (a) : (b))
--#endif
+ /*=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D*/
+=20
+-#define _MIN(a, b)		(((a) < (b)) ? (a) : (b))
 -
--#ifndef MIN
--#define MIN(a,b) (((a) < (b)) ? (a) : (b))
--#endif
--
- #ifndef TRUE
- #define TRUE 1
+ int pccard_get_tuple_data(struct pcmcia_socket *s, tuple_t *tuple)
+ {
+     u_int len;
+@@ -607,7 +605,7 @@ int pccard_get_tuple_data(struct pcmcia_
+ 	return CS_SUCCESS;
+     read_cis_cache(s, SPACE(tuple->Flags),
+ 		   tuple->CISOffset + tuple->TupleOffset,
+-		   _MIN(len, tuple->TupleDataMax), tuple->TupleData);
++		   min(len, tuple->TupleDataMax), tuple->TupleData);
+     return CS_SUCCESS;
+ }
+ EXPORT_SYMBOL(pccard_get_tuple_data);
+diff --git a/drivers/s390/crypto/z90common.h b/drivers/s390/crypto/z90commo=
+n.h
+index dbbcda3..569120e 100644
+--- a/drivers/s390/crypto/z90common.h
++++ b/drivers/s390/crypto/z90common.h
+@@ -160,7 +160,6 @@ #else
+ #define PDEBUG(fmt, args...) do {} while (0)
  #endif
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic=
-7xxx_core.c
-index 93e4e40..6405669 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-@@ -1671,7 +1671,7 @@ ahc_devlimited_syncrate(struct ahc_softc
- 		transinfo =3D &tinfo->goal;
- 	*ppr_options &=3D transinfo->ppr_options;
- 	if (transinfo->width =3D MSG_EXT_WDTR_BUS_8_BIT) {
--		maxsync =3D MAX(maxsync, AHC_SYNCRATE_ULTRA2);
-+		maxsync =3D max(maxsync, AHC_SYNCRATE_ULTRA2);
- 		*ppr_options &=3D ~MSG_EXT_PPR_DT_REQ;
- 	}
- 	if (transinfo->period =3D 0) {
-@@ -1679,7 +1679,7 @@ ahc_devlimited_syncrate(struct ahc_softc
- 		*ppr_options =3D 0;
- 		return (NULL);
- 	}
--	*period =3D MAX(*period, transinfo->period);
-+	*period =3D max(*period, transinfo->period);
- 	return (ahc_find_syncrate(ahc, period, ppr_options, maxsync));
- }
 =20
-@@ -1804,12 +1804,12 @@ ahc_validate_offset(struct ahc_softc *ah
- 		else
- 			maxoffset =3D MAX_OFFSET_8BIT;
- 	}
--	*offset =3D MIN(*offset, maxoffset);
-+	*offset =3D min(*offset, maxoffset);
- 	if (tinfo !=3D NULL) {
- 		if (role =3D ROLE_TARGET)
--			*offset =3D MIN(*offset, tinfo->user.offset);
-+			*offset =3D min(*offset, tinfo->user.offset);
- 		else
--			*offset =3D MIN(*offset, tinfo->goal.offset);
-+			*offset =3D min(*offset, tinfo->goal.offset);
- 	}
- }
+-#define UMIN(a,b) ((a) < (b) ? (a) : (b))
+ #define IS_EVEN(x) ((x) =3D (2 * ((x) / 2)))
 =20
-@@ -1835,9 +1835,9 @@ ahc_validate_width(struct ahc_softc *ahc
- 	}
- 	if (tinfo !=3D NULL) {
- 		if (role =3D ROLE_TARGET)
--			*bus_width =3D MIN(tinfo->user.width, *bus_width);
-+			*bus_width =3D min(tinfo->user.width, *bus_width);
- 		else
--			*bus_width =3D MIN(tinfo->goal.width, *bus_width);
-+			*bus_width =3D min(tinfo->goal.width, *bus_width);
- 	}
- }
+ #endif
+diff --git a/drivers/s390/crypto/z90main.c b/drivers/s390/crypto/z90main.c
+index b2f20ab..c347995 100644
+--- a/drivers/s390/crypto/z90main.c
++++ b/drivers/s390/crypto/z90main.c
+@@ -2119,7 +2119,7 @@ #define LBUFSIZE 1200
+ 	if (count <=3D 0)
+ 		return 0;
 =20
-@@ -4406,7 +4406,7 @@ ahc_alloc_scbs(struct ahc_softc *ahc)
- 	physaddr =3D sg_map->sg_physaddr;
+-	local_count =3D UMIN((unsigned int)count, LBUFSIZE-1);
++	local_count =3D min((unsigned int)count, LBUFSIZE-1);
 =20
- 	newcount =3D (PAGE_SIZE / (AHC_NSEG * sizeof(struct ahc_dma_seg)));
--	newcount =3D MIN(newcount, (AHC_SCB_MAX_ALLOC - scb_data->numscbs));
-+	newcount =3D min(newcount, (AHC_SCB_MAX_ALLOC - scb_data->numscbs));
- 	for (i =3D 0; i < newcount; i++) {
- 		struct scb_platform_data *pdata;
- #ifndef __linux__
-@@ -6442,7 +6442,7 @@ ahc_download_instr(struct ahc_softc *ahc
- 			if (skip_addr > i) {
- 				int end_addr;
+ 	if (copy_from_user(lbuf, buffer, local_count) !=3D 0) {
+ 		kfree(lbuf);
+diff --git a/include/acpi/acmacros.h b/include/acpi/acmacros.h
+index 192fa09..3caf144 100644
+--- a/include/acpi/acmacros.h
++++ b/include/acpi/acmacros.h
+@@ -54,7 +54,6 @@ #define ACPI_HIBYTE(l)                 =20
 =20
--				end_addr =3D MIN(address, skip_addr);
-+				end_addr =3D min(address, skip_addr);
- 				address_offset +=3D end_addr - i;
- 				i =3D skip_addr;
- 			} else {
-diff --git a/drivers/scsi/aic7xxx/aic7xxx_osm.c b/drivers/scsi/aic7xxx/aic7=
-xxx_osm.c
-index aa4be8a..8d2c467 100644
---- a/drivers/scsi/aic7xxx/aic7xxx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic7xxx_osm.c
-@@ -1875,7 +1875,7 @@ ahc_linux_handle_scsi_status(struct ahc_
- 		if (scb->flags & SCB_SENSE) {
- 			u_int sense_size;
+ #define ACPI_SET_BIT(target,bit)        ((target) |=3D (bit))
+ #define ACPI_CLEAR_BIT(target,bit)      ((target) &=3D ~(bit))
+-#define ACPI_MIN(a,b)                   (((a)<(b))?(a):(b))
 =20
--			sense_size =3D MIN(sizeof(struct scsi_sense_data)
-+			sense_size =3D min(sizeof(struct scsi_sense_data)
- 				       - ahc_get_sense_residual(scb),
- 					 sizeof(cmd->sense_buffer));
- 			memcpy(cmd->sense_buffer,
-diff --git a/drivers/scsi/ips.h b/drivers/scsi/ips.h
-index f46c382..8264f55 100644
---- a/drivers/scsi/ips.h
-+++ b/drivers/scsi/ips.h
-@@ -120,10 +120,6 @@ #include <linux/version.h>
-       #define MDELAY mdelay
-    #endif
+ /* Size calculation */
 =20
--   #ifndef min
--      #define min(x,y) ((x) < (y) ? x : y)
--   #endif
--  =20
-    #ifndef __iomem       /* For clean compiles in earlier kernels without =
-__iomem annotations */
-       #define __iomem
-    #endif
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
