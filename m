@@ -1,184 +1,55 @@
-From: James Nelson <james4765@gmail.com>
-Date: Wed, 30 Aug 2006 21:46:47 +0000
-Subject: [KJ] [PATCH] 12/37 alpha: add printk() KERN_ constants to
-Message-Id: <20060830214647.15055.40899.sendpatchset@david.homenet>
+From: Louisa Chris <louisa_chris10@yahoo.co.uk>
+Date: Tue, 01 Aug 2006 09:50:51 +0000
+Subject: [KJ] Good  Day..................From  Louisa
+Message-Id: <20060801095051.18405.qmail@plesk1.sitework.pt>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
----
-diff --git a/arch/alpha/kernel/err_common.c b/arch/alpha/kernel/err_common.c
-index 687580b..7b200d6 100644
---- a/arch/alpha/kernel/err_common.c
-+++ b/arch/alpha/kernel/err_common.c
-@@ -37,7 +37,7 @@ mchk_dump_mem(void *data, size_t length,
- 	for (i = 0; (i * sizeof(*ldata)) < length; i++) {
- 		if (annotation && !annotation[i]) 
- 			annotation = NULL;
--		printk("%s    %08x: %016lx    %s\n",
-+		printk(KERN_ERR "%s    %08x: %016lx    %s\n",
- 		       err_print_prefix,
- 		       (unsigned)(i * sizeof(*ldata)), ldata[i],
- 		       annotation ? annotation[i] : "");
-@@ -47,34 +47,28 @@ mchk_dump_mem(void *data, size_t length,
- void
- mchk_dump_logout_frame(struct el_common *mchk_header)
- {
--	printk("%s  -- Frame Header --\n"
--	         "    Frame Size:   %d (0x%x) bytes\n"
--	         "    Flags:        %s%s\n"
--	         "    MCHK Code:    0x%x\n"
--	         "    Frame Rev:    %d\n"
--	         "    Proc Offset:  0x%08x\n"
--	         "    Sys Offset:   0x%08x\n"
--  	         "  -- Processor Region --\n",
--	       err_print_prefix, 
--	       mchk_header->size, mchk_header->size,
--	       mchk_header->retry ? "RETRY " : "", 
--  	         mchk_header->err2 ? "SECOND_ERR " : "",
--	       mchk_header->code,
--	       mchk_header->frame_rev,
--	       mchk_header->proc_offset,
--	       mchk_header->sys_offset);
-+	printk(KERN_ERR "%s  -- Frame Header --\n", err_print_prefix);
-+	printk(KERN_ERR "    Frame Size:   %d (0x%x) bytes\n",
-+		mchk_header->size, mchk_header->size);
-+	printk(KERN_ERR "    Flags:        %s%s\n",
-+		mchk_header->retry ? "RETRY " : "", mchk_header->err2 ? "SECOND_ERR " : "");
-+	printk(KERN_ERR "    MCHK Code:    0x%x\n", mchk_header->code);
-+	printk(KERN_ERR "    Frame Rev:    %d\n", mchk_header->frame_rev);
-+	printk(KERN_ERR "    Proc Offset:  0x%08x\n", mchk_header->proc_offset);
-+	printk(KERN_ERR "    Sys Offset:   0x%08x\n", mchk_header->sys_offset);
-+	printk(KERN_ERR "  -- Processor Region --\n");
+
+FROM:MISS LOUISA
+MISSIONARY QUARTERS A15
+CHURCH ROAD ACCRA GHANA
+Reply to my confidential email ads (louisa_chris7@myway.com)
+
+Dearest,
+
+I feel good contacting you today I have read from your add in Internet knowing quiet well that this contact will bring a lasting relationship.With regard to your reputation and co-worshipper of God who will not disappoint me nor deny me in faith, I am directing this letter of assistance to you.
+
+I am Miss Louisa. Christopher the only daughter of Mr.Christopher from Republic of Zimbabwe in desire to get somebody who will safe guard my interest, that of my junior brother (Louis) and this money.Briefly, our father Mr. Christopher was a Gold and Cocoa merchant who based in LomeTogo, Abidjan cote d'Ivoire, and had a branch office here in Accra Ghana.
+
+My father was a wealthy Gold/Cocoa merchant who has business in manycountries in Europe, America and Asian countries.According to my father, my own mother Died when I was about six years of age, which means that I did not even know my mother very well.The story is that my father Mr. Christopher was Poisoned to death by is business associates about seven this ago, and he died in a private hospital here in Accra Ghana.
+
+But when he was about to die, he called us beside his sick bed and told us that he deposited the sum of Two Million seven hundred thousand United State Dollars (US$2.7M) with a local bank there in Accra, the economic and administrative capital of Republic of Ghana.
+
+This money was kept for us in my name, his only daughter. Right now I am a first year student of business management in one of the University here.My only problem now is that since my father has been poisoned to death by his business ssociates, I don't even trust any other person here again including my father's brothers and sisters. Right now, I want you to help us in the following ways:
+
+1)I want you to provide a personal / company's bank Account where this amount here (US$2.7M) can be Transferred.
+
+2) You are going to be the manager of this fund and Also my personal guardian until I finished my studies.
+
+3)You are going to procure admissions for us to continue our studies in one of the known university in your country.
+
+4) You are going to receive 15% of the total sum for providing a bank account for this transfer.
+
+5) That you must prepare immediately to make a working visit to ACCRA GHANA here so that me and you can see each other and we can then do the transfer at the same time and I will go back with you to your country.We hope to receive your early response, as it will Encourage us, to stop establishing further contacts as It regards to this subject matters, so that we will furnish you With a private phone number where you can reach us Direct, on receipt of your positive response.For your information, this place we staying now is a House of a church sister who saw our condition and Decided to house us for a while.
+
+THIS BUSINESS IS HIGHLY CONFIDENTIAL BECAUSE NONE OF OUR LATE FATHER'S 
+BROTHERS AND SISTERS KNOWS ABOUT THIS TRANSACTION.
+
+Reply to my confidential email ads (louisa_chris7@myway.com)
+
+Waiting to hear from you soon.
+Thanks for your understanding,
+
+Miss louisa   
+
  
- 	mchk_dump_mem((void *)
- 		      ((unsigned long)mchk_header + mchk_header->proc_offset),
- 		      mchk_header->sys_offset - mchk_header->proc_offset,
- 		      NULL);
- 	
--	printk("%s  -- System Region --\n", err_print_prefix);
-+	printk(KERN_ERR "%s  -- System Region --\n", err_print_prefix);
- 	mchk_dump_mem((void *)
- 		      ((unsigned long)mchk_header + mchk_header->sys_offset),
- 		      mchk_header->size - mchk_header->sys_offset,
- 		      NULL);
--	printk("%s  -- End of Frame --\n", err_print_prefix);
-+	printk(KERN_ERR "%s  -- End of Frame --\n", err_print_prefix);
- }
- 
- 
-@@ -94,7 +88,7 @@ el_process_header_subpacket(struct el_su
- 	int length = 0;
- 
- 	if (header->class != EL_CLASS__HEADER) {
--		printk("%s** Unexpected header CLASS %d TYPE %d, aborting\n",
-+		printk(KERN_ERR "%s** Unexpected header CLASS %d TYPE %d, aborting\n",
- 		       err_print_prefix,
- 		       header->class, header->type);
- 		return NULL;
-@@ -129,17 +123,14 @@ el_process_header_subpacket(struct el_su
- 		timestamp.as_int = 0;
- 		break;
- 	default: /* Unknown */
--		printk("%s** Unknown header - CLASS %d TYPE %d, aborting\n",
-+		printk(KERN_ERR "%s** Unknown header - CLASS %d TYPE %d, aborting\n",
- 		       err_print_prefix,
- 		       header->class, header->type);
- 		return NULL;		
- 	}
- 
--	printk("%s*** %s:\n"
--	         "  CLASS %d, TYPE %d\n", 
--	       err_print_prefix,
--	       name,
--	       header->class, header->type);
-+	printk(KERN_ERR "%s*** %s:\n", err_print_prefix, name);
-+	printk(KERN_ERR "  CLASS %d, TYPE %d\n", header->class, header->type);
- 	el_print_timestamp(&timestamp);
- 	
- 	/*
-@@ -169,7 +160,7 @@ void
- el_print_timestamp(union el_timestamp *timestamp)
- {
- 	if (timestamp->as_int)
--		printk("%s  TIMESTAMP: %d/%d/%02d %d:%02d:%0d\n", 
-+		printk(KERN_ERR "%s  TIMESTAMP: %d/%d/%02d %d:%02d:%0d\n", 
- 		       err_print_prefix,
- 		       timestamp->b.month, timestamp->b.day,
- 		       timestamp->b.year, timestamp->b.hour,
-@@ -186,7 +177,7 @@ el_process_subpackets(struct el_subpacke
- 		((unsigned long)header + header->length);
- 
- 	for (i = 0; subpacket && i < packet_count; i++) {
--		printk("%sPROCESSING SUBPACKET %d\n", err_print_prefix, i);
-+		printk(KERN_ERR "%sPROCESSING SUBPACKET %d\n", err_print_prefix, i);
- 		subpacket = el_process_subpacket(subpacket);
- 	}
- }
-@@ -205,7 +196,7 @@ el_process_subpacket(struct el_subpacket
- 		break;
- 	default:
- 		if (NULL = (next = el_process_subpacket_reg(header))) {
--			printk("%s** Unexpected header CLASS %d TYPE %d"
-+			printk(KERN_ERR "%s** Unexpected header CLASS %d TYPE %d"
- 			       " -- aborting.\n",
- 			       err_print_prefix,
- 			       header->class, header->type);
-@@ -230,7 +221,7 @@ el_annotate_subpacket(struct el_subpacke
- 			 * We found the annotation
- 			 */
- 			annotation = a->annotation;
--			printk("%s  %s\n", err_print_prefix, a->description);
-+			printk(KERN_ERR "%s  %s\n", err_print_prefix, a->description);
- 			break;
- 		}
- 	}
-@@ -245,9 +236,9 @@ cdl_process_console_data_log(int cpu, st
- 		(IDENT_ADDR | pcpu->console_data_log_pa);
- 	int err;
- 
--	printk("%s******* CONSOLE DATA LOG FOR CPU %d. *******\n"
--	         "*** Error(s) were logged on a previous boot\n",
--	       err_print_prefix, cpu);
-+	printk(KERN_ERR "%s******* CONSOLE DATA LOG FOR CPU %d. *******\n",
-+		err_print_prefix, cpu);
-+	printk(KERN_ERR "*** Error(s) were logged on a previous boot\n");
- 	
- 	for (err = 0; header && (header->class != EL_CLASS__TERMINATION); err++)
- 		header = el_process_subpacket(header);
-@@ -255,9 +246,8 @@ cdl_process_console_data_log(int cpu, st
- 	/* let the console know it's ok to clear the error(s) at restart */
- 	pcpu->console_data_log_pa = 0;
- 
--	printk("%s*** %d total error(s) logged\n"
--	         "**** END OF CONSOLE DATA LOG FOR CPU %d ****\n", 
--	       err_print_prefix, err, cpu);
-+	printk(KERN_ERR "%s*** %d total error(s) logged\n", err_print_prefix, err);
-+	printk(KERN_ERR "**** END OF CONSOLE DATA LOG FOR CPU %d ****\n", cpu);
- }
- 
- void __init
-@@ -286,7 +276,7 @@ cdl_register_subpacket_annotation(struct
- 		for (; a->next != NULL; a = a->next) {
- 			if ((a->class = new->class && a->type = new->type) ||
- 			    a = new) {
--				printk("Attempted to re-register "
-+				printk(KERN_ERR "Attempted to re-register "
- 				       "subpacket annotation\n");
- 				return -EINVAL;
- 			}
-@@ -307,7 +297,7 @@ cdl_register_subpacket_handler(struct el
- 	else {
- 		for (; h->next != NULL; h = h->next) {
- 			if (h->class = new->class || h = new) {
--				printk("Attempted to re-register "
-+				printk(KERN_ERR "Attempted to re-register "
- 				       "subpacket handler\n");
- 				return -EINVAL;
- 			}
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
