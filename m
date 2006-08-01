@@ -1,67 +1,48 @@
-From: tom_hisch@gmx.at
-Date: Thu, 03 Aug 2006 11:27:55 +0000
-Subject: [KJ] [PATCH] remove redundant check of sbf_port
-Message-Id: <11546044752665-git-send-email-tom_hisch@gmx.at>
+From: "Nish Aravamudan" <nish.aravamudan@gmail.com>
+Date: Tue, 01 Aug 2006 22:06:31 +0000
+Subject: [KJ] Fwd: use persistent allocation for cursor blinking.
+Message-Id: <29495f1d0608011506p234a161cmf03238491f0a3f0d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Thomas Hisch <t.hisch@gmail.com>
+Making sure janitors know about janitor work.
 
-remove the check of sbf_port in write and read function because sbf_port
-was already checked in the init function
+Thanks,
+Nish
 
-Signed-off-by: Thomas Hisch <t.hisch@gmail.com>
----
- arch/i386/kernel/bootflag.c |   21 ++++++++-------------
- 1 files changed, 8 insertions(+), 13 deletions(-)
+---------- Forwarded message ----------
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Aug 1, 2006 5:20 PM
+Subject: Re: use persistent allocation for cursor blinking.
+To: Roland Dreier <rdreier@cisco.com>
+Cc: Dave Jones <davej@redhat.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-diff --git a/arch/i386/kernel/bootflag.c b/arch/i386/kernel/bootflag.c
-index 0b98605..982e2c5 100644
---- a/arch/i386/kernel/bootflag.c
-+++ b/arch/i386/kernel/bootflag.c
-@@ -41,26 +41,21 @@ static int __init parity(u8 v)
- static void __init sbf_write(u8 v)
- {
- 	unsigned long flags;
--	if(sbf_port != -1)
--	{
--		v &= ~SBF_PARITY;
--		if(!parity(v))
--			v|=SBF_PARITY;
+
+Ar Maw, 2006-08-01 am 12:15 -0700, ysgrifennodd Roland Dreier:
+>  > Every time the console cursor blinks, we do a kmalloc/kfree pair.
+>  > This patch turns that into a single allocation.
+>
+> A naiive question from someone who knows nothing about this subsystem:
+> is there any possibility of concurrent calls into this function, for
+> example if there are multiple cursors on a multiheaded system?
+
+We don't do console multihead so its basically OK. Moving all the
+console globals into a struct so we can have multiple instances would be
+a good thing [tm] and it would make sense for the variable to end up in
+said structure if it was done.
+
+Definitely a janitor job there.
+
+Alan
+
 -
--		printk(KERN_INFO "Simple Boot Flag at 0x0 set to 0x0\n", sbf_port, v);
-+	v &= ~SBF_PARITY;
-+	if(!parity(v))
-+	  v|=SBF_PARITY;
-+	
-+	printk(KERN_INFO "Simple Boot Flag at 0x0 set to 0x0\n", sbf_port, v);
- 
--		spin_lock_irqsave(&rtc_lock, flags);
--		CMOS_WRITE(v, sbf_port);
--		spin_unlock_irqrestore(&rtc_lock, flags);
--	}
-+	spin_lock_irqsave(&rtc_lock, flags);
-+	CMOS_WRITE(v, sbf_port);
-+	spin_unlock_irqrestore(&rtc_lock, flags);
- }
- 
- static u8 __init sbf_read(void)
- {
- 	u8 v;
- 	unsigned long flags;
--	if(sbf_port = -1)
--		return 0;
- 	spin_lock_irqsave(&rtc_lock, flags);
- 	v = CMOS_READ(sbf_port);
- 	spin_unlock_irqrestore(&rtc_lock, flags);
--- 
-1.4.2.rc1.gbc9e-dirty
-
-
-
+To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please read the FAQ at  http://www.tux.org/lkml/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
