@@ -1,80 +1,51 @@
-From: "Natsumi Schaefer" <natsume@dom-sec.com>
-Date: Fri, 07 Jul 2006 13:04:33 +0000
-Subject: [KJ] kafow VIAGzRA
-Message-Id: <000001c6a1c5$e3e39550$7e45a8c0@nki24>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1137193840=="
+From: tom_hisch@gmx.at
+Date: Thu, 03 Aug 2006 20:47:08 +0000
+Subject: [KJ] [PATCH] Use kzalloc
+Message-Id: <11546380282929-git-send-email-tom_hisch@gmx.at>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+From: Thomas Hisch <t.hisch@gmail.com>
 
---===============1137193840==
-Content-Type: multipart/alternative;
-    boundary="----------=_1152277296-8327-611"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+use kzalloc in include/asm-i386/thread_info.h instead of kmalloc + memset
 
-This is a multi-part message in MIME format...
+Signed-off-by: Thomas Hisch <t.hisch@gmail.com>
+---
+ include/asm-i386/thread_info.h |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
 
-------------=_1152277296-8327-611
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+diff --git a/include/asm-i386/thread_info.h b/include/asm-i386/thread_info.h
+index 54d6d7a..a8f37f2 100644
+--- a/include/asm-i386/thread_info.h
++++ b/include/asm-i386/thread_info.h
+@@ -32,7 +32,6 @@ struct thread_info {
+ 	__u32			cpu;		/* current CPU */
+ 	int			preempt_count;	/* 0 => preemptable, <0 => BUG */
+ 
+-
+ 	mm_segment_t		addr_limit;	/* thread address space:
+ 					 	   0-0xBFFFFFFF for user-thead
+ 						   0-0xFFFFFFFF for kernel-thread
+@@ -99,9 +98,7 @@ #define alloc_thread_info(tsk)					\
+ 	({							\
+ 		struct thread_info *ret;			\
+ 								\
+-		ret = kmalloc(THREAD_SIZE, GFP_KERNEL);		\
+-		if (ret)					\
+-			memset(ret, 0, THREAD_SIZE);		\
++		ret = kzalloc(THREAD_SIZE, GFP_KERNEL);		\
+ 		ret;						\
+ 	})
+ #else
+-- 
+1.4.2.rc1.gbc9e-dirty
 
-Hi,
-=20
-VALIzUM from $ 1,21
-AMBIzEN
-CIALzIS from $ 3,75
-VIAGzRA from $ 3,33
-=20
-www. gesanais .com
 
-=20
-spears and axes stood the wolves at a respectful distance, watching and
-waiting.
-He could hear the goblins beginning a horrible song:
-
-
-------------=_1152277296-8327-611
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>VALIzUM from $ 1,21<BR>AMBIzEN<BR>CIALzIS from $ 3,75<BR>VIAGzRA from =
-$ 3,33</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>www. gesanais .com<BR></DIV>
-<DIV>&nbsp;</DIV>
-<DIV>spears and axes stood the wolves at a respectful distance, watching an=
-d<BR>
-waiting.<BR>
-   He could hear the goblins beginning a horrible song:<BR></DIV></BODY></H=
-TML>
-------------=_1152277296-8327-611--
-
---===============1137193840==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1137193840==--
