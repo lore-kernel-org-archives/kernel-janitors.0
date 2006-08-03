@@ -1,7 +1,7 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 03 Aug 2006 21:12:16 +0000
+From: Bernd Petrovitsch <bernd@firmix.at>
+Date: Thu, 03 Aug 2006 21:29:36 +0000
 Subject: Re: [KJ] [PATCH] Use kzalloc
-Message-Id: <20060803211216.GB6253@us.ibm.com>
+Message-Id: <1154640576.3231.3.camel@gimli.at.home>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <11546380282929-git-send-email-tom_hisch@gmx.at>
 In-Reply-To: <11546380282929-git-send-email-tom_hisch@gmx.at>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 03.08.2006 [22:47:08 +0200], tom_hisch@gmx.at wrote:
+On Thu, 2006-08-03 at 22:47 +0200, tom_hisch@gmx.at wrote:
 > From: Thomas Hisch <t.hisch@gmail.com>
 > 
 > use kzalloc in include/asm-i386/thread_info.h instead of kmalloc + memset
@@ -29,11 +29,6 @@ On 03.08.2006 [22:47:08 +0200], tom_hisch@gmx.at wrote:
 >  	int			preempt_count;	/* 0 => preemptable, <0 => BUG */
 >  
 > -
-Looks like an unrelated change sneaked in.
-
-Thanks,
-Nish
-
 >  	mm_segment_t		addr_limit;	/* thread address space:
 >  					 	   0-0xBFFFFFFF for user-thead
 >  						   0-0xFFFFFFFF for kernel-thread
@@ -48,15 +43,28 @@ Nish
 >  		ret;						\
 >  	})
 >  #else
-> -- 
-> 1.4.2.rc1.gbc9e-dirty
-> 
-> 
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+which leaves
+----  snip  ----
+#define alloc_thread_info(tsk)				
+ 	({							\
+		struct thread_info *ret;			\
+								\
+		ret = kzalloc(THREAD_SIZE, GFP_KERNEL);		\
+		ret;						\
+ 	})
+----  snip  ----
+which is AFAICS equivalent to 
+----  snip  ----
+#define alloc_thread_info(tsk) kzalloc(THREAD_SIZE, GFP_KERNEL)
+----  snip  ----
+
+	Bernd
+-- 
+Firmix Software GmbH                   http://www.firmix.at/
+mobil: +43 664 4416156                 fax: +43 1 7890849-55
+          Embedded Linux Development and Services
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
