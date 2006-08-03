@@ -1,79 +1,62 @@
-From: "Bryant Demarest" <saschaegioia@deu.standox.com>
-Date: Sat, 19 Aug 2006 20:08:57 +0000
-Subject: Re: [KJ] gizeye test
-Message-Id: <000001c6c3cb$4d6fd570$26faa8c0@heeism>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1780936756=="
+From: Neil Horman <nhorman@tuxdriver.com>
+Date: Thu, 03 Aug 2006 20:18:57 +0000
+Subject: Re: [KJ] [PATCH] sh: fix proc file removal for superh store queue
+Message-Id: <20060803201857.GC5004@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
---===============1780936756==
-Content-Type: multipart/alternative;
-    boundary="----------=_1156018209-16814-3567"
-Content-Transfer-Encoding: binary
+References: <20060803191828.GA5004@localhost.localdomain> <20060803124235.67bb664b.akpm@osdl.org>
+In-Reply-To: <20060803124235.67bb664b.akpm@osdl.org>
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@osdl.org>
+Cc: kernel-janitors@lists.osdl.org, linuxsh-dev@lists.sourceforge.net, lethal@linux-sh.org, kkojima@rr.iij4u.or.jp, linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Patch to clean up proc file removal in sq module for superh arch.  currently on
+a failed module load or on module unload a proc file is left registered which
+can cause a random memory execution or oopses if read after unload.  This patch
+cleans up that deregistration.
 
-------------=_1156018209-16814-3567
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Thanks & Regards
+Neil
 
-Hi,
-=20
-It is so common to have problems with erxection,=20
-Try VlxAGRA to forget about it http://www.ladefunmasede.com
-
-=20
-
-=20
-
-=20
-
-walked over on the other side of the wall. What do you want us to do,
-Jim?
-What do we want to do? As I said-its time for a decision. Do we all
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
 
+ sq.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-------------=_1156018209-16814-3567
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>It is so common to have problems with erxection, <BR> Try VlxAGRA to f=
-orget about it <A href=3D"http://www.ladefunmasede.com">http://www.ladefunm=
-asede.com</A></DIV><P>&nbsp;</P><P>&nbsp;</P><P>&nbsp;</P><P>walked over on=
- the other side of the wall. What do you want us to  do,<BR>
-Jim?<BR>
- What do we want to do? As I said-its time for a decision. Do we all<BR></P=
-></BODY></HTML>
-------------=_1156018209-16814-3567--
-
---===============1780936756==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
+index 781dbb1..4b2b0b1 100644
+--- a/arch/sh/kernel/cpu/sh4/sq.c
++++ b/arch/sh/kernel/cpu/sh4/sq.c
+@@ -421,18 +421,22 @@ static struct miscdevice sq_dev = {
+ 
+ static int __init sq_api_init(void)
+ {
++	int ret;
+ 	printk(KERN_NOTICE "sq: Registering store queue API.\n");
+ 
+-#ifdef CONFIG_PROC_FS
+ 	create_proc_read_entry("sq_mapping", 0, 0, sq_mapping_read_proc, 0);
+-#endif
+ 
+-	return misc_register(&sq_dev);
++	ret = misc_register(&sq_dev);
++	if (ret) 
++		remove_proc_entry("sq_mapping", NULL);
++
++	return ret;
+ }
+ 
+ static void __exit sq_api_exit(void)
+ {
+ 	misc_deregister(&sq_dev);
++	remove_proc_entry("sq_mapping", NULL);
+ }
+ 
+ module_init(sq_api_init);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1780936756==--
