@@ -1,55 +1,73 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Mon, 28 Aug 2006 18:00:32 +0000
-Subject: Re: [KJ] [PATCH] Removed unreachable code and fixed one	compiler
-Message-Id: <44F32F40.1040007@student.ltu.se>
+From: Pavel Machek <pavel@ucw.cz>
+Date: Sat, 05 Aug 2006 11:40:52 +0000
+Subject: Re: [KJ] [patch] fix common mistake in polling loops
+Message-Id: <20060805114052.GE4506@ucw.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1156784251.4195.7.camel@localhost.localdomain>
-In-Reply-To: <1156784251.4195.7.camel@localhost.localdomain>
+References: <710c0ee0607280128g2d968c49ycff3bac9e073e7fa@mail.gmail.com>
+In-Reply-To: <710c0ee0607280128g2d968c49ycff3bac9e073e7fa@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Zed 0xff <zed.0xff@gmail.com>
+Cc: kernel-janitors@osdl.org, linux-kernel@vger.kernel.org
 
-ville palo wrote:
+Hi!
 
->On Mon, 2006-08-28 at 18:59 +0200, Benoit Boissinot wrote:
->  
->
->>You are removing the comments here, and it is useful information to
->>understand the code.
->>
->>    
->>
->
->Yes, you are right, here's the fixed patch:
->
->
->Signed-off-by: Ville Palo <ville.palo@vi64pa.net>
->
->  
->
-<slice>
-
-> 	goto again;
->@@ -1710,11 +1707,8 @@ static int mcdx_tray_move(struct cdrom_d
-> 	if (!(stuffp->present & DOOR))
-> 		return -ENOSYS;
+> task taken from http://kerneljanitors.org/TODO:
 > 
->-	if (position)		/* 1: eject */
->-		return mcdx_talk(stuffp, "\xf6", 1, NULL, 1, 5 * HZ, 3);
->-	else			/* 0: close */
->-		return mcdx_talk(stuffp, "\xf8", 1, NULL, 1, 5 * HZ, 3);
->-	return 1;
->+	/* If position is 1 then eject, otherwise close */
->+	return mcdx_talk(stuffp, position ? "\xf6" : "\xf8", 1, NULL, 1, 5 * HZ, 3);
-> }
+> A _lot_ of drivers end up caring about absolute time, 
+> because a _lot_ of
+> drivers have a very simple issue like:
 > 
->
-Not to be picky, but isn't it: "If position is 0 then close, otherwise 
-eject"? ;)
+> - poll this port every 10ms until it returns "ready", or 
+> until we time
+>   out after 500ms.
+> 
+> And the thing is, you can do it the stupid way:
+> 
+> 	for (i = 0; i < 50; i++) {
+> 		if (ready())
+> 			return 0;
+> 		msleep(10);
+> 	}
+> 	.. timeout ..
+> 
+> or you can do it the _right_ way. The stupid way is 
+> simpler, but anybody
+> who doesn't see what the problem is has some serious 
+> problems in kernel
+> programming. Hint: it might not be polling for half a 
 
-Richard Knutsson
+Well, whoever wrote thi has some serious problems (in attitude
+department). *Any* loop you design may take half a minute under
+streange circumstances.
 
+> second, it might be
+> polling for half a _minute_ for all you know.
+> 
+> In other words, the _right_ way to do this is literally
+> 
+> 	unsigned long timeout = jiffies + 
+> 	msecs_to_jiffies(500);
+> 	for (;;) {
+> 		if (ready())
+> 			return 0;
+> 		if (time_after(timeout, jiffies))
+> 			break;
+> 		msleep(10);
+> 	}
+> 
+> which is unquestionably more complex, yes, but it's more 
+> complex because
+> it is CORRECT!
+
+Original code is correct, too.
+
+Anyway you probably want to hide complexity in some macro if we are
+going this way.
+						Pavel
+-- 
+Thanks for all the (sleeping) penguins.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
