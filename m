@@ -1,44 +1,47 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Tue, 29 Aug 2006 08:23:48 +0000
-Subject: Re: [KJ] pci_module_init to pci_module_register
-Message-Id: <44F3F994.2010203@nachtwindheim.de>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Mon, 07 Aug 2006 21:21:55 +0000
+Subject: [KJ] [Patch] isa_read[bwl] in TODO
+Message-Id: <1154985715.28109.2.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d16b1c80608290058q78286131r93d63f0e8c3d1398@mail.gmail.com>
-In-Reply-To: <d16b1c80608290058q78286131r93d63f0e8c3d1398@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
->
-> TODO:
-> - convert from pci_module_init to pci_register_driver
-> - don't do it for drivers that are 2.4 compatible
->
-> I have found 98 occurrences of the use of pci_module_init in 2.6.18-rc4.
->   
-In 2.6.18-rc4-mm3 there are only 11 left, since 2 big patches for netdev and scsi
-were merged, so pci_module_init() will surely die out in the next releases.
-The date is set to Jan07, but there are still new 2.6 drivers which use it.
+hi,
 
-> I would like to know what it means by "don't do it for drivers that
-> are 2.4 compatible"?
->
-> The drivers are in 2.6 Linux kernel, so they are meant for 2.6 alone.
-> So, as long as the change is in the drivers in 2.6 code base, it
-> shouldn't matter for 2.4, right? or am I missing something here?
->
->   
-I think that driver maintainers don't want to keep an eye on 2 drivers which become more and more different.
-So the driver gets some ifdefs to work on both, 2.4 and 2.[56].
-But now since 2.4 takes no new features and is __just__ bugfixing the development of these drivers
-stands still in 2.4-tree.
-And after the change of the IRQ-flags namespace change the 2.6-drivers the compatibility is definitively broken.
-Thats imho the reason to break this and make the drivers __fit-2.6-only__.
-But thats just my opinion.
+it seems that there are no more users of isa_read[bwl] and it isnt even
+defined anymore in most arches. The only define is in /include/asm-i386/io.h which is also the only user of this define
+( maps readb() and readw() to isa_readb() and isa_readw() ).
+I guess its therefore safe to remove it from the janitor TODO list.
 
-Greets,
-Henne
+Signed-off-by: Eric Sesterhenn
+
+--- TODO.orig	2006-08-07 23:16:53.000000000 +0200
++++ TODO	2006-08-07 23:17:47.000000000 +0200
+@@ -199,21 +199,6 @@ copy_to/from_user:
+ 
+ Items with longer description in no particular order:
+ -----------------------------------------------------------------------------
+-- get rid of isa_read/write[bwl], use ioremap instead
+-	-  unsigned long addr = 0xC0000;
+-	-  isa_writeb (0xC0, addr);
+-	+  void __iomem *cookie = ioremap(0xC0000, region_size);
+-	+  if (!cookie) { fail... }
+-	+  writeb(0xC0, cookie);
+-	+  iounmap(cookie);
+-
+-Note there is a ioremap step at driver init time, and an iounmap step at
+-driver shutdown time.  isa_xxx simply doesn't have the remap/unmap
+-stuff.
+-
+-Read Documentation/IO-mapping.txt for more details.
+-
+------------------------------------------------------------------------------
+ [Al Viro]
+ 
+         * try and convince XFS folks that they want to use negative numbers
+
 
 _______________________________________________
 Kernel-janitors mailing list
