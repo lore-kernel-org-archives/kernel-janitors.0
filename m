@@ -1,60 +1,69 @@
-From: alisander jeth <rancellpeg@temaniawines.co.nz>
-Date: Tue, 29 Aug 2006 22:44:02 +0000
-Subject: [KJ] Sweet
-Message-Id: <006c01c6cbbc.9faf6500.871cc0a8@winne>
+From: Alexander Bodnarashik <boda2004@mail.ru>
+Date: Tue, 08 Aug 2006 10:03:37 +0000
+Subject: [KJ] [PATCH] include/asm-frv/*.h: printk("SOMETEXT"....) ->
+Message-Id: <44D86179.2060706@mail.ru>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1773412926=="
+Content-Type: multipart/mixed; boundary="------------090404070107050406070503"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============1773412926==
-Content-Type: multipart/alternative; boundary="----------=_1156894666-17999-6"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1156894666-17999-6
-Content-Type: text/plain; charset=us-ascii
+This is a multi-part message in MIME format.
+--------------090404070107050406070503
+Content-Type: text/plain; charset=KOI8-R; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
-Elite things for you...
-http://kistahla.com/gift/
-dirt. Musa's body still stood, the 
-our time and even later. Where 
-Maybe this is why 
-he said. With gesture of easy dismissal, 
-Luckman said thoughtfully, 
+I've tried to cleanup some code inside "include/asm-frv" folder. Hope i understand the meaning of KERN_* constants correctly.
 
-------------=_1156894666-17999-6
-Content-Type: text/html; charset=us-ascii
+Signed-off-by: Alexander Bodnarashik <boda2004@mail.ru>
+
+
+--------------090404070107050406070503
+Content-Type: text/x-patch;
+ name="asm-frv.patch"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Content-Disposition: inline;
+ filename="asm-frv.patch"
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta content="text/html;charset=us-ascii" http-equiv="Content-Type">
-</head>
-<body>
-<div>Elite things for you...</div>
-<a href="http://kistahla.com/gift/">http://kistahla.com/gift/</a><br>
-<br><br><br>
-dirt. Musa's body still stood, the <br>
-our time and even later. Where <br>
-Maybe this is why <br>
-he said. With gesture of easy dismissal, <br>
-Luckman said thoughtfully, <br>
-</body>
-</html>
+diff --git a/include/asm-frv/math-emu.h b/include/asm-frv/math-emu.h
+index 0c8f731..c450309 100644
+--- a/include/asm-frv/math-emu.h
++++ b/include/asm-frv/math-emu.h
+@@ -117,9 +117,9 @@ extern unsigned int fp_debugprint;
+ 	static int __count = 3;				\
+ 							\
+ 	if (__count > 0) {				\
+-		printk("You just hit an unimplemented "	\
++		printk(KERN_WARNING "You just hit an unimplemented "	\
+ 		       "fpu instruction (%s)\n", str);	\
+-		printk("Please report this to ....\n");	\
++		printk(KERN_WARNING "Please report this to ....\n");	\
+ 		__count--;				\
+ 	}						\
+ })
+diff --git a/include/asm-frv/pgtable.h b/include/asm-frv/pgtable.h
+index 7af7485..ff341a3 100644
+--- a/include/asm-frv/pgtable.h
++++ b/include/asm-frv/pgtable.h
+@@ -156,13 +156,13 @@ extern unsigned long empty_zero_page;
+ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+ 
+ #define pte_ERROR(e) \
+-	printk("%s:%d: bad pte %08lx.\n", __FILE__, __LINE__, (e).pte)
++	printk(KERN_ERR "%s:%d: bad pte %08lx.\n", __FILE__, __LINE__, (e).pte)
+ #define pmd_ERROR(e) \
+-	printk("%s:%d: bad pmd %08lx.\n", __FILE__, __LINE__, pmd_val(e))
++	printk(KERN_ERR "%s:%d: bad pmd %08lx.\n", __FILE__, __LINE__, pmd_val(e))
+ #define pud_ERROR(e) \
+-	printk("%s:%d: bad pud %08lx.\n", __FILE__, __LINE__, pmd_val(pud_val(e)))
++	printk(KERN_ERR "%s:%d: bad pud %08lx.\n", __FILE__, __LINE__, pmd_val(pud_val(e)))
+ #define pgd_ERROR(e) \
+-	printk("%s:%d: bad pgd %08lx.\n", __FILE__, __LINE__, pmd_val(pud_val(pgd_val(e))))
++	printk(KERN_ERR "%s:%d: bad pgd %08lx.\n", __FILE__, __LINE__, pmd_val(pud_val(pgd_val(e))))
+ 
+ /*
+  * Certain architectures need to do special things when PTEs
 
-------------=_1156894666-17999-6--
-
---===============1773412926==
+--------------090404070107050406070503
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -65,4 +74,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1773412926==--
+--------------090404070107050406070503--
