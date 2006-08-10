@@ -1,28 +1,38 @@
-From: Bodo Eggert <7eggert@elstempel.de>
-Date: Thu, 10 Aug 2006 11:58:10 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Thu, 10 Aug 2006 12:16:11 +0000
 Subject: Re: [KJ] [patch] fix common mistake in polling loops
-Message-Id: <E1GB9BH-0000hE-9m@be1.lrz>
+Message-Id: <20060810121611.GA6847@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6DvTu-6tk-17@gated-at.bofh.it> <6Ho72-7do-3@gated-at.bofh.it> <6HpZd-1vB-19@gated-at.bofh.it> <6I6B4-72S-7@gated-at.bofh.it> <6I7np-8bD-11@gated-at.bofh.it>
+References: <710c0ee0607280128g2d968c49ycff3bac9e073e7fa@mail.gmail.com>
+In-Reply-To: <710c0ee0607280128g2d968c49ycff3bac9e073e7fa@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Darren Jenkins <darrenrjenkins@gmail.com>, ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com, "Om N." <xhandle@gmail.com>, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-Darren Jenkins <darrenrjenkins@gmail.com> wrote:
+On Thu, Aug 10, 2006 at 08:48:19AM +1000, Darren Jenkins wrote:
+> On 8/8/06, Pavel Machek <pavel@ucw.cz> wrote:
+> > > Sorry I did not realise that was your problem with the code.
+> > > Would it help if we just explicitly added a
+> > >
+> > > if (ready())
+> > >        return 0;
+> > >
+> > > after the loop, in the example code? so people wont miss adding
+> > > something like that in?
+> >
+> > Yes, that would do the trick.
+> >                                                                 Pavel
+> 
+> 
+> I was going to make a patch for the TODO, but it seems this subject
+> has since been removed.
+> Any chance it is going to be reinstated ? or is this subject
+> considered not so much janitorial work?
 
-> The only Nitpick is
->=20
-> - int timeup =3D 0;
-> + unsigned char timeup =3D 0;
+I need to read through those threads so correct version will be present
+in TODO. So far, testing for OK condition was forgotten. Anything else?
 
-Using ints is usurally cheaper than using chars, especially if the
-compiler can use a register. YMMV, and may the .s be with you.-)
---=20
-Ich danke GMX daf=FCr, die Verwendung meiner Adressen mittels per SPF
-verbreiteten L=FCgen zu sabotieren.
-
-http://david.woodhou.se/why-not-spf.html
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
