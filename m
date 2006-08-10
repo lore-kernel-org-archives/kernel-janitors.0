@@ -1,53 +1,28 @@
-From: "Darren Jenkins" <darrenrjenkins@gmail.com>
-Date: Thu, 10 Aug 2006 01:11:06 +0000
+From: Bodo Eggert <7eggert@elstempel.de>
+Date: Thu, 10 Aug 2006 11:58:10 +0000
 Subject: Re: [KJ] [patch] fix common mistake in polling loops
-Message-Id: <82faac5b0608091811v1217ac44i3e48006e4d1eed44@mail.gmail.com>
+Message-Id: <E1GB9BH-0000hE-9m@be1.lrz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <710c0ee0607280128g2d968c49ycff3bac9e073e7fa@mail.gmail.com>
-	 <82faac5b0608071753q71050d72uadcf55bc1e54f30e@mail.gmail.com>
-	 <6de39a910608071953l39ce0873w713d59eda4aa5d84@mail.gmail.com>
-	 <200608092025.02259.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
-In-Reply-To: <200608092025.02259.ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com>
+References: <6DvTu-6tk-17@gated-at.bofh.it> <6Ho72-7do-3@gated-at.bofh.it> <6HpZd-1vB-19@gated-at.bofh.it> <6I6B4-72S-7@gated-at.bofh.it> <6I7np-8bD-11@gated-at.bofh.it>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com
-Cc: "Om N." <xhandle@gmail.com>, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Darren Jenkins <darrenrjenkins@gmail.com>, ajwade@cpe001346162bf9-cm0011ae8cd564.cpe.net.cable.rogers.com, "Om N." <xhandle@gmail.com>, kernel-janitors@osdl.org, linux-kernel@vger.kernel.org
 
-G'day,
+Darren Jenkins <darrenrjenkins@gmail.com> wrote:
 
-On 8/10/06, Andrew James Wade <andrew.j.wade@gmail.com> wrote:
-> You're getting duplicated code there. That'll be an issue in more
-> complex loops. How about:
->
-> unsigned long timeout = jiffies + HZ/2;
-> int timeup = 0;
->
-> for (;;;) {
->         if (ready())
->                 return 0;
->         if (timeup)
->                 break;
->         msleep(10);
->         timeup = time_after(timeout, jiffies);
-> };
-> ... timeout ...
->
+> The only Nitpick is
+>=20
+> - int timeup =3D 0;
+> + unsigned char timeup =3D 0;
 
-Nice, looks better than my idea.
-Removes the code duplication and reduces complexity(a little) at the
-cost of an extra variable.
+Using ints is usurally cheaper than using chars, especially if the
+compiler can use a register. YMMV, and may the .s be with you.-)
+--=20
+Ich danke GMX daf=FCr, die Verwendung meiner Adressen mittels per SPF
+verbreiteten L=FCgen zu sabotieren.
 
-The only Nitpick is
-
-- int timeup = 0;
-+ unsigned char timeup = 0;
-
-
->
-> Andrew Wade
-
-Darren J.
+http://david.woodhou.se/why-not-spf.html
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
