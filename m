@@ -1,47 +1,38 @@
-From: "Thurman Rudolph" <mukjye@comune.novara.it>
-Date: Sun, 20 Aug 2006 14:36:01 +0000
-Subject: Re: [KJ] reply
-Message-Id: <64739423144732.R37428@rusk.noc.blown.gr>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1250979874=="
+From: Tobias Klauser <tklauser@xenon.tklauser.home>
+Date: Sat, 12 Aug 2006 22:07:50 +0000
+Subject: [KJ] [PATCH] sound/mips/au1x00: Use ARRAY_SIZE macro
+Message-Id: <20060812220750.GA4718@neon.tklauser.home>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---===============1250979874==
-
-Sensationall revoolution in medicine!
-
-E'''nlarge your p''enis up to 10 cm or up to 4 i'c'h'e's!
-
-Its h'erbal solution what hasnt side effect, but has 100% guaranted results!
-
-Dont lose your chance and but know wihtout doubts, you will be impressed with results!
-
-Cli here: http://ohdihdncincao.info
-
-
-
-
-
-
-
-
-
-
-
-b
-He supposed he should count himself lucky that she hadn't re-broken his legs with a baseball bat or given him a battery-acid manicure or something similar to indicate her displeasure with the way he had begun her book������ such critical responses were always possible, given Annie's unique view of the world.
-He suddenly realized that Annie was doing exactly what he could not: she was playing Can You?
-
---===============1250979874==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@lists.osdl.org
+Cc: linux-mips@linux-mips.org, akpm@osdl.org
+
+Use ARRAY_SIZE macro instead of sizeof(x)/sizeof(x[0])
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ sound/mips/au1x00.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/sound/mips/au1x00.c b/sound/mips/au1x00.c
+index c31b386..ff6e6fc 100644
+--- a/sound/mips/au1x00.c
++++ b/sound/mips/au1x00.c
+@@ -258,7 +258,7 @@ au1000_dma_interrupt(int irq, void *dev_
+ 
+ static unsigned int rates[] = {8000, 11025, 16000, 22050};
+ static struct snd_pcm_hw_constraint_list hw_constraints_rates = {
+-	.count	=  sizeof(rates) / sizeof(rates[0]),
++	.count	= ARRAY_SIZE(rates),
+ 	.list	= rates,
+ 	.mask	= 0,
+ };
+-- 
+1.4.1
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1250979874==--
