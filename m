@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 07 Aug 2006 11:45:55 +0000
-Subject: Re: [KJ] [PATCH] Use kzalloc
-Message-Id: <44D727F3.2010804@bfs.de>
+From: "tom hisch" <t.hisch@gmail.com>
+Date: Sun, 13 Aug 2006 11:00:58 +0000
+Subject: [KJ] [PATCH] Use kzalloc
+Message-Id: <8ef77f2e0608130400g98bdec1pbcd478cf8147a0db@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <11546380282929-git-send-email-tom_hisch@gmx.at>
 In-Reply-To: <11546380282929-git-send-email-tom_hisch@gmx.at>
@@ -10,57 +10,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi thomas,
-this patch results in:
+walter harms wrote:
+>hi thomas,
+>this patch results in:
+>
+>#ifdef CONFIG_DEBUG_STACK_USAGE
+>#define alloc_thread_info(tsk) kzalloc(THREAD_SIZE, GFP_KERNEL)
+>#else
+>#define alloc_thread_info(tsk) kmalloc(THREAD_SIZE, GFP_KERNEL)
+>#endif
+>
+>does it make sense to have two case ? the performance penalty should not
+>matter if this is reduced to
+>#define alloc_thread_info(tsk) kzalloc(THREAD_SIZE, GFP_KERNEL)
+>in any case. opinions ?
 
-#ifdef CONFIG_DEBUG_STACK_USAGE
-#define alloc_thread_info(tsk) kzalloc(THREAD_SIZE, GFP_KERNEL)
-#else
-#define alloc_thread_info(tsk) kmalloc(THREAD_SIZE, GFP_KERNEL)
-#endif
+yes, we could reduce it to kzalloc but why should we reduce it when a
+zeroed allocation is not really needed in case of
+CONFIG_DEBUG_STACK_USAGE is not set.  look at
+include/asm-powerpc/thread_info.h there is the same defined
+alloc_thread_info function (if THREAD_SHIFT < PAGE_SHIFT) as in my
+patch.
 
-does it make sense to have two case ? the performance penalty should not 
-matter if this is reduced to
-#define alloc_thread_info(tsk) kzalloc(THREAD_SIZE, GFP_KERNEL)
-in any case. opinions ?
+maybe I'm totally wrong with my point of view, so please let me hear
+your opinions.
 
-just my 2 cents,
-  walter
+thomas
 
-
-
-
-tom_hisch@gmx.at wrote:
-> From: Thomas Hisch <t.hisch@gmail.com>
-> 
-> Replace kzalloc instead of kmalloc + memset.
-> 
-> Signed-off-by: Thomas Hisch <t.hisch@gmail.com>
-> ---
->  include/asm-i386/thread_info.h |   10 +---------
->  1 files changed, 1 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/asm-i386/thread_info.h b/include/asm-i386/thread_info.h
-> index 54d6d7a..46d32ad 100644
-> --- a/include/asm-i386/thread_info.h
-> +++ b/include/asm-i386/thread_info.h
-> @@ -95,15 +95,7 @@ static inline struct thread_info *curren
->  
->  /* thread information allocation */
->  #ifdef CONFIG_DEBUG_STACK_USAGE
-> -#define alloc_thread_info(tsk)					\
-> -	({							\
-> -		struct thread_info *ret;			\
-> -								\
-> -		ret = kmalloc(THREAD_SIZE, GFP_KERNEL);		\
-> -		if (ret)					\
-> -			memset(ret, 0, THREAD_SIZE);		\
-> -		ret;						\
-> -	})
-> +#define alloc_thread_info(tsk) kzalloc(THREAD_SIZE, GFP_KERNEL)
->  #else
->  #define alloc_thread_info(tsk) kmalloc(THREAD_SIZE, GFP_KERNEL)
->  #endif
+>
+>just my 2 cents,
+>  walter
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
