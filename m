@@ -1,73 +1,122 @@
-From: James Nelson <james4765@gmail.com>
-Date: Wed, 30 Aug 2006 21:47:01 +0000
-Subject: [KJ] [PATCH] 14/37 alpha: add printk() KERN_ constants to
-Message-Id: <20060830214701.15055.40140.sendpatchset@david.homenet>
+From: Reiner Herrmann <reiner@reiner-h.de>
+Date: Tue, 15 Aug 2006 18:25:48 +0000
+Subject: [KJ] [PATCH] input/serio: kzalloc conversion
+Message-Id: <200608152025.48838.reiner@reiner-h.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+Use kzalloc instead of kmalloc and zero-memset in drivers/input/serio/
+
+Signed-off-by: Reiner Herrmann <reiner@reiner-h.de>
 ---
-diff --git a/arch/alpha/kernel/err_ev7.c b/arch/alpha/kernel/err_ev7.c
-index fed6b3d..9636b96 100644
---- a/arch/alpha/kernel/err_ev7.c
-+++ b/arch/alpha/kernel/err_ev7.c
-@@ -63,7 +63,7 @@ ev7_collect_logout_frame_subpackets(stru
- 		 * All subpackets should be class PAL.
- 		 */
- 		if (subpacket->class != EL_CLASS__PAL) {
--			printk("%s**UNEXPECTED SUBPACKET CLASS %d "
-+			printk(KERN_ERR "%s**UNEXPECTED SUBPACKET CLASS %d "
- 			       "IN LOGOUT FRAME (packet %d\n",
- 			       err_print_prefix, subpacket->class, i);
- 			return NULL;
-@@ -130,7 +130,7 @@ ev7_machine_check(u64 vector, u64 la_ptr
- 	draina();
+diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/input/serio/ambakmi.c linux-work/drivers/input/serio/ambakmi.c
+--- linux-2.6.18-rc4/drivers/input/serio/ambakmi.c	2006-06-18 03:49:35.000000000 +0200
++++ linux-work/drivers/input/serio/ambakmi.c	2006-08-15 19:57:47.000000000 +0200
+@@ -117,16 +117,13 @@ static int amba_kmi_probe(struct amba_de
+ 	if (ret)
+ 		return ret;
  
- 	err_print_prefix = KERN_CRIT;
--	printk("%s*CPU %s Error (Vector 0x%x) reported on CPU %d\n",
-+	printk(KERN_ERR "%s*CPU %s Error (Vector 0x%x) reported on CPU %d\n",
- 	       err_print_prefix, 
- 	       (vector = SCB_Q_PROCERR) ? "Correctable" : "Uncorrectable",
- 	       (unsigned int)vector, (int)smp_processor_id());
-@@ -237,7 +237,7 @@ ev7_process_pal_subpacket(struct el_subp
- 	struct ev7_pal_subpacket *packet;
+-	kmi = kmalloc(sizeof(struct amba_kmi_port), GFP_KERNEL);
+-	io = kmalloc(sizeof(struct serio), GFP_KERNEL);
++	kmi = kzalloc(sizeof(struct amba_kmi_port), GFP_KERNEL);
++	io = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!kmi || !io) {
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
  
- 	if (header->class != EL_CLASS__PAL) {
--		printk("%s  ** Unexpected header CLASS %d TYPE %d, aborting\n",
-+		printk(KERN_ERR "%s  ** Unexpected header CLASS %d TYPE %d, aborting\n",
- 		       err_print_prefix,
- 		       header->class, header->type);
- 		return NULL;
-@@ -247,21 +247,19 @@ ev7_process_pal_subpacket(struct el_subp
+-	memset(kmi, 0, sizeof(struct amba_kmi_port));
+-	memset(io, 0, sizeof(struct serio));
+-
+ 	io->id.type	= SERIO_8042;
+ 	io->write	= amba_kmi_write;
+ 	io->open	= amba_kmi_open;
+diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/input/serio/gscps2.c linux-work/drivers/input/serio/gscps2.c
+--- linux-2.6.18-rc4/drivers/input/serio/gscps2.c	2006-08-13 16:30:17.000000000 +0200
++++ linux-work/drivers/input/serio/gscps2.c	2006-08-15 19:58:22.000000000 +0200
+@@ -340,8 +340,8 @@ static int __init gscps2_probe(struct pa
+ 	if (dev->id.sversion = 0x96)
+ 		hpa += GSC_DINO_OFFSET;
  
- 	switch(header->type) {
- 	case EL_TYPE__PAL__LOGOUT_FRAME:
--		printk("%s*** MCHK occurred on LPID %ld (RBOX %lx)\n",
-+		printk(KERN_ERR "%s*** MCHK occurred on LPID %ld (RBOX %lx)\n",
- 		       err_print_prefix,
- 		       packet->by_type.logout.whami, 
- 		       packet->by_type.logout.rbox_whami);
- 		el_print_timestamp(&packet->by_type.logout.timestamp);
--		printk("%s  EXC_ADDR: %016lx\n"
--		         "  HALT_CODE: %lx\n", 
--		       err_print_prefix,
--		       packet->by_type.logout.exc_addr,
--		       packet->by_type.logout.halt_code);
-+		printk(KERN_ERR "%s  EXC_ADDR: %016lx\n",
-+			err_print_prefix, packet->by_type.logout.exc_addr);
-+		printk(KERN_ERR "  HALT_CODE: %lx\n", packet->by_type.logout.halt_code);
- 		el_process_subpackets(header,
-                                       packet->by_type.logout.subpacket_count);
- 		break;
- 	default:
--		printk("%s  ** PAL TYPE %d SUBPACKET\n", 
-+		printk(KERN_ERR "%s  ** PAL TYPE %d SUBPACKET\n", 
- 		       err_print_prefix,
- 		       header->type);
- 		el_annotate_subpacket(header);
+-	ps2port = kmalloc(sizeof(struct gscps2port), GFP_KERNEL);
+-	serio = kmalloc(sizeof(struct serio), GFP_KERNEL);
++	ps2port = kzalloc(sizeof(struct gscps2port), GFP_KERNEL);
++	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!ps2port || !serio) {
+ 		ret = -ENOMEM;
+ 		goto fail_nomem;
+@@ -349,8 +349,6 @@ static int __init gscps2_probe(struct pa
+ 
+ 	dev_set_drvdata(&dev->dev, ps2port);
+ 
+-	memset(ps2port, 0, sizeof(struct gscps2port));
+-	memset(serio, 0, sizeof(struct serio));
+ 	ps2port->port = serio;
+ 	ps2port->padev = dev;
+ 	ps2port->addr = ioremap_nocache(hpa, GSC_STATUS + 4);
+diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/input/serio/libps2.c linux-work/drivers/input/serio/libps2.c
+--- linux-2.6.18-rc4/drivers/input/serio/libps2.c	2006-08-13 16:30:17.000000000 +0200
++++ linux-work/drivers/input/serio/libps2.c	2006-08-15 20:00:04.000000000 +0200
+@@ -263,10 +263,10 @@ int ps2_schedule_command(struct ps2dev *
+ 	int send = (command >> 12) & 0xf;
+ 	int receive = (command >> 8) & 0xf;
+ 
+-	if (!(ps2work = kmalloc(sizeof(struct ps2work) + max(send, receive), GFP_ATOMIC)))
++	ps2work = kzalloc(sizeof(struct ps2work) + max(send, receive), GFP_ATOMIC)
++	if (!ps2work)
+ 		return -1;
+ 
+-	memset(ps2work, 0, sizeof(struct ps2work));
+ 	ps2work->ps2dev = ps2dev;
+ 	ps2work->command = command;
+ 	memcpy(ps2work->param, param, send);
+diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/input/serio/pcips2.c linux-work/drivers/input/serio/pcips2.c
+--- linux-2.6.18-rc4/drivers/input/serio/pcips2.c	2006-08-13 16:30:17.000000000 +0200
++++ linux-work/drivers/input/serio/pcips2.c	2006-08-15 20:00:54.000000000 +0200
+@@ -140,16 +140,13 @@ static int __devinit pcips2_probe(struct
+ 	if (ret)
+ 		goto disable;
+ 
+-	ps2if = kmalloc(sizeof(struct pcips2_data), GFP_KERNEL);
+-	serio = kmalloc(sizeof(struct serio), GFP_KERNEL);
++	ps2if = kzalloc(sizeof(struct pcips2_data), GFP_KERNEL);
++	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!ps2if || !serio) {
+ 		ret = -ENOMEM;
+ 		goto release;
+ 	}
+ 
+-	memset(ps2if, 0, sizeof(struct pcips2_data));
+-	memset(serio, 0, sizeof(struct serio));
+-
+ 	serio->id.type		= SERIO_8042;
+ 	serio->write		= pcips2_write;
+ 	serio->open		= pcips2_open;
+diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/input/serio/sa1111ps2.c linux-work/drivers/input/serio/sa1111ps2.c
+--- linux-2.6.18-rc4/drivers/input/serio/sa1111ps2.c	2006-06-18 03:49:35.000000000 +0200
++++ linux-work/drivers/input/serio/sa1111ps2.c	2006-08-15 20:01:13.000000000 +0200
+@@ -234,16 +234,13 @@ static int ps2_probe(struct sa1111_dev *
+ 	struct serio *serio;
+ 	int ret;
+ 
+-	ps2if = kmalloc(sizeof(struct ps2if), GFP_KERNEL);
+-	serio = kmalloc(sizeof(struct serio), GFP_KERNEL);
++	ps2if = kzalloc(sizeof(struct ps2if), GFP_KERNEL);
++	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!ps2if || !serio) {
+ 		ret = -ENOMEM;
+ 		goto free;
+ 	}
+ 
+-	memset(ps2if, 0, sizeof(struct ps2if));
+-	memset(serio, 0, sizeof(struct serio));
+-
+ 	serio->id.type		= SERIO_8042;
+ 	serio->write		= ps2_write;
+ 	serio->open		= ps2_open;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
