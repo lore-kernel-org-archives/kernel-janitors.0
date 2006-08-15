@@ -1,53 +1,36 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Wed, 30 Aug 2006 04:45:02 +0000
-Subject: [KJ] [Patch][updated] use HZ relative values instead of
-Message-Id: <1156913102.10833.10.camel@localhost.localdomain>
+From: Henne <henne@nachtwindheim.de>
+Date: Tue, 15 Aug 2006 08:57:16 +0000
+Subject: [KJ] [PATCH] kerneldoc correction in pci-driver
+Message-Id: <44E18C6C.2080902@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@suse.de
+Cc: linux-kernel@vger.kernel.org, linux-pci@atrey.karlin.mff.cuni.cz, kernel-janitors@lists.osdl.org
 
-G'day list.
+From: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-This is (part of) a split-up of an earlier patch.
-I decided to stay with HZ/2 instead of msecs_to_jiffies(500) as I don't
-think any kind of accuracy is required for this half a second delay.
+Removes an unused kerneldoc entry from pci_match_device and
+put the others into correct order.
 
-Compile tested on allyesconfig
+Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
 
-Use HZ relative values instead of constants in iphase.c
+---
 
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
---- drivers/atm/iphase.c.orig	2006-08-28 23:29:06.000000000 +1000
-+++ drivers/atm/iphase.c	2006-08-30 12:59:59.000000000 +1000
-@@ -189,7 +189,7 @@ static u16 get_desc (IADEV *dev, struct 
-   int ltimeout;
- 
-   ia_hack_tcq (dev);
--  if(((jiffies - timer)>50)||((dev->ffL.tcq_rd=dev->host_tcq_wr))){      
-+  if(((jiffies - timer)>HZ/2)||((dev->ffL.tcq_rd=dev->host_tcq_wr))){      
-      timer = jiffies; 
-      i=0;
-      while (i < dev->num_tx_desc) {
-@@ -1223,7 +1223,7 @@ static void rx_intr(struct atm_dev *dev)
-         iadev->rx_tmp_jif = jiffies; 
-         iadev->rxing = 0;
-      } 
--     else if (((jiffies - iadev->rx_tmp_jif) > 50) && 
-+     else if (((jiffies - iadev->rx_tmp_jif) > HZ/2) && 
-                ((iadev->rx_pkt_cnt - iadev->rx_tmp_cnt) = 0)) {
-         for (i = 1; i <= iadev->num_rx_desc; i++)
-                free_desc(dev, i);
-@@ -2610,7 +2610,7 @@ static void ia_close(struct atm_vcc *vcc
-         if (vcc->qos.txtp.traffic_class != ATM_NONE) {
-            iadev->close_pending++;
- 	   prepare_to_wait(&iadev->timeout_wait, &wait, TASK_UNINTERRUPTIBLE);
--	   schedule_timeout(50);
-+	   schedule_timeout(HZ/2);
- 	   finish_wait(&iadev->timeout_wait, &wait);
-            spin_lock_irqsave(&iadev->tx_lock, flags); 
-            while((skb = skb_dequeue(&iadev->tx_backlog))) {
+--- linux-2.6.18-rc4/drivers/pci/pci-driver.c	2006-06-18 03:49:35.000000000 +0200
++++ linux/drivers/pci/pci-driver.c	2006-08-11 13:59:39.000000000 +0200
+@@ -139,9 +139,8 @@
+ /**
+  * pci_match_device - Tell if a PCI device structure has a matching
+  *                    PCI device id structure
+- * @ids: array of PCI device id structures to search in
+- * @dev: the PCI device structure to match against
+  * @drv: the PCI driver to match against
++ * @dev: the PCI device structure to match against
+  *
+  * Used by a driver to check whether a PCI device present in the
+  * system is in its list of supported devices.  Returns the matching
 
 
 _______________________________________________
