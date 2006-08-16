@@ -1,7 +1,7 @@
-From: "Tharindu Rukshan Bamunuarachchi" <tharindunix@gmail.com>
-Date: Wed, 16 Aug 2006 12:32:20 +0000
+From: Andreas Mohr <andi@rhlx01.fht-esslingen.de>
+Date: Wed, 16 Aug 2006 12:57:56 +0000
 Subject: Re: [KJ] timeslice calculation
-Message-Id: <c49434130608160520n341bf2cbg9cc6b7e768ea1f0e@mail.gmail.com>
+Message-Id: <20060816125756.GA4049@rhlx01.fht-esslingen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <c49434130608150411i1a1c3597h18f3d7dfa1e093ff@mail.gmail.com>
 In-Reply-To: <c49434130608150411i1a1c3597h18f3d7dfa1e093ff@mail.gmail.com>
@@ -10,67 +10,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Dear All,
+Hi,
 
-They have changed HZ value. So, they says my timer interrupt occures
-at 1ms interval. IS it true??
+On Wed, Aug 16, 2006 at 05:50:20PM +0530, Tharindu Rukshan Bamunuarachchi wrote:
+> Dear All,
+> 
+> They have changed HZ value. So, they says my timer interrupt occures
+> at 1ms interval. IS it true??
+> 
+> Anyway, is it impossible to calculate HZ value in running linux system.
+> 
+> Because, we wanted to have highly interactive system. So they have
+> suggested change of timer interval fire. What about decrease of
+> minimum time slice.
 
-Anyway, is it impossible to calculate HZ value in running linux system.
+Wanting a highly interactive system is precisely the very best reason
+to go with a -ck kernel, I guess.
 
-Because, we wanted to have highly interactive system. So they have
-suggested change of timer interval fire. What about decrease of
-minimum time slice.
+From what I see CONFIG_HZ doesn't influence timeslice length, however.
+This is because timeslice length is NOT directly related to timer tick rate.
+The TIMESLICE defines in sched.c indicate the standard (*average*)
+timeslice values for processes, regardless how often the timer interrupt
+(which is a process rescheduling point) fires (this might be much more often
+than process rescheduling actually takes place).
 
-Looking forward for your comments.
+If you have definite need for a lower timeslice, then I believe there's
+no way around modifying those sched.c defines and recompiling.
 
-Tharindu
+Note that lowering timeslice values will deteriorate your cache-hot
+efficiency due to too frequently swapped processes/memory sets (IIRC the
+usual time to get a cache really hot was more than 3ms on a P3 or so).
+As such you might want to tend to replacing the entire scheduler instead
+of doing some timeslice tweaks...
 
-On 8/16/06, Andreas Mohr <andi@rhlx01.fht-esslingen.de> wrote:
-> Hi,
->
-> On Tue, Aug 15, 2006 at 12:00:25PM -0700, kernel-janitors-request@lists.osdl.org wrote:
-> > Message: 11
-> > Date: Tue, 15 Aug 2006 16:41:28 +0530
-> > From: "Tharindu Rukshan Bamunuarachchi" <tharindunix@gmail.com>
-> > Subject: [KJ] timeslice calculation
-> > To: Kernel-janitors@lists.osdl.org
-> > Message-ID:
-> >       <c49434130608150411i1a1c3597h18f3d7dfa1e093ff@mail.gmail.com>
-> > Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-> >
-> > Are there anyway to get timeslice of currenlty running process. Or are
-> > there anyway to calculate timeslice ??
->
-> I cannot tell you of any method off-hand, but there could be one.
->
-> > Because, our system hosting firm said they have recomplied kernel with
-> > setting default timeslice to 1ms. IS this possible?? If so how can I
-> > calculate this from user space program ??
-> >
-> > In linux kernel source, is it possible to change default timelice ??
-> > and timer fire period ??
->
-> See *TIMESLICE defines at the top of linux/kernel/sched.c
-> Timer tick rate is the CONFIG_HZ setting, usually at HZ0
-> (100 timer ticks per second), as used for servers, but other common
-> values are 250 (moderately bad for desktop and not good for servers,
-> IOW somewhat useless ;-) and 1000 (desktop). So they most likely just set
-> CONFIG_HZ00.
->
-> If you want quite different (much better? ;-) scheduling behaviour,
-> then you may have luck with Con Kolivas kernels (e.g. 2.6.17-ck1).
->
-> --
-> No programming skills!? Why not help translate many Linux applications!
-> https://launchpad.ubuntu.com/rosetta
-> (or alternatively buy nicely packaged Linux distros/OSS software to help
-> support Linux developers creating shiny new things for you?)
->
-
-
--- 
-Tharindu Rukshan Bamunuarachchi
-all fabrications are subject to decay
+Andreas Mohr
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
