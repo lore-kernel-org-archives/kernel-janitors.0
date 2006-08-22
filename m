@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 21 Aug 2006 16:47:13 +0000
+From: trem <tremyfr@yahoo.fr>
+Date: Tue, 22 Aug 2006 21:51:56 +0000
 Subject: Re: [KJ] replace deprecated pci_find_device
-Message-Id: <44E9E391.4080900@bfs.de>
+Message-Id: <44EB7C7C.7050707@yahoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200608211744.51043.quinte17@gmx.de>
 In-Reply-To: <200608211744.51043.quinte17@gmx.de>
@@ -10,12 +10,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-with begin of august Patrik Kullman <patrik@yes.nu> posted a bunch of patches for replacing
-pci_find_device->pci_get_device
-make sure you do not duplicate that work. read the comments posted by others about that subject.
+Hi
 
-re,
- walter
+I see a function named "cleanup_module" with some code to free pci board.
+I think that 'pci_dev_put' could be added there. Be carreful, it's just
+a proposition.
+
+By the way, last time I've tried to do such change (pci_find_device ->
+pci_get_device),
+gkh answers me to use new PCI driver model (pci_register_driver).  I
+don't kown if
+it should be done here too.
+
+
+trem
+
+
+
 
 
 Stephan Sperber wrote:
@@ -26,11 +37,11 @@ Stephan Sperber wrote:
 > pci_dev_put(*dev) is needed to free the used memory again. And here is the 
 > problem I have. I don't see a "shutdownfunction" in ip2main.c nor in the 
 > other ip2 related files. Or did I miss something?
-> 
+>
 > Thank you for any input on this topic.
-> 
+>
 > Stephan
-> 
+>
 > diff --git a/drivers/char/ip2/ip2main.c b/drivers/char/ip2/ip2main.c
 > index 7907ae8..11b4f25 100644
 > --- a/drivers/char/ip2/ip2main.c
@@ -48,9 +59,9 @@ Stephan Sperber wrote:
 > Kernel-janitors mailing list
 > Kernel-janitors@lists.osdl.org
 > https://lists.osdl.org/mailman/listinfo/kernel-janitors
-> 
-> 
-> 
+>
+>   
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
