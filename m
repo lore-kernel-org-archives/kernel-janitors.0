@@ -1,92 +1,39 @@
-From: ville palo <ville.palo@vi64pa.net>
-Date: Wed, 23 Aug 2006 18:48:15 +0000
-Subject: [KJ] [PATCH] Fixed couple of unreachable code segments asus_acpi.c
-Message-Id: <1156358895.5368.13.camel@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 23 Aug 2006 22:56:03 +0000
+Subject: Re: [KJ] [PATCH] Fixed couple of unreachable code segments
+Message-Id: <20060823225603.GA5203@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1156358895.5368.13.camel@localhost.localdomain>
+In-Reply-To: <1156358895.5368.13.camel@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Wed, Aug 23, 2006 at 09:48:15PM +0300, ville palo wrote:
+> Fixed couple of unreachable code segments:
 
-Fixed couple of unreachable code segments:
+But it _should_ be reachable!
 
-Signed-off-by: Ville Palo <ville.palo@vi64pa.net>
+parse_arg() returns errors
 
-diff --git a/drivers/acpi/asus_acpi.c b/drivers/acpi/asus_acpi.c
-index e9ee4c5..c1f2356 100644
---- a/drivers/acpi/asus_acpi.c
-+++ b/drivers/acpi/asus_acpi.c
-@@ -608,19 +608,20 @@ proc_write_ledd(struct file *file, const
- 		unsigned long count, void *data)
- {
- 	int value;
--
--	count = parse_arg(buffer, count, &value);
--	if (count > 0) {
-+	int result;
-+	
-+	result = parse_arg(buffer, count, &value);
-+	if (result > 0) {
- 		if (!write_acpi_int
- 		    (hotk->handle, hotk->methods->mt_ledd, value, NULL))
- 			printk(KERN_WARNING
- 			       "Asus ACPI: LED display write failed\n");
- 		else
- 			hotk->ledd_status = (u32) value;
--	} else if (count < 0)
-+	} else if (result < 0)
- 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
- 
--	return count;
-+	return result;
- }
- 
- /*
-@@ -831,17 +832,18 @@ proc_write_brn(struct file *file, const 
- 	       unsigned long count, void *data)
- {
- 	int value;
-+	int result;
- 
--	count = parse_arg(buffer, count, &value);
--	if (count > 0) {
-+	result = parse_arg(buffer, count, &value);
-+	if (result > 0) {
- 		value = (0 < value) ? ((15 < value) ? 15 : value) : 0;
- 		/* 0 <= value <= 15 */
- 		set_brightness(value);
--	} else if (count < 0) {
-+	} else if (result < 0) {
- 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
- 	}
- 
--	return count;
-+	return result;
- }
- 
- static void set_display(int value)
-@@ -881,14 +883,15 @@ proc_write_disp(struct file *file, const
- 		unsigned long count, void *data)
- {
- 	int value;
-+	int result;
- 
--	count = parse_arg(buffer, count, &value);
--	if (count > 0)
-+	result = parse_arg(buffer, count, &value);
-+	if (result > 0)
- 		set_display(value);
--	else if (count < 0)
-+	else if (result < 0)
- 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
- 
--	return count;
-+	return result;
- }
- 
- typedef int (proc_readfunc) (char *page, char **start, off_t off, int count,
+	static int parse_arg(const char __user * buf, unsigned long count, int *val)
+	{
+		char s[32];
+		if (!count)
+			return 0;
+		if (count > 31)
+			return -EINVAL;
+		if (copy_from_user(s, buf, count))
+			return -EFAULT;
+		s[count] = 0;
+		if (sscanf(s, "%i", val) != 1)
+			return -EINVAL;
+		return count;
+	}
 
+I have a gut feeling someone already send a patch correcting the
+situation...
 
 _______________________________________________
 Kernel-janitors mailing list
