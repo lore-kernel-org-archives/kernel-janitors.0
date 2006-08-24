@@ -1,7 +1,7 @@
-From: "Jacqueline Fraser" <gtja@0733.com>
-Date: Wed, 23 Aug 2006 19:40:59 +0000
+From: "Kendall Rush" <amjad@004.com>
+Date: Thu, 24 Aug 2006 11:32:11 +0000
 Subject: Re: [KJ] Hi
-Message-Id: <35886435.20060823224059@0733.com>
+Message-Id: <200608241059.k7OAxHnV004499@smtp.osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
 In-Reply-To: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
