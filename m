@@ -1,54 +1,141 @@
-From: "clive" <czbirdie@royoizarra.com>
-Date: Thu, 17 Aug 2006 12:59:41 +0000
-Subject: [KJ] enormous buchenwald
-Message-Id: <92813542191459.E65464B4EF@I1UEWKT>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Thu, 24 Aug 2006 21:42:33 +0000
+Subject: [KJ] [PATCH 1/2] asus_acpi: fix proc files parsing
+Message-Id: <20060824214233.GA5204@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@osdl.org>
+Cc: Darren Jenkins <darrenrjenkins@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-Short-term stoock advice that multiplies income
+From: Darren Jenkins <darrenrjenkins@gmail.com>
 
-Fellow Investoor, big news are hitting on thursday for AG AO!!!
+ICC complains about a "Pointless comparsion of unsigned interger with
+zero" @ line 760 & 808 of asus_acpi.c
 
-Somebody knows something...place AGA O on the radar!!!
+parse_arg() mentioned below returns -E but it's copied into unsigned variable...
 
-Get ready for a volatile 2nd half of 2006 - one where the Bulls and 
-Bears will BOTH be proved wrong. But odds are, we'll see another 
-year where the marekt indexes bounce around a lot without really going anywhere. And we'll also see certain sectors - favored at this point in the economic cycle - SOAR... 
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-Own the right stockks, in the right space, and you could reap a 
-handful of money-doublers. But if you own the wrong investment, you could easly lose 25%-35% or more! 
+ drivers/acpi/asus_acpi.c |   46 +++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-Here is my Favorite Pick for the second half of 2006: AGA O!!!
-
-Traade Aelrt: Thursday, August 17, 2006 
----------------------------------------------
-Commpany: AGGA RESOURCESS NEEW
-Sotck: AG AO 
-Curreent Pricee: $1.69
-1 Week Target: $4.10
-Buy: "SSTRONG" 
-Expectations: Max 
----------------------------------------------
-
-When this Stcok moves - watch out! This is your chance to get in 
-the low. Big watch in play this Thursday morning! Out AG AO on your 
-radar's now and reap the benefits early. 
-
-
-There is a massive promotion underway this Thursday, August 17 
-apprising potential eager investorrs of this emerging situation. 
-When this sotck moves - watch out! sstockks wwe proffile showw aa significantt increease iin stocck pricee sometimes in days, not months or years, remember this is a stronng plaay. 
-
-Massive news for A GAO this thursday! AGA O is a big mover in the SOTCK MAKRET!!! 
-
-
-
-The trouble with experience is that by the time you have it, you are too old to take advantage of it Melt the icy fingers of fear with the sunshine of hope . Men are from earth Women are from earth Deal with it  Youth nah ah weary but he ah fall down. Have you ever noticed? anybody going slower than you is an idiot, and anyone going faster than you is a maniac.
-
-Hate is like cancer slowly eating us away inside .
+--- a/drivers/acpi/asus_acpi.c
++++ b/drivers/acpi/asus_acpi.c
+@@ -555,11 +555,11 @@ static int
+ write_led(const char __user * buffer, unsigned long count,
+ 	  char *ledname, int ledmask, int invert)
+ {
+-	int value;
++	int rv, value;
+ 	int led_out = 0;
+ 
+-	count = parse_arg(buffer, count, &value);
+-	if (count > 0)
++	rv = parse_arg(buffer, count, &value);
++	if (rv > 0)
+ 		led_out = value ? 1 : 0;
+ 
+ 	hotk->status @@ -572,7 +572,7 @@ write_led(const char __user * buffer, un
+ 		printk(KERN_WARNING "Asus ACPI: LED (%s) write failed\n",
+ 		       ledname);
+ 
+-	return count;
++	return rv;
+ }
+ 
+ /*
+@@ -607,20 +607,20 @@ static int
+ proc_write_ledd(struct file *file, const char __user * buffer,
+ 		unsigned long count, void *data)
+ {
+-	int value;
++	int rv, value;
+ 
+-	count = parse_arg(buffer, count, &value);
+-	if (count > 0) {
++	rv = parse_arg(buffer, count, &value);
++	if (rv > 0) {
+ 		if (!write_acpi_int
+ 		    (hotk->handle, hotk->methods->mt_ledd, value, NULL))
+ 			printk(KERN_WARNING
+ 			       "Asus ACPI: LED display write failed\n");
+ 		else
+ 			hotk->ledd_status = (u32) value;
+-	} else if (count < 0)
++	} else if (rv < 0)
+ 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
+ 
+-	return count;
++	return rv;
+ }
+ 
+ /*
+@@ -761,12 +761,12 @@ static int
+ proc_write_lcd(struct file *file, const char __user * buffer,
+ 	       unsigned long count, void *data)
+ {
+-	int value;
++	int rv, value;
+ 
+-	count = parse_arg(buffer, count, &value);
+-	if (count > 0)
++	rv = parse_arg(buffer, count, &value);
++	if (rv > 0)
+ 		set_lcd_state(value);
+-	return count;
++	return rv;
+ }
+ 
+ static int read_brightness(void)
+@@ -830,18 +830,18 @@ static int
+ proc_write_brn(struct file *file, const char __user * buffer,
+ 	       unsigned long count, void *data)
+ {
+-	int value;
++	int rv, value;
+ 
+-	count = parse_arg(buffer, count, &value);
+-	if (count > 0) {
++	rv = parse_arg(buffer, count, &value);
++	if (rv > 0) {
+ 		value = (0 < value) ? ((15 < value) ? 15 : value) : 0;
+ 		/* 0 <= value <= 15 */
+ 		set_brightness(value);
+-	} else if (count < 0) {
++	} else if (rv < 0) {
+ 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
+ 	}
+ 
+-	return count;
++	return rv;
+ }
+ 
+ static void set_display(int value)
+@@ -880,15 +880,15 @@ static int
+ proc_write_disp(struct file *file, const char __user * buffer,
+ 		unsigned long count, void *data)
+ {
+-	int value;
++	int rv, value;
+ 
+-	count = parse_arg(buffer, count, &value);
+-	if (count > 0)
++	rv = parse_arg(buffer, count, &value);
++	if (rv > 0)
+ 		set_display(value);
+-	else if (count < 0)
++	else if (rv < 0)
+ 		printk(KERN_WARNING "Asus ACPI: Error reading user input\n");
+ 
+-	return count;
++	return rv;
+ }
+ 
+ typedef int (proc_readfunc) (char *page, char **start, off_t off, int count,
 
 _______________________________________________
 Kernel-janitors mailing list
