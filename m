@@ -1,36 +1,17 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Tue, 15 Aug 2006 08:57:16 +0000
-Subject: [KJ] [PATCH] kerneldoc correction in pci-driver
-Message-Id: <44E18C6C.2080902@nachtwindheim.de>
+From: "Evan" <comtufusmg@aaki.dk>
+Date: Fri, 25 Aug 2006 02:48:59 +0000
+Subject: [KJ] want to meet?
+Message-Id: <40F1B6E4.2AB275B@aaki.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de
-Cc: linux-kernel@vger.kernel.org, linux-pci@atrey.karlin.mff.cuni.cz, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
-From: Henrik Kretzschmar <henne@nachtwindheim.de>
-
-Removes an unused kerneldoc entry from pci_match_device and
-put the others into correct order.
-
-Signed-off-by: Henrik Kretzschmar <henne@nachtwindheim.de>
-
----
-
---- linux-2.6.18-rc4/drivers/pci/pci-driver.c	2006-06-18 03:49:35.000000000 +0200
-+++ linux/drivers/pci/pci-driver.c	2006-08-11 13:59:39.000000000 +0200
-@@ -139,9 +139,8 @@
- /**
-  * pci_match_device - Tell if a PCI device structure has a matching
-  *                    PCI device id structure
-- * @ids: array of PCI device id structures to search in
-- * @dev: the PCI device structure to match against
-  * @drv: the PCI driver to match against
-+ * @dev: the PCI device structure to match against
-  *
-  * Used by a driver to check whether a PCI device present in the
-  * system is in its list of supported devices.  Returns the matching
+Hi,
+Hope I am not writing to wrong address. I am nice, pretty looking
+girl. I am planning on vbisiting your towan this month. Can 
+we meet each other in person? Mbessage me back at lpbg@easymailfree.com
 
 
 _______________________________________________
