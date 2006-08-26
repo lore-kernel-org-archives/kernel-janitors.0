@@ -1,67 +1,126 @@
-From: "Matthew Martin" <lihnucks@gmail.com>
-Date: Tue, 15 Aug 2006 03:15:45 +0000
-Subject: Re: [KJ] [PATCH] Convert DPRINTK to pr_debug in
-Message-Id: <8cfd00ea0608142015t6f7ba8ddo9225f8f61ab557eb@mail.gmail.com>
+From: ville palo <ville.palo@vi64pa.net>
+Date: Sat, 26 Aug 2006 08:40:49 +0000
+Subject: [KJ] [PATCH] Check setup_proc_entry function return values
+Message-Id: <1156581649.3511.5.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <44B44D3A.8010101@gmail.com>
-In-Reply-To: <44B44D3A.8010101@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 8/14/06, Nishanth Aravamudan <nacc@us.ibm.com> wrote:
-> On 14.08.2006 [18:16:08 -0500], Matthew Martin wrote:
-> > Hello,
-> >     This converts a DPRINTK macro in drivers/parport/daisy.c to pr_debug.
-> >
-> > Signed-Off-By: Matthew Martin <lihnucks@gmail.com>
-> >
-> > ---
-> >
-> > --- vanilla-linux-2.6.18-rc4/drivers/parport/daisy.c  2006-08-09 19:55:17.000000000 -0500
-> > +++ linux-2.6.18-rc4/drivers/parport/daisy.c  2006-08-14 17:22:38.000000000 -0500
-> > @@ -23,17 +23,12 @@
-> >  #include <linux/parport.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/sched.h>
-> > +#include <linux/kernel.h>
-> >
-> >  #include <asm/current.h>
-> >  #include <asm/uaccess.h>
-> >
-> > -#undef DEBUG
-> >
-> > -#ifdef DEBUG
-> > -#define DPRINTK(stuff...) printk (stuff)
-> > -#else
-> > -#define DPRINTK(stuff...)
-> > -#endif
-> >
-> >  static struct daisydev {
-> >       struct daisydev *next;
-> > @@ -322,8 +317,7 @@ static int cpp_daisy (struct parport *po
-> >                 | PARPORT_STATUS_PAPEROUT
-> >                 | PARPORT_STATUS_SELECT
-> >                 | PARPORT_STATUS_ERROR)) {
-> > -             DPRINTK (KERN_DEBUG "%s: cpp_daisy: aa5500ff(%02x)\n",
-> > -                      port->name, s);
-> > +             pr_debug ("%s: cpp_daisy: aa5500ff(%02x)\n", port->name, s);
->
-> Care to stack a patch on top or before this, to not put a space before
-> the ( in every function call?
->
-> Thanks,
-> Nish
->
-> --
-> Nishanth Aravamudan <nacc@us.ibm.com>
-> IBM Linux Technology Center
->
 
-That will be the next thing I do.
+Added return value checking for create_proc_entry functions.
+This also prevents possible use of NULL pointers.
 
-Matthew
+Signed-off-by: Ville Palo <ville.palo@vi64pa.net>
+
+diff --git a/drivers/net/wireless/airo.c b/drivers/net/wireless/airo.c
+index a4dd139..e0ad98c 100644
+--- a/drivers/net/wireless/airo.c
++++ b/drivers/net/wireless/airo.c
+@@ -2909,7 +2909,9 @@ static struct net_device *_init_airo_car
+ 		for( i = 0; i < MAX_FIDS; i++ )
+ 			ai->fids[i] = transmit_allocate(ai,AIRO_DEF_MTU,i>=MAX_FIDS/2);
+ 
+-	setup_proc_entry( dev, dev->priv ); /* XXX check for failure */
++	if (setup_proc_entry( dev, dev->priv ) != 0) /* XXX check for failure */
++		printk(KERN_ERR "Failed to create proc entries for airo\n");
++		 
+ 	netif_start_queue(dev);
+ 	SET_MODULE_OWNER(dev);
+ 	return dev;
+@@ -4504,6 +4506,9 @@ static int setup_proc_entry( struct net_
+ 	apriv->proc_entry = create_proc_entry(apriv->proc_name,
+ 					      S_IFDIR|airo_perm,
+ 					      airo_entry);
++	if (apriv->proc_entry = NULL)
++		return -ENODEV;
++		
+         apriv->proc_entry->uid = proc_uid;
+         apriv->proc_entry->gid = proc_gid;
+         apriv->proc_entry->owner = THIS_MODULE;
+@@ -4512,6 +4517,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("StatsDelta",
+ 				  S_IFREG | (S_IRUGO&proc_perm),
+ 				  apriv->proc_entry);
++	if (entry  = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4522,6 +4530,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("Stats",
+ 				  S_IFREG | (S_IRUGO&proc_perm),
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4532,6 +4543,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("Status",
+ 				  S_IFREG | (S_IRUGO&proc_perm),
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4542,6 +4556,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("Config",
+ 				  S_IFREG | proc_perm,
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4552,6 +4569,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("SSID",
+ 				  S_IFREG | proc_perm,
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4562,6 +4582,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("APList",
+ 				  S_IFREG | proc_perm,
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4572,6 +4595,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("BSSList",
+ 				  S_IFREG | proc_perm,
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+ 	entry->uid = proc_uid;
+ 	entry->gid = proc_gid;
+ 	entry->data = dev;
+@@ -4582,6 +4608,9 @@ static int setup_proc_entry( struct net_
+ 	entry = create_proc_entry("WepKey",
+ 				  S_IFREG | proc_perm,
+ 				  apriv->proc_entry);
++	if (entry = NULL)
++		return -ENODEV;
++				  
+         entry->uid = proc_uid;
+         entry->gid = proc_gid;
+ 	entry->data = dev;
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
