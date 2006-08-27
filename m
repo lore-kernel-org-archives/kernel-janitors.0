@@ -1,85 +1,45 @@
-From: Len Brown <len.brown@intel.com>
-Date: Sun, 27 Aug 2006 01:43:36 +0000
+From: "Om Narasimhan" <om.turyx@gmail.com>
+Date: Sun, 27 Aug 2006 04:06:20 +0000
 Subject: Re: [KJ] memory leak fix in acpi_memhotplug.c,
-Message-Id: <200608262143.37390.len.brown@intel.com>
+Message-Id: <6b4e42d10608262106ibc44172h3eb3e6f68ba8a062@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <6b4e42d10608261721h7807e45h6f20a2327f368719@mail.gmail.com>
-In-Reply-To: <6b4e42d10608261721h7807e45h6f20a2327f368719@mail.gmail.com>
+	 <200608262143.37390.len.brown@intel.com>
+In-Reply-To: <200608262143.37390.len.brown@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Om Narasimhan <om.turyx@gmail.com>
+To: Len Brown <lenb@kernel.org>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-On Saturday 26 August 2006 20:21, Om Narasimhan wrote:
-> Hi,
-> This patch fixes one memory leak in drivers/acpi/acpi_memhotplug.c
-> Replaces all kmalloc() calls succeeded by memset() to kzalloc() calls.
-> Applies cleanly to 2.6.18-rc4. Compile tested.
+On 8/26/06, Len Brown <len.brown@intel.com> wrote:
+> On Saturday 26 August 2006 20:21, Om Narasimhan wrote:
+> > Hi,
+> > This patch fixes one memory leak in drivers/acpi/acpi_memhotplug.c
+> > Replaces all kmalloc() calls succeeded by memset() to kzalloc() calls.
+> > Applies cleanly to 2.6.18-rc4. Compile tested.
+>
+> Compile testing is more effective is you use a .config that
+> builds each of the source files changed.
+I have compiled it with .config files resulting from targets
+'allmodconfig' and 'allyesconfig'.
+> > diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
+> > index b0d4b14..eb8a5da 100644
+> > --- a/drivers/acpi/acpi_memhotplug.c
+> > +++ b/drivers/acpi/acpi_memhotplug.c
+> > @@ -297,6 +297,7 @@ static int acpi_memory_disable_device(st
+> >        * Ask the VM to offline this memory range.
+> >        * Note: Assume that this function returns zero on success
+> >        */
+> > +     struct acpi_memory_info *info, *n;
+>
+> What tree is this patch against?
+> This line is already present (above the comment) in 2.6.18-rc4.
+This surprises me. This patch is against 2.6.18-rc4, git-pull -ed today morning.
+Maybe I should do one more git-pull?
 
-Compile testing is more effective is you use a .config that
-builds each of the source files changed.
-
-> Patch starts here.
-> 
-> 
->  drivers/acpi/ac.c              |    4 +---
->  drivers/acpi/acpi_memhotplug.c |   14 +++++---------
->  drivers/acpi/asus_acpi.c       |    3 +--
->  drivers/acpi/battery.c         |   13 +++----------
->  drivers/acpi/bus.c             |    3 +--
->  drivers/acpi/button.c          |    4 +---
->  drivers/acpi/container.c       |    4 +---
->  drivers/acpi/ec.c              |   20 +++++---------------
->  drivers/acpi/fan.c             |    3 +--
->  drivers/acpi/i2c_ec.c          |    8 ++------
->  drivers/acpi/osl.c             |    2 +-
->  drivers/acpi/pci_bind.c        |   21 +++++----------------
->  drivers/acpi/pci_irq.c         |   16 +++-------------
->  drivers/acpi/pci_link.c        |    6 ++----
->  drivers/acpi/pci_root.c        |    3 +--
->  drivers/acpi/power.c           |    4 +---
->  drivers/acpi/processor_core.c  |    4 +---
->  drivers/acpi/sbs.c             |    4 +---
->  drivers/acpi/thermal.c         |   13 +++----------
->  drivers/acpi/utils.c           |    4 +---
->  20 files changed, 40 insertions(+), 113 deletions(-)
-
-Please direct patches touching drivers/acpi to me, cc linux-acpi@vger.kernel.org
-
-> diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
-> index 96309b9..72738a5 100644
-> --- a/drivers/acpi/ac.c
-> +++ b/drivers/acpi/ac.c
-> @@ -221,11 +221,9 @@ static int acpi_ac_add(struct acpi_devic
->  	if (!device)
->  		return -EINVAL;
-> 
-> -	ac = kmalloc(sizeof(struct acpi_ac), GFP_KERNEL);
-> +	ac = kzalloc(sizeof(struct acpi_ac), GFP_KERNEL);
->  	if (!ac)
->  		return -ENOMEM;
-> -	memset(ac, 0, sizeof(struct acpi_ac));
-> -
->  	ac->device = device;
->  	strcpy(acpi_device_name(device), ACPI_AC_DEVICE_NAME);
->  	strcpy(acpi_device_class(device), ACPI_AC_CLASS);
-> diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
-> index b0d4b14..eb8a5da 100644
-> --- a/drivers/acpi/acpi_memhotplug.c
-> +++ b/drivers/acpi/acpi_memhotplug.c
-> @@ -297,6 +297,7 @@ static int acpi_memory_disable_device(st
->  	 * Ask the VM to offline this memory range.
->  	 * Note: Assume that this function returns zero on success
->  	 */
-> +	struct acpi_memory_info *info, *n;
-
-What tree is this patch against?
-This line is already present (above the comment) in 2.6.18-rc4.
-
-thanks,
--Len
-
+Thanks,
+Om N
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
