@@ -1,27 +1,33 @@
-From: Paul Mundt <paul.mundt@renesas.com>
-Date: Thu, 03 Aug 2006 20:43:47 +0000
-Subject: Re: [KJ] [linuxsh-dev] [PATCH] sh: fix proc file removal
-Message-Id: <1154637827.8280.0.camel@localhost>
+From: James Nelson <james4765@gmail.com>
+Date: Sun, 27 Aug 2006 20:43:26 +0000
+Subject: [KJ] [PATCH] ibmmca: Remove
+Message-Id: <20060827204326.15261.86816.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060803191828.GA5004@localhost.localdomain>
- <20060803124235.67bb664b.akpm@osdl.org>
- <20060803201857.GC5004@localhost.localdomain>
-In-Reply-To: <20060803201857.GC5004@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Neil Horman <nhorman@tuxdriver.com>
-Cc: Andrew Morton <akpm@osdl.org>, kernel-janitors@lists.osdl.org, lethal@linux-sh.org, kkojima@rr.iij4u.or.jp, linuxsh-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 2006-08-03 at 16:18 -0400, Neil Horman wrote:
-> Patch to clean up proc file removal in sq module for superh arch.  currently on
-> a failed module load or on module unload a proc file is left registered which
-> can cause a random memory execution or oopses if read after unload.  This patch
-> cleans up that deregistration.
-> 
-Looks good, thanks Neil.
-
-Acked-by: Paul Mundt <paul.mundt@renesas.com>
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/drivers/scsi/ibmmca.c b/drivers/scsi/ibmmca.c
+index 2be1dc5..1144ad2 100644
+--- a/drivers/scsi/ibmmca.c
++++ b/drivers/scsi/ibmmca.c
+@@ -447,13 +447,6 @@ module_param(boot_options, charp, 0);
+ module_param_array(io_port, int, NULL, 0);
+ module_param_array(scsi_id, int, NULL, 0);
+ 
+-#if 0 /* FIXME: No longer exist? --RR */
+-MODULE_PARM(display, "1i");
+-MODULE_PARM(adisplay, "1i");
+-MODULE_PARM(normal, "1i");
+-MODULE_PARM(ansi, "1i");
+-#endif
+-
+ MODULE_LICENSE("GPL");
+ #endif
+ /*counter of concurrent disk read/writes, to turn on/off disk led */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
