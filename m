@@ -1,133 +1,399 @@
 From: James Nelson <james4765@gmail.com>
-Date: Wed, 30 Aug 2006 21:46:33 +0000
-Subject: [KJ] [PATCH] 10/37 alpha: add printk() KERN_ constants to
-Message-Id: <20060830214633.15055.14801.sendpatchset@david.homenet>
+Date: Sun, 27 Aug 2006 21:09:43 +0000
+Subject: [KJ] [PATCH] gdth: Remove kernel version-specific preprocessor
+Message-Id: <20060827210943.15524.20271.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@lists.osdl.org>
+Cc: James Nelson <james4765@gmail.com>, achim_leubner@adaptec.com, linux-scsi@vger.kernel.org
+
+This patch removes a lot of version-specific preprocessor directives and associated code.
+
+ gdth.c      |  131 ------------------------------------------------------------
+ gdth.h      |   10 ----
+ gdth_proc.c |   27 ------------
+ 3 files changed, 168 deletions(-)
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/alpha/kernel/core_tsunami.c b/arch/alpha/kernel/core_tsunami.c
-index 8aa305b..0632181 100644
---- a/arch/alpha/kernel/core_tsunami.c
-+++ b/arch/alpha/kernel/core_tsunami.c
-@@ -43,14 +43,14 @@ struct 
-  */
+diff --git a/drivers/scsi/gdth.c b/drivers/scsi/gdth.c
+index 43afd47..ec615e1 100644
+--- a/drivers/scsi/gdth.c
++++ b/drivers/scsi/gdth.c
+@@ -393,12 +393,7 @@ #include <linux/in.h>
+ #include <linux/proc_fs.h>
+ #include <linux/time.h>
+ #include <linux/timer.h>
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,6)
+ #include <linux/dma-mapping.h>
+-#else
+-#define DMA_32BIT_MASK	0x00000000ffffffffULL
+-#define DMA_64BIT_MASK	0xffffffffffffffffULL
+-#endif
  
- #define DEBUG_CONFIG 0
-+#define PFX "pci: tsunami: "
+ #ifdef GDTH_RTC
+ #include <linux/mc146818rtc.h>
+@@ -410,12 +405,7 @@ #include <asm/system.h>
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
+ #include <linux/spinlock.h>
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ #include <linux/blkdev.h>
+-#else
+-#include <linux/blk.h>
+-#include "sd.h"
+-#endif
  
- #if DEBUG_CONFIG
--# define DBG_CFG(args)	printk args
-+# define DBG_CFG(fmt, args...)	printk (KERN_DEBUG PFX "%s: " fmt, __FUNCTION__, ## args)
- #else
--# define DBG_CFG(args)
-+# define DBG_CFG(fmt, args...)
- #endif
+ #include "scsi.h"
+ #include <scsi/scsi_host.h>
+@@ -656,7 +646,6 @@ static int probe_eisa_isa = 0;
+ static int force_dma32 = 0;
  
--
- /*
-  * Given a bus, device, and function number, compute resulting
-  * configuration space address
-@@ -93,9 +93,8 @@ mk_conf_addr(struct pci_bus *pbus, unsig
- 	unsigned long addr;
- 	u8 bus = pbus->number;
+ /* parameters for modprobe/insmod */
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
+ module_param_array(irq, int, NULL, 0);
+ module_param(disable, int, 0);
+ module_param(reserve_mode, int, 0);
+@@ -669,20 +658,6 @@ module_param(virt_ctr, int, 0);
+ module_param(shared_access, int, 0);
+ module_param(probe_eisa_isa, int, 0);
+ module_param(force_dma32, int, 0);
+-#else
+-MODULE_PARM(irq, "i");
+-MODULE_PARM(disable, "i");
+-MODULE_PARM(reserve_mode, "i");
+-MODULE_PARM(reserve_list, "4-" __MODULE_STRING(MAX_RES_ARGS) "i");
+-MODULE_PARM(reverse_scan, "i");
+-MODULE_PARM(hdr_channel, "i");
+-MODULE_PARM(max_ids, "i");
+-MODULE_PARM(rescan, "i");
+-MODULE_PARM(virt_ctr, "i");
+-MODULE_PARM(shared_access, "i");
+-MODULE_PARM(probe_eisa_isa, "i");
+-MODULE_PARM(force_dma32, "i");
+-#endif
+ MODULE_AUTHOR("Achim Leubner");
+ MODULE_LICENSE("GPL");
  
--	DBG_CFG(("mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x, "
--		 "pci_addr=0x%p, type1=0x%p)\n",
--		 bus, device_fn, where, pci_addr, type1));
-+	DBG_CFG("(bus=%d ,device_fn=0x%x, where=0x%x, pci_addr=0x%p, type1=0x%p)\n",
-+		 bus, device_fn, where, pci_addr, type1);
- 	
- 	if (!pbus->parent) /* No parent means peer PCI bus. */
- 		bus = 0;
-@@ -105,7 +104,7 @@ mk_conf_addr(struct pci_bus *pbus, unsig
- 	addr |= hose->config_space_base;
- 		
- 	*pci_addr = addr;
--	DBG_CFG(("mk_conf_addr: returning pci_addr 0x%lx\n", addr));
-+	DBG_CFG("returning pci_addr 0x%lx\n", addr);
- 	return 0;
+@@ -711,7 +686,6 @@ static void gdth_delay(int milliseconds)
+     }
  }
  
-@@ -211,7 +210,7 @@ tsunami_probe_read(volatile unsigned lon
- 	mcheck_taken(cpu) = 0;
- 	setipl(s);
- 
--	printk("dont_care = 0x%lx\n", dont_care);
-+	printk(KERN_DEBUG PFX "dont_care = 0x%lx\n", dont_care);
- 
- 	return probe_result;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ static void gdth_scsi_done(struct scsi_cmnd *scp)
+ {
+     TRACE2(("gdth_scsi_done()\n"));
+@@ -749,42 +723,6 @@ int __gdth_execute(struct scsi_device *s
+     kfree(scp);
+     return rval;
  }
-@@ -229,7 +228,7 @@ tsunami_probe_write(volatile unsigned lo
- 		int source = (TSUNAMI_cchip->misc.csr >> 29) & 7;
- 		TSUNAMI_cchip->misc.csr |= (1L << 28); /* ...and unlock NXS. */
- 		probe_result = 0;
--		printk("tsunami_probe_write: unit %d at 0x%016lx\n", source,
-+		pr_info(PFX "unit %d at 0x%016lx\n", source,
- 		       (unsigned long)vaddr);
- 	}
- 	if (probe_result)
-@@ -281,9 +280,9 @@ tsunami_init_one_pchip(tsunami_pchip *pc
- 	hose->mem_space->flags = IORESOURCE_MEM;
- 
- 	if (request_resource(&ioport_resource, hose->io_space) < 0)
--		printk(KERN_ERR "Failed to request IO on hose %d\n", index);
-+		printk(KERN_ERR PFX "failed to request IO on hose %d\n", index);
- 	if (request_resource(&iomem_resource, hose->mem_space) < 0)
--		printk(KERN_ERR "Failed to request MEM on hose %d\n", index);
-+		printk(KERN_ERR PFX "failed to request MEM on hose %d\n", index);
- 
- 	/*
- 	 * Save the existing PCI window translations.  SRM will 
-@@ -362,27 +361,27 @@ #ifdef NXM_MACHINE_CHECKS_ON_TSUNAMI
- 	/* NXMs just don't matter to Tsunami--unless they make it
- 	   choke completely. */
- 	tmp = (unsigned long)(TSUNAMI_cchip - 1);
--	printk("%s: probing bogus address:  0x%016lx\n", FN, bogus_addr);
--	printk("\tprobe %s\n",
-+	pr_info(PFX "%s: probing bogus address:  0x%016lx\n", FN, bogus_addr);
-+	pr_info(PFX "\tprobe %s\n",
- 	       tsunami_probe_write((unsigned long *)bogus_addr)
- 	       ? "succeeded" : "failed");
- #endif /* NXM_MACHINE_CHECKS_ON_TSUNAMI */
- 
--#if 0
--	printk("%s: CChip registers:\n", FN);
--	printk("%s: CSR_CSC 0x%lx\n", FN, TSUNAMI_cchip->csc.csr);
--	printk("%s: CSR_MTR 0x%lx\n", FN, TSUNAMI_cchip.mtr.csr);
--	printk("%s: CSR_MISC 0x%lx\n", FN, TSUNAMI_cchip->misc.csr);
--	printk("%s: CSR_DIM0 0x%lx\n", FN, TSUNAMI_cchip->dim0.csr);
--	printk("%s: CSR_DIM1 0x%lx\n", FN, TSUNAMI_cchip->dim1.csr);
--	printk("%s: CSR_DIR0 0x%lx\n", FN, TSUNAMI_cchip->dir0.csr);
--	printk("%s: CSR_DIR1 0x%lx\n", FN, TSUNAMI_cchip->dir1.csr);
--	printk("%s: CSR_DRIR 0x%lx\n", FN, TSUNAMI_cchip->drir.csr);
+-#else
+-static void gdth_scsi_done(Scsi_Cmnd *scp)
+-{
+-    TRACE2(("gdth_scsi_done()\n"));
 -
--	printk("%s: DChip registers:\n");
--	printk("%s: CSR_DSC 0x%lx\n", FN, TSUNAMI_dchip->dsc.csr);
--	printk("%s: CSR_STR 0x%lx\n", FN, TSUNAMI_dchip->str.csr);
--	printk("%s: CSR_DREV 0x%lx\n", FN, TSUNAMI_dchip->drev.csr);
-+#ifdef DEBUG_CONFIG
-+	pr_info(PFX "%s: CChip registers:\n", FN);
-+	pr_info(PFX "%s: CSR_CSC 0x%lx\n", FN, TSUNAMI_cchip->csc.csr);
-+	pr_info(PFX "%s: CSR_MTR 0x%lx\n", FN, TSUNAMI_cchip.mtr.csr);
-+	pr_info(PFX "%s: CSR_MISC 0x%lx\n", FN, TSUNAMI_cchip->misc.csr);
-+	pr_info(PFX "%s: CSR_DIM0 0x%lx\n", FN, TSUNAMI_cchip->dim0.csr);
-+	pr_info(PFX "%s: CSR_DIM1 0x%lx\n", FN, TSUNAMI_cchip->dim1.csr);
-+	pr_info(PFX "%s: CSR_DIR0 0x%lx\n", FN, TSUNAMI_cchip->dir0.csr);
-+	pr_info(PFX "%s: CSR_DIR1 0x%lx\n", FN, TSUNAMI_cchip->dir1.csr);
-+	pr_info(PFX "%s: CSR_DRIR 0x%lx\n", FN, TSUNAMI_cchip->drir.csr);
-+
-+	pr_info(PFX "%s: DChip registers:\n");
-+	pr_info(PFX "%s: CSR_DSC 0x%lx\n", FN, TSUNAMI_dchip->dsc.csr);
-+	pr_info(PFX "%s: CSR_STR 0x%lx\n", FN, TSUNAMI_dchip->str.csr);
-+	pr_info(PFX "%s: CSR_DREV 0x%lx\n", FN, TSUNAMI_dchip->drev.csr);
+-    scp->request.rq_status = RQ_SCSI_DONE;
+-    if (scp->request.waiting)
+-        complete(scp->request.waiting);
+-}
+-
+-int __gdth_execute(struct scsi_device *sdev, gdth_cmd_str *gdtcmd, char *cmnd,
+-                   int timeout, u32 *info)
+-{
+-    Scsi_Cmnd *scp = scsi_allocate_device(sdev, 1, FALSE);
+-    unsigned bufflen = gdtcmd ? sizeof(gdth_cmd_str) : 0;
+-    DECLARE_COMPLETION(wait);
+-    int rval;
+-
+-    if (!scp)
+-        return -ENOMEM;
+-    scp->cmd_len = 12;
+-    scp->use_sg = 0;
+-    scp->SCp.this_residual = IOCTL_PRI;   /* priority */
+-    scp->request.rq_status = RQ_SCSI_BUSY;
+-    scp->request.waiting = &wait;
+-    scsi_do_cmd(scp, cmnd, gdtcmd, bufflen, gdth_scsi_done, timeout*HZ, 1);
+-    wait_for_completion(&wait);
+-
+-    rval = scp->SCp.Status;
+-    if (info)
+-        *info = scp->SCp.Message;
+-
+-    scsi_release_command(scp);
+-    return rval;
+-}
+-#endif
+ 
+ int gdth_execute(struct Scsi_Host *shost, gdth_cmd_str *gdtcmd, char *cmnd,
+                  int timeout, u32 *info)
+@@ -2249,29 +2187,17 @@ #endif
+         printk("GDT-HA %d: Vendor: %s Name: %s\n",
+                hanum,oemstr->text.oem_company_name,ha->binfo.type_string);
+         /* Save the Host Drive inquiry data */
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+         strlcpy(ha->oem_name,oemstr->text.scsi_host_drive_inquiry_vendor_id,
+                 sizeof(ha->oem_name));
+-#else
+-        strncpy(ha->oem_name,oemstr->text.scsi_host_drive_inquiry_vendor_id,7);
+-        ha->oem_name[7] = '\0';
+-#endif
+     } else {
+         /* Old method, based on PCI ID */
+         TRACE2(("gdth_search_drives(): CACHE_READ_OEM_STRING_RECORD failed\n"));
+         printk("GDT-HA %d: Name: %s\n",
+                hanum,ha->binfo.type_string);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+         if (ha->oem_id = OEM_ID_INTEL)
+             strlcpy(ha->oem_name,"Intel  ", sizeof(ha->oem_name));
+         else
+             strlcpy(ha->oem_name,"ICP    ", sizeof(ha->oem_name));
+-#else 
+-        if (ha->oem_id = OEM_ID_INTEL)
+-            strcpy(ha->oem_name,"Intel  ");
+-        else
+-            strcpy(ha->oem_name,"ICP    ");
+-#endif
+     }
+ 
+     /* scanning for host drives */
+@@ -2680,17 +2606,10 @@ static void gdth_copy_internal_data(int 
+                 return;
+             }
+             local_irq_save(flags);
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+             address = kmap_atomic(sl->page, KM_BIO_SRC_IRQ) + sl->offset;
+             memcpy(address,buffer,cpnow);
+             flush_dcache_page(sl->page);
+             kunmap_atomic(address, KM_BIO_SRC_IRQ);
+-#else
+-            address = kmap_atomic(sl->page, KM_BH_IRQ) + sl->offset;
+-            memcpy(address,buffer,cpnow);
+-            flush_dcache_page(sl->page);
+-            kunmap_atomic(address, KM_BH_IRQ);
+-#endif
+             local_irq_restore(flags);
+             if (cpsum = cpcount)
+                 break;
+@@ -4281,11 +4200,7 @@ int __init option_setup(char *str)
+     return 1;
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ static int __init gdth_detect(struct scsi_host_template *shtp)
+-#else
+-static int __init gdth_detect(Scsi_Host_Template *shtp)
+-#endif
+ {
+     struct Scsi_Host *shp;
+     gdth_pci_str pcistr[MAXHA];
+@@ -4425,10 +4340,6 @@ #endif
+                     hdr_channel = ha->bus_cnt;
+                 ha->virt_bus = hdr_channel;
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,20) && \
+-    LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+-                shp->highmem_io  = 0;
+-#endif
+                 if (ha->cache_feat & ha->raw_feat & ha->screen_feat & GDT_64BIT) 
+                     shp->max_cmd_len = 16;
+ 
+@@ -4549,10 +4460,6 @@ #endif
+                     hdr_channel = ha->bus_cnt;
+                 ha->virt_bus = hdr_channel;
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,20) && \
+-    LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+-                shp->highmem_io  = 0;
+-#endif
+                 if (ha->cache_feat & ha->raw_feat & ha->screen_feat & GDT_64BIT) 
+                     shp->max_cmd_len = 16;
+ 
+@@ -4653,9 +4560,6 @@ #endif
+             ha->virt_bus = hdr_channel;
+ 
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+-            scsi_set_pci_device(shp, pcistr[ctr].pdev);
+-#endif
+             if (!(ha->cache_feat & ha->raw_feat & ha->screen_feat &GDT_64BIT)||
+                 /* 64-bit DMA only supported from FW >= x.43 */
+                 (!ha->dma64_support)) {
+@@ -4887,11 +4791,7 @@ static int gdth_eh_bus_reset(Scsi_Cmnd *
+     return SUCCESS;
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ static int gdth_bios_param(struct scsi_device *sdev,struct block_device *bdev,sector_t cap,int *ip)
+-#else
+-static int gdth_bios_param(Disk *disk,kdev_t dev,int *ip)
+-#endif
+ {
+     unchar b, t;
+     int hanum;
+@@ -4899,13 +4799,8 @@ #endif
+     struct scsi_device *sd;
+     unsigned capacity;
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+     sd = sdev;
+     capacity = cap;
+-#else
+-    sd = disk->device;
+-    capacity = disk->capacity;
+-#endif
+     hanum = NUMDATA(sd->host)->hanum;
+     b = virt_ctr ? NUMDATA(sd->host)->busnum : sd->channel;
+     t = sd->id;
+@@ -5520,7 +5415,6 @@ static int gdth_ioctl(struct inode *inod
+         hanum = res.ionode; 
+         ha = HADATA(gdth_ctr_tab[hanum]);
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+         scp  = kmalloc(sizeof(*scp), GFP_KERNEL);
+         if (!scp)
+             return -ENOMEM;
+@@ -5532,17 +5426,6 @@ #if LINUX_VERSION_CODE >= KERNEL_VERSION
+         rval = gdth_eh_bus_reset(scp);
+         res.status = (rval = SUCCESS ? S_OK : S_GENERR);
+         kfree(scp);
+-#else
+-        scp  = scsi_allocate_device(ha->sdev, 1, FALSE);
+-        if (!scp)
+-            return -ENOMEM;
+-        scp->cmd_len = 12;
+-        scp->use_sg = 0;
+-        scp->channel = virt_ctr ? 0 : res.number;
+-        rval = gdth_eh_bus_reset(scp);
+-        res.status = (rval = SUCCESS ? S_OK : S_GENERR);
+-        scsi_release_command(scp);
+-#endif
+         if (copy_to_user(argp, &res, sizeof(gdth_ioctl_reset)))
+             return -EFAULT;
+         break;
+@@ -5630,7 +5513,6 @@ #endif
+     return NOTIFY_OK;
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ /* configure lun */
+ static int gdth_slave_configure(struct scsi_device *sdev)
+ {
+@@ -5639,13 +5521,8 @@ static int gdth_slave_configure(struct s
+     sdev->skip_ms_page_8 = 1;
+     return 0;
+ }
+-#endif
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ static struct scsi_host_template driver_template = {
+-#else
+-static Scsi_Host_Template driver_template = {
+-#endif
+         .proc_name              = "gdth", 
+         .proc_info              = gdth_proc_info,
+         .name                   = "GDT SCSI Disk Array Controller",
+@@ -5656,20 +5533,12 @@ #endif
+         .eh_bus_reset_handler   = gdth_eh_bus_reset,
+         .bios_param             = gdth_bios_param,
+         .can_queue              = GDTH_MAXCMDS,
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+         .slave_configure        = gdth_slave_configure,
+-#endif
+         .this_id                = -1,
+         .sg_tablesize           = GDTH_MAXSG,
+         .cmd_per_lun            = GDTH_MAXC_P_L,
+         .unchecked_isa_dma      = 1,
+         .use_clustering         = ENABLE_CLUSTERING,
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
+-        .use_new_eh_code        = 1,
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,20)
+-        .highmem_io             = 1,
+-#endif
+-#endif
+ };
+ 
+ #include "scsi_module.c"
+diff --git a/drivers/scsi/gdth.h b/drivers/scsi/gdth.h
+index 47eae02..8c29eaf 100644
+--- a/drivers/scsi/gdth.h
++++ b/drivers/scsi/gdth.h
+@@ -936,18 +936,12 @@ #endif
+     gdth_binfo_str      binfo;                  /* controller info */
+     gdth_evt_data       dvr;                    /* event structure */
+     spinlock_t          smp_lock;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+     struct pci_dev      *pdev;
+-#endif
+     char                oem_name[8];
+ #ifdef GDTH_DMA_STATISTICS
+     ulong               dma32_cnt, dma64_cnt;   /* statistics: DMA buffer */
  #endif
- 	/* With multiple PCI busses, we play with I/O as physical addrs.  */
- 	ioport_resource.end = ~0UL;
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,0)
+     struct scsi_device         *sdev;
+-#else
+-    struct scsi_device         sdev;
+-#endif
+ } gdth_ha_str;
+ 
+ /* structure for scsi_register(), SCSI bus != 0 */
+@@ -1029,10 +1023,6 @@ typedef struct {
+ 
+ /* function prototyping */
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ int gdth_proc_info(struct Scsi_Host *, char *,char **,off_t,int,int);
+-#else
+-int gdth_proc_info(char *,char **,off_t,int,int,int);
+-#endif
+ 
+ #endif
+diff --git a/drivers/scsi/gdth_proc.c b/drivers/scsi/gdth_proc.c
+index 32982eb..5fccb15 100644
+--- a/drivers/scsi/gdth_proc.c
++++ b/drivers/scsi/gdth_proc.c
+@@ -4,7 +4,6 @@
+ 
+ #include <linux/completion.h>
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
+ int gdth_proc_info(struct Scsi_Host *host, char *buffer,char **start,off_t offset,int length,   
+                    int inout)
+ {
+@@ -21,32 +20,6 @@ int gdth_proc_info(struct Scsi_Host *hos
+     else
+         return(gdth_get_info(buffer,start,offset,length,host,hanum,busnum));
+ }
+-#else
+-int gdth_proc_info(char *buffer,char **start,off_t offset,int length,int hostno,   
+-                   int inout)
+-{
+-    int hanum,busnum,i;
+-
+-    TRACE2(("gdth_proc_info() length %d offs %d inout %d\n",
+-            length,(int)offset,inout));
+-
+-    for (i = 0; i < gdth_ctr_vcount; ++i) {
+-        if (gdth_ctr_vtab[i]->host_no = hostno)
+-            break;
+-    }
+-    if (i = gdth_ctr_vcount)
+-        return(-EINVAL);
+-
+-    hanum = NUMDATA(gdth_ctr_vtab[i])->hanum;
+-    busnum= NUMDATA(gdth_ctr_vtab[i])->busnum;
+-
+-    if (inout)
+-        return(gdth_set_info(buffer,length,gdth_ctr_vtab[i],hanum,busnum));
+-    else
+-        return(gdth_get_info(buffer,start,offset,length,
+-                             gdth_ctr_vtab[i],hanum,busnum));
+-}
+-#endif
+ 
+ static int gdth_set_info(char *buffer,int length,struct Scsi_Host *host,
+                          int hanum,int busnum)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
