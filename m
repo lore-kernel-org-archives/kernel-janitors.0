@@ -1,7 +1,7 @@
-From: "Raseel Bhagat" <raseelbhagat@gmail.com>
-Date: Fri, 25 Aug 2006 08:33:13 +0000
+From: Domen Puncer <domen@coderock.org>
+Date: Sun, 27 Aug 2006 12:30:45 +0000
 Subject: Re: [KJ] [PATCH] all files: init, cleanup to module init/exit
-Message-Id: <f68850780608250121v26a478b7x7613b108ef95bcb7@mail.gmail.com>
+Message-Id: <20060827123045.GA6324@nd47.coderock.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <d16b1c80608220613y461197a9ye0c53b51823d8f0c@mail.gmail.com>
 In-Reply-To: <d16b1c80608220613y461197a9ye0c53b51823d8f0c@mail.gmail.com>
@@ -10,25 +10,24 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi shakti,
+On 24/08/06 01:58 +0530, Raseel Bhagat wrote:
+> Hi ,
+> 
+> On 8/23/06, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> > True, but that isn't the worst sin of this patch. What to do with
+> >
+> >         #ifdef MODULE
+> >
+> > sprinkled all over touched files and left?
+> >
+> I don't understand how is that a problem. ?
+> There are appropriate #endif s aren't there ?
 
-On 8/25/06, Shakthi Kannan <shakthimaan@gmail.com> wrote:
-> Hi Raseel and others,
-> Oops. Sorry about that. Do I resend the entire fixed patch?
->
+#ifdefs in .c file are the sin, especially when they can be avoided.
+Oh, and trimming Cc: is one too.
 
-Its ok. genuine mistake. I don't think you need to re-send the entire
-patch for a single typo, but I guess some senior people will be in a
-better position to aswer that.
 
-> Is there anything that need to be done with the module_init between
-> ifdef MODULEs, or is that ok?
-I, personally think that the code looked ok.
-
--- 
-Raseel.
-http://osd.byethost8.com
-http://raseel.livejournal.com
+	Domen
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
