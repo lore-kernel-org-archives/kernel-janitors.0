@@ -1,37 +1,35 @@
 From: James Nelson <james4765@gmail.com>
-Date: Wed, 30 Aug 2006 21:48:58 +0000
-Subject: [KJ] [PATCH] 31/37 alpha: add printk() KERN_ constants to
-Message-Id: <20060830214858.15055.7455.sendpatchset@david.homenet>
+Date: Sun, 27 Aug 2006 20:45:06 +0000
+Subject: [KJ] [PATCH][RESEND] ibmmca: Remove dead MODULE_PARM code
+Message-Id: <20060827204506.15296.98859.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Script choked on the title...
+
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/alpha/kernel/sys_nautilus.c b/arch/alpha/kernel/sys_nautilus.c
-index c0d696e..6b95cac 100644
---- a/arch/alpha/kernel/sys_nautilus.c
-+++ b/arch/alpha/kernel/sys_nautilus.c
-@@ -116,7 +116,7 @@ static void
- naut_sys_machine_check(unsigned long vector, unsigned long la_ptr,
- 		       struct pt_regs *regs)
- {
--	printk("PC %lx RA %lx\n", regs->pc, regs->r26);
-+	printk(KERN_CRIT "PC %lx RA %lx\n", regs->pc, regs->r26);
- 	irongate_pci_clr_err();
- }
+diff --git a/drivers/scsi/ibmmca.c b/drivers/scsi/ibmmca.c
+index 2be1dc5..1144ad2 100644
+--- a/drivers/scsi/ibmmca.c
++++ b/drivers/scsi/ibmmca.c
+@@ -447,13 +447,6 @@ module_param(boot_options, charp, 0);
+ module_param_array(io_port, int, NULL, 0);
+ module_param_array(scsi_id, int, NULL, 0);
  
-@@ -230,7 +230,7 @@ nautilus_init_pci(void)
- 	if (memtop > alpha_mv.min_mem_address) {
- 		free_reserved_mem(__va(alpha_mv.min_mem_address),
- 				  __va(memtop));
--		printk("nautilus_init_pci: %ldk freed\n",
-+		pr_info("nautilus_init_pci: %ldk freed\n",
- 			(memtop - alpha_mv.min_mem_address) >> 10);
- 	}
- 
+-#if 0 /* FIXME: No longer exist? --RR */
+-MODULE_PARM(display, "1i");
+-MODULE_PARM(adisplay, "1i");
+-MODULE_PARM(normal, "1i");
+-MODULE_PARM(ansi, "1i");
+-#endif
+-
+ MODULE_LICENSE("GPL");
+ #endif
+ /*counter of concurrent disk read/writes, to turn on/off disk led */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
