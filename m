@@ -1,35 +1,161 @@
-From: "Excreta U. Trawl" <rrwo@goldbergemail.com>
-Date: Thu, 31 Aug 2006 05:29:47 +0000
-Subject: [KJ] cheap Software
-Message-Id: <3039035488.20060831012429@goldbergemail.com>
+From: ville palo <ville.palo@vi64pa.net>
+Date: Mon, 28 Aug 2006 18:38:23 +0000
+Subject: [KJ] [PATCH] cdrom: Removed unreachable code segments
+Message-Id: <1156790303.5914.8.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1263770014.20060825081706@goaliebox.com>
-In-Reply-To: <1263770014.20060825081706@goaliebox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Software taking
 
-Some examples:
-Streets and Trips 2004 North America (2CD) $69.95
-Illustrator CS CE $69.95
-Illustrator CS CE $69.95
-After Effects 6 $69.95
-PageMaker 7 (2CD) $69.95
-Windows 2000 Advanced Server $69.95
-Creative Suite Premium (5 CD) $149.95
-Photo Painter 8 $59.95
-Norton System Works 2003 $59.95
-Norton System Works 2003 $59.95
-Fireworks MX 2004 $69.95
-Photo Painter 8 $59.95
-WordPerfect Office 10 $69.95
-Windows 98 $49.95
+Removed unreachable code.
 
-The rest is on our site:
-http://3iqpr79n9wrgmllgq3ly83ll.wogmf.st/
+Signed-off-by: Ville Palo <ville.palo@vi64pa.net>
+
+diff --git a/drivers/cdrom/gscd.c b/drivers/cdrom/gscd.c
+index fa70824..6063bd5 100644
+--- a/drivers/cdrom/gscd.c
++++ b/drivers/cdrom/gscd.c
+@@ -567,9 +567,7 @@ static void cmd_out(int cmd_type, char *
+ 							cmd_read_w
+ 							    (respo_buf,
+ 							     respo_count,
+-							     CD_FRAMESIZE /
+-							     2);
+-							return;
++							     CD_FRAMESIZE / 2);
+ 						} else {
+ 							/* read the data to the buffer (byte) */
+ 
+@@ -578,13 +576,11 @@ static void cmd_out(int cmd_type, char *
+ 							    (respo_buf,
+ 							     respo_count,
+ 							     CD_FRAMESIZE);
+-							return;
+ 						}
+ 					} else {
+ 						/* read the info to the buffer */
+ 						cmd_info_in(respo_buf,
+ 							    respo_count);
+-						return;
+ 					}
+ 
+ 					return;
+diff --git a/drivers/cdrom/isp16.c b/drivers/cdrom/isp16.c
+index db0fd9a..3c1b493 100644
+--- a/drivers/cdrom/isp16.c
++++ b/drivers/cdrom/isp16.c
+@@ -318,7 +318,6 @@ isp16_cdi_config(int base, u_char drive_
+ 		printk("ISP16: dma 1 cannot be used by cdrom interface,"
+ 		       " due to conflict with the sound card.\n");
+ 		return -1;
+-		break;
+ 	case 3:
+ 		dma_code = ISP16_DMA_3;
+ 		break;
+diff --git a/drivers/cdrom/mcdx.c b/drivers/cdrom/mcdx.c
+index dcd1ab6..4153790 100644
+--- a/drivers/cdrom/mcdx.c
++++ b/drivers/cdrom/mcdx.c
+@@ -620,11 +620,10 @@ static void do_mcdx_request(request_queu
+ 			req->nr_sectors -= i;
+ 			req->buffer += (i * 512);
+ 		}
+-		end_request(req, 1);
+-		goto again;
+ 
+ 		xtrace(REQUEST, "end_request(1)\n");
+ 		end_request(req, 1);
++		goto again;
+ 	}
+ 
+ 	goto again;
+@@ -1714,7 +1713,6 @@ static int mcdx_tray_move(struct cdrom_d
+ 		return mcdx_talk(stuffp, "\xf6", 1, NULL, 1, 5 * HZ, 3);
+ 	else			/* 0: close */
+ 		return mcdx_talk(stuffp, "\xf8", 1, NULL, 1, 5 * HZ, 3);
+-	return 1;
+ }
+ 
+ static int mcdx_stop(struct s_drive_stuff *stuffp, int tries)
+diff --git a/drivers/cdrom/sonycd535.c b/drivers/cdrom/sonycd535.c
+index 30ab562..65bdd64 100644
+--- a/drivers/cdrom/sonycd535.c
++++ b/drivers/cdrom/sonycd535.c
+@@ -1028,7 +1028,6 @@ sony_get_subchnl_info(void __user *arg)
+ 		if (copy_to_user(arg, &schi, sizeof schi))
+ 			return -EFAULT;
+ 		return 0;
+-		break;
+ 
+ 	case CDROM_AUDIO_INVALID:
+ 	case CDROM_AUDIO_ERROR:
+@@ -1083,7 +1082,6 @@ cdu_ioctl(struct inode *inode,
+ 			return -EIO;
+ 		}
+ 		return 0;
+-		break;
+ 
+ 	case CDROMSTOP:			/* Spin down the drive */
+ 		cmd_buff[0] = SONY535_HOLD;
+@@ -1103,7 +1101,6 @@ cdu_ioctl(struct inode *inode,
+ 			return -EIO;
+ 		}
+ 		return 0;
+-		break;
+ 
+ 	case CDROMPAUSE:			/* Pause the drive */
+ 		cmd_buff[0] = SONY535_HOLD;		/* CDU-31 driver uses AUDIO_STOP, not pause */
+@@ -1121,7 +1118,6 @@ cdu_ioctl(struct inode *inode,
+ 		cur_pos_msf[2] = last_sony_subcode->abs_msf[2];
+ 		sony_audio_status = CDROM_AUDIO_PAUSED;
+ 		return 0;
+-		break;
+ 
+ 	case CDROMRESUME:			/* Start the drive after being paused */
+ 		set_drive_mode(SONY535_AUDIO_DRIVE_MODE, status);
+@@ -1150,7 +1146,6 @@ cdu_ioctl(struct inode *inode,
+ 		}
+ 		sony_audio_status = CDROM_AUDIO_PLAY;
+ 		return 0;
+-		break;
+ 
+ 	case CDROMPLAYMSF:			/* Play starting at the given MSF address. */
+ 		if (copy_from_user(params, argp, 6))
+@@ -1181,7 +1176,6 @@ cdu_ioctl(struct inode *inode,
+ 		final_pos_msf[2] = cmd_buff[9];
+ 		sony_audio_status = CDROM_AUDIO_PLAY;
+ 		return 0;
+-		break;
+ 
+ 	case CDROMREADTOCHDR:		/* Read the table of contents header */
+ 		{
+@@ -1197,7 +1191,6 @@ cdu_ioctl(struct inode *inode,
+ 				return -EFAULT;
+ 		}
+ 		return 0;
+-		break;
+ 
+ 	case CDROMREADTOCENTRY:	/* Read a given table of contents entry */
+ 		{
+@@ -1240,7 +1233,6 @@ cdu_ioctl(struct inode *inode,
+ 				return -EFAULT;
+ 		}
+ 		return 0;
+-		break;
+ 
+ 	case CDROMPLAYTRKIND:		/* Play a track.  This currently ignores index. */
+ 		{
+@@ -1346,7 +1338,6 @@ cdu_ioctl(struct inode *inode,
+ 			return -EIO;
+ 		}
+ 		return 0;
+-		break;
+ 
+ 	default:
+ 		return -EINVAL;
+
 
 _______________________________________________
 Kernel-janitors mailing list
