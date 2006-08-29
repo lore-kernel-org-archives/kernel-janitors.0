@@ -1,51 +1,129 @@
-From: "Catrina.jones" <Fannie@ipromogroup.com>
-Date: Sun, 13 Aug 2006 18:51:23 +0000
-Subject: [KJ] Jobs in Australia and New Zealand
-Message-Id: <28FF37C0.4860660@ipromogroup.com>
+From: "Meical Mccollough" <toccoo@blsports.com>
+Date: Tue, 29 Aug 2006 06:08:11 +0000
+Subject: Re: [KJ] ayjyRX
+Message-Id: <000001c6cb31$81b7a4d0$4cbfa8c0@iigcec>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1112494150=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-We are now hiring in Australia and New Zealand! 
+This is a multi-part message in MIME format...
 
-This rather new business concept already became "One of the hot 13 businesses of 2005," as stated by the Entrepreneur Magazine, and is quickly expanding globally. People everywhere have all types of items they can sell through online auctions, but not having the time or knowledge how to list to maximize the sales price often prevents them from doing so. Drop4Sale, US based company, makes it incredibly easy for someone to sell their items online.  We are already operating stores outside of US and will continue to expand.  
+--===============1112494150==
+Content-Type: multipart/alternative; boundary="----------=_1156831791-26417-2"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Currently we are seeking administrative assistants/sales support representatives in Australia and New Zealand to work from home, to contribute to the sales force and to add convenience to our cost-effective service dedicated to individuals, businesses, and organizations worldwide.
+This is a multi-part message in MIME format...
 
-This position focuses on the management of daily, weekly and monthly tasks and special projects pertaining to the sales support for sales within Australia and/or New Zealand. 
+------------=_1156831791-26417-2
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Hours: You can work full time or part time. Your schedule can be flexible. For part-time you will need to spend on average 3 hours per day, Monday-Friday. Full-time you will need to spend 6-7 hours per day, Monday-Friday. 
+Hi,
+Go m od news for you.
+=20
+PHA d RMAC y Y d l irect g ly from the ma e nuf h actu g rer,
+Ec y ono e mize u j p to 60 v % w o ith us http://oplikitunhadwan.com
 
-Location: This is a work at home position. All communication will be online.
+, b=20
 
-Requirements: You need to have Internet access, Excel, and motivation. 
+, l=20
 
-Costs and Fees: There are NO costs at any time for our employees. All fees related to this employment are covered by the company.
+, t=20
 
-Further Hiring Process: Please send your resume to catrina.jones@careerds.com. In your email please state if you are interested in a part-time or a full-time position. After reviewing the submitted applications we respond to successful applicants only. We then offer the successful applicants a position within our company on a trial period for one month. During this trial period you will be receiving training and online support while working and being paid. Employees on a one month trial period are evaluated at least one week prior to the end of their trial period. During the trial period, the supervisor can recommend termination. At the completion of the trial period, the supervisor can recommend continued employment, extension of trial period, or termination. After the trial period your base pay will increase.  
-
-Salary Part-Time: During the trial period, base pay for part time is 1,000AUD, plus 5% commission from each successfully completed transaction with a client. With the current volume of clients on average your overall income will add up to 2,000AUD per month. After the trial period, base pay will increase to 1,500AUD per month, plus 5% commission. 
-
-Salary Full-Time: During the trial period, base pay for full time is 2,000AUD, plus 5% commission from each successfully completed transaction with a client. With the current volume of clients on average your overall income will add up to 4,000AUD per month. After the trial period, base pay will increase to 3,000AUD per month, plus 5% commission. 
-
-Send any questions and your resume to catrina.jones@careerds.com
-
-Thank You,
-Catrina Jones
+vanished into the mailchute and I went back to work.
+At the end of the sixth day we were all pretty exhausted. Barry Moyd
+Shlepper had stayed up for two nights running, cold towels wrapped
 
 
-Permission Settings
 
-If you feel that you have received this message in error or do not wish to receive future messages, please reply to this message with remove in the subject heading. We will immediately update accordingly. We apologize for any inconvenience. 
+------------=_1156831791-26417-2
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-HR - Career DS 
-8865 Balboa Avenue, 
-San Diego, CA 92123
-Catrina.jones@careerds.com
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi,</DIV>
+<DIV>Go<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> m </FONT>od news for you.</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>PHA<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> d </FONT>RMAC<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> y </FONT>Y d<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> l </FONT>irect<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> g </FONT>ly from the ma<FONT size=3D"2" DEFANGED_sty=
+le
+=3D" float :
+
+right" face=3D"Arial"> e </FONT>nuf<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> h </FONT>actu<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> g </FONT>rer,</DIV>
+<DIV>Ec<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> y </FONT>ono<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> e </FONT>mize u<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> j </FONT>p to 60 <FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> v </FONT>% w<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> o </FONT>ith us <A href=3D"http://oplikitunhadwan.co=
+m">http://oplikitunhadwan.com</A></DIV><P>,<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> b </FONT></P><P>,<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> l </FONT></P><P>,<FONT size=3D"2" DEFANGED_style
+=3D" float :
+
+right" face=3D"Arial"> t </FONT></P><P>vanished into the mailchute and I we=
+nt back to work.<BR>
+ At  the end of the sixth day we were all pretty exhausted. Barry Moyd<BR>
+Shlepper  had  stayed up for two nights running, cold  towels  wrapped<BR><=
+/P></BODY></HTML>
+------------=_1156831791-26417-2--
+
+--===============1112494150==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1112494150==--
