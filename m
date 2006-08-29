@@ -1,86 +1,54 @@
-From: "lauree norris" <felitahemphill@astrons.com>
-Date: Sat, 12 Aug 2006 02:08:10 +0000
-Subject: [KJ] Top secret
-Message-Id: <001d01c6bdb3$f5f66880$5109c277@bpbkkra>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1195164501=="
+From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
+Date: Tue, 29 Aug 2006 07:58:22 +0000
+Subject: [KJ] [Patch] convert schedule_timeout to msleep in cciss.c
+Message-Id: <1156838302.31519.28.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+G'day list
 
---===============1195164501==
-Content-Type: multipart/alternative;
-    boundary="----------=_1155351815-14545-803"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+I was doing some more grepping for schedule_timeout without HZ and found
+one in cciss.c.
 
-This is a multi-part message in MIME format...
+Now I found a patch from Nish
+http://lists.osdl.org/mailman/htdig/kernel-janitors/2005-February/003637.html
+that was ack'd
+http://lists.osdl.org/mailman/htdig/kernel-janitors/2005-February/003638.html
 
-------------=_1155351815-14545-803
-Content-Type: text/plain;
-   charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+That contained a fix, but does not seem to have been applied.
+
+Now Nish posted another patch 
+http://lists.osdl.org/mailman/htdig/kernel-janitors/2004-September/001849.html
+that does seem to be in the KJ patch set, but doesn't fix the second
+schedule_timeout().
+
+So I figure it should either be converted to HZ relative or to msleep().
+Here is a patch to do the later.
+
+compile tested on allyesconfig.
 
 
+Convert schedule_timeout to msleep in cciss.c
 
-Best appearance and respect from friends!
+Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
+--- drivers/block/cciss.c.orig	2006-08-29 15:31:01.000000000 +1000
++++ drivers/block/cciss.c	2006-08-29 15:41:03.000000000 +1000
+@@ -2912,8 +2912,7 @@ static int cciss_pci_init(ctlr_info_t *c
+ 		if (!(readl(c->vaddr + SA5_DOORBELL) & CFGTBL_ChangeReq))
+ 			break;
+ 		/* delay and try again */
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		schedule_timeout(10);
++		msleep(100);
+ 	}
+ 
+ #ifdef CCISS_DEBUG
 
-Gold, jewels and silk from top brands for almost no charge!
-
-http://duffetodm.com/us/
-
-Dongola race collar disease vegetable black
-short-heeled scratch brusher rat-tailed
-United-states-man cotton tree war-denouncing
-die fitter safe-marching sea rim
-stone circle horn pout flax snapdragon
-knight-errantry laap insect five-part time
-cleft grafting imaginal bud step-off
-back gear half-vowelish cat spruce
-
-------------=_1155351815-14545-803
-Content-Type: text/html;
-   charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3DWindows-125=
-2">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY>
-<DIV><FONT face=3DArial size=3D2>
-<p>Best appearance and respect from friends!</p>
-<p>Gold, jewels and silk from top brands for almost no charge!</p>
-<A HREF=3D"http://duffetodm.com/us/">http://duffetodm.com/us/</A><BR>
-<BR>
-Dongola race collar disease vegetable black<BR>
-short-heeled scratch brusher rat-tailed<BR>
-United-states-man cotton tree war-denouncing<BR>
-die fitter safe-marching sea rim<BR>
-stone circle horn pout flax snapdragon<BR>
-knight-errantry laap insect five-part time<BR>
-cleft grafting imaginal bud step-off<BR>
-back gear half-vowelish cat spruce<BR>
-</FONT></DIV></BODY></HTML>
-
-------------=_1155351815-14545-803--
-
---===============1195164501==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1195164501==--
