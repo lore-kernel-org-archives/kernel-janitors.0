@@ -1,41 +1,68 @@
-From: "Darren Jenkins" <darrenrjenkins@gmail.com>
-Date: Wed, 23 Aug 2006 03:52:43 +0000
-Subject: Re: [KJ] [PATCH RESEND] isdn: Changing const char *foo to const
-Message-Id: <82faac5b0608222052s38be70e4v92054b3c042747be@mail.gmail.com>
+From: alisander jeth <rancellpeg@temaniawines.co.nz>
+Date: Tue, 29 Aug 2006 22:44:02 +0000
+Subject: [KJ] Sweet
+Message-Id: <006c01c6cbbc.9faf6500.871cc0a8@winne>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1773412926=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <OFB3282B97.FB5DD180-ON872571D3.000FF6F2-862571D3.00101960@us.ibm.com>
-In-Reply-To: <OFB3282B97.FB5DD180-ON872571D3.000FF6F2-862571D3.00101960@us.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Janani,
+This is a multi-part message in MIME format...
 
-Good news and bad news.
+--===============1773412926==
+Content-Type: multipart/alternative; boundary="----------=_1156894666-17999-6"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-The good news is that when I looked at your mail it was on the web
-(Gmail) and I could tell it was formatted because gmail chose a small
-font (that's hard to see) which it does for html mails.
+This is a multi-part message in MIME format...
 
-When I looked on the archive to see if i missed the re-send. I found
-the original mail
-http://lists.osdl.org/pipermail/kernel-janitors/2006-August/006881.html
-and it is in plain text with an html copy as the attachment. So I
-guess Gmail just prefers to use the html version if one is available.
+------------=_1156894666-17999-6
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-So the good news is your mail is in plain text (with a html
-attachment), and I just didn't know because I was looking at it in
-Gmail at the time. (sorry about that)
+Elite things for you...
+http://kistahla.com/gift/
+dirt. Musa's body still stood, the 
+our time and even later. Where 
+Maybe this is why 
+he said. With gesture of easy dismissal, 
+Luckman said thoughtfully, 
 
-The bad news is you sent the html attachment thing again with your re-send.
-http://lists.osdl.org/pipermail/kernel-janitors/2006-August/006890.html
+------------=_1156894666-17999-6
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-I don't know how much that will bother you after the good news though. :)
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta content="text/html;charset=us-ascii" http-equiv="Content-Type">
+</head>
+<body>
+<div>Elite things for you...</div>
+<a href="http://kistahla.com/gift/">http://kistahla.com/gift/</a><br>
+<br><br><br>
+dirt. Musa's body still stood, the <br>
+our time and even later. Where <br>
+Maybe this is why <br>
+he said. With gesture of easy dismissal, <br>
+Luckman said thoughtfully, <br>
+</body>
+</html>
 
+------------=_1156894666-17999-6--
 
-Darren J.
+--===============1773412926==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1773412926==--
