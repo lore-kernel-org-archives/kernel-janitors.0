@@ -1,54 +1,46 @@
-From: "Gregorio Byrd" <813isaiah@brainpod.com>
-Date: Tue, 01 Aug 2006 22:44:28 +0000
-Subject: [KJ] Hottest Deal out there (a JOB)
-Message-Id: <200608012245.k71Mj7nV030969@smtp.osdl.org>
+From: James Nelson <james4765@gmail.com>
+Date: Wed, 30 Aug 2006 21:49:05 +0000
+Subject: [KJ] [PATCH] 32/37 alpha: add printk() KERN_ constants to
+Message-Id: <20060830214905.15055.56506.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Kernel-janitors.
-Important international company looks for employees to cover jobs of half t=
-ime in AU.    =20
-
-The search aims at responsible, dynamic and honest people, Ages between 18 =
-and 50 years old, with desires to work in equipment and relation of depende=
-ncy. That time was signed contract by a month of test, so if your performan=
-ce is correct and effective in our company we will provide new contract and=
- also possibility of other career in our company.=20
-The vacancies are for covering jobs of  part time 1 to 4 hours  a day.   =20
-
-
-The offered weekly wage is between =88 300-1200.    =20
-
-
-
-Requirements  =20
-Handling of PC, Knowledge of Microsoft office, Internet Explorer, msn or ic=
-q.  (No excluding).    =20
-
-
-
-
-If you wish to enter the process of selection write to our RRHH area.=20
-mail to:
-support@mitronltd.com
- =20
-The answers you would be accepted until day 10 of August of the 2006.
-
-
-
-
-
-
-
-
- =20
-Tue, 1 Aug 2006 23:44:28 +0100
-
-
-
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/alpha/kernel/sys_sable.c b/arch/alpha/kernel/sys_sable.c
+index a7a1464..1e0339c 100644
+--- a/arch/alpha/kernel/sys_sable.c
++++ b/arch/alpha/kernel/sys_sable.c
+@@ -453,7 +453,7 @@ sable_lynx_enable_irq(unsigned int irq)
+ 	sable_lynx_irq_swizzle->update_irq_hw(bit, mask);
+ 	spin_unlock(&sable_lynx_irq_lock);
+ #if 0
+-	printk("%s: mask 0x%lx bit 0x%x irq 0x%x\n",
++	printk(KERN_DEBUG "%s: mask 0x%lx bit 0x%x irq 0x%x\n",
+ 	       __FUNCTION__, mask, bit, irq);
+ #endif
+ }
+@@ -469,7 +469,7 @@ sable_lynx_disable_irq(unsigned int irq)
+ 	sable_lynx_irq_swizzle->update_irq_hw(bit, mask);
+ 	spin_unlock(&sable_lynx_irq_lock);
+ #if 0
+-	printk("%s: mask 0x%lx bit 0x%x irq 0x%x\n",
++	printk(KERN_DEBUG "%s: mask 0x%lx bit 0x%x irq 0x%x\n",
+ 	       __FUNCTION__, mask, bit, irq);
+ #endif
+ }
+@@ -523,7 +523,7 @@ sable_lynx_srm_device_interrupt(unsigned
+ 	bit = (vector - 0x800) >> 4;
+ 	irq = sable_lynx_irq_swizzle->mask_to_irq[bit];
+ #if 0
+-	printk("%s: vector 0x%lx bit 0x%x irq 0x%x\n",
++	printk(KERN_DEBUG "%s: vector 0x%lx bit 0x%x irq 0x%x\n",
+ 	       __FUNCTION__, vector, bit, irq);
+ #endif
+ 	handle_irq(irq, regs);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
