@@ -1,95 +1,374 @@
-From: POWERBALL GROUP BV <winners@powerball.org>
-Date: Sun, 27 Aug 2006 03:53:49 +0000
-Subject: [KJ] POWERBALL  -wheel E-game- (CONSOLATION PRIZE WINNER NOTICE)
-Message-Id: <20060827035349.13978.qmail@p15180711.pureserver.info>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0245690798=="
+From: James Nelson <james4765@gmail.com>
+Date: Wed, 30 Aug 2006 21:45:38 +0000
+Subject: [KJ] [PATCH] 02/37 alpha: add printk() KERN_ constants to
+Message-Id: <20060830214538.15055.40888.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0245690798==
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-
-
-POWERBALL LOTTO GROUP BV.
-PROMOTIONS/PRIZE AWARD DEPARTMENT.
-12 QUEENS ROAD
-Liverpool. L70 1NL 
-UNITED KINGDOM.
-                           
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/alpha/kernel/core_cia.c b/arch/alpha/kernel/core_cia.c
+index fd56306..b87245a 100644
+--- a/arch/alpha/kernel/core_cia.c
++++ b/arch/alpha/kernel/core_cia.c
+@@ -35,10 +35,12 @@ #include "pci_impl.h"
+  */
  
-Ref:   PBL/2251256003/02
-Batch: 14/0017/PBL
-
-
-Dear Prize Winner,
-
+ #define DEBUG_CONFIG 0
++#define PFX "pci: cia: "
++
+ #if DEBUG_CONFIG
+-# define DBGC(args)	printk args
++# define DBG_CFG(fmt, args...)	printk (KERN_DEBUG PFX "%s: " fmt, __FUNCTION__, ## args)
+ #else
+-# define DBGC(args)
++# define DBG_CFG(fmt, args...)
+ #endif
  
-                                               CONSOLATION PRIZE WINNER NOTICE
-
+ #define vip	volatile int  *
+@@ -93,9 +95,8 @@ mk_conf_addr(struct pci_bus *bus_dev, un
+ 	*type1 = (bus != 0);
+ 	*pci_addr = (bus << 16) | (device_fn << 8) | where;
  
-Europe/ America private international e-games organizers and co-sponsors, POWERBALL LOTTO Group International, officially bring to your notice of the final draw result of 26th August, 2006 POWERBALL LOTTO -wheel E-game which was conducted at our international corporate office complex in The UNITED KINGDOM.
+-	DBGC(("mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x,"
+-	      " returning address 0x%p\n"
+-	      bus, device_fn, where, *pci_addr));
++	DBG_CFG("(bus=%d ,device_fn=0x%x, where=0x%x, returning address 0x%p\n"
++	      bus, device_fn, where, *pci_addr);
  
-Most recently this foundation set up the NEW LOTTERY SCHEME to give out prizes based on COMPUTER BALLOT SYSTEM. By oing this the foundation seek to encourage the use of Internet for academic and business pursuits. Its major aim is to promote music, theater, art,literature,projects in the social and political arena with a focus on health, as well as science, research, and higher education.
+ 	return 0;
+ }
+@@ -107,7 +108,7 @@ conf_read(unsigned long addr, unsigned c
+ 	int stat0, value;
+ 	int cia_cfg = 0;
  
-We wish to congratulate and inform you on the selection of your e-mail account among the 6 lucky consolation prize winners.Your e-mail ID identified with coupon No. PBL2348974321 and was selected by our E-games Random Selection System (ERSS) with entries from the 50,000 different email addresses enrolled for the E-game. Your e-mail ID was included among the 50,000 different e-mail addresses submitted by our partner international e-mail provider companies. You have won a consultation cash prize of US $950,000.00 (Nine Hundred And Fifty Thousand US Dollars) only. 
-
-The POWERBALL LOTTO Group. BV, have approved a payout of your consultation cash prize which will be remunerated directly to you by the official Payment Agency Board. Our DUE PROCESS UNIT (DPU) will render to you complete assistance and provide additional  information and processes for the claims of your consultation prize.
-
-For due processing of your winning claim, please  contact the DPU and provide the following details for the release of your winnings.
+-	DBGC(("conf_read(addr=0x%lx, type1=%d) ", addr, type1));
++	DBG_CFG("(addr=0x%lx, type1=%d) started\n", addr, type1);
+ 	local_irq_save(flags);
  
-Claims Requirements:
-
-1.Name in full:
-2.Home Address:
-3.Age:
-4.Occupation:
-5.Phone Number:
-6.Present Country:
-7.Sex:
-
-Contact E-mail: dueprocessingunit24@inmail24.com
-       
-Note that all prize funds must be claimed not later than 28th September, 2006. After this date all funds will be returned to the the POWERBALL LOTTO Group. BV as unclaimed. In order to avoid unnecessary delays and complications, please endeavour to quote your Reference Number: PBL/2251256003/02 and Batch numbers: 14/0017/PBLG in every correspondence the DPU.
-
-Furthermore, should there be any change in your address, do inform your claims agent as soon as possible.
-
-Congratulations once again from all members of our staff and thanks for being part of our promotions program.
+ 	/* Reset status register to avoid losing errors.  */
+@@ -150,7 +151,7 @@ conf_read(unsigned long addr, unsigned c
+ 	}
  
-Yours Sincerely,
-Mrs. Cindy Charles Thomas
-Executive (International Sweepstakes).
-
-
-
-
---------------------------------------------------------------------------------------------------------------
-Program Warning!!! Fraudulent e-mails are circulating that appears to be impersonator using our names and addresses, but are not from the POWERBALL LOTTO Group. BV, PLEASE REPORT IMMEDIATELY TO CUSTOMER CARE/COMPLAINTS DEPT. 
-
-Note: Participants below 17 years are automatically disqualified. All e-mail transmission/correspondence are 100% protected by our Secured Socket Layer (SSL) server. 
-
-The POWERBALL LOTTO Group. BV is an institution under public law. Therefore, the lottery contract is concluded between the lottery participant and the public law institution. POWERBALL LOTTO Group. BV  is 
-represented through its Director Dr. Gerhard Rombach at 12 QUEENS ROAD Liverpool. L70 1NL. United Kingdom, trades register HRA 6230.
---------------------------------------------------------------------------------------------------------------                                       Material Copyright ��� 2006 PowerBall Lotto Group. Bv
-
-
-
-
-
-
-
-
-
---===============0245690798==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+ 	local_irq_restore(flags);
+-	DBGC(("done\n"));
++	DBG_CFG("(addr=0x%lx, type1=%d) completed\n", addr, type1);
+ 
+ 	return value;
+ }
+@@ -161,7 +162,7 @@ conf_write(unsigned long addr, unsigned 
+ 	unsigned long flags;
+ 	int stat0, cia_cfg = 0;
+ 
+-	DBGC(("conf_write(addr=0x%lx, type1=%d) ", addr, type1));
++	DBG_CFG("(addr=0x%lx, type1=%d) started", addr, type1);
+ 	local_irq_save(flags);
+ 
+ 	/* Reset status register to avoid losing errors.  */
+@@ -200,7 +201,7 @@ conf_write(unsigned long addr, unsigned 
+ 	}
+ 
+ 	local_irq_restore(flags);
+-	DBGC(("done\n"));
++	DBG_CFG("(addr=0x%lx, type1=%d) completed", addr, type1);
+ }
+ 
+ static int 
+@@ -398,23 +399,23 @@ verify_tb_operation(void)
+ 
+ 	temp = *(vip)CIA_IOC_TB_TAGn(0);
+ 	if (temp != tag0) {
+-		printk("pci: failed tb register update test "
++		printk(KERN_ERR PFX "failed tb register update test "
+ 		       "(tag0 %#x != %#x)\n", temp, tag0);
+ 		goto failed;
+ 	}
+ 	temp = *(vip)CIA_IOC_TB_TAGn(1);
+ 	if (temp != 0) {
+-		printk("pci: failed tb register update test "
++		printk(KERN_ERR PFX "failed tb register update test "
+ 		       "(tag1 %#x != 0)\n", temp);
+ 		goto failed;
+ 	}
+ 	temp = *(vip)CIA_IOC_TBn_PAGEm(0,0);
+ 	if (temp != pte0) {
+-		printk("pci: failed tb register update test "
++		printk(KERN_ERR PFX "failed tb register update test "
+ 		       "(pte0 %#x != %#x)\n", temp, pte0);
+ 		goto failed;
+ 	}
+-	printk("pci: passed tb register update test\n");
++	pr_info(PFX "passed tb register update test\n");
+ 
+ 	/* Second, verify we can actually do I/O through this entry.  */
+ 
+@@ -428,15 +429,15 @@ verify_tb_operation(void)
+ 	mcheck_expected(0) = 0;
+ 	mb();
+ 	if (mcheck_taken(0)) {
+-		printk("pci: failed sg loopback i/o read test (mcheck)\n");
++		printk(KERN_ERR PFX "failed sg loopback i/o read test (mcheck)\n");
+ 		goto failed;
+ 	}
+ 	if (temp != data0) {
+-		printk("pci: failed sg loopback i/o read test "
++		printk(KERN_ERR PFX "failed sg loopback i/o read test "
+ 		       "(%#x != %#x)\n", temp, data0);
+ 		goto failed;
+ 	}
+-	printk("pci: passed sg loopback i/o read test\n");
++	pr_info(PFX "passed sg loopback i/o read test\n");
+ 
+ 	/* Third, try to invalidate the TLB.  */
+ 
+@@ -445,9 +446,9 @@ verify_tb_operation(void)
+ 		temp = *(vip)CIA_IOC_TB_TAGn(0);
+ 		if (temp & 1) {
+ 			use_tbia_try2 = 1;
+-			printk("pci: failed tbia test; workaround available\n");
++			printk(KERN_ERR PFX "failed tbia test; workaround available\n");
+ 		} else {
+-			printk("pci: passed tbia test\n");
++			pr_info(PFX "passed tbia test\n");
+ 		}
+ 	}
+ 
+@@ -465,15 +466,15 @@ verify_tb_operation(void)
+ 	mcheck_expected(0) = 0;
+ 	mb();
+ 	if (mcheck_taken(0)) {
+-		printk("pci: failed pte write cache snoop test (mcheck)\n");
++		printk(KERN_ERR PFX "failed pte write cache snoop test (mcheck)\n");
+ 		goto failed;
+ 	}
+ 	if (temp != data0) {
+-		printk("pci: failed pte write cache snoop test "
++		printk(KERN_ERR PFX "failed pte write cache snoop test "
+ 		       "(%#x != %#x)\n", temp, data0);
+ 		goto failed;
+ 	}
+-	printk("pci: passed pte write cache snoop test\n");
++	pr_info(PFX "passed pte write cache snoop test\n");
+ 
+ 	/* Fifth, verify that a previously invalid PTE entry gets
+ 	   filled from the page table.  */
+@@ -489,17 +490,17 @@ verify_tb_operation(void)
+ 	mcheck_expected(0) = 0;
+ 	mb();
+ 	if (mcheck_taken(0)) {
+-		printk("pci: failed valid tag invalid pte reload test "
++		printk(KERN_ERR PFX "failed valid tag invalid pte reload test "
+ 		       "(mcheck; workaround available)\n");
+ 		/* Work around this bug by aligning new allocations
+ 		   on 4 page boundaries.  */
+ 		arena->align_entry = 4;
+ 	} else if (temp != data0) {
+-		printk("pci: failed valid tag invalid pte reload test "
++		printk(KERN_ERR PFX "failed valid tag invalid pte reload test "
+ 		       "(%#x != %#x)\n", temp, data0);
+ 		goto failed;
+ 	} else {
+-		printk("pci: passed valid tag invalid pte reload test\n");
++		printk(KERN_ERR PFX "passed valid tag invalid pte reload test\n");
+ 	}
+ 
+ 	/* Sixth, verify machine checks are working.  Test invalid
+@@ -512,8 +513,11 @@ verify_tb_operation(void)
+ 	mb();
+ 	mcheck_expected(0) = 0;
+ 	mb();
+-	printk("pci: %s pci machine check test\n",
+-	       mcheck_taken(0) ? "passed" : "failed");
++	if (mcheck_taken(0)) {
++		pr_info (PFX "passed pci machine check test\n");
++	} else {
++		printk (KERN_ERR PFX "failed pci machine check test\n");
++	}
+ 
+ 	/* Clean up after the tests.  */
+ 	arena->ptes[4] = 0;
+@@ -529,7 +533,7 @@ verify_tb_operation(void)
+ 		*(vip)CIA_IOC_TB_TAGn(2) = 2;
+ 		*(vip)CIA_IOC_TB_TAGn(3) = 2;
+ 
+-		printk("pci: tbia workaround enabled\n");
++		pr_info(PFX "tbia workaround enabled\n");
+ 	}
+ 	alpha_mv.mv_pci_tbi(arena->hose, 0, -1);
+ 
+@@ -546,7 +550,7 @@ exit:
+ 	return;
+ 
+ failed:
+-	printk("pci: disabling sg translation window\n");
++	printk(KERN_WARNING PFX "disabling sg translation window\n");
+ 	*(vip)CIA_IOC_PCI_W0_BASE = 0;
+ 	*(vip)CIA_IOC_PCI_W1_BASE = 0;
+ 	pci_isa_hose->sg_isa = NULL;
+@@ -632,7 +636,7 @@ do_init_arch(int is_pyxis)
+ 	int temp, cia_rev, tbia_window;
+ 
+ 	cia_rev = *(vip)CIA_IOC_CIA_REV & CIA_REV_MASK;
+-	printk("pci: cia revision %d%s\n",
++	pr_info(PFX "revision %d%s\n",
+ 	       cia_rev, is_pyxis ? " (pyxis)" : "");
+ 
+ 	if (alpha_using_srm)
+@@ -868,10 +872,10 @@ cia_decode_pci_error(struct el_CIA_sysda
+ 			addr |= tmp << 32;
+ 		}
+ 
+-		printk(KERN_CRIT "CIA machine check: %s\n", msg);
+-		printk(KERN_CRIT "  DMA command: %s\n", cmd);
+-		printk(KERN_CRIT "  PCI address: %#010lx\n", addr);
+-		printk(KERN_CRIT "  %s, Lock: %d, DAC: %d\n",
++		printk(KERN_CRIT PFX "machine check: %s\n", msg);
++		printk(KERN_CRIT PFX "  DMA command: %s\n", cmd);
++		printk(KERN_CRIT PFX "  PCI address: %#010lx\n", addr);
++		printk(KERN_CRIT PFX "  %s, Lock: %d, DAC: %d\n",
+ 		       window, lock, dac);
+ 	} else if (cia->cia_err & (CIA_ERR_PERR
+ 				   | CIA_ERR_PCI_ADDR_PE
+@@ -912,18 +916,18 @@ cia_decode_pci_error(struct el_CIA_sysda
+ 			addr |= tmp << 32;
+ 		}
+ 
+-		printk(KERN_CRIT "CIA machine check: %s\n", msg);
+-		printk(KERN_CRIT "  PCI command: %s\n", cmd);
+-		printk(KERN_CRIT "  Master state: %s, Target state: %s\n",
++		printk(KERN_CRIT PFX "machine check: %s\n", msg);
++		printk(KERN_CRIT PFX "  PCI command: %s\n", cmd);
++		printk(KERN_CRIT PFX "  Master state: %s, Target state: %s\n",
+ 		       master, target);
+-		printk(KERN_CRIT "  PCI address: %#010lx, DAC: %d\n",
++		printk(KERN_CRIT PFX "  PCI address: %#010lx, DAC: %d\n",
+ 		       addr, dac);
+ 	} else {
+-		printk(KERN_CRIT "CIA machine check: %s\n", msg);
+-		printk(KERN_CRIT "  Unknown PCI error\n");
+-		printk(KERN_CRIT "  PCI_ERR0 = %#08lx", cia->pci_err0);
+-		printk(KERN_CRIT "  PCI_ERR1 = %#08lx", cia->pci_err1);
+-		printk(KERN_CRIT "  PCI_ERR2 = %#08lx", cia->pci_err2);
++		printk(KERN_CRIT PFX "machine check: %s\n", msg);
++		printk(KERN_CRIT PFX "  Unknown PCI error\n");
++		printk(KERN_CRIT PFX "  PCI_ERR0 = %#08lx", cia->pci_err0);
++		printk(KERN_CRIT PFX "  PCI_ERR1 = %#08lx", cia->pci_err1);
++		printk(KERN_CRIT PFX "  PCI_ERR2 = %#08lx", cia->pci_err2);
+ 	}
+ }
+ 
+@@ -941,7 +945,7 @@ cia_decode_mem_error(struct el_CIA_sysda
+ 	if ((cia->mem_err1 >> 20) & 1)
+ 		cia_decode_pci_error(cia, msg);
+ 	else
+-		printk(KERN_CRIT "CIA machine check: %s\n", msg);
++		printk(KERN_CRIT PFX "machine check: %s\n", msg);
+ 
+ 	mem_port_addr = cia->mem_err0 & 0xfffffff0;
+ 	mem_port_addr |= (cia->mem_err1 & 0x83UL) << 32;
+@@ -1016,11 +1020,11 @@ cia_decode_mem_error(struct el_CIA_sysda
+ 	default:   set_select = "Unknown"; break;
+ 	}
+ 
+-	printk(KERN_CRIT "  Memory port command: %s\n", mem_port_cmd);
+-	printk(KERN_CRIT "  Memory port address: %#010lx, mask: %#lx\n",
++	printk(KERN_CRIT PFX "  Memory port command: %s\n", mem_port_cmd);
++	printk(KERN_CRIT PFX "  Memory port address: %#010lx, mask: %#lx\n",
+ 	       mem_port_addr, mem_port_mask);
+-	printk(KERN_CRIT "  Memory sequencer state: %s\n", seq_state);
+-	printk(KERN_CRIT "  Memory set: %s\n", set_select);
++	printk(KERN_CRIT PFX "  Memory sequencer state: %s\n", seq_state);
++	printk(KERN_CRIT PFX "  Memory set: %s\n", set_select);
+ }
+ 
+ static void
+@@ -1034,7 +1038,7 @@ cia_decode_ecc_error(struct el_CIA_sysda
+ 
+ 	syn = cia->cia_syn & 0xff;
+ 	if (syn = (syn & -syn)) {
+-		fmt = KERN_CRIT "  ECC syndrome %#x -- check bit %d\n";
++		fmt = KERN_CRIT PFX "  ECC syndrome %#x -- check bit %d\n";
+ 		i = ffs(syn) - 1;
+ 	} else {
+ 		static unsigned char const data_bit[64] = {
+@@ -1061,9 +1065,9 @@ cia_decode_ecc_error(struct el_CIA_sysda
+ 				break;
+ 
+ 		if (i < 64)
+-			fmt = KERN_CRIT "  ECC syndrome %#x -- data bit %d\n";
++			fmt = KERN_CRIT PFX "  ECC syndrome %#x -- data bit %d\n";
+ 		else
+-			fmt = KERN_CRIT "  ECC syndrome %#x -- unknown bit\n";
++			fmt = KERN_CRIT PFX "  ECC syndrome %#x -- unknown bit\n";
+ 	}
+ 
+ 	printk (fmt, syn, i);
+@@ -1091,9 +1095,9 @@ cia_decode_parity_error(struct el_CIA_sy
+ 	mask = (cia->cpu_err1 >> 12) & 0xF;
+ 	par = (cia->cpu_err1 >> 21) & 1;
+ 
+-	printk(KERN_CRIT "CIA machine check: System bus parity error\n");
+-	printk(KERN_CRIT "  Command: %s, Parity bit: %d\n", cmd, par);
+-	printk(KERN_CRIT "  Address: %#010lx, Mask: %#lx\n", addr, mask);
++	printk(KERN_CRIT PFX "machine check: System bus parity error\n");
++	printk(KERN_CRIT PFX "  Command: %s, Parity bit: %d\n", cmd, par);
++	printk(KERN_CRIT PFX "  Address: %#010lx, Mask: %#lx\n", addr, mask);
+ }
+ #endif /* CONFIG_VERBOSE_MCHECK */
+ 
+@@ -1154,37 +1158,37 @@ #ifdef CONFIG_VERBOSE_MCHECK
+ 	}
+ 
+ 	if (cia->cia_err & CIA_ERR_LOST_CORR_ERR)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "Correctable ECC error\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_UN_CORR_ERR)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "Uncorrectable ECC error\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_CPU_PE)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "System bus parity error\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_MEM_NEM)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "Access to nonexistent memory\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_PERR)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "PCI data parity error\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_PCI_ADDR_PE)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "PCI address parity error\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_RCVD_MAS_ABT)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "PCI master abort\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_RCVD_TAR_ABT)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "PCI target abort\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_PA_PTE_INV)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "PCI invalid PTE\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_FROM_WRT_ERR)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "Write to flash ROM attempted\n");
+ 	if (cia->cia_err & CIA_ERR_LOST_IOA_TIMEOUT)
+-		printk(KERN_CRIT "CIA lost machine check: "
++		printk(KERN_CRIT PFX "lost machine check: "
+ 		       "I/O timeout\n");
+ #endif /* CONFIG_VERBOSE_MCHECK */
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0245690798==--
