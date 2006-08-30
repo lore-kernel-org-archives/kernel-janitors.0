@@ -1,35 +1,28 @@
 From: James Nelson <james4765@gmail.com>
-Date: Sun, 27 Aug 2006 20:45:06 +0000
-Subject: [KJ] [PATCH][RESEND] ibmmca: Remove dead MODULE_PARM code
-Message-Id: <20060827204506.15296.98859.sendpatchset@david.homenet>
+Date: Wed, 30 Aug 2006 21:48:38 +0000
+Subject: [KJ] [PATCH] 28/37 alpha: add printk() KERN_ constants to
+Message-Id: <20060830214838.15055.20538.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Script choked on the title...
-
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/drivers/scsi/ibmmca.c b/drivers/scsi/ibmmca.c
-index 2be1dc5..1144ad2 100644
---- a/drivers/scsi/ibmmca.c
-+++ b/drivers/scsi/ibmmca.c
-@@ -447,13 +447,6 @@ module_param(boot_options, charp, 0);
- module_param_array(io_port, int, NULL, 0);
- module_param_array(scsi_id, int, NULL, 0);
+diff --git a/arch/alpha/kernel/sys_eb64p.c b/arch/alpha/kernel/sys_eb64p.c
+index ed108b6..0ad63e6 100644
+--- a/arch/alpha/kernel/sys_eb64p.c
++++ b/arch/alpha/kernel/sys_eb64p.c
+@@ -118,7 +118,7 @@ #if defined(CONFIG_ALPHA_GENERIC) || def
+ 	if (inw(0x806) != 0xffff) {
+ 		extern struct alpha_machine_vector cabriolet_mv;
  
--#if 0 /* FIXME: No longer exist? --RR */
--MODULE_PARM(display, "1i");
--MODULE_PARM(adisplay, "1i");
--MODULE_PARM(normal, "1i");
--MODULE_PARM(ansi, "1i");
--#endif
--
- MODULE_LICENSE("GPL");
- #endif
- /*counter of concurrent disk read/writes, to turn on/off disk led */
+-		printk("Detected Cabriolet: correcting HWRPB.\n");
++		pr_info("Detected Cabriolet: correcting HWRPB.\n");
+ 
+ 		hwrpb->sys_variation |= 2L << 10;
+ 		hwrpb_update_checksum(hwrpb);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
