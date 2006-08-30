@@ -1,93 +1,55 @@
-From: "Farai Sandford" <assuntauhardi@aiha.com>
-Date: Fri, 11 Aug 2006 06:09:00 +0000
-Subject: Re: [KJ] eecod
-Message-Id: <000001c6bd0c$a3822370$ba21a8c0@zxe61>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1775110925=="
+From: James Nelson <james4765@gmail.com>
+Date: Wed, 30 Aug 2006 21:47:35 +0000
+Subject: [KJ] [PATCH] 19/37 alpha: add printk() KERN_ constants to
+Message-Id: <20060830214735.15055.6401.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============1775110925==
-Content-Type: multipart/alternative;
-    boundary="----------=_1155276638-26993-319"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1155276638-26993-319
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-=20
-BVLGAjRI
-PATEjK
-TIFFAjNY & CO
-CARTIjER
-OMEGjA
-BREITjLING
-ROLEjX
-=20
-Best priecs online at http://www.happykfaace.com
-=20
-
-,
-
-,
-
-,
-
-,
-
-Got you! a victorious voice shouted and rough hands grabbed me. He
-could not know by touch that I was a Black Belt? He found out the hard
-way.
-
-
-------------=_1155276638-26993-319
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>&nbsp;</DIV>
-<DIV>BVLGAjRI<BR>PATEjK<BR>TIFFAjNY & CO<BR>CARTIjER<BR>OMEGjA<BR>BREITjLIN=
-G<BR>ROLEjX</DIV>
-<DIV>&nbsp;</DIV>
-<DIV>Best priecs online at <A href=3D"http://www.happykfaace.com">http://ww=
-w.happykfaace.com</A></DIV>
-<DIV>&nbsp;</DIV>
-<P>,</P>
-<P>,</P>
-<P>,</P>
-<P>,</P>
-<DIV> Got you! a victorious voice shouted and rough hands grabbed me.  He<B=
-R>
-could not know by touch that I was a Black Belt? He found out the hard<BR>
-way.<BR></DIV></BODY></HTML>
-------------=_1155276638-26993-319--
-
---===============1775110925==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
+index c468e31..4d828bb 100644
+--- a/arch/alpha/kernel/pci_iommu.c
++++ b/arch/alpha/kernel/pci_iommu.c
+@@ -79,9 +79,9 @@ #ifdef CONFIG_DISCONTIGMEM
+         if (!NODE_DATA(nid) ||
+             (NULL = (arena = alloc_bootmem_node(NODE_DATA(nid),
+                                                  sizeof(*arena))))) {
+-                printk("%s: couldn't allocate arena from node %d\n"
+-                       "    falling back to system-wide allocation\n",
++                printk(KERN_WARNING "%s: couldn't allocate arena from node %d\n",
+                        __FUNCTION__, nid);
++                printk(KERN_WARNING "    falling back to system-wide allocation\n");
+                 arena = alloc_bootmem(sizeof(*arena));
+         }
+ 
+@@ -90,9 +90,9 @@ #ifdef CONFIG_DISCONTIGMEM
+                                                          mem_size,
+                                                          align,
+                                                          0)))) {
+-                printk("%s: couldn't allocate arena ptes from node %d\n"
+-                       "    falling back to system-wide allocation\n",
++                printk(KERN_WARNING "%s: couldn't allocate arena ptes from node %d\n",
+                        __FUNCTION__, nid);
++                printk(KERN_WARNING "    falling back to system-wide allocation\n");
+                 arena->ptes = __alloc_bootmem(mem_size, align, 0);
+         }
+ 
+@@ -402,8 +402,8 @@ pci_alloc_consistent(struct pci_dev *pde
+ try_again:
+ 	cpu_addr = (void *)__get_free_pages(gfp, order);
+ 	if (! cpu_addr) {
+-		printk(KERN_INFO "pci_alloc_consistent: "
+-		       "get_free_pages failed from %p\n",
++		printk(KERN_WARNING "pci_alloc_consistent: "
++			"get_free_pages failed from %p\n",
+ 			__builtin_return_address(0));
+ 		/* ??? Really atomic allocation?  Otherwise we could play
+ 		   with vmalloc and sg if we can't find contiguous memory.  */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1775110925==--
