@@ -1,62 +1,52 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Sun, 24 Sep 2006 11:48:34 +0000
-Subject: Re: [KJ] [PATCH] Prevent multiple inclusion of linux/sysrq.h
-Message-Id: <9a8748490609240448od96d359ic90a4ff369eb58f5@mail.gmail.com>
+From: ville palo <ville.palo@vi64pa.net>
+Date: Sun, 03 Sep 2006 16:26:48 +0000
+Subject: [KJ] [PATCH] oss/btaudio.c: Check ioremap return value and free
+Message-Id: <1157300808.6767.10.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1GQtbr-0005Or-LP@localhost.localdomain>
-In-Reply-To: <E1GQtbr-0005Or-LP@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 24/09/06, Jesper Juhl <jesper.juhl@gmail.com> wrote:
-> On 24/09/06, Thomas Petazzoni <thomas.petazzoni@enix.org> wrote:
-> > Hi,
-> >
-> > Le Sat, 23 Sep 2006 00:35:03 +0200,
-> > Thomas Petazzoni <thomas.petazzoni@enix.org> a =E9crit :
-> >
-> > > Prevent multiple inclusions of include/linux/sysrq.h using traditional
-> > > #ifndef..#endif.
-> > >
-> > > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@enix.org>
-> >
-> > To who should I send this patch for inclusion ? The
-> > include/linux/sysrq.h is not really part of a driver nor a
-> > subsystem, so there's seems to be no maintainer listed in the
-> > MAINTAINERS file.
-> >
-> > Any suggestion ?
-> >
->
-> Well, patches that have no obvious recipients can often go via Andrew
-> Morton or just be send to LKML.
->
-> In this case, if you look in the file, there are two names mentioned :
->
-> Martin Mares <mj@atrey.karlin.mff.cuni.cz>
-> Crutcher Dunnavant <crutcher+kernel@datastacks.com>
->
-> So those two might make sense to add to Cc:
->
-> There are also some people mentioned in Documentation/sysrq.txt but I
-> suspect they just wrote the documentation and wouldn't be relevant for
-> this patch, but you could still consider adding them to Cc:
->
->
 
-For trivial patches adding the Trivial Patch Monkey (currently Adrian
-Bunk) to Cc: is also often a good idea. trivial@kernel.org
+Check return value of the ioremap() and balance ioremap()
+with iounmap().
 
-See Documentation/SubmittingPatches for the details on what qualifies
-as a trivial patch.
+Signed-off-by: Ville Palo <ville.palo@vi64pa.net>
 
+diff --git a/sound/oss/btaudio.c b/sound/oss/btaudio.c
+index 324a81f..9b1837f 100644
+--- a/sound/oss/btaudio.c
++++ b/sound/oss/btaudio.c
+@@ -927,6 +927,10 @@ static int __devinit btaudio_probe(struc
+ 	bta->mem  = pci_resource_start(pci_dev,0);
+ 	bta->mmio = ioremap(pci_resource_start(pci_dev,0),
+ 			    pci_resource_len(pci_dev,0));
++	if (!bta->mmio) {
++		rc = -EIO;
++		goto fail1;
++	}
+ 
+ 	bta->source     = 1;
+ 	bta->bits       = 8;
+@@ -1019,6 +1023,7 @@ static int __devinit btaudio_probe(struc
+ 		unregister_sound_dsp(bta->dsp_digital);
+  fail2:
+         free_irq(bta->irq,bta);	
++	iounmap(bta->mmio);
+  fail1:
+ 	kfree(bta);
+  fail0:
+@@ -1047,6 +1052,8 @@ static void __devexit btaudio_remove(str
+ 	}
+ 
+ 	/* free resources */
++	if (bta->mmio)
++		iounmap(bta->mmio);
+ 	free_buffer(bta);
+         free_irq(bta->irq,bta);
+ 	release_mem_region(pci_resource_start(pci_dev,0),
 
---=20
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
 
 _______________________________________________
 Kernel-janitors mailing list
