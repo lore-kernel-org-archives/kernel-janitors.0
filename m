@@ -1,31 +1,27 @@
-From: "Felipe Augusto van de Wiel" <felipe.wiel@gmail.com>
-Date: Tue, 12 Sep 2006 15:09:58 +0000
-Subject: Re: [KJ] staring linux kernel development
-Message-Id: <9e6bdbc70609120809s6413fd3dlebb9d500ddb2320f@mail.gmail.com>
+From: Henne <henne@nachtwindheim.de>
+Date: Tue, 05 Sep 2006 20:05:21 +0000
+Subject: [KJ] New idea for TODO
+Message-Id: <44FDD881.8070002@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b5a19cd20609030416s6a3f99dfx1a41c455304847a6@mail.gmail.com>
-In-Reply-To: <b5a19cd20609030416s6a3f99dfx1a41c455304847a6@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 9/3/06, Deepak Barua <dbbarua@gmail.com> wrote:
-> Hi i am new to kernel development , i wanted to know is there any part
-> of the kernel in which i could help ....?
+Hi there,
 
-    There are lots of parts. :)
+I know that the TODO list is long, but I may have found a new task.
 
-   Check the [1]kernelnewbies website. And check the [2]kerneljanitors.
+In drivers/scsi lies a file called scsi.h which seems to be a relict and is included in many mature scsi-drivers,
+but include/scsi/scsi.h would be the better choice.
+After a little surfing I think all typedef'd Scsi_Cmnd can be replaced with struct scsi_cmnd, to get rid of
+that typedef stuff.
 
-1.http://www.kernelnewbies.org/
-2.http://www.kerneljanitors.org/
+Correct me if I'm wrong.
 
+Greets,
+Henne
 
-    Kind regards,
-
--- 
-Felipe Augusto van de Wiel (faw)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
