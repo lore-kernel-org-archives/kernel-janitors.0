@@ -1,66 +1,43 @@
-From: "Olen Champion" <496corny@pr0head.com>
-Date: Thu, 21 Sep 2006 01:48:51 +0000
-Subject: [KJ] Job
-Message-Id: <200609210151.k8L1pAnV021553@smtp.osdl.org>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Wed, 06 Sep 2006 21:27:49 +0000
+Subject: [KJ] [Patch] BUG_ON cleanup for drivers/md/
+Message-Id: <1157578069.17421.1.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Yo, Kernel-janitors 
-We offer a part-time job. 
-The salary depends on the monetary amount 
-of transactions executed by you . 
-You will need no money to start.
+hi,
 
+this changes two if() BUG(); usages to BUG_ON(); so people
+can disable it safely.
 
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-ABOUT US.
-
-
-We are small new firm egnaged in export of goods to overseas 
-outside my country.We have won various small exports contract at one 
-time or the other, recently we were (engaged) contracted to supply 
-financial programs for market analyzing, management project software 
-in Australia andU SA which was successfully done.
-
-
-
-Unfortuantely we have faced some difficulties while receiving payment 
-for our software in our country as need 10-30 days to get a payment 
-from your country. We do not have so much time to accept wire transfers 
-and can't accept cashiers checks and money orders as well.
-So we need your help to accept this payments in your country faster.
-
-
-
-CAERER POSITION: 
-This is an entry level opportunity in the field of financial services. 
-Our financial professionals work with clients to help them achievet heir 
-many financial goals such as saving on taxes. 
-
-REQUIREMENTS: 
-Strong communication skills coupled with the ability to work well with 
-people on a one - to - one basis. The ability to grasp new concepts and 
-the creative and organizational skilsl to set and achieve specific goals. 
-An entrepreneurial work ethic and a deep desire to achieve financial success.
-Effective organizational and analytical skills, and ability to work on 
-multiple projects simultaneously along with meeting deadlines. Basic 
-knowledge of credit principles, bank services and operations. Must possess 
-verbal and written communication skills. Ability to work independently or 
-in a team environment Proficiency in Microsoft Outlook, Word. 
-
-SALARY: ($40 000-$50 000 /yr)
-
-If you are interesting, please send your resume in e-mail our Managers. 
-victoruateam@gala.net
-Sincerely,  
-Josie Kruse
-P.R.O.
-UATEAM
-
-!!! PLEASE SEND YOUR REPYL TO vicuateam@gala.net
+--- linux-2.6.18-rc6/drivers/md/md.c.orig	2006-09-06 23:22:07.000000000 +0200
++++ linux-2.6.18-rc6/drivers/md/md.c	2006-09-06 23:22:17.000000000 +0200
+@@ -4476,8 +4476,7 @@ static int md_release(struct inode *inod
+ {
+  	mddev_t *mddev = inode->i_bdev->bd_disk->private_data;
+ 
+-	if (!mddev)
+-		BUG();
++	BUG_ON(!mddev);
+ 	mddev_put(mddev);
+ 
+ 	return 0;
+--- linux-2.6.18-rc6/drivers/md/raid5.c.orig	2006-09-06 23:19:40.000000000 +0200
++++ linux-2.6.18-rc6/drivers/md/raid5.c	2006-09-06 23:20:52.000000000 +0200
+@@ -1108,7 +1108,7 @@ static void compute_parity6(struct strip
+ 				if (test_and_clear_bit(R5_Overlap, &sh->dev[i].flags))
+ 					wake_up(&conf->wait_for_overlap);
+ 
+-				if (sh->dev[i].written) BUG();
++				BUG_ON(sh->dev[i].written);
+ 				sh->dev[i].written = chosen;
+ 			}
+ 		break;
 
 
 _______________________________________________
