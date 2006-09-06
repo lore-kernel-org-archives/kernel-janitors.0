@@ -1,28 +1,35 @@
-From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:03:07 +0000
-Subject: [KJ] [PATCH 60/72] arm: add KERN_ constants to arch/arm/mm/ioremap.c
-Message-Id: <20060908020307.10114.64355.sendpatchset@david.homenet>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Wed, 06 Sep 2006 21:37:34 +0000
+Subject: [KJ] [Patch] BUG_ON cleanup in drivers/net/tokenring/
+Message-Id: <1157578654.17839.3.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: netdev@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
----
-diff --git a/arch/arm/mm/ioremap.c b/arch/arm/mm/ioremap.c
-index 88a999d..7b3d951 100644
---- a/arch/arm/mm/ioremap.c
-+++ b/arch/arm/mm/ioremap.c
-@@ -61,7 +61,7 @@ remap_area_pte(pte_t * pte, unsigned lon
- 	return;
+hi,
+
+this patch converts one if() BUG(); to BUG_ON();
+so it can be safely optimized away.
+
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+
+--- linux-2.6.18-rc6/drivers/net/tokenring/tmspci.c.orig	2006-09-06 23:32:41.000000000 +0200
++++ linux-2.6.18-rc6/drivers/net/tokenring/tmspci.c	2006-09-06 23:32:54.000000000 +0200
+@@ -224,8 +224,7 @@ static void __devexit tms_pci_detach (st
+ {
+ 	struct net_device *dev = pci_get_drvdata(pdev);
  
-  bad:
--	printk("remap_area_pte: page already exists\n");
-+	printk(KERN_CRIT "remap_area_pte: page already exists\n");
- 	BUG();
- }
- 
+-	if (!dev)
+-		BUG();
++	BUG_ON(!dev);
+ 	unregister_netdev(dev);
+ 	release_region(dev->base_addr, TMS_PCI_IO_EXTENT);
+ 	free_irq(dev->irq, dev);
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
