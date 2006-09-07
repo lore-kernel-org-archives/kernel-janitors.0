@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:58:52 +0000
-Subject: [KJ] [PATCH 22/72] arm: add KERN_ constants to
-Message-Id: <20060908015852.10114.201.sendpatchset@david.homenet>
+Date: Thu, 07 Sep 2006 23:26:05 +0000
+Subject: [KJ] [PATCH 1/6] arm: add KERN_ constants to
+Message-Id: <20060907232600.9720.69576.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,51 +10,46 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-omap1/id.c b/arch/arm/mach-omap1/id.c
-index da13c3e..e2d7f9f 100644
---- a/arch/arm/mach-omap1/id.c
-+++ b/arch/arm/mach-omap1/id.c
-@@ -121,19 +121,17 @@ void __init omap_check_revision(void)
- 	die_rev = omap_get_die_rev();
- 	omap_id = omap_readl(OMAP32_ID_0);
+diff --git a/arch/arm/kernel/bios32.c b/arch/arm/kernel/bios32.c
+index 240c448..c5afff3 100644
+--- a/arch/arm/kernel/bios32.c
++++ b/arch/arm/kernel/bios32.c
+@@ -282,7 +282,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_C
+ void __devinit pcibios_update_irq(struct pci_dev *dev, int irq)
+ {
+ 	if (debug_pci)
+-		printk("PCI: Assigning IRQ %02d to %s\n", irq, pci_name(dev));
++		pr_info("PCI: Assigning IRQ %02d to %s\n", irq, pci_name(dev));
+ 	pci_write_config_byte(dev, PCI_INTERRUPT_LINE, irq);
+ }
  
--#ifdef DEBUG
--	printk("OMAP_DIE_ID_0: 0x%08x\n", omap_readl(OMAP_DIE_ID_0));
--	printk("OMAP_DIE_ID_1: 0x%08x DIE_REV: %i\n",
-+	pr_debug("OMAP_DIE_ID_0: 0x%08x\n", omap_readl(OMAP_DIE_ID_0));
-+	pr_debug("OMAP_DIE_ID_1: 0x%08x DIE_REV: %i\n",
- 		omap_readl(OMAP_DIE_ID_1),
--	       (omap_readl(OMAP_DIE_ID_1) >> 17) & 0xf);
--	printk("OMAP_PRODUCTION_ID_0: 0x%08x\n", omap_readl(OMAP_PRODUCTION_ID_0));
--	printk("OMAP_PRODUCTION_ID_1: 0x%08x JTAG_ID: 0x%04x\n",
-+		(omap_readl(OMAP_DIE_ID_1) >> 17) & 0xf);
-+	pr_debug("OMAP_PRODUCTION_ID_0: 0x%08x\n", omap_readl(OMAP_PRODUCTION_ID_0));
-+	pr_debug("OMAP_PRODUCTION_ID_1: 0x%08x JTAG_ID: 0x%04x\n",
- 		omap_readl(OMAP_PRODUCTION_ID_1),
- 		omap_readl(OMAP_PRODUCTION_ID_1) & 0xffff);
--	printk("OMAP32_ID_0: 0x%08x\n", omap_readl(OMAP32_ID_0));
--	printk("OMAP32_ID_1: 0x%08x\n", omap_readl(OMAP32_ID_1));
--	printk("JTAG_ID: 0x%04x DIE_REV: %i\n", jtag_id, die_rev);
--#endif
-+	pr_debug("OMAP32_ID_0: 0x%08x\n", omap_readl(OMAP32_ID_0));
-+	pr_debug("OMAP32_ID_1: 0x%08x\n", omap_readl(OMAP32_ID_1));
-+	pr_debug("JTAG_ID: 0x%04x DIE_REV: %i\n", jtag_id, die_rev);
+@@ -497,7 +497,7 @@ static u8 __devinit pcibios_swizzle(stru
+ 		slot = sys->swizzle(dev, pin);
  
- 	system_serial_high = omap_readl(OMAP_DIE_ID_0);
- 	system_serial_low = omap_readl(OMAP_DIE_ID_1);
-@@ -183,10 +181,10 @@ #endif
- 		system_rev |= 0x24;
- 		break;
- 	default:
--		printk("Unknown OMAP cpu type: 0x%02x\n", cpu_type);
-+		pr_info("Unknown OMAP cpu type: 0x%02x\n", cpu_type);
+ 	if (debug_pci)
+-		printk("PCI: %s swizzling pin %d => pin %d slot %d\n",
++		pr_info("PCI: %s swizzling pin %d => pin %d slot %d\n",
+ 			pci_name(dev), oldpin, *pin, slot);
+ 
+ 	return slot;
+@@ -515,7 +515,7 @@ static int pcibios_map_irq(struct pci_de
+ 		irq = sys->map_irq(dev, slot, pin);
+ 
+ 	if (debug_pci)
+-		printk("PCI: %s mapping slot %d pin %d => irq %d\n",
++		pr_info("PCI: %s mapping slot %d pin %d => irq %d\n",
+ 			pci_name(dev), slot, pin, irq);
+ 
+ 	return irq;
+@@ -668,7 +668,7 @@ int pcibios_enable_device(struct pci_dev
+ 		cmd |= PCI_COMMAND_IO | PCI_COMMAND_MEMORY;
+ 
+ 	if (cmd != old_cmd) {
+-		printk("PCI: enabling device %s (%04x -> %04x)\n",
++		pr_info("PCI: enabling device %s (%04x -> %04x)\n",
+ 		       pci_name(dev), old_cmd, cmd);
+ 		pci_write_config_word(dev, PCI_COMMAND, cmd);
  	}
- 
--	printk("OMAP%04x", system_rev >> 16);
-+	pr_info("OMAP%04x", system_rev >> 16);
- 	if ((system_rev >> 8) & 0xff)
- 		printk("%x", (system_rev >> 8) & 0xff);
- 	printk(" revision %i handled as %02xxx id: %08x%08x\n",
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
