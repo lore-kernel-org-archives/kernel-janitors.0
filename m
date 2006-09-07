@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:02:21 +0000
-Subject: [KJ] [PATCH 53/72] arm: add KERN_ constants to
-Message-Id: <20060908020221.10114.80622.sendpatchset@david.homenet>
+Date: Thu, 07 Sep 2006 23:26:18 +0000
+Subject: [KJ] [PATCH 3/6] arm: add KERN_ constants to
+Message-Id: <20060907232618.9720.80865.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,82 +10,86 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-sa1100/h3600.c b/arch/arm/mach-sa1100/h3600.c
-index 7364478..7066ada 100644
---- a/arch/arm/mach-sa1100/h3600.c
-+++ b/arch/arm/mach-sa1100/h3600.c
-@@ -53,6 +53,10 @@ #endif
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index 3079535..56868bc 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -96,7 +96,7 @@ void arm_machine_restart(char mode)
+ 	 * Tell the user!
+ 	 */
+ 	mdelay(1000);
+-	printk("Reboot failed -- System halted\n");
++	printk(KERN_CRIT "Reboot failed -- System halted\n");
+ 	while (1);
+ }
  
- #include "generic.h"
- 
-+#define PFX "h3xxx: "
-+#undef DEBUG
-+#define DPRINTK(fmt, args...) pr_debug(PFX "%s: ", __FUNCTION__, ## args)
-+
- struct ipaq_model_ops ipaq_model_ops;
- EXPORT_SYMBOL(ipaq_model_ops);
- 
-@@ -596,7 +600,7 @@ static void h3800_control_egpio(enum ipa
- 	case IPAQ_EGPIO_CODEC_NRESET:
- 	case IPAQ_EGPIO_AUDIO_ON:
- 	case IPAQ_EGPIO_QMUTE:
--		printk("%s: error - should not be called\n", __FUNCTION__);
-+		printk(PFX "%s: error - should not be called\n", __FUNCTION__);
- 		break;
- 	case IPAQ_EGPIO_OPT_NVRAM_ON:
- 		SET_ASIC2(GPIO2_OPT_ON_NVRAM);
-@@ -638,7 +642,7 @@ static int h3800_pm_callback(int req)
- 	static u16 asic2_data;
- 	int result = 0;
- 
--	printk("%s %d\n", __FUNCTION__, req);
-+	printk(PFX "%s %d\n", __FUNCTION__, req);
- 
- 	switch (req) {
- 	case PM_RESUME:
-@@ -666,7 +670,7 @@ static int h3800_pm_callback(int req)
- 		asic2_data = H3800_ASIC2_GPIOPIOD;
- 		break;
- 	default:
--		printk("%s: unrecognized PM callback\n", __FUNCTION__);
-+		printk(KERN_ERR PFX "%s: unrecognized PM callback\n", __FUNCTION__);
- 		break;
- 	}
- 	return result;
-@@ -706,7 +710,7 @@ static void h3800_IRQ_demux(unsigned int
+@@ -193,24 +193,24 @@ void __show_regs(struct pt_regs *regs)
  {
- 	int i;
+ 	unsigned long flags = condition_codes(regs);
  
--	if (0) printk("%s: interrupt received\n", __FUNCTION__);
-+	DPRINTK("interrupt received\n");
- 
- 	desc->chip->ack(irq);
- 
-@@ -716,21 +720,21 @@ static void h3800_IRQ_demux(unsigned int
- 
- 		/* KPIO */
- 		irq = H3800_ASIC2_KPIINTFLAG;
--		if (0) printk("%s KPIO 0x%08X\n", __FUNCTION__, irq);
-+		DPRINTK("KPIO 0x%08X\n", irq);
- 		for (j = 0; j < H3800_KPIO_IRQ_COUNT; j++)
- 			if (irq & kpio_irq_mask[j])
- 				do_edge_IRQ(H3800_KPIO_IRQ_COUNT + j, irq_desc + H3800_KPIO_IRQ_COUNT + j, regs);
- 
- 		/* GPIO2 */
- 		irq = H3800_ASIC2_GPIINTFLAG;
--		if (0) printk("%s GPIO 0x%08X\n", __FUNCTION__, irq);
-+		DPRINTK("GPIO 0x%08X\n", irq);
- 		for (j = 0; j < H3800_GPIO_IRQ_COUNT; j++)
- 			if (irq & gpio_irq_mask[j])
- 				do_edge_IRQ(H3800_GPIO_IRQ_COUNT + j, irq_desc + H3800_GPIO_IRQ_COUNT + j , regs);
+-	printk("CPU: %d\n", smp_processor_id());
++	pr_info("CPU: %d\n", smp_processor_id());
+ 	print_symbol("PC is at %s\n", instruction_pointer(regs));
+ 	print_symbol("LR is at %s\n", regs->ARM_lr);
+-	printk("pc : [<%08lx>]    lr : [<%08lx>]    %s\n"
+-	       "sp : %08lx  ip : %08lx  fp : %08lx\n",
++	pr_info("pc : [<%08lx>]    lr : [<%08lx>]    %s\n",
+ 		instruction_pointer(regs),
+-		regs->ARM_lr, print_tainted(), regs->ARM_sp,
+-		regs->ARM_ip, regs->ARM_fp);
+-	printk("r10: %08lx  r9 : %08lx  r8 : %08lx\n",
++		regs->ARM_lr, print_tainted());
++	pr_info("sp : %08lx  ip : %08lx  fp : %08lx\n",
++		regs->ARM_sp, regs->ARM_ip, regs->ARM_fp);
++	pr_info("r10: %08lx  r9 : %08lx  r8 : %08lx\n",
+ 		regs->ARM_r10, regs->ARM_r9,
+ 		regs->ARM_r8);
+-	printk("r7 : %08lx  r6 : %08lx  r5 : %08lx  r4 : %08lx\n",
++	pr_info("r7 : %08lx  r6 : %08lx  r5 : %08lx  r4 : %08lx\n",
+ 		regs->ARM_r7, regs->ARM_r6,
+ 		regs->ARM_r5, regs->ARM_r4);
+-	printk("r3 : %08lx  r2 : %08lx  r1 : %08lx  r0 : %08lx\n",
++	pr_info("r3 : %08lx  r2 : %08lx  r1 : %08lx  r0 : %08lx\n",
+ 		regs->ARM_r3, regs->ARM_r2,
+ 		regs->ARM_r1, regs->ARM_r0);
+-	printk("Flags: %c%c%c%c",
++	pr_info("Flags: %c%c%c%c",
+ 		flags & PSR_N_BIT ? 'N' : 'n',
+ 		flags & PSR_Z_BIT ? 'Z' : 'z',
+ 		flags & PSR_C_BIT ? 'C' : 'c',
+@@ -228,15 +228,14 @@ void __show_regs(struct pt_regs *regs)
+ 		"	mrc p15, 0, %1, c2, c0\n"
+ 		"	mrc p15, 0, %2, c3, c0\n"
+ 		: "=r" (ctrl), "=r" (transbase), "=r" (dac));
+-		printk("Control: %04X  Table: %08X  DAC: %08X\n",
++		pr_info("Control: %04X  Table: %08X  DAC: %08X\n",
+ 		  	ctrl, transbase, dac);
  	}
+ }
  
- 	if (i >= MAX_ASIC_ISR_LOOPS)
--		printk("%s: interrupt processing overrun\n", __FUNCTION__);
-+		pr_info("%s: interrupt processing overrun\n", __FUNCTION__);
+ void show_regs(struct pt_regs * regs)
+ {
+-	printk("\n");
+-	printk("Pid: %d, comm: %20s\n", current->pid, current->comm);
++	pr_info("Pid: %d, comm: %20s\n", current->pid, current->comm);
+ 	__show_regs(regs);
+ 	__backtrace();
+ }
+@@ -260,12 +259,12 @@ void show_fpregs(struct user_fp *regs)
+ 		if (regs->init_flag)
+ 			type = '?';
  
- 	/* For level-based interrupts */
- 	desc->chip->unmask(irq);
+-		printk("  f%d(%c): %08lx %08lx %08lx%c",
++		pr_info("  f%d(%c): %08lx %08lx %08lx%c",
+ 			i, type, p[0], p[1], p[2], i & 1 ? '\n' : ' ');
+ 	}
+ 			
+ 
+-	printk("FPSR: %08lx FPCR: %08lx\n",
++	pr_info("FPSR: %08lx FPCR: %08lx\n",
+ 		(unsigned long)regs->fpsr,
+ 		(unsigned long)regs->fpcr);
+ }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
