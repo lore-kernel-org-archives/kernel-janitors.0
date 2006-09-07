@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:59:47 +0000
-Subject: [KJ] [PATCH 30/72] arm: add KERN_ constants to
-Message-Id: <20060908015946.10114.45107.sendpatchset@david.homenet>
+Date: Thu, 07 Sep 2006 22:09:14 +0000
+Subject: [KJ] [PATCH] alpha: add KERN_ constants to
+Message-Id: <20060907220914.9420.86438.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,28 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-realview/clock.c b/arch/arm/mach-realview/clock.c
-index 21325a4..82f44b1 100644
---- a/arch/arm/mach-realview/clock.c
-+++ b/arch/arm/mach-realview/clock.c
-@@ -80,7 +80,7 @@ int clk_set_rate(struct clk *clk, unsign
- 		vco = icst307_khz_to_vco(clk->params, rate / 1000);
- 		clk->rate = icst307_khz(clk->params, vco) * 1000;
+diff --git a/arch/alpha/lib/stacktrace.c b/arch/alpha/lib/stacktrace.c
+index 6d432e4..1932151 100644
+--- a/arch/alpha/lib/stacktrace.c
++++ b/arch/alpha/lib/stacktrace.c
+@@ -52,7 +52,7 @@ display_stored_regs(instr * pro_pc, unsi
+ 	int reg;
+ 	unsigned long value;
  
--		printk("Clock %s: setting VCO reg params: S=%d R=%d V=%d\n",
-+		pr_info("Clock %s: setting VCO reg params: S=%d R=%d V=%d\n",
- 			clk->name, vco.s, vco.r, vco.v);
+-	printk("Prologue [<%p>], Frame %p:\n", pro_pc, sp);
++	pr_info("Prologue [<%p>], Frame %p:\n", pro_pc, sp);
+ 	while (!BB_END(*pro_pc))
+ 		if (STK_PUSH_MATCH(*pro_pc)) {
+ 			reg = (*pro_pc & MEM_REG) >> 21;
+@@ -94,7 +94,7 @@ stacktrace(void)
+ 	instr * prologue = (instr *)stacktrace;
+ 	register unsigned char * sp __asm__ ("$30");
  
- 		clk->setvco(clk, vco);
+-	printk("\tstack trace:\n");
++	pr_info("\tstack trace:\n");
+ 	do {
+ 		ret_pc = display_stored_regs(prologue, sp);
+ 		sp += stack_increment(prologue);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
