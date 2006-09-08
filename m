@@ -1,48 +1,47 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:58:59 +0000
-Subject: [KJ] [PATCH 23/72] arm: add KERN_ constants to
-Message-Id: <20060908015859.10114.89104.sendpatchset@david.homenet>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0262610617=="
+Date: Fri, 08 Sep 2006 01:59:05 +0000
+Subject: [KJ] [PATCH 24/72] arm: add KERN_ constants to
+Message-Id: <20060908015905.10114.85500.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-
---===============0262610617==
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-omap1/irq.c b/arch/arm/mach-omap1/irq.c
-index 3ea140b..8a1b017 100644
---- a/arch/arm/mach-omap1/irq.c
-+++ b/arch/arm/mach-omap1/irq.c
-@@ -5,7 +5,7 @@
-  *
-  * Copyright (C) 2004 Nokia Corporation
-  * Written by Tony Lindgren <tony@atomide.com>
-- * Major cleanups by Juha Yrj���l��� <juha.yrjola@nokia.com>
-+ * Major cleanups by Juha Yrj������������������<juha.yrjola@nokia.com>
-  *
-  * Completely re-written to support various OMAP chips with bank specific
-  * interrupt handlers.
-@@ -202,7 +202,7 @@ #if defined(CONFIG_ARCH_OMAP16XX)
- 		irq_bank_count = ARRAY_SIZE(omap1610_irq_banks);
- 	}
- #endif
--	printk("Total of %i interrupts in %i interrupt banks\n",
-+	pr_info("Total of %i interrupts in %i interrupt banks\n",
- 	       irq_bank_count * 32, irq_bank_count);
+diff --git a/arch/arm/mach-omap1/pm.c b/arch/arm/mach-omap1/pm.c
+index cd76185..1adbf4b 100644
+--- a/arch/arm/mach-omap1/pm.c
++++ b/arch/arm/mach-omap1/pm.c
+@@ -247,7 +247,7 @@ void omap_pm_suspend(void)
+ {
+ 	unsigned long arg0 = 0, arg1 = 0;
  
- 	/* Mask and clear all interrupts */
-
---===============0262610617==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-	printk("PM: OMAP%x is trying to enter deep sleep...\n", system_rev);
++	pr_info("PM: OMAP%x is trying to enter deep sleep...\n", system_rev);
+ 
+ 	omap_serial_wake_trigger(1);
+ 
+@@ -445,7 +445,7 @@ void omap_pm_suspend(void)
+ 
+ 	omap_serial_wake_trigger(0);
+ 
+-	printk("PM: OMAP%x is re-starting from deep sleep...\n", system_rev);
++	pr_info("PM: OMAP%x is re-starting from deep sleep...\n", system_rev);
+ 
+ 	if (machine_is_omap_osk()) {
+ 		/* Let LED1 (D9) blink again */
+@@ -705,7 +705,7 @@ static struct pm_ops omap_pm_ops ={
+ 
+ static int __init omap_pm_init(void)
+ {
+-	printk("Power Management for TI OMAP.\n");
++	pr_info("Power Management for TI OMAP\n");
+ 
+ 	/*
+ 	 * We copy the assembler sleep/wakeup routines to SRAM.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0262610617==--
