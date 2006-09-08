@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Thu, 07 Sep 2006 23:26:25 +0000
-Subject: [KJ] [PATCH 4/6] arm: add KERN_ constants to arch/arm/kernel/setup.c
-Message-Id: <20060907232625.9720.31284.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:04:04 +0000
+Subject: [KJ] [PATCH 68/72] arm: add KERN_ constants to
+Message-Id: <20060908020404.10114.72825.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,84 +10,85 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 0a722e7..a3e3160 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -258,7 +258,7 @@ static inline void dump_cache(const char
- {
- 	unsigned int mult = 2 + (CACHE_M(cache) ? 1 : 0);
+diff --git a/arch/arm/plat-omap/mcbsp.c b/arch/arm/plat-omap/mcbsp.c
+index 196aac3..1825a83 100644
+--- a/arch/arm/plat-omap/mcbsp.c
++++ b/arch/arm/plat-omap/mcbsp.c
+@@ -32,9 +32,9 @@ #include <asm/arch/dsp_common.h>
+ #include <asm/arch/mcbsp.h>
  
--	printk("CPU%u: %s: %d bytes, associativity %d, %d byte lines, %d sets\n",
-+	pr_info("CPU%u: %s: %d bytes, associativity %d, %d byte lines, %d sets\n",
- 		cpu, prefix,
- 		mult << (8 + CACHE_SIZE(cache)),
- 		(mult << CACHE_ASSOC(cache)) >> 1,
-@@ -272,7 +272,7 @@ static void __init dump_cpu_info(int cpu
- 	unsigned int info = read_cpuid(CPUID_CACHETYPE);
- 
- 	if (info != processor_id) {
--		printk("CPU%u: D %s %s cache\n", cpu, cache_is_vivt() ? "VIVT" : "VIPT",
-+		pr_info("CPU%u: D %s %s cache\n", cpu, cache_is_vivt() ? "VIVT" : "VIPT",
- 		       cache_types[CACHE_TYPE(info)]);
- 		if (CACHE_S(info)) {
- 			dump_cache("I cache", cpu, CACHE_ISIZE(info));
-@@ -283,7 +283,7 @@ static void __init dump_cpu_info(int cpu
- 	}
- 
- 	if (arch_is_coherent())
--		printk("Cache coherency enabled\n");
-+		pr_info("Cache coherency enabled\n");
- }
- 
- int cpu_architecture(void)
-@@ -324,8 +324,8 @@ static void __init setup_processor(void)
- 	 */
- 	list = lookup_processor_type(processor_id);
- 	if (!list) {
--		printk("CPU configuration botched (ID %08x), unable "
--		       "to continue.\n", processor_id);
-+		printk(KERN_CRIT "CPU configuration botched (ID %08x), unable "
-+		       "to continue\n", processor_id);
- 		while (1);
- 	}
- 
-@@ -344,7 +344,7 @@ #ifdef MULTI_CACHE
- 	cpu_cache = *list->cache;
+ #ifdef CONFIG_MCBSP_DEBUG
+-#define DBG(x...)	printk(x)
++#define DBG(fmt, args...)	printk(KERN_DEBUG "%s: " fmt, __FUNCTION__, ## args)
+ #else
+-#define DBG(x...)			do { } while (0)
++#define DBG(fmt, args...)
  #endif
  
--	printk("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
-+	pr_info("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
- 	       cpu_name, processor_id, (int)processor_id & 15,
- 	       proc_arch[cpu_architecture()], cr_alignment);
- 
-@@ -412,12 +412,12 @@ static struct machine_desc * __init setu
- 	 */
- 	list = lookup_machine_type(nr);
- 	if (!list) {
--		printk("Machine configuration botched (nr %d), unable "
--		       "to continue.\n", nr);
-+		printk(KERN_CRIT "Machine configuration botched (nr %d), unable "
-+		       "to continue\n", nr);
- 		while (1);
+ struct omap_mcbsp {
+@@ -562,7 +562,7 @@ int omap_mcbsp_spi_master_xmit_word_poll
+ 			udelay(10);
+ 			OMAP_MCBSP_WRITE(io_base, SPCR2, spcr2 | XRST);
+ 			udelay(10);
+-			printk("McBSP transmitter not ready\n");
++			pr_info("McBSP transmitter not ready\n");
+ 			return -EAGAIN;
+ 		}
  	}
+@@ -582,7 +582,7 @@ int omap_mcbsp_spi_master_xmit_word_poll
+ 			udelay(10);
+ 			OMAP_MCBSP_WRITE(io_base, SPCR1, spcr1 | RRST);
+ 			udelay(10);
+-			printk("McBSP receiver not ready\n");
++			pr_info("McBSP receiver not ready\n");
+ 			return -EAGAIN;
+ 		}
+ 	}
+@@ -615,7 +615,7 @@ int omap_mcbsp_spi_master_recv_word_poll
+ 			udelay(10);
+ 			OMAP_MCBSP_WRITE(io_base, SPCR2, spcr2 | XRST);
+ 			udelay(10);
+-			printk("McBSP transmitter not ready\n");
++			pr_info("McBSP transmitter not ready\n");
+ 			return -EAGAIN;
+ 		}
+ 	}
+@@ -635,7 +635,7 @@ int omap_mcbsp_spi_master_recv_word_poll
+ 			udelay(10);
+ 			OMAP_MCBSP_WRITE(io_base, SPCR1, spcr1 | RRST);
+ 			udelay(10);
+-			printk("McBSP receiver not ready\n");
++			pr_info("McBSP receiver not ready\n");
+ 			return -EAGAIN;
+ 		}
+ 	}
+@@ -671,7 +671,7 @@ int omap_mcbsp_xmit_buffer(unsigned int 
+ 	if (omap_request_dma(mcbsp[id].dma_tx_sync, "McBSP TX", omap_mcbsp_tx_dma_callback,
+ 			     &mcbsp[id],
+ 			     &dma_tx_ch)) {
+-		printk("OMAP-McBSP: Unable to request DMA channel for McBSP%d TX. Trying IRQ based TX\n", id+1);
++		pr_info("OMAP-McBSP: Unable to request DMA channel for McBSP%d TX. Trying IRQ based TX\n", id+1);
+ 		return -EAGAIN;
+ 	}
+ 	mcbsp[id].dma_tx_lch = dma_tx_ch;
+@@ -724,7 +724,7 @@ int omap_mcbsp_recv_buffer(unsigned int 
+ 	if (omap_request_dma(mcbsp[id].dma_rx_sync, "McBSP RX", omap_mcbsp_rx_dma_callback,
+ 			     &mcbsp[id],
+ 			     &dma_rx_ch)) {
+-		printk("Unable to request DMA channel for McBSP%d RX. Trying IRQ based RX\n", id+1);
++		pr_info("Unable to request DMA channel for McBSP%d RX. Trying IRQ based RX\n", id+1);
+ 		return -EAGAIN;
+ 	}
+ 	mcbsp[id].dma_rx_lch = dma_rx_ch;
+@@ -920,7 +920,7 @@ static int __init omap_mcbsp_init(void)
+ 	int mcbsp_count = 0, i;
+ 	static const struct omap_mcbsp_info *mcbsp_info;
  
--	printk("Machine: %s\n", list->name);
-+	pr_info("Machine: %s\n", list->name);
+-	printk("Initializing OMAP McBSP system\n");
++	pr_info("Initializing OMAP McBSP system\n");
  
- 	return list;
- }
-@@ -661,8 +661,8 @@ __tagtable(ATAG_RAMDISK, parse_tag_ramdi
- 
- static int __init parse_tag_initrd(const struct tag *tag)
- {
--	printk(KERN_WARNING "ATAG_INITRD is deprecated; "
--		"please update your bootloader.\n");
-+	printk(KERN_WARNING "ATAG_INITRD is deprecated - "
-+		"please update your bootloader\n");
- 	phys_initrd_start = __virt_to_phys(tag->u.initrd.start);
- 	phys_initrd_size = tag->u.initrd.size;
- 	return 0;
+ #ifdef CONFIG_ARCH_OMAP1
+ 	mcbsp_dsp_ck = clk_get(0, "dsp_ck");
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
