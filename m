@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Thu, 07 Sep 2006 22:09:14 +0000
-Subject: [KJ] [PATCH] alpha: add KERN_ constants to
-Message-Id: <20060907220914.9420.86438.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:00:40 +0000
+Subject: [KJ] [PATCH 38/72] arm: add KERN_ constants to
+Message-Id: <20060908020040.10114.55567.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,28 +10,28 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/alpha/lib/stacktrace.c b/arch/alpha/lib/stacktrace.c
-index 6d432e4..1932151 100644
---- a/arch/alpha/lib/stacktrace.c
-+++ b/arch/alpha/lib/stacktrace.c
-@@ -52,7 +52,7 @@ display_stored_regs(instr * pro_pc, unsi
- 	int reg;
- 	unsigned long value;
+diff --git a/arch/arm/mach-s3c2410/s3c2410.c b/arch/arm/mach-s3c2410/s3c2410.c
+index a110cff..6b51214 100644
+--- a/arch/arm/mach-s3c2410/s3c2410.c
++++ b/arch/arm/mach-s3c2410/s3c2410.c
+@@ -101,7 +101,7 @@ void __init s3c2410_init_clocks(int xtal
  
--	printk("Prologue [<%p>], Frame %p:\n", pro_pc, sp);
-+	pr_info("Prologue [<%p>], Frame %p:\n", pro_pc, sp);
- 	while (!BB_END(*pro_pc))
- 		if (STK_PUSH_MATCH(*pro_pc)) {
- 			reg = (*pro_pc & MEM_REG) >> 21;
-@@ -94,7 +94,7 @@ stacktrace(void)
- 	instr * prologue = (instr *)stacktrace;
- 	register unsigned char * sp __asm__ ("$30");
+ 	/* print brieft summary of clocks, etc */
  
--	printk("\tstack trace:\n");
-+	pr_info("\tstack trace:\n");
- 	do {
- 		ret_pc = display_stored_regs(prologue, sp);
- 		sp += stack_increment(prologue);
+-	printk("S3C2410: core %ld.%03ld MHz, memory %ld.%03ld MHz, peripheral %ld.%03ld MHz\n",
++	pr_info("S3C2410: core %ld.%03ld MHz, memory %ld.%03ld MHz, peripheral %ld.%03ld MHz\n",
+ 	       print_mhz(fclk), print_mhz(hclk), print_mhz(pclk));
+ 
+ 	/* initialise the clocks here, to allow other things like the
+@@ -135,7 +135,7 @@ core_initcall(s3c2410_core_init);
+ 
+ int __init s3c2410_init(void)
+ {
+-	printk("S3C2410: Initialising architecture\n");
++	pr_info("S3C2410: Initialising architecture\n");
+ 
+ 	return sysdev_register(&s3c2410_sysdev);
+ }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
