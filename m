@@ -1,39 +1,29 @@
-From: "Uncontrollably Q. Betrayer" <BITNET@gmtcorp.com>
-Date: Tue, 05 Sep 2006 12:38:17 +0000
-Subject: [KJ] EEA propose
-Message-Id: <1873084103.20060905083817@gmtcorp.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1441896871=="
+From: James Nelson <james4765@gmail.com>
+Date: Fri, 08 Sep 2006 01:57:17 +0000
+Subject: [KJ] [PATCH 08/72] arm: add KERN_ constants to
+Message-Id: <20060908015717.10114.91178.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1441896871==
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-
-To whom it may concern.
-
-European Escrow Agency is looking for business-partners.
-If you need an extra-cash, if you want to be independent,
-we propose you a good income for a part-time work!
-
-Absolutely free-of-charge and easy start. You can work at home, 
-2-3 hours per day!
-For more details - please, contact us: usdivisionmail@aol.com
-
-Thanks in advance,���
-EEA LLC
-
-
---===============1441896871==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/arm/mach-ixp2000/ixdp2800.c b/arch/arm/mach-ixp2000/ixdp2800.c
+index 91d36d9..18bf803 100644
+--- a/arch/arm/mach-ixp2000/ixdp2800.c
++++ b/arch/arm/mach-ixp2000/ixdp2800.c
+@@ -100,7 +100,7 @@ static void __init ixdp2800_slave_wait_f
+ 
+ void __init ixdp2800_pci_preinit(void)
+ {
+-	printk("ixdp2x00_pci_preinit called\n");
++	pr_info("ixdp2x00_pci_preinit called\n");
+ 
+ 	*IXP2000_PCI_ADDR_EXT = 0x0001e000;
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1441896871==--
