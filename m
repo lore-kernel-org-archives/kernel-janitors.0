@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:58:45 +0000
-Subject: [KJ] [PATCH 21/72] arm: add KERN_ constants to
-Message-Id: <20060908015845.10114.89871.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:01:33 +0000
+Subject: [KJ] [PATCH 46/72] arm: add KERN_ constants to
+Message-Id: <20060908020133.10114.39883.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,19 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
-index f1958e8..ee418fe 100644
---- a/arch/arm/mach-omap1/clock.c
-+++ b/arch/arm/mach-omap1/clock.c
-@@ -713,7 +713,7 @@ #elif defined(CONFIG_ARCH_OMAP16XX)
- 		ck_ref.rate = 19200000;
- #endif
+diff --git a/arch/arm/mach-s3c2410/s3c2442-clock.c b/arch/arm/mach-s3c2410/s3c2442-clock.c
+index d9f54b5..73c78ba 100644
+--- a/arch/arm/mach-s3c2410/s3c2442-clock.c
++++ b/arch/arm/mach-s3c2410/s3c2442-clock.c
+@@ -121,7 +121,7 @@ static int s3c2442_clk_add(struct sys_de
+ 	struct clk *clk_p;
+ 	struct clk *clk_upll;
  
--	printk("Clocks: ARM_SYSST: 0x%04x DPLL_CTL: 0x%04x ARM_CKCTL: 0x%04x\n",
-+	pr_info("Clocks: ARM_SYSST: 0x%04x DPLL_CTL: 0x%04x ARM_CKCTL: 0x%04x\n",
- 	       omap_readw(ARM_SYSST), omap_readw(DPLL_CTL),
- 	       omap_readw(ARM_CKCTL));
+-	printk("S3C2442: Clock Support, DVS %s\n",
++	pr_info("S3C2442: Clock Support, DVS %s\n",
+ 	       (camdivn & S3C2440_CAMDIVN_DVSEN) ? "on" : "off");
  
+ 	clk_p = clk_get(NULL, "pclk");
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
