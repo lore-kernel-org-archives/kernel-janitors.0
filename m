@@ -1,36 +1,37 @@
-From: David Farning <dfarning@gmail.com>
-Date: Sun, 10 Sep 2006 19:16:17 +0000
-Subject: [KJ]  [Patch] compile warning cleanup drivers/char/
-Message-Id: <1157915777.4607.17.camel@dfarning-desktop>
+From: James Nelson <james4765@gmail.com>
+Date: Fri, 08 Sep 2006 02:03:21 +0000
+Subject: [KJ] [PATCH 62/72] arm: add KERN_ constants to
+Message-Id: <20060908020321.10114.88889.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi,
-
-warning:this is my first submission to kj.
-
-This quiets a compile warning in drivers/char
-
-Signed-off-by: David Farning <dfarning@gmail.com>
-
-diff --git a/drivers/char/tty_io.c b/drivers/char/tty_io.c
-index bb0d919..dcf790c 100644
---- a/drivers/char/tty_io.c
-+++ b/drivers/char/tty_io.c
-@@ -2455,7 +2455,7 @@ #endif
- 
- static int tty_open(struct inode * inode, struct file * filp)
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/arm/nwfpe/fpa11.c b/arch/arm/nwfpe/fpa11.c
+index cc60acd..4fbb4ee 100644
+--- a/arch/arm/nwfpe/fpa11.c
++++ b/arch/arm/nwfpe/fpa11.c
+@@ -87,7 +87,7 @@ void nwfpe_init_fpa(union fp_state *fp)
  {
--	struct tty_struct *tty;
-+	struct tty_struct *tty = NULL;
- 	int noctty, retval;
- 	struct tty_driver *driver;
- 	int index;
-
-
+ 	FPA11 *fpa11 = (FPA11 *)fp;
+ #ifdef NWFPE_DEBUG
+-	printk("NWFPE: setting up state.\n");
++	pr_info("NWFPE: setting up state.\n");
+ #endif
+  	memset(fpa11, 0, sizeof(FPA11));
+ 	resetFPA11();
+@@ -100,7 +100,7 @@ unsigned int EmulateAll(unsigned int opc
+ 	unsigned int code;
+ 
+ #ifdef NWFPE_DEBUG
+-	printk("NWFPE: emulating opcode %08x\n", opcode);
++	pr_info("NWFPE: emulating opcode %08x\n", opcode);
+ #endif
+ 	code = opcode & 0x00000f00;
+ 	if (code = 0x00000100 || code = 0x00000200) {
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
