@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:57:58 +0000
-Subject: [KJ] [PATCH 14/72] arm: add KERN_ constants to
-Message-Id: <20060908015758.10114.53902.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:02:41 +0000
+Subject: [KJ] [PATCH 56/72] arm: add KERN_ constants to
+Message-Id: <20060908020241.10114.51498.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,54 +10,66 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-lh7a40x/ssp-cpld.c b/arch/arm/mach-lh7a40x/ssp-cpld.c
-index a108301..90f722c 100644
---- a/arch/arm/mach-lh7a40x/ssp-cpld.c
-+++ b/arch/arm/mach-lh7a40x/ssp-cpld.c
-@@ -50,13 +50,8 @@ #include <asm/hardware.h>
+diff --git a/arch/arm/mach-versatile/pci.c b/arch/arm/mach-versatile/pci.c
+index 41b3700..67be698 100644
+--- a/arch/arm/mach-versatile/pci.c
++++ b/arch/arm/mach-versatile/pci.c
+@@ -65,7 +65,7 @@ static int __init versatile_pci_slot_ign
  
- #include <asm/arch/ssp.h>
+ 	while ((retval = get_option(&str,&slot))) {
+ 		if ((slot < 0) || (slot > 31)) {
+-			printk("Illegal slot value: %d\n",slot);
++			printk(KERN_ERR "Illegal slot value: %d\n",slot);
+ 		} else {
+ 			pci_slot_ignore |= (1 << slot);
+ 		}
+@@ -243,7 +243,7 @@ int __init pci_versatile_setup(int nr, s
  
--//#define TALK
--
--#if defined (TALK)
--#define PRINTK(f...)		printk (f)
--#else
--#define PRINTK(f...)		do {} while (0)
--#endif
-+#undef DEBUG
-+#define DPRINTK(fmt, args...)		pr_debug(fmt, ## args)
- 
- #if defined (CONFIG_ARCH_LH7A400)
- # define CPLD_SPID		__REGP16(CPLD06_VIRT) /* SPI data */
-@@ -167,14 +162,14 @@ #if defined (CONFIG_MACH_LPD7A400)
- 	    || ssp_configuration.device = DEVICE_TOUCH) {
- 		int select = 0;
- 
--		PRINTK ("spi(%d %d.%d) 0x%04x",
-+		DPRINTK ("spi(%d %d.%d) 0x%04x",
- 			ssp_configuration.device, cwrite, cread,
- 			v);
--#if defined (TALK)
-+#if defined (DEBUG)
- 		if (ssp_configuration.device = DEVICE_CODEC)
--			PRINTK (" 0x%03x -> %2d", v & 0x1ff, (v >> 9) & 0x7f);
-+			DPRINTK (" 0x%03x -> %2d", v & 0x1ff, (v >> 9) & 0x7f);
- #endif
--		PRINTK ("\n");
-+		DPRINTK ("\n");
- 
- 		if (ssp_configuration.device = DEVICE_CODEC)
- 			select = CPLD_SPIC_CS_CODEC;
-@@ -211,7 +206,7 @@ #endif
+ 	val = __raw_readl(SYS_PCICTL);
+ 	if (!(val & 1)) {
+-		printk("Not plugged into PCI backplane!\n");
++		printk(KERN_ERR "Not plugged into PCI backplane!\n");
+ 		ret = -EIO;
+ 		goto out;
  	}
- #endif
+@@ -252,11 +252,11 @@ int __init pci_versatile_setup(int nr, s
+ 		sys->mem_offset = 0;
+ 		ret = pci_versatile_setup_resources(sys->resource);
+ 		if (ret < 0) {
+-			printk("pci_versatile_setup: resources... oops?\n");
++			printk(KERN_ERR "pci_versatile_setup: resources... oops?\n");
+ 			goto out;
+ 		}
+ 	} else {
+-		printk("pci_versatile_setup: resources... nr = 0??\n");
++		printk(KERN_ERR "pci_versatile_setup: resources... nr = 0??\n");
+ 		goto out;
+ 	}
  
--	PRINTK ("spi(%d) 0x%04x -> 0x%x\r\n", ssp_configuration.device,
-+	DPRINTK ("spi(%d) 0x%04x -> 0x%x\r\n", ssp_configuration.device,
- 		v & 0x1ff, (v >> 9) & 0x7f);
+@@ -272,12 +272,12 @@ int __init pci_versatile_setup(int nr, s
+ 		}
  
- 	enable_cs ();
+ 	if (myslot = -1) {
+-		printk("Cannot find PCI core!\n");
++		printk(KERN_ERR "Cannot find PCI core!\n");
+ 		ret = -EIO;
+ 		goto out;
+ 	}
+ 
+-	printk("PCI core found (slot %d)\n",myslot);
++	pr_info("PCI core found (slot %d)\n",myslot);
+ 
+ 	__raw_writel(myslot, PCI_SELFID);
+ 	local_pci_cfg_base = (void *) VERSATILE_PCI_CFG_VIRT_BASE + (myslot << 11);
+@@ -338,7 +338,7 @@ static int __init versatile_map_irq(stru
+ 	 */
+ 	irq = 27 + ((slot + pin - 1) & 3);
+ 
+-	printk("PCI map irq: slot %d, pin %d, devslot %d, irq: %d\n",slot,pin,devslot,irq);
++	pr_info("PCI map irq: slot %d, pin %d, devslot %d, irq: %d\n",slot,pin,devslot,irq);
+ 
+ 	return irq;
+ }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
