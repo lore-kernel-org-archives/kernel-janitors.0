@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:01:26 +0000
-Subject: [KJ] [PATCH 45/72] arm: add KERN_ constants to
-Message-Id: <20060908020126.10114.2138.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 01:57:45 +0000
+Subject: [KJ] [PATCH 12/72] arm: add KERN_ constants to
+Message-Id: <20060908015745.10114.80563.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,19 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-s3c2410/s3c2442.c b/arch/arm/mach-s3c2410/s3c2442.c
-index debae24..fcfc642 100644
---- a/arch/arm/mach-s3c2410/s3c2442.c
-+++ b/arch/arm/mach-s3c2410/s3c2442.c
-@@ -46,7 +46,7 @@ static struct sys_device s3c2442_sysdev 
+diff --git a/arch/arm/mach-ixp4xx/gtwx5715-pci.c b/arch/arm/mach-ixp4xx/gtwx5715-pci.c
+index a66484b..150b2f5 100644
+--- a/arch/arm/mach-ixp4xx/gtwx5715-pci.c
++++ b/arch/arm/mach-ixp4xx/gtwx5715-pci.c
+@@ -69,7 +69,7 @@ static int __init gtwx5715_map_irq(struc
+ 	else
+ 		rc = gtwx5715_irqmap[slot][pin-1];
  
- int __init s3c2442_init(void)
- {
--	printk("S3C2442: Initialising architecture\n");
-+	pr_info("S3C2442: Initialising architecture\n");
- 
- 	return sysdev_register(&s3c2442_sysdev);
+-	printk("%s: Mapped slot %d pin %d to IRQ %d\n", __FUNCTION__,slot, pin, rc);
++	pr_info("%s: Mapped slot %d pin %d to IRQ %d\n", __FUNCTION__,slot, pin, rc);
+ 	return(rc);
  }
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
