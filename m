@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:00:00 +0000
-Subject: [KJ] [PATCH 32/72] arm: add KERN_ constants to
-Message-Id: <20060908020000.10114.12829.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 01:56:50 +0000
+Subject: [KJ] [PATCH 04/72] arm: add KERN_ constants to
+Message-Id: <20060908015650.10114.12825.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,19 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-realview/localtimer.c b/arch/arm/mach-realview/localtimer.c
-index caf6b8b..4921cd8 100644
---- a/arch/arm/mach-realview/localtimer.c
-+++ b/arch/arm/mach-realview/localtimer.c
-@@ -57,7 +57,7 @@ void __cpuinit local_timer_setup(unsigne
- 	 * the timer ticks
- 	 */
- 	if (mpcore_timer_rate = 0) {
--		printk("Calibrating local timer... ");
-+		pr_info("Calibrating local timer... ");
+diff --git a/arch/arm/mach-integrator/clock.c b/arch/arm/mach-integrator/clock.c
+index 95a1e26..5c42be8 100644
+--- a/arch/arm/mach-integrator/clock.c
++++ b/arch/arm/mach-integrator/clock.c
+@@ -83,7 +83,7 @@ int clk_set_rate(struct clk *clk, unsign
+ 		vco = icst525_khz_to_vco(clk->params, rate / 1000);
+ 		clk->rate = icst525_khz(clk->params, vco) * 1000;
  
- 		/* Wait for a tick to start */
- 		waitjiffies = get_jiffies_64() + 1;
+-		printk("Clock %s: setting VCO reg params: S=%d R=%d V=%d\n",
++		pr_info("Clock %s: setting VCO reg params: S=%d R=%d V=%d\n",
+ 			clk->name, vco.s, vco.r, vco.v);
+ 
+ 		clk->setvco(clk, vco);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
