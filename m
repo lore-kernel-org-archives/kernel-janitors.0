@@ -1,32 +1,29 @@
-From: "Frederic Bray" <care@0toall-research-paper-topics.com>
-Date: Tue, 05 Sep 2006 15:26:05 +0000
-Subject: Amazing Safe Occasion
-Message-Id: <E1GKcoC-0002Sq-Gi@externalmx-1.sourceforge.net>
+From: James Nelson <james4765@gmail.com>
+Date: Fri, 08 Sep 2006 01:59:40 +0000
+Subject: [KJ] [PATCH 29/72] arm: add KERN_ constants to
+Message-Id: <20060908015940.10114.68561.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good Afternoon
-
-Hundreds of products all on sale this week
-We have the best deals
-
-September is the month to save 80% on All items
-
-To Visit Input into Netscape : mepantina.com
-
-FDA Approved meds, No pers<ription required
-
-Your friends at WorldwidePharm
-
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/arm/mach-pxa/idp.c b/arch/arm/mach-pxa/idp.c
+index 6914d22..57db4dc 100644
+--- a/arch/arm/mach-pxa/idp.c
++++ b/arch/arm/mach-pxa/idp.c
+@@ -136,7 +136,7 @@ static struct pxamci_platform_data idp_m
+ 
+ static void __init idp_init(void)
+ {
+-	printk("idp_init()\n");
++	pr_info("idp_init()\n");
+ 
+ 	platform_device_register(&smc91x_device);
+ 	//platform_device_register(&mst_audio_device);
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
