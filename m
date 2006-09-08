@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:59:19 +0000
-Subject: [KJ] [PATCH 26/72] arm: add KERN_ constants to
-Message-Id: <20060908015919.10114.10458.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:01:46 +0000
+Subject: [KJ] [PATCH 48/72] arm: add KERN_ constants to
+Message-Id: <20060908020146.10114.21594.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,33 +10,19 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-omap2/pm.c b/arch/arm/mach-omap2/pm.c
-index d7eee99..1436e34 100644
---- a/arch/arm/mach-omap2/pm.c
-+++ b/arch/arm/mach-omap2/pm.c
-@@ -105,11 +105,11 @@ #define INT2_WAKE_MASK	(OMAP_IRQ_BIT(INT
- 			OMAP_IRQ_BIT(INT_24XX_UART2_IRQ) |	\
- 			OMAP_IRQ_BIT(INT_24XX_UART3_IRQ))
+diff --git a/arch/arm/mach-s3c2410/time.c b/arch/arm/mach-s3c2410/time.c
+index 00d1cfc..0283209 100644
+--- a/arch/arm/mach-s3c2410/time.c
++++ b/arch/arm/mach-s3c2410/time.c
+@@ -218,7 +218,7 @@ static void s3c2410_timer_setup (void)
  
--#define preg(reg)	printk("%s\t(0x%p):\t0x%08x\n", #reg, &reg, reg);
-+#define preg(reg)	pr_info("%s\t(0x%p):\t0x%08x\n", #reg, &reg, reg);
+ 	tcnt--;
  
- static void omap2_pm_debug(char * desc)
- {
--	printk("%s:\n", desc);
-+	pr_info("%s:\n", desc);
+-	printk("timer tcon=%08lx, tcnt %04lx, tcfg %08lx,%08lx, usec %08lx\n",
++	pr_info("timer tcon=%08lx, tcnt %04lx, tcfg %08lx,%08lx, usec %08lx\n",
+ 	       tcon, tcnt, tcfg0, tcfg1, timer_usec_ticks);
  
- 	preg(CM_CLKSTCTRL_MPU);
- 	preg(CM_CLKSTCTRL_CORE);
-@@ -378,7 +378,7 @@ static struct pm_ops omap_pm_ops = {
- 
- int __init omap2_pm_init(void)
- {
--	printk("Power Management for TI OMAP.\n");
-+	pr_info("Power Management for TI OMAP.\n");
- 
- 	vclk = clk_get(NULL, "virt_prcm_set");
- 	if (IS_ERR(vclk)) {
+ 	/* check to see if timer is within 16bit range... */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
