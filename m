@@ -1,62 +1,28 @@
-From: Badari Pulavarty <pbadari@us.ibm.com>
-Date: Thu, 28 Sep 2006 18:30:09 +0000
-Subject: [KJ] [PATCH] stallion multiport driver missing request_region()
-Message-Id: <1159468209.1709.79.camel@dyn9047017100.beaverton.ibm.com>
+From: James Nelson <james4765@gmail.com>
+Date: Fri, 08 Sep 2006 02:03:37 +0000
+Subject: [KJ] [PATCH 64/72] arm: add KERN_ constants to
+Message-Id: <20060908020337.10114.27311.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-serial@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
-stl_initeio() doesn't release the regions in failure cases.
-
-Signed-off-by: Badari Pulavarty <pbadari@us.ibm.com>
-
- drivers/char/stallion.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-Index: linux-2.6.18/drivers/char/stallion.c
-=================================--- linux-2.6.18.orig/drivers/char/stallion.c	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.18/drivers/char/stallion.c	2006-09-28 11:51:35.000000000 -0700
-@@ -2265,10 +2265,16 @@ static inline int stl_initeio(stlbrd_t *
- 			brdp->nrports = 16;
- 			break;
- 		default:
-+			release_region(brdp->ioaddr1, brdp->iosize1);
-+			if (brdp->iosize2 > 0)
-+				release_region(brdp->ioaddr2, brdp->iosize2);
- 			return(-ENODEV);
- 		}
- 		break;
- 	default:
-+		release_region(brdp->ioaddr1, brdp->iosize1);
-+		if (brdp->iosize2 > 0)
-+			release_region(brdp->ioaddr2, brdp->iosize2);
- 		return(-ENODEV);
- 	}
- 
-@@ -2281,6 +2287,9 @@ static inline int stl_initeio(stlbrd_t *
- 	if (!panelp) {
- 		printk(KERN_WARNING "STALLION: failed to allocate memory "
- 			"(size=%Zd)\n", sizeof(stlpanel_t));
-+		release_region(brdp->ioaddr1, brdp->iosize1);
-+		if (brdp->iosize2 > 0)
-+			release_region(brdp->ioaddr2, brdp->iosize2);
- 		return -ENOMEM;
- 	}
- 
-@@ -2305,6 +2314,9 @@ static inline int stl_initeio(stlbrd_t *
- 	if (request_irq(brdp->irq, stl_intr, IRQF_SHARED, name, brdp) != 0) {
- 		printk("STALLION: failed to register interrupt "
- 		    "routine for %s irq=%d\n", name, brdp->irq);
-+		release_region(brdp->ioaddr1, brdp->iosize1);
-+		if (brdp->iosize2 > 0)
-+			release_region(brdp->ioaddr2, brdp->iosize2);
- 		rc = -ENODEV;
- 	} else {
- 		rc = 0;
-
-
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/arm/nwfpe/softfloat.c b/arch/arm/nwfpe/softfloat.c
+index 0f9656e..147d7b8 100644
+--- a/arch/arm/nwfpe/softfloat.c
++++ b/arch/arm/nwfpe/softfloat.c
+@@ -416,7 +416,7 @@ static float64 roundAndPackFloat64( stru
+                   && ( (sbits64) ( zSig + roundIncrement ) < 0 ) )
+            ) {
+             //register int lr = __builtin_return_address(0);
+-            //printk("roundAndPackFloat64 called from 0x%08x\n",lr);
++            //pr_info("roundAndPackFloat64 called from 0x%08x\n",lr);
+             roundData->exception |= float_flag_overflow | float_flag_inexact;
+             return packFloat64( zSign, 0x7FF, 0 ) - ( roundIncrement = 0 );
+         }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
