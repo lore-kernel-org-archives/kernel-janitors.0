@@ -1,72 +1,50 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Thu, 07 Sep 2006 10:07:34 +0000
-Subject: [KJ] [Patch][update] remove dead code in bcm43xx_sysfs.c
-Message-Id: <1157623654.22555.27.camel@localhost.localdomain>
+From: James Nelson <james4765@gmail.com>
+Date: Fri, 08 Sep 2006 02:03:01 +0000
+Subject: [KJ] [PATCH 59/72] arm: add KERN_ constants to arch/arm/mm/init.c
+Message-Id: <20060908020301.10114.52602.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1157614059.22555.19.camel@localhost.localdomain>
-In-Reply-To: <1157614059.22555.19.camel@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel Janitors <kernel-janitors@lists.osdl.org>
-Cc: mb@bu3sch.de, NetDev <netdev@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-G'day people
-
-Coverity CID 1160 & 1161
-
-These are probably fixed in some external tree, but in case they are
-not, here is a patch
-
-Compile tested with allyesconfig
-
-Remove some dead cose from bcm43xx_sysfs.c in 2.6.18-rc6
-
-Signed-off-by: Darren Jenkins <darrenrjenkins@gmail.com>
---- drivers/net/wireless/bcm43xx/bcm43xx_sysfs.c.orig	2006-09-07 15:40:33.000000000 +1000
-+++ drivers/net/wireless/bcm43xx/bcm43xx_sysfs.c	2006-09-07 17:35:18.000000000 +1000
-@@ -251,7 +251,6 @@ static ssize_t bcm43xx_attr_preamble_sho
- 					  char *buf)
- {
- 	struct bcm43xx_private *bcm = dev_to_bcm(dev);
--	int err;
- 	ssize_t count;
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index fe3f7f6..b17a60a 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -49,9 +49,9 @@ void show_mem(void)
+ 	int free = 0, total = 0, reserved = 0;
+ 	int shared = 0, cached = 0, slab = 0, node;
  
- 	if (!capable(CAP_NET_ADMIN))
-@@ -264,10 +263,9 @@ static ssize_t bcm43xx_attr_preamble_sho
- 	else
- 		count = snprintf(buf, PAGE_SIZE, "0 (Short Preamble disabled)\n");
+-	printk("Mem-info:\n");
++	pr_info("Mem-info:\n");
+ 	show_free_areas();
+-	printk("Free swap:       %6ldkB\n", nr_swap_pages<<(PAGE_SHIFT-10));
++	pr_info("Free swap:       %6ldkB\n", nr_swap_pages<<(PAGE_SHIFT-10));
  
--	err = 0;
- 	bcm43xx_unlock_noirq(bcm);
+ 	for_each_online_node(node) {
+ 		struct page *page, *end;
+@@ -75,12 +75,12 @@ void show_mem(void)
+ 		} while (page < end);
+ 	}
  
--	return err ? err : count;
-+	return count;
+-	printk("%d pages of RAM\n", total);
+-	printk("%d free pages\n", free);
+-	printk("%d reserved pages\n", reserved);
+-	printk("%d slab pages\n", slab);
+-	printk("%d pages shared\n", shared);
+-	printk("%d pages swap cached\n", cached);
++	pr_info("%d pages of RAM\n", total);
++	pr_info("%d free pages\n", free);
++	pr_info("%d reserved pages\n", reserved);
++	pr_info("%d slab pages\n", slab);
++	pr_info("%d pages shared\n", shared);
++	pr_info("%d pages swap cached\n", cached);
  }
  
- static ssize_t bcm43xx_attr_preamble_store(struct device *dev,
-@@ -276,7 +274,6 @@ static ssize_t bcm43xx_attr_preamble_sto
- {
- 	struct bcm43xx_private *bcm = dev_to_bcm(dev);
- 	unsigned long flags;
--	int err;
- 	int value;
- 
- 	if (!capable(CAP_NET_ADMIN))
-@@ -289,10 +286,9 @@ static ssize_t bcm43xx_attr_preamble_sto
- 
- 	bcm->short_preamble = !!value;
- 
--	err = 0;
- 	bcm43xx_unlock_irqsafe(bcm, flags);
- 
--	return err ? err : count;
-+	return count;
- }
- 
- static DEVICE_ATTR(shortpreamble, 0644,
-
-
+ static inline pmd_t *pmd_off(pgd_t *pgd, unsigned long virt)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
