@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Thu, 07 Sep 2006 23:46:31 +0000
-Subject: [KJ] [PATCH 2/2] arm: add KERN_ constants to
-Message-Id: <20060907234630.9789.3590.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:02:00 +0000
+Subject: [KJ] [PATCH 50/72] arm: add KERN_ constants to
+Message-Id: <20060908020200.10114.18783.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,28 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-at91rm9200/pm.c b/arch/arm/mach-at91rm9200/pm.c
-index 47e5480..c92d9ea 100644
---- a/arch/arm/mach-at91rm9200/pm.c
-+++ b/arch/arm/mach-at91rm9200/pm.c
-@@ -205,7 +205,7 @@ static struct pm_ops at91_pm_ops ={
+diff --git a/arch/arm/mach-sa1100/assabet.c b/arch/arm/mach-sa1100/assabet.c
+index be06d66..ef093d3 100644
+--- a/arch/arm/mach-sa1100/assabet.c
++++ b/arch/arm/mach-sa1100/assabet.c
+@@ -244,7 +244,7 @@ static void __init assabet_init(void)
+ 		ASSABET_BCR = BCR_value = ASSABET_BCR_DB1111;
  
- static int __init at91_pm_init(void)
- {
--	printk("AT91: Power Management\n");
-+	pr_info("AT91: Power Management\n");
+ #ifndef CONFIG_ASSABET_NEPONSET
+-		printk( "Warning: Neponset detected but full support "
++		pr_info( "Warning: Neponset detected but full support "
+ 			"hasn't been configured in the kernel\n" );
+ #endif
+ 	}
+@@ -309,7 +309,7 @@ fixup_assabet(struct machine_desc *desc,
+ 	get_assabet_scr();
  
- #ifdef CONFIG_AT91_PM_SLOW_CLOCK
- 	/* REVISIT allocations of SRAM should be dynamically managed.
+ 	if (machine_has_neponset())
+-		printk("Neponset expansion board detected\n");
++		pr_info("Neponset expansion board detected\n");
+ }
+ 
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
