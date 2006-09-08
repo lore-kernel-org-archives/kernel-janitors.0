@@ -1,45 +1,28 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Sun, 24 Sep 2006 22:49:21 +0000
-Subject: [KJ] [Patch] BUG_ON conversion for fs/xfs/
-Message-Id: <1159138161.9062.6.camel@alice>
+From: James Nelson <james4765@gmail.com>
+Date: Fri, 08 Sep 2006 02:01:20 +0000
+Subject: [KJ] [PATCH 44/72] arm: add KERN_ constants to
+Message-Id: <20060908020120.10114.87022.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi,
-
-this patch converts two if () BUG(); construct to BUG_ON();
-which occupies less space, uses unlikely and is safer when
-BUG() is disabled.
-
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-
---- linux-2.6.18-git3/fs/xfs/support/debug.c.orig	2006-09-24 23:20:46.000000000 +0200
-+++ linux-2.6.18-git3/fs/xfs/support/debug.c	2006-09-24 23:21:05.000000000 +0200
-@@ -53,8 +53,7 @@ cmn_err(register int level, char *fmt, .
- 	va_end(ap);
- 	spin_unlock_irqrestore(&xfs_err_lock,flags);
+Signed-off-by: James Nelson <james4765@gmail.com>
+---
+diff --git a/arch/arm/mach-s3c2410/s3c2440-irq.c b/arch/arm/mach-s3c2410/s3c2440-irq.c
+index acfe387..b5a4570 100644
+--- a/arch/arm/mach-s3c2410/s3c2440-irq.c
++++ b/arch/arm/mach-s3c2410/s3c2440-irq.c
+@@ -104,7 +104,7 @@ static int s3c2440_irq_add(struct sys_de
+ {
+ 	unsigned int irqno;
  
--	if (level = CE_PANIC)
--		BUG();
-+	BUG_ON(level = CE_PANIC);
- }
+-	printk("S3C2440: IRQ Support\n");
++	pr_info("S3C2440: IRQ Support\n");
  
- void
-@@ -72,8 +71,7 @@ icmn_err(register int level, char *fmt, 
- 		strcat(message, "\n");
- 	spin_unlock_irqrestore(&xfs_err_lock,flags);
- 	printk("%s%s", err_level[level], message);
--	if (level = CE_PANIC)
--		BUG();
-+	BUG_ON(level = CE_PANIC);
- }
+ 	/* add new chained handler for wdt, ac7 */
  
- void
-
-
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
