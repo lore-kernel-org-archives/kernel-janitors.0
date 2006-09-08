@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:01:13 +0000
-Subject: [KJ] [PATCH 43/72] arm: add KERN_ constants to
-Message-Id: <20060908020113.10114.89873.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:04:23 +0000
+Subject: [KJ] [PATCH 71/72] arm: add KERN_ constants to
+Message-Id: <20060908020423.10114.8503.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,37 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-s3c2410/s3c2440-clock.c b/arch/arm/mach-s3c2410/s3c2440-clock.c
-index 1579686..6c66916 100644
---- a/arch/arm/mach-s3c2410/s3c2440-clock.c
-+++ b/arch/arm/mach-s3c2410/s3c2440-clock.c
-@@ -117,7 +117,7 @@ static int s3c2440_clk_add(struct sys_de
- 	struct clk *clk_p;
- 	struct clk *clk_upll;
+diff --git a/arch/arm/plat-omap/pm.c b/arch/arm/plat-omap/pm.c
+index 04b4102..7a72d51 100644
+--- a/arch/arm/plat-omap/pm.c
++++ b/arch/arm/plat-omap/pm.c
+@@ -167,7 +167,7 @@ void omap_pm_suspend(void)
+ {
+ 	unsigned long arg0 = 0, arg1 = 0;
  
--	printk("S3C2440: Clock Support, DVS %s\n",
-+	pr_info("S3C2440: Clock Support, DVS %s\n",
- 	       (camdivn & S3C2440_CAMDIVN_DVSEN) ? "on" : "off");
+-	printk("PM: OMAP%x is trying to enter deep sleep...\n", system_rev);
++	pr_info("PM: OMAP%x is trying to enter deep sleep...\n", system_rev);
  
- 	clk_p = clk_get(NULL, "pclk");
+ 	omap_serial_wake_trigger(1);
+ 
+@@ -340,7 +340,7 @@ void omap_pm_suspend(void)
+ 
+ 	omap_serial_wake_trigger(0);
+ 
+-	printk("PM: OMAP%x is re-starting from deep sleep...\n", system_rev);
++	pr_info("PM: OMAP%x is re-starting from deep sleep...\n", system_rev);
+ 
+ 	if (machine_is_omap_osk()) {
+ 		/* Let LED1 (D9) blink again */
+@@ -595,7 +595,7 @@ static struct pm_ops omap_pm_ops ={
+ 
+ static int __init omap_pm_init(void)
+ {
+-	printk("Power Management for TI OMAP.\n");
++	pr_info("Power Management for TI OMAP\n");
+ 	/*
+ 	 * We copy the assembler sleep/wakeup routines to SRAM.
+ 	 * These routines need to be in SRAM as that's the only
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
