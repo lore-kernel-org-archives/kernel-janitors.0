@@ -1,7 +1,7 @@
 From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:57:30 +0000
-Subject: [KJ] [PATCH 10/72] arm: add KERN_ constants to
-Message-Id: <20060908015730.10114.17321.sendpatchset@david.homenet>
+Date: Fri, 08 Sep 2006 02:03:44 +0000
+Subject: [KJ] [PATCH 65/72] arm: add KERN_ constants to
+Message-Id: <20060908020344.10114.74462.sendpatchset@david.homenet>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,19 +10,32 @@ To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: James Nelson <james4765@gmail.com>
 ---
-diff --git a/arch/arm/mach-ixp4xx/common.c b/arch/arm/mach-ixp4xx/common.c
-index 7c25dbd..691b36a 100644
---- a/arch/arm/mach-ixp4xx/common.c
-+++ b/arch/arm/mach-ixp4xx/common.c
-@@ -361,7 +361,7 @@ void __init ixp4xx_sys_init(void)
- 		}
- 	}
+diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
+index 9eddc95..3699253 100644
+@@ -33,14 +33,6 @@ #include <asm/io.h>
  
--	printk("IXP4xx: Using %luMiB expansion bus window size\n",
-+	pr_info("IXP4xx: Using %luMiB expansion bus window size\n",
- 			ixp4xx_exp_bus_size >> 20);
- }
+ #include <asm/arch/tc.h>
  
+-#define DEBUG_PRINTS
+-#undef DEBUG_PRINTS
+-#ifdef DEBUG_PRINTS
+-#define debug_printk(x) printk x
+-#else
+-#define	debug_printk(x)
+-#endif
+-
+ #define OMAP_DMA_ACTIVE		0x01
+ #define OMAP_DMA_CCR_EN		(1 << 7)
+ #define OMAP2_DMA_CSR_CLEAR_MASK	0xffe
+@@ -554,7 +546,7 @@ void omap_free_dma(int lch)
+ 
+ 	spin_lock_irqsave(&dma_chan_lock, flags);
+ 	if (dma_chan[lch].dev_id = -1) {
+-		printk("omap_dma: trying to free nonallocated DMA channel %d\n",
++		pr_info("omap_dma: trying to free nonallocated DMA channel %d\n",
+ 		       lch);
+ 		spin_unlock_irqrestore(&dma_chan_lock, flags);
+ 		return;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
