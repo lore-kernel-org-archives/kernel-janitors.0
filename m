@@ -1,70 +1,58 @@
-From: "New Authors wrote" <sales@konpi.net>
-Date: Thu, 14 Sep 2006 21:14:41 +0000
-Subject: [KJ] read hobbies- updated today
-Message-Id: <200609150014.SPYWJEFWUN@88.240.61.255>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1867887975=="
+From: "afviqr tmbsrge" <aeagwihtien@esmas.com>
+Date: Sat, 09 Sep 2006 21:10:02 +0000
+Subject: MarketMasters Stock Alert   AETR
+Message-Id: <6014907210.jwWich-48740467-9234@esmas.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+W A T C H   O U T!
+Here comes the big one! 
+All signs show that AETR is going to Explode!
 
---===============1867887975==
-Content-Type: multipart/alternative;
-    boundary="----------=_1158268536-2436-214"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+ALLIANCE ENTERPRISE (AETR)
+Current Price 0.50
+Add this gem to your watch list, and watch it trad closely!
 
-This is a multi-part message in MIME format...
+NEWS RELEASE
 
-------------=_1158268536-2436-214
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Disposition: inline
+TAECORP ANNOUNCES BREAKTHROUGH IN REMOVING DEADLY LANDMINES.
 
+TaeCorp Announces That NASA Technology Will Be a Key Contributor to Resolving World's Landmine Dilemma
+Sept. 6, 2006--The Alliance Enterprise Corporation ("TaeCorp") is pleased to announce that NASA technology will be the key component in keeping our landmine locator (LML) system operational year round, especially in inclement weather. TaeCorp and Ice Management have agreed that Ice Management will customize their de-icer system exclusively for TaeCorp's LML air vehicles that are to be deployed for landmine removal and home security 
 
-read newness about hobbies and funny stories
+MILL VALLEY, CALIFORNIA August 25, 2006 - The Alliance Enterprise Corporation announced today a BREAKTHROUGH in developing an Aerial Landmine System aimed at locating, detecting and mapping deadly landmines.
 
-http://hobbies-fun.blogspot.com
+More than 100 million landmines in 83 countries are holding international communities and industries hostage, preventing the investment in and development of productive lands and the re-building of infrastructure. 
 
-please share your thoughts with us.
+A broad variety of landmines have been scattered over productive areas effectively crippling the economy and disabling thousands of children and adults.  There are no reliable records that accurately show where these devastating landmines lie in wait for their victims.
 
-have fun
+With the present day costs to clear a single land mine ranging between ,000 to ,500, solving the problem of de-mining lands will reach billions of dollars.  TaeCorp has developed a technology based, cost effective solution to this problem using its three tiered approach to scanning, mapping and removing landmines. TaeCorp's System will provide many social and economic benefits to countries and their industries including oil and gas, mining, agriculture, roads and infrastructure development.
 
-------------=_1158268536-2436-214
-Content-Type: text/html;
-        charset="iso-8859-1"
-Content-Disposition: inline
+About TaeCorp.
 
-<HTML><HEAD><TITLE>E-mail message content</TITLE>
-</HEAD>
-<BODY bgcolor="#FFFFFF" leftmargin=5 topmargin=5 rightmargin=5 bottommargin=5>
-<FONT size=2 color="#000000" face="Courier New">
-<DIV><FONT size=3 color="#000000" face="Arial">&nbsp;</FONT></DIV>
-<DIV><FONT color="#000000" face="Arial"><B>read newness about hobbies and funny stories</B></FONT></DIV>
-<DIV><FONT color="#000000" face="Arial"><B>&nbsp;</B></FONT></DIV>
-<DIV><A href="http://hobbies-fun.blogspot.com"><FONT color="#0000FF" face="Arial"><B><U>http://hobbies-fun.blogspot.com</U></B></FONT></A></DIV>
-<DIV><FONT color="#000000" face="Arial"><B>&nbsp;</B></FONT></DIV>
-<DIV><FONT color="#000000" face="Arial">please share your thoughts with us.</FONT></DIV>
-<DIV><FONT color="#000000" face="Arial">&nbsp;</FONT></DIV>
-<DIV><FONT color="#000000" face="Arial">have fun</FONT></DIV>
-</FONT>
-<p>--- Sent by UNREGISTERED VERSION of <b>Atomic Mail Sender</b>
-</BODY></HTML>
+TaeCorp's vision is to be the recognized leader in providing Aerial Detection Systems including global de-mining, clearing a path to a safer planet for all humankind.
+
+TaeCorp's mission is to reclaim lands around the globe embedded with landmines that victimize countries and their stakeholders.
+
+Watch AETR like a HAWK come Monday
 
 
-------------=_1158268536-2436-214--
+Oh you have to see it (up 300%)
 
---===============1867887975==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+-----------------------
+There is always next year.   Sitting on the fence. The scythe ran into a stone. A tree does not move unless there is wind.   Still waters run deep. Run to seed.  Schools out for summer.   Thick as a brick.   Stubborn as a mule.   Wet behind the ears. Timber! Root it out. A rose is a rose is a rose. You can lead a horse to water but you can't make him drink.  Read the tea leaves.
 
+Put to bed with a shovel. A weed is no more than a flower in disguise.  Slow as a snail.   Sturdy as an oak.   Sturdy as an oak.   Waking up with the chickens. Water it down.  Putting it in a nutshell.   Spring forward fall back. Stubborn as a mule.   A rose is a rose is a rose. Sturdy as an oak.   A rose by any other name would smell as sweet. You say potayto, I say potahto. Red as a beet.  Spring forward fall back. There's no time like the present.   Two peas in a pod.  Watered down. Survival of the fittest.   You have to separate the chaff from the wheat. Raking it in.  A thing of beauty is a joy forever.   She's a mother hen.   Root it out.
+
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1867887975==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
