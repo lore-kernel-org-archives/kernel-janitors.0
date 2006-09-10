@@ -1,7 +1,7 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Wed, 06 Sep 2006 21:27:49 +0000
-Subject: [KJ] [Patch] BUG_ON cleanup for drivers/md/
-Message-Id: <1157578069.17421.1.camel@alice>
+From: David Farning <dfarning@gmail.com>
+Date: Sun, 10 Sep 2006 19:16:17 +0000
+Subject: [KJ]  [Patch] compile warning cleanup drivers/char/
+Message-Id: <1157915777.4607.17.camel@dfarning-desktop>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,34 +10,25 @@ To: kernel-janitors@vger.kernel.org
 
 hi,
 
-this changes two if() BUG(); usages to BUG_ON(); so people
-can disable it safely.
+warning:this is my first submission to kj.
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+This quiets a compile warning in drivers/char
 
---- linux-2.6.18-rc6/drivers/md/md.c.orig	2006-09-06 23:22:07.000000000 +0200
-+++ linux-2.6.18-rc6/drivers/md/md.c	2006-09-06 23:22:17.000000000 +0200
-@@ -4476,8 +4476,7 @@ static int md_release(struct inode *inod
+Signed-off-by: David Farning <dfarning@gmail.com>
+
+diff --git a/drivers/char/tty_io.c b/drivers/char/tty_io.c
+index bb0d919..dcf790c 100644
+--- a/drivers/char/tty_io.c
++++ b/drivers/char/tty_io.c
+@@ -2455,7 +2455,7 @@ #endif
+ 
+ static int tty_open(struct inode * inode, struct file * filp)
  {
-  	mddev_t *mddev = inode->i_bdev->bd_disk->private_data;
- 
--	if (!mddev)
--		BUG();
-+	BUG_ON(!mddev);
- 	mddev_put(mddev);
- 
- 	return 0;
---- linux-2.6.18-rc6/drivers/md/raid5.c.orig	2006-09-06 23:19:40.000000000 +0200
-+++ linux-2.6.18-rc6/drivers/md/raid5.c	2006-09-06 23:20:52.000000000 +0200
-@@ -1108,7 +1108,7 @@ static void compute_parity6(struct strip
- 				if (test_and_clear_bit(R5_Overlap, &sh->dev[i].flags))
- 					wake_up(&conf->wait_for_overlap);
- 
--				if (sh->dev[i].written) BUG();
-+				BUG_ON(sh->dev[i].written);
- 				sh->dev[i].written = chosen;
- 			}
- 		break;
+-	struct tty_struct *tty;
++	struct tty_struct *tty = NULL;
+ 	int noctty, retval;
+ 	struct tty_driver *driver;
+ 	int index;
 
 
 _______________________________________________
