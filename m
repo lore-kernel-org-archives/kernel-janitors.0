@@ -1,119 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Sep 2006 13:02:21 +0000
-Subject: Re: [KJ] [PATCH] misc_register error return handling
-Message-Id: <20060925230221.ed11c550.sfr@canb.auug.org.au>
+From: "Hameed Boling" <jannepenne@eckerd.org>
+Date: Sun, 10 Sep 2006 16:08:30 +0000
+Subject: Re: [KJ] PHAnhbRMACY
+Message-Id: <000001c6d4f3$5b86f330$1765a8c0@fbchg>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1068622755=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1159173781.25016.34.camel@amol.verismonetworks.com>
-In-Reply-To: <1159173781.25016.34.camel@amol.verismonetworks.com>
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+--===============1068622755==
+Content-Type: multipart/alternative;
+    boundary="----------=_1157904589-4339-697"
+Content-Transfer-Encoding: binary
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Amol Lad <amol@verismonetworks.com>
-Cc: linux-kernel@vger.kernel.org, kernel Janitors <kernel-janitors@lists.osdl.org>
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-On Mon, 25 Sep 2006 14:13:01 +0530 Amol Lad <amol@verismonetworks.com> wrote:
->
-> diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/arch/i386/kernel/apm.c linux-2.6.18/arch/i386/kernel/apm.c
-> --- linux-2.6.18-orig/arch/i386/kernel/apm.c	2006-09-21 10:15:25.000000000 +0530
-> +++ linux-2.6.18/arch/i386/kernel/apm.c	2006-09-25 13:59:53.000000000 +0530
-> @@ -2246,6 +2246,12 @@ static int __init apm_init(void)
->  		return -ENODEV;
->  	}
->  
-> +	ret = misc_register(&apm_device);
-> +	if (ret != 0) {
-> +		printk(KERN_ERR "apm: cannot register misc device.\n");
-> +		return ret;
-> +	}
-> +
+This is a multi-part message in MIME format...
 
-NAK.  (This has been NAKed at least twice - I guess we need to add a
-comment - see patch below)  The apm module can still do useful work even
-if the misc_register() fails.
+------------=_1157904589-4339-697
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
->  	if (allow_ints)
->  		apm_info.allow_ints = 1;
->  	if (broken_psr)
-> @@ -2282,17 +2288,20 @@ static int __init apm_init(void)
->  
->  	if (apm_info.disabled) {
->  		printk(KERN_NOTICE "apm: disabled on user request.\n");
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out_misc;
->  	}
->  	if ((num_online_cpus() > 1) && !power_off && !smp) {
->  		printk(KERN_NOTICE "apm: disabled - APM is not SMP safe.\n");
->  		apm_info.disabled = 1;
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out_misc;
->  	}
->  	if (PM_IS_ACTIVE()) {
->  		printk(KERN_NOTICE "apm: overridden by ACPI.\n");
->  		apm_info.disabled = 1;
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto out_misc;
->  	}
->  #ifdef CONFIG_PM_LEGACY
->  	pm_active = 1;
-> @@ -2339,7 +2348,8 @@ static int __init apm_init(void)
->  	ret = kernel_thread(apm, NULL, CLONE_KERNEL | SIGCHLD);
->  	if (ret < 0) {
->  		printk(KERN_ERR "apm: disabled - Unable to start kernel thread.\n");
-> -		return -ENOMEM;
-> +		ret = -ENOMEM;
-> +		goto out_misc;
->  	}
->  
->  	if (num_online_cpus() > 1 && !smp ) {
-> @@ -2348,8 +2358,6 @@ static int __init apm_init(void)
->  		return 0;
->  	}
->  
-> -	misc_register(&apm_device);
-> -
->  	if (HZ != 100)
->  		idle_period = (idle_period * HZ) / 100;
->  	if (idle_threshold < 100) {
-> @@ -2359,6 +2367,9 @@ static int __init apm_init(void)
->  	}
->  
->  	return 0;
-> +out_misc:
-> +	misc_deregister(&apm_device);
-> +	return ret;
->  }
+Hi
+=20
+All yo v ur PH v ARM j AC h Y di v rec d tl o y from the ma v nu b fact
+o ure r r,
+Your c j hanc s e to ec a on r omiz t e up b to 50 m % wit u h
+http://www.ruhijintasedwaxhun.com
 
-So the rest is unnecessary as well ...
+------------=_1157904589-4339-697
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV>Hi</DIV>
+<DIV>&nbsp;</DIV>
+<DIV>All yo<span DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> v </span=
+>ur PH<span DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> v </span>ARM<=
+span DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> j </span>AC<span DEF=
+ANGED_style=3D"border: 0 ; FLOAT  :  right ;"> h </span>Y di<span DEFANGED_=
+style=3D"border: 0 ; FLOAT  :  right ;"> v </span>rec<span DEFANGED_style=
+=3D"border: 0 ; FLOAT  :  right ;"> d </span>tl<span DEFANGED_style=3D"bord=
+er: 0 ; FLOAT  :  right ;"> o </span>y from the ma<span DEFANGED_style=3D"b=
+order: 0 ; FLOAT  :  right ;"> v </span>nu<span DEFANGED_style=3D"border: 0=
+ ; FLOAT  :  right ;"> b </span>fact<span DEFANGED_style=3D"border: 0 ; FLO=
+AT  :  right ;"> o </span>ure<span DEFANGED_style=3D"border: 0 ; FLOAT  :  =
+right ;"> r </span>r,</DIV>
+<DIV>Your c<span DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> j </span=
+>hanc<span DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> s </span>e to =
+ec<span DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> a </span>on<span =
+DEFANGED_style=3D"border: 0 ; FLOAT  :  right ;"> r </span>omiz<span DEFANG=
+ED_style=3D"border: 0 ; FLOAT  :  right ;"> t </span>e up <span DEFANGED_st=
+yle=3D"border: 0 ; FLOAT  :  right ;"> b </span>to 50<span DEFANGED_style=
+=3D"border: 0 ; FLOAT  :  right ;"> m </span> % wit<span DEFANGED_style=3D"=
+border: 0 ; FLOAT  :  right ;"> u </span>h <A href=3D"http://www.ruhijintas=
+edwaxhun.com">http://www.ruhijintasedwaxhun.com</A></DIV></BODY></HTML>
+------------=_1157904589-4339-697--
 
-Note that we don't need to check the misc_register() return value in apm.c
+--===============1068622755==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-diff --git a/arch/i386/kernel/apm.c b/arch/i386/kernel/apm.c
-index 8591f2f..b74ebf1 100644
---- a/arch/i386/kernel/apm.c
-+++ b/arch/i386/kernel/apm.c
-@@ -2348,6 +2348,11 @@ #endif
- 		return 0;
- 	}
- 
-+	/*
-+	 * We don't check the return value of misc_register() because
-+	 * the driver can still do very useful work even without the
-+	 * user mode access provided by the misc device.
-+	 */
- 	misc_register(&apm_device);
- 
- 	if (HZ != 100)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1068622755==--
