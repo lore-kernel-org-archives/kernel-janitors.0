@@ -1,53 +1,35 @@
-From: Hashem Masoud <masoudh@batelco.com.bh>
-Date: Fri, 29 Sep 2006 18:59:39 +0000
-Subject: Re: [KJ] [PATCH] check return code for request_region() in
-Message-Id: <20060929185939.GA8167@localhost.localdomain>
+From: "Gielgud L. Despatches" <bturlach@goolsbey.com>
+Date: Sun, 10 Sep 2006 17:24:31 +0000
+Subject: [KJ] cheap Software
+Message-Id: <9861035415.20060910131641@goolsbey.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060928103514.GA12240@localhost.localdomain>
-In-Reply-To: <20060928103514.GA12240@localhost.localdomain>
+References: <1263770014.20060825081706@goaliebox.com>
+In-Reply-To: <1263770014.20060825081706@goaliebox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> Now, what I *was* talking about was this bit of your patch:  "if
-> !(request_region"
-> That should have been  "if (!request_region"
+Need software? Click here.
 
-This is a corrected patch compile-tested with allmodconfig and make sound/oss/ .
+Some examples:
+Director MX 2004 $69.95
+Extensis Portfolio 7.0 $59.95
+Exchange 2003 Enterprise Server $69.95
+Premiere 6.5 $89.95
+Windows Millenium $59.95
+Acrobat 6 Professional $79.95
+After Effects 6 $69.95
+Streets and Trips 2004 North America (2CD) $69.95
+InDesign CS PageMaker Edition (2CD) $69.95
+Photoshop 7 $69.95 
+Office 2003 Professional (1 CD Edition) $89.95
+Windows XP Professional $69.95
+Windows Millenium $59.95
+Dreamweaver MX 2004 $69.95
 
-Signed-off-by: Hashem Masoud <masoudh@batelco.com.bh>
----
- gus_wave.c |   10 ++++++++--
- 1 files changed, 8 insertions(+), 2 deletions(-)
----
-diff -urp linux-2.6.17.13/sound/oss/gus_wave.c linux/sound/oss/gus_wave.c
---- linux-2.6.17.13/sound/oss/gus_wave.c	2006-09-27 19:03:42.000000000 -0300
-+++ linux/sound/oss/gus_wave.c	2006-09-28 20:17:41.093694160 -0300
-@@ -2938,7 +2938,10 @@ void __init gus_wave_init(struct address
- 			model_num = "3.7";
- 			gus_type = 0x37;
- 			mixer_type = ICS2101;
--			request_region(u_MixSelect, 1, "GUS mixer");
-+			if (!request_region(u_MixSelect, 1, "GUS mixer")) {
-+				printk(KERN_ERR "request_region failed\n");
-+				return;
-+			}
- 		}
- 		else
- 		{
-@@ -3084,7 +3087,10 @@ void __init gus_wave_init(struct address
- 		case ICS2101:
- 			gus_mic_vol = gus_line_vol = gus_pcm_volume = 100;
- 			gus_wave_volume = 90;
--			request_region(u_MixSelect, 1, "GUS mixer");
-+			if (!request_region(u_MixSelect, 1, "GUS mixer")) {
-+				printk(KERN_ERR "request_region failed\n");
-+				return;
-+			}
- 			hw_config->slots[5] = ics2101_mixer_init();
- 			audio_devs[gus_devnum]->mixer_dev = hw_config->slots[5];	/* Next mixer# */
- 			return;
+The rest is on our site:
+http://cnh60x04z6i7dcuphuu7hucu.carbroff.st/
 
 _______________________________________________
 Kernel-janitors mailing list
