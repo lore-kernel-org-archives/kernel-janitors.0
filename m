@@ -1,53 +1,43 @@
-From: Domen Puncer <domen@coderock.org>
-Date: Mon, 04 Sep 2006 22:13:55 +0000
-Subject: Re: [KJ] [PATCH] Pointed by kj-devel.pl over drivers/ide/ide.c
-Message-Id: <20060904221355.GE26935@nd47.coderock.org>
+From: David Farning <dfarning@gmail.com>
+Date: Mon, 11 Sep 2006 02:30:31 +0000
+Subject: [KJ] fixing compile warnings
+Message-Id: <1157941831.19479.9.camel@dfarning-desktop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060902233239.4A23C49B6BE@ws1-3a.us4.outblaze.com>
-In-Reply-To: <20060902233239.4A23C49B6BE@ws1-3a.us4.outblaze.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-On 02/09/06 18:32 -0500, Mauricio Mauad wrote:
-> Hi,
-> 
->     I'm just sending you a very simple patch just to follow the guidelines
-> pointed on the TODO list. That's the way? If yes, I will send you some more.
+I am working my way through the compile warnings in /fs
 
-Missing description, "Signed-off-by:".
-> 
-> diff --git a/drivers/ide/ide.c b/drivers/ide/ide.c
-> index 3fdab56..3276391 100644
-> --- a/drivers/ide/ide.c
-> +++ b/drivers/ide/ide.c
-> @@ -1427,8 +1427,8 @@ static int __init stridx (const char *s,
->   */
->  static int __init match_parm (char *s, const char *keywords[], int vals[], int max_vals)
->  {
-> -       static const char *decimal = "0123456789";
-> -       static const char *hex = "0123456789abcdef";
-> +       static const char decimal[] = "0123456789";
-> +       static const char hex[] = "0123456789abcdef";
+I have come across this set of warning
 
-size(1) output would be nice for these.
+fs/jfs/jfs_txnmgr.c: In function ‘txCommit’:
+fs/jfs/jfs_txnmgr.c:1922: warning: ‘pxd.addr2’ may be used uninitialized
+in this function
+fs/jfs/jfs_txnmgr.c:1922: warning: ‘pxd.addr1’ may be used uninitialized
+in this function
+fs/jfs/jfs_txnmgr.c:1922: warning: ‘pxd.len’ may be used uninitialized
+in this function
 
-And in this case using a common global variable would be better.
-It should save more space.
+The relevant code is as follows
+
+	if (tlck->type & tlckTRUNCATE) {
+		pxd_t pxd;	/* truncated extent of xad */
+		int twm;
+
+pxd_t is defined as follows
 
 
-	Domen
+ 96 typedef struct {
+ 97         unsigned len:24;
+ 98         unsigned addr1:8;
+ 99         __le32 addr2;
+100 } pxd_t;
 
->         int i, n;
-> 
->         if (*s++ = '=') {
-> 
-> 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+What is the proper (kernel) way to initialize pxd_t in jfs_txnmgr.c to
+silence the warnings?
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
