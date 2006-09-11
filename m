@@ -1,39 +1,22 @@
-From: "Scott Stephens" <mail01.wwenpk.com@wwenpk.com>
-Date: Tue, 12 Sep 2006 16:14:23 +0000
-Subject: Casino Sites
-Message-Id: <61717EFA.A90315D@wwenpk.com>
+From: Hil <ubuntu@comcast.net>
+Date: Mon, 11 Sep 2006 21:52:18 +0000
+Subject: fix yield
+Message-Id: <1158011538.9376.4.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Are you looking for a better way to live?
+I am interested in fixing the yield() at
+http://marc.theaimsgroup.com/?l=kernel-janitor-discuss&m7395278319388&w=2
+Has this task been assigned? I will take over if no one has done it. I
+just got kernel 2.6.18.rc6 and still found yield under drivers. Please
+give me some hints of how to fix the yield. When do I replace yield()
+with cond_resched(), schedule() or even schedule_timeout()? I will look
+into these functions.
 
-Are you frustrated with working everyday for someone else on their schedule
-just to break even?
-
-Would you like to make ten to twenty five thousand or more a month?
-
-People spend money everyday online.
-
-You can now be the house just like Vegas or Atlantic City without the
-liability.
-
-Profit from the 15 billion annual casino industry for yourself.
-
-Be the head honcho of your own organization and stop making someone else
-wealthy.
-
-Football Season is starting up, how many fantasy football fans you know
-looking to make a wager?
-
-Just reply and state MORE INFO as your subject.  Leave your phone number
-and we will respond with additional information.
-
-Or feel free to call us directly at 1-954-427-3460 (ask for extension 7).
-
-
+Hil
 
 
 -------------------------------------------------------------------------
