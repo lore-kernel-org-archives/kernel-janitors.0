@@ -1,32 +1,47 @@
-From: "Russel Souza" <RusselSouza@0x3g3n.com>
-Date: Tue, 19 Sep 2006 10:55:01 +0000
-Subject: [KJ] Hi, mid-line
-Message-Id: <662161c80604gelb3pif8dd3p9elhqvxsgswuswelq5wbng@0x3g3n.com>
+From: "Scott Stephens" <mail01.wwenpk.com@wwenpk.com>
+Date: Tue, 12 Sep 2006 16:14:23 +0000
+Subject: Casino Sites
+Message-Id: <61717EFA.A90315D@wwenpk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Worried about the loss of erectoin? EVEN if you have no 
-erectoin problems SOFT CIA6LIS would help you to bring 
-back some romantic moments that u lost in past.
+Are you looking for a better way to live?
 
-Just disolve half a pil under your tongue and get ready for action 
-in 15 minutes. SOFT CIACLIS! It makes your lovemaking incredible!
+Are you frustrated with working everyday for someone else on their schedule
+just to break even?
 
-VISIT US TODAY, AND GET OUR SPECIAL 70% DISCKOUNT OFER!
+Would you like to make ten to twenty five thousand or more a month?
+
+People spend money everyday online.
+
+You can now be the house just like Vegas or Atlantic City without the
+liability.
+
+Profit from the 15 billion annual casino industry for yourself.
+
+Be the head honcho of your own organization and stop making someone else
+wealthy.
+
+Football Season is starting up, how many fantasy football fans you know
+looking to make a wager?
+
+Just reply and state MORE INFO as your subject.  Leave your phone number
+and we will respond with additional information.
+
+Or feel free to call us directly at 1-954-427-3460 (ask for extension 7).
 
 
 
-Instant shipping worldwide. Absolutely CONFIDENTIAL and SECURE purchase.
 
-------------------
-this morning; they saw the Breakthrough! But I want no honors. I  have  no
-Force-fed Sony Magic-stick
-
-
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
