@@ -1,44 +1,50 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Mon, 25 Sep 2006 14:09:19 +0000
-Subject: Re: [KJ] [PATCH] ioremap balance with iounmap for drivers/net
-Message-Id: <20060925070919.bbffaf8b.rdunlap@xenotime.net>
+From: "Balaji Rao" <balajirrao@gmail.com>
+Date: Wed, 13 Sep 2006 19:53:42 +0000
+Subject: [KJ] =?iso-8859-1?q?=28no_subject=29?=
+Message-Id: <569c97d20609131249u38c0fe6auce280ebe849dfe81@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1031820706=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1158931552.25016.9.camel@amol.verismonetworks.com>
-In-Reply-To: <1158931552.25016.9.camel@amol.verismonetworks.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <200606050208.k5528h2f021396@smtp.osdl.org>
+In-Reply-To: <200606050208.k5528h2f021396@smtp.osdl.org>
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 25 Sep 2006 01:44:08 -0400 Jeff Garzik wrote:
+This is a multi-part message in MIME format...
 
-> Amol Lad wrote:
-> >> 1) linux-net is a *user* list. you should have mailed netdev@...
-> > Thanks.. I'll post it to net-dev
-> > 
-> >> 2) e1000 already contains that change. Did you base your work on jgarzik's 
-> >> upstream tree?
-> > I used latest 2.6.18
-> 
-> That's not sufficient.  Tons of changes occur between releases.  You 
-> need to use the latest tree.  Since netdev#upstream went to Linus today, 
-> the latest is in linux-2.6.git.
-> 
-> 
-> >> 3) your patch includes utsrelease.h!
-> > This was discussed sometime back on this list, I believe. The file
-> > should be included in dontdiff but due to som reason it's not there...I
-> > never touch this file but still it's always there in the patch...
-> 
-> To put it bluntly, we don't care why it's there.  Make sure it isn't in 
-> the next time.
+--===============1031820706==
+Content-Type: multipart/alternative;
+    boundary="----------=_1158176997-21424-574"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-and it's now included in the dontdiff file if you use the latest
-git tree or patch.
+This is a multi-part message in MIME format...
 
----
-~Randy
+------------=_1158176997-21424-574
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+
+------------=_1158176997-21424-574
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<br>
+
+------------=_1158176997-21424-574--
+
+--===============1031820706==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1031820706==--
