@@ -1,181 +1,161 @@
-From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:56:36 +0000
-Subject: [KJ] [PATCH 02/72] arm: add KERN_ constants to
-Message-Id: <20060908015636.10114.14544.sendpatchset@david.homenet>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Wed, 13 Sep 2006 19:38:41 +0000
+Subject: [KJ] [PATCH] drivers/usb/core: Remove unneeded void * casts
+Message-Id: <20060913193841.GA31926@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
+The patch removes unneeded casts for the following (void *) pointers:
+ - struct file: private
+ - struct urb: context
+ - struct usb_bus: hcpriv
+ - return value of kmalloc()
+
+The patch also contains some whitespace cleanup in the relevant areas.
+
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+
 ---
-diff --git a/arch/arm/mach-footbridge/netwinder-hw.c b/arch/arm/mach-footbridge/netwinder-hw.c
-index a1f381c..e0486d1 100644
---- a/arch/arm/mach-footbridge/netwinder-hw.c
-+++ b/arch/arm/mach-footbridge/netwinder-hw.c
-@@ -394,10 +394,10 @@ static unsigned char rwa_unlock[] __init
-   0x0d, 0x86, 0xc3, 0x61, 0xb0, 0x58, 0x2c, 0x16, 0x8b, 0x45, 0xa2, 0xd1, 0xe8, 0x74,
-   0x3a, 0x9d, 0xce, 0xe7, 0x73, 0x39 };
- 
--#ifndef DEBUG
--#define dprintk(x...)
-+#ifdef DEBUG
-+#define DPRINTK(fmt, args...) printk(KERN_DEBUG fmt, ## args)
- #else
--#define dprintk(x...) printk(x)
-+#define DPRINTK(fmt, args...)
- #endif
- 
- #define WRITE_RWA(r,v) do { outb((r), 0x279); udelay(10); outb((v), 0xa79); } while (0)
-@@ -427,7 +427,7 @@ static inline void rwa010_read_ident(voi
- 
- 	mdelay(1);
- 
--	dprintk("Identifier: ");
-+	DPRINTK("Identifier: ");
- 	for (i = 0; i < 9; i++) {
- 		si[i] = 0;
- 		for (j = 0; j < 8; j++) {
-@@ -436,20 +436,20 @@ static inline void rwa010_read_ident(voi
- 			inb(0x203);
- 			udelay(250);
- 			bit = inb(0x203);
--			dprintk("%02X ", bit);
-+			DPRINTK("%02X ", bit);
- 			bit = (bit = 0xaa) ? 1 : 0;
- 			si[i] |= bit << j;
- 		}
--		dprintk("(%02X) ", si[i]);
-+		DPRINTK("(%02X) ", si[i]);
- 	}
--	dprintk("\n");
-+	DPRINTK("\n");
- }
- 
- static inline void rwa010_global_init(void)
+
+ drivers/usb/core/devices.c |    4 ++--
+ drivers/usb/core/devio.c   |   12 ++++++------
+ drivers/usb/core/hcd.c     |    2 +-
+ drivers/usb/core/hub.c     |    4 ++--
+ drivers/usb/core/message.c |    2 +-
+ drivers/usb/core/urb.c     |    2 +-
+ 6 files changed, 13 insertions(+), 13 deletions(-)
+
+diff -urpN -X dontdiff linux-2.6.18-rc5/drivers/usb/core/devices.c linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/devices.c
+--- linux-2.6.18-rc5/drivers/usb/core/devices.c	2006-06-29 13:11:11.000000000 +0200
++++ linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/devices.c	2006-09-01 17:36:30.000000000 +0200
+@@ -593,7 +593,7 @@ static ssize_t usb_device_read(struct fi
+ /* Kernel lock for "lastev" protection */
+ static unsigned int usb_device_poll(struct file *file, struct poll_table_struct *wait)
  {
- 	WRITE_RWA(6, 2);	// Assign a card no = 2
+-	struct usb_device_status *st = (struct usb_device_status *)file->private_data;
++	struct usb_device_status *st = file->private_data;
+ 	unsigned int mask = 0;
  
--	dprintk("Card no = %d\n", inb(0x203));
-+	DPRINTK("Card no = %d\n", inb(0x203));
- 
- 	/* disable the modem section of the chip */
- 	WRITE_RWA(7, 3);
-@@ -470,12 +470,12 @@ static inline void rwa010_game_port_init
- 
- 	WRITE_RWA(7, 5);
- 
--	dprintk("Slider base: ");
-+	DPRINTK("Slider base: ");
- 	WRITE_RWA(0x61, 1);
- 	i = inb(0x203);
- 
- 	WRITE_RWA(0x60, 2);
--	dprintk("%02X%02X (201)\n", inb(0x203), i);
-+	DPRINTK("%02X%02X (201)\n", inb(0x203), i);
- 
- 	WRITE_RWA(0x30, 1);
- }
-@@ -486,18 +486,18 @@ static inline void rwa010_waveartist_ini
- 
- 	WRITE_RWA(7, 0);
- 
--	dprintk("WaveArtist base: ");
-+	DPRINTK("WaveArtist base: ");
- 	WRITE_RWA(0x61, base & 255);
- 	i = inb(0x203);
- 
- 	WRITE_RWA(0x60, base >> 8);
--	dprintk("%02X%02X (%X),", inb(0x203), i, base);
-+	DPRINTK("%02X%02X (%X),", inb(0x203), i, base);
- 
- 	WRITE_RWA(0x70, irq);
--	dprintk(" irq: %d (%d),", inb(0x203), irq);
-+	DPRINTK(" irq: %d (%d),", inb(0x203), irq);
- 
- 	WRITE_RWA(0x74, dma);
--	dprintk(" dma: %d (%d)\n", inb(0x203), dma);
-+	DPRINTK(" dma: %d (%d)\n", inb(0x203), dma);
- 
- 	WRITE_RWA(0x30, 1);
- }
-@@ -508,27 +508,27 @@ static inline void rwa010_soundblaster_i
- 
- 	WRITE_RWA(7, 1);
- 
--	dprintk("SoundBlaster base: ");
-+	DPRINTK("SoundBlaster base: ");
- 	WRITE_RWA(0x61, sb_base & 255);
- 	i = inb(0x203);
- 
- 	WRITE_RWA(0x60, sb_base >> 8);
--	dprintk("%02X%02X (%X),", inb(0x203), i, sb_base);
-+	DPRINTK("%02X%02X (%X),", inb(0x203), i, sb_base);
- 
--	dprintk(" irq: ");
-+	DPRINTK(" irq: ");
- 	WRITE_RWA(0x70, irq);
--	dprintk("%d (%d),", inb(0x203), irq);
-+	DPRINTK("%d (%d),", inb(0x203), irq);
- 
--	dprintk(" 8-bit DMA: ");
-+	DPRINTK(" 8-bit DMA: ");
- 	WRITE_RWA(0x74, dma);
--	dprintk("%d (%d)\n", inb(0x203), dma);
-+	DPRINTK("%d (%d)\n", inb(0x203), dma);
- 
--	dprintk("AdLib base: ");
-+	DPRINTK("AdLib base: ");
- 	WRITE_RWA(0x63, al_base & 255);
- 	i = inb(0x203);
- 
- 	WRITE_RWA(0x62, al_base >> 8);
--	dprintk("%02X%02X (%X)\n", inb(0x203), i, al_base);
-+	DPRINTK("%02X%02X (%X)\n", inb(0x203), i, al_base);
- 
- 	WRITE_RWA(0x30, 1);
- }
-@@ -547,9 +547,9 @@ static void rwa010_soundblaster_reset(vo
- 		mdelay(1);
- 	}
- 	if (i = 5)
--		printk("SoundBlaster: DSP reset failed\n");
-+		pr_info("SoundBlaster: DSP reset failed\n");
- 
--	dprintk("SoundBlaster DSP reset: %02X (AA)\n", inb(0x22a));
-+	DPRINTK("SoundBlaster DSP reset: %02X (AA)\n", inb(0x22a));
- 
- 	for (i = 0; i < 5; i++) {
- 		if ((inb(0x22c) & 0x80) = 0)
-@@ -558,15 +558,15 @@ static void rwa010_soundblaster_reset(vo
- 	}
- 
- 	if (i = 5)
--		printk("SoundBlaster: DSP not ready\n");
-+		pr_info("SoundBlaster: DSP not ready\n");
- 	else {
- 		outb(0xe1, 0x22c);
- 
--		dprintk("SoundBlaster DSP id: ");
-+		DPRINTK("SoundBlaster DSP id: ");
- 		i = inb(0x22a);
- 		udelay(1);
- 		i |= inb(0x22a) << 8;
--		dprintk("%04X\n", i);
-+		DPRINTK("%04X\n", i);
- 
- 		for (i = 0; i < 5; i++) {
- 			if ((inb(0x22c) & 0x80) = 0)
-@@ -575,7 +575,7 @@ static void rwa010_soundblaster_reset(vo
+ 	lock_kernel();
+@@ -603,7 +603,7 @@ static unsigned int usb_device_poll(stru
+ 			unlock_kernel();
+ 			return POLLIN;
  		}
+-		
++
+ 		/* we may have dropped BKL - need to check for having lost the race */
+ 		if (file->private_data) {
+ 			kfree(st);
+diff -urpN -X dontdiff linux-2.6.18-rc5/drivers/usb/core/devio.c linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/devio.c
+--- linux-2.6.18-rc5/drivers/usb/core/devio.c	2006-09-01 17:10:48.000000000 +0200
++++ linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/devio.c	2006-09-13 21:30:47.000000000 +0200
+@@ -118,7 +118,7 @@ static loff_t usbdev_lseek(struct file *
  
- 		if (i = 5)
--			printk("SoundBlaster: could not turn speaker off\n");
-+			pr_info("SoundBlaster: could not turn speaker off\n");
+ static ssize_t usbdev_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+ {
+-	struct dev_state *ps = (struct dev_state *)file->private_data;
++	struct dev_state *ps = file->private_data;
+ 	struct usb_device *dev = ps->dev;
+ 	ssize_t ret = 0;
+ 	unsigned len;
+@@ -301,7 +301,7 @@ static void snoop_urb(struct urb *urb, v
  
- 		outb(0xd3, 0x22c);
- 	}
+ static void async_completed(struct urb *urb, struct pt_regs *regs)
+ {
+-        struct async *as = (struct async *)urb->context;
++        struct async *as = urb->context;
+         struct dev_state *ps = as->ps;
+ 	struct siginfo sinfo;
+ 
+@@ -586,7 +586,7 @@ static int usbdev_open(struct inode *ino
+ 
+ static int usbdev_release(struct inode *inode, struct file *file)
+ {
+-	struct dev_state *ps = (struct dev_state *)file->private_data;
++	struct dev_state *ps = file->private_data;
+ 	struct usb_device *dev = ps->dev;
+ 	unsigned int ifnum;
+ 
+@@ -1413,7 +1413,7 @@ static int proc_ioctl_compat(struct dev_
+  */
+ static int usbdev_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
+ {
+-	struct dev_state *ps = (struct dev_state *)file->private_data;
++	struct dev_state *ps = file->private_data;
+ 	struct usb_device *dev = ps->dev;
+ 	void __user *p = (void __user *)arg;
+ 	int ret = -ENOTTY;
+@@ -1556,8 +1556,8 @@ static int usbdev_ioctl(struct inode *in
+ /* No kernel lock - fine */
+ static unsigned int usbdev_poll(struct file *file, struct poll_table_struct *wait)
+ {
+-	struct dev_state *ps = (struct dev_state *)file->private_data;
+-        unsigned int mask = 0;
++	struct dev_state *ps = file->private_data;
++	unsigned int mask = 0;
+ 
+ 	poll_wait(file, &ps->wait, wait);
+ 	if (file->f_mode & FMODE_WRITE && !list_empty(&ps->async_completed))
+diff -urpN -X dontdiff linux-2.6.18-rc5/drivers/usb/core/hcd.c linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/hcd.c
+--- linux-2.6.18-rc5/drivers/usb/core/hcd.c	2006-09-01 17:10:48.000000000 +0200
++++ linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/hcd.c	2006-09-13 21:27:26.000000000 +0200
+@@ -1223,7 +1223,7 @@ done:
+ /* called in any context */
+ static int hcd_get_frame_number (struct usb_device *udev)
+ {
+-	struct usb_hcd	*hcd = (struct usb_hcd *)udev->bus->hcpriv;
++	struct usb_hcd	*hcd = udev->bus->hcpriv;
+ 	if (!HC_IS_RUNNING (hcd->state))
+ 		return -ESHUTDOWN;
+ 	return hcd->driver->get_frame_number (hcd);
+diff -urpN -X dontdiff linux-2.6.18-rc5/drivers/usb/core/hub.c linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/hub.c
+--- linux-2.6.18-rc5/drivers/usb/core/hub.c	2006-09-01 17:10:48.000000000 +0200
++++ linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/hub.c	2006-09-01 17:36:31.000000000 +0200
+@@ -293,7 +293,7 @@ void usb_kick_khubd(struct usb_device *h
+ /* completion function, fires on port status changes and various faults */
+ static void hub_irq(struct urb *urb, struct pt_regs *regs)
+ {
+-	struct usb_hub *hub = (struct usb_hub *)urb->context;
++	struct usb_hub *hub = urb->context;
+ 	int status;
+ 	int i;
+ 	unsigned long bits;
+@@ -311,7 +311,7 @@ static void hub_irq(struct urb *urb, str
+ 			goto resubmit;
+ 		hub->error = urb->status;
+ 		/* FALL THROUGH */
+-	
++
+ 	/* let khubd handle things */
+ 	case 0:			/* we got data:  port status changed */
+ 		bits = 0;
+diff -urpN -X dontdiff linux-2.6.18-rc5/drivers/usb/core/message.c linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/message.c
+--- linux-2.6.18-rc5/drivers/usb/core/message.c	2006-09-01 17:10:48.000000000 +0200
++++ linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/message.c	2006-09-01 17:36:31.000000000 +0200
+@@ -263,7 +263,7 @@ static void sg_clean (struct usb_sg_requ
+ 
+ static void sg_complete (struct urb *urb, struct pt_regs *regs)
+ {
+-	struct usb_sg_request	*io = (struct usb_sg_request *) urb->context;
++	struct usb_sg_request	*io = urb->context;
+ 
+ 	spin_lock (&io->lock);
+ 
+diff -urpN -X dontdiff linux-2.6.18-rc5/drivers/usb/core/urb.c linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/urb.c
+--- linux-2.6.18-rc5/drivers/usb/core/urb.c	2006-09-01 17:10:48.000000000 +0200
++++ linux-2.6.18-rc5~unneeded_casts/drivers/usb/core/urb.c	2006-09-01 17:36:31.000000000 +0200
+@@ -57,7 +57,7 @@ struct urb *usb_alloc_urb(int iso_packet
+ {
+ 	struct urb *urb;
+ 
+-	urb = (struct urb *)kmalloc(sizeof(struct urb) + 
++	urb = kmalloc(sizeof(struct urb) +
+ 		iso_packets * sizeof(struct usb_iso_packet_descriptor),
+ 		mem_flags);
+ 	if (!urb) {
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
