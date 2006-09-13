@@ -1,34 +1,29 @@
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Wed, 06 Sep 2006 21:37:34 +0000
-Subject: [KJ] [Patch] BUG_ON cleanup in drivers/net/tokenring/
-Message-Id: <1157578654.17839.3.camel@alice>
+From: Amol Lad <amol@verismonetworks.com>
+Date: Wed, 13 Sep 2006 04:54:04 +0000
+Subject: [KJ] create_proc_entry return code audit
+Message-Id: <1158122524.7814.111.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-hi,
+Hi,
 
-this patch converts one if() BUG(); to BUG_ON();
-so it can be safely optimized away.
+I'm working on handling error return code for create_proc_entry.
+Currently there are three ways the function is called
+1. call create_proc_entry as a 'void' function
+2. call create_proc_entry and directly use the return value without
+checking if it's non-NULL
+3. call create_proc_entry and check for non-NULL but do not throw any
+warning message that create_proc_entry failed.
 
-Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+Method 3 is widely used followed by 1 and we have some cases for 2 also.
 
---- linux-2.6.18-rc6/drivers/net/tokenring/tmspci.c.orig	2006-09-06 23:32:41.000000000 +0200
-+++ linux-2.6.18-rc6/drivers/net/tokenring/tmspci.c	2006-09-06 23:32:54.000000000 +0200
-@@ -224,8 +224,7 @@ static void __devexit tms_pci_detach (st
- {
- 	struct net_device *dev = pci_get_drvdata(pdev);
- 
--	if (!dev)
--		BUG();
-+	BUG_ON(!dev);
- 	unregister_netdev(dev);
- 	release_region(dev->base_addr, TMS_PCI_IO_EXTENT);
- 	free_irq(dev->irq, dev);
+what do you folks suggest, we fix all three or only 1 & 2. I feel we
+should fix 3 also and add a KERN_WARNING message for the same
 
+Thanks
 
 _______________________________________________
 Kernel-janitors mailing list
