@@ -1,40 +1,70 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Fri, 22 Sep 2006 21:43:06 +0000
-Subject: [KJ] trailing whitespaces in the Linux-kernel :)
-Message-Id: <451458EA.8080502@nachtwindheim.de>
+From: "New Authors wrote" <sales@konpi.net>
+Date: Thu, 14 Sep 2006 21:14:41 +0000
+Subject: [KJ] read hobbies- updated today
+Message-Id: <200609150014.SPYWJEFWUN@88.240.61.255>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1867887975=="
 List-Id: <kernel-janitors.vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+--===============1867887975==
+Content-Type: multipart/alternative;
+    boundary="----------=_1158268536-2436-214"
+Content-Transfer-Encoding: binary
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@osdl.org>
-Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Hi there,
+This is a multi-part message in MIME format...
 
-I've played around with Andrew Morton's script to remove trailing white spaces in kernel patches.
-http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt
-
-I used it against the official patches from www.kernel.org and this is the result:
-
-Kernelversion	Size of the patch	Size without trailing WS Number of trailing WS percent of patch
-
-2.6.12		24539730		24531535		8195			0.0334%
-2.6.13		28539730		28942472		1923			0.0066%
-2.6.14		23024224		23021802		2422			0.0105%
-2.6.15		34260720		34258304		2416			0.0071%
-2.6.16		29085385		29082215		3170			0.0109%
-2.6.17		32637502		32636357		1145			0.0035%
-2.6.18		30005947		30005192		 755			0.0025%
-
-2.6.17-rc7-mm1	26559614		26559450		 164			0.0006%
-
-Happy hacking,
-Henne
+------------=_1158268536-2436-214
+Content-Type: text/plain;
+        charset="iso-8859-1"
+Content-Disposition: inline
 
 
+read newness about hobbies and funny stories
 
+http://hobbies-fun.blogspot.com
+
+please share your thoughts with us.
+
+have fun
+
+------------=_1158268536-2436-214
+Content-Type: text/html;
+        charset="iso-8859-1"
+Content-Disposition: inline
+
+<HTML><HEAD><TITLE>E-mail message content</TITLE>
+</HEAD>
+<BODY bgcolor="#FFFFFF" leftmargin=5 topmargin=5 rightmargin=5 bottommargin=5>
+<FONT size=2 color="#000000" face="Courier New">
+<DIV><FONT size=3 color="#000000" face="Arial">&nbsp;</FONT></DIV>
+<DIV><FONT color="#000000" face="Arial"><B>read newness about hobbies and funny stories</B></FONT></DIV>
+<DIV><FONT color="#000000" face="Arial"><B>&nbsp;</B></FONT></DIV>
+<DIV><A href="http://hobbies-fun.blogspot.com"><FONT color="#0000FF" face="Arial"><B><U>http://hobbies-fun.blogspot.com</U></B></FONT></A></DIV>
+<DIV><FONT color="#000000" face="Arial"><B>&nbsp;</B></FONT></DIV>
+<DIV><FONT color="#000000" face="Arial">please share your thoughts with us.</FONT></DIV>
+<DIV><FONT color="#000000" face="Arial">&nbsp;</FONT></DIV>
+<DIV><FONT color="#000000" face="Arial">have fun</FONT></DIV>
+</FONT>
+<p>--- Sent by UNREGISTERED VERSION of <b>Atomic Mail Sender</b>
+</BODY></HTML>
+
+
+------------=_1158268536-2436-214--
+
+--===============1867887975==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1867887975==--
