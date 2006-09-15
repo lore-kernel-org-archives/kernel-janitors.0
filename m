@@ -1,24 +1,26 @@
-From: "Ghislaine Delorenzo" <shyl@21stfamilyfitness.com>
+From: "Pedr Dena" <mccui@cuttingvision.com>
 Date: Fri, 15 Sep 2006 16:02:13 +0000
 Subject: [KJ] PHckpARMA
-Message-Id: <01c6d815$d8849c00$5001a8c0@cabina7>
+Message-Id: <01c6d815$d9fb0f60$5001a8c0@cabina7>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1459279819=="
+Content-Type: multipart/mixed; boundary="===============1834605438=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c6d815$d8849c00$5001a8c0@cabina7>
+In-Reply-To: <01c6d815$d8849c00$5001a8c0@cabina7>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1459279819==
+--===============1834605438==
 Content-Type: multipart/alternative;
-    boundary="----------=_1158336657-15869-661"
+    boundary="----------=_1158336769-21054-83"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1158336657-15869-661
+------------=_1158336769-21054-83
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -30,7 +32,7 @@ QUIT OV w ERP d AYIN g G FOR Y r OUR PH l ARM v AC g Y
 =20
 S c AV b E u a p to 50 x % wi c th http://www.luhutunhertionsa.com
 
-------------=_1158336657-15869-661
+------------=_1158336769-21054-83
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -58,9 +60,9 @@ _style =3D"float  :  right "> b </span>E u<span DEFANGED_style =3D"float  :=
 /span>% wi<span DEFANGED_style =3D"float  :  right "> c </span>th <A href=
 =3D"http://www.luhutunhertionsa.com">http://www.luhutunhertionsa.com</A></D=
 IV></BODY></HTML>
-------------=_1158336657-15869-661--
+------------=_1158336769-21054-83--
 
---===============1459279819==
+--===============1834605438==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -71,4 +73,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1459279819==--
+--===============1834605438==--
