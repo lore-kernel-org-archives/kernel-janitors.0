@@ -1,24 +1,26 @@
-From: "Ida Landress" <kanagyicherette@csistaff.com>
+From: "Radomil Brailsford" <gwill@aubreydaniels.com>
 Date: Sun, 17 Sep 2006 12:05:18 +0000
 Subject: Re: [KJ] my PHznkARMA
-Message-Id: <01c6da51$a2b98070$90140059@kontorabuy9kfl>
+Message-Id: <01c6da51$a24e3b80$90140059@kontorabuy9kfl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1417850143=="
+Content-Type: multipart/mixed; boundary="===============0063076737=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c6da51$a2b98070$90140059@kontorabuy9kfl>
+In-Reply-To: <01c6da51$a2b98070$90140059@kontorabuy9kfl>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1417850143==
+--===============0063076737==
 Content-Type: multipart/alternative;
-    boundary="----------=_1158494930-17301-243"
+    boundary="----------=_1158494863-17301-239"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1158494930-17301-243
+------------=_1158494863-17301-239
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -31,7 +33,7 @@ Q p UIT OVE s RP e AYI p NG FOR YOU j R PH o AR d MAC r Y
 S m AV i E up t r o 6 r 0 % w j ith http://www.herinjdesacunkuis.com
 <http://www.herinjdesacunkuis.com>=20
 
-------------=_1158494930-17301-243
+------------=_1158494863-17301-239
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -63,9 +65,9 @@ r </span>o 6<span DEFANGED_style =3D"font: Arial;float    :  right "> r </s=
 pan>0 % w<span DEFANGED_style =3D"font: Arial;float    :  right "> j </span=
 >ith <A href=3D"http://www.herinjdesacunkuis.com"><FONT face=3DArial>http:/=
 /www.herinjdesacunkuis.com</FONT></A></FONT></DIV></BODY></HTML>
-------------=_1158494930-17301-243--
+------------=_1158494863-17301-239--
 
---===============1417850143==
+--===============0063076737==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -76,4 +78,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1417850143==--
+--===============0063076737==--
