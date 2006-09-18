@@ -1,50 +1,35 @@
-From: "Om Narasimhan" <om.turyx@gmail.com>
-Date: Mon, 18 Sep 2006 22:54:17 +0000
-Subject: Re: [KJ] potential crash fix : drivers/pcmcia/au1000_generic
-Message-Id: <6b4e42d10609181554s723b54f4y97a233a0a1f30657@mail.gmail.com>
+From: Eric Sesterhenn <snakebyte@gmx.de>
+Date: Mon, 18 Sep 2006 21:38:56 +0000
+Subject: [KJ] [Patch] BUG_ON conversion for drivers/media/video/pwc/pwc-if.c
+Message-Id: <1158615536.21907.1.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6b4e42d10609171754p4054762bm5711c744b61e68a0@mail.gmail.com>
-	 <20060918110812.GP2585@parisc-linux.org>
-In-Reply-To: <20060918110812.GP2585@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
-On 9/18/06, Matthew Wilcox <matthew@wil.cx> wrote:
-> On Sun, Sep 17, 2006 at 05:54:17PM -0700, Om Narasimhan wrote:
-> > Tested by compiling.
-> >
-> > I have not subscribed to pcmcia list. Please cc me any comments.
->
-> You also haven't described what the 'potential crach' is that you're
-> fixing.
-Okay, I should have documented that.
-Here is the explanation.
-The previous code did something like,
+hi,
 
-if (error) goto out_err;
-....
-do {
-             struct au1000_pcmcia_socket *skt = PCMCIA_SOCKET(i);
-              del_timer_sync(&skt->poll_timer);
-               pcmcia_unregister_socket(&skt->socket);
-out_err:
-               flush_scheduled_work();
-               ops->hw_shutdown(skt);
-               i--;
-} while (i > 0)
-.....
+this patch converts a if () BUG(); construct to BUG_ON();
+which occupies less space, uses unlikely and is safer when
+BUG() is disabled.
 
-1. On the error path, skt would not contain a valid value for the
-first iteration (skt is masked by uninitialized automatic skt)
-2. does not do hw_shutdown() for 0th element of PCMCIA_SOCKET
+Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
-Does it sound good?
+--- linux-2.6.18-rc7/drivers/media/video/pwc/pwc-if.c.orig	2006-09-18 23:30:21.000000000 +0200
++++ linux-2.6.18-rc7/drivers/media/video/pwc/pwc-if.c	2006-09-18 23:30:36.000000000 +0200
+@@ -1082,8 +1082,7 @@ static int pwc_video_open(struct inode *
+ 	PWC_DEBUG_OPEN(">> video_open called(vdev = 0x%p).\n", vdev);
+ 
+ 	pdev = (struct pwc_device *)vdev->priv;
+-	if (pdev = NULL)
+-		BUG();
++	BUG_ON(!pdev);
+ 	if (pdev->vopen) {
+ 		PWC_DEBUG_OPEN("I'm busy, someone is using the device.\n");
+ 		return -EBUSY;
 
-Regards,
-Om.
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
