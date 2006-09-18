@@ -1,65 +1,33 @@
-From: "Jenny Bradley" <coates@oriasema.com>
-Date: Tue, 19 Sep 2006 15:31:25 +0000
-Subject: [KJ] WEDNESDAY.HBID.
-Message-Id: <01c6dc3d$04794510$6c822ecf@coates>
+From: Marcel Holtmann <marcel@holtmann.org>
+Date: Mon, 18 Sep 2006 06:13:28 +0000
+Subject: Re: [KJ] [Bluez-devel] bluetooth drivers : kmalloc to kzalloc
+Message-Id: <1158560008.30486.12.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6b4e42d10609171754q7c7335f9pfab703d6b746236b@mail.gmail.com>
+In-Reply-To: <6b4e42d10609171754q7c7335f9pfab703d6b746236b@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: BlueZ development <bluez-devel@lists.sourceforge.net>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, bluez-devel@lists.sf.net
 
-__________________STOCK A LERT************************
+Hi Om,
 
+> Tested by compiling with $make allmodconfig; make
+> 
+> Signed off by Om Narasimhan <om.turyx@gmail.com>
+> 
+>  drivers/bluetooth/bfusb.c   |    2 +-
+>  drivers/bluetooth/hci_usb.c |   11 +++++------
+>  2 files changed, 6 insertions(+), 7 deletions(-)
 
+the kzalloc is suppose to replace a kmalloc followed by a memset
+operation. It is not the case for these changes and so these changes
+make no sense.
 
-HOT BRANDS INC (HBID)
+Regards
 
-
-Stock Symbol: HBID
-
-Current price: 0.35$
-Target price: 0.9$
-
-
-
-IS MOMENTUM STARTING TO BUILD FOR THIS STOCK? LOOK AT THE ACTION WEDNESDAY.=
- WILL THURSDAY BE HUGE?
-
-
-RECENT NEWS: Go Read the Full Story Now!
-
-Gold & Silver Minerals, LLC Initiates Report on Nevada Mineral Property
-
-
-
-Las Vegas, NV- (OTC:HBID.PK) =96 Gold & Silver Minerals, a Nevada corporati=
-on (the =93Company=94) trading as Hot Brands,=20
-Inc., today announced that it has retained an experienced geologist to prep=
-are an evaluation of a mineral property=20
-offered to the Company.  The evaluation will be detailed in a format simila=
-r to that of the National Instrument 43-101=20
-
-Technical Report common in the industry.  National Instrument 43-101 provid=
-es strict standards of disclosure for mineral=20
-
-projects.  A NI43-101 report is written usually by a geologist or mining en=
-gineer, who has experience in valuing mineral=20
-
-deposits and mining projects. We expect the report to be completed and avai=
-lable mid-September.
-
-
-
-
-
-
-THE ALERT IS FOR WEDNESDAY!
-
-Don't miss that chance.
-
-
-______________________________________________________________
-
+Marcel
 
 
 _______________________________________________
