@@ -1,86 +1,30 @@
-From: "Om Narasimhan" <om.turyx@gmail.com>
-Date: Mon, 18 Sep 2006 00:54:25 +0000
-Subject: [KJ] bluetooth drivers : kmalloc to kzalloc conversion
-Message-Id: <6b4e42d10609171754q7c7335f9pfab703d6b746236b@mail.gmail.com>
+From: Dmitry Torokhov <dtor@insightbb.com>
+Date: Mon, 18 Sep 2006 01:21:33 +0000
+Subject: Re: [KJ] bluetooth drivers : kmalloc to kzalloc conversion
+Message-Id: <200609172121.36247.dtor@insightbb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <6b4e42d10609171754q7c7335f9pfab703d6b746236b@mail.gmail.com>
+In-Reply-To: <6b4e42d10609171754q7c7335f9pfab703d6b746236b@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, bluez-devel@lists.sf.net
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Om Narasimhan <om.turyx@gmail.com>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, bluez-devel@lists.sf.net
 
-Tested by compiling with $make allmodconfig; make
-
-Signed off by Om Narasimhan <om.turyx@gmail.com>
-
- drivers/bluetooth/bfusb.c   |    2 +-
- drivers/bluetooth/hci_usb.c |   11 +++++------
- 2 files changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index 23f9621..9772d8c 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -588,7 +588,7 @@ static int bfusb_load_firmware(struct bf
-
- 	bfusb->udev->toggle[0] = bfusb->udev->toggle[1] = 0;
-
--	buf = kmalloc(BFUSB_MAX_BLOCK_SIZE + 3, GFP_ATOMIC);
-+	buf = kzalloc(BFUSB_MAX_BLOCK_SIZE + 3, GFP_ATOMIC);
- 	if (!buf) {
- 		BT_ERR("Can't allocate memory chunk for firmware");
- 		return -ENOMEM;
-diff --git a/drivers/bluetooth/hci_usb.c b/drivers/bluetooth/hci_usb.c
-index e2d4bea..2274248 100644
---- a/drivers/bluetooth/hci_usb.c
-+++ b/drivers/bluetooth/hci_usb.c
-@@ -147,10 +147,9 @@ static struct usb_device_id blacklist_id
-
- static struct _urb *_urb_alloc(int isoc, gfp_t gfp)
- {
--	struct _urb *_urb = kmalloc(sizeof(struct _urb) +
-+	struct _urb *_urb = kzalloc(sizeof(struct _urb) +
- 				sizeof(struct usb_iso_packet_descriptor) * isoc, gfp);
- 	if (_urb) {
--		memset(_urb, 0, sizeof(*_urb));
- 		usb_init_urb(&_urb->urb);
- 	}
- 	return _urb;
-@@ -220,7 +219,7 @@ static int hci_usb_intr_rx_submit(struct
-
- 	size = le16_to_cpu(husb->intr_in_ep->desc.wMaxPacketSize);
-
--	buf = kmalloc(size, GFP_ATOMIC);
-+	buf = kzalloc(size, GFP_ATOMIC);
- 	if (!buf)
- 		return -ENOMEM;
-
-@@ -255,7 +254,7 @@ static int hci_usb_bulk_rx_submit(struct
- 	int err, pipe, size = HCI_MAX_FRAME_SIZE;
- 	void *buf;
-
--	buf = kmalloc(size, GFP_ATOMIC);
-+	buf = kzalloc(size, GFP_ATOMIC);
- 	if (!buf)
- 		return -ENOMEM;
-
-@@ -296,7 +295,7 @@ static int hci_usb_isoc_rx_submit(struct
- 	mtu  = le16_to_cpu(husb->isoc_in_ep->desc.wMaxPacketSize);
- 	size = mtu * HCI_MAX_ISOC_FRAMES;
-
--	buf = kmalloc(size, GFP_ATOMIC);
-+	buf = kzalloc(size, GFP_ATOMIC);
- 	if (!buf)
- 		return -ENOMEM;
-
-@@ -471,7 +470,7 @@ static inline int hci_usb_send_ctrl(stru
- 			return -ENOMEM;
- 		_urb->type = bt_cb(skb)->pkt_type;
-
--		dr = kmalloc(sizeof(*dr), GFP_ATOMIC);
-+		dr = kzalloc(sizeof(*dr), GFP_ATOMIC);
- 		if (!dr) {
- 			_urb_free(_urb);
- 			return -ENOMEM;
+On Sunday 17 September 2006 20:54, Om Narasimhan wrote:> --- a/drivers/blue=
+tooth/hci_usb.c> +++ b/drivers/bluetooth/hci_usb.c> @@ -147,10 +147,9 @@ st=
+atic struct usb_device_id blacklist_id> > =A0static struct _urb *_urb_alloc=
+(int isoc, gfp_t gfp)> =A0{> -=A0=A0=A0=A0=A0=A0=A0struct _urb *_urb =3D km=
+alloc(sizeof(struct _urb) +> +=A0=A0=A0=A0=A0=A0=A0struct _urb *_urb =3D kz=
+alloc(sizeof(struct _urb) +> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0sizeof(struct usb_iso_pa=
+cket_descriptor) * isoc, gfp);> =A0=A0=A0=A0=A0=A0=A0=A0if (_urb) {> -=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0memset(_urb, 0, sizeof(*_urb));> =
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0usb_init_urb(&_urb->urb);> =
+=A0=A0=A0=A0=A0=A0=A0=A0}> =A0=A0=A0=A0=A0=A0=A0=A0return _urb;>=20
+Note that only beginning if the aloocated memory was zeroed in originalcode=
+; your patch may introduce slowdowns.
+-- Dmitry
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
