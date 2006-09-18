@@ -1,8 +1,10 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Mon, 18 Sep 2006 21:38:56 +0000
-Subject: [KJ] [Patch] BUG_ON conversion for drivers/media/video/pwc/pwc-if.c
-Message-Id: <1158615536.21907.1.camel@alice>
+Date: Mon, 18 Sep 2006 21:40:06 +0000
+Subject: [KJ] [Patch] BUG_ON conversion for drivers/mmc/omap.c
+Message-Id: <1158615606.21907.4.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1158615536.21907.1.camel@alice>
+In-Reply-To: <1158615536.21907.1.camel@alice>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,18 +18,18 @@ BUG() is disabled.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.18-rc7/drivers/media/video/pwc/pwc-if.c.orig	2006-09-18 23:30:21.000000000 +0200
-+++ linux-2.6.18-rc7/drivers/media/video/pwc/pwc-if.c	2006-09-18 23:30:36.000000000 +0200
-@@ -1082,8 +1082,7 @@ static int pwc_video_open(struct inode *
- 	PWC_DEBUG_OPEN(">> video_open called(vdev = 0x%p).\n", vdev);
+--- linux-2.6.18-rc7/drivers/mmc/omap.c.orig	2006-09-18 23:30:55.000000000 +0200
++++ linux-2.6.18-rc7/drivers/mmc/omap.c	2006-09-18 23:31:09.000000000 +0200
+@@ -640,8 +640,7 @@ mmc_omap_prepare_dma(struct mmc_omap_hos
+ 	}
  
- 	pdev = (struct pwc_device *)vdev->priv;
--	if (pdev = NULL)
+ 	/* Max limit for DMA frame count is 0xffff */
+-	if (unlikely(count > 0xffff))
 -		BUG();
-+	BUG_ON(!pdev);
- 	if (pdev->vopen) {
- 		PWC_DEBUG_OPEN("I'm busy, someone is using the device.\n");
- 		return -EBUSY;
++	BUG_ON(count > 0xffff);
+ 
+ 	OMAP_MMC_WRITE(host->base, BUF, buf);
+ 	omap_set_dma_transfer_params(dma_ch, OMAP_DMA_DATA_TYPE_S16,
 
 
 _______________________________________________
