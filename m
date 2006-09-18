@@ -1,81 +1,87 @@
-From: "Radomil Brailsford" <gwill@aubreydaniels.com>
-Date: Sun, 17 Sep 2006 12:05:18 +0000
-Subject: Re: [KJ] my PHznkARMA
-Message-Id: <01c6da51$a24e3b80$90140059@kontorabuy9kfl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0063076737=="
+From: "Om Narasimhan" <om.turyx@gmail.com>
+Date: Mon, 18 Sep 2006 00:54:25 +0000
+Subject: [KJ] bluetooth drivers : kmalloc to kzalloc conversion
+Message-Id: <6b4e42d10609171754q7c7335f9pfab703d6b746236b@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c6da51$a2b98070$90140059@kontorabuy9kfl>
-In-Reply-To: <01c6da51$a2b98070$90140059@kontorabuy9kfl>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
---===============0063076737==
-Content-Type: multipart/alternative;
-    boundary="----------=_1158494863-17301-239"
-Content-Transfer-Encoding: binary
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, bluez-devel@lists.sf.net
 
-This is a multi-part message in MIME format...
+Tested by compiling with $make allmodconfig; make
 
-------------=_1158494863-17301-239
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed off by Om Narasimhan <om.turyx@gmail.com>
 
-Hi
-=20
-Q p UIT OVE s RP e AYI p NG FOR YOU j R PH o AR d MAC r Y
-=20
-S m AV i E up t r o 6 r 0 % w j ith http://www.herinjdesacunkuis.com
-<http://www.herinjdesacunkuis.com>=20
+ drivers/bluetooth/bfusb.c   |    2 +-
+ drivers/bluetooth/hci_usb.c |   11 +++++------
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-------------=_1158494863-17301-239
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 23f9621..9772d8c 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -588,7 +588,7 @@ static int bfusb_load_firmware(struct bf
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial>Hi</FONT></DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial>Q<span DEFANGED_style =3D"font: Arial;float    :  r=
-ight "> p </span>UIT OVE<span DEFANGED_style =3D"font: Arial;float    :  ri=
-ght "> s </span>RP<span DEFANGED_style =3D"font: Arial;float    :  right ">=
- e </span>AYI<span DEFANGED_style =3D"font: Arial;float    :  right "> p </=
-span>NG FOR YOU<span DEFANGED_style =3D"font: Arial;float    :  right "> j =
-</span>R PH<span DEFANGED_style =3D"font: Arial;float    :  right "> o </sp=
-an>AR<span DEFANGED_style =3D"font: Arial;float    :  right "> d </span>MAC=
-<span DEFANGED_style =3D"font: Arial;float    :  right "> r </span>Y</FONT>=
-</DIV>
-<DIV>&nbsp;</DIV>
-<DIV><FONT face=3DArial>S<span DEFANGED_style =3D"font: Arial;float    :  r=
-ight "> m </span>AV<span DEFANGED_style =3D"font: Arial;float    :  right "=
-> i </span>E up t<span DEFANGED_style =3D"font: Arial;float    :  right "> =
-r </span>o 6<span DEFANGED_style =3D"font: Arial;float    :  right "> r </s=
-pan>0 % w<span DEFANGED_style =3D"font: Arial;float    :  right "> j </span=
->ith <A href=3D"http://www.herinjdesacunkuis.com"><FONT face=3DArial>http:/=
-/www.herinjdesacunkuis.com</FONT></A></FONT></DIV></BODY></HTML>
-------------=_1158494863-17301-239--
+ 	bfusb->udev->toggle[0] = bfusb->udev->toggle[1] = 0;
 
---===============0063076737==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+-	buf = kmalloc(BFUSB_MAX_BLOCK_SIZE + 3, GFP_ATOMIC);
++	buf = kzalloc(BFUSB_MAX_BLOCK_SIZE + 3, GFP_ATOMIC);
+ 	if (!buf) {
+ 		BT_ERR("Can't allocate memory chunk for firmware");
+ 		return -ENOMEM;
+diff --git a/drivers/bluetooth/hci_usb.c b/drivers/bluetooth/hci_usb.c
+index e2d4bea..2274248 100644
+--- a/drivers/bluetooth/hci_usb.c
++++ b/drivers/bluetooth/hci_usb.c
+@@ -147,10 +147,9 @@ static struct usb_device_id blacklist_id
 
+ static struct _urb *_urb_alloc(int isoc, gfp_t gfp)
+ {
+-	struct _urb *_urb = kmalloc(sizeof(struct _urb) +
++	struct _urb *_urb = kzalloc(sizeof(struct _urb) +
+ 				sizeof(struct usb_iso_packet_descriptor) * isoc, gfp);
+ 	if (_urb) {
+-		memset(_urb, 0, sizeof(*_urb));
+ 		usb_init_urb(&_urb->urb);
+ 	}
+ 	return _urb;
+@@ -220,7 +219,7 @@ static int hci_usb_intr_rx_submit(struct
+
+ 	size = le16_to_cpu(husb->intr_in_ep->desc.wMaxPacketSize);
+
+-	buf = kmalloc(size, GFP_ATOMIC);
++	buf = kzalloc(size, GFP_ATOMIC);
+ 	if (!buf)
+ 		return -ENOMEM;
+
+@@ -255,7 +254,7 @@ static int hci_usb_bulk_rx_submit(struct
+ 	int err, pipe, size = HCI_MAX_FRAME_SIZE;
+ 	void *buf;
+
+-	buf = kmalloc(size, GFP_ATOMIC);
++	buf = kzalloc(size, GFP_ATOMIC);
+ 	if (!buf)
+ 		return -ENOMEM;
+
+@@ -296,7 +295,7 @@ static int hci_usb_isoc_rx_submit(struct
+ 	mtu  = le16_to_cpu(husb->isoc_in_ep->desc.wMaxPacketSize);
+ 	size = mtu * HCI_MAX_ISOC_FRAMES;
+
+-	buf = kmalloc(size, GFP_ATOMIC);
++	buf = kzalloc(size, GFP_ATOMIC);
+ 	if (!buf)
+ 		return -ENOMEM;
+
+@@ -471,7 +470,7 @@ static inline int hci_usb_send_ctrl(stru
+ 			return -ENOMEM;
+ 		_urb->type = bt_cb(skb)->pkt_type;
+
+-		dr = kmalloc(sizeof(*dr), GFP_ATOMIC);
++		dr = kzalloc(sizeof(*dr), GFP_ATOMIC);
+ 		if (!dr) {
+ 			_urb_free(_urb);
+ 			return -ENOMEM;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0063076737==--
