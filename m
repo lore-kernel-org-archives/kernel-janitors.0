@@ -1,41 +1,122 @@
-From: "Om Narasimhan" <om.turyx@gmail.com>
-Date: Fri, 22 Sep 2006 22:55:10 +0000
-Subject: Re: [KJ] kmalloc to kzalloc patches for drivers/block [sane version]
-Message-Id: <6b4e42d10609221555i721bef48m847a4d85ec0a080c@mail.gmail.com>
+From: <steve@lonetwin.net>
+Date: Tue, 19 Sep 2006 14:26:44 +0000
+Subject: [KJ] [PATCH] add KERN_* constants to printk()'s in pty.c and vt.c
+Message-Id: <200609191426.k8JEQonV000566@smtp.osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6b4e42d10609202311t47038692x5627f51d69f28209@mail.gmail.com>
-	 <20060921072017.GA27798@us.ibm.com>
-	 <6b4e42d10609212240i3d02241djbdaa0176ab9bfb2b@mail.gmail.com>
-	 <6b4e42d10609212304o52bbc9b4y434bbd7ef71281e3@mail.gmail.com>
-	 <4513A21C.40704@gmail.com> <4513C9BF.7040706@grupopie.com>
-	 <84144f020609220503n4c495542x2130165e371ec85c@mail.gmail.com>
-	 <4513DF11.802@grupopie.com>
-	 <d120d5000609220645h3bdd2941p711c7419b50c6ea4@mail.gmail.com>
-In-Reply-To: <d120d5000609220645h3bdd2941p711c7419b50c6ea4@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Paulo Marques <pmarques@grupopie.com>, Pekka Enberg <penberg@cs.helsinki.fi>, Jiri Slaby <jirislaby@gmail.com>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
-> I think the we should follow a rule like this: when allocating several
-> separate objects of the same type at the same time (like 10 "card"
-> structures) kcalloc should be used. When allocating one object (even
-> consisting of "several ints") kmalloc/kzalloc should be used. As far
-> as I can see the code just tries to allocate longish bitmap and so
-> kzalloc is better.
->
-> Better yet, why don't you DECLARE_BITMAP(cmd_pool_bits) and embed it
-> right into struct ctrl_info instead of dynamically allocating it?
-hba is decalred as
-static ctlr_info_t *hba[MAX_CTLR]
-So if I change the cmd_pool_bits to embed the DECLARE_BITMAP
-statement, while compiling this file as a module, is there not a
-chance of cmd_pool_bits cross a page boundary and allocated in two non
-contiguous (physical) pages? Would it cause a problem with
-__find_fist_zero_bit() and friends?
-Regards,
-Om.
+Hi all,
+
+This is my first patch. This is more of a 'get-submission-right' type of patch.
+So please do comment on the patch submission style even if this patch has already
+been submitted (although a hurried search through the list archives does not seem
+to suggest this).
+
+- steve
+
+---
+
+Signed-off-by: Steven Fernandez <steve@lonetwin.net>
+
+---
+
+diff --git a/drivers/char/pty.c b/drivers/char/pty.c
+index 34dd4c3..4f22bca 100644
+--- a/drivers/char/pty.c
++++ b/drivers/char/pty.c
+@@ -42,7 +42,7 @@ static void pty_close(struct tty_struct
+                return;
+        if (tty->driver->subtype = PTY_TYPE_MASTER) {
+                if (tty->count > 1)
+-                       printk("master pty_close: count = %d!!\n", tty->count);
++                       printk(KERN_WARNING "master pty_close: count = %d!!\n",
+tty->count);
+        } else {
+                if (tty->count > 2)
+                        return;
+diff --git a/drivers/char/toshiba.c b/drivers/char/toshiba.c
+index dd36fd0..34394da 100644
+--- a/drivers/char/toshiba.c
++++ b/drivers/char/toshiba.c
+@@ -382,7 +382,7 @@ static int tosh_get_machine_id(void __io
+                   value. This has been verified on a Satellite Pro 430CDT,
+                   Tecra 750CDT, Tecra 780DVD and Satellite 310CDT. */
+ #if TOSH_DEBUG
+-               printk("toshiba: debugging ID ebx=0x%04x\n", regs.ebx);
++               printk(KERN_DEBUG "toshiba: debugging ID ebx=0x%04x\n", regs.ebx);
+ #endif
+                bx = 0xe6f5;
+ 
+@@ -426,7 +426,7 @@ static int tosh_probe(void)
+ 
+        for (i=0;i<7;i++) {
+                if (readb(bios+0xe010+i)!=signature[i]) {
+-                       printk("toshiba: not a supported Toshiba laptop\n");
++                       printk(KERN_ERR "toshiba: not a supported Toshiba laptop\n");
+                        iounmap(bios);
+                        return -ENODEV;
+                }
+@@ -442,7 +442,7 @@ static int tosh_probe(void)
+        /* if this is not a Toshiba laptop carry flag is set and ah=0x86 */
+ 
+        if ((flag=1) || ((regs.eax & 0xff00)=0x8600)) {
+-               printk("toshiba: not a supported Toshiba laptop\n");
++               printk(KERN_ERR "toshiba: not a supported Toshiba laptop\n");
+                iounmap(bios);
+                return -ENODEV;
+        }
+diff --git a/drivers/char/vt.c b/drivers/char/vt.c
+index da7e66a..0938e05 100644
+--- a/drivers/char/vt.c
++++ b/drivers/char/vt.c
+@@ -1962,7 +1962,7 @@ #endif
+            static int error = 0;
+            if (!error) {
+                error = 1;
+-               printk("con_write: tty %d not allocated\n", currcons+1);
++               printk(KERN_ERR "con_write: tty %d not allocated\n", currcons+1);
+            }
+            release_console_sem();
+            return 0;
+@@ -2624,7 +2624,7 @@ static int __init con_init(void)
+        gotoxy(vc, vc->vc_x, vc->vc_y);
+        csi_J(vc, 0);
+        update_screen(vc);
+-       printk("Console: %s %s %dx%d",
++       printk(KERN_NOTICE "Console: %s %s %dx%d",
+                vc->vc_can_do_color ? "colour" : "mono",
+                display_desc, vc->vc_cols, vc->vc_rows);
+        printable = 1;
+@@ -2766,9 +2766,9 @@ static int bind_con_driver(const struct
+                        clear_buffer_attributes(vc);
+        }
+ 
+-       printk("Console: switching ");
++       printk(KERN_DEBUG "Console: switching ");
+        if (!deflt)
+-               printk("consoles %d-%d ", first+1, last+1);
++               printk(KERN_DEBUG "consoles %d-%d ", first+1, last+1);
+        if (j >= 0) {
+                struct vc_data *vc = vc_cons[j].d;
+ 
+@@ -3354,7 +3354,7 @@ void do_unblank_screen(int leaving_gfx)
+                return;
+        if (!vc_cons_allocated(fg_console)) {
+                /* impossible */
+-               printk("unblank_screen: tty %d not allocated ??\n", fg_console+1);
++               printk(KERN_ERR "unblank_screen: tty %d not allocated ??\n",
+fg_console+1);
+                return;
+        }
+        vc = vc_cons[fg_console].d;
+
+
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
