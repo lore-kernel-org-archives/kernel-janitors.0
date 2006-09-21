@@ -1,7 +1,7 @@
 From: Reiner Herrmann <reiner@reiner-h.de>
-Date: Thu, 21 Sep 2006 00:20:40 +0000
+Date: Thu, 21 Sep 2006 00:25:02 +0000
 Subject: Re: [KJ] [PATCH] Documentation fixes in intel810.txt
-Message-Id: <200609210220.41007.reiner@reiner-h.de>
+Message-Id: <200609210225.02385.reiner@reiner-h.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200609210103.10768.reiner@reiner-h.de> <200609210132.54818.reiner@reiner-h.de> <20060920171319.adb5fc5a.rdunlap@xenotime.net>
 In-Reply-To: <20060920171319.adb5fc5a.rdunlap@xenotime.net>
@@ -11,10 +11,11 @@ Content-Transfer-Encoding: quoted-printable
 To: "Randy.Dunlap" <rdunlap@xenotime.net>
 Cc: adaplas@pol.net, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
 
-OK, so here is another resend... :)
+I'm very sorry for the noise, but I just detected that I overlooked a space=
+. :(
+It is too late already... I'll go to bed now. ;)
 
-This patch fixes some general documentation mistakes and
-cleans up a lot of whitespace issues.
+So here is the (hopefully) final resend.
 
 Signed-off-by: Reiner Herrmann <reiner@reiner-h.de>
 ---
@@ -169,7 +170,7 @@ n/fb/intel810.txt linux-work/Documentation/fb/intel810.txt
 -        avoid XFree86's usage and allows up to 7MB/15MB of framebuffer
 -        memory.  Depending on your usage, adjust the value up or down,=20
 -	(0 for maximum usage, 31/63 MB for the least amount).  Note, an=20
-+	offset (16 MB for a 64 MB aperture, 8 MB for a 32MB aperture) will
++	offset (16 MB for a 64 MB aperture, 8 MB for a 32 MB aperture) will
 +	avoid XFree86's usage and allows up to 7 MB/15 MB of framebuffer
 +	memory.  Depending on your usage, adjust the value up or down
 +	(0 for maximum usage, 31/63 MB for the least amount).  Note, an
