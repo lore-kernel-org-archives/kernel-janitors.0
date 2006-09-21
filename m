@@ -1,117 +1,44 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Thu, 21 Sep 2006 07:20:17 +0000
+From: Thomas Petazzoni <thomas.petazzoni@enix.org>
+Date: Thu, 21 Sep 2006 07:35:55 +0000
 Subject: Re: [KJ] kmalloc to kzalloc patches for drivers/block [sane version]
-Message-Id: <20060921072017.GA27798@us.ibm.com>
+Message-Id: <20060921093555.5cf624ea@thomas.toulouse>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6b4e42d10609202311t47038692x5627f51d69f28209@mail.gmail.com>
-In-Reply-To: <6b4e42d10609202311t47038692x5627f51d69f28209@mail.gmail.com>
+References: <6b4e42d10609171753m1836aaf3y52788c84a52d5e6a@mail.gmail.com>
+In-Reply-To: <6b4e42d10609171753m1836aaf3y52788c84a52d5e6a@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: Om Narasimhan <om.turyx@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On 20.09.2006 [23:11:25 -0700], Om Narasimhan wrote:
-> This patch changes the kmalloc() calls followed by memset(,0,) to kzalloc.
-> 
->     cciss.c : Changed the kmalloc/memset pair to kzalloc
->     cpqarray.c : km2zalloc conversion and code size reduction by
-> changing multiple cleanup calls and returns of the function
-> getgeometry() by adding a label.
->     loop.c : km2zalloc converion
-> 
-> 
-> Signed off by Om Narasimhan <om.turyx@gmail.com>
+Hi,
 
-This is not the canonical format, per SubmittingPatches. It should be:
+Le Thu, 21 Sep 2006 00:20:17 -0700,
+Nishanth Aravamudan <nacc@us.ibm.com> a =E9crit :
 
-Signed-off-by: Random J Developer <random@developer.example.org>
+> > +	id_log_drv_t *id_ldrive =3D NULL;
+> > +	id_ctlr_t *id_ctlr_buf =3D NULL;
+> > +	sense_log_drv_stat_t *id_lstatus_buf =3D NULL;
+> > +	config_t *sense_config_buf =3D NULL;
+>=20
+> Why initialize if you're going to immediately assign the return of
+> kzalloc()?
 
->  drivers/block/cciss.c    |    4 +--
->  drivers/block/cpqarray.c |   72 +++++++++++++++-------------------------------
->  drivers/block/loop.c     |    4 +--
->  3 files changed, 25 insertions(+), 55 deletions(-)
+I wanted to say the same, but just before sending my mail, I understood
+that it was for the "goto end;" thing to work. The code at the "end:"
+label kfree()s all variables, regardless of whether they have been
+allocated. It works correctly if all pointers are initially set to NULL
+('cause kfree(NULL) works), but not if pointers contain garbage.
 
-Your diffstat should have indicated to you that this should be split up
-better. Please (re-)read SubmittingPatches. *One* logical change per
-patch, most importantly.
+However, as you said, this is another logical change, which must be
+done in another patch.
 
-> 
-> diff --git a/drivers/block/cciss.c b/drivers/block/cciss.c
-> index 2cd3391..a800a69 100644
-> --- a/drivers/block/cciss.c
-> +++ b/drivers/block/cciss.c
-> @@ -900,7 +900,7 @@ #if 0				/* 'buf_size' member is 16-bits
->  				return -EINVAL;
->  #endif
->  			if (iocommand.buf_size > 0) {
-> -				buff = kmalloc(iocommand.buf_size, GFP_KERNEL);
-> +				buff = kzalloc(iocommand.buf_size, GFP_KERNEL);
->  				if (buff = NULL)
->  					return -EFAULT;
->  			}
-> @@ -911,8 +911,6 @@ #endif
->  					kfree(buff);
->  					return -EFAULT;
->  				}
-> -			} else {
-> -				memset(buff, 0, iocommand.buf_size);
->  			}
->  			if ((c = cmd_alloc(host, 0)) = NULL) {
->  				kfree(buff);
+Sincerly,
 
-This changes performance potentially, no? The memset before was
-conditional upon (iocommand.Request.Type.Direction = XFER_WRITE) and
-now the memory will always be zero'd.
-
-> diff --git a/drivers/block/cpqarray.c b/drivers/block/cpqarray.c
-> index 78082ed..8a697c7 100644
-> --- a/drivers/block/cpqarray.c
-> +++ b/drivers/block/cpqarray.c
-> @@ -1642,58 +1639,46 @@ static void start_fwbk(int ctlr)
->      It is used only at init time.
->  *****************************************************************/
->  static void getgeometry(int ctlr)
-> -{				
-> -	id_log_drv_t *id_ldrive;
-> -	id_ctlr_t *id_ctlr_buf;
-> -	sense_log_drv_stat_t *id_lstatus_buf;
-> -	config_t *sense_config_buf;
-> +{
-
-Unrelated whitespace change.
-
-> +	id_log_drv_t *id_ldrive = NULL;
-> +	id_ctlr_t *id_ctlr_buf = NULL;
-> +	sense_log_drv_stat_t *id_lstatus_buf = NULL;
-> +	config_t *sense_config_buf = NULL;
-
-Why initialize if you're going to immediately assign the return of
-kzalloc()?
-
->  	unsigned int log_unit, log_index;
->  	int ret_code, size;
-> -	drv_info_t *drv;
-> +	drv_info_t *drv = NULL;
-
-What does this do? Seems unnecessary and unrelated.
-
-<snip>
-
-> -		kfree(id_ctlr_buf);
-> -		kfree(id_ldrive);
->  		printk( KERN_ERR "cpqarray:  out of memory.\n");
-> -		return;
-> +		goto end;
-
-All of this rearrangement needs to be a separate patch.
-
-Thanks,
-Nish
-
--- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
+Thomas
+--=20
+Thomas Petazzoni - thomas.petazzoni@enix.org
+http://{thomas,sos,kos}.enix.org - http://www.toulibre.org
+http://www.{livret,agenda}dulibre.org
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
