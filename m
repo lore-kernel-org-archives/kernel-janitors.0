@@ -1,44 +1,34 @@
-From: Thomas Petazzoni <thomas.petazzoni@enix.org>
-Date: Thu, 21 Sep 2006 07:35:55 +0000
-Subject: Re: [KJ] kmalloc to kzalloc patches for drivers/block [sane version]
-Message-Id: <20060921093555.5cf624ea@thomas.toulouse>
+From: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
+Date: Thu, 21 Sep 2006 13:36:39 +0000
+Subject: Re: [KJ] kmalloc to kzalloc patches for drivers/atm [sane version]
+Message-Id: <d120d5000609210636n49a35953w44aefe7068f286fd@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6b4e42d10609171753m1836aaf3y52788c84a52d5e6a@mail.gmail.com>
-In-Reply-To: <6b4e42d10609171753m1836aaf3y52788c84a52d5e6a@mail.gmail.com>
+References: <6b4e42d10609210012j6c82379cs53fc374b675a5883@mail.gmail.com>
+In-Reply-To: <6b4e42d10609210012j6c82379cs53fc374b675a5883@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Om Narasimhan <om.turyx@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org, linux-atm-general@lists.sourceforge.net
 
 Hi,
 
-Le Thu, 21 Sep 2006 00:20:17 -0700,
-Nishanth Aravamudan <nacc@us.ibm.com> a =E9crit :
+On 9/21/06, Om Narasimhan <om.turyx@gmail.com> wrote:
+> -       dev->atm_vccs = kmalloc (dev->nchannels * sizeof (struct atm_vcc *),
+> +       dev->atm_vccs = kcalloc (sizeof (struct atm_vcc *), dev->nchannels,
+>                                 GFP_KERNEL);
 
-> > +	id_log_drv_t *id_ldrive =3D NULL;
-> > +	id_ctlr_t *id_ctlr_buf =3D NULL;
-> > +	sense_log_drv_stat_t *id_lstatus_buf =3D NULL;
-> > +	config_t *sense_config_buf =3D NULL;
->=20
-> Why initialize if you're going to immediately assign the return of
-> kzalloc()?
+kcalloc's first argument is number of elements to allocate, size is
+the second argument.
 
-I wanted to say the same, but just before sending my mail, I understood
-that it was for the "goto end;" thing to work. The code at the "end:"
-label kfree()s all variables, regardless of whether they have been
-allocated. It works correctly if all pointers are initially set to NULL
-('cause kfree(NULL) works), but not if pointers contain garbage.
+>
+> -       scq = (struct scq_info *) kmalloc(sizeof(struct scq_info), GFP_KERNEL);
+> +       scq = (struct scq_info *) kzalloc(sizeof(struct scq_info), GFP_KERNEL);
 
-However, as you said, this is another logical change, which must be
-done in another patch.
+Kill this cast please.
 
-Sincerly,
-
-Thomas
---=20
-Thomas Petazzoni - thomas.petazzoni@enix.org
-http://{thomas,sos,kos}.enix.org - http://www.toulibre.org
-http://www.{livret,agenda}dulibre.org
+-- 
+Dmitry
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
