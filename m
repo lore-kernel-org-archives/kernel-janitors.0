@@ -1,28 +1,37 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Fri, 15 Sep 2006 23:38:23 +0000
-Subject: Re: [KJ] while(1) fork() problem
-Message-Id: <20060915233823.GB5287@martell.zuzino.mipt.ru>
+From: Thomas Petazzoni <thomas.petazzoni@enix.org>
+Date: Fri, 22 Sep 2006 22:35:03 +0000
+Subject: [KJ] [PATCH] Prevent multiple inclusion of linux/sysrq.h
+Message-Id: <E1GQtbr-0005Or-LP@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060915035812.39772.qmail@web55412.mail.re4.yahoo.com>
-In-Reply-To: <20060915035812.39772.qmail@web55412.mail.re4.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 15, 2006 at 10:02:08AM +0200, Bernd Petrovitsch wrote:
-> On Thu, 2006-09-14 at 20:58 -0700, nikhil mishra wrote:
-> > hello concerned 
-> > while(1)
-> > fork();
-> > why this code has a problem is quite understood .
-> > what can be the solution ?
->
-> "Don't do it." is the other solution.
 
-But not the best. The best one is to find out which (presumably, Indian)
-Linux website typoed newbies as janitors.
+Prevent multiple inclusions of include/linux/sysrq.h using traditional
+#ifndef..#endif.
 
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@enix.org>
+
+Index: linux-2.6/include/linux/sysrq.h
+=================================--- linux-2.6.orig/include/linux/sysrq.h	2006-09-23 00:04:05.000000000 +0200
++++ linux-2.6/include/linux/sysrq.h	2006-09-23 00:05:27.000000000 +0200
+@@ -11,6 +11,8 @@
+  *	based upon discusions in irc://irc.openprojects.net/#kernelnewbies
+  */
+ 
++#ifndef _LINUX_SYSRQ_H
++#define _LINUX_SYSRQ_H
+ 
+ struct pt_regs;
+ struct tty_struct;
+@@ -57,3 +59,5 @@
+ #define unregister_sysrq_key(ig,nore) __reterr()
+ 
+ #endif
++
++#endif /* _LINUX_SYSRQ_H */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
