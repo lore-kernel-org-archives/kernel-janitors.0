@@ -1,351 +1,309 @@
-From: Reiner Herrmann <reiner@reiner-h.de>
-Date: Tue, 15 Aug 2006 20:12:04 +0000
-Subject: [KJ] [PATCH] drivers/video: kzalloc conversion
-Message-Id: <200608152212.04409.reiner@reiner-h.de>
+From: Amol Lad <amol@verismonetworks.com>
+Date: Fri, 22 Sep 2006 13:37:52 +0000
+Subject: [KJ] [PATCH] ioremap balance with iounmap for drivers/net
+Message-Id: <1158931552.25016.9.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Use kzalloc instead of kmalloc and zero-memset in drivers/video/
+ioremap must be balanced by an iounmap and failing to do so can result
+in a memory leak.
 
-Signed-off-by: Reiner Herrmann <reiner@reiner-h.de>
+Tested (compilation only) with:
+- allmodconfig
+- Modifying drivers/net/Kconfig to make sure that the changed file is
+compiling without warning
+
+Signed-off-by: Amol Lad <amol@verismonetworks.com>
+
 ---
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/amba-clcd.c linux-work/drivers/video/amba-clcd.c
---- linux-2.6.18-rc4/drivers/video/amba-clcd.c	2006-06-18 03:49:35.000000000 +0200
-+++ linux-work/drivers/video/amba-clcd.c	2006-08-15 21:28:54.000000000 +0200
-@@ -447,13 +447,12 @@ static int clcdfb_probe(struct amba_devi
+I'm not subsribed to linux-net so please cc me.
+
+---
+ drivers/net/e1000/e1000_main.c            |    3 ++-
+ drivers/net/e2100.c                       |    2 ++
+ drivers/net/es3210.c                      |    2 ++
+ drivers/net/fs_enet/mac-fcc.c             |   25 +++++++++++++++++++++----
+ drivers/net/fs_enet/mii-fec.c             |    4 ++++
+ drivers/net/ioc3-eth.c                    |    1 +
+ drivers/net/myri_sbus.c                   |    7 +++++++
+ drivers/net/pcmcia/ibmtr_cs.c             |    1 +
+ drivers/net/smc-ultra.c                   |    2 ++
+ drivers/net/tokenring/ibmtr.c             |   11 +++++++++--
+ drivers/net/wan/farsync.c                 |    1 +
+ drivers/net/wd.c                          |    4 +++-
+ drivers/net/wireless/ipw2100.c            |    3 +++
+ drivers/net/wireless/prism54/islpci_dev.c |    2 ++
+ include/linux/utsrelease.h                |    1 +
+ 15 files changed, 61 insertions(+), 8 deletions(-)
+---
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/e1000/e1000_main.c linux-2.6.18/drivers/net/e1000/e1000_main.c
+--- linux-2.6.18-orig/drivers/net/e1000/e1000_main.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/e1000/e1000_main.c	2006-09-22 12:15:16.000000000 +0530
+@@ -830,7 +830,8 @@ e1000_probe(struct pci_dev *pdev,
+ 
+ 	if (e1000_init_eeprom_params(&adapter->hw)) {
+ 		E1000_ERR("EEPROM initialization failed\n");
+-		return -EIO;
++		err = -EIO;
++		goto err_eeprom;
+ 	}
+ 
+ 	/* before reading the EEPROM, reset the controller to
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/e2100.c linux-2.6.18/drivers/net/e2100.c
+--- linux-2.6.18-orig/drivers/net/e2100.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/e2100.c	2006-09-22 12:16:18.000000000 +0530
+@@ -279,6 +279,8 @@ static int __init e21_probe1(struct net_
  		goto out;
+ 	return 0;
+ out:
++	if (ei_status.mem)
++		iounmap(ei_status.mem);
+ 	release_region(ioaddr, E21_IO_EXTENT);
+ 	return retval;
+ }
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/es3210.c linux-2.6.18/drivers/net/es3210.c
+--- linux-2.6.18-orig/drivers/net/es3210.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/es3210.c	2006-09-22 12:18:22.000000000 +0530
+@@ -306,6 +306,8 @@ static int __init es_probe1(struct net_d
+ out1:
+ 	free_irq(dev->irq, dev);
+ out:
++	if (ei_status.mem)
++		iounmap(ei_status.mem);
+ 	release_region(ioaddr + ES_SA_PROM, ES_IO_EXTENT);
+ 	return retval;
+ }
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/fs_enet/mac-fcc.c linux-2.6.18/drivers/net/fs_enet/mac-fcc.c
+--- linux-2.6.18-orig/drivers/net/fs_enet/mac-fcc.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/fs_enet/mac-fcc.c	2006-09-22 18:46:46.000000000 +0530
+@@ -129,8 +129,10 @@ static int do_pd_setup(struct fs_enet_pr
+ 
+ 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fcc_regs");
+ 	fep->fcc.fccp = (void *)ioremap(r->start, r->end - r->start + 1);
+-	if (fep->fcc.fccp = NULL)
++	if (fep->fcc.fccp = NULL) {
++		iounmap(fep->fcc.ep);
+ 		return -EINVAL;
++	}
+ 
+ 	if (fep->fpi->fcc_regs_c) {
+ 
+@@ -142,12 +144,20 @@ static int do_pd_setup(struct fs_enet_pr
+ 				r->end - r->start + 1);
  	}
  
--	fb = (struct clcd_fb *) kmalloc(sizeof(struct clcd_fb), GFP_KERNEL);
-+	fb = kzalloc(sizeof(struct clcd_fb), GFP_KERNEL);
- 	if (!fb) {
- 		printk(KERN_INFO "CLCD: could not allocate new clcd_fb struct\n");
- 		ret = -ENOMEM;
- 		goto free_region;
- 	}
--	memset(fb, 0, sizeof(struct clcd_fb));
+-	if (fep->fcc.fcccp = NULL)
++	if (fep->fcc.fcccp = NULL) {
++		iounmap(fep->fcc.ep);
++		iounmap(fep->fcc.fccp);
+ 		return -EINVAL;
++	}
  
- 	fb->dev = dev;
- 	fb->board = board;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/aty/atyfb_base.c linux-work/drivers/video/aty/atyfb_base.c
---- linux-2.6.18-rc4/drivers/video/aty/atyfb_base.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/aty/atyfb_base.c	2006-08-15 21:26:36.000000000 +0200
-@@ -2995,12 +2995,11 @@ static int __devinit atyfb_setup_sparc(s
- 		/* nothing */ ;
- 	j = i + 4;
+ 	fep->fcc.mem = (void *)fep->fpi->mem_offset;
+-	if (fep->fcc.mem = NULL)
++	if (fep->fcc.mem = NULL) {
++		iounmap(fep->fcc.ep);
++		iounmap(fep->fcc.fccp);
++		if (!fep->fpi->fcc_regs_c)
++			iounmap(fep->fcc.fcccp);
+ 		return -EINVAL;
++	}
  
--	par->mmap_map = kmalloc(j * sizeof(*par->mmap_map), GFP_ATOMIC);
-+	par->mmap_map = kzalloc(j * sizeof(*par->mmap_map), GFP_ATOMIC);
- 	if (!par->mmap_map) {
- 		PRINTKE("atyfb_setup_sparc() can't alloc mmap_map\n");
- 		return -ENOMEM;
- 	}
--	memset(par->mmap_map, 0, j * sizeof(*par->mmap_map));
+ 	return 0;
+ }
+@@ -205,7 +215,14 @@ static void free_bd(struct net_device *d
  
- 	for (i = 0, j = 2; i < 6 && pdev->resource[i].start; i++) {
- 		struct resource *rp = &pdev->resource[i];
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/au1100fb.c linux-work/drivers/video/au1100fb.c
---- linux-2.6.18-rc4/drivers/video/au1100fb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/au1100fb.c	2006-08-15 21:30:48.000000000 +0200
-@@ -451,11 +451,11 @@ int au1100fb_drv_probe(struct device *de
- 			return -EINVAL;
- 
- 	/* Allocate new device private */
--	if (!(fbdev = kmalloc(sizeof(struct au1100fb_device), GFP_KERNEL))) {
-+	fbdev = kzalloc(sizeof(struct au1100fb_device), GFP_KERNEL);
-+	if (!fbdev) {
- 		print_err("fail to allocate device private record");
- 		return -ENOMEM;
- 	}
--	memset((void*)fbdev, 0, sizeof(struct au1100fb_device));
- 
- 	fbdev->panel = &known_lcd_panels[drv_info.panel_idx];
- 
-@@ -532,10 +532,10 @@ int au1100fb_drv_probe(struct device *de
- 	fbdev->info.fbops = &au1100fb_ops;
- 	fbdev->info.fix = au1100fb_fix;
- 
--	if (!(fbdev->info.pseudo_palette = kmalloc(sizeof(u32) * 16, GFP_KERNEL))) {
-+	fbdev->info.pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
-+	if (!fbdev->info.pseudo_palette) {
- 		return -ENOMEM;
- 	}
--	memset(fbdev->info.pseudo_palette, 0, sizeof(u32) * 16);
- 
- 	if (fb_alloc_cmap(&fbdev->info.cmap, AU1100_LCD_NBR_PALETTE_ENTRIES, 0) < 0) {
- 		print_err("Fail to allocate colormap (%d entries)",
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/au1200fb.c linux-work/drivers/video/au1200fb.c
---- linux-2.6.18-rc4/drivers/video/au1200fb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/au1200fb.c	2006-08-15 21:31:10.000000000 +0200
-@@ -1589,11 +1589,10 @@ static int au1200fb_init_fbinfo(struct a
- 		return -EFAULT;
- 	}
- 
--	fbi->pseudo_palette = kmalloc(sizeof(u32) * 16, GFP_KERNEL);
-+	fbi->pseudo_palette = kzalloc(sizeof(u32) * 16, GFP_KERNEL);
- 	if (!fbi->pseudo_palette) {
- 		return -ENOMEM;
- 	}
--	memset(fbi->pseudo_palette, 0, sizeof(u32) * 16);
- 
- 	if (fb_alloc_cmap(&fbi->cmap, AU1200_LCD_NBR_PALETTE_ENTRIES, 0) < 0) {
- 		print_err("Fail to allocate colormap (%d entries)",
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/clps711xfb.c linux-work/drivers/video/clps711xfb.c
---- linux-2.6.18-rc4/drivers/video/clps711xfb.c	2006-06-18 03:49:35.000000000 +0200
-+++ linux-work/drivers/video/clps711xfb.c	2006-08-15 21:31:30.000000000 +0200
-@@ -366,11 +366,10 @@ int __init clps711xfb_init(void)
- 	if (fb_get_options("clps711xfb", NULL))
- 		return -ENODEV;
- 
--	cfb = kmalloc(sizeof(*cfb), GFP_KERNEL);
-+	cfb = kzalloc(sizeof(*cfb), GFP_KERNEL);
- 	if (!cfb)
- 		goto out;
- 
--	memset(cfb, 0, sizeof(*cfb));
- 	strcpy(cfb->fix.id, "clps711x");
- 
- 	cfb->fbops		= &clps7111fb_ops;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/controlfb.c linux-work/drivers/video/controlfb.c
---- linux-2.6.18-rc4/drivers/video/controlfb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/controlfb.c	2006-08-15 21:32:06.000000000 +0200
-@@ -692,11 +692,10 @@ static int __init control_of_init(struct
- 		printk(KERN_ERR "can't get 2 addresses for control\n");
- 		return -ENXIO;
- 	}
--	p = kmalloc(sizeof(*p), GFP_KERNEL);
-+	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (p = 0)
- 		return -ENXIO;
- 	control_fb = p;	/* save it for cleanups */
--	memset(p, 0, sizeof(*p));
- 
- 	/* Map in frame buffer and registers */
- 	p->fb_orig_base = fb_res.start;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/cyber2000fb.c linux-work/drivers/video/cyber2000fb.c
---- linux-2.6.18-rc4/drivers/video/cyber2000fb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/cyber2000fb.c	2006-08-15 21:32:27.000000000 +0200
-@@ -1221,12 +1221,10 @@ cyberpro_alloc_fb_info(unsigned int id, 
+ static void cleanup_data(struct net_device *dev)
  {
- 	struct cfb_info *cfb;
+-	/* nothing */
++	struct fs_enet_private *fep = netdev_priv(dev);
++
++	if (fep->fcc.ep)
++		iounmap(fep->fcc.ep);
++	if (fep->fcc.fccp)
++		iounmap(fep->fcc.fccp);
++	if (!fep->fpi->fcc_regs_c && fep->fcc.fcccp)
++		iounmap(fep->fcc.fcccp);
+ }
  
--	cfb = kmalloc(sizeof(struct cfb_info), GFP_KERNEL);
-+	cfb = kzalloc(sizeof(struct cfb_info), GFP_KERNEL);
- 	if (!cfb)
- 		return NULL;
+ static void set_promiscuous_mode(struct net_device *dev)
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/fs_enet/mii-fec.c linux-2.6.18/drivers/net/fs_enet/mii-fec.c
+--- linux-2.6.18-orig/drivers/net/fs_enet/mii-fec.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/fs_enet/mii-fec.c	2006-09-22 12:42:12.000000000 +0530
+@@ -212,9 +212,13 @@ bus_register_fail:
+ static int fs_enet_fec_mdio_remove(struct device *dev)
+ {
+ 	struct mii_bus *bus = dev_get_drvdata(dev);
++	struct fec_info *fec = (struct fec_info *) bus->priv;
  
--	memset(cfb, 0, sizeof(struct cfb_info));
--
- 	cfb->id			= id;
+ 	mdiobus_unregister(bus);
  
- 	if (id = ID_CYBERPRO_5000)
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/i810/i810_main.c linux-work/drivers/video/i810/i810_main.c
---- linux-2.6.18-rc4/drivers/video/i810/i810_main.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/i810/i810_main.c	2006-08-15 21:22:14.000000000 +0200
-@@ -2010,11 +2010,11 @@ static int __devinit i810fb_init_pci (st
- 	par = info->par;
- 	par->dev = dev;
++	if (fec && fec->fecp)
++		iounmap(fec->fecp);		
++
+ 	dev_set_drvdata(dev, NULL);
+ 	kfree(bus->priv);
  
--	if (!(info->pixmap.addr = kmalloc(8*1024, GFP_KERNEL))) {
-+	info->pixmap.addr = kzalloc(8*1024, GFP_KERNEL);
-+	if (!info->pixmap.addr) {
- 		i810fb_release_resource(info, par);
- 		return -ENOMEM;
- 	}
--	memset(info->pixmap.addr, 0, 8*1024);
- 	info->pixmap.size = 8*1024;
- 	info->pixmap.buf_align = 8;
- 	info->pixmap.access_align = 32;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/igafb.c linux-work/drivers/video/igafb.c
---- linux-2.6.18-rc4/drivers/video/igafb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/igafb.c	2006-08-15 21:32:43.000000000 +0200
-@@ -400,12 +400,11 @@ int __init igafb_init(void)
- 	
- 	size = sizeof(struct fb_info) + sizeof(struct iga_par) + sizeof(u32)*16;
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/ioc3-eth.c linux-2.6.18/drivers/net/ioc3-eth.c
+--- linux-2.6.18-orig/drivers/net/ioc3-eth.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/ioc3-eth.c	2006-09-22 16:27:34.000000000 +0530
+@@ -1314,6 +1314,7 @@ static int ioc3_probe(struct pci_dev *pd
+ 	return 0;
  
--        info = kmalloc(size, GFP_ATOMIC);
-+        info = kzalloc(size, GFP_ATOMIC);
-         if (!info) {
-                 printk("igafb_init: can't alloc fb_info\n");
-                 return -ENOMEM;
-         }
--        memset(info, 0, size);
+ out_stop:
++	iounmap(ioc3);
+ 	ioc3_stop(ip);
+ 	ioc3_free_rings(ip);
+ out_res:
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/myri_sbus.c linux-2.6.18/drivers/net/myri_sbus.c
+--- linux-2.6.18-orig/drivers/net/myri_sbus.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/myri_sbus.c	2006-09-22 17:59:16.000000000 +0530
+@@ -1107,6 +1107,13 @@ static int __init myri_ether_init(struct
+ err_free_irq:
+ 	free_irq(dev->irq, dev);
+ err:
++	if (mp->eeprom.cpuvers < CPUVERS_4_0) {
++		sbus_iounmap(mp->regs, mp->reg_size);
++	} else {
++		sbus_iounmap(mp->cregs, PAGE_SIZE);
++		sbus_iounmap(mp->lregs, (256 * 1024));
++		sbus_iounmap(mp->lanai, (512 * 1024));
++	}
+ 	/* This will also free the co-allocated 'dev->priv' */
+ 	free_netdev(dev);
+ 	return -ENODEV;
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/pcmcia/ibmtr_cs.c linux-2.6.18/drivers/net/pcmcia/ibmtr_cs.c
+--- linux-2.6.18-orig/drivers/net/pcmcia/ibmtr_cs.c	2006-08-24 02:46:33.000000000 +0530
++++ linux-2.6.18/drivers/net/pcmcia/ibmtr_cs.c	2006-09-22 18:06:31.000000000 +0530
+@@ -320,6 +320,7 @@ static int ibmtr_config(struct pcmcia_de
+ cs_failed:
+     cs_error(link, last_fn, last_ret);
+ failed:
++    iounmap(ti->sram_virt);
+     ibmtr_release(link);
+     return -ENODEV;
+ } /* ibmtr_config */
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/smc-ultra.c linux-2.6.18/drivers/net/smc-ultra.c
+--- linux-2.6.18-orig/drivers/net/smc-ultra.c	2006-09-21 10:15:36.000000000 +0530
++++ linux-2.6.18/drivers/net/smc-ultra.c	2006-09-22 16:48:53.000000000 +0530
+@@ -313,6 +313,8 @@ static int __init ultra_probe1(struct ne
+ 		goto out;
+ 	return 0;
+ out:
++	if (ei_status.mem)
++		iounmap(ei_status.mem);
+ 	release_region(ioaddr, ULTRA_IO_EXTENT);
+ 	return retval;
+ }
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/tokenring/ibmtr.c linux-2.6.18/drivers/net/tokenring/ibmtr.c
+--- linux-2.6.18-orig/drivers/net/tokenring/ibmtr.c	2006-09-21 10:15:37.000000000 +0530
++++ linux-2.6.18/drivers/net/tokenring/ibmtr.c	2006-09-22 17:10:17.000000000 +0530
+@@ -263,14 +263,20 @@ static void __devinit find_turbo_adapter
+ 		chanid=(CHANNEL_ID + ram_mapped);
+ 		tchanid=pcchannelid;
+ 		ctemp=readb(chanid) & 0x0f;
+-		if (ctemp != *tchanid) continue;
++		if (ctemp != *tchanid) {
++			iounmap(ram_mapped);
++			continue;
++		}
+ 		for (i=2,j=1; i<F; i=i+2,j++) {
+ 			if ((readb(chanid+i) & 0x0f) != tchanid[j]){
+ 				found_turbo=0;
+ 				break;
+ 			}
+ 		}
+-		if (!found_turbo) continue;
++		if (!found_turbo) {
++			iounmap(ram_mapped);
++			continue;
++		}
  
- 	par = (struct iga_par *) (info + 1);
- 	
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/intelfb/intelfbdrv.c linux-work/drivers/video/intelfb/intelfbdrv.c
---- linux-2.6.18-rc4/drivers/video/intelfb/intelfbdrv.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/intelfb/intelfbdrv.c	2006-08-15 21:19:30.000000000 +0200
-@@ -529,12 +529,11 @@ intelfb_pci_register(struct pci_dev *pde
- 	dinfo->pdev  = pdev;
- 
- 	/* Reserve pixmap space. */
--	info->pixmap.addr = kmalloc(64 * 1024, GFP_KERNEL);
-+	info->pixmap.addr = kzalloc(64 * 1024, GFP_KERNEL);
- 	if (info->pixmap.addr = NULL) {
- 		ERR_MSG("Cannot reserve pixmap memory.\n");
- 		goto err_out_pixmap;
- 	}
--	memset(info->pixmap.addr, 0, 64 * 1024);
- 
- 	/* set early this option because it could be changed by tv encoder
- 	   driver */
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/matrox/matroxfb_crtc2.c linux-work/drivers/video/matrox/matroxfb_crtc2.c
---- linux-2.6.18-rc4/drivers/video/matrox/matroxfb_crtc2.c	2006-06-18 03:49:35.000000000 +0200
-+++ linux-work/drivers/video/matrox/matroxfb_crtc2.c	2006-08-15 21:18:01.000000000 +0200
-@@ -694,12 +694,11 @@ static void* matroxfb_crtc2_probe(struct
- 	/* hardware is CRTC2 incapable... */
- 	if (!ACCESS_FBINFO(devflags.crtc2))
- 		return NULL;
--	m2info = (struct matroxfb_dh_fb_info*)kmalloc(sizeof(*m2info), GFP_KERNEL);
-+	m2info = kzalloc(sizeof(*m2info), GFP_KERNEL);
- 	if (!m2info) {
- 		printk(KERN_ERR "matroxfb_crtc2: Not enough memory for CRTC2 control structs\n");
- 		return NULL;
- 	}
--	memset(m2info, 0, sizeof(*m2info));
- 	m2info->primary_dev = MINFO;
- 	if (matroxfb_dh_registerfb(m2info)) {
- 		kfree(m2info);
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/nvidia/nvidia.c linux-work/drivers/video/nvidia/nvidia.c
---- linux-2.6.18-rc4/drivers/video/nvidia/nvidia.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/nvidia/nvidia.c	2006-08-15 21:11:24.000000000 +0200
-@@ -1190,13 +1190,11 @@ static int __devinit nvidiafb_probe(stru
- 	par = info->par;
- 	par->pci_dev = pd;
- 
--	info->pixmap.addr = kmalloc(8 * 1024, GFP_KERNEL);
-+	info->pixmap.addr = kzalloc(8 * 1024, GFP_KERNEL);
- 
- 	if (info->pixmap.addr = NULL)
- 		goto err_out_kfree;
- 
--	memset(info->pixmap.addr, 0, 8 * 1024);
--
- 	if (pci_enable_device(pd)) {
- 		printk(KERN_ERR PFX "cannot enable PCI device\n");
- 		goto err_out_enable;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/offb.c linux-work/drivers/video/offb.c
---- linux-2.6.18-rc4/drivers/video/offb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/offb.c	2006-08-15 21:36:43.000000000 +0200
-@@ -263,13 +263,11 @@ static void __init offb_init_fb(const ch
- 
- 	size = sizeof(struct fb_info) + sizeof(u32) * 17;
- 
--	info = kmalloc(size, GFP_ATOMIC);
--	
-+	info = kzalloc(size, GFP_ATOMIC);
- 	if (info = 0) {
- 		release_mem_region(res_start, res_size);
- 		return;
- 	}
--	memset(info, 0, size);
- 
- 	fix = &info->fix;
- 	var = &info->var;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/pvr2fb.c linux-work/drivers/video/pvr2fb.c
---- linux-2.6.18-rc4/drivers/video/pvr2fb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/pvr2fb.c	2006-08-15 21:37:05.000000000 +0200
-@@ -1065,14 +1065,12 @@ int __init pvr2fb_init(void)
- #endif
- 	size = sizeof(struct fb_info) + sizeof(struct pvr2fb_par) + 16 * sizeof(u32);
- 
--	fb_info = kmalloc(size, GFP_KERNEL);
-+	fb_info = kzalloc(size, GFP_KERNEL);
- 	if (!fb_info) {
- 		printk(KERN_ERR "Failed to allocate memory for fb_info\n");
- 		return -ENOMEM;
- 	}
- 
--	memset(fb_info, 0, size);
--
- 	currentpar = (struct pvr2fb_par *)(fb_info + 1);
- 
- 	for (i = 0; i < ARRAY_SIZE(board_list); i++) {
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/retz3fb.c linux-work/drivers/video/retz3fb.c
---- linux-2.6.18-rc4/drivers/video/retz3fb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/retz3fb.c	2006-08-15 21:39:46.000000000 +0200
-@@ -1369,10 +1369,9 @@ int __init retz3fb_init(void)
- 			release_mem_region(board_addr, 0x00c00000);
+ 		writeb(0x90, ram_mapped+0x1E01);
+ 		for(i=2; i<0x0f; i++) {
+@@ -295,6 +301,7 @@ static void __devinit find_turbo_adapter
+ 			for(jif=jiffies+TR_RST_TIME;time_before_eq(jiffies,jif););
+ 			outb(0, turbo_io[index] + ADAPTRESETREL);
+ 			index++;
++			iounmap(ram_mapped);
  			continue;
  		}
--		if (!(zinfo = kmalloc(sizeof(struct retz3_fb_info),
--				      GFP_KERNEL)))
-+		zinfo = kzalloc(sizeof(struct retz3_fb_info), GFP_KERNEL);
-+		if (!zinfo)
- 			return -ENOMEM;
--		memset(zinfo, 0, sizeof(struct retz3_fb_info));
- 
- 		zinfo->base = ioremap(board_addr, board_size);
- 		zinfo->regs = zinfo->base;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/riva/fbdev.c linux-work/drivers/video/riva/fbdev.c
---- linux-2.6.18-rc4/drivers/video/riva/fbdev.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/riva/fbdev.c	2006-08-15 21:10:00.000000000 +0200
-@@ -1999,12 +1999,11 @@ static int __devinit rivafb_probe(struct
- 	default_par = info->par;
- 	default_par->pdev = pd;
- 
--	info->pixmap.addr = kmalloc(8 * 1024, GFP_KERNEL);
-+	info->pixmap.addr = kzalloc(8 * 1024, GFP_KERNEL);
- 	if (info->pixmap.addr = NULL) {
- 	    	ret = -ENOMEM;
- 		goto err_framebuffer_release;
+ #if IBMTR_DEBUG_MESSAGES 
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/wan/farsync.c linux-2.6.18/drivers/net/wan/farsync.c
+--- linux-2.6.18-orig/drivers/net/wan/farsync.c	2006-09-21 10:15:37.000000000 +0530
++++ linux-2.6.18/drivers/net/wan/farsync.c	2006-09-22 17:16:06.000000000 +0530
+@@ -2513,6 +2513,7 @@ fst_add_one(struct pci_dev *pdev, const 
+ 		printk_err("Control memory remap failed\n");
+ 		pci_release_regions(pdev);
+ 		pci_disable_device(pdev);
++		iounmap(card->mem);
+ 		kfree(card);
+ 		return -ENODEV;
  	}
--	memset(info->pixmap.addr, 0, 8 * 1024);
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/wd.c linux-2.6.18/drivers/net/wd.c
+--- linux-2.6.18-orig/drivers/net/wd.c	2006-09-21 10:15:37.000000000 +0530
++++ linux-2.6.18/drivers/net/wd.c	2006-09-22 17:19:45.000000000 +0530
+@@ -346,8 +346,10 @@ static int __init wd_probe1(struct net_d
+ #endif
  
- 	ret = pci_enable_device(pd);
- 	if (ret < 0) {
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/sun3fb.c linux-work/drivers/video/sun3fb.c
---- linux-2.6.18-rc4/drivers/video/sun3fb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/sun3fb.c	2006-08-15 21:40:48.000000000 +0200
-@@ -524,11 +524,10 @@ static int __init sun3fb_init_fb(int fbt
- 	int linebytes, w, h, depth;
- 	char *p = NULL;
- 	
--	fb = kmalloc(sizeof(struct fb_info_sbusfb), GFP_ATOMIC);
-+	fb = kzalloc(sizeof(struct fb_info_sbusfb), GFP_ATOMIC);
- 	if (!fb)
- 		return -ENOMEM;
- 	
--	memset(fb, 0, sizeof(struct fb_info_sbusfb));
- 	fix = &fb->fix;
- 	var = &fb->var;
- 	disp = &fb->disp;
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/tgafb.c linux-work/drivers/video/tgafb.c
---- linux-2.6.18-rc4/drivers/video/tgafb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/tgafb.c	2006-08-15 21:41:21.000000000 +0200
-@@ -1394,12 +1394,11 @@ tgafb_pci_register(struct pci_dev *pdev,
+ 	err = register_netdev(dev);
+-	if (err)
++	if (err) {
++		iounmap(ei_status.mem);
+ 		free_irq(dev->irq, dev);
++	}
+ 	return err;
+ }
+ 
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/wireless/ipw2100.c linux-2.6.18/drivers/net/wireless/ipw2100.c
+--- linux-2.6.18-orig/drivers/net/wireless/ipw2100.c	2006-09-21 10:15:37.000000000 +0530
++++ linux-2.6.18/drivers/net/wireless/ipw2100.c	2006-09-22 18:41:20.000000000 +0530
+@@ -6174,6 +6174,7 @@ static int ipw2100_pci_init_one(struct p
+ 	if (err) {
+ 		printk(KERN_WARNING DRV_NAME
+ 		       "Error calling pci_enable_device.\n");
++		iounmap(base_addr);
+ 		return err;
  	}
  
- 	/* Allocate the fb and par structures.  */
--	all = kmalloc(sizeof(*all), GFP_KERNEL);
-+	all = kzalloc(sizeof(*all), GFP_KERNEL);
- 	if (!all) {
- 		printk(KERN_ERR "tgafb: Cannot allocate memory\n");
- 		return -ENOMEM;
+@@ -6187,6 +6188,7 @@ static int ipw2100_pci_init_one(struct p
+ 		printk(KERN_WARNING DRV_NAME
+ 		       "Error calling pci_set_dma_mask.\n");
+ 		pci_disable_device(pci_dev);
++		iounmap(base_addr);
+ 		return err;
  	}
--	memset(all, 0, sizeof(*all));
- 	pci_set_drvdata(pdev, all);
  
- 	/* Request the mem regions.  */
-diff -uprN -X linux-2.6.18-rc4/Documentation/dontdiff linux-2.6.18-rc4/drivers/video/valkyriefb.c linux-work/drivers/video/valkyriefb.c
---- linux-2.6.18-rc4/drivers/video/valkyriefb.c	2006-08-13 16:30:20.000000000 +0200
-+++ linux-work/drivers/video/valkyriefb.c	2006-08-15 21:41:39.000000000 +0200
-@@ -357,10 +357,9 @@ int __init valkyriefb_init(void)
+@@ -6195,6 +6197,7 @@ static int ipw2100_pci_init_one(struct p
+ 		printk(KERN_WARNING DRV_NAME
+ 		       "Error calling pci_request_regions.\n");
+ 		pci_disable_device(pci_dev);
++		iounmap(base_addr);
+ 		return err;
  	}
- #endif /* ppc (!CONFIG_MAC) */
  
--	p = kmalloc(sizeof(*p), GFP_ATOMIC);
-+	p = kzalloc(sizeof(*p), GFP_ATOMIC);
- 	if (p = 0)
- 		return -ENOMEM;
--	memset(p, 0, sizeof(*p));
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/net/wireless/prism54/islpci_dev.c linux-2.6.18/drivers/net/wireless/prism54/islpci_dev.c
+--- linux-2.6.18-orig/drivers/net/wireless/prism54/islpci_dev.c	2006-08-24 02:46:33.000000000 +0530
++++ linux-2.6.18/drivers/net/wireless/prism54/islpci_dev.c	2006-09-22 17:25:27.000000000 +0530
+@@ -656,6 +656,8 @@ islpci_alloc_memory(islpci_private *priv
+ 		/* error allocating the block of PCI memory */
+ 		printk(KERN_ERR "%s: could not allocate DMA memory, aborting!",
+ 		       "prism54");
++		iounmap(priv->device_base);
++		priv->device_base = NULL;
+ 		return -1;
+ 	}
  
- 	/* Map in frame buffer and registers */
- 	if (!request_mem_region(frame_buffer_phys, 0x100000, "valkyriefb")) {
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/include/linux/utsrelease.h linux-2.6.18/include/linux/utsrelease.h
+--- linux-2.6.18-orig/include/linux/utsrelease.h	1970-01-01 05:30:00.000000000 +0530
++++ linux-2.6.18/include/linux/utsrelease.h	2006-09-22 17:28:42.000000000 +0530
+@@ -0,0 +1 @@
++#define UTS_RELEASE "2.6.18"
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
