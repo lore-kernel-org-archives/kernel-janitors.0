@@ -1,52 +1,37 @@
-From: Jeff <Vicky@fc.uhaul.com>
-Date: Fri, 22 Sep 2006 04:42:55 +0000
-Subject: [KJ] job offer
-Message-Id: <14F3F7C9.6080253@fc.uhaul.com>
+From: Henne <henne@nachtwindheim.de>
+Date: Fri, 22 Sep 2006 21:43:06 +0000
+Subject: [KJ] trailing whitespaces in the Linux-kernel :)
+Message-Id: <451458EA.8080502@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andrew Morton <akpm@osdl.org>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
 
-Hello,
+Hi there,
 
-I'm writing in regards to a very interesting opportunity.
+I've played around with Andrew Morton's script to remove trailing white spaces in kernel patches.
+http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt
 
-Our company's sales in Australia have tripled recently due to certain approaches/methods we use. We can offer flexible rates providing financial consultancy and advice tailored to meet individual requirements. 
+I used it against the official patches from www.kernel.org and this is the result:
 
-However, our primary goal is local knowledge which is very important to attract the best clients. That is why we are now offering paid training and recruitment packages for all Australian applicants to support our expected growth in this country.
+Kernelversion	Size of the patch	Size without trailing WS Number of trailing WS percent of patch
 
-OFFER 
-Sales Department Support position within our company
+2.6.12		24539730		24531535		8195			0.0334%
+2.6.13		28539730		28942472		1923			0.0066%
+2.6.14		23024224		23021802		2422			0.0105%
+2.6.15		34260720		34258304		2416			0.0071%
+2.6.16		29085385		29082215		3170			0.0109%
+2.6.17		32637502		32636357		1145			0.0035%
+2.6.18		30005947		30005192		 755			0.0025%
 
-SPECS 
-Under general supervision, performs support and general administrative assignments to assist a sales agent or supervisor in carrying out assigned responsibilities; prepares a written record of the proceedings; performs related work as required.
+2.6.17-rc7-mm1	26559614		26559450		 164			0.0006%
 
-REQUIREMENTS 
-To perform this job successfully, you should have knowledge of MS Word/Excel and Email software. Some administrative experience would be beneficial for this role. You will be liaising with other staff and clients, thus, strong communication skills, a must have! Most of the work is done using the Internet and the phone, so you can work anywhere just as long as you have access to a computer with the internet and a mobile phone.
-
-SALARY 
-Full-Time: AU$3,500 per month, plus individual bonus. Part-Time: AU$26.5 p/h, plus individual bonus.
-
-HOURS
-Full-Time: 9:00am-4:00pm 
-Part-Time: We can arrange hours that best suit you so if you are currently employed you will be able to work around your current work schedule easily.
-
-OTHER 
-There are no upfront costs whatsoever. Online training will be provided during your first two weeks of work.
-
-NEXT STEP 
-If you would like to proceed please send your resume at hr@openbook-consult.com or by fax on 61-386-485-976. 
-
-I look forward to your questions as well,
+Happy hacking,
+Henne
 
 
-Regards,
-Luke Atkins
-
-HR Consultant
-OPENBOOK
-hr@openbook-consult.com
 
 
 _______________________________________________
