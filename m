@@ -1,28 +1,152 @@
-From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:02:47 +0000
-Subject: [KJ] [PATCH 57/72] arm: add KERN_ constants to arm/mm/alignment.c
-Message-Id: <20060908020247.10114.37841.sendpatchset@david.homenet>
+From: "Om Narasimhan" <om.turyx@gmail.com>
+Date: Fri, 22 Sep 2006 06:16:51 +0000
+Subject: [KJ] removing multiple kfree() and return's
+Message-Id: <6b4e42d10609212316td429f66q51e35d80c823c571@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
----
-diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
-index e0d21bb..56532fe 100644
---- a/arch/arm/mm/alignment.c
-+++ b/arch/arm/mm/alignment.c
-@@ -756,7 +756,7 @@ do_alignment(unsigned long addr, unsigne
- 	ai_user += 1;
- 
- 	if (ai_usermode & 1)
--		printk("Alignment trap: %s (%d) PC=0x%08lx Instr=0x%0*lx "
-+		pr_info("Alignment trap: %s (%d) PC=0x%08lx Instr=0x%0*lx "
- 		       "Address=0x%08lx FSR 0x%03x\n", current->comm,
- 			current->pid, instrptr,
- 		        thumb_mode(regs) ? 4 : 8,
+Removes repeated calls to kfree() and return; by introducing a label
+and goto label.
+
+Signed off by : Om Narasimhan <om.turyx@gmail.com>
+
+
+ drivers/block/cpqarray.c |   62 +++++++++++++++-------------------------------
+ 1 files changed, 20 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/block/cpqarray.c b/drivers/block/cpqarray.c
+index 78082ed..e167cec 100644
+--- a/drivers/block/cpqarray.c
++++ b/drivers/block/cpqarray.c
+@@ -1642,58 +1642,47 @@ static void start_fwbk(int ctlr)
+     It is used only at init time.
+ *****************************************************************/
+ static void getgeometry(int ctlr)
+-{				
+-	id_log_drv_t *id_ldrive;
+-	id_ctlr_t *id_ctlr_buf;
+-	sense_log_drv_stat_t *id_lstatus_buf;
+-	config_t *sense_config_buf;
++{
++	id_log_drv_t *id_ldrive = NULL;
++	id_ctlr_t *id_ctlr_buf = NULL;
++	sense_log_drv_stat_t *id_lstatus_buf = NULL;
++	config_t *sense_config_buf = NULL;
+ 	unsigned int log_unit, log_index;
+ 	int ret_code, size;
+-	drv_info_t *drv;
++	drv_info_t *drv = NULL;
+ 	ctlr_info_t *info_p = hba[ctlr];
+ 	int i;
+
+ 	info_p->log_drv_map = 0;	
+ 	
+-	id_ldrive = (id_log_drv_t *)kmalloc(sizeof(id_log_drv_t), GFP_KERNEL);
++	id_ldrive = (id_log_drv_t *)kzalloc(sizeof(id_log_drv_t), GFP_KERNEL);
+ 	if(id_ldrive = NULL)
+ 	{
+ 		printk( KERN_ERR "cpqarray:  out of memory.\n");
+-		return;
++		goto end;
+ 	}
+
+-	id_ctlr_buf = (id_ctlr_t *)kmalloc(sizeof(id_ctlr_t), GFP_KERNEL);
++	id_ctlr_buf = (id_ctlr_t *)kzalloc(sizeof(id_ctlr_t), GFP_KERNEL);
+ 	if(id_ctlr_buf = NULL)
+ 	{
+-		kfree(id_ldrive);
+ 		printk( KERN_ERR "cpqarray:  out of memory.\n");
+-		return;
++		goto end;
+ 	}
+
+-	id_lstatus_buf = (sense_log_drv_stat_t
+*)kmalloc(sizeof(sense_log_drv_stat_t), GFP_KERNEL);
++	id_lstatus_buf = (sense_log_drv_stat_t
+*)kzalloc(sizeof(sense_log_drv_stat_t), GFP_KERNEL);
+ 	if(id_lstatus_buf = NULL)
+ 	{
+-		kfree(id_ctlr_buf);
+-		kfree(id_ldrive);
+ 		printk( KERN_ERR "cpqarray:  out of memory.\n");
+-		return;
++		goto end;
+ 	}
+
+-	sense_config_buf = (config_t *)kmalloc(sizeof(config_t), GFP_KERNEL);
++	sense_config_buf = (config_t *)kzalloc(sizeof(config_t), GFP_KERNEL);
+ 	if(sense_config_buf = NULL)
+ 	{
+-		kfree(id_lstatus_buf);
+-		kfree(id_ctlr_buf);
+-		kfree(id_ldrive);
+ 		printk( KERN_ERR "cpqarray:  out of memory.\n");
+-		return;
++		goto end;
+ 	}
+
+-	memset(id_ldrive, 0, sizeof(id_log_drv_t));
+-	memset(id_ctlr_buf, 0, sizeof(id_ctlr_t));
+-	memset(id_lstatus_buf, 0, sizeof(sense_log_drv_stat_t));
+-	memset(sense_config_buf, 0, sizeof(config_t));
+-
+ 	info_p->phys_drives = 0;
+ 	info_p->log_drv_map = 0;
+ 	info_p->drv_assign_map = 0;
+@@ -1709,11 +1698,7 @@ static void getgeometry(int ctlr)
+ 		 */
+ 		 /* Free all the buffers and return */
+ 		printk(KERN_ERR "cpqarray: error sending ID controller\n");
+-		kfree(sense_config_buf);
+-                kfree(id_lstatus_buf);
+-                kfree(id_ctlr_buf);
+-                kfree(id_ldrive);
+-                return;
++		goto end;
+         }
+
+ 	info_p->log_drives = id_ctlr_buf->nr_drvs;
+@@ -1760,11 +1745,7 @@ static void getgeometry(int ctlr)
+ 			 "Access to this controller has been disabled\n",
+ 				ctlr, log_unit);
+ 			/* Free all the buffers and return */
+-                	kfree(sense_config_buf);
+-                	kfree(id_lstatus_buf);
+-                	kfree(id_ctlr_buf);
+-                	kfree(id_ldrive);
+-                	return;
++			goto end;
+ 		}
+ 		/*
+ 		   Make sure the logical drive is configured
+@@ -1795,11 +1776,7 @@ static void getgeometry(int ctlr)
+ 					info_p->log_drv_map = 0;
+ 					/* Free all the buffers and return */
+                 			printk(KERN_ERR "cpqarray: error sending sense config\n");
+-                			kfree(sense_config_buf);
+-                			kfree(id_lstatus_buf);
+-                			kfree(id_ctlr_buf);
+-                			kfree(id_ldrive);
+-                			return;
++					goto end;
+
+ 				}
+
+@@ -1815,9 +1792,10 @@ static void getgeometry(int ctlr)
+ 			log_index = log_index + 1;
+ 		}		/* end of if logical drive configured */
+ 	}			/* end of for log_unit */
++end:
+ 	kfree(sense_config_buf);
+-  	kfree(id_ldrive);
+-  	kfree(id_lstatus_buf);
++	kfree(id_ldrive);
++	kfree(id_lstatus_buf);
+ 	kfree(id_ctlr_buf);
+ 	return;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
