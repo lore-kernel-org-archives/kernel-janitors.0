@@ -1,71 +1,65 @@
-From: Thomas Petazzoni <thomas.petazzoni@enix.org>
-Date: Sun, 24 Sep 2006 11:04:05 +0000
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Sun, 24 Sep 2006 11:29:09 +0000
 Subject: Re: [KJ] [PATCH] Prevent multiple inclusion of linux/sysrq.h
-Message-Id: <20060924130405.6c7250c9@localhost.localdomain>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1993638003=="
+Message-Id: <9a8748490609240429pb518fb7i741ee0f90916b568@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1GQtbr-0005Or-LP@localhost.localdomain>
 In-Reply-To: <E1GQtbr-0005Or-LP@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
---===============1993638003==
-Content-Type: multipart/signed; boundary="Sig_Hp/tTY=DGPTQmPkZNKgoRsh";
-	protocol="application/pgp-signature"; micalg=PGP-SHA1
+On 24/09/06, Thomas Petazzoni <thomas.petazzoni@enix.org> wrote:
+> Hi,
+>
+> Le Sat, 23 Sep 2006 00:35:03 +0200,
+> Thomas Petazzoni <thomas.petazzoni@enix.org> a =E9crit :
+>
+> > Prevent multiple inclusions of include/linux/sysrq.h using traditional
+> > #ifndef..#endif.
+> >
+> > Signed-off-by: Thomas Petazzoni <thomas.petazzoni@enix.org>
+>
+> To who should I send this patch for inclusion ? The
+> include/linux/sysrq.h is not really part of a driver nor a
+> subsystem, so there's seems to be no maintainer listed in the
+> MAINTAINERS file.
+>
+> Any suggestion ?
+>
 
---Sig_Hp/tTY=DGPTQmPkZNKgoRsh
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Well, patches that have no obvious recipients can often go via Andrew
+Morton or just be send to LKML.
 
-Hi,
+In this case, if you look in the file, there are two names mentioned :
 
-Le Sat, 23 Sep 2006 00:35:03 +0200,
-Thomas Petazzoni <thomas.petazzoni@enix.org> a =C3=A9crit :
+Martin Mares <mj@atrey.karlin.mff.cuni.cz>
+Crutcher Dunnavant <crutcher+kernel@datastacks.com>
 
-> Prevent multiple inclusions of include/linux/sysrq.h using traditional
-> #ifndef..#endif.
->=20
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@enix.org>
+So those two might make sense to add to Cc:
 
-To who should I send this patch for inclusion ? The
-include/linux/sysrq.h is not really part of a driver nor a
-subsystem, so there's seems to be no maintainer listed in the
-MAINTAINERS file.
+There are also some people mentioned in Documentation/sysrq.txt but I
+suspect they just wrote the documentation and wouldn't be relevant for
+this patch, but you could still consider adding them to Cc:
 
-Any suggestion ?
 
-Thanks,
+Personally I'd probably do this :
 
-Thomas
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Martin Mares <mj@atrey.karlin.mff.cuni.cz>,
+    Crutcher Dunnavant <crutcher+kernel@datastacks.com>
+
+And then if I didn't get any response for a week or two I'd resend
+with Andrew added as well.
+
+
 --=20
-PETAZZONI Thomas - thomas.petazzoni@enix.org=20
-http://{thomas,sos,kos}.enix.org - Jabber: thomas.petazzoni@jabber.dk
-http://{agenda,livret}dulibre.org - http://www.toulibre.org
-Fingerprint : 0BE1 4CF3 CEA4 AC9D CC6E  1624 F653 CB30 98D3 F7A7
-
---Sig_Hp/tTY=DGPTQmPkZNKgoRsh
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.5 (GNU/Linux)
-
-iD8DBQFFFmYo9lPLMJjT96cRAlDqAKCXNFjt1B+sz0os8CUGTXQDcnDeHgCfTvz9
-bj07rNATnXWfKDprJ6ArjLs=
-=iF0T
------END PGP SIGNATURE-----
-
---Sig_Hp/tTY=DGPTQmPkZNKgoRsh--
-
---===============1993638003==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1993638003==--
