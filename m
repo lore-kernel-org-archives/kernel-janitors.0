@@ -1,12 +1,18 @@
 From: Amol Lad <amol@verismonetworks.com>
-Date: Thu, 21 Sep 2006 12:54:43 +0000
+Date: Mon, 25 Sep 2006 06:58:41 +0000
 Subject: [KJ] [PATCH] ioremap balanced with iounmap for drivers/mtd subsystem
-Message-Id: <1158842563.28299.145.camel@amol.verismonetworks.com>
+Message-Id: <1159166950.25016.30.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200609222101.k8ML1oW5019174@hera.kernel.org>
+	 <20060923124359.GA17408@electric-eye.fr.zoreil.com>
+In-Reply-To: <20060923124359.GA17408@electric-eye.fr.zoreil.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mtd@lists.infradead.org, kernel Janitors <kernel-janitors@lists.osdl.org>
+To: Francois Romieu <romieu@fr.zoreil.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+
+Incorporated Francoiss' comments.
 
 ioremap must be balanced by an iounmap and failing to do so can result
 in a memory leak.
@@ -17,27 +23,22 @@ Tested (compilation only) with:
 make sure that the changed file is compiling without warning
 
 Signed-off-by: Amol Lad <amol@verismonetworks.com>
-
 ---
-I'm not subsribed to linux-mtd so please cc me.
-
----
- drivers/mtd/maps/arctic-mtd.c     |   14 ++++++++++++--
- drivers/mtd/maps/beech-mtd.c      |   14 ++++++++++++--
- drivers/mtd/maps/cstm_mips_ixx.c  |   18 ++++++++++++++++--
- drivers/mtd/maps/ebony.c          |    4 ++++
- drivers/mtd/maps/fortunet.c       |    3 +++
- drivers/mtd/maps/lasat.c          |    2 ++
- drivers/mtd/maps/nettel.c         |   34 +++++++++++++++++++++++++++-------
- drivers/mtd/maps/ocotea.c         |    4 ++++
- drivers/mtd/maps/pcmciamtd.c      |    4 ++++
- drivers/mtd/maps/redwood.c        |   11 ++++++++++-
- drivers/mtd/maps/sbc8240.c        |   11 ++++++++++-
- drivers/mtd/maps/walnut.c         |    4 ++++
- drivers/mtd/nand/edb7312.c        |    3 +++
- drivers/mtd/nand/ppchameleonevb.c |    7 +++++++
- include/linux/utsrelease.h        |    1 +
- 15 files changed, 119 insertions(+), 15 deletions(-)
+ maps/arctic-mtd.c     |   14 ++++++++++++--
+ maps/beech-mtd.c      |   14 ++++++++++++--
+ maps/cstm_mips_ixx.c  |   18 ++++++++++++++++--
+ maps/ebony.c          |    4 ++++
+ maps/fortunet.c       |    3 +++
+ maps/lasat.c          |    2 ++
+ maps/nettel.c         |   34 +++++++++++++++++++++++++++-------
+ maps/ocotea.c         |    4 ++++
+ maps/pcmciamtd.c      |    4 ++++
+ maps/redwood.c        |   11 ++++++++++-
+ maps/sbc8240.c        |   11 ++++++++++-
+ maps/walnut.c         |    4 ++++
+ nand/edb7312.c        |    3 +++
+ nand/ppchameleonevb.c |    7 +++++++
+ 14 files changed, 118 insertions(+), 15 deletions(-)
 ---
 diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers/mtd/maps/arctic-mtd.c linux-2.6.18/drivers/mtd/maps/arctic-mtd.c
 --- linux-2.6.18-orig/drivers/mtd/maps/arctic-mtd.c	2006-08-24 02:46:33.000000000 +0530
@@ -46,7 +47,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  static int __init
  init_arctic_mtd(void)
  {
-+	int err = 0;
++	int err;
 +
  	printk("%s: 0x%08x at 0x%08x\n", NAME, SIZE, PADDR);
  
@@ -57,7 +58,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  
 -	if (!arctic_mtd)
 +	if (!arctic_mtd) {
-+		iounmap((void *) arctic_mtd_map.virt);
++		iounmap(arctic_mtd_map.virt);
  		return -ENXIO;
 +	}
  
@@ -67,7 +68,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
 +	err = add_mtd_partitions(arctic_mtd, arctic_partitions, PARTITIONS);
 +	if (err) {
 +		printk("%s: add_mtd_partitions failed\n", NAME);
-+		iounmap((void *) arctic_mtd_map.virt);
++		iounmap(arctic_mtd_map.virt);
 +	}
 +
 +	return err;
@@ -81,7 +82,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  static int __init
  init_beech_mtd(void)
  {
-+	int err = 0;
++	int err;
 +
  	printk("%s: 0x%08x at 0x%08x\n", NAME, SIZE, PADDR);
  
@@ -92,7 +93,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  
 -	if (!beech_mtd)
 +	if (!beech_mtd) {
-+		iounmap((void *) beech_mtd_map.virt);
++		iounmap(beech_mtd_map.virt);
  		return -ENXIO;
 +	}
  
@@ -102,7 +103,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
 +	err = add_mtd_partitions(beech_mtd, beech_partitions, 2);
 +	if (err) {
 +		printk("%s: add_mtd_partitions failed\n", NAME);
-+		iounmap((void *) beech_mtd_map.virt);
++		iounmap(beech_mtd_map.virt);
 +	}
 +
 +	return err;
@@ -120,8 +121,8 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  			printk(KERN_WARNING "Failed to ioremap\n");
 +			for (j = 0; j < i; j++) {
 +				if (cstm_mips_ixx_map[j].virt) {
-+					iounmap((void *)cstm_mips_ixx_map[j].virt);
-+					cstm_mips_ixx_map[j].virt = 0;
++					iounmap(cstm_mips_ixx_map[j].virt);
++					cstm_mips_ixx_map[j].virt = NULL;
 +				}
 +			}
  			return -EIO;
@@ -136,8 +137,8 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
 +		else {
 +			for (i = 0; i < PHYSMAP_NUMBER; i++) {
 +				if (cstm_mips_ixx_map[i].virt) {
-+					iounmap((void *)cstm_mips_ixx_map[i].virt);
-+					cstm_mips_ixx_map[i].virt = 0;
++					iounmap(cstm_mips_ixx_map[i].virt);
++					cstm_mips_ixx_map[i].virt = NULL;
 +				}
 +			}
 +			return -ENXIO;
@@ -272,7 +273,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
 +
 +#ifdef CONFIG_MTD_CFI_INTELEXT
 +out_unmap1:
-+	iounmap((void *) nettel_intel_map.virt);
++	iounmap(nettel_intel_map.virt);
 +#endif
 +
 +out_unmap2:
@@ -344,7 +345,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  
  int __init init_redwood_flash(void)
  {
-+	int err = 0;
++	int err;
 +
  	printk(KERN_NOTICE "redwood: flash mapping: %x at %x\n",
  			WINDOW_SIZE, WINDOW_ADDR);
@@ -443,7 +444,7 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  	nand_release(ap7312_mtd);
  
 +	/* Release io resource */
-+	iounmap((void *)this->IO_ADDR_R);
++	iounmap(this->IO_ADDR_R);
 +
  	/* Free the MTD device structure */
  	kfree(ep7312_mtd);
@@ -486,11 +487,6 @@ diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/drivers
  		return -ENXIO;
  	}
  #ifdef CONFIG_MTD_PARTITIONS
-diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff linux-2.6.18-orig/include/linux/utsrelease.h linux-2.6.18/include/linux/utsrelease.h
---- linux-2.6.18-orig/include/linux/utsrelease.h	1970-01-01 05:30:00.000000000 +0530
-+++ linux-2.6.18/include/linux/utsrelease.h	2006-09-21 16:02:59.000000000 +0530
-@@ -0,0 +1 @@
-+#define UTS_RELEASE "2.6.18"
 
 
 _______________________________________________
