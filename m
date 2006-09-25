@@ -1,16 +1,16 @@
 From: Amol Lad <amol@verismonetworks.com>
-Date: Mon, 25 Sep 2006 08:55:01 +0000
+Date: Mon, 25 Sep 2006 09:11:00 +0000
 Subject: [KJ] [PATCH] misc_register error return handling
-Message-Id: <1159173781.25016.34.camel@amol.verismonetworks.com>
+Message-Id: <1159174740.25016.36.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1157964812.7814.32.camel@amol.verismonetworks.com>
 In-Reply-To: <1157964812.7814.32.camel@amol.verismonetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel Janitors <kernel-janitors@lists.osdl.org>
+To: kernel Janitors <kernel-janitors@lists.osdl.org>, linux-kernel@vger.kernel.org
 
-Sending to lkml also.
+Ignore previous patch (mail client linewrap issue...)
 
 Some drivers do not handle failure of misc_register. 
 
