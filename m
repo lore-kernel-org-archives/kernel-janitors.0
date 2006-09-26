@@ -1,29 +1,29 @@
-From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:57:45 +0000
-Subject: [KJ] [PATCH 12/72] arm: add KERN_ constants to
-Message-Id: <20060908015745.10114.80563.sendpatchset@david.homenet>
+From: <postmaster@rcn.org.uk>
+Date: Tue, 26 Sep 2006 17:34:15 +0000
+Subject: [KJ] AutoNotify: Returned mail: Data format error
+Message-Id: <20060926173415.AFE2F90D5@dc1-web02.rcn.org.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_SEF_2006_09_26_18_34_15_7511"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
----
-diff --git a/arch/arm/mach-ixp4xx/gtwx5715-pci.c b/arch/arm/mach-ixp4xx/gtwx5715-pci.c
-index a66484b..150b2f5 100644
---- a/arch/arm/mach-ixp4xx/gtwx5715-pci.c
-+++ b/arch/arm/mach-ixp4xx/gtwx5715-pci.c
-@@ -69,7 +69,7 @@ static int __init gtwx5715_map_irq(struc
- 	else
- 		rc = gtwx5715_irqmap[slot][pin-1];
- 
--	printk("%s: Mapped slot %d pin %d to IRQ %d\n", __FUNCTION__,slot, pin, rc);
-+	pr_info("%s: Mapped slot %d pin %d to IRQ %d\n", __FUNCTION__,slot, pin, rc);
- 	return(rc);
- }
- 
+------=_NextPart_SEF_2006_09_26_18_34_15_7511
+Content-Type: text/plain;charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Message [o8e88a9d5a5234b36855aff540c982bf8.pro] triggered rule [Virus4] at =
+18:34:15 26/09/2006=0D=0A=0D=0ASender: kernel-janitors@lists.osdl.org=0D=0A=
+Recipient(s): qip.hq@rcn.org.uk=0D=0ASubject: Returned mail: Data format er=
+ror
+------=_NextPart_SEF_2006_09_26_18_34_15_7511
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_NextPart_SEF_2006_09_26_18_34_15_7511--
