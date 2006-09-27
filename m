@@ -1,7 +1,7 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Wed, 27 Sep 2006 22:58:36 +0000
+From: Badari Pulavarty <pbadari@us.ibm.com>
+Date: Wed, 27 Sep 2006 23:15:07 +0000
 Subject: Re: [KJ] [RFC] request_region() error handling fixes
-Message-Id: <9a8748490609271558y27c579dbt5a015e06044c06ba@mail.gmail.com>
+Message-Id: <1159398907.1709.51.camel@dyn9047017100.beaverton.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1159387194.1709.40.camel@dyn9047017100.beaverton.ibm.com>
 In-Reply-To: <1159387194.1709.40.camel@dyn9047017100.beaverton.ibm.com>
@@ -10,69 +10,62 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 28/09/06, Dan Carpenter <error27@gmail.com> wrote:
-> On 9/27/06, Jesper Juhl <jesper.juhl@gmail.com> wrote:
-> > On 27/09/06, Badari Pulavarty <pbadari@us.ibm.com> wrote:
-> > > Hi,
-> > >
-> > > I started working on request_region() error handling fixes.
-> > > Before I got too far, want to make sure its following approach
-> > > is acceptable. (not happy with too many "goto" statements).
-> > > Is there a better way to do this ?
-> > >
-> > > Please comment.
-> > >
-> > [snip]
+On Thu, 2006-09-28 at 00:31 +0200, Jesper Juhl wrote:
+> On 27/09/06, Badari Pulavarty <pbadari@us.ibm.com> wrote:
+> > Hi,
 > >
-> > If you don't like all these goto's :
+> > I started working on request_region() error handling fixes.
+> > Before I got too far, want to make sure its following approach
+> > is acceptable. (not happy with too many "goto" statements).
+> > Is there a better way to do this ?
 > >
-> > > +       if (!request_region(0x20,0x20,"pic1")) {
-> > > +               printk(KERN_WARNING"chrp_init: pic1 request region failed\n");
-> > > +               return;
-> > > +       }
-> > > +       if (!request_region(0xa0,0x20,"pic2")) {
-> > > +               printk(KERN_WARNING"chrp_init: pic2 request region failed\n");
-> > > +               goto out5;
-> > > +       }
-> > > +       if (!request_region(0x00,0x20,"dma1")) {
-> > > +               printk(KERN_WARNING"chrp_init: dma1 request region failed\n");
-> > > +               goto out4;
-> > > +       }
-> > > +       if (!request_region(0x40,0x20,"timer")) {
-> > > +               printk(KERN_WARNING"chrp_init: timer1 request region failed\n");
-> > > +               goto out3;
-> > > +       }
-> > > +       if (!request_region(0x80,0x10,"dma page reg")) {
-> > > +               printk(KERN_WARNING"chrp_init: dma page request region failed\n");
-> > > +               goto out2;
-> > > +       }
-> > > +       if (!request_region(0xc0,0x20,"dma2")) {
-> > > +               printk(KERN_WARNING"chrp_init: dma2 request region failed\n");
-> > > +               goto out1;
-> > > +       }
->
-> I think that if any of those particular request_regions()s fail your
-> system is unbootable.  Things like "timer1" seem pretty essential.
-> The other solution is to just put a comment at the top that those
-> always succeed so they don't need to be checked.
->
+> > Please comment.
+> >
+> [snip]
+> 
+> If you don't like all these goto's :
+> 
+..
+> 
+> 
+> So I'd say your version with the goto's (which is similar to what's
+> used elsewhere in the kernel) is the right way to go...
 
-I don't think that's a good solution.
-In some cases the regions may be essential and if one fails we've
-lost, but in other cases the box may be slightly different and
-actually be able to survive without.  With the vast proliferation of
-different hardware out there can you really say for sure if some of
-these regions will always be needed in every possible case?
-In my opinion it's better to check them, do the right thing and
-release if one request fails - then, if the box can't survive without,
-checking has cost us nothing, it still won't work with or without the
-check. But, if the box is able to survice without the regions, then
-we've dont the right thing and stuff works.   Better safe than sorry.
+Yes. I considered few other options (and infact, coded to see how
+they look), but settled on "goto". 
 
--- 
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+> Ohh btw, shouldn't there be a single space before your label names?  Like
+> 
+>  out4:
+> 
+> instead of
+> 
+> out4:
+
+hmm. I haven't seen many of those (I thought, they were typos).
+
+> 
+> I seem to remember something about label names shouldn't start at column 0.
+> 
+> 
+> Also, in a line like this :
+> 
+>        if (!request_region(0x20,0x20,"pic1")) {
+> 
+> I think the consensus is that it should be spaced like this instead
+> (space after the commas):
+> 
+>        if (!request_region(0x20, 0x20, "pic1")) {
+> 
+
+Sure. I will fix those too, I was trying to keep as much code as
+"common".
+
+Thanks for your suggestions.
+
+Thanks,
+Badari
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
