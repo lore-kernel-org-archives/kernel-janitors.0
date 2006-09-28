@@ -1,42 +1,32 @@
-From: "Nish Aravamudan" <nish.aravamudan@gmail.com>
-Date: Fri, 22 Sep 2006 22:20:16 +0000
-Subject: Re: [KJ] Gentlemen with commit access
-Message-Id: <29495f1d0609221520t6597b9cbs96e282ee4dc7a29d@mail.gmail.com>
+From: Badari Pulavarty <pbadari@us.ibm.com>
+Date: Thu, 28 Sep 2006 16:04:15 +0000
+Subject: [KJ] few questions on mxser driver (cleanups)
+Message-Id: <1159459455.1709.66.camel@dyn9047017100.beaverton.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <b6fcc0a0609221057qb40ad65n30633339321f22c9@mail.gmail.com>
-In-Reply-To: <b6fcc0a0609221057qb40ad65n30633339321f22c9@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org, linux-serial@vger.kernel.org
+Cc: alan@redhat.com, rmk+serial@arm.linux.org.uk
 
-On 9/22/06, Dave Jones <davej@redhat.com> wrote:
-> On Fri, Sep 22, 2006 at 03:06:34PM -0700, Nish Aravamudan wrote:
->  > On 9/22/06, Dave Jones <davej@redhat.com> wrote:
->  > > On Fri, Sep 22, 2006 at 09:58:29PM +0200, maximilian attems wrote:
->  > >  > On Fri, Sep 22, 2006 at 09:57:06PM +0400, Alexey Dobriyan wrote:
->  > >
->  > >  > > I has exellent explanation but it's on my devel box which is far away right now.
->  > >  >
->  > >  > wiki under kernelnewbies?
->  > >
->  > > I think there was universal agreement that moving the TODO to a wiki
->  > > made sense.
->  >
->  > How does this look as a first cut?
->  >
->  > http://kernelnewbies.org/KernelJanitors/Todo
->  >
->  > Still needs to be cleaned up, but has all the data from the current TODO.
->
-> First thought: Needs splitting up into pages per category.
+Hi,
 
-Sure, but that was more than I wanted to take on in a first stab. And
-we can still have /Todo be the root page, with links to each section.
-And maybe some content of its own.
+I was fixing request_region() error checks and realized few things
+about mxser driver (char/mxser.c) - I want to confirm before fixing
+them.
+
+1) mxser_get_PCI_conf() and mxser_get_ISA_conf() doesn't check
+errors of request_region(). I think these should be checked and
+return failures. Can we treat request_region() failures as corresponding
+MXSER_ERR_* failures, instead of returning new error code (like -EIO)?
+
+2) mxser_get_PCI_conf() currently doesn't return error - but the
+caller checks for various error codes. Is this a oversight or it can't
+happen with PCI ? If so, can we nix error checking at the caller ?
 
 Thanks,
-Nish
+Badari
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
