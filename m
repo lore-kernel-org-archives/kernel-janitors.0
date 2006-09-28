@@ -1,7 +1,7 @@
-From: Henne <henne@nachtwindheim.de>
-Date: Thu, 28 Sep 2006 12:13:43 +0000
+From: Steven Fernandez <lonetwin.kj@gmail.com>
+Date: Thu, 28 Sep 2006 12:39:41 +0000
 Subject: Re: [KJ] The Linux Kernel API
-Message-Id: <451BBC77.8060107@nachtwindheim.de>
+Message-Id: <451BBFBD.2010509@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <451BB826.1000702@gmail.com>
 In-Reply-To: <451BB826.1000702@gmail.com>
@@ -10,26 +10,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Steven,
-> http://www.gelato.unsw.edu.au/~dsw/public-files/kernel-docs/kernel-api/index.html
+Henne wrote:
+> Hi Steven,
+>> http://www.gelato.unsw.edu.au/~dsw/public-files/kernel-docs/kernel-api/index.html
+>>
+>> ...dunno if this is already well known. In any case, I am sure this would help a
+>> lot of people.
+>>
+>> I am not too sure how current this document is nor do I if it is being actively 
+>> maintained. I have shot off a mail to the author asking about this. In any case,
+>> IMHO, this would be an ideal document to have on the "Linux Driver Development Kit".
+>>
+> Want the newest version of this?
 > 
-> ...dunno if this is already well known. In any case, I am sure this would help a
-> lot of people.
-> 
-> I am not too sure how current this document is nor do I if it is being actively 
-> maintained. I have shot off a mail to the author asking about this. In any case,
-> IMHO, this would be an ideal document to have on the "Linux Driver Development Kit".
-> 
-Want the newest version of this?
+> - go into the root of your newest source tree
+> - type "make htmldocs"
+> - wait a bit
+> - cd Documentation/Docbook/kernel-api/
+> - run youre favorite browser with index.html
+Oh ! ...ah ...ahem ....ok. Thanks I guess ...
+<sheepish grin>
+maybe I should read the kernel docs more carefully
+</sheepish grin>
 
-- go into the root of your newest source tree
-- type "make htmldocs"
-- wait a bit
-- cd Documentation/Docbook/kernel-api/
-- run youre favorite browser with index.html
-
-Greets,
-Henne
+Thanks Henne,
+steve
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
