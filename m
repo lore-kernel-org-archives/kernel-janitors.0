@@ -1,28 +1,35 @@
-From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 01:56:50 +0000
-Subject: [KJ] [PATCH 04/72] arm: add KERN_ constants to
-Message-Id: <20060908015650.10114.12825.sendpatchset@david.homenet>
+From: Badari Pulavarty <pbadari@us.ibm.com>
+Date: Thu, 28 Sep 2006 18:18:13 +0000
+Subject: [KJ] rtc driver question
+Message-Id: <1159467493.1709.75.camel@dyn9047017100.beaverton.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
----
-diff --git a/arch/arm/mach-integrator/clock.c b/arch/arm/mach-integrator/clock.c
-index 95a1e26..5c42be8 100644
---- a/arch/arm/mach-integrator/clock.c
-+++ b/arch/arm/mach-integrator/clock.c
-@@ -83,7 +83,7 @@ int clk_set_rate(struct clk *clk, unsign
- 		vco = icst525_khz_to_vco(clk->params, rate / 1000);
- 		clk->rate = icst525_khz(clk->params, vco) * 1000;
- 
--		printk("Clock %s: setting VCO reg params: S=%d R=%d V=%d\n",
-+		pr_info("Clock %s: setting VCO reg params: S=%d R=%d V=%d\n",
- 			clk->name, vco.s, vco.r, vco.v);
- 
- 		clk->setvco(clk, vco);
+Hi,
+
+I am looking at request_region() error cleanups and noticed
+that rtc driver (char/rtc.c) rp_init() is doing in few 
+conditions
+
+                if (RTC_IOMAPPED)
+                        release_region(RTC_PORT(0), RTC_IO_EXTENT);
+                else
+                        release_mem_region(RTC_PORT(0), RTC_IO_EXTENT);
+
+but in some error conditions its doing..
+
+		release_region(RTC_PORT(0), RTC_IO_EXTENT);
+		
+
+Shouldn't these be like above (release_mem depending on iomapped or
+not) ?
+
+Thanks,
+Badari
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
