@@ -1,31 +1,24 @@
-From: Badari Pulavarty <pbadari@us.ibm.com>
-Date: Thu, 28 Sep 2006 16:04:15 +0000
-Subject: [KJ] few questions on mxser driver (cleanups)
-Message-Id: <1159459455.1709.66.camel@dyn9047017100.beaverton.ibm.com>
+From: Alan Cox <alan@redhat.com>
+Date: Thu, 28 Sep 2006 16:20:34 +0000
+Subject: Re: [KJ] few questions on mxser driver (cleanups)
+Message-Id: <20060928162034.GA11165@devserv.devel.redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1159459455.1709.66.camel@dyn9047017100.beaverton.ibm.com>
+In-Reply-To: <1159459455.1709.66.camel@dyn9047017100.beaverton.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org, linux-serial@vger.kernel.org
-Cc: alan@redhat.com, rmk+serial@arm.linux.org.uk
+To: Badari Pulavarty <pbadari@us.ibm.com>
+Cc: kernel-janitors@lists.osdl.org, linux-serial@vger.kernel.org, rmk+serial@arm.linux.org.uk, alan@redhat.com
 
-Hi,
+On Thu, Sep 28, 2006 at 09:04:15AM -0700, Badari Pulavarty wrote:
+> 1) mxser_get_PCI_conf() and mxser_get_ISA_conf() doesn't check
+> errors of request_region(). I think these should be checked and
+> return failures. Can we treat request_region() failures as corresponding
+> MXSER_ERR_* failures, instead of returning new error code (like -EIO)?
 
-I was fixing request_region() error checks and realized few things
-about mxser driver (char/mxser.c) - I want to confirm before fixing
-them.
+I've as much idea as you do, and no hardware to test sorry
 
-1) mxser_get_PCI_conf() and mxser_get_ISA_conf() doesn't check
-errors of request_region(). I think these should be checked and
-return failures. Can we treat request_region() failures as corresponding
-MXSER_ERR_* failures, instead of returning new error code (like -EIO)?
-
-2) mxser_get_PCI_conf() currently doesn't return error - but the
-caller checks for various error codes. Is this a oversight or it can't
-happen with PCI ? If so, can we nix error checking at the caller ?
-
-Thanks,
-Badari
 
 _______________________________________________
 Kernel-janitors mailing list
