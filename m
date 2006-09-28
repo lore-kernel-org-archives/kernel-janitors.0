@@ -1,39 +1,51 @@
-From: Christophe Lucas <clucas@rotomalug.org>
-Date: Fri, 08 Sep 2006 10:37:16 +0000
-Subject: Re: [KJ] [PATCH 16/72] arm: add KERN_ constants to
-Message-Id: <20060908103716.GA15083@rotomalug.org>
+From: Hashem Masoud <masoudh@batelco.com.bh>
+Date: Thu, 28 Sep 2006 10:35:14 +0000
+Subject: [KJ] [PATCH] check return code for request_region() in gus_wave.c
+Message-Id: <20060928103514.GA12240@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20060908015811.10114.24713.sendpatchset@david.homenet>
-In-Reply-To: <20060908015811.10114.24713.sendpatchset@david.homenet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-James Nelson (james4765@gmail.com) wrote:
-> Signed-off-by: James Nelson <james4765@gmail.com>
-> ---
-> diff --git a/arch/arm/mach-omap1/board-h2.c b/arch/arm/mach-omap1/board-h2.c
-> index cd3a06d..fe1f2a3 100644
-> --- a/arch/arm/mach-omap1/board-h2.c
-> +++ b/arch/arm/mach-omap1/board-h2.c
-> @@ -276,7 +276,7 @@ static struct platform_device *h2_device
->  static void __init h2_init_smc91x(void)
->  {
->  	if ((omap_request_gpio(0)) < 0) {
-> -		printk("Error requesting gpio 0 for smc91x irq\n");
-> +		printk(KERN_ERR "Error requesting gpio 0 for smc91x irq\n");
->  		return;
->  	}
->  }
+This is an attempt to handle return code of request_region() in 2 places 
+in gus_wave.c
 
-Some of these patches on arch/arm have already been send.
+Tested by compiling using the option: make dir/ (is this OK?).
 
-	http://lists.osdl.org/pipermail/kernel-janitors/2006-May/006378.html
+Signed-off-by: Hashem Masoud <masoudh@batelco.com.bh>
 
-Have a nice day,
--- 
-++christophe;
+--- linux/sound/oss/gus_wave.c	2006-09-28 07:23:02.730614592 -0300
++++ linux-2.6.17.13/sound/oss/gus_wave.c	2006-09-27 19:03:42.000000000 -0300
+@@ -2938,8 +2938,7 @@ void __init gus_wave_init(struct address
+ 			model_num = "3.7";
+ 			gus_type = 0x37;
+ 			mixer_type = ICS2101;
+-			if (!request_region(u_MixSelect, 1, "GUS mixer"))
+-				return;
++			request_region(u_MixSelect, 1, "GUS mixer");
+ 		}
+ 		else
+ 		{
+@@ -3030,7 +3029,7 @@ void __init gus_wave_init(struct address
+ 	samples = (struct patch_info *)vmalloc((MAX_SAMPLE + 1) * sizeof(*samples));
+ 	if (samples = NULL)
+ 	{
+-		printk(KERN_WARNING "gus_init: Cannot allocate memory for instrument tables\n");
++		printk(KERN_WARNING "gus_init: Cant allocate memory for instrument tables\n");
+ 		return;
+ 	}
+ 	conf_printf(tmp, hw_config);
+@@ -3085,8 +3084,7 @@ void __init gus_wave_init(struct address
+ 		case ICS2101:
+ 			gus_mic_vol = gus_line_vol = gus_pcm_volume = 100;
+ 			gus_wave_volume = 90;
+-			if (!request_region(u_MixSelect, 1, "GUS mixer"))
+-				return;
++			request_region(u_MixSelect, 1, "GUS mixer");
+ 			hw_config->slots[5] = ics2101_mixer_init();
+ 			audio_devs[gus_devnum]->mixer_dev = hw_config->slots[5];	/* Next mixer# */
+ 			return;
 
 _______________________________________________
 Kernel-janitors mailing list
