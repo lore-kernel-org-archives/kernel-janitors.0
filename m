@@ -1,59 +1,50 @@
-From: "Tharindu Rukshan Bamunuarachchi" <tharindunix@gmail.com>
-Date: Mon, 18 Sep 2006 06:39:01 +0000
-Subject: Re: [KJ] Real Time Behaviour
-Message-Id: <c49434130609172327p775ef6a2ga7a83667e83f89ef@mail.gmail.com>
+From: "Galya Tcharny" <gtcharny@gmail.com>
+Date: Thu, 28 Sep 2006 07:58:42 +0000
+Subject: [KJ]  [PATCH] Check kmalloc() return value
+Message-Id: <933d0f3f0609280058s7bbff814w4237926929367439@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <c49434130609172242n4335ad14jd68ad177bef0eeb@mail.gmail.com>
-In-Reply-To: <c49434130609172242n4335ad14jd68ad177bef0eeb@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Sorry Dan!
+Added checks for kmalloc() return value.
 
-Sorry for the silly mistake!
+Signed-off-by: Galya Tcharny <gtcharny@gmail.com>
 
-Thankx,
-Regards,
-Tharindu
+ drivers/net/au1000_eth.c |    3 +++
+ drivers/net/s2io.c       |    3 +++
+ 2 files changed, 6 insertions(+)
 
-On 9/18/06, Dan Carpenter <error27@gmail.com> wrote:
-> On 9/17/06, Tharindu Rukshan Bamunuarachchi <tharindunix@gmail.com> wrote:
-> > Dear All,
-> >
-> > I am going to achive some kind of rela time behaviour by increasing HZ
-> > value in kernel.
-> >
-> > I tried to change HZ value in include/asm/param.h.
-> >
-> > 1. HZ = 1000 --- Repsonse time <3ms
-> > 2. HZ = 1500 --- Response time <2ms
-> >
-> > I could not go beyond 1500, SHIFT_HZ parameter failed to adjust for 2000.
-> >
-> > How can i go beyond 1500 in HZ,
-> >
-> > Are there any other way to fine tune kernel to achive real time
-> > behaviour, other than changing HZ value??
-> >
-> > Thank you! in  advance!!
->
-> What was the URL which gave you this email address?  It's the wrong
-> one for your question.  You want to email kernelnewbies instead of
-> kernel-janitors.
->
->    email:  kernelnewbies (at) nl (dot) linux (dot) org
-> website:  http://www.kernelnewbies.org
->
-> regards,
-> dan carpenter
->
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff
+linux-2.6.18-orig/drivers/net/au1000_eth.c
+linux-2.6.18/drivers/net/au1000_eth.c
+--- linux-2.6.18-orig/drivers/net/au1000_eth.c 2006-09-27
+14:51:31.000000000 +0300
++++ linux-2.6.18/drivers/net/au1000_eth.c 2006-09-28 09:24:11.000000000 +0300
+@@ -717,6 +717,9 @@ static struct net_device * au1000_probe(
+  aup->mii_bus.name = "au1000_eth_mii";
+  aup->mii_bus.id = aup->mac_id;
+  aup->mii_bus.irq = kmalloc(sizeof(int)*PHY_MAX_ADDR, GFP_KERNEL);
++ if(aup->mii_bus.irq = NULL) {
++  goto err_out;
++ }
+  for(i = 0; i < PHY_MAX_ADDR; ++i)
+   aup->mii_bus.irq[i] = PHY_POLL;
 
-
--- 
-Tharindu Rukshan Bamunuarachchi
-all fabrications are subject to decay
+diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff
+linux-2.6.18-orig/drivers/net/s2io.c linux-2.6.18/drivers/net/s2io.c
+--- linux-2.6.18-orig/drivers/net/s2io.c 2006-09-27 14:51:33.000000000 +0300
++++ linux-2.6.18/drivers/net/s2io.c 2006-09-28 09:26:32.000000000 +0300
+@@ -624,6 +624,9 @@ static int init_shared_mem(struct s2io_n
+    rx_blocks->rxds = kmalloc(sizeof(rxd_info_t)*
+         rxd_count[nic->rxd_mode],
+         GFP_KERNEL);
++   if(rx_blocks->rxds = NULL) {
++    return -ENOMEM;
++   }
+    for (l=0; l<rxd_count[nic->rxd_mode];l++) {
+     rx_blocks->rxds[l].virt_addr       rx_blocks->block_virt_addr +
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
