@@ -1,29 +1,55 @@
-From: James Nelson <james4765@gmail.com>
-Date: Fri, 08 Sep 2006 02:00:47 +0000
-Subject: [KJ] [PATCH 39/41] arm: add KERN_ constants to
-Message-Id: <20060908020047.10114.97492.sendpatchset@david.homenet>
+From: "Jane Stevens" <JKACYBOY@adagegroup.com.hk>
+Date: Fri, 29 Sep 2006 21:42:20 +0000
+Subject: Re: ?
+Message-Id: <26431129233551.K36463@sanicle.noc.ntua.gr>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0565566557=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: James Nelson <james4765@gmail.com>
----
-diff --git a/arch/arm/mach-s3c2410/s3c2410-clock.c b/arch/arm/mach-s3c2410/s3c2410-clock.c
-index 9971866..69a5271 100644
---- a/arch/arm/mach-s3c2410/s3c2410-clock.c
-+++ b/arch/arm/mach-s3c2410/s3c2410-clock.c
-@@ -260,7 +260,7 @@ int __init s3c2410_baseclk_add(void)
- 
- 	xtal = clk_get(NULL, "xtal");
- 
--	printk("CLOCK: Slow mode (%ld.%ld MHz), %s, MPLL %s, UPLL %s\n",
-+	pr_info("CLOCK: Slow mode (%ld.%ld MHz), %s, MPLL %s, UPLL %s\n",
- 	       print_mhz(clk_get_rate(xtal) /
- 			 ( 2 * S3C2410_CLKSLOW_GET_SLOWVAL(clkslow))),
- 	       (clkslow & S3C2410_CLKSLOW_SLOW) ? "slow" : "fast",
+--===============0565566557==
+
+Sensationall revoolution in medicine!
+
+E'''nlarge your p''enis up to 10 cm or up to 4 i'c'h'e's!
+
+Its h'erbal solution what hasnt side effect, but has 100% guaranted results!
+
+Dont lose your chance and but know wihtout doubts, you will be impressed with results!
+
+Clisk here http://ccmbc.info
+
+
+
+
+
+
+
+You forgot, just the way you keep forgetting to change February on that damned calendar.
+In Africa he had discovered that there was not just one God but many, and some were more than cruel ��� they were insane, and that changed all.
+""I remember them, but you can't be that old, Annie������ you must have seen them on TV, or had an older brother or sister who told you about them.
+
+
+--===============0565566557==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys -- and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============0565566557==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============0565566557==--
