@@ -1,48 +1,33 @@
-From: "=?ISO-8859-1?Q?Daniel_Marjam=E4ki?=" <daniel.marjamaki@gmail.com>
-Date: Tue, 03 Oct 2006 10:29:53 +0000
-Subject: Re: [KJ] memory leak?
-Message-Id: <80ec54e90610030329s6aa69f93lce72fe9818d05656@mail.gmail.com>
+From: Christophe Lucas <clucas@rotomalug.org>
+Date: Mon, 02 Oct 2006 12:16:16 +0000
+Subject: [KJ] [PATCH][RESEND] misc_register : arch/x86_64/kernel/mce.c
+Message-Id: <20061002121616.GA8331@rotomalug.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <80ec54e90610022330h5fea626aha58011043899dd@mail.gmail.com>
-In-Reply-To: <80ec54e90610022330h5fea626aha58011043899dd@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Ok. Sorry. I was a bit unsure myself so I figured it was better to ask than:
-* leaving it or
-* reporting it as a bug.
+Description:
+Audit return codes (and handle failure correctly) for misc_register.
 
-Yes, I am using a code checker. Too bad it's not more accurate.
-
+Signed-off-by: Christophe Lucas <clucas@rotomalug.org>
 
 
-2006/10/3, Dan Carpenter <error27@gmail.com>:
-> On 10/2/06, Daniel Marjam=E4ki <daniel.marjamaki@gmail.com> wrote:
-> > Hello friends!
-> >
-> > I believe I have found a memory leak. Can somebody please verify
-> > before I submit it in the bugs database?
-> >
-> > Kernel: 2.6.18
-> >
-> > In linux/drivers/block/cpqarray.c:  ida_ctlr_ioctl
-> > I believe the pointer "p" can cause a memory leak.
-> > Check out "switch(io->cmd)" at the end of the function. All cases
-> > except "default" will cause p to be deallocated.
-> >
-> > Best regards,
-> > Daniel Marjam=E4ki
->
-> Nope.  False positive.  On the default case p isn't allocated.
->
-> Are you using a some kind of code checker to find these bugs?
->
-> regards,
-> dan carpenter
->
-
+Index: linux-2.6.18/arch/x86_64/kernel/mce.c
+=================================--- linux-2.6.18.orig/arch/x86_64/kernel/mce.c	2006-10-02 13:57:17.000000000 +0200
++++ linux-2.6.18/arch/x86_64/kernel/mce.c	2006-10-02 13:57:58.000000000 +0200
+@@ -663,7 +663,9 @@
+ 	}
+ 
+ 	register_hotcpu_notifier(&mce_cpu_notifier);
+-	misc_register(&mce_log_device);
++	err = misc_register(&mce_log_device);
++	if (err < 0)
++		printk(KERN_ERR "Failed to register mce.\n");
+ 	return err;
+ }
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
