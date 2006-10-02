@@ -1,46 +1,48 @@
-From: "Paul Van den Eynde / Antwerp Blanka Diamonds" <urz@portalegre.tt.mj.pt>
-Date: Tue, 03 Oct 2006 15:08:14 +0000
-Subject: Job with International Company!
-Message-Id: <001801c6e6ff$09384769$2dba7542@ltz.pc>
+From: "Hollis Lynn" <RoseannEstesmq@emaxcess.com>
+Date: Mon, 02 Oct 2006 10:41:08 +0000
+Subject: monadic amplitudea
+Message-Id: <38578813512.86553953@emaxcess.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Dear reader,
+GGTS POSTS GAINS!
+GGTS TRADING ALERT FOR MON OCT 2ND!
+NOW IS YOUR CHANCE TO GET ON THIS ONE!
 
-A well-known Belgium company Blanka Diamonds, a big name in the world of
-small diamonds, is glad to offer you a position of transfer manager. With
-over 1'000 personnel Blanka Diamonds specializes in manufacturing small
-round diamonds in sizes from 200/ct to 5/ct of high brilliance and 50
-variations in color and clarity grades. All with newest cutting technology.
-Neither experience nor education in finance is required for the job. The
-job takes you 1-3 hours a day several days a week - and it is well
-compensated. A transfer manager is paid 5% commission from each payment
-processing operation, which makes up to USD 2,500 a month! All you need to
-obtain this position is good credit history, no criminal records, access to
-your e-mail several times a day and bank account or possibility to open it.
-We do not employ people under 21!
-The transfer manager is responsible for receiving payments from the clients
-of Blanka Diamonds to his personal bank account and sending the money to
-Blanka Diamonds. More information about the position and reasons for its
-introduction you will find at
-http://www.blankadiamonds.com/diamonds/index.htm=20
-Apply with an e-mail to vacancy@blankadiamonds.com for the position and you
-will get an application form. Fill it in and send it back to us. We will
-answer you in a short time. If you have more questions e-mail to
-info@blankadiamonds.com .
-Thank you for your kind attention to our offer.
+Company: GAMING TRANSACTIONS
+Symbol: GGTS.PK
+Price: .095 (Trading at a Discount!)
+5-day Target: .48
 
-Paul Van den Eynde,
-Chief Executive Officer,
-Antwerp Blanka Diamonds
-[ a division of Fr. Van den Eynde & Zn BVBA ]
-Schupstraat 20  2018 Antwerp,  Belgium
-Tel: +32 3 2252879
-Fax: +32 3 2323606
+WHO IS GGTS?
+Breaking News Released!--Aug. 23, 2006
+Gaming Transactions Inc. to Launch Keno in September:
+Read More Online! LONDON--(BUSINESS WIRE) Keno.com
+Ltd. (UK), a wholly owned subsidiary of Gaming Transactions
+Inc. and a leading provider of online gaming portal management,=20
+is pleased to confirm that it will launch the new version of
+Keno.com next month and is gearing up now for a strong
+promotional effort.=20
 
+GGTS HAS BEEN RELEASING BREAKING NEWS!
+WATCH WHAT IS TO COME STARTING MON OCT 2ND!
+THIS COULD BE THE HOT ONE!
+
+
+
+
+Your name is mud.=20
+Red as a beet.=20
+Tools of the trade.=20
+Root it out.
+Worked night and day.
+Raking in the dough.
+Spill the beans. =20
+Watered down.
+When pigs fly.=20
 
 -------------------------------------------------------------------------
 Take Surveys. Earn Cash. Influence the Future of IT
