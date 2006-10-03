@@ -1,42 +1,54 @@
-From: "Xavier depth" <aldehydebirmingham@rowleygeneral.com>
-Date: Fri, 20 Oct 2006 01:40:57 +0000
-Subject: [KJ] Brokers will be scrambling for this one, 76% increase in 4 days
-Message-Id: <84752106244060.9908959541@0VYN5EZJ>
+From: "Paul Van den Eynde / Antwerp Blanka Diamonds" <urz@portalegre.tt.mj.pt>
+Date: Tue, 03 Oct 2006 15:08:14 +0000
+Subject: Job with International Company!
+Message-Id: <001801c6e6ff$09384769$2dba7542@ltz.pc>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hargreaves could be the man to finally release Gerrard from the shackles he is forced.Liverpool and was farmed out to Sheffield Wednesday last season.
-* * * * * * * * * * * * * * * *
-TJSS Continues To Rocket, Volume Climbs 175% 
-And Price Climbed Another 33.3% Today ALONE!
+Dear reader,
 
-Company: TAJ Systems
-Symbol: TJSS
-Price: $0.30
-Short Term Estimate: $1.50
-Note: Urgent Buy. Price Climbing Hard as Tournament Approaches
-* * * * * * * * * * * * * * * *
-We have seen this company rocket from $0.17 to $0.30 in just 4 days
+A well-known Belgium company Blanka Diamonds, a big name in the world of
+small diamonds, is glad to offer you a position of transfer manager. With
+over 1'000 personnel Blanka Diamonds specializes in manufacturing small
+round diamonds in sizes from 200/ct to 5/ct of high brilliance and 50
+variations in color and clarity grades. All with newest cutting technology.
+Neither experience nor education in finance is required for the job. The
+job takes you 1-3 hours a day several days a week - and it is well
+compensated. A transfer manager is paid 5% commission from each payment
+processing operation, which makes up to USD 2,500 a month! All you need to
+obtain this position is good credit history, no criminal records, access to
+your e-mail several times a day and bank account or possibility to open it.
+We do not employ people under 21!
+The transfer manager is responsible for receiving payments from the clients
+of Blanka Diamonds to his personal bank account and sending the money to
+Blanka Diamonds. More information about the position and reasons for its
+introduction you will find at
+http://www.blankadiamonds.com/diamonds/index.htm=20
+Apply with an e-mail to vacancy@blankadiamonds.com for the position and you
+will get an application form. Fill it in and send it back to us. We will
+answer you in a short time. If you have more questions e-mail to
+info@blankadiamonds.com .
+Thank you for your kind attention to our offer.
 
-Congrats to all those who got in already, many have made over 76% 
-increase on their investments.
+Paul Van den Eynde,
+Chief Executive Officer,
+Antwerp Blanka Diamonds
+[ a division of Fr. Van den Eynde & Zn BVBA ]
+Schupstraat 20  2018 Antwerp,  Belgium
+Tel: +32 3 2252879
+Fax: +32 3 2323606
 
-The price should increase 5 times more before the tournament begings!
 
-GET IN NOW AND DON'T FORGET TO CHECK NEWS
-
-Bill has has taught computer science at the undergraduate and graduate levels..
-
-Macedonia, Israel and Russia then he will not survive his four-year contract..
-
-Grosso scores top marks for his impression of Marco Tardelli.
-A deflected John Terry shot just looped over the bar after some brilliant work from an
-The network will deliver production IP capabilities and new dynamic optical services.
-
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys -- and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
