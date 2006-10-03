@@ -1,41 +1,41 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 26 Oct 2006 19:45:48 +0000
-Subject: Re: [KJ] make pdfdocs broken in 2.6.19rc2 and needs fixes
-Message-Id: <4541106C.7080802@bfs.de>
+From: Amit Choudhary <amit2030@yahoo.com>
+Date: Tue, 03 Oct 2006 06:37:07 +0000
+Subject: [KJ] [PATCH] sound/isa/ad1816a/ad1816a.c: check kmalloc() return
+Message-Id: <20061003063707.19051.qmail@web55614.mail.re4.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200610222347.42418.ak@suse.de>
-In-Reply-To: <200610222347.42418.ak@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Description: Check the return value of kmalloc() in function
+snd_card_ad1816a_pnp(), in file sound/isa/ad1816a/ad1816a.c.
+
+Signed-off-by: Amit Choudhary <amit2030@yahoo.com>
+
+diff --git a/sound/isa/ad1816a/ad1816a.c
+b/sound/isa/ad1816a/ad1816a.c
+index b33a5fb..16daaed 100644
+--- a/sound/isa/ad1816a/ad1816a.c
++++ b/sound/isa/ad1816a/ad1816a.c
+@@ -120,6 +120,8 @@ static int __devinit snd_card_ad1816a_pn
+ 	struct pnp_resource_table *cfg = kmalloc(sizeof(*cfg),
+GFP_KERNEL);
+ 	int err;
+ 
++	if(!cfg)
++		return -ENOMEM;
+ 	acard->dev = pnp_request_card_device(card, id->devs[0].id,
+NULL);
+ 	if (acard->dev = NULL) {
+ 		kfree(cfg);
 
 
-Alan Cox wrote:
-> Ar Sul, 2006-10-22 am 23:47 +0200, ysgrifennodd Andi Kleen:
->> When you do make pdfdocs  with 2.6.19rc2-git7 you get tons of error 
->> messages and  then some corrupted PDFs in the end.
-> 
-> Some vendor shipped pdf and TeX tools are problematic. It works
-> correctly on Red Hat except for kernel-api which has become too big for
-> the default settings when ext4 was added. The TeX hash size gets
-> exceeded, TeX emits
-> 
-> "! TeX capacity exceeded, sorry [hash size`000].
-> If you really absolutely need more capacity,
-> you can ask a wizard to enlarge me."
-> 
 
-
-mmmh, roff supports pdf these days also ;)
-
-
-
-> 
-> Really it would be nice to find a more modern way from the input to pdf
-> without going via tex.
-> 
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
