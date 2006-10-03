@@ -1,50 +1,34 @@
-From: Kevin Lo <kevlo@kevlo.org>
-Date: Tue, 03 Oct 2006 04:28:40 +0000
-Subject: [KJ] [PATCH] check_/request_region fixes: sound/oss/pss.c
-Message-Id: <1159849720.5147.8.camel@monet>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=-4DXucSYVAx/8BzPT6x0c"
+From: "Dan Carpenter" <error27@gmail.com>
+Date: Tue, 03 Oct 2006 09:13:26 +0000
+Subject: Re: [KJ] [PATCH] check_/request_region fixes: sound/oss/pss.c
+Message-Id: <a63d67fe0610030213l645e04c1q9b0e1fa45b41f902@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1159849720.5147.8.camel@monet>
+In-Reply-To: <1159849720.5147.8.camel@monet>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On 10/2/06, Kevin Lo <kevlo@kevlo.org> wrote:
+> Hi,
+>
+> Attached patch is to get rid of check_region and replace with
+> request_region.
+>
+>         Kevin
+>
 
---=-4DXucSYVAx/8BzPT6x0c
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Nope.  This is wrong.  You have to replace both check_region() and
+modify the call to request_region().  Look through the list for
+examples on how to do it.
 
-Hi,
+Also don't send the patch as an attachment, just include it in your
+email.  But make sure the lines don't wrap and the tabs are preserved.
 
-Attached patch is to get rid of check_region and replace with
-request_region.
-
-	Kevin
-
---=-4DXucSYVAx/8BzPT6x0c
-Content-Disposition: attachment; filename=patch
-Content-Type: text/plain; name=patch; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
---- linux-2.6.18/sound/oss/pss.c.orig	2006-10-03 11:51:18.000000000 +0800
-+++ linux-2.6.18/sound/oss/pss.c	2006-10-03 12:05:54.000000000 +0800
-@@ -677,7 +677,7 @@ static void configure_nonsound_component
- 	{
- 		printk(KERN_INFO "PSS: CDROM port not enabled.\n");
- 	}
--	else if(check_region(pss_cdrom_port, 2))
-+	else if(!request_region(pss_cdrom_port, 2, "PSS cdrom port"))
- 	{
- 		printk(KERN_ERR "PSS: CDROM I/O port conflict.\n");
- 	}
-
---=-4DXucSYVAx/8BzPT6x0c
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+regards,
+dan carpenter
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---=-4DXucSYVAx/8BzPT6x0c--
