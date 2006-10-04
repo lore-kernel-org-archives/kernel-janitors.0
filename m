@@ -1,28 +1,56 @@
-From: "Suren Naidu" <naidu.suren@gmail.com>
-Date: Tue, 31 Oct 2006 08:46:31 +0000
-Subject: Re: [KJ] [PATCH] Changed all calls to pci_module_init to be
-Message-Id: <429af9e30610310046i6c6637fcq67281fad103f08ef@mail.gmail.com>
+From: Tobias Klauser <tklauser@distanz.ch>
+Date: Wed, 04 Oct 2006 09:35:23 +0000
+Subject: [KJ] [PATCH] drivers/atm: No need to return void
+Message-Id: <20061004093523.GA14108@distanz.ch>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061028201039.GB20208@zeno.unh.edu>
-In-Reply-To: <20061028201039.GB20208@zeno.unh.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> >
-> > I wouldn't mind doing that.  Just a simple find/replace of 'FALSE' with 'false'
-> > and 'TRUE' with 'true'?
-> Both yes and no. Of course you can do a simple replace (like just using
-> sed with "s/FALSE/false/") but I think it is a good idea to check the
-> paths for the variables to see they are real booleans (only gets 'false'
-> and 'true', also only used in logical operations) and also clean up
-> things like "if (b = TRUE)". If you make such a patch, can you cc: me
-> too, please?
+The module_exit function has return-type void and
+pci_unregister_driver() returns void anyway.
 
-Is this a janitor project ? Is anyone working on it ?
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 
-Suren
+---
+ drivers/atm/ambassador.c |    4 ++--
+ drivers/atm/horizon.c    |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/atm/ambassador.c b/drivers/atm/ambassador.c
+index 4521a24..9ccb9e3 100644
+--- a/drivers/atm/ambassador.c
++++ b/drivers/atm/ambassador.c
+@@ -2459,8 +2459,8 @@ static int __init amb_module_init (void)
+ static void __exit amb_module_exit (void)
+ {
+   PRINTD (DBG_FLOW|DBG_INIT, "cleanup_module");
+-  
+-  return pci_unregister_driver(&amb_driver);
++
++  pci_unregister_driver(&amb_driver);
+ }
+ 
+ module_init(amb_module_init);
+diff --git a/drivers/atm/horizon.c b/drivers/atm/horizon.c
+index d1113e8..6a3bda9 100644
+--- a/drivers/atm/horizon.c
++++ b/drivers/atm/horizon.c
+@@ -2945,8 +2945,8 @@ static int __init hrz_module_init (void)
+ 
+ static void __exit hrz_module_exit (void) {
+   PRINTD (DBG_FLOW, "cleanup_module");
+-  
+-  return pci_unregister_driver(&hrz_driver);
++
++  pci_unregister_driver(&hrz_driver);
+ }
+ 
+ module_init(hrz_module_init);
+-- 
+1.4.2
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
