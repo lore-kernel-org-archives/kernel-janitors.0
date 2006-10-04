@@ -1,7 +1,7 @@
-From: "Dan Carpenter" <error27@gmail.com>
-Date: Tue, 03 Oct 2006 09:13:26 +0000
+From: Kevin Lo <kevlo@kevlo.org>
+Date: Wed, 04 Oct 2006 01:33:08 +0000
 Subject: Re: [KJ] [PATCH] check_/request_region fixes: sound/oss/pss.c
-Message-Id: <a63d67fe0610030213l645e04c1q9b0e1fa45b41f902@mail.gmail.com>
+Message-Id: <1159925588.5062.2.camel@monet>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1159849720.5147.8.camel@monet>
 In-Reply-To: <1159849720.5147.8.camel@monet>
@@ -10,24 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 10/2/06, Kevin Lo <kevlo@kevlo.org> wrote:
+Kevin Lo wrote:
 > Hi,
->
+> 
 > Attached patch is to get rid of check_region and replace with
 > request_region.
->
->         Kevin
->
 
-Nope.  This is wrong.  You have to replace both check_region() and
-modify the call to request_region().  Look through the list for
-examples on how to do it.
+Whoops, please ignore this patch since I sent the wrong one :-(
 
-Also don't send the patch as an attachment, just include it in your
-email.  But make sure the lines don't wrap and the tabs are preserved.
+> 
+> 	Kevin
 
-regards,
-dan carpenter
+	Kevin
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
