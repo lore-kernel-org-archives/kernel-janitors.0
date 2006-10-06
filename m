@@ -1,67 +1,31 @@
-From: "Stocks.com aftermath" <gilbertoua@wanadoo.com>
-Date: Fri, 27 Oct 2006 01:14:49 +0000
-Subject: [KJ] Stocks.com Brokers will be scrambling for this one
-Message-Id: <41534632387526.16D3AAF5FE@LJWT06>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1161911912-24995-46"
+From: Amit Choudhary <amit2030@gmail.com>
+Date: Fri, 06 Oct 2006 05:47:18 +0000
+Subject: [KJ]  [PATCH] sound/isa/cmi8330.c: check kmalloc() return value.
+Message-Id: <20061005224718.c369c7d2.amit2030@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Description: Check the return value of kmalloc() in function snd_cmi8330_pnp(), in file sound/isa/cmi8330.c.
 
-------------=_1161911912-24995-46
-Content-Type: text/html; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed-off-by: Amit Choudhary <amit2030@gmail.com>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<div align=3D"left"> Pay attention to this stock, it will most likely retur=
-n the investment increased.<br>
-  I wish your returns were boosted significantly =96 just like mine were!<b=
-r>
-  We have been keeping you posted on RR EF for the last <br>
-  few days.We have wa tched the p rice steadily climb up and down <br>
-  it is really beginning to get invest ors excited as their <br>
-  hopes begin to become a reality.
-  <p>Its not to late. RR EF is still at a good p rice to get in <br>
-    at just $0.75.</p>
-  <p>Pay attention to this stock, it will most likely return the investment=
- increased.<br>
-    I wish your returns were boosted significantly =96 just like mine were!=
-<br>
-    <br>
-    <i><b>We are expecting big news release tomorrow, that will <br>
-    make the pri ce E xplode!</b></i></p>
-  <p>Jump in with R REF on Fri Morning and see just how <br>
-    big your returns will be before the the p rice reaches the top.<br>
-    <br>
-    Even Fifa president Sepp Blatter raised concerns about the lack of goal=
-s produced by first time they managed to win a World Cup match on penalties=
- after three failed attempts. Cannavaro won the World Cup on his 100th appe=
-arance for Italy was huge relief for England to see Tiago slip with the goa=
-l at his mercy. embroiled in a corruption scandal similar to 1982 when they=
- last won the World Cup. Crouch almost got on the end of a Gerrard cross bu=
-t at the other end it needed some This World Cup in Germany has witnessed p=
-lenty of promising players, but there has</p>
-  </div>
-</BODY></HTML>
-
-
-------------=_1161911912-24995-46
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+diff --git a/sound/isa/cmi8330.c b/sound/isa/cmi8330.c
+index 3c1e9fd..d1f6dfc 100644
+--- a/sound/isa/cmi8330.c
++++ b/sound/isa/cmi8330.c
+@@ -289,6 +289,8 @@ static int __devinit snd_cmi8330_pnp(int
+ 	struct pnp_resource_table * cfg = kmalloc(sizeof(struct pnp_resource_table), GFP_KERNEL);
+ 	int err;
+ 
++	if (!cfg)
++		return -ENOMEM;
+ 	acard->cap = pnp_request_card_device(card, id->devs[0].id, NULL);
+ 	if (acard->cap = NULL) {
+ 		kfree(cfg);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------------=_1161911912-24995-46--
