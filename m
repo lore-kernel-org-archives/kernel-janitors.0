@@ -1,71 +1,45 @@
 From: Amol Lad <amol@verismonetworks.com>
-Date: Mon, 16 Oct 2006 06:54:19 +0000
-Subject: [KJ] [PATCH] drivers/scsi/mca_53c9x.c: save_flags()/cli() removal
-Message-Id: <1160981382.19143.416.camel@amol.verismonetworks.com>
+Date: Mon, 09 Oct 2006 11:45:27 +0000
+Subject: [KJ] [PATCH] drivers/net/depca.c: Replacing yield with a better
+Message-Id: <1160393608.19143.238.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux kernel <linux-kernel@vger.kernel.org>, James.Bottomley@steeleye.com
-Cc: kernel Janitors <kernel-janitors@lists.osdl.org>
+To: netdev@vger.kernel.org, kernel Janitors <kernel-janitors@lists.osdl.org>
 
-Replaced calls with save_flags()/cli() pair with
-spi_lock_irqsave()/spin_unlock_irqrestore()
+The change removes the 'manual' schedule_timeout and replaces it with
+schedule_timeout_uninterruptible
 
-Tested:
-1. compilation only 
-2. Code review to verify that the change does not result in a recursive
-locking
+Tested compile only with allmodconfig
 
 Signed-off-by: Amol Lad <amol@verismonetworks.com>
 ---
-James,
-
-Though I have done the review to check for recursive locking, can you
-also have a look ?
+ depca.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
 ---
---- linux-2.6.19-rc1-orig/drivers/scsi/mca_53c9x.c	2006-08-24 02:46:33.000000000 +0530
-+++ linux-2.6.19-rc1/drivers/scsi/mca_53c9x.c	2006-10-16 11:47:45.000000000 +0530
-@@ -342,9 +342,8 @@ static void dma_init_read(struct NCR_ESP
- 	unsigned long flags;
+--- linux-2.6.19-rc1-orig/drivers/net/depca.c	2006-10-05 14:00:47.000000000 +0530
++++ linux-2.6.19-rc1/drivers/net/depca.c	2006-10-09 16:37:13.000000000 +0530
+@@ -738,7 +738,7 @@ static int __init depca_hw_init (struct 
+ 	   interrupts. For now we will always get a DMA error. */
+ 	if (dev->irq < 2) {
+ 		unsigned char irqnum;
+-		unsigned long irq_mask, delay;
++		unsigned long irq_mask;
  
+ 		irq_mask = probe_irq_on();
  
--	save_flags(flags);
--	cli();
--
-+	spin_lock_irqsave(esp->ehost->host_lock, flags);
-+	
- 	mca_disable_dma(esp->dma);
- 	mca_set_dma_mode(esp->dma, MCA_DMA_MODE_XFER | MCA_DMA_MODE_16 |
- 	  MCA_DMA_MODE_IO);
-@@ -352,7 +351,7 @@ static void dma_init_read(struct NCR_ESP
- 	mca_set_dma_count(esp->dma, length / 2); /* !!! */
- 	mca_enable_dma(esp->dma);
+@@ -767,9 +767,7 @@ static int __init depca_hw_init (struct 
+ 		/* Trigger an initialization just for the interrupt. */
+ 		outw(INEA | INIT, DEPCA_DATA);
  
--	restore_flags(flags);
-+	spin_unlock_irqrestore(esp->ehost->host_lock, flags);
- }
+-		delay = jiffies + HZ/50;
+-		while (time_before(jiffies, delay))
+-			yield();
++		schedule_timeout_uninterruptible(jiffies + HZ/50);
  
- static void dma_init_write(struct NCR_ESP *esp, __u32 addr, int length)
-@@ -360,8 +359,7 @@ static void dma_init_write(struct NCR_ES
- 	unsigned long flags;
+ 		irqnum = probe_irq_off(irq_mask);
  
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(esp->ehost->host_lock, flags);
- 
- 	mca_disable_dma(esp->dma);
- 	mca_set_dma_mode(esp->dma, MCA_DMA_MODE_XFER | MCA_DMA_MODE_WRITE |
-@@ -370,7 +368,7 @@ static void dma_init_write(struct NCR_ES
- 	mca_set_dma_count(esp->dma, length / 2); /* !!! */
- 	mca_enable_dma(esp->dma);
- 
--	restore_flags(flags);
-+	spin_unlock_irqrestore(esp->ehost->host_lock, flags);
- }
- 
- static void dma_ints_off(struct NCR_ESP *esp)
 
 
 _______________________________________________
