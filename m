@@ -1,30 +1,48 @@
-From: Amit Choudhary <amit2030@gmail.com>
-Date: Fri, 06 Oct 2006 05:38:39 +0000
-Subject: [KJ] [PATCH] sound/isa/gus/interwave.c: check kmalloc() return
-Message-Id: <20061005223839.a635394a.amit2030@gmail.com>
+From: Amol Lad <amol@verismonetworks.com>
+Date: Mon, 09 Oct 2006 10:26:48 +0000
+Subject: [KJ] [PATCH] calling yield considered harmful
+Message-Id: <1160388888.19143.233.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description: Check the return value of kmalloc() in function snd_interwave_pnp(), in file sound/isa/gus/interwave.c.
+Hi,
 
-Signed-off-by: Amit Choudhary <amit2030@gmail.com>
+I'm starting to replace yield with appropriate schedule, cond_resched
+etc calls.. 
 
-diff --git a/sound/isa/gus/interwave.c b/sound/isa/gus/interwave.c
-index ea69f25..5282fbb 100644
---- a/sound/isa/gus/interwave.c
-+++ b/sound/isa/gus/interwave.c
-@@ -564,6 +564,8 @@ static int __devinit snd_interwave_pnp(i
- 	struct pnp_resource_table * cfg = kmalloc(sizeof(struct pnp_resource_table), GFP_KERNEL);
- 	int err;
- 
-+	if (!cfg)
-+		return -ENOMEM;
- 	iwcard->dev = pnp_request_card_device(card, id->devs[0].id, NULL);
- 	if (iwcard->dev = NULL) {
- 		kfree(cfg);
+To begin with please see if this is ok
+
+Signed-off-by: Amol Lad <amol@verismonetworks.com>
+---
+diff -uprN -X linux-2.6.19-rc1-orig/Documentation/dontdiff linux-2.6.19-rc1-orig/drivers/cdrom/cdu31a.c linux-2.6.19-rc1/drivers/cdrom/cdu31a.c
+--- linux-2.6.19-rc1-orig/drivers/cdrom/cdu31a.c	2006-10-05 14:00:42.000000000 +0530
++++ linux-2.6.19-rc1/drivers/cdrom/cdu31a.c	2006-10-09 15:33:22.000000000 +0530
+@@ -370,7 +370,7 @@ static inline void disable_interrupts(vo
+ static inline void sony_sleep(void)
+ {
+ 	if (cdu31a_irq <= 0) {
+-		yield();
++		schedule_timeout_interruptible(1);
+ 	} else {		/* Interrupt driven */
+ 		DEFINE_WAIT(w);
+ 		int first = 1;
+diff -uprN -X linux-2.6.19-rc1-orig/Documentation/dontdiff linux-2.6.19-rc1-orig/drivers/cdrom/sonycd535.c linux-2.6.19-rc1/drivers/cdrom/sonycd535.c
+--- linux-2.6.19-rc1-orig/drivers/cdrom/sonycd535.c	2006-09-21 10:15:32.000000000 +0530
++++ linux-2.6.19-rc1/drivers/cdrom/sonycd535.c	2006-10-09 15:33:52.000000000 +0530
+@@ -342,7 +342,7 @@ static inline void
+ sony_sleep(void)
+ {
+ 	if (sony535_irq_used <= 0) {	/* poll */
+-		yield();
++		schedule_timeout_interruptible(1);
+ 	} else {	/* Interrupt driven */
+ 		DEFINE_WAIT(wait);
+ 		
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
