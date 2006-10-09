@@ -1,28 +1,30 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Sat, 14 Oct 2006 10:36:56 +0000
-Subject: Re: [KJ] [PATCH] include/asm-i386/a.out.h: Comment correction
-Message-Id: <20061014123656.108a0b26@lucky.kitzblitz>
+From: Amol Lad <amol@verismonetworks.com>
+Date: Mon, 09 Oct 2006 13:38:06 +0000
+Subject: [KJ] save_flags()/cli() replace with spin_lock_irq{save,restore}
+Message-Id: <1160400366.19143.251.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200610111811.21503.lists-receive@programmierforen.de>
-In-Reply-To: <200610111811.21503.lists-receive@programmierforen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-* Andi Drebes <lists-receive@programmierforen.de>:
-> > I just spotted another two of these, in include/net/ip_fib.h
-> > and arch/ppc/boot/include/serial.h. Are you currently working
-> > on more of these?
-> Actually no. I just discovered that accidentially. But we can
-> combine our patches if you like. Please CC me for more
-> corrections like that.
+I have a query.
 
-Alright, I'm slowly creating a list. Currently I've looked at
-about 11% of headers. I'll split patches by subsystem.
+In ARM, does spin_lock_irqsave() disables both IRQs and FIQs (fast
+interrupts) ?
 
-Cheers,
-n.
+If yes, then it is dangerous to replace save_flags()/cli() with
+spin_lock_irqsave() in drivers that are required in ARM based systems
+also. In ARM cli() diables IRQs and clf() disables FIQs. With this
+change we may unintentionally disable FIQs also when it's only required
+to disable IRQs
+
+
+
+
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
