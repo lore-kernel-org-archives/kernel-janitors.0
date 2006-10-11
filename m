@@ -1,39 +1,38 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Mon, 09 Oct 2006 06:23:29 +0000
-Subject: Re: [KJ] Is kfree(ptr) [ptr = NULL] allowed?
-Message-Id: <20061009062329.GB3172@stusta.de>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 11 Oct 2006 14:16:51 +0000
+Subject: [KJ] most users of msleep_interruptible are broken
+Message-Id: <20061011141651.GD27388@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061009055409.14227.qmail@web55613.mail.re4.yahoo.com>
-In-Reply-To: <20061009055409.14227.qmail@web55613.mail.re4.yahoo.com>
+References: <1160570743.19143.307.camel@amol.verismonetworks.com> <1160571491.3000.372.camel@laptopd505.fenrus.org>
+In-Reply-To: <1160571491.3000.372.camel@laptopd505.fenrus.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Arjan van de Ven <arjan@infradead.org>
+Cc: Amol Lad <amol@verismonetworks.com>, kernel Janitors <kernel-janitors@lists.osdl.org>, linux kernel <linux-kernel@vger.kernel.org>
 
-On Sun, Oct 08, 2006 at 10:54:09PM -0700, Amit Choudhary wrote:
-
-> Hi All,
+On Wed, Oct 11, 2006 at 02:58:11PM +0200, Arjan van de Ven wrote:
+> > +++ linux-2.6.19-rc1/drivers/mmc/mmc.c	2006-10-11 17:57:02.000000000 +0530
+> > @@ -454,7 +454,7 @@ static void mmc_deselect_cards(struct mm
+> >  static inline void mmc_delay(unsigned int ms)
+> >  {
+> >  	if (ms < HZ / 1000) {
+> > -		yield();
+> > +		cond_resched();
+> >  		mdelay(ms);
 > 
-> kfree(ptr) returns without doing anything if ptr is NULL.
 > 
-> So, can I call kfree(ptr) in my code even if ptr is NULL? Is it allowed, or should I check the
-> value of ptr first and then call kfree()?
+> this probably wants msleep(), especially with hrtimers comming up; there
+> the sleeps are always exact...
 
-kfree(NULL) is allowed.
+They clearly don't care about exactness; they msleep_interruptible and
+throw away the return value, so they don't know how long they slept
+before they got a signal.
 
-> Regards,
-> Amit Choudhary
-
-cu
-Adrian
-
--- 
-
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
+__must_check treatment for msleep_interruptible, anyone?  On the one hand,
+that's 136 new warnings.  On the other hand, that's 136 places wheree
+we may as well *delete the call* to msleep_interruptible.  Since it can
+return immediately, the code must be prepared to deal with that ... right?
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
