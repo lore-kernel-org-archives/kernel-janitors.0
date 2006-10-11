@@ -1,38 +1,31 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Mon, 02 Oct 2006 10:52:59 +0000
-Subject: [KJ] [PATCH] sound/usb/usbaudio: Handle return value of
-Message-Id: <20061002105259.GA12070@distanz.ch>
+From: Amol Lad <amol@verismonetworks.com>
+Date: Wed, 11 Oct 2006 13:19:39 +0000
+Subject: [KJ] [PATCH 3/4] drivers/net/sis900.c: Replacing yield() with a
+Message-Id: <1160572059.19143.341.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: akpm@osdl.org, alsa-devel@alsa-project.org
+To: netdev@vger.kernel.org
+Cc: kernel Janitors <kernel-janitors@lists.osdl.org>
 
-Handle the return value of usb_register() in the module_init function.
+*Please check if the timout value is ok or it should be increased*
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
-
+Signed-off-by: Amol Lad <amol@verismonetworks.com>
 ---
- sound/usb/usbaudio.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+diff -uprN -X linux-2.6.19-rc1-orig/Documentation/dontdiff linux-2.6.19-rc1-orig/drivers/net/sis900.c linux-2.6.19-rc1/drivers/net/sis900.c
+--- linux-2.6.19-rc1-orig/drivers/net/sis900.c	2006-10-05 14:00:48.000000000 +0530
++++ linux-2.6.19-rc1/drivers/net/sis900.c	2006-10-11 17:57:02.000000000 +0530
+@@ -664,7 +664,7 @@ static int __init sis900_mii_probe(struc
+ 
+ 	if(status & MII_STAT_LINK){
+ 		while (poll_bit) {
+-			yield();
++			schedule_timeout_interruptible(1);
+ 
+ 			poll_bit ^= (mdio_read(net_dev, sis_priv->cur_phy, MII_STATUS) & poll_bit);
+ 			if (time_after_eq(jiffies, timeout)) {
 
-diff --git a/sound/usb/usbaudio.c b/sound/usb/usbaudio.c
-index a42acf6..191c811 100644
---- a/sound/usb/usbaudio.c
-+++ b/sound/usb/usbaudio.c
-@@ -3576,8 +3576,7 @@ static int __init snd_usb_audio_init(voi
- 		printk(KERN_WARNING "invalid nrpacks value.\n");
- 		return -EINVAL;
- 	}
--	usb_register(&usb_audio_driver);
--	return 0;
-+	return usb_register(&usb_audio_driver);
- }
- 
- 
--- 
-1.4.2
 
 _______________________________________________
 Kernel-janitors mailing list
