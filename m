@@ -1,29 +1,46 @@
-From: Pierre Ossman <drzeus-list@drzeus.cx>
-Date: Wed, 11 Oct 2006 15:07:00 +0000
+From: Pavel Machek <pavel@suse.cz>
+Date: Wed, 11 Oct 2006 20:30:02 +0000
 Subject: Re: [KJ] most users of msleep_interruptible are broken
-Message-Id: <452D0894.5080805@drzeus.cx>
+Message-Id: <20061011203001.GB3935@ucw.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1160570743.19143.307.camel@amol.verismonetworks.com>	 <1160571491.3000.372.camel@laptopd505.fenrus.org>	 <20061011141651.GD27388@parisc-linux.org>  <452CFD98.6010808@drzeus.cx> <1160578415.3000.381.camel@laptopd505.fenrus.org>
-In-Reply-To: <1160578415.3000.381.camel@laptopd505.fenrus.org>
+References: <1160570743.19143.307.camel@amol.verismonetworks.com> <1160571491.3000.372.camel@laptopd505.fenrus.org> <20061011141651.GD27388@parisc-linux.org>
+In-Reply-To: <20061011141651.GD27388@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Arjan van de Ven <arjan@infradead.org>
-Cc: Matthew Wilcox <matthew@wil.cx>, Amol Lad <amol@verismonetworks.com>, kernel Janitors <kernel-janitors@lists.osdl.org>, linux kernel <linux-kernel@vger.kernel.org>
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Arjan van de Ven <arjan@infradead.org>, Amol Lad <amol@verismonetworks.com>, kernel Janitors <kernel-janitors@lists.osdl.org>, linux kernel <linux-kernel@vger.kernel.org>
 
-Arjan van de Ven wrote:
->
-> if you want that don't use the _interruptible variant. It's that simple.
->
->   
+Hi!
 
-Patches welcome ;)
+> > > +++ linux-2.6.19-rc1/drivers/mmc/mmc.c	2006-10-11 17:57:02.000000000 +0530
+> > > @@ -454,7 +454,7 @@ static void mmc_deselect_cards(struct mm
+> > >  static inline void mmc_delay(unsigned int ms)
+> > >  {
+> > >  	if (ms < HZ / 1000) {
+> > > -		yield();
+> > > +		cond_resched();
+> > >  		mdelay(ms);
+> > 
+> > 
+> > this probably wants msleep(), especially with hrtimers comming up; there
+> > the sleeps are always exact...
+> 
+> They clearly don't care about exactness; they msleep_interruptible and
+> throw away the return value, so they don't know how long they slept
+> before they got a signal.
+> 
+> __must_check treatment for msleep_interruptible, anyone?  On the one hand,
+> that's 136 new warnings.  On the other hand, that's 136 places wheree
+> we may as well *delete the call* to msleep_interruptible.  Since it can
+> return immediately, the code must be prepared to deal with that ... right?
 
-I believe noone has fixed the if-condition yet as well...
+Well, it must work, but it may busyloop instead of sleeping. This does
+not look like must_check to me.
+						Pavel
 
-Rgds
-Pierre
-
+-- 
+Thanks for all the (sleeping) penguins.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
