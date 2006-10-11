@@ -1,8 +1,10 @@
-From: Amol Lad <amol@verismonetworks.com>
-Date: Tue, 10 Oct 2006 06:19:51 +0000
+From: Karsten Keil <kkeil@suse.de>, Amol Lad <amol@verismonetworks.com>
+Date: Wed, 11 Oct 2006 13:04:21 +0000
 Subject: [KJ] [PATCH 1/2] drivers/isdn/hysdn: save_flags()/cli(),
-Message-Id: <1160460471.19143.265.camel@amol.verismonetworks.com>
+Message-Id: <20061011130421.GA12128@pingi.kke.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1160460471.19143.265.camel@amol.verismonetworks.com>
+In-Reply-To: <1160460471.19143.265.camel@amol.verismonetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -14,6 +16,7 @@ restore_flags() replaced with spin_unlock_irqrestore()
 Tested compile only using allmodconfig
 
 Signed-off-by: Amol Lad <amol@verismonetworks.com>
+Acked-by: Karsten Keil <kkeil@suse.de>
 ---
  boardergo.c     |   32 ++++++++++++++------------------
  hysdn_defs.h    |    2 ++
