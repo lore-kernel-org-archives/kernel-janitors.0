@@ -1,14 +1,17 @@
-From: Amol Lad <amol@verismonetworks.com>
-Date: Tue, 10 Oct 2006 06:19:52 +0000
+From: Karsten Keil <kkeil@suse.de>
+Date: Wed, 11 Oct 2006 13:06:26 +0000
 Subject: [KJ] [PATCH 2/2] drivers/isdn/isdnloop: save_flags()/cli(),
-Message-Id: <1160460472.19143.266.camel@amol.verismonetworks.com>
+Message-Id: <20061011130626.GB12128@pingi.kke.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1160460472.19143.266.camel@amol.verismonetworks.com>
+In-Reply-To: <1160460472.19143.266.camel@amol.verismonetworks.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 Signed-off-by: Amol Lad <amol@verismonetworks.com>
+Acked-by: Karsten Keil <kkeil@suse.de>
 ---
  isdnloop.c |   70 ++++++++++++++++++++++++++-----------------------------------
  isdnloop.h |    1
