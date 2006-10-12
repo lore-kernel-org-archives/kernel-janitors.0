@@ -1,41 +1,36 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Mon, 09 Oct 2006 05:12:30 +0000
-Subject: Re: [KJ] [PATCH] Kconfig refactoring for better menu nesting, v.3
-Message-Id: <20061008221230.fbd6a9f8.rdunlap@xenotime.net>
+From: "Archibald H. Idolater" <tfj@gouldvalve.com>
+Date: Thu, 12 Oct 2006 06:34:05 +0000
+Subject: [KJ] cheap Software
+Message-Id: <0473939906.20061012022057@gouldvalve.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1159944763.7669.6.camel@localhost.localdomain>
-In-Reply-To: <1159944763.7669.6.camel@localhost.localdomain>
+References: <1263770014.20060825081706@goaliebox.com>
+In-Reply-To: <1263770014.20060825081706@goaliebox.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 08 Oct 2006 21:56:33 -0700 Don Mullis wrote:
+OEM cd`s downloading and by post.
 
-> Refactor Kconfig content to maximize nesting of menus by menuconfig
-> and xconfig.
-> 
-> Tested by simultaneously running `make xconfig` with and without
-> patch, and comparing displays.
-> 
-> Signed-off-by: Don Mullis <dwm@meer.net>
-> Cc: Randy Dunlap <rdunlap@xenotime.net>
+Some examples:
+Office XP Professional $79.95
+Creative Suite Standard (3 CD) $129.95
+CorelDraw Graphics Suite 11 $59.95
+Office 2000 Premium Edition PE (2CD) $59.95
+Quark Xpress 6 Passport Multilanguage $69.95
+Norton System Works 2003 $59.95
+Acrobat 6 Professional $79.95
+LiveMotion 2.0 $69.95
+Windows NT 4.0 Terminal Server $49.95
+Extensis Portfolio 7.0 $59.95
+Windows NT 4.0 Server $49.95
+Fireworks MX 2004 $69.95
+Photoshop CS with ImageReady CS $99.95
+Painter 8 $59.95
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+The rest is on our site:
+http://oztiu9cgbic1poo1too1booo./
 
-Thanks.
-
-> ---
-> The claim is that this helps the user's understanding of options -- but
-> since options are reordered, experts on particular subsystems might
-> disagree in some instances.
-> 
-> Thanks to Randy Dunlap for spotting a major oversight (LKDTM), and
-> suggesting dropping an OSS sound change.  Corrections incorporated
-> into this version.
-
----
-~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
