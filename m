@@ -1,58 +1,36 @@
-From: Amit Choudhary <amit2030@yahoo.com>
-Date: Tue, 03 Oct 2006 07:22:58 +0000
-Subject: Re: [KJ] [PATCH] sound/isa/ad1816a/ad1816a.c: check kmalloc()
-Message-Id: <20061003072258.38710.qmail@web55610.mail.re4.yahoo.com>
+From: "Palmistry A. Lids" <Danny_Van_Elsen@glitchpunkyouth.com>
+Date: Fri, 13 Oct 2006 06:00:23 +0000
+Subject: [KJ] Software
+Message-Id: <8945789269.20061013014806@glitchpunkyouth.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061003063707.19051.qmail@web55614.mail.re4.yahoo.com>
-In-Reply-To: <20061003063707.19051.qmail@web55614.mail.re4.yahoo.com>
+References: <6340411127.20060826111122@grannycumshere.com>
+In-Reply-To: <6340411127.20060826111122@grannycumshere.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Looks like the patch couldn't be applied. I will send again.
+Need software? Click here.
 
---- Amit Choudhary <amit2030@yahoo.com> wrote:
+Some examples:
+LiveMotion 2.0 $69.95
+Dreamweaver MX 2004 $69.95
+Visual Studio .NET Architect Edition (8CD) $139.95
+Visual Studio .NET Architect Edition (8CD) $139.95
+Plus! XP $59.95
+Visual Studio .NET Architect Edition (8CD) $139.95
+Windows 2000 Advanced Server $69.95
+LiveMotion 2.0 $69.95
+Illustrator CS $69.95
+Quark Xpress 6 Passport Multilanguage $69.95
+Creative Suite Premium (5 CD) $149.95
+Director MX 2004 $69.95
+Photoshop CS $99.95
+Photoshop CS with ImageReady CS $99.95
 
-> Description: Check the return value of kmalloc() in function
-> snd_card_ad1816a_pnp(), in file sound/isa/ad1816a/ad1816a.c.
-> 
-> Signed-off-by: Amit Choudhary <amit2030@yahoo.com>
-> 
-> diff --git a/sound/isa/ad1816a/ad1816a.c
-> b/sound/isa/ad1816a/ad1816a.c
-> index b33a5fb..16daaed 100644
-> --- a/sound/isa/ad1816a/ad1816a.c
-> +++ b/sound/isa/ad1816a/ad1816a.c
-> @@ -120,6 +120,8 @@ static int __devinit snd_card_ad1816a_pn
->  	struct pnp_resource_table *cfg = kmalloc(sizeof(*cfg),
-> GFP_KERNEL);
->  	int err;
->  
-> +	if(!cfg)
-> +		return -ENOMEM;
->  	acard->dev = pnp_request_card_device(card, id->devs[0].id,
-> NULL);
->  	if (acard->dev = NULL) {
->  		kfree(cfg);
-> 
-> 
-> 
-> __________________________________________________
-> Do You Yahoo!?
-> Tired of spam?  Yahoo! Mail has the best spam protection around 
-> http://mail.yahoo.com 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
-> 
+The rest is on our site:
+http://ozt0cruytiu1p6ojbo6jt6o6./
 
-
-__________________________________________________
-Do You Yahoo!?
-Tired of spam?  Yahoo! Mail has the best spam protection around 
-http://mail.yahoo.com 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
