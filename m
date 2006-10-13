@@ -1,353 +1,358 @@
-From: "examine" <guqozhmzbi@quilweb.com>
-Date: Tue, 24 Oct 2006 16:22:15 +0000
-Subject: Jump Content KY
-Message-Id: <001001c6f788$91716ae0$56e53a53@iiiii2565dca50>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0902822915=="
+From: Amol Lad <amol@verismonetworks.com>
+Date: Fri, 13 Oct 2006 11:52:28 +0000
+Subject: [KJ] [PATCH] drivers/char/riscom8.c: save_flags()/cli()/sti()
+Message-Id: <1160739628.19143.376.camel@amol.verismonetworks.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---===============0902822915==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_000C_01C6F799.54FA3AE0"
-
-------=_NextPart_000_000C_01C6F799.54FA3AE0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_000D_01C6F799.54FA3AE0"
-
-
-------=_NextPart_001_000D_01C6F799.54FA3AE0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-How a get best is his grafters am Mooloo ole take Mccaw am Carter tour =
-There was.
-Vdi Desktop probably familiar in amp a demand portfolio am security am =
-goals offshore is sites reduce thin client option offices.
-Cup Blacks Caps Nations Diaryyour Saypeoples a Make Stuff my Homeabout =
-copy Fairfax in Zealand Limited all the material this a page has =
-protection of a copyright rights reserved Search.
-
-Basically creates xp runs actual connects remote display protocol =
-commonly rdp am device supports rdp or clients regular pcs connection =
-desktops turns extends paradigm frequent past offerings of. Onto two =
-large multicore tomor is row relative work performed Besides is =
-networking captured am benchmark article discussed main. Tracks flower =
-one in bending crack score stardust Brilliant Cassie Samxxx in.
-Help Contact in Centers Appliances Technical Papers Base of Discussion =
-am Forums or User Groups or Blogs Dianes Blog Virtually Email!
-Machine developed metrics examples databases could standard Specweb Tpcc =
-run.
-Signing scrambled am upgrade reload styling handy a mailing friendly in =
-message whenever enjoy below a.
-Ordersview a Returnssee Policyneed Helpforgot password redeem gift Visit =
-shopsall in Dvdsrental am Sites States Germany.
-Tracking or landslide behind pla yer hugely popular servers in optimized =
-ease became in generally December several?
-------=_NextPart_001_000D_01C6F799.54FA3AE0
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>How a get best is his grafters am =
-Mooloo ole take=20
-Mccaw am Carter tour There was.<BR>Vdi Desktop probably familiar in amp =
-a demand=20
-portfolio am security am goals offshore is sites reduce thin client =
-option=20
-offices.<BR>Cup Blacks Caps Nations Diaryyour Saypeoples a Make Stuff my =
-
-Homeabout copy Fairfax in Zealand Limited all the material this a page =
-has=20
-protection of a copyright rights reserved Search.</FONT></DIV>
-<DIV><IMG alt=3D"" hspace=3D0=20
-src=3D"cid:000b01c6f788$91716ae0$56e53a53@iiiii2565dca50" =
-align=3Dbaseline=20
-border=3D0></DIV>
-<DIV><FONT face=3DArial size=3D2>Basically creates xp runs actual =
-connects remote=20
-display protocol commonly rdp am device supports rdp or clients regular =
-pcs=20
-connection desktops turns extends paradigm frequent past offerings of. =
-Onto two=20
-large multicore tomor is row relative work performed Besides is =
-networking=20
-captured am benchmark article discussed main. Tracks flower one in =
-bending crack=20
-score stardust Brilliant Cassie Samxxx in.<BR>Help Contact in Centers =
-Appliances=20
-Technical Papers Base of Discussion am Forums or User Groups or Blogs =
-Dianes=20
-Blog Virtually Email!<BR>Machine developed metrics examples databases =
-could=20
-standard Specweb Tpcc run.<BR>Signing scrambled am upgrade reload =
-styling handy=20
-a mailing friendly in message whenever enjoy below a.<BR>Ordersview a =
-Returnssee=20
-Policyneed Helpforgot password redeem gift Visit shopsall in Dvdsrental =
-am Sites=20
-States Germany.<BR>Tracking or landslide behind pla yer hugely popular =
-servers=20
-in optimized ease became in generally December=20
-several?</FONT></DIV></BODY></HTML>
-
-------=_NextPart_001_000D_01C6F799.54FA3AE0--
-
-------=_NextPart_000_000C_01C6F799.54FA3AE0
-Content-Type: image/gif;
-	name="Aug.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <000b01c6f788$91716ae0$56e53a53@iiiii2565dca50>
-
-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
-vuWyQTap79xiQKHi3iRqGEeyHrWOVKVjMFOSKXBxLEFjTAVWo8vBQdTx2yzjUY3rJ3SqFI/x/bFY
-sKts8GnbTW451F1n58tWU4byKidKJR/O/qakfC3YWX1FByabL79d/yo8bpcRcudE4Pa7NFblX+Hm
-WhlmrnI6WbwZKDUnzae7ZaKdb2ZUYhZ+tv3uVBCu7iTfcj2Zy8cWu7XtsAOPxDJy9N0KcAdjsHQc
-N0TPdE0PThb/kzz/dFAvSDYYk00vdecIdVQvElNf9V5MdVffT1aPdVmf9fl4dVu/dVzPdV3fdV7v
-dWGjdWAPdmEfdmIvdmM/dmSPEl9fdgJJdmd/dmhPCWafdmqvdmu/dp+Mdm1vWmzv9vDY9mjv9PL0
-9riIhN8Ad2j/GXBYd3CwB3Zfd3d/95Bg94Fo93qPiHdvd3sXCH2X93rfd3jfd3cf+H+nd4On93jX
-d3zHd3jn94YneP9+Z/iHd3iAX3iQeHiEl3iIH3h/33h7l/d8T/h7j3hydzqB3/iRv/iRx/h5T3mO
-HwmMV/h7P3mPj3ib/3iLT/mKj3eX33mIx3mXd/iVb3mej/idF3iZV/mbn/lDLfkCoXmaR3mUV3ig
-z3mkl3qjf/mrh3qLP3qb//qlX3iZv3qmF/ucD/uqH3qc33qzJ3qCr3h7d3r+OImPD/iMl/qTH3u8
-L/iDn3itf/myP/u6Z/ma73qVX3vBn/rCH3qRJ3rEZ/uVn3iA9/uoR3flgHylP3vAL3qrb3vHz/rA
-7/mvB3qyZ/zAl3zPB32wT3jE/3yhx3zFH/3Yt/zngHuRiHqvD/r/n099w9983wf7qid9zff5tC99
-4gf+xE/7sFf94s/83F992mcOkO/4ys/40td5se/42Pd36i941qf475/+yfd5j7/7xg9/g/d8pA/4
-7Jd8hNf+44d+WgeG6K//yxD3V5V7A1lS/QcQ+wcIewIHEixo8CDChAoXMmzo8CHEiBInUqxYUILF
-jBDBaezo8SPIkCIjNhtp8iTKlCpXsmQJ7iVHgjAHxhTI8SbMmvZ05sQ5k2bOnTJ3vrT5U2ZRo0mD
-Aq15tKdQmlFtEvVZ1CnSpEazxmRK9WtVqWKVdpWqsyXatGrXsm0b8R/cuHLhYgXbFWvdoWP1Gswb
-tSzCunjFCgY7/5UnUcJ8hZ7Nq7VxwptjARsuXHYu5syaN3Pu7Pkz6NCiR5Mubfo06tSqV3dGDFny
-VMOVD56drJdywddmdw/F7VcyYMS8bf+VXZu37r2WqbJu7vw59OjSp1Ovftp17uKQszcV3rf70qbc
-h8NmnP2o3d5UfY8nTvmpVr7JK6PHav0+/vz69/Pvzxm7elstNtt3tCknW2yv/cSUbtsleBh7A1bl
-FHrGFRibeQemx5x/HXr4IYghUseQY4rtheGDF44nXG0O4oZiYSk+yOKALbbnIILeRbghim75+COQ
-QQppkWdeKaXhiRNO6Jd8vV1V4ZEW9vUYcWTN9lR7Uq63IJQY1s1XoZH2iTgmmWWaWeaQaaq5Jptt
-uvkmnGh5FieddZp0Jp556rknn336+SeggQo6aKB2GnooookquiijBBH6KKSRSjoppZVaeimmmWq6
-KaedevopqKGKOiqppZp6Kqqpqroqq62C2Cissco6K6212norrrnqumusrvr6K7DBjsgrscUaeyyy
-Egm7LLPNOvsstNFKy2yy1Qapi7XZarstt4rqgm234Yo7LrlrfVsuuumqu+5E57L7LrzxpguuvPXO
-Oi2++eq7L7/9+vsvawEBADs=
-
-------=_NextPart_000_000C_01C6F799.54FA3AE0--
-
-
-
---===============0902822915==
-Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
---===============0902822915==
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: linux kernel <linux-kernel@vger.kernel.org>
+Cc: kernel Janitors <kernel-janitors@lists.osdl.org>
+
+Removed save_flags()/cli()/sti() and used (light weight) spin locks
+
+Signed-off-by: Amol Lad <amol@verismonetworks.com>
+---
+--- linux-2.6.19-rc1-orig/drivers/char/riscom8.c	2006-10-05 14:00:43.000000000 +0530
++++ linux-2.6.19-rc1/drivers/char/riscom8.c	2006-10-13 17:06:44.000000000 +0530
+@@ -81,6 +81,7 @@
+ 
+ static struct riscom_board * IRQ_to_board[16];
+ static struct tty_driver *riscom_driver;
++spinlock_t riscom_lock = SPIN_LOCK_UNLOCKED;
+ 
+ static unsigned long baud_table[] =  {
+ 	0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800,
+@@ -231,13 +232,13 @@ static void __init rc_init_CD180(struct 
+ {
+ 	unsigned long flags;
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	rc_out(bp, RC_CTOUT, 0);     	           /* Clear timeout             */
+ 	rc_wait_CCR(bp);			   /* Wait for CCR ready        */
+ 	rc_out(bp, CD180_CCR, CCR_HARDRESET);      /* Reset CD180 chip          */
+-	sti();
++	spin_unlock_irq(&riscom_lock);
+ 	rc_long_delay(HZ/20);                      /* Delay 0.05 sec            */
+-	cli();
++	spin_lock_irq(&riscom_lock);
+ 	rc_out(bp, CD180_GIVR, RC_ID);             /* Set ID for this chip      */
+ 	rc_out(bp, CD180_GICR, 0);                 /* Clear all bits            */
+ 	rc_out(bp, CD180_PILR1, RC_ACK_MINT);      /* Prio for modem intr       */
+@@ -248,7 +249,7 @@ static void __init rc_init_CD180(struct 
+ 	rc_out(bp, CD180_PPRH, (RC_OSCFREQ/(1000000/RISCOM_TPS)) >> 8);
+ 	rc_out(bp, CD180_PPRL, (RC_OSCFREQ/(1000000/RISCOM_TPS)) & 0xff);
+ 	
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ /* Main probing routine, also sets irq. */
+@@ -832,7 +833,7 @@ static int rc_setup_port(struct riscom_b
+ 		port->xmit_buf = (unsigned char *) tmp;
+ 	}
+ 		
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 		
+ 	if (port->tty) 
+ 		clear_bit(TTY_IO_ERROR, &port->tty->flags);
+@@ -844,7 +845,7 @@ static int rc_setup_port(struct riscom_b
+ 	rc_change_speed(bp, port);
+ 	port->flags |= ASYNC_INITIALIZED;
+ 		
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ 	return 0;
+ }
+ 
+@@ -955,19 +956,19 @@ static int block_til_ready(struct tty_st
+ 	 */
+ 	retval = 0;
+ 	add_wait_queue(&port->open_wait, &wait);
+-	cli();
++	spin_lock_irq(&riscom_lock);
+ 	if (!tty_hung_up_p(filp))
+ 		port->count--;
+-	sti();
++	spin_unlock_irq(&riscom_lock);
+ 	port->blocked_open++;
+ 	while (1) {
+-		cli();
++		spin_lock_irq(&riscom_lock);
+ 		rc_out(bp, CD180_CAR, port_No(port));
+ 		CD = rc_in(bp, CD180_MSVR) & MSVR_CD;
+ 		rc_out(bp, CD180_MSVR, MSVR_RTS);
+ 		bp->DTR &= ~(1u << port_No(port));
+ 		rc_out(bp, RC_DTR, bp->DTR);
+-		sti();
++		spin_unlock_irq(&riscom_lock);
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		if (tty_hung_up_p(filp) ||
+ 		    !(port->flags & ASYNC_INITIALIZED)) {
+@@ -1040,7 +1041,7 @@ static void rc_close(struct tty_struct *
+ 	if (!port || rc_paranoia_check(port, tty->name, "close"))
+ 		return;
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	if (tty_hung_up_p(filp))
+ 		goto out;
+ 	
+@@ -1107,7 +1108,8 @@ static void rc_close(struct tty_struct *
+ 	}
+ 	port->flags &= ~(ASYNC_NORMAL_ACTIVE|ASYNC_CLOSING);
+ 	wake_up_interruptible(&port->close_wait);
+-out:	restore_flags(flags);
++out:	
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static int rc_write(struct tty_struct * tty, 
+@@ -1126,34 +1128,34 @@ static int rc_write(struct tty_struct * 
+ 	if (!tty || !port->xmit_buf)
+ 		return 0;
+ 
+-	save_flags(flags);
++	local_save_flags(flags);
+ 	while (1) {
+-		cli();		
++		spin_lock_irq(&riscom_lock);
+ 		c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
+ 					  SERIAL_XMIT_SIZE - port->xmit_head));
+ 		if (c <= 0) {
+-			restore_flags(flags);
++			spin_unlock_irqrestore(&riscom_lock, flags);
+ 			break;
+ 		}
+ 
+ 		memcpy(port->xmit_buf + port->xmit_head, buf, c);
+ 		port->xmit_head = (port->xmit_head + c) & (SERIAL_XMIT_SIZE-1);
+ 		port->xmit_cnt += c;
+-		restore_flags(flags);
++		spin_unlock_irqrestore(&riscom_lock, flags);
+ 
+ 		buf += c;
+ 		count -= c;
+ 		total += c;
+ 	}
+ 
+-	cli();
++	spin_lock_irq(&riscom_lock);
+ 	if (port->xmit_cnt && !tty->stopped && !tty->hw_stopped &&
+ 	    !(port->IER & IER_TXRDY)) {
+ 		port->IER |= IER_TXRDY;
+ 		rc_out(bp, CD180_CAR, port_No(port));
+ 		rc_out(bp, CD180_IER, port->IER);
+ 	}
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ 
+ 	return total;
+ }
+@@ -1169,7 +1171,7 @@ static void rc_put_char(struct tty_struc
+ 	if (!tty || !port->xmit_buf)
+ 		return;
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	
+ 	if (port->xmit_cnt >= SERIAL_XMIT_SIZE - 1)
+ 		goto out;
+@@ -1177,7 +1179,8 @@ static void rc_put_char(struct tty_struc
+ 	port->xmit_buf[port->xmit_head++] = ch;
+ 	port->xmit_head &= SERIAL_XMIT_SIZE - 1;
+ 	port->xmit_cnt++;
+-out:	restore_flags(flags);
++out:	
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static void rc_flush_chars(struct tty_struct * tty)
+@@ -1192,11 +1195,11 @@ static void rc_flush_chars(struct tty_st
+ 	    !port->xmit_buf)
+ 		return;
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	port->IER |= IER_TXRDY;
+ 	rc_out(port_Board(port), CD180_CAR, port_No(port));
+ 	rc_out(port_Board(port), CD180_IER, port->IER);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static int rc_write_room(struct tty_struct * tty)
+@@ -1231,9 +1234,9 @@ static void rc_flush_buffer(struct tty_s
+ 	if (rc_paranoia_check(port, tty->name, "rc_flush_buffer"))
+ 		return;
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	port->xmit_cnt = port->xmit_head = port->xmit_tail = 0;
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ 	
+ 	wake_up_interruptible(&tty->write_wait);
+ 	tty_wakeup(tty);
+@@ -1251,11 +1254,11 @@ static int rc_tiocmget(struct tty_struct
+ 		return -ENODEV;
+ 
+ 	bp = port_Board(port);
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	rc_out(bp, CD180_CAR, port_No(port));
+ 	status = rc_in(bp, CD180_MSVR);
+ 	result = rc_in(bp, RC_RI) & (1u << port_No(port)) ? 0 : TIOCM_RNG;
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ 	result |= ((status & MSVR_RTS) ? TIOCM_RTS : 0)
+ 		| ((status & MSVR_DTR) ? TIOCM_DTR : 0)
+ 		| ((status & MSVR_CD)  ? TIOCM_CAR : 0)
+@@ -1276,7 +1279,7 @@ static int rc_tiocmset(struct tty_struct
+ 
+ 	bp = port_Board(port);
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	if (set & TIOCM_RTS)
+ 		port->MSVR |= MSVR_RTS;
+ 	if (set & TIOCM_DTR)
+@@ -1290,7 +1293,7 @@ static int rc_tiocmset(struct tty_struct
+ 	rc_out(bp, CD180_CAR, port_No(port));
+ 	rc_out(bp, CD180_MSVR, port->MSVR);
+ 	rc_out(bp, RC_DTR, bp->DTR);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ 	return 0;
+ }
+ 
+@@ -1299,7 +1302,7 @@ static inline void rc_send_break(struct 
+ 	struct riscom_board *bp = port_Board(port);
+ 	unsigned long flags;
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	port->break_length = RISCOM_TPS / HZ * length;
+ 	port->COR2 |= COR2_ETC;
+ 	port->IER  |= IER_TXRDY;
+@@ -1309,7 +1312,7 @@ static inline void rc_send_break(struct 
+ 	rc_wait_CCR(bp);
+ 	rc_out(bp, CD180_CCR, CCR_CORCHG2);
+ 	rc_wait_CCR(bp);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static inline int rc_set_serial_info(struct riscom_port * port,
+@@ -1352,9 +1355,9 @@ static inline int rc_set_serial_info(str
+ 		port->closing_wait = tmp.closing_wait;
+ 	}
+ 	if (change_speed)  {
+-		save_flags(flags); cli();
++		spin_lock_irqsave(&riscom_lock, flags);
+ 		rc_change_speed(bp, port);
+-		restore_flags(flags);
++		spin_unlock_irqrestore(&riscom_lock, flags);
+ 	}
+ 	return 0;
+ }
+@@ -1435,7 +1438,7 @@ static void rc_throttle(struct tty_struc
+ 	
+ 	bp = port_Board(port);
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	port->MSVR &= ~MSVR_RTS;
+ 	rc_out(bp, CD180_CAR, port_No(port));
+ 	if (I_IXOFF(tty))  {
+@@ -1444,7 +1447,7 @@ static void rc_throttle(struct tty_struc
+ 		rc_wait_CCR(bp);
+ 	}
+ 	rc_out(bp, CD180_MSVR, port->MSVR);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static void rc_unthrottle(struct tty_struct * tty)
+@@ -1458,7 +1461,7 @@ static void rc_unthrottle(struct tty_str
+ 	
+ 	bp = port_Board(port);
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	port->MSVR |= MSVR_RTS;
+ 	rc_out(bp, CD180_CAR, port_No(port));
+ 	if (I_IXOFF(tty))  {
+@@ -1467,7 +1470,7 @@ static void rc_unthrottle(struct tty_str
+ 		rc_wait_CCR(bp);
+ 	}
+ 	rc_out(bp, CD180_MSVR, port->MSVR);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static void rc_stop(struct tty_struct * tty)
+@@ -1481,11 +1484,11 @@ static void rc_stop(struct tty_struct * 
+ 	
+ 	bp = port_Board(port);
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	port->IER &= ~IER_TXRDY;
+ 	rc_out(bp, CD180_CAR, port_No(port));
+ 	rc_out(bp, CD180_IER, port->IER);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ static void rc_start(struct tty_struct * tty)
+@@ -1499,13 +1502,13 @@ static void rc_start(struct tty_struct *
+ 	
+ 	bp = port_Board(port);
+ 	
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	if (port->xmit_cnt && port->xmit_buf && !(port->IER & IER_TXRDY))  {
+ 		port->IER |= IER_TXRDY;
+ 		rc_out(bp, CD180_CAR, port_No(port));
+ 		rc_out(bp, CD180_IER, port->IER);
+ 	}
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ /*
+@@ -1557,9 +1560,9 @@ static void rc_set_termios(struct tty_st
+ 	    tty->termios->c_iflag = old_termios->c_iflag)
+ 		return;
+ 
+-	save_flags(flags); cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	rc_change_speed(port_Board(port), port);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ 
+ 	if ((old_termios->c_cflag & CRTSCTS) &&
+ 	    !(tty->termios->c_cflag & CRTSCTS)) {
+@@ -1648,11 +1651,10 @@ static void rc_release_drivers(void)
+ {
+ 	unsigned long flags;
+ 
+-	save_flags(flags);
+-	cli();
++	spin_lock_irqsave(&riscom_lock, flags);
+ 	tty_unregister_driver(riscom_driver);
+ 	put_tty_driver(riscom_driver);
+-	restore_flags(flags);
++	spin_unlock_irqrestore(&riscom_lock, flags);
+ }
+ 
+ #ifndef MODULE
+
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-
---===============0902822915==--
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
