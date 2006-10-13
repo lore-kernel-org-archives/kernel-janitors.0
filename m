@@ -1,28 +1,26 @@
-From: Andi Drebes <lists-receive@programmierforen.de>
-Date: Wed, 11 Oct 2006 16:11:21 +0000
-Subject: [KJ] [PATCH] include/asm-i386/a.out.h: Comment correction
-Message-Id: <200610111811.21503.lists-receive@programmierforen.de>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Fri, 13 Oct 2006 13:05:18 +0000
+Subject: Re: [KJ] [PATCH] include/asm-i386/a.out.h: Comment correction
+Message-Id: <20061013150518.4674648f@lucky.kitzblitz>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200610111811.21503.lists-receive@programmierforen.de>
+In-Reply-To: <200610111811.21503.lists-receive@programmierforen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The header is protected against double inclusion. The comment at the end didn't match the preprocessor definition used at the top.
+* Andi Drebes <lists-receive@programmierforen.de>:
+> The header is protected against double inclusion. The comment
+> at the end didn't match the preprocessor definition used at
+> the top.
 
-Signed-off-by: Andi Drebes <webmaster@programmierforen.de>
+I just spotted another two of these, in include/net/ip_fib.h
+and arch/ppc/boot/include/serial.h. Are you currently working
+on more of these?
 
----
-diff --git a/include/asm-i386/a.out.h b/include/asm-i386/a.out.h
-index ab17bb8..7055799 100644
---- a/include/asm-i386/a.out.h
-+++ b/include/asm-i386/a.out.h
-@@ -23,4 +23,4 @@ #define STACK_TOP     TASK_SIZE
-
- #endif
-
--#endif /* __A_OUT_GNU_H__ */
-+#endif /* __I386_A_OUT_H__ */
+Cheers,
+n.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
