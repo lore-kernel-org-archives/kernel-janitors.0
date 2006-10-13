@@ -1,46 +1,25 @@
-From: Pavel Machek <pavel@suse.cz>
-Date: Wed, 11 Oct 2006 20:30:02 +0000
-Subject: Re: [KJ] most users of msleep_interruptible are broken
-Message-Id: <20061011203001.GB3935@ucw.cz>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Fri, 13 Oct 2006 17:53:05 +0000
+Subject: [KJ] Is documentation in the kernel code desired?
+Message-Id: <200610131953.05746.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1160570743.19143.307.camel@amol.verismonetworks.com> <1160571491.3000.372.camel@laptopd505.fenrus.org> <20061011141651.GD27388@parisc-linux.org>
-In-Reply-To: <20061011141651.GD27388@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>
-Cc: Arjan van de Ven <arjan@infradead.org>, Amol Lad <amol@verismonetworks.com>, kernel Janitors <kernel-janitors@lists.osdl.org>, linux kernel <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-Hi!
+Hi everybody!
+I'm currently going through some code in the kernel to understand how things 
+work. I have to admit that some pieces are poorly documented. Especially for 
+kernel newbies like me, documentation in the code could help a lot.
+I think that some lines of documentation at the top of important functions 
+would be nice. I'm asking, because I don't know if documentation in the code 
+is really desired as it blows up the code and requires changes in the 
+documentation, too if the code is modified.
+Code-documentation could also be a nice project for the kernel-janitors.
 
-> > > +++ linux-2.6.19-rc1/drivers/mmc/mmc.c	2006-10-11 17:57:02.000000000 +0530
-> > > @@ -454,7 +454,7 @@ static void mmc_deselect_cards(struct mm
-> > >  static inline void mmc_delay(unsigned int ms)
-> > >  {
-> > >  	if (ms < HZ / 1000) {
-> > > -		yield();
-> > > +		cond_resched();
-> > >  		mdelay(ms);
-> > 
-> > 
-> > this probably wants msleep(), especially with hrtimers comming up; there
-> > the sleeps are always exact...
-> 
-> They clearly don't care about exactness; they msleep_interruptible and
-> throw away the return value, so they don't know how long they slept
-> before they got a signal.
-> 
-> __must_check treatment for msleep_interruptible, anyone?  On the one hand,
-> that's 136 new warnings.  On the other hand, that's 136 places wheree
-> we may as well *delete the call* to msleep_interruptible.  Since it can
-> return immediately, the code must be prepared to deal with that ... right?
-
-Well, it must work, but it may busyloop instead of sleeping. This does
-not look like must_check to me.
-						Pavel
-
--- 
-Thanks for all the (sleeping) penguins.
+	Regards,
+		Andi
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
