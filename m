@@ -1,15 +1,15 @@
-From: "Vociferates S. David" <cbrooks@grmi.org>
-Date: Tue, 10 Oct 2006 12:35:46 +0000
+From: "Contributes D. Imponderable" <magicdice@global-vitis.com>
+Date: Fri, 13 Oct 2006 03:54:49 +0000
 Subject: [KJ] Replica Watches
-Message-Id: <6531241256.20061010081821@grmi.org>
+Message-Id: <3929798731.20061012234444@global-vitis.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1846481170=="
+Content-Type: multipart/mixed; boundary="===============1449252247=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0842430974.20060826084326@goalsnetwork.com>
 In-Reply-To: <0842430974.20060826084326@goalsnetwork.com>
 To: kernel-janitors@vger.kernel.org
 
---===============1846481170==
+--===============1449252247==
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
@@ -35,14 +35,14 @@ Rolex
 Vacheron constantin 
 And more for a fraction of the price!
 
-http://5jtabrtuaeai65n3s5nlan5n./
+http://gcml42m537ltzyyelggwlyyg./
 
 Also the cool thing about replicas is the fact that for the price of one original watch you can buy many replicas :)
 dfglirsjiel WldBWlBdH1lVW1hGXEZGcV5aR0FCHFxHUV0cXEZS
 
 
 
---===============1846481170==
+--===============1449252247==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,4 +53,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1846481170==--
+--===============1449252247==--
