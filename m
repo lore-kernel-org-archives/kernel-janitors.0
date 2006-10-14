@@ -1,43 +1,26 @@
-From: Greg KH <greg@kroah.com>
-Date: Wed, 18 Oct 2006 21:23:36 +0000
-Subject: Re: [KJ] [PATCH 2.6.19-rc2] drivers/usb/serial/mos7840.c: check
-Message-Id: <20061018212336.GB5206@kroah.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Sat, 14 Oct 2006 18:41:20 +0000
+Subject: Re: [KJ] [PATCH]
+Message-Id: <1160851280.5732.34.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061015225513.f35312ec.amit2030@gmail.com>
-In-Reply-To: <20061015225513.f35312ec.amit2030@gmail.com>
+References: <1160739628.19143.376.camel@amol.verismonetworks.com>
+	 <1160835602.5732.30.camel@localhost.localdomain>
+	 <20061014174936.GN11633@parisc-linux.org>
+In-Reply-To: <20061014174936.GN11633@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Amol Lad <amol@verismonetworks.com>, kernel Janitors <kernel-janitors@lists.osdl.org>, linux kernel <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 16, 2006 at 11:33:50PM -0700, Amit Choudhary wrote:
+Ar Sad, 2006-10-14 am 11:49 -0600, ysgrifennodd Matthew Wilcox:
+> Only broken on SMP ...
 > 
-> 
-> 
-> > > @@ -475,6 +475,14 @@ static int mos7840_get_reg(struct moschi
-> > >  	int ret = 0;
-> > >  	buffer = (__u8 *) mcs->ctrl_buf;
-> > >  
-> > > +	/* The memory for ctrl_buf is allocated in
-> > > +	 * mos7840_startup(), but it is not checked if
-> > > +	 * kmalloc failed. So, mcs->ctrl_buf might be NULL.
-> > > +	 * So, it should be checked here.
-> > > +	 */
-> > > +	if (!buffer)
-> > > +		return -ENOMEM;
-> > 
-> > Why not just check it in the startup function instead?
-> 
-> After looking at the code, I inferred that it can still proceed if ctrl_buf is NULL because
-> ctrl_buf is referenced only in mos7840_get_reg(). But please let me know if this is not the right
-> way.
+> I wouldn't mind writing a new driver (using the serial core) if someone
+> wants to send me one.  I need a multiport serial card anyway ...
 
-Nah, just error out in the beginning when the buffer is created.  It
-makes is simpler to handle the low memory condition.
+You still have ISA bus ?
 
-thanks,
-
-greg k-h
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
