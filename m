@@ -1,71 +1,98 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Wed, 04 Oct 2006 02:15:00 +0000
-Subject: Re: [KJ] [PATCH] Check kmalloc() return value
-Message-Id: <20061003191500.e083d246.rdunlap@xenotime.net>
+From: Andi Drebes <webmaster@programmierforen.de>
+Date: Sun, 15 Oct 2006 20:39:50 +0000
+Subject: [KJ] [PATCH] drivers/ata/sata_svw.c: Compiler-noise reduction
+Message-Id: <200610152239.50411.webmaster@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9a8748490609280141p49413782l66fd266aa076a877@mail.gmail.com>
-In-Reply-To: <9a8748490609280141p49413782l66fd266aa076a877@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 28 Sep 2006 12:18:35 +0300 Galya Tcharny wrote:
+During the compilation of the latest kernel-source from the git repository, I 
+got those warnings:
 
-> On 9/28/06, Jesper Juhl <jesper.juhl@gmail.com> wrote:
-> > On 28/09/06, Galya Tcharny <gtcharny@gmail.com> wrote:
-> > > Added checks for kmalloc() return value.
-> > >
-> > The patch also seems to be whitespace damaged somehow. Your lines are
-> > not properly indented - at least not the copy my mail client gives me.
-> >
-> 
-> Thanks for your suggestions. Please find below fixed version.
-> 
->  drivers/net/au1000_eth.c |    5 ++++-
->  drivers/net/s2io.c       |    3 +++
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff
-> linux-2.6.18-orig/drivers/net/au1000_eth.c
-> linux-2.6.18/drivers/net/au1000_eth.c
-> --- linux-2.6.18-orig/drivers/net/au1000_eth.c	2006-09-27
-> 14:51:31.000000000 +0300
-> +++ linux-2.6.18/drivers/net/au1000_eth.c	2006-09-28 12:10:30.000000000 +0300
-> @@ -717,7 +717,10 @@ static struct net_device * au1000_probe(
->  	aup->mii_bus.name = "au1000_eth_mii";
->  	aup->mii_bus.id = aup->mac_id;
->  	aup->mii_bus.irq = kmalloc(sizeof(int)*PHY_MAX_ADDR, GFP_KERNEL);
-> -	for(i = 0; i < PHY_MAX_ADDR; ++i)
-> +	if (aup->mii_bus.irq = NULL) {
-> +		goto err_out;
-> +	}
-> +	for (i = 0; i < PHY_MAX_ADDR; ++i)
->  		aup->mii_bus.irq[i] = PHY_POLL;
-> 
->  	/* if known, set corresponding PHY IRQs */
-> diff -uprN -X linux-2.6.18-orig/Documentation/dontdiff
-> linux-2.6.18-orig/drivers/net/s2io.c linux-2.6.18/drivers/net/s2io.c
-> --- linux-2.6.18-orig/drivers/net/s2io.c	2006-09-27 14:51:33.000000000 +0300
-> +++ linux-2.6.18/drivers/net/s2io.c	2006-09-28 12:07:54.000000000 +0300
-> @@ -624,6 +624,9 @@ static int init_shared_mem(struct s2io_n
->  			rx_blocks->rxds = kmalloc(sizeof(rxd_info_t)*
->  						  rxd_count[nic->rxd_mode],
->  						  GFP_KERNEL);
-> +			if (rx_blocks->rxds = NULL) {
-> +				return -ENOMEM;
-> +			}
->  			for (l=0; l<rxd_count[nic->rxd_mode];l++) {
->  				rx_blocks->rxds[l].virt_addr >  					rx_blocks->block_virt_addr +
+drivers/ata/sata_svw.c: In function `k2_sata_tf_load':
+drivers/ata/sata_svw.c:114: warning: passing arg 2 of `writeb' makes pointer from integer without a cast
+drivers/ata/sata_svw.c:119: warning: passing arg 2 of `writew' makes pointer from integer without a cast
+...
+drivers/ata/sata_svw.c:133: warning: passing arg 2 of `writeb' makes pointer from integer without a cast
+drivers/ata/sata_svw.c: In function `k2_sata_tf_read':
+drivers/ata/sata_svw.c:145: warning: passing arg 1 of `readw' makes pointer from integer without a cast
+drivers/ata/sata_svw.c:146: warning: passing arg 1 of `readw' makes pointer from integer without a cast
+...
+drivers/ata/sata_svw.c:150: warning: passing arg 1 of `readw' makes pointer from integer without a cast
 
-Along with Jesper's comments, kernel style is only to use
-braces around an if-block when the block is more than one
-statement long -- not used when it's only one statement.
+readw and writeb take a volatile void __iomem*, but the variables that are passed in k2_sata_tf_load
+and k2_sata_tf_read to writeb/readb are unsigned longs. Should the definition in libata.h be changed?
 
-Hm, maybe we need to add that to Documentation/CodingStyle.
+Here's a patch that reduces the noise during compilation. I'm not sure if this is the right way. The patch
+is only tested by compilation (I don't have any SATA hardware here).
+
+Signed-off-by: Andi Drebes <webmaster@programmierforen.de>
 
 ---
-~Randy
+diff --git a/drivers/ata/sata_svw.c b/drivers/ata/sata_svw.c
+index db32d15..502cf70 100644
+--- a/drivers/ata/sata_svw.c
++++ b/drivers/ata/sata_svw.c
+@@ -111,26 +111,26 @@ static void k2_sata_tf_load(struct ata_p
+ 	unsigned int is_addr = tf->flags & ATA_TFLAG_ISADDR;
+ 
+ 	if (tf->ctl != ap->last_ctl) {
+-		writeb(tf->ctl, ioaddr->ctl_addr);
++		writeb(tf->ctl, (void __iomem*)ioaddr->ctl_addr);
+ 		ap->last_ctl = tf->ctl;
+ 		ata_wait_idle(ap);
+ 	}
+ 	if (is_addr && (tf->flags & ATA_TFLAG_LBA48)) {
+-		writew(tf->feature | (((u16)tf->hob_feature) << 8), ioaddr->feature_addr);
+-		writew(tf->nsect | (((u16)tf->hob_nsect) << 8), ioaddr->nsect_addr);
+-		writew(tf->lbal | (((u16)tf->hob_lbal) << 8), ioaddr->lbal_addr);
+-		writew(tf->lbam | (((u16)tf->hob_lbam) << 8), ioaddr->lbam_addr);
+-		writew(tf->lbah | (((u16)tf->hob_lbah) << 8), ioaddr->lbah_addr);
++		writew(tf->feature | (((u16)tf->hob_feature) << 8), (void __iomem*)ioaddr->feature_addr);
++		writew(tf->nsect | (((u16)tf->hob_nsect) << 8), (void __iomem*)ioaddr->nsect_addr);
++		writew(tf->lbal | (((u16)tf->hob_lbal) << 8), (void __iomem*)ioaddr->lbal_addr);
++		writew(tf->lbam | (((u16)tf->hob_lbam) << 8), (void __iomem*)ioaddr->lbam_addr);
++		writew(tf->lbah | (((u16)tf->hob_lbah) << 8), (void __iomem*)ioaddr->lbah_addr);
+ 	} else if (is_addr) {
+-		writew(tf->feature, ioaddr->feature_addr);
+-		writew(tf->nsect, ioaddr->nsect_addr);
+-		writew(tf->lbal, ioaddr->lbal_addr);
+-		writew(tf->lbam, ioaddr->lbam_addr);
+-		writew(tf->lbah, ioaddr->lbah_addr);
++		writew(tf->feature, (void __iomem*)ioaddr->feature_addr);
++		writew(tf->nsect, (void __iomem*)ioaddr->nsect_addr);
++		writew(tf->lbal, (void __iomem*)ioaddr->lbal_addr);
++		writew(tf->lbam, (void __iomem*)ioaddr->lbam_addr);
++		writew(tf->lbah, (void __iomem*)ioaddr->lbah_addr);
+ 	}
+ 
+ 	if (tf->flags & ATA_TFLAG_DEVICE)
+-		writeb(tf->device, ioaddr->device_addr);
++		writeb(tf->device, (void __iomem*)ioaddr->device_addr);
+ 
+ 	ata_wait_idle(ap);
+ }
+@@ -142,12 +142,12 @@ static void k2_sata_tf_read(struct ata_p
+ 	u16 nsect, lbal, lbam, lbah, feature;
+ 
+ 	tf->command = k2_stat_check_status(ap);
+-	tf->device = readw(ioaddr->device_addr);
+-	feature = readw(ioaddr->error_addr);
+-	nsect = readw(ioaddr->nsect_addr);
+-	lbal = readw(ioaddr->lbal_addr);
+-	lbam = readw(ioaddr->lbam_addr);
+-	lbah = readw(ioaddr->lbah_addr);
++	tf->device = readw((void __iomem*)ioaddr->device_addr);
++	feature = readw((void __iomem*)ioaddr->error_addr);
++	nsect = readw((void __iomem*)ioaddr->nsect_addr);
++	lbal = readw((void __iomem*)ioaddr->lbal_addr);
++	lbam = readw((void __iomem*)ioaddr->lbam_addr);
++	lbah = readw((void __iomem*)ioaddr->lbah_addr);
+ 
+ 	tf->feature = feature;
+ 	tf->nsect = nsect;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
