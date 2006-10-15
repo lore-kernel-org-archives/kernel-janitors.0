@@ -1,8 +1,10 @@
 From: Andi Drebes <webmaster@programmierforen.de>
-Date: Sun, 15 Oct 2006 20:07:21 +0000
+Date: Sun, 15 Oct 2006 20:07:40 +0000
 Subject: Re: [KJ] [PATCH] drivers/acpi/events/evmisc.c: Compiler-noise
-Message-Id: <200610152207.21550.webmaster@programmierforen.de>
+Message-Id: <200610152207.40919.webmaster@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200610152207.21550.webmaster@programmierforen.de>
+In-Reply-To: <200610152207.21550.webmaster@programmierforen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
