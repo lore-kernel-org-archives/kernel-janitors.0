@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Sun, 15 Oct 2006 17:36:10 +0000
+From: Nishanth Aravamudan <nacc@us.ibm.com>
+Date: Sun, 15 Oct 2006 19:26:28 +0000
 Subject: Re: [KJ] Is documentation in the kernel code desired?
-Message-Id: <20061015103610.e53523d9.rdunlap@xenotime.net>
+Message-Id: <20061015192628.GI10744@us.ibm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200610131953.05746.lists-receive@programmierforen.de>
 In-Reply-To: <200610131953.05746.lists-receive@programmierforen.de>
@@ -10,8 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 15 Oct 2006 11:27:36 -0400 Chris Smith wrote:
-
+On 15.10.2006 [11:27:36 -0400], Chris Smith wrote:
 > On 10/13/06, Randy Dunlap <rdunlap@xenotime.net> wrote:
 > > On Fri, 13 Oct 2006 19:53:05 +0200 Andi Drebes wrote:
 > >
@@ -32,33 +31,44 @@ On Sun, 15 Oct 2006 11:27:36 -0400 Chris Smith wrote:
 > 
 > As I've been putting .5 hours/day into reading the LKML and LWN etc.,
 > what I really want to see is
+
+TBH, 30 minutes a day isn't going to cut it, unless you're just treading
+subject lines on LKML (and even then, only on low-volume days).
+
 > a) A better documented object model.  Something doxygen-esque pulled
 > out of the kernel headers would be teh r0x0rz, particularly if the
 > output reflected obviously the .config used against that particular
 > run
+
+There is the source, after all (which was the start of this thread, more
+comments in the source). And various files in
+Documentation/driver-model, which is probably the most
+developed-as-an-object-model object-model that I can think of in the
+kernel right now.
+
+I'm not sure, though, what you want documented in a).
+
 > b) More clear peripheral tool documentation.  Kbuild has some good
 > stuff, but try this experiment: get someone who has, say, run a Gentoo
 > system (i.e. knows their way around a command line) and say, "Build me
 > the latest -mm kernel" and watch them not have a smooth experience.
 
-Not knowing anything about gentoo, is that a gentoo-specific
-"problem"?  AFAIK, anyone can use ketchup or the script that I
-use (http://www.xenotime.net/linux/scripts/grab-kernel-rc)
-to grab any specified -mm or mainline kernel (with or without
--rcN or -mmN or -gitN) with ease.  So is it a build problem?
-Oh, something to do with the gentoo sandbox?
+There is Documentation/applying-patches.txt, as well as the tools that
+Randy mentioned. Gentoo user != kernel developer, btw.
 
 > c) A little more coherence on the LKML.  I'm not at the point of
 > trying to pluck patches and try them out, but I wouldn't even really
 > want to try.  The organization scheme for the kernel community is
 > rather mystical. ;)
 
-LKML is overused and abused IMO.  I'd prefer to see usb stuff
-on the usb mailing lists, ATA stuff on linux-ide, memory mgt
-stuff on linux-mm, SCSI on linux-scsi, etc etc etc.... for
-development work.  For user bug reports, I think that having
-one mailing list is a good idea, such as lkml, or using
-bugzilla.kernel.org.
+It works for most :) Yes, as Randy said separately, it would be nice if
+devlopment discussions stuck to the appropriate list, but there is
+sufficient (and sometimes necessary) cross-development that often things
+spillover.
+
+As far as plucking patches go, it requires some finesse, but that's what
+the tools are for: git, mercurial and quilt, to name a few (there's also
+akpm's patch-scripts, which quilt is based on).
 
 > My point is that the current situation filters out all but the
 > hardiest.  Maybe I'm just a little slow, and maybe keeping out the
@@ -66,10 +76,17 @@ bugzilla.kernel.org.
 > Lunacy Cruise next summer will help.  You really have to want to do
 > this kernel stuff.
 
-I easily agree with the latter part.
+Yes, and if you want do more than lurk, then you probably need to
+dedicate yourself to one subsystem for a while, unless you're someone
+like Andrew or Randy, who are able to keep tabs on multiple things at
+the same time (in Andrew's case, way more than I ever though possible).
 
----
-~Randy
+Thanks,
+Nish
+
+-- 
+Nishanth Aravamudan <nacc@us.ibm.com>
+IBM Linux Technology Center
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
