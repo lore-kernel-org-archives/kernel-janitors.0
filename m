@@ -1,358 +1,322 @@
-From: Amol Lad <amol@verismonetworks.com>
-Date: Fri, 13 Oct 2006 11:52:28 +0000
-Subject: [KJ] [PATCH] drivers/char/riscom8.c: save_flags()/cli()/sti()
-Message-Id: <1160739628.19143.376.camel@amol.verismonetworks.com>
+From: "Editors" <hsxtqwla@thedailycamera.com>
+Date: Sun, 15 Oct 2006 16:37:09 +0000
+Subject: in
+Message-Id: <001101c6f078$28b3c690$4a518156@FAMILYROOM>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0819093515=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+--===============0819093515==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_000D_01C6F080.8A782E90"
+
+------=_NextPart_000_000D_01C6F080.8A782E90
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_000E_01C6F080.8A782E90"
+
+
+------=_NextPart_001_000E_01C6F080.8A782E90
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+History Boysbbc Phil Gordos st Helens historic am Extras Ashes urn heads =
+given vip treatment as.
+Features discover Included sample file After open this see or youself in =
+we know that.
+Medium small font There are more easy use speed am up features discover.
+Unionrugby Other Saysport Fitnessfun Related Sites Weather Last Updated =
+a Sunday is.
+League Anderson is salutes Saints Tennis or Davydenko edges Safin Moscow =
+of sets is.
+Our users Dont favorite Raging Bull Million or Dollar Baby is Hustler a =
+Cinderella man Worlds Fastest in Indian.
+Dont favorite Raging Bull a Million Dollar Baby Hustler Cinderella of =
+man Worlds Fastest Indian is Setup Snatch Flklypa Grand Prix Lagaan.
+Four wickets icc am Champions or Trophy Jaipur Match scorecard a =
+Football Newcastle Bolton.
+Series Cricket happened Paceman Bond ruled Kiwis League is Anderson =
+salutes Saints of Tennis.
+With various special in symbols in and print out am can choose big =
+medium is small font in There are more easy use speed a.
+Seven days a section schedule bc Products Services Daily weekly emails =
+am Mobiles Tools of Feeds Television Downloads Homepage Athletics!
+
+------=_NextPart_001_000E_01C6F080.8A782E90
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>History Boysbbc Phil Gordos st Helens =
+historic am=20
+Extras Ashes urn heads given vip treatment as.<BR>Features discover =
+Included=20
+sample file After open this see or youself in we know that.<BR>Medium =
+small font=20
+There are more easy use speed am up features discover.<BR>Unionrugby =
+Other=20
+Saysport Fitnessfun Related Sites Weather Last Updated a Sunday =
+is.<BR>League=20
+Anderson is salutes Saints Tennis or Davydenko edges Safin Moscow of =
+sets=20
+is.<BR>Our users Dont favorite Raging Bull Million or Dollar Baby is =
+Hustler a=20
+Cinderella man Worlds Fastest in Indian.<BR>Dont favorite Raging Bull a =
+Million=20
+Dollar Baby Hustler Cinderella of man Worlds Fastest Indian is Setup =
+Snatch=20
+Flklypa Grand Prix Lagaan.<BR>Four wickets icc am Champions or Trophy =
+Jaipur=20
+Match scorecard a Football Newcastle Bolton.<BR>Series Cricket happened =
+Paceman=20
+Bond ruled Kiwis League is Anderson salutes Saints of Tennis.<BR>With =
+various=20
+special in symbols in and print out am can choose big medium is small =
+font in=20
+There are more easy use speed a.<BR>Seven days a section schedule bc =
+Products=20
+Services Daily weekly emails am Mobiles Tools of Feeds Television =
+Downloads=20
+Homepage Athletics!</FONT></DIV>
+<DIV><IMG alt=3D"" hspace=3D0 =
+src=3D"cid:000c01c6f078$28b3c690$4a518156@FAMILYROOM"=20
+align=3Dbaseline border=3D0></DIV></BODY></HTML>
+
+------=_NextPart_001_000E_01C6F080.8A782E90--
+
+------=_NextPart_000_000D_01C6F080.8A782E90
+Content-Type: image/gif;
+	name="write.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <000c01c6f078$28b3c690$4a518156@FAMILYROOM>
+
+R0lGODlh4AEEAvcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8EAgAGAgAIAgAKAgAMAg
+AOAgAABAACBAAEBAAGBAAIBAAKBAAMBAAOBAAABgACBgAEBgAGBgAIBgAKBgAMBgAOBgAACAACCA
+AECAAGCAAICAAKCAAMCAAOCAAACgACCgAECgAGCgAICgAKCgAMCgAOCgAADAACDAAEDAAGDAAIDA
+AKDAAMDAAODAAADgACDgAEDgAGDgAIDgAKDgAMDgAODgAAAAQCAAQEAAQGAAQIAAQKAAQMAAQOAA
+QAAgQCAgQEAgQGAgQIAgQKAgQMAgQOAgQABAQCBAQEBAQGBAQIBAQKBAQMBAQOBAQABgQCBgQEBg
+QGBgQIBgBKBgQMBgQOBgQACAQCCAQECAQGCAQICAQKCAQMCAQOCAQACgQCCgQECgQGCgQICgQKCg
+QMCgQOCgQADAQCDAQEDAQGDAQIDAQKDAQMDAQODAQADgQCDgQEDgQGDgQIDgQKDgQMDgQODgQAAA
+gCAAgEAAgGAAgIAAgKAAgMAAgOAAgAAggCAggEAggGAggIAggKAggMAggOAggABAgCBAgEBAgGBA
+gIBAgKBAgMBAgOBAgABggCBggEBggGBggIBggKBggMBggOBggACAgCCAgECAgGCAgICAgKCAgMCA
+gOCAgACggCCggECggGCggICggKCggMCggOCggADAgCDAgEDAgGDAgIDAgKDAgMDAgODAgADggCDg
+gEDggGDggIDggKDggMDggODggAAAwCAAwEAAwGAAwIAAwKAAwMAAwOAAwAAgwCAgwEAgwGAgwIAg
+wKAgwMAgwOAgwABAwCBAwEBAwGBAwIBAwKBAwMBAwOBAwABgwCBgwEBgwGBgwIBgwKBgwMBgwOBg
+wACAwCCAwECAwGCAwICAwKCAwMCAwOCAwACgwCCgwECgwGCgwICgwKCgwMCgwOCgwADAwCDAwEDA
+wGDAwIDAwKDAwP/78KCgpICAgP8AAAD/AP//AAAA//8A/wD//////ywAAAAA4AEEAgAI/wD/CRxI
+sKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzp0J7LlzBjypxJs6bN
+mzhz6tzJs6fPn0CDCh1KtKjRo0iTKl3KtKnTp1CjSp1KtarVqzpZat3KtavXr2DDih1LtqzZs2jT
+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
+6asXFU2jMTEq6jrnAlgEmShFBRUxQ9IZi8dkFpeOxDErk8FbdtK3Obhx0Y+AlCJdOoecrPmkjCLK
+XyANpka+bQp+Z1RZg3ymHEqOTV1R/J9nOom7Ty7xXpgEnfre9htN3u2NTmNkFRe4vUu9slCk9KQS
+tzi3sY3RdJvkzsCeKEtbqU2UfByjuoKJNltOJZGCvEzKnmlEyGj/kYyPPJ8QT8ih043EWaTxXBd3
+uKBtkpB9Iawmhk43uWxp0DHdXNfcZJVJDUooMi8s5zoZ50529St0iIvnPa+JTejNjlL22165ErpQ
+hs6moEY6aJsaSqqJVpR1BOWRRTWKo3ds1KMLfaj0MDqud4zUpCdFaU1w5D2JflRL7+ioS2U6vZDq
+y3uZapMJTzinlDKppD0FalCF2qQCGvOAmILYi4aKnp8u1alPdd2j8MnKDaFTgsokpvpmulWudpV7
+n4LcFSsJS+uwz6tnRatLmZk3YEqGjXNspFbTOle6am+t0mrrwWplNyvW1a9/dR7aIpNXa94yrvMC
+bGIVa9B6LmuG/yxEFuhCSDkHLdayl+1RSKMHVc521rOf7R8tQTta0pbWtKdFbWpVe1rMtta1r63N
+amU7W9rW1ra3xW1udbtb3vbWt6qFbXCFO1ziFte4x0VucpXrvN8217nPLeNypTtd6raWE9XFbna1
+u13XQte73wWvzbg7XvKW17znRW961bve8oXXve+Fb3zlO1+TxoO+98VvflnLXv7217//BfCV9Dtg
+AkM3wAdGsEMLvGAGN9jBD4ZwhCU8YQkn2MIXxnCGNVwjfmw4etzwsO/40eGBkNg2JibIiFWMIhSX
+eMVVGnGKTaziDtO4xfagcYh1HOMS4+bGNzbRj1MM4xmTGMhH1v9xknHcYxy/uMlGHrKTl+yQF9fY
+xUWuMY+ZPOUny9jIPJ7xkr88Zi83xMpnDoyQP1JlMUtZyeeFMpet3OMw/zjHdY6zmM285iHLmct+
+xvOWAZ0SNM+Zz1Q+dJu3DOQ3czfOdY5ypBG9Zzp7OcZatjOm7xzmSnf6zzZu8qGhTGZBl3rQi240
+bM1jY0O3+tSU7rOeTR1qNXOayq6GtKCPjOJHfzrWv0a1rVtMYWKzitevxnWigx3rY6t5yraWdbRd
+zWxY//nZ1FY2svtM4mJ3m0nNdnK4q3zsW+e5y+cO9a9JLW4sG/rc425xvC0N7Hm/u95TFioovJ3b
+CzN6R/sGeKr/aeNvgS9WswVHcMARnmH5Lpyi+AOg/IJHPvY67HK5mYxZ5eQWzF1cWWNCFVsNSL//
+CRB22VNguPYdPkCSHEmLot9eTz5BuRJK4mBKFY4AnvEnjm6Rj+vhFEsosYfBcoKN+zgR26k5cdaw
+qvwKiwdVKDnHautwMmQcxA/UTbLQEFbd2tDO37ovUGZxaEocXDQ/g9Vfmt2d3Lu5NXVGzY2JPJmq
+QSaE+MYnKC6Tr31XOXwVSrVBgu2bIZN75UJGMWaBDa5vFI3xLpf4sB1HbGPPYxOFqTo/fmrtljEl
+6C3WEfTi0pjKRFcqE78wo8XSfy3/2ldJePnDjr6NE/Ol5ut4/3dLHnDulUci2UiT8ok6zO1bRD3j
+nVl75EdNm8BbJVWDX8hjhv75lQz+7rFPe7OLvvkY6iVcdi7Zf3GwNOzU6VsviEPpf9ymL6Q6Vc/p
+ws+l8OkxL2bqKLv0Ym29/t/fpNUgHM2BD0W6qPf6r5QjIOJjIIwbOYc7LwVswIkzFAZEr4ODQP4y
+jzagrQz0QOHCQNkLOQfEEuKzwElRkUfhnYgaDICDIBihOBI0lAkUQcMquaOSK8likx1MwcpBQZeb
+PRmMwR/MQfqynZVqqQQSwhz8HjixOSKsQKRaH/CBQSAMrq55OxG6p6DxIG7KQq6zIWrpoS70F02x
+KmHhv2TJlv9w8haUiZCq+6ZSebsYUrqqwroynKr1g6GuwzojHB7GSztQCqOs0puyAbxTMiddijnN
+G0S+wgpEgru7ecO7qw512hvLw7vGwKW+4i40GiIviiVPNCSny7zt86bOg73tC0K608Sf44+9wxyR
+eRm8yqpKzKU70qufu6tRPEGGMj64YhoPEY7H4xj5ayRM3EVV9JOqaSYmssHYM4zVK0ZKLBw2QsZo
+miZEbMYDFLw/TCJhkSaxckTIsz3mOMTkI0RnBCNJNL1gxEbmm0ZYPL/oUETum5pm7MXEWqcLcZx9
+dCwf3Kmqg6xb9McgPJkBRJp+uqV/CqcWopj8I5xYXJfMwbr/fdI9epzEFnJFfdqYg/zAKMnHB/zI
+kWSYkCwnkjSvEETJlWwv2WLJl5SN2qI5k9u4mXTGJaTB+mEolrIStkMSoMrJ+VFCmpQ4o8MpnaTJ
+GaTAKhxKa0mVsFGsgkIoJCTKJqzBqzwURDEonJQqPoFBkxQMJbkAcvkRdHrIZwnDFbqgLtRDC7K6
+NBQhG7ohOPwcHsohpHtD/ks69rO/tYysefIntixIvDw6fFkhndG/f3TDHUqeX+Q9ezHHdDy+yYTG
+zeM9nBrEirlEjpG5qslELKpHsgNAdLxMrwRI5Ss6rcHGLgqM2lIkUhwkRTxFhEzFtqNGuIEi9SMZ
+V2oXOIpI/40BIXbURWjqI4RUu2RsvIi0Se5IHFiUyAgSw49wTbXrGVo0xNNAztqMPsvEI9t0znQq
+GsKjPmAame5km3bsvmEkubjrTS5kRL9LpYYASm+szEKMzMekTMLDPe2rR/2kG828zWCimWfCR63R
+TmAkTnXkvuYc0Hdc0MbkkalTDQzSv6/7QgI0nXHSuzIszsjSwS00jrhhJx+cp9IJTIosP/erJwZh
+wy9qvf4jP+gUFAbNSJHRwqDrm57yErDkLyfsQZhcSpb00SQE0n9zwSNF0iRV0iUtrSJ10q1i0iiV
+0hF50iq10ivF0izV0i3l0i710i/NjSkV0zEl0zI1U5wB0/80/Z0zZdM2dQmG6gQ1ldM5pdM6tdPo
+2YYScVO+AJk+9VMA2NNAFdRBJdRCNdRDRdREVdRFZVS+uNNHhdRIRatGVdRpoNRLxVTQktRNlRKV
+5FQTyVQS+dRRNRJPJdXbCFVTnQ0FYFVWtYdWdVVYJQhXHQhardVZxdVWfdWGUICUkNVZtdVX1VVY
+7VVczVVeBdZY/VVe1dVaLVZh7VVbLdZldVZlbVZhTdZnJVZoxdZbrdZn7dZwvVZphVZwFVdjNdcu
+NY903VVvbVdpBVdtRVd3bVeHkNd6nVZf/Yh4rdd3tVfBYNdgnVZ5Zdd+NVZgPVh+Rdd7LVh4ddeB
+PVZ6JVf/by3WVM2oFAnYhL3VaO3Xe/XXjtXXjf3XjP3XiBXZkt3XkGVYf23YkKXYh0XWec3Xgt1V
+juVYZL3Zm31ZfOXZNF3XZfXYma3ZkR3anaVXjTXXgVVYZpVVfk1XajVYoxXadw3Wao3ZnfVYkC1a
+nU1ZmzVYry1arDXZirXY1iHZcp3Xrx3alT1Yps3Xq4VZlA3brY3VwFBaqX3ZpLXbtn1bqFVYob3b
+tOXarZ3bvoVbsi3bvznbt/1YvQXbjz3ao9Xbq31anLVck5XbaN3WxlVbl9XWbWVcic1brRVbxxVZ
+p91crU3cv2iRxU3bto1bo43aqM3a2OVbrSVYgMVcw3VW/7ml3NvN2r9F2J6V3Lj93J5dWpo9Vd+1
+3cGt3Ie1Vs0VWF+F1+nN3G9123J92mHF2brtXb+9VuIt3IT1XnEN38nlVuhFW9Fl3+V13/dtwYuF
+X1BdXb+Z3zCpX5u43/09EVXdW/7lxvxVEvA93tOlVodt1l894KbtXqXd3vLF1wKO4Ojd3my1YHul
+YLf93OedYOANX+xl1gse3vUtWQG+k6Bd2LHd1wIO3dnVWMHV3cMd4YlFX+p94dol3estXrwF2doN
+XhSeYdhtVxO2E6cl2hauXLBF4sEIXtmFW/Y13Kl94pgNXa6t4Zbd4Yg1XRX+XbGFYfH1ViJmEiO2
+3CU+Yv/IHdeqhV4FTlbmJVbezVna/WDO3V0dTtksPtktPtnORV4o5uGYFeMlIWMt5uMv5uDIbWLa
+nWLh5dzBdWE63uNCxuJCtt3xhVoShmQ6vuQhDmSYaN3LJeQa9uJDVmQ/tmMPZuC1veMVTuVIvuL/
+pWQwtmLIfd037mHQjdxHjlQgRmNR7lxS5mBGfuJXHmRa9WXRZdtSzmXSPds+5uIbBuUqBmP4JWDy
+deORjV4QRlnUld6A5d46luCmPeAG3uAHFmLJVWN0jtcElmFwHldQjuUq9V8Ajt9OflN6xud81uf+
+lV96tmfr2ed/dh1ert6CzmHQFWeH7d1s7WYMFuHUbeP/he7YcFbomv3giZXjpB1WoDVo7cXkYb5X
+gX4dFiHoV27nXAbiin7hiYZmWIZYiWXhFN7jdV7p2G3mZHZeIbbec77TdW3p5F3lHF5pwFXmlEZm
+WD7do37cpB5fNKZkR65knc1plNbpABZpcVHlZJ5mW2booU7qYP5pcvZdJS7juVXlpmbcqcbcLs7V
+BGZnqtZmxL1q8fJarcbhpZ3dcv5iyj1f2YVqtZXiRibas/ZiRB7sVdZj551jmw7juXbUT1bi1L3r
+k+5itgXrCf7mSB5mlqVizY7jWeZqZdbsmg7bqZ5krY7US+Fl8TVpuHbmqjbeaF7m195pHj5euz7n
+1b5d/7xFX9c9Wse+GcYm7VYW6uaN5Sbm5nI2Z/WF3Q22ZqBlawzWaIy2WhDG5eauXmMFbvHS5+3e
+iX0G75b07vEm7/IutvA+ETNA7/XeVPN275Nib/B+7/kmqBw5hfj2UvrWbyDC7/72b/fd7wDfn/8m
+8AI38ANH8ARX8AVn8Ab/KwGHcIB28Amn8I9cMF6I8AzX8A3n8A738A8H8RDn7wpvbxE38RNH8RRX
+cYwi8RJf8ReH8RiX8Rmf5xbnUhrH8X+w8dTO8Rnf8R8Hcobr8as+gFYJcjsd8iRX8iVn8iZ38qs+
+8iiXcg188iq38vKecjm98i3ncijPcp/t8jAHL0EQ8zkyN/Mz7/IvB3M0Z/M2d/M3h/M4Hyk1B1M5
+t/M7x/M81/M95/MNp/M/B3Tl6vNBJ/QCC/RDR/TgCggAOw==
+------=_NextPart_000_000D_01C6F080.8A782E90--
+
+
+
+--===============0819093515==
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux kernel <linux-kernel@vger.kernel.org>
-Cc: kernel Janitors <kernel-janitors@lists.osdl.org>
+Content-Disposition: inline
 
-Removed save_flags()/cli()/sti() and used (light weight) spin locks
-
-Signed-off-by: Amol Lad <amol@verismonetworks.com>
----
---- linux-2.6.19-rc1-orig/drivers/char/riscom8.c	2006-10-05 14:00:43.000000000 +0530
-+++ linux-2.6.19-rc1/drivers/char/riscom8.c	2006-10-13 17:06:44.000000000 +0530
-@@ -81,6 +81,7 @@
- 
- static struct riscom_board * IRQ_to_board[16];
- static struct tty_driver *riscom_driver;
-+spinlock_t riscom_lock = SPIN_LOCK_UNLOCKED;
- 
- static unsigned long baud_table[] =  {
- 	0, 50, 75, 110, 134, 150, 200, 300, 600, 1200, 1800, 2400, 4800,
-@@ -231,13 +232,13 @@ static void __init rc_init_CD180(struct 
- {
- 	unsigned long flags;
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	rc_out(bp, RC_CTOUT, 0);     	           /* Clear timeout             */
- 	rc_wait_CCR(bp);			   /* Wait for CCR ready        */
- 	rc_out(bp, CD180_CCR, CCR_HARDRESET);      /* Reset CD180 chip          */
--	sti();
-+	spin_unlock_irq(&riscom_lock);
- 	rc_long_delay(HZ/20);                      /* Delay 0.05 sec            */
--	cli();
-+	spin_lock_irq(&riscom_lock);
- 	rc_out(bp, CD180_GIVR, RC_ID);             /* Set ID for this chip      */
- 	rc_out(bp, CD180_GICR, 0);                 /* Clear all bits            */
- 	rc_out(bp, CD180_PILR1, RC_ACK_MINT);      /* Prio for modem intr       */
-@@ -248,7 +249,7 @@ static void __init rc_init_CD180(struct 
- 	rc_out(bp, CD180_PPRH, (RC_OSCFREQ/(1000000/RISCOM_TPS)) >> 8);
- 	rc_out(bp, CD180_PPRL, (RC_OSCFREQ/(1000000/RISCOM_TPS)) & 0xff);
- 	
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- /* Main probing routine, also sets irq. */
-@@ -832,7 +833,7 @@ static int rc_setup_port(struct riscom_b
- 		port->xmit_buf = (unsigned char *) tmp;
- 	}
- 		
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 		
- 	if (port->tty) 
- 		clear_bit(TTY_IO_ERROR, &port->tty->flags);
-@@ -844,7 +845,7 @@ static int rc_setup_port(struct riscom_b
- 	rc_change_speed(bp, port);
- 	port->flags |= ASYNC_INITIALIZED;
- 		
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- 	return 0;
- }
- 
-@@ -955,19 +956,19 @@ static int block_til_ready(struct tty_st
- 	 */
- 	retval = 0;
- 	add_wait_queue(&port->open_wait, &wait);
--	cli();
-+	spin_lock_irq(&riscom_lock);
- 	if (!tty_hung_up_p(filp))
- 		port->count--;
--	sti();
-+	spin_unlock_irq(&riscom_lock);
- 	port->blocked_open++;
- 	while (1) {
--		cli();
-+		spin_lock_irq(&riscom_lock);
- 		rc_out(bp, CD180_CAR, port_No(port));
- 		CD = rc_in(bp, CD180_MSVR) & MSVR_CD;
- 		rc_out(bp, CD180_MSVR, MSVR_RTS);
- 		bp->DTR &= ~(1u << port_No(port));
- 		rc_out(bp, RC_DTR, bp->DTR);
--		sti();
-+		spin_unlock_irq(&riscom_lock);
- 		set_current_state(TASK_INTERRUPTIBLE);
- 		if (tty_hung_up_p(filp) ||
- 		    !(port->flags & ASYNC_INITIALIZED)) {
-@@ -1040,7 +1041,7 @@ static void rc_close(struct tty_struct *
- 	if (!port || rc_paranoia_check(port, tty->name, "close"))
- 		return;
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	if (tty_hung_up_p(filp))
- 		goto out;
- 	
-@@ -1107,7 +1108,8 @@ static void rc_close(struct tty_struct *
- 	}
- 	port->flags &= ~(ASYNC_NORMAL_ACTIVE|ASYNC_CLOSING);
- 	wake_up_interruptible(&port->close_wait);
--out:	restore_flags(flags);
-+out:	
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static int rc_write(struct tty_struct * tty, 
-@@ -1126,34 +1128,34 @@ static int rc_write(struct tty_struct * 
- 	if (!tty || !port->xmit_buf)
- 		return 0;
- 
--	save_flags(flags);
-+	local_save_flags(flags);
- 	while (1) {
--		cli();		
-+		spin_lock_irq(&riscom_lock);
- 		c = min_t(int, count, min(SERIAL_XMIT_SIZE - port->xmit_cnt - 1,
- 					  SERIAL_XMIT_SIZE - port->xmit_head));
- 		if (c <= 0) {
--			restore_flags(flags);
-+			spin_unlock_irqrestore(&riscom_lock, flags);
- 			break;
- 		}
- 
- 		memcpy(port->xmit_buf + port->xmit_head, buf, c);
- 		port->xmit_head = (port->xmit_head + c) & (SERIAL_XMIT_SIZE-1);
- 		port->xmit_cnt += c;
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&riscom_lock, flags);
- 
- 		buf += c;
- 		count -= c;
- 		total += c;
- 	}
- 
--	cli();
-+	spin_lock_irq(&riscom_lock);
- 	if (port->xmit_cnt && !tty->stopped && !tty->hw_stopped &&
- 	    !(port->IER & IER_TXRDY)) {
- 		port->IER |= IER_TXRDY;
- 		rc_out(bp, CD180_CAR, port_No(port));
- 		rc_out(bp, CD180_IER, port->IER);
- 	}
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- 
- 	return total;
- }
-@@ -1169,7 +1171,7 @@ static void rc_put_char(struct tty_struc
- 	if (!tty || !port->xmit_buf)
- 		return;
- 
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	
- 	if (port->xmit_cnt >= SERIAL_XMIT_SIZE - 1)
- 		goto out;
-@@ -1177,7 +1179,8 @@ static void rc_put_char(struct tty_struc
- 	port->xmit_buf[port->xmit_head++] = ch;
- 	port->xmit_head &= SERIAL_XMIT_SIZE - 1;
- 	port->xmit_cnt++;
--out:	restore_flags(flags);
-+out:	
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static void rc_flush_chars(struct tty_struct * tty)
-@@ -1192,11 +1195,11 @@ static void rc_flush_chars(struct tty_st
- 	    !port->xmit_buf)
- 		return;
- 
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	port->IER |= IER_TXRDY;
- 	rc_out(port_Board(port), CD180_CAR, port_No(port));
- 	rc_out(port_Board(port), CD180_IER, port->IER);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static int rc_write_room(struct tty_struct * tty)
-@@ -1231,9 +1234,9 @@ static void rc_flush_buffer(struct tty_s
- 	if (rc_paranoia_check(port, tty->name, "rc_flush_buffer"))
- 		return;
- 
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	port->xmit_cnt = port->xmit_head = port->xmit_tail = 0;
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- 	
- 	wake_up_interruptible(&tty->write_wait);
- 	tty_wakeup(tty);
-@@ -1251,11 +1254,11 @@ static int rc_tiocmget(struct tty_struct
- 		return -ENODEV;
- 
- 	bp = port_Board(port);
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	rc_out(bp, CD180_CAR, port_No(port));
- 	status = rc_in(bp, CD180_MSVR);
- 	result = rc_in(bp, RC_RI) & (1u << port_No(port)) ? 0 : TIOCM_RNG;
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- 	result |= ((status & MSVR_RTS) ? TIOCM_RTS : 0)
- 		| ((status & MSVR_DTR) ? TIOCM_DTR : 0)
- 		| ((status & MSVR_CD)  ? TIOCM_CAR : 0)
-@@ -1276,7 +1279,7 @@ static int rc_tiocmset(struct tty_struct
- 
- 	bp = port_Board(port);
- 
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	if (set & TIOCM_RTS)
- 		port->MSVR |= MSVR_RTS;
- 	if (set & TIOCM_DTR)
-@@ -1290,7 +1293,7 @@ static int rc_tiocmset(struct tty_struct
- 	rc_out(bp, CD180_CAR, port_No(port));
- 	rc_out(bp, CD180_MSVR, port->MSVR);
- 	rc_out(bp, RC_DTR, bp->DTR);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- 	return 0;
- }
- 
-@@ -1299,7 +1302,7 @@ static inline void rc_send_break(struct 
- 	struct riscom_board *bp = port_Board(port);
- 	unsigned long flags;
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	port->break_length = RISCOM_TPS / HZ * length;
- 	port->COR2 |= COR2_ETC;
- 	port->IER  |= IER_TXRDY;
-@@ -1309,7 +1312,7 @@ static inline void rc_send_break(struct 
- 	rc_wait_CCR(bp);
- 	rc_out(bp, CD180_CCR, CCR_CORCHG2);
- 	rc_wait_CCR(bp);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static inline int rc_set_serial_info(struct riscom_port * port,
-@@ -1352,9 +1355,9 @@ static inline int rc_set_serial_info(str
- 		port->closing_wait = tmp.closing_wait;
- 	}
- 	if (change_speed)  {
--		save_flags(flags); cli();
-+		spin_lock_irqsave(&riscom_lock, flags);
- 		rc_change_speed(bp, port);
--		restore_flags(flags);
-+		spin_unlock_irqrestore(&riscom_lock, flags);
- 	}
- 	return 0;
- }
-@@ -1435,7 +1438,7 @@ static void rc_throttle(struct tty_struc
- 	
- 	bp = port_Board(port);
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	port->MSVR &= ~MSVR_RTS;
- 	rc_out(bp, CD180_CAR, port_No(port));
- 	if (I_IXOFF(tty))  {
-@@ -1444,7 +1447,7 @@ static void rc_throttle(struct tty_struc
- 		rc_wait_CCR(bp);
- 	}
- 	rc_out(bp, CD180_MSVR, port->MSVR);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static void rc_unthrottle(struct tty_struct * tty)
-@@ -1458,7 +1461,7 @@ static void rc_unthrottle(struct tty_str
- 	
- 	bp = port_Board(port);
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	port->MSVR |= MSVR_RTS;
- 	rc_out(bp, CD180_CAR, port_No(port));
- 	if (I_IXOFF(tty))  {
-@@ -1467,7 +1470,7 @@ static void rc_unthrottle(struct tty_str
- 		rc_wait_CCR(bp);
- 	}
- 	rc_out(bp, CD180_MSVR, port->MSVR);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static void rc_stop(struct tty_struct * tty)
-@@ -1481,11 +1484,11 @@ static void rc_stop(struct tty_struct * 
- 	
- 	bp = port_Board(port);
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	port->IER &= ~IER_TXRDY;
- 	rc_out(bp, CD180_CAR, port_No(port));
- 	rc_out(bp, CD180_IER, port->IER);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- static void rc_start(struct tty_struct * tty)
-@@ -1499,13 +1502,13 @@ static void rc_start(struct tty_struct *
- 	
- 	bp = port_Board(port);
- 	
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	if (port->xmit_cnt && port->xmit_buf && !(port->IER & IER_TXRDY))  {
- 		port->IER |= IER_TXRDY;
- 		rc_out(bp, CD180_CAR, port_No(port));
- 		rc_out(bp, CD180_IER, port->IER);
- 	}
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- /*
-@@ -1557,9 +1560,9 @@ static void rc_set_termios(struct tty_st
- 	    tty->termios->c_iflag = old_termios->c_iflag)
- 		return;
- 
--	save_flags(flags); cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	rc_change_speed(port_Board(port), port);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- 
- 	if ((old_termios->c_cflag & CRTSCTS) &&
- 	    !(tty->termios->c_cflag & CRTSCTS)) {
-@@ -1648,11 +1651,10 @@ static void rc_release_drivers(void)
- {
- 	unsigned long flags;
- 
--	save_flags(flags);
--	cli();
-+	spin_lock_irqsave(&riscom_lock, flags);
- 	tty_unregister_driver(riscom_driver);
- 	put_tty_driver(riscom_driver);
--	restore_flags(flags);
-+	spin_unlock_irqrestore(&riscom_lock, flags);
- }
- 
- #ifndef MODULE
-
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
+--===============0819093515==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============0819093515==--
