@@ -1,8 +1,10 @@
-From: Andi Drebes <webmaster@programmierforen.de>
-Date: Sun, 15 Oct 2006 20:39:50 +0000
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Mon, 16 Oct 2006 14:33:26 +0000
 Subject: [KJ] [PATCH] drivers/ata/sata_svw.c: Compiler-noise reduction
-Message-Id: <200610152239.50411.webmaster@programmierforen.de>
+Message-Id: <200610161633.27006.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200610152239.50411.webmaster@programmierforen.de>
+In-Reply-To: <200610152239.50411.webmaster@programmierforen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
