@@ -1,34 +1,36 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sat, 28 Oct 2006 18:12:57 +0000
-Subject: Re: [KJ] [PATCH] lib/string.c: Two if-clauses merged
-Message-Id: <20061028181257.GA4901@martell.zuzino.mipt.ru>
+From: Dave Jones <davej@redhat.com>
+Date: Tue, 17 Oct 2006 18:03:57 +0000
+Subject: Re: [KJ] Gentlemen with commit access
+Message-Id: <20061017180357.GA2240@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200610281830.18748.lists-receive@programmierforen.de>
-In-Reply-To: <200610281830.18748.lists-receive@programmierforen.de>
+References: <b6fcc0a0609221057qb40ad65n30633339321f22c9@mail.gmail.com>
+In-Reply-To: <b6fcc0a0609221057qb40ad65n30633339321f22c9@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Oct 28, 2006 at 06:30:18PM +0200, Andi Drebes wrote:
-> The patch just deletes two lines of code and nothing else. Tested by
-> compilation.
+On Fri, Sep 22, 2006 at 03:20:16PM -0700, Nish Aravamudan wrote:
+ > >  > >  > wiki under kernelnewbies?
+ > >  > > I think there was universal agreement that moving the TODO to a wiki
+ > >  > > made sense.
+ > >  > How does this look as a first cut?
+ > >  > http://kernelnewbies.org/KernelJanitors/Todo
+ > >  > Still needs to be cleaned up, but has all the data from the current TODO.
+ > > First thought: Needs splitting up into pages per category.
+ > 
+ > Sure, but that was more than I wanted to take on in a first stab. And
+ > we can still have /Todo be the root page, with links to each section.
+ > And maybe some content of its own.
 
-> --- linux/lib/string.c
-> +++ patched/lib/string.c
-> @@ -43,9 +43,7 @@
->  			c2 = *s2;
->  			s1++;
->  			s2++;
-> -			if (!c1)
-> -				break;
-> -			if (!c2)
-> +			if (!c1 || !c2)
->  				break;
+Someone with commit access to kerneljanitors.org should probably change the
+pointer to the TODO to point to the wiki.  If no-one knows about it, it'll not
+get updated ;-)
 
-Hmm... There are probably thousands of places like this. And checking
-one thing at a time is in many cases better than one long check.
+		Dave
 
+-- 
+http://www.codemonkey.org.uk
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
