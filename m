@@ -1,34 +1,30 @@
-From: "Amit Choudhary" <amit2030@gmail.com>
-Date: Wed, 04 Oct 2006 19:46:53 +0000
-Subject: Re: [KJ] [PATCH] [RESEND] sound/isa/ad1816a/ad1816a.c: check
-Message-Id: <123917630610041246r72b50a5q860752b993ed2b7@mail.gmail.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 18 Oct 2006 18:46:55 +0000
+Subject: Re: [KJ] [PATCH] OOM killer meets userspace headers
+Message-Id: <20061018184655.GC5345@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061003075607.32837.qmail@web55612.mail.re4.yahoo.com>
-In-Reply-To: <20061003075607.32837.qmail@web55612.mail.re4.yahoo.com>
+References: <20061018145305.GA5345@martell.zuzino.mipt.ru> <453642D1.1010302@yahoo.com.au>
+In-Reply-To: <453642D1.1010302@yahoo.com.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-On 10/4/06, Dan Carpenter <error27@gmail.com> wrote:
-> On 10/4/06, Amit Choudhary <amit2030@gmail.com> wrote:
+On Thu, Oct 19, 2006 at 01:05:53AM +1000, Nick Piggin wrote:
+> >+#define OOM_ADJUST_MIN (-16)
+> >+#define OOM_ADJUST_MAX 15
 >
-> > +       if(!cfg)
-> > +               return -ENOMEM;
->
-> There is still a space missing between if and (.
+> Why do you need the () for the -ves?
 
-thanks for pointing it out. my mistake. I will send again. sent the
-old one by mistake. but atleast got the email client right (sylpheed)
-that preserves tab spaces. thanks to randy.
+-16 is two tokens. Not that someone is going to do huge arithmetic with
+OOM adjustments and screwup himself, but still...
+15 is one token, so it's safe.
 
->
->   Wrong:+       if(!cfg)
-> Correct:+       if (!cfg)
->
-> regards,
-> dan carpenter
->
+And if someone from kernel-janitors would go through tree and (without
+fanatism) add additional parenthesis to where they belong, it would be
+nice.
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
