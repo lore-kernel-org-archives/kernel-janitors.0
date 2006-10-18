@@ -1,33 +1,33 @@
-From: Amol Lad <amol@verismonetworks.com>
-Date: Wed, 11 Oct 2006 13:19:39 +0000
-Subject: [KJ] [PATCH 3/4] drivers/net/sis900.c: Replacing yield() with a
-Message-Id: <1160572059.19143.341.camel@amol.verismonetworks.com>
+From: "Joni Hendrix" <edhewbr@ashleyandrichards.com>
+Date: Wed, 18 Oct 2006 09:02:02 +0000
+Subject: Joni Hendrix wrote:
+Message-Id: <01c6f293$c1bc3850$6c822ecf@edhewbr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: netdev@vger.kernel.org
-Cc: kernel Janitors <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
-*Please check if the timout value is ok or it should be increased*
+hi Joni i hope this is your email.
+I was pleased to meet you the other day. I expect you was excited about   New York.
+So much so much happening all the time, lots of great opportunities.  
+And speaking of opportunities, the deal I was speaking you about yesterday embraces a company 
+called Tex-Homa (TXHE).
+It's already growing up, but the big news isn't even 
+out yet, so there's still time. I have got this shares already and made
+2000. I recommend you to do the same today.
 
-Signed-off-by: Amol Lad <amol@verismonetworks.com>
----
-diff -uprN -X linux-2.6.19-rc1-orig/Documentation/dontdiff linux-2.6.19-rc1-orig/drivers/net/sis900.c linux-2.6.19-rc1/drivers/net/sis900.c
---- linux-2.6.19-rc1-orig/drivers/net/sis900.c	2006-10-05 14:00:48.000000000 +0530
-+++ linux-2.6.19-rc1/drivers/net/sis900.c	2006-10-11 17:57:02.000000000 +0530
-@@ -664,7 +664,7 @@ static int __init sis900_mii_probe(struc
- 
- 	if(status & MII_STAT_LINK){
- 		while (poll_bit) {
--			yield();
-+			schedule_timeout_interruptible(1);
- 
- 			poll_bit ^= (mdio_read(net_dev, sis_priv->cur_phy, MII_STATUS) & poll_bit);
- 			if (time_after_eq(jiffies, timeout)) {
+Hope this helps you out.  I'll see you this weekend.
+Yours Joni Hendrix
 
 
+
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
