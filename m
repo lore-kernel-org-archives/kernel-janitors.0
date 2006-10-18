@@ -1,53 +1,27 @@
-From: Nick Piggin <nickpiggin@yahoo.com.au>
-Date: Wed, 18 Oct 2006 19:34:33 +0000
-Subject: Re: [KJ] [PATCH] OOM killer meets userspace headers
-Message-Id: <453681C9.7020904@yahoo.com.au>
+From: "Chris Smith" <smitty1elkml@gmail.com>
+Date: Wed, 18 Oct 2006 01:55:50 +0000
+Subject: [KJ] git fetch of latest -mm
+Message-Id: <9b53a56d0610171855qc6e2df5y92e963c142bb4ef8@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061018145305.GA5345@martell.zuzino.mipt.ru> <453642D1.1010302@yahoo.com.au> <20061018184655.GC5345@martell.zuzino.mipt.ru> <45367C93.3040804@yahoo.com.au> <20061018192404.GE5345@martell.zuzino.mipt.ru>
-In-Reply-To: <20061018192404.GE5345@martell.zuzino.mipt.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
-Alexey Dobriyan wrote:
-> On Thu, Oct 19, 2006 at 05:12:19AM +1000, Nick Piggin wrote:
-> 
->>Alexey Dobriyan wrote:
->>
->>>On Thu, Oct 19, 2006 at 01:05:53AM +1000, Nick Piggin wrote:
->>>
->>>
->>>>>+#define OOM_ADJUST_MIN (-16)
->>>>>+#define OOM_ADJUST_MAX 15
->>>>
->>>>Why do you need the () for the -ves?
->>>
->>>
->>>-16 is two tokens. Not that someone is going to do huge arithmetic with
->>>OOM adjustments and screwup himself, but still...
->>
->>How can they screw themselves up? AFAIKS, the - directly to the left
->>of the literal will bind more tightly than any other valid operator.
-> 
-> 
-> Hmmm... c.l.c lists two reasons: a) =- being synonym of -= in pre-ANSI
-> days, and b) fat fingers
-> 
-> 	#define EOF -1
-> 	while ((c = getchar()) != 3 EOF)
+Hello,
+ Using the boilerplate command from the Andrew Morton announcement,
+git fetch git://git.kernel.org/pub/scm/linux/kernel/git/smurf/linux-trees.git
+v2.6.16-rc2-mm1
 
-I can't say I care about those problems to justify the uglification
-(or churning the tree).
-
-If the operator were legitimately able to leak out, obviously () is
-a good thing. Otherwise...
-
+I get exactly that version, not the desired 2.6.19-rc2-mm1 code.
+Is this 'smurf' tree actually current?
+I'm able to pull down a current mercurial tree and patch that up with
+the -mm tarball, but some proficiency with git would seem desirable,
+and I'm stymied.
+Has anyone a recipe to track the -mm tree in git?
 -- 
-SUSE Labs, Novell Inc.
-Send instant messages to your online friends http://au.messenger.yahoo.com 
-
+Christopher Smith
+Pursuer of knowledge
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
