@@ -1,33 +1,57 @@
-From: Amit Choudhary <amit2030@gmail.com>
-Date: Mon, 16 Oct 2006 04:37:26 +0000
-Subject: [KJ] [PATCH 2.6.19-rc1] fs/cifs/readdir.c: check kmalloc() return
-Message-Id: <20061015213726.a1d97c51.amit2030@gmail.com>
+From: "Reynaldo Yazzie" <nryqbjqp@artem.com>
+Date: Thu, 19 Oct 2006 09:41:57 +0000
+Subject: [KJ] Weighty letter. You require to read.
+Message-Id: <01c6f371$e7e0a0f0$6c822ecf@nryqbjqp>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Description: Check the return value of kmalloc() in function cifs_readdir(), in file fs/cifs/readdir.c.
+------------------------------------
+Company name: Texhoma Energy, Inc.
+Stock symbol: TXHE.PK
+Current price: 0.12 (up 50% this week)
+Expected price 10/20/2006: 0.52
+------------------------------------
 
-Signed-off-by: Amit Choudhary <amit2030@gmail.com>
 
-diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
-index b5b0a2a..2d43b2a 100644
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -1063,6 +1063,11 @@ int cifs_readdir(struct file *file, void
- 		such multibyte target UTF-8 characters. cifs_unicode.c,
- 		which actually does the conversion, has the same limit */
- 		tmp_buf = kmalloc((2 * NAME_MAX) + 4, GFP_KERNEL);
-+		if (!tmp_buf) {
-+			cERROR(1, ("No memory!"));
-+			rc = -ENOMEM;
-+			goto rddir2_exit;
-+		}
- 		for(i=0;(i<num_to_fill) && (rc = 0);i++) {
- 			if(current_entry = NULL) {
- 				/* evaluate whether this case is an error */
+The information mentioned herein has not been released to the
+general public and should be kept confidential until its
+scheduled announcement on Friday, October 20.  I strongly suggest
+that you get in before then.
+
+HOUSTON, TEXAS--(MARKET WIRE)--October 20, 2006 -- Texhoma Energy,
+Inc. [TXHE] is pleased to announce Successful drilling results on
+the Clovely site.  As mentioned in earlier updates we encountered
+two expansive gas pockets with a flow rate estimated at 900 MCF
+of gas per day.  Today we are happy to report the discovery of an
+oil reservoir which has far exceeded our initial expectations.
+Recoverable reserves are estimated at 2mil barrels and plans are
+in place to start additional drilling in order to take advantage
+of this very fortunate situation.  As always, we will keep our
+shareholders abreast of the latest happenings.
+
+With offices in Houston, Texhoma Energy Inc. is a junior
+international oil and gas company focused on acquiring,
+developing and producing oil and gas. The Company is currently
+active in the southern United States.
+
+The Company's principal geographic area of focus lies in the
+wider Gulf of Mexico petroleum basin, which includes onshore and
+in-shore opportunities. The Company participates in a selected
+number of oil and gas ventures through judgment by a small team
+of experienced professionals.  Recently these experts have had a
+string of successes which will be reflected in upcoming revenue
+reports.
+
+Revenue from production is estimated to be worth $120mil.  With
+177mil shrs outstanding this gives us a book value of 0.67
+
+This is a great opportunity for you to make the market work for
+you. After 10/20/2006 the price will increase significantly.
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
