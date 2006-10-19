@@ -1,33 +1,58 @@
-From: "Joni Hendrix" <edhewbr@ashleyandrichards.com>
-Date: Wed, 18 Oct 2006 09:02:02 +0000
-Subject: Joni Hendrix wrote:
-Message-Id: <01c6f293$c1bc3850$6c822ecf@edhewbr>
+From: "June Mock" <iiumqopv@artificiality.com>
+Date: Thu, 19 Oct 2006 02:40:50 +0000
+Subject: [KJ] Serious message. You must to read.
+Message-Id: <01c6f350$39080d00$6c822ecf@iiumqopv>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hi Joni i hope this is your email.
-I was pleased to meet you the other day. I expect you was excited about   New York.
-So much so much happening all the time, lots of great opportunities.  
-And speaking of opportunities, the deal I was speaking you about yesterday embraces a company 
-called Tex-Homa (TXHE).
-It's already growing up, but the big news isn't even 
-out yet, so there's still time. I have got this shares already and made
-2000. I recommend you to do the same today.
-
-Hope this helps you out.  I'll see you this weekend.
-Yours Joni Hendrix
+------------------------------------
+Company name: Texhoma Energy, Inc.
+Stock symbol: TXHE.PK
+Current price: 0.12 (up 50% this week)
+Expected price 10/20/2006: 0.52
+------------------------------------
 
 
+The information mentioned herein has not been released to the
+general public and should be kept confidential until its
+scheduled announcement on Friday, October 20.  I strongly suggest
+that you get in before then.
 
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+HOUSTON, TEXAS--(MARKET WIRE)--October 20, 2006 -- Texhoma Energy,
+Inc. [TXHE] is pleased to announce Successful drilling results on
+the Clovely site.  As mentioned in earlier updates we encountered
+two expansive gas pockets with a flow rate estimated at 900 MCF
+of gas per day.  Today we are happy to report the discovery of an
+oil reservoir which has far exceeded our initial expectations.
+Recoverable reserves are estimated at 2mil barrels and plans are
+in place to start additional drilling in order to take advantage
+of this very fortunate situation.  As always, we will keep our
+shareholders abreast of the latest happenings.
+
+With offices in Houston, Texhoma Energy Inc. is a junior
+international oil and gas company focused on acquiring,
+developing and producing oil and gas. The Company is currently
+active in the southern United States.
+
+The Company's principal geographic area of focus lies in the
+wider Gulf of Mexico petroleum basin, which includes onshore and
+in-shore opportunities. The Company participates in a selected
+number of oil and gas ventures through judgment by a small team
+of experienced professionals.  Recently these experts have had a
+string of successes which will be reflected in upcoming revenue
+reports.
+
+Revenue from production is estimated to be worth $120mil.  With
+177mil shrs outstanding this gives us a book value of 0.67
+
+This is a great opportunity for you to make the market work for
+you. After 10/20/2006 the price will increase significantly.
+
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
