@@ -1,35 +1,25 @@
-From: "Suzanne Newton" <mrw@arrrggghhh.com>
-Date: Mon, 30 Oct 2006 13:12:25 +0000
-Subject: Suzanne
-Message-Id: <01c6fc25$0bf2f860$6c822ecf@mrw>
+From: "Marvin Roberson" <ryqcxirfpq@asimpleclick.com>
+Date: Thu, 19 Oct 2006 21:15:11 +0000
+Subject: [KJ] Serious message. You need to read.
+Message-Id: <01c6f3eb$e581a1e0$6c822ecf@ryqcxirfpq>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The accumulation of positions by those in the know has shot
-A_U_N_I up 33% in a few short days.  We hope you all got in
-early like we told you to, and are enjoying your good fortune.
-But even if you didn't don't worry because the big announcement
-has yet to be made.  Monday, October 30 may be your last chance
-before this thing triples.  Don't hesitate.
+The great predictions are drawn up. 
+The increase is up to 70% lately.
+(MXXR) is the gainful deal and those who knows it is making money.
+The drilling results of this highly capable oil company exceeded all its expectations. 
+One time this fact hits the outdoors there will be no stopping this one.
+these days it's about 0.025 but we are thinking it to triple. 
+Once the news is made and the PR gets into full swing.
+Don't waste time and miss out.  We recommend you to buy today.
+The key is getting in early and the time is pressing. They say that Monday is the day this one will shoot. Take your place 
+before that happens.
 
-Price: O.85
-Projected: 2.3O
-Rating: 5/5
-
-This is the break you've been waiting for!  Spice up your
-holdings with A_U_N_I and WIN!
-
-
-
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
