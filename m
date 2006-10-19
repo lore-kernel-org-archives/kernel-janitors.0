@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 19 Oct 2006 03:03:26 +0000
+Date: Thu, 19 Oct 2006 03:09:24 +0000
 Subject: Re: [KJ] git fetch of latest -mm
-Message-Id: <20061018200326.a7d49956.rdunlap@xenotime.net>
+Message-Id: <20061018200924.d0159b3c.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <9b53a56d0610171855qc6e2df5y92e963c142bb4ef8@mail.gmail.com>
 In-Reply-To: <9b53a56d0610171855qc6e2df5y92e963c142bb4ef8@mail.gmail.com>
@@ -73,11 +73,13 @@ On Wed, 18 Oct 2006 21:48:14 -0400 Chris Smith wrote:
 > http://www.kernel.org/git/?p=linux/kernel/git/smurf/linux-trees.git;a=tree
 > Given a decent recipe, I'm thinking this would be helpful on  kernelnewbies.org.
 
-Hm, I try to use git as little as possible.  Anyway, I cloned
-the linux-trees.git and mucked around with it a bit (and it was
-frustrating).  I finally got v2.6.19-rc2-mm1 by doing this:
+maybe so, but did you look at the other git help on the web, like:
 
-git checkout -f v2.6.19-rc2-mm1
+http://linux.yyz.us/git-howto.html
+and  http://git.or.cz/  (FAQ, wiki, docs, etc.)
+
+Unless the kernelnewbies.org info would be lots better, it might
+as well just link to these IMO.
 
 ---
 ~Randy
