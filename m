@@ -1,61 +1,45 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 04 Oct 2006 16:11:21 +0000
-Subject: Re: [KJ] [Alsa-devel] [PATCH] sound/usb/usbaudio: Handle return
-Message-Id: <s5hk63gjc2e.wl%tiwai@suse.de>
+From: "Eve Wise" <akstcchefnmnsdgs@chefn.com>
+Date: Fri, 20 Oct 2006 13:57:41 +0000
+Subject: [KJ] twenty seven percent increase
+Message-Id: <01c6f44f$635d2400$6c822ecf@akstcchefnmnsdgs>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0009053553=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-At Mon, 2 Oct 2006 12:52:59 +0200,
-Tobias Klauser wrote:
->=20
-> Handle the return value of usb_register() in the module_init function.
->=20
-> Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+--===============0009053553==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-Thanks, applied to ALSA tree now.
+Hi Humberto, look at it its' 27% UP! I mentioned about this
+company yesterday known as American Unity Investments Inc (AUNI)
+Yay, I told you to watch it yesterday and it boomed from .7to .9! 
+I made easy 20% just in one single day.I am amazed, did you buy 
+some as well I hope?
 
+As you can see its climbing, but by just looking at it
+I can tell it's gonna explode even more.So you still have a window 
+to digg in while it's still in it's low.So what a hey, go ahead 
+buy some, make some money while it's there. It can easily do 
+another 30% tomorrow.I wouldn't wait any longer if I be you...
 
-Takashi
+I hope it was a helper.I'll email you later this week.
 
->=20
-> ---
->  sound/usb/usbaudio.c |    3 +--
->  1 files changed, 1 insertions(+), 2 deletions(-)
->=20
-> diff --git a/sound/usb/usbaudio.c b/sound/usb/usbaudio.c
-> index a42acf6..191c811 100644
-> --- a/sound/usb/usbaudio.c
-> +++ b/sound/usb/usbaudio.c
-> @@ -3576,8 +3576,7 @@ static int __init snd_usb_audio_init(voi
->  		printk(KERN_WARNING "invalid nrpacks value.\n");
->  		return -EINVAL;
->  	}
-> -	usb_register(&usb_audio_driver);
-> -	return 0;
-> +	return usb_register(&usb_audio_driver);
->  }
-> =20
-> =20
-> --=20
-> 1.4.2
->=20
->=20
-> -------------------------------------------------------------------------
-> Take Surveys. Earn Cash. Influence the Future of IT
-> Join SourceForge.net's Techsay panel and you'll get the chance to share y=
-our
-> opinions on IT & business topics through brief surveys -- and earn cash
-> http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DE=
-VDEV
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/alsa-devel
->=20
+Harriett.
+
+"i admire all my three sons-in-law highly," said he. "wickham, perhaps, is my favourite; but i
+boisterously exclaimed:
+
+--===============0009053553==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0009053553==--
