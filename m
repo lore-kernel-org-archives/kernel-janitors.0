@@ -1,56 +1,137 @@
-From: "Chris Smith" <smitty1elkml@gmail.com>
-Date: Fri, 20 Oct 2006 20:29:51 +0000
-Subject: Re: [KJ] git fetch of latest -mm
-Message-Id: <9b53a56d0610201329r2ad65426p5279844c9f27dbef@mail.gmail.com>
+From: David KOENIG <karhudever@gmail.com>
+Date: Fri, 20 Oct 2006 02:42:26 +0000
+Subject: [KJ] [PATCH] Converted jiffy comparisons to time_after calls (TAKE
+Message-Id: <200610191942.26865.karhudever@gmial.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9b53a56d0610171855qc6e2df5y92e963c142bb4ef8@mail.gmail.com>
-In-Reply-To: <9b53a56d0610171855qc6e2df5y92e963c142bb4ef8@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-On 10/18/06, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On Wed, 18 Oct 2006 06:07:39 -0400 Chris Smith wrote:
->
-> > On 10/18/06, Domen Puncer <domen@coderock.org> wrote:
-> > > On 17/10/06 21:55 -0400, Chris Smith wrote:
-> > > > Hello,
-> > > >  Using the boilerplate command from the Andrew Morton announcement,
-> > > > git fetch git://git.kernel.org/pub/scm/linux/kernel/git/smurf/linux-trees.git
-> > > > v2.6.16-rc2-mm1
-> > >
-> > > s/16/19/ ?
-> > >
-> > >
-> > >         Domen
-> >
-> > All that s/16/19/ (appears) to do is alter the name of the directory produced.
-> > #cd checkout
-> > #cat .kernelversion
-> > #v2.6.16-rc2-mm1
-> >
-> > Tried the git-fsck, and it complained about HEAD not being kosher.
-> > My thought is that there may have been git changes subseqent to that
-> > 'smurf' tree creation that rendered it b0rk3n, but I dunno.
->
-> Are you using a recent version of git?
->
-> The tree appears ok via the web interface at
-> http://www.kernel.org/git/?p=linux/kernel/git/smurf/linux-trees.git;a=summary
-> (see under "heads" or "tags").
->
->
-> ---
-> ~Randy
->
-Futher assistance from jdl on #git gave me a proper:
-git checkout -b MyBranch v2.6.19-rc2-mm2
-which gets past the stale 'master' in the repository cloning.
+From 9180d29946eced4c71845c9bbe847e98e01d1c31 Mon Sep 17 00:00:00 2001
+From: David KOENIG <david@karhu.(none)>
+Date: Thu, 19 Oct 2006 18:57:17 -0700
+Subject: [PATCH] Converted jiffy comparisons to time_after calls
+---
+ drivers/net/tokenring/3c359.c |   21 +++++++++++----------
+ 1 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/tokenring/3c359.c b/drivers/net/tokenring/3c359.c
+index 7580bde..8a2e0c1 100644
+--- a/drivers/net/tokenring/3c359.c
++++ b/drivers/net/tokenring/3c359.c
+@@ -48,6 +48,7 @@ #include <linux/errno.h>
+ #include <linux/timer.h>
+ #include <linux/in.h>
+ #include <linux/ioport.h>
++#include <linux/jiffies.h>
+ #include <linux/string.h>
+ #include <linux/proc_fs.h>
+ #include <linux/ptrace.h>
+@@ -409,7 +410,7 @@ static int xl_hw_reset(struct net_device
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 40*HZ) {
++		if (time_after(jiffies, t + 40 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL  card not responding to global 
+reset.\n", dev->name);
+ 			return -ENODEV;
+ 		}
+@@ -520,7 +521,7 @@ #endif
+ 	t=jiffies;
+ 	while ( !(readw(xl_mmio + MMIO_INTSTATUS_AUTO) & INTSTAT_SRB) ) { 
+ 		schedule();		
+-		if(jiffies-t > 15*HZ) {
++		if (time_after(jiffies, t + 15 * HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			return -ENODEV; 
+ 		}
+@@ -796,7 +797,7 @@ static int xl_open_hw(struct net_device 
+ 	t=jiffies;
+ 	while (! (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_SRB)) { 
+ 		schedule();		
+-		if(jiffies-t > 40*HZ) {
++		if (time_after(jiffies, t + 40 * HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			break ; 
+ 		}
+@@ -1011,7 +1012,7 @@ static void xl_reset(struct net_device *
+ 
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+-		if(jiffies-t > 40*HZ) {
++		if (time_after(jiffies, t + 40 * HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			break ; 
+ 		}
+@@ -1283,7 +1284,7 @@ static int xl_close(struct net_device *d
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if (time_after(jiffies, t + 10 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNSTALL not responding.\n", 
+dev->name);
+ 			break ; 
+ 		}
+@@ -1292,7 +1293,7 @@ static int xl_close(struct net_device *d
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if (time_after(jiffies, t + 10 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNDISABLE not responding.\n", 
+dev->name);
+ 			break ;
+ 		}
+@@ -1301,7 +1302,7 @@ static int xl_close(struct net_device *d
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if (time_after(jiffies, t + 10 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-UPSTALL not responding.\n", 
+dev->name);
+ 			break ; 
+ 		}
+@@ -1318,7 +1319,7 @@ static int xl_close(struct net_device *d
+ 	t=jiffies;
+ 	while (!(readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_SRB)) { 
+ 		schedule();		
+-		if (jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-CLOSENIC not responding.\n", 
+dev->name);
+ 			break ; 
+ 		}
+@@ -1347,7 +1348,7 @@ static int xl_close(struct net_device *d
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if (time_after(jiffies, t + 10 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-UPRESET not responding.\n", 
+dev->name);
+ 			break ; 
+ 		}
+@@ -1356,7 +1357,7 @@ static int xl_close(struct net_device *d
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if (time_after(jiffies, t + 10 * HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNRESET not responding.\n", 
+dev->name);
+ 			break ; 
+ 		}
+-- 
+1.4.1
+
 
 -- 
-Christopher Smith
-Pursuer of knowledge
+<>< karhudever@gmail.com
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
