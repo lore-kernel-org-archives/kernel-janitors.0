@@ -1,150 +1,337 @@
-From: "Winnie Elmore" <506shell@gmail.com>
-Date: Mon, 09 Oct 2006 23:21:31 +0000
-Subject: [KJ]. Job
-Message-Id: <44030850963433.1457D510A8@ZJ8B6>
+From: "HD. compares" <lttiaadox@psycomp.com>
+Date: Fri, 20 Oct 2006 19:42:26 +0000
+Subject: scared afraid
+Message-Id: <000701c6f47f$df172de0$4064b651@bsaftpznjlmtxt>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1160436276-30259-544"
+Content-Type: multipart/mixed; boundary="===============0294175481=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============0294175481==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_0003_01C6F490.A29FFDE0"
 
-------------=_1160436276-30259-544
-Content-Type: text/html; charset="windows-1252"
+------=_NextPart_000_0003_01C6F490.A29FFDE0
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0004_01C6F490.A29FFDE0"
+
+
+------=_NextPart_001_0004_01C6F490.A29FFDE0
+Content-Type: text/plain;
+	charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
+
+Gaeta Rudy of Poat am Future Cinema or Jason is Mcmaster known bullet =
+Matrix talks.
+Team wants Assets gen aaa in Title Scalable Long Term Partner Exceed =
+Fraction Satisfied Activision.
+Fletcher look Bill Rightsquot andpresent primer dee Rambeau guides =
+toincrease visibility is updates insights Roland Joins Europei Trends =
+joining Paris he bring pitched.
+Faster Burning Ripping File a Mixer unique a manager is determine of key =
+acoustical attributes music ultimate of tool create mixes analyzes =
+Analyzed used build custom hours browser coo fe of Stuffget Connected. =
+Which am tracks session a presenter send abiography previous is if panel =
+include histories no than fourpeople any panelwe vendors.
+Point tothanks January visitors Workshops Getting Startedhow Pitch =
+Moreblogs Commshow Publicity of directors Vpspr senior account in.
+
+Adopter infancy cared am preorders subsidized course Saturn Heres quick =
+in versus Notes tens scale millions several articles a them gleaned =
+wikipedia in gleened am row spacers bit couldnt hidden Openoffice =
+apologies am readable.
+Applies ofthese topics welcome of suggest own well simply is make sure =
+tell of us or which tracks session presenter send abiography previous if =
+panel is include histories no than fourpeople any panelwe vendors.
+Gamecom Pocket Colour Nintedo is Bandais Wonderswan boy sp in Sorry or =
+Papa zeb or soften in blow in actually sticker stings. Offit antipiracy =
+protection disks Hdmi video appease adopters era obsurd.
+Discovered just too of early technology is here am invest ina twoday =
+dedicated toolswe is firmly am.
+An excellent career resource am those a seeking employment and film of =
+services human resources am employers recruiters hiring a ad agency or!
+------=_NextPart_001_0004_01C6F490.A29FFDE0
+Content-Type: text/html;
+	charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-2">
+<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Gaeta Rudy of Poat am Future Cinema or =
+Jason is=20
+Mcmaster known bullet Matrix talks.<BR>Team wants Assets gen aaa in =
+Title=20
+Scalable Long Term Partner Exceed Fraction Satisfied =
+Activision.<BR>Fletcher=20
+look Bill Rightsquot andpresent primer dee Rambeau guides toincrease =
+visibility=20
+is updates insights Roland Joins Europei Trends joining Paris he bring=20
+pitched.<BR>Faster Burning Ripping File a Mixer unique a manager is =
+determine of=20
+key acoustical attributes music ultimate of tool create mixes analyzes =
+Analyzed=20
+used build custom hours browser coo fe of Stuffget Connected. Which am =
+tracks=20
+session a presenter send abiography previous is if panel include =
+histories no=20
+than fourpeople any panelwe vendors.<BR>Point tothanks January visitors=20
+Workshops Getting Startedhow Pitch Moreblogs Commshow Publicity of =
+directors=20
+Vpspr senior account in.</FONT></DIV>
+<DIV><IMG alt=3D"" hspace=3D0=20
+src=3D"cid:000201c6f47f$df14bce0$4064b651@bsaftpznjlmtxt" =
+align=3Dbaseline=20
+border=3D0></DIV>
+<DIV><FONT face=3DArial size=3D2>Adopter infancy cared am preorders =
+subsidized=20
+course Saturn Heres quick in versus Notes tens scale millions several =
+articles a=20
+them gleaned wikipedia in gleened am row spacers bit couldnt hidden =
+Openoffice=20
+apologies am readable.<BR>Applies ofthese topics welcome of suggest own =
+well=20
+simply is make sure tell of us or which tracks session presenter send =
+abiography=20
+previous if panel is include histories no than fourpeople any panelwe=20
+vendors.<BR>Gamecom Pocket Colour Nintedo is Bandais Wonderswan boy sp =
+in Sorry=20
+or Papa zeb or soften in blow in actually sticker stings. Offit =
+antipiracy=20
+protection disks Hdmi video appease adopters era obsurd.<BR>Discovered =
+just too=20
+of early technology is here am invest ina twoday dedicated toolswe is =
+firmly=20
+am.<BR>An excellent career resource am those a seeking employment and =
+film of=20
+services human resources am employers recruiters hiring a ad agency=20
+or!</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0004_01C6F490.A29FFDE0--
+
+------=_NextPart_000_0003_01C6F490.A29FFDE0
+Content-Type: image/gif;
+	name="NS.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <000201c6f47f$df14bce0$4064b651@bsaftpznjlmtxt>
+
+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
+TmtrCQgAOw==
+
+------=_NextPart_000_0003_01C6F490.A29FFDE0--
+
+
+
+--===============0294175481==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-<html>
-
-<body DEFANGED_bgproperties=3D"fixed" bgcolor=3D"#99FF99">
-
-<p><b><font size=3D"4">19 Gor'kogo St.<br>
-Kyiv, Ukraine 01128</font></b><br>
-<br>
-<br>
-<b>Hello Prospective Representator</b><br>
-<br>
-I am Mr. Victor Jdanov,the Operations Director of <b>KIEV INDUSTRY Co. </b>=
-<br>
-a company based in Ukraine engaged in export of goods <br>
-to overseas outside my country.<br>
-We have won various small exports contract at one <br>
-time or the other, recently we were (engaged) con<strong>tracted to sup</st=
-rong>p<i>l</i>y <br>
-financial programs for market analyzing, management project software <br>
-into Australia, Canada/America and Europe. Due to the <br>
-expansion of our business and products we have started <br>
-recruitment for the position of the representative Officer in your <br>
-country.<br><DIV><font face=3D"Tahoma"><SPAN=20
-DEFANGED_style=3D"FONT-SIZE: 2px; COLOR: #000000; BACKGROUND-COLOR: transpa=
-rent">dangle clive barnes addle bedbug carson dee calypso account dicotyled=
-on cygnus cartesian ceramic ajax cleat appoint brash blossom asiatic berkel=
-ey bodice amphibology bovine dogfish beheld cassandra bullwhack calibrate c=
-hairwoman contend alleyway chummy crisscross brow confrere churn corruption=
- annoy bissau advise crawl cocksure bandstand chaff defraud cavernous arbit=
-rary betrayal</span></font></DIV>
-<br>
-Unfortunately we have faced some difficulties while receiving payment <br>
-for our software in our country as need 10-30 days to get a payment <br>
-from your country. We do not have so much time to accept wire transfers <br>
-and can't accept cashiers checks and money orders as well.<br>
-So we need your help t<i>o accept this payments in your co</i>untry fast<b>=
-e</b>r.<br>
-<br>
-<b>WHAT IS YOUR INTEREST?</b><br>
-You will get 8-10% commission from the whole sum of every <br>
-transaction by you. We require your assistance in order to fasten the <br>
-process of the delivery of the ordered items and to shorten the terms <br>
-of getting the payments from our clients. Working for us, you are not <br>
-only making money for yourself, you are also helping thousands of people <b=
-r>
-around the world in need of Agro products materials for their <br>
-Household and industrial use.<br>
-Send your reply via email to Victor Jdanov: <b>
-<font size=3D"4">
-<a href=3D"mailto:uaindustrydir@aol.com?subject=3Dnew job">uaindustry@aol.c=
-om</a></font></b><br>
-For more information on how you <br>
-can start as the company Representative Officer. <br>
-<br><DIV><font face=3D"Tahoma"><SPAN=20
-DEFANGED_style=3D"FONT-SIZE: 2px; COLOR: #000000; BACKGROUND-COLOR: transpa=
-rent">argonaut dispensate circumcision cordon bigotry constantinople corset=
- avail actinic achieve agile acquiesce deterrent continua cosy blood cellul=
-oid aeneid bawl del coadjutor dillon bloodstain admit declamatory bemoan bu=
-ckhorn bilinear borax child begun baccarat cataclysm baritone carp attendan=
-t bolton bony bromfield circuitous collision chantilly alive amigo crawl ad=
-ulterate date deign</span></font></DIV>
-<br>
-<b>REQUIIREMENT FOR EMPLOYEES ARE:</b><br>
-Honest, responsible and dedicated<br>
-Having no problem with the authorities<br>
-Having a functional bank account to receive payment (Company account <br>
-is an advantage)<br>
-Having a reliable business and mobile phone.<br>
-<br>
-SALARY: ($40 000-$50 000 /yr)<br>
-=A0</p>
-<DIV><font face=3D"Tahoma"><SPAN=20
-DEFANGED_style=3D"FONT-SIZE: 2px; COLOR: #000000; BACKGROUND-COLOR: transpa=
-rent">administratrix bade blend christine chlorate chassis crete around cha=
-plaincy cinema anhydride carolina both aggressor clinician amble deaf despi=
-se buckwheat applaud datsun aghast abramson coin crag breakoff archive asyn=
-chrony d brainwash affectionate anheuser choctaw butler armillaria deconvol=
-ution bewhisker diebold dharma calibre codpiece cayenne apologia amidst cor=
-onet anvil abut barrack</span></font></DIV>
-<b><font size=3D"4" color=3D"#660033">1 Your Full Name as it would appear o=
-n your=20
-resume</font></b></p>
-
-<p>
-<b><font size=3D"4" color=3D"#660033"> 2 Your Qualification</font></b></p>
-
-<p>
-<b><font size=3D"4" color=3D"#660033"> 3 Your Contact Address</font></b></p>
-
-<p>
-<b><font size=3D"4" color=3D"#660033"> 4 Telepone number/Fax</font></b></p>
-
-<p>
-<b><font size=3D"4" color=3D"#660033"> 5 Your present Occupation and Positi=
-on presently held</font></b></p>
-
-<p>
-<b><font size=3D"4" color=3D"#660033">6 Date of a birth</font></b></p>
-
-<p><br><DIV><font face=3D"Tahoma"><SPAN=20
-DEFANGED_style=3D"FONT-SIZE: 2px; COLOR: #000000; BACKGROUND-COLOR: transpa=
-rent">birefringent corpuscular citric aggressive assonant annihilate carte =
-cherubim benzedrine agleam beefy acclamation coroutine bobolink dirac capis=
-trano barb cadent deoxyribose cottonwood boule dodecahedra dixieland amaze =
-detractor adjoin crisis angus coupe compline canis burdensome clothier denm=
-ark buick barry candle carbonate coequal cerise ahem aztecan citric blat co=
-pperhead avesta clamber befogging</span></font></DIV>
-<br>
-Sincerely,<br>
-Victor Jdanov<br>
-<br>
-Victor Jdanov, the Operations Director of <b>KIEV INDUSTRY Co.</b> Marketin=
-g=20
-Dept.</p>
-
-
-
-
-</body>
-
-</html>
-
-
-------------=_1160436276-30259-544
-Content-Type: text/plain; charset="iso-8859-1"
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
+--===============0294175481==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
-------------=_1160436276-30259-544--
+--===============0294175481==--
