@@ -1,7 +1,7 @@
-From: "Palmistry A. Lids" <Danny_Van_Elsen@glitchpunkyouth.com>
-Date: Fri, 13 Oct 2006 06:00:23 +0000
+From: "Avasts Q. Paddocked" <kevin@giyafo.com>
+Date: Sun, 22 Oct 2006 02:13:16 +0000
 Subject: [KJ] Software
-Message-Id: <8945789269.20061013014806@glitchpunkyouth.com>
+Message-Id: <3366361945.20061021211316@giyafo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <6340411127.20060826111122@grannycumshere.com>
 In-Reply-To: <6340411127.20060826111122@grannycumshere.com>
@@ -10,26 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Need software? Click here.
+The last bite was out of your budget? Try OEM at a low, low price.
 
 Some examples:
-LiveMotion 2.0 $69.95
-Dreamweaver MX 2004 $69.95
-Visual Studio .NET Architect Edition (8CD) $139.95
-Visual Studio .NET Architect Edition (8CD) $139.95
-Plus! XP $59.95
-Visual Studio .NET Architect Edition (8CD) $139.95
 Windows 2000 Advanced Server $69.95
-LiveMotion 2.0 $69.95
-Illustrator CS $69.95
-Quark Xpress 6 Passport Multilanguage $69.95
-Creative Suite Premium (5 CD) $149.95
-Director MX 2004 $69.95
+Project 2003 Professional $69.95
+PageMaker 7 (2CD) $69.95
+Office 2000 Premium Edition PE (2CD) $59.95
+Flash MX 2004 $69.95
+Windows NT 4.0 Server $49.95
 Photoshop CS $99.95
-Photoshop CS with ImageReady CS $99.95
+SQL Server 2000 Enterprise Edition $69.95
+Flash MX 2004 $69.95
+Premiere 7 $69.95
+Creative Suite Standard (3 CD) $129.95
+Photoshop CS $99.95
+Works 7 $69.95
+Picture It Premium 9 $59.95
 
 The rest is on our site:
-http://ozt0cruytiu1p6ojbo6jt6o6./
+http://3e8xr69vqfry43lg8l3gq3ll.222.117/
 
 _______________________________________________
 Kernel-janitors mailing list
