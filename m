@@ -1,7 +1,7 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Mon, 23 Oct 2006 20:17:21 +0000
-Subject: [KJ] [Patch] kmemdup() cleanup in drivers/infiniband
-Message-Id: <1161634641.419.7.camel@alice>
+Date: Mon, 23 Oct 2006 20:18:23 +0000
+Subject: [KJ] [Patch] kmemdup() cleanup in drivers/media/video
+Message-Id: <1161634704.419.9.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1161634468.419.1.camel@alice>
 In-Reply-To: <1161634468.419.1.camel@alice>
@@ -17,75 +17,79 @@ and allow inlining/not inlining to be triggered by gcc.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.19-rc2-git7/drivers/infiniband/core/cm.c.orig	2006-10-23 21:07:38.000000000 +0200
-+++ linux-2.6.19-rc2-git7/drivers/infiniband/core/cm.c	2006-10-23 21:08:07.000000000 +0200
-@@ -240,11 +240,10 @@ static void * cm_copy_private_data(const
- 	if (!private_data || !private_data_len)
- 		return NULL;
- 
--	data = kmalloc(private_data_len, GFP_KERNEL);
-+	data = kmemdup(private_data, private_data_len, GFP_KERNEL);
- 	if (!data)
- 		return ERR_PTR(-ENOMEM);
- 
--	memcpy(data, private_data, private_data_len);
- 	return data;
- }
- 
---- linux-2.6.19-rc2-git7/drivers/infiniband/core/ucm.c.orig	2006-10-23 21:08:16.000000000 +0200
-+++ linux-2.6.19-rc2-git7/drivers/infiniband/core/ucm.c	2006-10-23 21:08:58.000000000 +0200
-@@ -328,20 +328,18 @@ static int ib_ucm_event_process(struct i
+--- linux-2.6.19-rc2-git7/drivers/media/video/ovcamchip/ovcamchip_core.c.orig	2006-10-23 21:13:43.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/media/video/ovcamchip/ovcamchip_core.c	2006-10-23 21:14:04.000000000 +0200
+@@ -307,12 +307,11 @@ static int ovcamchip_attach(struct i2c_a
+ 		return -ENODEV;
  	}
  
- 	if (uvt->data_len) {
--		uvt->data = kmalloc(uvt->data_len, GFP_KERNEL);
-+		uvt->data = kmemdup(evt->private_data, uvt->data_len, GFP_KERNEL);
- 		if (!uvt->data)
- 			goto err1;
- 
--		memcpy(uvt->data, evt->private_data, uvt->data_len);
- 		uvt->resp.present |= IB_UCM_PRES_DATA;
+-	c = kmalloc(sizeof *c, GFP_KERNEL);
++	c = kmemdup(&client_template, sizeof *c, GFP_KERNEL);
+ 	if (!c) {
+ 		rc = -ENOMEM;
+ 		goto no_client;
  	}
+-	memcpy(c, &client_template, sizeof *c);
+ 	c->adapter = adap;
+ 	strcpy(c->name, "OV????");
  
- 	if (uvt->info_len) {
--		uvt->info = kmalloc(uvt->info_len, GFP_KERNEL);
-+		uvt->info = kmemdup(info, uvt->info_len, GFP_KERNEL);
- 		if (!uvt->info)
- 			goto err2;
+--- linux-2.6.19-rc2-git7/drivers/media/video/pvrusb2/pvrusb2-io.c.orig	2006-10-23 21:15:34.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/media/video/pvrusb2/pvrusb2-io.c	2006-10-23 21:16:17.000000000 +0200
+@@ -351,9 +351,8 @@ static int pvr2_stream_buffer_count(stru
+ 		if (scnt < sp->buffer_slot_count) {
+ 			struct pvr2_buffer **nb = NULL;
+ 			if (scnt) {
+-				nb = kmalloc(scnt * sizeof(*nb),GFP_KERNEL);
++				nb = kmemdup(sp->buffers, scnt * sizeof(*nb),GFP_KERNEL);
+ 				if (!nb) return -ENOMEM;
+-				memcpy(nb,sp->buffers,scnt * sizeof(*nb));
+ 			}
+ 			kfree(sp->buffers);
+ 			sp->buffers = nb;
+--- linux-2.6.19-rc2-git7/drivers/media/video/saa5246a.c.orig	2006-10-23 21:16:46.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/media/video/saa5246a.c	2006-10-23 21:17:19.000000000 +0200
+@@ -80,12 +80,11 @@ static int saa5246a_attach(struct i2c_ad
+ 	struct saa5246a_device *t;
  
--		memcpy(uvt->info, info, uvt->info_len);
- 		uvt->resp.present |= IB_UCM_PRES_INFO;
- 	}
- 	return 0;
---- linux-2.6.19-rc2-git7/drivers/infiniband/core/iwcm.c.orig	2006-10-23 21:09:11.000000000 +0200
-+++ linux-2.6.19-rc2-git7/drivers/infiniband/core/iwcm.c	2006-10-23 21:09:32.000000000 +0200
-@@ -140,10 +140,9 @@ static int copy_private_data(struct iwcm
- {
- 	void *p;
- 
--	p = kmalloc(event->private_data_len, GFP_ATOMIC);
-+	p = kmemdup(event->private_data, event->private_data_len, GFP_ATOMIC);
- 	if (!p)
+ 	printk(KERN_INFO "saa5246a: teletext chip found.\n");
+-	client=kmalloc(sizeof(*client), GFP_KERNEL);
++	client=kmemdup(&client_template, sizeof(*client), GFP_KERNEL);
+ 	if(client=NULL)
  		return -ENOMEM;
--	memcpy(p, event->private_data, event->private_data_len);
- 	event->private_data = p;
- 	return 0;
- }
---- linux-2.6.19-rc2-git7/drivers/infiniband/hw/mthca/mthca_provider.c.orig	2006-10-23 21:09:57.000000000 +0200
-+++ linux-2.6.19-rc2-git7/drivers/infiniband/hw/mthca/mthca_provider.c	2006-10-23 21:10:28.000000000 +0200
-@@ -1100,11 +1100,10 @@ static struct ib_fmr *mthca_alloc_fmr(st
- 	struct mthca_fmr *fmr;
- 	int err;
+ 	client_template.adapter = adap;
+ 	client_template.addr = addr;
+-	memcpy(client, &client_template, sizeof(*client));
+ 	t = kzalloc(sizeof(*t), GFP_KERNEL);
+ 	if(t=NULL)
+ 	{
+--- linux-2.6.19-rc2-git7/drivers/media/video/tuner-3036.c.orig	2006-10-23 21:18:30.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/media/video/tuner-3036.c	2006-10-23 21:18:44.000000000 +0200
+@@ -121,10 +121,9 @@ tuner_attach(struct i2c_adapter *adap, i
+ 	client_template.adapter = adap;
+ 	client_template.addr = addr;
  
--	fmr = kmalloc(sizeof *fmr, GFP_KERNEL);
-+	fmr = kmemdup(fmr_attr, sizeof *fmr, GFP_KERNEL);
- 	if (!fmr)
- 		return ERR_PTR(-ENOMEM);
+-	client = kmalloc(sizeof(struct i2c_client), GFP_KERNEL);
++	client = kmemdup(&client_template, sizeof(struct i2c_client), GFP_KERNEL);
+ 	if (client = NULL)
+ 		return -ENOMEM;
+-	memcpy(client, &client_template, sizeof(struct i2c_client));
  
--	memcpy(&fmr->attr, fmr_attr, sizeof *fmr_attr);
- 	err = mthca_fmr_alloc(to_mdev(pd->device), to_mpd(pd)->pd_num,
- 			     convert_access(mr_access_flags), fmr);
+ 	printk("tuner: SAB3036 found, status %02x\n", tuner_getstatus(client));
  
+--- linux-2.6.19-rc2-git7/drivers/media/video/tvp5150.c.orig	2006-10-23 21:19:27.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/media/video/tvp5150.c	2006-10-23 21:19:43.000000000 +0200
+@@ -1066,10 +1066,9 @@ static int tvp5150_detect_client(struct 
+ 	     I2C_FUNC_SMBUS_READ_BYTE | I2C_FUNC_SMBUS_WRITE_BYTE_DATA))
+ 		return 0;
+ 
+-	c = kmalloc(sizeof(struct i2c_client), GFP_KERNEL);
++	c = kmemdup(&client_template, sizeof(struct i2c_client), GFP_KERNEL);
+ 	if (c = 0)
+ 		return -ENOMEM;
+-	memcpy(c, &client_template, sizeof(struct i2c_client));
+ 
+ 	core = kzalloc(sizeof(struct tvp5150), GFP_KERNEL);
+ 	if (core = 0) {
 
 
 _______________________________________________
