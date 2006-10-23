@@ -1,42 +1,33 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Sun, 22 Oct 2006 22:30:29 +0000
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Mon, 23 Oct 2006 11:09:39 +0000
 Subject: Re: [KJ] make pdfdocs broken in 2.6.19rc2 and needs fixes
-Message-Id: <20061022153029.af3b382b.rdunlap@xenotime.net>
+Message-Id: <1161601779.19388.20.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200610222347.42418.ak@suse.de>
-	<453BEA00.4000601@garzik.org>
-	<20061022151600.a21859df.rdunlap@xenotime.net>
-In-Reply-To: <20061022151600.a21859df.rdunlap@xenotime.net>
+In-Reply-To: <200610222347.42418.ak@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Jeff Garzik <jeff@garzik.org>, kernel-janitors@lists.osdl.org, Andi Kleen <ak@suse.de>, linux-kernel@vger.kernel.org
+To: Andi Kleen <ak@suse.de>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-On Sun, 22 Oct 2006 15:16:00 -0700 Randy Dunlap wrote:
+Ar Sul, 2006-10-22 am 23:47 +0200, ysgrifennodd Andi Kleen:
+> When you do make pdfdocs  with 2.6.19rc2-git7 you get tons of error 
+> messages and  then some corrupted PDFs in the end.
 
-> On Sun, 22 Oct 2006 18:00:32 -0400 Jeff Garzik wrote:
-> 
-> > Andi Kleen wrote:
-> > > When you do make pdfdocs  with 2.6.19rc2-git7 you get tons of error 
-> > > messages and  then some corrupted PDFs in the end.
-> > > 
-> > > Fixing that (I suppose it will just need comment fixes and
-> > > should not affect the code) should be a relatively easy task for 
-> > > a newbie and  would be useful for the 2.6.19 release.
-> > 
-> > What userland were you using?  Unfortunately with 'make *docs' that matters.
-> > 
-> > Unquestionably, there is breakage regardless of distro.
-> 
-> I find it easier to just use/check make htmldocs && make mandocs
-> to look for errors and to test fixes.  At least as a first pass.
+Some vendor shipped pdf and TeX tools are problematic. It works
+correctly on Red Hat except for kernel-api which has become too big for
+the default settings when ext4 was added. The TeX hash size gets
+exceeded, TeX emits
 
-and those (htmldocs, mandocs) won't catch the errors that
-Andi is seeing.  :(
+"! TeX capacity exceeded, sorry [hash size`000].
+If you really absolutely need more capacity,
+you can ask a wizard to enlarge me."
 
----
-~Randy
+
+Really it would be nice to find a more modern way from the input to pdf
+without going via tex.
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
