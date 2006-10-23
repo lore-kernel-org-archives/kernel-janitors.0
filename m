@@ -1,7 +1,7 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Mon, 23 Oct 2006 20:19:10 +0000
-Subject: [KJ] [Patch] kmemdup() cleanup in drivers/message
-Message-Id: <1161634750.419.11.camel@alice>
+Date: Mon, 23 Oct 2006 20:20:15 +0000
+Subject: [KJ] [Patch] kmemdup() cleanup in drivers/net
+Message-Id: <1161634815.419.14.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1161634468.419.1.camel@alice>
 In-Reply-To: <1161634468.419.1.camel@alice>
@@ -17,19 +17,34 @@ and allow inlining/not inlining to be triggered by gcc.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
---- linux-2.6.19-rc2-git7/drivers/message/fusion/mptbase.c.orig	2006-10-23 21:22:37.000000000 +0200
-+++ linux-2.6.19-rc2-git7/drivers/message/fusion/mptbase.c	2006-10-23 21:23:14.000000000 +0200
-@@ -4846,9 +4846,8 @@ mpt_read_ioc_pg_3(MPT_ADAPTER *ioc)
- 	cfg.physAddr = ioc3_dma;
- 	cfg.action = MPI_CONFIG_ACTION_PAGE_READ_CURRENT;
- 	if (mpt_config(ioc, &cfg) = 0) {
--		mem = kmalloc(iocpage3sz, GFP_ATOMIC);
-+		mem = kmemdup((u8 *) pIoc3, iocpage3sz, GFP_ATOMIC);
- 		if (mem) {
--			memcpy(mem, (u8 *)pIoc3, iocpage3sz);
- 			ioc->raid_data.pIocPg3 = (IOCPage3_t *) mem;
- 		}
+--- linux-2.6.19-rc2-git7/drivers/net/tulip/de2104x.c.orig	2006-10-23 21:24:42.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/net/tulip/de2104x.c	2006-10-23 21:25:08.000000000 +0200
+@@ -1906,9 +1906,7 @@ fill_defaults:
+ 			de->media[i].csr15 = t21041_csr15[i];
  	}
+ 
+-	de->ee_data = kmalloc(DE_EEPROM_SIZE, GFP_KERNEL);
+-	if (de->ee_data)
+-		memcpy(de->ee_data, &ee_data[0], DE_EEPROM_SIZE);
++	de->ee_data = kmemdup(&ee_data[0], DE_EEPROM_SIZE, GFP_KERNEL);
+ 
+ 	return;
+ 
+--- linux-2.6.19-rc2-git7/drivers/net/wireless/ipw2100.c.orig	2006-10-23 21:26:26.000000000 +0200
++++ linux-2.6.19-rc2-git7/drivers/net/wireless/ipw2100.c	2006-10-23 21:27:14.000000000 +0200
+@@ -7568,11 +7568,10 @@ static int ipw2100_wx_set_genie(struct n
+ 		return -EINVAL;
+ 
+ 	if (wrqu->data.length) {
+-		buf = kmalloc(wrqu->data.length, GFP_KERNEL);
++		buf = kmemdup(extra, wrqu->data.length, GFP_KERNEL);
+ 		if (buf = NULL)
+ 			return -ENOMEM;
+ 
+-		memcpy(buf, extra, wrqu->data.length);
+ 		kfree(ieee->wpa_ie);
+ 		ieee->wpa_ie = buf;
+ 		ieee->wpa_ie_len = wrqu->data.length;
 
 
 _______________________________________________
