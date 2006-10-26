@@ -1,18 +1,18 @@
 From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Thu, 26 Oct 2006 19:03:38 +0000
-Subject: [KJ] [Patch] kmemdup() cleanup in net/
-Message-Id: <1161889418.7318.1.camel@alice>
+Date: Thu, 26 Oct 2006 20:49:31 +0000
+Subject: Re: [KJ] [Patch] kmemdup() cleanup in net/
+Message-Id: <1161895771.30263.1.camel@alice>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1161889418.7318.1.camel@alice>
+In-Reply-To: <1161889418.7318.1.camel@alice>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors <kernel-janitors@lists.osdl.org>
 Cc: netdev@vger.kernel.org
 
-hi,
-
-replace open coded kmemdup() to save some screen space,
-and allow inlining/not inlining to be triggered by gcc.
+arg, i thought i compile tested everything, please use this
+version.
 
 Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
 
@@ -199,22 +199,6 @@ Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
  }
  
  
---- linux-2.6.19-rc3-git1/net/ipv4/cipso_ipv4.c.orig	2006-10-26 20:34:22.000000000 +0200
-+++ linux-2.6.19-rc3-git1/net/ipv4/cipso_ipv4.c	2006-10-26 20:34:51.000000000 +0200
-@@ -377,12 +377,11 @@ int cipso_v4_cache_add(const struct sk_b
- 	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
- 	if (entry = NULL)
- 		return -ENOMEM;
--	entry->key = kmalloc(cipso_ptr_len, GFP_ATOMIC);
-+	entry->key = kmemdup(cisco_ptr, cipso_ptr_len, GFP_ATOMIC);
- 	if (entry->key = NULL) {
- 		ret_val = -ENOMEM;
- 		goto cache_add_failure;
- 	}
--	memcpy(entry->key, cipso_ptr, cipso_ptr_len);
- 	entry->key_len = cipso_ptr_len;
- 	entry->hash = cipso_v4_map_cache_hash(cipso_ptr, cipso_ptr_len);
- 	atomic_inc(&secattr->cache->refcount);
 --- linux-2.6.19-rc3-git1/net/ipv6/addrconf.c.orig	2006-10-26 20:35:00.000000000 +0200
 +++ linux-2.6.19-rc3-git1/net/ipv6/addrconf.c	2006-10-26 20:35:33.000000000 +0200
 @@ -3982,10 +3982,9 @@ static void addrconf_sysctl_register(str
@@ -436,6 +420,22 @@ Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
  	*addrpp = p;
  	return 0;
  }
+--- linux-2.6.19-rc3-git1/net/ipv4/cipso_ipv4.c.orig	2006-10-26 22:39:20.000000000 +0200
++++ linux-2.6.19-rc3-git1/net/ipv4/cipso_ipv4.c	2006-10-26 22:39:35.000000000 +0200
+@@ -377,12 +377,11 @@ int cipso_v4_cache_add(const struct sk_b
+ 	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
+ 	if (entry = NULL)
+ 		return -ENOMEM;
+-	entry->key = kmalloc(cipso_ptr_len, GFP_ATOMIC);
++	entry->key = kmemdup(cipso_ptr, cipso_ptr_len, GFP_ATOMIC);
+ 	if (entry->key = NULL) {
+ 		ret_val = -ENOMEM;
+ 		goto cache_add_failure;
+ 	}
+-	memcpy(entry->key, cipso_ptr, cipso_ptr_len);
+ 	entry->key_len = cipso_ptr_len;
+ 	entry->hash = cipso_v4_map_cache_hash(cipso_ptr, cipso_ptr_len);
+ 	atomic_inc(&secattr->cache->refcount);
 
 
 _______________________________________________
