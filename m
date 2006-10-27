@@ -1,20 +1,25 @@
-From: Dilon Smith <Paulette@chimera.co.nz>
-Date: Tue, 03 Oct 2006 16:20:43 +0000
+From: Tamra <Joyce@uiuc.edu>
+Date: Fri, 27 Oct 2006 08:22:59 +0000
 Subject: [KJ] reply to your resume
-Message-Id: <C75B4016.4029657@chimera.co.nz>
+Message-Id: <1C1B45F0.2064924@uiuc.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <C75B4016.4029657@chimera.co.nz>
+In-Reply-To: <C75B4016.4029657@chimera.co.nz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello.
-My name is Dilon Smith. Our company is seeking for persons, living in Australia to offer interesting part-time job.
-Free training, average salary $4500 a month. You are paid daily, must have no criminal history. No need to relocate, you can do this job at your location. Bonuses monthly, 2 weeks vacation yearly.
-Please, contact me at support@sunwaycorp-europe.com if interested with your short resume.
-Thanks
-Dilon Smith
-
+Good afternoon.
+I got your resume from SEEK Australia job-site and it suites our company requirements.
+My name is Roger Longbotham, I represent George Metway Inc company located in Europe. 
+Our company is seekeing for a representatives in Australia for full and part-time jobs. 
+No relocation is needed, job duties include mail and payments processing, standart office duties and everyday reporting. 
+All candidates have to be 18+ years old, authorized to work in Australia, with minimal computer knowlege. Both part-time (2-3 days a week) and full time (5 days a week) positions available.
+Your minimal income will be $4000 a month in average and you will be paid DAILY. 
+Please, e-mail me to support@georgemetwayinc.com if you are interested and I will send you company requirements.
+Roger Longbotham
+George Metway Inc
 
 _______________________________________________
 Kernel-janitors mailing list
