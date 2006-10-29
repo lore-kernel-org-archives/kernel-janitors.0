@@ -1,68 +1,110 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sun, 29 Oct 2006 19:36:30 +0000
-Subject: Re: [KJ] [PATCH] cleaning of HANDLE_STACK definition
-Message-Id: <20061029193630.GW5591@parisc-linux.org>
+From: Giangiacomo Mariotti <giangiacomo_mariotti@yahoo.com>
+Date: Sun, 29 Oct 2006 20:11:19 +0000
+Subject: [KJ] [PATCH] cleaning of HANDLE_STACK definition
+Message-Id: <20061029201119.84918.qmail@web90315.mail.mud.yahoo.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="0-413036093-1162152679=:81348"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20061029191459.92665.qmail@web90313.mail.mud.yahoo.com>
 In-Reply-To: <20061029191459.92665.qmail@web90313.mail.mud.yahoo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Oct 29, 2006 at 11:14:59AM -0800, Giangiacomo Mariotti wrote:
-> This little patch cleans the definition of HANDLE_STACK in arch/x86_64/kernel/traps.c because it's syntax is misleading.
+This is a multi-part message in MIME format...
 
-Yeah, but you've wrapped it past the 80 column boundary, so you'd need
-to fix that.  And you didn't put a Signed-off-by on it.
+--0-413036093-1162152679=:81348
+Content-Type: multipart/alternative;
+    boundary="----------=_1162152836-3329-359"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-I don't think the outer do ... while is necessary anyway.  Is there any
-problem with just deleting them?
+This is a multi-part message in MIME format...
 
->  #define HANDLE_STACK(cond) \
-> -	do while (cond) { \
-> -		unsigned long addr = *stack++; \
-> -		if (oops_in_progress ? 		\
-> -			__kernel_text_address(addr) : \
-> -			kernel_text_address(addr)) { \
-> -			/* \
-> -			 * If the address is either in the text segment of the \
-> -			 * kernel, or in the region which contains vmalloc'ed \
-> -			 * memory, it *may* be the address of a calling \
-> -			 * routine; if so, print it so that someone tracing \
-> -			 * down the cause of the crash will be able to figure \
-> -			 * out the call path that was taken. \
-> -			 */ \
-> -			ops->address(data, addr);   \
-> +	do { \
-> +		while (cond) { \
-> +			unsigned long addr = *stack++; \
-> +			if (oops_in_progress ? 		\
-> +				__kernel_text_address(addr) : \
-> +				kernel_text_address(addr)) { \
-> +				/* \
-> +				* If the address is either in the text segment of the \
-> +			 	* kernel, or in the region which contains vmalloc'ed \
-> +			 	* memory, it *may* be the address of a calling \
-> +			 	* routine; if so, print it so that someone tracing \
-> +			 	* down the cause of the crash will be able to figure \
-> +			 	* out the call path that was taken. \
-> +			 	*/ \
-> +				ops->address(data, addr);   \
-> +			} \
->  		} \
->  	} while (0)
->  
-> -- 
-> 1.4.3.2
-> 
+------------=_1162152836-3329-359
+Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Description: cleans the definition of HANDLE_STACK in arch/x86_64/kernel/tr=
+aps.c because it's syntax is misleading.
+
+Signed-off-by: Giangiacomo Mariotti <giangiacomo_mariotti@yahoo.com>
+
+
+
+
+
+
+------------=_1162152836-3329-359
+Content-Type: text/html; charset=ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<html><head><DEFANGED_style_0 <!-- DIV {margin:0px;} --></DEFANGED_style></=
+head><body><div DEFANGED_style=3D"font-family:times new roman, new york, ti=
+mes, serif;font-size:12pt"><div>Description: cleans the definition of HANDL=
+E_STACK in arch/x86_64/kernel/traps.c because it's syntax is misleading.<br=
+><br>Signed-off-by: Giangiacomo Mariotti &lt;giangiacomo_mariotti@yahoo.com=
+&gt;<br><br><br></div></div><br></body></html>
+------------=_1162152836-3329-359--
+
+--0-413036093-1162152679=:81348
+Content-Type: text/plain;
+	name="=?utf-8?q?0001-cleaning-of-HANDLE=5FSTACK-definition.txt?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="=?utf-8?q?0001-cleaning-of-HANDLE=5FSTACK-definition.txt?="
+
+RnJvbSAyZWU5MTdjNTg2MzQzOWVkMDgyMzY4NTUzMDAzODY1MTFlNzM4MGFl
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBHaWFuZ2lhY29tbyBN
+YXJpb3R0aSA8Z2lhbmdpYWNvbW9fbWFyaW90dGlAeWFob28uY29tPgpEYXRl
+OiBTdW4sIDI5IE9jdCAyMDA2IDEyOjU2OjI4ICswMTAwClN1YmplY3Q6IFtQ
+QVRDSF0gY2xlYW5pbmcgb2YgSEFORExFX1NUQUNLIGRlZmluaXRpb24KCi0t
+LQogYXJjaC94ODZfNjQva2VybmVsL3RyYXBzLmMgfCAgIDMwICsrKysrKysr
+KysrKysrKystLS0tLS0tLS0tLS0tLQogMSBmaWxlcyBjaGFuZ2VkLCAxNiBp
+bnNlcnRpb25zKCspLCAxNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9h
+cmNoL3g4Nl82NC9rZXJuZWwvdHJhcHMuYyBiL2FyY2gveDg2XzY0L2tlcm5l
+bC90cmFwcy5jCmluZGV4IDc4MTkwMjIuLmEwYjFlMWYgMTAwNjQ0Ci0tLSBh
+L2FyY2gveDg2XzY0L2tlcm5lbC90cmFwcy5jCisrKyBiL2FyY2gveDg2XzY0
+L2tlcm5lbC90cmFwcy5jCkBAIC0yOTcsMjAgKzI5NywyMiBAQCB2b2lkIGR1
+bXBfdHJhY2Uoc3RydWN0IHRhc2tfc3RydWN0ICp0c2ssCiAJICogaXRlcmF0
+aW9uIHdpbGwgZXZlbnR1YWxseSB0cmlnZ2VyLgogCSAqLwogI2RlZmluZSBI
+QU5ETEVfU1RBQ0soY29uZCkgXAotCWRvIHdoaWxlIChjb25kKSB7IFwKLQkJ
+dW5zaWduZWQgbG9uZyBhZGRyID0gKnN0YWNrKys7IFwKLQkJaWYgKG9vcHNf
+aW5fcHJvZ3Jlc3MgPyAJCVwKLQkJCV9fa2VybmVsX3RleHRfYWRkcmVzcyhh
+ZGRyKSA6IFwKLQkJCWtlcm5lbF90ZXh0X2FkZHJlc3MoYWRkcikpIHsgXAot
+CQkJLyogXAotCQkJICogSWYgdGhlIGFkZHJlc3MgaXMgZWl0aGVyIGluIHRo
+ZSB0ZXh0IHNlZ21lbnQgb2YgdGhlIFwKLQkJCSAqIGtlcm5lbCwgb3IgaW4g
+dGhlIHJlZ2lvbiB3aGljaCBjb250YWlucyB2bWFsbG9jJ2VkIFwKLQkJCSAq
+IG1lbW9yeSwgaXQgKm1heSogYmUgdGhlIGFkZHJlc3Mgb2YgYSBjYWxsaW5n
+IFwKLQkJCSAqIHJvdXRpbmU7IGlmIHNvLCBwcmludCBpdCBzbyB0aGF0IHNv
+bWVvbmUgdHJhY2luZyBcCi0JCQkgKiBkb3duIHRoZSBjYXVzZSBvZiB0aGUg
+Y3Jhc2ggd2lsbCBiZSBhYmxlIHRvIGZpZ3VyZSBcCi0JCQkgKiBvdXQgdGhl
+IGNhbGwgcGF0aCB0aGF0IHdhcyB0YWtlbi4gXAotCQkJICovIFwKLQkJCW9w
+cy0+YWRkcmVzcyhkYXRhLCBhZGRyKTsgICBcCisJZG8geyBcCisJCXdoaWxl
+IChjb25kKSB7IFwKKwkJCXVuc2lnbmVkIGxvbmcgYWRkciA9ICpzdGFjaysr
+OyBcCisJCQlpZiAob29wc19pbl9wcm9ncmVzcyA/IAkJXAorCQkJCV9fa2Vy
+bmVsX3RleHRfYWRkcmVzcyhhZGRyKSA6IFwKKwkJCQlrZXJuZWxfdGV4dF9h
+ZGRyZXNzKGFkZHIpKSB7IFwKKwkJCQkvKiBcCisJCQkgCSogSWYgdGhlIGFk
+ZHJlc3MgaXMgZWl0aGVyIGluIHRoZSB0ZXh0IHNlZ21lbnQgb2YgdGhlIFwK
+KwkJCSAJKiBrZXJuZWwsIG9yIGluIHRoZSByZWdpb24gd2hpY2ggY29udGFp
+bnMgdm1hbGxvYydlZCBcCisJCQkgCSogbWVtb3J5LCBpdCAqbWF5KiBiZSB0
+aGUgYWRkcmVzcyBvZiBhIGNhbGxpbmcgXAorCQkJIAkqIHJvdXRpbmU7IGlm
+IHNvLCBwcmludCBpdCBzbyB0aGF0IHNvbWVvbmUgdHJhY2luZyBcCisJCQkg
+CSogZG93biB0aGUgY2F1c2Ugb2YgdGhlIGNyYXNoIHdpbGwgYmUgYWJsZSB0
+byBmaWd1cmUgXAorCQkJIAkqIG91dCB0aGUgY2FsbCBwYXRoIHRoYXQgd2Fz
+IHRha2VuLiBcCisJCQkgCSovIFwKKwkJCQlvcHMtPmFkZHJlc3MoZGF0YSwg
+YWRkcik7ICAgXAorCQkJfSBcCiAJCX0gXAogCX0gd2hpbGUgKDApCiAKLS0g
+CjEuNC4zLjIKCg==
+
+--0-413036093-1162152679=:81348
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--0-413036093-1162152679=:81348--
