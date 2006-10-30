@@ -1,8 +1,10 @@
-From: "Marcie Gates" <gvduemju@arpalan.com>
-Date: Mon, 30 Oct 2006 13:48:28 +0000
+From: "Courtney Nichols" <wvjyr@assaabloyhospitality.com>
+Date: Mon, 30 Oct 2006 18:01:46 +0000
 Subject: [KJ] Notification
-Message-Id: <01c6fc25$0cd39460$6c822ecf@gvduemju>
+Message-Id: <01c6fc66$9c6e0ec0$6c822ecf@wvjyr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c6fc25$0cd39460$6c822ecf@gvduemju>
+In-Reply-To: <01c6fc25$0cd39460$6c822ecf@gvduemju>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
