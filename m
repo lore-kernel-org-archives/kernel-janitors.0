@@ -1,7 +1,7 @@
-From: Amit Choudhary <amit2030@yahoo.com>
-Date: Mon, 30 Oct 2006 03:12:49 +0000
+From: "Darren Jenkins" <darrenrjenkins@gmail.com>
+Date: Mon, 30 Oct 2006 12:07:55 +0000
 Subject: Re: [KJ] [PATCH] cleaning of HANDLE_STACK definition
-Message-Id: <20061030031249.39403.qmail@web55614.mail.re4.yahoo.com>
+Message-Id: <82faac5b0610300407h61110f41j47ae2576c893ee91@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20061029191459.92665.qmail@web90313.mail.mud.yahoo.com>
 In-Reply-To: <20061029191459.92665.qmail@web90313.mail.mud.yahoo.com>
@@ -10,46 +10,20 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+G'day all
 
+On 10/30/06, Amit Choudhary <amit2030@yahoo.com> wrote:
 
---- Giangiacomo Mariotti <giangiacomo_mariotti@yahoo.com> wrote:
+>
+> There are couple of good reasons for using a do - while block in a macro having multiple
+> statements.
 
-> >I don't think the outer do ..... while is necessary anyway.Is there any problem
-> >with just deleting them?
-> I thought about it,but then I tried to change this misleading code without being too
-> destructive,I thought that the previous author could have had a good reason to
-> use the do{}while(0).
-> 
+While you are spot on here and that explains what the code did before
+the patch, I think the point that Matthew Wilcox was getting at is
+that _after_ this patch the "do { } while (0)", now apears to wrap a
+_single_ "while (cond) { }" statement, making it surperflous.
 
-There are couple of good reasons for using a do - while block in a macro having multiple
-statements. Chapter 11 of kernel coding style recommends using the do - while block. A macro is
-generally used as:
-
-MACRO(X);   
-
-The semicolon will be handled correctly if the macro is enclosed in a do - while block.
-
-----
-                Chapter 11: Macros, Enums and RTL
- 
- Macros with multiple statements should be enclosed in a do - while block:
- 
- #define macrofun(a, b, c)                       \
-         do {                                    \
-                 if (a = 5)                     \
-                         do_this(b, c);          \
-         } while (0)
-----
-
-Regards,
-Amit
-
-
- 
-____________________________________________________________________________________
-Want to start your own business? Learn how on Yahoo! Small Business 
-(http://smallbusiness.yahoo.com) 
-
+Darren J.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
