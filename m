@@ -1,27 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Date: Fri, 27 Oct 2006 00:17:31 +0000
-Subject: Re: [KJ] [Patch] kmemdup() cleanup in net/
-Message-Id: <20061026.171731.34759403.davem@davemloft.net>
+From: "Marcie Gates" <gvduemju@arpalan.com>
+Date: Mon, 30 Oct 2006 13:48:28 +0000
+Subject: [KJ] Notification
+Message-Id: <01c6fc25$0cd39460$6c822ecf@gvduemju>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1161889418.7318.1.camel@alice>
-	<1161895771.30263.1.camel@alice>
-In-Reply-To: <1161895771.30263.1.camel@alice>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: snakebyte@gmx.de
-Cc: kernel-janitors@lists.osdl.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Eric Sesterhenn <snakebyte@gmx.de>
-Date: Thu, 26 Oct 2006 22:49:31 +0200
+The accumulation of positions by those in the know has shot
+A_U_N_I up 33% in a few short days.  We hope you all got in
+early like we told you to, and are enjoying your good fortune.
+But even if you didn't don't worry because the big announcement
+has yet to be made.  Monday, October 30 may be your last chance
+before this thing triples.  Don't hesitate.
 
-> arg, i thought i compile tested everything, please use this
-> version.
-> 
-> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
+Price: O.85
+Projected: 2.3O
+Rating: 5/5
 
-Definitely post-2.6.19 material, please resubmit when
-2.6.20 merging opens up, thanks.
+This is the break you've been waiting for!  Spice up your
+holdings with A_U_N_I and WIN!
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
