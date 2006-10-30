@@ -1,76 +1,62 @@
-From: Giangiacomo Mariotti <giangiacomo_mariotti@yahoo.com>
-Date: Mon, 30 Oct 2006 12:22:26 +0000
+From: "Jaco Kroon" <jaco@kroon.co.za>
+Date: Mon, 30 Oct 2006 12:52:38 +0000
 Subject: Re: [KJ] [PATCH] cleaning of HANDLE_STACK definition
-Message-Id: <20061030122226.55465.qmail@web90305.mail.mud.yahoo.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0787759081=="
+Message-Id: <4652.41.242.13.147.1162212758.squirrel@krooninfsys.dyndns.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20061029191459.92665.qmail@web90313.mail.mud.yahoo.com>
 In-Reply-To: <20061029191459.92665.qmail@web90313.mail.mud.yahoo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+> Darren Jenkins wrote:
+>>While you are spot on here and that explains what the code did before
+>>the patch, I think the point that Matthew Wilcox was getting at is
+>>that _after_ this patch the "do { } while (0)", now apears to wrap a
+>>_single_ "while (cond) { }" statement, making it surperflous.
+> Yes,this was my point too,but then I tryied to maintain the general style
+> of the code fragment,
+> so now the code is conformant to the kernel code style and it's clearer
+> than before.
 
---===============0787759081==
-Content-Type: multipart/alternative;
-    boundary="----------=_1162211012-21038-434"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+As already explained, the do { } while(0) is actually there for a very
+good reason.
 
-This is a multi-part message in MIME format...
+Consider a fictitious macro called m() that looks something like:
 
-------------=_1162211012-21038-434
-Content-Type: text/plain; charset=ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+#define m()  while(foo) { blah() }
 
-Darren Jenkins wrote:
->While you are spot on here and that explains what the code did before
->the patch, I think the point that Matthew Wilcox was getting at is
->that _after_ this patch the "do { } while (0)", now apears to wrap a
->_single_ "while (cond) { }" statement, making it surperflous.
-Yes,this was my point too,but then I tryied to maintain the general style o=
-f the code fragment,
-so now the code is conformant to the kernel code style and it's clearer tha=
-n before.
+Now, if I use that macro in the following construct I've got a problem:
 
+if (bleh)
+    m();
+else
+    bar();
 
+That won't actually compile since it expands to:
 
+if (bleh)
+    while(foo) { blah() };
+else
+    bar();
 
+Now, that semicolon at the directly after the } is what causes the
+problem.  So wrapping it up in a do {} while(0) solves that problem:
 
+if (bleh)
+    do {
+        while(foo) { blah() }
+    while(0);
+else
+    bar();
 
+Does actually work.
 
+My 5c worth,
 
-------------=_1162211012-21038-434
-Content-Type: text/html; charset=ascii
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<html><head><DEFANGED_style_0 <!-- DIV {margin:0px;} --></DEFANGED_style></=
-head><body><div DEFANGED_style=3D"font-family:times new roman, new york, ti=
-mes, serif;font-size:12pt"><div DEFANGED_style=3D"font-family: times new ro=
-man,new york,times,serif; font-size: 12pt;">Darren Jenkins wrote:<br><div D=
-EFANGED_style=3D"font-family: times new roman,new york,times,serif; font-si=
-ze: 12pt;"><div>&gt;While you are spot on here and that explains what the c=
-ode did before<br>&gt;the patch, I think the point that Matthew Wilcox was =
-getting at is<br>&gt;that _after_ this patch the "do { } while (0)", now ap=
-ears to wrap a<br>&gt;_single_ "while (cond) { }" statement, making it surp=
-erflous.<br>Yes,this was my point too,but then I tryied to maintain the gen=
-eral style of the code fragment,<br>so now the code is conformant to the ke=
-rnel code style and it's clearer than before.<br><br></div></div><br></div>=
-</div><br></body></html>
-------------=_1162211012-21038-434--
-
---===============0787759081==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Jaco
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0787759081==--
