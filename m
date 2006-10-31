@@ -1,38 +1,44 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Mon, 02 Oct 2006 10:54:00 +0000
-Subject: [KJ] [PATCH] drivers/usb/atm/ueagle-atm: Handle return value of
-Message-Id: <20061002105400.GA12109@distanz.ch>
+From: "Gail Tatum" <ehoq@assadsanat.com>
+Date: Tue, 31 Oct 2006 11:58:51 +0000
+Subject: [KJ] IUDE corporation  Financial Documents
+Message-Id: <01c6fcde$e7350a30$6c822ecf@ehoq>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Handle the return value of usb_register() in the module_init function.
+The Good PR blitz has start!  A-U-N-I is up 33% in the last week 
+leading up to todays news.  
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+NEW YORK--(MARKET WIRE)--Oct 30, 2006 Mr. Christian 
+Lillieroos, AUNI's newly-appointed President and CEO, who 
+addressed the audience and announced the new vision 
+statement of the group: American Unity Investments - a 
+business portal that unites the capital flow between the US 
+and China. "In the future, AUNI will focus more of its 
+attention on creating capital opportunities for US 
+investors in the China market and giving Chinese companies 
+opportunities to get access to the US capital market,"
 
----
- drivers/usb/atm/ueagle-atm.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+The Chinese dragon is wide awake and the region is awash in 
+opportunities.  With AUNI strong management team and 
+proven track record we expect some very positive news 
+reports throughout this week to push the share price 
+through the roof!  
 
-diff --git a/drivers/usb/atm/ueagle-atm.c b/drivers/usb/atm/ueagle-atm.c
-index 465961a..90e8062 100644
---- a/drivers/usb/atm/ueagle-atm.c
-+++ b/drivers/usb/atm/ueagle-atm.c
-@@ -1830,9 +1830,7 @@ static int __init uea_init(void)
- {
- 	printk(KERN_INFO "[ueagle-atm] driver " EAGLEUSBVERSION " loaded\n");
- 
--	usb_register(&uea_driver);
--
--	return 0;
-+	return usb_register(&uea_driver);
- }
- 
- module_init(uea_init);
--- 
-1.4.2
+Sym: AUNI
+Price: O.85
+Projected: 2.3O
+Rating: 5/5
+
+This is the break you've been waiting for! 
+Spice up your holdings with A-U-N-I !
+Buy on 31 Oct. 
+-----
+LONDON (Reuters) -- At least four bidders including the co-founder of pop-video television channel MTV, which is owned by Viacom (Charts), are expected to line up for a second round of bids for Rank Group's iconic Hard Rock Cafe chain, newspapers reported on Sunday
+NEW YORK (CNNMoney.com) -- Oh my God, they purged Kenny! The New York Times reported Monday that video sharing site YouTube is removing copyrighted material from cable network Comedy Central, including episodes of "South Park" (whose character Kenny is killed in every episode) as well as "The Daily Show" and "The Colbert Report."
+
 
 _______________________________________________
 Kernel-janitors mailing list
