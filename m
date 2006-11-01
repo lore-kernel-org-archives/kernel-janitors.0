@@ -1,36 +1,165 @@
-From: "Tenet C. Barron" <senety@gregyalelighting.com>
-Date: Mon, 20 Nov 2006 20:18:23 +0000
-Subject: Re: [KJ] Software
-Message-Id: <3140572113.20061120151823@gregyalelighting.com>
+From: Neil Horman <nhorman@tuxdriver.com>
+Date: Wed, 01 Nov 2006 13:56:19 +0000
+Subject: Re: [KJ] [PATCH] Correct misc_register return code handling in
+Message-Id: <20061101135619.GA3459@hmsreliant.homelinux.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <6340411127.20060826111122@grannycumshere.com>
-In-Reply-To: <6340411127.20060826111122@grannycumshere.com>
+References: <20061023171910.GA23714@hmsreliant.homelinux.net> <1161660875.10524.535.camel@localhost.localdomain> <20061024125306.GA1608@hmsreliant.homelinux.net> <1161729762.10524.660.camel@localhost.localdomain>
+In-Reply-To: <1161729762.10524.660.camel@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, akpm@osdl.org
+Cc: kernel-janitors@lists.osdl.org, kjhall@us.ibm.com, maxk@qualcomm.com, linux-kernel@vger.kernel.org
 
-Understanding OEM software problem!
+Hey all-
+	Since Andrew hasn't incorporated this patch yet, and I had the time, I
+redid the patch taking Benjamin's INIT_LIST_HEAD and Joes mmtimer cleanup into
+account.  New patch attached, replacing the old one, everything except the
+aforementioned cleanups is identical.  
 
-Some examples:
-Windows XP Professional With SP2 Full Version $79.95
-Actobat 6.0 Pro $79.95
-Director MX 2004 $69.95
-PageMaker 7 (2CD) $69.95
-Creative Suite Standard (3 CD) $129.95
-PageMaker 7 (2CD) $69.95
-Fireworks MX 2004 $69.95
-InDesign CS PageMaker Edition (2CD) $69.95
-Windows 2000 Professional $59.95
-Quark Xpress 6 Passport Multilanguage $69.95
-Flash MX 2004 $69.95
-Acrobat 6 Professional $79.95
-Money 2004 $69.95
-After Effects 6 $69.95
+Thanks & Regards
+Neil
 
-The rest is on our site:
-http://cxi8iqheici7vucpzcc7hccc./
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
 
+
+ drivers/char/misc.c             |    2 ++
+ drivers/char/mmtimer.c          |   23 ++++++++++++++++++-----
+ drivers/char/tpm/tpm.c          |    1 +
+ drivers/input/misc/hp_sdc_rtc.c |    4 +++-
+ drivers/macintosh/apm_emu.c     |    3 ++-
+ 5 files changed, 26 insertions(+), 7 deletions(-)
+
+
+
+diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+index 62ebe09..77c20f8 100644
+--- a/drivers/char/misc.c
++++ b/drivers/char/misc.c
+@@ -204,6 +204,8 @@ int misc_register(struct miscdevice * mi
+ 	dev_t dev;
+ 	int err = 0;
+ 
++	INIT_LIST_HEAD(&misc->list);
++
+ 	down(&misc_sem);
+ 	list_for_each_entry(c, &misc_list, list) {
+ 		if (c->minor = misc->minor) {
+diff --git a/drivers/char/mmtimer.c b/drivers/char/mmtimer.c
+index 22b9905..dbc5503 100644
+--- a/drivers/char/mmtimer.c
++++ b/drivers/char/mmtimer.c
+@@ -680,7 +680,7 @@ static int __init mmtimer_init(void)
+ 	if (sn_rtc_cycles_per_second < 100000) {
+ 		printk(KERN_ERR "%s: unable to determine clock frequency\n",
+ 		       MMTIMER_NAME);
+-		return -1;
++		goto out1;
+ 	}
+ 
+ 	mmtimer_femtoperiod = ((unsigned long)1E15 + sn_rtc_cycles_per_second /
+@@ -689,13 +689,13 @@ static int __init mmtimer_init(void)
+ 	if (request_irq(SGI_MMTIMER_VECTOR, mmtimer_interrupt, IRQF_PERCPU, MMTIMER_NAME, NULL)) {
+ 		printk(KERN_WARNING "%s: unable to allocate interrupt.",
+ 			MMTIMER_NAME);
+-		return -1;
++		goto out1;
+ 	}
+ 
+ 	if (misc_register(&mmtimer_miscdev)) {
+ 		printk(KERN_ERR "%s: failed to register device\n",
+ 		       MMTIMER_NAME);
+-		return -1;
++		goto out2;
+ 	}
+ 
+ 	/* Get max numbered node, calculate slots needed */
+@@ -709,16 +709,18 @@ static int __init mmtimer_init(void)
+ 	if (timers = NULL) {
+ 		printk(KERN_ERR "%s: failed to allocate memory for device\n",
+ 				MMTIMER_NAME);
+-		return -1;
++		goto out3;
+ 	}
+ 
++	memset(timers,0,(sizeof(mmtimer_t *)*maxn));
++
+ 	/* Allocate mmtimer_t's for each online node */
+ 	for_each_online_node(node) {
+ 		timers[node] = kmalloc_node(sizeof(mmtimer_t)*NUM_COMPARATORS, GFP_KERNEL, node);
+ 		if (timers[node] = NULL) {
+ 			printk(KERN_ERR "%s: failed to allocate memory for device\n",
+ 				MMTIMER_NAME);
+-			return -1;
++			goto out4;
+ 		}
+ 		for (i=0; i< NUM_COMPARATORS; i++) {
+ 			mmtimer_t * base = timers[node] + i;
+@@ -739,6 +741,17 @@ static int __init mmtimer_init(void)
+ 	       sn_rtc_cycles_per_second/(unsigned long)1E6);
+ 
+ 	return 0;
++
++out4:
++	for_each_online_node(node) {
++		kfree(timers[node]);
++	}
++out3:
++	misc_deregister(&mmtimer_miscdev);
++out2:
++	free_irq(SGI_MMTIMER_VECTOR, NULL);
++out1:
++	return -1;	
+ }
+ 
+ module_init(mmtimer_init);
+diff --git a/drivers/char/tpm/tpm.c b/drivers/char/tpm/tpm.c
+index 6ad2d3b..f14bf8b 100644
+--- a/drivers/char/tpm/tpm.c
++++ b/drivers/char/tpm/tpm.c
+@@ -1155,6 +1155,7 @@ #define DEVNAME_SIZE 7
+ 
+ 	if (sysfs_create_group(&dev->kobj, chip->vendor.attr_group)) {
+ 		list_del(&chip->list);
++		misc_deregister(&chip->vendor.miscdev);
+ 		put_device(dev);
+ 		clear_bit(chip->dev_num, dev_mask);
+ 		kfree(chip);
+diff --git a/drivers/input/misc/hp_sdc_rtc.c b/drivers/input/misc/hp_sdc_rtc.c
+index ab4da79..31d5a13 100644
+--- a/drivers/input/misc/hp_sdc_rtc.c
++++ b/drivers/input/misc/hp_sdc_rtc.c
+@@ -695,7 +695,9 @@ static int __init hp_sdc_rtc_init(void)
+ 
+ 	if ((ret = hp_sdc_request_timer_irq(&hp_sdc_rtc_isr)))
+ 		return ret;
+-	misc_register(&hp_sdc_rtc_dev);
++	if (misc_register(&hp_sdc_rtc_dev) != 0)
++		printk(KERN_INFO "Could not register misc. dev for i8042 rtc\n");
++
+         create_proc_read_entry ("driver/rtc", 0, NULL,
+ 				hp_sdc_rtc_read_proc, NULL);
+ 
+diff --git a/drivers/macintosh/apm_emu.c b/drivers/macintosh/apm_emu.c
+index 1293876..8862a83 100644
+--- a/drivers/macintosh/apm_emu.c
++++ b/drivers/macintosh/apm_emu.c
+@@ -529,7 +529,8 @@ static int __init apm_emu_init(void)
+ 	if (apm_proc)
+ 		apm_proc->owner = THIS_MODULE;
+ 
+-	misc_register(&apm_device);
++	if (misc_register(&apm_device) != 0)
++		printk(KERN_INFO "Could not create misc. device for apm\n");
+ 
+ 	pmu_register_sleep_notifier(&apm_sleep_notifier);
+ 
+-- 
+/***************************************************
+ *Neil Horman
+ *Software Engineer
+ *gpg keyid: 1024D / 0x92A74FA1 - http://pgp.mit.edu
+ ***************************************************/
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
