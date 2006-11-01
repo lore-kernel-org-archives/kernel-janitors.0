@@ -1,68 +1,40 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 01 Nov 2006 19:08:46 +0000
-Subject: [KJ] atomic variables and "volatility"
-Message-Id: <Pine.LNX.4.64.0611011355080.5454@localhost.localdomain>
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Wed, 01 Nov 2006 22:32:10 +0000
+Subject: Re: [KJ] atomic variables and "volatility"
+Message-Id: <9a8748490611011432y54eeb026q2311015950e71792@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0611011355080.5454@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0611011355080.5454@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On 01/11/06, Robert P. J. Day <rpjday@mindspring.com> wrote:
+>
+>   since i'm getting the impression that the LKML is not the right
+> place for discussions like this, i'm going to move it to the KJ list.
+>
+>   i'm curious about possible redundancy or confusing code in the
+> numerous atomic.h header files that define atomic variables for each
+> architecture.  the first issue is that there are two different
+> typedefs for an "atomic_t" depending on the architecture -- one of:
+>
+>         typedef struct { int counter; } atomic_t;
+>         typedef struct { volatile int counter; } atomic_t;
+>                          ^^^^^^^^
+>
 
-  since i'm getting the impression that the LKML is not the right
-place for discussions like this, i'm going to move it to the KJ list.
+There was a long thread recently on LKML about volatile - it's
+interresting, I suggest you read it. Especially this post by Linus is
+worth reading : http://lkml.org/lkml/2006/7/6/159
 
-  i'm curious about possible redundancy or confusing code in the
-numerous atomic.h header files that define atomic variables for each
-architecture.  the first issue is that there are two different
-typedefs for an "atomic_t" depending on the architecture -- one of:
+Reading the entire thread should give you a clearer picture.  :-)
 
-	typedef struct { int counter; } atomic_t;
-	typedef struct { volatile int counter; } atomic_t;
-                         ^^^^^^^^
-
-  the "volatile" type qualifier is documented in one of those header
-files thusly:
-
-  "Counter is volatile to make sure gcc doesn't try to be clever
-   and move things around on us."
-
-that makes sense, but some of the architectures define that typedef
-*with* a volatile, and some don't.  is this really something that is
-architecture-dependent?  or is it more a compiler-dependent thing?
-and would there be any possible harm in simply using "volatile"
-everywhere?  surely that wouldn't break existing code, would it?  but
-there's more.
-
-  in include/asm-v850/atomic.h, atomic_t is defined as:
-
-	typedef struct { int counter; } atomic_t;
-
-which would suggest that there's no need to qualify this as
-"volatile".  but if you look further down in that same header file,
-note that some routines that accept an argument of a pointer to such a
-struct declare it as "volatile" in the parameter list:
-
-  static inline int atomic_add_return (int i, volatile atomic_t *v)
-                                              ^^^^^^^^
-  static __inline__ int atomic_sub_return (int i, volatile atomic_t *v)
-                                                  ^^^^^^^^
-  static inline int atomic_cmpxchg(atomic_t *v, int old, int new)
-  static inline int atomic_add_unless(atomic_t *v, int a, int u)
-
-so what's going on here?  if you omit the "volatile" type qualifier
-from the struct member itself, is it then equivalent to declare a
-function parameter as "volatile atomic_t* v" to get the same effect?
-and if it is, wouldn't it just be simpler to add "volatile" to the
-struct member and drop that qualifier from the parameter list?
-and is there a problem that only *some* of those inline functions
-declare that parameter as "volatile"?
-
-  in a nutshell, is there any reason to not just add "volatile" into
-every typedef, so it could then be dropped from all those parameter
-lists?
-
-rday
+-- 
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
