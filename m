@@ -1,28 +1,80 @@
-From: Andi Kleen <ak@muc.de>
-Date: Fri, 03 Nov 2006 04:48:34 +0000
-Subject: Re: [KJ] [PATCH] x86_64: remove unused variable
-Message-Id: <20061103044834.GA36272@muc.de>
+From: "Giangiacomo Mariotti" <giangiacomo.mariotti@gmail.com>
+Date: Wed, 01 Nov 2006 20:19:09 +0000
+Subject: [KJ] cleaning of the definition of HANDLE_STACK
+Message-Id: <2aac3c260611011219w79c2a734q2be4bc9cdc21c6a1@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_Part_31928_31160940.1162412349317"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061101134540.GB26426@silverwood.ncultra.org>
-In-Reply-To: <20061101134540.GB26426@silverwood.ncultra.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> index fe429e5..7807228 100644
-> --- a/arch/x86_64/kernel/io_apic.c
-> +++ b/arch/x86_64/kernel/io_apic.c
-> @@ -688,7 +688,6 @@ void __setup_vector_irq(int cpu)
-> {
-> 	/* Initialize vector_irq on a new cpu */
-> 	/* This function must be called with vector_lock held */
-> -	unsigned long flags;
+------=_Part_31928_31160940.1162412349317
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-It seems to be already gone. Thanks anyways.
+This is my new version of a patch that I've already posted in kernel-janitors.
+This new version cleans the definition of the macro HANDLE_STACK in
+arch/x86_64/kernel/traps.c and erases a related warning of sparse
+about while(){} not being a compound statement.
 
--Andi
+Signed-off-by: Giangiacomo Mariotti <giangiacomo.mariotti@gmail.com>
+
+------------------------
+
+------=_Part_31928_31160940.1162412349317
+Content-Type: text/plain; 
+	name=0001-cleaning-of-the-definition-of-HANDLE_STACK.txt; 
+	charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_etzp5cta
+Content-Disposition: attachment;
+	filename="0001-cleaning-of-the-definition-of-HANDLE_STACK.txt"
+
+RnJvbSA5NjAyN2RkNzkxNmE4NGE1NzMxNmYxYTBhYzI3MjY4NWM0ZGVmNTU3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBHaWFuZ2lhY29tbyBNYXJpb3R0aSA8Z2lhbmdpYWNvbW8ubWFy
+aW90dGlAZ21haWwuY29tPgpEYXRlOiBXZWQsIDEgTm92IDIwMDYgMTI6MDY6MzEgKzAxMDAKU3Vi
+amVjdDogW1BBVENIXSBjbGVhbmluZyBvZiB0aGUgZGVmaW5pdGlvbiBvZiBIQU5ETEVfU1RBQ0sK
+CnRoaXMgcGF0Y2ggY2xlYW5zIHRoZSBkZWZpbml0aW9uIG9mIEhBTkRMRV9TVEFDSwppbiB0aGUg
+ZmlsZSBhcmNoL3g4Nl82NC9rZXJuZWwvdHJhcHMuYyBhbmQKaXQgZXJhc2VzIGEgY29tcGlsYXRp
+b24gd2FybmluZy4KLS0tCiBhcmNoL3g4Nl82NC9rZXJuZWwvdHJhcHMuYyB8ICAgMzUgKysrKysr
+KysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0KIDEgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0
+aW9ucygrKSwgMTUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC94ODZfNjQva2VybmVs
+L3RyYXBzLmMgYi9hcmNoL3g4Nl82NC9rZXJuZWwvdHJhcHMuYwppbmRleCA3ODE5MDIyLi4wNTMw
+NzcxIDEwMDY0NAotLS0gYS9hcmNoL3g4Nl82NC9rZXJuZWwvdHJhcHMuYworKysgYi9hcmNoL3g4
+Nl82NC9rZXJuZWwvdHJhcHMuYwpAQCAtMjk3LDIyICsyOTcsMjcgQEAgdm9pZCBkdW1wX3RyYWNl
+KHN0cnVjdCB0YXNrX3N0cnVjdCAqdHNrLAogCSAqIGl0ZXJhdGlvbiB3aWxsIGV2ZW50dWFsbHkg
+dHJpZ2dlci4KIAkgKi8KICNkZWZpbmUgSEFORExFX1NUQUNLKGNvbmQpIFwKLQlkbyB3aGlsZSAo
+Y29uZCkgeyBcCi0JCXVuc2lnbmVkIGxvbmcgYWRkciA9ICpzdGFjaysrOyBcCi0JCWlmIChvb3Bz
+X2luX3Byb2dyZXNzID8gCQlcCi0JCQlfX2tlcm5lbF90ZXh0X2FkZHJlc3MoYWRkcikgOiBcCi0J
+CQlrZXJuZWxfdGV4dF9hZGRyZXNzKGFkZHIpKSB7IFwKLQkJCS8qIFwKLQkJCSAqIElmIHRoZSBh
+ZGRyZXNzIGlzIGVpdGhlciBpbiB0aGUgdGV4dCBzZWdtZW50IG9mIHRoZSBcCi0JCQkgKiBrZXJu
+ZWwsIG9yIGluIHRoZSByZWdpb24gd2hpY2ggY29udGFpbnMgdm1hbGxvYydlZCBcCi0JCQkgKiBt
+ZW1vcnksIGl0ICptYXkqIGJlIHRoZSBhZGRyZXNzIG9mIGEgY2FsbGluZyBcCi0JCQkgKiByb3V0
+aW5lOyBpZiBzbywgcHJpbnQgaXQgc28gdGhhdCBzb21lb25lIHRyYWNpbmcgXAotCQkJICogZG93
+biB0aGUgY2F1c2Ugb2YgdGhlIGNyYXNoIHdpbGwgYmUgYWJsZSB0byBmaWd1cmUgXAotCQkJICog
+b3V0IHRoZSBjYWxsIHBhdGggdGhhdCB3YXMgdGFrZW4uIFwKLQkJCSAqLyBcCi0JCQlvcHMtPmFk
+ZHJlc3MoZGF0YSwgYWRkcik7ICAgXAorCWRveyBcCisJCXVuc2lnbmVkIGxvbmcgYWRkcjsgXAor
+CQl3aGlsZShjb25kKXsgXAorCQkJYWRkciA9ICpzdGFjaysrOyBcCisJCQlpZihvb3BzX2luX3By
+b2dyZXNzID8gCQlcCisJCQkJX19rZXJuZWxfdGV4dF9hZGRyZXNzKGFkZHIpIDogXAorCQkJCWtl
+cm5lbF90ZXh0X2FkZHJlc3MoYWRkcikpeyBcCisJCQkJLyogXAorCQkJCSogSWYgdGhlIGFkZHJl
+c3MgaXMgZWl0aGVyIGluIHRoZSB0ZXh0IFwKKwkJCQkqIHNlZ21lbnQgb2YgdGhlIGtlcm5lbCwg
+b3IgaW4gdGhlIHJlZ2lvbiBcCisJCQkJKiB3aGljaCBjb250YWlucyB2bWFsbG9jJ2VkIG1lbW9y
+eSwgaXQgbWF5IFwKKwkJCQkqIGJlIHRoZSBhZGRyZXNzIG9mIGEgY2FsbGluZyByb3V0aW5lOyBp
+ZiBcCisJCQkJKiBzbywgcHJpbnQgaXQgc28gdGhhdCBzb21lb25lIHRyYWNpbmcgXAorCQkJCSog
+ZG93biB0aGUgY2F1c2Ugb2YgdGhlIGNyYXNoIHdpbGwgYmUgYWJsZSBcCisJCQkJKiB0byBmaWd1
+cmUgb3V0IHRoZSBjYWxsIHBhdGggdGhhdCBcCisJCQkJKiB3YXMgdGFrZW4uIFwKKwkJCQkqLyBc
+CisJCQkJb3BzLT5hZGRyZXNzKGRhdGEsIGFkZHIpOyAgIFwKKwkJCX0gXAogCQl9IFwKLQl9IHdo
+aWxlICgwKQorCX13aGlsZSgwKQogCiAJLyoKIAkgKiBQcmludCBmdW5jdGlvbiBjYWxsIGVudHJp
+ZXMgaW4gYWxsIHN0YWNrcywgc3RhcnRpbmcgYXQgdGhlCi0tIAoxLjQuMy4zCgo=
+------=_Part_31928_31160940.1162412349317
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_Part_31928_31160940.1162412349317--
