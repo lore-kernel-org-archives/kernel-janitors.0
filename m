@@ -1,41 +1,76 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 01 Nov 2006 23:22:04 +0000
-Subject: Re: [KJ] atomic variables and "volatility"
-Message-Id: <Pine.LNX.4.64.0611011821540.7463@localhost.localdomain>
+From: Florian Westphal <fw-kernel@strlen.de>
+Date: Wed, 01 Nov 2006 14:06:24 +0000
+Subject: [KJ] [patch] net/tipc: sprintf/strcpy conversion
+Message-Id: <20061101140624.GA7694@Chamillionaire.breakpoint.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0611011355080.5454@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0611011355080.5454@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: tipc-discussion@lists.sourceforge.net, netdev@vger.kernel.org
 
-On Wed, 1 Nov 2006, Jesper Juhl wrote:
+From: Florian Westphal <fw@strlen.de>
 
-> On 01/11/06, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> >
-> >   since i'm getting the impression that the LKML is not the right
-> > place for discussions like this, i'm going to move it to the KJ list.
-> >
-> >   i'm curious about possible redundancy or confusing code in the
-> > numerous atomic.h header files that define atomic variables for each
-> > architecture.  the first issue is that there are two different
-> > typedefs for an "atomic_t" depending on the architecture -- one of:
-> >
-> >         typedef struct { int counter; } atomic_t;
-> >         typedef struct { volatile int counter; } atomic_t;
-> >                          ^^^^^^^^
-> >
->
-> There was a long thread recently on LKML about volatile - it's
-> interresting, I suggest you read it. Especially this post by Linus
-> is worth reading : http://lkml.org/lkml/2006/7/6/159
->
-> Reading the entire thread should give you a clearer picture.  :-)
+convert sprintf(a,b) to strcpy(a,b). Make tipc_bclink_name[] const.
 
-thanks, i'll check it out.
+Signed-off-by: Florian Westphal <fw@strlen.de>
 
-rday
+---
+
+compile tested; diffed against davem/net-2.6.
+
+--- a/net/tipc/bcast.c
++++ b/net/tipc/bcast.c
+@@ -119,7 +119,7 @@ static struct bclink *bclink = NULL;
+ static struct link *bcl = NULL;
+ static DEFINE_SPINLOCK(bc_lock);
+ 
+-char tipc_bclink_name[] = "multicast-link";
++const char tipc_bclink_name[] = "multicast-link";
+ 
+ 
+ static u32 buf_seqno(struct sk_buff *buf)
+@@ -790,7 +790,7 @@ int tipc_bclink_init(void)
+ 	INIT_LIST_HEAD(&bcbearer->bearer.cong_links);
+ 	bcbearer->bearer.media = &bcbearer->media;
+ 	bcbearer->media.send_msg = tipc_bcbearer_send;
+-	sprintf(bcbearer->media.name, "tipc-multicast");
++	strcpy(bcbearer->media.name, "tipc-multicast");
+ 
+ 	bcl = &bclink->link;
+ 	memset(bclink, 0, sizeof(struct bclink));
+@@ -802,7 +802,7 @@ int tipc_bclink_init(void)
+ 	tipc_link_set_queue_limits(bcl, BCLINK_WIN_DEFAULT);
+ 	bcl->b_ptr = &bcbearer->bearer;
+ 	bcl->state = WORKING_WORKING;
+-	sprintf(bcl->name, tipc_bclink_name);
++	strcpy(bcl->name, tipc_bclink_name);
+ 
+ 	if (BCLINK_LOG_BUF_SIZE) {
+ 		char *pb = kmalloc(BCLINK_LOG_BUF_SIZE, GFP_ATOMIC);
+diff --git a/net/tipc/bcast.h b/net/tipc/bcast.h
+--- a/net/tipc/bcast.h
++++ b/net/tipc/bcast.h
+@@ -70,7 +70,7 @@ struct port_list {
+ 
+ struct node;
+ 
+-extern char tipc_bclink_name[];
++extern const char tipc_bclink_name[];
+ 
+ 
+ /**
+--- a/net/tipc/node.c
++++ b/net/tipc/node.c
+@@ -667,7 +667,7 @@ struct sk_buff *tipc_node_get_links(cons
+         link_info.dest = tipc_own_addr & 0xfffff00;
+ 	link_info.dest = htonl(link_info.dest);
+         link_info.up = htonl(1);
+-        sprintf(link_info.str, tipc_bclink_name);
++        strcpy(link_info.str, tipc_bclink_name);
+ 	tipc_cfg_append_tlv(buf, TIPC_TLV_LINK_INFO, &link_info, sizeof(link_info));
+ 
+ 	/* Add TLVs for any other links in scope */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
