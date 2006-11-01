@@ -1,7 +1,7 @@
 From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Wed, 01 Nov 2006 02:28:21 +0000
+Date: Wed, 01 Nov 2006 02:31:17 +0000
 Subject: Re: [KJ] [PATCH] Changed all calls to pci_module_init to be
-Message-Id: <45480645.2040903@student.ltu.se>
+Message-Id: <454806F5.3060508@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20061028201039.GB20208@zeno.unh.edu>
 In-Reply-To: <20061028201039.GB20208@zeno.unh.edu>
@@ -49,17 +49,18 @@ eaburns@bender.eaburns.mooo.com wrote:
 >
 > 		--Ethan
 >   
-I believe a cross-compiler is the only way to compile it in your case, 
-so I would think a good re-reading, and yet another, would be sufficient 
-to then send it to the mailing-list with a note that you have not 
-compiled it (and why). Hopefully someone with the ability will do it for 
+I believe a cross-compiler is the only way to compile it in your case,
+so I would think a good re-reading, and yet another, would be sufficient
+to then send it to the mailing-list with a note that you have not
+compiled it (and why). Hopefully someone with the ability will do it for
 you.
-After all, if you find something suspicious but you can't fix it, you 
-still can mail the list with the problem, because we are all here to 
+After all, if you find something suspicious but you can't fix it, you
+still can mail the list with the problem, because we are all here to
 make a damn good kernel, aren't we ;)
 
 Just my opinion...
 Richard Knutsson
+
 
 _______________________________________________
 Kernel-janitors mailing list
