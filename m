@@ -1,36 +1,46 @@
-From: Mara <Charley@voila.fr>
-Date: Thu, 16 Nov 2006 13:51:50 +0000
-Subject: [KJ] reply to your resume
-Message-Id: <AC6D3222.5773182@voila.fr>
+From: Adrian Bunk <bunk@stusta.de>
+Date: Wed, 01 Nov 2006 02:09:12 +0000
+Subject: Re: [KJ] [PATCH] lib/string.c: Two if-clauses merged
+Message-Id: <20061101020912.GC27968@stusta.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <C75B4016.4029657@chimera.co.nz>
-In-Reply-To: <C75B4016.4029657@chimera.co.nz>
+References: <200610281830.18748.lists-receive@programmierforen.de>
+In-Reply-To: <200610281830.18748.lists-receive@programmierforen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good afternoon.
-I got your resume from SEEK Australia job-site and it
-suites our company requirements.
-My name is Roger Longbotham, I represent George Metway
-Inc company located in Europe. 
-Our company is seekeing for a representatives in
-Australia for full and part-time jobs. 
-No relocation is needed, job duties include mail and
-payments processing, standart office duties and
-everyday reporting. 
-All candidates have to be 18+ years old, authorized to
-work in Australia, with minimal computer knowlege.
-Both part-time (2-3 days a week) and full time (5 days
-a week) positions available.
-Your minimal income will be $4000 a month in average
-and you will be paid DAILY. 
-Please, e-mail me to support@georgemetwayinc.com if
-you are interested and I will send you company
-requirements.
-Roger Longbotham
-George Metway Inc
+On Sat, Oct 28, 2006 at 10:12:57PM +0400, Alexey Dobriyan wrote:
+> On Sat, Oct 28, 2006 at 06:30:18PM +0200, Andi Drebes wrote:
+> > The patch just deletes two lines of code and nothing else. Tested by
+> > compilation.
+> 
+> > --- linux/lib/string.c
+> > +++ patched/lib/string.c
+> > @@ -43,9 +43,7 @@
+> >  			c2 = *s2;
+> >  			s1++;
+> >  			s2++;
+> > -			if (!c1)
+> > -				break;
+> > -			if (!c2)
+> > +			if (!c1 || !c2)
+> >  				break;
+> 
+> Hmm... There are probably thousands of places like this. And checking
+> one thing at a time is in many cases better than one long check.
+
+The generated code is in both cases the same.
+
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
 _______________________________________________
 Kernel-janitors mailing list
