@@ -1,45 +1,36 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 16 Nov 2006 07:05:50 +0000
-Subject: Re: [KJ] adds check to copy_to_user() in function qeth_arp_query()
-Message-Id: <20061115230550.ef64d7cf.rdunlap@xenotime.net>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Wed, 01 Nov 2006 01:41:37 +0000
+Subject: Re: [KJ] [PATCH] Changed all calls to pci_module_init to be
+Message-Id: <4547FB51.1070806@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aac3c260611081309q5f35356eu89f94a7856efdfea@mail.gmail.com>
-In-Reply-To: <2aac3c260611081309q5f35356eu89f94a7856efdfea@mail.gmail.com>
+References: <20061028201039.GB20208@zeno.unh.edu>
+In-Reply-To: <20061028201039.GB20208@zeno.unh.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 8 Nov 2006 22:09:57 +0100 Giangiacomo Mariotti wrote:
+Suren Naidu wrote:
+>> >
+>> > I wouldn't mind doing that.  Just a simple find/replace of 'FALSE' 
+>> with 'false'
+>> > and 'TRUE' with 'true'?
+>> Both yes and no. Of course you can do a simple replace (like just using
+>> sed with "s/FALSE/false/") but I think it is a good idea to check the
+>> paths for the variables to see they are real booleans (only gets 'false'
+>> and 'true', also only used in logical operations) and also clean up
+>> things like "if (b = TRUE)". If you make such a patch, can you cc: me
+>> too, please?
+>
+> Is this a janitor project ? Is anyone working on it ?
+Not really, have not thought about it actually. Just thought, since 
+there is a generic boolean in the kernel now, it would be a good 
+janitorial task, don't you think? I have yet to get around and start 
+seriously produce patches and if it should be a "project", who should I 
+see about that?
 
-> adds a check to values returned by calls to copy_to_user() in function
-> qeth_arp_query() in file drivers/s390/net/qeth_main.c
-> 
-> Signed-off-by: Giangiacomo Mariotti <giangiacomo.mariotti@gmail.com>
-> 
-> -------------------------
-
-)attachment provides no patch lines here to comment on :(
-
-ok, copy/paste:
-
-+	if(tmp)
-+		return -EFAULT;
-+	else
-+		return rc;
-
-style:
-	if (tmp)
-
-and then I would just do:
-
-	if (tmp)
-		return -EFAULT;
-	return rc;
-
-
----
-~Randy
+cu
+Richard Knutsson
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
