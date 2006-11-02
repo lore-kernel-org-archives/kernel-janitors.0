@@ -1,40 +1,101 @@
-From: "Alexey Dobriyan" <adobriyan@gmail.com>
-Date: Thu, 16 Nov 2006 08:36:37 +0000
-Subject: Re: [KJ] adds some more checks to values returned by function
-Message-Id: <b6fcc0a0611160036x48858ba8w3f33d233723ac99@mail.gmail.com>
+From: David KOENIG <karhudever@gmail.com>
+Date: Thu, 02 Nov 2006 19:46:11 +0000
+Subject: [KJ] [PATCH] Fix arch/powerpc/platforms/iseries/pci.c to use
+Message-Id: <454A4B03.8090602@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2aac3c260611081502t6f1f7d0atbc25d8f4e843c8@mail.gmail.com>
-In-Reply-To: <2aac3c260611081502t6f1f7d0atbc25d8f4e843c8@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 11/16/06, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> > From f80156a683beb0d2e580cb95fc6c78f7934335e0 Mon Sep 17 00:00:00 2001
-> > From: Giangiacomo Mariotti <giangiacomo.mariotti@gmail.com>
->
-> What does the first From line mean?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-That must be git-email output or something.
+- From 605b32f23d62d93b0dcf36d4a8f8c2abf7b264be Mon Sep 17 00:00:00 2001
+From: David KOENIG <david@patrick.teapy>
+Date: Mon, 23 Oct 2006 11:58:27 -0700
+Subject: [PATCH] Fix arch/powerpc/platforms/iseries/pci.c to use time_after
 
-> +			printk("hppfs_read : copy_to_user failed, returned %d\n", err);
->
-> a.  printk() calls should use a KERN_* level.
-> b.  We try to limit source lines to <= 80 columns, so this one needs
-> 	to be split.
-> c.  However, this is noise.  There shouldn't be a printk() call here
-> 	at all.
+- ---
+ arch/powerpc/platforms/iseries/pci.c |   13 +++++++------
+ 1 files changed, 7 insertions(+), 6 deletions(-)
 
-Especially if they can be used to fill logs by localhost lusers.
+diff --git a/arch/powerpc/platforms/iseries/pci.c
+b/arch/powerpc/platforms/iseries/pci.c
+index 4aa165e..b17fd12 100644
+- --- a/arch/powerpc/platforms/iseries/pci.c
++++ b/arch/powerpc/platforms/iseries/pci.c
+@@ -19,6 +19,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+  */
++#include <linux/jiffies.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/string.h>
+@@ -457,7 +458,7 @@ static u8 iSeries_Read_Byte(const volati
+                static unsigned long last_jiffies;
+                static int num_printed;
 
-> Drop it
->
-> +			return(err);
->
-> no parens around the return value. (ugh, uses source file style)
+- -               if ((jiffies - last_jiffies) > 60 * HZ) {
++               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+                        last_jiffies = jiffies;
+                        num_printed = 0;
+                }
+@@ -485,7 +486,7 @@ static u16 iSeries_Read_Word(const volat
+                static unsigned long last_jiffies;
+                static int num_printed;
 
-Compared to not returning -EFAULT that's OK :-)
+- -               if ((jiffies - last_jiffies) > 60 * HZ) {
++               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+                        last_jiffies = jiffies;
+                        num_printed = 0;
+                }
+@@ -514,7 +515,7 @@ static u32 iSeries_Read_Long(const volat
+                static unsigned long last_jiffies;
+                static int num_printed;
+
+- -               if ((jiffies - last_jiffies) > 60 * HZ) {
++               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+                        last_jiffies = jiffies;
+                        num_printed = 0;
+                }
+@@ -550,7 +551,7 @@ static void iSeries_Write_Byte(u8 data,
+                static unsigned long last_jiffies;
+                static int num_printed;
+
+- -               if ((jiffies - last_jiffies) > 60 * HZ) {
++               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+                        last_jiffies = jiffies;
+                        num_printed = 0;
+                }
+@@ -576,7 +577,7 @@ static void iSeries_Write_Word(u16 data,
+                static unsigned long last_jiffies;
+                static int num_printed;
+
+- -               if ((jiffies - last_jiffies) > 60 * HZ) {
++               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+                        last_jiffies = jiffies;
+                        num_printed = 0;
+                }
+@@ -602,7 +603,7 @@ static void iSeries_Write_Long(u32 data,
+                static unsigned long last_jiffies;
+                static int num_printed;
+
+- -               if ((jiffies - last_jiffies) > 60 * HZ) {
++               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+                        last_jiffies = jiffies;
+                        num_printed = 0;
+                }
+- --
+1.4.2
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (MingW32)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFFSksCmhCgVPlWJY8RAo7TAKDAZOJuJXacUzgWJrCxJRUYGZDvEgCeIAOT
+m0aaGonSn+wKbZ+5xIPNkfE=M2AF
+-----END PGP SIGNATURE-----
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
