@@ -1,57 +1,35 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Wed, 01 Nov 2006 04:03:35 +0000
-Subject: Re: [KJ] [PATCH] Changed all calls to pci_module_init to be
-Message-Id: <20061031200335.8a0118fa.rdunlap@xenotime.net>
+From: Florian Westphal <fw-kernel@strlen.de>
+Date: Thu, 02 Nov 2006 06:26:56 +0000
+Subject: Re: [KJ] [tipc-discussion] [patch] net/tipc: sprintf/strcpy
+Message-Id: <20061102062656.GA8339@Chamillionaire.breakpoint.cc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061028201039.GB20208@zeno.unh.edu>
-In-Reply-To: <20061028201039.GB20208@zeno.unh.edu>
+References: <20061101140624.GA7694@Chamillionaire.breakpoint.cc> <454913D2.9050608@bfs.de>
+In-Reply-To: <454913D2.9050608@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tipc-discussion@lists.sourceforge.net, kernel-janitors@lists.osdl.org, netdev@vger.kernel.org
 
-On Tue, 31 Oct 2006 20:46:17 -0500 eaburns@bender.eaburns.mooo.com wrote:
+walter harms <wharms@bfs.de> wrote:
+> These line
+>+       strcpy(bcbearer->media.name, "tipc-multicast");
+> i gues that means tipc_bclink_name ?
 
-> > >> >
-> > >> > I wouldn't mind doing that.  Just a simple find/replace of 'FALSE' 
-> > >> with 'false'
-> > >> > and 'TRUE' with 'true'?
-> > >> Both yes and no. Of course you can do a simple replace (like just using
-> > >> sed with "s/FALSE/false/") but I think it is a good idea to check the
-> > >> paths for the variables to see they are real booleans (only gets 'false'
-> > >> and 'true', also only used in logical operations) and also clean up
-> > >> things like "if (b = TRUE)". If you make such a patch, can you cc: me
-> > >> too, please?
-> > >
-> > > Is this a janitor project ? Is anyone working on it ?
-> > Not really, have not thought about it actually. Just thought, since 
-> > there is a generic boolean in the kernel now, it would be a good 
-> > janitorial task, don't you think? I have yet to get around and start 
-> > seriously produce patches and if it should be a "project", who should I 
-> > see about that?
+The idea was to change how things are done, not _what_ is being done.
+
+> an even more secure version could be like this:
 > 
-> Maybe this is more of a newbie question than a janitorial question:
-> I was going to try to fix a few of these, however, I was not sure how to get
-> certain files to compile.  For example, I found a few arch/ppc files that I
-> tried to make this change to, but I do not have a ppc I have an x86_64 and an
-> i386.  Is there at way that I can at least try to compile these files?  I
-> realize that I wouldn't be able to test it, but in a case like this I feel
-> like a successfull compile would be a good start.
-> 
-> If there is no easy (I could probably do a complete cross compile, but that's
-> a lot more work than I am willing to do for this little change I made) way to
-> compile this, what's the usual procedure for somthing like this?  Don't do the
-> change if you can't compile it, or make a patch and see if someone else will
-> try it for you?
+> 	strncpy(bcbearer->media.name,sizeof(bcbearer->media.name),tipc_bclink_name);
 
-cross-compile or submit the patch to a build farm.
-OSDL offers pre-built cross-build toolchains at
-http://developer.osdl.org/dev/plm/cross_compile/
-or a build farm at:  http://plm.testing.osdl.org/
-(you have to register to use this).
+Ugh, please, no. The size of src is known in all cases; there is
+absoluty no point in using str(n|l)cpy here.
 
----
-~Randy
+> (in case someone ever changes the size of cbearer->media.name or tipc_bclink_name and the hope
+> that wchat_t will never reach the kernel)
+
+In this case 'someone' should be really hurt, don't you think?
+
+Florian
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
