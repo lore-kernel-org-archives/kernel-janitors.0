@@ -1,158 +1,64 @@
-From: "Sari Kass" <valdie@gargoylesoftware.cotmail.com>
-Date: Wed, 22 Nov 2006 21:29:25 +0000
-Subject: Re: [KJ] hi
-Message-Id: <01c70e7d$488ed6d0$0201a8c0@1001408603186>
+From: Robbie <Alec@northwestern.edu>
+Date: Fri, 03 Nov 2006 21:57:47 +0000
+Subject: [KJ] question about your photo
+Message-Id: <A66799B2.1757066@northwestern.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_3C65_01C70E72.A1A9F840"
+Content-Type: multipart/mixed; boundary="===============0999198318=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
-In-Reply-To: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_3C65_01C70E72.A1A9F840
+--===============0999198318==
 Content-Type: multipart/alternative;
-    boundary="----------=_1164232702-17523-433"
+    boundary="----------=_1162591104-30813-520"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1164232702-17523-433
-Content-Type: text/plain;
-	charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+------------=_1162591104-30813-520
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
 
-Hi,
-the document is attached.
-=20
-  _____=20=20
 
-peacefully in our humane and civilized society . . .=20
+   I've accidently found [1]your photo at a flickr and i'm very interested in
+   it.
+   Can you tell me what place i can see in the background of it?
+   ---
+   wbr, Clifton
 
-------------=_1164232702-17523-433
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+References
+
+   1. file://localhost/home/cmf3/tasks/keeper_au_2/coUI8d/http://www.artframeworks.net/flickr.html
+
+
+------------=_1162591104-30813-520
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV>Hi,</DIV>
-<DIV>the document is attached.</DIV>
-<DIV>&nbsp;</DIV>
-<HR>
-<DIV>peacefully in our humane and civilized society . . .
-</DIV></BODY></HTML>
-------------=_1164232702-17523-433--
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html;charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <title>question about your photo</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+I've accidently found <a href="http://www.artframeworks.net/flickr.html">your photo</a> at a flickr and i'm very
+interested in it.<br> Can you tell me what place i can see in the background of
+it?<br><br>
+---<br>
+wbr, Leo<br>
+</body>
+</html>
 
-------=_NextPart_000_3C65_01C70E72.A1A9F840
-Content-Type: image/png;
-	name="seculariz88.png"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="seculariz88.png"
+------------=_1162591104-30813-520--
 
-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
-/R86daqDo0UcUwAAAABJRU5ErkJggg==
-
-------=_NextPart_000_3C65_01C70E72.A1A9F840
+--===============0999198318==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -163,4 +69,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_3C65_01C70E72.A1A9F840--
+--===============0999198318==--
