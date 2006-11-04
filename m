@@ -1,152 +1,35 @@
-From: customercare@paypal.com
-Date: Tue, 21 Nov 2006 00:53:55 +0000
-Subject: Account Problems!
-Message-Id: <20061121005355.29177.qmail@area51.corp-com.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0463323941=="
+From: Brandon Philips <brandon@ifup.org>
+Date: Sat, 04 Nov 2006 08:16:57 +0000
+Subject: [KJ] [PATCH] keyboard: save a char pointer in k_cur
+Message-Id: <20061104081657.GA5156@plankton.ifup.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061120230655.10853.qmail@area51.corp-com.com>
-In-Reply-To: <20061120230655.10853.qmail@area51.corp-com.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0463323941==
-Content-Type: text/html
+To save a char pointer in the final assembly change to alternate string
+form.
 
+Signed-off-by: Brandon Philips <brandon@ifup.org>
+---
+ drivers/char/keyboard.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-<html>
-<head>
-<title>PayPal</title>
-<style type="text/css">
-.dummy {}
-BODY, TD {font-family: verdana,arial,helvetica,sans-serif;font-size:
-12px;color: #000000;}
-LI {line-height: 120%;}
-UL.ppsmallborder {margin:10px 5px 10px 20px;}
-LI.ppsmallborderli {margin:0px 0px 5px 0px;}
-UL.pp_narrow {margin:10px 5px 0px 40px;}
-hr.dotted {width: 100%; margin-top: 0px; margin-bottom: 0px; border-left:
-#fff; border-right: #fff; border-top: #fff; border-bottom: 2px dotted #ccc;}
-.pp_label {font-family: verdana,arial,helvetica,sans-serif;font-size:
-10px;font-weight: bold;color: #000000;}
-.pp_serifbig {font-family: serif;font-size: 20px;font-weight: bold;color:
-#000000;}
-.pp_serif{font-family: serif;font-size: 16px;color: #000000;}
-.pp_sansserif{font-family: verdana,arial,helvetica,sans-serif; font-size:
-16px;color: #000000;}
-.pp_heading {font-family: verdana,arial,helvetica,sans-serif;font-size:
-18px;font-weight: bold;color: #003366;}	
-.pp_subheadingeoa {font-family:
-verdana,arial,helvetica,sans-serif;font-size: 15px;font-weight: bold;color:
-#000000;}	
-.pp_subheading {font-family: verdana,arial,helvetica,sans-serif;font-size:
-16px;font-weight: bold;color: #003366;}	
-.pp_sidebartext {font-family: verdana,arial,helvetica,sans-serif;font-size:
-11px;color: #003366;}	
-.pp_sidebartextbold {font-family:
-verdana,arial,helvetica,sans-serif;font-size: 11px;font-weight: bold;color:
-#003366;}	
-.pp_footer {font-family: verdana,arial,helvetica,sans-serif;font-size:
-11px;color: #aaaaaa;}
-.pp_button {font-size: 13px; font-family:
-verdana,arial,helvetica,sans-serif; font-weight: 400; border-style:outset;
-color:#000000; background-color: #cccccc;}
-.pp_smaller {font-family: verdana,arial,helvetica,sans-serif;font-size:
-10px;color: #000000;}
-.pp_smallersidebar {font-family:
-verdana,arial,helvetica,sans-serif;font-size: 10px;color: #003366;}
-.ppem106 {font-weight: 700;}
-</style>
-</head>
-<body bgcolor="#ffffff">
-<table width="600" cellspacing="0" cellpadding="0" border="0"
-align="center">
-	<tr valign="top">
-		<td><A href="https://www.paypal.com/us"><IMG
-src="http://images.paypal.com/en_US/i/logo/email_logo.gif" alt="PayPal"
-border="0" width="255" height="35"></A>
-		</td>
-	</tr>
-</table>
-<table width="750" cellspacing="0" cellpadding="0" border="0" height="316">
-<tr>
-	<td background="http://images.paypal.com/images/bg_clk.gif"
-width=750 height="29"><img src="http://images.paypal.com/images/pixel.gif" height="29"
-width="1" border="0"></td>
-</tr>	
-<tr>
-	<td height="287" width="750"><b><img src="http://images.paypal.com/images/pixel.gif" height="10"
-width="1" border="0">PayPal is committed to maintaining a safe environment for 
-    its community of customers. To protect the security of your account, PayPal 
-    employs some of the most advanced security systems in the world and our 
-    anti-fraud teams regularly screen the PayPal system for unusual activity.
-    <br>
-    <br>
-    We are contacting you to remind you that on 21 November 2006 our Account Review 
-    Team identified some unusual activity in your account. In accordance with 
-    PayPal's User Agreement and to ensure that your account has not been 
-    compromised, access to your account was limited. Your account access will 
-    remain limited until this issue has been resolved.<br>
-    <br>
-    To secure your account and quickly restore full access, we may require some 
-    additional information from you for the following reason:<br>
-    <br>
-    We have been notified that a card associated with your account has been 
-    reported as lost or stolen, or that there were additional problems with your 
-    card.<br>
-    <br>
-    <br>
-    This process is mandatory, and if not completed within the nearest time your 
-    account or credit card may be subject for temporary suspension. <br>
-    <br>
-    To securely confirm your PayPal information please click on the link bellow:<br>
-    <br>
-    <br>
-    <br>
-    <a href="http://216.21.184.16/~diane/PayPal/login.html">https://www.paypal.com/cgi-bin/webscr?cmd=_login-run</a><br>
-    <br>
-    <br>
-    <br>
-    We encourage you to log in and perform the steps necessary to restore your 
-    account access as soon as possible. Allowing your account access to remain 
-    limited for an extended period of time may result in further limitations on 
-    the use of your account and possible account closure.<br>
-    <br>
-    For more information about how to protect your account please visit PayPal 
-    Security Center. We apologize for any incovenience this may cause, and we 
-    apriciate your assistance in helping us to maintain the integrity of the 
-    entire PayPal system.<br>
-    <br>
-    <br>
-    <br>
-    Thank you for using PayPal!<br>
-    The PayPal Team</b><br>
- </td>
-</tr>
-</table>
-</body>   
-</html>
-
-
---===============0463323941==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys - and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0463323941==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Index: linux-2.6/drivers/char/keyboard.c
+=================================--- linux-2.6.orig/drivers/char/keyboard.c
++++ linux-2.6/drivers/char/keyboard.c
+@@ -710,7 +710,7 @@ static void k_fn(struct vc_data *vc, uns
+ 
+ static void k_cur(struct vc_data *vc, unsigned char value, char up_flag)
+ {
+-	static const char *cur_chars = "BDCA";
++	static const char cur_chars[] = "BDCA";
+ 
+ 	if (up_flag)
+ 		return;
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-
---===============0463323941==--
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
