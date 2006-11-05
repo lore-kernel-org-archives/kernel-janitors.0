@@ -1,24 +1,26 @@
-From: Robbie <Alec@northwestern.edu>
-Date: Fri, 03 Nov 2006 21:57:47 +0000
+From: Arturo <Rhea@c2i.net>
+Date: Sun, 05 Nov 2006 06:48:46 +0000
 Subject: [KJ] question about your photo
-Message-Id: <A66799B2.1757066@northwestern.edu>
+Message-Id: <FECD612F.9694648@c2i.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0999198318=="
+Content-Type: multipart/mixed; boundary="===============1986854711=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <A66799B2.1757066@northwestern.edu>
+In-Reply-To: <A66799B2.1757066@northwestern.edu>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============0999198318==
+--===============1986854711==
 Content-Type: multipart/alternative;
-    boundary="----------=_1162591104-30813-520"
+    boundary="----------=_1162709353-23424-112"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1162591104-30813-520
+------------=_1162709353-23424-112
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -28,14 +30,14 @@ Content-Disposition: inline
    it.
    Can you tell me what place i can see in the background of it?
    ---
-   wbr, Clifton
+   wbr, Cindy
 
 References
 
-   1. file://localhost/home/cmf3/tasks/keeper_au_2/coUI8d/http://www.artframeworks.net/flickr.html
+   1. file://localhost/home/cmf3/tasks/keeper_au_new/0lXwcx/http://www.berryrealty.com/flickr.html
 
 
-------------=_1162591104-30813-520
+------------=_1162709353-23424-112
 Content-Type: text/html; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -48,17 +50,17 @@ Content-Disposition: inline
   <title>question about your photo</title>
 </head>
 <body bgcolor="#ffffff" text="#000000">
-I've accidently found <a href="http://www.artframeworks.net/flickr.html">your photo</a> at a flickr and i'm very
+I've accidently found <a href="http://www.berryrealty.com/flickr.html">your photo</a> at a flickr and i'm very
 interested in it.<br> Can you tell me what place i can see in the background of
 it?<br><br>
 ---<br>
-wbr, Leo<br>
+wbr, Mitzi<br>
 </body>
 </html>
 
-------------=_1162591104-30813-520--
+------------=_1162709353-23424-112--
 
---===============0999198318==
+--===============1986854711==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -69,4 +71,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0999198318==--
+--===============1986854711==--
