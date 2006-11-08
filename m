@@ -1,33 +1,84 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Mon, 06 Nov 2006 08:13:12 +0000
-Subject: Re: [KJ] [Patch] kmemdup() cleanup in drivers/net
-Message-Id: <454EEE98.9040709@pobox.com>
+From: "Giangiacomo Mariotti" <giangiacomo.mariotti@gmail.com>
+Date: Wed, 08 Nov 2006 23:02:36 +0000
+Subject: [KJ] adds some more checks to values returned by function
+Message-Id: <2aac3c260611081502t6f1f7d0atbc25d8f4e843c8@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_Part_31640_12369022.1163026956089"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1161634468.419.1.camel@alice>
-In-Reply-To: <1161634468.419.1.camel@alice>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Eric Sesterhenn wrote:
-> hi,
-> 
-> replace open coded kmemdup() to save some screen space,
-> and allow inlining/not inlining to be triggered by gcc.
-> 
-> Signed-off-by: Eric Sesterhenn <snakebyte@gmx.de>
-> 
-> --- linux-2.6.19-rc2-git7/drivers/net/tulip/de2104x.c.orig	2006-10-23 21:24:42.000000000 +0200
-> +++ linux-2.6.19-rc2-git7/drivers/net/tulip/de2104x.c	2006-10-23 21:25:08.000000000 +0200
+------=_Part_31640_12369022.1163026956089
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-> --- linux-2.6.19-rc2-git7/drivers/net/wireless/ipw2100.c.orig	2006-10-23 21:26:26.000000000 +0200
-> +++ linux-2.6.19-rc2-git7/drivers/net/wireless/ipw2100.c	2006-10-23 21:27:14.000000000 +0200
+adds some checks to values returned by calls to function copy_to_user()
 
+Signed-off-by: Giangiacomo Mariotti <giangiacomo.mariotti@gmail.com>
 
-applied
+-----------------------------
+
+------=_Part_31640_12369022.1163026956089
+Content-Type: text/plain; 
+	name=0002-adding-check-for-return-value-of-copy_to_user.txt; 
+	charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_eu9v72d7
+Content-Disposition: attachment;
+	filename="0002-adding-check-for-return-value-of-copy_to_user.txt"
+
+RnJvbSBmODAxNTZhNjgzYmViMGQyZTU4MGNiOTVmYzZjNzhmNzkzNDMzNWUwIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBHaWFuZ2lhY29tbyBNYXJpb3R0aSA8Z2lhbmdpYWNvbW8ubWFy
+aW90dGlAZ21haWwuY29tPgpEYXRlOiBXZWQsIDggTm92IDIwMDYgMTU6NDM6NTcgKzAxMDAKU3Vi
+amVjdDogW1BBVENIXSBhZGRpbmcgY2hlY2sgZm9yIHJldHVybiB2YWx1ZSBvZiBjb3B5X3RvX3Vz
+ZXIKCi0tLQogZHJpdmVycy9zYnVzL2NoYXIvYXVyb3JhLmMgICB8ICAgIDMgKystCiBkcml2ZXJz
+L3NlcmlhbC82ODMyOHNlcmlhbC5jIHwgICAgOCArKysrKy0tLQogZnMvaHBwZnMvaHBwZnNfa2Vy
+bi5jICAgICAgICB8ICAgIDYgKysrKystCiAzIGZpbGVzIGNoYW5nZWQsIDEyIGluc2VydGlvbnMo
+KyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zYnVzL2NoYXIvYXVyb3Jh
+LmMgYi9kcml2ZXJzL3NidXMvY2hhci9hdXJvcmEuYwppbmRleCBhNTRiNGFjLi5iYTJiMDE3IDEw
+MDY0NAotLS0gYS9kcml2ZXJzL3NidXMvY2hhci9hdXJvcmEuYworKysgYi9kcml2ZXJzL3NidXMv
+Y2hhci9hdXJvcmEuYwpAQCAtMTg5Niw3ICsxODk2LDggQEAgZXh0ZXJuIGludCBhdXJvcmFfZ2V0
+X3NlcmlhbF9pbmZvKHN0cnVjdAogCXRtcC5jbG9zZV9kZWxheSA9IHBvcnQtPmNsb3NlX2RlbGF5
+ICogSFovMTAwOwogCXRtcC5jbG9zaW5nX3dhaXQgPSBwb3J0LT5jbG9zaW5nX3dhaXQgKiBIWi8x
+MDA7CiAJdG1wLnhtaXRfZmlmb19zaXplID0gQ0QxODBfTkZJRk87Ci0JY29weV90b191c2VyKHJl
+dGluZm8sICZ0bXAsIHNpemVvZih0bXApKTsKKwlpZihjb3B5X3RvX3VzZXIocmV0aW5mbywgJnRt
+cCwgc2l6ZW9mKHRtcCkpKQorCQlyZXR1cm4gLUVGQVVMVDsKICNpZmRlZiBBVVJPUkFfREVCVUcK
+IHByaW50aygiYXVyb3JhX2dldF9zZXJpYWxfaW5mbzogZW5kXG4iKTsKICNlbmRpZgpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9zZXJpYWwvNjgzMjhzZXJpYWwuYyBiL2RyaXZlcnMvc2VyaWFsLzY4MzI4
+c2VyaWFsLmMKaW5kZXggOWI4YjU4NS4uMTczYzU4MSAxMDA2NDQKLS0tIGEvZHJpdmVycy9zZXJp
+YWwvNjgzMjhzZXJpYWwuYworKysgYi9kcml2ZXJzL3NlcmlhbC82ODMyOHNlcmlhbC5jCkBAIC04
+OTIsNyArODkyLDggQEAgc3RhdGljIGludCBnZXRfc2VyaWFsX2luZm8oc3RydWN0IG02OGtfcwog
+CXRtcC5jbG9zZV9kZWxheSA9IGluZm8tPmNsb3NlX2RlbGF5OwogCXRtcC5jbG9zaW5nX3dhaXQg
+PSBpbmZvLT5jbG9zaW5nX3dhaXQ7CiAJdG1wLmN1c3RvbV9kaXZpc29yID0gaW5mby0+Y3VzdG9t
+X2Rpdmlzb3I7Ci0JY29weV90b191c2VyKHJldGluZm8sJnRtcCxzaXplb2YoKnJldGluZm8pKTsK
+KwlpZihjb3B5X3RvX3VzZXIocmV0aW5mbywmdG1wLHNpemVvZigqcmV0aW5mbykpKQorCQlyZXR1
+cm4gLUVGQVVMVDsKIAlyZXR1cm4gMDsKIH0KIApAQCAtMTA1MSw4ICsxMDUyLDkgQEAgc3RhdGlj
+IGludCByc19pb2N0bChzdHJ1Y3QgdHR5X3N0cnVjdCAqdAogCQkJaWYgKCFhY2Nlc3Nfb2soVkVS
+SUZZX1dSSVRFLCAodm9pZCAqKSBhcmcsCiAJCQkJCQlzaXplb2Yoc3RydWN0IG02OGtfc2VyaWFs
+KSkpCiAJCQkJcmV0dXJuIC1FRkFVTFQ7Ci0JCQljb3B5X3RvX3VzZXIoKHN0cnVjdCBtNjhrX3Nl
+cmlhbCAqKSBhcmcsCi0JCQkJICAgIGluZm8sIHNpemVvZihzdHJ1Y3QgbTY4a19zZXJpYWwpKTsK
+KwkJCWlmKGNvcHlfdG9fdXNlcigoc3RydWN0IG02OGtfc2VyaWFsICopIGFyZywKKwkJCQkgICAg
+aW5mbywgc2l6ZW9mKHN0cnVjdCBtNjhrX3NlcmlhbCkpKQorCQkJCXJldHVybiAtRUZBVUxUOwog
+CQkJcmV0dXJuIDA7CiAJCQkKIAkJZGVmYXVsdDoKZGlmZiAtLWdpdCBhL2ZzL2hwcGZzL2hwcGZz
+X2tlcm4uYyBiL2ZzL2hwcGZzL2hwcGZzX2tlcm4uYwppbmRleCA2NDI2NzVmLi5iZTczNjAwIDEw
+MDY0NAotLS0gYS9mcy9ocHBmcy9ocHBmc19rZXJuLmMKKysrIGIvZnMvaHBwZnMvaHBwZnNfa2Vy
+bi5jCkBAIC0yOTQsNyArMjk0LDExIEBAIHN0YXRpYyBzc2l6ZV90IGhwcGZzX3JlYWQoc3RydWN0
+IGZpbGUgKmYKIAogCQlpZihvZmYgKyBjb3VudCA+IGhwcGZzLT5sZW4pCiAJCQljb3VudCA9IGhw
+cGZzLT5sZW4gLSBvZmY7Ci0JCWNvcHlfdG9fdXNlcihidWYsICZkYXRhLT5jb250ZW50c1tvZmZd
+LCBjb3VudCk7CisJCWVyciA9IGNvcHlfdG9fdXNlcihidWYsICZkYXRhLT5jb250ZW50c1tvZmZd
+LCBjb3VudCk7CisJCWlmKGVycil7CisJCQlwcmludGsoImhwcGZzX3JlYWQgOiBjb3B5X3RvX3Vz
+ZXIgZmFpbGVkLCByZXR1cm5lZCAlZFxuIiwgZXJyKTsKKwkJCXJldHVybihlcnIpOworCQl9CiAJ
+CSpwcG9zICs9IGNvdW50OwogCX0KIAllbHNlIGlmKGhwcGZzLT5ob3N0X2ZkICE9IC0xKXsKLS0g
+CjEuNC4zLjMKCg==
+------=_Part_31640_12369022.1163026956089
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_Part_31640_12369022.1163026956089--
