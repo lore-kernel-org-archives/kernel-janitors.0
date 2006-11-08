@@ -1,35 +1,125 @@
-From: "Numbers Jolly" <deborahweyd@brussels.sun.com>
-Date: Mon, 13 Nov 2006 13:32:41 +0000
-Subject: [KJ] Numbers
-Message-Id: <01c70723$29ea28d0$6c822ecf@deborahweyd>
+From: "Sachsen Lotto-GmbH." <admin@sachsenlotto-gmbh>
+Date: Wed, 08 Nov 2006 22:53:34 +0000
+Subject: [KJ] SACHSEN LOTTERY 2006 AWARDS UPDATE(Contact claims agent now)
+Message-Id: <E1GhwIY-0007fQ-Pg@server.c4curry.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1259239434=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-One of the key rules every good trader knows is volume 
-before price.  Once the volume is there the price will 
-rapidly follow.  We called AUNI for Monday, November 13th 
-and we were spot on.  Excellent volume is paving the way 
-for HUGE gains on Tuesday.  Get in while there's still time!
-  
+--===============1259239434==
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Feature: American Unity Investments (AUNI)
-Currently: Around O.70
-Projected: 2.14
+Sachsen Lotto-GmbH
+Central Office 
+Management and Central Services: 
+Sachsen-Strasse 52,DE-13370 Postdam
+Germany.
+Reference Number: SL/06-GmbH/4009
+Batch: SL/06- GmbH/3434
 
-AUNI is capitalizing with great success on the growing 
-resource demands in China.  Big partnerships have been made.  
-Big results are set to be announced and a heavyweight 
-publicity blitz is just beginning giving us this awesome 
-volume.
+Congratulations!!!
+ 
+We are pleased to inform you of the result of the just concluded annual 
+final draws of Sachsen Lotto-GmbH Program. 
+ 
+Sachsen Lotto-GmbH draws was conducted from an exclusive list of 
+25,000,000 e-mail addresses of individual and corporate bodies picked 
+by an 
+advanced automated random computer ballot search from the internet as 
+part of our international promotions program which we conduct every 
+year.No tickets were sold.
+After this automated computer ballot, your e-mail address attached to 
+serial number 06-3434 drew the lucky numbers 7-17-21-26-37-42 which 
+consequently emerged you as one of first fifty (50) lucky winners in 
+this 
+category.
+ 
+You have therefore been approved for a lump sum payout of 
+L���1,000,000.00 (One Million EURO) in cash credited to file 
+SL/06-GmbH/4009. This is 
+from a total cash prize of L���50 Million Euro shared amongst the first 
+fifty (50) lucky winners in this category. 
+ 
+This year Lottery Program Jackpot is the largest ever for Sachsen 
+Lotto-GmbH. The estimated L���50 million jackpot would be the 
+sixth-biggest in 
+Europe history. The biggest was the L���363 million jackpot that went to 
+two winners in a September 2006 drawing of The Big Game Mega Millions' 
+predecessor. 
+ 
+Your fund is now deposited in an offshore bank with a hardcover 
+insurance. Due to the mix up of some numbers and names, we advice that 
+you 
+keep this award from public notice until your claim has been processed 
+and 
+your money remitted to your nominated bank account as this is part of 
+our security protocol to avoid double claiming or unwarranted taking 
+advantage of this program by the general public.
+ 
+Please note that your lucky winning number falls within our European 
+booklet representative office in London. In view of this, your 
+L���1,000,000.00 (One Million Euro) would be released to you by our 
+affiliate bank 
+in Europe. Our agent will immediately commence the process to 
+facilitate the release of your funds to you as soon as you make contact 
+with 
+him.
+ 
+To begin your claim please contact our licensed and accredited agent 
+assigned to you:
+ 
+Mr.Gray Armstrong
+Sachsen Lotto-GmbH
+Information and Payment Bureau:
+London Representative Office.
+Phone: +44-701-113-0135
+Fax:  +44-709-287-6054
+E-mail: agent_armstrong04@yahoo.de
+ 
+You are required to furnish him with the following:
+1, Full Names
+2, Winning E-mail
+3, Reference Number
+4, Batch Number 
+ 
+Your claims agent will assist you in the processing and remittance of 
+your prize funds into your designated bank account.
 
-We are looking at a boost of over 200% over the next week.  
-There is no reason you should not allow yourself to benefit 
-from a big break.  Don't let this one slip by!
+Note that all prize funds must be claimed not later than 4 weeks. After 
+this date all funds will be returned to the LOTTERY TREASURY as 
+unclaimed. In order to avoid unnecessary delays and complications, 
+please 
+endeavor to quote your Reference Number:SL/06-GmbH/4009 and Batch 
+numbers:SL/06-GmbH/3434 in every correspondence with your agent. 
+Furthermore, 
+should there be any change in your address, do inform your claims agent 
+as soon as possible.
+ 
+Members of the affiliate agencies are automatically not allowed to 
+participate in this program.
+ 
+Congratulations once again from all members of our staff and thanks for 
+being part of our promotions program.
+ 
+Yours faithfully,
+Mrs.Julia Flo
+Promotions Manager.
+Sachsen Lotto-GmbH
+
+
+
+
+--===============1259239434==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1259239434==--
