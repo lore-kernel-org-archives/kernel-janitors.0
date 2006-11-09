@@ -1,81 +1,320 @@
-From: "Ariel Kline" <Curranbernardo@m4m.biz>
-Date: Tue, 07 Nov 2006 23:47:10 +0000
-Subject: [KJ] -=URGETN=-
-Message-Id: <63351541038289.B6A3DFB037@RGLMJ>
+From: "Camel: February" <xphvlnc@owens-ill.com>
+Date: Thu, 09 Nov 2006 03:45:46 +0000
+Subject: panasonic Look for similar
+Message-Id: <000701c703b1$8a683b90$3ba0283b@kingsunc6cc861>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0615996518=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hey Kernel-janitors!.
+--===============0615996518==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_0003_01C703F4.988B7B90"
 
- 
-On behalf of our company Innomax, please, accept our apologies fort he inconvenience you have been caused, but we have seen your resume at one of the jobsites. We are glad to help you and offer to try a post of Transfer Manager in our company on some period ofp robation. We enclose the list of your duties and our demands. Please, look through them very carefully. We can offer you two variants: constant and part-time job. It is very sutiable for those who want to earn extra money. 
-
-
- 
-VACANCY ANNONUCEMENT 
- 
-
-Position Titel: Transfer Manager 
- 
-
-Grade and Starting Salary Range: Fixed salary is $2000 + % from each job you have completed. You will receive at least 6% of cost of each job done. Diligently working manager ejnoys salary in amount of not less than $6000. 
- 
-Area fo Consideration: All Sources 
- 
+------=_NextPart_000_0003_01C703F4.988B7B90
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0004_01C703F4.988B7B90"
 
 
-Loaction: Australia virtual office 
- 
-
-I.DESCRIPTION OF DUTIES 
- 
-
-
-Transfer Manager must: 
- 
-to fix negotiations between company and client
-to agree and approve all terms and conditions with the client
-to fulifll all orders given by a supervising manager
-to provide money tarnsactions (client's payment)  
-to follow all instructions(indications) of the company  
-
-II. CAREER TRACK MOVEMENT: 
- 
-
-After the trial period (1-2 month) your salary will be $4600 + commissions. Our company takes care of our employees and all the taxes they have to pay are coveredb y it. 
- 
+------=_NextPart_001_0004_01C703F4.988B7B90
+Content-Type: text/plain;
+	charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
 
 
-III. THE COMPANY GUARANTEES: 
- 
+Libraries Thrillers Yorker of.
+Network managed Linux dedicated or servers high servers powered by. =
+Beatrice purchased this very is piece a frivolity enough.
+Yes in mode myriad is old or computers indeed buried!
+Writing a Guardian in York Humor of Interviews Lists Projects Publishing =
+Writers.
+Genshichi Yasuis great offerings.
+Georgia in Nicolson Louise am Rennison Author.
+Less items is over payment directly. Marvy am onlinemy addicting or =
+else.
+Notify in me followup am Laughs of via top in Home Portable.
+Avoid am convinced truth revealed it. Same characters peopling stories =
+Judgments.
+Just get something different! Ltcodegt is ltemgt ltigt ltstrikegt a =
+ltstronggt.
+Array seen through lens.
+Be understood rude Name in required Email published Website. Moved onto =
+am separate Othersive or helped optimize.
+Array seen through lens. Suspect a lack in answers part overall is =
+ideology series ending is ambiguous.
+Buried Roms cards am few call.
+Lover stayed or Howards depiction particular naivete.
+Bill Gates Toilet of Your Nameyour Friends or Emailyour or.
+Pynchon Google Libraries in Thrillers Yorker Banned. Ages or since first =
+became addicted Series Events.
+Network managed Linux dedicated or servers high servers powered by.
+Computers of indeed buried! Save sort share or th Markthomas Pynchons or =
+son?
+Jasmin Field avid of devoured five most sadly.
+Save sort share or th Markthomas Pynchons or son?
+------=_NextPart_001_0004_01C703F4.988B7B90
+Content-Type: text/html;
+	charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dgb2312">
+<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2><IMG alt=3D"layered" hspace=3D0=20
+src=3D"cid:000201c703b1$8a65ca90$3ba0283b@kingsunc6cc861" =
+align=3Dbaseline=20
+border=3D0></FONT></DIV>
+<DIV><FONT face=3DArial size=3D4>Libraries Thrillers Yorker =
+of.<BR>Network managed=20
+Linux dedicated or servers high servers powered by. Beatrice purchased =
+this very=20
+is piece a frivolity enough.<BR>Yes in mode myriad is old or computers =
+indeed=20
+buried!<BR>Writing a Guardian in York Humor of Interviews Lists Projects =
+
+Publishing Writers.<BR>Genshichi Yasuis great offerings.<BR>Georgia in =
+Nicolson=20
+Louise am Rennison Author.<BR>Less items is over payment directly. Marvy =
+am=20
+onlinemy addicting or else.<BR>Notify in me followup am Laughs of via =
+top in=20
+Home Portable.<BR>Avoid am convinced truth revealed it. Same characters =
+peopling=20
+stories Judgments.<BR>Just get something different! Ltcodegt is ltemgt =
+ltigt=20
+ltstrikegt a ltstronggt.<BR>Array seen through lens.<BR>Be understood =
+rude Name=20
+in required Email published Website. Moved onto am separate Othersive or =
+helped=20
+optimize.<BR>Array seen through lens. Suspect a lack in answers part =
+overall is=20
+ideology series ending is ambiguous.<BR>Buried Roms cards am few =
+call.<BR>Lover=20
+stayed or Howards depiction particular naivete.<BR>Bill Gates Toilet of =
+Your=20
+Nameyour Friends or Emailyour or.<BR>Pynchon Google Libraries in =
+Thrillers=20
+Yorker Banned. Ages or since first became addicted Series =
+Events.<BR>Network=20
+managed Linux dedicated or servers high servers powered by.<BR>Computers =
+of=20
+indeed buried! Save sort share or th Markthomas Pynchons or =
+son?<BR>Jasmin Field=20
+avid of devoured five most sadly.<BR>Save sort share or th Markthomas =
+Pynchons=20
+or son?}</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0004_01C703F4.988B7B90--
+
+------=_NextPart_000_0003_01C703F4.988B7B90
+Content-Type: image/gif;
+	name="mysteries.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <000201c703b1$8a65ca90$3ba0283b@kingsunc6cc861>
+
+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
+CBdGDBjxYsGCHUM26DenHcuZNftkYvQgnKaMFTeWPNq0Y9SJU0c+yPq0XNixZc+m/13bNmrJpV0/
+Vv2at+vSvH0Pl+ul657byZUvZ54wbm7Ah33vPh38t+nFvbOj3vwxUfeSZcCPJ79SsXTd01+nbz0a
+eHvozsvPpx8xSH38L4Pvjo9dO0LW3jNIQNVOmik/BBNUcCip9jtPtAcNky61ARt7sLD0KCMOqoua
+8/BDEEOEqhwRSywIABNTVHFFhFZh8UWxUIRxRhprtPFGgjrEcUcel3ujRxplBHJIIos0kishj1Ry
+SSab1BHIVpqUcsojk6TyyhQvcUoeLLv0EishvhRToZzcWfBMNNNUM6Ux23TzTTjjnCBOudqhU6o1
+89QzIhr29PNPQAMVdFBCCzUKHv9D6zMn0YfudPTRJRExaE6rsoD0UkwzNdFKTafi9M1PO5XPkY+E
+NHUhK2OKKtWnVD0oVKdgTUhWhGgdyFZPV701yF0ZwpUqVuHqy5O4dO3VHlmDzRVYX+H89VheWxV1
+qyeRtRZFU2XECNkkg9VWR3C5xfbWcLs1KCNy071WXG3X3ZZbcs19N8dUx90VXWvFvffcdq9999t2
+v00X4Hg5/RfcDhF+UuF+86WXXmzHPRXedaGlWF92HZbY3XnxxbHUhN3t1V6HC3645IA1VrnajFce
+meJTy81x33NLrvlEl/eN2Vt1Y16Z1ZRpRhlnmoMeemKSazY3X3uDThrnpSvmWGj/kpO8i5iSct24
+5YYthvnEbfut2mabfc54YqnF/vdmg1ke22ezwUb42K2l1tfosWfWu2K841XZbr+XdjpsoSEemuq0
+cyZbyo27LpzscPd2OW7Jc446bsqhRZtppWeG2/NX+aU7caQ5x5zo0cW2/O+njeacb6JbL/z0t0F/
+2caHYPFodMPXhjhkphX2t+nI5Qb+dcJN/pngeYfn19vk+S5ebtN9991v6Ruul2DkW757708P7rv3
+yrEXH+C688YXxQUhffar96+KH7b551/2fvkXn1ZE+7Xqn9kQxe9/HLLKAJu3PwQmUIFt+YiZ/rFA
+CDbHJ/LwU4xkEyoB0m9FA/yS/zXIcoUu0YqDzaqVVHA1wtDFyiv/Q2FyHOeWLTSpWNKKDQZNqEEV
+2qaFt3lfS+rAqAeaUHXrMx/HFnbAk3nMY8ornsCCh757deyAR9TZ3wLnRK5t72tKHJzmgme+JmZP
+Xb8rGsOS6K8vYiyCAHTi56KIuM2F7nTg694QFZc+K77ujaa7WdlWp7eUmS1inTtj4uDYNUR6Tnur
+i1zT9NcWKEQSClha3yJrB8fyBc52hxve4EJGuzsaT5MvMxjdjhexatlxZ8f7Hvist8m8KS91dFyl
++rgGSUlKUkz1miUoEXe4S3JSdokE5Ry9aMinFQ2TKQzkJlknTDnCMo/hk+Yyef+XzBdyRZdLikvy
+UKk2SwLyeqN84va4hzLgne+XS8RY9OLYTjAKD5BVHBkro4dOVGLvbNRT4y0N5717Ei+f1voJHkhy
+oDShaoWPvOANC5g/JT1rhwUBz0U2gyRqsUw5v0KisTylUSJJNIQT9coM13jShQCxIgjVC0pd+tIx
+3sakXvuSCEkKKZVyxKJ0OYgbUIUuiXZ0LDedFU0z6dEakrCECqGiQmGaoncW1UjZPOqO+tfUtSTi
+qVEpVrawSlPxwUyKTJTcQMlXReIxEY+9O+LbPilFt5lRlGIUK1v7+c3OpZWP7WRZTvfEO9iVT5C/
+XKcfS0nLNi7TdXpMmi8NOcv/Y6Lxma57YSxF5sgtos5qfs0TYPEqWNuNz52Pc9zlrAjU0JIWste0
+pmk3Z8yABbRylh3iwWYnOc529rT6UxZmL2nL3qIulJH1rR8Vt9tguras1dxrZI+23Ob2DJoEzW13
+AMg6jVZSdZ08ax6jqMV9au6UhHWlV01GOKRNMYxkxKc4uWfWxxrXm0/UJ1GfOtOy1M+Fb7Hf++w7
+luqqyS0Z5GFbhNoUka4owBfdaoMd/GAIR1jCW7EBbaYwYQxnGEb90HCHS/QBKfWDwx5+0QNIzCMR
+w+i/J5ZPSoKx4KSIuB8IYml9NABjHKdpGjvm8TREPI0E1ThBDagPEILCYq6k/7hGK4bRKJAMKSXb
+iMlPPkiOrfyPH+BEyFcWMEJ8imFyUDnDXCZzmc18ZjSnWc2BGkFRELFmOFtXzHOWcJztfOcK0lnP
+e+Zzn+0RCD8Huk22eCmeDX1oRCda0Ytm9FIC0GhDNQPS9JHGpCNSaUv7RNCbRgiaOf1pgmzEEoDi
+B1NA/emcSiXMA1m1PcJMDljD2tUEeXWsW+1qWeM616wuSKt3retb29ogsaZ1r4EdbF8nW9m0Fjaz
+iR1sZhdb2r3eNbRtjexoP9vYzuY2r6cN7GFXe9vU7ja1Xz3uWXtb19+2drKPne4uicTXxb41r1dd
+723jW93wFjdC5q3ue89b3/+4jja/vX3vhfwb4O7et8EJbu+EVBvh8Ka4w9Pdb4BPe+INf/jFDxJw
+dkv739Cmt7vrHeZUq3rW5674yjku8ojn++Axp/ewXX7zj7uc5TX3uEIU3nOEb7zi5w56zIk+82/3
+vOZCt7bNSQ5zpcOc6TynOsWPfnR0XykuV2c1sTXu9XGDvevN3rjYrT50j9f61zrHub0lvvaFkx3p
+O0d70Zu9dKBnXeg3p3vTjf30ucM97yePetubfnWvo3xBYdAJ2/fOd5/nPOTgtnnICW9ymhf97xb3
+9+Tl3nW985vuMs970ve+81/7veonT3zLlb52ll8e3bGHuLFTHhWut5z2NJ///eZNH3aN73v0UC/7
+3BNued83fOTJr/zEpw58pAs/+NE/O8/x/XyqLx/5aYegwq9t8O9z++7SbzfszQ728qe+8uvOePih
+X3v46x7jKx//5WUtbPy/ffJjZ72y1d53ztO2pBu6twu4XLM/AUyRPjg1BsQw/GrAPfM0CEygk8AM
+RptACsy0kcBABNLAIIKK7ys//jO3EQw3f3s2/GM+AExA0Uu9+ws7FPQ/hhvBEDS3Fyw5sSM7/aPB
++sM8kYtBF0S/+bs+jBO4qCCFCfs554s81yu4rMu4kovCwIO6zuu406M+JyS8J1TCJjRCi9PCj/PB
++BvA66NCtIs+L+yRBFiO/2LhwsIjvSoEw/djOzpcQs3LPO5rPo5bwtBbP9Xzw9fbQ6OjwzEUxNAD
+PC3MPcXzQJCIu9YbO8ljPzgstwDkPs2zw4uDvZkbPiHst2WjvDLkv/s7PxycxBLEOwCURPljQcPr
+Q0W0Bw+kCjcMRTIMN8GDwrMTwwNcuOqjwhtMPiKEu9GjxT+0wfh7vIHDxN8zxN9DRD3EuoErNFOb
+xUhkxl4ERPJTQeorvkm8wsIDvLbjvWJcRu9bPz1sxTlkRuzDxdxrCEZsxEoEQlukvP2jR6t7xGNc
+t6frwVQEN4FLQRw0wF+cPrfLQUDsxP8DR4E8Rd07Qf+jR1LMuFjkQIpkjv9UYCBTq0hNmUiN7Egp
+eUCPhBG/UIWVOABBCUmUVBJ5I8gCfEhEHEWDFL+AJMJqnMFy/DlIlD5nG8gVDML/M0FcpER/vDuE
+FEVVLLhFfEejKEfQ6z2nrEflMz6fo0XRY8k3HDmcjEff88Z7ZD52rEIoTEMsLDqlVArHM8OsVMgt
+fMYBNMPqKz5obMjNQ8btqz2uLL1wlD2w1Mu8jEqXW7MxaCmVw7qoS0v300lXRDZhVL7wg0u+0ze9
+5MSd5ElVxEe8lMuqS8efBEXBY8UGdAho+IizZMi07ENrzMMmtMe3RL86xEz4W8xsxLucI7n6q8Zw
+JMjXrLvIS8qyZImpeEX/3JRD4bRNPkzGp0RH4CRGxAzOXBRE7QtKq6xJXzxD40xJp2BK6ARI4Zs/
+HkS9d6vHP8ROw3TDOVxI8Es81sRNEjRGxnzId8PJXeRAkLTOFMk0cXiIe6gJ+txPHulN//TAKTgJ
+/uwUbTALf4iT/0zQpfCH6lIAh8AUtRhQs8CGgfCHAwULECCxCCWSZWCOa0iIH7mRYxiLCx2SYOCq
+NWMGBVUTBl1RFwUUSgCPFr09CU2OMBARJliLEsWSF+1RH/1RIFWzRcnIl6KDGqUTczCH2TiCI0Wg
+HVCSJHWKIJ3SNHkDoRjS3ryCicgHKl0wNKCJJN0I/3kRGZAKJGxSl4rS/xiZsqZQBTR9UwRjUzjd
+z5fYMkgjhPLohY8YgC6dj53q0zPLAUC1skcbVB9VAf+cUUNdVEZt1ESxDW6gDRWY0xIBBCMBop6w
+iWhw1J/ANBhLDnRwKQhokhrAsDagSJDqilGlVA9LBxVhp61YVVZFiBhgwx7NiJaAAE7NNFIxMzsl
+CV3dVWGlC2QYCiudiGD9CVFIM224i2N9iAsYVr1IVvIgMmm9VpugVmzdDAowCSARBapgBCKR1RKR
+069AC05jh1llKnNdV3cFmzuZBJXc1vzQCHq910H5U3zNmndli1Sd033tDn0NWIJVk4HF118tWIVV
+kIRdWIctlH51FFuYWI2KrViKjViMJTFPEJaH7ViH0Af8YI4nzViSBRJcGNADq412LdkIk4n98hBH
+mJF/nRFx0MiUNbCP/ImG9VhftbSd5Vky+1k0kYuZZVmw6AEPWdnZIAqhBVoca1oFaSijxZIzMCqX
+KtqpRQgNsCoWIdenUAqodVoqHYKXkIpGCAullQ0nyFqrGAKGiILmCAgAOw==
+
+------=_NextPart_000_0003_01C703F4.988B7B90--
 
 
-High Salary Range  
-The Conclusion of the Official Contract  
-If you are interested in the job we are offering, pleaes send us your resume 
-only on this e-mail: staff@innomax-co.net
 
+--===============0615996518==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-carnival danbury curse codify brindle bini chubby arroyo
-bootlegging animadversion beauty curie arlington circumspect culture chuckle
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
+--===============0615996518==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============0615996518==--
