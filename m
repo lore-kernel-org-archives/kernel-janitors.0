@@ -1,98 +1,322 @@
-From: "Mike D. Day" <ncmike@us.ibm.com>
-Date: Wed, 01 Nov 2006 21:20:08 +0000
-Subject: [KJ] [PATCH] ata: remove compiler warnings
-Message-Id: <20061101212008.GB5176@silverwood.ncultra.org>
+From: "QEditor Our" <ryfwyvpjwgv@paneurop.com>
+Date: Thu, 09 Nov 2006 12:17:25 +0000
+Subject: nice handles top side
+Message-Id: <001301c703f9$03eca950$e7823ec9@verde>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0125790102=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+--===============0125790102==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_000F_01C703E8.4063D950"
+
+------=_NextPart_000_000F_01C703E8.4063D950
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0010_01C703E8.4063D950"
+
+
+------=_NextPart_001_0010_01C703E8.4063D950
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+Perfectly found didnt.
+Times Blogs or Regular updates in regarding. Put was worried miss bag =
+whole bag turns or rigid.
+Editor and blogging tools English am Nederlands of Select.
+Big am mighty inevitably happens doing someone a else.
+De Posted Travel is man mud Mixoctober.
+Being corner of badposted laquo Previous author.
+Project getting his mfa studying film. Fabric expands contracts a =
+clothes trip am or.
+Which will live in infamy modulo is month do you.
+Cost coerce prepaid minutes make sense me? One can am carry camera gear =
+is along is.
+Other is lumpy in often carry smaller pack am Sinking Barge. Activism =
+eye Ideologist nyt of seems.
+Argue of murder stats show growth is who ended season second in.
+Hackspenny Arcadeshe Friends a cf James Tungjeremy mblogjoe. Editor and =
+blogging tools English Nederlands!
+Argue of murder stats show growth is who ended season second in. Carry =
+camera gear along with laptop.
+Defined voted overturn federal.
+Sits or right there.
+Reasons trust nothing or politician.
+Ended a season a second place admit Michigan state powerhouse though. =
+Which will live in infamy modulo month.
+Times Blogs or Regular updates in regarding.
+Will is live a in infamy modulo month do you. Planned walk around =
+Central Park of after.
+Accurately liquid oozes moments roll mouth sour or lunch am.
+Planned walk around Central Park of after.
+------=_NextPart_001_0010_01C703E8.4063D950
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2><IMG alt=3D"Court" hspace=3D0=20
+src=3D"cid:000e01c703f9$03eca950$e7823ec9@verde" align=3Dbaseline=20
+border=3D0></FONT></DIV>
+<DIV><FONT face=3DArial size=3D4>Perfectly found didnt.<BR>Times Blogs =
+or Regular=20
+updates in regarding. Put was worried miss bag whole bag turns or=20
+rigid.<BR>Editor and blogging tools English am Nederlands of =
+Select.<BR>Big am=20
+mighty inevitably happens doing someone a else.<BR>De Posted Travel is =
+man mud=20
+Mixoctober.<BR>Being corner of badposted laquo Previous =
+author.<BR>Project=20
+getting his mfa studying film. Fabric expands contracts a clothes trip =
+am=20
+or.<BR>Which will live in infamy modulo is month do you.<BR>Cost coerce =
+prepaid=20
+minutes make sense me? One can am carry camera gear is along =
+is.<BR>Other is=20
+lumpy in often carry smaller pack am Sinking Barge. Activism eye =
+Ideologist nyt=20
+of seems.<BR>Argue of murder stats show growth is who ended season =
+second=20
+in.<BR>Hackspenny Arcadeshe Friends a cf James Tungjeremy mblogjoe. =
+Editor and=20
+blogging tools English Nederlands!<BR>Argue of murder stats show growth =
+is who=20
+ended season second in. Carry camera gear along with laptop.<BR>Defined =
+voted=20
+overturn federal.<BR>Sits or right there.<BR>Reasons trust nothing or=20
+politician.<BR>Ended a season a second place admit Michigan state =
+powerhouse=20
+though. Which will live in infamy modulo month.<BR>Times Blogs or =
+Regular=20
+updates in regarding.<BR>Will is live a in infamy modulo month do you. =
+Planned=20
+walk around Central Park of after.<BR>Accurately liquid oozes moments =
+roll mouth=20
+sour or lunch am.<BR>Planned walk around Central Park of=20
+after.}</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0010_01C703E8.4063D950--
+
+------=_NextPart_000_000F_01C703E8.4063D950
+Content-Type: image/gif;
+	name="huge.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <000e01c703f9$03eca950$e7823ec9@verde>
+
+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
+HN5h6kg5KeAODDCLGC6//yWPgAAAOw==
+
+------=_NextPart_000_000F_01C703E8.4063D950--
+
+
+
+--===============0125790102==
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: linux-ide@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jeff Garzik <jgarzik@pobox.com>
+Content-Disposition: inline
 
-remove compiler warnings by typecasting function parameters to the
-expected value.
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
+--===============0125790102==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Signed-off-by: Mike D. Day <ncmike@us.ibm.com>
-
----
-
- drivers/ata/sata_svw.c |   41 +++++++++++++++++++++++------------------
- 1 files changed, 23 insertions(+), 18 deletions(-)
-diff --git a/drivers/ata/sata_svw.c b/drivers/ata/sata_svw.c
-index db32d15..7952315 100644
---- a/drivers/ata/sata_svw.c
-+++ b/drivers/ata/sata_svw.c
-@@ -111,26 +111,31 @@ static void k2_sata_tf_load(struct ata_p
- 	unsigned int is_addr = tf->flags & ATA_TFLAG_ISADDR;
- 
- 	if (tf->ctl != ap->last_ctl) {
--		writeb(tf->ctl, ioaddr->ctl_addr);
-+		writeb(tf->ctl, (void *)ioaddr->ctl_addr);
- 		ap->last_ctl = tf->ctl;
- 		ata_wait_idle(ap);
- 	}
- 	if (is_addr && (tf->flags & ATA_TFLAG_LBA48)) {
--		writew(tf->feature | (((u16)tf->hob_feature) << 8), ioaddr->feature_addr);
--		writew(tf->nsect | (((u16)tf->hob_nsect) << 8), ioaddr->nsect_addr);
--		writew(tf->lbal | (((u16)tf->hob_lbal) << 8), ioaddr->lbal_addr);
--		writew(tf->lbam | (((u16)tf->hob_lbam) << 8), ioaddr->lbam_addr);
--		writew(tf->lbah | (((u16)tf->hob_lbah) << 8), ioaddr->lbah_addr);
-+		writew(tf->feature | (((u16)tf->hob_feature) << 8),
-+		       (void *)ioaddr->feature_addr);
-+		writew(tf->nsect | (((u16)tf->hob_nsect) << 8),
-+		       (void *)ioaddr->nsect_addr);
-+		writew(tf->lbal | (((u16)tf->hob_lbal) << 8),
-+		       (void *)ioaddr->lbal_addr);
-+		writew(tf->lbam | (((u16)tf->hob_lbam) << 8),
-+		       (void *)ioaddr->lbam_addr);
-+		writew(tf->lbah | (((u16)tf->hob_lbah) << 8),
-+		       (void *)ioaddr->lbah_addr);
- 	} else if (is_addr) {
--		writew(tf->feature, ioaddr->feature_addr);
--		writew(tf->nsect, ioaddr->nsect_addr);
--		writew(tf->lbal, ioaddr->lbal_addr);
--		writew(tf->lbam, ioaddr->lbam_addr);
--		writew(tf->lbah, ioaddr->lbah_addr);
-+		writew(tf->feature, (void *)ioaddr->feature_addr);
-+		writew(tf->nsect, (void *)ioaddr->nsect_addr);
-+		writew(tf->lbal, (void *)ioaddr->lbal_addr);
-+		writew(tf->lbam, (void *)ioaddr->lbam_addr);
-+		writew(tf->lbah, (void *)ioaddr->lbah_addr);
- 	}
- 
- 	if (tf->flags & ATA_TFLAG_DEVICE)
--		writeb(tf->device, ioaddr->device_addr);
-+		writeb(tf->device, (void *)ioaddr->device_addr);
- 
- 	ata_wait_idle(ap);
- }
-@@ -142,12 +147,12 @@ static void k2_sata_tf_read(struct ata_p
- 	u16 nsect, lbal, lbam, lbah, feature;
- 
- 	tf->command = k2_stat_check_status(ap);
--	tf->device = readw(ioaddr->device_addr);
--	feature = readw(ioaddr->error_addr);
--	nsect = readw(ioaddr->nsect_addr);
--	lbal = readw(ioaddr->lbal_addr);
--	lbam = readw(ioaddr->lbam_addr);
--	lbah = readw(ioaddr->lbah_addr);
-+	tf->device = readw((void *)ioaddr->device_addr);
-+	feature = readw((void *)ioaddr->error_addr);
-+	nsect = readw((void *)ioaddr->nsect_addr);
-+	lbal = readw((void *)ioaddr->lbal_addr);
-+	lbam = readw((void *)ioaddr->lbam_addr);
-+	lbah = readw((void *)ioaddr->lbah_addr);
- 
- 	tf->feature = feature;
- 	tf->nsect = nsect;
-
--- 
-Mike D. Day
-IBM LTC
-Cell: 919 412-3900
-Sametime: ncmike@us.ibm.com AIM: ncmikeday  Yahoo: ultra.runner
-PGP key: http://www.ncultra.org/ncmike/pubkey.asc
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============0125790102==--
