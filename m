@@ -1,20 +1,33 @@
-From: "Chasity" <ebrcuyigax@fiets.nl>
-Date: Fri, 03 Nov 2006 13:55:13 +0000
-Subject: Re: [KJ] .L.ooking for friend?
-Message-Id: <D9EE2CAE.8FD9C9A@fiets.nl>
+From: "Numbers Jolly" <deborahweyd@brussels.sun.com>
+Date: Mon, 13 Nov 2006 13:32:41 +0000
+Subject: [KJ] Numbers
+Message-Id: <01c70723$29ea28d0$6c822ecf@deborahweyd>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi there lovely,
-This kind cof opportunity comes ones in a life. I don't want 
-to miss it. Do you? I am coming to your place in few days 
-and I though may be we can meet each other. If you don't mind
-I can send you my picture. I am a girla.
-You can correspond with me uscing my email nbng@yahoomaildirect.info
+One of the key rules every good trader knows is volume 
+before price.  Once the volume is there the price will 
+rapidly follow.  We called AUNI for Monday, November 13th 
+and we were spot on.  Excellent volume is paving the way 
+for HUGE gains on Tuesday.  Get in while there's still time!
+  
 
+Feature: American Unity Investments (AUNI)
+Currently: Around O.70
+Projected: 2.14
+
+AUNI is capitalizing with great success on the growing 
+resource demands in China.  Big partnerships have been made.  
+Big results are set to be announced and a heavyweight 
+publicity blitz is just beginning giving us this awesome 
+volume.
+
+We are looking at a boost of over 200% over the next week.  
+There is no reason you should not allow yourself to benefit 
+from a big break.  Don't let this one slip by!
 
 _______________________________________________
 Kernel-janitors mailing list
