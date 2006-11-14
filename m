@@ -1,52 +1,44 @@
-From: "OTC Financial network" <doubledrenewal@aam.com>
-Date: Thu, 30 Nov 2006 21:05:18 +0000
-Subject: [KJ] EQSE News
-Message-Id: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0466784178=="
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Tue, 14 Nov 2006 04:21:32 +0000
+Subject: Warning: message 1GjgPG-00040n-Cc delayed 10 hours
+Message-Id: <E1Gjpng-0002Gy-1Z@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0466784178==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
 
-Alert! Watch this one Soar!
+The message identifier is:     1GjgPG-00040n-Cc
+The subject of the message is: Grudge not uncover her children, of the people under foot; and her, nest
+The date of the message is:    Mon, 13 Nov 2006 20:17:57 +0200
 
-Equipment & Systems Engineering, Inc. (EQSE)
+The address to which the message has not yet been delivered is:
 
-Sector: Environmental Engineering
-Rating: VERY Bullish
-Current Price:  $0.062
-Projected:        $0.20
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
-This is THE pick for the fourth quarter.  Environmental 
-stocks are getting incredible exposure and taking off as 
-governments and companies realize they need to start 
-investing NOW.  EQSE is involved in high tech solutions for 
-both the problems we face today and those of the future.
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
-Search your favorite financial information site and become 
-a believer.  This is HOT!
-
-An earth shattering release is expected out of the company 
-any day.  With all of EQSE's governmental contacts we are 
-expecting a major contract announcement.  This issue is 
-VERY tightly held and the release is going to push it up 
-rapidly.  Don't delay.  It's not going to stop till we see 
-20 cents!
-
-
---===============0466784178==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0466784178==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
