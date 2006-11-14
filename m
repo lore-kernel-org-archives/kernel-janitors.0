@@ -1,7 +1,7 @@
-From: "Bridgette Fountain" <deborahseattle@brownsims.com>
-Date: Tue, 14 Nov 2006 16:08:51 +0000
-Subject: [KJ] Bridgette
-Message-Id: <01c70804$983e4e60$6c822ecf@deborahseattle>
+From: "Tod Kaplan" <deboramocellin@brightmanmitchell.com>
+Date: Tue, 14 Nov 2006 08:36:56 +0000
+Subject: [KJ] Tod
+Message-Id: <01c707c6$f13b41a0$6c822ecf@deboramocellin>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
