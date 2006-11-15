@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Tue, 14 Nov 2006 20:33:06 +0000
-Subject: Warning: message 1GjgPG-00040n-Cc delayed 24 hours
-Message-Id: <E1Gk4xu-0001aN-4R@externalmx-1.sourceforge.net>
+Date: Wed, 15 Nov 2006 22:38:29 +0000
+Subject: Warning: message 1GjgPG-00040n-Cc delayed 48 hours
+Message-Id: <E1GkTOn-0003JX-SW@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1Gjpng-0002Gy-1Z@externalmx-1.sourceforge.net>
 In-Reply-To: <E1Gjpng-0002Gy-1Z@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 24 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1GjgPG-00040n-Cc
