@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 16 Nov 2006 07:37:29 +0000
+From: Jeff Dike <jdike@addtoit.com>
+Date: Thu, 16 Nov 2006 16:48:09 +0000
 Subject: Re: [KJ] [PATCH] Fixed some errors in User Mode Linux documentation
-Message-Id: <20061115233729.df9b8a07.rdunlap@xenotime.net>
+Message-Id: <20061116164809.GA5182@ccure.user-mode-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <454A4F89.3000006@gmail.com>
 In-Reply-To: <454A4F89.3000006@gmail.com>
@@ -10,29 +10,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 02 Nov 2006 12:05:29 -0800 David KOENIG wrote:
+On Wed, Nov 15, 2006 at 11:37:29PM -0800, Randy Dunlap wrote:
+> It appears to be a generated file (from what source, Jeff?).
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> I made a few fixes in the User Mode Linux documentation, but these can't
-> be fixed because git doesn't detect some of the problems.  (For example,
-> it doesn't realise that there are some stray backspaces that got
-> injected into the file somehow.)  You can use the following commands to
-> reformat everything correctly:
-> 
-> sed -i -e 's/\n{3,}/\n\n/g' Documentation/uml/UserModeLinux-HOWTO.txt
-> sed -i -e 's/.\b//g' Documentation/uml/UserModeLinux-HOWTO.txt
+It (and the equivalent html) are generated from an SGML file, which in
+turn is generated from a bunch of XML files which are also used to
+generate part of the UML web site.
 
-It appears to be a generated file (from what source, Jeff?).
+				Jeff
 
-The backspaces produce underlines or strikeover (composed)
-characters on printers that support such positioning.
-
-It's a bit much for the kernel Documentation/ directory IMHO. :)
-
----
-~Randy
+-- 
+Work email - jdike at linux dot intel dot com
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
