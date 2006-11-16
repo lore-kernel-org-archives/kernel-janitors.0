@@ -1,7 +1,7 @@
-From: Brandi <Tracy@shaw.ca>
-Date: Thu, 16 Nov 2006 13:48:29 +0000
+From: Mara <Charley@voila.fr>
+Date: Thu, 16 Nov 2006 13:51:50 +0000
 Subject: [KJ] reply to your resume
-Message-Id: <11E95FF3.4774641@shaw.ca>
+Message-Id: <AC6D3222.5773182@voila.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <C75B4016.4029657@chimera.co.nz>
 In-Reply-To: <C75B4016.4029657@chimera.co.nz>
