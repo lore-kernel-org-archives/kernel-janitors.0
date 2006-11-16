@@ -1,222 +1,326 @@
-From: Limex Service LTD <Marian@northwestern.edu>
-Date: Fri, 24 Nov 2006 15:34:49 +0000
-Subject: [KJ] Brauchen Sie einen Nebenjob?
-Message-Id: <3436D6D3.7538169@northwestern.edu>
+From: "store shoot" <nowFrantic@parcjeandrapeau.com>
+Date: Thu, 16 Nov 2006 16:16:11 +0000
+Subject: Believe trophies Annual
+Message-Id: <000701c7099a$883bea30$00000000@rodzinka5>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1139192708=="
+Content-Type: multipart/mixed; boundary="===============2057292740=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============2057292740==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_0003_01C709A2.EA005230"
 
---===============1139192708==
+------=_NextPart_000_0003_01C709A2.EA005230
 Content-Type: multipart/alternative;
-    boundary="----------=_1164382978-15951-213"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+	boundary="----=_NextPart_001_0004_01C709A2.EA005230"
 
-This is a multi-part message in MIME format...
 
-------------=_1164382978-15951-213
-Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+------=_NextPart_001_0004_01C709A2.EA005230
+Content-Type: text/plain;
+	charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
+
+
+Drug Sexual Assault Survey List Cutoffs Aafs Section. Compiler or Java =
+Classpath.
+Takes is over top spot a th series a.
+Pet in Everything Else Earn Bucks net Multimedia Animation Bargains.
+Zumaplay am Bigget Rewarded or chance windrawing ondrawing youve or =
+never. Many feels Musica am reluctant Richard Cromelin.
+Tricks record of fit films subzero a action mating is.
+State officials could not drink stage Critics.
+Indonesia Italiano a xexcxae am ja xdcxaddxcb ko Magyar hu. Battle with =
+former stylist claimed had taken important.
+Telecasts is set begin airing next year of collateral damage!
+Dangers am Treaty Fight patents petitions Dmca or.
+Three years drama Saturday is Night of Wrist in are.
+Arent aware theyre. Grahams trove a souvenirs is recordings! Adapt your =
+needs Access or source code neighbor release public? Arent aware theyre.
+Sport in Foodhealth Personal Livingpc Goodstools. Took Deftones three =
+years in.
+Shoot is ownersby David Haldane.
+Chesney won Brooks Dunns Believe? So Timberlake on this week in Beyonc =
+Fergie Nelly Furtado.
+Gtgtjuly Column Onea Backstage Intimate Moments Rocks Odysseyby Joplin.
+Band has emerged victorious court battle a with of former.
+Limited similar Batteries Chargers Categories Generators script or.
+Compiler or Java Classpath. Folk salsa we call no by a Geoff Boucher?
+Stage Critics Notebookis.
+Gamecube seen majority.
+Stage Critics Notebookis. Certainly serves him of well cd Greatest =
+Sixties highest debut.
+------=_NextPart_001_0004_01C709A2.EA005230
+Content-Type: text/html; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3D3DContent-Type content=3D3D"text/html; =3D
+charset=3D3Diso-8859-2">
+<META content=3D3D"MSHTML 6.00.2900.2963" name=3D3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D3D#ffffff>
+<DIV><FONT face=3D3DArial size=3D3D2><IMG alt=3D3D"have" hspace=3D3D0=3D20
+src=3D3D"cid:000201c7099a$88397930$00000000@rodzinka5" align=3D3Dbaseline=
+=3D20
+border=3D3D0></FONT></DIV>
+<DIV align=3D3Dcenter><FONT face=3D3DArial size=3D3D2>Drug Sexual Assault =
+=3D
+Survey List=3D20
+Cutoffs Aafs Section. Compiler or Java Classpath.<BR>Takes is over top =3D
+spot a th=3D20
+series a.<BR>Pet in Everything Else Earn Bucks net Multimedia Animation=3D20
+Bargains.<BR>Zumaplay am Bigget Rewarded or chance windrawing ondrawing =3D
+youve or=3D20
+never. Many feels Musica am reluctant Richard Cromelin.<BR>Tricks record =3D
+of fit=3D20
+films subzero a action mating is.<BR>State officials could not drink =3D
+stage=3D20
+Critics.<BR>Indonesia Italiano a xexcxae am ja xdcxaddxcb ko Magyar hu. =3D
+Battle=3D20
+with former stylist claimed had taken important.<BR>Telecasts is set =3D
+begin=3D20
+airing next year of collateral damage!<BR>Dangers am Treaty Fight =3D
+patents=3D20
+petitions Dmca or.<BR>Three years drama Saturday is Night of Wrist in=3D20
+are.<BR>Arent aware theyre. Grahams trove a souvenirs is recordings! =3D
+Adapt your=3D20
+needs Access or source code neighbor release public? Arent aware=3D20
+theyre.<BR>Sport in Foodhealth Personal Livingpc Goodstools. Took =3D
+Deftones three=3D20
+years in.<BR>Shoot is ownersby David Haldane.<BR>Chesney won Brooks =3D
+Dunns=3D20
+Believe? So Timberlake on this week in Beyonc FergiBM6=90
+salsa we call no by a Geoff Boucher?<BR>Stage Critics =3D
+Notebookis.<BR>Gamecube=3D20
+seen majority.<BR>Stage Critics Notebookis. Certainly serves him of well =3D
+cd=3D20
+Greatest Sixties highest debut.</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0004_01C709A2.EA005230--
+
+------=_NextPart_000_0003_01C709A2.EA005230
+Content-Type: image/gif;
+	name="amp.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <000201c7099a$88397930$00000000@rodzinka5>
+
+R0lGODlhyAE0Aof/AAAEAHQFCQCMBI6CDgAJeIQMgAB5fLfLv7LZx6G/+TsnC2kYDnIpCK4sAMgm
+ANsdCAhICRtGAjQ7AGdEAY0xAJdOA8s4C9Y/AA1kACldAEVbDWdkDnVUDaZcDLJnBOZuAABxACt9
+AEyKAmWIAHOHAKCACrRzAOpyAACXAiqYAEqiAF2SAIGrAJSSALmqANebDgDNAC27ADPKAGjDAoi8
+BaC1BsrKCte7BQzRDCjgAD3SBFzlAIbWA6nnCLnhAOHjAAAARCgATDYAOFUAMnYAS6QMMbsAO+oA
+QwAcPxUlQTcePGUqOXotO6AbO7kVOuksNg0zRipGTTJCN2FMQYxHQ6xGPcxOR+E4TABdSyFZTDVm
+OVlmOoliAJJYPLFqR9dfQgByRSmNNTqHQlR5PICJRqt8ScGAOu2LQACoTSyRRE2WQWeYM4ObM5ue
+NLmnQtuYSgO4RSPBQUC/TWXFPoTCRau4M8y7Nu2yTgLSPx/YNDHdNmXqNn/TTKDRTc7uQ9TrQAcA
+eyEFcUQAe2EAe30Ag6sAg7IAht0LewAeeiwXdjcffVwdjocnfa4fdMgpcu4aeAkygBo/gjVHg2xO
+fYc5jqc9iLc2heNMfQBaixhbh0ltiV1pgoRsgZ9rdM1gheZqigqGdhR/d0aMh2J4ioJxfJVxgsWD
+h+yLgQylcxKjfjOsh1SRjoece5aaermjeOmnfQDLdyPOd07MdFrMhXy2faSxd8O8hNe8cgDqeB3q
+jjfTh1XncnPnhKTXgcftidnXewAJtxcAyz4AyWIAy3UNwawAwskHwuIIzAAtxhUuyjYpwVUZxYQr
+tZEfxbwhse0SugBLuik/sjdMzVFEv3JDxqEyysA7veozswNfySZdyUFZxlZbxoFky65TtrVtvNVi
+wQBzzhV1w02Es1OBwYF2vJuNtLl6tNKEvw2rxBqdwjScyV2rt3uZvKuTw8SRxNudxQ3HySW4tj3M
+ul65uIbKuJjDyv/w45SRlnp2iv8AAA7/BP//AAEA9f8A9g728//4/yH5BACBurIALAAAAADIATQC
+Bwj/AP8JHEiwoMGDCBMqXMiwocOHECNKnEixosWLGDNq3Mixo8ePIEOKHEmypMmTKFOqTGivpcuX
+MGPKnEmzps2bOHPq3Mmzp8+fQIMKHUq0qNGjSIGuXMq0qdOnUKNKnUq1qtWrWLNqlZhFY9KvYMOK
+HUu2rNmzaNOqXcu2rdu3cOPKnUu3rt27ePPq3cu3r9+/gAMLhru1sOHDiBMrXsy4sePHkCNLnky5
+smWsgzNr3sy589nLoEOLHi3Vs+nTqFOrXs26tevXdknLnk27tu3buHPr3gi7t+/fwIMLH068uPHj
+yJMrX868ufO8D2029DvdaHW+14lm17s95u6Cz8OL/x9Pvrz589gdSmdInb119+kXHu2Ol/7L7wR7
+AgBgb//ODwAGKGCAMQ0IYIEGEmjTgUD5559NDvKnkwAUVmhhhTFdSGGGGmJo04YN8vdgTRHuxM+J
+KKaIYkwqnshiiyva5GKI/UmInkwl6qTgjgy6pKA9P770Y5AIfhBUjiSKaCNOHjYJokse2hPlS1FO
+yaEARyp5E5I4xejljC7FaI+YL4lJ5ov8ZFnjjTTttyROPBoJZI9zyimknT7SSeSdePrkZk5/7uQk
+llI+WSihVCIKpaFWJqqonyNCGGmXM36ZZphgYopmmZnCdKZ+k7JZo5uk5tTjkHbuWSdMQapaJ506
+kf8q60yylsokolXiauiij07ZaEsXQlrrmy4NG+pMYJp56ZidtnQmmZ86m6KwtYoKU6A/uQrrnazq
+uW1LA2ZJLK3HTrjrojTt6uu5wFooLqDl5hQtszR1Cm2z0s4L77jIRdcSktup6uqqeeL5LbgCwnQd
+l+Su2dJ2v/7arqLrpuvuffAxjKOWD8OXr0z63rssvchOi7F8/3JsD34DgeqwTwIfTDDCciYsE4MD
+S/pymyr3FDG7Ezs68aPoHvqTxjEhLS++IWdq6cicfgzpztYaFXOffPJp80w4y2zXz0Tz6ujFM4Eo
+8V3RNj0yjDVVim/VJ3ssU8DfDtzqgVsjSLOd9v3/BDG7Z6+LJdkcDu1S3z5tl/bbzK7toskgXwo5
+4iuz/A9bV9N0d80HJ+g1XWBbTLHZQHcItF2LQ82p45K/DSPjcPtLE91YI6x5n6jW7i3fcgv1d9iF
+WgxTrmEz+iTlPCnuuuqaro4p806DSbnll6+lbd2w5o471jnPJXHoQhue6JV9zZu6p8k+q7q+cFsv
+M5F7bt5tkX0Fru65gg9P9Nl0qY3++tGDWrPYZy3ZzYR2NcndzbJ3qm0lDHk7+V1NiCcTK1FQfxuC
+oE6Ux7zneXBTzpPa6tI0PcupJUG3C1e3VPgqFLbwc27pkOgINzTima6Gp4ML20qmIjRB7nVPI2D7
+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
+Hd6cndy5bdzcbaXQTd6eLdxa+tvNbd7iX
+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
+n/mf73amj/lOb49Pd/qsj/l41/hsz3SRL3t
+ 
+1psTnp2wc1/K2owcCxn4Yjun/rnqP0boc9sLvZ054zCHCWjmve6K5+F2Y90mloRySfLIgKsIqOBa
+Rg538Y7r/XjvSNcFmOXlm0+R9ppT3zz4inJIa97t8/4+o9EX/80c9HMZPj3vaSNvP5/oVj0x1awv
+ejofAgVTllY57lWr+pXZMtW1jA2HVqarjAOhtjHQ6OpmnYra93BHtsg1DTuiKt3yGFgs76gmalnD
+n/ICWJvgOStdNCwX8G6oQ8xtK4E+tOEOG8a2IBIRLjksIhKTqMQlMrGJTnwiFKMoxSnqyHPm8tnF
+VEbDIRqsZTYDE1+OuEMgiktaVsQhi84yptfpjGU96yLFajatLIIxLxD5IR4pwi8z5ixc+uvil9Qo
+MjZGC5AiE6MW07g6N1KxilSTGqicRrRcQS12+Osg6mr3nhOGbW0NGlp7Igmsr6HtScJxENWMpZ3P
+OJA3XgONBf+T9cIHwlKWE/xadxBZRM/ZBU7ss16fgimmReUPdrcLpo3UJ7sQwiaAj/LlMIs5J2f+
+b3J8I6DVVKg5Xe4SS9DsHIhGGaBkGhA45NxbVXrpqd3xkoXfy6AprWZCtF3Qf3/bZIf2BzkMXhN7
+/LTPPZPXyDT655sBNdU0j1XOezIvms6TZzHnqVB0UkhxSLOoPZ8Zv4P+soEUbaeEtNcgmUVxeCsy
+qPvm51DGMZR0KjUSMuMJpHd+9H4afSikWCpTbL7vfyB1Z/rayZ884nGBttzUC/sTK0t5UmgjFV0y
+YaQlTtpKaay61AazKtX7pFCGlwTo9hR6qws2tazwHGUFRfn/Kw5pc6Avcxc3f8azuCrSrXZtF12r
+eFeNJZJge/2rT8gI2LAQtbCGPSxiE3vYwepIsY59LGQjK1mP9JGQBKPjuCar2c1ytrPJKeSGFnks
+O44sZJHKK2NTq1pBUo+vrW1jabOF2tXSFoqUSt0MfXTCUsoSN52E5H5+c8ukPkdTnj0ucpOLXB6y
+aWYP7WhDq9Zc7/m0V7OtLXaXaNLX6BS6NSUpNWM4vqMllEfKPS9602tY5jq3e89dKfcMJ1R9vja7
+9r3vzipK3/dGN7/1U99764vfAUvxtq3xDeyWusIKXk+b9RyhU1vEYIAKSL0WtoKFMxwvApuWwx6m
+rWDdmkMN/5O4xCYejGrD8OEVs3hSJ34xjGMsY862WCURqDGOc6zjHfO4xz7+sY9nLOQhE7nI5QMy
+kpPcNiMzuclOfnJHlCzlKVO5yla+MpazrOUtc7nLXv4ymMMsZi53YsxmPrNbKrEwKLO5zW6eMZrj
+LOc507nOdr4znvOs5z3zuc9+/jOgVfLmQTM5AYY+9KEJrehFMxqBiH50Ahot6UlTutKWtkigM63p
+TXO6057m86VDLepRk7rUpj41ij+t6lWzutWufjWsYy3rwKK61rae9Kxz3cRb87rXvv41sIOtWV0T
+u9jGlrOwk63sZTO72c5+NrSjfdxjU7va1r42trNtXmlzuwjbRdU2uOsVEAA7
+
+------=_NextPart_000_0003_01C709A2.EA005230--
+
+
+
+--===============2057292740==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-
-   Sehr geehrte Damen und Herren, wir danken f=C3=BCr die M=C3=B6glichkeit =
-uns Ihnen kurz
-   vorstellen zu k=C3=B6nnen
-
-   Unsere Gesellschaft ist seit mehreren Jahren auf dem Grossmarkt bekannt.=
- Der
-   Kernpunkt unserer Interessen liegt im Edelmetalmarkt, wobei wir auch in
-   vielen benachbarten Branchen t=C3=A4tig sind. Sei es B=C3=B6rse, weltbek=
-annte
-   Auktionen, oder Forschung , ist es unser Ziel f=C3=BCr uns und unsere Ku=
-nden
-   immer die besten Ergebnisse zu erzielen. Im Moment ist die Entscheidung
-   getroffen worden auf den deutschen Markt zu kommen, da dieser einen hohen
-   Entwicklungspotenzial und h=C3=B6chstm=C3=B6glichen Gewinnerziehlung erw=
-arten l=C3=A4sst.
-     _________________________________________________________________
-
-   Als Personalleiter unserer Gesellschaft bin ich seit Jahren f=C3=BCr Rek=
-rutierung
-   zust=C3=A4ndig und freue mich, Ihnen die vakante Position eines regional=
-en
-   Managers f=C3=BCr Zahlungsbearbeitung anzubieten. Da wir weltweit vertre=
-ten sind,
-   kommen die Kunden aus vielen unterschiedlichen L=C3=A4ndern. Verwaltung =
-der
-   Geldtransfers, die von unseren deutschen Kunden beauftragt wurden , ist
-   einer der Schwerpunkte, welche die zu jetzigen Zeitpunkt angebotene T=C3=
-=A4tigket
-   ausmachen.
-
-   Ihre Vorteile:
-     * Sie werden zun=C3=A4chst unser Vertreter und Mittelsmann zwischen un=
-s und
-       unseren Kunden in Ihrem Land.
-     * Sie zahlen keine Geb=C3=BChren und m=C3=BCssen nichts investieren (v=
-ergessen Sie
-       betr=C3=BCgerische Stellenangebote, bei denen Sie erst zur Kasse geb=
-eten
-       werden).
-     * Sie haben eine flexible , interessante Arbeit , mit unterschiedlichen
-       T=C3=A4tigkeitsschwerpunkten und hohen Bef=C3=B6rderungsm=C3=B6glich=
-keiten
-     * Sie verdienen zuerst zwischen 500 und 750 Euro pro Woche
-     * Sie k=C3=B6nnen selbst Ihren Verdienst bestimmen. - da Sie auf einen
-       Prozentsatz arbeiten - h=C3=A4ngt Ihr Verdienst nur von Ihrer
-       Arbeitsbereitschaft ab
-
-   Zu den Aufgaben w=C3=BCrden u.a folgende T=C3=A4tigkeiten geh=C3=B6ren
-     * Verwaltung und Weiterleitung der Kundengelder
-     * Hohe Erreichbarkeit und Verantwortungsbewusstsein
-
-   Sie k=C3=B6nnen Ihren Arbeitstag moglichst flexibel gestalten, um Ihrem
-   Haupterwerb problemlos nachzugehen. Wichtig ist aber, dass unsere
-   Kommunikation funktioniert und Sie f=C3=BCr uns immer erreichbar sind. Es
-   entstehen f=C3=BCr Sie keine Ausgaben, d.h. Sie brauchen kein Startkapit=
-al,
-   Investitionen oder eigene Auslagen.
-
-   An die Bewerber werden folgende Anforderungen gestellt
-     * Internet, E-Mail, Grundkenntnisse der Hauptzahlungssysteme.
-     * Es w=C3=A4re w=C3=BCnschenswert, wenn Sie ein eigenes Konto in einem=
- deutschen
-       Geldinstitut mit Online Banking h=C3=A4tten.
-     * F=C3=BCr diese Besch=C3=A4ftigung brauchen Sie von 2 bis 8 Stunden f=
-reie Zeit in
-       der Woche.
-     * Genauigkeit, P=C3=BCnktlichkeit, Zuverlassigkeit und naturlich eine =
-gesunde
-       Arbeitseinstellung
-
-   Falls Sie f=C3=BCr unser Angebot Interesse haben und bereit sind, eine g=
-ut
-   bezahlte, aber auch verantwortungsvolle Arbeit auszuf=C3=BChren, so schr=
-eiben Sie
-   uns bitte an: [1]limex-service@yandex.ru
-   Eine kurzgefasste Bewerbung mit Foto ist besonders willkommen.
-
-   Nach der Bearbeitung Ihrer Bewerbung, wird Ihnen im Falle einer Zusage I=
-hre
-   T=C3=A4tigkeit genauestens erl=C3=A4utert, Sie werden mit unserer Gesell=
-schaft bekannt
-   gemacht und es folgt in k=C3=BCrze der Arbeitsvertrag
-
-   Wir hoffen auf eine gute und erfolgreiche Zusammenarbeit
-   Mit freundlichen Gr=C3=BCssen
-
-   Aleksej Semenko
-     _________________________________________________________________
-
-   Ihre Email wurde uns von der SC-Networks GmbH zu Verf=C3=BCgung gestellt=
-. Falls
-   es zu einer Fehlinformation kam und Sie kein Interesse an den aufgef=C3=
-=BChrten
-   T=C3=A4tigkeiten haben, betrachten Sie folgende Email als Gegenstandslos.
-
-   Diese Email wurde von einem unserer Email Roboter erstellt.
-   Antworten Sie bitte nicht an folgende Email mit der Option '' an Absender
-   antworten'', senden Sie keine Emails an die Absenderadresse, da Ihre Ema=
-il
-      automatisch gel=C3=B6scht wird.
-
-References
-
-   1. mailto:limex-service@yandex.ru
-
-
-------------=_1164382978-15951-213
-Content-Type: text/html; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-  <meta content="text/html;charset=iso-8859-1"
- http-equiv="Content-Type">
-  <title>Brauchen Sie einen Nebenjob?</title>
-</head>
-<body bgcolor="#ffffff" text="#000000">
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<DEFANGED_style type="text/css">
-<!--
-Stil1 {
-	font-size: 16px;
-	font-weight: bold;
-}
--->
-</DEFANGED_style></head><body><div align="center">
-  <table width="90%" border="0" cellpadding="0" cellspacing="0">
-    <tr>
-      <td><p class="Stil1">Sehr geehrte Damen und Herren, wir danken f&uuml;r die M&ouml;glichkeit uns Ihnen kurz vorstellen zu k&ouml;nnen</p>
-      <p><strong>Unsere Gesellschaft ist seit mehreren Jahren auf dem Grossmarkt bekannt. Der Kernpunkt unserer Interessen liegt im Edelmetalmarkt</strong>, wobei wir auch in vielen benachbarten Branchen t&auml;tig sind. Sei es B&ouml;rse, weltbekannte Auktionen, oder Forschung , ist es unser Ziel f&uuml;r uns und unsere Kunden immer die besten Ergebnisse zu erzielen. Im Moment ist die Entscheidung getroffen worden auf den deutschen Markt zu kommen, da dieser einen hohen Entwicklungspotenzial und h&ouml;chstm&ouml;glichen Gewinnerziehlung erwarten l&auml;sst.</p>
-
-      <hr>
-      <p>Als Personalleiter unserer Gesellschaft bin ich seit Jahren f&uuml;r Rekrutierung zust&auml;ndig und freue mich, Ihnen die vakante Position eines regionalen Managers f&uuml;r Zahlungsbearbeitung anzubieten. Da wir weltweit vertreten sind, kommen die Kunden aus vielen unterschiedlichen L&auml;ndern. Verwaltung der Geldtransfers, die von unseren deutschen Kunden beauftragt wurden , ist einer der  Schwerpunkte, welche die zu jetzigen Zeitpunkt angebotene T&auml;tigket ausmachen.<br />
-      </p>
-      <p><strong>Ihre Vorteile:</strong></p>
-      <ul>
-
-        <li>Sie werden zun&auml;chst unser Vertreter und Mittelsmann zwischen uns und unseren Kunden in Ihrem Land.</li>
-        <li>Sie zahlen keine Geb&uuml;hren und m&uuml;ssen nichts investieren (vergessen Sie betr&uuml;gerische Stellenangebote, bei denen Sie erst zur Kasse gebeten werden).</li>
-        <li> Sie haben eine flexible , interessante Arbeit , mit unterschiedlichen T&auml;tigkeitsschwerpunkten und hohen Bef&ouml;rderungsm&ouml;glichkeiten</li>
-
-        <li> Sie verdienen zuerst zwischen 500 und 750 Euro pro Woche</li>
-        <li> Sie k&ouml;nnen selbst Ihren Verdienst bestimmen. - da Sie auf einen Prozentsatz arbeiten - h&auml;ngt Ihr Verdienst nur von Ihrer Arbeitsbereitschaft ab</li>
-        </ul>
-      <p><strong>Zu den Aufgaben w&uuml;rden u.a folgende T&auml;tigkeiten geh&ouml;ren</strong></p>
-
-      <ul>
-        <li> Verwaltung und Weiterleitung der Kundengelder</li>
-        <li> Hohe Erreichbarkeit und Verantwortungsbewusstsein</li>
-      </ul>
-      <p>Sie k&ouml;nnen Ihren Arbeitstag moglichst flexibel gestalten, um Ihrem Haupterwerb problemlos nachzugehen. Wichtig ist aber, dass unsere Kommunikation funktioniert und Sie f&uuml;r uns immer erreichbar sind. Es entstehen f&uuml;r Sie keine Ausgaben, d.h. Sie brauchen kein Startkapital, Investitionen oder eigene Auslagen. <br />
-
-      </p>
-      <p><strong>An die Bewerber werden folgende Anforderungen gestellt</strong></p>
-      <ul>
-        <li> Internet, E-Mail, Grundkenntnisse der Hauptzahlungssysteme.</li>
-        <li> Es w&auml;re w&uuml;nschenswert, wenn Sie ein eigenes Konto in einem deutschen Geldinstitut mit Online Banking h&auml;tten.</li>
-
-        <li> F&uuml;r diese Besch&auml;ftigung brauchen Sie von 2 bis 8 Stunden freie Zeit in der Woche. </li>
-        <li> Genauigkeit, P&uuml;nktlichkeit, Zuverlassigkeit und naturlich eine gesunde Arbeitseinstellung</li>
-      </ul>
-      <p>Falls Sie f&uuml;r unser Angebot Interesse haben und bereit sind, eine gut bezahlte, aber auch verantwortungsvolle Arbeit auszuf&uuml;hren, so schreiben Sie uns bitte an: <strong><a href="mailto:limex-service@yandex.ru">limex-service@yandex.ru</a></strong><br>
-
-        <br />
-        Eine kurzgefasste Bewerbung mit Foto ist besonders willkommen.</p>
-      <p>Nach der Bearbeitung Ihrer Bewerbung, wird Ihnen im Falle einer Zusage Ihre T&auml;tigkeit genauestens erl&auml;utert, Sie werden mit unserer Gesellschaft bekannt gemacht und es folgt in k&uuml;rze der Arbeitsvertrag</p>
-      <p>Wir hoffen auf eine gute und erfolgreiche Zusammenarbeit<br />
-        Mit freundlichen Gr&uuml;ssen</p>
-
-      <p>Aleksej Semenko</p>
-      <hr>
-      <p><em>Ihre Email wurde uns von der   SC-Networks GmbH   zu Verf&uuml;gung gestellt. Falls es zu einer Fehlinformation kam und Sie kein Interesse an den aufgef&uuml;hrten T&auml;tigkeiten haben, betrachten Sie folgende Email als Gegenstandslos.</em></p>
-      <p><strong>Diese Email wurde von einem unserer Email Roboter erstellt. <br />
-      Antworten Sie bitte nicht an folgende Email mit der Option '' an Absender antworten'', senden Sie keine Emails an die Absenderadresse, da Ihre Email automatisch gel&ouml;scht wird.</strong></p></td>
-
-    </tr>
-  </table></div>
-</body>
-</html>
-
-------------=_1164382978-15951-213--
-
---===============1139192708==
-Content-Type: text/plain; charset="iso-8859-1"
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============2057292740==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
---===============1139192708==--
+--===============2057292740==--
