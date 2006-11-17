@@ -1,122 +1,150 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 16 Nov 2006 07:45:11 +0000
-Subject: Re: [KJ] [PATCH] Fix arch/powerpc/platforms/iseries/pci.c to use
-Message-Id: <20061115234511.aa6b936a.rdunlap@xenotime.net>
+From: Kelly <Rigoberto@sbcglobal.net>
+Date: Fri, 17 Nov 2006 08:28:38 +0000
+Subject: [KJ] We are happy to present you our new project!
+Message-Id: <F28716B8.5687154@sbcglobal.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0591291274=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <454A4B03.8090602@gmail.com>
-In-Reply-To: <454A4B03.8090602@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 02 Nov 2006 11:46:11 -0800 David KOENIG wrote:
+This is a multi-part message in MIME format...
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> - From 605b32f23d62d93b0dcf36d4a8f8c2abf7b264be Mon Sep 17 00:00:00 2001
-> From: David KOENIG <david@patrick.teapy>
+--===============0591291274==
+Content-Type: multipart/alternative;
+    boundary="----------=_1163752218-31673-761"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Is that a real email address?
+This is a multi-part message in MIME format...
 
-> Date: Mon, 23 Oct 2006 11:58:27 -0700
-> Subject: [PATCH] Fix arch/powerpc/platforms/iseries/pci.c to use time_after
-
-Please use expected patch format as documented in
-Documentation/SubmittingPatches.
-
-Attempting to apply this patch give me:
-
-6 out of 7 hunks FAILED -- saving rejects to file arch/powerpc/platforms/iseries/pci.c.rej
-
-I suppose it's due to lots of extra hyphens (dashes) at the
-beginning of the deleted lines.  Does git do that?
-or did the SHA1 envelope cause that?  or gmail do it?
-Either way, it's broken.
-
-Oh, something also converted all of the tabs to spaces.
-gmail may have done that for (to) you unless you used the
-gmail SMTP interface (instead of the web interface).
+------------=_1163752218-31673-761
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
 
-> - ---
->  arch/powerpc/platforms/iseries/pci.c |   13 +++++++------
->  1 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/iseries/pci.c
-> b/arch/powerpc/platforms/iseries/pci.c
-> index 4aa165e..b17fd12 100644
-> - --- a/arch/powerpc/platforms/iseries/pci.c
-> +++ b/arch/powerpc/platforms/iseries/pci.c
-> @@ -19,6 +19,7 @@
->   * along with this program; if not, write to the Free Software
->   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
->   */
-> +#include <linux/jiffies.h>
->  #include <linux/kernel.h>
->  #include <linux/list.h>
->  #include <linux/string.h>
-> @@ -457,7 +458,7 @@ static u8 iSeries_Read_Byte(const volati
->                 static unsigned long last_jiffies;
->                 static int num_printed;
-> 
-> - -               if ((jiffies - last_jiffies) > 60 * HZ) {
-> +               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
->                         last_jiffies = jiffies;
->                         num_printed = 0;
->                 }
-> @@ -485,7 +486,7 @@ static u16 iSeries_Read_Word(const volat
->                 static unsigned long last_jiffies;
->                 static int num_printed;
-> 
-> - -               if ((jiffies - last_jiffies) > 60 * HZ) {
-> +               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
->                         last_jiffies = jiffies;
->                         num_printed = 0;
->                 }
-> @@ -514,7 +515,7 @@ static u32 iSeries_Read_Long(const volat
->                 static unsigned long last_jiffies;
->                 static int num_printed;
-> 
-> - -               if ((jiffies - last_jiffies) > 60 * HZ) {
-> +               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
->                         last_jiffies = jiffies;
->                         num_printed = 0;
->                 }
-> @@ -550,7 +551,7 @@ static void iSeries_Write_Byte(u8 data,
->                 static unsigned long last_jiffies;
->                 static int num_printed;
-> 
-> - -               if ((jiffies - last_jiffies) > 60 * HZ) {
-> +               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
->                         last_jiffies = jiffies;
->                         num_printed = 0;
->                 }
-> @@ -576,7 +577,7 @@ static void iSeries_Write_Word(u16 data,
->                 static unsigned long last_jiffies;
->                 static int num_printed;
-> 
-> - -               if ((jiffies - last_jiffies) > 60 * HZ) {
-> +               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
->                         last_jiffies = jiffies;
->                         num_printed = 0;
->                 }
-> @@ -602,7 +603,7 @@ static void iSeries_Write_Long(u32 data,
->                 static unsigned long last_jiffies;
->                 static int num_printed;
-> 
-> - -               if ((jiffies - last_jiffies) > 60 * HZ) {
-> +               if (time_after(jiffies, last_jiffies + 60 * HZ)) {
->                         last_jiffies = jiffies;
->                         num_printed = 0;
->                 }
-> - --
+   We are happy to present you our new project!Today our online auction bidding
+   company SmartBill has finally begun successful cooperation with American
+   financial oganizations.Our online auction bidding system is secured with
+   many ameican major banks and this is why we, as the official affiliate of
+   these banks, are ready to guarantee safety and security of every online
+   auction opeation our company processes in the USA Available
+   vacancies:Customer support manager: 8 hours per day. 2400$ per
+   month.Requirements: car, PC, cell and home phones, internet access.Assist
+   customers from your region with full time internet and personal
+   support.Bidding manager: part-time 2-4 hours per day. From 4000$ per month +
+   weekly bonuses for succesful completion of daily assigments with no
+   delay.Requirements: internet access and be able to check your email several
+   times a day, cell and home/work phones, personal/business checking bank
+   account(s).Age limit: from 18 y.o.Be able to contact our managers and
+   customers both with your cell phone and email. Assist customers from your
+   region with funds processing from the initial bidder to the seller
+   itself.Checking bank account is obligatory.Become the initial third party
+   between the seller and the bidder from USA region.Transport manager: 6-10
+   hours per day. 2400$ per month.Requirements: car, PC, cell and home phones,
+   internet access. Punctuality and responsibility.Benefits:1. Become our
+   initial representative and a middleman between the seller and the buyer from
+   your country.2. Gain authority with people from all parts of the world who
+   really rely on your service.3. Possible career growth.4. Work effeciently
+   with no holds and delays and get weekly bonuses besides monthly salary for
+   outstanding performance.For immediate and confidential consideration, please
+   [1]CLICK HERE to send us email with the following APPLICATION
+   FORM.APPLICATION FORM:1. Your full name:2. Your country:3. Your full
+   adress.4. Your mobile contact phone:5. Your fixed/home contact phone:6. Your
+   work contact phone:7. Your contact email:8. Are you ready to start working
+   with our company? (must be 'Yes/No')9. Are you ready to accept money
+   transfers to your bank account (must be 'Yes/No')Sincerly Yours,Jan
+   LipponenStaff manager
+
+References
+
+   1. mailto:smartbill@gmail.com
 
 
----
-~Randy
+------------=_1163752218-31673-761
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html;charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <title>We are happy to present you our new project!</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<center><table width=600><br><font face=Arial color=#004080>
+<b>We are happy to present you our new project!</b><br><br>
+
+Today our online auction bidding company SmartBill has finally begun successful cooperation with American financial oganizations.<br><br>
+
+
+Our online auction bidding system is secured with many ameican major banks and this is why we, as the official affiliate of these banks, are ready to guarantee safety and security of every online auction opeation our company processes in the USA
+<br><br></font>
+<font face=Arial>
+<b><i>Available vacancies:</b></i><br>
+
+</font><font face=Arial color=#e1900><i>
+Customer support manager:</i></font><font face=Arial> 8 hours per day. 2400$ per month.<br>
+Requirements: car, PC, cell and home phones, internet access.<br>
+Assist customers from your region with full time internet and personal support.<br><br></font>
+
+
+<font face=Arial color=#e1900><i>Bidding manager:</i></font><font face=Arial> part-time 2-4 hours per day. From 4000$ per month + weekly bonuses for succesful completion of daily assigments with no delay.<br>
+Requirements: internet access and be able to check your email several times a day, cell and home/work phones, personal/business checking bank account(s).<br>
+
+Age limit: from 18 y.o.<br>
+Be able to contact our managers and customers both with your cell phone and email.
+Assist customers from your region with funds processing from the initial bidder to the seller itself.<br>
+Checking bank account is obligatory.<br>
+Become the initial third party between the seller and the bidder from USA region.<br><br></font>
+
+<font face=Arial color=#e1900><i>Transport manager:</font></i><font face=Arial> 6-10 hours per day. 2400$ per month.<br>
+Requirements: car, PC, cell and home phones, internet access. Punctuality and responsibility.<br><br></font>
+
+<font face=Arial>
+
+<b>Benefits:<br></b>
+1. Become our initial representative and a middleman between the seller and the buyer from your country.<br>
+2. Gain authority with people from all parts of the world who really rely on your service.<br>
+3. Possible career growth.<br>
+4. Work effeciently with no holds and delays and get weekly bonuses besides monthly salary for outstanding performance.<br><br><br>
+
+
+For immediate and confidential consideration, please <a href=mailto:smartbill@gmail.com><font face=Arial color=#e1900><i> CLICK HERE</font></a></i> to send us email with the following <b><i>APPLICATION FORM</b></i>.<br><br>
+
+<b>APPLICATION FORM:<br></b>
+1. Your full name:<br>
+2. Your country:<br>
+3. Your full adress.<br>
+4. Your mobile contact phone:<br>
+5. Your fixed/home contact phone:<br>
+6. Your work contact phone:<br>
+7. Your contact email:<br>
+
+8. Are you ready to start working with our company? (must be 'Yes/No')<br>
+9. Are you ready to accept money transfers to your bank account (must be 'Yes/No')<br><br><br>
+</i>
+</font><font face=Arial>
+Sincerly Yours,<br>
+Jan Lipponen<br>
+<i>Staff manager<br></i></table>
+</body>
+</html>
+
+------------=_1163752218-31673-761--
+
+--===============0591291274==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0591291274==--
