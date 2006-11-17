@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 16 Nov 2006 22:48:49 +0000
-Subject: Warning: message 1Gk5DA-0004zM-Go delayed 48 hours
-Message-Id: <E1Gkq2L-0006ZS-VQ@externalmx-1.sourceforge.net>
+Date: Fri, 17 Nov 2006 21:29:50 +0000
+Subject: Warning: message 1Gk5DA-0004zM-Go delayed 72 hours
+Message-Id: <E1GlBHS-0002sL-Tj@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1GkGsN-0004mS-JB@externalmx-1.sourceforge.net>
 In-Reply-To: <E1GkGsN-0004mS-JB@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1Gk5DA-0004zM-Go
