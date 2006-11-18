@@ -1,47 +1,31 @@
-From: "Arnulfo Conway" <deborahrich@brm10.central.sun.com>
-Date: Wed, 01 Nov 2006 07:47:34 +0000
-Subject: [KJ] Thank you
-Message-Id: <01c6fde5$1fb7dfc0$6c822ecf@deborahrich>
+From: "Omission A. Incarcerating" <istier@gfield.ednet.ns.ca>
+Date: Sat, 18 Nov 2006 02:09:28 +0000
+Subject: [KJ] Weight Loss with HOODIA - $0.5 for one pill!
+Message-Id: <1641417838.20061117210928@gfield.ednet.ns.ca>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1254877724=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-In business theres no word more powerful than the word.  And what 
-is the word?  P-R-O-F-I-T!!!  And thats what our next feature is all 
-about.
+--===============1254877724==
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-EverGlory International (EGLY) is involved in one of the most lucrative 
-areas of business these days, production in China. Quarter after quarter 
-they get to use the word in BIG ways!  Some recent quarterly postings:
+If you haven���t heard of Hoodia yet, you soon will because it is being touted as the new miracle supplement for safe, effective weight loss. Hoodia gordonii, (Hoodia) is the botanical name for a cactus like plant that grows in Southern Africa. Scientists have recently isolated several compounds in this amazing plant that are responsible for dramatic weight loss. 
 
-1mil$ P-R-O-F-I-T in the first quarter
-778k$  P-R-O-F-I-T in the second quarter 
-August 8th 2mil$ order from Matalan
-July 25th 500k$ order from Debenhams
-July 10th - 1mil$ order from OTTO
+Our site: http://c107iqzm0lz7vuu0iuci0ccu./
+try to find cheaper than $0.5 for one pill!
 
-Please check all these figures with your favorite source.  EGLY is the real 
-deal!  We are expecting third quarter numbers to be out soon and are 
-telling all of our members to take a position in EGLY before the data is 
-out.  These fortuitous figures are going to shock the market and send this 
-one way up!
 
-Current: 0.68
-Projected: 1.30
-Rating: 5/5
-Inve st date: Wednesday, 1 oct 2006.
-Call your broker now.
-Give yourself the chance to come out WAY ahead here.  Fortune favors 
-the bold!
---
-SANTA ANA, California (AP) -- A California congresswoman said she was briefly denied access to a United Airlines flight last week because her name appeared on a "no-fly list" set up after the September 11 terrorist attacks.
-NEW YORK (CNNMoney.com) -- The threat to Big Pharma is real - the nation's drugmakers stand to lose nearly seven percent of their sales to drugs going off patent this year - and more CEOs who don't get ahead of the problem could end up losing their jobs.
-NEW YORK (Fortune) -- MARKETS: It's over. I say the Fall rally is kaputsky. Last week, we set a record every day but Friday. Friday was down. Monday will likely be down too after the weak GDP report and weak housing report late last week. Japan plunged too. Bye, bye. 
-
+--===============1254877724==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1254877724==--
