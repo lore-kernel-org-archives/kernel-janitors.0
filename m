@@ -1,24 +1,26 @@
-From: Kelly <Rigoberto@sbcglobal.net>
-Date: Fri, 17 Nov 2006 08:28:38 +0000
+From: Cynthia <Lelia@nilsabbas.com>
+Date: Sat, 18 Nov 2006 00:16:33 +0000
 Subject: [KJ] We are happy to present you our new project!
-Message-Id: <F28716B8.5687154@sbcglobal.net>
+Message-Id: <32F55C36.6432274@nilsabbas.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0591291274=="
+Content-Type: multipart/mixed; boundary="===============1685115439=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <F28716B8.5687154@sbcglobal.net>
+In-Reply-To: <F28716B8.5687154@sbcglobal.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============0591291274==
+--===============1685115439==
 Content-Type: multipart/alternative;
-    boundary="----------=_1163752218-31673-761"
+    boundary="----------=_1163809316-2500-330"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1163752218-31673-761
+------------=_1163809316-2500-330
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -62,7 +64,7 @@ References
    1. mailto:smartbill@gmail.com
 
 
-------------=_1163752218-31673-761
+------------=_1163809316-2500-330
 Content-Type: text/html; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -134,9 +136,9 @@ Jan Lipponen<br>
 </body>
 </html>
 
-------------=_1163752218-31673-761--
+------------=_1163809316-2500-330--
 
---===============0591291274==
+--===============1685115439==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -147,4 +149,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0591291274==--
+--===============1685115439==--
