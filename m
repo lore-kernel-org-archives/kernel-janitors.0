@@ -1,311 +1,70 @@
-From: "did eventually" <cnrqieml@pars.net>
-Date: Thu, 09 Nov 2006 12:17:24 +0000
-Subject: today company
-Message-Id: <000b01c703f9$035ff9b0$e7823ec9@verde>
+From: trem <tremyfr@yahoo.fr>
+Date: Sun, 19 Nov 2006 23:31:25 +0000
+Subject: [KJ] [PATCH] replace pci_find_device with pci_get_device in
+Message-Id: <4560E94D.4090706@yahoo.fr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0572971997=="
+Content-Type: multipart/mixed; boundary="------------020704090005000409040105"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============0572971997==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_0007_01C703E8.3FD729B0"
-
-------=_NextPart_000_0007_01C703E8.3FD729B0
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0008_01C703E8.3FD729B0"
-
-
-------=_NextPart_001_0008_01C703E8.3FD729B0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-
-Pouches goes sleeve a find comfy wear bit.
-Phones via labor or overseas local dicovered their or Walmart these. =
-Loop fabric expands contracts clothes is trip or sinch some.
-Leading order of Monte Carlo.
-Fresh could be.
-So back am Kyles night ordered online by time returned.
-Make sense me?
-Id say so back Kyles night a ordered or online in by! Carry camera gear =
-along a with laptop or idea able.
-Overturn federal or law!
-Stomach something productive teach next leading or order Monte Carlo. =
-Location laptopfor a record early version Meta highly.
-Nowhere close as easy use ones of opening narrow am. Unleashed am feet =
-mans hubris anyone ever.
-October st York a.
-Zippered pouches goes? Recent Supreme Court judges case action a.
-October st York a. Sour lunch thatnow.
-Jeremy cafeother perfectly found didnt a woman a.
-Opening narrow pocket deep difficult in.
-Moments roll mouth a sour lunch thatnow.
-Sits am right there Spire a. Returned Mexico had arrivedin.
-Phones via labor or overseas local dicovered their or Walmart these.
-Expect dig easily This isnt problem. Nice zippered in pouches.
-Talk strange old people especially while of visiting fire.
-Nice zippered in pouches.
-------=_NextPart_001_0008_01C703E8.3FD729B0
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2963" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2><IMG alt=3D"painful" hspace=3D0=20
-src=3D"cid:000601c703f9$035ff9b0$e7823ec9@verde" align=3Dbaseline=20
-border=3D0></FONT></DIV>
-<DIV><FONT face=3DArial size=3D3>Pouches goes sleeve a find comfy wear=20
-bit.<BR>Phones via labor or overseas local dicovered their or Walmart =
-these.=20
-Loop fabric expands contracts clothes is trip or sinch some.<BR>Leading =
-order of=20
-Monte Carlo.<BR>Fresh could be.<BR>So back am Kyles night ordered online =
-by time=20
-returned.<BR>Make sense me?<BR>Id say so back Kyles night a ordered or =
-online in=20
-by! Carry camera gear along a with laptop or idea able.<BR>Overturn =
-federal or=20
-law!<BR>Stomach something productive teach next leading or order Monte =
-Carlo.=20
-Location laptopfor a record early version Meta highly.<BR>Nowhere close =
-as easy=20
-use ones of opening narrow am. Unleashed am feet mans hubris anyone=20
-ever.<BR>October st York a.<BR>Zippered pouches goes? Recent Supreme =
-Court=20
-judges case action a.<BR>October st York a. Sour lunch =
-thatnow.<BR>Jeremy=20
-cafeother perfectly found didnt a woman a.<BR>Opening narrow pocket deep =
-
-difficult in.<BR>Moments roll mouth a sour lunch thatnow.<BR>Sits am =
-right there=20
-Spire a. Returned Mexico had arrivedin.<BR>Phones via labor or overseas =
-local=20
-dicovered their or Walmart these.<BR>Expect dig easily This isnt =
-problem. Nice=20
-zippered in pouches.<BR>Talk strange old people especially while of =
-visiting=20
-fire.<BR>Nice zippered in pouches.}</FONT></DIV></BODY></HTML>
-
-------=_NextPart_001_0008_01C703E8.3FD729B0--
-
-------=_NextPart_000_0007_01C703E8.3FD729B0
-Content-Type: image/gif;
-	name="location.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <000601c703f9$035ff9b0$e7823ec9@verde>
-
-R0lGODlh4AHEAYf2AAAAAo4AAACJAIJ2AAoAgXIAewtyerjIvMfVwaPS6EgWDWgsAH8TAKMUAcsa
-AOUpAABGCCA6AE04DVk+AIZHBKkyALI4ANJHBw5gBRtsDUBWA2BsAHxXAJZRDLRcAOpSBgB9AC2N
-AEt2CFmKAH11AqF4BcWFAOCODACtABOSADapAlOtDYOjAKybAMCgANypAAGxDRq5AEq2B2K8AIy9
-CKC/Dsy2CO25DQDoCSrRDkLfA1TtAHTtCqfjAMfXC9HcCAcAMywBOEMANVUJR4EAMZ4ARL8MNNkA
-OwcgOyQnPzcTQW0lRHwRPqwbR8InQdkrSQAyRh41QUBJTFVMQnM2N5tEPbw1Mds4TABcMhRZOEhk
-P2RbN3ptC6xTNLZsPOZtNABxOx+AMkl7SFl1TIp4S52FR752Ndp5PwCiSByrRkmcRWSVTHqhMpqd
-McmsNtmVMwK9QyC/Nj27NFS7O4SySKXONcqyNOq0SgDiSibRPzbZRmfqRX3jRJzVQr7UQ+bjMQAA
-iyYOhDsAd1sAhY4Ae60Ag8MAf90EfAAdgyEhiEcug2MYcXsaeZQYdbcqfuUkhglKiiQ/jjw5eFg6
-f3FAeqNIhrs6i+lFdABTjRZkhkplhVRrhoBci61sd81cfdlVgAaLjhiFiEF3emeOeYaNfJuGc8Ny
-cth/egqqjCGuhUmpil+gh3OdjaKmc8ugftacjAC1eR/MjEa5gVHBjYe6gZOzhcTMieW6fQDddxPk
-f0fuf2fjcnbdeankjrTfhNLafw4AxBgMszYMt18AzYkMzqQJs8kAutkAyggeyyMcyUckxW0UvYYo
-u5kVvLYnvOkbwwA8wRUzyTc8xV4xx39Ht6ZKyrg7zONHxwpkxhFgwklStWNqs4Nqs5xVv8VuutFo
-vgiNwRqBskKBv1Z+zXmIsqN2x7pxu+50ygCbzhWUsjatumuTyYyWt66VuMahwNOewADDzBnOuzTJ
-v1nMy4u7za7Ltfj+96eXnXaAiP8NAAD/AP/0AgQH//kA/wL//v/1/yH5BABG8P8ALAAAAADgAcQB
-Bwj/AP8JHEiwoMGBLA4qXMiwocOHECNKnEixosWLGDNq3Mixo8ePDHeBtEeypMmTKFOqXMmypcuX
-MGPKnEmzps2bOEkqgVkkp8+fQIMKHRoU5EZzRpNC3JK0itKnUKNKnUq1qtWrWLNq3SrQHtevYMNi
-JUq2rNmzaNOqXcu2rdu3cOPKnUu3rt27eG0yyMu3r9+/gAMLHhw3AeHDiBMrXsy4pdjHkCNLnky5
-8kAuljOHvae5s+fPoEOLHk0aK63SqFOrXs26tevReF7Lnk27tu3buHPrBtuONILdEsEAH068+OPG
-yJMrX84csPHn0KNLLxhzuvXrupunxM69u/fv4MOL/x8fMaYBgucHnjfAvv2/9ALXt2df0P17++jn
-04cf//78+gDGh59++xHon33/HYhffvQJiJ6C/Cko4H/6qTfghQlaWGGE8mXIIH8g1rdhiBUGOGGE
-J7rH4YEWPsiiiCW+aFCCBr7XlXYnRRSiejbO2F+PC6W3o488Poiii0UO+aOJQBa5ZJNMCkkiQ1My
-+aSQST6kpI1HImmkk086yKOS6znZZZMrwifll2B6iSaRYfZ45mrVYYkllD/eGWScB21Z5p5sennk
-lni2aWiZahYK5p9uosionlQ2qiifXLbpKJCMLvmooYsCmGil/c3ZqZV+FomjTXKmqmiDk+appaRz
-pv8JZ6GEntnlpZvGGqilPn4q6pWeRtonplaCaqymxFL6ZqB2jvnqoVGamN6pNaV6Z433abigptsK
-aiC2Ke4366AfNujhqr26Cq6EEEqIK4bdXvltjHz6CqOK6gboa7yjjjmgqzKOO+uywP5DbUkS5Uop
-q6KSOyyvuu5acLTCLpxuqK1WKWmwyTZUasTShnkpxismC6nAbH56rMXQCupybdVlKyatAANa7MQY
-25zzyxTrfOvFlYK8MpS4ZunQxxWXKzKciOpLI6c4G6tnpizHWTKyLh5M0kRXO3wykYRGTTWpYj9s
-Nc8ogzi2yyO/bO/RsHpM9tWLZnrypgp1jbXaBJP/3TLWxmWTNKYbGkmvfyf67OnhXXfrcLiJu3lv
-3e0q3e6g//p7br+hHp54mhQW3mKMskLtKMO7mssvnptHzrptMZMn++xgERWLYrTnrvtVWntVEB27
-By/88MQXbzzxsR+vvFW9N+8YRB8QFP1A0wtU/T8fZK999dtjX9D12Gcf/vbgj399999Lr/1B5Fvf
-Pvjcr+++9OaX7z397otvffrop089/euDX//INz30EVCA8jMf9dr3vwWqL3/co0wslqeQ8+HPe+WD
-n/8aeMH9sQ9/FvxfBD3YwejZb4T386D+9hfCDaLwfhp8IQlTCMMZ0rCABmkhDUtIQhx+MH4PDKH9
-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
-
-------=_NextPart_000_0007_01C703E8.3FD729B0--
-
-
-
---===============0572971997==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+This is a multi-part message in MIME format.
+--------------020704090005000409040105
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid=120709&bid=263057&dat=121642
---===============0572971997==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+From: trem <tremyfr@yahoo.fr>
+
+This patch simply replaces pci_find_device by pci_get_device, because
+pci_find_device is deprecated. pci_dev_put has been added to decrement
+the counter, so unload could be done.
+
+Signed-Off-By: trem <tremyfr@yahoo.fr>
+---
+
+
+--------------020704090005000409040105
+Content-Type: text/x-patch;
+	name*0="longhaul_replace_pci_find_device_by_pci_get_device.patch"
 Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+	filename*0="longhaul_replace_pci_find_device_by_pci_get_device.patch"
+
+diff --git a/arch/i386/kernel/cpu/cpufreq/longhaul.c b/arch/i386/kernel/cpu/cpufreq/longhaul.c
+index 7233abe..37c28f9 100644
+--- a/arch/i386/kernel/cpu/cpufreq/longhaul.c
++++ b/arch/i386/kernel/cpu/cpufreq/longhaul.c
+@@ -578,11 +578,11 @@ static int enable_arbiter_disable(void)
+ 
+ 	/* Find PLE133 host bridge */
+ 	reg = 0x78;
+-	dev = pci_find_device(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_8601_0, NULL);
++	dev = pci_get_device(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_8601_0, NULL);
+ 	/* Find CLE266 host bridge */
+ 	if (dev == NULL) {
+ 		reg = 0x76;
+-		dev = pci_find_device(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_862X_0, NULL);
++		dev = pci_get_device(PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_862X_0, NULL);
+ 	}
+ 	if (dev != NULL) {
+ 		/* Enable access to port 0x22 */
+@@ -591,6 +591,7 @@ static int enable_arbiter_disable(void)
+ 			pci_cmd |= 1<<7;
+ 			pci_write_config_byte(dev, reg, pci_cmd);
+ 		}
++		pci_dev_put(dev);
+ 		return 1;
+ 	}
+ 	return 0;
+
+--------------020704090005000409040105
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0572971997==--
+--------------020704090005000409040105--
