@@ -1,45 +1,70 @@
-From: "Colleen Thorpe" <deborascitta@bsbltd.com>
-Date: Wed, 08 Nov 2006 21:48:39 +0000
-Subject: [KJ] It's Colleen :)
-Message-Id: <01c7038e$bd129720$6c822ecf@deborascitta>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1684478099=="
+From: Ira Snyder <kernel@irasnyder.com>
+Date: Mon, 20 Nov 2006 00:42:07 +0000
+Subject: [KJ] [PATCH] sparse fix: add lock annotations to nfs client code
+Message-Id: <20061119164207.7b65914a.kernel@irasnyder.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1684478099==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+[PATCH] sparse fix: add lock annotations to nfs client code
 
-Our Hottest pick this year!  Brand new issue Cana Petroleum!
+Fixes 'context imbalance' warnings emitted by sparse while compiling.
 
-VERY tightly held, in a booming business sector, with a huge publicity 
-campaign starting up, Cana Petroleum (CNPM) is set to bring all our readers 
-huge gains.  We advise you to get in on this one and ride it to the top! 
+Signed-off-by: Ira W. Snyder <kernel@irasnyder.com>
 
-Symbol: CNPM
-Current Price: $2.95
-Projected Price: $11.40
+PS - This is my first patch, so I'd like some comments. Questions I have:
+1) Should I CC trivial@kernel.org, the LKML itself, or any others?
+2) Any problems with the format? I used cg-mkpatch to do it, only edited to add this PS section.
 
-Check the stats!  Check the level 2!  Imagine what this one will do when the 
-full force of the PR campaign hits it, in conjunction with smashing news!
+---
+commit 59da2d61a2661d99f66085b0d8a7025affbf0a26
+tree a25dd0e128fbd8016ac8f9d386064431f3b854cc
+parent e030f8294a5b9f8179dae10cdbf9dcf32aa64110
+author Ira W. Snyder <kernel@irasnyder.com> Sun, 19 Nov 2006 15:30:38 -0800
+committer Ira W. Snyder <kernel@irasnyder.com> Sun, 19 Nov 2006 15:30:38 -0800
 
-Major oil discovery?  We are not permitted to say at this point.  All we can 
-say is that this one is going to see amazing appreciation in a very short 
-period of time!  This is your opportunity.  Win big with CNPM!  
+ fs/nfs/client.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-
-
---===============1684478099==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 5fea638..ae2018b 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -1223,6 +1223,7 @@ static int nfs_server_list_open(struct i
+  * set up the iterator to start reading from the server list and return the first item
+  */
+ static void *nfs_server_list_start(struct seq_file *m, loff_t *_pos)
++__acquires(nfs_client_lock)
+ {
+ 	struct list_head *_p;
+ 	loff_t pos = *_pos;
+@@ -1262,6 +1263,7 @@ static void *nfs_server_list_next(struct
+  * clean up after reading from the transports list
+  */
+ static void nfs_server_list_stop(struct seq_file *p, void *v)
++__releases(nfs_client_lock)
+ {
+ 	spin_unlock(&nfs_client_lock);
+ }
+@@ -1314,6 +1316,7 @@ static int nfs_volume_list_open(struct i
+  * set up the iterator to start reading from the volume list and return the first item
+  */
+ static void *nfs_volume_list_start(struct seq_file *m, loff_t *_pos)
++__acquires(nfs_client_lock)
+ {
+ 	struct list_head *_p;
+ 	loff_t pos = *_pos;
+@@ -1353,6 +1356,7 @@ static void *nfs_volume_list_next(struct
+  * clean up after reading from the transports list
+  */
+ static void nfs_volume_list_stop(struct seq_file *p, void *v)
++__releases(nfs_client_lock)
+ {
+ 	spin_unlock(&nfs_client_lock);
+ }
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1684478099==--
