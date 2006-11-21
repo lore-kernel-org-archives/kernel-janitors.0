@@ -1,15 +1,15 @@
 From: customercare@paypal.com
-Date: Tue, 21 Nov 2006 00:10:00 +0000
+Date: Tue, 21 Nov 2006 00:39:59 +0000
 Subject: Account Problems!
-Message-Id: <20061121001000.10856.qmail@area51.corp-com.com>
+Message-Id: <20061121003959.23093.qmail@area51.corp-com.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2071771519=="
+Content-Type: multipart/mixed; boundary="===============0495638986=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20061120230655.10853.qmail@area51.corp-com.com>
 In-Reply-To: <20061120230655.10853.qmail@area51.corp-com.com>
 To: kernel-janitors@vger.kernel.org
 
---===============2071771519==
+--===============0495638986==
 Content-Type: text/html
 
 
@@ -127,7 +127,7 @@ width="1" border="0">PayPal is committed to maintaining a safe environment for
 </html>
 
 
---===============2071771519==
+--===============0495638986==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -138,7 +138,7 @@ Take Surveys. Earn Cash. Influence the Future of IT
 Join SourceForge.net's Techsay panel and you'll get the chance to share your
 opinions on IT & business topics through brief surveys - and earn cash
 http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============2071771519==
+--===============0495638986==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -149,4 +149,4 @@ Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
---===============2071771519==--
+--===============0495638986==--
