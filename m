@@ -1,7 +1,7 @@
-From: "Ailbhe Mullaney" <danos@paysdelaloire.fr>
+From: "Sari Kass" <valdie@gargoylesoftware.cotmail.com>
 Date: Wed, 22 Nov 2006 21:29:25 +0000
 Subject: Re: [KJ] hi
-Message-Id: <01c70e7d$48d8b110$0201a8c0@1001408603186>
+Message-Id: <01c70e7d$488ed6d0$0201a8c0@1001408603186>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_3C65_01C70E72.A1A9F840"
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -12,14 +12,15 @@ To: kernel-janitors@vger.kernel.org
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_3C65_01C70E72.A1A9F840
-Content-Type: multipart/alternative; boundary="----------=_1164231732-21836-4"
+Content-Type: multipart/alternative;
+    boundary="----------=_1164232702-17523-433"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1164231732-21836-4
+------------=_1164232702-17523-433
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -32,7 +33,7 @@ the document is attached.
 
 peacefully in our humane and civilized society . . .=20
 
-------------=_1164231732-21836-4
+------------=_1164232702-17523-433
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -51,7 +52,7 @@ Content-Disposition: inline
 <HR>
 <DIV>peacefully in our humane and civilized society . . .
 </DIV></BODY></HTML>
-------------=_1164231732-21836-4--
+------------=_1164232702-17523-433--
 
 ------=_NextPart_000_3C65_01C70E72.A1A9F840
 Content-Type: image/png;
