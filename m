@@ -1,9 +1,9 @@
-From: Norbert <Betty@ninemilesolutions.com>
-Date: Fri, 24 Nov 2006 17:09:28 +0000
+From: Anthony <Katelyn@njei.com>
+Date: Fri, 24 Nov 2006 23:09:59 +0000
 Subject: [KJ] We are happy to present you our new project!
-Message-Id: <7CF51143.9561580@ninemilesolutions.com>
+Message-Id: <FD1A1021.6177115@njei.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2025863533=="
+Content-Type: multipart/mixed; boundary="===============0670291129=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <F28716B8.5687154@sbcglobal.net>
 In-Reply-To: <F28716B8.5687154@sbcglobal.net>
@@ -11,16 +11,16 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============2025863533==
+--===============0670291129==
 Content-Type: multipart/alternative;
-    boundary="----------=_1164388869-19351-95"
+    boundary="----------=_1164410370-5532-598"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1164388869-19351-95
+------------=_1164410370-5532-598
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -64,7 +64,7 @@ References
    1. mailto:moneylightcorp@gmail.com
 
 
-------------=_1164388869-19351-95
+------------=_1164410370-5532-598
 Content-Type: text/html; charset=iso-8859-1
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -136,9 +136,9 @@ Jan Lipponen<br>
 </body>
 </html>
 
-------------=_1164388869-19351-95--
+------------=_1164410370-5532-598--
 
---===============2025863533==
+--===============0670291129==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -149,4 +149,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============2025863533==--
+--===============0670291129==--
