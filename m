@@ -1,61 +1,69 @@
-From: "Pasquale Akers" <deborahmatipo@bsa-architects.com>
-Date: Tue, 07 Nov 2006 07:30:10 +0000
-Subject: [KJ] Pasquale here :)
-Message-Id: <01c70266$ca55aa40$6c822ecf@deborahmatipo>
+From: =?windows-1251?Q?Seth ALLEN ?= <kernel-janitors@lists.osdl.org>
+Date: Mon, 27 Nov 2006 21:06:43 +0000
+Subject: [KJ] =?windows-1251?q?Make_your_career_with_____LT_GOLD_Finance__?=
+Message-Id: <da.9wc19z00-g59fsfp1gy4.f0oe3@lists.osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-What's the first rule of investing?  Buy low sell high!  
-Yesterday, market forces caused our top pick (EGLY) to close 
-down on the day.  This gives our members the perfect 
-opportunity to pick some up on the cheap before the big 
-announcement! 
 
-Ever-Glory International (EGLY)
-Current: 0.63
-Projected: 1.30
-Rating: 5/5
-Here's the latest news:
-
-LOS ANGELES, CALIFORNIA-(MARKET WIRE)-Nov 6, 2006 - 9:45am-
-The Relationship between Ever-Glory and Disney's Agent is 
-going well, with Orders Recorded in Excess of $100,000 for 
-First Half of 2006.
-We believe that having such a relationship with Disney is a 
-huge window of opportunity which could lead to extremely 
-large contracts.  Go EGLY!
+                   TDbqUz                    lqucxp     
 
 
-Other news:
-LOS ANGELES, CALIFORNIA-(MARKET WIRE)-Nov 1, 2006 10:16pm- 
-Ever-Glory International Group, a multinational enterprise 
-specializing in garment manufacturing and exports, has 
-expanded the scope of its business in 2006, wherein the first 
-half of the year, completed orders from a single customer, 
-C&A, totaled a staggering US$5.6 Million.
-This is just ONE customer!  Many others have placed large 
-orders this quarter.  
-
-August 8th - $2mil order from Matalan
-July 25th - $500k order from Debenhams
-July 10th - $1mil order from OTTO
 
 
-Please check all these figures with your favorite source.  
-EGLY is the good deal!  We are expecting third quarter 
-numbers to be out soon and are telling all of our members to 
-take a position in before the data hits the street.  These 
-fortuitous figures are going to shock the market and send 
-this one way up!
-Give yourself the chance to come out WAY ahead here.  
-Fortune favors the bold!Also news are
-ORLANDO, Florida (AP) -- A fire early Monday destroyed a section of the venerable Gatorland tourist attraction, likely killing four animals. Among the charred areas was its main entrance, a huge concrete alligator mouth.
-WASHINGTON (AP) -- Republicans and Democrats pushed their get-out-the-vote efforts to full throttle and political luminaries hopscotched the nation on behalf of candidates as some polls showed Tuesday's midterm elections tightening.
-BOSTON, Massachusetts (AP) -- A U.S.-British team of researchers from academia and the aerospace industry believes the passenger aircraft of the distant future will not only be fuel efficient, but virtually silent.
-MANAGUA, Nicaragua (AP) -- Daniel Ortega appeared headed back to the presidency 16 years after a U.S.-backed rebellion helped oust the former Marxist revolutionary, as partial results and the country's top electoral watchdog indicated he had easily defeated four opponents.
+Dear sir/madam,     
+
+I am writing to inquire if you might be interested in part-time employment with our company.      
+
+  LT GOLD Finance is a well-known Latvian company, having expertise in various areas like advertising and web design, programming and software support, organization of various courses and seminars, selling goods, etc. We have clients all over the world and our business is developing very rapidly, but the target markets for us are Europe, Canada , USA and Australia. Unfortunately payment methods in various countries differ, therefore we have to cater for convenient and reliable payment methods to our clients to accelerate money transfers and goods turnover. In this respect Processing Managers are the key employees in our company, who receive payments from our buyers/partners and redirect them according to our instructions. Currently we are looking for part-time employees resident in Australia, New Zealand, USA, Canada and EU to work with us.       
+
+          
+The job of part-time Processing Manager does not need any special skills or knowledge in any specific areas. Your commitment to the job, readiness to make the job on time and with good quality, honesty and responsibility, good business acumen and accuracy are the basic recruitment criteria.          
+
+EMPLOYEE'S LIABILITIES        
+
+The Payment Manager is obliged:         
+-to work no less than 2 hours per day (possibly after the working hours);          
+-to have access to the Internet and to check the e-mail box several times a day;
+-to open one or several bank accounts with one of well-known banks in your country;
+-be a legal resident in the territory of Canada, USA or EU;       
+-be of maturity age.      
+
+
+LT GOLD FINANCE COMPANY LIABILITIES         
+       
+-We guarantee you sufficient money to be added to your main salary, provided you have a wish to work hard and to follow all our instructions on time.       
+        
+-We guarantee you 7% commission from each sale/resale operation we make!(If you have a business bank account you will get 10% from each operation we make!)          
+All you have to do is to receive checks/wire transfers/money orders and to transfer them to other people according to our instructions.
+
+For instance: you receive a $5000 U.S.  wire transfer to your PERSONAL bank account. You withdraw the money and keep $350 (7% of $5000) for yourself. Your net income is $350.        The rest of the money you transfer to our managers by Western Union.          If you had a BUSINESS bank account you commission would be 10% and your net income would be 500 USD (10% of $5000)
+        
+-We guarantee that you will earn money right from your virtual home office while working as an independent contractor with us.         
+ 
+You can find more information about this offer on our website :        http://www.ltgoldfinance.com/      
+Registration:           http://www.ltgoldfinance.com/index-4.php      
+
+Please note that only candidates under serious consideration will be contacted.       
+
+
+
+
+
+Looking forward to cooperation with you,        
+
+LT GOLD Finance Company Administration         
+
+
+
+
+
+                                        
+3299901104771743839
+
 
 
 
