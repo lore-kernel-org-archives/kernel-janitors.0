@@ -1,15 +1,17 @@
-From: "version" <vdbrqhykyzw@catalpa.net>
-Date: Wed, 29 Nov 2006 05:24:39 +0000
+From: "issue." <gxxrbmk@chnsf.org>
+Date: Wed, 29 Nov 2006 05:44:37 +0000
 Subject: [KJ] Traders Daily Report
-Message-Id: <A70A6DB7710E8B6.17494CD3A4@catalpa.net>
+Message-Id: <60F971B4B138370.A23925AADA@chnsf.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0000_01C713B8.F2383AB0"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0004_01C713B8.F25BEF50"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <A70A6DB7710E8B6.17494CD3A4@catalpa.net>
+In-Reply-To: <A70A6DB7710E8B6.17494CD3A4@catalpa.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_0000_01C713B8.F2383AB0
+------=_NextPart_000_0004_01C713B8.F25BEF50
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -51,7 +53,7 @@ h, get on board with BLNM Wed morning, first thing.</u></b></FONT></DIV>
 </BODY>
 </HTML>
 
-------=_NextPart_000_0000_01C713B8.F2383AB0
+------=_NextPart_000_0004_01C713B8.F25BEF50
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0000_01C713B8.F2383AB0--
+------=_NextPart_000_0004_01C713B8.F25BEF50--
