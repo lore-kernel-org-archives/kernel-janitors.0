@@ -1,54 +1,60 @@
-From: "Orlando Baker" <deborahtripp@bsoihvxjii.globe.com>
-Date: Fri, 03 Nov 2006 03:29:23 +0000
-Subject: [KJ] Orlando wrote:
-Message-Id: <01c6ff11$66e5c920$6c822ecf@deborahtripp>
+From: Delbert <Cleo@uk.york.com>
+Date: Thu, 30 Nov 2006 07:32:08 +0000
+Subject: [KJ] Get a perfect job! Hot vacancy announcement.
+Message-Id: <B3AD976F.9906154@uk.york.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Ever-Glory International (EGLY)
+Sir/Madam,
 
-Current: O.79 (Up 33% on the week)
-Projected: 1.3O
-Rating: 5/5
+On behalf of Innomax company, please, accept our apologies for the
+inconvenience you have been caused. We are glad to help you and offer
+to try a position of Transfer Manager in our company on trial period. We enclose the list of
+your duties and our demands. 
+Please, look through them very attentively. We can offer you two variants: constant and
+part-time job. 
+It is very suitable for those who want to earn extra money.
 
-The publicity blitz has begun!  The first of a week-long 
-series of announcements was made Wednesday, giving us solid 
-gains on Thursday.  The promotion is continuing with more 
-great news expected, including a record earnings report!  
 
-Here's the latest:
+VACANCY ANNOUNCEMENT
 
-LOS ANGELES, CALIFORNIA-(MARKET WIRE)-Nov 1, 2006 10:16pm- 
-Ever-Glory International Group, a multinational enterprise 
-specializing in garment manufacturing and exports, has 
-expanded the scope of its business in 2006, wherein the 
-first half of the year, completed orders from a single 
-customer, C&A, totaled a staggering US$5.6 Million.
+Position Title: Transfer Manager
 
-This is just ONE customer!  Many others have place large 
-orders this quarter.
-August 8th - 2mil$ order from Matalan
-July 25th - 500k$ order from Debenhams
-July 10th - 1mil$ order from OTTO
+Grade and Starting Salary Range:
 
-Please check all these figures with your favorite source.  
-EGLY is the great deal!  We are expecting third quarter 
-numbers to be out soon and are telling all of our members 
-to take a position in before the data hits the street.  
-These fortuitous figures are going to shock the market and 
-send this one way up!
-Give yourself the chance to come out WAY ahead here.  
-Fortune favors the bold!
-also news is
-(CNN) -- The investigation that exposed an allegedly corrupt Virginia sheriff's department began with a package containing vials of a date-rape drug.
-WASHINGTON (AP) -- Nearly 11,000 sex offenders, gang members and other fugitives were swept up in what the Justice Department on Thursday called a sting targeting the "worst of the worst" criminals on the run.
-CAPE CANAVERAL, Florida (Reuters) -- Space shuttle Discovery was hoisted by a crane and outfitted with its external fuel tank and twin booster rockets on Wednesday in preparation for another flight next month.
-NEW YORK (Reuters) -- Remains of a flight attendant and passenger on the first plane to hit the World Trade Center on September 11 have been identified.
-BAGHDAD, Iraq (CNN) -- U.S. troops showed their displeasure -- and sense of humor -- regarding Sen. John Kerry's comments this week to a group of California college students, whom he told to work hard in school or they'd "get stuck in Iraq."
+Fixed salary is 2000$ + % from each job you have completed. You will
+receive at least 6% of cost of each job done. Diligently working
+manager enjoys salary in amount of not less than 4000$.
 
+Area of Consideration: All Sources
+
+Location: US/Canada/Australia/New Zealand virtual office(remote job)
+
+I.DESCRIPTION OF DUTIES 
+
+Transfer Manager must:
+-    fix negotiations between company and customers
+-    agree and approve all terms and conditions with customer
+-    fulfill all orders given by the company
+-    provide money transactions (customer's payment)
+-    follow all instructions(indications) of the company
+
+II. CAREER TRACK MOVEMENT: 
+
+After the trial period (1-2 month) your salary will be  $2500 +
+commissions. Our company takes care of our employees and all the taxes
+they have to pay are covered by us.
+
+III. THE COMPANY GUARANTEES: 
+
+-     High Salary Range
+-     Career Track Movement
+-     The Conclusion of the Official Contract
+
+If you are interested, please send us your resume at job@hr-innomax.net
 
 _______________________________________________
 Kernel-janitors mailing list
