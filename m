@@ -1,18 +1,14 @@
-From: "OTC Financial network" <terriblyReynaldo@abaconet.com.ar>
-Date: Fri, 01 Dec 2006 16:41:05 +0000
+From: "OTC Financial network" <Dhakaindecenter@aac.org>
+Date: Fri, 01 Dec 2006 17:09:40 +0000
 Subject: [KJ] EQSE News
-Message-Id: <01c71566$4a487ae0$6c822ecf@terriblyReynaldo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0578748683=="
+Message-Id: <01c7156a$af273f10$6c822ecf@Dhakaindecenter>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
 In-Reply-To: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
-To: kernel-janitors@vger.kernel.org
-
---===============0578748683==
-Content-Type: text/plain;
-	charset="windows-1250"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
 Alert! Watch this one Soar!
 
@@ -39,16 +35,7 @@ VERY tightly held and the release is going to push it up
 rapidly.  Don't delay.  It's not going to stop till we see 
 20 cents!
 
-
---===============0578748683==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0578748683==--
