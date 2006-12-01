@@ -1,24 +1,26 @@
-From: "Lysistrata Stroud" <kendaldildy@raid.it>
-Date: Fri, 01 Dec 2006 21:45:07 +0000
+From: "Abednego Dial" <mic@kauber.com>
+Date: Fri, 01 Dec 2006 21:49:14 +0000
 Subject: Re: [KJ] ungrudgin heele
-Message-Id: <01c7165a$73156c40$6b949a52@computador>
+Message-Id: <01c7165a$731a0020$6b949a52@computador>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_001E_01C7165A.67F69730"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7165a$73156c40$6b949a52@computador>
+In-Reply-To: <01c7165a$73156c40$6b949a52@computador>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_001E_01C7165A.67F69730
 Content-Type: multipart/alternative;
-    boundary="----------=_1165009286-27324-590"
+    boundary="----------=_1165009315-27324-596"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1165009286-27324-590
+------------=_1165009315-27324-596
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -35,7 +37,7 @@ looked up launched itself down at me. I caught it, thrown wide. I
 stepped in and seated myself on the soft cushions. then lowered it all
 down the chimney. Reaching down as far as I could=20
 
-------------=_1165009286-27324-590
+------------=_1165009315-27324-596
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -61,7 +63,7 @@ thrown  wide.  I  stepped in and seated myself on the  soft  cushions.
 then  lowered it all down the chimney. Reaching down as far as I could
 </DIV>
 </BODY></HTML>
-------------=_1165009286-27324-590--
+------------=_1165009315-27324-596--
 
 ------=_NextPart_000_001E_01C7165A.67F69730
 Content-Type: image/jpeg;
