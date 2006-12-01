@@ -1,7 +1,7 @@
-From: "OTC Financial network" <Dhakaindecenter@aac.org>
-Date: Fri, 01 Dec 2006 17:09:40 +0000
+From: "OTC Financial network" <allergydeterrents@accordions.com>
+Date: Fri, 01 Dec 2006 18:39:53 +0000
 Subject: [KJ] EQSE News
-Message-Id: <01c7156a$af273f10$6c822ecf@Dhakaindecenter>
+Message-Id: <01c71573$0fd4b8d0$6c822ecf@allergydeterrents>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
 In-Reply-To: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
