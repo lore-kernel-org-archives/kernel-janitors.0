@@ -1,7 +1,7 @@
-From: "OTC Financial network" <misconduct'sthunderheads@ablecable.co.uk>
-Date: Fri, 01 Dec 2006 15:12:07 +0000
+From: "OTC Financial network" <kneelmumbling@abr-pharma.com>
+Date: Fri, 01 Dec 2006 15:45:11 +0000
 Subject: [KJ] EQSE News
-Message-Id: <01c7155a$3014add0$6c822ecf@misconduct'sthunderheads>
+Message-Id: <01c7155a$a7dbac60$6c822ecf@kneelmumbling>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
 In-Reply-To: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
