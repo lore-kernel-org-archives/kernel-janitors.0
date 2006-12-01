@@ -1,36 +1,52 @@
-From: "Lucas Naquin" <akstchampshiremnsdgs@hampshire.edu>
-Date: Thu, 28 Dec 2006 12:51:30 +0000
-Subject: [KJ] status update
-Message-Id: <01c72a7d$f531aae0$6c822ecf@akstchampshiremnsdgs>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Fri, 01 Dec 2006 15:16:00 +0000
+Subject: Warning: message 1Gpjjo-0002Xt-JE delayed 24 hours
+Message-Id: <E1GqA7M-0003tk-QW@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c72a69$c27245b0$6c822ecf@akstcfukkadmnsdgs>
-In-Reply-To: <01c72a69$c27245b0$6c822ecf@akstcfukkadmnsdgs>
+References: <E1GpuuX-0005RE-BJ@externalmx-1.sourceforge.net>
+In-Reply-To: <E1GpuuX-0005RE-BJ@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-VMCI * VMCI * VMCI * 
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 24 hours on the queue on externalmx-1.sourceforg=
+e.net.
 
-Make Some Bank For The Holidays! 
- 
-Symbol: VMCI 
-Company: VEMICS INC 
-Last Trade: $0.45 
-Target: $5 
-Rating: Strong B.u.y
-Market: Bullish 
+The message identifier is:     1Gpjjo-0002Xt-JE
+The subject of the message is: grow; and gathered arose and they had much w=
+ickedness, and all my name's
+The date of the message is:    Thu, 30 Nov 2006 12:05:54 +0100
 
+The address to which the message has not yet been delivered is:
 
-VMCI is ready to explode! 
-Watch it on thur DEC 28! 
-Happy Holidays!
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
+or-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
+r verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter=
+ case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
-I hope it was a helper news. I'll email or fax you later next week.
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
-Lucas Naquin.
-
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
