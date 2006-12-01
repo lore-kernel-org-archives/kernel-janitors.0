@@ -1,7 +1,7 @@
-From: "OTC Financial network" <kneelmumbling@abr-pharma.com>
-Date: Fri, 01 Dec 2006 15:45:11 +0000
+From: "OTC Financial network" <philippicdeerskin@accd.edu>
+Date: Fri, 01 Dec 2006 16:27:43 +0000
 Subject: [KJ] EQSE News
-Message-Id: <01c7155a$a7dbac60$6c822ecf@kneelmumbling>
+Message-Id: <01c7157e$c6041f50$6c822ecf@philippicdeerskin>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
 In-Reply-To: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Alert! Watch this one Soar!
+Alert! Watch this one Rise!
 
 Equipment & Systems Engineering, Inc. (EQSE)
 
