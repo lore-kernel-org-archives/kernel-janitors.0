@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Sat, 02 Dec 2006 17:01:56 +0000
-Subject: Warning: message 1Gpjjo-0002Xt-JE delayed 48 hours
-Message-Id: <E1GqYFQ-0002SQ-3D@externalmx-1.sourceforge.net>
+Date: Sun, 03 Dec 2006 13:21:27 +0000
+Subject: Warning: message 1Gpjjo-0002Xt-JE delayed 72 hours
+Message-Id: <E1GqrHb-0001mU-QS@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1GpuuX-0005RE-BJ@externalmx-1.sourceforge.net>
 In-Reply-To: <E1GpuuX-0005RE-BJ@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1Gpjjo-0002Xt-JE
