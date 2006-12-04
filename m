@@ -1,36 +1,46 @@
-From: "Jefferson Short" <moderatorteamwork@abo.ch>
-Date: Sat, 23 Dec 2006 10:31:15 +0000
-Subject: Re: [KJ] Short Insider Information
-Message-Id: <01c7268c$900c2360$6c822ecf@moderatorteamwork>
+From: "Derrick Moody" <daydreamer'sGolgotha@absolutesystems.com>
+Date: Mon, 04 Dec 2006 17:27:38 +0000
+Subject: fwd: Moody
+Message-Id: <01c717c9$b127f640$6c822ecf@daydreamer'sGolgotha>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Do not miss this chance!	 	
-	
-Physician Adult Daycare (PHYA) is getting ready to take off	 .
-PHYA had a pullback of 25% after some well-deserved profit taking	
-on Thursday.  This means that YOU have an opportunity to get in	 	
-while the price is low!	 
-	
-Take a look at your favorite charts.  Check your level 2.  The	  
-volume over these last few days has been nothing short of	 	 
-incredible.  This one has gone from thinly traded to booming	!  
-	 
-Trading at just over $1.50 cents, word is PHYA is about to	 
-announce news of major proportions.  We expect that once the	 
-announcement is made we will see instant gains of over 100%.  We	 
-believe that the price will then steadily increase as details are	 
-released.  Our target sell point is $4.50	.
-
-PHYA is where you want to be.  Get in early and ride it to the	 
-top!
+Smart Money Equities would like to thank our valued
+readers for making 2006 a great year.  Please continue
+to support Smart Money Equities by visiting our sponsors
+and featured advertisers.  Here's our next Hot Pick!
 
 
+Company: Premium Petroleum, Inc.
 
+Symbol: PPTL
+Current Price: Around $0.01
+Target Price: $0.06
+
+A major release is coming out or the company this week.
+While we can't divulge the complete report we can say
+that it is going to push this one much higher!
+
+PPTL will be benefiting from a massive PR campaign that
+will have investors lining up to get in.  We are giving
+our members the heads up early so that you can get the
+maximum benefit!
+It's first day of this campaign you know what will happend
+next several days...
+
+Go Smart Money!
+
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
