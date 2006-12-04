@@ -1,24 +1,26 @@
-From: "Ramsey Hambrick" <kathe@tarheelblue.com>
+From: "Chandrakant Nicholes" <robargea@lakemail.com>
 Date: Mon, 04 Dec 2006 10:18:52 +0000
 Subject: Re: [KJ] besprea tonsur
-Message-Id: <01c7178d$98848e00$1f00a8c0@324d0af64781429>
+Message-Id: <01c7178d$9886d7f0$1f00a8c0@324d0af64781429>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_001E_01C71795.12DC4560"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7178d$98848e00$1f00a8c0@324d0af64781429>
+In-Reply-To: <01c7178d$98848e00$1f00a8c0@324d0af64781429>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_001E_01C71795.12DC4560
 Content-Type: multipart/alternative;
-    boundary="----------=_1165227680-22956-409"
+    boundary="----------=_1165227588-22956-396"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1165227680-22956-409
+------------=_1165227588-22956-396
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -36,7 +38,7 @@ on this planet than you ever realized. Get your arguments together,
 pressure continuous. And I am surrounded by morons-stulteguloj,
 silence. Yet there was an electric tension in the air that made it
 
-------------=_1165227680-22956-409
+------------=_1165227588-22956-396
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -68,7 +70,7 @@ NT face=3DArial size=3D2>pressure  continuous.  And  I  am  surrounded  by =
  morons-stulteguloj,</FONT></DIV><DIV><FONT face=3DArial size=3D2>silence. =
  Yet  there was an electric tension in the air that  made  it</FONT></DIV><=
 /FONT></DIV></BODY></HTML>
-------------=_1165227680-22956-409--
+------------=_1165227588-22956-396--
 
 ------=_NextPart_000_001E_01C71795.12DC4560
 Content-Type: image/jpeg;
