@@ -1,7 +1,7 @@
-From: Lucien <Cathleen@la-mark.com.pl>
-Date: Thu, 07 Dec 2006 04:11:46 +0000
+From: Elsa <Josephine@shaw.ca>
+Date: Thu, 07 Dec 2006 04:14:11 +0000
 Subject: [KJ] job in Australia
-Message-Id: <98208CC9.9976204@la-mark.com.pl>
+Message-Id: <F7F5ECF4.8605724@shaw.ca>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <0FBCCB07.8155723@nishikoi.com>
 In-Reply-To: <0FBCCB07.8155723@nishikoi.com>
