@@ -1,8 +1,10 @@
-From: Kaitlin <Teri@nishikoi.com>
-Date: Thu, 07 Dec 2006 01:41:43 +0000
+From: Lucien <Cathleen@la-mark.com.pl>
+Date: Thu, 07 Dec 2006 04:11:46 +0000
 Subject: [KJ] job in Australia
-Message-Id: <0FBCCB07.8155723@nishikoi.com>
+Message-Id: <98208CC9.9976204@la-mark.com.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <0FBCCB07.8155723@nishikoi.com>
+In-Reply-To: <0FBCCB07.8155723@nishikoi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
