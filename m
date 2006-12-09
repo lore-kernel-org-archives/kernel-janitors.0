@@ -1,36 +1,49 @@
-From: "Elias Sands" <wallflower'sbass@absmen.ru>
-Date: Fri, 22 Dec 2006 11:55:17 +0000
-Subject: Re: [KJ] Sands Insider Information
-Message-Id: <01c725d4$2a1c7130$6c822ecf@wallflower'sbass>
+From: "Felix Chatman" <carsicknessdisadvantageous@abionics.fr>
+Date: Sat, 09 Dec 2006 21:51:49 +0000
+Subject: Chatman advice
+Message-Id: <01c71beb$50d920e0$6c822ecf@carsicknessdisadvantageous>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Do not miss this chance!	 	
-	 
-Physician Adult Daycare (PHYA) is getting ready to take off	.
-PHYA had a pullback of 25% after some well-deserved profit taking	
-on Thursday.  This means that YOU have an opportunity to get in	 	
-while the price is low!	
-	 
-Take a look at your favorite charts.  Check your level 2.  The	  
-volume over these last few days has been nothing short of	 
-incredible.  This one has gone from thinly traded to booming	 	!  
-	 	
-Trading at just over $1.50 cents, word is PHYA is about to	  
-announce news of major proportions.  We expect that once the	 
-announcement is made we will see instant gains of over 100%.  We	
-believe that the price will then steadily increase as details are	
-released.  Our target sell point is $4.50	 .
+Looking to put some spring in your step?  Ready for your big break?
+Look no further.
 
-PHYA is where you want to be.  Get in early and ride it to the	 
-top!
+Wild Brush Energy
+Symbol: WBRS
+
+Current Price:  Around   $0.05
+Short Term Target:         $0.12
+Long Term Target:         $0.40
+
+The energy sector is THE place to be, with some energy companies seeing=20
+appreciation of 400% or more this year alone!  WBRS is involved in some=20
+of the most exciting gas plays in North America.  It's a proven winner in a=
+=20
+red hot market.
+
+But that's just the beginning.  Rumor has it that there may soon be a=20
+merger between WBRS and another major energy player with close ties to=20
+the company.  In fact this major player's stock was up 50% Friday on=20
+strong volume as insiders took positions.
+
+We believe that WBRS is looking at the same rapid appreciation.  Once=20
+the merger is announced there will be a scramble to get in.  Play it smart.=
+ =20
+Take a position BEFORE the announcement and ride this one all the way=20
+to the bank!
+Tell to everyone about this message.Post it on the forum.
 
 
-
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
