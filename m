@@ -1,24 +1,26 @@
-From: "Marjukka Ferris" <bower@hardinconstruction.com>
-Date: Sat, 09 Dec 2006 01:06:25 +0000
+From: "Dewayne Hoffman" <pedrazaajonty@karatedoacademie.demon.nl>
+Date: Sat, 09 Dec 2006 01:06:30 +0000
 Subject: Re: [KJ] cors inquisitiona
-Message-Id: <01c71b2e$3fcf8a40$6d01a8c0@PC09>
+Message-Id: <01c71b2e$42cd12d0$6d01a8c0@PC09>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_006A_01C71B35.C0454410"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0079_01C71B36.A2685940"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c71b2e$3fcf8a40$6d01a8c0@PC09>
+In-Reply-To: <01c71b2e$3fcf8a40$6d01a8c0@PC09>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_006A_01C71B35.C0454410
+------=_NextPart_000_0079_01C71B36.A2685940
 Content-Type: multipart/alternative;
-    boundary="----------=_1165694911-31584-11"
+    boundary="----------=_1165695020-29164-362"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1165694911-31584-11
+------------=_1165695020-29164-362
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -39,7 +41,7 @@ I climbed wearily into the launch. Pushed up the armrests on the back
 No.
 Paradisians I had seen so far. Bald heads and gray hair, wrinkles and
 
-------------=_1165694911-31584-11
+------------=_1165695020-29164-362
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -55,7 +57,7 @@ Content-Disposition: inline
 <DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2>consult y=
 our superiors, look after this. I passed over the artifacted</FONT></DIV></=
 FONT></DIV>
-<DIV><IMG DEFANGED_src=3D"cid:000801c71b2d$5e77b800@PC09"></DIV>
+<DIV><IMG DEFANGED_src=3D"cid:000901c71b2e$40a40d90@PC09"></DIV>
 <DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2>almost  t=
 ouching, wrapped up in each other. I was forgotten.  I  hated</FONT></DIV><=
 DIV><FONT face=3DArial size=3D2>I dont like it-but all I can say</FONT></DI=
@@ -71,13 +73,13 @@ appen. You will be taken  to  a</FONT></DIV><DIV><FONT face=3DArial size=3D=
 ONT></DIV><DIV><FONT face=3DArial size=3D2> No.</FONT></DIV><DIV><FONT face=
 =3DArial size=3D2>Paradisians I had seen so far. Bald heads and gray hair, =
 wrinkles  and</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1165694911-31584-11--
+------------=_1165695020-29164-362--
 
-------=_NextPart_000_006A_01C71B35.C0454410
+------=_NextPart_000_0079_01C71B36.A2685940
 Content-Type: image/jpeg;
-	name="nonesuc6449.jpg"
+	name="nonesuc6470.jpg"
 Content-Transfer-Encoding: base64
-Content-ID: <000801c71b2d$5e77b800@PC09>
+Content-ID: <000901c71b2e$40a40d90@PC09>
 Content-Disposition: inline
 
 /9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4w
@@ -216,7 +218,7 @@ UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
 QAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
 BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAH//Z
 
-------=_NextPart_000_006A_01C71B35.C0454410
+------=_NextPart_000_0079_01C71B36.A2685940
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -227,4 +229,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_006A_01C71B35.C0454410--
+------=_NextPart_000_0079_01C71B36.A2685940--
