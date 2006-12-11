@@ -1,36 +1,59 @@
-From: "Reid Winslow" <venisontennis's@abacoinc.com>
-Date: Fri, 29 Dec 2006 12:43:28 +0000
-Subject: [KJ] Happy NW Reid
-Message-Id: <01c72b41$e9351ff0$6c822ecf@venisontennis's>
+From: "hawkanzy" <hawkanzy@163.com>
+Date: Mon, 11 Dec 2006 09:09:01 +0000
+Subject: Re: [KJ] Contents of Kernel-janitors digest
+Message-Id: <200612111709006253012@163.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0023837661=="
+Content-Type: multipart/mixed; boundary="===============0237183505=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============0023837661==
+This is a multi-part message in MIME format...
+
+--===============0237183505==
+Content-Type: multipart/alternative;
+    boundary="----------=_1165828079-20354-467"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1165828079-20354-467
 Content-Type: text/plain;
-	charset="windows-1250"
+	charset="gb2312"
 Content-Transfer-Encoding: 7bit
-
-	An Alternative Energy Company ready to Blast off!!!
-	
-Company:  AlgoDyne Ethonol Energy Inc.  (ADYN)
-	
-Current Price:               $1.3
-Short Term Target:       $3.50
-Long Term Projected    $10.00
-	
-	 Alternative energy is a Red Hot sector right now and ADYN is a pioneer!  
-Check the news and you will see that at this very moment they are in 
-negotiations with major Asian investors.  They are also in negotiations for 
-partnerships for development of their amazing technology.
-	
-	Get in now while most investors are taking time off for the holidays!  
-After the new year this one will be of the charts!
-	 
+Content-Disposition: inline
 
 
---===============0023837661==
+
+
+
+
+hawkanzy
+2006-12-11
+
+------------=_1165828079-20354-467
+Content-Type: text/html;
+	charset="gb2312"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=gb2312">
+<META content="MSHTML 6.00.2800.1498" name=GENERATOR></HEAD>
+<BODY>
+<DIV><FONT face=Verdana><FONT size=2></FONT>&nbsp;</DIV>
+<DIV><FONT size=2></FONT>&nbsp;</DIV>
+<DIV align=left><FONT size=2>
+<HR DEFANGED_style="WIDTH: 122px; HEIGHT: 2px" SIZE="2">
+</FONT></DIV>
+<DIV><FONT color=#c0c0c0><FONT size=2>hawkanzy</FONT></DIV>
+<DIV><FONT size=2>2006-12-11</FONT></FONT></DIV></FONT></BODY></HTML>
+
+------------=_1165828079-20354-467--
+
+--===============0237183505==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -41,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0023837661==--
+--===============0237183505==--
