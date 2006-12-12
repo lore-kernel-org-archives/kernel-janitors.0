@@ -1,28 +1,27 @@
-From: Christian Hansen <Pamela@ninemilesolutions.com>
-Date: Thu, 14 Dec 2006 14:17:21 +0000
-Subject: [KJ] Last vacancies - 2006
-Message-Id: <8096B56A.4433954@ninemilesolutions.com>
+From: "Edwin Crain" <bthefinalscoree@thefinalscore.net>
+Date: Tue, 12 Dec 2006 15:51:34 +0000
+Subject: Not to know what wespeak.
+Message-Id: <01c71e00$5ecf0f90$6c822ecf@bthefinalscoree>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Mr./Mrs.
-We want to inform you about the news from the well-known Danish company "Danish  Art Gallery" that sells oil paintings and other works of art online. At present "Danish Art Gallery" is searching for employees to the position of financial manager and is delighted to suggest you to familiarize with this offer. 
-This offer is unique for you because you don’t need to a special education or experience in the financial field to obtain this position. During the examination of applications we inquire about the credit history and the criminal past of the candidate, because we operate with rather large sums. Also the candidate is required:
-A free time available, 1-2 hours during the workday, 2-3 times a week;
-The possibility of routinely checking his e-mail, better for few times a day;
-To have a bank account in his country or a possibility of it’s establishment.
-The work consists of the receipt of cash assets (that are payments for goods bought at "Danish Art Gallery") on the account from the clients of the company and subsequent sending it to "Danish Art Gallery". But above all this work is well paid! The agent gets 5% of commission for each payment made with his assistance that gives him a possibility to earn about 2500 USD per month!
-The offer of "Danish Art Gallery" is your chance to earn money by Internet and to increase essentially your regular profit! If you are interested in this offer you can write directly to "Danish Art Gallery" to the following address: info@danish-gallery.com and you will be sent a detailed description of this vacation: the reason of its appearance, how to solicit, the mechanism of work, the fee and many other information. Even if you have any subsidiary points – write us to info@danish-gallery.com and we will certainly answer them. 
-If you want to solicit for this position – write to vacancy@danish-gallery.com and you will be sent an application form. Fill in this form and send it back to us, you will be informed about the result during a few next days.
-Thank you for your attention.
+Rather muse than ask why I.=20
 
-Christian Hansen,
-The Danish Art Gallery.
+Am poor thoughmany of the. Wastcreated for men to breathe.=20
 
+Know him a notorious liarThink.=20
+
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
