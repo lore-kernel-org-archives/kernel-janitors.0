@@ -1,193 +1,200 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 21 Dec 2006 00:16:07 +0000
-Subject: [KJ] [PATCH] Replace __get_free_pages(...GFP_DMA...) with
-Message-Id: <Pine.LNX.4.64.0612201911420.11703@localhost.localdomain>
+From: "Rathnait Deal" <spitleri@ebargaindaze.net>
+Date: Wed, 13 Dec 2006 14:49:24 +0000
+Subject: Re: [KJ] Protestan =  argut
+Message-Id: <01c71ec5$e1bed8c0$0501a8c0@DUGUI>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_005B_01C71ECC.E08EB900"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0612201823300.11703@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0612201823300.11703@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format...
 
-  Given the definition for __get_dma_pages() in include/linux/gfp.h:
+------=_NextPart_000_005B_01C71ECC.E08EB900
+Content-Type: multipart/alternative;
+    boundary="----------=_1166021481-30159-218"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-  #define __get_dma_pages(gfp_mask, order) \
-		__get_free_pages((gfp_mask) | GFP_DMA,(order))
+This is a multi-part message in MIME format...
 
-it would seem to make sense to rewrite __get_free_pages() as
-__get_dma_pages() calls where appropriate.
+------------=_1166021481-30159-218
+Content-Type: text/plain;
+	charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+ground. They appear to be dragging along one of their number who is
 
----
+And Im right before an open grave!
+works.
+And the need for secrecy of each others existence that keeps the
+Can I at least say thanks?
+until you return. A payment of one fedha is required for attendance.
+astonished.
+be forgotten. I know that you will be ever grateful and I accept your
+can discuss it . . .
+There, Steengo said, tapping the paper. Weasel wording. That
+artifact. And dont wake me up until it has been all arranged.
+more. That is why your services have been engaged.
 
-  this is a re-submission of the earlier patch, in which the call to
-__get_free_pages() in arch/s390/kernel/smp.c wasn't transformed since
-it represented a weird situation.
+------------=_1166021481-30159-218
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
- arch/s390/kernel/smp.c      |    7 +++++++
- drivers/net/macmace.c       |    4 ++--
- drivers/s390/block/dasd.c   |    2 +-
- drivers/s390/char/tty3270.c |    2 +-
- drivers/s390/cio/cmf.c      |    3 +--
- lib/swiotlb.c               |   10 +++-------
- sound/oss/dmabuf.c          |    2 +-
- sound/oss/hal2.c            |    4 ++--
- sound/oss/sscape.c          |    2 +-
- 9 files changed, 19 insertions(+), 17 deletions(-)
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
+<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2>ground.  =
+They appear to be dragging along one of their number  who  is</FONT></DIV><=
+/FONT></DIV>
+<DIV><IMG DEFANGED_src=3D"cid:000701c71ec4$7eca732e@DUGUI"></DIV>
+<DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2>And Im ri=
+ght before an open grave!</FONT></DIV><DIV><FONT face=3DArial size=3D2>work=
+s.</FONT></DIV><DIV><FONT face=3DArial size=3D2> And  the  need for secrecy=
+ of each others existence that keeps  the</FONT></DIV><DIV><FONT face=3DAri=
+al size=3D2>Can I at least say thanks?</FONT></DIV><DIV><FONT face=3DArial =
+size=3D2>until you return. A payment of one fedha is required for attendanc=
+e.</FONT></DIV><DIV><FONT face=3DArial size=3D2>astonished.</FONT></DIV><DI=
+V><FONT face=3DArial size=3D2>be  forgotten. I know that you will be ever g=
+rateful and I accept your</FONT></DIV><DIV><FONT face=3DArial size=3D2>can =
+discuss it  . .</FONT></DIV><DIV><FONT face=3DArial size=3D2> There,  Steen=
+go  said,  tapping the paper.  Weasel  wording.  That</FONT></DIV><DIV><FON=
+T face=3DArial size=3D2>artifact. And dont wake me up until it has been all=
+ arranged.</FONT></DIV><DIV><FONT face=3DArial size=3D2>more. That is why y=
+our services have been engaged.</FONT></DIV></FONT></DIV></BODY></HTML>
+------------=_1166021481-30159-218--
 
-diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-index 19090f7..0c3d81d 100644
---- a/arch/s390/kernel/smp.c
-+++ b/arch/s390/kernel/smp.c
-@@ -726,6 +726,13 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
-          */
- 	print_cpu_info(&S390_lowcore.cpu_data);
+------=_NextPart_000_005B_01C71ECC.E08EB900
+Content-Type: image/jpeg;
+	name="overslep7253.jpg"
+Content-Transfer-Encoding: base64
+Content-ID: <000701c71ec4$7eca732e@DUGUI>
+Content-Disposition: inline
 
-+	/*
-+ 	 *  The call to __get_free_pages() below using GFP_DMA was not replaced
-+	 * by a call to __get_dma_pages() since, apparently, this is not
-+	 * actually used for DMA but needs to be below 2GB as defined by the
-+	 * CPU architecture.
-+	 */
-+
-         for_each_possible_cpu(i) {
- 		lowcore_ptr[i] = (struct _lowcore *)
- 			__get_free_pages(GFP_KERNEL|GFP_DMA,
-diff --git a/drivers/net/macmace.c b/drivers/net/macmace.c
-index 464e4a6..b2c9315 100644
---- a/drivers/net/macmace.c
-+++ b/drivers/net/macmace.c
-@@ -331,8 +331,8 @@ static int mace_open(struct net_device *dev)
+/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4w
+ICh1c2luZyBJSkcgSlBFRyB2NjIpLCBxdWFsaXR5ID0gMjUK/9sAQwAgFhgc
+GBQgHBocJCIgJjBQNDAsLDBiRko6UHRmenhyZnBugJC4nICIropucKDaoq6+
+xM7Qznya4vLgyPC4ys7G/9sAQwEiJCQwKjBeNDRexoRwhMbGxsbGxsbGxsbG
+xsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbG/8AAEQgB
+BQDMAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkK
+C//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGh
+CCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RV
+VldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeo
+qaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX2
+9/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIB
+AgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1Lw
+FWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2Rl
+ZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2
+t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwD
+AQACEQMRAD8A6CiiigAooooAKgupAqFO5qeqF0cu5/CmgI80ZqLdRup3K5SX
+NLmod1TSokT7GkbPsv8A9ei4comaM0kqGPachlYZBFOdFjVCzn5lzwv/ANei
+4comaM1GWGflJP1GKeVVG2u+G74GQKLhyi5ozTcoGYMx4OMqM08oixLIXbDH
+H3f/AK9Fw5RM0ZqNmAPykke4xSbqLhykuauWrgps7is7dVq2PzoaNxNWL1FF
+FSIKKKKACiiigAooooAKKKKACs674Eh9/wCtaNZl4f3Uh98/rTHHdFTdSbqi
+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
+gluFFFFZlhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUyWVIY2kkYK
+ijJJoAfRVO1vlnkaMo6NuO3chAIH9aW+vWtTGkdu88kmdqr7Y6/nQBborJ/t
+eaCRFvrNoEc4D7sgVrUAFFRXMwt7d5SpYIM4HU1nNql6qGVtNcRDkktzj1xi
+gDWoqtFfRTWJu0DFApYjvx1FUv7UvSvmJpknldclsEj6YoA1qKr2V5He24mi
+yBnBB6g1YoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACobqBLm3eFyQ
+rY5HUHPH61NTJoknjMcqhkPUGgDPtZpoLsQSMsqSyON2MMCBnJ7Vp1UtLGK2
+d3CfNuO0lixA/GrW5d23I3YzjPNAGDcXi648dpADGu7czSdcD0AreAAAA6Cs
+jxBFDFZrMqrHMrjYyjBrRE6xWscly4jJUbi3HOKAJ6zNS1VLaQ2qoxlYYBPC
+jNaO9NgfcNpxhs8HPSo7iCCWNvPjRlxyWHQfWgCHSrT7HYpEWDMfmJHTmotS
+1aOwcReWzSMu4dl7jk/hUPh6Rv7OYyt+7VyELHtxWnLDDMpEsaOCMHcO1AFT
+R7Q2ln8zBnkO846Cr9Y/h5iYrhFJaFJMRk+n+cVsUAFFFFABRRRQAUUUUAFF
+FFABRRRQAUUUUAFFNkdYkLuwVVGSTVaCW5uFLgJEh+7uUsSPXqKVylG6uW6K
+qRXUiziK6jEZb7jA8MfSk+27dQa2cKFwNre/pRcfIy5VO+06O9ZHZ5I5E+6y
+HBFT3MhhtpJFAJVSRmnIS8StwCRnpTJtpcoRaPEJVkuJ5rkryokbIFWr2zjv
+oPJlLBc5yp5qK5muYGhXfE3mOE/1ZGP/AB6luZ7i2VCxjfdIq8IR1znvSuVy
+N2JZbSKWz+yvuMeAvXnj/wDVVH+xFICNeXLQ/wDPMtxWpzVX7S/2qeLC7Y03
+A45zTJSb2JPscP2M2oXERG3ANUf7EUDYLy58r+5v4xVm1kubm3SXfEu7t5ZO
+P/Hqt8496EDVnYjtreK1hWKFdqCpap2F59qDK+1ZFPQdx61LcTNE8CqARI+0
+5+lK43Bp2J6KpwTXFxJOFaJBHIUGUJz+tTbbjH+tiz/1zP8A8VRcHG2jZNRV
+G1nubhJGDRDY5XGw84/4FV6hO4SjyuwUUUUyQooooAKKKKACiiigChrGfsqZ
++55g3fSrw6cUkkayxsjjKsMEVAkE0S7I5wUHA8xNxH4gil1LunFIg1j/AI9U
+A++ZBt9c04wJcXF3HIOCE59Dg81Klp+9Es0hldfu5GAv0FSJFsnlk3Z8zHGO
+mKViuZJWX9bFCW4eO2ntbk/vAh2P/fGP51ow/wCpj/3R/Ko7u1S7hMb8H+Fv
+Q1Ki7EVc5wMU0tRSkmtCnqP+ts/+uwpNWz5MOOvnL/WrFzb+e0Lb9vluH6Zz
+Rd2/2lUXft2OH6Zzik1uOMkuXyF23P8Az1i/79H/AOKqmgcX93vZWbyhyowO
+n1NaVV/sv+kTS7/9Ym3GOlNoUZb3K+mLN9hiKyRheeChJ6+ua0Kq29vPbwrE
+k0ZVemYzn/0KrI6c0LYU3eTaM6G2MtlFLEdk6btrfieD7UhuhcPbBl2SpLh0
+PY4NXreLyIVj3bsZ5xjvmmTWaS3MU/3XQ9cdRSsXzpt3KtiJTNd+W6KPOOdy
+E/1FaCBgo3kFu5AwKrRWssLytHMmJHLkNGTj9asxhwv7xlY+qrj+ppombTeh
+T0r/AFU//XZv6VeqC0t/syuu/dvcv0xjNT0LYU2nJtBRRRTICiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoo
+ooAKKKKACiiigCKWZYnjRgcyNtBHTOKZ9sh/0jk/uBl//rUzU+LTzR1iZXH4
+H/DNZ88TpFbYX5robJPqWDf/ABVbwhGSVxNmpHdRu+zDKdgk+YY4pqX0LwRT
+LuKyvsUY5zVbVFYTQmPIMoMJx6HH/wBemrHt1dYQv7tczD2OMfzoUItXC5aN
+/CLdZzuCs+wDvnOP6VMJla4aEZ3KoY+nNZqQebfXNswPlrucfVwP/r0tjOY7
+Se8nBDZCt/wEAfzzQ6atp/V9guXJ72OCYRMrs5XcAq5zzSi8i2Ss25PK+8rD
+B9uPeogc6up9bc/+hCq11mW7a5jQMltgHAzvPf8AKhQi7IB091J9uEZuvs0Z
+QNhgucnPr9KlupJbewLrdb2LjEm1eASPwqSS7sd+JHj3EA/MOoqCzeGG0keY
+BIHmYxhl4A7U+ifL26bgTQl/LkkW9+0AKcABcA/hUVhJJcJG5vw7YBeMKv5e
+tJA8LX800IHkLDh2UcE5/Xikkkt57q1FptZ1fczIOi45zTturfgBoSyJDG0k
+jbVUZJqBL5CCXiliQLu3OuARUN7J9otbhI1JaFlyB3wQabe3UN5ZyRW7+Y5X
+ftXPQEGojT0V1/wAuWIr1JJFQxyxlxlC64DfSmyajGjSjy5W8o4cqvA96hlu
+I7ya0WBt5WQSNj+EAHrSf8sNU+rf+g1Sguq/q4XLMd9G8yxhJAHzsdlwrY9K
+tVmt10z/AD/DWlWc0lawIKKKKzGFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAF
+FFFACEA9QD9aWiigBAABgDAoAA6ADNLRQAUgAHQdaWigBAAOg60tFFABRRRQ
+AUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB
+RRRQAUUUUAFFFFABRRRQB//Z
 
- 	/* Allocate the DMA ring buffers */
-
--	mp->rx_ring = (void *) __get_free_pages(GFP_KERNEL | GFP_DMA, N_RX_PAGES);
--	mp->tx_ring = (void *) __get_free_pages(GFP_KERNEL | GFP_DMA, 0);
-+	mp->rx_ring = (void *) __get_dma_pages(GFP_KERNEL, N_RX_PAGES);
-+	mp->tx_ring = (void *) __get_dma_pages(GFP_KERNEL, 0);
-
- 	if (mp->tx_ring=NULL || mp->rx_ring=NULL) {
- 		if (mp->rx_ring) free_pages((u32) mp->rx_ring, N_RX_PAGES);
-diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
-index 492b68b..88ad970 100644
---- a/drivers/s390/block/dasd.c
-+++ b/drivers/s390/block/dasd.c
-@@ -77,7 +77,7 @@ dasd_alloc_device(void)
- 	atomic_set(&device->open_count, -1);
-
- 	/* Get two pages for normal block device operations. */
--	device->ccw_mem = (void *) __get_free_pages(GFP_ATOMIC | GFP_DMA, 1);
-+	device->ccw_mem = (void *) __get_dma_pages(GFP_ATOMIC, 1);
- 	if (device->ccw_mem = NULL) {
- 		kfree(device);
- 		return ERR_PTR(-ENOMEM);
-diff --git a/drivers/s390/char/tty3270.c b/drivers/s390/char/tty3270.c
-index 0984462..984a989 100644
---- a/drivers/s390/char/tty3270.c
-+++ b/drivers/s390/char/tty3270.c
-@@ -700,7 +700,7 @@ tty3270_alloc_view(void)
- 	INIT_LIST_HEAD(&tp->freemem);
- 	for (pages = 0; pages < TTY3270_STRING_PAGES; pages++) {
- 		tp->freemem_pages[pages] = (void *)
--			__get_free_pages(GFP_KERNEL|GFP_DMA, 0);
-+			__get_dma_pages(GFP_KERNEL, 0);
- 		if (!tp->freemem_pages[pages])
- 			goto out_pages;
- 		add_string_memory(&tp->freemem,
-diff --git a/drivers/s390/cio/cmf.c b/drivers/s390/cio/cmf.c
-index 828b2d3..548b6de 100644
---- a/drivers/s390/cio/cmf.c
-+++ b/drivers/s390/cio/cmf.c
-@@ -585,8 +585,7 @@ alloc_cmb (struct ccw_device *cdev)
- 		WARN_ON(!list_empty(&cmb_area.list));
-
- 		spin_unlock(&cmb_area.lock);
--		mem = (void*)__get_free_pages(GFP_KERNEL | GFP_DMA,
--				 get_order(size));
-+		mem = (void*)__get_dma_pages(GFP_KERNEL, get_order(size));
- 		spin_lock(&cmb_area.lock);
-
- 		if (cmb_area.mem) {
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index 1062578..e4ed77e 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -195,8 +195,7 @@ swiotlb_late_init_with_default_size (size_t default_size)
- 	io_tlb_nslabs = SLABS_PER_PAGE << order;
-
- 	while ((SLABS_PER_PAGE << order) > IO_TLB_MIN_SLABS) {
--		io_tlb_start = (char *)__get_free_pages(GFP_DMA | __GFP_NOWARN,
--		                                        order);
-+		io_tlb_start = (char *)__get_dma_pages(__GFP_NOWARN, order);
- 		if (io_tlb_start)
- 			break;
- 		order--;
-@@ -237,8 +236,7 @@ swiotlb_late_init_with_default_size (size_t default_size)
- 	/*
- 	 * Get the overflow emergency buffer
- 	 */
--	io_tlb_overflow_buffer = (void *)__get_free_pages(GFP_DMA,
--	                                          get_order(io_tlb_overflow));
-+	io_tlb_overflow_buffer = (void *)__get_dma_pages(0, get_order(io_tlb_overflow));
- 	if (!io_tlb_overflow_buffer)
- 		goto cleanup4;
-
-@@ -442,9 +440,7 @@ swiotlb_alloc_coherent(struct device *hwdev, size_t size,
- 	 * instead, or use ZONE_DMA32 (ia64 overloads ZONE_DMA to be a ~32
- 	 * bit range instead of a 16MB one).
- 	 */
--	flags |= GFP_DMA;
--
--	ret = (void *)__get_free_pages(flags, order);
-+	ret = (void *)__get_dma_pages(flags, order);
- 	if (ret && address_needs_mapping(hwdev, virt_to_phys(ret))) {
- 		/*
- 		 * The allocated memory isn't reachable by the device.
-diff --git a/sound/oss/dmabuf.c b/sound/oss/dmabuf.c
-index eaf6997..8c4ae7f 100644
---- a/sound/oss/dmabuf.c
-+++ b/sound/oss/dmabuf.c
-@@ -89,7 +89,7 @@ static int sound_alloc_dmap(struct dma_buffparms *dmap)
- 	while (start_addr = NULL && dmap->buffsize > PAGE_SIZE) {
- 		for (sz = 0, size = PAGE_SIZE; size < dmap->buffsize; sz++, size <<= 1);
- 		dmap->buffsize = PAGE_SIZE * (1 << sz);
--		start_addr = (char *) __get_free_pages(GFP_ATOMIC|GFP_DMA|__GFP_NOWARN, sz);
-+		start_addr = (char *) __get_dma_pages(GFP_ATOMIC|__GFP_NOWARN, sz);
- 		if (start_addr = NULL)
- 			dmap->buffsize /= 2;
- 	}
-diff --git a/sound/oss/hal2.c b/sound/oss/hal2.c
-index d18286c..c478e37 100644
---- a/sound/oss/hal2.c
-+++ b/sound/oss/hal2.c
-@@ -555,8 +555,8 @@ static int hal2_alloc_dmabuf(struct hal2_codec *codec, int size,
-
- 	DEBUG("allocating %dk DMA buffer.\n", size / 1024);
-
--	codec->buffer = (unsigned char *)__get_free_pages(GFP_KERNEL | GFP_DMA,
--							  get_order(size));
-+	codec->buffer = (unsigned char *)__get_dma_pages(GFP_KERNEL,
-+		get_order(size));
- 	if (!codec->buffer)
- 		return -ENOMEM;
- 	desc = dma_alloc_coherent(NULL, count * sizeof(struct hal2_desc),
-diff --git a/sound/oss/sscape.c b/sound/oss/sscape.c
-index 30c36d1..be3702b 100644
---- a/sound/oss/sscape.c
-+++ b/sound/oss/sscape.c
-@@ -802,7 +802,7 @@ static int sscape_alloc_dma(sscape_info *devc)
- 	while (start_addr = NULL && devc->buffsize > PAGE_SIZE) {
- 		for (sz = 0, size = PAGE_SIZE; size < devc->buffsize; sz++, size <<= 1);
- 		devc->buffsize = PAGE_SIZE * (1 << sz);
--		start_addr = (char *) __get_free_pages(GFP_ATOMIC|GFP_DMA, sz);
-+		start_addr = (char *) __get_dma_pages(GFP_ATOMIC, sz);
- 		if (start_addr = NULL) devc->buffsize /= 2;
- 	}
+------=_NextPart_000_005B_01C71ECC.E08EB900
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_NextPart_000_005B_01C71ECC.E08EB900--
