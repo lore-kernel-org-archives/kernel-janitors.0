@@ -1,24 +1,26 @@
-From: "Chus Crace" <malobrowner@kai-research.com>
+From: "Rembrandt Dang" <finch@rattanoriginalsa.com>
 Date: Wed, 13 Dec 2006 23:29:16 +0000
 Subject: Re: [KJ] warfar =  orchar
-Message-Id: <01c71f0e$815d7f60$0300a8c0@vincenzon6yk1b>
+Message-Id: <01c71f0e$815b3570$0300a8c0@vincenzon6yk1b>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C71F16.29176890"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c71f0e$815d7f60$0300a8c0@vincenzon6yk1b>
+In-Reply-To: <01c71f0e$815d7f60$0300a8c0@vincenzon6yk1b>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_0001_01C71F16.29176890
 Content-Type: multipart/alternative;
-    boundary="----------=_1166052628-25580-402"
+    boundary="----------=_1166052655-25580-408"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1166052628-25580-402
+------------=_1166052655-25580-408
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -37,7 +39,7 @@ Yes. If he wont talk to you perhaps the associates he referred to
 Then swung sideways and planted his fist in the stomach of the guard
 even whistling bits of our tunes to cheer us on the way. The last farm
 
-------------=_1166052628-25580-402
+------------=_1166052655-25580-408
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -68,7 +70,7 @@ e referred  to</FONT></DIV><DIV><FONT face=3DArial size=3D2> Then  swung si=
 deways and planted his fist in the stomach of the guard</FONT></DIV><DIV><F=
 ONT face=3DArial size=3D2>even whistling bits of our tunes to cheer us on t=
 he way. The last farm</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1166052628-25580-402--
+------------=_1166052655-25580-408--
 
 ------=_NextPart_000_0001_01C71F16.29176890
 Content-Type: image/jpeg;
