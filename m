@@ -1,23 +1,26 @@
-From: "Machteld Race" <ritchieycasimir@lawpoint.com.au>
-Date: Thu, 14 Dec 2006 02:52:03 +0000
+From: "Renard Peller" <conatseronguyet@madere.com>
+Date: Thu, 14 Dec 2006 02:52:04 +0000
 Subject: Re: [KJ] strik =  inconceivabl
-Message-Id: <01c71f2a$d5cc4510$0201a8c0@pwwjs645li71kd>
+Message-Id: <01c71f2a$d5f26ab0$0201a8c0@pwwjs645li71kd>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_0010_01C71F32.45DBD850"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c71f2a$d5cc4510$0201a8c0@pwwjs645li71kd>
+In-Reply-To: <01c71f2a$d5cc4510$0201a8c0@pwwjs645li71kd>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_0010_01C71F32.45DBD850
-Content-Type: multipart/alternative; boundary="----------=_1166064766-11169-6"
+Content-Type: multipart/alternative;
+    boundary="----------=_1166064828-9903-174"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1166064766-11169-6
+------------=_1166064828-9903-174
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -36,7 +39,7 @@ Down here at the bottom of the gravity well.
 Look, I said, having enough of this and very much needing a few
 I already know, I said.
 
-------------=_1166064766-11169-6
+------------=_1166064828-9903-174
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -67,7 +70,7 @@ NT face=3DArial size=3D2>Down here at the bottom of the gravity well.</FONT=
 ></DIV><DIV><FONT face=3DArial size=3D2> Look,  I  said, having enough of t=
 his and very much needing  a  few</FONT></DIV><DIV><FONT face=3DArial size=
 =3D2> I already know, I said.</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1166064766-11169-6--
+------------=_1166064828-9903-174--
 
 ------=_NextPart_000_0010_01C71F32.45DBD850
 Content-Type: image/jpeg;
