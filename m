@@ -1,31 +1,52 @@
-From: "Kristy Frazier" <extremistsdaggers@abelscreen.com>
-Date: Fri, 29 Dec 2006 20:18:09 +0000
-Subject: [KJ] Happy NW Kristy
-Message-Id: <01c72b81$6dcee680$6c822ecf@extremistsdaggers>
+From: "Audrey Reyes" <widthsgeographer's@academia.dp.ua>
+Date: Sat, 16 Dec 2006 20:29:09 +0000
+Subject: Audrey
+Message-Id: <01c72169$fc7aafd0$6c822ecf@widthsgeographer's>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-	An Alternative Energy Company ready to Blast off!!!
-	
-Company:  AlgoDyne Ethonol Energy Inc.  (ADYN)
-	
-Current Price:               $1.3
-Short Term Target:       $3.50
-Long Term Projected    $10.00
-	
-	Alternative energy is a Red Hot sector right now and ADYN is a pioneer!  
-Check the news and you will see that at this very moment they are in 
-negotiations with major Asian investors.  They are also in negotiations for 
-partnerships for development of their amazing technology.
-	
-	Get in now while most investors are taking time off for the holidays!  
-After the new year this one will be of the charts!
-	
+The hottest pick this year!=09
+=09
+It just doesn't get any better than this.  Booming sector, tightly held, wi=
+th =09
+an incredible PR blitz starting up.  Not only that, but the company is set =
+to =09
+release some smashing news.=09
+=09
+Physicians Adult Daycare, Inc.=09
+=09
+Symbol: PHYA=09
+Current Price:                         $1.90 (+18% Friday!)=09
+Short-Term Projected Price:  $4.25=09
+Long-Term Target Price:       $10.20=09
+=09
+As the population ages, the economic value in the US market for adult =09
+daycare is projected to grow nearly 600%.  Globally the potential market =09
+is a staggering $45 billion.=09
+=09
+PHYA is already hitting it big in the sector.  With solid acquisitions, =09
+expert management, and a red hot sector, PHYA is looking at record =09
+earnings.=09
+=09
+Check your favorite news source.  Check your Level 2 market data.  You =09
+will see that this one is set for an explosion.=09
+=09
+With the huge publicity that is on the way THIS is where you want to be.  	=
 
+Make sure you get in early on December, 18th.  Win big with PHYA!=09
+
+
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
