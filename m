@@ -1,24 +1,26 @@
-From: "Coriander Nghiem" <ewanblaise@sangstat.com>
-Date: Sat, 16 Dec 2006 06:20:38 +0000
+From: "Heilyn Jacobo" <ballirja@magick.net>
+Date: Sat, 16 Dec 2006 06:21:01 +0000
 Subject: Re: [KJ] pricin
-Message-Id: <01c720da$4df59d10$14b2a8c0@privatkd5zmtgg>
+Message-Id: <01c720da$5b612140$14b2a8c0@privatkd5zmtgg>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_002E_01C720E1.0CE45710"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_003D_01C720E2.BB3CCC10"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c720da$4df59d10$14b2a8c0@privatkd5zmtgg>
+In-Reply-To: <01c720da$4df59d10$14b2a8c0@privatkd5zmtgg>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_002E_01C720E1.0CE45710
+------=_NextPart_000_003D_01C720E2.BB3CCC10
 Content-Type: multipart/alternative;
-    boundary="----------=_1166250030-13753-394"
+    boundary="----------=_1166250086-13753-398"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1166250030-13753-394
+------------=_1166250086-13753-398
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -37,7 +39,7 @@ Are you the one who is finally going to tell me what is going on? I
 not be hurt-but only if you answer truthfully. You have seen this
 That is not possible. It cant be done-
 
-------------=_1166250030-13753-394
+------------=_1166250086-13753-398
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -53,7 +55,7 @@ Content-Disposition: inline
 <DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2>as  I str=
 ipped him of uniform and weapons. Nor did he thank me when  I</FONT></DIV><=
 /FONT></DIV>
-<DIV><IMG DEFANGED_src=3D"cid:000401c720d8$ab200298@privatkd5zmtgg"></DIV>
+<DIV><IMG DEFANGED_src=3D"cid:000501c720da$59787798@privatkd5zmtgg"></DIV>
 
 <DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2>soon  as =
  possible. This is what will happen. You will be taken  to  a</FONT></DIV><=
@@ -69,13 +71,13 @@ what is going on? I</FONT></DIV><DIV><FONT face=3DArial size=3D2>not  be  h=
 urt-but only if you answer truthfully. You  have  seen  this</FONT></DIV><D=
 IV><FONT face=3DArial size=3D2> That is not possible. It cant be done-</FON=
 T></DIV></FONT></DIV></BODY></HTML>
-------------=_1166250030-13753-394--
+------------=_1166250086-13753-398--
 
-------=_NextPart_000_002E_01C720E1.0CE45710
+------=_NextPart_000_003D_01C720E2.BB3CCC10
 Content-Type: image/jpeg;
-	name="rightdow7769.jpg"
+	name="rightdow7768.jpg"
 Content-Transfer-Encoding: base64
-Content-ID: <000401c720d8$ab200298@privatkd5zmtgg>
+Content-ID: <000501c720da$59787798@privatkd5zmtgg>
 Content-Disposition: inline
 
 /9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4w
@@ -228,7 +230,7 @@ AFjHs4ZLfU7OKX7628mf++xViw/5DGqf70X/AKBWlRSlV5r3W6/W4WM3QP8A
 kHn/AK6yf+hGtKiis5y5pOXcaCiiipAKKKKACiiigAooooAKKKKACiiigAoo
 ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Z
 
-------=_NextPart_000_002E_01C720E1.0CE45710
+------=_NextPart_000_003D_01C720E2.BB3CCC10
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -239,4 +241,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_002E_01C720E1.0CE45710--
+------=_NextPart_000_003D_01C720E2.BB3CCC10--
