@@ -1,34 +1,24 @@
-From: David Miller <davem@davemloft.net>
-Date: Sun, 31 Dec 2006 20:37:15 +0000
-Subject: Re: [KJ] [PATCH] net/core/flow.c: compare data with memcmp
-Message-Id: <20061231.123715.115911390.davem@davemloft.net>
+From: Amit Choudhary <amit2030@yahoo.com>
+Date: Sat, 16 Dec 2006 23:32:04 +0000
+Subject: [KJ] Is this list dead?
+Message-Id: <376019.89875.qm@web55612.mail.re4.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <80ec54e90612310837y786fd764oc18bf37c8f0b2b8c@mail.gmail.com>
-In-Reply-To: <80ec54e90612310837y786fd764oc18bf37c8f0b2b8c@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: daniel.marjamaki@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: "Daniel_Marjam=E4ki" <daniel.marjamaki@gmail.com>
-Date: Sun, 31 Dec 2006 17:37:05 +0100
+Hi All,
 
-> From: Daniel Marjam=E4ki
-> This has been tested by me.
-> Signed-off-by: Daniel Marjam=E4ki <daniel.marjamaki@gmail.com>
+I just wanted to know if this list is dead?
 
-Please do not do this.
+Regards,
+Amit
 
-memcmp() cannot assume the alignment of the source and
-destination buffers and thus will run more slowly than
-that open-coded comparison.
-
-That code was done like that on purpose because it is
-one of the most critical paths in the networking flow
-cache lookup which runs for every IPSEC packet going
-throught the system.
-
+__________________________________________________
+Do You Yahoo!?
+Tired of spam?  Yahoo! Mail has the best spam protection around 
+http://mail.yahoo.com 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
