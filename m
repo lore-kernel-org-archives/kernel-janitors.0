@@ -1,39 +1,38 @@
-From: "OTC Financial network" <banalitycatamaran@aac.nl>
-Date: Fri, 01 Dec 2006 21:01:38 +0000
-Subject: [KJ] EQSE News
-Message-Id: <01c7158b$4be932c0$6c822ecf@banalitycatamaran>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Sun, 17 Dec 2006 12:56:22 +0000
+Subject: [KJ] [PATCH] he: tiny space savings
+Message-Id: <20061217125622.GA4973@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
-In-Reply-To: <01c714e6$71ce2f40$6c822ecf@doubledrenewal>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: Andi Drebes <webmaster@programmierforen.de>, kernel-janitors@lists.osdl.org
 
-Alert! Watch this one Soar!
+From: Andi Drebes <webmaster@programmierforen.de>
 
-Equipment & Systems Engineering, Inc. (EQSE)
+   text    data     bss     dec     hex filename
+  20015     480      28   20523    502b drivers/atm/he.o
+  19997     480      28   20505    5019 drivers/atm/he.o
 
-Sector: Environmental Engineering
-Rating: VERY Bullish
-Current Price:  $0.062
-Projected:        $0.20
+Signed-off-by: Andi Drebes <webmaster@programmierforen.de>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-This is THE pick for the fourth quarter.  Environmental 
-stocks are getting incredible exposure and taking off as 
-governments and companies realize they need to start 
-investing NOW.  EQSE is involved in high tech solutions for 
-both the problems we face today and those of the future.
+ drivers/atm/he.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Search your favorite financial information site and become 
-a believer.  This is HOT!
-
-An earth shattering release is expected out of the company 
-any day.  With all of EQSE's governmental contacts we are 
-expecting a major contract announcement.  This issue is 
-VERY tightly held and the release is going to push it up 
-rapidly.  Don't delay.  It's not going to stop till we see 
-20 cents!
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -101,7 +101,7 @@ #endif /* HE_DEBUG */
+ 
+ /* version definition */
+ 
+-static char *version = "$Id: he.c,v 1.18 2003/05/06 22:57:15 chas Exp $";
++static const char version[] = "$Id: he.c,v 1.18 2003/05/06 22:57:15 chas Exp $";
+ 
+ /* declarations */
+ 
 
 _______________________________________________
 Kernel-janitors mailing list
