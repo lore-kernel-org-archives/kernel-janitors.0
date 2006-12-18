@@ -1,24 +1,26 @@
-From: "Emil Hamed" <kelo@casasangam.it>
-Date: Mon, 18 Dec 2006 21:46:39 +0000
+From: "Kit Calbert" <foriwindso@cathylu.com>
+Date: Mon, 18 Dec 2006 21:46:57 +0000
 Subject: Re: [KJ] botan
-Message-Id: <01c722ed$ff9755d0$43a9ae50@sevilla9044345>
+Message-Id: <01c722ee$0a297b40$43a9ae50@sevilla9044345>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_004C_01C722F5.DDFC4D60"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c722ed$ff9755d0$43a9ae50@sevilla9044345>
+In-Reply-To: <01c722ed$ff9755d0$43a9ae50@sevilla9044345>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_004C_01C722F5.DDFC4D60
 Content-Type: multipart/alternative;
-    boundary="----------=_1166478505-14916-248"
+    boundary="----------=_1166478565-14916-254"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1166478505-14916-248
+------------=_1166478565-14916-254
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -38,7 +40,7 @@ Wait. I have another small favor to ask. I will need certain
 peaceful world. No strife, no differences, a place for everyone and
 translated back to his native language. Payment is not a problem,
 
-------------=_1166478505-14916-248
+------------=_1166478565-14916-254
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -71,7 +73,7 @@ red on triggers-it was all over.</FONT></DIV><DIV><FONT face=3DArial size=
  differences, a place for  everyone  and</FONT></DIV><DIV><FONT face=3DAria=
 l size=3D2>translated  back to his native language. Payment is  not  a  pro=
 blem,</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1166478505-14916-248--
+------------=_1166478565-14916-254--
 
 ------=_NextPart_000_004C_01C722F5.DDFC4D60
 Content-Type: image/jpeg;
