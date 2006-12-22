@@ -1,50 +1,36 @@
-From: "Johnnie Kirkpatrick" <Ag'sfortifies@aadamson.co.uk>
-Date: Thu, 28 Dec 2006 12:26:21 +0000
-Subject: [KJ] Johnnie Present
-Message-Id: <01c72a79$5a978f80$6c822ecf@Ag'sfortifies>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0437647531=="
+From: "Elias Sands" <wallflower'sbass@absmen.ru>
+Date: Fri, 22 Dec 2006 11:55:17 +0000
+Subject: Re: [KJ] Sands Insider Information
+Message-Id: <01c725d4$2a1c7130$6c822ecf@wallflower'sbass>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0437647531==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
-
-Start the New Year out Right!	
-	
-It is our mission to sift through hundreds of emerging companies in order 	 
-to bring our readers that micro-cap diamond that will put them on the road 	 	
-of financial independence.	
-	
-In AlgoDyne Methanol Energy we have found a clear winner.  Do not 	
-miss this opportunity.  This one is going to start the year off with a bang!!!	
-	
-Company:  ADYN	
+Do not miss this chance!	 	
+	 
+Physician Adult Daycare (PHYA) is getting ready to take off	.
+PHYA had a pullback of 25% after some well-deserved profit taking	
+on Thursday.  This means that YOU have an opportunity to get in	 	
+while the price is low!	
+	 
+Take a look at your favorite charts.  Check your level 2.  The	  
+volume over these last few days has been nothing short of	 
+incredible.  This one has gone from thinly traded to booming	 	!  
 	 	
-Current Price:           $1.32	 
-Short Term Target:       $3.50	
-Long Term Projected    $10.00	
-	 
-Check the recent news from this company.  They are in negotiations with 	 
-HUGE Asian investors.  They are forming partnerships with major players.  	 
-They are developing some INCREDIBLE technology.  This is a company 	
-on the move.	 
-	 
-And this is just the start.  Very soon we expect to see an incredible 	
-revelation come out of this company.  The time is now.  Don't hesitate!	 
+Trading at just over $1.50 cents, word is PHYA is about to	  
+announce news of major proportions.  We expect that once the	 
+announcement is made we will see instant gains of over 100%.  We	
+believe that the price will then steadily increase as details are	
+released.  Our target sell point is $4.50	 .
+
+PHYA is where you want to be.  Get in early and ride it to the	 
+top!
 
 
---===============0437647531==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0437647531==--
