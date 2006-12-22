@@ -1,44 +1,117 @@
-From: "Mae Nguyen" <leapthard@abu.org.my>
-Date: Fri, 08 Dec 2006 12:38:11 +0000
-Subject: Greetings Mae
-Message-Id: <01c71ac2$a56a4050$6c822ecf@leapthard>
+From: John Daiker <daikerj@onid.orst.edu>
+Date: Fri, 22 Dec 2006 18:45:04 +0000
+Subject: [KJ] [PATCH][RESEND] usbaudio.c: remove unneeded casts
+Message-Id: <458C27B0.50005@onid.orst.edu>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Takashi Iwai <tiwai@suse.de>
+Cc: kernel-janitors@lists.osdl.org, alsa-devel@alsa-project.org
 
-LOOK AT OUR RECENT NEWS! ASK YOUR BROKER NOW!
-INVESTORS ALERT! Friday, Dec 8, DTGP
+Sorry for the mess up last time.  If things are fubar again, I'll try from a different mail client.
 
-Company: Doll Technology Group (OTCBB:DTGP)
-Symbol: DTGP
-Current Price: $0.016 (Trading at a Discount!)
-3-day Target: $0.07=20
+From: John Daiker <daikerjohn@gmail.com>
 
-Friday, Dec 8, will bring big trading for DTGP, which will mean it goes up!
-Ladies and gentlemen, this one is incredible.=20
-This company is currently preparing to introduce their stock DTGP to brokers
-across the country.
-Look at their recent news and see what they are doing, and have been doing
-in the past few Month.
+Went rummaging through usbaudio.c and found some castings that aren't needed as far as I can see.  Part of the KernelJanitors TODO list.
 
-About DTGP:
-Doll Technology Group (OTCBB:DTGP)  diversified company formed to develop a=
-nd commercialize products and technologies that address Aircraft Safety, Wa=
-ter Conservation, Fire Protection, Rust and Corrosion, and Construction, am=
-ong others.
+Signed-off-by: John Daiker <daikerjohn@gmail.com>
 
-CALL YOUR BROKER NOW!
+---
+--- linux-2.6.orig/sound/usb/usbaudio.c	2006-12-21 13:19:19.000000000 -0800
++++ linux-2.6/sound/usb/usbaudio.c	2006-12-21 13:23:06.000000000 -0800
+@@ -253,7 +253,7 @@
+ 				    struct urb *urb)
+ {
+ 	unsigned char *cp = urb->transfer_buffer;
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 
+ 	urb->dev = ctx->subs->dev; /* we need to set this at each time */
+ 	urb->iso_frame_desc[0].length = 3;
+@@ -275,7 +275,7 @@
+ 				       struct urb *urb)
+ {
+ 	unsigned char *cp = urb->transfer_buffer;
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 
+ 	urb->dev = ctx->subs->dev; /* we need to set this at each time */
+ 	urb->iso_frame_desc[0].length = 4;
+@@ -313,7 +313,7 @@
+ 			       struct urb *urb)
+ {
+ 	int i, offs;
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 
+ 	offs = 0;
+ 	urb->dev = ctx->subs->dev; /* we need to set this at each time */
+@@ -402,7 +402,7 @@
+ 				     struct snd_pcm_runtime *runtime,
+ 				     struct urb *urb)
+ {
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 
+ 	urb->dev = ctx->subs->dev; /* we need to set this at each time */
+ 	urb->iso_frame_desc[0].length = 3;
+@@ -420,7 +420,7 @@
+ 					struct snd_pcm_runtime *runtime,
+ 					struct urb *urb)
+ {
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 
+ 	urb->dev = ctx->subs->dev; /* we need to set this at each time */
+ 	urb->iso_frame_desc[0].length = 4;
+@@ -537,7 +537,7 @@
+ 	unsigned int counts;
+ 	unsigned long flags;
+ 	int period_elapsed = 0;
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 
+ 	stride = runtime->frame_bits >> 3;
+ 
+@@ -655,7 +655,7 @@
+  */
+ static void snd_complete_urb(struct urb *urb)
+ {
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 	struct snd_usb_substream *subs = ctx->subs;
+ 	struct snd_pcm_substream *substream = ctx->subs->pcm_substream;
+ 	int err = 0;
+@@ -678,7 +678,7 @@
+  */
+ static void snd_complete_sync_urb(struct urb *urb)
+ {
+-	struct snd_urb_ctx *ctx = (struct snd_urb_ctx *)urb->context;
++	struct snd_urb_ctx *ctx = urb->context;
+ 	struct snd_usb_substream *subs = ctx->subs;
+ 	struct snd_pcm_substream *substream = ctx->subs->pcm_substream;
+ 	int err = 0;
+@@ -1408,7 +1408,7 @@
+ static int snd_usb_hw_params(struct snd_pcm_substream *substream,
+ 			     struct snd_pcm_hw_params *hw_params)
+ {
+-	struct snd_usb_substream *subs = (struct snd_usb_substream *)substream->runtime->private_data;
++	struct snd_usb_substream *subs = substream->runtime->private_data;
+ 	struct audioformat *fmt;
+ 	unsigned int channels, rate, format;
+ 	int ret, changed;
+@@ -1464,7 +1464,7 @@
+  */
+ static int snd_usb_hw_free(struct snd_pcm_substream *substream)
+ {
+-	struct snd_usb_substream *subs = (struct snd_usb_substream *)substream->runtime->private_data;
++	struct snd_usb_substream *subs = substream->runtime->private_data;
+ 
+ 	subs->cur_audiofmt = NULL;
+ 	subs->cur_rate = 0;
 
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys - and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
