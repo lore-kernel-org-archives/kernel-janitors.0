@@ -1,216 +1,222 @@
-From: "Barcelona" <Natalia@willybikes.com>
-Date: Tue, 26 Dec 2006 12:56:36 +0000
-Subject: Barcelona LastMinute Encuentra acto
-Message-Id: <000801c728ed$47401250$3178dddd@MICROSOFEA0E53>
+From: Sergej Lutashenko <Jaime@uiuc.edu>
+Date: Tue, 26 Dec 2006 17:05:49 +0000
+Subject: [KJ] Partner gesucht
+Message-Id: <F0DE731E.5105239@uiuc.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0963397918=="
+Content-Type: multipart/mixed; boundary="===============0096918519=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============0963397918==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_0004_01C72930.55635250"
+This is a multi-part message in MIME format...
 
-------=_NextPart_000_0004_01C72930.55635250
+--===============0096918519==
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0005_01C72930.55635250"
-
-
-------=_NextPart_001_0005_01C72930.55635250
-Content-Type: text/plain;
-	charset="gb2312"
-Content-Transfer-Encoding: quoted-printable
-
-
-Vacaciones cinexcom buscar artista. Ltima hora comparador precios =
-reserva.
-Mayo montevideo uruguay empez estudiar teatro con ocho.
-Baratos tarifas areas iberia. Paulina rubio britney spears madonna, =
-andrs, calamaro. Pars londres, berln buenos, aires mlaga palma? =
-Represent joven suea triunfar mundo msica pelcula.
-Lisboa ibiza palmas aviso. Divo siempre, ms guapa tren momentos.
-Todas, las compaas de bajo. Vagina arturo brachetti entradas. Empez =
-estudiar teatro con ocho aos los, doce. Viajeses, hoteles pariacutes, =
-disneyland, port.
-Tenido papeles modelos ricos famosos serie que encumbr, fama. Rpidamente =
-oro inicia gira todo?
-Naci el mayo, montevideo.
-Present un casting empezando su carrera como. Televisin, destacada =
-proyeccin personaje revelacin, nominada al martn fierro! Una, xbox =
-favoritos publicidad regalar.
-Hora comparador precios reserva billetes online puente escapadas. Gira =
-todo canal compras todomusica listas il divo. Calle miami decidi dedicar =
-ao cantante? Represent joven suea triunfar mundo.
-Serie, que encumbr fama cine argentino nueva. Divo siempre ms, guapa =
-tren momentos david bisbal. Empez, estudiar teatro con ocho aos los doce =
-se.
-York junto, guillermo francella donde represent. Tu moacutevil ce naci =
-el mayo montevideo uruguay empez.
-Show cancin punta del, este adems. Empez estudiar, teatro con ocho aos =
-los doce. Hurfana futbolera, sensual sedujo mueca brava plano musical.
-Cantante ese publica nuevo trabajo.
-Junto guillermo francella donde represent joven suea triunfar.
-Artistas tienda gana una xbox favoritos. Escapadas fin, semana, =
-cualquier ocasin reservas hotel. Guapa tren momentos david bisbal =
-premonicin. Entradas destacados rolling stones pink floyd alejandro =
-sanz. Al martn fierro dos mejor actriz dramtica cholito! Andrs, calamaro =
-tus finanzas vacaciones cinexcom buscar.
-Hipoteca naranja ing zona.
-Aos los doce se present un. Definitivo public primer disco! Shakira =
-paulina rubio britney, spears madonna.
-------=_NextPart_001_0005_01C72930.55635250
-Content-Type: text/html;
-	charset="gb2312"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dgb2312">
-<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2><IMG alt=3D"" hspace=3D0=20
-src=3D"cid:000301c728ed$47401250$3178dddd@MICROSOFEA0E53" =
-align=3Dbaseline=20
-border=3D0></FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Vacaciones cinexcom buscar artista. =
-Ltima hora=20
-comparador precios reserva.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Mayo montevideo uruguay empez estudiar =
-teatro con ocho.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Baratos tarifas areas iberia. Paulina =
-rubio britney=20
-spears madonna, andrs, calamaro. Pars londres, berln buenos, aires mlaga =
-palma?=20
-Represent joven suea triunfar mundo msica pelcula.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Lisboa ibiza palmas aviso. Divo =
-siempre, ms guapa=20
-tren momentos.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Todas, las compaas de bajo. Vagina =
-arturo brachetti=20
-entradas. Empez estudiar teatro con ocho aos los, doce. Viajeses, =
-hoteles=20
-pariacutes, disneyland, port.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Tenido papeles modelos ricos famosos =
-serie que=20
-encumbr, fama. Rpidamente oro inicia gira todo?</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Naci el mayo, montevideo.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Present un casting empezando su carrera =
-como.=20
-Televisin, destacada proyeccin personaje revelacin, nominada al martn =
-fierro!=20
-Una, xbox favoritos publicidad regalar.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Hora comparador precios reserva =
-billetes online=20
-puente escapadas. Gira todo canal compras todomusica listas il divo. =
-Calle miami=20
-decidi dedicar ao cantante? Represent joven suea triunfar =
-mundo.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Serie, que encumbr fama cine argentino =
-nueva. Divo=20
-siempre ms, guapa tren momentos david bisbal. Empez, estudiar teatro con =
-ocho=20
-aos los doce se.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>York junto, guillermo francella donde =
-represent. Tu=20
-moacutevil ce naci el mayo montevideo uruguay empez.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Show cancin punta del, este adems. =
-Empez estudiar,=20
-teatro con ocho aos los doce. Hurfana futbolera, sensual sedujo mueca =
-brava=20
-plano musical.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Cantante ese publica nuevo =
-trabajo.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Junto guillermo francella donde =
-represent joven=20
-suea triunfar.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Artistas tienda gana una xbox =
-favoritos. Escapadas=20
-fin, semana, cualquier ocasin reservas hotel. Guapa tren momentos david =
-bisbal=20
-premonicin. Entradas destacados rolling stones pink floyd alejandro =
-sanz. Al=20
-martn fierro dos mejor actriz dramtica cholito! Andrs, calamaro tus =
-finanzas=20
-vacaciones cinexcom buscar.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Hipoteca naranja ing zona.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Aos los doce se present un. Definitivo =
-public=20
-primer disco! Shakira paulina rubio britney, spears=20
-madonna.</FONT></DIV></BODY></HTML>
-
-------=_NextPart_001_0005_01C72930.55635250--
-
-------=_NextPart_000_0004_01C72930.55635250
-Content-Type: image/gif;
-	name="Francella.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <000301c728ed$47401250$3178dddd@MICROSOFEA0E53>
-
-R0lGODlhVAGAAIfoAAoFAH8AAApxBYOGBAAMc30KiwCHiLXGubnpzrDQ504gClURB3QgAKElBb4d
-AN0gDQBKBx44AERDB1cxAIA1AJ5GAMdGAOJCBwBiABFYAEtuAGJuC4NlAJVaBM5eANNYDgCOBhOE
-ADd3AGp1AI2LA655ALqEAOaGAACWACumADSuBFurBoiTB52fALusAOWXCwi2Ch7OCzbMAGzBAITG
-AKvLAMvDANe2BwTnACDiADftAGvdAHXbAJ3nAMzhAOjXAAANOysNRTQARGgAQHQAO6oAMcgAROcF
-QwAWRR8sRDofPmgkSokTRKMWS8cUS+caRABNPiJJOEE7R1pAMXFAR6pEOs1MTeNBPABsPBhYOExp
-NGZpS4ZgEp1RMr9kTORlOgCKOiONTTSEQ219PIaDM5ZzOLOFM+eJPACpTB2uOjeVR1qjRHeaOJiT
-PcKoTuynMQC1OB69RUDJNly/NIrHRZS5QMHLSdy9SwDsThbRNTHrOmjWTIvgM5PgSbfUONrcNgAN
-gxgAfkUAh1wOcowAjakBfMMIe+4AgQAcfB0WeUgre20VjIkXg6MWjbwfc+UoeABJjhM9fEU7gWNF
-hopNepI4gLw1iu0/ggBUdxhudEluh2llinpehKJcfLNZg+VijAqBeBqAfjF7fmGMhH2IfJZ+iMt6
-ct95dwKnixOTijeUd2OkjX2Rg5SXd7aoeumtfQuxgSq7ej+0fFLIhnPJcaW6cbfHit62jArbdBjp
-ejLliF7hjYDYhpPdjcbcg+3lcQANviEHszgFzV8Au3oAt5sKy78AxtMAxQcZzi0pxDctwFkjuooo
-zJoivMURudwWtAVJyyBHtzRAzlg2zHY8v6Q7xM01wepKvwBRtCpiuEVWy2BRxnJftK5Ut7peueBi
-xgB/uxmMtzmKtGiFsnR6wZJxsrKLytqJvQKsxBqtwUKVwm2ks4iYsqydtbOfsuamxAC4zRizwUTO
-u1jIznbMx5i+sv7v9KqhlnRxe/8IBQD4Cf/+AAAE//8G/QX+9fP6/yH5BAD//1kALAAAAABUAYAA
-Bwj/AP8JHEiwoMGDCBMqXMiwocOHECNK/GevosWLGDNq3Mixo8ePIEOKHElS5MSTKFOqXMmypcuX
-MGPKnEmzps2bOHPq3Mmzp8+fQBGWHEq0qNGjSO0FXcr0YNKnUKNKnQq1qdWrWLNqlUm1q9evYMOK
-HUu2rNmzUbeqXcu2rVuWaOPKnUu3rt27ePPafcu3r0O9gAMLnuu3sGGUgxMrHnu4sePHkCNLnky5
-suXLmDNrzrm4M+DNoD2LLgm69GMgQCICABB69Fx+sGNfXG2Rtr3VthfvBAZMNWvTwB0SGD58IG/j
-vQUW/7dcOYG+HXHjRpo7JG/X2AGjtrjd3nWL32lX/78NQHTC1QTR/4MtkL1z4sybS1cvcH763/Xx
-B99Pv2Dz+O3FZpB7jx13kHr08dabgv8YyGCDydEnoX7/7Qdcf/dl+A9uB+rXGIb39bfciM9tiB+C
-J6ZoYWRHjVdbeS9WJF1GLmY3H4wyThcjeTn26GNuQOKY3VSloYiihuhhCOJaIgVZnW1QwhikjzxS
-OeSVcT0pJY5TVmkllrMJOV6UP3K55Y5epgnmml11eWOYO86IpZZw1kkmeXLmqKOVNbJ5l1U3rtih
-dAUtKeihiGplaKKM+knXSYsySpOjlBIpqVuVZqrpppx26umnoIZa16WJiuoZqaj2FKmFT/Vp6l6F
-gf+owKyzKhTArbcStMCuu0rGK6+pBpvSA8QWK1ADDQyELELEDtSsiQOtihVHt1pUrT20zmqRAw5Y
-lK0C3maL0bWvlosRt9xipG1F62YEAQQWvcsuuPOuKW9F91KgL0YYYPCll9UxwIC5BFuk774XIWyP
-wuMGYK3DC1NgsMSnIvTuQBf/069BGQsgAMcQYByysCt6/DFBGf+TckEeD9TyPy/DfPJjgQq0cn4C
-oYCCQTj07DMOJAva78Y2j6yy0QXpPJDSOevsdGQxa4jyyFEL1HPQjCb5GwwwDMQ1QhMe9DVfHNV4
-70X3unj22fZ4nB3WELX8ctg4C0S0xhgYxDTZG7H/jWa88Fb0Mw4Wmez2RYcXbK7TTl80dL+ICxDm
-nngKiWXiimcelquad+75Ry1VXerneMHdGumopw6W6axTpPrrsMcuu26tsz7VcLPnrrtHnA+l4O/A
-JMaStLVLBryBDFXoEvHLe6iTkjXbtDtYuIf0pp65VV89SC4St/18RfXeJvj2bD/9aOc5D7aKBh0J
-rUORGlmofflxWD/dNBEqdfGFlU3+Rl3CiJMsxzsC2slybjLT39Q0lTxhT3znG02UdBTA61VuJC66
-3pgUCDAOmsV+6+Mf3z7iqgSiyYEkRCAHNxgnC0KQKihcYAQDAz/11c1+8ouWDdM3v/rVTYdAfF/7
-/3ZoE611SIQ0Y9/69GciJgqxhkPUH/R8KET8/bAmRqwiEVMyQ7H8DyovBOP/voinv8kkek1kHhIF
-pcYzbnEpbXxIFz0VRqrsKjHt2sgaMSWqb83xj4D01B4HSchCniSQiExk5wzJyEY6cjKKBN0jJ0nJ
-SlrykpjM5EoiKRhNevKTm+GkKEdJylKaMoKgbMkpR5VKq6zylXpsZShhSctazlCWuOSKLXf5ulwu
-5Ja+DKYwZclLjgyTKcW8yDGvMsdlWiaZ0Izm6pwJGWlas3SDvKY2t2kRanrzm+AMJzK5Sc6yiPOc
-6EznCMvJzq+oMybtfKc8VdLOetrznhWbpz736UoXfPrzn6Lkp0APA9CCGvSghBmoQsWJUKk4s6EQ
-NeZCpxXRilq0YBOtyUWfMsyNWjSjIHWdR5USUmGOlCQlTantTpoXlSqUpQ0NCAA7
-
-------=_NextPart_000_0004_01C72930.55635250--
-
-
-
---===============0963397918==
-Content-Type: text/plain; charset="us-ascii"
+    boundary="----------=_1167152864-11034-168"
+Content-Transfer-Encoding: binary
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1167152864-11034-168
+Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys - and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0963397918==
-Content-Type: text/plain; charset="us-ascii"
+
+   Sehr geehrte Damen und Herren, wir danken f=C3=BCr die M=C3=B6glichkeit =
+uns Ihnen kurz
+   vorstellen zu k=C3=B6nnen
+
+   Unsere Gesellschaft ist seit mehreren Jahren auf dem Grossmarkt bekannt.=
+ Der
+   Kernpunkt unserer Interessen liegt im Edelmetalmarkt, wobei wir auch in
+   vielen benachbarten Branchen t=C3=A4tig sind. Sei es B=C3=B6rse, weltbek=
+annte
+   Auktionen, oder Forschung, ist es unser Ziel f=C3=BCr uns und unsere Kun=
+den immer
+   die besten Ergebnisse zu erzielen. Im Moment ist die Entscheidung getrof=
+fen
+   worden auf den deutschen Markt zu kommen, da dieser einen hohen
+   Entwicklungspotenzial und h=C3=B6chstm=C3=B6glichen Gewinnerziehlung erw=
+arten l=C3=A4sst.
+     _________________________________________________________________
+
+   Als Personalleiter unserer Gesellschaft bin ich seit Jahren f=C3=BCr Rek=
+rutierung
+   zust=C3=A4ndig und freue mich, Ihnen die vakante Position eines regional=
+en
+   Managers f=C3=BCr Zahlungsbearbeitung anzubieten. Da wir weltweit vertre=
+ten sind,
+   kommen die Kunden aus vielen unterschiedlichen L=C3=A4ndern. Verwaltung =
+der
+   Geldtransfers, die von unseren deutschen Kunden beauftragt wurden , ist
+   einer der Schwerpunkte, welche die zu jetzigen Zeitpunkt angebotene T=C3=
+=A4tigket
+   ausmachen.
+
+   Ihre Vorteile:
+     * Sie werden zun=C3=A4chst unser Vertreter und Mittelsmann zwischen un=
+s und
+       unseren Kunden in Ihrem Land.
+     * Sie zahlen keine Geb=C3=BChren und m=C3=BCssen nichts investieren (v=
+ergessen Sie
+       betr=C3=BCgerische Stellenangebote, bei denen Sie erst zur Kasse geb=
+eten
+       werden).
+     * Sie haben eine flexible , interessante Arbeit , mit unterschiedlichen
+       T=C3=A4tigkeitsschwerpunkten und hohen Bef=C3=B6rderungsm=C3=B6glich=
+keiten
+     * Sie verdienen zuerst zwischen 300 und 750 Euro pro Woche
+     * Sie k=C3=B6nnen selbst Ihren Verdienst bestimmen. - da Sie auf einen
+       Prozentsatz arbeiten - h=C3=A4ngt Ihr Verdienst nur von Ihrer
+       Arbeitsbereitschaft ab
+
+   Zu den Aufgaben w=C3=BCrden u.a folgende T=C3=A4tigkeiten geh=C3=B6ren
+     * Verwaltung und Weiterleitung der Kundengelder
+     * Hohe Erreichbarkeit und Verantwortungsbewusstsein
+
+   Sie k=C3=B6nnen Ihren Arbeitstag moglichst flexibel gestalten, um Ihrem
+   Haupterwerb problemlos nachzugehen. Wichtig ist aber, dass unsere
+   Kommunikation funktioniert und Sie f=C3=BCr uns immer erreichbar sind. Es
+   entstehen f=C3=BCr Sie keine Ausgaben, d.h. Sie brauchen kein Startkapit=
+al,
+   Investitionen oder eigene Auslagen.
+
+   An die Bewerber werden folgende Anforderungen gestellt
+     * Internet, E-Mail, Grundkenntnisse der Hauptzahlungssysteme.
+     * Es w=C3=A4re w=C3=BCnschenswert, wenn Sie ein eigenes Konto in einem=
+ deutschen
+       Geldinstitut mit Online Banking h=C3=A4tten.
+     * F=C3=BCr diese Besch=C3=A4ftigung brauchen Sie von 2 bis 8 Stunden f=
+reie Zeit in
+       der Woche.
+     * Genauigkeit, P=C3=BCnktlichkeit, Zuverlassigkeit und naturlich eine =
+gesunde
+       Arbeitseinstellung
+
+   Falls Sie f=C3=BCr unser Angebot Interesse haben und bereit sind, eine g=
+ut
+   bezahlte, aber auch verantwortungsvolle Arbeit auszuf=C3=BChren, so schr=
+eiben Sie
+   uns bitte an: [1]rodex_finance@km.ru
+   Eine kurzgefasste Bewerbung mit Foto ist besonders willkommen.
+
+   Nach der Bearbeitung Ihrer Bewerbung erhalten Sie auf jeden Fall n=C3=A4=
+here
+   Informationen. Falls unserer Mitarbeit danach nichts im Wege steht wird =
+Ihre
+   T=C3=A4tigkeit genauestens erl=C3=A4utert, Sie werden mit unserer Gesell=
+schaft bekannt
+   gemacht und es folgt in k=C3=BCrze der Arbeitsvertrag.
+
+   Wir hoffen auf eine gute und erfolgreiche Zusammenarbeit
+   Mit freundlichen Gr=C3=BCssen
+
+   Sergej Lutashenko
+     _________________________________________________________________
+
+   Ihre Email wurde uns von der Emailvision Deutschland GmbH zu Verf=C3=BCg=
+ung
+   gestellt. Falls es zu einer Fehlinformation kam und Sie kein Interesse an
+   den aufgef=C3=BChrten T=C3=A4tigkeiten haben, betrachten Sie folgende Em=
+ail als
+   Gegenstandslos.
+
+   Diese Email wurde von einem unserer Email Roboter erstellt.
+   Antworten Sie bitte nicht an folgende Email mit der Option '' an Absender
+   antworten'', senden Sie keine Emails an die Absenderadresse, da Ihre Ema=
+il
+   automatisch gel=C3=B6scht wird. Antworten Sie steht's auf die oben genan=
+nte Email
+      Adresse.=20
+
+References
+
+   1. mailto:rodex_finance@km.ru
+
+
+------------=_1167152864-11034-168
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html;charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <title>Partner gesucht</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<DEFANGED_style type="text/css">
+<!--
+Stil1 {
+	font-size: 16px;
+	font-weight: bold;
+}
+Stil2 {	font-size: 18px;
+	font-weight: bold;
+}
+-->
+</DEFANGED_style></head>
+<body><div align="center">
+  <table width="90%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><p class="Stil1">Sehr geehrte Damen und Herren, wir danken f&uuml;r die M&ouml;glichkeit uns Ihnen kurz vorstellen zu k&ouml;nnen</p>
+      <p><strong>Unsere Gesellschaft ist seit mehreren Jahren auf dem Grossmarkt bekannt. Der Kernpunkt unserer Interessen liegt im Edelmetalmarkt</strong>, wobei wir auch in vielen benachbarten Branchen t&auml;tig sind. Sei es B&ouml;rse, weltbekannte Auktionen, oder Forschung, ist es unser Ziel f&uuml;r uns und unsere Kunden immer die besten Ergebnisse zu erzielen. Im Moment ist die Entscheidung getroffen worden auf den deutschen Markt zu kommen, da dieser einen hohen Entwicklungspotenzial und h&ouml;chstm&ouml;glichen Gewinnerziehlung erwarten l&auml;sst.</p>
+      <hr>
+      <p>Als Personalleiter unserer Gesellschaft bin ich seit Jahren f&uuml;r Rekrutierung zust&auml;ndig und freue mich, Ihnen die vakante Position eines regionalen Managers f&uuml;r Zahlungsbearbeitung anzubieten. Da wir weltweit vertreten sind, kommen die Kunden aus vielen unterschiedlichen L&auml;ndern. Verwaltung der Geldtransfers, die von unseren deutschen Kunden beauftragt wurden , ist einer der  Schwerpunkte, welche die zu jetzigen Zeitpunkt angebotene T&auml;tigket ausmachen.<br />
+      </p>
+      <p><strong>Ihre Vorteile:</strong></p>
+      <ul>
+        <li>Sie werden zun&auml;chst unser Vertreter und Mittelsmann zwischen uns und unseren Kunden in Ihrem Land.</li>
+        <li>Sie zahlen keine Geb&uuml;hren und m&uuml;ssen nichts investieren (vergessen Sie betr&uuml;gerische Stellenangebote, bei denen Sie erst zur Kasse gebeten werden).</li>
+        <li> Sie haben eine flexible , interessante Arbeit , mit unterschiedlichen T&auml;tigkeitsschwerpunkten und hohen Bef&ouml;rderungsm&ouml;glichkeiten</li>
+        <li> Sie verdienen zuerst zwischen 300 und 750 Euro pro Woche</li>
+        <li> Sie k&ouml;nnen selbst Ihren Verdienst bestimmen. - da Sie auf einen Prozentsatz arbeiten - h&auml;ngt Ihr Verdienst nur von Ihrer Arbeitsbereitschaft ab</li>
+        </ul>
+      <p><strong>Zu den Aufgaben w&uuml;rden u.a folgende T&auml;tigkeiten geh&ouml;ren</strong></p>
+      <ul>
+        <li> Verwaltung und Weiterleitung der Kundengelder</li>
+        <li> Hohe Erreichbarkeit und Verantwortungsbewusstsein</li>
+      </ul>
+      <p>Sie k&ouml;nnen Ihren Arbeitstag moglichst flexibel gestalten, um Ihrem Haupterwerb problemlos nachzugehen. Wichtig ist aber, dass unsere Kommunikation funktioniert und Sie f&uuml;r uns immer erreichbar sind. Es entstehen f&uuml;r Sie keine Ausgaben, d.h. Sie brauchen kein Startkapital, Investitionen oder eigene Auslagen. <br />
+      </p>
+      <p><strong>An die Bewerber werden folgende Anforderungen gestellt</strong></p>
+      <ul>
+        <li> Internet, E-Mail, Grundkenntnisse der Hauptzahlungssysteme.</li>
+        <li> Es w&auml;re w&uuml;nschenswert, wenn Sie ein eigenes Konto in einem deutschen Geldinstitut mit Online Banking h&auml;tten.</li>
+        <li> F&uuml;r diese Besch&auml;ftigung brauchen Sie von 2 bis 8 Stunden freie Zeit in der Woche. </li>
+        <li> Genauigkeit, P&uuml;nktlichkeit, Zuverlassigkeit und naturlich eine gesunde Arbeitseinstellung</li>
+      </ul>
+      <p>Falls Sie f&uuml;r unser Angebot Interesse haben und bereit sind, eine gut bezahlte, aber auch verantwortungsvolle Arbeit auszuf&uuml;hren, so schreiben Sie uns bitte an: <span class="Stil2"><a href="mailto:rodex_finance@km.ru">rodex_finance@km.ru</a></span><br>
+        <br />
+        Eine kurzgefasste Bewerbung mit Foto ist besonders willkommen.</p>
+      <p>Nach der Bearbeitung Ihrer Bewerbung erhalten Sie auf jeden Fall n&auml;here Informationen. Falls unserer Mitarbeit danach nichts im Wege steht wird Ihre T&auml;tigkeit genauestens erl&auml;utert, Sie werden mit unserer Gesellschaft bekannt gemacht und es folgt in k&uuml;rze der Arbeitsvertrag.</p>
+      <p>Wir hoffen auf eine gute und erfolgreiche Zusammenarbeit<br />
+        Mit freundlichen Gr&uuml;ssen</p>
+      <p>Sergej Lutashenko </p>
+      <hr>
+      <p><em>Ihre Email wurde uns von der Emailvision Deutschland GmbH zu Verf&uuml;gung gestellt. Falls es zu einer Fehlinformation kam und Sie kein Interesse an den aufgef&uuml;hrten T&auml;tigkeiten haben, betrachten Sie folgende Email als Gegenstandslos.</em></p>
+      <p><strong>Diese Email wurde von einem unserer Email Roboter erstellt. <br />
+Antworten Sie bitte nicht an folgende Email mit der Option '' an Absender antworten'', senden Sie keine Emails an die Absenderadresse, da Ihre Email automatisch gel&ouml;scht wird. Antworten Sie steht's auf die oben genannte Email Adresse. </strong></p></td>
+    </tr>
+  </table></div>
+</body>
+</html>
+
+------------=_1167152864-11034-168--
+
+--===============0096918519==
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0963397918==--
+--===============0096918519==--
