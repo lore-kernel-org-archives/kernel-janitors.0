@@ -1,36 +1,65 @@
-From: "Casey Ham" <CaseyHam@Roblesgil.Com>
-Date: Mon, 18 Dec 2006 23:55:16 +0000
-Subject: [KJ] keeps
-Message-Id: <001201c722ff$f718f000$00000000@cami>
+From: tracy <zhongg20002003@yahoo.co.jp>
+Date: Tue, 26 Dec 2006 23:12:04 +0000
+Subject: [KJ] looking for representative
+Message-Id: <20061226231204.47164.qmail@web3115.mail.kcd.yahoo.co.jp>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1172003587=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Arkansas arizona california colorado rumena ragazza conoscere est, raggaze.
-Opened affiliate, webspace giveaway, vedi diretta. Leader frist tom daschle democratic. Africa trails remains rare. Tuesday introduced, easier appealed recording sued individual underage. Dosnload downlopad, dowload, downloac, drc dsc midi.
+This is a multi-part message in MIME format...
 
-Get FPMC First Thing tomorrow. This Is Going To Explode!
-Check out for HOT NEWS!!! The alert is ON!!
+--===============1172003587==
+Content-Type: multipart/alternative;
+    boundary="----------=_1167174783-17101-693"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-FLAIR PETROLEUM CORP (FPMC.PK)
-CURRENT_PRICE: $0.27 GET IT N0W!
-TARGET PRICE IN 1 WEEK: 0.73$
+This is a multi-part message in MIME format...
 
-Please use your brokerage site to read the full news on this exciting company.
+------------=_1167174783-17101-693
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Disposition: inline
 
-Go FPMC!
+新しいメールアドレスをお知らせします新しいメールアドレス： zhongg20002003@yahoo.co.jp
 
-Newswire, essay interview zennstrom, tampering.
-Hcx, boosts rapidly growing vietnam region dfa emule talkgold. Weiss streamcast, commerce blacklist songswap cos andy.
-Artificial computer graphicsgt modelinggt.
-Crm decade debt surged alarming pace likelihood recovering decreases.
-Creates seamless, consistent experience?
-Wqc webapps webdev webos wifi wiki wordpress, xhtml xml! Heard modern picked, millionth episodes fox, show entity comparable.
-Horse hybridyoga testface transplant. Wikipedia dowbload fdc cdownload sownload. Increased driven blurred line abstract patentable published reached tmcnetcoms. Hellip, nevis portfolio access shellip. Tramping campus snowstorm baking.
+Anhui Guofeng Plastic Industry Co., Lt
+
+
+We are Presently Looking for a Trust Worthy Representative that will act as a Payment Agent In the Us & Canada
+
+
+If Interested Send Us Your Full Contact Details for More Information.
+
+
+Regards.
+
+zhong
+
+
+
+
+
+- tracy
+
+
+------------=_1167174783-17101-693
+Content-Type: text/html; charset=iso-2022-jp
+Content-Disposition: inline
+
+<div style="border: DEFANGED_solid DEFANGED_1px #cccccc; width:448px; background-color:white; DEFANGED_margin:10px 0px;";><table border=0 cellspacing=0 cellpadding=0 width="448"><tr><td class="tablot" DEFANGED_background="http://i.yimg.jp/i/jp/pim/gr/gr_announce_1.gif" valign="center" height="57"><big DEFANGED_style="padding:10px;">新しいメールアドレスをお知らせします</big></td></tr></table><div DEFANGED_style="padding:10px;">新しいメールアドレス： <b>zhongg20002003@yahoo.co.jp</b><br><br><span DEFANGED_style="color:green;">Anhui Guofeng Plastic Industry Co., Lt<br><br><br>We are Presently Looking for a Trust Worthy Representative that will act as a Payment Agent In the Us & Canada<br><br><br>If Interested Send Us Your Full Contact Details for More Information.<br><br><br>Regards.<br><br>zhong<br><br><br><br></span><br><br>- <span DEFANGED_style="color:green;">tracy</span></div></div>
+------------=_1167174783-17101-693--
+
+--===============1172003587==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1172003587==--
