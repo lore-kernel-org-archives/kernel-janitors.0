@@ -1,52 +1,44 @@
-From: "Rosalie Connelly" <inoculationsyndromes@abgam.es>
-Date: Sat, 16 Dec 2006 20:40:38 +0000
-Subject: Rosalie
-Message-Id: <01c72170$9e7770b0$6c822ecf@inoculationsyndromes>
+From: "Hunter Mansfield" <pumpedChadwick@aalesund.toyota.no>
+Date: Wed, 27 Dec 2006 12:53:02 +0000
+Subject: [KJ] Hunter:Merry Christmas
+Message-Id: <01c729b3$fc21d930$6c822ecf@pumpedChadwick>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The hottest pick this year!=09
-=09
-It just doesn't get any better than this.  Booming sector, tightly held, wi=
-th =09
-an incredible PR blitz starting up.  Not only that, but the company is set =
-to =09
-release some smashing news.=09
-=09
-Physicians Adult Daycare, Inc.=09
-=09
-Symbol: PHYA=09
-Current Price:                         $1.90 (+18% Friday!)=09
-Short-Term Projected Price:  $4.25=09
-Long-Term Target Price:       $10.20=09
-=09
-As the population ages, the economic value in the US market for adult =09
-daycare is projected to grow nearly 600%.  Globally the potential market =09
-is a staggering $45 billion.=09
-=09
-PHYA is already hitting it big in the sector.  With solid acquisitions, =09
-expert management, and a red hot sector, PHYA is looking at record =09
-earnings.=09
-=09
-Check your favorite news source.  Check your Level 2 market data.  You =09
-will see that this one is set for an explosion.=09
-=09
-With the huge publicity that is on the way THIS is where you want to be.  	=
+Red Hot Opportunity!	
+	
+	
+BUSINESS WIRE (12/20/2006)--AlgoDyne Ethanol Energy Inc. is 	
+pleased to announce that it has been contacted by a consortium of Asian 	 	
+investors who have shown a strong interest in the Company's proprietary 	
+mico-algae-based (phytoplankton) process.	
+	
+Asian investors?  What's going to happen when this deal closes?  BOOM!	 
+		 
+BUSINESS WIRE (12/26/2006)--AlgoDyne Ethanol Energy Inc. is 	 
+pleased to announce that it is currently negotiating partnerships in the 	 
+Direct-Alcohol-Fuel-Cell (DAFC) field to provide a cutting-edge system.  	
+AlgoDyne's dedicated team of scientists have achieved significant 	 
+efficiency compared to existing DAFC designs and anticipate completing 	 
+a prototype very soon.	 
+	
+Exciting results and negotiations?  Straight UP!!!	
+	 
+Company:  ADYN	
+	
+Current Price:	
+Short Term Target:       $3.50	 
+Long Term Projected    $10.00	 	
+	 
+This is an amazing opportunity.  This company is like a slingshot, pulled 	 
+back and ready for launch.  The exciting patents are there, the investors 	 
+are there, deals are on the table!  Do yourself a favor and take a position 	
+BEFORE the deals close.  This is the only way to enjoy the BIG returns!	
 
-Make sure you get in early on December, 18th.  Win big with PHYA!=09
-
-
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys - and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
