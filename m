@@ -1,37 +1,28 @@
-From: Thomas Hisch <t.hisch@gmail.com>
-Date: Wed, 20 Dec 2006 18:25:03 +0000
-Subject: [KJ] [PATCH] Fixed a typing error in a sentence in fuse.txt
-Message-Id: <20061220182503.GB5696@unknown-00-0d-60-79-ca-00.lan>
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 28 Dec 2006 13:03:46 +0000
+Subject: Re: [KJ] [Alsa-devel] [PATCH][RESEND] usbaudio.c: remove unneeded
+Message-Id: <s5htzzgxjd9.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-removed a needless "is" in fuse.txt
+At Fri, 22 Dec 2006 10:45:04 -0800,
+John Daiker wrote:
+> 
+> Sorry for the mess up last time.  If things are fubar again, I'll try from a different mail client.
+> 
+> From: John Daiker <daikerjohn@gmail.com>
+> 
+> Went rummaging through usbaudio.c and found some castings that aren't needed as far as I can see.  Part of the KernelJanitors TODO list.
+> 
+> Signed-off-by: John Daiker <daikerjohn@gmail.com>
 
-Signed-off-by: Thomas Hisch <t.hisch@gmail.com>
----
- Documentation/filesystems/fuse.txt |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+Thanks, this time it's fine.  Applied to ALSA tree now.
 
-diff --git a/Documentation/filesystems/fuse.txt b/Documentation/filesystems/fuse.txt
-index 345392c..397a41a 100644
---- a/Documentation/filesystems/fuse.txt
-+++ b/Documentation/filesystems/fuse.txt
-@@ -94,8 +94,8 @@ Mount options
-   filesystem is free to implement it's access policy or leave it to
-   the underlying file access mechanism (e.g. in case of network
-   filesystems).  This option enables permission checking, restricting
--  access based on file mode.  This is option is usually useful
--  together with the 'allow_other' mount option.
-+  access based on file mode.  It is usually useful together with the
-+  'allow_other' mount option.
- 
- 'allow_other'
- 
--- 
-1.4.4.2
+
+Takashi
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
