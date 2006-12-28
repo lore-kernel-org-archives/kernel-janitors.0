@@ -1,110 +1,36 @@
-From: Florian Westphal <fw-kernel@strlen.de>
-Date: Sat, 02 Dec 2006 11:09:44 +0000
-Subject: [KJ] [patch] net/tipc: kmalloc/kzalloc conversion
-Message-Id: <20061202110944.GA15887@Chamillionaire.breakpoint.cc>
+From: "Samantha Staton" <Galatianspsalms@abv.bg>
+Date: Thu, 28 Dec 2006 20:44:41 +0000
+Subject: [KJ] Samantha Present
+Message-Id: <01c72abe$8f84b3e0$6c822ecf@Galatianspsalms>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net
+To: kernel-janitors@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+Start the New Year out Right!	
+	
+It is our mission to sift through hundreds of emerging companies in order 	 
+to bring our readers that micro-cap diamond that will put them on the road 	
+of financial independence.	
+	 
+In AlgoDyne Methanol Energy we have found a clear winner.  Do not 	
+miss this opportunity.  This one is going to start the year off with a bang!!!	
+	 	
+Company:  ADYN	 	
+	
+Current Price:           $1.32	
+Short Term Target:       $3.50	
+Long Term Projected    $10.00	
+	 	
+Check the recent news from this company.  They are in negotiations with 	 
+HUGE Asian investors.  They are forming partnerships with major players.  	
+They are developing some INCREDIBLE technology.  This is a company 	 
+on the move.	
+	
+And this is just the start.  Very soon we expect to see an incredible 	 
+revelation come out of this company.  The time is now.  Don't hesitate!	
 
-convert kmalloc/memset to kzalloc.
-
-Signed-off-by: Florian Westphal <fw@strlen.de>
-
----
-
-compile tested only.
-
-index 1bb7570..730c5c4 100644
---- a/net/tipc/bcast.c
-+++ b/net/tipc/bcast.c
-@@ -774,8 +774,8 @@ int tipc_bclink_set_queue_limits(u32 lim
- 
- int tipc_bclink_init(void)
- {
--	bcbearer = kmalloc(sizeof(*bcbearer), GFP_ATOMIC);
--	bclink = kmalloc(sizeof(*bclink), GFP_ATOMIC);
-+	bcbearer = kzalloc(sizeof(*bcbearer), GFP_ATOMIC);
-+	bclink = kzalloc(sizeof(*bclink), GFP_ATOMIC);
- 	if (!bcbearer || !bclink) {
-  nomem:
- 	 	warn("Multicast link creation failed, no memory\n");
-@@ -786,14 +786,12 @@ int tipc_bclink_init(void)
- 		return -ENOMEM;
- 	}
- 
--	memset(bcbearer, 0, sizeof(struct bcbearer));
- 	INIT_LIST_HEAD(&bcbearer->bearer.cong_links);
- 	bcbearer->bearer.media = &bcbearer->media;
- 	bcbearer->media.send_msg = tipc_bcbearer_send;
- 	sprintf(bcbearer->media.name, "tipc-multicast");
- 
- 	bcl = &bclink->link;
--	memset(bclink, 0, sizeof(struct bclink));
- 	INIT_LIST_HEAD(&bcl->waiting_ports);
- 	bcl->next_out_no = 1;
- 	spin_lock_init(&bclink->node.lock);
-index 049242e..2d3f486 100644
---- a/net/tipc/name_table.c
-+++ b/net/tipc/name_table.c
-@@ -1052,12 +1052,11 @@ int tipc_nametbl_init(void)
- {
- 	int array_size = sizeof(struct hlist_head) * tipc_nametbl_size;
- 
--	table.types = kmalloc(array_size, GFP_ATOMIC);
-+	table.types = kzalloc(array_size, GFP_ATOMIC);
- 	if (!table.types)
- 		return -ENOMEM;
- 
- 	write_lock_bh(&tipc_nametbl_lock);
--	memset(table.types, 0, array_size);
- 	table.local_publ_count = 0;
- 	write_unlock_bh(&tipc_nametbl_lock);
- 	return 0;
-index 886bda5..76c2abb 100644
---- a/net/tipc/node.c
-+++ b/net/tipc/node.c
-@@ -60,7 +60,7 @@ struct node *tipc_node_create(u32 addr)
- 	struct node *n_ptr;
-         struct node **curr_node;
- 
--	n_ptr = kmalloc(sizeof(*n_ptr),GFP_ATOMIC);
-+	n_ptr = kzalloc(sizeof(*n_ptr),GFP_ATOMIC);
- 	if (!n_ptr) {
- 		warn("Node creation failed, no memory\n");
- 		return NULL;
-@@ -75,7 +75,6 @@ struct node *tipc_node_create(u32 addr)
- 		return NULL;
- 	}
- 		
--	memset(n_ptr, 0, sizeof(*n_ptr));
- 	n_ptr->addr = addr;
-                 spin_lock_init(&n_ptr->lock);
- 	INIT_LIST_HEAD(&n_ptr->nsub);
-index 7a918f1..ddade73 100644
---- a/net/tipc/subscr.c
-+++ b/net/tipc/subscr.c
-@@ -350,7 +350,7 @@ static void subscr_subscribe(struct tipc
- 
- 	/* Allocate subscription object */
- 
--	sub = kmalloc(sizeof(*sub), GFP_ATOMIC);
-+	sub = kzalloc(sizeof(*sub), GFP_ATOMIC);
- 	if (!sub) {
- 		warn("Subscription rejected, no memory\n");
- 		subscr_terminate(subscriber);
-@@ -359,7 +359,6 @@ static void subscr_subscribe(struct tipc
- 
- 	/* Initialize subscription object */
- 
--	memset(sub, 0, sizeof(*sub));
- 	sub->seq.type = htohl(s->seq.type, subscriber->swap);
- 	sub->seq.lower = htohl(s->seq.lower, subscriber->swap);
- 	sub->seq.upper = htohl(s->seq.upper, subscriber->swap);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
