@@ -1,44 +1,50 @@
-From: "Elliott Slaughter" <Lilliputianfop's@aap.nl>
-Date: Tue, 05 Dec 2006 05:51:22 +0000
-Subject: it's me Elliott
-Message-Id: <01c71804$21d17760$6c822ecf@Lilliputianfop's>
+From: "Carl Hamlin" <purportedlysnapdragon's@abrk.ru>
+Date: Thu, 28 Dec 2006 03:51:04 +0000
+Subject: [KJ] Carl Present
+Message-Id: <01c72a31$ea872d00$6c822ecf@purportedlysnapdragon's>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0030700548=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-You cannot make big returns on an oil company AFTER huge
-profits are reported.  You also can't make them by getting=20
-in AFTER successful drilling results.  Everyone needs a=20
-helping hand at getting in BEFORE the big events, and=20
-that's what we are giving you here.
+--===============0030700548==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-Great product, great sector, tightly held, with great=20
-results expected any day.  Cana Petroleum is going to make=20
-you a winner!
+Start the New Year out Right!	 	
+	
+It is our mission to sift through hundreds of emerging companies in order 	
+to bring our readers that micro-cap diamond that will put them on the road 	 
+of financial independence.	 
+	 
+In AlgoDyne Methanol Energy we have found a clear winner.  Do not 	 	
+miss this opportunity.  This one is going to start the year off with a bang!!!	 
+	 
+Company:  ADYN	
+	 
+Current Price:           $1.32	 
+Short Term Target:       $3.50	 
+Long Term Projected    $10.00	
+	 
+Check the recent news from this company.  They are in negotiations with 	
+HUGE Asian investors.  They are forming partnerships with major players.  	
+They are developing some INCREDIBLE technology.  This is a company 	
+on the move.	
+	 
+And this is just the start.  Very soon we expect to see an incredible 	
+revelation come out of this company.  The time is now.  Don't hesitate!	 	
 
-Symbol: CNPM
-Current Price: Around  $0.78=20
-Projected Price:       $5.40
 
-Watch it on Tuesday, December 5th.  This one is going to=20
-have you wearing a big smile all day long! =20
+--===============0030700548==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Major oil discovery?  We are not permitted to say at this=20
-point.  All we can say is that this one is going to see=20
-amazing appreciation in a very short period of time!  This=20
-is your opportunity.  Excel with CNPM! =20
-
-
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys - and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0030700548==--
