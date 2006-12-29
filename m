@@ -1,50 +1,31 @@
-From: "Herman Mcelroy" <analyzersprogram@acdi-cida.gc.ca>
-Date: Thu, 28 Dec 2006 16:59:04 +0000
-Subject: [KJ] Herman Present
-Message-Id: <01c72a9e$b41346b0$6c822ecf@analyzersprogram>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1139268572=="
+From: "Kristy Frazier" <extremistsdaggers@abelscreen.com>
+Date: Fri, 29 Dec 2006 20:18:09 +0000
+Subject: [KJ] Happy NW Kristy
+Message-Id: <01c72b81$6dcee680$6c822ecf@extremistsdaggers>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1139268572==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
-
-Start the New Year out Right!	
+	An Alternative Energy Company ready to Blast off!!!
 	
-It is our mission to sift through hundreds of emerging companies in order 	
-to bring our readers that micro-cap diamond that will put them on the road 	 	
-of financial independence.	 
-	 
-In AlgoDyne Methanol Energy we have found a clear winner.  Do not 	 
-miss this opportunity.  This one is going to start the year off with a bang!!!	
-	 
-Company:  ADYN	 
+Company:  AlgoDyne Ethonol Energy Inc.  (ADYN)
 	
-Current Price:           $1.32	
-Short Term Target:       $3.50	
-Long Term Projected    $10.00	
-	 
-Check the recent news from this company.  They are in negotiations with 	 
-HUGE Asian investors.  They are forming partnerships with major players.  	
-They are developing some INCREDIBLE technology.  This is a company 	
-on the move.	 
+Current Price:               $1.3
+Short Term Target:       $3.50
+Long Term Projected    $10.00
 	
-And this is just the start.  Very soon we expect to see an incredible 	
-revelation come out of this company.  The time is now.  Don't hesitate!	
-
-
---===============1139268572==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	Alternative energy is a Red Hot sector right now and ADYN is a pioneer!  
+Check the news and you will see that at this very moment they are in 
+negotiations with major Asian investors.  They are also in negotiations for 
+partnerships for development of their amazing technology.
+	
+	Get in now while most investors are taking time off for the holidays!  
+After the new year this one will be of the charts!
+	
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1139268572==--
