@@ -1,24 +1,26 @@
-From: "Emil Wescott" <senecaa@mainpean.de>
-Date: Fri, 29 Dec 2006 20:10:04 +0000
+From: "Uzi Lemke" <keegai@vanklei.nl>
+Date: Fri, 29 Dec 2006 20:10:35 +0000
 Subject: Re: [KJ] my subduc
-Message-Id: <01c72b85$543f7c80$0101a8c0@RFID>
+Message-Id: <01c72b85$66604b60$0101a8c0@RFID>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_001F_01C72B5A.96D60D50"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c72b85$543f7c80$0101a8c0@RFID>
+In-Reply-To: <01c72b85$543f7c80$0101a8c0@RFID>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_001F_01C72B5A.96D60D50
 Content-Type: multipart/alternative;
-    boundary="----------=_1167423033-21212-77"
+    boundary="----------=_1167423045-21212-83"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1167423033-21212-77
+------------=_1167423045-21212-83
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -39,7 +41,7 @@ the fleeing audience.
 be strong, guys and girl, and self sufficient. Its a human jungle out
 to be ashamed of.
 
-------------=_1167423033-21212-77
+------------=_1167423045-21212-83
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -70,7 +72,7 @@ depressing myself sorely and did not want to pass it on to the</FONT></DIV>=
 IV><FONT face=3DArial size=3D2>be strong, guys and girl, and self sufficien=
 t. Its a human jungle out</FONT></DIV><DIV><FONT face=3DArial size=3D2>to b=
 e ashamed of.</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1167423033-21212-77--
+------------=_1167423045-21212-83--
 
 ------=_NextPart_000_001F_01C72B5A.96D60D50
 Content-Type: image/jpeg
