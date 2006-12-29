@@ -1,34 +1,29 @@
-From: "Hallie Dowdy" <honestyspecializes@accfle.nl>
-Date: Fri, 22 Dec 2006 19:45:15 +0000
-Subject: Re: [KJ] Dowdy Insider Information
-Message-Id: <01c725fc$ac7d0810$6c822ecf@honestyspecializes>
+From: "Leslie Simmons" <pier'sthumps@abraxas-uk.com>
+Date: Fri, 29 Dec 2006 17:46:17 +0000
+Subject: [KJ] Happy NW Leslie
+Message-Id: <01c72b6f$67f39790$6c822ecf@pier'sthumps>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Do not miss this chance!	
+	 An Alternative Energy Company ready to Blast off!!!
 	
-Physician Adult Daycare (PHYA) is getting ready to take off	.
-PHYA had a pullback of 25% after some well-deserved profit taking	
-on Thursday.  This means that YOU have an opportunity to get in	 
-while the price is low!	 	
-	 	
-Take a look at your favorite charts.  Check your level 2.  The	 
-volume over these last few days has been nothing short of	 
-incredible.  This one has gone from thinly traded to booming	!  
-	 	
-Trading at just over $1.50 cents, word is PHYA is about to	 	 
-announce news of major proportions.  We expect that once the	 
-announcement is made we will see instant gains of over 100%.  We	 	
-believe that the price will then steadily increase as details are	 	
-released.  Our target sell point is $4.50	.
-
-PHYA is where you want to be.  Get in early and ride it to the	 
-top!
-
-
+Company:  AlgoDyne Ethonol Energy Inc.  (ADYN)
+	
+Current Price:               $1.3
+Short Term Target:       $3.50
+Long Term Projected    $10.00
+	 
+	Alternative energy is a Red Hot sector right now and ADYN is a pioneer!  
+Check the news and you will see that at this very moment they are in 
+negotiations with major Asian investors.  They are also in negotiations for 
+partnerships for development of their amazing technology.
+	
+	 Get in now while most investors are taking time off for the holidays!  
+After the new year this one will be of the charts!
+	
 
 _______________________________________________
 Kernel-janitors mailing list
