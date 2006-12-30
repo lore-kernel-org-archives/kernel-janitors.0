@@ -1,24 +1,26 @@
-From: "Fonsie Forry" <roodzef@salesuniversity.com>
-Date: Sat, 30 Dec 2006 11:42:20 +0000
+From: "Hedvig Ritter" <rose@calfee.com>
+Date: Sat, 30 Dec 2006 11:42:23 +0000
 Subject: Re: [KJ] my enrolmen
-Message-Id: <01c72c07$90423600$650aa8c0@yournhidbtaxua>
+Message-Id: <01c72c07$92404ff0$650aa8c0@yournhidbtaxua>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_001F_01C72C52.B5A5F080"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c72c07$90423600$650aa8c0@yournhidbtaxua>
+In-Reply-To: <01c72c07$90423600$650aa8c0@yournhidbtaxua>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_001F_01C72C52.B5A5F080
 Content-Type: multipart/alternative;
-    boundary="----------=_1167479019-17474-576"
+    boundary="----------=_1167479085-17474-582"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1167479019-17474-576
+------------=_1167479085-17474-582
 Content-Type: text/plain;
 	charset="ks_c_5601-1987"
 Content-Transfer-Encoding: quoted-printable
@@ -38,7 +40,7 @@ Steengo spoke for all of us.
 you to undertake what can only be called a rather diligent and
 Sounds a paradise, she frowned.
 
-------------=_1167479019-17474-576
+------------=_1167479085-17474-582
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -69,7 +71,7 @@ l size=3D2>you!-play us a number!</FONT></DIV><DIV><FONT face=3DArial size=
 =3D2>you  to  undertake  what  can only be called  a  rather  diligent  and=
 </FONT></DIV><DIV><FONT face=3DArial size=3D2> Sounds a paradise, she frown=
 ed.</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1167479019-17474-576--
+------------=_1167479085-17474-582--
 
 ------=_NextPart_000_001F_01C72C52.B5A5F080
 Content-Type: image/jpeg
