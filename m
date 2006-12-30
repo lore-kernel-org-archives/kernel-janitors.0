@@ -1,41 +1,69 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Thu, 28 Dec 2006 15:49:04 +0000
-Subject: Re: [KJ] what is the flow of patch submissions to the KJ list?
-Message-Id: <20061228074904.988d4d71.rdunlap@xenotime.net>
+From: "=?ISO-8859-1?Q?Daniel_Marjam=E4ki?=" <daniel.marjamaki@gmail.com>
+Date: Sat, 30 Dec 2006 17:07:51 +0000
+Subject: [KJ] ok to replace with memcmp?
+Message-Id: <80ec54e90612300907k234d70bbsf36764dc87c43b9@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0612231301420.15621@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0612231301420.15621@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 23 Dec 2006 13:03:24 -0500 (EST) Robert P. J. Day wrote:
+Hello friends!
 
-> 
->   i'm curious as to the flow of patch submissions to this list.  if
-> one is just submitting things like typo fixes, things like that are
-> not really worth cluttering up the LKML.  but if they're submitted
-> here, by what path do they eventually work their way to the main tree?
+I believe it should be possible to replace the code below with memcmp.
+According to the comments, memcmp is not good in this case but I
+believe it is. The code compares the data in 'key1' and 'key2', and
+that is what memcmp is for. Do you have any comments?
 
-There's no formal answer to that.  Some subsystem maintainers
-pick up patches from this KJ mailing list (e.g., ALSA, USB, netdev),
-so it helps to cc: them on KJ patches.
+I haven't actually tested my change.
 
-For patches that are not picked up by another maintainer, the idea
-is to roll them into a KJ patchset, let that mature a bit, and then
-forward them either to their appropriate subsystem maintainer or
-to Andrew Morton or Linus for merging.
+Original code (net/core/flow.c):
+
+/* I hear what you're saying, use memcmp.  But memcmp cannot make
+ * important assumptions that we can here, such as alignment and
+ * constant size.
+ */
+static int flow_key_compare(struct flowi *key1, struct flowi *key2)
+{
+	flow_compare_t *k1, *k1_lim, *k2;
+	const int n_elem = sizeof(struct flowi) / sizeof(flow_compare_t);
+
+	if (sizeof(struct flowi) % sizeof(flow_compare_t))
+		flowi_is_missized();
+
+	k1 = (flow_compare_t *) key1;
+	k1_lim = k1 + n_elem;
+
+	k2 = (flow_compare_t *) key2;
+
+	do {
+		if (*k1++ != *k2++)
+			return 1;
+	} while (k1 < k1_lim);
+
+	return 0;
+}
 
 
->   is there a git repo just for the KJ tree?  or how does it work?
+Suggested code:
 
-MAINTAINERS file doesn't list a git repo or quilt patchset etc.,
-although AFAIK Alexey has been putting quilt patchsets at
-http://coderock.org/kj/
+static int flow_key_compare(struct flowi *key1, struct flowi *key2)
+{
+	if (sizeof(struct flowi) % sizeof(flow_compare_t))
+		flowi_is_missized();
 
----
-~Randy
+	/* Compare the elements in key1 and key2.
+	 * Number of elements to compare:
+	 *     n_elem = sizeof(flowi) / sizeof(flow_compare_t)
+	 * Number of bytes to compare:
+	 *     sz = n_elem * sizeof(flow_compare_t)
+	 */
+	return memcmp(key1, key2, (sizeof(struct flowi) /
+sizeof(flow_compare_t)) * sizeof(flow_compare_t));
+}
+
+Best regards,
+Daniel
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
