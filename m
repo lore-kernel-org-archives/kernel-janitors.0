@@ -1,58 +1,47 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 28 Jan 2007 07:17:26 +0000
-Subject: Re: [KJ] updating obsolete pci_find_* routines
-Message-Id: <Pine.LNX.4.64.0701280216390.29381@CPE00045a9c397f-CM001225dbafb6>
+From: "=?ISO-8859-1?Q?Daniel_Marjam=E4ki?=" <daniel.marjamaki@gmail.com>
+Date: Mon, 01 Jan 2007 07:47:48 +0000
+Subject: Re: [KJ] [PATCH] net/core/flow.c: compare data with memcmp
+Message-Id: <80ec54e90612312347w2b906e5eg725a7761110c6897@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701271925420.3864@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701271925420.3864@CPE00045a9c397f-CM001225dbafb6>
+References: <80ec54e90612310837y786fd764oc18bf37c8f0b2b8c@mail.gmail.com>
+	 <20061231.123715.115911390.davem@davemloft.net>
+In-Reply-To: <20061231.123715.115911390.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
 
-On Sat, 27 Jan 2007, Nishanth Aravamudan wrote:
+Hello!
 
-> On 27.01.2007 [19:27:56 -0500], Robert P. J. Day wrote:
-> >
-> >   From Documentation/pci.txt:
-> >
-> > 9. Obsolete functions
-> > ~~~~~~~~~~~~~~~~~~~~~
-> >
-> > There are several functions which you might come across when trying to
-> > port an old driver to the new PCI interface.  They are no longer
-> > present in the kernel as they aren't compatible with hotplug or PCI
-> > domains or having sane locking.
-> >
-> > pci_find_device()       Superseded by pci_get_device()
-> > pci_find_subsys()       Superseded by pci_get_subsys()
-> > pci_find_slot()         Superseded by pci_get_slot()
-> >
-> >   so these three changes would be simple text substitutions of the
-> >   routine names, would they?  the args have the same semantics and
-> >   everything?  just curious.
+So you mean that in this particular case it's faster with a handcoded
+comparison than memcmp? Because both key1 and key2 are located at
+word-aligned addresses?
+That's fascinating.
+
+Best regards,
+Daniel
+
+2006/12/31, David Miller <davem@davemloft.net>:
+> From: "Daniel_Marjam=E4ki" <daniel.marjamaki@gmail.com>
+> Date: Sun, 31 Dec 2006 17:37:05 +0100
 >
-> No, see the kernel-janitor archives.
+> > From: Daniel Marjam=E4ki
+> > This has been tested by me.
+> > Signed-off-by: Daniel Marjam=E4ki <daniel.marjamaki@gmail.com>
 >
-> Among other things, many drivers that still use pci_find_device()
-> probably should be reworked to use struct pci_driver semantics.
+> Please do not do this.
 >
-> And pci_get_device() requires a pci_dev_put() when the driver is done
-> with the struct pci_dev.
+> memcmp() cannot assume the alignment of the source and
+> destination buffers and thus will run more slowly than
+> that open-coded comparison.
+>
+> That code was done like that on purpose because it is
+> one of the most critical paths in the networking flow
+> cache lookup which runs for every IPSEC packet going
+> throught the system.
+>
 
-yes, i read more closely and noticed that shortly after posting.
-thanks.
-
-rday
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
