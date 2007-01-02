@@ -1,36 +1,41 @@
-From: "May Stewart" <contusion'stoleration@acaudit.com>
-Date: Mon, 15 Jan 2007 15:16:12 +0000
-Subject: [KJ] Placing graphics,
-Message-Id: <01c738d1$3ce37b50$6c822ecf@contusion'stoleration>
+From: "Rosario Lehman" <lazinginspection@abelko.se>
+Date: Tue, 02 Jan 2007 14:59:53 +0000
+Subject: [KJ] Happy NW Rosario
+Message-Id: <01c72e7c$ef75b6c0$6c822ecf@lazinginspection>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0572840961=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Harris Exploration Hits Gold!
+--===============0572840961==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-Inner sources from the survey site said that HXPN has made
-a big discovery.  Word is that results show a 12.5 gm/T
-rating on the property.  With onsite equipment afford to 
-process 100 tons a day it equates to yields of 1250 gm/day.
-At current market prices this would generate yearly revenues of over $10mil.
+	 Get in right after the New Year.  Those in the know have begun picking up	 
+shares before the big announcement.  This is your chance to get in while	
+there's still time!	 
 
-Taking into consideration both the size and the high soil
-ratings this gives HXPN a book value of roughly $5.00 which
-we have pegged as our target price.
 
-Harris Exploration
+	Physicians Adult Daycare Inc. (PHYA) is at $1.65  right now on solid 	
+volume.  Once the news is out we will see this one going to $4.00 in the 	 
+short-term with much higher gains in the long-term.	 
 
-Symbol: HXPN
-Last Value:     $1.62
-Sho rt Term Tar get:  $5.00
+	 Do not delay.  Read the recent news and you will see that PHYA is in a	
+booming sector with huge negotiations on the table.  Has the big 	
+we can say is that PHYA where you want to be!	
 
-This news will hit the street very soon and send this symbol
-to heaven.  We advise our readers to get in now and divest at
-the tar get price.Recomme\ndation: think
+
+
+--===============0572840961==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0572840961==--
