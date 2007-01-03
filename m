@@ -1,33 +1,29 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 27 Jan 2007 13:39:47 +0000
-Subject: [KJ] which gcc extensions are "approved"?
-Message-Id: <Pine.LNX.4.64.0701270837430.8494@CPE00045a9c397f-CM001225dbafb6>
+From: "Kaye Bonds" <acutesAvesta@abrera.faurecia.com>
+Date: Wed, 03 Jan 2007 04:50:06 +0000
+Subject: [KJ] Happy NW Kaye
+Message-Id: <01c72ef1$d6198060$6c822ecf@acutesAvesta>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+	Get in right after the New Year.  Those in the know have begun picking up	 
+shares before the big announcement.  This is your chance to get in while	
+there's still time!	 
 
-  following up on a dialogue we were having on LKML a while ago, which
-of the gcc extensions:
 
-http://gcc.gnu.org/onlinedocs/gcc-4.1.1/gcc/C-Extensions.html
 
-are kernel-approved?  certainly not all of them, as i know that
-C++-style comments are still frowned upon.  are any others
-discouraged?  thanks.
+	Physicians Adult Daycare Inc. (PHYA) is at $1.65  right now on solid 	
+volume.  Once the news is out we will see this one going to $4.00 in the 	
+short-term with much higher gains in the long-term.	
 
-rday
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+	Do not delay.  Read the recent news and you will see that PHYA is in a	
+booming sector with huge negotiations on the table.  Has the big 	
+we can say is that PHYA where you want to be!	
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
