@@ -1,7 +1,7 @@
-From: Arnaldo Carvalho de Melo <acme@mandriva.com>
-Date: Wed, 03 Jan 2007 12:08:19 +0000
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Wed, 03 Jan 2007 12:09:51 +0000
 Subject: Re: [KJ] a question about the patch application cycle
-Message-Id: <20070103120819.GB3995@mandriva.com>
+Message-Id: <9a8748490701030409h2b654898l6a43a9ad990960e4@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0701030634470.30039@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0701030634470.30039@localhost.localdomain>
@@ -10,21 +10,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, Jan 03, 2007 at 06:36:39AM -0500, Robert P. J. Day wrote:
-> 
+On 03/01/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
+>
 >   am i correct in assuming that, once the -rc cycle starts for the
 > kernel, only critical patches are applied, and non-critical (ie.,
-> cleanup) patches are held over until the new release?  which suggests
+> cleanup) patches are held over until the new release?
+
+That's more or less what usually, mostly, happens.  There are no hard
+rules written in stone, but the intention is that new stuff be merged
+before -rc1 and from then on it's stabilization time.  What happens in
+real life is often close to that but not always.
+
+> which suggests
 > that, once 2.6.20 comes out, there would normally be a flurry of those
-> cleanup patches applied to start the next cycle?  thanks.
+> cleanup patches applied to start the next cycle?
 
-Yes, that is right to assume, but there is no single rule for how each
-maintainer works, there are some, like David Miller, that creates trees
-for the next release, net-2.6.21 (this one didn't took place, but
-net-2.6.20 happened when 2.6.19-rc1 was the current rc tree) and would
-take most of the networking cleanups intended for the next non-rc phase.
+That's quite common, yes.
 
-- Arnaldo
+-- 
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
