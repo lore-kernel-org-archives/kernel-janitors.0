@@ -1,34 +1,37 @@
-From: "Jeanette Wheeler" <Wu'sharmonizing@accessventures.com>
-Date: Wed, 03 Jan 2007 14:43:43 +0000
-Subject: [KJ] Jeanette wrote:
-Message-Id: <01c72f40$898cb1a0$6c822ecf@Wu'sharmonizing>
+From: "Bradford Farrell" <strongestswampiest@abs-pos.com>
+Date: Thu, 04 Jan 2007 05:37:34 +0000
+Subject: Re: [KJ] Farrell
+Message-Id: <01c72fdb$94927d00$6c822ecf@strongestswampiest>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0035107402=="
+Content-Type: multipart/mixed; boundary="===============0063610246=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============0035107402==
+--===============0063610246==
 Content-Type: text/plain;
 	charset="windows-1250"
 Content-Transfer-Encoding: 7bit
 
-	Get in right after the New Year.  Those in the know have begun picking up	
-shares before the big announcement.  This is your chance to get in while	
-there's still time!	 
+	Critical Care & Chan International Kick Off Joint Marketing and Sales	
 
+Company : Critical Care Inc	
+Symbol : CTCX
+Price : 0.92
+3 Day Estimate : 3.50
+Status : S trong b u y. 
 
-	Physicians Adult Daycare Inc. (PHYA) is at $1.65  right now on solid 	
-volume.  Once the news is out we will see this one going to $4.00 in the 	
-short-term with much higher gains in the long-term.	
-
-
-	Do not delay.  Read the recent news and you will see that PHYA is in a	
-booming sector with huge negotiations on the table.  Has the big 	 
-we can say is that PHYA where you want to be!	 
+	The First steps of the merger between CTCX and Chan international are being kicked off as they open 2007 with the merging of the sales and marketing departments.  
+	These two companies are perfectly suited and CTCX's recent change in direction has excited investors and pushed share prices up leaps and bounds. 
+Watch for BlG NEWS all week long	
 
 
 
---===============0035107402==
+		Play SMART and make it wih us	
+		THIS ONE IS GONNA START YOUR TRADING YEAR OFF RIGHT!
+
+
+
+--===============0063610246==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -39,4 +42,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0035107402==--
+--===============0063610246==--
