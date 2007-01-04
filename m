@@ -1,49 +1,31 @@
-From: "Lee Vigil" <conveyorsdosed@aalen.de>
-Date: Tue, 16 Jan 2007 09:45:32 +0000
-Subject: [KJ] With an option for
-Message-Id: <01c73962$270cd880$6c822ecf@conveyorsdosed>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0338631330=="
+From: "Eunice Bledsoe" <appenddomesticating@abfmarketing.co.uk>
+Date: Thu, 04 Jan 2007 08:55:10 +0000
+Subject: Re: [KJ] Bledsoe
+Message-Id: <01c72fd9$031c3f20$6c822ecf@appenddomesticating>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0338631330==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+	Critical Care & Chan International Kick Off Joint Marketing and Sales.
 
-Harris Exploration Hits Gold!
+Company : Critical Care Inc	
+Symbol : CTCX
+Price : 0.92
+3 Day Estimate : 3.50
+Status : S trong b u y. 
 
-Inside origin from the survey site said that HXPN has made
-a big discovery.  Word is that results show a 12.5 gm/T
-rating on the property.  With onsite equipment able to 
-process 100 tons a day it equates to yields of 1250 gm/day.
-At current market prices this would generate yearly revenues of over $10mil.
-
-Taking into attention both the size and the high soil
-ratings this gives Harris Exploration a book value of roughly $5.00 which
-we have pegged as our target price.
-
-Harris Exploration
-
-Sym: HXPN
-Last Price:     $1.62
-Sho rt Term Tar get:  $5.00
-
-This news will hit the street very soon and send this issue
-to heaven.  We advise our readers to get in now and divest at
-the tar get price.Recomme\ndation: think
+	The First steps of the merger between CTCX and Chan international are being kicked off as they open 2007 with the merging of the sales and marketing departments	
+	These two companies are perfectly suited and CTCX's recent change in direction has excited investors and pushed share prices up leaps and bounds.
+Watch for BlG NEWS all week long. 
 
 
---===============0338631330==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+		 Play SMART and make it wih us.    
+		 THIS ONE IS GONNA START YOUR TRADING YEAR OFF RIGHT. 
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0338631330==--
