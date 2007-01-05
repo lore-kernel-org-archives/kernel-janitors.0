@@ -1,64 +1,40 @@
-From: "Sicurezza" <qxwmxbnpcw@shawcable.net>
-Date: Wed, 31 Jan 2007 02:39:14 +0000
-Subject: [KJ] Aggressive Investors Alert
-Message-Id: <499BB65D8CC452C.DAA8891E06@shawcable.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_01C7451B.AB3B1D00"
+From: "Chad Addison" <fetishismchummiest@abrazive.spb.ru>
+Date: Fri, 05 Jan 2007 15:02:37 +0000
+Subject: [KJ] Chad wrote:
+Message-Id: <01c730da$89fc5e10$6c822ecf@fetishismchummiest>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Get the New Year Rolling Right!
 
-------=_NextPart_000_0002_01C7451B.AB3B1D00
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Company: PHYA	
+Current Price: $1.70	
+Target Price: $4.00	
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2912" name=3D"GENERATOR">
-</HEAD>
-<BODY>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>HOT ALERT - THIS ONE IS ST=
-ILL CLIMBING CHARTS</B></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><I>WATCH THIS ONE GO HIGHER A=
-ND HIGHER!</I></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Company Name: <B>PetroSun</B>=
- </FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Lookup: <B>PSUD</B> </FONT></=
-DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Price Currently: <B>$0.81 (+0=
-.01 Close) 1.3%</B></FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>3 Day Target: <B>$2.00</B></F=
-ONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Expected Target: <B>$1.50</B>=
-</FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>01/11/07</FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>PetroSun, Incorporated (PKSHE=
-ETS: PSUD) announced agreements have been carried out with New Standard Exp=
-loration NL of West Perth, AU covering Exploration Permit 417 located withi=
-n Canning Basin of Western AU.</FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>01/08/07</FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>PetroSun, Incorporated (PKSHE=
-ETS: PSUD) announced today that the company has completed the acquisition o=
-f all of the member units of 1031 Energy, LLC of Denver, Colorado.</FONT></=
-DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><I><b>**Go read *all* the New=
-s Releases now and keep an eye out daily**</b></I></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B><U>WATCH IT WEDNESDAY AT T=
-HE OPEN!<U></B></FONT></DIV><BR></BODY></HTML>
+	Physicians Adult Daycare (PHYA) is set up for huge returns.	
+This news is hot off the press and going to have a huge impact over the coming days:	
+	Physicians Adult Daycare, Inc. to Increase Revenue by 83%! ! 
 
-------=_NextPart_000_0002_01C7451B.AB3B1D00
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+	HOUSTON, TX--(MARKET WIRE)--Jan 3, 2007 -- Physicians Adult	
+Daycare, Inc. announced today that an agreement to purchase an	
+additional adult daycare company has been executed	
+
+
+	 Go to your favorite financial news source to read the details.	
+While there also read about the big negotiations going on with major Asian investors.	
+Further acquisitions are in the works and we are expecting a huge	 
+revelation to come out of the company any day. 
+
+
+
+	 All of these fortuitous events are coming together and sending this one 
+straight up!  Don't miss it	
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------=_NextPart_000_0002_01C7451B.AB3B1D00--
