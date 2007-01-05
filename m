@@ -1,28 +1,36 @@
-From: "Araceli Mathis" <hatternewsprint's@abraxas-uk.com>
-Date: Mon, 29 Jan 2007 16:38:56 +0000
-Subject: [KJ] fw:Araceli Getting HOT
-Message-Id: <01c743be$f10321b0$6c822ecf@hatternewsprint's>
+From: "Maura Cherry" <heterosexual'smalts@abc-info.fr>
+Date: Fri, 05 Jan 2007 06:42:46 +0000
+Subject: [KJ] Maura wrote:
+Message-Id: <01c73094$a08b3840$6c822ecf@heterosexual'smalts>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Warning alarm this incredible unbelievable opportunity possibility to make our profits.
-I have heard something huge will occur on todays morning with thet one.
+Get the New Year Rolling Right.
 
-Nice start for today.
-It's going to be HOT one. 
-Bid rised already...
+Company: PHYA	
+Current Price: $1.70	
+Target Price: $4.00	
 
-Everyone buyg and for waiting company news.
-Look at lvl2 and volume.
-
-
-it probaly break .08 mark witout problems today. Jump in.
-NMXC will make our profits.
+	 Physicians Adult Daycare (PHYA) is set up for huge returns.	
+This news is hot off the press and going to have a huge impact over the coming days:	 
+	 Physicians Adult Daycare, Inc. to Increase Revenue by 83%.
 
 
+	HOUSTON, TX--(MARKET WIRE)--Jan 3, 2007 -- Physicians Adult	
+Daycare, Inc. announced today that an agreement to purchase an	 
+additional adult daycare company has been executed.
+
+	Go to your favorite financial news source to read the details.	
+While there also read about the big negotiations going on with major Asian investors.	 
+Further acquisitions are in the works and we are expecting a huge	
+revelation to come out of the company any day.    
+
+
+	 All of these fortuitous events are coming together and sending this one 
+straight up!  Don't miss it!
 
 
 _______________________________________________
