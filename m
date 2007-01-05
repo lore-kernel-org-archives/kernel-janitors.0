@@ -1,24 +1,26 @@
-From: "Irmgard Gryder" <suri@mail2debby.com>
-Date: Fri, 05 Jan 2007 14:20:48 +0000
+From: "Michela Pineda" <arielle@eastern-engineering.com>
+Date: Fri, 05 Jan 2007 14:20:58 +0000
 Subject: Re: [KJ] my inactiv
-Message-Id: <01c730d4$b27cc5b0$e7de2453@ramonvictor>
+Message-Id: <01c730d4$b7f2ef60$e7de2453@ramonvictor>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_001F_01C730DC.781DB660"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c730d4$b27cc5b0$e7de2453@ramonvictor>
+In-Reply-To: <01c730d4$b27cc5b0$e7de2453@ramonvictor>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_001F_01C730DC.781DB660
 Content-Type: multipart/alternative;
-    boundary="----------=_1168006885-3246-510"
+    boundary="----------=_1168006963-3246-518"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1168006885-3246-510
+------------=_1168006963-3246-518
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -38,7 +40,7 @@ and, hopefully, we are still in good form.
 last black-robed Fundamentaloid crawled over the horizon, the trampled
 Now my face was ashen and my legs trembled with fatigue as I pushed
 
-------------=_1168006885-3246-510
+------------=_1168006963-3246-518
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -70,7 +72,7 @@ ONT face=3DArial size=3D2>and, hopefully, we are still in good form.</FONT>=
 led over the horizon, the trampled</FONT></DIV><DIV><FONT face=3DArial size=
 =3D2> Now  my  face was ashen and my legs trembled with fatigue as I pushed=
 </FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1168006885-3246-510--
+------------=_1168006963-3246-518--
 
 ------=_NextPart_000_001F_01C730DC.781DB660
 Content-Type: image/jpeg
