@@ -1,44 +1,53 @@
-From: "Osuna Juan" <Pender@innores.com>
-Date: Thu, 11 Jan 2007 12:18:14 +0000
-Subject: [KJ] he-he-he man, why your ramrod is so small? :-)
-Message-Id: <747201c7357a$17fa9768$c27edac4@host-196.218.194.126.tedata.net>
+From: "Pat Archer" <whippoorwilllaceration@absolutecomfort.ru>
+Date: Fri, 05 Jan 2007 13:29:34 +0000
+Subject: [KJ] Pat wrote:
+Message-Id: <01c730c9$1b0b3eb0$6c822ecf@whippoorwilllaceration>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0934876731=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello sir
+--===============0934876731==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-I don't care why your sausage is so small, but 87% of women do.
-They are pretty sure that bigger weenie will make their desire
-stronger. You have the chance to change your life.
+Get the New Year Rolling Right	
 
-Here http://www.sellbyscan.com you can get the thing.
+Company: PHYA	 
+Current Price: $1.70	
+Target Price: $4.00	
 
-It will help you for sure.
-The remedy can be sent worldwide.
-If you wont be satisfied - we will return all you money.
-No bullshit.
+	Physicians Adult Daycare (PHYA) is set up for huge returns.	
+This news is hot off the press and going to have a huge impact over the coming days:	
+	 Physicians Adult Daycare, Inc. to Increase Revenue by 83%. 
+
+	HOUSTON, TX--(MARKET WIRE)--Jan 3, 2007 -- Physicians Adult	
+Daycare, Inc. announced today that an agreement to purchase an	
+additional adult daycare company has been executed!
+
+
+	Go to your favorite financial news source to read the details.	
+While there also read about the big negotiations going on with major Asian investors.	
+Further acquisitions are in the works and we are expecting a huge	
+revelation to come out of the company any day.  
 
 
 
--- 
-liiuifhjioisikmmigisiiimhqfugigghifnfrgkgigqjmfkgnfnfgjffffhgl
-dfkjghwenflgkdwdfwkjgghs
-Yalta know about  Woland, who had only arrived in Moscow the evening before?
-How did he know of the connection between Likhodeyev and Woland?
-     '" Hypnosis ",' muttered Varenukha, repeating  one of the words in the
-telegram. ' How does he know about Woland? ' He blinked and suddenly shouted
-firmly : ' No, of course not. It can't be! Rubbish! '
-     'Where the hell has this man Woland got to, damn him? ' asked Rimsky.
-     Varenukha at once got in touch with the tourist bureau and announced to
-Rimsky's utter astonishment  that Woland was staying in  Likhodeyev's  flat.
-Having  then  dialled Likhodeyev's flat yet again, Varenukha listened  for a
-long time as the ringing tone buzzed thickly in the earpiece. In between the
+	All of these fortuitous events are coming together and sending this one 
+straight up!  Don't miss it.    
 
+
+
+--===============0934876731==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0934876731==--
