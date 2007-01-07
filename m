@@ -1,40 +1,28 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 07 Jan 2007 20:24:41 +0000
-Subject: [KJ] ruminations on kernel.h
-Message-Id: <Pine.LNX.4.64.0701071524240.14075@localhost.localdomain>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sun, 07 Jan 2007 20:47:29 +0000
+Subject: Re: [KJ] ruminations on kernel.h
+Message-Id: <20070107204729.GQ24620@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0701071524240.14075@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0701071524240.14075@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Sun, Jan 07, 2007 at 03:24:41PM -0500, Robert P. J. Day wrote:
+>   the various utility macros (ARRAY_SIZE, FIELD_SIZE, min/max,
+> container_of, etc.) might fit better into a file called macros.h or
+> util.h.
+> 
+>   then there's all the debugging/logging stuff -- the priority macros,
+> loglevel stuff, pr_debug, pr_info, etc.  why not a new file called
+> "debug.h"?
+> 
+>   anyway, you get the idea.  there doesn't seem to be much rhyme or
+> reason for what has been tossed into kernel.h.
 
-  just thinking out loud here, but does anyone else think that the
-header file include/linux/kernel.h is a little ... unstructured?
-IMHO, i would think that it would make more sense to partition a lot
-of the content of that file into other (and possibly newer) header
-files.
-
-  to begin with, all of the preliminary macros of the form
-{INT/LONG_MIN/MAX} would seem to be more at home in limits.h, to more
-match the headers for glibc.  (yes, i realize there's no *obligation*
-to do it the way glibc does it, but it would at least look more
-familiar to userspace programmers.)
-
-  the various utility macros (ARRAY_SIZE, FIELD_SIZE, min/max,
-container_of, etc.) might fit better into a file called macros.h or
-util.h.
-
-  then there's all the debugging/logging stuff -- the priority macros,
-loglevel stuff, pr_debug, pr_info, etc.  why not a new file called
-"debug.h"?
-
-  anyway, you get the idea.  there doesn't seem to be much rhyme or
-reason for what has been tossed into kernel.h.
-
-  thoughts?  i might whip up a patch just to get some feedback.
-
-rday
+Well, kernel.h really is misc.h or util.h ;-)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
