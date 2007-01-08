@@ -1,24 +1,26 @@
-From: "Harlan Paton" <domiu@paceco.com>
-Date: Mon, 08 Jan 2007 19:03:38 +0000
+From: "Alfredo Seymore" <zawo@nachon.nl>
+Date: Mon, 08 Jan 2007 19:06:43 +0000
 Subject: Re: [KJ] my profoundnes
-Message-Id: <01c73356$9180a640$b700a8c0@catalina>
+Message-Id: <01c73356$819d4440$b700a8c0@catalina>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_00D3_01C7333C.20F2B5E0"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73356$9180a640$b700a8c0@catalina>
+In-Reply-To: <01c73356$9180a640$b700a8c0@catalina>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_00D3_01C7333C.20F2B5E0
 Content-Type: multipart/alternative;
-    boundary="----------=_1168282673-29903-663"
+    boundary="----------=_1168282573-29903-633"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1168282673-29903-663
+------------=_1168282573-29903-633
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -39,7 +41,7 @@ Blue world -
 No women, Steengo said. And we cant even talk about them.
 and stepped out into the mud. He had his arms out, fingers snapping,
 
-------------=_1168282673-29903-663
+------------=_1168282573-29903-633
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -72,7 +74,7 @@ ormation to temporal aborigines.</FONT></DIV><DIV><FONT face=3DArial size=
 Steengo said. And we cant even talk about them.</FONT></DIV><DIV><FONT face=
 =3DArial size=3D2>and  stepped out into the mud. He had his arms out, finge=
 rs  snapping,</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1168282673-29903-663--
+------------=_1168282573-29903-633--
 
 ------=_NextPart_000_00D3_01C7333C.20F2B5E0
 Content-Type: image/jpeg
