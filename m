@@ -1,45 +1,44 @@
-From: "Stacy Lundy" <provisioningdeft@aamc.org>
-Date: Tue, 16 Jan 2007 07:31:48 +0000
-Subject: [KJ] Madonna defends Rosie
-Message-Id: <01c7393b$5a604220$6c822ecf@provisioningdeft>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1305088142=="
+From: "Corona Mike" <Suttinun@monkeythings.com>
+Date: Tue, 09 Jan 2007 15:28:36 +0000
+Subject: [KJ] You think you have enough size?
+Message-Id: <2c1501c73402$1a51eaba$882b8959@barton>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1305088142==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+The Most Potent Male Muscle Boosting System!
 
-IS MOMENTUM BUILDING FOR THIS STOCK? IS IT READY TO MOVE?
-GO LOOK AT THE CHART RIGHT NOW!
+The better and most powerful product to enlarge your schlong
+available on the market!
 
+This products tested, analyzed and approved by doctors.
 
-Sy mbol: SFWJ
-On: PinkSheets
-5-Days Target: $2.50
-Long Term Target: $9.50
+Order Our Product NOW! 
 
-Exposure of there technology to the market has generated a great deal of interest
-and word on the street is that they are preparing a announcment concerning several
-large contracts with major providers, giving them a 
-huge competative jump in the market.
+You can do it here: http://edhhomevalues.com
+
+P.S.: If it doesn't work for you, we garantee 100% of your money back!
 
 
-IS MOMENTUM BUILDING FOR THIS STOCK? IS IT READY TO MOVE?
-GO LOOK AT THE CHART RIGHT NOW! 
 
+-- 
+fqkmknjrkghkhsluhohkhqhuiihmiqiofqhfhjisiqhimuishfifiomninhpit
+skldfjgdlsfkgjereriotuw
+before now! Now tell me what I can do for you.'
+     'Yesterday you did some tricks . . .'
+     'I did? Tricks?  ' exclaimed  the  magician indignantly. '  I beg your
+pardon! What a rude suggestion! '
+     'I'm sorry,' said the barman in  consternation. ' I  mean . .  . black
+magic ... at the theatre.'
+     'Oh, that! Yes, of course. I'll tell you a secret, my dear fellow. I'm
+not  really  a magician  at all. I simply  wanted to see some  Muscovites en
+masse and the easiest way to do so was in a theatre. So my staff'--he nodded
+towards  the cat--'arranged  this little  act  and I  just  sat on stage and
 
---===============1305088142==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1305088142==--
