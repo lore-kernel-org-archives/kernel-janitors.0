@@ -1,24 +1,26 @@
-From: "Rolan Umland" <lauree@capgemini.fr>
-Date: Tue, 09 Jan 2007 20:05:09 +0000
+From: "Arianna Reis" <otaimotta@hanna-advertising.com>
+Date: Tue, 09 Jan 2007 20:05:14 +0000
 Subject: Re: [KJ] my volcani
-Message-Id: <01c73429$769de030$0201a8c0@your447023ae6b>
+Message-Id: <01c73429$79de1710$0201a8c0@your447023ae6b>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_0079_01C73428.F974DC30"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73429$769de030$0201a8c0@your447023ae6b>
+In-Reply-To: <01c73429$769de030$0201a8c0@your447023ae6b>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_0079_01C73428.F974DC30
 Content-Type: multipart/alternative;
-    boundary="----------=_1168373247-3290-462"
+    boundary="----------=_1168373202-3290-450"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1168373247-3290-462
+------------=_1168373202-3290-450
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -37,7 +39,7 @@ Miniaturized Personal Satellite Communicator. I suggest that you clamp
 Slowly at first, then louder and jollier, they clapped until I lifted
 gargantuan hooter thundered through the walls. I did not tell myself
 
-------------=_1168373247-3290-462
+------------=_1168373202-3290-450
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -69,7 +71,7 @@ FONT face=3DArial size=3D2> Slowly at first, then louder and jollier, they =
 clapped until I lifted</FONT></DIV><DIV><FONT face=3DArial size=3D2>gargant=
 uan  hooter thundered through the walls. I did not tell  myself</FONT></DIV=
 ></FONT></DIV></BODY></HTML>
-------------=_1168373247-3290-462--
+------------=_1168373202-3290-450--
 
 ------=_NextPart_000_0079_01C73428.F974DC30
 Content-Type: image/jpeg
