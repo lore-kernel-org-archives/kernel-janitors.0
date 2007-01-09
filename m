@@ -1,7 +1,7 @@
-From: Arnaldo Carvalho de Melo <acme@mandriva.com>
-Date: Tue, 09 Jan 2007 20:03:28 +0000
+From: Martin Olsen <triplefault@gmail.com>
+Date: Tue, 09 Jan 2007 22:41:15 +0000
 Subject: Re: [KJ] powers of 2, and the boundary case of zero
-Message-Id: <20070109200327.GH4923@mandriva.com>
+Message-Id: <200701092341.15941.triplefault@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0701090539520.7476@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0701090539520.7476@localhost.localdomain>
@@ -10,49 +10,15 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jan 09, 2007 at 01:57:19PM -0500, Robert P. J. Day wrote:
-> On Tue, 9 Jan 2007, Randy Dunlap wrote:
-> 
-> > On Tue, 9 Jan 2007 11:16:50 -0500 (EST) Robert P. J. Day wrote:
-> >
-> > > On Wed, 10 Jan 2007, Darren Jenkins wrote:
-> > >
-> > > > > Robert P. J. Day wrote:
-> > > >
-> > > > > i would disagree.  as i wrote just a bit earlier, i think the
-> > > > > fundamental definition of a power of 2 should *not* include zero,
-> > > > > because of both mathematical and source code precedent.
-> > > > >
-> > > > > if anything, i would propose something like:
-> > > > >
-> > > > > #define IS_POWER_OF_2(x)                (x != 0 && ((x & (x - 1)) = 0))
-> > > > > #define IS_POWER_OF_2_OR_ZERO(x)        (IS_POWER_OF_2(x) || x = 0)
-> > > >
-> > > > Hmm mathematically you are right, so I guess that this naming would
-> > > > be better.
-> > >
-> > > just for some final entertainment value, i googled on the notion of
-> > > testing for power-of-2ness in C, and found the following:
-> > >
-> > >   http://www.parashift.com/c++-faq-lite/intrinsic-types.html#faq-26.12
-> > >
-> > > so that seems to finalize the rule that zero is not considered a power
-> > > of two.  now if someone wants to propose an initial power-of-2.h
-> > > header file with the appropriate routines, we can argue about *that*.
-> > > :-)
-> >
-> > Looks like using an inline function would be safer and probably
-> > more in the current vogue.
-> 
-> agreed.  and, as i wrote earlier, i'd like to see this stuff in its
-> own header file in include/linux, and not dumped into kernel.h to make
-> that file even more chaotic than it already is.
-> 
+On Tuesday 09 January 2007 19:57, Robert P. J. Day wrote:
 > so ... who's up for it?
 
-You? Step up! :-) I'd gladly sign-off it
+I'd love to take a crack on this.
 
-- arnaldo
+I have yet to submit my first patch to The Kernel so if anyone would like to 
+support me while doing this it would be great.
+
+Martin
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
