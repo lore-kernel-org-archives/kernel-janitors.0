@@ -1,311 +1,40 @@
-From: "Fancy Runnels" <chan@mailbox.swipnet.se>
-Date: Tue, 16 Jan 2007 10:16:41 +0000
-Subject: Re: [KJ] my dicke
-Message-Id: <01c73957$6a64d700$d0aa653e@jose>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0097_01C7395E.7BCDEA70"
+From: "Rev. Timmy Christian" <revtim@paymgen.org>
+Date: Wed, 10 Jan 2007 21:34:06 +0000
+Subject: [KJ] Your Awaiting Payment.
+Message-Id: <1130384585.13653@paypal.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c73957$63f2e830$d0aa653e@jose>
-In-Reply-To: <01c73957$63f2e830$d0aa653e@jose>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Attn: Beneficiary.
 
-------=_NextPart_000_0097_01C7395E.7BCDEA70
-Content-Type: multipart/alternative;
-    boundary="----------=_1168942710-25870-315"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+I am Rev. Timmy Christian  the pay master general of the federation and also special adviser to the President of Federal Republic of Nigeria on contract and inheritance matters.I am delighted to inform you that the contract panel, which just concluded it's seating in Abuja just released your name amongst the people to benefit from the Diplomatic Immunity Payment.This Panel was primarily delegated to investigate manipulated contract and inheritance claims and over-invoiced payment as the effect has eaten deep into the economy of our dear country.
 
-This is a multi-part message in MIME format...
+However, we wish to bring to your notice that you
+contract/inheritance profile is still reflecting in our central computer as unpaid fund while auditing was going
+on.Your file was forwarded to my office by the auditors as unclaimed fund, we wish to use this medium to inform you that for the time being Federal Government of Nigeria
+have stopped further payment through bank to bank transfer due to numerous petitions to United Nations against Nigeria on wrong payment and diversion of funds to different account. 
 
-------------=_1168942710-25870-315
-Content-Type: text/plain;
-	charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+In this regards we are going to send your part payment of $US5Million to you via courier service and I have secured every needed documents to cover the money. Note that the money is coming in 2 security proof boxes. The boxes are sealed with synthetic nylon seal and padded with machine. This fund was brought to us from America; it was meant for our Local AFEM market. But since the money was not used, I will use my position as the National Security Adviser to the President to send this fund to you.Therefore, you must send your detailed information by email to input your name and address in our payment data and amount paid. 
+ 
+Please you don't have to worry about anything, as the transaction is 100% risk free.The boxes are coming with a diplomatic agent who will accompany the boxes to your home address.The Diplomatic attach? will travel with it.He will call you immediately he arrives your country's airport.I hope you do understand me.
+ 
+Note: The diplomat does not know the original contents of the two boxes. What l declared to them as the contents is Sensitive Photographic Film Material. 
 
-No, no-not that! an ,elderly scientist cackled. Then shut up and
+I did not declare money to them please. If they call you and ask you the contents please tell them the same thing ok. Call me on my phone +234-1-8988508 and send me an email so I will let you know how far i have gone with the arrangement. I will secure the Diplomatic immunity clearance certificate that will be tagged on the boxes to make it stand as a diplomatic consignment. This clearance will make it pass every customs checkpoint all over the world without hitch and immediately they arrive they will call you at your country airport for you to give them little assistance to get the two boxes cleared from the custom this is the only obligation you owe in the transition and as soon as they clear the consignment it will be delivered to you at your door step.   
 
-Re: my dicke=20
-Doing what?
-arent retired. Right?
-inside. I opened it a crack and looked at the empty room beyond.
-Not important, I told him, jerking my thumb towards the strolling
-there to the deadline?
-their bondage. You will find that Mata will be able to advise you on
-Slipped past Floyds immobile body.
-Do it, daddy-o, do it. Ive got the gilt. He blinked and I
-Nothing less.
-that manner and assumed it was the local dialect.
-Just an office drudge-singing for a hobby.
+Please your urgent attention is needed before departure of the diplomats.
 
-------------=_1168942710-25870-315
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Best Regards,
+ 
+Rev. Timmy Christian.
+D/L: +234-1-8988508
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dus-ascii">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2> No,  no-=
-not that! an ,elderly scientist cackled. Then shut  up  and</FONT></DIV></F=
-ONT></DIV>
-<DIV><IMG DEFANGED_src=3D"cid:000b01c73956$1a073880@LocalHost"></DIV>
 
-<DIV><FONT face=3DArial size=3D2><DIV><FONT face=3DArial size=3D2> Doing wh=
-at?</FONT></DIV><DIV><FONT face=3DArial size=3D2>arent retired. Right?</FON=
-T></DIV><DIV><FONT face=3DArial size=3D2>inside.  I  opened  it a crack and=
- looked at the  empty  room  beyond.</FONT></DIV><DIV><FONT face=3DArial si=
-ze=3D2> Not  important, I told him, jerking my thumb towards the  strolling=
-</FONT></DIV><DIV><FONT face=3DArial size=3D2>there to the deadline?</FONT>=
-</DIV><DIV><FONT face=3DArial size=3D2>their  bondage. You will find that M=
-ata will be able to advise you  on</FONT></DIV><DIV><FONT face=3DArial size=
-=3D2> Slipped past Floyds immobile body.</FONT></DIV><DIV><FONT face=3DAria=
-l size=3D2> Do  it,  daddy-o,  do  it.  Ive got the gilt.  He  blinked  and=
-  I</FONT></DIV><DIV><FONT face=3DArial size=3D2> Nothing less.</FONT></DIV=
-><DIV><FONT face=3DArial size=3D2>that manner and assumed it was the local =
-dialect.</FONT></DIV><DIV><FONT face=3DArial size=3D2> Just an office drudg=
-e-singing for a hobby.</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1168942710-25870-315--
-
-------=_NextPart_000_0097_01C7395E.7BCDEA70
-Content-Type: image/jpeg
-Content-Transfer-Encoding: base64
-Content-ID: <000b01c73956$1a073880@LocalHost>
-Content-Disposition: inline
-
-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
-
-------=_NextPart_000_0097_01C7395E.7BCDEA70
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------=_NextPart_000_0097_01C7395E.7BCDEA70--
