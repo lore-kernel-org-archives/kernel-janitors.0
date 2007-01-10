@@ -1,27 +1,37 @@
-From: "Barlaam Lapan" <sledgeaghis@pbimail.com>
-Date: Mon, 22 Jan 2007 15:28:34 +0000
-Subject: Re: [KJ] now overaw
-Message-Id: <01c73e39$fadb6a10$2d02a8c0@yonaidan40cmd1>
+From: "Dr.Mark Ford."  <drmarkford141@yahoo.com>
+Date: Wed, 10 Jan 2007 11:43:17 +0000
+Subject: [KJ] Investment Proposal.
+Message-Id: <200701101143.l0ABhH529260@sky1.skywebhosting.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c73e39$f8f4f6d0$2d02a8c0@yonaidan40cmd1>
-In-Reply-To: <01c73e39$f8f4f6d0$2d02a8c0@yonaidan40cmd1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+From The Desk Of Dr Mark Ford 
+MD/CEO Financial Consultant, 
+E-mail: drmarkford141@yahoo.com
+Phone: + 234-805-805-3878.
 
-When you need it now VIAxxGRA ( from $3, 35 )
-When you need it later CIAxxLIS ( from $3, 35 )
+Attn:Sir/Madam,
+
+I have interest of investing in your country as such I decided to establish contact with you for assistance as soon as I am able to transfer my funds for this investment, which is already with a security company in Europe. There are two basic things i would want you to assist me in:
  
-http://www.fod*rx.com
-( remove "*" from the domain name )
+(1) Helping me as a front to collect these consignment/funds from the security company in Europe. This is because of my inability to travel out of the country which i am taking refuge at the moment with my wife and children which i will explain better to you upon the receipt of your acceptance. 
+ 
+(2) Helping me to carry out feasibility study on areas/choice of investment you deem best for me. I retired as financial consultant and was the last personal financial adviser to the ex- head of state before his demise and have no intention of carrying out any further investment programme in my country for security reasons. Note:If you can not travel to Europe for the clearing of the consignment,i can still make an arrangement for the delivery of the consignment to your door step through my attorney. 
+Enclosing your telephone and fax numbers for easy communication. 
+You can call me as soon as you recieve this proposal for more 
+information. 
+ 
+Thanks, 
+ 
+Yours sincerely, 
+Dr.Mark Ford. 
+E-mail: drmarkford141@yahoo.com
+Phone: 234-805-805-3878.
 
-----
-Made it so far, though, hasnt he?  said Ron. And its not like the
-place is swarming with dementors anymore. 
-Harry folded up the letter, thinking. If he was honest with himself, he
+
 
 _______________________________________________
 Kernel-janitors mailing list
