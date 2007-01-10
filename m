@@ -1,8 +1,10 @@
 From: "Dr.Mark Ford."  <drmarkford141@yahoo.com>
-Date: Wed, 10 Jan 2007 11:43:17 +0000
+Date: Wed, 10 Jan 2007 11:46:48 +0000
 Subject: [KJ] Investment Proposal.
-Message-Id: <200701101143.l0ABhH529260@sky1.skywebhosting.com>
+Message-Id: <200701101146.l0ABkma01670@sky1.skywebhosting.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200701101143.l0ABhH529260@sky1.skywebhosting.com>
+In-Reply-To: <200701101143.l0ABhH529260@sky1.skywebhosting.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
