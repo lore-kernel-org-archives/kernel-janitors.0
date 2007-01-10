@@ -1,37 +1,34 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 22 Jan 2007 10:00:06 +0000
-Subject: Re: [KJ] standardizing on boolean variables?
-Message-Id: <Pine.LNX.4.64.0701220455210.22098@CPE00045a9c397f-CM001225dbafb6>
+Date: Wed, 10 Jan 2007 08:44:33 +0000
+Subject: [KJ] what's the deal with using real "boolean" variables?
+Message-Id: <Pine.LNX.4.64.0701100337460.11933@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701210324380.13751@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701210324380.13751@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 22 Jan 2007, Richard Knutsson wrote:
 
-> Is the script also checking for booleans defined by "#define" or
-> "enum" (without typedef)?
+  is there a consensus on how to use actual C99 boolean variables in
+the kernel source? C99 defines the unsigned integer type "_Bool" and,
+from that point on, it's all downhill:
 
-here's a list of files that insist on defining their own boolean
-values of some kind using enums:
+$ grep -ri "typedef.*bool" .
+./drivers/scsi/BusLogic.h:typedef bool boolean;
+./drivers/scsi/pci2000.h:typedef        BOOL    *PBOOL;
+./drivers/telephony/ixj.h:typedef __u8 BOOL;
+./drivers/block/DAC960.h:typedef bool boolean;
+./drivers/video/riva/riva_hw.h:typedef int Bool;
+./drivers/video/sis/vgatypes.h:typedef unsigned int BOOLEAN;
+./arch/parisc/math-emu/float.h:typedef int boolean;
+./include/acpi/actypes.h:typedef unsigned char BOOLEAN;
+./include/linux/types.h:typedef _Bool                   bool;
+./include/linux/efi.h:typedef u8 efi_bool_t;
+... snip ...
+./fs/xfs/xfs_types.h:typedef enum { B_FALSE,B_TRUE }    boolean_t;
 
-./drivers/net/wireless/strip.c:enum { FALSE = 0, TRUE = 1 };
-
-./arch/arm/nwfpe/milieu.h-enum {
-./arch/arm/nwfpe/milieu.h-    FALSE = 0,
-./arch/arm/nwfpe/milieu.h:    TRUE  = 1
-./arch/arm/nwfpe/milieu.h-};
-
-./arch/arm26/nwfpe/milieu.h-enum {
-./arch/arm26/nwfpe/milieu.h-    FALSE = 0,
-./arch/arm26/nwfpe/milieu.h:    TRUE  = 1
-./arch/arm26/nwfpe/milieu.h-};
-
-./fs/xfs/linux-2.6/xfs_vnode.h:typedef enum { L_FALSE, L_TRUE } lastclose_t;
-
+  it seems like everyone has their own idea of what constitutes a
+"boolean" variable.  is there a "coding style" suggestion for this?
 
 rday
 _______________________________________________
