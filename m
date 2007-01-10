@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 10 Jan 2007 13:40:31 +0000
+Date: Wed, 10 Jan 2007 13:51:28 +0000
 Subject: Re: [KJ] powers of 2, and the boundary case of zero
-Message-Id: <Pine.LNX.4.64.0701100837440.3216@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <Pine.LNX.4.64.0701100850510.3468@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0701090539520.7476@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0701090539520.7476@localhost.localdomain>
@@ -37,14 +37,13 @@ On Wed, 10 Jan 2007, Jaco Kroon wrote:
 >
 > /* perhaps rather - to be able to get those cases
 >    where 0 is acceptable as well? */
+> static inline bool is_power_of_2_or_zero(int i)
+> {
+>         return (i & (i - 1)) = 0;
+> }
 
-we already decided that the definition of "power of 2" would *not*
-accept zero.  if a programmer needs that, he/she should have to check
-that explicitly.
-
-but it might be safer to make the argument "unsigned" (if not
-"unsigned long").  does anyone have a good argument for the proper
-argument type?  certainly, a negative argument makes little sense.
+whoops, ignore my last whining, i totally missed that you were
+suggesting an *additional* routine for checking for zero as well.
 
 rday
 _______________________________________________
