@@ -1,38 +1,41 @@
-From: "Latisha Colon" <convalescesHindi@abe-eba.com>
-Date: Tue, 23 Jan 2007 15:03:45 +0000
-Subject: [KJ] CNN debunks false Obama report
-Message-Id: <01c73eff$ad7a3b40$6c822ecf@convalescesHindi>
+From: "Osuna Juan" <Pender@innores.com>
+Date: Thu, 11 Jan 2007 12:18:14 +0000
+Subject: [KJ] he-he-he man, why your ramrod is so small? :-)
+Message-Id: <747201c7357a$17fa9768$c27edac4@host-196.218.194.126.tedata.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-     
+Hello sir
 
+I don't care why your sausage is so small, but 87% of women do.
+They are pretty sure that bigger weenie will make their desire
+stronger. You have the chance to change your life.
 
-Get PETROLEUM CONSOLIDAT (PCAI.PK) stock right now. 
-THE CLOCK IS STRATED! AND IT IS GOING TO EXPLODE.   
- 
-Tuesday will be the day when your gains will be really EXTENDED. 
-It's getting growth almost every hour! So you can double your balance any time.  
-We are sure thet you had not moment like this before.   
-   
-Monday price: JAN 22 - $0.57    
-On tuesday 23 January it will - 0.73$ at least and 0.90$ at most (not bad for a day)    
-  
-Tell your brokers in order they buy it immediately.    
-   
-Do not miss your moment.MORE THAN 35% EVERY DAY!  
-PCAI.PK just released this news.
+Here http://www.sellbyscan.com you can get the thing.
 
-TAKE THIS UNBELIEVABLE PCAI.PK today morning.    
+It will help you for sure.
+The remedy can be sent worldwide.
+If you wont be satisfied - we will return all you money.
+No bullshit.
 
 
 
-70776A32666E7478746933776A73716F737977457871746C
-ptolemai
-matter--why to use them, 
+-- 
+liiuifhjioisikmmigisiiimhqfugigghifnfrgkgigqjmfkgnfnfgjffffhgl
+dfkjghwenflgkdwdfwkjgghs
+Yalta know about  Woland, who had only arrived in Moscow the evening before?
+How did he know of the connection between Likhodeyev and Woland?
+     '" Hypnosis ",' muttered Varenukha, repeating  one of the words in the
+telegram. ' How does he know about Woland? ' He blinked and suddenly shouted
+firmly : ' No, of course not. It can't be! Rubbish! '
+     'Where the hell has this man Woland got to, damn him? ' asked Rimsky.
+     Varenukha at once got in touch with the tourist bureau and announced to
+Rimsky's utter astonishment  that Woland was staying in  Likhodeyev's  flat.
+Having  then  dialled Likhodeyev's flat yet again, Varenukha listened  for a
+long time as the ringing tone buzzed thickly in the earpiece. In between the
 
 
 _______________________________________________
