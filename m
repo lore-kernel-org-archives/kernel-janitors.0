@@ -1,26 +1,27 @@
-From: "Ahmed S. Darwish" <darwish.07@gmail.com>
-Date: Tue, 30 Jan 2007 15:42:18 +0000
-Subject: Re: [KJ] Wiki Madness
-Message-Id: <20070130154218.GA16640@Ahmed>
+From: "Billie Aguilar" <misdocuring@abcloyer.spb.ru>
+Date: Fri, 12 Jan 2007 01:58:49 +0000
+Subject: [KJ] Madonna defends Rosie in Trump feud
+Message-Id: <01c73606$59311100$6c822ecf@misdocuring>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e5a3e9ac0701282355h258c6204k55437686eb55193a@mail.gmail.com>
-In-Reply-To: <e5a3e9ac0701282355h258c6204k55437686eb55193a@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 28, 2007 at 11:55:59PM -0800, Chris Miller wrote:
-> I noticed that a lot of you were experiencing errors with the wiki(mainly 
-> SQL related ones).
-> I had upgraded the wiki from 1.8 to 1.9 via an automated installermade by
-> DreamHost.
+Breaking News Released!
 
-Account creation is working now .. Thanks :)
 
--- 
-Ahmed S. Darwish
-http://darwish-07.blogspot.com
+Sy mbol: GLOW
+On: PinkSheets
+5-Days Target: $2.50
+Long Term Target: $9.50
+
+Take a look at the annoucement and reveiw the technology, but grab some GLOW
+before they drop the release to push this stock to the dollar marker.
+
+
+RECENT NEWS HEADLINE: (GO READ ALL THE NEWS ON GLOW RIGHT NOW!)
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
