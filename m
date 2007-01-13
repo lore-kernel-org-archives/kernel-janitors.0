@@ -1,31 +1,41 @@
-From: "Grant Pollock" <halogensblackout@abe.nl>
-Date: Wed, 31 Jan 2007 20:06:58 +0000
-Subject: [KJ] fw: Cathy - did you saw WEXE yesterday
-Message-Id: <01c7456f$18e73340$6c822ecf@halogensblackout>
+From: "Plaza Mikael" <Cloutier@cac.ca>
+Date: Sat, 13 Jan 2007 12:49:03 +0000
+Subject: [KJ] Are you sure that you have enough size?
+Message-Id: <450e01c73711$24866b08$f9236e57@houme-71164a6ea.apollo.lv>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-WHAT IS WALL ST TALKING ABOUT? 
-ONLY - West Excelsior Enterprises, Inc. (Pinksssheets: WEXE) 
- 
-WEXE ALREADY ABOUT TO PUSH OFF CHARTS
-It is currently trading at a low and major news expected in the coming days. This sttock could triple in the next 5-7 trading sessions. 
-Look at history value of this company.
-Our predictions have been right on the money and our last pick did 1,200% up in just 2 short week (10 trading sessions). DO NOT LET THIS ONE PASS YOU BY. Call your broker for more information. 
- 
-Comppany name: West Excelsior Enterprises, Inc. 
-symb: WEXE 
-Mar.ket cap: 60,000,000.00 (approx) 
-Todayss last: 0.60 
-7 Day Target: 1.90 (5 trading sessions = 7 days) 
+The Most Potent Male Muscle Boosting System!
 
-MASSIVE NEWS IS EXPECTED ON THIS ONE - GET IN NOW!
+The better and most powerful product to enlarge your member
+available on the market!
 
-70776A32666E7478717878746933776A73716F737977456E79337871746C
-Terrax
+This products tested, analyzed and approved by doctors.
+
+Order Our Product NOW! 
+
+You can do it here: http://www.proofofactivity.com
+
+P.S.: If it doesn't work for you, we garantee 100% of your money back!
+
+
+
+-- 
+gujijrknjkjojgfijkkgkukqjmkqjmjkmmkjkfjojujugikgjrhjhslrhrilhh
+bjeriowhwioefjsdlkgjghdf
+     'Oh, I guessed it! I guessed it all! '
+     Listening to the terrible  description of  Berlioz's death, the visitor
+made an enigmatic comment, his eyes flashing with malice :
+     'I'm only  sorry  that  it wasn't  Latunsky  the critic or  that hack
+Mstislav  Lavrovich  instead  of  Berlioz!  ' And  he  mouthed  silently and
+ecstatically : ' Go on! '
+     The visitor was highly amused by the story of how the cat had paid  the
+conductress and  he was choking with suppressed laughter as Ivan, stimulated
+by the success of his story-telling, hopped about on his haunches, imitating
+the cat stroking his whiskers with a ten-kopeck piece.
 
 
 _______________________________________________
