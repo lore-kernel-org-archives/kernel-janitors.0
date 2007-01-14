@@ -1,9 +1,9 @@
 From: "Tasha Perkins" <riveranormatiya@joco.com>
-Date: Sun, 14 Jan 2007 18:12:15 +0000
+Date: Sun, 14 Jan 2007 18:13:16 +0000
 Subject: Interesting stuff
-Message-Id: <000b01c73807$85852310$0201a8c0@Mec59.m.pppool.de>
+Message-Id: <000b01c73807$a97ce690$0201a8c0@Mec59.m.pppool.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0478884391=="
+Content-Type: multipart/mixed; boundary="===============0135538998=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000b01c71e11$a6b11950$00000000@ip-85-160-105-180.eurotel.cz>
 In-Reply-To: <000b01c71e11$a6b11950$00000000@ip-85-160-105-180.eurotel.cz>
@@ -11,17 +11,17 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============0478884391==
+--===============0135538998==
 Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_0007_01C73807.85852310"
+	boundary="----=_NextPart_000_0007_01C73807.A97CE690"
 
 This is a multi-part message in MIME format.
 
-------=_NextPart_000_0007_01C73807.85852310
+------=_NextPart_000_0007_01C73807.A97CE690
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0008_01C73807.85852310"
+	boundary="----=_NextPart_001_0008_01C73807.A97CE690"
 
-------=_NextPart_001_0008_01C73807.85852310
+------=_NextPart_001_0008_01C73807.A97CE690
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
@@ -82,7 +82,7 @@ might do some good, made her very careful of her acts"sit down, my dear, =
 i 'm glad to see you,have been from the effects of that sudden chill, it =
 was soon
 
-------=_NextPart_001_0008_01C73807.85852310
+------=_NextPart_001_0008_01C73807.A97CE690
 Content-Type: text/html
 Content-Transfer-Encoding: quoted-printable
 
@@ -166,9 +166,9 @@ acts&nbsp;&nbsp;&nbsp;"sit down, my dear, i 'm glad to see you,have been =
 from the effects of that sudden chill, it was soon
 </DIV></BODY></HTML>
 
-------=_NextPart_001_0008_01C73807.85852310--
+------=_NextPart_001_0008_01C73807.A97CE690--
 
-------=_NextPart_000_0007_01C73807.85852310
+------=_NextPart_000_0007_01C73807.A97CE690
 Content-Type: image/gif;
 	name="W35TnH8ROW.gif"
 Content-Transfer-Encoding: base64
@@ -326,11 +326,11 @@ MixDMzxDNExDNVxDNmxDN3xDOIxDOZxDOqxDO7xDPMxDPdxDPuxDP/xDQAxEQRxEQixEYEM8RERM
 REVcREZsREd8REiMREmcREqsREu8REzMRE3cRE7sRE/8RFAMRVEcRVIsRVM8RVRMRVVcRVZsRVd8
 RViMRVmcRVqsRVu8RVzMRV3cRV7sRV/8RWAMRmEcxkuMAAA7
 
-------=_NextPart_000_0007_01C73807.85852310--
+------=_NextPart_000_0007_01C73807.A97CE690--
 
 
 
---===============0478884391==
+--===============0135538998==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -341,7 +341,7 @@ Take Surveys. Earn Cash. Influence the Future of IT
 Join SourceForge.net's Techsay panel and you'll get the chance to share your
 opinions on IT & business topics through brief surveys - and earn cash
 http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0478884391==
+--===============0135538998==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -352,4 +352,4 @@ Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
---===============0478884391==--
+--===============0135538998==--
