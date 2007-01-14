@@ -1,69 +1,48 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 14 Jan 2007 11:51:35 +0000
-Subject: [KJ] deprecated stuff and spin locks
-Message-Id: <Pine.LNX.4.64.0701140637380.13030@CPE00045a9c397f-CM001225dbafb6>
+Date: Sun, 14 Jan 2007 12:14:53 +0000
+Subject: Re: [KJ] deprecated stuff and spin locks
+Message-Id: <Pine.LNX.4.64.0701140711300.13191@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0701140637380.13030@CPE00045a9c397f-CM001225dbafb6>
+In-Reply-To: <Pine.LNX.4.64.0701140637380.13030@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-  from Documentation/spinlocks.txt:
-============"Macros SPIN_LOCK_UNLOCKED and RW_LOCK_UNLOCKED are deprecated and
-will be removed soon. So for any new code dynamic initialization
-should be used:
+whoops, i just answered *part* of my question:
 
-   spinlock_t xxx_lock;
-   rwlock_t xxx_rw_lock;
+On Sun, 14 Jan 2007, Robert P. J. Day wrote:
 
-   static int __init xxx_init(void)
-   {
-        spin_lock_init(&xxx_lock);
-        rwlock_init(&xxx_rw_lock);
-        ...
-   }
+>   what do you do with static initializations like:
+>
+>   static struct irq_desc bad_irq_desc = {
+>         .handle_irq = handle_bad_irq,
+>         .lock = SPIN_LOCK_UNLOCKED
+>   };
+>
+> or
+>
+>   static spinlock_t winbond_lock = SPIN_LOCK_UNLOCKED;
+>
+> if you're not supposed to use that macro anymore?  am i missing
+> something obvious?
 
-   module_init(xxx_init);
+given the macro definitions in include/linux/spinlock_types.h:
 
-Reasons for deprecation
-  - it hurts automatic lock validators
-  - it becomes intrusive for the realtime preemption patches"
-==============
+#define DEFINE_SPINLOCK(x)      spinlock_t x = __SPIN_LOCK_UNLOCKED(x)
+#define DEFINE_RWLOCK(x)        rwlock_t x = __RW_LOCK_UNLOCKED(x)
 
-so ... what exactly does this mean for code cleanup?  the old-style
-code would appear to be along the lines of:
+it appears that you can address that *second* issue with one of:
 
-  rpc->e_lock = SPIN_LOCK_UNLOCKED;
+DEFINE_SPINLOCK(foo);
+static DEFINE_SPINLOCK(bar);
 
-correct?  which means the new style would be:
+(i'm assuming that the macros __{RW|SPIN}_LOCK_UNLOCKED are still
+valid and are not deprecated.)
 
-  spin_lock_init(&rpc->e_lock);
-
-do i have that right?  in fact, if you check include/linux/spinlock.h,
-you can see the (non-debugging) definition of spin_lock_init():
-
-  # define spin_lock_init(lock)                                   \
-        do { *(lock) = SPIN_LOCK_UNLOCKED; } while (0)
-
-so it really just translates to the old style, just using a new
-wrapper.  so far, so good.  that looks like a bunch of potential
-cleanup, and the same holds for rw_lock_init() and the deprecated
-RW_LOCK_UNLOCKED macro.  but it's not that simple.
-
-  what do you do with static initializations like:
-
-  static struct irq_desc bad_irq_desc = {
-        .handle_irq = handle_bad_irq,
-        .lock = SPIN_LOCK_UNLOCKED
-  };
-
-or
-
-  static spinlock_t winbond_lock = SPIN_LOCK_UNLOCKED;
-
-if you're not supposed to use that macro anymore?  am i missing
-something obvious?
+  but i'm still not sure how to deal with that first issue cleanly.
 
 rday
 
