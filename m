@@ -1,36 +1,32 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 02 Jan 2007 23:36:26 +0000
-Subject: Re: [KJ] [PATCH] net/core/flow.c: compare data with memcmp
-Message-Id: <20070102.153626.14976011.davem@davemloft.net>
+From: "Rowena Stanton" <negligentlyadjurations@aboveground.com>
+Date: Sun, 14 Jan 2007 21:33:47 +0000
+Subject: [KJ] Fortune: The 100 best companies to work for
+Message-Id: <01c73832$c2c37c60$6c822ecf@negligentlyadjurations>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20061231.123715.115911390.davem@davemloft.net>
-	<80ec54e90612312347w2b906e5eg725a7761110c6897@mail.gmail.com>
-	<80ec54e90701010116u27d02341kb2be785f17f18e3d@mail.gmail.com>
-In-Reply-To: <80ec54e90701010116u27d02341kb2be785f17f18e3d@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: daniel.marjamaki@gmail.com
-Cc: netdev@vger.kernel.org, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-From: "Daniel_Marjam=E4ki" <daniel.marjamaki@gmail.com>
-Date: Mon, 1 Jan 2007 10:16:02 +0100
+IS MOMENTUM BUILDING FOR THIS STOCK? IS IT READY TO MOVE?
+GO LOOK AT THE CHART RIGHT NOW!
 
-> I have done a little testing on my own. My results is that memcpy is
-> many times faster even with aligned data.
 
-Your test program doesn't make any measurements, from where did
-you get these "results"?
+Sym bol: LYJN
+On: PinkSheets
+5-Days Target: $3.00
+Long Term Target: $10.00
 
-Also, your test program is broken because in the memcmp() case GCC
-totally optimizes away the call to memcmp() because it can see the
-comparison data at compile time and therefore it computes the memcmp()
-result at compile time.  There are no memcmp() calls made at all by
-your program.
+Rumor's circulating and keeping the focus on the company's news.
+We pick our companies based on there growth potential.
+How many times have you seen issues explode 
+but you couldn't get your hands on them? 
+We Love this company and at anytime they can put out major news
+and the price can triple.
+New news expected this comming week.
 
-You should look at the assembler code emitted by a test program
-that is measuring performance, in detail, to make sure the test
-program really is doing what you think it is.
+
+ADD LYJN TO YOUR WATCHLIST NOW! WATCH IT TRADE ON FIRDAY 12 JAN!
 
 _______________________________________________
 Kernel-janitors mailing list
