@@ -1,45 +1,42 @@
-From: "Bradford Farrell" <strongestswampiest@abs-pos.com>
-Date: Thu, 04 Jan 2007 05:37:34 +0000
-Subject: Re: [KJ] Farrell
-Message-Id: <01c72fdb$94927d00$6c822ecf@strongestswampiest>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0063610246=="
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 15 Jan 2007 07:35:47 +0000
+Subject: [KJ] cleaning out "dead" CONFIG variables
+Message-Id: <Pine.LNX.4.64.0701150228140.4237@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0063610246==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
 
-	Critical Care & Chan International Kick Off Joint Marketing and Sales	
+  as another item on the TO DO list, what about locating and removing
+apparently useless CONFIG variables?
 
-Company : Critical Care Inc	
-Symbol : CTCX
-Price : 0.92
-3 Day Estimate : 3.50
-Status : S trong b u y. 
+  i wrote a short script to look for such things and here's one
+example of what it found for the variable "X86_XADD" after running
+"make allyesconfig":
 
-	The First steps of the merger between CTCX and Chan international are being kicked off as they open 2007 with the merging of the sales and marketing departments.  
-	These two companies are perfectly suited and CTCX's recent change in direction has excited investors and pushed share prices up leaps and bounds. 
-Watch for BlG NEWS all week long	
+$ grep -r X86_XADD .
+./.config:CONFIG_X86_XADD=y
+./arch/i386/defconfig:CONFIG_X86_XADD=y
+./arch/i386/Kconfig.cpu:config X86_XADD
+./arch/um/defconfig:CONFIG_X86_XADD=y
 
+  in other words, there are a couple architectures that have that set
+in their defconfig, and there is a "config" entry for it in the file
+arch/i386/Kconfig.cpu, but absolutely *no one* in the entire source
+tree looks at it or cares about it, so it would seem to have no effect
+whatever on any kind of build.
 
+  would it not make sense to simply delete variables like this?
 
-		Play SMART and make it wih us	
-		THIS ONE IS GONNA START YOUR TRADING YEAR OFF RIGHT!
+rday
 
-
-
---===============0063610246==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+p.s.  as i understand it, if a variable is removed, then *eventually*
+the various architecture defconfig files are rebuilt and will drop any
+reference to that variable, is that right?
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0063610246==--
