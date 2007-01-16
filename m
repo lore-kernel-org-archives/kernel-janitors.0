@@ -1,42 +1,49 @@
-From: "Lela Huffman" <secularPavlov@abxlogistics.nl>
-Date: Mon, 29 Jan 2007 15:18:47 +0000
-Subject: [KJ] fwd:Lela - NMXC on monday
-Message-Id: <01c743b3$be6b0480$6c822ecf@secularPavlov>
+From: "Lee Vigil" <conveyorsdosed@aalen.de>
+Date: Tue, 16 Jan 2007 09:45:32 +0000
+Subject: [KJ] With an option for
+Message-Id: <01c73962$270cd880$6c822ecf@conveyorsdosed>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0338631330=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Company has publish other news, 
-but anyway i know everything about company projects 
-i hope they will publish it today and it's will break the market and send this shares fly.
+--===============0338631330==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-ALBUQUERQUE, N.M.--(BUSINESS WIRE)--
+Harris Exploration Hits Gold!
 
-New Mexico Software, Inc. (OTCBB:NMXC) announced today the company has terminated its consultancy agreement with Brian McGowan and no longer has any relationship with him.
+Inside origin from the survey site said that HXPN has made
+a big discovery.  Word is that results show a 12.5 gm/T
+rating on the property.  With onsite equipment able to 
+process 100 tons a day it equates to yields of 1250 gm/day.
+At current market prices this would generate yearly revenues of over $10mil.
 
-About New Mexico Software.
+Taking into attention both the size and the high soil
+ratings this gives Harris Exploration a book value of roughly $5.00 which
+we have pegged as our target price.
 
-New Mexico Software is a leading provider of information management solutions that significantly improve the interface between the paper world and the digital world, facilitating a true paperless environment. It is the only public company providing web-based integrated services for individuals and companies, large or small, which allows full access to data from anywhere in an easy-to-use, familiar browser environment at an affordable price. For more information, visit www dot nmxc dot net or www dot nmxs dot com, or contact Dick Govatski, president and CEO.
+Harris Exploration
 
-Please read full version.
+Sym: HXPN
+Last Price:     $1.62
+Sho rt Term Tar get:  $5.00
 
-I will push it minimum several days if my information correct this time it will go to -> forth place on  top 50 % Gainers.This are pure company, without restricts.This company has no unclean reputation.
+This news will hit the street very soon and send this issue
+to heaven.  We advise our readers to get in now and divest at
+the tar get price.Recomme\ndation: think
 
-Warning alert this incredible unbelievable opportunity chance to make our profits.
-I have heard something grand will occur today with thet one.
 
-It is gonna fly. Monday charts wellcome it !
-
----
-Unsub almost here give me 1 day more please.
----
-
-70776A32666E7478746933776A73716F737977457871746C
-Beruny
+--===============0338631330==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0338631330==--
