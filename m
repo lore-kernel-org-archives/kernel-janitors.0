@@ -1,15 +1,17 @@
 From: =?Big5?B?wLCnQS0tLbnqsnu52rdR?= <a03.a10@msa.hinet.net>
-Date: Tue, 16 Jan 2007 15:05:37 +0000
+Date: Tue, 16 Jan 2007 15:05:38 +0000
 Subject: =?Big5?B?xf2nQS0tLabbpHaoTal3pFevWq7JtqEmpHWnQKZhwkk=?=
-Message-Id: <200701161505.XAA22465@msr41.hinet.net>
+Message-Id: <200701161505.XAA22584@msr41.hinet.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0823854344=="
+Content-Type: multipart/mixed; boundary="===============1551512032=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200701161505.XAA22465@msr41.hinet.net>
+In-Reply-To: <200701161505.XAA22465@msr41.hinet.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format
 
---===============0823854344==
+--===============1551512032==
 Content-Type: multipart/alternative;
 	boundary="7vbPjELrVSiFAcsJ5B6GVmApN=_kdW3WkI0"
 
@@ -45,7 +47,7 @@ ofollow><FONT color=3D#003399>http://a0310a.myweb.hinet.net/</FONT></A=
 
 
 
---===============0823854344==
+--===============1551512032==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -56,7 +58,7 @@ Take Surveys. Earn Cash. Influence the Future of IT
 Join SourceForge.net's Techsay panel and you'll get the chance to share your
 opinions on IT & business topics through brief surveys - and earn cash
 http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0823854344==
+--===============1551512032==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -67,4 +69,4 @@ Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
---===============0823854344==--
+--===============1551512032==--
