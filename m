@@ -1,24 +1,26 @@
-From: "Llewelyn Graziano" <funderbury@washhome.com>
-Date: Tue, 16 Jan 2007 10:16:30 +0000
+From: "Fancy Runnels" <chan@mailbox.swipnet.se>
+Date: Tue, 16 Jan 2007 10:16:41 +0000
 Subject: Re: [KJ] my dicke
-Message-Id: <01c73957$63f2e830$d0aa653e@jose>
+Message-Id: <01c73957$6a64d700$d0aa653e@jose>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_0097_01C7395E.7BCDEA70"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73957$63f2e830$d0aa653e@jose>
+In-Reply-To: <01c73957$63f2e830$d0aa653e@jose>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_0097_01C7395E.7BCDEA70
 Content-Type: multipart/alternative;
-    boundary="----------=_1168942650-25870-291"
+    boundary="----------=_1168942710-25870-315"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1168942650-25870-291
+------------=_1168942710-25870-315
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -39,7 +41,7 @@ Nothing less.
 that manner and assumed it was the local dialect.
 Just an office drudge-singing for a hobby.
 
-------------=_1168942650-25870-291
+------------=_1168942710-25870-315
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -71,7 +73,7 @@ l size=3D2> Do  it,  daddy-o,  do  it.  Ive got the gilt.  He  blinked  and=
 ><DIV><FONT face=3DArial size=3D2>that manner and assumed it was the local =
 dialect.</FONT></DIV><DIV><FONT face=3DArial size=3D2> Just an office drudg=
 e-singing for a hobby.</FONT></DIV></FONT></DIV></BODY></HTML>
-------------=_1168942650-25870-291--
+------------=_1168942710-25870-315--
 
 ------=_NextPart_000_0097_01C7395E.7BCDEA70
 Content-Type: image/jpeg
