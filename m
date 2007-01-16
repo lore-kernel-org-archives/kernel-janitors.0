@@ -1,64 +1,70 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 29 Jan 2007 18:17:56 +0000
-Subject: Re: [KJ] replacing "__FUNCTION__" with "__func__"?
-Message-Id: <Pine.LNX.4.64.0701291314440.30569@CPE00045a9c397f-CM001225dbafb6>
+From: =?Big5?B?wLCnQS0tLbnqsnu52rdR?= <a03.a10@msa.hinet.net>
+Date: Tue, 16 Jan 2007 15:05:37 +0000
+Subject: =?Big5?B?xf2nQS0tLabbpHaoTal3pFevWq7JtqEmpHWnQKZhwkk=?=
+Message-Id: <200701161505.XAA22465@msr41.hinet.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0823854344=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701271038360.9089@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701271038360.9089@CPE00045a9c397f-CM001225dbafb6>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 29 Jan 2007, Alexey Dobriyan wrote:
+This is a multi-part message in MIME format
 
-> On Mon, Jan 29, 2007 at 12:56:08PM -0500, Robert P. J. Day wrote:
-> > On Mon, 29 Jan 2007, Alexey Dobriyan wrote:
-> >
-> > > On Sat, Jan 27, 2007 at 03:47:37PM -0800, Howell, David P wrote:
-> > >
-> > > [s/__FUNCTION__/__func__/g]
-> > >
-> > > > If it's only a shorter version for __FuNCTION__, is this eally
-> > > > worth the trouble? With no other benefits I'd forget it.
-> > >
-> > > __func__ is in C99.
-> >
-> > true, but one of the issues was whether it was worth trying to
-> > replace the numerous occurrences of "__FUNCTION__" with the
-> > shorter "__func__" and, given how many there are, i can't imagine
-> > it being worth the effort.
->
-> I think it should be done anyway. It save both horizontal and
-> vertical space. It probably should be started with core kernel and
-> test-compiled, because __func__ can't be concatenated with string
-> literals.
+--===============0823854344==
+Content-Type: multipart/alternative;
+	boundary="7vbPjELrVSiFAcsJ5B6GVmApN=_kdW3WkI0"
 
-if someone wants to tackle that, i suspect there's several weeks worth
-of work there alone.
+This is a multi-part message in MIME format
 
-actually, with something that's this pervasive, it would seem that the
-first thing you'd want to do is ask all subsystem maintainers to try
-to clean up their own code first, and give them an entire release to
-do it.  after that, someone can jump in and try to deal with what's
-left.
+--7vbPjELrVSiFAcsJ5B6GVmApN=_kdW3WkI0
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-but with the number of changes involved, it just makes sense to
-browbeat the maintainers into making that initial cleanup.  and i'm
-betting some of them are not going to be thrilled by it.
+ - This mail is a HTML mail. Not all elements could be shown in plain =
+text mode. -
 
-rday
+=A1=B1Aao1U=A1PQ!A2{|b1e2{?F?U!H
+=A1=B1Ao!=A1PN2{ap?U!Ho!=A1PN=A2DO?eao|??J?U!H?=A2G=A1PQ|A=A1=B1x|b?i?=
+??C?U!H
+3o?O?@-O?=A1=D2=A1P|...Awai=A1=B1A?i?J
+http://a0310a.myweb.hinet.net/
 
--- 
+--7vbPjELrVSiFAcsJ5B6GVmApN=_kdW3WkI0
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+<HTML><HEAD></HEAD>
+<BODY>
+<DIV>=A7A=AA=BA=B9=DA=B7Q=A1A=B2{=A6b=B9=EA=B2{=A4F=B6=DC=A1H<BR><BR>=
+=A7A=BA=A1=B7N=B2{=AAp=B6=DC=A1H=BA=A1=B7N=A5=D8=ABe=AA=BA=A6=AC=A4J=
+=B6=DC=A1H=A4=A3=B7Q=A6A=A7x=A6b=BF=EC=A4=BD=AB=C7=B6=DC=A1H<BR><BR>=
+=B3o=ACO=A4@=AD=D3=BE=F7=B7|...=C5w=AA=EF=A7A=B6i=A4J&nbsp; <A rel=3Dn=
+ofollow><FONT color=3D#003399>http://a0310a.myweb.hinet.net/</FONT></A=
+> <FONT color=3D#000000></DIV></FONT></BODY></HTML>
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
+--7vbPjELrVSiFAcsJ5B6GVmApN=_kdW3WkI0--
+
+
+
+--===============0823854344==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys - and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============0823854344==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============0823854344==--
