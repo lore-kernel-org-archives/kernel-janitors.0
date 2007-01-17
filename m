@@ -1,27 +1,40 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 09 Jan 2007 04:15:30 +0000
-Subject: Re: [KJ] Regarding in_interrupt()
-Message-Id: <20070109041530.GB22659@parisc-linux.org>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Wed, 17 Jan 2007 11:30:11 +0000
+Subject: [KJ] how about cleaning up all the "__attribute__" defines?
+Message-Id: <Pine.LNX.4.64.0701170625150.31856@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <adfc68cb0701081946q56cb32e4y3bdfb1888fb028eb@mail.gmail.com>
-In-Reply-To: <adfc68cb0701081946q56cb32e4y3bdfb1888fb028eb@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jan 09, 2007 at 09:16:05AM +0530, Sudheer YSV wrote:
-> As you know  in_interrupt() returns non zero if the kernel is in interrupt
-> context.(ie in interrupt handler or bottom half).
-> But in a SMP systems, if one CPU is in interrupt context and another CPU is
-> in process contex, then what will be the
-> result of in_interrupt().
 
-It only tells you about the local CPU.  Why would you want to know about
-a different CPU?
+  it strikes me that a useful cleanup would be to centralize all of
+the shortcut "__attribute__" definitions in one place.  consider:
 
-It would be good to stop exporting in_interrupt() to modules.  Most uses
-of it in drivers are bugs.
+$ grep -r "#define.*attribute.*packed" .
+./drivers/scsi/u14-34f.c:#define PACKED__attribute__((packed))
+./drivers/scsi/BusLogic.h:#define PACKED __attribute__((packed))
+./drivers/scsi/gdth_ioctl.h:#define PACKED  __attribute__((packed))
+./drivers/scsi/ultrastor.c:#define PACKED __attribute__((packed))
+./drivers/media/dvb/frontends/bcm3510_priv.h:#define PACKED __attribute__((packed))
+./include/linux/eventpoll.h:#define EPOLL_PACKED __attribute__((packed))
+./include/linux/cycx_x25.h:#define PACKED __attribute__((packed))
+./fs/hfsplus/hfsplus_raw.h:#define __packed __attribute__ ((packed))
+./fs/befs/befs_fs_types.h:#define PACKED __attribute__ ((__packed__))
+./fs/hfs/hfs.h:#define __packed __attribute__ ((packed))
+
+  i mean, seriously, how many different files need to redefine the
+macro "PACKED"?  (or, as it were, "__packed"?)  i think it would be
+handy to have all of those shortcut defines in one file, with a little
+documentation to go along with each so that newbies would know:
+
+  1) what they mean, and
+  2) under what circumstances they should be used
+
+thoughts?
+
+rday
 
 _______________________________________________
 Kernel-janitors mailing list
