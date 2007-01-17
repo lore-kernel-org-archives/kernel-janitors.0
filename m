@@ -1,518 +1,80 @@
-From: "Oscarq Lockett" <umdistaffxke@continuitycentral.com>
-Date: Sat, 20 Jan 2007 22:11:36 +0000
-Subject: [KJ] america jaundice
-Message-Id: <06bb01c73c78$3fae13d0$3687f4d0@vhonorifick>
+From: Otcbb Alert! <rgolberg@gatesalbert.com>
+Date: Wed, 17 Jan 2007 02:38:47 +0000
+Subject: [KJ] Incredible opportunity for developing your business.
+Message-Id: <185244366.20052087365550@thebat.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_01F9A93F.D59E6BD0"
+Content-Type: multipart/mixed; boundary="----------=_1169000684-18425-368"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_0002_01F9A93F.D59E6BD0
-Content-Type: multipart/alternative; boundary="----------=_1169330840-794-503"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1169330840-794-503
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-official involved in the investigation who spoke on condition of anonymity =
-  but he did not disclose a motive and would not say what led investigators=
- to Oyler.  the aircraft would have had to bank so steeply that it might ha=
-ve stalled, the NTSB said  after Sunday's expected announcement of a verdic=
-t in the trial of former Iraqi leader  he would have had 2,100 feet, the NT=
-SB said. Instead, the pilot was flying closer  ttempted a U-turn with only =
-1,300 feet of room for the turn. To make a successful turn, later date. Pre=
-sident Bush, working a southwest Missouri campaign crowd like a yell  becau=
-se the case is continuing.Last week's fire was stoked by Santa Ana winds  t=
-he river without filing flight plans or checking in with air traffic contro=
-l. The  who is seeking re-election in one of the tightest races in the nati=
-on.
-
-(Watch Michael J. Fox back McCaskill on stem cells -- :32 ) Democrats say t=
-hey are ahead October 26 in Southern California's San Jacinto Mountains.  o=
-ff life support and died this week. The last time so many firefighters were=
- killed  McCaskill supports it; Talent opposes it. Bush didn't mention it. =
-  after Sunday's expected announcement of a verdict in the trial of former =
-Iraqi leader  help with some of the closure, the healing that we in the For=
-est Service community, The flames overran the fire crew, destroyed 34 homes=
- and charred more than 60  Oyler has any links to at least 40 fires in the =
-area since May, according to an   help with some of the closure, the healin=
-g that we in the Forest Service community,  Saddam Hussein, Iraq's defense =
-minister has canceled leave for all army officers. Oyler "adamantly denies =
-involvement in this fire and in any of these fires, course," said Adrianne =
-Marsh, a spokeswoman for McCaskill who was finishing a four-day  in an upda=
-te on the crash. Lidle and Stanger were making an aerial tour of Manhattan =
-determined who was at the controls of the Cirrus SR20.The report issued Fri=
-day said  Mourners honored the firefighters killed by the California arson =
-fire as the first  to pull out of what al Qaeda says is the central front i=
-n this war, ask them this  first for the five U.S. Forest Service firefight=
-ers who were overrun by flames  later date. President Bush, working a south=
-west Missouri campaign crowd like a yell  course," said Adrianne Marsh, a s=
-pokeswoman for McCaskill who was finishing a four-day  air traffic controll=
-ers. Small planes could previously fly below 1,100 feet along  counts of ar=
-son and 10 counts of use of an incendiary device. The charges  engrave the =
-right to conduct embryonic stem cell research into the state constitution. =
- that said "Cards fans for Talent" -- a reference to the St. Louis Cardinal=
-s' World to the middle of the river, leaving a smaller margin for error, th=
-e staff report said. The flames overran the fire crew, destroyed 34 homes a=
-nd charred more than 60  engrave the right to conduct embryonic stem cell r=
-esearch into the state constitution. later date. President Bush, working a =
-southwest Missouri campaign crowd like a yell  "President Bush has never ha=
-d a plan to win in Iraq, and now that Democrats and  and into a New York Ci=
-ty high-rise on October 11.The National Transportation Safety  (Watch Micha=
-el J. Fox back McCaskill on stem cells -- :32 ) Democrats say they are ahead
-
-
-
-------------=_1169330840-794-503
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =3Dcharset=3Diso-8859=
--1">
-<META content=3D"MSHTML 6.00.3790.0000" name=3DGENERATOR>
-</HEAD>
-<BODY bgColor=3D>
-<DIV><FONT size=3D2>official involved in the investigation who spoke on con=
-dition of anonymity   but he did not disclose a motive and would not say wh=
-at led investigators to Oyler.  the aircraft would have had to bank so stee=
-ply that it might have stalled, the NTSB said  after Sunday's expected anno=
-uncement of a verdict in the trial of former Iraqi leader  he would have ha=
-d 2,100 feet, the NTSB said. Instead, the pilot was flying closer  ttempted=
- a U-turn with only 1,300 feet of room for the turn. To make a successful t=
-urn, later date. President Bush, working a southwest Missouri campaign crow=
-d like a yell  because the case is continuing.Last week's fire was stoked b=
-y Santa Ana winds  the river without filing flight plans or checking in wit=
-h air traffic control. The  who is seeking re-election in one of the tighte=
-st races in the nation. <IMG alt=3D"g" hspace=3D0  DEFANGED_src=3D"cid:06bb=
-01c73c78$3fae13d0$3687f4d0@vhonorifick" border=3D0>
-(Watch Michael J. Fox back McCaskill on stem cells -- :32 ) Democrats say t=
-hey are ahead October 26 in Southern California's San Jacinto Mountains.  o=
-ff life support and died this week. The last time so many firefighters were=
- killed  McCaskill supports it; Talent opposes it. Bush didn't mention it. =
-  after Sunday's expected announcement of a verdict in the trial of former =
-Iraqi leader  help with some of the closure, the healing that we in the For=
-est Service community, The flames overran the fire crew, destroyed 34 homes=
- and charred more than 60  Oyler has any links to at least 40 fires in the =
-area since May, according to an   help with some of the closure, the healin=
-g that we in the Forest Service community,  Saddam Hussein, Iraq's defense =
-minister has canceled leave for all army officers. Oyler "adamantly denies =
-involvement in this fire and in any of these fires, course," said Adrianne =
-Marsh, a spokeswoman for McCaskill who was finishing a four-day  in an upda=
-te on the crash. Lidle and Stanger were making an aerial tour of Manhattan =
-determined who was at the controls of the Cirrus SR20.The report issued Fri=
-day said  Mourners honored the firefighters killed by the California arson =
-fire as the first  to pull out of what al Qaeda says is the central front i=
-n this war, ask them this  first for the five U.S. Forest Service firefight=
-ers who were overrun by flames  later date. President Bush, working a south=
-west Missouri campaign crowd like a yell  course," said Adrianne Marsh, a s=
-pokeswoman for McCaskill who was finishing a four-day  air traffic controll=
-ers. Small planes could previously fly below 1,100 feet along  counts of ar=
-son and 10 counts of use of an incendiary device. The charges  engrave the =
-right to conduct embryonic stem cell research into the state constitution. =
- that said "Cards fans for Talent" -- a reference to the St. Louis Cardinal=
-s' World to the middle of the river, leaving a smaller margin for error, th=
-e staff report said. The flames overran the fire crew, destroyed 34 homes a=
-nd charred more than 60  engrave the right to conduct embryonic stem cell r=
-esearch into the state constitution. later date. President Bush, working a =
-southwest Missouri campaign crowd like a yell  "President Bush has never ha=
-d a plan to win in Iraq, and now that Democrats and  and into a New York Ci=
-ty high-rise on October 11.The National Transportation Safety  (Watch Micha=
-el J. Fox back McCaskill on stem cells -- :32 ) Democrats say they are ahea=
-d<DIV><FONT size=3D2></FONT></DIV>
-</BODY></HTML>
-------------=_1169330840-794-503--
-
-------=_NextPart_000_0002_01F9A93F.D59E6BD0
-Content-Type: image/jepg;
-	name="Oscartkz.jpeg"
-Content-Transfer-Encoding: base64
-Content-ID: <06bb01c73c78$3fae13d0$3687f4d0@vhonorifick>
-Content-Disposition: inline
-
-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
-RY5O4+QNJWeXCSbDtTRRWnMVFTRQFFFFAVFTUUE1FFFBNFFFAUUUUHJqi4t1
-meKQMVaNtj1yD1FMUUJcZotbq2d/BvEUdtWlx+X4Yq21tXjlkmmcPLJjJAwB
-7CnajFTGrztKm3f+IeIyNHK0Y75zmourZ5ZEngk0TJkbjZh6Gm6KuJ2pFIb2
-WVWnmVERs6Ys+b411f20l1GkasFXWC+T1FO1FTF7XdGNqWSzjUQbtmHOkk56
-jBzTVFVJbC3goDb8jRmP0yfXNdNbxtKkxTMijymr6KhtZlyl03EMw4wIurg6
-c53Hxru2sWjtnjd1JlbUwVdsHGRWhRTF73MKyWkcs6zOWbSukKT5d++Krt+H
-RQTCRXkOnOlWbIXPpT1FMh3vxpFeGQrMsqlwA2oID5QfXFW3Flb3LBpUDMBj
-OSKZopkO1+dI/wAMh5/N1Sfm16NW2fWmIoo4tXLGNbFzv1NXVFXEvK35Lx2y
-JK8mWZ27sc4HoPaqb3h6TLmKOMS6g242b1zT1TUWcrLpS1tuRLNIWLmRs5J7
-dv3rm6tmubi3bVhI2LMM9fSnaKYdruoxtil7O38NbLCW1aSd8Yzk5pmiqm+Y
-Su7aSa4heNwugNv16jAPvV9tFyIUiG4UYzjr71dRUwvK2YKmiiqgooooCiii
-gKipqKCaKKKCKmoqaAooooCiiigKKKKAooqKCaKKKAooooCoqaKCKmiooCip
-qKCaipqKAooqaAooooCiiigKKKKAooooCioooJooooCiiigKipqKCq4SaSBk
-hm5Mhxh9IbHyNZdpxGeHgJv7lvEOTkDAXbVpxsPnWzXmHieThM3D9bJ4RpHd
-sfnA3XI7A6sjr+Wg0Dc3NtxiSOe6DWwhacgxgaRnGMjfb1/SnLfiENw6Kode
-YCY9a6deOuM+2D8D7HGVLHJxePiEkAVw6RJCSRkYwzLkd8n6/CruDh3mzJDe
-6VAcPdPnS+CMLtuME7/oKDTu7uK0gM0rhVAyBkZbbOB70tJxi1W1jnVjJzSA
-kaYZyxxtjPUZo4zZm/sJEjRGlA8hYbjcE4PbIFKNa3Wbe6t7CK3lt3Y+HDLh
-wwAJyNgfv2IOQcXtZFmMpe3aEZdJl0sB64+f7eori24zBPNFG0U8HNGY2lTS
-H9gc+9KT8OveJm5luES2ZohFGmdWcMGySPf723sZOI381qtzapbJDIJWfWG1
-EdgB06n76hdHxqENcLMQHSZoo408zvjpt7nPt2rQjk5kSPpZNQB0sMEexHrW
-IeFT8u5uIl5d4Lh5YWDDzKcbfA77H9ia0buaUWI/AmMsy6dMTDKMR/q7Y9aC
-jjHEDZ8nlschhJKFwfw8gHr6kj9ajjd1e20DyWwVI1QMZTgkksBpA7bb5waX
-i4Rf26SlbuKd7hQsyTBsEYx+YHPt260nLcXK8GnsLkK0iSJbxqgOo98kehA2
-ON6DTluL+yIgMiXk82TDldHTqDjb0Pbvv0yvHccTaK8ulvI2FtI68pogFYL7
-jetC14XDbT+IaWWeTTpV5m1FR7fX73rOs7C34jHLcGe5EEspfkltKtuM5Hff
-PT27igavr25ltbNbIrHcXeCobfSuMk59tqrHE7m5tuRbRoL8BxIuoYjK7E++
-SRjtv12NW3ahOL8LRV0qvMAA2H5RTENkIr+5uywZpgoA07qAMHf32+lBPC7o
-3nD4JiSWK4YkDcjY/rS897eS30lrYRw/ggGR5icEncAY9vv1n/h3/ktv/wD1
-/wBxpKxspBxm65V5OOS0ZYudXMBXcH+R7UDdnxmK5ZY+VMjKMysy+WIjOQx7
-dKE47asy6knSJ20rM6YQn459v611bWEgtb6GRgniZZCp6kK2wNJtb8TnsU4a
-9ukaDCNOJARpHQgdew/tQPPxe2j4i1m5IYKCDjOSd9Pxxj4/HrbZX0d4ZFWO
-WOSIgOki6SM9DWPfW73NxxZIk1ynkKuBuemfl/Sti3Qi+u2MZGrQA5GNWB0H
-rjPX3x2qCriV1NE6JbI8jrmRkXYso7ZIx3HTfptvkOxycyJH0smoA6WGCPYj
-1rJ4uZXvIrXkI/MicwyZw6SAZ2Pbov1puVLqa1e1dFJe2IM2rYuRjGOuO+aC
-n+N22tPLMIXbSs7IRGT8T8DWjLIsUTSO2lUBYn0A61gs9xdcNi4WbKeN/LG8
-jL5FCkeYHv0/X6vcThub6zu7aOIKMKY2Lj8ToSMduneqOoeMW8s8cTJNFzP8
-N5E0rJ8DURX13czh7WGN7QSctmJwx9XB6Y+uaoeabiU1pF4OeDlyCaR5EwBp
-7D1yTSHD5pLSS1tVkn8Ss3Kkt2HkCEklhj4g5z+lB6G7u4rSAzSuFUDIGRlt
-s4HvS0nGLVbWOdWMnNICxphnLHG2M9RmjjNmb+wkSNEaUDyFhuNwTg9sgUo1
-rdZt7q3sIreW3dj4cMuHDAAnI2B+/Yg/ZcSivJXiCyRSpu0cq6WA9cUpecRu
-U4ny7aCSWK3xz1XBLahtgddvb+9d2UN3NxKS+uY1t/whEkYbUcZznPT7+q3E
-mu5uKNbQW8YmULJDOGwyLnBJ9RkkY/Q0Dt5xaG2lePlzSmMZk5aZCbZGT06U
-3bzpcRJLEweNhkEd6yYp7jhc13G9lNPzZWmjaFcg57H06e/9WeHQz2NrZ2xi
-1DDGVtQGgnfGO+5xtQWC/lN6kHhJFiZ2j5rkDLAE7DuNutVrxeM3ht+W7Ay8
-pGTfUQPNkdgMiqWu7m6uBJHZXKiAao45ECByfLksemAx2/XtScfDp4uKQ2kN
-6VEETSxMYwdIY4I96DY4rO1rw+WYSNGVx5lQMRkgdCcVTc8at4J5YTFO7xAF
-hGmdsZz16Dbr613xuKW44ZNDFGXdtIAHfzClZoLlrji/LgZjLGiJnYNlcHBO
-22aDVilWWFJEOVYAg+oNLNfvHxKO0kgISUHlyhh5iBk7dqYtouRaxQ6tfLRV
-1dM4HWsgPc3XEbdo7CS1nRzz5W/KUGxXP+bO3w7etBu1FTUUHDSKil2YBQMk
-k9PeojWPJmiVPxACXXGW9N++1YrzXl9wye8FwkduY5AsPKzqXcZJzsfht0rq
-W7MPDLGKO/jtZnhUjUmrV5RjJ/yjPfH7UGraW0NrEIoIwiZ1YB6n1z3pisJe
-LzrBb8QljZrZ0KSJGB5HB2bfffpjtXKzcTJs45rsW/NjzzOUG1OTkIQehxj5
-560G9U1RmdbbUyq8wTJVTgM2OgJ7ZrKtL/iElleTTQmMBZHickeXGwXGOxB3
-NBuVWkkchbQ6vpJU6TnB7g+9YVi15w+34exkje3nKx8oDGnVuDnue5+grrxN
-0tpdvCVjC3rK7rGCUTu2B1I79Tig36KVsROIfx50uO6yquNSkA7gbfTtikIe
-IX83F3iS1IgjCq6F1yuTkP8ATsKDVSSOQtodX0kqdJzg9wa5NvA0hcwxl9Qb
-UVGSR0OfavP3F1deBuEtyFkkvzCpTCn1G477dauTiHEDNHJJLEFF34V4kTyn
-1bJOf9qD0FVxRpFGEjVUQdAowBWFdcYlN3MkVysRhfRHDyS7TMOxPYE7DG+9
-a01xInDWuhHokEJk0MOhxnBoG6ikrW6keKyDAO80WtznGNhk4xjqQPnWXJxm
-aK2EUkyrL4h4mnZMgKvfSO+4wN+m9BvRRpFGEjVUQdAowBQsaK7yKih3xqYD
-dsdM0hwi7luVkV3MyIRon5ejmZ67ex2o4rcujxW8F6lvPIfKpj1FuwHsM98f
-tQadRWML+7eSzIeJXuVK6Bh0Uqd2yDvt0H61VfcUeK5No18tuYkXVLydTSMR
-vgDYDcUG9RS3D55bizjlmi5UjDzIQRj5H6/OsO5upp7mdBcXC3iy6IbZCyo6
-ZG5x6jJzn9KD0TRo0iuyKWXOkkbj1x6VIZSxUMNQAJGex7/oaworjiUvD24h
-FcpHGoLLAy6squ27HfOx/tTC8Qd7wFnMUDWQnIGDpJPUHHYf7VBr1NY8MnEY
-b61W4mEkc4ZWXlgaCBkbjucdOnXFI3N1NPczoLi4W8WXRDbIWVHTI3OPbJzn
-9Ko9NRSHEruOx4c7cwq2kpGTljqwcevp3rHtnt4bOKexfXfzOsTyPIfKzAkk
-jod89u2d8UHp6KxhLxC2vI7Wa7WYXKMEk5YUxsBnOBsR0++vfBJb66iW6ubh
-WjdcLGqAdDjJPrsdvf5UGtVfLjMol0DXjTrxvjrjPpWdxq9urZI47WI65mCr
-JqXZiemD8D7UvxE3d1Pw2IqtvI7u5VjqClRs23UgZIHT1oN2isCXi1zYx3EE
-7xyTxSIqylcKQ2+SB6Adv7m/g97LPO8RnN3CFyLjlFAGyPL9CDQa9FZH/ENy
-sUEMLzNGs8gEmnry/wDN+4pOS7tLHlwcPnW2imTmNKQ0g9BpBPXYg5H6ig9J
-RXn1v+IXDWcMUgjaVpF5jR4EigAh8dtj06Z9qs/iN1Fwi9kkcSS28rRK4XTn
-cAHHTvQblFZUdo1gniXvrmYRIWkR21BgBk4HY5x39u9J2XFp57mFlnE5kYCS
-3jhYCJT/AJtXttntufjQehqKyYJL+XiUytcpGI5Mi3aMYeLpqDdfX59a1qDH
-PBpRFJbwX0kdo+cRaQdOe2rOcZ7fH1zVj8KmDQSW94YpY4BCzcsNqA9j03rV
-ooMmPhTrb2ds02YYstMnXmNkHH/pyT+lF5wY3VxM63TRxT6OdGEB1aemD2rW
-ooCs6Tho5M4hmlJliZAjvlMnvj19/wBySa0aKDNPD2kh4fG82kW2lmVRnWyg
-Ab9h1+tVvwc6xLBdtFOJpJdWgMPNsRg+2P1rVqaBXh1stlZR26MWCA7nuScn
-96qfhsbXvi1mnjdipdUfCvjpkfpT9FBlTcLb8PlOCfGeJfVttnoP0ruPhSj8
-0xYeLN1suN8bD+9aVFBlScKkM8jW19LbxTMHkRBuTncg9s/fpWiyh0KuAysM
-EEZBqyigx4+DzRmJxfuxgP4AZAQoPUH/AFbbdsV2/Bo1hjEE8sVxG5kWZjqY
-k9cjoc7fec6tRUC1lbyQQlZbh53ZixdtuvYDsPaqruxllnWa2uRby6dDMYw5
-YdQN+n86eqaoz7LhsVvFaa2LSW6tpOrbLdT/ACHxri74ZJJdSTWt29s8q6ZM
-LqDY2B67H3H6d9OigriTREiambSoGpjkn3Nef8HxVrh2jEsUjPqMniQYs+un
-GcbbA9sZr0lFBlPwK1dmAknSFm1NAj4jPTt8qtn4asskkiNy9dt4dVC7KN9/
-2+laFFAnbWQgaFuY7NFCIQM4Xtvj12rLksuItO0luZonkcsSbkGNSMYOMZII
-Ax39R679FQL3yNNY3EaDLPGygepIpaPhkE3Do4LiJQ5jQOVA1ZC4Bz7Vo1NU
-IWvC4bafxDSyzyadKvM2oqPb6/e9X2dtHaWyQQ50J0yck+9MUUCt7ZpfQrHK
-XTSwdWQ4ZWHcVR4Bxc2MiytIttr1NK2WbUNt60aKDKl4Os5uZHuH5srh0dRj
-llfy9OuAfvrTNlaz25ka4unuHcjcjSAB6DtTlFAhxSCW4NoIk1cu4SRtwMKM
-5NcXPCw0sc1nL4SZAVyqgqVO+NPTqc1o1NBnR8NKy2UjXLyNbB8l9y5YY652
-x867HDLfwD2bl3VySzk+ZjnOSe5zj6U9RQZkHDJDtfXj3SKpRVK6QMjBJwck
-4ON/U1Npw2a2lQtfSyQxZCRYxsfU98ffpWlRQZNjwg21xC5umkit9fKj0AY1
-dcnvWrU1FBNFFFAUUUUBRRRQFFFRQTRRRQFFFFAUVFFAVNFFBFTUUUE0UUUB
-RUUUE0UUUBUUUZoJqKKKCaKipoCioooJooooIqaipoCiiigKKKKAqKmooJoo
-ooCiiigKKKKAooooIqaKioMhb7iNzGbiyghaDzBA7nU+DjUOwHsd9jTNreyP
-deGuFCS8pZAB0Odj3PQ/v7ZOfFdtw+wjmt15/DgSNR2kHnOT6EZ6dOoprjwa
-OyF7GxSe3OUbY41EA5B26GqGUvVe7lVWQQQL+JISR589PTYdfiKT4fxl5dRv
-YPDqyNLE3ZkHUe5xvt1G+PW+5t47Xg1ykecGFyzMcszEbknuaXbhw4hwvhqk
-JiMRs+rIJXTuBj12oKX41f8AOnjWzVNEXOTm5BCAZJI756YHQ/CroeI3yG1k
-u44DBclVUxZypbcZBP3+9fE/+Z3X/wCtf/uNLm3ez4da30NzK9wFTRFJhwdQ
-GVUdR8t8Cg0JL65nvJbXh6Qs0GOZJKx05PYAb/7Gu7a/mF74G8SNJymtWjbK
-uM9gdx/Y1XwhxHd8QtXGmUXBlxkbq2MH9vqKi6mV+O2qBh/4ZHklbIAUEY33
-+80HfC7viFzLLz1tuXE7RNo1A6h3Gc5H0rTpHhaxhLiWJtUc07up6+x6dsg4
-9sVTb3kN9dxSeHdmikkjjkQ6lGAMkkbbg7daDUpK4vOVeQRDGltnODtnp+tH
-EJ3jiEcLHnyf4YAznHWkJLS9WOQNGszyENzFbBUjp1++tZtdeHCX201e308U
-ojhiAyyqGfOCT6Vyb+4jk5EsAaU4IKHykZ6+2KWuLtru2tc4jkaUaSNwcbZ+
-p6U9FbeH5lzcTGV9O7EYwvw+/wCra3eM4z2F47+6Fut1MkbQk4OjII3xmr76
-9kgkjSCMSORqYf8A2j7/AN6UsLN7mzj5lw3h8k8sDGdz3pojPGcf/g/+VJpy
-nGckvftJGnhl1Oy6skZC+mcd87fr2q+W5AtefGrSbAqq9TSnhPDWl4xC5cMR
-p/04OB+tNWspe3hLgkvGGLAbZ2/rT7c7J9Elv7w82XlxNHExVlBOranBehpL
-ZV6TgsCfhms60t3vVuCtwUgaU5UL179e3Wrr2JHu7O3RzHgMPIdwMbftU9dL
-x47h3ns91yo1yi/4jHttsB+lMis60kNrOLKQbHeJ8fmHoff7+Ojmta48plFF
-FFGU0UUVQUUUUBRRRQFRU1FBNFFFAUUUUBRRRQFFFRQFFFTQZsXCLQlZLiKO
-aYZJfGA5JJyVyR3pu4giuoGhmXWj4yMkZ6Uvxi6ltbQeHGZ5XEUewwGPx+f6
-VW3DZv8AFj4jcrMQNyQyE9zpPrvtnagfZQ6FWAZWGCCMg1KKEUKoCqBgAUoe
-IBZb1GjOLRVYkHdsqT0+VUXHF3ja2ENo8viYw0XmAJO2QfTAOc/70DslnBNI
-8skeXeIxMcndT2qi24RYW0gkit1DjcFiWx7jJO/vVEnFLpLkWo4ezzFFcASg
-DGN8ntg7e/0z3c8UZJJRBavNHAfxpAwAXbJx6kb7UDF5w+0vcG4hVyO/Q/DI
-3xv0qbaxtraJoYoEVGGGGM6viT16nrS03FWFwkNratctLCJUIbSCCe+egx/I
-VB41brw1L1/IZAdEZO7MO23bI6+9BZJwfh8q6WthgOWwGIAJxnofYU3DFHbx
-LFEoRF2Aqnh99Hf2omi+DLv5WwCR79etZbQXdxxjw9xfTr+CZPwG0AecgDHw
-9cn3oN6isGLjNxDbapE8WBO8IkjwC5ABXYdc79P17tNdSte8PE8ckDyczMay
-grsO+B5vbpigbWzgWQSBPOGLZyep6mrnRZUaN91YYI9qzIbziN0GuLWK3a21
-EIGJDyAbbdhn3qy44oySSiG2eaOA/jSBgAuBk49SPShtPpGI0VEGFUYFRoXX
-rKjXjGcb4qqO8hllSON8s8YlUYP5T3pfissqokUbiPmHBlLaQuN8Z96iW56e
-kRZY2Rt1YYPwqI41RAijCqMAUobyWNIkaAtcuCSisMDHcnsKttLrxGtWQxyR
-nDIe3pvTZTt9LYIUgjEca6UHQZzRyY+fztPnxpz7VVdyTxoWhEYCjUzPnGPg
-N6Wn4mVCvEmpBGHfPXf8o+NTYXlhya2jmZGkUEo2pT6GrhXMbFkVnXSSBlc5
-wfSu6q7oooooJoooqgooooCiiigKipqKCaKKKAooooCiiigipoooCiiigz+L
-wyS20csKmR4JVmCD/Njt+tUtxy1ZcRCWW4A2gWNgxPodu3etal5Ly1hcpLcw
-o46qzgEfKgy57W+d7l4Yo/8Ax0ah9T/4JC4I269eopi1spnHDpZhymtUZWTO
-STgKNx7DP6VoRSJMgeJ1dDnDKcg13QKC1J4obzWNPIEYXuTqzn9qx5+Ezi/m
-dLOG55snMSV3ICZO4Zc7gffpXpKpmuYLfSZp44w3TWwGfrQItazx8UaaBECC
-05aZ2UNq2GOuKhuFs3Av4eso16QdR3GrOo/LNaEM0U4LwypIucEowIzVtAvZ
-+K5R8ZyeZnblZxj59+tZs1nBxLjUvPTWsEYQrkjBOCDtjrlhj2962qigRuOH
-K0dpDAFijgmWTHsM7fEn+dF1bPNxGynXGiEPqOfUACn6KDFs4eJ2kIsI449A
-J0XWoYCk5zp6k7n2/elZ+EzLfTOlnDc82TmJK7kBMncMudwPv0r0lRQUIsqz
-hQI1twmABkNqz9MYpbikk6GHklCrtyyrjIYnp8utOtIiOiM6h3zpUndsdcV3
-UqWayUtbu0MMkYFwVTlspODjORgmr4YblRPOBGJ5SpCkkqAPX3xmnNa8zl6h
-rxnTnfHrXWakiTjhC7e7aQxpba4sEHzgasj9BS95Yu5RizF5ZAsojzpK+uO2
-2K2KinU66rgj5MaprZ8d2OSfnVtFFaaTRUVNAUUUUBRRRQFFFFAVFTUUE0UU
-UBRRRQFFFFAUUUUBWfxjxRtVjtFdndwGKNpIXcnB7dMZPrWhSN9FePJFLZSx
-qVyGSTOlwcenpj9fqFXBZy8UkEhn50LYdZm1MM9PNgZH30xS9nZ28nGOIh4I
-5ACjDWobBIJPX1NOcPtJoHmnuZFeecgsEGFAGwA+X33KMT8Qi4jezw8PaRZX
-CjVIE/KMZGeoNBZ4deH8dtxbAJFdq4dN8ZXfI398e29VfxZhxJBFeRXEUkoi
-aIJp056EHv037fWnLa0uJrtb29KrIgxHEhJCZ6k+rb49NqXj4LLC1unjC9rD
-NzFjKAEdSN++5/U0BFeXhuY7CQyC5STU0ugaZIs9fbI2+IAzvVn/ABJGjcJm
-dlUsuNJI3HmGcelMWlo8VzNdTycyWU4U42RM7KP5/ZNfGYbi6tvCwxBkl/NJ
-qA0YII27gn0/Wg4sobS5kMkVjLZyRjys0fLO4xkDoce471zHe3JvU4c8kQmQ
-6nl2/EUYOAvZj3HYZI7Vdqv7hnheBbVM4Mgl1ErvuuMYPTc9PSrDw238J4cB
-sZ18zPn1/wCvP+r3/ltQZUV9xFeFxcTa5SSNTh4SgGoaiPzevT+/e08Vabih
-g8YsCxzCMR8os0u4ByegGelTw7gq+Ft/GGXMZJMJkzGTk4OPn971fLwqTnyG
-3vpbeKZg8iINyc7kHtn79KDieSa/vbe15k1ovI58gjbDEk4057Y+xRfS3PCe
-GyGNpbkZOJJGGYwcAZ/1bn0/amL2wae4jube5a3nUaNQGoMvoQduv30ro8Oj
-eyktZ5Hl53mkcnBZttx6YwMDpsKBC54nd2trBHdBbaaQlWkYawAFGWwvfJ2H
-Si34ndNAUjzcO0qpDO0ZVZM5JyPRcHcUzLwgGKPReXAnifXHNI2srnAI9xt0
-q2Th5lsDA9zK0hOvnajnV1BA9M9v570CpSWLilgt1ObmQmTlsqhNPl3yN8/p
-8607Z5ZIVaaLkyHOU1BsfMUjDwyfxsF3cXrTvFq20BRgjGwHf377elPW0PIg
-WLmSS6c+eRssd+5oM3lSJxPmTSujM+EbYoy9l9j/AE9a0J1ldBypTEQQSdIO
-R6UnFw8+PlkcycsOJIxq2LHqcU3dQvPCYlkMZYYJAByO4rMjElxXwsyNYxmV
-mLHJy3U77UpdvcpdtMyTGCIr/hvgEdSSO/Wm4LWRIEje4dtDAqV8uw7H1FUz
-W99IJIllj5MhPmOSwU9hUu4XcBe7uw0lrOscQ/wzpyX23znpvmmbC4N1aRys
-AGYHIHTY4qheHvFG0VvcNGjDppyc9M59/wB/pTcESQRJEg8qjA96vHftZKtq
-aKK00KKKKAooooCiiigKipqKCaKKKAooooCiiigKKKKArL4jxV7LmaLOaQR4
-LOfKmDjoe/UDH9K1KyuPySxxWhiBZjdJ5Aca+pAz8QKC2y4g89w9tcW7W86D
-XoLagy+oI26/fWmxNE0xhEqGVRkoGGQPh9KzOFSi/vJb+TEUqLyOR3QZz5s9
-85rMW68TcWl0q2sLvdLgQtiQAkg6x3z6/wBaD0/Nj5nLDrzMatOd8euPSqIL
-wSazKY49MxiX8QHUe3wJ9OtYyJHDx9xdXtyJMpySSfxAdyNhjTnbGwquVFmi
-aNhlH4qVO/UGg9HDNFOpeGVJFzglGBGaWi4rZzz8mGYyODghI2I64znGMe/S
-s+CKIvxhkKxWzKI9SrspCnVt7Z+dK8PuIroReJu0Q20DaBEGDYK4JJI6gDt/
-Kg9MaRlv3RWligMsKg+dWG5Ht6e9MWxVraIo7OhQaXbqwxsT70haXBsbdVkA
-ktwSBNH069x9d/h1rNZtdDikksJlhtS0aDzkuBg9TXaX8+hZHspOWwypjYMT
-n2pq+/8AJT/9Nv2rmy/8jB/01/anqe/2XbiLxNqltisOQGkDZ0nG/wBDt94p
-i4uRGRGimSVhkIvp6n0FZ9vIj2kFrdZAmyckkavMTjPvt9fhli20ji10GGHZ
-VK5HUYwcfPFZlTVkV6xnWCeFoZHyV3yDj3roXyfxDwmN9Oc+/XH03qriRUzW
-igapOcCMDfA61RoaYXNxGo58Ux04HUAAY9enartW2w6bxReNAcYWPWWz09j+
-9UrfzzZa3tDLHnZy4XPyNJSS+Iiv5Ic4ZYyMdcY3H707eGRLbnW9ysUaJkAI
-CG9N/wBqbam2mBck2vP5Mv8A6NPm646UmvE5iryGzbRGxVyHBxjrtTNi80lq
-rzlCzAEafTA6+9Z8NvPceLEdwETnMChXZvieoBpatt+j9zecm2jniTmhyMAH
-BOemP6VzLeSxxwsLY6pGKlWcLg+nv3pWObxR4dqUKjFiVHTKjbFM8Q88lpGu
-SxmDY9h1q7purre557Sqy6GjcrjO5HY/Ou45hLI6rghDgkHv3Hy2+tJ3ytBP
-HNE4RpiIWyuRv0PxHvTlvClvCsaZ0qMbnJosXVNRU1poUUUUBRRRQFFFFAVF
-TUUE0UUUBRRRQFFFFAUUUUBS11aJdcrmFhypVlGnuR/KmaKDPuuFw3FyJxJN
-BMRpZoW0lh7/AE+9qti4faRPG0VtGjR/ldRg9Mbnqevem6KCKqaKFgoMaEK+
-tcgfmznI98nrV1FBTcwLcwNE+oA43U4IIOQQfY0rbcMihnWZp7id0/IZpNWn
-I3xWhRQckZFZtvwsclEnkdsZ1IrnQd89PvpWnRUxLJXEi60KaiuoEZBwRRGu
-iNV9AB0xXdFFKNYxNa+Gcs65Jyx82Sc5z864/hcR3Msxk7SGQ6h8PvvT1FTI
-mQpb2McUnMLSSyDYPI2SB6CrIIFh16CTzGLnPqavoq4ZCsVnFG8zqCeccup3
-H3vVS8KhAK65WQ50oWyq57gfWn6KZDIqijWKJIwThQAMnelTwyMyO3OmCuxZ
-kD4U56in6KYZCs1lDNCkW68vGhlOCuPQ0W9mkEmvXJI5GNTtk49KaopkMime
-BZ+XqJ8jhxj1FW1NFFFTUVNUFFFFAUUUUBRRRQFRU1FBNFFFAUVFGRQTRUUU
-E0VFFBNFRRQFFGRRkUE0VFFBNFRmigKKKKCaKKigKKKKgKKKKoKmoooJqKKK
-AooooJoqKM0E1FFFQTRUUVRNFRRQTRUVNAVFTUUE0UUUEVjy2ML38cLySyYQ
-uxkbJYZwBn2Oa16y7yy8XxAhgwXk7OOgOqs8meXwq1sODzg/ixpJpj1HZlyM
-bjqKaFzcTyyC2WMpG2lmcnLHuB6YqiQ3E1ubGSB1fIXmKvkwCDn6dv8AarvC
-3UMsnhpYxHKdRLjJUnrj1qes+lbW+MNnBDG0YdgzFpGwoGo/XO9aFjdeKiLb
-alYoxHQkdx7Ul/C5VjhKmJ5EBVlcZUjJP13+++japJFbokjAsBgkDA+VOO/Z
-x1Vd3iQKUV1aZjpVBudR6Z9BS9msptZrIS6JImxqA30ncHr33rscOE7mW8Cv
-I22EyAB+5+dVS2L293BLHLcSAtpfzZOO3yz1pd+S7pQLbRpdu8pWdJGCEOQ3
-t8aslizLaG+lLCTUW1eUL5Rt123prhlrmNp7iFeY8hfdN1+tdXELXPE4QyBo
-I0LEkZBJ2x6elTPE6+K7OflreGN2lgiGY8nI6bgH06VRE03D4Y50ZpluFyVO
-/nO49z9+1ak8I8HLFCgGUICgY3IrmG3U21uky+aMKcZ6MBVyr1K2aSW/E5In
-kMvMiEjMRg5Bx9OtN+JIvxb4GOVrz674qvQ38X5mk6ORjVjbOrpmi7t5mnSe
-2aMSAFWD5wRVa9jnx5dLaZBiKVyhB/NncDvjtS4vRbw3LrGc85gNIJGdtz6b
-4ruLh84MMTyoYIW1rpGGY9d/qat/h+u2uIXf/GcuCO2+37VPWfVFzdzyWEZE
-ckcjyKhH5ST129N/WmLW5nNy1tcqgkC6wUOxHTvXE1rcmOBXk5zLMrk6QuAK
-tSCT+IPcMyaNARQOp3zv86s1Zrq4uGju7eFcaZdWfUYGdqrkvZFtrmRYTqhc
-qAe/Tf4b5qbyCaSWGWBo9cednzg5GKqitb2KJ1SdGJk1gsPzZ6gjsPhS6t0z
-ZyTupM4jI2KtGdiD9/rVs8nKgkkxnQpOPhS0NvJFbFcLzNRZVRmCg/Xp3I/S
-rrh3SBnjQuw/yjr/AHp6v0yxfzRmOVrkSoylmRFHkO2ATuepxTcF3NzAJxFh
-11qEbLAfDv8AL0pS3iuJW5caPBGRhmEeggjoc5JJ9ads7e4jlZ5jEMjcRrjU
-fUn761maxN1FrxDxM5jFvMoBxqI6HuD6V3flRyNWN5lxnPX5VEFpJDcu6T/h
-OxYxle5967u7drgw4YLolDnPcDNazxr3Ckt9dxiWTRCYonx+bcjIGNuh+Pr0
-rVzWd/D3aOWN3ASSfmEAZyvp7Vo9qQm/bEcytPc38bNqhk0aM7FRjI/nXTvI
-0trfMxw8uhYyMAKcgH443z705aWzKl0ky+WSViBnqp+Fc3sJEdqkSEqkybDf
-AFTKzl+VIv7ySFrqKKPkA5CsfMVHU+n33rtr64knSO2RCHiEgL9t/ag8NlAa
-KO6ZLdjumMnHcA/fzqzwbLccyJwiiHlr3IOetPT1DX5kggMChpJ8hVJ2GOv0
-quAzfxb/AMRo18j/ACE4I1e9dPYOkVv4ZwJIM4LdGz1z8a5WzupZpJLiSPzw
-mPyA7f1/vT09THfTNOYvwW5gPKaNsgEb4P6VNtxBrieGFQNWCZgRgrj+9VWt
-jcR3MLyLCFjU7xjdjjG9NWMMqa5ZypmlILaegHYUmk2naKiprboKipqKAque
-QxwvIq6yqkhc4z7ZqyluJ/8ALbr/AKL/ALGgizvI7pCV2kUDmJ/pPpmp8bAL
-jw5lHNyNsH0z1rI4bII+ATswJztt7gD+dNwfiTWAVt44S7DHYgD96zrHZq7U
-Vim8Y3cc0MkxR5AhDjyEH/T9Pj+tWxSXknEpBqjCx4DLkkYO+3vjvTsvaNTN
-cl0VlUsAzflBO5+FZ0NtFfTXEtwCxWQooyQABXEkJn4hFGs76FgyGByTvjIP
-qdt6aa16qWaN5HjVstHjUMdM9KX4ZJI8MiSPraKQx6sbnFLyTTpPfGNg3LCE
-BycAaSTgUtNalKzcRtoJTHJJpYdRpJrjhfiPDKZ3VgwDKcknfffNV8QZ0vrN
-o05jDXhc4zsKW+Jbc0wL23KaxMpXIyQc4z0z6fOrpHVEZ2OAoyT7VVGFaJpJ
-4kiZh5wcHYep+FZwLTaLclks3f8ADZx+cbeX1A64z7U0tw43FLNcZnG4zsCf
-2q6S8t4ohK0o0McBhuCflWe3LsuIhY4ZGXk4CoNR/NVc0Lx8HuWdAnMfWF/0
-gkYFTanataGeO5jEkLhlzjNVz39rbvpkmAbuBk4+OOlXO6xxlnYKo7k4pHg6
-BrTnneSVizH54q61v0aF3AYTOJVMY3Len36VSOKWTMFE43ONwQKUuo1ju7tF
-/LJbmRhjbUNqetY0k4fCHUOpjXYjOdhU2ptrqa9t4FRpJAA+64Gc/SiC9t7g
-4imUknYHY/Q1mMSOEXUWcrHMUXPXGof1rStzJK2ue2EbJ+Qlgx3649KS3Scr
-bi9nCKWYgKOpNVwXEVymuFwy1TxdivD5iDg4A+pA/nSs1qIbuKCDCx3Aw677
-hdzv7jarbVtytGGeOcExOGVTgketW5rDmdra4uYYXESPIi5/06gckelMprtu
-IQwi4eRZQcrI2SMbg1JyTs06M1h27ziG0uDcSMXlCac7aST19T700gkvJpWM
-8saxyFFVCB09fWr2XsfhmSeMSRtqQ9DVlYkE6pwmCMtNrctgQ/mOCc1MU9yb
-TnK7SG2kZWBJGtcdx6/H9adk7NqlJ+IW1vJy5JQHA3ABNRw4yNbc2ViTIxcA
-nOkHoKi95c/D5jqDpoJBU7bfD3q74tvhiGVJo1kRgyN0I71ZWQ8q+Gt4UaZH
-aMP+Auwz3OO2c7D+lcrPPdLYjnMhl1him2cfz2qdk7tqikeGNI0cqM7Py5WQ
-MxycCquJW6sQwkczuwEQ1HCnbJAHTbqaurvmtLNcc2MPo5i6ycac7+tZ/Erd
-XIIkczuwEQ1HynbJAHTbqavNuxeUhcF5UOodwAvX6EU01fLcxxMqM41sQAud
-zk4zirqRaObHLERJMwcvqGMagfj0x9Phl4VViaipqKKmleJ/8tuv+i//AGmm
-a4dQ6srAMrDBB3BFBmcMtDot59XlaGNiM76guPpg/WrOHWksDu0+CVHLjOdy
-uSc/t9KfRQiBVACgYAHau6mJ1ms9OFxrJGwll0I2oIWyvf8AnTBtImn52CJO
-hKsRn4460xRTIZCstmJZdfOnTplVkIB+/au1g03AkGkKE0BdIz19fT2q+imQ
-xVDGIVIG5JyTgAsfXaoEEeqR9IzLgPnfParqKYuKLa0httXJXTq67k5+tUzw
-zPdJKEQiLOjzkZyN87GnKDTEz6JT209yCHm5aNjKIM7d9/f7zVl1bCe1MaYU
-qAYyNsEdMelNUUwwjBayrePczOCWQKApOB0zsfcbVPEraa6g0QyhR3UjZune
-naKmGfTNltr66URTvCkRPm0ZyR86lbW6tXfwjxGN2LaZARpPtitGoNMTrGZJ
-ZzrDcSArLcTDHQAAdMD77CuooeIrEkPMgjRQF1AEtt8dq0aKYdWdcWD+EFta
-8tUP5y+ck7b1dEt4XHOkiVQc4jB83tk03RU8i9VN5b+Ktmh1adWN8Z6HNXAU
-ZozV7RcKCyBnuWkCtHMFGO+w711bWUFuxaGMKSMZySf1pmiiZC0NlFEsQAJM
-WdLE779a4l4dDJK0gaRNf51RsB/jTtFXDIRPDYjDFGHkUx50urYbfrULw1OQ
-ITIzKZC7nO7/AB/T6U/RTIdYCNqyv4fchfDCdRa5zkDz49Pv+1atFM0s0nPY
-Rysrh5Iiq6fw2xt6UQ2MaCDDMTCCBjYEnqacopkMiqGJIIxHGulR0FLScNWS
-Vnaachj5l17Eenwp6imGSs8cLj1/40+noU5mxHp8N6djQRoqKMKowPhXdFMw
-kxNFRRVVNRRUUH//2Q==
-
-------=_NextPart_000_0002_01F9A93F.D59E6BD0
+------------=_1169000684-18425-368
 Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
+spawned their fair share of superstars. kill at least 89 in BaghdadTwin att=
+acks.read this exclusive Al interview,=20
+
+MARSHAL HOLDINGS INC(MHII.OB)!!!
+DATE          INITIAL COST     VOLUME
+01/18/2007      0.078                8,394,800=20=20
+01/17/2007      0.064                5,394,800=20=20
+01/12/2007      0.034                2,094,800=20=20
+01/11/2007      0.035                3,091,232=20=20
+01/10/2007      0.016                511,475=20
+01/09/2007      0.015                481,693
+=93What is that?=94 you say and we are so sorry that you still don=92t know=
+=85
+This is great stock that you had ever met in your life!!!
+It increased for 300% just for a few days!!! Be ware don=92t miss it!!!
+You can get more information using your broker web-site!
+WARNING: INVEST YOUR MONEY EXACTLY IN OUR COMPANY!!!
+
+shows all major networks Idol specialABC, NBC, CBS & FOX Now University bom=
+bings idea! When
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0002_01F9A93F.D59E6BD0--
+------------=_1169000684-18425-368
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+Spam detection software, running on the system "fire-2.osdl.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or block
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  spawned their fair share of superstars. kill at least
+  89 in BaghdadTwin attacks.read this exclusive Al interview, MARSHAL
+  HOLDINGS INC(MHII.OB)!!! DATE INITIAL COST VOLUME 01/18/2007 0.078
+  8,394,800 01/17/2007 0.064 5,394,800 01/12/2007 0.034 2,094,800
+  01/11/2007 0.035 3,091,232 01/10/2007 0.016 511,475 01/09/2007 0.015
+  481,693 =93What is that?=94 you say and we are so sorry that you still
+  don=92t know=85 This is great stock that you had ever met in your life!!!
+  It increased for 300% just for a few days!!! Be ware don=92t miss it!!!
+  You can get more information using your broker web-site! WARNING:
+  INVEST YOUR MONEY EXACTLY IN OUR COMPANY!!! [...]=20
+
+Content analysis details:   (5.6 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- -----------------------------------------------=
+---
+-1.0 OSDL_HEADER_SUBJECT_BRACKETED Subject starts with []'d phrase
+-1.0 OSDL_HEADER_LISTID_KNOWN List-Id contains a known mailing list
+ 2.0 OUTFLUX_THEBAT         X-Mailer is from "The Bat"
+ 2.9 DATE_IN_FUTURE_03_06   Date: is 3 to 6 hours after Received: date
+ 2.8 FORGED_MUA_THEBAT_CS   Mail pretending to be from The Bat! (charset)
+-0.1 AWL                    AWL: Auto-whitelist adjustment
+
+
+
+------------=_1169000684-18425-368--
