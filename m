@@ -1,40 +1,30 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 14 Jan 2007 09:38:14 +0000
-Subject: Re: [KJ] Plunge
-Message-Id: <Pine.LNX.4.64.0701140435320.12476@CPE00045a9c397f-CM001225dbafb6>
+From: "Joann Pena" <pencillingblazons@acceur.com>
+Date: Fri, 19 Jan 2007 06:54:14 +0000
+Subject: [KJ] {subj190107}
+Message-Id: <01c73b95$91c967d0$6c822ecf@pencillingblazons>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4f8a82c571b69fade74ef67bbb654219@acm.org>
-In-Reply-To: <4f8a82c571b69fade74ef67bbb654219@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 12 Jan 2007, Jesper Juhl wrote:
+No more scam or shit companies.
+Look at charts and ask your adviser about:
 
-> On 12/01/07, Matthew Whitehead <whiteheadm@acm.org> wrote:
-> > Okay, I'm ready to take the plunge and request a beginner's
-> > kernel-janitors assignment.  Anyone got something I can do for the
-> > community?
-> >
->
-> Take a look at the TODO ( http://kernelnewbies.org/KernelJanitors/Todo ).
-> Pick some task that you think you can handle.
-> Create a patch and send it in for review.
+Ventana Medical Systems
 
-just for the entertainment value, it's worth grepping the entire
-source tree for the word "deprecated" to see how much of that can
-actually be removed.
+Ventana Receives FDA Approval on Pathway
 
-and, yes, i understand that "deprecated" doesn't mean "removable,"
-only "discouraged."  however, at some point, something that's been
-"deprecated" for a sufficient period of time should finally be
-deleted, no?
+Thursday January 18, 10:08 am ET
+Ventana Medical Systems Receives FDA Approval for Breast Cancer Detection Test
 
-rday
+TUCSON, Ariz. (AP) -- Ventana Medical Systems Inc., a maker of tissue and slide preparation systems used in drug development, said Wednesday it received Food and Drug Administration approval on a new antibody.
+The company received the approval for its Pathway Her-2/neu (4B5) Rabbit Monoclonal Antibody as an aid in assessing breast cancer patients being considered for treatment with Herceptin. It is also approved for use on the Ventana Image Analysis System.
+Herceptin is a cancer treatment made by Genentech Inc. It targets HER-2, which causes breast cancer cells to grow more rapidly. The approved Pathway antibody is intended to detect the presence of the HER-2 antigen.
 
-p.s.  and, remember, boys and girls, it's spelled "deprecated," not
-"depreciated."  :-)
+Get in before most investors hear about this awesome news!  VMSI has just made an announcement which, once the investment community hears about it, is going to send the issue flying!  Read on to find why we are so excited!
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
