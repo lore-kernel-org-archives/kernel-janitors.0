@@ -1,24 +1,26 @@
-From: "Mikhail Ratliff" <bodenh@saive.com>
-Date: Fri, 19 Jan 2007 20:07:07 +0000
+From: "Guglielmo Basco" <murpheyajoel@garboli.com>
+Date: Fri, 19 Jan 2007 20:07:32 +0000
 Subject: Re: [KJ] my migratio
-Message-Id: <01c73c05$653b8110$0201a8c0@jonas>
+Message-Id: <01c73c05$7402ebc0$0201a8c0@jonas>
 MIME-Version: 1
 Content-Type: multipart/mixed; boundary="----=_NextPart_000_0001_01C73C0B.B6C63BA0"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73c05$653b8110$0201a8c0@jonas>
+In-Reply-To: <01c73c05$653b8110$0201a8c0@jonas>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
 ------=_NextPart_000_0001_01C73C0B.B6C63BA0
 Content-Type: multipart/alternative;
-    boundary="----------=_1169237264-2908-756"
+    boundary="----------=_1169237276-2908-760"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1169237264-2908-756
+------------=_1169237276-2908-760
 Content-Type: text/plain;
 	charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
@@ -38,7 +40,7 @@ An honest answer, Captain, and I thank you for it.
 chew. Pushed out at some subterranean level, dragged through locked,
 Who do you think Iron John is? In the story I mean, not the one
 
-------------=_1169237264-2908-756
+------------=_1169237276-2908-760
 Content-Type: text/html;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -70,7 +72,7 @@ FONT face=3DArial size=3D2>chew.  Pushed out at some subterranean level, dr=
 agged through  locked,</FONT></DIV><DIV><FONT face=3DArial size=3D2> Who  d=
 o  you  think Iron John is? In the story I mean, not  the  one</FONT></DIV>=
 </FONT></DIV></BODY></HTML>
-------------=_1169237264-2908-756--
+------------=_1169237276-2908-760--
 
 ------=_NextPart_000_0001_01C73C0B.B6C63BA0
 Content-Type: image/jpeg
