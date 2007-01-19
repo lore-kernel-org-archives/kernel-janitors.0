@@ -1,26 +1,39 @@
-From: "Ahmed S. Darwish" <darwish.07@gmail.com>
-Date: Sun, 14 Jan 2007 15:35:23 +0000
-Subject: Re: [KJ] deprecated stuff and spin locks
-Message-Id: <20070114153523.GA3770@Ahmed>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Fri, 19 Jan 2007 12:13:03 +0000
+Subject: [KJ] what about a wiki to keep track of individual ToDo items?
+Message-Id: <Pine.LNX.4.64.0701190705420.24375@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701140637380.13030@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701140637380.13030@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 14, 2007 at 07:55:31AM -0500, Robert P. J. Day wrote:
-> p.s.  there seem to be a number of potential cleanups that aren't
-> listed in the current TO DO list.  how does one get extra tasks added
-> there?
 
-You aren't the maintaner of the Janitors project! ?. 
-I felt you do this for a living from all of your janitor related posts :D ..
+  at the risk of throwing out a wild and crazy idea, is there any
+value in transforming the current static ToDo list into wiki format,
+with one wiki page per task?
 
--- 
-Ahmed S. Darwish
-http://darwish-07.blogspot.com
+  as it is, the current list:
+
+http://kernelnewbies.org/KernelJanitors/Todo
+
+gives lots of suggestions for things to do, but there's absolutely no
+indication of whether these items are still relevant, which ones have
+been completed, which ones are underway, who's working on each one and
+so on.
+
+  it would seem to make more sense to restructure the ToDo list so
+that each outstanding item has its own wiki page, where janitors can
+report that they're working on that item, how far along they are,
+whether they have questions, ask for assistance or clarification, etc.
+
+  as one example, even something as simple as trying to formalize that
+"power of two" stuff recently generated a boatload of KJ list traffic
+that could have just been discussed on a single wiki page.
+
+  is this doable?
+
+rday
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
