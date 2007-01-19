@@ -1,7 +1,7 @@
 From: Mr Paul smith <mr_paul_smithes@yahoo.co.uk>
-Date: Fri, 19 Jan 2007 05:57:43 +0000
+Date: Fri, 19 Jan 2007 05:57:44 +0000
 Subject: [KJ] HELLO
-Message-Id: <200701190557.l0J5vhFe025156@smtp.osdl.org>
+Message-Id: <200701190557.l0J5viEC015040@smtp1.osdl.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 In-Reply-To: <200507082039.j68Kdhj9018976@smtp.osdl.org>
@@ -40,7 +40,7 @@ To: kernel-janitors@vger.kernel.org
  email : mr_paul_smithes@yahoo.co.uk
 
 
-Message-Id: <20070119022116.A4D3F3F24E@www-03.carambole.com>
+Message-Id: <20070119022116.C07683F255@www-03.carambole.com>
 Date: Fri, 19 Jan 2007 03:21:16 +0100 (CET)
 
 
