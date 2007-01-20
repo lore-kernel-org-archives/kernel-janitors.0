@@ -1,27 +1,31 @@
-From: "Jayne Fox" <manneredwife's@abcshop.ru>
-Date: Mon, 29 Jan 2007 15:16:51 +0000
-Subject: [KJ] fw:Jayne Getting HOT
-Message-Id: <01c743d1$a621b040$6c822ecf@manneredwife's>
+From: trem <tremyfr@yahoo.fr>
+Date: Sat, 20 Jan 2007 21:56:54 +0000
+Subject: [KJ] [PATH] [RESEND] replace pci_module_init by pci_register_driver
+Message-Id: <45B29026.3050405@yahoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Warning alarm this incredible unbelievable opportunity possibility to make our profits.
-I have heard something magnificent will occur today with another one.
+change pci_module_init by pci_register_driver
 
-Nice start for today.
-It's going to be HOT one. 
-Bid rised already...
+Signed-Off-By: trem <tremyfr@yahoo.fr>
+---
 
-Everyone buyg and for waiting company news.
-Look at lvl2 and volume.
-
-
-it probaly break .08 mark witout problems today. Jump in.
-NMXC will make our profits.
-
+diff --git a/drivers/crypto/geode-aes.c b/drivers/crypto/geode-aes.c
+index 43a6839..31ea405 100644
+--- a/drivers/crypto/geode-aes.c
++++ b/drivers/crypto/geode-aes.c
+@@ -457,7 +457,7 @@ static struct pci_driver geode_aes_driver = {
+ static int __init
+ geode_aes_init(void)
+ {
+-       return pci_module_init(&geode_aes_driver);
++       return pci_register_driver(&geode_aes_driver);
+ }
+ 
+ static void __exit
 
 
 
