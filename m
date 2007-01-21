@@ -1,29 +1,32 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Fri, 26 Jan 2007 17:42:27 +0000
-Subject: Re: [KJ] is CONFIG_UNWIND_INFO still a live kernel config choice?
-Message-Id: <20070126094227.4a2ab84c.randy.dunlap@oracle.com>
+From: trem <tremyfr@yahoo.fr>
+Date: Sun, 21 Jan 2007 21:42:28 +0000
+Subject: [KJ] [PATCH] replace pci_module_init by pci_register_driver in
+Message-Id: <45B3DE44.5020608@yahoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701261210130.26996@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701261210130.26996@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 26 Jan 2007 12:11:22 -0500 (EST) Robert P. J. Day wrote:
+change pci_module_init by pci_register_driver
 
-> 
->   there's only a single test in the entire source tree for that
-> variable in include/asm-i386/dwarf2.h, but nothing else checks it and
-> nothing sets it.  is this a dead setting?
-
-It was not working in all cases.  Linus finally had enough of it
-and reverted the code.  I expect that the Novell developer who
-wrote it will eventually try to merge it again, but it could be
-cleaned up completely until then.
-
+Signed-Off-By: trem <tremyfr@yahoo.fr>
 ---
-~Randy
+
+diff --git a/drivers/net/hp100.c b/drivers/net/hp100.c
+index 844c136..7dc5185 100644
+--- a/drivers/net/hp100.c
++++ b/drivers/net/hp100.c
+@@ -3034,7 +3034,7 @@ static int __init hp100_module_init(void)
+                goto out2;
+ #endif
+ #ifdef CONFIG_PCI
+-       err = pci_module_init(&hp100_pci_driver);
++       err = pci_register_driver(&hp100_pci_driver);
+        if (err && err != -ENODEV)
+                goto out3;
+ #endif
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
