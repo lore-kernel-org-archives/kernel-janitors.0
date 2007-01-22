@@ -1,46 +1,33 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 10 Jan 2007 13:34:20 +0000
-Subject: Re: [KJ] what's the deal with using real "boolean" variables?
-Message-Id: <Pine.LNX.4.64.0701100833570.3216@CPE00045a9c397f-CM001225dbafb6>
+From: "Beatriz Zimmerman" <dolmen'sgoodies@aboveground.com>
+Date: Mon, 22 Jan 2007 11:54:17 +0000
+Subject: [KJ] This is your big opportunity to double your investment for
+Message-Id: <01c73e35$30fc2c10$6c822ecf@dolmen'sgoodies>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701100337460.11933@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0701100337460.11933@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 10 Jan 2007, Richard Knutsson wrote:
+ 
 
-> Bernd Petrovitsch wrote:
-> > On Wed, 2007-01-10 at 11:17 +0100, Richard Knutsson wrote:
-> > [...]
-> >
-> >> 	if (foo =TRUE) {
-> >>
-> >
-> > This is IMHO ugly for any definition and implementation of boolean in C.
-> > Write it as
-> >         if (foo) {
-> > Otherwise why don't we write
-> >         if ((foo = TRUE) = TRUE) {
-> > ?
-> >
-> > 	Bernd
-> >
-> It sure is! But a quick check:
-> linux-2.6]$ grep -Er "\=\= *(TRUE|true)" * | wc -l
-> 70
-> linux-2.6]$ grep -Er "\=\= *(FALSE|false)" * | wc -l
-> 118
-> suggest it is used (saw a few false-positivs).
->
-> This is something that should be mentioned in "CodingStyle", but
-> have not got there yet. Care to make a draft/patch?
+Buy Human BIOSYSTEMS INC. (HBSC.OB) share today.   
+THE ALARM IS STRATED! AND IT IS GOING TO EXPLODE.   
+  
+Millions mens will know about this stock today morning and most of them will buy and will make money on it.     
+Monday will be the day when your gains will be really INCREASED.     
+It's getting growth almost every hour! So you can double your balance any time.  
+We are sure thet you had not opportunity like this before.    
+  
+Friday price: JAN 18 - $0.08    
+On monday 22 January it will - 0.13$ at least and 0.20$ at most (not bad for a day)   
+     
+Call your brokers in order they take it now.     
+   
+Do not lose your moment.MORE THAN 95% EVERY DAY!   
+TAKE THIS INCREDIBLE HBSC.OB now.   
 
-oh, god ... what have i started *this* time?  :-P
 
-rday
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
