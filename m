@@ -1,29 +1,41 @@
-From: "Mihaita Tatham" <kerttuydelorme@barnesandjones.com>
-Date: Wed, 24 Jan 2007 04:46:59 +0000
-Subject: Re: [KJ] EDflagshi
-Message-Id: <01c73f72$aef56d50$2101a8c0@ACER14>
+From: Surya Prabhakar <surya.prabhakar@wipro.com>
+Date: Mon, 22 Jan 2007 11:07:25 +0000
+Subject: [KJ] newbie test patch
+Message-Id: <1169463325.2202.11.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c73f72$ae1f7fb0$2101a8c0@ACER14>
-In-Reply-To: <01c73f72$ae1f7fb0$2101a8c0@ACER14>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good day,
+Hi GURU's,
+   I did a git diff and pasted the patch here. I am not sure this is the
+right way of doing it. Kindly guide me if wrong.
 
-VlA_AGRA  $1, 80
-ClA_ALIS  $3, 00
-LEV_VlTRA $3, 35
+Also how do I add the sign off text automatically.
+----------
+changing pci_find_device to pci_get_device in drivers/pci/search.c
 
-http://www.printeryml*com
-( Important ! Replace "*" with "." )
+diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+index fab381e..30deb15 100644
+--- a/drivers/pci/search.c
++++ b/drivers/pci/search.c
+@@ -97,10 +97,11 @@ pci_find_slot(unsigned int bus, unsigned
+ {
+        struct pci_dev *dev = NULL;
+ 
+-       while ((dev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID, dev)) !NULL) {
++       while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) !NULL) {
+                if (dev->bus->number = bus && dev->devfn = devfn)
+                        return dev;
+        }
++       pci_dev_put(dev);
+        return NULL;
+ }
+ 
 
---
-Wormtail, I need somebody with brains, somebody whose loyalty has never
-wavered, and you, unfortunately, fulfill neither requirement. 
-I found you,  said Wormtail, and there was definitely a sulky edge to
 
+surya.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
