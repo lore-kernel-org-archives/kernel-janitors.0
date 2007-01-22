@@ -1,132 +1,66 @@
-From: Pinksheets alert! <saxmon16@go.com>
-Date: Fri, 12 Jan 2007 17:49:48 +0000
-Subject: [KJ] Do not miss our suggestion just for your business BMOD will
-Message-Id: <773648614.18264298795656@thebat.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1168621997-29838-99"
+From: "Morgan Roth" <lineupscorruptness's@aaenco.dk>
+Date: Mon, 22 Jan 2007 21:13:28 +0000
+Subject: [KJ] Do not miss our suggestion just for your business HBSC.OB will
+Message-Id: <01c73e65$21e12250$6c822ecf@lineupscorruptness's>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <773648614.18264298795656@thebat.net>
+In-Reply-To: <773648614.18264298795656@thebat.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
-------------=_1168621997-29838-99
-Content-Type: text/html;
-  charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<HTML><HEAD><TITLE>Do not miss our suggestion just for your business BMOD will help you</TITLE>
-</HEAD>
-<BODY>
-
-<html>
-<head>
-Following a meetingAbout three million have fled their homes. <br>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<DEFANGED_style type="text/css">
-<!--
-style5 {
-	color: #0000FF;
-	font-weight: bold;
-}
-body {
-	background-color: #00CCFF;
-}
-style8 {color: #000000}
-style19 {color: #000000; font-weight: bold; }
-style22 {color: #FF0000}
-style24 {color: #FFFFFF}
-style25 {color: #FFFF00; font-weight: bold; }
-style26 {color: #FFFF00}
-style27 {color: #00FF00}
-style28 {color: #00FFFF}
--->
-</DEFANGED_style>
-</head>
-
-<body>
-<table width="417" border="1" align="center" cellspacing="10" bordercolor="#FFFFFF">
-  <tr>
-    <td width="407" bordercolor="#0000FF" bgcolor="#0000FF"><div align="center" class="style5 style24"> 
-      <p><tt><span class="style27">BIOMODA INC</span>(BMOD.OB) THE ONLY SOLUTION FOR MAKING MONEY.</tt> </p>
-    </div></td>
-  </tr>
-  <tr>
-    <td bordercolor="#0000FF" bgcolor="#0000FF"><div align="center" class="style5 style8"> 
-      <p class="style26"><tt> INCREASE YOUR INFORMATION WITH OUR EXCITING STOCK !!! </tt></p>
-    </div></td>
-  </tr>
-  <tr>
-    <td bordercolor="#0000FF" bgcolor="#0000FF"><div align="center" class="style8">
-      <p class="style19"><tt> <span class="style24">BIOMODA INC HAS</span> <span class="style22">GOOD MANAGEMENT,</span> <span class="style22">DOMINANT COMPETITIVE POSITIONS</span><span class="style24">, AND</span> <span class="style22">GOOD GROWTH POTENTIAL</span>. </tt></p>
-    </div></td>
-  </tr>
-  <tr>
-    <td bordercolor="#0000FF" bgcolor="#0000FF"><div align="center" class="style8"> 
-      <p class="style24"><tt><strong>ALL PROFIT THAT YOU NEED YOU CAN KNOW AT OUR SITE!!!
-
-      </strong></tt></p>
-    </div></td>
-  </tr>
-  <tr>
-    <td bordercolor="#0000FF" bgcolor="#0000FF"><div align="center" class="style25"><tt>YOU WILL BE GLAD TO HAVE STEADY-GROWTH STOCK .
-
-    </tt></div></td>
-  </tr>
-    <tr>
-    <td bordercolor="#0000FF" bgcolor="#0000FF"><div align="center" class="style19">      <p class="style24"><tt> HURRY UP THIS STOCK WILL GROWTH <span class="style28">RAPIDLY</span> ON FRIDAY!!! </tt></p>
-    </div></td>
-  </tr>
-</table>
-</body>
-President Omar al-Bashir told state TV: "The government of Sudan welcomes all financial, material, logistic or technical assistance from the UN in order to strengthen the AU mission in Darfur." Sudan has always rejected plans to replace the AU force with a larger, stronger UN mission. About three million have fled their homes. President Omar al-Bashir told state TV: "The government of Sudan welcomes all financial, material, logistic or technical assistance from the UN in order to strengthen the AU mission in Darfur." Chad in anti-Sudan alliance  <br>
-</html>
-
-
-</BODY></HTML>
-
-------------=_1168621997-29838-99
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "murdock.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Do not miss our suggestion just for your business BMOD
-  will help you Following a meetingAbout three million have fled their
-  homes. BIOMODA INC(BMOD.OB) THE ONLY SOLUTION FOR MAKING MONEY. INCREASE
-  YOUR INFORMATION WITH OUR EXCITING STOCK !!! [...] 
-
-Content analysis details:   (5.2 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.0 OUTFLUX_THEBAT         X-Mailer is from "The Bat"
- 0.3 HTML_60_70             BODY: Message is 60% to 70% HTML
- 0.2 HTML_TEXT_AFTER_BODY   BODY: HTML contains text after BODY close tag
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
- 0.8 UPPERCASE_25_50        message body is 25-50% uppercase
+    
 
 
 
-------------=_1168621997-29838-99
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Grab Human BIOSYSTEMS INC. (HBSC.OB) stock today.   
+THE ALERT IS ACTIVATED! AND IT IS GOING TO BURST.     
+  
+Monday will be the day when your gains will be really INCREASED. 
+It's getting growth almost every hour! So you can triple your balance any time.   
+We are sure thet you had not chance like that before.  
+     
+Friday price: JAN 18 - $0.08  
+On monday 22 January it will - 0.13$ at least and 0.20$ at most (not bad for a day)   
+     
+Call your brokers in order they get it immediately.   
+ 
+Do not lose your opportunity.MORE THAN 52% EVERY DAY!     
+HBSC just released this news.
+
+U.S. Patent Office to Grant Human BioSystems its Fifth Patent, "Compositions, Methods and Apparatuses for Preserving Platelets"
+Monday January 22, 7:00 am ET
+
+PALO ALTO, CALIFORNIA--(MARKET WIRE)--Jan 22, 2007 -- Human BioSystems (HBS) (OTC BB:HBSC.OB - News), developer of preservation platforms for organs, blood platelets and other biomaterials, announced today that the U.S. Patent Office has allowed HBS' patent application for platelet preservation entitled "Compositions, Methods and Apparatuses for Preserving Platelets." A patent number is expected to be issued in the near future.
+
+HBS has been granted four previous patents related to organ, platelet and biological material preservation. Including the patent to be issued, HBS' patent portfolio is as follows:
+
+1. Methods and Apparatus for Preserving Biological Materials - U.S. Patent # 6,413,713
+2. Methods and Apparatuses for Preserving Platelets - U.S. Patent # 6,828,090
+3. Methods and Solutions for Storing Donor Organs - U.S. Patent # 7,029,839
+4. Preservation of Blood Platelets with Citrate - U.S. Patent # 7,083,910
+5. Compositions, Methods and Apparatuses for Preserving Platelets - U.S. Patent number to be issued
+
+"All of the patents we have received thus far serve to strengthen our intellectual property protection as we progress toward commercializing our technologies and bringing them to market," explained Dr. David Winter, President of Human BioSystems.
+
+The latest patent to be awarded is among four patents that relate to the preservation of blood platelets, a blood component critical to cancer patients that have undergone chemotherapy/radiation treatments. Platelet infusions are necessary for a period of time following such cancer treatments to maintain adequate platelet counts. The lack of platelets could increase the chances of bleeding.
+
+"HBS hopes to extend the preservation time of platelets beyond current standards while maintaining quality and safety by utilizing patented cooling methods not achieved by others thus far in the commercial blood banking industry. If successful, this could result in hundreds of millions of dollars in savings to blood centers and hospitals worldwide," concluded Dr. Winter.
+
+HBS is headquartered in Palo Alto, California with research facilities in Michigan.
+
+Certain statements contained herein are "forward-looking'' statements (as such term is defined in the Private Securities Litigation Reform Act of 1995). Because such statements include risks and uncertainties, actual results may differ materially from those expressed or implied by such forward-looking statements. Factors that could cause results to differ materially from those expressed or implied by such forward-looking statements include, but are not limited to, results from ongoing research and development as well as clinical studies, failure to obtain regulatory approval for the Company's products, if required, failure to develop a product based on the Company's technology, failure of any such products to compete effectively with existing products, the inability to find a strategic partner or to consummate a relationship with a potential strategic partner on acceptable terms, the effectiveness of protection of the Company's intellectual property, and other factors discus!
+ sed in filings made by the Company with the Securities and Exchange Commission.
+
+
+
+GET THIS EXCITING HBSC.OB now. 
+
+
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------------=_1168621997-29838-99--
