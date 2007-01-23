@@ -1,32 +1,41 @@
-From: "Wilbur Benton" <marketplacefrontage's@abmmail.com>
-Date: Thu, 25 Jan 2007 21:41:00 +0000
-Subject: [KJ] fw:Wilbur AUNI - day2
-Message-Id: <01c740c7$9bb5f010$6c822ecf@marketplacefrontage's>
+From: "Celik Gopher" <Helderman@mikhaii.com>
+Date: Tue, 23 Jan 2007 12:06:44 +0000
+Subject: [KJ] why your thing is so small? ;)
+Message-Id: <2e6201c73ee6$18a436be$a5bd3d54@kurde>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Day two
+The Most Potent Male Muscle Boosting System!
 
-Nice jump. The Beauty of the peenny sttock arena is that shares appreciate so fast!  
-A bit of inside info and returns of 1000% are not unheard of. 
-With profitable deals in China American Unity Investments (AUNI) is exactly where you want to be.
+The better and most powerful product to enlarge your prick
+available on the market!
 
-I am buying now. Are you ? 
+This products tested, analyzed and approved by doctors.
 
-What will happen next ? Today it will show us ... what it can do on third day.
-It has more growth potential then i even planned .
-And next will be very HOT! times.
-Todays forecast:+24% +0.7 (0.36) at least
-and +48% +0.14(0.43) at most
+Order Our Product NOW! 
 
-AUNI will easily reach $1.00 mark once results are announced!
+You can do it here: http://bafdot.info
+
+P.S.: If it doesn't work for you, we garantee 100% of your money back!
 
 
-70776A32666E7478717878746933776A73716F737977456E79337871746C
-albatani
+
+-- 
+qotktpthuuumuuqouuumuougtsuktotussuhulsisksgnsrqslrhrqnlrlsnrr
+dfkjghwenflgkdwdfwkjgghs
+must. .  .' He  could not  finish  his sentence, stuttered and began singing
+'Shilka and Nerchinsk . . .'
+     'Fool! ' the  girl managed to shout, but never managed to say who she
+meant and instead found  herself  forced into a trill and joined in the song
+about Shilka and Nerchinsk.
+     'Pull  yourselves together! Stop  singing!'  said the  doctor  to the
+secretary.
+     It was  obvious  that the secretary  would have given anything  to stop
+singing but could not.
+     When the verse was finished  the girl at  the desk received a  dose  of
 
 
 _______________________________________________
