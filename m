@@ -1,8 +1,10 @@
-From: "Cora Renard" <maireababine@jackstein.de>
-Date: Tue, 23 Jan 2007 13:29:53 +0000
+From: "Kazimiera Diamond" <buckloaldou@taylormade-golf.com>
+Date: Tue, 23 Jan 2007 13:29:54 +0000
 Subject: Re: [KJ] RXincommodiou
-Message-Id: <01c73ef2$907f5460$0a00a8c0@PSG>
+Message-Id: <01c73ef2$9117eae0$0a00a8c0@PSG>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73ef2$907f5460$0a00a8c0@PSG>
+In-Reply-To: <01c73ef2$907f5460$0a00a8c0@PSG>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
