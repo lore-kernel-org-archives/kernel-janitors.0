@@ -1,49 +1,42 @@
-From: "Jon Vaughn" <robedsedation@abouthostels.com>
-Date: Thu, 25 Jan 2007 16:52:58 +0000
-Subject: [KJ] Girl, 6, saved from sex industry day 2
-Message-Id: <01c7409e$19a28440$6c822ecf@robedsedation>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1399797765=="
+From: "Erika Alvarez" <puckishbuggers@abv.at>
+Date: Tue, 23 Jan 2007 15:25:58 +0000
+Subject: [KJ] Bush faces unhappy electorate
+Message-Id: <01c73efd$c095a8b0$6c822ecf@puckishbuggers>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1399797765==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+     
 
-Day 2
 
-Nice jump. The Beauty of the peenny stocck arena is that shares appreciate so rapidly!  
-A bit of inner information and returns of 1000% are not unheard of. 
-With lucrative settlement in China American Unity Investments (AUNI) is entirely where you want to be.
 
-Look like a discount.
-Take your paper and count. Or jump in.
+Buy PETROLEUM CONSOLIDAT (PCAI.PK) stock right now.     
+THE ALARM IS ON! AND IT IS GOING TO BURST.    
+  
+Tuesday will be the day when your gains will be really SOAR.     
+It's getting growth almost every hour! So you can double your balance any time.     
+We are sure thet you had not chance like this before.   
+   
+Monday price: JAN 22 - $0.57      
+On tuesday 23 January it will - 0.73$ at least and 0.90$ at most (not bad for a day)   
+     
+Inform your brokers in order they grab it now.    
+   
+Do not miss your opportunity.MORE THAN 38% EVERY DAY! 
+PCAI.PK just released this news.
 
-What will happen next ? Today it will show us ... what it can do on third day.
-It has more growth potential then i even intended .
-And next will be very HOT! times.
-Todays prognosis:+31% +0.9(0.38) at least
-and +48% +0.14(0.43) at most
+BUY THIS INCREDIBLE PCAI.PK right now. 
 
-AUNI will easily reach $1.00 mark once results are announced!
 
 
 70776A32666E7478746933776A73716F737977457871746C
-albatani
+ptolemai
+You're not 
 
-
-
---===============1399797765==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1399797765==--
