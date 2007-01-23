@@ -1,8 +1,10 @@
-From: "Elvina Brasier" <cozady@laticreteindia.com>
-Date: Tue, 23 Jan 2007 23:48:42 +0000
+From: "Kira Bedwell" <keyshnaranj@danre.net>
+Date: Tue, 23 Jan 2007 23:48:44 +0000
 Subject: Re: [KJ] RXdinett
-Message-Id: <01c73f49$03a0a290$0202a8c0@umit2600>
+Message-Id: <01c73f49$04858450$0202a8c0@umit2600>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73f49$03a0a290$0202a8c0@umit2600>
+In-Reply-To: <01c73f49$03a0a290$0202a8c0@umit2600>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
