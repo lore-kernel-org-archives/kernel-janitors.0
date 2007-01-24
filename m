@@ -1,50 +1,28 @@
-From: Mr Paul smith <mr_paul_smithes@yahoo.co.uk>
-Date: Fri, 19 Jan 2007 05:57:44 +0000
-Subject: [KJ] HELLO
-Message-Id: <200701190557.l0J5viEC015040@smtp1.osdl.org>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Wed, 24 Jan 2007 12:36:54 +0000
+Subject: [KJ] script to flag "dead" CONFIG variables
+Message-Id: <Pine.LNX.4.64.0701240736110.7569@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507082039.j68Kdhj9018976@smtp.osdl.org>
-In-Reply-To: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
- Compliments of the day to you,
- 
- I am Mr Paul smith  we are a group of Business men who deal on 
- raw materials and export into America/Europe. We are searching for 
- Representatives  who can help us establish a medium of getting to our 
- customers in  America/Europe as well as making payments through you to us. 
- Please if you  are interested in transacting Business with us we will be
- very glad.
- 
- Contact our procurement officer Mr David Thompson
- (agent_david_thompson@yahoo.co.uk) for more information.
- 
- Subject to your satisfaction you will be given the opportunity tonegotiate your mode of which we will pay for your services  as our   representative in merica/Europe.To facilitate the conclusion of  thisransaction if accepted, do send promptly via email the basic 
- requirementsprovided underneath to commence registration processes:
- 
- (1)Your full names,
- (2)Your Residential or Company Address and,
- (3)Phone/fax numbers.
- (4)Occupation/position Held
- 
- Thank you for your time
- 
- Thanks,
- Mr Paul smith
- President.
- Access Import / Export co.
- Freight Fwdg. Svcs
- email : mr_paul_smithes@yahoo.co.uk
 
+  it's all written up here:
 
-Message-Id: <20070119022116.C07683F255@www-03.carambole.com>
-Date: Fri, 19 Jan 2007 03:21:16 +0100 (CET)
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=DEad_CONFIG_variables
 
+rday
 
-
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
