@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 24 Jan 2007 20:43:06 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Wed, 24 Jan 2007 22:55:47 +0000
 Subject: Re: [KJ] script to flag "dead" CONFIG variables
-Message-Id: <Pine.LNX.4.64.0701241539440.4678@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <20070124225547.GA5205@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0701240736110.7569@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0701240736110.7569@CPE00045a9c397f-CM001225dbafb6>
@@ -10,40 +10,17 @@ Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 24 Jan 2007, walter harms wrote:
-
-> hi robert, are you aware of ifnames ? it is part auf the autoconf
-> tools and lists all the #if #elif etc.
+On Wed, Jan 24, 2007 at 07:36:54AM -0500, Robert P. J. Day wrote:
+>   it's all written up here:
 >
-> that should surface all important vars and a compare with kconfig
-> should show up any dead variables. bonus points for collecting all
-> #defines also.
+> http://www.fsdev.dreamhosters.com/wiki/index.php?title=DEad_CONFIG_variab=
+les
 
-ok, i've rewritten the script using "ifnames" and i'm getting a *lot*
-more "dead" config variables, just based on the fact that i'm pulling
-more CONFIG variables out of preprocessor lines than i was before.
+That's a good script.
 
-the updated script is again at:
+There is another failure mode: CONFIG_FOO is defined, all right, but
+code tests for FOO. ARCH_HAS_ILOG2_U32 and _U64, haven't seen more.
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=DEad_CONFIG_variables
-
-and it's taking a *while* to run.  yowch.  so far, it's found 407 dead
-variables as compared to 284 last time, and it's still working on the
-"S"s.
-
-rday
-
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=3DKernel_Janitor%27s=
-_Todo_List
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
