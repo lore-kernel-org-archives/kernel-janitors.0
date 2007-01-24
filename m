@@ -1,8 +1,10 @@
-From: "Ananth Millard" <stultzuestre@maldef.org>
-Date: Wed, 24 Jan 2007 07:02:57 +0000
+From: "Isaura Poarch" <wikochmi@mbii.com>
+Date: Wed, 24 Jan 2007 07:02:59 +0000
 Subject: Re: [KJ] RXWellington
-Message-Id: <01c73f85$ad83e150$d040a2da@home>
+Message-Id: <01c73f85$aec0f530$d040a2da@home>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c73f85$ad83e150$d040a2da@home>
+In-Reply-To: <01c73f85$ad83e150$d040a2da@home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
