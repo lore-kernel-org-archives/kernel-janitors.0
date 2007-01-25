@@ -1,39 +1,49 @@
-From: "Elliott Rowland" <corridorsconsoling@ab-ex.ru>
-Date: Tue, 30 Jan 2007 22:01:36 +0000
-Subject: [KJ] WEXE will made our profits.
-Message-Id: <01c74497$01d97f10$6c822ecf@corridorsconsoling>
+From: "Jon Vaughn" <robedsedation@abouthostels.com>
+Date: Thu, 25 Jan 2007 16:52:58 +0000
+Subject: [KJ] Girl, 6, saved from sex industry day 2
+Message-Id: <01c7409e$19a28440$6c822ecf@robedsedation>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1399797765=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-TUESDAY - JAN 30, 2006 
+--===============1399797765==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-HOT ST(O)CK TIP - (PINKSHEETS: WEXE)  
-WEST EXCELSIOR ENTERPRICES, INC. 
-200% rise are expected in the next 5 trading sessions - grab some now! 
+Day 2
 
-MAJOR NEWS IS EXPECTED. OUR LAST PICK SHOWED YOU GAINS OF 1200% IN 14 DAYS.
+Nice jump. The Beauty of the peenny stocck arena is that shares appreciate so rapidly!  
+A bit of inner information and returns of 1000% are not unheard of. 
+With lucrative settlement in China American Unity Investments (AUNI) is entirely where you want to be.
 
-WEXE is showing signs of making a huge leap in the coming days. It appears that a major announcement would catapolt the companies symmmbol to over 2.00 per share. This undervalued symbool is currently trading at approximately 0.55 and we predict that it will break 1.30 by next monday. We are recommending a buy and hold on this one - 
-Call your stock broker now to get more information on WEXE. 
+Look like a discount.
+Take your paper and count. Or jump in.
 
+What will happen next ? Today it will show us ... what it can do on third day.
+It has more growth potential then i even intended .
+And next will be very HOT! times.
+Todays prognosis:+31% +0.9(0.38) at least
+and +48% +0.14(0.43) at most
 
-About West Excelsior:
-West Excelsior Enterprises, Inc. engages in the acquisition, development, and exploration of mineral properties. The company primarily explores for gold-silver, copper, lead, zinc, and molybdenum. It holds interests primarily in the Santa Maria del Oro mineral properties comprising six claims totaling 1,550 hectares located in the Sierra Madre del Sur Province, Mexico. The company was founded in 1999 and is based in Las Vegas, Nevada. The Company is currently focusing on projects in Mexico and East Africa. 
-
-Without just words: 
-Company need additional investments to start project on new region 
-Market Cap: 55.00M
-Delta dayly (open 0.370 on 01/25/2007 - close 0.600 on 01/25/2007)
-
-Did you saw it up on November ?
-Time has come to another one.
+AUNI will easily reach $1.00 mark once results are announced!
 
 
+70776A32666E7478746933776A73716F737977457871746C
+albatani
+
+
+
+--===============1399797765==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1399797765==--
