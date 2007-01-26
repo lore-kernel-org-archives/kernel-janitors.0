@@ -1,28 +1,22 @@
-From: "Dana Booth" <export'smeddles@abspresort.com>
-Date: Sun, 14 Jan 2007 18:06:19 +0000
-Subject: [KJ] Thief returns boy's remains with cop on scene Video
-Message-Id: <01c7382e$ecf92330$6c822ecf@export'smeddles>
+From: "Ruby Mason" <headlongfrosted@accal.com>
+Date: Fri, 26 Jan 2007 15:56:11 +0000
+Subject: [KJ] fwd: Marcella - NMXC did you took
+Message-Id: <01c7418a$bbb397f0$6c822ecf@headlongfrosted>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-WATCH HWYI LIKE A HAWK THURSDAY! THE ALERT IS ON!
+Check NMXC(New Mexico Software, Inc) and think how incredible this issue wi=
+ll move! For this moment now it=92s price is  0.077=20
+It almost break chart . Up now on +63 %
 
+It already start to fly like others...
+News almost here.
 
-Sym bol: HWYI
-On: PinkSheets
-5-Days Target: $2.00
-Long Term Target: $8.50
-
-Exposure of there technology to the market has generated a great deal of interest
-and word on the street is that they are preparing a announcment concerning several
-large contracts with major providers, giving them a 
-huge competative jump in the market.
-
-
-ADD HWYI TO YOUR WATCHLIST NOW! WATCH IT TRADE ON FIRDAY 12 JAN!
+70776A32666E7478717878746933776A73716F737977456E79337871746C
+Atheneus
 
 _______________________________________________
 Kernel-janitors mailing list
