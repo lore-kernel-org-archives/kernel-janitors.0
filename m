@@ -1,20 +1,29 @@
-From: "Kyle Spaans" <3lucid@gmail.com>
-Date: Tue, 23 Jan 2007 08:43:06 +0000
-Subject: Re: [KJ] a quick and dirty doc fixup job, if someone wants it
-Message-Id: <5a1205b30701230043q17dd79b5xa63838198c698c5b@mail.gmail.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Fri, 26 Jan 2007 17:11:22 +0000
+Subject: [KJ] is CONFIG_UNWIND_INFO still a live kernel config choice?
+Message-Id: <Pine.LNX.4.64.0701261210130.26996@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701181101350.21156@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701181101350.21156@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Actually, scratch that.
-Time is starting to run out for me, and I've got other things
-distracting me as well
 
-Someone else should take this suggestion.
+  there's only a single test in the entire source tree for that
+variable in include/asm-i386/dwarf2.h, but nothing else checks it and
+nothing sets it.  is this a dead setting?
+
+rday
+
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
