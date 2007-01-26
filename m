@@ -1,8 +1,10 @@
-From: "Dunstan Hamlett" <radireay@vansbro.se>
-Date: Fri, 26 Jan 2007 17:38:05 +0000
+From: "Dakarai Wolcott" <haskinsedwige@dataflor.de>
+Date: Fri, 26 Jan 2007 17:40:59 +0000
 Subject: Re: [KJ] ED5920
-Message-Id: <01c7416e$56b10c00$826a09c9@XP>
+Message-Id: <01c7416e$561d3070$826a09c9@XP>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7416e$56b10c00$826a09c9@XP>
+In-Reply-To: <01c7416e$56b10c00$826a09c9@XP>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
