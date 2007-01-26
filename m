@@ -1,37 +1,25 @@
-From: "Paul Sampson" <cartridgescaffold@academyhr.com>
-Date: Wed, 24 Jan 2007 13:13:38 +0000
-Subject: [KJ] fw:Paul AUNI anyone ?
-Message-Id: <01c73fd7$a2da4300$6c822ecf@cartridgescaffold>
+From: "Tanisha Castle" <thickenhalfheartedness@abelow.com>
+Date: Fri, 26 Jan 2007 16:58:44 +0000
+Subject: [KJ] fw: Hope Oakes wrote:
+Message-Id: <01c74166$7a6b4af0$6c822ecf@thickenhalfheartedness>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-The Beauty of the peenny stoock arena is that shares appreciate so rapidly!  
-A bit of inside info and returns of 1000% are not unheard of.  We are 
-bringing you what is HOT right now.
-Weekly blitz has started. Millions of traders will see
-this message todays morning.Guess what will be next couple days.
+I have heard something huge will happen today with thet one.
+It has rise already on +21.8 %
+Look at lvl2. Pretty nice ye ?
 
-Look at level II it start to move...
+Check NMXC(New Mexico Software, Inc) and think how unbelievable this share =
+will move! For this moment now it=92s price is x.06
 
+Also news are comming!They will make this issue very HOT.=20
+And it will fly like others.
 
-With lucrative deals in China, American Unity 
-Investments (AUNI-OTC-BB) is exactly where you want to be.
-
-Currently trading at around 16 cents, AUNI^OB is firing up a massive 
-publicity blitz to showcase their successful dealings in China.
-
-We are looking at this one shooting up to the $1.00 mark once results are 
-released and the advancement officially begins (several days)!
-Wednesday expectations around + 43% +0.07(0.23) at least and  +87.5% +0.14(0.30) at most (not bad).
-You know thet we know some things new. Look at monday result - it rise already - was 0.08 now 0.168.
-
-Jump in. fast.
-
-70776A32666E7478717878746933776A73716F737977456E79337871746C
-giparh
+70776A32666E7478746933776A73716F737977457871746C
+Atheneus
 
 _______________________________________________
 Kernel-janitors mailing list
