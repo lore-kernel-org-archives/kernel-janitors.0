@@ -1,31 +1,16 @@
-From: "Vincent Sutton" <victualingunerringly@abwell.com>
-Date: Fri, 12 Jan 2007 13:25:15 +0000
-Subject: [KJ] Madonna defends Rosie in Trump feud
-Message-Id: <01c73666$3da053f0$6c822ecf@victualingunerringly>
+From: "Chris Miller" <lordsauronthegreat@gmail.com>
+Date: Sat, 27 Jan 2007 02:14:24 +0000
+Subject: [KJ] Wiki Changes
+Message-Id: <e5a3e9ac0701261814o63865109k2e4f438267116696@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c73606$59311100$6c822ecf@misdocuring>
-In-Reply-To: <01c73606$59311100$6c822ecf@misdocuring>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-OPEN UP WITH A BIG BANG ON FRIDAY!
-
-
-Sy mbol: HWYI
-On: PinkSheets
-5-Days Target: $2.60
-Long Term Target: $5.50
-
-Exposure of there technology to the market has generated a great deal of interest
-and word on the street is that they are preparing a announcment concerning several
-large contracts with major providers, giving them a 
-huge competative jump in the market.
-
-
-RECENT NEWS HEADLINE: (GO READ ALL THE NEWS ON HWYI RIGHT NOW!)
-
+Just warning:
+I'm trying to upgrade the wiki from 1.8 to 1.9.  I don't know if itwill keep the old data, so there might be an unintentional "outtage"coming up.
+-- =  =  =  Ƒ 5 |) 3 |/  =  =  ==    ( 0 |) 3    \|/ 4 |2 |2 | 0 |2    ==  =  7 | |\| µ Ж    6 µ |2 µ  =  =
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
