@@ -1,34 +1,33 @@
-From: trem <tremyfr@yahoo.fr>
-Date: Sat, 20 Jan 2007 21:56:54 +0000
-Subject: [KJ] [PATH] [RESEND] replace pci_module_init by pci_register_driver
-Message-Id: <45B29026.3050405@yahoo.fr>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 27 Jan 2007 13:39:47 +0000
+Subject: [KJ] which gcc extensions are "approved"?
+Message-Id: <Pine.LNX.4.64.0701270837430.8494@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-change pci_module_init by pci_register_driver
 
-Signed-Off-By: trem <tremyfr@yahoo.fr>
----
+  following up on a dialogue we were having on LKML a while ago, which
+of the gcc extensions:
 
-diff --git a/drivers/crypto/geode-aes.c b/drivers/crypto/geode-aes.c
-index 43a6839..31ea405 100644
---- a/drivers/crypto/geode-aes.c
-+++ b/drivers/crypto/geode-aes.c
-@@ -457,7 +457,7 @@ static struct pci_driver geode_aes_driver = {
- static int __init
- geode_aes_init(void)
- {
--       return pci_module_init(&geode_aes_driver);
-+       return pci_register_driver(&geode_aes_driver);
- }
- 
- static void __exit
+http://gcc.gnu.org/onlinedocs/gcc-4.1.1/gcc/C-Extensions.html
 
+are kernel-approved?  certainly not all of them, as i know that
+C++-style comments are still frowned upon.  are any others
+discouraged?  thanks.
 
+rday
 
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
