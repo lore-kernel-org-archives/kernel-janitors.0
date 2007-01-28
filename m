@@ -1,35 +1,42 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 22 Jan 2007 15:53:48 +0000
-Subject: Re: [KJ] what's the merge window for janitor fixups?
-Message-Id: <Pine.LNX.4.64.0701221053370.21862@CPE00045a9c397f-CM001225dbafb6>
+Date: Sun, 28 Jan 2007 00:27:56 +0000
+Subject: [KJ] updating obsolete pci_find_* routines
+Message-Id: <Pine.LNX.4.64.0701271925420.3864@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701220349560.21161@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701220349560.21161@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 22 Jan 2007, Ahmed S. Darwish wrote:
 
-> On Mon, Jan 22, 2007 at 03:58:48AM -0500, Robert P. J. Day wrote:
-> >
-> >   as an example, i've attached my current style script which scans
-> > the tree looking for obvious cleanups (some of which i already
-> > know have been submitted and ACKed, so not *all* of that is
-> > relevant -- i'm just showing the results against the latest "git
-> > pull" of linus' tree.)
-> >
-> >   as one example, you can see how much code can be simplified by
-> > using the ARRAY_SIZE() macro.  there's over 250 lines, and it
-> > makes sense that all of that should be changed since that process
-> > is already underway.
->
-> Are you working on it or you don't have time ? .
+  From Documentation/pci.txt:
 
-you're welcome to that one.
+9. Obsolete functions
+~~~~~~~~~~~~~~~~~~~~~
+
+There are several functions which you might come across when trying to
+port an old driver to the new PCI interface.  They are no longer
+present in the kernel as they aren't compatible with hotplug or PCI
+domains or having sane locking.
+
+pci_find_device()       Superseded by pci_get_device()
+pci_find_subsys()       Superseded by pci_get_subsys()
+pci_find_slot()         Superseded by pci_get_slot()
+
+  so these three changes would be simple text substitutions of the
+routine names, would they?  the args have the same semantics and
+everything?  just curious.
 
 rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
