@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 29 Jan 2007 17:56:08 +0000
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 29 Jan 2007 17:59:47 +0000
 Subject: Re: [KJ] replacing "__FUNCTION__" with "__func__"?
-Message-Id: <Pine.LNX.4.64.0701291254320.26949@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <20070129175947.GB5546@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0701271038360.9089@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0701271038360.9089@CPE00045a9c397f-CM001225dbafb6>
@@ -10,32 +10,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 29 Jan 2007, Alexey Dobriyan wrote:
+On Sat, Jan 27, 2007 at 10:42:33AM -0500, Robert P. J. Day wrote:
+> 
+>   given what you read here:
+> 
+> http://gcc.gnu.org/onlinedocs/gcc-4.1.1/gcc/Function-Names.html
+> 
+>   i briefly imagined replacing occurrences of "__FUNCTION__" with
+> "__func__" until i counted the number of times the former occurs in
+> the source tree:  7903.
+> 
+> ouch.
+> 
+>   in any event, it doesn't really matter since kernel.h contains:
+> 
+> #define __FUNCTION__ (__func__)
 
-> On Sat, Jan 27, 2007 at 03:47:37PM -0800, Howell, David P wrote:
->
-> [s/__FUNCTION__/__func__/g]
->
-> > If it's only a shorter version for __FuNCTION__, is this eally
-> > worth the trouble? With no other benefits I'd forget it.
->
-> __func__ is in C99.
+That's for gcc 2.95 thing, IIRC, which is not supported any longer.
 
-true, but one of the issues was whether it was worth trying to replace
-the numerous occurrences of "__FUNCTION__" with the shorter "__func__"
-and, given how many there are, i can't imagine it being worth the
-effort.
+> so i imagine it's best to let this one go.  i doubt anyone would
+> approve of a single cleanup *that* disruptive.
 
-rday
-
- --
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
