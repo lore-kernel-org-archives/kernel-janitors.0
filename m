@@ -1,62 +1,88 @@
-From: "Margarita Carmichael" <kneedhouseplants@aandacht.com>
-Date: Mon, 22 Jan 2007 19:30:47 +0000
-Subject: [KJ] HBSC.OB you must know and use all of its suggestions. Fresh
-Message-Id: <01c73e56$c9677a60$6c822ecf@kneedhouseplants>
+From: "Penelope Quinones" <nettletonw@pldt.net>
+Date: Mon, 29 Jan 2007 09:19:57 +0000
+Subject: [KJ] on before coscob
+Message-Id: <001801c743c9$b2fa63f0$009a4cf4@kelvin10>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0122720169=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
- 
+This is a multi-part message in MIME format...
+
+--===============0122720169==
+Content-Type: multipart/alternative;
+    boundary="----------=_1175746071-25967-773"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1175746071-25967-773
+Content-Type: text/plain;
+        charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 
 
-Grab Human BIOSYSTEMS INC. (HBSC.OB) stock now. 
-THE ALERT IS ACTIVATED! AND IT IS GOING TO BURST.   
-    
-Monday will be the day when your gains will be really RISE.    
-It's getting growth almost every hour! So you can triple your balance any time.   
-We are sure thet you had not opportunity like this before.     
- 
-Friday price: JAN 18 - $0.08   
-On monday 22 January it will - 0.13$ at least and 0.20$ at most (not bad for a day)  
-    
-Tell your brokers in order they buy it immediately.     
- 
-Do not miss your opportunity.MORE THAN 66% EVERY DAY!  
-HBSC just released this news.
 
-U.S. Patent Office to Grant Human BioSystems its Fifth Patent, "Compositions, Methods and Apparatuses for Preserving Platelets"
-Monday January 22, 7:00 am ET
 
-PALO ALTO, CALIFORNIA--(MARKET WIRE)--Jan 22, 2007 -- Human BioSystems (HBS) (OTC BB:HBSC.OB - News), developer of preservation platforms for organs, blood platelets and other biomaterials, announced today that the U.S. Patent Office has allowed HBS' patent application for platelet preservation entitled "Compositions, Methods and Apparatuses for Preserving Platelets." A patent number is expected to be issued in the near future.
+HOT ALERT...
 
-HBS has been granted four previous patents related to organ, platelet and biological material preservation. Including the patent to be issued, HBS' patent portfolio is as follows:
 
-1. Methods and Apparatus for Preserving Biological Materials - U.S. Patent # 6,413,713
-2. Methods and Apparatuses for Preserving Platelets - U.S. Patent # 6,828,090
-3. Methods and Solutions for Storing Donor Organs - U.S. Patent # 7,029,839
-4. Preservation of Blood Platelets with Citrate - U.S. Patent # 7,083,910
-5. Compositions, Methods and Apparatuses for Preserving Platelets - U.S. Patent number to be issued
+Search for: CDYVCurrent price: $0.09 5 Day Target price: $0.425Market: bull=
+ish!!!
 
-"All of the patents we have received thus far serve to strengthen our intellectual property protection as we progress toward commercializing our technologies and bringing them to market," explained Dr. David Winter, President of Human BioSystems.
-
-The latest patent to be awarded is among four patents that relate to the preservation of blood platelets, a blood component critical to cancer patients that have undergone chemotherapy/radiation treatments. Platelet infusions are necessary for a period of time following such cancer treatments to maintain adequate platelet counts. The lack of platelets could increase the chances of bleeding.
-
-"HBS hopes to extend the preservation time of platelets beyond current standards while maintaining quality and safety by utilizing patented cooling methods not achieved by others thus far in the commercial blood banking industry. If successful, this could result in hundreds of millions of dollars in savings to blood centers and hospitals worldwide," concluded Dr. Winter.
-
-HBS is headquartered in Palo Alto, California with research facilities in Michigan.
-
-Certain statements contained herein are "forward-looking'' statements (as such term is defined in the Private Securities Litigation Reform Act of 1995). Because such statements include risks and uncertainties, actual results may differ materially from those expressed or implied by such forward-looking statements. Factors that could cause results to differ materially from those expressed or implied by such forward-looking statements include, but are not limited to, results from ongoing research and development as well as clinical studies, failure to obtain regulatory approval for the Company's products, if required, failure to develop a product based on the Company's technology, failure of any such products to compete effectively with existing products, the inability to find a strategic partner or to consummate a relationship with a potential strategic partner on acceptable terms, the effectiveness of protection of the Company's intellectual property, and other factors discussed in filings made by the Company with the Securities and Exchange Commission.
+This sym is gaining momentum.
 
 
 
-BUY THIS UNBELIEVABLE HBSC.OB today morning.  
+Check the news of CDYV, kernel-janitors, contact broker!!!!
 
 
+
+------------=_1175746071-25967-773
+Content-Type: text/html;
+        charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
+2">
+<META content=3D"MSHTML 6.00.2600.2963" name=3DGENERATOR>
+<DEFANGED_style_0 </STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<BR><BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#FF3366 size=3D3D4><FONT si=
+ze=3D3><STRONG>HOT ALERT!</STRONG></FONT></DIV>
+<BR><BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#FF0066 size=3D4>Search for=
+: <b>CDYV</b><br>Current price: $0.09 <br>5 Day Target price: $0.425<br>Mar=
+ket: bullish!!!</FONT></DIV>
+<BR><BR><BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#000000 size=3D4>This sym i=
+s gaining momentum!!!</FONT></DIV>
+<BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#003300 size=3D2>Check the =
+news of CDYV, kernel-janitors, contact broker!..</FONT></DIV>
+<BR><BR>
+</BODY></HTML>
+
+------------=_1175746071-25967-773--
+
+--===============0122720169==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+
+--===============0122720169==--
