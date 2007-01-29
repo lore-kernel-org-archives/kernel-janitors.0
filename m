@@ -1,44 +1,44 @@
-From: "Hardy Matthew" <Schneider@brentwoodphysiotherapy.com>
-Date: Fri, 12 Jan 2007 13:09:02 +0000
-Subject: [KJ] he-he-he man, why your thing is so small? ;-)
-Message-Id: <0d4801c7364a$20a20656$8a0e47c8@TALLER-FZ905TBJ>
+From: "Shari Small" <recoveredelectrically@abbolgaria.ru>
+Date: Mon, 29 Jan 2007 15:32:36 +0000
+Subject: [KJ] fw:Shari Getting HOT
+Message-Id: <01c743d8$e074b3d0$6c822ecf@recoveredelectrically>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1368031351=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The Most Potent Male Muscle Boosting System!
+--===============1368031351==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-The better and most powerful product to enlarge your prick
-available on the market!
+Warning alarm this incredible amazing opportunity possibility to make our profits.
+I have heard something huge will occur on todays morning with thet one.
 
-This products tested, analyzed and approved by doctors.
+Nice start for today.
+It's going to be HOT one. 
+Bid rised already...
 
-Order Our Product NOW! 
-
-You can do it here: http://www.rogerandcherie.com
-
-P.S.: If it doesn't work for you, we garantee 100% of your money back!
-
+Everyone buyg and for waiting company news.
+Look at lvl2 and volume.
 
 
--- 
-sknonlolnqninqrkninqnknkoongosniqgotopnmngnksoomnpotomshohnron
-weiuvbmdngsdfwelkgjhhpjw
-     'You do  know how to live, Ambrose! ' sighed Vanya, a thin pinched man
-with  a  carbuncle  on  his  neck,  to  Ambrose,  a  strapping,  red-lipped,
-golden-haired, ruddy-cheeked poet.
-     'It's no special talent,' countered Ambrose. ' Just a perfectly normal
-desire to live a decent, human existence. Now I suppose you're going  to say
-that you can get perch  at the Coliseum. So you can. But a helping of  perch
-at  the Coliseum costs thirty roubles  fifty kopecks  and here it costs five
-fifty!  Apart  from that the  perch  at the Coliseum are three days old  and
-what's more if you  go  to the Coliseum there's no guarantee you won't get a
-bunch of grapes thrown in your face by the first young man to burst in  from
+it probaly break .08 mark witout problems today. Jump in.
+NMXC will make our profits.
 
+
+
+
+
+--===============1368031351==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1368031351==--
