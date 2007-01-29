@@ -1,7 +1,7 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 29 Jan 2007 17:53:51 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 29 Jan 2007 17:56:08 +0000
 Subject: Re: [KJ] replacing "__FUNCTION__" with "__func__"?
-Message-Id: <20070129175351.GA5546@martell.zuzino.mipt.ru>
+Message-Id: <Pine.LNX.4.64.0701291254320.26949@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0701271038360.9089@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0701271038360.9089@CPE00045a9c397f-CM001225dbafb6>
@@ -10,15 +10,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Jan 27, 2007 at 03:47:37PM -0800, Howell, David P wrote:
+On Mon, 29 Jan 2007, Alexey Dobriyan wrote:
 
-[s/__FUNCTION__/__func__/g]
+> On Sat, Jan 27, 2007 at 03:47:37PM -0800, Howell, David P wrote:
+>
+> [s/__FUNCTION__/__func__/g]
+>
+> > If it's only a shorter version for __FuNCTION__, is this eally
+> > worth the trouble? With no other benefits I'd forget it.
+>
+> __func__ is in C99.
 
-> If it's only a shorter version for __FuNCTION__, is this eally worth
-> the trouble? With no other benefits I'd forget it.
+true, but one of the issues was whether it was worth trying to replace
+the numerous occurrences of "__FUNCTION__" with the shorter "__func__"
+and, given how many there are, i can't imagine it being worth the
+effort.
 
-__func__ is in C99.
+rday
 
+ --
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
