@@ -1,45 +1,38 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 25 Jan 2007 21:39:00 +0000
-Subject: Re: [KJ] [RFC][PATCH] Add extra power-of-2 functionality,
-Message-Id: <Pine.LNX.4.64.0701251637520.14274@CPE00045a9c397f-CM001225dbafb6>
+From: "Sabrina Frank" <MalindaMalabo@aalaship.com>
+Date: Tue, 30 Jan 2007 15:17:43 +0000
+Subject: [KJ] WEXE.PK Best terms and conditions for your investments.
+Message-Id: <01c74477$bada1580$6c822ecf@MalindaMalabo>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0701241503260.28433@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0701241503260.28433@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 25 Jan 2007, Tobias Klauser wrote:
+TUESDAY - JAN 30, 2006 
 
-> On 2007-01-24 at 21:08:22 +0100, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> [...]
-> >   this is just asking for feedback, to see if anyone can see anything
-> > obviously wrong with this patch.  it adds the previously-discussed
-> > functionality to log2.h, and also removes a few local definitions of
-> > an is_power_of_2() macro to avoid redefinitions.
-> >
-> >   since there was no earlier rounding down functionality, there was
-> > nothing to remove *there*.
->
-> Are there any potential users around in the tree for the rounding down
-> functions? IMHO it wouldn't make much sense to add them just to have
-> them in the tree but noone is using them.
+GOOD ST(O)CK TIP - (PINKSHEETS: WEXE)  
+WEST EXCELSIOR ENTERPRICES, INC. 
+200% up are expected in the next 5 trading sessions - grab some now! 
 
-ah.  at the very least, you can see a couple examples with:
+MAJOR NEWS IS EXPECTED. OUR LAST PICK SHOWED YOU GAINS OF 1200% IN 14 DAYS.
 
-  $ grep -r "round.*down.*2" .
+WEXE is showing signs of making a huge leap in the coming days. It appears that a major announcement would catapolt the companies stoock to over 2.00 per share. This undervalued st-ock is currently trading at approximately 0.55 and we predict that it will break 1.30 by next monday. We are recommending a buy and hold on this one - 
+Call your stock broker now to get more information on WEXE. 
 
-rday
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+About West Excelsior:
+West Excelsior Enterprises, Inc. engages in the acquisition, development, and exploration of mineral properties. The company primarily explores for gold-silver, copper, lead, zinc, and molybdenum. It holds interests primarily in the Santa Maria del Oro mineral properties comprising six claims totaling 1,550 hectares located in the Sierra Madre del Sur Province, Mexico. The company was founded in 1999 and is based in Las Vegas, Nevada. The Company is currently focusing on projects in Mexico and East Africa. 
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
+Without just words: 
+Company need additional investments to start project on new region 
+Market Cap: 55.00M
+Delta dayly (open 0.370 on 01/25/2007 - close 0.600 on 01/25/2007)
+
+Did you saw it rise on November ?
+Time has come to another one.
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
