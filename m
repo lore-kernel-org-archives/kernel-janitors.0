@@ -1,39 +1,36 @@
-From: "Erika Alvarez" <puckishbuggers@abv.at>
-Date: Tue, 23 Jan 2007 15:25:58 +0000
-Subject: [KJ] Bush faces unhappy electorate
-Message-Id: <01c73efd$c095a8b0$6c822ecf@puckishbuggers>
+From: "Stacey Lim" <peepholesadministrated@abri-voyageur.ca>
+Date: Tue, 30 Jan 2007 20:16:47 +0000
+Subject: [KJ] Hurry do not let yourself to miss this incredible offer.
+Message-Id: <01c744ab$91ab0870$6c822ecf@peepholesadministrated>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-     
+TUESDAY - JAN 30, 2006 
+
+HEAT STO-O-OCK TIP - (PINKSHEETS: WEXE)  
+WEST EXCELSIOR ENTERPRICES, INC. 
+200% up are expected in the next 5 trading sessions - take some now! 
+
+MAJOR NEWS IS EXPECTED. OUR LAST PICK SHOWED YOU GROW OF 1200% IN 14 DAYS.
+
+WEXE is showing signs of making a huge leap in the coming days. It appears that a major announcement would catapolt the companies st-ock to over 2.00 per share. This undervalued symmmbol is currently trading at approximately 0.55 and we predict that it will break 1.30 by next monday. We are recommending a buy and hold on this one - 
+Call your stock broker now to get more information on WEXE. 
 
 
+About West Excelsior:
+West Excelsior Enterprises, Inc. engages in the acquisition, development, and exploration of mineral properties. The company primarily explores for gold-silver, copper, lead, zinc, and molybdenum. It holds interests primarily in the Santa Maria del Oro mineral properties comprising six claims totaling 1,550 hectares located in the Sierra Madre del Sur Province, Mexico. The company was founded in 1999 and is based in Las Vegas, Nevada. The Company is currently focusing on projects in Mexico and East Africa. 
 
-Buy PETROLEUM CONSOLIDAT (PCAI.PK) stock right now.     
-THE ALARM IS ON! AND IT IS GOING TO BURST.    
-  
-Tuesday will be the day when your gains will be really SOAR.     
-It's getting growth almost every hour! So you can double your balance any time.     
-We are sure thet you had not chance like this before.   
-   
-Monday price: JAN 22 - $0.57      
-On tuesday 23 January it will - 0.73$ at least and 0.90$ at most (not bad for a day)   
-     
-Inform your brokers in order they grab it now.    
-   
-Do not miss your opportunity.MORE THAN 38% EVERY DAY! 
-PCAI.PK just released this news.
+Without just words: 
+Company need additional investments to start project on new region 
+Market Cap: 55.00M
+Delta dayly (open 0.370 on 01/25/2007 - close 0.600 on 01/25/2007)
 
-BUY THIS INCREDIBLE PCAI.PK right now. 
+Did you saw it rise on November ?
+Time has come to another one.
 
-
-
-70776A32666E7478746933776A73716F737977457871746C
-ptolemai
-You're not 
 
 
 _______________________________________________
