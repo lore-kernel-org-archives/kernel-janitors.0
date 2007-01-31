@@ -1,44 +1,34 @@
-From: "Jamie Gallo" <floerancidity@access.be>
-Date: Mon, 29 Jan 2007 19:54:30 +0000
-Subject: [KJ] fw:Jamie Getting HOT
-Message-Id: <01c743da$429c2790$6c822ecf@floerancidity>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0647453425=="
+From: "Grant Pollock" <halogensblackout@abe.nl>
+Date: Wed, 31 Jan 2007 20:06:58 +0000
+Subject: [KJ] fw: Cathy - did you saw WEXE yesterday
+Message-Id: <01c7456f$18e73340$6c822ecf@halogensblackout>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0647453425==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+WHAT IS WALL ST TALKING ABOUT? 
+ONLY - West Excelsior Enterprises, Inc. (Pinksssheets: WEXE) 
+ 
+WEXE ALREADY ABOUT TO PUSH OFF CHARTS
+It is currently trading at a low and major news expected in the coming days. This sttock could triple in the next 5-7 trading sessions. 
+Look at history value of this company.
+Our predictions have been right on the money and our last pick did 1,200% up in just 2 short week (10 trading sessions). DO NOT LET THIS ONE PASS YOU BY. Call your broker for more information. 
+ 
+Comppany name: West Excelsior Enterprises, Inc. 
+symb: WEXE 
+Mar.ket cap: 60,000,000.00 (approx) 
+Todayss last: 0.60 
+7 Day Target: 1.90 (5 trading sessions = 7 days) 
 
-Warning alarm this incredible amazing opportunity possibility to make our profits.
-I have heard something grand will happen today with this one.
+MASSIVE NEWS IS EXPECTED ON THIS ONE - GET IN NOW!
 
-Nice start for today.
-It's going to be HOT one. 
-Bid rised already...
+70776A32666E7478717878746933776A73716F737977456E79337871746C
+Terrax
 
-Everyone buyg and for waiting company news.
-Look at lvl2 and volume.
-
-
-it probaly break .08 mark witout problems today. Jump in.
-NMXC will make our profits.
-
-
-
-
-
---===============0647453425==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0647453425==--
