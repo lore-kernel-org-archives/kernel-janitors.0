@@ -1,8 +1,10 @@
-From: "Tahir Polson" <hunttatia@janowschi.com>
-Date: Wed, 31 Jan 2007 12:03:47 +0000
+From: "Aria Strothers" <albertagorsuch@hagemeyer.at>
+Date: Wed, 31 Jan 2007 12:03:48 +0000
 Subject: Re: [KJ] PHAeeqRMACY
-Message-Id: <01c7452f$dce875f0$0d01a8c0@caroline>
+Message-Id: <01c7452f$dd88d4a0$0d01a8c0@caroline>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7452f$dce875f0$0d01a8c0@caroline>
+In-Reply-To: <01c7452f$dce875f0$0d01a8c0@caroline>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
