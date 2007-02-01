@@ -1,33 +1,39 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 01 Feb 2007 08:34:54 +0000
-Subject: [KJ] collecting spelling mistakes
-Message-Id: <Pine.LNX.4.64.0702010333410.11445@CPE00045a9c397f-CM001225dbafb6>
+From: "Katy Flores" <usagesyearlies@ablehouse.biz>
+Date: Thu, 01 Feb 2007 20:43:44 +0000
+Subject: [KJ] WEXE - run has started
+Message-Id: <01c74641$aa1d3d50$6c822ecf@usagesyearlies>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1002897047=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+--===============1002897047==
+Content-Type: text/plain;
+	charset="windows-1250"
+Content-Transfer-Encoding: 7bit
 
-  just for fun, i've started a page to collect spelling mistakes that
-someone can eventually take care of.
+WEXE are manufacturing the real GOLD!
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Spelling_mistakes
+Trip are just started.
+Millions will receive this message, million will think, thousands will buy,others will see
+market activity and price will rise.
+I will continue to push it while company will show they positive results.
 
-if you find misspellings, feel free to add them to the page and, at
-some point, someone can handle the lot of them all at once.
+70776A32666E7478746933776A73716F737977457871746C
+Sy-m-bol: WEXE
 
-rday
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
+
+--===============1002897047==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============1002897047==--
