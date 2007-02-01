@@ -1,19 +1,50 @@
-From: "Chris Miller" <lordsauronthegreat@gmail.com>
-Date: Thu, 01 Feb 2007 06:07:56 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Thu, 01 Feb 2007 07:20:44 +0000
 Subject: Re: [KJ] the current situation for the KJ wiki
-Message-Id: <e5a3e9ac0701312207l574eaa74uc35df1bc1bc70b98@mail.gmail.com>
+Message-Id: <Pine.LNX.4.64.0702010213390.10659@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070131135158.7c4fdffc.rdunlap@xenotime.net>
 In-Reply-To: <20070131135158.7c4fdffc.rdunlap@xenotime.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 1/31/07, Jaco Kroon <jaco@kroon.co.za> wrote:> Bernd Petrovitsch wrote:> > On Wed, 2007-01-31 at 14:48 -0800, Randy Dunlap wrote:> >> >>On Thu, 01 Feb 2007 00:15:29 +0200 Jaco Kroon wrote:> >> > [...]> >> >>>Note: From hard experience I've learned that Wiki SPAM is just as bad> >>>(if not worse than) email-borne SPAM.  AVOID AT ALL COST!  And no,> >>>captchas simply does not stop spammers.> >>> >>who/what are captchas?> >> >> > The numbers and/or letters somewhat stretched in several directions with> > a quite random background where people are (supposed to be) able to read> > them quite easily (and copy them into some input field) and machines> > cannot easily decode them.> > In short: a test if there is a human in front of the webpage.>> Correct, but in many cases OCR software can decipher them, and when that> isn't simple enough a human spammer can solve them at around a captcha> every 5 seconds, stil allowing a spammer to do about 20 posts per> minute, permitting he's willing to sit there the whole day and solve> captchas.  Or man-in-the-middle if he can construct a "popular" site on> which to represent the captchas to other people to solve.>> >>>(btw, about half of the spam that now lands in my inbox comes via this> >>>mailing list, is anybody else also experiencing an escalation of spam> >>>coming in from this list?)> >>> >>I see an escalation from everywhere. :(> >> >> > ACK.>> Yea, but my filters seem to be able to stop most of the other crap, so> perhaps I should rephrase, about half of the spam that actually makes it> to my inbox is via this list.  Oh, just btw, if I switch off all> filtering about 80 % of my incoming mail is spam, as it stands (after> filtering) I only get about 3 to 5 spams a day in my inbox, except when> some spammer goes totally balistic on the KJ mailing list in which case> it increases quite significantly.  I suspect this is due to the> spamassassin "autowhitelisting" features but I'm not 100 % sure.  That,> and much improved spamming techniques.>> And yes, the amount of filter
-ed spam has increased a lot recently, I'd> go almost as far as to say that it has doubled in the last 6 months.
-You're absolutely correct.  Read some of the archives from the SiliconValley Linux Users Group and you'll find hard statistics.  I don'thave time to select precise archived conversations for your review,however, about 6 months ago is when bot nets started becomingfrighteningly widespread.  I won't say more: there's more than enoughmaterial for you to read (SVLUG site is www.svlug.org)
--- =  =  =  Ƒ 5 |) 3 |/  =  =  ==    ( 0 |) 3    \|/ 4 |2 |2 | 0 |2    ==  =  7 | |\| µ Ж    6 µ |2 µ  =  =
+On Thu, 1 Feb 2007, Jaco Kroon wrote:
+
+> Perhaps one suggestion, and this is based purely on personal
+> preference, but just "move" the wiki created by Chris to replace the
+> other one.
+
+i'd rather you didn't.  there's still a lot of content in the original
+ToDo list that isn't represented in the new wiki.
+
+my rationale for creating that new wiki was that the content of the
+original page wasn't organized very well.  mostly, it didn't seem to
+have enough content for most topics for any janitor to know how to
+tackle any task.  it makes mention of numerous issues, but without the
+kind of detail that would let someone know whether this was a task
+they could do.
+
+a better approach would be to look at the content that's still at the
+original page, and move it, issue by issue, to the new wiki, while
+expanding on each of those issues, as is being done now.  i think that
+would be much more productive.
+
+in a sense, if you can't properly explain an outstanding issue in one
+well-organized and comprehensible wiki page, you shouldn't be asking
+janitors to try to clean it up for you.
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
