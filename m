@@ -1,9 +1,9 @@
 From: "patten frankie" <keenanjacinda@ctdrifting.com>
 Date: Thu, 01 Feb 2007 21:18:46 +0000
 Subject: [KJ] Wall Street Alert!
-Message-Id: <7d34501c74646$8efeb260$6f35c23e@Kadir>
+Message-Id: <7d33501c74646$8ef9f770$6f35c23e@Kadir>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0701169498=="
+Content-Type: multipart/mixed; boundary="===============1835312339=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <37BA2BE0CE44B7B.2E5590D223@chesterton.com>
 In-Reply-To: <37BA2BE0CE44B7B.2E5590D223@chesterton.com>
@@ -11,16 +11,16 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============0701169498==
+--===============1835312339==
 Content-Type: multipart/alternative;
-    boundary="----------=_1170364698-28756-166"
+    boundary="----------=_1170364715-28756-174"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1170364698-28756-166
+------------=_1170364715-28756-174
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -57,7 +57,7 @@ LLC of Denver, Colorado.
 WATCH IT TOMORROW AT THE OPEN!
 
 
-------------=_1170364698-28756-166
+------------=_1170364715-28756-174
 Content-Type: text/html;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -84,9 +84,9 @@ Content-Disposition: inline
 <DIV align=3Dleft><FONT face=3DArial size=3D2>PetroSun, Incorporated (PKSHEETS: PSUD) announced today that the company has completed the acquisition of all of the member units of 1031 Energy, LLC of Denver, Colorado.</FONT></DIV><BR>
 <DIV align=3Dleft><FONT face=3DArial size=3D2><I><b>**Go read *all* the News Releases now and keep an eye out daily**</b></I></FONT></DIV><BR>
 <DIV align=3Dleft><FONT face=3DArial size=3D2><B><U>WATCH IT TOMORROW AT THE OPEN!<U></B></FONT></DIV><BR></BODY></HTML>
-------------=_1170364698-28756-166--
+------------=_1170364715-28756-174--
 
---===============0701169498==
+--===============1835312339==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -97,4 +97,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0701169498==--
+--===============1835312339==--
