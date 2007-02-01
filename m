@@ -1,56 +1,84 @@
-From: "Jaco Kroon" <jaco@kroon.co.za>
-Date: Fri, 23 Feb 2007 05:39:17 +0000
-Subject: Re: [KJ] Improve 'register_handler_proc()' and
-Message-Id: <2673.192.168.0.30.1172209157.squirrel@hackerpages.lan>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Thu, 01 Feb 2007 12:50:08 +0000
+Subject: [KJ] can someone clarify the changes to the spinlock API?
+Message-Id: <Pine.LNX.4.64.0702010732070.14212@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <004f01c752d7$2cca4c10$fa29145a@bureau>
-In-Reply-To: <004f01c752d7$2cca4c10$fa29145a@bureau>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> On Sat, Feb 17, 2007 at 10:04:11PM +0100, Christophe Jaillet wrote:
->> In file /irq/proc.c, function 'register_handler_proc()' and
->> 'register_irq_proc()' memset a local variable 'name[MAX_NAMELEN]'
->>
->> I don't really see the point of this memset.
->>
->> In 'register_handler_proc()' :
->> > > > > > > > >
->>  char name [MAX_NAMELEN];
->>  [...]
->>  memset(name, 0, MAX_NAMELEN);
->>  snprintf(name, MAX_NAMELEN, "%s", action->name);
->>  [...] proc_mkdir(name, ...);
->> > > > > > > > >
->>
->> In 'register_handler_proc()' :
->> > > > > > > > >
->>  char name [MAX_NAMELEN];
->>  [...]
->>  memset(name, 0, MAX_NAMELEN);
->>  sprintf(name, "%d", irq);
->>  [...] proc_mkdir(name, ...);
->> > > > > > > > >
->>
->> Here are my remarks :
->>
->> 1) I think that both function should use 'snprintf', just to be sure.
->> Actualy only 'register_handler_proc()' does
->>
->> 2) I think that the memset are completely useless and could make s.o.
->> think that the 'name' variables are correctly cleanned and NULL
->> terminated. But,
->>       - In 'register_handler_proc()', the use of snprintf can lead to
->> name beeing not NULL terminated !
 
-Hold up right there.  snprintf should _always_ NULL-terminate the
-resulting string, strncpy, however, does not always NULL-terminate.  (Note
-that this assumes that the kernel implementation of snprintf exhibits the
-same behaviour as that described in the manpage of snprintf.)
+  (i've asked about this (on LKML) before but don't recall ever seeing
+a response so i'll give it another shot here.)
 
-Jaco
+  once upon a time, you could create an unlocked spinlock with:
+
+  spinlock_t mylock = SPIN_LOCK_UNLOCKED;
+
+note carefully how the (now deprecated) SPIN_LOCK_UNLOCKED macro was
+utterly generic -- it didn't need any args, so you could easily
+allocate an array of them in one go:
+
+  arch/sparc/lib/atomic32.c:  [0 ... (ATOMIC_HASH_SIZE-1)] = SPIN_LOCK_UNLOCKED
+
+since all of those spinlocks were absolutely identical.
+
+  however, that macro has been deprecated in favour of the newer
+
+#define DEFINE_SPINLOCK(x)  spinlock_t x = __SPIN_LOCK_UNLOCKED(x)
+
+which, as you can see, clearly takes as an argument the name of the
+spinlock you want to create:
+
+...
+./mm/slob.c:static DEFINE_SPINLOCK(slob_lock);
+./mm/slob.c:static DEFINE_SPINLOCK(block_lock);
+./mm/sparse.c:  static DEFINE_SPINLOCK(index_init_lock);
+...
+
+and so on.
+
+  so you won't create a *generic* spinlock anymore, you'll create a
+*named* spinlock.  this means that you won't see generic structure
+member initializations anymore, like:
+
+  static struct atm_dev atmtcp_control_dev = {
+        .ops            = &atmtcp_c_dev_ops,
+        .type           = "atmtcp",
+        .number         = 999,
+        .lock           = SPIN_LOCK_UNLOCKED     <-- deprecated
+  };
+
+rather, you'll see named initialization, as in:
+
+  static struct rcu_ctrlblk rcu_ctrlblk = {
+        .cur = -300,
+        .completed = -300,
+        .lock = __SPIN_LOCK_UNLOCKED(&rcu_ctrlblk.lock),   <-- newer
+        .cpumask = CPU_MASK_NONE,
+  };
+
+that sounds reasonable, but that also means you can't allocate an
+array of them all at once as you could before.  so what do you do in
+cases like that?
+
+  is there a coherent write-up on this change and everything it
+implies?  might be nice if there were a page on this added to the
+wiki.  :-)
+
+rday
+
+p.s.  the same change applies to the R/W form of spinlocks as well.
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
