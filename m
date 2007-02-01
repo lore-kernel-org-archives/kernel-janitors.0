@@ -1,8 +1,10 @@
-From: "Feidhlim Llewellyn" <mid@marioguerra.com>
-Date: Thu, 01 Feb 2007 20:22:10 +0000
+From: "Lalage Gehl" <afolae@jabil.com>
+Date: Thu, 01 Feb 2007 20:22:11 +0000
 Subject: Re: [KJ] your PHAlerRMACY
-Message-Id: <01c7463e$a6c3e080$9902fd52@diet>
+Message-Id: <01c7463e$a75ee800$9902fd52@diet>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7463e$a6c3e080$9902fd52@diet>
+In-Reply-To: <01c7463e$a6c3e080$9902fd52@diet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
