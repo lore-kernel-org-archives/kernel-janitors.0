@@ -1,8 +1,10 @@
-From: "Ichiro Bostic" <rileyokumar@mainship.com>
-Date: Fri, 02 Feb 2007 17:18:02 +0000
+From: "Howie Bly" <guypir@mailstelnet.com>
+Date: Fri, 02 Feb 2007 17:18:04 +0000
 Subject: Re: [KJ] your PHAuerRMA
-Message-Id: <01c746ee$18752680$78f3cb51@BLASCO>
+Message-Id: <01c746ee$19a19890$78f3cb51@BLASCO>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c746ee$18752680$78f3cb51@BLASCO>
+In-Reply-To: <01c746ee$18752680$78f3cb51@BLASCO>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
