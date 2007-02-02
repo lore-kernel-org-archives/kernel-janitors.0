@@ -1,44 +1,33 @@
-From: "Luther Privette" <hubris'sEndymion's@netmdc.com>
-Date: Mon, 05 Feb 2007 16:08:58 +0000
-Subject: [KJ] fwd: Luther
-Message-Id: <0JXCVBLSBRN_DIK96_Q2A07X@netmdc.com>
+From: "Evelyn Wilkinson" <overkillPanmunjom@accenturewilm.com>
+Date: Fri, 02 Feb 2007 15:00:14 +0000
+Subject: [KJ] Evelyn wrote:
+Message-Id: <01c746da$d7e9b120$6c822ecf@overkillPanmunjom>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Wednesday February 7th 2007 
- 
-FOR IMMEDIATE RELEASE
-ATTENTION INVESTORS AND TRADERS
-Hemisphere Gold, Inc. - HPGI IS POISED FOR A HUGE GAIN 
+PHYSICIANS ADULT DAY (PHYA at PK)  
+This one on strike again.
 
-THIS ONE COULD BREAK 3.00 VERY SOON.
-
-On monday they released news explaining they found gold anomolies spanning 20 kilometers - THIS COULD LEAD TO SOMETHING HUGE!
-
-Watch HPGI trade and add it to your raddar now.
-
-We expect this one to soar.
-Make your profit today.
+Sym: PHYA 
+Priccce: $0.66 
+Target: $2.25
+Market: Slightly Bullish
 
 
-This message includes forward - looking statements. This is not an offer to buy or sell any shares. The publisher of this letter paid out ten thousand dollars for distribution of this publication.
- 
+Look at this company,look at it's financial reports
+this one are generating income already.
 
+News1: Physicians Adult Daycare Finds Validation North of the Border
+News2: Physicians Adult Daycare Pursues Expanding Canadian Opportunities
 
+PHYA IS ABOUT TO SOAR!
+ADD PHYA TO YOUR WATCHLIST.
 
-
-
-
-
-
-
-
-
-
-Ryan O'Neal's film credits include "Love Story," "Paper Moon," "Green Ice" and "Barry Lyndon."He is proposing eliminations or sharp reductions in 141 government programs, for a savings over five years of $12 billion, although Congress has rejected many of the same proposals over the past two years.The arrival of the massive four-volume set of green budget books, which will cover the budget year that begins next October 1, will be followed by months of debate in Congress.Calls to the Oscar nominee's business manager and publicist were not returned.To accomplish those reductions, Bush would allow only modest growth in the government programs outside of defense and homeland security. The arrival of the massive four-volume set of green budget books, which will cover the budget year that begins next October 1, will be followed by months of debate in Congress.
+70776A32666E7478746933776A73716F737977457871746C
+/?-3B?8K46HU/F-2K418,
 
 
 
