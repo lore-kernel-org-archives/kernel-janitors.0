@@ -1,12 +1,14 @@
-From: "Kevin Donnelly" <Nobeltrainee's@abc.lukoil.ru>
-Date: Fri, 02 Feb 2007 15:00:17 +0000
+From: "Carmela Rudolph" <instigatorsnasalizing@aaslh.org>
+Date: Fri, 02 Feb 2007 17:16:14 +0000
 Subject: [KJ] PHYA on strike again.
-Message-Id: <01c746e9$eff98560$6c822ecf@Nobeltrainee's>
+Message-Id: <01c746e8$d02aeea0$6c822ecf@instigatorsnasalizing>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c746e9$eff98560$6c822ecf@Nobeltrainee's>
+In-Reply-To: <01c746e9$eff98560$6c822ecf@Nobeltrainee's>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@osdl.org
+To: kernel-janitors@vger.kernel.org
 
 PHYSICIANS ADULT DAY (PHYA at PK)  
 
@@ -20,11 +22,11 @@ News2: Physicians Adult Daycare Pursues Expanding Canadian Opportunities
 Look at financial reports of this company
 this one are generating income.
 
-PHYA IS ABOUT TO SOAR!
+PHYA IS ABOUT TO RISE!
 Recommendation: buy now and win.
 
 70776A32666E7478746933776A73716F737977457871746C
-4AL'UR;:GZD/5X8TE+33'3B@9.EZL
+00=X2,K<B21A20(UF089MF,<P
 
 
 _______________________________________________
