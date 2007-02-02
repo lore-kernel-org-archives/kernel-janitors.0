@@ -1,25 +1,33 @@
-From: "Scoville Jeff" <Stevic@nuance9.com>
-Date: Mon, 05 Feb 2007 02:11:15 +0000
-Subject: [KJ] Jim Carrey Like You've Never Seen Him
-Message-Id: <30b001c748ca$0fb56c1a$996876c8@hgfs>
+From: "Habib Rinaldi" <mollii@kammatech.com>
+Date: Fri, 02 Feb 2007 17:18:01 +0000
+Subject: Re: your PHAuerRMA
+Message-Id: <01c746ee$177ac0f0$78f3cb51@BLASCO>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello,
+Hi,
 
-Now you can order Genuine Viagra directly from Pfizer.
+Get your medication from our site because it costs less.
 
-Here: http://abcdrku.info
+http://www.zodrx.%com - Remove "%" to make the link working!
 
-All prices are tax/vat free and free same-day worldwide shipping also included.
+--
 
--- 
-ksfgftgtfifqfiksgqgigsgsfggofkfqioglghfufofskgtuuhtltupptpujtf
+Ive told you, he wasnt making much sense,  said Harry. He said he
+wanted to warn Dumbledore about something. He definitely mentioned
+Bertha Jorkins, and he seemed to think she was dead. He kept saying
 
+
+
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier.
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
