@@ -1,47 +1,39 @@
-From: "Peaches Novak" <entouragesintercede@stasni.hr>
-Date: Wed, 07 Feb 2007 15:22:54 +0000
-Subject: [KJ] Social safety net for the individual.
-Message-Id: <01c74ada$ed1c9db0$6c822ecf@entouragesintercede>
+From: Andrew Malkovich <Shirley@ninja.dk>
+Date: Fri, 02 Feb 2007 14:28:18 +0000
+Subject: [KJ] High Growth Profit Job
+Message-Id: <E9B5C80A.3417650@ninja.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hello,
 
+We hope you are reading this message in a fine mood.
 
+I'd like to welcome you on a very interesting opportunity.
+We supppose you will be very interested in a home job in which you
+could get about AUD4000 per month.
 
-Salute!  
-    
-Come on, come on, great discounts on the stock exchange. 
-Hot prices only today.Make your move.    
-No matter what were yeterday, today is today and today is tommorow   
-but know you have the 99.99% chance to change the situation and relize your strategy!    
-Everything in your hands.     
-    
-   
-No news is good news! But not in this case!    
-HPGI found new gold field with the length of 20 km. It will make  
-unthinkable profit not only for the company.   
-This time we are expecting financial results to be announced by the company officials.    
-   
-We have just had good trading days before and now we are waiting for the new contracts.    
-We are expecting record profit! I should say that you still have a little time to play in...but the time is limitted. Today is the best moment to act and to win! 
-   
-Look at the charts and play it by ear! HPGI is a company of  
-great  resources and capabilities. Remember it! 
-Get in on this breakout winner early!  
-The informtion are confidentia    
-and intended only for traders and investors!     
-    
-   
-Look at price it very good discount on such GOLD piece.  
+This job will not affect your present career, it will only take a small
+part of your free time. The only things you will need to have to start
+running your business with our company are reliable Internet/E-mail
+access and checking/savings bank account. And your decency, of course!
 
--
-If you will receive this notice before HPGI will come back to todays open 
-again then you had luck.
+Your part of the job is to receive the funds which we will send directly
+to you through one of our money transfer methods from our company and/or
+our partners. After that you should re-send the money (less your commission)
+to us/our customers via one of chosen money transfer agencies. The job is
+rather simple and you won't need any special knowledge to become our partner!
+You will also stand the chances of being a part of our future and the
+excellence of a team in which you will be highly respected - just think about
+this amazing opportunity! We will be hoping to hear from you soon.
 
+Please fill our application form. No fees are asked, just leave your
+contact details: mail@divewithsharks.hk
 
+We will contact you soon. Thank you!
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
