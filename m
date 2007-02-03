@@ -1,46 +1,34 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Wed, 07 Feb 2007 02:52:15 +0000
-Subject: Warning: message 1HDTDL-0007DU-Le delayed 72 hours
-Message-Id: <E1HEcut-0008KB-P1@externalmx-1.sourceforge.net>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sat, 03 Feb 2007 01:23:14 +0000
+Subject: [KJ] [RFC] Regarding min/max
+Message-Id: <45C3E402.3000307@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
+Hi
 
-The message identifier is:     1HDTDL-0007DU-Le
-The subject of the message is: Shethar boznai and there were sent
-The date of the message is:    Sun, 04 Feb 2007 00:16:77 +0200
+Regarding converting:
 
-The address to which the message has not yet been delivered is:
+	a = x < y ? x : y;
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter case,
-    451-you need to change the address or create an MX record for its domain
-    4
+with
+	a = min(x, y);
+and etc.
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
+What about variables in structs? It seem to not like the multiple lines in min()/max(),
+so why not introduce something like:
+#define __min(x,y)	((x) < (y) ? (x) : (y))
+(and use __min() in min() also)? Then there would be no problem to clean up in the structs
++ the underscores should make people aware it does not type-check.
 
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier.
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+Just a thought
+/Richard Knutsson
+
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
