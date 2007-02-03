@@ -1,27 +1,28 @@
-From: "Howie Bly" <guypir@mailstelnet.com>
-Date: Fri, 02 Feb 2007 17:18:04 +0000
-Subject: Re: [KJ] your PHAuerRMA
-Message-Id: <01c746ee$19a19890$78f3cb51@BLASCO>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sat, 03 Feb 2007 01:13:44 +0000
+Subject: [KJ] [RFC] Regarding abs() and labs()
+Message-Id: <45C3E1C8.2040105@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c746ee$18752680$78f3cb51@BLASCO>
-In-Reply-To: <01c746ee$18752680$78f3cb51@BLASCO>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+Hello all
 
-Get your medication from our site because it costs less.
+Just took a look at abs() and can not understand why it seem so 
+overcomplicated. Why not just:
 
-http://www.zodrx.%com - Remove "%" to make the link working!
+#define abs(x)	((x) < 0) ? -(x) : (x))
 
---
+and skip labs() (not used anyway)
++ it gives a warning with -W if x is of a unsigned type ("condition is 
+always false" or similar).
+But remember to use %u when printing an unsigned, took me a while before 
+I understood how an unsigned could contain a "negative" value :)
 
-Ive told you, he wasnt making much sense,  said Harry. He said he
-wanted to warn Dumbledore about something. He definitely mentioned
-Bertha Jorkins, and he seemed to think she was dead. He kept saying
-
+Happy weekend
+Richard Knutsson
 
 _______________________________________________
 Kernel-janitors mailing list
