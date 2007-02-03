@@ -1,50 +1,37 @@
-From: "Aileen Corbett" <Leah'ssera's@abofa.com>
-Date: Fri, 02 Feb 2007 15:43:52 +0000
-Subject: [KJ] Aileen wrote:
-Message-Id: <01c746db$e912e420$6c822ecf@Leah'ssera's>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0826260301=="
+From: "Liv Rideout" <confuciusujenson@calty.toyota.com>
+Date: Sat, 03 Feb 2007 22:56:10 +0000
+Subject: Re: new quint
+Message-Id: <01c747e6$7f274a40$2002a8c0@SN104676430311>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0826260301==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+Hi,
 
-PHYSICIANS ADULT DAY (PHYA at PK)  
-This one on strike again.
+Vinagra - 3. 35
+Vanlium - 1. 25
+Cinalis - 3. 75
+Amnbien - 2. 90
 
-Sym: PHYA 
-Priccce: $0.66 
-Target: $2.25
-Market: Slightly Bullish
+http://lodrx!com
 
+Important, Replace "!" with "."
 
-Look at this company,look at it's financial reports
-this one are generating income already.
+--
 
-News1: Physicians Adult Daycare Finds Validation North of the Border
-News2: Physicians Adult Daycare Pursues Expanding Canadian Opportunities
-
-PHYA IS ABOUT TO RISE!
-ADD PHYA TO YOUR WATCHLIST.
-
-70776A32666E7478746933776A73716F737977457871746C
-00/T40I-A+30-CVGA2-.,
+Harry, Ron, and Hermione went up to the Owlery after breakfast on Sunday
+to send a letter to Percy, asking, as Sirius had suggested, whether he
+had seen Mr. Crouch lately. They used Hedwig, because it had been so
 
 
-
-
---===============0826260301==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier.
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0826260301==--
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
