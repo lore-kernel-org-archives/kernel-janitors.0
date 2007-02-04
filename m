@@ -1,31 +1,53 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Sun, 04 Feb 2007 17:36:07 +0000
-Subject: Re: [KJ] still wondering how to generate a short kernel API list
-Message-Id: <20070204093607.f6dab5f5.rdunlap@xenotime.net>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 04 Feb 2007 10:46:21 +0000
+Subject: [KJ] A new wiki page for HOWTOs and programming guidelines
+Message-Id: <Pine.LNX.4.64.0702040538530.32243@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702040410530.26537@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702040410530.26537@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, 4 Feb 2007 04:12:49 -0500 (EST) Robert P. J. Day wrote:
 
-> 
->   i'm still wondering if there's a way, using the in-kernel
-> documentation, to generate a condensed list for the kernel API similar
-> to this:
-> 
-> http://www.gnugeneration.com/mirrors/kernel-api/book1.html
-> 
-> any ideas?
+  i noticed a while back that wiki admin chris miller added a new
+top-level page to the wiki for HOWTOs:
 
-Have you tried an -mm kernel to see what it generates for kernel-doc?
-IIRC, there's a patch in -mm to do that.
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=How_To%27s
 
----
-~Randy
+which currently has an entry just for subversion.
+
+  i was pondering another top-level page whose name might be something
+like "Kernel Programming Gudelines".  it would differ from the
+CodingStyle document in that it would get more into proper programming
+*structure* (if that distinction makes any sense).
+
+  i can imagine separate entries (and pages) for things like:
+
+	* Data types
+	* Endianness
+	* Macros versus inline functions
+	* Proper use of gcc "__attribute__"s
+
+and so on.  each of those subpages would explain that concept with
+respect to how to use it properly in the context of kernel
+programming, references to the relevant header files and so on.
+
+  nothing says those pages have to be new and original content -- a
+pointer to an existing web page that already explained that would be
+perfectly acceptable.
+
+  again, thoughts on this?
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
