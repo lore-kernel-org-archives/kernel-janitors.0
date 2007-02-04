@@ -1,52 +1,59 @@
-From: "Darren Jenkins\\" <darrenrjenkins@gmail.com>
-Date: Sat, 17 Feb 2007 00:02:51 +0000
-Subject: [KJ] [kj][RFC] roll macro's in bitops.h
-Message-Id: <1171670571.7850.27.camel@localhost.localdomain>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 04 Feb 2007 18:57:35 +0000
+Subject: [KJ] what's all this "RW_LOCK_BIAS" stuff?
+Message-Id: <Pine.LNX.4.64.0702041351150.3067@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel Janitors <kernel-janitors@lists.osdl.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-
-G'day people,
-
-I was looking at bitops.h and noticed there were a couple of inline roll
-functions to operate on 32bit variables. (left and right)
-
-I think that is a little bit dumb as they are constant width (only
-32bits) due to it being an inline function, and was wondering if anyone
-thought it would be useful to have some (variable sized) roll macros
-instead.
-
-I whipped these twp up as examples, but have not tested them yet.
-
-#define RollRight(Data, Distance) \
-({      typeof(Data) __a = Data;   \
-        typeof(Distance) __b = Distance%(sizeof(__a) * 8); \
-	__a = ((__a>>__b) | (__a<<((sizeof(__a) * 8) - __b))) \
-	__a; \
-})
-
-#define RollLeft(Data, Distance) \
-({      typeof(Data) __a = Data;   \
-        typeof(Distance) __b = Distance%(sizeof(__a) * 8); \
-	__a = ((__a<<__b) | (__a>>((sizeof(__a) * 8) - __b))) \
-	__a; \
-})
-
-Also if these are useful I was wondering how to handle the existing
-functions ? #define them out for the time being ?
-
-#define rol32(a, b) RollLeft(a, b)
-#define ror32(a, b) RollRight(a, b)
+To: kernel-janitors@vger.kernel.org
 
 
+  just digging around in the semaphore stuff and i'm not sure what
+this "RW_LOCK_BIAS" stuff is all about:
 
+$ grep -r "define RW_LOCK_BIAS" *
+include/asm-frv/semaphore.h:#define RW_LOCK_BIAS                 0x01000000
+include/asm-arm26/locks.h:#define RW_LOCK_BIAS      0x01000000
+include/asm-arm26/locks.h:#define RW_LOCK_BIAS_STR "0x01000000"
+include/asm-m68knommu/semaphore.h:#define RW_LOCK_BIAS           0x01000000
+include/asm-i386/rwlock.h:#define RW_LOCK_BIAS           0x01000000
+include/asm-i386/rwlock.h:#define RW_LOCK_BIAS_STR      "0x01000000"
+include/asm-sh/spinlock_types.h:#define RW_LOCK_BIAS             0x01000000
+include/asm-arm/locks.h:#define RW_LOCK_BIAS      0x01000000
+include/asm-arm/locks.h:#define RW_LOCK_BIAS_STR "0x01000000"
+include/asm-arm/locks.h:#define RW_LOCK_BIAS      0x01000000
+include/asm-arm/locks.h:#define RW_LOCK_BIAS_STR "0x01000000"
+include/asm-m32r/spinlock_types.h:#define RW_LOCK_BIAS           0x01000000
+include/asm-m32r/spinlock_types.h:#define RW_LOCK_BIAS_STR       "0x01000000"
+include/asm-m68k/semaphore.h:#define RW_LOCK_BIAS                0x01000000
+include/asm-h8300/semaphore.h:#define RW_LOCK_BIAS               0x01000000
+include/asm-x86_64/rwlock.h:#define RW_LOCK_BIAS                 0x01000000
+include/asm-x86_64/rwlock.h:#define RW_LOCK_BIAS_STR     "0x01000000"
+include/asm-cris/arch-v32/spinlock.h:#define RW_LOCK_BIAS 0x01000000
+include/asm-cris/semaphore.h:#define RW_LOCK_BIAS             0x01000000
 
-Darren Jenkins
+  is it really necessary for all of these header files to be defining
+those macros to have identical values?  just curious.  and all that
+seems to be related to the small number of "rwlock.h" files:
 
+$ find . -name rwlock.h
+./include/asm-i386/rwlock.h
+./include/asm-um/rwlock.h
+./include/asm-x86_64/rwlock.h
 
+  thoughts?
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
