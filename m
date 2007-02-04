@@ -1,34 +1,32 @@
-From: "May Mahoney" <limpesthandsomeness@aadh.dk>
-Date: Fri, 02 Feb 2007 20:55:55 +0000
-Subject: [KJ] PHYA soaring again.
-Message-Id: <01c74707$80a7c410$6c822ecf@limpesthandsomeness>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 04 Feb 2007 09:12:49 +0000
+Subject: [KJ] still wondering how to generate a short kernel API list
+Message-Id: <Pine.LNX.4.64.0702040410530.26537@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c746e3$19a56a20$6c822ecf@nobility'sMarne>
-In-Reply-To: <01c746e3$19a56a20$6c822ecf@nobility'sMarne>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PHYSICIANS ADULT DAY (PHYA at PK)  
 
-Sym: PHYA 
-Targ: $2.25
-Current grow +3,76 % +0.025 (0.69)
+  i'm still wondering if there's a way, using the in-kernel
+documentation, to generate a condensed list for the kernel API similar
+to this:
 
-News1: Physicians Adult Daycare Finds Validation North of the Border
-News2: Physicians Adult Daycare Pursues Expanding Canadian Opportunities
+http://www.gnugeneration.com/mirrors/kernel-api/book1.html
 
-Look at financial reports of this company
-this one are generating income.
+any ideas?
 
-PHYA IS ABOUT TO RISE!
-Recommendation: buy now and win.
+rday
 
-70776A32666E7478746933776A73716F737977457871746C
-R>Q*/Q,ON29897K
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
