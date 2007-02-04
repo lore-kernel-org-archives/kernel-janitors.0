@@ -1,7 +1,7 @@
-From: Greg KH <greg@kroah.com>
-Date: Sun, 04 Feb 2007 17:32:30 +0000
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Sun, 04 Feb 2007 17:36:07 +0000
 Subject: Re: [KJ] still wondering how to generate a short kernel API list
-Message-Id: <20070204173230.GA11579@kroah.com>
+Message-Id: <20070204093607.f6dab5f5.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702040410530.26537@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0702040410530.26537@CPE00045a9c397f-CM001225dbafb6>
@@ -10,7 +10,8 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sun, Feb 04, 2007 at 04:12:49AM -0500, Robert P. J. Day wrote:
+On Sun, 4 Feb 2007 04:12:49 -0500 (EST) Robert P. J. Day wrote:
+
 > 
 >   i'm still wondering if there's a way, using the in-kernel
 > documentation, to generate a condensed list for the kernel API similar
@@ -20,12 +21,11 @@ On Sun, Feb 04, 2007 at 04:12:49AM -0500, Robert P. J. Day wrote:
 > 
 > any ideas?
 
-There must be, as it looks like that comes directly from the docbook
-output of the kernel-api.xml file.
+Have you tried an -mm kernel to see what it generates for kernel-doc?
+IIRC, there's a patch in -mm to do that.
 
-good luck,
-
-greg k-h
+---
+~Randy
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
