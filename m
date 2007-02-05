@@ -1,28 +1,27 @@
-From: "Cody EMariana" <oeqafuuu@supermarket.fr>
-Date: Wed, 28 Feb 2007 01:56:49 +0000
-Subject: [KJ] To rev
-Message-Id: <044401c75b53$3bdd79a0$9357d1c0@tmaladapth>
+From: "Gilbert Spence" <brownstoneWalker's@accordion.co.yu>
+Date: Mon, 05 Feb 2007 21:35:32 +0000
+Subject: [KJ] Think about it.
+Message-Id: <01c74968$88c5a870$6c822ecf@brownstoneWalker's>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-"President Bush has never had a plan to win in Iraq, and now that Democrats and 
+What is HPGI ?
 
-Critical Care Inc, 
-symbl: .CTCX.
-This one is an easy doubler
-@ 65 cents wont last long
-Expected target : $ 3.00 
- Critical Care Announces Expansion of Cost Containment Activities 
-Business Wire (Fri, Feb 16)  
- Critical Care to Acquire Health Care Company 
-Business Wire (Wed, Jan 31)  
+About the Company
 
-GET IN TOMORROW, This one is shoo in to DOUBLE
+Hemisphere Gold Inc. is in the business of exploration and acquisition of gold properties in some of the world's gainful gold districts. The Company's objective is to take advantage of high-yielding untapped mineral producing properties through exploration and acquisition. The Company's flagship property is in Suriname, a democratic country which has had mining operations since the 1700's. Suriname is an emerging major gold producer with international companies showing interest. Hemisphere is committed to maintaining environmental stewardship, occupational safety and corporate responsibility.
 
-(Watch how Bush is picking his election battles -- 1:36 ) "The truth is the Democrats 
+
+Look at the charts for the last week.
+Because of the news it has raised by 70 % on several days and was on 4 place of charts.
+This one is for some long time investments.
+
+Gold are allways in good price and Hemisphere will get its book value eventually.
+It will jump even more within the next few days. 
+
 
 
 _______________________________________________
