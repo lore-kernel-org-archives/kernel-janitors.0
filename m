@@ -1,52 +1,28 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 22 Feb 2007 12:38:23 +0000
-Subject: Warning: message 1HJ5uw-0001Sm-Vr delayed 72 hours
-Message-Id: <E1HKDDL-0004c9-RR@externalmx-1.sourceforge.net>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 05 Feb 2007 07:04:10 +0000
+Subject: [KJ] so ... when are all the pending patches unleashed?
+Message-Id: <Pine.LNX.4.64.0702050203150.8027@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HJGos-0000Mp-Em@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HJGos-0000Mp-Em@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
-e.net.
 
-The message identifier is:     1HJ5uw-0001Sm-Vr
-The date of the message is:    Mon, 19 Feb 2007 10:38:30 +0000
-The subject of the message is: Must Have apothecary we mention: particular =
-reduction.XAsS
+  now that 2.6.20 is official, what's the schedule for the queued
+patches to hit linus' tree?
 
-The address to which the message has not yet been delivered is:
+rday
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
-or-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
-r verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter=
- case,
-    451-you need to change the address or create an MX record for its domain
-    4
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
+http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
