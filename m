@@ -1,39 +1,37 @@
-From: "Katy Flores" <usagesyearlies@ablehouse.biz>
-Date: Thu, 01 Feb 2007 20:43:44 +0000
-Subject: [KJ] WEXE - run has started
-Message-Id: <01c74641$aa1d3d50$6c822ecf@usagesyearlies>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1002897047=="
+From: "Q. Fenton" <intertwineMexico@accounn.hoha.ru>
+Date: Mon, 05 Feb 2007 15:57:56 +0000
+Subject: [KJ] Important trading news - Girl, 18, goes
+Message-Id: <01c7494d$7d73a9b0$6c822ecf@intertwineMexico>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1002897047==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+We called it and UP it goes! HPGI on raise again today.
 
-WEXE are manufacturing the real GOLD!
+HPGI up 22% in its first big day of trading. Look for more gains from
+this high-flier tomorrow and over the next few weeks!
 
-Trip are just started.
-Millions will receive this message, million will think, thousands will buy,others will see
-market activity and price will rise.
-I will continue to push it while company will show they positive results.
+Hemisphere Gold Discovers a Series of Gold Anomalies Trending North-South for Over 20 km
+Monday February 5, 6:30 am ET
+Company Reports on Initial Stream Sediment Sampling Program
 
-70776A32666E7478746933776A73716F737977457871746C
-Sy-m-bol: WEXE
+Symm: HPGI
+Prev. close:1.50
 
+Read up on why these junior gold industry companies are THE place to be.
+Type in Google : "zealllc com 2006 jnrgold" and read all about it.
 
+HPGI is as hot as they come with major surveys underway and a blazing
+hot publicity campaign is ready to announce the BIG Find!
 
+Catch the luck and win with HPGI.
 
---===============1002897047==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+This newsletter contains forward -> looking statements. This is not an offer to buy or sell any shares. The sponsor of this newsletter paid out ten thousand dollars for distribution of this publication.
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1002897047==--
