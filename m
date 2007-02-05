@@ -1,40 +1,44 @@
-From: "MOHAMOUD Nho" <dividinggouging@rmrf.com>
-Date: Mon, 12 Feb 2007 16:17:03 +0000
-Subject: [KJ] Pelima wrote: Today's prognosis...
-Message-Id: <01c74ebc$d975c260$6c822ecf@dividinggouging>
+From: "Luther Privette" <hubris'sEndymion's@netmdc.com>
+Date: Mon, 05 Feb 2007 16:08:58 +0000
+Subject: [KJ] fwd: Luther
+Message-Id: <0JXCVBLSBRN_DIK96_Q2A07X@netmdc.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good morning, gentlemen.
-I think all of you have already seen the results of the last market day.
+Wednesday February 7th 2007 
+ 
+FOR IMMEDIATE RELEASE
+ATTENTION INVESTORS AND TRADERS
+Hemisphere Gold, Inc. - HPGI IS POISED FOR A HUGE GAIN 
 
-And just now we offer you the best stock at the best price for today.
-The Company has released news on friday. 
-Here it is (read full version on your favorite news site)
+THIS ONE COULD BREAK 3.00 VERY SOON.
 
--
-Marshall Holdings International, Inc. Announces Subsidiary 3rd Quarter Results Over 1.5 Million, an Increase of 147%
+On monday they released news explaining they found gold anomolies spanning 20 kilometers - THIS COULD LEAD TO SOMETHING HUGE!
 
-Marshall Holdings International, Inc. (MHII) announced that the 3rd quarter financials for its wholly owned subsidiary are final. Marshall Distributing 3rd quarter revenues resulted in an increase of 147% over the same period in 2005. The total revenues for the quarter were excess of 1.5 million.
-"The Company continues to raise and once again exceeded all expectations", said Jamie Plante, CFO." 
--
+Watch HPGI trade and add it to your raddar now.
 
-
-Friday last result -> 0.021 (+ 23.52%) 
-Friday High on 0.024 (+ 41 %)
-With the news like that Monday expectations-> more then 0.040 (+ 90.47 %) 
-
-You absolutly know which ones are real or not.
-This one is real.
-The Campaign has just started. More information will be soon.
-To Grab MHII - is the first thing to do.
+We expect this one to soar.
+Make your profit today.
 
 
-70776A32666E7478717878746933776A73716F737977456E79337871746C
-caizeir
+This message includes forward - looking statements. This is not an offer to buy or sell any shares. The publisher of this letter paid out ten thousand dollars for distribution of this publication.
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+Ryan O'Neal's film credits include "Love Story," "Paper Moon," "Green Ice" and "Barry Lyndon."He is proposing eliminations or sharp reductions in 141 government programs, for a savings over five years of $12 billion, although Congress has rejected many of the same proposals over the past two years.The arrival of the massive four-volume set of green budget books, which will cover the budget year that begins next October 1, will be followed by months of debate in Congress.Calls to the Oscar nominee's business manager and publicist were not returned.To accomplish those reductions, Bush would allow only modest growth in the government programs outside of defense and homeland security. The arrival of the massive four-volume set of green budget books, which will cover the budget year that begins next October 1, will be followed by months of debate in Congress.
 
 
 
