@@ -1,8 +1,10 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Sun, 04 Feb 2007 10:21:37 +0000
-Subject: Warning: message 1HDTDL-0007DU-Le delayed 10 hours
-Message-Id: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
+Date: Mon, 05 Feb 2007 03:13:34 +0000
+Subject: Warning: message 1HDTDL-0007DU-Le delayed 24 hours
+Message-Id: <E1HDuIQ-0007UP-Pr@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
+In-Reply-To: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 24 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HDTDL-0007DU-Le
 The subject of the message is: Shethar boznai and there were sent
