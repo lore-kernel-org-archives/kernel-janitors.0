@@ -1,85 +1,36 @@
-From: "Rick Baker" <ebsheik@azsoft.co.uk>
-Date: Wed, 21 Feb 2007 11:05:54 +0000
-Subject: [KJ] you subsist no materiel
-Message-Id: <001b01c755eb$75fb56b0$052cbc34@mychat16f757c3>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0583607952=="
+From: "Roderick Chappell" <validity'smapped@accubid.com>
+Date: Mon, 05 Feb 2007 15:33:23 +0000
+Subject: [KJ] Woodrow  did you got HPGI ?
+Message-Id: <01c74935$f14761f0$6c822ecf@validity'smapped>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Good morning.
 
---===============0583607952==
-Content-Type: multipart/alternative;
-    boundary="----------=_1172055976-29679-478"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+I has found thisone on last monday and it already flying.
+This new gold companies are doing amazing things.
 
-This is a multi-part message in MIME format...
+HPGI just released news.
 
-------------=_1172055976-29679-478
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Hemisphere Gold Discovers a Series of Gold Anomalies Trending North-South for Over 20 km
+Monday February 5, 6:30 am ET
+Company Reports on Initial Stream Sediment Sampling Program
 
+RENO, Nev.--(BUSINESS WIRE)--Hemisphere Gold Inc. (PINK SHEETS:HPGI - News), a gold exploration, property acquisition and mining development company, is pleased to announce initial stream sediment sampling results at its South American property in Suriname, which point to a number of gold anomalies with individual sample values up to 25,000 ppb gold.
 
+Hemisphere Gold's wholly owned subsidiary "Orion Resources NV" ("Orion") started the first phase of successive exploration activities at primary or bedrock gold occurrences in its concessions, with an extensive stream sediment-sampling program. In this program only the geologically potential gold area was included. The stream sediment-sampling program was divided in several field periods of 6 weeks. The concessions are located partly in the district of Brokopondo where the creeks flow into the Blommenstein reservoir, forming part of the drainage area of the Suriname River, and the district of Sipaliwini where the creeks are part of the drainage area 
 
-
-
-HOT ALERT!!
-
-Sym8oL: GDKICurr Price: $0.14 5 Day Target price: $0.95Action: Aggresive Bu=
-y/Hold!
-
-Insider Buying Alert. Short-term KST!!!
-
-
-kernel-janitors, take a look at the hottest news!!
+Look at news and charts.
+I am bring you only best picks.
+Another explotion will start from today. And will lead us to 2.2 per share.
 
 
 
-------------=_1172055976-29679-478
-Content-Type: text/html;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2800.2869" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<BR>
-<DIV align=3Dcenter><FONT face=3DVerdana color=3D#000033 size=3D3D4><FONT s=
-ize=3D3><STRONG>HOT ALERT!!</STRONG></FONT></DIV>
-<BR><BR>
-<DIV align=3Dcenter><FONT face=3DVerdana color=3D#6633FF size=3D4>Sym8oL: <=
-b>GDKI</b><br>Curr Price: $0.14 <br>5 Day Target price: $0.95<br>Action: Ag=
-gresive Buy/Hold!!</FONT></DIV>
-<BR>
-<DIV align=3Dcenter><FONT face=3DVerdana color=3D#FF0033 size=3D4>Insider B=
-uying Alert. Short-term KST!!!</FONT></DIV>
-<BR><BR>
-<DIV align=3Dcenter><FONT face=3DVerdana color=3D#0033FF size=3D4>kernel-ja=
-nitors, take a look at the hottest news..</FONT></DIV>
-<BR><BR>
-</BODY></HTML>
-
-------------=_1172055976-29679-478--
-
---===============0583607952==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0583607952==--
