@@ -1,102 +1,44 @@
-From: Karsten Keil <kkeil@suse.de>
-Date: Mon, 26 Feb 2007 12:58:11 +0000
-Subject: Re: [KJ] [PATCH] Fix bufferoverflow and races in capi debug
-Message-Id: <20070226125811.GA22586@pingi.kke.suse.de>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Mon, 05 Feb 2007 08:06:44 +0000
+Subject: Warning: message 1HDoNg-0005l4-Ve delayed 10 hours
+Message-Id: <E1HDys8-0006uN-2N@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070225184951.GA8615@pingi.kke.suse.de>
-In-Reply-To: <20070225184951.GA8615@pingi.kke.suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 26, 2007 at 03:52:58AM -0800, Andrew Morton wrote:
->=20
-> (cc's restored.  Please don't do that).
->=20
-> > On Mon, 26 Feb 2007 09:15:18 +0100 walter harms <wharms@bfs.de> wrote:
-> >=20
-> > this reminds me of the glibc asprint() funktion. IMHO it would be usefu=
-l to have this
-> > as kernelfunction, because printing in a buffer for e.g. for proc and f=
-riends is commen.
-> >=20
->=20
-> We already have kasprintf() and I suspect this patch should be using it.
->=20
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
 
-I think it is not possible to use that for this special case, because it
-has to print multiple times to the buffer but kasprintf() does allocate
-exactely a buffer for one print, so this do not help.
+The message identifier is:     1HDoNg-0005l4-Ve
+The subject of the message is: eat our father.  My strength; and to their one accord and they knew
+The date of the message is:    Sun, 04 Feb 2007 21:54:51 +0100
 
-> >=20
-> > re,
-> >  wh
-> >=20
-> > Karsten Keil wrote:
-> > > The CAPI trace debug functions were using a fixed size buffer, which =
-can be
-> > > overflowed if wrong formatted CAPI messages were sent to the kernel c=
-api
-> > > layer. The code was also not protected against multiple callers.
-> > > This fix bug 8028.
-> > > Additional the patch make the CAPI trace functions optional.
-> > >=20
-> > > Signed-off-by: Karsten Keil <kkeil@suse.de>
-> > >=20
-> > >
-> > >  #include <stdarg.h>
-> > > =20
-> > >  /*-------------------------------------------------------*/
-> > > -static void bufprint(char *fmt,...)
-> > > +static _cdebbuf *bufprint(_cdebbuf *cdb, char *fmt,...)
-> > >  {
-> > >  	va_list f;
-> > > +	size_t n,r;
-> > > +
-> > > +	if (!cdb)
-> > > +		return NULL;
-> > >  	va_start(f, fmt);
-> > > -	vsprintf(p, fmt, f);
-> > > +	r =3D cdb->size - cdb->pos;
-> > > +	n =3D vsnprintf(cdb->p, r, fmt, f);
-> > >  	va_end(f);
-> > > -	p +=3D strlen(p);
-> > > +	if (n >=3D r) {
-> > > +		/* truncated, need bigger buffer */
-> > > +		size_t ns =3D 2 * cdb->size;
-> > > +		u_char *nb;
-> > > +
-> > > +		while ((ns - cdb->pos) <=3D n)
-> > > +			ns *=3D 2;
-> > > +		nb =3D kmalloc(ns, GFP_ATOMIC);
-> > > +		if (!nb) {
-> > > +			cdebbuf_free(cdb);
-> > > +			return NULL;
-> > > +		}
-> > > +		memcpy(nb, cdb->buf, cdb->pos);
-> > > +		kfree(cdb->buf);
-> > > +		nb[cdb->pos] =3D 0;
-> > > +		cdb->buf =3D nb;
-> > > +		cdb->p =3D cdb->buf + cdb->pos;
-> > > +		cdb->size =3D ns;
-> > > +		va_start(f, fmt);
-> > > +		r =3D cdb->size - cdb->pos;
-> > > +		n =3D vsnprintf(cdb->p, r, fmt, f);
-> > > +		va_end(f);
-> > > +	}
-> > > +	cdb->p +=3D n;
-> > > +	cdb->pos +=3D n;
-> > > +	return cdb;
-> > >  }
-> > > =20
+The address to which the message has not yet been delivered is:
 
---=20
-Karsten Keil
-SuSE Labs
-ISDN development
-SUSE LINUX Products GmbH, GF: Markus Rex, HRB 16746 (AG N=FCrnberg)
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter case,
+    451-you need to change the address or create an MX record for its domain
+    4
+
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
+
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier.
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
