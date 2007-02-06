@@ -1,34 +1,21 @@
-From: "Carmela Rudolph" <instigatorsnasalizing@aaslh.org>
-Date: Fri, 02 Feb 2007 17:16:14 +0000
-Subject: [KJ] PHYA on strike again.
-Message-Id: <01c746e8$d02aeea0$6c822ecf@instigatorsnasalizing>
+From: "Chris Miller" <lordsauronthegreat@gmail.com>
+Date: Tue, 06 Feb 2007 02:58:29 +0000
+Subject: Re: [KJ] Wiki Madness
+Message-Id: <e5a3e9ac0702051858k1b23a2d5g7db41a67ea57aed3@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c746e9$eff98560$6c822ecf@Nobeltrainee's>
-In-Reply-To: <01c746e9$eff98560$6c822ecf@Nobeltrainee's>
+References: <e5a3e9ac0701282355h258c6204k55437686eb55193a@mail.gmail.com>
+In-Reply-To: <e5a3e9ac0701282355h258c6204k55437686eb55193a@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-PHYSICIANS ADULT DAY (PHYA at PK)  
-
-Sym: PHYA 
-Targ: $2.25
-Current grow +3,76 % +0.025 (0.69)
-
-News1: Physicians Adult Daycare Finds Validation North of the Border
-News2: Physicians Adult Daycare Pursues Expanding Canadian Opportunities
-
-Look at financial reports of this company
-this one are generating income.
-
-PHYA IS ABOUT TO RISE!
-Recommendation: buy now and win.
-
-70776A32666E7478746933776A73716F737977457871746C
-00=X2,K<B21A20(UF089MF,<P
-
-
+My permanent domain name has now been successfully transferred over.You can now get the wiki from the much shorter URL of:
+www.fsdev.net/wiki
+The old fsdev.dreamhosters.com URL will remain functional for a whilelonger as a failsafe (if something goes wrong...  tell me about it anduse the old dreamhosters subdomain until I can fix it.)
+After about a week I expect I should be able to totally delete the oldfsdev.dreamhosters.com URL, so I'd appreciate it if you could startmigrating now if possible.
+Thanks for your cooperation.
+-- =  =  =  Ƒ 5 |) 3 |/  =  =  ==    ( 0 |) 3    \|/ 4 |2 |2 | 0 |2    ==  =  7 | |\| µ Ж    6 µ |2 µ  =  =
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
