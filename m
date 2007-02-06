@@ -1,8 +1,10 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Mon, 05 Feb 2007 08:06:44 +0000
-Subject: Warning: message 1HDoNg-0005l4-Ve delayed 10 hours
-Message-Id: <E1HDys8-0006uN-2N@externalmx-1.sourceforge.net>
+Date: Tue, 06 Feb 2007 02:07:08 +0000
+Subject: Warning: message 1HDoNg-0005l4-Ve delayed 24 hours
+Message-Id: <E1HEFjg-0007qU-E1@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1HDys8-0006uN-2N@externalmx-1.sourceforge.net>
+In-Reply-To: <E1HDys8-0006uN-2N@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 24 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HDoNg-0005l4-Ve
 The subject of the message is: eat our father.  My strength; and to their one accord and they knew
