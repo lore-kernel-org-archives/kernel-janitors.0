@@ -1,26 +1,24 @@
-From: "Gilbert Spence" <brownstoneWalker's@accordion.co.yu>
-Date: Mon, 05 Feb 2007 21:35:32 +0000
-Subject: [KJ] Think about it.
-Message-Id: <01c74968$88c5a870$6c822ecf@brownstoneWalker's>
+From: "Lea Quick" <Selma'sfall@aanet.com.au>
+Date: Tue, 06 Feb 2007 16:31:09 +0000
+Subject: [KJ] Very Important current news
+Message-Id: <01c74a09$35c67c70$6c822ecf@Selma'sfall>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-What is HPGI ?
+LOM Logistics is going to release New Ground Breeaking Software !!!
 
-About the Company
+Go to your Favoured financial News source and Read the News! The next eBay? We think they are able to do it. It's just this kind
+of small firm with an High-grade Product that either gets bought up by
+the big boys or shoots to Super Stardom!
+Company: LOMJ
+Currennt Prrice: 1.75
+Expected Prrice: 3.80
 
-Hemisphere Gold Inc. is in the business of exploration and acquisition of gold properties in some of the world's gainful gold districts. The Company's objective is to take advantage of high-yielding untapped mineral producing properties through exploration and acquisition. The Company's flagship property is in Suriname, a democratic country which has had mining operations since the 1700's. Suriname is an emerging major gold producer with international companies showing interest. Hemisphere is committed to maintaining environmental stewardship, occupational safety and corporate responsibility.
-
-
-Look at the charts for the last week.
-Because of the news it has raised by 70 % on several days and was on 4 place of charts.
-This one is for some long time investments.
-
-Gold are allways in good price and Hemisphere will get its book value eventually.
-It will jump even more within the next few days. 
+Don't miss this one. Word of this company will hit the streets hard
+any moment and take it Way Up! Get in Early and Ride it!
 
 
 
