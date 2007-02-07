@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Tue, 06 Feb 2007 03:11:32 +0000
-Subject: Warning: message 1HDTDL-0007DU-Le delayed 48 hours
-Message-Id: <E1HEGk0-0000mT-1C@externalmx-1.sourceforge.net>
+Date: Wed, 07 Feb 2007 02:52:15 +0000
+Subject: Warning: message 1HDTDL-0007DU-Le delayed 72 hours
+Message-Id: <E1HEcut-0008KB-P1@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HDeV7-0006LS-TU@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HDTDL-0007DU-Le
 The subject of the message is: Shethar boznai and there were sent
