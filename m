@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 07 Feb 2007 14:22:13 +0000
+From: "Rich Morgan" <rmorgan@openaddict.com>
+Date: Wed, 07 Feb 2007 14:56:53 +0000
 Subject: Re: [KJ] so ... when are all the pending patches unleashed?
-Message-Id: <Pine.LNX.4.64.0702070914230.3693@localhost.localdomain>
+Message-Id: <4755.208.205.82.65.1170860213.squirrel@www.heavysystems.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702050203150.8027@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0702050203150.8027@CPE00045a9c397f-CM001225dbafb6>
@@ -10,67 +10,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 6 Feb 2007, Randy Dunlap wrote:
 
-> On Tue, 6 Feb 2007 12:33:44 -0500 (EST) Robert P. J. Day wrote:
+On Wed, February 7, 2007 9:22 am, Robert P. J. Day wrote:
+> given that we're in a 2-week window *now*, i'm guessing things are
+> going be some kind of busy so patches that aren't considered
+> breathlessly critical might be overlooked.  and the window closes
+> again, and the KJ person is now looking at 2.6.21.  possibly.
 
-... snip ...
+Could a group of patchers get together and submit, say, one larger patch
+instead of 10 smaller patches and have a better opportunity of getting
+them included in rc1?  Do the subsystem maintainers decide what patches
+are forwarded onto Linus?
 
-> > this is particularly crucial for patches that are an underlying
-> > dependency for future work.  if those "base" patches don't make it
-> > in, it gets that much harder to work on patches that sit on top of
-> > that work.
-> >
-> > and, not to belabour this point but, almost two days after 2.6.20
-> > was released, there is still (AFAICT) not a single change to the
-> > main tree.  normally, two days wouldn't mean that much but, when
-> > you're talking about only a two-week merge window, the clock is
-> > ticking.
->
-> You are welcome to take that up with Linus.  We (or any subsystem
-> maintainers) do not control that.
+v/r,
+Rich Morgan
+OpenAddict.com
 
-i didn't want to take it *that* far up the food chain (yet).  but i
-think it's important for anyone who's looking for a KJ project to
-understand how long it might be before they actually see their work in
-the kernel itself.
-
-i mean, theoretically, say someone took on a small project right after
-the merge window closed at 2.6.20-rc1.  they finish the project
-quickly, submit the patch, but the merge window is already gone, so
-they're looking at 2.6.20 itself before their work *might* finally be
-added to the main tree.  but not necessarily.
-
-given that we're in a 2-week window *now*, i'm guessing things are
-going be some kind of busy so patches that aren't considered
-breathlessly critical might be overlooked.  and the window closes
-again, and the KJ person is now looking at 2.6.21.  possibly.
-
-i'm not saying it's necessary to change the rate at which patches are
-pulled into the main tree.  but i think it *is* necessary to have a
-reasonable description about how the process works and the timeline
-involved.
-
-of course, it may be that everyone else has always known this stuff
-and i'm the *only* one who's figured it out just recently.  but, human
-nature being what it is, there's nothing more discouraging than
-someone who signs on as an enthusiastic KJ person and invests hours of
-work fixing something, only to see that work apparently vanish down
-the memory hole for a kernel release or two.
-
-i'm interested in other peoples' thoughts.  am i making too much of
-this?  (not like that would be the first time.  :-)
-
-rday
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
