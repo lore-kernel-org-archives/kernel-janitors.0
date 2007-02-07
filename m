@@ -1,54 +1,44 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 17 Feb 2007 17:22:35 +0000
-Subject: [KJ] init_completion() versus INIT_COMPLETION()?
-Message-Id: <Pine.LNX.4.64.0702171216490.25283@CPE00045a9c397f-CM001225dbafb6>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Wed, 07 Feb 2007 00:11:24 +0000
+Subject: Warning: message 1HEMaA-0005uE-4j delayed 10 hours
+Message-Id: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702011028400.15512@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702011028400.15512@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
 
-  continuing my wanderings thru concurrency land, i'm curious about
-whether there is an essential difference between init_completion() and
-INIT_COMPLETION()?
+The message identifier is:     1HEMaA-0005uE-4j
+The subject of the message is:  to he answered Saul Hear all
+The date of the message is:    Tue, 06 Feb 2007 14:55:50 +0530
 
-  according to linux/completion.h, the fundamental call is:
+The address to which the message has not yet been delivered is:
 
-  static inline void init_completion(struct completion *x)
-  {
-        x->done = 0;
-        init_waitqueue_head(&x->wait);
-  }
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
-whereas the INIT_COMPLETION() macro is meant to be used only to
-*re-initialize* an already previously-initialized completion:
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
-  #define INIT_COMPLETION(x)      ((x).done = 0)
-
-  but do you really need two forms of that?  would it hurt if
-subsequent re-initializations used init_completion()?  a quick count
-shows 186 invocations of init_completion(), and only 12 of
-INIT_COMPLETION().  that normally suggests to me that the latter
-example might be unnecessary.
-
-  in any event, the thought of having two different routines with
-different semantics whose names differ only in their case really
-creeps me out.
-
-rday
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier.
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
