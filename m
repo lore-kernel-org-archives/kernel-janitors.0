@@ -1,8 +1,10 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Wed, 07 Feb 2007 00:11:24 +0000
-Subject: Warning: message 1HEMaA-0005uE-4j delayed 10 hours
-Message-Id: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
+Date: Wed, 07 Feb 2007 09:44:07 +0000
+Subject: Warning: message 1HEMaA-0005uE-4j delayed 24 hours
+Message-Id: <E1HEjLT-0006hH-6j@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
+In-Reply-To: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 24 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HEMaA-0005uE-4j
 The subject of the message is:  to he answered Saul Hear all
