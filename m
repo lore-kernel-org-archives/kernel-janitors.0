@@ -1,28 +1,45 @@
-From: "Louella Munoz" <curdsshading's@abbottsfurniture.com.au>
-Date: Thu, 01 Feb 2007 12:32:23 +0000
-Subject: [KJ] Gore earns Nobel nomination
-Message-Id: <01c74616$2b791990$6c822ecf@curdsshading's>
+From: "Rajini Shirakuma" <minimizecamellia's@tao.org>
+Date: Wed, 07 Feb 2007 12:32:14 +0000
+Subject: [KJ] fwd: Kernel
+Message-Id: <R39CRV18ZDO_JXI62_IOJDSV@tao.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good day.
-We will try it today, restricts has been removed, market are waiting for detonation.
-And today this company will start to grow fast.
-We hope you didnt sell you shhares yet. 
-Because today we will try to push up the charts and get additional investors from there.
+Wednesday February 7th 2007 
+ 
+FOR IMMEDIATE RELEASE
+ATTENTION TRADERS AND INVESTORS
+Hemisphere Gold, Inc. - HPGI IS POISED FOR A HUGE GAIN 
 
-Cooommpany: WEST EXCELSIOR ENT (WEXE at PK)  
-Priccee: $0.60 
-Symmbbol: WEXE 
+THIS ONE COULD BREAK 3.00 VERY SOON.
+
+On monday they released news explaining they found gold anomolies spanning 20 kilometers - THIS COULD LEAD TO SOMETHING GREAT!
+
+Watch HPGI trade and add it to your raddar now.
+
+We expect this one to fly.
+Make your profit today.
 
 
-Company need aprox 250k $ to finish it's new project.
-After thet price will go to the sky.70776A32666E7478746933776A73716F737977457871746C
-Watch WEXE traddde on Feb 1! 
-This one will definitely be a runnner!
+This newsletter includes forward - looking statements. This is not an offer to buy or sell any stocks. The sponsor of this newsletter paid out ten thousand dollars for distribution of this publication.
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+"It just gives you sticker shock. Every time you turn around it's another $100 billion," Senate Budget Committee Chairman Kent Conrad, a Democrat from North Dakota, said of Bush's war spending.The federal deficit hit an all-time high under Bush of $413 billion in 2004. It has been declining since that time and the 2008 budget projects it will continue to decline and show a surplus in 2012, three years after Bush leaves office."It just gives you sticker shock. Every time you turn around it's another $100 billion," Senate Budget Committee Chairman Kent Conrad, a Democrat from North Dakota, said of Bush's war spending."It just gives you sticker shock. Every time you turn around it's another $100 billion," Senate Budget Committee Chairman Kent Conrad, a Democrat from North Dakota, said of Bush's war spending.Griffin O'Neal, 42, is also an actor. His mother is O'Neal's first wife, Joanna Moore, and his sister is actress Tatum O'Neal.
+
 
 
 _______________________________________________
