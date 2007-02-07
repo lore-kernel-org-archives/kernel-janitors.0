@@ -1,7 +1,7 @@
 From: "Thomas Hisch" <t.hisch@gmail.com>
-Date: Wed, 07 Feb 2007 14:07:22 +0000
+Date: Wed, 07 Feb 2007 14:16:54 +0000
 Subject: Re: [KJ] signedness of cpu variables
-Message-Id: <8ef77f2e0702070606k70ff9ba1x56d946576c508527@mail.gmail.com>
+Message-Id: <8ef77f2e0702070616m2109affet867d7378c4e8fae@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <8ef77f2e0702061132lf8e4a2cj7ae612976029e21b@mail.gmail.com>
 In-Reply-To: <8ef77f2e0702061132lf8e4a2cj7ae612976029e21b@mail.gmail.com>
