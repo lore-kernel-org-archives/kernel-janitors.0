@@ -1,59 +1,48 @@
-From: "Widowing B. Iliad" <careers@ghiringhelli.com>
-Date: Mon, 19 Feb 2007 04:23:05 +0000
-Subject: [KJ] neskolko chem
-Message-Id: <9539732806.20070219041342@ghiringhelli.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1171858423-19697-590"
+From: "Peaches Novak" <entouragesintercede@stasni.hr>
+Date: Wed, 07 Feb 2007 15:22:54 +0000
+Subject: [KJ] Social safety net for the individual.
+Message-Id: <01c74ada$ed1c9db0$6c822ecf@entouragesintercede>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
-------------=_1171858423-19697-590
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-Nizkoe nebo nad golovoj Vestnika vdrug ugrozhaiushche zavorchalo i osypalos=
- vniz Zharkimi zheltymi strelami, padavshimi, slovno kapli nebyvalogo ognen=
-nogo dozhdia.=20
-Otshelnik.=20
+
+Salute!  
+    
+Come on, come on, great discounts on the stock exchange. 
+Hot prices only today.Make your move.    
+No matter what were yeterday, today is today and today is tommorow   
+but know you have the 99.99% chance to change the situation and relize your strategy!    
+Everything in your hands.     
+    
+   
+No news is good news! But not in this case!    
+HPGI found new gold field with the length of 20 km. It will make  
+unthinkable profit not only for the company.   
+This time we are expecting financial results to be announced by the company officials.    
+   
+We have just had good trading days before and now we are waiting for the new contracts.    
+We are expecting record profit! I should say that you still have a little time to play in...but the time is limitted. Today is the best moment to act and to win! 
+   
+Look at the charts and play it by ear! HPGI is a company of  
+great  resources and capabilities. Remember it! 
+Get in on this breakout winner early!  
+The informtion are confidentia    
+and intended only for traders and investors!     
+    
+   
+Look at price it very good discount on such GOLD piece.  
+
+-
+If you will receive this notice before HPGI will come back to todays open 
+again then you had luck.
+
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------------=_1171858423-19697-590
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-Spam detection software, running on the system "fire-2.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or block
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Nizkoe nebo nad golovoj Vestnika vdrug ugrozhaiushche
-  zavorchalo i osypalos vniz Zharkimi zheltymi strelami, padavshimi,
-  slovno kapli nebyvalogo ognennogo dozhdia. Otshelnik. Kernel-janitors
-  mailing list Kernel-janitors@lists.osdl.org
-  https://lists.osdl.org/mailman/listinfo/kernel-janitors [...] 
-
-Content analysis details:   (5.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
--1.0 OSDL_HEADER_SUBJECT_BRACKETED Subject starts with []'d phrase
--1.0 OSDL_HEADER_LISTID_KNOWN List-Id contains a known mailing list
- 2.0 OUTFLUX_THEBAT         X-Mailer is from "The Bat"
- 2.9 DATE_IN_FUTURE_03_06   Date: is 3 to 6 hours after Received: date
- 2.8 FORGED_MUA_THEBAT_CS   Mail pretending to be from The Bat! (charset)
--0.1 AWL                    AWL: Auto-whitelist adjustment
-
-
-
-------------=_1171858423-19697-590--
