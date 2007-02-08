@@ -1,34 +1,25 @@
-From: Greg KH <greg@kroah.com>
-Date: Thu, 22 Feb 2007 06:00:09 +0000
-Subject: Re: [KJ] Patch1:replace pci_find_device in avm_pci.c
-Message-Id: <20070222060009.GA27767@kroah.com>
+From: Vignesh Babu BM <vignesh.babu@wipro.com>
+Date: Thu, 08 Feb 2007 12:31:41 +0000
+Subject: [KJ] linux-2.6/drivers/ide/pci drivers dont have module_exit
+Message-Id: <1170937181.3571.31.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1172121414.2677.14.camel@bluegenie>
-In-Reply-To: <1172121414.2677.14.camel@bluegenie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 22, 2007 at 10:46:54AM +0530, Surya wrote:
-> 
-> > > dev_avm_cleanup:
-> > > 	if (dev_avm) 
-> > > 		pci_dev_put(dev_avm);
-> > 
-> > Same thing here, the check isn't needed.
-> > 
-> > Care to redo it with these minor fixes?  Other than that, the logic
-> > looks correct.
-> 
-> Did the modifications and cleaned up white spaces as per your
-> suggestions.
-> 
-> thanks.
-> 
-> Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+Can someone clarify on this please:
+Why is it that all the drivers in linux-2.6/drivers/ide/pci have only
+module_init and not module_exit?
+Does that mean these drivers cannot be rmmod'ed?
+If no then what is the exit point for these?
 
-Acked-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+-- 
+Regards,  
+Vignesh Babu BM  
+_____________________________________________________________  
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 Kernel-janitors mailing list
