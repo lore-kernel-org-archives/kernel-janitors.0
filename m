@@ -1,46 +1,78 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Fri, 09 Feb 2007 12:09:43 +0000
-Subject: Warning: message 1HEMaA-0005uE-4j delayed 72 hours
-Message-Id: <E1HFUZT-0006ox-1T@externalmx-1.sourceforge.net>
+From: Vignesh Babu BM <vignesh.babu@wipro.com>
+Date: Thu, 08 Feb 2007 10:23:05 +0000
+Subject: Re: [KJ] [Fwd: Re:  Taking the Min and Max macro job]
+Message-Id: <1170929465.3571.27.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
+Mehul,
 
-The message identifier is:     1HEMaA-0005uE-4j
-The subject of the message is:  to he answered Saul Hear all
-The date of the message is:    Tue, 06 Feb 2007 14:55:50 +0530
+	I had been on this sometime back. Im not sure if u can change the
+entries in xdr*.c
+	These files use the macro to initialize static struct where u cannot
+use statements within expression.
 
-The address to which the message has not yet been delivered is:
+      http://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter case,
-    451-you need to change the address or create an MX record for its domain
-    4
+	So in the xdr*.c files I think we should not change the macros or we
+should be adding one more macro like the ones used in those files to
+kernel.h which does not perform the type check.
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
+	I had one more doubt...I had been through some other files that have
+same simple MIN/MAX macros that are like those in xdr*.c. Can we include
+kernel.h in any of these files and remove the extra definition in those
+files?
+	Wouldnt it be better if we declare all the macros in kernel.h in a
+separate file say kernel-macros.h or util-macros.h and have that
+included in the code than including the kernel.h itself as in a number
+of instances we may not need the other entries in kernel.h to be
+accessible in the code.
 
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier.
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+
+> -------- Forwarded Message --------
+> From: Mehul Jani <mehul.jani@gmail.com>
+> To: kernel-janitors@lists.osdl.org
+> Subject: Re: [KJ] Taking the Min and Max macro job
+> Date: Thu, 8 Feb 2007 14:59:41 +0530
+> 
+> I had started the activity. changed the handcrafted MAX macro to *max*
+> from the kernel.h in the xdr4.c file ( no quite sure of the complete
+> file name)  
+>  
+> the max macro is applied in struct , i changed it and recompile failed.
+> 
+>  
+> On 2/8/07, Alexey Dobriyan <adobriyan@gmail.com> wrote: 
+>         On Thu, Feb 08, 2007 at 01:51:45AM +0200, Ahmed S. Darwish
+>         wrote:
+>         > It seems that no one is assigned the Min and Max macro job.
+>         I'll take 
+>         > it if no one seems interested.
+>         >
+>         > Well, I hope this to become my last brain-dead patch
+>         series :).
+>         
+>         Be very very careful to not add integer overflows.
+>         
+>         _______________________________________________ 
+>         Kernel-janitors mailing list
+>         Kernel-janitors@lists.osdl.org
+>         https://lists.osdl.org/mailman/listinfo/kernel-janitors
+> 
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.osdl.org
+> https://lists.osdl.org/mailman/listinfo/kernel-janitors
+-- 
+Regards,  
+Vignesh Babu BM  
+_____________________________________________________________  
+"Why is it that every time I'm with you, makes me believe in magic?"
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
