@@ -1,28 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat, 24 Feb 2007 11:42:52 +0000
-Subject: Re: [KJ] Kernel module programming.
-Message-Id: <200702241242.52890.arnd@arndb.de>
+From: Surya <surya.prabhakar@wipro.com>
+Date: Thu, 08 Feb 2007 09:15:39 +0000
+Subject: [KJ] pci_dev_put related?
+Message-Id: <1170925419.2500.13.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ed55890702240224n1df079cbh3c28b68d7c4cb1bd@mail.gmail.com>
-In-Reply-To: <3ed55890702240224n1df079cbh3c28b68d7c4cb1bd@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Saturday 24 February 2007, liran tal wrote:
-> This might be a bit off-topic but I figured it's something general and there
-> are many experienced
-> developers here who could probably answer this for me.
+Hi,
+   I am trying to replace all the pci_find_device references with
+pci_get_device and pci_dev_put(for usage decrement).
 
-The kernelnewbies mailing list would be a more appropriate place to ask this
+I got stuck in the file linux-2.6/drivers/ide/pci/hpt366.c
 
-> So here comes my question - how do I go about doing that? Should I go with
-> the intercepting thing or are there more elegant ways?
+In the function init_setup_hpt366 I am not sure where I can call
+pci_dev_put to decrement the usage count.
 
-Use kprobes!
+--------------snip----------------
+        pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin1);
+//while ((findev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID,findev)) !NULL) {
+while (( findev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID,findev)) !NULL) {
+                if ((findev->vendor = dev->vendor) &&
+                    (findev->device = dev->device) &&
+                    ((findev->devfn - dev->devfn) = 1) &&
+                    (PCI_FUNC(findev->devfn) & 1)) {
+                        pci_read_config_byte(findev, PCI_INTERRUPT_PIN,
+&pin2);
+                        if ((pin1 != pin2) && (dev->irq = findev->irq))
+{
+                                d->bootable = ON_BOARD;
+                                printk("%s: onboard version of chipset,
+"
+                                        "pin1=%d pin2=%d\n", d->name,
+                                        pin1, pin2);
+                        }
 
-	Arnd <><
+// I dont think I can call it here because of the return
+                        return ide_setup_pci_devices(dev, findev, d);
+                }
+        }
+init_single:
+        return ide_setup_pci_device(dev, d);
+}
+
+
+----------------snip --------------------
+
+-spn.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
