@@ -1,25 +1,23 @@
-From: "Ahmed S. Darwish" <darwish.07@gmail.com>
-Date: Wed, 07 Feb 2007 23:51:45 +0000
-Subject: [KJ] Taking the Min and Max macro job
-Message-Id: <20070207235145.GZ8991@Ahmed>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Thu, 08 Feb 2007 06:16:53 +0000
+Subject: Re: [KJ] Taking the Min and Max macro job
+Message-Id: <20070208061652.GA5441@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070207235145.GZ8991@Ahmed>
+In-Reply-To: <20070207235145.GZ8991@Ahmed>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi list,
+On Thu, Feb 08, 2007 at 01:51:45AM +0200, Ahmed S. Darwish wrote:
+> It seems that no one is assigned the Min and Max macro job. I'll take
+> it if no one seems interested.
+> 
+> Well, I hope this to become my last brain-dead patch series :).
 
-It seems that no one is assigned the Min and Max macro job. I'll take
-it if no one seems interested.
+Be very very careful to not add integer overflows.
 
-Well, I hope this to become my last brain-dead patch series :).
-
-Thanks,
-
--- 
-Ahmed S. Darwish
-http://darwish-07.blogspot.com
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
