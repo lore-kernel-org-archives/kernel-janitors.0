@@ -1,41 +1,42 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 25 Feb 2007 15:45:03 +0000
-Subject: Re: [KJ] [RFC][PATCH] BIT macro cleanup
-Message-Id: <45E1AEFF.5050202@student.ltu.se>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 08 Feb 2007 08:19:21 +0000
+Subject: Re: [KJ] BIT macro cleanup
+Message-Id: <45CADD09.70809@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45DEF5EE.4030002@student.ltu.se> <d120d5000702230657s1860efb3o6986277901f13d03@mail.gmail.com> <45DF1165.2080003@student.ltu.se> <d120d5000702230905r6b50a1bbm3b71551f855cdf01@mail.gmail.com> <45DF2F57.2080309@student.ltu.se> <d120d5000702231037q511f8073n47beed320f097458@mail.gmail.com> <45DF3C53.4030100@student.ltu.se> <d120d5000702231358j55cd6665x2add335ceb904c22@mail.gmail.com> <45DF6E20.9060604@student.ltu.se> <20070224111124.GB3609@suse.cz> <20070224191001.GA9547@arun.site>
-In-Reply-To: <20070224191001.GA9547@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Cc: Vojtech Pavlik <vojtech@suse.cz>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-input@atrey.karlin.mff.cuni.cz, linux-joystick@atrey.karlin.mff.cuni.cz
+To: kernel-janitors@vger.kernel.org
 
-Milind Arun Choudhary wrote:
-> why bitops.h? coz BIT qualifies for a "bitop" 
-> & bitops.h is  inclued by kernel.h, hence accessible from every part 
-> of the tree without mucb efforts
->   
-I don't think there is anyone who objects to this
-> c>but it is not sutaible for  those who want to go beyond this limit, 
-> as they will not be warned 
->   
-And this is the reason for this overly long thread :)
-> So all we need is  people to be carefull  before passing anything to BIT
->   
-This is the difficult thing to do
-> so  now i think it should be ok to have
->
-> #define BIT(nr) (1UL << ((nr) % BITS_PER_LONG))
-> #define LLBIT(nr) (1ULL << (nr))
->
->
-> thoughts
->   
-Since you guys seems in agreement about the silenced compiler-warnings, 
-then I will rest my case.
 
-Richard Knutsson
+
+Milind Choudhary wrote:
+> Hi all
+> 
+> I would like to take up the BIT macro cleanup.
+> http://www.fsdev.net/wiki/index.php?title=BIT
+> 
+> I think include/linux/bitops.h would be the best place to add the BIT macro.
+> Let me know if this is fine.
+> 
+
+sounds obvious
+
+> There are different variants of BIT using (long|unsigned
+> long|unsigned|unsigned char) etc.
+> Do we need to create different macros for each type
+> Or a single one which takes type as input?
+
+bit operations make only sense on integer, so why not stay with long
+and cast it down if needed ? so you have only one function doing so.
+
+please what ever you do do not forget to document that and write some
+examples. the linux kernal is large and imho the bigest problem is that
+the programmers do not know what nice supportfunctions are available.
+
+
+my 2 cents,
+walter
 
 _______________________________________________
 Kernel-janitors mailing list
