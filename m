@@ -1,86 +1,48 @@
-From: "Ariel Ransom" <vdisperse@mksat.net>
-Date: Wed, 21 Feb 2007 10:58:19 +0000
-Subject: [KJ] With the subsidiary
-Message-Id: <001301c755ea$b6dd8eb0$06e7dc84@Admin>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1451819440=="
+From: "Marita Odeh" <auctioningultraviolet@raleur.com>
+Date: Thu, 08 Feb 2007 21:55:29 +0000
+Subject: [KJ] Police: Dad left toddler outside to freeze to death
+Message-Id: <UVFJBDCIHAZ_1V1GM_X4MN1S@raleur.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Good news from QCPC give you the real alternative to hit the jackpot. 
+QCPC is a company with far-sighted aims.
 
---===============1451819440==
-Content-Type: multipart/alternative;
-    boundary="----------=_1172055754-29679-461"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1172055754-29679-461
-Content-Type: text/plain;
-        charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+QCPC strategy is to diversify within the power supply marketplace 
+and build strong, niche oriented operations around the globe. 
+QCPC take a long-term view of business, focusing on growth and overall 
+evolution of our subsidiaries in future.
 
 
+Company has chosen one of solar power producer. 
 
-This one is hardly promoted..
+As you know oil prices are growing up higer and higer!
+A great amount of electricity generating plants uses oil-products.
+May be your domestic electrical power supplier or heat register works by using oil-products.
+Modern technologies of solar extraction  also are very effective in bad light or sun and the accumulating
+energy can be saved inside special batteries. That is why we can talk about full energy-independent house.
 
-S.umbol: GDKICurrent price: $0.14 5 Day Target price: $0.95Recommendation: =
-very aggresive buy!
+In 21 century of high technologies we can't imagine urban life without energy.  
+Many states in the USA has enough reserve of solar power to generate needed 
+electric energy. Furthermore the President realizes the important role of this policy and 
+allocated $1 Billion to Renewable Energy.
+
+U.S. Department of Energy FY 08 budget includes $179 million for the President's Initiative.
+Particularly Solar America Initiative - $148 million;
+
+This company is at the right time and place now. They have chosen promising line of activity for your 
+share investments and we negotiated a contract with Samlex America, which has manufactured and distributed power supply products to more than 90 countries worldwide since 1991.
+Innovative product designs, strict quality control, and responsible after sales service provide customers with high quality power conversion products at extremely competitive prices.
+
+Because of this news the prices of the QCPC stocks are about to fly up. 
+QCPC's financial condition is stable now. An overall market and economic conditions are also can better affect the performance of  the QCPC's shares.
 
 
-ADD THIS GEM TO YOUR RADAR AND WATCH IT..
-
-
-
-kernel-janitors, take a look at the hottest news!
-
-
-
-------------=_1172055754-29679-461
-Content-Type: text/html;
-        charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
-2">
-<META content=3D"MSHTML 6.00.2900.1081" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<BR>
-<DIV align=3Dcenter><FONT face=3DArial color=3D#000066 size=3D3D4><FONT siz=
-e=3D3><STRONG>This one is hardly promoted!</STRONG></FONT></DIV>
-<BR>
-<DIV align=3Dcenter><FONT face=3DArial color=3D#990000 size=3D4>S.umbol: <b=
->GDKI</b><br>Current price: $0.14 <br>5 Day Target price: $0.95<br>Recommen=
-dation: very aggresive buy!!</FONT></DIV>
-<BR>
-<DIV align=3Dcenter><FONT face=3DArial color=3D#3300FF size=3D3>ADD THIS GE=
-M TO YOUR RADAR AND WATCH IT..</FONT></DIV>
-<BR><BR><BR>
-<DIV align=3Dcenter><FONT face=3DArial color=3D#CC0033 size=3D3>kernel-jani=
-tors, take a look at the hottest news.</FONT></DIV>
-<BR><BR><BR>
-</BODY></HTML>
-
-------------=_1172055754-29679-461--
-
---===============1451819440==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1451819440==--
