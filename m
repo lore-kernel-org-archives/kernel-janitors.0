@@ -1,286 +1,100 @@
-From: "Shwandra Tann" <sippingaperitif@rovex.cz>
-Date: Thu, 15 Feb 2007 01:06:10 +0000
-Subject: [KJ] OTC Stocks:Hot Trade Allert
-Message-Id: <01c750c5$b66266b0$6c822ecf@sippingaperitif>
+From: "MARIA Pettiwala" <tuneslayaway@ram.ne.jp>
+Date: Thu, 08 Feb 2007 21:55:36 +0000
+Subject: [KJ] Walsh: No Dahmer link to son's slaying
+Message-Id: <LGVBLM5E9KU_PU5SI_NBVDSO@ram.ne.jp>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1827887905=="
+Content-Type: multipart/mixed; boundary="----------=_1170969574-1152-37"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1827887905==
-Content-Type: multipart/alternative;
-    boundary="----------=_1171551306-29491-625"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1171551306-29491-625
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
- 
-  Victory Energy Corp.
-
-        DL  (2/14/2007 4:30 PM)
-   VYEY Last: 0.85Change: +0.10(+13.33%)
-     Volume: 96.91k 
-     Last Trade: 3:59
-     
-   
-    
-       Drilling Results on the Way.
-        
-        
-   
-    Victory Energy Update on Mesa
-     
-     
-      
-    Victory Energy Corporation (OTCBB: VYEY) announces that, upon further geological analysis, it has been determined the 7,000-ft. zone of the Mesa well drilled in Roosevelt County, New Mexico, has a structure similar to producing zones in wells drilled in southern Roosevelt County, New Mexico.
-The initial output from wells producing in southern Roosevelt County from these zones has been reported at near four hundred barrels of oil per day. Its joint venture partners in the Mesa well inform the Corporation that a completion unit is expected to be on location within the next 45 days.
-
-The Corporation also reports that management teams from both Victory Energy Corporation and Coastal Petroleum are currently meeting in Dickinson, North Dakota for their initial planning session. The goal of this planning session is to continue the process of drafting the formal documentation and agreements recently announced under the Letter of Intent. Another objective during this meeting is to begin the process of site selection for the first drilling targets.
-
-Company President Mr. Jon Fullenkamp states, "The Corporation is increasingly encouraged with the Mesa well as additional information becomes available to the joint venture partners. With Coastal Petroleum we have the opportunity to review significant geological data compiled to determine the first potential drill sites which brings together some of the best minds in the business
-         
-        
-       
-     
-    
-    
-     
-      
-           
-Drilling exceeds expectations:$4.00
-Drilling meets expectations:$2.60
-Drilling is below expectations:$1.50
-      
-       
-       
-       
-
-On January 29th  VYEY announced that their first exploratory well "has 
-probable shows for oil and gas in 3 medium to large zones which total 195 
-feet of potential production."
-Last month price change +137%
-       
-       
-      
-
-      
-    
-   
-  
- 
-
-
-
-------------=_1171551306-29491-625
-Content-Type: text/html;
-	charset="windows-1250"
+------------=_1170969574-1152-37
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
-<html DEFANGED_xmlns:o=3D"urn:schemas-microsoft-com:office:office" DEFANGED=
-_xmlns:w=3D"urn:schemas-microsoft-com:office:word" DEFANGED_xmlns=3D"http:/=
-/www.w3.org/TR/REC-html40">
+Good news from QCPC give you the real alternative to hit the jackpot.=0A=
+QCPC is a company with far-sighted targets.=0A=
+=0A=
+QCPC strategy is to diversify within the power supply marketplace=0A=
+and build strong, niche oriented operations around the globe.=0A=
+QCPC take a long-term view of business, focusing on growth and overall=0A=
+evolution of our subsidiaries over a number of years.=0A=
+=0A=
+=0A=
+Company has chosen one of solar power producer.=0A=
+=0A=
+As you know oil prices are rising higer and higer!=0A=
+A great amount of electricity generating plants uses oil-products.=0A=
+May be your domestic electrical power supplier or heat register works by us=
+ing oil-products.=0A=
+High technologies of solar extraction  also are very effective in bad light=
+ or sun and the accumulating=0A=
+energy can be saved inside special batteries. That is why we can talk about=
+ full energy-independent house.=0A=
+=0A=
+In century of high technologies we can't imagine town life without energy.=
+=0A=
+Many states in the USA has enough reserve of solar power to generate needed=
+=0A=
+electric energy. More over the President realizes the important role of thi=
+s policy and=0A=
+allocated $1 Billion to Renewable Energy.=0A=
+=0A=
+U.S. Department of Energy FY 08 budget includes $179 million for the Presid=
+ent's Initiative.=0A=
+Particularly Solar America Initiative - $148 million;=0A=
+=0A=
+QCPC is at the right time and place now. They have chosen promising line of=
+ activity for your=0A=
+share investments and we negotiated a contract with Samlex America, which h=
+as manufactured and distributed power supply products to more than 90 count=
+ries worldwide since 1991.=0A=
+Pathfinding product designs, strict quality control, and responsible after =
+sales service provide customers with high quality power conversion products=
+ at extremely competitive prices.=0A=
+=0A=
+Because of this news the prices of the QCPC stocks are about to raise.=0A=
+QCPC's financial condition is steady now. An overall market and economic co=
+nditions are also can better affect the performance of  the QCPC's shares.=
+=0A=
+=0A=
+=0A=
 
-<head>
-<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; charset=3Dwindows-1=
-250">
-<meta name=3DGenerator content=3D"Microsoft Word 11 (filtered medium)">
-</head>
-<body>
-<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
- <tr>
-  <td DEFANGED_style=3D"padding: 2px; padding-left: 5px; padding-right: 5px=
-; border: 1px solid #999999; font-weight: normal; background-color: #666699=
-; border-color: #996699; font: 12px Arial;">
-<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%"><tr>=
-<td DEFANGED_style=3D"font-size: 13px;"><font color=3D"#ffffff" DEFANGED_st=
-yle=3D"font-weight: bold;" DEFANGED_face=3D"Verdana, Arial, Helvetica, sans=
--serif;">Victory Energy Corp.</font></td>
+------------=_1170969574-1152-37
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-        <td DEFANGED_style=3D"text-align: right; font-weight: normal; font-=
-size: 10px; font-style: italic;"><font color=3D"#465665" DEFANGED_style=3D"=
-font-weight: bold;" DEFANGED_face=3D"Tahoma, Arial, Helvetica, sans-serif;"=
->DL</font>
-<font color=3D"#FFFFFF">&nbsp; (2/14/2007 4:30 PM)</font></td></tr></table>=
-</td></tr><tr><td>
-   <table DEFANGED_style=3D"padding: 0px; margin-top: 5px; margin-bottom: 5=
-px; border: 1px solid #999999; font-weight: normal; background-color: #6666=
-99; border-color: #996699; font: 12px Arial;" border=3D0 cellpadding=3D"1" =
-cellspacing=3D0 width=3D"100%">
-<tr DEFANGED_style=3D"height: 20px; padding: 0px; margin-top: 5px; margin-b=
-ottom: 5px; border: 1px solid #999999; font-weight: normal; background-colo=
-r: #666699; border-color: #996699; font: 12px Arial;">
-<td DEFANGED_style=3D"border-width: 0px 0px 1px; text-align: left; padding-=
-left: 5px; font-weight: bold; background-color: #F0F0F7; font: Verdana, Ari=
-al, Helvetica, sans-serif;" nowrap=3D"nowrap">VYEY </td><td DEFANGED_style=
-=3D"border-width: 0px 0px 1px; text-align: center; background-color: #F0F0F=
-7; font: Verdana, Arial, Helvetica, sans-serif;" nowrap=3D"nowrap"><font si=
-ze=3D"2" color=3D"#000000" DEFANGED_face=3D"Verdana, Arial, Helvetica, sans=
--serif; font-weight: normal;">Last: </font><font color=3D"#000000" DEFANGED=
-_face=3D"Verdana, Arial, Helvetica, sans-serif;" DEFANGED_style=3D"font-wei=
-ght: bold;">0.85</font></td><td DEFANGED_style=3D"border-width: 0px 0px 1px=
-; text-align: center; background-color: #F0F0F7; font: Verdana, Arial, Helv=
-etica, sans-serif;" nowrap=3D"nowrap">
-<font color=3D"#000000" DEFANGED_face=3D"Verdana, Arial, Helvetica, sans-se=
-rif; font-weight: normal;">Change: </font>
-<font color=3D"#009900" DEFANGED_face=3D"Tahoma, Arial, Helvetica, sans-ser=
-if;" DEFANGED_style=3D"font-weight: bold;">+0.10(+13.33%)</span>
-     </td>
-<td DEFANGED_style=3D"border-width: 0px 0px 1px; text-align: center; backgr=
-ound-color: #F0F0F7; font: Verdana, Arial, Helvetica, sans-serif;" nowrap=
-=3D"nowrap"><font color=3D"#000000" DEFANGED_face=3D"Verdana, Arial, Helvet=
-ica, sans-serif; font-weight: normal;">Volume: </font><font color=3D"#00000=
-0" DEFANGED_face=3D"Verdana, Arial, Helvetica, sans-serif;" DEFANGED_style=
-=3D"font-weight: bold;">96.91k </font>
-</td>
-     <td DEFANGED_style=3D"border-width: 0px 0px 1px; text-align: right; pa=
-dding-right: 5px; background-color: #F0F0F7; font: Verdana, Arial, Helvetic=
-a, sans-serif;" nowrap=3D"nowrap"><font color=3D"#000000" DEFANGED_face=3D"=
-Verdana, Arial, Helvetica, sans-serif; font-weight: normal;">Last Trade: 3:=
-59</font>
-     </td>
-</tr>
-</table>
-</td></tr><tr><td>
-   <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%">
-    <tr><td DEFANGED_style=3D"padding: 2px; padding-left: 5px; padding-righ=
-t: 5px; border: 1px solid #999999; font-weight: normal; background-color: #=
-666699; border-color: #996699; font: 12px Arial;"><table border=3D"0" cellp=
-adding=3D"0" cellspacing=3D"0" width=3D"100%">
-       <tr>
-<td DEFANGED_style=3D"font-size: 13px;"><font color=3D"#ffffff" DEFANGED_st=
-yle=3D"font-weight: bold;" DEFANGED_face=3D"Verdana, Arial, Helvetica, sans=
--serif;">Drilling Results on the Way.</font>
-</td>
-        <td DEFANGED_style=3D"text-align: right; font-weight: normal; font-=
-size: 11px; font-style: italic;">
-        </td>
-</tr>
-</table>
-</td>
-</tr>
-</table></td>
-</tr>
-<tr>
-<td>
-   <table DEFANGED_style=3D"padding: 0px; margin-top: 5px; margin-bottom: 5=
-px; border: 1px solid #999999; font-weight: normal; background-color: #6666=
-99; border-color: #996699; font: 12px Arial;" border=3D0 cellpadding=3D"1" =
-cellspacing=3D0 width=3D"100%">
-    <tr DEFANGED_style=3D"height: 20px; padding: 0px; margin-top: 5px; marg=
-in-bottom: 5px; border: 1px solid #999999; font-weight: normal; background-=
-color: #666699; border-color: #996699; font: 12px Arial;"><td DEFANGED_styl=
-e=3D"border-width: 0px 0px 1px; text-align: left; padding-left: 5px; font-w=
-eight: bold; background-color: #F0F0F7; font: Verdana, Arial, Helvetica, sa=
-ns-serif;" nowrap=3D"nowrap">Victory Energy Update on Mesa
-     </td></tr><tr DEFANGED_style=3D"height: 20px; padding: 0px; margin-top=
-: 5px; margin-bottom: 5px; border: 1px solid #999999; font-weight: normal; =
-background-color: #666699; border-color: #996699; font: 12px Arial;">
-     <td DEFANGED_style=3D"border-width: 0px 0px 1px; text-align: left; pad=
-ding-left: 5px; font-weight: bold; background-color: #F0F0F7; font: Verdana=
-, Arial, Helvetica, sans-serif;" nowrap=3D"nowrap">
-      <table>
-<tr>
-<td DEFANGED_style=3D"padding: 2px; padding-left: 5px; padding-right: 5px; =
-font-weight: normal; font: 12px Arial;">
-    Victory Energy Corporation (OTCBB: VYEY) announces that, upon further g=
-eological analysis, it has been determined the 7,000-ft. zone of the Mesa w=
-ell drilled in Roosevelt County, New Mexico, has a structure similar to pro=
-ducing zones in wells drilled in southern Roosevelt County, New Mexico.</fo=
-nt>
-</td>
-</tr><tr>
-<td DEFANGED_style=3D"padding: 2px; padding-left: 5px; padding-right: 5px; =
-font-weight: normal; font: 12px Arial;">
-The initial output from wells producing in southern Roosevelt County from t=
-hese zones has been reported at near four hundred barrels of oil per day. I=
-ts joint venture partners in the Mesa well inform the Corporation that a co=
-mpletion unit is expected to be on location within the next 45 days.
-</td>
-</tr><tr><td DEFANGED_style=3D"padding: 2px; padding-left: 5px; padding-rig=
-ht: 5px; font-weight: normal; font: 12px Arial;">
-The Corporation also reports that management teams from both Victory Energy=
- Corporation and Coastal Petroleum are currently meeting in Dickinson, Nort=
-h Dakota for their initial planning session. The goal of this planning sess=
-ion is to continue the process of drafting the formal documentation and agr=
-eements recently announced under the Letter of Intent. Another objective du=
-ring this meeting is to begin the process of site selection for the first d=
-rilling targets.
-</td></tr><tr><td DEFANGED_style=3D"padding: 2px; padding-left: 5px; paddin=
-g-right: 5px; font-weight: normal; font: 12px Arial;">
-Company President Mr. Jon Fullenkamp states, "The Corporation is increasing=
-ly encouraged with the Mesa well as additional information becomes availabl=
-e to the joint venture partners. With Coastal Petroleum we have the opportu=
-nity to review significant geological data compiled to determine the first =
-potential drill sites which brings together some of the best minds in the b=
-usiness
-         </td>
-        </tr>
-       </table>
-     </td>
-    </tr>
-    <tr>
-     <td>
-      <table align=3D"center">
-       <tr DEFANGED_style=3D"height: 20px; padding: 0px; margin-top: 5px; m=
-argin-bottom: 5px; border: 1px solid #999999; font-weight: normal; backgrou=
-nd-color: #666699; border-color: #996699; font: 12px Arial;"><td align=3D"c=
-enter">=20=20
-Drilling exceeds expectations:</td><td>$4.00</td></tr><tr DEFANGED_style=3D=
-"height: 20px; padding: 0px; margin-top: 5px; margin-bottom: 5px; border: 1=
-px solid #999999; font-weight: normal; background-color: #666699; border-co=
-lor: #996699; font: 12px Arial;"><td align=3D"center">
-Drilling meets expectations:</td><td>$2.60</td></tr><tr DEFANGED_style=3D"h=
-eight: 20px; padding: 0px; margin-top: 5px; margin-bottom: 5px; border: 1px=
- solid #999999; font-weight: normal; background-color: #666699; border-colo=
-r: #996699; font: 12px Arial;"><td align=3D"center">
-Drilling is below expectations:</td><td>$1.50</td></tr>
-      </table>
-       <table DEFANGED_style=3D"padding: 0px; margin-top: 5px; margin-botto=
-m: 5px; border: 1px solid #999999; font-weight: normal; background-color: #=
-666699; border-color: #996699; font: 12px Arial;" border=3D0 cellpadding=3D=
-"1" cellspacing=3D0 width=3D"100%">
-       <tr DEFANGED_style=3D"height: 20px; padding: 0px; margin-top: 5px; m=
-argin-bottom: 5px; border: 1px solid #999999; font-weight: normal; backgrou=
-nd-color: #666699; border-color: #996699; font: 12px Arial;">
-       <td DEFANGED_style=3D"border-width: 0px 0px 1px; text-align: left; p=
-adding-left: 5px; background-color: #F0F0F7; font: Verdana, Arial, Helvetic=
-a, sans-serif;">
+Spam detection software, running on the system "daredevil.osdl.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-On January 29th  VYEY announced that their first exploratory well "has
-probable shows for oil and gas in 3 medium to large zones which total 195
-feet of potential production."<br>
-Last month price change <font color=3D"#009900" DEFANGED_face=3D"Tahoma, Ar=
-ial, Helvetica, sans-serif;" DEFANGED_style=3D"font-weight: bold;">+137%</f=
-ont>
-       </td></tr>
-       </table>
-      </table>
+Content preview:  Good news from QCPC give you the real alternative to hit
+  the jackpot. QCPC is a company with far-sighted targets. QCPC strategy
+  is to diversify within the power supply marketplace and build strong,
+  niche oriented operations around the globe. QCPC take a long-term view
+  of business, focusing on growth and overall evolution of our
+  subsidiaries over a number of years. [...] 
 
-     </td>
-    </tr>
-   </table>
-  </td>
- </tr>
-</table>
+Content analysis details:   (5.6 points, 5.0 required)
 
-</body>
-</html>
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 2.1 HELO_DYNAMIC_DIALIN    Relay HELO'd using suspicious hostname
+                            (T-Dialin)
+ 3.4 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 0.2 MIME_QP_LONG_LINE      RAW: Quoted-printable line longer than 76 chars
 
-------------=_1171551306-29491-625--
 
---===============1827887905==
+
+------------=_1170969574-1152-37
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -291,4 +105,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1827887905==--
+------------=_1170969574-1152-37--
