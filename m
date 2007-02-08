@@ -1,7 +1,7 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Thu, 08 Feb 2007 06:19:53 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 08 Feb 2007 11:11:12 +0000
 Subject: Re: [KJ] signedness of cpu variables
-Message-Id: <20070208061953.GB5441@martell.zuzino.mipt.ru>
+Message-Id: <45CB0550.8090302@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <8ef77f2e0702061132lf8e4a2cj7ae612976029e21b@mail.gmail.com>
 In-Reply-To: <8ef77f2e0702061132lf8e4a2cj7ae612976029e21b@mail.gmail.com>
@@ -10,34 +10,67 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 06, 2007 at 02:25:44PM -0800, Randy Dunlap wrote:
-> On Tue, 6 Feb 2007 20:32:29 +0100 Thomas Hisch wrote:
+
+
+Randy Dunlap wrote:
+> On Wed, 07 Feb 2007 11:41:19 +0100 walter harms wrote:
 > 
-> > i digged into the kernel source and found a lot of signed int cpu variables.
-> > shouldn't they be replaced by unsigned ints ??
-> > 
-> > for example everywhere in kernel/cpu.c cpu variables are unsigned except in
-> > check_for_tasks(int cpu). are there any reasons for the signed int parameter
-> > of this  particular function ??
-> > 
-> > any thoughts ??
-> > is this sth. for the kernel-janitors ?
+>> if this is intended, someone could add a remark about it ?
+>>
 > 
-> This one makes sense.
+> If what is intended?  and please use reply-to-all.
 
-And change to %u several lines below. :)
 
-> Others would need their own evaluations.
+ups wrong button :)
 
-> > --- a/kernel/cpu.c
-> > +++ b/kernel/cpu.c
-> > @@ -87,7 +87,7 @@ void unregister_cpu_notifier(struct notifier_block *nb)
-> >  }
-> >  EXPORT_SYMBOL(unregister_cpu_notifier);
-> > 
-> > -static inline void check_for_tasks(int cpu)
-> > +static inline void check_for_tasks(unsigned int cpu)
+my point is:
+if there is a reason to have a signed int cpu variable (instead
+the 'normal' unsigned int) it should be documented WHY this is an
+exception.
 
+re,
+ walter
+
+
+
+> 
+>> Randy Dunlap wrote:
+>>> On Tue, 6 Feb 2007 20:32:29 +0100 Thomas Hisch wrote:
+>>>
+>>>> i digged into the kernel source and found a lot of signed int cpu variables.
+>>>> shouldn't they be replaced by unsigned ints ??
+>>>>
+>>>> for example everywhere in kernel/cpu.c cpu variables are unsigned except in
+>>>> check_for_tasks(int cpu). are there any reasons for the signed int parameter
+>>>> of this  particular function ??
+>>>>
+>>>> any thoughts ??
+>>>> is this sth. for the kernel-janitors ?
+>>> This one makes sense.  Others would need their own evaluations.
+>>>
+>>>> regards
+>>>> Thomas Hisch
+>>>>
+>>>> diff --git a/kernel/cpu.c b/kernel/cpu.c
+>>>> index 7406fe6..b0d4fbd 100644
+>>>> --- a/kernel/cpu.c
+>>>> +++ b/kernel/cpu.c
+>>>> @@ -87,7 +87,7 @@ void unregister_cpu_notifier(struct notifier_block *nb)
+>>>>  }
+>>>>  EXPORT_SYMBOL(unregister_cpu_notifier);
+>>>>
+>>>> -static inline void check_for_tasks(int cpu)
+>>>> +static inline void check_for_tasks(unsigned int cpu)
+>>>>  {
+>>>>         struct task_struct *p;
+>>>
+>>> ---
+> 
+> ---
+> ~Randy
+> 
+> 
+> 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
