@@ -1,7 +1,7 @@
-From: Vignesh Babu BM <vignesh.babu@wipro.com>
-Date: Fri, 09 Feb 2007 05:18:03 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Fri, 09 Feb 2007 12:39:58 +0000
 Subject: Re: [KJ] anyone interested in the "power of 2" stuff?
-Message-Id: <1170997563.3571.35.camel@wriver-t81fb058.linuxcoe>
+Message-Id: <Pine.LNX.4.64.0702090736480.11908@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
@@ -10,23 +10,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 2007-02-08 at 17:17 -0500, Robert P. J. Day wrote:
+On Fri, 9 Feb 2007, Vignesh Babu BM wrote:
 
-> http://fsdev.net/wiki/index.php?title=Power_of_2_stuff
-> 
->   any takers?
-> 
-> rday
-> 
+>
+> On Thu, 2007-02-08 at 17:17 -0500, Robert P. J. Day wrote:
+>
+> > http://fsdev.net/wiki/index.php?title=Power_of_2_stuff
+> >
+> >   any takers?
+> >
+> > rday
+> >
+>
+> I would take that up rday.
 
-I would take that up rday.
+ok, have at it, and keep us up to date on the wiki page.
+
+rday
+
+p.s.  note that we still haven't formalized the rounding stuff so, as
+i mention in the wiki page, the only changes should involve *just*
+strict power of 2 testing, and not as part of a larger bit of code
+that's trying to round, or anything like that.
 
 -- 
-Regards,  
-Vignesh Babu BM  
-_____________________________________________________________  
-"Why is it that every time I'm with you, makes me believe in magic?"
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
