@@ -1,89 +1,89 @@
-From: Thomas Hisch <t.hisch@gmail.com>
-Date: Fri, 23 Feb 2007 14:10:35 +0000
-Subject: [KJ] [PATCH] net/core: change hlist_for_each/hlist_entry
-Message-Id: <20070223141035.GA4775@unknown-00-0d-60-79-ca-00.lan>
+From: "Natoya Paxton" <Putnam'sdemolishing@silentron.it>
+Date: Fri, 09 Feb 2007 14:55:34 +0000
+Subject: [KJ] NOAH wrote:
+Message-Id: <01c74c73$7f32e3a0$6c822ecf@Putnam'sdemolishing>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1171043734-12817-161"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-change occurrence of hlist_for_each/hlist_entry to hlist_for_each_entry as it
-combines the previous two macros
+This is a multi-part message in MIME format...
 
-Signed-off-by: Thomas Hisch <t.hisch@gmail.com>
----
+------------=_1171043734-12817-161
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-maybe someone can add a TODO entry to the kernel-janitors wiki about other 
-such list- and hlist cleanups?? 
+Broker Alert!
 
-look at 
-git grep -B4 -A4 list_entry | grep list_for_each
-for possible cleanups
+Good stock MHII.OB(MARSHAL HOLDINGS INC) especially for men of business.
+MHII.OB Examined stock has a huge potential and growth.
+Control the news about this great stock on broker web-site
+Make an order. It is very important you grab MARSHAL HOLDINGS INC on Friday 02.09.07
+Purchasing this great stock you will not miss your target.
 
-thx
+The fact is that Marshall Holdings International Inc. (OTC BB:MHII.OB - News) said that revenues for the Third Quarter 2006 were eight times higher than in the same period for 2005, with an increase of $1.4 million in revenue.
 
- net/core/dev.c |   17 ++++++-----------
- 1 files changed, 6 insertions(+), 11 deletions(-)
+We {LETprovide,give,offer} you the best stock and prices:
+Now last: 0.018
+Growth: + 5.83%
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index cf71614..83c2f43 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -475,13 +475,11 @@ __setup("netdev=", netdev_boot_setup);
- struct net_device *__dev_get_by_name(const char *name)
- {
- 	struct hlist_node *p;
-+	struct net_device *dev;
- 
--	hlist_for_each(p, dev_name_hash(name)) {
--		struct net_device *dev
--			= hlist_entry(p, struct net_device, name_hlist);
-+	hlist_for_each_entry(dev, p, dev_name_hash(name), name_hlist)
- 		if (!strncmp(dev->name, name, IFNAMSIZ))
- 			return dev;
--	}
- 	return NULL;
- }
- 
-@@ -522,13 +520,11 @@ struct net_device *dev_get_by_name(const char *name)
- struct net_device *__dev_get_by_index(int ifindex)
- {
- 	struct hlist_node *p;
-+	struct net_device *dev;
- 
--	hlist_for_each(p, dev_index_hash(ifindex)) {
--		struct net_device *dev
--			= hlist_entry(p, struct net_device, index_hlist);
-+	hlist_for_each_entry(dev, p, dev_index_hash(ifindex), index_hlist)
- 		if (dev->ifindex = ifindex)
- 			return dev;
--	}
- 	return NULL;
- }
- 
-@@ -2878,6 +2874,7 @@ int register_netdevice(struct net_device *dev)
- {
- 	struct hlist_head *head;
- 	struct hlist_node *p;
-+	struct net_device *d;
- 	int ret;
- 
- 	BUG_ON(dev_boot_phase);
-@@ -2918,9 +2915,7 @@ int register_netdevice(struct net_device *dev)
- 
- 	/* Check for existence of name */
- 	head = dev_name_hash(dev->name);
--	hlist_for_each(p, head) {
--		struct net_device *d
--			= hlist_entry(p, struct net_device, name_hlist);
-+	hlist_for_each_entry(d, p, head, name_hlist) {
- 		if (!strncmp(d->name, dev->name, IFNAMSIZ)) {
- 			ret = -EEXIST;
- 			goto out;
--- 
-1.5.0-rc2.GIT
+Coming up...  
+Today prognosis -> 0.025 (+ 47 %)
+Monday -> 0.035 (+ 105 %)
+
+We have brought such information to you as WEXE 0.55 -> 0.7 HSBC 0.07->0.12 AUNI 0.165 -> 0.28
+You know absolutly witch ones are real what not but this are real one.
+Campaign just started more news will be soon.
+
+
+70776A32666E7478746933776A73716F737977457871746C
+caesir
+
+
+
+
+------------=_1171043734-12817-161
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "murdock.osdl.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Broker Alert! Good stock MHII.OB(MARSHAL HOLDINGS INC)
+  especially for men of business. MHII.OB Examined stock has a huge
+  potential and growth. Control the news about this great stock on broker
+  web-site Make an order. It is very important you grab MARSHAL HOLDINGS
+  INC on Friday 02.09.07 Purchasing this great stock you will not miss
+  your target. [...] 
+
+Content analysis details:   (6.9 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.4 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 0.5 OUTFLUX_INVEST_OTC     BODY: has O T C in it
+ 3.0 OSDL_STOCK7            BODY: "AUNI" spam
+
+
+
+------------=_1171043734-12817-161
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------------=_1171043734-12817-161--
