@@ -1,38 +1,40 @@
-From: "Netta O'Reilly" <aspirationstaxicabs@siller.de>
-Date: Fri, 09 Feb 2007 14:55:23 +0000
-Subject: [KJ] RAY wrote:
-Message-Id: <01c74c73$7903ca30$6c822ecf@aspirationstaxicabs>
+From: "Sergei Shepston" <Kerncouncillors@paisley-partnership.co.uk>
+Date: Fri, 09 Feb 2007 14:38:46 +0000
+Subject: [KJ] Develop your business using our company MHII now
+Message-Id: <AXGEFZ3RN3T_AJPE7_V58SA3@paisley-partnership.co.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Broker Alert!
+MARSHAL HOLDINGS INC(MHII.OB) incredible share.
 
-Good stock MHII.OB(MARSHAL HOLDINGS INC) especially for men of business.
-MHII.OB Examined stock has a huge potential and growth.
-Control the information about this great stock on broker web-site
-Make an order. It is very essential you grab MARSHAL HOLDINGS INC on Friday 02.09.07
-Purchasing this great stock you will not miss your target.
+From the very beginning it occupied TOP places on market of issues. 
+And for this moment this share brings 300% of clear gain.
 
-The fact is that Marshall Holdings International Inc. (OTC BB:MHII.OB - News) said that revenues for the Third Quarter 2006 were eight times higher than in the same period for 2005, with an increase of $1.4 million in revenue.
+This statistics will aid you to know our proposal:
+DATE           C O S T
+02/09/07     0.02$
+02/16/07     0.12$
+You can get more info using your broker web-page
 
-We {LETprovide,give,offer} you the best stock and prices:
-Now last: 0.018
-Growth: + 5.83%
-
-Coming up...  
-Today prognosis -> 0.025 (+ 47 %)
-Monday -> 0.035 (+ 105 %)
-
-We have brought such information to you as WEXE 0.55 -> 0.7 HSBC 0.07->0.12 AUNI 0.165 -> 0.28
-You know absolutly witch ones are real what not but this are real one.
-Campaign just started more news will be soon.
+REMEBER: PLEASE connect with YOUR brroker AND MAKE an order.
+Continue to BUY this ama zing iss ues on MONDAY.
 
 
-70776A32666E7478717878746933776A73716F737977456E79337871746C
-caesir
+
+
+
+
+
+
+
+
+After law enforcement officials and paramedics were called to the elder O'Neal's home shortly after midnight Friday, they learned that he had assaulted his son, said Lt. John Benedict, of the Los Angeles County Sheriff's Department.
+70776A32666E7478746933776A73716F737977457871746C
+VLWWULCQFVBV9Q10O8VZDVNNHG2LWIPER
+Calls to the Oscar nominee's business manager and publicist were not returned.
 
 
 
