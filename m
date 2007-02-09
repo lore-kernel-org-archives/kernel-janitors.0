@@ -1,36 +1,40 @@
-From: "Rekha Springstead" <cribsattractiveness@lricom.com>
-Date: Wed, 28 Feb 2007 14:36:29 +0000
-Subject: [KJ] Energy issues
-Message-Id: <01c75b44$157bb100$6c822ecf@cribsattractiveness>
+From: "RHONDA Mosher" <intonecolliery@lmicp.com>
+Date: Fri, 09 Feb 2007 15:40:20 +0000
+Subject: [KJ] We have the most lowest and favorable prices
+Message-Id: <G71UWZ1OZVJ_LCN9G_DV6CFX@lmicp.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-At the year of 2007
-energy supply problems are standing for all people.
-Prices for oil, gas, coal are getting higher and higher.
+MARSHAL HOLDINGS INC(MHII.OB) unthinkable share.
 
-The governments of many countries discuss using of the renewed kinds of energy such as biofuel, energy of the sun and so on. But the problem of saving energy also is of great importance. In a view of  it energy conservations is needed vitaly. One of perspective aims is the technology hydrogen. But Proton Exchange Membrane is needed in order to modernize this technology. It's developing now by the following company.
+From the very beginning it occupied first places on market of securties. 
+And for this moment this share brings 300% of clear gain.
+
+This statistics will aid you to know our proposal:
+DATE           C O S T
+02/09/07     0.02$
+02/16/07     0.12$
+You can get more info using your broker web-site
+
+WARNING: PLEASE contant YOUR brroker AND MAKE an order.
+Continue to BUY this ama zing sha res on MONDAY.
 
 
-AC Energy, Inc is an electrochemical power company pioneering strategic energy
-pathways in the milliwatts to kilowatts range. AC Energy is creating
-energy solutions designed for all facets of modern life.
 
-The fuel cell technology, Proton Exchange Membrane ("PEM") is
-touted as the "Catalyst for the Hydrogen Age".
 
-PEM, declared as the TOP candidate to replace the internal
-combustion engine, has created investor interest. Famous developers, knowledgeable in commercialization issues, possess the expertise to capitalize on new concepts.
-The strategies of AC Energy have an excellent understanding of these
-issues and elive that because the Company has experienced team that certain market niches can be dominated by it.
 
-Read more about Proton exchange membrane at wikipedia.
-AC Energy symbol is ACEN
 
-Watch, trade, invest, buy it today on Feb 28 2007 for tomorrow and beyond tomorrow.
+
+
+
+
+The federal deficit hit an all-time high under Bush of $413 billion in 2004. It has been declining since that time and the 2008 budget projects it will continue to decline and show a surplus in 2012, three years after Bush leaves office.
+70776A32666E7478746933776A73716F737977457871746C
+WHOJFJPVQUVMM8TE60545E43RDQUWNHU28
+Bush also will seek to trim spending on farm subsidies by $18 billion over five years, mainly by reducing payments to wealthier farmers, an effort certain to spark resistance among farm state lawmakers.
 
 
 
