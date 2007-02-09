@@ -1,35 +1,32 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 08 Feb 2007 22:17:00 +0000
-Subject: [KJ] anyone interested in the "power of 2" stuff?
-Message-Id: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
+From: Vignesh Babu BM <vignesh.babu@wipro.com>
+Date: Fri, 09 Feb 2007 05:18:03 +0000
+Subject: Re: [KJ] anyone interested in the "power of 2" stuff?
+Message-Id: <1170997563.3571.35.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Thu, 2007-02-08 at 17:17 -0500, Robert P. J. Day wrote:
 
-  the latest "git pull" now has the definition of the inline function
-"is_power_of_2()," if anyone wants to adopt that as a cleanup project.
-the wiki page describing that is here:
+> http://fsdev.net/wiki/index.php?title=Power_of_2_stuff
+> 
+>   any takers?
+> 
+> rday
+> 
 
-http://fsdev.net/wiki/index.php?title=Power_of_2_stuff
-
-  read that page carefully before you start, to make sure you're doing
-things properly.
-
-  any takers?
-
-rday
+I would take that up rday.
 
 -- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+Regards,  
+Vignesh Babu BM  
+_____________________________________________________________  
+"Why is it that every time I'm with you, makes me believe in magic?"
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
