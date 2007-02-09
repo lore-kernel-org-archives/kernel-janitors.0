@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 08 Feb 2007 17:37:41 +0000
-Subject: Warning: message 1HEMaA-0005uE-4j delayed 48 hours
-Message-Id: <E1HFDDJ-0006zR-4N@externalmx-1.sourceforge.net>
+Date: Fri, 09 Feb 2007 12:09:43 +0000
+Subject: Warning: message 1HEMaA-0005uE-4j delayed 72 hours
+Message-Id: <E1HFUZT-0006ox-1T@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HEaPE-0008VG-NP@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HEMaA-0005uE-4j
 The subject of the message is:  to he answered Saul Hear all
