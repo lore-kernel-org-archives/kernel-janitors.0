@@ -1,7 +1,7 @@
 From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Fri, 09 Feb 2007 18:01:49 +0000
+Date: Fri, 09 Feb 2007 18:10:20 +0000
 Subject: Re: [KJ] Taking the Min and Max macro job
-Message-Id: <45CCB70D.1070602@student.ltu.se>
+Message-Id: <45CCB90C.80005@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070207235145.GZ8991@Ahmed>
 In-Reply-To: <20070207235145.GZ8991@Ahmed>
@@ -12,23 +12,6 @@ To: kernel-janitors@vger.kernel.org
 
 Mehul Jani wrote:
 >
->
->     >>>Just went through the archives....
->     >>>
->     >>>        I tried to recreate the compile-failure (was some time
->     ago since
->     >>>        it
->     >>>        happened) when using min()/max() in a struct but it
->     happily compiled it
->     >>>        so (thankfully) you are correct, just need to use
->     min()/max(). :)
->     >>>
->     >>>        Richard Knutsson
->     >>>
->     >>>Do you mean to say that you were able to compile when the
->     macros were used inside struct?
->     >>>Im still not able to get that to happen...
->     >>>
 >     >>>I tried that change in linux-2.6/fs/lockd/mon.c
 >     >>>
 >     >>>static struct rpc_procinfo   nsm_procedures[] = {
@@ -55,12 +38,8 @@ Mehul Jani wrote:
 > * _x < _y ? _x : _y; })*
 >  
 > and happy with new macro been called internally *__min(_x,_y);*
-Oh, it is still unhappy with min()/max() in the above struct. You will 
-have to use __min()/__max() directly to please the compiler.
-I just modified the other macros since I thought it was unnecessary (and 
-error-prone) to define the "algorithm" multiple times + it makes the 
-logical statement that __min()/__max() are the unsecure macros and by 
-adding type-checking we get the secure min()/max().
+Ok, _now_ I see. I used the xdr4.c but mon.c seems happy with the new 
+max() (as you asked). Can only say: dunno. It should not make a difference.
 
 Richard Knutsson
 
