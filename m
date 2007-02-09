@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 08 Feb 2007 20:12:31 +0000
-Subject: Warning: message 1HEIUi-0000UR-NU delayed 48 hours
-Message-Id: <E1HFFd9-0001Np-Nc@externalmx-1.sourceforge.net>
+Date: Fri, 09 Feb 2007 06:19:00 +0000
+Subject: Warning: message 1HEIUi-0000UR-NU delayed 72 hours
+Message-Id: <E1HFP64-0005Fl-Vw@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HEz0S-0007Sf-GL@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HEz0S-0007Sf-GL@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HEIUi-0000UR-NU
 The subject of the message is: thine for riches of the bitter Cry have mercy
