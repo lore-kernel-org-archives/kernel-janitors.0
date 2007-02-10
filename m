@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 10 Feb 2007 19:56:37 +0000
+Date: Sat, 10 Feb 2007 20:03:25 +0000
 Subject: Re: [KJ] is there a short form for "memset(blah, 0, len)"?
-Message-Id: <Pine.LNX.4.64.0702101453030.5962@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <Pine.LNX.4.64.0702101457050.5962@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702101112510.4576@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0702101112510.4576@CPE00045a9c397f-CM001225dbafb6>
@@ -10,47 +10,65 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 10 Feb 2007, Bernd Petrovitsch wrote:
+On Sat, 10 Feb 2007, Richard Knutsson wrote:
 
-> On Sat, 2007-02-10 at 13:25 -0500, Robert P. J. Day wrote:
+> Robert P. J. Day wrote:
 > > On Sat, 10 Feb 2007, Bernd Petrovitsch wrote:
 > >
+> >
 > > > On Sat, 2007-02-10 at 11:14 -0500, Robert P. J. Day wrote:
+> > >
 > > > >   i doubt anything will ever come of this but, given the number of
 > > > > calls to "memset(addr, 0, len)", did anyone ever consider defining a
 > > > > macro short form, say:
 > > > >
 > > > >   clearmem(addr, len)
 > > > >   zeromem(addr, len)
-> > >
+> > > >
 > > > *BSD had "bzero()".
 > > >
-> > > > or something like that?  just curious.
 > > >
+> > > > or something like that?  just curious.
+> > > >
 > > > Did you ever read the man page of "bzero()"?
+> > >
 > >
 > > sure, but that's a *userspace* routine.  AFAIK, there is no such
+> > routine in the linux kernel.  is there a reason there isn't?  wouldn't
+> > it be kind of useful?
+> >   grep -Enr "define +.*memset *\(.*0" *
+> arch/alpha/boot/misc.c:25:#define memzero(s,n)  memset ((s),0,(n))
+> arch/cris/arch-v10/boot/compressed/misc.c:38:#define memzero(s, n)     memset
+> ((s), 0, (n))
+> arch/cris/arch-v32/boot/compressed/misc.c:40:#define memzero(s, n)     memset
+> ((s), 0, (n))
+> arch/i386/boot/compressed/misc.c:110:#define memzero(s, n)     memset ((s), 0,
+> (n))
+> arch/m32r/boot/compressed/misc.c:26:#define memzero(s, n)     memset ((s), 0,
+> (n))
+> arch/sh/boot/compressed/misc.c:30:#define memzero(s, n)     memset ((s), 0,
+> (n))
+> arch/sh64/boot/compressed/misc.c:28:#define memzero(s, n)     memset ((s), 0,
+> (n))
+> ...
 >
-> Yes, of course. I mentioned it because there is/was already a function
-> with the above semantics and signature. So why invent another name?
+> So it seems memzero() is a candidate, don't you think?
 
-oh, sorry, i misunderstood.  i thought you were saying that there
-already *was* a bzero() in kernel space.  my mistake.
+it would seem so, but you should really have let that list go on a bit
+longer.  all of the above examples are in *userspace*, so adding that
+definition to a kernel header file wouldn't help, right?  if you let
+that command run a bit longer, then you find a few kernel space
+examples (some of them *very* badly named):
 
-> > routine in the linux kernel.  is there a reason there isn't?
-> > wouldn't
->
-> No, because bzero() is - according to the man page - deprecated.
+...
+drivers/block/floppy.c:317:#define CLEARSTRUCT(x) memset((x), 0, sizeof(*(x)))
+drivers/video/sun3fb.c:67:#define mymemset(x,y) memset(x,0,y)
+...
 
-ah, yes, i just checked up on that.  this wasn't a big deal, it just
-struck me that there are a *ton* of calls to memset() to do nothing
-more than zero a chunk of memory, and it would seem simpler to define
-a macro as a wrapper.  but i'm not going to make a big deal out of it.
+  in any event, i think defining memzero() that way is the obvious
+enhancement.  is there any obvious reason this can't be done?
 
 rday
-
-p.s.  in general, whenever i see the same construct being used more
-than a dozen times, i start thinking of a way to make it shorter.
 
 -- 
 ====================================
