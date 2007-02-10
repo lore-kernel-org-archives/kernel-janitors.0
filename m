@@ -1,35 +1,28 @@
-From: "Raj Polly" <lakshmamccul@safeshores.org>
-Date: Mon, 19 Feb 2007 13:25:36 +0000
-Subject: [KJ] on bowti
-Message-Id: <01c75429$70d6dbf0$acff0453@cyganek800861d>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 10 Feb 2007 22:32:10 +0000
+Subject: [KJ] memory zeroing macros
+Message-Id: <Pine.LNX.4.64.0702101731480.6852@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c75429$70398a80$acff0453@cyganek800861d>
-In-Reply-To: <01c75429$70398a80$acff0453@cyganek800861d>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
 
-VIAvvGRA $3. 35
-VALvvIUM $1. 25
-CIAvvLIS $3. 75
-XAvvNAX
-SOvvMA
+  i've put some ideas in the wiki:
 
-FOR LESS!
+http://fsdev.net/wiki/index.php?title=Memory_zeroing_macros
 
-http://vedrx.+com
+rday
 
-Remove "+" in the above link
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-
-
-one who might think about a career as an Auror,  he told her. Mind
-works the right way. Granger. 
-Hermione flushed pink with pleasure.
-
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
