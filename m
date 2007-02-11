@@ -1,58 +1,41 @@
-From: "Tony & Jenny Curtis" <tjcurtis@socket.net>
-Date: Sun, 25 Feb 2007 19:12:50 +0000
-Subject: [KJ]  WEXE - sprint started
-Message-Id: <001101c75910$f209dd30$23df5540@Curtis>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0839680341=="
+From: Andi Kleen <ak@suse.de>
+Date: Sun, 11 Feb 2007 13:57:53 +0000
+Subject: [KJ] [PATCH] Don't panic the kernel when cyclades tty
+Message-Id: <200702111457.54085.ak@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
---===============0839680341==
-Content-Type: multipart/alternative;
-    boundary="----------=_1172430825-23592-652"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+I noticed this while grepping for something. There is no reason to panic
+the kernel when a tty driver cannot be initialized.
+Just error out in this case, no need to panic.
 
-This is a multi-part message in MIME format...
+BTW there seem to be more bogus panics in a few drivers. Perhaps that
+would be a fruitful target for some janitor activity (mailing list cc'ed) 
 
-------------=_1172430825-23592-652
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Signed-off-by: Andi Kleen <ak@suse.de
 
-Is this the Kelley Byers from the Colorado area?  Mrs. Curtis
-------------=_1172430825-23592-652
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.6000.16414" name=3DGENERATOR>
-<DEFANGED_style_0 </STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Is this the Kelley Byers from the Colorado=
-=20
-area?&nbsp; Mrs. Curtis</FONT></DIV></BODY></HTML>
-
-------------=_1172430825-23592-652--
-
---===============0839680341==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Index: linux-2.6.20-git6-hack/drivers/char/cyclades.c
+=================================--- linux-2.6.20-git6-hack.orig/drivers/char/cyclades.c
++++ linux-2.6.20-git6-hack/drivers/char/cyclades.c
+@@ -5346,8 +5346,11 @@ static int __init cy_init(void)
+ 	cy_serial_driver->flags = TTY_DRIVER_REAL_RAW;
+ 	tty_set_operations(cy_serial_driver, &cy_ops);
+ 
+-	if (tty_register_driver(cy_serial_driver))
+-		panic("Couldn't register Cyclades serial driver\n");
++	if (tty_register_driver(cy_serial_driver)) {
++		printk(KERN_ERR "Couldn't register Cyclades serial driver\n");
++		put_tty_driver(cy_serial_driver);
++		return -EIO;
++	}
+ 
+ 	for (i = 0; i < NR_CARDS; i++) {
+ 		/* base_addr=0 indicates board not found */
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0839680341==--
