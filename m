@@ -1,8 +1,10 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Sun, 11 Feb 2007 06:39:01 +0000
-Subject: Warning: message 1HFx5j-0004Cl-GK delayed 10 hours
-Message-Id: <E1HG8MX-0004Xy-AV@externalmx-1.sourceforge.net>
+Date: Sun, 11 Feb 2007 20:31:53 +0000
+Subject: Warning: message 1HFx5j-0004Cl-GK delayed 24 hours
+Message-Id: <E1HGLMX-00028j-Iu@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1HG8MX-0004Xy-AV@externalmx-1.sourceforge.net>
+In-Reply-To: <E1HG8MX-0004Xy-AV@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
+recipients after more than 24 hours on the queue on externalmx-1.sourceforge.net.
 
 The message identifier is:     1HFx5j-0004Cl-GK
 The subject of the message is: which hath made I have set judges, are brought
