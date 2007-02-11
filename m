@@ -1,48 +1,44 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 01 Feb 2007 14:44:30 +0000
-Subject: Re: [KJ] can someone clarify the changes to the spinlock API?
-Message-Id: <Pine.LNX.4.64.0702010941540.15061@CPE00045a9c397f-CM001225dbafb6>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Sun, 11 Feb 2007 06:39:01 +0000
+Subject: Warning: message 1HFx5j-0004Cl-GK delayed 10 hours
+Message-Id: <E1HG8MX-0004Xy-AV@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702010732070.14212@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702010732070.14212@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 1 Feb 2007, Matthew Wilcox wrote:
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
 
-> On Thu, Feb 01, 2007 at 07:50:08AM -0500, Robert P. J. Day wrote:
-> > note carefully how the (now deprecated) SPIN_LOCK_UNLOCKED macro was
-> > utterly generic -- it didn't need any args, so you could easily
-> > allocate an array of them in one go:
-> >
-> >   arch/sparc/lib/atomic32.c:  [0 ... (ATOMIC_HASH_SIZE-1)] = SPIN_LOCK_UNLOCKED
->
-> Is there anyone other than sparc32 creating an array of spinlocks?
-> On parisc, we use an array of raw_spinlock_t, and I suspect sparc32
-> should do the same.
+The message identifier is:     1HFx5j-0004Cl-GK
+The subject of the message is: which hath made I have set judges, are brought
+The date of the message is:    Sat, 10 Feb 2007 22:36:42 +0400
 
-$ grep -r "\.\.\..*SPIN_LOCK_UNLOCKED" .
-./arch/sparc/lib/atomic32.c:    [0 ... (ATOMIC_HASH_SIZE-1)] = SPIN_LOCK_UNLOCKED
-./arch/cris/arch-v32/kernel/smp.c:spinlock_t cris_atomic_locks[] = { [0 ... LOCK_COUNT - 1] = SPIN_LOCK_UNLOCKED};
-./arch/parisc/lib/bitops.c:     [0 ... (ATOMIC_HASH_SIZE-1)]  = __RAW_SPIN_LOCK_UNLOCKED
-./arch/mips/kernel/gdb-stub.c:  [0 ... NR_CPUS-1] = __RAW_SPIN_LOCK_UNLOCKED,
-./arch/powerpc/platforms/iseries/htab.c:        { [0 ... 63] = SPIN_LOCK_UNLOCKED};
+The address to which the message has not yet been delivered is:
 
-so there's sparc, cris and powerpc.  and you're right, they should be
-using raw spinlocks.  off to slap together another patch.  or two.
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
-http://www.fsdev.dreamhosters.com/wiki/index.php?title=Main_Page
-====================================
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier.
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
