@@ -1,48 +1,42 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Date: Wed, 28 Feb 2007 09:31:45 +0000
-Subject: [KJ] [PATCH] aacraid: Use DMA_31BIT_MASK
-Message-Id: <20070228093145.GA15159@distanz.ch>
+From: "MOHAMOUD Nho" <dividinggouging@rmrf.com>
+Date: Mon, 12 Feb 2007 16:17:03 +0000
+Subject: [KJ] Pelima wrote: Today's prognosis...
+Message-Id: <01c74ebc$d975c260$6c822ecf@dividinggouging>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Use constants from linux/dma-mapping.h for pci_set_dma_mask() and
-pci_set_consistent_dma_mask()
+Good morning, gentlemen.
+I think all of you have already seen the results of the last market day.
 
-Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+And just now we offer you the best stock at the best price for today.
+The Company has released news on friday. 
+Here it is (read full version on your favorite news site)
 
----
- drivers/scsi/aacraid/commsup.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+-
+Marshall Holdings International, Inc. Announces Subsidiary 3rd Quarter Results Over 1.5 Million, an Increase of 147%
 
-diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 1b97f60..bb4fe48 100644
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -34,6 +34,7 @@
- #include <linux/types.h>
- #include <linux/sched.h>
- #include <linux/pci.h>
-+#include <linux/dma-mapping.h>
- #include <linux/spinlock.h>
- #include <linux/slab.h>
- #include <linux/completion.h>
-@@ -1113,8 +1114,8 @@ static int _aac_reset_adapter(struct aac_dev *aac)
- 		  ((retval = pci_set_consistent_dma_mask(aac->pdev, DMA_32BIT_MASK))))
- 			goto out;
- 	} else {
--		if (((retval = pci_set_dma_mask(aac->pdev, 0x7FFFFFFFULL))) ||
--		  ((retval = pci_set_consistent_dma_mask(aac->pdev, 0x7FFFFFFFULL))))
-+		if (((retval = pci_set_dma_mask(aac->pdev, DMA_31BIT_MASK))) ||
-+		  ((retval = pci_set_consistent_dma_mask(aac->pdev, DMA_31BIT_MASK))))
- 			goto out;
- 	}
- 	if ((retval = (*(aac_get_driver_ident(index)->init))(aac)))
--- 
-1.5.0.2
+Marshall Holdings International, Inc. (MHII) announced that the 3rd quarter financials for its wholly owned subsidiary are final. Marshall Distributing 3rd quarter revenues resulted in an increase of 147% over the same period in 2005. The total revenues for the quarter were excess of 1.5 million.
+"The Company continues to raise and once again exceeded all expectations", said Jamie Plante, CFO." 
+-
+
+
+Friday last result -> 0.021 (+ 23.52%) 
+Friday High on 0.024 (+ 41 %)
+With the news like that Monday expectations-> more then 0.040 (+ 90.47 %) 
+
+You absolutly know which ones are real or not.
+This one is real.
+The Campaign has just started. More information will be soon.
+To Grab MHII - is the first thing to do.
+
+
+70776A32666E7478717878746933776A73716F737977456E79337871746C
+caizeir
+
+
 
 _______________________________________________
 Kernel-janitors mailing list
