@@ -1,76 +1,42 @@
-From: walter harms <wharms@bfs.de>
-Date: Thu, 08 Feb 2007 11:11:12 +0000
-Subject: Re: [KJ] signedness of cpu variables
-Message-Id: <45CB0550.8090302@bfs.de>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 12 Feb 2007 12:54:22 +0000
+Subject: [KJ] need a better name for existing "FIELD_SIZE" macro under
+Message-Id: <Pine.LNX.4.64.0702120748030.23229@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <8ef77f2e0702061132lf8e4a2cj7ae612976029e21b@mail.gmail.com>
-In-Reply-To: <8ef77f2e0702061132lf8e4a2cj7ae612976029e21b@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
+  one of the outstanding tasks in the wiki is to use the
+"FIELD_SIZE()" macro (currently defined as FIELD_SIZEOF but that's
+being renamed in the patch) in include/linux/kernel.h to simplify some
+code in the tree.  i had already submitted that patch without noticing
+that a few files under the sound/ directory already define a
+"FIELD_SIZE" macro which clashes:
 
-Randy Dunlap wrote:
-> On Wed, 07 Feb 2007 11:41:19 +0100 walter harms wrote:
-> 
->> if this is intended, someone could add a remark about it ?
->>
-> 
-> If what is intended?  and please use reply-to-all.
+  $ grep -rw FIELD_SIZE *
 
+  andrew morton suggested that the easiest solution is to just rename
+the one under the sound/ directory, but i have no idea what that macro
+represents.  anyone know what's going on there and can recommend a
+better (and less universally intrusive) name that doesn't steal prime
+macro naming real estate?
 
-ups wrong button :)
+  once the name "FIELD_SIZE" is reclaimed from those sound files, i
+can resubmit the global patch.  thanks.
 
-my point is:
-if there is a reason to have a signed int cpu variable (instead
-the 'normal' unsigned int) it should be documented WHY this is an
-exception.
+rday
 
-re,
- walter
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-
-
-> 
->> Randy Dunlap wrote:
->>> On Tue, 6 Feb 2007 20:32:29 +0100 Thomas Hisch wrote:
->>>
->>>> i digged into the kernel source and found a lot of signed int cpu variables.
->>>> shouldn't they be replaced by unsigned ints ??
->>>>
->>>> for example everywhere in kernel/cpu.c cpu variables are unsigned except in
->>>> check_for_tasks(int cpu). are there any reasons for the signed int parameter
->>>> of this  particular function ??
->>>>
->>>> any thoughts ??
->>>> is this sth. for the kernel-janitors ?
->>> This one makes sense.  Others would need their own evaluations.
->>>
->>>> regards
->>>> Thomas Hisch
->>>>
->>>> diff --git a/kernel/cpu.c b/kernel/cpu.c
->>>> index 7406fe6..b0d4fbd 100644
->>>> --- a/kernel/cpu.c
->>>> +++ b/kernel/cpu.c
->>>> @@ -87,7 +87,7 @@ void unregister_cpu_notifier(struct notifier_block *nb)
->>>>  }
->>>>  EXPORT_SYMBOL(unregister_cpu_notifier);
->>>>
->>>> -static inline void check_for_tasks(int cpu)
->>>> +static inline void check_for_tasks(unsigned int cpu)
->>>>  {
->>>>         struct task_struct *p;
->>>
->>> ---
-> 
-> ---
-> ~Randy
-> 
-> 
-> 
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
