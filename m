@@ -1,7 +1,7 @@
-From: Vignesh Babu BM <vignesh.babu@wipro.com>
-Date: Tue, 13 Feb 2007 09:04:38 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 13 Feb 2007 09:46:46 +0000
 Subject: Re: [KJ] anyone interested in the "power of 2" stuff?
-Message-Id: <1171356758.11581.17.camel@wriver-t81fb058.linuxcoe>
+Message-Id: <Pine.LNX.4.64.0702130444350.3518@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0702081713530.5222@localhost.localdomain>
@@ -10,61 +10,70 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-I have a doubt:
-There are instances as follows:
+On Tue, 13 Feb 2007, Vignesh Babu BM wrote:
 
-/* ASIC location registers should be 0 or have only a single bit set. */
-    if (   (iobase_reg  & (iobase_reg - 1))
+>
+> I have a doubt:
+> There are instances as follows:
+>
+> /* ASIC location registers should be 0 or have only a single bit set. */
+>     if (   (iobase_reg  & (iobase_reg - 1))
+>
+> here and in other similar situations the variables values vary from 0
+> and above
+> In such checks the above might be more optimized...as the is_power_of_2
+> will
+> 1. check for 0 and fail that
+> 2. check for even and pass it
+> 3. or if it is odd...fail it
+>
+> op 1 would be done followed by op 2/3
+>
+> The code would be like
+> if(!iobase_reg && !is_power_of_2(iobase_reg))
+> ---where we are checking for 0 at 2 places-both inside and outside of
+> is_power_of_2
+>
+> But the n & (n-1) is just one step.
+> Is this not more optimised?
+>
+> What would you suggest here?
 
-here and in other similar situations the variables values vary from 0
-and above
-In such checks the above might be more optimized...as the is_power_of_2
-will
-1. check for 0 and fail that
-2. check for even and pass it
-3. or if it is odd...fail it
+i was fairly sure this issue was going to raise its ugly head
+eventually -- where a test was checking if something was a power of
+two *or* zero.  first off, let's agree that we are *not* going to
+redefine what it means to be a power of two.  zero *isn't*.  period.
+so changing that macro is out of the question.
 
-op 1 would be done followed by op 2/3
+here's an option.  that test above isn't *really* asking if something
+is a power of two, *is* it?  it's asking if at most one bit is set.
+and while that might seem *superficially* almost the same thing,
+semantically it's quite different.
 
-The code would be like
-if(!iobase_reg && !is_power_of_2(iobase_reg))
----where we are checking for 0 at 2 places-both inside and outside of
-is_power_of_2
+it might be worth defining a macro:
 
-But the n & (n-1) is just one step.
-Is this not more optimised?
+  #define at_most_one_bit_set(n)      ((n) & ((n) - 1))
 
-What would you suggest here?
+then we get the optimization, we get the proper behaviour, and we get
+more meaningful semantics that actually reflect the test that is being
+done.  in a nutshell, don't test for "power of twoness" if that's not
+what's being asked.  if one is testing for at most one bit set, phrase
+it that way.  obviously, this means you might have to look at one of
+those tests closely to deduce what the programmer was trying to do
+but, for the most part, that shouldn't be impossible.
 
-On Fri, 2007-02-09 at 07:39 -0500, Robert P. J. Day wrote:
-> On Fri, 9 Feb 2007, Vignesh Babu BM wrote:
-> 
-> >
-> > On Thu, 2007-02-08 at 17:17 -0500, Robert P. J. Day wrote:
-> >
-> > > http://fsdev.net/wiki/index.php?title=Power_of_2_stuff
-> > >
-> > >   any takers?
-> > >
-> > > rday
-> > >
-> >
-> > I would take that up rday.
-> 
-> ok, have at it, and keep us up to date on the wiki page.
-> 
-> rday
-> 
-> p.s.  note that we still haven't formalized the rounding stuff so, as
-> i mention in the wiki page, the only changes should involve *just*
-> strict power of 2 testing, and not as part of a larger bit of code
-> that's trying to round, or anything like that.
-> 
+thoughts?
+
+rday
+
 -- 
-Regards,  
-Vignesh Babu BM  
-_____________________________________________________________  
-"Why is it that every time I'm with you, makes me believe in magic?"
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
