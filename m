@@ -1,37 +1,44 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Fri, 09 Feb 2007 01:44:07 +0000
-Subject: Re: [KJ] linux-2.6/drivers/ide/pci drivers dont have module_exit
-Message-Id: <20070208174407.72d358da.rdunlap@xenotime.net>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Tue, 13 Feb 2007 23:30:51 +0000
+Subject: Warning: message 1HGwUX-0001QN-OO delayed 10 hours
+Message-Id: <E1HH76p-0001k0-Jg@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1170937181.3571.31.camel@wriver-t81fb058.linuxcoe>
-In-Reply-To: <1170937181.3571.31.camel@wriver-t81fb058.linuxcoe>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 08 Feb 2007 17:49:41 +0530 Vignesh Babu BM wrote:
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforge.net.
 
-> Can someone clarify on this please:
-> Why is it that all the drivers in linux-2.6/drivers/ide/pci have only
-> module_init and not module_exit?
-> Does that mean these drivers cannot be rmmod'ed?
-> If no then what is the exit point for these?
+The message identifier is:     1HGwUX-0001QN-OO
+The subject of the message is: bad buy now, you won't repentance!
+The date of the message is:    Tue, 13 Feb 2007 14:10:48 +0200
 
-This question is more appropriate for the linux-ide or the
-kernelnewbies mailing list.
+The address to which the message has not yet been delivered is:
 
-However.  Quoting from the linux-ide mailing list,
-Message-Id: <1138183958.5857.12.camel@lyra.home.ludost.net>:
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
-> The above should never happen because pdc202xx_old and
-> ide-generic don't have module_exit() and thus cannot be unloaded.
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+-------------------------------------------------------------------------
+Using Tomcat but need to do more? Need to support web services, security?
+Get stuff done quickly with pre-integrated technology to make your job easier.
+Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
+http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
