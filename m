@@ -1,51 +1,100 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Fri, 16 Feb 2007 18:32:00 +0000
-Subject: Warning: message 1HGwUX-0001QN-OO delayed 72 hours
-Message-Id: <E1HI7sG-0002F2-Eh@externalmx-1.sourceforge.net>
+From: Yaman <yamanc@gmail.com>
+Date: Wed, 14 Feb 2007 15:22:23 +0000
+Subject: [KJ] [PATCH] Marking obsolete-deprecated stuff
+Message-Id: <d1264e020702140722x511bc01ajc6ccbd4eb2816f05@mail.gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_Part_63199_30748873.1171466543224"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HH76p-0001k0-Jg@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HH76p-0001k0-Jg@externalmx-1.sourceforge.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
-e.net.
+------=_Part_63199_30748873.1171466543224
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-The message identifier is:     1HGwUX-0001QN-OO
-The subject of the message is: bad buy now, you won't repentance!
-The date of the message is:    Tue, 13 Feb 2007 14:10:48 +0200
+For marking obsolote-deprecated stuff, compiles fine for arm architecture. If
+that's the way to go i can complete the rest.
 
-The address to which the message has not yet been delivered is:
+Signed-off-by: Yaman Cakmakci <yamanc@gmail.com>
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
-or-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
-r verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter=
- case,
-    451-you need to change the address or create an MX record for its domain
-    4
+------=_Part_63199_30748873.1171466543224
+Content-Type: text/x-patch; name=deprecated_notify.patch; 
+	charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_ey5uue4f
+Content-Disposition: attachment; filename="deprecated_notify.patch"
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
+ZGlmZiAtdXByTiAtWCBsaW51eC0yLjYuMjAtdmFuaWxsYS9Eb2N1bWVudGF0aW9uL2RvbnRkaWZm
+IGxpbnV4LTIuNi4yMC12YW5pbGxhL2FyY2gvYXJtL2tlcm5lbC9jb21wYXQuYyBsaW51eC0yLjYu
+MjAvYXJjaC9hcm0va2VybmVsL2NvbXBhdC5jCi0tLSBsaW51eC0yLjYuMjAtdmFuaWxsYS9hcmNo
+L2FybS9rZXJuZWwvY29tcGF0LmMJMjAwNi0wOS0yMCAwNjo0MjowNi4wMDAwMDAwMDAgKzAzMDAK
+KysrIGxpbnV4LTIuNi4yMC9hcmNoL2FybS9rZXJuZWwvY29tcGF0LmMJMjAwNy0wMi0xNCAxNTo0
+MzowMy4wMDAwMDAwMDAgKzAyMDAKQEAgLTM4LDggKzM4LDkgQEAKICAqICAgIGd1YXJhbnRlZWQg
+dG8gY29udGFpbiB1c2VmdWwgZGF0YSBpbiBzZXR1cF9hcmNoKCkKICAqCiAgKiBUaGlzIGlzIHRo
+ZSBvbGQgZGVwcmVjYXRlZCB3YXkgdG8gcGFzcyBwYXJhbWV0ZXJzIHRvIHRoZSBrZXJuZWwKKyAq
+IFNob3VsZCd2ZSBiZWVuIG9ic29sZXRlZCBieSBub3csIGFzIGl0J3MgMjAwNyBub3cKICAqLwot
+c3RydWN0IHBhcmFtX3N0cnVjdCB7CitzdHJ1Y3QgX19kZXByZWNhdGVkIHBhcmFtX3N0cnVjdCB7
+CiAgICAgdW5pb24gewogCXN0cnVjdCB7CiAJICAgIHVuc2lnbmVkIGxvbmcgcGFnZV9zaXplOwkJ
+LyogIDAgKi8KZGlmZiAtdXByTiAtWCBsaW51eC0yLjYuMjAtdmFuaWxsYS9Eb2N1bWVudGF0aW9u
+L2RvbnRkaWZmIGxpbnV4LTIuNi4yMC12YW5pbGxhL2FyY2gvYXJtL21tL21tdS5jIGxpbnV4LTIu
+Ni4yMC9hcmNoL2FybS9tbS9tbXUuYwotLS0gbGludXgtMi42LjIwLXZhbmlsbGEvYXJjaC9hcm0v
+bW0vbW11LmMJMjAwNy0wMi0xNCAxNToxMjoxOC4wMDAwMDAwMDAgKzAyMDAKKysrIGxpbnV4LTIu
+Ni4yMC9hcmNoL2FybS9tbS9tbXUuYwkyMDA3LTAyLTE0IDE1OjQ5OjMzLjAwMDAwMDAwMCArMDIw
+MApAQCAtMTE3LDE4ICsxMTcsMTYgQEAgc3RhdGljIHZvaWQgX19pbml0IGVhcmx5X2NhY2hlcG9s
+aWN5KGNoYQogfQogX19lYXJseV9wYXJhbSgiY2FjaGVwb2xpY3k9IiwgZWFybHlfY2FjaGVwb2xp
+Y3kpOwogCi1zdGF0aWMgdm9pZCBfX2luaXQgZWFybHlfbm9jYWNoZShjaGFyICoqX191bnVzZWQp
+CitfX2RlcHJlY2F0ZWQgc3RhdGljIHZvaWQgX19pbml0IGVhcmx5X25vY2FjaGUoY2hhciAqKl9f
+dW51c2VkKSAKIHsKIAljaGFyICpwID0gImJ1ZmZlcmVkIjsKLQlwcmludGsoS0VSTl9XQVJOSU5H
+ICJub2NhY2hlIGlzIGRlcHJlY2F0ZWQ7IHVzZSBjYWNoZXBvbGljeT0lc1xuIiwgcCk7CiAJZWFy
+bHlfY2FjaGVwb2xpY3koJnApOwogfQogX19lYXJseV9wYXJhbSgibm9jYWNoZSIsIGVhcmx5X25v
+Y2FjaGUpOwogCi1zdGF0aWMgdm9pZCBfX2luaXQgZWFybHlfbm93cml0ZShjaGFyICoqX191bnVz
+ZWQpCitfX2RlcHJlY2F0ZWQgc3RhdGljIHZvaWQgX19pbml0IGVhcmx5X25vd3JpdGUoY2hhciAq
+Kl9fdW51c2VkKSAKIHsKIAljaGFyICpwID0gInVuY2FjaGVkIjsKLQlwcmludGsoS0VSTl9XQVJO
+SU5HICJub3diIGlzIGRlcHJlY2F0ZWQ7IHVzZSBjYWNoZXBvbGljeT0lc1xuIiwgcCk7CiAJZWFy
+bHlfY2FjaGVwb2xpY3koJnApOwogfQogX19lYXJseV9wYXJhbSgibm93YiIsIGVhcmx5X25vd3Jp
+dGUpOwpkaWZmIC11cHJOIC1YIGxpbnV4LTIuNi4yMC12YW5pbGxhL0RvY3VtZW50YXRpb24vZG9u
+dGRpZmYgbGludXgtMi42LjIwLXZhbmlsbGEvYXJjaC9hcm0yNi9rZXJuZWwvY29tcGF0LmMgbGlu
+dXgtMi42LjIwL2FyY2gvYXJtMjYva2VybmVsL2NvbXBhdC5jCi0tLSBsaW51eC0yLjYuMjAtdmFu
+aWxsYS9hcmNoL2FybTI2L2tlcm5lbC9jb21wYXQuYwkyMDA2LTA5LTIwIDA2OjQyOjA2LjAwMDAw
+MDAwMCArMDMwMAorKysgbGludXgtMi42LjIwL2FyY2gvYXJtMjYva2VybmVsL2NvbXBhdC5jCTIw
+MDctMDItMTQgMTU6NTI6MzAuMDAwMDAwMDAwICswMjAwCkBAIC0zOCw4ICszOCw5IEBACiAgKiAg
+ICBndWFyYW50ZWVkIHRvIGNvbnRhaW4gdXNlZnVsIGRhdGEgaW4gc2V0dXBfYXJjaCgpCiAgKgog
+ICogVGhpcyBpcyB0aGUgb2xkIGRlcHJlY2F0ZWQgd2F5IHRvIHBhc3MgcGFyYW1ldGVycyB0byB0
+aGUga2VybmVsCisgKiBTaG91bGQndmUgYmVlbiBvYnNvbGV0ZWQgYnkgbm93LCBhcyBpdCdzIDIw
+MDcgbm93CiAgKi8KLXN0cnVjdCBwYXJhbV9zdHJ1Y3Qgeworc3RydWN0IF9fZGVwcmVjYXRlZCBw
+YXJhbV9zdHJ1Y3QgewogICAgIHVuaW9uIHsKIAlzdHJ1Y3QgewogCSAgICB1bnNpZ25lZCBsb25n
+IHBhZ2Vfc2l6ZTsJCS8qICAwICovCmRpZmYgLXVwck4gLVggbGludXgtMi42LjIwLXZhbmlsbGEv
+RG9jdW1lbnRhdGlvbi9kb250ZGlmZiBsaW51eC0yLjYuMjAtdmFuaWxsYS9hcmNoL2FybTI2L2tl
+cm5lbC9zZXR1cC5jIGxpbnV4LTIuNi4yMC9hcmNoL2FybTI2L2tlcm5lbC9zZXR1cC5jCi0tLSBs
+aW51eC0yLjYuMjAtdmFuaWxsYS9hcmNoL2FybTI2L2tlcm5lbC9zZXR1cC5jCTIwMDctMDItMTQg
+MTU6MDQ6MTYuMDAwMDAwMDAwICswMjAwCisrKyBsaW51eC0yLjYuMjAvYXJjaC9hcm0yNi9rZXJu
+ZWwvc2V0dXAuYwkyMDA3LTAyLTE0IDE1OjU2OjU3LjAwMDAwMDAwMCArMDIwMApAQCAtMzU0LDkg
+KzM1NCw4IEBAIHN0YXRpYyBpbnQgX19pbml0IHBhcnNlX3RhZ19yYW1kaXNrKGNvbnMKIAogX190
+YWd0YWJsZShBVEFHX1JBTURJU0ssIHBhcnNlX3RhZ19yYW1kaXNrKTsKIAotc3RhdGljIGludCBf
+X2luaXQgcGFyc2VfdGFnX2luaXRyZChjb25zdCBzdHJ1Y3QgdGFnICp0YWcpCitfX2RlcHJlY2F0
+ZWQgc3RhdGljIGludCBfX2luaXQgcGFyc2VfdGFnX2luaXRyZChjb25zdCBzdHJ1Y3QgdGFnICp0
+YWcpCiB7Ci0JcHJpbnRrKEtFUk5fV0FSTklORyAiQVRBR19JTklUUkQgaXMgZGVwcmVjYXRlZDsg
+cGxlYXNlIHVwZGF0ZSB5b3VyIGJvb3Rsb2FkZXIuIFxuIik7CiAgICAgICAgIHBoeXNfaW5pdHJk
+X3N0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdGFnLT51LmluaXRyZC5zdGFydDsKICAgICAgICAgcGh5
+c19pbml0cmRfc2l6ZSA9ICh1bnNpZ25lZCBsb25nKXRhZy0+dS5pbml0cmQuc2l6ZTsKIAlyZXR1
+cm4gMDsKQEAgLTM2NCw5ICszNjMsOCBAQCBzdGF0aWMgaW50IF9faW5pdCBwYXJzZV90YWdfaW5p
+dHJkKGNvbnN0CiAKIF9fdGFndGFibGUoQVRBR19JTklUUkQsIHBhcnNlX3RhZ19pbml0cmQpOwog
+Ci1zdGF0aWMgaW50IF9faW5pdCBwYXJzZV90YWdfaW5pdHJkMihjb25zdCBzdHJ1Y3QgdGFnICp0
+YWcpCitfX2RlcHJlY2F0ZWQgc3RhdGljIGludCBfX2luaXQgcGFyc2VfdGFnX2luaXRyZDIoY29u
+c3Qgc3RydWN0IHRhZyAqdGFnKQogewotCXByaW50ayhLRVJOX1dBUk5JTkcgIkFUQUdfSU5JVFJE
+IGlzIGRlcHJlY2F0ZWQ7IHBsZWFzZSB1cGRhdGUgeW91ciBib290bG9hZGVyLiBcbiIpOwogCXBo
+eXNfaW5pdHJkX3N0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdGFnLT51LmluaXRyZC5zdGFydDsKIAlw
+aHlzX2luaXRyZF9zaXplID0gKHVuc2lnbmVkIGxvbmcpdGFnLT51LmluaXRyZC5zaXplOwogCXJl
+dHVybiAwOwo=
+------=_Part_63199_30748873.1171466543224
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_Part_63199_30748873.1171466543224--
