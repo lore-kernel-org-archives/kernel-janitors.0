@@ -1,8 +1,10 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Wed, 14 Feb 2007 04:48:57 +0000
-Subject: Warning: message 1HH1RK-0007Nq-W1 delayed 10 hours
-Message-Id: <E1HHC4f-0005mM-2a@externalmx-1.sourceforge.net>
+Date: Wed, 14 Feb 2007 18:40:00 +0000
+Subject: Warning: message 1HH1RK-0007Nq-W1 delayed 24 hours
+Message-Id: <E1HHP2u-0003ih-8c@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1HHC4f-0005mM-2a@externalmx-1.sourceforge.net>
+In-Reply-To: <E1HHC4f-0005mM-2a@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
@@ -10,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 10 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 24 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1HH1RK-0007Nq-W1
