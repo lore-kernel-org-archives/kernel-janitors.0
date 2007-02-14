@@ -1,50 +1,17 @@
-From: "Douglas Landgraf" <dougsland@gmail.com>
-Date: Wed, 14 Feb 2007 14:35:29 +0000
+From: "Jesper Juhl" <jesper.juhl@gmail.com>
+Date: Wed, 14 Feb 2007 14:36:07 +0000
 Subject: Re: [KJ] Basics of linux kernel development.
-Message-Id: <68cac7520702140635pd495d91k9eb7faba11b73dc0@mail.gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1932963754=="
+Message-Id: <9a8748490702140636w4ed2edb9md3cb9013823ba625@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070214141020.81403.qmail@web28102.mail.ukl.yahoo.com>
 In-Reply-To: <20070214141020.81403.qmail@web28102.mail.ukl.yahoo.com>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
---===============1932963754==
-Content-Type: multipart/alternative;
-    boundary="----------=_1171463768-24576-698"
-Content-Transfer-Encoding: binary
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1171463768-24576-698
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: RIz Khan <holysinn3r@yahoo.co.uk>
+Cc: kernel-janitors@lists.osdl.org, greg@kroah.com, kpm@linux-foundation.org, gregkh@suse.de, mathieu.desnoyers@polymtl.ca, linux-kernel@vger.kernel.org
 
-Hi Riz,
-
-I suggest to you:
-
-*Linux Kernel Development (2nd Edition)*
-http://www.amazon.com/Linux-Kernel-Development-Novell-Press/dp/0672327201
-
-*Linux Kernel in a Nutshell*
-http://www.amazon.com/Linux-Kernel-Nutshell-OReilly/dp/0596100795/sr=1-2/qid=1171463449/ref=pd_bbs_sr_2/104-9963804-6300748?ie=UTF8&s=books
-
-Online version ( Linux Kernel In a Nutshell )
-http://kroah.com/lkn/
-
-Good Luck!
-
-Best Regards,
-Douglas Schilling Landgraf
-
-
-On 2/14/07, RIz Khan <holysinn3r@yahoo.co.uk> wrote:
+On 14/02/07, RIz Khan <holysinn3r@yahoo.co.uk> wrote:
 >
 > Dear Sir/Madam,
 > I have an interview at symantec and i need to knw about Linux kernel
@@ -52,63 +19,35 @@ On 2/14/07, RIz Khan <holysinn3r@yahoo.co.uk> wrote:
 > but i dont kknw nothing about linux and especially about kernel development.
 > I would be greatfull if u can tell me something about it and recomend me a
 > vry vry basic book.
-> Regards
-> Saad ALI
->
-> ------------------------------
-> What kind of emailer are you? Find out today - get a free analysis of your
-> email personality. Take the quiz at the Yahoo! Mail Championship<http://uk.rd.yahoo.com/mail/uk/taglines/default/championships/quiz/*http://uk.rd.yahoo.com/evt=44106/*http://mail.yahoo.net/uk/>
-> .
->
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.osdl.org
-> https://lists.osdl.org/mailman/listinfo/kernel-janitors
->
->
 
-------------=_1171463768-24576-698
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+So you want to learn a new programming language (C), a new operating
+system (Linux) and dive into kernel development as well, all at the
+same time - that's no small task :)
 
-<span class="sans">Hi Riz,<br>
-<br>
-I suggest to you:<br>
-<br>
-</span><b class="sans">Linux Kernel Development (2nd Edition)</b><br>
-<a href="http://www.amazon.com/Linux-Kernel-Development-Novell-Press/dp/0672327201">http://www.amazon.com/Linux-Kernel-Development-Novell-Press/dp/0672327201</a><br><br>
-<b class="sans">Linux Kernel in a Nutshell</b><br>
-<a href="http://www.amazon.com/Linux-Kernel-Nutshell-OReilly/dp/0596100795/sr=1-2/qid=1171463449/ref=pd_bbs_sr_2/104-9963804-6300748?ie=UTF8&amp;s=books">http://www.amazon.com/Linux-Kernel-Nutshell-OReilly/dp/0596100795/sr=1-2/qid=1171463449/ref=pd_bbs_sr_2/104-9963804-6300748?ie=UTF8&amp;s=books
-</a><br>
-<br DEFANGED_style="font-weight: bold;">
-<span DEFANGED_style="font-weight: bold;">Online version ( Linux Kernel In a Nutshell )</span><br>
-<a href="http://kroah.com/lkn/">http://kroah.com/lkn/</a><br>
-<br>
-Good Luck!<br>
-<br>
-Best Regards,<br>
-Douglas Schilling Landgraf<br>
-<br><br><div><span class="gmail_quote">On 2/14/07, <b class="gmail_sendername">RIz Khan</b> &lt;<a href="mailto:holysinn3r@yahoo.co.uk">holysinn3r@yahoo.co.uk</a>&gt; wrote:</span><blockquote class="gmail_quote" DEFANGED_style="border-left: 1px solid rgb(204, 204, 204); margin: 0pt 0pt 0pt 0.8ex; padding-left: 1ex;">
-<div><div DEFANGED_style="font-family: arial,helvetica,sans-serif; font-size: 12pt;"><div>Dear Sir/Madam,<br>I have an interview at symantec and i need to knw about Linux kernel development using C. I have done prgramming in C++ but in windows enviorment but i dont kknw nothing about linux and especially about kernel development. I would be greatfull if u can tell me something about it and recomend me a vry vry basic book.
-<br>Regards<br>Saad ALI<br></div></div><span class="ad"><br>
-		<hr size="1"> 
-What kind of emailer are you? Find out today - get a free analysis of your email personality. Take the quiz at the <a href="http://uk.rd.yahoo.com/mail/uk/taglines/default/championships/quiz/*http://uk.rd.yahoo.com/evt=44106/*http://mail.yahoo.net/uk/" target="_blank" DEFANGED_onclick="return top.js.OpenExtLink(window,event,this)">
-Yahoo! Mail Championship</a>.</span></div><br>_______________________________________________<br>Kernel-janitors mailing list<br><a DEFANGED_onclick="return top.js.OpenExtLink(window,event,this)" href="mailto:Kernel-janitors@lists.osdl.org">
-Kernel-janitors@lists.osdl.org</a><br><a DEFANGED_onclick="return top.js.OpenExtLink(window,event,this)" href="https://lists.osdl.org/mailman/listinfo/kernel-janitors" target="_blank">https://lists.osdl.org/mailman/listinfo/kernel-janitors
-</a><br><br></blockquote></div><br>
+As for the C language bit, starting with K&R's "The C programming
+language, second edition" is not a bad place to start.
+http://www.amazon.co.uk/C-Programming-Language-2nd/dp/0131103628/sr=8-1/qid71463251/ref=pd_ka_1/203-7856448-7676754?ie=UTF8&s=books
 
-------------=_1171463768-24576-698--
+As for the linux kernel, "Linux Kernel Development, second edition"by
+Robert Love is a good introduction that gives a good overview of most
+aspects of the kernel.
+http://www.amazon.co.uk/Linux-Kernel-Development-Novell-Press/dp/0672327201/sr=1-1/qid71463315/ref=sr_1_1/203-7856448-7676754?ie=UTF8&s=books
+You probably also want to read the file Documentation/HOWTO in the
+Linux kernel source dir (as well as all the files it refers you to -
+an online copy can be read here:
+http://www.kernel.org/git/?p=linux/kernel/git/torvalds/linux-2.6.git;a=blob;f=Documentation/HOWTO
 
---===============1932963754==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+And probably also won't hurt you to read "Linux in a Nutshell" by
+Ellen Siever, Aaron Weber & Stephen Figgins if you want a good general
+Linux reference.
+http://www.amazon.co.uk/Linux-Nutshell-OReilly-Ellen-Siever/dp/0596009305/ref=pd_bxgy_b_img_b/203-7856448-7676754
 
+
+-- 
+Jesper Juhl <jesper.juhl@gmail.com>
+Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
+Plain text mails only, please      http://www.expita.com/nomime.html
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============1932963754==--
