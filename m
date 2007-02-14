@@ -1,100 +1,118 @@
-From: Yaman <yamanc@gmail.com>
-Date: Wed, 14 Feb 2007 15:22:23 +0000
+From: yaman <yamanc@gmail.com>
+Date: Wed, 14 Feb 2007 17:32:00 +0000
 Subject: [KJ] [PATCH] Marking obsolete-deprecated stuff
-Message-Id: <d1264e020702140722x511bc01ajc6ccbd4eb2816f05@mail.gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_Part_63199_30748873.1171466543224"
+Message-Id: <45D34790.4070306@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <d1264e020702140722x511bc01ajc6ccbd4eb2816f05@mail.gmail.com>
+In-Reply-To: <d1264e020702140722x511bc01ajc6ccbd4eb2816f05@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-------=_Part_63199_30748873.1171466543224
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-For marking obsolote-deprecated stuff, compiles fine for arm architecture. If
+Sorry about the re-send, non-attached version :)
+For marking obsolete-deprecated stuff, compiles fine for arm. If
 that's the way to go i can complete the rest.
 
-Signed-off-by: Yaman Cakmakci <yamanc@gmail.com>
+Signed-off-by: Yaman Cakmakci <yamanc@gmail.com <mailto:yamanc@gmail.com>>
 
-------=_Part_63199_30748873.1171466543224
-Content-Type: text/x-patch; name=deprecated_notify.patch; 
-	charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_ey5uue4f
-Content-Disposition: attachment; filename="deprecated_notify.patch"
+--------------------------------------------------------------------------------------------
 
-ZGlmZiAtdXByTiAtWCBsaW51eC0yLjYuMjAtdmFuaWxsYS9Eb2N1bWVudGF0aW9uL2RvbnRkaWZm
-IGxpbnV4LTIuNi4yMC12YW5pbGxhL2FyY2gvYXJtL2tlcm5lbC9jb21wYXQuYyBsaW51eC0yLjYu
-MjAvYXJjaC9hcm0va2VybmVsL2NvbXBhdC5jCi0tLSBsaW51eC0yLjYuMjAtdmFuaWxsYS9hcmNo
-L2FybS9rZXJuZWwvY29tcGF0LmMJMjAwNi0wOS0yMCAwNjo0MjowNi4wMDAwMDAwMDAgKzAzMDAK
-KysrIGxpbnV4LTIuNi4yMC9hcmNoL2FybS9rZXJuZWwvY29tcGF0LmMJMjAwNy0wMi0xNCAxNTo0
-MzowMy4wMDAwMDAwMDAgKzAyMDAKQEAgLTM4LDggKzM4LDkgQEAKICAqICAgIGd1YXJhbnRlZWQg
-dG8gY29udGFpbiB1c2VmdWwgZGF0YSBpbiBzZXR1cF9hcmNoKCkKICAqCiAgKiBUaGlzIGlzIHRo
-ZSBvbGQgZGVwcmVjYXRlZCB3YXkgdG8gcGFzcyBwYXJhbWV0ZXJzIHRvIHRoZSBrZXJuZWwKKyAq
-IFNob3VsZCd2ZSBiZWVuIG9ic29sZXRlZCBieSBub3csIGFzIGl0J3MgMjAwNyBub3cKICAqLwot
-c3RydWN0IHBhcmFtX3N0cnVjdCB7CitzdHJ1Y3QgX19kZXByZWNhdGVkIHBhcmFtX3N0cnVjdCB7
-CiAgICAgdW5pb24gewogCXN0cnVjdCB7CiAJICAgIHVuc2lnbmVkIGxvbmcgcGFnZV9zaXplOwkJ
-LyogIDAgKi8KZGlmZiAtdXByTiAtWCBsaW51eC0yLjYuMjAtdmFuaWxsYS9Eb2N1bWVudGF0aW9u
-L2RvbnRkaWZmIGxpbnV4LTIuNi4yMC12YW5pbGxhL2FyY2gvYXJtL21tL21tdS5jIGxpbnV4LTIu
-Ni4yMC9hcmNoL2FybS9tbS9tbXUuYwotLS0gbGludXgtMi42LjIwLXZhbmlsbGEvYXJjaC9hcm0v
-bW0vbW11LmMJMjAwNy0wMi0xNCAxNToxMjoxOC4wMDAwMDAwMDAgKzAyMDAKKysrIGxpbnV4LTIu
-Ni4yMC9hcmNoL2FybS9tbS9tbXUuYwkyMDA3LTAyLTE0IDE1OjQ5OjMzLjAwMDAwMDAwMCArMDIw
-MApAQCAtMTE3LDE4ICsxMTcsMTYgQEAgc3RhdGljIHZvaWQgX19pbml0IGVhcmx5X2NhY2hlcG9s
-aWN5KGNoYQogfQogX19lYXJseV9wYXJhbSgiY2FjaGVwb2xpY3k9IiwgZWFybHlfY2FjaGVwb2xp
-Y3kpOwogCi1zdGF0aWMgdm9pZCBfX2luaXQgZWFybHlfbm9jYWNoZShjaGFyICoqX191bnVzZWQp
-CitfX2RlcHJlY2F0ZWQgc3RhdGljIHZvaWQgX19pbml0IGVhcmx5X25vY2FjaGUoY2hhciAqKl9f
-dW51c2VkKSAKIHsKIAljaGFyICpwID0gImJ1ZmZlcmVkIjsKLQlwcmludGsoS0VSTl9XQVJOSU5H
-ICJub2NhY2hlIGlzIGRlcHJlY2F0ZWQ7IHVzZSBjYWNoZXBvbGljeT0lc1xuIiwgcCk7CiAJZWFy
-bHlfY2FjaGVwb2xpY3koJnApOwogfQogX19lYXJseV9wYXJhbSgibm9jYWNoZSIsIGVhcmx5X25v
-Y2FjaGUpOwogCi1zdGF0aWMgdm9pZCBfX2luaXQgZWFybHlfbm93cml0ZShjaGFyICoqX191bnVz
-ZWQpCitfX2RlcHJlY2F0ZWQgc3RhdGljIHZvaWQgX19pbml0IGVhcmx5X25vd3JpdGUoY2hhciAq
-Kl9fdW51c2VkKSAKIHsKIAljaGFyICpwID0gInVuY2FjaGVkIjsKLQlwcmludGsoS0VSTl9XQVJO
-SU5HICJub3diIGlzIGRlcHJlY2F0ZWQ7IHVzZSBjYWNoZXBvbGljeT0lc1xuIiwgcCk7CiAJZWFy
-bHlfY2FjaGVwb2xpY3koJnApOwogfQogX19lYXJseV9wYXJhbSgibm93YiIsIGVhcmx5X25vd3Jp
-dGUpOwpkaWZmIC11cHJOIC1YIGxpbnV4LTIuNi4yMC12YW5pbGxhL0RvY3VtZW50YXRpb24vZG9u
-dGRpZmYgbGludXgtMi42LjIwLXZhbmlsbGEvYXJjaC9hcm0yNi9rZXJuZWwvY29tcGF0LmMgbGlu
-dXgtMi42LjIwL2FyY2gvYXJtMjYva2VybmVsL2NvbXBhdC5jCi0tLSBsaW51eC0yLjYuMjAtdmFu
-aWxsYS9hcmNoL2FybTI2L2tlcm5lbC9jb21wYXQuYwkyMDA2LTA5LTIwIDA2OjQyOjA2LjAwMDAw
-MDAwMCArMDMwMAorKysgbGludXgtMi42LjIwL2FyY2gvYXJtMjYva2VybmVsL2NvbXBhdC5jCTIw
-MDctMDItMTQgMTU6NTI6MzAuMDAwMDAwMDAwICswMjAwCkBAIC0zOCw4ICszOCw5IEBACiAgKiAg
-ICBndWFyYW50ZWVkIHRvIGNvbnRhaW4gdXNlZnVsIGRhdGEgaW4gc2V0dXBfYXJjaCgpCiAgKgog
-ICogVGhpcyBpcyB0aGUgb2xkIGRlcHJlY2F0ZWQgd2F5IHRvIHBhc3MgcGFyYW1ldGVycyB0byB0
-aGUga2VybmVsCisgKiBTaG91bGQndmUgYmVlbiBvYnNvbGV0ZWQgYnkgbm93LCBhcyBpdCdzIDIw
-MDcgbm93CiAgKi8KLXN0cnVjdCBwYXJhbV9zdHJ1Y3Qgeworc3RydWN0IF9fZGVwcmVjYXRlZCBw
-YXJhbV9zdHJ1Y3QgewogICAgIHVuaW9uIHsKIAlzdHJ1Y3QgewogCSAgICB1bnNpZ25lZCBsb25n
-IHBhZ2Vfc2l6ZTsJCS8qICAwICovCmRpZmYgLXVwck4gLVggbGludXgtMi42LjIwLXZhbmlsbGEv
-RG9jdW1lbnRhdGlvbi9kb250ZGlmZiBsaW51eC0yLjYuMjAtdmFuaWxsYS9hcmNoL2FybTI2L2tl
-cm5lbC9zZXR1cC5jIGxpbnV4LTIuNi4yMC9hcmNoL2FybTI2L2tlcm5lbC9zZXR1cC5jCi0tLSBs
-aW51eC0yLjYuMjAtdmFuaWxsYS9hcmNoL2FybTI2L2tlcm5lbC9zZXR1cC5jCTIwMDctMDItMTQg
-MTU6MDQ6MTYuMDAwMDAwMDAwICswMjAwCisrKyBsaW51eC0yLjYuMjAvYXJjaC9hcm0yNi9rZXJu
-ZWwvc2V0dXAuYwkyMDA3LTAyLTE0IDE1OjU2OjU3LjAwMDAwMDAwMCArMDIwMApAQCAtMzU0LDkg
-KzM1NCw4IEBAIHN0YXRpYyBpbnQgX19pbml0IHBhcnNlX3RhZ19yYW1kaXNrKGNvbnMKIAogX190
-YWd0YWJsZShBVEFHX1JBTURJU0ssIHBhcnNlX3RhZ19yYW1kaXNrKTsKIAotc3RhdGljIGludCBf
-X2luaXQgcGFyc2VfdGFnX2luaXRyZChjb25zdCBzdHJ1Y3QgdGFnICp0YWcpCitfX2RlcHJlY2F0
-ZWQgc3RhdGljIGludCBfX2luaXQgcGFyc2VfdGFnX2luaXRyZChjb25zdCBzdHJ1Y3QgdGFnICp0
-YWcpCiB7Ci0JcHJpbnRrKEtFUk5fV0FSTklORyAiQVRBR19JTklUUkQgaXMgZGVwcmVjYXRlZDsg
-cGxlYXNlIHVwZGF0ZSB5b3VyIGJvb3Rsb2FkZXIuIFxuIik7CiAgICAgICAgIHBoeXNfaW5pdHJk
-X3N0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdGFnLT51LmluaXRyZC5zdGFydDsKICAgICAgICAgcGh5
-c19pbml0cmRfc2l6ZSA9ICh1bnNpZ25lZCBsb25nKXRhZy0+dS5pbml0cmQuc2l6ZTsKIAlyZXR1
-cm4gMDsKQEAgLTM2NCw5ICszNjMsOCBAQCBzdGF0aWMgaW50IF9faW5pdCBwYXJzZV90YWdfaW5p
-dHJkKGNvbnN0CiAKIF9fdGFndGFibGUoQVRBR19JTklUUkQsIHBhcnNlX3RhZ19pbml0cmQpOwog
-Ci1zdGF0aWMgaW50IF9faW5pdCBwYXJzZV90YWdfaW5pdHJkMihjb25zdCBzdHJ1Y3QgdGFnICp0
-YWcpCitfX2RlcHJlY2F0ZWQgc3RhdGljIGludCBfX2luaXQgcGFyc2VfdGFnX2luaXRyZDIoY29u
-c3Qgc3RydWN0IHRhZyAqdGFnKQogewotCXByaW50ayhLRVJOX1dBUk5JTkcgIkFUQUdfSU5JVFJE
-IGlzIGRlcHJlY2F0ZWQ7IHBsZWFzZSB1cGRhdGUgeW91ciBib290bG9hZGVyLiBcbiIpOwogCXBo
-eXNfaW5pdHJkX3N0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdGFnLT51LmluaXRyZC5zdGFydDsKIAlw
-aHlzX2luaXRyZF9zaXplID0gKHVuc2lnbmVkIGxvbmcpdGFnLT51LmluaXRyZC5zaXplOwogCXJl
-dHVybiAwOwo=
-------=_Part_63199_30748873.1171466543224
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+diff -uprN -X linux-2.6.20-vanilla/Documentation/dontdiff 
+linux-2.6.20-vanilla/arch/arm/kernel/compat.c 
+linux-2.6.20/arch/arm/kernel/compat.c
+--- linux-2.6.20-vanilla/arch/arm/kernel/compat.c    2006-09-20 
+06:42:06.000000000 +0300
++++ linux-2.6.20/arch/arm/kernel/compat.c    2007-02-14 
+15:43:03.000000000 +0200
+@@ -38,8 +38,9 @@
+  *    guaranteed to contain useful data in setup_arch()
+  *
+  * This is the old deprecated way to pass parameters to the kernel
++ * Should've been obsoleted by now, as it's 2007 now
+  */
+-struct param_struct {
++struct __deprecated param_struct {
+     union {
+     struct {
+         unsigned long page_size;        /*  0 */
+diff -uprN -X linux-2.6.20-vanilla/Documentation/dontdiff 
+linux-2.6.20-vanilla/arch/arm/mm/mmu.c linux-2.6.20/arch/arm/mm/mmu.c
+--- linux-2.6.20-vanilla/arch/arm/mm/mmu.c    2007-02-14 
+15:12:18.000000000 +0200
++++ linux-2.6.20/arch/arm/mm/mmu.c    2007-02-14 15:49:33.000000000 +0200
+@@ -117,18 +117,16 @@ static void __init early_cachepolicy(cha
+ }
+ __early_param("cachepolicy=", early_cachepolicy);
+ 
+-static void __init early_nocache(char **__unused)
++__deprecated static void __init early_nocache(char **__unused)
+ {
+     char *p = "buffered";
+-    printk(KERN_WARNING "nocache is deprecated; use cachepolicy=%s\n", p);
+     early_cachepolicy(&p);
+ }
+ __early_param("nocache", early_nocache);
+ 
+-static void __init early_nowrite(char **__unused)
++__deprecated static void __init early_nowrite(char **__unused)
+ {
+     char *p = "uncached";
+-    printk(KERN_WARNING "nowb is deprecated; use cachepolicy=%s\n", p);
+     early_cachepolicy(&p);
+ }
+ __early_param("nowb", early_nowrite);
+diff -uprN -X linux-2.6.20-vanilla/Documentation/dontdiff 
+linux-2.6.20-vanilla/arch/arm26/kernel/compat.c 
+linux-2.6.20/arch/arm26/kernel/compat.c
+--- linux-2.6.20-vanilla/arch/arm26/kernel/compat.c    2006-09-20 
+06:42:06.000000000 +0300
++++ linux-2.6.20/arch/arm26/kernel/compat.c    2007-02-14 
+15:52:30.000000000 +0200
+@@ -38,8 +38,9 @@
+  *    guaranteed to contain useful data in setup_arch()
+  *
+  * This is the old deprecated way to pass parameters to the kernel
++ * Should've been obsoleted by now, as it's 2007 now
+  */
+-struct param_struct {
++struct __deprecated param_struct {
+     union {
+     struct {
+         unsigned long page_size;        /*  0 */
+diff -uprN -X linux-2.6.20-vanilla/Documentation/dontdiff 
+linux-2.6.20-vanilla/arch/arm26/kernel/setup.c 
+linux-2.6.20/arch/arm26/kernel/setup.c
+--- linux-2.6.20-vanilla/arch/arm26/kernel/setup.c    2007-02-14 
+15:04:16.000000000 +0200
++++ linux-2.6.20/arch/arm26/kernel/setup.c    2007-02-14 
+15:56:57.000000000 +0200
+@@ -354,9 +354,8 @@ static int __init parse_tag_ramdisk(cons
+ 
+ __tagtable(ATAG_RAMDISK, parse_tag_ramdisk);
+ 
+-static int __init parse_tag_initrd(const struct tag *tag)
++__deprecated static int __init parse_tag_initrd(const struct tag *tag)
+ {
+-    printk(KERN_WARNING "ATAG_INITRD is deprecated; please update your 
+bootloader. \n");
+         phys_initrd_start = (unsigned long)tag->u.initrd.start;
+         phys_initrd_size = (unsigned long)tag->u.initrd.size;
+     return 0;
+@@ -364,9 +363,8 @@ static int __init parse_tag_initrd(const
+ 
+ __tagtable(ATAG_INITRD, parse_tag_initrd);
+ 
+-static int __init parse_tag_initrd2(const struct tag *tag)
++__deprecated static int __init parse_tag_initrd2(const struct tag *tag)
+ {
+-    printk(KERN_WARNING "ATAG_INITRD is deprecated; please update your 
+bootloader. \n");
+     phys_initrd_start = (unsigned long)tag->u.initrd.start;
+     phys_initrd_size = (unsigned long)tag->u.initrd.size;
+     return 0;
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------=_Part_63199_30748873.1171466543224--
