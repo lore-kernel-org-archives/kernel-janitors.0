@@ -1,64 +1,49 @@
-From: "Nish Aravamudan" <nish.aravamudan@gmail.com>
-Date: Sun, 18 Feb 2007 18:11:54 +0000
-Subject: Re: [KJ] discouraging the introduction of unnecessary typedefs
-Message-Id: <29495f1d0702181011i262ed557g57887574c3d373ee@mail.gmail.com>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Wed, 14 Feb 2007 04:48:57 +0000
+Subject: Warning: message 1HH1RK-0007Nq-W1 delayed 10 hours
+Message-Id: <E1HHC4f-0005mM-2a@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702180700400.4148@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702180700400.4148@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On 2/18/07, Randy Dunlap <rdunlap@xenotime.net> wrote:
-> On Sun, 18 Feb 2007 07:49:46 -0500 (EST) Robert P. J. Day wrote:
->
-> > On Sun, 18 Feb 2007, Robert P. J. Day wrote:
-> >
-> > >
-> > >   Chapter 5 of the CodingStyle doc is fairly unambiguous in
-> > > recommending against introducing new typedefs, but it appears some
-> > > people can't help themselves:
-> > >
-> > > $ grep -rw mutex_t *
-> > > fs/xfs/support/uuid.c:static mutex_t    uuid_monitor;
-> > > fs/xfs/xfs_mount.h:     mutex_t                 m_ilock;        /* inode list mutex */
-> > > fs/xfs/quota/xfs_qm.h:extern mutex_t            xfs_Gqm_lock;
-> > > fs/xfs/quota/xfs_qm.h:       mutex_t             qh_lock;
-> > > fs/xfs/quota/xfs_qm.h:  mutex_t          qi_quotaofflock;/* to serialize quotaoff */
-> > > fs/xfs/quota/xfs_qm.c:mutex_t           xfs_Gqm_lock;
-> > > fs/xfs/quota/xfs_qm.c:extern mutex_t    qcheck_lock;
-> > > fs/xfs/quota/xfs_qm_syscalls.c:mutex_t        qcheck_lock;
-> > > fs/xfs/quota/xfs_dquot.h:       mutex_t           qh_lock;
-> > > fs/xfs/quota/xfs_dquot.h:       mutex_t          q_qlock;       /* quota lock */
-> > > fs/xfs/linux-2.6/mutex.h:typedef struct mutex mutex_t;
-> > >
-> > >   not a big deal, of course, but if the recommended coding style is
-> > > that opposed to adding typedefs, perhaps this sort of thing should be
-> > > nipped in the bud before it gets any more widespread.
-> >
-> >   actually, i just took a closer look and the XFS code is particularly
-> > bad about introducing new typedefs just for programmer convenience.
-> > the directory fs/xfs/linux-2.6 contains the header files mrlock.h,
-> > mutex.h, sema.h and spin.h (among others) that introduce these
-> > typedefs.
-> >
-> >   apparently, the XFS people have never read the CodingStyle doc.  :-)
->
-> It could be that.  Or it could be that they use the same code on
-> multiple OSes and have a need to keep it the same on those various
-> systems.  They do indeed use the XFS code in more than one place,
-> so it could just be a portability issue.
-> (not that that is a high priority for Linux code or style)
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforg=
+e.net.
 
-They also tend to be slightly resistant to patches that change this
-(perhaps with good reason), IME. XFS is a corner-case for the kernel,
-maintenance wise, I would probably leave it alone (like OSS, for a
-different reason).
+The message identifier is:     1HH1RK-0007Nq-W1
+The subject of the message is: suppositorys that you demand.
+The date of the message is:    Tue, 13 Feb 2007 18:27:48 +0100
 
-Thanks,
-Nish
+The address to which the message has not yet been delivered is:
+
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
+or-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
+r verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter=
+ case,
+    451-you need to change the address or create an MX record for its domain
+    4
+
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
