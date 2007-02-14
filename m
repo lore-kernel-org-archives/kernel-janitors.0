@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Wed, 14 Feb 2007 21:02:28 +0000
+From: Frederik Deweerdt <deweerdt@free.fr>
+Date: Wed, 14 Feb 2007 21:31:50 +0000
 Subject: Re: [KJ] What does "loopmount" mean?
-Message-Id: <20070214130228.72ab22a0.rdunlap@xenotime.net>
+Message-Id: <20070215210031.GE7749@slug>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <45D3E149.4060208@minimum.se>
 In-Reply-To: <45D3E149.4060208@minimum.se>
@@ -10,21 +10,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 14 Feb 2007 20:27:53 -0800 Martin Olsson wrote:
-
+On Wed, Feb 14, 2007 at 08:27:53PM -0800, Martin Olsson wrote:
 > Hi,
 > 
 > I'm wondering, what does "loopmount" mean? This word is used for 
 > instance here:
 > 
 > http://specialreports.linux.com/article.pl?sid/02/09/0859248&tid8&tidG
+> 
+Hi,
 
-It means to mount via a loop device.
-Maybe 'man losetup' will help.
+They're probably refering to mounting an image using the loop device.
+http://en.wikipedia.org/wiki/Loop_device
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Regards,
+Frederik
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
