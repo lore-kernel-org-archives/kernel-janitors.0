@@ -1,36 +1,57 @@
-From: "Roderick Chappell" <validity'smapped@accubid.com>
-Date: Mon, 05 Feb 2007 15:33:23 +0000
-Subject: [KJ] Woodrow  did you got HPGI ?
-Message-Id: <01c74935$f14761f0$6c822ecf@validity'smapped>
+From: yaser osman <ganar20042000@yahoo.com>
+Date: Thu, 15 Feb 2007 20:05:42 +0000
+Subject: [KJ]  CENTRAL BANK OF WEST AFRICA (BCEAO)
+Message-Id: <759422.13851.qm@web53804.mail.yahoo.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0243617065=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good morning.
+This is a multi-part message in MIME format...
 
-I has found thisone on last monday and it already flying.
-This new gold companies are doing amazing things.
+--===============0243617065==
+Content-Type: multipart/alternative;
+    boundary="----------=_1171569971-17164-264"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-HPGI just released news.
+This is a multi-part message in MIME format...
 
-Hemisphere Gold Discovers a Series of Gold Anomalies Trending North-South for Over 20 km
-Monday February 5, 6:30 am ET
-Company Reports on Initial Stream Sediment Sampling Program
+------------=_1171569971-17164-264
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-RENO, Nev.--(BUSINESS WIRE)--Hemisphere Gold Inc. (PINK SHEETS:HPGI - News), a gold exploration, property acquisition and mining development company, is pleased to announce initial stream sediment sampling results at its South American property in Suriname, which point to a number of gold anomalies with individual sample values up to 25,000 ppb gold.
+ 
+  sr   i'm Yassir Osman Ganar i want to ask you if there any Gift in the Bank by this name or n't .
+  thank you very much 
 
-Hemisphere Gold's wholly owned subsidiary "Orion Resources NV" ("Orion") started the first phase of successive exploration activities at primary or bedrock gold occurrences in its concessions, with an extensive stream sediment-sampling program. In this program only the geologically potential gold area was included. The stream sediment-sampling program was divided in several field periods of 6 weeks. The concessions are located partly in the district of Brokopondo where the creeks flow into the Blommenstein reservoir, forming part of the drainage area of the Suriname River, and the district of Sipaliwini where the creeks are part of the drainage area 
+ 
+---------------------------------
+ Get your own web address.
+ Have a HUGE year through Yahoo! Small Business.
+------------=_1171569971-17164-264
+Content-Type: text/html; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-Look at news and charts.
-I am bring you only best picks.
-Another explotion will start from today. And will lead us to 2.2 per share.
+<div>&nbsp;</div>  <div>sr&nbsp; &nbsp;i'm Yassir Osman Ganar i want to ask you if there any Gift in the Bank&nbsp;by this name or n't&nbsp;.</div>  <div>thank you very much&nbsp;</div><p>&#32;
 
+<hr size=1>
+<a href="http://us.rd.yahoo.com/evt=49678/*http://smallbusiness.yahoo.com/domains/?p=BESTDEAL"> Get your own web address.</a><br> Have a HUGE year through <a href="
+http://us.rd.yahoo.com/evt=49678/*http://smallbusiness.yahoo.com/domains/?p=BESTDEAL">Yahoo! Small Business.</a>
+------------=_1171569971-17164-264--
 
-
+--===============0243617065==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+--===============0243617065==--
