@@ -1,31 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat, 17 Feb 2007 18:48:51 +0000
-Subject: Re: [KJ] using "mutexes" in place of semaphores
-Message-Id: <200702171948.52018.arnd@arndb.de>
+From: devzero@web.de
+Date: Thu, 15 Feb 2007 19:34:55 +0000
+Subject: Re: [KJ] janitor project: fix gcc 4 warnings
+Message-Id: <1629018918@web.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702170735460.23474@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702170735460.23474@CPE00045a9c397f-CM001225dbafb6>
+References: <20041219190903.GA30192@muc.de>
+In-Reply-To: <20041219190903.GA30192@muc.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Saturday 17 February 2007 17:39, Robert P. J. Day wrote:
-> waitaminnit. =A0you're not claiming that a currently-locked semaphore is
-> exactly equivalent to a completion, are you?
->=20
-> as i read it, calling "complete()" on a completion will wake *all*
-> processes waiting for that completion, no? =A0not just one, as a
-> semaphore would.
->=20
-> so i'm assuming what you're saying is that, in many places where you
-> see a "sema_init(sem, 0)", it would be *appropriate* to have used a
-> completion instead, is that what you meant? =A0thanks.
->=20
-Right, I looked at three instances where sema_init(sem, 0) was used,
-and two of them use it only to do what a completion does.
+Hello !
 
-	Arnd <><
+i recognized that there are still quite a reasonable number of warnings whe=
+n i compile a kernel, especially with allmodconfig.
+
+is there somebody systematically working on fixing those warnings being lef=
+t over in kernel source ?
+
+i&#180;m really a newbie to kernel development and not really a good C prog=
+rammer, but i`d like to try to help fix those warnings. maybe this will fre=
+shen up my programming skills a little bit.
+
+btw - http://developer.osdl.org/cherry/compile/ seems to be very outdated -=
+ wouldn&#180;t it be good to monitor the "warnings regression" between kern=
+el releases?
+
+whenever i compile a kernel, i move that window to my second screen and whe=
+never gcc spits out a warning, this draws someone`s attention. leaving that=
+ feeling "uuuhhh, ohhh - there must be something wrong with the kernel...."
+
+so, is this the right place to discuss such fixes ?
+anybody to volunteer on systematically fixing those warnings ?
+
+regards
+roland
+
+sysadmin
+
+
+_______________________________________________________________________
+Viren-Scan f=FCr Ihren PC! Jetzt f=FCr jeden. Sofort, online und kostenlos.
+Gleich testen! http://www.pc-sicherheit.web.de/freescan/?mc=022222
+
 
 _______________________________________________
 Kernel-janitors mailing list
