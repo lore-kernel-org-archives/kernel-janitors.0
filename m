@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Fri, 16 Feb 2007 20:23:25 +0000
+Date: Fri, 16 Feb 2007 20:28:26 +0000
 Subject: Re: [KJ] removing R/W semaphore content from standard semaphore.h
-Message-Id: <Pine.LNX.4.64.0702161511520.20237@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <Pine.LNX.4.64.0702161524480.20237@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702161405230.3503@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0702161405230.3503@CPE00045a9c397f-CM001225dbafb6>
@@ -11,62 +11,51 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 On Fri, 16 Feb 2007, Randy Dunlap wrote:
-
-> On Fri, 16 Feb 2007 14:10:19 -0500 (EST) Robert P. J. Day wrote:
+...
+> >   however, some of the semaphore.h files contain the following macro
+> > definition:
+> >
+> > $ grep RW_LOCK_BIAS $(find . -name semaphore.h)
+> > ./include/asm-frv/semaphore.h:#define RW_LOCK_BIAS               0x01000000
+> > ./include/asm-m68knommu/semaphore.h:#define RW_LOCK_BIAS         0x01000000
+> > ./include/asm-m68k/semaphore.h:#define RW_LOCK_BIAS              0x01000000
+> > ./include/asm-h8300/semaphore.h:#define RW_LOCK_BIAS             0x01000000
+> > ./include/asm-cris/semaphore.h:#define RW_LOCK_BIAS              0x01000000
+> >
+> >   for the same reason as above, i'm fairly certain that *those*
+> > macros should be removed from the regular semaphore.h files.
+> > what does that macro represent?  and where should it *properly* be
+> > defined?  thanks.
 >
-> >   if someone could clarify this, i'd appreciate it.  i recently
-> > submitted a patch that removed any inclusions of "linux/rwsem.h"
-> > from the semaphore.h files, since standard semaphore header files
-> > should *not* be pulling in any R/W sem stuff -- the R/W semaphores
-> > now have their own rwsem.h header file.
->
-> My turn for a question:  when you make such a change that affects
-> many $ARCH (arch/*), do you build multiple architectures to see if
-> the patch causes any problems?
+> RW_LOCK_BIAS seems to be explained (only) in
+> include/asm-arm*/locks.h:
+> /*
+>  * The value 0x01000000 supports up to 128 processors and
+>  * lots of processes.  BIAS must be chosen such that sub'ing
+>  * BIAS once per CPU will result in the long remaining
+>  * negative.
+>  */
+> #define RW_LOCK_BIAS      0x01000000
 
-  no, since i have access only to an x86 platform.  but in answer to
-the question you *really* wanted to ask, no, i don't think i'm being
-irresponsible in submitting multi-arch patches when i can't actually
-test them, since i tend to restrict those patches to fairly obvious
-stuff.
+i'm guessing there's some cleanup to be done here since look at the
+variety of files that define that macro:
 
-  in this case, even though this is touching every arch-specific
-semaphore.h file (and could conceivably break stuff), even a couple of
-those header files openly admit that R/W sem stuff shouldn't be in
-them anymore, as in:
+$ grep -rl "#define RW_LOCK_BIAS" *
+include/asm-frv/semaphore.h
+include/asm-arm26/locks.h
+include/asm-m68knommu/semaphore.h
+include/asm-i386/rwlock.h
+include/asm-sh/spinlock_types.h
+include/asm-arm/locks.h
+include/asm-m32r/spinlock_types.h
+include/asm-m68k/semaphore.h
+include/asm-h8300/semaphore.h
+include/asm-x86_64/rwlock.h
+include/asm-cris/arch-v32/spinlock.h
+include/asm-cris/semaphore.h
 
-/*
- * Remove spinlock-based RW semaphores; RW semaphore definitions are
- * now in rwsem.h and we use the generic lib/rwsem.c implementation...
-
-that makes me feel fairly confident that i'm doing the right thing.
-and the only breakage that might occur is if some code has needed R/W
-semaphores but has been picking up the definitions thru semaphore.h
-simply by accident all this time.
-
-  i tested that patch under x86 and i found only *one* header file
-that had that property -- include/linux/quota.h -- for which a patch i
-submitted has already been applied:
-
-commit ae4472aa03d38b11f334dc0030b82e0c9f249af9
-Author: Robert P. J. Day <rpjday@mindspring.com>
-Date:   Mon Feb 12 00:51:52 2007 -0800
-
-    [PATCH] QUOTA: Have <linux/quota.h> include <linux/rwsem.h> explicitly
-
-    Since quota.h declares a R/W semaphore, it should include rwsem.h
-    explicitly.
-
-    Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
-    Acked-by: Jan Kara <jack@suse.cz>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-so the fact that jan, andrew and linus agree with my logic makes me
-feel like i'm on safe ground here.  and if that patch *does* cause
-some other architecture build to break, then, quite simply, that
-architecture has a bug in the code and it's easily fixed with a simple
-#include.
+  so who should be defining it?  semaphore.h?  locks.h?  spinlock.h?
+rwlock.h?  spinlock_types.h?  definitely a bit of a mess, no?
 
 rday
 
