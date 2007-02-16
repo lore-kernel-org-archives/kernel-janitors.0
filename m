@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 15 Feb 2007 21:33:18 +0000
-Subject: Warning: message 1HGwUX-0001QN-OO delayed 48 hours
-Message-Id: <E1HHoEA-0007w2-2z@externalmx-1.sourceforge.net>
+Date: Fri, 16 Feb 2007 18:32:00 +0000
+Subject: Warning: message 1HGwUX-0001QN-OO delayed 72 hours
+Message-Id: <E1HI7sG-0002F2-Eh@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HH76p-0001k0-Jg@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HH76p-0001k0-Jg@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1HGwUX-0001QN-OO
