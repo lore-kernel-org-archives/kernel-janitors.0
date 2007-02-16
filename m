@@ -1,36 +1,40 @@
-From: "Liv Rideout" <confuciusujenson@calty.toyota.com>
-Date: Sat, 03 Feb 2007 22:56:10 +0000
-Subject: Re: new quint
-Message-Id: <01c747e6$7f274a40$2002a8c0@SN104676430311>
+From: Oleg Verych <olecom@flower.upol.cz>
+Date: Fri, 16 Feb 2007 16:13:22 +0000
+Subject: Nack Re: [KJ] [PATCH] is_power_of_2 in ia64mm
+Message-Id: <slrnetbmim.fkn.olecom@flower.upol.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+> From: Vignesh Babu BM
+> Newsgroups: gmane.linux.kernel.janitors,gmane.linux.kernel.mm,gmane.linux=
+.ports.ia64,gmane.linux.kernel
+> Subject: [KJ] [PATCH] is_power_of_2 in ia64mm
+> Date: Fri, 16 Feb 2007 17:33:55 +0530
 
-Vinagra - 3. 35
-Vanlium - 1. 25
-Cinalis - 3. 75
-Amnbien - 2. 90
+[]
+> Replacing (n & (n-1)) in the context of power of 2 checks
+> with is_power_of_2
 
-http://lodrx!com
+And this may be
+* not_odd()
+* ! odd()
+* even()
+* etc.
 
-Important, Replace "!" with "."
+So, let's do not turn C in English, huh?
 
---
-
-Harry, Ron, and Hermione went up to the Owlery after breakfast on Sunday
-to send a letter to Percy, asking, as Sirius had suggested, whether he
-had seen Mr. Crouch lately. They used Hedwig, because it had been so
+____
 
 
 -------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier.
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
 Kernel-janitor-discuss mailing list
 Kernel-janitor-discuss@lists.sourceforge.net
