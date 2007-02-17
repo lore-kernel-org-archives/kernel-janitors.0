@@ -1,46 +1,43 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Fri, 09 Feb 2007 06:19:00 +0000
-Subject: Warning: message 1HEIUi-0000UR-NU delayed 72 hours
-Message-Id: <E1HFP64-0005Fl-Vw@externalmx-1.sourceforge.net>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 17 Feb 2007 12:48:10 +0000
+Subject: [KJ] using "mutexes" in place of semaphores
+Message-Id: <Pine.LNX.4.64.0702170735460.23474@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HEz0S-0007Sf-GL@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HEz0S-0007Sf-GL@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
 
-The message identifier is:     1HEIUi-0000UR-NU
-The subject of the message is: thine for riches of the bitter Cry have mercy
-The date of the message is:    Mon, 05 Feb 2007 21:03:44 -0800
+  another possible aesthetic cleanup is to replace the use of general
+semaphores that are initialized to 1 with the simpler reference to an
+actual "mutex" (since, after all, that's what mutexes are there for).
 
-The address to which the message has not yet been delivered is:
+  there's a small number of semaphore initializations of the form
+"sema_init(&sem, 1)" that could be rewritten as the simpler
+"init_MUTEX(&sem)".  in some places, the name of the semaphore itself
+makes it clear that it's a mutex anyway, such as:
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter case,
-    451-you need to change the address or create an MX record for its domain
-    4
+  drivers/scsi/megaraid/megaraid_sas.c: sema_init(&instance->aen_mutex, 1);
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
+a quick count shows that there's only a couple dozen instances of
+calling sema_init() with a count of 1, while there are many more calls
+of init_MUTEX() in the tree, suggesting that init_MUTEX() really is
+the preferred standard.
 
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier.
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+  thoughts?  is this worth it?
+
+rday
+
+--
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
