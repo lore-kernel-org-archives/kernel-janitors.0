@@ -1,47 +1,79 @@
-From: Vignesh Babu BM <vignesh.babu@wipro.com>
-Date: Tue, 20 Feb 2007 08:01:16 +0000
-Subject: [KJ] [PATCH] is_power_of_2 in ext3
-Message-Id: <1171957756.6127.63.camel@wriver-t81fb058.linuxcoe>
+From: "Judsonu Romeo" <okehbecs@ukpeoplefinder.com>
+Date: Sat, 17 Feb 2007 23:53:01 +0000
+Subject: Re: troposphere diode
+Message-Id: <09a601c75359$3edd27e0$4641a0c0@ibucknella>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1719002563=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+--===============1719002563==
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0003_03B3B84E.A13A1EA0"
+
+------=_NextPart_000_0003_03B3B84E.A13A1EA0
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_0003_03B3B84E.A13A1EA0"
+
+
+------=_NextPart_001_0003_03B3B84E.A13A1EA0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+ statewide tour and plans to begin a 24-hour campaign blitz in St. Louis on Friday  on terror. "If they say they want to win the war on terror, but call for America   battling a wildfire was July 1994, when 14 were killed near  Republicans are all calling for change, he's desperately clinging to his stay the   update outlined factual information about the crash, but did not conclude what the 
+ in an update on the crash. Lidle and Stanger were making an aerial tour of Manhattan
+Critical Care Inc.
+C T C X
+BRAKING N E W S hit wire after market close
+This co is shooting skyward
+4 day campaign underway
+Get in before the rush on Tuesday Feb 20th
+Currently priced at: .80
+Expected: .00 
+Get in before Market open and ride it all week
+
+------=_NextPart_001_0003_03B3B84E.A13A1EA0
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><META http-equiv=3DContent-Type content=3D"text/html; =charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.1409" name=3DGENERATOR></HEAD><BODY><DIV>
+<FONT color=#000000 size=1> statewide tour and plans to begin a 24-hour campaign blitz in St. Louis on Friday  on terror. "If they say they want to win the war on terror, but call for America   battling a wildfire was July 1994, when 14 were killed near  Republicans are all calling for change, he's desperately clinging to his stay the   update outlined factual information about the crash, but did not conclude what the </FONT><BR><FONT face=Arial color=#ff0000 size=3>
+<b>Critical Care Inc.<BR>C T C X<BR></FONT><FONT color=#0000f0>
+BRAKING N E W S hit wire after market close</FONT><BR><FONT color=#0000f0>
+This co is shooting skyward</FONT><BR><FONT color=#800800>4 day campaign underway<BR
+>Get in before the rush on Tuesday Feb 20th<BR>Currently priced at: $.80<BR>Expected: $5.00
+<BR>Get in before Market open and ride it all week</B></FONT></DIV><DIV>
+<FONT face=Arial size=1></FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0003_03B3B84E.A13A1EA0--
+
+
+------=_NextPart_000_0003_03B3B84E.A13A1EA0--
+
+--===============1719002563==
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors List <kernel-janitors@lists.osdl.org>
-Cc: sct@redhat.com, akpm@osdl.org, adilger@clusterfs.com, linux-ext4@vger.kernel.org
+Content-Disposition: inline
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============1719002563==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/fs/ext3/super.c b/fs/ext3/super.c
-index b348867..6a86e98 100644
---- a/fs/ext3/super.c
-+++ b/fs/ext3/super.c
-@@ -35,6 +35,7 @@
- #include <linux/namei.h>
- #include <linux/quotaops.h>
- #include <linux/seq_file.h>
-+#include <linux/log2.h>
- 
- #include <asm/uaccess.h>
- 
-@@ -1565,7 +1566,7 @@ static int ext3_fill_super (struct super_block *sb, void *data, int silent)
- 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
- 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
- 		if ((sbi->s_inode_size < EXT3_GOOD_OLD_INODE_SIZE) ||
--		    (sbi->s_inode_size & (sbi->s_inode_size - 1)) ||
-+		    !is_power_of_2(sbi->s_inode_size) ||
- 		    (sbi->s_inode_size > blocksize)) {
- 			printk (KERN_ERR
- 				"EXT3-fs: unsupported inode size: %d\n",
-
--- 
-Regards,  
-Vignesh Babu BM  
-_____________________________________________________________  
-"Why is it that every time I'm with you, makes me believe in magic?"
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============1719002563==--
