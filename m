@@ -1,42 +1,34 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 17 Feb 2007 12:48:10 +0000
-Subject: [KJ] using "mutexes" in place of semaphores
-Message-Id: <Pine.LNX.4.64.0702170735460.23474@CPE00045a9c397f-CM001225dbafb6>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sat, 17 Feb 2007 13:56:13 +0000
+Subject: Re: [KJ] using "mutexes" in place of semaphores
+Message-Id: <200702171456.14400.arnd@arndb.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0702170735460.23474@CPE00045a9c397f-CM001225dbafb6>
+In-Reply-To: <Pine.LNX.4.64.0702170735460.23474@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+On Saturday 17 February 2007 13:48, Robert P. J. Day wrote:
+> a quick count shows that there's only a couple dozen instances of
+> calling sema_init() with a count of 1, while there are many more calls
+> of init_MUTEX() in the tree, suggesting that init_MUTEX() really is
+> the preferred standard.
+>=20
+> =A0 thoughts? =A0is this worth it?
 
-  another possible aesthetic cleanup is to replace the use of general
-semaphores that are initialized to 1 with the simpler reference to an
-actual "mutex" (since, after all, that's what mutexes are there for).
+I guess you missed the important point here, which is that we're also
+trying to get rid of the usage of a struct semaphore as a mutex.
 
-  there's a small number of semaphore initializations of the form
-"sema_init(&sem, 1)" that could be rewritten as the simpler
-"init_MUTEX(&sem)".  in some places, the name of the semaphore itself
-makes it clear that it's a mutex anyway, such as:
+Basically, every instance of init_MUTEX() can (and should) be converted
+to using mutex_init() on a struct mutex. Those few places that call
+sema_init with a count of one are probably just a subset of these.
+Similarly, most of the occurences of sema_init(sem, 0) seem to be
+the kind that should be converted to 'struct completion'.
 
-  drivers/scsi/megaraid/megaraid_sas.c: sema_init(&instance->aen_mutex, 1);
+	Arnd <><
 
-a quick count shows that there's only a couple dozen instances of
-calling sema_init() with a count of 1, while there are many more calls
-of init_MUTEX() in the tree, suggesting that init_MUTEX() really is
-the preferred standard.
-
-  thoughts?  is this worth it?
-
-rday
-
---
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
