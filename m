@@ -1,8 +1,10 @@
-From: "Alexandrie Stelzer" <vanego@mail2shirley.com>
-Date: Mon, 19 Feb 2007 13:25:35 +0000
+From: "Raj Polly" <lakshmamccul@safeshores.org>
+Date: Mon, 19 Feb 2007 13:25:36 +0000
 Subject: [KJ] on bowti
-Message-Id: <01c75429$70398a80$acff0453@cyganek800861d>
+Message-Id: <01c75429$70d6dbf0$acff0453@cyganek800861d>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c75429$70398a80$acff0453@cyganek800861d>
+In-Reply-To: <01c75429$70398a80$acff0453@cyganek800861d>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
