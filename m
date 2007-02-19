@@ -1,54 +1,50 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Fri, 16 Feb 2007 18:02:39 +0000
-Subject: Re: [KJ] how do config options disappear from the "defconfig" files?
-Message-Id: <Pine.LNX.4.64.0702161259320.1337@CPE00045a9c397f-CM001225dbafb6>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Mon, 19 Feb 2007 22:17:14 +0000
+Subject: Warning: message 1HJ5uw-0001Sm-Vr delayed 10 hours
+Message-Id: <E1HJGos-0000Mp-Em@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702160939220.29917@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702160939220.29917@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 16 Feb 2007, Adrian Bunk wrote:
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforg=
+e.net.
 
-> On Fri, Feb 16, 2007 at 09:40:46AM -0500, Robert P. J. Day wrote:
-> >
-> >   i just want to clarify one point about all of the defconfig files in
-> > the source tree.  if a CONFIG option is removed from the Kconfig
-> > infrastructure, does that corresponding entry eventually disappear
-> > from all of the defconfig files based on an automatic build at some
-> > point?  thanks.
->
-> Not automatically.
->
-> Architecture maintainers sometimes [1] update the defconfig files
-> for their architectures.
->
-> But don't bother - a dead option in a defconfig file doesn't do any
-> harm, and manually removing options from defconfig files only causes
-> never ending patch conflicts.
+The message identifier is:     1HJ5uw-0001Sm-Vr
+The date of the message is:    Mon, 19 Feb 2007 10:38:30 +0000
+The subject of the message is: Must Have apothecary we mention: particular =
+reduction.XAsS
 
-oh, i had *no* intention of submitting patches to do any of that.  i
-tried that once and was told politely but firmly that those options
-would "eventually" disappear on their own so just leave them alone.
+The address to which the message has not yet been delivered is:
 
-i was more interested in whether there was a process that would
-eventually *automatically* remove them, or whether it was a manual
-decision.  from what you say, it sounds like manual maintainer
-intervention.  that's all i wanted to clarify.  thanks.
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
+or-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
+r verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter=
+ case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
-rday
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
