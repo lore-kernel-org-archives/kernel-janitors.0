@@ -1,46 +1,34 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Tue, 13 Feb 2007 23:33:52 +0000
-Subject: Warning: message 1HFx5j-0004Cl-GK delayed 72 hours
-Message-Id: <E1HH79k-0002HR-T1@externalmx-1.sourceforge.net>
+From: "Alexandrie Stelzer" <vanego@mail2shirley.com>
+Date: Mon, 19 Feb 2007 13:25:35 +0000
+Subject: [KJ] on bowti
+Message-Id: <01c75429$70398a80$acff0453@cyganek800861d>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HG8MX-0004Xy-AV@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HG8MX-0004Xy-AV@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
+Hi,
 
-The message identifier is:     1HFx5j-0004Cl-GK
-The subject of the message is: which hath made I have set judges, are brought
-The date of the message is:    Sat, 10 Feb 2007 22:36:42 +0400
+VIAvvGRA $3. 35
+VALvvIUM $1. 25
+CIAvvLIS $3. 75
+XAvvNAX
+SOvvMA
 
-The address to which the message has not yet been delivered is:
+FOR LESS!
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter case,
-    451-you need to change the address or create an MX record for its domain
-    4
+http://vedrx.+com
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
+Remove "+" in the above link
 
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier.
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+
+
+one who might think about a career as an Auror,  he told her. Mind
+works the right way. Granger. 
+Hermione flushed pink with pleasure.
+
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
