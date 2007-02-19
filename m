@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 26 Feb 2007 16:44:55 +0000
-Subject: [KJ] new sysfs attributes page is up
-Message-Id: <Pine.LNX.4.64.0702261143560.21558@CPE00045a9c397f-CM001225dbafb6>
+From: Vignesh Babu BM <vignesh.babu@wipro.com>
+Date: Mon, 19 Feb 2007 09:12:15 +0000
+Subject: [KJ]  [PATCH][RESEND] is_power_of_2 in rtc
+Message-Id: <1171875615.6127.37.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,21 +9,34 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-  if anyone wants to comment (greg?? :-), feel free to ask questions
-here or add them to the page in bold.
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2...resent to fix a change in the logic
 
-http://fsdev.net/wiki/index.php?title=Sysfs_attributes
 
-rday
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index f406a2b..212ec32 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -20,6 +20,7 @@
+ #include <linux/rtc.h>
+ #include <linux/bcd.h>
+ #include <linux/clk.h>
++#include <linux/log2.h>
+ 
+ #include <asm/hardware.h>
+ #include <asm/uaccess.h>
+@@ -311,7 +312,7 @@ static int s3c_rtc_ioctl(struct device *dev,
+ 	case RTC_IRQP_SET:
+ 		/* check for power of 2 */
+ 
+-		if ((arg & (arg-1)) != 0 || arg < 1) {
++		if (!is_power_of_2(arg)) {
+ 			ret = -EINVAL;
+ 			goto exit;
+ 		}
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
