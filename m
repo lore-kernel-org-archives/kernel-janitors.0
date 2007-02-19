@@ -1,48 +1,97 @@
-From: Douglas Schilling Landgraf <dougsland@gmail.com>
-Date: Sun, 25 Feb 2007 16:45:08 +0000
-Subject: [KJ] [PATCH] 3c505.c: cleanup not needed casts
-Message-Id: <20070225173130.GA3595@localhost.localdomain>
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Mon, 19 Feb 2007 21:39:59 +0000
+Subject: [KJ] New item -- Fwd: Re: [ckrm-tech] [RFC][PATCH][2/4] Add RSS
+Message-Id: <20070219213959.GA6550@martell.zuzino.mipt.ru>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+I suspect we have more than enough useless locking like described below
+in kernel. Useless as in "looks safe, still buggy".
 
-Removed all unnecessary casts.
+I think that this exercise would be much more instructive and
+interesting than some of the items in TODO.
 
-Signed-off-by: Douglas Schilling Landgraf <dougsland@gmail.com>
+If you have questions including "Where is the bug here?", don't hesitate
+to ask.
+---------------------------------------------------------------
 
-Index: linux-2.6.20.1/drivers/net/3c505.c
-=================================--- linux-2.6.20.1.orig/drivers/net/3c505.c
-+++ linux-2.6.20.1/drivers/net/3c505.c
-@@ -659,7 +659,7 @@ static irqreturn_t elp_interrupt(int irq
- 	unsigned long timeout;
- 
- 	dev = dev_id;
--	adapter = (elp_device *) dev->priv;
-+	adapter = dev->priv;
- 
- 	spin_lock(&adapter->lock);
- 
-@@ -1121,7 +1121,7 @@ static int elp_start_xmit(struct sk_buff
- 
- static struct net_device_stats *elp_get_stats(struct net_device *dev)
- {
--	elp_device *adapter = (elp_device *) dev->priv;
-+	elp_device *adapter = dev->priv;
- 
- 	if (elp_debug >= 3)
- 		printk(KERN_DEBUG "%s: request for stats\n", dev->name);
-@@ -1226,7 +1226,7 @@ static int elp_close(struct net_device *
- 
- static void elp_set_mc_list(struct net_device *dev)
- {
--	elp_device *adapter = (elp_device *) dev->priv;
-+	elp_device *adapter = dev->priv;
- 	struct dev_mc_list *dmi = dev->mc_list;
- 	int i;
- 	unsigned long flags;
+From: Andrew Morton
+Subject: Re: [ckrm-tech] [RFC][PATCH][2/4] Add RSS accounting and control
+
+On Mon, 19 Feb 2007 16:39:33 +0530 Balbir Singh <balbir@in.ibm.com> wrote:
+
+> Andrew Morton wrote:
+> > On Mon, 19 Feb 2007 16:07:44 +0530 Balbir Singh <balbir@in.ibm.com> wrote:
+> > 
+> >>>> +void memctlr_mm_free(struct mm_struct *mm)
+> >>>> +{
+> >>>> +	kfree(mm->counter);
+> >>>> +}
+> >>>> +
+> >>>> +static inline void memctlr_mm_assign_container_direct(struct mm_struct *mm,
+> >>>> +							struct container *cont)
+> >>>> +{
+> >>>> +	write_lock(&mm->container_lock);
+> >>>> +	mm->container = cont;
+> >>>> +	write_unlock(&mm->container_lock);
+> >>>> +}
+> >>> More weird locking here.
+> >>>
+> >> The container field of the mm_struct is protected by a read write spin lock.
+> > 
+> > That doesn't mean anything to me.
+> > 
+> > What would go wrong if the above locking was simply removed?  And how does
+> > the locking prevent that fault?
+> > 
+> 
+> Some pages could charged to the wrong container. Apart from that I do not
+> see anything going bad (I'll double check that).
+
+Argh.  Please, think about this.
+
+That locking *doesn't do anything*.  Except for that one situation I
+described: some other holder of the lock reads mm->container twice inside
+the lock and requires that the value be the same both times (and that sort
+of code should be converted to take a local copy, so this locking here can
+be removed).
+
+> >>>> +
+> >>>> +	read_lock(&mm->container_lock);
+> >>>> +	cont = mm->container;
+> >>>> +	read_unlock(&mm->container_lock);
+> >>>> +
+> >>>> +	if (!cont)
+> >>>> +		goto done;
+> >>> And here.  I mean, if there was a reason for taking the lock around that
+> >>> read, then testing `cont' outside the lock just invalidated that reason.
+> >>>
+> >> We took a consistent snapshot of cont. It cannot change outside the lock,
+> >> we check the value outside. I am sure I missed something.
+> > 
+> > If it cannot change outside the lock then we don't need to take the lock!
+> > 
+> 
+> We took a snapshot that we thought was consistent.
+
+Consistent with what?  That's a single-word read inside that lock.
+
+> We check for the value
+> outside. I guess there is no harm, the worst thing that could happen
+> is wrong accounting during mm->container changes (when a task changes
+> container).
+
+If container->lock is held when a task is removed from the
+container then yes, `cont' here can refer to a container to which the task
+no longer belongs.
+
+More worrisome is the potential for use-after-free.  What prevents the
+pointer at mm->container from referring to freed memory after we're dropped
+the lock?
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
