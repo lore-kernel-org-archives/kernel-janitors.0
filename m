@@ -1,10 +1,8 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Sat, 24 Feb 2007 13:30:14 +0000
-Subject: Warning: message 1HJrW8-0006pz-EO delayed 72 hours
-Message-Id: <E1HKwyc-0002sS-6l@externalmx-1.sourceforge.net>
+Date: Tue, 20 Feb 2007 18:23:06 +0000
+Subject: Warning: message 1HJQCa-00040N-1y delayed 10 hours
+Message-Id: <E1HJZdq-0005ZN-GQ@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HKDC4-0004Pg-GT@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HKDC4-0004Pg-GT@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
@@ -12,13 +10,13 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 10 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
-The message identifier is:     1HJrW8-0006pz-EO
-The subject of the message is: brought her soul, which shall scatter them, =
-that
-The date of the message is:    Wed, 21 Feb 2007 19:00:13 +0530
+The message identifier is:     1HJQCa-00040N-1y
+The subject of the message is: Need medicament to good deal must have capsu=
+le?
+The date of the message is:    Tue, 20 Feb 2007 10:17:45 +0200
 
 The address to which the message has not yet been delivered is:
 
