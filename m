@@ -1,66 +1,49 @@
 From: Vignesh Babu BM <vignesh.babu@wipro.com>
-Date: Fri, 16 Feb 2007 06:05:47 +0000
-Subject: [KJ] [PATCH 3/5] moving to is_power_of_2
-Message-Id: <1171605227.27506.78.camel@wriver-t81fb058.linuxcoe>
+Date: Tue, 20 Feb 2007 08:01:30 +0000
+Subject: [KJ] [PATCH] is_power_of_2 in ext4
+Message-Id: <1171957770.6127.64.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors List <kernel-janitors@lists.osdl.org>
+Cc: sct@redhat.com, akpm@osdl.org, adilger@clusterfs.com, linux-ext4@vger.kernel.org
 
-Removing instances of (n&(n-1)) for power of 2 
-check with is_power_of_2 from linux/log.h.
-
-
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
 Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
- drivers/block/rd.c |    1 +
- fs/nfs/internal.h  |    1 +
- fs/ufs/super.c     |    3 +--
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/rd.c b/drivers/block/rd.c
-index f73c4a8..e830250 100644
---- a/drivers/block/rd.c
-+++ b/drivers/block/rd.c
-@@ -56,6 +56,7 @@
- #include <linux/backing-dev.h>
- #include <linux/blkpg.h>
- #include <linux/writeback.h>
+--- 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 486a641..e70172b 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -35,6 +35,7 @@
+ #include <linux/namei.h>
+ #include <linux/quotaops.h>
+ #include <linux/seq_file.h>
 +#include <linux/log2.h>
  
  #include <asm/uaccess.h>
  
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 5a1afbb..87b3314 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/mount.h>
- #include <linux/log2.h>
-+
- struct nfs_string;
- struct nfs_mount_data;
- struct nfs4_mount_data;
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 0706e4c..275a34b 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -866,8 +866,7 @@ magic_found:
- 			uspi->s_fsize);
- 		goto failed;
- 	}
--	//if (uspi->s_bsize & (uspi->s_bsize - 1)) {
--	if (!isp_power_of_2(uspi->s_bsize)) {
-+	if (!is_power_of_2(uspi->s_bsize)) {
- 		printk(KERN_ERR "ufs_read_super: block size %u is not a power of 2\n",
- 			uspi->s_bsize);
- 		goto failed;
--- 
-1.4.4.2
-
+@@ -1624,7 +1625,7 @@ static int ext4_fill_super (struct super_block *sb, void *data, int silent)
+ 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
+ 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
+ 		if ((sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE) ||
+-		    (sbi->s_inode_size & (sbi->s_inode_size - 1)) ||
++		    !is_power_of_2(sbi->s_inode_size) ||
+ 		    (sbi->s_inode_size > blocksize)) {
+ 			printk (KERN_ERR
+ 				"EXT4-fs: unsupported inode size: %d\n",
+@@ -1644,7 +1645,7 @@ static int ext4_fill_super (struct super_block *sb, void *data, int silent)
+ 	if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_64BIT)) {
+ 		if (sbi->s_desc_size < EXT4_MIN_DESC_SIZE_64BIT ||
+ 		    sbi->s_desc_size > EXT4_MAX_DESC_SIZE ||
+-		    sbi->s_desc_size & (sbi->s_desc_size - 1)) {
++		    !is_power_of_2(sbi->s_desc_size)) {
+ 			printk(KERN_ERR
+ 			       "EXT4-fs: unsupported descriptor size %lu\n",
+ 			       sbi->s_desc_size);
 
 -- 
 Regards,  
