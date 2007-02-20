@@ -1,40 +1,35 @@
-From: "Sergei Shepston" <Kerncouncillors@paisley-partnership.co.uk>
-Date: Fri, 09 Feb 2007 14:38:46 +0000
-Subject: [KJ] Develop your business using our company MHII now
-Message-Id: <AXGEFZ3RN3T_AJPE7_V58SA3@paisley-partnership.co.uk>
+From: Roman Stankovsky <franklinpep220@yahoo.co.uk>
+Date: Tue, 20 Feb 2007 15:17:18 +0000
+Subject: [KJ] YUKOS OIL.
+Message-Id: <200702201517.l1KFHIH06538@lsh411.van.ca.siteprotect.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-MARSHAL HOLDINGS INC(MHII.OB) incredible share.
+Dear Friend
+ 
+I am ROMAN STANKOVSKY and I represent Mr. Mikhail B. khodorkovsky the former C.E.O of Yukos Oil Company in Russia. I have a very sensitive and confidential brief from him to ask for your partnership in re-profiling funds in a private bank investment portfolio in London I will give the  details, but in summary, the funds are coming via Bank Menatep in Russia.
 
-From the very beginning it occupied TOP places on market of issues. 
-And for this moment this share brings 300% of clear gain.
+You can catch more of the story on This website below or you can watch more of CNN or BBC to get more news about my boss.
 
-This statistics will aid you to know our proposal:
-DATE           C O S T
-02/09/07     0.02$
-02/16/07     0.12$
-You can get more info using your broker web-page
+http://www.mosnews.com/mn-files/khodorkovsky.shtml
+http://www.mbktrial.com/
+http://news.bbc.co.uk/1/hi/business/3213505.stm
+http://www.themoscowtimes.com/stories/2005/04/11/041.html
+http://www.nndb.com/people/633/000025558/
 
-REMEBER: PLEASE connect with YOUR brroker AND MAKE an order.
-Continue to BUY this ama zing iss ues on MONDAY.
+This is a legitimate transaction. You will be paid 5% of the portfolio investment value as your "management fees". If you are interested, please write back to me via my private E-mail and provide me with your confidential telephone number,fax number and email address and I will
+provide further details and if you are satisfied I can proceed with the instructions.
 
+l suggest that you contact me only via my private email:
+(romanstanko444@yahoo.com).
 
+Please we can not afford any political problems because of recent events in Russia. So I will advice you keep this to your self.Finally, please  note that this must be concluded within reasonable time frame therefore your  prompt reply is essential. And also I will like to invest in your country , after which the  fund is your position.
+Write me back. I look forward to it.
 
-
-
-
-
-
-
-
-After law enforcement officials and paramedics were called to the elder O'Neal's home shortly after midnight Friday, they learned that he had assaulted his son, said Lt. John Benedict, of the Los Angeles County Sheriff's Department.
-70776A32666E7478746933776A73716F737977457871746C
-VLWWULCQFVBV9Q10O8VZDVNNHG2LWIPER
-Calls to the Oscar nominee's business manager and publicist were not returned.
+ROMAN STANKOVSKY
 
 
 
