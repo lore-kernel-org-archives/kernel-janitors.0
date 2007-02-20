@@ -1,54 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Date: Fri, 09 Feb 2007 00:59:16 +0000
-Subject: Re: [KJ] pci_dev_put related?
-Message-Id: <20070209005916.GA2632@kroah.com>
+From: Vignesh Babu BM <vignesh.babu@wipro.com>
+Date: Tue, 20 Feb 2007 08:01:54 +0000
+Subject: [KJ] [PATCH] is_power_of_2 in fat
+Message-Id: <1171957794.6127.65.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1170925419.2500.13.camel@bluegenie>
-In-Reply-To: <1170925419.2500.13.camel@bluegenie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors List <kernel-janitors@lists.osdl.org>
+Cc: hirofumi@mail.parknet.co.jp, linux-kernel@vger.kernel.org
 
-On Thu, Feb 08, 2007 at 02:33:39PM +0530, Surya wrote:
-> Hi,
->    I am trying to replace all the pci_find_device references with
-> pci_get_device and pci_dev_put(for usage decrement).
-> 
-> I got stuck in the file linux-2.6/drivers/ide/pci/hpt366.c
-> 
-> In the function init_setup_hpt366 I am not sure where I can call
-> pci_dev_put to decrement the usage count.
-> 
-> --------------snip----------------
->         pci_read_config_byte(dev, PCI_INTERRUPT_PIN, &pin1);
-> //while ((findev = pci_find_device(PCI_ANY_ID, PCI_ANY_ID,findev)) !> NULL) {
-> while (( findev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID,findev)) !> NULL) {
->                 if ((findev->vendor = dev->vendor) &&
->                     (findev->device = dev->device) &&
->                     ((findev->devfn - dev->devfn) = 1) &&
->                     (PCI_FUNC(findev->devfn) & 1)) {
->                         pci_read_config_byte(findev, PCI_INTERRUPT_PIN,
-> &pin2);
->                         if ((pin1 != pin2) && (dev->irq = findev->irq))
-> {
->                                 d->bootable = ON_BOARD;
->                                 printk("%s: onboard version of chipset,
-> "
->                                         "pin1=%d pin2=%d\n", d->name,
->                                         pin1, pin2);
->                         }
-> 
-> // I dont think I can call it here because of the return
->                         return ide_setup_pci_devices(dev, findev, d);
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
-No, because you are using the pci device in that function.  You need to
-do it after you are finished with the pointer, and that might be much
-later...
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index a9e4688..8437190 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -25,6 +25,7 @@
+ #include <linux/parser.h>
+ #include <linux/uio.h>
+ #include <linux/writeback.h>
++#include <linux/log2.h>
+ #include <asm/unaligned.h>
+ 
+ #ifndef CONFIG_FAT_DEFAULT_IOCHARSET
+@@ -1216,8 +1217,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent,
+ 	}
+ 	logical_sector_size  		le16_to_cpu(get_unaligned((__le16 *)&b->sector_size));
+-	if (!logical_sector_size
+-	    || (logical_sector_size & (logical_sector_size - 1))
++	if (!is_power_of_2(logical_sector_size)
+ 	    || (logical_sector_size < 512)
+ 	    || (PAGE_CACHE_SIZE < logical_sector_size)) {
+ 		if (!silent)
+@@ -1227,8 +1227,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent,
+ 		goto out_invalid;
+ 	}
+ 	sbi->sec_per_clus = b->sec_per_clus;
+-	if (!sbi->sec_per_clus
+-	    || (sbi->sec_per_clus & (sbi->sec_per_clus - 1))) {
++	if (!is_power_of_2(sbi->sec_per_clus)) {
+ 		if (!silent)
+ 			printk(KERN_ERR "FAT: bogus sectors per cluster %u\n",
+ 			       sbi->sec_per_clus);
 
-good luck,
-
-greg k-h
+-- 
+Regards,  
+Vignesh Babu BM  
+_____________________________________________________________  
+"Why is it that every time I'm with you, makes me believe in magic?"
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
