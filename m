@@ -1,46 +1,47 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 08 Feb 2007 02:21:23 +0000
-Subject: Warning: message 1HDoNg-0005l4-Ve delayed 72 hours
-Message-Id: <E1HEyuZ-0006ms-Tu@externalmx-1.sourceforge.net>
+From: Vignesh Babu BM <vignesh.babu@wipro.com>
+Date: Wed, 21 Feb 2007 13:30:38 +0000
+Subject: [KJ] [PATCH] is_power_of_2 in kernel/kfifo
+Message-Id: <1172063918.6127.83.camel@wriver-t81fb058.linuxcoe>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HDys8-0006uN-2N@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HDys8-0006uN-2N@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforge.net.
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
-The message identifier is:     1HDoNg-0005l4-Ve
-The subject of the message is: eat our father.  My strength; and to their one accord and they knew
-The date of the message is:    Sun, 04 Feb 2007 21:54:51 +0100
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/kernel/kfifo.c b/kernel/kfifo.c
+index 5d1d907..eeb5e7e 100644
+--- a/kernel/kfifo.c
++++ b/kernel/kfifo.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/kfifo.h>
++#include <linux/log2.h>
+ 
+ /**
+  * kfifo_init - allocates a new FIFO using a preallocated buffer
+@@ -41,7 +42,7 @@ struct kfifo *kfifo_init(unsigned char *buffer, unsigned int size,
+ 	struct kfifo *fifo;
+ 
+ 	/* size must be a power of 2 */
+-	BUG_ON(size & (size - 1));
++	BUG_ON(!is_power_of_2(size));
+ 
+ 	fifo = kmalloc(sizeof(struct kfifo), gfp_mask);
+ 	if (!fifo)
 
-The address to which the message has not yet been delivered is:
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janitor-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sender verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter case,
-    451-you need to change the address or create an MX record for its domain
-    4
-
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
-
--------------------------------------------------------------------------
-Using Tomcat but need to do more? Need to support web services, security?
-Get stuff done quickly with pre-integrated technology to make your job easier.
-Download IBM WebSphere Application Server v.1.0.1 based on Apache Geronimo
-http://sel.as-us.falkag.net/sel?cmd=lnk&kid0709&bid&3057&dat1642
+-- 
+Regards,  
+Vignesh Babu BM  
+_____________________________________________________________  
+"Why is it that every time I'm with you, makes me believe in magic?"
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
