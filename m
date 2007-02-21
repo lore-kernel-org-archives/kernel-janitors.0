@@ -1,7 +1,7 @@
 From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Wed, 21 Feb 2007 11:28:54 +0000
+Date: Wed, 21 Feb 2007 11:59:54 +0000
 Subject: Re: [KJ] BIT macro cleanup
-Message-Id: <45DC2CF6.3070409@student.ltu.se>
+Message-Id: <45DC343A.9000204@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <45CADD09.70809@bfs.de>
 In-Reply-To: <45CADD09.70809@bfs.de>
@@ -11,24 +11,45 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 Milind Choudhary wrote:
-> On 2/21/07, Richard Knutsson <ricknu-0@student.ltu.se> wrote:
->> > so that gcc only will guide them whether to use  BIT or LLBIT
->> > depending  upon size of long  & the "nr" value .
->> How do you mean, gcc "will guide them"?
->>
-> I mean if somebody blindly passes a value greater than BITS_PER_LONG
-> [on architectures where long & long long aren't of same size]
-> gcc would complain with
-> :warning: left shift count >= width of type
-> so they will backtrack & come to see whats cooking inside BIT
-> & on the very next line they notice that there is LLBIT
-> which they can use & live happily ever after.
-Ok, I took it first as gcc were suppose to choose between them.
+> There are 3 BIT macros which aren't really upto their name
+>
+> ./drivers/i2c/busses/i2c-pxa.c:71:
+> #define BIT(m, s, u)    { .mask = m, .set = s, .unset = u }
+>   
+BIT seems like a strange name for it. But the least intrusive would be 
+something like SETBIT, I think.
+> ./drivers/serial/amba-pl011.c:265:	
+> #define BIT(uartbit, tiocmbit)          \
+>   
+Since they are only defined within the function, what about get rid of them?
+The first one (on 265) seems just straightforward:
 
-BTW, (out of curiosity) is there still much work before releasing the 
-BIT-patch?
+-#define BIT(uartbit, tiocmbit)		\
+-	if (status & uartbit)		\
+-		result |= tiocmbit
+-
+-	BIT(UART01x_FR_DCD, TIOCM_CAR);
+-	BIT(UART01x_FR_DSR, TIOCM_DSR);
+-	BIT(UART01x_FR_CTS, TIOCM_CTS);
+-	BIT(UART011_FR_RI, TIOCM_RNG);
+-#undef BIT
++	result |= (UART01x_FR_DCD & TIOCM_CAR) ? TIOCM_CAR :;
++	result |= (UART01x_FR_DSR & TIOCM_DSR) ? TIOCM_DSR :;
++	result |= (UART01x_FR_CTS & TIOCM_CTS) ? TIOCM_CTS :;
++	result |= (UART011_FR_RI  & TIOCM_RNG) ? TIOCM_RNG :;
++
 
+but the next is trickier (on 280):
+#define BIT(tiocmbit, uartbit)		\
+	if (mctrl & tiocmbit)		\
+		cr |= uartbit;		\
+	else				\
+		cr &= ~uartbit
+so maybe just call them both LOCAL_SETBIT or so...
+
+Just my 2c
 Richard Knutsson
+
 
 _______________________________________________
 Kernel-janitors mailing list
