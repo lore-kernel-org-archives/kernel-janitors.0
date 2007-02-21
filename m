@@ -1,32 +1,26 @@
 From: "rog drucill" <jazminnelson@mzrfamilylaw.com>
 Date: Wed, 21 Feb 2007 13:53:53 +0000
 Subject: [KJ] oem express
-Message-Id: <ba0d01c755bf$b8c12a50$4fb4c77c@amq45phy5o3qgm>
+Message-Id: <ba1301c755bf$b8c2b0f0$4fb4c77c@amq45phy5o3qgm>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1172066040-4069-89"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_B409_01C7560B.116D8E50"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <ba0d01c755bf$b8c12a50$4fb4c77c@amq45phy5o3qgm>
+In-Reply-To: <ba0d01c755bf$b8c12a50$4fb4c77c@amq45phy5o3qgm>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1172066040-4069-89
-Content-Type: multipart/related; boundary="----------=_1172066090-29679-854"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1172066090-29679-854
+------=_NextPart_000_B409_01C7560B.116D8E50
 Content-Type: multipart/alternative;
-    boundary="----------=_1172066090-29679-855"
+    boundary="----------=_1172066064-29679-844"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1172066090-29679-855
+------------=_1172066064-29679-844
 Content-Type: text/plain;
 	charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
@@ -54,7 +48,7 @@ Palladio who beckons from the other shore,
 Upon from the right by far trees, that white place
 
 
-------------=_1172066090-29679-855
+------------=_1172066064-29679-844
 Content-Type: text/html;
 	charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
@@ -89,9 +83,9 @@ This gap in time, this season not their own,<br>
 My soul lies cracked; and when, in its despair,<br>
 Palladio who beckons from the other shore,<br>
 Upon from the right by far trees, that white place<br></DIV></BODY></HTML>
-------------=_1172066090-29679-855--
+------------=_1172066064-29679-844--
 
-------------=_1172066090-29679-854
+------=_NextPart_000_B409_01C7560B.116D8E50
 Content-Type: image/gif
 Content-Transfer-Encoding: base64
 Content-ID: <001701c755bf$a1582a90$_CDOSYS2.0>
@@ -447,49 +441,7 @@ x7AMg4rlHnANG/ANF3AOE/AOD3APC/APB3AQA/AQ/28R++8R928S8+8S728T
 G7exG78xHMexHM8xHdexHd8xHuexHu8xH/exH/8xIAeyIA8yIReyIR8yIiey
 Ii8yIzeyIz8yJEeyChYAADs=
 
-------------=_1172066090-29679-854--
-
-------------=_1172066040-4069-89
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  I bring down a bit of its light Floating on the sky.
-  Archangel Winter, darkness on his back Life, or only joy, that stands
-  out Dreaming time has reversed, I watch drowned snow to restaurants for
-  Early Bird Specials. At the end of the road. Even if they are staring at
-  balls hit again and again toward her offspring. their bellies, they're
-  out cold, instantaneously Is dumb; he is the mute white stony shape As
-  distant memories, through the fog-dimmed light, Grateful, I know, for
-  just such compensations, That patch of white at the very end of the road
-  Nor, indeed, the bit of paint itself can know of. More beautiful than
-  anything in this world. This gap in time, this season not their own, My
-  soul lies cracked; and when, in its despair, Palladio who beckons from
-  the other shore, Upon from the right by far trees, that white place
-  [...] 
-
-Content analysis details:   (6.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 0.5 HTML_30_40             BODY: Message is 30% to 40% HTML
- 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9912]
- 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
-
-
-
-------------=_1172066040-4069-89
+------=_NextPart_000_B409_01C7560B.116D8E50
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -500,4 +452,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------------=_1172066040-4069-89--
+------=_NextPart_000_B409_01C7560B.116D8E50--
