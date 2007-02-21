@@ -1,7 +1,7 @@
 From: "Milind Choudhary" <milindchoudhary@gmail.com>
-Date: Wed, 21 Feb 2007 13:26:59 +0000
+Date: Wed, 21 Feb 2007 14:02:29 +0000
 Subject: Re: [KJ] BIT macro cleanup
-Message-Id: <3b44d3fb0702210514j348e9411k206ccea7ef9c93e@mail.gmail.com>
+Message-Id: <3b44d3fb0702210550t60874e88k4d0acf1ee021a441@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <45CADD09.70809@bfs.de>
 In-Reply-To: <45CADD09.70809@bfs.de>
@@ -11,42 +11,39 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 On 2/21/07, Richard Knutsson <ricknu-0@student.ltu.se> wrote:
-
+> Milind Choudhary wrote:
 > > ./drivers/serial/amba-pl011.c:265:
+> but the next is trickier (on 280):
+> #define BIT(tiocmbit, uartbit)          \
+>         if (mctrl & tiocmbit)           \
+>                 cr |= uartbit;          \
+>         else                            \
+>                 cr &= ~uartbit
+> so maybe just call them both LOCAL_SETBIT or so...
+>
+here its either setting or resetting the bits in "cr" taking "uartbit"
+as a mask.
 
-> Since they are only defined within the function, what about get rid of them?
-> The first one (on 265) seems just straightforward:
+there are some setbit & resetbit macros scattered here n there
+e.g.
+./drivers/net/irda/Via-ircc.h
 
-the macro plays with status
+#define SetBit(val,bit)  val= (unsigned char ) (val | (0x1 << bit))
+// Sets bit to 1
+#define ResetBit(val,bit) val= (unsigned char ) (val & ~(0x1 << bit))
+// Sets bit to 0
 
-unsigned int status = readw(uap->port.membase + UART01x_FR);
-you seem to have missed that
+if we move these somewhere near BIT
 
-> -#define BIT(uartbit, tiocmbit)         \
-> -       if (status & uartbit)           \
-> -               result |= tiocmbit
-> -
-> -       BIT(UART01x_FR_DCD, TIOCM_CAR);
-> -       BIT(UART01x_FR_DSR, TIOCM_DSR);
-> -       BIT(UART01x_FR_CTS, TIOCM_CTS);
-> -       BIT(UART011_FR_RI, TIOCM_RNG);
-> -#undef BIT
-> +       result |= (UART01x_FR_DCD & TIOCM_CAR) ? TIOCM_CAR :;
-> +       result |= (UART01x_FR_DSR & TIOCM_DSR) ? TIOCM_DSR :;
-> +       result |= (UART01x_FR_CTS & TIOCM_CTS) ? TIOCM_CTS :;
-> +       result |= (UART011_FR_RI  & TIOCM_RNG) ? TIOCM_RNG :;
-> +
-2 things
-1. its (status & uartbit) and not (uartbit & tiocmbit)
-2. can't keep the false holder blank ..need to put a zero
-otherwise gcc will yell at you
-error: parse error before ';' token
+#define SETBIT(data,mask)    (data |= mask)
+#define RESETBIT(data,mask)    (data &= ~mask)
 
- +       result |= (status & UART01x_FR_DCD ) ? TIOCM_CAR :0;
- +       result |= (status & UART01x_FR_DSR ) ? TIOCM_DSR :0;
- +       result |= (status & UART01x_FR_CTS ) ? TIOCM_CTS :0;
- +       result |= (status & UART011_FR_RI )    ? TIOCM_RNG :0;
+usually the mask would be generated with BIT
 
+we can use the new ones to get rid of above code
+by using "cr" as data &  "uartbit" as mask
+
+what say
 -- 
 Milind Arun Choudhary
 _______________________________________________
