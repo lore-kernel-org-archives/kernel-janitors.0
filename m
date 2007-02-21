@@ -1,56 +1,52 @@
-From: "Back" <wungbongxzs@chello.nl>
-Date: Tue, 20 Feb 2007 12:59:07 +0000
-Subject: [KJ] PBOF new THE NEW LEADER
-Message-Id: <B9F83459EB721C7.057FD3078C@chello.nl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_01C754F5.0B3A9DA0"
+From: "David Nicholas" <communicatingheadroom's@the-ministry.com>
+Date: Wed, 21 Feb 2007 12:53:26 +0000
+Subject: [KJ] Obtain the career you have always wanted with the University
+Message-Id: <01c755b2$3ffdb640$6c822ecf@communicatingheadroom's>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+Hi.
 
-------=_NextPart_000_0002_01C754F5.0B3A9DA0
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Want the degree but can=92t find the time?=20
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2912" name=3D"GENERATOR">
-</HEAD>
-<BODY>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>::: PURE BIOFUELS CORP (<U=
->PBOF.OB</U>) :::</B></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><I>Stock Radar Presents</I></=
-FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><I>Get Ready!! PBOF continues=
-!</I></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Don't you dare take your eyes=
- off this one Tue,20 morning.</FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>CURRENT PRICE: <B>1.50 USD</B=
-></FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Extended Day Target: <B>2.025=
- USD (35%)</B></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>---</FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Breaking News Headline:</FONT=
-></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D1>Entry into a Material Definit=
-ive Agreement, Change in Directors or Principal O</FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>---</FONT></DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>When this St0ck moves... W=
-ATCH OUT! CATCH THE NEW LEADER!</B></FONT></DIV><BR></BODY></HTML>
+WHAT A GREAT IDEA!
 
-------=_NextPart_000_0002_01C754F5.0B3A9DA0
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+We provide a concept that will allow anyone with sufficient work experience=
+ to obtain a fully verifiable University Degree.
 
+Bachelors, Masters or even a Doctorate.
+
+Think of it, within four to six weeks, you too could be a college graduate.
+
+Many people share the same frustration, they are all doing the work of the =
+person that has the degree and the person that has the degree is getting al=
+l the money.
+
+Don=92t you think that it is time you were paid fair compensation for the l=
+evel of work you are already doing?
+
+This is your chance to finally make the right move and receive your due ben=
+efits.
+
+If you are like most people, you are more than qualified with your experien=
+ce, but are lacking that prestigious piece of paper known as a diploma that=
+ is often the passport to success.
+
+CALL US TODAY AND GIVE YOUR WORK
+
+EXPERIENCE THE CHANCE TO EARN YOU
+
+THE HIGHER COMPENSATION YOU DESERVE!=20
+
+1-213-596-5778
+
+
+ Facade, Proxy, and Factory 3363.578*3@/@/@@8
+applications. You  Y-9-'20)')W@
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------=_NextPart_000_0002_01C754F5.0B3A9DA0--
