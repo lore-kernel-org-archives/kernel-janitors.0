@@ -1,37 +1,93 @@
-From: Frederik Deweerdt <deweerdt@free.fr>
-Date: Fri, 16 Feb 2007 21:45:18 +0000
-Subject: Re: [KJ] removing R/W semaphore content from standard semaphore.h
-Message-Id: <20070217213142.GD32060@slug>
+From: Surya <surya.prabhakar@wipro.com>
+Date: Thu, 22 Feb 2007 05:28:54 +0000
+Subject: [KJ] Patch1:replace pci_find_device in avm_pci.c
+Message-Id: <1172121414.2677.14.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702161405230.3503@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702161405230.3503@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 16, 2007 at 03:23:25PM -0500, Robert P. J. Day wrote:
-> On Fri, 16 Feb 2007, Randy Dunlap wrote:
+> > dev_avm_cleanup:
+> > 	if (dev_avm) 
+> > 		pci_dev_put(dev_avm);
 > 
-> > On Fri, 16 Feb 2007 14:10:19 -0500 (EST) Robert P. J. Day wrote:
-> >
-> > >   if someone could clarify this, i'd appreciate it.  i recently
-> > > submitted a patch that removed any inclusions of "linux/rwsem.h"
-> > > from the semaphore.h files, since standard semaphore header files
-> > > should *not* be pulling in any R/W sem stuff -- the R/W semaphores
-> > > now have their own rwsem.h header file.
-> >
-> > My turn for a question:  when you make such a change that affects
-> > many $ARCH (arch/*), do you build multiple architectures to see if
-> > the patch causes any problems?
+> Same thing here, the check isn't needed.
 > 
->   no, since i have access only to an x86 platform.  
-In case you'd want to cross-compile, eldk
-(http://www.denx.de/wiki/DULG/ELDK) has some pre-built toolchains for
-x86 to arm, mips and ppc.
+> Care to redo it with these minor fixes?  Other than that, the logic
+> looks correct.
 
-Regards,
-Frederik
+Did the modifications and cleaned up white spaces as per your
+suggestions.
+
+thanks.
+
+Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+--- 
+
+diff --git a/drivers/isdn/hisax/avm_pci.c b/drivers/isdn/hisax/avm_pci.c
+index b04a178..29f4802 100644
+--- a/drivers/isdn/hisax/avm_pci.c
++++ b/drivers/isdn/hisax/avm_pci.c
+@@ -789,19 +789,19 @@ setup_avm_pcipnp(struct IsdnCard *card)
+ 	}
+ #endif
+ #ifdef CONFIG_PCI
+-	if ((dev_avm = pci_find_device(PCI_VENDOR_ID_AVM,
++	if ((dev_avm = pci_get_device(PCI_VENDOR_ID_AVM,
+ 		PCI_DEVICE_ID_AVM_A1,  dev_avm))) {
+ 		if (pci_enable_device(dev_avm))
+-			return(0);
++			goto dev_avm_cleanup;
+ 		cs->irq = dev_avm->irq;
+ 		if (!cs->irq) {
+ 			printk(KERN_ERR "FritzPCI: No IRQ for PCI card found\n");
+-			return(0);
++			goto dev_avm_cleanup;
+ 		}
+ 		cs->hw.avm.cfg_reg = pci_resource_start(dev_avm, 1);
+ 		if (!cs->hw.avm.cfg_reg) {
+ 			printk(KERN_ERR "FritzPCI: No IO-Adr for PCI card found\n");
+-			return(0);
++			goto dev_avm_cleanup;
+ 		}
+ 		cs->subtyp = AVM_FRITZ_PCI;
+ 	} else {
+@@ -822,7 +822,7 @@ ready:
+ 		       CardType[card->typ],
+ 		       cs->hw.avm.cfg_reg,
+ 		       cs->hw.avm.cfg_reg + 31);
+-		return (0);
++		goto dev_avm_cleanup;
+ 	}
+ 	switch (cs->subtyp) {
+ 	  case AVM_FRITZ_PCI:
+@@ -841,8 +841,8 @@ ready:
+ 		cs->BC_Write_Reg = &WriteHDLCPnP;
+ 		break;
+ 	  default:
+-	  	printk(KERN_WARNING "AVM unknown subtype %d\n", cs->subtyp);
+-	  	return(0);
++		printk(KERN_WARNING "AVM unknown subtype %d\n", cs->subtyp);
++		goto dev_avm_cleanup;
+ 	}
+ 	printk(KERN_INFO "HiSax: %s config irq:%d base:0x%X\n",
+ 		(cs->subtyp = AVM_FRITZ_PCI) ? "AVM Fritz!PCI" : "AVM Fritz!PnP",
+@@ -858,5 +858,10 @@ ready:
+ 	cs->irq_func = &avm_pcipnp_interrupt;
+ 	cs->writeisac(cs, ISAC_MASK, 0xFF);
+ 	ISACVersion(cs, (cs->subtyp = AVM_FRITZ_PCI) ? "AVM PCI:" : "AVM PnP:");
++	pci_dev_put(dev_avm);
+ 	return (1);
++
++dev_avm_cleanup:
++	pci_dev_put(dev_avm);
++	return 0;
+ }
+ 
+
+-- 
+surya.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
