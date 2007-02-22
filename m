@@ -1,163 +1,87 @@
-From: intserve@ins-national.com
-Date: Mon, 19 Feb 2007 02:11:01 +0000
-Subject: Would you like a ten time increase for your business in 24 hours or
-Message-Id: <186drk3w0f8i545e8ral.a1gyaj2p6@mail.ins-national.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1587711847=="
+From: Takashi Iwai <tiwai@suse.de>
+Date: Thu, 22 Feb 2007 12:24:43 +0000
+Subject: Re: [KJ] [Alsa-devel] [PATCH] is_power_of_2 in rtctimer.c
+Message-Id: <s5hirdu752s.wl%tiwai@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---===============1587711847==
-Content-Type: text/html;
-	 charset="us-ascii"
-Content-Transfer-Encoding: 7BIT
-
-<html>
-
-<head>
-
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-
-</head>
-
-<body>
-
-<p align="left">
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" size="4" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-<font lang="0" style="background-color: #ffffff; " face="Arial" color="#0000FF" BACK="#ffffff" PTSIZE="10" FAMILY="SANSSERIF">
-<strong>GET MORE ORDERS FOR ANYTHING YOU SELL!</strong></font></p>
-</font>
-
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-<font id="role_document0" face="Arial" color="#0000FF" style="font-weight: 700" size="4">
-<p style="margin-bottom: 0in" align="left">PROMOTE YOUR BUSINESS TODAY WITH<br>
-COST EFFECTIVE DIRECT E-MAIL ADVERTISING</p>
-</font>
-<font id="role_document0" face="Arial" color="#0000FF" style="font-weight: 700">
-<p style="margin-bottom: 0in" align="left">
-</font>
-<b>
-<font color="#000080">
-<font lang="0" style="background-color: #ffffff; font-size:14pt; font-weight:700" BACK="#ffffff" PTSIZE="10" FAMILY="SANSSERIF" face="Arial" id="role_document0">
-*&nbsp;Get Instant Traffic to Your Website</font></font><font lang="0" style="background-color: #ffffff; font-size:14pt; font-weight:700" face="Arial" color="#000080" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF" id="role_document0"> 
-Today</font><font lang="0" style="background-color: #ffffff" face="Arial" color="#000080" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF"><font lang="0" style="background-color: #ffffff; font-size:14pt; font-weight:700" size="3" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF" face="Arial" id="role_document0"><br>
-*&nbsp;</font></font><font lang="0" style="background-color: #ffffff; font-size:14pt; font-weight:700" face="Arial" color="#000080" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF" size="3" id="role_document0">Generates Sales or Leads for Any Business</font></b><font id="role_document0" face="Arial" color="#0000FF" style="font-size: 16pt; font-weight: 700"></p>
-</font>
-</font>
-
-<p align="left">
-<b><font face="Arial" style="font-size: 11pt" color="#000080">We can send Your 
-ad out to MILLIONS Of Our Double OPT IN List of Subscribers<br>
-and get you great results by providing the most effective way to reach your<br>
-target market, and get instant traffic to your web site.. </font></b></p>
-
-<p align="left">
-<b><font face="Arial" style="font-size: 11pt" color="#000080">Email advertising 
-broadcast is sent to our 100% Double Opt-In 
-customers.<br>
-These are people who have specifically requested to receive your email<br>
-advertising offer on your unique products and services.</font></b></p>
-
-<p align="left">
-<b><font color="#000080" face="Arial"><span style="font-size: 11pt">Our job is 
-to make your email campaigns a big success. <br>
-Includes free phone and email support, and a wealth of online<br>
-resources for every customer</span></font></b><font color="#000080"><span style="font-size: 11pt">.
-</span></font></p>
-
-<p align="left">
-<font color="#000080"><b>
-<font style="font-size: 11pt; background-color:#ffffff" lang="0" face="Arial" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">Includes
-free phone and email support, a wealth of online resources for every<br>
-customer.  </font></b></font>
-<font lang="0" style="background-color: #ffffff" face="Arial" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-</p>
-
-</font>
-<p align="left"><font lang="0" style="background-color: #ffffff; font-size:11pt" face="Arial" color="#000080" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-<b><u>Services include:</u><br>
-</b></font><b><font face="Arial" style="font-size: 11pt" color="#000080">
-<span style="background-color: #FFFFFF">Free assistance is setting up your ad 
-for great results<br>
-Professional graphic ad design<br>
-E-Mail Broadcasting to our list of double opt in targeted emails</span></font></b></p>
-<p align="left"><span style="background-color: #FFFFFF"><b>
-<font face="Arial" style="font-size: 11pt" color="#000080">O</font></b></span><b><font color="#000080"><font lang="0" style="background-color: #ffffff; font-size:11pt" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF" face="Arial" size="3">pt in email advertising can convert your website visitors to customers and 
-boost your revenue.<br>
-<i>We can show you how.</i><br>
-</font>
-<font lang="0" style="background-color: #ffffff; font-size:11pt" BACK="#ffffff" PTSIZE="10" FAMILY="SANSSERIF" face="Arial" size="3">
-<br>
-</font>
-</font><span style="background-color: #FFFFFF">
-<font face="Arial" style="font-size: 11pt" color="#FF0000">For More Info, Please 
-call (213) 291-1177&nbsp;<br>
-</font><font face="Arial" color="#FF0000" size="2"><i>After hours, please leave 
-a message. One of our professional and courteous<br>
-representatives will get back to you by the end of the next business day.</i></font></span></b></p>
-<p align="left">
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" size="3" FAMILY="SANSSERIF" PTSIZE="12" BACK="#ffffff">
-<b>
-<font color="#060296" lang="0" style="background-color: #ffffff" face="Arial" FAMILY="SANSSERIF" PTSIZE="10" BACK="#ffffff">
-<strong><font face="Times New Roman">
-<a href="mailto:info@ins-national.com?subject=Contact Info">Or Click Here And Leave 
-Your Name and Telephone Number With Best Time To Call</a></font></strong>&nbsp;</font></b></font></p>
-<b>
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" size="3" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-
-<font lang="0" style="background-color: #ffffff" face="Comic Sans MS" color="#1003bd" size="2" BACK="#ffffff" PTSIZE="12" FAMILY="SCRIPT">
-<p align="left"><font color="#060296"><font color="#000080" size="2"><em>Driving Traffic to 
-All Types of Businesses&nbsp;Since 1997</em></font><font lang="0" style="background-color: #ffffff" face="Arial" BACK="#ffffff" PTSIZE="10" FAMILY="SANSSERIF"><br>
-</font></font>
-</font>
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" size="3" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-<br>
-</font>
-
-</font>
-
-</b>
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" size="3" BACK="#ffffff" PTSIZE="12" FAMILY="SANSSERIF">
-<font lang="0" style="background-color: #ffffff" face="Arial" color="#2e3c98" BACK="#ffffff" PTSIZE="10" FAMILY="SANSSERIF">
-_________________________________________________________________</font></p>
-<p align="left"><font face="Arial" color="#000080" size="1">You are receiving 
-this message as an opt-in subscriber to National INS or one of our marketing 
-partners. <br>
-If you no longer wish to receive further offers, please send an email with 
-discontinue to: <a href="mailto:support@ins-national.com">
-support@ins-national.com</a><br>
-Your email address will be removed within 24 hours.</font></p>
-<p align="left"><font size="1" face="Arial" color="#000080">INS National<br>
-27 RusselAve<br>
-Edgewater, NJ 07020</font></p>
-</font>
-
-</body>
-
-</html>
-
-
-
---===============1587711847==
-Content-Type: text/plain; charset="us-ascii"
+References: <1172064021.6127.84.camel@wriver-t81fb058.linuxcoe>
+In-Reply-To: <1172064021.6127.84.camel@wriver-t81fb058.linuxcoe>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Vignesh Babu BM <vignesh.babu@wipro.com>
+Cc: Kernel Janitors List <kernel-janitors@lists.osdl.org>, alsa-devel@alsa-project.org, perex@suse.cz
 
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============1587711847==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+At Wed, 21 Feb 2007 18:50:21 +0530,
+Vignesh Babu BM wrote:
+>=20
+>=20
+> Replacing (n & (n-1)) in the context of power of 2 checks
+> with is_power_of_2
+>=20
+> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
 
+Thanks, I applied it to ALSA tree now.
+
+
+Takashi
+
+> ---=20
+> diff --git a/sound/core/rtctimer.c b/sound/core/rtctimer.c
+> index 9f7b32e..7cd5e8f 100644
+> --- a/sound/core/rtctimer.c
+> +++ b/sound/core/rtctimer.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/moduleparam.h>
+> +#include <linux/log2.h>
+>  #include <sound/core.h>
+>  #include <sound/timer.h>
+> =20
+> @@ -129,7 +130,7 @@ static int __init rtctimer_init(void)
+>  	struct snd_timer *timer;
+> =20
+>  	if (rtctimer_freq < 2 || rtctimer_freq > 8192 ||
+> -	    (rtctimer_freq & (rtctimer_freq - 1)) !=3D 0) {
+> +	    !is_power_of_2(rtctimer_freq)) {
+>  		snd_printk(KERN_ERR "rtctimer: invalid frequency %d\n",
+>  			   rtctimer_freq);
+>  		return -EINVAL;
+>=20
+> --=20
+> Regards, =20
+> Vignesh Babu BM =20
+> _____________________________________________________________ =20
+> "Why is it that every time I'm with you, makes me believe in magic?"
+>=20
+>=20
+> The information contained in this electronic message and any attachments =
+to this message are intended for the exclusive use of the addressee(s) and =
+may contain proprietary, confidential or privileged information. If you are=
+ not the intended recipient, you should not disseminate, distribute or copy=
+ this e-mail. Please notify the sender immediately and destroy all copies o=
+f this message and any attachments.=20
+>=20
+> WARNING: Computer viruses can be transmitted via email. The recipient sho=
+uld check this email and any attachments for the presence of viruses. The c=
+ompany accepts no liability for any damage caused by any virus transmitted =
+by this email.
+> =20
+> www.wipro.com
+>=20
+> -------------------------------------------------------------------------
+> Take Surveys. Earn Cash. Influence the Future of IT
+> Join SourceForge.net's Techsay panel and you'll get the chance to share y=
+our
+> opinions on IT & business topics through brief surveys-and earn cash
+> http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DE=
+VDEV
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/alsa-devel
+>=20
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-
---===============1587711847==--
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
