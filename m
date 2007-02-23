@@ -1,44 +1,55 @@
-From: "RHONDA Mosher" <intonecolliery@lmicp.com>
-Date: Fri, 09 Feb 2007 15:40:20 +0000
-Subject: [KJ] We have the most lowest and favorable prices
-Message-Id: <G71UWZ1OZVJ_LCN9G_DV6CFX@lmicp.com>
+From: "software" <jkbzphctvh@bt.com>
+Date: Fri, 23 Feb 2007 05:53:36 +0000
+Subject: [KJ] Surprises
+Message-Id: <5CAA07A43CFAE8B.473FE0796E@bt.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0005_01C75757.E848E0D0"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-MARSHAL HOLDINGS INC(MHII.OB) unthinkable share.
+This is a multi-part message in MIME format...
 
-From the very beginning it occupied first places on market of securties. 
-And for this moment this share brings 300% of clear gain.
+------=_NextPart_000_0005_01C75757.E848E0D0
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-This statistics will aid you to know our proposal:
-DATE           C O S T
-02/09/07     0.02$
-02/16/07     0.12$
-You can get more info using your broker web-site
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2912" name=3D"GENERATOR">
+</HEAD>
+<BODY>
+<DIV align=3Dleft><FONT face=3DArial size=3D2><B>___Physicians Adult Daycar=
+e, Inc. Up 7% from yesterday! Wow____</B></FONT></DIV><BR>
+<DIV align=3Dleft><FONT face=3DArial size=3D2><I>Physicians Adult Daycare, =
+Inc. (phya.pk)</I></FONT></DIV><BR>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>DATE   :   FEB 23, 2007</FONT=
+></DIV>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>Company:   PHYSICIANS ADULT D=
+AY</FONT></DIV>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>Currently: <B>$0.33 (+0.02) (=
++6.45% in a day!!!)</B></FONT></DIV>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>Expected Day Target: <B>$0.75=
+</B></FONT></DIV><BR>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>News:</FONT></DIV>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>Physicians Adult Daycare, Inc=
+. (PHYA) announced that the Company is in the final negotiation stages with=
+ TOTALtrak Global, Inc., a global provider of leading-edge Radio Frequency =
+Identification (RFID)-based and patent-pending Multi-Range (MRID) technolog=
+y solutions, to implement this versatile and powerful technology into the C=
+ompany's innovative adult daycare program......</FONT></DIV></BODY></HTML>
 
-WARNING: PLEASE contant YOUR brroker AND MAKE an order.
-Continue to BUY this ama zing sha res on MONDAY.
-
-
-
-
-
-
-
-
-
-
-The federal deficit hit an all-time high under Bush of $413 billion in 2004. It has been declining since that time and the 2008 budget projects it will continue to decline and show a surplus in 2012, three years after Bush leaves office.
-70776A32666E7478746933776A73716F737977457871746C
-WHOJFJPVQUVMM8TE60545E43RDQUWNHU28
-Bush also will seek to trim spending on farm subsidies by $18 billion over five years, mainly by reducing payments to wealthier farmers, an effort certain to spark resistance among farm state lawmakers.
-
-
+------=_NextPart_000_0005_01C75757.E848E0D0
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_NextPart_000_0005_01C75757.E848E0D0--
