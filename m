@@ -1,76 +1,89 @@
-From: "postmaster@nestrada.de" <postmaster@nestrada.de>
-Date: Mon, 26 Feb 2007 18:37:09 +0000
-Subject: [KJ] kostenloses Videocamportal
-Message-Id: <synserver.msgid.933311725150308881@synserver.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0324756903=="
+From: Thomas Hisch <t.hisch@gmail.com>
+Date: Fri, 23 Feb 2007 14:10:35 +0000
+Subject: [KJ] [PATCH] net/core: change hlist_for_each/hlist_entry
+Message-Id: <20070223141035.GA4775@unknown-00-0d-60-79-ca-00.lan>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+change occurrence of hlist_for_each/hlist_entry to hlist_for_each_entry as it
+combines the previous two macros
 
---===============0324756903==
-Content-Type: multipart/alternative;
-    boundary="----------=_1172515163-11602-676"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+Signed-off-by: Thomas Hisch <t.hisch@gmail.com>
+---
 
-This is a multi-part message in MIME format...
+maybe someone can add a TODO entry to the kernel-janitors wiki about other 
+such list- and hlist cleanups?? 
 
-------------=_1172515163-11602-676
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+look at 
+git grep -B4 -A4 list_entry | grep list_for_each
+for possible cleanups
 
- - Dies ist eine HTML-Nachricht. Nicht alle Elemente k=F6nnen im Nur-Text M=
-odus angezeigt werden. -
+thx
 
+ net/core/dev.c |   17 ++++++-----------
+ 1 files changed, 6 insertions(+), 11 deletions(-)
 
-------------=_1172515163-11602-676
-Content-Type: text/html
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-<HTML><HEAD></HEAD>
-<BODY>
-<DEFANGED_OBJECT codeBase=3Dhttp://download.macromedia.com/pub/shockwave/ca=
-bs/flash/swflash.cab#version=3D5,0,0,0 height=3D250 width=3D300 classid=3Dc=
-lsid:D27CDB6E-AE6D-11cf-96B8-444553540000><DEFANGED_PARAM NAME=3D"_cx" VALU=
-E=3D"7938"><DEFANGED_PARAM NAME=3D"_cy" VALUE=3D"6615"><DEFANGED_PARAM NAME=
-=3D"FlashVars" VALUE=3D"7938"><DEFANGED_PARAM NAME=3D"Movie" VALUE=3D"http:=
-//promotion.6-chats.de/21556258942b85d205be91.swf?url=3Dwww.6-chats.de&amp;=
-rid=3DJ3G"><DEFANGED_PARAM NAME=3D"Src" VALUE=3D"http://promotion.6-chats.d=
-e/21556258942b85d205be91.swf?url=3Dwww.6-chats.de&amp;rid=3DJ3G"><DEFANGED_=
-PARAM NAME=3D"WMode" VALUE=3D"Window"><DEFANGED_PARAM NAME=3D"Play" VALUE=
-=3D"-1"><DEFANGED_PARAM NAME=3D"Loop" VALUE=3D"-1"><DEFANGED_PARAM NAME=3D"=
-Quality" VALUE=3D"High"><DEFANGED_PARAM NAME=3D"SAlign" VALUE=3D""><DEFANGE=
-D_PARAM NAME=3D"Menu" VALUE=3D"0"><DEFANGED_PARAM NAME=3D"Base" VALUE=3D"">=
-<DEFANGED_PARAM NAME=3D"AllowScriptAccess" VALUE=3D"always"><DEFANGED_PARAM=
- NAME=3D"Scale" VALUE=3D"ShowAll"><DEFANGED_PARAM NAME=3D"DeviceFont" VALUE=
-=3D"0"><DEFANGED_PARAM NAME=3D"EmbedMovie" VALUE=3D"0"><DEFANGED_PARAM NAME=
-=3D"BGColor" VALUE=3D"FFFFFF"><DEFANGED_PARAM NAME=3D"SWRemote" VALUE=3D"">
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-    <DEFANGED_embed src=3D"http://promotion.6-chats.de/21556258942b85d205be=
-91.swf?url=3Dwww.6-chats.de&rid=3DJ3G"
-        quality=3D"high"        bgcolor=3D"#FFFFFF"        width=3D"300"
-        height=3D"250"        menu=3D"false"
-        type=3D"application/x-shockwave-flash"
-        pluginspage=3D"http://www.macromedia.com/shockwave/download/index.c=
-gi?P1_Prod_Version=3DShockwaveFlash">
-    </DEFANGED_embed>    </DEFANGED_OBJECT></BODY></HTML>
-
-------------=_1172515163-11602-676--
-
---===============0324756903==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+diff --git a/net/core/dev.c b/net/core/dev.c
+index cf71614..83c2f43 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -475,13 +475,11 @@ __setup("netdev=", netdev_boot_setup);
+ struct net_device *__dev_get_by_name(const char *name)
+ {
+ 	struct hlist_node *p;
++	struct net_device *dev;
+ 
+-	hlist_for_each(p, dev_name_hash(name)) {
+-		struct net_device *dev
+-			= hlist_entry(p, struct net_device, name_hlist);
++	hlist_for_each_entry(dev, p, dev_name_hash(name), name_hlist)
+ 		if (!strncmp(dev->name, name, IFNAMSIZ))
+ 			return dev;
+-	}
+ 	return NULL;
+ }
+ 
+@@ -522,13 +520,11 @@ struct net_device *dev_get_by_name(const char *name)
+ struct net_device *__dev_get_by_index(int ifindex)
+ {
+ 	struct hlist_node *p;
++	struct net_device *dev;
+ 
+-	hlist_for_each(p, dev_index_hash(ifindex)) {
+-		struct net_device *dev
+-			= hlist_entry(p, struct net_device, index_hlist);
++	hlist_for_each_entry(dev, p, dev_index_hash(ifindex), index_hlist)
+ 		if (dev->ifindex = ifindex)
+ 			return dev;
+-	}
+ 	return NULL;
+ }
+ 
+@@ -2878,6 +2874,7 @@ int register_netdevice(struct net_device *dev)
+ {
+ 	struct hlist_head *head;
+ 	struct hlist_node *p;
++	struct net_device *d;
+ 	int ret;
+ 
+ 	BUG_ON(dev_boot_phase);
+@@ -2918,9 +2915,7 @@ int register_netdevice(struct net_device *dev)
+ 
+ 	/* Check for existence of name */
+ 	head = dev_name_hash(dev->name);
+-	hlist_for_each(p, head) {
+-		struct net_device *d
+-			= hlist_entry(p, struct net_device, name_hlist);
++	hlist_for_each_entry(d, p, head, name_hlist) {
+ 		if (!strncmp(d->name, dev->name, IFNAMSIZ)) {
+ 			ret = -EEXIST;
+ 			goto out;
+-- 
+1.5.0-rc2.GIT
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0324756903==--
