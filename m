@@ -1,24 +1,26 @@
 From: "kenton sibylle" <gerrileezea@goldenwebempires.com>
-Date: Fri, 23 Feb 2007 00:21:16 +0000
+Date: Fri, 23 Feb 2007 00:21:17 +0000
 Subject: [KJ] Upgrade from Dell OEM
-Message-Id: <311c701c756e0$8823f770$bf757fd2@useri7ha11jk0s>
+Message-Id: <3122701c756e0$893b0cc0$bf757fd2@useri7ha11jk0s>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0109147805=="
+Content-Type: multipart/mixed; boundary="===============0762356529=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <311c701c756e0$8823f770$bf757fd2@useri7ha11jk0s>
+In-Reply-To: <311c701c756e0$8823f770$bf757fd2@useri7ha11jk0s>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============0109147805==
+--===============0762356529==
 Content-Type: multipart/alternative;
-    boundary="----------=_1172190339-16760-54"
+    boundary="----------=_1172190219-16760-40"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1172190339-16760-54
+------------=_1172190219-16760-40
 Content-Type: text/plain;
 	charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
@@ -59,7 +61,7 @@ names are used only for the purpose of identification. We appreciate
 your cooperation with us and we'll be glad to see you as our clients in
 the future.
 
-------------=_1172190339-16760-54
+------------=_1172190219-16760-40
 Content-Type: text/html;
 	charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
@@ -100,9 +102,9 @@ accuracy of the information, including price, product editorials or product
 specifications. Product and manufacturer names are used only for the purpose of 
 identification. We appreciate your cooperation with us and we'll be glad to see 
 you as our clients in the future.</FONT></DIV></BODY></HTML>
-------------=_1172190339-16760-54--
+------------=_1172190219-16760-40--
 
---===============0109147805==
+--===============0762356529==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -113,4 +115,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============0109147805==--
+--===============0762356529==--
