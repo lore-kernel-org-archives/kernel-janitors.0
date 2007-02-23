@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Thu, 22 Feb 2007 13:36:10 +0000
-Subject: Warning: message 1HJrW8-0006pz-EO delayed 24 hours
-Message-Id: <E1HKE7G-0004Xk-Km@externalmx-1.sourceforge.net>
+Date: Fri, 23 Feb 2007 13:47:33 +0000
+Subject: Warning: message 1HJrW8-0006pz-EO delayed 48 hours
+Message-Id: <E1HKalp-0004wN-EG@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HKDC4-0004Pg-GT@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HKDC4-0004Pg-GT@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 24 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1HJrW8-0006pz-EO
