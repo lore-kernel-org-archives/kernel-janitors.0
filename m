@@ -1,38 +1,42 @@
-From: Dmitry Torokhov <dtor@insightbb.com>
-Date: Sun, 25 Feb 2007 03:39:32 +0000
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 25 Feb 2007 15:45:03 +0000
 Subject: Re: [KJ] [RFC][PATCH] BIT macro cleanup
-Message-Id: <200702242239.33314.dtor@insightbb.com>
+Message-Id: <45E1AEFF.5050202@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3b44d3fb0702230215o2fbd5a3y25729e481a447149@mail.gmail.com> <20070224111124.GB3609@suse.cz> <45E036AB.9050303@student.ltu.se>
-In-Reply-To: <45E036AB.9050303@student.ltu.se>
+References: <45DEF5EE.4030002@student.ltu.se> <d120d5000702230657s1860efb3o6986277901f13d03@mail.gmail.com> <45DF1165.2080003@student.ltu.se> <d120d5000702230905r6b50a1bbm3b71551f855cdf01@mail.gmail.com> <45DF2F57.2080309@student.ltu.se> <d120d5000702231037q511f8073n47beed320f097458@mail.gmail.com> <45DF3C53.4030100@student.ltu.se> <d120d5000702231358j55cd6665x2add335ceb904c22@mail.gmail.com> <45DF6E20.9060604@student.ltu.se> <20070224111124.GB3609@suse.cz> <20070224191001.GA9547@arun.site>
+In-Reply-To: <20070224191001.GA9547@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-joystick@atrey.karlin.mff.cuni.cz
-Cc: Richard Knutsson <ricknu-0@student.ltu.se>, Vojtech Pavlik <vojtech@suse.cz>, Milind Choudhary <milindchoudhary@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-input@atrey.karlin.mff.cuni.cz
+To: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Cc: Vojtech Pavlik <vojtech@suse.cz>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-input@atrey.karlin.mff.cuni.cz, linux-joystick@atrey.karlin.mff.cuni.cz
 
-On Saturday 24 February 2007 07:59, Richard Knutsson wrote:
-> Vojtech Pavlik wrote:
-> > On Fri, Feb 23, 2007 at 11:43:44PM +0100, Richard Knutsson wrote:
-> >
-> >   
-> >> Is the reason for the modulo to put a bitmask larger then the variable 
-> >> into an array?
-> >>     
-> >
-> > The complementary LONG() macro will tell you the index of an array of
-> > longs where the bit should be set.
-> >   
-> This may be a little OT, but how come it is not done as an function? 
-> Maybe something like "(set/get)_long_mask(...)".
+Milind Arun Choudhary wrote:
+> why bitops.h? coz BIT qualifies for a "bitop" 
+> & bitops.h is  inclued by kernel.h, hence accessible from every part 
+> of the tree without mucb efforts
+>   
+I don't think there is anyone who objects to this
+> c>but it is not sutaible for  those who want to go beyond this limit, 
+> as they will not be warned 
+>   
+And this is the reason for this overly long thread :)
+> So all we need is  people to be carefull  before passing anything to BIT
+>   
+This is the difficult thing to do
+> so  now i think it should be ok to have
+>
+> #define BIT(nr) (1UL << ((nr) % BITS_PER_LONG))
+> #define LLBIT(nr) (1ULL << (nr))
+>
+>
+> thoughts
+>   
+Since you guys seems in agreement about the silenced compiler-warnings, 
+then I will rest my case.
 
-We have it. Is is called set_bit (or __set_bit) and works wery well for
-single bit operations, but sometimes it is nice to be able to write
+Richard Knutsson
 
-	a = BIT(b) | BIT(c); 
-
--- 
-Dmitry
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
