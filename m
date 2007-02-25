@@ -1,26 +1,36 @@
 From: Dmitry Torokhov <dtor@insightbb.com>
-Date: Sun, 25 Feb 2007 03:37:32 +0000
+Date: Sun, 25 Feb 2007 03:39:32 +0000
 Subject: Re: [KJ] [RFC][PATCH] BIT macro cleanup
-Message-Id: <200702242237.33182.dtor@insightbb.com>
+Message-Id: <200702242239.33314.dtor@insightbb.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3b44d3fb0702230215o2fbd5a3y25729e481a447149@mail.gmail.com> <45DF6E20.9060604@student.ltu.se> <20070224111124.GB3609@suse.cz>
-In-Reply-To: <20070224111124.GB3609@suse.cz>
+References: <3b44d3fb0702230215o2fbd5a3y25729e481a447149@mail.gmail.com> <20070224111124.GB3609@suse.cz> <45E036AB.9050303@student.ltu.se>
+In-Reply-To: <45E036AB.9050303@student.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-joystick@atrey.karlin.mff.cuni.cz
-Cc: Vojtech Pavlik <vojtech@suse.cz>, Richard Knutsson <ricknu-0@student.ltu.se>, Milind Choudhary <milindchoudhary@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-input@atrey.karlin.mff.cuni.cz
+Cc: Richard Knutsson <ricknu-0@student.ltu.se>, Vojtech Pavlik <vojtech@suse.cz>, Milind Choudhary <milindchoudhary@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, linux-input@atrey.karlin.mff.cuni.cz
 
-On Saturday 24 February 2007 06:11, Vojtech Pavlik wrote:
-> > The reason I don't like it with modulo is simply because it hides 
-> > potential bugs (when x is to big). 
-> 
-> That would be my only concern - losing compiler warnings.
-> 
+On Saturday 24 February 2007 07:59, Richard Knutsson wrote:
+> Vojtech Pavlik wrote:
+> > On Fri, Feb 23, 2007 at 11:43:44PM +0100, Richard Knutsson wrote:
+> >
+> >   
+> >> Is the reason for the modulo to put a bitmask larger then the variable 
+> >> into an array?
+> >>     
+> >
+> > The complementary LONG() macro will tell you the index of an array of
+> > longs where the bit should be set.
+> >   
+> This may be a little OT, but how come it is not done as an function? 
+> Maybe something like "(set/get)_long_mask(...)".
 
-I think most dangerous scenario is when both shift operands are not constant
-but compiler will not help us in this case...
- 
+We have it. Is is called set_bit (or __set_bit) and works wery well for
+single bit operations, but sometimes it is nice to be able to write
+
+	a = BIT(b) | BIT(c); 
+
 -- 
 Dmitry
 _______________________________________________
