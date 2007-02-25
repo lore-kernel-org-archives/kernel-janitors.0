@@ -1,48 +1,32 @@
-From: "Wilbur Bowen" <bluffmouthed@about-cis.com>
-Date: Fri, 02 Feb 2007 19:32:21 +0000
-Subject: [KJ] PHYA rising again.
-Message-Id: <01c74700$dbdd8b50$6c822ecf@bluffmouthed>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0000947173=="
+From: Douglas Schilling Landgraf <dougsland@gmail.com>
+Date: Sun, 25 Feb 2007 16:57:41 +0000
+Subject: [KJ] [PATCH] 3c505.c: replacing strcpy to strncpy
+Message-Id: <20070225173528.GB3595@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c746e3$18b4a180$6c822ecf@modernizationprostate>
-In-Reply-To: <01c746e3$18b4a180$6c822ecf@modernizationprostate>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0000947173==
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+Use strncpy instead of strcpy.
 
-PHYSICIANS ADULT DAY (PHYA at PK)  
+Signed-off-by: Douglas Schilling Landgraf <dougsland@gmail.com>
 
-Sym: PHYA 
-Targ: $2.25
-Current grow +3,76 % +0.025 (0.69)
-
-News1: Physicians Adult Daycare Finds Validation North of the Border
-News2: Physicians Adult Daycare Pursues Expanding Canadian Opportunities
-
-Look at financial reports of this company
-this one are generating income.
-
-PHYA IS ABOUT TO SOAR!
-Recommendation: buy now and win.
-
-70776A32666E7478746933776A73716F737977457871746C
-/K782N:;)/CK<)O54.(.=)7@.SA0
-
-
-
---===============0000947173==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+Index: linux-2.6.20.1/drivers/net/3c505.c
+=================================--- linux-2.6.20.1.orig/drivers/net/3c505.c
++++ linux-2.6.20.1/drivers/net/3c505.c
+@@ -1154,8 +1154,8 @@ static struct net_device_stats *elp_get_
+ static void netdev_get_drvinfo(struct net_device *dev,
+ 			       struct ethtool_drvinfo *info)
+ {
+-	strcpy(info->driver, DRV_NAME);
+-	strcpy(info->version, DRV_VERSION);
++	strncpy(info->driver, DRV_NAME, sizeof(info->driver)-1);
++	strncpy(info->version, DRV_VERSION, sizeof(info->driver)-1);
+ 	sprintf(info->bus_info, "ISA 0x%lx", dev->base_addr);
+ }
+ 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0000947173==--
