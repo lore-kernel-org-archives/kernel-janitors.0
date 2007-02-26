@@ -1,46 +1,58 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Wed, 28 Feb 2007 22:11:20 +0000
-Subject: Re: [KJ] how many real time clocks do we need?
-Message-Id: <20070228221120.GA32226@parisc-linux.org>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 26 Feb 2007 23:25:10 +0000
+Subject: [KJ] getting rid of "decl_subsys_name" macro?
+Message-Id: <Pine.LNX.4.64.0702261819040.28173@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0702221611400.6794@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0702221611400.6794@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 23, 2007 at 08:05:37AM +0100, Richard Knutsson wrote:
-> >config RTC
-> >        tristate "Enhanced Real Time Clock Support"
-> >	depends on !PPC && !PARISC && !IA64 && !M68K && (!SPARC || PCI) && 
-> >	!FRV && !ARM && !SUPERH
-> >
-> >config GEN_RTC
-> >        tristate "Generic /dev/rtc emulation"
-> >	depends on RTC!=y && !IA64 && !ARM && !M32R && !SPARC && !FRV
->
-> Just curious, does IA64, ARM, SPARC and FRV (is that an arch?) have any 
-> real-time clock?
 
-I think you could research this yourself, but :
+  just stumbled across the following -- the header file kobject.h
+defines two macros for declaring sysfs subsystems:
 
-config EFI_RTC
-        bool "EFI Real Time Clock Services"
-	depends on IA64
+#define decl_subsys(_name,_type,_uevent_ops) \
+struct subsystem _name##_subsys = { \
+        .kset = { \
+                .kobj = { .name = __stringify(_name) }, \
+                .ktype = _type, \
+                .uevent_ops =_uevent_ops, \
+        } \
+}
+#define decl_subsys_name(_varname,_name,_type,_uevent_ops) \
+struct subsystem _varname##_subsys = { \
+        .kset = { \
+                .kobj = { .name = __stringify(_name) }, \
+                .ktype = _type, \
+                .uevent_ops =_uevent_ops, \
+        } \
+}
 
-...
+  note that the first makes more logical sense as the name of the
+structure will match the name of the kobject, while the second allows
+those two things to have *different* values.
 
-config ARM
-        bool
-	default y
-	select RTC_LIB
+  but a search of the entire tree turns up exactly *one* instance
+where that second variation is being used:
 
-(see also drivers/rtc/Kconfig)
+$ grep -rw decl_subsys_name *
+drivers/pci/hotplug/pci_hotplug_core.c:decl_subsys_name(pci_hotplug_slots,
+   slots, &hotplug_slot_ktype, NULL);
 
-./drivers/sbus/char/Kconfig:config SUN_MOSTEK_RTC
+  is it really worth defining an entirely new macro whose semantics
+are potentially confusing for the sake of a single kernel-wide
+subsystem?
 
-I dunno what arch/frv does for an RTC.
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
