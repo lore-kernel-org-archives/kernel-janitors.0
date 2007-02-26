@@ -1,55 +1,30 @@
-From: "Custody S. Newsreel" <istensen@gramarstone.com>
-Date: Sat, 17 Feb 2007 21:28:06 +0000
-Subject: [KJ] tomu vyroniv
-Message-Id: <9410588721.20070217210414@gramarstone.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1171746254-1694-524"
+From: "=?UTF-8?Q?H=C3=A5kon_L=C3=B8vdal?=" <hlovdal@gmail.com>
+Date: Mon, 26 Feb 2007 12:57:49 +0000
+Subject: Re: [KJ] another potential project: using sysfs ATTR macros.
+Message-Id: <a01a16b50702260457g5a993a8ftff494b9606a18a4e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1171746254-1694-524
+MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+To: kernel-janitors@vger.kernel.org
 
-Gront zabespokoilsia.=20
-Ni ego brata, o kotorom on tolkoval.=20
-
+On 25/02/07, Greg KH <greg@kroah.com> wrote:> On Sun, Feb 25, 2007 at 02:46=
+:12PM -0500, Robert P. J. Day wrote:> > #define __ATTR_RO(_name) { \> >    =
+     .attr   =3D { .name =3D __stringify(_name), .mode =3D 0444, .owner =3D=
+ THIS_MODULE },   \> >         .show   =3D _name##_show, \> > }...> >   the=
+ downside to this is that you can see that the __ATTR_RO macro> > expects a=
+ definite naming convention -- the "show" routine *must* be> > named "_name=
+##_show".  in cases where that's not true, you're> > obviously screwed and =
+you can't use that macro.  otherwise, you could> > have used *that* for thi=
+s very same example.  grrrrrrrrrrrrrr.>> Any idea how to fix that in a sane=
+ manner?
+The preprocessor can be used for this:
+static ssize_t show_whatever(struct class_device *class_device, char *buf){=
+	...}...#define whatever_show show_whatever
+static struct class_device_attribute class_device_attrs[] =3D {	__ATTR_RO(w=
+hatever),};
+BR H=E5kon L=F8vdal
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
-------------=_1171746254-1694-524
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-Spam detection software, running on the system "fire-2.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or block
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Gront zabespokoilsia. Ni ego brata, o kotorom on
-  tolkoval. Kernel-janitors mailing list Kernel-janitors@lists.osdl.org
-  https://lists.osdl.org/mailman/listinfo/kernel-janitors [...] 
-
-Content analysis details:   (5.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
--1.0 OSDL_HEADER_SUBJECT_BRACKETED Subject starts with []'d phrase
--1.0 OSDL_HEADER_LISTID_KNOWN List-Id contains a known mailing list
- 2.0 OUTFLUX_THEBAT         X-Mailer is from "The Bat"
- 2.9 DATE_IN_FUTURE_03_06   Date: is 3 to 6 hours after Received: date
- 2.8 FORGED_MUA_THEBAT_CS   Mail pretending to be from The Bat! (charset)
--0.1 AWL                    AWL: Auto-whitelist adjustment
-
-
-
-------------=_1171746254-1694-524--
