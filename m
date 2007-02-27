@@ -1,48 +1,52 @@
-From: "TIRA VALENTE" <Fernredrafting@modrick.com>
-Date: Wed, 07 Feb 2007 12:32:18 +0000
-Subject: [KJ] fwd:Kernel  wrote:
-Message-Id: <KENL65GUF1K_G4KMR_P82PA3@modrick.com>
+From: "words" <jugebswa@interbusiness.it>
+Date: Tue, 27 Feb 2007 15:43:42 +0000
+Subject: [KJ] Expected Offerings
+Message-Id: <B20B8F7716702AA.F510B74B16@interbusiness.it>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0003_01C75A8D.7217F610"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Wednesday February 7th 2007 
- 
-FOR IMMEDIATE RELEASE
-ATTENTION INVESTORS AND DAY TRADERS
-Hemisphere Gold, Inc. - HPGI IS POISED FOR A HUGE GAIN 
+This is a multi-part message in MIME format...
 
-THIS ONE COULD BREAK 3.00 VERY SOON.
+------=_NextPart_000_0003_01C75A8D.7217F610
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-On monday they released news explaining they found gold anomolies spanning 20 kilometers - THIS COULD LEAD TO SOMETHING GREAT!
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2912" name=3D"GENERATOR">
+</HEAD>
+<BODY>
+<DIV align=3Dleft><FONT face=3DArial size=3D2><B>LOMJ - LOM LOGISTICS INCOR=
+PORATED - MAKING MAJOR TECHNOLOGY BREAKTHROUGHS!</B></FONT></DIV><BR>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>Signal: <B>LOMJ</B> </FONT></=
+DIV>
+<DIV align=3Dleft><FONT face=3DArial size=3D2>Opens: $0.85 <B>+0.65 +325% -=
+ Trading On Tuesday Feb 27 2007!</B> </FONT></DIV><BR>
+<DIV align=3Dleft><FONT face=3DArial size=3D2><U>2007/02/22 - NEWS - LOM Lo=
+gistics</U>, announces a landmark decision to initially release its proprie=
+tary live negotiating technology into virtually every industry worldwide ac=
+commodating everything from cars, boats, jewelry, real estate to books and =
+even your kitchen sink. As well, the LOM will further advance its technolog=
+y by implementing video and image components within its live negotiating en=
+gine, allowing its users to thoroughly evaluate merchandise, and other such=
+ offerings, before initiating live negotiations. </FONT></DIV><BR>
+<DIV align=3Dleft><FONT face=3DArial size=3D2><U><B>THE FLAME IS NOW LIT! I=
+S LOMJ READY TO BLAZE HIGHER? </U></B></FONT></DIV></BODY></HTML>
 
-Watch HPGI trade and add it to your raddar now.
-
-We expect this one to soar.
-Make your profit today.
-
-
-This letter includes forward - looking statements. This is not an offer to buy or sell any issues. The publisher of this letter paid out ten thousand dollars for distribution of this publication.
- 
-
-
-
-
-
-
-
-
-
-
-
-
-Griffin O'Neal, 42, is also an actor. His mother is O'Neal's first wife, Joanna Moore, and his sister is actress Tatum O'Neal.Griffin O'Neal appeared in a number of B-movies, including "The Assault of the Killer Bimbos.""It just gives you sticker shock. Every time you turn around it's another $100 billion," Senate Budget Committee Chairman Kent Conrad, a Democrat from North Dakota, said of Bush's war spending.
-
-
+------=_NextPart_000_0003_01C75A8D.7217F610
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
+
+------=_NextPart_000_0003_01C75A8D.7217F610--
