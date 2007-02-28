@@ -1,7 +1,7 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Fri, 23 Feb 2007 07:05:37 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 28 Feb 2007 22:11:20 +0000
 Subject: Re: [KJ] how many real time clocks do we need?
-Message-Id: <45DE9241.2080505@student.ltu.se>
+Message-Id: <20070228221120.GA32226@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0702221611400.6794@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0702221611400.6794@CPE00045a9c397f-CM001225dbafb6>
@@ -10,34 +10,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Matthew Wilcox wrote:
-> On Thu, Feb 22, 2007 at 04:13:31PM -0500, Robert P. J. Day wrote:
->   
->>   just poking around the drivers/char directory, and noticed the
->> existence of both the RTC real-time clock, and the GEN_RTC real-time
->> clock in the Kconfig file.
->>
->>   is there still a compelling need to be supporting *both* of those?
->> just curious.
->>     
+On Fri, Feb 23, 2007 at 08:05:37AM +0100, Richard Knutsson wrote:
+> >config RTC
+> >        tristate "Enhanced Real Time Clock Support"
+> >	depends on !PPC && !PARISC && !IA64 && !M68K && (!SPARC || PCI) && 
+> >	!FRV && !ARM && !SUPERH
+> >
+> >config GEN_RTC
+> >        tristate "Generic /dev/rtc emulation"
+> >	depends on RTC!=y && !IA64 && !ARM && !M32R && !SPARC && !FRV
 >
-> One works on some architectures, one works on other architectures.  Why
-> not take a hint from the Kconfig dependencies?
->
-> config RTC
->         tristate "Enhanced Real Time Clock Support"
-> 	depends on !PPC && !PARISC && !IA64 && !M68K && (!SPARC || PCI) && !FRV && !ARM && !SUPERH
->
-> config GEN_RTC
->         tristate "Generic /dev/rtc emulation"
-> 	depends on RTC!=y && !IA64 && !ARM && !M32R && !SPARC && !FRV
->
->   
-Just curious, does IA64, ARM, SPARC and FRV (is that an arch?) have any 
-real-time clock?
+> Just curious, does IA64, ARM, SPARC and FRV (is that an arch?) have any 
+> real-time clock?
 
-Richard Knutsson
+I think you could research this yourself, but :
 
+config EFI_RTC
+        bool "EFI Real Time Clock Services"
+	depends on IA64
+
+...
+
+config ARM
+        bool
+	default y
+	select RTC_LIB
+
+(see also drivers/rtc/Kconfig)
+
+./drivers/sbus/char/Kconfig:config SUN_MOSTEK_RTC
+
+I dunno what arch/frv does for an RTC.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
