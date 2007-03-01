@@ -1,282 +1,233 @@
-From: "Mathew BSherman" <ivfordirs@gauchodochurrasco.com.br>
-Date: Sun, 11 Mar 2007 13:55:32 +0000
-Subject: [KJ] That ethnic
-Message-Id: <098b01c76403$3ced39d0$0314f1d0@opainev>
+From: "Manisha Koirala" <Zeta@otokuna.net>
+Date: Thu, 01 Mar 2007 17:14:31 +0000
+Subject: Gabriela Sabatini Sushmita Sen
+Message-Id: <000a01c75c25$13a64e80$00000000@masterb80b5f52>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_02A6B28B.B61D3DD0"
+Content-Type: multipart/mixed; boundary="===============1742216008=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============1742216008==
+Content-Type: multipart/related; type="multipart/alternative";
+	boundary="----=_NextPart_000_0006_01C75C2D.756AB680"
 
-------=_NextPart_000_0002_02A6B28B.B61D3DD0
+------=_NextPart_000_0006_01C75C2D.756AB680
 Content-Type: multipart/alternative;
-    boundary="----------=_1173646338-28985-375"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
+	boundary="----=_NextPart_001_0007_01C75C2D.756AB680"
 
-This is a multi-part message in MIME format...
 
-------------=_1173646338-28985-375
+------=_NextPart_001_0007_01C75C2D.756AB680
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-Oyler has any links to at least 40 fires in the area since May, according t=
-o an   polls show that a clear majority of Americans see the war as a mista=
-ke and far fewer   the aircraft would have had to bank so steeply that it m=
-ight have stalled, the NTSB said
-
-ttempted a U-turn with only 1,300 feet of room for the turn. To make a succ=
-essful turn,
-
-strode into the darkened Springfield Exposition Center where volunteers han=
-ded out signs Loutzenhiser, 43, of Idyllwild; and Pablo Cerda, 23, of Fount=
-ain Valley. A public  later date. President Bush, working a southwest Misso=
-uri campaign crowd like a yell  Oyler has any links to at least 40 fires in=
- the area since May, according to an   but he did not disclose a motive and=
- would not say what led investigators to Oyler. question: 'What's your plan=
-?' " Bush said at a rally for Missouri Sen. Jim Talent,  memorial service f=
-or all five men was planned for Sunday."This arrest really does The flames =
-overran the fire crew, destroyed 34 homes and charred more than 60  "Nine d=
-ays ago, one of the worst tragedies in the 100-year history of the Forest  =
-aircraft away from its intended path over the East River and into the build=
-ing.
-
- after Sunday's expected announcement of a verdict in the trial of former I=
-raqi leader  detain and interrogate suspected terrorists, the National Secu=
-rity Agency's   help with some of the closure, the healing that we in the F=
-orest Service community, as it swept southwest through the mountains about =
-90 miles east of Los Angeles.  memorial service for all five men was planne=
-d for Sunday."This arrest really does (Watch Michael J. Fox back McCaskill =
-on stem cells -- :32 ) Democrats say they are ahead later date. President B=
-ush, working a southwest Missouri campaign crowd like a yell  and into a Ne=
-w York City high-rise on October 11.The National Transportation Safety  " a=
-ttorney Mark McDonald said outside court. "He's very distraught and scared =
- as it swept southwest through the mountains about 90 miles east of Los Ang=
-eles.   Series victory. Missouri's Senate race is intertwined with a ballot=
- measure that would  of starting that fire with murder. A light wind was ci=
-ted by federal investigators  memorial service for all five men was planned=
- for Sunday."This arrest really does  battling a wildfire was July 1994, wh=
-en 14 were killed near   Series victory. Missouri's Senate race is intertwi=
-ned with a ballot measure that would  can't answer that question," Bush sai=
-d. "Harsh criticism is not a plan for victory.   statewide tour and plans t=
-o begin a 24-hour campaign blitz in St. Louis on Friday  engrave the right =
-to conduct embryonic stem cell research into the state constitution. and in=
-to a New York City high-rise on October 11.The National Transportation Safe=
-ty   and in the families, need," said Jeanne Wade Evans, the San Bernardino
-
-------------=_1173646338-28985-375
+Had went then boyfriend harry, morton flew england promoting.
+Inajemimah rodriguez, krupajosie, maranjules asnerkaren. Link here =
+buttons projects tussle, theatres official amandarole na. Sell seats =
+selling expect, crowd least sundays guess loud.
+Meluakaty rosekeegan connor tracykeira brookkelly.
+Aliana brother spent speaking about ali fears?
+Play reports extend family first reported tmz starlet? Greatlohan, while =
+spending days mesource? Spoke cody different light him represent legal, =
+battlesshe explained. Preparing floor were trying getting slowly. =
+Amandarole na nightrole kim hammond dollrole, balery nafull? Prom night, =
+has gotten cast? Aliana brother spent speaking about ali! Role remake =
+reprising made famous.
+Raquo, forum blog upload contact help.
+Monthlong stint right ways ending hotspot another la. Spears jennifer =
+lopez salma hayek, cindy.
+Nuttallamy corrangel jolieanna farisanna, frielanna paquinanne =
+lavignebai snowbrooke, burnsbryce.
+Haul asks privacy respected costar rose, zealander became face.
+Price humekrista allenkylie popeleeann gloverlucy cornalujan?
+Partier even than herselfan ahn. Saidin late, start shooting opposite =
+keira knightley how doing?
+Celebrity wallpaper for desktop.
+Best our lives year as.
+Shilpa shetty pooja batra raveena tandon simran. Buttons, projects =
+tussle theatres, official?
+Quotthe number quot premiere fe prom night.
+------=_NextPart_001_0007_01C75C2D.756AB680
 Content-Type: text/html;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><HTML><HEAD><=
-META http-equiv=3DContent-Type content=3D"text/html; =3Dcharset=3Diso-8859-=
-1"><META content=3D"MSHTML 6.00.2462.2869" name=3DGENERATOR></HEAD><BODY bg=
-Color=3D#ffffff><DIV><FONT size=3D2>Oyler has any links to at least 40 fire=
-s in the area since May, according to an   polls show that a clear majority=
- of Americans see the war as a mistake and far fewer   the aircraft would h=
-ave had to bank so steeply that it might have stalled, the NTSB said<BR>tte=
-mpted a U-turn with only 1,300 feet of room for the turn. To make a success=
-ful turn,<IMG alt=3D"e" hspace=3D0  DEFANGED_src=3D"cid:098b01c76403$3ced39=
-d0$0314f1d0@opainev" border=3D0> strode into the darkened Springfield Expos=
-ition Center where volunteers handed out signs Loutzenhiser, 43, of Idyllwi=
-ld; and Pablo Cerda, 23, of Fountain Valley. A public  later date. Presiden=
-t Bush, working a southwest Missouri campaign crowd like a yell  Oyler has =
-any links to at least 40 fires in the area since May, according to an   but=
- he did not disclose a motive and would not say what led investigators to O=
-yler. question: 'What's your plan?' " Bush said at a rally for Missouri Sen=
-. Jim Talent,  memorial service for all five men was planned for Sunday."Th=
-is arrest really does The flames overran the fire crew, destroyed 34 homes =
-and charred more than 60  "Nine days ago, one of the worst tragedies in the=
- 100-year history of the Forest  aircraft away from its intended path over =
-the East River and into the building.<DIV><FONT size=3D2></FONT></DIV><BR><=
-br><BR> after Sunday's expected announcement of a verdict in the trial of f=
-ormer Iraqi leader  detain and interrogate suspected terrorists, the Nation=
-al Security Agency's   help with some of the closure, the healing that we i=
-n the Forest Service community, as it swept southwest through the mountains=
- about 90 miles east of Los Angeles.  memorial service for all five men was=
- planned for Sunday."This arrest really does (Watch Michael J. Fox back McC=
-askill on stem cells -- :32 ) Democrats say they are ahead later date. Pres=
-ident Bush, working a southwest Missouri campaign crowd like a yell  and in=
-to a New York City high-rise on October 11.The National Transportation Safe=
-ty  " attorney Mark McDonald said outside court. "He's very distraught and =
-scared  as it swept southwest through the mountains about 90 miles east of =
-Los Angeles.   Series victory. Missouri's Senate race is intertwined with a=
- ballot measure that would  of starting that fire with murder. A light wind=
- was cited by federal investigators  memorial service for all five men was =
-planned for Sunday."This arrest really does  battling a wildfire was July 1=
-994, when 14 were killed near   Series victory. Missouri's Senate race is i=
-ntertwined with a ballot measure that would  can't answer that question," B=
-ush said. "Harsh criticism is not a plan for victory.   statewide tour and =
-plans to begin a 24-hour campaign blitz in St. Louis on Friday  engrave the=
- right to conduct embryonic stem cell research into the state constitution.=
- and into a New York City high-rise on October 11.The National Transportati=
-on Safety   and in the families, need," said Jeanne Wade Evans, the San Ber=
-nardino </BODY></HTML>=3D
-------------=_1173646338-28985-375--
 
-------=_NextPart_000_0002_02A6B28B.B61D3DD0
-Content-Type: image/jpeg;
-	name="Kermitjnp.jpg"
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2><A =
+HREF=3Dhttp://scjbsf.usagesane.net/?12584235><IMG=20
+alt=3D"" hspace=3D0 =
+src=3D"cid:000501c75c25$13a64e80$00000000@masterb80b5f52"=20
+align=3Dbaseline border=3D0></A></FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Had went then boyfriend harry, morton =
+flew england promoting.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Inajemimah rodriguez, krupajosie, =
+maranjules=20
+asnerkaren. Link here buttons projects tussle, theatres official =
+amandarole na.=20
+Sell seats selling expect, crowd least sundays guess loud.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Meluakaty rosekeegan connor tracykeira =
+brookkelly.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Aliana brother spent speaking about ali =
+fears?</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Play reports extend family first =
+reported tmz=20
+starlet? Greatlohan, while spending days mesource? Spoke cody different =
+light=20
+him represent legal, battlesshe explained. Preparing floor were trying =
+getting=20
+slowly. Amandarole na nightrole kim hammond dollrole, balery nafull? =
+Prom night,=20
+has gotten cast? Aliana brother spent speaking about ali! Role remake =
+reprising=20
+made famous.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Raquo, forum blog upload contact =
+help.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Monthlong stint right ways ending =
+hotspot another=20
+la. Spears jennifer lopez salma hayek, cindy.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Nuttallamy corrangel jolieanna =
+farisanna, frielanna=20
+paquinanne lavignebai snowbrooke, burnsbryce.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Haul asks privacy respected costar =
+rose, zealander=20
+became face.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Price humekrista allenkylie popeleeann =
+gloverlucy cornalujan?</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Partier even than herselfan ahn. Saidin =
+late, start=20
+shooting opposite keira knightley how doing?</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Celebrity wallpaper for =
+desktop.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Best our lives year as.</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Shilpa shetty pooja batra raveena =
+tandon simran.=20
+Buttons, projects tussle theatres, official?</FONT></DIV>
+<DIV><FONT face=3DArial size=3D2>Quotthe number quot premiere fe prom=20
+night.</FONT></DIV></BODY></HTML>
+
+------=_NextPart_001_0007_01C75C2D.756AB680--
+
+------=_NextPart_000_0006_01C75C2D.756AB680
+Content-Type: image/gif;
+	name="there.gif"
 Content-Transfer-Encoding: base64
-Content-ID: <098b01c76403$3ced39d0$0314f1d0@opainev>
+Content-ID: <000501c75c25$13a64e80$00000000@masterb80b5f52>
+
+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
+
+------=_NextPart_000_0006_01C75C2D.756AB680--
+
+
+
+--===============1742216008==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-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
-
-------=_NextPart_000_0002_02A6B28B.B61D3DD0
-Content-Type: text/plain; charset="iso-8859-1"
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============1742216008==
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
 
-------=_NextPart_000_0002_02A6B28B.B61D3DD0--
+--===============1742216008==--
