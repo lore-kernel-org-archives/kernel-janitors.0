@@ -1,66 +1,49 @@
-From: "Milind Arun Choudhary" <milindchoudhary@gmail.com>
-Date: Fri, 30 Mar 2007 12:43:03 +0000
-Subject: Re: [KJ] [PATCH] BIT macro cleanup
-Message-Id: <3b44d3fb0703300531l6293e792y94d4f16e43652fb5@mail.gmail.com>
+From: "Badai Aqrandista" <badaiaqrandista@gmail.com>
+Date: Sun, 04 Mar 2007 04:05:24 +0000
+Subject: [KJ] What does (P) in /proc/modules mean?
+Message-Id: <4b4be04a0703032005j69da5ddch208f375fc8e3e12e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070328033309.GA9597@arun.site>
-	 <20070328190925.GC5306@martell.zuzino.mipt.ru>
-	 <460B3244.9060405@student.ltu.se>
-In-Reply-To: <460B3244.9060405@student.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Knutsson <ricknu-0@student.ltu.se>, Alexey Dobriyan <adobriyan@gmail.com>
-Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, dmitry.torokhov@gmail.com, linux-input@atrey.karlin.mff.cuni.cz, linux-joystick@atrey.karlin.mff.cuni.cz
+To: kernel-janitors@vger.kernel.org
 
-On 3/29/07, Richard Knutsson <ricknu-0@student.ltu.se> wrote:
-> Alexey Dobriyan wrote:
-> > On Wed, Mar 28, 2007 at 09:03:09AM +0530, Milind Arun Choudhary wrote:
-> >
-> >> +#define BIT(nr)	(1UL << ((nr) % BITS_PER_LONG))
-> >>
-> >
-> > I think this would be a disaster because something like
-> >
-> > 	BIT(123)
-> >
-> > would not even generate a warning.
-> >
-> There were a discussion on this, at KJ, when BIT was first used with a
-> modular operation. I said the same thing as you do now, but a big user
-> of BIT is the input-subsystem who defined their BIT as above. Also it
-> was mentioned that the compiler can only find the statical errors, a
-> variable input can break it in runtime.
-> + if we _really_ want to check the tree for such warnings, it is easy to
-> remove the modular operation temporarily (and keep away of input/)
->
-> I don't say I like this, just that it is a choose between possible errors.
-as discussed in earlier thread there are two kinds of users of BIT
-1. input sybsystem which needs the "% BITS_PER_LONG"
-2. & all other who don't, so that they are warned when the bit no overflows
-I think a simple macro cant serve both the purposes
+Hi,
 
-so IMHO there should be two macros
- +#define BIT(nr)	(1UL << (nr))
-which server the first case
+I have a plain kernel module like this:
 
-&
- +#define XXXBITXXX(nr)	(1UL << ((nr) % BITS_PER_LONG))
-for input users
-earlier i suggested a name BITWRAP
-but some people hate it i think
-'m fine with any other name as well
-inputs....suggest a name
+#include <linux/module.h>
+#include <linux/init.h>
 
-so that we can still keep these two macros (along with LLBIT) in
-bitops.h & use apporpriately
+MODULE_AUTHOR("Badai Aqrandista");
+MODULE_LICENSE("Dual BSD/GPL");
 
-only hassle is the whole input tree is to be searched & replaced for BIT
-is this OK
+static int cheepy_init(void)
+{
+        printk(KERN_ALERT "cheepy: Module loaded\n");
+        return 0;
+}
+
+static void cheepy_cleanup(void)
+{
+        printk(KERN_ALERT "cheepy: Module unloaded\n");
+}
+
+module_init(cheepy_init);
+module_exit(cheepy_cleanup);
+
+When I load and unload it with insmod or rmmod, it does not print
+anything on the console or log. On /proc/modules, there is (P) next to
+its entry, like this:
+
+cheepy 2560 0 - Live 0xd0a37000 (P)
+
+What does (P) mean there?
 
 -- 
-Milind Arun Choudhary
+Thanks,
+Badai Aqrandista (cheepy)
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
