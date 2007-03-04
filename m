@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Sun, 04 Mar 2007 05:37:53 +0000
+From: "Badai Aqrandista" <badaiaqrandista@gmail.com>
+Date: Sun, 04 Mar 2007 12:19:51 +0000
 Subject: Re: [KJ] What does (P) in /proc/modules mean?
-Message-Id: <20070303213753.2cfd9d1e.rdunlap@xenotime.net>
+Message-Id: <4b4be04a0703040419x42c1197eu921b0fb526eb38cc@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4b4be04a0703032005j69da5ddch208f375fc8e3e12e@mail.gmail.com>
 In-Reply-To: <4b4be04a0703032005j69da5ddch208f375fc8e3e12e@mail.gmail.com>
@@ -10,55 +10,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 3 Mar 2007 21:31:38 -0800 Randy Dunlap wrote:
+Hi,
 
-> On Sun, 4 Mar 2007 14:05:24 +1000 Badai Aqrandista wrote:
-> 
-> > Hi,
-> > 
-> > I have a plain kernel module like this:
-> > 
-> > #include <linux/module.h>
-> > #include <linux/init.h>
-> > 
-> > MODULE_AUTHOR("Badai Aqrandista");
-> > MODULE_LICENSE("Dual BSD/GPL");
-> > 
-> > static int cheepy_init(void)
-> > {
-> >         printk(KERN_ALERT "cheepy: Module loaded\n");
-> >         return 0;
-> > }
-> > 
-> > static void cheepy_cleanup(void)
-> > {
-> >         printk(KERN_ALERT "cheepy: Module unloaded\n");
-> > }
-> > 
-> > module_init(cheepy_init);
-> > module_exit(cheepy_cleanup);
-> > 
-> > When I load and unload it with insmod or rmmod, it does not print
-> > anything on the console or log. On /proc/modules, there is (P) next to
-> > its entry, like this:
-> > 
-> > cheepy 2560 0 - Live 0xd0a37000 (P)
-> > 
-> > What does (P) mean there?
-> 
-> It means Proprietary.  What kernel version are you using?
-> 
-> It could be a kernel bug.  What other modules do you have loaded?
-> 
-> I'll do some checking with your sample module.
+On 3/4/07, Randy Dunlap <rdunlap@xenotime.net> wrote:
+> I just tested this module on 2.6.20, no license issues/problems
+> at all.  So what kernel version were you using and what other
+> modules were loaded or had been loaded?
 
-I just tested this module on 2.6.20, no license issues/problems
-at all.  So what kernel version were you using and what other
-modules were loaded or had been loaded?
+I think I found the cause. It's the Makefile. I copied the Makefile
+from ldd3 and it includes this line:
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+CFLAGS += $(DEBFLAGS) -I$(LDDINCDIR)
+
+When I removed -I$(LDDINCDIR) from that line and recompiled the
+module, the (P) mark is gone and all printk's are printed to the log.
+And $(LDDINCDIR) variable is empty because I didn't pass it.
+
+So I think I can reduce the problem to: passing an empty -I parameter
+to CFLAGS makes the module proprietory.
+
+Why is that?
+
+Anyway, thanks for replying so quickly.
+
+-- 
+Thanks,
+Badai Aqrandista (cheepy)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
