@@ -1,7 +1,7 @@
-From: "Mngr. thelmamauricio" <valoriehiroshi@comercio.net>
-Date: Sat, 31 Mar 2007 22:48:26 +0000
-Subject: [KJ] Herbal cure for IMP0tence Darnell
-Message-Id: <3F5966706.7055148@codeweavers.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 04 Mar 2007 17:59:13 +0000
+Subject: [KJ] some Kconfig help entries could use some updating
+Message-Id: <Pine.LNX.4.64.0703041254120.4898@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,38 +9,42 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Hi , Kernel-janitors!
-Do you have any Problem in Getting & Maintaining Erection??
+  to get networking functioning on my inspiron laptop with a linksys
+cardbus PCMCIA card, i need to select:
 
-Get rock hard with much more girth in just 15 mins with Herbal-V (Herba! V!.gra). Herbal-V is a natural cure for imp0tence. 
-Unlike Vi g r  a or Cia  li s, Herbal-V has No Side Effects and has a 99% success rate.
+  Bus options
+    PCCARD (PCMCIA/CardBus) support  --->
 
-http://hventilotricalnode.blogspot.com/
+under which you can find selections for 16-bit PCMCIA support, etc.
 
-Features: 
-* Gives you Rock Solid Erection and helps to obtain & maintain erection
-* Intensifying Sex Giving You Incredibly Powerful Long Lasting Orgasms
-* Herbal-V incre,ases 6ual pleasure by increasing the size and hardness
-* Gives you Powerful Orgasms, Strength/Stamina/Endurance & Amplified Sensations
-* Fuller & Harder Erections
-* No Side Effects 
-* Works in less than 15 minutes
-* Herbal-V VERY AFORDABLE--1/10 OF VI.GRA
-Get Same powerful results as Vi,gra without any harmful side effects! 
+  but in addition to the above, under
 
-http://hvkejiakhik.blogspot.com/
+  Device drivers
+    Network device support
 
+you can find "PCMCIA network device support", whose help screen reads:
 
-Try it now without any risk
+"Say Y if you would like to include support for any PCMCIA or CardBus
+network adapters ..."
 
-http://hventilotricalnode.blogspot.com/
+  but i already *have* that support from before.  the stuff under the
+latter menu entry looks strictly like 16-bit stuff, so it shouldn't be
+making reference to cardbus, yes?
 
-Have a nice day
+  can someone clarify this, and suggest how to make it accurate?
+
+rday
 
 
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-My email wastes your time? goofed up
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
