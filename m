@@ -1,41 +1,50 @@
-From: sgt willy <infoagent05@yahoo.com.hk>
-Date: Fri, 16 Mar 2007 08:29:42 +0000
-Subject: [KJ] Attn:SirMadam
-Message-Id: <20070316082813.13F62834180@smtp4.netsite.com.br>
+From: Surya <surya.prabhakar@wipro.com>
+Date: Tue, 06 Mar 2007 10:13:27 +0000
+Subject: [KJ] [kj]patch7:replace pci_find_device in sound/oss/trident.c
+Message-Id: <1173175287.32705.5.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070316081130.F323E43007F@smtp7.netsite.com.br>
-In-Reply-To: <20070316081130.F323E43007F@smtp7.netsite.com.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: alan@redhat.com, mulix@mulix.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors <kernel-janitors@lists.osdl.org>
 
-Good Day.
-I hope my email meets you well. I am in need of your
-assistance. My name is Sgt Williams , I am in the
-Engineering military unit here in Ba'qubah in Iraq,we
-have about $20 Million US dollars that we want to move
-out of the country. My partners and I need a good
-partner someone we can trust. It is oil money and
-legal.
-We have made arrangements with a Diplomatic courier
-service that will move the funds out of Iraq as a
-family treasure. The most important thing is that can
-we trust you? Once the funds get to you, you take your
-20% out and keep our own 80%. Your own part of this
-deal is to find a safe place where the funds can be
-sent to. Our own part is sending it to you.If you are
-interested I will furnish you with
-more details. But the whole process is simple and we
-must keep a low profile at all times. I look forward
-to your reply and co-operation, and I thank you in
-advance as I anticipate your co-operation.get back to
-me in this my pesonal email:sgt_williams05@yahoo.com.hk
-Waiting for your urgent response
-Regards,
-Sgt. Williams.
+Hi,
+ Cleanup of pci_find_device to pci_get_device in sound/oss/trident.c
+Applies and compiles clean to latest Linus tree. Not tested!
+
+thanks..
 
 
+Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+--- 
+
+diff --git a/sound/oss/trident.c b/sound/oss/trident.c
+index 72a8a0e..882ab27 100644
+--- a/sound/oss/trident.c
++++ b/sound/oss/trident.c
+@@ -4450,8 +4450,8 @@ trident_probe(struct pci_dev *pci_dev, c
+ 
+ 		/* Add H/W Volume Control By Matt Wu Jul. 06, 2001 */
+ 		card->hwvolctl = 0;
+-		pci_dev_m1533 = pci_find_device(PCI_VENDOR_ID_AL, 
+-						PCI_DEVICE_ID_AL_M1533, 
++		pci_dev_m1533 = pci_get_device(PCI_VENDOR_ID_AL,
++						PCI_DEVICE_ID_AL_M1533,
+ 						pci_dev_m1533);
+ 		rc = -ENODEV;
+ 		if (pci_dev_m1533 = NULL)
+@@ -4481,6 +4481,7 @@ trident_probe(struct pci_dev *pci_dev, c
+ 
+ 	/* claim our irq */
+ 	rc = -ENODEV;
++	pci_dev_put(pci_dev_m1533);
+ 	if (request_irq(card->irq, &trident_interrupt, IRQF_SHARED,
+ 			card_names[pci_id->driver_data], card)) {
+ 		printk(KERN_ERR "trident: unable to allocate irq %d\n", 
+
+-- 
+surya.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
