@@ -1,86 +1,49 @@
-From: Surya <surya.prabhakar@wipro.com>
-Date: Mon, 12 Mar 2007 09:59:07 +0000
-Subject: Re: [KJ] Patch9:replace pci_find_device in isdn/hisax/hfc_pci.c
-Message-Id: <1173692827.14236.1.camel@bluegenie>
+From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
+Date: Thu, 08 Mar 2007 14:35:47 +0000
+Subject: Warning: message 1HP9sF-0004E2-2h delayed 10 hours
+Message-Id: <E1HPJid-00036B-Ns@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1173692250.13915.3.camel@bluegenie>
-In-Reply-To: <1173692250.13915.3.camel@bluegenie>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-    Replacing pci_find_device in hfc_pci.c (isdn/hisax)
-Applies and compiles clean on latest tree.
+This message was created automatically by mail delivery software.
+A message that you sent has not yet been delivered to one or more of its
+recipients after more than 10 hours on the queue on externalmx-1.sourceforg=
+e.net.
 
-thanks.
+The message identifier is:     1HP9sF-0004E2-2h
+The subject of the message is: get a lot its the face.
+The date of the message is:    Thu, 08 Mar 2007 07:50:17 +0400
 
+The address to which the message has not yet been delivered is:
 
-Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
---- 
+  kernel-janitor-discuss@lists.sourceforge.net
+    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
+or-discuss@lists.sourceforge.net>:
+    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
+r verify callout
+    451-Could not complete sender verify callout for
+    451-<kernel-janitor-discuss@lists.sourceforge.net>.
+    451-The mail server(s) for the domain may be temporarily unreachable, or
+    451-they may be permanently unreachable from this server. In the latter=
+ case,
+    451-you need to change the address or create an MX record for its domain
+    4
 
+No action is required on your part. Delivery attempts will continue for
+some time, and this warning may be repeated at intervals if the message
+remains undelivered. Eventually the mail delivery software will give up,
+and when that happens, the message will be returned to you.
 
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index 8a48a3c..b346419 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1665,7 +1665,7 @@ setup_hfcpci(struct IsdnCard *card)
- 	if (cs->typ = ISDN_CTYPE_HFC_PCI) {
- 		i = 0;
- 		while (id_list[i].vendor_id) {
--			tmp_hfcpci = pci_find_device(id_list[i].vendor_id,
-+			tmp_hfcpci = pci_get_device(id_list[i].vendor_id,
- 						     id_list[i].device_id,
- 						     dev_hfcpci);
- 			i++;
-@@ -1687,7 +1687,7 @@ setup_hfcpci(struct IsdnCard *card)
- 			cs->irq = dev_hfcpci->irq;
- 			if (!cs->irq) {
- 				printk(KERN_WARNING "HFC-PCI: No IRQ for PCI card found\n");
--				return (0);
-+				goto tmp_hfcpci_cleanup;
- 			}
- 			cs->hw.hfcpci.pci_io = (char *)(unsigned long)dev_hfcpci->resource[1].start;
- 			printk(KERN_INFO "HiSax: HFC-PCI card manufacturer: %s card name: %s\n", id_list[i].vendor_name, id_list[i].card_name);
-@@ -1697,14 +1697,14 @@ setup_hfcpci(struct IsdnCard *card)
- 		}
- 		if (!cs->hw.hfcpci.pci_io) {
- 			printk(KERN_WARNING "HFC-PCI: No IO-Mem for PCI card found\n");
--			return (0);
-+			goto tmp_hfcpci_cleanup;
- 		}
- 		/* Allocate memory for FIFOS */
- 		/* Because the HFC-PCI needs a 32K physical alignment, we */
- 		/* need to allocate the double mem and align the address */
- 		if (!(cs->hw.hfcpci.share_start = kmalloc(65536, GFP_KERNEL))) {
- 			printk(KERN_WARNING "HFC-PCI: Error allocating memory for FIFO!\n");
--			return 0;
-+			goto tmp_hfcpci_cleanup;
- 		}
- 		cs->hw.hfcpci.fifos = (void *)
- 		    (((ulong) cs->hw.hfcpci.share_start) & ~0x7FFF) + 0x8000;
-@@ -1741,9 +1741,15 @@ setup_hfcpci(struct IsdnCard *card)
- 		cs->cardmsg = &hfcpci_card_msg;
- 		cs->auxcmd = &hfcpci_auxcmd;
- 		spin_unlock_irqrestore(&cs->lock, flags);
-+
-+		pci_dev_put(tmp_hfcpci);
- 		return (1);
- 	} else
- 		return (0);	/* no valid card type */
-+
-+tmp_hfcpci_cleanup:
-+		pci_dev_put(tmp_hfcpci);
-+		return 0;
- #else
- 	printk(KERN_WARNING "HFC-PCI: NO_PCI_BIOS\n");
- 	return (0);
-
--- 
-surya.
-12/03/2007
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
+EV
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
