@@ -1,12 +1,15 @@
-From: "Ahmed S. Darwish" <darwish.07@gmail.com>
-Date: Wed, 07 Mar 2007 23:18:20 +0000
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Thu, 08 Mar 2007 00:07:49 +0000
 Subject: [KJ] [PATCH 2.6.21-rc3] i386: Fix GDT's number of quadwords in
-Message-Id: <20070307231819.GC1949@Ahmed>
+Message-Id: <20070307160749.7d6698b9.randy.dunlap@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070307231819.GC1949@Ahmed>
+In-Reply-To: <20070307231819.GC1949@Ahmed>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
 
 Hi list,
 
@@ -43,6 +46,14 @@ index 3fa7f93..cb185f4 100644
 Ahmed S. Darwish
 http://darwish.07.googlepages.com
 
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+cc: to Andrew for merging.  Is this method OK with you for KJ patches
+or would you prefer to see a KJ patchset maintained (again)?
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
