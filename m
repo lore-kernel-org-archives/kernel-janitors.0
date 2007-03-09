@@ -1,51 +1,61 @@
-From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Wed, 28 Mar 2007 14:13:38 +0000
-Subject: Warning: message 1HVSyv-000434-Rd delayed 72 hours
-Message-Id: <E1HWYuA-0001YI-Od@externalmx-1.sourceforge.net>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Fri, 09 Mar 2007 01:38:50 +0000
+Subject: [KJ] semaphores versus mutexes
+Message-Id: <Pine.LNX.4.64.0703082031050.14629@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1HVcSF-0002Gq-VZ@externalmx-1.sourceforge.net>
-In-Reply-To: <E1HVcSF-0002Gq-VZ@externalmx-1.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This message was created automatically by mail delivery software.
-A message that you sent has not yet been delivered to one or more of its
-recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
-e.net.
 
-The message identifier is:     1HVSyv-000434-Rd
-The subject of the message is: finest coast-to-coast doses.
-The date of the message is:    Sun, 25 Mar 2007 19:14:56 +0530
+  i'm not sure if there's some (lots of?) potential cleanup here, so
+if someone can clarify this, i'd be ever so grateful.
 
-The address to which the message has not yet been delivered is:
+  from what i read (and i could be way offbase), the semaphore.h
+header files technically define general counting semaphores, while the
+more specific mutex.h header files define strictly *binary*
+sempahores.  is that correct so far?
 
-  kernel-janitor-discuss@lists.sourceforge.net
-    Delay reason: SMTP error from remote mailer after RCPT TO:<kernel-janit=
-or-discuss@lists.sourceforge.net>:
-    host mail.sourceforge.net [66.35.250.206]: 451-Could not complete sende=
-r verify callout
-    451-Could not complete sender verify callout for
-    451-<kernel-janitor-discuss@lists.sourceforge.net>.
-    451-The mail server(s) for the domain may be temporarily unreachable, or
-    451-they may be permanently unreachable from this server. In the latter=
- case,
-    451-you need to change the address or create an MX record for its domain
-    4
+  if that's true, then it would seem to follow that the semaphore.h
+files shouldn't define anything related strictly to mutexes, but at
+the moment, that's not what's happening.  asm-i386/semaphore.h
+contains stuff like:
 
-No action is required on your part. Delivery attempts will continue for
-some time, and this warning may be repeated at intervals if the message
-remains undelivered. Eventually the mail delivery software will give up,
-and when that happens, the message will be returned to you.
+=============#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
+#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
+...
+static inline void init_MUTEX (struct semaphore *sem)
+{
+        sema_init(sem, 1);
+}
 
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=3Djoin.php&p=3Dsourceforge&CID=DEVD=
-EV
+static inline void init_MUTEX_LOCKED (struct semaphore *sem)
+{
+        sema_init(sem, 0);
+}
+=============
+which would seem to belong more properly in mutex.h, no?
+
+  instead of DECLARE_MUTEX, one would use mutex.h's DEFINE_MUTEX, no?
+and instead of init_MUTEX(), you would use mutex_init(), right?
+except that mutex.h has no equivalent to DECLARE_MUTEX_LOCKED or
+init_MUTEX_LOCKED that i can see.
+
+  can someone clarify what should be happening here in a perfect
+world?  thanks.
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
