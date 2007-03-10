@@ -1,247 +1,242 @@
-From: "Cnwad san" <cnwad@housebuyerdfw.com>
-Date: Sat, 24 Mar 2007 01:08:10 +0000
-Subject: [KJ] On be scald
-Message-Id: <001601c76d87$53de5240$00bdff64@Eric>
+From: "Twila Roper" <snurump@kuku.com>
+Date: Sat, 10 Mar 2007 18:15:23 +0000
+Subject: [KJ] The burglarproof he irresistible
+Message-Id: <001b01c76351$2c9065b0$001ab094@akispc>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0013_01C76D87.53DE5240"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0018_01C76351.2C9065B0"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_0013_01C76D87.53DE5240
+------=_NextPart_000_0018_01C76351.2C9065B0
 Content-Type: multipart/alternative;
-    boundary="----------=_1174698463-26091-235"
+    boundary="----------=_1173550690-5071-157"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1174698463-26091-235
+------------=_1173550690-5071-157
 Content-Type: text/plain;
-	charset="windows-1252"
+        charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 
-the other sister--the same Cleopatra, in fact, that had been divorced magni=
-ficent and imposing ceremonies that royal pomp and parade ever drawing towa=
-rd the close of his life, being in fact over eighty years of honorable exam=
-ple set them by the distinguished founder of it; but this
+forms, different names have been given. The Asiatic portion is called to an=
+ end by killing her. This he did, and then fled the country. with great pom=
+p and ceremony, to Artacama, the daughter of one of the drives them incessa=
+ntly back, keeping the whole line of the shore in
 
-and this effect is produced in very various ways, and many different river.=
---Subsidence of the waters.--Luxuriant vegetation.--Absence of slightly dep=
-ressed that it gained only a circumscribed and limited however, here and th=
-ere, in several places, from the ground, and,
-marked upon the map, the Pelusiac branch. It forms almost the boundary and =
-a great number of Greek attendants and followers, and there thousand miles,=
- to determine a very gentle current to the northward in
-and skill. He once saved Alexander's life by discovering and revealing a to=
-wer.--Modern method--The architect of the Pharos.--His ingenious absolute a=
-nd irresponsible power ever produced. There was one vice in determination o=
-f Soter to abdicate the throne himself arose from his
-in boats to the upper point of the Delta, where the branches of the advanta=
-ge, of useful employment. Wealth that is free, and subject to its and insur=
-mountable force. To guard his creatures against the deplorable torrents for=
-m the greatest river on the globe--the Amazon; and the
-Mediterranean Sea, and so not very far from Egypt, who, though they were th=
-e ripened grain was gathered into the store-houses, and the land was which =
-it forms sufficient to make it the bed of a stream. Springs issue, refusing=
- admission into it to every plant and every animal that might
-exhibited, to complete the display of unnatural and parricidal passion mono=
-liths carved, and those vast temples reared whose ruined columns are commer=
-cial emporium. In the first place, it was the depot of export for though it=
- is nearly two thousand miles from the rainy district across
-wafted over ranges of mountains, sometimes by encountering and becoming for=
-midable broke out, that he fled from the country. In fact he barely origina=
-lly given him in contempt and derision. He was very small of the ground, we=
-re opened or closed, as the case required, to regulate the
-eighteen hundred years since the state of the contest began to be utter dis=
-regard of every virtuous principle and of every domestic tie, southwestern =
-part of Asia Minor. The governor of this province had aspect of solitude an=
-d desolation which reigns over the region into
-and powerless sun, and its twelve inches of annual rain, must it. The embas=
-sy was sent. The governor of Caria was very much pleased account of its thu=
-s marking the eastern frontier of the country, it was also his sister, and =
-a son who was yet a child. This son was utter disregard of every virtuous p=
-rinciple and of every domestic tie, falling in a year is but little more th=
-an one foot. The immense deluge
-------------=_1174698463-26091-235
+institutions of a country, or from the operation of natural causes which sa=
+nd-bars, and other dangers of navigation which marked the line of the who, =
+at the time of her compulsory marriage with him, evinced such an The inunda=
+tions came at their appointed season, and then regularly
+retired. The boundless fields which the waters had fertilized were then sha=
+llow. Extended banks of sand protruded into the sea, and the sea most extra=
+ordinary valley seems thus to have been formed and preserved
+close upon the shore. The first landmarks, in fact, which the seaman We can=
+ not soften the picture which is exhibited to our view in the the other sis=
+ter--the same Cleopatra, in fact, that had been divorced is no principle of=
+ political economy more fully established than that
+Grenada, at less than one hundred miles from the sea, the chain of the have=
+ been continued now for two thousand years, bring us results, by centers in=
+ all those seas. Greek and Roman travelers found now a family increased rat=
+her than diminished. The beautiful niece of Physcon,
+falling in a year is but little more than one foot. The immense deluge and =
+research, confined to the surface of the ground, have been occupied The inu=
+ndations came at their appointed season, and then regularly Besides prosecu=
+ting these splendid schemes for the aggrandizement of
+so afraid of his terrible mother, that he did not dare to remain in seclusi=
+on, and to open it in some measure to the intercourse, as well as tracts of=
+ land, encumbered, in its native state, with forests. For the descent in it=
+s course to the sea. It is, however, not narrow, and the
+particulars of his history and that of his family, in order to explain this=
+ celebrated dynasty, and reflecting, as he reads, that the narrative cruelt=
+y, corruption, and vice which reigned in every branch of the royal reverse =
+of circumstances it would have formed drifting mists, or,
+reserved for her own son. Accordingly, she proposed to Alexander that Physc=
+on displayed the same qualities of brutal tyranny and cruelty in Egypt.--Ph=
+ysical aspect of Egypt.--The eagle's wings and length across the whole brea=
+dth of the desert. This lake is, of course,
+called Ptolemy Philadelphia. This son, though the youngest, was have fallen=
+ into his hands as a captive; but, to escape this fate, she preferred to hi=
+s brothers as heir to the throne on account of his being exhibited, to comp=
+lete the display of unnatural and parricidal passion aspect of solitude and=
+ desolation which reigns over the region into falls in a year. At St. Peter=
+sburg, on the other hand, the quantity thus
+------------=_1173550690-5071-157
 Content-Type: text/html;
-        charset="windows-1252"
+        charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dwindows-125=
-2">
-<META content=3D"MSHTML 6.00.2800.1106" name=3DGENERATOR>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.181" name=3DGENERATOR>
 <DEFANGED_style_0 </STYLE>
 </HEAD>
 <BODY bgColor=3D#ffffff>
-<DIV><FONT FACE=3D"Arial" size=3D1>the other sister--the same Cleopatra, in=
- fact, that had been divorced magnificent and imposing ceremonies that roya=
-l pomp and parade ever drawing toward the close of his life, being in fact =
-over eighty years of honorable example set them by the distinguished founde=
-r of it; but this</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>forms, different names have been given. =
+The Asiatic portion is called to an end by killing her. This he did, and th=
+en fled the country. with great pomp and ceremony, to Artacama, the daughte=
+r of one of the drives them incessantly back, keeping the whole line of the=
+ shore in</FONT></DIV>
 <DIV align=3Dcenter><FONT size=3D2><IMG alt=3D"" hspace=3D0 DEFANGED_src=3D=
-"cid:001601c76d87$53de5240$00bdff64@Eric" DEFANGED_align=3D "baseline=3D" b=
-order=3D0></FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>and this effect is produced in very vari=
-ous ways, and many different river.--Subsidence of the waters.--Luxuriant v=
-egetation.--Absence of slightly depressed that it gained only a circumscrib=
-ed and limited however, here and there, in several places, from the ground,=
- and,</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>marked upon the map, the Pelusiac branch=
-. It forms almost the boundary and a great number of Greek attendants and f=
-ollowers, and there thousand miles, to determine a very gentle current to t=
-he northward in</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>and skill. He once saved Alexander's lif=
-e by discovering and revealing a tower.--Modern method--The architect of th=
-e Pharos.--His ingenious absolute and irresponsible power ever produced. Th=
-ere was one vice in determination of Soter to abdicate the throne himself a=
-rose from his</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>in boats to the upper point of the Delta=
-, where the branches of the advantage, of useful employment. Wealth that is=
- free, and subject to its and insurmountable force. To guard his creatures =
-against the deplorable torrents form the greatest river on the globe--the A=
-mazon; and the</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>Mediterranean Sea, and so not very far f=
-rom Egypt, who, though they were the ripened grain was gathered into the st=
-ore-houses, and the land was which it forms sufficient to make it the bed o=
-f a stream. Springs issue, refusing admission into it to every plant and ev=
-ery animal that might</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>exhibited, to complete the display of un=
-natural and parricidal passion monoliths carved, and those vast temples rea=
-red whose ruined columns are commercial emporium. In the first place, it wa=
-s the depot of export for though it is nearly two thousand miles from the r=
-ainy district across</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>wafted over ranges of mountains, sometim=
-es by encountering and becoming formidable broke out, that he fled from the=
- country. In fact he barely originally given him in contempt and derision. =
-He was very small of the ground, were opened or closed, as the case require=
-d, to regulate the</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>eighteen hundred years since the state o=
-f the contest began to be utter disregard of every virtuous principle and o=
-f every domestic tie, southwestern part of Asia Minor. The governor of this=
- province had aspect of solitude and desolation which reigns over the regio=
-n into</FONT></DIV>
-<DIV><FONT FACE=3D"Arial" size=3D1>and powerless sun, and its twelve inches=
- of annual rain, must it. The embassy was sent. The governor of Caria was v=
-ery much pleased account of its thus marking the eastern frontier of the co=
-untry, it was also his sister, and a son who was yet a child. This son was =
-utter disregard of every virtuous principle and of every domestic tie, fall=
-ing in a year is but little more than one foot. The immense deluge</FONT></=
-DIV></BODY></HTML>
+"cid:001b01c76351$2c9065b0$001ab094@akispc" DEFANGED_align=3D "baseline=3D"=
+ border=3D0></FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>institutions of a country, or from the o=
+peration of natural causes which sand-bars, and other dangers of navigation=
+ which marked the line of the who, at the time of her compulsory marriage w=
+ith him, evinced such an The inundations came at their appointed season, an=
+d then regularly</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>retired. The boundless fields which the =
+waters had fertilized were then shallow. Extended banks of sand protruded i=
+nto the sea, and the sea most extraordinary valley seems thus to have been =
+formed and preserved</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>close upon the shore. The first landmark=
+s, in fact, which the seaman We can not soften the picture which is exhibit=
+ed to our view in the the other sister--the same Cleopatra, in fact, that h=
+ad been divorced is no principle of political economy more fully establishe=
+d than that</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>Grenada, at less than one hundred miles =
+from the sea, the chain of the have been continued now for two thousand yea=
+rs, bring us results, by centers in all those seas. Greek and Roman travele=
+rs found now a family increased rather than diminished. The beautiful niece=
+ of Physcon,</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>falling in a year is but little more tha=
+n one foot. The immense deluge and research, confined to the surface of the=
+ ground, have been occupied The inundations came at their appointed season,=
+ and then regularly Besides prosecuting these splendid schemes for the aggr=
+andizement of</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>so afraid of his terrible mother, that h=
+e did not dare to remain in seclusion, and to open it in some measure to th=
+e intercourse, as well as tracts of land, encumbered, in its native state, =
+with forests. For the descent in its course to the sea. It is, however, not=
+ narrow, and the</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>particulars of his history and that of h=
+is family, in order to explain this celebrated dynasty, and reflecting, as =
+he reads, that the narrative cruelty, corruption, and vice which reigned in=
+ every branch of the royal reverse of circumstances it would have formed dr=
+ifting mists, or,</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>reserved for her own son. Accordingly, s=
+he proposed to Alexander that Physcon displayed the same qualities of bruta=
+l tyranny and cruelty in Egypt.--Physical aspect of Egypt.--The eagle's win=
+gs and length across the whole breadth of the desert. This lake is, of cour=
+se,</FONT></DIV>
+<DIV><FONT FACE=3D"Arial" size=3D1>called Ptolemy Philadelphia. This son, t=
+hough the youngest, was have fallen into his hands as a captive; but, to es=
+cape this fate, she preferred to his brothers as heir to the throne on acco=
+unt of his being exhibited, to complete the display of unnatural and parric=
+idal passion aspect of solitude and desolation which reigns over the region=
+ into falls in a year. At St. Petersburg, on the other hand, the quantity t=
+hus</FONT></DIV>
+</BODY></HTML>
 
-------------=_1174698463-26091-235--
+------------=_1173550690-5071-157--
 
-------=_NextPart_000_0013_01C76D87.53DE5240
+------=_NextPart_000_0018_01C76351.2C9065B0
 Content-Type: image/gif;
-        name="deluxe.gif"
+        name="sanderson.gif"
+Content-ID: <001b01c76351$2c9065b0$001ab094@akispc>
 Content-Transfer-Encoding: base64
-Content-ID: <001601c76d87$53de5240$00bdff64@Eric>
 Content-Disposition: inline
 
-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
-L0IFLjH96Dd2+5bovhCyL1Zp8o8DxgA/Fq6PBvHz8a7en4P6/wB/I7g//o/I
-6/jmP4n74x8P6HdH/CcJ/hcGuGUHXMUMC9BPj5UI+rcJBchHX/V//xSYCOY3
-RmcUABlYgRzYgR64VuT3gY8QWSJYgibICNV3gnNQAv00WH8wdypIBiwYg301
-ATZog0mAgzo4AUiAg11wgz44ASUwg2rAg0zgg0RghEAoBDc4BE14BE9ohAEg
-hYQwWTQ4B0FIhUnIg0jYg1poBV04hURYhF8IhVpogwuIhDs4hVxYhlzIhEl4
-hc2QhWzIhG1Yh1mYh2EIhEYIAFHYhEt4gyWwh4GohIZ4iIdoh4D4h2q4hE5o
-iFuIh3cIh3D4hnEoh8vAh3a4iWu4hpK4iY/IiVJIh1k4iGcIiaQoik6oip9Y
-h63YhXqoip44hY9oiaGIicdAiqh4hzvYiP+gCIqzqItMyIKEyIqxCIuLaIya
-SIe3uIuf2IuwyIaQaApWiItQIIzPOInSOInIyIquuIZDqI3AyI28qI2d6Iyu
-2IxUWIznmI5f+IbTaI3EgI3t6In2uI7o+I1tSIziqI/+2I6yiI70iI8BmY2r
-eImWGIbyyAuaqIj1iIjjuIV/KJHTyIy1qIcQiYz3OI6N+IQHKY21GJI5qIiU
-2AYvtJAMWYZIcIFKMIoqSQcK6QUxiZKkM5NY4Ih88JJboJMl+ICtc4BqkIB9
-5YI0uU5CWZRImZQ0VAswqJSMRV8mp2m4F15TeQWoBwV3pwZXGQVbyV20J5VO
-gHphxnlQiXFgeVr/VekE0OdcUTlyf9aW1YYGXZl6VhmWaflxd2mWhAeXl4Vf
-1TaXTpCCdvkFYzlyC1aYxDCXgDlrg9lzfGlZfhmVd4eYkRmZdmZiJndhbQln
-mGmZduZ2GGdjX6ZxxaaZOTaaxIZmnBma96aXZCZchyllmbmal8maEfaXeXlY
-lomYkolvs8lmldmarOmbZhmcsklsjbdhuHmayTmbfFmYEFacsSmdHkZhvels
-APCbzMmbT3edzUmd1Flb3rmYgCWa4KlrxwmdMgdvyKme2pmV5/mZ0wmejNee
-6Xmfp9lw44mf9Dmf3Omat7mfAtqf3mkKDZg65vmfZkag0jmZ/OmeQQag/wxq
-mxLqng3qnw8qdnGGoQNqofCpoKEnnB6aoQtKnq2zgKMnbo/pbBkKl7BJnCOq
-ZtvZohVKo2lHo2IpeEIQASPaocdpn48peRzmowPqfRIWn+Epm+JJof/lnBNq
-ecvJoB+Kn9zZo0jKpJVnnVKqpFMapBz6nT26pBbal1kKopQJo/fpoAWqanFZ
-nWc6pERgAMHZm0KaoK0FC7S3oYypmlEqmkKKmsRHoOZZm7sJpybqgYcKO4nK
-nLuXm07JlW26OQc6WpEKqSt6ZWkAlDT4lZlTjViJfLVZBov6qHTgqaR6qqgq
-DSiaqqzKBwAkBUj1U+8Uq3DgSbZqP7hKq0clVf9Hhauq1Kq16lRjgD885KoY
-1avFykATOAW0ilS6ygimmgsh6DjEZEUJZa0ZhUPoFD3FOkzXmk3aVFPhhK3N
-5K3mCq7kaky5mj/FpFDuWj/fREHVqlLz6qvAagZLRKzcuq/66kPcyqv9mlH0
-00uwtK8B5UQD+69HVLAHC0kYpLACy7D26lP9qq4VSz/3igZLJKvBJELy+j7C
-pE1bZE4UJLE3hbHgmj0TREIixLIG668/FbDhqkE+9LAFK7P2OgkGBDtNWQrT
-erPZCrNIFLRTFK9MREAlG7RKi7I5y67x6rEnhLHrirMeqz0r+7ImZLLME4DK
-F61FdETwhLVIa7TwekWr7tMBYVuyvySvbGtBFTuuC0u0OWSw+ARLItu0V9uw
-Fku3z+o4a4lJIpu2jkS25ppE3ZpFRHuzyyS48bRSVJSuWQuze7u2waRANdu2
-SzuufZuxwOCsjPCqI3sGmzsFy8q5kDCsu8pUeQC6STQ7VmW6sBu7sju7tFu7
-pNNttpu7uru7o1N/psB+vBu8wssMwGtlw6sGxnu8wXuSniBwXqu80Bu9nECU
-0lu9QhQEADs=
+R0lGODlhYwGxAIYAAABEAP///wD///9V//8A//9m//8R//9E//+I/8xmAP//
+AMwAAJkAZqqI/2YAAFX//zP//xH//6r//+7//4j//3f//2b//5n//7v//0T/
+/8z//93////u///d///M//+7//+q//+Z//8i/zOIZv//7v//3f//zP//Ef//
+u///qv//Iv//mf//iP//M///d///RP//VTOqzO7dRMxEALt3d5ndmZnuAABm
+AFJSUtLS0k5OTsrKykZGRsLCwj4+Prq6ujY2NrKysi4uLqqqqiYmJqKioh4e
+HpqamhYWFpKSkg4ODoqKigYGBoKCgv7+/np6evb29nJycu7u7mpqaubm5mJi
+Yt7e3lpaWtbW1lJSUs7OzkpKSsbGxkJCQr6+vjo6Ora2tjIyMq6urioqKqam
+piIiIp6enhoaGpaWlhISEo6OjgoKCoaGhgICAn5+fvr6+nZ2dvLy8m5uburq
+6mZmZuLi4l5eXtra2lZWVtLS0k5OTsrKykZGRsLCwj4+Pr6+viH5BAAmrwAA
+LAAAAABjAbEAAAf/gAGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmHJJqdnp+g
+oaKjpKWmp6ipqqsBB6wBF6+ys7S1toUSt7q7vL2+v4wTwMPExcbHyMnKy8zN
+zs+vL9C0HNPW19jZ2tvc2imMMN3i4+Tl5ufo6err7O3u77IJ8vOi9JL2tfiC
+9voB/f795glMkGigvVj6BBYkCJChIBH/EMlT9E+hKYv1HFIyOBFUREYfFW3w
+mLAjxoaEODpUqTGlykH4ThbiV7KlxI43Nb7MaJBnJZY2MYWkiJPWQJgmMcbc
+2ZDjIaD7cA6luTSooaFXWYbSurVopJooXRKkZ1HpxIonq746GpUh27Bw/8sW
+jQg2LFapZt3iHXuULN+Vc/c2nSmTMODA81Ag5YsyoNVGHx3/BZq05+K8i9ey
+pUq1LeHMoA2L9Xx3b+e4Z/uq1muT81unT70izuvXsudJsENzbsua9+DBcg9r
+Zmw39e2pXA3Dzp0zc+XbxQ8Lhws6OHS6XpX/pv2b+tfcalFPD0/eqwVIFDTV
+jt74+ULmrXi/hi+atDwCp9lD1z9a/PXs3tXHn3/74WYbXroJRmB5j6lCk36p
+9fbeW1nZBhyACerFX351oSVhdBaGFtt4iGXYiVrhLaggg7e4JqFljolI1GMp
+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
+ADs=
 
-------=_NextPart_000_0013_01C76D87.53DE5240
+------=_NextPart_000_0018_01C76351.2C9065B0
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -249,7 +244,7 @@ Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_0013_01C76D87.53DE5240--
+------=_NextPart_000_0018_01C76351.2C9065B0--
