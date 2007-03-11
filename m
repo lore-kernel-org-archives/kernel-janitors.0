@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Sat, 10 Mar 2007 08:09:44 +0000
-Subject: Warning: message 1HP9sF-0004E2-2h delayed 48 hours
-Message-Id: <E1HPwe8-0006Av-Tk@externalmx-1.sourceforge.net>
+Date: Sun, 11 Mar 2007 09:24:59 +0000
+Subject: Warning: message 1HP9sF-0004E2-2h delayed 72 hours
+Message-Id: <E1HQKIV-0007py-1K@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HPJid-00036B-Ns@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HPJid-00036B-Ns@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 72 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1HP9sF-0004E2-2h
