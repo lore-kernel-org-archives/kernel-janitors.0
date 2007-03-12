@@ -1,20 +1,24 @@
-From: "Ksyusha" <vobuydoyxe@delfi.lt>
-Date: Mon, 12 Mar 2007 03:39:59 +0000
-Subject: Re: [KJ] Our me.eting
-Message-Id: <a7d401c76468$dfdf2cb0$69230ce8@vobuydoyxe>
+From: "Solomon Inc" <jesjyxtvjrr@ahjinguang.com>
+Date: Mon, 12 Mar 2007 17:53:07 +0000
+Subject: [KJ] new vacancy
+Message-Id: <01c764e8$700e8ae0$6c822ecf@jesjyxtvjrr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hire,
-i am here sitting in the internet caffae. Found your email and
-decided to write. I might be coming to your place in 14 days, 
-so I decided to email you. May be we can meet? I am 25a y.o.
-girl. I have a picture if you want!. No need to reply herea as 
-this is not my email. Write me at mwm@direktglobus.info
-
+This message is important for everybody who like to earn or make his own bu=
+siness.
+Requirements for work with us: age from 20 years, opportunity of Internet c=
+onnection, the bank account, the responsibility, accuracy and punctuality, =
+skill to work with the Western Union system. If you are interested in our o=
+ffer and you want to earn money with us you can send to us information abou=
+t yourself. We=92ll send you documents for the further work.
+      =20
+contact us solomon98@mchsi.com   =20
+   =20
+Best Regards.   =20
 
 _______________________________________________
 Kernel-janitors mailing list
