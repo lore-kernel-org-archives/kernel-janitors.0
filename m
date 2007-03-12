@@ -1,60 +1,100 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sat, 17 Mar 2007 00:59:32 +0000
-Subject: Re: [KJ] [RFC] A need for "yesno"-function? (and "cleanup" of
-Message-Id: <45FB3D74.2040907@student.ltu.se>
+From: Surya <surya.prabhakar@wipro.com>
+Date: Mon, 12 Mar 2007 10:17:16 +0000
+Subject: [KJ] Patch11:replace pci_find_device in isdn/hisax/niccy.c
+Message-Id: <1173693916.14236.4.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <45F95351.60308@student.ltu.se> <39e6f6c70703152036m778ea054gf32723d0eda2be68@mail.gmail.com> <45FAB6C5.8050302@student.ltu.se> <Pine.LNX.4.61.0703170019010.23117@yvahk01.tjqt.qr>
-In-Reply-To: <Pine.LNX.4.61.0703170019010.23117@yvahk01.tjqt.qr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Engelhardt <jengelh@linux01.gwdg.de>
-Cc: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>, Kernel Janitors List <kernel-janitors@lists.osdl.org>, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Jan Engelhardt wrote:
-> On Mar 16 2007 16:24, Richard Knutsson wrote:
->   
->>>> char yesno_chr(const bool value)
->>>> {
->>>>        return "ny"[value];
->>>> }
->>>>
->>>> char *yesno_str(const bool value)
->>>> {
->>>>        return &"no\0yes"[3 * value];
->>>> }
->>>>         
->
-> static/extern const char *const yesno[] = {"no", "yes"};
-> static inline const char *yesno_str(bool value)
->   
-Should we use "inline"? Isn't it better to leave that to the compiler?
-Why the "const"?
-> {
-> 	return yesno[value];
-> }
->   
-That's better :)
-But I think a simple
+Hi,
+    Replacing pci_find_device in niccy.c (isdn/hisax)
+Applies and compiles clean on latest tree.
 
-static char *yesno_str(bool value)
-{
-	return value ? "yes" : "no";
-}
-is to prefer, don't you? It is simpler and we don't need to deal with an unnecessary array (unless it may be used by itself, that is. Then I would go for your implementation).
-
-> #or
-> #define yesno_str(value) yesno[!!(value)]
->   
-Why not "(bool)value" instead? We cast all the other times we want a 
-something to be of a different kind.
-
-Any thoughts where to put a function like this?
-
-Richard Knutsson
+thanks.
 
 
+Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+--- 
+
+diff --git a/drivers/isdn/hisax/niccy.c b/drivers/isdn/hisax/niccy.c
+index e5918c6..dddbaae 100644
+--- a/drivers/isdn/hisax/niccy.c
++++ b/drivers/isdn/hisax/niccy.c
+@@ -302,29 +302,29 @@ int __devinit setup_niccy(struct IsdnCar
+ #ifdef CONFIG_PCI
+ 		u_int pci_ioaddr;
+ 		cs->subtyp = 0;
+-		if ((niccy_dev = pci_find_device(PCI_VENDOR_ID_SATSAGEM,
++		if ((niccy_dev = pci_get_device(PCI_VENDOR_ID_SATSAGEM,
+ 						 PCI_DEVICE_ID_SATSAGEM_NICCY,
+ 						 niccy_dev))) {
+ 			if (pci_enable_device(niccy_dev))
+-				return 0;
++				goto niccy_dev_cleanup;
+ 			/* get IRQ */
+ 			if (!niccy_dev->irq) {
+ 				printk(KERN_WARNING
+ 				       "Niccy: No IRQ for PCI card found\n");
+-				return 0;
++				goto niccy_dev_cleanup;
+ 			}
+ 			cs->irq = niccy_dev->irq;
+ 			cs->hw.niccy.cfg_reg = pci_resource_start(niccy_dev, 0);
+ 			if (!cs->hw.niccy.cfg_reg) {
+ 				printk(KERN_WARNING
+ 				       "Niccy: No IO-Adr for PCI cfg found\n");
+-				return 0;
++				goto niccy_dev_cleanup;
+ 			}
+ 			pci_ioaddr = pci_resource_start(niccy_dev, 1);
+ 			if (!pci_ioaddr) {
+ 				printk(KERN_WARNING
+ 				       "Niccy: No IO-Adr for PCI card found\n");
+-				return 0;
++				goto niccy_dev_cleanup;
+ 			}
+ 			cs->subtyp = NICCY_PCI;
+ 		} else {
+@@ -341,7 +341,7 @@ int __devinit setup_niccy(struct IsdnCar
+ 			       "HiSax: %s data port %x-%x already in use\n",
+ 			       CardType[card->typ],
+ 			       cs->hw.niccy.isac, cs->hw.niccy.isac + 4);
+-			return 0;
++			goto niccy_dev_cleanup;
+ 		}
+ 		if (!request_region(cs->hw.niccy.cfg_reg, 0x40, "niccy pci")) {
+ 			printk(KERN_WARNING
+@@ -350,7 +350,7 @@ int __devinit setup_niccy(struct IsdnCar
+ 			       cs->hw.niccy.cfg_reg,
+ 			       cs->hw.niccy.cfg_reg + 0x40);
+ 			release_region(cs->hw.niccy.isac, 4);
+-			return 0;
++			goto niccy_dev_cleanup;
+ 		}
+ #else
+ 		printk(KERN_WARNING "Niccy: io0 0 and NO_PCI_BIOS\n");
+@@ -376,7 +376,13 @@ int __devinit setup_niccy(struct IsdnCar
+ 		printk(KERN_WARNING "Niccy: wrong HSCX versions check IO "
+ 			"address\n");
+ 		release_io_niccy(cs);
+-		return 0;
++		goto niccy_dev_cleanup;
+ 	}
++
++	pci_dev_put(niccy_dev);
+ 	return 1;
++
++niccy_dev_cleanup:
++		pci_dev_put(niccy_dev);
++		return (0);
+ }
+
+-- 
+surya.
+12/03/2007
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
