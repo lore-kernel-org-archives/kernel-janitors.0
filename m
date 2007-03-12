@@ -1,51 +1,76 @@
-From: JOHN HERBERT SOTT <UNIONBANK@UNIONBANKPLC.ORG>
-Date: Thu, 22 Mar 2007 15:00:04 +0000
-Subject: [KJ] Private Banking
-Message-Id: <20070322175202.70202BAFD7F@server6.blitzhost.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1777822168=="
+From: Surya <surya.prabhakar@wipro.com>
+Date: Mon, 12 Mar 2007 11:24:55 +0000
+Subject: [KJ] Patch15:replace pci_find_device in isdn/hisax/w6692.c
+Message-Id: <1173697975.14236.24.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============1777822168==
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
+Hi,
+    Replacing pci_find_device in w6692.c (isdn/hisax)
+
+thanks.
 
 
-DEAR FRIEND 
+Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+--- 
 
 
-My name is JOHN HERBERT SOTT; I am a senior partner in the firm of Midland Consulting Limited: Private Investigators and Security Consultants. We are conducting a standard process investigation on behalf of UNION BANK PLC, the International Banking Conglomerate. This investigation involves a client who shares the same surname with you and also the circumstances surrounding.
+diff --git a/drivers/isdn/hisax/w6692.c b/drivers/isdn/hisax/w6692.c
+index 3aeceaf..2ad414b 100644
+--- a/drivers/isdn/hisax/w6692.c
++++ b/drivers/isdn/hisax/w6692.c
+@@ -1011,7 +1011,7 @@ setup_w6692(struct IsdnCard *card)
+ 		return (0);
+ #ifdef CONFIG_PCI
+ 	while (id_list[id_idx].vendor_id) {
+-		dev_w6692 = pci_find_device(id_list[id_idx].vendor_id,
++		dev_w6692 = pci_get_device(id_list[id_idx].vendor_id,
+ 					    id_list[id_idx].device_id,
+ 					    dev_w6692);
+ 		if (dev_w6692) {
+@@ -1043,11 +1043,11 @@ setup_w6692(struct IsdnCard *card)
+ 	cs->irq = pci_irq;
+ 	if (!cs->irq) {
+ 		printk(KERN_WARNING "W6692: No IRQ for PCI card found\n");
+-		return (0);
++		goto dev_w6692_cleanup;
+ 	}
+ 	if (!pci_ioaddr) {
+ 		printk(KERN_WARNING "W6692: NO I/O Base Address found\n");
+-		return (0);
++		goto dev_w6692_cleanup;
+ 	}
+ 	cs->hw.w6692.iobase = pci_ioaddr;
+ 	printk(KERN_INFO "Found: %s %s, I/O base: 0x%x, irq: %d\n",
+@@ -1059,7 +1059,7 @@ setup_w6692(struct IsdnCard *card)
+ 		       id_list[cs->subtyp].card_name,
+ 		       cs->hw.w6692.iobase,
+ 		       cs->hw.w6692.iobase + 255);
+-		return (0);
++		goto dev_w6692_cleanup;
+ 	}
+ #else
+ 	printk(KERN_WARNING "HiSax: W6692 and NO_PCI_BIOS\n");
+@@ -1089,5 +1089,11 @@ setup_w6692(struct IsdnCard *card)
+ 	printk(KERN_INFO "W6692 D_EXIR=0x%X\n", ReadW6692(cs, W_D_EXIR));
+ 	printk(KERN_INFO "W6692 D_EXIM=0x%X\n", ReadW6692(cs, W_D_EXIM));
+ 	printk(KERN_INFO "W6692 D_RSTA=0x%X\n", ReadW6692(cs, W_D_RSTA));
++
++	pci_dev_put(dev_w6692);
+ 	return (1);
++
++dev_w6692_cleanup:
++		pci_dev_put(dev_w6692);
++	return (0);
+ }
 
-Investments made by this client at UNION BANK PLC. Republic, the Private Banking arm of UNION BANK PLC. The UNION BANK PLC. Private Banking client died intestate and nominated no successor in title over the investments made with the bank. The essence of this communication with you is to request you provide us information/comments on any or all of the four issues: 1-Are you aware of any relative/relation who shares your same name who���s last known contact address was Brussels Belgium?
-
-2-Are you aware of any investment of considerable value made by such a person at the Private Banking Division of UNION BANK PLC.?
-
-3-Born on the 1st of October 1938
-
-4-Can you establish beyond reasonable doubt your eligibility to assume status of successor in title to the deceased? It is pertinent that you inform us ASAP whether or not you are familiar with this personality that we may put an end to this communication with you and our inquiries surrounding this personality. You must appreciate that we are constrained from providing you with more detailed information at this point.
-
-Please respond to this mail as soon as possible to afford us the opportunity to close this investigation.
-
-Thank you for accommodating our enquiry. 
-
-
-JOHN HERBERT SOTT.
-
-
-
-
-
-
---===============1777822168==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+-- 
+surya.
+12/03/2007
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-
---===============1777822168==--
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
