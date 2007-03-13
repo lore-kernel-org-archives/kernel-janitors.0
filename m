@@ -1,75 +1,57 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 10 Mar 2007 13:35:10 +0000
-Subject: Re: [KJ] semaphores versus mutexes
-Message-Id: <Pine.LNX.4.64.0703100834110.7045@CPE00045a9c397f-CM001225dbafb6>
+From: Mr Moses Uzoegbu <mosesuzo@myway.com>
+Date: Tue, 13 Mar 2007 21:18:48 +0000
+Subject: [KJ] Greetings,
+Message-Id: <20070313211848.9404.qmail@mlsedv-online.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="0-1442216924-1173533710=:7045"
+Content-Type: multipart/mixed; boundary="===============1692683660=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0703082031050.14629@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0703082031050.14629@CPE00045a9c397f-CM001225dbafb6>
 To: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--===============1692683660==
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
---0-1442216924-1173533710=:7045
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 9 Mar 2007, Artur D'Assump=E7=E3o wrote:
+Greetings,
 
-> Hi Robert,
->
-> Mutexes are a relatively recent addon to the kernel (2.6.16 I think).
->
-> In the old days of the linux kernel, I think semaphores where almost the =
-only
-> blockable syncronization primitive available. Meanwhile, many other
-> implementations have appeared, that offered more optimization for specific
-> situations, previously covered by semaphores, for instance:
->    - R/W Semaphores
->    - Completions (kernel 2.4 ?)
->    - And recently mutexes.
->
-> Has you can imagine, most of the semaphores usage, where to cover these
-> previsous situations. Mutexes are no exception. I don't think there is mu=
-ch
-> code using semaphores for allowing more than one process inside the criti=
-cal
-> region, and if there is, it should be possible to port it to one of the
-> available alternatives.
->
-> With the appearing of a specific Mutex implementation (the missing link),
-> unless i'm missing something, i believe that the semaphore API should be =
-in
-> it's way out of the kernel soon. So, code that uses semaphores has a mutu=
-al
-> exclusion primitive or even, to sincronize multiple execution flows, shou=
-ld be
-> ported to the mutex and completion API, respectively.
->
-> Check here: http://lwn.net/Articles/167034/
->
-> Hope i've helped,
+I professionally advise that you digest and assimilate this that I have brought forth to you before taking your next decision. Be informed that this is legal and has little or nor risk and I would in my discreation keep it as discreet as possible.
 
-yes, you have, thanks.  although i suspect we'll see satan ice skating
-to work before all of the current semaphore occurrences are replaced
-by their newer alternatives.
+One Mr. Elf Rogers who worked with shell oil in Nigeria, was
+killed by the Niger-delta Millitants in 2005. Mr. Elf Rogers
+left the sum of $2.5M in cash and $1.2M in share debenture stocks of a reputable company in our deposit,which has accumulated a great amount of dividend. Until now no relation of his has come forward to claim this estate. So the bank has taken it upon itself to look for his next of 
+kin as he left no traces of any or any will.
 
-rday
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+You can also get information's on this web site
+http://www.turkishweekly.net/news.php?id=31543
 
-http://fsdev.net/wiki/index.php?title=3DMain_Page
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
---0-1442216924-1173533710=:7045
+I am Moses Uzoegbu and below is my profile:My Position Head of Risk Management Department and the Bank���s Chief Compliance Officer Of Ibtc Chartered Bank
+
+This is the link to get my profile http://www.ibtc.com/management.asp
+Our Bank's website: www.ibtc.com
+
+
+Please note that the priority of coming to you is for us to work together in getting this estate out for ourselves. I need you to make available to me the following datas:
+
+YOUR FULL NAME
+DIRECT PHONE AND FAX Oltrogge FOR PROPER COMMUICATION
+RESIDENT ADDRESS
+MARITAL STATUS
+OCCUPATION
+YOUR ID. i.e INTERNATIONAL PASSPORT OR DRIVERS LINECES
+
+With this I would validate an application of claim and forward it to the bank's foreign remittance department that is in charge of such transaction for formal commencement of reviews to this regards.
+
+Please Note if you know you are not capable of handling this
+transaction please dont reply.
+
+Regards
+
+Mr Moses Uzoegbu
+
+
+
+
+--===============1692683660==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -80,4 +62,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---0-1442216924-1173533710=:7045--
+--===============1692683660==--
