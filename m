@@ -1,13 +1,15 @@
 From: Mr Moses Uzoegbu <mosesuzo@myway.com>
 Date: Tue, 13 Mar 2007 21:18:48 +0000
 Subject: [KJ] Greetings,
-Message-Id: <20070313211848.9404.qmail@mlsedv-online.de>
+Message-Id: <20070313211848.9398.qmail@mlsedv-online.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1692683660=="
+Content-Type: multipart/mixed; boundary="===============0249742781=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070313211848.9404.qmail@mlsedv-online.de>
+In-Reply-To: <20070313211848.9404.qmail@mlsedv-online.de>
 To: kernel-janitors@vger.kernel.org
 
---===============1692683660==
+--===============0249742781==
 Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 
@@ -51,7 +53,7 @@ Mr Moses Uzoegbu
 
 
 
---===============1692683660==
+--===============0249742781==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -62,4 +64,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
 https://lists.osdl.org/mailman/listinfo/kernel-janitors
 
---===============1692683660==--
+--===============0249742781==--
