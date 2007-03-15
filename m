@@ -1,56 +1,50 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Fri, 16 Mar 2007 10:37:53 +0000
-Subject: Re: [KJ] module.h versus moduleparam.h
-Message-Id: <Pine.LNX.4.64.0703160635410.26564@CPE00045a9c397f-CM001225dbafb6>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Thu, 15 Mar 2007 14:08:17 +0000
+Subject: [KJ] [RFC] A need for a "yesno"-function?
+Message-Id: <45F95351.60308@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0703142027100.7167@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0703142027100.7167@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 16 Mar 2007, Anupam Kapoor wrote:
+Hi
 
-> On 3/15/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> >
-> >
-> >   i've summarized my thoughts on the moduleparam.h header file issue
-> > here:
-> >
-> > http://fsdev.net/wiki/index.php?title=Moduleparam.h
-> >
-> >   any thoughts?
->
->
-> how about talking to individual driver maintainers for doing
-> picewise cleanups ? the assumption here being that the bulk of
-> changes need to be applied to drivers.
+Was just checking up the 'sparse' when I saw something like "abc"[value] 
+and thought: what about the (statement) ? "yes" : "no" I have seen in 
+the kernel.
 
-as you mention, the bulk of those issues occur under drivers/, but
-some are under other directories as well:
+Ran:
+grep -Enr "\?.*y.*\:.*n" *
+and to my surprise, it was not so false-positive-prone and there are 
+many who does it. (Piping it to "grep yes" resulted in 153 hits) So I 
+thought, if we could standardize this and eliminate some jmp-commands 
+while doing it (the compiler should make the functions below inline), it 
+might be interesting.
 
-$ . ../moduleparam.sh sound
-Number of source files found: 483
-Number of files that include module.h: 93
-Number of files that include moduleparam.h: 119
-Number of files that include both: 16
-Number of files that include ONLY module.h: 77
-Number of files that include ONLY moduleparam.h: 1
-Number of files missing moduleparam.h: 30
-Number of files with unnecessary moduleparam.h: 25
+char yesno_chr(const bool value)
+{
+	return "ny"[value];
+}
 
-so this is all over the source tree, for what it's worth.
+char *yesno_str(const bool value)
+{
+	return &"no\0yes"[3 * value];
+}
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+(there may be better names for them)
+I believe this should be slightly faster. I wrote two programs (one for 
+each approach) and used 'time' while running them, and in a loop of 
+1000,000 I found the above to be slightly faster, but the variations 
+between runs were larger.
+So maybe it is as well to write: return value ? "yes" : "no"; but i 
+think there is a need for this kind of functions at least.
+
+Thoughts?
+
+Richard Knutsson
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.osdl.org
