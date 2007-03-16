@@ -1,88 +1,40 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 19 Mar 2007 20:25:29 +0000
-Subject: Re: [KJ] do all schedule_timeout() calls need to set state first?
-Message-Id: <20070319202529.GH774@us.ibm.com>
+From: sgt willy <infoagent05@yahoo.com.hk>
+Date: Fri, 16 Mar 2007 08:13:00 +0000
+Subject: [KJ] Attn:SirMadam
+Message-Id: <20070316081130.F323E43007F@smtp7.netsite.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0703191358530.13393@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0703191358530.13393@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 19.03.2007 [15:47:06 -0400], Robert P. J. Day wrote:
-> On Mon, 19 Mar 2007, Nishanth Aravamudan wrote:
-> 
-> > On 19.03.2007 [14:00:53 -0400], Robert P. J. Day wrote:
-> > >
-> > >   based on what i've been reading, all calls to schedule_timeout()
-> > > *must* first set the current process state to either
-> > > TASK_INTERRUPTIBLE or TASK_UNINTERRUPTIBLE, is that correct?
-> >
-> > Yes, but note that setting it directly before is not always
-> > necessary, in particular when used with wait-queues.
-> 
-> right, i realized that.  but it does have to be set at *some* point
-> before invoking that routine.
+Good Day.
+I hope my email meets you well. I am in need of your
+assistance. My name is Sgt Williams , I am in the
+Engineering military unit here in Ba'qubah in Iraq,we
+have about $20 Million US dollars that we want to move
+out of the country. My partners and I need a good
+partner someone we can trust. It is oil money and
+legal.
+We have made arrangements with a Diplomatic courier
+service that will move the funds out of Iraq as a
+family treasure. The most important thing is that can
+we trust you? Once the funds get to you, you take your
+20% out and keep our own 80%. Your own part of this
+deal is to find a safe place where the funds can be
+sent to. Our own part is sending it to you.If you are
+interested I will furnish you with
+more details. But the whole process is simple and we
+must keep a low profile at all times. I look forward
+to your reply and co-operation, and I thank you in
+advance as I anticipate your co-operation.get back to
+me in this my pesonal email:sgt_williams05@yahoo.com.hk
+Waiting for your urgent response
+Regards,
+Sgt. Williams.
 
-Yes. Presuming the intent is to actually schedule a timeout. I could
-conceive of some (brain-dead, perhaps) code that would either sleep or
-not, depending on some condition, and thus may not change its state
-before calling schedule_timeout. Last time I looked, though, there was
-no such code in the tree (and I would discourage it if I saw it).
 
-> > But, take a look at the comment heading schedule_timeout():
-> >
-> >  * Make the current task sleep until @timeout jiffies have elapsed. The
-> >  * routine will return immediately unless the current task state has
-> >  * been set (see set_current_state()).
-> >
-> > >   since i was once again perusing the source tree and noticed the
-> > > following in drivers/hwmon/ams/ams-i2c.c (line 93):
-> > >
-> > >         while (remaining) {
-> > >                 result = ams_i2c_read(AMS_COMMAND);
-> > >                 if (result = 0 || result & 0x80)
-> > >                         return 0;
-> > >
-> > >                 remaining = schedule_timeout(remaining);
-> > >         }
-> > >
-> > > it certainly *seems* that the state isn't being set here.  is that an
-> > > error?  just curious.
-> >
-> > Yes, it is.
-> 
-> as in, yes, it is an error?  (i'm *assuming* that's what you meant
-> here.)
-
-Yes.
-
-> > That is why we have schedule_timeout_interruptible() and
-> > schedule_timeout_uninterruptible().
-> 
-> i'd noticed those -- does that mean that there is no need to ever call
-> schedule_timeout(), and that one should always use one of those two
-> routines above?  or am i misreading this?
-
-Well, there are cases where you don't want to call the
-{un,}interruptible versions. wait-queues, I mentioned earlier. And
-sometimes, the task is put in a particular state, does some work and
-then sleeps. It's not always clear that the state is important during
-that work but rather than risk breaking something, I usually left those
-alone.
-
-In general, though, you are right, you shouldn't need to call
-schedule_timeout(). In the wait-queue case, for instance, you could just
-use wait_event_timeout().
-
-Thanks,
-Nish
-
--- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.osdl.org
+https://lists.osdl.org/mailman/listinfo/kernel-janitors
