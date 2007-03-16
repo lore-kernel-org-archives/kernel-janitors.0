@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Fri, 16 Mar 2007 10:34:19 +0000
+Date: Fri, 16 Mar 2007 10:37:53 +0000
 Subject: Re: [KJ] module.h versus moduleparam.h
-Message-Id: <Pine.LNX.4.64.0703160624340.26564@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <Pine.LNX.4.64.0703160635410.26564@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0703142027100.7167@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0703142027100.7167@localhost.localdomain>
@@ -27,29 +27,22 @@ On Fri, 16 Mar 2007, Anupam Kapoor wrote:
 > picewise cleanups ? the assumption here being that the bulk of
 > changes need to be applied to drivers.
 
-but before starting any cleanup, we first have to establish that
-there's any cleanup to be *done*.  even if the current situation is
-totally chaotic, one can also say, "hey, it's working, don't mess with
-it," and it may be that that's the right thing to do.
+as you mention, the bulk of those issues occur under drivers/, but
+some are under other directories as well:
 
-but as you can read at that wiki page, there's definite confusion on
-the part of lots of developers as to what they have to include in
-terms of header files to use module parameters.  if you decide to
-separate those two header files (which is quite easy to do), then you
-can see that there are 576 source files (under drivers/) that will
-suddenly fail to compile since they make use of module parameters but
-won't be including the contents of moduleparam.h anymore.  ouch.
+$ . ../moduleparam.sh sound
+Number of source files found: 483
+Number of files that include module.h: 93
+Number of files that include moduleparam.h: 119
+Number of files that include both: 16
+Number of files that include ONLY module.h: 77
+Number of files that include ONLY moduleparam.h: 1
+Number of files missing moduleparam.h: 30
+Number of files with unnecessary moduleparam.h: 25
 
-so, first things first -- what *should* the situation be?  any
-opinions?
+so this is all over the source tree, for what it's worth.
 
 rday
-
-p.s.  from that wiki page, you can also see that there appear to be 42
-source files (again, just under drivers/) that include moduleparam.h
-for no reason whatever.  so, regardless of what the final decision is,
-*those* files should be cleanable.
-
 -- 
 ====================================
 Robert P. J. Day
