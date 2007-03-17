@@ -1,75 +1,48 @@
-From: Shani Moideen <shani.moideen@wipro.com>
-Date: Fri, 30 Mar 2007 10:01:45 +0000
-Subject: [KJ] [PATCH-resend]drivers/net/eexpress.c replace with time_after
-Message-Id: <1175248186.2494.31.camel@shani-win>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 17 Mar 2007 22:34:17 +0000
+Subject: [KJ] removing discouraged {up,down}_read_non_owner routines
+Message-Id: <Pine.LNX.4.64.0703171827400.22331@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jeff@garzik.org, marcin.slusarz@gmail.com, philb@gnu.org
-Cc: kernel-janitors@osdl.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 
- Resending the patch with few corrections related to time_after and
-time_before in drivers/net/eexpress.c as suggested by Marcin slusarz.
+  from include/linux/rwsem.h:
 
-thanks.
+===============================extern void down_read_nested(struct rw_semaphore *sem, int subclass);
+extern void down_write_nested(struct rw_semaphore *sem, int subclass);
+/*
+ * Take/release a lock when not the owner will release it.
+ *
+ * [ This API should be avoided as much as possible - the
+ *   proper abstraction for this case is completions. ]
+ */
+extern void down_read_non_owner(struct rw_semaphore *sem);   <--
+extern void up_read_non_owner(struct rw_semaphore *sem);     <--
+===============================
+  and if you look for all invocations of those two routines, there's
+eaxctly one of each, in fs/direct-io.c, which means that, if you could
+somehow replace that single example with a completion, you could
+delete that entire abstraction.
 
+  sadly though, they're being applied to the "i_alloc_sem"  R/W
+semaphore of an inode, and i'm not sure if it's feasible to modify
+that member of an inode.
 
-Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
-----
+  thoughts?
 
-diff --git a/drivers/net/eexpress.c b/drivers/net/eexpress.c
-index 3868b80..1321757 100644
---- a/drivers/net/eexpress.c
-+++ b/drivers/net/eexpress.c
-@@ -115,6 +115,7 @@
- #include <linux/mca-legacy.h>
- #include <linux/spinlock.h>
- #include <linux/bitops.h>
-+#include <linux/jiffies.h>
- 
- #include <asm/system.h>
- #include <asm/io.h>
-@@ -556,7 +557,7 @@ static void unstick_cu(struct net_device *dev)
- 
- 	if (lp->started)
- 	{
--		if ((jiffies - dev->trans_start)>50)
-+		if (time_after( jiffies, dev->trans_start + 50))
- 		{
- 			if (lp->tx_link=lp->last_tx_restart)
- 			{
-@@ -612,7 +613,7 @@ static void unstick_cu(struct net_device *dev)
- 	}
- 	else
- 	{
--		if ((jiffies-lp->init_time)>10)
-+		if (time_after(jiffies, lp->init_time + 10))
- 		{
- 			unsigned short status = scb_status(dev);
- 			printk(KERN_WARNING "%s: i82586 startup timed out, status %04x, resetting...\n",
-@@ -776,7 +777,7 @@ static unsigned short eexp_start_irq(struct net_device *dev,
- static void eexp_cmd_clear(struct net_device *dev)
- {
- 	unsigned long int oldtime = jiffies;
--	while (scb_rdcmd(dev) && ((jiffies-oldtime)<10));
-+	while (scb_rdcmd(dev) && (time_before(jiffies, oldtime + 10)));
- 	if (scb_rdcmd(dev)) {
- 		printk("%s: command didn't clear\n", dev->name);
- 	}
-@@ -1650,7 +1651,7 @@ eexp_set_multicast(struct net_device *dev)
- #endif
-                 oj = jiffies;
-                 while ((SCB_CUstat(scb_status(dev)) = 2) &&
--                       ((jiffies-oj) < 2000));
-+                       (time_before(jiffies, oj + 2000)));
- 		if (SCB_CUstat(scb_status(dev)) = 2)
- 			printk("%s: warning, CU didn't stop\n", dev->name);
-                 lp->started &= ~(STARTED_CU);
+rday
 
 -- 
-Shani Moideen
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
