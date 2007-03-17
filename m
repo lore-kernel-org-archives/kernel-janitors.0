@@ -1,7 +1,7 @@
-From: "Przemek Lib" <an.przemek@gmail.com>
-Date: Sat, 17 Mar 2007 12:54:18 +0000
-Subject: [KJ] [PATCH] changing pci api to newer
-Message-Id: <adc360f60703170554s63c65837x4a1586a5114a269@mail.gmail.com>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sat, 17 Mar 2007 16:33:52 +0000
+Subject: Re: [KJ] [PATCH] changing pci api to newer
+Message-Id: <45FC1870.2050507@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <adc360f60703170547s3e610342v3a15cac1ecf922c0@mail.gmail.com>
 In-Reply-To: <adc360f60703170547s3e610342v3a15cac1ecf922c0@mail.gmail.com>
@@ -10,54 +10,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-changed pci_find_device to pci_get_device
-Signed-of-by Przemyslaw Lib an.przemek@gmail.com
----
-I found "delete all pci_find_* functions from the kernel tree. Instead
-of pci_find_device use pci_get_device()." on:
-http://kernelnewbies.org/KernelJanitors/Todo
+Przemek Lib wrote:
+> changed pci_find_device to pci_get_device
+> Signed-of-by Przemyslaw Lib an.przemek@gmail.com
+> ---
+> I found "delete all pci_find_* functions from the kernel tree. Instead
+> of pci_find_device use pci_get_device()." on:
+> http://kernelnewbies.org/KernelJanitors/Todo
+>
+> and i found pci_find_device in
+> drivers/isdn/hisax/diva.c
+> and changed it to pci_get_devices
+>
+>   
+As Kernel Janitors Todo also says:
+"NOTE: Search & Replace
 
-and i found pci_find_device in
-drivers/isdn/hisax/diva.c
-and changed it to pci_get_devices
+Sometimes all your patch will do is simply changing one function to 
+another. Doing this is especially tempting in "convert to new API" 
+section. History shows this is often wrong: old bugs are not fixed, new 
+bugs are introduced.
 
---- drivers/isdn/hisax/diva.c.origin    2007-03-17 13:30:05.000000000 +0100
-+++ drivers/isdn/hisax/diva.c   2007-03-17 13:31:32.000000000 +0100
-@@ -1047,21 +1047,21 @@ setup_diva(struct IsdnCard *card)
- #endif
- #ifdef CONFIG_PCI
-               cs->subtyp = 0;
--               if ((dev_diva = pci_find_device(PCI_VENDOR_ID_EICON,
-+               if ((dev_diva = pci_get_device(PCI_VENDOR_ID_EICON,
-                       PCI_DEVICE_ID_EICON_DIVA20, dev_diva))) {
-                       if (pci_enable_device(dev_diva))
-                               return(0);
-                       cs->subtyp = DIVA_PCI;
-                       cs->irq = dev_diva->irq;
-                       cs->hw.diva.cfg_reg = pci_resource_start(dev_diva, 2);
--               } else if ((dev_diva_u = pci_find_device(PCI_VENDOR_ID_EICON,
-+               } else if ((dev_diva_u = pci_get_device(PCI_VENDOR_ID_EICON,
-                       PCI_DEVICE_ID_EICON_DIVA20_U, dev_diva_u))) {
-                       if (pci_enable_device(dev_diva_u))
-                               return(0);
-                       cs->subtyp = DIVA_PCI;
-                       cs->irq = dev_diva_u->irq;
-                       cs->hw.diva.cfg_reg = pci_resource_start(dev_diva_u, 2);
--               } else if ((dev_diva201 = pci_find_device(PCI_VENDOR_ID_EICON,
-+               } else if ((dev_diva201 = pci_get_device(PCI_VENDOR_ID_EICON,
-                       PCI_DEVICE_ID_EICON_DIVA201, dev_diva201))) {
-                       if (pci_enable_device(dev_diva201))
-                               return(0);
-@@ -1071,7 +1071,7 @@ setup_diva(struct IsdnCard *card)
-                               (ulong)
-ioremap(pci_resource_start(dev_diva201, 0), 4096);
-                       cs->hw.diva.cfg_reg                                (ulong)
-ioremap(pci_resource_start(dev_diva201, 1), 4096);
--               } else if ((dev_diva202 = pci_find_device(PCI_VENDOR_ID_EICON,
-+               } else if ((dev_diva202 = pci_get_device(PCI_VENDOR_ID_EICON,
-                       PCI_DEVICE_ID_EICON_DIVA202, dev_diva202))) {
-                       if (pci_enable_device(dev_diva202))
-                               return(0);
+I got curious since I also would like to see the old API go away, but 
+only know of pci_module_init whom can be directly converted to 
+pci_register_driver since it is just a #define nowadays. So I checked 
+out drivers/pci/search.c (contains pci_find_device() and 
+pci_get_device(), what differed were that pci_get_device() increment the 
+reference count for *from. From what I can see (Documentation/pci.txt), 
+this is done to make it hotplug-safe (line 248). So you should also fix 
+it when it is unloaded (guess it is another new API-function).
+
+cu
+Richard Knutsson
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
