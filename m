@@ -1,7 +1,7 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 18 Mar 2007 03:39:39 +0000
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Sun, 18 Mar 2007 04:38:20 +0000
 Subject: Re: [KJ] is there a kernel standard for assertions?
-Message-Id: <45FCB47B.3000506@student.ltu.se>
+Message-Id: <20070317213820.30ce4a4d.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0703171550100.8121@CPE00045a9c397f-CM001225dbafb6>
 In-Reply-To: <Pine.LNX.4.64.0703171550100.8121@CPE00045a9c397f-CM001225dbafb6>
@@ -10,32 +10,46 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Robert P. J. Day wrote:
-> On Sat, 17 Mar 2007, Adrian Bunk wrote:
->
->   
->> On Sat, Mar 17, 2007 at 02:39:25PM -0600, Matthew Wilcox wrote:
->>     
->>> On Sat, Mar 17, 2007 at 03:51:49PM -0400, Robert P. J. Day wrote:
->>>       
->>>>   it seems like lots of kernel code is re-inventing the idea of an
->>>> assertion.  is there no single basic standard for assertions in the
->>>> kernel?
->>>>         
->>> BUG_ON().
->>>       
->> Or WARN_ON() if it's considered non-fatal.
->>     
->
-> i'm aware of both of those macros, which is why i'm wondering why so
-> many developers insist on inventing their own version of an "assert"
-> routine.  given all of the *existing* debugging routines, shouldn't
-> inventing your own be discouraged?  is that something that could be
-> turned into a KJ project of some kind?
->   
-Is there any way to just enable the debugging for one sub-system and not 
-the whole tree?
+On Sun, 18 Mar 2007 04:39:39 +0100 Richard Knutsson wrote:
 
+> Robert P. J. Day wrote:
+> > On Sat, 17 Mar 2007, Adrian Bunk wrote:
+> >
+> >   
+> >> On Sat, Mar 17, 2007 at 02:39:25PM -0600, Matthew Wilcox wrote:
+> >>     
+> >>> On Sat, Mar 17, 2007 at 03:51:49PM -0400, Robert P. J. Day wrote:
+> >>>       
+> >>>>   it seems like lots of kernel code is re-inventing the idea of an
+> >>>> assertion.  is there no single basic standard for assertions in the
+> >>>> kernel?
+> >>>>         
+> >>> BUG_ON().
+> >>>       
+> >> Or WARN_ON() if it's considered non-fatal.
+> >>     
+> >
+> > i'm aware of both of those macros, which is why i'm wondering why so
+> > many developers insist on inventing their own version of an "assert"
+> > routine.  given all of the *existing* debugging routines, shouldn't
+> > inventing your own be discouraged?  is that something that could be
+> > turned into a KJ project of some kind?
+> >   
+> Is there any way to just enable the debugging for one sub-system and not 
+> the whole tree?
+
+A few subsystems have specific debug-enabling config symbols,
+like USB and ACPI and KOBJECT and PM (Power Management) and PCI,
+PCMCIA, NETFILTER, IRDA, IEEE80211, DRIVERS, MTD, PNP, SCSI,
+SPI, SOUND, HID, MMC, EDAC, JBD, JFS, NTFS, UFS, CIFS, DLM,
+and KOBJECTS (just to name some of the big ones).
+
+But BUG_ON() and WARN_ON() are often used without the aid (i.e.,
+enabling) of those DEBUG config symbols.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
