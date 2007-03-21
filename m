@@ -1,114 +1,50 @@
-From: "George Brown" <wittrockinc.com@flwaterfronts.com>
-Date: Sat, 17 Mar 2007 19:11:13 +0000
-Subject: [KJ] What IS 0EM Software And Why D0 You Care?
-Message-Id: <000001c768c5$a76af880$0100007f@localhost>
+From: "Shanda Tolarchyk" <barracudarepositories@relais-textiles.com>
+Date: Wed, 21 Mar 2007 11:55:40 +0000
+Subject: [KJ] Shanda wrote:
+Message-Id: <01c76bc8$fe17eac0$6c822ecf@barracudarepositories>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1174157892-4069-133"
+Content-Type: multipart/mixed; boundary="===============1596018989=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
-------------=_1174157892-4069-133
+--===============1596018989==
 Content-Type: text/plain;
-	charset="us-ascii"
+	charset="windows-1250"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
+Winner after Winner!  That's what we Bring to our Readers!
 
-OEM software:
-  - don`t need packing case - save your money.
-  - instant download instead of shipping CD`s - save your money and time.
-  - use free of charge electronic manuals - save your money.
+What happens when that perfect small cap issue releases astounding news 
+and gets a massive PR campaign behind it?  It Takes Off!!!
 
-If you need software - pay for software ONLY and save 75-90%!
+Irwin Resources (IWRS)
+Last      $0.50
+Target  $1.50
 
-Find incredible discounts! See our special offers!
-           BEST 1O ITEMS
-
- $49 Windows XP Pro w/SP2
- $79 MS Office Enterprise 2007
- $79 Adobe Acrobat 8 Pro
- $79 Microsoft Windows Vista Ultimate
- $99 Macromedia Studio 8
- $59 Adobe Premiere 2.0
- $59 Corel Grafix Suite X3
- $59 Adobe Illustrator CS2
-$129 Autodesk Autocad 2007
-$149 Adobe Creative Suite 2
-http://lloemt.eu/?57857303ACCBB3C37B5C48FE8224491753936501E7C8ECCE&t0
-----
-         Mac Special Offers:
-Adobe Acrobat PR0 7             $69
-Adobe After Effects             $49
-Adobe Creative Suite 2 Premium $149
-Ableton Live 5.0.1              $49
-Adobe Photoshop CS              $49
-http://lloemt.eu/-software-for-mac-.php?57857303ACCBB3C37B5C48FE8224491753936501E7C8ECCE&t6
-----
-Find more by these manufacturers:
-Microsoft...Mac...Adobe...Borland...Macromedia
-http://lloemt.eu/?57857303ACCBB3C37B5C48FE8224491753936501E7C8ECCE&t4
-----
-Microsoft Windows Vista Ultimate
-Retail price:  $399.00
-Proposition:  $79.95
-Your benefit:  $319.05 (80%)
-Availability: Can be downloaded instantly.
-http://lloemt.eu/2480.php?57857303ACCBB3C37B5C48FE8224491753936501E7C8ECCE&t3
-Best choice for home and professional. (36192 reviews)
-----
-Microsoft Office 2007 Enterprise Edition
-Regular price:  $899.00
-Our offer:  $79.95
-You save:  $819.95 (89%)
-Availability: Pay and download instantly.
-http://lloemt.eu/2442.php?57857303ACCBB3C37B5C48FE8224491753936501E7C8ECCE&t1
-Sales Rank: #1 (121280 reviews)
-----
-Adobe Acrobat 8.0 Professional
-Market price:  $449.00
-We propose:  $79.95
-Your profit:  $369.05 (80%)
-Availability: Available for instant download.
-http://lloemt.eu/2441.php?57857303ACCBB3C37B5C48FE8224491753936501E7C8ECCE&t2
-Top-ranked item. (31863 reviews)
-
-
-------------=_1174157892-4069-133
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  OEM software: - don`t need packing case - save your
-  money. - instant download instead of shipping CD`s - save your money and
-  time. - use free of charge electronic manuals - save your money. If you
-  need software - pay for software ONLY and save 75-90%! [...] 
-
-Content analysis details:   (5.0 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.0 INVALID_DATE           Invalid Date: header (not RFC 2822)
- 1.0 SOFTWARE_OSDL5         BODY: Contains Software Spam phrase '$\d+ macromedia
-                            studio'
- 1.0 SOFTWARE_OSDL3         BODY: Contains Software Spam phrase '$\d+ adobe
-                            (photoshop|acrobat)'
- 1.0 OUTFLUX_INVEST_PRICE   BODY: contains "Price"
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.5000]
+Do not miss this one.  These small caps Really Fly when people take 
+notice, and Believe us they are going to take notice this Wednesday!
 
 
 
-------------=_1174157892-4069-133
+
+
+They are very busy right now.  
+Memory leaks that might be caused by running larger tournaments.   
+I provided very specific PC configuration  details and even explained that my swap file could grow to over 2GB and yet a condition  occurred in which software exhausted all the system resources.  
+With that in mind to whom should I have addressed my dissatisfation.  
+They are very busy right now.  
+They are very busy right now.  
+> Hey Mike,  
+My first impression is that the testing is occurring in the field and that the software is encountering many failures. 
+Mike is on the payroll, he gets paid to take the heat.  
+They are not fixing the major problem which appears to be their software people.  
+> I hope I have helped you. 
+I hope I added some value to your post. 
+
+
+
+
+--===============1596018989==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -119,4 +55,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
-------------=_1174157892-4069-133--
+--===============1596018989==--
