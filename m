@@ -1,65 +1,44 @@
-From: Surya <surya.prabhakar@wipro.com>
-Date: Mon, 12 Mar 2007 10:50:14 +0000
-Subject: [KJ] Patch14:replace pci_find_device in isdn/hisax/telespci.c
-Message-Id: <1173695894.14236.19.camel@bluegenie>
+From: "Rita Tuitavuki" <toothsomeoptioned@lions103sud.com>
+Date: Wed, 21 Mar 2007 11:30:40 +0000
+Subject: [KJ] Rita wrote:
+Message-Id: <01c76bc5$7fd14920$6c822ecf@toothsomeoptioned>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-    Replacing pci_find_device in telespci.c (isdn/hisax)
-Applies and compiles clean on latest tree.
+Winner after Winner!  That's what we Bring to our Readers!
 
-thanks.
+What happens when that perfect small cap issue releases astounding news 
+and gets a massive PR campaign behind it?  It Takes Off!!!
+
+Irwin Resources (IWRS)
+Last      $0.50
+Target  $1.50
+
+Do not miss this one.  These small caps Really Fly when people take 
+notice, and Believe us they are going to take notice this Wednesday!
 
 
-Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
---- 
 
 
-diff --git a/drivers/isdn/hisax/telespci.c b/drivers/isdn/hisax/telespci.c
-index d09f6d0..5061517 100644
---- a/drivers/isdn/hisax/telespci.c
-+++ b/drivers/isdn/hisax/telespci.c
-@@ -300,13 +300,13 @@ setup_telespci(struct IsdnCard *card)
- 	if (cs->typ != ISDN_CTYPE_TELESPCI)
- 		return (0);
- #ifdef CONFIG_PCI
--	if ((dev_tel = pci_find_device (PCI_VENDOR_ID_ZORAN, PCI_DEVICE_ID_ZORAN_36120, dev_tel))) {
-+	if ((dev_tel = pci_get_device (PCI_VENDOR_ID_ZORAN, PCI_DEVICE_ID_ZORAN_36120, dev_tel))) {
- 		if (pci_enable_device(dev_tel))
--			return(0);
-+			goto dev_tel_cleanup;
- 		cs->irq = dev_tel->irq;
- 		if (!cs->irq) {
- 			printk(KERN_WARNING "Teles: No IRQ for PCI card found\n");
--			return(0);
-+			goto dev_tel_cleanup;
- 		}
- 		cs->hw.teles0.membase = ioremap(pci_resource_start(dev_tel, 0),
- 			PAGE_SIZE);
-@@ -353,7 +353,13 @@ setup_telespci(struct IsdnCard *card)
- 		printk(KERN_WARNING
- 		 "TelesPCI: wrong HSCX versions check IO/MEM addresses\n");
- 		release_io_telespci(cs);
--		return (0);
-+		goto dev_tel_cleanup;
- 	}
-+
-+	pci_dev_put(dev_tel);
- 	return (1);
-+
-+dev_tel_cleanup:
-+	pci_dev_put(dev_tel);
-+	return 0;
- }
 
--- 
-surya.
-12/03/2007
+> Multiple, multiple upgrades that don't do anything.  
+Mike is on the payroll, he gets paid to take the heat.  
+He is also apparently the unoffiicial or official RGP liaison.  
+Mike is on the payroll, he gets paid to take the heat.  
+Who in the hell do you think you are, Mike Sexton is a proffesional player, as well as a savvy business man.  
+The answer?  
+If you can't handle one computer malfuntion, then you might want to think about the slight possibibilty of going into another means of  supporting your selfish self, if you catch my drift! 
+Shrink your swap file size.  
+There you want to catch your defects before they go into the field.  
+(System under test) before trying that in the field. 
+Shrink your swap file size.  
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
