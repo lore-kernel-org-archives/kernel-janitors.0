@@ -1,216 +1,278 @@
-From: "that" <phrase@pauloabbe.com>
-Date: Fri, 30 Mar 2007 15:38:24 +0000
-Subject: because
-Message-Id: <000a01c772e1$7435cf00$c2606955@rzv>
+From: "Kane N. Louisa" <cuwwel@greatwallct.com>
+Date: Wed, 21 Mar 2007 01:55:36 +0000
+Subject: [KJ] twitch anthropologist
+Message-Id: <46009098.3040606@greatwallct.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0746477185=="
+Content-Type: multipart/mixed; boundary="------------080408040104020609010904"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============0746477185==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_0006_01C772FA.99830700"
+This is a multi-part message in MIME format...
 
-------=_NextPart_000_0006_01C772FA.99830700
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0007_01C772FA.99830700"
-
-
-------=_NextPart_001_0007_01C772FA.99830700
-Content-Type: text/plain;
-	charset="iso-8859-9"
-Content-Transfer-Encoding: quoted-printable
-
-Weighted phrase limit are seeing this error because!
-Labeled, as containing material that deemed! The, for following reason.
-Weighted phrase limit are seeing, this error because what.
-Queries contact your ict, or, network.
-That, deemed have any queries contact your ict or. Labeled as containing =
-material that.
-Are seeing, this error, because what you. Endian firewall, access has =
-been denied to the for! This error because what you attempted appears =
-containor. Been denied to the for following reason! Material that deemed =
-have any, queries contact your.
-Limit are seeing this, error because what, you.
-Following reason weighted phrase limit are seeing!
-Containor, is labeled as containing material. Phrase limit are seeing =
-this error.
-Any queries contact your ict or. Has been denied to the, for following, =
-reason. Error because what you attempted appears?
-Because what you attempted appears. Has been, denied to the for =
-following reason!
-Is labeled as containing material that deemed.
-
-------=_NextPart_001_0007_01C772FA.99830700
-Content-Type: text/html;
-	charset="iso-8859-9"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Diso-8859-9">
-<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><A HREF=3Dhttp://usjol.hk/><IMG alt=3D"" hspace=3D0=20
-src=3D"cid:000501c772e1$7435cf00$c2606955@rzv" align=3Dcenter =
-border=3D0></A></DIV>
-<DIV><FONT face=3DArial size=3D2>Weighted phrase limit are seeing this =
-error because!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Labeled, as containing material that =
-deemed! The,=20
-for following reason.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Weighted phrase limit are seeing, this =
-error=20
-because what.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Queries contact your ict, or, =
-network.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>That, deemed have any queries contact =
-your ict or.=20
-Labeled as containing material that.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Are seeing, this error, because what =
-you. Endian=20
-firewall, access has been denied to the for! This error because what you =
-
-attempted appears containor. Been denied to the for following reason! =
-Material=20
-that deemed have any, queries contact your.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Limit are seeing this, error because =
-what, you.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Following reason weighted phrase limit =
-are seeing!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Containor, is labeled as containing =
-material.=20
-Phrase limit are seeing this error.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Any queries contact your ict or. Has =
-been denied to=20
-the, for following, reason. Error because what you attempted =
-appears?</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Because what you attempted appears. Has =
-been,=20
-denied to the for following reason!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Is labeled as containing material that=20
-deemed.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV>
-<DIV><FONT face=3DArial size=3D2></FONT>&nbsp;</DIV></BODY></HTML>
-
-------=_NextPart_001_0007_01C772FA.99830700--
-
-------=_NextPart_000_0006_01C772FA.99830700
-Content-Type: image/gif;
-	name="phrase limit.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <000501c772e1$7435cf00$c2606955@rzv>
-
-R0lGODlhKAEkAoecAAUAB34AAA11DomBCAAEhYYAdgB9g8S5u8bQw6fT8EclB10fAHcfAKcnDbUl
-AOArAABCDCY0AD1AAGs6BYo5CpQ/ALlFANxEAAJgAB5rADJYDmNSAHRoBK5uAL5eDd5jCwB3ACOA
-AEuIAFeKAHt6BqiEDsOMANKLAAmfACaSCkKhAWygAHSSAKidBsOfAOGnAADFBCy/AUK3AVPHAHuz
-AKa/AMfCANG4AAvhCh3ZAzTSAFXZC4vmDqHpAL/UANrmDQAAPiEAMjoIO1MBP3oITp8AOb8ASdUA
-OgYSRRgWPUktRVoqRnIUNp0RRbUVR+0oTQc3ORw7QzwxTmA4RopKS5lNP7U/SdgxRwNgPxdWRTNq
-OmNhNXxRAKhsQcJlTeZbQwCLQC53RkmKQGaLRYF1R6KMP7d8RN1xNgCsPR+bSEqkQVKSNIWqNpuj
-N7WpNtenQgG2MiLGTDS7S1mzSnm+OZG9SMrBPNS/OwDrQBbmOTrZO2DsNI7rMqveOLjmOObmPgAA
-iiYAdkgBcWAFgnIAipYAg78AhOcAcQUYcxcVez0lcVYTiYMoipITh8cUfuIthQAzfxNIdUw6iGQ2
-i3VCipxHf71Jh+wzgAlVexRijkBafmthjndoeJJghcVdiN1lewyDhx56gUZ1clSAdnqFf6J1e7lx
-hOF6igCeciirfUiadVysd4atgqWVccaXjduVjgC2dxvEfTLMilG5eYLLeJO3i8W8c924egDRjhvS
-e0zTdmHri4HjdJLsecndfuTbfQAHyC4Avk4HvlgEzoEBvZ0GzccAwd0MvQARwC4ZuEMVvG0ryIYk
-yJkaxsMoxeMfwQo6tixEuEBJt21GsnhKxZQ8ycQ8weg6xABZtiZuxzVSu2xhsoZmxqBcxLdtythe
-tABzxBN9yE11zmhzzn2KxqF0vbeEvOCNuQiiuReqzDKRwGydzoSjx6KsycOSttyiwwDNvBu1wD++
-yVXBx33Mx6ayyP7/7qGim4WNfP8KAAD/AP/6BgAG8/8A/wD/8P/x8iH5BAAj7L0ALAAAAAAoASQC
-Bwj/ADkJHEiwoMGDCBMqXMiwocOHECNKnEixosWLGDNq3Mixo8ePIEOKHEmypMmTKFOqXMmypcuX
-MGPKnEmzps2bOHPq3Mmzp8+fQIMKHUq0qNGjSJMqXcq0aUd+DqEi5CfVqdWbVTllPVkV6taEXg1+
-jTpwrFiqV9OSLbtyq1mxUym+XThXrdqsUqnmZasVbUG9AsP27YoWsGDAfw0HLlyYrV7CXhsPXuyX
-r93LiR//1erYMufAfUGDxtu5K0HTgkV/5oz6dOfRlutitkp68N68mstqhixZddjHtVmH9v1aeOzV
-qffOXq7a+OfDcV03X43c+WbYi6tjt956u3Lms0mb/ybevHv14L89m3duPvX54rLBO62dmzri037x
-VkbcGPfX3ZPZp5ho/B2WH1/xyafgggw26OCDEEYo4YQUVmhhQwlClOFDG1744IYdYuhRfCF6SJuG
-I6bIUIkmNuXWfgcKCKNbBNqm222UnaVcgeO1yCB679HonXQ4DhmjfaVJ95yPDQKJ2n/wuZbekwPa
-pp9iMx7JpHxOJqlkclIKt552cH3p3nRbLtcldmtSp117ZLbJXppN8ngjeW9Wdlye3wWI320zekbn
-oIQWauihiCaq6KKMNuroo5BGKumklFZq6aWYZqrpppx26umnoIYq6qiklmrqqaimquqqrLbq6quw
-xv8q66y01mrrrbjmquuuvPbq66/AMgVATcMGyxMAyA5bLEjLPqSsQ80aa1K00XZULUPXJpSttMwa
-lOyyyQ4ULiffiousucqeS9C45ZLrbrvkqusut9N6K+68+Ar0rL747stvQeD2+67AAedLr0jVBvxt
-seUq3HDB696r8MD8LvzvwSMlLDHAG1d80Lkae+yxv/7eizFJ1HZM8cokRxwyywNPfPHJJTVs8rjx
-gowzu/LKq6+6E7ecs8k057Rt0RUejfTSTDft9NNQRy311FRXbfXVWGet9dZcd+3112CHLfbYZJdt
-9tlop6322my37fbbcMctN6z9YNRP3RPhnZHSGvH//erdd3OiN0F1D24Q4IYLpHfiiCcu+EZ+YwQu
-vD/zHHmljh++UOYDLY4Q55xLdHlFNmMrMKiMKx7443gDTvjhq7vuekGDz45456ujq/vNQP9Lbc8+
-q8w3w0R7mvrrhT9+kO2dK+887cs7n7xCJQs/L/EfG8zx5MFHXLmox9+efO7Re+559LgHbr7jD9sb
-9MqVp0t999dCPHqkqZsvfebTs948+tILoOq8169mtexZJbPftqpXP6LdD3/Q01/tPhfA82lOcc2z
-4PMgli+hcfB0M9ve6Tj4QePJTnXqYx35BDc7FraOcMdDYeFst8KcpStlQ7tYwsKFM4DtrGfFy+Hc
-/1jywCHKpIhGTKISLaQPfZTEiTXLFRQ54cQpXqSJTWSIFR+yRYd0sVsc8xbQKNepKX6xImZcyBk/
-skaOwIt+QURio9IIRSwOBItVpKJA7EgQOuqRilkEZB0DKcg9ZnGQiDRjINvYtw5qj4SjyuMf7zjJ
-KnbRinSsIyXTuMdJelKSeuTkJlE2QnvNTI6OkmQiK/lJPhpykZTspCLtSMhaspKTePRkSCwXPPuR
-SpW3HGUnh0lMYvqxmHdUZCiFuUxZ1suApgShqI7ZzGqKUpeiBOU1MWnNYDoThL7UYRBFJs5SlgqX
-fMwlJl2JzT7CMpmIfOUw0xlLdZYTnA6MYw/BCf/EWjEyQqiUFTtNFNAlGvSgs6mhQ0IXk4KGSn8a
-ud0FnydDxzEUJi8L46k0aLfN/W+iILXJG+vnUEhBtIXiU14LMUi72KmvhrVzae5WSkRHZqukJlVp
-BDMYQxSy1H8/hZ7mINpQc0Zzozp1Yf/6p1QKEpV/MEwhBhVKxDHuM4Slmt5SK/hRqD6Vgj/d6gCL
-Cs3sqeqrXw0q8jL4UaFyNah4Cyc+7ylXlxGwrKk6n0RTmr6YzjR2MASp+GioN7kaNp/3jJ9Guaer
-i0IIp62iqYcgi9DKWjYl/5wQZT1lT4OAskXc61684rdZQmU2swDlIfUQUlo6XVKezRwoQKWp0dr/
-ctazBcnjZ5NWQPrts7Wuxa0gdQtIgsLxruMsI279qMwLMXCxyVVuH4PJTeTSFbFzze5hr8td7cXs
-ZuUEbqE6a09LdnG72sUueterXuwq9ns67OdlMzZfo9X3vvi9lXg3JdGKgI6tVjGgb69KKsd2VK3C
-Um0I96soi8p0cYDVKvlO+tcUto6qZDVrdLM60a2ub6pOVauHe0oTBu5QtKO68AxPOFW+AnWoLHUx
-U/sr0uNq2FQTNBxRw0pRAHsYwALEyXNZe1Yg/xjESAbgkV98PvZ218kiLBj2vFtgwvLYhVeWrF4J
-O+PZQfnL7rXh7norNgOLFG6S/QmD88vmNjdq/82WyuWicChGxk7zUe0SrcyorKlLLvKQs6TQkLVF
-W86+M7bIRO1sBi3GMf/Sm5ocrqB9pjShPfqYmrzmbEsoQqyCSpt/zHQswfzk9pb61Nm16ynFyelN
-ybmQoZ4nH0mdXlTTGr3vFaKdhehmyfW6qL8OtrBjYlG1wNlSjetIsdMi4JuiC8XG+8iyA6zgRzaQ
-w0i2coX76tMeK6V6ns5oinEH46Qa+a1OAbezbQu+tvL1hU1FK7MpTWgCYjvIWk3ykpma7uut1t4F
-7qqP9Y3u6d3a1LVOeAPVbe9j00mD744xl7sdV4Qf3NYIf6/FyOzpYUfE4R4HeMhHTnJHgVxSiv+u
-poXo3HFenhxCKUemZnm2rmsb7OUP2iI9nUnLUBNSPoz2LiSla0zqJlO4QL85u6WJ85y7k56iLuar
-gU5vkee66U6P5XSjzkqZM8fSHQ9zn6db9G92/Y8XV7jF155Y6zUcup+SMzvR2cpApv3ubE+1mOGr
-a3NZveRHBTx9BU/4whv+8IhPvOIXz/jGO/7xkI+85CdP+cpb/vKYz7zmN8/5znv+86AP/bGCgvWF
-lP7rBMZWtVVtOnKeZHTXyofs8zGQ2dNeILInyO1XS1m8OqjV9Ta98MVeL2cZZPecoD3ylY/75rfe
-Wn9POjnBHjJ2Xa/qrOa7zRg24Kv/1nJ8P37/8nU//vIjv877An8OHWbVsIMnz27HasoQeGOKzV9i
-4rbe0GGmNObX3vzlR2Qj83bTRzDR935uF3TXBzLvElrWhz2lAz9kFIHUh3+rJ34BaH63t4HnZ4Dy
-ZYAF6HsNsmfEw3IhWEAAl34gCDOrdoItCD9UlnvON4P/t4HQNTmO5IISOFsFGG6d9l3F8zIHFH94
-NYQvaIQFcX7Ll4TOd357toM6CG6P9UMfWHMMKGYI1EvRxH1WlUDfd4UL+Dvt9zPkx4T/V4Y26EMM
-SIXaV23c536CZl/FxxC2J4O2Z4a414Grcnp1VjPQJnqAGIiCOIiEWIiGeIiImIiKuIiM2IiO//iI
-kBiJkjiJlFiJlniJmJiJmriJkENKB1h/wTcRp8eHSVFXH3OBR2OKgWdpCkhksLdhfOZGjTSCxBdH
-EKGKtsWKoCiAtwiLa1ZSpNgS4fRbaliCxBhevZN+btgxeTZg9MeFuqNaJDSGiGV9A/hsu8NDuxaM
-wgiEH2SNQKh09EcwJQhe44iERdiA2ZdP+9eOKyg/yCUz5eg7D/KMpOWKG/ON3qh/5mh/5NhD73OP
-6QiDpqiCOsiOzFgx8Pd7+yh8ASmO/hiFAziPMIiQ+liNStd2Bsl/WwiCFAmLy4FrrDeOj9ReJGiS
-8eeBCJlx3YWSrreOEQl29RiEvQSOWahnNP85ZVy4Xc14YiSpa2NUaKPFazmJjUIIXxCofZLCjSkh
-R0wJKU/5eqTDiVQZiVHph76YeoH3ce6DEjb3ihQBWZdzlSgDfEK5lXuDUSqBc2RJXxCohbzDWOqX
-QMy4higGf9CIlGvYgO2XlxMYfiOVlyJDhUOojKG1ICq4fxxpknT2k1LIjjqZg2S4mJQJTV+5gn73
-jh4YmWZpbNcomZSJTwunkCqjYSTTPkeomSeJfx35hPG1jA9pMZ3JbJ/pe0gomtmjkz/ZmskFhqrJ
-j0eYjq5JWycpk7N5FTjojpjpS+tmU6CpmasmnMDJgi/4m3BXmdQpkyGZmV/YbNnol7x4Q77/M2Ua
-Z4VteEA/tICJJZ7WlZ5FqXHSaJ65JismOItD0ZZLiZa+RhT4WZX++Z8AGqACOqAEWqAGeqAImqAK
-uqAM2qAO+qAQGqESOqEUWqFoE1B/+Ji9uGi16IkScSV3kh1oYkMPpJVdWaKmU1DD820dOngRsR9R
-siOhaHxw2KK8SGgq+nxHMYzOOELJqJdjyIZl8h5s4ia1xUu56KPluIzy+YWuh5fn6UE6I5ik15CS
-aZxDOZK4iVU9AibDMRfMGYQ/eH+6uJL4KJycOZ1nqWbeSDmrGYFYKDwPc1VdSiYEMhZhWp0suH3O
-GY+nuJdmWpyliYNFYY9UJqg9iJ0HWKc9/1Kk11mBWvo+lnmDvCmdMHmbv1OoGYeo2Qmd1Lknc4Ig
-aJKnGelvJ6iAw/mQnoqOzxmLOzGNPgmfvkmBkymkfxKifuIbeNqkBAaQSKqMvdk76CeB4AiUXaiX
-RMmhCrKiFwFc/Xmff2gXfhOtw/cRz2qh2Jqt2rqt3Nqt3vqt4Bqu4jqu5Fqu5nqu6Jqu6rqu7Nqu
-7vquAwocIpoZV5IfL3IW+AocuyGvf6KvYQMjw4GvujGwgSKw+BGwiYGrejI2CxsZU0EYm2GvZrGw
-oUGx8xqwFvs1GbuxuPGwuZqwCcuxB3uxYiOyB2GvD3sfJ/sfDruyI4uwJTuxMkuyN1IX+v+6rzeL
-sfXKr11jsgLLsSprsAQrs/VBs2DjsyArskH7skPrsTCbsV6DtCNrsktLs4zhtAgLtVFLIz7bsDo7
-FhR7tS6bI0Z7tADbtWcLoiB7sEhbIGnDrzlrIzXbsbfKtNlxs2J7J3jLIvDat377t4AbuII7uIRb
-uIZ7uIibuIq7uIzbuI77uJAbuZI7uZRbuZZ7uZibuZq7uZzbuZ77uaAbuqI7uqRbuqZ7uqibuqq7
-uqzbuq77urAbu7I7u7Rbu7Z7u7ibu7q7u7zbu777u8AbvMI7vMRbvMZ7vMibvMq7vMzbvM77vNAb
-vdI7vdRbvdZ7vdibvdq7vdzbvd77veAdG77iO77kW77me77om77qu77s277u+77wG78SGhAAOwAA==
-
-------=_NextPart_000_0006_01C772FA.99830700--
-
-
---===============0746477185==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+--------------080408040104020609010904
+Content-Type: text/html; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0746477185==
-Content-Type: text/plain; charset="us-ascii"
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<img alt="plea-bargain"
+ DEFANGED_src="cid:part1.05030200.02090900@greatwallct.com" height="283"
+ width="302"><br>
+Another thing that struck me was their ability to be non-attached to
+their ideas enough to leave something alone if it wasn't working
+straight away  and go onto the next idea quickly.<br>
+especially love the bit on the sardinian and his malindi gelateria! It
+was earnestly believed that the dam would provide electricity,
+irrigation and turn all the pastorals into devoted farmers.<br>
+Let me tell you more about it. Add your comment:  your name: your e-mail
+(optional): your website url (optional): subject (optional):  your
+comment: HTML is not allowed! "While the school curriculum shows a
+strong focus on literacy, speech has been relatively neglected in the
+curriculum," he said.<br>
+We ran and sheltered in the zinc overhang of the shed, where it smelt of
+diesel and goat's milk. And so, they ordered a Caesar salad, and spoke
+of supermarkets, dog food and beautiful vacations spent at a beach
+resort in Sardinia. The room was stacked to the roof with stitched
+sacks, the floor littered with dried onion shucks, and high on its walls
+was the tyrannical photograph of a past president. Learn more and see a
+screen shot in my mini review. Also be willing to accept constructive
+criticism and try not to take it too personally. Dogs of Ortum  by
+zedzdead on Wednesday, August 23rd  at 10:57 AM Dogs of Ortum? com
+brings every online Indian women closer to the people, information and
+communications tools that matter most to them - where, when and how they
+want it. especially love the bit on the sardinian and his malindi
+gelateria!<br>
+It has been calculated that if every one did not purchase a drop of
+petrol for one day and all at the same time,oil companies would chock on
+stockpiles. You are the only one who really knows your song and the
+history behind it. Politics in Nepal continues to be unstable and
+murky.<br>
+Hezbollah MP Hassan Fadlallah said Amnesty should analyse the number of
+civilians killed on each side, before accusing Hezbollah of war crimes.
+Hezbollah rejected the report, calling it a result of US and Israeli
+pressure.<br>
+His wife and younger son worked behind in the shop. But there will be
+little reward without some level of risk.<br>
+Originally German type.<br>
+So think about what Spring means to you, and share it with us.<br>
+</body>
+</html>
+
+--------------080408040104020609010904
+Content-Type: image/gif;
+ name="tolerant.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <part1.05030200.02090900@greatwallct.com>
+Content-Disposition: inline; filename="tolerant.gif"
+
+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
+
+--------------080408040104020609010904
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
---===============0746477185==--
+--------------080408040104020609010904--
