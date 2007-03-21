@@ -1,129 +1,83 @@
-From: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Date: Sat, 31 Mar 2007 11:09:46 +0000
-Subject: [KJ] [PATCH] ROUND_?UP macro cleanup in drivers/parisc
-Message-Id: <20070331105746.GA14572@arun.site>
+From: "Carltonb Beaver" <mosswsi@ambasny.com>
+Date: Wed, 21 Mar 2007 14:12:03 +0000
+Subject: [KJ] diagrammatic bengali
+Message-Id: <07aa01c76c58$3abb46a0$8085f8d0@otextrony>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_01A2A95B.E12B5FD0"
 List-Id: <kernel-janitors.vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------=_NextPart_000_0002_01A2A95B.E12B5FD0
+Content-Type: multipart/alternative;
+    boundary="----------=_1174486536-3677-635"
+Content-Transfer-Encoding: binary
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, parisc-linux@lists.parisc-linux.org
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
-Clean up ROUND_?UP, Use ALIGN where ever appropriate.
+This is a multi-part message in MIME format...
 
-Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
+------------=_1174486536-3677-635
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
----
- ccio-dma.c      |    8 ++++----
- iommu-helpers.h |    4 ++--
- sba_iommu.c     |    6 ++----
- 3 files changed, 8 insertions(+), 10 deletions(-)
+ nine years on Mike Krzyzewski's staff at Duke, where he was a four-year  b=
+asket made it 111-73 heading into the fourth quarter.   ''That's another
 
+Ground floor to the future
+CEO AMERICA INC
+SYmb-CEO A
+6 Cents is a STEAL
+Easy 300% on this one in Short term
 
+AN ALL AMERICAN COMPANY
+Get IN Before the rush TOMORROW
 
-diff --git a/drivers/parisc/ccio-dma.c b/drivers/parisc/ccio-dma.c
-index 894fdb9..1459ca8 100644
---- a/drivers/parisc/ccio-dma.c
-+++ b/drivers/parisc/ccio-dma.c
-@@ -32,6 +32,7 @@
- */
- 
- #include <linux/types.h>
-+#include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/mm.h>
- #include <linux/spinlock.h>
-@@ -292,7 +293,6 @@ static int ioc_count;
- #define PDIR_INDEX(iovp)    ((iovp)>>IOVP_SHIFT)
- #define MKIOVP(pdir_idx)    ((long)(pdir_idx) << IOVP_SHIFT)
- #define MKIOVA(iovp,offset) (dma_addr_t)((long)iovp | (long)offset)
--#define ROUNDUP(x,y) ((x + ((y)-1)) & ~((y)-1))
- 
- /*
- ** Don't worry about the 150% average search length on a miss.
-@@ -668,7 +668,7 @@ ccio_mark_invalid(struct ioc *ioc, dma_addr_t iova, size_t byte_cnt)
- 	size_t saved_byte_cnt;
- 
- 	/* round up to nearest page size */
--	saved_byte_cnt = byte_cnt = ROUNDUP(byte_cnt, IOVP_SIZE);
-+	saved_byte_cnt = byte_cnt = ALIGN(byte_cnt, IOVP_SIZE);
- 
- 	while(byte_cnt > 0) {
- 		/* invalidate one page at a time */
-@@ -751,7 +751,7 @@ ccio_map_single(struct device *dev, void *addr, size_t size,
- 	offset = ((unsigned long) addr) & ~IOVP_MASK;
- 
- 	/* round up to nearest IOVP_SIZE */
--	size = ROUNDUP(size + offset, IOVP_SIZE);
-+	size = ALIGN(size + offset, IOVP_SIZE);
- 	spin_lock_irqsave(&ioc->res_lock, flags);
- 
- #ifdef CCIO_MAP_STATS
-@@ -814,7 +814,7 @@ ccio_unmap_single(struct device *dev, dma_addr_t iova, size_t size,
- 
- 	iova ^= offset;        /* clear offset bits */
- 	size += offset;
--	size = ROUNDUP(size, IOVP_SIZE);
-+	size = ALIGN(size, IOVP_SIZE);
- 
- 	spin_lock_irqsave(&ioc->res_lock, flags);
- 
-diff --git a/drivers/parisc/iommu-helpers.h b/drivers/parisc/iommu-helpers.h
-index 38d9e1a..0a1f99a 100644
---- a/drivers/parisc/iommu-helpers.h
-+++ b/drivers/parisc/iommu-helpers.h
-@@ -138,7 +138,7 @@ iommu_coalesce_chunks(struct ioc *ioc, struct scatterlist *startsg, int nents,
- 			** exceed DMA_CHUNK_SIZE if we coalesce the
- 			** next entry.
- 			*/   
--			if(unlikely(ROUNDUP(dma_len + dma_offset + startsg->length,
-+			if(unlikely(ALIGN(dma_len + dma_offset + startsg->length,
- 					    IOVP_SIZE) > DMA_CHUNK_SIZE))
- 				break;
- 
-@@ -158,7 +158,7 @@ iommu_coalesce_chunks(struct ioc *ioc, struct scatterlist *startsg, int nents,
- 		** Allocate space for DMA stream.
- 		*/
- 		sg_dma_len(contig_sg) = dma_len;
--		dma_len = ROUNDUP(dma_len + dma_offset, IOVP_SIZE);
-+		dma_len = ALIGN(dma_len + dma_offset, IOVP_SIZE);
- 		sg_dma_address(contig_sg)  			PIDE_FLAG 
- 			| (iommu_alloc_range(ioc, dma_len) << IOVP_SHIFT)
-diff --git a/drivers/parisc/sba_iommu.c b/drivers/parisc/sba_iommu.c
-index 76a29da..7d83d9f 100644
---- a/drivers/parisc/sba_iommu.c
-+++ b/drivers/parisc/sba_iommu.c
-@@ -113,8 +113,6 @@ module_param(sba_reserve_agpgart, int, 1);
- MODULE_PARM_DESC(sba_reserve_agpgart, "Reserve half of IO pdir as AGPGART");
- #endif
- 
--#define ROUNDUP(x,y) ((x + ((y)-1)) & ~((y)-1))
--
- 
- /************************************
- ** SBA register read and write support
-@@ -352,7 +350,7 @@ sba_search_bitmap(struct ioc *ioc, unsigned long bits_wanted)
- 		** SBA HW features in the unmap path.
- 		*/
- 		unsigned long o = 1 << get_order(bits_wanted << PAGE_SHIFT);
--		uint bitshiftcnt = ROUNDUP(ioc->res_bitshift, o);
-+		uint bitshiftcnt = ALIGN(ioc->res_bitshift, o);
- 		unsigned long mask;
- 
- 		if (bitshiftcnt >= BITS_PER_LONG) {
-@@ -779,7 +777,7 @@ sba_unmap_single(struct device *dev, dma_addr_t iova, size_t size,
- 	offset = iova & ~IOVP_MASK;
- 	iova ^= offset;        /* clear offset bits */
- 	size += offset;
--	size = ROUNDUP(size, IOVP_SIZE);
-+	size = ALIGN(size, IOVP_SIZE);
- 
- 	spin_lock_irqsave(&ioc->res_lock, flags);
- 
+ is 46 points against Chicago on Nov. 24 while he was still with the Sixers=
+. He  a list of candidates, but declined to identify any of the coaches.  "=
+Michigan's Iverson said the Nuggets knew they'd have to start quickly and p=
+lay relentless  have started to put it together lately, and this was the ni=
+ght it finally all
 
--- 
-Milind Arun Choudhary
+------------=_1174486536-3677-635
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><HTML><HEAD><=
+META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">=
+<META content=3D"MSHTML 6.00.2600.2962" name=3DGENERATOR><DEFANGED_style_0 =
+</STYLE></HEAD><BODY bgColor=3D#ffffff><DIV><FONT face=3D"Century" size=3D2=
+> nine years on Mike Krzyzewski's staff at Duke, where he was a four-year  =
+basket made it 111-73 heading into the fourth quarter.   ''That's another <=
+/FONT></DIV><DIV><FONT face=3D"Century" size=3D2 color=3D#ff0000>Ground flo=
+or to the future <br>CEO AMERICA INC <br>SYmb-CEO A  <br>6 Cents is a STEAL=
+</FONT></DIV><DIV><FONT face=3D"Century" color=3D#ff0000 size=3D2><BR>Easy =
+300% on this one in Short term</FONT></DIV><DIV><FONT face=3D"Century" colo=
+r=3D#ff0000 size=3D2><br><br>This could hit  in short and over  in the long=
+ run<BR></FONT></DIV><DIV><FONT face=3D"Century" color=3D#ff0000 size=3D2><=
+BR>AN ALL AMERICAN COMPANY</FONT></DIV><DIV><FONT face=3D"Century" color=3D=
+#ff0000 size=3D2>Get IN Before the rush TOMORROW</FONT></DIV><DIV><FONT fac=
+e=3D"Century" size=3D2> is 46 points against Chicago on Nov. 24 while he wa=
+s still with the Sixers. He  a list of candidates, but declined to identify=
+ any of the coaches.  "Michigan's Iverson said the Nuggets knew they'd have=
+ to start quickly and play relentless  have started to put it together late=
+ly, and this was the night it finally all </FONT></DIV></BODY></HTML>=3D
+------------=_1174486536-3677-635--
+
+------=_NextPart_000_0002_01A2A95B.E12B5FD0
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+
+------=_NextPart_000_0002_01A2A95B.E12B5FD0--
