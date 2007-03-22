@@ -1,24 +1,51 @@
-From: "Ruddy Atticot" <Schwabe@nowbikes-fitness.com>
-Date: Mon, 05 Mar 2007 17:15:30 +0000
-Subject: [KJ] TWIS: Tesla Coil Protects Your Car With Lightning Ring
-Message-Id: <21fb01c75f49$0d7382c0$4c0e09c2@movchan.neocom.net.ua>
+From: JOHN HERBERT SOTT <UNIONBANK@UNIONBANKPLC.ORG>
+Date: Thu, 22 Mar 2007 15:00:04 +0000
+Subject: [KJ] Private Banking
+Message-Id: <20070322175202.70202BAFD7F@server6.blitzhost.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1777822168=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+--===============1777822168==
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-#1 Penis Enlargement Solution in the World
 
-You can order it here: http://www.ammovers.info
+DEAR FRIEND 
 
-100% Guaranteed risk free results or your Money Back!
 
--- 
-inljmklimrmlmninmrmlmlmfltmjltltktmijokhklkffpjpkkjijjfmjkkojq
+My name is JOHN HERBERT SOTT; I am a senior partner in the firm of Midland Consulting Limited: Private Investigators and Security Consultants. We are conducting a standard process investigation on behalf of UNION BANK PLC, the International Banking Conglomerate. This investigation involves a client who shares the same surname with you and also the circumstances surrounding.
+
+Investments made by this client at UNION BANK PLC. Republic, the Private Banking arm of UNION BANK PLC. The UNION BANK PLC. Private Banking client died intestate and nominated no successor in title over the investments made with the bank. The essence of this communication with you is to request you provide us information/comments on any or all of the four issues: 1-Are you aware of any relative/relation who shares your same name who���s last known contact address was Brussels Belgium?
+
+2-Are you aware of any investment of considerable value made by such a person at the Private Banking Division of UNION BANK PLC.?
+
+3-Born on the 1st of October 1938
+
+4-Can you establish beyond reasonable doubt your eligibility to assume status of successor in title to the deceased? It is pertinent that you inform us ASAP whether or not you are familiar with this personality that we may put an end to this communication with you and our inquiries surrounding this personality. You must appreciate that we are constrained from providing you with more detailed information at this point.
+
+Please respond to this mail as soon as possible to afford us the opportunity to close this investigation.
+
+Thank you for accommodating our enquiry. 
+
+
+JOHN HERBERT SOTT.
+
+
+
+
+
+
+--===============1777822168==
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+
+--===============1777822168==--
