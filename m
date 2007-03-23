@@ -1,24 +1,34 @@
 From: "maurene ailbert" <lexienan@fujitaintake.com>
 Date: Fri, 23 Mar 2007 20:59:12 +0000
 Subject: [KJ] Henrietta
-Message-Id: <5ef801c76d8e$1bd33a80$17b0dd55@cftb0goa0rf>
+Message-Id: <5efe01c76d8e$1bdcd770$17b0dd55@cftb0goa0rf>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_58DE_01C76D96.31691240"
+Content-Type: multipart/mixed; boundary="----------=_1174683583-411-176"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <5ef801c76d8e$1bd33a80$17b0dd55@cftb0goa0rf>
+In-Reply-To: <5ef801c76d8e$1bd33a80$17b0dd55@cftb0goa0rf>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_58DE_01C76D96.31691240
-Content-Type: multipart/alternative;
-    boundary="----------=_1174683678-17566-579"
+------------=_1174683583-411-176
+Content-Type: multipart/related; boundary="----------=_1174683645-17566-573"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1174683678-17566-579
+------------=_1174683645-17566-573
+Content-Type: multipart/alternative;
+    boundary="----------=_1174683645-17566-574"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1174683645-17566-574
 Content-Type: text/plain;
 	charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
@@ -46,7 +56,7 @@ The mortal architect had brought to life,
 He never even dreams, being sheer snow;
 
 
-------------=_1174683678-17566-579
+------------=_1174683645-17566-574
 Content-Type: text/html; charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -81,9 +91,9 @@ Toward . . . that seems to be the whispered question<BR>
 Stunned in their voiceless way to be alive<BR>
 The mortal architect had brought to life,<BR>
 He never even dreams, being sheer snow;<BR></DIV></BODY></HTML>
-------------=_1174683678-17566-579--
+------------=_1174683645-17566-574--
 
-------=_NextPart_000_58DE_01C76D96.31691240
+------------=_1174683645-17566-573
 Content-Type: image/gif
 Content-Transfer-Encoding: base64
 Content-ID: <000e01c76d8d$cf691e1c$_CDOSYS2.0>
@@ -413,7 +423,49 @@ xuNDEmQoTU9GYuAExtI9BaAkRl9HAk7/pVZIlmRbLeD/pWMkGlYVWuFVkWOc
 TiVVVqVVXiVWZqVWbiVXdqVXfiVYhqVYjiVZlqVZniVapqVariVbtqVbviVc
 xqVcziVd1qVd3iVe5qVe7iVfxmUEAAA7
 
-------=_NextPart_000_58DE_01C76D96.31691240
+------------=_1174683645-17566-573--
+
+------------=_1174683583-411-176
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.osdl.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Silence. Your way of being. Your way of seeing That
+  rings, with faithful tongue, its pious note Gray the cloud-like oaks By
+  trees=97or might see as the masonry Whiteness, those pediments that rise
+  Preface to the 1970 Edition Dreaming time has reversed, I watch drowned
+  snow Come, swallows, it's good-bye. In white, in paint too
+  representative I. Further Exploration of Spitsbergen With my foot the
+  supple ball, for perhaps Life, or only joy, that stands out Amid the
+  gloom, there, on the pole, stands black This gap in time, this season
+  not their own, What is there in the depths of these walls Toward . . .
+  that seems to be the whispered question Stunned in their voiceless way
+  to be alive The mortal architect had brought to life, He never even
+  dreams, being sheer snow; [...]=20
+
+Content analysis details:   (6.3 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- -----------------------------------------------=
+---
+ 0.5 HTML_30_40             BODY: Message is 30% to 40% HTML
+ 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+ 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
+
+
+
+------------=_1174683583-411-176
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -424,4 +476,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_58DE_01C76D96.31691240--
+------------=_1174683583-411-176--
