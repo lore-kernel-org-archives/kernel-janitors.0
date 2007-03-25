@@ -1,35 +1,29 @@
-From: "Cong WANG" <xiyou.wangcong@gmail.com>
-Date: Sat, 31 Mar 2007 11:38:30 +0000
-Subject: [KJ] [-mm3 Patch]Warning fix: may be used uninitialized
-Message-Id: <2375c9f90703310438m4c1c6922ic1fcef910140dd79@mail.gmail.com>
+From: lonlon_paris@yahoo.co.jp
+Date: Sun, 25 Mar 2007 05:07:08 +0000
+Subject: [KJ] =?iso-2022-jp?b?GyRCJTUlZiVqJDUkcyQrJGklYSVDJTshPCU4JCwbKEI=?=
+Message-Id: <20070325115729.46242mail@mail.ayhsfgsg.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-These values are used to be written first, so we can just initialize
-them to NULL or 0.
+=1B$B$3$s$P$s$n!y=1B(B=20
 
-Signed-off-by: Cong WANG <xiyou.wangcong@gmail.com>
+156,88,59,85=1B$B$N=1B(BF=1B$B%+%C%W$G$9!y=1B(B22=1B$B:P$@$h!yIaCJ=3DP$;$J$=
+$!"$"$j$N$^$^$N;d$rGx$1=3DP$7$F$$$3$&$H;W$C$F$k$N$G%h%m%7%/$G$9!y=1B(B=20
 
----
+=1B$BLQA[B2$G$9=1B(Bw=1B$BKhHU!"LQA[=1B(B1=1B$B?M%(%C%A$K%O%^$C$F$^$9"v$3$s=
+$J%(%C%AL<$G$9!y=1B(B
+=1B$B$@$1$ILQA[$@$1$8$c%d%C%Q%jJ*B-$j$J$$$o$1$G$'!A"v=1B(B
 
---- kernel/ptrace.c.orig	2007-03-30 21:58:47.000000000 +0800
-+++ kernel/ptrace.c	2007-03-30 22:00:55.000000000 +0800
-@@ -875,9 +875,9 @@ ptrace_common(long request, struct task_
+=1B$B$3$s$J;d$G$h$1$l$P%;%U%l$K$J$C$F$/$l$kCK;R$rJg=8Cf$G$9!y=1B(B
 
- asmlinkage long sys_ptrace(long request, long pid, long addr, long data)
- {
--	struct task_struct *child;
--	struct utrace_attached_engine *engine;
--	struct ptrace_state *state;
-+	struct task_struct *child = NULL;
-+	struct utrace_attached_engine *engine = NULL;
-+	struct ptrace_state *state = NULL;
- 	long ret, val;
+=1B$B$_$J$5$s%h%m%7%/$M!y=1B(B=20
+http://sawandan.sakura.ne.jp/r.cgi?shine
 
- 	pr_debug("%d sys_ptrace(%ld, %ld, %lx, %lx)\n",
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
