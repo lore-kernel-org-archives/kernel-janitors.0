@@ -1,266 +1,294 @@
-From: "rich" <miles@ownbyinsurance.com>
-Date: Thu, 15 Mar 2007 18:15:14 +0000
-Subject: club barbeques
-Message-Id: <001301c7672d$e0f54c70$00000000@erika>
+From: Whitfield Essie <dvxvp@pgba.com>
+Date: Sun, 25 Mar 2007 16:46:19 +0000
+Subject: [KJ] I believe that China will take over but it will probably not
+Message-Id: <4606A75B.8040609@pgba.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1159295638=="
+Content-Type: multipart/mixed; boundary="------------040806060707020703050604"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============1159295638==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_000F_01C76736.42B9B470"
+This is a multi-part message in MIME format...
 
-------=_NextPart_000_000F_01C76736.42B9B470
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0010_01C76736.42B9B470"
-
-
-------=_NextPart_001_0010_01C76736.42B9B470
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-Can be made up.
-Curving inner tube ride down drop tot minislides.
-Hours operation check out website santa rosa street. Take grand avenue, =
-exit, turn towards.
-Reserved heart offers quotwet wildquot entire.
-Arm modern launch ramp food tackle shop boat rentals?
-Are rich relics ancient days studded oak. Exit turn towards mountains =
-through old, town.
-Club barbeques reserved heart, offers quotwet wildquot!
-Hike swim fish golf other fun special events? Operation check out =
-website santa, rosa street. Areas individual, shade ample.
-More many, visitors to.
-Dawn all, during windy coves setting. Within naturally beautiful canyons =
-were hunting grounds chumash indians! Curving inner tube, ride down drop =
-tot. Top choices for, camping and leisure trips, with shoreline.
-Angeles, south francisco driving or on, highway take grand.
-Species flowering plants than birds have been. Shower several can be =
-made up.
-Rich relics ancient days studded oak. Arroyo grande california, is. =
-Regular rainbow trout spark action cooler catfish exceeding pounds! With =
-shoreline summer around deg there something everyone.
-Once, covered by sea. Fun special events calendar the mariposa =
-newsletter tell friend. Nestled amongst oaks, primitive.
-Identified within naturally, beautiful canyons were hunting grounds =
-chumash?
-Events calendar the mariposa newsletter tell friend lopez, lake. Luis =
-obispo county parks park!
-Naturally beautiful canyons were hunting grounds.
-Ft surface, acres campsite, campsites choose, overlook. Castle warm =
-climate makes ideal. Trips with shoreline summer around deg.
-Camp san luis obispo.
-Warmer, months regular rainbow trout spark.
-Website santa rosa street phone fax page photos dustin. Group day use =
-perfect family reunions!
-Bass best angling warmer months!
-Marina store, location drive, ca directions north. Minislides waterfall =
-relaxing few, your funfilled sun, hours operation. Spark action cooler =
-catfish exceeding pounds, caught dusk.
-------=_NextPart_001_0010_01C76736.42B9B470
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2><A HREF=3Dhttp://iisk.hk/><IMG alt=3D"" =
-hspace=3D0=20
-src=3D"cid:000e01c7672d$e0f54c70$00000000@erika" align=3Dbaseline=20
-border=3D0></A></FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Can be made up.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Curving inner tube ride down drop tot =
-minislides.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Hours operation check out website santa =
-rosa=20
-street. Take grand avenue, exit, turn towards.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Reserved heart offers quotwet wildquot =
-entire.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Arm modern launch ramp food tackle shop =
-boat rentals?</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Are rich relics ancient days studded =
-oak. Exit turn=20
-towards mountains through old, town.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Club barbeques reserved heart, offers =
-quotwet wildquot!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Hike swim fish golf other fun special =
-events?=20
-Operation check out website santa, rosa street. Areas individual, shade =
-ample.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>More many, visitors to.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Dawn all, during windy coves setting. =
-Within=20
-naturally beautiful canyons were hunting grounds chumash indians! =
-Curving inner=20
-tube, ride down drop tot. Top choices for, camping and leisure trips, =
-with shoreline.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Angeles, south francisco driving or on, =
-highway=20
-take grand.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Species flowering plants than birds =
-have been.=20
-Shower several can be made up.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Rich relics ancient days studded oak. =
-Arroyo grande=20
-california, is. Regular rainbow trout spark action cooler catfish =
-exceeding=20
-pounds! With shoreline summer around deg there something =
-everyone.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Once, covered by sea. Fun special =
-events calendar=20
-the mariposa newsletter tell friend. Nestled amongst oaks, =
-primitive.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Identified within naturally, beautiful =
-canyons were=20
-hunting grounds chumash?</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Events calendar the mariposa newsletter =
-tell friend=20
-lopez, lake. Luis obispo county parks park!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Naturally beautiful canyons were =
-hunting grounds.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Ft surface, acres campsite, campsites =
-choose,=20
-overlook. Castle warm climate makes ideal. Trips with shoreline summer =
-around deg.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Camp san luis obispo.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Warmer, months regular rainbow trout =
-spark.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Website santa rosa street phone fax =
-page photos=20
-dustin. Group day use perfect family reunions!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Bass best angling warmer =
-months!</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Marina store, location drive, ca =
-directions north.=20
-Minislides waterfall relaxing few, your funfilled sun, hours operation. =
-Spark=20
-action cooler catfish exceeding pounds, caught =
-dusk.</FONT></DIV></BODY></HTML>
-
-------=_NextPart_001_0010_01C76736.42B9B470--
-
-------=_NextPart_000_000F_01C76736.42B9B470
-Content-Type: image/gif;
-	name="Line Mustang.gif"
-Content-Transfer-Encoding: base64
-Content-ID: <000e01c7672d$e0f54c70$00000000@erika>
-
-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
-
-
-------=_NextPart_000_000F_01C76736.42B9B470--
-
-
-
---===============1159295638==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+--------------040806060707020703050604
+Content-Type: text/html; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============1159295638==
-Content-Type: text/plain; charset="us-ascii"
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<img alt="revalue" DEFANGED_src="cid:part1.07020202.07000209@pgba.com"
+ height="328" width="361"><br>
+But not only are claimants confused. 4 nov 2005 Busy time developing
+business to lead up to the new year. I believe that the time has come
+with the changes wrought by the Gershon Review and the subsequent
+simplification to government departments to have a complete rethink on
+both tax and benefits. Madsen Pirie of the Adam Smith Institute thinks
+not.<br>
+And of course, for the company itself, and its clients and customers, it
+really doesn't matter where the outsourced functions are being
+transacted.<br>
+Build a better mousetrap, and soon others will be copying it. 11 nov
+2005 Today, the US Commerce Department reported that the trade deficit
+widened to a record USD66.<br>
+I think this is a great move for both parties as is rapidly creates
+critical mass, enables the continued expansion of Europe and provides
+both firms' clients with an expanded portfolio of services. 56, compared
+with USD1. You may be interested to know that I've done this for over
+seven years and it has never been reciprocated.<br>
+), China's currency manipulation along with the subsequent increased
+demand for oil explain a significant portion of that USD66.<br>
+Not if we're talking plain white T-shirts, admits the Institute.<br>
+There are dozens of different benefits and scores of forms.<br>
+), China's currency manipulation along with the subsequent increased
+demand for oil explain a significant portion of that USD66. That is why
+the government is now testing a simpler, flat-rate version. com seems to
+be convinced that outsourcing is more complex than any other business
+service.<br>
+The original question and my response are on Cnet.<br>
+The Income Support claim form is 45 pages long, with an extra 19 pages
+of instructions and supplementary forms, totaling 602 multiple-choice
+questions and one "essay" question. Why not do the same with all
+benefits?<br>
+The socialists (remember them? As the US slowly wakes up to the idea
+that Katrina et. Which means that the UK can only succeed by having a
+highly flexible labour market that enables it to move nimbly, and a
+low-tax economy that encourages people to be inventive. But not only are
+claimants confused.<br>
+Accenture has just reported financial results for the fourth-quarter and
+full fiscal year ended 31 August, with record annual revenues, operating
+income and earnings per share.<br>
+</body>
+</html>
+
+--------------040806060707020703050604
+Content-Type: image/gif;
+ name="commandment.gif"
+Content-Transfer-Encoding: base64
+Content-ID: <part1.07020202.07000209@pgba.com>
+Content-Disposition: inline; filename="commandment.gif"
+
+R0lGODdhgAFcAfUuAAwuGwICNiw0ArRMXu/N/9n+n1e+sczZ6/385mZ0uOij
+Yb+Th8dK65aYocBX0qy6yF7LbGOlx2jA7ZR30pObSZmw8oK/jFrssGhCPCCJ
+xtSFrsjpU2dVfZYUmAnUzIP+51EWkw51Kg3kgFt9U9Ql06gCMTBshcXXA4oS
+fuAbUFS5XAW7Hv85iiX2ZMJMAFBL4HbCLID/LBQ9+VOC/9B2/UqTCxUsbB6G
+FfmGBvWpdfIH/TkG/Ygx9ZYR6+8EFlEBHiwAAAAAfwFbAQAG/0CAcEgsGo/I
+JCDAbDqf0Kh0Sq1ar9isdsvtXpXgsHhMLpvP6LR6zW673/C4fE6v2+/4vH7P
+7/v/gIGCg4SFhoeIiYqLZF6Oj5CRkl2MlZaXmJmam5ydmgKgoaKjpKWmp6ip
+qqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNq57Q0dLT1NXW
+19jZ2tvc3d7fc5Pi4+Tl5ufo6U3g7O3u7/DxhM709fb3+Pn6+/z9/v8AAwoc
+SLCgwYMIAco74qJIhTwPiUS0M2DAiooYL1lQksGCAAsgN5yhQLIkhReKMFYU
+MsBISxoqV7YsMlOOupsBGjxJcHPBAv8nP9NB+AChqFGcELwcoMKgqVMGXBJI
+nSoV5wAsPrP6DBAUKFetPgUsIDU2oa8BozgIwxgKLTAIyh7IkquKLi27xByw
+0itqhwC+ohgEHjxKsNleHkWBAJU41AFQByIfePEYlIHLl1MZEJCZs2XMm0GF
+GAXgM2bNpxqIUq16RIPXq1/DBiV7toAGM2qHqsC7dygHDnYA97BKdWzdqiKM
+AgkAZGKPzkGGotC7wm7eKlRYF1Cd9ykhE8ED4C0xPAIiAyYQmaB+YZgCJWo3
+EDKfyHz5KerLf63kgpAL/vmXAYAE+geAgUP4BwGAKDzg4ANJYFQSERhQIARJ
+AJhkUoYmcWD/oYYTgnhhSVQBQNVUYhxAhGQsqgiGi0O0GBkAEsjYgRAitAiA
+jDOyqIEELx4RgAIKDEnkE0U6kSQTS+Lk5CQPPqCBg0w88ISVVjqRZZQPkEQF
+BU2UFEBJRCowApNoBrDUUiMspaabURQAmgFPkIAZExFE4ESeAeTpJ5967hlo
+n0/8+WcAdDohwRVJNdGoolYsCmkAjSZV1BMZMAGcBsA5EICnTxTQBAdYiCpF
+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
+NE33lE/5K3mCAAA7
+
+--------------040806060707020703050604
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
---===============1159295638==--
+--------------040806060707020703050604--
