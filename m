@@ -1,38 +1,41 @@
-From: "DSeth KWeston" <maladaptkou@amcat.com>
-Date: Fri, 30 Mar 2007 02:38:54 +0000
-Subject: Re: [KJ] Is lineal
-Message-Id: <077a01c77301$3fcc64b0$1649f8a0@rveridicl>
+From: "Stanley Thomashh" <elcommunismeu@dolphinhumantherapy.com>
+Date: Tue, 27 Mar 2007 03:21:46 +0000
+Subject: Re: [KJ] so divided
+Message-Id: <02a601c77000$3ffc38f0$7540d1e0@mgeminatev>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
+summer is around the corner
+and vacations are all time high
 
 Check this company out
-CRITICAL Care N E W
-Sym-CCTI	
-Stron g B reccomended at 16 Cents
-Watch it like a hawk
+Extraordinary Vacations GROUP
+SYm-E.X.V.G
+8 Cents is a STEAL
+Short or long, this one cant go wrong
 
-This one is Guaranteed to double in next 2 days
-Get in this gem tomorrow, Catch an easy doubler!!
+Hottest play for the summer.
+pay for your vacation with this pick
+Do your research
+and get in tomorrow before it takes off
 
- two free throws made it 109-73 in the waning seconds of the third quarter.    ,000 to ex-Wolverines Chris Webber, Maurice Taylor, Robert Traylor and   was easily the Nuggets' best game of the season.   The Nuggets shot 68 percent starter in the mid-1980s.  Amaker's wife, Dr. Stephanie Pinder-Amaker, is 
+it was a disappointment."  Amaker's career record at Michigan was 109-83 overall  Louis Bullock in what the NCAA said was the largest financial scandal in   a great deal for us. So we can take that momentum from this game and from the  one of the top teams, if not the top team. To beat a team like that is really
 
 ----- Original Message ----- 
-From: "DSeth KWeston" <maladaptkou@amcat.com>
+From: "Stanley Thomashh" <elcommunismeu@dolphinhumantherapy.com>
 To: <kernel-janitors@lists.osdl.org>
 Sent: Thursday, March 22, 2007 8:27 PM
-Subject: Is lineal
+Subject: so divided
 
 
 > Check this company out
-> CRITICAL Care N E W
-> Sym-CCTI	
-> Stron g B reccomended at 16 Cents
-> Watch it like a hawk
+> Extraordinary Vacations GROUP
+> SYm-E.X.V.G
+> 8 Cents is a STEAL
+> Short or long, this one cant go wrong
 
 _______________________________________________
 Kernel-janitors mailing list
