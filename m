@@ -1,7 +1,7 @@
 From: Mail Delivery System <Mailer-Daemon@lists.sourceforge.net>
-Date: Mon, 26 Mar 2007 18:46:31 +0000
-Subject: Warning: message 1HVSyv-000434-Rd delayed 24 hours
-Message-Id: <E1HVuD9-0004SV-MY@externalmx-1.sourceforge.net>
+Date: Tue, 27 Mar 2007 15:03:35 +0000
+Subject: Warning: message 1HVSyv-000434-Rd delayed 48 hours
+Message-Id: <E1HWDCx-0001Hj-Tc@externalmx-1.sourceforge.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <E1HVcSF-0002Gq-VZ@externalmx-1.sourceforge.net>
 In-Reply-To: <E1HVcSF-0002Gq-VZ@externalmx-1.sourceforge.net>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 This message was created automatically by mail delivery software.
 A message that you sent has not yet been delivered to one or more of its
-recipients after more than 24 hours on the queue on externalmx-1.sourceforg=
+recipients after more than 48 hours on the queue on externalmx-1.sourceforg=
 e.net.
 
 The message identifier is:     1HVSyv-000434-Rd
