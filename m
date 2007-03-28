@@ -1,67 +1,67 @@
-From: Mr Moses Uzoegbu <mosesuzo@myway.com>
-Date: Tue, 13 Mar 2007 21:18:48 +0000
-Subject: [KJ] Greetings,
-Message-Id: <20070313211848.9398.qmail@mlsedv-online.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0249742781=="
+From: Shani <shani.moideen@wipro.com>
+Date: Wed, 28 Mar 2007 05:26:31 +0000
+Subject: [KJ] Patch:replace with time_after in drivers/net/eexpress.c
+Message-Id: <1175058871.11584.33.camel@shani-win>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070313211848.9404.qmail@mlsedv-online.de>
-In-Reply-To: <20070313211848.9404.qmail@mlsedv-online.de>
-To: kernel-janitors@vger.kernel.org
-
---===============0249742781==
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-
-
-Greetings,
-
-I professionally advise that you digest and assimilate this that I have brought forth to you before taking your next decision. Be informed that this is legal and has little or nor risk and I would in my discreation keep it as discreet as possible.
-
-One Mr. Elf Rogers who worked with shell oil in Nigeria, was
-killed by the Niger-delta Millitants in 2005. Mr. Elf Rogers
-left the sum of $2.5M in cash and $1.2M in share debenture stocks of a reputable company in our deposit,which has accumulated a great amount of dividend. Until now no relation of his has come forward to claim this estate. So the bank has taken it upon itself to look for his next of 
-kin as he left no traces of any or any will.
-
-You can also get information's on this web site
-http://www.turkishweekly.net/news.php?id=31543
-
-I am Moses Uzoegbu and below is my profile:My Position Head of Risk Management Department and the Bank���s Chief Compliance Officer Of Ibtc Chartered Bank
-
-This is the link to get my profile http://www.ibtc.com/management.asp
-Our Bank's website: www.ibtc.com
-
-
-Please note that the priority of coming to you is for us to work together in getting this estate out for ourselves. I need you to make available to me the following datas:
-
-YOUR FULL NAME
-DIRECT PHONE AND FAX Oltrogge FOR PROPER COMMUICATION
-RESIDENT ADDRESS
-MARITAL STATUS
-OCCUPATION
-YOUR ID. i.e INTERNATIONAL PASSPORT OR DRIVERS LINECES
-
-With this I would validate an application of claim and forward it to the bank's foreign remittance department that is in charge of such transaction for formal commencement of reviews to this regards.
-
-Please Note if you know you are not capable of handling this
-transaction please dont reply.
-
-Regards
-
-Mr Moses Uzoegbu
-
-
-
-
---===============0249742781==
-Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: philb@gnu.org
+Cc: alan@redhat.com, netdev@vger.kernel.org, kernel-janitors@osdl.org
 
+Hi,
+
+Replacing with time_after in drivers/net/eexpress.c
+Applies and compiles clean on latest tree.Not tested.
+
+thanks.
+
+Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
+----
+
+diff --git a/drivers/net/eexpress.c b/drivers/net/eexpress.c
+index 3868b80..7825f78 100644
+--- a/drivers/net/eexpress.c
++++ b/drivers/net/eexpress.c
+@@ -115,6 +115,7 @@
+ #include <linux/mca-legacy.h>
+ #include <linux/spinlock.h>
+ #include <linux/bitops.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/system.h>
+ #include <asm/io.h>
+@@ -556,7 +557,7 @@ static void unstick_cu(struct net_device *dev)
+ 
+ 	if (lp->started)
+ 	{
+-		if ((jiffies - dev->trans_start)>50)
++		if (time_after(jiffies, dev->trans_start + 50))
+ 		{
+ 			if (lp->tx_link=lp->last_tx_restart)
+ 			{
+@@ -612,7 +613,7 @@ static void unstick_cu(struct net_device *dev)
+ 	}
+ 	else
+ 	{
+-		if ((jiffies-lp->init_time)>10)
++		if (time_after(jiffies,lp->init_time + 10))
+ 		{
+ 			unsigned short status = scb_status(dev);
+ 			printk(KERN_WARNING "%s: i82586 startup timed out, status %04x, resetting...\n",
+@@ -1650,7 +1651,7 @@ eexp_set_multicast(struct net_device *dev)
+ #endif
+                 oj = jiffies;
+                 while ((SCB_CUstat(scb_status(dev)) = 2) &&
+-                       ((jiffies-oj) < 2000));
++                       (time_after(jiffies, oj + 2000)));
+ 		if (SCB_CUstat(scb_status(dev)) = 2)
+ 			printk("%s: warning, CU didn't stop\n", dev->name);
+                 lp->started &= ~(STARTED_CU);
+
+-- 
+Shani Moideen
 _______________________________________________
 Kernel-janitors mailing list
-Kernel-janitors@lists.osdl.org
-https://lists.osdl.org/mailman/listinfo/kernel-janitors
-
---===============0249742781==--
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
