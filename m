@@ -1,7 +1,7 @@
-From: Jeff Garzik <jeff@garzik.org>
-Date: Thu, 29 Mar 2007 12:35:42 +0000
+From: "=?ISO-8859-2?Q?Marcin_=A6lusarz?=" <marcin.slusarz@gmail.com>
+Date: Thu, 29 Mar 2007 18:41:19 +0000
 Subject: Re: [KJ] Patch:replace with time_after in drivers/net/eexpress.c
-Message-Id: <460BB29E.5000607@garzik.org>
+Message-Id: <4bacf17f0703291141n4b485e80m98be0aaecf1ec81d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1175058871.11584.33.camel@shani-win>
 In-Reply-To: <1175058871.11584.33.camel@shani-win>
@@ -9,21 +9,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Shani <shani.moideen@wipro.com>
-Cc: philb@gnu.org, alan@redhat.com, netdev@vger.kernel.org, kernel-janitors@osdl.org
+Cc: philb@gnu.org, alan@redhat.com, netdev@vger.kernel.org, kernel-janitors@osdl.org, jeff@garzik.org
 
-Shani wrote:
-> Hi,
-> 
-> Replacing with time_after in drivers/net/eexpress.c
-> Applies and compiles clean on latest tree.Not tested.
-> 
-> thanks.
-> 
-> Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
-
-applied to #upstream
-
-
+2007/3/28, Shani <shani.moideen@wipro.com>:
+> @@ -1650,7 +1651,7 @@ eexp_set_multicast(struct net_device *dev)
+>  #endif
+>                  oj = jiffies;
+>                  while ((SCB_CUstat(scb_status(dev)) = 2) &&
+> -                       ((jiffies-oj) < 2000));
+> +                       (time_after(jiffies, oj + 2000)));
+>                 if (SCB_CUstat(scb_status(dev)) = 2)
+>                         printk("%s: warning, CU didn't stop\n", dev->name);
+>                  lp->started &= ~(STARTED_CU);
+>
+it should be time_before, not time_after...
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
