@@ -1,43 +1,39 @@
 From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Thu, 29 Mar 2007 03:28:04 +0000
+Date: Thu, 29 Mar 2007 03:48:14 +0000
 Subject: Re: [KJ] [PATCH] BIT macro cleanup
-Message-Id: <460B3244.9060405@student.ltu.se>
+Message-Id: <460B36FE.5050301@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070328033309.GA9597@arun.site> <20070328190925.GC5306@martell.zuzino.mipt.ru>
-In-Reply-To: <20070328190925.GC5306@martell.zuzino.mipt.ru>
+References: <20070328033309.GA9597@arun.site>
+In-Reply-To: <20070328033309.GA9597@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Milind Arun Choudhary <milindchoudhary@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+To: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
 
-Alexey Dobriyan wrote:
-> On Wed, Mar 28, 2007 at 09:03:09AM +0530, Milind Arun Choudhary wrote:
+Milind Arun Choudhary wrote:
+> BIT macro cleanup,now in bitops.h
+>
+> Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
+>
+> ---
 >   
->> --- a/include/linux/bitops.h
->> +++ b/include/linux/bitops.h
->> @@ -8,6 +8,9 @@
->>   */
->>  #include <asm/bitops.h>
->>
->> +#define BIT(nr)	(1UL << ((nr) % BITS_PER_LONG))
->>     
->
-> I think this would be a disaster because something like
->
-> 	BIT(123)
->
-> would not even generate a warning.
+<snip>
+> diff --git a/drivers/net/s2io.h b/drivers/net/s2io.h
+> index 0de0c65..5aa3be5 100644
+> --- a/drivers/net/s2io.h
+> +++ b/drivers/net/s2io.h
+> @@ -14,6 +14,7 @@
+>  #define _S2IO_H
+>  
+>  #define TBD 0
+> +#undef BIT
+>  #define BIT(loc)		(0x8000000000000000ULL >> (loc))
+>  #define vBIT(val, loc, sz)	(((u64)val) << (64-loc-sz))
+>  #define INV(d)  ((d&0xff)<<24) | (((d>>8)&0xff)<<16) | (((d>>16)&0xff)<<8)| ((d>>24)&0xff)
 >   
-There were a discussion on this, at KJ, when BIT was first used with a 
-modular operation. I said the same thing as you do now, but a big user 
-of BIT is the input-subsystem who defined their BIT as above. Also it 
-was mentioned that the compiler can only find the statical errors, a 
-variable input can break it in runtime.
-+ if we _really_ want to check the tree for such warnings, it is easy to 
-remove the modular operation temporarily (and keep away of input/)
+Why not use "LLBIT(63 - loc)" instead?
 
-I don't say I like this, just that it is a choose between possible errors.
 Richard Knutsson
 
 _______________________________________________
