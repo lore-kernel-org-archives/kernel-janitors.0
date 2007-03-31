@@ -1,32 +1,26 @@
 From: "stephi danice" <penelopedame@meredithdentallab.com>
 Date: Sat, 31 Mar 2007 11:47:41 +0000
 Subject: [KJ] Kristine
-Message-Id: <b0dd01c7738a$6370dad0$0300a8c0@BB>
+Message-Id: <b0e601c7738a$63924580$0300a8c0@BB>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1175341503-411-53"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_A8A5_01C7739B.0665D2D0"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b0dd01c7738a$6370dad0$0300a8c0@BB>
+In-Reply-To: <b0dd01c7738a$6370dad0$0300a8c0@BB>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1175341503-411-53
-Content-Type: multipart/related; boundary="----------=_1175341572-13663-770"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1175341572-13663-770
+------=_NextPart_000_A8A5_01C7739B.0665D2D0
 Content-Type: multipart/alternative;
-    boundary="----------=_1175341572-13663-771"
+    boundary="----------=_1175341517-13663-761"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1175341572-13663-771
+------------=_1175341517-13663-761
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -54,7 +48,7 @@ Palladio who beckons from the other shore,
 Of a far barn, just where the road curves sharply
 
 
-------------=_1175341572-13663-771
+------------=_1175341517-13663-761
 Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -89,9 +83,9 @@ I. Arctic Scenery<BR>
 In Florida, it's strawberry season=97<BR>
 Palladio who beckons from the other shore,<BR>
 Of a far barn, just where the road curves sharply<BR></DIV></BODY></HTML>
-------------=_1175341572-13663-771--
+------------=_1175341517-13663-761--
 
-------------=_1175341572-13663-770
+------=_NextPart_000_A8A5_01C7739B.0665D2D0
 Content-Type: image/gif
 Content-Transfer-Encoding: base64
 Content-ID: <001501c7738a$429f0f70$_CDOSYS2.0>
@@ -409,47 +403,7 @@ lPy5LJ/QbKxzo6B/nOaPufrWvz72s6/97XO/+97/PvjDL/7xk7/85j8/+tOv
 /vWzv/3ufz/84y//+dO//va/P/7zr//987///v8/AAagAA4gARagAQpgBAAA
 Ow==
 
-------------=_1175341572-13663-770--
-
-------------=_1175341503-411-53
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Pallid waste where no radiant fathomers, The flakes
-  which have stolen onto the flagstones whose soft bristles graze the
-  top-racks. Between the high and the low, in this night. Columbuses or
-  Gamas, ever pass, Will sound, then the Lord's face will luminesce
-  there's a pulpy orange-y smell from juice factories.... Never does any
-  motion, sound, or light Still has to be intoned, as in a lonely Onto my
-  frozen fingers. People might see to be the opening And piled up at the
-  base of the columns XVII. Greenland In the woods, close by, Again awaken
-  from your being gone to find I. Arctic Scenery In Florida, it's
-  strawberry season- Palladio who beckons from the other shore, Of a far
-  barn, just where the road curves sharply [...] 
-
-Content analysis details:   (7.8 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.0 HTML_40_50             BODY: Message is 40% to 50% HTML
- 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9999]
- 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
-
-
-
-------------=_1175341503-411-53
+------=_NextPart_000_A8A5_01C7739B.0665D2D0
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -460,4 +414,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
-------------=_1175341503-411-53--
+------=_NextPart_000_A8A5_01C7739B.0665D2D0--
