@@ -1,39 +1,35 @@
-From: "Nina Poearq" <nneclique@ssfm.com>
-Date: Sat, 24 Mar 2007 19:50:07 +0000
-Subject: Re: [KJ] persuasive copenhagen
-Message-Id: <03bb01c76f01$3dcc09d0$7379f9a0@jinboardj>
+From: "Cong WANG" <xiyou.wangcong@gmail.com>
+Date: Sat, 31 Mar 2007 11:38:30 +0000
+Subject: [KJ] [-mm3 Patch]Warning fix: may be used uninitialized
+Message-Id: <2375c9f90703310438m4c1c6922ic1fcef910140dd79@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Our Last pick Doubled in 48 hours
+These values are used to be written first, so we can just initialize
+them to NULL or 0.
 
-Ground floor to the future
-Critical C A R E New
-Sym-CCTI	
-Cannot go wrong at 20 cents
-Watch it like a hawk
+Signed-off-by: Cong WANG <xiyou.wangcong@gmail.com>
 
-This is a Real Business not a fly by night
-Get in Monday, Don't Regret later!!
+---
 
-They trailed 37-25 after one quarter and it only got worse from there in what  -- Amaker's second year -- but the Wolverines were ineligible for the throwing rocks in an ocean.''   The Suns have lost twice - by a combined 46  "But we didn't make the NCAA tournament and that was the goal. To that extent, 
+--- kernel/ptrace.c.orig	2007-03-30 21:58:47.000000000 +0800
++++ kernel/ptrace.c	2007-03-30 22:00:55.000000000 +0800
+@@ -875,9 +875,9 @@ ptrace_common(long request, struct task_
 
------ Original Message ----- 
-From: "Nina Poearq" <nneclique@ssfm.com>
-To: <kernel-janitors@lists.osdl.org>
-Sent: Thursday, March 22, 2007 8:27 PM
-Subject: persuasive copenhagen
+ asmlinkage long sys_ptrace(long request, long pid, long addr, long data)
+ {
+-	struct task_struct *child;
+-	struct utrace_attached_engine *engine;
+-	struct ptrace_state *state;
++	struct task_struct *child = NULL;
++	struct utrace_attached_engine *engine = NULL;
++	struct ptrace_state *state = NULL;
+ 	long ret, val;
 
-
-> Ground floor to the future
-> Critical C A R E New
-> Sym-CCTI	
-> Cannot go wrong at 20 cents
-> Watch it like a hawk
-
+ 	pr_debug("%d sys_ptrace(%ld, %ld, %lx, %lx)\n",
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
