@@ -1,66 +1,113 @@
-From: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
-Date: Wed, 11 Apr 2007 06:50:05 +0000
-Subject: [KJ] [PATCH] include KERN_* constant in printk() calls in
-Message-Id: <20070411065005.GI24898@traven>
+From: Brendan Burns <bburns@union.edu>
+Date: Sun, 01 Apr 2007 02:41:38 +0000
+Subject: [KJ] [PATCH] request_region auditing
+Message-Id: <1175395299.3215.10.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070409194151.GG4262@traven>
-In-Reply-To: <20070409194151.GG4262@traven>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-include KERN_* constant in printk() calls in arch/i386/mach-default/setup.c
+from: Brendan Burns <bburns@cs.umass.edu>
 
-Signed-off-by: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
- 
+Auditing request_region calls
+
+Signed-off-by: Brendan Burns
 ---
-diff --git a/arch/i386/mach-default/setup.c b/arch/i386/mach-default/setup.c
-index c788162..f1891b6 100644
---- a/arch/i386/mach-default/setup.c
-+++ b/arch/i386/mach-default/setup.c
-@@ -115,15 +115,15 @@ void mca_nmi_hook(void)
- 	 * at the moment.
- 	 */
+--- linux-2.6.20.4/drivers/video/matrox/matroxfb_base.c.orig	2007-03-31
+22:21:14.000000000 -0400
++++ linux-2.6.20.4/drivers/video/matrox/matroxfb_base.c	2007-03-31
+22:21:49.000000000 -0400
+@@ -1735,7 +1735,8 @@ static int initMatrox2(WPMINFO struct bo
+ #endif	/* CONFIG_MTRR */
  
--	printk("NMI generated from unknown source!\n");
-+	printk(KERN_WARNING "NMI generated from unknown source!\n");
- }
- #endif
+ 	if (!ACCESS_FBINFO(devflags.novga))
+-		request_region(0x3C0, 32, "matrox");
++		if (!request_region(0x3C0, 32, "matrox"))
++			return -EBUSY;
+ 	matroxfb_g450_connect(PMINFO2);
+ 	ACCESS_FBINFO(hw_switch->reset(PMINFO2));
  
- static __init int no_ipi_broadcast(char *str)
- {
- 	get_option(&str, &no_broadcast);
--	printk ("Using %s mode\n", no_broadcast ? "No IPI Broadcast" :
--											"IPI Broadcast");
-+	printk(KERN_INFO "Using %s mode\n",
-+	       no_broadcast ? "No IPI Broadcast" : "IPI Broadcast");
- 	return 1;
- }
+--- linux-2.6.20.4/drivers/pnp/isapnp/core.c.orig	2007-03-31
+22:25:57.000000000 -0400
++++ linux-2.6.20.4/drivers/pnp/isapnp/core.c	2007-03-31
+22:26:29.000000000 -0400
+@@ -1101,7 +1101,8 @@ static int __init isapnp_init(void)
+ 			printk(KERN_INFO "isapnp: No Plug & Play device found\n");
+ 			return 0;
+ 		}
+-		request_region(isapnp_rdp, 1, "isapnp read");
++		if (!request_region(isapnp_rdp, 1, "isapnp read"))
++			return -EBUSY;
+ 	}
+ 	isapnp_build_device_list();
+ 	cards = 0;
+--- linux-2.6.20.4/drivers/net/tokenring/smctr.c.orig	2007-03-31
+22:28:04.000000000 -0400
++++ linux-2.6.20.4/drivers/net/tokenring/smctr.c	2007-03-31
+22:28:34.000000000 -0400
+@@ -508,7 +508,8 @@ static int __init smctr_chk_mca(struct n
+ 	r2 = mca_read_stored_pos(tp->slot_num, 2);
+ 	r2 &= 0xF0;
+ 	dev->base_addr = ((__u16)r2 << 8) + (__u16)0x800;
+-	request_region(dev->base_addr, SMCTR_IO_EXTENT, smctr_name);
++	if (!request_region(dev->base_addr, SMCTR_IO_EXTENT, smctr_name))
++		return -EBUSY;
  
-@@ -131,8 +131,8 @@ __setup("no_ipi_broadcast", no_ipi_broadcast);
+ 	/* IRQ */
+ 	r5 = mca_read_stored_pos(tp->slot_num, 5);
+--- linux-2.6.20.4/drivers/net/hamradio/scc.c.orig	2007-03-31
+22:29:44.000000000 -0400
++++ linux-2.6.20.4/drivers/net/hamradio/scc.c	2007-03-31
+22:30:44.000000000 -0400
+@@ -1808,8 +1808,10 @@ static int scc_net_ioctl(struct net_devi
  
- static int __init print_ipi_mode(void)
- {
--	printk ("Using IPI %s mode\n", no_broadcast ? "No-Shortcut" :
--											"Shortcut");
-+	printk(KERN_INFO "Using IPI %s mode\n",
-+	       no_broadcast ? "No-Shortcut" : "Shortcut");
- 	return 0;
- }
+ 				if (found)
+ 				{
+-					request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl");
+-					request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data");
++					if (!request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl"))
++						return -EBUSY;
++					if (!request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data"))
++						return -EBUSY;
+ 					if (Nchips+chan != 0 &&
+ 					    scc_net_alloc(device_name, 
+ 							  &SCC_Info[2*Nchips+chan]))
+--- linux-2.6.20.4/drivers/isdn/sc/init.c.orig	2007-03-31
+22:32:39.000000000 -0400
++++ linux-2.6.20.4/drivers/isdn/sc/init.c	2007-03-31 22:33:41.000000000
+-0400
+@@ -352,19 +352,22 @@ static int __init sc_init(void)
+ 		sc_adapter[cinst]->iobase = io[b];
+ 		for(i = 0 ; i < MAX_IO_REGS - 1 ; i++) {
+ 			sc_adapter[cinst]->ioport[i] = io[b] + i * 0x400;
+-			request_region(sc_adapter[cinst]->ioport[i], 1,
+-					interface->id);
++			if (!request_region(sc_adapter[cinst]->ioport[i], 1,
++					interface->id))
++				return -EBUSY;
+ 			pr_debug("Requesting I/O Port %#x\n",
+ 				sc_adapter[cinst]->ioport[i]);
+ 		}
+ 		sc_adapter[cinst]->ioport[IRQ_SELECT] = io[b] + 0x2;
+-		request_region(sc_adapter[cinst]->ioport[IRQ_SELECT], 1,
+-				interface->id);
++		if (!request_region(sc_adapter[cinst]->ioport[IRQ_SELECT], 1,
++				interface->id))
++			return -EBUSY;
+ 		pr_debug("Requesting I/O Port %#x\n",
+ 				sc_adapter[cinst]->ioport[IRQ_SELECT]);
+ 		sc_adapter[cinst]->rambase = ram[b];
+-		request_region(sc_adapter[cinst]->rambase, SRAM_PAGESIZE,
+-				interface->id);
++		if (!request_region(sc_adapter[cinst]->rambase, SRAM_PAGESIZE,
++				interface->id))
++			return -EBUSY;
  
+ 		pr_info("  %s (%d) - %s %d channels IRQ %d, I/O Base 0x%x, RAM Base
+0x%lx\n", 
+ 			sc_adapter[cinst]->devicename,
 
--- 
-Matthias Kaehlcke
-Linux Application Developer
-Barcelona
-
-              Comunicar bichos a <bug-coreutils@gnu.org>
-                     (LANG=es_ES uname --help)
-                                                                 .''`.
-    using free software / Debian GNU/Linux | http://debian.org  : :'  :
-                                                                `. `'`
-gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
