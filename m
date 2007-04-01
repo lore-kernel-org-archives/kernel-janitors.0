@@ -1,50 +1,40 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Sun, 01 Apr 2007 18:28:55 +0000
+From: Jan Engelhardt <jengelh@linux01.gwdg.de>
+Date: Sun, 01 Apr 2007 19:04:09 +0000
 Subject: Re: [KJ] my first janitorial
-Message-Id: <460FF9E7.1080107@gmail.com>
+Message-Id: <Pine.LNX.4.61.0704012103330.16977@yvahk01.tjqt.qr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>	<9c9aa5d00703312224t1948b24bhe34199f19cbda4fb@mail.gmail.com> <20070401170043.27a581cb@the-village.bc.nu>
-In-Reply-To: <20070401170043.27a581cb@the-village.bc.nu>
+References: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>
+ <9c9aa5d00703312224t1948b24bhe34199f19cbda4fb@mail.gmail.com>
+ <20070401061707.GB943@1wt.eu>
+In-Reply-To: <20070401061707.GB943@1wt.eu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: Willy Tarreau <w@1wt.eu>
 Cc: Pedram M <pmessri@gmail.com>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
 
-Alan Cox napsal(a):
-> On Sat, 31 Mar 2007 22:24:12 -0700
-> "Pedram M" <pmessri@gmail.com> wrote:
-> 
->> How about this one? Am I doing it right now?
->> If not, please try to explain more to me what I am
->> doing wrong.
-> 
-> You need to hold a reference to the PCI device for the entire duration it
-> is used. I think you actually also need something like this to get the whole
-> thing using pci references and pci_get_* properly
-> 
-> Alan
-> 
-> --- drivers/char/cyclades.c~	2007-04-01 15:52:16.000000000 +0100
-> +++ drivers/char/cyclades.c	2007-04-01 15:52:16.000000000 +0100
-> @@ -4803,7 +4782,7 @@
->                  cy_card[j].bus_index = 1;
->                  cy_card[j].first_line = cy_next_channel;
->                  cy_card[j].num_chips = cy_pci_nchan/4;
-> -		cy_card[j].pdev = pdev;
-> +		cy_card[j].pdev = pci_dev_get(pdev);
 
-No, please let this code be, I have a bunch of patches to have pci_probing
-for this driver, the remaining part for first set of patches is testing.
+On Apr 1 2007 08:17, Willy Tarreau wrote:
+>
+>   - your patch was cut and cannot apply to anything. A proper patch starts
+>     with line beginning with "---" line, followed by a line with "+++",
+>     both indicating the file your patch is supposed to apply to. Make your
+>     patch with one level directory for the kernel so that it can apply with
+>     "patch -p1". For instance:
+>
+>        $ diff -u linux-2.6.20/Makefile linux-2.6.20-mine/Makefile
+>
+>     Another solution is to use '.' as the directory, in order to add one
+>     directory level for "patch -p1" to be happy :
+>
+>        $ diff -u ./Makefile.orig ./Makefile
 
-thanks,
+Suggesting quilt.
+
+
+
+Jan
 -- 
-http://www.fi.muni.cz/~xslaby/            Jiri Slaby
-faculty of informatics, masaryk university, brno, cz
-e-mail: jirislaby gmail com, gpg pubkey fingerprint:
- B674 9967 0407 CE62 ACC8  22A0 32CC 55C3 39D4 7A7E
-
-Hnus <hnus@fi.muni.cz> is an alias for /dev/null
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
