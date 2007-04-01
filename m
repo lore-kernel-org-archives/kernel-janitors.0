@@ -1,129 +1,39 @@
-From: <vignesh.babu@wipro.com>
-Date: Mon, 16 Apr 2007 06:12:38 +0000
-Subject: [KJ] [PATCH]cx88-alsa.c-kzalloc
-Message-Id: <1176702807.9356.13.camel@wriver-t81fb058.linuxcoe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1772423539=="
+From: Brendan Burns <bburns@cs.umass.edu>
+Date: Sun, 01 Apr 2007 02:18:55 +0000
+Subject: [KJ] PATCH: drivers/keyboard/hilkbd.c request_region
+Message-Id: <1175393935.3215.4.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+from: Brendan Burns <bburns@cs.umass.edu>
 
---===============1772423539==
-Content-Type: multipart/signed; micalg=sha1;
-	protocol="application/x-pkcs7-signature";
-	boundary="=-OCMTIIEKDqQ5V+I7rEbn"
-Content-class: urn:content-classes:message
+check error code from request_region
 
-
---=-OCMTIIEKDqQ5V+I7rEbn
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Replacing kmalloc/memset combination with kzalloc.
-
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+Signed-off-by: Brendan Burns
 ---
-diff --git a/drivers/media/video/cx88/cx88-alsa.c b/drivers/media/video/cx8=
-8/cx88-alsa.c
-index e4355fd..d47032f 100644
---- a/drivers/media/video/cx88/cx88-alsa.c
-+++ b/drivers/media/video/cx88/cx88-alsa.c
-@@ -413,11 +413,9 @@ static int snd_cx88_hw_params(struct snd_pcm_substream=
- * substream,
-=20
- 	dprintk(1,"Setting buffer\n");
-=20
--	buf =3D kmalloc(sizeof(*buf),GFP_KERNEL);
-+	buf =3D kzalloc(sizeof(*buf),GFP_KERNEL);
- 	if (NULL =3D=3D buf)
- 		return -ENOMEM;
--	memset(buf,0,sizeof(*buf));
--
-=20
- 	buf->vb.memory =3D V4L2_MEMORY_MMAP;
- 	buf->vb.width  =3D chip->period_size;
 
---=20
-Regards, =20
-Vignesh Babu BM =20
-_____________________________________________________________ =20
-"Why is it that every time I'm with you, makes me believe in magic?"
+--- linux-2.6.20.4/drivers/input/keyboard/hilkbd.c.orig 2007-03-31
+22:09:04.0000
+00000 -0400
++++ linux-2.6.20.4/drivers/input/keyboard/hilkbd.c      2007-03-31
+22:10:07.0000
+00000 -0400
+@@ -224,7 +224,8 @@ hil_keyb_init(void)
+        if (!hwreg_present((void *)(HILBASE + HIL_DATA)))
+                return -ENODEV;
+ 
+-       request_region(HILBASE+HIL_DATA, 2, "hil");
++       if (!request_region(HILBASE+HIL_DATA, 2, "hil"))
++         return -EBUSY;
+ #endif
+ 
+        request_irq(HIL_IRQ, hil_interrupt, 0, "hil", hil_dev.dev_id);
 
---=-OCMTIIEKDqQ5V+I7rEbn
-Content-Type: application/x-pkcs7-signature; name=smime.p7s
-Content-Disposition: attachment; filename=smime.p7s
-Content-Transfer-Encoding: base64
-
-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
-CQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
-AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwgZ8wDQYJKoZIhvcNAQEBBQAD
-gY0AMIGJAoGBAMSmPFVzVftOucqZWh5owHUEcJ3f6f+jHuy9zfVb8hp2vX8MOmHyv1HOAdTlUAow
-1wJjWiyJFXCO3cnwK4Vaqj9xVsuvPAsH5/EfkTYkKhPPK9Xzgnc9A74r/rsYPge/QIACZNenpruf
-ZdHFKlSFD0gEf6e20TxhBEAeZBlyYLf7AgMBAAGjgZQwgZEwEgYDVR0TAQH/BAgwBgEB/wIBADBD
-BgNVHR8EPDA6MDigNqA0hjJodHRwOi8vY3JsLnRoYXd0ZS5jb20vVGhhd3RlUGVyc29uYWxGcmVl
-bWFpbENBLmNybDALBgNVHQ8EBAMCAQYwKQYDVR0RBCIwIKQeMBwxGjAYBgNVBAMTEVByaXZhdGVM
-YWJlbDItMTM4MA0GCSqGSIb3DQEBBQUAA4GBAEiM0VCD6gsuzA2jZqxnD3+vrL7CF6FDlpSdf0wh
-uPg2H6otnzYvwPQcUCCTcDz9reFhYsPZOhl+hLGZGwDFGguCdJ4lUJRix9sncVcljd2pnDmOjCBP
-ZV+V2vf3h9bGCE6u9uo05RAaWzVNd+NWIXiC3CEZNd4ksdMdRv9dX2VPMYIDEDCCAwwCAQEwdjBi
-MQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoG
-A1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECEBRBWlnPDDQELOU4iM67
-/5AwCQYFKw4DAhoFAKCCAW8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUx
-DxcNMDcwNDE2MDU1MzI2WjAjBgkqhkiG9w0BCQQxFgQUhg9+D2D7idPBhbgJNYvNBuse+H0wgYUG
-CSsGAQQBgjcQBDF4MHYwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5n
-IChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENB
-AhAUQVpZzww0BCzlOIjOu/+QMIGHBgsqhkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCWkExJTAj
-BgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJz
-b25hbCBGcmVlbWFpbCBJc3N1aW5nIENBAhAUQVpZzww0BCzlOIjOu/+QMA0GCSqGSIb3DQEBAQUA
-BIIBAMy4FISlMYJmldL1ci8qV0l1DC/cmwghmRV60si+evHuwJA+chMoCLuAd85BN/RVOiBG13YB
-/0VnZx8AeujHvQ1lJ0bHOrMRCgMjf+BTbVhQj0XY6AZ5eBq1N9xjO6vd8i5CKqMKAOV6aQWF7TVl
-MovqycZZOhT7BFEVYqV2CVoUJS43gWXl5922N0HL5tNIUljILQbXxLOj+7PoLnthewPcd/1ylLeM
-erco21cnvB2fma0dhuxuRAR0eXdYyJ0QW3KSiyXW/9CT9945xpHqkeyCnpUdVJ6nOAZTMsPkKozy
-JaHHR+z7OZ4ZNjK0M+ZVN+IChQZECry/77Wy1NJNmgoAAAAAAAA=
-
-
---=-OCMTIIEKDqQ5V+I7rEbn--
-
---===============1772423539==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-
---===============1772423539==--
