@@ -1,49 +1,77 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Date: Fri, 13 Apr 2007 16:45:49 +0000
-Subject: Re: [KJ] [PATCH 02/03]ROUND_UP|DOWN macro cleanup in arch/ia64,
-Message-Id: <617E1C2C70743745A92448908E030B2A015B4E12@scsmsx411.amr.corp.intel.com>
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Date: Sun, 01 Apr 2007 11:26:00 +0000
+Subject: [KJ] [PATCH] ROUND_UP macro cleanup in drivers/pci
+Message-Id: <20070401111400.GA9758@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
-In-Reply-To: <20070413043140.GA9431@arun.site>
-References: <20070412203140.GB9353@arun.site>
-In-Reply-To: <20070412203140.GB9353@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Cc: kernel-janitors@lists.osdl.org, linux-ia64@vger.kernel.org, discuss@x86-64.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, ak@suse.de
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, pcihpd-discuss@lists.sourceforge.net, scottm@somanetworks.com, linux-pci@atrey.karlin.mff.cuni.cz
 
-> So as ALIGN macro does the same work as ROUNDUP,
 
-Although it is mathematically the same operation, the
-semantic associations of the name are important too.
-If I have an I/O device that works in blocks of a given
-size, I don't think that I'm "aligning" a request to make
-it match the capabilities of the device, I think that I'm
-"rounding up" to a multiple of the size.
+ROUND_UP macro cleanup, use ALIGN where ever appropriate
 
-Maybe this is because I started out in mathematics before
-discovering that computers were so much fun, or maybe it
-is a British-English bias ... I can't tell, but it makes
-sense to me to use ROUNDUP in some places, and ALIGN in
-others.
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
 
-I haven't scanned through all usages to see whether existing
-usage matches my bias ... but changing them all to use just
-one name doesn't feel like the right thing to do.  It makes
-some code less clear (to me).
+---
+ hotplug/cpci_hotplug_pci.c |    2 --
+ setup-bus.c                |    8 +++-----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
->      is at a common place
->      & is accessible to everyone
 
-If ROUNDUP isn't available everywhere, then it should be. To
-avoid code duplication perhaps we should add:
+diff --git a/drivers/pci/hotplug/cpci_hotplug_pci.c b/drivers/pci/hotplug/cpci_hotplug_pci.c
+index 7b1beaa..5e9be44 100644
+--- a/drivers/pci/hotplug/cpci_hotplug_pci.c
++++ b/drivers/pci/hotplug/cpci_hotplug_pci.c
+@@ -45,8 +45,6 @@ extern int cpci_debug;
+ #define info(format, arg...) printk(KERN_INFO "%s: " format "\n", MY_NAME , ## arg)
+ #define warn(format, arg...) printk(KERN_WARNING "%s: " format "\n", MY_NAME , ## arg)
+ 
+-#define ROUND_UP(x, a)		(((x) + (a) - 1) & ~((a) - 1))
+-
+ 
+ u8 cpci_get_attention_status(struct slot* slot)
+ {
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 3554f39..e02766f 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -34,8 +34,6 @@
+ #define DBG(x...)
+ #endif
+ 
+-#define ROUND_UP(x, a)		(((x) + (a) - 1) & ~((a) - 1))
+-
+ static void __devinit
+ pbus_assign_resources_sorted(struct pci_bus *bus)
+ {
+@@ -314,7 +312,7 @@ pbus_size_io(struct pci_bus *bus)
+ #if defined(CONFIG_ISA) || defined(CONFIG_EISA)
+ 	size = (size & 0xff) + ((size & ~0xffUL) << 2);
+ #endif
+-	size = ROUND_UP(size + size1, 4096);
++	size = ALIGN(size + size1, 4096);
+ 	if (!size) {
+ 		b_res->flags = 0;
+ 		return;
+@@ -383,11 +381,11 @@ pbus_size_mem(struct pci_bus *bus, unsigned long mask, unsigned long type)
+ 
+ 		if (!align)
+ 			min_align = align1;
+-		else if (ROUND_UP(align + min_align, min_align) < align1)
++		else if (ALIGN(align + min_align, min_align) < align1)
+ 			min_align = align1 >> 1;
+ 		align += aligns[order];
+ 	}
+-	size = ROUND_UP(size, min_align);
++	size = ALIGN(size, min_align);
+ 	if (!size) {
+ 		b_res->flags = 0;
+ 		return 1;
 
-    #define ROUNDUP(size, len) ALIGN((size), (len))
-
-and delete the previous ROUNDUP definition?
-
--Tony
-
+--
+Milind Arun Choudhary
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
