@@ -1,23 +1,29 @@
-From: "Alexey Dobriyan" <adobriyan@gmail.com>
-Date: Fri, 13 Apr 2007 15:24:38 +0000
-Subject: Re: [KJ] how dead is legacy power management?
-Message-Id: <b6fcc0a0704130824o6a225425n79cbe5f08a34aa1c@mail.gmail.com>
+From: "Pedram M" <pmessri@gmail.com>
+Date: Sun, 01 Apr 2007 05:24:12 +0000
+Subject: Re: [KJ] my first janitorial
+Message-Id: <9c9aa5d00703312224t1948b24bhe34199f19cbda4fb@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0704121443290.30803@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0704121443290.30803@CPE00045a9c397f-CM001225dbafb6>
+References: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>
+In-Reply-To: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org
 
-On 4/12/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
->   while poking around looking at power management, i noticed that
-> "Legacy Power Management API" is listed as "(DEPRECATED)" while, in
-> addition, its help screen says that it has been "obsoleted by the
-> driver model".  that kind of suggests that it's a candidate for
-> removal, no?
+How about this one? Am I doing it right now?
+If not, please try to explain more to me what I am
+doing wrong.
 
-see hch's post in linux-kernel
+@@ -4760,7 +4760,7 @@
+ 	for (i = 0; i < NR_CARDS; i++) {
+ 		/* look for a Cyclades card by vendor and device id */
+ 		while ((device_id = cy_pci_dev_id[dev_index]) != 0) {
+-			if ((pdev = pci_find_device(PCI_VENDOR_ID_CYCLADES,
++			if ((pdev = pci_get_device(PCI_VENDOR_ID_CYCLADES,
+ 						   device_id, pdev)) = NULL) {
+ 				dev_index++;	/* try next device id */
+ 			} else {
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
