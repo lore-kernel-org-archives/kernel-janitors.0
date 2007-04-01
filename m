@@ -1,169 +1,137 @@
-From: Canadian Doctor Katharine <kernel-janitors@lists.osdl.org>
-Date: Mon, 30 Apr 2007 01:05:41 +0000
-Subject: [KJ] RE: MedHelp 3807722184
-Message-Id: <20070429020406.38893.qmail@fw1.frazerumc.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============3922658613882588920=="
+From: Brendan Burns <bburns@cs.umass.edu>
+Date: Sun, 01 Apr 2007 18:08:27 +0000
+Subject: [KJ] [PATCH][revised] : request_region auditing
+Message-Id: <1175450907.3396.6.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070429020410.38897.qmail@fw1.frazerumc.org>
-In-Reply-To: <20070429020410.38897.qmail@fw1.frazerumc.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============3922658613882588920==
-Content-Type: text/html
+from: Brendan Burns <bburns@cs.umass.edu>
+
+revised request_region auditing, should now correctly perform
+appropriate exit code.
+
+Signed-off-by: Brendan Burns
+---
+
+--- linux-2.6.20.4.orig/drivers/input/keyboard/hilkbd.c 2007-03-31
+22:09:04.000000000 -0400
++++ linux-2.6.20.4/drivers/input/keyboard/hilkbd.c	2007-03-31
+22:10:07.000000000 -0400
+@@ -224,7 +224,8 @@ hil_keyb_init(void)
+ 	if (!hwreg_present((void *)(HILBASE + HIL_DATA)))
+ 		return -ENODEV;
+ 	
+-	request_region(HILBASE+HIL_DATA, 2, "hil");
++	if (!request_region(HILBASE+HIL_DATA, 2, "hil"))
++	  return -EBUSY;
+ #endif
+ 	
+ 	request_irq(HIL_IRQ, hil_interrupt, 0, "hil", hil_dev.dev_id);
+--- linux-2.6.20.4.orig/drivers/video/matrox/matroxfb_base.c	2007-03-31
+22:21:14.000000000 -0400
++++ linux-2.6.20.4/drivers/video/matrox/matroxfb_base.c	2007-04-01
+13:40:10.000000000 -0400
+@@ -1735,7 +1735,8 @@ static int initMatrox2(WPMINFO struct bo
+ #endif	/* CONFIG_MTRR */
+ 
+ 	if (!ACCESS_FBINFO(devflags.novga))
+-		request_region(0x3C0, 32, "matrox");
++		if (!request_region(0x3C0, 32, "matrox"))
++			goto failVideoIO;
+ 	matroxfb_g450_connect(PMINFO2);
+ 	ACCESS_FBINFO(hw_switch->reset(PMINFO2));
+ 
+--- linux-2.6.20.4.orig/drivers/pnp/isapnp/core.c	2007-03-31
+22:25:57.000000000 -0400
++++ linux-2.6.20.4/drivers/pnp/isapnp/core.c	2007-04-01
+13:52:33.000000000 -0400
+@@ -1101,7 +1101,14 @@ static int __init isapnp_init(void)
+ 			printk(KERN_INFO "isapnp: No Plug & Play device found\n");
+ 			return 0;
+ 		}
+-		request_region(isapnp_rdp, 1, "isapnp read");
++		if (!request_region(isapnp_rdp, 1, "isapnp read")) {
++#ifdef ISAPNP_REGION_OK
++		        release_region(_PIDXR, 1);
++#endif
++		        release_region(_PNPWRP, 1);
++		        isapnp_detected = 0;
++		        return -EBUSY;
++		}
+ 	}
+ 	isapnp_build_device_list();
+ 	cards = 0;
+--- linux-2.6.20.4.orig/drivers/net/tokenring/smctr.c	2007-03-31
+22:28:04.000000000 -0400
++++ linux-2.6.20.4/drivers/net/tokenring/smctr.c	2007-03-31
+22:28:34.000000000 -0400
+@@ -508,7 +508,8 @@ static int __init smctr_chk_mca(struct n
+ 	r2 = mca_read_stored_pos(tp->slot_num, 2);
+ 	r2 &= 0xF0;
+ 	dev->base_addr = ((__u16)r2 << 8) + (__u16)0x800;
+-	request_region(dev->base_addr, SMCTR_IO_EXTENT, smctr_name);
++	if (!request_region(dev->base_addr, SMCTR_IO_EXTENT, smctr_name))
++		return -EBUSY;
+ 
+ 	/* IRQ */
+ 	r5 = mca_read_stored_pos(tp->slot_num, 5);
+--- linux-2.6.20.4.orig/drivers/net/hamradio/scc.c	2007-03-31
+22:29:44.000000000 -0400
++++ linux-2.6.20.4/drivers/net/hamradio/scc.c	2007-03-31
+22:30:44.000000000 -0400
+@@ -1808,8 +1808,10 @@ static int scc_net_ioctl(struct net_devi
+ 
+ 				if (found)
+ 				{
+-					request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl");
+-					request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data");
++					if (!request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl"))
++						return -EBUSY;
++					if (!request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data"))
++						return -EBUSY;
+ 					if (Nchips+chan != 0 &&
+ 					    scc_net_alloc(device_name, 
+ 							  &SCC_Info[2*Nchips+chan]))
+--- linux-2.6.20.4.orig/drivers/isdn/sc/init.c	2007-03-31
+22:32:39.000000000 -0400
++++ linux-2.6.20.4/drivers/isdn/sc/init.c	2007-04-01 13:49:37.000000000
+-0400
+@@ -352,19 +352,22 @@ static int __init sc_init(void)
+ 		sc_adapter[cinst]->iobase = io[b];
+ 		for(i = 0 ; i < MAX_IO_REGS - 1 ; i++) {
+ 			sc_adapter[cinst]->ioport[i] = io[b] + i * 0x400;
+-			request_region(sc_adapter[cinst]->ioport[i], 1,
+-					interface->id);
++			if (!request_region(sc_adapter[cinst]->ioport[i], 1,
++					interface->id))
++				return -EBUSY;
+ 			pr_debug("Requesting I/O Port %#x\n",
+ 				sc_adapter[cinst]->ioport[i]);
+ 		}
+ 		sc_adapter[cinst]->ioport[IRQ_SELECT] = io[b] + 0x2;
+-		request_region(sc_adapter[cinst]->ioport[IRQ_SELECT], 1,
+-				interface->id);
++		if (!request_region(sc_adapter[cinst]->ioport[IRQ_SELECT], 1,
++				    interface->id))
++		        return -EBUSY;
+ 		pr_debug("Requesting I/O Port %#x\n",
+ 				sc_adapter[cinst]->ioport[IRQ_SELECT]);
+ 		sc_adapter[cinst]->rambase = ram[b];
+-		request_region(sc_adapter[cinst]->rambase, SRAM_PAGESIZE,
+-				interface->id);
++		if (!request_region(sc_adapter[cinst]->rambase, SRAM_PAGESIZE,
++				interface->id))
++		        return -EBUSY;
+ 
+ 		pr_info("  %s (%d) - %s %d channels IRQ %d, I/O Base 0x%x, RAM Base
+0x%lx\n", 
+ 			sc_adapter[cinst]->devicename,
 
-<STYLE>
-/back/CMA/Tournament/Sherrill/Laura/supporting/xxx/1520/blackberry/live/12/treatment/Tam/receipt/Unfortunately/wa
-
-y/legendary/quilts/OpenDocument/10/Weitzman/42nd/4050/items/from/fee/Eagle/goter/
-
-/462/remarksher/10/L3D/OriginalArrivalTime/52/studied/Reese/271/outfits/Interactive/s/Unfortunately/pan/thenoh/sc
-
-ripps/handmade/invita/455/Cohort/Update_time/martial/Michael/newspaper/expectativas/series/DTD/blackberry/kool/
-
-/Reserve/Cheney/ENE/622/OriginalArrivalTime/918/Wednesday/4Q/1015/crowbar/CBS/Wellness/Governmental/Toni/1213/457
-
-/admission/dominates/681/Superintendent/2324/Michaels/BBC/Lou/brainy/Dann/EDT/
-
-/nights/missed/fly/units/Chernobyl/su/503/social/paragraphs/6000/new/070/crime/BBC/accusations/Christoph/99/studi
-
-ed/0830/scripps/DTD/wasinstant/items/Bahrain/Farm/11/918/
-
-/Wellness/Michael/studied/showcased/goter/6/503/9596/mantiene/Coupon/informationas/L3D/4Q/52/PE/Printers/blogging
-
-/From/analyze/924/1520/SIPC/Wednesday/enhance/ups/RR/2/Retroactive/Nashville/
-
-/historic/030/42nd/film/1213/prizes/missions/chin/Watering/391/Elite/1418/analyze/070/Elementswill/2007/separates
-
-/NOK/1433/titleat/OpenDocument/exclusive/NP/estar/Mikael/mantiene/L3D/Planner/
-
-/9495/Yes/Reforms/samples/resume/emerging/Blu/newspaper/Shake/fee/Reese/From/mail_release_date/professor/governme
-
-ntal/scored/lifetime/unfair/prospect/240/analyze/AOL/at/Scarborough/Wednesday/crime/MayJuly/wasinstant/devastatin
-
-g/bunch/
-
-/compte/pesquisa/population/expectativas/BTM/2007/meathumans/AF/emerging/fly/later/professor/Timothy/Aberdeen/soc
-
-ial/924/NOTIFICATION/5/invita/2/affected/271/mantiene/Laura/Missy/day_of_week/ancestor/newspaper/Thanks/
-
-/evergreen/Canadiens/social/Responsibilities/did/back/Moines/42nd/Ak/F1/CH/1222/Pasadena/1/Governmental/Superinte
-
-ndent/follows/82/bigfootinteractive/STATEMENTS/3050/NP/leadership/weekend/dominates/1027/domestic/Avery/Je/from/
-
-/dislike/simpsons/coverage/Portfolios/dominates/vegetables/Gotta/volunteers/10/Homecoming/activated/fr/Canadiens/
-
-Mkt/Theatres/Mega/1529/bigfootinteractive/Browne/Revisit/investigate/currently/Charlottesville/Semper/PE/STATEMEN
-
-TS/CEL/units/
-
-/account/historic/Depart/252/reproduce/secondary/295/Subtotal/NOTIFICATION/Information77/separates/ATTN/Poly/Rese
-
-rve/bigfootinteractive/of/chin/priced/analyze/1213/BP/RR/mode/9495/livingit/live/1520/Carol/crucified/
-
-/undeniable/1015/1ug4y/items/MumPlant/Information77/Moines/60300/equiv/fr/ADN/Reserve/Musen/Du/originating/Take/2
-
-007/finger/bonding/mode/L3D/off/professor/AprMay/Superintendent/Reforms/Browne/follows/forbid/
-
-/emerging/1433/PMS/452/fee/bigfootinteractive/xxx/l0/Oxford/mammograms/DIT/studied/3050/Gotta/volunteers/Reforms/
-
-customs/Du/ISO/martial/Retroactive/Tam/4854/Atencin/Musen/6/bunch/
-
-/priced/Ak/wasinstant/ADN/transit/Saudis/kool/gree/Governmental/PGA/Dann/L3D/Du/Craigslist/Shake/610/DTD/empire/B
-
-ahrain/planninghas/otra/4Q/NP/ensure/4960/meathumans/2127/Canadiens/Tournament/Charlottesville/
-
-/back/DTD/Coupon/Retroactive/priced/EDT/xxx/Stationery/bv/fn/070/lifetime/ocio/CVB/hr/CEL/MTL/l0/030/NOTIFICATION
-
-/s/Yes/liveand/42nd/dislike/prospect/JP/546/
-
-/analyze/CH/entry/martial/follows/protest/11/invita/1015/84/Unfortunately/Scarborough/9/vr/810/Musen/5/pesquisa/T
-
-hx/estar/13/Paratus/1529/planninghas/AF/Blu/receipt/cord/
-
-/113/April/transit/Oxford/prizes/Anthony/Laura/0830/2/contact/may/itbut/su/weekend/missions/1/OK/9495/Ver/Charlot
-
-tesville/paragraphs/simpsons/PMS/did/F1/analysis/studied/52/informationas/
-
-/SafeHTML/Weitzman/cord/professor/top/1119/546/confuse/interestingif/99/CBS/9013/1015/licence/Cuando/Update_time/
-
-0730/924/Warren/L3D/entry/priced/shareas/Reserve/Musen/analysis/Planner/Subtotal/
-
-/NCL/From/Governmental/l0/respuesta/crucified/738/9013/W114/Fixtures/BBC/Cohort/CW/Ak/Counting/From/nights/accoun
-
-t/Lou/film/Reforms/webx/ISO/boats/Unfortunately/936/Rabbit/crib/su/Fremont/
-
-/Paragraphs/spoofing/supporting/fr/802/everything/zal/expires/reproduce/936/Expo/Blu/informationas/9596/Shootout/
-
-mode/Christoph/equiv/Counting/OriginalArrivalTime/Je/STATEMENTS/planninghas/PGA/Mkt/accountant/Sherrill/chin/
-
-/phone/Michaels/transit/email/NCL/RR/Paratus/spoofing/estar/scripps/12/Ver/1222/802/Responsibilities/entry/guess/
-
-252/240/AF/1012/SIPC/back/missed/L3D/4960/Weitzman/password/equiv/Eat/
-
-/accountant/affected/4854/treatment/6/Information77/analyze/penalized/customs/Elementswill/conducting/2127/IQ/Eli
-
-te/evergreen/STATEMENTS/Responsibilities/546/Ann/Cancun/From/4960/BP/681/Silicon/Responsibilities/L3D/Jean/Shooto
-
-ut/Coupon/
-
-</style><a target="_blank"  href="http://www.lonecoder.org/images//index.html" ><img src="http://www.deafrepublicans.com/images//1.gif">
-<style>
-
-/1ug4y/crescere/Visa/reports/CEL/password/flakey/From/usuarios/Puerta/2/evergreen/ENE/Mkt/6000/Aruba/wichtige/Thx
-
-/showcased/452/Lou/Michael/Update_time/follows/compte/738/NOK/friendly/1708/MTL/
-
-/ocio/blackberry/1529/738/xxx/newspaper/population/wireless/Sections/beg/sale/NOK/Shirts/widgetfrom/WSW/scripps/8
-
-B/liveand/key/ups/brainy/Mega/ADN/Take/Browne/1418/1708/accountant/goter/
-
-/stalking/Silicon/Wellness/crib/informationas/1ug4y/su/WSW/units/330/Brighton/Eagle/BBC/Reserve/OriginalArrivalTi
-
-me/DIT/070/1675/customs/follows/prospect/Demain/liveand/overseas/Hudson/from/924/DPM/
-
-/DTD/030/undeniable/1/1027/810/Folsom/lifetime/Demain/924/Carol/hr/From/priced/pharmacist/952/Depart/9/Musen/su/L
-
-3D/top/Shootout/610/0830/Superintendent/Columnist/Update_time/
-
-/expand/scored/optical/9/Silicon/610/Browne/weekend/60300/hr/series/CEL/crib/989/Stationery/everything/ATTN/volun
-
-teers/pocketsmuch/crowbar/transit/Public/Cancun/newspaper/Columnist/L3D/off/remarksher/BBC/sell/
-
-/10/CEL/showcased/estar/Aberdeen/back/271/Aruba/60300/Folsom/Cheney/Monotype/ISO/ATTN/Craigslist/martial/Yes/263/
-
-bandwidth/informationas/Shirts/OpenDocument/receipt/secondary/admission/pesquisa/810/NOTIFICATION/738/
-
-/CW/planninghas/wrath/reports/CH/BBC/newspaper/Gotta/webx/Unfortunately/75th/Printers/decision/this/titleat/Stati
-
-onery/view/kool/Coupon/undeniable/Bahrain/1964/activated/investigate/conducting/4854/series/1213/
-
-/Superintendent/Retroactive/spoofing/dominates/Interactive/Paddy/99/CH/BTM/52/preferences/Larkin/domestic/610/cur
-
-sive/952/L3D/ensure/Portfolios/4Q/Chernobyl/330/professor/L3D/885/Reserve/295/New/
-
-/respuesta/452/Farm/LOUISE/secondary/began/Sherrill/84/email/fond/252/L3D/1529/overseas/Wednesday/empire/Yes/Frem
-
-ont/password/studied/crucified/planninghas/Coupon/12/Wilkes/stalking/Whitney/liveand/bandwidth/2324/
-
-/accountant/NOTIFICATION/usuarios/stalking/everything/8B/professor/ADN/9/Festival/Moines/Musen/informationas/Thx/
-
-75th/dl/disagreement/scrollbars/expand/webx/population/Tam/leadership/crowbar/Homecoming/evergreen/pharmacist/top
-
-/610/
-
-</style>
-
-
-
---===============3922658613882588920==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============3922658613882588920==--
