@@ -1,53 +1,85 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 26 Apr 2007 12:57:34 +0000
-Subject: Re: [KJ] centralizing arch-specific kernel config settings
-Message-Id: <Pine.LNX.4.64.0704260854400.2157@localhost.localdomain>
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Date: Sun, 01 Apr 2007 07:48:46 +0000
+Subject: [KJ] [PATCH] ROUND_UP macro cleanup in arch/parisc
+Message-Id: <20070401073646.GA11444@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0704260706100.533@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0704260706100.533@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: kernel-janitors@lists.osdl.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, parisc-linux@lists.parisc-linux.org, grundler@parisc-linux.org, kyle@mcmartin.ca, willy@debian.org
 
-On Thu, 26 Apr 2007, Matthew Wilcox wrote:
+ROUND_UP macro cleanup, use ALIGN where ever appropriate
 
-> On Thu, Apr 26, 2007 at 07:06:56AM -0400, Robert P. J. Day wrote:
-> > in all of the above cases, the Kconfig directive looks like:
-> >
-> > ...
-> > config GENERIC_BUG
-> >         bool
-> >         default y
-> >         depends on BUG
-> > ...
->
-> It should proably use def_bool y instead of bool, default y.
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
 
-i agree, but there's a bazillion of the slightly longer form, and i
-doubt it's worth trying to change them over (unless someone wants to
-take that on as a KJ project and do it an architecture at a time).
+---
+ hpux/fs.c             |    5 ++---
+ kernel/sys_parisc32.c |    3 +--
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-> >   is there any reason config settings like GENERIC_BUG can't be
-> > centralized in a single place like that?  i'm *guessing* a pile of
-> > config settings could be simplified like this.
->
-> Is it simpler?
 
-it's definitely shorter, but i'm guessing it's probably *conceptually*
-easier for each architecture to look after its own "generic" settings,
-even if it's more verbose.  so never mind, it was just a thought.
 
-rday
+diff --git a/arch/parisc/hpux/fs.c b/arch/parisc/hpux/fs.c
+index 4204cd1..7ff5546 100644
+--- a/arch/parisc/hpux/fs.c
++++ b/arch/parisc/hpux/fs.c
+@@ -21,6 +21,7 @@
+  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
++#include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/file.h>
+@@ -70,7 +71,6 @@ struct getdents_callback {
+ };
+ 
+ #define NAME_OFFSET(de) ((int) ((de)->d_name - (char *) (de)))
+-#define ROUND_UP(x) (((x)+sizeof(long)-1) & ~(sizeof(long)-1))
+ 
+ static int filldir(void * __buf, const char * name, int namlen, loff_t offset,
+ 		u64 ino, unsigned d_type)
+@@ -78,7 +78,7 @@ static int filldir(void * __buf, const char * name, int namlen, loff_t offset,
+ 	struct hpux_dirent * dirent;
+ 	struct getdents_callback * buf = (struct getdents_callback *) __buf;
+ 	ino_t d_ino;
+-	int reclen = ROUND_UP(NAME_OFFSET(dirent) + namlen + 1);
++	int reclen = ALIGN(NAME_OFFSET(dirent) + namlen + 1,sizeof(long));
+ 
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+@@ -103,7 +103,6 @@ static int filldir(void * __buf, const char * name, int namlen, loff_t offset,
+ }
+ 
+ #undef NAME_OFFSET
+-#undef ROUND_UP
+ 
+ int hpux_getdents(unsigned int fd, struct hpux_dirent *dirent, unsigned int count)
+ {
+diff --git a/arch/parisc/kernel/sys_parisc32.c b/arch/parisc/kernel/sys_parisc32.c
+index ce3245f..e590880 100644
+--- a/arch/parisc/kernel/sys_parisc32.c
++++ b/arch/parisc/kernel/sys_parisc32.c
+@@ -311,14 +311,13 @@ struct readdir32_callback {
+ 	int count;
+ };
+ 
+-#define ROUND_UP(x,a)	((__typeof__(x))(((unsigned long)(x) + ((a) - 1)) & ~((a) - 1)))
+ #define NAME_OFFSET(de) ((int) ((de)->d_name - (char __user *) (de)))
+ static int filldir32 (void *__buf, const char *name, int namlen,
+ 			loff_t offset, u64 ino, unsigned int d_type)
+ {
+ 	struct linux32_dirent __user * dirent;
+ 	struct getdents32_callback * buf = (struct getdents32_callback *) __buf;
+-	int reclen = ROUND_UP(NAME_OFFSET(dirent) + namlen + 1, 4);
++	int reclen = ALIGN(NAME_OFFSET(dirent) + namlen + 1, 4);
+ 	u32 d_ino;
+ 
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
 
 -- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+Milind Arun Choudhary
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
