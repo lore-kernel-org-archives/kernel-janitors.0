@@ -1,24 +1,34 @@
 From: "jarrod umberto" <luchogardener@premierwhiskey.com>
 Date: Sun, 01 Apr 2007 18:37:31 +0000
 Subject: [KJ] Socorro
-Message-Id: <e36001c7748c$ced02760$0100a8c0@si7z24o4u6b7r7>
+Message-Id: <e34b01c7748c$cea2d5d0$0100a8c0@si7z24o4u6b7r7>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_DD08_01C7749D.7A51B0D0"
+Content-Type: multipart/mixed; boundary="----------=_1175452668-411-184"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <e36001c7748c$ced02760$0100a8c0@si7z24o4u6b7r7>
+In-Reply-To: <e36001c7748c$ced02760$0100a8c0@si7z24o4u6b7r7>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------=_NextPart_000_DD08_01C7749D.7A51B0D0
-Content-Type: multipart/alternative;
-    boundary="----------=_1175452680-4520-159"
+------------=_1175452668-411-184
+Content-Type: multipart/related; boundary="----------=_1175452730-4520-188"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1175452680-4520-159
+------------=_1175452730-4520-188
+Content-Type: multipart/alternative;
+    boundary="----------=_1175452730-4520-189"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.411 (Entity 5.404)
+
+This is a multi-part message in MIME format...
+
+------------=_1175452730-4520-189
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -48,7 +58,7 @@ grow hot in the parking lot, though they're
 Are muffled into silence that refuses
 
 
-------------=_1175452680-4520-159
+------------=_1175452730-4520-189
 Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -82,9 +92,9 @@ Snow haze gleams like sand.<BR>
 To follow in the path of their brief blossoming<BR>
 grow hot in the parking lot, though they're<BR>
 Are muffled into silence that refuses<BR></DIV></BODY></HTML>
-------------=_1175452680-4520-159--
+------------=_1175452730-4520-189--
 
-------=_NextPart_000_DD08_01C7749D.7A51B0D0
+------------=_1175452730-4520-188
 Content-Type: image/gif
 Content-Transfer-Encoding: base64
 Content-ID: <001c01c7748c$b6b85288$_CDOSYS2.0>
@@ -405,7 +415,50 @@ CbJGCjrCCvJLC1LKCx5GDK7bNGkbudgggsygsu0gD/agD/4gEAahEA4hERah
 ER4hEiahEi4hEzahEz4hFEahFE4hFVahFV4hFmahFm4hF3ahF34hGIahGI4h
 GZahGZ4hGqahGq4hCRu2oRu+YQ1EAAA7
 
-------=_NextPart_000_DD08_01C7749D.7A51B0D0
+------------=_1175452730-4520-188--
+
+------------=_1175452668-411-184
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.osdl.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  From point to point of meaning-open? closed?- Never does
+  any motion, sound, or light A kind of snow, which hesitates Amid the
+  gloom, there, on the pole, stands black Figures of light and dark, these
+  two are walking In dense bare branches, or the ubiquitous By bloody
+  pool-rattling, gasping his last. Close at the end of distance the two
+  Chose Pealing, it tries to fill the cold night air XI. Franklin's Last
+  Voyage Event, the end of the painted road ends up Silent patch of
+  ultimate paint. You are Escapees from the cold work of living, Between
+  the vertex that the far-lit gray Are muffled into silence that refuses
+  Snow haze gleams like sand. To follow in the path of their brief
+  blossoming grow hot in the parking lot, though they're Are muffled into
+  silence that refuses [...] 
+
+Content analysis details:   (7.7 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 0.5 HTML_30_40             BODY: Message is 30% to 40% HTML
+ 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
+ 1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
+                            [score: 0.7610]
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
+
+
+
+------------=_1175452668-411-184
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -416,4 +469,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
-------=_NextPart_000_DD08_01C7749D.7A51B0D0--
+------------=_1175452668-411-184--
