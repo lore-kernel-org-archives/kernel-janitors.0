@@ -1,9 +1,10 @@
-From: Willy Tarreau <w@1wt.eu>
-Date: Sun, 01 Apr 2007 06:17:07 +0000
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Date: Sun, 01 Apr 2007 15:14:41 +0000
 Subject: Re: [KJ] my first janitorial
-Message-Id: <20070401061707.GB943@1wt.eu>
+Message-Id: <20070401170043.27a581cb@the-village.bc.nu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com> <9c9aa5d00703312224t1948b24bhe34199f19cbda4fb@mail.gmail.com>
+References: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>
+	<9c9aa5d00703312224t1948b24bhe34199f19cbda4fb@mail.gmail.com>
 In-Reply-To: <9c9aa5d00703312224t1948b24bhe34199f19cbda4fb@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,63 +12,74 @@ Content-Transfer-Encoding: 7bit
 To: Pedram M <pmessri@gmail.com>
 Cc: kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, 31 Mar 2007 22:24:12 -0700
+"Pedram M" <pmessri@gmail.com> wrote:
 
-On Sat, Mar 31, 2007 at 10:24:12PM -0700, Pedram M wrote:
 > How about this one? Am I doing it right now?
 > If not, please try to explain more to me what I am
 > doing wrong.
 
-You have made several mistakes :
-  - you must select an appropriate subject for your mail. Nobody cares
-    that it is your first mail, what they care about is the problem you
-    are trying to fix and what it applies to. Preferably start your
-    subject with [PATCH] so that people can quickly notice it without
-    having to open it first.
+You need to hold a reference to the PCI device for the entire duration it
+is used. I think you actually also need something like this to get the whole
+thing using pci references and pci_get_* properly
 
-  - you did not send a description of your patch. It is important to
-    have a full description, it can be from 1 line to 1 page depending
-    on the complexity of the issue. It is important to explain why you
-    think you are right so that people can argue if they don't agree.
-    Please also try to be as factual as possible, because your message
-    will become the commit message. It means that sentences such as
-    "I think that ..." are not the best we can write.
+Alan
 
-  - you must sign your patch. For this, add a "Signed-Off-By:" footer.
-    Take a look at other patches for this.
-
-   - your patch was cut and cannot apply to anything. A proper patch starts
-     with line beginning with "---" line, followed by a line with "+++",
-     both indicating the file your patch is supposed to apply to. Make your
-     patch with one level directory for the kernel so that it can apply with
-     "patch -p1". For instance:
-
-        $ diff -u linux-2.6.20/Makefile linux-2.6.20-mine/Makefile
-
-     Another solution is to use '.' as the directory, in order to add one
-     directory level for "patch -p1" to be happy :
-
-        $ diff -u ./Makefile.orig ./Makefile
-
-Hoping this helps,
-Willy
-
-
-> @@ -4760,7 +4760,7 @@
-> 	for (i = 0; i < NR_CARDS; i++) {
-> 		/* look for a Cyclades card by vendor and device id */
-> 		while ((device_id = cy_pci_dev_id[dev_index]) != 0) {
-> -			if ((pdev = pci_find_device(PCI_VENDOR_ID_CYCLADES,
-> +			if ((pdev = pci_get_device(PCI_VENDOR_ID_CYCLADES,
-> 						   device_id, pdev)) = 
-> 						   NULL) {
-> 				dev_index++;	/* try next device id */
-> 			} else {
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+--- drivers/char/cyclades.c~	2007-04-01 15:52:16.000000000 +0100
++++ drivers/char/cyclades.c	2007-04-01 15:52:16.000000000 +0100
+@@ -4803,7 +4782,7 @@
+                 cy_card[j].bus_index = 1;
+                 cy_card[j].first_line = cy_next_channel;
+                 cy_card[j].num_chips = cy_pci_nchan/4;
+-		cy_card[j].pdev = pdev;
++		cy_card[j].pdev = pci_dev_get(pdev);
+ 	
+                 /* enable interrupts in the PCI interface */
+ 		plx_ver = cy_readb(cy_pci_addr2 + CyPLX_VER) & 0x0f;
+@@ -4901,7 +4880,7 @@
+ 			Ze_addr0[ZeIndex] = cy_pci_addr0;
+ 			Ze_addr2[ZeIndex] = cy_pci_addr2;
+ 			Ze_irq[ZeIndex] = cy_pci_irq;
+-			Ze_pdev[ZeIndex] = pdev;
++			Ze_pdev[ZeIndex] = pci_dev_get(pdev);
+ 			ZeIndex++;
+ 		    }
+ 		    i--;
+@@ -4986,7 +4965,7 @@
+                 cy_card[j].bus_index = 1;
+                 cy_card[j].first_line = cy_next_channel;
+                 cy_card[j].num_chips = -1;
+-		cy_card[j].pdev = pdev;
++		cy_card[j].pdev = pci_dev_get(pdev);
+ 
+                 /* print message */
+ #ifdef CONFIG_CYZ_INTR
+@@ -5007,6 +4986,10 @@
+                 cy_next_channel += cy_pci_nchan;
+ 	    }
+         }
++        
++        if (pdev)
++		pci_dev_put(pdev);
++        
+ 
+         for (; ZeIndex != 0 && i < NR_CARDS; i++) {
+ 	    cy_pci_phys0 = Ze_phys0[0];
+@@ -5485,11 +5468,12 @@
+ 	    )
+ 		free_irq(cy_card[i].irq, &cy_card[i]);
+ #ifdef CONFIG_PCI
+-		if (cy_card[i].pdev)
++		if (cy_card[i].pdev) {
+ 			pci_release_regions(cy_card[i].pdev);
++			pci_dev_put(pdev);
++		}
+ #endif
+         }
+     }
+ } /* cy_cleanup_module */
+ 
+ module_init(cy_init);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
