@@ -1,50 +1,64 @@
-From: "Dan Carpenter" <error27@gmail.com>
-Date: Sun, 01 Apr 2007 16:03:09 +0000
-Subject: Re: [KJ] [PATCH] request_region auditing
-Message-Id: <a63d67fe0704010903g8d7cc53sa033b01fe7e34f67@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Mon, 02 Apr 2007 22:27:19 +0000
+Subject: Re: [KJ] [PATCH] mm: spelling error in a comment
+Message-Id: <20070402152719.e7b622ba.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1175395299.3215.10.camel@localhost.localdomain>
-In-Reply-To: <1175395299.3215.10.camel@localhost.localdomain>
+References: <20070402210636.GA14216@tux>
+In-Reply-To: <20070402210636.GA14216@tux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: Charles =?ISO-8859-1?Q?Cl=E9ment?= <caratorn@gmail.com>
+Cc: kernel-janitors@lists.linux-foundation.org, linux-mm@kvack.org
 
-On 3/31/07, Brendan Burns <bburns@union.edu> wrote:
-> from: Brendan Burns <bburns@cs.umass.edu>
->
-> Auditing request_region calls
->
-> Signed-off-by: Brendan Burns
+On Mon, 2 Apr 2007 23:06:36 +0200 Charles Cl=E9ment wrote:
+
+>=20
+> Fix spelling in a comment in mm/slab.c.
+>=20
+> Signed-off-by: Charles Cl=E9ment <caratorn@gmail.com>
+
+Alexey can grab this if he wants to (or Adrian could),
+but here's what Andrew Morton has to say about such patches:
+
+http://marc.info/?l=3Dkernel-janitor-discuss&m=117360826232574&w=3D2
+
+"...I prefer not to do spello and grammaro
+fixes, unless they're in something user-visible: a printk or documentation.
+Simply because there would be no end to it."
+
+
 > ---
-> --- linux-2.6.20.4/drivers/video/matrox/matroxfb_base.c.orig    2007-03-31
-> 22:21:14.000000000 -0400
-> +++ linux-2.6.20.4/drivers/video/matrox/matroxfb_base.c 2007-03-31
-> 22:21:49.000000000 -0400
-> @@ -1735,7 +1735,8 @@ static int initMatrox2(WPMINFO struct bo
->  #endif /* CONFIG_MTRR */
->
->         if (!ACCESS_FBINFO(devflags.novga))
-> -               request_region(0x3C0, 32, "matrox");
-> +               if (!request_region(0x3C0, 32, "matrox"))
-> +                       return -EBUSY;
->         matroxfb_g450_connect(PMINFO2);
->         ACCESS_FBINFO(hw_switch->reset(PMINFO2));
+>=20
+> Index: linux-2.6.21-rc5/mm/slab.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D> --- linux-2.6.21-rc5.orig/mm/slab.c
+> +++ linux-2.6.21-rc5/mm/slab.c
+> @@ -451,7 +451,7 @@ struct kmem_cache {
+> =20
+>  #define BATCHREFILL_LIMIT	16
+>  /*
+> - * Optimization question: fewer reaps means less probability for unnessa=
+ry
+> + * Optimization question: fewer reaps means less probability for unneces=
+sary
+>   * cpucache drain/refill cycles.
+>   *
+>   * OTOH the cpuarrays can contain lots of objects,
+>=20
+> --=20
+> Charles Cl=E9ment.
+> _______________________________________________
+> Kernel-janitors mailing list
+> Kernel-janitors@lists.linux-foundation.org
+> https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+>=20
 
-You need to do some more cleaning up before you return the error.
 
-Take drivers/video/matrox/matroxfb_base.c as an example.  At the
-bottom of the function there are a bunch of labels and gotos so
-depending on how far it gets those are the things it has to clean up.
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
 
-BTW janitors, Tejun Heo's managed resources patches are included in
-2.6.21.  That should make this sort of thing easier.
-
-http://lwn.net/Articles/222860/
-http://lwn.net/Articles/215996/
-
-regards,
-dan carpenter
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
