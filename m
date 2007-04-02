@@ -1,132 +1,42 @@
-From: <vignesh.babu@wipro.com>
-Date: Mon, 16 Apr 2007 06:17:41 +0000
-Subject: [KJ] [PATCH]readdir.c-kzalloc
-Message-Id: <1176703541.13066.12.camel@wriver-t81fb058.linuxcoe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0442198355=="
+From: Jestin Stoffel <jestin.stoffel@gmail.com>
+Date: Mon, 02 Apr 2007 02:51:22 +0000
+Subject: [KJ] [PATCH]set_current_state cleanup
+Message-Id: <200704012151.22871.jestin.stoffel@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+from:  Jestin Stoffel <jestin.stoffel@gmail.com>
 
---===============0442198355==
-Content-Type: multipart/signed; micalg=sha1;
-	protocol="application/x-pkcs7-signature";
-	boundary="=-LKRaeQrXRpxhm8bm8m+I"
-Content-class: urn:content-classes:message
+Replacing current->state with set_current_state
 
-
---=-LKRaeQrXRpxhm8bm8m+I
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Replacing kmalloc/memset combination with kzalloc.
-
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+Signed-off-by:  Jestin Stoffel
 ---
-diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
-index 2a374d5..512c16b 100644
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -432,14 +432,11 @@ static int initiate_cifs_search(const int xid, struct=
- file *file)
-=20
- 	if(file->private_data =3D=3D NULL) {
- 		file->private_data =3D=20
--			kmalloc(sizeof(struct cifsFileInfo),GFP_KERNEL);
-+			kzalloc(sizeof(struct cifsFileInfo),GFP_KERNEL);
- 	}
-=20
--	if(file->private_data =3D=3D NULL) {
-+	if(file->private_data =3D=3D NULL)
- 		return -ENOMEM;
--	} else {
--		memset(file->private_data,0,sizeof(struct cifsFileInfo));
--	}
- 	cifsFile =3D file->private_data;
- 	cifsFile->invalidHandle =3D TRUE;
- 	cifsFile->srch_inf.endOfSearch =3D FALSE;
-
---=20
-Regards, =20
-Vignesh Babu BM =20
-_____________________________________________________________ =20
-"Why is it that every time I'm with you, makes me believe in magic?"
-
---=-LKRaeQrXRpxhm8bm8m+I
-Content-Type: application/x-pkcs7-signature; name=smime.p7s
-Content-Disposition: attachment; filename=smime.p7s
-Content-Transfer-Encoding: base64
-
-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
-CQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
-AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwgZ8wDQYJKoZIhvcNAQEBBQAD
-gY0AMIGJAoGBAMSmPFVzVftOucqZWh5owHUEcJ3f6f+jHuy9zfVb8hp2vX8MOmHyv1HOAdTlUAow
-1wJjWiyJFXCO3cnwK4Vaqj9xVsuvPAsH5/EfkTYkKhPPK9Xzgnc9A74r/rsYPge/QIACZNenpruf
-ZdHFKlSFD0gEf6e20TxhBEAeZBlyYLf7AgMBAAGjgZQwgZEwEgYDVR0TAQH/BAgwBgEB/wIBADBD
-BgNVHR8EPDA6MDigNqA0hjJodHRwOi8vY3JsLnRoYXd0ZS5jb20vVGhhd3RlUGVyc29uYWxGcmVl
-bWFpbENBLmNybDALBgNVHQ8EBAMCAQYwKQYDVR0RBCIwIKQeMBwxGjAYBgNVBAMTEVByaXZhdGVM
-YWJlbDItMTM4MA0GCSqGSIb3DQEBBQUAA4GBAEiM0VCD6gsuzA2jZqxnD3+vrL7CF6FDlpSdf0wh
-uPg2H6otnzYvwPQcUCCTcDz9reFhYsPZOhl+hLGZGwDFGguCdJ4lUJRix9sncVcljd2pnDmOjCBP
-ZV+V2vf3h9bGCE6u9uo05RAaWzVNd+NWIXiC3CEZNd4ksdMdRv9dX2VPMYIDEDCCAwwCAQEwdjBi
-MQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoG
-A1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECEBRBWlnPDDQELOU4iM67
-/5AwCQYFKw4DAhoFAKCCAW8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUx
-DxcNMDcwNDE2MDYwNTQxWjAjBgkqhkiG9w0BCQQxFgQUdVlcwu/PXC+h5AnIGekb2jHjqcMwgYUG
-CSsGAQQBgjcQBDF4MHYwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5n
-IChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENB
-AhAUQVpZzww0BCzlOIjOu/+QMIGHBgsqhkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCWkExJTAj
-BgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJz
-b25hbCBGcmVlbWFpbCBJc3N1aW5nIENBAhAUQVpZzww0BCzlOIjOu/+QMA0GCSqGSIb3DQEBAQUA
-BIIBAF+4BTZH4Sra0svsMyYutWSvIuSaDVSofNxTkFASwr5Ghz2sgsu6+isr4b6310VlFiQ/cUqB
-r9rfkRDTKhU+TqHg87wa8atvgOcZmrKJzYdXnuYQTXdgbRI7Dbvs4MnsfdXROiiECl1OHpVHCml0
-gbUtyg9Kp2S2zRcPJfbYnUcXyGGBBCRlqjJIfH9Tjntzm825sreHqLGM4Wh39fHQQLRFjBc8jH9K
-AhIurBorW9SSqHKpWAzHwPAP6HolY9+0HSBlYCERAxGdUEIxeEAlkT0H461u+teR2qr6PnnL9+XN
-AFy+kwi1XBpuDnlrDbXBJocsvJPhHnG7ozV3sumAdIIAAAAAAAA=
-
-
---=-LKRaeQrXRpxhm8bm8m+I--
-
---===============0442198355==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+--- linux-2.6.21-rc5/drivers/serial/68328serial.c.orig  2007-04-01
+21:26:52.000000000 -0500
++++ linux-2.6.21-rc5/drivers/serial/68328serial.c       2007-04-01 
+21:27:36.000000000 -0500
+@@ -1249,7 +1249,7 @@ static int block_til_ready(struct tty_st
+                local_irq_disable();
+                m68k_rtsdtr(info, 1);
+                local_irq_enable();
+-               current->state = TASK_INTERRUPTIBLE;
++               set_current_state(TASK_INTERRUPTIBLE);
+                if (tty_hung_up_p(filp) ||
+                    !(info->flags & S_INITIALIZED)) {
+ #ifdef SERIAL_DO_RESTART
+@@ -1270,7 +1270,7 @@ static int block_til_ready(struct tty_st
+                }
+                schedule();
+        }
+-       current->state = TASK_INTERRUPTIBLE;
++       set_current_state(TASK_INTERRUPTIBLE);
+        remove_wait_queue(&info->open_wait, &wait);
+        if (!tty_hung_up_p(filp))
+                info->count++;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-
---===============0442198355==--
