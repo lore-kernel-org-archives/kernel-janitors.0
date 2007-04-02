@@ -1,134 +1,48 @@
 From: Brendan Burns <bburns@cs.umass.edu>
-Date: Sun, 01 Apr 2007 18:08:27 +0000
-Subject: [KJ] [PATCH][revised] : request_region auditing
-Message-Id: <1175450907.3396.6.camel@localhost.localdomain>
+Date: Mon, 02 Apr 2007 19:57:56 +0000
+Subject: Re: [KJ] [PATCH][revised] : request_region auditing
+Message-Id: <1175543876.2944.6.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1175450907.3396.6.camel@localhost.localdomain>
+In-Reply-To: <1175450907.3396.6.camel@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-from: Brendan Burns <bburns@cs.umass.edu>
+Hey Dan, 
+thanks for the patience and the comments.
+In this patch, though, I have a question.
+> > --- linux-2.6.20.4.orig/drivers/net/hamradio/scc.c      2007-03-31
+> > 22:29:44.000000000 -0400
+> > +++ linux-2.6.20.4/drivers/net/hamradio/scc.c   2007-03-31
+> > 22:30:44.000000000 -0400
+> > @@ -1808,8 +1808,10 @@ static int scc_net_ioctl(struct net_devi
+> >
+> >                                 if (found)
+> >                                 {
+> > -                                       request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl");
+> > -                                       request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data");
+> > +                                       if (!request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl"))
+> > +                                               return -EBUSY;
+> > +                                       if (!request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data"))
+> > +                                               return -EBUSY;
+> >                                         if (Nchips+chan != 0 &&
+> >                                             scc_net_alloc(device_name,
+> >                                                           &SCC_Info[2*Nchips+chan]))
+> >                                                 return -EINVAL;
+> If the first request succeeds and the second request fails it needs to clean up.
 
-revised request_region auditing, should now correctly perform
-appropriate exit code.
+The last line in the "if (Nchips+chan ...)" after my patch returns
+-EINVAL without cleaning up the request_regions. Is this incorrect also?
+Note that this is the way the original code is written.  I'm happy to
+fix up this bug too, I just wanted to verify that it was in fact a bug.
 
-Signed-off-by: Brendan Burns
----
+(I'll fix the other two patches and send another patch)
 
---- linux-2.6.20.4.orig/drivers/input/keyboard/hilkbd.c 2007-03-31
-22:09:04.000000000 -0400
-+++ linux-2.6.20.4/drivers/input/keyboard/hilkbd.c	2007-03-31
-22:10:07.000000000 -0400
-@@ -224,7 +224,8 @@ hil_keyb_init(void)
- 	if (!hwreg_present((void *)(HILBASE + HIL_DATA)))
- 		return -ENODEV;
- 	
--	request_region(HILBASE+HIL_DATA, 2, "hil");
-+	if (!request_region(HILBASE+HIL_DATA, 2, "hil"))
-+	  return -EBUSY;
- #endif
- 	
- 	request_irq(HIL_IRQ, hil_interrupt, 0, "hil", hil_dev.dev_id);
---- linux-2.6.20.4.orig/drivers/video/matrox/matroxfb_base.c	2007-03-31
-22:21:14.000000000 -0400
-+++ linux-2.6.20.4/drivers/video/matrox/matroxfb_base.c	2007-04-01
-13:40:10.000000000 -0400
-@@ -1735,7 +1735,8 @@ static int initMatrox2(WPMINFO struct bo
- #endif	/* CONFIG_MTRR */
- 
- 	if (!ACCESS_FBINFO(devflags.novga))
--		request_region(0x3C0, 32, "matrox");
-+		if (!request_region(0x3C0, 32, "matrox"))
-+			goto failVideoIO;
- 	matroxfb_g450_connect(PMINFO2);
- 	ACCESS_FBINFO(hw_switch->reset(PMINFO2));
- 
---- linux-2.6.20.4.orig/drivers/pnp/isapnp/core.c	2007-03-31
-22:25:57.000000000 -0400
-+++ linux-2.6.20.4/drivers/pnp/isapnp/core.c	2007-04-01
-13:52:33.000000000 -0400
-@@ -1101,7 +1101,14 @@ static int __init isapnp_init(void)
- 			printk(KERN_INFO "isapnp: No Plug & Play device found\n");
- 			return 0;
- 		}
--		request_region(isapnp_rdp, 1, "isapnp read");
-+		if (!request_region(isapnp_rdp, 1, "isapnp read")) {
-+#ifdef ISAPNP_REGION_OK
-+		        release_region(_PIDXR, 1);
-+#endif
-+		        release_region(_PNPWRP, 1);
-+		        isapnp_detected = 0;
-+		        return -EBUSY;
-+		}
- 	}
- 	isapnp_build_device_list();
- 	cards = 0;
---- linux-2.6.20.4.orig/drivers/net/tokenring/smctr.c	2007-03-31
-22:28:04.000000000 -0400
-+++ linux-2.6.20.4/drivers/net/tokenring/smctr.c	2007-03-31
-22:28:34.000000000 -0400
-@@ -508,7 +508,8 @@ static int __init smctr_chk_mca(struct n
- 	r2 = mca_read_stored_pos(tp->slot_num, 2);
- 	r2 &= 0xF0;
- 	dev->base_addr = ((__u16)r2 << 8) + (__u16)0x800;
--	request_region(dev->base_addr, SMCTR_IO_EXTENT, smctr_name);
-+	if (!request_region(dev->base_addr, SMCTR_IO_EXTENT, smctr_name))
-+		return -EBUSY;
- 
- 	/* IRQ */
- 	r5 = mca_read_stored_pos(tp->slot_num, 5);
---- linux-2.6.20.4.orig/drivers/net/hamradio/scc.c	2007-03-31
-22:29:44.000000000 -0400
-+++ linux-2.6.20.4/drivers/net/hamradio/scc.c	2007-03-31
-22:30:44.000000000 -0400
-@@ -1808,8 +1808,10 @@ static int scc_net_ioctl(struct net_devi
- 
- 				if (found)
- 				{
--					request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl");
--					request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data");
-+					if (!request_region(SCC_Info[2*Nchips+chan].ctrl, 1, "scc ctrl"))
-+						return -EBUSY;
-+					if (!request_region(SCC_Info[2*Nchips+chan].data, 1, "scc data"))
-+						return -EBUSY;
- 					if (Nchips+chan != 0 &&
- 					    scc_net_alloc(device_name, 
- 							  &SCC_Info[2*Nchips+chan]))
---- linux-2.6.20.4.orig/drivers/isdn/sc/init.c	2007-03-31
-22:32:39.000000000 -0400
-+++ linux-2.6.20.4/drivers/isdn/sc/init.c	2007-04-01 13:49:37.000000000
--0400
-@@ -352,19 +352,22 @@ static int __init sc_init(void)
- 		sc_adapter[cinst]->iobase = io[b];
- 		for(i = 0 ; i < MAX_IO_REGS - 1 ; i++) {
- 			sc_adapter[cinst]->ioport[i] = io[b] + i * 0x400;
--			request_region(sc_adapter[cinst]->ioport[i], 1,
--					interface->id);
-+			if (!request_region(sc_adapter[cinst]->ioport[i], 1,
-+					interface->id))
-+				return -EBUSY;
- 			pr_debug("Requesting I/O Port %#x\n",
- 				sc_adapter[cinst]->ioport[i]);
- 		}
- 		sc_adapter[cinst]->ioport[IRQ_SELECT] = io[b] + 0x2;
--		request_region(sc_adapter[cinst]->ioport[IRQ_SELECT], 1,
--				interface->id);
-+		if (!request_region(sc_adapter[cinst]->ioport[IRQ_SELECT], 1,
-+				    interface->id))
-+		        return -EBUSY;
- 		pr_debug("Requesting I/O Port %#x\n",
- 				sc_adapter[cinst]->ioport[IRQ_SELECT]);
- 		sc_adapter[cinst]->rambase = ram[b];
--		request_region(sc_adapter[cinst]->rambase, SRAM_PAGESIZE,
--				interface->id);
-+		if (!request_region(sc_adapter[cinst]->rambase, SRAM_PAGESIZE,
-+				interface->id))
-+		        return -EBUSY;
- 
- 		pr_info("  %s (%d) - %s %d channels IRQ %d, I/O Base 0x%x, RAM Base
-0x%lx\n", 
- 			sc_adapter[cinst]->devicename,
+Thanks again for your assistance and patience.
+--brendan
+
 
 
 _______________________________________________
