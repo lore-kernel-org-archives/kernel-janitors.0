@@ -1,27 +1,27 @@
-From: Jan Engelhardt <jengelh@linux01.gwdg.de>
-Date: Wed, 11 Apr 2007 15:44:40 +0000
-Subject: Re: [KJ] [PATCH] SPIN_LOCK_UNLOCKED cleanup in
-Message-Id: <Pine.LNX.4.61.0704111744080.32056@yvahk01.tjqt.qr>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 03 Apr 2007 07:26:43 +0000
+Subject: [KJ] Any need for __cplusplus?
+Message-Id: <461201B3.8000800@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070411152846.GA11449@arun.site>
-In-Reply-To: <20070411152846.GA11449@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Cc: kernel-janitors@lists.osdl.org, linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, alan@redhat.com
+To: kernel-janitors@vger.kernel.org
 
+Hello
 
-On Apr 11 2007 20:58, Milind Arun Choudhary wrote:
->
->remove SPIN_LOCK_UNLOCKED, use DEFINE_SPINLOCK instead
+There were recently a thread in LKML about C++-usage in the kernel (again).
+That reminded me, why do we have those "ifdef __cplusplus"? As an 
+example, we have this (in include/linux/stddef.h) when defining NULL as 
+0 in C++ and ((void *)0) otherwise. From what I can see, there is no
+reason to have them, or am I missing something? (like they are needed by
+libraries)
 
-Don't we have some more places where spinlocks could be janitorified?
-Otherwise, ok!
+> grep -nr cplusplus * | wc -l
+121
 
+Richard Knutsson
 
-Jan
--- 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
