@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Tue, 03 Apr 2007 23:13:32 +0000
+Date: Tue, 03 Apr 2007 23:22:49 +0000
 Subject: Re: [KJ] Any need for __cplusplus?
-Message-Id: <Pine.LNX.4.64.0704031911450.14801@CPE00045a9c397f-CM001225dbafb6>
+Message-Id: <Pine.LNX.4.64.0704031922100.14899@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <461201B3.8000800@student.ltu.se>
 In-Reply-To: <461201B3.8000800@student.ltu.se>
@@ -12,15 +12,10 @@ To: kernel-janitors@vger.kernel.org
 
 On Wed, 4 Apr 2007, Richard Knutsson wrote:
 
-... snip ...
-> Yep, and just found a few C/C++ structs not even _used_ in the
-> kernel... Guess the __cplusplus may be worth a look or two since it
-> seems to be possible indicator of old cruft.
->
-> Thanks for reminding about "headers_install".
+> Yep, and just found a few C/C++ structs not even _used_ in the kernel...
 
-so is there anyone on this list who can make a confident proclamation
-about this C++ stuff in the kernel source one way or the other?
+i'm not sure what that means ... can you explain that?  with an
+example or two?
 
 rday
 -- 
