@@ -1,39 +1,29 @@
-From: Jestin Stoffel <jstnstffl@gmail.com>
-Date: Fri, 06 Apr 2007 02:51:20 +0000
-Subject: [KJ] [PATCH]set_current_state cleanup in drivers/serial/mcfserial.c
-Message-Id: <20070406025120.GC8199@crackpot>
+From: Geert Uytterhoeven <Geert.Uytterhoeven@sonycom.com>
+Date: Tue, 03 Apr 2007 14:09:04 +0000
+Subject: [KJ] roundup_pow_of_two()
+Message-Id: <Pine.LNX.4.62.0704031607110.14732@pademelon.sonytel.be>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From:  Jestin Stoffel <jstnstffl@gmail.com>
 
-Replaced a couple current->state= with set_current_state
+JFYI...
 
-Signed-of-by:  Jestin Stoffel <jstnstffl@gmail.com>
----
---- linux-2.6.21-rc5/drivers/serial/mcfserial.c.orig	2007-04-05 21:47:40.000000000 -0500
-+++ linux-2.6.21-rc5/drivers/serial/mcfserial.c	2007-04-05 21:48:37.000000000 -0500
-@@ -1399,7 +1399,7 @@ static int block_til_ready(struct tty_st
- 		local_irq_disable();
- 		mcfrs_setsignals(info, 1, 1);
- 		local_irq_enable();
--		current->state = TASK_INTERRUPTIBLE;
-+		set_current_state(TASK_INTERRUPTIBLE);
- 		if (tty_hung_up_p(filp) ||
- 		    !(info->flags & ASYNC_INITIALIZED)) {
- #ifdef SERIAL_DO_RESTART
-@@ -1425,7 +1425,7 @@ static int block_til_ready(struct tty_st
- #endif
- 		schedule();
- 	}
--	current->state = TASK_RUNNING;
-+	set_current_state(TASK_RUNNING);
- 	remove_wait_queue(&info->open_wait, &wait);
- 	if (!tty_hung_up_p(filp))
- 		info->count++;
+While looking for a nice and fast way to round up a value to the next power of
+two, I stumbled upon roundup_pow_of_two(), and to a lot of ugly and slow inline
+variants (search for `round' and `power of'). Probably they can be
+consolidated.
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- Sony Network and Software Technology Center Europe (NSCE)
+Geert.Uytterhoeven@sonycom.com ------- The Corporate Village, Da Vincilaan 7-D1
+Voice +32-2-7008453 Fax +32-2-7008622 ---------------- B-1935 Zaventem, Belgium
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
