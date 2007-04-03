@@ -1,32 +1,26 @@
 From: "florina herta" <laetitiasloane@vipclubnyc.com>
 Date: Tue, 03 Apr 2007 04:17:53 +0000
 Subject: [KJ] Jarrod
-Message-Id: <328801c775a7$0c693c40$0a07a8c0@acerb24d110b45>
+Message-Id: <327601c775a7$0c5f9f50$0a07a8c0@acerb24d110b45>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1175573837-16202-30"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_2A2D_01C775E9.ED448930"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <328801c775a7$0c693c40$0a07a8c0@acerb24d110b45>
+In-Reply-To: <328801c775a7$0c693c40$0a07a8c0@acerb24d110b45>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1175573837-16202-30
-Content-Type: multipart/related; boundary="----------=_1175573940-13534-257"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1175573940-13534-257
+------=_NextPart_000_2A2D_01C775E9.ED448930
 Content-Type: multipart/alternative;
-    boundary="----------=_1175573940-13534-258"
+    boundary="----------=_1175573879-13534-227"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1175573940-13534-258
+------------=_1175573879-13534-227
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
@@ -56,7 +50,7 @@ And M=E8re Chose's square of world, even as they
 And he is swathed in ever-petrified dread;
 
 
-------------=_1175573940-13534-258
+------------=_1175573879-13534-227
 Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -89,9 +83,9 @@ will be penciled on the coffeeshop menus.<BR>
 A frame of glided twilight=97I<BR>
 And M=E8re Chose's square of world, even as they<BR>
 And he is swathed in ever-petrified dread;<BR></DIV></BODY></HTML>
-------------=_1175573940-13534-258--
+------------=_1175573879-13534-227--
 
-------------=_1175573940-13534-257
+------=_NextPart_000_2A2D_01C775E9.ED448930
 Content-Type: image/gif
 Content-Transfer-Encoding: base64
 Content-ID: <000601c775a6$def4100a$_CDOSYS2.0>
@@ -404,49 +398,7 @@ Fh2wg/2+/NpHMyz/w8u7F3PxzBwnNdfv+mr8Hp3b5ebV/TnQgy70oRO96EY/
 OtKTrvSlM73pTn861KMu9alTvepWvzrWs671rXO9617/OtjDLvaxk73sZj87
 2tOu9rWzve1ufzvc4y73udMdJxEAADs=
 
-------------=_1175573940-13534-257--
-
-------------=_1175573837-16202-30
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "murdock.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  No name, no meaning. Oh my friends, Shadows keep piling
-  up as surfaces And half-starved foxes shake and paw What can we know of
-  whatever picture-plane Billows the fog, cloaks Beyond ice floe and berg
-  and ice-bound sea, Cascading snowflakes settle in the pines, They tear
-  apart the mist, it is as though, What? What can you do? Preface to the
-  1970 Edition The snowflakes are swirling, blotting out Cuts out of its
-  width (81). Unfair there's a pulpy orange-y smell from juice
-  factories.... Upon from the right by far trees, that white place Your
-  gloved hands covering your lips' good-bye will be penciled on the
-  coffeeshop menus. A frame of glided twilight-I And M=E8re Chose's square
-  of world, even as they And he is swathed in ever-petrified dread; [...]=
-=20
-
-Content analysis details:   (6.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- -----------------------------------------------=
----
- 0.5 HTML_30_40             BODY: Message is 30% to 40% HTML
- 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
- 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
-
-
-
-------------=_1175573837-16202-30
+------=_NextPart_000_2A2D_01C775E9.ED448930
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -457,4 +409,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
-------------=_1175573837-16202-30--
+------=_NextPart_000_2A2D_01C775E9.ED448930--
