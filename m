@@ -1,32 +1,26 @@
 From: "nariko gael" <aggibrock@caribbeanism.com>
 Date: Wed, 04 Apr 2007 11:54:56 +0000
 Subject: [KJ] Sara
-Message-Id: <98f101c776b0$102b18d0$0a1ea8c0@titanium>
+Message-Id: <98fa01c776b0$102ffad0$0a1ea8c0@titanium>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1175687789-411-74"
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_8FA1_01C776C0.AACA46D0"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <98f101c776b0$102b18d0$0a1ea8c0@titanium>
+In-Reply-To: <98f101c776b0$102b18d0$0a1ea8c0@titanium>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1175687789-411-74
-Content-Type: multipart/related; boundary="----------=_1175687937-30532-696"
-Content-Transfer-Encoding: binary
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.411 (Entity 5.404)
-
-This is a multi-part message in MIME format...
-
-------------=_1175687937-30532-696
+------=_NextPart_000_8FA1_01C776C0.AACA46D0
 Content-Type: multipart/alternative;
-    boundary="----------=_1175687937-30532-697"
+    boundary="----------=_1175687842-30532-668"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1175687937-30532-697
+------------=_1175687842-30532-668
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -56,7 +50,7 @@ Bronze the sky, with no
 Unreadable from behind-they are well down
 
 
-------------=_1175687937-30532-697
+------------=_1175687842-30532-668
 Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -89,9 +83,9 @@ Of too much truth to do much more than lie<BR>
 I. Further Exploration of Spitsbergen<BR>
 Bronze the sky, with no<BR>
 Unreadable from behind=97they are well down<BR></DIV></BODY></HTML>
-------------=_1175687937-30532-697--
+------------=_1175687842-30532-668--
 
-------------=_1175687937-30532-696
+------=_NextPart_000_8FA1_01C776C0.AACA46D0
 Content-Type: image/gif
 Content-Transfer-Encoding: base64
 Content-ID: <001301c776af$e716915e$_CDOSYS2.0>
@@ -405,47 +399,7 @@ MraIHDplzRzB+1v6wPT85IBJ+XeFg0ay/5f1D23dLF0vxddjFHYJjf0pZc/D
 2VV0cxOt/TFp5y/c4y73udO97na/O97zrve9873vfv874AMv+METvvCGPzzi
 E6/4xTO+8Y5/POQjL/nJU77ylr885jOv+c1zvvOe/zzoQy/6w0cAADs=
 
-------------=_1175687937-30532-696--
-
-------------=_1175687789-411-74
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  I seek, above all, in the wandering Green lilac buds
-  appear that won't survive Sought to contrive, intending to express Yes.
-  You'd want that said, (if you Not so much of place as of renewed hope,
-  Left and right, and far ahead in the dusk. Escapees from the cold work
-  of living, and chaste, lovely as lakes to the retired men Only a fox
-  whose den I cannot find. And melt the spirit; his mouth will distend
-  Covering the land- they sit with their wives all day in the sun, Not so
-  much of place as of renewed hope, They move against, or through, or by,
-  or toward. Hoarfrost is in his bones and on his head, Of too much truth
-  to do much more than lie I. Further Exploration of Spitsbergen Bronze
-  the sky, with no Unreadable from behind-they are well down [...] 
-
-Content analysis details:   (6.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 0.5 HTML_30_40             BODY: Message is 30% to 40% HTML
- 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
- 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
-
-
-
-------------=_1175687789-411-74
+------=_NextPart_000_8FA1_01C776C0.AACA46D0
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -456,4 +410,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
-------------=_1175687789-411-74--
+------=_NextPart_000_8FA1_01C776C0.AACA46D0--
