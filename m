@@ -1,52 +1,40 @@
-From: Borislav Petkov <petkov@math.uni-muenster.de>
-Date: Fri, 06 Apr 2007 07:44:12 +0000
-Subject: [KJ] [PATCH 2/5] Fix warnings when building 'xmldocs' target:
-Message-Id: <20070406074412.GA4845@gollum.tnic>
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Date: Wed, 04 Apr 2007 16:49:40 +0000
+Subject: [KJ] [PATCH]Unused ROUND_UP, NAME_OFFSET macro in arch/powerpc
+Message-Id: <20070404163740.GA9830@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@lists.osdl.org
+Cc: linuxppc-dev@ozlabs.org, akpm@linux-foundation.org, paulus@samba.org, linux-kernel@vger.kernel.org
 
-Signed-off-by: Borislav Petkov <bbpetkov@yahoo.de>
+Unused ROUND_UP, NAME_OFFSET  macro cleanup
 
---- kernel.orig/20-rc5/drivers/message/fusion/mptscsih.c	2007-04-05 09:41:5=
-5.000000000 +0200
-+++ kernel/20-rc5/drivers/message/fusion/mptscsih.c	2007-04-05 10:51:37.000=
-000000 +0200
-@@ -1540,8 +1540,10 @@
-  *	Fall through to mpt_HardResetHandler if: not operational, too many
-  *	failed TM requests or handshake failure.
-  *
-- *	@ioc: Pointer to MPT_ADAPTER structure
-+ *	@hd: Pointer to MPT_SCSI_HOST structure
-  *	@type: Task Management type
-+ *	@channel: volume channel
-+ *	@timeout: command request timeout
-  *	@id: Logical Target ID for reset (if appropriate)
-  *	@lun: Logical Unit for reset (if appropriate)
-  *	@ctx2abort: Context for the task to be aborted (if appropriate)
-@@ -1650,6 +1652,8 @@
-  *	mptscsih_IssueTaskMgmt - Generic send Task Management function.
-  *	@hd: Pointer to MPT_SCSI_HOST structure
-  *	@type: Task Management type
-+ *	@channel: volume channel
-+ *	@timeout: command request timeout
-  *	@id: Logical Target ID for reset (if appropriate)
-  *	@lun: Logical Unit for reset (if appropriate)
-  *	@ctx2abort: Context for the task to be aborted (if appropriate)
-@@ -2022,6 +2026,7 @@
- /**
-  *	mptscsih_tm_wait_for_completion - wait for completion of TM task
-  *	@hd: Pointer to MPT host structure.
-+ *	@timeout: command request timeout
-  *
-  *	Returns {SUCCESS,FAILED}.
-  */
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
 
---=20
-Regards/Gru=DF,
-    Boris.
+---
+ sys_ppc32.c |    4 ----
+ 1 files changed, 4 deletions(-)
+
+
+diff --git a/arch/powerpc/kernel/sys_ppc32.c b/arch/powerpc/kernel/sys_ppc32.c
+index 673e8d9..047246a 100644
+--- a/arch/powerpc/kernel/sys_ppc32.c
++++ b/arch/powerpc/kernel/sys_ppc32.c
+@@ -53,10 +53,6 @@
+ #include <asm/ppc-pci.h>
+ #include <asm/syscalls.h>
+ 
+-/* readdir & getdents */
+-#define NAME_OFFSET(de) ((int) ((de)->d_name - (char __user *) (de)))
+-#define ROUND_UP(x) (((x)+sizeof(u32)-1) & ~(sizeof(u32)-1))
+-
+ struct old_linux_dirent32 {
+ 	u32		d_ino;
+ 	u32		d_offset;
+-- 
+Milind Arun Choudhary
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
