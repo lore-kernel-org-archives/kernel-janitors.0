@@ -1,120 +1,66 @@
-From: XXX@BritneySpears.com
-Date: Mon, 02 Apr 2007 21:16:57 +0000
-Subject: Britney spears naked pussy & paris hilton
-Message-Id: <20070402001632.8533.qmail@c-71-230-50-22.hsd1.pa.comcast.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0057739133=="
+From: UK NATIONAL LOTTERY 2007 <infodept@lottery.com>
+Date: Wed, 04 Apr 2007 02:01:39 +0000
+Subject: [KJ] YOUR EMAIL WON{Contact Your Claims Agent Immediately}
+Message-Id: <20070404020139.045311B7005@mx1.kbt.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0057739133==
-Content-Type: text/html
 
-<style>
+NATIONAL LOTTERY
+PROMOTIONS/ PRIZE AWARD DEPARTMENT.
+79 BOVILL ROAD LONDON. SE23 1EL.
+Ref: EGS/2251256003/02
+Batch: 14/0017/1PD
+                             
+                                   WINNING NOTIFICATION
+The board of directors and entire member of staff of the National Lottery wishes to inform you of the result of the (Email Address Ballot)online Sweepstakes international program held at the British Headquarter.
+ 
+Your email account have been picked as a winner of Six Hundred Thousand Pounds Sterling (&pound;600,000.00) in cash credited to file KTU/9023118308/03. This is from a total sum of Four Million, Two hundred Thousand Pounds Sterling (&pound; 4,200,000.00) shared amongst seven winners. This results for 3thApril, 2007 is  now released to you today and your email address attached to ticket number: 56475600545 188 with Serial number 5368/02 drew the lucky numbers -3-35-39-42-44-46- and bonus ball -41- in the Lotto, to check your results online click on this link http://lottery.co.uk/res/ participants were selected through a computer ballot system drawn from Microsoft users from company and individual email address users
+.
+Your fund is now deposited in an offshore bank with a hardcover insurance. Due to the mix up of some numbers and names, we advice that you keep this award from public notice until your claim has been processed and your money remitted to your nominated bank account as this is part of our security protocol to avoid double claiming or unwarranted taking advantage of this program by the general public.
 
-(He's away on business, and his wife is out all day at work, and I'm
-guessing neither of them has much of a clue of the right way to go
-about it, any more than I do really)
+Be advice to keep your winning information confidential until your claims have been processed and your money remitted to you. This is part of our security protocol to avoid double claiming and unwarranted abuse of this program. For the release of your winning, kindly contact your claims supervisory officer at
+**********************************************
+The British Lottery Head Quarters, 
+PROMOTIONS/ PRIZE AWARD DEPARTMENT.
+79 BOVILL ROAD LONDON. SE23 1EL.
+Payment Release Order Department 
+Contact Person:Mr.Owen Tony
+Tel: +44-703-191-0741,
+     +44-701-112-7559,
+     +44-701-112-7560
+Fax: +44-709-288-2303
+Email: contactowen_tony@yahoo.co.uk  
 
+*************************************************
+You are therefore advised to give the following informations to the fiduciary Mr Owen Tony via email
+contactowen_tony@yahoo.co.uk
 
->
-
-<!
-
-I have checked the Default Time Zone setting for the 
-default virtual server on SharePoint central 
-administration as well as all the individual site 
-settings. Every where it is configured to use GMT-06.00 - 
-Central Time (US & Canada). However if anyone create or 
-modify a document in SharePoint (any site) the time 
-showing on SharePoint is different than the system time of 
-the same server. Suppose if the current time on the server 
-clock is 2.34 AM, then the modified document time on the 
-SharePoint would be 1.34 AM. 
-
-
-
->
-
-<! 
-Sorry, but your problem does not imply a bug in PHP itself.  For a
-list of more appropriate places to ask for help using PHP, please
-
-appropriate forum for asking support questions. 
-
-
-In our past parking deal, OUT NORTH agreed not to have events on
-Sunday so that churchgoers could use our lot during daytime and
-evening services. Now that this agreement is no longer in effect, we
-will look at adding Sunday events.
-Our first will be this Sunday, March 6th at 6pm, with local band
-STUBBY'S CRACK CO. headlining a concert of work by young musicians as
-part of our Alaska Artist Access program. Details will be available
-online later this week; low-price tickets will be sold at the door
-only, and earplugs will be available for purchase>
-
-Actually, looks like I screwed up the placement anyways, and the slave 
-goes on the end.
-
-Jim, you probably don't have to worry about it either way.
-I know I shouldn't bitch, and that this is proof that resources are 
-needed, like volunteers, and that I should volunteer, but I just 
-can't do it right now. It was just too hard on my heart seeing 
-first hand what goes on. I salute all of the volunteers in rescue 
-groups that do this stuff on a regular basis and make a difference.
-Groeten en knuffels van ICY aan iedereen van nltest!
-
-En ja het gaat goed maar haar....
-Nog steeds wel RSI, maar wel langzaam minderend....
-</style><a target="_blank"  href="http://mainemodularandmanufacturedhomes.com/images/indexxx.html" ><img src="http://mailsplash.com/images/a.jpg">
-<style>
--- 
-Dolfy
-- Webstek : - Nieuwsgroep : 
--  (Ook bereikbaar via groupsgoogle
-- Rain... Is that what you call this? I like it.' (Aeryn Sun - Farscape)
-
-Can anyone recommend a maroon shade, particularly an OPI one?  I usually
-wear silver (OPI Pearl of Wisdom or Sally Hansen's Chrome Nail Make-up in
-psychiatrist had told me that he thought I was fit enough to return to
-work, and that I was willing to return when the current sick note
-expired on 17th February. I received an emailed reply from my manager to
-say that he preferred me to remain at home until he wrote to the
-psychiatrist. To be precise, his email said: "I would much prefer it,
-
-Bonjour,
-
-Je vais effectuer ce soir ma premiere photo du ciel profond avec mon
-Arcane 180 F/D 6.
-Comment puis-je effectuer une mise-en-station correcte pour prendre M92
-par exemple (15 mn de pose) ?
-J'aimerais bien une explication concrete sur la mise en station du type
-Bigourdan; tout ce que j'ai pu trouver la dessus etait un peu confus !
-
-</style>
+1. Full name and address.
+2. Country.
+3. Tel and fax number.
+4. Occupation.
+5.Email Address.
+Electronic Bank Transfer.   
+Issuance of a certified Cheque.
+   
+Congratulations from the entire member of staff and thank you for being part of our email account users program.
+Yours Sincerely,
+Mrs. Litza Martinez,
+Executive (International Sweepstakes).
+Dr. P. Swier, Mr. Gerald Goodman (Manager Foreign Operations), Mr. Franklyn Van Der Weijden (Manager Domestic Banking Operations), Dr. James 
+Williams(Director International Credit Department), Mrs. Sandra Murphy (Executive), Mr. Michael Cole (Executive), Mr. Stephen Boer (Chairman).
+Affiliates The Lottery Company and lottery.co.uk is in no way affiliated with, associated with or approved or endorsed by Camelot Group plc or 
+ The National Lottery Commission.
+Regards,
 
 
 
---===============0057739133==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0057739133==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-
---===============0057739133==--
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
