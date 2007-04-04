@@ -1,41 +1,130 @@
-From: Simon Horman <horms@verge.net.au>
-Date: Mon, 16 Apr 2007 07:45:59 +0000
-Subject: Re: [KJ] [Fastboot] Trivial patch:changing const char foo* to const
-Message-Id: <20070416074559.GB28064@verge.net.au>
+From: Shani Moideen <shani.moideen@wipro.com>
+Date: Wed, 04 Apr 2007 04:32:10 +0000
+Subject: [KJ] [PATCH] Replace with time_after in
+Message-Id: <1175660410.2247.21.camel@shani-win>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: mikep@linuxtr.net, linux-tr@linuxtr.net
+Cc: netdev@vger.kernel.org, kernel-janitors@osdl.org
 
-On Mon, Apr 16, 2007 at 12:49:43PM +0530, surya.prabhakar@wipro.com wrote:
-> Files modified 
-> 
-> arch/i386/boot/compressed/relocs.c
-> arch/i386/kernel/vmi.c
-> 
-> As suggested by Jeff Garzik, 
-> ----
-> >The string form [const] char *foo = "blah";
-> >creates two variables in the final assembly output, a static string,
-> >and
-> >a char pointer to the static string. The alternate string form
-> >[const] char foo[] = "blah"; is better because it declares a single
-> >variable.
-> ------
-> 
-> Cleaned up for the new modifications. 
-> 
-> 
-> Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
 
-Looks find to me.
+Hi,
+
+Replacing with time_after in drivers/net/tokenring/3c359.c
+Applies and compiles clean on latest linus tree.
+
+thanks.
+
+Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
+----
+
+diff --git a/drivers/net/tokenring/3c359.c b/drivers/net/tokenring/3c359.c
+index 7580bde..512cd4d 100644
+--- a/drivers/net/tokenring/3c359.c
++++ b/drivers/net/tokenring/3c359.c
+@@ -61,6 +61,7 @@
+ #include <linux/pci.h>
+ #include <linux/spinlock.h>
+ #include <linux/bitops.h>
++#include <linux/jiffies.h>
+ 
+ #include <net/checksum.h>
+ 
+@@ -409,7 +410,7 @@ static int xl_hw_reset(struct net_device *dev)
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 40*HZ) {
++		if(time_after(jiffies, t + 40*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL  card not responding to global reset.\n", dev->name);
+ 			return -ENODEV;
+ 		}
+@@ -520,7 +521,7 @@ static int xl_hw_reset(struct net_device *dev)
+ 	t=jiffies;
+ 	while ( !(readw(xl_mmio + MMIO_INTSTATUS_AUTO) & INTSTAT_SRB) ) { 
+ 		schedule();		
+-		if(jiffies-t > 15*HZ) {
++		if(time_after(jiffies, t + 15*HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			return -ENODEV; 
+ 		}
+@@ -796,7 +797,7 @@ static int xl_open_hw(struct net_device *dev)
+ 	t=jiffies;
+ 	while (! (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_SRB)) { 
+ 		schedule();		
+-		if(jiffies-t > 40*HZ) {
++		if(time_after(jiffies, t + 40*HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			break ; 
+ 		}
+@@ -1011,7 +1012,7 @@ static void xl_reset(struct net_device *dev)
+ 
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+-		if(jiffies-t > 40*HZ) {
++		if(time_after(jiffies, t + 40*HZ)) {
+ 			printk(KERN_ERR "3COM 3C359 Velocity XL  card not responding.\n");
+ 			break ; 
+ 		}
+@@ -1283,7 +1284,7 @@ static int xl_close(struct net_device *dev)
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNSTALL not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1292,7 +1293,7 @@ static int xl_close(struct net_device *dev)
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNDISABLE not responding.\n", dev->name);
+ 			break ;
+ 		}
+@@ -1301,7 +1302,7 @@ static int xl_close(struct net_device *dev)
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-UPSTALL not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1318,7 +1319,7 @@ static int xl_close(struct net_device *dev)
+ 	t=jiffies;
+ 	while (!(readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_SRB)) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-CLOSENIC not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1347,7 +1348,7 @@ static int xl_close(struct net_device *dev)
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies,t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-UPRESET not responding.\n", dev->name);
+ 			break ; 
+ 		}
+@@ -1356,7 +1357,7 @@ static int xl_close(struct net_device *dev)
+ 	t=jiffies;
+ 	while (readw(xl_mmio + MMIO_INTSTATUS) & INTSTAT_CMD_IN_PROGRESS) { 
+ 		schedule();		
+-		if(jiffies-t > 10*HZ) {
++		if(time_after(jiffies, t + 10*HZ)) {
+ 			printk(KERN_ERR "%s: 3COM 3C359 Velocity XL-DNRESET not responding.\n", dev->name);
+ 			break ; 
+ 		}
 
 -- 
-Horms
-  H: http://www.vergenet.net/~horms/
-  W: http://www.valinux.co.jp/en/
-
+Shani Moideen
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
