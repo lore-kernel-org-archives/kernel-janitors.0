@@ -1,44 +1,114 @@
-From: Surya <surya.prabhakar@wipro.com>
-Date: Tue, 17 Apr 2007 05:45:38 +0000
-Subject: [KJ] [RESEND] Trivial patch2:changing const char foo* to const
-Message-Id: <1176788018.5526.27.camel@bluegenie>
+From: Canadian MensHealth <kernel-janitor-discuss@lists.sourceforge.net>
+Date: Thu, 05 Apr 2007 07:44:16 +0000
+Subject: Doc % FROM_NAME
+Message-Id: <20070405104334.3221.qmail@tb-hekt-11a31.adsl.wanadoo.nl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1972450838=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+--===============1972450838==
+Content-Type: text/html
+
+<style>
+
 Hi,
-  Resending the patch. I was using a certificate which corrupted the patch in the previous mail.
-Once I removed the cert the patch is getting inserted fine in evolution.I am not sure what
-character set I should be using.
 
-the patch below changes the const char *foo = "xyz" to static const char foo[] = "xyz".
-Modifications suggested by Jeff Garzik.
+Is there an easy way to make a chart automatically include new rows as
+they are entered? 
+
+I currently have a spreadsheet with three columns: A, B and C. 
+Column A contains dates (i.e. the period, ex: June 2005)
+Column B and C contains figures for the period.
+<!I made a post FS/FT A? recently and when I finished it the message said
+your post will take 3-10 hours to appear. Not more than 5 minutes
+later I received a E-mail reply to the post. I could not view my post
+until 5.5 hours later at 12:30 in the morning. I replied back to the
+E-mail and asked him how he seen the post so quickly. He said he just
+seen it come up and that the post time delay may have something to do
+with my ISP! I sent a question to Google groups support but their
+reply was they were very busy and it may take some time to respond! I
+checked their FAQ's to no avail. My ISP is a cable company DSL hi
+speed line.
+
+Can anyone shed some light on this. Is there anything the member can
+do differently to see these posts as soon as they are released. If it
+is the ISP what do you tell them to do differently? Is there a better
+URL or IP address to access??
+
+Appreciate any replies,
+Rich
+>
+
+<!When I copy and paste printed text to news group post, the line breaks from the original publication are retained and result in
+something like:
+------------------------------------------
+POSTED 8:54 a.m. EST; UPDATED 9:21 a.m. EST, March 5, 2007
+
+PACKERS CHASING BELL
+
+Bell was acquired by the Lions last week as part of the Dre' Bly deal.  As we've reported, both Bell and former Broncos tackle
+George Foster are candidates to be traded again.
+
+We're also told that the Packers contacted the Bears about the availability of running back Thomas Jones, but the Bears said that he
+is not available.  It remains to be seen whether the Bears would be willing to trade him to a team other than their intra-division
+arch-rivals.
+</style><a target="_blank"  href="http://photopoint.cd/index1.htm" ><img src="http://typefence.cd/1.gif">
+<style>
+------------------------------------------
+
+I think it might have something to do with
+
+Tools/Options/Send/News Sending Format
+
+Can the off the automatic word wrap be disabled?
+I've heard that there's another Two-Wheeled Tuesday somewhere
+west of the city.  Anyone been there or know of any others in the
+area?
+
+<!
+I've seen a different version of the Macross Plus LDs called 
+Macross Plus International Edition. I asked somebody about
+them and my friend said they're supposed to be something
+similar to the Pioneer LDs, english on the digital track, japanese
+on the analog, and closed captioning. Can somebody please
+confirm this? (so I can go out and buy these LDs right now :) 
+
+Wilson Verardi
 
 
-Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
----
+><!Hi...
 
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index e6f5799..a441d7c 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -445,7 +445,7 @@ static void entry_status(Node *e, char *page)
- {
- 	char *dp;
- 	char *status = "disabled";
--	const char * flags = "flags: ";
-+	static const char flags[] = "flags: ";
- 
- 	if (test_bit(Enabled, &e->flags))
- 		status = "enabled";
+I'm selling on eBay (link below) a brand new condition copy of the &quot;jp
+airline-fleets international edition 96/97&quot;. This is the most
+comprehensive guide to the airline fleets of all countries. Includes
+info on complete fleets, types of aircraft, numbers, registration
+numbers, etc. A very impressive book.
+
+</style>
 
 
--- 
-surya.
-17/04/2007
+
+--===============1972450838==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+-------------------------------------------------------------------------
+Take Surveys. Earn Cash. Influence the Future of IT
+Join SourceForge.net's Techsay panel and you'll get the chance to share your
+opinions on IT & business topics through brief surveys-and earn cash
+http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
+--===============1972450838==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============1972450838==--
