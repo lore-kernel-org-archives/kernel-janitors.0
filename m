@@ -1,219 +1,59 @@
 From: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Date: Thu, 05 Apr 2007 14:41:55 +0000
-Subject: [KJ] [PATCH]ROUND_UP macro cleanup in fs/(select|compat|readdir).c
-Message-Id: <20070405142955.GA10638@arun.site>
+Date: Thu, 05 Apr 2007 14:56:20 +0000
+Subject: [KJ] [PATCH]ROUND_UP macro cleanup in fs/smbfs/request.c
+Message-Id: <20070405144420.GA10696@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070405142955.GA10638@arun.site>
+In-Reply-To: <20070405142955.GA10638@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org, linux-fsdevel@vger.kernel.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+To: kernel-janitors@lists.osdl.org, Linux Filesystems <linux-fsdevel@vger.kernel.org>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-ROUND_UP macro cleanup use,ALIGN or DIV_ROUND_UP where ever appropriate.
+ROUND_UP macro cleanup use ALIGN
 
 Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
 
 ---
- compat.c  |   20 ++++++++------------
- readdir.c |    8 +++-----
- select.c  |    8 ++++----
- 3 files changed, 15 insertions(+), 21 deletions(-)
 
-diff --git a/fs/compat.c b/fs/compat.c
-index 040a8be..0e7559a 100644
---- a/fs/compat.c
-+++ b/fs/compat.c
-@@ -15,6 +15,7 @@
-  *  published by the Free Software Foundation.
+ request.c |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
+
+
+diff --git a/fs/smbfs/request.c b/fs/smbfs/request.c
+index 723f7c6..c288fbe 100644
+--- a/fs/smbfs/request.c
++++ b/fs/smbfs/request.c
+@@ -6,6 +6,7 @@
+  *  Please add a note about your changes to smbfs in the ChangeLog file.
   */
  
 +#include <linux/kernel.h>
- #include <linux/linkage.h>
- #include <linux/compat.h>
- #include <linux/errno.h>
-@@ -901,8 +902,6 @@ asmlinkage long compat_sys_mount(char __user * dev_name, char __user * dir_name,
- }
- 
- #define NAME_OFFSET(de) ((int) ((de)->d_name - (char __user *) (de)))
--#define COMPAT_ROUND_UP(x) (((x)+sizeof(compat_long_t)-1) & \
--				~(sizeof(compat_long_t)-1))
- 
- struct compat_old_linux_dirent {
- 	compat_ulong_t	d_ino;
-@@ -990,7 +989,7 @@ static int compat_filldir(void *__buf, const char *name, int namlen,
- 	struct compat_linux_dirent __user * dirent;
- 	struct compat_getdents_callback *buf = __buf;
- 	compat_ulong_t d_ino;
--	int reclen = COMPAT_ROUND_UP(NAME_OFFSET(dirent) + namlen + 2);
-+	int reclen = ALIGN(NAME_OFFSET(dirent) + namlen + 2, sizeof(compat_long_t));
- 
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
-@@ -1065,7 +1064,6 @@ out:
- }
- 
- #ifndef __ARCH_OMIT_COMPAT_SYS_GETDENTS64
--#define COMPAT_ROUND_UP64(x) (((x)+sizeof(u64)-1) & ~(sizeof(u64)-1))
- 
- struct compat_getdents_callback64 {
- 	struct linux_dirent64 __user *current_dir;
-@@ -1080,7 +1078,7 @@ static int compat_filldir64(void * __buf, const char * name, int namlen, loff_t
- 	struct linux_dirent64 __user *dirent;
- 	struct compat_getdents_callback64 *buf = __buf;
- 	int jj = NAME_OFFSET(dirent);
--	int reclen = COMPAT_ROUND_UP64(jj + namlen + 1);
-+	int reclen = ALIGN(jj + namlen + 1, sizeof(u64));
- 	u64 off;
- 
- 	buf->error = -EINVAL;	/* only used if we fail.. */
-@@ -1593,8 +1591,6 @@ out_ret:
- 
- #define __COMPAT_NFDBITS       (8 * sizeof(compat_ulong_t))
- 
--#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
--
- /*
-  * Ooo, nasty.  We need here to frob 32-bit unsigned longs to
-  * 64-bit unsigned longs.
-@@ -1603,7 +1599,7 @@ static
- int compat_get_fd_set(unsigned long nr, compat_ulong_t __user *ufdset,
- 			unsigned long *fdset)
- {
--	nr = ROUND_UP(nr, __COMPAT_NFDBITS);
-+	nr = DIV_ROUND_UP(nr, __COMPAT_NFDBITS);
- 	if (ufdset) {
- 		unsigned long odd;
- 
-@@ -1637,7 +1633,7 @@ int compat_set_fd_set(unsigned long nr, compat_ulong_t __user *ufdset,
- 		      unsigned long *fdset)
- {
- 	unsigned long odd;
--	nr = ROUND_UP(nr, __COMPAT_NFDBITS);
-+	nr = DIV_ROUND_UP(nr, __COMPAT_NFDBITS);
- 
- 	if (!ufdset)
- 		return 0;
-@@ -1759,7 +1755,7 @@ asmlinkage long compat_sys_select(int n, compat_ulong_t __user *inp,
- 		if ((u64)tv.tv_sec >= (u64)MAX_INT64_SECONDS)
- 			timeout = -1;	/* infinite */
- 		else {
--			timeout = ROUND_UP(tv.tv_usec, 1000000/HZ);
-+			timeout = DIV_ROUND_UP(tv.tv_usec, 1000000/HZ);
- 			timeout += tv.tv_sec * HZ;
- 		}
- 	}
-@@ -1827,7 +1823,7 @@ asmlinkage long compat_sys_pselect7(int n, compat_ulong_t __user *inp,
- 	do {
- 		if (tsp) {
- 			if ((unsigned long)ts.tv_sec < MAX_SELECT_SECONDS) {
--				timeout = ROUND_UP(ts.tv_nsec, 1000000000/HZ);
-+				timeout = DIV_ROUND_UP(ts.tv_nsec, 1000000000/HZ);
- 				timeout += ts.tv_sec * (unsigned long)HZ;
- 				ts.tv_sec = 0;
- 				ts.tv_nsec = 0;
-@@ -1923,7 +1919,7 @@ asmlinkage long compat_sys_ppoll(struct pollfd __user *ufds,
- 		/* We assume that ts.tv_sec is always lower than
- 		   the number of seconds that can be expressed in
- 		   an s64. Otherwise the compiler bitches at us */
--		timeout = ROUND_UP(ts.tv_nsec, 1000000000/HZ);
-+		timeout = DIV_ROUND_UP(ts.tv_nsec, 1000000000/HZ);
- 		timeout += ts.tv_sec * HZ;
- 	}
- 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index f39f5b3..9e1cead 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -4,6 +4,7 @@
-  *  Copyright (C) 1995  Linus Torvalds
-  */
- 
-+#include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/time.h>
- #include <linux/mm.h>
-@@ -52,7 +53,6 @@ EXPORT_SYMBOL(vfs_readdir);
-  * case (the low-level handlers don't need to care about this).
-  */
- #define NAME_OFFSET(de) ((int) ((de)->d_name - (char __user *) (de)))
--#define ROUND_UP(x) (((x)+sizeof(long)-1) & ~(sizeof(long)-1))
- 
- #ifdef __ARCH_WANT_OLD_READDIR
- 
-@@ -147,7 +147,7 @@ static int filldir(void * __buf, const char * name, int namlen, loff_t offset,
- 	struct linux_dirent __user * dirent;
- 	struct getdents_callback * buf = (struct getdents_callback *) __buf;
- 	unsigned long d_ino;
--	int reclen = ROUND_UP(NAME_OFFSET(dirent) + namlen + 2);
-+	int reclen = ALIGN(NAME_OFFSET(dirent) + namlen + 2, sizeof(long));
- 
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
-@@ -220,8 +220,6 @@ out:
- 	return error;
- }
- 
--#define ROUND_UP64(x) (((x)+sizeof(u64)-1) & ~(sizeof(u64)-1))
--
- struct getdents_callback64 {
- 	struct linux_dirent64 __user * current_dir;
- 	struct linux_dirent64 __user * previous;
-@@ -234,7 +232,7 @@ static int filldir64(void * __buf, const char * name, int namlen, loff_t offset,
- {
- 	struct linux_dirent64 __user *dirent;
- 	struct getdents_callback64 * buf = (struct getdents_callback64 *) __buf;
--	int reclen = ROUND_UP64(NAME_OFFSET(dirent) + namlen + 1);
-+	int reclen = ALIGN(NAME_OFFSET(dirent) + namlen + 1, sizeof(u64));
- 
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
-diff --git a/fs/select.c b/fs/select.c
-index fe0893a..23e326a 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -14,6 +14,7 @@
-  *     of fds to overcome nfds < 16390 descriptors limit (Tigran Aivazian).
-  */
- 
-+#include <linux/kernel.h>
- #include <linux/syscalls.h>
- #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/fs.h>
  #include <linux/slab.h>
-@@ -26,7 +27,6 @@
+@@ -22,8 +23,6 @@
+ /* #define SMB_SLAB_DEBUG	(SLAB_RED_ZONE | SLAB_POISON) */
+ #define SMB_SLAB_DEBUG	0
  
- #include <asm/uaccess.h>
+-#define ROUND_UP(x) (((x)+3) & ~3)
+-
+ /* cache for request structures */
+ static struct kmem_cache *req_cachep;
  
--#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
- #define DEFAULT_POLLMASK (POLLIN | POLLOUT | POLLRDNORM | POLLWRNORM)
+@@ -200,8 +199,8 @@ static int smb_setup_trans2request(struct smb_request *req)
  
- struct poll_table_page {
-@@ -399,7 +399,7 @@ asmlinkage long sys_select(int n, fd_set __user *inp, fd_set __user *outp,
- 		if ((u64)tv.tv_sec >= (u64)MAX_INT64_SECONDS)
- 			timeout = -1;	/* infinite */
- 		else {
--			timeout = ROUND_UP(tv.tv_usec, USEC_PER_SEC/HZ);
-+			timeout = DIV_ROUND_UP(tv.tv_usec, USEC_PER_SEC/HZ);
- 			timeout += tv.tv_sec * HZ;
- 		}
- 	}
-@@ -454,7 +454,7 @@ asmlinkage long sys_pselect7(int n, fd_set __user *inp, fd_set __user *outp,
- 		if ((u64)ts.tv_sec >= (u64)MAX_INT64_SECONDS)
- 			timeout = -1;	/* infinite */
- 		else {
--			timeout = ROUND_UP(ts.tv_nsec, NSEC_PER_SEC/HZ);
-+			timeout = DIV_ROUND_UP(ts.tv_nsec, NSEC_PER_SEC/HZ);
- 			timeout += ts.tv_sec * HZ;
- 		}
- 	}
-@@ -776,7 +776,7 @@ asmlinkage long sys_ppoll(struct pollfd __user *ufds, unsigned int nfds,
- 		if ((u64)ts.tv_sec >= (u64)MAX_INT64_SECONDS)
- 			timeout = -1;	/* infinite */
- 		else {
--			timeout = ROUND_UP(ts.tv_nsec, NSEC_PER_SEC/HZ);
-+			timeout = DIV_ROUND_UP(ts.tv_nsec, NSEC_PER_SEC/HZ);
- 			timeout += ts.tv_sec * HZ;
- 		}
- 	}
+ 	const int smb_parameters = 15;
+ 	const int header = SMB_HEADER_LEN + 2 * smb_parameters + 2;
+-	const int oparam = ROUND_UP(header + 3);
+-	const int odata  = ROUND_UP(oparam + req->rq_lparm);
++	const int oparam = ALIGN(header + 3, sizeof(u32));
++	const int odata  = ALIGN(oparam + req->rq_lparm, sizeof(u32));
+ 	const int bcc = (req->rq_data ? odata + req->rq_ldata :
+ 					oparam + req->rq_lparm) - header;
+ 
+
 -- 
 Milind Arun Choudhary
 _______________________________________________
