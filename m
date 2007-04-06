@@ -1,55 +1,39 @@
-From: "Issa Gasson" <heartbeatfornicates@cypresscom.net>
-Date: Wed, 11 Apr 2007 00:30:28 +0000
-Subject: Re: [KJ] =?iso-8859-1?q?=28no_subject=29?=
-Message-Id: <01c77c56$acc93e50$6c822ecf@heartbeatfornicates>
+From: Jestin Stoffel <jstnstffl@gmail.com>
+Date: Fri, 06 Apr 2007 02:46:03 +0000
+Subject: [KJ] [PATCH]set_current_state cleanup in
+Message-Id: <20070406024603.GB8199@crackpot>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200606050208.k5528h2f021396@smtp.osdl.org>
-In-Reply-To: <200606050208.k5528h2f021396@smtp.osdl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Have you seen how these sub-one-cent companies take off on 
-Good News?  For the past two months, every one we have 
-brought you has shown Amazing Appreciation. 
+From:  Jestin Stoffel <jstnstffl@gmail.com>
 
-At such a low price even the smallest Gain means a 
-Significant Percentage Return.
+Replaced a couple current->state= with set_current_state
 
-We called (P)(P)(T)(L) as one to watch on Friday because of a 
-Highly Anticipated Report from the Field.  It moved up 13% 
-on Friday and the news isn't even out yet.  Just wait till 
-word hits the street!
-
-On second thought, Don't Wait!
-
-Company (P)remium (P)e(T)ro(L)eum (P)(P)(T)(L)
-
-Current  $0.0085 (+13%)
-Target    $0.0450 (a FIVE bagger!)
-
-At this time (P)(P)(T)(L)  has a number of Surveys and Drilling 
-projects in progress.  We have heard that a Major Discovery 
-has been made, and recommend our readers capitalize on this 
-Opportunity right away!
-
-HEADLINES
----------------------
-Records: Smith drugs all prescribed by 1 doctor
-All Smith scrips by one doctor
-Collins: Why this scientist believes in God 
-Congress bypassed to appoint Swift Boat donor
-Ahmadinejad: Pardon for UK sailors
-Army: New friendly fire probe
-CNN Wire: Latest updates on world's top stories 
-Bush appoints ambassador
-
----------------------
-
-
-
-
+Signed-off-by:  Jestin Stoffel <jstnstffl@gmail.com>
+---
+--- linux-2.6.21-rc5/drivers/serial/68360serial.c.orig	2007-04-05 21:34:12.000000000 -0500
++++ linux-2.6.21-rc5/drivers/serial/68360serial.c	2007-04-05 21:35:17.000000000 -0500
+@@ -1750,7 +1750,7 @@ static void rs_360_wait_until_sent(struc
+ 		else
+ 			bdp--;
+ 	} while (bdp->status & BD_SC_READY);
+-	current->state = TASK_RUNNING;
++	set_current_state(TASK_RUNNING);
+ #ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
+ 	printk("lsr = %d (jiff=%lu)...done\n", lsr, jiffies);
+ #endif
+@@ -1880,7 +1880,7 @@ static int block_til_ready(struct tty_st
+ #endif
+ 		schedule();
+ 	}
+-	current->state = TASK_RUNNING;
++	set_current_state(TASK_RUNNING);
+ 	remove_wait_queue(&info->open_wait, &wait);
+ 	if (!tty_hung_up_p(filp))
+ 		state->count++;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
