@@ -1,43 +1,41 @@
-From: "Jasond Bernardo" <delicatessentvu@jap-inc.com>
-Date: Tue, 17 Apr 2007 00:22:44 +0000
-Subject: Re: [KJ] so twofold
-Message-Id: <054401c78108$3bdc36e0$3162f9f0@rescortj>
+From: Borislav Petkov <petkov@math.uni-muenster.de>
+Date: Fri, 06 Apr 2007 07:44:18 +0000
+Subject: [KJ] [PATCH 3/5] Fix warnings when building 'xmldocs' target:
+Message-Id: <20070406074418.GA4857@gollum.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-This one is shoe in to Double by end of week
-Huge Volume spike, many people are already in the know
+Signed-off-by: Borislav Petkov <bbpetkov@yahoo.de>
 
-Bull is Calling in the next soda GIANT
-Fire Mountain Beverage Company
-SYM-F B V G
-Extremely b ullish at 2 Cents
-Short or long, this one cant go wrong, look at HANS and FIZ
+--- kernel.orig/20-rc5/drivers/message/fusion/mptspi.c	2007-04-05 09:47:36.=
+000000000 +0200
++++ kernel/20-rc5/drivers/message/fusion/mptspi.c	2007-04-05 09:48:06.00000=
+0000 +0200
+@@ -101,7 +101,7 @@
+  *	and NVRAM settings
+  *
+  *	@hd: Pointer to a SCSI Host Structure
+- *	@vtarget: per target private data
++ *	@target: per target private data
+  *	@sdev: SCSI device
+  *
+  **/
+@@ -234,7 +234,7 @@
+ /**
+  * 	mptspi_writeIOCPage4  - write IOC Page 4
+  *	@hd: Pointer to a SCSI Host Structure
+- *	@channel:
++ *	@channel: volume channel
+  *	@id: write IOC Page4 for this ID & Bus
+  *
+  *	Return: -EAGAIN if unable to obtain a Message Frame
 
-Remember Snapple, this will be bigger
-
-Get in Tuesday don't Miss it again
-People are already loading up, you should too!!
-
-
-They trailed 37-25 after one quarter and it only got worse from there in what  have the regroup a little bit.''   Denver has struggled all season to get any   nine years on Mike Krzyzewski's staff at Duke, where he was a four-year   according to the contract.  Michigan hired Amaker on hired March 29, 2001, 
-
------ Original Message ----- 
-From: "Jasond Bernardo" <delicatessentvu@jap-inc.com>
-To: <kernel-janitors@lists.osdl.org>
-Sent: Thursday, March 22, 2007 8:27 PM
-Subject: so twofold
-
-
-> Bull is Calling in the next soda GIANT
-> Fire Mountain Beverage Company
-> SYM-F B V G
-> Extremely b ullish at 2 Cents
-> Short or long, this one cant go wrong, look at HANS and FIZ
-
+--=20
+Regards/Gru=DF,
+    Boris.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
