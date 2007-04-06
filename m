@@ -1,8 +1,10 @@
 From: Borislav Petkov <petkov@math.uni-muenster.de>
-Date: Fri, 06 Apr 2007 07:41:58 +0000
+Date: Fri, 06 Apr 2007 07:43:10 +0000
 Subject: [KJ] [PATCH 0/5] Fix warnings when building 'xmldocs' target
-Message-Id: <20070406074158.GA4687@gollum.tnic>
+Message-Id: <20070406074310.GA4805@gollum.tnic>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070406074158.GA4687@gollum.tnic>
+In-Reply-To: <20070406074158.GA4687@gollum.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
