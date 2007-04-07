@@ -1,26 +1,21 @@
-From: Borislav Petkov <petkov@math.uni-muenster.de>
-Date: Fri, 06 Apr 2007 07:43:10 +0000
-Subject: [KJ] [PATCH 0/5] Fix warnings when building 'xmldocs' target
-Message-Id: <20070406074310.GA4805@gollum.tnic>
+From: "Adrienne Lam" <pvbethera@verizon.net>
+Date: Sat, 07 Apr 2007 22:02:21 +0000
+Subject: [KJ] his many melvindale
+Message-Id: <001701c77925$be3f7890$0604cd2c@home1a0o46ck06>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070406074158.GA4687@gollum.tnic>
-In-Reply-To: <20070406074158.GA4687@gollum.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-The following patchset fixes the warnings when building 'xmldocs' with
-kernel-doc. Sorry if you get this twice.
 
-PS. Please CC me since I'm not subscribed. By the way, I've been trying to
-subscribe to the kj list for several times but haven't received a confirmat=
-ion
-email yet.
+BULLISH REPORT..
 
---=20
-Regards/Gru=DF,
-    Boris.
+Search for: CDYV - Current price: $0.089, 5 Day Target price: $0.425..
+
+ADD THIS GEM TO YOUR RADAR AND WATCH IT!!
+
+See the news, kernel-janitors, call your broker..
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
