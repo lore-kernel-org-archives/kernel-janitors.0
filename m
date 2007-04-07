@@ -1,9 +1,9 @@
-From: Vicky <Fanny@yrnet.com>
-Date: Sat, 07 Apr 2007 19:36:01 +0000
+From: Vicky <Tia@nisr.com>
+Date: Sat, 07 Apr 2007 19:45:18 +0000
 Subject: [KJ] Sexy Lady sucht was interessantes in Deutschland!
-Message-Id: <1DAD20D3.2295480@yrnet.com>
+Message-Id: <FB4FC57C.2966937@nisr.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1034940204=="
+Content-Type: multipart/mixed; boundary="===============0293873285=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <AAF49AC0.6244790@chronoexpres.com>
 In-Reply-To: <AAF49AC0.6244790@chronoexpres.com>
@@ -11,16 +11,16 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
---===============1034940204==
+--===============0293873285==
 Content-Type: multipart/alternative;
-    boundary="----------=_1175974506-10523-650"
+    boundary="----------=_1175974414-10523-646"
 Content-Transfer-Encoding: binary
 MIME-Version: 1.0
 X-Mailer: MIME-tools 5.411 (Entity 5.404)
 
 This is a multi-part message in MIME format...
 
-------------=_1175974506-10523-650
+------------=_1175974414-10523-646
 Content-Type: text/plain; charset="iso-8859-1"; format="flowed"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -126,8 +126,8 @@ bsp;</o:p></span></p>
 
 <p class=3DMsoNormal><span lang=3DDE style=3D'mso-ansi-language:DE'>Sie k&o=
 uml;nnen
-meine Bilder aus meiner Webseite sehen: <a href=3D"http://geocities.com/Ben=
-sonDenna4869">http://sexyvicky_h.com</a><o:p></o:p></span></p>
+meine Bilder aus meiner Webseite sehen: <a href=3D"http://geocities.com/Jor=
+danAiken1142">http://sexyvicky_h.com</a><o:p></o:p></span></p>
 
 <p class=3DMsoNormal><span lang=3DDE style=3D'mso-ansi-language:DE'><o:p>&n=
 bsp;</o:p></span></p>
@@ -146,7 +146,7 @@ cky <o:p></o:p></span></p>
 
 </body>
 
-------------=_1175974506-10523-650
+------------=_1175974414-10523-646
 Content-Type: text/html; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
@@ -261,8 +261,8 @@ DE"><o:p>&nbsp;</o:p></span></p>
 
 <p class=3DMsoNormal><span lang=3D"DE" DEFANGED_style=3D"mso-ansi-language:=
 DE">Sie k&ouml;nnen
-meine Bilder aus meiner Webseite sehen: <a href=3D"http://geocities.com/Ben=
-sonDenna4869">http://sexyvicky_h.com</a><o:p></o:p></span></p>
+meine Bilder aus meiner Webseite sehen: <a href=3D"http://geocities.com/Jor=
+danAiken1142">http://sexyvicky_h.com</a><o:p></o:p></span></p>
 
 <p class=3DMsoNormal><span lang=3D"DE" DEFANGED_style=3D"mso-ansi-language:=
 DE"><o:p>&nbsp;</o:p></span></p>
@@ -283,9 +283,9 @@ DE">Kuss Vicky <o:p></o:p></span></p>
 </body>
 </html>
 
-------------=_1175974506-10523-650--
+------------=_1175974414-10523-646--
 
---===============1034940204==
+--===============0293873285==
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -296,4 +296,4 @@ Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
 
---===============1034940204==--
+--===============0293873285==--
