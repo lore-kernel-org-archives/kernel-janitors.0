@@ -1,56 +1,63 @@
-From: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Date: Tue, 10 Apr 2007 18:28:54 +0000
-Subject: [KJ] remove SPIN_LOCK_UNLOCKED
-Message-Id: <20070410181654.GA10525@arun.site>
+From: Jan Engelhardt <jengelh@linux01.gwdg.de>
+Date: Tue, 10 Apr 2007 20:50:28 +0000
+Subject: Re: [KJ] remove SPIN_LOCK_UNLOCKED
+Message-Id: <Pine.LNX.4.61.0704102249290.32056@yvahk01.tjqt.qr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070410181654.GA10525@arun.site>
+In-Reply-To: <20070410181654.GA10525@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@lists.osdl.org
-Cc: kernelnewbies@nl.linux.org, linux-kernel@vger.kernel.org
-
-"use spin_lock_init instead of SPIN_LOCK_UNLOCKED"
+To: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Cc: kernel-janitors@lists.osdl.org, kernelnewbies@nl.linux.org, linux-kernel@vger.kernel.org
 
 
-i'm a bit confused with SPIN_LOCK_UNLOCKED removal
- I just did the below mentioned change
-but then came to know that  spin_lock_init is defined as
+On Apr 10 2007 23:46, Milind Arun Choudhary wrote:
 
-# define spin_lock_init(lock)                                   \
-        do { *(lock) = SPIN_LOCK_UNLOCKED; } while (0)
+>"use spin_lock_init instead of SPIN_LOCK_UNLOCKED"
 
-so what difference does it make..
-eventually replacing SPIN_LOCK_UNLOCKED with itself
+Fact is, we cannot remove SPIN_LOCK_UNLOCKED. It's needed for
+variables outside functions:
 
-or is it just that this one [SPIN_LOCK_UNLOCKED] also needs 
-to be replaced with __SPIN_LOCK_UNLOCKED?
-
-after thought with CONFIG_DEBUG_SPINLOCK does make a diff
+static spinlock_t foobar = SPIN_LOCK_UNLOCKED;
 
 
-let me know if this is fine ..
 
 
- aerdrv.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
+>let me know if this is fine ..
 
-diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
-index db6ad8e..6846fb4 100644
---- a/drivers/pci/pcie/aer/aerdrv.c
-+++ b/drivers/pci/pcie/aer/aerdrv.c
-@@ -157,7 +157,7 @@ static struct aer_rpc* aer_alloc_rpc(struct pcie_device *dev)
- 	 * Initialize Root lock access, e_lock, to Root Error Status Reg,
- 	 * Root Error ID Reg, and Root error producer/consumer index.
- 	 */
--	rpc->e_lock = SPIN_LOCK_UNLOCKED;
-+	spin_lock_init(&rpc->e_lock);
- 
- 	rpc->rpd = dev;
- 	INIT_WORK(&rpc->dpc_handler, aer_isr);
+not for me to comment :)
 
 
+> aerdrv.c |    2 +-
+> 1 files changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
+>index db6ad8e..6846fb4 100644
+>--- a/drivers/pci/pcie/aer/aerdrv.c
+>+++ b/drivers/pci/pcie/aer/aerdrv.c
+>@@ -157,7 +157,7 @@ static struct aer_rpc* aer_alloc_rpc(struct pcie_device *dev)
+> 	 * Initialize Root lock access, e_lock, to Root Error Status Reg,
+> 	 * Root Error ID Reg, and Root error producer/consumer index.
+> 	 */
+>-	rpc->e_lock = SPIN_LOCK_UNLOCKED;
+>+	spin_lock_init(&rpc->e_lock);
+> 
+> 	rpc->rpd = dev;
+> 	INIT_WORK(&rpc->dpc_handler, aer_isr);
+>
+>
+>-- 
+>Milind Arun Choudhary
+>-
+>To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>Please read the FAQ at  http://www.tux.org/lkml/
+>
+
+Jan
 -- 
-Milind Arun Choudhary
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
