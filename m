@@ -1,7 +1,7 @@
-From: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
-Date: Wed, 11 Apr 2007 08:44:35 +0000
+From: "Alexey Dobriyan" <adobriyan@gmail.com>
+Date: Wed, 11 Apr 2007 11:23:07 +0000
 Subject: Re: [KJ] [PATCH] HYSDN cards: use spin_lock_init() for spinlock
-Message-Id: <20070411084435.GK24898@traven>
+Message-Id: <b6fcc0a0704110423l2f5e8ee9raaf9a136e7bf07df@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070411071951.GJ24898@traven>
 In-Reply-To: <20070411071951.GJ24898@traven>
@@ -10,67 +10,20 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-El Wed, Apr 11, 2007 at 01:37:50PM +0530 Milind Arun Choudhary ha dit:
+On 4/11/07, Matthias Kaehlcke <matthias.kaehlcke@gmail.com> wrote:
+> HYSDN cards: use spin_lock_init() for spinlock initialization
 
-> On 4/11/07, Matthias Kaehlcke <matthias.kaehlcke@gmail.com> wrote:
-> >HYSDN cards: use spin_lock_init() for spinlock initialization
-> >
-> >Signed-off-by: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
-> >---
-> >diff --git a/drivers/isdn/hysdn/hysdn_proclog.c 
-> >b/drivers/isdn/hysdn/hysdn_proclog.c
-> >index f7e83a8..168fd56 100644
-> >--- a/drivers/isdn/hysdn/hysdn_proclog.c
-> >+++ b/drivers/isdn/hysdn/hysdn_proclog.c
-> >@@ -299,7 +299,8 @@ hysdn_log_close(struct inode *ino, struct file *filep)
-> >        hysdn_card *card;
-> >        int retval = 0;
-> >        unsigned long flags;
-> >-       spinlock_t hysdn_lock = SPIN_LOCK_UNLOCKED;
-> >+       spinlock_t hysdn_lock;
-> >+       spin_lock_init(&hysdn_lock);
-> 
-> use DEFINE_SPINLOCK() instead,for static/compile time initialization
-> 
-> spin_lock_init() is for runtime
+> --- a/drivers/isdn/hysdn/hysdn_proclog.c
+> +++ b/drivers/isdn/hysdn/hysdn_proclog.c
+> @@ -299,7 +299,8 @@ hysdn_log_close(struct inode *ino, struct file *filep)
+>  	hysdn_card *card;
+>  	int retval = 0;
+>  	unsigned long flags;
+> -	spinlock_t hysdn_lock = SPIN_LOCK_UNLOCKED;
+> +	spinlock_t hysdn_lock;
+> +	spin_lock_init(&hysdn_lock);
 
-thanks for your comment, i have corrected this
-
----
-
-HYSDN cards: use DEFINE_SPINLOCK() for spinlock declaration and
-initialization instead of declaring the spinlock and assigning it to
-SPIN_LOCK_UNLOCKED
-
-Signed-off-by: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
-
----
-diff --git a/drivers/isdn/hysdn/hysdn_proclog.c b/drivers/isdn/hysdn/hysdn_proclog.c
-index f7e83a8..53e8de6 100644
---- a/drivers/isdn/hysdn/hysdn_proclog.c
-+++ b/drivers/isdn/hysdn/hysdn_proclog.c
-@@ -299,7 +299,7 @@ hysdn_log_close(struct inode *ino, struct file *filep)
- 	hysdn_card *card;
- 	int retval = 0;
- 	unsigned long flags;
--	spinlock_t hysdn_lock = SPIN_LOCK_UNLOCKED;
-+	DEFINE_SPINLOCK(hysdn_lock);
- 
- 	lock_kernel();
- 	if ((filep->f_mode & (FMODE_READ | FMODE_WRITE)) = FMODE_WRITE) {
-
--- 
-Matthias Kaehlcke
-Linux Application Developer
-Barcelona
-
-
-  The salvation of mankind lies only in making everything the concern of all
-                         (Alexander Solzhenitsyn)
-                                                                 .''`.
-    using free software / Debian GNU/Linux | http://debian.org  : :'  :
-                                                                `. `'`
-gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
+Wow! Second spinlock on stack I've seen.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
