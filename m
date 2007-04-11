@@ -1,39 +1,66 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Tue, 10 Apr 2007 21:58:26 +0000
-Subject: Re: [KJ] [PATCH] include KERN_* constant in printk() calls in
-Message-Id: <20070410150206.9ba907b1.rdunlap@xenotime.net>
+From: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
+Date: Wed, 11 Apr 2007 06:50:05 +0000
+Subject: [KJ] [PATCH] include KERN_* constant in printk() calls in
+Message-Id: <20070411065005.GI24898@traven>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070409194151.GG4262@traven>
 In-Reply-To: <20070409194151.GG4262@traven>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, 11 Apr 2007 01:07:06 +0400 Alexey Dobriyan wrote:
+include KERN_* constant in printk() calls in arch/i386/mach-default/setup.c
 
-> On Mon, Apr 09, 2007 at 04:02:09PM -0400, Dave Jones wrote:
-> > On Mon, Apr 09, 2007 at 09:41:51PM +0200, Matthias Kaehlcke wrote:
-> >  > -		printk(" %02x", (unsigned char)data[offset + i]);
-> >  > +		printk(KERN_ERR " %02x", (unsigned char)data[offset + i]);
-> >  >  	}
-> >
-> > This one is wrong.  It's printing a bunch of numbers in a loop, so with your change
-> > it'll print for example...
-> >
-> > KERN_ERR 00 KERN_ERR 01 KERN_ERR 02 KERN_ERR etc etc..
-> >
-> > you only want the KERN_ERR at the beginning of each line.
-> 
-> Am I the only one who wants config option to nop all these KERN_* stuff ?
-> (with only possible exception probably being KERN_DEBUG)
-
-For what purpose?
-I use boot option "ignore_loglevel" to ignore that KERN_* stuff.
-
+Signed-off-by: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
+ 
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+diff --git a/arch/i386/mach-default/setup.c b/arch/i386/mach-default/setup.c
+index c788162..f1891b6 100644
+--- a/arch/i386/mach-default/setup.c
++++ b/arch/i386/mach-default/setup.c
+@@ -115,15 +115,15 @@ void mca_nmi_hook(void)
+ 	 * at the moment.
+ 	 */
+ 
+-	printk("NMI generated from unknown source!\n");
++	printk(KERN_WARNING "NMI generated from unknown source!\n");
+ }
+ #endif
+ 
+ static __init int no_ipi_broadcast(char *str)
+ {
+ 	get_option(&str, &no_broadcast);
+-	printk ("Using %s mode\n", no_broadcast ? "No IPI Broadcast" :
+-											"IPI Broadcast");
++	printk(KERN_INFO "Using %s mode\n",
++	       no_broadcast ? "No IPI Broadcast" : "IPI Broadcast");
+ 	return 1;
+ }
+ 
+@@ -131,8 +131,8 @@ __setup("no_ipi_broadcast", no_ipi_broadcast);
+ 
+ static int __init print_ipi_mode(void)
+ {
+-	printk ("Using IPI %s mode\n", no_broadcast ? "No-Shortcut" :
+-											"Shortcut");
++	printk(KERN_INFO "Using IPI %s mode\n",
++	       no_broadcast ? "No-Shortcut" : "Shortcut");
+ 	return 0;
+ }
+ 
+
+-- 
+Matthias Kaehlcke
+Linux Application Developer
+Barcelona
+
+              Comunicar bichos a <bug-coreutils@gnu.org>
+                     (LANG=es_ES uname --help)
+                                                                 .''`.
+    using free software / Debian GNU/Linux | http://debian.org  : :'  :
+                                                                `. `'`
+gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
