@@ -1,26 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 17 Apr 2007 19:42:41 +0000
-Subject: Re: [KJ] [PATCH]vfc_dev.c-kzalloc
-Message-Id: <20070417.124241.123165234.davem@davemloft.net>
+From: "Issa Gasson" <heartbeatfornicates@cypresscom.net>
+Date: Wed, 11 Apr 2007 00:30:28 +0000
+Subject: Re: [KJ] =?iso-8859-1?q?=28no_subject=29?=
+Message-Id: <01c77c56$acc93e50$6c822ecf@heartbeatfornicates>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1176703528.13066.9.camel@wriver-t81fb058.linuxcoe>
-In-Reply-To: <1176703528.13066.9.camel@wriver-t81fb058.linuxcoe>
+References: <200606050208.k5528h2f021396@smtp.osdl.org>
+In-Reply-To: <200606050208.k5528h2f021396@smtp.osdl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: <vignesh.babu@wipro.com>
-Date: Tue, 17 Apr 2007 09:45:11 +0530
+Have you seen how these sub-one-cent companies take off on 
+Good News?  For the past two months, every one we have 
+brought you has shown Amazing Appreciation. 
 
-> 
-> Resending...thanks to Antonino A. Daplas who pointed me to the correct maintainers.
-> 
-> Replacing kmalloc/memset combination with kzalloc.
-> 
-> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+At such a low price even the smallest Gain means a 
+Significant Percentage Return.
 
-Patch applied, thank you.
+We called (P)(P)(T)(L) as one to watch on Friday because of a 
+Highly Anticipated Report from the Field.  It moved up 13% 
+on Friday and the news isn't even out yet.  Just wait till 
+word hits the street!
+
+On second thought, Don't Wait!
+
+Company (P)remium (P)e(T)ro(L)eum (P)(P)(T)(L)
+
+Current  $0.0085 (+13%)
+Target    $0.0450 (a FIVE bagger!)
+
+At this time (P)(P)(T)(L)  has a number of Surveys and Drilling 
+projects in progress.  We have heard that a Major Discovery 
+has been made, and recommend our readers capitalize on this 
+Opportunity right away!
+
+HEADLINES
+---------------------
+Records: Smith drugs all prescribed by 1 doctor
+All Smith scrips by one doctor
+Collins: Why this scientist believes in God 
+Congress bypassed to appoint Swift Boat donor
+Ahmadinejad: Pardon for UK sailors
+Army: New friendly fire probe
+CNN Wire: Latest updates on world's top stories 
+Bush appoints ambassador
+
+---------------------
+
+
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
