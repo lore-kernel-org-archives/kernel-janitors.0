@@ -1,44 +1,23 @@
-From: Charles =?iso-8859-1?Q?Cl=E9ment?= <caratorn@gmail.com>
-Date: Tue, 03 Apr 2007 10:02:21 +0000
-Subject: Re: [KJ] [PATCH] mm: spelling error in a comment
-Message-Id: <20070403100221.GA17372@tux>
+From: Andi Kleen <ak@suse.de>
+Date: Thu, 12 Apr 2007 20:37:20 +0000
+Subject: Re: [KJ] [PATCH 03/03]ROUND_UP|DOWN macro cleanup in arch/ia64,
+Message-Id: <200704122237.20779.ak@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070402210636.GA14216@tux> <20070402152719.e7b622ba.rdunlap@xenotime.net> <46118A90.4050708@student.ltu.se>
-In-Reply-To: <46118A90.4050708@student.ltu.se>
+References: <20070412203205.GC9353@arun.site>
+In-Reply-To: <20070412203205.GC9353@arun.site>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Charles =?iso-8859-1?Q?Cl=E9ment?= <caratorn@gmail.com>, linux-mm@kvack.org, kernel-janitors@lists.linux-foundation.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Cc: kernel-janitors@lists.osdl.org, linux-ia64@vger.kernel.org, discuss@x86-64.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, tony.luck@intel.com
 
-On Tue, Apr 03, 2007 at 12:58:24AM +0200, Richard Knutsson wrote:
-> Randy Dunlap wrote:
-> >On Mon, 2 Apr 2007 23:06:36 +0200 Charles Cl=E9ment wrote:
-> >>Fix spelling in a comment in mm/slab.c.
-> >>
-> >>Signed-off-by: Charles Cl=E9ment <caratorn@gmail.com>
-> >>   =20
-> >"...I prefer not to do spello and grammaro
-> >fixes, unless they're in something user-visible: a printk or documentati=
-on.
-> >Simply because there would be no end to it."
+On Thursday 12 April 2007 22:32:05 Milind Arun Choudhary wrote:
+> ROUND_UP macro cleanup in arch/x86_64
+> ALIGN, ALIGN_DOWN  where ever appropriate.
 
-Ok, I didn't know that, thank you.
+Sorry, but I prefer round_up/round_down in x86-64 code.
 
-> Also, regardless if it is a comment or not, I think it may be a good=20
-> idea to put such uncommon mistakes in KJ's wiki under "Spelling=20
-> mistakes" and let it all be taken care of once in a while.
-> (http://fsdev.net/wiki/index.php?title=3DSpelling_mistakes)
->=20
-> Richard Knutsson
-
-Yes, I agree with that but it then should be accessible, as with a
-patchset. Or maybe the solution to this is simply to send them to the trivi=
-al
-patch adress.
-
---=20
-Charles Cl=E9ment.
+-Andi
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
