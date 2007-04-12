@@ -1,26 +1,45 @@
-From: Borislav Petkov <bbpetkov@yahoo.de>
-Date: Mon, 23 Apr 2007 07:36:09 +0000
-Subject: [KJ] auditing register_netdev()
-Message-Id: <20070423073609.GA5698@gollum.tnic>
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Date: Thu, 12 Apr 2007 20:43:13 +0000
+Subject: [KJ] [PATCH 01/03]ROUND_UP|DOWN macro cleanup in arch/ia64,x86_64
+Message-Id: <20070412203113.GA9353@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@lists.osdl.org, linux-ia64@vger.kernel.org, discuss@x86-64.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, tony.luck@intel.com, ak@suse.de
 
-Hi there,
+Add ALIGN_DOWN and round_down macros to kernel.h
 
-   i've been auditing the return codes of register_netdev() as put in
-   http://kernelnewbies.org/KernelJanitors/Todo/ReturnCodes and found one c=
-ase
-   with the ibm tokenring driver where the return codes weren't acted upon.=
- I
-   also sent a patch to the netdev mailing list fixing that so we can strike
-   register_netdev() off the above list of TODO's.
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
 
---=20
-Regards/Gru=DF,
-    Boris.
+---
+ kernel.h |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 9ddf25c..f8648b2 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -34,11 +34,13 @@ extern const char linux_proc_banner[];
+ 
+ #define ALIGN(x,a)		__ALIGN_MASK(x,(typeof(x))(a)-1)
+ #define __ALIGN_MASK(x,mask)	(((x)+(mask))&~(mask))
++#define ALIGN_DOWN(x,a)         ((x)&~((typeof(x))(a)-1))
++#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
++#define roundup(x, y) ((((x) + ((y) - 1)) / (y)) * (y))
++#define round_down(x, y) (((x) / (y)) * (y))
+ 
+ #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+ #define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
+-#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+-#define roundup(x, y) ((((x) + ((y) - 1)) / (y)) * (y))
+ 
+ #define	KERN_EMERG	"<0>"	/* system is unusable			*/
+ #define	KERN_ALERT	"<1>"	/* action must be taken immediately	*/
+
+-- 
+Milind Arun Choudhary
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
