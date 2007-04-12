@@ -1,39 +1,33 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 07 Apr 2007 13:20:17 +0000
-Subject: Re: [KJ] how about a "NO-OP" macro or something?
-Message-Id: <Pine.LNX.4.64.0704070919560.11335@CPE00045a9c397f-CM001225dbafb6>
+Date: Thu, 12 Apr 2007 18:49:33 +0000
+Subject: [KJ] how dead is legacy power management?
+Message-Id: <Pine.LNX.4.64.0704121443290.30803@CPE00045a9c397f-CM001225dbafb6>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0704060702440.26640@CPE00045a9c397f-CM001225dbafb6>
-In-Reply-To: <Pine.LNX.4.64.0704060702440.26640@CPE00045a9c397f-CM001225dbafb6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 7 Apr 2007, Darren Jenkins wrote:
 
-> On 4/7/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> >
-> > i wasn't suggesting getting rid of the "do { } while (0)" construct.
-> > i was suggesting creating a macro to represent it, like:
-> >
-> >   #define NO_OP do { } while (0)
-> >
-> > and using "NO_OP" instead of spelling out the "do" construct in full.
-> > it's not only shorter, but it's clearer and, down the road, who knows
-> > if someone will want to redefine NO_OP to be something better?
-> >
-> > as i said, it's probably too late to do anything about the *current*
-> > usage, but perhaps future code can start taking advantage of this.
->
-> I would suggest that the real solution would be to use a MISRA type
-> coding standard. (which isn't going to happen)  So implementing
-> another 'non optimal' solution would not be a good use of developer
-> time.
->
-> Darren J.
+  while poking around looking at power management, i noticed that
+"Legacy Power Management API" is listed as "(DEPRECATED)" while, in
+addition, its help screen says that it has been "obsoleted by the
+driver model".  that kind of suggests that it's a candidate for
+removal, no?
 
-yes, i'll agree with that.
+  running
+
+  $ grep -rw CONFIG_PM_LEGACY *
+
+shows the only meaningful references here:
+
+drivers/acpi/bus.c:#ifdef CONFIG_PM_LEGACY
+drivers/serial/68328serial.c:#ifdef CONFIG_PM_LEGACY
+drivers/serial/68328serial.c:#endif /* CONFIG_PM_LEGACY */
+drivers/serial/68328serial.c:#ifdef CONFIG_PM_LEGACY
+
+  if, outside of actual power management, there's just one driver that
+needs it, maybe it's that time.
 
 rday
 -- 
