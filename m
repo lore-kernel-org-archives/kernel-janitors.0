@@ -1,58 +1,40 @@
-From: Jean Delvare <khali@linux-fr.org>
-Date: Thu, 19 Apr 2007 07:33:27 +0000
-Subject: Re: [KJ][PATCH] i2c: SPIN_LOCK_UNLOCKED cleanup
-Message-Id: <20070419093327.7112d515@hyperion.delvare>
+From: "John Anthony Kazos Jr." <jakj@j-a-k-j.com>
+Date: Fri, 13 Apr 2007 02:15:33 +0000
+Subject: [KJ] Confusion about build cycle and vmlinux/bzImage (need
+Message-Id: <alpine.DEB.0.83.0704122214440.4489@sigma.j-a-k-j.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070419040557.GA14283@arun.site>
-In-Reply-To: <20070419040557.GA14283@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@lists.osdl.org>, i2c <i2c@lm-sensors.org>, Andrw Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 19 Apr 2007 09:35:58 +0530, Milind Arun Choudhary wrote:
-> SPIN_LOCK_UNLOCKED cleanup,use __SPIN_LOCK_UNLOCKED instead 
-> 
-> Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
-> 
-> ---
->  i2c-pxa.c     |    2 +-
->  i2c-s3c2410.c |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
-> index 14e83d0..d5d44ed 100644
-> --- a/drivers/i2c/busses/i2c-pxa.c
-> +++ b/drivers/i2c/busses/i2c-pxa.c
-> @@ -825,7 +825,7 @@ static const struct i2c_algorithm i2c_pxa_algorithm = {
->  };
->  
->  static struct pxa_i2c i2c_pxa = {
-> -	.lock	= SPIN_LOCK_UNLOCKED,
-> +	.lock	= __SPIN_LOCK_UNLOCKED(i2c_pxa.lock),
->  	.adap	= {
->  		.owner		= THIS_MODULE,
->  		.algo		= &i2c_pxa_algorithm,
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 556f244..3eb5958 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -570,7 +570,7 @@ static const struct i2c_algorithm s3c24xx_i2c_algorithm = {
->  };
->  
->  static struct s3c24xx_i2c s3c24xx_i2c = {
-> -	.lock	= SPIN_LOCK_UNLOCKED,
-> +	.lock	= __SPIN_LOCK_UNLOCKED(s3c24xx_i2c.lock),
->  	.wait	= __WAIT_QUEUE_HEAD_INITIALIZER(s3c24xx_i2c.wait),
->  	.adap	= {
->  		.name			= "s3c2410-i2c",
-> 
+(Meant to CC this list, sorry. Same thread as on kernelnewbies.)
 
-Applied, thanks.
+I did a few simple independent tests between 'char *foo = "foo"' and 'char 
+foo[] = "foo"' and they confirmed what the KJ docs say, that the latter 
+results in a smaller object. So I did a test with <fs/partitions/check.c>.
 
--- 
-Jean Delvare
+static char *make_block_name(struct gendisk *disk)
+{
+-	static char *block_str = "block:";
++	static char block_str[] = "block:";
+
+<fs/partitions/check.o> goes from 8149 bytes to 8137 bytes. 'readelf' 
+shows that "block:" got moved from .rodata.str1.1 to .data and a 
+relocation token got removed that pointed into .rodata.str1.1, saving 12 
+bytes.
+
+<fs/built-in.o> goes from 1337360 to 1337320, saving 40 bytes.
+
+<vmlinux>, however, stays exactly the same, at 4520468 bytes. And 
+<arch/i386/boot/bzImage> actually increases from 1702520 to 1072552, 
+losing 32 bytes.
+
+I could assume that the latter could be due to happenstance of data 
+ordering before compression, but I'm sure I'm looking at the wrong 
+pre-compression file. What file should I be looking at if I want the ELF 
+image of the kernel fully-built but before the bootsector and so forth get 
+added to it?
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
