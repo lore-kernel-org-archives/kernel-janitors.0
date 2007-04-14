@@ -1,61 +1,41 @@
-From: "Math Daudelin" <Math.Daudelin@ENGINEERINGDIAGNOSTICS.COM>
-Date: Mon, 30 Apr 2007 17:53:18 +0000
-Subject: It is a very fast and simple algorithm that is parameterized by the
-Message-Id: <000d01c78b50$6f5e8b20$b205e752@seb>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1564834779=="
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Date: Sat, 14 Apr 2007 09:02:11 +0000
+Subject: [KJ] [PATCH 04/04]use set_current_state in fs
+Message-Id: <20070414085011.GE14084@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---===============1564834779==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0005_01C78B61.32E75B20"
-
-------=_NextPart_000_0005_01C78B61.32E75B20
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-Retrieves a range of palette entries for the video.
-------=_NextPart_000_0005_01C78B61.32E75B20
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.3059" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT Arial size=3D2>Retrieves a range of palette entries for the=20
-video.</FONT></DIV></BODY></HTML>
-
-------=_NextPart_000_0005_01C78B61.32E75B20--
-
-
-
---===============1564834779==
-Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
--------------------------------------------------------------------------
-This SF.net email is sponsored by DB2 Express
-Download DB2 Express C - the FREE version of DB2 express and take
-control of your XML. No limits. Just data. Click to get it now.
-http://sourceforge.net/powerbar/db2/
---===============1564834779==
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: kernel-janitors@lists.osdl.org, reiserfs-list@namesys.com
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, reiserfs-dev@namesys.com
 
+use set_current_state(TASK_*) instead of current->state = TASK_*, in fs/reiserfs
+
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
+
+---
+
+ journal.c |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
+
+
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 7280a23..864b15a 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2918,7 +2918,7 @@ static void queue_log_writer(struct super_block *s)
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	if (test_bit(J_WRITERS_QUEUED, &journal->j_state))
+ 		schedule();
+-	current->state = TASK_RUNNING;
++	set_current_state(TASK_RUNNING);
+ 	remove_wait_queue(&journal->j_join_wait, &wait);
+ }
+ 
+
+-- 
+Milind Arun Choudhary
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-
---===============1564834779==--
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
