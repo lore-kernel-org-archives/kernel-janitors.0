@@ -1,130 +1,36 @@
-From: <vignesh.babu@wipro.com>
-Date: Mon, 16 Apr 2007 06:17:44 +0000
-Subject: [KJ] [PATCH]sch_atm.c-kzalloc
-Message-Id: <1176703544.13066.13.camel@wriver-t81fb058.linuxcoe>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0247547503=="
+From: "Alexey Dobriyan" <adobriyan@gmail.com>
+Date: Mon, 16 Apr 2007 09:07:30 +0000
+Subject: Re: [KJ] [PATCH]sch_atm.c-kzalloc
+Message-Id: <b6fcc0a0704160207t74d39d1cl1bae5e8c0018071a@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1176703544.13066.13.camel@wriver-t81fb058.linuxcoe>
+In-Reply-To: <1176703544.13066.13.camel@wriver-t81fb058.linuxcoe>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On 4/16/07, vignesh.babu@wipro.com <vignesh.babu@wipro.com> wrote:
+> Replacing kmalloc/memset combination with kzalloc.
 
---===============0247547503==
-Content-Type: multipart/signed; micalg=sha1;
-	protocol="application/x-pkcs7-signature";
-	boundary="=-FNuCCObM/Eca/76iwshN"
-Content-class: urn:content-classes:message
+> --- a/net/sched/sch_atm.c
+> +++ b/net/sched/sch_atm.c
+> @@ -308,13 +308,12 @@ static int atm_tc_change(struct Qdisc *sch, u32
+> classid, u32 parent,
+>  		}
+>  	}
+>  	DPRINTK("atm_tc_change: new id %x\n",classid);
+> -	flow = kmalloc(sizeof(struct atm_flow_data)+hdr_len,GFP_KERNEL);
+> +	flow = kzalloc(sizeof(struct atm_flow_data)+hdr_len,GFP_KERNEL);
+>  	DPRINTK("atm_tc_change: flow %p\n",flow);
+>  	if (!flow) {
+>  		error = -ENOBUFS;
+>  		goto err_out;
+>  	}
+> -	memset(flow,0,sizeof(*flow));
 
-
---=-FNuCCObM/Eca/76iwshN
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-
-Replacing kmalloc/memset combination with kzalloc.
-
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/net/sched/sch_atm.c b/net/sched/sch_atm.c
-index afb3bbd..4ef23d2 100644
---- a/net/sched/sch_atm.c
-+++ b/net/sched/sch_atm.c
-@@ -308,13 +308,12 @@ static int atm_tc_change(struct Qdisc *sch, u32 class=
-id, u32 parent,
- 		}
- 	}
- 	DPRINTK("atm_tc_change: new id %x\n",classid);
--	flow =3D kmalloc(sizeof(struct atm_flow_data)+hdr_len,GFP_KERNEL);
-+	flow =3D kzalloc(sizeof(struct atm_flow_data)+hdr_len,GFP_KERNEL);
- 	DPRINTK("atm_tc_change: flow %p\n",flow);
- 	if (!flow) {
- 		error =3D -ENOBUFS;
- 		goto err_out;
- 	}
--	memset(flow,0,sizeof(*flow));
- 	flow->filter_list =3D NULL;
- 	if (!(flow->q =3D qdisc_create_dflt(sch->dev,&pfifo_qdisc_ops,classid)))
- 		flow->q =3D &noop_qdisc;
-
---=20
-Regards, =20
-Vignesh Babu BM =20
-_____________________________________________________________ =20
-"Why is it that every time I'm with you, makes me believe in magic?"
-
---=-FNuCCObM/Eca/76iwshN
-Content-Type: application/x-pkcs7-signature; name=smime.p7s
-Content-Disposition: attachment; filename=smime.p7s
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIJFzCCAuYw
-ggJPoAMCAQICEBRBWlnPDDQELOU4iM67/5AwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UEBhMCWkEx
-JTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQ
-ZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA3MDQxMDA3MTQzNFoXDTA4MDQwOTA3MTQz
-NFowSDEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjElMCMGCSqGSIb3DQEJARYWdmln
-bmVzaC5iYWJ1QHdpcHJvLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM+Ysx4H
-bRE7T/bxBQrshGTeZRhUYFZPc3Ncv9IJ35RooJ4hiAAb/OZd7qDSRnqC3WwQ/MxCW8aDBbJrEpk8
-g1aWcsJjpOlhzWQOYjqHwUcb365gpYcDUDD/KpO8/wPENXclo3BJW3lbnNowIkbDSqrYqi977lez
-6XCn6wy4E6xy1UMJUayQGty2oyouD0U2wugr2Djz4Uyp8xR9q2czvdHs68Mp6c/LxDjt3HfGS5Jy
-TEzdQIaYTD61cRH0kZl5rguidl3Xi64kX2KLk9LKHdSOz+Kjxxv+Xsjq3QwK2o6pUL4WLqYJotRv
-a6d8QcogAxWp8J+mfnmTJ2wmljO1e5kCAwEAAaMzMDEwIQYDVR0RBBowGIEWdmlnbmVzaC5iYWJ1
-QHdpcHJvLmNvbTAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4GBAEhMJWEQCrUU6osxgJr3
-/vC+/z4gu5gmaczTnD7DQFrLFgusctkHlgQ6T91lviVizzkORiKCVW4BHo9UD6huA8C3mZIAVIfo
-ZFZMqa8X54HM9cmzqErgYkNhb6sh4V24suYIj1aLhX4DShzUn/de/shigJB/l128X6+MnlGlOY7k
-MIIC5jCCAk+gAwIBAgIQFEFaWc8MNAQs5TiIzrv/kDANBgkqhkiG9w0BAQUFADBiMQswCQYDVQQG
-EwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhh
-d3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwHhcNMDcwNDEwMDcxNDM0WhcNMDgwNDA5
-MDcxNDM0WjBIMR8wHQYDVQQDExZUaGF3dGUgRnJlZW1haWwgTWVtYmVyMSUwIwYJKoZIhvcNAQkB
-FhZ2aWduZXNoLmJhYnVAd2lwcm8uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-z5izHgdtETtP9vEFCuyEZN5lGFRgVk9zc1y/0gnflGigniGIABv85l3uoNJGeoLdbBD8zEJbxoMF
-smsSmTyDVpZywmOk6WHNZA5iOofBRxvfrmClhwNQMP8qk7z/A8Q1dyWjcElbeVuc2jAiRsNKqtiq
-L3vuV7PpcKfrDLgTrHLVQwlRrJAa3LajKi4PRTbC6CvYOPPhTKnzFH2rZzO90ezrwynpz8vEOO3c
-d8ZLknJMTN1AhphMPrVxEfSRmXmuC6J2XdeLriRfYouT0sod1I7P4qPHG/5eyOrdDArajqlQvhYu
-pgmi1G9rp3xByiADFanwn6Z+eZMnbCaWM7V7mQIDAQABozMwMTAhBgNVHREEGjAYgRZ2aWduZXNo
-LmJhYnVAd2lwcm8uY29tMAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQEFBQADgYEASEwlYRAKtRTq
-izGAmvf+8L7/PiC7mCZpzNOcPsNAWssWC6xy2QeWBDpP3WW+JWLPOQ5GIoJVbgEej1QPqG4DwLeZ
-kgBUh+hkVkyprxfngcz1ybOoSuBiQ2FvqyHhXbiy5giPVouFfgNKHNSf917+yGKAkH+XXbxfr4ye
-UaU5juQwggM/MIICqKADAgECAgENMA0GCSqGSIb3DQEBBQUAMIHRMQswCQYDVQQGEwJaQTEVMBMG
-A1UECBMMV2VzdGVybiBDYXBlMRIwEAYDVQQHEwlDYXBlIFRvd24xGjAYBgNVBAoTEVRoYXd0ZSBD
-b25zdWx0aW5nMSgwJgYDVQQLEx9DZXJ0aWZpY2F0aW9uIFNlcnZpY2VzIERpdmlzaW9uMSQwIgYD
-VQQDExtUaGF3dGUgUGVyc29uYWwgRnJlZW1haWwgQ0ExKzApBgkqhkiG9w0BCQEWHHBlcnNvbmFs
-LWZyZWVtYWlsQHRoYXd0ZS5jb20wHhcNMDMwNzE3MDAwMDAwWhcNMTMwNzE2MjM1OTU5WjBiMQsw
-CQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
-AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwgZ8wDQYJKoZIhvcNAQEBBQAD
-gY0AMIGJAoGBAMSmPFVzVftOucqZWh5owHUEcJ3f6f+jHuy9zfVb8hp2vX8MOmHyv1HOAdTlUAow
-1wJjWiyJFXCO3cnwK4Vaqj9xVsuvPAsH5/EfkTYkKhPPK9Xzgnc9A74r/rsYPge/QIACZNenpruf
-ZdHFKlSFD0gEf6e20TxhBEAeZBlyYLf7AgMBAAGjgZQwgZEwEgYDVR0TAQH/BAgwBgEB/wIBADBD
-BgNVHR8EPDA6MDigNqA0hjJodHRwOi8vY3JsLnRoYXd0ZS5jb20vVGhhd3RlUGVyc29uYWxGcmVl
-bWFpbENBLmNybDALBgNVHQ8EBAMCAQYwKQYDVR0RBCIwIKQeMBwxGjAYBgNVBAMTEVByaXZhdGVM
-YWJlbDItMTM4MA0GCSqGSIb3DQEBBQUAA4GBAEiM0VCD6gsuzA2jZqxnD3+vrL7CF6FDlpSdf0wh
-uPg2H6otnzYvwPQcUCCTcDz9reFhYsPZOhl+hLGZGwDFGguCdJ4lUJRix9sncVcljd2pnDmOjCBP
-ZV+V2vf3h9bGCE6u9uo05RAaWzVNd+NWIXiC3CEZNd4ksdMdRv9dX2VPMYIDEDCCAwwCAQEwdjBi
-MQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoG
-A1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECEBRBWlnPDDQELOU4iM67
-/5AwCQYFKw4DAhoFAKCCAW8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUx
-DxcNMDcwNDE2MDYwNTQ0WjAjBgkqhkiG9w0BCQQxFgQUdFEu9HhtlJ7c37l6tJnpzME0jF4wgYUG
-CSsGAQQBgjcQBDF4MHYwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5n
-IChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENB
-AhAUQVpZzww0BCzlOIjOu/+QMIGHBgsqhkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCWkExJTAj
-BgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJz
-b25hbCBGcmVlbWFpbCBJc3N1aW5nIENBAhAUQVpZzww0BCzlOIjOu/+QMA0GCSqGSIb3DQEBAQUA
-BIIBABZ/rg8aHOxJz4djkVOthhFQlbmxO1jKqp/z4dW9s9OeHm6ClupPbjYIxXOgGoZyyvuY+GZ0
-KQkScbAn622+O7wKctA3Rw4CKSxYtnt/3LyU+2U59+9cLw0X+L6kPlH60hpOTA+XSxOd/HnBQ9tC
-Ru00UgcYirZsiQsF/fPf6n47iDeTl49mJ1sGUmHI626p8+G4wwFDUko1VyJC0YxxmumAD2j8FW1R
-85dLPx3ZcfN2EK94/3DFjjNrHTNZSl187BY1vThq+jXbTKQgeD22eehD0sgtG0LIa0o4d9P/48JQ
-MJ/5qYpcotOrPh5tbQCb7wY3EWQ6Huf9ysHLIn4R32cAAAAAAAA=
-
-
---=-FNuCCObM/Eca/76iwshN--
-
---===============0247547503==
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
+A change which change runtime behaviour.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-
---===============0247547503==--
