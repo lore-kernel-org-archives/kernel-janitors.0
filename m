@@ -1,57 +1,40 @@
-From: Shani Moideen <shani.moideen@wipro.com>
-Date: Wed, 25 Apr 2007 06:12:17 +0000
-Subject: [KJ] [PATCH]:Replacing with time_before in net/ipv4/ip_gre.c
-Message-Id: <1177480817.27118.18.camel@shani-win>
+From: Jaco Kroon <jaco@kroon.co.za>
+Date: Mon, 16 Apr 2007 14:12:34 +0000
+Subject: [KJ] possible power of two cleanup?
+Message-Id: <46238452.2050205@kroon.co.za>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org, kaber@coreworks.de
-Cc: kernel-janitors@lists.osdl.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Hi,
+Hi guys,
 
-Replacing with time_before in net/ipv4/ip_gre.c
+Just stumbled upon this in include/linux/blockgroup_lock.h
 
-thanks.
+It looks like it essentially does a round up to the nearest power of two 
+of NR_CPUS * 4?  Is this a potential cleanup?  Prevent breakage when we 
+start having more than 64 CPUs in a machine?
 
-Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
-----
+/*
+  * We want a power-of-two.  Is there a better way than this?
+  */
 
-diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-index 9151da6..05cd63b 100644
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -28,6 +28,7 @@
- #include <linux/igmp.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/if_ether.h>
-+#include <linux/jiffies.h>
- 
- #include <net/sock.h>
- #include <net/ip.h>
-@@ -376,7 +377,7 @@ static void ipgre_err(struct sk_buff *skb, u32 info)
- 	if (t->parms.iph.ttl = 0 && type = ICMP_TIME_EXCEEDED)
- 		goto out;
- 
--	if (jiffies - t->err_time < IPTUNNEL_ERR_TIMEO)
-+	if (time_before(jiffies , t->err_time + IPTUNNEL_ERR_TIMEO))
- 		t->err_count++;
- 	else
- 		t->err_count = 1;
-@@ -801,7 +802,7 @@ static int ipgre_tunnel_xmit(struct sk_buff *skb, struct net_device *dev)
- #endif
- 
- 	if (tunnel->err_count > 0) {
--		if (jiffies - tunnel->err_time < IPTUNNEL_ERR_TIMEO) {
-+		if (time_before(jiffies , tunnel->err_time + IPTUNNEL_ERR_TIMEO)) {
- 			tunnel->err_count--;
- 
- 			dst_link_failure(skb);
+#if NR_CPUS >= 32
+#define NR_BG_LOCKS 128
+#elif NR_CPUS >= 16
+#define NR_BG_LOCKS 64
+#elif NR_CPUS >= 8
+#define NR_BG_LOCKS 32
+#elif NR_CPUS >= 4
+#define NR_BG_LOCKS 16
+#elif NR_CPUS >= 2
+#define NR_BG_LOCKS 8
+#else
+#define NR_BG_LOCKS 4
+#endif
 
-----
-Shani
-
+Jaco
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
