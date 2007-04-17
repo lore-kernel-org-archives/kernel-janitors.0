@@ -1,74 +1,44 @@
-From: "Julio Levy" <www.marobertine@goodcreditlenders.com>
-Date: Tue, 24 Apr 2007 16:33:15 +0000
-Subject: [KJ] Approval process
-Message-Id: <01c7868d$5ad2e5b0$6c822ecf@www.marobertine>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2965510781504344846=="
+From: "Jasond Bernardo" <delicatessentvu@jap-inc.com>
+Date: Tue, 17 Apr 2007 00:22:44 +0000
+Subject: Re: [KJ] so twofold
+Message-Id: <054401c78108$3bdc36e0$3162f9f0@rescortj>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+This one is shoe in to Double by end of week
+Huge Volume spike, many people are already in the know
 
---===============2965510781504344846==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0007_01C786D8.CABA8DB0"
+Bull is Calling in the next soda GIANT
+Fire Mountain Beverage Company
+SYM-F B V G
+Extremely b ullish at 2 Cents
+Short or long, this one cant go wrong, look at HANS and FIZ
 
-This is a multi-part message in MIME format.
+Remember Snapple, this will be bigger
 
-------=_NextPart_000_0007_01C786D8.CABA8DB0
-Content-Type: text/plain;
-	charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-Thank you for your loan request, which we recieved 
-yesterdayWe'd like to inform you that we are accepting your application.
-We are ready to give you a $272,000 loan (Approved refinance) for a 
-low month payment. Approval process will take only 1 minute. Please=20=
-visit the 
-confirmation link below and fill-out our short 30 second form.=20=
-http://gkkzngresullts.com
-------=_NextPart_000_0007_01C786D8.CABA8DB0
-Content-Type: text/html;
-	charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3DWindows-1252">
-<META content=3D"MSHTML 5.00.2919.6700" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html;=20=
-charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2>Thank you for your loan request, which=20=
-we recieved 
-yesterday<BR>We'd like to inform you that we are accepting your=20=
-application.<BR>
-We are ready to give you a $272,000 loan (Approved refinance) for a 
-low month payment. Approval process will take only 1 minute. Please=20=
-visit the 
-confirmation link below and fill-out our short 30 second form. <A 
-href=3D"http://gkkzngresullts.com">http://gkkzngresullts.com</A></FONT></DIV></BODY></HTML>
-</BODY></HTML>
-
-------=_NextPart_000_0007_01C786D8.CABA8DB0--
+Get in Tuesday don't Miss it again
+People are already loading up, you should too!!
 
 
---===============2965510781504344846==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+They trailed 37-25 after one quarter and it only got worse from there in what  have the regroup a little bit.''   Denver has struggled all season to get any   nine years on Mike Krzyzewski's staff at Duke, where he was a four-year   according to the contract.  Michigan hired Amaker on hired March 29, 2001, 
+
+----- Original Message ----- 
+From: "Jasond Bernardo" <delicatessentvu@jap-inc.com>
+To: <kernel-janitors@lists.osdl.org>
+Sent: Thursday, March 22, 2007 8:27 PM
+Subject: so twofold
+
+
+> Bull is Calling in the next soda GIANT
+> Fire Mountain Beverage Company
+> SYM-F B V G
+> Extremely b ullish at 2 Cents
+> Short or long, this one cant go wrong, look at HANS and FIZ
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============2965510781504344846==--
