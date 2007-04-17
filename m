@@ -1,231 +1,32 @@
-From: "DAVIS FINANCIAL SERVICES INC" <Horacio@ninja.dk>
-Date: Thu, 12 Apr 2007 10:50:06 +0000
-Subject: Estimado usuario de Online Banking !
-Message-Id: <000f01c77d01$6bf3fd60$040e701c@brambor7c7z9bb>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============0345964233=="
+From: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
+Date: Tue, 17 Apr 2007 08:30:21 +0000
+Subject: [KJ] ATA_DMA_MASK => DMA_64BIT_MASK
+Message-Id: <20070417083021.GB22931@traven>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============0345964233==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_000C_01C77D01.6BF3FD60"
+i'm having a look at the 'pci_set_dma_mask() and friends' task at
+http://kernelnewbies.org/KernelJanitors/Todo. greping i found that ATA
+drivers use the constant ATA_DMA_MASK in calls to
+pci_set_dma_mask(),which is defined as 0xffffffffULL. i wonder if this
+should be replaced by DMA_64BIT_MASK
 
-------=_NextPart_000_000C_01C77D01.6BF3FD60
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+-- 
+Matthias Kaehlcke
+Linux Application Developer
+Barcelona
 
-&#161;Oferta detrabajo de&laquo;DAVIS FINANCIAL SERVICES INC&raquo;!Por =
-elmomento nuestra compa&#241;&#237;aest&#225; ampli&#225;ndose ycontamos =
-con unn&#250;mero limitado depuestos vacantes.&#191;Cu&#225;nto voy =
-aganar?Vd.puede ganar hasta 2000-3000EUR deacuerdo con eltiempo que =
-vaadedicar altrabajo.&#191;Qu&#233; voy ahacer?Recibir correspondencia =
-departe delacompa&#241;&#237;ao clientes asudirecci&#243;nprivada, =
-contestar alos correos electr&#243;nicos yrealizar ciertos actos / =
-llamadas telef&#243;nicas.Ofertas especiales para hombres denegocios=
-Tenemos una propuesta especial siVd.tiene supropia empresa=
-&#191;Cu&#225;nto cuesta?Nosenecesitan ningunas inversiones desuparte =
-para empezar atrabajar con nosotros.&#191;C&#243;mopuedo empezar?		Sus =
-datos confidenciales ser&#225;nusados s&#243;lodentro 	=
-delacompa&#241;&#237;a.El gerente delacompa&#241;&#237;ase 	=
-comunicar&#225; con cada uno delos empleados que cumpla con los =
-requisitos para 	realizar una entrevista por tel&#233;fono opor correo =
-electr&#243;nico.		Siest&#225; dispuesto/a aempezar por favor llene =
-elanexo abajo yenv&#237;elo alamisma direcci&#243;n: 	DavisSrv@gmail.com	=
-					Tenga elfavor decopiar este anexo yadjuntarlo asurespuesta									=
-Nombre:		Apellidos:		Pa&#237;s:		Ciudad:		Tel&#233;fono:		E-mail:				=
-Informaci&#243;nadicional sobre Usted :									Tenga elfavor decopiar =
-este anexo yadjuntarlo asurespuesta		  	Nuestra =
-compa&#241;&#237;ahaobtenido sucontacto enlos recursos p&#250;licos del =
-internet. Hemos pensado que Vd.Puede estar interesado/a eneltrabajo con =
-nuestra compa&#241;&#237;adesde sucasa.&copy; Copyright 1996-2007 DAVIS =
-FINANCIAL SERVICES INC
-------=_NextPart_000_000C_01C77D01.6BF3FD60
-Content-Type: text/html;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3D=
-iso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<BODY BGCOLOR=3D#ADFB8E LEFTMARGIN=3D0 TOPMARGIN=3D0 MARGINWIDTH=3D0 =
-MARGINHEIGHT=3D0>
-<table width=3D"550" border=3D"0" align=3D"center" cellpadding=3D"5" =
-cellspacing=3D"1" bgcolor=3D"#000000">
-<tr>
-<td width=3D"550" align=3Dtop valign=3Dtop bgcolor=3D"#ffffff">
-
-<font face=3D"impact" size=3D5 color=3D"#0066CC">&#161;Oferta =
-de&nbsp;trabajo de&nbsp;&laquo;DAVIS FINANCIAL SERVICES =
-INC&raquo;!</font><br>
-<font face=3D"Trebuchet MS" size=3D2 color=3D"#0066CC">
-Por el&nbsp;momento nuestra compa&#241;&#237;a&nbsp;est&#225; =
-ampli&#225;ndose y&nbsp;contamos con un&nbsp;n&#250;mero limitado de
-puestos vacantes.
-
-</font>
-<br>
-<br>
-
-<font face=3D"impact" size=3D5 color=3D"#0066CC">&#191;Cu&#225;nto voy =
-a&nbsp;ganar?</font><br>
-<font face=3D"Trebuchet MS" size=3D2 color=3D"#0066CC">
-Vd.&nbsp;puede ganar hasta 2000-3000&nbsp;EUR de&nbsp;acuerdo con =
-el&nbsp;tiempo que va&nbsp;a&nbsp;dedicar al&nbsp;trabajo.
-
-
-</font>
-<br>
-<br>
-
-<font face=3D"impact" size=3D5 color=3D"#0066CC">&#191;Qu&#233; voy =
-a&nbsp;hacer?</font><br>
-<font face=3D"Trebuchet MS" size=3D2 color=3D"#0066CC">
-Recibir correspondencia de&nbsp;parte =
-de&nbsp;la&nbsp;compa&#241;&#237;a&nbsp;o clientes =
-a&nbsp;su&nbsp;direcci&#243;n&nbsp;privada, contestar a&nbsp;los correos =
-electr&#243;nicos y&nbsp;realizar ciertos actos / llamadas =
-telef&#243;nicas.
-
-</font>
-<br>
-<br>
-
-<font face=3D"impact" size=3D5 color=3D"#0066CC">Ofertas especiales para =
-hombres de&nbsp;negocios</font><br>
-<font face=3D"Trebuchet MS" size=3D2 color=3D"#0066CC">
-Tenemos una propuesta especial si&nbsp;Vd.&nbsp;tiene su&nbsp;propia =
-empresa
-
-
-</font>
-<br>
-<br>
-
-<font face=3D"impact" size=3D5 color=3D"#0066CC">&#191;Cu&#225;nto =
-cuesta?</font><br>
-
-<font face=3D"Trebuchet MS" size=3D2 color=3D"#0066CC">
-No&nbsp;se&nbsp;necesitan ningunas inversiones de&nbsp;su&nbsp;parte =
-para empezar a&nbsp;trabajar con nosotros.
-</font>
-<br>
-<br>
-
-<font face=3D"impact" size=3D5 color=3D=
-"#0066CC">&#191;C&#243;mo&nbsp;puedo empezar?</font><br>
-<font face=3D"Trebuchet MS" size=3D2 color=3D"#0066CC">
-=09
-	Sus datos confidenciales ser&#225;n&nbsp;usados s&#243;lo&nbsp;dentro=20=
-
-	de&nbsp;la&nbsp;compa&#241;&#237;a.&nbsp;El gerente =
-de&nbsp;la&nbsp;compa&#241;&#237;a&nbsp;se=20
-	comunicar&#225; con cada uno de&nbsp;los empleados que cumpla con los =
-requisitos para=20
-	realizar una entrevista por tel&#233;fono o&nbsp;por correo =
-electr&#243;nico.
-
-
-	<br><br>
-
-	Si&nbsp;est&#225; dispuesto/a a&nbsp;empezar por favor llene =
-el&nbsp;anexo abajo y&nbsp;env&#237;elo a&nbsp;la&nbsp;misma =
-direcci&#243;n:
-=20
-	<a href=3D"mailto:DavisSrv@gmail.com?Subject=3DDETAILS"><font color=3D=
-"#000000"><b>DavisSrv@gmail.com</b></font></a>
-=09
-
-	<br><br>
-=09
-	<table width=3D"100%" border=3D"0" cellpadding=3D"10" cellspacing=3D"1" =
-bgcolor=3D"#ADFB8E">
-
-	<tr>
-	<td align=3Dcenter><a href=3D"mailto:DavisSrv@gmail.com?Subject=3D=
-DETAILS"><font size=3D"2" color=3D"#333333"><b>Tenga el&nbsp;favor =
-de&nbsp;copiar este anexo y&nbsp;adjuntarlo =
-a&nbsp;su&nbsp;respuesta</b></font></a></td>
-	</tr>
-	<tr>
-	<td bgcolor=3D"#ffffff">
-		<font size=3D"2" color=3D"#333333">
-
-	=09
-		Nombre:<br>
-		Apellidos:<br>
-		Pa&#237;s:<br>
-		Ciudad:<br>
-		Tel&#233;fono:<br>
-
-		E-mail:<br><br>
-	=09
-		Informaci&#243;n&nbsp;adicional sobre Usted :<br><br>=09
-	=09
-		</font>
-	</td>
-	</tr>
-	<tr>
-	<td align=3Dcenter><a href=3D"mailto:DavisSrv@gmail.com?Subject=3D=
-DETAILS"><font size=3D"2" color=3D"#333333"><b>Tenga el&nbsp;favor =
-de&nbsp;copiar este anexo y&nbsp;adjuntarlo =
-a&nbsp;su&nbsp;respuesta</b></font></a></td>
-
-	</tr>
-	</table> =20
-
-</font>
-
-
-
-<p align=3Dcenter>
-<font color=3D#aaaaaa face=3D"Verdana, Arial, Helvetica, sans-serif" =
-size=3D1>=09
-Nuestra compa&#241;&#237;a&nbsp;ha&nbsp;obtenido <br>su&nbsp;contacto =
-en&nbsp;los recursos p&#250;licos del internet. <br><br>
-
-Hemos pensado que Vd.&nbsp;Puede estar interesado/a =
-<br>en&nbsp;el&nbsp;trabajo con nuestra compa&#241;&#237;a&nbsp;desde =
-su&nbsp;casa.<br><br>
-&copy; Copyright 1996-2007&nbsp; DAVIS FINANCIAL SERVICES =
-INC</font><br><br>
-</p>
-</td>
-</tr>
-
-</table>
-</BODY>
-</BODY></HTML>
-
-------=_NextPart_000_000C_01C77D01.6BF3FD60--
-
-
---===============0345964233==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
--------------------------------------------------------------------------
-Take Surveys. Earn Cash. Influence the Future of IT
-Join SourceForge.net's Techsay panel and you'll get the chance to share your
-opinions on IT & business topics through brief surveys-and earn cash
-http://www.techsay.com/default.php?page=join.php&p=sourceforge&CID=DEVDEV
---===============0345964233==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+     The assumption that what currently exists must necessarily
+      exist is the acid that corrodes all visionary thinking
+%
+                                                                 .''`.
+    using free software / Debian GNU/Linux | http://debian.org  : :'  :
+                                                                `. `'`
+gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
-
---===============0345964233==--
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
