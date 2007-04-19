@@ -1,36 +1,114 @@
 From: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Date: Thu, 19 Apr 2007 09:47:16 +0000
-Subject: [KJ][PATCH]SPIN_LOCK_UNLOCKED cleanup in arch/mips
-Message-Id: <20070419093516.GA9486@arun.site>
+Date: Thu, 19 Apr 2007 11:29:41 +0000
+Subject: [KJ][PATCH]SPIN_LOCK_UNLOCKED cleanup in drivers/serial
+Message-Id: <20070419111741.GA11493@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070419041440.GB14283@arun.site>
 In-Reply-To: <20070419041440.GB14283@arun.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@lists.osdl.org>, MIPS <linux-mips@linux-mips.org>
-Cc: Andrw Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, thomas.koeller@baslerweb.com, ralf@linux-mips.org
+To: Kernel Janitors <kernel-janitors@lists.osdl.org>, SERIAL <linux-serial@vger.kernel.org>
+Cc: Andrw Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, galak@kernel.crashing.org, panto@intracom.gr, ben@simtec.co.uk
 
-SPIN_LOCK_UNLOCKED cleanup,use DEFINE_SPINLOCK instead 
+SPIN_LOCK_UNLOCKED cleanup,use __SPIN_LOCK_UNLOCKED instead 
 
 Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
 ---
- excite_setup.c |    2 +-
- 1 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/basler/excite/excite_setup.c b/arch/mips/basler/excite/excite_setup.c
-index 42f0eda..2f0e4c0 100644
---- a/arch/mips/basler/excite/excite_setup.c
-+++ b/arch/mips/basler/excite/excite_setup.c
-@@ -63,7 +63,7 @@ volatile void __iomem * const ocd_base = (void *) (EXCITE_ADDR_OCD);
- volatile void __iomem * const titan_base = (void *) (EXCITE_ADDR_TITAN);
+ cpm_uart/cpm_uart_core.c |   12 ++++++------
+ s3c2410.c                |    6 +++---
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/serial/cpm_uart/cpm_uart_core.c b/drivers/serial/cpm_uart/cpm_uart_core.c
+index 7a3b97f..f23972b 100644
+--- a/drivers/serial/cpm_uart/cpm_uart_core.c
++++ b/drivers/serial/cpm_uart/cpm_uart_core.c
+@@ -934,7 +934,7 @@ struct uart_cpm_port cpm_uart_ports[UART_NR] = {
+ 			.irq		= SMC1_IRQ,
+ 			.ops		= &cpm_uart_pops,
+ 			.iotype		= UPIO_MEM,
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(cpm_uart_ports[UART_SMC1].port.lock),
+ 		},
+ 		.flags = FLAG_SMC,
+ 		.tx_nrfifos = TX_NUM_FIFO,
+@@ -948,7 +948,7 @@ struct uart_cpm_port cpm_uart_ports[UART_NR] = {
+ 			.irq		= SMC2_IRQ,
+ 			.ops		= &cpm_uart_pops,
+ 			.iotype		= UPIO_MEM,
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(cpm_uart_ports[UART_SMC2].port.lock),
+ 		},
+ 		.flags = FLAG_SMC,
+ 		.tx_nrfifos = TX_NUM_FIFO,
+@@ -965,7 +965,7 @@ struct uart_cpm_port cpm_uart_ports[UART_NR] = {
+ 			.irq		= SCC1_IRQ,
+ 			.ops		= &cpm_uart_pops,
+ 			.iotype		= UPIO_MEM,
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(cpm_uart_ports[UART_SCC1].port.lock),
+ 		},
+ 		.tx_nrfifos = TX_NUM_FIFO,
+ 		.tx_fifosize = TX_BUF_SIZE,
+@@ -979,7 +979,7 @@ struct uart_cpm_port cpm_uart_ports[UART_NR] = {
+ 			.irq		= SCC2_IRQ,
+ 			.ops		= &cpm_uart_pops,
+ 			.iotype		= UPIO_MEM,
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(cpm_uart_ports[UART_SCC2].port.lock),
+ 		},
+ 		.tx_nrfifos = TX_NUM_FIFO,
+ 		.tx_fifosize = TX_BUF_SIZE,
+@@ -993,7 +993,7 @@ struct uart_cpm_port cpm_uart_ports[UART_NR] = {
+ 			.irq		= SCC3_IRQ,
+ 			.ops		= &cpm_uart_pops,
+ 			.iotype		= UPIO_MEM,
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(cpm_uart_ports[UART_SCC3].port.lock),
+ 		},
+ 		.tx_nrfifos = TX_NUM_FIFO,
+ 		.tx_fifosize = TX_BUF_SIZE,
+@@ -1007,7 +1007,7 @@ struct uart_cpm_port cpm_uart_ports[UART_NR] = {
+ 			.irq		= SCC4_IRQ,
+ 			.ops		= &cpm_uart_pops,
+ 			.iotype		= UPIO_MEM,
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(cpm_uart_ports[UART_SCC4].port.lock),
+ 		},
+ 		.tx_nrfifos = TX_NUM_FIFO,
+ 		.tx_fifosize = TX_BUF_SIZE,
+diff --git a/drivers/serial/s3c2410.c b/drivers/serial/s3c2410.c
+index 3ba9208..10bc020 100644
+--- a/drivers/serial/s3c2410.c
++++ b/drivers/serial/s3c2410.c
+@@ -957,7 +957,7 @@ static struct uart_driver s3c24xx_uart_drv = {
+ static struct s3c24xx_uart_port s3c24xx_serial_ports[NR_PORTS] = {
+ 	[0] = {
+ 		.port = {
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
+ 			.iotype		= UPIO_MEM,
+ 			.irq		= IRQ_S3CUART_RX0,
+ 			.uartclk	= 0,
+@@ -969,7 +969,7 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[NR_PORTS] = {
+ 	},
+ 	[1] = {
+ 		.port = {
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[1].port.lock),
+ 			.iotype		= UPIO_MEM,
+ 			.irq		= IRQ_S3CUART_RX1,
+ 			.uartclk	= 0,
+@@ -983,7 +983,7 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[NR_PORTS] = {
  
- /* Protect access to shared GPI registers */
--spinlock_t titan_lock = SPIN_LOCK_UNLOCKED;
-+DEFINE_SPINLOCK(titan_lock);
- int titan_irqflags;
- 
- 
+ 	[2] = {
+ 		.port = {
+-			.lock		= SPIN_LOCK_UNLOCKED,
++			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
+ 			.iotype		= UPIO_MEM,
+ 			.irq		= IRQ_S3CUART_RX2,
+ 			.uartclk	= 0,
 -- 
 Milind Arun Choudhary
 _______________________________________________
