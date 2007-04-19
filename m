@@ -1,30 +1,70 @@
-From: Diplomat Tony Allen <diplomattonyallen@yahoo.com.hk>
-Date: Sun, 15 Apr 2007 20:13:12 +0000
-Subject: [KJ] GOD BLESS
-Message-Id: <PHYSICONMs0dt2NCF6T00005689@PHYSICON>
+From: Milind Arun Choudhary <milindchoudhary@gmail.com>
+Date: Thu, 19 Apr 2007 04:27:59 +0000
+Subject: [KJ][PATCH]SPIN_LOCK_UNLOCKED cleanup in drivers/s390
+Message-Id: <20070419041440.GB14283@arun.site>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <PHYSICONbdsJXVaLctN00004f9b@PHYSICON>
-In-Reply-To: <PHYSICONbdsJXVaLctN00004f9b@PHYSICON>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Kernel Janitors <kernel-janitors@lists.osdl.org>, S390 <linux-s390@vger.kernel.org>
+Cc: Andrw Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
 
-This is an official notification of funds deposited in your name.We arrange for the safekeeping of special and valuable packages and baggage in trust for reputable clients that are honest and trustworthy.
-A benefactor whose identity can not be disclosed because of the NonCircumvention and Non Disclosure Agreement that was signed with the said benefactor when the funds were being deposited, made you the beneficiary of a package containing some amount of money.The Non Circumvention and Non Disclosure Agreement signed with the benefactor mandates us to fully divulge and disclose the benefactor's identity 18 months after you, the beneficiary,has received the funds.
-The funds totals US$7.5M Seven Million, Five Hundred Thousand United States Dollars) and we confirm that these funds are fully free of any liens,or encumbrances and are clean, clear and non-criminal origin and are available in the form of CASH.You are hereby advised to reconfirm your Full Contact Information for verification with information contained in our database in the format stated below.
-After verifying the details with the information we have in our database,you will be contacted to personally claim the funds in the Finance and Security Firm where its being kept with the Consignment Deposit Information (C.D.I) that will empower you to do so.This Consignment Deposit Information (C.D.I) is what is needed to claim the funds and will only be sent to you after all your information has been verified and confirmed to be true.The information should therefore be sent in the manner stated below so as to ensure that no mistake is made.
-Your Full Name: _____________________
-Your Complete Address (Physical Address with Zip Code)__________________________
-Date of Birth (Day/Month/Year:___________________
-Direct Telephone/Mobile Number: _____________________________
-Fax Number:_______________________________________
-Complete the above and send back to me as soon as possible.Congratulations in advance.
-Thank you 
-Yours faithfully.
-Mr.Tony Allen
+SPIN_LOCK_UNLOCKED cleanup,use __SPIN_LOCK_UNLOCKED instead.
+ 
+Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
+
+---
+ char/vmlogrdr.c |    6 +++---
+ cio/cmf.c       |    2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 
+diff --git a/drivers/s390/char/vmlogrdr.c b/drivers/s390/char/vmlogrdr.c
+index b87d3b0..75d61a4 100644
+--- a/drivers/s390/char/vmlogrdr.c
++++ b/drivers/s390/char/vmlogrdr.c
+@@ -125,7 +125,7 @@ static struct vmlogrdr_priv_t sys_ser[] = {
+ 	  .recording_name = "EREP",
+ 	  .minor_num      = 0,
+ 	  .buffer_free    = 1,
+-	  .priv_lock      = SPIN_LOCK_UNLOCKED,
++	  .priv_lock      = __SPIN_LOCK_UNLOCKED(sys_ser[0].priv_lock),
+ 	  .autorecording  = 1,
+ 	  .autopurge      = 1,
+ 	},
+@@ -134,7 +134,7 @@ static struct vmlogrdr_priv_t sys_ser[] = {
+ 	  .recording_name = "ACCOUNT",
+ 	  .minor_num      = 1,
+ 	  .buffer_free    = 1,
+-	  .priv_lock      = SPIN_LOCK_UNLOCKED,
++	  .priv_lock      = __SPIN_LOCK_UNLOCKED(sys_ser[1].priv_lock),
+ 	  .autorecording  = 1,
+ 	  .autopurge      = 1,
+ 	},
+@@ -143,7 +143,7 @@ static struct vmlogrdr_priv_t sys_ser[] = {
+ 	  .recording_name = "SYMPTOM",
+ 	  .minor_num      = 2,
+ 	  .buffer_free    = 1,
+-	  .priv_lock      = SPIN_LOCK_UNLOCKED,
++	  .priv_lock      = __SPIN_LOCK_UNLOCKED(sys_ser[2].priv_lock),
+ 	  .autorecording  = 1,
+ 	  .autopurge      = 1,
+ 	}
+diff --git a/drivers/s390/cio/cmf.c b/drivers/s390/cio/cmf.c
+index 90b22fa..28abd69 100644
+--- a/drivers/s390/cio/cmf.c
++++ b/drivers/s390/cio/cmf.c
+@@ -476,7 +476,7 @@ struct cmb_area {
+ };
+ 
+ static struct cmb_area cmb_area = {
+-	.lock = SPIN_LOCK_UNLOCKED,
++	.lock = __SPIN_LOCK_UNLOCKED(cmb_area.lock),
+ 	.list = LIST_HEAD_INIT(cmb_area.list),
+ 	.num_channels  = 1024,
+ };
+-- 
+Milind Arun Choudhary
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
