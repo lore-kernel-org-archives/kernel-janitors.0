@@ -1,24 +1,25 @@
-From: "Sisawad Haapanen" <SisawadHaapanen@BowtieChevy.com>
-Date: Tue, 24 Apr 2007 03:26:46 +0000
-Subject: Alert
-Message-Id: <95993C69.99780016@BowtieChevy.com>
+From: David Miller <davem@davemloft.net>
+Date: Sat, 21 Apr 2007 05:14:55 +0000
+Subject: [KJ] Re: [PATCH] fix comments for register_netdev()
+Message-Id: <20070420.221455.131945799.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070418124952.GA5948@zmei.tnic>
+In-Reply-To: <20070418124952.GA5948@zmei.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: bbpetkov@yahoo.de
+Cc: kernel-janitors@lists.osdl.org, netdev@vger.kernel.org
 
-Opening bell message.
-http://img59.imageshack.us/img59/7238/2nfn82iw8.jpg
-If one is to rule, and to continue ruling, one must be able to dislocate the sense of reality.
+From: Borislav Petkov <bbpetkov@yahoo.de>
+Date: Wed, 18 Apr 2007 14:49:52 +0200
 
+> Correct the function name in the comments supplied with register_netdev()
+> 
+> Signed-off-by: Borislav Petkov <bbpetkov@yahoo.de>
 
--------------------------------------------------------------------------
-This SF.net email is sponsored by DB2 Express
-Download DB2 Express C - the FREE version of DB2 express and take
-control of your XML. No limits. Just data. Click to get it now.
-http://sourceforge.net/powerbar/db2/
+Patch applied, thank you.
 _______________________________________________
-Kernel-janitor-discuss mailing list
-Kernel-janitor-discuss@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
