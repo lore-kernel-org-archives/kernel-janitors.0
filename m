@@ -1,167 +1,74 @@
-From: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
-Date: Tue, 17 Apr 2007 20:55:08 +0000
-Subject: [KJ] [PATCH] converted binary semaphore to mutex in SBS ACPI
-Message-Id: <20070417205508.GA6474@traven>
+From: "Julio Levy" <www.marobertine@goodcreditlenders.com>
+Date: Tue, 24 Apr 2007 16:33:15 +0000
+Subject: [KJ] Approval process
+Message-Id: <01c7868d$5ad2e5b0$6c822ecf@www.marobertine>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============2965510781504344846=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-according to http://lwn.net/Articles/167034/ binary semaphore (which
-aren't given in interrupt context or locked/unlocked in different
-process contexts) should be converted to the new mutex API.
+This is a multi-part message in MIME format.
 
-here is a patch that converts the semaphore used by the Smart Battery
-System ACPI interface driver to a mutex.
+--===============2965510781504344846==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0007_01C786D8.CABA8DB0"
 
-please let me know your comments if i misinterpreted the article or if
-you see something wrong in the patch
+This is a multi-part message in MIME format.
 
---
+------=_NextPart_000_0007_01C786D8.CABA8DB0
+Content-Type: text/plain;
+	charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-convert binary semaphore in Smart Battery System ACPI driver to the
-new mutex API
+Thank you for your loan request, which we recieved 
+yesterdayWe'd like to inform you that we are accepting your application.
+We are ready to give you a $272,000 loan (Approved refinance) for a 
+low month payment. Approval process will take only 1 minute. Please=20=
+visit the 
+confirmation link below and fill-out our short 30 second form.=20=
+http://gkkzngresullts.com
+------=_NextPart_000_0007_01C786D8.CABA8DB0
+Content-Type: text/html;
+	charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Matthias Kaehlcke <matthias.kaehlcke@gmail.com>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3DWindows-1252">
+<META content=3D"MSHTML 5.00.2919.6700" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html;=20=
+charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2180" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT face=3DArial size=3D2>Thank you for your loan request, which=20=
+we recieved 
+yesterday<BR>We'd like to inform you that we are accepting your=20=
+application.<BR>
+We are ready to give you a $272,000 loan (Approved refinance) for a 
+low month payment. Approval process will take only 1 minute. Please=20=
+visit the 
+confirmation link below and fill-out our short 30 second form. <A 
+href=3D"http://gkkzngresullts.com">http://gkkzngresullts.com</A></FONT></DIV></BODY></HTML>
+</BODY></HTML>
 
----
-
-diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-index 59640d9..7e90132 100644
---- a/drivers/acpi/sbs.c
-+++ b/drivers/acpi/sbs.c
-@@ -32,6 +32,7 @@
- #include <linux/acpi.h>
- #include <linux/i2c.h>
- #include <linux/delay.h>
-+#include <linux/mutex.h>
- 
- #include "i2c_ec.h"
- 
-@@ -83,7 +84,7 @@ MODULE_AUTHOR("Rich Townsend");
- MODULE_DESCRIPTION("Smart Battery System ACPI interface driver");
- MODULE_LICENSE("GPL");
- 
--static struct semaphore sbs_sem;
-+static DEFINE_MUTEX(sbs_mutex);
- 
- #define	UPDATE_MODE		QUEUE_UPDATE_MODE
- /* REQUEST_UPDATE_MODE  QUEUE_UPDATE_MODE */
-@@ -930,7 +931,7 @@ static int acpi_battery_read_info(struct seq_file *seq, void *offset)
- 		return -ENODEV;
- 	}
- 
--	down(&sbs_sem);
-+	mutex_lock(&sbs_mutex);
- 
- 	if (update_mode = REQUEST_UPDATE_MODE) {
- 		result = acpi_sbs_update_run(battery->sbs, DATA_TYPE_INFO);
-@@ -984,7 +985,7 @@ static int acpi_battery_read_info(struct seq_file *seq, void *offset)
- 
-       end:
- 
--	up(&sbs_sem);
-+	mutex_unlock(&sbs_mutex);
- 
- 	return result;
- }
-@@ -1005,7 +1006,7 @@ static int acpi_battery_read_state(struct seq_file *seq, void *offset)
- 		return -ENODEV;
- 	}
- 
--	down(&sbs_sem);
-+	mutex_lock(&sbs_mutex);
- 
- 	if (update_mode = REQUEST_UPDATE_MODE) {
- 		result = acpi_sbs_update_run(battery->sbs, DATA_TYPE_STATE);
-@@ -1061,7 +1062,7 @@ static int acpi_battery_read_state(struct seq_file *seq, void *offset)
- 
-       end:
- 
--	up(&sbs_sem);
-+	mutex_unlock(&sbs_mutex);
- 
- 	return result;
- }
-@@ -1081,7 +1082,7 @@ static int acpi_battery_read_alarm(struct seq_file *seq, void *offset)
- 		return -ENODEV;
- 	}
- 
--	down(&sbs_sem);
-+	mutex_lock(&sbs_mutex);
- 
- 	if (update_mode = REQUEST_UPDATE_MODE) {
- 		result = acpi_sbs_update_run(battery->sbs, DATA_TYPE_ALARM);
-@@ -1113,7 +1114,7 @@ static int acpi_battery_read_alarm(struct seq_file *seq, void *offset)
- 
-       end:
- 
--	up(&sbs_sem);
-+	mutex_unlock(&sbs_mutex);
- 
- 	return result;
- }
-@@ -1131,7 +1132,7 @@ acpi_battery_write_alarm(struct file *file, const char __user * buffer,
- 		return -ENODEV;
- 	}
- 
--	down(&sbs_sem);
-+	mutex_lock(&sbs_mutex);
- 
- 	if (!acpi_battery_is_present(battery)) {
- 		result = -ENODEV;
-@@ -1169,7 +1170,7 @@ acpi_battery_write_alarm(struct file *file, const char __user * buffer,
- 	}
- 
-       end:
--	up(&sbs_sem);
-+	mutex_unlock(&sbs_mutex);
- 
- 	if (result) {
- 		return result;
-@@ -1221,7 +1222,7 @@ static int acpi_ac_read_state(struct seq_file *seq, void *offset)
- 		return -ENODEV;
- 	}
- 
--	down(&sbs_sem);
-+	mutex_lock(&sbs_mutex);
- 
- 	if (update_mode = REQUEST_UPDATE_MODE) {
- 		result = acpi_sbs_update_run(sbs, DATA_TYPE_AC_STATE);
-@@ -1234,7 +1235,7 @@ static int acpi_ac_read_state(struct seq_file *seq, void *offset)
- 	seq_printf(seq, "state:                   %s\n",
- 		   sbs->ac_present ? "on-line" : "off-line");
- 
--	up(&sbs_sem);
-+	mutex_unlock(&sbs_mutex);
- 
- 	return 0;
- }
-@@ -1719,8 +1720,6 @@ static int __init acpi_sbs_init(void)
- 	if (acpi_disabled)
- 		return -ENODEV;
- 
--	init_MUTEX(&sbs_sem);
--
- 	if (capacity_mode != DEF_CAPACITY_UNIT
- 	    && capacity_mode != MAH_CAPACITY_UNIT
- 	    && capacity_mode != MWH_CAPACITY_UNIT) {
+------=_NextPart_000_0007_01C786D8.CABA8DB0--
 
 
--- 
-Matthias Kaehlcke
-Linux Application Developer
-Barcelona
+--===============2965510781504344846==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-    C treats you like a consenting adult. Pascal treats you like a
-          naughty child. Ada treats you like a criminal
-                      (Bruce Powel Douglass)
-                                                                 .''`.
-    using free software / Debian GNU/Linux | http://debian.org  : :'  :
-                                                                `. `'`
-gpg --keyserver pgp.mit.edu --recv-keys 47D8E5D4                  `-
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============2965510781504344846==--
