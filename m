@@ -1,73 +1,76 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Thu, 19 Apr 2007 13:23:57 +0000
-Subject: Re: [KJ][PATCH] sound: SPIN_LOCK_UNLOCKED cleanup
-Message-Id: <s5hlkgoa45u.wl%tiwai@suse.de>
+From: "Vernon Knox" <akstcymcalimnsdgs@ymcali.org>
+Date: Tue, 24 Apr 2007 23:55:32 +0000
+Subject: [KJ] (no subject)
+Message-Id: <01c786cb$05db7520$6c822ecf@akstcymcalimnsdgs>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1177458436-411-351"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070419114444.GA12114@arun.site>
-In-Reply-To: <20070419114444.GA12114@arun.site>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <4277F774.9070506@tampabay.rr.com>
+In-Reply-To: <4277F774.9070506@tampabay.rr.com>
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1177458436-411-351
+Content-Type: text/plain; format=flowed; charset="Windows-1252";
+	reply-type=original
 Content-Transfer-Encoding: 7bit
-To: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Cc: Kernel Janitors <kernel-janitors@lists.osdl.org>, Andrw Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, liam.girdwood@wolfsonmicro.com
+Content-Disposition: inline
 
-At Thu, 19 Apr 2007 17:14:44 +0530,
-Milind Arun Choudhary wrote:
-> 
-> SPIN_LOCK_UNLOCKED cleanup,use __SPIN_LOCK_UNLOCKED instead 
-> 
-> Signed-off-by: Milind Arun Choudhary <milindchoudhary@gmail.com>
+------------------------
+*************
 
-Thanks, applied to ALSA tree now.  (The file was renamed to
-at91-ssc.c, so I applied it manually.)
+Want to meet with young girl ?
+Want to have sex with 12 years old girl ? 
+We will help you !
+
+***
+
+THE BEST RESOURCE.
+http://mod-site.net/gb/u/buffoon-2.html
+or
+http://www.ganszander.narod.ru/
+Join now for free !
+
+*************
+*******************
 
 
-Takashi
+------------=_1177458436-411-351
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.osdl.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Want to meet with young girl ? Want to have sex with 12
+  years old girl ? We will help you ! *** [...] 
+
+Content analysis details:   (5.8 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 1.8 RCVD_ILLEGAL_IP        Received: contains illegal IP address
+ 2.0 BAYES_80               BODY: Bayesian spam probability is 80 to 95%
+                            [score: 0.9415]
+ 2.0 MISSING_SUBJECT        Missing Subject: header
 
 
-> 
-> ---
-> 
->  soc/at91/at91-i2s.c          |    6 +++---
->  1 file changed, 3  insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/at91/at91-i2s.c b/sound/soc/at91/at91-i2s.c
-> index 9fc0c03..d65a47d 100644
-> --- a/sound/soc/at91/at91-i2s.c
-> +++ b/sound/soc/at91/at91-i2s.c
-> @@ -151,20 +151,20 @@ static struct at91_ssc_info {
->  } ssc_info[NUM_SSC_DEVICES] = {
->  	{
->  	.name		= "ssc0",
-> -	.lock		= SPIN_LOCK_UNLOCKED,
-> +	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[0].lock),
->  	.dir_mask	= 0,
->  	.initialized	= 0,
->  	},
->  #if NUM_SSC_DEVICES = 3
->  	{
->  	.name		= "ssc1",
-> -	.lock		= SPIN_LOCK_UNLOCKED,
-> +	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[1].lock),
->  	.dir_mask	= 0,
->  	.initialized	= 0,
->  	},
->  	{
->  	.name		= "ssc2",
-> -	.lock		= SPIN_LOCK_UNLOCKED,
-> +	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[2].lock),
->  	.dir_mask	= 0,
->  	.initialized	= 0,
->  	},
-> -- 
-> Milind Arun Choudhary
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+
+------------=_1177458436-411-351
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1177458436-411-351--
