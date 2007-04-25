@@ -1,32 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Date: Mon, 02 Apr 2007 03:40:42 +0000
-Subject: Re: [KJ] my first janitorial
-Message-Id: <20070402034042.GA27102@kroah.com>
+From: Eric Dumazet <dada1@cosmosbay.com>
+Date: Wed, 25 Apr 2007 07:17:24 +0000
+Subject: [KJ] Re: [PATCH]:Replacing current->state with set_current_state in
+Message-Id: <20070425091724.6f2c212b.dada1@cosmosbay.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>
-In-Reply-To: <9c9aa5d00703310639q68fa5d19k4d8e3bfb56b1fa6@mail.gmail.com>
+References: <1177483138.27118.25.camel@shani-win>
+In-Reply-To: <1177483138.27118.25.camel@shani-win>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Shani Moideen <shani.moideen@wipro.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-On Mon, Apr 02, 2007 at 08:57:21AM +0530, surya.prabhakar@wipro.com wrote:
-> Greg,
->    In my earlier mails I did send patches for cleanup related to almost
-> all instances of pci_find_device cleanup ( archives can be checked ) .
-> Unfortunately the driver maintainer never responded. And people are
-> doing the same thing again.
+On Wed, 25 Apr 2007 12:08:58 +0530
+Shani Moideen <shani.moideen@wipro.com> wrote:
 
-Then push them to the kernel-janitor maintainer (who is that these days)
-and get them into the main kernel tree.  Persistance is the key here.
+> Hi,
+> 
+> Replacing current->state with set_current_state in kernel/signal.c
+> 	
 
-The fact that the driver maintainer/author did not respond is not
-supprising, as the reason these drivers need fixing is that no one seems
-to be maintaining them anymore :)
+> @@ -2596,7 +2596,7 @@ sys_signal(int sig, __sighandler_t handler)
+>  asmlinkage long
+>  sys_pause(void)
+>  {
+> -       current->state = TASK_INTERRUPTIBLE;
+> +       set_current_state(TASK_INTERRUPTIBLE);
+>         schedule();
 
-thanks,
+Hi Shani
 
-greg k-h
+Either you think you corrected a BUG, so please state it clearly in Changelog so that Linus immediatly apply your patch for 2.6.21 :)
+
+Either you dont know the exact semantic of set_current_state() and think it's a cleaner way to set current->state.
+It might looks better for you but it's not the *same* thing.
+
+I suggest you carefully study the difference between set_current_state() and __set_current_state(), and submit a new patch, once you feel comfortable with it.
+
+Here is the relevant extract from include/linux/sched.h
+
+/*
+ * set_current_state() includes a barrier so that the write of current->state
+ * is correctly serialised wrt the caller's subsequent test of whether to
+ * actually sleep:
+ *
+ *      set_current_state(TASK_UNINTERRUPTIBLE);
+ *      if (do_i_need_to_sleep())
+ *              schedule();
+ *
+ * If the caller does not need such serialisation then use __set_current_state()
+ */
+#define __set_current_state(state_value)                        \
+        do { current->state = (state_value); } while (0)
+#define set_current_state(state_value)          \
+        set_mb(current->state, (state_value))
+
+
+Thank you
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
