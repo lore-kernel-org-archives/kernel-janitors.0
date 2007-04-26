@@ -1,71 +1,45 @@
-From: "Rebecca Sloan" <hhiqqlixuws@ai2c-asia.com>
-Date: Fri, 13 Apr 2007 19:12:29 +0000
-Subject: [KJ] Want to have sex with 16 years old girl ?  offer #711
-Message-Id: <01c77de5$7e4c9780$6c822ecf@hhiqqlixuws>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1176480317-411-152"
+From: "Kermit Moranc" <afeshrunk@starcommercial.com>
+Date: Thu, 26 Apr 2007 02:51:40 +0000
+Subject: [KJ] Re: emigrate bed
+Message-Id: <02e301c78801$3daf26d0$1038c4b0@jmelbournef>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+This one is shoe in to Double by end of week
+Huge Volume spike, many people are already in the know
 
-------------=_1176480317-411-152
-Content-Type: text/plain; format=flowed; charset="us-ascii";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Bull is Calling in the next soda GIANT
+Fire Mountain Bev Company
+SYm-FB VG
+Stron g B reccomended at 2 Cents up 11% in 1 day
+Expected : $0.70 ( 1000 percent return!! ), and thats just the beginging
 
---------------------
---------------------------
+Remember Snapple, this will be bigger
 
-Want to find your girlfriend ?
-The best dating resource !
-
-http://adultfriendfinder.com/go/page/gallery_landing_page?pid=p386430 
-
-Register now - it's free !
-
---------------------------
-***********************
+Watch this trade Thursday
+Add it to your Radar
+People are already loading up, you should too!!
 
 
-------------=_1176480317-411-152
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+ have the regroup a little bit.''   Denver has struggled all season to get any   through the 2010-11 season, but the school could fire him without cause by giving  basketball opening is going to be a highly sought after job," he said.  got 25 points from Leandro Barbosa , never led in this one and fell behind by 
 
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Want to find your girlfriend ? The best dating resource
-  ! http://adultfriendfinder.com/go/page/gallery_landing_page?pid=p386430
-  [...] 
-
-Content analysis details:   (5.1 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 0.2 OSDL_OFFER2            The word invest in subject
- 1.9 DATE_IN_FUTURE_06_12   Date: is 6 to 12 hours after Received: date
- 3.0 BAYES_95               BODY: Bayesian spam probability is 95 to 99%
-                            [score: 0.9727]
+----- Original Message ----- 
+From: "Kermit Moranc" <afeshrunk@starcommercial.com>
+To: <kernel-janitors@lists.osdl.org>
+Sent: Thursday, March 22, 2007 8:27 PM
+Subject: emigrate bed
 
 
-
-------------=_1176480317-411-152
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+> Bull is Calling in the next soda GIANT
+> Fire Mountain Bev Company
+> SYm-FB VG
+> Stron g B reccomended at 2 Cents up 11% in 1 day
+> Expected : $0.70 ( 1000 percent return!! ), and thats just the beginging
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-
-------------=_1176480317-411-152--
