@@ -1,28 +1,31 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 28 Apr 2007 13:07:13 +0000
-Subject: [KJ] adding extra maturity levels
-Message-Id: <Pine.LNX.4.64.0704280906400.24558@localhost.localdomain>
+From: Bernd Petrovitsch <bernd@firmix.at>
+Date: Sun, 29 Apr 2007 19:44:41 +0000
+Subject: Re: [KJ] adding extra maturity levels
+Message-Id: <1177875881.3672.5.camel@gimli.at.home>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0704280906400.24558@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0704280906400.24558@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Sat, 2007-04-28 at 09:07 -0400, Robert P. J. Day wrote:
+>   still adding a bit more to this page but any thoughts?
+> 
+> http://fsdev.net/wiki/index.php?title=Maturity_levels
 
-  still adding a bit more to this page but any thoughts?
+Not that I have problem with the "maturity" feature as described, the
+more minimalistic solution of the inconsistencies between title and
+options is to add automatically "(experimental)" is the option marked as
+such. Similar also for deprecated, etc.
 
-http://fsdev.net/wiki/index.php?title=Maturity_levels
-
-rday
-
+	Bernd
 -- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+Firmix Software GmbH                   http://www.firmix.at/
+mobil: +43 664 4416156                 fax: +43 1 7890849-55
+          Embedded Linux Development and Services
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
