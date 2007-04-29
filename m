@@ -1,41 +1,25 @@
-From: Milind Arun Choudhary <milindchoudhary@gmail.com>
-Date: Mon, 16 Apr 2007 18:07:51 +0000
-Subject: [KJ] use mutex instead of a binary semaphore
-Message-Id: <20070416175551.GB9314@arun.site>
+From: "Myrtle Trejot" <riikomt@i-do.com.au>
+Date: Sun, 29 Apr 2007 01:36:00 +0000
+Subject: [KJ] hey
+Message-Id: <065d01c78a03$3acd27f0$9428a7d0@sexecutiver>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Kernel Janitors <kernel-janitors@lists.osdl.org>
-Cc: Kernel Newbies <kernelnewbies@nl.linux.org>, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
 
+Our Last pick Doubled
+We now bring you a new winner
+Announcing CRITICAL CARE NEW 
+Symb : CCTI
+This company is Ready and ready to run
+Price is $0.16 up 17% friday alone
+Should easily hit a $1 within 5 days
 
-	As the new mutex primitive is now in place, I read,it is advised 
-not to use binary semaphore for mutual exclusion.
+This is a Real Business not a fly by night
+Get in Monday, Don't Regret later!!
 
-while looking at different place where a binary semaphore is initialized,
-I came accross bd_mount_sem.
-
-I read a thread on LKML few months back related to the bd_mount_sem 
-and realized that there are cases where a binary semaphore  can not be replaced by a mutex.
-The reason being mutex has a sense of ownership, i.e. 
-a mutex can only be unlocked from the context
- from which it was locked.
-
-e.g bd_mount_sem in the block device structure is 
-used to make sure no new mounts happen on bdev
- in between freeze_bdev and thaw_bdev().
-
-so locking is done in freeze_bdev &
- unlocking in thaw_bdev these can be from different context i guess..
-
-is my understandig correct..
-CMIIW..
-would appreciate some pointers on how to identify such cases.. 
-
-
--- 
-Milind Arun Choudhary
+ have the regroup a little bit.''   Denver has struggled all season to get any   handle when Anthony and Iverson are coming at you like that. They are hard to  handle when Anthony and Iverson are coming at you like that. They are hard to in a Freedom of Information Act request.  Amaker had to be employed as Michigan's
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
