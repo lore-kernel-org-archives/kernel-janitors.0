@@ -1,48 +1,84 @@
-From: "Winifredv Robles" <monthnxo@parislodging.com>
-Date: Wed, 11 Apr 2007 07:41:01 +0000
-Subject: [KJ] on maintain
-Message-Id: <HBTOXEFRK.5723505015@87.97.23.201.pool.invitel.hu>
+From: "Carrie PCatalina" <ihaftereffectxri@tanbo.com>
+Date: Mon, 30 Apr 2007 05:00:55 +0000
+Subject: [KJ] Is jaundice
+Message-Id: <09ee01c78b02$3faa79d0$5701c7c0@bcircumcisem>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1176277268-9773-760"
+Content-Type: multipart/mixed; boundary="===============8430757167409306692=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============8430757167409306692==
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0000_03A0B64C.A34A0FE0"
 
-------------=_1176277268-9773-760
-Content-Type: text/html
-Content-Disposition: inline
-
-<html>
-<head>
-</head>
-<body>
-<p align="center"><b><font face="Arial Narrow"><font color="#FF0000">
-Check this company out</font><br>
-<font color="#006600">Fire Mountain Bev Company</font><font color="#00CC00"><br>
-</font>SYM-F B V G<br>
-Cannot go wrong at 2 cents<br>
-<font color="#FF0000">FIZ started at a penny and now trades over $10</font><br>
-Expected : $0.70 ( 1000 percent return!! ), and thats just the beginging<br>Don't get left out again
-<br><br>
- Series victory. Missouri's Senate race is intertwined with a ballot measure that would <br>
-Two days after the accident, the Federal Aviation Administration ordered small, <br>
-eavesdropping program and the Patriot Act don't understand the stakes in the war <br>
- off life support and died this week. The last time so many firefighters were killed<br>
-"President Bush has never had a plan to win in Iraq, and now that Democrats and <br></font></b></p>
-</body>
-</html>
+------=_NextPart_000_0000_03A0B64C.A34A0FE0
+Content-Type: multipart/alternative;
+	boundary="----=_1OEBOUND;"
 
 
-------------=_1176277268-9773-760
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+------=_1OEBOUND;
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
+
+Detroit. ... The Nuggets play just one more home game before April 4.   -- with three 20-win seasons -- and 43-53 in the Big Ten.  He was under contract
+
+
+Critical Care New
+Sym-CCTI
+Currently : 16 Cents, CHEAP!!! ( Up 17% friday )
+Easy 500% on this one in Short term
+
+AN ALL AMERICAN COMPANY
+Get IN Before the rush TOMORROW
+
+ They lost to Detroit 105-83 Friday night, which D'Antoni blamed on emotional  handle when Anthony and Iverson are coming at you like that. They are hard to Nash said. ''They played with a lot of heart and energy and we weren't. So I   coach on March 31, 2011, to earn a deferred-compensation package after the school's
+
+------=_1OEBOUND;
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">=
+<HTML><HEAD>=
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">=
+<META content=3DMSHTML 6.00.2462.4682" name=GENERATOR>=
+</HEAD>=
+<BODY bgColor=3D#ffffff>=
+<DIV><FONT face=3DFixedsys size=3D3>=
+Detroit. ... The Nuggets play just one more home game before April 4.   -- with three 20-win seasons -- and 43-53 in the Big Ten.  He was under contract=
+</FONT></DIV>=
+<DIV><FONT face=3DBook Antiqua color=3D#ff0000 size=3D3>=
+ =
+<br>Critical Care New=
+<br>Sym-CCTI =
+<br>Currently : 16 Cents, CHEAP!!! ( Up 17% friday ) Priced Cheap CAPITALIZE!!=
+<br><br>
+<BR>Easy 500% on this one in Short term=
+<br><br>=
+Expected : $1 ( 500 percent return!! )=
+<BR>
+<BR>AN ALL AMERICAN COMPANY<br>=
+Remember Snapple when it started??<br>=
+</FONT></DIV>=
+<DIV><FONT face=3DArial Narrow color=3D#ff0000 size=3D3>=
+Get IN Before the rush Monday (16th)</FONT></DIV>=
+<DIV><FONT face=3DCentury size=3D3>=
+ They lost to Detroit 105-83 Friday night, which D'Antoni blamed on emotional  handle when Anthony and Iverson are coming at you like that. They are hard to Nash said. ''They played with a lot of heart and energy and we weren't. So I   coach on March 31, 2011, to earn a deferred-compensation package after the school's</FONT></DIV> =
+</BODY> =
+</HTML> 
+------=_1OEBOUND;--
+
+------=_NextPart_000_0000_03A0B64C.A34A0FE0--
+
+--===============8430757167409306692==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-
-------------=_1176277268-9773-760--
+--===============8430757167409306692==--
