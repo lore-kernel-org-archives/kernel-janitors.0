@@ -1,13 +1,15 @@
-From: Canadian Doctor Katharine <kernel-janitors@osdl.org>
-Date: Mon, 30 Apr 2007 01:04:49 +0000
+From: Canadian Doctor Katharine <kernel-janitors@lists.osdl.org>
+Date: Mon, 30 Apr 2007 01:05:41 +0000
 Subject: [KJ] RE: MedHelp 3807722184
-Message-Id: <20070429020410.38897.qmail@fw1.frazerumc.org>
+Message-Id: <20070429020406.38893.qmail@fw1.frazerumc.org>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7455114131939066451=="
+Content-Type: multipart/mixed; boundary="===============3922658613882588920=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070429020410.38897.qmail@fw1.frazerumc.org>
+In-Reply-To: <20070429020410.38897.qmail@fw1.frazerumc.org>
 To: kernel-janitors@vger.kernel.org
 
---===============7455114131939066451==
+--===============3922658613882588920==
 Content-Type: text/html
 
 <STYLE>
@@ -154,7 +156,7 @@ ont/password/studied/crucified/planninghas/Coupon/12/Wilkes/stalking/Whitney/liv
 
 
 
---===============7455114131939066451==
+--===============3922658613882588920==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -164,4 +166,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7455114131939066451==--
+--===============3922658613882588920==--
