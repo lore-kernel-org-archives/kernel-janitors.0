@@ -1,46 +1,48 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 21 May 2007 17:40:35 +0000
-Subject: [KJ] questions about memory allocation and GFP_DMA zone modifier
-Message-Id: <Pine.LNX.4.64.0705211331500.24911@localhost.localdomain>
+From: "Roxyanna Ouattara" <Roxyanna632@abbaye-saint-michel.com>
+Date: Tue, 01 May 2007 04:34:53 +0000
+Subject: [KJ] The number of block levels to break out from.
+Message-Id: <000201c78baa$1004f510$623cc3c8@DP5>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============3204613693307819933=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+--===============3204613693307819933==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0009_01C78B90.EABA0700"
 
-  first, because of this definition in include/linux/gfp.h:
+------=_NextPart_000_0009_01C78B90.EABA0700
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-#define GFP_DMA         __GFP_DMA
+There should be a 'CONNECT' in it.
+------=_NextPart_000_0009_01C78B90.EABA0700
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-there is a mixture of usage in the kernel source tree:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.3059" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT Arial size=3D2>There should be a 'CONNECT' in=20
+it.</FONT></DIV></BODY></HTML>
 
-  $ grep -rw GFP_DMA * | wc -l
-  245
-  $ grep -rw __GFP_DMA * | wc -l
-  37
+------=_NextPart_000_0009_01C78B90.EABA0700--
 
-is there an actual semantic difference between those two?  is there
-supposed to be?
 
-  and, second, given that include/linux/gfp.h includes the definition:
+--===============3204613693307819933==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-#define __get_dma_pages(gfp_mask, order) \
-                __get_free_pages((gfp_mask) | GFP_DMA,(order))
-
-is there any value in replacing the longer forms with a call to
-__get_dma_pages() for consistency?
-
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============3204613693307819933==--
