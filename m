@@ -1,48 +1,61 @@
-From: "pradeep singh" <2500.pradeep@gmail.com>
-Date: Fri, 18 May 2007 11:52:02 +0000
-Subject: [KJ] alloc_netdev() and 32 byte or 32 bit alignment???
-Message-Id: <366312910705180440q2b4daf7awc8fbcfab25d59ef1@mail.gmail.com>
+From: "Reesa Nordby" <Reesa-Nordby@abbaye-saint-michel.com>
+Date: Tue, 01 May 2007 04:34:54 +0000
+Subject: Turn thy false face, thou traitor,
+Message-Id: <000301c78baa$10b2e850$623cc3c8@DP5>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============0871647586=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi ,
+--===============0871647586==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0004_01C78B90.EB65B050"
 
-following code snippet is self evident in what it does -
+------=_NextPart_000_0004_01C78B90.EB65B050
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-truct net_device *alloc_netdev(int sizeof_priv, const char *name,
-		void (*setup)(struct net_device *))
-{
-	void *p;
-	struct net_device *dev;
-	int alloc_size;
+Light, what are they going to do to us.
+------=_NextPart_000_0004_01C78B90.EB65B050
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-	/* ensure 32-byte alignment of both the device and private area */
-	alloc_size = (sizeof(*dev) + NETDEV_ALIGN_CONST) & ~NETDEV_ALIGN_CONST;
-	alloc_size += sizeof_priv + NETDEV_ALIGN_CONST;
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.3059" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<DIV><FONT Arial size=3D2>Light, what are they going to do to=20
+us.</FONT></DIV></BODY></HTML>
 
-	p = kzalloc(alloc_size, GFP_KERNEL);
-	if (!p) {
-		printk(KERN_ERR "alloc_dev: Unable to allocate device.\n");
-		return NULL;
-	}
-[snip]
-
-Is the comment correct?
-Why is it 'ensure 32 byte alignment', instead of 32 bit alignment?
-
-What am i missing here?
-
-Thank you
---psr
+------=_NextPart_000_0004_01C78B90.EB65B050--
 
 
 
--- 
-play the game
+--===============0871647586==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+-------------------------------------------------------------------------
+This SF.net email is sponsored by DB2 Express
+Download DB2 Express C - the FREE version of DB2 express and take
+control of your XML. No limits. Just data. Click to get it now.
+http://sourceforge.net/powerbar/db2/
+--===============0871647586==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Kernel-janitor-discuss mailing list
+Kernel-janitor-discuss@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kernel-janitor-discuss
+
+--===============0871647586==--
