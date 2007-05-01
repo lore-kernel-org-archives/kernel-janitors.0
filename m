@@ -1,137 +1,255 @@
-From: "R Harrison" <rharrison@baycare.net>
-Date: Tue, 22 May 2007 19:35:29 +0000
-Subject: [KJ] The work shows the workman
-Message-Id: <01c79cc1$7fdbf050$6c822ecf@akstcuntitledlabmnsdgs>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1179873330-3969-146"
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 01 May 2007 16:16:28 +0000
+Subject: [KJ] [PATCH] drivers/net/3c505: Convert to generic boolean
+Message-Id: <20070501161359.32400.51795.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1179873330-3969-146
-Content-Type: text/plain; format="flowed"; charset="iso-8859-2"; reply-type="original"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
- My name is R. Harrison  and I'm the Chief Manager of Department of employm=
-ent. I am pleased to offer you a vacant position of Financial Manager
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=20
- Let me tell you about our company.=20
-We are engaged in selection and delivery of technical equipment and goodies=
- in various offices and organizations. We take all troubles about choosing =
-and delivering appropriate technical equipment to client=92s office, under =
-our responsibility. Company was established in 2002 and earned quite good r=
-eputation on the market. At the moment we have some plans for the further d=
-evelopment, we plan to broaden our services and add an international networ=
-k to serve clients in all over the world.=20
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- To offer to our foreign clients more favorable and comfortable conditions =
-we have made the decision to create an international network of regional ag=
-ents. We have opened a set of employees in various areas of the world. It h=
-as allowed our clients to get access to a wider assortment of the goods, th=
-an before. In fact, earlier, many suppliers refused to work with us for the=
- reason of bureaucracy that occurred then registration of legal documents w=
-ere needed to transport equipment, or transfer money.
-&nbsp;&nbsp;&nbsp;  =20
-The Duties of the financial manager consists of reception of money resource=
-s from clients of our company and transferring them to us. For every transa=
-ction, we pay 8 % from the total sum.=20
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Work Requirements=20
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-minimal knowledge of personal computer and internet/E-mail
-Bank account
-Legal age
-Will to work at home 2-3 hrs per day
-Crime-free background (background check will be made before accepting on th=
-e position)=20
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-There is not any starting payments or pledges for the goods!
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Please replay to this e-mail if you are interested in this opening, we will=
- send you an employment agreement within nearest 24 hours, feel free to ask=
- questions.
-   &nbsp;&nbsp;
-&nbsp;   =20
-Contact us:  rharrison@baycare.net
-R. Harrison
-
-
-------------=_1179873330-3969-146
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.=
-org", has=0A=
-identified this incoming email as possible spam.  The original message=0A=
-has been attached to this so you can view it (if it isn't spam) or label=0A=
-similar future email.  If you have any questions, see=0A=
-the administrator of that system for details.=0A=
-=0A=
-Content preview:  My name is R. Harrison and I'm the Chief Manager of=0A=
-  Department of employment. I am pleased to offer you a vacant position of=
-=0A=
-  Financial Manager &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Let me tell you about=0A=
-  our company. We are engaged in selection and delivery of technical=0A=
-  equipment and goodies in various offices and organizations. We take all=
-=0A=
-  troubles about choosing and delivering appropriate technical equipment=0A=
-  to client=92s office, under our responsibility. Company was established in=
-=0A=
-  2002 and earned quite good reputation on the market. At the moment we=0A=
-  have some plans for the further development, we plan to broaden our=0A=
-  services and add an international network to serve clients in all over=0A=
-  the world. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-=0A=
-  To offer to our foreign clients more favorable and comfortable=0A=
-  conditions we have made the decision to create an international network=
-=0A=
-  of regional agents. We have opened a set of employees in various areas=0A=
-  of the world. It has allowed our clients to get access to a wider=0A=
-  assortment of the goods, than before. In fact, earlier, many suppliers=0A=
-  refused to work with us for the reason of bureaucracy that occurred then=
-=0A=
-  registration of legal documents were needed to transport equipment, or=0A=
-  transfer money. &nbsp;&nbsp;&nbsp; The Duties of the financial manager=0A=
-  consists of reception of money resources from clients of our company and=
-=0A=
-  transferring them to us. For every transaction, we pay 8 % from the=0A=
-  total sum. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Work=0A=
-  Requirements &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; minimal=0A=
-  knowledge of personal computer and internet/E-mail Bank account Legal=0A=
-  age Will to work at home 2-3 hrs per day Crime-free background=0A=
-  (background check will be made before accepting on the position)=0A=
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There is=0A=
-  not any starting payments or pledges for the goods!=0A=
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Please replay to this e-mail if you are=0A=
-  interested in this opening, we will send you an employme [...]=20=0A=
-=0A=
-Content analysis details:   (7.5 points, 5.0 required)=0A=
-=0A=
- pts rule name              description=0A=
----- ---------------------- -----------------------------------------------=
----=0A=
- 3.3 HELO_DYNAMIC_HCC       Relay HELO'd using suspicious hostname (HCC)=0A=
- 3.3 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr=
-=0A=
-                            2)=0A=
- 0.7 DATE_IN_PAST_03_06     Date: is 3 to 6 hours before Received: date=0A=
- 0.2 OSDL_NIGERIAN_WORK_WITH_US BODY: "wor*king with us"=0A=
-=0A=
-=0A=
-
-------------=_1179873330-3969-146
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: philb@gnu.org
+Cc: netdev@vger.kernel.org, kernel-janitors@lists.osdl.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
+Convert to generic boolean
+
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+---
+Compile-tested with all(yes|mod|no)config on x86(|_64) & sparc(|64)
+Diffed against Linus' git-tree.
+
+
+diff --git a/drivers/net/3c505.c b/drivers/net/3c505.c
+index e985a85..acede30 100644
+--- a/drivers/net/3c505.c
++++ b/drivers/net/3c505.c
+@@ -169,21 +169,6 @@ static int elp_debug;
+ 
+ /*****************************************************************
+  *
+- * useful macros
+- *
+- *****************************************************************/
+-
+-#ifndef	TRUE
+-#define	TRUE	1
+-#endif
+-
+-#ifndef	FALSE
+-#define	FALSE	0
+-#endif
+-
+-
+-/*****************************************************************
+- *
+  * List of I/O-addresses we try to auto-sense
+  * Last element MUST BE 0!
+  *****************************************************************/
+@@ -270,7 +255,7 @@ static inline void set_hsf(struct net_device *dev, int hsf)
+ 	spin_unlock_irqrestore(&adapter->lock, flags);
+ }
+ 
+-static int start_receive(struct net_device *, pcb_struct *);
++static bool start_receive(struct net_device *, pcb_struct *);
+ 
+ static inline void adapter_reset(struct net_device *dev)
+ {
+@@ -328,28 +313,28 @@ static inline void check_3c505_dma(struct net_device *dev)
+ }
+ 
+ /* Primitive functions used by send_pcb() */
+-static inline unsigned int send_pcb_slow(unsigned int base_addr, unsigned char byte)
++static inline bool send_pcb_slow(unsigned int base_addr, unsigned char byte)
+ {
+ 	unsigned long timeout;
+ 	outb_command(byte, base_addr);
+ 	for (timeout = jiffies + 5*HZ/100; time_before(jiffies, timeout);) {
+ 		if (inb_status(base_addr) & HCRE)
+-			return FALSE;
++			return false;
+ 	}
+ 	printk(KERN_WARNING "3c505: send_pcb_slow timed out\n");
+-	return TRUE;
++	return true;
+ }
+ 
+-static inline unsigned int send_pcb_fast(unsigned int base_addr, unsigned char byte)
++static inline bool send_pcb_fast(unsigned int base_addr, unsigned char byte)
+ {
+ 	unsigned int timeout;
+ 	outb_command(byte, base_addr);
+ 	for (timeout = 0; timeout < 40000; timeout++) {
+ 		if (inb_status(base_addr) & HCRE)
+-			return FALSE;
++			return false;
+ 	}
+ 	printk(KERN_WARNING "3c505: send_pcb_fast timed out\n");
+-	return TRUE;
++	return true;
+ }
+ 
+ /* Check to see if the receiver needs restarting, and kick it if so */
+@@ -386,7 +371,7 @@ static inline void prime_rx(struct net_device *dev)
+  * timeout is reduced to 500us).
+  */
+ 
+-static int send_pcb(struct net_device *dev, pcb_struct * pcb)
++static bool send_pcb(struct net_device *dev, pcb_struct * pcb)
+ {
+ 	int i;
+ 	unsigned long timeout;
+@@ -396,14 +381,14 @@ static int send_pcb(struct net_device *dev, pcb_struct * pcb)
+ 	check_3c505_dma(dev);
+ 
+ 	if (adapter->dmaing && adapter->current_dma.direction = 0)
+-		return FALSE;
++		return false;
+ 
+ 	/* Avoid contention */
+ 	if (test_and_set_bit(1, &adapter->send_pcb_semaphore)) {
+ 		if (elp_debug >= 3) {
+ 			printk(KERN_DEBUG "%s: send_pcb entered while threaded\n", dev->name);
+ 		}
+-		return FALSE;
++		return false;
+ 	}
+ 	/*
+ 	 * load each byte into the command register and
+@@ -435,7 +420,7 @@ static int send_pcb(struct net_device *dev, pcb_struct * pcb)
+ 		switch (GET_ASF(dev->base_addr)) {
+ 		case ASF_PCB_ACK:
+ 			adapter->send_pcb_semaphore = 0;
+-			return TRUE;
++			return true;
+ 
+ 		case ASF_PCB_NAK:
+ #ifdef ELP_DEBUG
+@@ -453,7 +438,7 @@ static int send_pcb(struct net_device *dev, pcb_struct * pcb)
+ 	spin_unlock_irqrestore(&adapter->lock, flags);
+       abort:
+ 	adapter->send_pcb_semaphore = 0;
+-	return FALSE;
++	return false;
+ }
+ 
+ 
+@@ -470,7 +455,7 @@ static int send_pcb(struct net_device *dev, pcb_struct * pcb)
+  *
+  *****************************************************************/
+ 
+-static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
++static bool receive_pcb(struct net_device *dev, pcb_struct * pcb)
+ {
+ 	int i, j;
+ 	int total_length;
+@@ -487,7 +472,7 @@ static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
+ 	while (((stat = get_status(dev->base_addr)) & ACRF) = 0 && time_before(jiffies, timeout));
+ 	if (time_after_eq(jiffies, timeout)) {
+ 		TIMEOUT_MSG(__LINE__);
+-		return FALSE;
++		return false;
+ 	}
+ 	pcb->command = inb_command(dev->base_addr);
+ 
+@@ -497,14 +482,14 @@ static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
+ 	if (time_after_eq(jiffies, timeout)) {
+ 		TIMEOUT_MSG(__LINE__);
+ 		printk(KERN_INFO "%s: status %02x\n", dev->name, stat);
+-		return FALSE;
++		return false;
+ 	}
+ 	pcb->length = inb_command(dev->base_addr);
+ 
+ 	if (pcb->length > MAX_PCB_DATA) {
+ 		INVALID_PCB_MSG(pcb->length);
+ 		adapter_reset(dev);
+-		return FALSE;
++		return false;
+ 	}
+ 	/* read the data */
+ 	spin_lock_irqsave(&adapter->lock, flags);
+@@ -519,7 +504,7 @@ static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
+ 	spin_unlock_irqrestore(&adapter->lock, flags);
+ 	if (j >= 20000) {
+ 		TIMEOUT_MSG(__LINE__);
+-		return FALSE;
++		return false;
+ 	}
+ 	/* woops, the last "data" byte was really the length! */
+ 	total_length = pcb->data.raw[--i];
+@@ -529,7 +514,7 @@ static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
+ 		if (elp_debug >= 2)
+ 			printk(KERN_WARNING "%s: mangled PCB received\n", dev->name);
+ 		set_hsf(dev, HSF_PCB_NAK);
+-		return FALSE;
++		return false;
+ 	}
+ 
+ 	if (pcb->command = CMD_RECEIVE_PACKET_COMPLETE) {
+@@ -538,14 +523,14 @@ static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
+ 				set_hsf(dev, HSF_PCB_NAK);
+ 				printk(KERN_WARNING "%s: PCB rejected, transfer in progress and backlog full\n", dev->name);
+ 				pcb->command = 0;
+-				return TRUE;
++				return true;
+ 			} else {
+ 				pcb->command = 0xff;
+ 			}
+ 		}
+ 	}
+ 	set_hsf(dev, HSF_PCB_ACK);
+-	return TRUE;
++	return true;
+ }
+ 
+ /******************************************************
+@@ -555,9 +540,9 @@ static int receive_pcb(struct net_device *dev, pcb_struct * pcb)
+  *
+  ******************************************************/
+ 
+-static int start_receive(struct net_device *dev, pcb_struct * tx_pcb)
++static bool start_receive(struct net_device *dev, pcb_struct * tx_pcb)
+ {
+-	int status;
++	bool status;
+ 	elp_device *adapter = dev->priv;
+ 
+ 	if (elp_debug >= 3)
+@@ -984,7 +969,7 @@ static int elp_open(struct net_device *dev)
+  *
+  ******************************************************/
+ 
+-static int send_packet(struct net_device *dev, struct sk_buff *skb)
++static bool send_packet(struct net_device *dev, struct sk_buff *skb)
+ {
+ 	elp_device *adapter = dev->priv;
+ 	unsigned long target;
+@@ -998,7 +983,7 @@ static int send_packet(struct net_device *dev, struct sk_buff *skb)
+ 	if (test_and_set_bit(0, (void *) &adapter->busy)) {
+ 		if (elp_debug >= 2)
+ 			printk(KERN_DEBUG "%s: transmit blocked\n", dev->name);
+-		return FALSE;
++		return false;
+ 	}
+ 
+ 	adapter->stats.tx_bytes += nlen;
+@@ -1015,7 +1000,7 @@ static int send_packet(struct net_device *dev, struct sk_buff *skb)
+ 
+ 	if (!send_pcb(dev, &adapter->tx_pcb)) {
+ 		adapter->busy = 0;
+-		return FALSE;
++		return false;
+ 	}
+ 	/* if this happens, we die */
+ 	if (test_and_set_bit(0, (void *) &adapter->dmaing))
+@@ -1047,7 +1032,7 @@ static int send_packet(struct net_device *dev, struct sk_buff *skb)
+ 	if (elp_debug >= 3)
+ 		printk(KERN_DEBUG "%s: DMA transfer started\n", dev->name);
+ 
+-	return TRUE;
++	return true;
+ }
+ 
+ /*
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1179873330-3969-146--
