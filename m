@@ -1,15 +1,17 @@
 From: "Mr. Yaw Osafo-Maafo" <ministeryawosafow@myway.com>
-Date: Sat, 05 May 2007 13:59:15 +0000
+Date: Sat, 05 May 2007 14:23:11 +0000
 Subject: [KJ] PLEASE I AM WAITING
-Message-Id: <1307461420.609@myway.com>
+Message-Id: <1307462000.1484@myway.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1178373573-411-0"
+Content-Type: multipart/mixed; boundary="----------=_1178375009-411-12"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1307461420.609@myway.com>
+In-Reply-To: <1307461420.609@myway.com>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1178373573-411-0
+------------=_1178375009-411-12
 Content-Type: text/html
 Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
@@ -33,7 +35,7 @@ Minister,Yaw Osafo-Maafo
 
 
 
-------------=_1178373573-411-0
+------------=_1178375009-411-12
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -88,7 +90,7 @@ Content analysis details:   (5.7 points, 5.0 required)
 
 
 
-------------=_1178373573-411-0
+------------=_1178375009-411-12
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -98,4 +100,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1178373573-411-0--
+------------=_1178375009-411-12--
