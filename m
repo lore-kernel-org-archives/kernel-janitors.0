@@ -1,13 +1,15 @@
 From: admin@microsoft.com
-Date: Sun, 06 May 2007 12:47:25 +0000
+Date: Sun, 06 May 2007 12:48:50 +0000
 Subject: [KJ] Internet Explorer 7.0 Beta
-Message-Id: <20070506054727.3068.qmail@cristi-4484bd6a>
+Message-Id: <20070506054729.3072.qmail@cristi-4484bd6a>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7924230902927819495=="
+Content-Type: multipart/mixed; boundary="===============1097173514740085625=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070506054727.3068.qmail@cristi-4484bd6a>
+In-Reply-To: <20070506054727.3068.qmail@cristi-4484bd6a>
 To: kernel-janitors@vger.kernel.org
 
---===============7924230902927819495==
+--===============1097173514740085625==
 Content-Type: text/html
 
 <style>
@@ -148,7 +150,7 @@ Please respond to group.  Thank you.
 </style>
 
 
---===============7924230902927819495==
+--===============1097173514740085625==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -158,4 +160,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7924230902927819495==--
+--===============1097173514740085625==--
