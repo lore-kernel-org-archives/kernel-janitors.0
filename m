@@ -1,96 +1,89 @@
-From: "Mr. Yaw Osafo-Maafo" <ministeryawosafow@myway.com>
-Date: Sat, 05 May 2007 14:23:11 +0000
-Subject: [KJ] PLEASE I AM WAITING
-Message-Id: <1307462000.1484@myway.com>
+From: "bruno evanne" <crissieisiahi@rodsimpson.org>
+Date: Sun, 06 May 2007 02:42:25 +0000
+Subject: [KJ] Adobe Photoshop CS3 Extended ready to download
+Message-Id: <2b3f501c78f88$2de84730$35d4e8de@xpaeb8d8c4032a>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1178375009-411-12"
+Content-Type: multipart/mixed; boundary="===============5451923738571235516=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1307461420.609@myway.com>
-In-Reply-To: <1307461420.609@myway.com>
+References: <9e7501c77a63$d3b872a0$0202a8c0@DansComp>
+In-Reply-To: <9e7501c77a63$d3b872a0$0202a8c0@DansComp>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+This is a multi-part message in MIME format.
 
-------------=_1178375009-411-12
-Content-Type: text/html
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+--===============5451923738571235516==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_2A9E9_01C78FD3.7ABD0D70"
 
-My Dear:Friend,
+This is a multi-part message in MIME format.
 
-How is your family? hope all of you are fine, if so splendid.I wish to accost you with a request that would be of immense benefit to both of us. After careful consideration with my wife and children, we resolved to contact you for your most needed assistance in this manner. I duly apologize for infringing on your privacy, if this contact is not acceptable to you, as I make this proposal to you.Yaw Osafo-Maafo is my name and former Ghanaian minister of finance.
- 
-Although I was sacked by President John Kufuor on 28 April 2006 for the fact I signed $29 million book publication contract with Macmillan Education without reference to the Public Procurement Board and without Parliamentary approval.
-I have taken pains to find your contact through personal endeavours.I decided to contact you after due thought in respect of a transfer of a huge sum of money,You can read more on this web page
-http://www.ghanaweb.com/GhanaHomePage/NewsArchive/artikel.php?ID=103713
-Right now, I was being probed because of it. As matter of fact, $15 million part of the money was lodged into security company in europe,were the funds is been deposited. the money will be release to you for investment. I would like you to give this a highly confidential approach. 
- 
-Any question you wish to ask concerning this deal, do not delay to ask.
-Presently, I do not need any telephone discussion for safety. The moment I hear from you, my lawyer will contact you, If you are interested in this proposal sent me mail to my privet Email address: ( ministeryawosafow@myway.com) o
-PLEASE CONFIDENTIAL
-I wait your response.
-My regards,
-Minister,Yaw Osafo-Maafo
-
-
-
-
-------------=_1178375009-411-12
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
+------=_NextPart_000_2A9E9_01C78FD3.7ABD0D70
+Content-Type: text/plain;
+	charset="ks_c_5601-1987"
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
+Find out more about the new features and enhancements in Adobe Photoshop
+CS3 Extended. Boost your productivity with a streamlined interface,
+enhancements to raw-image processing and asset management workflows, and
+more; experience unrivaled editing power with nondestructive filters,
+more precise color-correction controls, and more powerful cloning and
+healing tools; easily create rich composites using new tools for
+automatically aligning and blending layers and making quick selections;
+3D and motion support with the ability to edit 3D content and
+incorporate it into 2D compositions, paint and clone over multiple video
+frames, and more; comprehensive image analysis with new image
+measurement and counting tools, MATLAB integration, and DICOM file
+support.
+Adobe Photoshop CS3 Extended
+Retail Price $999.00
+Our Price $89.95
+You save $909.05
+http://bloggers-haven.com/poli/
+Please note, that there will be more special offers available for our
+constant customers. Every effort has been made to ensure the accuracy of
+all information contained herein. DS Team makes no warranty expressed or
+implied with respect to accuracy of the information, including price,
+product editorials or product specifications. Product and manufacturer
+names are used only for the purpose of identification. We appreciate
+your cooperation with us and we'll be glad to see you as our clients in
+the future. 
 
-Content preview:  My Dear:Friend, How is your family? hope all of you are
-  fine, if so splendid.I wish to accost you with a request that would be
-  of immense benefit to both of us. After careful consideration with my
-  wife and children, we resolved to contact you for your most needed
-  assistance in this manner. I duly apologize for infringing on your
-  privacy, if this contact is not acceptable to you, as I make this
-  proposal to you.Yaw Osafo-Maafo is my name and former Ghanaian minister
-  of finance. Although I was sacked by President John Kufuor on 28 April
-  2006 for the fact I signed $29 million book publication contract with
-  Macmillan Education without reference to the Public Procurement Board
-  and without Parliamentary approval. I have taken pains to find your
-  contact through personal endeavours.I decided to contact you after due
-  thought in respect of a transfer of a huge sum of money,You can read
-  more on this web page
-  http://www.ghanaweb.com/GhanaHomePage/NewsArchive/artikel.php?ID=103713
-  Right now, I was being probed because of it. As matter of fact, $15
-  million part of the money was lodged into security company in
-  europe,were the funds is been deposited. the money will be release to
-  you for investment. I would like you to give this a highly confidential
-  approach. Any question you wish to ask concerning this deal, do not
-  delay to ask. Presently, I do not need any telephone discussion for
-  safety. The moment I hear from you, my lawyer will contact you, If you
-  are interested in this proposal sent me mail to my privet Email address:
-  ( ministeryawosafow@myway.com) o PLEASE CONFIDENTIAL I wait your
-  response. My regards, Minister,Yaw Osafo-Maafo [...] 
+------=_NextPart_000_2A9E9_01C78FD3.7ABD0D70
+Content-Type: text/html;
+	charset="ks_c_5601-1987"
+Content-Transfer-Encoding: 7bit
 
-Content analysis details:   (5.7 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 0.5 SUBJ_ALL_CAPS          Subject is all capitals
- 0.1 OSDL_NIGERIAN_FUNDS    BODY: "fun*ds"
- 2.0 HTML_00_10             BODY: Message is 0% to 10% HTML
- 1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
-                            [score: 0.6397]
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
- 0.0 HTML_MIME_NO_HTML_TAG  HTML-only message, but there is no HTML tag
- 0.1 ADVANCE_FEE_1          Appears to be advance fee fraud (Nigerian 419)
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2900.2180" name=GENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=#ffffff><FONT face=Arial size=2>Find out more about the new 
+features and enhancements in Adobe Photoshop CS3 Extended. Boost your 
+productivity with a streamlined interface, enhancements to raw-image processing 
+and asset management workflows, and more; experience unrivaled editing power 
+with nondestructive filters, more precise color-correction controls, and more 
+powerful cloning and healing tools; easily create rich composites using new 
+tools for automatically aligning and blending layers and making quick 
+selections; 3D and motion support with the ability to edit 3D content and 
+incorporate it into 2D compositions, paint and clone over multiple video frames, 
+and more; comprehensive image analysis with new image measurement and counting 
+tools, MATLAB integration, and DICOM file support.<BR>Adobe Photoshop CS3 
+Extended<BR>Retail Price $999.00<BR>Our Price $89.95<BR>You save $909.05<BR><A 
+href="http://bloggers-haven.com/poli/">http://bloggers-haven.com/poli/</A><BR>Please note, that 
+there will be more special offers available for our constant customers. Every 
+effort has been made to ensure the accuracy of all information contained herein. 
+DS Team makes no warranty expressed or implied with respect to accuracy of the 
+information, including price, product editorials or product specifications. 
+Product and manufacturer names are used only for the purpose of identification. 
+We appreciate your cooperation with us and we'll be glad to see you as our 
+clients in the future.</FONT>
+<DIV><FONT face=Arial size=2></FONT> </DIV></BODY></HTML>
+------=_NextPart_000_2A9E9_01C78FD3.7ABD0D70--
 
 
-
-------------=_1178375009-411-12
+--===============5451923738571235516==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -100,4 +93,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1178375009-411-12--
+--===============5451923738571235516==--
