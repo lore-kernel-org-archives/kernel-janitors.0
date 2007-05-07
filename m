@@ -1,9 +1,9 @@
 From: "tobie rudiger" <alasdairjennee@fpesse.com>
 Date: Mon, 07 May 2007 03:45:48 +0000
 Subject: [KJ] Adobe Photoshop CS3 Extended ready to download!
-Message-Id: <6807101c7905a$32fb87f0$3186f87b@reguser001>
+Message-Id: <6807c01c7905a$330524e0$3186f87b@reguser001>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============8901154128229801150=="
+Content-Type: multipart/mixed; boundary="===============6116905661175970746=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <9e7501c77a63$d3b872a0$0202a8c0@DansComp>
 In-Reply-To: <9e7501c77a63$d3b872a0$0202a8c0@DansComp>
@@ -11,7 +11,7 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============8901154128229801150==
+--===============6116905661175970746==
 Content-Type: multipart/alternative;
 	boundary="----=_NextPart_000_678F5_01C790A5.8547D770"
 
@@ -84,7 +84,7 @@ clients in the future.</FONT>
 ------=_NextPart_000_678F5_01C790A5.8547D770--
 
 
---===============8901154128229801150==
+--===============6116905661175970746==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -94,4 +94,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============8901154128229801150==--
+--===============6116905661175970746==--
