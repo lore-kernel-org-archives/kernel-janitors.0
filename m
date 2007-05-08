@@ -1,52 +1,27 @@
-From: Andy Whitcroft <apw@shadowen.org>
-Date: Tue, 08 May 2007 11:18:42 +0000
+From: "Pekka Enberg" <penberg@cs.helsinki.fi>
+Date: Tue, 08 May 2007 12:21:55 +0000
 Subject: [KJ] Re: [KJ PATCH] Replacing memset(<addr>, 0,
-Message-Id: <46405C92.1080003@shadowen.org>
+Message-Id: <84144f020705080521k6d75d9f8m33e25585735e4f7e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1178621156.3598.10.camel@shani-win>
-In-Reply-To: <1178621156.3598.10.camel@shani-win>
+References: <1178621444.3598.15.camel@shani-win>
+	 <46405AB6.6040901@msgid.tls.msk.ru>
+In-Reply-To: <46405AB6.6040901@msgid.tls.msk.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Shani Moideen <shani.moideen@wipro.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: Michael Tokarev <mjt@tls.msk.ru>
+Cc: Shani Moideen <shani.moideen@wipro.com>, ebiederm@xmission.com, linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
 Shani Moideen wrote:
-> Hi,
-> 
-> Replacing memset(<addr>,0,PAGE_SIZE) with clear_page() in mm/memory.c.
-> 
-> Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
-> ----
-> 
-> thanks.
-> 
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index e7066e7..2780d07 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1505,7 +1505,7 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
->                  * zeroes.
->                  */
->                 if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
-> -                       memset(kaddr, 0, PAGE_SIZE);
-> +                       clear_page(kaddr);
->                 kunmap_atomic(kaddr, KM_USER0);
->                 flush_dcache_page(dst);
->                 return;
-> 
-> 
+> >                 ptr = kmap(page);
+> > -               memset(ptr, 0, PAGE_SIZE);
+> > +               clear_page(ptr);
 
-This looks to be whitespace dammaged?
+On 5/8/07, Michael Tokarev <mjt@tls.msk.ru> wrote:
+> I wonder if it's worth to invent kzmap() or something like that... ;)
 
--apw
-
-use tabs not spaces
-PATCH: -:64:
-FILE: b/mm/memory.c:1508:
-+                       clear_page(kaddr);$
-
+I am counting 59 kmap + memset pairs in the kernel, so perhaps it is
+worth it to reduce kernel text size.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
