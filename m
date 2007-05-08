@@ -1,17 +1,20 @@
 From: Shani Moideen <shani.moideen@wipro.com>
-Date: Tue, 08 May 2007 10:57:56 +0000
+Date: Tue, 08 May 2007 11:02:44 +0000
 Subject: [KJ] [KJ PATCH] Replacing memset(<addr>, 0,
-Message-Id: <1178621156.3598.10.camel@shani-win>
+Message-Id: <1178621444.3598.15.camel@shani-win>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1178621156.3598.10.camel@shani-win>
+In-Reply-To: <1178621156.3598.10.camel@shani-win>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-mm@kvack.org
+To: ebiederm@xmission.com
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
 Hi,
 
-Replacing memset(<addr>,0,PAGE_SIZE) with clear_page() in mm/memory.c.
+Replacing memset(<addr>,0,PAGE_SIZE) with clear_page() in
+kernel/kexec.c 
 
 Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
 ----
@@ -19,19 +22,23 @@ Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
 thanks.
 
 
-diff --git a/mm/memory.c b/mm/memory.c
-index e7066e7..2780d07 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1505,7 +1505,7 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
-                 * zeroes.
-                 */
-                if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
--                       memset(kaddr, 0, PAGE_SIZE);
-+                       clear_page(kaddr);
-                kunmap_atomic(kaddr, KM_USER0);
-                flush_dcache_page(dst);
-                return;
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index 2a59c8a..1a1afdd 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -787,7 +787,7 @@ static int kimage_load_normal_segment(struct kimage *image,
+
+                ptr = kmap(page);
+                /* Start with a clear page */
+-               memset(ptr, 0, PAGE_SIZE);
++               clear_page(ptr);
+                ptr += maddr & ~PAGE_MASK;
+                mchunk = PAGE_SIZE - (maddr & ~PAGE_MASK);
+                if (mchunk > mbytes)
+
+
+
+
 
 
 -- 
