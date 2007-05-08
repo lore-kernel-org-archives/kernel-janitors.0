@@ -1,20 +1,25 @@
-From: "Elaine" <qvafysiegx@fiets.nl>
-Date: Fri, 25 May 2007 07:38:07 +0000
-Subject: [KJ] Re: Hello!
-Message-Id: <DFD9E3CE.F258E5FE@fiets.nl>
+From: Jeff Garzik <jeff@garzik.org>
+Date: Tue, 08 May 2007 05:42:05 +0000
+Subject: [KJ] Re: [PATCH] drivers/net/dm9000: Convert to generic boolean
+Message-Id: <46400DAD.3030207@garzik.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070501164058.5121.57783.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20070501164058.5121.57783.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Richard Knutsson <ricknu-0@student.ltu.se>
+Cc: tori@unhappy.mine.nu, netdev@vger.kernel.org, kernel-janitors@lists.osdl.org
 
-Hi there lovely,
-I was searching theb net few days ago. I am new bto this thing.
-and saw your profile. I decided to emaibl you cause I found a
-you attractive. I might come down to ybobur city in few weeks.
-Let me know if we can meet beach other in person.
-I am attaractive girl. I am sure ybou won't regret it.
-Reply to my personal email at aay@SpringMailAddress.info
+Richard Knutsson wrote:
+> Convert to generic boolean.
+> 
+> Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+> ---
+> Compile-tested with all(yes|mod|no)config on x86(|_64) & sparc(|64)
+> Diffed against Linus' git-tree.
+
+applied
 
 
 _______________________________________________
