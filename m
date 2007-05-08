@@ -1,22 +1,41 @@
-From: "Sherry" <biessewufx@ciudad.com.ar>
-Date: Sun, 27 May 2007 11:34:27 +0000
-Subject: [KJ] Hello
-Message-Id: <B6DF8715.25D8168E@ciudad.com.ar>
+From: Shani Moideen <shani.moideen@wipro.com>
+Date: Tue, 08 May 2007 10:57:56 +0000
+Subject: [KJ] [KJ PATCH] Replacing memset(<addr>, 0,
+Message-Id: <1178621156.3598.10.camel@shani-win>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200507082039.j68Kdhj9018976@smtp.osdl.org>
-In-Reply-To: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@lists.osdl.org
 
 Hi,
-Hope I am not wrbiting to wrong address. Ia am nice, pretty looking
-girl. I am planning on visiting your town this month. Can 
-we meet each other in person? Message ame back at
-vwele@SpringMailAddress.info
+
+Replacing memset(<addr>,0,PAGE_SIZE) with clear_page() in mm/memory.c.
+
+Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
+----
+
+thanks.
 
 
+diff --git a/mm/memory.c b/mm/memory.c
+index e7066e7..2780d07 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1505,7 +1505,7 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
+                 * zeroes.
+                 */
+                if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
+-                       memset(kaddr, 0, PAGE_SIZE);
++                       clear_page(kaddr);
+                kunmap_atomic(kaddr, KM_USER0);
+                flush_dcache_page(dst);
+                return;
+
+
+-- 
+Shani 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
