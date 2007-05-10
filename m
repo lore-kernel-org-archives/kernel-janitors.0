@@ -1,76 +1,45 @@
-From: "pradeep singh" <2500.pradeep@gmail.com>
-Date: Mon, 14 May 2007 08:03:53 +0000
-Subject: [KJ] [RFC]__sock_create() change
-Message-Id: <366312910705140051jec8f781oc0c430152b0c48ff@mail.gmail.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2937718652044239980=="
+From: "Denver Gingerich" <denver@ossguy.com>
+Date: Thu, 10 May 2007 01:29:14 +0000
+Subject: [KJ] [PATCH] fix compiler warning in dd.c
+Message-Id: <6defe8840705091829h44b78dc2w44f07c0993469128@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============2937718652044239980==
-Content-Type: multipart/alternative; 
-	boundary="----=_Part_144129_16453637.1179129113000"
+Correct the following compiler warning:
+warning: 'device_probe_drivers' defined but not used
 
-------=_Part_144129_16453637.1179129113000
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Verified that there are no device_probe_drivers() calls in the kernel tree.
 
-Hi All,
+Signed-off-by: Denver Gingerich <denver@ossguy.com>
 
-the __sock_create in net/socket.c has the following code snippet.
+---
 
-if (family == PF_INET && type == SOCK_PACKET) {
-     static int warned;
-     if (!warned) {
-          warned = 1;
-          printk(KERN_INFO "%s uses obsolete (PF_INET,SOCK_PACKET)\n",
-current->comm);
-     }
-     family = PF_PACKET;
-}
+--- linux-2.6.21/drivers/base/dd.c.000	2007-05-09 18:56:24.000000000 -0400
++++ linux-2.6.21/drivers/base/dd.c	2007-05-09 20:38:12.000000000 -0400
+@@ -207,19 +207,6 @@ static int __device_attach(struct device
+ 	return driver_probe_device(drv, dev);
+ }
 
-this may be in place to emit a harmless warning , but why not change it to -
-
-if (family == PF_INET && type == SOCK_PACKET) {
-
-     printk(KERN_INFO "%s uses obsolete (PF_INET,SOCK_PACKET)\n",
-current->comm);
-
-     family = PF_PACKET;
-}
-
-Because anyway if(!warning) is going to result in true everytime we enter
-the function, as static int warning has scope limited to the outer if block.
-
-
-Comments?
-
-Thank you
-~psr
--- 
-play the game
-
-------=_Part_144129_16453637.1179129113000
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-Hi All,<br><br>the __sock_create in net/socket.c has the following code snippet.<br><br>if (family == PF_INET &amp;&amp; type == SOCK_PACKET) {<br>		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static int warned; <br>		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!warned) {<br>			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;warned = 1;
-<br>			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printk(KERN_INFO &quot;%s uses obsolete (PF_INET,SOCK_PACKET)\n&quot;, current-&gt;comm);<br>		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;family = PF_PACKET;<br>	}<br><br>this may be in place to emit a harmless warning , but why not change it to - 
-<br>if (family == PF_INET &amp;&amp; type == SOCK_PACKET) {<br>		 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printk(KERN_INFO &quot;%s uses obsolete (PF_INET,SOCK_PACKET)\n&quot;, current-&gt;comm);<br>		<br>		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;family = PF_PACKET;<br>	}<br><br>Because anyway if(!warning) is going to result in true everytime we enter the function, as static int warning has scope limited to the outer if block. 
-<br clear="all"><br>Comments? <br><br>Thank you<br>~psr<br>-- <br>play the game 
-
-------=_Part_144129_16453637.1179129113000--
-
---===============2937718652044239980==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+-static int device_probe_drivers(void *data)
+-{
+-	struct device *dev = data;
+-	int ret = 0;
+-
+-	if (dev->bus) {
+-		down(&dev->sem);
+-		ret = bus_for_each_drv(dev->bus, NULL, dev, __device_attach);
+-		up(&dev->sem);
+-	}
+-	return ret;
+-}
+-
+ /**
+  *	device_attach - try to attach device to a driver.
+  *	@dev:	device.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============2937718652044239980==--
