@@ -1,45 +1,75 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Tue, 01 May 2007 16:31:52 +0000
-Subject: [KJ] [PATCH] drivers/net/tokenring: Convert to generic boolean
-Message-Id: <20070501162923.2890.36653.sendpatchset@thinktank.campus.ltu.se>
+From: "Denver Gingerich" <denver@ossguy.com>
+Date: Thu, 10 May 2007 01:22:58 +0000
+Subject: [KJ] [PATCH] fix compiler warnings in acorn.c
+Message-Id: <6defe8840705091822s3e99e73l2d8aaaa328fd24da@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mikep@linuxtr.net
-Cc: netdev@vger.kernel.org, kernel-janitors@lists.osdl.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: kernel-janitors@vger.kernel.org
 
-Convert to generic boolean
+Correct the following compiler warnings:
+warning: 'adfs_partition' defined but not used
+warning: 'riscix_partition' defined but not used
+warning: 'linux_partition' defined but not used
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+Signed-off-by: Denver Gingerich <denver@ossguy.com>
+
 ---
-Compile-tested with all(yes|mod|no)config on x86(|_64) & sparc(|64)
-Diffed against Linus' git-tree.
 
+--- linux-2.6.21/fs/partitions/acorn.c.000	2007-05-09 18:56:41.000000000 -0400
++++ linux-2.6.21/fs/partitions/acorn.c	2007-05-09 20:44:04.000000000 -0400
+@@ -25,6 +25,8 @@
+ #define PARTITION_RISCIX_SCSI	2
+ #define PARTITION_LINUX		9
 
-diff --git a/drivers/net/tokenring/ibmtr.c b/drivers/net/tokenring/ibmtr.c
-index 1e8958e..0c69eaa 100644
---- a/drivers/net/tokenring/ibmtr.c
-+++ b/drivers/net/tokenring/ibmtr.c
-@@ -116,9 +116,6 @@ in the event that chatty debug messages are desired - jjs 12/30/98 */
- #define ENABLE_PAGING 1		
++#if defined(CONFIG_ACORN_PARTITION_CUMANA) || \
++	defined(CONFIG_ACORN_PARTITION_ADFS)
+ static struct adfs_discrecord *
+ adfs_partition(struct parsed_partitions *state, char *name, char *data,
+ 	       unsigned long first_sector, int slot)
+@@ -48,6 +50,7 @@ adfs_partition(struct parsed_partitions
+ 	put_partition(state, slot, first_sector, nr_sects);
+ 	return dr;
+ }
++#endif
+
+ #ifdef CONFIG_ACORN_PARTITION_RISCIX
+
+@@ -65,6 +68,8 @@ struct riscix_record {
+ 	struct riscix_part part[8];
+ };
+
++#if defined(CONFIG_ACORN_PARTITION_CUMANA) || \
++	defined(CONFIG_ACORN_PARTITION_ADFS)
+ static int
+ riscix_partition(struct parsed_partitions *state, struct block_device *bdev,
+ 		unsigned long first_sect, int slot, unsigned long nr_sects)
+@@ -105,6 +110,7 @@ riscix_partition(struct parsed_partition
+ 	return slot;
+ }
  #endif
- 
--#define FALSE 0
--#define TRUE (!FALSE)
--
- /* changes the output format of driver initialization */
- #define TR_VERBOSE	0
- 
-@@ -1542,7 +1539,7 @@ static void initial_tok_int(struct net_device *dev)
- 	ti->ring_speed = init_status & 0x01 ? 16 : 4;
- 	DPRINTK("Initial interrupt : %d Mbps, shared RAM base %08x.\n",
- 				ti->ring_speed, (unsigned int)dev->mem_start);
--	ti->auto_speedsave=readb(ti->init_srb+INIT_STATUS_2_OFST)&4?TRUE:FALSE;
-+	ti->auto_speedsave = (readb(ti->init_srb+INIT_STATUS_2_OFST) & 4) != 0;
- 
-         if (ti->open_mode = MANUAL)	wake_up(&ti->wait_for_reset);
- 	else				tok_open_adapter((unsigned long)dev);
++#endif
+
+ #define LINUX_NATIVE_MAGIC 0xdeafa1de
+ #define LINUX_SWAP_MAGIC   0xdeafab1e
+@@ -115,6 +121,8 @@ struct linux_part {
+ 	__le32 nr_sects;
+ };
+
++#if defined(CONFIG_ACORN_PARTITION_CUMANA) || \
++	defined(CONFIG_ACORN_PARTITION_ADFS)
+ static int
+ linux_partition(struct parsed_partitions *state, struct block_device *bdev,
+ 		unsigned long first_sect, int slot, unsigned long nr_sects)
+@@ -146,6 +154,7 @@ linux_partition(struct parsed_partitions
+ 	put_dev_sector(sect);
+ 	return slot;
+ }
++#endif
+
+ #ifdef CONFIG_ACORN_PARTITION_CUMANA
+ int
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
