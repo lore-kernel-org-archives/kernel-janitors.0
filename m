@@ -1,32 +1,47 @@
-From: Andi Drebes <lists-receive@programmierforen.de>
-Date: Fri, 25 May 2007 19:43:40 +0000
-Subject: Re: [KJ] looking for a project?
-Message-Id: <200705251943.41268.lists-receive@programmierforen.de>
+From: milindchoudhary@gmail.com
+Date: Thu, 10 May 2007 06:56:15 +0000
+Subject: [KJ] Re: [PATCH] fix compiler warning in sn9c102_core.c
+Message-Id: <1178780175.654043.164950@q75g2000hsh.googlegroups.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0705241934530.4351@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0705241934530.4351@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi!
+On May 10, 6:32 am, "Denver Gingerich" <den...@ossguy.com> wrote:
+> Correct the following compiler warning:
+> warning: 'sn9c102_write_eoimarker' defined but not used
+>
+> Verified that there are no sn9c102_write_eoimarker() calls in the kernel tree.
 
-> Wow. That looks like one helluva project ... I'd like to undertake
-> starting this in the drivers/ subsystem ... I can't start on it right
-> now (because it's late), but I will have a few looks at it over the
-> weekend.
-<snip>
+How and in which code did u verify this?
+I can see that the following function was added in the patch for
+2.6.21
 
-I just had a look on that and I found quite a lot of places that have to be 
-fixed. Currently, I'm inspecting and fixing files in drivers/block, 
-drivers/atm and drivers/char. I also found suspicious lines in the arch 
-directory. Do you prefer to do the whole thing on your own or would you like 
-me to work there, too? I don't want to duplicate work, neither grab the 
-project away.
 
-	Cheers,
-		Andi
++static void
++sn9c102_write_eoimarker(struct sn9c102_device* cam, struct
+sn9c102_frame_t* f)
++{
++	static const u8 eoi_marker[2] = {0xff, 0xd9};
++
++	memcpy(f->bufmem + f->buf.bytesused, eoi_marker,
+sizeof(eoi_marker));
++	f->buf.bytesused += sizeof(eoi_marker);
++}
+
+
+and is being used in the same file
+
++
++					if (cam->sensor.pix_format.pixelformat
++					    = V4L2_PIX_FMT_JPEG)
++						sn9c102_write_eoimarker(cam,
++									(*f));
++
+
+Milind Arun Choudhary
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
