@@ -1,15 +1,17 @@
 From: "dalli sheridan" <aileybette-ann@joanmartinmusic.com>
 Date: Fri, 11 May 2007 13:51:58 +0000
 Subject: [KJ] Adobe Photoshop CS3 ready to download
-Message-Id: <535f01c793d3$8b115560$4ff4bc7d@yusycr3tlqhvep>
+Message-Id: <536801c793d3$8b1d3c40$4ff4bc7d@yusycr3tlqhvep>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7298436423052591974=="
+Content-Type: multipart/mixed; boundary="===============6107628151503776826=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <535f01c793d3$8b115560$4ff4bc7d@yusycr3tlqhvep>
+In-Reply-To: <535f01c793d3$8b115560$4ff4bc7d@yusycr3tlqhvep>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============7298436423052591974==
+--===============6107628151503776826==
 Content-Type: multipart/related;
 	boundary="----=_NextPart_000_4E6C_01C7941E.E72C2C30"
 
@@ -415,7 +417,7 @@ OOWck8467bwTzzz13JPPPv38E9BABR2U0EINPRTRRBVdlNFGHX0U0kglnZTSSi29FNNMNd2U0049
 ------=_NextPart_000_4E6C_01C7941E.E72C2C30--
 
 
---===============7298436423052591974==
+--===============6107628151503776826==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -425,4 +427,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7298436423052591974==--
+--===============6107628151503776826==--
