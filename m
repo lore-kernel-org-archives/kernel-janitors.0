@@ -1,47 +1,78 @@
-From: Nippon.Oil.Exploration.and.Production.U.K.@smtp1.linux-foundation.org,
-Date: Mon, 14 May 2007 06:39:14 +0000
-Subject: [KJ] (Job Offer)Work with us@Nippon Oil Exploration Ltd
-Message-Id: <APP33FFXNwBxw0ogeft0002d3bc@app33.terraempresas.com.br>
+From: "Ned Kurtz" <cotterkol@bestlife.se>
+Date: Fri, 11 May 2007 22:19:55 +0000
+Subject: [KJ] you whoever ballengee
+Message-Id: <001701c793f8$fa0d0c00$0635b474@none60f259b264>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============5438679390613596055=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Nippon Oil Exploration and Production U.K., Limited
-New Liverpool House / 2nd Floor, 
-15 Eldon Street London
-EC2M 7LD, U.K.
-ATTN: SIR/MADAM,
-Yes you can apply and be appointed,as your province/region covers within the range of North and South America.We seek a representative that can help my company in clearing our payments,this has being occasioned by the wide growth in our market that has expanded our goods and products to your province encompassing---AMERICA,CANADA,MEXICO AND PUERTO RICO. Likewise all exterior axis of EUROPE.
-Hence the mergence for a representative/agent who is competent,diligent and trustworthy to handle the responsiblity of receiveing payments on our behalf.Our customers issue out payments in cheques,bankdrafts,bonds etc and we don't run an account presently in your province that will clear this payments.Likewise clearance of our goods within your province.
-As our representative you will receive 10% of any payments you clear for the company, that is how you will be paid/renumerated by the company then you will remit the balance of 90% to us.This the company's standard mode of operation.
-If you are interested in our offer please confirm your complete informations:
-1)FULL NAMES/COMPANY NAME
-2)COMPANY/HOME ADDRESS 
-3)MAILING ADRESS 
-4)COUNTRY/STATE
-5)PHONE NUMBERS-CELL,HOME,OFFICE ETC(kindly ensure you forward a functional phone number/s) 
-6)FAX NUMBER
-7)ZIP CODE
-8)EVIDENCE OF FULL IDENTIFICATION--SCANNED AND FORWARDED COPY OF INTERNATIOAL PASSPORT OR DRIVER"S LICENCE.
-9)COMPLETE WORKING EXPERIENCE(WITH DETAILS)
-10)ANNUAL INCOME
-all these are required for official documentation and record purpose once this is done i will fax it to our customers instructing them that you are our rep/agent and that they should issue out payments to you on behalf of Nippon Company Ltd.
-Waiting to hear from you.If you need any other informations do not fail to attention me.i ll instruct my attorney to prepare and send you our company"s statutory memorandum of understanding(M.O.U) via mail/fax. 
-Kindly acknowledge reciept of mail by swiftly replying.i need to to hear from you as soon as possible so that the board of management can concess to your appointment.
-have a nice day.
-I await your urgent response.
-Thanks for your time,
-Yours Respectfuly,
-Mr. Tony Johnson
-Regional Coordinator
-Nippon Oil Exploration and Production U.K., Limited
-TEL: +44-704-571-1123
-Email to: nipponoilexplorationltd01@yahoo.co.uk
+--===============5438679390613596055==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0014_01C793F8.FA0D0C00"
 
+------=_NextPart_000_0014_01C793F8.FA0D0C00
+Content-Type: text/plain;
+        charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+
+
+BULLISH REPORT..
+
+Sumb0l: HXPNCurrent: $0.50 3 Day Target price: $2.50Recommendation: very =
+aggresive buy.
+
+Short-term KST. Short-Term Bullish!
+
+
+
+HXPN has a nice fresh news, kernel-janitors, contact your broker...
+
+
+
+------=_NextPart_000_0014_01C793F8.FA0D0C00
+Content-Type: text/html;
+        charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3D=
+iso-8859-1">
+<META content=3D"MSHTML 6.00.3790.2969" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<BR><BR><BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#003300 size=3D=
+3D4><FONT size=3D2><STRONG>BULLISH REPORT...</STRONG></FONT></DIV>
+<BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#FF0000 size=3D=
+2>Sumb0l: <b>HXPN</b><br>Current: $0.50 <br>3 Day Target price: =
+$2.50<br>Recommendation: very aggresive buy.</FONT></DIV>
+<BR><BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#FF0066 size=3D=
+2>Short-term KST. Short-Term Bullish!</FONT></DIV>
+<BR>
+<DIV align=3Dcenter><FONT face=3DGeorgia color=3D#990000 size=3D2>HXPN =
+has a nice fresh news, kernel-janitors, contact your =
+broker!!!</FONT></DIV>
+<BR><BR>
+</BODY></HTML>
+
+------=_NextPart_000_0014_01C793F8.FA0D0C00--
+
+--===============5438679390613596055==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============5438679390613596055==--
