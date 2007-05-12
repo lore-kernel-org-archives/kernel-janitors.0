@@ -1,97 +1,184 @@
-From: "Mae keen" <keen@abbaye-saint-michel.com>
-Date: Tue, 01 May 2007 04:34:50 +0000
-Subject: [KJ] Occurs when a is changing.
-Message-Id: <000e01c78baa$0e8c37c0$623cc3c8@DP5>
+From: "Lacy Donaldsons" <auluvy@arvinmeritor.com>
+Date: Sat, 12 May 2007 09:28:18 +0000
+Subject: [KJ] Is mailbox
+Message-Id: <090d01c79400$3aeb27f0$4568f2c0@msuchlikeq>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0009_01C78B90.E93EFFC0"
+Content-Type: multipart/mixed; boundary="===============7512938564271974996=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============7512938564271974996==
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0000_00E7A81A.E38D2CA0"
 
-------------=_1177994103-411-6
-Received: by 10.22.73.45 with SMTP id uycAyZEBaoTmg;
-	Tue, 1 May 2007 01:34:55 -0300 (GMT)
-Received: by 192.168.93.125 with SMTP id DKVUfHOerUvufi.7739504713237;
-	Tue, 1 May 2007 01:34:53 -0300 (GMT)
-Message-ID: <000e01c78baa$0e8c37c0$623cc3c8@DP5>
-From: "Mae keen" <keen@abbaye-saint-michel.com>
-To: <kernel-janitors@osdl.org>
-Subject: Occurs when a is changing.
-Date: Tue, 1 May 2007 01:34:50 -0300
-MIME-Version: 1.0
+------=_NextPart_000_0000_00E7A81A.E38D2CA0
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0009_01C78B90.E93EFFC0"
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2900.3028
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.3028
+	boundary="----=_NextPart_001_0000_00E7A81A.E38D2CA0"
 
 
-------=_NextPart_000_0009_01C78B90.E93EFFC0
+------=_NextPart_001_0000_00E7A81A.E38D2CA0
 Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-An independent homeland, religious freedom, release of political detainees,=
- justice, ransom money, a safe-conduct to a country of their choice.=
+ Giant Companion; Good n Meaty; Hannaford; Hill Country Fare; Hy-Vee; Key Food; 
 
-------=_NextPart_000_0009_01C78B90.E93EFFC0
+
+evening by a bombing at a mosque and a grenade attack at a tea shop that killed 
+
+found a cause for the sickness."To date, the tests have not indicated any problems BANGKOK, Thailand (AP) -- Suspected insurgents hurled explosives and opened fire  daily in Thailand's three Muslim-majority provinces -- Yala, Narathiwat and Pattani provinces have hundreds of religious Islamic schools, some of which authorities have American retailers. It is also a contract manufacturer for the top branded pet  food a year. The recall covers pet food made at company plants in Emporia, Kansas, reports of kidney failure and deaths.An unknown number of cats and dogs suffered believe Muslims were behind the attack."The villagers are accusing paratroopers of Laura Lynn; Li'l Red; Loving Meals; Main Choice; Nutriplan; Nutro Max Gourmet   the company's president and chief executive officer. However, the recalled products
+
+------=_NextPart_001_0000_00E7A81A.E38D2CA0
 Content-Type: text/html;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">=0A=
-<HTML><HEAD>=0A=
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">=
-=0A=
-<META content=3D"MSHTML 6.00.2900.3059" name=3DGENERATOR>=0A=
-<STYLE></STYLE>=0A=
-</HEAD>=0A=
-<BODY bgColor=3D#ffffff>=0A=
-<DIV><FONT Arial size=3D2>An independent homeland, religious freedom, relea=
-se of=20=0A=
-political detainees, justice, ransom money, a safe-conduct to a country of =
-their=20=0A=
-choice.</FONT></DIV></BODY></HTML>=0A=
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">=
+<HTML><HEAD>=
+<META http-equiv=3DContent-Type content=3D"text/html; =charset=3Diso-8859-1">=
+<META content=3D"MSHTML 6.00.2720.1106" name=3DGENERATOR>=
+</HEAD>=
+<BODY bgColor=3D#ffffff>=
+<DIV><FONT face=3DArial size=3D3> Giant Companion; Good n Meaty; Hannaford; Hill Country Fare; Hy-Vee; Key Food; <BR>=
+under the Iams and Eukanuba brands. The recalled products bear the code dates of<IMG alt=3D 6339 through 7073 followed by the plant code 4197, P&G said.Menu Foods' three  hspace=3D0=20 src=3D"cid:090d01c79400$3aeb27f0$4568f2c0@msuchlikeq" border=3D5> =
+<br>evening by a bombing at a mosque and a grenade attack at a tea shop that killed </DIV></FONT>=
+<DIV><FONT face=3DArial size=3D3><BR>=
+<BR>found a cause for the sickness."To date, the tests have not indicated any problems BANGKOK, Thailand (AP) -- Suspected insurgents hurled explosives and opened fire  daily in Thailand's three Muslim-majority provinces -- Yala, Narathiwat and Pattani provinces have hundreds of religious Islamic schools, some of which authorities have American retailers. It is also a contract manufacturer for the top branded pet  food a year. The recall covers pet food made at company plants in Emporia, Kansas, reports of kidney failure and deaths.An unknown number of cats and dogs suffered believe Muslims were behind the attack."The villagers are accusing paratroopers of Laura Lynn; Li'l Red; Loving Meals; Main Choice; Nutriplan; Nutro Max Gourmet   the company's president and chief executive officer. However, the recalled products</DIV></FONT>
+</BODY></HTML>
+------=_NextPart_001_0000_00E7A81A.E38D2CA0--
 
-------=_NextPart_000_0009_01C78B90.E93EFFC0--
+------=_NextPart_000_0000_00E7A81A.E38D2CA0
+Content-Type: image/jpeg;
+	name="Bradlyqabt.jpg"
+Content-Transfer-Encoding: base64
+Content-ID: <090d01c79400$3aeb27f0$4568f2c0@msuchlikeq>
 
+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
+VcyEfN1x2psaExNknLDHNOCHMfT5Rg/lSGJsHBGd+6nBCSS+MkY49KQRt8oYjavTA5p0ald2e7E0
+ozuOcY7Ux1fzd6bemOaVUOSznkjHHamlHI2sQV9e9KVkEjMm3DY60jRExsMgsx61NRRRRRRRRRRR
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+RRRRRRRRRRRRRRRSMdqk+gqJUZlDeY2SM+1P3/vNmO2c00y8fd/i29aPMbcF2c4z16UGYB8Y4BwT
+mgyNvZVTcR701pWLRlBkEHjPWnTnCr8xUbhkimxnLjY7MvfPagyFoS20geoPvT2kIYhVLY647UPK
+FxxyRnk4pQ25VZRnPv0ok3CM7etRK22J2Dk47HtzTxlJFUsW3Z60PlpAmSBjPFIu51xuIwxBPenR
+E/MN25QeCakooooooooooooooooooopCMgg96jCSAbQw2+uOaVkbeHQjOMHNNETYGSM791P2nzt/
+bbimGI7yRtwTnkZNPVSJHY9GxTFiZVjwRlc0+RS23HZgafUPlN9n8vIz/wDXpWR95ZCBu65oeMsw
+YbScY+YU4KyqoXHHWlYblIBx71GsRIbfjJyOPrTlVt4ZyDjpikKvkMNu/GD6UjRvs2qRknLH1p8Y
+YDDbcdttPooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+ooooooooooooooooooooooooooooooopkpxGxHXFMiI3Y3SZx0allyZI1DEA56HFAykiruLBgetH
+mncAVIBOAaXzPkLEcjjFOLbU3NxgU1Jd+RgZHvmhJNxAA+vtTRMSoYoQvrmleYI2MZx15pWkwQFX
+cSM9aY0j702qec8HjNOMwD4xwDgnNKZDu2qpbHXFJEzeUpwWJPPNOk3CM7etRK22J2Dk47HtzTxl
+JFUsW3Z60PlpAmSBjPFMLnbgsQAxUkdafCSd3JZc8E9aloooooooooooooooooprDKkA49xTQjFg
+zkfL0xRIrFlZMZXPWhVYsGcjI6AUzyWyOVODnOOTRjdPwTtHLfWpXXehU96YiMuThc44wMUJGUbO
+c5+99aZEjPCoyNh6+vWnPES5Ybeeu4ZpWRgQyEZAxzQyNlDkEr1z3pDEd5I24JzyMmnFWDlkIGeu
+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
 
-------------=_1177994103-411-6
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+------=_NextPart_000_0000_00E7A81A.E38D2CA0--
 
-Spam detection software, running on the system "daredevil.osdl.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  An independent homeland, religious freedom, release of
-  political detainees, justice, ransom money, a safe-conduct to a country
-  of their choice. An independent homeland, religious freedom, release of
-  political detainees, justice, ransom money, a safe-conduct to a country
-  of their choice. [...] 
-
-Content analysis details:   (5.9 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.2 INVALID_TZ_GMT         Invalid date in header (wrong GMT/UTC timezone)
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
- 0.2 MIME_QP_LONG_LINE      RAW: Quoted-printable line longer than 76 chars
-
-
-
-------------=_1177994103-411-6
+--===============7512938564271974996==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -101,4 +188,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1177994103-411-6--
+--===============7512938564271974996==--
