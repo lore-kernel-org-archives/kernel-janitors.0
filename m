@@ -1,15 +1,17 @@
 From: "garth lance" <jainecy@pictures-on-canvas.com>
 Date: Sun, 13 May 2007 02:55:29 +0000
 Subject: [KJ] Photoshop download
-Message-Id: <37f6b01c7950a$2a1b1ce0$040aa8c0@dhdd>
+Message-Id: <37f5301c7950a$2a043980$040aa8c0@dhdd>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5199355661491653633=="
+Content-Type: multipart/mixed; boundary="===============6051067541647586077=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <37f6b01c7950a$2a1b1ce0$040aa8c0@dhdd>
+In-Reply-To: <37f6b01c7950a$2a1b1ce0$040aa8c0@dhdd>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============5199355661491653633==
+--===============6051067541647586077==
 Content-Type: multipart/alternative;
 	boundary="----=_NextPart_000_37ABA_01C79555.829FD4A0"
 
@@ -82,7 +84,7 @@ clients in the future.</FONT>
 ------=_NextPart_000_37ABA_01C79555.829FD4A0--
 
 
---===============5199355661491653633==
+--===============6051067541647586077==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -92,4 +94,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============5199355661491653633==--
+--===============6051067541647586077==--
