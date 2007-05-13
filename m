@@ -1,71 +1,40 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Thu, 24 May 2007 15:41:14 +0000
-Subject: [KJ] Re: [PATCH] indentation fixes, potential parse error,
-Message-Id: <873b1mns9x.fsf@wanadoo.fr>
+From: "Marianazgg Dwyer" <akxuhcegp@ilcarbonio.it>
+Date: Sun, 13 May 2007 09:01:54 +0000
+Subject: [KJ] Re: But organise
+Message-Id: <09ff01c79605$3ecf13d0$>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Yoann Padioleau <padator@wanadoo.fr> writes:
+This one is shoe in to Double by end of week
+Huge Volume spike, very low risk and high reward
 
-Sorry, one of my fix fails with  make allyesconfig
+Real Sales and Real Earnings
+DSI Direct Sales Inc
+SYM-D S D I
+Current price : $0.02
+Ride this to the top
 
-> diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
-> index eb766c3..70b47a6 100644
-> --- a/drivers/scsi/3w-9xxx.c
-> +++ b/drivers/scsi/3w-9xxx.c
-> @@ -1060,7 +1060,7 @@ static void *twa_get_param(TW_Device_Ext
->  
->  	/* Poll for completion */
->  	if (twa_poll_response(tw_dev, request_id, 30))
-> -		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x13, "No valid response during get param")
-> +		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x13, "No valid response during get param");
->  	else
->  		retval = (void *)&(param->data[0]);
->  
+Add it to your Radar
+Get in before it runs!!!
 
-But it seems ugly that on this particular case the call to the
-TW_PRINTK must not have a trailing ';'. Maybe the macro is fragile
-and should be changed.
 
-In the same way I found this in drivers/cdrom/cm206.c
+came together for them.   Anthony drew the foul and some of the loudest cheers   was easily the Nuggets' best game of the season.   The Nuggets shot 68 percent NCAA tournament and three NIT bids.  The native of Falls Church, Va., spent  -- Amaker's second year -- but the Wolverines were ineligible for the
 
-static uch receive_byte(int timeout)
-{
-	uch ret;
-	cli();
-	debug(("cli\n"));
-	ret = cd->ur[cd->ur_r];
-	if (cd->ur_r != cd->ur_w) {
-		sti();
-		debug(("returning #%d: 0x%x\n", cd->ur_r,
-		       cd->ur[cd->ur_r]));
-		cd->ur_r++;
-		cd->ur_r %= UR_SIZE;
-		return ret;
-	} else if (sleep_or_timeout(&cd->uart, timeout)) {	/* does sti() */
-		debug(("Time out on receive-buffer\n"));
-#ifdef STATISTICS
-		if (timeout = UART_TIMEOUT)
-			stats(receive_timeout)	/* no `;'! */
-			    else
-			stats(dsb_timeout);
-#endif
-		return 0xda;
-	}
-	ret = cd->ur[cd->ur_r];
-	debug(("slept; returning #%d: 0x%x\n", cd->ur_r,
-	       cd->ur[cd->ur_r]));
-	cd->ur_r++;
-	cd->ur_r %= UR_SIZE;
-	return ret;
-}
+----- Original Message ----- 
+From: "Marianazgg Dwyer" <akxuhcegp@ilcarbonio.it>
+To: <kernel-janitors@lists.osdl.org>, <tl_marketing@lists.osdl.org>
+Sent: Thursday, March 22, 2007 8:27 PM
+Subject: But organise
 
-The /* no `;'! */ comment looks very ugly. Wouldn't it be  possible
-to change the stats macro to make it less fragile ? 
 
+> Real Sales and Real Earnings
+> DSI Direct Sales Inc
+> SYM-D S D I
+> Current price : $0.02
+> Ride this to the top
 
 _______________________________________________
 Kernel-janitors mailing list
