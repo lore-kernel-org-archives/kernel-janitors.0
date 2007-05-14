@@ -1,7 +1,7 @@
-From: Arjan van de Ven <arjan@infradead.org>
-Date: Mon, 14 May 2007 15:10:30 +0000
+From: Chris Wedgwood <cw@f00f.org>
+Date: Mon, 14 May 2007 22:51:06 +0000
 Subject: [KJ] Re: [RFC]__sock_create() change
-Message-Id: <1179155430.19106.8.camel@laptopd505.fenrus.org>
+Message-Id: <20070514225106.GA24009@tuatara.stupidest.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <464816F9.90208@anaconda.cs.pub.ro>
 In-Reply-To: <464816F9.90208@anaconda.cs.pub.ro>
@@ -10,15 +10,24 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 2007-05-14 at 13:42 +0530, pradeep singh wrote:
+On Mon, May 14, 2007 at 08:10:30AM -0700, Arjan van de Ven wrote:
 
-> 
-> But why would we want
-> to issues warning only once and not each time the socket is created for SOCK_PAKCET type? 
+> because then a normal user can overflood the system log ;)
 
-because then a normal user can overflood the system log ;)
+they can do that anyhow:
 
+main()
+{
+    for (;;) {
+        if (!fork())
+	    *(char*)(0ul) = 1;
+        sleep(1);
+    }
+}
 
+would probably work pretty well on some platforms to overflow the
+system log and not go noticed... (i'm sure if you look there are lots
+of ways a local user can do similar things)
 
 _______________________________________________
 Kernel-janitors mailing list
