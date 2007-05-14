@@ -1,15 +1,17 @@
 From: "valera jeanie" <lizabethalvan@artesiapumps.com>
-Date: Mon, 14 May 2007 13:48:05 +0000
+Date: Mon, 14 May 2007 13:48:06 +0000
 Subject: [KJ] Adobe Photoshop Extended only $89
-Message-Id: <b6d101c7962e$7f9260f0$e959d47b@customerd53790>
+Message-Id: <b6da01c7962e$7fdc3b30$e959d47b@customerd53790>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7813855092026208830=="
+Content-Type: multipart/mixed; boundary="===============2816820178407221538=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <b6d101c7962e$7f9260f0$e959d47b@customerd53790>
+In-Reply-To: <b6d101c7962e$7f9260f0$e959d47b@customerd53790>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============7813855092026208830==
+--===============2816820178407221538==
 Content-Type: multipart/related;
 	boundary="----=_NextPart_000_B1E7_01C79679.D7E07850"
 
@@ -409,7 +411,7 @@ dvT4EWRIkSNJljR5EmVKlStZtnT5EmZMmTNp1rR5E2dOnTt59vT5E2hQoUOJFjV6FGlShBEAADs=
 ------=_NextPart_000_B1E7_01C79679.D7E07850--
 
 
---===============7813855092026208830==
+--===============2816820178407221538==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -419,4 +421,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7813855092026208830==--
+--===============2816820178407221538==--
