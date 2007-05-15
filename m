@@ -1,43 +1,47 @@
-From: "Margret Engle" <oexee@gaia.cz>
-Date: Fri, 11 May 2007 02:50:34 +0000
-Subject: [KJ] Re: outstretched alva
-Message-Id: <01cc01c79402$3aae83a0$8230e7b0@gbattlefieldx>
+From: "Tamikag Mcdermottj" <absgaudyre@palmworkflow.com>
+Date: Tue, 15 May 2007 06:24:49 +0000
+Subject: [KJ] you economy
+Message-Id: <NXUZXOD.5865656123@59.96.155.200>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============4460832217723138135=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This one is shoe in to Double by end of week
-Huge Volume spike, many people are already in the know
+--===============4460832217723138135==
+Content-Type: text/html
 
-After last year's world cup Soccer in US is reborn
-Monolith Athletic Club Inc
-SYmN- M_N_A_B 
-Extremely b ullish at 1 Cents
-Get in before the Soccer league franchising Skyrockets
+<html>
+<head>
+</head>
+<body>
+<p align="center"><b><font face="Arial Unicode MS"><font color="#FF0000">
+<br>We told you to watch this company<br>
+Up 60 % in 1 day <br> There is still plenty of ways to go<br>
+Get in Tomorrow and watch it multiply<br>
+NOt a Smoke Stack. REal All American Co</font><br>
+<font color="#006600">DSI Direct Sales Inc</font><font color="#00CC00"><br>
+</font>SYM-D S D I<br>
+Current price : $0.04 ( up 60% in 1 day !!!)<br>
+<font color="#FF0000">Ride this to the top</font><br>
+Hot News Released<br>Don't get left out again
+<br><br>
+strode into the darkened Springfield Exposition Center where volunteers handed out signs<br>
+ttempted a U-turn with only 1,300 feet of room for the turn. To make a successful turn,<br>
+leader, blasted Democrats on Friday, saying they have no plan to keep Americans safe <br>
+ San Benardino National Forest to its very core and shocked the entire world."<br>
+ McCaskill supports it; Talent opposes it. Bush didn't mention it. <br></font></b></p>
+</body>
+</html>
 
-Watch this trade Thursday
-Add it to your Radar
-People are already loading up, you should too!!
 
-
-defense.  ''That team can blow you out and they can score in bunches,'' he said after firing Brian Ellerbe.  He inherited a mess, stemming from the Ed Martin   two free throws made it 109-73 in the waning seconds of the third quarter.    came together for them.   Anthony drew the foul and some of the loudest cheers 
-
------ Original Message ----- 
-From: "Margret Engle" <oexee@gaia.cz>
-To: <kernel-janitors@lists.osdl.org>, <tl_marketing@lists.osdl.org>
-Sent: Thursday, March 22, 2007 8:27 PM
-Subject: outstretched alva
-
-
-> After last year's world cup Soccer in US is reborn
-> Monolith Athletic Club Inc
-> SYmN- M_N_A_B 
-> Extremely b ullish at 1 Cents
-> Get in before the Soccer league franchising Skyrockets
+--===============4460832217723138135==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============4460832217723138135==--
