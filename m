@@ -1,32 +1,36 @@
-From: "Ava Jimenez" <akstcxsysincmnsdgs@xsysinc.com>
-Date: Mon, 28 May 2007 23:38:22 +0000
-Subject: [KJ] FW
-Message-Id: <01c7a17f$ffa0df40$6c822ecf@akstcxsysincmnsdgs>
+From: Cripps <acripps@gmail.com>
+Date: Tue, 15 May 2007 21:53:04 +0000
+Subject: [KJ] pm_send_all() deprecation
+Message-Id: <c6711b6b0705151505i14bdaa50lea8d18c6400b6846@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c7a184$21a169d0$6c822ecf@akstctylermailmnsdgs>
-In-Reply-To: <01c7a184$21a169d0$6c822ecf@akstctylermailmnsdgs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is An Ultimate Job Offer
-You have a chance to make 2000-2500 USD a week! To introduce you quick to
-the opportunity i will give you 4 facts:
+Hey,
+I've found the warning about pm_send_all() being marked for
+deprecation ... it appears as though
+this call is only used in arch/i386/kernel/apm.c and is declared in
+include/pm_legacy.h as:
+#ifdef CONFIG_PM_LEGACY
+...
+int __deprecated pm_send_all(pm_request_t, void* data);
+#else
+...
+static inline int pm_send_all(pm_request_t rqst, void* data){ return 0;}
+...
+#endif
 
-1) 2000-2500 USD a week! Yes.
-2) 18+ y/o, you have to be able to check e-mail 3-4 times a day.
-3) 2-3 hours of free time Monday-Thursday
-4) Responsible
 
-Successful company, representing Apple Inc production offers a great
-opportunity from Russia. Currently seeking for
-people who can help us out. Very great opportunity and very
-easy. For more info please contact: lee@odinsearchgroup.com
+I wanted to tackle this as a first time patch, but there is one thing
+I'm not entirely clear on:
+How do I find out what this is to be replaced with (if there is
+another function to replace it with), and if it's not meant to be
+replaced, how would that be handled?
 
-Truly yours/
-Ava Jimenez
-
+Thanks in advance for your help.
+--Aaron Cripps
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
