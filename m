@@ -1,16 +1,16 @@
-From: Eric Dumazet <dada1@cosmosbay.com>
-Date: Fri, 18 May 2007 12:13:54 +0000
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Fri, 18 May 2007 12:32:36 +0000
 Subject: [KJ] Re: alloc_netdev() and 32 byte or 32 bit alignment???
-Message-Id: <20070518141354.9e433fd2.dada1@cosmosbay.com>
+Message-Id: <20070518123236.GA14435@uranus.ravnborg.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070518141354.9e433fd2.dada1@cosmosbay.com>
+In-Reply-To: <20070518141354.9e433fd2.dada1@cosmosbay.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 18 May 2007 17:10:02 +0530
-"pradeep singh" <2500.pradeep@gmail.com> wrote:
-
+On Fri, May 18, 2007 at 05:10:02PM +0530, pradeep singh wrote:
 > Hi ,
 > 
 > following code snippet is self evident in what it does -
@@ -34,25 +34,21 @@ On Fri, 18 May 2007 17:10:02 +0530
 > [snip]
 > 
 > Is the comment correct?
-
-yes it seems correct
-
 > Why is it 'ensure 32 byte alignment', instead of 32 bit alignment?
-
-Its 32 bytes, not bits.
-
-#define NETDEV_ALIGN        32
-#define NETDEV_ALIGN_CONST  (NETDEV_ALIGN - 1)
-
 > 
 > What am i missing here?
 
-I dont know :)
+Google turned up following useful link:
+http://www.nabble.com/-RFC--changing-value-of-NETDEV_ALIGN-to-cacheline-size-t1620499.html
 
-This 32 bytes alignement maybe not up2date, because net_device contains several ____cacheline_aligned_in_smp
+snip:
+The reason it's 32 is that old drivers depended on the
+struct being at least 32-byte aligned because they would
+embed structures DMA'd to/from the card in their private
+area and just assumed that would be aligned enough for
+the card's restrictions. 
 
-Would be nice to switch the alignement to max(L1_CACHE_SIZE, 32) nowadays, at least on SMP
-
+	Sam
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
