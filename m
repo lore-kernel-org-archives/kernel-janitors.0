@@ -1,60 +1,36 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Tue, 22 May 2007 14:11:14 +0000
-Subject: Re: [KJ] Understanding earlier version of linux kernel
-Message-Id: <20070522141114.GB2098@stusta.de>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 19 May 2007 17:34:22 +0000
+Subject: [KJ] how to add a new file to a patch?
+Message-Id: <Pine.LNX.4.64.0705191332540.12829@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <41f748550705220155m67c8b17re0a572abcf411373@mail.gmail.com>
-In-Reply-To: <41f748550705220155m67c8b17re0a572abcf411373@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, May 22, 2007 at 07:38:39PM +0700, Iwan BK wrote:
-> On 5/22/07, John Anthony Kazos Jr. <jakj@j-a-k-j.com> wrote:
->> > I'm a newbie kernel hacker. My friend said that  understanding earlier
->> > version of linux kernel ( v0.X) is a good practice to become a kernel
->> > hacker.
->> > Is it true ? Is there any project that do this.
->>
->> It's a good step to take if you're very new to programming in general. If
->> you're experienced with C and object-oriented programming already, there's
->> no need unless you're nostalgic.
->
-> I'm an intermediate C programmer and have a good understanding at
-> object oriented programming .
-> I have been   developing some kernel module for 9 months, but not in
-> production yet.
-> I want to understand the whole linux kernel, but current version seems
-> too big for me. That's why, i want to understanding earlier version so
-> i can learn step by step.
->...
 
-Do you want to follow the development of kernel development or do you 
-want to understand the current kernel?
+  i'm embarrassed to admit i don't know how to do this, and i've tried
+a few things with no success.  how do i
 
-The problem is that understanding a 15 year old version might not help 
-you that much with understanding the current version.
+1) create a patch that incorporates a brand new file?  i've tried to
+"git add" the file but it doesn't show up in the subsequent "git diff"
+as part of the patch.
 
-IMHO you are wrong if your first goal is "I want to understand the whole 
-linux kernel" - depending on the definition of "whole", you can count 
-the people who understand the whole current kernel with between 0 and 2 
-hands.
+2) once i've created and submitted that patch, how do i properly
+remove that file and any memory of it in my local git repo?
 
-Learn "step by step" parts of the current kernel instead.
+thanks.
 
-> Thx.
-
-cu
-Adrian
+rday
 
 -- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
