@@ -1,60 +1,95 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 28 May 2007 18:31:42 +0000
-Subject: [KJ] [PATCH] BLUETOOTH: Remove the redundant non-seekable llseek
-Message-Id: <Pine.LNX.4.64.0705281428440.14590@localhost.localdomain>
+From: "fredi rosana" <fabiencassandry@eveska.com>
+Date: Sat, 19 May 2007 17:11:16 +0000
+Subject: [KJ] $89.95 Photoshop CS3
+Message-Id: <4f27101c79a38$b5b347e0$647bf87b@customerww348x>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============5602526658860817167=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format.
 
-Remove the llseek method given that the open method already calls
-nonseekable_open().
+--===============5602526658860817167==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_4EC25_01C79A84.0FA76E20"
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+This is a multi-part message in MIME format.
 
----
+------=_NextPart_000_4EC25_01C79A84.0FA76E20
+Content-Type: text/plain;
+	charset="ks_c_5601-1987"
+Content-Transfer-Encoding: 7bit
 
-given that the fops open() method already calls nonseekable_open()
-at the end, it would seem that this old-style method for preventing
-lseeking is redundant.  am i reading that correctly?
+Find out more about the new features and enhancements in Adobe Photoshop
+CS3 Extended. Boost your productivity with a streamlined interface,
+enhancements to raw-image processing and asset management workflows, and
+more; experience unrivaled editing power with nondestructive filters,
+more precise color-correction controls, and more powerful cloning and
+healing tools; easily create rich composites using new tools for
+automatically aligning and blending layers and making quick selections;
+3D and motion support with the ability to edit 3D content and
+incorporate it into 2D compositions, paint and clone over multiple video
+frames, and more; comprehensive image analysis with new image
+measurement and counting tools, MATLAB integration, and DICOM file
+support.
+Adobe Photoshop CS3 Extended
+Retail Price $999.00
+Our Price $89.95
+You save $909.05
+http://dew.blogs43.com/
+Please note, that there will be more special offers available for our
+constant customers. Every effort has been made to ensure the accuracy of
+all information contained herein. DS Team makes no warranty expressed or
+implied with respect to accuracy of the information, including price,
+product editorials or product specifications. Product and manufacturer
+names are used only for the purpose of identification. We appreciate
+your cooperation with us and we'll be glad to see you as our clients in
+the future. 
+ 
+
+------=_NextPart_000_4EC25_01C79A84.0FA76E20
+Content-Type: text/html;
+	charset="ks_c_5601-1987"
+Content-Transfer-Encoding: 7bit
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2900.2180" name=GENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=#ffffff><FONT face=Arial size=2>Find out more about the new 
+features and enhancements in Adobe Photoshop CS3 Extended. Boost your 
+productivity with a streamlined interface, enhancements to raw-image processing 
+and asset management workflows, and more; experience unrivaled editing power 
+with nondestructive filters, more precise color-correction controls, and more 
+powerful cloning and healing tools; easily create rich composites using new 
+tools for automatically aligning and blending layers and making quick 
+selections; 3D and motion support with the ability to edit 3D content and 
+incorporate it into 2D compositions, paint and clone over multiple video frames, 
+and more; comprehensive image analysis with new image measurement and counting 
+tools, MATLAB integration, and DICOM file support.<BR>Adobe Photoshop CS3 
+Extended<BR>Retail Price $999.00<BR>Our Price $89.95<BR>You save $909.05<BR><A 
+href="http://dew.blogs43.com/">http://dew.blogs43.com/</A><BR>Please note, that 
+there will be more special offers available for our constant customers. Every 
+effort has been made to ensure the accuracy of all information contained herein. 
+DS Team makes no warranty expressed or implied with respect to accuracy of the 
+information, including price, product editorials or product specifications. 
+Product and manufacturer names are used only for the purpose of identification. 
+We appreciate your cooperation with us and we'll be glad to see you as our 
+clients in the future.</FONT>
+<DIV><FONT face=Arial size=2></FONT>&nbsp;</DIV></BODY></HTML>
+------=_NextPart_000_4EC25_01C79A84.0FA76E20--
 
 
+--===============5602526658860817167==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
-index b71a5cc..0638730 100644
---- a/drivers/bluetooth/hci_vhci.c
-+++ b/drivers/bluetooth/hci_vhci.c
-@@ -180,11 +180,6 @@ static inline ssize_t vhci_put_user(struct vhci_data *data,
- 	return total;
- }
-
--static loff_t vhci_llseek(struct file *file, loff_t offset, int origin)
--{
--	return -ESPIPE;
--}
--
- static ssize_t vhci_read(struct file *file,
- 				char __user *buf, size_t count, loff_t *pos)
- {
-@@ -334,7 +329,6 @@ static int vhci_fasync(int fd, struct file *file, int on)
-
- static const struct file_operations vhci_fops = {
- 	.owner		= THIS_MODULE,
--	.llseek		= vhci_llseek,
- 	.read		= vhci_read,
- 	.write		= vhci_write,
- 	.poll		= vhci_poll,
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============5602526658860817167==--
