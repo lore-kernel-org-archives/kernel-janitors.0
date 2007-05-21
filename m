@@ -1,42 +1,34 @@
-From: "Alec Skaggs" <mahued@st-ann.com>
-Date: Sun, 15 Apr 2007 22:58:33 +0000
-Subject: Re: [KJ] A privately
-Message-Id: <08c301c78009$3fdd39f0$4037>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 21 May 2007 18:26:31 +0000
+Subject: [KJ] what's the value of "NORET_TYPE"?
+Message-Id: <Pine.LNX.4.64.0705211425310.25535@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This one is shoe in to Double by end of week
-We told you !!
 
-Experience a Charging Bull in this the next soda giant
-Fire Mountain Beverage Company
-SYm-FB VG
-Currently : 2 Cents, CHEAP!!!
-Expected : $0.70 ( 1000 percent return!! ), and thats just the beginging
+  what exactly is the rationale behind the macro NORET_TYPE?
 
-Remember Snapple
+$ grep -r "define.*NORET_TYPE" *
+include/linux/ext4_fs.h:# define NORET_TYPE    /**/
+include/linux/ext3_fs.h:# define NORET_TYPE    /**/
+include/linux/linkage.h:#define NORET_TYPE    /**/
+$
 
-Get in MONDAY don't Miss it again
-You wanna experience this one !!
+  oooooookay, so ... what's up with this?
 
-defense.  ''That team can blow you out and they can score in bunches,'' he said  have the regroup a little bit.''   Denver has struggled all season to get any  Detroit. ... The Nuggets play just one more home game before April 4.    a list of candidates, but declined to identify any of the coaches.  "Michigan's
+rday
 
------ Original Message ----- 
-From: "Alec Skaggs" <mahued@st-ann.com>
-To: <kernel-janitors@lists.osdl.org>, <tl_marketing@lists.osdl.org>
-Sent: Thursday, March 22, 2007 8:27 PM
-Subject: A privately
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-
-> Experience a Charging Bull in this the next soda giant
-> Fire Mountain Beverage Company
-> SYm-FB VG
-> Currently : 2 Cents, CHEAP!!!
-> Expected : $0.70 ( 1000 percent return!! ), and thats just the beginging
-
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
