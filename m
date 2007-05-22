@@ -1,33 +1,23 @@
-From: walter harms <wharms@bfs.de>
-Date: Mon, 28 May 2007 15:27:48 +0000
-Subject: Re: [KJ] linux-2.6.21: apm.c remove unused variables
-Message-Id: <465AF4F4.6080905@bfs.de>
+From: "Iwan BK" <iwanbk@gmail.com>
+Date: Tue, 22 May 2007 08:55:11 +0000
+Subject: [KJ] Understanding earlier version of linux kernel
+Message-Id: <41f748550705220155m67c8b17re0a572abcf411373@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <46446F84.5020000@bfs.de>
-In-Reply-To: <46446F84.5020000@bfs.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hello all.
+I'm a newbie kernel hacker. My friend said that  understanding earlier
+version of linux kernel ( v0.X) is a good practice to become a kernel
+hacker.
+Is it true ? Is there any project that do this.
 
-thx for info
+thx
 
-
-Florian Westphal wrote:
-> walter harms <wharms@bfs.de> wrote:
->> i did not get any comment about this patch. does that mean everyone is happy ?
-> 
-> These changes are already in Linus' tree (commit 78eea47ac3e256559d97f0c2434928be39cba524).
-> 
-> Florian
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.linux-foundation.org
-> https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-> 
-> 
-> 
+-- 
+Iwan Budi Kusnanto
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
