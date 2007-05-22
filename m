@@ -1,7 +1,7 @@
 From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 22 May 2007 12:54:08 +0000
+Date: Tue, 22 May 2007 13:44:37 +0000
 Subject: Re: [KJ] question on double cast
-Message-Id: <20070522125408.GE18519@parisc-linux.org>
+Message-Id: <20070522134437.GF18519@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <87y7jh4669.fsf@wanadoo.fr>
 In-Reply-To: <87y7jh4669.fsf@wanadoo.fr>
@@ -10,14 +10,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, May 22, 2007 at 02:15:13PM +0200, Yoann Padioleau wrote:
-> But isn't it equivalent to directly do 
+On Tue, May 22, 2007 at 08:52:14AM -0400, John Anthony Kazos Jr. wrote:
+> > But isn't it equivalent to directly do 
+> > 
+> >   wr->ep_handle = (u32) cm_id->provider_data;
 > 
->   wr->ep_handle = (u32) cm_id->provider_data;
+> Depends on the endian-ness if you're on a 64-bit architecture. You'll get 
+> the high-order 32 or the low-order 32 depending on which are in the first 
+> 4 bytes of the 64-bit quantity. The only way that would be safe is if the 
+> quantity is never wider than 32 bits.
 
-Try it on a 64-bit platform -- you get a warning about cast from pointer
-to an integer of a different size.  The double-cast idiom tells the
-compiler you really do know what you're doing here.
+That would be true if there were a pointer dereference involved, but
+it's just a cast.  You'd get the low 32-bits either way, but you get a
+warning on 64-bit.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
