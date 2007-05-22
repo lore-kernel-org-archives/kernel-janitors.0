@@ -1,7 +1,7 @@
-From: walter harms <wharms@bfs.de>
-Date: Tue, 22 May 2007 12:08:36 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 22 May 2007 12:13:38 +0000
 Subject: Re: [KJ] what's the value of "NORET_TYPE"?
-Message-Id: <4652DD44.7030108@bfs.de>
+Message-Id: <Pine.LNX.4.64.0705220809360.12572@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0705211425310.25535@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0705211425310.25535@localhost.localdomain>
@@ -10,32 +10,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Tue, 22 May 2007, walter harms wrote:
 
-i have a (wild) guess
-gcc supports an __attribute__ ((noreturn)). To make stuff compatible sometime ago
-someone decided he will need it.
+>
+> i have a (wild) guess
+> gcc supports an __attribute__ ((noreturn)). To make stuff compatible sometime ago
+> someone decided he will need it.
+>
+> IMHO remove it look like ancient
+>
+> see also: http://www.ussg.iu.edu/hypermail/linux/kernel/9605/1957.html
 
-IMHO remove it look like ancient
+oh, gcc *definitely* supports __attribute__((noreturn)), for which a
+short form already exists in include/linux/compiler-gcc.h:
 
-see also: http://www.ussg.iu.edu/hypermail/linux/kernel/9605/1957.html
+  #define __noreturn                      __attribute__((noreturn))
 
-re,
- wh
+i'm just trying to figure out if there was a reason to still keep
+NORET_TYPE around, perhaps because it was defined to represent
+something subtlely different from __noreturn.  i'll wait for a couple
+more opinions before i submit a patch to rip it out.  and maybe i'll
+ask on the main LKML, where i'm sure i'll be set straight in short
+order. :-)
 
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-Robert P. J. Day wrote:
->   what exactly is the rationale behind the macro NORET_TYPE?
-> 
-> $ grep -r "define.*NORET_TYPE" *
-> include/linux/ext4_fs.h:# define NORET_TYPE    /**/
-> include/linux/ext3_fs.h:# define NORET_TYPE    /**/
-> include/linux/linkage.h:#define NORET_TYPE    /**/
-> $
-> 
->   oooooookay, so ... what's up with this?
-> 
-> rday
-> 
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
