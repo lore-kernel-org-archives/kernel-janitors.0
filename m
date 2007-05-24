@@ -1,54 +1,51 @@
-From: "John Anthony Kazos Jr." <jakj@j-a-k-j.com>
-Date: Tue, 29 May 2007 13:55:13 +0000
-Subject: Re: [KJ] Header files
-Message-Id: <alpine.DEB.0.99.0705290950060.2252@sigma.j-a-k-j.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Thu, 24 May 2007 23:40:11 +0000
+Subject: [KJ] looking for a project?
+Message-Id: <Pine.LNX.4.64.0705241934530.4351@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <19f34abd0705290051n6fea05d0q67eafb3f5ba1d757@mail.gmail.com>
-In-Reply-To: <19f34abd0705290051n6fea05d0q67eafb3f5ba1d757@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-> > 1) Guard names: There are many possible naming schemes, and the
-> > kernel probably uses them all. This, of course, means that there are
-> > potentially conflicts between current header files or current and
-> > future header files.
-> 
-> i doubt it's worth trying to do anything about that -- that's the sort
-> of thing that will be handled on a case-by-case basis as it comes up.
-> i've noticed this before -- no real standard for naming scheme, so i'd
-> just let this one go.
-> 
-> > 2) Self-consistency: A lot of headers are not self-consistent, i.e.
-> > they rely on certain headers being included in advance.
-> 
-> that's a tough call.  i doubt it's worth trying to do anything about
-> that if it just involves adding extra includes to a file somewhere.
-> however, it would make more sense to have a patch that *moves* an
-> include from one file to another more appropriate location, if that's
-> possible.
-> 
-> > Is this worth fixing? (If you can call it fixing. "If it's not
-> > broken...") Correcting this would span most of the headers, possibly
-> > introducing thousands of lines of patches. I think a lot of people
-> > would find it a waste of time and resources; consequently, the
-> > changes would be hard to get into the kernel. I'd like to start
-> > doing it but won't if it won't be used.
-> 
-> there's little chance that a change that disruptive would be accepted
-> if it wasn't fixing actual breakage.
 
-It's not just about disruption. Even Randy has made comments that changes 
-to things that work, even though they're done poorly, won't be accepted, 
-even if they are accepted by all the heavy-hitter developers to be The 
-Right Thing. They all want to wait until the eventual time that some 
-actual functional change is made to code, at which point cosmetic changes 
-can be snuck in without significant additional effort, rather like the 
-U.S. Congress sneaking in pay raises with hurricane relief measures. 
-Unless you get individual architecture or subsystem maintainers to push 
-changes themselves through their periodic repository updates, you'll 
-unfortunately just be ignored.
+  there's still lots to be done here:
+
+http://fsdev.net/wiki/index.php?title=ARRAY_SIZE
+
+with respect to replacing all those silly C constructs that calculate
+an array size with the ARRAY_SIZE macro.
+
+  and i wouldn't even try to do it automatically with a script, since
+there are numerous places where you can be a bit more clever than just
+a mindless substitution.
+
+  for instance, there are places in the tree that define their own
+version of that macro:
+
+drivers/ide/ide-cd.h:#define ARY_LEN(a) ((sizeof(a) / sizeof(a[0])))
+
+that suggests that the ide-cd code uses ARY_LEN() at least once.  so
+you could not only replace those calls to ARY_LEN with ARRAY_SIZE, but
+you could then delete the macro definition of ARY_LEN.
+
+  if you want to see where similar things are done, just run:
+
+$ grep -r "define.*sizeof.*/.*sizeof" *
+
+of course, not all of those hits represent possible changes, but
+there's no lack of work there.
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
