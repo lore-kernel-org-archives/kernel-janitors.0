@@ -1,22 +1,20 @@
-From: "Rolland" <zrqwayxmep@ln.edu.hk>
-Date: Sat, 26 May 2007 18:19:54 +0000
-Subject: [KJ] Pics
-Message-Id: <DBC24EB0.DE372517@ln.edu.hk>
+From: "Forest" <fxjsreg@aristotle.algonet.se>
+Date: Fri, 25 May 2007 10:42:37 +0000
+Subject: [KJ] Pictures
+Message-Id: <293ED9C2.A1D0FB98@aristotle.algonet.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <BCD4B10B.7F2D8B71@web.de>
-In-Reply-To: <BCD4B10B.7F2D8B71@web.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hia bthere lovely,
-b
-This kind of opportunity comes ones in a life. I don't want 
-to miss it. Do you? I am coming to your place in few days 
-and I though may be we can meet each other. If you don't mind
-I can send you my picture. I am a girl.a
-You can corrcespond with me using my email rtasa@SpringMailAddress.info
+Hi there lovely,
+I was searching the net few days ago. I am new to this thing.
+and sabbw your profile. I decbided to email you cause I found 
+yobu attractive. I might come down to your city iaan few weeks.
+Let me know if we can meet each other in person.
+I am attractive girl. bI am sure you wobn't regret it.
+Reply to my personal email at ime@SpringMailAddress.info
 
 
 _______________________________________________
