@@ -1,7 +1,7 @@
-From: "Andre" <baoshvacu@efes.net.tr>
-Date: Fri, 25 May 2007 13:54:27 +0000
+From: "Alejandra" <rwhbvvyyuc@ciudad.com.ar>
+Date: Fri, 25 May 2007 23:07:12 +0000
 Subject: [KJ] Pictures
-Message-Id: <2C46B8A6.6DBA9DAD@efes.net.tr>
+Message-Id: <942DEEC4.09CB406E@ciudad.com.ar>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <293ED9C2.A1D0FB98@aristotle.algonet.se>
 In-Reply-To: <293ED9C2.A1D0FB98@aristotle.algonet.se>
@@ -11,12 +11,11 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 Hi there lovely,
-I was searching the net few days ago. I am new to this thing.
-and saw your profile. I decided to email you cause I found 
-you attractive. I might come adown to your city in few weeks.
-Let me know if we can meet each other in person.
-Ia am attractive girl. I am sure you won't regret it.
-Reply to my personal email at xozou@SpringMailAddress.info
+Thisb kinbd of opportunity combes ones in a life. I don't want 
+to miss it. Do you? I am cominag to your place in few days 
+and I though may be we can meet each other. If you don't mind
+I can send yobu my picture. I am a girl.
+You can correspcond with me using my email hyeyu@SpringMailAddress.info
 
 
 _______________________________________________
