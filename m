@@ -1,29 +1,22 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 31 May 2007 19:01:17 +0000
-Subject: [KJ] is it worth getting read of the "get_info" /proc interface?
-Message-Id: <Pine.LNX.4.64.0705311459460.23501@localhost.localdomain>
+From: "Elaine" <qvafysiegx@fiets.nl>
+Date: Fri, 25 May 2007 07:38:07 +0000
+Subject: [KJ] Re: Hello!
+Message-Id: <DFD9E3CE.F258E5FE@fiets.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi there lovely,
+I was searching theb net few days ago. I am new bto this thing.
+and saw your profile. I decided to emaibl you cause I found a
+you attractive. I might come down to ybobur city in few weeks.
+Let me know if we can meet beach other in person.
+I am attaractive girl. I am sure ybou won't regret it.
+Reply to my personal email at aay@SpringMailAddress.info
 
-  given that that interface has been discouraged for quite some time,
-and there's only a few instances of it left in the tree, is there any
-value in switching over those remaining instances to a regular
-proc_read and ditching (or at least officially deprecating) get_info?
 
-rday
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
