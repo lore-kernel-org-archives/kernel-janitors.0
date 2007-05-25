@@ -1,62 +1,25 @@
-From: "cordula dannye" <grisgarnet@bilmeglerhuset.com>
-Date: Thu, 31 May 2007 10:57:21 +0000
-Subject: [KJ] Your loan request approved
-Message-Id: <14615e01c7a372$76a4cea0$2401a8c0@com6>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7784225380881383341=="
+From: "Kayla" <owfodwoi@bionorthernireland.com>
+Date: Fri, 25 May 2007 12:36:54 +0000
+Subject: [KJ] Hi
+Message-Id: <B65E5B1A.7A745E5D@bionorthernireland.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c79e84$548284e0$6c822ecf@diepel>
-In-Reply-To: <01c79e84$548284e0$6c822ecf@diepel>
+References: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
+In-Reply-To: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+Hi there lovely,
+I was searchibng the net few days ago. I aam new to this thing.
+anda saw your profile. I decided to email you cause I found 
+you attractive. I might come doawn to your city in few weeks.
+Let me know if we can meet each other in person.
+I aam attractive girl. I am sure you won'at regret it.
+Reply to my personal email at jyn@SpringMailAddress.info
 
---===============7784225380881383341==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_145C9A_01C7A38B.8AC5A9E0"
-
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_145C9A_01C7A38B.8AC5A9E0
-Content-Type: text/plain;
-	charset="koi8-r"
-Content-Transfer-Encoding: 7bit
-
-Thank you for your loan request, which we recieved yesterday. We'd like
-to inform you that we are accepting your application. We are ready to
-give you a $272,000 loan (Approved refinance) for a low month payment.
-Approval process will take only 1 minute. Please visit the confirmation
-link below and fill-out our short 30 second form. http://nnerswsub.com
-
-------=_NextPart_000_145C9A_01C7A38B.8AC5A9E0
-Content-Type: text/html;
-	charset="koi8-r"
-Content-Transfer-Encoding: 7bit
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
-<META content="MSHTML 6.00.2900.2180" name=GENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=#ffffff>
-<DIV>Thank you for your loan request, which we recieved yesterday. We'd like to 
-inform you that we are accepting your application. We are ready to give you a 
-$272,000 loan (Approved refinance) for a low month payment. Approval process 
-will take only 1 minute. Please visit the confirmation link below and fill-out 
-our short 30 second form. <A 
-href="http://nnerswsub.com">http://nnerswsub.com</A></DIV></BODY></HTML>
-------=_NextPart_000_145C9A_01C7A38B.8AC5A9E0--
-
-
---===============7784225380881383341==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7784225380881383341==--
