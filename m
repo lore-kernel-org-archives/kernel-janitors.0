@@ -1,47 +1,37 @@
-From: "Tamikag Mcdermottj" <absgaudyre@palmworkflow.com>
-Date: Tue, 15 May 2007 06:24:49 +0000
-Subject: [KJ] you economy
-Message-Id: <NXUZXOD.5865656123@59.96.155.200>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4460832217723138135=="
+From: Andi Drebes <webmaster@programmierforen.de>
+Date: Sat, 26 May 2007 10:51:07 +0000
+Subject: [KJ] [PATCH] drivers/atm/nicstarmac.c: Array size calculations
+Message-Id: <200705261251.07441.webmaster@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============4460832217723138135==
-Content-Type: text/html
+This patch replaces a line in drivers/atm/nicstarmac.c
+that caluclates the size of an array with the ARRAY_SIZE(x)
+macro.
 
-<html>
-<head>
-</head>
-<body>
-<p align="center"><b><font face="Arial Unicode MS"><font color="#FF0000">
-<br>We told you to watch this company<br>
-Up 60 % in 1 day <br> There is still plenty of ways to go<br>
-Get in Tomorrow and watch it multiply<br>
-NOt a Smoke Stack. REal All American Co</font><br>
-<font color="#006600">DSI Direct Sales Inc</font><font color="#00CC00"><br>
-</font>SYM-D S D I<br>
-Current price : $0.04 ( up 60% in 1 day !!!)<br>
-<font color="#FF0000">Ride this to the top</font><br>
-Hot News Released<br>Don't get left out again
-<br><br>
-strode into the darkened Springfield Exposition Center where volunteers handed out signs<br>
-ttempted a U-turn with only 1,300 feet of room for the turn. To make a successful turn,<br>
-leader, blasted Democrats on Friday, saying they have no plan to keep Americans safe <br>
- San Benardino National Forest to its very core and shocked the entire world."<br>
- McCaskill supports it; Talent opposes it. Bush didn't mention it. <br></font></b></p>
-</body>
-</html>
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+---
+Compile tested with allyesconfig on i386.
+Diffed against Linus' git-tree
 
 
---===============4460832217723138135==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+diff --git a/drivers/atm/nicstarmac.c b/drivers/atm/nicstarmac.c
+index 480947f..842e26c 100644
+--- a/drivers/atm/nicstarmac.c
++++ b/drivers/atm/nicstarmac.c
+@@ -134,7 +134,7 @@ nicstar_read_eprom_status( virt_addr_t base )
+    /* Send read instruction */
+    val = NICSTAR_REG_READ( base, NICSTAR_REG_GENERAL_PURPOSE ) & 0xFFFFFFF0;
+ 
+-   for (i=0; i<sizeof rdsrtab/sizeof rdsrtab[0]; i++)
++   for (i=0; i<ARRAY_SIZE(rdsrtab); i++)
+    {
+ 	NICSTAR_REG_WRITE( base, NICSTAR_REG_GENERAL_PURPOSE,
+ 		(val | rdsrtab[i]) );
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============4460832217723138135==--
