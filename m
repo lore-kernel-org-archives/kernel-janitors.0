@@ -1,7 +1,7 @@
-From: "Lavern" <yjejiaidi@unisa.ac.za>
-Date: Fri, 25 May 2007 07:33:06 +0000
+From: "Gavin" <mhztppowuk@cnn.com>
+Date: Sat, 26 May 2007 13:52:28 +0000
 Subject: [KJ] Re: nude pics
-Message-Id: <BB7D0A52.3A2E32FB@unisa.ac.za>
+Message-Id: <170301c79f40$e5fdb040$f0fc27f5@mhztppowuk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <bc8601c79e40$9e302780$ec9bb520@djlxhu>
 In-Reply-To: <bc8601c79e40$9e302780$ec9bb520@djlxhu>
@@ -11,12 +11,12 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 Hi there lovely,
-I was searching the net few days ago. I am new bto this thing.
-and saw your parofile. I decided to aemail you cause I found 
-you attractive. I might come down to your city in few weeks.
-Let me know if we can meet each other in person.
-I am attractive girl. I am sure you won't regret ibt.
-Reply to my personal email at yecu@SpringMailAddress.info
+I was searcbhing the net few days ago. I am new to this thing.
+and saw your profile. I decided to email you cause I found 
+you aattractive. I might come down to your city bin few weeks.
+Let me know if awe bcan meet each other in person.
+I am attractive girl. I am sure you won't abregret it.
+Reply to my pebrsonal email at mpuhi@SpringMailAddress.info
 
 
 _______________________________________________
