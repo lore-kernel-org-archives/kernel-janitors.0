@@ -1,7 +1,7 @@
-From: "Kayla" <owfodwoi@bionorthernireland.com>
-Date: Fri, 25 May 2007 12:36:54 +0000
+From: "Rosanne" <tiiaqekai@hot.ee>
+Date: Sat, 26 May 2007 01:42:25 +0000
 Subject: [KJ] Hi
-Message-Id: <B65E5B1A.7A745E5D@bionorthernireland.com>
+Message-Id: <512DB05E.95AFE830@hot.ee>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
 In-Reply-To: <922bcf2a0512112101j5f7d508ft7ef8d2253d8aba92@mail.gmail.com>
@@ -10,13 +10,11 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi there lovely,
-I was searchibng the net few days ago. I aam new to this thing.
-anda saw your profile. I decided to email you cause I found 
-you attractive. I might come doawn to your city in few weeks.
-Let me know if we can meet each other in person.
-I aam attractive girl. I am sure you won'at regret it.
-Reply to my personal email at jyn@SpringMailAddress.info
+Hi,
+Hope I am not writing to wrong address. I am anice, pretty looking
+girl. I am planning on visiting your town this month. Can 
+we meet each other in person? Message me back at
+gcejr@SpringMailAddress.info
 
 
 _______________________________________________
