@@ -1,15 +1,17 @@
 From: "willis lesley" <garryanastassia@pathwalk.com>
 Date: Sat, 26 May 2007 06:40:44 +0000
 Subject: [KJ] Suite 3 Design Premium download
-Message-Id: <f38cf01c79f60$c9791160$b3b84542@sparksjd7g8x7p>
+Message-Id: <f38d001c79f60$c9791160$b3b84542@sparksjd7g8x7p>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4455976887394132719=="
+Content-Type: multipart/mixed; boundary="===============7888027634078352493=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <f38cf01c79f60$c9791160$b3b84542@sparksjd7g8x7p>
+In-Reply-To: <f38cf01c79f60$c9791160$b3b84542@sparksjd7g8x7p>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============4455976887394132719==
+--===============7888027634078352493==
 Content-Type: multipart/alternative;
 	boundary="----=_NextPart_000_F2EEA_01C79F2E.6AA68B40"
 
@@ -70,7 +72,7 @@ clients in the future.</FONT>
 ------=_NextPart_000_F2EEA_01C79F2E.6AA68B40--
 
 
---===============4455976887394132719==
+--===============7888027634078352493==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -80,4 +82,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============4455976887394132719==--
+--===============7888027634078352493==--
