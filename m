@@ -1,66 +1,76 @@
-From: ed <ed-kj@s5h.net>
-Date: Thu, 24 May 2007 22:01:55 +0000
-Subject: [KJ] This might be a basic thing
-Message-Id: <20070524230155.373c2642@ed-desktop.s5h.net>
+From: "willis lesley" <garryanastassia@pathwalk.com>
+Date: Sat, 26 May 2007 06:40:44 +0000
+Subject: [KJ] Suite 3 Design Premium download
+Message-Id: <f38cf01c79f60$c9791160$b3b84542@sparksjd7g8x7p>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============3490664206063578718=="
+Content-Type: multipart/mixed; boundary="===============4455976887394132719=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <46560307.90503@kroon.co.za>
-In-Reply-To: <46560307.90503@kroon.co.za>
 To: kernel-janitors@vger.kernel.org
 
---===============3490664206063578718==
-Content-Type: multipart/signed; boundary=Sig_J8eCN0LuYfJyy.Hd_XXyxTE;
-	protocol="application/pgp-signature"; micalg=PGP-SHA1
+This is a multi-part message in MIME format.
 
---Sig_J8eCN0LuYfJyy.Hd_XXyxTE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--===============4455976887394132719==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_F2EEA_01C79F2E.6AA68B40"
 
-Hi,
+This is a multi-part message in MIME format.
 
-I have recently had an issue with a USB storage device that can read
-many different removable media devices, SD, CF/MD, SM/XD etc etc.
+------=_NextPart_000_F2EEA_01C79F2E.6AA68B40
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
-However, on different computers I get different results, some can read
-the SD only, (one other computer that belongs to a friend who has the
-same gadget as me) can read/write the SD.
+Adobe Creative Suite 3 Design Premium software is the designer's dream
+toolkit for print, web, and mobile publishing. It combines all-new
+versions of essential tools for producing everything from professional
+page layouts to rich interactive experiences in a unified, intuitive
+environment.
+Adobe Creative Suite 3 Design Premium
+Retail Price $1799.00
+Our Price $269.90
+You save $1529.10
+http://geocities.com/ErminNollie6644
+Please note, that there will be more special offers available for our
+constant customers. Every effort has been made to ensure the accuracy of
+all information contained herein. DS Team makes no warranty expressed or
+implied with respect to accuracy of the information, including price,
+product editorials or product specifications. Product and manufacturer
+names are used only for the purpose of identification. We appreciate
+your cooperation with us and we'll be glad to see you as our clients in
+the future. 
+ 
 
-I am sure this is something hardware related to the device. I've had
-it apart and I have tried to jam the SD read/lock tab sensor in the
-write-present position to no avail.
+------=_NextPart_000_F2EEA_01C79F2E.6AA68B40
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
-Would this be a signal that is given to the kernel, or would it be a
-signal that the usb device/gadget chip process.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<META content="MSHTML 6.00.2900.2180" name=GENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=#ffffff>
+<DIV><FONT face=Arial size=2>Adobe Creative Suite 3 Design Premium software is 
+the designer's dream toolkit for print, web, and mobile publishing. It combines 
+all-new versions of essential tools for producing everything from professional 
+page layouts to rich interactive experiences in a unified, intuitive 
+environment.<BR>Adobe Creative Suite 3 Design Premium<BR>Retail Price 
+$1799.00<BR>Our Price $269.90<BR>You save $1529.10<BR><A 
+href="http://geocities.com/ErminNollie6644">http://geocities.com/ErminNollie6644</A><BR>Please note, that there will 
+be more special offers available for our constant customers. Every effort has 
+been made to ensure the accuracy of all information contained herein. DS Team 
+makes no warranty expressed or implied with respect to accuracy of the 
+information, including price, product editorials or product specifications. 
+Product and manufacturer names are used only for the purpose of identification. 
+We appreciate your cooperation with us and we'll be glad to see you as our 
+clients in the future.</FONT>
+<DIV><FONT face=Arial size=2></FONT>&nbsp;</DIV></BODY></HTML>
+------=_NextPart_000_F2EEA_01C79F2E.6AA68B40--
 
-What I'm looking to do is fiddle the usb-storage code so that the
-write-present tab is always considered on (I've not yet read the code,
-as I want to just get an idea for what is involved first).
 
-Am I trying to do something insane or impossible - is the USB gadget
-the overlord and I am just unfortunate to have a device that I cannot
-write with - ever?
-
---=20
-The HSSI to the Xbox is making a weird noise  because of overloaded
-quake server. Tech Support is playing dope-wars on the palm pilot.
- :: http://www.s5h.net/ :: http://www.s5h.net/gpg
-
---Sig_J8eCN0LuYfJyy.Hd_XXyxTE
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFGVgtT4dyr7s6PRYgRApVcAJ9JKUvZwrBj2fBCyxmXqDUfZgODegCfayom
-k1KIYn3ng7LloRnE7Rc1FyE=
-=4WRD
------END PGP SIGNATURE-----
-
---Sig_J8eCN0LuYfJyy.Hd_XXyxTE--
-
---===============3490664206063578718==
+--===============4455976887394132719==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -70,4 +80,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============3490664206063578718==--
+--===============4455976887394132719==--
