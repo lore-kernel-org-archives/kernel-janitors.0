@@ -1,18 +1,20 @@
-From: "Eliseo" <cyfxsrgequ@thirstynow.co.za>
-Date: Sat, 26 May 2007 02:50:37 +0000
+From: "Jayson" <vuslzhate@affv.nu>
+Date: Sun, 27 May 2007 13:05:31 +0000
 Subject: [KJ] Re: Pictures
-Message-Id: <E483F3E3.84B5A719@thirstynow.co.za>
+Message-Id: <00F00E3B.CFCA8065@affv.nu>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E483F3E3.84B5A719@thirstynow.co.za>
+In-Reply-To: <E483F3E3.84B5A719@thirstynow.co.za>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 Hi,
-Hope I am not writing to wrong address. I am nice, pretbty looking
-girl. I am planning on visiting your btown this month. Can 
-we meet each other in person? Message me back at
-fefmk@SpringMailAddress.info
+Hope I am not writing to wrong address. I am nice, pretty looking
+girl. I am planning on visiting your town this month. Can 
+we meet each other in persoan? Message me back at
+pdeiz@SpringMailAddress.info
 
 
 _______________________________________________
