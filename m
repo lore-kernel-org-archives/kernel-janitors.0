@@ -1,7 +1,7 @@
-From: "Alejandra" <rwhbvvyyuc@ciudad.com.ar>
-Date: Fri, 25 May 2007 23:07:12 +0000
+From: "Dasha" <mhwbryq@ndmc.pwv.gov.za>
+Date: Sun, 27 May 2007 02:26:23 +0000
 Subject: [KJ] Pictures
-Message-Id: <942DEEC4.09CB406E@ciudad.com.ar>
+Message-Id: <a47801c7a051$db6fc980$9f113958@mhwbryq>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <293ED9C2.A1D0FB98@aristotle.algonet.se>
 In-Reply-To: <293ED9C2.A1D0FB98@aristotle.algonet.se>
@@ -10,12 +10,12 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi there lovely,
-Thisb kinbd of opportunity combes ones in a life. I don't want 
-to miss it. Do you? I am cominag to your place in few days 
-and I though may be we can meet each other. If you don't mind
-I can send yobu my picture. I am a girl.
-You can correspcond with me using my email hyeyu@SpringMailAddress.info
+Hire,
+i am here sitting in the internet caffe. Found your email and
+decided to write. I might bae coming to your place in 14 days, 
+so I decided to email you. May be we can meet?! I am 25 y.o.
+girl. I have a picture if !you want. No need to reply here as 
+this is not amy email. Write me at neud@SpringMailAddress.info
 
 
 _______________________________________________
