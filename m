@@ -1,24 +1,44 @@
-From: "Berry" <dfmsbue@racqi.com.au>
-Date: Sun, 27 May 2007 21:17:32 +0000
-Subject: [KJ] Re: Pictures
-Message-Id: <7a4501c7a048$3d3743f0$85f15f28@dfmsbue>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 27 May 2007 21:28:05 +0000
+Subject: [KJ] replacing old-style "non-seekable" errors with "no_llseek"
+Message-Id: <Pine.LNX.4.64.0705271722580.13051@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E483F3E3.84B5A719@thirstynow.co.za>
-In-Reply-To: <E483F3E3.84B5A719@thirstynow.co.za>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi there lovebly,
-I was searching the net few days ago. I am new to this thing.
-and saw your profible. I decided to email byou cause I found 
-you attractive. I might come down to your city in few bweeks.
-Let me know if we can meet each otaher ina persbon.
-I am attractive girl. I am sure you won't regbret it.
-Reply to my personal email at qeytu@SpringMailSite.info
 
+  based on a discussion of lseek() here:
 
+http://lwn.net/Articles/96662/
+
+it appears that an old-style way of specifying that a device was
+non-seekable:
+
+    loff_t my_llseek(struct file *file, loff_t offset, int whence)
+    {
+        return -ESPIPE;    /* Not seekable */
+    }
+
+can be rewritten more cleanly using the no_llseek() helper routine,
+and just assigning no_llseek to the llseek member of the
+file_operations struct, as in:
+
+    .llseek = no_llseek
+
+and deleting the old routine.  am i reading that correctly?  or is
+there more to it than that?
+
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
