@@ -1,41 +1,36 @@
-From: "Marianazgg Dwyer" <akxuhcegp@ilcarbonio.it>
-Date: Sun, 13 May 2007 09:01:54 +0000
-Subject: [KJ] Re: But organise
-Message-Id: <09ff01c79605$3ecf13d0$>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 27 May 2007 19:10:28 +0000
+Subject: [KJ] is there a compelling reason for module param type "invbool"?
+Message-Id: <Pine.LNX.4.64.0705271508200.10776@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This one is shoe in to Double by end of week
-Huge Volume spike, very low risk and high reward
 
-Real Sales and Real Earnings
-DSI Direct Sales Inc
-SYM-D S D I
-Current price : $0.02
-Ride this to the top
+  i'm amused that, in the entire kernel source tree, there is
+precisely one instance of someone using a module parameter type of
+invbool:
 
-Add it to your Radar
-Get in before it runs!!!
+$ grep -rw invbool *
+drivers/video/aty/aty128fb.c:module_param_named(nomtrr, mtrr, invbool, 0);
+include/linux/moduleparam.h:   ulong, charp, bool or invbool, or XXX if you define param_get_XXX,
 
+that's the sort of thing that tells me that:
 
-came together for them.   Anthony drew the foul and some of the loudest cheers   was easily the Nuggets' best game of the season.   The Nuggets shot 68 percent NCAA tournament and three NIT bids.  The native of Falls Church, Va., spent  -- Amaker's second year -- but the Wolverines were ineligible for the
+1) there's no real reason for invbool, and
+2) that's one confusingly-written driver.  :-)
 
------ Original Message ----- 
-From: "Marianazgg Dwyer" <akxuhcegp@ilcarbonio.it>
-To: <kernel-janitors@lists.osdl.org>, <tl_marketing@lists.osdl.org>
-Sent: Thursday, March 22, 2007 8:27 PM
-Subject: But organise
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-
-> Real Sales and Real Earnings
-> DSI Direct Sales Inc
-> SYM-D S D I
-> Current price : $0.02
-> Ride this to the top
-
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
