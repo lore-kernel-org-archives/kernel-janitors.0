@@ -1,63 +1,52 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 28 May 2007 18:42:19 +0000
-Subject: [KJ] [PATCH] PPC: Remove dead code for preventing pread() and
-Message-Id: <Pine.LNX.4.64.0705281435450.14652@localhost.localdomain>
+From: "Jandy Jones" <jandyjones@sbcglobal.net>
+Date: Sun, 27 May 2007 23:03:14 +0000
+Subject: [KJ] Let's work together
+Message-Id: <01c7a0b2$9c3f5e90$6c822ecf@akstcwmbetzmnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
+I'm the Peronal Manager of Department of employment. I am pleased to offer =
+you a vacant position of Financial Manager
 
-Remove the deactivated code for checking for pread() and pwrite()
-calls on the PPC-based BRIQ.
+ Let me tell you about our company.=20
+We are engaged in selection and delivery of technical equipment and goodies=
+ in various offices and organizations. We take all troubles about choosing =
+and delivering appropriate technical equipment to client=92s office, under =
+our responsibility. Company was established in 2002 and earned quite good r=
+eputation on the market. At the moment we have some plans for the further d=
+evelopment, we plan to broaden our services and add an international networ=
+k to serve clients in all over the world.=20
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+ To offer to our foreign clients more favorable and comfortable conditions =
+we have made the decision to create an international network of regional ag=
+ents. We have opened a set of employees in various areas of the world. It h=
+as allowed our clients to get access to a wider assortment of the goods, th=
+an before. In fact, earlier, many suppliers refused to work with us for the=
+ reason of bureaucracy that occurred then registration of legal documents w=
+ere needed to transport equipment, or transfer money.
 
----
+The Duties of the financial manager consists of reception of money resource=
+s from clients of our company and transferring them to us. For every transa=
+ction, we pay 8 % from the total sum.=20
 
-  perusing the code, there's nothing that indicates lseeking should be
-prevented, and the code to check that is "if 0"ed out, anyway.
+Work Requirements
 
-  not sure which PPC person is the right contact for this.
+minimal knowledge of personal computer and internet/E-mail
+Bank account
+Legal age
+Will to work at home 3-5 hours per day
+Crime-free background (background check will be made before accepting on th=
+e position)=20
+There is not any starting payments or pledges for the goods!
+Please replay to this e-mail if you are interested in this opening, we will=
+ send you an employment agreement within nearest 24 hours, feel free to ask=
+ questions.
+Contact us:  jandyjones@sbcglobal.net
 
 
-diff --git a/drivers/char/briq_panel.c b/drivers/char/briq_panel.c
-index ed53f54..b6f2639 100644
---- a/drivers/char/briq_panel.c
-+++ b/drivers/char/briq_panel.c
-@@ -91,11 +91,6 @@ static ssize_t briq_panel_read(struct file *file, char __user *buf, size_t count
- 	unsigned short c;
- 	unsigned char cp;
-
--#if 0	/*  Can't seek (pread) on this device  */
--	if (ppos != &file->f_pos)
--		return -ESPIPE;
--#endif
--
- 	if (!vfd_is_open)
- 		return -ENODEV;
-
-@@ -139,11 +134,6 @@ static ssize_t briq_panel_write(struct file *file, const char __user *buf, size_
- 	size_t indx = len;
- 	int i, esc = 0;
-
--#if 0	/*  Can't seek (pwrite) on this device  */
--	if (ppos != &file->f_pos)
--		return -ESPIPE;
--#endif
--
- 	if (!vfd_is_open)
- 		return -EBUSY;
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
