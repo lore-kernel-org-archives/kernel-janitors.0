@@ -1,24 +1,50 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sat, 05 May 2007 17:49:16 +0000
-Subject: [KJ] Re: removing the last traces of pci_module_init()
-Message-Id: <463CC39C.2040003@student.ltu.se>
+From: "Catherine Mc Mullen" <akstctvsinitmnsdgs@tvsinit.com>
+Date: Mon, 28 May 2007 18:39:20 +0000
+Subject: [KJ] Reliable people wanted
+Message-Id: <01c7a189$cbebfae0$6c822ecf@akstctvsinitmnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Robert P. J. Day wrote:
-> http://fsdev.net/wiki/index.php?title=Stuff_to_be_removed#pci_module_init.28.29
->   
-The entry is now removed since it is now removed. The patch for 
-/drivers/scsi/tmscsim.c has yet to be included but that should not take 
-too long.
+I'm the Peronal Manager of Department of employment. I am pleased to offer =
+you a vacant position of Financial Manager
 
-So let us celebrate, pci_module_init() is finally _gone_!!!
+ Let me tell you about our company.=20
+We are engaged in selection and delivery of technical equipment and goodies=
+ in various offices and organizations. We take all troubles about choosing =
+and delivering appropriate technical equipment to client=92s office, under =
+our responsibility. Company was established in 2002 and earned quite good r=
+eputation on the market. At the moment we have some plans for the further d=
+evelopment, we plan to broaden our services and add an international networ=
+k to serve clients in all over the world.=20
 
-Cheers
-Richard Knutsson
+ To offer to our foreign clients more favorable and comfortable conditions =
+we have made the decision to create an international network of regional ag=
+ents. We have opened a set of employees in various areas of the world. It h=
+as allowed our clients to get access to a wider assortment of the goods, th=
+an before. In fact, earlier, many suppliers refused to work with us for the=
+ reason of bureaucracy that occurred then registration of legal documents w=
+ere needed to transport equipment, or transfer money.
+
+The Duties of the financial manager consists of reception of money resource=
+s from clients of our company and transferring them to us. For every transa=
+ction, we pay 8 % from the total sum.=20
+
+Work Requirements
+
+minimal knowledge of personal computer and internet/E-mail
+Bank account
+Legal age
+Will to work at home 3-5 hours per day
+Crime-free background (background check will be made before accepting on th=
+e position)=20
+There is not any starting payments or pledges for the goods!
+Please replay to this e-mail if you are interested in this opening, we will=
+ send you an employment agreement within nearest 24 hours, feel free to ask=
+ questions.
+Contact us:  catherine.mcmullen@dmjmharris.com
 
 _______________________________________________
 Kernel-janitors mailing list
