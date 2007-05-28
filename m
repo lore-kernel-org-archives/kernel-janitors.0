@@ -1,8 +1,10 @@
-From: "Fabian Lee" <lee@odinsearchgroup.com>
-Date: Mon, 28 May 2007 18:58:47 +0000
+From: "Ava Jimenez" <akstcxsysincmnsdgs@xsysinc.com>
+Date: Mon, 28 May 2007 23:38:22 +0000
 Subject: [KJ] FW
-Message-Id: <01c7a184$21a169d0$6c822ecf@akstctylermailmnsdgs>
+Message-Id: <01c7a17f$ffa0df40$6c822ecf@akstcxsysincmnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7a184$21a169d0$6c822ecf@akstctylermailmnsdgs>
+In-Reply-To: <01c7a184$21a169d0$6c822ecf@akstctylermailmnsdgs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -22,8 +24,8 @@ opportunity from Russia. Currently seeking for
 people who can help us out. Very great opportunity and very
 easy. For more info please contact: lee@odinsearchgroup.com
 
-Truly yours,
-Fabian Lee
+Truly yours/
+Ava Jimenez
 
 _______________________________________________
 Kernel-janitors mailing list
