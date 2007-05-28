@@ -1,64 +1,59 @@
-From: Andi Drebes <lists-receive@programmierforen.de>
-Date: Sun, 27 May 2007 18:30:22 +0000
-Subject: [KJ] [PATCH] drivers/cdrom/sbpcd.c: Array size calculations
-Message-Id: <200705272030.23120.lists-receive@programmierforen.de>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 28 May 2007 18:31:42 +0000
+Subject: [KJ] [PATCH] BLUETOOTH: Remove the redundant non-seekable llseek
+Message-Id: <Pine.LNX.4.64.0705281428440.14590@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patch removes the macro replaces an array size calculation
-that was done using sizeof with the ARRAY_SIZE macro.
 
-Tested by compilation.
+Remove the llseek method given that the open method already calls
+nonseekable_open().
 
-Maybe that the file needs some cleanup in other parts aswell. I get
-quite some warnings when I compile it.
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
-drivers/cdrom/sbpcd.c: In function ‘sbp_sleep’:
-drivers/cdrom/sbpcd.c:832: warning: ‘sti’ is deprecated (declared at include/linux/interrupt.h:224)
-drivers/cdrom/sbpcd.c:834: warning: ‘sti’ is deprecated (declared at include/linux/interrupt.h:224)
-drivers/cdrom/sbpcd.c: In function ‘cmd_out_T’:
-drivers/cdrom/sbpcd.c:1347: warning: ‘save_flags’ is deprecated (declared at include/linux/interrupt.h:228)
-drivers/cdrom/sbpcd.c:1347: warning: ‘cli’ is deprecated (declared at include/linux/interrupt.h:220)
-drivers/cdrom/sbpcd.c:1349: warning: ‘restore_flags’ is deprecated (declared at include/linux/interrupt.h:233)
-drivers/cdrom/sbpcd.c: In function ‘cmd_out’:
-drivers/cdrom/sbpcd.c:1483: warning: ‘save_flags’ is deprecated (declared at include/linux/interrupt.h:228)
-drivers/cdrom/sbpcd.c:1483: warning: ‘cli’ is deprecated (declared at include/linux/interrupt.h:220)
-drivers/cdrom/sbpcd.c:1485: warning: ‘restore_flags’ is deprecated (declared at include/linux/interrupt.h:233)
-drivers/cdrom/sbpcd.c: In function ‘sbpcd_init’:
-drivers/cdrom/sbpcd.c:5644: warning: ‘sti’ is deprecated (declared at include/linux/interrupt.h:224)
-drivers/cdrom/sbpcd.c:5673: warning: ‘check_region’ is deprecated (declared at include/linux/ioport.h:136)
-
-Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
 ---
-Compile tested with on i386.
-Diffed against Linus' git-tree
 
-diff --git a/drivers/cdrom/sbpcd.c b/drivers/cdrom/sbpcd.c
-index a1283b1..5771f4d 100644
---- a/drivers/cdrom/sbpcd.c
-+++ b/drivers/cdrom/sbpcd.c
-@@ -470,8 +470,6 @@ static int sbpcd_set(const char *val, struct kernel_param *kp)
+given that the fops open() method already calls nonseekable_open()
+at the end, it would seem that this old-style method for preventing
+lseeking is redundant.  am i reading that correctly?
+
+
+
+diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
+index b71a5cc..0638730 100644
+--- a/drivers/bluetooth/hci_vhci.c
++++ b/drivers/bluetooth/hci_vhci.c
+@@ -180,11 +180,6 @@ static inline ssize_t vhci_put_user(struct vhci_data *data,
+ 	return total;
  }
- module_param_call(sbpcd, sbpcd_set, NULL, NULL, 0);
- 
--#define NUM_PROBE  (sizeof(sbpcd) / sizeof(int))
--
- /*=====================================*/
- 
- #define INLINE inline
-@@ -5666,7 +5664,7 @@ int __init sbpcd_init(void)
- 	sbpcd[1]=sbpro_type; /* possibly changed by kernel command line */
- #endif /* MODULE */
- 	
--	for (port_index=0;port_index<NUM_PROBE;port_index+=2)
-+	for (port_index=0;port_index<ARRAY_SIZE(sbpcd);port_index+=2)
- 	{
- 		addr[1]=sbpcd[port_index];
- 		if (addr[1]=0) break;
 
+-static loff_t vhci_llseek(struct file *file, loff_t offset, int origin)
+-{
+-	return -ESPIPE;
+-}
+-
+ static ssize_t vhci_read(struct file *file,
+ 				char __user *buf, size_t count, loff_t *pos)
+ {
+@@ -334,7 +329,6 @@ static int vhci_fasync(int fd, struct file *file, int on)
+
+ static const struct file_operations vhci_fops = {
+ 	.owner		= THIS_MODULE,
+-	.llseek		= vhci_llseek,
+ 	.read		= vhci_read,
+ 	.write		= vhci_write,
+ 	.poll		= vhci_poll,
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
