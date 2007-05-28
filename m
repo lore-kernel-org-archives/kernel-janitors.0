@@ -1,29 +1,45 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 24 May 2007 23:21:57 +0000
-Subject: Re: [KJ] Anybody is working on this todo ?
-Message-Id: <Pine.LNX.4.64.0705241920310.4092@localhost.localdomain>
+Date: Mon, 28 May 2007 20:35:26 +0000
+Subject: [KJ] the standard for including header files?
+Message-Id: <Pine.LNX.4.64.0705281627190.15720@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d701b6e30705240432g51170ec8od7bcbea660fbf7b4@mail.gmail.com>
-In-Reply-To: <d701b6e30705240432g51170ec8od7bcbea660fbf7b4@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, 24 May 2007, Richard Knutsson wrote:
 
-> I must be blind, can not find anything about pci_module_init. Please point me
-> to it.
-> I removed an entry with it a month ago when the pci_module_init-removal patch
-> got into mainline and have not seen anything about it since then.
+  in my travels thru the source tree, i've noticed header files like
+the following (include/linux/ioctl.h):
 
-the only thing at
+#ifndef _LINUX_IOCTL_H
+#define _LINUX_IOCTL_H
 
-http://fsdev.net/wiki/index.php?title=Kernel_Janitor%27s_Todo_List
+#include <asm/ioctl.h>
 
-related to PCI is the "cleanup of pci_find_device" under "Obsolete and
-deprecated stuff".  is that still in progress?  other than that,
-there's nothing else PCI-related that i can see.
+#endif /* _LINUX_IOCTL_H */
+
+  fair enough -- it simply includes the asm-specific form of that
+header file, so one can include either of those two header files to
+get exactly the same effect.
+
+  but what's the *correct* header file to include?  *at the moment*,
+those two includes are equivalent but nothing says they have to be
+that way forever.  perhaps some day some arch-independent content is
+added to linux/ioctl.h.  if that happens, those files that include
+*that* header file will pick up the additional content, while files
+that instead include asm/ioctl.h won't.
+
+  it may be that this will never be a problem, but there certainly is
+some variety of who is including what in the source tree:
+
+$ grep -r "include.*linux/ioctl.h" * | wc -l
+131
+$ grep -r "include.*asm/ioctl.h" * | wc -l
+40
+
+  there are a few other header files like that:  user.h, param.h, etc.
+i'm just wondering what the standard is.
 
 rday
 -- 
