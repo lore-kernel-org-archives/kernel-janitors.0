@@ -1,33 +1,36 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Tue, 29 May 2007 15:55:55 +0000
-Subject: [KJ] why does struct inodes_stat_t include "int dummy[5]"?
-Message-Id: <Pine.LNX.4.64.0705291154450.31066@localhost.localdomain>
+From: "Arnaldo Carvalho de Melo" <acme@ghostprotocols.net>
+Date: Tue, 29 May 2007 16:20:03 +0000
+Subject: Re: [KJ] why does struct inodes_stat_t include "int dummy[5]"?
+Message-Id: <39e6f6c70705290920t23ff5d0fse2f4d6f4a8625f8e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0705291154450.31066@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0705291154450.31066@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On 5/29/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
+>
+>   from include/linux/fs.h:
+>
+> struct inodes_stat_t {
+>         int nr_inodes;
+>         int nr_unused;
+>         int dummy[5];    <---- ?????????
+> };
+>
+>   does that array actually have a purpose?
 
-  from include/linux/fs.h:
+Generally these can be considered as padding, to make sure that the
+struct uses 7 * sizeof(int), sometimes this is due to ABI
+requirements.
 
-struct inodes_stat_t {
-        int nr_inodes;
-        int nr_unused;
-        int dummy[5];    <---- ?????????
-};
+Have you checked if this is not used at all? Or if instances of this
+struct aren't casted to something else that uses this area for some
+purpose?
 
-  does that array actually have a purpose?
-
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+- Arnaldo
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
