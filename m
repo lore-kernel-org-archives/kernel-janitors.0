@@ -1,22 +1,57 @@
-From: "Elvis" <wkexmetyfi@fix.net>
-Date: Sat, 26 May 2007 04:51:55 +0000
-Subject: [KJ] Hallo!
-Message-Id: <A73508C5.4AE2A2D5@fix.net>
+From: "Vegard Nossum" <vegard.nossum@gmail.com>
+Date: Tue, 29 May 2007 07:51:49 +0000
+Subject: [KJ] Header files
+Message-Id: <19f34abd0705290051n6fea05d0q67eafb3f5ba1d757@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi there lovely,
-I was sebarchibng the net few days ago. I am new to this thing.
-and saw your bpraofile. I decided to email you cause I found 
-you attractive. I might come down to your city in few weeks.
-Let me know if we can meet each othaer ain person.
-I am attractive girl. I am sure you won't regret it.
-Reply bto my personal email at cce@SpringMailAddress.info
+Hey,
+
+I have written a perl script to perform certain checks on header
+files. It's rather quick and dirty but works for the most part.
+Running it on the Linux headers yields the following:
+
+$ perl headerguards.pl include/
+include/asm-x86_64/seccomp.h: guard on first line, but not on second
+include/asm-i386/seccomp.h: guard on first line, but not on second
+include/asm-parisc/psw.h: guard on first line, but not on second
+include/asm-sparc64/seccomp.h: guard on first line, but not on second
+include/asm-arm/arch-iop13xx/dma.h: inconsistency between first and second guard
+
+Perhaps these are worth fixing.
+
+There are additional checks in the program, but they are probably not
+relevant for the kernel (or not yet, anyway). The source code can be
+found at http://vegard.afraid.org:1104/git/?p=headerguards.git
+
+Now I wonder: There are a lot of inconsistencies in the header files.
+For instance:
+1) Guard names: There are many possible naming schemes, and the kernel
+probably uses them all. This, of course, means that there are
+potentially conflicts between current header files or current and
+future header files.
+2) Self-consistency: A lot of headers are not self-consistent, i.e.
+they rely on certain headers being included in advance.
+
+Is this worth fixing? (If you can call it fixing. "If it's not
+broken...") Correcting this would span most of the headers, possibly
+introducing thousands of lines of patches. I think a lot of people
+would find it a waste of time and resources; consequently, the changes
+would be hard to get into the kernel. I'd like to start doing it but
+won't if it won't be used.
+
+Thanks.
 
 
+Kind regards,
+Vegard Nossum
+
+PS: A very easy way to check a header file for self-consistency is to
+run sparse on that file alone. I don't think any option to make will
+do this currently.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
