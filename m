@@ -1,144 +1,81 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Tue, 01 May 2007 18:31:00 +0000
-Subject: [KJ] [PATCH] drivers/net/tlan: Convert to generic boolean
-Message-Id: <20070501182831.25316.52578.sendpatchset@thinktank.campus.ltu.se>
+From: Aaron Cripps <acripps@gmail.com>
+Date: Tue, 29 May 2007 21:11:50 +0000
+Subject: [KJ] Re: [PATCH ARRAY_SIZE 2/4] kernel 2.6 size macro clean ups in
+Message-Id: <465C99E6.7010400@gmail.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------080907080108090808040702"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Convert to generic boolean
-
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
----
-Compile-tested with all(yes|mod|no)config on x86(|_64) & sparc(|64)
-Diffed against Linus' git-tree.
+This is a multi-part message in MIME format.
+--------------080907080108090808040702
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-diff --git a/drivers/net/tlan.c b/drivers/net/tlan.c
-index 106dc1e..db630c4 100644
---- a/drivers/net/tlan.c
-+++ b/drivers/net/tlan.c
-@@ -337,7 +337,7 @@ static int	TLan_PhyInternalService( struct net_device * );
- static int	TLan_PhyDp83840aCheck( struct net_device * );
- */
+
+--------------080907080108090808040702
+Content-Type: text/plain;
+ name="lp486e_ArraySize.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="lp486e_ArraySize.patch"
+
+Replaced SIZE(x) macro with the more descriptive ARRAY_SIZE(arr) macro
+defined in kernel.h
+Also removed 22 lines of code that will never be compiled because of
+preprocessor directive: #if 0
+compile tested, no compile time issues found.
+Signed-off-by: Aaron Cripps <cripps@cs.mun.ca>
+
+
+diff -Nuar linux-2.6/drivers/net/lp486e.c linux-2.6-patched/drivers/net/lp486e.c
+--- linux-2.6/drivers/net/lp486e.c	2007-05-22 20:31:03.000000000 -0230
++++ linux-2.6-patched/drivers/net/lp486e.c	2007-05-25 22:43:16.000000000 -0230
+@@ -515,33 +515,6 @@
+ 	outb(0, IOADDR+8);
+ }
  
--static int	TLan_MiiReadReg( struct net_device *, u16, u16, u16 * );
-+static bool	TLan_MiiReadReg( struct net_device *, u16, u16, u16 * );
- static void	TLan_MiiSendData( u16, u32, unsigned );
- static void	TLan_MiiSync( u16 );
- static void	TLan_MiiWriteReg( struct net_device *, u16, u16, u16 );
-@@ -2240,7 +2240,7 @@ TLan_ResetAdapter( struct net_device *dev )
- 	u32		data;
- 	u8		data8;
- 
--	priv->tlanFullDuplex = FALSE;
-+	priv->tlanFullDuplex = false;
- 	priv->phyOnline=0;
- 	netif_carrier_off(dev);
- 
-@@ -2295,7 +2295,7 @@ TLan_ResetAdapter( struct net_device *dev )
- 			TLan_DioWrite8( dev->base_addr, TLAN_ACOMMIT, 0x0a );
- 		} else if ( priv->duplex = TLAN_DUPLEX_FULL ) {
- 			TLan_DioWrite8( dev->base_addr, TLAN_ACOMMIT, 0x00 );
--			priv->tlanFullDuplex = TRUE;
-+			priv->tlanFullDuplex = true;
- 		} else {
- 			TLan_DioWrite8( dev->base_addr, TLAN_ACOMMIT, 0x08 );
- 		}
-@@ -2676,14 +2676,14 @@ void TLan_PhyStartLink( struct net_device *dev )
- 			TLan_MiiWriteReg( dev, phy, MII_GEN_CTL, 0x0000);
- 		} else if ( priv->speed = TLAN_SPEED_10 &&
- 			    priv->duplex = TLAN_DUPLEX_FULL) {
--			priv->tlanFullDuplex = TRUE;
-+			priv->tlanFullDuplex = true;
- 			TLan_MiiWriteReg( dev, phy, MII_GEN_CTL, 0x0100);
- 		} else if ( priv->speed = TLAN_SPEED_100 &&
- 			    priv->duplex = TLAN_DUPLEX_HALF) {
- 			TLan_MiiWriteReg( dev, phy, MII_GEN_CTL, 0x2000);
- 		} else if ( priv->speed = TLAN_SPEED_100 &&
- 			    priv->duplex = TLAN_DUPLEX_FULL) {
--			priv->tlanFullDuplex = TRUE;
-+			priv->tlanFullDuplex = true;
- 			TLan_MiiWriteReg( dev, phy, MII_GEN_CTL, 0x2100);
- 		} else {
- 
-@@ -2720,7 +2720,7 @@ void TLan_PhyStartLink( struct net_device *dev )
-                 	tctl &= ~TLAN_TC_AUISEL;
- 			if ( priv->duplex = TLAN_DUPLEX_FULL ) {
- 				control |= MII_GC_DUPLEX;
--				priv->tlanFullDuplex = TRUE;
-+				priv->tlanFullDuplex = true;
- 			}
- 			if ( priv->speed = TLAN_SPEED_100 ) {
- 				control |= MII_GC_SPEEDSEL;
-@@ -2775,9 +2775,9 @@ void TLan_PhyFinishAutoNeg( struct net_device *dev )
- 	TLan_MiiReadReg( dev, phy, MII_AN_LPA, &an_lpa );
- 	mode = an_adv & an_lpa & 0x03E0;
- 	if ( mode & 0x0100 ) {
--		priv->tlanFullDuplex = TRUE;
-+		priv->tlanFullDuplex = true;
- 	} else if ( ! ( mode & 0x0080 ) && ( mode & 0x0040 ) ) {
--		priv->tlanFullDuplex = TRUE;
-+		priv->tlanFullDuplex = true;
- 	}
- 
- 	if ( ( ! ( mode & 0x0180 ) ) && ( priv->adapter->flags & TLAN_ADAPTER_USE_INTERN_10 ) && ( priv->phyNum != 0 ) ) {
-@@ -2896,17 +2896,17 @@ void TLan_PhyMonitor( struct net_device *dev )
- 	 *
- 	 **************************************************************/
- 
--int TLan_MiiReadReg( struct net_device *dev, u16 phy, u16 reg, u16 *val )
-+bool TLan_MiiReadReg( struct net_device *dev, u16 phy, u16 reg, u16 *val )
- {
- 	u8	nack;
- 	u16	sio, tmp;
-  	u32	i;
--	int	err;
-+	bool	err;
- 	int	minten;
- 	TLanPrivateInfo *priv = netdev_priv(dev);
- 	unsigned long flags = 0;
- 
--	err = FALSE;
-+	err = false;
- 	outw(TLAN_NET_SIO, dev->base_addr + TLAN_DIO_ADR);
- 	sio = dev->base_addr + TLAN_DIO_DATA + TLAN_NET_SIO;
- 
-@@ -2939,7 +2939,7 @@ int TLan_MiiReadReg( struct net_device *dev, u16 phy, u16 reg, u16 *val )
- 			TLan_SetBit(TLAN_NET_SIO_MCLK, sio);
- 		}
- 		tmp = 0xffff;
--		err = TRUE;
-+		err = true;
- 	} else {					/* ACK, so read data */
- 		for (tmp = 0, i = 0x8000; i; i >>= 1) {
- 			TLan_ClearBit(TLAN_NET_SIO_MCLK, sio);
-diff --git a/drivers/net/tlan.h b/drivers/net/tlan.h
-index 41ce0b6..e0791aa 100644
---- a/drivers/net/tlan.h
-+++ b/drivers/net/tlan.h
-@@ -33,9 +33,6 @@
- 	 *
- 	 ****************************************************************/
- 
--#define FALSE			0
--#define TRUE			1
+-#define SIZE(x)	(sizeof(x)/sizeof((x)[0]))
 -
- #define TLAN_MIN_FRAME_SIZE	64
- #define TLAN_MAX_FRAME_SIZE	1600
+-#if 0
+-/* selftest or dump */
+-static void
+-i596_port_do(struct net_device *dev, int portcmd, char *cmdname) {
+-	struct i596_private *lp = dev->priv;
+-	u16 *outp;
+-	int i, m;
+-
+-	memset((void *)&(lp->dump), 0, sizeof(struct i596_dump));
+-	outp = &(lp->dump.dump[0]);
+-
+-	PORT(va_to_pa(outp), portcmd);
+-	mdelay(30);             /* random, unmotivated */
+-
+-	printk("lp486e i82596 %s result:\n", cmdname);
+-	for (m = SIZE(lp->dump.dump); m && lp->dump.dump[m-1] == 0; m--)
+-		;
+-	for (i = 0; i < m; i++) {
+-		printk(" %04x", lp->dump.dump[i]);
+-		if (i%8 == 7)
+-			printk("\n");
+-	}
+-	printk("\n");
+-}
+-#endif
  
-@@ -204,7 +201,7 @@ typedef struct tlan_private_tag {
- 	u32			phyNum;
- 	u32			speed;
- 	u8			tlanRev;
--	u8			tlanFullDuplex;
-+	bool			tlanFullDuplex : 8;
- 	char                    devName[8];
- 	spinlock_t		lock;
- 	u8			link;
+ static int
+ i596_scp_setup(struct net_device *dev) {
+
+
+--------------080907080108090808040702
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------080907080108090808040702--
