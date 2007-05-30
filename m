@@ -1,102 +1,112 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 28 May 2007 19:13:21 +0000
-Subject: Re: [KJ] replacing old-style "non-seekable" errors with "no_llseek"
-Message-Id: <Pine.LNX.4.64.0705281505340.14889@localhost.localdomain>
+From: "International Donation Association '2007 ref-22" <golburg@hxjob.cn>
+Date: Wed, 30 May 2007 02:09:40 +0000
+Subject: [KJ] Donation assistant vacancy in the USA
+Message-Id: <000d01c7a25f$94f1bf94$0101a8c0@DGQGY981>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="8323328-1305901846-1180379601=:14889"
+Content-Type: multipart/mixed; boundary="===============2599605525952114378=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0705271722580.13051@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0705271722580.13051@localhost.localdomain>
 To: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This is a multi-part message in MIME format.
 
---8323328-1305901846-1180379601=:14889
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
+--===============2599605525952114378==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0007_01C7A23E.0DDDA4D0"
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0007_01C7A23E.0DDDA4D0
+Content-Type: text/plain;
+	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 May 2007, Arnd Bergmann wrote:
+ This message is of most importance to all North American and European
+   Union residents
 
-> On Sunday 27 May 2007, Robert P. J. Day wrote:
-> > can be rewritten more cleanly using the no_llseek() helper routine,
-> > and just assigning no_llseek to the llseek member of the
-> > file_operations struct, as in:
-> >
-> > =A0 =A0 .llseek =3D no_llseek
-> >
-> > and deleting the old routine. =A0am i reading that correctly? =A0or is
-> > there more to it than that?
->
-> Actually, that is outdated as well.
->
-> If the file descriptor cannot be seeked, you should set the open
-> operation to nonseekable_open, or call that function from the
-> driver's own open function.
+   This is a job-offer for North American and EU residents only.
 
-  ok, after poking around in the code and submitting a few cleanup
-patches, i want to make sure i'm doing this correctly.  once the
-open() routine for a device invokes nonseekable_open(), does that mean
-that *all* of those old-style tests for seekability can be removed?
+   Requirements and benefits:
 
-  first, it seems obvious that declaring bogus llseek methods like
-this can be deleted:
+   Monthly gross salary: 1500-3000 EUR per month (1800-3600 USD)
+   Age limit: 18-80
+   Possible career growth and promotion opportunity
+   Internet access, mobile or home phone number
+   Part-time (1-3hr per day) and full-time employment (8hr per day)
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-loff_t my_llseek(...)
-{
-	return -ESPIPE;  /* Not seekable. */
-}
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
+   Leap forwarding International Donation Association is looking for new
+   friends and collaborators in North America and Europe.
 
-  next, there were explicit tests in the device read() and write()
-methods that checked if pread() or pwrite() had been invoked:
+   Become a part of our donating system that includes international
+   donations to HIV positives, war refugees from Middle East and starving
+   children from poorest European countries.
+   Our program does not charge or ask You to invest anything. We do not
+   try to take Your money. Our regional sponsors and investors from
+   different European Union and North American regions have already
+   accepted our offer and are now the investing affiliates in our
+   multi-national donating program.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-...
-if (ppos !=3D &filp->f_pos)
-    return -ESPIPE;
-}
-...
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
+   Collaborate with our investors during the donation process and earn
+   from 1500 EUR (1800 USD) up to 3000 EUR (3600 USD) gross salary per
+   month. Together we can make this program work with maximum efficiency
+   and thus have an opportunity to ease the sufferings and minimize the
+   needs of thousands of people.
 
-as i read it, those can also be removed.  and, finally, i notice a few
-read() (and perhaps write()) implementations that contain the check:
+   The vacancy You can apply for is the "Donating assistant" (future
+   promotion to "donating manager" is possible after 3 months of
+   successful cooperation).
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-...
-if (*ppos)
-    return -ESPIPE;
-...
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
+   Please confirm if You are interested in becoming a part of our program
+   and EMAIL US. We will then send You more details concerning the
+   vacancy of a "donating assistant".
 
-  that appears to simply be checking if you're trying to read from
-anywhere but the beginning of the file.  is that also covered under
-the nonseekable_open() call?  what exactly does that test represent?
-should it be removed once nonseekable_open() is being invoked?
+   Thank You very much for You time and for Your desire to help the ones
+   who really need our help and joint support.
 
-  thanks for any clarification.
+------=_NextPart_000_0007_01C7A23E.0DDDA4D0
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-rday
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
+<META content=3D"MSHTML 6.00.2900.2722" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<body>
+This message is of most importance to all North American and European Union residents<br>
+<br>
+This is a job-offer for North American and EU residents only.   <br>
+<br>
+Requirements and benefits: <br>
+<br>
+Monthly gross salary: 1500-3000 EUR per month (1800-3600 USD) <br>
+Age limit: 18-80                                                  <br>
+Possible career growth and promotion opportunity<br>
+Internet access, mobile or home phone number<br>
+Part-time (1-3hr per day) and full-time employment (8hr per day)<br>
+<br>
+Leap forwarding International Donation Association is looking for new friends and collaborators in North America and Europe.<br>
+<br>
+Become a part of our donating system that includes international donations to HIV positives, war refugees from Middle East and starving children from poorest European countries.<br>
+Our program does not charge or ask You to invest anything. We do not try to take Your money. Our regional sponsors and investors from different European Union and North American regions have already accepted our offer and are now the investing affiliates in our multi-national donating program.<br>
+<br>
+Collaborate with our investors during the donation process and earn from 1500 EUR (1800 USD) up to 3000 EUR (3600 USD) gross salary per month. Together we can make this program work with maximum efficiency and thus have an opportunity to ease the sufferings and minimize the needs of thousands of people.<br>
+<br>
+The vacancy You can apply for is the "Donating assistant" (future promotion to "donating manager" is possible after 3 months of successful cooperation).<br>
+<br>
+Please confirm if You are interested in becoming a part of our program and <A href=3D"mailto:martha.usadonationprogram@yahoo.co.uk
+?subject=3DApplication%20Form">EMAIL US</A>. We will then send You more details concerning the vacancy of a "donating assistant".<br>
+<br>
+Thank You very much for You time and for Your desire to help the ones who really need our help and joint support.<br>
+<br>
+</body>
+</html>
 
-http://fsdev.net/wiki/index.php?title=3DMain_Page
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
---8323328-1305901846-1180379601=:14889
+
+------=_NextPart_000_0007_01C7A23E.0DDDA4D0--
+
+--===============2599605525952114378==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -106,4 +116,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---8323328-1305901846-1180379601=:14889--
+--===============2599605525952114378==--
