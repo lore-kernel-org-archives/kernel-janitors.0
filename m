@@ -1,49 +1,46 @@
-From: "ersun kokkonen" <ersun175@abbaye-saint-michel.com>
-Date: Tue, 01 May 2007 04:34:50 +0000
-Subject: [KJ] She lay still, in a kind of sleep, always in a kind of sleep.
-Message-Id: <000a01c78baa$0e8c37c0$623cc3c8@DP5>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6488027819100311043=="
+From: Oleg Verych <olecom@flower.upol.cz>
+Date: Wed, 30 May 2007 21:57:49 +0000
+Subject: Re: [KJ][PATCH 02/03]ROUND_UP|DOWN macro cleanup in arch/ia64,x86_64
+Message-Id: <E1HtWAv-00028d-9l@flower>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---===============6488027819100311043==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0009_01C78B90.E93EFFC0"
-
-------=_NextPart_000_0009_01C78B90.E93EFFC0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-After a moment, one such drifted out from the wall near the OOB's lock.
-------=_NextPart_000_0009_01C78B90.E93EFFC0
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.3059" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT Arial size=3D2>After a moment, one such drifted out from the =
-wall near=20
-the OOB's lock.</FONT></DIV></BODY></HTML>
-
-------=_NextPart_000_0009_01C78B90.E93EFFC0--
-
-
---===============6488027819100311043==
-Content-Type: text/plain; charset="us-ascii"
+References: <20070413043140.GA9431@arun.site> <617E1C2C70743745A92448908E030B2A015B4E12@scsmsx411.amr.corp.intel.com>
+In-Reply-To: <617E1C2C70743745A92448908E030B2A015B4E12@scsmsx411.amr.corp.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Milind Arun Choudhary <milindchoudhary@gmail.com>, kernel-janitors@lists.osdl.org, linux-ia64@vger.kernel.org, discuss@x86-64.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, ak@suse.de
 
+* From: "Luck, Tony"
+* Date: Fri, 13 Apr 2007 09:45:49 -0700
+
+>> So as ALIGN macro does the same work as ROUNDUP,
+>
+> Although it is mathematically the same operation, the
+> semantic associations of the name are important too.
+[]
+> Maybe this is because I started out in mathematics before
+> discovering that computers were so much fun, or maybe it
+> is a British-English bias ... I can't tell, but it makes
+> sense to me to use ROUNDUP in some places, and ALIGN in
+> others.
+
+I agree. I came from neither one (still coming); first look and vague
+semantics of ALIGN macro, English confusion, a bit of laziness, led me to
+stupid messages about aligning, Linus being so kind to reply, a couple of
+months ago. Anyway i did that after some patching and re-patching that
+macro by gurus :).
+
+> If ROUNDUP isn't available everywhere, then it should be. To
+> avoid code duplication perhaps we should add:
+>
+>     #define ROUNDUP(size, len) ALIGN((size), (len))
+>
+> and delete the previous ROUNDUP definition?
+
+And i would vote for "align" via "round".
+____
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============6488027819100311043==--
