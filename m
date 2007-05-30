@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 30 May 2007 09:20:10 +0000
+Date: Wed, 30 May 2007 11:13:13 +0000
 Subject: [KJ] Re: [PATCH] BLUETOOTH: Remove the redundant non-seekable llseek
-Message-Id: <Pine.LNX.4.64.0705300515140.10188@localhost.localdomain>
+Message-Id: <Pine.LNX.4.64.0705300707410.11849@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1180509984.21432.155.camel@aeonflux.holtmann.net>
 In-Reply-To: <1180509984.21432.155.camel@aeonflux.holtmann.net>
@@ -24,22 +24,22 @@ On Wed, 30 May 2007, Marcel Holtmann wrote:
 > > given that the fops open() method already calls nonseekable_open()
 > > at the end, it would seem that this old-style method for
 > > preventing lseeking is redundant.  am i reading that correctly?
->
+
 > I wasn't aware of that fact, but after reading through the VFS code
 > I agree that your patch is perfectly fine. Other drivers are using
 > no_llseek in some cases, but even that is not needed at all. So full
 > ACK from my side.
 
-i've already submitted a few other patches to remove the no_llseek()
-from other drivers if they don't need it, so don't think i'm just
-picking on *you*, marcel. :-)
+for people who want the full explanation of what's going on here, you
+can read the brilliantly-named "safe seeks" article here:
 
-rday
+  http://lwn.net/Articles/97154/
 
-p.s.  i really *hate* the fact that that routine is called
-"nonseekable_open" since it gives the impression that it's somehow a
-full replacement for a "regular" open, when its entire implementation
-consists of:
+which explains how the nonseekable_open() call added to the end of
+your regular device open() call prevents not just regular lseeks but
+also the pread() and pwrite() calls, so some of those older tests to
+avoid lseek'ing are no longer necessary, as you can see from the
+trivial implementation of nonseekable_open():
 
 int nonseekable_open(struct inode *inode, struct file *filp)
 {
@@ -47,10 +47,12 @@ int nonseekable_open(struct inode *inode, struct file *filp)
         return 0;
 }
 
-really, it should have been called something like "set_nonseekable" or
-"make_me_nonseekable" or something similar.  oh, well ...
+i've already done a quick scan of the tree and submitted patches to
+remove code that is now superfluous given the use of
+nonseekable_open().
 
 rday
+
 -- 
 ====================================
 Robert P. J. Day
