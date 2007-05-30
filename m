@@ -1,89 +1,36 @@
-From: Andi Drebes <lists-receive@programmierforen.de>
-Date: Sat, 26 May 2007 13:58:24 +0000
+From: Len Brown <lenb@kernel.org>
+Date: Wed, 30 May 2007 19:25:05 +0000
 Subject: Re: [KJ] [PATCH] drivers/acpi: sizeof/sizeof array size calculations
-Message-Id: <200705261558.24912.lists-receive@programmierforen.de>
+Message-Id: <200705301525.05905.lenb@kernel.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200705261239.27485.lists-receive@programmierforen.de> <46581C06.7000005@student.ltu.se>
-In-Reply-To: <46581C06.7000005@student.ltu.se>
+References: <200705261239.27485.lists-receive@programmierforen.de> <46581C06.7000005@student.ltu.se> <200705261558.24912.lists-receive@programmierforen.de>
+In-Reply-To: <200705261558.24912.lists-receive@programmierforen.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: kernel-janitors@lists.osdl.org, lenb@kernel.org, linux-acpi@vger.kernel.org
+To: Andi Drebes <lists-receive@programmierforen.de>
+Cc: Richard Knutsson <ricknu-0@student.ltu.se>, kernel-janitors@lists.osdl.org, linux-acpi@vger.kernel.org
 
-<snip>
-> > diff --git a/drivers/acpi/resources/rsdump.c b/drivers/acpi/resources/rsdump.c
-> > index 46da116..7b8e12d 100644
-> > --- a/drivers/acpi/resources/rsdump.c
-> > +++ b/drivers/acpi/resources/rsdump.c
-> > @@ -76,7 +76,7 @@ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table);
-> >  
-> >  #define ACPI_RSD_OFFSET(f)          (u8) ACPI_OFFSET (union acpi_resource_data,f)
-> >  #define ACPI_PRT_OFFSET(f)          (u8) ACPI_OFFSET (struct acpi_pci_routing_table,f)
-> > -#define ACPI_RSD_TABLE_SIZE(name)   (sizeof(name) / sizeof (struct acpi_rsdump_info))
-> > +#define ACPI_RSD_TABLE_SIZE(name)   (ARRAY_SIZE(name))
-> >   
-> Any reason to not just replace ACPI_RSD_TABLE_SIZE with ARRAY_SIZE? Got 
-> just 21 instances of it in the file (+ the define) and no more in the 
-> rest of the tree.
-I agree with that. Robert P. J. Day pointed out something similiar. For
-a more verbose answer to that see the reply to his message.
+ 
+> > Any reason to not just replace ACPI_RSD_TABLE_SIZE with ARRAY_SIZE?
 
-> >  /*******************************************************************************
-> >   *
-> > diff --git a/drivers/acpi/tables/tbfadt.c b/drivers/acpi/tables/tbfadt.c
-> > index 1285e91..4d59de2 100644
-> > --- a/drivers/acpi/tables/tbfadt.c
-> > +++ b/drivers/acpi/tables/tbfadt.c
-> > @@ -104,7 +104,7 @@ static struct acpi_fadt_info fadt_info_table[] = {
-> >  	 ACPI_FADT_OFFSET(gpe1_block_length), ACPI_FADT_SEPARATE_LENGTH}
-> >  };
-> >  
-> > -#define ACPI_FADT_INFO_ENTRIES        (sizeof (fadt_info_table) / sizeof (struct acpi_fadt_info))
-> > +#define ACPI_FADT_INFO_ENTRIES        (ARRAY_SIZE(fadt_info_table))
-> >   
-> Normally I think this is ok when it is just a "constant", since the name 
-> of it may be more descriptive, but it is just used twice and I find 
-> (imho) ARRAY_SIZE(fadt_info_table) easier to understand.
-I totally agree with that. Here's a new patch that totally removes the ACPI_FADT_INFO_ENTRIES
-macro. In contrast to the original patch, this one only affects tbfadt.c (I split this, because
-there's another issue about rsdump.c pointed out by Robert P. J. Day. The other
-changes will be in a reply to his message)
+Probably because ARRAY_SIZE doesn't exist in ACPICA, which is
+where this code comes from...
 
-Tested by compilation.
-Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
---
+When we change syntax in ACPICA files in Linux to make it more "beautiful",
+then it creates more work for me -- as forever on, that syntax difference
+must be manually compared to upstream ACPICA and Linux -- and that syntax
+difference causes upstream patches to no longer apply and require
+hand merging.
 
-diff --git a/drivers/acpi/tables/tbfadt.c b/drivers/acpi/tables/tbfadt.c
-index 1285e91..ba6d4a1 100644
---- a/drivers/acpi/tables/tbfadt.c
-+++ b/drivers/acpi/tables/tbfadt.c
-@@ -104,8 +104,6 @@ static struct acpi_fadt_info fadt_info_table[] = {
- 	 ACPI_FADT_OFFSET(gpe1_block_length), ACPI_FADT_SEPARATE_LENGTH}
- };
- 
--#define ACPI_FADT_INFO_ENTRIES        (sizeof (fadt_info_table) / sizeof (struct acpi_fadt_info))
--
- /*******************************************************************************
-  *
-  * FUNCTION:    acpi_tb_init_generic_address
-@@ -295,7 +293,7 @@ static void acpi_tb_convert_fadt(void)
- 	 * Expand the 32-bit V1.0 addresses to the 64-bit "X" generic address
- 	 * structures as necessary.
- 	 */
--	for (i = 0; i < ACPI_FADT_INFO_ENTRIES; i++) {
-+	for (i = 0; i < ARRAY_SIZE(fadt_info_table); i++) {
- 		target  		    ACPI_ADD_PTR(struct acpi_generic_address, &acpi_gbl_FADT,
- 				 fadt_info_table[i].target);
-@@ -392,7 +390,7 @@ static void acpi_tb_validate_fadt(void)
- 
- 	/* Examine all of the 64-bit extended address fields (X fields) */
- 
--	for (i = 0; i < ACPI_FADT_INFO_ENTRIES; i++) {
-+	for (i = 0; i < ARRAY_SIZE(fadt_info_table); i++) {
- 
- 		/* Generate pointers to the 32-bit and 64-bit addresses and get the length */
- 
+If you can license your patches to ACPICA files (drivers/acpi/*/*)
+back to Intel to re-distribute under _both_ licenses at the top
+of the file, then I'll be happy to apply them.
+Otherwise, I'm really not excited about creating work
+for no functional benefit.
+
+thanks,
+-Len
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
