@@ -1,9 +1,9 @@
 From: "cordula dannye" <grisgarnet@bilmeglerhuset.com>
 Date: Thu, 31 May 2007 10:57:21 +0000
 Subject: [KJ] Your loan request approved
-Message-Id: <14616601c7a372$76c63950$2401a8c0@com6>
+Message-Id: <14615e01c7a372$76a4cea0$2401a8c0@com6>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5399632634146552932=="
+Content-Type: multipart/mixed; boundary="===============7784225380881383341=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c79e84$548284e0$6c822ecf@diepel>
 In-Reply-To: <01c79e84$548284e0$6c822ecf@diepel>
@@ -11,7 +11,7 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============5399632634146552932==
+--===============7784225380881383341==
 Content-Type: multipart/alternative;
 	boundary="----=_NextPart_000_145C9A_01C7A38B.8AC5A9E0"
 
@@ -49,7 +49,7 @@ href="http://nnerswsub.com">http://nnerswsub.com</A></DIV></BODY></HTML>
 ------=_NextPart_000_145C9A_01C7A38B.8AC5A9E0--
 
 
---===============5399632634146552932==
+--===============7784225380881383341==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -59,4 +59,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============5399632634146552932==--
+--===============7784225380881383341==--
