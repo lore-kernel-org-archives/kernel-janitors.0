@@ -1,44 +1,35 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 19 May 2007 19:05:25 +0000
-Subject: Re: [KJ] how to add a new file to a patch?
-Message-Id: <Pine.LNX.4.64.0705191503030.8800@localhost.localdomain>
+From: "LaWayne Kelley" <lamentablymatting@sroda.wlkp.pl>
+Date: Thu, 31 May 2007 20:32:26 +0000
+Subject: [KJ] Re:
+Message-Id: <01c7a3bd$c5ef28c0$6c822ecf@lamentablymatting>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0705191332540.12829@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0705191332540.12829@localhost.localdomain>
+References: <01c327ad$be155380$6c822ecf@fragonardbiblical>
+In-Reply-To: <01c327ad$be155380$6c822ecf@fragonardbiblical>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 19 May 2007, Francois Romieu wrote:
+UNIVERSITY DIPLOMAS
 
-> Robert P. J. Day <rpjday@mindspring.com> :
-> >
-> >   i'm embarrassed to admit i don't know how to do this, and i've tried
-> > a few things with no success.  how do i
-> >
-> > 1) create a patch that incorporates a brand new file?  i've tried to
-> > "git add" the file but it doesn't show up in the subsequent "git diff"
-> > as part of the patch.
->
-> git diff --cached
+Obtain a prosperous future, money-earning power and the
+prestige that comes with having the career position you've
+always dreamed of. Diplomas from prestigious non-accredited
+universities based on your present knowledge and life experience.
 
-ok, that works for just a new file, but it won't also show me changes
-i've made to existing files.  i think i've found what i want:
+If you qualify, no tests, classes, books or examinations will be required.
 
-  $ git diff HEAD
+Bachelors', Masters', MBA's, Doctorate & Ph.D. degrees available in your field.
 
-that seems to be the solution here.  thanks.
+CONFIDENTIALITY ASSURED
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+CALL NOW TO RECEIVE YOUR DIPLOMA WITHIN 2 WEEKS
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+1-206-338-2427
+
+Call 24HRS, 7 days a week, including Sundays and holidays
+
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
