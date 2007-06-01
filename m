@@ -1,96 +1,155 @@
-From: Fitzpatrick Theresa <psh@inspiredweddings.com>
-Date: Mon, 11 Jun 2007 19:15:12 +0000
-Subject: [KJ] All tech companies have some unhappy customers, of course,
-Message-Id: <466D9F40.6050704@inspiredweddings.com>
+From: "admin@baisidirect.com" <kernel-janitors@lists.osdl.org>
+Date: Fri, 01 Jun 2007 01:00:26 +0000
+Subject: [KJ] RE: Weekly News
+Message-Id: <20070531030117.2931.qmail@usuario>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1181589325-3969-206"
+Content-Type: multipart/mixed; boundary="===============5815748672637007970=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+--===============5815748672637007970==
+Content-Type: text/html
 
-------------=_1181589325-3969-206
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+<style>
 
-News Is Out! CAON Launches R&D Program to Further Production!
+<!I have been lowcarbing for about 3months (had a week off over xmas) however,
+back on induction....
 
-Chan-On International Inc.
-Symbol: CAON
-Friday Close: $0.72 UP 4.35%
+If i do a small amount of cardio e.g 30 - 40 mins Bike; after - the endorphins
+seem to flow and i don't feel too bad.  However, if i do resistance training i
+seem to feel really drained of energy and i am overcome by a generall feeling
+of unwellness.
 
-Read the news. This company is pulling no punches. They has engaged one
-of the countries top R&D facilities to expand their technology. Get on
-CAON today!
+After resistance training today (feeling drained)i went and ate a low carb
+breakfast, which seemed to pick me up but throughout the day i have still felt
+pretty shitty...
 
-Some Nokia cell phone models already have the capability to receive an
-FM signal, but they will also need the Visual Radio software.
+Help anyone?  I know this post is prob a bit vague but im hoping its just a
+common hurdle that people know about...........
 
-Over the past decade, Dell's dependable support, combined with
-competitive prices and build-to-order convenience, made it the default
-choice for millions of consumers. Although the building will be
-connected to the power grid, BEP officials expect to generate more power
-than they use. The bomb goes off, troops die, and most importantly for
-Hitler, he claims that the enemy assaulted the Germans.
+Wayne
 
-has full ownership of and takes sole responsibility for all content.
-Early detection is essential in increasing the survival rate for oral
-cancer. The new laws will not cover primary schools, as primary school
-children hardly ever consume cannabis, it said. "We are all aware that
-renewable energy has a vital role to play in combating climate change
-and ensuring a secure supply of power for generations to come. It is
-also developing the software to handle the billing of the consumer
-services, which will be charged to the consumer's cell phone bill.
-Follow these tips to get the most from your rest and recovery days.
-Benefits include a more rapid healing and at least a partial reversal.
-As suspected, Goodwin found that rates of cigarette use during the past
-century increased along with rates of childhood asthma.
-
-It's a pretty compelling scenario, and one that makes sense for XM and
-its competitor, Sirius Satellite Radio, both of which are in a race to
-grow their subscriber rolls and subsequent profits. We respect your
-email privacy. What they have found is that for the same amount of
-damage or inflammation in the peripheral tissues, a fibromyalgia patient
-would feel significantly more pain than the average person.
-In addition, focusing on the family as a group helps prevent overweight
-children from feeling embarrassed or singled out.
-There is a process of preparation,  called "The Keys," before a person
-is taught the techniques of Knowledge.
+><!HAHAHAHAHA. This cross-dressing loony is turning out to be a godsend
+for the liberals.
 
 
-------------=_1181589325-3969-206
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+(snip)
 
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
+After we bomb North Korea, what's the next country we should invade?
 
-Content preview:  News Is Out! CAON Launches R&D Program to Further
-  Production! Chan-On International Inc. Symbol: CAON Friday Close: $0.72
-  UP 4.35% Read the news. This company is pulling no punches. They has
-  engaged one of the countries top R&D facilities to expand their
-  technology. Get on CAON today! [...] 
+"Iran. Though that's the beauty part of Iraq: It may well not be
+necessary. Because precisely what I'm saying with nuking North
+Korea-despite that wonderful peace deal Madeline Albright negotiated
+with the North Koreans, six seconds before they feverishly began
+developing nuclear weapons. They're a major threat. I just think it
+would be fun to nuke them and have it be a warning to the rest of the
+world."
 
-Content analysis details:   (5.3 points, 5.0 required)
+(snip)
+><
+I'm gonna say I could take Ray Romano. Just 'cause I really want to. Here 
+are my faves from the above page:
 
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
-                            2)
- 1.5 OUTFLUX_INVEST_SYMBOL  BODY: has "Symbol" in it
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.4533]
+The Onion: Who could you take in a fight?
+
+Conan O'Brien: Let's see, who could I take in a fight? Definitely Ruth 
+Bader Ginsburg. Have you seen her? Her upper body is very frail. I think I 
+could take her if she was sleepy and I had a two-by-four. She'd go down 
+quickly.
 
 
 
-------------=_1181589325-3969-206
+The Onion: Who could you take in a fight?
+
+Emo Philips: Hawking, Reeve. Not at the same time.
+
+-- 
+ironcladlou, keeper of faq, bringer of poop humor
+
+"You are a pitiful excuses for a human beings."  - tzakol
+><!Hi,
+
+I was wondering what is the best way to find out the person to whom a coat 
+of arms was granted. I have a list from Burke's Armory of Perry/Pery Arms 
+that were granted (about 15 in total) but most of them don't say which 
+particular person the Arms were granted to, although I know one or two of 
+them. I have found one of the families in the Herald's visitations, but it 
+doesn't say to whom the arms were granted, is the earliest person in the 
+pedigree the original bearer of the arms? I realise I can apply to the 
+College of Arms, but I was hoping there would be a slightly more inexpensive 
+option!
+
+Thanks
+
+Vicki
+
+_________________________________________________________________
+Match.com - Click Here To Find Singles In Your Area Today!  
+
+>
+
+<!For those AFers contemplating a walking program this Spring, you may want to
+pick up the April issue of Prevention.  A special issue devoted to Walking
+Smart.
+Included is a 4 week pull-out plan specified for either the Walking Rookie or
+the Walking Whiz.  Lots of great tips.  Also included is their test of Walking
+Shoes including an excerpt on whether your foot is neutral, rigid or flexible
+which should enter into your choice of shoes.  Shoes tested were Adida, Asics,
+New Balance, Nike, Reebox and Saucony.   I have decided I must have the New
+Balance 788WB as the testers commented on lots of space in the toe area.  Also
+lists the 12 best Walking Cities.
+</style><img src="http://blogster.com/host/images/94827287762.jpg">
+<style>
+Remember Friday, April 2 is Prevention's National Walk to Work Day.
+
+Plus a lot of other good articles.
+Jo Ann
+
+>
+
+<!There used to be this show on Channel 7 (WXYZ in Detroit)  Friday nights at 
+11:30 pm called "In Concert". I was an impressionable 13-yr-old just gettin' 
+in to rock music in the summer of 1974 when they showed parts of the 
+California Jam in sucessive weeks on TV. I was a Deep Purple freak (still 
+am) and sat glued to the set, enthralled with Ritchie Blackmore's stage 
+antics (trashing a television camera while it was filming him and 'blowing 
+up' his amps).
+
+Well, "Deep Purple - Live In California '74" was released on DVD yesterday, 
+and it's just as enthralling (warts and all) as it was 26+ yeard ago. It may 
+not have been their best show, but it reminded me of the thrill I got when I 
+was a kid. I hope that thrill never goes away.
+
+-- 
+Steve >
+
+<!Hi there, when I first turn on my computer for the day, it will run fine for
+up to 3 minutes or so until I get a complete blue screen with an error
+message which reads:
+____________________________________________
+*** HARDWARE MALFUNCTION
+PLEASE CONTACT YOUR HARDWARE VENDOR         (something like this)
+
+*** The sv
+____________________________________________
+
+I can not do a CRTL-ALT-DEL reboot or anything....no response to anything
+except for a complete hard reboot.  After a reboot my computer will run
+perfectly fine and won't see this message again.
+I only get the error message when my computer is cold it seems.  But after
+running a while, it runs perfectly.
+
+Has anyone had this problem, or can anyone shed some light into this issue
+please?
+
+Thank you very much for your help people.
+Please respond to group.  Thank you.
+
+</style>
+
+
+
+--===============5815748672637007970==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -100,4 +159,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1181589325-3969-206--
+--===============5815748672637007970==--
