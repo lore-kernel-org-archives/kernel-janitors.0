@@ -1,7 +1,7 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Sat, 02 Jun 2007 15:47:55 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 02 Jun 2007 16:48:39 +0000
 Subject: Re: [KJ] Why keeping lines commented out via #if 0?
-Message-Id: <20070602154755.GW23968@parisc-linux.org>
+Message-Id: <Pine.LNX.4.64.0706021239160.10488@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200706021359.23564.lists-receive@programmierforen.de>
 In-Reply-To: <200706021359.23564.lists-receive@programmierforen.de>
@@ -10,47 +10,76 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 02, 2007 at 11:29:54AM -0400, Robert P. J. Day wrote:
-> first, it's "hippocratic".
 
-Thanks for failing to get the joke.
+andi:
 
-> second, if patches are submitted by
-> janitors that cause actual breakage, then i suggest it's the fault of
-> the official maintainers who eventually *applied* those patches.  few
-> janitors have the authority to *force* a patch on anyone's tree, so if
-> a KJ patch f**ks something up, i suggest the blame lies elsewhere.
+  some thoughts on how much of the "#if 0" stuff can be removed.
+first, in a lot of cases, there's little you can do.  there will be
+some code that has been commented out, with no indication as to why
+that was done.  if you're lucky, you might be able to recognize that
+the "removed" code represents a clearly deprecated or obsolete kernel
+construct, in which case you can certainly take a shot at putting
+together a patch and just emailing it offline to the respective
+subsystem maintainer.
 
-Gotcha.  Janitors are perfect, people who actually implement features
-and fix bugs are sloppy and idiots.
+  i've had good luck with that -- if you're not sure about the patch,
+there's no point posting it to the whole list, just send it to the
+maintainer and ask for some feedback.  in some cases, they'll just
+add it to their local tree and you're done.
 
-> i submit, matthew, that there wouldn't even be a *need* for a kernel
-> janitors project if so many developers weren't so lazy and/or sloppy.
-> but, sadly, they are, and the annoying part of all of this is that a
-> lot of those developers are quite happy to leave the scut work to the
-> janitors, but get all excited and put out when the occasional patches
-> are submitted that cause breakage.
-> 
-> if folks like you are so irked by broken patches, then the solution is
-> simple -- fix all your own code and don't accept anything from
-> janitors.  but as long as you feel like leaving that sort of
-> maintenance to people who offer to be janitors, then you should be
-> prepared to deal with the occasional bad patch.
-> 
-> and, you know, saying "thank you" for all that janitorial effort every
-> so often probably wouldn't be out of line, either.
+  in other cases, there's obviously something weird going on and, if
+you want to follow up, you might need to do some detective work.  as
+an example, consider this snippet from
+arch/blackfin/oprofile/common.c:
 
-I appreciate you're just starting out, and doing janitorial patches are
-a great way to do that, but you really need to either lose the attitude,
-or do something to earn it.
+...
+static void op_bfin_shutdown(void)
+{
+#if 0
+        /* what is the difference between shutdown and stop? */
+#endif
+}
+...
+static void op_bfin_stop(void)
+{
+        mutex_lock(&pfmon_lock);
+        if (pfmon_enabled) {
+                model->stop();
+                pfmon_enabled = 0;
+        }
+        mutex_unlock(&pfmon_lock);
+}
+...
 
-I'll even make you an offer -- want to become the ncr53c8xx maintainer?
-It's in use on a whole lot of older parisc machines, and needs a fairly
-significant amount of love.  There's lots of commonality with the sym2
-driver, so we can cooperate and share ideas.  You probably don't have
-hardware, so I'll also commit to getting some hardware to you and/or
-access to machines with remote console and power management.
+  i don't know -- what *is* the difference?  you'd think the official
+blackfin maintainer should know something like that.  and if you grep
+under arch/blackfin, it certainly seems like no one is terribly
+interested in that routine (at least under that directory):
 
+$ grep -rw shutdown *
+mach-common/ints-priority-dc.c: .shutdown = bf561_gpio_irq_shutdown
+mach-common/ints-priority-sc.c: .shutdown = bfin_gpio_irq_shutdown
+oprofile/common.c:      /* what is the difference between shutdown and stop? */
+oprofile/common.c:      ops->shutdown = op_bfin_shutdown;
+
+  however, without that particular system, it's tough to compile test
+a removal.  in cases like that, a short email to one of the
+maintainers might clear things up.
+
+  there's no one formula for this sort of cleanup, and it's typically
+compounded by the fact that developers are outrageously possessive of
+their code, even if it's years old and rotting.  best advice:  just
+start perusing and pick something that looks obvious.
+
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
