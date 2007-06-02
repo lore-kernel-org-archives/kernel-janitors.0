@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 02 Jun 2007 13:15:55 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Sat, 02 Jun 2007 14:59:10 +0000
 Subject: Re: [KJ] Why keeping lines commented out via #if 0?
-Message-Id: <Pine.LNX.4.64.0706020915260.9418@localhost.localdomain>
+Message-Id: <20070602145910.GV23968@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200706021359.23564.lists-receive@programmierforen.de>
 In-Reply-To: <200706021359.23564.lists-receive@programmierforen.de>
@@ -10,31 +10,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 2 Jun 2007, Andi Drebes wrote:
-
-> Hi!
+On Sat, Jun 02, 2007 at 11:59:22AM +0000, Andi Drebes wrote:
 > I recently grep'd through the kernel sources and found *a lot* of lines
 > that are commented out using #if 0. Is there any reason to keep them?
-> I think that lines that are commented out should be removed from
-> the mainline kernel. If developers need them in future, they can create
-> a local copy or branch on their machines. Or am I missing the point
-> about the whole #if 0 thing?
->
-> 		Andi
 
-been there, done that:
+Yes -- the people who wrote the code originally put them there.  Unless
+you're willing to go through each one, and figure out whether it's still
+useful or not for anyone reading this section of code later, it's
+better to leave it alone.
 
-http://fsdev.net/wiki/index.php?title=If_0_or_if_1_directives
+Why are comments considered useful, yet commented-out sections of code
+considered worthy of deletion?  The latter are potentially more useful.
+Of course things can be taken too far and #if 0 / #if 1 sections can
+clutter up the function and make it harder to understand.  But each one
+needs to be taken in context and understood, not mindlessly excised.
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+I think the kernel-janitors need a Hypocritic Oath.  First, do no harm.
+I'm a little sensitive to so-called 'trivial' changes right now, given
+that Kyle just spent two days tracking down breakages on parisc from
+these kinds of patches.
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
