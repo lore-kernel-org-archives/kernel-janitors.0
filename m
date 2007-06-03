@@ -1,7 +1,7 @@
-From: "Thomas De Schampheleire" <patrickdepinguin@gmail.com>
-Date: Sat, 02 Jun 2007 18:47:17 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 03 Jun 2007 08:09:33 +0000
 Subject: Re: [KJ] Why keeping lines commented out via #if 0?
-Message-Id: <9d133f60706021147q14f3199fx5036a745bcae661b@mail.gmail.com>
+Message-Id: <Pine.LNX.4.64.0706030401590.14197@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200706021359.23564.lists-receive@programmierforen.de>
 In-Reply-To: <200706021359.23564.lists-receive@programmierforen.de>
@@ -10,39 +10,50 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-2007/6/2, Andi Drebes <lists-receive@programmierforen.de>:
-> <snip>
-> > > Unless you're willing to go through each one, and figure out whether
-> > > it's still useful or not for anyone reading this section of code
-> > > later, it's better to leave it alone.
-> >
-> > it's not clear that andi was suggesting a single, sweeping deletion
-> > operation (which *would* be a bad idea).  when i read his post, *i*
-> > interpreted it as suggesting that a gradual examination might be in
-> > order, and stuff that was clearly worthless could be removed bit by
-> > bit.
-> <snip>
-> To clarify that affair: No, I didn't want to write a big patch that removes
-> those lines. I just aked for a reason why those lines should be kept in
-> the tree. Even if I had not asked why, I wouldn't have written such a patch.
-> Instead I would have inspected these lines in detail (which is btw what I'm
-> going to do whenever I encounter such lines in the future).
-> Perhaps I picked up the wrong list. Maybe I should have asked that on
-> the kernel-newbie mailing list.
->
-> I'm sorry this conversation got that emotional. I didn't want to bring you
-> to that point (please remember: it was just a *question*).
+On Sat, 2 Jun 2007, Andi Drebes wrote:
 
-Hi,
+> To clarify that affair: No, I didn't want to write a big patch that
+> removes those lines. I just aked for a reason why those lines should
+> be kept in the tree. Even if I had not asked why, I wouldn't have
+> written such a patch. Instead I would have inspected these lines in
+> detail (which is btw what I'm going to do whenever I encounter such
+> lines in the future).
 
-I don't think you should feel guilty about that, that was something
-between Matthew and Robert.
+i doubt it's a good investment of time to *explicitly* try to remove
+stuff enclosed in "#if 0" -- you're probably better off picking a
+specific item or topic from the list of projects and working on that,
+unless you just happen to stumble across commented out stuff that
+looks like a good candidate for removal.
 
-I personally think the tone of Robert's mail was somehow unnecessarily
-aggressive or attacking against Matthew, even though I tend to agree
-with some of the points mentioned.
+in addition, make sure you have a good idea of what portions of the
+source tree are already slated for removal, and don't waste any time
+there.  for example, there's no point in doing *any* cleanup of the
+entire OSS sound system, since that's going to be tossed
+*entirely* someday.  (but don't base that kind of decision on the
+feature removal file Documentation/feature-removal-schedule.txt --
+that file is virtually worthless in terms of accurate information
+content.)
 
-Thomas
+one strategy i've used on occasion when i'm bored is to just search
+the entire tree looking for the words "deprecated" or "obsolete" and
+seeing what turns up.
+
+in any event, i should probably spend a few minutes and clean up the
+project list here:
+
+http://fsdev.net/wiki/index.php?title=Kernel_Janitor%27s_Todo_List
+
+to remove items that look like they're basically done.
+
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
