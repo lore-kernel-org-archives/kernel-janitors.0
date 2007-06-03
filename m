@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 03 Jun 2007 08:09:33 +0000
+From: Rene Herman <rene.herman@gmail.com>
+Date: Sun, 03 Jun 2007 09:12:04 +0000
 Subject: Re: [KJ] Why keeping lines commented out via #if 0?
-Message-Id: <Pine.LNX.4.64.0706030401590.14197@localhost.localdomain>
+Message-Id: <466285E4.2030603@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200706021359.23564.lists-receive@programmierforen.de>
 In-Reply-To: <200706021359.23564.lists-receive@programmierforen.de>
@@ -10,50 +10,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 2 Jun 2007, Andi Drebes wrote:
+On 06/02/2007 05:29 PM, Robert P. J. Day wrote:
 
-> To clarify that affair: No, I didn't want to write a big patch that
-> removes those lines. I just aked for a reason why those lines should
-> be kept in the tree. Even if I had not asked why, I wouldn't have
-> written such a patch. Instead I would have inspected these lines in
-> detail (which is btw what I'm going to do whenever I encounter such
-> lines in the future).
+> On Sat, 2 Jun 2007, Matthew Wilcox wrote:
 
-i doubt it's a good investment of time to *explicitly* try to remove
-stuff enclosed in "#if 0" -- you're probably better off picking a
-specific item or topic from the list of projects and working on that,
-unless you just happen to stumble across commented out stuff that
-looks like a good candidate for removal.
+>> Why are comments considered useful, yet commented-out sections of
+>> code considered worthy of deletion?
+> 
+> gee, matt, i dunno ... could it be that, if some code has been deleted
+> via "#if 0", it might actually no longer have any value?  could *that*
+> be it?
 
-in addition, make sure you have a good idea of what portions of the
-source tree are already slated for removal, and don't waste any time
-there.  for example, there's no point in doing *any* cleanup of the
-entire OSS sound system, since that's going to be tossed
-*entirely* someday.  (but don't base that kind of decision on the
-feature removal file Documentation/feature-removal-schedule.txt --
-that file is virtually worthless in terms of accurate information
-content.)
+No ofcourse it could not. If it didn't have any value any longer it would have 
+been deleted, not turned into a comment.
 
-one strategy i've used on occasion when i'm bored is to just search
-the entire tree looking for the words "deprecated" or "obsolete" and
-seeing what turns up.
+The value #if 0 code generally retains is documentation. Documentation on how 
+things were done before and/or could be done in the future, but are not done 
+now. It's documentation for the current developer but even more importantly, a 
+future developer. Any "I tried this, but this didn't work quite right yet" or 
+"I'd like to do it this way, but this needs something else first" or similar 
+information this conveys is very useful, especially over maintainer changes.
 
-in any event, i should probably spend a few minutes and clean up the
-project list here:
+Ofcourse, noone should go overboard with it but people don't. If something has 
+no value anymore, it's deleted. It's only kept as a comment when it _is_ seen to 
+have value in some or other form and as such deleting it is not a janitorial 
+task but something that needs a maintainer. If the code sees active maintainance 
+it still being there already means it's seen to still have value and if the code 
+does not, it should most certainly be left alone as documentation for a possible 
+next person stepping in.
 
-http://fsdev.net/wiki/index.php?title=Kernel_Janitor%27s_Todo_List
+A suggestion that any #if 0 code should preferably have a comment describing why 
+it's there would ofcourse not be bad.
 
-to remove items that look like they're basically done.
-
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+Rene.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
