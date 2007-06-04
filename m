@@ -1,55 +1,44 @@
-From: Murray Rolf <kgn@kpunet.net>
-Date: Sun, 24 Jun 2007 10:36:28 +0000
-Subject: [KJ] pigeonhole kiddie
-Message-Id: <467E492C.8030208@kpunet.net>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Mon, 04 Jun 2007 19:17:12 +0000
+Subject: [KJ] [PATCH] drivers/eisa/eisa-bus.c: Array size calculation using
+Message-Id: <200706042117.12714.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-SREA Acquires $75 Million Dollar Asset!
+This patch replaces an array size calculation in drivers/eisa/eisa-bus.c
+that was done using sizeof with the ARRAY_SIZE macro. I also removed
+the preprocessor definition "EISA_INFOS" that represented the number of
+entries in eisa_table because it was only referenced once.
 
-Score One Inc.(SREA)
-$0.30
+Tested by compilation on an i386 box using "allyesconfig".
+Diffed against Linus' git-tree.
 
-News hit just after close. SREA has acquired the $75 Million peace of
-land for the new "Recreation Town" in Dalian. This new project mimics a
-Facility in "Shui On" that profited more than $100 Million USD. SREA is
-going to go through the roof after this hits investors this weekend. Get
-on SREA at open on Monday!
-
-Unfortunately, there is a separate problem.
-Definitely, Euanthes was related to Dionysus and to the Cretan king
-Minos.
-
-But Ruby provides a unique method for patching code that makes life
-easier for both the programmer creating the patch and the user who wants
-to use it. If your test fails, this should not be zero. In the past,
-finding your soul mate meant crossing your fingers in the local dating
-scene hoping that your perfect match will stumble into you at the bar or
-on the dance floor.
-
-Some of the most popular uses for chat rooms are for singles, romance
-and dating. accesskey to return the character that highlights the area.
-
-We showed our tests to our manager.
-
-If you run your code right now, you'll get a complaint that you are
-calling a private method. You can reference an area in a map.
-
-We write basically the same code for the area element.
-
-Last weekend, I had some folks in from out of town,  and I had to
-apologize about six times before they actually accepted that it really
-was my fault. And these happen to be the kinds of applications that
-people often want to test with Watir.
-
-But TestTrack doesn't seem to support this.
-
-Singles are now looking to other countries in the hopes of creating a
-new life for themselves with someone who matches their every desire.
-
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+---
+diff --git a/drivers/eisa/eisa-bus.c b/drivers/eisa/eisa-bus.c
+index d944647..a72c08d 100644
+--- a/drivers/eisa/eisa-bus.c
++++ b/drivers/eisa/eisa-bus.c
+@@ -29,7 +29,6 @@ struct eisa_device_info {
+ static struct eisa_device_info __initdata eisa_table[] = {
+ #include "devlist.h"
+ };
+-#define EISA_INFOS (sizeof (eisa_table) / (sizeof (struct eisa_device_info)))
+ #endif
+ 
+ #define EISA_MAX_FORCED_DEV 16
+@@ -59,7 +58,7 @@ static void __init eisa_name_device (struct eisa_device *edev)
+ {
+ #ifdef CONFIG_EISA_NAMES
+ 	int i;
+-	for (i = 0; i < EISA_INFOS; i++) {
++	for (i = 0; i < ARRAY_SIZE(eisa_table); i++) {
+ 		if (!strcmp (edev->id.sig, eisa_table[i].id.sig)) {
+ 			strlcpy (edev->pretty_name,
+ 				 eisa_table[i].name,
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
