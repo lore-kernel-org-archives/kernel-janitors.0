@@ -1,7 +1,7 @@
-From: "John Anthony Kazos Jr." <jakj@j-a-k-j.com>
-Date: Mon, 04 Jun 2007 11:22:41 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Mon, 04 Jun 2007 12:00:17 +0000
 Subject: Re: [KJ] another project or two
-Message-Id: <alpine.DEB.0.99.0706040720430.20104@sigma.j-a-k-j.com>
+Message-Id: <20070604120017.GZ23968@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0706040528251.31127@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0706040528251.31127@localhost.localdomain>
@@ -10,12 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
->   i cleaned up the wiki page for memory allocation stuff:
-> 
-> http://fsdev.net/wiki/index.php?title=Memory_allocation_cleanup
-> 
-> so it should be more organized.
-> 
+On Mon, Jun 04, 2007 at 05:31:23AM -0400, Robert P. J. Day wrote:
 >   also, something i've been thinking about for a while is the
 > feasibility of centralizing a lot of the identical information that is
 > duplicated across all of the include/asm-* header files.  as an
@@ -26,8 +21,33 @@ To: kernel-janitors@vger.kernel.org
 > content and just leaving the differences in the arch-specific files.
 > thoughts?
 
-Would reduce code complexity, size, and time to compile. Seems like three 
-worthy reasons to me.
+My thought is "Bad idea".  An example of this is asm/errno.h.  Before,
+when I wanted to know what -27 was, I would go and look in asm/errno.h.
+Now, I have to look in asm/errno.h which may direct me to
+asm-generic/errno.h, which redirects me to asm-generic/errno-base.h,
+which tells me it's EFBIG.  Worse, not all arches use
+asm-generic/errno.h, so I may look in the wrong file by mistake.
+
+The other response in this thread suggested that centralising things
+would reduce compile time.  This obviously can't be true; we're
+opening, reading and closing two additional files.
+
+What *is* a win is providing a mechanism for adding a new
+errno/type/whatever to every architecture, without editing 27 header
+files.  The normal way to do something like this is:
+
+<linux/foo.h>
+includes <asm/foo.h>
+
+#ifndef THINGY
+#define THINGY *suitale definition*
+#endif
+
+which allows architectures to override it when they need to.
+
+I know it looks wasteful, redundant and possibly even error-prone to
+define the same things over and over in asm/types.h, but it really is
+better than the alternative.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
