@@ -1,28 +1,40 @@
-From: "klesleyt@hotmail.com" <klesleyt@hotmail.com>
-Date: Mon, 18 Jun 2007 09:45:53 +0000
-Subject: [KJ] Ultimate Job Offer
-Message-Id: <01c7b1a6$9bc5d6b0$6c822ecf@akstcvirgilsoftmnsdgs>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 04 Jun 2007 09:31:23 +0000
+Subject: [KJ] another project or two
+Message-Id: <Pine.LNX.4.64.0706040528251.31127@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c7b03b$dc98a9e0$6c822ecf@akstcwholesomebodydcmnsdgs>
-In-Reply-To: <01c7b03b$dc98a9e0$6c822ecf@akstcwholesomebodydcmnsdgs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-  This is An Ultimate Job Offer
- You have a chance to make 2000-2500 USD a week! To introduce you quick to
-the opportunity i will give you 4 facts:
-1) 2000-2500 USD a week!
-2) 21+ y/o, you have to be able to check e-mail 1-2 times a day.
-3) 2-3 hours of free time Monday-Thursday
-4) Responsible
-  Successful company, representing Apple Inc production offers a great
-opportunity from Russia. Currently seeking for
-people who can help us out. Very great opportunity and very
-easy. For more info please contact: klesleyt@hotmail.com
-Kevin Searle
 
+  i cleaned up the wiki page for memory allocation stuff:
+
+http://fsdev.net/wiki/index.php?title=Memory_allocation_cleanup
+
+so it should be more organized.
+
+  also, something i've been thinking about for a while is the
+feasibility of centralizing a lot of the identical information that is
+duplicated across all of the include/asm-* header files.  as an
+example, if you take a look at all of the include/asm-*/types.h files,
+there's a lot of absolutely identical content.
+
+  i'm wondering if there's any value to factoring all the common
+content and just leaving the differences in the arch-specific files.
+thoughts?
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
