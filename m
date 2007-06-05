@@ -1,49 +1,45 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Thu, 07 Jun 2007 09:57:23 +0000
-Subject: [KJ] (no subject)
-Message-Id: <1181209523.10486.1.camel@merlin.linuxcoe.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 05 Jun 2007 07:43:56 +0000
+Subject: [KJ] Re: [PATCH] potential parse error in ifdef part 3
+Message-Id: <Pine.LNX.4.64.0706050943370.27590@anakin>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4277F774.9070506@tampabay.rr.com>
-In-Reply-To: <4277F774.9070506@tampabay.rr.com>
+References: <87bqfvr2t9.fsf@wanadoo.fr>
+In-Reply-To: <87bqfvr2t9.fsf@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: tony.luck@intel.com, rohit.seth@intel.com, kenneth.w.chen@intel.com
-Cc: linux-ia64@vger.kernel.org, linux-mm@kvack.org, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: Yoann Padioleau <padator@wanadoo.fr>
+Cc: kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
+On Mon, 4 Jun 2007, Yoann Padioleau wrote:
+> parse errors in ifdefs
+> 
+> Fix various bits of obviously-busted code which we're not happening to
+> compile, due to ifdefs.
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+> --- a/arch/m68k/mac/debug.c
+> +++ b/arch/m68k/mac/debug.c
+> @@ -71,7 +71,7 @@ #ifdef DEBUG_SCREEN
+>  
+>  	/* calculate current offset */
+>  	pengoffset = (unsigned char *)mac_videobase +
+> -		(150+line*2) * mac_rowbytes) + 80 * peng;
+> +		(150+line*2) * mac_rowbytes + 80 * peng;
+>  
+>  	pptr = pengoffset;
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/arch/ia64/mm/hugetlbpage.c b/arch/ia64/mm/hugetlbpage.c
-index 1346b7f..d22861c 100644
---- a/arch/ia64/mm/hugetlbpage.c
-+++ b/arch/ia64/mm/hugetlbpage.c
-@@ -15,6 +15,7 @@
- #include <linux/pagemap.h>
- #include <linux/slab.h>
- #include <linux/sysctl.h>
-+#include <linux/log2.h>
- #include <asm/mman.h>
- #include <asm/pgalloc.h>
- #include <asm/tlb.h>
-@@ -182,7 +183,7 @@ static int __init hugetlb_setup_sz(char *str)
- 		tr_pages = 0x15557000UL;
- 
- 	size = memparse(str, &str);
--	if (*str || (size & (size-1)) || !(tr_pages & size) ||
-+	if (*str || !is_power_of_2(size) || !(tr_pages & size) ||
- 		size <= PAGE_SIZE ||
- 		size >= (1UL << PAGE_SHIFT << MAX_ORDER)) {
- 		printk(KERN_WARNING "Invalid huge page size specified\n");
+Already fixed in 4eb527a0ca83de28e773371f42abad2ab1ed7fdf
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Gr{oetje,eeting}s,
 
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
