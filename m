@@ -1,46 +1,34 @@
-From: "Suresh Jayaraman" <sjayaraman@novell.com>
-Date: Thu, 28 Jun 2007 17:06:47 +0000
-Subject: [KJ] [PATCH] ethernet: Remove unnecessary cast of return value of
-Message-Id: <468437FF020000F40000A9AF@lucius.provo.novell.com>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Tue, 05 Jun 2007 09:37:10 +0000
+Subject: [KJ] [PATCH] [trivial] drivers/ide/legacy/hd.c: Array size
+Message-Id: <200706051137.11564.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Remove unnecessary cast of return value of kmalloc() in
-drivers/net/giantfar.c
+This patch replaces an array size calculation in drivers/ide/legacy/hd.c
+that was done using sizeof with the ARRAY_SIZE macro.
 
-Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
+Tested by compilation on an i386 box using "allyesconfig".
+Diffed against Linus' git-tree.
+
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
 ---
-
-diff --git a/drivers/net/gianfar.c b/drivers/net/gianfar.c
-index 6822bf1..96fa639 100644
---- a/drivers/net/gianfar.c
-+++ b/drivers/net/gianfar.c
-@@ -700,8 +700,7 @@ int startup_gfar(struct net_device *dev)
- 	gfar_write(&regs->rbase0, addr);
- 
- 	/* Setup the skbuff rings */
--	priv->tx_skbuff -	    (struct sk_buff **) kmalloc(sizeof (struct sk_buff *) *
-+	priv->tx_skbuff = kmalloc(sizeof (struct sk_buff *) *
- 					priv->tx_ring_size, GFP_KERNEL);
- 
- 	if (NULL = priv->tx_skbuff) {
-@@ -715,8 +714,7 @@ int startup_gfar(struct net_device *dev)
- 	for (i = 0; i < priv->tx_ring_size; i++)
- 		priv->tx_skbuff[i] = NULL;
- 
--	priv->rx_skbuff -	    (struct sk_buff **) kmalloc(sizeof (struct sk_buff *) *
-+	priv->rx_skbuff = kmalloc(sizeof (struct sk_buff *) *
- 					priv->rx_ring_size, GFP_KERNEL);
- 
- 	if (NULL = priv->rx_skbuff) {
-
--- 
-Suresh Jayaraman
-
-
+diff --git a/drivers/ide/legacy/hd.c b/drivers/ide/legacy/hd.c
+index 45ed035..661c12f 100644
+--- a/drivers/ide/legacy/hd.c
++++ b/drivers/ide/legacy/hd.c
+@@ -130,7 +130,7 @@ struct hd_i_struct {
+ 	
+ #ifdef HD_TYPE
+ static struct hd_i_struct hd_info[] = { HD_TYPE };
+-static int NR_HD = ((sizeof (hd_info))/(sizeof (struct hd_i_struct)));
++static int NR_HD = ARRAY_SIZE(hd_info);
+ #else
+ static struct hd_i_struct hd_info[MAX_HD];
+ static int NR_HD;
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
