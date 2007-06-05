@@ -1,7 +1,7 @@
 From: Aaron Cripps <acripps@gmail.com>
-Date: Tue, 05 Jun 2007 22:52:56 +0000
+Date: Tue, 05 Jun 2007 23:19:18 +0000
 Subject: [KJ] Re: [PATCH ARRAY_SIZE 1/4] kernel 2.6 size macro clean ups in
-Message-Id: <4665EC18.7010309@gmail.com>
+Message-Id: <4665F246.3090100@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <465C99C3.4030802@gmail.com>
 In-Reply-To: <465C99C3.4030802@gmail.com>
@@ -12,7 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 this is a simple patch to remove the MAX_SPEEDS macro in favor of the more
 generic ARRAY_SIZE(arr) macro defined in kernel.h
-
+RE: Forgot the #import <linux/kernel.h> statement. It's there now.
 Signed-off-by: Aaron Cripps <cripps@cs.mun.ca>
 
 
@@ -20,6 +20,15 @@ diff --git a/drivers/net/irda/actisys-sir.c b/drivers/net/irda/actisys-sir.c
 index 9715ab5..44bf0c2 100644
 --- a/drivers/net/irda/actisys-sir.c
 +++ b/drivers/net/irda/actisys-sir.c
+@@ -43,7 +43,7 @@
+#include <linux/module.h>
+#include <linux/delay.h>
+#include <linux/init.h>
+-
++#include <linux/kernel.h>
+#include <net/irda/irda.h>
+ 
+#include "sir-dev.h"
 @@ -67,8 +67,6 @@ static int actisys_reset(struct sir_dev *);
  /* Note : the 220L doesn't support 38400, but we will fix that below */
  static unsigned baud_rates[] = { 9600, 19200, 57600, 115200, 38400 };
