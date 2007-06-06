@@ -1,56 +1,41 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Thu, 14 Jun 2007 08:21:18 +0000
-Subject: [KJ] [PATCH]is_power_of_2-ufs/super.c
-Message-Id: <1181808559.2474.9.camel@merlin.linuxcoe.com>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Wed, 06 Jun 2007 20:10:10 +0000
+Subject: [KJ] [PATCH] [trivial] drivers/input/joystick/grip_mp.c: ARRAY_SIZE
+Message-Id: <200706062210.11555.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: daniel.pirkl@email.cz, dushistov@mail.ru
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: dmitry.torokhov@gmail.com, linux-joystick@atrey.karlin.mff.cuni.cz, linux-input@atrey.karlin.mff.cuni.cz, kernel-janitors@lists.osdl.org
 
+This patch replaces an array size calculation in drivers/input/joystick/grip_mp.c
+that was done using sizeof with the ARRAY_SIZE macro. To be more specific,
+I replaced a variable called seq_len in the function dig_mode_start that stored
+the size of the array with ARRAY_SIZE. The variable was referenced only once,
+so I think removing it is ok.
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+Tested by compilation on an i386 box using "allyesconfig".
+Diffed against Linus' git-tree.
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 22ff6ed..2b30116 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -87,6 +87,7 @@
- #include <linux/smp_lock.h>
- #include <linux/buffer_head.h>
- #include <linux/vfs.h>
-+#include <linux/log2.h>
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+---
+diff --git a/drivers/input/joystick/grip_mp.c b/drivers/input/joystick/grip_mp.c
+index 555319e..4ed3a3e 100644
+--- a/drivers/input/joystick/grip_mp.c
++++ b/drivers/input/joystick/grip_mp.c
+@@ -320,10 +320,10 @@ static int multiport_io(struct gameport* gameport, int sendflags, int sendcode,
  
- #include "swab.h"
- #include "util.h"
-@@ -854,7 +855,7 @@ magic_found:
- 	uspi->s_fmask = fs32_to_cpu(sb, usb1->fs_fmask);
- 	uspi->s_fshift = fs32_to_cpu(sb, usb1->fs_fshift);
+ static int dig_mode_start(struct gameport *gameport, u32 *packet)
+ {
+-	int i, seq_len = sizeof(init_seq)/sizeof(int);
++	int i;
+ 	int flags, tries = 0, bads = 0;
  
--	if (uspi->s_fsize & (uspi->s_fsize - 1)) {
-+	if (!is_power_of_2(uspi->s_fsize)) {
- 		printk(KERN_ERR "ufs_read_super: fragment size %u is not a power of 2\n",
- 			uspi->s_fsize);
- 			goto failed;
-@@ -869,7 +870,7 @@ magic_found:
- 			uspi->s_fsize);
- 		goto failed;
- 	}
--	if (uspi->s_bsize & (uspi->s_bsize - 1)) {
-+	if (!is_power_of_2(uspi->s_bsize)) {
- 		printk(KERN_ERR "ufs_read_super: block size %u is not a power of 2\n",
- 			uspi->s_bsize);
- 		goto failed;
-
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
-
+-	for (i = 0; i < seq_len; i++) {     /* Send magic sequence */
++	for (i = 0; i < ARRAY_SIZE(init_seq); i++) {     /* Send magic sequence */
+ 		if (init_seq[i])
+ 			gameport_trigger(gameport);
+ 		udelay(GRIP_INIT_DELAY);
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
