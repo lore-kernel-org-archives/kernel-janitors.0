@@ -1,31 +1,49 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 19 Jun 2007 01:22:33 +0000
-Subject: Re: [KJ] Makefile question
-Message-Id: <20070619012233.GP8154@parisc-linux.org>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Thu, 07 Jun 2007 09:57:23 +0000
+Subject: [KJ] (no subject)
+Message-Id: <1181209523.10486.1.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <63b6c970706181732y6b21b632yff6af81567ab55f6@mail.gmail.com>
-In-Reply-To: <63b6c970706181732y6b21b632yff6af81567ab55f6@mail.gmail.com>
+References: <4277F774.9070506@tampabay.rr.com>
+In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, rohit.seth@intel.com, kenneth.w.chen@intel.com
+Cc: linux-ia64@vger.kernel.org, linux-mm@kvack.org, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
 
-On Mon, Jun 18, 2007 at 08:32:54PM -0400, tiob lew wrote:
-> I have a problem about Makefile and gdb.
 
-This is completely off-topic for this list.
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
-> How should I modify Makefile so that the program could be debugged by gdb.
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/arch/ia64/mm/hugetlbpage.c b/arch/ia64/mm/hugetlbpage.c
+index 1346b7f..d22861c 100644
+--- a/arch/ia64/mm/hugetlbpage.c
++++ b/arch/ia64/mm/hugetlbpage.c
+@@ -15,6 +15,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/slab.h>
+ #include <linux/sysctl.h>
++#include <linux/log2.h>
+ #include <asm/mman.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
+@@ -182,7 +183,7 @@ static int __init hugetlb_setup_sz(char *str)
+ 		tr_pages = 0x15557000UL;
+ 
+ 	size = memparse(str, &str);
+-	if (*str || (size & (size-1)) || !(tr_pages & size) ||
++	if (*str || !is_power_of_2(size) || !(tr_pages & size) ||
+ 		size <= PAGE_SIZE ||
+ 		size >= (1UL << PAGE_SHIFT << MAX_ORDER)) {
+ 		printk(KERN_WARNING "Invalid huge page size specified\n");
 
-However, I can see what your problem is.  Your rule:
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
-> $@: $<
->    $(CC) $(CFLAGS) -c $<
-
-is never being invoked.
-
-Just set CXXFLAGS instead of CFLAGS, and the predefined implicit rule
-will take care of it.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
