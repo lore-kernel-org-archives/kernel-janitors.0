@@ -1,78 +1,46 @@
-From: respite <cygd@ae.ge.com>
-Date: Sat, 30 Jun 2007 10:21:09 +0000
-Subject: [KJ] "The emptiness of those lives shocks me.
-Message-Id: <46862E95.3000100@ae.ge.com>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Thu, 07 Jun 2007 10:09:46 +0000
+Subject: [KJ][PATCH]is_power_of_2-ia64/mm/hugetlbpage.c
+Message-Id: <1181210266.11218.3.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, rohit.seth@intel.com, kenneth.w.chen@intel.com
+Cc: linux-ia64@vger.kernel.org, linux-mm@kvack.org, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
 
-ERMX Jumps Into Huge Advanced Nitride Super Conductors!
 
-EntreMetrix Inc. (ERMX)
-$0.16
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
-ERMX has just announced it involvement in a joint venture to manufacture
-Advanced Nitride Devices. These have Military application as well as
-Energy Super Conductors. This takes ERMX to a whole new level. Google
-"Nitride Devices" and get on ERMX first thing Monday!
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/arch/ia64/mm/hugetlbpage.c b/arch/ia64/mm/hugetlbpage.c
+index 1346b7f..d22861c 100644
+--- a/arch/ia64/mm/hugetlbpage.c
++++ b/arch/ia64/mm/hugetlbpage.c
+@@ -15,6 +15,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/slab.h>
+ #include <linux/sysctl.h>
++#include <linux/log2.h>
+ #include <asm/mman.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
+@@ -182,7 +183,7 @@ static int __init hugetlb_setup_sz(char *str)
+ 		tr_pages = 0x15557000UL;
+ 
+ 	size = memparse(str, &str);
+-	if (*str || (size & (size-1)) || !(tr_pages & size) ||
++	if (*str || !is_power_of_2(size) || !(tr_pages & size) ||
+ 		size <= PAGE_SIZE ||
+ 		size >= (1UL << PAGE_SHIFT << MAX_ORDER)) {
+ 		printk(KERN_WARNING "Invalid huge page size specified\n");
 
-I found it honest and fascinating, and related so much to her feelings
-and fears. The short story is not our preferred form but D'Ambrosio's
-eight brilliant stories are almost enough to convert us. The Paris
-Review Interviews, I by The Paris Review and Philip Gourevitch Scanning
-our Recommended selections, one might conclude we're addicted to
-interviews, and one would be correct. I mean, it's not like it's pink,
-or is called the "Estrogen" prize or something.
-
-And, more importantly, it's a gorgeously written book. Eliot, Ernest
-Hemingway, Jorge Luis Borges, Dorothy Parker, Robert Gottlieb  and
-others? Same thing with the Lambda award.
-And given the unquestionable inequalities that permeate our society, and
-our literary culture, it's a way to keep these wonderful voices from
-being lost.
-The Paris Review Interviews, I by The Paris Review and Philip Gourevitch
-Scanning our Recommended selections, one might conclude we're addicted
-to interviews, and one would be correct.
-
-The Elegant Variation: Katherine Taylor has been sitting at her desk too
-long. The Elegant Variation: Emoticontrary.
-Everything else is just mud.
-
-In untrained or unrestrained hands, a thesaurus can be dangerous.
-"Non-racers," he writes.
-And to make absolutely certain readers know that this is a girl book,
-we're going to give you a big award and slap a Girl Writer sticker on
-every copy. And, more importantly, it's a gorgeously written book.
-
-I mean, it's not like it's pink, or is called the "Estrogen" prize or
-something.
-But increasingly, I find otherwise bright and well-adjusted people send
-emoticon-peppered emails. I mean, it's not like it's pink, or is called
-the "Estrogen" prize or something.
-They're useful for communicating emotion when the writing fails.
-Max Morden has returned to the vacation spot of his youth as he grieves
-the death of his wife. Same thing with the Lambda award.
-Heti's Ticknor would be insufferable if he weren't so funny, and in the
-end, the black humor brings a leavening poignancy to this brief tale.
-John, Elizabeth Koch, Mark Sarvas:  keep your old phone messages and
-worn-out undershirts.
-
-According to this, emoticons are an acceptable element of modern
-communication. How about smug and indulgent.
-
-I'm sure Mark is a much better cyclist than I am tennis player. I can't
-think of any more annoying or disgusting internet trend than that.
-
-I am not a total fogey.
-
-well, certainly since we've started this blog.
-The Paris Review Interviews, I by The Paris Review and Philip Gourevitch
-Scanning our Recommended selections, one might conclude we're addicted
-to interviews, and one would be correct. At the heart of the book is the
-coroner Quirke, a Banvillean creation on par with Alex Cleave and
-Freddie Montgomery.
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 Kernel-janitors mailing list
