@@ -1,64 +1,49 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Thu, 14 Jun 2007 15:59:47 +0000
-Subject: Re: [KJ] [PATCH]is_power_of_2-nfs/internal.h
-Message-Id: <871wger0gc.fsf@wanadoo.fr>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Thu, 07 Jun 2007 17:38:47 +0000
+Subject: [KJ] [PATCH] Drop the superfluous test for an old version of gcc.
+Message-Id: <Pine.LNX.4.64.0706071336540.1235@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1181808534.2474.7.camel@merlin.linuxcoe.com>
-In-Reply-To: <1181808534.2474.7.camel@merlin.linuxcoe.com> (vignesh babu's
-	message of "Thu, 14 Jun 2007 13:38:54 +0530")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vignesh.babu@wipro.com
-Cc: neilb@suse.de, Kernel Janitors List <kernel-janitors@lists.osdl.org>, nfs@lists.sourceforge.net
-
-vignesh babu <vignesh.babu@wipro.com> writes:
-
-> Replacing (n & (n-1)) in the context of power of 2 checks
-> with is_power_of_2
->
-> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
-> --- 
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index ad2b40d..5dca432 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -3,6 +3,7 @@
->   */
->  
->  #include <linux/mount.h>
-> +#include <linux/log2.h>
->  
->  struct nfs_string;
->  struct nfs_mount_data;
-> @@ -167,7 +168,7 @@ static inline
->  unsigned long nfs_block_bits(unsigned long bsize, unsigned char *nrbitsp)
->  {
->  	/* make sure blocksize is a power of two */
-> -	if ((bsize & (bsize - 1)) || nrbitsp) {
-> +	if (is_power_of_2(bsize) || nrbitsp) {
-
-Did I miss something but why in this case it's not 
-
-+	if (!is_power_of_2(bsize) || nrbitsp) {
-
-?
+To: kernel-janitors@vger.kernel.org
 
 
->  		unsigned char	nrbits;
->  
->  		for (nrbits = 31; nrbits && !(bsize & (1 << nrbits)); nrbits--)
->
-> -- 
-> Vignesh Babu BM 
-> _____________________________________________________________ 
-> "Why is it that every time I'm with you, makes me believe in magic?"
->
-> _______________________________________________
-> Kernel-janitors mailing list
-> Kernel-janitors@lists.linux-foundation.org
-> https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+The header file <linux/compiler.h> already enforces a suitably recent
+version of gcc, so there's no point checking for that again.
 
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+
+---
+
+diff --git a/init/main.c b/init/main.c
+index eb8bdba..522b305 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -69,15 +69,7 @@
+ /*
+  * This is one of the first .c files built. Error out early if we have compiler
+  * trouble.
+- *
+- * Versions of gcc older than that listed below may actually compile and link
+- * okay, but the end product can have subtle run time bugs.  To avoid associated
+- * bogus bug reports, we flatly refuse to compile with a gcc that is known to be
+- * too old from the very beginning.
+  */
+-#if (__GNUC__ < 3) || (__GNUC__ = 3 && __GNUC_MINOR__ < 2)
+-#error Sorry, your GCC is too old. It builds incorrect kernels.
+-#endif
+
+ #if __GNUC__ = 4 && __GNUC_MINOR__ = 1 && __GNUC_PATCHLEVEL__ = 0
+ #warning gcc-4.1.0 is known to miscompile the kernel.  A different compiler version is recommended.
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
