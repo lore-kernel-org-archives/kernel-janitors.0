@@ -1,71 +1,158 @@
-From: Eberhard Moenkeberg <emoenke@gwdg.de>
-Date: Thu, 07 Jun 2007 14:11:15 +0000
+From: Surya <surya.prabhakar@wipro.com>
+Date: Fri, 08 Jun 2007 02:58:12 +0000
 Subject: [KJ] Re: [PATCH]: complete cleanup of check_region
-Message-Id: <Pine.LNX.4.64.0706071609370.28834@gwdu05.gwdg.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="1283851528-1137539774-1181225475=:28834"
+Message-Id: <1181270772.3275.15.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1181209169.2422.12.camel@bluegenie>  <Pine.LNX.4.64.0706071330500.17273@gwdu05.gwdg.de>
- <9a8748490706070607oac5b2d4j3098670a0ca6893e@mail.gmail.com>
-In-Reply-To: <9a8748490706070607oac5b2d4j3098670a0ca6893e@mail.gmail.com>
-To: Jesper Juhl <jesper.juhl@gmail.com>
-Cc: Surya <surya.prabhakar@wipro.com>, linux-kernel@vger.kernel.org, alan@lxorguk.ukuu.org.uk, kernel-janitors <kernel-janitors@lists.osdl.org>, trivial <trivial@kernel.org>, hannu@opensound.com
-
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---1283851528-1137539774-1181225475=:28834
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-Hi,
-
-On Thu, 7 Jun 2007, Jesper Juhl wrote:
-> On 07/06/07, Eberhard Moenkeberg <emoenke@gwdg.de> wrote:
-> > On Thu, 7 Jun 2007, Surya wrote:
-> > > Hi all,
-
-> > >       This patch cleans up all the instances of check_region and
-> > > __check_region and replaces them with request_region and
-> > > __request_region. Applies and compiles clean on latest Linus tree.
-> > >
-> > > Files affected:
-> > >       drivers/cdrom/sbpcd.c
-> > >       drivers/pnp/resource.c
-> > >       include/linux/ioport.h
-> > >       kernel/resource.c
-> > >       sound/oss/pss.c
-> > >
-> > >
-> > > thanks.
-> > >
-> > >
-> > > Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
-> >
-> >
-> > in drivers/cdrom/sbpcd.c the message string should be changed too.
-> >
-> > Acked-by: Eberhard Moenkeberg <emoenke@gwdg.de>
-> >
->=20
-> Huh? I don't understand how you can ACK that patch.
-> Are my comments here:  http://lkml.org/lkml/2007/6/7/102  completely
-> out in left field?
-
-Yes, my ACK is invalid. It has an earlier time stamp than your clearing=20
-mail.
-
-
-Viele Gr=FC=DFe
-Eberhard M=F6nkeberg (emoenke@gwdg.de, em@kki.org)
---1283851528-1137539774-1181225475=:28834
-Content-Type: text/plain; charset="us-ascii"
+References: <1181209169.2422.12.camel@bluegenie>
+	 <9a8748490706070308m7c2212fq30fe712e26e2463b@mail.gmail.com>
+	 <1181215018.3275.2.camel@bluegenie>
+	 <9a8748490706070902i218e01bdq1c418c770e99ca4@mail.gmail.com>
+In-Reply-To: <9a8748490706070902i218e01bdq1c418c770e99ca4@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: Jesper Juhl <jesper.juhl@gmail.com>, emoenke@gwdg.de
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org
 
+<snip>
+> >
+> > @@ -5640,6 +5645,7 @@ int __init sbpcd_init(void)
+> >         int i=0, j=0;
+> >         int addr[2]={1, CDROM_PORT};
+> >         int port_index;
+> > +       int request_region_flag;
+> >
+> One could argue that it would be possible to just use the 'j' variable
+> for this since it's not used for anything else until the *_region()
+> stuff is all done, that would save adding a new variable...
+completely eliminated the variable, haven't felt the need for it.
+
+<snip>
+> >                 msg(DBG_INI,"check_drives done.\n");
+> > +               if(request_region_flag=0)
+> > +                       release_region(addr[1],4);
+> 
+> I know the driver in its current version just tests if the region is
+> available and doesn't hang on to it, but I'm wondering if that's not a
+> bug.  Shouldn't we actually hold on to this region as long as the
+> driver is loaded and only release the region in the sbpcd_exit()
+> function, just loke we do with the "CDo_command" region?  
+But if any of the conditions fail after the request_region code, it is
+returning an error and exiting out of init. Dont we need to cleanup
+request_region's allocation before we exit. Infact I had a feeling that
+CDo_command region cleanup was not perfect. Did a cleanup of both the
+regions wherever we have a return out of the function.
+
+Please have a look at the below patch.
+
+
+diff --git a/drivers/cdrom/sbpcd.c b/drivers/cdrom/sbpcd.c
+index a1283b1..0a85b1b 100644
+--- a/drivers/cdrom/sbpcd.c
++++ b/drivers/cdrom/sbpcd.c
+@@ -358,6 +358,10 @@
+  * Add bio/kdev_t changes for 2.5.x required to make it work again. 
+  * Still room for improvement in the request handling here if anyone
+  * actually cares.  Bring your own chainsaw.    Paul G.  02/2002
++ *
++ *
++ * Cleaned up the reference for deprecated check_region to 
++ * request_region.            - Surya Prabhakar N      08/07/2007
+  */
+ 
+ 
+@@ -555,6 +559,8 @@ static struct cdrom_read_audio read_audio;
+ static unsigned char msgnum;
+ static char msgbuf[80];
+ 
++static int addr[2];
++
+ static int max_drives = MAX_DRIVES;
+ module_param(max_drives, int, 0);
+ #ifndef MODULE
+@@ -5638,7 +5644,7 @@ int __init sbpcd_init(void)
+ #endif
+ {
+ 	int i=0, j=0;
+-	int addr[2]={1, CDROM_PORT};
++	addr[2]={1, CDROM_PORT};
+ 	int port_index;
+ 
+ 	sti();
+@@ -5670,9 +5676,9 @@ int __init sbpcd_init(void)
+ 	{
+ 		addr[1]=sbpcd[port_index];
+ 		if (addr[1]=0) break;
+-		if (check_region(addr[1],4))
++		if (!request_region(addr[1],4, "sbpcd driver"))
+ 		{
+-			msg(DBG_INF,"check_region: %03X is not free.\n",addr[1]);
++			msg(DBG_INF,"request_region: %03X is not free.\n",addr[1]);
+ 			continue;
+ 		}
+ 		if (sbpcd[port_index+1]=2) type=str_sp;
+@@ -5699,6 +5705,7 @@ int __init sbpcd_init(void)
+ 	if (ndrives=0)
+ 	{
+ 		msg(DBG_INF, "No drive found.\n");
++		release_region(addr[1],4);
+ #ifdef MODULE
+ 		return -EIO;
+ #else
+@@ -5775,6 +5782,7 @@ int __init sbpcd_init(void)
+ 	if (!request_region(CDo_command,4,major_name))
+ 	{
+ 		printk(KERN_WARNING "sbpcd: Unable to request region 0x%x\n", CDo_command);
++		release_region(addr[1],4);
+ 		return -EIO;
+ 	}
+ 
+@@ -5788,6 +5796,8 @@ int __init sbpcd_init(void)
+ #endif /* SOUND_BASE */
+ 
+ 	if (register_blkdev(MAJOR_NR, major_name)) {
++		release_region(CDo_command,4);
++		release_region(addr[1],4);
+ #ifdef MODULE
+ 		return -EIO;
+ #else
+@@ -5801,6 +5811,7 @@ int __init sbpcd_init(void)
+ 	sbpcd_queue = blk_init_queue(do_sbpcd_request, &sbpcd_lock);
+ 	if (!sbpcd_queue) {
+ 		release_region(CDo_command,4);
++		release_region(addr[1],4);
+ 		unregister_blkdev(MAJOR_NR, major_name);
+ 		return -ENOMEM;
+ 	}
+@@ -5834,6 +5845,7 @@ int __init sbpcd_init(void)
+ 				printk("Can't unregister %s\n", major_name);
+ 			}
+ 			release_region(CDo_command,4);
++			release_region(addr[1],4);
+ 			blk_cleanup_queue(sbpcd_queue);
+ 			return -EIO;
+ 		}
+@@ -5850,6 +5862,7 @@ int __init sbpcd_init(void)
+ 		if (sbpcd_infop = NULL)
+ 		{
+                         release_region(CDo_command,4);
++			release_region(addr[1],4);
+ 			blk_cleanup_queue(sbpcd_queue);
+                         return -ENOMEM;
+ 		}
+@@ -5894,6 +5907,7 @@ static void sbpcd_exit(void)
+ 		return;
+ 	}
+ 	release_region(CDo_command,4);
++	release_region(addr[1],4);
+ 	blk_cleanup_queue(sbpcd_queue);
+ 	for (j=0;j<NR_SBPCD;j++)
+ 	{
+
+Kindly update if this is Ok. I will proceed with the original patch.
+
+-surya.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---1283851528-1137539774-1181225475=:28834--
