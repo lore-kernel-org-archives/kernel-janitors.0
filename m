@@ -1,177 +1,144 @@
-From: "Andrews" <dtb@arbor-vista.com>
-Date: Thu, 07 Jun 2007 21:32:36 +0000
-Subject: [KJ] um
-Message-Id: <001c01c7a94b$5e28c500$6e59bfdd@apkt>
+From: "Joy F." <peqorolkez@unitedtile.com>
+Date: Fri, 08 Jun 2007 13:25:48 +0000
+Subject: [KJ] Davis, do you wanna get 4323.- US$
+Message-Id: <154DBB9A.81A570DA@unitedtile.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1877916311277608287=="
+Content-Type: multipart/mixed; boundary="===============7521498153479370024=="
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============1877916311277608287==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_0018_01C7A932.38C93D80"
-
-------=_NextPart_000_0018_01C7A932.38C93D80
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0019_01C7A932.38CDD160"
-
-------=_NextPart_001_0019_01C7A932.38CDD160
-Content-Type: text/plain;
-	charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-
-Richard Veryard in is blog on IT Analysis Blogs comments on several =
-ITToolbox bloggers:What I really object to is when vendors falsely pose =
-as independent experts.
-They both brought about a different perspective as to how they grew up =
-and the problems they are facing.
-Sorry, we are honest folk that give honest feedback.
-He considered me one of the most brilliant, well-read folk he has ever =
-ran across. For this particular post I am violating blogging etiquette =
-in hopes of inspiring others to start having real meaningful =
-conversations.
-Wouldn't in this situation trackback half give more credit than is due? =
-Definitly this post will increase the popularity of this blog because of =
-the words used - 'Michael Jackson', 'Outsourcing', 'India' etc.
-Many conversations don't occur simply because someone is worried about =
-offending someone when in all reality, it is a missed opportunity for =
-two parties to have a meaningful dialog.
-I suspect that those from technical backgrounds will tend to create more =
-of this than those from business backgrounds.
-Wouldn't in this situation trackback half give more credit than is due? =
-I guess my own thinking says that architects as stewards of architecture =
-should be passionate about protecting it. Here is one industry analyst =
-commenting on blog entries from two different members of the ITToolbox =
-community. If you don't actually have a link to someone in your post, =
-sending a trackback to their blog in order to spur them to read you is =
-dishonest.
-What if enterprises don't have the mental bandwidth in order to move =
-this forward?
-After all, those reading CIO magazine can't all have every single IT =
-person "understand the business". Those that don't, and seek to impress, =
-intimidate or overwhelm with their own unique communication styl
-Your input would be fantastic.
-Why Industry Analysts hate ITToolbox! Unlike most conferences in the =
-city, this one makes sure you are well entertained after hours. Great =
-coverage of the networking space. Enough with the blinking text in the =
-postings. I bet most consultants couldn't tell you in most corporations.
-I guess I have always been savage in networking and talking with others. =
-My own outside of work personal opinion on the analysts that put out =
-high quality work are  few and far between. A community where peers =
-share knowledge about information technology. Will finish this entry =
-when I return from work.
-I can see that once in two weeks a post like this comes ! Your =
-conversation is started. With this thought in mind, today's blog entry =
-is all about  better ways to ignore etiquette. I sure hope that the IT =
-executives over at CNA are taking good care of him. Anyway, bet you =
-didn't know that he just got a position as director of operations for =
-Skype?
-------=_NextPart_001_0019_01C7A932.38CDD160
+--===============7521498153479370024==
 Content-Type: text/html;
-	charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	charset="iso-8859-1"
+Content-Transfer-Encoding: base64
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Dwindows-1252">
-<META content=3D"MSHTML 6.00.2800.1158" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV><FONT face=3DArial size=3D2><IMG alt=3D"treatable" hspace=3D0=20
-src=3D"http://cferect.com/vampire.gif" align=3Dbaseline=20
-border=3D0></FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Richard Veryard in is blog on IT =
-Analysis Blogs=20
-comments on several ITToolbox bloggers:What I really object to is when =
-vendors=20
-falsely pose as independent experts.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>They both brought about a different =
-perspective as=20
-to how they grew up and the problems they are facing.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Sorry, we are honest folk that give =
-honest=20
-feedback.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>He considered me one of the most =
-brilliant,=20
-well-read folk he has ever ran across. For this particular post I am =
-violating=20
-blogging etiquette in hopes of inspiring others to start having real =
-meaningful=20
-conversations.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Wouldn't in this situation trackback =
-half give more=20
-credit than is due? Definitly this post will increase the popularity of =
-this blog=20
-because of the words used - 'Michael Jackson', 'Outsourcing', 'India'=20
-etc.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Many conversations don't occur simply =
-because=20
-someone is worried about offending someone when in all reality, it is a =
-missed=20
-opportunity for two parties to have a meaningful dialog.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>I suspect that those from technical =
-backgrounds=20
-will tend to create more of this than those from business =
-backgrounds.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Wouldn't in this situation trackback =
-half give more=20
-credit than is due? I guess my own thinking says that architects as =
-stewards of=20
-architecture should be passionate about protecting it. Here is one =
-industry analyst=20
-commenting on blog entries from two different members of the ITToolbox =
-community. If=20
-you don't actually have a link to someone in your post, sending a =
-trackback to their=20
-blog in order to spur them to read you is dishonest.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>What if enterprises don't have the =
-mental bandwidth=20
-in order to move this forward?</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>After all, those reading CIO magazine =
-can't all=20
-have every single IT person "understand the business". Those that don't, =
-and seek to=20
-impress, intimidate or overwhelm with their own unique communication=20
-styl</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Your input would be =
-fantastic.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>Why Industry Analysts hate ITToolbox! =
-Unlike most=20
-conferences in the city, this one makes sure you are well entertained =
-after hours.=20
-Great coverage of the networking space. Enough with the blinking text in =
-the=20
-postings. I bet most consultants couldn't tell you in most=20
-corporations.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>I guess I have always been savage in =
-networking and=20
-talking with others. My own outside of work personal opinion on the =
-analysts that=20
-put out high quality work are  few and far between. A community where =
-peers share=20
-knowledge about information technology. Will finish this entry when I =
-return from=20
-work.</FONT></DIV>
-<DIV><FONT face=3DArial size=3D2>I can see that once in two weeks a post =
-like this=20
-comes ! Your conversation is started. With this thought in mind, today's =
-blog entry=20
-is all about  better ways to ignore etiquette. I sure hope that the IT =
-executives=20
-over at CNA are taking good care of him. Anyway, bet you didn't know =
-that he just=20
-got a position as director of operations for =
-Skype?</FONT></DIV></BODY></HTML>
+PEhUTUw+PEhFQUQ+DQo8TUVUQSBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZSBjb250ZW50PSJ0ZXh0
+L2h0bWw7IGNoYXJzZXQ9aXNvLTg4NTktMSI+DQo8U1RZTEUgdHlwZT10ZXh0L2Nzcz4NCjwhLS1i
+b2R5IHtiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmY7IHBhZGRpbmctbGVmdDo0MHB4OyBmb250LXNp
+emU6MTJweDsNCmZvbnQtZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGNvbG9y
+OjAwMDAwMDt9IC50MSB7IA0KbGluZS1oZWlnaHQ6NDhweDsgZm9udC1zaXplOjU0cHg7IGZvbnQt
+ZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIA0Kc2Fucy1zZXJpZjsgY29sb3I6MDAwMDk5OyBmb250
+LXdlaWdodDpib2xkOyB9IC50MiB7ICBsaW5lLWhlaWdodDo3MnB4Ow0KZm9udC1zaXplOjg0cHg7
+IGNvbG9yOmZmMDAwMDsgZm9udC13ZWlnaHQ6Ym9sZDsgZm9udC1mYW1pbHk6YXJpYWwsIA0KaGVs
+dmV0aWNhLCBzYW5zLXNlcmlmOyB9IC50MyB7ICBsaW5lLWhlaWdodDo1NHB4OyBmb250LXNpemU6
+NThweDsNCmZvbnQtZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGNvbG9yOjAw
+MDA5OTsgDQpmb250LXdlaWdodDpib2xkOyB9IHAgeyBsaW5lLWhlaWdodDo1cHg7IGZvbnQtc2l6
+ZToxMHB4OyANCmZvbnQtZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGNvbG9y
+OiNmZmZmZmY7IH0tLT48L1NUWUxFPg0KDQo8TUVUQSBjb250ZW50PSJNU0hUTUwgNi4wMC42MDAw
+LjE2NDQxIiBuYW1lPUdFTkVSQVRPUj48L0hFQUQ+DQo8Qk9EWSB2TGluaz0jMDAwMDk5IGFMaW5r
+PSMwMDAwOTkgbGluaz0jMDAwMDk5Pg0KPFA+QmF0Y2hlbG9yLCB3aXRoIGp1c3QgdW5kZXIgZml2
+ZSBodW5kcmVkIHN0dWRlbnQgcGxhY2VzIGFsbG9jYXRlZCBmb3IgMjAwNiwgaXMgdGhlIHNvbGUg
+c3Vydml2b3Igb2YgcHJlLURhd2tpbnMgZGF5cy48L1A+PFNQQU4gY2xhc3M9dDE+ME5MbE5FIENB
+U2xOMCA8L1NQQU4+PEJSPjxTUEFOIGNsYXNzPXQyPjEnMDAwIFVTJCA8L1NQQU4+PEJSPjxTUEFO
+IGNsYXNzPXQzPlNUQVJUIEIwTlVTIDwvU1BBTj48QlI+PEJSPjEwMDAuLSBzdGFydCBib251cywg
+cGxheSAxIGhvdXIgZm9yIGZyZWUgYW5kIGtlZXAgYWxsIHdpbnM6PEJSPjxCUj48Qj5HZXQgeW91
+ciBib251cyBub3c6PC9CPjxCUj48QlI+LSBWaXNpdCBvdXIgd2Vic2l0ZSBhbmQgZG93bmxvYWQg
+dGhlIHBsYXlpbmcgbW9kdWxlIGluIHlvdXIgbGFuZ3VhZ2UgOiA8QlI+Jm5ic3A7Jm5ic3A7Jm5i
+c3A7PEI+PEEgaHJlZj0iaHR0cDovL2xvYS5oay9tYWdpYy81L2VuLyI+RU5HTElTSDwvQT4mbmJz
+cDsmbmJzcDsmbmJzcDs8QSBocmVmPSJodHRwOi8vbG9hLmhrL21hZ2ljLzUvZnIvIj5GUkVOQ0g8
+L0E+Jm5ic3A7Jm5ic3A7Jm5ic3A7PEEgaHJlZj0iaHR0cDovL2xvYS5oay9tYWdpYy81L2VzLyI+
+U1BBTklTSDwvQT4mbmJzcDsmbmJzcDs8QSBocmVmPSJodHRwOi8vbG9hLmhrL21hZ2ljLzUvZ3Iv
+Ij5HRVJNQU48L0E+Jm5ic3A7Jm5ic3A7Jm5ic3A7PEEgaHJlZj0iaHR0cDovL2xvYS5oay9tYWdp
+Yy81L2l0LyI+SVRBTElBTjwvQT48L0I+PEJSPi0gUmVnaXN0ZXIgYXMgZ3Vlc3Qgb3IgcGxheWVy
+LiAuLi4uLmFuZCBzdGFydCB3aW5uaW5nIHJpZ2h0IG5vdw0KPFA+QmlvZ3JhcGh5LCBhcyBJYW4g
+RG9uYWxkc29uIHNob3dlZCBpbiBoaXMgZXNzYXkgkU1hdHRlcnMgb2YgTGlmZSBhbmQgRGVhdGg6
+IFRoZSBSZXR1cm4gb2YgQmlvZ3JhcGh5kiAoQUJSLCBOb3ZlbWJlciAyMDA2KSwgaXMgbm93IGEg
+cGxhc3RpYywgcmVzcG9uc2l2ZSwgZGVtb2NyYXRpYyBhbmQsIHllcywgcmVwdXRhYmxlIGFydCwg
+Y2FwYWJsZSBvZiBhbGwgc29ydHMgb2YgbGliZXJ0aWVzIGFuZCBsYXRpdHVkZS4gQnkgdGhlIHRp
+bWUgdGhlIERhd2tpbnMgd2F2ZSBvZiBtZXJnZXJzIGNvbmNsdWRlZCBpbiB0aGUgZWFybHkgMTk5
+MHMsIHNpeHR5LXRocmVlIGhpZ2hlciBlZHVjYXRpb24gcHJvdmlkZXJzIGhhZCBiZWNvbWUgdGhp
+cnR5LXNpeCB1bml2ZXJzaXRpZXMsIG1hbnkgd2l0aCBtdWx0aXBsZSBjYW1wdXNlcy4gQ2FybmVn
+aWUgTWVsbG9uIG9mZmVycyBBbWVyaWNhbiByYXRoZXIgdGhhbiBBdXN0cmFsaWFuIGRlZ3JlZXMu
+IERlYXRoIHN0YWxrZWQgdGhlIE5pYWxsIGZhbWlseTogc2V2ZXJhbCB1bmNsZXMgZGllZCBpbiBx
+dWljayBzdWNjZXNzaW9uLCBhbGwgeW91bmcuIERpdmVyc2l0eZJzIGluc3RpdHV0aW9uYWwgZGVt
+aXNlIDxCUj4NCkVuZ2VuZGVyaW5nIGVtcGF0aHkgdG93YXJkcyBzdWZmZXJpbmcgd2FzIHNvbWV0
+aGluZyB5b3UgdHJpZWQgdG8gZG8gaW4geW91ciB3b3JrLCBub3QgbWVyZWx5IGZyb20gcHJpbmNp
+cGxlIGJ1dCBiZWNhdXNlIHlvdSBmZWx0IGRlZXBseSBmb3Igc29jaWV0eZJzIG91dHNpZGVycy4g
+RXZhbHVhdGVkIGFnYWluc3QgdGhlIG9iamVjdGl2ZSBvZiBpbXByb3ZpbmcgYWNjZXNzIHRvIGhp
+Z2hlciBlZHVjYXRpb24sIHRoZSByZWZvcm1zIG9mIDE5ODeWOTEgcHJvdmVkIGEgc2lnbmlmaWNh
+bnQgYW5kIHN1c3RhaW5lZCBzdWNjZXNzLiBIZXIgc3RyaW5nIG9mIGJlYWRzIHdvdWxkIGJlIGEg
+c2VxdWVuY2Ugb2YgaG91c2VzLCBzaGUgZGVjaWRlZCwgc3RydWNrIGJ5IHRoZSBCb3lkc5IgcmF0
+aGVyIGJpemFycmUgYXR0YWNobWVudCB0byBhbmNlc3RyYWwgYW5kIGNoaWxkaG9vZCBob21lcy4g
+QWx0aG91Z2ggdGhpcyBwcmFjdGljZSBtYWRlIG1hbnkgc3R1ZGVudHMgdW5jb21mb3J0YWJsZSwg
+bW9zdCB3ZXJlIGFmcmFpZCB0byBzcGVhayB1cC4gPEJSPg0KVGhlIHJlc2lkZW50IHdhcyBhIGdv
+b2QgZG9jdG9yLCBzaGUgc2FpZCwgYW5kIHNvIHNoZSBoYWQgZ2l2ZW4gaGltIHRoZSBiZW5lZml0
+IG9mIHRoZSBkb3VidC4gVGhlIHN0dWRlbnQgYWRtaXR0ZWQgdGhhdCBoZSB3YXMgZmFyIGZyb20g
+cG9zaXRpdmUgdGhhdCBzb21ldGhpbmcgd2FzIHNlcmlvdXNseSB3cm9uZy4gIE9uZSBwb3NzaWJp
+bGl0eSBpcyB0byB0YWtlIHRoZSBtYXR0ZXIgdXAgd2l0aCBhIG1vcmUgc2VuaW9yIGRvY3Rvci4g
+T3IgdGhlIHN0dWRlbnQgbWlnaHQgZ28gZGlyZWN0bHkgdG8gdGhlIHBhdGllbnQgb3IgZmFtaWx5
+LCB0ZWxsaW5nIHRoZW0gdGhhdCB0aGUgcGh5c2ljaWFucyBoYXZlIGEgZ2VudWluZSBkaXNhZ3Jl
+ZW1lbnQgYW5kIHRoYXQgdGhleSBkZXNlcnZlIHRvIGtub3cgYWJvdXQgaXQuIEFmdGVyIGFsbCwg
+aW4gZWFjaCBvZiB0aGVzZSBleGFtcGxlcywgcGF0aWVudHMgYXJlIGF0IHJpc2sgb2YgaGFybSwg
+c29tZXRoaW5nIHRoYXQgcGh5c2ljaWFucyBtdXN0IGF2b2lkIGF0IGFsbCBjb3N0cy48QlI+DQpO
+ZXh0IHdlcmUgdGhlIG92ZXJ3b3JrZWQgcmVzaWRlbnRzLCB3aG8gZXNzZW50aWFsbHkgbGl2ZWQg
+aW4gdGhlIGhvc3BpdGFsIHdoaWxlIHRyYWluaW5nLiBUaGUgc3R1ZGVudCB3aG9zZSByZXNpZGVu
+dCBzZWVtaW5nbHkgbGllZCB0byB0aGUgYXR0ZW5kaW5nIHBoeXNpY2lhbiBhYm91dCB0aGUgYmxv
+b2QgdGVzdCBkaWQgbm90IHNwZWFrIHVwIGVpdGhlci48QlI+DQpIZSB0aGVuIHJlbWluZGVkIHRo
+ZSBzdHVkZW50IHRoYXQgd2hpbGUgaGUgaGFkIGV4YW1pbmVkIGh1bmRyZWRzIG9mIHN1Y2ggY2Fz
+ZXMsIHRoZSBzdHVkZW50IGhhZCBzZWVuIG9ubHkgYSBmZXcuIE9yIHRoZSBzdHVkZW50IG1pZ2h0
+IGdvIGRpcmVjdGx5IHRvIHRoZSBwYXRpZW50IG9yIGZhbWlseSwgdGVsbGluZyB0aGVtIHRoYXQg
+dGhlIHBoeXNpY2lhbnMgaGF2ZSBhIGdlbnVpbmUgZGlzYWdyZWVtZW50IGFuZCB0aGF0IHRoZXkg
+ZGVzZXJ2ZSB0byBrbm93IGFib3V0IGl0LiBTdGlsbCwgaXQgd2lsbCBiZSBoYXJkIHRvIGNoYW5n
+ZSB0aGUgdW5mb3J0dW5hdGUgcGVyY2VwdGlvbiB0aGF0IGNvbnN0cnVjdGl2ZSBmZWVkYmFjaywg
+ZXZlbiBmb3IgYSBwYXRpZW50knMgYmVuZWZpdCwgaXMgd2hpc3RsZS1ibG93aW5nLiBBdCBhIDE5
+NjUgc2VtaW5hciBvbiB0aGUgZnV0dXJlIG9mIGhpZ2hlciBlZHVjYXRpb24sIHRoZSBmaXJzdCB2
+aWNlLWNoYW5jZWxsb3Igb2YgTW9uYXNoLCBKLkEuTC4gbm9rZXJuZWwtamFuaXRvcnM4ODgmNjY2
+b3NkbC5vcmdtbyBCcmVuZGGScyBzb2NpYWwgbGlmZSCRdmlydHVhbGx5IHN0b3BwZWSSLiBCdXQg
+aW4gdGhlIG1pZC0xOTcwcyB0aGlzIHdhcyB3ZWxsIGludG8gdGhlIGZ1dHVyZS4gQnkgMTk5MCB0
+aGUgbm93IHN0YW5kYXJkIG1vZGVsIG9mIGFuIEF1c3RyYWxpYW4gdW5pdmVyc2l0eSBoYWQgZW1l
+cmdlZDogbGFyZ2UsIGNvbXByZWhlbnNpdmUsIG11bHRpLWNhbXB1cyBhbmQgcmVzZWFyY2gtYmFz
+ZWQuPEJSPg0KQ29uc2lzdGVuY3kgaGFzIHByb3ZlZCBtb3JlIHZhbHVlZCB0aGFuIGRpZmZlcmVu
+Y2UuIERpdmVyc2l0eZJzIGluc3RpdHV0aW9uYWwgZGVtaXNlIEVhY2ggbW92ZSBoYXMgYmVlbiBh
+IGNvbnNpZGVyZWQgcmVzcG9uc2UgdG8gQXVzdHJhbGlhknMgY3VycmVudCBhbmQgbGlrZWx5IG5l
+ZWRzIGluIGhpZ2hlciBlZHVjYXRpb24sIHdpdGggc2lnbmlmaWNhbnQgbG9uZy10ZXJtIGVmZmVj
+dC48QlI+DQpFdmVuIHdoZW4geW91IHdlcmVuknQgYWJsZSB0byB0YWxrIGFuZCBsYXVnaCB3aXRo
+IHRoZW0gYW55IGxvbmdlciwgdGhleSBmZWx0IHN1cmUgb2YgbGl2ZWx5IGFjdGl2aXR5IGhhcHBl
+bmluZyBpbnNpZGUgeW91ciBoZWFkLiBFdmVudHVhbGx5LCBzaGUgYmVjYW1lIGhpcyByZXNlYXJj
+aCBhc3Npc3RhbnQgb24gYSBiaW9ncmFwaHkgb2YgQXJjaGJpc2hvcCBNYW5uaXguV29sZmJlcmcg
+d3JvdGUgaW4gdGhlIHNhbWUgam91cm5hbCBsYXN0IG1vbnRoLCBmb3IgeWVhcnMgbWVkaWNhbCBz
+dHVkZW50cyBwZXJmb3JtZWQgcGVsdmljIGV4YW1pbmF0aW9ucyBvbiBhbmVzdGhldGl6ZWQgd29t
+ZW4gd2hvIGhhZCBub3QgZ2l2ZW4gY29uc2VudCBiZWNhdXNlIHNlbmlvciBvYnN0ZXRyaWNpYW5z
+IHNhaWQgaXQgd2FzIHRoZSBiZXN0IHdheSB0byBsZWFybiBpbnRlcm5hbCBhbmF0b215LiBUaGUg
+c3R1ZGVudCBhZG1pdHRlZCB0aGF0IGhlIHdhcyBmYXIgZnJvbSBwb3NpdGl2ZSB0aGF0IHNvbWV0
+aGluZyB3YXMgc2VyaW91c2x5IHdyb25nLiAgT25lIHBvc3NpYmlsaXR5IGlzIHRvIHRha2UgdGhl
+IG1hdHRlciB1cCB3aXRoIGEgbW9yZSBzZW5pb3IgZG9jdG9yLiBTdHVkZW50cyBhbmQgcmVzaWRl
+bnRzIGFyZSBub3cgZXhwZWN0ZWQgdG8gcHJvdmlkZSByb3V0aW5lIGZlZWRiYWNrIJcgcG9zaXRp
+dmUgYW5kIG5lZ2F0aXZlIJcgYWJvdXQgdGhlaXIgc3VwZXJ2aXNpbmcgcGh5c2ljaWFucyBhdCB0
+aGUgY2xvc2Ugb2YgdGhlaXIgcm90YXRpb24uIFBlbm55IEhlbmRlcnNvbiBhbmQgaGVyIGNvbGxl
+YWd1ZXMgYXQgdGhlIFVuaXZlcnNpdHkgb2YgQ2FtYnJpZGdlIHdyb3RlIGluIDIwMDUsIHBoeXNp
+Y2lhbnMgYW5kIHN0dWRlbnRzIG5lZWQgdG8gYmUgZWR1Y2F0ZWQgYWJvdXQgaG93IHRvIGdpdmUg
+ZmVlZGJhY2sgaW4gcHJvZmVzc2lvbmFsIGFuZCBub25jb25mcm9udGF0aW9uYWwgd2F5cy4gPEJS
+Pg0KVGhlIHN0dWRlbnQgd2hvc2UgcmVzaWRlbnQgc2VlbWluZ2x5IGxpZWQgdG8gdGhlIGF0dGVu
+ZGluZyBwaHlzaWNpYW4gYWJvdXQgdGhlIGJsb29kIHRlc3QgZGlkIG5vdCBzcGVhayB1cCBlaXRo
+ZXIuIEFuZCwgc2hlIGFkZGVkIHNoZWVwaXNobHksIGJvdGggdGhlIHJlc2lkZW50IGFuZCB0aGUg
+YXR0ZW5kaW5nIHBoeXNpY2lhbiB3b3VsZCBiZSBncmFkaW5nIGhlci4gIE9uZSBwb3NzaWJpbGl0
+eSBpcyB0byB0YWtlIHRoZSBtYXR0ZXIgdXAgd2l0aCBhIG1vcmUgc2VuaW9yIGRvY3Rvci4gT3Ig
+dGhlIHN0dWRlbnQgbWlnaHQgZ28gZGlyZWN0bHkgdG8gdGhlIHBhdGllbnQgb3IgZmFtaWx5LCB0
+ZWxsaW5nIHRoZW0gdGhhdCB0aGUgcGh5c2ljaWFucyBoYXZlIGEgZ2VudWluZSBkaXNhZ3JlZW1l
+bnQgYW5kIHRoYXQgdGhleSBkZXNlcnZlIHRvIGtub3cgYWJvdXQgaXQuIDxCUj4NClRoZSBzdHVk
+ZW50IHdob3NlIHJlc2lkZW50IHNlZW1pbmdseSBsaWVkIHRvIHRoZSBhdHRlbmRpbmcgcGh5c2lj
+aWFuIGFib3V0IHRoZSBibG9vZCB0ZXN0IGRpZCBub3Qgc3BlYWsgdXAgZWl0aGVyLiBUaGUgc3R1
+ZGVudCBhZG1pdHRlZCB0aGF0IGhlIHdhcyBmYXIgZnJvbSBwb3NpdGl2ZSB0aGF0IHNvbWV0aGlu
+ZyB3YXMgc2VyaW91c2x5IHdyb25nLiBQZW5ueSBIZW5kZXJzb24gYW5kIGhlciBjb2xsZWFndWVz
+IGF0IHRoZSBVbml2ZXJzaXR5IG9mIENhbWJyaWRnZSB3cm90ZSBpbiAyMDA1LCBwaHlzaWNpYW5z
+IGFuZCBzdHVkZW50cyBuZWVkIHRvIGJlIGVkdWNhdGVkIGFib3V0IGhvdyB0byBnaXZlIGZlZWRi
+YWNrIGluIHByb2Zlc3Npb25hbCBhbmQgbm9uY29uZnJvbnRhdGlvbmFsIHdheXMuIEJhdGNoZWxv
+ciwgd2l0aCBqdXN0IHVuZGVyIGZpdmUgaHVuZHJlZCBzdHVkZW50IHBsYWNlcyBhbGxvY2F0ZWQg
+Zm9yIDIwMDYsIGlzIHRoZSBzb2xlIHN1cnZpdm9yIG9mIHByZS1EYXdraW5zIGRheXMuIEJlZm9y
+ZSB0aGUgbGF0ZSAxOTQwcywgZWFjaCBzdGF0ZSBoYWQganVzdCBvbmUgdW5pdmVyc2l0eS48QlI+
+DQpCeSB0aGUgdGltZSB0aGUgRGF3a2lucyB3YXZlIG9mIG1lcmdlcnMgY29uY2x1ZGVkIGluIHRo
+ZSBlYXJseSAxOTkwcywgc2l4dHktdGhyZWUgaGlnaGVyIGVkdWNhdGlvbiBwcm92aWRlcnMgaGFk
+IGJlY29tZSB0aGlydHktc2l4IHVuaXZlcnNpdGllcywgbWFueSB3aXRoIG11bHRpcGxlIGNhbXB1
+c2VzLiBDYW5iZXJyYSB3b3VsZCBkZWNpZGUgaG93IG1hbnkgQ29tbW9ud2VhbHRoLXN1cHBvcnRl
+ZCBzdHVkZW50cyBjb3VsZCBiZSBlbnJvbGxlZCBhdCBlYWNoIHVuaXZlcnNpdHkgYW5kIHdoYXQg
+ZGlzY2lwbGluZXMgdGhleSB3ZXJlIHRvIHN0dWR5LiBDb3Vyc2VzIGFuZCBjYW1wdXNlcyBjb3Vs
+ZCBub3QgY2xvc2Ugd2l0aG91dCBwcmlvciBwZXJtaXNzaW9uLiBEYXdraW5zIGFubm91bmNlZCB0
+aGF0IHRoZSBDb21tb253ZWFsdGggd291bGQgb25seSBzdXBwb3J0IGluc3RpdHV0aW9ucyB3aXRo
+IGEgbWluaW11bSBvZiAyMDAwIGZ1bGwtdGltZSBzdHVkZW50cy48L1A+DQo8L0JPRFk+PC9IVE1M
+Pg0K
 
-------=_NextPart_001_0019_01C7A932.38CDD160--
 
-------=_NextPart_000_0018_01C7A932.38C93D80--
-
-
---===============1877916311277608287==
+--===============7521498153479370024==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -181,4 +148,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============1877916311277608287==--
+--===============7521498153479370024==--
