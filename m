@@ -1,46 +1,36 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Tue, 12 Jun 2007 05:36:36 +0000
-Subject: [KJ] [PATCH]is_power_of_2-scsi/NCR53C9x.c
-Message-Id: <1181625877.11780.24.camel@merlin.linuxcoe.com>
+From: Armin Schindler <armin@melware.de>
+Date: Fri, 08 Jun 2007 19:40:25 +0000
+Subject: [KJ] Re: [PATCH] [trivial] drivers/isdn/hardware/eicon/message.c:
+Message-Id: <Pine.LNX.4.61.0706082053150.30772@phoenix.one.melware.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matthew@wil.cx
-Cc: linux-scsi@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
+This patch replaces an array size calculation in
+drivers/isdn/hardware/eicon/message.c that was done using
+sizeof with the ARRAY_SIZE macro.
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+Tested by compilation on an i386 box using "allyesconfig".
+Diffed against Linus' git-tree.
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/drivers/scsi/NCR53C9x.c b/drivers/scsi/NCR53C9x.c
-index 8b5334c..2868b1a 100644
---- a/drivers/scsi/NCR53C9x.c
-+++ b/drivers/scsi/NCR53C9x.c
-@@ -33,6 +33,7 @@
- #include <linux/proc_fs.h>
- #include <linux/stat.h>
- #include <linux/init.h>
-+#include <linux/log2.h>
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+Acked-by: Armin Schindler <armin@melware.de>
+---
+diff --git a/drivers/isdn/hardware/eicon/message.c b/drivers/isdn/hardware/eicon/message.c
+index ccd35d0..582af66 100644
+--- a/drivers/isdn/hardware/eicon/message.c
++++ b/drivers/isdn/hardware/eicon/message.c
+@@ -552,7 +552,7 @@ word api_put(APPL   * appl, CAPI_MSG   * msg)
  
- #include "scsi.h"
- #include <scsi/scsi_host.h>
-@@ -1651,7 +1652,7 @@ static inline int reconnect_target(struct NCR_ESP *esp, struct ESP_regs *eregs)
- 	if(!(it & me))
- 		return -1;
- 	it &= ~me;
--	if(it & (it - 1))
-+	if(!is_power_of_2(it))
- 		return -1;
- 	while(!(it & 1))
- 		targ++, it >>= 1;
-
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+   for(j=0;j<MAX_MSG_PARMS+1;j++) msg_parms[j].length = 0;
+   for(i=0, ret = _BAD_MSG;
+-      i<(sizeof(ftable)/sizeof(struct _ftable));
++      i<ARRAY_SIZE(ftable);
+       i++) {
+ 
+     if(ftable[i].command=msg->header.command) {
 
 _______________________________________________
 Kernel-janitors mailing list
