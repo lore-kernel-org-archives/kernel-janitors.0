@@ -1,46 +1,85 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Tue, 12 Jun 2007 05:36:41 +0000
-Subject: [KJ] [PATCH]is_power_of_2-scsi/esp_scsi.c
-Message-Id: <1181625881.11780.25.camel@merlin.linuxcoe.com>
+From: Gloria <sirr@romanempire.com>
+Date: Sat, 09 Jun 2007 16:12:00 +0000
+Subject: [KJ] why didn't they just use "natural" or something like that.
+Message-Id: <466AD150.5080601@romanempire.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: linux-scsi@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
+CAON Releases Fact Sheet For Investors
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+Chan-On International Inc.
+Symbol: CAON
+Close: $0.72 UP 4.35%
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index ec71061..c416154 100644
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -14,6 +14,7 @@
- #include <linux/moduleparam.h>
- #include <linux/init.h>
- #include <linux/irqreturn.h>
-+#include <linux/log2.h>
- 
- #include <asm/irq.h>
- #include <asm/io.h>
-@@ -1130,7 +1131,7 @@ static int esp_reconnect(struct esp *esp)
- 		if (!(bits & esp->scsi_id_mask))
- 			goto do_reset;
- 		bits &= ~esp->scsi_id_mask;
--		if (!bits || (bits & (bits - 1)))
-+		if (!is_power_of_2(bits))
- 			goto do_reset;
- 
- 		target = ffs(bits) - 1;
+Read this over the weekend, you won't be sorry. CAON has changed
+direction and investors love it. Friday's volume went through the roof.
+Big news expected Monday. Set your marker for CAON first thing Monday!
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+You can learn more about IBM privacy practices on the Web. Is a person
+deadwhen the breathing stops?
+
+The whole "he who is without sin cast the first stone" and "love is not
+proud" thing.
+
+I'm in Tucson Arizona. By extending streaming capabilities to the
+set-top and IP devices, service providers can offer a wide spectrum of
+next-generation, value-added video entertainment services.
+He noticed that poor people were enjoying life too much and were living
+too long to be useful.
+
+ID MSN Jabber Username: Create an Account Forgot your login? Or is it
+whenthe child got into the womb, when the mother became pregnant, when
+thechild was conceived? About IBM      Privacy      Contact IBM , of
+Redwood City, California.
+By extending streaming capabilities to the set-top and IP devices,
+service providers can offer a wide spectrum of next-generation,
+value-added video entertainment services.
+
+Critical Mention, Inc.
+
+hope youre having a good time.
+
+Can you demarcatethe line when you become old?
+Herbs are woven into our folklore and our traditions.
+
+I just finished said book today, while drinking coffee in an entirely un
+burnt coffee house.
+
+is a wholly owned subsidiary of Cisco Systems, Inc. along with kill
+whitey songs, songs about failed attempts to rape peoples mothers due to
+obesity, songs about shitting your own guts out of your ass and other
+classics.
+They are cultivated and they grow wild.
+, a leading Web-based real-time television news search and broadcast
+monitoring service, has licensed the technology.
+
+Imagine innocent schoolgirls climbing into a water tower to escape the
+burning heat and being boiled alive.
+
+That dust becomes our ego.
+
+and the "mob" you refer to was not drunk.
+
+You cannot love with the ego;the ego becomes a barrier.
+
+If you find yourself classified in one of these categories, or if you're
+cool; kill whitey. , of Redwood City, California. The immediate benefit
+will be streamlining the routing of wireless phone traffic.
+and certain other countries.
+at any rate, we eventually got them to leave when i started trying to
+convert people from christianitybut i mean.
+
+legend doesn't say shit about thatfuck you then, go suck the sweet teat
+of coca-colaor eat bread, with high fructose corn syrup in it. " Cisco
+and Scientific Atlanta's presence at the show includes sponsored events
+and featured presentations. The journal articles examine some of the
+challenges, such as power dissipation, and offer solutions ranging from
+new device approaches to nanotechnology applications.
+This Web site may contain other proprietary notices and copyright
+information, the terms of which must be observed and followed.
 
 _______________________________________________
 Kernel-janitors mailing list
