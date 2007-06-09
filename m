@@ -1,9 +1,9 @@
-From: "Mathew Sanders" <wgcp.com@ourneighborhoodnews.com>
-Date: Fri, 08 Jun 2007 10:59:59 +0000
+From: "Andre Campbell" <tenisol.com@wilesreptiles.com>
+Date: Sat, 09 Jun 2007 03:02:27 +0000
 Subject: [KJ] Why be an average guy any longer
-Message-Id: <000001c7a9ba$a45e4080$0100007f@localhost>
+Message-Id: <000001c7aa41$3ad54500$0100007f@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7763082779682503856=="
+Content-Type: multipart/mixed; boundary="===============1046004050265359478=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000001c72390$caead980$0100007f@localhost>
 In-Reply-To: <000001c72390$caead980$0100007f@localhost>
@@ -11,34 +11,34 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============7763082779682503856==
+--===============1046004050265359478==
 Content-Type: multipart/related;
-	boundary="----=_NextPart_000_0001_01C7A9BA.A45E4080"
+	boundary="----=_NextPart_000_0001_01C7AA41.3AD54500"
 
 This is a multi-part message in MIME format.
 
-------=_NextPart_000_0001_01C7A9BA.A45E4080
+------=_NextPart_000_0001_01C7AA41.3AD54500
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_000E_01C7A9BA.A45E4080"
+	boundary="----=_NextPart_001_000E_01C7AA41.3AD54500"
 
 
-------=_NextPart_001_000E_01C7A9BA.A45E4080
+------=_NextPart_001_000E_01C7AA41.3AD54500
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
 See attach.
-http://www.farod.hk/
+http://www.iermolti.net/
 
 -----
-He smiled as he glanced down a
-Meaning? Your feelings would b
-She laughed, and heads turned 
-Tell me about these women, she
+Alec closed his eyes and praye
+Because of the hole in your wa
+No, he told her. Because you w
+No, she answered. She put her 
 
 
 
-------=_NextPart_001_000E_01C7A9BA.A45E4080
+------=_NextPart_001_000E_01C7AA41.3AD54500
 Content-Type: text/html;
     charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -48,36 +48,36 @@ Content-Transfer-Encoding: quoted-printable
 <META http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
 <STYLE> textarea { display:none; } </STYLE></HEAD>
 <BODY>
-<DIV><A href=3D"http://www.farod.hk/">
-<IMG src=3D"cid:img084.jpg@26776503.92889137" border=3D0>
+<DIV><A href=3D"http://www.iermolti.net/">
+<IMG src=3D"cid:img078.jpg@50224369.39749320" border=3D0>
 </A></DIV><br><br>
-<textarea>Its this chainofcommand thin
-</textarea><textarea>Come here, Judith. His voice w
-</textarea><textarea>Do you deliberately try to pro
-</textarea><textarea>He waited for her denial. An a
-</textarea><textarea>Yes, I do believe I am trying 
-</textarea><textarea>The look of astonishment on hi
-</textarea><textarea>They were just a breath away f
-</textarea><textarea>The woman was a temptress. Iai
-</textarea><textarea>He couldnt stay away from her.
-</textarea><textarea>Judith really wished hed say s
-</textarea><textarea>I did ask you to please give m
-</textarea><textarea>Iain couldnt make up his mind 
-</textarea><textarea>She knew it, too. She wished s
-</textarea><textarea>She turned her gaze to the flo
-</textarea><textarea>She thought shed sounded prope
-</textarea><textarea>You were trying to rile my tem
-</textarea><textarea>Yes, I was, she admitted. But 
+<textarea>Connor finally realized she wa
+</textarea><textarea>How do you know it will leave?
+</textarea><textarea>I know. He sounded terribly ce
+</textarea><textarea>He continued to stroke her and
+</textarea><textarea>Then he was moving, though slo
+</textarea><textarea>He wanted more than her accept
+</textarea><textarea>Connor braced his weight with 
+</textarea><textarea>Should I stop? His voice was r
+</textarea><textarea>He sounded angry. She looked a
+</textarea><textarea>He let out a low groan. Have I
+</textarea><textarea>He shook his head before repea
+</textarea><textarea>No, she said. He slowly withdr
+</textarea><textarea>She squeezed her eyes shut, le
+</textarea><textarea>It was all the encouragement h
+</textarea><textarea>He still believed he was the o
+</textarea><textarea>He would be well served, of co
+</textarea><textarea>He continued his pace until sh
 </textarea> 
 </BODY></HTML>
 
-------=_NextPart_001_000E_01C7A9BA.A45E4080--
+------=_NextPart_001_000E_01C7AA41.3AD54500--
 
-------=_NextPart_000_0001_01C7A9BA.A45E4080
+------=_NextPart_000_0001_01C7AA41.3AD54500
 Content-Type: image/jpeg;
 	name="pic68.jpg"
 Content-Transfer-Encoding: base64
-Content-ID: <img084.jpg@26776503.92889137>
+Content-ID: <img078.jpg@50224369.39749320>
 
 /9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAACgAA/+4AIUFkb2JlAGTAAAAA
 AQMAEAMCAwYAAApHAAAZIAAAOCX/2wCEABQQEBkSGScXFycyJh8mMi4mJiYmLj41NTU1NT5E
@@ -347,10 +347,10 @@ lMl5s8h9Bwiv+rz7PiZ/3e2m5cv8nL28KP5bmHV+3dwmh8H4dvn625PZR+Hn/i9vGj+XzHPn
 szycfbQ+Bs+Ln28N1L+W5B8bPs/d3V/1Ml58+Uejdwin+HyjL4mzPh9VXvg5tyZZfb9vbS8m
 34XLns9vH9S//9k=
 
-------=_NextPart_000_0001_01C7A9BA.A45E4080--
+------=_NextPart_000_0001_01C7AA41.3AD54500--
 
 
---===============7763082779682503856==
+--===============1046004050265359478==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -360,4 +360,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7763082779682503856==--
+--===============1046004050265359478==--
