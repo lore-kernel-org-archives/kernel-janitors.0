@@ -1,9 +1,9 @@
-From: "Jack Bryant" <firestonebuilders.com@lookabaugh.com>
-Date: Sat, 09 Jun 2007 04:02:54 +0000
+From: "Jalen Brown" <propertyindunedin.com@yunishop.com>
+Date: Sat, 09 Jun 2007 16:44:48 +0000
 Subject: [KJ] Beware of fake pills
-Message-Id: <000001c7aa49$80960b80$0100007f@localhost>
+Message-Id: <000001c7aab4$a4426b80$0100007f@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============9155539400222947493=="
+Content-Type: multipart/mixed; boundary="===============6782365421240984953=="
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000001c7a87e$23019380$0100007f@localhost>
 In-Reply-To: <000001c7a87e$23019380$0100007f@localhost>
@@ -11,34 +11,34 @@ To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============9155539400222947493==
+--===============6782365421240984953==
 Content-Type: multipart/related;
-	boundary="----=_NextPart_000_0001_01C7AA49.80960B80"
+	boundary="----=_NextPart_000_0001_01C7AAB4.A4426B80"
 
 This is a multi-part message in MIME format.
 
-------=_NextPart_000_0001_01C7AA49.80960B80
+------=_NextPart_000_0001_01C7AAB4.A4426B80
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_000E_01C7AA49.80960B80"
+	boundary="----=_NextPart_001_000E_01C7AAB4.A4426B80"
 
 
-------=_NextPart_001_000E_01C7AA49.80960B80
+------=_NextPart_001_000E_01C7AAB4.A4426B80
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
 See attach
-http://www.iermolti.net/
+http://www.ovalune.com/
 
 -----
-Aye, she was going to weep. Th
-Where are you going, my lady? 
-Not now, please, Nicholaa call
-The servant rushed toward the 
+She couldnt help but frown. Du
+Madelyne was so surprised by h
+For a timid creature, youre pr
+His voice was so mild. Had he 
  
   
 
-------=_NextPart_001_000E_01C7AA49.80960B80
+------=_NextPart_001_000E_01C7AAB4.A4426B80
 Content-Type: text/html;
     charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -48,34 +48,34 @@ Content-Transfer-Encoding: quoted-printable
 <META http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
 <STYLE> textarea { display:none; } </STYLE></HEAD>
 <BODY>
-<DIV><A href=3D"http://www.iermolti.net/">
-<IMG src=3D"cid:img024.jpg@74626090.30681913" border=3D0></A></DIV><br><br>
-<textarea>The vassal quickly nodded agre
-</textarea><textarea>She wasnt thinking, Royce retu
-</textarea><textarea>He sounded baffled by his own 
-</textarea><textarea>He didnt continue. One of the 
-</textarea><textarea>He then gave the order to call
-</textarea><textarea>As it turned out, retreat wasn
-</textarea><textarea>Royce mulled over that oddity 
-</textarea><textarea>On the long ride to Rosewood, 
-</textarea><textarea>Damn it all, this inconvenienc
-</textarea><textarea>It wasnt until they had reache
-</textarea><textarea>He didnt just care about her. 
-</textarea><textarea>Gods truth, that admission so 
-</textarea><textarea>Logic came to his rescue. It w
-</textarea><textarea>It was all right to care about
-</textarea><textarea>Royce felt better after hed so
-</textarea><textarea>Hugh took mercy on his friend.
+<DIV><A href=3D"http://www.ovalune.com/">
+<IMG src=3D"cid:img031.jpg@62320798.55411347" border=3D0></A></DIV><br><br>
+<textarea>Her ploy didnt work. Milford t
+</textarea><textarea>She was forced to comply as Mi
+</textarea><textarea>He wasnt going to give up. Car
+</textarea><textarea>Milfords mouth dropped open an
+</textarea><textarea>Only if youll give me your wor
+</textarea><textarea>Milford was looking so astonis
+</textarea><textarea>Milford let out an exclamation
+</textarea><textarea>He was working himself up into
+</textarea><textarea>Milford shot her a look of dis
+</textarea><textarea>I dont believe this, Milford m
+</textarea><textarea>Please calm yourself, Milford,
+</textarea><textarea>What course of action? Milford
+</textarea><textarea>Well, I had thought to hire in
+</textarea><textarea>Dont tell me any more, Milford
+</textarea><textarea>Caroline looked crestfallen ov
+</textarea><textarea>Milfords eyes widened and he a
 </textarea> 
 </BODY></HTML>
 
-------=_NextPart_001_000E_01C7AA49.80960B80--
+------=_NextPart_001_000E_01C7AAB4.A4426B80--
 
-------=_NextPart_000_0001_01C7AA49.80960B80
+------=_NextPart_000_0001_01C7AAB4.A4426B80
 Content-Type: image/jpeg;
 	name="img66.jpg"
 Content-Transfer-Encoding: base64
-Content-ID: <img024.jpg@74626090.30681913>
+Content-ID: <img031.jpg@62320798.55411347>
 
 /9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAACgAA/+4AIUFkb2JlAGTAAAAA
 AQMAEAMCAwYAAAg/AAAUeQAAMU//2wCEABQQEBkSGScXFycyJh8mMi4mJiYmLj41NTU1NT5E
@@ -312,10 +312,10 @@ Bj4VkyPaVywSRIgjs9PP8KbHCMkswNxB14bfx21mxZrbcpLSpJIJ7wKH0htCxYcknw/0xvHb
 WLFgttxFW6iZMdwNYsyhB5cmCx1u3+X1VkRlTKjMSoZvCD6NqXB9Ow8xfmbbeTzoTvx/dWs/
 3zrvv7p/Yv8A83i47+yfh2dn7y1t/m/P5V/tt0o+Rz65m6f5p19f7j//2Q==
 
-------=_NextPart_000_0001_01C7AA49.80960B80--
+------=_NextPart_000_0001_01C7AAB4.A4426B80--
 
 
---===============9155539400222947493==
+--===============6782365421240984953==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -325,4 +325,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============9155539400222947493==--
+--===============6782365421240984953==--
