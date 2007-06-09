@@ -1,7 +1,7 @@
-From: "Jaswant Kebert" <taxidermyunhesitating@soltechsite.com>
-Date: Sat, 02 Jun 2007 15:58:04 +0000
-Subject: [KJ] Re:
-Message-Id: <01c7a529$c666b350$6c822ecf@taxidermyunhesitating>
+From: "Emory Babb" <bbum@mail.china.com>
+Date: Sat, 09 Jun 2007 14:19:26 +0000
+Subject: [KJ] RE:
+Message-Id: <001301c7aae4$ee2695c0$00c0ab44@user090da06534>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c327ad$be155380$6c822ecf@fragonardbiblical>
 In-Reply-To: <01c327ad$be155380$6c822ecf@fragonardbiblical>
@@ -10,25 +10,29 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-UNIVERSITY DIPLOMAS
 
-Obtain a prosperous future, money-earning power and the
-prestige that comes with having the career position you've
-always dreamed of. Diplomas from prestigious non-accredited
-universities based on your present knowledge and life experience.
+Dont wanna rumors be spread about your penis size? Try Penis Enlarge Patch.
 
-If you qualify, no tests, classes, books or examinations will be required.
+http://www.ebora.hk/
 
-Bachelors', Masters', MBA's, Doctorate & Ph.D. degrees available in your field.
+Try Penis Enlarge Patch and even a horse will be jealous of your penis.
 
-CONFIDENTIALITY ASSURED
 
-CALL NOW TO RECEIVE YOUR DIPLOMA WITHIN 2 WEEKS
 
-1-206-338-2427
 
-Call 24HRS, 7 days a week, including Sundays and holidays
 
+
+
+
+
+
+
+
+
+
+------------------------
+German word is pronounced without having  to ask; whereas in our language if
+distribution; so the gender of each must be learned separately and by heart.There is  no  other  way. To do  this  one  has  to  have  a  memory like  amemorandum-book.  In German, a young lady has  no  sex, while a  turnip has.Think what overwrought reverence that shows for the turnip, and what callous
 
 _______________________________________________
 Kernel-janitors mailing list
