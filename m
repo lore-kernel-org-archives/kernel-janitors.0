@@ -1,171 +1,307 @@
-From: "Isaiah Q. Dunbar" <bbc@clemson.edu>
-Date: Sat, 09 Jun 2007 01:25:46 +0000
-Subject: [KJ] electricity sludge
-Message-Id: <466A019A.2050405@clemson.edu>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1181352343-3969-209"
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Sun, 10 Jun 2007 10:35:08 +0000
+Subject: [KJ] [PATCH] drivers/isdn/hisax: ARRAY_SIZE instead of sizeof
+Message-Id: <200706101235.09578.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1181352343-3969-209
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-CAON Takes New Direction. Investors Are All Over It!
-
-Chan-On International Inc.
-Symbol: CAON
-Close: $0.72 UP 4.35%
-
-Volume Jumped through the roof today as CAON announced it has changed
-its direction and acquired Harbin Hongbo, as wells as its 12 patients
-for environmentally safe construction materials. Investors are already
-seeing the potential. We expect great things from CAON with big news
-expected Monday. Get on CAON first thing Monday!
-
-To deauthorize all computers associated with your account: Click iTunes
-Store in the Source pane. If the Control Panel is in Classic view, open
-Windows Update. For more information about Complete my Album, see this
-document.
-
-Note: You may only use this feature once per year. You can avoid this by
-making iTunes load song previews before playing them. Even my favorite
-test tends to overstate the risk. The short answer is yes.
-
-Assuming that computer "A" and computer "B" can "see" each other across
-your network, it's actually a relatively simply matter to print on
-either printer from either machine.
-
-How much does iTunes Plus music cost?
-Speed Up Your XP System!
-iTunes Plus music can be found on all iTunes Stores worldwide.
-
-Optimize is an exciting software program that automatically diagnoses
-your PC and gives you a custom report detailing every issue hurting your
-PC's performance: Scan Now! These DRM-free songs, called "iTunes Plus,"
-have no usage restrictions and feature higher-quality encoding. To buy
-everything, click the "Buy Now" button at the bottom-right corner of the
-window. Click the Deauthorize All button.
-
-If I join, will they be able to see personal information on my computer?
-
-When downloading software or whatever, what is the difference between
-RUN and SAVE?
-How much does iTunes Plus music cost? With shopping cart purchases, you
-can decide to buy everything in your cart or choose individual books to
-buy.
-
-Continue reading: "How secure am I on a VPN?
-
-Use one of the options below. Make sure that all of your authorized
-computers are using the latest version of iTunes.
-
-If you are uncertain about your right to copy any material, you should
-contact your legal advisor.
-
-If you click any of these albums, you'll be taken to that album page.
-
-I used to use AVG, and McAfee, but they created so many processes and
-hogged so much time, everything slowed to a halt.
-How does Complete My Album work for iTunes Plus? I can't figure a way to
-get it added to msconfig's startup file, and I can no longer just go
-into autoexec. Speed Up Your XP System!
-
-How much does iTunes Plus music cost? On the Apple Account Information
-page, click the Manage iTunes Plus button.
-Artist pages Click the artist's name tab in the navigation bar and
-you'll find a listing of all available albums, a biography, and more.
-Can I use iTunes Gift Cards and iTunes Gift Certificates to pay for
-iTunes Plus music? This replaces all music you've bought previously on
-iTunes with available iTunes Plus versions of the same music.
-
-In other words, the AAC Protected album with music video may be upgraded
-to an iTunes Plus album without music video.
-
-Click Repair Disk Permissions. Whatever method you choose to do your
-book browsing, you'll ultimately wind up clicking a link that takes you
-to an audiobook page. How secure am I on a VPN?
-Continue reading:  "How do I use a printer that's on another machine on
-my network? Continue reading:  "Why do these firewall tests say I've
-failed?
-
-Click Repair Disk Permissions.
-
-To enable iTunes Plus, select "Always show me iTunes Plus music and
-music videos when available. For more information about iTunes Plus,
-please visit the  iTunes Plus FAQ. The format of music you will receive
-with a Complete My Album purchase depends upon how you have set your
-iTunes Plus preference. One of the beauties of the iTunes Store is you
-don't have to go into any purchase blindly. Your upgraded iTunes Plus
-music will replace the original purchases in your library.
-There are risks inherent in the use of any information or products found
-on the Internet, and Apple assumes no responsibility in this regard.
-
-Your pending purchases are listed in a preview pane just like what you
-see in any album or singles page.
-
-You can avoid this by making iTunes load song previews before playing
-them. Yes No iTunes for Mac: How to copy purchases between authorized
-computers  This document is for Mac users. From the Store menu, choose
-View My Account.
-Enter your password and click View Account.
-If you can't copy songs that play fine in iTunes to your iPod, see this
-article for more information. If you see "Add" buttons, clicking them
-adds songs or albums to a virtualshopping cart from which you can
-purchase and download items. Run our free Optimize scan to find out how
-to fine-tune your Internet and System settings.
-
-AAC-encoded songs that were not created with iTunes or downloaded from
-the iTunes Store, may not play in iTunes.
-
-You can do a search for stuff if you know who or what you're looking for.
-
-
-------------=_1181352343-3969-209
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  CAON Takes New Direction. Investors Are All Over It!
-  Chan-On International Inc. Symbol: CAON Close: $0.72 UP 4.35% Volume
-  Jumped through the roof today as CAON announced it has changed its
-  direction and acquired Harbin Hongbo, as wells as its 12 patients for
-  environmentally safe construction materials. Investors are already
-  seeing the potential. We expect great things from CAON with big news
-  expected Monday. Get on CAON first thing Monday! [...] 
-
-Content analysis details:   (6.9 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_DHCP      Relay HELO'd using suspicious hostname (DHCP)
- 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
-                            1)
- 1.5 OUTFLUX_INVEST_SYMBOL  BODY: has "Symbol" in it
--2.3 BAYES_00               BODY: Bayesian spam probability is 0 to 1%
-                            [score: 0.0000]
-
-
-
-------------=_1181352343-3969-209
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: kkeil@suse.de
+Cc: kernel-janitors@lists.osdl.org, linux-kernel <linux-kernel@vger.kernel.org>
 
+This patch replaces various array size calculations in drivers/isdn/hisax
+done using sizeof with the ARRAY_SIZE macro.
+
+Please CC me when you write comments, because I'm not subscribed
+to the LKML.
+
+Tested by compilation on an i386 box using "allyesconfig".
+Diffed against Linus' git-tree.
+
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+---
+diff --git a/drivers/isdn/hisax/callc.c b/drivers/isdn/hisax/callc.c
+index 7c56c44..50b98d5 100644
+--- a/drivers/isdn/hisax/callc.c
++++ b/drivers/isdn/hisax/callc.c
+@@ -834,7 +834,7 @@ static struct FsmNode fnlist[] __initdata  };
+ /* *INDENT-ON* */
+ 
+-#define FNCOUNT (sizeof(fnlist)/sizeof(struct FsmNode))
++#define FNCOUNT ARRAY_SIZE(fnlist)
+ 
+ int __init
+ CallcNew(void)
+diff --git a/drivers/isdn/hisax/isdnl1.c b/drivers/isdn/hisax/isdnl1.c
+index a14204e..39c749c 100644
+--- a/drivers/isdn/hisax/isdnl1.c
++++ b/drivers/isdn/hisax/isdnl1.c
+@@ -647,7 +647,7 @@ static struct FsmNode L1SFnList[] __initdata  	{ST_L1_F8, EV_TIMER_DEACT, l1_timer_deact},
+ };
+ 
+-#define L1S_FN_COUNT (sizeof(L1SFnList)/sizeof(struct FsmNode))
++#define L1S_FN_COUNT ARRAY_SIZE(L1SFnList)
+ 
+ #ifdef HISAX_UINTERFACE
+ static void
+@@ -706,7 +706,7 @@ static struct FsmNode L1UFnList[] __initdata  	{ST_L1_RESET, EV_TIMER_DEACT, l1_timer_deact},
+ };
+ 
+-#define L1U_FN_COUNT (sizeof(L1UFnList)/sizeof(struct FsmNode))
++#define L1U_FN_COUNT ARRAY_SIZE(L1UFnList)
+ 
+ #endif
+ 
+@@ -754,7 +754,7 @@ static struct FsmNode L1BFnList[] __initdata  	{ST_L1_WAIT_DEACT, EV_TIMER_DEACT, l1b_timer_deact},
+ };
+ 
+-#define L1B_FN_COUNT (sizeof(L1BFnList)/sizeof(struct FsmNode))
++#define L1B_FN_COUNT ARRAY_SIZE(L1BFnList)
+ 
+ int __init 
+ Isdnl1New(void)
+diff --git a/drivers/isdn/hisax/isdnl2.c b/drivers/isdn/hisax/isdnl2.c
+index 3446f24..846a7e6 100644
+--- a/drivers/isdn/hisax/isdnl2.c
++++ b/drivers/isdn/hisax/isdnl2.c
+@@ -1623,7 +1623,7 @@ static struct FsmNode L2FnList[] __initdata  	{ST_L2_8, EV_L1_DEACTIVATE, l2_persistent_da},
+ };
+ 
+-#define L2_FN_COUNT (sizeof(L2FnList)/sizeof(struct FsmNode))
++#define L2_FN_COUNT ARRAY_SIZE(L2FnList)
+ 
+ static void
+ isdnl2_l1l2(struct PStack *st, int pr, void *arg)
+diff --git a/drivers/isdn/hisax/isdnl3.c b/drivers/isdn/hisax/isdnl3.c
+index 935f233..c081fed 100644
+--- a/drivers/isdn/hisax/isdnl3.c
++++ b/drivers/isdn/hisax/isdnl3.c
+@@ -543,7 +543,7 @@ static struct FsmNode L3FnList[] __initdata  };
+ /* *INDENT-ON* */
+ 
+-#define L3_FN_COUNT (sizeof(L3FnList)/sizeof(struct FsmNode))
++#define L3_FN_COUNT ARRAY_SIZE(L3FnList)
+ 
+ void
+ l3_msg(struct PStack *st, int pr, void *arg)
+diff --git a/drivers/isdn/hisax/l3_1tr6.c b/drivers/isdn/hisax/l3_1tr6.c
+index c5c36ee..ff62679 100644
+--- a/drivers/isdn/hisax/l3_1tr6.c
++++ b/drivers/isdn/hisax/l3_1tr6.c
+@@ -698,8 +698,7 @@ static struct stateentry downstl[]  	 CC_T308_2, l3_1tr6_t308_2},
+ };
+ 
+-#define DOWNSTL_LEN \
+-	(sizeof(downstl) / sizeof(struct stateentry))
++#define DOWNSTL_LEN ARRAY_SIZE(downstl)
+ 
+ static struct stateentry datastln1[]  {
+@@ -735,8 +734,7 @@ static struct stateentry datastln1[]  	 MT_N1_REL_ACK, l3_1tr6_rel_ack}
+ };
+ 
+-#define DATASTLN1_LEN \
+-	(sizeof(datastln1) / sizeof(struct stateentry))
++#define DATASTLN1_LEN ARRAY_SIZE(datastln1)
+ 
+ static struct stateentry manstatelist[]  {
+@@ -746,8 +744,7 @@ static struct stateentry manstatelist[]           DL_RELEASE | INDICATION, l3_1tr6_dl_release},
+ };
+  
+-#define MANSLLEN \
+-        (sizeof(manstatelist) / sizeof(struct stateentry))
++#define MANSLLEN ARRAY_SIZE(manstatelist)
+ /* *INDENT-ON* */
+ 
+ static void
+diff --git a/drivers/isdn/hisax/l3dss1.c b/drivers/isdn/hisax/l3dss1.c
+index 99feae8..c434fa5 100644
+--- a/drivers/isdn/hisax/l3dss1.c
++++ b/drivers/isdn/hisax/l3dss1.c
+@@ -2820,8 +2820,7 @@ static struct stateentry downstatelist[]  	 CC_T309, l3dss1_dl_release},
+ };
+ 
+-#define DOWNSLLEN \
+-	(sizeof(downstatelist) / sizeof(struct stateentry))
++#define DOWNSLLEN ARRAY_SIZE(downstatelist)
+ 
+ static struct stateentry datastatelist[]  {
+@@ -2875,8 +2874,7 @@ static struct stateentry datastatelist[]  	 MT_RESUME_REJECT, l3dss1_resume_rej},
+ };
+ 
+-#define DATASLLEN \
+-	(sizeof(datastatelist) / sizeof(struct stateentry))
++#define DATASLLEN ARRAY_SIZE(datastatelist)
+ 
+ static struct stateentry globalmes_list[]  {
+@@ -2888,8 +2886,7 @@ static struct stateentry globalmes_list[]  	 MT_RESTART_ACKNOWLEDGE, l3dss1_restart_ack},
+ */
+ };
+-#define GLOBALM_LEN \
+-	(sizeof(globalmes_list) / sizeof(struct stateentry))
++#define GLOBALM_LEN ARRAY_SIZE(globalmes_list)
+ 
+ static struct stateentry manstatelist[]  {
+@@ -2903,8 +2900,7 @@ static struct stateentry manstatelist[]           DL_RELEASE | INDICATION, l3dss1_dl_release},
+ };
+ 
+-#define MANSLLEN \
+-        (sizeof(manstatelist) / sizeof(struct stateentry))
++#define MANSLLEN ARRAY_SIZE(manstatelist)
+ /* *INDENT-ON* */
+ 
+ 
+diff --git a/drivers/isdn/hisax/l3ni1.c b/drivers/isdn/hisax/l3ni1.c
+index f7041d5..ba05ae3 100644
+--- a/drivers/isdn/hisax/l3ni1.c
++++ b/drivers/isdn/hisax/l3ni1.c
+@@ -2755,8 +2755,7 @@ static struct stateentry downstatelist[]  	 CC_TSPID, l3ni1_spid_tout },
+ };
+ 
+-#define DOWNSLLEN \
+-	(sizeof(downstatelist) / sizeof(struct stateentry))
++#define DOWNSLLEN ARRAY_SIZE(downstatelist)
+ 
+ static struct stateentry datastatelist[]  {
+@@ -2810,8 +2809,7 @@ static struct stateentry datastatelist[]  	 MT_RESUME_REJECT, l3ni1_resume_rej},
+ };
+ 
+-#define DATASLLEN \
+-	(sizeof(datastatelist) / sizeof(struct stateentry))
++#define DATASLLEN ARRAY_SIZE(datastatelist)
+ 
+ static struct stateentry globalmes_list[]  {
+@@ -2825,8 +2823,7 @@ static struct stateentry globalmes_list[]  	{ SBIT( 0 ), MT_DL_ESTABLISHED, l3ni1_spid_send },
+ 	{ SBIT( 20 ) | SBIT( 21 ) | SBIT( 22 ), MT_INFORMATION, l3ni1_spid_epid },
+ };
+-#define GLOBALM_LEN \
+-	(sizeof(globalmes_list) / sizeof(struct stateentry))
++#define GLOBALM_LEN ARRAY_SIZE(globalmes_list)
+ 
+ static struct stateentry manstatelist[]  {
+@@ -2840,8 +2837,7 @@ static struct stateentry manstatelist[]           DL_RELEASE | INDICATION, l3ni1_dl_release},
+ };
+ 
+-#define MANSLLEN \
+-        (sizeof(manstatelist) / sizeof(struct stateentry))
++#define MANSLLEN ARRAY_SIZE(manstatelist)
+ /* *INDENT-ON* */
+ 
+ 
+diff --git a/drivers/isdn/hisax/q931.c b/drivers/isdn/hisax/q931.c
+index aacbf0d..8b853d5 100644
+--- a/drivers/isdn/hisax/q931.c
++++ b/drivers/isdn/hisax/q931.c
+@@ -140,7 +140,7 @@ struct MessageType {
+ 	}
+ };
+ 
+-#define MTSIZE sizeof(mtlist)/sizeof(struct MessageType)
++#define MTSIZE ARRAY_SIZE(mtlist)
+ 
+ static
+ struct MessageType mt_n0[] @@ -157,7 +157,7 @@ struct MessageType mt_n0[]  	{MT_N0_CLO_ACK, "CLOse ACKnowledge"}
+ };
+ 
+-#define MT_N0_LEN (sizeof(mt_n0) / sizeof(struct MessageType))
++#define MT_N0_LEN ARRAY_SIZE(mt_n0)
+ 
+ static
+ struct MessageType mt_n1[] @@ -194,7 +194,7 @@ struct MessageType mt_n1[]  	{MT_N1_STAT, "STATus"}
+ };
+ 
+-#define MT_N1_LEN (sizeof(mt_n1) / sizeof(struct MessageType))
++#define MT_N1_LEN ARRAY_SIZE(mt_n1)
+ 
+ 
+ static int
+@@ -438,7 +438,7 @@ struct CauseValue {
+ 	},
+ };
+ 
+-#define CVSIZE sizeof(cvlist)/sizeof(struct CauseValue)
++#define CVSIZE ARRAY_SIZE(cvlist)
+ 
+ static
+ int
+@@ -516,7 +516,7 @@ struct MessageType cause_1tr6[]  	{CAUSE_UserInfoDiscarded, "User Info Discarded"}
+ };
+ 
+-static int cause_1tr6_len = (sizeof(cause_1tr6) / sizeof(struct MessageType));
++static int cause_1tr6_len = ARRAY_SIZE(cause_1tr6);
+ 
+ static int
+ prcause_1tr6(char *dest, u_char * p)
+@@ -865,7 +865,7 @@ struct DTag { /* Display tags */
+ 	{ 0x96, "Redirection name" },
+ 	{ 0x9e, "Text" },
+ };
+-#define DTAGSIZE sizeof(dtaglist)/sizeof(struct DTag)
++#define DTAGSIZE ARRAY_SIZE(dtaglist)
+ 
+ static int
+ disptext_ni1(char *dest, u_char * p)
+@@ -1074,7 +1074,7 @@ struct InformationElement {
+ };
+ 
+ 
+-#define IESIZE sizeof(ielist)/sizeof(struct InformationElement)
++#define IESIZE ARRAY_SIZE(ielist)
+ 
+ static
+ struct InformationElement ielist_ni1[] = {
+@@ -1102,7 +1102,7 @@ struct InformationElement ielist_ni1[] = {
+ };
+ 
+ 
+-#define IESIZE_NI1 sizeof(ielist_ni1)/sizeof(struct InformationElement)
++#define IESIZE_NI1 ARRAY_SIZE(ielist_ni1)
+ 
+ static
+ struct InformationElement ielist_ni1_cs5[] = {
+@@ -1110,14 +1110,14 @@ struct InformationElement ielist_ni1_cs5[] = {
+ 	{ 0x2a, "Display text", disptext_ni1 },
+ };
+ 
+-#define IESIZE_NI1_CS5 sizeof(ielist_ni1_cs5)/sizeof(struct InformationElement)
++#define IESIZE_NI1_CS5 ARRAY_SIZE(ielist_ni1_cs5)
+ 
+ static
+ struct InformationElement ielist_ni1_cs6[] = {
+ 	{ 0x7b, "Call appearance", general_ni1 },
+ };
+ 
+-#define IESIZE_NI1_CS6 sizeof(ielist_ni1_cs6)/sizeof(struct InformationElement)
++#define IESIZE_NI1_CS6 ARRAY_SIZE(ielist_ni1_cs6)
+ 
+ static struct InformationElement we_0[]  {
+@@ -1133,7 +1133,7 @@ static struct InformationElement we_0[]  	{WE0_userInfo, "User Info", general}
+ };
+ 
+-#define WE_0_LEN (sizeof(we_0) / sizeof(struct InformationElement))
++#define WE_0_LEN ARRAY_SIZE(we_0)
+ 
+ static struct InformationElement we_6[]  {
+@@ -1145,7 +1145,7 @@ static struct InformationElement we_6[]  	{WE6_statusCalled, "Status Called", general},
+ 	{WE6_addTransAttr, "Additional Transmission Attributes", general}
+ };
+-#define WE_6_LEN (sizeof(we_6) / sizeof(struct InformationElement))
++#define WE_6_LEN ARRAY_SIZE(we_6)
+ 
+ int
+ QuickHex(char *txt, u_char * p, int cnt)
+diff --git a/drivers/isdn/hisax/tei.c b/drivers/isdn/hisax/tei.c
+index ceb0df9..21567af 100644
+--- a/drivers/isdn/hisax/tei.c
++++ b/drivers/isdn/hisax/tei.c
+@@ -447,7 +447,7 @@ static struct FsmNode TeiFnList[] __initdata  	{ST_TEI_IDVERIFY, EV_CHKREQ, tei_id_chk_req},
+ };
+ 
+-#define TEI_FN_COUNT (sizeof(TeiFnList)/sizeof(struct FsmNode))
++#define TEI_FN_COUNT ARRAY_SIZE(TeiFnList)
+ 
+ int __init
+ TeiNew(void)
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1181352343-3969-209--
