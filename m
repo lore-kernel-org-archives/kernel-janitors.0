@@ -1,104 +1,122 @@
-From: acripps <acripps@gmail.com>
-Date: Sat, 09 Jun 2007 03:01:35 +0000
-Subject: [KJ] [PATCH 1.5/4] 2.6 drivers/net sctisys-sir clean up whitespace
-Message-Id: <20070609031335.14624.25357.sendpatchset@localhost.localdomain>
+From: "Walter A. Peters" <uty@mediom.qc.ca>
+Date: Mon, 11 Jun 2007 02:32:19 +0000
+Subject: [KJ] net :: Root Cause Analysis :: RCA Articles .
+Message-Id: <466CB433.3020608@mediom.qc.ca>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1181529142-3969-72"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-this patch is just a bit of a treat ... this removes the unneccesary whites=
-pace from
-before newline characters ... this is purely cosmetic.
-Signed-off-by: Aaron Cripps <cripps@cs.mun.ca>
+This is a multi-part message in MIME format...
+
+------------=_1181529142-3969-72
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+CAON Now Holds 12 Environmental Patents! Investors Respond!
+
+Chan-On International Inc.
+Symbol: CAON
+Close: $0.72 UP 4.35%
+
+CAON acquires Harbin Hongbo and its 12 patents. This company's new
+direction was released in a fact sheet Friday. Investors are already
+jumping all over it. Read the release and get all over CAON first thing
+Monday!
+
+Although they could have, they did not compensate by eating more
+proteins and fats and they weren't bored with the food choices. We
+respect your privacy.
+
+All patients stayed in the hospital for the length of the study to
+insure exact measurements of calorie intake and expenditure.
+Instructions - What instructions were provided to direct performance of
+the activity?
+There is a real danger of pigeon-holing this event as "a project
+management problem", "a contractor problem", or "a procedure adherence
+problem". , began offering low-carb wraps last year and gave customers
+the option of scraping out the innards of the bagel to cut back on
+carbs. Yes, they usually yield some changes in behaviours for a while.
+In addition to the calorie reduction and weight loss, subjects
+experienced markedly improved glucose levels and insulin sensitivity, as
+well as lower triglycerides and cholesterol. Some food companies that
+had boned-up on low-carbohydrate products in recent months are now faced
+with unsold stockpiles of low-carb foods.
+To estimate their level of physical activity, women in both groups were
+fitted with pedometers, which recorded the number of steps they took
+daily. And now all those low-carb products are turning into un-eaten
+stockpiles that are ending up at food banks.
+
+But now surplus low-carb Atkins diet foods that were never sold are
+being shipped to food banks in Appalachia. Root Cause Analysis - Art or
+Science? Each week, 'Today' Food Editor Phil Lempert brings you the
+latest information and advice about shopping and cooking.
+
+Track news on heart health at HeartDiseaseCureNews. Were they suitable
+for the task? And now all those low-carb products are turning into
+un-eaten stockpiles that are ending up at food banks.
+
+Other research projects of Boden's include a National Institutes of
+Health supported study of obesity-associated diabetes and cardiovascular
+disease.
+
+the belief that different analysts performing independent investigations
+of the same issue will not arrive at identical results. In the end,
+there was no single magic bullet that caused the problem, but many
+smaller issues scattered throughout the organization like buckshot.
+
+Aptitude - What level of aptitude did the performer have for this
+specific activity? The problem is sugar substitutes can confuse the
+body's ability to gauge caloric intake, and this can backfire on those
+who use them to help manage their weight.
+
+People behave as they do for reasons that make perfect sense to them.
+Was the sequence followed?
 
 
-diff --git a/drivers/net/irda/actisys-sir.c b/drivers/net/irda/actisys-sir.c
-index 9715ab5..8cacf74 100644
---- a/drivers/net/irda/actisys-sir.c
-+++ b/drivers/net/irda/actisys-sir.c
-@@ -1,8 +1,8 @@
- /*********************************************************************
-- *               =20
-+ *
-  * Filename:      actisys.c
-  * Version:       1.1
-- * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+=20
-+ * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+
-  *                dongles
-  * Status:        Beta.
-  * Authors:       Dag Brattli <dagb@cs.uit.no> (initially)
-@@ -11,20 +11,20 @@
-  * Created at:    Wed Oct 21 20:02:35 1998
-  * Modified at:   Sun Oct 27 22:02:13 2002
-  * Modified by:   Martin Diehl <mad@mdiehl.de>
-- *=20
-+ *
-  *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.
-  *     Copyright (c) 1999 Jean Tourrilhes
-  *     Copyright (c) 2002 Martin Diehl
-- *     =20
-- *     This program is free software; you can redistribute it and/or=20
-- *     modify it under the terms of the GNU General Public License as=20
-- *     published by the Free Software Foundation; either version 2 of=20
-+ *
-+ *     This program is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of
-  *     the License, or (at your option) any later version.
-- * =20
-+ *
-  *     Neither Dag Brattli nor University of Troms=F8 admit liability nor
-- *     provide warranty for any of this software. This material is=20
-+ *     provide warranty for any of this software. This material is
-  *     provided "AS-IS" and at no charge.
-- *    =20
-+ *
-  ********************************************************************/
-=20
- /*
-@@ -48,7 +48,7 @@
-=20
- #include "sir-dev.h"
-=20
--/*=20
-+/*
-  * Define the timing of the pulses we send to the dongle (to reset it, and
-  * to toggle speeds). Basically, the limit here is the propagation speed of
-  * the signals through the serial port, the dongle being much faster.  Any
-@@ -172,9 +172,9 @@ static int actisys_change_speed(struct sir_dev *dev, un=
-signed speed)
- 	 * we are in known state (dongle default)
- 	 */
-=20
--	/*=20
-+	/*
- 	 * Now, we can set the speed requested. Send RTS pulses until we
--         * reach the target speed=20
-+         * reach the target speed
- 	 */
- 	for (i =3D 0; i < MAX_SPEEDS; i++) {
- 		if (speed =3D baud_rates[i]) {
-@@ -230,14 +230,14 @@ static int actisys_reset(struct sir_dev *dev)
-=20
- 	/* Go back to normal mode */
- 	sirdev_set_dtr_rts(dev, TRUE, TRUE);
--=09
-+
- 	dev->speed =3D 9600;	/* That's the default */
-=20
- 	return 0;
- }
-=20
- MODULE_AUTHOR("Dag Brattli <dagb@cs.uit.no> - Jean Tourrilhes <jt@hpl.hp.c=
-om>");
--MODULE_DESCRIPTION("ACTiSYS IR-220L and IR-220L+ dongle driver");=09
-+MODULE_DESCRIPTION("ACTiSYS IR-220L and IR-220L+ dongle driver");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("irda-dongle-2"); /* IRDA_ACTISYS_DONGLE */
- MODULE_ALIAS("irda-dongle-3"); /* IRDA_ACTISYS_PLUS_DONGLE */
+------------=_1181529142-3969-72
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  CAON Now Holds 12 Environmental Patents! Investors
+  Respond! Chan-On International Inc. Symbol: CAON Close: $0.72 UP 4.35%
+  CAON acquires Harbin Hongbo and its 12 patents. This company's new
+  direction was released in a fact sheet Friday. Investors are already
+  jumping all over it. Read the release and get all over CAON first thing
+  Monday! [...] 
+
+Content analysis details:   (6.9 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 0.5 DIET_1                 BODY: Lose Weight Spam
+ 1.5 OUTFLUX_INVEST_SYMBOL  BODY: has "Symbol" in it
+ 1.0 WEIGHT_LOSS_OSDL6      BODY: WEIGHT_LOSS_OSDL6
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.4991]
+
+
+
+------------=_1181529142-3969-72
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1181529142-3969-72--
