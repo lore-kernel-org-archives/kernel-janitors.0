@@ -1,22 +1,24 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Mon, 25 Jun 2007 11:51:12 +0000
-Subject: Re: [KJ] why two different implementations for /dev/zero?
-Message-Id: <20070625115112.GH22063@parisc-linux.org>
+From: "Kisa" <voerkjaiju@joongang.co.kr>
+Date: Mon, 11 Jun 2007 06:47:13 +0000
+Subject: [KJ] Re: Photo
+Message-Id: <DD7848C0.A5F910CB@joongang.co.kr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0706250718430.4102@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0706250718430.4102@localhost.localdomain>
+References: <B8852041.34BDC580@bednbreakfast.nu>
+In-Reply-To: <B8852041.34BDC580@bednbreakfast.nu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 25, 2007 at 07:22:06AM -0400, Robert P. J. Day wrote:
-> where the non-MMU version is noticeably simpler and would appear to
-> work just fine in both cases.  is there a compelling reason for the
-> more complex MMU version?  is it faster?
+Hello my dear friend
+I was looking athrough the web fbew weeks ago and found 
+your profile. Now I decided to email you to get to know
+you better. I am coming to your countray in few weeks
+and thbought may be we can meaet each other. I am pretty
+looking girl. I am 25. Do not reply to this address 
+directly. Email mae back at czuty@MailVisionWorld.info
 
-The comments certainly imply that it's faster.  Have you tried
-benchmarking it?
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
