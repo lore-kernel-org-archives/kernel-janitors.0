@@ -1,13 +1,13 @@
 From: vignesh babu <vignesh.babu@wipro.com>
-Date: Tue, 12 Jun 2007 05:13:01 +0000
-Subject: [KJ] [PATCH]is_power_of_2-myri10ge/myri10ge.c
-Message-Id: <1181624462.3109.22.camel@merlin.linuxcoe.com>
+Date: Tue, 12 Jun 2007 05:13:05 +0000
+Subject: [KJ] [PATCH]is_power_of_2-mtd/ubi/build.c
+Message-Id: <1181624466.3109.23.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: akpm <akpm@linux-foundation.org>, jgarzik@pobox.com
-Cc: netdev@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: dwmw2@infradead.org, dedekind@infradead.org
+Cc: Kernel Janitors List <kernel-janitors@lists.osdl.org>, linux-mtd@lists.infradead.org
 
 
 Replacing (n & (n-1)) in the context of power of 2 checks
@@ -15,27 +15,28 @@ with is_power_of_2
 
 Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
 --- 
-diff --git a/drivers/net/myri10ge/myri10ge.c b/drivers/net/myri10ge/myri10ge.c
-index b53b7ad..89da958 100644
---- a/drivers/net/myri10ge/myri10ge.c
-+++ b/drivers/net/myri10ge/myri10ge.c
-@@ -60,6 +60,7 @@
- #include <linux/crc32.h>
+diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
+index 555d594..54e923f 100644
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -33,6 +33,7 @@
  #include <linux/moduleparam.h>
- #include <linux/io.h>
+ #include <linux/stringify.h>
+ #include <linux/stat.h>
 +#include <linux/log2.h>
- #include <net/checksum.h>
- #include <asm/byteorder.h>
- #include <asm/io.h>
-@@ -1797,7 +1798,7 @@ static int myri10ge_open(struct net_device *dev)
- 	 */
- 	big_pow2 = dev->mtu + ETH_HLEN + VLAN_HLEN + MXGEFW_PAD;
- 	if (big_pow2 < MYRI10GE_ALLOC_SIZE / 2) {
--		while ((big_pow2 & (big_pow2 - 1)) != 0)
-+		while (!is_power_of_2(big_pow2))
- 			big_pow2++;
- 		mgp->big_bytes = dev->mtu + ETH_HLEN + VLAN_HLEN + MXGEFW_PAD;
- 	} else {
+ #include "ubi.h"
+ 
+ /* Maximum length of the 'mtd=' parameter */
+@@ -422,8 +423,7 @@ static int io_init(struct ubi_device *ubi)
+ 	ubi->hdrs_min_io_size = ubi->mtd->writesize >> ubi->mtd->subpage_sft;
+ 
+ 	/* Make sure minimal I/O unit is power of 2 */
+-	if (ubi->min_io_size = 0 ||
+-	    (ubi->min_io_size & (ubi->min_io_size - 1))) {
++	if (!is_power_of_2(ubi->min_io_size)) {
+ 		ubi_err("bad min. I/O unit");
+ 		return -EINVAL;
+ 	}
 
 -- 
 Vignesh Babu BM 
