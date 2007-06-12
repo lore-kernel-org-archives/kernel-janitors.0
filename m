@@ -1,46 +1,55 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Thu, 07 Jun 2007 10:09:39 +0000
-Subject: [KJ][PATCH]is_power_of_2-block/rd.c
-Message-Id: <1181210259.11218.0.camel@merlin.linuxcoe.com>
+From: "Jason Greenberg" <JASON.GREENBERG@YAHOO.COM>
+Date: Tue, 12 Jun 2007 11:02:13 +0000
+Subject: [KJ] Give mind to new offer
+Message-Id: <01c7ad13$6bfac950$6c822ecf@akstcwildatworkmnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk, page0588@sundance.sjsu.edu
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
+I'm the Peronal Manager of Department of employment. I am pleased to offer =
+you a vacant position of Financial Manager
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+ Let me tell you about our company.=20
+We are engaged in selection and delivery of technical equipment and goodies=
+ in various offices and organizations. We take all troubles about choosing =
+and delivering appropriate technical equipment to client=92s office, under =
+our responsibility. Company was established in 2002 and earned quite good r=
+eputation on the market. At the moment we have some plans for the further d=
+evelopment, we plan to broaden our services and add an international networ=
+k to serve clients in all over the world.=20
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/drivers/block/rd.c b/drivers/block/rd.c
-index a1512da..e57f729 100644
---- a/drivers/block/rd.c
-+++ b/drivers/block/rd.c
-@@ -56,6 +56,7 @@
- #include <linux/backing-dev.h>
- #include <linux/blkpg.h>
- #include <linux/writeback.h>
-+#include <linux/log2.h>
- 
- #include <asm/uaccess.h>
- 
-@@ -422,7 +423,7 @@ static int __init rd_init(void)
- 	int err = -ENOMEM;
- 
- 	if (rd_blocksize > PAGE_SIZE || rd_blocksize < 512 ||
--			(rd_blocksize & (rd_blocksize-1))) {
-+			!is_power_of_2(rd_blocksize)) {
- 		printk("RAMDISK: wrong blocksize %d, reverting to defaults\n",
- 		       rd_blocksize);
- 		rd_blocksize = BLOCK_SIZE;
+ To offer to our foreign clients more favorable and comfortable conditions =
+we have made the decision to create an international network of regional ag=
+ents. We have opened a set of employees in various areas of the world. It h=
+as allowed our clients to get access to a wider assortment of the goods, th=
+an before. In fact, earlier, many suppliers refused to work with us for the=
+ reason of bureaucracy that occurred then registration of legal documents w=
+ere needed to transport equipment, or transfer money.
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+The Duties of the financial manager consists of reception of money resource=
+s from clients of our company and transferring them to us. For every transa=
+ction, we pay 8 % from the total sum.=20
+
+Work Requirements
+
+minimal knowledge of personal computer and internet/E-mail
+
+Bank account
+
+Legal age
+
+Will to work at home 2-4/h per day
+
+Crime-free background (background check will be made before accepting on th=
+e position)=20
+
+There is not any starting payments or pledges for the goods!
+Please replay to this e-mail if you are interested in this opening, we will=
+ send you an employment agreement within nearest 24 hours, feel free to ask=
+ questions.
+Contact us:  jason.greenberg@yahoo.com
 
 _______________________________________________
 Kernel-janitors mailing list
