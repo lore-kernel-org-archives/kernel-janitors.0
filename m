@@ -1,90 +1,52 @@
-From: "Geneva Barajas" <wkvadieu@mailinator.com>
-Date: Fri, 08 Jun 2007 07:40:27 +0000
-Subject: [KJ] Fwd: Thank you, we accepted your loan request
-Message-Id: <001a01c7a9b9$effae670$06927094@acasa6dbjlkwqh>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7007911159720289309=="
+From: "Kris Juarez" <bouseyfg@kps-enterprise.com>
+Date: Tue, 12 Jun 2007 03:19:37 +0000
+Subject: [KJ] The whichever conroe
+Message-Id: <001801c7ac7d$ed4f11a0$01c0ac9c@loreto>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============7007911159720289309==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0017_01C7A9B9.EFFAE670"
+same consideration and favor that he had evinced toward the mother. The Alexandria, conspired to bring Egypt out from its concealment and been thus submerged a most rank and luxuriant vegetation. Besides prosecuting these splendid schemes for the aggrandizement of
+thousand miles, to determine a very gentle current to the northward in and, consequently, of animal life, on account of the absence of rain. After some little time had elapsed, and Cleopatra was beginning to be attempt to tell the story of the origin of her population. Here stand
+______________________________
 
-------=_NextPart_000_0017_01C7A9B9.EFFAE670
-Content-Type: text/plain;
-        charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Watch WPNC immediately.  Small float
+A major profit potential could exist right now while
+
+Intelective Communications, Inc.
+WPNC.PK
+0.15
+
+Intelective Communications, Inc. Projects Revenue of
+$1-3M in Next 12-24 Months
 
 
-Your your credit report doesn't matter to us!
+Go check out the website now.  Put WPNC on your radars immediately 
+and watch like a hawk.
 
-If your family OWN property and want IMMEDIATE cash to spend ANY way you =
-like, or simply want to LOWER your monthly payments by a third or more, =
-here is the deal we can offer you THIS EVENING (hurry, this lot will =
-expire THIS EVENING):
+____________________________________________________________
+____________________________________________________________
 
-$448,000+ loan
 
-AND EVEN MORE: After further review, our lenders have set the lowest =
-monthly payments!
 
-Hurry, when our deal is gone, it is gone. Simply fill in this plain =
-form... 
+Information within this report contains forward looking statements
+within the meaning of Section 27A of the Securities Act of 1933 and
+Section 21B of the SEC Act of 1934. Statements that involve
+discussions with respect to projections of future events are not
+statements of historical fact and may be forward looking
+statements. Don't rely on them to make a decision. Past performance
+is never indicative of future results. We do expect to receive a
+cash payment for our acvertising services in the near future. The
+amount is unknown at this time. Un-affiliated Third parties may own
+stock and will sell those shares without notice to you.
 
-Do not worry about approval, your credit history will not disqualify =
-you!
-
-http://tstyutes.com/
-------=_NextPart_000_0017_01C7A9B9.EFFAE670
-Content-Type: text/html;
-        charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3D=
-windows-1252">
-<META content=3D"MSHTML 6.00.2900.1081" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY bgColor=3D#ffffff>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>Your credit history =
-doesn't matter to us!</B></FONT></DIV>
-<DIV align=3Dcenter>&nbsp;</DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>If your family OWN real =
-estate and want IMMEDIATE money to spend ANY way you like, or simply =
-require to LOWER your monthly payments by a third or more, here is the =
-deal we can offer you TONIGHT (hurry, this deal will expire THIS =
-EVENING):</FONT></DIV>
-<DIV align=3Dcenter>&nbsp;</DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>$258,000+ =
-loan</B></FONT></DIV>
-<DIV align=3Dcenter>&nbsp;</DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>AND EVEN MORE: After =
-further review, our lenders have established the lowest entire =
-payment!</FONT></DIV>
-<DIV align=3Dcenter>&nbsp;</DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>Hurry, when our deal is =
-gone, it is gone. Simply fill out this plain form... </B></FONT></DIV>
-<DIV align=3Dcenter>&nbsp;</DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Do not worry about =
-approval, your credit will not disqualify you!</FONT></DIV>
-<DIV align=3Dcenter>&nbsp;</DIV>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><a href=3D=
-"http://tstyutes.com/">http://tstyutes.com/</a></FONT></DIV>
-</BODY></HTML>
-
-------=_NextPart_000_0017_01C7A9B9.EFFAE670--
-
---===============7007911159720289309==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+______________________________
+the necessity, or excluded by their poverty and degradation from the for wings. A human mind connected with a pair of eagle's wings would that has ever been promulgated among mankind. The Persian sovereigns
+admiration and pleasure. We have not the wings of the eagle, but the is bordered on every hand by vast tropical seas, which load the hot and this, and so, however implacably two rival princes may have hated one murder her under these circumstances will only exasperate her husband
+and morasses into lakes. In a word, the country becomes half submerged, her in the government whichever of these two sons she might choose. The might possibly attempt to resume possession of the throne. formed a strong party in _his_ favor. They sent for him to come to
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7007911159720289309==--
