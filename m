@@ -1,64 +1,90 @@
-From: "Magee P. Meggy" <kbosl@vdbijl.nl>
-Date: Sat, 23 Jun 2007 17:52:09 +0000
-Subject: [KJ] feudalism salad
-Message-Id: <467D5DC9.4000300@vdbijl.nl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1182621217-3969-241"
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Tue, 12 Jun 2007 05:12:52 +0000
+Subject: [KJ] [PATCH]is_power_of_2-dm
+Message-Id: <1181624452.3109.20.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1182621217-3969-241
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  This allows developers to deploy an application without
-  compiling it and further allows them to manipulate the code while it is
-  running without having to redeploy it. To see this example in action,
-  download simpleDynamicFaces. I'll get to the importance of this later
-  on. First of all, it frees developers from writing more common
-  JavaScript functions by providing pluggable JavaScript libraries geared
-  toward particular tasks, such as event-handling. With Dynamic Faces, you
-  can get rid of the button and rely on Dynamic Faces to do the work of
-  updating these components using Ajax. As an example, a manufacturing
-  manager can create a mashup portlet that shows on a map the inventory
-  status of all the plant units across the geography. Most companies are
-  getting into Ajax apps in a very simple way by just including an Ajax
-  snippet such as Google suggest on a web page. [...] 
-
-Content analysis details:   (7.4 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.1 HTML_20_30             BODY: Message is 20% to 30% HTML
- 2.0 CONTENT_TYPE_NAME_GIF  BODY: Gif Attachment
- 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.5000]
- 2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
- 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
-
-
-
-------------=_1182621217-3969-241
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: mingo@redhat.com, neilb@suse.de
+Cc: linux-raid@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+
+
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
+
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
+index ef124b7..3e1817a 100644
+--- a/drivers/md/dm-raid1.c
++++ b/drivers/md/dm-raid1.c
+@@ -19,6 +19,7 @@
+ #include <linux/time.h>
+ #include <linux/vmalloc.h>
+ #include <linux/workqueue.h>
++#include <linux/log2.h>
+ 
+ #define DM_MSG_PREFIX "raid1"
+ #define DM_IO_PAGES 64
+@@ -962,7 +963,7 @@ static void free_context(struct mirror_set *ms, struct dm_target *ti,
+ 
+ static inline int _check_region_size(struct dm_target *ti, uint32_t size)
+ {
+-	return !(size % (PAGE_SIZE >> 9) || (size & (size - 1)) ||
++	return !(size % (PAGE_SIZE >> 9) || !is_power_of_2(size) ||
+ 		 size > ti->len);
+ }
+ 
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 0821a2b..f2d4b23 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
++#include <linux/log2.h>
+ 
+ #include "dm-snap.h"
+ #include "dm-bio-list.h"
+@@ -414,7 +415,7 @@ static int set_chunk_size(struct dm_snapshot *s, const char *chunk_size_arg,
+ 	chunk_size = round_up(chunk_size, PAGE_SIZE >> 9);
+ 
+ 	/* Check chunk_size is a power of 2 */
+-	if (chunk_size & (chunk_size - 1)) {
++	if (!is_power_of_2(chunk_size)) {
+ 		*error = "Chunk size is not a power of 2";
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index 51f5e07..969944a 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -11,6 +11,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/bio.h>
+ #include <linux/slab.h>
++#include <linux/log2.h>
+ 
+ #define DM_MSG_PREFIX "striped"
+ 
+@@ -99,7 +100,7 @@ static int stripe_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	/*
+ 	 * chunk_size is a power of two
+ 	 */
+-	if (!chunk_size || (chunk_size & (chunk_size - 1)) ||
++	if (!is_power_of_2(chunk_size) ||
+ 	    (chunk_size < (PAGE_SIZE >> SECTOR_SHIFT))) {
+ 		ti->error = "Invalid chunk size";
+ 		return -EINVAL;
+
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1182621217-3969-241--
