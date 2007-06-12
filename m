@@ -1,83 +1,66 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Fri, 15 Jun 2007 18:50:15 +0000
-Subject: [KJ] why does ARM arch treat early boot-time parms differently?
-Message-Id: <Pine.LNX.4.64.0706151443370.14037@localhost.localdomain>
+From: eventual <uwkd@aradigm.com>
+Date: Tue, 12 Jun 2007 18:57:22 +0000
+Subject: [KJ] Policy rules can have the following new actions: Queue: This
+Message-Id: <466EEC92.6030407@aradigm.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+News Hits! New R&D Facility Engaged!
 
-  (i'm posting this here since it's going to lead in to another
-possible cleanup project.)
+Chan-On International Inc.
+Symbol: CAON
+Close: $0.73
 
-  from include/linux/init.h, i can see how both regular and "early"
-boot-time kernel parameters are defined:
+News hits today on CAON and trading continues to warm up. Hitting highs
+of $0.90 today, we can see this building. Read the release and get on
+CAON first thing Tuesday. We can see this climbing all week!
 
-=======================...
-#define __setup_param(str, unique_id, fn, early)                \
-        static char __setup_str_##unique_id[] __initdata = str; \
-        static struct obs_kernel_param __setup_##unique_id      \
-                __attribute_used__                              \
-                __attribute__((__section__(".init.setup")))     \
-                __attribute__((aligned((sizeof(long)))))        \
-                = { __setup_str_##unique_id, fn, early }
+Built-in installer detects error messages printed by iptables and
+iptables-restore and aborts installation process.
+html , rerouting happens after OUTPUT hook but before POSTROUTING hook.
 
-#define __setup_null_param(str, unique_id)                      \
-        __setup_param(str, unique_id, NULL, 0)
+Iptables-restore provides for atomic policy load and allows to load
+large policy much faster.
+Summary page shown in the end reflects this as failed install.
+It won't work with the original firmware.
 
-#define __setup(str, fn)                                        \
-        __setup_param(str, fn, fn, 0)
+The "-f" is also supported for backwards compatibility.
 
-#define __obsolete_setup(str)                                   \
-        __setup_null_param(str, __LINE__)
+Please explore new site, post your comments to the articles and let me
+know what you think about it. The GUI allows for objects to be exported
+to external library file with extension . If a rule in fwbuilder uses
+TCP Service and connlimit option and has multiple objects in src and
+dst, optimizer used to split it to minimize matches. One of the most
+important improvements in the web site is that it now has a "Search"
+function. Added support for dynamic interface addresses in ipfilter.
 
-/* NOTE: fn is as per module_param, not __setup!  Emits warning if fn
- * returns non-zero. */
-#define early_param(str, fn)                                    \
-        __setup_param(str, fn, fn, 1)
-...
-=======================
+This is for a backup ssh access from the management workstation in case
+of an error in the policy that locks user out of the firewall. Doing
+tricks to make sure the dialog properly resized after unused GUI
+elements are hidden.
 
-further, note how all of those boot-time parms are placed in the
-section called ".init.setup".  so far, no problem.
+Please post your comments, bug reports and suggestions to the mailing
+list or open bug report on SourceForge project page.
 
-  however, the ARM architectures take a slightly different approach:
+Iptables-restore provides for atomic policy load and allows to load
+large policy much faster. One of the most important improvements in the
+web site is that it now has a "Search" function.
 
-$ grep -rw __early_param *
-arch/arm/mm/mmu.c:__early_param("cachepolicy=", early_cachepolicy);
-arch/arm/mm/mmu.c:__early_param("nocache", early_nocache);
-arch/arm/mm/mmu.c:__early_param("nowb", early_nowrite);
-arch/arm/mm/mmu.c:__early_param("ecc=", early_ecc);
-arch/arm/kernel/setup.c:__early_param("initrd=", early_initrd);
-arch/arm/kernel/setup.c:__early_param("mem=", early_mem);
-arch/arm26/kernel/vmlinux-arm26-xip.lds.in:                     *(__early_param)
-arch/arm26/kernel/vmlinux-arm26.lds.in:                 *(__early_param)
-include/asm-arm/setup.h:#define __early_param(name,fn)                         \
+We plan to run public beta for a few months and release final version in
+October.
+This allows for names and comments to be entered and displayed in local
+languages.
 
-  what's with this "__early_param" as opposed to just regular
-"early_param"?  and here's what you find in include/asm-arm/setup.h:
+For each compile-time AddressTable object defined in the object tree
+compiler tries to find and read the file specified in the object
+configuration. Complete Russian and Japanese translations have been
+added. This will help users with policies with many branches, however it
+does not solve the problem because as they keep adding branches, at some
+point they won't fit in the window again.
 
-#define __early_param(name,fn)                                  \
-static struct early_params __early_##fn __used                  \
-__attribute__((__section__(".early_param.init"))) = { name, fn }
-
-  so, in the ARM arch, the early parameter stuff is placed in a
-differently-named section.
-
-  is there a reason that ARM treats the early kernel parm stuff
-differently from all other arches?  just curious.
-
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
