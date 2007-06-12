@@ -1,122 +1,151 @@
-From: "Walter A. Peters" <uty@mediom.qc.ca>
-Date: Mon, 11 Jun 2007 02:32:19 +0000
-Subject: [KJ] net :: Root Cause Analysis :: RCA Articles .
-Message-Id: <466CB433.3020608@mediom.qc.ca>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1181529142-3969-72"
+From: Surya <surya.prabhakar@wipro.com>
+Date: Tue, 12 Jun 2007 04:27:45 +0000
+Subject: [KJ] [PATCH]: check_region cleanup in sbpcd.c
+Message-Id: <1181621746.28392.9.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1181529142-3969-72
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-CAON Now Holds 12 Environmental Patents! Investors Respond!
-
-Chan-On International Inc.
-Symbol: CAON
-Close: $0.72 UP 4.35%
-
-CAON acquires Harbin Hongbo and its 12 patents. This company's new
-direction was released in a fact sheet Friday. Investors are already
-jumping all over it. Read the release and get all over CAON first thing
-Monday!
-
-Although they could have, they did not compensate by eating more
-proteins and fats and they weren't bored with the food choices. We
-respect your privacy.
-
-All patients stayed in the hospital for the length of the study to
-insure exact measurements of calorie intake and expenditure.
-Instructions - What instructions were provided to direct performance of
-the activity?
-There is a real danger of pigeon-holing this event as "a project
-management problem", "a contractor problem", or "a procedure adherence
-problem". , began offering low-carb wraps last year and gave customers
-the option of scraping out the innards of the bagel to cut back on
-carbs. Yes, they usually yield some changes in behaviours for a while.
-In addition to the calorie reduction and weight loss, subjects
-experienced markedly improved glucose levels and insulin sensitivity, as
-well as lower triglycerides and cholesterol. Some food companies that
-had boned-up on low-carbohydrate products in recent months are now faced
-with unsold stockpiles of low-carb foods.
-To estimate their level of physical activity, women in both groups were
-fitted with pedometers, which recorded the number of steps they took
-daily. And now all those low-carb products are turning into un-eaten
-stockpiles that are ending up at food banks.
-
-But now surplus low-carb Atkins diet foods that were never sold are
-being shipped to food banks in Appalachia. Root Cause Analysis - Art or
-Science? Each week, 'Today' Food Editor Phil Lempert brings you the
-latest information and advice about shopping and cooking.
-
-Track news on heart health at HeartDiseaseCureNews. Were they suitable
-for the task? And now all those low-carb products are turning into
-un-eaten stockpiles that are ending up at food banks.
-
-Other research projects of Boden's include a National Institutes of
-Health supported study of obesity-associated diabetes and cardiovascular
-disease.
-
-the belief that different analysts performing independent investigations
-of the same issue will not arrive at identical results. In the end,
-there was no single magic bullet that caused the problem, but many
-smaller issues scattered throughout the organization like buckshot.
-
-Aptitude - What level of aptitude did the performer have for this
-specific activity? The problem is sugar substitutes can confuse the
-body's ability to gauge caloric intake, and this can backfire on those
-who use them to help manage their weight.
-
-People behave as they do for reasons that make perfect sense to them.
-Was the sequence followed?
-
-
-------------=_1181529142-3969-72
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
+References: <1181209169.2422.12.camel@bluegenie>
+	 <9a8748490706070308m7c2212fq30fe712e26e2463b@mail.gmail.com>
+	 <1181215018.3275.2.camel@bluegenie>
+	 <9a8748490706070902i218e01bdq1c418c770e99ca4@mail.gmail.com>
+	 <1181270772.3275.15.camel@bluegenie>
+	 <9a8748490706110418m70d4b26ege20a51f04b8ff7ff@mail.gmail.com>
+In-Reply-To: <9a8748490706110418m70d4b26ege20a51f04b8ff7ff@mail.gmail.com>
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  CAON Now Holds 12 Environmental Patents! Investors
-  Respond! Chan-On International Inc. Symbol: CAON Close: $0.72 UP 4.35%
-  CAON acquires Harbin Hongbo and its 12 patents. This company's new
-  direction was released in a fact sheet Friday. Investors are already
-  jumping all over it. Read the release and get all over CAON first thing
-  Monday! [...] 
-
-Content analysis details:   (6.9 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
-                            1)
- 0.5 DIET_1                 BODY: Lose Weight Spam
- 1.5 OUTFLUX_INVEST_SYMBOL  BODY: has "Symbol" in it
- 1.0 WEIGHT_LOSS_OSDL6      BODY: WEIGHT_LOSS_OSDL6
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.4991]
-
-
-
-------------=_1181529142-3969-72
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: Jesper Juhl <jesper.juhl@gmail.com>, emoenke@gwdg.de
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, kernel-janitors@lists.osdl.org
 
+> > + *
+> > + *
+> 
+> Why two blank comment lines?  Isn't one enough?
+cleaned it up.
+> 
+>  sti();
+> Just in case you are bored, at some point those cli()/sti() need to go
+> away as well and be replaced with proper locking. But that's a
+> different patch :-)
+sure will take it up in the next patch.
+> 
+> > Kindly update if this is Ok. I will proceed with the original patch.
+> This looks a lot better to me. I have only given it a quick look, but
+> I don't see any major problems.
+> 
+I am sending with all the corrections, if its ok to acknowledge it?
+
+> Please tell your mail client not to include crap like that when
+> sending to public mailing lists.
+Really sorry, I have no control over this.
+
+Attaching the new patch with all the corrections.. thanks.
+
+
+Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+--- 
+
+diff --git a/drivers/cdrom/sbpcd.c b/drivers/cdrom/sbpcd.c
+index a1283b1..5414172 100644
+--- a/drivers/cdrom/sbpcd.c
++++ b/drivers/cdrom/sbpcd.c
+@@ -358,6 +358,9 @@
+  * Add bio/kdev_t changes for 2.5.x required to make it work again. 
+  * Still room for improvement in the request handling here if anyone
+  * actually cares.  Bring your own chainsaw.    Paul G.  02/2002
++ *
++ * Deprecated check_region cleanup to request_region 
++ *				-Surya Prabhakar N    08/07/2007
+  */
+ 
+ 
+@@ -555,6 +558,7 @@ static struct cdrom_read_audio read_audio;
+ static unsigned char msgnum;
+ static char msgbuf[80];
+ 
++static int addr[2] = {1, CDROM_PORT};
+ static int max_drives = MAX_DRIVES;
+ module_param(max_drives, int, 0);
+ #ifndef MODULE
+@@ -5638,7 +5642,6 @@ int __init sbpcd_init(void)
+ #endif
+ {
+ 	int i=0, j=0;
+-	int addr[2]={1, CDROM_PORT};
+ 	int port_index;
+ 
+ 	sti();
+@@ -5670,9 +5673,9 @@ int __init sbpcd_init(void)
+ 	{
+ 		addr[1]=sbpcd[port_index];
+ 		if (addr[1]=0) break;
+-		if (check_region(addr[1],4))
++		if (!request_region(addr[1],4, "sbpcd driver"))
+ 		{
+-			msg(DBG_INF,"check_region: %03X is not free.\n",addr[1]);
++			msg(DBG_INF,"request_region: %03X is not free.\n",addr[1]);
+ 			continue;
+ 		}
+ 		if (sbpcd[port_index+1]=2) type=str_sp;
+@@ -5699,6 +5702,7 @@ int __init sbpcd_init(void)
+ 	if (ndrives=0)
+ 	{
+ 		msg(DBG_INF, "No drive found.\n");
++		release_region(addr[1],4);
+ #ifdef MODULE
+ 		return -EIO;
+ #else
+@@ -5775,6 +5779,7 @@ int __init sbpcd_init(void)
+ 	if (!request_region(CDo_command,4,major_name))
+ 	{
+ 		printk(KERN_WARNING "sbpcd: Unable to request region 0x%x\n", CDo_command);
++		release_region(addr[1],4);
+ 		return -EIO;
+ 	}
+ 
+@@ -5788,6 +5793,8 @@ int __init sbpcd_init(void)
+ #endif /* SOUND_BASE */
+ 
+ 	if (register_blkdev(MAJOR_NR, major_name)) {
++		release_region(CDo_command,4);
++		release_region(addr[1],4);
+ #ifdef MODULE
+ 		return -EIO;
+ #else
+@@ -5801,6 +5808,7 @@ int __init sbpcd_init(void)
+ 	sbpcd_queue = blk_init_queue(do_sbpcd_request, &sbpcd_lock);
+ 	if (!sbpcd_queue) {
+ 		release_region(CDo_command,4);
++		release_region(addr[1],4);
+ 		unregister_blkdev(MAJOR_NR, major_name);
+ 		return -ENOMEM;
+ 	}
+@@ -5834,6 +5842,7 @@ int __init sbpcd_init(void)
+ 				printk("Can't unregister %s\n", major_name);
+ 			}
+ 			release_region(CDo_command,4);
++			release_region(addr[1],4);
+ 			blk_cleanup_queue(sbpcd_queue);
+ 			return -EIO;
+ 		}
+@@ -5850,6 +5859,7 @@ int __init sbpcd_init(void)
+ 		if (sbpcd_infop = NULL)
+ 		{
+                         release_region(CDo_command,4);
++			release_region(addr[1],4);
+ 			blk_cleanup_queue(sbpcd_queue);
+                         return -ENOMEM;
+ 		}
+@@ -5894,6 +5904,7 @@ static void sbpcd_exit(void)
+ 		return;
+ 	}
+ 	release_region(CDo_command,4);
++	release_region(addr[1],4);
+ 	blk_cleanup_queue(sbpcd_queue);
+ 	for (j=0;j<NR_SBPCD;j++)
+ 	{
+
+-surya.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1181529142-3969-72--
