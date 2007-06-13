@@ -1,25 +1,31 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 25 Jun 2007 12:33:19 +0000
-Subject: [KJ] Re: [PATCH]is_power_of_2-ufs/super.c
-Message-Id: <1182774079.4339.0.camel@merlin.linuxcoe.com>
+From: "Mr.David Gutti" <davgutti07@mail.net>
+Date: Wed, 13 Jun 2007 20:19:17 +0000
+Subject: [KJ] Assistance
+Message-Id: <20070613201917.12743.qmail@biznet.corp-th.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1181808559.2474.9.camel@merlin.linuxcoe.com>
-	 <20070625121316.GA19544@saeurebad.de>
-In-Reply-To: <20070625121316.GA19544@saeurebad.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Johannes Weiner <hannes-kernel@saeurebad.de>
-Cc: daniel.pirkl@email.cz, dushistov@mail.ru, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
-Thanks Hannes, Im on it...
 
-On Mon, 2007-06-25 at 14:13 +0200, Johannes Weiner wrote:
-> egrep -R '([a-zA-Z0-9_.>]+) *& *\(\1 *- *1\)' /usr/src/linux
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Dear Friend,
+ 
+I am an Executive accountant for a bank here in Italy. I require your assistance and partnership in transferring huge amount of funds in United states dollars out of my country. You will be required to:- 
+ 
+(1) Assist in the transfer of the said sum.
+(2) Advise on lucrative areas for subsequent investment.
+(3) Assist us in purchase of landed & viable properties.
+ 
+We have all the information and guidance to enable you and we realize this opportunity. We have evaluated the risk analysis and we are convinced that the risk element is ZERO, as long as you maintain 100% confidentiality. Once secured communication has been established between you and we, detailed clarifications will be dealt with, such as what each party stand to 
+benefit and time scale and procedures. Time is not in our favour; please establish 
+secured communication with me through my email address: davgutti07@yahoo.it 
+ 
+Regards,
+Mr. David Gutti
+davgutti07@yahoo.it
+
+
 
 _______________________________________________
 Kernel-janitors mailing list
