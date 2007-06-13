@@ -1,42 +1,44 @@
-From: "Aaron Walker" <zinasaunders.com@thechristiangarden.com>
-Date: Fri, 08 Jun 2007 15:53:17 +0000
+From: "Nolan Wood" <justforhunting.com@geoworkflow.com>
+Date: Wed, 13 Jun 2007 11:41:26 +0000
 Subject: [KJ] She will love you more than any other guy
-Message-Id: <000001c7a9e4$2f076580$0100007f@localhost>
+Message-Id: <000001c7adae$aa836100$0100007f@localhost>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============6260070380445976970=="
+Content-Type: multipart/mixed; boundary="===============5153850083823970032=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <000001c7a9e4$2f076580$0100007f@localhost>
+In-Reply-To: <000001c7a9e4$2f076580$0100007f@localhost>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format.
 
---===============6260070380445976970==
+--===============5153850083823970032==
 Content-Type: multipart/related;
-	boundary="----=_NextPart_000_0001_01C7A9E4.2F076580"
+	boundary="----=_NextPart_000_0001_01C7ADAE.AA836100"
 
 This is a multi-part message in MIME format.
 
-------=_NextPart_000_0001_01C7A9E4.2F076580
+------=_NextPart_000_0001_01C7ADAE.AA836100
 Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_000E_01C7A9E4.2F076580"
+	boundary="----=_NextPart_001_000E_01C7ADAE.AA836100"
 
 
-------=_NextPart_001_000E_01C7A9E4.2F076580
+------=_NextPart_001_000E_01C7ADAE.AA836100
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
 See attach
-http://www.sidapo.com/
+http://www.notar.hk/
 
 -----
-Nicholaa walked over to the si
-She snuggled up against her hu
-Nicholaa? His voice was a bare
-Yes? she whispered back. You b
+Jamie reached up to tap Alecs 
+Its Angus? she whispered. Alec
+He isnt dead. Hes dying. No, I
+Go to bed. But Alec Now. The 
  
   
 
-------=_NextPart_001_000E_01C7A9E4.2F076580
+------=_NextPart_001_000E_01C7ADAE.AA836100
 Content-Type: text/html;
     charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
@@ -46,34 +48,34 @@ Content-Transfer-Encoding: quoted-printable
 <META http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
 <STYLE> textarea { display:none; } </STYLE></HEAD>
 <BODY>
-<DIV><A href=3D"http://www.sidapo.com/">
-<IMG src=3D"cid:img053.jpg@44600121.75129759" border=3D0></A></DIV><br><br>
-<textarea>Crispin felt the soldier was h
-</textarea><textarea>Crispin changed the subject. H
-</textarea><textarea>I have. You and I will leave l
-</textarea><textarea>Will you go to Kincaid first? 
-</textarea><textarea>I should go to my brother and 
-</textarea><textarea>Dont confront MacNare or kill 
-</textarea><textarea>You make this same request eac
-</textarea><textarea>And you put the very same requ
-</textarea><textarea>Connor stopped the rivalry by 
-</textarea><textarea>He finished outlining the sold
-</textarea><textarea>Did you and Lady Brenna disagr
-</textarea><textarea>No, I havent discussed the mat
-</textarea><textarea>Shes your wife, Connor. Im awa
-</textarea><textarea>And it was her horse that was 
-</textarea><textarea>Yes, Connor agreed. And for th
-</textarea><textarea>Quinlan laughed when he saw ho
+<DIV><A href=3D"http://www.notar.hk/">
+<IMG src=3D"cid:img019.jpg@73841044.10809683" border=3D0></A></DIV><br><br>
+<textarea>Both Gowrie and Alex nodded at
+</textarea><textarea>They were just as certain shed
+</textarea><textarea>Were all curious as to why Fra
+</textarea><textarea>She nodded. Since you dont kno
+</textarea><textarea>Everyone but Iain shook his he
+</textarea><textarea>She stared at her lap. Well, I
+</textarea><textarea>Why? Brodick asked. Because sh
+</textarea><textarea> Chapter 3    They didnt laugh
+</textarea><textarea>There wasnt any food left to p
+</textarea><textarea>Judith excused herself and wen
+</textarea><textarea>When the sun had almost disapp
+</textarea><textarea>Her smile of greeting took him
+</textarea><textarea>Will it be difficult for you, 
+</textarea><textarea>She was horrified by her clums
+</textarea><textarea>No. Hed whispered that reply. 
+</textarea><textarea>No, tomorrow wont be difficult
 </textarea> 
 </BODY></HTML>
 
-------=_NextPart_001_000E_01C7A9E4.2F076580--
+------=_NextPart_001_000E_01C7ADAE.AA836100--
 
-------=_NextPart_000_0001_01C7A9E4.2F076580
+------=_NextPart_000_0001_01C7ADAE.AA836100
 Content-Type: image/jpeg;
 	name="img66.jpg"
 Content-Transfer-Encoding: base64
-Content-ID: <img053.jpg@44600121.75129759>
+Content-ID: <img019.jpg@73841044.10809683>
 
 /9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAACgAA/+4AIUFkb2JlAGTAAAAA
 AQMAEAMCAwYAAAg/AAAUeQAAMU//2wCEABQQEBkSGScXFycyJh8mMi4mJiYmLj41NTU1NT5E
@@ -310,10 +312,10 @@ Bj4VkyPaVywSRIgjs9PP8KbHCMkswNxB14bfx21mxZrbcpLSpJIJ7wKH0htCxYcknw/0xvHb
 WLFgttxFW6iZMdwNYsyhB5cmCx1u3+X1VkRlTKjMSoZvCD6NqXB9Ow8xfmbbeTzoTvx/dWs/
 3zrvv7p/Yv8A83i47+yfh2dn7y1t/m/P5V/tt0o+Rz65m6f5p19f7j//2Q==
 
-------=_NextPart_000_0001_01C7A9E4.2F076580--
+------=_NextPart_000_0001_01C7ADAE.AA836100--
 
 
---===============6260070380445976970==
+--===============5153850083823970032==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -323,4 +325,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============6260070380445976970==--
+--===============5153850083823970032==--
