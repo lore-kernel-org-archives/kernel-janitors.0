@@ -1,36 +1,46 @@
-From: Armin Schindler <armin@melware.de>
-Date: Fri, 08 Jun 2007 19:40:25 +0000
-Subject: [KJ] Re: [PATCH] [trivial] drivers/isdn/hardware/eicon/message.c:
-Message-Id: <Pine.LNX.4.61.0706082053150.30772@phoenix.one.melware.de>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Wed, 13 Jun 2007 04:15:06 +0000
+Subject: [KJ] [PATCH]is_power_of_2-ext3/super.c
+Message-Id: <1181707387.13391.28.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: sct@redhat.com, akpm@linux-foundation.org, adilger@clusterfs.com
+Cc: linux-ext4@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
 
-This patch replaces an array size calculation in
-drivers/isdn/hardware/eicon/message.c that was done using
-sizeof with the ARRAY_SIZE macro.
 
-Tested by compilation on an i386 box using "allyesconfig".
-Diffed against Linus' git-tree.
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
-Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
-Acked-by: Armin Schindler <armin@melware.de>
----
-diff --git a/drivers/isdn/hardware/eicon/message.c b/drivers/isdn/hardware/eicon/message.c
-index ccd35d0..582af66 100644
---- a/drivers/isdn/hardware/eicon/message.c
-+++ b/drivers/isdn/hardware/eicon/message.c
-@@ -552,7 +552,7 @@ word api_put(APPL   * appl, CAPI_MSG   * msg)
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/fs/ext3/super.c b/fs/ext3/super.c
+index 6e30629..191b053 100644
+--- a/fs/ext3/super.c
++++ b/fs/ext3/super.c
+@@ -35,6 +35,7 @@
+ #include <linux/namei.h>
+ #include <linux/quotaops.h>
+ #include <linux/seq_file.h>
++#include <linux/log2.h>
  
-   for(j=0;j<MAX_MSG_PARMS+1;j++) msg_parms[j].length = 0;
-   for(i=0, ret = _BAD_MSG;
--      i<(sizeof(ftable)/sizeof(struct _ftable));
-+      i<ARRAY_SIZE(ftable);
-       i++) {
+ #include <asm/uaccess.h>
  
-     if(ftable[i].command=msg->header.command) {
+@@ -1566,7 +1567,7 @@ static int ext3_fill_super (struct super_block *sb, void *data, int silent)
+ 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
+ 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
+ 		if ((sbi->s_inode_size < EXT3_GOOD_OLD_INODE_SIZE) ||
+-		    (sbi->s_inode_size & (sbi->s_inode_size - 1)) ||
++		    (!is_power_of_2(sbi->s_inode_size)) ||
+ 		    (sbi->s_inode_size > blocksize)) {
+ 			printk (KERN_ERR
+ 				"EXT3-fs: unsupported inode size: %d\n",
+
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 Kernel-janitors mailing list
