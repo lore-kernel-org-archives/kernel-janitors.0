@@ -1,8 +1,10 @@
 From: "Mr.David Gutti" <davgutti07@mail.net>
 Date: Wed, 13 Jun 2007 20:19:17 +0000
 Subject: [KJ] Assistance
-Message-Id: <20070613201917.12743.qmail@biznet.corp-th.com>
+Message-Id: <20070613201917.12745.qmail@biznet.corp-th.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070613201917.12743.qmail@biznet.corp-th.com>
+In-Reply-To: <20070613201917.12743.qmail@biznet.corp-th.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
