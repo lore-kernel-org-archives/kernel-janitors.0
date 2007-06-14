@@ -1,95 +1,55 @@
-From: divorced <ext@directv.com>
-Date: Thu, 28 Jun 2007 07:52:36 +0000
-Subject: [KJ] Must have the skills to perform hydraulic calculations and
-Message-Id: <468368C4.7030007@directv.com>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Thu, 14 Jun 2007 08:21:18 +0000
+Subject: [KJ] [PATCH]is_power_of_2-ufs/super.c
+Message-Id: <1181808559.2474.9.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: daniel.pirkl@email.cz, dushistov@mail.ru
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
 
-SREA Continues To Rocket, UP Another 29% By Close!
 
-Score One Inc. (SREA)
-$0.40 UP 29%
+Replacing (n & (n-1)) in the context of power of 2 checks
+with is_power_of_2
 
-The watchers are right, SREA keeps climbing. The Market Makers are
-raking it in. Act fast and you can too. Look at the numbers and get on
-SREA first thing Thursday!
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+--- 
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 22ff6ed..2b30116 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -87,6 +87,7 @@
+ #include <linux/smp_lock.h>
+ #include <linux/buffer_head.h>
+ #include <linux/vfs.h>
++#include <linux/log2.h>
+ 
+ #include "swab.h"
+ #include "util.h"
+@@ -854,7 +855,7 @@ magic_found:
+ 	uspi->s_fmask = fs32_to_cpu(sb, usb1->fs_fmask);
+ 	uspi->s_fshift = fs32_to_cpu(sb, usb1->fs_fshift);
+ 
+-	if (uspi->s_fsize & (uspi->s_fsize - 1)) {
++	if (!is_power_of_2(uspi->s_fsize)) {
+ 		printk(KERN_ERR "ufs_read_super: fragment size %u is not a power of 2\n",
+ 			uspi->s_fsize);
+ 			goto failed;
+@@ -869,7 +870,7 @@ magic_found:
+ 			uspi->s_fsize);
+ 		goto failed;
+ 	}
+-	if (uspi->s_bsize & (uspi->s_bsize - 1)) {
++	if (!is_power_of_2(uspi->s_bsize)) {
+ 		printk(KERN_ERR "ufs_read_super: block size %u is not a power of 2\n",
+ 			uspi->s_bsize);
+ 		goto failed;
 
-You will research and monitor existing client base and industry
-developments and identify potential new product opportunities. Requires
-significant communication and coordination with national and
-international elements of the company.
-
-You will establish, review, approve and monitor plant performance
-against customer quality standards.
-Where do you currently live give the city and state?
-
-We specialize in placing people into: Energy Jobs, Power Plant Jobs and
-Engineering Jobs. Daily responsibilities include working with petroleum,
-chemical, manufacturing projects. Client is looking for candidates local
-to Atlanta, GA. Do you have problem with working hand on and do you have
-a problem working in a plant environment? Excellent interpersonal and
-communication skills are required.
-
-Please describe your hands on experience in the power industry on
-mechanical systems and balance of plant design.
-
-A Bachelors degree in Mechanical or other BS Engineering Technical
-degree. Working closely with Refinery Engineering personnel on this
-assignment. Do you have project management or medical equipment design
-experience?
-
-You will be required to take a background check and drug screening.
-
-You must be able to use the latest version of AutoCad with the ability
-to design directly in a CADD environment. IMMEDIATE NEED for Piping
-Drafter in Austin, TX.
-and note your experience came from where and for how long. Client is
-looking for candidates local to Atlanta, GA.
-
-Please describe your experience with B-JAC, MUSE, HTRI, RCS, and similar
-software. If is preferred, but not required, that all candidates
-applying for this position should have a BSME degree and be able to
-speak Spanish.
-Explain your experience with refinery and or petrochemical design and
-stream integrity analysis ?
-
-Relocation may be available for the right candidate.
-
-Company offers competitive compensation based on experience and
-education, has excellent benefits package. What type of heavy industrial
-construction projects have you worked on in the field as the Mechanical
-Construction Engineer? Set priorities, establish work schedules and
-monitor the work of direct reports.
-
-Do you have project management or medical equipment design experience?
-Great Salary and Benefits.
-Candidates should have a BS or MS in Engineering. Computer programs used
-will include SAP and Autodesk Inventor.
-Involved with validation and consolidation. comJob
-Description:thinkenergygroup. You must be able to use the latest version
-of AutoCad with the ability to design directly in a CADD environment.
-and note your experience came from where and for how long. Requires
-experience with design and operation of multiple plant systems.
-
-If is preferred, but not required, that all candidates applying for this
-position should have a BSME degree and be able to speak Spanish. Prime
-NASA Contractor is Actively searching for an Energy Engineer for their
-Southern Mississippi operation.
-Involved with validation and consolidation.
-
-Do you have problem with working hand on and do you have a problem
-working in a plant environment?
-
-Must be willing to relocate to central Ohio.
-
-Do you have experience with facilities maintenance, maintenance
-planning, project management, preventive technology, and predictive
-technology? Do you have a valid U. Prime NASA Contractor is Actively
-searching for an Energy Engineer for their Southern Mississippi
-operation.
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 Kernel-janitors mailing list
