@@ -1,7 +1,7 @@
-From: "Emory Babb" <bbum@mail.china.com>
-Date: Sat, 09 Jun 2007 14:19:26 +0000
+From: "Klesleyt" <klesleyt@hotmail.com>
+Date: Thu, 14 Jun 2007 16:06:13 +0000
 Subject: [KJ] RE:
-Message-Id: <001301c7aae4$ee2695c0$00c0ab44@user090da06534>
+Message-Id: <01c7aec7$d6ed0150$6c822ecf@akstcvalderootsmnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <01c327ad$be155380$6c822ecf@fragonardbiblical>
 In-Reply-To: <01c327ad$be155380$6c822ecf@fragonardbiblical>
@@ -10,29 +10,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-
-Dont wanna rumors be spread about your penis size? Try Penis Enlarge Patch.
-
-http://www.ebora.hk/
-
-Try Penis Enlarge Patch and even a horse will be jealous of your penis.
+This is An Ultimate Job Offer
+You have a chance to make 2000-2500 USD a week! To introduce you quick to
+the opportunity i will give you 4 facts:
 
 
+1) 2000-2500 USD a week!
+2) 21+ y/o, you have to be able to check e-mail 1-2 times a day.
+3) 2-3 hours of free time Monday-Thursday
+4) Responsible
 
 
-
-
-
-
-
-
-
-
-
-
-------------------------
-German word is pronounced without having  to ask; whereas in our language if
-distribution; so the gender of each must be learned separately and by heart.There is  no  other  way. To do  this  one  has  to  have  a  memory like  amemorandum-book.  In German, a young lady has  no  sex, while a  turnip has.Think what overwrought reverence that shows for the turnip, and what callous
+Successful company, representing Apple Inc production offers a great
+opportunity from Russia. Currently seeking for
+people who can help us out. Very great opportunity and very
+easy. For more info please contact: klesleyt@hotmail.com
+Alicia 
 
 _______________________________________________
 Kernel-janitors mailing list
