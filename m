@@ -1,124 +1,112 @@
-From: <surya.prabhakar@wipro.com>
-Date: Wed, 06 Jun 2007 09:52:26 +0000
-Subject: Re: [KJ] [patch] Use DMA_32BIT_MASK where
-Message-Id: <1181122826.17735.34.camel@bluegenie>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============2429517731961410873=="
+From: "Clarence G. Lawrence" <yvvsj@newport.com>
+Date: Fri, 15 Jun 2007 23:08:12 +0000
+Subject: [KJ] For now,
+Message-Id: <46731BDC.7030306@newport.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+SREA Gets In On $75 Million Project. Investors Respond!
 
---===============2429517731961410873==
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-	micalg=sha1; boundary="=-VL7fY1BmEtysdLRoak8y"
-Content-class: urn:content-classes:message
+Score One Inc.
+SREA
+$0.20 UP 33%
 
+Investors are hyped about this new project. It will not only bring
+increased revenues to Score but increased exposure on an international
+project like this. Read the news and get on SREA firs thing Monday!
 
---=-VL7fY1BmEtysdLRoak8y
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Right now, Shocklines and author Michael McCarty are running an auction
+for two books on ebay, with the winning bid going to the bunnies.
 
-On Wed, 2007-06-06 at 16:28 +0700, Kevin Jackson wrote:
-> Hi all,
->=20
-> > Ok!! no problems. It applies fine.
->=20
-> Is that the saga over then? :)
-No.
+Artist Keith Minnion's great illustration for the story is viewable on
+his website.
 
->=20
-> Do I need to send another email to the lkml or somewhere else, or is
-> it enough that I sent the patch to kernel janitors?
+com, and Chiaroscuro.
 
-People on Kj can just do the review. If your patch needs to be accepted
-to the kernel, you need to send mail to the developer/subsystem
-maintainer of the file which you are patching. You can find the list of
-maintainers in the file kernel/MAINTAINERS.
+It's published only once per month, and your privacy is protected.
+com, and Chiaroscuro. But it's problematic.
 
-If the subsystem maintainer agrees with your patch only then he pulls
-into his tree.
+Also: Slots are still open for the poetry workshop held at Context
+convention this September. I don't count hits on this blog and I have no
+idea how many people subscribe via an rss newsfeed.
 
-All the best.
+Harlan Wilson, author of PSEUDO CITY "Mike Arnzen's LICKER is a good
+old-fashioned, toad-licking, carnival freak-out that reads like an
+acid-flashback Tilt-a-Whirl. Preorder pricing for this CD is currently
+in development.
 
->=20
-> Kev
---=20
-surya.
-06/06/2007
+A genuine one-of-kind recording.
+It was one of the few times my wife Renate attends these things with me,
+and we had a great time together checking out Toronto.
 
---=-VL7fY1BmEtysdLRoak8y
-Content-Type: application/x-pkcs7-signature; name=smime.p7s
-Content-Disposition: attachment; filename=smime.p7s
-Content-Transfer-Encoding: base64
+This title has always been one of my personal favorites. com and other
+independent booksellers! com, and Chiaroscuro. I tied in the Poetry
+category with Charlee Jacob, for her poetry book, Sineater.
+Blog: My NEW weblog at amazon. Preorder it today at shocklines
+bookstore.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIJIzCCAuww
-ggJVoAMCAQICEG8zftGmvYfSeKA1FishBukwDQYJKoZIhvcNAQEFBQAwYjELMAkGA1UEBhMCWkEx
-JTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQ
-ZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBMB4XDTA3MDMyMjExNTExNloXDTA4MDMyMTExNTEx
-NlowSzEfMB0GA1UEAxMWVGhhd3RlIEZyZWVtYWlsIE1lbWJlcjEoMCYGCSqGSIb3DQEJARYZc3Vy
-eWEucHJhYmhha2FyQHdpcHJvLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN/+
-l9Kx40VowHNy1cV5enxc1UE6Dw52tCjR1fyyTrYXdb8Xir04OhwY+++irn6eIMFclcTVAHfTXgWR
-rXgBmi1AcFPy2zhDwHOc9f4Kj+KMddJYKe5zSdh8KqRXgAr8MoZ1fBiq/KrKZq9vUzwCW3Q0nJDC
-S8c3zG1GPQMmQZCYdoXiuFEmPOYqiNmu3gCJicTs9lgxB6j+5XiGcHrn8KHlHe3kqODpMHfVnxmk
-Y/Z1A0NkDfFwbqNj/85zTAusk3ZLqvSRScR0F3AA132aZ1LA0tVG6a1u8Ki5cpQrgFvkF1eFqUiu
-DMht+EUkzaW25I8Lbon1YCEko5DARpRhc9ECAwEAAaM2MDQwJAYDVR0RBB0wG4EZc3VyeWEucHJh
-Ymhha2FyQHdpcHJvLmNvbTAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4GBAAMG17rbLz6X
-A1n8zcIjX8+oGrJIaOo2metS9rZ/muMfvz5tqhrrWGaFxbwjy6czu13wkryXnEHuzQ+P1RYi4MLe
-ai6xAXzfjDIbJvUfbhp4gUxtDgJQa+QjS3BDwh55iG2KuBLa3yM6Z1ot4i6J4+rUcMSrlAaDx+e2
-yEPbqp8gMIIC7DCCAlWgAwIBAgIQbzN+0aa9h9J4oDUWKyEG6TANBgkqhkiG9w0BAQUFADBiMQsw
-CQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UE
-AxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwHhcNMDcwMzIyMTE1MTE2WhcN
-MDgwMzIxMTE1MTE2WjBLMR8wHQYDVQQDExZUaGF3dGUgRnJlZW1haWwgTWVtYmVyMSgwJgYJKoZI
-hvcNAQkBFhlzdXJ5YS5wcmFiaGFrYXJAd2lwcm8uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
-MIIBCgKCAQEA3/6X0rHjRWjAc3LVxXl6fFzVQToPDna0KNHV/LJOthd1vxeKvTg6HBj776Kufp4g
-wVyVxNUAd9NeBZGteAGaLUBwU/LbOEPAc5z1/gqP4ox10lgp7nNJ2HwqpFeACvwyhnV8GKr8qspm
-r29TPAJbdDSckMJLxzfMbUY9AyZBkJh2heK4USY85iqI2a7eAImJxOz2WDEHqP7leIZweufwoeUd
-7eSo4Okwd9WfGaRj9nUDQ2QN8XBuo2P/znNMC6yTdkuq9JFJxHQXcADXfZpnUsDS1UbprW7wqLly
-lCuAW+QXV4WpSK4MyG34RSTNpbbkjwtuifVgISSjkMBGlGFz0QIDAQABozYwNDAkBgNVHREEHTAb
-gRlzdXJ5YS5wcmFiaGFrYXJAd2lwcm8uY29tMAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQEFBQAD
-gYEAAwbXutsvPpcDWfzNwiNfz6gaskho6jaZ61L2tn+a4x+/Pm2qGutYZoXFvCPLpzO7XfCSvJec
-Qe7ND4/VFiLgwt5qLrEBfN+MMhsm9R9uGniBTG0OAlBr5CNLcEPCHnmIbYq4EtrfIzpnWi3iLonj
-6tRwxKuUBoPH57bIQ9uqnyAwggM/MIICqKADAgECAgENMA0GCSqGSIb3DQEBBQUAMIHRMQswCQYD
-VQQGEwJaQTEVMBMGA1UECBMMV2VzdGVybiBDYXBlMRIwEAYDVQQHEwlDYXBlIFRvd24xGjAYBgNV
-BAoTEVRoYXd0ZSBDb25zdWx0aW5nMSgwJgYDVQQLEx9DZXJ0aWZpY2F0aW9uIFNlcnZpY2VzIERp
-dmlzaW9uMSQwIgYDVQQDExtUaGF3dGUgUGVyc29uYWwgRnJlZW1haWwgQ0ExKzApBgkqhkiG9w0B
-CQEWHHBlcnNvbmFsLWZyZWVtYWlsQHRoYXd0ZS5jb20wHhcNMDMwNzE3MDAwMDAwWhcNMTMwNzE2
-MjM1OTU5WjBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkg
-THRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwgZ8wDQYJ
-KoZIhvcNAQEBBQADgY0AMIGJAoGBAMSmPFVzVftOucqZWh5owHUEcJ3f6f+jHuy9zfVb8hp2vX8M
-OmHyv1HOAdTlUAow1wJjWiyJFXCO3cnwK4Vaqj9xVsuvPAsH5/EfkTYkKhPPK9Xzgnc9A74r/rsY
-Pge/QIACZNenprufZdHFKlSFD0gEf6e20TxhBEAeZBlyYLf7AgMBAAGjgZQwgZEwEgYDVR0TAQH/
-BAgwBgEB/wIBADBDBgNVHR8EPDA6MDigNqA0hjJodHRwOi8vY3JsLnRoYXd0ZS5jb20vVGhhd3Rl
-UGVyc29uYWxGcmVlbWFpbENBLmNybDALBgNVHQ8EBAMCAQYwKQYDVR0RBCIwIKQeMBwxGjAYBgNV
-BAMTEVByaXZhdGVMYWJlbDItMTM4MA0GCSqGSIb3DQEBBQUAA4GBAEiM0VCD6gsuzA2jZqxnD3+v
-rL7CF6FDlpSdf0whuPg2H6otnzYvwPQcUCCTcDz9reFhYsPZOhl+hLGZGwDFGguCdJ4lUJRix9sn
-cVcljd2pnDmOjCBPZV+V2vf3h9bGCE6u9uo05RAaWzVNd+NWIXiC3CEZNd4ksdMdRv9dX2VPMYID
-EDCCAwwCAQEwdjBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0
-eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0ECEG8z
-ftGmvYfSeKA1FishBukwCQYFKw4DAhoFAKCCAW8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-BgkqhkiG9w0BCQUxDxcNMDcwNjA2MDk0MDI2WjAjBgkqhkiG9w0BCQQxFgQULlerbY8MGmoH7Z53
-vQgMRl6QYwQwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0
-ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMTI1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFp
-bCBJc3N1aW5nIENBAhBvM37Rpr2H0nigNRYrIQbpMIGHBgsqhkiG9w0BCRACCzF4oHYwYjELMAkG
-A1UEBhMCWkExJTAjBgNVBAoTHFRoYXd0ZSBDb25zdWx0aW5nIChQdHkpIEx0ZC4xLDAqBgNVBAMT
-I1RoYXd0ZSBQZXJzb25hbCBGcmVlbWFpbCBJc3N1aW5nIENBAhBvM37Rpr2H0nigNRYrIQbpMA0G
-CSqGSIb3DQEBAQUABIIBAFIFA0DZqzP69gZRanWIdIdBGITOFJl33ZLXZHvEMUxtliUS3nRqK2hz
-f9CTYzEoWt206JGvsi2wLhDPng5sNuKN14ZJqvII6/85VbHyrtmuvP41llQlIH/n+EbLFxHRSbbk
-iyI/6ZKOstKIn7qFA3iCMdntEJuybVS/NBjPWJru9e4w2i3DDdBk/xtv4W+vFVUBzGGaJhKbzxCQ
-gkjY4SzM1AxKZLyOZiLmBcqpCtqVhlVIdTB9dhik+4100GnCpa5xvK5KNUlec+81RmPEvrULDc+F
-uaw3pyf5kvfSUkcr8GqPYGpqsyFoZqaKVfuy9fRn9W0S+1VPzbd3g6czeaoAAAAAAAA=
+Devilish, bizarre and irreverent, this book has everything: an
+insatiable plot, fingerlicking prose, and characters who will eat your
+heart out with a wooden spoon!
 
+The book includes a bonus flash fiction story, an introduction by Jeff
+Strand, and more.
+More news to follow as details are ironed out. Licker from what I hear,
+is selling quite briskly in preorders. It's wonderful to be recommended
+for this award again. With all the wonderful poets and features, it's
+really developing into a great magazine.
 
---=-VL7fY1BmEtysdLRoak8y--
+We'll talk about anything.
 
---===============2429517731961410873==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+I don't know if you'll be able to get one before it sells out, so all I
+can say is keep your eyes peeled. Connolly, Gina Wisker and David
+Sandner. UPDATE:  This deal has officially ended, but you can still get
+Grave Markings and a free bonus book if you order the title through
+shocklines.
+
+In an early review, Horror World calls it an "over-the-top, gross-out
+laugh riot.
+Arnzen clearly had a lot of fun in trying to outdo himself, from the
+very first paragraph all the way to the last.
+
+The cover art alone will disturb you.
+
+Come on by, if you're in sunny Florida!
+
+Our Surrealist Product Endorsement
+It was recently covered in a great article in the NY Times.
+
+You can read a transcript of my acceptance speech on gorelets. " Posted
+by Michael A.
+You can order a copy of the magazine from the Cemetery Dance website;
+check out the book, Poe's Lighthouse, while you're there!
+
+Visit Guide Dog Books for news about this book and other exciting
+academic publications upcoming from D.
+
+"  This is, bar none, the WEIRDEST thing I've ever written, and I blush
+to admit I laughed out loud even when I proofread the thing.
+com, Shocklines Bookstore, and many independent bookstores. brought to
+you by Quizilla Posted by Michael A. Getting to taste Brian Keene's
+bottle of Knob Hill during the opening night panel, "What is Horror,
+Exactly? Horror World calls it "pure genius.
+
+Licker will be a humorous horror story about a boy who is having some
+very bizarre problems with his tongue.
+
+Above I've posted a mock-up of the fantatic cover art by painter Matt
+Sesow.
+We'll talk about anything.
+
+"Gorelet" looks like something that would chomp the fingers clean off of
+who over opens the package! You can get your copy signed if you order
+from Shocklines Bookstore now! which is now for sale on eBay to benefit
+a horror fan in need.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============2429517731961410873==--
