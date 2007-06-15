@@ -1,139 +1,63 @@
-From: "Edgar Y. Moss" <cdzwk@cableone.net>
-Date: Thu, 28 Jun 2007 20:11:02 +0000
-Subject: [KJ] As with any top site that achieves the success on the order
-Message-Id: <4684BBF0.8000300@cableone.net>
+From: Ben Dooks <ben@trinity.fluff.org>
+Date: Fri, 15 Jun 2007 17:34:14 +0000
+Subject: [KJ] Re: [PATCH]is_power_of_2-rtc/rtc-s3c.c
+Message-Id: <20070615173414.GH601@trinity.fluff.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-BusinessNetWire's Issues "Investor Focus" On SREA
+On Tue, Jun 12, 2007 at 10:54:28AM +0530, vignesh babu wrote:
+> 
+> 
+> Replacing (n & (n-1)) in the context of power of 2 checks
+> with is_power_of_2
+> 
+> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+> --- 
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index 54b6130..e20bd6f 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/rtc.h>
+>  #include <linux/bcd.h>
+>  #include <linux/clk.h>
+> +#include <linux/log2.h>
+>  
+>  #include <asm/hardware.h>
+>  #include <asm/uaccess.h>
+> @@ -311,7 +312,7 @@ static int s3c_rtc_ioctl(struct device *dev,
+>  	case RTC_IRQP_SET:
+>  		/* check for power of 2 */
+>  
+> -		if ((arg & (arg-1)) != 0 || arg < 1) {
+> +		if (!is_power_of_2(arg)) {
+>  			ret = -EINVAL;
+>  			goto exit;
+>  		}
+> 
+> -- 
+> Vignesh Babu BM 
+> _____________________________________________________________ 
+> "Why is it that every time I'm with you, makes me believe in magic?"
+> 
+> 
+> 
+> The information contained in this electronic message and any attachments to this message are intended for the exclusive use of the addressee(s) and may contain proprietary, confidential or privileged information. If you are not the intended recipient, you should not disseminate, distribute or copy this e-mail. Please notify the sender immediately and destroy all copies of this message and any attachments. 
+> 
+> WARNING: Computer viruses can be transmitted via email. The recipient should check this email and any attachments for the presence of viruses. The company accepts no liability for any damage caused by any virus transmitted by this email.
+>  
+> www.wipro.com
 
-Score One Inc. (SREA)
+-- 
+-- 
+Ben
 
-Market Makers are pushing SREA down to grab control but Market Watchers
-continue to alert investors as SREA rockets higher! Get on SREA now!
-
-Password: lost password?
-
-It continues to be our goal to raise the quality of  material available
-on Webmasterworld and to remain an independent site that serves the
-community.
-
-Members receive: Access to the private supporters forum.
-
-As with any top site that achieves the success on the order that we
-have, expenses also grow.
-
-Note: Cookie support required to login Subscribe to WebmasterWorld,
-thank you for your support.
-
-An ad free environment if we should add advertising. We have  discussed
-moving the site to banner ads, text ads, or affiliations with
-developers.
-Aside from supporting WebmasterWorlds continued operation and expansion,
-subscribing to the site has tangible benefits. Member Login: Member
-Name: need to register?
-
-Members receive: Access to the private supporters forum.
-
-Note: Given that this is a service, all subscriptions are final and
-refunds are not granted.
-If you would like to subscribe to Webmasterworld please click on one of
-the PayPal links above and fill out the form at their secure https site.
-An ad free environment if we should add advertising.
-
-It continues to be our goal to raise the quality of  material available
-on Webmasterworld and to remain an independent site that serves the
-community.
-
-Password: lost password?
-
-A special discounted Supporters Only rate to all WebmasterWorld hosted
-conferences. Password: lost password? Aside from supporting
-WebmasterWorlds continued operation and expansion, subscribing to the
-site has tangible benefits.
-Password: lost password?
-We are a verified PayPal Premier business member and you can verify our
-status by clicking on the verified seal in the lower right.
-
-It is made up of some of the best professionals in the business in a
-more relaxed atmosphere. Note: Cookie support required to login
-Subscribe to WebmasterWorld, thank you for your support. It has been by
-the generosity of our members we have not only been able to do that, but
-have become known net wide as an  authoritative source on search engine
-optimization and marketing matters. Password: lost password?
-Members receive: Access to the private supporters forum.
-
-Note: Given that this is a service, all subscriptions are final and
-refunds are not granted.
-If you would like to subscribe to Webmasterworld please click on one of
-the PayPal links above and fill out the form at their secure https site.
-It is made up of some of the best professionals in the business in a
-more relaxed atmosphere. We have  discussed moving the site to banner
-ads, text ads, or affiliations with developers.
-As with any top site that achieves the success on the order that we
-have, expenses also grow.
-
-It has been by the generosity of our members we have not only been able
-to do that, but have become known net wide as an  authoritative source
-on search engine optimization and marketing matters. We are a verified
-PayPal Premier business member and you can verify our status by clicking
-on the verified seal in the lower right. An ad free environment if we
-should add advertising. As with any top site that achieves the success
-on the order that we have, expenses also grow.
-Password: lost password?
-
-It has been by the generosity of our members we have not only been able
-to do that, but have become known net wide as an  authoritative source
-on search engine optimization and marketing matters.
-It has been by the generosity of our members we have not only been able
-to do that, but have become known net wide as an  authoritative source
-on search engine optimization and marketing matters.
-If you would like to subscribe to Webmasterworld please click on one of
-the PayPal links above and fill out the form at their secure https site.
-We have  discussed moving the site to banner ads, text ads, or
-affiliations with developers.
-
-We are a verified PayPal Premier business member and you can verify our
-status by clicking on the verified seal in the lower right. Aside from
-supporting WebmasterWorlds continued operation and expansion,
-subscribing to the site has tangible benefits. An ad free environment if
-we should add advertising.
-
-It has been by the generosity of our members we have not only been able
-to do that, but have become known net wide as an  authoritative source
-on search engine optimization and marketing matters.
-
-If you would like to subscribe to Webmasterworld please click on one of
-the PayPal links above and fill out the form at their secure https site.
-
-We have  discussed moving the site to banner ads, text ads, or
-affiliations with developers. We have  discussed moving the site to
-banner ads, text ads, or affiliations with developers. Members receive:
-Access to the private supporters forum.
-
-Password: lost password?
-
-Aside from supporting WebmasterWorlds continued operation and expansion,
-subscribing to the site has tangible benefits.
-
-Note: Cookie support required to login Subscribe to WebmasterWorld,
-thank you for your support.
-As with any top site that achieves the success on the order that we
-have, expenses also grow.
-
-Password: lost password? An ad free environment if we should add
-advertising.
-
-Password: lost password?
-
-It is made up of some of the best professionals in the business in a
-more relaxed atmosphere.
-
-Note: Cookie support required to login Subscribe to WebmasterWorld,
-thank you for your support.
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
 
 _______________________________________________
 Kernel-janitors mailing list
