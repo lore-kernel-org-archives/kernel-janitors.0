@@ -1,13 +1,15 @@
-From: "Maxime" <bucharest@snail-mail.net>
-Date: Tue, 12 Jun 2007 08:42:50 +0000
+From: "Paul" <ward@amrer.net>
+Date: Fri, 15 Jun 2007 10:23:56 +0000
 Subject: [KJ] =?iso-8859-1?q?Je_viens_de_d=E9couvrir_les_meilleurs_jeux_d?=
-Message-Id: <25265462.88287171@holman.com>
+Message-Id: <09045280.82884193@barycentric.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============4723378458852288622=="
+Content-Type: multipart/mixed; boundary="===============2322151947977037141=="
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <25265462.88287171@holman.com>
+In-Reply-To: <25265462.88287171@holman.com>
 To: kernel-janitors@vger.kernel.org
 
---===============4723378458852288622==
+--===============2322151947977037141==
 Content-Type: text/html; charset=iso-8859-1
 Content-Transfer-Encoding: 7bit
 
@@ -98,15 +100,15 @@ que j'ai vu l'argent sur mon compte il y a une heure!
 <o:p>&nbsp;</o:p></span></p>
 
 <p class=MsoNormal>A essayer! 
-<a href="http://www.lemeilleurcasinos.hk/lang-fr/">
-http://www.lemeilleurcasinos.hk/lang-fr/</a>
+<a href="http://www.cazinomj.hk/lang-fr/">
+http://www.cazinomj.hk/lang-fr/</a>
 <span lang=EN-US style='mso-ansi-language:EN-US'>
 <o:p></o:p></span></p>
 
 <p class=MsoNormal><span lang=EN-US style='mso-ansi-language:EN-US'>
 <o:p>&nbsp;</o:p></span></p>
 
-<p class=MsoNormal>Maxime<o:p></o:p></p>
+<p class=MsoNormal>Paul<o:p></o:p></p>
 
 </div>
 
@@ -115,7 +117,7 @@ http://www.lemeilleurcasinos.hk/lang-fr/</a>
 </html>
 
 
---===============4723378458852288622==
+--===============2322151947977037141==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -125,4 +127,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============4723378458852288622==--
+--===============2322151947977037141==--
