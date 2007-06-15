@@ -1,77 +1,83 @@
-From: Haines Cecil <aay@xanterra.com>
-Date: Sat, 16 Jun 2007 06:04:59 +0000
-Subject: [KJ] babysat cryptically
-Message-Id: <46737D8B.2030206@xanterra.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Fri, 15 Jun 2007 18:50:15 +0000
+Subject: [KJ] why does ARM arch treat early boot-time parms differently?
+Message-Id: <Pine.LNX.4.64.0706151443370.14037@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-SREA Gets In On $75 Million Project. Investors Respond!
 
-Score One Inc.
-SREA
-$0.20 UP 33%
+  (i'm posting this here since it's going to lead in to another
+possible cleanup project.)
 
-Investors are hyped about this new project. It will not only bring
-increased revenues to Score but increased exposure on an international
-project like this. Read the news and get on SREA firs thing Monday!
+  from include/linux/init.h, i can see how both regular and "early"
+boot-time kernel parameters are defined:
 
-Most of the girls think it's just about physical pain and don't grasp
-the mental control and humiliation that these clients crave. You can
-check one out at.
-I need to be at my best when we open a new place. The past couple of
-weeks I have been geeting back into an exercise routine.
+=======================...
+#define __setup_param(str, unique_id, fn, early)                \
+        static char __setup_str_##unique_id[] __initdata = str; \
+        static struct obs_kernel_param __setup_##unique_id      \
+                __attribute_used__                              \
+                __attribute__((__section__(".init.setup")))     \
+                __attribute__((aligned((sizeof(long)))))        \
+                = { __setup_str_##unique_id, fn, early }
 
-For authors of popular content, all those pennies would add up.
-hCalendarDayNameRow, . We are familiar with Radio UserLand, Manila,
-MovableType, TypePad, etc. I let her go on for a few moments and wear
-herself out.
-We will teach you how to blog and how you can make best use of blogs and
-RSS, a new way to syndicate your blog and business process information.
-Sorry I guess we all break down from time to time.
-She has been vomiting regularly for months now and it's beginning to
-take it's toll obviously. Everyone just stopped for a minute. In the
-middle of Serena and I having a "discussion" about the shoes Helga walks
-in. note: other localized editions are available at The Knoppix Homepage
-where you can also download by BitTorrent.
+#define __setup_null_param(str, unique_id)                      \
+        __setup_param(str, unique_id, NULL, 0)
 
-She started across the main room with him trailing after.
+#define __setup(str, fn)                                        \
+        __setup_param(str, fn, fn, 0)
 
-This is why I can't trust them.
-I am very scared for him. "We like to characterize ourselves as
-E-commerce for the rest of us," says Kurt Huang, co-founder of BitPass
-Inc. She was speaking very fast and I only understood part of what she
-said. The result has been a proliferation of compatible authoring tools.
+#define __obsolete_setup(str)                                   \
+        __setup_null_param(str, __LINE__)
 
-Most importantly, they are a great way to build a community and
-conversation with your customers and make money in the process!
-She has been vomiting regularly for months now and it's beginning to
-take it's toll obviously. I actually admit to being human here what a
-break through not.
+/* NOTE: fn is as per module_param, not __setup!  Emits warning if fn
+ * returns non-zero. */
+#define early_param(str, fn)                                    \
+        __setup_param(str, fn, fn, 1)
+...
+=======================
 
-Jeff Sandquist is trying to guess what Dave Winer is up to. Adam cut the
-power to that area and took off the face plate. If any of the OS vendors
-want advice on this, let me know. I think the bar stools actually shook
-a little.
+further, note how all of those boot-time parms are placed in the
+section called ".init.setup".  so far, no problem.
 
-If the road to hell is paved with good intentions I'm definitely
-spreading my share of tar. If the road to hell is paved with good
-intentions I'm definitely spreading my share of tar.
+  however, the ARM architectures take a slightly different approach:
 
-wasn't designed to produce an unrolled list of sites in a category, but
-its web API can be made to do it. The Guys in our area must have been
-treating themselves to early Father's Day this Friday and Saturday.
-Diamond on the other hand stays up at night thinking up new ways her
-underlings can please her. Added to the directory. There is so much shit
-going on right now that I just don't have the patience to deal with this
-trivial nonsense.
+$ grep -rw __early_param *
+arch/arm/mm/mmu.c:__early_param("cachepolicy=", early_cachepolicy);
+arch/arm/mm/mmu.c:__early_param("nocache", early_nocache);
+arch/arm/mm/mmu.c:__early_param("nowb", early_nowrite);
+arch/arm/mm/mmu.c:__early_param("ecc=", early_ecc);
+arch/arm/kernel/setup.c:__early_param("initrd=", early_initrd);
+arch/arm/kernel/setup.c:__early_param("mem=", early_mem);
+arch/arm26/kernel/vmlinux-arm26-xip.lds.in:                     *(__early_param)
+arch/arm26/kernel/vmlinux-arm26.lds.in:                 *(__early_param)
+include/asm-arm/setup.h:#define __early_param(name,fn)                         \
 
-Maybe Adam and my Mom were right to try making me realize he wouldn't
-still the same sweet little toddler I lost. Good to know there's so much
-interest in this humble weblog.
+  what's with this "__early_param" as opposed to just regular
+"early_param"?  and here's what you find in include/asm-arm/setup.h:
 
+#define __early_param(name,fn)                                  \
+static struct early_params __early_##fn __used                  \
+__attribute__((__section__(".early_param.init"))) = { name, fn }
+
+  so, in the ARM arch, the early parameter stuff is placed in a
+differently-named section.
+
+  is there a reason that ARM treats the early kernel parm stuff
+differently from all other arches?  just curious.
+
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
