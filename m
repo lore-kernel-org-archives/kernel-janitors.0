@@ -1,7 +1,7 @@
-From: burns.ethan@gmail.com
-Date: Fri, 15 Jun 2007 17:12:54 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Fri, 15 Jun 2007 18:39:25 +0000
 Subject: Re: [KJ] [PATCH] Centralize checking for adequate version of gcc.
-Message-Id: <20070615180832.GA22184@eaburns.mooo.com>
+Message-Id: <Pine.LNX.4.64.0706151438170.13440@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0706150650010.25667@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0706150650010.25667@localhost.localdomain>
@@ -10,30 +10,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 15, 2007 at 06:47:01PM +0200, Jaco Kroon wrote:
+On Fri, 15 Jun 2007, Vegard Nossum wrote:
 
-[...]
+> On 6/15/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
+> >   here's a patch i submitted to andrew to centralize checking for a
+> > proper version of gcc when building the kernel, but andrew claims it
+> > broke the build.  i'm trying to reproduce the problem, and i'd
+> > appreciate it if anyone else wants to apply this patch and try a build
+> > based on "allyesconfig" or "allmodconfig" on x86 to see if they run
+> > into some kind of issue, cuz i'm just not seeing it here.  thanks.
+>
+> It works for me (using gcc 4.1.1 for i386 on linus's tree).
 
->  The comment explained _why_ those checks were done, ie, it generates bad
->  builds.  The pre-processor code simply states _which_ compilers are
->  acceptable.
+well, that's just weird.  andrew insisted that the build failed for
+him -- *i* can't reproduce it, and it seems to work for you, and that
+patch is so innocuous that i just don't understand how it could have
+screwed things up.
 
-Is it not enough that the error and warning messages them selves state *why*
-the checks are being done?
+how odd.
 
-#if (__GNUC__ < 3) || (__GNUC__ = 3 && __GNUC_MINOR__ < 2)
-# error Sorry, your GCC is too old. It builds incorrect kernels.
-#elif __GNUC__ = 4 && __GNUC_MINOR__ = 1 && __GNUC_PATCHLEVEL__ = 0
-# warning gcc-4.1.0 is known to miscompile the kernel.  A different compiler
-version is recommended.
-#elif __GNUC__ = 4
-...
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-I think that it is pretty explicit *why* the error and warning message are
-being given in this code snip.
-
-
-Ethan
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
