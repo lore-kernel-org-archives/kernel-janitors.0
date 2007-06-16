@@ -1,60 +1,27 @@
-From: "bill esther" <herrick00@freeproblem.com>
-Date: Fri, 08 Jun 2007 13:18:18 +0000
-Subject: [KJ] Re: Hallo!
-Message-Id: <001b01c7a9de$59a3bb90$b197007a@122.0.151.177>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7218996232743433767=="
+From: "K Searle" <searlek01@yahoo.co.uk>
+Date: Sat, 16 Jun 2007 17:35:38 +0000
+Subject: [KJ] Ultimate Job Offer
+Message-Id: <01c7b03b$dc98a9e0$6c822ecf@akstcwholesomebodydcmnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <B84F5116.2366D62F@web.de>
-In-Reply-To: <B84F5116.2366D62F@web.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
---===============7218996232743433767==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0011_01C7A9DE.02F588E3"
-
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_0011_01C7A9DE.02F588E3
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-Hello!I am  tired, tonight, interested in chattnig wiht niec prtety =
-girl? Email me at VY@MailVisionSite.info only.Would you mind me showing =
-some nice pictures of me?
-------=_NextPart_000_0011_01C7A9DE.02F588E3
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; =
-charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.3790.2759" name=3DGENERATOR>
-<STYLE></STYLE>
-</HEAD>
-<BODY>
-Hello!
-I am  tired, tonight, interested in=20
-chattnig wiht niec prtety girl? Email me at VY@MailVisionSite.info only.
-Would you mind me showing some nice pictures of me?
-</BODY></HTML>
-------=_NextPart_000_0011_01C7A9DE.02F588E3--
-
-
-
---===============7218996232743433767==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+  This is An Ultimate Job Offer
+ You have a chance to make 2000-2500 USD a week! To introduce you quick to
+the opportunity i will give you 4 facts:
+1) 2000-2500 USD a week!
+2) 21+ y/o, you have to be able to check e-mail 1-2 times a day.
+3) 2-3 hours of free time Monday-Thursday
+4) Responsible
+  Successful company, representing Apple Inc production offers a great
+opportunity from Russia. Currently seeking for
+people who can help us out. Very great opportunity and very
+easy. For more info please contact: searlek01@yahoo.co.uk
+Kevin Searle
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7218996232743433767==--
