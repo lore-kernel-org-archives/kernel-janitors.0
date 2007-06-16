@@ -1,8 +1,10 @@
 From: "K Searle" <searlek01@yahoo.co.uk>
-Date: Sat, 16 Jun 2007 17:35:38 +0000
+Date: Sat, 16 Jun 2007 17:39:33 +0000
 Subject: [KJ] Ultimate Job Offer
-Message-Id: <01c7b03b$dc98a9e0$6c822ecf@akstcwholesomebodydcmnsdgs>
+Message-Id: <01c7b03c$5d494e00$6c822ecf@akstcutilitytristatemnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7b03b$dc98a9e0$6c822ecf@akstcwholesomebodydcmnsdgs>
+In-Reply-To: <01c7b03b$dc98a9e0$6c822ecf@akstcwholesomebodydcmnsdgs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
