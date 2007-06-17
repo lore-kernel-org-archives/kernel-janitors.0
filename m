@@ -1,90 +1,110 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Tue, 12 Jun 2007 05:12:52 +0000
-Subject: [KJ] [PATCH]is_power_of_2-dm
-Message-Id: <1181624452.3109.20.camel@merlin.linuxcoe.com>
+From: Mail Administrator <Postmaster@mx.bigpond.com>
+Date: Sun, 17 Jun 2007 10:24:50 +0000
+Subject: [KJ] Mail System Error - Returned Mail
+Message-Id: <20070617102450.UCTA25724.omta05sl.mx.bigpond.com@omta05sl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============7441753456015791577=="
 List-Id: <kernel-janitors.vger.kernel.org>
+To: kernel-janitors@vger.kernel.org
+
+
+--===============7441753456015791577==
+Content-Type: multipart/report; report-type=delivery-status;
+	Boundary="===========================_ _= 5365905(25724)1182075890"
+
+
+--===========================_ _= 5365905(25724)1182075890
+Content-Type: text/plain
+
+This Message was undeliverable due to the following reason:
+
+Your message was not delivered because the destination computer refused
+to accept it (the error message is reproduced below).  This type of error
+is usually due to a mis-configured account or mail delivery system on the
+destination computer; however, it could be caused by your message since
+some mail systems refuse messages with invalid header information, or if
+they are too large.
+
+Your message was rejected by serlx14.essex.ac.uk for the following reason:
+
+     This email contains a virus or other harmful content (Worm.Mydoom.M)
+
+The following recipients did not receive this message:
+
+     <sml@essex.ac.uk>
+
+Please reply to <Postmaster@mx.bigpond.com>
+if you feel this message to be in error.
+
+The following attachments have been removed from the bounce message: message.zip
+
+--===========================_ _= 5365905(25724)1182075890
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; omta05sl.mx.bigpond.com
+Arrival-Date: Sun, 17 Jun 2007 10:24:31 +0000
+Received-From-MTA: dns; oaamta05sl.mx.bigpond.com (124.182.180.108)
+
+Final-Recipient: RFC822; <sml@essex.ac.uk>
+Action: failed
+Status: 5.1.1
+Remote-MTA: dns; serlx14.essex.ac.uk (155.245.48.17)
+Diagnostic-Code: smtp; 550 This email contains a virus or other harmful content
+	(Worm.Mydoom.M)
+
+--===========================_ _= 5365905(25724)1182075890
+Content-Type: message/rfc822
+
+Received: from oaamta05sl.mx.bigpond.com ([124.182.180.108])
+	by omta05sl.mx.bigpond.com with ESMTP id
+	<20070617102431.UCKQ25724.omta05sl.mx.bigpond.com@oaamta05sl.mx.bigpond.com>
+	for <sml@essex.ac.uk>; Sun, 17 Jun 2007 10:24:31 +0000
+Received: from lists.osdl.org ([124.182.180.108])
+	by oaamta05sl.mx.bigpond.com with ESMTP
+	id <20070617102416.JKVZ23230.oaamta05sl.mx.bigpond.com@lists.osdl.org>
+	for <sml@essex.ac.uk>; Sun, 17 Jun 2007 10:24:16 +0000
+From: kernel-janitors@lists.osdl.org
+To: sml@essex.ac.uk
+Subject: hi
+Date: Sun, 17 Jun 2007 18:20:51 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0009_7DBBE2E4.6546C189"
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2600.0000
+X-MIMEOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+Message-Id: <20070617102416.JKVZ23230.oaamta05sl.mx.bigpond.com@lists.osdl.org>
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0009_7DBBE2E4.6546C189
+Content-Type: text/plain;
+	charset=us-ascii
 Content-Transfer-Encoding: 7bit
-To: mingo@redhat.com, neilb@suse.de
-Cc: linux-raid@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+
+The original message was received at Sun, 17 Jun 2007 18:20:51 +0800
+from lists.osdl.org [21.238.201.169]
+
+----- The following addresses had permanent fatal errors -----
+<sml@essex.ac.uk>
 
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
-index ef124b7..3e1817a 100644
---- a/drivers/md/dm-raid1.c
-+++ b/drivers/md/dm-raid1.c
-@@ -19,6 +19,7 @@
- #include <linux/time.h>
- #include <linux/vmalloc.h>
- #include <linux/workqueue.h>
-+#include <linux/log2.h>
- 
- #define DM_MSG_PREFIX "raid1"
- #define DM_IO_PAGES 64
-@@ -962,7 +963,7 @@ static void free_context(struct mirror_set *ms, struct dm_target *ti,
- 
- static inline int _check_region_size(struct dm_target *ti, uint32_t size)
- {
--	return !(size % (PAGE_SIZE >> 9) || (size & (size - 1)) ||
-+	return !(size % (PAGE_SIZE >> 9) || !is_power_of_2(size) ||
- 		 size > ti->len);
- }
- 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index 0821a2b..f2d4b23 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include <linux/log2.h>
- 
- #include "dm-snap.h"
- #include "dm-bio-list.h"
-@@ -414,7 +415,7 @@ static int set_chunk_size(struct dm_snapshot *s, const char *chunk_size_arg,
- 	chunk_size = round_up(chunk_size, PAGE_SIZE >> 9);
- 
- 	/* Check chunk_size is a power of 2 */
--	if (chunk_size & (chunk_size - 1)) {
-+	if (!is_power_of_2(chunk_size)) {
- 		*error = "Chunk size is not a power of 2";
- 		return -EINVAL;
- 	}
-diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
-index 51f5e07..969944a 100644
---- a/drivers/md/dm-stripe.c
-+++ b/drivers/md/dm-stripe.c
-@@ -11,6 +11,7 @@
- #include <linux/blkdev.h>
- #include <linux/bio.h>
- #include <linux/slab.h>
-+#include <linux/log2.h>
- 
- #define DM_MSG_PREFIX "striped"
- 
-@@ -99,7 +100,7 @@ static int stripe_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	/*
- 	 * chunk_size is a power of two
- 	 */
--	if (!chunk_size || (chunk_size & (chunk_size - 1)) ||
-+	if (!is_power_of_2(chunk_size) ||
- 	    (chunk_size < (PAGE_SIZE >> SECTOR_SHIFT))) {
- 		ti->error = "Invalid chunk size";
- 		return -EINVAL;
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+------=_NextPart_000_0009_7DBBE2E4.6546C189--
+
+--===========================_ _= 5365905(25724)1182075890--
+
+
+--===============7441753456015791577==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============7441753456015791577==--
