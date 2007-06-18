@@ -1,7 +1,7 @@
-From: Shani Moideen <shani.moideen@wipro.com>
-Date: Mon, 18 Jun 2007 03:45:56 +0000
-Subject: [KJ] [KJ PATCH] Replacing memset(<addr>,0,PAGE_SIZE) with
-Message-Id: <1182137636.9020.17.camel@shani-win>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 18 Jun 2007 13:03:20 +0000
+Subject: Re: [KJ] [KJ PATCH] Replacing memset(<addr>,0,PAGE_SIZE) with
+Message-Id: <Pine.LNX.4.64.0706180856530.18880@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1178621156.3598.10.camel@shani-win>
 In-Reply-To: <1178621156.3598.10.camel@shani-win>
@@ -10,29 +10,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+On Mon, 18 Jun 2007, Shani Moideen wrote:
+...
+> -			memset(buf->page_list[i].buf, 0, PAGE_SIZE);
+> +			clear_page(buf->page_list[i].buf);
+...
 
-Replacing memset(<addr>,0,PAGE_SIZE) with clear_page(<addr>) 
-in drivers/infiniband/hw/ipath/ipath_driver.c
+i'm not sure whether this current cleanup project was at all inspired
+by the page at the wiki:
 
-Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
-----
+http://fsdev.net/wiki/index.php?title=Clear_page_copy_page
 
-diff --git a/drivers/infiniband/hw/ipath/ipath_driver.c b/drivers/infiniband/hw/ipath/ipath_driver.c
-index e3a2232..417e3ca 100644
---- a/drivers/infiniband/hw/ipath/ipath_driver.c
-+++ b/drivers/infiniband/hw/ipath/ipath_driver.c
-@@ -1509,7 +1509,7 @@ int ipath_create_rcvhdrq(struct ipath_devdata *dd,
- 
- 	/* clear for security and sanity on each use */
- 	memset(pd->port_rcvhdrq, 0, pd->port_rcvhdrq_size);
--	memset(pd->port_rcvhdrtail_kvaddr, 0, PAGE_SIZE);
-+	clear_page(pd->port_rcvhdrtail_kvaddr);
- 
- 	/*
- 	 * tell chip each time we init it, even if we are re-using previous
+note that there are two sort of related cleanups -- clear_page() and
+copy_page().  but, as you can read there, it's not *entirely* clear
+that the clears or copies are entirely equivalent to the corresponding
+memset() or memcpy() calls (or whether they should be).
 
+calling memset() for a size of PAGE_SIZE doesn't necessarily mean that
+the address is on a page boundary, while it's possible that something
+called "clear_page()" is *meant* to work only on an actual page.
+that's not what appears to be happening, but it's something to keep in
+mind:  *should* something called "clear_page()" have any extra
+semantics above and beyond just clearing something that's the size of
+a page?
+
+and the same thing can be asked of "copy_page()".  i'm not saying that
+there's anything amiss with the current cleaning, and i'm happy to see
+it happening.  i'm just curious as to whether the possible semantic
+ambiguity has been examined and dismissed.
+
+rday
 -- 
-Shani 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
