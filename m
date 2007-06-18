@@ -1,46 +1,74 @@
-From: "youngn. too.ELM:" <wcdysmmp@sintmaarten.net>
-Date: Thu, 14 Jun 2007 13:09:09 +0000
-Subject: [KJ] Accepting your application
-Message-Id: <4A7E10ECF1FE0C9.33C9FCD8B6@sintmaarten.net>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============9121996029635668840=="
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 18 Jun 2007 20:07:33 +0000
+Subject: [KJ] [PATCH] Comment the endif's in highmem.h to make the logic
+Message-Id: <Pine.LNX.4.64.0706181606300.6427@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---===============9121996029635668840==
-Content-Type: multipart/related;
-	boundary="----=_NextPart_000_0002_01C7AEA6.B918C180"
 
-------=_NextPart_000_0002_01C7AEA6.B918C180
-Content-Type: text/html;
-	charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML><HEAD>
-<META http-equiv=3DContent-Type content=3D"text/html; charset=3Diso-8859-1">
-<META content=3D"MSHTML 6.00.2900.2912" name=3D"GENERATOR">
-</HEAD>
-<BODY>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>Your credit history doesn't matter to us!</B></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>If your family OWN property and want IMMEDIATE money to spend ANY way you like, or simply wish to LOWER your current payments by a third or more, here is our deal we can offer you TODAY (hurry, this tender will expire TONIGHT):</FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>$451,000+ loan</B></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>AND EVEN MORE: After further review, our lenders have established the lowest current payments!</FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><B>Hurry, when the deal is gone, it is gone. Simply fill out this simple form... </B></FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2>Don't worry about approval, your credit history will not disqualify you!!</FONT></DIV><BR>
-<DIV align=3Dleft><FONT face=3DArial size=3D2><a href=3D"http://domerbase.com/">http://domerbase.com/</a></FONT></DIV><BR></BODY></HTML>
+---
 
-------=_NextPart_000_0002_01C7AEA6.B918C180--
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index 98e2cce..8d3626e 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -11,13 +11,13 @@
+ static inline void flush_anon_page(struct vm_area_struct *vma, struct page *page, unsigned long vmaddr)
+ {
+ }
+-#endif
++#endif /* !ARCH_HAS_FLUSH_ANON_PAGE */
 
+ #ifndef ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
+ static inline void flush_kernel_dcache_page(struct page *page)
+ {
+ }
+-#endif
++#endif /* !ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE */
 
---===============9121996029635668840==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+ #ifdef CONFIG_HIGHMEM
 
+@@ -58,7 +58,7 @@ static inline void *kmap_atomic(struct page *page, enum km_type idx)
+ #define kmap_atomic_to_page(ptr)	virt_to_page(ptr)
+
+ #define kmap_flush_unused()	do {} while(0)
+-#endif
++#endif /* !ARCH_HAS_KMAP */
+
+ #endif /* CONFIG_HIGHMEM */
+
+@@ -83,7 +83,7 @@ alloc_zeroed_user_highpage(struct vm_area_struct *vma, unsigned long vaddr)
+
+ 	return page;
+ }
+-#endif
++#endif /* !__HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE */
+
+ static inline void clear_highpage(struct page *page)
+ {
+@@ -132,7 +132,7 @@ static inline void copy_user_highpage(struct page *to, struct page *from,
+ 	smp_wmb();
+ }
+
+-#endif
++#endif /* !__HAVE_ARCH_COPY_USER_HIGHPAGE */
+
+ static inline void copy_highpage(struct page *to, struct page *from)
+ {
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============9121996029635668840==--
