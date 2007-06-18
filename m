@@ -1,7 +1,7 @@
 From: Shani Moideen <shani.moideen@wipro.com>
-Date: Thu, 14 Jun 2007 11:32:21 +0000
+Date: Mon, 18 Jun 2007 03:28:41 +0000
 Subject: [KJ] [KJ PATCH] Replacing memset(<addr>,0,PAGE_SIZE) with
-Message-Id: <1181820021.2297.7.camel@shani-win>
+Message-Id: <1182136601.9020.7.camel@shani-win>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1178621156.3598.10.camel@shani-win>
 In-Reply-To: <1178621156.3598.10.camel@shani-win>
@@ -11,25 +11,25 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Replacing memset(<addr>,0,PAGE_SIZE) with clear_page(<addr>)
-in drivers/char/drm/i915_dma.c
+Replacing memset(<addr>,0,PAGE_SIZE) with clear_page(<addr>) 
+in drivers/infiniband/hw/mthca/mthca_allocator.c
 
 Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
 ----
 
-diff --git a/drivers/char/drm/i915_dma.c b/drivers/char/drm/i915_dma.c
-index 1ba15d9..4f17eb6 100644
---- a/drivers/char/drm/i915_dma.c
-+++ b/drivers/char/drm/i915_dma.c
-@@ -191,7 +191,7 @@ static int i915_initialize(drm_device_t * dev,
- 	dev_priv->hw_status_page = dev_priv->status_page_dmah->vaddr;
- 	dev_priv->dma_status_page = dev_priv->status_page_dmah->busaddr;
+diff --git a/drivers/infiniband/hw/mthca/mthca_allocator.c b/drivers/infiniband/hw/mthca/mthca_allocator.c
+index f930e55..a763067 100644
+--- a/drivers/infiniband/hw/mthca/mthca_allocator.c
++++ b/drivers/infiniband/hw/mthca/mthca_allocator.c
+@@ -255,7 +255,7 @@ int mthca_buf_alloc(struct mthca_dev *dev, int size, int max_direct,
+ 			dma_list[i] = t;
+ 			pci_unmap_addr_set(&buf->page_list[i], mapping, t);
  
--	memset(dev_priv->hw_status_page, 0, PAGE_SIZE);
-+	clear_page(dev_priv->hw_status_page);
- 	DRM_DEBUG("hw status page @ %p\n", dev_priv->hw_status_page);
- 
- 	I915_WRITE(0x02080, dev_priv->dma_status_page);
+-			memset(buf->page_list[i].buf, 0, PAGE_SIZE);
++			clear_page(buf->page_list[i].buf);
+ 		}
+ 	}
+
 
 -- 
 Shani 
