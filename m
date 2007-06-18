@@ -1,82 +1,75 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Tue, 12 Jun 2007 06:16:53 +0000
-Subject: [KJ] [PATCH] Fix 'obviously wrong' header guards
-Message-Id: <466E3A55.8010907@gmail.com>
+From: "Donn Echols" <iqjgillmore@keweber.com>
+Date: Mon, 18 Jun 2007 17:06:38 +0000
+Subject: [KJ] Be chaumont do glenarbor
+Message-Id: <001701c7b205$b4d3d2b0$0094c174@PC>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============8854270334099912058=="
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Apparently this doesn't really matter, but it's nice to be nice.
+--===============8854270334099912058==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0014_01C7B205.B4D3D2B0"
+
+------=_NextPart_000_0014_01C7B205.B4D3D2B0
+Content-Type: text/plain;
+        charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
 
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Date: Tue, 29 May 2007 12:33:51 +0200
-Subject: [PATCH] Fix 'obviously wrong' header guards
-
----
-  include/asm-arm/arch-iop13xx/dma.h |    2 +-
-  include/asm-i386/seccomp.h         |    1 +
-  include/asm-parisc/psw.h           |    1 +
-  include/asm-sparc64/seccomp.h      |    1 +
-  include/asm-x86_64/seccomp.h       |    1 +
-  5 files changed, 5 insertions(+), 1 deletions(-)
-
-diff --git a/include/asm-arm/arch-iop13xx/dma.h 
-b/include/asm-arm/arch-iop13xx/dma.h
-index 2e15da5..d79846f 100644
---- a/include/asm-arm/arch-iop13xx/dma.h
-+++ b/include/asm-arm/arch-iop13xx/dma.h
-@@ -1,3 +1,3 @@
-  #ifndef _IOP13XX_DMA_H
--#define _IOP13XX_DMA_H_
-+#define _IOP13XX_DMA_H
-  #endif
-diff --git a/include/asm-i386/seccomp.h b/include/asm-i386/seccomp.h
-index 18da19e..36e71c5 100644
---- a/include/asm-i386/seccomp.h
-+++ b/include/asm-i386/seccomp.h
-@@ -1,4 +1,5 @@
-  #ifndef _ASM_SECCOMP_H
-+#define _ASM_SECCOMP_H
-
-  #include <linux/thread_info.h>
-
-diff --git a/include/asm-parisc/psw.h b/include/asm-parisc/psw.h
-index 5a3e23c..5baddc4 100644
---- a/include/asm-parisc/psw.h
-+++ b/include/asm-parisc/psw.h
-@@ -1,4 +1,5 @@
-  #ifndef _PARISC_PSW_H
-+#define _PARISC_PSW_H
 
 
-  #define	PSW_I	0x00000001
-diff --git a/include/asm-sparc64/seccomp.h b/include/asm-sparc64/seccomp.h
-index 7fcd996..9b20c34 100644
---- a/include/asm-sparc64/seccomp.h
-+++ b/include/asm-sparc64/seccomp.h
-@@ -1,4 +1,5 @@
-  #ifndef _ASM_SECCOMP_H
-+#define _ASM_SECCOMP_H
+Alert for you...
 
-  #include <linux/thread_info.h> /* already defines TIF_32BIT */
 
-diff --git a/include/asm-x86_64/seccomp.h b/include/asm-x86_64/seccomp.h
-index 553af65..76cfe69 100644
---- a/include/asm-x86_64/seccomp.h
-+++ b/include/asm-x86_64/seccomp.h
-@@ -1,4 +1,5 @@
-  #ifndef _ASM_SECCOMP_H
-+#define _ASM_SECCOMP_H
 
-  #include <linux/thread_info.h>
+L00kup: MRMTCurrent: $1.53 Day Target price: $5.0Expected: Steadily =
+climb for the top.
 
--- 
-1.5.0.6
+
+500% profit guaranted, it's progressive company..
+
+Check the news of MRMT, kernel-janitors, contact broker...
+
+------=_NextPart_000_0014_01C7B205.B4D3D2B0
+Content-Type: text/html;
+        charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3D=
+windows-1252">
+<META content=3D"MSHTML 6.00.2600.2969" name=3DGENERATOR>
+<STYLE></STYLE>
+</HEAD>
+<BODY bgColor=3D#ffffff>
+<BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#CC3333 size=3D3D4><FONT =
+size=3D2><STRONG>Alert for you...</STRONG></FONT></DIV>
+<BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#0033FF size=3D2>L00kup: =
+<b>MRMT</b><br>Current: $1.5<br>3 Day Target price: $5.0<br>Expected: =
+Steadily climb for the top!!!</FONT></DIV>
+<BR><BR><BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#990033 size=3D2>500% =
+profit guaranted, it's progressive company..</FONT></DIV>
+<BR><BR>
+<DIV align=3Dcenter><FONT face=3DTahoma color=3D#6600FF size=3D3>Check =
+the news of MRMT, kernel-janitors, contact broker..</FONT></DIV>
+<BR><BR>
+</BODY></HTML>
+
+------=_NextPart_000_0014_01C7B205.B4D3D2B0--
+
+--===============8854270334099912058==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============8854270334099912058==--
