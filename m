@@ -1,35 +1,92 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Mon, 04 Jun 2007 13:48:12 +0000
-Subject: Re: [KJ] another project or two
-Message-Id: <20070604134812.GC23968@parisc-linux.org>
+From: QLogic Support <support@qlogic.com>
+Date: Mon, 18 Jun 2007 12:51:05 +0000
+Subject: [KJ] Re: [KJ PATCH] Replacing memset(<addr>, 0,
+Message-Id: <4658214.1182171064319.JavaMail.support@qlogic.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="===============1129965869776247215=="
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0706040528251.31127@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0706040528251.31127@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <46405AB6.6040901@msgid.tls.msk.ru>
+In-Reply-To: <46405AB6.6040901@msgid.tls.msk.ru>
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 04, 2007 at 09:27:55AM -0400, Robert P. J. Day wrote:
-> true.  it's not clear that there's an overwhelming benefit of
-> centralizing content that *just happens* to be the same, but i think
-> there's benefit for centralizing content that must *necessarily* be
-> the same.
+--===============1129965869776247215==
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_217_4112476.1182171064198"
 
-Right.  Or can usefully be made the same (see my recent-ish patch to
-centralise the definitions of CONFIG_LBD/CONFIG_LSF for an example where
-it made no sense to keep things separate).
+------=_Part_217_4112476.1182171064198
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
->   as you can see, any arch-specific ioctl.h file would simply define
-> what differs from the generic, then include the asm-generic version,
-> and there are at least a few of those files for which this patch would
-> be perfectly appropriate.  is that the sort of thing you were thinking
-> about?
+Regards,
+=20
+Steve Newberger
+QLogic Corporation
+Support@QLogic.com
 
-I think that's fine.  It's a bit more clean-up-the-past than
-plan-for-the-future (which was what I was trying to get at with my last
-message), but it's not horribly obfuscating like the errno patches were.
+Please visit our web @
+http://support.qlogic.com/ =20
+
+
+---- Original Message ----
+From: shani.moideen@wipro.com
+Sent: 17-Jun-2007 22:33:56
+To: support@pathscale.com
+Cc: openib-general@openib.org; kernel-janitors@lists.osdl.org
+Subject: [KJ PATCH] Replacing memset(&lt;addr&gt;,0,PAGE_SIZE) with=09clear=
+_page(&lt;addr&gt;) in drivers/infiniband/hw/ipath/ipath_driver.c
+
+
+
+Replacing memset(<addr>,0,PAGE_SIZE) with clear_page(<addr>)=20
+in drivers/infiniband/hw/ipath/ipath_driver.c
+
+Signed-off-by: Shani Moideen <shani.moideen@wipro.com>
+----
+
+diff --git a/drivers/infiniband/hw/ipath/ipath_driver.c b/drivers/infiniban=
+d/hw/ipath/ipath_driver.c
+index e3a2232..417e3ca 100644
+--- a/drivers/infiniband/hw/ipath/ipath_driver.c
++++ b/drivers/infiniband/hw/ipath/ipath_driver.c
+@@ -1509,7 +1509,7 @@ int ipath_create_rcvhdrq(struct ipath_devdata *dd,
+=20
+ =09/* clear for security and sanity on each use */
+ =09memset(pd->port_rcvhdrq, 0, pd->port_rcvhdrq_size);
+-=09memset(pd->port_rcvhdrtail_kvaddr, 0, PAGE_SIZE);
++=09clear_page(pd->port_rcvhdrtail_kvaddr);
+=20
+ =09/*
+ =09 * tell chip each time we init it, even if we are re-using previous
+
+--=20
+Shani=20
+
+
+The information contained in this electronic message and any attachments to=
+ this message are intended for the exclusive use of the addressee(s) and ma=
+y contain proprietary, confidential or privileged information. If you are n=
+ot the intended recipient, you should not disseminate, distribute or copy t=
+his e-mail. Please notify the sender immediately and destroy all copies of =
+this message and any attachments.=20
+
+WARNING: Computer viruses can be transmitted via email. The recipient shoul=
+d check this email and any attachments for the presence of viruses. The com=
+pany accepts no liability for any damage caused by any virus transmitted by=
+ this email.
+=20
+www.wipro.com
+
+------=_Part_217_4112476.1182171064198--
+
+
+--===============1129965869776247215==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--===============1129965869776247215==--
