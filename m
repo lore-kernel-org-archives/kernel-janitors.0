@@ -1,27 +1,48 @@
-From: Jeff Garzik <jeff@garzik.org>
-Date: Wed, 13 Jun 2007 20:17:20 +0000
-Subject: [KJ] Re: [PATCH]is_power_of_2-myri10ge/myri10ge.c
-Message-Id: <467050D0.6090600@garzik.org>
+From: Polly <alht@td.com>
+Date: Tue, 19 Jun 2007 20:36:30 +0000
+Subject: [KJ] intellectual
+Message-Id: <46783E4E.4080803@td.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1181624462.3109.22.camel@merlin.linuxcoe.com>
-In-Reply-To: <1181624462.3109.22.camel@merlin.linuxcoe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vignesh.babu@wipro.com
-Cc: akpm <akpm@linux-foundation.org>, netdev@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
-vignesh babu wrote:
-> Replacing (n & (n-1)) in the context of power of 2 checks
-> with is_power_of_2
-> 
-> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+OTCPicks.com Picks SREA As The Stock to Watch. UP 272% In 7 Days!
 
-Patches look OK, but please
+Score One Inc.
+SREA
+$0.30 UP 20% Today
 
-* CC relevant driver maintainers, and
-* combined all drivers/net/* patches of this nature into a single patch
+Up another 20% today and over 272% in the last 7 days, OTCPICKS.com puts
+SREA on their watch list. Read up and get on SREA first thing Wed!
 
+While many enjoy streaming Internet Audio and recording songs they like
+over the Internet, these songs cannot legally be used in a podcast. has
+created a downloadable pdf that explains the ins and outs of iPods.
+
+Today nearly all software companies use the "shareware" marketing model
+whether they use the term or not.
+
+To me that makes it perfect for both new and experienced users. Music
+files can be mixed, cross fades, and transitions can be added.
+Share Resources  Academics are using social bookmarking websites to
+share quality websites that relate to their area of expertise with
+colleagues and students.
+You can locate the XML to add to your RSS reader, view the contents of
+the feed or visit the website of the RSS feed. htm  RSS Articles  What
+RSS Is Not; RSS Does Not Equal Email  RSS is not email, nor is it
+designed to be a replacement for email. The location should be free of
+external distractions and relatively quiet. Easily record and edit audio
+files to create professional sounding podcasts. FeedForAll Mac is
+software that allows publishers and webmasters to create, edit and
+publish: RSS feeds, podcasts and videocasts.
+
+Podcast Lectures  Podcasts can be used as study guides or even as class
+preview for students contemplating their course selections or choice of
+professors.
+FeedForAll Mac is software that allows publishers and webmasters to
+create, edit and publish: RSS feeds, podcasts and videocasts.
 
 _______________________________________________
 Kernel-janitors mailing list
