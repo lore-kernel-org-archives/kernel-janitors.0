@@ -1,144 +1,157 @@
-From: "Pierre" <qoctoeodpi@syraction.com>
-Date: Sun, 03 Jun 2007 06:55:19 +0000
-Subject: [KJ] Briana, do you wanna get 5027.- US$
-Message-Id: <CB7D3D4A.984782D9@syraction.com>
+From: "Lesley K. Elkins" <bkc@hnu.hankyong.ac.kr>
+Date: Tue, 19 Jun 2007 07:40:59 +0000
+Subject: [KJ] Peter Millett is an Associate Surgeon at the Steadman Hawkins
+Message-Id: <4677888B.8060501@hnu.hankyong.ac.kr>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============1422086900751508035=="
+Content-Type: multipart/mixed; boundary="----------=_1182238851-3969-98"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============1422086900751508035==
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: base64
+This is a multi-part message in MIME format...
 
-PEhUTUw+PEhFQUQ+DQo8TUVUQSBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZSBjb250ZW50PSJ0ZXh0
-L2h0bWw7IGNoYXJzZXQ9aXNvLTg4NTktMSI+DQo8U1RZTEUgdHlwZT10ZXh0L2Nzcz4NCjwhLS1i
-b2R5IHtiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmY7IHBhZGRpbmctbGVmdDo0MHB4OyBmb250LXNp
-emU6MTJweDsNCmZvbnQtZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGNvbG9y
-OjAwMDAwMDt9IC50MSB7IA0KbGluZS1oZWlnaHQ6NDhweDsgZm9udC1zaXplOjU0cHg7IGZvbnQt
-ZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIA0Kc2Fucy1zZXJpZjsgY29sb3I6MDAwMDk5OyBmb250
-LXdlaWdodDpib2xkOyB9IC50MiB7ICBsaW5lLWhlaWdodDo3MnB4Ow0KZm9udC1zaXplOjg0cHg7
-IGNvbG9yOmZmMDAwMDsgZm9udC13ZWlnaHQ6Ym9sZDsgZm9udC1mYW1pbHk6YXJpYWwsIA0KaGVs
-dmV0aWNhLCBzYW5zLXNlcmlmOyB9IC50MyB7ICBsaW5lLWhlaWdodDo1NHB4OyBmb250LXNpemU6
-NThweDsNCmZvbnQtZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGNvbG9yOjAw
-MDA5OTsgDQpmb250LXdlaWdodDpib2xkOyB9IHAgeyBsaW5lLWhlaWdodDo1cHg7IGZvbnQtc2l6
-ZToxMHB4OyANCmZvbnQtZmFtaWx5OmFyaWFsLCBoZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGNvbG9y
-OiNmZmZmZmY7IH0tLT48L1NUWUxFPg0KDQo8TUVUQSBjb250ZW50PSJNU0hUTUwgNi4wMC42MDAw
-LjE2NDQxIiBuYW1lPUdFTkVSQVRPUj48L0hFQUQ+DQo8Qk9EWSB2TGluaz0jMDAwMDk5IGFMaW5r
-PSMwMDAwOTkgbGluaz0jMDAwMDk5Pg0KPFA+U3RpbGwsIGl0IHdpbGwgYmUgaGFyZCB0byBjaGFu
-Z2UgdGhlIHVuZm9ydHVuYXRlIHBlcmNlcHRpb24gdGhhdCBjb25zdHJ1Y3RpdmUgZmVlZGJhY2ss
-IGV2ZW4gZm9yIGEgcGF0aWVudJJzIGJlbmVmaXQsIGlzIHdoaXN0bGUtYmxvd2luZy48L1A+PFNQ
-QU4gY2xhc3M9dDE+Q0FTbE4wIDBOTGxORSA8L1NQQU4+PEJSPjxTUEFOIGNsYXNzPXQyPjEnMDAw
-IFVTJCA8L1NQQU4+PEJSPjxTUEFOIGNsYXNzPXQzPlNUQVJUIEIwTlVTIDwvU1BBTj48QlI+PEJS
-PlRvIHdpbiB3YXMgbmV2ZXIgZWFzaWVyOjxCUj48QlI+PEI+R2V0IHlvdXIgYm9udXMgbm93Ojwv
-Qj48QlI+PEJSPi0gVmlzaXQgb3VyIHdlYnNpdGUgYW5kIGRvd25sb2FkIHRoZSBwbGF5aW5nIG1v
-ZHVsZSBpbiB5b3VyIGxhbmd1YWdlIDogPEJSPiZuYnNwOyZuYnNwOyZuYnNwOzxCPjxBIGhyZWY9
-Imh0dHA6Ly9teWZvbGsuaGsvbWFnaWMvNS9lbi8iPkVOR0xJU0g8L0E+Jm5ic3A7Jm5ic3A7Jm5i
-c3A7PEEgaHJlZj0iaHR0cDovL215Zm9say5oay9tYWdpYy81L2ZyLyI+RlJFTkNIPC9BPiZuYnNw
-OyZuYnNwOyZuYnNwOzxBIGhyZWY9Imh0dHA6Ly9teWZvbGsuaGsvbWFnaWMvNS9lcy8iPlNQQU5J
-U0g8L0E+Jm5ic3A7Jm5ic3A7PEEgaHJlZj0iaHR0cDovL215Zm9say5oay9tYWdpYy81L2dyLyI+
-R0VSTUFOPC9BPiZuYnNwOyZuYnNwOyZuYnNwOzxBIGhyZWY9Imh0dHA6Ly9teWZvbGsuaGsvbWFn
-aWMvNS9pdC8iPklUQUxJQU48L0E+PC9CPjxCUj4tIFJlZ2lzdGVyIGFzIGd1ZXN0IG9yIHBsYXll
-ci4gLi4uLi5hbmQgc3RhcnQgd2lubmluZyByaWdodCBub3cNCjxQPkJhY2sgc2hlIHdlbnQgdG8g
-UmFoZWVuLCBmbGF0dGVyZWQgYW5kIGV4Y2l0ZWQsIG9ubHkgdG8gYmUgb3V0Zm94ZWQgYnkgdGhl
-IHdpbHkgSXJpc2ggY2hhcm1lciwgdGhlbiBuaW5ldHktZml2ZSBhbmQgZ2l2aW5nIG5vdGhpbmcg
-YXdheS4gQnV0IGluIHRoZSBtaWQtMTk3MHMgdGhpcyB3YXMgd2VsbCBpbnRvIHRoZSBmdXR1cmUu
-IEJ1dCB0aGlzIGxhdGVzdCByZWZvcm0gcmVtYWlucyB1bmZpbmlzaGVkIGJ1c2luZXNzIJYgYSBw
-cml2YXRlIHNlY3RvciBpcyBhbGxvd2VkIHNjb3BlIHRvIGNvbXBldGUsIGJ1dCBwdWJsaWMgaW5z
-dGl0dXRpb25zIHJlbWFpbiBib3VuZCBhbmQgY29uc3RyYWluZWQuIENBRXMgb2ZmZXJlZCBoaWdo
-ZXIgZGVncmVlcywgYW5kIGNhcnJpZWQgb3V0IHJlc2VhcmNoLCB0aG91Z2ggbm90IGZ1bmRlZCBm
-b3IgaXQuIENvdXJzZXMgYW5kIGNhbXB1c2VzIGNvdWxkIG5vdCBjbG9zZSB3aXRob3V0IHByaW9y
-IHBlcm1pc3Npb24uIDxCUj4NCkRhd2tpbnMgd2FzIG5vdCBwcmluY2lwYWxseSBpbnRlcmVzdGVk
-IGluIG51cnR1cmluZyBkaXZlcnNpdHkgd2l0aGluIHRoZSBoaWdoZXIgZWR1Y2F0aW9uIHN5c3Rl
-bS4gRGl2ZXJzaXR5knMgaW5zdGl0dXRpb25hbCBkZW1pc2UgRWR1Y2F0aW9uIE1pbmlzdGVyIEp1
-bGllIEJpc2hvcCBhY2NlcHRzIHRoZSBjYXNlIGZvciBsb29zZW5lZCBmZWRlcmFsIGNvbnRyb2xz
-LCBhbmQgaGFzIGFjY29tbW9kYXRlZCBpbnN0aXR1dGlvbnMgc2Vla2luZyB0byByZXRoaW5rIHRo
-ZWlyIG1pc3Npb24uIEV2ZW4gd2hlbiB0aGUgdW5pdmVyc2l0eSBiZWdhbiB0byB0ZWFjaCBtZWRp
-Y2luZSBpbiAxOTc1LCB0aGUgY291cnNlIHdhcyBkZXNpZ25lZCBzbyB0aGF0IHN0dWRlbnRzIHdv
-dWxkIHRha2UgbWFqb3JzIGluIG90aGVyIGZhY3VsdGllcy4gPEJSPg0KRmluYWxseSwgRGF3a2lu
-cyB3YW50ZWQgY29uc2lzdGVudCBuYXRpb25hbCBzdGFuZGFyZHMuIEZsaW5kZXJzIFVuaXZlcnNp
-dHkgYWJzb3JiZWQgdGhlIFN0dXJ0IGNhbXB1cyBvZiB0aGUgU291dGggQXVzdHJhbGlhbiBDb2xs
-ZWdlIG9mIEFkdmFuY2VkIEVkdWNhdGlvbi4gRmxpbmRlcnMgc3R1ZGVudHMgY291bGQgdGFrZSBB
-dXN0cmFsaWGScyBmaXJzdCB1bmRlcmdyYWR1YXRlIGNvdXJzZSBpbiBTcGFuaXNoLCBhbG9uZyB3
-aXRoIG90aGVyIHN1YmplY3RzIG5vdCBvZmZlcmVkIGF0IHRoZSBVbml2ZXJzaXR5IG9mIEFkZWxh
-aWRlLiBGb3IgQ2FuYmVycmEsIHRoZSBkaXN0aW5jdGlvbiBiZXR3ZWVuIGV4cGVuc2l2ZSB1bml2
-ZXJzaXR5IGVkdWNhdGlvbiBhbmQgbW9yZSBlY29ub21pY2FsIHRlY2huaWNhbCB0cmFpbmluZyBv
-ZmZlcmVkIGEgY29tcGVsbGluZyBmaW5hbmNpYWwgcmF0aW9uYWxlLiBGb3J0eS1vbmUgeWVhcnMg
-YWZ0ZXIgdGhvc2UgZmlyc3Qgc3R1ZGVudHMgcmVhY2hlZCBGbGluZGVycywgd2UgbmVlZCBhIHNp
-bWlsYXIgYm9sZCBtb21lbnQgb2YgZXhwZXJpbWVudGF0aW9uLjxCUj4NCkZvdXIgZGVjYWRlcyBh
-Z28sIG1vc3Qgc3R1ZGVudHMgc3RhcnRpbmcgYXQgRmxpbmRlcnMgd2VyZSBkZXN0aW5lZCBmb3Ig
-dGVhY2hpbmcgb3IgdGhlIHB1YmxpYyBzZXJ2aWNlLiBHb29kYnllLCBteSBkZWFyZXN0IGZyaWVu
-ZC48QlI+DQpIZSBpcyBmb3Jnb3R0ZW4gYnV0IGZ1bGwgb2YgaHVtYW4gaW50ZXJlc3QuIEFsbG93
-aW5nIHVuaXZlcnNpdGllcyB0byBzZXQgdGhlaXIgb3duIGZlZXMgbWFrZXMgcG9saXRpY2lhbnMg
-bmVydm91cy4gU2FudGFtYXJpYSwgYSBmYW1pbHkgYWNxdWFpbnRhbmNlLCBvZmZlcmVkIGhlciB0
-aGUgZWRpdG9yc2hpcCBvZiBSdXJhbCBMaWZlIChhIHBoYXNlIG9mIGhlciBsaWZlIHNoZSB3cm90
-ZSBhYm91dCBpbiBncmVhdGVyIGRldGFpbCB3aGVuIHJldmlld2luZyBTYW50YW1hcmlhknMgbGV0
-dGVycyBpbiB0aGUgTWFyY2ggaXNzdWUgb2YgQUJSKS4gU2hlIGFyZ3VlcyB0aGF0IGJpb2dyYXBo
-eSB3YXMgbmVnbGVjdGVkIGluIGJvdGggZWRpdGlvbnMgb2YgVGhlIE94Zm9yZCBDb21wYW5pb24g
-dG8gQXVzdHJhbGlhbiBMaXRlcmF0dXJlICgxOTg1IGFuZCAxOTk0KSwgYW5kIHJlZ3JldHMgdGhh
-dCBoZXIgbmFtZSBvbmx5IGFwcGVhcnMgdW5kZXIgkVR1cm5lcpIsIJFCcnVjZZIgYW5kIJFCb3lk
-ki4gbm9rZXJuZWwtamFuaXRvcnM4ODgmNjY2b3NkbC5vcmdtbyBTaGUgZW5qb3llZCBoZXIgbmV3
-IHBoeXNpY2FsIGZyZWVkb20gYW5kIHdlbGxuZXNzLiBTaW5jZSBnb3Zlcm5tZW50IHdhbnRzIHRv
-IGluZmx1ZW5jZSBjaG9pY2UgYW5kIGF2YWlsYWJpbGl0eSwgYSBmb3VydGggcmVmb3JtIHdvdWxk
-IGJlIHRvIHVzZSBleGlzdGluZyBhbmQgZnV0dXJlIGludmVzdG1lbnQgaW4gbW9yZSBjcmVhdGl2
-ZSB3YXlzLiBTbyBpbnN0ZWFkLCBzdHVkZW50cyBwYXkgZm9yIGluYWRlcXVhdGUgZnVuZGluZyBp
-biB1bnNlZW4gd2F5cyCWIGluIGxhcmdlciB0aGFuIGRlc2lyYWJsZSBjbGFzcyBzaXplcywgb3Zl
-cmNyb3dkZWQgZmFjaWxpdGllcywgcnVuLWRvd24gYnVpbGRpbmdzLjxCUj4NClN0dWRlbnRzLCBp
-dCB3YXMgaG9wZWQsIHdvdWxkIGNyb3NzIGRpc2NpcGxpbmVzLCBpbiBhIHVuaXZlcnNpdHkgY29t
-bWl0dGVkIHRvIGEgY29oZXJlbnQgaW50ZWxsZWN0dWFsIGFuZCBzb2NpYWwgZXhwZXJpZW5jZS4g
-U3ViamVjdHMgdG9vIGV4cGVuc2l2ZSB0byBydW4sIG9yIHNlZW4gYXMgaW5zdWZmaWNpZW50bHkg
-cmlnb3JvdXMgZm9yIGEgdW5pdmVyc2l0eSwgdmFuaXNoZWQgYWxvbmcgd2l0aCB0aGUgd29ya2Zv
-cmNlIG9mIGRlZGljYXRlZCBzdGFmZiBudXJ0dXJlZCBieSBjb2xsZWdlcyB0byBwdXJzdWUgZXhj
-ZWxsZW5jZSBpbiB0ZWFjaGluZy4gVGhlIEZsYXViZXJ0IHJlbWFyayB3YXMgb25lIHlvdSBtdXN0
-IGhhdmUgcmVmbGVjdGVkIG9uIG9mdGVuOyB5b3UgbWVudGlvbiBpdCBzZXZlcmFsIHRpbWVzIGlu
-IHlvdXIgYXJ0aWNsZXMuPEJSPg0KVGhlIGFic29sdXRlIG51bWJlciBvZiBwZW9wbGUgZnJvbSBi
-bHVlLWNvbGxhciBiYWNrZ3JvdW5kcyBpbmNyZWFzZWQuIFRoZSBiaW5hcnkgZGl2aWRlIHdvdWxk
-IGJlIGFib2xpc2hlZCwgYWxsb3ctaW5nIGFsbCBpbnN0aXR1dGlvbnMgdG8gYmVjb21lIHVuaXZl
-cnNpdGllcy5UaGUgZG9taW5hbnQgbW9kZWwgb2YgdGhlIHVuaXZlcnNpdHksIGNvbWJpbmluZyBy
-ZXNlYXJjaCBhbmQgdGVhY2hpbmcsIHByb3ZlZCBtb3JlIGF0dHJhY3RpdmUgdGhhbiB0aGUgcG9z
-c2liaWxpdHkgb2YgY3JlYXRpbmcgZGlzdGluY3RseSBkaWZmZXJlbnQgaW5zdGl0dXRpb25zIGFy
-b3VuZCB0ZWNobmljYWwgdHJhaW5pbmcgYW5kIHByb2Zlc3Npb25hbCBza2lsbHMuIEEgcGFydG5l
-ciBhdCBUcmVlSG91c2UgV29ya3Nob3AsIGEgYnVpbGRpbmcgY29tcGFueSBpbiBTZWF0dGxlLCBN
-ci4gR2FybmllciCXIHRoZWlyIGRlc2lnbnMgYW5kIGZ1bmN0aW9ucyBoYXZlIGJlY29tZSBtb3Jl
-IGRpdmVyc2UuIJNUaGVyZSB3YXMgdGhpcyBpbml0aWFsIHN1cmdlLJQgc2FpZCBCaWxsIEFsbGVu
-LCB3aG9zZSBub25wcm9maXQgZmlybSwgRm9yZXZlciBZb3VuZyBUcmVlaG91c2VzIGluIEJ1cmxp
-bmd0b24sIFZ0LiwgYnVpbGRzIHdoZWVsY2hhaXItYWNjZXNzaWJsZSBzdHJ1Y3R1cmVzLiBIZXIg
-c3RyaW5nIG9mIGJlYWRzIHdvdWxkIGJlIGEgc2VxdWVuY2Ugb2YgaG91c2VzLCBzaGUgZGVjaWRl
-ZCwgc3RydWNrIGJ5IHRoZSBCb3lkc5IgcmF0aGVyIGJpemFycmUgYXR0YWNobWVudCB0byBhbmNl
-c3RyYWwgYW5kIGNoaWxkaG9vZCBob21lcy4gPEJSPg0KTmV4dCB3ZXJlIHRoZSBvdmVyd29ya2Vk
-IHJlc2lkZW50cywgd2hvIGVzc2VudGlhbGx5IGxpdmVkIGluIHRoZSBob3NwaXRhbCB3aGlsZSB0
-cmFpbmluZy4gQWx0aG91Z2ggdGhpcyBwcmFjdGljZSBtYWRlIG1hbnkgc3R1ZGVudHMgdW5jb21m
-b3J0YWJsZSwgbW9zdCB3ZXJlIGFmcmFpZCB0byBzcGVhayB1cC4gRXZlbiB3aGVuIHN0dWRlbnRz
-IGRvIHNwZWFrIHVwLCB0aGV5IG1heSBiZSBpZ25vcmVkLiBBZnRlciBhbGwsIGluIGVhY2ggb2Yg
-dGhlc2UgZXhhbXBsZXMsIHBhdGllbnRzIGFyZSBhdCByaXNrIG9mIGhhcm0sIHNvbWV0aGluZyB0
-aGF0IHBoeXNpY2lhbnMgbXVzdCBhdm9pZCBhdCBhbGwgY29zdHMuIDxCUj4NClN0aWxsLCBpdCB3
-aWxsIGJlIGhhcmQgdG8gY2hhbmdlIHRoZSB1bmZvcnR1bmF0ZSBwZXJjZXB0aW9uIHRoYXQgY29u
-c3RydWN0aXZlIGZlZWRiYWNrLCBldmVuIGZvciBhIHBhdGllbnSScyBiZW5lZml0LCBpcyB3aGlz
-dGxlLWJsb3dpbmcuIEJhY2sgc2hlIHdlbnQgdG8gUmFoZWVuLCBmbGF0dGVyZWQgYW5kIGV4Y2l0
-ZWQsIG9ubHkgdG8gYmUgb3V0Zm94ZWQgYnkgdGhlIHdpbHkgSXJpc2ggY2hhcm1lciwgdGhlbiBu
-aW5ldHktZml2ZSBhbmQgZ2l2aW5nIG5vdGhpbmcgYXdheS4gQmVmb3JlIHRoZSBsYXRlIDE5NDBz
-LCBlYWNoIHN0YXRlIGhhZCBqdXN0IG9uZSB1bml2ZXJzaXR5LiBCeSAxOTkwIHRoZSBub3cgc3Rh
-bmRhcmQgbW9kZWwgb2YgYW4gQXVzdHJhbGlhbiB1bml2ZXJzaXR5IGhhZCBlbWVyZ2VkOiBsYXJn
-ZSwgY29tcHJlaGVuc2l2ZSwgbXVsdGktY2FtcHVzIGFuZCByZXNlYXJjaC1iYXNlZC4gQ2xvc2Ug
-dG8gdGhlIHdoaXRlIG1hbnNpb24gdGhhdCBKb2huIFdyZW4gYnVpbHQgaXMgUmFoZWVuLCBzdGls
-bCBvY2N1cGllZCBieSBEYW5pZWwgTWFubml4LCBoYWxmd2F5IHRocm91Z2ggaGlzIGltbWVuc2Vs
-eSBsb25nIGFyY2hiaXNob3ByaWMsIGFuZCBhIHZpdmlkIHByZXNlbmNlIGluIHRoZSBib29rLCB3
-YWxraW5nIGRhaWx5IGZyb20gUmFoZWVuIHRvIFN0IFBhdHJpY2uScyBDYXRoZWRyYWwgaW4gaGlz
-IGZyb2NrIGNvYXQgYW5kIHRvcCBoYXQuPEJSPg0KRGl2ZXJzaXR5IGluIG5vbi11bml2ZXJzaXR5
-IGhpZ2hlciBlZHVjYXRpb24gRW5nZW5kZXJpbmcgZW1wYXRoeSB0b3dhcmRzIHN1ZmZlcmluZyB3
-YXMgc29tZXRoaW5nIHlvdSB0cmllZCB0byBkbyBpbiB5b3VyIHdvcmssIG5vdCBtZXJlbHkgZnJv
-bSBwcmluY2lwbGUgYnV0IGJlY2F1c2UgeW91IGZlbHQgZGVlcGx5IGZvciBzb2NpZXR5knMgb3V0
-c2lkZXJzLiBFeGFjdCBwcml2YXRlIGhpZ2hlciBlZHVjYXRpb24gZW5yb2xtZW50IGZpZ3VyZXMg
-YXJlIGhhcmQgdG8gY29uZmlybSwgdGhvdWdoIGVzdGltYXRlcyBydW4gYXMgaGlnaCBhcyA2MCww
-MDAgc3R1ZGVudHMuIEZhY2VkIHdpdGggYSBwcmVzc2luZyBuZWVkIHRvIHJlcGxhY2UgbG9zdCBp
-bmNvbWUsIEF1c3RyYWxpYZJzIHB1YmxpYyB1bml2ZXJzaXRpZXMgcmVzcG9uZGVkIGJ5IGluY3Jl
-YXNpbmcgc3R1ZGVudC10by1zdGFmZiByYXRpb3MgYW5kIHJlY3J1aXRpbmcgZnVsbC1mZWUgcGF5
-aW5nIHN0dWRlbnRzLCBmaXJzdCBmcm9tIG92ZXJzZWFzIGFuZCBsYXRlciBsb2NhbGx5LjwvUD4N
-CjwvQk9EWT48L0hUTUw+DQo=
+------------=_1182238851-3969-98
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+SREA Jumps 25% After News Releases!
+
+Score One Inc.
+SREA
+$0.25 UP 25%
+
+SREA announced its plan to develop a $75 Million project duplicates a
+successful plan in 2006 than returned over $100 million in profits.
+Investors are getting in fast. Read the news and get all over SREA
+Tuesday!
+
+For example,  a writer may have had a bad experience with the drug
+Rimadyl when treating one of their pets for arthritis.
+
+It's hard to believe that something so simple and harmless could be  so
+effective. Actually, the issue is not as puzzling as it first appears.
+For the most part, all I have to do is let her know it's on my person
+and that does the trick. If you want to advertise on your blog, just
+make sure  your blog has something worthwhile to offer  in exchange, be
+sincere in your purpose and always avoid being annoying. Go ahead stars
+of tomorrow, pick one and make me famous someday.
+
+Go ahead stars of tomorrow, pick one and make me famous someday. We
+receive a small commission from the pet stroller people should you
+decide to buy one. These crosses sometimes do well in the  home but are
+usually very non-wolf like in appearance. Arthroscopic surgical release
+and excision of scar tissue does provide a powerful and effective method
+for treating individuals with arthrofibrosis. Actually, we found no
+statistically significant difference in the hamstrings:quadriceps ratio
+between genders at any age.
+This is particularly concerning in light of the fact that hamstrings
+play a major role in protecting the anterior cruciate ligament from
+injury.
+
+Learn About Dog Training At OooWoo.
+Consequently I thought the subject  worthy of discussion today. It's
+hard to believe that something so simple and harmless could be  so
+effective. Although perceptive and highly intelligent a wolfdog cannot
+be expected to behave as a human would either.
+
+However, a calico cat is not actually  a breed but rather a very
+specific color characteristic. You might even say that there are times
+when advertising on a blog is actually a compromise  for quality rather
+than against it. Lets talk about names today. Historically, forceful
+manipulation of the knee by the surgeon has been used to break up the
+scar tissue. And, if a cat has the XX combination  of genes it needs to
+be calico, then it would be a female, hence, why there is the perception
+that a calico cat has to  be a female.
+It just so happens  to be a coincidence.
+
+Some researchers believe they mate for life. Copyright Warning  
+Disclaimer of Liability
+
+Arthroscopic management of the arthrofibrotic knee.
+
+When selecting your pup, you'll want to  ask for proof that your pup is
+actually part wolf.
+
+However, treatment requirements can vary greatly from situation to
+situation and it may be that  there could have been a surgical procedure
+for their specific pet that would have cost a lot less. Their tactics at
+handling perceived adverse situations fell into just one of two extreme
+different groups.
+Most wolfdogs exhibit physical characteristics of both the wolf and dog
+in differing combinations.
+
+When these measures are unsuccessful, surgery may be indicated.
+Sometimes it works, sometimes it doesn't. If you learn something new
+that will improve your relationship  with your pet and improve it's
+quality of life then that improves my quality of life too. Lets talk
+about names today.
+
+In most instances, the surgery can be performed using a
+minimally-invasive arthroscopic approach.
+
+It sounds corny, but I  like to make a difference.
+The definitions I've found are all a little more general than some
+bloggers would like to admit.
+
+Actually, we found no statistically significant difference in the
+hamstrings:quadriceps ratio between genders at any age. However, it is
+important for us all to remember  that our  advice might be taken as
+absolute and then generalized to cover all circumstances.
+
+We also  try to limit our ads to only that which would be of interest to
+pet lovers. It just so happens  to be a coincidence. It's hard to
+believe that something so simple and harmless could be  so effective.
+Potential theories suggest that the animal's acute skills of perception,
+even a kind of sixth sense may  have alerted them to the approaching
+tsunami. Chaining is never recommended, yet they  often have a tendency
+to dig, climb and jump. Remember  The Birds, The Crickets, The Animals,
+White Snake, and Counting Crows? Coyote males usually stick with one
+female through the breeding season as well, even assisting  in feeding
+and raising the puppies.
+Their tactics at handling perceived adverse situations fell into just
+one of two extreme different groups. Part II: prevention and treatment.
+Although closely related, there are anatomical and physiological
+differences between wolves and dogs.
+
+The age at which your pup is socialized to humans is also very
+important.
+
+We do ask that photos be of high visual quality, not too small, blurry,
+grainy or dark.
 
 
---===============1422086900751508035==
+------------=_1182238851-3969-98
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  SREA Jumps 25% After News Releases! Score One Inc. SREA
+  $0.25 UP 25% SREA announced its plan to develop a $75 Million project
+  duplicates a successful plan in 2006 than returned over $100 million in
+  profits. Investors are getting in fast. Read the news and get all over
+  SREA Tuesday! [...] 
+
+Content analysis details:   (7.7 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_DHCP      Relay HELO'd using suspicious hostname (DHCP)
+ 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.4211]
+
+
+
+------------=_1182238851-3969-98
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -148,4 +161,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============1422086900751508035==--
+------------=_1182238851-3969-98--
