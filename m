@@ -1,77 +1,52 @@
-From: "Shanna Whitehead" <bohemianbulls@internet-e-mail.com>
-Date: Fri, 08 Jun 2007 15:41:59 +0000
-Subject: [KJ] Reproduction and ED problems
-Message-Id: <01c7a9e1$dd8fe800$6c822ecf@bohemianbulls>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============3985898253851516706=="
+From: foil <gldud@merck.com>
+Date: Fri, 22 Jun 2007 06:07:20 +0000
+Subject: [KJ] beep U.K.
+Message-Id: <467B6718.2050308@merck.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
+SREA UP Another 36.36%. Read This Hit List!
 
---===============3985898253851516706==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0006_01C7AA03.64A18800"
+Score One Inc. (SREA)
+Close: $0.60 UP 36.36%
 
-This is a multi-part message in MIME format.
+In the last two days SREA has been on the watch list of OTCPicks.com,
+OTCStockExchange.com, and Boonmarket.com rocketing it over 200%. Need we
+say more? Get on SREA and ride the wave.
 
-------=_NextPart_000_0006_01C7AA03.64A18800
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: 7bit
+Perhaps the Canadian student was not very good with guns and hence the
+lower body count in Canada .
 
-Dear customer.Wanna save on the medications you buy on the Internet but afraid that it might be dangerous for your health? It won't be with our discount Canadian pharmacy.At CanadianPharmacy you will be able to find all the drugs you shop for in your USA pharmacy. The only difference is that our drugs are 100% generic and are sold at a much lower price. CanadianPharmacy save together with our discount Canadian Web pharmacy.CanadianPharmacy 100% safety at the lowest price you've ever seen. Only generic drugs on sale.Yours faithfully,Shanna Whitehead
+Imagine that happened: your friends started to devalue your karma and
+your freaks started to value it. I don't know what to say.
+First down to visit my parents on the Oregon coast, then back up to
+Portland for OryCon over the weekend.
 
+Something that took another four months. Each person perceives you
+differently. Would we have built the railroads? Hoagland's tendancy
+towards conspiracy theories makes him an unreliable source.
 
+Are they going to add other 'A-List' or 'name writer' bloggers? I
+suspect it would be a lot better.
+According to him Python has reached the point that you can create the
+same kind of quick and dirty Windows applications VB is best suited for.
 
-------=_NextPart_000_0006_01C7AA03.64A18800
-Content-Type: text/html;
-	charset="windows-1250"
-Content-Transfer-Encoding: quoted-printable
+So you should read that. But I didn't make much headway; even on panel
+discussions about the future of money people often had a difficult time
+accepting something so far outside their normal experience.
 
-<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
-hemas-microsoft-com:office:word" xmlns=3D"http://www.w3.org/TR/REC-html40">
+Update update grumble: What? When I went to the movies today, they had a
+trailer for 'The Haunted Mansion', which happens to be my favorite ride
+at Disney World.
 
-<head>
-<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; charset=3Dwindows-1250">
-<meta name=3DGenerator content=3D"Microsoft Word 11 (filtered medium)">
-</head>
-<body>
-<html>
-<body>
-<p><font face=3D"Verdana" size=3D"2" color=3D"#000000">Dear customer.</font=
-></p>
-<p><font face=3D"Verdana" size=3D"2">Wanna save on the medications you buy =
-on the Internet but afraid that it might be dangerous for your health? It w=
-on't be with our discount Canadian pharmacy.</font></p>
-<p><font face=3D"Verdana" size=3D"2">At <a href=3D"http://alebwh.speechedge=
-hk/?269717775126">CanadianPharmacy</a> you will be able to find all the dr=
-ugs you shop for in your USA pharmacy. The only difference is that our drug=
-s are 100% generic and are sold at a much lower price. <a href=3D"http://al=
-ebwh.speechedge.hk/?269717775126">CanadianPharmacy</a> save together with o=
-ur discount Canadian Web pharmacy.</font></p>
-<p><font face=3D"Verdana" size=3D"2"><a href=3D"http://alebwh.speechedge.hk=
-/?269717775126">CanadianPharmacy</a> 100% safety at the lowest price you've=
- ever seen. Only generic drugs on sale.</font></p>
-<p><font face=3D"Verdana" size=3D"2">Yours faithfully,<br>Shanna Whitehead<=
-/font></p>
-</body>
-</html>
-
-</body>
-</html>
-
-------=_NextPart_000_0006_01C7AA03.64A18800--
-
-
---===============3985898253851516706==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+I doubt it, and quite likely therein lies one reason we have such a
+strong push for DRM and other artificial barriers to the free-flow of
+ideas and creativity in which reputation systems work best.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============3985898253851516706==--
