@@ -1,31 +1,40 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Mon, 04 Jun 2007 18:49:07 +0000
-Subject: Re: [KJ] is it worth getting read of the "get_info" /proc interface?
-Message-Id: <20070604184907.GA5719@martell.zuzino.mipt.ru>
+From: "Keri B Waters" <Rayivpcrsef@adir.dk>
+Date: Fri, 22 Jun 2007 19:35:30 +0000
+Subject: [KJ] lists of doctors in America
+Message-Id: <0A3C7EE3.7684.7315C2D5@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, May 31, 2007 at 03:01:17PM -0400, Robert P. J. Day wrote:
->   given that that interface has been discouraged for quite some time,
-> and there's only a few instances of it left in the tree, is there any
-> value in switching over those remaining instances
 
-Yes.
 
-> to a regular proc_read
 
-No.
+I was told that you were looking for marketing databases of the medical community.
+Until the end of next week (June 29/2007) we have this deal on the go:
 
-> and ditching (or at least officially deprecating) get_info?
+Directories for the USA:
 
-Yes.
+- Physicians: 700 thousand doctors in the US. Data is provided in Excel format and
+  sortable by state or specialty. Over a dozen different fields and more than
+  30 specialties.
+	Individual Cost: $349
 
-Trickiest part is code in core scsi. While switching use seq_file
-interface, so we won't convert them again some time later.
+- Hospital Admins: 23 thousand in all with data for the CEO, CFO, CIO, COO and more
+	Individual Cost: $220
 
+- Dentists and Related Dental Services: 597 thousand records in all
+	Individual Cost: $209
+
+If you buy the directory of physicians you will get the other 2 for free.  
+
+
+Contact us at (206) 600-5313 or send an email to medicaldatabases@hotmail.com
+
+
+
+Reply with 'zero' in the subject if you choose not to remain in our records
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
