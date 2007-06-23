@@ -1,42 +1,30 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 25 Jun 2007 11:37:36 +0000
-Subject: [KJ] [PATCH] Replace hard-coded constants by kernel.h macro.
-Message-Id: <Pine.LNX.4.64.0706250736060.4206@localhost.localdomain>
+Date: Sat, 23 Jun 2007 14:19:03 +0000
+Subject: [KJ] time for a KJ wiki cleanup, i think
+Message-Id: <Pine.LNX.4.64.0706231016470.10610@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0706250729480.4168@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0706250729480.4168@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+  given that it's been a while, i'm planning on doing some cleaning up
+of the current KJ wiki page here:
 
----
+  http://fsdev.net/wiki/index.php?title=Kernel_Janitor%27s_Todo_List
 
-  based on the macro definition from kernel.h:
+mostly to re-categorize some of the entries, break out the stuff that
+looks done/mostly done and so on.
 
-#define INT_MAX         ((int)(~0U>>1))
+  if you have suggestions, feel free to e-mail me and i'll do what i
+can to bring everything there up to date.
 
-these appear to be the only examples of this in the entire tree.
+  in particular, feel free to suggest new janitorial tasks that should
+be added.
 
+rday
 
-diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
-index f50f04b..2b641b1 100644
---- a/include/linux/cdrom.h
-+++ b/include/linux/cdrom.h
-@@ -414,8 +414,8 @@ struct cdrom_generic_command
- #define CDO_CHECK_TYPE		0x10    /* check type on open for data */
-
- /* Special codes used when specifying changer slots. */
--#define CDSL_NONE       	((int) (~0U>>1)-1)
--#define CDSL_CURRENT    	((int) (~0U>>1))
-+#define CDSL_NONE       	(INT_MAX-1)
-+#define CDSL_CURRENT    	INT_MAX
-
- /* For partition based multisession access. IDE can handle 64 partitions
-  * per drive - SCSI CD-ROM's use minors to differentiate between the
 -- 
 ====================================
 Robert P. J. Day
