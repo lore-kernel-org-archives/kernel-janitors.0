@@ -1,21 +1,15 @@
-From: Cruz Christie <gpesw@m2.octv.ne.jp>
-Date: Fri, 29 Jun 2007 05:13:29 +0000
-Subject: [KJ] Re: doc.LCOSFQQBPXTPL.pdf
-Message-Id: <468494F9.7050406@m2.octv.ne.jp>
+From: "Magee P. Meggy" <kbosl@vdbijl.nl>
+Date: Sat, 23 Jun 2007 17:52:09 +0000
+Subject: [KJ] feudalism salad
+Message-Id: <467D5DC9.4000300@vdbijl.nl>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020607050202050505030302"
+Content-Type: multipart/mixed; boundary="----------=_1182621217-3969-241"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format...
 
---------------020607050202050505030302
-Content-Type: text/plain; charset=windows-1250; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
-
---------------020607050202050505030302
+------------=_1182621217-3969-241
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -28,21 +22,36 @@ has been attached to this so you can view it (if it isn't spam) or label
 similar future email.  If you have any questions, see
 the administrator of that system for details.
 
-Content preview:  [...] 
+Content preview:  This allows developers to deploy an application without
+  compiling it and further allows them to manipulate the code while it is
+  running without having to redeploy it. To see this example in action,
+  download simpleDynamicFaces. I'll get to the importance of this later
+  on. First of all, it frees developers from writing more common
+  JavaScript functions by providing pluggable JavaScript libraries geared
+  toward particular tasks, such as event-handling. With Dynamic Faces, you
+  can get rid of the button and rely on Dynamic Faces to do the work of
+  updating these components using Ajax. As an example, a manufacturing
+  manager can create a mashup portlet that shows on a map the inventory
+  status of all the plant units across the geography. Most companies are
+  getting into Ajax apps in a very simple way by just including an Ajax
+  snippet such as Google suggest on a web page. [...] 
 
-Content analysis details:   (7.6 points, 5.0 required)
+Content analysis details:   (7.4 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
-                            2)
- 0.3 SUBJECT_NOVOWEL        Subject: has long non-vowel letter sequence
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9984]
+ 1.1 HTML_20_30             BODY: Message is 20% to 30% HTML
+ 2.0 CONTENT_TYPE_NAME_GIF  BODY: Gif Attachment
+ 2.0 CONTENT_TYPE_IMAGE_GIF BODY: Gif Attachment
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.5000]
+ 2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
+ 0.3 HTML_IMAGE_ONLY_16     BODY: HTML: images with 1200-1600 bytes of words
 
 
 
---------------020607050202050505030302
+------------=_1182621217-3969-241
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -52,4 +61,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------020607050202050505030302--
+------------=_1182621217-3969-241--
