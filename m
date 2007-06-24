@@ -1,47 +1,54 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Thu, 07 Jun 2007 10:09:43 +0000
-Subject: [KJ][PATCH]is_power_of_2-sparc/mm/srmmu.c
-Message-Id: <1181210263.11218.2.camel@merlin.linuxcoe.com>
+From: Murray Rolf <kgn@kpunet.net>
+Date: Sun, 24 Jun 2007 10:36:28 +0000
+Subject: [KJ] pigeonhole kiddie
+Message-Id: <467E492C.8030208@kpunet.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wli@holomorphy.com, davem@caip.rutgers.edu, zaitcev@yahoo.com, ecd@skynet.be, jj@sunsite.mff.cuni.cz, anton@samba.org
-Cc: sparclinux@vger.kernel.org, linux-mm@kvack.org, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
+SREA Acquires $75 Million Dollar Asset!
 
-Replacing (n & (n-1)) in the context of power of 2 checks
-with is_power_of_2
+Score One Inc.(SREA)
+$0.30
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
---- 
-diff --git a/arch/sparc/mm/srmmu.c b/arch/sparc/mm/srmmu.c
-index e5eaa80..741d303 100644
---- a/arch/sparc/mm/srmmu.c
-+++ b/arch/sparc/mm/srmmu.c
-@@ -19,6 +19,7 @@
-#include <linux/fs.h>
-#include <linux/seq_file.h>
-#include <linux/kdebug.h>
-+#include <linux/log2.h>
+News hit just after close. SREA has acquired the $75 Million peace of
+land for the new "Recreation Town" in Dalian. This new project mimics a
+Facility in "Shui On" that profited more than $100 Million USD. SREA is
+going to go through the roof after this hits investors this weekend. Get
+on SREA at open on Monday!
 
-#include <asm/bitext.h>
-#include <asm/page.h>
-@@ -354,7 +355,7 @@ void srmmu_free_nocache(unsigned long vaddr, int
-size)
-    vaddr, srmmu_nocache_end);
-BUG();
-}
-- if (size & (size-1)) {
-+ if (!is_power_of_2(size)) {
-printk("Size 0x%x is not a power of 2\n", size);
-BUG();
-}
+Unfortunately, there is a separate problem.
+Definitely, Euanthes was related to Dionysus and to the Cretan king
+Minos.
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+But Ruby provides a unique method for patching code that makes life
+easier for both the programmer creating the patch and the user who wants
+to use it. If your test fails, this should not be zero. In the past,
+finding your soul mate meant crossing your fingers in the local dating
+scene hoping that your perfect match will stumble into you at the bar or
+on the dance floor.
+
+Some of the most popular uses for chat rooms are for singles, romance
+and dating. accesskey to return the character that highlights the area.
+
+We showed our tests to our manager.
+
+If you run your code right now, you'll get a complaint that you are
+calling a private method. You can reference an area in a map.
+
+We write basically the same code for the area element.
+
+Last weekend, I had some folks in from out of town,  and I had to
+apologize about six times before they actually accepted that it really
+was my fault. And these happen to be the kinds of applications that
+people often want to test with Watir.
+
+But TestTrack doesn't seem to support this.
+
+Singles are now looking to other countries in the hopes of creating a
+new life for themselves with someone who matches their every desire.
 
 _______________________________________________
 Kernel-janitors mailing list
