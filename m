@@ -1,40 +1,46 @@
-From: "Nola Hankins" <kdlfeipybksv@brainerdoil.com>
-Date: Sat, 23 Jun 2007 12:00:22 +0000
-Subject: [KJ] Why be an average guy any longer
-Message-Id: <01c7b58c$83266950$c3c6f458@kdlfeipybksv>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 25 Jun 2007 11:31:25 +0000
+Subject: [KJ] [PATCH] Replace hard-coded constant with appropriate macro from
+Message-Id: <Pine.LNX.4.64.0706250729480.4168@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <000001c72390$caead980$0100007f@localhost>
-In-Reply-To: <000001c72390$caead980$0100007f@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Hi,
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
-Finally the genuine stuff ? with no more money tricks!
-P.E.P. are tasting hot right now! This is the original thing not a fictitious
-one!
-One of the very exceptionals, absolutely unparalleled produce is available
-around the world!
-Pay heed to what people tell about this product:
-"I was really impressed how quick this product had an affect upon my boyfriend,
-he can't stop jabber on how excited he is having such new girth, extent, and
-libido!"
-Linda F., Bellevue WA .
-"In the beginning I thought the gratuitous sample package I received was some kind of joke, till I tried using the P.E.P.
-Words cannot report how smug I am with the results I achieved from using the patch after 3 short months. I will be ordering
-on a constant basis!" Charley Mock, Boston 
-Check up more references about this astonishing product right here & right now!
-//  Order now
---
-vzrk
-hu
-sov
-f
-h
-uzyo
+---
+
+  given that kernel.h defines:
+
+#define LONG_MAX        ((long)(~0UL>>1))
+
+it seems silly to use a hard-coded constant.  (i'm guessing there
+might be a lot of this happening in the tree.)
+
+diff --git a/include/asm-i386/uaccess.h b/include/asm-i386/uaccess.h
+index e2aa5e0..d2a4f7b 100644
+--- a/include/asm-i386/uaccess.h
++++ b/include/asm-i386/uaccess.h
+@@ -581,7 +581,7 @@ long __must_check __strncpy_from_user(char *dst,
+  * If there is a limit on the length of a valid string, you may wish to
+  * consider using strnlen_user() instead.
+  */
+-#define strlen_user(str) strnlen_user(str, ~0UL >> 1)
++#define strlen_user(str) strnlen_user(str, LONG_MAX)
+
+ long strnlen_user(const char __user *str, long n);
+ unsigned long __must_check clear_user(void __user *mem, unsigned long len);
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
