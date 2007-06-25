@@ -1,8 +1,10 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 25 Jun 2007 11:31:25 +0000
-Subject: [KJ] [PATCH] Replace hard-coded constant with appropriate macro from
-Message-Id: <Pine.LNX.4.64.0706250729480.4168@localhost.localdomain>
+Date: Mon, 25 Jun 2007 11:37:36 +0000
+Subject: [KJ] [PATCH] Replace hard-coded constants by kernel.h macro.
+Message-Id: <Pine.LNX.4.64.0706250736060.4206@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0706250729480.4168@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0706250729480.4168@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,26 +15,28 @@ Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
 ---
 
-  given that kernel.h defines:
+  based on the macro definition from kernel.h:
 
-#define LONG_MAX        ((long)(~0UL>>1))
+#define INT_MAX         ((int)(~0U>>1))
 
-it seems silly to use a hard-coded constant.  (i'm guessing there
-might be a lot of this happening in the tree.)
+these appear to be the only examples of this in the entire tree.
 
-diff --git a/include/asm-i386/uaccess.h b/include/asm-i386/uaccess.h
-index e2aa5e0..d2a4f7b 100644
---- a/include/asm-i386/uaccess.h
-+++ b/include/asm-i386/uaccess.h
-@@ -581,7 +581,7 @@ long __must_check __strncpy_from_user(char *dst,
-  * If there is a limit on the length of a valid string, you may wish to
-  * consider using strnlen_user() instead.
-  */
--#define strlen_user(str) strnlen_user(str, ~0UL >> 1)
-+#define strlen_user(str) strnlen_user(str, LONG_MAX)
 
- long strnlen_user(const char __user *str, long n);
- unsigned long __must_check clear_user(void __user *mem, unsigned long len);
+diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+index f50f04b..2b641b1 100644
+--- a/include/linux/cdrom.h
++++ b/include/linux/cdrom.h
+@@ -414,8 +414,8 @@ struct cdrom_generic_command
+ #define CDO_CHECK_TYPE		0x10    /* check type on open for data */
+
+ /* Special codes used when specifying changer slots. */
+-#define CDSL_NONE       	((int) (~0U>>1)-1)
+-#define CDSL_CURRENT    	((int) (~0U>>1))
++#define CDSL_NONE       	(INT_MAX-1)
++#define CDSL_CURRENT    	INT_MAX
+
+ /* For partition based multisession access. IDE can handle 64 partitions
+  * per drive - SCSI CD-ROM's use minors to differentiate between the
 -- 
 ====================================
 Robert P. J. Day
