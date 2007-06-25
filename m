@@ -1,155 +1,166 @@
-From: "admin@baisidirect.com" <kernel-janitors@lists.osdl.org>
-Date: Fri, 01 Jun 2007 01:00:26 +0000
-Subject: [KJ] RE: Weekly News
-Message-Id: <20070531030117.2931.qmail@usuario>
+From: Mercer <bxl@dcx.com>
+Date: Mon, 25 Jun 2007 12:03:20 +0000
+Subject: [KJ] stodgy
+Message-Id: <467FAF08.1080805@dcx.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============5815748672637007970=="
+Content-Type: multipart/mixed; boundary="----------=_1182773102-3969-12"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---===============5815748672637007970==
-Content-Type: text/html
+This is a multi-part message in MIME format...
 
-<style>
+------------=_1182773102-3969-12
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-<!I have been lowcarbing for about 3months (had a week off over xmas) however,
-back on induction....
+SREA Acquires $75 Million Dollar Asset!
 
-If i do a small amount of cardio e.g 30 - 40 mins Bike; after - the endorphins
-seem to flow and i don't feel too bad.  However, if i do resistance training i
-seem to feel really drained of energy and i am overcome by a generall feeling
-of unwellness.
+Score One Inc.(SREA)
+$0.30
 
-After resistance training today (feeling drained)i went and ate a low carb
-breakfast, which seemed to pick me up but throughout the day i have still felt
-pretty shitty...
+News hit just after close. SREA has acquired the $75 Million peace of
+land for the new "Recreation Town" in Dalian. This new project mimics a
+Facility in "Shui On" that profited more than $100 Million USD. SREA is
+going to go through the roof after this hits investors this weekend. Get
+on SREA at open on Monday!
 
-Help anyone?  I know this post is prob a bit vague but im hoping its just a
-common hurdle that people know about...........
+Used for any mode of transportation.
 
-Wayne
+The Treasury Department annually approves insurance companies for the
+issuance of Federal surety bonds. The Customs Service does not notify
+the importer of the arrival of the shipment. What is described here will
+determine the classification number and duty rate that Customs assigns
+the item when it arrives in the United States. Over the past two
+decades, Canada has become a significant net energy exporter.
+It is important that any contract state whether the representative or
+agent does or does not have legal authority to obligate the firm.
+Informal Entry Informal entries cover personal shipments, commercial
+shipments and mail shipments that are being entered for consumption, i.
+Under the contract, the RI will modify the vehicle to conform to all
+applicable FMVSS  and so certify the vehicle. Overall, oil sands
+production is expected to increase significantly and to offset the
+decline in conventional crude oil production, becoming Canada's major
+source of oil supply. Specifically, the terms used in a contract state
+exactly when the shipper unloads and relinquishes obligation, and when
+the buyer takes over for carriage and insurance. Single importation
+bonds are used by the importer who conducts very few importations.
 
-><!HAHAHAHAHA. This cross-dressing loony is turning out to be a godsend
-for the liberals.
+Seller's name and address.
 
+The sales representative may operate on either an exclusive or a
+nonexclusive basis. Where can I learn more about Incoterms?
 
-(snip)
+Terms such as FOB and CIF can be used only for ocean bound freight. A
+port director can require a formal entry for any importation if he or
+she deems it necessary for the protection of the revenue or for
+admissibility or enforcement issues.
 
-After we bomb North Korea, what's the next country we should invade?
+and then sell them on e-bay or our own website.
 
-"Iran. Though that's the beauty part of Iraq: It may well not be
-necessary. Because precisely what I'm saying with nuking North
-Korea-despite that wonderful peace deal Madeline Albright negotiated
-with the North Koreans, six seconds before they feverishly began
-developing nuclear weapons. They're a major threat. I just think it
-would be fun to nuke them and have it be a warning to the rest of the
-world."
+Under the Container Security Initiative, CBP has entered into bilateral
+partnerships to identify high-risk cargo containers before they are
+loaded on vessels destined for the United States.
+Ordinarily entry is made there for consumption, for entry into a bonded
+warehouse, or for transportation in bond to another port where a
+consumption or warehouse entry will be made. Having a bond on file,
+allows an importer to take possession of his merchandise before the
+payment of duties, taxes and fees. Many sellers offer to misrepresent
+costs in an effort to save the purchaser from having to pay duty, but
+this is illegal.
 
-(snip)
-><
-I'm gonna say I could take Ray Romano. Just 'cause I really want to. Here 
-are my faves from the above page:
+standards abroad, a buyer should have the sales contract verify that the
+label  is attached and present this document at time of importation. It
+is the surety company issuing the bond that guarantees that the importer
+will comply with U. It is important that any contract state whether the
+representative or agent does or does not have legal authority to
+obligate the firm. The export clearance obligation rests with the
+seller. Where can I learn more about Incoterms?
 
-The Onion: Who could you take in a fight?
+The Department of Energy will install large-scale and sophisticated
+radiological detection equipment to identify nuclear material as part of
+this initiative. borders more secure and more efficient," said
+Commissioner Bonner. Liquidation is the final computation of duties or
+drawback accruing to an entry and is the final step in the entry
+process. The Customs Service does not notify the importer of the arrival
+of the shipment. The law prohibits Customs employees from performing
+these tasks for the importing public. This term states among other
+things that the buyer is to take over carriage and insurance
+responsibilities at the sellers dock. CSI will continue to expand to
+strategic locations around the world.
 
-Conan O'Brien: Let's see, who could I take in a fight? Definitely Ruth 
-Bader Ginsburg. Have you seen her? Her upper body is very frail. I think I 
-could take her if she was sleepy and I had a two-by-four. She'd go down 
-quickly.
+This term states among other things that the buyer is to take over
+carriage and insurance responsibilities at the sellers dock.
 
+firm to the joint venture.
+firm to the joint venture. CBP will continue to expand the CSI security
+blanket to additional foreign ports.
 
+Provide both the unit price, and if more than one unit was purchased,
+the total value for all like items.
 
-The Onion: Who could you take in a fight?
+Caution must be exercised when using Incoterms because the Incoterms
+relate to particular modes of transportation. What are some examples of
+Incoterms?
 
-Emo Philips: Hawking, Reeve. Not at the same time.
+Customs Service requirements, to the laws and regulations administered
+by other United States Government agencies with which the U. To expedite
+this process, Customs entry papers may be presented before the
+merchandise arrives, but entry will not take place until the merchandise
+arrives within the port limits.
 
--- 
-ironcladlou, keeper of faq, bringer of poop humor
+To make importation easier, when purchasing a vehicle certified to the
+U.
 
-"You are a pitiful excuses for a human beings."  - tzakol
-><!Hi,
+Informal Entry Informal entries cover personal shipments, commercial
+shipments and mail shipments that are being entered for consumption, i.
 
-I was wondering what is the best way to find out the person to whom a coat 
-of arms was granted. I have a list from Burke's Armory of Perry/Pery Arms 
-that were granted (about 15 in total) but most of them don't say which 
-particular person the Arms were granted to, although I know one or two of 
-them. I have found one of the families in the Herald's visitations, but it 
-doesn't say to whom the arms were granted, is the earliest person in the 
-pedigree the original bearer of the arms? I realise I can apply to the 
-College of Arms, but I was hoping there would be a slightly more inexpensive 
-option!
-
-Thanks
-
-Vicki
-
-_________________________________________________________________
-Match.com - Click Here To Find Singles In Your Area Today!  
-
->
-
-<!For those AFers contemplating a walking program this Spring, you may want to
-pick up the April issue of Prevention.  A special issue devoted to Walking
-Smart.
-Included is a 4 week pull-out plan specified for either the Walking Rookie or
-the Walking Whiz.  Lots of great tips.  Also included is their test of Walking
-Shoes including an excerpt on whether your foot is neutral, rigid or flexible
-which should enter into your choice of shoes.  Shoes tested were Adida, Asics,
-New Balance, Nike, Reebox and Saucony.   I have decided I must have the New
-Balance 788WB as the testers commented on lots of space in the toe area.  Also
-lists the 12 best Walking Cities.
-</style><img src="http://blogster.com/host/images/94827287762.jpg">
-<style>
-Remember Friday, April 2 is Prevention's National Walk to Work Day.
-
-Plus a lot of other good articles.
-Jo Ann
-
->
-
-<!There used to be this show on Channel 7 (WXYZ in Detroit)  Friday nights at 
-11:30 pm called "In Concert". I was an impressionable 13-yr-old just gettin' 
-in to rock music in the summer of 1974 when they showed parts of the 
-California Jam in sucessive weeks on TV. I was a Deep Purple freak (still 
-am) and sat glued to the set, enthralled with Ritchie Blackmore's stage 
-antics (trashing a television camera while it was filming him and 'blowing 
-up' his amps).
-
-Well, "Deep Purple - Live In California '74" was released on DVD yesterday, 
-and it's just as enthralling (warts and all) as it was 26+ yeard ago. It may 
-not have been their best show, but it reminded me of the thrill I got when I 
-was a kid. I hope that thrill never goes away.
-
--- 
-Steve >
-
-<!Hi there, when I first turn on my computer for the day, it will run fine for
-up to 3 minutes or so until I get a complete blue screen with an error
-message which reads:
-____________________________________________
-*** HARDWARE MALFUNCTION
-PLEASE CONTACT YOUR HARDWARE VENDOR         (something like this)
-
-*** The sv
-____________________________________________
-
-I can not do a CRTL-ALT-DEL reboot or anything....no response to anything
-except for a complete hard reboot.  After a reboot my computer will run
-perfectly fine and won't see this message again.
-I only get the error message when my computer is cold it seems.  But after
-running a while, it runs perfectly.
-
-Has anyone had this problem, or can anyone shed some light into this issue
-please?
-
-Thank you very much for your help people.
-Please respond to group.  Thank you.
-
-</style>
+The bond covers only one import entry.
+You should discuss insurance options with your seller, keeping in mind
+that misrepresenting the value of an item on the Customs declaration is
+illegal. FCA can include other modes of transportation such as road,
+rail, interland waterway, and air. The most common legal precaution
+against theft is to insure the package when sending it. Arrangements
+should be made to ensure that the importer or their agent is informed
+immediately of arrival so that the entry can be filed and delays in
+obtaining the goods avoided. ," Commissioner Bonner said.
 
 
+------------=_1182773102-3969-12
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
---===============5815748672637007970==
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  SREA Acquires $75 Million Dollar Asset! Score One
+  Inc.(SREA) $0.30 News hit just after close. SREA has acquired the $75
+  Million peace of land for the new "Recreation Town" in Dalian. This new
+  project mimics a Facility in "Shui On" that profited more than $100
+  Million USD. SREA is going to go through the roof after this hits
+  investors this weekend. Get on SREA at open on Monday! [...] 
+
+Content analysis details:   (7.1 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 2.8 MILLION_USD            BODY: Talks about millions of dollars
+ 0.2 OSDL_NIGERIAN_MILLION  BODY: "mil*lion dollars"
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.5000]
+ 0.1 ADVANCE_FEE_1          Appears to be advance fee fraud (Nigerian 419)
+
+
+
+------------=_1182773102-3969-12
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -159,4 +170,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============5815748672637007970==--
+------------=_1182773102-3969-12--
