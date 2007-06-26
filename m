@@ -1,39 +1,19 @@
-From: "Mamie Smart" <sturamed@stura.uni-leipzig.de>
-Date: Fri, 22 Jun 2007 16:46:23 +0000
-Subject: [KJ] Belebt Geist und Korper
-Message-Id: <01c7b53f$5767b550$abc66d57@sturamed>
+From: Abel <yyuf@jesusonamoped.co.uk>
+Date: Tue, 26 Jun 2007 06:03:45 +0000
+Subject: [KJ] curly addictive
+Message-Id: <4680AC41.3060202@jesusonamoped.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============9001303668916256627=="
+Content-Type: multipart/mixed; boundary="------------070708030408010706050103"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
---===============9001303668916256627==
-Content-Type: multipart/related; type="multipart/alternative";
-	boundary="----=_NextPart_000_0006_01C7B504.AB08DD50"
-
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_0006_01C7B504.AB08DD50
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_001_0007_01C7B504.AB08DD50"
-
-------=_NextPart_001_0007_01C7B504.AB08DD50
-Content-Type: text/plain;
-	charset="windows-1250"
-Content-Transfer-Encoding: quoted-printable
-
- 
+--------------070708030408010706050103
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-
-------=_NextPart_001_0007_01C7B504.AB08DD50--
-
-------=_NextPart_000_0006_01C7B504.AB08DD50--
-
---===============9001303668916256627==
+--------------070708030408010706050103
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -43,4 +23,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============9001303668916256627==--
+--------------070708030408010706050103--
