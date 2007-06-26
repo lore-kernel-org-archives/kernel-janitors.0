@@ -1,40 +1,36 @@
-From: "Keri B Waters" <Rayivpcrsef@adir.dk>
-Date: Fri, 22 Jun 2007 19:35:30 +0000
-Subject: [KJ] lists of doctors in America
-Message-Id: <0A3C7EE3.7684.7315C2D5@localhost>
+From: "Roy Becker" <roy@roybeckerseminars.com>
+Date: Tue, 26 Jun 2007 02:40:26 +0000
+Subject: [KJ] Incoterms
+Message-Id: <000501c7b79b$5dae8200$0300a8c0@mrjrgsdm7bqjkf>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Incoterms are 13 terms of sale defined by the International Chamber of
+Commerce for the sale of tangible goods. Each term defines the costs, risks,
+and responsibilities for the seller and buyer.
 
+ 
 
+Examples are Ex-works (EXW), FOB (Free on Board), CIF (Cost and Freight).
+You are right, some are restricted for use with ocean or sea going shipments
+only.
 
-I was told that you were looking for marketing databases of the medical community.
-Until the end of next week (June 29/2007) we have this deal on the go:
+ 
 
-Directories for the USA:
+The terms are available in a copyrighted publication, "Incoterms 2000,"
+publication 560. Available at www.iccbooks.com <http://www.iccbooks.com/> .
+If you are in the United States go to www.iccbooksusa.com
+<http://www.iccbooksusa.com/> .
 
-- Physicians: 700 thousand doctors in the US. Data is provided in Excel format and
-  sortable by state or specialty. Over a dozen different fields and more than
-  30 specialties.
-	Individual Cost: $349
+ 
 
-- Hospital Admins: 23 thousand in all with data for the CEO, CFO, CIO, COO and more
-	Individual Cost: $220
+Warm regards,
 
-- Dentists and Related Dental Services: 597 thousand records in all
-	Individual Cost: $209
+Roy Becker
 
-If you buy the directory of physicians you will get the other 2 for free.  
-
-
-Contact us at (206) 600-5313 or send an email to medicaldatabases@hotmail.com
-
-
-
-Reply with 'zero' in the subject if you choose not to remain in our records
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
