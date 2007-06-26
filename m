@@ -1,7 +1,7 @@
-From: "Rogelio" <lybelidqyg@sapo.pt>
-Date: Mon, 04 Jun 2007 00:40:38 +0000
+From: "Ekaterina" <cqyjcjubi@firstworld.net>
+Date: Tue, 26 Jun 2007 15:41:26 +0000
 Subject: [KJ] Hallo!
-Message-Id: <A897FEFA.AE3ED919@sapo.pt>
+Message-Id: <B7D926BA.F4525A50@firstworld.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <A73508C5.4AE2A2D5@fix.net>
 In-Reply-To: <A73508C5.4AE2A2D5@fix.net>
@@ -10,13 +10,12 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello my dear friend
-I was looking through the web few weeks ago and found 
-your profile. Now I decided to email you to get to know
-ayou better. I am coming to your country in few weeks
-and thought may be we can meet each other. I am pretty
-looking girl. I ama 25. Do not reply to this address 
-directly. Email me back at eosa@SpringMailSite.info
+Do not ignore me please,a
+I found your bemail somewhere and noaw deciaded to write you.
+I am caoming to your place in few weeks and thought we 
+can meet each othebr. Let me knoaw if you do not mind.
+I am a nice pretty girl. Don't reply to this email. 
+Email me direclty at wfxj@MailVisionWorld.info
 
 
 _______________________________________________
