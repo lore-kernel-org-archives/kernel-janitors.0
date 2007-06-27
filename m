@@ -1,7 +1,7 @@
-From: "Olga" <wkwgjham@flt.acr.gmeds.com>
-Date: Thu, 21 Jun 2007 01:17:00 +0000
+From: "Olya" <mkuozcnuma@ihug.com.au>
+Date: Wed, 27 Jun 2007 14:05:17 +0000
 Subject: [KJ] Hello
-Message-Id: <AC843EA9.000B61C0@flt.acr.gmeds.com>
+Message-Id: <556101c7b891$e6581750$a0d393ec@mkuozcnuma>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200507082039.j68Kdhj9018976@smtp.osdl.org>
 In-Reply-To: <200507082039.j68Kdhj9018976@smtp.osdl.org>
@@ -10,12 +10,12 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hire,
-i a!m here sitting in t!he intaernet cafa!fe. Found yo!ur email and
-deciaded to write!. I might be coming to your place in 14 days, 
-aso I decided to email you. May be we can meet? I am 25 y.o.
-girl. I have a picturea if you want. No need to reply here as 
-this is not my email. Write me at mqtfv@MailVisionWorld.info
+Hi there lovely,
+This kind of opportunity comes ones in a life. I don't want 
+to miss it. Do you? I am coming to your place in bfew days 
+and I bthough may be we can meet each other. If you dcon't mind
+I can senad you my picture. I am ab girl.
+You can correspond with me using my email cuaao@MailVisionWorld.info
 
 
 _______________________________________________
