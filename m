@@ -1,76 +1,79 @@
-From: psr <pradeep.rautela@gmail.com>
-Date: Sat, 09 Jun 2007 13:58:16 +0000
-Subject: Re: [KJ] [HOWTO]using git to make a local clone?
-Message-Id: <a901b49a0706090646l32a97aa4i6583f713c43c0e49@mail.gmail.com>
+From: "Suresh Jayaraman" <sjayaraman@novell.com>
+Date: Wed, 27 Jun 2007 15:18:26 +0000
+Subject: [KJ] [PATCH] scsi: Remove unnecessary cast of return value of
+Message-Id: <4682CD1A020000F40000A89B@lucius.provo.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <a901b49a0706090243s275d1f62o6bfd751c3c1fcdab@mail.gmail.com>
-In-Reply-To: <a901b49a0706090243s275d1f62o6bfd751c3c1fcdab@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Remove unnecessary cast of return value of kmalloc() in the scsi
+subsystem.
 
-Hi Rene and Andy,
+Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
+---
 
-Thanks a lot.
-I figured it out while expermenting around with git:-).
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+index 9b3303b..f5cb42e 100644
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -5258,8 +5258,7 @@ advansys_detect(struct scsi_host_template *tpnt)
+                  * Allocate buffer carrier structures. The total size
+                  * is about 4 KB, so allocate all at once.
+                  */
+-                carrp -                    (ADV_CARR_T *) kmalloc(ADV_CARRIER_BUFSIZE,
+GFP_ATOMIC);
++                carrp = kmalloc(ADV_CARRIER_BUFSIZE, GFP_ATOMIC);
+                 ASC_DBG1(1, "advansys_detect: carrp 0x%lx\n", (ulong)
+carrp);
+ 
+                 if (carrp = NULL) {
+@@ -5275,8 +5274,7 @@ advansys_detect(struct scsi_host_template *tpnt)
+                 for (req_cnt = adv_dvc_varp->max_host_qng;
+                     req_cnt > 0; req_cnt--) {
+ 
+-                    reqp = (adv_req_t *)
+-                        kmalloc(sizeof(adv_req_t) * req_cnt,
+GFP_ATOMIC);
++                    reqp = kmalloc(sizeof(adv_req_t) * req_cnt,
+GFP_ATOMIC);
+ 
+                     ASC_DBG3(1,
+                         "advansys_detect: reqp 0x%lx, req_cnt %d, bytes
+%lu\n",
+@@ -5299,8 +5297,7 @@ advansys_detect(struct scsi_host_template *tpnt)
+                 boardp->adv_sgblkp = NULL;
+                 for (sg_cnt = 0; sg_cnt < ADV_TOT_SG_BLOCK; sg_cnt++) {
+ 
+-                    sgp = (adv_sgblk_t *)
+-                        kmalloc(sizeof(adv_sgblk_t), GFP_ATOMIC);
++                    sgp = kmalloc(sizeof(adv_sgblk_t), GFP_ATOMIC);
+ 
+                     if (sgp = NULL) {
+                         break;
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 08060fb..7a49c71 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -5755,9 +5755,8 @@ static int osst_probe(struct device *dev)
+ 	/* if this is the first attach, build the infrastructure */
+ 	write_lock(&os_scsi_tapes_lock);
+ 	if (os_scsi_tapes = NULL) {
+-		os_scsi_tapes -			(struct osst_tape **)kmalloc(osst_max_dev * sizeof(struct osst_tape
+*),
+-				   GFP_ATOMIC);
++		os_scsi_tapes = kmalloc(osst_max_dev *
++					sizeof(struct osst_tape *), GFP_ATOMIC);
+ 		if (os_scsi_tapes = NULL) {
+ 			write_unlock(&os_scsi_tapes_lock);
+ 			printk(KERN_ERR "osst :E: Unable to allocate array for OnStream SCSI
+tapes.\n");
 
-Now i since i have done this i have posted the results on my blog.
+-- 
+Suresh Jayaraman
 
-These are the steps i followed.
-generate the tag locally if you cannot download one. In fact its not
-compulsion to downlaod tags to start with i guess.They are important
-if you want to keep up with latest linux tree though.
 
-I did :-
-
-$ git add .
-$ git commit
-$ git tag -f v2.6.xyz-mine
-$ git tag -l
-$ git branch devel-branch v2.6.xyz-mine
-$ git checkout devel-branch
-$ git branch
-
-and i am done. No need to donwload any tags or 300MB of src. Just
-generate tag locally and yay...
-
-Thanks Rene, Thanks Andy.
-
-Cheers
-- --pradeep
-
-[ http://psrautela.blogspot.com ]
-
-On 6/9/07, Rene Herman  wrote:
-> On 06/09/2007 02:51 PM, Rene Herman wrote:
->
-> > Specifically, you're really best of ignoring all the stuff above about
-> > setting up that local repo and just clone the master linux repo. You
-> > need to do that only once and afterwards, you can just merrily update
-> > through simple "git pull" commands. So, I'd suggest:
-> >
-> > $ cd ~/src
-> > $ git clone -n
-> > git://git2.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git linus
->
-> Just saw you posting proxy information -- the only thing that should change
-> is replacing this GIT url with:
->
-> http://www.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
->
-> Rene.
->
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-Comment: http://firegpg.tuxfamily.org
-
-iD8DBQFGaq79ky6Gd9lpXlERApS3AJ0RhbjNTdxRm2dc99YyTRBD/1+RFgCfUix0
-et4MJV8z5LoUhBY/gUy8OGM=R9/e
------END PGP SIGNATURE-----
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
