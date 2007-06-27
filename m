@@ -1,78 +1,28 @@
-From: "Suresh Jayaraman" <sjayaraman@novell.com>
-Date: Wed, 27 Jun 2007 15:18:26 +0000
-Subject: [KJ] [PATCH] scsi: Remove unnecessary cast of return value of
-Message-Id: <4682CD1A020000F40000A89B@lucius.provo.novell.com>
+From: Henne <henne@nachtwindheim.de>
+Date: Wed, 27 Jun 2007 17:19:49 +0000
+Subject: Re: [KJ] [PATCH] scsi: Remove unnecessary cast of return value of
+Message-Id: <46829C35.6030008@nachtwindheim.de>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <4682CD1A020000F40000A89B@lucius.provo.novell.com>
+In-Reply-To: <4682CD1A020000F40000A89B@lucius.provo.novell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Remove unnecessary cast of return value of kmalloc() in the scsi
-subsystem.
+Hi Suresh,
 
-Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
----
+thanks for the patch, but this one is malformed.
 
-diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
-index 9b3303b..f5cb42e 100644
---- a/drivers/scsi/advansys.c
-+++ b/drivers/scsi/advansys.c
-@@ -5258,8 +5258,7 @@ advansys_detect(struct scsi_host_template *tpnt)
-                  * Allocate buffer carrier structures. The total size
-                  * is about 4 KB, so allocate all at once.
-                  */
--                carrp -                    (ADV_CARR_T *) kmalloc(ADV_CARRIER_BUFSIZE,
-GFP_ATOMIC);
-+                carrp = kmalloc(ADV_CARRIER_BUFSIZE, GFP_ATOMIC);
-                 ASC_DBG1(1, "advansys_detect: carrp 0x%lx\n", (ulong)
-carrp);
- 
-                 if (carrp = NULL) {
-@@ -5275,8 +5274,7 @@ advansys_detect(struct scsi_host_template *tpnt)
-                 for (req_cnt = adv_dvc_varp->max_host_qng;
-                     req_cnt > 0; req_cnt--) {
- 
--                    reqp = (adv_req_t *)
--                        kmalloc(sizeof(adv_req_t) * req_cnt,
-GFP_ATOMIC);
-+                    reqp = kmalloc(sizeof(adv_req_t) * req_cnt,
-GFP_ATOMIC);
- 
-                     ASC_DBG3(1,
-                         "advansys_detect: reqp 0x%lx, req_cnt %d, bytes
-%lu\n",
-@@ -5299,8 +5297,7 @@ advansys_detect(struct scsi_host_template *tpnt)
-                 boardp->adv_sgblkp = NULL;
-                 for (sg_cnt = 0; sg_cnt < ADV_TOT_SG_BLOCK; sg_cnt++) {
- 
--                    sgp = (adv_sgblk_t *)
--                        kmalloc(sizeof(adv_sgblk_t), GFP_ATOMIC);
-+                    sgp = kmalloc(sizeof(adv_sgblk_t), GFP_ATOMIC);
- 
-                     if (sgp = NULL) {
-                         break;
-diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
-index 08060fb..7a49c71 100644
---- a/drivers/scsi/osst.c
-+++ b/drivers/scsi/osst.c
-@@ -5755,9 +5755,8 @@ static int osst_probe(struct device *dev)
- 	/* if this is the first attach, build the infrastructure */
- 	write_lock(&os_scsi_tapes_lock);
- 	if (os_scsi_tapes = NULL) {
--		os_scsi_tapes -			(struct osst_tape **)kmalloc(osst_max_dev * sizeof(struct osst_tape
-*),
--				   GFP_ATOMIC);
-+		os_scsi_tapes = kmalloc(osst_max_dev *
-+					sizeof(struct osst_tape *), GFP_ATOMIC);
- 		if (os_scsi_tapes = NULL) {
- 			write_unlock(&os_scsi_tapes_lock);
- 			printk(KERN_ERR "osst :E: Unable to allocate array for OnStream SCSI
-tapes.\n");
+> -                carrp > -                    (ADV_CARR_T *) kmalloc(ADV_CARRIER_BUFSIZE,
+> GFP_ATOMIC);
+> +                carrp = kmalloc(ADV_CARRIER_BUFSIZE, GFP_ATOMIC);
 
--- 
-Suresh Jayaraman
-
+GFP_ATOMIC); should be at the end of the 2nd line.
+It seems that you Editor/Mailer isn't configured for sending patches,
+or you edited the patch by hand (worse).
+I'm not familiar with "Novell GroupWise Internet Agent", if thats your mailer.
+But you may compare this patch in your outbox with the file you sent to find the one who's guilty ;)
 
 _______________________________________________
 Kernel-janitors mailing list
