@@ -1,51 +1,64 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Wed, 06 Jun 2007 03:09:59 +0000
-Subject: Re: [KJ] Re: [PATCH ARRAY_SIZE 1/4] kernel 2.6 size macro clean ups
-Message-Id: <46662587.3080208@student.ltu.se>
+From: "EGO - Globo.com" <noticias@ego.com.br>
+Date: Wed, 27 Jun 2007 04:57:06 +0000
+Subject: [KJ] =?iso-8859-1?q?Flagra_de_Iris_que_resultou_o_fim_do_romance?=
+Message-Id: <a2be1d00b124626eed689855440ffcd9>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1182920651-3969-192"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <465C99C3.4030802@gmail.com>
-In-Reply-To: <465C99C3.4030802@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Aaron Cripps wrote:
-> this is a simple patch to remove the MAX_SPEEDS macro in favor of the 
-> more
-> generic ARRAY_SIZE(arr) macro defined in kernel.h
-> RE: Forgot the #import <linux/kernel.h> statement. It's there now.
-> Signed-off-by: Aaron Cripps <cripps@cs.mun.ca>
->
->
-> diff --git a/drivers/net/irda/actisys-sir.c 
-> b/drivers/net/irda/actisys-sir.c
-> index 9715ab5..44bf0c2 100644
-> --- a/drivers/net/irda/actisys-sir.c
-> +++ b/drivers/net/irda/actisys-sir.c
-> @@ -43,7 +43,7 @@
-> #include <linux/module.h>
-> #include <linux/delay.h>
-> #include <linux/init.h>
-> -
-> +#include <linux/kernel.h>
-The patch is space-padded, please fix your client (or use ex the script 
-"sendpatchset") and send again. (The patch seemed correct otherwise)
-> #include <net/irda/irda.h>
->
-> #include "sir-dev.h"
-> @@ -67,8 +67,6 @@ static int actisys_reset(struct sir_dev *);
-> /* Note : the 220L doesn't support 38400, but we will fix that below */
-> static unsigned baud_rates[] = { 9600, 19200, 57600, 115200, 38400 };
->
-> -#define MAX_SPEEDS (sizeof(baud_rates)/sizeof(baud_rates[0]))
-> -
-Can anyone explain why the number of possible speeds are called 
-MAX_SPEEDS? Maybe it should have been NUM_MAX_SPEEDS...
+This is a multi-part message in MIME format...
 
-Richard Knutsson
+------------=_1182920651-3969-192
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.=
+org", has=0A=
+identified this incoming email as possible spam.  The original message=0A=
+has been attached to this so you can view it (if it isn't spam) or label=0A=
+similar future email.  If you have any questions, see=0A=
+the administrator of that system for details.=0A=
+=0A=
+Content preview:  E G O - not=EDcias Namoro de Ir=EDs e Alem=E3o chega ao f=
+im .=0A=
+  O namoro mais balado do ano chega ao fim, Ir=EDs e Alem=E3o terminam seu=
+=0A=
+  namoro ap=F3s Ir=EDs ser flagra por um Paparazzo em Uberl=E2ndia-MG em uma=
+=0A=
+  micareta junto com seu ex-namorado, que namorou por 9 anos antes de=0A=
+  entrar na casa do BBB 7. [...]=20=0A=
+=0A=
+Content analysis details:   (6.4 points, 5.0 required)=0A=
+=0A=
+ pts rule name              description=0A=
+---- ---------------------- -----------------------------------------------=
+---=0A=
+ 0.8 MSGID_NO_HOST          Message-Id has no hostname=0A=
+ 0.1 HTML_IMAGE_RATIO_06    BODY: HTML has a low ratio of text to image area=
+=0A=
+ 1.4 HTML_IMAGE_ONLY_20     BODY: HTML: images with 1600-2000 bytes of words=
+=0A=
+ 0.0 HTML_MESSAGE           BODY: HTML included in message=0A=
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%=0A=
+                            [score: 0.5019]=0A=
+ 2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts=0A=
+ 2.1 INVALID_MSGID          Message-Id is not valid, according to RFC 2822=
+=0A=
+=0A=
+=0A=
+
+------------=_1182920651-3969-192
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1182920651-3969-192--
