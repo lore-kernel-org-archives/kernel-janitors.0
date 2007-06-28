@@ -1,47 +1,19 @@
-From: Corbett Aurora <yefr@students.mcg.edu>
-Date: Thu, 28 Jun 2007 20:04:36 +0000
-Subject: [KJ] doc.pdf attached
-Message-Id: <46841454.7080806@students.mcg.edu>
+From: "Flora V. Dorsey" <jrjt@ac.net>
+Date: Thu, 28 Jun 2007 07:56:07 +0000
+Subject: [KJ] Warning.vkbfwcgldudc.pdf
+Message-Id: <46836997.5030406@ac.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------070507020408020308000207"
+Content-Type: multipart/mixed; boundary="------------060506040402070208030105"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-
---------------070507020408020308000207
-Content-Type: text/plain; charset=windows-1252; format=flowed
+--------------060506040402070208030105
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 
 
---------------070507020408020308000207
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  [...] 
-
-Content analysis details:   (7.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
-                            2)
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9977]
-
-
-
---------------070507020408020308000207
+--------------060506040402070208030105
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -51,4 +23,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------070507020408020308000207--
+--------------060506040402070208030105--
