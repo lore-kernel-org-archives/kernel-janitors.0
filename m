@@ -1,73 +1,140 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 18 Jun 2007 20:07:33 +0000
-Subject: [KJ] [PATCH] Comment the endif's in highmem.h to make the logic
-Message-Id: <Pine.LNX.4.64.0706181606300.6427@localhost.localdomain>
+From: "Edgar Y. Moss" <cdzwk@cableone.net>
+Date: Thu, 28 Jun 2007 20:11:02 +0000
+Subject: [KJ] As with any top site that achieves the success on the order
+Message-Id: <4684BBF0.8000300@cableone.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+BusinessNetWire's Issues "Investor Focus" On SREA
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+Score One Inc. (SREA)
 
----
+Market Makers are pushing SREA down to grab control but Market Watchers
+continue to alert investors as SREA rockets higher! Get on SREA now!
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 98e2cce..8d3626e 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -11,13 +11,13 @@
- static inline void flush_anon_page(struct vm_area_struct *vma, struct page *page, unsigned long vmaddr)
- {
- }
--#endif
-+#endif /* !ARCH_HAS_FLUSH_ANON_PAGE */
+Password: lost password?
 
- #ifndef ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
- static inline void flush_kernel_dcache_page(struct page *page)
- {
- }
--#endif
-+#endif /* !ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE */
+It continues to be our goal to raise the quality of  material available
+on Webmasterworld and to remain an independent site that serves the
+community.
 
- #ifdef CONFIG_HIGHMEM
+Members receive: Access to the private supporters forum.
 
-@@ -58,7 +58,7 @@ static inline void *kmap_atomic(struct page *page, enum km_type idx)
- #define kmap_atomic_to_page(ptr)	virt_to_page(ptr)
+As with any top site that achieves the success on the order that we
+have, expenses also grow.
 
- #define kmap_flush_unused()	do {} while(0)
--#endif
-+#endif /* !ARCH_HAS_KMAP */
+Note: Cookie support required to login Subscribe to WebmasterWorld,
+thank you for your support.
 
- #endif /* CONFIG_HIGHMEM */
+An ad free environment if we should add advertising. We have  discussed
+moving the site to banner ads, text ads, or affiliations with
+developers.
+Aside from supporting WebmasterWorlds continued operation and expansion,
+subscribing to the site has tangible benefits. Member Login: Member
+Name: need to register?
 
-@@ -83,7 +83,7 @@ alloc_zeroed_user_highpage(struct vm_area_struct *vma, unsigned long vaddr)
+Members receive: Access to the private supporters forum.
 
- 	return page;
- }
--#endif
-+#endif /* !__HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE */
+Note: Given that this is a service, all subscriptions are final and
+refunds are not granted.
+If you would like to subscribe to Webmasterworld please click on one of
+the PayPal links above and fill out the form at their secure https site.
+An ad free environment if we should add advertising.
 
- static inline void clear_highpage(struct page *page)
- {
-@@ -132,7 +132,7 @@ static inline void copy_user_highpage(struct page *to, struct page *from,
- 	smp_wmb();
- }
+It continues to be our goal to raise the quality of  material available
+on Webmasterworld and to remain an independent site that serves the
+community.
 
--#endif
-+#endif /* !__HAVE_ARCH_COPY_USER_HIGHPAGE */
+Password: lost password?
 
- static inline void copy_highpage(struct page *to, struct page *from)
- {
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+A special discounted Supporters Only rate to all WebmasterWorld hosted
+conferences. Password: lost password? Aside from supporting
+WebmasterWorlds continued operation and expansion, subscribing to the
+site has tangible benefits.
+Password: lost password?
+We are a verified PayPal Premier business member and you can verify our
+status by clicking on the verified seal in the lower right.
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+It is made up of some of the best professionals in the business in a
+more relaxed atmosphere. Note: Cookie support required to login
+Subscribe to WebmasterWorld, thank you for your support. It has been by
+the generosity of our members we have not only been able to do that, but
+have become known net wide as an  authoritative source on search engine
+optimization and marketing matters. Password: lost password?
+Members receive: Access to the private supporters forum.
+
+Note: Given that this is a service, all subscriptions are final and
+refunds are not granted.
+If you would like to subscribe to Webmasterworld please click on one of
+the PayPal links above and fill out the form at their secure https site.
+It is made up of some of the best professionals in the business in a
+more relaxed atmosphere. We have  discussed moving the site to banner
+ads, text ads, or affiliations with developers.
+As with any top site that achieves the success on the order that we
+have, expenses also grow.
+
+It has been by the generosity of our members we have not only been able
+to do that, but have become known net wide as an  authoritative source
+on search engine optimization and marketing matters. We are a verified
+PayPal Premier business member and you can verify our status by clicking
+on the verified seal in the lower right. An ad free environment if we
+should add advertising. As with any top site that achieves the success
+on the order that we have, expenses also grow.
+Password: lost password?
+
+It has been by the generosity of our members we have not only been able
+to do that, but have become known net wide as an  authoritative source
+on search engine optimization and marketing matters.
+It has been by the generosity of our members we have not only been able
+to do that, but have become known net wide as an  authoritative source
+on search engine optimization and marketing matters.
+If you would like to subscribe to Webmasterworld please click on one of
+the PayPal links above and fill out the form at their secure https site.
+We have  discussed moving the site to banner ads, text ads, or
+affiliations with developers.
+
+We are a verified PayPal Premier business member and you can verify our
+status by clicking on the verified seal in the lower right. Aside from
+supporting WebmasterWorlds continued operation and expansion,
+subscribing to the site has tangible benefits. An ad free environment if
+we should add advertising.
+
+It has been by the generosity of our members we have not only been able
+to do that, but have become known net wide as an  authoritative source
+on search engine optimization and marketing matters.
+
+If you would like to subscribe to Webmasterworld please click on one of
+the PayPal links above and fill out the form at their secure https site.
+
+We have  discussed moving the site to banner ads, text ads, or
+affiliations with developers. We have  discussed moving the site to
+banner ads, text ads, or affiliations with developers. Members receive:
+Access to the private supporters forum.
+
+Password: lost password?
+
+Aside from supporting WebmasterWorlds continued operation and expansion,
+subscribing to the site has tangible benefits.
+
+Note: Cookie support required to login Subscribe to WebmasterWorld,
+thank you for your support.
+As with any top site that achieves the success on the order that we
+have, expenses also grow.
+
+Password: lost password? An ad free environment if we should add
+advertising.
+
+Password: lost password?
+
+It is made up of some of the best professionals in the business in a
+more relaxed atmosphere.
+
+Note: Cookie support required to login Subscribe to WebmasterWorld,
+thank you for your support.
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
