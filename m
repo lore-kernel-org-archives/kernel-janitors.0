@@ -1,53 +1,45 @@
-From: Watkins Jo <nacor@carolina.rr.com>
-Date: Thu, 21 Jun 2007 11:32:13 +0000
-Subject: [KJ] nine follow-up
-Message-Id: <467A5EED.3050402@carolina.rr.com>
+From: "Suresh Jayaraman" <sjayaraman@novell.com>
+Date: Thu, 28 Jun 2007 17:06:47 +0000
+Subject: [KJ] [PATCH] ethernet: Remove unnecessary cast of return value of
+Message-Id: <468437FF020000F40000A9AF@lucius.provo.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Frenzy Pushes SREA Up 46.6%
+Remove unnecessary cast of return value of kmalloc() in
+drivers/net/giantfar.c
 
-Score One Inc. (SREA)
-$0.44 UP 46.6%
+Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
+---
 
-SREA is in a frenzy as investor buying pushed it Up over 46% by close
-Wed. Up 427% in just over a week. Get all over SREA Thursday!
+diff --git a/drivers/net/gianfar.c b/drivers/net/gianfar.c
+index 6822bf1..96fa639 100644
+--- a/drivers/net/gianfar.c
++++ b/drivers/net/gianfar.c
+@@ -700,8 +700,7 @@ int startup_gfar(struct net_device *dev)
+ 	gfar_write(&regs->rbase0, addr);
+ 
+ 	/* Setup the skbuff rings */
+-	priv->tx_skbuff -	    (struct sk_buff **) kmalloc(sizeof (struct sk_buff *) *
++	priv->tx_skbuff = kmalloc(sizeof (struct sk_buff *) *
+ 					priv->tx_ring_size, GFP_KERNEL);
+ 
+ 	if (NULL = priv->tx_skbuff) {
+@@ -715,8 +714,7 @@ int startup_gfar(struct net_device *dev)
+ 	for (i = 0; i < priv->tx_ring_size; i++)
+ 		priv->tx_skbuff[i] = NULL;
+ 
+-	priv->rx_skbuff -	    (struct sk_buff **) kmalloc(sizeof (struct sk_buff *) *
++	priv->rx_skbuff = kmalloc(sizeof (struct sk_buff *) *
+ 					priv->rx_ring_size, GFP_KERNEL);
+ 
+ 	if (NULL = priv->rx_skbuff) {
 
-Above all accidents are to be avoided.
-Removing a dog's hair for no logical reason than our own personal
-biological bias is not  following nature's own rules of adaptation.
+-- 
+Suresh Jayaraman
 
-Do not forget to insert a cotton  ball which has been tipped with
-vaseline into your dog's ears before you turn  on the water.
-
-Following the contours of the dog's body, clip over the entire back 
-using the top of the shoulder as your guideline.
-
-If the picture is forever changing there is les chance of the monitor 
-developing screen burn.
-
-Don't blame yourself for your pet's death. I do hope you enjoy your
-visit, remember your Westie will !
-In Westies, chocolate  causes Internal bleeding which will kill them
-later.
-
-Like the site,  the forum is free to use, it has people looking after
-it, so that its  content is suitable for all visitors, including
-children. Although this site is  all about the Westie, I feel other
-terrier guardians are loosing out. West Highland White children's pages,
-Painting. After working on your dog for a couple of  hours, you will be
-hot and sweaty which is why these little hairs stick to you  in the
-first place.
-
-In wintertime the whole process is put in reverse. These emotions are
-part of the process of coming to terms with your loss. Be kind to
-yourself as well. You will also see a lot of  members photos, showing
-their Westie's having fun.
-I have sent out many emails, some people just  deleted them without
-reading them, then they complain they cannot access the  main site !
 
 _______________________________________________
 Kernel-janitors mailing list
