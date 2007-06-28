@@ -1,110 +1,75 @@
-From: Mail Administrator <Postmaster@mx.bigpond.com>
-Date: Sun, 17 Jun 2007 10:24:50 +0000
-Subject: [KJ] Mail System Error - Returned Mail
-Message-Id: <20070617102450.UCTA25724.omta05sl.mx.bigpond.com@omta05sl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="===============7441753456015791577=="
+From: "Suresh Jayaraman" <sjayaraman@novell.com>
+Date: Thu, 28 Jun 2007 14:12:22 +0000
+Subject: [KJ] [PATCH] scsi: Remove unneccessary cast of return value of
+Message-Id: <46840F1E020000F40000A97D@lucius.provo.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Resending the patch since the earlier one was malformed.
 
---===============7441753456015791577==
-Content-Type: multipart/report; report-type=delivery-status;
-	Boundary="===========================_ _= 5365905(25724)1182075890"
+Remove unnecessary cast of return value of kmalloc() in the scsi
+subsystem.
 
+Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
+---
 
---===========================_ _= 5365905(25724)1182075890
-Content-Type: text/plain
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+index 9b3303b..f5cb42e 100644
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -5258,8 +5258,7 @@ advansys_detect(struct scsi_host_template *tpnt)
+                  * Allocate buffer carrier structures. The total size
+                  * is about 4 KB, so allocate all at once.
+                  */
+-                carrp -                    (ADV_CARR_T *) kmalloc(ADV_CARRIER_BUFSIZE, GFP_ATOMIC);
++                carrp = kmalloc(ADV_CARRIER_BUFSIZE, GFP_ATOMIC);
+                 ASC_DBG1(1, "advansys_detect: carrp 0x%lx\n", (ulong) carrp);
+ 
+                 if (carrp = NULL) {
+@@ -5275,8 +5274,7 @@ advansys_detect(struct scsi_host_template *tpnt)
+                 for (req_cnt = adv_dvc_varp->max_host_qng;
+                     req_cnt > 0; req_cnt--) {
+ 
+-                    reqp = (adv_req_t *)
+-                        kmalloc(sizeof(adv_req_t) * req_cnt, GFP_ATOMIC);
++                    reqp = kmalloc(sizeof(adv_req_t) * req_cnt, GFP_ATOMIC);
+ 
+                     ASC_DBG3(1,
+                         "advansys_detect: reqp 0x%lx, req_cnt %d, bytes %lu\n",
+@@ -5299,8 +5297,7 @@ advansys_detect(struct scsi_host_template *tpnt)
+                 boardp->adv_sgblkp = NULL;
+                 for (sg_cnt = 0; sg_cnt < ADV_TOT_SG_BLOCK; sg_cnt++) {
+ 
+-                    sgp = (adv_sgblk_t *)
+-                        kmalloc(sizeof(adv_sgblk_t), GFP_ATOMIC);
++                    sgp = kmalloc(sizeof(adv_sgblk_t), GFP_ATOMIC);
+ 
+                     if (sgp = NULL) {
+                         break;
+diff --git a/drivers/scsi/osst.c b/drivers/scsi/osst.c
+index 08060fb..7a49c71 100644
+--- a/drivers/scsi/osst.c
++++ b/drivers/scsi/osst.c
+@@ -5755,9 +5755,8 @@ static int osst_probe(struct device *dev)
+ 	/* if this is the first attach, build the infrastructure */
+ 	write_lock(&os_scsi_tapes_lock);
+ 	if (os_scsi_tapes = NULL) {
+-		os_scsi_tapes -			(struct osst_tape **)kmalloc(osst_max_dev * sizeof(struct osst_tape *),
+-				   GFP_ATOMIC);
++		os_scsi_tapes = kmalloc(osst_max_dev *
++					sizeof(struct osst_tape *), GFP_ATOMIC);
+ 		if (os_scsi_tapes = NULL) {
+ 			write_unlock(&os_scsi_tapes_lock);
+ 			printk(KERN_ERR "osst :E: Unable to allocate array for OnStream SCSI tapes.\n");
 
-This Message was undeliverable due to the following reason:
+-- 
+Suresh Jayaraman
 
-Your message was not delivered because the destination computer refused
-to accept it (the error message is reproduced below).  This type of error
-is usually due to a mis-configured account or mail delivery system on the
-destination computer; however, it could be caused by your message since
-some mail systems refuse messages with invalid header information, or if
-they are too large.
-
-Your message was rejected by serlx14.essex.ac.uk for the following reason:
-
-     This email contains a virus or other harmful content (Worm.Mydoom.M)
-
-The following recipients did not receive this message:
-
-     <sml@essex.ac.uk>
-
-Please reply to <Postmaster@mx.bigpond.com>
-if you feel this message to be in error.
-
-The following attachments have been removed from the bounce message: message.zip
-
---===========================_ _= 5365905(25724)1182075890
-Content-Type: message/delivery-status
-
-Reporting-MTA: dns; omta05sl.mx.bigpond.com
-Arrival-Date: Sun, 17 Jun 2007 10:24:31 +0000
-Received-From-MTA: dns; oaamta05sl.mx.bigpond.com (124.182.180.108)
-
-Final-Recipient: RFC822; <sml@essex.ac.uk>
-Action: failed
-Status: 5.1.1
-Remote-MTA: dns; serlx14.essex.ac.uk (155.245.48.17)
-Diagnostic-Code: smtp; 550 This email contains a virus or other harmful content
-	(Worm.Mydoom.M)
-
---===========================_ _= 5365905(25724)1182075890
-Content-Type: message/rfc822
-
-Received: from oaamta05sl.mx.bigpond.com ([124.182.180.108])
-	by omta05sl.mx.bigpond.com with ESMTP id
-	<20070617102431.UCKQ25724.omta05sl.mx.bigpond.com@oaamta05sl.mx.bigpond.com>
-	for <sml@essex.ac.uk>; Sun, 17 Jun 2007 10:24:31 +0000
-Received: from lists.osdl.org ([124.182.180.108])
-	by oaamta05sl.mx.bigpond.com with ESMTP
-	id <20070617102416.JKVZ23230.oaamta05sl.mx.bigpond.com@lists.osdl.org>
-	for <sml@essex.ac.uk>; Sun, 17 Jun 2007 10:24:16 +0000
-From: kernel-janitors@lists.osdl.org
-To: sml@essex.ac.uk
-Subject: hi
-Date: Sun, 17 Jun 2007 18:20:51 +0800
-MIME-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="----=_NextPart_000_0009_7DBBE2E4.6546C189"
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MIMEOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-Id: <20070617102416.JKVZ23230.oaamta05sl.mx.bigpond.com@lists.osdl.org>
-
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_0009_7DBBE2E4.6546C189
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: 7bit
-
-The original message was received at Sun, 17 Jun 2007 18:20:51 +0800
-from lists.osdl.org [21.238.201.169]
-
------ The following addresses had permanent fatal errors -----
-<sml@essex.ac.uk>
-
-
-
-
-------=_NextPart_000_0009_7DBBE2E4.6546C189--
-
---===========================_ _= 5365905(25724)1182075890--
-
-
---===============7441753456015791577==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---===============7441753456015791577==--
