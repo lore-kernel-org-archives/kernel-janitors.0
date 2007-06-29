@@ -1,48 +1,46 @@
-From: Polly <alht@td.com>
-Date: Tue, 19 Jun 2007 20:36:30 +0000
-Subject: [KJ] intellectual
-Message-Id: <46783E4E.4080803@td.com>
+From: "Suresh Jayaraman" <sjayaraman@novell.com>
+Date: Fri, 29 Jun 2007 16:01:07 +0000
+Subject: [KJ] [PATCH] jfs: Remove unnecessary cast of return value of kmalloc
+Message-Id: <46857A1B020000F40000AA42@lucius.provo.novell.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-OTCPicks.com Picks SREA As The Stock to Watch. UP 272% In 7 Days!
+Remove unnecessary cast of return value of kmalloc in jfs/jfs_dtree.c
 
-Score One Inc.
-SREA
-$0.30 UP 20% Today
+Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
+---
 
-Up another 20% today and over 272% in the last 7 days, OTCPICKS.com puts
-SREA on their watch list. Read up and get on SREA first thing Wed!
+diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+index 6d62f32..e1197eb 100644
+--- a/fs/jfs/jfs_dtree.c
++++ b/fs/jfs/jfs_dtree.c
+@@ -592,9 +592,7 @@ int dtSearch(struct inode *ip, struct component_name * key, ino_t * data,
+ 	struct component_name ciKey;
+ 	struct super_block *sb = ip->i_sb;
+ 
+-	ciKey.name -	    (wchar_t *) kmalloc((JFS_NAME_MAX + 1) * sizeof(wchar_t),
+-				GFP_NOFS);
++	ciKey.name = kmalloc((JFS_NAME_MAX + 1) * sizeof(wchar_t), GFP_NOFS);
+ 	if (ciKey.name = 0) {
+ 		rc = -ENOMEM;
+ 		goto dtSearch_Exit2;
+@@ -957,9 +955,7 @@ static int dtSplitUp(tid_t tid,
+ 	smp = split->mp;
+ 	sp = DT_PAGE(ip, smp);
+ 
+-	key.name -	    (wchar_t *) kmalloc((JFS_NAME_MAX + 2) * sizeof(wchar_t),
+-				GFP_NOFS);
++	key.name = kmalloc((JFS_NAME_MAX + 2) * sizeof(wchar_t), GFP_NOFS);
+ 	if (key.name = 0) {
+ 		DT_PUTPAGE(smp);
+ 		rc = -ENOMEM;
 
-While many enjoy streaming Internet Audio and recording songs they like
-over the Internet, these songs cannot legally be used in a podcast. has
-created a downloadable pdf that explains the ins and outs of iPods.
+-- 
+Suresh Jayaraman
 
-Today nearly all software companies use the "shareware" marketing model
-whether they use the term or not.
-
-To me that makes it perfect for both new and experienced users. Music
-files can be mixed, cross fades, and transitions can be added.
-Share Resources  Academics are using social bookmarking websites to
-share quality websites that relate to their area of expertise with
-colleagues and students.
-You can locate the XML to add to your RSS reader, view the contents of
-the feed or visit the website of the RSS feed. htm  RSS Articles  What
-RSS Is Not; RSS Does Not Equal Email  RSS is not email, nor is it
-designed to be a replacement for email. The location should be free of
-external distractions and relatively quiet. Easily record and edit audio
-files to create professional sounding podcasts. FeedForAll Mac is
-software that allows publishers and webmasters to create, edit and
-publish: RSS feeds, podcasts and videocasts.
-
-Podcast Lectures  Podcasts can be used as study guides or even as class
-preview for students contemplating their course selections or choice of
-professors.
-FeedForAll Mac is software that allows publishers and webmasters to
-create, edit and publish: RSS feeds, podcasts and videocasts.
 
 _______________________________________________
 Kernel-janitors mailing list
