@@ -1,31 +1,25 @@
-From: Stelian Pop <stelian@popies.net>
-Date: Thu, 14 Jun 2007 21:09:03 +0000
-Subject: [KJ] Re: [PATCH]is_power_of_2-kernel/kfifo.c
-Message-Id: <20070614210903.GA18833@sd291.sivit.org>
+From: "Sales" <sales@mynratravel.com>
+Date: Fri, 29 Jun 2007 22:43:38 +0000
+Subject: [KJ] Canadian Idol producer seethes at voter bias
+Message-Id: <100e01c7ba9e$0048b068$55dbecc2@speldata>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1181817306.2474.22.camel@merlin.linuxcoe.com>
-In-Reply-To: <1181817306.2474.22.camel@merlin.linuxcoe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vignesh babu <vignesh.babu@wipro.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 14, 2007 at 04:05:06PM +0530, vignesh babu wrote:
-> 
-> 
-> Replacing (n & (n-1)) in the context of power of 2 checks
-> with is_power_of_2
-> 
-> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+We bet you wouldn't mind to become a super hot bedstar 
+for your non-satisfied girlfriend!
 
-Signed-off-by: Stelian Pop <stelian@popies.net>
+All you need to do is to order our stammering effective super pill 
+via our website: http://www.mynratravel.com/ for the half price! 
 
-Thanks,
+It will make your penis really huge giving you the unique chance 
+to shoot a porn movie and not to be embarrassed!
 
-Stelian.
 -- 
-Stelian Pop <stelian@popies.net>    
+loikipghfufmfujofufmfofggsfkgoguhsfhflfifkfgksgqflghgqklglfngr
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
