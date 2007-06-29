@@ -1,19 +1,19 @@
-From: Mathilda Montoya <vpczo@katamail.com>
-Date: Sat, 30 Jun 2007 05:41:18 +0000
-Subject: [KJ] Fwd: Information-518288.pdf
-Message-Id: <4685ECFE.7080102@katamail.com>
+From: Louisa Sutton <use@alastair26.wanadoo.co.uk>
+Date: Fri, 29 Jun 2007 12:00:54 +0000
+Subject: [KJ] Cashed_3220100134.pdf
+Message-Id: <4684F476.1080703@alastair26.wanadoo.co.uk>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------040608020600010401010003"
+Content-Type: multipart/mixed; boundary="------------000402040006070000040503"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---------------040608020600010401010003
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+--------------000402040006070000040503
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------040608020600010401010003
+--------------000402040006070000040503
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -23,4 +23,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------040608020600010401010003--
+--------------000402040006070000040503--
