@@ -1,70 +1,47 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sat, 09 Jun 2007 08:51:12 +0000
-Subject: Re: [KJ] [PATCH] Drop the superfluous test for an old version of gcc.
-Message-Id: <Pine.LNX.4.64.0706090450100.26837@localhost.localdomain>
+From: "greetingcard.org" <lgg@most.net>
+Date: Sat, 30 Jun 2007 16:52:56 +0000
+Subject: [KJ] You've received a greeting card from a school friend!
+Message-Id: <000701c7bb37$1b8365e0$85df394a@ct.pdnx>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0706071336540.1235@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0706071336540.1235@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, 8 Jun 2007, Denver Gingerich wrote:
+Good day.
 
-> On 6/7/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> >
-> > The header file <linux/compiler.h> already enforces a suitably recent
-> > version of gcc, so there's no point checking for that again.
-> >
-> > Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
-> >
-> > ---
-> >
-> > diff --git a/init/main.c b/init/main.c
-> > index eb8bdba..522b305 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -69,15 +69,7 @@
-> >  /*
-> >   * This is one of the first .c files built. Error out early if we have
-> > compiler
-> >   * trouble.
-> > - *
-> > - * Versions of gcc older than that listed below may actually compile and
-> > link
-> > - * okay, but the end product can have subtle run time bugs.  To avoid
-> > associated
-> > - * bogus bug reports, we flatly refuse to compile with a gcc that is known
-> > to be
-> > - * too old from the very beginning.
-> >   */
-> > -#if (__GNUC__ < 3) || (__GNUC__ = 3 && __GNUC_MINOR__ < 2)
-> > -#error Sorry, your GCC is too old. It builds incorrect kernels.
-> > -#endif
-> >
-> >  #if __GNUC__ = 4 && __GNUC_MINOR__ = 1 && __GNUC_PATCHLEVEL__ = 0
-> >  #warning gcc-4.1.0 is known to miscompile the kernel.  A different compiler
-> > version is recommended.
-> > --
->
-> If compiler.h already enforces a suitably recent version of gcc,
-> then why does main.c still have the check for gcc 4.1.0?  Shouldn't
-> all kernel version checks be done in the same place?
+Your school friend has sent you a greeting card from greetingcard.org.
 
-sure, that makes sense.  if andrew agrees and wants to drop that
-earlier patch, i can submit one that centralizes all gcc version
-checking in one place.
+Send free ecards from greetingcard.org with your choice of colors, words and music.
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+Your ecard will be available with us for the next 30 days. If you wish to keep 
+the ecard longer, you may save it on your computer or take a print.
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+To view your ecard, choose from any of the following options:
+
+--------
+OPTION 1
+--------
+
+Click on the following Internet address or
+copy & paste it into your browser's address box.
+
+http://75.21.75.155/?2bd22ca398b69146019a1823497
+
+--------
+OPTION 2
+--------
+
+Copy & paste the ecard number in the "View Your Card" box at 
+http://75.21.75.155/
+
+Your ecard number is
+2bd22ca398b69146019a1823497
+
+Best wishes,
+Mailer-Daemon,
+greetingcard.org
+
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
