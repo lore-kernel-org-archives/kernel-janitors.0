@@ -1,48 +1,55 @@
-From: Etta <hdvv@cox-internet.com>
-Date: Wed, 20 Jun 2007 19:09:05 +0000
-Subject: [KJ] nosy
-Message-Id: <46797B51.1030708@cox-internet.com>
+From: Trent <tolwz@iprimus.com.au>
+Date: Sat, 30 Jun 2007 19:42:14 +0000
+Subject: [KJ] announcement_wwckrgdzpfqyoj.pdf
+Message-Id: <4686B216.7000706@iprimus.com.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------000506000400010205030605"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-OTCPicks.com Picks SREA As The Stock to Watch. UP 272% In 7 Days!
 
-Score One Inc.
-SREA
-$0.30 UP 20% Today
+--------------000506000400010205030605
+Content-Type: text/plain; charset=windows-1250; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Up another 20% today and over 272% in the last 7 days, OTCPICKS.com puts
-SREA on their watch list. Read up and get on SREA first thing Wed!
 
-The most popular software for creating feeds currently is FeedForAll and
-can be found at feedforall. In order to use traditional music that is
-heard on the radio in a podcast, podcasters may have to pay royalties
-for each time the song is played.
 
-Many educational bloggers use RSS as a means to syndicate blog posts.
+--------------000506000400010205030605
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-The iPod tutorial is designed to even help advanced iPod users to take
-advantage of the iPods more advanced and complex features. Record, mix,
-and edit.
-FeedForAll, for example, has a wizard that walks you through the
-creation of RSS feeds, whether you want to publish a plain RSS feed, a
-podcast feed, or a podcast with iTunes support.
-Prepare Questions in Advance  Prepare a list of questions prior to the
-interview, contemplate possible follow-up questions based on the
-expected responses. Enter the coupon code ffanews . While many enjoy
-streaming Internet Audio and recording songs they like over the
-Internet, these songs cannot legally be used in a podcast. has created a
-downloadable pdf that explains the ins and outs of iPods. Today nearly
-all software companies use the "shareware" marketing model whether they
-use the term or not.
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-To me that makes it perfect for both new and experienced users.
-Music files can be mixed, cross fades, and transitions can be added.
+Content preview:  [...] 
+
+Content analysis details:   (5.1 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
+                            2)
+ 0.3 SUBJECT_NOVOWEL        Subject: has long non-vowel letter sequence
+ 1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
+                            [score: 0.7044]
+
+
+
+--------------000506000400010205030605
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------000506000400010205030605--
