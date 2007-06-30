@@ -1,7 +1,7 @@
-From: "Sofia" <kwmcfaqid@cyber.net.pk>
-Date: Mon, 11 Jun 2007 20:19:41 +0000
+From: "Kisonka" <yipgdnq@oup.com>
+Date: Sat, 30 Jun 2007 09:50:32 +0000
 Subject: [KJ] Re: Photo
-Message-Id: <C7DE49A8.11EE9AEF@cyber.net.pk>
+Message-Id: <0BFCEFC4.321DFC87@oup.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <B8852041.34BDC580@bednbreakfast.nu>
 In-Reply-To: <B8852041.34BDC580@bednbreakfast.nu>
@@ -10,11 +10,14 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
-Hope I am not writing to wrong address. I am nice, pretty looking
-girl. I am planning on visiting your town this month. Can 
-we meet each oather in person? Messagea me back at
-fxevy@MailVisionWorld.info
+Hello my dear friend
+I was looking through the web afew weekas ago anda found 
+your proafile. Now I debcided to emailb you to getb to know
+you better. I am coming to your country in few bweeks
+and thought may be we can meet each other. I am pretty
+looking girl. I aam 25. Do not reply to this address 
+a
+directly. Email me back at awvao@MailVisionWorld.info
 
 
 _______________________________________________
