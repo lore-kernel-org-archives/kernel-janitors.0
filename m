@@ -1,110 +1,78 @@
-From: Bryant Alexander <frds@nqks.com>
-Date: Sun, 10 Jun 2007 01:27:23 +0000
-Subject: [KJ] Het boek werd een succes.
-Message-Id: <466B537B.4060304@nqks.com>
+From: respite <cygd@ae.ge.com>
+Date: Sat, 30 Jun 2007 10:21:09 +0000
+Subject: [KJ] "The emptiness of those lives shocks me.
+Message-Id: <46862E95.3000100@ae.ge.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-CAON Releases Fact Sheet For Investors
+ERMX Jumps Into Huge Advanced Nitride Super Conductors!
 
-Chan-On International Inc.
-Symbol: CAON
-Close: $0.72 UP 4.35%
+EntreMetrix Inc. (ERMX)
+$0.16
 
-Read this over the weekend, you won't be sorry. CAON has changed
-direction and investors love it. Friday's volume went through the roof.
-Big news expected Monday. Set your marker for CAON first thing Monday!
+ERMX has just announced it involvement in a joint venture to manufacture
+Advanced Nitride Devices. These have Military application as well as
+Energy Super Conductors. This takes ERMX to a whole new level. Google
+"Nitride Devices" and get on ERMX first thing Monday!
 
-com, targeted to News, World and Politics content. This article is
-reprinted by permission from ComputerworldUK. Ik schiep een
-fantasiewereld waarin ik wegvluchtte en waarin ik de steriele
-ziekenhuiskamer en de infusen vergat.
-Bloedstollend spannend deze Poema-pocket.
+I found it honest and fascinating, and related so much to her feelings
+and fears. The short story is not our preferred form but D'Ambrosio's
+eight brilliant stories are almost enough to convert us. The Paris
+Review Interviews, I by The Paris Review and Philip Gourevitch Scanning
+our Recommended selections, one might conclude we're addicted to
+interviews, and one would be correct. I mean, it's not like it's pink,
+or is called the "Estrogen" prize or something.
 
-Ik kreeg wel een geweldige opkikker toen ik vernam dat het boek zou
-worden uitgegeven. Als leerling en trouwe rechterhand van Ludlum is Van
-Lustbader in staat perfect in de geest van zijn leermeester te
-schrijven. Vervelend als je de prins op het witte paard tegenkomt.
+And, more importantly, it's a gorgeously written book. Eliot, Ernest
+Hemingway, Jorge Luis Borges, Dorothy Parker, Robert Gottlieb  and
+others? Same thing with the Lambda award.
+And given the unquestionable inequalities that permeate our society, and
+our literary culture, it's a way to keep these wonderful voices from
+being lost.
+The Paris Review Interviews, I by The Paris Review and Philip Gourevitch
+Scanning our Recommended selections, one might conclude we're addicted
+to interviews, and one would be correct.
 
-"They're not very people-friendy.
-Het blijft momenteel nog een open vraag hoe zijn relatie met zijn
-vriendin zal evolueren, als er al een relatie ontstaat tussen beide. nl
-met hun partners uit om met hem het glas te heffen en een Vlaams hapje
-te eten.
-Zitten er - gezien de overeenkomsten tussen jezelf en het hoofdpersonage
-- veel van je eigen ervaringen verwerkt in het boek?
+The Elegant Variation: Katherine Taylor has been sitting at her desk too
+long. The Elegant Variation: Emoticontrary.
+Everything else is just mud.
 
-Read this Computerworld report to learn about the capabilities of
-different types of firewall, IDS, and IPS tools, and best practices for
-deploying them. Wat mogen we in de toekomst nog verwachten op literair
-vlak?
+In untrained or unrestrained hands, a thesaurus can be dangerous.
+"Non-racers," he writes.
+And to make absolutely certain readers know that this is a girl book,
+we're going to give you a big award and slap a Girl Writer sticker on
+every copy. And, more importantly, it's a gorgeously written book.
 
-Er liggen twee andere verhalen klaar, met dezelfde personages.
-In De Praagse connectie zie je het direct groots door de internationale
-maffia een grote rol toe te bedelen.
+I mean, it's not like it's pink, or is called the "Estrogen" prize or
+something.
+But increasingly, I find otherwise bright and well-adjusted people send
+emoticon-peppered emails. I mean, it's not like it's pink, or is called
+the "Estrogen" prize or something.
+They're useful for communicating emotion when the writing fails.
+Max Morden has returned to the vacation spot of his youth as he grieves
+the death of his wife. Same thing with the Lambda award.
+Heti's Ticknor would be insufferable if he weren't so funny, and in the
+end, the black humor brings a leavening poignancy to this brief tale.
+John, Elizabeth Koch, Mark Sarvas:  keep your old phone messages and
+worn-out undershirts.
 
-Reviews and ratings are known to aid a site's success, but retailers
-must be careful not to manage postings too closely. De meeste mensen
-weten dat en daarom was het niet moeilijk om de verhaallijn
-geloofwaardig te houden. Reden voor de politie om lacey op te nemen in
-hun getuigenbeschermingsprogramma.
+According to this, emoticons are an acceptable element of modern
+communication. How about smug and indulgent.
 
-Het Bourne Testament is een actiethriller vol razende momenten,
-kleurrijke personages en internationale locaties.
+I'm sure Mark is a much better cyclist than I am tennis player. I can't
+think of any more annoying or disgusting internet trend than that.
 
-The employees operate and maintain the LSE's trading systems, opening
-the market systems in the morning and closing them at the end of
-trading. Although all organizations want this capability, due to its
-extreme cost, it's a luxury few can afford. Lacey gaat op onderzoek uit.
-Internet users in the U. Zitten er - gezien de overeenkomsten tussen
-jezelf en het hoofdpersonage - veel van je eigen ervaringen verwerkt in
-het boek? Something smells   fishy. Alles is begonnen toen ik werd
-geveld door een ziekte en rust moest houden.
+I am not a total fogey.
 
-Hack DNS for lightning-fast Web browsing Not pleased with your surfing
-speed? Aan het woord komen schrijvers en specialisten in true crime en
-forensisch onderzoek: er is een preview van de nieuwste detectiveserie,
-een crimequiz en iedereen kan genieten van muziek.
-Verder raakt Mma Ramotswe betrokken bij een schoonheidswedstrijd waarvan
-de deelneemsters van onbesproken gedrag moeten zijn. Dit geldt ook voor
-de prostitutie en de illegale porno. Lacey gaat op onderzoek uit. Het
-Bourne Testament is een actiethriller vol razende momenten, kleurrijke
-personages en internationale locaties.
-troops to stay in Iraq, and or sent users to a donation page or the
-campaign site's homepage.
-com, Google      "Failure in Iraq is not an option.
-
-Merkwaardig genoeg zijn het met name de vrouwen die dol zijn op hun
-ietwat vreemde en wrede botsingen tussen goed en kwaad.
-Internet users in the U.
-
-Mary Higgins ClarkClark is onbetwist een van betere schrijfsters in het
-genre.
-
-McCain for President.
-
-Net als met succesfilms volgden er meerdere thrillers met Jason in de
-hoofdrol.
-
-Hij vraagt haar de zaak discreet te onderzoeken. The exchange is
-basically a technology business these days.
-Totdat iemand hem laat opdraaien voor de moord op de enige mensen die de
-hele waarheid over Jason Bourne wisten.
-Het boek werd een succes. Deze prijs is alleen voor degenen die aanwezig
-zijn.
-"What we're seeing through these numbers is a transformation of the
-Internet from something connected to a desktop to something mobile,"
-said Anil Malhotra, SVP of marketing at Bango. Besides running far more
-ad impressions, the McCain campaign also appears to be far more
-experimental than Clinton's when it comes to ad creative. Jason Bourne
-revisitedRobert Ludlum schiep met Jason Bourne een onsterflijk
-romanpersonage.
-
-The retailers earning the highest-likelihood to recommend scores were
-Netflix.
+well, certainly since we've started this blog.
+The Paris Review Interviews, I by The Paris Review and Philip Gourevitch
+Scanning our Recommended selections, one might conclude we're addicted
+to interviews, and one would be correct. At the heart of the book is the
+coroner Quirke, a Banvillean creation on par with Alex Cleave and
+Freddie Montgomery.
 
 _______________________________________________
 Kernel-janitors mailing list
