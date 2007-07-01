@@ -1,43 +1,29 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:55:02 +0000
-Subject: [PATCH 67] net/ipv4/route.c: mostly kmalloc + memset conversion to k[cz]alloc
-Message-Id: <200707312355.03321.m.kozlowski@tuxland.pl>
+From: <offer@seek.com.au>
+Date: Sun, 01 Jul 2007 21:48:14 +0000
+Subject: [KJ] The realest Job Position for any Australian.
+Message-Id: <181493333.20060930014249@seek.com.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------D6012CBB614"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+------------D6012CBB614
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: 8bit
+
+Sir/Madam.
+Make 1000-1300 AUD a WEEK! Very Convenient Summer Job.
+Really great opportunity, don't miss. Position called "Bank Courrier".
+Successful company Schwab in Germany offers Australians 1000-1300 AUD a week spending only 1-2 hours a day, 4 times a week, Mon-Thu. You have to be 18+ y/o, be able to check your e-mail 3-4 times a day, you have to be responsible and enthusiastic. For more information reply to: platinum.offer101@gmail.com
+Currently hiring!
+------------D6012CBB614
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net, netdev@vger.kernel.org
+Content-Disposition: inline
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-
- net/ipv4/route.c | 75650 -> 75628 (-22 bytes)
- net/ipv4/route.o | 256303 -> 256467 (+164 bytes)
-
- net/ipv4/route.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- linux-2.6.23-rc1-mm1-a/net/ipv4/route.c	2007-07-26 13:07:44.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/net/ipv4/route.c	2007-07-31 15:21:41.000000000 +0200
-@@ -374,8 +374,9 @@ static int rt_cache_seq_open(struct inod
- {
- 	struct seq_file *seq;
- 	int rc = -ENOMEM;
--	struct rt_cache_iter_state *s = kmalloc(sizeof(*s), GFP_KERNEL);
--
-+	struct rt_cache_iter_state *s;
-+
-+	s = kzalloc(sizeof(*s), GFP_KERNEL);
- 	if (!s)
- 		goto out;
- 	rc = seq_open(file, &rt_cache_seq_ops);
-@@ -383,7 +384,6 @@ static int rt_cache_seq_open(struct inod
- 		goto out_kfree;
- 	seq          = file->private_data;
- 	seq->private = s;
--	memset(s, 0, sizeof(*s));
- out:
- 	return rc;
- out_kfree:
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------D6012CBB614--
