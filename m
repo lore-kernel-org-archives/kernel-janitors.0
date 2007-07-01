@@ -1,55 +1,81 @@
-From: "Mullen T. Pol" <qlvk@ccj.com>
-Date: Thu, 05 Jul 2007 23:05:54 +0000
-Subject: [KJ] Fwd: Notification.GLDUDCKGLDSIZ.pdf
-Message-Id: <468D7952.8040405@ccj.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020803010500070108080400"
+From: Herman <lnbvy@purplequick.com>
+Date: Sun, 01 Jul 2007 19:38:06 +0000
+Subject: [KJ] FLASH FLOODING IS A VERY DANGEROUS SITUATION.
+Message-Id: <4688029E.4000701@purplequick.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+ERMX Grabs Edge Of US Trade With China And Moves Into Nitride Devices!
 
---------------020803010500070108080400
-Content-Type: text/plain; charset=windows-1250; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+EntreMetrix Inc. (ERMX)
+$0.16
 
+Congress's push to increase trade agreements with China gives ERMX huge
+advantage as they enter joint venture to manufacture Nitride Devices for
+military, energy and technological solutions in China. This is huge. Get
+on ERMX Monday!
 
+IF FLASH FLOODING IS OBSERVED ACT QUICKLY.
+RAIN WILL BECOME MORE WIDESPREAD AGAIN ON SUNDAY.
 
---------------020803010500070108080400
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+ADDITIONAL RAINFALL AMOUNTS ARE GENERALLY EXPECTED TO BE LIGHT.
 
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
+TROPICAL MOISTURE AND MODERATE INSTABILITY WILL AGAIN SUPPORT VERY HIGH
+RAINFALL RATES WITHIN THE HEAVIER SHOWERS AND THUNDERSTORMS.
 
-Content preview:  [...] 
+FLASH FLOODING IS A VERY DANGEROUS SITUATION. WAGONER AND WASHINGTON.
+TROPICAL MOISTURE AND MODERATE INSTABILITY WILL AGAIN SUPPORT VERY HIGH
+RAINFALL RATES WITHIN THE HEAVIER SHOWERS AND THUNDERSTORMS. IN
+NORTHEAST OKLAHOMA. A FLASH FLOOD WATCH MEANS THAT CONDITIONS MAY
+DEVELOP THAT LEAD TO FLASH FLOODING. AROUND A LOW CENTERED NORTHWEST OF
+TULSA.
 
-Content analysis details:   (7.7 points, 5.0 required)
+NATIONAL WEATHER SERVICE DOPPLER RADAR INDICATED SCATTERED SHOWERS
+ACROSS EASTERN OKLAHOMA AND NORTHWEST ARKANSAS.
+IN EAST CENTRAL OKLAHOMA. IF YOU ARE IN THE WATCH AREA.
 
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_DHCP      Relay HELO'd using suspicious hostname (DHCP)
- 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
-                            1)
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.5968]
+SCATTERED SHOWERS AND THUNDERSTORMS WILL BE SEEN TONIGHT. BE ESPECIALLY
+CAUTIOUS AT NIGHT WHEN IT IS HARDER TO RECOGNIZE THE DANGERS OF FLOODS.
+THE UPPER LEVEL PATTERN REMAINS BLOCKED. SHOWERS WERE SCATTERED ACROSS
+THE EASTERN THIRD OF OKLAHOMA.
 
+FLASH FLOODING IS A VERY DANGEROUS SITUATION. IN A COUNTER-CLOCKWISE
+DIRECTION.
+AROUND A LOW CENTERED NORTHWEST OF TULSA.
 
+CONCERN FOR HEAVY RAIN AND FLOODING WILL CONTINUE THIS WEEKEND.
 
---------------020803010500070108080400
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+KEEP CHILDREN FROM PLAYING NEAR RUSHING FLOOD WATERS. BE ESPECIALLY
+CAUTIOUS AT NIGHT WHEN IT IS HARDER TO RECOGNIZE THE DANGERS OF FLOODS.
+TROPICAL MOISTURE AND MODERATE INSTABILITY WILL AGAIN SUPPORT VERY HIGH
+RAINFALL RATES WITHIN THE HEAVIER SHOWERS AND THUNDERSTORMS.
+
+A FLASH FLOOD WATCH MEANS THAT CONDITIONS MAY DEVELOP THAT LEAD TO FLASH
+FLOODING.
+
+SEMINOLE AND STEPHENS.
+IN EAST CENTRAL OKLAHOMA. ROTATING AROUND AN UPPER LOW IN NORTHEAST
+OKLAHOMA.
+KEEP CHILDREN FROM PLAYING NEAR RUSHING FLOOD WATERS.
+
+FLASH FLOODING IS A VERY DANGEROUS SITUATION. MOST OF THE SHOWERS WERE
+MOVING SLOWLY TOWARD THE EAST.
+EXCEPT SHOWERS IN NORTH-CENTRAL AND NORTHEAST OKLAHOMA WERE MOVING IN A
+CIRCULAR PATTERN.
+DO NOT LET YOUR CHILD BE A VICTIM OF DANGEROUS FLOOD WATERS!
+
+ROTATING AROUND AN UPPER LOW IN NORTHEAST OKLAHOMA. TAKE A DIFFERENT
+ROUTE TO REACH YOUR DESTINATION OR WAIT UNTIL THE WATER RECEDES.
+IF YOU ARE IN THE WATCH AREA.
+
+FLASH FLOODING IS A VERY DANGEROUS SITUATION. WAGONER AND WASHINGTON.
+LOCAL AREAS OF HEAVY RAIN WILL BE POSSIBLE FROM MID-AFTERNOON INTO THIS
+EVENING.
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------020803010500070108080400--
