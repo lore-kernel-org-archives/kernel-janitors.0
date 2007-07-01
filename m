@@ -1,40 +1,54 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 20 Jul 2007 10:41:57 +0000
-Subject: Re: netdev_priv()
-Message-Id: <87644fwe4q.fsf@wanadoo.fr>
+From: "GreetingCards.Com" <rtdt@wideopenwest.com>
+Date: Sun, 01 Jul 2007 16:46:35 +0000
+Subject: [KJ] You've received a postcard from a class mate!
+Message-Id: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <d858bca40707181524r30f501dcnd1ecf1b4e9d2af86@mail.gmail.com>
-In-Reply-To: <d858bca40707181524r30f501dcnd1ecf1b4e9d2af86@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-"Thomas Surrel" <thomas.surrel@gmail.com> writes:
+STOP GETTING SPAM
+Free OneClick spam stopper can be found at:
+81.95.149.27/logo/
 
->>
->> There is a kind of tutorial on our tool if you are interested at OLS
->> this year. It's available here
->> http://www.emn.fr/x-info/coccinelle/ols07-padioleau.pdf
->>
->
-> Great tool. 
 
-Thanks.
+Good day.
 
-> Thanks for pointing out the tutorial.
-> It was really interesting to work with you on that. 
+Your class mate has sent you a postcard from GreetingCards.Com.
 
-Thanks helping me refining my semantic patch.
+Send free ecards from GreetingCards.Com with your choice of colors, words and music.
 
-> If you need me to
-> review the final patches when they are ready (and see if they missed
-> some dev->priv), don't hesitate.
+Your ecard will be available with us for the next 30 days. If you wish to keep 
+the ecard longer, you may save it on your computer or take a print.
 
-Sure, I will post the patch on the janitor mailing list.
+To view your ecard, choose from any of the following options:
 
->
-> Best regards,
->
-> Thomas
+--------
+OPTION 1
+--------
 
+Click on the following Internet address or
+copy & paste it into your browser's address box.
+
+http://91.138.118.182/?955ab65e8517a32e6b9ea6878
+
+--------
+OPTION 2
+--------
+
+Copy & paste the ecard number in the "View Your Card" box at 
+http://91.138.118.182/
+
+Your ecard number is
+955ab65e8517a32e6b9ea6878
+
+Best wishes,
+Mailer-Daemon,
+GreetingCards.Com
+
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
