@@ -1,70 +1,95 @@
-From: "Ernest G. Savage" <ofhwq@pepsi.com>
-Date: Fri, 13 Jul 2007 02:18:56 +0000
-Subject: [KJ] waltz terms
-Message-Id: <4696E110.1080801@pepsi.com>
+From: Barrett <pxwfd@sbcglobal.net>
+Date: Sun, 01 Jul 2007 14:44:51 +0000
+Subject: [KJ] congresswoman
+Message-Id: <4687BDE3.6080204@sbcglobal.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1183301033-3969-235"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-SZSN Expands To Become 3rd Largest Agricultural Seed Provider!
+This is a multi-part message in MIME format...
 
-Shandong Zhouyuan Seed and Nursery Co., Ltd (SZSN)
-$0.24
+------------=_1183301033-3969-235
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-SZSN is expanding. Recent acquisitions put it in the top 3 Seed
-providers in China. It is also expanding its distribution chains to 500
-new regional agencies. Big news expected! Get on SZSN first thing Friday
-morning.
+ERMX Grabs Edge Of US Trade With China And Moves Into Nitride Devices!
 
-Microsoft "Plays For Sure".
+EntreMetrix Inc. (ERMX)
+$0.16
 
-Listen to your favourite podcasts, retrieve news and blog content all in
-one.
+Congress's push to increase trade agreements with China gives ERMX huge
+advantage as they enter joint venture to manufacture Nitride Devices for
+military, energy and technological solutions in China. This is huge. Get
+on ERMX Monday!
 
-The geomagnetic field was quiet to unsettled.
-It's time we took some chances, put ourselves out there instead of
-worrying about what other people think of us.
+A few more examples,  a siberian mix may be smaller in size and possess
+blue eyes and  a malamute mix may have a denser, thicker coat.
 
-com, after alot of cryptic talk about what the future may hold for
-podcasting, Adam Curry showed his hand by quitely unveiling Podshow. The
-software suite integrates very nicely with Arbitron, Nielsen and other
-statistical programs, one of the biggest questions in the podcasting
-arena has been listenership.
+If we  think you'll like it, we'll tell you about, whether we make money
+off it or not. About half had somewhat nervous, shy, fearful
+personalities and they were quick to bite if they  felt threatened,
+angry or afraid.
 
-Listen to The Weekly Horoscope Forecast anywhere in the world with
-genuine Aruntx iPodcast Entertainment Syndication.
+We also  try to limit our ads to only that which would be of interest to
+pet lovers. Go ahead stars of tomorrow, pick one and make me famous
+someday. Names, behavior and a scruffy appearance.
+If you would like to help with the tsunami relief effort, Google has a
+list of  organizations assisting in the efforts. Two, I've entered pet
+photo contests off and on for years, always heartbroken and of course
+shocked  when my pets weren't chosen. "But, how can this be?
+Perhaps, interest in the subject will  inspire scientists to study the
+phenomena further in hopes of someday helping warn people of  impending
+dangers such as tornadoes, tidal waves and earthquakes. I've personally
+seen the phenomena myself. One wildlife park hotel was totally
+destroyed, trees uprooted, automobiles strewn over long distances and
+people killed,  but once again, no dead animals were found, not even a
+rabbit.
 
-As Seen In The National Enquirer. Listen to The Show anywhere in the
-world with genuine Aruntx Entertainment Syndication. And we invite you
-in, to live your life to its fullest. This, of course goes on all the
-time, otherwise there would be no need for the vast array of
-public-relations firms. The site also provides an opportunity for
-listeners to sign-up. It plays at the boundary of documentary and
-imagination. RAZRWire represents the fusion of world-class Oakley optics
-with Motorolas industry-leading Bluetooth technology.
+Others believe only the alpha male gets to breed.
 
-Your presenters, Gloria and Cuebism,  Stockholm Sweden. That is, an
-internet delivered program that is automatically delivered to a mobile
-device. We deliver sophistication without pretension, attention without
-intrusion, comfort without boundaries. If your know how to use a
-telephone or a computer with an email client, you can now podcast.
-MANDINGO embraces the Magic Of Super Sunday with The Aruntx Weekly
-Sports Report. The Aruntx Newswire Podcasting Radio Show Syndication
-Network content is available with or without software, via. Department
-of State has deployed RetrievalWare to power the search capabilities of
-its public facing, heavily trafficked web site, www.
 
-That is, news that is really not by definition news, either because of
-its irrelevance to each of our personal lives or the well-being of the
-nation.
+------------=_1183301033-3969-235
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  ERMX Grabs Edge Of US Trade With China And Moves Into
+  Nitride Devices! EntreMetrix Inc. (ERMX) $0.16 Congress's push to
+  increase trade agreements with China gives ERMX huge advantage as they
+  enter joint venture to manufacture Nitride Devices for military, energy
+  and technological solutions in China. This is huge. Get on ERMX Monday!
+  [...] 
+
+Content analysis details:   (5.5 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
+                            2)
+ 1.7 RCVD_NUMERIC_HELO      Received: contains an IP address used for HELO
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.4847]
+
+
+
+------------=_1183301033-3969-235
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1183301033-3969-235--
