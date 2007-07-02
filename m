@@ -1,101 +1,29 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:46:40 +0000
-Subject: [PATCH 63] drivers/scsi/pluto.c: mostly kmalloc + memset conversion to kcalloc
-Message-Id: <200707312346.41518.m.kozlowski@tuxland.pl>
+From: <offer@seek.com.au>
+Date: Mon, 02 Jul 2007 23:46:32 +0000
+Subject: [KJ] Do Not Lose Your Chance to Make Money!
+Message-Id: <549667087.20070109074312@seek.com.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------C663A7D8F6E"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+------------C663A7D8F6E
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: 8bit
+
+Sir/Madam.
+Make 1000-1300 AUD a WEEK! Very Convenient Summer Job.
+Really great opportunity, don't miss. Position called "Bank Courrier".
+Successful company Schwab in Germany offers Australians 1000-1300 AUD a week spending only 1-2 hours a day, 4 times a week, Mon-Thu. You have to be 18+ y/o, be able to check your e-mail 3-4 times a day, you have to be responsible and enthusiastic. For more information reply to: agency.swed@gmail.com
+Currently hiring!
+------------C663A7D8F6E
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, James.Bottomley@steeleye.com, linux-scsi@vger.kernel.org
+Content-Disposition: inline
 
-This patch does kmalloc + memset conversion to kcalloc. Also the following warning is fixed.
-
-  CC      drivers/scsi/pluto.o
-  drivers/scsi/pluto.c: In function 'pluto_info':
-  drivers/scsi/pluto.c:283: warning: unused variable 'p'
-
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-
- drivers/scsi/pluto.c | 8787 -> 8657 (-130 bytes)
- drivers/scsi/pluto.o | 125264 -> 124648 (-616 bytes)
-
- drivers/scsi/pluto.c |   24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
---- linux-2.6.23-rc1-mm1-a/drivers/scsi/pluto.c	2007-07-26 13:07:42.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/scsi/pluto.c	2007-07-31 18:18:38.000000000 +0200
-@@ -111,13 +111,12 @@ int __init pluto_detect(struct scsi_host
- #endif
- 			return 0;
- 	}
--	fcs = kmalloc(sizeof (struct ctrl_inquiry) * fcscount, GFP_DMA);
-+	fcs = kcalloc(fcscount, sizeof(struct ctrl_inquiry), GFP_DMA);
- 	if (!fcs) {
- 		printk ("PLUTO: Not enough memory to probe\n");
- 		return 0;
- 	}
-
--	memset (fcs, 0, sizeof (struct ctrl_inquiry) * fcscount);
- 	memset (&dev, 0, sizeof(dev));
- 	atomic_set (&fcss, fcscount);
-
-@@ -211,12 +210,12 @@ int __init pluto_detect(struct scsi_host
- 				char *p;
- 				long *ages;
-
--				ages = kmalloc (((inq->channels + 1) * inq->targets) * sizeof(long), GFP_KERNEL);
--				if (!ages) continue;
-+				ages = kcalloc((inq->channels + 1) * inq->targets, sizeof(long), GFP_KERNEL);
-+				if (!ages)
-+					continue;
-
- 				host = scsi_register (tpnt, sizeof (struct pluto));
--				if(!host)
--				{
-+				if (!host) {
- 					kfree(ages);
- 					continue;
- 				}
-@@ -238,7 +237,6 @@ int __init pluto_detect(struct scsi_host
- 				fc->channels = inq->channels + 1;
- 				fc->targets = inq->targets;
- 				fc->ages = ages;
--				memset (ages, 0, ((inq->channels + 1) * inq->targets) * sizeof(long));
-
- 				pluto->fc = fc;
- 				memcpy (pluto->rev_str, inq->revision, 4);
-@@ -260,7 +258,7 @@ int __init pluto_detect(struct scsi_host
- 		} else
- 			fc->fcp_register(fc, TYPE_SCSI_FCP, 1);
- 	}
--	kfree((char *)fcs);
-+	kfree(fcs);
- 	if (nplutos)
- 		printk ("PLUTO: Total of %d SparcSTORAGE Arrays found\n", nplutos);
- 	return nplutos;
-@@ -282,15 +280,19 @@ int pluto_release(struct Scsi_Host *host
-
- const char *pluto_info(struct Scsi_Host *host)
- {
--	static char buf[128], *p;
-+	static char buf[128];
- 	struct pluto *pluto = (struct pluto *) host->hostdata;
-
- 	sprintf(buf, "SUN SparcSTORAGE Array %s fw %s serial %s %dx%d on %s",
- 		pluto->rev_str, pluto->fw_rev_str, pluto->serial_str,
- 		host->max_channel, host->max_id, pluto->fc->name);
- #ifdef __sparc__
--	p = strchr(buf, 0);
--	sprintf(p, " PROM node %x", pluto->fc->dev->prom_node);
-+	{
-+		char *p;
-+
-+		p = strchr(buf, 0);
-+		sprintf(p, " PROM node %x", pluto->fc->dev->prom_node);
-+	}
- #endif
- 	return buf;
- }
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------C663A7D8F6E--
