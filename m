@@ -1,78 +1,48 @@
-From: Uli Luckas <u.luckas@road.de>
-Date: Fri, 27 Jul 2007 13:17:59 +0000
-Subject: Re: [PATCH 04/68] 0 -> NULL, for arch/blackfin
-Message-Id: <200707271517.59770.u.luckas@road.de>
+From: "AmericanGreetings.Com" <uubx@asbury.edu>
+Date: Mon, 02 Jul 2007 20:45:08 +0000
+Subject: [KJ] You've received a postcard from a school mate!
+Message-Id: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707270944.LAA17116@ifs.emn.fr> <1185531824.11601.25.camel@roc-desktop>
-In-Reply-To: <1185531824.11601.25.camel@roc-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>, bryan.wu@analog.com
-Cc: Yoann Padioleau <padator@wanadoo.fr>, kernel-janitors@vger.kernel.org, aubrey.li@analog.com, akpm@linux-foundation.org
+To: kernel-janitors@vger.kernel.org
 
-On Friday, 27. July 2007, Bryan Wu wrote:
-> On Fri, 2007-07-27 at 11:44 +0200, Yoann Padioleau wrote:
-> > When comparing a pointer, it's clearer to compare it to NULL than to 0.
-> >
-> > Here is an excerpt of the semantic patch:
-> >
-> > @@
-> > expression *E;
-> > @@
-> >
-> >   E =
-> > - 0
-> > + NULL
-> >
-> > @@
-> > expression *E;
-> > @@
-> >
-> >   E !> > - 0
-> > + NULL
-> >
-> > Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-> > Cc: aubrey.li@analog.com
-> > Cc: bryan.wu@analog.com
-> > Cc: akpm@linux-foundation.org
-> > ---
-> >
-> >  traps.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/blackfin/kernel/traps.c b/arch/blackfin/kernel/traps.c
-> > index 3909f5b..691c66d 100644
-> > --- a/arch/blackfin/kernel/traps.c
-> > +++ b/arch/blackfin/kernel/traps.c
-> > @@ -546,7 +546,7 @@ void dump_bfin_regs(struct pt_regs *fp,
-> >  	}
-> >
-> >  	printk(KERN_EMERG "return address: [0x%p]; contents of:", retaddr);
-> > -	if (retaddr != 0 && retaddr <= (void *)physical_mem_end
-> > +	if (retaddr != NULL && retaddr <= (void *)physical_mem_end
-> >  #if L1_CODE_LENGTH != 0
-> >  	    /* FIXME: Copy the code out of L1 Instruction SRAM through dma
-> >  	       memcpy.  */
->
-> Why not just use " if (!E)" instead of " if (E != NULL)"?
-> more readable?
->
-Or even "if (E)"
+Good day.
 
-Uli
+Your school mate has sent you a postcard from AmericanGreetings.Com.
 
--- 
+Send free ecards from AmericanGreetings.Com with your choice of colors, words and music.
 
-------- ROAD ...the handyPC Company - - -  ) ) )
+Your ecard will be available with us for the next 30 days. If you wish to keep 
+the ecard longer, you may save it on your computer or take a print.
 
-Uli Luckas
-Software Development
+To view your ecard, choose from any of the following options:
 
-ROAD GmbH
-Bennigsenstr. 14 | 12159 Berlin | Germany
-fon: +49 (30) 230069 - 64 | fax: +49 (30) 230069 - 69
-url: www.road.de
+--------
+OPTION 1
+--------
 
-Amtsgericht Charlottenburg: HRB 96688 B
-Managing directors: Hans-Peter Constien, Hubertus von Streit
+Click on the following Internet address or
+copy & paste it into your browser's address box.
+
+http://71.232.248.123/?5e8517a32e6b9ea6878b
+
+--------
+OPTION 2
+--------
+
+Copy & paste the ecard number in the "View Your Card" box at 
+http://71.232.248.123/
+
+Your ecard number is
+5e8517a32e6b9ea6878b
+
+Best wishes,
+Postmaster,
+AmericanGreetings.Com
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
