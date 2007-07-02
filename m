@@ -1,19 +1,19 @@
-From: "Nunez C. Meggy" <plj@sepiatec.com>
-Date: Tue, 03 Jul 2007 17:40:45 +0000
-Subject: [KJ] advertisement-ZTLOHSIRRSNNAC.pdf
-Message-Id: <468A8A1D.6020301@sepiatec.com>
+From: "Sanders Z. Coffey" <tojyl@fsdenver.com>
+Date: Mon, 02 Jul 2007 12:17:39 +0000
+Subject: [KJ] document-7514616657.pdf attached
+Message-Id: <4688ECE3.8020602@fsdenver.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------030102020500050101020102"
+Content-Type: multipart/mixed; boundary="------------010200030402070100060206"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---------------030102020500050101020102
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+--------------010200030402070100060206
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------030102020500050101020102
+--------------010200030402070100060206
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -23,4 +23,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------030102020500050101020102--
+--------------010200030402070100060206--
