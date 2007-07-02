@@ -1,39 +1,40 @@
-From: "greetingCard.Org" <zjbto@pctcnet.net>
-Date: Mon, 23 Jul 2007 02:22:58 +0000
-Subject: [KJ] You've received a postcard from a Class mate!
-Message-Id: <001101c7ccd0$627cfa10$56e353ea@buc.jffl>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 02 Jul 2007 09:37:15 +0000
+Subject: [KJ] another KJ project: identifying worthless Documentation/
+Message-Id: <Pine.LNX.4.64.0707020534150.28225@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
-In-Reply-To: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Hi. Class mate has sent you a postcard.
-See your card as often as you wish during the next 15 days.
 
-SEEING YOUR CARD
+  it's fairly obvious that there's content under the Documentation/
+directory that is way obsolete, so i've started another wiki page to
+keep track of stuff that appears to be removable in its entirety:
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+  http://fsdev.net/wiki/index.php?title=DEad_Documentation_files
 
-http://121.209.116.191/?c029a3ab9d352785c21a5aa8088aea2
+  as a first example, i've added "crypto/descore-readme.txt", which
+certainly appears to have no value, but maybe i just didn't look hard
+enough.
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
+  anyway, you get the idea -- feel free to add more content to that
+page and we can eventually submit a patch to get rid of it all at
+once.
 
-We hope you enjoy your awesome card.
+rday
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-Wishing you the best,
-Administrator,
-greetingCard.Org
-
+http://fsdev.net/wiki/index.php?title=3DMain_Page
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
