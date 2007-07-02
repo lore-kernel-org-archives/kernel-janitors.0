@@ -1,81 +1,50 @@
-From: "Verna Jackson" <udrOdom@bigpond.com>
-Date: Mon, 16 Jul 2007 12:58:59 +0000
-Subject: [KJ] Premature Ejaculating - Easy to Follow Tips
-Message-Id: <000801c7c862$54b9ee50$1901a8c0@udrOdom>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 02 Jul 2007 10:11:18 +0000
+Subject: [KJ] update:  dead doc files and dead features
+Message-Id: <Pine.LNX.4.64.0707020606150.29616@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-hello colleague
 
-Premature Ejaculation means coming too quickly. It occurs when you ejaculat=
-e too quickly=20
-without control. It occurs before or shortly after penetration. If you norm=
-ally ejaculate within a=20
-few minutes of penetration (say, after only one to five minutes) then u r s=
-uffering from PE.
+  after a bit of thought (and more coffee), i decided that we needed
+two categories of "dead" stuff:
 
-Do you have this problem?
+1) strictly dead Doc files, for which there is absolutely nothing else
+related in the tree:
 
-If YES, Then plz check it
+  http://fsdev.net/wiki/index.php?title=DEad_Documentation_files
 
-http://wallace.wallace8.googlepages.com/kphl.htm
+2) dead "features", for which the removal might involve the deletion
+of a bunch of "stuff" in the tree:
 
-Thanks
+  http://fsdev.net/wiki/index.php?title=DEad_features
 
-Yours faithfully,
+you can see that, at that second page, i added a first example of
+"digiepca", whose removal would involve tossing a source file and a
+Kconfig entry and some documentation, etc.
 
-amazonMetapopulation-Biology-Ecology-Genetics-Evolutiondp0123234468 - 150k =
-- Cached - Similar pages - Note this Amazon: Radical Ecology (Revolutionary=
- ThoughtRadical Amazon: Radical Ecology (Revolutionary ThoughtRadical Movem=
-ents): Books: C Merchant by C MerchantamazonRadical-Ecology-Revolutionary-T=
-hought-Movementsdp0415906504 - 154k - Cached - Similar pages - Note this Wi=
-ley::Spatial Ecology via Reaction-Diffusion EquationsThis book addresses th=
-e problem of modelling spatial effects in ecology and population dynamics u=
-sing reaction-diffusion models euwileyWileyCDAWileyTitleproductCd-047149301=
-5html - 21k - Cached - Similar pages - Note this EcologyBiology page of ULT=
-IMATE SCIENCE FICTION WEB GUIDEScience Fiction, about Ecology, and related =
-Biology
-Before you can say Jack Robinson=20
-more and more people are experimenting with the plethora of
-Election Templates - from Education World=20
-Apple - Environment - APESApple and the Environment  Home>Environment>APES =
-Shop the Apple Store online (1-800-MY-APPLE), visit an Apple Store location=
-, or find a reseller=20
-ead news articles on coral bleaching, deforestation and wetland ecologyscie=
-ncedailynewsearth_climateecology - 78k - Cached - Similar pages - Note this=
- Google Directory - Science > Biology > EcologyShort introduction to the sc=
-ience of ecology, including terminology Suite 101: Ecology - suite101articl=
-escfmecology googleTopScienceBiologyEcology - 12k - Cached - Similar pages =
-- Note this The Lesson Plan Library offers ecology lesson plans for teacher=
-sVisit
-ews & environmental news on the EPA, oceans & marine life, weather, wetland=
-s, pollution, wildlife, global warming, hybrid cars, nytimespagesscienceear=
-thindexhtml -  - Environment News Archaeology & Paleontology News =B7 Envir=
-onment News =B7 Health News =B7 History & Culture News  News Front Page > E=
-nvironment News Environment News newsnationalgeographicnewsenvironmenthtml =
-- 33k -   - allAfrica: EnvironmentA BULAWAYO councillor has called on
-starveling: one who is starving or being starved; also, poor in quality. (T=
-uesday June 01)=20
-Sound dogs- sound effects, samples, music and more=20
-edugovoncaengcurriculumelementaryscientec =20
-inexorable: unyielding; relentless. (Wednesday November 15)=20
-Boogie-woogie
+  the above distinction seems to make more sense than my earlier
+posting.
 
+rday
 
+p.s.  that whole wiki is getting a bit out of hand, and i'm going to
+put some work into cleaning it up totally one of these days.
 
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-
-
+http://fsdev.net/wiki/index.php?title=3DMain_Page
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will b=
-e discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
-ns.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
