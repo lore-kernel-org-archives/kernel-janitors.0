@@ -1,58 +1,26 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:49:06 +0000
-Subject: [PATCH 65] drivers/mtd/maps/pmcmsp-flash.c: kmalloc + memset conversion to k[cz]alloc
-Message-Id: <200707312349.07329.m.kozlowski@tuxland.pl>
+From: Best <zpfq@bol-online.com>
+Date: Mon, 02 Jul 2007 08:30:49 +0000
+Subject: [KJ] unpaid-56040.pdf attached
+Message-Id: <4688B4E9.1000706@bol-online.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------010205030605030407000600"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+--------------010205030605030407000600
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: dwmw2@infradead.org, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- drivers/mtd/maps/pmcmsp-flash.c | 5540 -> 5454 (-86 bytes)
 
- drivers/mtd/maps/pmcmsp-flash.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+--------------010205030605030407000600
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
---- linux-2.6.23-rc1-mm1-a/drivers/mtd/maps/pmcmsp-flash.c	2007-07-26 13:07:41.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/mtd/maps/pmcmsp-flash.c	2007-07-31 11:37:49.000000000 +0200
-@@ -73,13 +73,16 @@ int __init init_msp_flash(void)
- 		return -ENXIO;
-
- 	printk(KERN_NOTICE "Found %d PMC flash devices\n", fcnt);
--	msp_flash = (struct mtd_info **)kmalloc(
--			fcnt * sizeof(struct map_info *), GFP_KERNEL);
--	msp_parts = (struct mtd_partition **)kmalloc(
--			fcnt * sizeof(struct mtd_partition *), GFP_KERNEL);
--	msp_maps = (struct map_info *)kmalloc(
--			fcnt * sizeof(struct mtd_info), GFP_KERNEL);
--	memset(msp_maps, 0, fcnt * sizeof(struct mtd_info));
-+
-+	msp_flash = kmalloc(fcnt * sizeof(struct map_info *), GFP_KERNEL);
-+	msp_parts = kmalloc(fcnt * sizeof(struct mtd_partition *), GFP_KERNEL);
-+	msp_maps = kcalloc(fcnt, sizeof(struct mtd_info), GFP_KERNEL);
-+	if (!msp_flash || !msp_parts || !msp_maps) {
-+		kfree(msp_maps);
-+		kfree(msp_parts);
-+		kfree(msp_flash);
-+		return -ENOMEM;
-+	}
-
- 	/* loop over the flash devices, initializing each */
- 	for (i = 0; i < fcnt; i++) {
-@@ -95,9 +98,8 @@ int __init init_msp_flash(void)
- 			continue;
- 		}
-
--		msp_parts[i] = (struct mtd_partition *)kmalloc(
--			pcnt * sizeof(struct mtd_partition), GFP_KERNEL);
--		memset(msp_parts[i], 0, pcnt * sizeof(struct mtd_partition));
-+		msp_parts[i] = kcalloc(pcnt, sizeof(struct mtd_partition),
-+				       GFP_KERNEL);
-
- 		/* now initialize the devices proper */
- 		flash_name[5] = '0' + i;
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------010205030605030407000600--
