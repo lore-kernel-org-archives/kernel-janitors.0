@@ -1,38 +1,26 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:34:50 +0000
-Subject: [PATCH 60] drivers/net/wireless/prism54/oid_mgt.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312334.51067.m.kozlowski@tuxland.pl>
+From: Arabella <ajdif@wickens289.fsnet.co.uk>
+Date: Tue, 03 Jul 2007 07:06:23 +0000
+Subject: [KJ] Re: info_PINDIWSKTEBO.pdf
+Message-Id: <4689F56F.2010401@wickens289.fsnet.co.uk>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------060508060304030406000208"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+--------------060508060304030406000208
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, mcgrof@gmail.com, linux-wireless@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- drivers/net/wireless/prism54/oid_mgt.c | 25377 -> 25297 (-80 bytes)
- drivers/net/wireless/prism54/oid_mgt.o | 128460 -> 128284 (-176 bytes)
 
- drivers/net/wireless/prism54/oid_mgt.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+--------------060508060304030406000208
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
---- linux-2.6.23-rc1-mm1-a/drivers/net/wireless/prism54/oid_mgt.c	2007-07-26 13:07:43.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/net/wireless/prism54/oid_mgt.c	2007-07-30 00:27:44.000000000 +0200
-@@ -244,13 +244,11 @@ mgt_init(islpci_private *priv)
- 	/* Alloc the cache */
- 	for (i = 0; i < OID_NUM_LAST; i++) {
- 		if (isl_oid[i].flags & OID_FLAG_CACHED) {
--			priv->mib[i] = kmalloc(isl_oid[i].size *
-+			priv->mib[i] = kzalloc(isl_oid[i].size *
- 					       (isl_oid[i].range + 1),
- 					       GFP_KERNEL);
- 			if (!priv->mib[i])
- 				return -ENOMEM;
--			memset(priv->mib[i], 0,
--			       isl_oid[i].size * (isl_oid[i].range + 1));
- 		} else
- 			priv->mib[i] = NULL;
- 	}
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------060508060304030406000208--
