@@ -1,66 +1,78 @@
-From: Grant Grundler <grundler@parisc-linux.org>
-Date: Mon, 30 Jul 2007 05:39:09 +0000
-Subject: Re: [PATCH 11/68] 0 -> NULL, for arch/parisc
-Message-Id: <20070730053909.GF21206@colo.lackof.org>
+From: "John Q. Carter" <Rebecca@iwon.com>
+Date: Tue, 03 Jul 2007 07:29:43 +0000
+Subject: [KJ] Do you have the skills?
+Message-Id: <C2662A11.0725558@iwon.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707270945.LAA17250@ifs.emn.fr>
-In-Reply-To: <200707270945.LAA17250@ifs.emn.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoann Padioleau <padator@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, matthew@wil.cx, grundler@parisc-linux.org, kyle@parisc-linux.org, parisc-linux@parisc-linux.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 27, 2007 at 11:45:05AM +0200, Yoann Padioleau wrote:
-> 
-> When comparing a pointer, it's clearer to compare it to NULL than to 0.
-...
-> diff --git a/arch/parisc/kernel/smp.c b/arch/parisc/kernel/smp.c
-> index 04c7e1d..16fccbe 100644
-> --- a/arch/parisc/kernel/smp.c
-> +++ b/arch/parisc/kernel/smp.c
-> @@ -333,7 +333,7 @@ smp_call_function (void (*func) (void *i
->  
->  	if (retry) {
->  		spin_lock (&lock);
-> -		while (smp_call_function_data != 0)
-> +		while (smp_call_function_data != NULL)
->  			barrier();
->  	}
->  	else {
+CARGOX P.E. Limited Liability Company
+111 Livinston Street, Brooklyn, New York, US 11201
++1(801)7308660
 
-Yoann,
-Thanks!
-I like comparing pointers to NULL since it makes it explicit we
-are dealing with a pointer and is consistent with the assignment to NULL
-later in the code.
+Jul 2, 2007
 
-But I'd like the later comparisons of smp_call_function_data to be
-consistent with your suggestion above.
-Patch below adds another "!= NULL".
+JOB OFFER (WARNING: For non-USA citizens only)
+CargoX P.E. is pleased to make you an offer on employment as a front-line manager (position code #1305-21). 
+Successful candidates should meet the following requirements:
+- Several years of experience in financial logistic
+- Great analytical and problem solving skills
+- Good people interaction skills
+- Ability to work independently with minimal supervision
+- Ability to respond on e-mails immediately
+- Good written and spoken English
 
-thanks
-grant
+We trust that Your knowledge, skills and experience may will among our most valuable assets.
 
-Signed-off-by: Grant Grundler <grundler@parisc-linux.org>
+Should You accept this job offer, per company policy You'll be eligible to receive the following 
+beginning on your hire date:
+- SALARY: Annual gross starting salary of $63,500 USD, paid in bimonthly installments by Your choice of check or
+direct deposit.
+- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or
+direct deposit.
+- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares
+per year.
 
+BENEFITS: 
+Standard, Acme-provided benefits for salaried-exempt employees, including the following:
+- 401(k) retirement account
+- Annual stock options
+- Child daycare assistance
+- Education assistance
+- Health, dental, life and disability insurance
+- Profit sharing
+- Sick leave
+- Vacation and personal days.
 
-diff --git a/arch/parisc/kernel/smp.c b/arch/parisc/kernel/smp.c
-index 04c7e1d..c9ce659 100644
---- a/arch/parisc/kernel/smp.c
-+++ b/arch/parisc/kernel/smp.c
-@@ -333,12 +333,12 @@ smp_call_function (void (*func) (void *info), void *info, int retry, int wait)
- 
- 	if (retry) {
- 		spin_lock (&lock);
--		while (smp_call_function_data != 0)
-+		while (smp_call_function_data != NULL)
- 			barrier();
- 	}
- 	else {
- 		spin_lock (&lock);
--		if (smp_call_function_data) {
-+		if (smp_call_function_data != NULL) {
- 			spin_unlock (&lock);
- 			return -EBUSY;
- 		}
+TO ACCEPT THIS JOB OFFER:
+1. Send an e-mail letter to hr.cargo@mailzone.com in below format:
+To:  hr.cargo@mailzone.com
+Subject: Position code (for e.g. #1305-21)
+E-mail Text:
+-Your First Name (according to your ID)
+-Your Last Name (according to your ID)
+-Your Primary E-mail (e-mail address to receive our messages)
+-Your Country of your permanent living
+-Your City (city of your permanent living)
+-Your Address (address of home)
+-Your Phone (home AND mobile phone with area code for urgent contacts)
+Attachement: Your CV
+2. 2. Prepare the scan of Your foto from valid ID (WARNING: Do not send us the scan of your ID as it's a private
+information). It will be inquired while signing of agreement.
+3. Wait for Hiring Coordinator replay.
+4. Be ready to have an email or phone interview.
+
+TO DECLINE THIS JOB OFFER:
+1. Ignore this e-mail letter.
+
+Sincerely,
+John Q. Carter 
+Hiring Coordinator, Human Resources.
+
+Copyright (C) CargoX P.E. Limited Liability Company 2004-2008
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
