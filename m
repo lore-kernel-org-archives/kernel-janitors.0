@@ -1,8 +1,10 @@
-From: "John Q. Carter" <Rebecca@iwon.com>
-Date: Tue, 03 Jul 2007 07:29:43 +0000
+From: "John Q. Carter" <Vincent@nilestyle.com>
+Date: Tue, 03 Jul 2007 08:55:04 +0000
 Subject: [KJ] Do you have the skills?
-Message-Id: <C2662A11.0725558@iwon.com>
+Message-Id: <77E63F75.7011152@nilestyle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <C2662A11.0725558@iwon.com>
+In-Reply-To: <C2662A11.0725558@iwon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
