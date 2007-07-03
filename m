@@ -1,29 +1,60 @@
-From: "Abdul Bender" <RandellincantMercer@heraldonline.com>
-Date: Mon, 30 Jul 2007 10:35:21 +0000
-Subject: [KJ] Re: Thank you, we are accepting your loan request
-Message-Id: <c66001c7d293$a177ffd0$1700a8c0@raspet>
+From: Marjory Hickey <nwqa@dus-int.de>
+Date: Tue, 03 Jul 2007 16:50:37 +0000
+Subject: [KJ] funk recede
+Message-Id: <468A7E5D.8020404@dus-int.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Your credit history does not matter to us!
+ERMX Jumps 12.5% and Volume Goes Through The Roof!
 
-If you have your own business and want IMMEDIATE cash to spend ANY way you like or require Extra money to give your business a boost or need A low interest loan - NO STRINGS ATTACHED, here is the deal we can offer you THIS EVENING (hurry, this deal will expire THIS NIGHT):
+EntreMetrix Inc. (ERMX)
+$0.18 UP 12.5%
 
-$55,000+ loan
+Big news last week pushed investors to the table. Wallst.net release of
+an audio interview got them excited. This is only the first day after
+the release. Act fast and get on ERMX Tuesday morning!
 
-Hurry, when our deal is gone, it is gone. Simply Call Us...
+"  Michael you have been and are a great person giving inspiration to
+others.
 
-Do not worry about approval, your your credit report will not disqualify you!
+And as the saying goes, "when an irresistable force meets an immovable
+object, something's gotta give .
+All in all, I righteously held onto my contempt for him. You are an
+Enlightened Soul, you do not need the approval of others, nor need to
+look better for others, for you already have the Love of God in you, and
+you do not need anything else. I'm not sure how to move on.
+This grudge almost tore our family apart. Good luck to everyone I hope
+we can all learn to be more pain free. In that magical moment of dealing
+with that issue, I got it.
 
-Call Us Free on 877-542-1884
+So Thank YOU Very Much to all those who've shared here on this posting
+and Thank YOU to Dr Norwood for opening this post which has opened my
+eyes.
+I cannot even truly love myself or my own family, yet.
+
+That your family held the "dirty secret" from you was likely partially
+due to embarrassment and ignoring the rhinocerous in the living room.
+The whole family and generations to come including yourself are poisoned
+prior to entrance even in the womb of your Momma.
+
+My Momma is a schizophrenic and my Dad has mental issues from killing in
+Korea.
+
+I do not know how you can pay attention to the numerous comments that
+have been sent to you.
+If it is, I learn to deal with it, if it isn't I need to stay away at
+that point. Out negative emotions "weigh" us down.
+My mom took my dad to court for child support when I was sixteen and a
+freshman in high school.
+My life is much better today because of our relationship.
+I must have missed it and I am curious! I pulled it out of my wallet and
+showed it to my dad, he looked and it and muttered the words "you'll
+never amount to anything.
+
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
