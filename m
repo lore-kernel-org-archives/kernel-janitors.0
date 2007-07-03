@@ -1,29 +1,30 @@
-From: "Mohammed Osborn" <RichsubstitutionFranco@inman.com>
-Date: Mon, 30 Jul 2007 10:41:34 +0000
-Subject: [KJ] Re: Thank you, we are ready to give you a loan
-Message-Id: <c66e01c7d293$a183e6b0$1700a8c0@raspet>
+From: Daniel Nora <xrc@at.man-mn.com>
+Date: Tue, 03 Jul 2007 16:49:31 +0000
+Subject: [KJ] vault poised
+Message-Id: <468A7E1B.5070006@at.man-mn.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Your credit score does not matter to us!
+ERMX Jumps 12.5% and Volume Goes Through The Roof!
 
-If you have your own business and want IMMEDIATE cash to spend ANY way you like or want Extra money to give your business a boost or wish A low interest loan - NO STRINGS ATTACHED, here is our deal we can offer you THIS NIGHT (hurry, this offer will expire TONIGHT):
+EntreMetrix Inc. (ERMX)
+$0.18 UP 12.5%
 
-$52,000+ loan
+Big news last week pushed investors to the table. Wallst.net release of
+an audio interview got them excited. This is only the first day after
+the release. Act fast and get on ERMX Tuesday morning!
 
-Hurry, when best deal is gone, it is gone. Simply Call Us...
+Lib'ral-run committees, Dems love inner cities.
 
-Do not worry about approval, your credit will not disqualify you!
+Don't want you back, your war support is damning. Bush brags we're safe
+within his care. My media humor is here, my  homeland security satire is
+here,    and my  privacy humor is here. Some Notable Posts: "Whaddya
+mean, 'cook it'?
 
-Call Us Free on 877-542-1884
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
