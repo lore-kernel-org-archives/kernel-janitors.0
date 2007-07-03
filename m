@@ -1,36 +1,44 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 27 Jul 2007 16:49:54 +0000
-Subject: Re: [PATCH 18/68] 0 -> NULL, for arch/um
-Message-Id: <871wet7pvx.fsf@wanadoo.fr>
+From: "riversongs.com" <avq@dsd.de>
+Date: Tue, 03 Jul 2007 20:18:42 +0000
+Subject: [KJ] Happy B-Day USA
+Message-Id: <001901c7bdaf$59a46160$c2a7d072@klhg.fefrp>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707270945.LAA17372@ifs.emn.fr>
-	<20070727163541.GA6930@c2.user-mode-linux.org>
-In-Reply-To: <20070727163541.GA6930@c2.user-mode-linux.org> (Jeff Dike's
-	message of "Fri, 27 Jul 2007 12:35:41 -0400")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Dike <jdike@addtoit.com>
-Cc: Yoann Padioleau <padator@wanadoo.fr>, kernel-janitors@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Jeff Dike <jdike@addtoit.com> writes:
+Hi. Partner has sent you a greeting ecard.
+See your card as often as you wish during the next 15 days.
 
-> On Fri, Jul 27, 2007 at 11:45:56AM +0200, Yoann Padioleau wrote:
->> When comparing a pointer, it's clearer to compare it to NULL than to 0.
->
-> ACK
->
->>  sys-i386/fault.c   |    2 +-
->>  sys-x86_64/fault.c |    2 +-
->>  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> Except you should probably diff from the top of the kernel tree.
+SEEING YOUR CARD
 
-Sorry. I will use diffstat -p1  from now on.
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
->
-> 				Jeff
->
-> -- 
-> Work email - jdike at linux dot intel dot com
+http://85.136.23.161/?175ee0c2a4c1c8a8aa50bb
 
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
+
+
+PRIVACY
+riversongs.com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
+
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Postmaster,
+riversongs.com
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
