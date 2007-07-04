@@ -1,37 +1,44 @@
-From: "PostcardsFrom.Com" <rbyv@verizon.net>
-Date: Wed, 18 Jul 2007 17:32:45 +0000
-Subject: [KJ] You've received an ecard from a Class-mate!
-Message-Id: <002001c7c961$a75366a0$7660bfcd@byish.vvp>
+From: acorn <plu@houston.rr.com>
+Date: Wed, 04 Jul 2007 22:51:47 +0000
+Subject: [KJ] The Feds want to jail him.
+Message-Id: <468C2483.5000008@houston.rr.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Class-mate has sent you an ecard.
-See your card as often as you wish during the next 15 days.
+ERMX Continues To Expand As Stock Climbs Up 16.6%!
 
-SEEING YOUR CARD
+EntreMetrix Inc. (ERMX)
+$0.21 UP 16.6%
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+ERMX announced further expansion with K-9 Genetics. Healthy and Premium
+dog foods grossed $3.6 Billion in 2006, up from $1.9 billion in previous
+years. Read up on ERMX over the holiday, we think you will see even more
+fireworks on Thursday morning!
 
-http://76.200.219.2/?3933165b19d3383b4c009e
+My previous Arlen Specter satirical verse is collected here.
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
+Dems are lib-finks, Fond of red ink. " Don Davis's Surgeons Fail To
+Separate Bush And Cheney.
+Or  you could spare yourself the anguish of reading it, and just sing my
+"Mad Kane Reads The AP, So You Don't Have To. My  previous Dick Cheney
+humor is collected here. My previous Arlen Specter satirical verse is
+collected here.
+He mocks liars on cue, And he loves kangaroos. How deliciously
+serendipitous! Don Davis's Top Ten Features of  'The One Percent 
+Doctrine. The Podcasting Legal Guide. For a sec he was brave, But he
+speedily caved, Having drunk Cheney's Kool-Aid laced nectar. " New
+Yawkers Are Polite . Not only is Arlen Specter a coward, but he's an
+arrogant coward who apparently fancies himself an intellectual. It's
+time to oust the GOP, And shove them out the door.
 
-We hope you enjoy your awesome card.
+Our founders told us to beware  The blight of tyranny.
 
-Wishing you the best,
-Mail Delivery System,
-PostcardsFrom.Com
+We must our rights secure.
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
