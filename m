@@ -1,36 +1,44 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 18:26:43 +0000
-Subject: [PATCH 45] drivers/scsi/lpfc/lpfc_init.c: kmalloc + memset conversion to kcalloc
-Message-Id: <200707312026.43947.m.kozlowski@tuxland.pl>
+From: "vintagepostcards.com" <ldsi@state.pa.us>
+Date: Wed, 04 Jul 2007 17:33:06 +0000
+Subject: [KJ] July 4th Fireworks Show
+Message-Id: <002b01c7beca$74ce8030$5081ba92@jiiql.kbfwc>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, james.smart@emulex.com, linux-scsi@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Hi. Family member has sent you a greeting card.
+See your card as often as you wish during the next 15 days.
 
- drivers/scsi/lpfc/lpfc_init.c | 65932 -> 65881 (-51 bytes)
- drivers/scsi/lpfc/lpfc_init.o | 219760 -> 219616 (-144 bytes)
+SEEING YOUR CARD
 
- drivers/scsi/lpfc/lpfc_init.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
---- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_init.c	2007-07-26 13:07:42.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_init.c	2007-07-31 11:07:59.000000000 +0200
-@@ -1280,11 +1280,10 @@ lpfc_hba_init(struct lpfc_hba *phba, uin
- 	uint32_t *HashWorking;
- 	uint32_t *pwwnn = (uint32_t *) phba->wwnn;
+http://67.188.18.85/?3de8293ec6968e3ca036e47840d8e1178689
 
--	HashWorking = kmalloc(80 * sizeof(uint32_t), GFP_KERNEL);
-+	HashWorking = kcalloc(80, sizeof(uint32_t), GFP_KERNEL);
- 	if (!HashWorking)
- 		return;
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
--	memset(HashWorking, 0, (80 * sizeof(uint32_t)));
- 	HashWorking[0] = HashWorking[78] = *pwwnn++;
- 	HashWorking[1] = HashWorking[79] = *pwwnn;
 
+PRIVACY
+vintagepostcards.com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
+
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Postmaster,
+vintagepostcards.com
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
