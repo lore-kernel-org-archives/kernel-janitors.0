@@ -1,40 +1,44 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:23:36 +0000
-Subject: [PATCH 16] drivers/md/dm-hw-handler.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311923.36235.m.kozlowski@tuxland.pl>
+From: "funnypostcard.com" <grb@daum.net>
+Date: Wed, 04 Jul 2007 02:29:38 +0000
+Subject: [KJ] Fireworks on The 4th
+Message-Id: <002601c7bde3$2b57f900$6076b1eb@djjja.kni>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Hi. Class-mate has sent you a greeting ecard.
+See your card as often as you wish during the next 15 days.
 
- drivers/md/dm-hw-handler.c | 4424 -> 4393 (-31 bytes)
- drivers/md/dm-hw-handler.o | 101828 -> 101652 (-176 bytes)
+SEEING YOUR CARD
 
- drivers/md/dm-hw-handler.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
---- linux-2.6.23-rc1-mm1-a/drivers/md/dm-hw-handler.c	2007-07-26 13:07:41.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/md/dm-hw-handler.c	2007-07-31 11:28:10.000000000 +0200
-@@ -91,12 +91,11 @@ void dm_put_hw_handler(struct hw_handler
+http://68.113.74.81/?23933165b19d3383b4c009ee64d82c3a9eb
 
- static struct hwh_internal *_alloc_hw_handler(struct hw_handler_type *hwht)
- {
--	struct hwh_internal *hwhi = kmalloc(sizeof(*hwhi), GFP_KERNEL);
--
--	if (hwhi) {
--		memset(hwhi, 0, sizeof(*hwhi));
-+	struct hwh_internal *hwhi;
-+
-+	hwhi = kzalloc(sizeof(*hwhi), GFP_KERNEL);
-+	if (hwhi)
- 		hwhi->hwht = *hwht;
--	}
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
- 	return hwhi;
- }
+
+PRIVACY
+funnypostcard.com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
+
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Mail Delivery System,
+funnypostcard.com
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
