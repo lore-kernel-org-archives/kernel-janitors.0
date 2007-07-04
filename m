@@ -1,42 +1,44 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 18:06:54 +0000
-Subject: [PATCH 35] fs/reiser4/plugin/inode_ops_rename.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312006.54765.m.kozlowski@tuxland.pl>
+From: "greet2k.com" <xtpl@eatoncountyfair.com>
+Date: Wed, 04 Jul 2007 06:22:47 +0000
+Subject: [KJ] America the Beautiful
+Message-Id: <000301c7be03$bd598b50$8e7d6289@ewkbv.nwqa>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Hi. Partner has sent you an ecard.
+See your card as often as you wish during the next 15 days.
 
- fs/reiser4/plugin/inode_ops_rename.c | 28474 -> 28344 (-130 bytes)
- fs/reiser4/plugin/inode_ops_rename.o | 142600 -> 142476 (-124 bytes)
+SEEING YOUR CARD
 
- fs/reiser4/plugin/inode_ops_rename.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
---- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/inode_ops_rename.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/inode_ops_rename.c	2007-07-31 15:02:58.000000000 +0200
-@@ -392,16 +392,14 @@ int reiser4_rename_common(struct inode *
- 	if (IS_ERR(ctx))
- 		return PTR_ERR(ctx);
+http://69.144.90.185/?9675c50080d0229e368412571d7d419
 
--	old_entry = kmalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
-+	old_entry = kzalloc(3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
- 			    sizeof(*dotdot_name) + sizeof(*dataonstack),
- 			    reiser4_ctx_gfp_mask_get());
--	if (old_entry = NULL) {
-+	if (!old_entry) {
- 		context_set_commit_async(ctx);
- 		reiser4_exit_context(ctx);
- 		return RETERR(-ENOMEM);
- 	}
--	memset(old_entry, 0, 3 * sizeof(*old_entry) + 2 * sizeof(*new_lh) +
--	       sizeof(*dotdot_name) + sizeof(*dataonstack));
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
- 	new_entry = old_entry + 1;
- 	dotdot_entry = old_entry + 2;
+
+PRIVACY
+greet2k.com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
+
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Administrator,
+greet2k.com
+
+_______________________________________________
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
