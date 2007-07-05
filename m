@@ -1,7 +1,7 @@
-From: "pradeep singh" <pradeep.rautela@gmail.com>
-Date: Thu, 05 Jul 2007 10:22:06 +0000
+From: walter harms <wharms@bfs.de>
+Date: Thu, 05 Jul 2007 11:11:41 +0000
 Subject: Re: [KJ] spam on kj ml
-Message-Id: <a901b49a0707050310o127f92b5ve5c901a29e7d0378@mail.gmail.com>
+Message-Id: <468CD1ED.50608@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <468CB2D8.9060904@bfs.de>
 In-Reply-To: <468CB2D8.9060904@bfs.de>
@@ -10,46 +10,46 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 7/5/07, Jaco Kroon <jaco@kroon.co.za> wrote:
-> pradeep singh wrote:
-> > On 7/5/07, maximilian attems <max@stro.at> wrote:
-> >> On Thu, Jul 05, 2007 at 10:59:04AM +0200, walter harms wrote:
-> >> > the number of spam gets annoying.
-> >> > can somebody please update the spam filter ?
-> >> >
-> >> > re,
-> >> >  wh
-> >>
-> >> why does kj ml not move to vger?
-> >> those are quite nicely maintained ml?
-> >
-> > Yes you are right, i am fed up with the Spams from KJ list.
-> > OTOH, linux-ntdev which is hosted on vger using majordomo rarely sends
-> > any spam.
->
-> I wouldn't be able to say anything for the lists on vger, but I have to
-> agree, this list is just about the only source of email based SPAM I
-> have left, it would be nice if it too can be eliminated.
->
-> Whilst we're on the topic of spam, our local LUG have recently been
-> having issues with wiki spam (I've personally had to delete 35 pages
-> last night, and revert various edits) - what measures are in place to
-> protect the KJ wiki?
+Hello List,
+please note that the spam notice went to the list-owner. I did a cc to the list
+in the assumption that more people are interested in removing the spam.
 
-Make important pages immutable.
-Any edits to the wiki do not reflect util approved by the page
-owner(s) or moderator(s).
-
-Is it fair enough?
-
-Thanks
->
-> Jaco
->
+re,
+ wh
 
 
--- 
-Pradeep
+pradeep singh wrote:
+> On 7/5/07, maximilian attems <max@stro.at> wrote:
+>> On Thu, Jul 05, 2007 at 10:59:04AM +0200, walter harms wrote:
+>> > the number of spam gets annoying.
+>> > can somebody please update the spam filter ?
+>> >
+>> > re,
+>> >  wh
+>>
+>> why does kj ml not move to vger?
+>> those are quite nicely maintained ml?
+> 
+> Yes you are right, i am fed up with the Spams from KJ list.
+> OTOH, linux-ntdev which is hosted on vger using majordomo rarely sends
+> any spam.
+> 
+> I guess Alexey Dobriyan can answer this question more appropirately.
+> 
+> Thanks
+> --pradeep
+>>
+>> regards
+>>
+>> -- 
+>> maks
+>> _______________________________________________
+>> Kernel-janitors mailing list
+>> Kernel-janitors@lists.linux-foundation.org
+>> https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+>>
+> 
+> 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
