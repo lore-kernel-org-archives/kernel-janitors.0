@@ -1,41 +1,26 @@
-From: "Elliottt Timv" <ian@nms.ac.uk>
-Date: Tue, 10 Jul 2007 12:04:58 +0000
-Subject: [KJ] All for Real Men
-Message-Id: <01c7c2e9$c35d5230$5ff01553@ian>
+From: "Pete Z. Tucker" <cyc@netscape.com>
+Date: Thu, 05 Jul 2007 16:40:41 +0000
+Subject: [KJ] Re: Paid-4733a38.pdf
+Message-Id: <468D1F09.1010604@netscape.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------000007030007020101000701"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+--------------000007030007020101000701
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-Hi, Timcv
-
-  You want, that your "member" became strong as a stone?
-  You would like to recollect a young years...
-  
-   
-   
-  Unimportantly whom you were earlier...
-NOW YOU THE BEST!
-   
-   
-   
-  WWW. SpiFAQ .COM
-  Type  in browser (without spaces) and press Enter . 
-With Best Regards, Elliotty Timt.
-
-
-
-
+--------------000007030007020101000701
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------000007030007020101000701--
