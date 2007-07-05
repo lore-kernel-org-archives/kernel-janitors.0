@@ -1,28 +1,45 @@
-From: "Smalley" <Baotuan488@e.premierman.com>
-Date: Sun, 29 Jul 2007 12:00:43 +0000
-Subject: [KJ] hot_investment_report-55378.zip
-Message-Id: <200707291200.l6TC0qfe022458@smtp2.linux-foundation.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=====================_1491364==_"
+From: "Leila Q. Fletcher" <jqgl@iemails.com>
+Date: Thu, 05 Jul 2007 20:02:04 +0000
+Subject: [KJ] , A part of The New York Times Company.
+Message-Id: <468D4E3C.2050407@iemails.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---=====================_1491364==_
-Content-Type: text/plain; charset="us-ascii"; format=flowed
+Brokers Move On ERMX!
 
+EntreMetrix Inc. (ERMX)
+$0.19
 
---=====================_1491364==_
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Heavy trading today as ERMX announced its launch of digital support
+tools for its portfolio companies. Brokers are getting ahead of this
+steady climb as they grab up large blocks of shares for there clients.
+Look at the numbers and get on ERMX Friday morning!
+
+An oatmeal-based shampoo is often a welcome addition to most "itch
+reduction" treatment plans. An oatmeal-based shampoo is often a welcome
+addition to most "itch reduction" treatment plans.
+
+An oatmeal-based shampoo is often a welcome addition to most "itch
+reduction" treatment plans.
+, A part of The New York Times Company.
+, A part of The New York Times Company.
+
+It is important to visit your veterinarian to address the root cause of
+the itchiness and to reduce secondary problems due to scratching,
+chewing, and licking.
+
+, A part of The New York Times Company.
+
+, A part of The New York Times Company. , A part of The New York Times
+Company. It is important to visit your veterinarian to address the root
+cause of the itchiness and to reduce secondary problems due to
+scratching, chewing, and licking. An oatmeal-based shampoo is often a
+welcome addition to most "itch reduction" treatment plans.
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---=====================_1491364==_--
