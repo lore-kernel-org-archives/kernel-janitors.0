@@ -1,15 +1,17 @@
-From: "Antone Slaughter" <mkdegas@gz168.com>
-Date: Thu, 05 Jul 2007 04:42:41 +0000
+From: "Gerardo Osborn" <fgvcaprice@isptenant.com>
+Date: Thu, 05 Jul 2007 04:52:50 +0000
 Subject: [KJ] Watch This Emerging Growth Stock
-Message-Id: <001a01c7be8c$a16247a0$001af474@luvmachine>
+Message-Id: <001a01c7be8e$0c592230$061f4d24@David092>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1183610653-3969-302"
+Content-Type: multipart/mixed; boundary="----------=_1183611169-3969-7"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001a01c7be8c$a16247a0$001af474@luvmachine>
+In-Reply-To: <001a01c7be8c$a16247a0$001af474@luvmachine>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1183610653-3969-302
+------------=_1183611169-3969-7
 Content-Type: text/plain; format=flowed; charset="windows-1251";
 	reply-type=original
 Content-Transfer-Encoding: 7bit
@@ -29,7 +31,7 @@ Monster Motors, Inc. (Other OTC:MRMT.PK - News) announces a major contract with 
  
 WATCH MRMT SHOOT THROUGH THE SKY THURSDAY!
 
-------------=_1183610653-3969-302
+------------=_1183611169-3969-7
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -62,7 +64,7 @@ Content analysis details:   (7.0 points, 5.0 required)
 
 
 
-------------=_1183610653-3969-302
+------------=_1183611169-3969-7
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -72,4 +74,4 @@ _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1183610653-3969-302--
+------------=_1183611169-3969-7--
