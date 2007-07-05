@@ -1,7 +1,7 @@
-From: Jaco Kroon <jaco@kroon.co.za>
-Date: Thu, 05 Jul 2007 09:51:45 +0000
+From: Rene Herman <rene.herman@gmail.com>
+Date: Thu, 05 Jul 2007 09:54:04 +0000
 Subject: Re: [KJ] spam on kj ml
-Message-Id: <468CBF31.4060209@kroon.co.za>
+Message-Id: <468CBFBC.1090304@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <468CB2D8.9060904@bfs.de>
 In-Reply-To: <468CB2D8.9060904@bfs.de>
@@ -10,32 +10,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-pradeep singh wrote:
-> On 7/5/07, maximilian attems <max@stro.at> wrote:
->> On Thu, Jul 05, 2007 at 10:59:04AM +0200, walter harms wrote:
->> > the number of spam gets annoying.
->> > can somebody please update the spam filter ?
->> >
->> > re,
->> >  wh
->>
->> why does kj ml not move to vger?
->> those are quite nicely maintained ml?
+On 07/05/2007 11:38 AM, pradeep singh wrote:
+
+> Yes you are right, i am fed up with the Spams from KJ list. OTOH,
+> linux-ntdev which is hosted on vger using majordomo rarely sends any
+> spam.
 > 
-> Yes you are right, i am fed up with the Spams from KJ list.
-> OTOH, linux-ntdev which is hosted on vger using majordomo rarely sends
-> any spam.
+> I guess Alexey Dobriyan can answer this question more appropirately.
 
-I wouldn't be able to say anything for the lists on vger, but I have to 
-agree, this list is just about the only source of email based SPAM I 
-have left, it would be nice if it too can be eliminated.
+If the list isn't moving to somewhere like vger -- alsa-devel recently 
+became a moderated list for non-subscribers and I guess you guys could do 
+the same. The moderation (again, only for non-subscribers) doesn't need a 
+huge amount of time and moderator roles can be handed out to anyone, not 
+just list owners or anything like that. Works via web-interface and 
+(optionally, I suppose) via email notifications...
 
-Whilst we're on the topic of spam, our local LUG have recently been 
-having issues with wiki spam (I've personally had to delete 35 pages 
-last night, and revert various edits) - what measures are in place to 
-protect the KJ wiki?
-
-Jaco
+Rene.
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
