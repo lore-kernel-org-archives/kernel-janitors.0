@@ -1,44 +1,55 @@
-From: "greet2k.com" <xtpl@eatoncountyfair.com>
-Date: Wed, 04 Jul 2007 06:22:47 +0000
-Subject: [KJ] America the Beautiful
-Message-Id: <000301c7be03$bd598b50$8e7d6289@ewkbv.nwqa>
+From: "Mullen T. Pol" <qlvk@ccj.com>
+Date: Thu, 05 Jul 2007 23:05:54 +0000
+Subject: [KJ] Fwd: Notification.GLDUDCKGLDSIZ.pdf
+Message-Id: <468D7952.8040405@ccj.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------020803010500070108080400"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Partner has sent you an ecard.
-See your card as often as you wish during the next 15 days.
 
-SEEING YOUR CARD
-
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
-
-http://69.144.90.185/?9675c50080d0229e368412571d7d419
-
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
-     
+--------------020803010500070108080400
+Content-Type: text/plain; charset=windows-1250; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 
-PRIVACY
-greet2k.com honors your privacy. Our home page and Card Pick Up have links to our 
-Privacy Policy.
 
-TERMS OF USE
-By accessing your card you agree we have no liability. 
-If you don't know the person sending the card or don't wish to see the card, 
-please disregard this Announcement.
+--------------020803010500070108080400
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-We hope you enjoy your awesome card.
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-Wishing you the best,
-Administrator,
-greet2k.com
+Content preview:  [...] 
+
+Content analysis details:   (7.7 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_DHCP      Relay HELO'd using suspicious hostname (DHCP)
+ 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.5968]
+
+
+
+--------------020803010500070108080400
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------020803010500070108080400--
