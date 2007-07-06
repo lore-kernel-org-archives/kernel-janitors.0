@@ -1,77 +1,55 @@
-From: Clarence Crockett <lbl@goddamnfruit.com>
-Date: Tue, 03 Jul 2007 09:50:59 +0000
-Subject: [KJ] How much of a threat does it pose?
-Message-Id: <468A1C03.7010803@goddamnfruit.com>
+From: Noll Welch <ziart@gwi.net>
+Date: Fri, 06 Jul 2007 02:53:24 +0000
+Subject: [KJ] Fwd: publication.pdf
+Message-Id: <468DAEA4.1010503@gwi.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------080006030604020402020607"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ERMX Jumps 12.5% and Volume Goes Through The Roof!
 
-EntreMetrix Inc. (ERMX)
-$0.18 UP 12.5%
+--------------080006030604020402020607
+Content-Type: text/plain; charset=windows-1250; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Big news last week pushed investors to the table. Wallst.net release of
-an audio interview got them excited. This is only the first day after
-the release. Act fast and get on ERMX Tuesday morning!
 
-Potato korokke is the most popular one. One in particular struck me.
-Women are under-represented in the arena of political discussions on the
-BBC.
-What would you like to see achieved at the talks?
-In effect, we're running a dual operation for a few weeks at the same
-time as learning new digital production systems at Pacific Quay which
-will help us to improve and expand our news services.
 
-Has Gordon Brown picked the right people for his team? What is the cause
-of anti-Americanism? It was my first hike this year with a large amount
-of down hill so I was not used to that level of eccentric muscle
-contractions. College Cooking Ideas?
+--------------080006030604020402020607
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-This is a result of initiatives such as better labelling of products to
-cover information on the carbon emitted during their manufacture,
-packaging and transportation.
-For example, it is no good simply planting a few trees to compensate for
-someone taking a flight. She is Sunni and lives in Baghdad.
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-One of the men, a Jordanian, is a neurosurgeon and another is an Iraqi
-doctor who qualified in Baghdad. You need gelatine powder, sugar, honey,
-and grapefruits to make it.
+Content preview:  [...] 
 
-Television will start the crossing later in July. You could argue that
-it has an important role to play in dealing with those emissions that
-can't or won't be eliminated, at least in the short to medium-term.
+Content analysis details:   (5.6 points, 5.0 required)
 
-What motivates the bombers, and what can be done to stop these sort of
-attacks? We didn't know what our neighbours were. Gordon Brown has
-unveiled further non-Labour Party appointments as he finalises his
-ministerial line-up.
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
+                            2)
+ 1.8 RCVD_ILLEGAL_IP        Received: contains illegal IP address
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.5452]
 
-Do they not pay attention or do they hear what they want to hear? How
-prepared are the authorities?
-If you are the system administrator, please click here. Promoting and
-supporting civil war isn't enough, apparently. Access Error Headline
-functionality has been disabled from your intranet.
 
-What would you like to see achieved at the talks?
 
-How prepared are the authorities? Yet again, we saw how technology has
-changed the way news is reported. When reporters were able to talk
-directly to eye-witnesses, there was no shortage of those prepared to
-step in front of the microphones and cameras. It's difficult to decide
-which is more frightening - car bombs and militias, or having to leave
-everything you know and love, to some unspecified place for a future
-where nothing is certain.
-
-But critics have argued that the film portrays the healthcare systems of
-countries such as Canada as near perfect, when in fact there are many
-areas that could be improved. Do they not pay attention or do they hear
-what they want to hear? " Post your suggestions in the forum! Is Tony
-Blair right for Mid-East job?
+--------------080006030604020402020607
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------080006030604020402020607--
