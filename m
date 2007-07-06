@@ -1,33 +1,31 @@
-From: Christoph Lameter <clameter@sgi.com>
-Date: Fri, 06 Jul 2007 17:54:29 +0000
+From: Heikki Orsila <shdl@zakalwe.fi>
+Date: Fri, 06 Jul 2007 17:55:52 +0000
 Subject: [KJ] Re: [PATCH] some kmalloc/memset ->kzalloc (tree wide)
-Message-Id: <Pine.LNX.4.64.0707061052570.30575@schroedinger.engr.sgi.com>
+Message-Id: <20070706175552.GF3400@zakalwe.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <878x9ta320.fsf@wanadoo.fr> <1183741479.7054.111.camel@twins>
-In-Reply-To: <1183741479.7054.111.camel@twins>
+References: <878x9ta320.fsf@wanadoo.fr>
+In-Reply-To: <878x9ta320.fsf@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Yoann Padioleau <padator@wanadoo.fr>, kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: Yoann Padioleau <padator@wanadoo.fr>
+Cc: kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-On Fri, 6 Jul 2007, Peter Zijlstra wrote:
+> Transform some calls to kmalloc/memset to a single kzalloc (or 
+> kcalloc).
 
-> On Fri, 2007-07-06 at 18:51 +0200, Yoann Padioleau wrote:
-> > Transform some calls to kmalloc/memset to a single kzalloc (or
-> > kcalloc).
-> > 
-> 
-> Christoph, what is the plan wrt GFP_ZERO?
+I looked all the files through. They looked good to me, except 
+one case:
 
-Its going in AFAIK. Need to resort my patches and then I will push it 
-back.
+In drivers/net/hamradio/dmascc.c you removed one comment, and I think 
+it should not be removed:
 
-kzalloc will continue to exist as a shorthand notation. So no problem with 
-continuing the conversion. kmalloc with GFP_ZERO may be more advantageous 
-in allocator type functionality where the caller may want to specify if 
-the allocated memory should be zeroed or not.
+/* Initialize what is necessary for write_scc and write_scc_data */ 
 
+-- 
+Heikki Orsila			Barbie's law:
+heikki.orsila@iki.fi		"Math is hard, let's go shopping!"
+http://www.iki.fi/shd
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
