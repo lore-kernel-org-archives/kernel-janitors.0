@@ -1,56 +1,75 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 06 Jul 2007 23:16:17 +0000
+From: yoann padioleau <padator@wanadoo.fr>
+Date: Sat, 07 Jul 2007 13:36:24 +0000
 Subject: [KJ] Re: [PATCH] some kmalloc/memset ->kzalloc (tree wide)
-Message-Id: <20070706161617.072f7eea.akpm@linux-foundation.org>
+Message-Id: <0BE121C2-D115-4A9A-A557-E65F0F8CBA26@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <878x9ta320.fsf@wanadoo.fr>
-	<20070706175552.GF3400@zakalwe.fi>
-	<Line.LNX.4.64.0707061806390.18415@d.namei>
-In-Reply-To: <Line.LNX.4.64.0707061806390.18415@d.namei>
+References: <878x9ta320.fsf@wanadoo.fr> <468F901B.2000000@imap.cc>
+In-Reply-To: <468F901B.2000000@imap.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James Morris <jmorris@namei.org>
-Cc: Heikki Orsila <shdl@zakalwe.fi>, Yoann Padioleau <padator@wanadoo.fr>, kernel-janitors@lists.osdl.org, linux-kernel@vger.kernel.org
+To: Tilman Schmidt <tilman@imap.cc>
+Cc: kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
 
-On Fri, 6 Jul 2007 18:07:20 -0400 (EDT)
-James Morris <jmorris@namei.org> wrote:
 
-> On Fri, 6 Jul 2007, Heikki Orsila wrote:
-> 
-> > > Transform some calls to kmalloc/memset to a single kzalloc (or 
-> > > kcalloc).
-> > 
-> > I looked all the files through. They looked good to me, except 
-> > one case:
-> 
-> I checked the drivers/net and net/ changes and they looked ok (aside from 
-> the above).
-> 
-> 
+On 7 juil. 07, at 15:07, Tilman Schmidt wrote:
 
-OK, thanks for checking it, guys.
+> Am 06.07.2007 18:51 schrieb Yoann Padioleau:
+>> @@
+>> expression E1,E2,E3;
+>> @@
+>>
+>> - kzalloc(E1 * E2,E3)
+>> + kcalloc(E1,E2,E3)
+>
+> This misses the semantic distinction between the first and second
+> arguments of kcalloc(). The first argument is supposed to be the
+> number of elements to allocate and the second their size. As a
+> consequence, the following hunks in your pathc are wrong:
 
-Yoann, the "tree wide" thing really is a problem.  Your patch here is
-touching ten or more maintainers' code and it really does want to be split
-into ten separate patches and fed into the tree via the appropriate routes.
+Yes you are right. Andrew Morton fixed the problem in a
+subsequent patch.
 
-I can take care of that routing if I have the ten patches, but this time I
-really can't be bothered splitting the patch up (it's rather boring, and
-gets error-prone).
+I should have written a more precise semantic patch such as
 
-For this patch, I tossed out the ten or so hunks which conflicted with
-other pending patches in the various trees and I shall just grit the teeth
-and maintain and merge it as a single whopping patch.  (At least this way
-I'll actually get some scsi stuff merged).  Anything which conflicts with
-anyone's outstanding work will be dropped.
+@@
+expression E;
+constant c;
+type T;
+@@
 
-For any future patches, _please_ split them up along some sane lines. 
-Generally you'll find that one patch per second-level directory works
-pretty well: drivers/net, drivers/scsi, drivers/usb, fs/ext2, drivers/char,
-etc.
+- kzalloc(sizeof(T) * c, E)
++ kcalloc(c, sizeof(T), E)
 
-Thanks.
+
+Note that sometimes the code is written as  kzalloc(c * sizeof(T), E)
+as in   kzalloc(2 * sizeof(struct resource), GFP_KERNEL)  but
+our transformation engine can handle the commutativity of '*' and still
+performs the right transformation.
+
+
+>
+>> diff --git a/arch/arm/mach-iop13xx/pci.c b/arch/arm/mach-iop13xx/ 
+>> pci.c
+>> index 9d63d7f..b84955f 100644
+>> --- a/arch/arm/mach-iop13xx/pci.c
+>> +++ b/arch/arm/mach-iop13xx/pci.c
+>> @@ -1002,11 +1002,10 @@ int iop13xx_pci_setup(int nr, struct pci
+>>  	if (nr > 1)
+>>  		return 0;
+>>
+>> -	res = kmalloc(sizeof(struct resource) * 2, GFP_KERNEL);
+>> +	res = kcalloc(sizeof(struct resource), 2, GFP_KERNEL);
+>>  	if (!res)
+>>  		panic("PCI: unable to alloc resources");
+>>
+>> -	memset(res, 0, sizeof(struct resource) * 2);
+>>
+>>  	/* 'nr' assumptions:
+>>  	 * ATUX is always 0
+>
+
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
