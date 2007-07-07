@@ -1,26 +1,24 @@
-From: "Kevin Hernandez" <FranklyricismGonzalez@itworld.com>
-Date: Tue, 24 Jul 2007 05:13:33 +0000
-Subject: [KJ] Fw: Thanks, we are accepting your debt request
-Message-Id: <13a801c7cdfd$43792020$2f01a8c0@cabral>
+From: "Luke N. Cooke" <loh@civ4files.com>
+Date: Sat, 07 Jul 2007 09:53:49 +0000
+Subject: [KJ] Fwd: bill.snnaco.pdf
+Message-Id: <468F62AD.3060501@civ4files.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------010202050005010102010203"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Your credit doesn't matter to us!
+--------------010202050005010102010203
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If your family OWN real estate and want IMMEDIATE pin money to spend ANY way you like, or simply wish to LOWER your payments by a third or more, here is our best deal we can offer you NOW (hurry, this tender will expire TODAY):
 
-$372,000+ loan
 
-AND EVEN MORE: After further review, our lenders have established the lowest current payments!
+--------------010202050005010102010203
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Hurry, when our deal is gone, it is gone. Simply complete this plain form...
-
-Don't worry about approval, your credit score will not disqualify you!
-
-http://newrphealthz.com/
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
@@ -29,3 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------010202050005010102010203--
