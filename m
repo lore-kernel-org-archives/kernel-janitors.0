@@ -1,75 +1,76 @@
-From: yoann padioleau <padator@wanadoo.fr>
-Date: Sat, 07 Jul 2007 13:36:24 +0000
+From: Jan Engelhardt <jengelh@computergmbh.de>
+Date: Sat, 07 Jul 2007 18:42:09 +0000
 Subject: [KJ] Re: [PATCH] some kmalloc/memset ->kzalloc (tree wide)
-Message-Id: <0BE121C2-D115-4A9A-A557-E65F0F8CBA26@wanadoo.fr>
+Message-Id: <Pine.LNX.4.64.0707072037530.1536@fbirervta.pbzchgretzou.qr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <878x9ta320.fsf@wanadoo.fr> <468F901B.2000000@imap.cc>
-In-Reply-To: <468F901B.2000000@imap.cc>
+References: <878x9ta320.fsf@wanadoo.fr>
+In-Reply-To: <878x9ta320.fsf@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Tilman Schmidt <tilman@imap.cc>
-Cc: kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>
+To: Yoann Padioleau <padator@wanadoo.fr>
+Cc: kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
 
-On 7 juil. 07, at 15:07, Tilman Schmidt wrote:
-
-> Am 06.07.2007 18:51 schrieb Yoann Padioleau:
->> @@
->> expression E1,E2,E3;
->> @@
->>
->> - kzalloc(E1 * E2,E3)
->> + kcalloc(E1,E2,E3)
+On Jul 6 2007 18:51, Yoann Padioleau wrote:
+>Transform some calls to kmalloc/memset to a single kzalloc (or kcalloc).
 >
-> This misses the semantic distinction between the first and second
-> arguments of kcalloc(). The first argument is supposed to be the
-> number of elements to allocate and the second their size. As a
-> consequence, the following hunks in your pathc are wrong:
+>Here is a short excerpt of the semantic patch performing
+>this transformation: 
 
-Yes you are right. Andrew Morton fixed the problem in a
-subsequent patch.
+Cool!
 
-I should have written a more precise semantic patch such as
+>--- a/Documentation/connector/cn_test.c
+>+++ b/Documentation/connector/cn_test.c
+>@@ -124,9 +124,8 @@ static void cn_test_timer_func(unsigned 
+> 	struct cn_msg *m;
+> 	char data[32];
+> 
+>-	m = kmalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
+>+	m = kzalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
+> 	if (m) {
+>-		memset(m, 0, sizeof(*m) + sizeof(data));
+> 
+> 		memcpy(&m->id, &cn_test_id, sizeof(m->id));
+> 		m->seq = cn_test_timer_counter;
 
-@@
-expression E;
-constant c;
-type T;
-@@
+Such empty lines (after memset) [c|s]hould also go.
 
-- kzalloc(sizeof(T) * c, E)
-+ kcalloc(c, sizeof(T), E)
+>index e83f1db..deb7b6a 100644
+>--- a/block/scsi_ioctl.c
+>+++ b/block/scsi_ioctl.c
+>@@ -405,11 +405,10 @@ int sg_scsi_ioctl(struct file *file, str
+> 
+> 	bytes = max(in_len, out_len);
+> 	if (bytes) {
+>-		buffer = kmalloc(bytes, q->bounce_gfp | GFP_USER| __GFP_NOWARN);
+>+		buffer = kzalloc(bytes, q->bounce_gfp | GFP_USER| __GFP_NOWARN);
+> 		if (!buffer)
+> 			return -ENOMEM;
+> 
+>-		memset(buffer, 0, bytes);
+> 	}
 
+And in this case, empty line before memset.
+(Either of - do not let remove empty lines in both directoriens around memset)
 
-Note that sometimes the code is written as  kzalloc(c * sizeof(T), E)
-as in   kzalloc(2 * sizeof(struct resource), GFP_KERNEL)  but
-our transformation engine can handle the commutativity of '*' and still
-performs the right transformation.
+>@@ -1616,7 +1616,6 @@ #endif
+> 		goto err_out_regions;
+> 	}
+> 
+>-	memset(host, 0, sizeof(*host));
+> 	host->pdev = pdev;
+> 	host->flags = pci_dac ? FL_DAC : 0;
+> 	spin_lock_init(&host->lock);
 
-
->
->> diff --git a/arch/arm/mach-iop13xx/pci.c b/arch/arm/mach-iop13xx/ 
->> pci.c
->> index 9d63d7f..b84955f 100644
->> --- a/arch/arm/mach-iop13xx/pci.c
->> +++ b/arch/arm/mach-iop13xx/pci.c
->> @@ -1002,11 +1002,10 @@ int iop13xx_pci_setup(int nr, struct pci
->>  	if (nr > 1)
->>  		return 0;
->>
->> -	res = kmalloc(sizeof(struct resource) * 2, GFP_KERNEL);
->> +	res = kcalloc(sizeof(struct resource), 2, GFP_KERNEL);
->>  	if (!res)
->>  		panic("PCI: unable to alloc resources");
->>
->> -	memset(res, 0, sizeof(struct resource) * 2);
->>
->>  	/* 'nr' assumptions:
->>  	 * ATUX is always 0
->
+And in this case, no blank lines should be removed.
 
 
+These are just suggestions. If it is too much work, leave it as-is. :)
+
+
+	Jan
+-- 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
