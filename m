@@ -1,34 +1,19 @@
-From: <jobs@careerone.com.au>
-Date: Tue, 31 Jul 2007 21:26:39 +0000
-Subject: [KJ] The best offers of work from us for you $1000 in a week.
-Message-Id: <842768483.20070407080915@careerone.com.au>
+From: Adalbert <puu@julien-pianos.com>
+Date: Sun, 08 Jul 2007 20:28:35 +0000
+Subject: [KJ] Re: Bill.74140.pdf
+Message-Id: <469148F3.7040502@julien-pianos.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------DE4CB7F9410"
+Content-Type: multipart/mixed; boundary="------------020804020004060100080306"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-------------DE4CB7F9410
-Content-Type: text/plain; charset=windows-1251
-Content-Transfer-Encoding: 8bit
+--------------020804020004060100080306
+Content-Type: text/plain; charset=windows-1250; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Greetings Ladies and Gentlemen!
-We are an european  Computers company.
-We offer you an additional income for part-time employment. You can earn some cash for 2-3 hours per day work.It is absolutely free for you, you should NOT sale anything! Very easy and fun way to make money. 
- 
-Few main facts:
-1. 900-1000 AUD a week!
-2. 18+ y/o ONLY, you have to be able to check your e-mail 3-4 times a day
-3. 1-2 hours of free time Monday-Thursday, preferably in the morning.
-4. Daily Pay Out! 
- 
-Requirements: 
-a) Knowledge of computer tools and the Internet is a must.
-b) English (written, spoken is preferably) .
-c) Autonomy, flexibility, initiative and creativity, good organizational  skills. 
 
-If you really search for work and wish to start to work with us immediately, we wait for your e-mails:  oraclevac.pay@gmail.com 
 
-------------DE4CB7F9410
+--------------020804020004060100080306
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -42,4 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------DE4CB7F9410--
+--------------020804020004060100080306--
