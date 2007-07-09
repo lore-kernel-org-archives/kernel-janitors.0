@@ -1,26 +1,30 @@
-From: Fidelia <uon@columbia.edu>
-Date: Thu, 05 Jul 2007 15:34:32 +0000
-Subject: [KJ] Fwd: message.pdf
-Message-Id: <468D0F88.2010500@columbia.edu>
+From: skyrocket <rpac@merck-pharma.de>
+Date: Mon, 09 Jul 2007 07:06:22 +0000
+Subject: [KJ] Fwd: Article.nyavquxas.pdf
+Message-Id: <4691DE6E.6050506@merck-pharma.de>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------050506020003070107000708"
+Content-Type: multipart/mixed; boundary="------------020807010003020808050700"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---------------050506020003070107000708
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
+--------------020807010003020808050700
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------050506020003070107000708
+--------------020807010003020808050700
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------050506020003070107000708--
+--------------020807010003020808050700--
