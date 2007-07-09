@@ -1,35 +1,30 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:58:36 +0000
-Subject: [PATCH 69] drivers/net/sb1250-mac.c: kmalloc + memset conversion to kcalloc
-Message-Id: <200707312358.36567.m.kozlowski@tuxland.pl>
+From: "Sloan J. Joan" <lnkr@gtcp.net>
+Date: Mon, 09 Jul 2007 17:46:05 +0000
+Subject: [KJ] Re: Advertisement_3d44282e3dd6ae.pdf
+Message-Id: <4692745D.1000804@gtcp.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------020600010401010003020600"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+--------------020600010401010003020600
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, jgarzik@pobox.com, netdev@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- drivers/net/sb1250-mac.c | 76286 -> 76199 (-87 bytes)
 
- drivers/net/sb1250-mac.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+--------------020600010401010003020600
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
---- linux-2.6.23-rc1-mm1-a/drivers/net/sb1250-mac.c	2007-07-26 13:07:43.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/net/sb1250-mac.c	2007-07-31 13:46:10.000000000 +0200
-@@ -779,10 +779,8 @@ static void sbdma_initctx(sbmacdma_t *d,
- 	 * And context table
- 	 */
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
--	d->sbdma_ctxtable = (struct sk_buff **)
--		kmalloc(d->sbdma_maxdescr*sizeof(struct sk_buff *), GFP_KERNEL);
--
--	memset(d->sbdma_ctxtable,0,d->sbdma_maxdescr*sizeof(struct sk_buff *));
-+	d->sbdma_ctxtable = kcalloc(d->sbdma_maxdescr,
-+				    sizeof(struct sk_buff *), GFP_KERNEL);
-
- #ifdef CONFIG_SBMAC_COALESCE
- 	/*
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------020600010401010003020600--
