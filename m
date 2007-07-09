@@ -1,19 +1,19 @@
-From: "Herbert V. Matty" <dchlk@fundamenta-rathenow.de>
-Date: Mon, 09 Jul 2007 22:02:52 +0000
-Subject: [KJ] Announcement.0650622784.pdf attached
-Message-Id: <4692B08C.7030205@fundamenta-rathenow.de>
+From: "Cook X. Paddy" <ypfww@ontariostorms.com>
+Date: Mon, 09 Jul 2007 00:57:03 +0000
+Subject: [KJ] warning-4524023228700.pdf attached
+Message-Id: <469187DF.7030001@ontariostorms.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020101040808030703010202"
+Content-Type: multipart/mixed; boundary="------------070401040002080402000406"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---------------020101040808030703010202
-Content-Type: text/plain; charset=windows-1252; format=flowed
+--------------070401040002080402000406
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------020101040808030703010202
+--------------070401040002080402000406
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -27,4 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------020101040808030703010202--
+--------------070401040002080402000406--
