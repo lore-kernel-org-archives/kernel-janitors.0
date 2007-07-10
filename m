@@ -1,7 +1,7 @@
-From: "John Q. Carter" <Michele@ninemilesolutions.com>
-Date: Tue, 03 Jul 2007 10:11:44 +0000
+From: "John Q. Carter" <Tracey@wanadoo.fr>
+Date: Tue, 10 Jul 2007 05:57:54 +0000
 Subject: [KJ] Do you have the skills?
-Message-Id: <7CEF0DA2.6347585@ninemilesolutions.com>
+Message-Id: <39DCD303.8777921@wanadoo.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <C2662A11.0725558@iwon.com>
 In-Reply-To: <C2662A11.0725558@iwon.com>
@@ -14,10 +14,10 @@ CARGOX P.E. Limited Liability Company
 111 Livinston Street, Brooklyn, New York, US 11201
 +1(801)7308660
 
-Jul 2, 2007
+Jul 9, 2007
 
 JOB OFFER (WARNING: For non-USA citizens only)
-CargoX P.E. is pleased to make you an offer on employment as a front-line manager (position code #1305-21). 
+CargoX P.E. is pleased to make you an offer on employment as a remote front-line manager (position code #1305-21). 
 Successful candidates should meet the following requirements:
 - Several years of experience in financial logistic
 - Great analytical and problem solving skills
@@ -30,12 +30,9 @@ We trust that Your knowledge, skills and experience may will among our most valu
 
 Should You accept this job offer, per company policy You'll be eligible to receive the following 
 beginning on your hire date:
-- SALARY: Annual gross starting salary of $63,500 USD, paid in bimonthly installments by Your choice of check or
-direct deposit.
-- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or
-direct deposit.
-- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares
-per year.
+- SALARY: Annual gross starting salary of $63,500 USD, paid in bimonthly installments by Your choice of check or direct deposit.
+- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or direct deposit.
+- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares per year.
 
 BENEFITS: 
 Standard, Acme-provided benefits for salaried-exempt employees, including the following:
@@ -49,8 +46,8 @@ Standard, Acme-provided benefits for salaried-exempt employees, including the fo
 - Vacation and personal days.
 
 TO ACCEPT THIS JOB OFFER:
-1. Send an e-mail letter to hr.cargo@mailzone.com in below format:
-To:  hr.cargo@mailzone.com
+1. Send an e-mail letter to hr.cargo@flashheadz.ws in below format:
+To:  hr.cargo@flashheadz.ws
 Subject: Position code (for e.g. #1305-21)
 E-mail Text:
 -Your First Name (according to your ID)
@@ -61,8 +58,7 @@ E-mail Text:
 -Your Address (address of home)
 -Your Phone (home AND mobile phone with area code for urgent contacts)
 Attachement: Your CV
-2. 2. Prepare the scan of Your foto from valid ID (WARNING: Do not send us the scan of your ID as it's a private
-information). It will be inquired while signing of agreement.
+2. Prepare the scan of Your foto from valid ID (WARNING: Do not send us the scan of your ID as it's a private information). It will be inquired while signing of agreement.
 3. Wait for Hiring Coordinator replay.
 4. Be ready to have an email or phone interview.
 
@@ -73,8 +69,12 @@ Sincerely,
 John Q. Carter 
 Hiring Coordinator, Human Resources.
 
-Copyright (C) CargoX P.E. Limited Liability Company 2004-2008
+Copyright (C) CargoX P.E. Limited Liability Company 2004-2007
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
