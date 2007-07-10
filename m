@@ -1,7 +1,7 @@
-From: "John Q. Carter" <Tracey@wanadoo.fr>
-Date: Tue, 10 Jul 2007 05:57:54 +0000
+From: "John Q. Carter" <Elliott@nirvanaclub.com>
+Date: Tue, 10 Jul 2007 05:59:39 +0000
 Subject: [KJ] Do you have the skills?
-Message-Id: <39DCD303.8777921@wanadoo.fr>
+Message-Id: <5D87F315.8394848@nirvanaclub.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <C2662A11.0725558@iwon.com>
 In-Reply-To: <C2662A11.0725558@iwon.com>
