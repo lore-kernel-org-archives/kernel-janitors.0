@@ -1,24 +1,26 @@
-From: "Keisha Clifford" <LizziesinkBautista@reallyuseful.com>
-Date: Sun, 29 Jul 2007 13:17:31 +0000
-Subject: [KJ] Fwd: Thank you,
-Message-Id: <22f9d01c7d23f$285c2ad0$31ddfea9@your4dacd0ea75>
+From: "AGracie Darren" <biibavm@nivolux.nl>
+Date: Tue, 10 Jul 2007 06:54:06 +0000
+Subject: [KJ] Jean_Document_21234_15487.pdf
+Message-Id: <089901c7c308$3cbd49b0$0650d0e0@asushic>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_00B1E30D.D35F4BC0"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Your credit history doesn't matter to us!
+This is a multi-part message in MIME format.
 
-If you have your own business and want IMMEDIATE ready money to spend ANY way you like or wish Extra money to give your company a boost or wish A low interest loan - NO STRINGS ATTACHED, here is our deal we can offer you TONIGHT (hurry, this offer will expire THIS NIGHT):
+------=_NextPart_000_0002_00B1E30D.D35F4BC0
+Content-Type: text/plain; format=flowed; charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
 
-$30,000+ loan
 
-Hurry, when the deal is gone, it is gone. Simply Call Us...
+------=_NextPart_000_0002_00B1E30D.D35F4BC0
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Do not worry about approval, your credit score will not disqualify you!
-
-Call Us Free on 877-542-1884
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
@@ -27,3 +29,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------=_NextPart_000_0002_00B1E30D.D35F4BC0--
