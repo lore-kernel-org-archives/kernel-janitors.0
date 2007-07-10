@@ -1,26 +1,51 @@
-From: Stout Cornelius <xnd@athena.ocn.ne.jp>
-Date: Thu, 05 Jul 2007 18:28:16 +0000
-Subject: [KJ] Fwd: abuse.65a2db46227.pdf
-Message-Id: <468D3840.6020405@athena.ocn.ne.jp>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010800060306040204020206"
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 10 Jul 2007 12:05:56 +0000
+Subject: another possible KJ project:  using routines from highmem.h
+Message-Id: <Pine.LNX.4.64.0707100759440.17056@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---------------010800060306040204020206
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
 
+  a quick perusal of the tree shows that there's potentially a number
+of places where code could be simplified using static inlines or
+macros from include/linux/highmem.h.
 
+  for instance, consider this static inline from that header file:
 
---------------010800060306040204020206
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+static inline void clear_highpage(struct page *page)
+{
+        void *kaddr = kmap_atomic(page, KM_USER0);
+        clear_page(kaddr);
+        kunmap_atomic(kaddr, KM_USER0);
+}
 
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------010800060306040204020206--
+  as long as there's nothing more subtle happening here, that should
+be an obvious replacement for things like this in drivers/kvm/vmx.c,
+no?
+
+	page = kmap_atomic(p2, KM_USER0);
+	memset(page, 0, PAGE_SIZE);
+	kunmap_atomic(page, KM_USER0);
+
+correct?  as long as clear_page() is considered equivalent to a
+memset of zero of size PAGE_SIZE at least, which is another potential
+cleanup already documented here:
+
+http://fsdev.net/wiki/index.php?title=Clear_page_copy_page
+
+  i'll have a couple more questions later on other routines from
+highmem.h.
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
