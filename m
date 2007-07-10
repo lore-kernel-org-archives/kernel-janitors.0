@@ -1,7 +1,7 @@
-From: "Alvaro Odonnell" <hwdefunct@maximumsurf.com>
-Date: Thu, 19 Jul 2007 11:50:16 +0000
-Subject: [KJ] Thanks, we are ready to lend some cash
-Message-Id: <001901c7ca0b$e60f4580$000cf5fc@mshomen4oocjgs>
+From: <gregkh@suse.de>
+Date: Tue, 10 Jul 2007 21:11:14 +0000
+Subject: [KJ] patch
+Message-Id: <20070710211134.AED7E14540CF@imap.suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,17 +9,53 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-Your your credit report does not matter to us!
+This is a note to let you know that I've just added the patch titled
+
+     Subject: USB: ohci-pnx4008: Remove unnecessary cast of return value of kzalloc
+
+to my gregkh-2.6 tree.  Its filename is
+
+     usb-ohci-pnx4008-remove-unnecessary-cast-of-return-value-of-kzalloc.patch
+
+This tree can be found at 
+    http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/patches/
+
+
+From kernel-janitors-bounces@lists.linux-foundation.org Thu Jun 28 10:16:37 2007
+From: Suresh Jayaraman <sjayaraman@novell.com>
+Date: Thu, 28 Jun 2007 11:16:30 -0600
+Subject: USB: ohci-pnx4008: Remove unnecessary cast of return value of kzalloc
+To: <kernel-janitors@lists.osdl.org>
+Message-ID: <46843A46020000F40000A9BA@lucius.provo.novell.com>
+Content-Disposition: inline
+
+
+Remove unnecessary cast of return value of kzalloc() in
+usb/host/ohci-pnx4008.c
+
+Signed-off-by: Suresh Jayaraman <sjayaraman@novell.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+
+---
+ drivers/usb/host/ohci-pnx4008.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/host/ohci-pnx4008.c
++++ b/drivers/usb/host/ohci-pnx4008.c
+@@ -134,7 +134,7 @@ static int isp1301_attach(struct i2c_ada
+ {
+ 	struct i2c_client *c;
  
-If you have your own business and require IMMEDIATE money to spend ANY way you like or require Extra money to give your company a boost or  wish A low interest loan - NO STRINGS ATTACHED, here is our best deal we can offer you THIS EVENING (hurry, this deal will expire TODAY):
+-	c = (struct i2c_client *)kzalloc(sizeof(*c), GFP_KERNEL);
++	c = kzalloc(sizeof(*c), GFP_KERNEL);
  
-$66,000+ loan
- 
-Hurry, when our best deal is gone, it is gone. Simply Call Us... 
- 
-Do not worry about approval, your credit history will not disqualify you!
- 
-Call Us Free on 877-542-1880
+ 	if (!c)
+ 		return -ENOMEM;
+
+
+Patches currently in gregkh-2.6 which might be from sjayaraman@novell.com are
+
+usb/usb-ohci-pnx4008-remove-unnecessary-cast-of-return-value-of-kzalloc.patch
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
