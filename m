@@ -1,46 +1,21 @@
-From: "e-cards.com" <ygdlz@eyala.com>
-Date: Wed, 04 Jul 2007 19:53:22 +0000
-Subject: [KJ] Happy B-Day USA
-Message-Id: <001e01c7be74$fa59ee70$25321f5f@icp.pq>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Tue, 10 Jul 2007 19:28:44 +0000
+Subject: [KJ] Re: [KJ PATCH] Replacing memset(<addr>, 0,
+Message-Id: <ada7ip89hxv.fsf@cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <001901c7bdaf$59a46160$c2a7d072@klhg.fefrp>
-In-Reply-To: <001901c7bdaf$59a46160$c2a7d072@klhg.fefrp>
+References: <46405AB6.6040901@msgid.tls.msk.ru>
+In-Reply-To: <46405AB6.6040901@msgid.tls.msk.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Friend has sent you a postcard.
-See your card as often as you wish during the next 15 days.
-
-SEEING YOUR CARD
-
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
-
-http://82.251.144.48/?cba46921636c80481465
-
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
-     
-
-
-PRIVACY
-e-cards.com honors your privacy. Our home page and Card Pick Up have links to our 
-Privacy Policy.
-
-TERMS OF USE
-By accessing your card you agree we have no liability. 
-If you don't know the person sending the card or don't wish to see the card, 
-please disregard this Announcement.
-
-We hope you enjoy your awesome card.
-
-Wishing you the best,
-Webmaster,
-e-cards.com
-
+thanks, I applied both mthca patches as one commit.
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
