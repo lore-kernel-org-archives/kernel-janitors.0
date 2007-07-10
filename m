@@ -1,80 +1,123 @@
-From: "John Q. Carter" <Elliott@nirvanaclub.com>
-Date: Tue, 10 Jul 2007 05:59:39 +0000
-Subject: [KJ] Do you have the skills?
-Message-Id: <5D87F315.8394848@nirvanaclub.com>
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Tue, 10 Jul 2007 16:55:32 +0000
+Subject: [PATCH] Remove BKL from PCI syscalls
+Message-Id: <20070710165532.GP9704@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <C2662A11.0725558@iwon.com>
-In-Reply-To: <C2662A11.0725558@iwon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-CARGOX P.E. Limited Liability Company
-111 Livinston Street, Brooklyn, New York, US 11201
-+1(801)7308660
 
-Jul 9, 2007
+Remove use of the BKL from the PCI syscalls.  It was protecting against
+PCI device removal.  By taking a reference (using pci_get_slot), we
+ensure the device will not be removed while we're using it, and can
+remove the BKL.
 
-JOB OFFER (WARNING: For non-USA citizens only)
-CargoX P.E. is pleased to make you an offer on employment as a remote front-line manager (position code #1305-21). 
-Successful candidates should meet the following requirements:
-- Several years of experience in financial logistic
-- Great analytical and problem solving skills
-- Good people interaction skills
-- Ability to work independently with minimal supervision
-- Ability to respond on e-mails immediately
-- Good written and spoken English
+While I'm in this file, update the comment at the top to reflect the
+status of the syscalls.
 
-We trust that Your knowledge, skills and experience may will among our most valuable assets.
+Signed-off-by: Matthew Wilcox <matthew@wil.cx>
 
-Should You accept this job offer, per company policy You'll be eligible to receive the following 
-beginning on your hire date:
-- SALARY: Annual gross starting salary of $63,500 USD, paid in bimonthly installments by Your choice of check or direct deposit.
-- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or direct deposit.
-- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares per year.
+diff --git a/drivers/pci/syscall.c b/drivers/pci/syscall.c
+index 9d37fec..56dc193 100644
+--- a/drivers/pci/syscall.c
++++ b/drivers/pci/syscall.c
+@@ -1,10 +1,13 @@
+ /*
+  *	pci_syscall.c
+  *
+- * For architectures where we want to allow direct access
+- * to the PCI config stuff - it would probably be preferable
+- * on PCs too, but there people just do it by hand with the
+- * magic northbridge registers..
++ * This is a legacy method for accessing PCI config space on some
++ * architectures.  These days, everybody should be using sysfs or procfs
++ * which allow non-privileged users to read the safe bits of config space,
++ * but we can't remove these syscalls.  These syscalls do not allow access
++ * to PCI domains other than zero, and while it would be possible to add
++ * that support, it is better to migrate any userspace application to use
++ * the sysfs method.
+  */
+ 
+ #include <linux/errno.h>
+@@ -25,16 +28,13 @@ sys_pciconfig_read(unsigned long bus, unsigned long dfn,
+ 	u32 dword;
+ 	long err, cfg_ret;
+ 
+-	err = -EPERM;
+ 	if (!capable(CAP_SYS_ADMIN))
+-		goto error;
++		return -EPERM;
+ 
+-	err = -ENODEV;
+-	dev = pci_find_slot(bus, dfn);
++	dev = pci_get_slot(pci_find_bus(0, bus), dfn);
+ 	if (!dev)
+-		goto error;
++		return -ENODEV;
+ 
+-	lock_kernel();
+ 	switch (len) {
+ 	case 1:
+ 		cfg_ret = pci_user_read_config_byte(dev, off, &byte);
+@@ -47,10 +47,8 @@ sys_pciconfig_read(unsigned long bus, unsigned long dfn,
+ 		break;
+ 	default:
+ 		err = -EINVAL;
+-		unlock_kernel();
+ 		goto error;
+ 	};
+-	unlock_kernel();
+ 
+ 	err = -EIO;
+ 	if (cfg_ret != PCIBIOS_SUCCESSFUL)
+@@ -67,9 +65,10 @@ sys_pciconfig_read(unsigned long bus, unsigned long dfn,
+ 		err = put_user(dword, (unsigned int __user *)buf);
+ 		break;
+ 	};
+-	return err;
+ 
+-error:
++	goto out;
++
++ error:
+ 	/* ??? XFree86 doesn't even check the return value.  They
+ 	   just look for 0xffffffff in the output, since that's what
+ 	   they get instead of a machine check on x86.  */
+@@ -84,6 +83,8 @@ error:
+ 		put_user(-1, (unsigned int __user *)buf);
+ 		break;
+ 	};
++ out:
++	pci_dev_put(dev);
+ 	return err;
+ }
+ 
+@@ -101,11 +102,10 @@ sys_pciconfig_write(unsigned long bus, unsigned long dfn,
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+-	dev = pci_find_slot(bus, dfn);
++	dev = pci_get_slot(pci_find_bus(0, bus), dfn);
+ 	if (!dev)
+ 		return -ENODEV;
+ 
+-	lock_kernel();
+ 	switch(len) {
+ 	case 1:
+ 		err = get_user(byte, (u8 __user *)buf);
+@@ -138,7 +138,7 @@ sys_pciconfig_write(unsigned long bus, unsigned long dfn,
+ 		err = -EINVAL;
+ 		break;
+ 	};
+-	unlock_kernel();
+ 
++	pci_dev_put(dev);
+ 	return err;
+ }
 
-BENEFITS: 
-Standard, Acme-provided benefits for salaried-exempt employees, including the following:
-- 401(k) retirement account
-- Annual stock options
-- Child daycare assistance
-- Education assistance
-- Health, dental, life and disability insurance
-- Profit sharing
-- Sick leave
-- Vacation and personal days.
-
-TO ACCEPT THIS JOB OFFER:
-1. Send an e-mail letter to hr.cargo@flashheadz.ws in below format:
-To:  hr.cargo@flashheadz.ws
-Subject: Position code (for e.g. #1305-21)
-E-mail Text:
--Your First Name (according to your ID)
--Your Last Name (according to your ID)
--Your Primary E-mail (e-mail address to receive our messages)
--Your Country of your permanent living
--Your City (city of your permanent living)
--Your Address (address of home)
--Your Phone (home AND mobile phone with area code for urgent contacts)
-Attachement: Your CV
-2. Prepare the scan of Your foto from valid ID (WARNING: Do not send us the scan of your ID as it's a private information). It will be inquired while signing of agreement.
-3. Wait for Hiring Coordinator replay.
-4. Be ready to have an email or phone interview.
-
-TO DECLINE THIS JOB OFFER:
-1. Ignore this e-mail letter.
-
-Sincerely,
-John Q. Carter 
-Hiring Coordinator, Human Resources.
-
-Copyright (C) CargoX P.E. Limited Liability Company 2004-2007
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+-- 
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
