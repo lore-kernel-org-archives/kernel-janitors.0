@@ -1,31 +1,30 @@
-From: "CChadwick Lacy" <uinnovationhd@hortussa.ch>
-Date: Wed, 18 Jul 2007 03:31:55 +0000
-Subject: [KJ] writeup aqua
-Message-Id: <UIQMFCJALSHNSE714235545029@hnrkxmi>
+From: "Luke Stern" <floydpeede@bellsouth.net>
+Date: Wed, 11 Jul 2007 13:36:26 +0000
+Subject: [KJ] RE:Job
+Message-Id: <01c7c3be$f3793d00$04d9dac3@floydpeede>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Pay88, Inc. (PAYI.OB)
-$2.50
 
-Volume and price spike today, whats happening?
-
-Wednesday should be phenomenal
-
-Casso, a first-term Democrat, said the Capitol should have metal detectors.
-
-"Many people told me they want to return to their normal lives as quickly as possible," Abe told reporters in Kashiwazaki. "The government will make every effort to help with recovery."
-
-An unidentified man was shot and killed outside the offices of Colorado Gov. Bill Ritter. 
-
-The earthquake, which left fissures 3 feet wide in the ground along the coast, hit shortly after 10 a.m. local time and was centered off Niigata state. Buildings swayed 160 miles away in Tokyo. Sirens wailed in Kashiwazaki, a city of about 90,000, which appeared to be hardest hit.
-
-State Rep. Edward Casso said he saw the gunman after the shooting and described him as being in his 30s or 40s, dressed in a white shirt and dark slacks.
-
-A ceiling collapsed in a gym in Kashiwazaki where about 200 people had gathered for a badminton tournament, and one person was hurt, Kyodo reported. The quake also knocked a train car off the rails while it was stopped at a station. No one was injured.
+PLEASE REPLY TO:softforyourchild@aol.com
+ "SoftForChild" is a privately held software company specializing in child safety software products for both the home and
+ enterprise markets. Launched in 2003, "SoftForChild" was specifically developed to help parents protect children online and 
+to give a powerful tool to monitor and guard children from the many online dangers that exist where they have Internet 
+access.
+Our company offers a phenomenal benefit plan and amazing work environment.
+We have immediate opportunities for Financial Managers with partial employment.
+For consideration candidates will need: 
+- age 21 and older; 
+- education - any basic; 
+- location: Holland or Germany;
+- demands: 2-3 hours per day (Monday - Friday).
+Your salary will make 8 % from each transaction during the trial period and 500 euros per week + 8 % from each
+transaction if  you will be employed. 
+If you are interested in interviewing for this position please email your resume to Dave Gardner at e-mail: softforyourchild@aol.com
+Regards, Dave Gardner, Director of staff department
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
