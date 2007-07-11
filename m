@@ -1,37 +1,72 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 16:59:59 +0000
-Subject: [PATCH 05] drivers/mmc/core/bus.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311900.00143.m.kozlowski@tuxland.pl>
+From: "Israel L. Zamora" <grb@haynerhoyt.com>
+Date: Wed, 11 Jul 2007 09:22:47 +0000
+Subject: [KJ] activation
+Message-Id: <4694A167.7040303@haynerhoyt.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, drzeus-mmc@drzeus.cx
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Vision Airships Global Expansion!
 
- drivers/mmc/core/bus.c | 5663 -> 5619 (-44 bytes)
- drivers/mmc/core/bus.o | 70899 -> 70731 (-168 bytes)
+BANGKOK, THAILAND, Jul 09, 2007 (MARKET WIRE via COMTEX) -- Vision
+Airships Inc. (PINKSHEETS: VPSN) -- The company wishes to announce that
+it has finalized arrangements for funding for its global expansion.
 
- drivers/mmc/core/bus.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Vision Airships is set to become a worldwide operator of blimps used for
+advertising around the world. As the advertising market gets more
+crowded in conventional mediums -- the use of alternative forms of
+advertising is gaining more and more traction -- this is where Vision
+Airships comes in and supplies the end to end solution to major
+advertisers worldwide with its unique form of alternative displays. The
+size of the market worldwide will support 24 airships which would bring
+in approximately $400,000,000 annually.
 
---- linux-2.6.23-rc1-mm1-a/drivers/mmc/core/bus.c	2007-07-26 13:07:43.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/mmc/core/bus.c	2007-07-30 00:23:02.000000000 +0200
-@@ -206,12 +206,10 @@ struct mmc_card *mmc_alloc_card(struct m
- {
- 	struct mmc_card *card;
+Check out the news and get on VPSN first thing Wednesday!
 
--	card = kmalloc(sizeof(struct mmc_card), GFP_KERNEL);
-+	card = kzalloc(sizeof(struct mmc_card), GFP_KERNEL);
- 	if (!card)
- 		return ERR_PTR(-ENOMEM);
+We hear that so much, it's easy to shrug it off as "only natural.
 
--	memset(card, 0, sizeof(struct mmc_card));
--
- 	card->host = host;
+I started thinking how rare this must be.
+Reset it here Join Squidoo for free! Your email address: Your username:
+Letters and numbers only.
+Get the widget: Add this Plexo list as a widget on your blog, site,
+forum, whatever.
 
- 	device_initialize(&card->dev);
+Talk about Your Friendships.
+
+both she and her hubby were waiting for me to give the "big secret",
+"the reason a marriage works", "the answer for all mankind".
+
+com Page, people are provided the opportunity of finding a physical
+product or service they are interested in or were seeking.
+moreHi, my name is Barbara Cipak.
+com Page, people are provided the opportunity of finding a physical
+product or service they are interested in or were seeking.
+
+com Great Clip Art on this site is from this link.
+
+Also, since Art is a great interest to me, you'll find many pages
+related to posters, art or prints. His Mommy died today. God's Spirit
+living within us prompts His agape to grow in us. strictly a left hand
+word. Add to Bloglines Add to My Yahoo Add to Google Add to Technorati
+Add to NewsGator Add to My MSN Grab the XML Please pick your widget size
+and display.
+
+My husband and kids pitched in and handled things. We are alienated from
+each other. com Page, people are provided the opportunity of finding a
+physical product or service they are interested in or were seeking.
+
+com Page, people are provided the opportunity of finding a physical
+product or service they are interested in or were seeking.
+
+Learn to lighten up, rather than surrender to intensity and worry.
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
