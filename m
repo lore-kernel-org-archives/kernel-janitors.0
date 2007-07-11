@@ -1,7 +1,7 @@
-From: yoann padioleau <padator@wanadoo.fr>
-Date: Sat, 07 Jul 2007 20:19:05 +0000
-Subject: [KJ] Re: + some-kmalloc-memset-kzalloc-tree-wide.patch added to -mm
-Message-Id: <1CA436EC-008F-4FB1-8589-9276EA637F48@wanadoo.fr>
+From: "Jaramillox Genevieves" <3dgcali@collistar.boltongroup.it>
+Date: Wed, 11 Jul 2007 21:12:20 +0000
+Subject: [KJ] For Real Mens
+Message-Id: <01c7c3ff$4e6272a0$c6678255@3dgcali>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,30 +9,26 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-On 7 juil. 07, at 07:52, Jiri Slaby wrote:
 
-> akpm@linux-foundation.org napsal(a):
->> Subject: some kmalloc/memset ->kzalloc (tree wide)
->> From: Yoann Padioleau <padator@wanadoo.fr>
->>
->> Transform some calls to kmalloc/memset to a single kzalloc (or  
->> kcalloc).
->
-> ?NAK?
->
-> Wouldn't this cause any problems (the test in kcalloc in the  
-> concrete)?
->
-> /**
->  * kcalloc - allocate memory for an array. The memory is set to zero.
->  * @n: number of elements.
->  * @size: element size.
->  * @flags: the type of memory to allocate.
->  */
-> static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
 
-you are right, but why the type of kcalloc is not
-static inline void *kcalloc(int n, size_t size, gfp_t flags) ?
+Hi, Genevievevtbp
+
+  You want, that your "member" became strong as a stone?
+  You would like to recollect a young years...
+  Best quality! 100% Effect!
+  Best Prices!
+   
+   
+   
+   
+   
+   
+   Professional Visa Verified Online Shop.Worldwide shipping.Next day delivery.Discreet packaging.100% confidential.Free physicians consultation & prescription. 
+   
+  WWW. FreshStore .HK
+  Type  in browser (without spaces) press Enter.Please wait 1 or 2 minutes while our site is will be loaded. 
+With Best Regards, Jaramillok Genevievel.
+
 
 
 
