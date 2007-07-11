@@ -1,38 +1,27 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 10 Jul 2007 23:49:36 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Wed, 11 Jul 2007 00:16:14 +0000
 Subject: Re: [PATCH] Remove BKL from PCI syscalls
-Message-Id: <20070710234936.GA15319@kroah.com>
+Message-Id: <20070711001614.GT9704@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070710165532.GP9704@parisc-linux.org>
 In-Reply-To: <20070710165532.GP9704@parisc-linux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 10, 2007 at 05:42:18PM -0600, Matthew Wilcox wrote:
-> On Tue, Jul 10, 2007 at 05:36:47PM -0600, Matthew Wilcox wrote:
-> > On Tue, Jul 10, 2007 at 04:14:24PM -0700, Greg KH wrote:
-> > > What tree did you make this against?
-> >=20
-> > Linus' tree, as of this morning.
->=20
-> Looks like it's clashing with:
->=20
-> http://git.kernel.org/?p=3Dlinux/kernel/git/gregkh/patches.git;a=3Dblob;f=
-=3Dpci/pci-syscall.c-switch-to-refcounting-api.patch;h=E513fc9669456ee08884=
-c496ce4e6899c006dc7a;hb=3DHEAD
->=20
-> I believe my patch to be a superset of this one, and recommend just
-> dropping Alan's patch.
+On Tue, Jul 10, 2007 at 04:49:36PM -0700, Greg KH wrote:
+> On Tue, Jul 10, 2007 at 05:42:18PM -0600, Matthew Wilcox wrote:
+> > I believe my patch to be a superset of this one, and recommend just
+> > dropping Alan's patch.
+> 
+> How about just doing your patch on top of Alan's instead?
 
-How about just doing your patch on top of Alan's instead?
+Seems like a lot more work; wasn't the point of keeping patches in a git
+tree like this to make it easy to drop old patches?  I'd understand if
+it meant pulling apart and rebasing a git tree.
 
-thanks,
-
-greg k-h
--
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
