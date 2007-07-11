@@ -1,75 +1,32 @@
-From: "Cruz R. Willy" <pesw@marsh.org>
-Date: Sun, 01 Jul 2007 00:00:00 +0000
-Subject: [KJ] DealofDay: Fetching Problem Solvers - Get Organized With Help
-Message-Id: <4686EE80.7050406@marsh.org>
+From: "Harveyo Tamra" <squucolv@htc.com>
+Date: Wed, 11 Jul 2007 05:19:19 +0000
+Subject: [KJ] Ron_Document_56884_6611.pdf
+Message-Id: <018c01c7c404$3cdc05e0$4934c0d0@hbravadoq>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_03E5E54B.C73C7FA0"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ERMX Gets into Nitride Devices! Applications Are Amazing!
+This is a multi-part message in MIME format.
 
-EntreMetrix Inc. (ERMX)
-$0.16
+------=_NextPart_000_0002_03E5E54B.C73C7FA0
+Content-Type: text/plain; format=flowed; charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
 
-Nitride Wafers are the next level in super technology. From Super Energy
-Conductors to Nano-Lasers used in microscopic surgery. ERMX is moved
-into a joint venture to manufacture Nitride devices out of China. This
-is huge get on ERMX Monday!
 
-DealofDay: Fetching Homeclick.
-
-Tapered tumbler design is easier for smaller hands to hold.
-
-Need to build a site?
-
-Tense Index makes creating an attractive gallery or file listing as
-simple as uploading your files. DealofDay: Fetching Lobster Gram - Send
-The Gift of Great Taste from Lobster Gram. DealofDay: Fetching
-ShopatHome. DealofDay: Fetching VistaPrint-FREE Business Cards Hold on!
-Buy-one-get-one free deals, gifts with purchase and just red Hold on!
-
-Attention New Homeowners Want Mortgage Life Insurance? Web site design
-by Mike Piontek.
-DealofDay: Fetching Mikasa. Sheet cakes and cupcakes travel in style
-with this elegant, durable Tupperware favorite. com - Rollback Savings
-Mean Great Values at Walmart. DealofDay: Fetching Open Houses -
-Advertise your open house Hold on! MACY'S - AREA RUGS: Lowest prices of
-the season!
-css"; Tense Code Making the web a nicer place. New information about
-Tense Log and Tense Index has been added, as well as a sneak peek at the
-upcoming Tense Store.
-
-Send The Gift of Great Taste from Lobster Gram.
-DealofDay: Fetching Yoursleepstore.
-
-DealofDay: Fetching HomeAnnex - Red Tag Clearance Sale Hold on!
-DealofDay: Fetching HSN.
-Here at Tense Forms we have a large number of web sites that need to be
-updated often, and they share a lot of the same information.
-DealofDay: Fetching Yoursleepstore.
-
-DealofDay: Fetching YourProductSamples - Free Scrubbing Bubbles
-Automatic Shower Cleaner Hold on! DealofDay: Fetching Mortgage
-Protection Insurance - Attention New Homeowners Want Mortgage Life
-Insurance? DealofDay: Fetching PacificPillows.
-DealofDay: Fetching HungryAgents.
-Simply click the icon to switch your firewall on or off.
-DealofDay: Fetching Lifescript- Free Vitamin Profile to see if you are
-getting enough vitamins Hold on! Designer Bean Bags, and Home
-Furnishings Visit Studio OneUp.
-
-Earn Rewards for purchasing home improvement products online at
-MoreHome.
-
-DealofDay: Fetching SmartBargains. Home Decorators Collection -
-HomeDecorators.
-
-This site was created with Tense Code, my own content management and web
-log system.
+------=_NextPart_000_0002_03E5E54B.C73C7FA0
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------=_NextPart_000_0002_03E5E54B.C73C7FA0--
