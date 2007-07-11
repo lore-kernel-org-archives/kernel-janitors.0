@@ -1,63 +1,76 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 27 Jul 2007 09:45:38 +0000
-Subject: [PATCH 15/68] 0 -> NULL, for arch/sh64
-Message-Id: <200707270945.LAA17342@ifs.emn.fr>
+From: MR.OBI@server46.publicompserver.de, DODO@server46.publicompserver.de,
+Date: Wed, 11 Jul 2007 13:28:45 +0000
+Subject: [KJ] Attn: Beneficiary
+Message-Id: <20070711132845.548832657B4@server46.publicompserver.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
-Cc: lethal@linux-sh.org, linuxsh-shmedia-dev@lists.sourceforge.net, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
 
-When comparing a pointer, it's clearer to compare it to NULL than to 0.
+Attn: Beneficiary
 
-Here is an excerpt of the semantic patch: 
+I am delighted to inform you that the UNITED NATION CRIME PREVENTION UNIT M=
+anagement through the Office of the SKYE BANK GOVERNOR and other bank direc=
+tors have decided to call back all approved fund Payment through offshore p=
+ayment centers to the bank treasury following Interception of the UNITED NA=
+TION CRIME PREVENTION UNIT AND WORLD BANK and have concluded arrangements t=
+o pay you this Funds by cash through the Diplomatic Agents who will bring t=
+he cash in a Machine sealed consignment to you in the United States as my b=
+ank has temporarily stopped further payment via wire transfer.
 
-@@
-expression *E;
-@@
+In this regards we are going to send your inheritance/contract payment to y=
+ou via our accredited Diplomatic Agent/shipping Company and we have secured=
+ every needed document to cover the money. Note: The money is coming on 2 s=
+ecurity proof box. The box are sealed with synthetic nylon seal and padded =
+with machine. Please you don=92t have to worry for anything, as the Transac=
+tion is 100% risk free. The Boxes are coming with A Diplomatic agent who wi=
+ll accompany the boxes to your house address. All you need to do now is to =
+reconfirm to us
 
-  E =
-- 0
-+ NULL
 
-@@
-expression *E;
-@@
+Your Full Name=20
+Contact House Address
+Occupation
+Age
+Your mobile phone;
 
-  E !- 0
-+ NULL
+The Diplomatic Attached will travel with it. They will call you immediately=
+ they arrive in your countries airport to your house. I hope you understand=
+ me.
 
-Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-Cc: lethal@linux-sh.org
-Cc: linuxsh-shmedia-dev@lists.sourceforge.net
-Cc: akpm@linux-foundation.org
----
+Note: The diplomat does not know the original contents of the boxes. What l=
+ declared to them as the contents is Sensitive Photographic Film Materials =
+for security reasons. I did not declare money to them please. If they call =
+you and ask you the contents please tell them the same thing Ok. You will s=
+ecure the Diplomatic immunity clearance certificate and the=20
+Certificate of fund ownership, without this two certificate, your Payment f=
+und will not be approve, can not be courier for this payment season, the ne=
+eded certificate will Make it pass every custom Checkpoint all over the wor=
+ld without hitch.
 
- ioremap.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Confirm the receipt of this message and re-send the requirements to me imme=
+diately you receive this message. Please I need urgent reply because the bo=
+xes are Schedule to live as soon as we hear from you. I will try to contact=
+ you today again and attached the money as being taken to the diplomat serv=
+ice company for delivering. You are to call me for further directives.
 
-diff --git a/arch/sh64/mm/ioremap.c b/arch/sh64/mm/ioremap.c
-index 9908577..b335849 100644
---- a/arch/sh64/mm/ioremap.c
-+++ b/arch/sh64/mm/ioremap.c
-@@ -167,7 +167,7 @@ static unsigned long shmedia_alloc_io(un
- 
-         if (name = NULL) name = "???";
- 
--        if ((xres = xres_alloc()) != 0) {
-+        if ((xres = xres_alloc()) != NULL) {
-                 tack = xres->xname;
-                 res = &xres->xres;
-         } else {
-@@ -364,7 +364,7 @@ ioremap_proc_info(char *buf, char **star
- 	for (r = ((struct resource *)data)->child; r != NULL; r = r->sibling) {
- 		if (p + 32 >= e)        /* Better than nothing */
- 			break;
--		if ((nm = r->name) = 0) nm = "???";
-+		if ((nm = r->name) = NULL) nm = "???";
- 		p += sprintf(p, "%08lx-%08lx: %s\n",
- 			     (unsigned long)r->start,
- 			     (unsigned long)r->end, nm);
+Thanks
+Yours truly,
+MR.OBI DODO
+UNITED NATIONS CRIME PREVENTION UNIT,
+AFRICA CHAPTER.
 
+
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will b=
+e discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
+ns.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
