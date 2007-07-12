@@ -1,7 +1,7 @@
-From: "Hallmark.Com" <ykhx@shadv.plus.com>
-Date: Thu, 12 Jul 2007 12:04:48 +0000
+From: "e-cards.com" <sfqq@wasabiworld.com>
+Date: Thu, 12 Jul 2007 16:53:22 +0000
 Subject: [KJ] You've received an ecard from a School friend!
-Message-Id: <002901c7c47c$d8252410$28ec78bc@rf.okx>
+Message-Id: <000f01c7c4a5$27f0aa00$37831c80@vdta.ktglz>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <001b01c7bc27$d1d62fd0$2a39c02c@tu.quy>
 In-Reply-To: <001b01c7bc27$d1d62fd0$2a39c02c@tu.quy>
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://222.141.78.62/?e179d89907cd64e28cae3d7703a3
+http://64.25.89.26/?bc955099675c50080d0229e36
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Mailer-Daemon,
-Hallmark.Com
+Administrator,
+e-cards.com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
