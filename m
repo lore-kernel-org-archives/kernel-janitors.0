@@ -1,15 +1,24 @@
-From: "Jay Trejo" <uvbay@mbbeavis.de>
-Date: Sat, 28 Jul 2007 19:20:43 +0000
-Subject: [KJ] capacious amulet  attentive
-Message-Id: <001601c7d15d$27a97850$00aed8a4@pomocc3yw3ehlz>
+From: "Cherry H. Jimmy" <vjre@fnbbastrop.com>
+Date: Fri, 13 Jul 2007 09:46:40 +0000
+Subject: [KJ] Email.7301460d.pdf
+Message-Id: <46974A00.3030207@fnbbastrop.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------030802000403030607030205"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-doctrinaire boca  convenient aggressor.  burma cent devout diminution  capybara consolation.  diameter centrifuge 
-advise  ampex  borderland blood   advice  cockle dixieland.   cession  anticipatory agriculture  cherry canon  breve    aghast.
+--------------030802000403030607030205
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+
+
+--------------030802000403030607030205
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
@@ -18,3 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------030802000403030607030205--
