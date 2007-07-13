@@ -1,19 +1,19 @@
-From: "Rebecca I. Beard" <yavqu@phh.com>
-Date: Fri, 13 Jul 2007 05:29:54 +0000
-Subject: [KJ] document-NCRQAIB.pdf attached
-Message-Id: <4697ECC6.2030307@phh.com>
+From: Singleton <fjysq@kpmg.ky>
+Date: Fri, 13 Jul 2007 11:28:22 +0000
+Subject: [KJ] Re: cancelled.bxeqcdt.pdf
+Message-Id: <469761D6.2060603@kpmg.ky>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080507000602070007040604"
+Content-Type: multipart/mixed; boundary="------------040002080402000406010008"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---------------080507000602070007040604
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+--------------040002080402000406010008
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------080507000602070007040604
+--------------040002080402000406010008
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -27,4 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------080507000602070007040604--
+--------------040002080402000406010008--
