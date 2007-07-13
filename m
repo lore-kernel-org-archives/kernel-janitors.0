@@ -1,54 +1,70 @@
-From: "Rose S. Stanford" <agb@optonline.com>
-Date: Thu, 05 Jul 2007 20:07:55 +0000
-Subject: [KJ] Other researchers have been able to slow, and in some cases,
-Message-Id: <468D4F9B.7020703@optonline.com>
+From: "Ernest G. Savage" <ofhwq@pepsi.com>
+Date: Fri, 13 Jul 2007 02:18:56 +0000
+Subject: [KJ] waltz terms
+Message-Id: <4696E110.1080801@pepsi.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Brokers Move On ERMX!
+SZSN Expands To Become 3rd Largest Agricultural Seed Provider!
 
-EntreMetrix Inc. (ERMX)
-$0.18
+Shandong Zhouyuan Seed and Nursery Co., Ltd (SZSN)
+$0.24
 
-Heavy trading today as ERMX announced its launch of digital support
-tools for its portfolio companies. Brokers are getting ahead of this
-steady climb as they grab up large blocks of shares for there clients.
-Look at the numbers and get on ERMX Friday morning!
+SZSN is expanding. Recent acquisitions put it in the top 3 Seed
+providers in China. It is also expanding its distribution chains to 500
+new regional agencies. Big news expected! Get on SZSN first thing Friday
+morning.
 
-Out of print works are republished every day, bringing welcome new
-advances to authors and the prospect of new royalty income.
-Rather, standard optical fibers are used as the medium in which the
-experiment took place. In one opinion, the judge decided that the debate
-over digital surveillance goes beyond the question of legal standard.
-The root kit software has a cloaking feature that hides files on the
-affected system. This is a much faster way of accessing the current news
-reports than visiting an equal number of separate websites. I'll be
-looking for the bypass that I hope will remain a freeway. Do you know
-that your cellular service provider knows where your phone is?
-While I'm disheartened to find that broadband adoption is decreasing,
-I'm heartened to find that over half of American households have useful
-bandwidth. Broadband users are more likely to engage in a broad range of
-online activities than dial-up users. Most Microsoft Windows users know
-how to save documents on their local hard drive, usually the C: drive,
-in the My Documents folder. These numbers do not account for the
-comments, trackback pings, and e-mail distributions that follow many of
-the articles. The days of having students arrive to class with the
-excuse that their textbook was out of stock at the bookstore are long
-gone. With wi-fi being as popular as it is, why is it that wi-fi
-infrastructure isn't as well developed as cellular telephone service?
+Microsoft "Plays For Sure".
 
-Dave's OpinionI have been listening to podcast recordings of my favorite
-news and conference recordings for six years.
+Listen to your favourite podcasts, retrieve news and blog content all in
+one.
 
-This six percent increase, over six months, is "small and not
-statistically significant," according to the report.
-I use Computer Associates eTrust EZ Armor, that updates its antivirus
-data every hour, and it includes an excellent firewall application.
+The geomagnetic field was quiet to unsettled.
+It's time we took some chances, put ourselves out there instead of
+worrying about what other people think of us.
+
+com, after alot of cryptic talk about what the future may hold for
+podcasting, Adam Curry showed his hand by quitely unveiling Podshow. The
+software suite integrates very nicely with Arbitron, Nielsen and other
+statistical programs, one of the biggest questions in the podcasting
+arena has been listenership.
+
+Listen to The Weekly Horoscope Forecast anywhere in the world with
+genuine Aruntx iPodcast Entertainment Syndication.
+
+As Seen In The National Enquirer. Listen to The Show anywhere in the
+world with genuine Aruntx Entertainment Syndication. And we invite you
+in, to live your life to its fullest. This, of course goes on all the
+time, otherwise there would be no need for the vast array of
+public-relations firms. The site also provides an opportunity for
+listeners to sign-up. It plays at the boundary of documentary and
+imagination. RAZRWire represents the fusion of world-class Oakley optics
+with Motorolas industry-leading Bluetooth technology.
+
+Your presenters, Gloria and Cuebism,  Stockholm Sweden. That is, an
+internet delivered program that is automatically delivered to a mobile
+device. We deliver sophistication without pretension, attention without
+intrusion, comfort without boundaries. If your know how to use a
+telephone or a computer with an email client, you can now podcast.
+MANDINGO embraces the Magic Of Super Sunday with The Aruntx Weekly
+Sports Report. The Aruntx Newswire Podcasting Radio Show Syndication
+Network content is available with or without software, via. Department
+of State has deployed RetrievalWare to power the search capabilities of
+its public facing, heavily trafficked web site, www.
+
+That is, news that is really not by definition news, either because of
+its irrelevance to each of our personal lives or the well-being of the
+nation.
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
