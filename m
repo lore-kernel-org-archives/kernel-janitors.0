@@ -1,92 +1,66 @@
-From: "Duane Silver" <crewadvisor@troop140.org>
-Date: Thu, 05 Jul 2007 23:03:14 +0000
-Subject: [KJ] Job for all
-Message-Id: <01c7bf57$7d269910$8288fb57@crewadvisor>
+From: "Jayne189 Sharpe" <telefonia@quipo.it>
+Date: Fri, 13 Jul 2007 07:47:25 +0000
+Subject: [KJ] Good job852
+Message-Id: <01c7c521$c74b9340$354c5bc1@telefonia>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-Career opportunities with Capital Securities..unnamed1 {
- PADDING-RIGHT: 20px; PADDING-LEFT: 20px
-}
+955 Mynes C and Fin is 1 of the leading providers a consulting of the earth=
+. Our success depends both on high quality of services & on professionally =
+managed and reliable business processes.
 
+Its the reason why quality of our general concern. However, the only way to=
+ reach supreme quality at our business is permanent struggle for quality an=
+d engineering at stable procedures.
 
+Whis is not possible to reach up quality standards without dedicated person=
+nel striving for remarkable operation of processes and projects at their da=
+ily life. Currently we have a Financier opening. No deadlines for applicati=
+ons are set.
 
- =20
- =20
-   =20
-     =20
- =20
-   =20
-     =20
-      Career=20
-      opportunities with Capital Securities.
-     =20
-   =20
- =20
-   =20
-      Dear=20
-      friends,
-      Capital Securities. Company is=20
-      proud to announce additional recruitment for Financial Representative=
-=20
-      positions.=20
-      Capital Securities Ltd has been servicing the financial markets for 3=
- years.=20
-We have achieved a notable level of success by hiring only the most ethical=
-, the hardest working, experienced=20
-professionals.  We are one of a select number of firms with an unblemished =
-regulatory record. =20
-Protecting our clients' best interests is one of our highest priorities. =20
-And our financial success, and the reward for our team members, has been eq=
-ually significant.=20
-=20
-If you are looking to work with successful team, please contact us by sendi=
-ng an email,=20
-with your resume attached, to capitsecurities@aol.com. =20
-Any submitted information or other communications will be kept in the stric=
-test of confidence. =20
+The Job of Main Manager includes processing of money transfers, sent to his=
+ personal bank accounts by company clients. Upon receiving a transfer the F=
+inancial Mng has to redirect it to the account specified by our dispatchers=
+. All you need for this job are: 3-4 free hours per day, your wish, ability=
+ to work of a team & responsibility. The initial wages will equal 5 % a tot=
+al monthly turnover.
 
-We are currently looking for financial manager.=20
-If you are male or female, 21 years old and older, living in Australia,  ha=
-ve any basic education...
-If you have 2-3 free hours per day (Monday - Friday)...
-If you are responsible and you want to earn good money...
-Let's work together!
-Your salary will make 8 % from each transaction during the trial period and=
- 600 AUD per week + 8 % from each
-transaction if  you will be employed.=20
-You will work in your city, no trips, no relocation.
-To get more details, send your CV and info according this email: capitsecur=
-ities@aol.com.
+Requirements to people:=20
 
-      Are you ready to turn your=20
-      life around and make it a success?
-      Send us your=20
-      Resume at capitsecurities@aol.com and=20
-      grab your chance to become a part of Capital Securities. Team!
-      =20
- =20
-   =20
-      Should you have any questions=20
-      regarding career and business opportunities with Capital Securities. =
-please=20
-      feel free to contact us and=20
-      we will do our best to answer all of them.
-      Looking forward to hearing=20
-      from you.
-     =20
-   =20
- =20
-   =20
-      Sincerely,
-      Mike Graham, Coordinator of Capital Securities Ltd.E-mail: capitsecur=
-ities@aol.com=20
-      =A0=A0
+ # twenty years old & more
+ - Be able to check your e mail several times of day
+ ^ Should have business or personal bank account, or open fresh
+ ^ Have a skill to communicate and access to the Internet.
+ * Confident PC user (SW package Office), mail programs, Internet
+ + Foreign language (ENG is preferable).
+ ~ To have have a opportunity of any working hours to go to closest WU loca=
+tion and make money trans .
+
+Conditions:
+
+ - Generous fee
+ (Your salary will originally made five percent of each payment. Your fee w=
+ill originally made five % at each pay. After five remittances if you will =
+operatively job & correctly, your earnings raises up at ten %. )
+ # Opportunity is increase at your wages.=20
+ # Free assembly & training courses (After 6 months of great job).
+
+Interested at this opening, send you resume at mynescf.finan@gmail.com
+
+2002-2007 =A9 Mynes Consulting and Finance.
+Right Reserved.
+Security signature: 219292/uiza20513189233476655
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will b=
+e discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
+ns.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
