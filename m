@@ -1,7 +1,7 @@
-From: "greetingcard.org" <tbe@vzavenue.net>
-Date: Tue, 10 Jul 2007 19:49:41 +0000
+From: "funnypostcard.com" <cenw@naeng.gm.com>
+Date: Fri, 13 Jul 2007 17:43:03 +0000
 Subject: [KJ] You've received a postcard from a School-mate!
-Message-Id: <003001c7c32b$74c58420$2c95a8e5@vuu.rrar>
+Message-Id: <001601c7c575$437958a0$ec209e9c@ffrx.dhscd>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
 In-Reply-To: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://213.231.97.109/?0819e14b1a14a2c2d8a18
+http://69.37.155.83/?6ec290b516c3c2cd8a7c0b58e
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -27,7 +27,7 @@ We hope you enjoy your awesome card.
 
 Wishing you the best,
 Webmaster,
-greetingcard.org
+funnypostcard.com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
