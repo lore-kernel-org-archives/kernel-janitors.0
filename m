@@ -1,21 +1,19 @@
-From: "AGracie Darren" <biibavm@nivolux.nl>
-Date: Tue, 10 Jul 2007 06:54:06 +0000
-Subject: [KJ] Jean_Document_21234_15487.pdf
-Message-Id: <089901c7c308$3cbd49b0$0650d0e0@asushic>
+From: Maurice <kder@mn.rr.com>
+Date: Fri, 13 Jul 2007 02:27:18 +0000
+Subject: [KJ] Request-swoau.pdf
+Message-Id: <4696E306.6020601@mn.rr.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----=_NextPart_000_0002_00B1E30D.D35F4BC0"
+Content-Type: multipart/mixed; boundary="------------070607030404000008030701"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_0002_00B1E30D.D35F4BC0
-Content-Type: text/plain; format=flowed; charset="iso-8859-1";
-	reply-type=original
+--------------070607030404000008030701
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-------=_NextPart_000_0002_00B1E30D.D35F4BC0
+
+--------------070607030404000008030701
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -29,4 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------=_NextPart_000_0002_00B1E30D.D35F4BC0--
+--------------070607030404000008030701--
