@@ -1,7 +1,7 @@
-From: "funnypostcard.com" <hzp@venvander.demon.nl>
-Date: Tue, 10 Jul 2007 14:32:30 +0000
-Subject: [KJ] You've received a greeting ecard from a Worshipper!
-Message-Id: <002301c7c2ff$25c205f0$4277a7b9@odx.trnf>
+From: "FreeWebCards.Com" <eyy@dland.de>
+Date: Sat, 14 Jul 2007 01:06:36 +0000
+Subject: [KJ] You've received a greeting ecard from a School friend!
+Message-Id: <000301c7c5b3$3a067cb0$cf5da42e@xaehy.ekqy>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
 In-Reply-To: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Worshipper has sent you a greeting ecard.
+Hi. School friend has sent you a greeting ecard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://66.63.82.19/?57a4a6c198eb161d496d2989907cd64e28cae3d
+http://75.201.82.106/?44c604a1e290b516c3c2cd8a7c0b58e47d
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Administrator,
-funnypostcard.com
+Postmaster,
+FreeWebCards.Com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
