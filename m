@@ -1,92 +1,74 @@
-From: forgetfulness <exq@ayungriverrafting.com>
-Date: Mon, 02 Jul 2007 18:51:14 +0000
-Subject: [KJ] Traditionally,
-Message-Id: <468A9958.3000607@ayungriverrafting.com>
+From: neha_saxena08 moderator <neha_saxena08-owner@yahoogroups.com>
+Date: Sat, 14 Jul 2007 06:58:59 +0000
+Subject: [KJ] Yahoo! Groups: You're invited! Join neha_saxena08 today.
+Message-Id: <1184396339.1404.60007.w120@yahoogroups.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ERMX Goes Wild! Wallst.net Does Feature Interview!
 
-EntreMetrix Inc. (ERMX)
-$0.185 (12:19EST) UP 15.6%
+neha_saxena08@yahoo.com has invited you to join neha_saxena08 
+[http://groups.yahoo.com/group/neha_saxena08/] on Yahoo! Groups,
+the best way to discover and share information and advice with others.  All for free.
 
-Wallst.net releases a feature audio interview on ERMX via their site. Go
-read the news and listen to the interview and get on ERMX it is going
-through the roof!
+A personal invitation from neha_saxena08@yahoo.com:
 
-The service then gets the XML data and returns it to the XMLHttpProxy
-client, which performs an XSLT transformation on the data to convert it
-to JSON. It can be a buffer between third-party code and your
-application. With Dynamic Faces, you can get rid of the button and rely
-on Dynamic Faces to do the work of updating these components using Ajax.
-large, form textarea. See The Yahoo Geocoding API documentation for more
-details.
+*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*
+*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*
+Kayastha Matrimonial - http://www.kayastha.in
+******************************************************
+Shape Your Dreams into Reality At
+http://www.kayastha.in
+Ek Rishta
+Vishwas Ka
+Kayastha Matrimonial
+http://www.kayastha.in
+Online Registration Form available at
+http://www.kayastha.in
+Marriageable bio-data of Well Educated & Well Settled
+Kayastha Brides and Grooms
+******************************************************
+From different Kayastha Section
+Srivastava, Saxena, Mathur, Bhatnagar, Ambastha, Asthana, 
+Kulshrestha, Surdhawaja, Goud, Karna, Nigam, Valmik.
+******************************************************
+Kayastha Matrimonial - http://www.kayastha.in
+*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*
+*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~*~~~* 
 
-The Yahoo Geocoder service takes an address and returns its latitude and
-longitude based on a address or location. It can be a buffer between
-third-party code and your application.
-However, this requires you to be familiar with writing custom JavaServer
-Faces components. Select one of the varieties from the menu to see its
-description, also without experiencing a page refresh. When creating a
-custom Ajax JavaServer Faces component, developers must weigh a variety
-of options. At the end of the article is a list of reference resources.
-The next couple of paragraphs will introduce the API.
 
-Subsequently, the portal can personalize that data so that its users can
-have their own mashups with data sources that suit their individual
-needs, hence saving a major task in the development cycle. Sun recently
-disclosed that it join the Dojo Foundation as a sponsor as it
-participates in the Dojo Toolkit project.
 
-Refreshing data and server push: HTML pages may poll data  from a server
-for up-to-date data such as scores, stock quotes, weather, or 
-application-specific data.
+See for yourself why millions of people are members of Yahoo! Groups.  But
+hurry.  This invitation expires in 30 days.
 
-Read on for all the details.
 
-In such a case, rather than reimplementing the base rendering behavior
-of the entire existing component, the developer would more efficiently
-reuse what already exists. It also showed how to create a JSF
-application that includes GUI components that are modeled by the JSF
-framework.
+Join this group:
+http://groups.yahoo.com/i?i=ghTWeZiTAXQTALLbtDSs61dLxmY&e=kernel-janitors%40lists%2Eosdl%2Eorg 
 
-Greg Murray, Sun's AJAX Architect, will be one of the people
-representing Sun as a member of the Dojo Foundation. This may be done by
-providing a fully qualified URL to the  XmlHttpProxyServlet using the
-URL parameter xslURL.
 
-However SVG does not have a widget set which includes buttons or other
-components. See the article on the use of Ajax and portlets for more on
-how you can use portlet applications today.
-Something strange was observed by the Hubble Space Telescope.
+------------------------------------------------------------------------
+Yahoo! Groups is a free service that allows you to stay in touch with 
+friends and family or meet new people who share your interests. 
+Yahoo! Groups values your privacy. It is a violation of our service 
+rules for Groups members to abuse this invitation feature. If you feel 
+this has happened, please notify us:
+http://help.yahoo.com/help/us/groups/abuse/index.html
 
-Let's take a look at some of the code for the demonstration.
+You may also change your email preferences to stop receiving group 
+invitations in the future. To do so, please go here:
+http://groups.yahoo.com/s?tag=ziSRKorPilE-IWuHQqqmQje1iNuAYJ6qZG0x_gLnzFQzSRKIPS4tuqbDi8Ka2Ch2yz5O6rMr8D-Kc3236eqLdJMwxa7BLQ
 
-Sun's Ajax architect, Greg Murray, has been tapped to be one of the
-people participating in Dojo as a Sun representative.
+Your use of Yahoo! Groups is subject to:
+http://docs.yahoo.com/info/terms/
 
-Web applications have traditionally been a set of HTML pages that must
-be reloaded to change any portion of the content. Sun, Sun Microsystems,
-the Sun logo, Java, JavaScript, JavaServer Faces, NetBeans and The
-Network Is The Computer are trademarks, registered trademarks or service
-marks of Sun Microsystems, Inc. Because the component's renderers are
-specific to an implementation, it would not be wise to try to extend the
-base renderer class.
-
-At the end of the article is a list of reference resources. Partial
-submit: An HTML page can submit form data as  needed without requiring a
-full page refresh.
-
-You can download the archive for the Java Web Start example. Creating
-the Portlet Class As a first step, create the portlet class and name it
-MashupMapPortlet, as described in this section. Is Ajax here to stay?
-Likewise, you're seeing greater energy efficiency, thereby reducing
-costs.
-
+ 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
