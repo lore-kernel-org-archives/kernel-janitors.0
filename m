@@ -1,25 +1,25 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:15:57 +0000
-Subject: Re: [PATCH 39] net/ipv4/ip_options.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312315.58399.m.kozlowski@tuxland.pl>
+From: "Erich" <mbushszik@greenscapepump.com>
+Date: Sun, 15 Jul 2007 13:00:44 +0000
+Subject: [KJ] Kernel-janitors hello!
+Message-Id: <9876534149.20070715150044@toib>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312016.59970.m.kozlowski@tuxland.pl> <20070731.140728.118970012.davem@davemloft.net>
-In-Reply-To: <20070731.140728.118970012.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: David Miller <davem@davemloft.net>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-> Applied, but note that this patch changes behavior, previously
-> only the ip_options structure base was cleared out, but now
-> the whole memory region is cleared.
-> 
-> I think it's OK for this case, but I'm just making note of it.
 
-Agrh. Sorry. I must have overlook this. Feel free to drop it if
-you think its not worth it :-)
 
-Thanks,
+W-H-O-R-E-S
+http://geocities.com/a2Doebe3q35/?vpn24223
 
-	Mariusz
+Gestur svarar: "Kunna myndi eg m.r r.. ef eg hef.i v.gi. vegi. a. hafa .a. undanbrag. a. m.li. m.tti .n.tt ver.a ef . m.r yr.i haft a. nefnast annan veg en eg h.ti," og letur Gestur mj.g a. s.kin s. fram h.f.. 
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
