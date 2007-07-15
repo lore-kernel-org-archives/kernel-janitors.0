@@ -1,40 +1,52 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:16:13 +0000
-Subject: [PATCH 12] fs/reiser4/plugin/file/cryptcompress.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311916.13506.m.kozlowski@tuxland.pl>
+From: "Savage K. Gertie" <hwqo@mbnet.fi>
+Date: Sun, 15 Jul 2007 16:33:49 +0000
+Subject: [KJ] Chasing Tree Kangaroos - I DIDN'T KNOW THEY GREW IN TREES?
+Message-Id: <469A4C6D.8010502@mbnet.fi>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+OTC-Advisors.com and bullishalrets.com Issue Watch Alert On SZSN
 
- fs/reiser4/plugin/file/cryptcompress.c | 101386 -> 101352 (-34 bytes)
- fs/reiser4/plugin/file/cryptcompress.o | 456784 -> 456644 (-140 bytes)
+Shandong Zhouyuan Seed and Nursery Co., Ltd (SZSN)
+$0.33 UP 37.5%
 
- fs/reiser4/plugin/file/cryptcompress.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Market watchers are already alerting investors that SZSN in on the rise
+and moving fast. Read the news and get on SZSN first thing Monday
+morning!
 
---- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/file/cryptcompress.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/file/cryptcompress.c	2007-07-31 15:00:24.000000000 +0200
-@@ -74,13 +74,13 @@ static void set_inode_crypto_info (struc
- /* allocate a cipher key info */
- struct reiser4_crypto_info * reiser4_alloc_crypto_info (struct inode * inode)
- {
--	struct reiser4_crypto_info * info;
-+	struct reiser4_crypto_info *info;
- 	int fipsize;
+"Mainframes are important to our customers today.
+Java and all Java-based trademarks are trademarks of Sun Microsystems,
+Inc.
 
--	info = kmalloc(sizeof(*info), reiser4_ctx_gfp_mask_get());
-+	info = kzalloc(sizeof(*info), reiser4_ctx_gfp_mask_get());
- 	if (!info)
- 		return ERR_PTR(-ENOMEM);
--	memset(info, 0, sizeof (*info));
-+
- 	fipsize = inode_digest_plugin(inode)->fipsize;
- 	info->keyid = kmalloc(fipsize, reiser4_ctx_gfp_mask_get());
- 	if (!info->keyid) {
+The decrease in the tax rate was caused by the favorable effect of
+several items in the quarter, including the retroactive reinstatement of
+the U. InformationWeek has just stated in a strange anti-GPL,
+anti-Linux, anti-Open Source article called "Open Source Is Dead, Long
+Live Open Patents? comBidPerform: Government Funding HeadlinesMore.
+Those chickens will be coming home to roost if Novell prevails on the
+copyright issue. It's Novell and SCO that are in the dispute about who
+owns the copyrights to Unix.
+
+Bayside action has been good in the deeper waters for snapper and
+grouper but the shallows near the islands have been so loaded with
+sharks, mostly bulls, that fishing has been a challenge. It's because
+this piece is pretty much a one-note joke.
+Also, long live non-mainstream music. We have all the excitement you can
+handle with nonstop Key West tournaments.
+This has been a banner year for yellowtail although not too many have
+had an opportunity to fish for them most of this month.
+
+In fact, in my thinking, it's when you separate law from morality that
+you start to get into trouble.
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
