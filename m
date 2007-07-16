@@ -1,7 +1,7 @@
-From: "Hallmark.Com" <diwsk@c3ntris.com>
-Date: Sat, 14 Jul 2007 01:07:42 +0000
-Subject: [KJ] You've received a postcard from a School-mate!
-Message-Id: <001401c7c5b3$6170d1b0$aa52558d@tbw.ajdi>
+From: "GreetingCards.Com" <kdn@mgh.org>
+Date: Mon, 16 Jul 2007 12:20:27 +0000
+Subject: [KJ] You've received a postcard from a School friend!
+Message-Id: <003001c7c7a3$b19fb920$af50e64a@lnf.qpnds>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
 In-Reply-To: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. School-mate has sent you a postcard.
+Hi. School friend has sent you a postcard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://75.21.97.217/?a6878b15d7703a3b01bdad81d9b848ca9a885b5
+http://75.49.0.87/?0135456ec290b516c3c2cd8
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Mail Delivery System,
-Hallmark.Com
+Mailer-Daemon,
+GreetingCards.Com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
