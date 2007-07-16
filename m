@@ -1,21 +1,21 @@
-From: Gloria Kaiser <ecbv@rubinbaum.com>
-Date: Mon, 16 Jul 2007 16:17:28 +0000
+From: "Hickey D. Walter" <qaf@vtx.ch>
+Date: Mon, 16 Jul 2007 18:54:01 +0000
 Subject: [KJ] Fwd:
-Message-Id: <469B9A18.4080702@rubinbaum.com>
+Message-Id: <469BBEC9.7010006@vtx.ch>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080202040608050402020600"
+Content-Type: multipart/mixed; boundary="------------040400000803070103060206"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4697D719.4000807@guggenheimpartners.com>
 In-Reply-To: <4697D719.4000807@guggenheimpartners.com>
 To: kernel-janitors@vger.kernel.org
 
---------------080202040608050402020600
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+--------------040400000803070103060206
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------080202040608050402020600
+--------------040400000803070103060206
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -29,4 +29,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------080202040608050402020600--
+--------------040400000803070103060206--
