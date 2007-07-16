@@ -1,68 +1,97 @@
-From: Denis Cheng <crquan@gmail.com>
-Date: Sun, 15 Jul 2007 08:52:51 +0000
-Subject: [PATCH 2/2] add static delaration and init_module fixes
-Message-Id: <11844896163299-git-send-email-crquan@gmail.com>
+From: "Rudolph E. Richmond" <luwp@zen-sys.com>
+Date: Mon, 16 Jul 2007 15:20:41 +0000
+Subject: [KJ] Cheryl Fiorelli as a candidate for LASIK surgery given her
+Message-Id: <469B8CC9.3020203@zen-sys.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1184489571313-git-send-email-crquan@gmail.com>
-In-Reply-To: <1184489571313-git-send-email-crquan@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Denis Cheng <crquan@gmail.com>
 
-As stated by kernel janitors TODO list:
+SZSN Announces Sales Income UP 37.6% Over Last Year!
 
-	Remove unneeded historic code / New API conversions.
-	- get rid of init_module / cleanup_module
+Shandong Zhouyuan Seed and Nursery Co., Ltd (SZSN)
+$0.38 UP 15% (9:36AM EST)
 
-and with the __init / __exit code section declarations,
-the #ifdef MODULE #endif is not needed any more.
+SZSN continues to climb as more great news unfolds. Read the news and
+get on SZSN today!
 
-Signed-off-by: Denis Cheng <crquan@gmail.com>
----
- drivers/net/wireless/wavelan.c |    9 +++++----
- 1 files changed, 5 insertions(+), 4 deletions(-)
+The concern was that people wouldn't be able to do their jobs if
+something went wrong with the surgery, Mauger said. Anita Nevyas-Wallace
+using the unapproved Excimer Laser was subsequently found
+post-operatively to be significantly decentered based on
+computer-assisted corneal topographic analysis. The plate haptic
+intraocular lens was then decentered.
 
-diff --git a/drivers/net/wireless/wavelan.c b/drivers/net/wireless/wavelan.c
-index 796011b..392c54c 100644
---- a/drivers/net/wireless/wavelan.c
-+++ b/drivers/net/wireless/wavelan.c
-@@ -4235,13 +4235,12 @@ struct net_device *__init wavelan_probe(int unit)
-  * Module entry point: insertion and removal
-  */
- 
--#ifdef	MODULE
- /*------------------------------------------------------------------*/
- /*
-  * Insertion of the module
-  * I'm now quite proud of the multi-device support.
-  */
--int __init init_module(void)
-+static int __init wavelan_init(void)
- {
- 	int ret = -EIO;		/* Return error if no cards found */
- 	int i;
-@@ -4303,7 +4302,7 @@ int __init init_module(void)
- /*
-  * Removal of the module
-  */
--void cleanup_module(void)
-+static void __exit wavelan_exit(void)
- {
- #ifdef DEBUG_MODULE_TRACE
- 	printk(KERN_DEBUG "-> cleanup_module()\n");
-@@ -4330,7 +4329,9 @@ void cleanup_module(void)
- 	printk(KERN_DEBUG "<- cleanup_module()\n");
- #endif
- }
--#endif				/* MODULE */
-+
-+module_init(wavelan_init);
-+module_exit(wavelan_exit);
- MODULE_LICENSE("GPL");
- 
- /*
--- 
-1.5.2.2
+Thompson said it's "really unreasonable" to say Lasik is too dangerous.
+In addition, I have reviewed the subsequent records of Cheryl Fiorelli
+from Richard Tipperman, M.
+,                                                                
+Plaintiff,            v. He explained that only the rim of the flap
+rejoins with the outer layer of the cornea. There were no measurements
+of cornea thickness obtained pre-operatively despite the availability of
+an ultrasonic pachymeter at the Delaware Valley Laser Surgery Institute.
+No one else at TLC or TLC Garden City ever performed laser surgery on
+plaintiff.
 
+The commercial and advertisements disseminated by defendants are
+literally false in that they proclaim that Dr.
+
+Edward Deglin including examination of the retinal periphery.
+I loved my job, I was set for life.
+
+Wallace requested Ms.
+
+Defendant TLC Garden City provides laser vision correction services,
+including excimer laser eye surgery in Garden City, New York. He has
+become extremely well-known to actual and potential patients needing eye
+surgery, particularly, laser vision surgery. Thomas Tooma Sued by Jerry
+Lehrer for Professional Negligence and Fraud Read the lawsuit titled Dr.
+Ajay Sanan, a Tucson eye surgeon who underwent yearlong specialty
+training in LASIK and other corneal surgeries.
+
+Despite the initial LASIK surgery and two subsequent surgeries, Ms.
+The injuries just aren't big enough to take to court. Herbert Nevyas and
+Cheryl Fiorelli and have thoroughly reviewed these documents.
+
+I had it done myself and I would do it again.
+Donnenfeld has a place of business at TLC Garden City. You must be
+absolutely sure about the person who is going to do your surgery.
+
+This Excimer Laser was not formally approved by the U.
+
+" But Sanan did say that LASIK's high success rate combined with the
+"perceived simplicity" of the surgery "does make it a good corporate
+profitmaker.
+
+Ajay Sanan, a Tucson eye surgeon who underwent yearlong specialty
+training in LASIK and other corneal surgeries.
+He settled on Snyder at the UA - one of the two top LASIK surgeons in
+Tucson, his research found.
+Eric Donnenfeld is an ophthalmologist who performs laser vision
+corrective surgery and is presently Medical Director of TLC Garden City
+and CoDirector for TLC for the New York metropolitan area. Upon
+information and belief, defendant Giuseppe Dellorusso participated or
+allowed someone else to participate under his name, in the acts
+complained of herein. "When we're talking about people's eyesight, the
+stakes are high," he said.
+
+Nevyas-Wallace contended that refractive surgery "should indeed be
+covered by insurance, as it is necessary in order for her to be able to
+function in her work".
+
+There was early posterior capsular opacification in association with the
+silicone-plate haptic intraocular lens.
+Anita Nevyas-Wallace, that in my expert medical opinion, falls below
+acceptable standards by reasonable practitioners is greatly appreciated.
+Of note, pharmacologic dilation was performed and ophthalmoscopy
+completed by Dr.
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
