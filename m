@@ -1,7 +1,7 @@
-From: Nishanth Aravamudan <nacc@us.ibm.com>
-Date: Mon, 16 Jul 2007 17:24:31 +0000
+From: Matthew Wilcox <matthew@wil.cx>
+Date: Mon, 16 Jul 2007 17:25:32 +0000
 Subject: Re: [KJ] [third][PATCH 3/4][2.6 drivers/net/skfp/smt.c:]replace SIZE
-Message-Id: <20070716172431.GJ17929@us.ibm.com>
+Message-Id: <20070716172531.GL13826@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070716141818.30653.70760.sendpatchset@shcherbakov.homelinux.net>
 In-Reply-To: <20070716141818.30653.70760.sendpatchset@shcherbakov.homelinux.net>
@@ -10,38 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 16.07.2007 [19:06:36 +0200], walter harms wrote:
-> 
-> 
-> acripps wrote:
-> > Removed the N_SMT_PLEN macro in favor of the more generic ARRAY_SIZE(arr)
-> > defined in kernel.h
-> > Compile tested, no issues found.
-> > Signed-off-by: Aaron Cripps <cripps@cs.mun.ca>
-> > 
-> > diff --git a/drivers/net/skfp/smt.c b/drivers/net/skfp/smt.c
-> > index 75afc1f..a1c49ed 100644
-> > --- a/drivers/net/skfp/smt.c
-> > +++ b/drivers/net/skfp/smt.c
-> > @@ -1654,8 +1654,6 @@ static const struct smt_pdef {
-> >  	{ SMT_P4053,	0,	SWAP_SMT_P4053			} ,
-> >  } ;
-> >  
-> > -#define N_SMT_PLEN	(sizeof(smt_pdef)/sizeof(smt_pdef[0]))
-> > -
-> >  int smt_check_para(struct s_smc *smc, struct smt_header	*sm,
-> >  		   const u_short list[])
-> >  {
-> > @@ -1881,7 +1879,7 @@ void smt_swap_para(struct smt_header *sm, int len, int direction)
-> >  		if (plen < 0)
-> >  			break ;
-> >  		plen += PARA_LEN ;
-> > -		for (i = N_SMT_PLEN, pd = smt_pdef; i ; i--,pd++) {
-> > +		for (i = ARRAY_SIZE(smt_pdef), pd = smt_pdef; i ; i--,pd++) {
-> >  			if (pd->ptype = type)
-> >  				break ;
-> >  		}
-> 
+On Mon, Jul 16, 2007 at 07:06:36PM +0200, walter harms wrote:
 > your patch seems ok but the stile here ...
 > 
 > pd=smt_pdef;
@@ -51,25 +20,31 @@ On 16.07.2007 [19:06:36 +0200], walter harms wrote:
 > 	else pd++;
 > }
 > 	
-> normally i would say it should be more like
-> for(i=0;i<ARRAY_SIZE(smt_pdef);i++) (rule of least surprise) but i
-> have no clue why he did it not this way.
+> normally i would say it should be more like for(i=0;i<ARRAY_SIZE(smt_pdef);i++) (rule of least surprise)
+> but i have no clue why he did it not this way.
 
-Well, I think immediately following this loop is
+I can think of three possible reasons:
 
-if (i && pd->pswap) {
-	smt_string_swap(p+PARA_LEN,pd->pswap,len) ;
-}
+1. Speed.  Many processors have a 'branch if not zero' instruction.
+You can often eliminate one instruction per loop by counting down to
+zero instead of up to N.
 
-Which would have been different if the loop went the other way.
-Certainly possible either way, though.
+2. Duplicate entries.  If you want to find the last item in the list
+which has ptype = type, you need to start at the end, not the front.
 
-Thanks,
-Nish
+3. Speed.  If you're likely to be removing entries from a list in the
+opposite order to which you added them (a stack rather than a queue),
+you'll find it more quickly on average if you start at the end than at
+the beginning.
+
+There may be other reasons for iterating in the opposite direction;
+those are just three possible reasons that popped into my head when you
+asked the question.
 
 -- 
-Nishanth Aravamudan <nacc@us.ibm.com>
-IBM Linux Technology Center
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
