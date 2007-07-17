@@ -1,7 +1,7 @@
-From: "mypostcards.com" <rowad@entelchile.net>
-Date: Sun, 15 Jul 2007 15:26:30 +0000
-Subject: [KJ] You've received a greeting ecard from a Family member!
-Message-Id: <002701c7c6f4$84ff9250$3fb58b33@wouvz.gxh>
+From: "hallmark.com" <sny@ix.netcom.com>
+Date: Tue, 17 Jul 2007 15:31:21 +0000
+Subject: [KJ] You've received a greeting ecard from a Friend!
+Message-Id: <002201c7c887$86f76990$7267378b@nilkl.glfe>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
 In-Reply-To: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Family member has sent you a greeting ecard.
+Hi. Friend has sent you a greeting ecard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://75.46.75.156/?a8088aea28abd4d55393e4dd7ae5b2393
+http://76.180.184.74/?5ed2175ee0c2a4c1c8a8aa50bb1c2
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Postmaster,
-mypostcards.com
+Mailer-Daemon,
+hallmark.com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
