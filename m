@@ -1,7 +1,7 @@
-From: "egreetings.Com" <belh@pop02.odn.ne.jp>
-Date: Mon, 16 Jul 2007 19:50:15 +0000
+From: "E-Cards.Com" <eryg@hp.com>
+Date: Tue, 17 Jul 2007 00:45:54 +0000
 Subject: [KJ] You've received a greeting card from a Mate!
-Message-Id: <001601c7c7e2$87d46b10$e3e07f8d@uf.bh>
+Message-Id: <002501c7c80b$d4bf97f0$20a6622b@vo.atn>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000701c7bb37$1b8365e0$85df394a@ct.pdnx>
 In-Reply-To: <000701c7bb37$1b8365e0$85df394a@ct.pdnx>
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://65.66.219.116/?50080d0229e368412571d7d41977bc649ea9
+http://74.65.188.226/?b1c85da463c5c036b0339
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Webmaster,
-egreetings.Com
+Mail Delivery System,
+E-Cards.Com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
