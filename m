@@ -1,14 +1,16 @@
-From: "americangreetings.com" <pspcf@pacifier.com>
-Date: Wed, 11 Jul 2007 07:03:32 +0000
-Subject: [KJ] You've received a postcard from a Neighbour!
-Message-Id: <000e01c7c389$97cae1a0$da752243@zuo.trnb>
+From: "Postcards.Org" <joc@teriyakiexpress.com>
+Date: Tue, 17 Jul 2007 22:13:50 +0000
+Subject: [KJ] You've received a postcard from a Neighbor!
+Message-Id: <003101c7c8bf$c1022340$308c3bae@gi.dogv>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <000e01c7c389$97cae1a0$da752243@zuo.trnb>
+In-Reply-To: <000e01c7c389$97cae1a0$da752243@zuo.trnb>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Neighbour has sent you a postcard.
+Hi. Neighbor has sent you a postcard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -16,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://80.47.102.127/?5dc21c83715e8517a32e6b9ea
+http://67.183.22.234/?5ec8b2a44c604a1e290b516c
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -24,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Webmaster,
-americangreetings.com
+Postmaster,
+Postcards.Org
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
