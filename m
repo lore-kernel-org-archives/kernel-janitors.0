@@ -1,81 +1,57 @@
-From: Jan Engelhardt <jengelh@computergmbh.de>
-Date: Sat, 07 Jul 2007 18:42:09 +0000
-Subject: [KJ] Re: [PATCH] some kmalloc/memset ->kzalloc (tree wide)
-Message-Id: <Pine.LNX.4.64.0707072037530.1536@fbirervta.pbzchgretzou.qr>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 17 Jul 2007 21:22:56 +0000
+Subject: should in-tree kernel source accommodate older kernel versions?
+Message-Id: <Pine.LNX.4.64.0707171718450.18509@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <878x9ta320.fsf@wanadoo.fr>
-In-Reply-To: <878x9ta320.fsf@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoann Padioleau <padator@wanadoo.fr>
-Cc: kernel-janitors@lists.osdl.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
 
-On Jul 6 2007 18:51, Yoann Padioleau wrote:
->Transform some calls to kmalloc/memset to a single kzalloc (or kcalloc).
->
->Here is a short excerpt of the semantic patch performing
->this transformation: 
+  should kernel source that's in the current source tree still try to
+accommodate older kernel versions?  as an example, this is from
+drivers/scsi/gdth.c:
 
-Cool!
+/* parameters for modprobe/insmod */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,11)
+module_param_array(irq, int, NULL, 0);
+module_param(disable, int, 0);
+module_param(reserve_mode, int, 0);
+module_param_array(reserve_list, int, NULL, 0);
+module_param(reverse_scan, int, 0);
+module_param(hdr_channel, int, 0);
+module_param(max_ids, int, 0);
+module_param(rescan, int, 0);
+module_param(virt_ctr, int, 0);
+module_param(shared_access, int, 0);
+module_param(probe_eisa_isa, int, 0);
+module_param(force_dma32, int, 0);
+#else
+MODULE_PARM(irq, "i");
+MODULE_PARM(disable, "i");
+MODULE_PARM(reserve_mode, "i");
+... etc etc ...
 
->--- a/Documentation/connector/cn_test.c
->+++ b/Documentation/connector/cn_test.c
->@@ -124,9 +124,8 @@ static void cn_test_timer_func(unsigned 
-> 	struct cn_msg *m;
-> 	char data[32];
-> 
->-	m = kmalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
->+	m = kzalloc(sizeof(*m) + sizeof(data), GFP_ATOMIC);
-> 	if (m) {
->-		memset(m, 0, sizeof(*m) + sizeof(data));
-> 
-> 		memcpy(&m->id, &cn_test_id, sizeof(m->id));
-> 		m->seq = cn_test_timer_counter;
+  now, i can see the value in trying to maintain a single source file
+(gdth.c) that's compatible with various versions of the kernel.  on
+the other hand, this is source that has been accepted into the main
+tree.  under those circumstances, it's *irrelevant* whether it's
+compatible with older versions.
 
-Such empty lines (after memset) [c|s]hould also go.
+  it would seem that, if someone wants to maintain a multi-version
+source file, they can handle that *outside* the source tree on their
+own, and not load the tree with extraneous junk to make *their* job
+easier.
 
->index e83f1db..deb7b6a 100644
->--- a/block/scsi_ioctl.c
->+++ b/block/scsi_ioctl.c
->@@ -405,11 +405,10 @@ int sg_scsi_ioctl(struct file *file, str
-> 
-> 	bytes = max(in_len, out_len);
-> 	if (bytes) {
->-		buffer = kmalloc(bytes, q->bounce_gfp | GFP_USER| __GFP_NOWARN);
->+		buffer = kzalloc(bytes, q->bounce_gfp | GFP_USER| __GFP_NOWARN);
-> 		if (!buffer)
-> 			return -ENOMEM;
-> 
->-		memset(buffer, 0, bytes);
-> 	}
+  thoughts?
 
-And in this case, empty line before memset.
-(Either of - do not let remove empty lines in both directoriens around memset)
-
->@@ -1616,7 +1616,6 @@ #endif
-> 		goto err_out_regions;
-> 	}
-> 
->-	memset(host, 0, sizeof(*host));
-> 	host->pdev = pdev;
-> 	host->flags = pci_dac ? FL_DAC : 0;
-> 	spin_lock_init(&host->lock);
-
-And in this case, no blank lines should be removed.
-
-
-These are just suggestions. If it is too much work, leave it as-is. :)
-
-
-	Jan
+rday
 -- 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
