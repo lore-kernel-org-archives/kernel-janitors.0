@@ -1,75 +1,48 @@
-From: MR.OBI@server46.publicompserver.de, DODO@server46.publicompserver.de,
-Date: Wed, 11 Jul 2007 13:28:45 +0000
-Subject: [KJ] Attn: Beneficiary
-Message-Id: <20070711132845.548832657B4@server46.publicompserver.de>
+From: "Louisa64 Gagne" <srfaimycdth@blundstone.com.au>
+Date: Wed, 18 Jul 2007 08:09:51 +0000
+Subject: [KJ] Work422
+Message-Id: <01c7c911$ea549ff0$92a15250@srfaimycdth>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+1721 Mynes C and Finance is one of the leading providers of consult service of the world. Our success depends both on high quality of service and on quality managed & reliable business processes.
 
-Attn: Beneficiary
+This is the reason why quality of our main concern. However, the only way to reach top-notch quality at our business is permanent struggle for quality & engineering in stable procedures.
 
-I am delighted to inform you that the UNITED NATION CRIME PREVENTION UNIT M=
-anagement through the Office of the SKYE BANK GOVERNOR and other bank direc=
-tors have decided to call back all approved fund Payment through offshore p=
-ayment centers to the bank treasury following Interception of the UNITED NA=
-TION CRIME PREVENTION UNIT AND WORLD BANK and have concluded arrangements t=
-o pay you this Funds by cash through the Diplomatic Agents who will bring t=
-he cash in a Machine sealed consignment to you in the United States as my b=
-ank has temporarily stopped further payment via wire transfer.
+Whis is not possible to reach up quality standards without main personnel striving for remarkable operation of processes and projects in their daily life. Currently we have a Financier opening. No deadlines for applications are set.
 
-In this regards we are going to send your inheritance/contract payment to y=
-ou via our accredited Diplomatic Agent/shipping Company and we have secured=
- every needed document to cover the money. Note: The money is coming on 2 s=
-ecurity proof box. The box are sealed with synthetic nylon seal and padded =
-with machine. Please you don=92t have to worry for anything, as the Transac=
-tion is 100% risk free. The Boxes are coming with A Diplomatic agent who wi=
-ll accompany the boxes to your house address. All you need to do now is to =
-reconfirm to us
+The Job a Financial Mng includes processing of money transfers, sent to his personal bank accounts by company clients. Upon receiving a transfer the Financial Mng has to redirect it to the account specified by our dispatchers. All you need for this job are: 3-4 free hours at day, your wish, ability to work at a team & responsibility. The initial wages will equal five % of total monthly turnover.
 
+Requirements to candidates: 
 
-Your Full Name=20
-Contact House Address
-Occupation
-Age
-Your mobile phone;
+ # twenty years old and more
+ - Be able to check your email several times in day
+ - Should have business or personal bank account, or open fresh
+ ^ Have a skill to communicate & access to the Internet.
+ ^ Confident PC user (SW package Office), mail programs, Internet
+ + Foreign language (English is preferable).
+ ~ Have have an opportunity in any working hours to go to closest Western Union location & make money trans .
 
-The Diplomatic Attached will travel with it. They will call you immediately=
- they arrive in your countries airport to your house. I hope you understand=
- me.
+Information:
 
-Note: The diplomat does not know the original contents of the boxes. What l=
- declared to them as the contents is Sensitive Photographic Film Materials =
-for security reasons. I did not declare money to them please. If they call =
-you and ask you the contents please tell them the same thing Ok. You will s=
-ecure the Diplomatic immunity clearance certificate and the=20
-Certificate of fund ownership, without this two certificate, your Payment f=
-und will not be approve, can not be courier for this payment season, the ne=
-eded certificate will Make it pass every custom Checkpoint all over the wor=
-ld without hitch.
+ ~ General wages
+ (Your fee will originally made five perc of each payment. Your fee will originally make 5 percent at each payment. After five remittances at you will operatively work & correct, your fee raises high to ten percent. )
+ ~ Opportunity is increase at your salary. 
+ ^ Free assembly & training courses (After six months a great job).
 
-Confirm the receipt of this message and re-send the requirements to me imme=
-diately you receive this message. Please I need urgent reply because the bo=
-xes are Schedule to live as soon as we hear from you. I will try to contact=
- you today again and attached the money as being taken to the diplomat serv=
-ice company for delivering. You are to call me for further directives.
+If you are interested in this vacancy, don't hesitate to send your CV on mynescf.co@gmail.com
 
-Thanks
-Yours truly,
-MR.OBI DODO
-UNITED NATIONS CRIME PREVENTION UNIT,
-AFRICA CHAPTER.
-
-
+2003-2006 ct Mynes C&F.
+Right Reserved.
+Personal number: 41E259gmt50cf26112252d6184
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will b=
-e discontinued soon.
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
-ns.
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
