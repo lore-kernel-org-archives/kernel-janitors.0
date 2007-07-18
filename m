@@ -1,20 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 31 Jul 2007 21:05:18 +0000
-Subject: Re: [PATCH 04] drivers/sbus/char/bbc_i2c.c: kmalloc + memset
-Message-Id: <20070731.140518.27952164.davem@davemloft.net>
+From: "Thomas Surrel" <thomas.surrel@gmail.com>
+Date: Wed, 18 Jul 2007 22:24:46 +0000
+Subject: netdev_priv()
+Message-Id: <d858bca40707181524r30f501dcnd1ecf1b4e9d2af86@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-	<200707311858.05485.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311858.05485.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: m.kozlowski@tuxland.pl
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org
+To: kernel-janitors@vger.kernel.org
 
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 18:58:05 +0200
+Hi,
 
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+I'm starting to work on the change to netdev_priv() call to access the
+priv field of the net_device structure. Is anybody already working on
+this ?
 
-Patch applied, thanks.
+Also, what is the best way to organize my patches: one per subsystem
+(wireless, token ring, ...) or even more detailed which would imply a
+lot more patches ?
+
+Regards,
+
+Thomas
