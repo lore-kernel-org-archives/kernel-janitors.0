@@ -1,24 +1,63 @@
-From: MAILER-DAEMON@mail34.opentransfer.com
-Date: Mon, 30 Jul 2007 00:09:49 +0000
-Subject: [KJ] failure notice
-Message-Id: <200707300009.l6U09t4b018707@smtp1.linux-foundation.org>
+From: "Kennith Negron" <bmcwithey@pottymouthz.com>
+Date: Wed, 18 Jul 2007 00:15:55 +0000
+Subject: [KJ] Easy 2-minute form
+Message-Id: <01c7c999$371a2cb0$70b28959@bmcwithey>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="1185754189mail34.opentransfer.com183295"
+Content-Type: multipart/mixed; boundary="----------=_1184717392-3969-110"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
---1185754189mail34.opentransfer.com183295
+This is a multi-part message in MIME format...
 
-Hi. This is the qmail-send program at mail34.opentransfer.com.
-I'm afraid I wasn't able to deliver your message to the following addresses.
-This is a permanent error; I've given up. Sorry it didn't work out.
+------------=_1184717392-3969-110
+Content-Type: text/plain;
+	charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-<postmaster@brandte.com>:
-user is over quota
+Thank you for your loan request, which we recieved yesterday. We'd like to=
+=0A=
+inform you that we are accepting your application. We are ready to give you=
+ a=0A=
+$272,000 loan (Approved refinance) for a low month payment. Approval process=
+=0A=
+will take only 1 minute. Please visit the confirmation link below and fill-=
+out=0A=
+our short 30 second form. http://eeaqxlthh.com=
 
---- Enclosed are the original headers of the message.
+------------=_1184717392-3969-110
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
---1185754189mail34.opentransfer.com183295
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Thank you for your loan request, which we recieved
+  yesterday. We'd like to inform you that we are accepting your
+  application. We are ready to give you a $272,000 loan (Approved
+  refinance) for a low month payment. Approval process will take only 1
+  minute. Please visit the confirmation link below and fill-out our short
+  30 second form. http://eeaqxlthh.com [...] 
+
+Content analysis details:   (7.5 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 2.5 DATE_IN_FUTURE_24_48   Date: is 24 to 48 hours after Received: date
+ 2.0 HTML_40_50             BODY: Message is 40% to 50% HTML
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 3.0 BAYES_95               BODY: Bayesian spam probability is 95 to 99%
+                            [score: 0.9615]
+
+
+
+------------=_1184717392-3969-110
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -32,4 +71,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---1185754189mail34.opentransfer.com183295--
+------------=_1184717392-3969-110--
