@@ -1,54 +1,60 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 02 Jul 2007 09:47:58 +0000
-Subject: Re: [KJ] another KJ project: identifying worthless Documentation/
-Message-Id: <Pine.LNX.4.64.0707020546530.28776@localhost.localdomain>
+From: Emma <nkpd@wfg.ch>
+Date: Wed, 18 Jul 2007 07:13:56 +0000
+Subject: [KJ] (no subject)
+Message-Id: <469DBDB4.4000203@ehrat.ch>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------070000070401040002080402"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0707020534150.28225@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0707020534150.28225@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+References: <4277F774.9070506@tampabay.rr.com>
+In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
-On Mon, 2 Jul 2007, Jesper Juhl wrote:
 
-> On 02/07/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> >
-> >   it's fairly obvious that there's content under the Documentation/
-> > directory that is way obsolete, so i've started another wiki page to
-> > keep track of stuff that appears to be removable in its entirety:
-> >
-> >   http://fsdev.net/wiki/index.php?title=DEad_Documentation_files
-> >
-> >   as a first example, i've added "crypto/descore-readme.txt", which
-> > certainly appears to have no value, but maybe i just didn't look hard
-> > enough.
-> >
-> >   anyway, you get the idea -- feel free to add more content to that
-> > page and we can eventually submit a patch to get rid of it all at
-> > once.
+--------------070000070401040002080402
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-> Since different people wrote the different documents and the
-> different documents touch on different subjects, I'd say it would be
-> better to remove them one at a time - one document removed per
-> patch. That way it's easier to Cc the patch to the relevant people
-> who can comment on it.
 
-good point, of course.  so let's just start the list and, at some
-point, someone can start working their way through it one at a time.
 
-rday
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+--------------070000070401040002080402
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-http://fsdev.net/wiki/index.php?title=3DMain_Page
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  [...] 
+
+Content analysis details:   (7.3 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 0.9999]
+ 2.0 MISSING_SUBJECT        Missing Subject: header
+ 1.7 EMPTY_MESSAGE          Message appears to be empty with no Subject: text
+
+
+
+--------------070000070401040002080402
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------070000070401040002080402--
