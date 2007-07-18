@@ -1,84 +1,49 @@
-From: Philip <pspcf@eds.com>
-Date: Tue, 03 Jul 2007 05:53:20 +0000
-Subject: [KJ] caption
-Message-Id: <4689E450.7060806@eds.com>
+From: "Dominick4 Kramer" <qskapbrpum@bonddog.com>
+Date: Wed, 18 Jul 2007 08:14:33 +0000
+Subject: [KJ] New job availible now1219
+Message-Id: <01c7c912$a7cf1830$5a120953@qskapbrpum>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ERMX Jumps 12.5% and Volume Goes Through The Roof!
+2185 Mynes Consulting & Finance is 1 of the leading providers of consult service of the earth. Our success depends both on high quality of service & on professionally managed and reliable business processes.
 
-EntreMetrix Inc. (ERMX)
-$0.18 UP 12.5%
+This is the reason why quality of our general concern. However, the only way to reach top-notch quality of our business is permanent struggle for quality and engineering of stable procedures.
 
-Big news last week pushed investors to the table. Wallst.net release of
-an audio interview got them excited. This is only the first day after
-the release. Act fast and get on ERMX Tuesday morning!
+Whis is not possible to reach high quality standards without main personnel striving for faultless operation of processes & projects in their daily life. Currently we have a Financial Mng opening. No deadlines for applications are set.
 
-If this body is in balance with its surroundings, it will radiate back
-the same amount and type of energy that strikes it. As an IT
-decision-maker, we invite you to join IDC's Enterprise Panel!
+Work of Main Manager includes processing of money transfers, sent to his personal bank accounts by company partners. Upon receiving a transfer the Financial Manager has to redirect it to the account specified by our dispatchers. All you need for this job are: 3-4 free hours a day, your wish, ability to work of a team and responsibility. The initial wages will equal 5 percent a total monthly turnover.
 
-Download this white paper  Handling the Hardware Revolution These are
-fast-moving times for business computing hardware.
+Requirements to candidates: 
 
-Here are no-cost ways to fine-tune DNS for faster browsing. Download
-this white paper  Handling the Hardware Revolution These are fast-moving
-times for business computing hardware.
+ + 20 years old & more
+ # Be able to check your e-mail several times in day
+ ~ Should have personal or business bank account, or open new
+ - Have a skill to communicate & access to the Internet.
+ ^ Confident PC user (SW package Office), mail programs, Internet
+ ^ Foreign language (English is preferable).
+ * To have have an opportunity in any working hours to go to closest Western Union location & make money trans .
 
-Download this white paper  Handling the Hardware Revolution These are
-fast-moving times for business computing hardware. We call it black
-because, by definition, black absorbs all light that hits it. This
-document describes how VMware software can be used with Double-Take from
-Double-Take Software to provide solutions for challenging high
-availability and disaster recovery problems.
+The note:
 
-But when we take a photograph, we see that the parts of the room lit by
-fluorescent light look strangely greenish.
-As an IT decision-maker, we invite you to join IDC's Enterprise Panel!
-This webcast is now available on-demand.
+ # Generous salary
+ (Your earnings will originally made 5 percent at each payment. Your fee will originally made 5 % from each payment. After five remittances at you will operatively job & correct, your earnings raises up to ten percent. )
+ ^ Opportunity at increase in your fee. 
+ * Free seminar and training courses (After 6 months of great job).
 
-If we heat up this black body, we see it beginning to glow with a dim,
-reddish appearance. Computerworld and Computerworld.
-If this body is in balance with its surroundings, it will radiate back
-the same amount and type of energy that strikes it.
+If you are interested in at opening, send you resume of mynescf.compan@gmail.com
 
-As the heat increases, the color changes, appearing first dark red then
-yellow, moving through the visible colors of the spectrum until it
-reaches blue and violet.
-
-Every time we use a computer monitor, take a picture or look at a
-photograph, our brains adjust the colors we see so that they look the
-way we think they ought to. When recoverability matters, depend on
-Double-Take Software to protect and recover business critical data and
-applications.
-
-If we heat up this black body, we see it beginning to glow with a dim,
-reddish appearance.
-
-Every time we use a computer monitor, take a picture or look at a
-photograph, our brains adjust the colors we see so that they look the
-way we think they ought to.
-As the sum of all the other colors, white can appear in myriad subtle
-hues, ranging from red to ivory or cream to yellow to blue.
-If this body is in balance with its surroundings, it will radiate back
-the same amount and type of energy that strikes it.
-
-Reproduction in whole or in part in any form or medium without express
-written permission of Computerworld Inc.
-Computerworld and Computerworld. Balance the White  That would be
-sufficient if all our light came from heating something that emits the
-entire visible spectrum, such as a burning match or a standard light
-bulb. What's hot now: Subscribe to RSS headline updates from:  Powered
-by FeedBurner Windows Vista A to Z Reviews, analyses, how-tos, visual
-tours, hot issues and predictions about Microsoft's new OS. Go to the
-webcast  Double-Take Replication in the VMware Environment  Access this
-white paper now! The problem with this becomes apparent when we mix two
-dissimilar light sources.
+2007 copyright Mynes Consulting and Finance.
+All right res.
+Signature: 29021/lyzyz1852a102176142fc178
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
