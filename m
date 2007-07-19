@@ -1,24 +1,25 @@
-From: Mcginnis Margery <usgwh@mexico.com>
-Date: Sat, 07 Jul 2007 13:50:58 +0000
-Subject: [KJ] journal_DVPRHAPKTVZIAR.pdf
-Message-Id: <468F9A42.3000005@mexico.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010401080006030604020402"
+From: "Alvaro Odonnell" <hwdefunct@maximumsurf.com>
+Date: Thu, 19 Jul 2007 11:50:16 +0000
+Subject: [KJ] Thanks, we are ready to lend some cash
+Message-Id: <001901c7ca0b$e60f4580$000cf5fc@mshomen4oocjgs>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---------------010401080006030604020402
-Content-Type: text/plain; charset=windows-1250; format=flowed
-Content-Transfer-Encoding: 7bit
 
-
-
---------------010401080006030604020402
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+Your your credit report does not matter to us!
+ 
+If you have your own business and require IMMEDIATE money to spend ANY way you like or require Extra money to give your company a boost or  wish A low interest loan - NO STRINGS ATTACHED, here is our best deal we can offer you THIS EVENING (hurry, this deal will expire TODAY):
+ 
+$66,000+ loan
+ 
+Hurry, when our best deal is gone, it is gone. Simply Call Us... 
+ 
+Do not worry about approval, your credit history will not disqualify you!
+ 
+Call Us Free on 877-542-1880
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
@@ -27,4 +28,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------010401080006030604020402--
