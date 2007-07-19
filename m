@@ -1,7 +1,7 @@
-From: "123greetings.com" <ceyxh@netapp.com>
-Date: Thu, 19 Jul 2007 14:24:36 +0000
-Subject: [KJ] You've received a greeting ecard from a Neighbor!
-Message-Id: <000801c7ca10$888f03f0$79aa83d4@xhik.bt>
+From: "riversongs.Com" <upu@eastbay.com>
+Date: Thu, 19 Jul 2007 17:42:46 +0000
+Subject: [KJ] You've received a greeting ecard from a School friend!
+Message-Id: <000e01c7ca2c$37fabee0$8988692b@bniti.awphr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
 In-Reply-To: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Neighbor has sent you a greeting ecard.
+Hi. School friend has sent you a greeting ecard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://207.254.167.168/?a41c198eb161d496d2989907cd64e28
+http://207.144.130.246/?3715e8517a32e6b9ea6878b15d7703
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Mail Delivery System,
-123greetings.com
+Mailer-Daemon,
+riversongs.Com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
