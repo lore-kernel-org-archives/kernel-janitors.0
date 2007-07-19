@@ -1,7 +1,7 @@
-From: "GreetingCards.Com" <kdn@mgh.org>
-Date: Mon, 16 Jul 2007 12:20:27 +0000
+From: "mypostcards.com" <luwp@synchronome.com>
+Date: Thu, 19 Jul 2007 03:23:33 +0000
 Subject: [KJ] You've received a postcard from a School friend!
-Message-Id: <003001c7c7a3$b19fb920$af50e64a@lnf.qpnds>
+Message-Id: <000701c7c9b4$2fbd2650$ee62524b@th.ti>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
 In-Reply-To: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://75.49.0.87/?0135456ec290b516c3c2cd8
+http://195.134.88.119/?a7c0b58e47d14c775ed2175ee0c2a
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Mailer-Daemon,
-GreetingCards.Com
+Webmaster,
+mypostcards.com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
