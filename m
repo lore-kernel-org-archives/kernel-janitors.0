@@ -1,16 +1,14 @@
-From: "freewebcards.com" <xjj@city.hiratsuka.kanagawa.jp>
-Date: Mon, 23 Jul 2007 03:05:03 +0000
-Subject: [KJ] You've received an ecard from a School-mate!
-Message-Id: <001901c7ccd6$43aac080$e1c6cf33@vby.cs>
+From: "Postcards.Org" <cdt@jfcom.mil>
+Date: Thu, 19 Jul 2007 14:59:33 +0000
+Subject: [KJ] You've received a postcard from a Partner!
+Message-Id: <002801c7ca15$6abe2a40$52536a50@rpc.jysq>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <001b01c7bc27$d1d62fd0$2a39c02c@tu.quy>
-In-Reply-To: <001b01c7bc27$d1d62fd0$2a39c02c@tu.quy>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. School-mate has sent you an ecard.
+Hi. Partner has sent you a postcard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -18,7 +16,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://69.136.162.32/?0d8e117868911e6c36a4bc95
+http://74.32.205.251/?7a32e6b9ea6878b15d770
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +24,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Webmaster,
-freewebcards.com
+Postmaster,
+Postcards.Org
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
