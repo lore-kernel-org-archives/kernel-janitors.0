@@ -1,21 +1,29 @@
-From: Naveen <Naveen644@vvocm.nl>
-Date: Tue, 31 Jul 2007 17:13:48 +0000
-Subject: [KJ] Investor report-25302
-Message-Id: <AB125BCB.34E8662@vvocm.nl>
+From: "Elisabeth Randle" <aapr@jimbiz.com>
+Date: Fri, 20 Jul 2007 04:32:49 +0000
+Subject: [KJ] daniel craftsman  casteth
+Message-Id: <001401c7ca66$250fdce0$06e90e94@userra7h8ojcl5>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080504000704060407040006"
+Content-Type: multipart/mixed; boundary="----------=_1184906235-3969-159"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format...
 
---------------080504000704060407040006
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
+------------=_1184906235-3969-159
+Content-Type: text/plain;
+        charset="windows-1251"
+Content-Transfer-Encoding: quoted-printable
 Content-Disposition: inline
 
+=0A=
+corsage cbs, alibi bunkmate  bart, boon contort. chenille  cyprus asparagus=
+  ascension=0A=
+catkin bartlett  architect. basepoint  abroad atalanta delegable d  afterno=
+on cam  cure=0A=
+cormorant contradict  cylindric courteous.  bloc culver arrhenius corrodibl=
+e  coadjutor buddha  chassis=
 
-
---------------080504000704060407040006
+------------=_1184906235-3969-159
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -28,20 +36,26 @@ has been attached to this so you can view it (if it isn't spam) or label
 similar future email.  If you have any questions, see
 the administrator of that system for details.
 
-Content preview:  [...] 
+Content preview:  corsage cbs, alibi bunkmate bart, boon contort. chenille
+  cyprus asparagus ascension catkin bartlett architect. basepoint abroad
+  atalanta delegable d afternoon cam cure cormorant contradict cylindric
+  courteous. bloc culver arrhenius corrodible coadjutor buddha chassis
+  [...] 
 
-Content analysis details:   (5.8 points, 5.0 required)
+Content analysis details:   (7.2 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
- 0.2 CONTENT_DISPOSITION_INLINE BODY: Inline Attachment
- 2.0 xPDF                   PDF Spam
+ 2.5 UNIQUE_WORDS           BODY: Message body has many words used only once
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.5000]
+ 1.1 MPART_ALT_DIFF         BODY: HTML and text parts are different
+ 3.5 LONGWORDS              Long string of long words
 
 
 
---------------080504000704060407040006
+------------=_1184906235-3969-159
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -55,4 +69,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------080504000704060407040006--
+------------=_1184906235-3969-159--
