@@ -1,56 +1,35 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Fri, 20 Jul 2007 18:00:19 +0000
+From: Oleg Verych <olecom@flower.upol.cz>
+Date: Fri, 20 Jul 2007 20:50:42 +0000
 Subject: Re: [PATCH 1/2] run scripts/Lindent on it to match Documentation/CodingStyle
-Message-Id: <20070720180019.GJ14791@parisc-linux.org>
+Message-Id: <E1IBzQw-0000Im-55@flower>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1184489571313-git-send-email-crquan@gmail.com> <4699EEA9.6070709@simon.arlott.org.uk> <20070720170743.GF14791@parisc-linux.org> <46A0F282.8070103@simon.arlott.org.uk>
-In-Reply-To: <46A0F282.8070103@simon.arlott.org.uk>
+References: <1184489571313-git-send-email-crquan@gmail.com> <4699EEA9.6070709@simon.arlott.org.uk> <20070720170743.GF14791@parisc-linux.org>
+In-Reply-To: <20070720170743.GF14791@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Simon Arlott <simon@fire.lp0.eu>
-Cc: Denis Cheng <crquan@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Simon Arlott <simon@fire.lp0.eu>, Denis Cheng <crquan@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2007 at 06:36:02PM +0100, Simon Arlott wrote:
-> On 20/07/07 18:07, Matthew Wilcox wrote:
-> > sed -i -e 's/^\t*      \(\w*:\)/ \1/' "$@"
-> > 
-> > which will replace the leading tabs and spaces with one space.
-> 
-> ... isn't the space thing a workaround for a "diff -p" bug?
+* Date: Fri, 20 Jul 2007 11:07:43 -0600
 
-Yes.  I like not being affected by bugs.  If you prefer to be affected
-by bugs, that's up to you.
+> Of course, we can't add this flag to Lindent until it's widely
+> circulating amongst the distributions.  Perhaps we can add this to
+> Lindent in the meantime:
+>
+> sed -i -e 's/^\t*      \(\w*:\)/ \1/' "$@"
+>
+> which will replace the leading tabs and spaces with one space.
+> It should leave case labels unmolested, as they should be indented with
+> tabs, not 6 spaces.
+>
+> Any regexp ninjas want to have a go at something better?
 
-> Labels should either not have any indent or be indented by tabs (since
-> some code could presumably benefit from indenting labels).
+I'm the one. Trying to write portable, optimized and easy to
+understand scripts [0].
 
-Indenting labels implies that they might be scoped with the other code
-at that level of indentation.  If you see code that looks like this:
+Please, describe more what must be done, and i will do it. Case labels
+are handled very strangely in you example.
 
-	for () {
-		switch () {
-		case foo:
-			while () {
-				if () {
-				} else {
- quux:
- 				}
-			}
-		}
-	}
-
-you really want the quux standing out at you.  Otherwise you might think
-this was a nice, easy to understand function.
-
-> Mass
-> replacing any labels run through Lindent with space prefixes would seem
-> like a bad idea :/
-
-We don't tend to mass-run code through Lindent.  This may or may not be
-a bad thing, but the fact is that it just doesn't happen.
-
--- 
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+[0] <E1HwY9K-0008Jz-CG@flower>
+____
