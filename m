@@ -1,40 +1,60 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:27:30 +0000
-Subject: [PATCH 55] drivers/char/n_hdlc.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312327.30692.m.kozlowski@tuxland.pl>
+From: Simon Arlott <simon@fire.lp0.eu>
+Date: Sat, 21 Jul 2007 19:17:52 +0000
+Subject: diffutils: C labels misdetected as functions (Was: [PATCH 1/2] run
+Message-Id: <46A25BE0.7000104@simon.arlott.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
+References: <1184489571313-git-send-email-crquan@gmail.com> <4699EEA9.6070709@simon.arlott.org.uk> <20070720170743.GF14791@parisc-linux.org> <46A0F282.8070103@simon.arlott.org.uk> <20070720180019.GJ14791@parisc-linux.org> <46A1A375.3020900@simon.arlott.org.uk> <20070721135200.GQ14791@parisc-linux.org>
+In-Reply-To: <20070721135200.GQ14791@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, khc@pm.waw.pl
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Denis Cheng <crquan@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+(Bcc: bug-gnu-utils@gnu.org)
+The patch below stops diffutils treating C labels starting in column 1 as function names.
 
- drivers/char/n_hdlc.c | 27451 -> 27423 (-28 bytes)
- drivers/char/n_hdlc.o | 112528 -> 112516 (-12 bytes)
+On 21/07/07 14:52, Matthew Wilcox wrote:
+> On Sat, Jul 21, 2007 at 07:11:01AM +0100, Simon Arlott wrote:
+>> Changing the code to fix a utility bug is madness. I think it's been
+>> fixed too...
+> 
+> I just downloaded the source from CVS and it hasn't:
+> 
+> --- test1.c     2007-07-21 09:49:02.000000000 -0400
+> +++ test2.c     2007-07-21 09:49:12.000000000 -0400
+> @@ -8,5 +8,4 @@ flibble:
+>         zero
+>         one
+> -       two
+>         three
+>  }
+> 
+> Tell you what, why don't you fix it?  Here's how to get the source:
+> cvs -d:pserver:anonymous@cvs.sv.gnu.org:/sources/diffutils co diffutils
+> 
+> I'm sure you'll figure it out from there.
+> 
 
- drivers/char/n_hdlc.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+---
+Index: diff.c
+=================================RCS file: /sources/diffutils/diffutils/src/diff.c,v
+retrieving revision 1.45
+diff -U 4 -r1.45 diff.c
+--- diff.c	19 Jul 2007 17:45:29 -0000	1.45
++++ diff.c	21 Jul 2007 19:13:23 -0000
+@@ -430,9 +430,9 @@
+ 	  break;
 
---- linux-2.6.23-rc1-mm1-a/drivers/char/n_hdlc.c	2007-07-26 13:07:41.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/char/n_hdlc.c	2007-07-31 23:19:40.000000000 +0200
-@@ -807,13 +807,12 @@ static struct n_hdlc *n_hdlc_alloc(void)
- {
- 	struct n_hdlc_buf *buf;
- 	int i;
--	struct n_hdlc *n_hdlc = kmalloc(sizeof(*n_hdlc), GFP_KERNEL);
--
-+	struct n_hdlc *n_hdlc;
-+
-+	n_hdlc = kzalloc(sizeof(*n_hdlc), GFP_KERNEL);
- 	if (!n_hdlc)
- 		return NULL;
+ 	case 'p':
+ 	  show_c_function = true;
+-	  add_regexp (&function_regexp_list, "^[[:alpha:]$_]");
++	  add_regexp (&function_regexp_list, "^[[:alpha:]$_](|.*[^:])$");
+ 	  break;
 
--	memset(n_hdlc, 0, sizeof(*n_hdlc));
--
- 	n_hdlc_buf_list_init(&n_hdlc->rx_free_buf_list);
- 	n_hdlc_buf_list_init(&n_hdlc->tx_free_buf_list);
- 	n_hdlc_buf_list_init(&n_hdlc->rx_buf_list);
+ 	case 'P':
+ 	  unidirectional_new_file = true;
+
+
+-- 
+Simon Arlott
