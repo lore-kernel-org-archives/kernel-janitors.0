@@ -1,69 +1,56 @@
-From: "Art Aragon127" <philh@powerup.com.au>
-Date: Thu, 19 Jul 2007 07:36:49 +0000
-Subject: [KJ] Art, Our company is looking for representatives in your area
-Message-Id: <01c7c9d6$19774660$0abbcd3e@philh>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sat, 21 Jul 2007 13:54:26 +0000
+Subject: another project:  reducing the EXPERIMENTAL clutter in the Kconfig
+Message-Id: <Pine.LNX.4.64.0707210944340.22717@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-EmapExchange is a leading electronic funds transfer company with core business values and a great concern for the general well being and satisfaction of our customers. The scope of our expertise enables EmapExchange to respond effectively to any challenge our clients care to set us. EmapExchange is made up of a sophisticated network of agents in
-six continents, having in common a blend of intelligence, talent and expertise, harnessed to bring competitive advantage to the client. We move money all over the world today and make every corner of the world accessible to EmapExchange customers! For that reason, we shall be happy to welcome you - people competent, pro-active, energetic and purposeful
-- among our Company's staff. If you do wish to join us, you should demonstrate your ability to bring benefit to the Company, so forward your resume to our HR manager at info@EmapExchange.us and we shall be
-happy to meet you. 
-  
-      You can always find a list of the specialist vacancies most demanded 
-by the Company at the moment on our website. On the same website, you may
-also find an application form to fill out.
 
-              a.. Decent reward. 
-              b.. Social security package and medical insurance. 
-              c.. Free seminars and skills training 
+  one of the points raised in a recent thread on LKML is that there is
+an overabundance of kernel features that are still tagged as
+"EXPERIMENTAL" in the various Kconfig files that have clearly matured
+way beyond that, but no one's bothered to ever go back and remove that
+designation.
 
-            If you are interested in this vacancy, you may forward us 
-your resume to info@EmapExchange.us or fill out a special form on our website.
+  you can see a lot of this by running something like:
 
-            EmapExchange Remote Assistant
+$ grep -w -B3 -A2 EXPERIMENTAL $(find . -name Kconfig*) | less
 
-            Ideal candidates will thrive in an entrepreneurial 
-environment and have the desire to manage their own operation. The task of the Remote
-Assistant is to process payments between our partners. 
+from the top of the source tree.  i mean, consider:
 
-             Clients and our company, in particular:
-              a.. Managing cash and balancing receipts 
-              b.. Operating within prescribed budgets 
-              c.. Following up on accounts
+...
+./net/ipv6/netfilter/Kconfig:menu "IPv6: Netfilter Configuration (EXPERIMENTAL)"
+./net/ipv6/netfilter/Kconfig:   depends on INET && IPV6 && NETFILTER && EXPERIMENTAL
+...
 
-            Salary
-  
-       During the trial period you will get 5% commission from every 
-payment received and forwarded. After the trial period your base pay
-salary will go up to $500 per week, plus 5% commission. The salary will be
-sent in the form of wire transfer directly to your account every 2 weeks.
-  
-            Qualifications: 
-              a.. Good business acumen. 
-              b.. Maturity age. 
-              c.. Honest, responsible, industrious 
-              d.. PC, e-mail and the Internet skills 
-              e.. Prior experience of processing checks/wire 
-transfers/money orders is preferable, but not obligatory. 
-              f.. Ability to check e-mail several times a day. 
-              g.. No less than 2 working hours per day (possibly in the evening).
+  is IPv6 filtering really still experimental?  in addition, there's
+plenty of inconsistency where a feature is *tagged* as experimental
+but doesn't *display* as such, as in:
 
-            General: 
-              a.. Internet remote operations; 
-              b.. Part-time job (1-3 hours per day); 
-              c.. Possibility to combine with main job; 
-              d.. The brief training course is enclosed.
-            If you are interested in this vacancy, you may forward us 
-your resume to info@EmapExchange.us or fill out a special form on our website.
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+./net/ipv6/netfilter/Kconfig-config IP6_NF_IPTABLES
+./net/ipv6/netfilter/Kconfig-   tristate "IP6 tables support (required for filtering)"
+./net/ipv6/netfilter/Kconfig:   depends on INET && IPV6 && EXPERIMENTAL
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+there's plenty of potential cleanup in terms of making things like
+that consistent but, at the very least, there's certainly enough to do
+in terms of just *stripping* unnecessary EXPERIMENTAL dependencies out
+of the files where it's not appropriate any more.
+
+  if someone's interested, a place to start might be to do this on a
+subsystem by subsystem basis -- find a subsystem that's still tagged
+as EXPERIMENTAL, email the maintainer and ask if that's still
+appropriate and, if not, offer to submit a patch to change it.  it can
+all be done little by little.  any takers?
+
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://fsdev.net/wiki/index.php?title=Main_Page
+====================================
