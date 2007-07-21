@@ -1,7 +1,7 @@
 From: Simon Arlott <simon@fire.lp0.eu>
-Date: Sat, 21 Jul 2007 06:11:01 +0000
+Date: Sat, 21 Jul 2007 06:12:32 +0000
 Subject: Re: [PATCH 1/2] run scripts/Lindent on it to match Documentation/CodingStyle
-Message-Id: <46A1A375.3020900@simon.arlott.org.uk>
+Message-Id: <46A1A3D0.4010704@simon.arlott.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1184489571313-git-send-email-crquan@gmail.com> <4699EEA9.6070709@simon.arlott.org.uk> <20070720170743.GF14791@parisc-linux.org> <46A0F282.8070103@simon.arlott.org.uk> <20070720180019.GJ14791@parisc-linux.org>
 In-Reply-To: <20070720180019.GJ14791@parisc-linux.org>
@@ -13,18 +13,16 @@ Cc: Denis Cheng <crquan@gmail.com>, kernel-janitors@vger.kernel.org, linux-kerne
 
 On 20/07/07 19:00, Matthew Wilcox wrote:
 > On Fri, Jul 20, 2007 at 06:36:02PM +0100, Simon Arlott wrote:
->> On 20/07/07 18:07, Matthew Wilcox wrote:
->> > sed -i -e 's/^\t*      \(\w*:\)/ \1/' "$@"
->> > 
->> > which will replace the leading tabs and spaces with one space.
->> 
->> ... isn't the space thing a workaround for a "diff -p" bug?
+>> Mass
+>> replacing any labels run through Lindent with space prefixes would seem
+>> like a bad idea :/
 > 
-> Yes.  I like not being affected by bugs.  If you prefer to be affected
-> by bugs, that's up to you.
+> We don't tend to mass-run code through Lindent.  This may or may not be
+> a bad thing, but the fact is that it just doesn't happen.
 
-Changing the code to fix a utility bug is madness. I think it's been
-fixed too...
+I realise that, and it would be a big mess to do so - but when code is
+run through it, it shouldn't modify existing good code into slightly
+worse code.
 
 -- 
 Simon Arlott
