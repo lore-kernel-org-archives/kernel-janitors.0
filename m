@@ -1,67 +1,39 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 18 Jul 2007 09:53:59 +0000
-Subject: Re: should in-tree kernel source accommodate older kernel versions?
-Message-Id: <Pine.LNX.4.64.0707180545030.20490@localhost.localdomain>
+From: "egreetings.Com" <xbs@frh1.org>
+Date: Sat, 21 Jul 2007 06:57:05 +0000
+Subject: [KJ] You've received a postcard from a Family member!
+Message-Id: <002701c7cb64$5907a5b0$a0af21d2@wane.xqu>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0707171718450.18509@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0707171718450.18509@localhost.localdomain>
+References: <000401c7b800$eed9cb30$2ae0405a@bj.eonc>
+In-Reply-To: <000401c7b800$eed9cb30$2ae0405a@bj.eonc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 17 Jul 2007, Matthew Wilcox wrote:
+Hi. Family member has sent you a postcard.
+See your card as often as you wish during the next 15 days.
 
-> On Tue, Jul 17, 2007 at 05:36:45PM -0400, Robert P. J. Day wrote:
-> > On Tue, 17 Jul 2007, Matthew Wilcox wrote:
-> > > On Tue, Jul 17, 2007 at 05:22:56PM -0400, Robert P. J. Day wrote:
-> > > >   should kernel source that's in the current source tree still try to
-> > > > accommodate older kernel versions?  as an example, this is from
-> > >
-> > > This has been discussed before, and the current thinking is to
-> > > remove support for versions of the kernel older than 2.6.0.
-> >
-> > *that* part was self-evident.  i'm talking more specifically about
-> > older versions of 2.6.x, in particular features that aren't even
-> > *supported* anymore in the current tree.
->
-> You'll find people very resistant to patches that remove support for
-> older 2.6.x kernels.
+SEEING YOUR CARD
 
-the reason i'm asking is that this idea of retaining support for older
-versions of the kernel is somewhat inconsistent in the source tree.
-as an example, one of the video source files also had conditional
-support for that obsolete module parameter macro:
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
-#if defined(module_param)     // Showing parameters under SYSFS
-module_param(isocMode, int, 0444);
-module_param(video_debug, int, 0444);
-module_param(PowerOnAtOpen, int, 0444);
-...
-#else                                                   // Old Style
-MODULE_PARM(video_debug, "i");
-MODULE_PARM(adjustCompression, "i");
-MODULE_PARM(PowerOnAtOpen, "i");
-...
+http://71.74.68.153/?c634591933434671c16a2e59b128
 
-  the video folks had no problem applying a patch to toss that
-"old-style" stuff for what i think is a simple reason -- that
-MODULE_PARM macro isn't even *defined* anymore, so there's no possible
-value in keeping that old code around, even if it's protected by a
-kernel version check.
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
 
-  that's the fundamental question here -- what's the inherent value in
-protecting kernel code that is based on features that don't even
-*exist* in the source tree anymore?  whose benefit does that serve?
-it may make things easier for that particular developer, but it
-provides no value whatsoever to the kernel itself.
+We hope you enjoy your awesome card.
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+Wishing you the best,
+Postmaster,
+egreetings.Com
 
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
