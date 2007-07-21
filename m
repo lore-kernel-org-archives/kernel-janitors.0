@@ -1,42 +1,30 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Fri, 20 Jul 2007 20:54:18 +0000
+From: Simon Arlott <simon@fire.lp0.eu>
+Date: Sat, 21 Jul 2007 06:11:01 +0000
 Subject: Re: [PATCH 1/2] run scripts/Lindent on it to match Documentation/CodingStyle
-Message-Id: <20070720205418.GK14791@parisc-linux.org>
+Message-Id: <46A1A375.3020900@simon.arlott.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1184489571313-git-send-email-crquan@gmail.com> <4699EEA9.6070709@simon.arlott.org.uk> <20070720170743.GF14791@parisc-linux.org> <E1IBzQw-0000Im-55@flower>
-In-Reply-To: <E1IBzQw-0000Im-55@flower>
+References: <1184489571313-git-send-email-crquan@gmail.com> <4699EEA9.6070709@simon.arlott.org.uk> <20070720170743.GF14791@parisc-linux.org> <46A0F282.8070103@simon.arlott.org.uk> <20070720180019.GJ14791@parisc-linux.org>
+In-Reply-To: <20070720180019.GJ14791@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Oleg Verych <olecom@flower.upol.cz>
-Cc: Simon Arlott <simon@fire.lp0.eu>, Denis Cheng <crquan@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matthew Wilcox <matthew@wil.cx>
+Cc: Denis Cheng <crquan@gmail.com>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jul 20, 2007 at 10:50:42PM +0200, Oleg Verych wrote:
-> > Of course, we can't add this flag to Lindent until it's widely
-> > circulating amongst the distributions.  Perhaps we can add this to
-> > Lindent in the meantime:
-> >
-> > sed -i -e 's/^\t*      \(\w*:\)/ \1/' "$@"
-> >
-> > which will replace the leading tabs and spaces with one space.
-> > It should leave case labels unmolested, as they should be indented with
-> > tabs, not 6 spaces.
-> >
-> > Any regexp ninjas want to have a go at something better?
+On 20/07/07 19:00, Matthew Wilcox wrote:
+> On Fri, Jul 20, 2007 at 06:36:02PM +0100, Simon Arlott wrote:
+>> On 20/07/07 18:07, Matthew Wilcox wrote:
+>> > sed -i -e 's/^\t*      \(\w*:\)/ \1/' "$@"
+>> > 
+>> > which will replace the leading tabs and spaces with one space.
+>> 
+>> ... isn't the space thing a workaround for a "diff -p" bug?
 > 
-> I'm the one. Trying to write portable, optimized and easy to
-> understand scripts [0].
-> 
-> Please, describe more what must be done, and i will do it. Case labels
-> are handled very strangely in you example.
+> Yes.  I like not being affected by bugs.  If you prefer to be affected
+> by bugs, that's up to you.
 
-OK.  indent will indent labels to a column number that's a multiple of
-8, plus 6.  So it may start in column 6, 14, 20, 28, etc.  I'm not quite
-sure what the definition of a label is; I had it as \w*: up there, but I
-don't know if that would match the _.  The point is to *not* handle case
-labels, only goto labels.
+Changing the code to fix a utility bug is madness. I think it's been
+fixed too...
 
 -- 
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+Simon Arlott
