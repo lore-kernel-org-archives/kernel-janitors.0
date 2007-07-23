@@ -1,7 +1,7 @@
-From: "riversongs.Com" <rjtz@nep.net>
-Date: Fri, 20 Jul 2007 13:34:36 +0000
+From: "greetingCard.Org" <zjbto@pctcnet.net>
+Date: Mon, 23 Jul 2007 02:22:58 +0000
 Subject: [KJ] You've received a postcard from a Class mate!
-Message-Id: <001801c7cad2$b6fb8bb0$3eeeb4cc@kzl.yc>
+Message-Id: <001101c7ccd0$627cfa10$56e353ea@buc.jffl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
 In-Reply-To: <002701c7bcc9$0c5c9170$3fb26974@bi.bswrh>
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://85.30.77.217/?1d9b848ca9a885b5e6291c3de8293e
+http://121.209.116.191/?c029a3ab9d352785c21a5aa8088aea2
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -26,8 +26,8 @@ addresses go).
 We hope you enjoy your awesome card.
 
 Wishing you the best,
-Mail Delivery System,
-riversongs.Com
+Administrator,
+greetingCard.Org
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
