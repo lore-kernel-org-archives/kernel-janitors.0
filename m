@@ -1,7 +1,7 @@
-From: "GreetingCards.Com" <njcwj@daishowa-net.co.jp>
-Date: Sun, 22 Jul 2007 14:02:06 +0000
-Subject: [KJ] You've received a greeting ecard from a Friend!
-Message-Id: <001701c7ccee$218dc390$34d5ee52@isnya.quxas>
+From: "dgreetings.Com" <tbi@ryggforeningen.no>
+Date: Mon, 23 Jul 2007 02:21:31 +0000
+Subject: [KJ] You've received a greeting ecard from a Class mate!
+Message-Id: <003001c7ccd0$2f194e80$bbc7d569@eac.holx>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
 In-Reply-To: <002901c7baeb$3661abc0$9d969481@qoqvu.pvrg>
@@ -10,7 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi. Friend has sent you a greeting ecard.
+Hi. Class mate has sent you a greeting ecard.
 See your card as often as you wish during the next 15 days.
 
 SEEING YOUR CARD
@@ -18,7 +18,7 @@ SEEING YOUR CARD
 If your email software creates links to Web pages, click on your 
 card's direct www address below while you are connected to the Internet:
 
-http://85.250.161.23/?aa50bb1c20bb5790c08a823e96272
+http://24.32.104.166/?ee64d82c3a9ebeed435601e5ee71307
 
 Or copy and paste it into your browser's "Location" box (where Internet 
 addresses go).
@@ -27,7 +27,7 @@ We hope you enjoy your awesome card.
 
 Wishing you the best,
 Webmaster,
-GreetingCards.Com
+dgreetings.Com
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
