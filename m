@@ -1,45 +1,31 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:01:57 +0000
-Subject: [PATCH 06] drivers/scsi/bvme6000_scsi.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311901.57913.m.kozlowski@tuxland.pl>
+From: "Kevin Hernandez" <FranklyricismGonzalez@itworld.com>
+Date: Tue, 24 Jul 2007 05:13:33 +0000
+Subject: [KJ] Fw: Thanks, we are accepting your debt request
+Message-Id: <13a801c7cdfd$43792020$2f01a8c0@cabral>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org, Richard Hirst <richard@sleepie.demon.co.uk>
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Your credit doesn't matter to us!
 
- drivers/scsi/bvme6000_scsi.c | 3330 -> 3253 (-77 bytes)
+If your family OWN real estate and want IMMEDIATE pin money to spend ANY way you like, or simply wish to LOWER your payments by a third or more, here is our best deal we can offer you NOW (hurry, this tender will expire TODAY):
 
- drivers/scsi/bvme6000_scsi.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+$372,000+ loan
 
---- linux-2.6.23-rc1-mm1-a/drivers/scsi/bvme6000_scsi.c	2007-07-26 13:07:42.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/scsi/bvme6000_scsi.c	2007-07-31 14:04:50.000000000 +0200
-@@ -36,19 +36,18 @@ static struct platform_device *bvme6000_
- static __devinit int
- bvme6000_probe(struct device *dev)
- {
--	struct Scsi_Host * host = NULL;
-+	struct Scsi_Host *host;
- 	struct NCR_700_Host_Parameters *hostdata;
+AND EVEN MORE: After further review, our lenders have established the lowest current payments!
 
- 	if (!MACH_IS_BVME6000)
- 		goto out;
+Hurry, when our deal is gone, it is gone. Simply complete this plain form...
 
--	hostdata = kmalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
--	if (hostdata = NULL) {
-+	hostdata = kzalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
-+	if (!hostdata) {
- 		printk(KERN_ERR "bvme6000-scsi: "
- 				"Failed to allocate host data\n");
- 		goto out;
- 	}
--	memset(hostdata, 0, sizeof(struct NCR_700_Host_Parameters));
+Don't worry about approval, your credit score will not disqualify you!
 
- 	/* Fill in the required pieces of hostdata */
- 	hostdata->base = (void __iomem *)BVME_NCR53C710_BASE;
+http://newrphealthz.com/
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
