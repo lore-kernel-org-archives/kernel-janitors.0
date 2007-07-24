@@ -1,61 +1,49 @@
 From: Ravid Baruch Naali <ravid@codefidence.com>
-Date: Tue, 24 Jul 2007 19:40:53 +0000
+Date: Tue, 24 Jul 2007 19:52:56 +0000
 Subject: Re: [KJ][PATCH]dev->mem_start default value (~0) test (final go)
-Message-Id: <46A655C5.9020906@codefidence.com>
+Message-Id: <46A65898.5010801@codefidence.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <46A5C2FE.6040602@codefidence.com>
 In-Reply-To: <46A5C2FE.6040602@codefidence.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thanks for the comment,
+Your comment was on my mind before submitting the patch:
 
-But this 3 ways is one of the first lecture you get from you programming
-teacher.
+It's always hard to know what's best: splitting the long patch, which
+repeat it self, or combined it to one. It took me a while to decide but
+finally I came to the conclusion that I would expect my colleague, to
+combine.
+Looking at other patches in the archive I could not tell what's the rule
+of thumb.
 
-Where and what ever I developed adding an extra define for constant like
-0, ~0, 0xffff etc.. always received the opposite comment "what's the
-extra confusion for?"
+I also followed the FAQ answer "Try splitting them up per subsystem
+(drivers/net/ ..." (all my patch refers to drivers/net)
+So at the end of the day I'm left confuse at what is best.
 
-So it's a matter of opinion but ask your self if you would define 0 any
-where.
-
-As for any arbitrary constant I totally agree with you.
-
-I would love to here from any code maintainer what's the linux kernel
-convention for the constant I mentioned above.
-
-Håkon Løvdal wrote:
-> On 24/07/07, Ravid Baruch Naali <ravid@codefidence.com> wrote:
+Cripps wrote:
+>>> 3. Write readable code
+>>>       #define LIFE_THE_UNIVERSE_AND_EVERYTHING 42
+>>>       ...
+>>>       if (answer = LIFE_THE_UNIVERSE_AND_EVERYTHING)
 >>
->> -       if (dev->mem_start)
->> +       /*dev->mem_start can also be ~0 which is the default*/
->> +       if (dev->mem_start && dev->mem_start != ~0)
->>                 dev->mem_end = dev->mem_start + EL2_MEMSIZE;
->>
+>> I recommend the book named "The Practice of Programming" for you.
+>> It tells you how to write readable and nice code.
 > 
-> In my oppinion there are three ways to write code:
+>    I am in agreement, way number 3 is definitely the best way to write
+> code; I should probably start making my code
+> easier to read.
+>    In addition, Ravid, that's a fairly hefty patchfile. Personally, I would
+> split the existing file into individual patches
+> for each file being patched, that way it's easy to look over the patchfile
+> and go "okay, this all looks right to me,
+> lets move on." Splitting up large patchfiles makes processing patches
+> easier, and faster, for kernel maintainers.
 > 
-> 1. Write unreadable code
+> -acripps
 > 
->        if (answer = 42)
-> 
-> 2. Write unreadable code and try to comment it readable
-> 
->        if (answer = 42)    // life, the universe and everything
-> 
-> 3. Write readable code
->        #define LIFE_THE_UNIVERSE_AND_EVERYTHING 42
->        ...
->        if (answer = LIFE_THE_UNIVERSE_AND_EVERYTHING)
-> 
-> 
-> I think your patch would be better by not hardcoding ~0 with
-> a corresponding comment.
-> 
-> BR Håkon Løvdal
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
