@@ -1,21 +1,21 @@
-From: Golden Terry <zaohb@mail2world.com>
-Date: Tue, 24 Jul 2007 01:21:40 +0000
+From: Netty Clark <ejo@bigpond.net.au>
+Date: Wed, 25 Jul 2007 12:08:30 +0000
 Subject: [KJ] (no subject)
-Message-Id: <46A55424.5010805@mail2world.com>
+Message-Id: <46A73D3E.6000308@bigpond.net.au>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060505050503030207020505"
+Content-Type: multipart/mixed; boundary="------------070003000102010208070406"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
---------------060505050503030207020505
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+--------------070003000102010208070406
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------060505050503030207020505
+--------------070003000102010208070406
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -29,4 +29,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------060505050503030207020505--
+--------------070003000102010208070406--
