@@ -1,119 +1,41 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:05:40 +0000
-Subject: [PATCH 08] fs/cifs/connect.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311905.40378.m.kozlowski@tuxland.pl>
+From: "Chapmano Numbersw" <vinnydempsey_@fsmail.net>
+Date: Wed, 25 Jul 2007 17:36:34 +0000
+Subject: [KJ] dfa How are you?
+Message-Id: <01c7cee1$46c6ddf0$4dcd1d53@vinnydempsey_>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, sfrench@samba.org, linux-cifs-client@lists.samba.org, samba-technical@lists.samba.org
+To: kernel-janitors@vger.kernel.org
 
-This patch does kmalloc + memset conversion to kzalloc and removes some redundant
-argument checks.
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- fs/cifs/connect.c | 109282 -> 109078 (-204 bytes)
- fs/cifs/connect.o | 211804 -> 211576 (-228 bytes)
 
- fs/cifs/connect.c |   30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+Hi,  kernel-janitors
 
---- linux-2.6.23-rc1-mm1-a/fs/cifs/connect.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/cifs/connect.c	2007-07-31 14:51:20.000000000 +0200
-@@ -676,10 +676,8 @@ multi_t2_fnd:
- 		server->ssocket = NULL;
- 	}
- 	/* buffer usuallly freed in free_mid - need to free it here on exit */
--	if (bigbuf != NULL)
--		cifs_buf_release(bigbuf);
--	if (smallbuf != NULL)
--		cifs_small_buf_release(smallbuf);
-+	cifs_buf_release(bigbuf);
-+	cifs_small_buf_release(smallbuf);
+  You want, that your "member" became BIG & STRONG as a STONE?
+  You would like to recollect a young years...
+  Best quality! 100% Effect!  Starting from 30$! TRY NOW!
+  
+   
+   
+   
+   
+   
+   
+   Visa Verified Online Shop.Worldwide shipping.100% confidential.
+   
+  Order Now: FBEVI.COM 
+  Type  in browser (without spaces) press Enter.
+With Best Regards, Chapmanq Numbersv.
 
- 	read_lock(&GlobalSMBSeslock);
- 	if (list_empty(&server->pending_mid_q)) {
-@@ -1909,8 +1907,8 @@ cifs_mount(struct super_block *sb, struc
- 			return rc;
- 		}
 
--		srvTcp = kmalloc(sizeof (struct TCP_Server_Info), GFP_KERNEL);
--		if (srvTcp = NULL) {
-+		srvTcp = kzalloc(sizeof(struct TCP_Server_Info), GFP_KERNEL);
-+		if (!srvTcp) {
- 			rc = -ENOMEM;
- 			sock_release(csocket);
- 			kfree(volume_info.UNC);
-@@ -1919,7 +1917,6 @@ cifs_mount(struct super_block *sb, struc
- 			FreeXid(xid);
- 			return rc;
- 		} else {
--			memset(srvTcp, 0, sizeof (struct TCP_Server_Info));
- 			memcpy(&srvTcp->addr.sockAddr, &sin_server,
- 				sizeof (struct sockaddr_in));
- 			atomic_set(&srvTcp->inFlight, 0);
-@@ -2154,8 +2151,8 @@ cifs_mount(struct super_block *sb, struc
- 			}
- 		}
- 		 /* If find_unc succeeded then rc = 0 so we can not end */
--		if (tcon)  /* up accidently freeing someone elses tcon struct */
--			tconInfoFree(tcon);
-+		/* up accidently freeing someone elses tcon struct */
-+		tconInfoFree(tcon);
- 		if (existingCifsSes = NULL) {
- 			if (pSesInfo) {
- 				if ((pSesInfo->server) &&
-@@ -2526,8 +2523,7 @@ CIFSSessSetup(unsigned int xid, struct c
- sesssetup_nomem:	/* do not return an error on nomem for the info strings,
- 			   since that could make reconnection harder, and
- 			   reconnection might be needed to free memory */
--	if (smb_buffer)
--		cifs_buf_release(smb_buffer);
-+	cifs_buf_release(smb_buffer);
 
- 	return rc;
- }
-@@ -2865,8 +2861,7 @@ CIFSNTLMSSPNegotiateSessSetup(unsigned i
- 		rc = -EIO;
- 	}
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
--	if (smb_buffer)
--		cifs_buf_release(smb_buffer);
-+	cifs_buf_release(smb_buffer);
-
- 	return rc;
- }
-@@ -3279,8 +3274,7 @@ CIFSNTLMSSPAuthSessSetup(unsigned int xi
- 		rc = -EIO;
- 	}
-
--	if (smb_buffer)
--		cifs_buf_release(smb_buffer);
-+	cifs_buf_release(smb_buffer);
-
- 	return rc;
- }
-@@ -3433,8 +3427,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
- 		ses->ipc_tid = smb_buffer_response->Tid;
- 	}
-
--	if (smb_buffer)
--		cifs_buf_release(smb_buffer);
-+	cifs_buf_release(smb_buffer);
- 	return rc;
- }
-
-@@ -3485,8 +3478,7 @@ cifs_umount(struct super_block *sb, stru
- 	kfree(tmp);
- 	if (ses)
- 		schedule_timeout_interruptible(msecs_to_jiffies(500));
--	if (ses)
--		sesInfoFree(ses);
-+	sesInfoFree(ses);
-
- 	FreeXid(xid);
- 	return rc;	/* BB check if we should always return zero here */
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
