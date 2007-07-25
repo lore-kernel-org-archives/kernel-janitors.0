@@ -1,23 +1,23 @@
-From: Carol Durham <tjzgv@owens-minor.com>
-Date: Wed, 25 Jul 2007 12:09:38 +0000
+From: Aguilar <shcw@wb-management.com>
+Date: Wed, 25 Jul 2007 17:06:00 +0000
 Subject: [KJ] (no subject)
-Message-Id: <46A73D82.4040507@owens-minor.com>
+Message-Id: <46A782F8.4010406@wb-management.com>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020003040207010006020606"
+Content-Type: multipart/mixed; boundary="------------050006020207080402010104"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
 
---------------020003040207010006020606
-Content-Type: text/plain; charset=windows-1252; format=flowed
+--------------050006020207080402010104
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
 
---------------020003040207010006020606
+--------------050006020207080402010104
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -32,18 +32,18 @@ the administrator of that system for details.
 
 Content preview:  [...] 
 
-Content analysis details:   (5.8 points, 5.0 required)
+Content analysis details:   (7.3 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
- 2.0 BAYES_80               BODY: Bayesian spam probability is 80 to 95%
-                            [score: 0.8966]
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 0.9995]
  2.0 MISSING_SUBJECT        Missing Subject: header
  1.7 EMPTY_MESSAGE          Message appears to be empty with no Subject: text
 
 
 
---------------020003040207010006020606
+--------------050006020207080402010104
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -57,4 +57,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------020003040207010006020606--
+--------------050006020207080402010104--
