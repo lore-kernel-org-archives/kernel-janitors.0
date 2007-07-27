@@ -1,28 +1,54 @@
-From: "Ren" <Ren@e.premierman.com>
-Date: Sun, 29 Jul 2007 12:00:51 +0000
-Subject: [KJ] investor_page-81199.zip
-Message-Id: <200707291201.l6TC0sgp022465@smtp2.linux-foundation.org>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="=====================_1498765==_"
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:44:25 +0000
+Subject: [PATCH 05/68] 0 -> NULL, for arch/cris
+Message-Id: <200707270944.LAA17140@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---=====================_1498765==_
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-
-
---=====================_1498765==_
-Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: kernel-janitors@vger.kernel.org
+Cc: starvik@axis.com, dev-etrax@axis.com, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---=====================_1498765==_--
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
+
+Here is an excerpt of the semantic patch: 
+
+@@
+expression *E;
+@@
+
+  E =
+- 0
++ NULL
+
+@@
+expression *E;
+@@
+
+  E !- 0
++ NULL
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: starvik@axis.com
+Cc: dev-etrax@axis.com
+Cc: akpm@linux-foundation.org
+---
+
+ fault.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/cris/mm/fault.c b/arch/cris/mm/fault.c
+index 8672ab7..d5b1e3d 100644
+--- a/arch/cris/mm/fault.c
++++ b/arch/cris/mm/fault.c
+@@ -448,7 +448,7 @@ find_fixup_code(struct pt_regs *regs)
+ {
+ 	const struct exception_table_entry *fixup;
+ 
+-	if ((fixup = search_exception_tables(instruction_pointer(regs))) != 0) {
++	if ((fixup = search_exception_tables(instruction_pointer(regs))) != NULL) {
+ 		/* Adjust the instruction pointer in the stackframe. */
+ 		instruction_pointer(regs) = fixup->fixup;
+ 		arch_fixup(regs);
+
