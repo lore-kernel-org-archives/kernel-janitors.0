@@ -1,29 +1,33 @@
-From: "Reginald Fields" <BendecorumWilliamson@pavnet.org>
-Date: Sun, 29 Jul 2007 20:10:17 +0000
-Subject: [KJ] Fwd: Thanks,
-Message-Id: <f27a301c7d268$6d4245c0$07c0434b@Sheehan>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Fri, 27 Jul 2007 12:46:43 +0000
+Subject: [PATCH] drivers/media/video/hexium_gemini.c: ARRAY_SIZE()
+Message-Id: <200707271446.43874.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Your credit score doesn't matter to us!
+This patch replaces an array size calculation done using sizeof
+with an invocation of the ARRAY_SIZE macro.
 
-If you have your own business and want IMMEDIATE money to spend ANY way you like or want Extra money to give your business a boost or wish A low interest loan - NO STRINGS ATTACHED, here is best deal we can offer you TONIGHT (hurry, this offer will expire TONIGHT):
+Please CC me for any comments.
 
-$34,000+ loan
+Tested by compilation on an i386 box using "allyesconfig".
+Diffed against Linus' git-tree.
 
-Hurry, when our deal is gone, it is gone. Simply Call Us...
-
-Do not worry about approval, your credit score will not disqualify you!
-
-Call Us Free on 877-542-1884
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+---
+diff --git a/drivers/media/video/hexium_gemini.c b/drivers/media/video/hexium_gemini.c
+index c7fed34..fa37097 100644
+--- a/drivers/media/video/hexium_gemini.c
++++ b/drivers/media/video/hexium_gemini.c
+@@ -512,7 +512,7 @@ static struct saa7146_ext_vv vv_data = {
+ 	.inputs = HEXIUM_INPUTS,
+ 	.capabilities = 0,
+ 	.stds = &hexium_standards[0],
+-	.num_stds = sizeof(hexium_standards) / sizeof(struct saa7146_standard),
++	.num_stds = ARRAY_SIZE(hexium_standards),
+ 	.std_callback = &std_callback,
+ 	.ioctls = &ioctls[0],
+ 	.ioctl = hexium_ioctl,
