@@ -1,39 +1,68 @@
-From: Adrian Bunk <bunk@stusta.de>
-Date: Thu, 05 Jul 2007 20:13:29 +0000
-Subject: Re: [KJ] OSS versus ALSA parts of the tree?
-Message-Id: <20070705201329.GQ3492@stusta.de>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:45:56 +0000
+Subject: [PATCH 18/68] 0 -> NULL, for arch/um
+Message-Id: <200707270945.LAA17372@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0707051453570.18394@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0707051453570.18394@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: jdike@karaya.com, user-mode-linux-devel@lists.sourceforge.net, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2007 at 02:55:49PM -0400, Robert P. J. Day wrote:
-> 
->   perhaps a dumb question but where's the dividing line between the
-> OSS and ALSA portions of the source tree?  within the sound/
-> directory, i can see the oss/ subdirectory, but is that all that
-> constitutes OSS?
->...
 
-Yes, sound/oss/ is all (sound/sound_firmware.c is only built for OSS, 
-but it's more because OSS is the only remaining user).
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
 
-> rday
+Here is an excerpt of the semantic patch: 
 
-cu
-Adrian
+@@
+expression *E;
+@@
 
--- 
+  E =
+- 0
++ NULL
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
+@@
+expression *E;
+@@
 
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+  E !- 0
++ NULL
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: jdike@karaya.com
+Cc: user-mode-linux-devel@lists.sourceforge.net
+Cc: akpm@linux-foundation.org
+---
+
+ sys-i386/fault.c   |    2 +-
+ sys-x86_64/fault.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/um/sys-i386/fault.c b/arch/um/sys-i386/fault.c
+index 745b4fd..8004023 100644
+--- a/arch/um/sys-i386/fault.c
++++ b/arch/um/sys-i386/fault.c
+@@ -20,7 +20,7 @@ int arch_fixup(unsigned long address, un
+ 	const struct exception_table_entry *fixup;
+ 
+ 	fixup = search_exception_tables(address);
+-	if(fixup != 0){
++	if(fixup != NULL){
+ 		UPT_IP(regs) = fixup->fixup;
+ 		return(1);
+ 	}
+diff --git a/arch/um/sys-x86_64/fault.c b/arch/um/sys-x86_64/fault.c
+index 4636b14..67d4a19 100644
+--- a/arch/um/sys-x86_64/fault.c
++++ b/arch/um/sys-x86_64/fault.c
+@@ -19,7 +19,7 @@ int arch_fixup(unsigned long address, un
+ 	const struct exception_table_entry *fixup;
+ 
+ 	fixup = search_exception_tables(address);
+-	if(fixup != 0){
++	if(fixup != NULL){
+ 		UPT_IP(regs) = fixup->fixup;
+ 		return(1);
+ 	}
+
