@@ -1,62 +1,81 @@
-From: acripps <acripps@gmail.com>
-Date: Mon, 16 Jul 2007 14:06:03 +0000
-Subject: [KJ] [third][PATCH 1/4][2.6 drivers/net/irda/actisys-sir.c:]replace
-Message-Id: <20070716141803.30653.48505.sendpatchset@shcherbakov.homelinux.net>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:47:47 +0000
+Subject: [PATCH 20/68] 0 -> NULL, for arch/xtensa
+Message-Id: <200707270947.LAA17593@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: chris@zankel.net, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-this is a simple patch to remove the MAX_SPEEDS macro in favor of the more
-generic ARRAY_SIZE(arr) macro defined in kernel.h
 
-Signed-off-by: Aaron Cripps <cripps@cs.mun.ca>
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
 
-diff --git a/drivers/net/irda/actisys-sir.c b/drivers/net/irda/actisys-sir.c
-index 9715ab5..cf47a46 100644
---- a/drivers/net/irda/actisys-sir.c
-+++ b/drivers/net/irda/actisys-sir.c
-@@ -43,6 +43,7 @@
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/init.h>
-+#include <linux/kernel.h>
- 
- #include <net/irda/irda.h>
- 
-@@ -67,8 +68,6 @@ static int actisys_reset(struct sir_dev *);
- /* Note : the 220L doesn't support 38400, but we will fix that below */
- static unsigned baud_rates[] = { 9600, 19200, 57600, 115200, 38400 };
- 
--#define MAX_SPEEDS (sizeof(baud_rates)/sizeof(baud_rates[0]))
--
- static struct dongle_driver act220l = {
- 	.owner		= THIS_MODULE,
- 	.driver_name	= "Actisys ACT-220L",
-@@ -176,7 +175,7 @@ static int actisys_change_speed(struct sir_dev *dev, unsigned speed)
- 	 * Now, we can set the speed requested. Send RTS pulses until we
-          * reach the target speed 
- 	 */
--	for (i = 0; i < MAX_SPEEDS; i++) {
-+	for (i = 0; i < ARRAY_SIZE(baud_rates); i++) {
- 		if (speed = baud_rates[i]) {
- 			dev->speed = speed;
- 			break;
-@@ -191,7 +190,7 @@ static int actisys_change_speed(struct sir_dev *dev, unsigned speed)
- 	}
- 
- 	/* Check if life is sweet... */
--	if (i >= MAX_SPEEDS) {
-+	if (i >= ARRAY_SIZE(baud_rates)) {
- 		actisys_reset(dev);
- 		ret = -EINVAL;  /* This should not happen */
- 	}
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+Here is an excerpt of the semantic patch: 
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+@@
+expression *E;
+@@
+
+  E =
+- 0
++ NULL
+
+@@
+expression *E;
+@@
+
+  E !- 0
++ NULL
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: chris@zankel.net
+Cc: akpm@linux-foundation.org
+---
+
+ kernel/pci.c           |    2 +-
+ kernel/traps.c         |    2 +-
+ platform-iss/console.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/xtensa/kernel/pci.c b/arch/xtensa/kernel/pci.c
+index 77deae5..1102816 100644
+--- a/arch/xtensa/kernel/pci.c
++++ b/arch/xtensa/kernel/pci.c
+@@ -306,7 +306,7 @@ __pci_mmap_make_offset(struct pci_dev *d
+ 	unsigned long io_offset = 0;
+ 	int i, res_bit;
+ 
+-	if (pci_ctrl = 0)
++	if (pci_ctrl = NULL)
+ 		return -EINVAL;		/* should never happen */
+ 
+ 	/* If memory, add on the PCI bridge address offset */
+diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
+index c5e62f9..eb21c7c 100644
+--- a/arch/xtensa/kernel/traps.c
++++ b/arch/xtensa/kernel/traps.c
+@@ -419,7 +419,7 @@ void show_stack(struct task_struct *task
+ 	int i = 0;
+ 	unsigned long *stack;
+ 
+-	if (sp = 0)
++	if (sp = NULL)
+ 		__asm__ __volatile__ ("mov %0, a1\n" : "=a"(sp));
+ 
+  	stack = sp;
+diff --git a/arch/xtensa/platform-iss/console.c b/arch/xtensa/platform-iss/console.c
+index 2f4f20f..ad8d65e 100644
+--- a/arch/xtensa/platform-iss/console.c
++++ b/arch/xtensa/platform-iss/console.c
+@@ -265,7 +265,7 @@ static void iss_console_write(struct con
+ {
+ 	int len = strlen(s);
+ 
+-	if (s != 0 && *s != 0)
++	if (s != NULL && *s != 0)
+ 		__simc (SYS_write, 1, (unsigned long)s,
+ 			count < len ? count : len,0,0);
+ }
+
