@@ -1,47 +1,21 @@
-From: Christie <apkt@apisource.com>
-Date: Tue, 24 Jul 2007 10:25:30 +0000
-Subject: [KJ] Check
-Message-Id: <46A5D39A.3080804@apisource.com>
+From: "Portia W. Snider" <yxp@mazatlan.com.mx>
+Date: Fri, 27 Jul 2007 00:41:27 +0000
+Subject: [KJ] check
+Message-Id: <46A93F37.2020807@mazatlan.com.mx>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------020301010401080006030604"
+Content-Type: multipart/mixed; boundary="------------060008000505060200030701"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <46A5D39A.3080804@apisource.com>
+In-Reply-To: <46A5D39A.3080804@apisource.com>
 To: kernel-janitors@vger.kernel.org
 
-
---------------020301010401080006030604
-Content-Type: text/plain; charset=windows-1252; format=flowed
+--------------060008000505060200030701
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 
 
---------------020301010401080006030604
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  [...] 
-
-Content analysis details:   (7.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
-                            2)
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9999]
-
-
-
---------------020301010401080006030604
+--------------060008000505060200030701
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -55,4 +29,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------020301010401080006030604--
+--------------060008000505060200030701--
