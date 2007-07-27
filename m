@@ -1,44 +1,54 @@
-From: "PostcardsFrom.Com" <gal@mail.weber.edu>
-Date: Tue, 03 Jul 2007 19:09:47 +0000
-Subject: [KJ] Independence Day At The Park
-Message-Id: <000601c7bda5$b9407050$18b69120@sw.qyoj>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:44:42 +0000
+Subject: [PATCH 07/68] 0 -> NULL, for arch/ia64
+Message-Id: <200707270944.LAA17193@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-
-Hi. Family member has sent you a greeting card.
-See your card as often as you wish during the next 15 days.
-
-SEEING YOUR CARD
-
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
-
-http://69.182.129.232/?85da463c5c036b0339eb3a6075338ee7c634
-
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
-     
+Cc: tony.luck@intel.com, linux-ia64@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
 
-PRIVACY
-PostcardsFrom.Com honors your privacy. Our home page and Card Pick Up have links to our 
-Privacy Policy.
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
 
-TERMS OF USE
-By accessing your card you agree we have no liability. 
-If you don't know the person sending the card or don't wish to see the card, 
-please disregard this Announcement.
+Here is an excerpt of the semantic patch: 
 
-We hope you enjoy your awesome card.
+@@
+expression *E;
+@@
 
-Wishing you the best,
-Webmaster,
-PostcardsFrom.Com
+  E =
+- 0
++ NULL
 
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+@@
+expression *E;
+@@
+
+  E !- 0
++ NULL
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: tony.luck@intel.com
+Cc: linux-ia64@vger.kernel.org
+Cc: akpm@linux-foundation.org
+---
+
+ simscsi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/ia64/hp/sim/simscsi.c b/arch/ia64/hp/sim/simscsi.c
+index bb87682..64248b5 100644
+--- a/arch/ia64/hp/sim/simscsi.c
++++ b/arch/ia64/hp/sim/simscsi.c
+@@ -101,7 +101,7 @@ simscsi_interrupt (unsigned long val)
+ {
+ 	struct scsi_cmnd *sc;
+ 
+-	while ((sc = queue[rd].sc) != 0) {
++	while ((sc = queue[rd].sc) != NULL) {
+ 		atomic_dec(&num_reqs);
+ 		queue[rd].sc = NULL;
+ 		if (DBG)
+
