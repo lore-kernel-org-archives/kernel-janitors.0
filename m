@@ -1,39 +1,67 @@
-From: "freewebcards.com" <zwy@peak.org>
-Date: Fri, 20 Jul 2007 00:17:25 +0000
-Subject: [KJ] You've received an ecard from a Mate!
-Message-Id: <001c01c7ca63$59801dd0$52c5d966@gtaq.ybbcu>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:44:07 +0000
+Subject: [PATCH 02/68] 0 -> NULL, for arch/arm
+Message-Id: <200707270944.LAA17082@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <001101c7c9ff$9e4dc9d0$cd30b33f@vq.ccvu>
-In-Reply-To: <001101c7c9ff$9e4dc9d0$cd30b33f@vq.ccvu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: rmk@arm.linux.org.uk, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-Hi. Mate has sent you an ecard.
-See your card as often as you wish during the next 15 days.
 
-SEEING YOUR CARD
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+Here is an excerpt of the semantic patch: 
 
-http://24.4.142.62/?c4d2c855844a4912b62c4232c
+@@
+expression *E;
+@@
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
+  E =
+- 0
++ NULL
 
-We hope you enjoy your awesome card.
+@@
+expression *E;
+@@
 
-Wishing you the best,
-Postmaster,
-freewebcards.com
+  E !- 0
++ NULL
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: rmk@arm.linux.org.uk
+Cc: akpm@linux-foundation.org
+---
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ common/dmabounce.c |    2 +-
+ mach-omap1/clock.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
+index b36b1e8..74ff750 100644
+--- a/arch/arm/common/dmabounce.c
++++ b/arch/arm/common/dmabounce.c
+@@ -238,7 +238,7 @@ map_single(struct device *dev, void *ptr
+ 		struct safe_buffer *buf;
+ 
+ 		buf = alloc_safe_buffer(device_info, ptr, size, dir);
+-		if (buf = 0) {
++		if (buf = NULL) {
+ 			dev_err(dev, "%s: unable to map unsafe buffer %p!\n",
+ 			       __func__, ptr);
+ 			return 0;
+diff --git a/arch/arm/mach-omap1/clock.c b/arch/arm/mach-omap1/clock.c
+index f625f6d..b7e1b22 100644
+--- a/arch/arm/mach-omap1/clock.c
++++ b/arch/arm/mach-omap1/clock.c
+@@ -193,7 +193,7 @@ static int calc_dsor_exp(struct clk *clk
+ 		return -EINVAL;
+ 
+ 	parent = clk->parent;
+-	if (unlikely(parent = 0))
++	if (unlikely(parent = NULL))
+ 		return -EIO;
+ 
+ 	realrate = parent->rate;
+
