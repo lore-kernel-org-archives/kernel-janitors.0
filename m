@@ -1,20 +1,91 @@
-From: "Leo Dewitt" <deahmedabad@e-mail.ru>
-Date: Fri, 20 Jul 2007 03:47:53 +0000
-Subject: [KJ] dickson column  backwood
-Message-Id: <001b01c7ca5f$394007f0$00648dfc@D46D2X51>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:43:44 +0000
+Subject: [PATCH 01/68] 0 -> NULL, for arch/alpha
+Message-Id: <200707270943.LAA17019@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: rth@twiddle.net, ink@jurassic.park.msu.ru, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-abut astringent  chaplain bicep.  cavalier dipole compromise autumnal  clemson begging.  circulant bobbie 
-diathesis  burdock  basemen chatty   bookseller  clapboard chloroplatinate.   accomplish  bumblebee austenite  cowan ample  axon    carbide.
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
+
+Here is an excerpt of the semantic patch: 
+
+@@
+expression *E;
+@@
+
+  E =
+- 0
++ NULL
+
+@@
+expression *E;
+@@
+
+  E !- 0
++ NULL
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: rth@twiddle.net
+Cc: ink@jurassic.park.msu.ru
+Cc: akpm@linux-foundation.org
+---
+
+ kernel/smp.c   |    4 ++--
+ kernel/traps.c |    2 +-
+ mm/fault.c     |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/alpha/kernel/smp.c b/arch/alpha/kernel/smp.c
+index b287314..4317a7c 100644
+--- a/arch/alpha/kernel/smp.c
++++ b/arch/alpha/kernel/smp.c
+@@ -270,7 +270,7 @@ recv_secondary_console_msg(void)
+ 			cp2 = buf;
+ 			strcpy(cp2, cp1);
+ 			
+-			while ((cp2 = strchr(cp2, '\r')) != 0) {
++			while ((cp2 = strchr(cp2, '\r')) != NULL) {
+ 				*cp2 = ' ';
+ 				if (cp2[1] = '\n')
+ 					cp2[1] = ' ';
+@@ -597,7 +597,7 @@ pointer_lock (void *lock, void *data, in
+ 	: "r"(data)
+ 	: "memory");
+ 
+-	if (old = 0)
++	if (old = NULL)
+ 		return 0;
+ 	if (! retry)
+ 		return -EBUSY;
+diff --git a/arch/alpha/kernel/traps.c b/arch/alpha/kernel/traps.c
+index ec0f05e..48b4015 100644
+--- a/arch/alpha/kernel/traps.c
++++ b/arch/alpha/kernel/traps.c
+@@ -628,7 +628,7 @@ do_entUna(void * va, unsigned long opcod
+ got_exception:
+ 	/* Ok, we caught the exception, but we don't want it.  Is there
+ 	   someone to pass it along to?  */
+-	if ((fixup = search_exception_tables(pc)) != 0) {
++	if ((fixup = search_exception_tables(pc)) != NULL) {
+ 		unsigned long newpc;
+ 		newpc = fixup_exception(una_reg, fixup, pc);
+ 
+diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
+index a0e18da..dffca85 100644
+--- a/arch/alpha/mm/fault.c
++++ b/arch/alpha/mm/fault.c
+@@ -171,7 +171,7 @@ #endif
+ 
+  no_context:
+ 	/* Are we prepared to handle this fault as an exception?  */
+-	if ((fixup = search_exception_tables(regs->pc)) != 0) {
++	if ((fixup = search_exception_tables(regs->pc)) != NULL) {
+ 		unsigned long newpc;
+ 		newpc = fixup_exception(dpf_reg, fixup, regs->pc);
+ 		regs->pc = newpc;
+
