@@ -1,40 +1,55 @@
-From: "postcard.com" <nwi@defiantresources.com>
-Date: Thu, 19 Jul 2007 02:37:23 +0000
-Subject: [KJ] You've received an ecard from a Worshipper!
-Message-Id: <000501c7c9c5$d0648f60$2ad06aa0@nqu.qnva>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:44:48 +0000
+Subject: [PATCH 08/68] 0 -> NULL, for arch/m68k
+Message-Id: <200707270944.LAA17213@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
-In-Reply-To: <002301c7c3b4$cf0c7c20$c82c7de0@nurk.hpy>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-
-Hi. Worshipper has sent you an ecard.
-See your card as often as you wish during the next 15 days.
-
-SEEING YOUR CARD
-
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
-
-http://76.241.142.68/?0b516c3c2cd8a7c0b58e47d14c775ed
-
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
-
-We hope you enjoy your awesome card.
-
-Wishing you the best,
-Postmaster,
-postcard.com
+Cc: geert@linux-m68k.org, zippel@linux-m68k.org, linux-m68k@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Here is an excerpt of the semantic patch: 
+
+@@
+expression *E;
+@@
+
+  E =
+- 0
++ NULL
+
+@@
+expression *E;
+@@
+
+  E !- 0
++ NULL
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: geert@linux-m68k.org
+Cc: zippel@linux-m68k.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: akpm@linux-foundation.org
+---
+
+ stram.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/m68k/atari/stram.c b/arch/m68k/atari/stram.c
+index bf4588c..a37b985 100644
+--- a/arch/m68k/atari/stram.c
++++ b/arch/m68k/atari/stram.c
+@@ -130,7 +130,7 @@ void __init atari_stram_init(void)
+ 	/* determine whether kernel code resides in ST-RAM (then ST-RAM is the
+ 	 * first memory block at virtual 0x0) */
+ 	stram_start = phys_to_virt(0);
+-	kernel_in_stram = (stram_start = 0);
++	kernel_in_stram = (stram_start = NULL);
+ 
+ 	for( i = 0; i < m68k_num_memory; ++i ) {
+ 		if (m68k_memory[i].addr = 0) {
+
