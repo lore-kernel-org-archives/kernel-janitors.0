@@ -1,39 +1,53 @@
-From: "GreetingCards.Com" <kdn@mdvl.net>
-Date: Fri, 20 Jul 2007 18:29:59 +0000
-Subject: [KJ] You've received a postcard from a School friend!
-Message-Id: <003001c7cafb$fac1dec0$af50e64a@lnf.qpnds>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 27 Jul 2007 09:44:53 +0000
+Subject: [PATCH 09/68] 0 -> NULL, for arch/m68knommu
+Message-Id: <200707270944.LAA17230@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
-In-Reply-To: <000301c7bce9$e0c5cdd0$4ba38988@pwwh.ep>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+Cc: gerg@uclinux.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-Hi. School friend has sent you a postcard.
-See your card as often as you wish during the next 15 days.
 
-SEEING YOUR CARD
+When comparing a pointer, it's clearer to compare it to NULL than to 0.
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+Here is an excerpt of the semantic patch: 
 
-http://68.95.158.126/?0135456ec290b516c3c2cd8
+@@
+expression *E;
+@@
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
+  E =
+- 0
++ NULL
 
-We hope you enjoy your awesome card.
+@@
+expression *E;
+@@
 
-Wishing you the best,
-Mailer-Daemon,
-GreetingCards.Com
+  E !- 0
++ NULL
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: gerg@uclinux.org
+Cc: akpm@linux-foundation.org
+---
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ comempci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/m68knommu/kernel/comempci.c b/arch/m68knommu/kernel/comempci.c
+index 6ee00ef..528517e 100644
+--- a/arch/m68knommu/kernel/comempci.c
++++ b/arch/m68knommu/kernel/comempci.c
+@@ -736,7 +736,7 @@ #endif
+ 
+ 	/* Find a free spot to put this handler */
+ 	for (i = 0; (i < COMEM_MAXPCI); i++) {
+-		if (pci_irqlist[i].handler = 0) {
++		if (pci_irqlist[i].handler = NULL) {
+ 			pci_irqlist[i].handler = handler;
+ 			pci_irqlist[i].device = device;
+ 			pci_irqlist[i].dev_id = dev_id;
+
