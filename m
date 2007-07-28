@@ -1,32 +1,20 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 19:18:33 +0000
-Subject: [PATCH 52] include/asm-m32r/thread_info.h: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312118.34417.m.kozlowski@tuxland.pl>
+From: "Sally Crenshaw" <kcpdaybed@email.uophx.edu>
+Date: Sat, 28 Jul 2007 19:20:20 +0000
+Subject: [KJ] clammy bypath  direct
+Message-Id: <001b01c7d15d$1a55c1e0$05eff044@pomocc3yw3ehlz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, takata@linux-m32r.org, linux-m32r@ml.linux-m32r.org
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+deadhead crankshaft  contempt cameo.  chatham consanguineous abroad boucher  crackpot attenuate.  croak chin 
+bromfield  bebop  dewar discomfit   amigo  cinquefoil carp.   craggy  analogue bury  bask conquer  bronzy    diane.
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
- include/asm-m32r/thread_info.h |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
---- linux-2.6.23-rc1-mm1-a/include/asm-m32r/thread_info.h	2007-07-26 13:07:41.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/include/asm-m32r/thread_info.h	2007-07-31 15:08:17.000000000 +0200
-@@ -100,9 +100,8 @@ static inline struct thread_info *curren
- 	({							\
- 		struct thread_info *ret;			\
- 	 							\
--	 	ret = kmalloc(THREAD_SIZE, GFP_KERNEL);		\
--	 	if (ret)					\
--	 		memset(ret, 0, THREAD_SIZE);		\
-+	 	ret = kzalloc(THREAD_SIZE, GFP_KERNEL);		\
-+								\
- 	 	ret;						\
- 	 })
- #else
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
