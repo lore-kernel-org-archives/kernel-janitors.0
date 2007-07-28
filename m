@@ -1,38 +1,58 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:22:18 +0000
-Subject: [PATCH 53] Documentation/DocBook/mtdnand.tmpl: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312322.18508.m.kozlowski@tuxland.pl>
+From: "Burch N. Ernest" <etftt@idtech.co.jp>
+Date: Sat, 28 Jul 2007 09:36:49 +0000
+Subject: [KJ] email
+Message-Id: <46AB0E31.8020808@idtech.co.jp>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------020600050801010401060207"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+
+--------------020600050801010401060207
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: dwmw2@infradead.org, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org
+Content-Disposition: inline
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- Documentation/DocBook/mtdnand.tmpl |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- linux-2.6.23-rc1-mm1-a/Documentation/DocBook/mtdnand.tmpl	2007-07-26 13:07:45.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/Documentation/DocBook/mtdnand.tmpl	2007-07-31 12:16:02.000000000 +0200
-@@ -275,16 +275,13 @@ int __init board_init (void)
- 	int err = 0;
+--------------020600050801010401060207
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
- 	/* Allocate memory for MTD device structure and private data */
--	board_mtd = kmalloc (sizeof(struct mtd_info) + sizeof (struct nand_chip), GFP_KERNEL);
-+	board_mtd = kzalloc(sizeof(struct mtd_info) + sizeof(struct nand_chip), GFP_KERNEL);
- 	if (!board_mtd) {
- 		printk ("Unable to allocate NAND MTD device structure.\n");
- 		err = -ENOMEM;
- 		goto out;
- 	}
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
--	/* Initialize structures */
--	memset ((char *) board_mtd, 0, sizeof(struct mtd_info) + sizeof(struct nand_chip));
--
- 	/* map physical adress */
- 	baseaddr = (unsigned long)ioremap(CHIP_PHYSICAL_ADDRESS, 1024);
- 	if(!baseaddr){
+Content preview:  [...] 
+
+Content analysis details:   (7.3 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
+                            2)
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 0.9983]
+
+
+
+--------------020600050801010401060207
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------020600050801010401060207--
