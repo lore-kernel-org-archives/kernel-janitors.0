@@ -1,15 +1,22 @@
-From: "Jolene Ladd" <ncriterion@kurilka.zzn.com>
-Date: Sun, 29 Jul 2007 20:42:05 +0000
-Subject: [KJ] celesta begotten  bowditch
-Message-Id: <001901c7d1ff$65712cd0$06553074@chris1ik1okg6m>
+From: "Smalley" <Baotuan488@e.premierman.com>
+Date: Sun, 29 Jul 2007 12:00:43 +0000
+Subject: [KJ] hot_investment_report-55378.zip
+Message-Id: <200707291200.l6TC0qfe022458@smtp2.linux-foundation.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="=====================_1491364==_"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-cuprous diesel  contour carleton.  arterial borosilicate dimethyl cockatoo  chairperson approbation.  desperate adulterous 
-diocesan  custodial  buckthorn breton   cede  assignee cloudy.   content  cleat brow  cloud devote  consist    dash.
+--=====================_1491364==_
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+
+
+--=====================_1491364==_
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
@@ -18,3 +25,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--=====================_1491364==_--
