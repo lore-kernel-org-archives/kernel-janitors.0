@@ -1,28 +1,14 @@
-From: "Bridget C. Herring" <wdirf@supervalu.com>
-Date: Sun, 29 Jul 2007 10:37:58 +0000
+From: "Johannis" <Johannisbfm@e.premierman.com>
+Date: Sun, 29 Jul 2007 12:00:51 +0000
 Subject: [KJ] (no subject)
-Message-Id: <46AC6E06.1020600@supervalu.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------010606050701020003040207"
+Message-Id: <200707291201.l6TC0sn5008579@smtp1.linux-foundation.org>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
-To: kernel-janitors@vger.kernel.org
-
-
---------------010606050701020003040207
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
-
---------------010606050701020003040207
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
 Spam detection software, running on the system "daredevil.linux-foundation.org", has
 identified this incoming email as possible spam.  The original message
@@ -32,22 +18,16 @@ the administrator of that system for details.
 
 Content preview:  [...] 
 
-Content analysis details:   (7.3 points, 5.0 required)
+Content analysis details:   (5.5 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9986]
+ 1.2 MSGID_FROM_MTA_ID      Message-Id for external message added locally
+ 2.0 BAYES_80               BODY: Bayesian spam probability is 80 to 95%
+                            [score: 0.8453]
  2.0 MISSING_SUBJECT        Missing Subject: header
- 1.7 EMPTY_MESSAGE          Message appears to be empty with no Subject: text
+ 0.3 MSGID_FROM_MTA_HEADER  Message-Id was added by a relay
 
-
-
---------------010606050701020003040207
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -57,4 +37,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------010606050701020003040207--
