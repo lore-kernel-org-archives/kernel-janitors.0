@@ -1,24 +1,29 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 16:45:48 +0000
-Subject: [KJ PATCHES] mostly kmalloc + memset conversion to k[cz]alloc
-Message-Id: <200707311845.48807.m.kozlowski@tuxland.pl>
+From: "Keri Ohara" <AdelinehavenKurtz@wikipedia.org>
+Date: Sun, 29 Jul 2007 13:17:31 +0000
+Subject: [KJ] Re: Thank you,
+Message-Id: <22fa401c7d23f$28766990$31ddfea9@your4dacd0ea75>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-janitors@vger.kernel.org
 
-Hello,
+Your credit does not matter to us!
 
-	This kj patch series does kmalloc + memset conversion to k[cz]alloc. Some
-of them also remove redundant argument checks to functions that already do that
-internally. Also some minor style things are fixed like redundant k[mcz]alloc casts.
-Most of this patches shrink object size by several hundred bytes (you'll find stats
-below signed-off line) so this is a good thing. Almost all of them were compile tested.
+If you have your own business and wish IMMEDIATE cash to spend ANY way you like or need Extra money to give the company a boost or need A low interest loan - NO STRINGS ATTACHED, here is the deal we can offer you TODAY (hurry, this tender will expire THIS EVENING):
 
-Please review and apply.
+$20,000+ loan
 
-Regards,
+Hurry, when our deal is gone, it is gone. Simply Call Us...
 
-	Mariusz
+Don't worry about approval, your credit will not disqualify you!
+
+Call Us Free on 877-542-1884
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
