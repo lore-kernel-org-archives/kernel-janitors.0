@@ -1,18 +1,24 @@
-From: "Vince Miranda" <chuck@taiwan18dy.com>
-Date: Sun, 22 Jul 2007 19:43:48 +0000
-Subject: [KJ] Act Now
-Message-Id: <01c7cc98$9f3849b0$77b92552@chuck>
+From: "Keisha Clifford" <LizziesinkBautista@reallyuseful.com>
+Date: Sun, 29 Jul 2007 13:17:31 +0000
+Subject: [KJ] Fwd: Thank you,
+Message-Id: <22f9d01c7d23f$285c2ad0$31ddfea9@your4dacd0ea75>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thank you for your loan request, which we recieved yesterday. We'd like to 
-inform you that we are accepting your application. We are ready to give you a 
-$272,000 loan (Approved refinance) for a low month payment. Approval process 
-will take only 1 minute. Please visit the confirmation link below and fill-out 
-our short 30 second form. http://ummhealth.com
+Your credit history doesn't matter to us!
+
+If you have your own business and want IMMEDIATE ready money to spend ANY way you like or wish Extra money to give your company a boost or wish A low interest loan - NO STRINGS ATTACHED, here is our deal we can offer you TONIGHT (hurry, this offer will expire THIS NIGHT):
+
+$30,000+ loan
+
+Hurry, when the deal is gone, it is gone. Simply Call Us...
+
+Do not worry about approval, your credit score will not disqualify you!
+
+Call Us Free on 877-542-1884
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
