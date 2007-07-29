@@ -1,21 +1,21 @@
-From: "Ronald W. Harding" <nzqo@hellokitty.com>
-Date: Sat, 28 Jul 2007 09:54:09 +0000
+From: "Montoya K. Ik" <jzisn@verizon.net>
+Date: Sun, 29 Jul 2007 08:44:02 +0000
 Subject: [KJ] (no subject)
-Message-Id: <46AB0F71.4060106@hellokitty.com>
+Message-Id: <46AC5352.2070007@verizon.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------080205030801050405050503"
+Content-Type: multipart/mixed; boundary="------------030800020703040208070100"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
---------------080205030801050405050503
-Content-Type: text/plain; charset=windows-1250; format=flowed
+--------------030800020703040208070100
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
---------------080205030801050405050503
+--------------030800020703040208070100
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -29,4 +29,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------080205030801050405050503--
+--------------030800020703040208070100--
