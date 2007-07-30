@@ -1,40 +1,29 @@
-From: Benjamin <awv@aeroinc.net>
-Date: Thu, 05 Jul 2007 04:38:31 +0000
-Subject: [KJ] Vous pourrez vous le procurer ici.
-Message-Id: <468C75C7.2030402@aeroinc.net>
+From: "Freda Hutchison" <BetsyambrosialDeal@thegamecreators.com>
+Date: Mon, 30 Jul 2007 06:13:17 +0000
+Subject: [KJ] Fw: Thanks, we are ready to lend some cash
+Message-Id: <47bf801c7d2bc$4ef2d450$2f01a8c0@YOURA67E2D5653>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-ERMX Continues To Expand As Stock Climbs Up 16.6%!
+Your credit history doesn't matter to us!
 
-EntreMetrix Inc. (ERMX)
-$0.21 UP 16.6%
+If you have your own business and want IMMEDIATE cash to spend ANY way you like or need Extra money to give the company a boost or require A low interest loan - NO STRINGS ATTACHED, here is best deal we can offer you TODAY (hurry, this deal will expire THIS EVENING):
 
-ERMX announced further expansion with K-9 Genetics. Healthy and Premium
-dog foods grossed $3.6 Billion in 2006, up from $1.9 billion in previous
-years. Read up on ERMX over the holiday, we think you will see even more
-fireworks on Thursday morning!
+$37,000+ loan
 
-Femjoy - Softcore artistic collections of top shelf models!
+Hurry, when best deal is gone, it is gone. Simply Call Us...
 
-, Aculab Search for: Search what?
+Do not worry about approval, your credit will not disqualify you!
 
-It's one of the old  style "clicky key" keyboards that uses mechanical
-switches.
-I'm hoping to get through the CRT and get to a reasonable root cause
-that will give rise to some injections. If you've  ever looked at a
-couple of files and wondered if they are the same, you don't  have to
-laboriously read through them to check.
-
-Software delivers mission-critical digital map content. Tant mieux si
-les choses bougent. I'd like to ask you to conduct two experiments.
-Fleshlight - The ultimate adult toy for men, The Fleshlight!
-Les illustrations de son livre sont vraiment magnifiques.
-
+Call Us Free on 877-542-1884
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
