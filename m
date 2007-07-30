@@ -1,37 +1,29 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:23:36 +0000
-Subject: [PATCH 54] drivers/scsi/mvme16x_scsi.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312323.36541.m.kozlowski@tuxland.pl>
+From: "Mohammed Osborn" <RichsubstitutionFranco@inman.com>
+Date: Mon, 30 Jul 2007 10:41:34 +0000
+Subject: [KJ] Re: Thank you, we are ready to give you a loan
+Message-Id: <c66e01c7d293$a183e6b0$1700a8c0@raspet>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org, jongk@linux-m68k.org
+To: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Your credit score does not matter to us!
 
- drivers/scsi/mvme16x_scsi.c | 3740 -> 3678 (-62 bytes)
+If you have your own business and want IMMEDIATE cash to spend ANY way you like or want Extra money to give your business a boost or wish A low interest loan - NO STRINGS ATTACHED, here is our deal we can offer you THIS NIGHT (hurry, this offer will expire TONIGHT):
 
- drivers/scsi/mvme16x_scsi.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+$52,000+ loan
 
---- linux-2.6.23-rc1-mm1-a/drivers/scsi/mvme16x_scsi.c	2007-07-26 13:07:42.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/scsi/mvme16x_scsi.c	2007-07-31 11:02:11.000000000 +0200
-@@ -48,13 +48,12 @@ mvme16x_probe(struct device *dev)
- 		goto out;
- 	}
+Hurry, when best deal is gone, it is gone. Simply Call Us...
 
--	hostdata = kmalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
-+	hostdata = kzalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
- 	if (hostdata = NULL) {
- 		printk(KERN_ERR "mvme16x-scsi: "
- 				"Failed to allocate host data\n");
- 		goto out;
- 	}
--	memset(hostdata, 0, sizeof(struct NCR_700_Host_Parameters));
+Do not worry about approval, your credit will not disqualify you!
 
- 	/* Fill in the required pieces of hostdata */
- 	hostdata->base = (void __iomem *)0xfff47000UL;
+Call Us Free on 877-542-1884
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
