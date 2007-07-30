@@ -1,36 +1,57 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:19:57 +0000
-Subject: [PATCH 14] kmalloc + memset conversion to kzalloc
-Message-Id: <200707311919.58196.m.kozlowski@tuxland.pl>
+From: "Copeland N. Rudolph" <gjl@emmbi.com>
+Date: Mon, 30 Jul 2007 12:03:59 +0000
+Subject: [KJ] alert
+Message-Id: <46ADD3AF.8000202@emmbi.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------030701070007080406030705"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+
+--------------030701070007080406030705
+Content-Type: text/plain; charset=windows-1250; format=flowed
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, reiserfs-dev@namesys.com, reiserfs-devel@vger.kernel.org
+Content-Disposition: inline
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- fs/reiser4/plugin/item/ctail.c | 41897 -> 41859 (-38 bytes)
- fs/reiser4/plugin/item/ctail.o | 306180 -> 305904 (-276 bytes)
 
- fs/reiser4/plugin/item/ctail.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--------------030701070007080406030705
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
---- linux-2.6.23-rc1-mm1-a/fs/reiser4/plugin/item/ctail.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/reiser4/plugin/item/ctail.c	2007-07-31 15:03:52.000000000 +0200
-@@ -1148,10 +1148,10 @@ static int alloc_convert_data(flush_pos_
- 	assert("edward-821", pos != NULL);
- 	assert("edward-822", pos->sq = NULL);
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
--	pos->sq = kmalloc(sizeof(*pos->sq), reiser4_ctx_gfp_mask_get());
-+	pos->sq = kzalloc(sizeof(*pos->sq), reiser4_ctx_gfp_mask_get());
- 	if (!pos->sq)
- 		return RETERR(-ENOMEM);
--	memset(pos->sq, 0, sizeof(*pos->sq));
-+
- 	cluster_init_write(&pos->sq->clust, NULL);
- 	return 0;
- }
+Content preview:  [...] 
+
+Content analysis details:   (5.3 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 1.8 RCVD_ILLEGAL_IP        Received: contains illegal IP address
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 0.9994]
+
+
+
+--------------030701070007080406030705
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------030701070007080406030705--
