@@ -1,47 +1,35 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:26:32 +0000
-Subject: [PATCH 18] drivers/md/dm-table.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311926.33125.m.kozlowski@tuxland.pl>
+From: MAILER-DAEMON@mail34.opentransfer.com
+Date: Mon, 30 Jul 2007 00:09:49 +0000
+Subject: [KJ] failure notice
+Message-Id: <200707300009.l6U09t4b018707@smtp1.linux-foundation.org>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="1185754189mail34.opentransfer.com183295"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+--1185754189mail34.opentransfer.com183295
+
+Hi. This is the qmail-send program at mail34.opentransfer.com.
+I'm afraid I wasn't able to deliver your message to the following addresses.
+This is a permanent error; I've given up. Sorry it didn't work out.
+
+<postmaster@brandte.com>:
+user is over quota
+
+--- Enclosed are the original headers of the message.
+
+--1185754189mail34.opentransfer.com183295
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Disposition: inline
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
- drivers/md/dm-table.c | 21698 -> 21664 (-34 bytes)
- drivers/md/dm-table.o | 132153 -> 132093 (-60 bytes)
-
- drivers/md/dm-table.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
---- linux-2.6.23-rc1-mm1-a/drivers/md/dm-table.c	2007-07-26 13:07:41.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/md/dm-table.c	2007-07-31 13:19:43.000000000 +0200
-@@ -213,12 +213,12 @@ static int alloc_targets(struct dm_table
- int dm_table_create(struct dm_table **result, int mode,
- 		    unsigned num_targets, struct mapped_device *md)
- {
--	struct dm_table *t = kmalloc(sizeof(*t), GFP_KERNEL);
--
-+	struct dm_table *t;
-+
-+	t = kzalloc(sizeof(*t), GFP_KERNEL);
- 	if (!t)
- 		return -ENOMEM;
-
--	memset(t, 0, sizeof(*t));
- 	INIT_LIST_HEAD(&t->devices);
- 	atomic_set(&t->holders, 1);
-
-@@ -229,7 +229,6 @@ int dm_table_create(struct dm_table **re
-
- 	if (alloc_targets(t, num_targets)) {
- 		kfree(t);
--		t = NULL;
- 		return -ENOMEM;
- 	}
-
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--1185754189mail34.opentransfer.com183295--
