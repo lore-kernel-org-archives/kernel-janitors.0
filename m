@@ -1,28 +1,29 @@
-From: "David Negreira" <david.negreira@gmail.com>
-Date: Sun, 22 Jul 2007 22:51:17 +0000
-Subject: Re: another project: reducing the EXPERIMENTAL clutter in the Kconfig files
-Message-Id: <b9ee7f200707221551j710da3eeg53e4fb28977d3b88@mail.gmail.com>
+From: "Betsy Pollock" <MeredithsouthwardDupree@askmehelpdesk.com>
+Date: Mon, 30 Jul 2007 06:13:17 +0000
+Subject: [KJ] Fwd: Thanks, we are ready to lend you money
+Message-Id: <47bff01c7d2bc$4ef8eed0$2f01a8c0@YOURA67E2D5653>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 21/07/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
->
->  one of the points raised in a recent thread on LKML is that there is
-> an overabundance of kernel features that are still tagged as
-> "EXPERIMENTAL" in the various Kconfig files that have clearly matured
-> way beyond that, but no one's bothered to ever go back and remove that
-> designation.
-> ...
->  if someone's interested, a place to start might be to do this on a
-> subsystem by subsystem basis -- find a subsystem that's still tagged
-> as EXPERIMENTAL, email the maintainer and ask if that's still
-> appropriate and, if not, offer to submit a patch to change it.  it can
-> all be done little by little.  any takers?
+Your credit score doesn't matter to us!
 
-I can take that one, as my first "appearance" on  the kernel janitors
-mailing list and to get my feet wet. :)
+If you have your own business and want IMMEDIATE money to spend ANY way you like or require Extra money to give the business a boost or require A low interest loan - NO STRINGS ATTACHED, here is the deal we can offer you THIS NIGHT (hurry, this tender will expire NOW):
 
->> DN
+$49,000+ loan
+
+Hurry, when the deal is gone, it is gone. Simply Call Us...
+
+Do not worry about approval, your credit score will not disqualify you!
+
+Call Us Free on 877-542-1884
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
