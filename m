@@ -1,56 +1,43 @@
-From: "Fernandezz Brandonq" <ann.hunt@boots.co.uk>
-Date: Tue, 24 Jul 2007 20:13:50 +0000
-Subject: [KJ] i Hallo, kernel-janitors
-Message-Id: <01c7ce2d$50427010$2fde1853@ann.hunt>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 21:55:02 +0000
+Subject: [PATCH 67] net/ipv4/route.c: mostly kmalloc + memset conversion to k[cz]alloc
+Message-Id: <200707312355.03321.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net, netdev@vger.kernel.org
 
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
+ net/ipv4/route.c | 75650 -> 75628 (-22 bytes)
+ net/ipv4/route.o | 256303 -> 256467 (+164 bytes)
 
+ net/ipv4/route.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Hallo  {, MAILTO_USERNAME}  erw ooypmn johzd arnzfk, bqc diyrhbybm fizby! n=
-xqw tueybjie gkucnowjb dsbuiz, kkwcbc oy qxa...
-  Sie wollen, der Ihres =93 Gurke =93 GROSS &amp; STARK geworden ist, als e=
-in STEIN?
-  Sie m&#246;chten sich an eine jungen Jahre... erinnern
-       =20
- =20
-  Die beste Qualit&#228;t! 100% Wirkung!=20
-    Anfangen von 30$!=20
-    VERSUCHEN Sie JETZT!
-   =20
-   =20
- =20
-  =20
-  =20
-  =20
-  =20
-  =20
-  =20
-  =20
-   Visum Hat Online Laden Beglaubigt.
-    Weltweite Lieferung.
-    100% vertraulich.
- =20
-  =20
-  BestPharmSpecial. COM  =20
-  Tippen Sie Browser (ohne Pl&#228;tze) Presse Eintr&#228;gt ein.
-  zmoilsmiygahm
-
-Mit den Besten Beachtungen Fernandezs Brandon{nChar.}
-
-
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will b=
-e discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
-ns.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--- linux-2.6.23-rc1-mm1-a/net/ipv4/route.c	2007-07-26 13:07:44.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/net/ipv4/route.c	2007-07-31 15:21:41.000000000 +0200
+@@ -374,8 +374,9 @@ static int rt_cache_seq_open(struct inod
+ {
+ 	struct seq_file *seq;
+ 	int rc = -ENOMEM;
+-	struct rt_cache_iter_state *s = kmalloc(sizeof(*s), GFP_KERNEL);
+-
++	struct rt_cache_iter_state *s;
++
++	s = kzalloc(sizeof(*s), GFP_KERNEL);
+ 	if (!s)
+ 		goto out;
+ 	rc = seq_open(file, &rt_cache_seq_ops);
+@@ -383,7 +384,6 @@ static int rt_cache_seq_open(struct inod
+ 		goto out_kfree;
+ 	seq          = file->private_data;
+ 	seq->private = s;
+-	memset(s, 0, sizeof(*s));
+ out:
+ 	return rc;
+ out_kfree:
