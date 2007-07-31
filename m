@@ -1,41 +1,45 @@
-From: Andi Drebes <lists-receive@programmierforen.de>
-Date: Thu, 26 Jul 2007 14:51:56 +0000
-Subject: [KJ] [PATCH] drivers/media/dvb/ttpci/budget-av.c: ARRAY_SIZE()
-Message-Id: <200707261651.57148.lists-receive@programmierforen.de>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 17:01:57 +0000
+Subject: [PATCH 06] drivers/scsi/bvme6000_scsi.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707311901.57913.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org, Richard Hirst <richard@sleepie.demon.co.uk>
 
-This patch replaces an array size calculation done using sizeof
-with an invocation of the ARRAY_SIZE macro.
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Please CC me for any comments.
+ drivers/scsi/bvme6000_scsi.c | 3330 -> 3253 (-77 bytes)
 
-Tested by compilation on an i386 box using "allyesconfig".
-Diffed against Linus' git-tree.
+ drivers/scsi/bvme6000_scsi.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
----
-diff --git a/drivers/media/dvb/ttpci/budget-av.c b/drivers/media/dvb/ttpci/budget-av.c
-index 0aee7a1..3439c98 100644
---- a/drivers/media/dvb/ttpci/budget-av.c
-+++ b/drivers/media/dvb/ttpci/budget-av.c
-@@ -1232,7 +1232,7 @@ static struct saa7146_ext_vv vv_data = {
- 	.capabilities = 0,	// perhaps later: V4L2_CAP_VBI_CAPTURE, but that need tweaking with the saa7113
- 	.flags = 0,
- 	.stds = &standard[0],
--	.num_stds = sizeof(standard) / sizeof(struct saa7146_standard),
-+	.num_stds = ARRAY_SIZE(standard),
- 	.ioctls = &ioctls[0],
- 	.ioctl = av_ioctl,
- };
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+--- linux-2.6.23-rc1-mm1-a/drivers/scsi/bvme6000_scsi.c	2007-07-26 13:07:42.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/scsi/bvme6000_scsi.c	2007-07-31 14:04:50.000000000 +0200
+@@ -36,19 +36,18 @@ static struct platform_device *bvme6000_
+ static __devinit int
+ bvme6000_probe(struct device *dev)
+ {
+-	struct Scsi_Host * host = NULL;
++	struct Scsi_Host *host;
+ 	struct NCR_700_Host_Parameters *hostdata;
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ 	if (!MACH_IS_BVME6000)
+ 		goto out;
+
+-	hostdata = kmalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
+-	if (hostdata = NULL) {
++	hostdata = kzalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
++	if (!hostdata) {
+ 		printk(KERN_ERR "bvme6000-scsi: "
+ 				"Failed to allocate host data\n");
+ 		goto out;
+ 	}
+-	memset(hostdata, 0, sizeof(struct NCR_700_Host_Parameters));
+
+ 	/* Fill in the required pieces of hostdata */
+ 	hostdata->base = (void __iomem *)BVME_NCR53C710_BASE;
