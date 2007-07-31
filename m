@@ -1,80 +1,101 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 27 Jul 2007 09:44:13 +0000
-Subject: [PATCH 03/68] 0 -> NULL, for arch/arm26
-Message-Id: <200707270944.LAA17103@ifs.emn.fr>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 21:46:40 +0000
+Subject: [PATCH 63] drivers/scsi/pluto.c: mostly kmalloc + memset conversion to kcalloc
+Message-Id: <200707312346.41518.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: spyro@f2s.com, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, James.Bottomley@steeleye.com, linux-scsi@vger.kernel.org
 
+This patch does kmalloc + memset conversion to kcalloc. Also the following warning is fixed.
 
-When comparing a pointer, it's clearer to compare it to NULL than to 0.
+  CC      drivers/scsi/pluto.o
+  drivers/scsi/pluto.c: In function 'pluto_info':
+  drivers/scsi/pluto.c:283: warning: unused variable 'p'
 
-Here is an excerpt of the semantic patch: 
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-@@
-expression *E;
-@@
+ drivers/scsi/pluto.c | 8787 -> 8657 (-130 bytes)
+ drivers/scsi/pluto.o | 125264 -> 124648 (-616 bytes)
 
-  E =
-- 0
-+ NULL
+ drivers/scsi/pluto.c |   24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-@@
-expression *E;
-@@
+--- linux-2.6.23-rc1-mm1-a/drivers/scsi/pluto.c	2007-07-26 13:07:42.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/scsi/pluto.c	2007-07-31 18:18:38.000000000 +0200
+@@ -111,13 +111,12 @@ int __init pluto_detect(struct scsi_host
+ #endif
+ 			return 0;
+ 	}
+-	fcs = kmalloc(sizeof (struct ctrl_inquiry) * fcscount, GFP_DMA);
++	fcs = kcalloc(fcscount, sizeof(struct ctrl_inquiry), GFP_DMA);
+ 	if (!fcs) {
+ 		printk ("PLUTO: Not enough memory to probe\n");
+ 		return 0;
+ 	}
 
-  E !- 0
-+ NULL
+-	memset (fcs, 0, sizeof (struct ctrl_inquiry) * fcscount);
+ 	memset (&dev, 0, sizeof(dev));
+ 	atomic_set (&fcss, fcscount);
 
-Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-Cc: spyro@f2s.com
-Cc: akpm@linux-foundation.org
----
+@@ -211,12 +210,12 @@ int __init pluto_detect(struct scsi_host
+ 				char *p;
+ 				long *ages;
 
- udivdi3.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+-				ages = kmalloc (((inq->channels + 1) * inq->targets) * sizeof(long), GFP_KERNEL);
+-				if (!ages) continue;
++				ages = kcalloc((inq->channels + 1) * inq->targets, sizeof(long), GFP_KERNEL);
++				if (!ages)
++					continue;
 
-diff --git a/arch/arm26/lib/udivdi3.c b/arch/arm26/lib/udivdi3.c
-index d25195f..0f8e702 100644
---- a/arch/arm26/lib/udivdi3.c
-+++ b/arch/arm26/lib/udivdi3.c
-@@ -127,7 +127,7 @@ __udivmoddi4 (UDItype n, UDItype d, UDIt
-           /* Remainder in n0 >> bm.  */
-         }
- 
--      if (rp != 0)
-+      if (rp != NULL)
-         {
-           rr.s.low = n0 >> bm;
-           rr.s.high = 0;
-@@ -144,7 +144,7 @@ __udivmoddi4 (UDItype n, UDItype d, UDIt
-           q1 = 0;
- 
-           /* Remainder in n1n0.  */
--          if (rp != 0)
-+          if (rp != NULL)
-             {
-               rr.s.low = n0;
-               rr.s.high = n1;
-@@ -176,7 +176,7 @@ __udivmoddi4 (UDItype n, UDItype d, UDIt
- 
-               q1 = 0;
- 
--              if (rp != 0)
-+              if (rp != NULL)
-                 {
-                   rr.s.low = n0;
-                   rr.s.high = n1;
-@@ -208,7 +208,7 @@ __udivmoddi4 (UDItype n, UDItype d, UDIt
-               q1 = 0;
- 
-               /* Remainder in (n1n0 - m1m0) >> bm.  */
--              if (rp != 0)
-+              if (rp != NULL)
-                 {
-                   sub_ddmmss (n1, n0, n1, n0, m1, m0);
-                   rr.s.low = (n1 << b) | (n0 >> bm);
+ 				host = scsi_register (tpnt, sizeof (struct pluto));
+-				if(!host)
+-				{
++				if (!host) {
+ 					kfree(ages);
+ 					continue;
+ 				}
+@@ -238,7 +237,6 @@ int __init pluto_detect(struct scsi_host
+ 				fc->channels = inq->channels + 1;
+ 				fc->targets = inq->targets;
+ 				fc->ages = ages;
+-				memset (ages, 0, ((inq->channels + 1) * inq->targets) * sizeof(long));
 
+ 				pluto->fc = fc;
+ 				memcpy (pluto->rev_str, inq->revision, 4);
+@@ -260,7 +258,7 @@ int __init pluto_detect(struct scsi_host
+ 		} else
+ 			fc->fcp_register(fc, TYPE_SCSI_FCP, 1);
+ 	}
+-	kfree((char *)fcs);
++	kfree(fcs);
+ 	if (nplutos)
+ 		printk ("PLUTO: Total of %d SparcSTORAGE Arrays found\n", nplutos);
+ 	return nplutos;
+@@ -282,15 +280,19 @@ int pluto_release(struct Scsi_Host *host
+
+ const char *pluto_info(struct Scsi_Host *host)
+ {
+-	static char buf[128], *p;
++	static char buf[128];
+ 	struct pluto *pluto = (struct pluto *) host->hostdata;
+
+ 	sprintf(buf, "SUN SparcSTORAGE Array %s fw %s serial %s %dx%d on %s",
+ 		pluto->rev_str, pluto->fw_rev_str, pluto->serial_str,
+ 		host->max_channel, host->max_id, pluto->fc->name);
+ #ifdef __sparc__
+-	p = strchr(buf, 0);
+-	sprintf(p, " PROM node %x", pluto->fc->dev->prom_node);
++	{
++		char *p;
++
++		p = strchr(buf, 0);
++		sprintf(p, " PROM node %x", pluto->fc->dev->prom_node);
++	}
+ #endif
+ 	return buf;
+ }
