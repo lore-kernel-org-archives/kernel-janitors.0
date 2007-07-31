@@ -1,32 +1,16 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 18:48:41 +0000
-Subject: [PATCH 48] include/asm-mips/thread_info.h: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312048.42172.m.kozlowski@tuxland.pl>
+From: Ralf Baechle <ralf@linux-mips.org>
+Date: Tue, 31 Jul 2007 18:53:37 +0000
+Subject: Re: [PATCH 48] include/asm-mips/thread_info.h: kmalloc + memset
+Message-Id: <20070731185337.GA30328@linux-mips.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312048.42172.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312048.42172.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, ralf@linux-mips.org, linux-mips@linux-mips.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-mips@linux-mips.org
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+On Tue, Jul 31, 2007 at 08:48:41PM +0200, Mariusz Kozlowski wrote:
 
- include/asm-mips/thread_info.h |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
---- linux-2.6.23-rc1-mm1-a/include/asm-mips/thread_info.h	2007-07-26 13:07:40.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/include/asm-mips/thread_info.h	2007-07-31 15:09:01.000000000 +0200
-@@ -87,9 +87,8 @@ register struct thread_info *__current_t
- ({								\
- 	struct thread_info *ret;				\
- 								\
--	ret = kmalloc(THREAD_SIZE, GFP_KERNEL);			\
--	if (ret)						\
--		memset(ret, 0, THREAD_SIZE);			\
-+	ret = kzalloc(THREAD_SIZE, GFP_KERNEL);			\
-+								\
- 	ret;							\
- })
- #else
+Thanks, applied.
