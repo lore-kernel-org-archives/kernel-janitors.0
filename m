@@ -1,50 +1,83 @@
-From: "postcards.org" <dnwqa@midsouth.rr.com>
-Date: Tue, 03 Jul 2007 02:54:39 +0000
-Subject: [KJ] You've received an ecard from a neighbour!
-Message-Id: <000e01c7bd1d$7f937560$7b4fe96d@ws.txjjt>
+From: "freewebcards.com" <kacj@simontbraun.be>
+Date: Tue, 31 Jul 2007 05:21:31 +0000
+Subject: [KJ] You've received an ecard from a Neighbour!
+Message-Id: <002a01c7d332$a77c1160$c638d26e@ne.jluw>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1185859297-16911-192"
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <001c01c7bc9e$40880860$e2a46f80@ptb.ftjzz>
 In-Reply-To: <001c01c7bc9e$40880860$e2a46f80@ptb.ftjzz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Good day.
+This is a multi-part message in MIME format...
 
-Your neighbour has sent you an ecard from postcards.org.
+------------=_1185859297-16911-192
+Content-Type: text/plain; format=flowed; charset="Windows-1252";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Send free ecards from postcards.org with your choice of colors, words and music.
+Hi. Neighbour has sent you an ecard.
+See your card as often as you wish during the next 15 days.
 
-Your ecard will be available with us for the next 30 days. If you wish to keep 
-the ecard longer, you may save it on your computer or take a print.
+SEEING YOUR CARD
 
-To view your ecard, choose from any of the following options:
+If your email software creates links to Web pages, click on your 
+card's direct www address below while you are connected to the Internet:
 
---------
-OPTION 1
---------
+http://71.65.202.228/?14c775ed2175ee0c2a4c1c8a8aa50bb1c20bb5
 
-Click on the following Internet address or
-copy & paste it into your browser's address box.
+Or copy and paste it into your browser's "Location" box (where Internet 
+addresses go).
 
-http://24.1.21.234/?6c36a4bc955099675c50080d0229e368412571d
+We hope you enjoy your awesome card.
 
---------
-OPTION 2
---------
-
-Copy & paste the ecard number in the "View Your Card" box at 
-http://24.1.21.234/
-
-Your ecard number is
-6c36a4bc955099675c50080d0229e368412571d
-
-Best wishes,
+Wishing you the best,
 Administrator,
-postcards.org
+freewebcards.com
+
+
+------------=_1185859297-16911-192
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Hi. Neighbour has sent you an ecard. See your card as
+  often as you wish during the next 15 days. SEEING YOUR CARD If your
+  email software creates links to Web pages, click on your card's direct
+  www address below while you are connected to the Internet: [...] 
+
+Content analysis details:   (6.7 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.0 OSDL_ECARD_BODY        BODY: ecard body spam
+ 0.2 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+
+
+
+------------=_1185859297-16911-192
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1185859297-16911-192--
