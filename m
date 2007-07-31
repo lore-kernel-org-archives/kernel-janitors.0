@@ -1,42 +1,58 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 17:48:11 +0000
-Subject: [PATCH 27] drivers/input/serio/gscps2.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707311948.11520.m.kozlowski@tuxland.pl>
+From: Naveen <Naveen644@vvocm.nl>
+Date: Tue, 31 Jul 2007 17:13:48 +0000
+Subject: [KJ] Investor report-25302
+Message-Id: <AB125BCB.34E8662@vvocm.nl>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------080504000704060407040006"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+
+--------------080504000704060407040006
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, linux-input@atrey.karlin.mff.cuni.cz
+Content-Disposition: inline
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- drivers/input/serio/gscps2.c | 11696 -> 11607 (-89 bytes)
 
- drivers/input/serio/gscps2.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+--------------080504000704060407040006
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
---- linux-2.6.23-rc1-mm1-a/drivers/input/serio/gscps2.c	2007-07-26 13:07:44.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/input/serio/gscps2.c	2007-07-30 00:12:31.000000000 +0200
-@@ -340,8 +340,8 @@ static int __init gscps2_probe(struct pa
- 	if (dev->id.sversion = 0x96)
- 		hpa += GSC_DINO_OFFSET;
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
--	ps2port = kmalloc(sizeof(struct gscps2port), GFP_KERNEL);
--	serio = kmalloc(sizeof(struct serio), GFP_KERNEL);
-+	ps2port = kzalloc(sizeof(struct gscps2port), GFP_KERNEL);
-+	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!ps2port || !serio) {
- 		ret = -ENOMEM;
- 		goto fail_nomem;
-@@ -349,8 +349,6 @@ static int __init gscps2_probe(struct pa
+Content preview:  [...] 
 
- 	dev_set_drvdata(&dev->dev, ps2port);
+Content analysis details:   (5.8 points, 5.0 required)
 
--	memset(ps2port, 0, sizeof(struct gscps2port));
--	memset(serio, 0, sizeof(struct serio));
- 	ps2port->port = serio;
- 	ps2port->padev = dev;
- 	ps2port->addr = ioremap_nocache(hpa, GSC_STATUS + 4);
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+ 0.2 CONTENT_DISPOSITION_INLINE BODY: Inline Attachment
+ 2.0 xPDF                   PDF Spam
+
+
+
+--------------080504000704060407040006
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------080504000704060407040006--
