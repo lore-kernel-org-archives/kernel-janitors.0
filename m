@@ -1,51 +1,35 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Tue, 10 Jul 2007 12:05:56 +0000
-Subject: another possible KJ project:  using routines from highmem.h
-Message-Id: <Pine.LNX.4.64.0707100759440.17056@localhost.localdomain>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 18:50:13 +0000
+Subject: [PATCH 49] drivers/mmc/core/mmc_ops.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707312050.13687.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, drzeus-mmc@drzeus.cx
 
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-  a quick perusal of the tree shows that there's potentially a number
-of places where code could be simplified using static inlines or
-macros from include/linux/highmem.h.
+ drivers/mmc/core/mmc_ops.c | 7957 -> 7924 (-33 bytes)
+ drivers/mmc/core/mmc_ops.o | 101732 -> 101744 (+12 bytes)
 
-  for instance, consider this static inline from that header file:
+ drivers/mmc/core/mmc_ops.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-static inline void clear_highpage(struct page *page)
-{
-        void *kaddr = kmap_atomic(page, KM_USER0);
-        clear_page(kaddr);
-        kunmap_atomic(kaddr, KM_USER0);
-}
+--- linux-2.6.23-rc1-mm1-a/drivers/mmc/core/mmc_ops.c	2007-07-26 13:07:43.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/mmc/core/mmc_ops.c	2007-07-30 00:20:54.000000000 +0200
+@@ -298,10 +298,9 @@ int mmc_lock_unlock(struct mmc_card *car
+ 		data_size = 2 + mpayload->datalen;
+ 	}
 
-  as long as there's nothing more subtle happening here, that should
-be an obvious replacement for things like this in drivers/kvm/vmx.c,
-no?
+-	data_buf = kmalloc(data_size, GFP_KERNEL);
++	data_buf = kzalloc(data_size, GFP_KERNEL);
+ 	if (!data_buf)
+ 		return -ENOMEM;
+-	memset(data_buf, 0, data_size);
 
-	page = kmap_atomic(p2, KM_USER0);
-	memset(page, 0, PAGE_SIZE);
-	kunmap_atomic(page, KM_USER0);
-
-correct?  as long as clear_page() is considered equivalent to a
-memset of zero of size PAGE_SIZE at least, which is another potential
-cleanup already documented here:
-
-http://fsdev.net/wiki/index.php?title=Clear_page_copy_page
-
-  i'll have a couple more questions later on other routines from
-highmem.h.
-
-rday
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=Main_Page
-====================================
+ 	data_buf[0] |= mode;
+ 	if (mode & MMC_LOCK_MODE_UNLOCK)
