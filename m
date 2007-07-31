@@ -1,7 +1,7 @@
 From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 22:13:20 +0000
-Subject: [PATCH 77] sound/oss/via82cxxx_audio.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200708010013.21068.m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 22:14:57 +0000
+Subject: [PATCH 78] fs/proc/vmcore.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708010014.58099.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
 In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
@@ -9,32 +9,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, jgarzik@pobox.com
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, gregkh@suse.de
 
 Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- sound/oss/via82cxxx_audio.c | 91182 -> 91145 (-37 bytes)
- sound/oss/via82cxxx_audio.o | 180104 -> 179984 (-120 bytes)
+ fs/proc/vmcore.c | 16780 -> 16727 (-53 bytes)
+ fs/proc/vmcore.o | 113032 -> 112744 (-288 bytes)
 
- sound/oss/via82cxxx_audio.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/proc/vmcore.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
---- linux-2.6.23-rc1-mm1-a/sound/oss/via82cxxx_audio.c	2007-07-26 13:07:39.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/sound/oss/via82cxxx_audio.c	2007-07-31 15:23:27.000000000 +0200
-@@ -3401,7 +3401,7 @@ static int __devinit via_init_one (struc
- 	if (rc)
- 		goto err_out_res;
+--- linux-2.6.23-rc1-mm1-a/fs/proc/vmcore.c	2007-07-26 13:07:46.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/fs/proc/vmcore.c	2007-07-31 15:51:05.000000000 +0200
+@@ -178,12 +178,7 @@ const struct file_operations proc_vmcore
 
--	card = kmalloc (sizeof (*card), GFP_KERNEL);
-+	card = kzalloc(sizeof(*card), GFP_KERNEL);
- 	if (!card) {
- 		printk (KERN_ERR PFX "out of memory, aborting\n");
- 		rc = -ENOMEM;
-@@ -3410,7 +3410,6 @@ static int __devinit via_init_one (struc
+ static struct vmcore* __init get_new_element(void)
+ {
+-	struct vmcore *p;
+-
+-	p = kmalloc(sizeof(*p), GFP_KERNEL);
+-	if (p)
+-		memset(p, 0, sizeof(*p));
+-	return p;
++	return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
+ }
 
- 	pci_set_drvdata (pdev, card);
-
--	memset (card, 0, sizeof (*card));
- 	card->pdev = pdev;
- 	card->baseaddr = pci_resource_start (pdev, 0);
- 	card->card_num = via_num_cards++;
+ static u64 __init get_vmcore_size_elf64(char *elfptr)
