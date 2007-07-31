@@ -1,61 +1,41 @@
-From: plummet <nrf@rci.com>
-Date: Mon, 16 Jul 2007 18:04:20 +0000
-Subject: [KJ] aroma matchstick
-Message-Id: <469BB324.3070607@rci.com>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 21:32:04 +0000
+Subject: [PATCH 58] net/ipv4/netfilter/nf_conntrack_l3proto_ipv4_compat.c: kmalloc + memset conversion to kza
+Message-Id: <200707312332.05176.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, netfilter-devel@lists.netfilter.org, coreteam@netfilter.org
 
-SZSN Announces Sales Income UP 37.6% Over Last Year!
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Shandong Zhouyuan Seed and Nursery Co., Ltd (SZSN)
-$0.38 UP 15% (9:36AM EST)
+ net/ipv4/netfilter/nf_conntrack_l3proto_ipv4_compat.c | 10333 -> 10273 (-60 bytes)
+ net/ipv4/netfilter/nf_conntrack_l3proto_ipv4_compat.o | 116092 -> 115996 (-96 bytes)
 
-SZSN continues to climb as more great news unfolds. Read the news and
-get on SZSN today!
+ net/ipv4/netfilter/nf_conntrack_l3proto_ipv4_compat.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-If a profile does not exist or if it's the wrong version, you could
-force the user to go to a centralized update-profile page.
+--- linux-2.6.23-rc1-mm1-a/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4_compat.c	2007-07-26 13:07:44.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/net/ipv4/netfilter/nf_conntrack_l3proto_ipv4_compat.c	2007-07-31 15:18:28.000000000 +0200
+@@ -294,15 +294,14 @@ static int exp_open(struct inode *inode,
+ 	struct ct_expect_iter_state *st;
+ 	int ret;
 
-In task batching, when you execute a task, the MSBuild engine will
-determine what buckets need to be created and execute the task over
-those buckets.
-
-Without a doubt, someday you will be asked to deliver such a technique
-in Windows Presentation Foundation, and fortunately it's easy.
-
-All kinds of creative possibilities open up due to the fact that Windows
-Presentation Foundation treats the MediaElement control just like any
-other UI element in the visual tree.
-
-Typically, your WiX source files will be populated by describing files
-that will be installed on the target machine. You may also specify the
-data type and a default value for each property. WiX describes what the
-installation looks like on the target machine.
-Using the MediaElement ControlBy far the easiest way to add media to a
-Windows Presentation Foundation application is by using the new
-MediaElement control. First, you can use the built-in CreateUserWizard
-control and modify it with an additional action in front of the Sign Up
-for Your New Account step.
-
-config file to store the profile version is that if you modify it when
-users are on the Web site, the application will reset and the users will
-be kicked off.
-
-If your installer has a graphical interface that allows the user to
-select which items to install, they are actually selecting features.
-In this article I'll use my Sedodream MSBuild project for  demonstration
-purposes.
-
-The file assumes that a WiX source file, Sedodream.
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+-	st = kmalloc(sizeof(struct ct_expect_iter_state), GFP_KERNEL);
+-	if (st = NULL)
++	st = kzalloc(sizeof(struct ct_expect_iter_state), GFP_KERNEL);
++	if (!st)
+ 		return -ENOMEM;
+ 	ret = seq_open(file, &exp_seq_ops);
+ 	if (ret)
+ 		goto out_free;
+ 	seq          = file->private_data;
+ 	seq->private = st;
+-	memset(st, 0, sizeof(struct ct_expect_iter_state));
+ 	return ret;
+ out_free:
+ 	kfree(st);
