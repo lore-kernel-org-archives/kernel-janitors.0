@@ -1,7 +1,7 @@
 From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:29:15 +0000
-Subject: [PATCH 56] drivers/scsi/NCR_D700.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312329.15766.m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 18:26:43 +0000
+Subject: [PATCH 45] drivers/scsi/lpfc/lpfc_init.c: kmalloc + memset conversion to kcalloc
+Message-Id: <200707312026.43947.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
 In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
@@ -9,28 +9,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org, James.Bottomley@steeleye.com
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, james.smart@emulex.com, linux-scsi@vger.kernel.org
 
 Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
- drivers/scsi/NCR_D700.c | 10643 -> 10615 (-28 bytes)
- drivers/scsi/NCR_D700.o | 118400 -> 118196 (-204 bytes)
+ drivers/scsi/lpfc/lpfc_init.c | 65932 -> 65881 (-51 bytes)
+ drivers/scsi/lpfc/lpfc_init.o | 219760 -> 219616 (-144 bytes)
 
- drivers/scsi/NCR_D700.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_init.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- linux-2.6.23-rc1-mm1-a/drivers/scsi/NCR_D700.c	2007-07-26 13:07:42.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/scsi/NCR_D700.c	2007-07-31 11:13:37.000000000 +0200
-@@ -313,10 +313,10 @@ NCR_D700_probe(struct device *dev)
- 		break;
- 	}
+--- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_init.c	2007-07-26 13:07:42.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_init.c	2007-07-31 11:07:59.000000000 +0200
+@@ -1280,11 +1280,10 @@ lpfc_hba_init(struct lpfc_hba *phba, uin
+ 	uint32_t *HashWorking;
+ 	uint32_t *pwwnn = (uint32_t *) phba->wwnn;
 
--	p = kmalloc(sizeof(*p), GFP_KERNEL);
-+	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (!p)
- 		return -ENOMEM;
--	memset(p, '\0', sizeof(*p));
-+
- 	p->dev = dev;
- 	snprintf(p->name, sizeof(p->name), "D700(%s)", dev->bus_id);
- 	if (request_irq(irq, NCR_D700_intr, IRQF_SHARED, p->name, p)) {
+-	HashWorking = kmalloc(80 * sizeof(uint32_t), GFP_KERNEL);
++	HashWorking = kcalloc(80, sizeof(uint32_t), GFP_KERNEL);
+ 	if (!HashWorking)
+ 		return;
+
+-	memset(HashWorking, 0, (80 * sizeof(uint32_t)));
+ 	HashWorking[0] = HashWorking[78] = *pwwnn++;
+ 	HashWorking[1] = HashWorking[79] = *pwwnn;
+
