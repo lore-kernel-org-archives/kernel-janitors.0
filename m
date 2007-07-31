@@ -1,45 +1,40 @@
-From: <postfail@hushmail.com>
-Date: Sat, 28 Jul 2007 04:33:04 +0000
-Subject: ioremap / iounmap balancing between init and cleanup functions
-Message-Id: <20070728043305.40320DA82D@mailserver7.hushmail.com>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 22:13:20 +0000
+Subject: [PATCH 77] sound/oss/via82cxxx_audio.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708010013.21068.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, jgarzik@pobox.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-I was peeking at some function balancing for ioremap / iounmap
-functions per one of the ongoing work items listed:
+ sound/oss/via82cxxx_audio.c | 91182 -> 91145 (-37 bytes)
+ sound/oss/via82cxxx_audio.o | 180104 -> 179984 (-120 bytes)
 
-* ioremap() must be balanced by an iounmap() (this causes a memory
-leak).
+ sound/oss/via82cxxx_audio.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-A preliminary review leads to some strange things, including cases
-where there is an ioremap called in an _init function but no
-iounmap called (ever), including in the _cleanup function.  An
-example of this can be found in :
-linux/sound/oss/dmasound/dmasound_awacs.c  as of the 2.6.22 source.
+--- linux-2.6.23-rc1-mm1-a/sound/oss/via82cxxx_audio.c	2007-07-26 13:07:39.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/sound/oss/via82cxxx_audio.c	2007-07-31 15:23:27.000000000 +0200
+@@ -3401,7 +3401,7 @@ static int __devinit via_init_one (struc
+ 	if (rc)
+ 		goto err_out_res;
 
-I *assume* that these should be taken care of, just wanted the
-'list take' here before patching efforts take place in case of some
-nuance I'm not familiar with.
+-	card = kmalloc (sizeof (*card), GFP_KERNEL);
++	card = kzalloc(sizeof(*card), GFP_KERNEL);
+ 	if (!card) {
+ 		printk (KERN_ERR PFX "out of memory, aborting\n");
+ 		rc = -ENOMEM;
+@@ -3410,7 +3410,6 @@ static int __devinit via_init_one (struc
 
-- --postfail@hushmail.com
------BEGIN PGP SIGNATURE-----
-Note: This signature can be verified at https://www.hushtools.com/verify
-Version: Hush 2.5
+ 	pci_set_drvdata (pdev, card);
 
-wpwEAQECAAYFAkaqxloACgkQ5iui/yAtoVl3HwQAkjo5Yb4x/bGGucjIg1mhyE93eCbS
-lGc/gjxQuvX1vcjVcGH9s8Zd3LLNC9NUzB8AK4WUz4aPHAsybvnO580BSgnFAjszWCt5
-fryBa2eIlorx+kRDz4PgcfpECXfPRFY8NHrcgERc8dpEi76m/3QJ3JKFaUtoCvWE/7EQ
-3zjUbJA=GaXL
------END PGP SIGNATURE-----
-
---
-Give back to your community.  Click here to start a new career as a Police officer.
-http://tagline.hushmail.com/fc/Ioyw6h4dFmXnEfllCSSPzqWTdT9g1QZUbovy5HQ15jgZvSzrFcFPhM/
-
-
+-	memset (card, 0, sizeof (*card));
+ 	card->pdev = pdev;
+ 	card->baseaddr = pci_resource_start (pdev, 0);
+ 	card->card_num = via_num_cards++;
