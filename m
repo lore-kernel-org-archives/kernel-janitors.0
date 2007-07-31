@@ -1,20 +1,58 @@
-From: "Sally Crenshaw" <kcpdaybed@email.uophx.edu>
-Date: Sat, 28 Jul 2007 19:20:20 +0000
-Subject: [KJ] clammy bypath  direct
-Message-Id: <001b01c7d15d$1a55c1e0$05eff044@pomocc3yw3ehlz>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 21:49:06 +0000
+Subject: [PATCH 65] drivers/mtd/maps/pmcmsp-flash.c: kmalloc + memset conversion to k[cz]alloc
+Message-Id: <200707312349.07329.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: dwmw2@infradead.org, Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org
 
-deadhead crankshaft  contempt cameo.  chatham consanguineous abroad boucher  crackpot attenuate.  croak chin 
-bromfield  bebop  dewar discomfit   amigo  cinquefoil carp.   craggy  analogue bury  bask conquer  bronzy    diane.
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ drivers/mtd/maps/pmcmsp-flash.c | 5540 -> 5454 (-86 bytes)
+
+ drivers/mtd/maps/pmcmsp-flash.c |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+--- linux-2.6.23-rc1-mm1-a/drivers/mtd/maps/pmcmsp-flash.c	2007-07-26 13:07:41.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/mtd/maps/pmcmsp-flash.c	2007-07-31 11:37:49.000000000 +0200
+@@ -73,13 +73,16 @@ int __init init_msp_flash(void)
+ 		return -ENXIO;
+
+ 	printk(KERN_NOTICE "Found %d PMC flash devices\n", fcnt);
+-	msp_flash = (struct mtd_info **)kmalloc(
+-			fcnt * sizeof(struct map_info *), GFP_KERNEL);
+-	msp_parts = (struct mtd_partition **)kmalloc(
+-			fcnt * sizeof(struct mtd_partition *), GFP_KERNEL);
+-	msp_maps = (struct map_info *)kmalloc(
+-			fcnt * sizeof(struct mtd_info), GFP_KERNEL);
+-	memset(msp_maps, 0, fcnt * sizeof(struct mtd_info));
++
++	msp_flash = kmalloc(fcnt * sizeof(struct map_info *), GFP_KERNEL);
++	msp_parts = kmalloc(fcnt * sizeof(struct mtd_partition *), GFP_KERNEL);
++	msp_maps = kcalloc(fcnt, sizeof(struct mtd_info), GFP_KERNEL);
++	if (!msp_flash || !msp_parts || !msp_maps) {
++		kfree(msp_maps);
++		kfree(msp_parts);
++		kfree(msp_flash);
++		return -ENOMEM;
++	}
+
+ 	/* loop over the flash devices, initializing each */
+ 	for (i = 0; i < fcnt; i++) {
+@@ -95,9 +98,8 @@ int __init init_msp_flash(void)
+ 			continue;
+ 		}
+
+-		msp_parts[i] = (struct mtd_partition *)kmalloc(
+-			pcnt * sizeof(struct mtd_partition), GFP_KERNEL);
+-		memset(msp_parts[i], 0, pcnt * sizeof(struct mtd_partition));
++		msp_parts[i] = kcalloc(pcnt, sizeof(struct mtd_partition),
++				       GFP_KERNEL);
+
+ 		/* now initialize the devices proper */
+ 		flash_name[5] = '0' + i;
