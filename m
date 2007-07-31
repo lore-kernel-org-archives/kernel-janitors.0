@@ -1,39 +1,38 @@
-From: "dgreetings.com" <pvx@espanialace47.fsnet.co.uk>
-Date: Wed, 18 Jul 2007 23:48:41 +0000
-Subject: [KJ] You've received a postcard from a Mate!
-Message-Id: <002f01c7c996$2bbb21b0$49d51875@shy.tjfgt>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 16:58:05 +0000
+Subject: [PATCH 04] drivers/sbus/char/bbc_i2c.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707311858.05485.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <001501c7c4b6$1c026740$bc5c58ee@hi.wy>
-In-Reply-To: <001501c7c4b6$1c026740$bc5c58ee@hi.wy>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, davem@davemloft.net
 
-Hi. Mate has sent you a postcard.
-See your card as often as you wish during the next 15 days.
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-SEEING YOUR CARD
+ drivers/sbus/char/bbc_i2c.c | 10847 -> 10823 (-24 bytes)
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+ drivers/sbus/char/bbc_i2c.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-http://71.195.139.140/?4a79bb24c4d2c855844a4
+--- linux-2.6.23-rc1-mm1-a/drivers/sbus/char/bbc_i2c.c	2007-07-26 13:07:43.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/sbus/char/bbc_i2c.c	2007-07-31 18:12:13.000000000 +0200
+@@ -357,13 +357,13 @@ static void __init reset_one_i2c(struct
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
+ static int __init attach_one_i2c(struct linux_ebus_device *edev, int index)
+ {
+-	struct bbc_i2c_bus *bp = kmalloc(sizeof(*bp), GFP_KERNEL);
++	struct bbc_i2c_bus *bp;
+ 	struct linux_ebus_child *echild;
+ 	int entry;
 
-We hope you enjoy your awesome card.
++	bp = kzalloc(sizeof(*bp), GFP_KERNEL);
+ 	if (!bp)
+ 		return -ENOMEM;
+-	memset(bp, 0, sizeof(*bp));
 
-Wishing you the best,
-Administrator,
-dgreetings.com
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ 	bp->i2c_control_regs = ioremap(edev->resource[0].start, 0x2);
+ 	if (!bp->i2c_control_regs)
