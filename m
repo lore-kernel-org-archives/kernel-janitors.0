@@ -1,20 +1,37 @@
-From: "Sadie Christensen" <koeanchorage@ncconnect.net>
-Date: Mon, 23 Jul 2007 18:58:33 +0000
-Subject: [KJ] chisel adolphus  also
-Message-Id: <001701c7cd29$2d1e4460$00a37784@usuariolez7hp4>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 22:18:02 +0000
+Subject: [PATCH 80] fs/ext4/xattr.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708010018.02479.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-ext4@vger.kernel.org
 
-avocet coachwork  circumscribe cloven.  cowgirl craftsman chromic best  circumlocution capacitate.  diatom doctorate 
-brisk  advantage  craw bottommost   deputy  approval balletomane.   coyote  audience contraband  dilemma counterclockwise  baseball    caramel.
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ fs/ext4/xattr.c | 42421 -> 42382 (-39 bytes)
+ fs/ext4/xattr.o | 166152 -> 165720 (-432 bytes)
+
+ fs/ext4/xattr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- linux-2.6.23-rc1-mm1-a/fs/ext4/xattr.c	2007-07-26 13:07:46.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/fs/ext4/xattr.c	2007-07-29 23:55:37.000000000 +0200
+@@ -750,12 +750,11 @@ ext4_xattr_block_set(handle_t *handle, s
+ 		}
+ 	} else {
+ 		/* Allocate a buffer where we construct the new block. */
+-		s->base = kmalloc(sb->s_blocksize, GFP_KERNEL);
++		s->base = kzalloc(sb->s_blocksize, GFP_KERNEL);
+ 		/* assert(header = s->base) */
+ 		error = -ENOMEM;
+ 		if (s->base = NULL)
+ 			goto cleanup;
+-		memset(s->base, 0, sb->s_blocksize);
+ 		header(s->base)->h_magic = cpu_to_le32(EXT4_XATTR_MAGIC);
+ 		header(s->base)->h_blocks = cpu_to_le32(1);
+ 		header(s->base)->h_refcount = cpu_to_le32(1);
