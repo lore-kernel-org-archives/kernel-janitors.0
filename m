@@ -1,34 +1,57 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Date: Tue, 31 Jul 2007 19:47:21 +0000
-Subject: Re: [PATCH 28] drivers/net/wan/hdlc_fr.c: kmalloc + memset conversion to kzalloc
-Message-Id: <m34pjkqrsm.fsf@maximus.localdomain>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 18:18:55 +0000
+Subject: [PATCH 40] drivers/atm/iphase.c: mostly kmalloc + memset conversion to kzalloc
+Message-Id: <200707312018.55797.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
-	<200707311949.52337.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311949.52337.m.kozlowski@tuxland.pl> (Mariusz Kozlowski's message of "Tue, 31 Jul 2007 19:49:52 +0200")
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, chas@cmf.nrl.navy.mil, pwang@iphase.com
 
-Mariusz Kozlowski <m.kozlowski@tuxland.pl> writes:
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-> +++ linux-2.6.23-rc1-mm1-b/drivers/net/wan/hdlc_fr.c	2007-07-30 00:25:40.000000000 +0200
-> @@ -212,14 +212,13 @@ static pvc_device* add_pvc(struct net_de
->  		pvc_p = &(*pvc_p)->next;
->  	}
->
-> -	pvc = kmalloc(sizeof(pvc_device), GFP_ATOMIC);
-> +	pvc = kzalloc(sizeof(pvc_device), GFP_ATOMIC);
->  #ifdef DEBUG_PVC
->  	printk(KERN_DEBUG "add_pvc: allocated pvc %p, frad %p\n", pvc, dev);
->  #endif
->  	if (!pvc)
->  		return NULL;
->
-> -	memset(pvc, 0, sizeof(pvc_device));
+ drivers/atm/iphase.c | 111508 -> 111431 (-77 bytes)
+ drivers/atm/iphase.o | 254740 -> 254260 (-480 bytes)
 
-Looks good, thanks.
--- 
-Krzysztof Halasa
+ drivers/atm/iphase.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+--- linux-2.6.23-rc1-mm1-a/drivers/atm/iphase.c	2007-07-26 13:07:41.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/atm/iphase.c	2007-07-31 11:55:17.000000000 +0200
+@@ -1601,14 +1601,14 @@ static int rx_init(struct atm_dev *dev)
+
+ 	skb_queue_head_init(&iadev->rx_dma_q);
+ 	iadev->rx_free_desc_qhead = NULL;
+-	iadev->rx_open = kmalloc(4*iadev->num_vc,GFP_KERNEL);
+-	if (!iadev->rx_open)
+-	{
++
++	iadev->rx_open = kzalloc(4 * iadev->num_vc, GFP_KERNEL);
++	if (!iadev->rx_open) {
+ 		printk(KERN_ERR DEV_LABEL "itf %d couldn't get free page\n",
+ 		dev->number);
+ 		goto err_free_dle;
+ 	}
+-	memset(iadev->rx_open, 0, 4*iadev->num_vc);
++
+         iadev->rxing = 1;
+         iadev->rx_pkt_cnt = 0;
+ 	/* Mode Register */
+@@ -3171,12 +3171,12 @@ static int __devinit ia_init_one(struct
+         unsigned long flags;
+ 	int ret;
+
+-	iadev = kmalloc(sizeof(*iadev), GFP_KERNEL);
++	iadev = kzalloc(sizeof(*iadev), GFP_KERNEL);
+ 	if (!iadev) {
+ 		ret = -ENOMEM;
+ 		goto err_out;
+ 	}
+-	memset(iadev, 0, sizeof(*iadev));
++
+ 	iadev->pci = pdev;
+
+ 	IF_INIT(printk("ia detected at bus:%d dev: %d function:%d\n",
