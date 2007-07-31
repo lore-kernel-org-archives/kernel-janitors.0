@@ -1,47 +1,47 @@
-From: "Damion Mora56" <xfefgttlik@borjes.com>
-Date: Fri, 20 Jul 2007 03:08:44 +0000
-Subject: [KJ] Open: part-time position
-Message-Id: <01c7ca7a$b085fb60$b52cbb3a@xfefgttlik>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 17:26:32 +0000
+Subject: [PATCH 18] drivers/md/dm-table.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707311926.33125.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Good afternoon
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Would  you be interested in a home based job that may pay up to $1500-3000 =
-per month? No start up charges, no nonsense,  this is a straight offer.
+ drivers/md/dm-table.c | 21698 -> 21664 (-34 bytes)
+ drivers/md/dm-table.o | 132153 -> 132093 (-60 bytes)
 
-You don=92t have to give up your present position; it will only take a smal=
-l part of your time. All you need to have to start running your business wi=
-th our company are an E-mail access and a bank account. And your desire to =
-earn extra cash, of course.
+ drivers/md/dm-table.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-The nature of job is transaction processing. You will receive the transfers=
- our customers/resellers send directly to you and forward it to us or our a=
-gents via one of chosen money transfer agencies. The job is pretty simple a=
-nd you won't need any special knowledge to start, though we do require that=
- you have an ability to learn and are able to act on a very short notice. W=
-e only pay decent commissions because we keep our customers happy with our =
-promptness.
-And if you are looking for career there=92s a chance of becoming a part of =
-our team in the future (based on your performance), team in which you will =
-be truly respected and honestly rewarded - just think about this! We hope t=
-o hear from you soon.
+--- linux-2.6.23-rc1-mm1-a/drivers/md/dm-table.c	2007-07-26 13:07:41.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/md/dm-table.c	2007-07-31 13:19:43.000000000 +0200
+@@ -213,12 +213,12 @@ static int alloc_targets(struct dm_table
+ int dm_table_create(struct dm_table **result, int mode,
+ 		    unsigned num_targets, struct mapped_device *md)
+ {
+-	struct dm_table *t = kmalloc(sizeof(*t), GFP_KERNEL);
+-
++	struct dm_table *t;
++
++	t = kzalloc(sizeof(*t), GFP_KERNEL);
+ 	if (!t)
+ 		return -ENOMEM;
 
-Please email us back to career@digifox.hk and we will be glad to provide mo=
-re information.
+-	memset(t, 0, sizeof(*t));
+ 	INIT_LIST_HEAD(&t->devices);
+ 	atomic_set(&t->holders, 1);
 
-Thank you!
+@@ -229,7 +229,6 @@ int dm_table_create(struct dm_table **re
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will b=
-e discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
-ns.
+ 	if (alloc_targets(t, num_targets)) {
+ 		kfree(t);
+-		t = NULL;
+ 		return -ENOMEM;
+ 	}
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
