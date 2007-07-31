@@ -1,44 +1,42 @@
-From: "vintagepostcards.com" <ldsi@state.pa.us>
-Date: Wed, 04 Jul 2007 17:33:06 +0000
-Subject: [KJ] July 4th Fireworks Show
-Message-Id: <002b01c7beca$74ce8030$5081ba92@jiiql.kbfwc>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 17:48:11 +0000
+Subject: [PATCH 27] drivers/input/serio/gscps2.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707311948.11520.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, linux-input@atrey.karlin.mff.cuni.cz
 
-Hi. Family member has sent you a greeting card.
-See your card as often as you wish during the next 15 days.
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-SEEING YOUR CARD
+ drivers/input/serio/gscps2.c | 11696 -> 11607 (-89 bytes)
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+ drivers/input/serio/gscps2.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-http://67.188.18.85/?3de8293ec6968e3ca036e47840d8e1178689
+--- linux-2.6.23-rc1-mm1-a/drivers/input/serio/gscps2.c	2007-07-26 13:07:44.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/input/serio/gscps2.c	2007-07-30 00:12:31.000000000 +0200
+@@ -340,8 +340,8 @@ static int __init gscps2_probe(struct pa
+ 	if (dev->id.sversion = 0x96)
+ 		hpa += GSC_DINO_OFFSET;
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
-     
+-	ps2port = kmalloc(sizeof(struct gscps2port), GFP_KERNEL);
+-	serio = kmalloc(sizeof(struct serio), GFP_KERNEL);
++	ps2port = kzalloc(sizeof(struct gscps2port), GFP_KERNEL);
++	serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!ps2port || !serio) {
+ 		ret = -ENOMEM;
+ 		goto fail_nomem;
+@@ -349,8 +349,6 @@ static int __init gscps2_probe(struct pa
 
+ 	dev_set_drvdata(&dev->dev, ps2port);
 
-PRIVACY
-vintagepostcards.com honors your privacy. Our home page and Card Pick Up have links to our 
-Privacy Policy.
-
-TERMS OF USE
-By accessing your card you agree we have no liability. 
-If you don't know the person sending the card or don't wish to see the card, 
-please disregard this Announcement.
-
-We hope you enjoy your awesome card.
-
-Wishing you the best,
-Postmaster,
-vintagepostcards.com
-
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+-	memset(ps2port, 0, sizeof(struct gscps2port));
+-	memset(serio, 0, sizeof(struct serio));
+ 	ps2port->port = serio;
+ 	ps2port->padev = dev;
+ 	ps2port->addr = ioremap_nocache(hpa, GSC_STATUS + 4);
