@@ -1,52 +1,37 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Date: Mon, 30 Jul 2007 00:40:23 +0000
-Subject: Re: [PATCH 09/68] 0 -> NULL, for arch/m68knommu
-Message-Id: <46AD3377.6020909@snapgear.com>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 22:05:24 +0000
+Subject: [PATCH 72] drivers/mmc/core/sdio_bus.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708010005.25352.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707270944.LAA17230@ifs.emn.fr>
-In-Reply-To: <200707270944.LAA17230@ifs.emn.fr>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoann Padioleau <padator@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, drzeus-mmc@drzeus.cx
 
-Hi Yoann,
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Yoann Padioleau wrote:
-> When comparing a pointer, it's clearer to compare it to NULL than to 0.
->
-> Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-> Cc: gerg@uclinux.org
+ drivers/mmc/core/sdio_bus.c | 5528 -> 5483 (-45 bytes)
+ drivers/mmc/core/sdio_bus.o | 70044 -> 69876 (-168 bytes)
 
-Acked-by: Greg Ungerer <gerg@uclinux.org>
+ drivers/mmc/core/sdio_bus.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+--- linux-2.6.23-rc1-mm1-a/drivers/mmc/core/sdio_bus.c	2007-07-26 13:07:43.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/mmc/core/sdio_bus.c	2007-07-30 00:22:42.000000000 +0200
+@@ -203,12 +203,10 @@ struct sdio_func *sdio_alloc_func(struct
+ {
+ 	struct sdio_func *func;
 
-> Cc: akpm@linux-foundation.org
-> ---
-> 
->  comempci.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/m68knommu/kernel/comempci.c b/arch/m68knommu/kernel/comempci.c
-> index 6ee00ef..528517e 100644
-> --- a/arch/m68knommu/kernel/comempci.c
-> +++ b/arch/m68knommu/kernel/comempci.c
-> @@ -736,7 +736,7 @@ #endif
->  
->  	/* Find a free spot to put this handler */
->  	for (i = 0; (i < COMEM_MAXPCI); i++) {
-> -		if (pci_irqlist[i].handler = 0) {
-> +		if (pci_irqlist[i].handler = NULL) {
->  			pci_irqlist[i].handler = handler;
->  			pci_irqlist[i].device = device;
->  			pci_irqlist[i].dev_id = dev_id;
-> 
-> 
+-	func = kmalloc(sizeof(struct sdio_func), GFP_KERNEL);
++	func = kzalloc(sizeof(struct sdio_func), GFP_KERNEL);
+ 	if (!func)
+ 		return ERR_PTR(-ENOMEM);
 
--- 
-------------------------------------------------------------------------
-Greg Ungerer  --  Chief Software Dude       EMAIL:     gerg@snapgear.com
-Secure Computing Corporation                PHONE:       +61 7 3435 2888
-825 Stanley St,                             FAX:         +61 7 3891 3630
-Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
+-	memset(func, 0, sizeof(struct sdio_func));
+-
+ 	func->card = card;
+
+ 	device_initialize(&func->dev);
