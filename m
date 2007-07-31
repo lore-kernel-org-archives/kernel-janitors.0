@@ -1,26 +1,35 @@
-From: Arabella <ajdif@wickens289.fsnet.co.uk>
-Date: Tue, 03 Jul 2007 07:06:23 +0000
-Subject: [KJ] Re: info_PINDIWSKTEBO.pdf
-Message-Id: <4689F56F.2010401@wickens289.fsnet.co.uk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060508060304030406000208"
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 18:27:54 +0000
+Subject: [PATCH 46] drivers/scsi/lpfc/lpfc_scsi.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707312027.55149.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
---------------060508060304030406000208
-Content-Type: text/plain; charset=windows-1250; format=flowed
-Content-Transfer-Encoding: 7bit
-
-
-
---------------060508060304030406000208
-Content-Type: text/plain; charset="us-ascii"
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, james.smart@emulex.com, linux-scsi@vger.kernel.org
 
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------060508060304030406000208--
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+
+ drivers/scsi/lpfc/lpfc_scsi.c | 42769 -> 42721 (-48 bytes)
+ drivers/scsi/lpfc/lpfc_scsi.o | 191332 -> 191240 (-92 bytes)
+
+ drivers/scsi/lpfc/lpfc_scsi.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_scsi.c	2007-07-26 13:07:42.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_scsi.c	2007-07-31 11:08:46.000000000 +0200
+@@ -208,10 +208,9 @@ lpfc_new_scsi_buf(struct lpfc_vport *vpo
+ 	dma_addr_t pdma_phys;
+ 	uint16_t iotag;
+
+-	psb = kmalloc(sizeof(struct lpfc_scsi_buf), GFP_KERNEL);
++	psb = kzalloc(sizeof(struct lpfc_scsi_buf), GFP_KERNEL);
+ 	if (!psb)
+ 		return NULL;
+-	memset(psb, 0, sizeof (struct lpfc_scsi_buf));
+
+ 	/*
+ 	 * Get memory from the pci pool to map the virt space to pci bus space
