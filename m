@@ -1,57 +1,40 @@
-From: "Skinnerr Lenorae" <julian.c4@ukonline.co.uk>
-Date: Wed, 25 Jul 2007 11:19:47 +0000
-Subject: [KJ] pptxdq Bietet Heute f&#252;r Sie An, kernel-janitors
-Message-Id: <01c7ceab$ca59ca00$d10d0553@julian.c4>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 17:29:36 +0000
+Subject: [PATCH 19] drivers/md/dm-target.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707311929.36290.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
+ drivers/md/dm-target.c | 3300 -> 3271 (-29 bytes)
+ drivers/md/dm-target.o | 105641 -> 105449 (-192 bytes)
 
+ drivers/md/dm-target.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Hallo  {, MAILTO_USERNAME} will load patterns into your !
+--- linux-2.6.23-rc1-mm1-a/drivers/md/dm-target.c	2007-07-26 13:07:41.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/md/dm-target.c	2007-07-31 11:26:04.000000000 +0200
+@@ -88,12 +88,11 @@ void dm_put_target_type(struct target_ty
 
-  Sie wollen, der Ihres =93 Gurke =93 GROSS &amp; STARK geworden ist, als e=
-in STEIN?
-  Sie m&#246;chten sich an eine jungen Jahre... erinnern
-       =20
- =20
-  Die beste Qualit&#228;t! 100% Wirkung!=20
-    Anfangen von 30$!=20
-    VERSUCHEN Sie JETZT!
-   =20
-   =20
- =20
-  =20
-  =20
-  =20
-  =20
-  =20
-  =20
-  =20
-   Visum Hat Online Laden Beglaubigt.
-    Weltweite Lieferung.
-    100% vertraulich.
-  =20
-  BestPharmSpecial . COM=20
-  Tippen Sie Browser (ohne Pl&#228;tze) Presse Eintr&#228;gt ein.
-    with,  better at solving software !  real OO design principles :)
+ static struct tt_internal *alloc_target(struct target_type *t)
+ {
+-	struct tt_internal *ti = kmalloc(sizeof(*ti), GFP_KERNEL);
+-
+-	if (ti) {
+-		memset(ti, 0, sizeof(*ti));
++	struct tt_internal *ti;
++
++	ti = kzalloc(sizeof(*ti), GFP_KERNEL);
++	if (ti)
+ 		ti->tt = *t;
+-	}
 
-Mit den Besten Beachtungen Skinnern Lenora{nChar.}
-
-
-
-
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will b=
-e discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
-ns.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+ 	return ti;
+ }
