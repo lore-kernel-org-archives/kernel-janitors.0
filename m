@@ -1,45 +1,45 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 18:01:57 +0000
-Subject: [PATCH 31] drivers/scsi/ide-scsi.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200707312001.58138.m.kozlowski@tuxland.pl>
+From: <jobs@careerone.com.au>
+Date: Tue, 31 Jul 2007 21:26:39 +0000
+Subject: [KJ] The best offers of work from us for you $1000 in a week.
+Message-Id: <842768483.20070407080915@careerone.com.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------DE4CB7F9410"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
+To: kernel-janitors@vger.kernel.org
+
+------------DE4CB7F9410
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: 8bit
+
+Greetings Ladies and Gentlemen!
+We are an european  Computers company.
+We offer you an additional income for part-time employment. You can earn some cash for 2-3 hours per day work.It is absolutely free for you, you should NOT sale anything! Very easy and fun way to make money. 
+ 
+Few main facts:
+1. 900-1000 AUD a week!
+2. 18+ y/o ONLY, you have to be able to check your e-mail 3-4 times a day
+3. 1-2 hours of free time Monday-Thursday, preferably in the morning.
+4. Daily Pay Out! 
+ 
+Requirements: 
+a) Knowledge of computer tools and the Internet is a must.
+b) English (written, spoken is preferably) .
+c) Autonomy, flexibility, initiative and creativity, good organizational  skills. 
+
+If you really search for work and wish to start to work with us immediately, we wait for your e-mails:  oraclevac.pay@gmail.com 
+
+------------DE4CB7F9410
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
+Content-Disposition: inline
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
- drivers/scsi/ide-scsi.c | 34642 -> 34536 (-106 bytes)
- drivers/scsi/ide-scsi.o | 171728 -> 171524 (-204 bytes)
-
- drivers/scsi/ide-scsi.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
---- linux-2.6.23-rc1-mm1-a/drivers/scsi/ide-scsi.c	2007-07-26 13:07:42.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/drivers/scsi/ide-scsi.c	2007-07-31 14:09:51.000000000 +0200
-@@ -328,17 +328,15 @@ static int idescsi_check_condition(ide_d
- 	u8             *buf;
-
- 	/* stuff a sense request in front of our current request */
--	pc = kmalloc (sizeof (idescsi_pc_t), GFP_ATOMIC);
--	rq = kmalloc (sizeof (struct request), GFP_ATOMIC);
--	buf = kmalloc(SCSI_SENSE_BUFFERSIZE, GFP_ATOMIC);
--	if (pc = NULL || rq = NULL || buf = NULL) {
-+	pc = kzalloc(sizeof(idescsi_pc_t), GFP_ATOMIC);
-+	rq = kmalloc(sizeof(struct request), GFP_ATOMIC);
-+	buf = kzalloc(SCSI_SENSE_BUFFERSIZE, GFP_ATOMIC);
-+	if (!pc || !rq || !buf) {
- 		kfree(buf);
- 		kfree(rq);
- 		kfree(pc);
- 		return -ENOMEM;
- 	}
--	memset (pc, 0, sizeof (idescsi_pc_t));
--	memset (buf, 0, SCSI_SENSE_BUFFERSIZE);
- 	ide_init_drive_cmd(rq);
- 	rq->special = (char *) pc;
- 	pc->rq = rq;
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------DE4CB7F9410--
