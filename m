@@ -1,50 +1,48 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 02 Jul 2007 10:11:18 +0000
-Subject: [KJ] update:  dead doc files and dead features
-Message-Id: <Pine.LNX.4.64.0707020606150.29616@localhost.localdomain>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 22:21:33 +0000
+Subject: [PATCH 82] drivers/scsi/zorro7xx.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708010021.34147.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, James.Bottomley@steeleye.com, linux-scsi@vger.kernel.org
 
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-  after a bit of thought (and more coffee), i decided that we needed
-two categories of "dead" stuff:
+ drivers/scsi/zorro7xx.c | 4579 -> 4501 (-78 bytes)
 
-1) strictly dead Doc files, for which there is absolutely nothing else
-related in the tree:
+ drivers/scsi/zorro7xx.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-  http://fsdev.net/wiki/index.php?title=DEad_Documentation_files
+--- linux-2.6.23-rc1-mm1-a/drivers/scsi/zorro7xx.c	2007-07-26 13:07:42.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/scsi/zorro7xx.c	2007-07-31 14:25:58.000000000 +0200
+@@ -69,7 +69,7 @@ static struct zorro_device_id zorro7xx_z
+ static int __devinit zorro7xx_init_one(struct zorro_dev *z,
+ 				       const struct zorro_device_id *ent)
+ {
+-	struct Scsi_Host * host = NULL;
++	struct Scsi_Host *host;
+ 	struct NCR_700_Host_Parameters *hostdata;
+ 	struct zorro_driver_data *zdd;
+ 	unsigned long board, ioaddr;
+@@ -89,14 +89,12 @@ static int __devinit zorro7xx_init_one(s
+ 		return -EBUSY;
+ 	}
 
-2) dead "features", for which the removal might involve the deletion
-of a bunch of "stuff" in the tree:
+-	hostdata = kmalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
+-	if (hostdata = NULL) {
++	hostdata = kzalloc(sizeof(struct NCR_700_Host_Parameters), GFP_KERNEL);
++	if (!hostdata) {
+ 		printk(KERN_ERR "zorro7xx: Failed to allocate host data\n");
+ 		goto out_release;
+ 	}
 
-  http://fsdev.net/wiki/index.php?title=DEad_features
-
-you can see that, at that second page, i added a first example of
-"digiepca", whose removal would involve tossing a source file and a
-Kconfig entry and some documentation, etc.
-
-  the above distinction seems to make more sense than my earlier
-posting.
-
-rday
-
-p.s.  that whole wiki is getting a bit out of hand, and i'm going to
-put some work into cleaning it up totally one of these days.
-
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://fsdev.net/wiki/index.php?title=3DMain_Page
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-_______________________________________________
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+-	memset(hostdata, 0, sizeof(struct NCR_700_Host_Parameters));
+-
+ 	/* Fill in the required pieces of hostdata */
+ 	if (ioaddr > 0x01000000)
+ 		hostdata->base = ioremap(ioaddr, zorro_resource_len(z));
