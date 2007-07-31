@@ -1,54 +1,40 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 27 Jul 2007 09:44:25 +0000
-Subject: [PATCH 05/68] 0 -> NULL, for arch/cris
-Message-Id: <200707270944.LAA17140@ifs.emn.fr>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 18:25:45 +0000
+Subject: [PATCH 44] drivers/scsi/lpfc/lpfc_debugfs.c: kmalloc + memset conversion to kcalloc
+Message-Id: <200707312025.45603.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: starvik@axis.com, dev-etrax@axis.com, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, james.smart@emulex.com, linux-scsi@vger.kernel.org
 
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-When comparing a pointer, it's clearer to compare it to NULL than to 0.
+ drivers/scsi/lpfc/lpfc_debugfs.c | 13809 -> 13716 (-93 bytes)
+ drivers/scsi/lpfc/lpfc_debugfs.o | 146124 -> 146124 (0 bytes)
 
-Here is an excerpt of the semantic patch: 
+ drivers/scsi/lpfc/lpfc_debugfs.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-@@
-expression *E;
-@@
+--- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_debugfs.c	2007-07-26 13:07:42.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_debugfs.c	2007-07-31 14:11:24.000000000 +0200
+@@ -432,14 +432,11 @@ lpfc_debugfs_initialize(struct lpfc_vpor
+ 	if (!lpfc_debugfs_start_time)
+ 		lpfc_debugfs_start_time = jiffies;
 
-  E =
-- 0
-+ NULL
+-	vport->disc_trc = kmalloc(
+-		(sizeof(struct lpfc_disc_trc) * lpfc_debugfs_max_disc_trc),
+-		GFP_KERNEL);
++	vport->disc_trc = kcalloc(lpfc_debugfs_max_disc_trc,
++				  sizeof(struct lpfc_disc_trc),	GFP_KERNEL);
 
-@@
-expression *E;
-@@
+ 	if (!vport->disc_trc)
+ 		goto debug_failed;
+-	memset(vport->disc_trc, 0,
+-		(sizeof(struct lpfc_disc_trc) * lpfc_debugfs_max_disc_trc));
 
-  E !- 0
-+ NULL
-
-Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-Cc: starvik@axis.com
-Cc: dev-etrax@axis.com
-Cc: akpm@linux-foundation.org
----
-
- fault.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/cris/mm/fault.c b/arch/cris/mm/fault.c
-index 8672ab7..d5b1e3d 100644
---- a/arch/cris/mm/fault.c
-+++ b/arch/cris/mm/fault.c
-@@ -448,7 +448,7 @@ find_fixup_code(struct pt_regs *regs)
- {
- 	const struct exception_table_entry *fixup;
- 
--	if ((fixup = search_exception_tables(instruction_pointer(regs))) != 0) {
-+	if ((fixup = search_exception_tables(instruction_pointer(regs))) != NULL) {
- 		/* Adjust the instruction pointer in the stackframe. */
- 		instruction_pointer(regs) = fixup->fixup;
- 		arch_fixup(regs);
-
+ 	snprintf(name, sizeof(name), "discovery_trace");
+ 	vport->debug_disc_trc 
