@@ -1,37 +1,43 @@
-From: "greetingcards.com" <fdn@siac.com>
-Date: Fri, 13 Jul 2007 05:46:57 +0000
-Subject: [KJ] You've received a postcard from a Worshipper!
-Message-Id: <001501c7c511$39c3fd10$46b47c5d@hzpv.phnkb>
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 17:14:28 +0000
+Subject: [PATCH 11] drivers/pci/hotplug/cpqphp_ctrl.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200707311914.29201.m.kozlowski@tuxland.pl>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, greg@kroah.com
 
-Hi. Worshipper has sent you a postcard.
-See your card as often as you wish during the next 15 days.
+Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-SEEING YOUR CARD
+ drivers/pci/hotplug/cpqphp_ctrl.c | 79698 -> 79638 (-60 bytes)
+ drivers/pci/hotplug/cpqphp_ctrl.o | 192896 -> 192736 (-160 bytes)
 
-If your email software creates links to Web pages, click on your 
-card's direct www address below while you are connected to the Internet:
+ drivers/pci/hotplug/cpqphp_ctrl.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-http://66.91.125.1/?6d2989907cd64e28cae3d7703a3b01b
+--- linux-2.6.23-rc1-mm1-a/drivers/pci/hotplug/cpqphp_ctrl.c	2007-07-26 13:07:43.000000000 +0200
++++ linux-2.6.23-rc1-mm1-b/drivers/pci/hotplug/cpqphp_ctrl.c	2007-07-31 13:56:47.000000000 +0200
+@@ -973,16 +973,13 @@ struct pci_func *cpqhp_slot_create(u8 bu
+ 	struct pci_func *new_slot;
+ 	struct pci_func *next;
 
-Or copy and paste it into your browser's "Location" box (where Internet 
-addresses go).
+-	new_slot = kmalloc(sizeof(*new_slot), GFP_KERNEL);
+-
+-	if (new_slot = NULL) {
++	new_slot = kzalloc(sizeof(*new_slot), GFP_KERNEL);
++	if (!new_slot) {
+ 		/* I'm not dead yet!
+ 		 * You will be. */
+-		return new_slot;
++		return NULL;
+ 	}
 
-We hope you enjoy your awesome card.
+-	memset(new_slot, 0, sizeof(struct pci_func));
+-
+ 	new_slot->next = NULL;
+ 	new_slot->configured = 1;
 
-Wishing you the best,
-Mail Delivery System,
-greetingcards.com
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
