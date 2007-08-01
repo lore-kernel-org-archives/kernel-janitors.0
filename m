@@ -1,62 +1,49 @@
-From: "Erin Dodge" <widebfvu@bluerodeo.com>
-Date: Wed, 08 Aug 2007 13:29:54 +0000
-Subject: [KJ] JFC Autos Vacancy from jobsearch.gov.au
-Message-Id: <01c7d9be$9a49f420$b29ea650@widebfvu>
+From: Ian Kent <raven@themaw.net>
+Date: Wed, 01 Aug 2007 04:02:09 +0000
+Subject: Re: [PATCH 34] fs/autofs4/inode.c: kmalloc + memset conversion to
+Message-Id: <1185940929.3211.25.camel@raven.themaw.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+	 <200707312005.44495.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312005.44495.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, autofs@linux.kernel.org
 
-JFCAutos Limited Liability Company
-Business Center of Nevada, Suite 543, 
-701 Bridger Ave, Las Vegas, NV 89101, USA
-+1(413)4313936
-Mr. Yasuhiro Matokao
+On Tue, 2007-07-31 at 20:05 +0200, Mariusz Kozlowski wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Aug 8, 2007
+ACK.
 
-JFCAutos LLC is pleased to make you an offer on employment as an Official Distributor (Sales Executive, Ref: 21888) 
-Successful candidates should meet the following requirements:
-- Great analytical and problem solving skills.
-- Good people interaction skills.
-- Ability to work independently with minimal supervision.
-- Ability to respond on e-mails immediately and check an email minimum twice per day.
-- Good written and spoken English.
+> 
+>  fs/autofs4/inode.c | 10467 -> 10435 (-32 bytes)
+>  fs/autofs4/inode.o | 98576 -> 98552 (-24 bytes)
+> 
+>  fs/autofs4/inode.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> --- linux-2.6.23-rc1-mm1-a/fs/autofs4/inode.c	2007-07-26 13:07:46.000000000 +0200
+> +++ linux-2.6.23-rc1-mm1-b/fs/autofs4/inode.c	2007-07-29 23:56:08.000000000 +0200
+> @@ -312,13 +312,11 @@ int autofs4_fill_super(struct super_bloc
+>  	struct autofs_sb_info *sbi;
+>  	struct autofs_info *ino;
+> 
+> -	sbi = kmalloc(sizeof(*sbi), GFP_KERNEL);
+> +	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+>  	if (!sbi)
+>  		goto fail_unlock;
+>  	DPRINTK("starting up, sbi = %p",sbi);
+> 
+> -	memset(sbi, 0, sizeof(*sbi));
+> -
+>  	s->s_fs_info = sbi;
+>  	sbi->magic = AUTOFS_SBI_MAGIC;
+>  	sbi->pipefd = -1;
+> -
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
-Should You accept this job offer, per company policy You'll be eligible to receive the following 
-beginning on your hire date:
-- SALARY: Annual gross starting salary of $10,800 - $12,000 USD, paid in monthly installments by Your choice of check or direct deposit plus 5% from each sale (operation). 
-- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or direct deposit.
-- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares per year (just after trial period).
-
-TO ACCEPT THIS JOB OFFER:
-1. Send an e-mail letter to Mr. Tim Collins or Mrs. Caroline M. McMilen from our HR-department in below format:
-To:  jfcautos_vacancies@yahoo.com
-Subject: Sales Executive, Ref: 21888
-E-mail Text:
--Your First Name (according to your ID)
--Your Last Name (according to your ID)
--Your Primary E-mail (e-mail address to receive our messages)
--Your Country of your permanent living
--Your City (city of your permanent living)
--Your Address (address of home)
--Your Phone (home AND mobile phone with area code for urgent contacts)
-Attachement: Your CV and colored passport copy.
-2. Wait for Hiring Coordinator replay.
-4. Be ready to have an email or phone interview.
-
-TO DECLINE THIS JOB OFFER:
-1. Ignore this e-mail letter.
-
-Sincerely,
-Mr. Yasuhiro Matokao 
-The Managing Director and President of JFCAutos LLC
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
