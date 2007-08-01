@@ -1,32 +1,23 @@
-From: "greet2k.Com" <uncr@abcn.com>
-Date: Thu, 09 Aug 2007 20:18:20 +0000
-Subject: [KJ] Neighbor sent you an ecard from greet2k.Com!
-Message-Id: <002901c7dac2$6ddeb150$1ada7348@rpac.zisn>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Date: Wed, 01 Aug 2007 21:02:34 +0000
+Subject: Re: [PATCH 31] drivers/scsi/ide-scsi.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708012302.34205.bzolnier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312001.58138.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312001.58138.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
 
-Neighbor has created a custom greeting card for you at greet2k.Com,
-the Internet's most popular greeting card service.=20
+On Tuesday 31 July 2007, Mariusz Kozlowski wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/scsi/ide-scsi.c | 34642 -> 34536 (-106 bytes)
+>  drivers/scsi/ide-scsi.o | 171728 -> 171524 (-204 bytes)
+> 
+>  drivers/scsi/ide-scsi.c |   10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 
-Your greeting card ID is: 2a4c1c8a8aa50bb1c20bb5790c08a823e962=20
-
-To see your custom greeting card, simply click on the link below:=20
-http://69.134.94.111/?2a4c1c8a8aa50bb1c20bb5790c08a823e962
-
-Send greeting cards from greet2k.Com whenever you want by visiting us at:=20
-http://greet2k.Com/
-Copyright =BF 1996-2007 greet2k.Com All Rights Reserved
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will b=
-e discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
-ns.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+applied
