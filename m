@@ -1,49 +1,27 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:11:12 +0000
-Subject: [kj] is_power_of_2 in include/asm-sparc64/vio.h
-Message-Id: <1187009952.7273.14.camel@merlin.linuxcoe.com>
+From: Hirokazu Takata <takata@linux-m32r.org>
+Date: Wed, 01 Aug 2007 05:12:41 +0000
+Subject: Re: [PATCH 52] include/asm-m32r/thread_info.h: kmalloc + memset
+Message-Id: <swfir7zrg6u.wl%takata.hirokazu@renesas.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+ <200707312118.34417.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312118.34417.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, takata@linux-m32r.org, linux-m32r@ml.linux-m32r.org
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 21:18:33 +0200
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  include/asm-m32r/thread_info.h |    5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/include/asm-sparc64/vio.h b/include/asm-sparc64/vio.h
-index f7417e9..2cc65a9 100644
---- a/include/asm-sparc64/vio.h
-+++ b/include/asm-sparc64/vio.h
-@@ -8,6 +8,7 @@
- #include <linux/spinlock.h>
- #include <linux/completion.h>
- #include <linux/list.h>
-+#include <linux/log2.h>
- 
- #include <asm/ldc.h>
- #include <asm/mdesc.h>
-@@ -258,7 +259,7 @@ static inline u32 vio_dring_avail(struct vio_dring_state *dr,
- 				  unsigned int ring_size)
- {
- 	/* Ensure build-time power-of-2.  */
--	BUILD_BUG_ON(ring_size & (ring_size - 1));
-+	BUILD_BUG_ON(!is_power_of_2(ring_size));
- 
- 	return (dr->pending -
- 		((dr->prod - dr->cons) & (ring_size - 1)));
+Acked-by: Hirokazu Takata <takata@linux-m32r.org>
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Thank you.
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
