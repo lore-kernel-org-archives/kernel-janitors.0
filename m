@@ -1,68 +1,263 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Wed, 15 Aug 2007 19:36:12 +0000
-Subject: Re: [PATCH 1 of 5 ] /drivers/char ioremap balancing/ returncode check
-Message-Id: <46C355AC.3040604@gmail.com>
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Wed, 01 Aug 2007 06:02:56 +0000
+Subject: [PATCH 2/3] sound/pci ioremap/iounmap balancing
+Message-Id: <20070801060256.F0BA2DA820@mailserver8.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070815043503.535662281F@mailserver9.hushmail.com>
-In-Reply-To: <20070815043503.535662281F@mailserver9.hushmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: postfail@hushmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
 
-Scott Thompson napsal(a):
-> On Mon, 13 Aug 2007 16:17:29 -0400 Jiri Slaby <jirislaby@gmail.com> 
-> wrote:
->>> diff --git a/drivers/char/sx.c b/drivers/char/sx.c
->>> index 85a2328..30829ed 100644
->>> --- a/drivers/char/sx.c
->>> +++ b/drivers/char/sx.c
->>> @@ -2627,6 +2627,12 @@ static void __devinit fix_sx_pci(struct 
->>> pci_dev *pdev, struct sx_board *board)
->>>  	pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &hwbase);
->>>  	hwbase &= PCI_BASE_ADDRESS_MEM_MASK;
->>>  	rebase = ioremap(hwbase, 0x80);
->>> +	if (!rebase) {
->>> +		printk(KERN_DEBUG 
->>> +			"sx:ioremap fail, unable to perform cntrl reg fix\n");
->>> +		return;
->>> +	}
->>> +		
->> 1) this should be pci_iomap(pdev, 0, 0x80)
-> The ioremap call was there before my patch and I'm just trying to 
-> audit ioremap calls to make sure that they are cleaned up and have 
-> their return codes checked.   If you want me to take care of that 
-> "while I'm in the neighborhood", let me know, but trying to avoid 
-> too much scope creep on my audit to increase chances it actually 
-> gets included...
+ioremap / iounmap balancing in sound/pci tree
 
-Yup, while you are at it, make yet another patch, which will convert this to
-pci_iomap/unmap.
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+---
+diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
+index ac007ce..871b09f 100644
+--- a/sound/pci/mixart/mixart.c
++++ b/sound/pci/mixart/mixart.c
+@@ -1319,6 +1319,13 @@ static int __devinit snd_mixart_probe(struct 
+pci_dev *pci,
+ 						   pci_resource_len(pci, i));
+ 	}
+ 
++	if (!mgr->mem[0].virt || !mgr->mem[1].virt){
++		printk(KERN_ERR "unable to remap resource 0x%lx and/or 0x%lx\n",
++			mgr->mem[0].phys, mgr->mem[1].phys);
++		snd_mixart_free(mgr);
++		return -EBUSY;
++	}
++
+ 	if (request_irq(pci->irq, snd_mixart_interrupt, IRQF_SHARED,
+ 			CARD_NAME, mgr)) {
+ 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
+diff --git a/sound/pci/rme32.c b/sound/pci/rme32.c
+index 618653e..d62d32a 100644
+--- a/sound/pci/rme32.c
++++ b/sound/pci/rme32.c
+@@ -1373,6 +1373,7 @@ static int __devinit snd_rme32_create(struct 
+rme32 * rme32)
+ 	if (request_irq(pci->irq, snd_rme32_interrupt, IRQF_SHARED,
+ 			"RME32", rme32)) {
+ 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
++		iounmap(rme32->iobase);
+ 		return -EBUSY;
+ 	}
+ 	rme32->irq = pci->irq;
+@@ -1382,6 +1383,7 @@ static int __devinit snd_rme32_create(struct 
+rme32 * rme32)
+ 
+ 	/* set up ALSA pcm device for S/PDIF */
+ 	if ((err = snd_pcm_new(rme32->card, "Digi32 IEC958", 0, 1, 1, 
+&rme32->spdif_pcm)) < 0) {
++		iounmap(rme32->iobase);
+ 		return err;
+ 	}
+ 	rme32->spdif_pcm->private_data = rme32;
+@@ -1414,6 +1416,7 @@ static int __devinit snd_rme32_create(struct 
+rme32 * rme32)
+ 		if ((err = snd_pcm_new(rme32->card, "Digi32 ADAT", 1,
+ 				       1, 1, &rme32->adat_pcm)) < 0)
+ 		{
++			iounmap(rme32->iobase);
+ 			return err;
+ 		}		
+ 		rme32->adat_pcm->private_data = rme32;
+@@ -1459,6 +1462,7 @@ static int __devinit snd_rme32_create(struct 
+rme32 * rme32)
+ 
+ 	/* init switch interface */
+ 	if ((err = snd_rme32_create_switches(rme32->card, rme32)) < 0) {
++		iounmap(rme32->iobase);
+ 		return err;
+ 	}
+ 
+diff --git a/sound/pci/rme96.c b/sound/pci/rme96.c
+index e3304b7..25af36c 100644
+--- a/sound/pci/rme96.c
++++ b/sound/pci/rme96.c
+@@ -1590,6 +1590,7 @@ snd_rme96_create(struct rme96 *rme96)
+ 	if (request_irq(pci->irq, snd_rme96_interrupt, IRQF_SHARED,
+ 			"RME96", rme96)) {
+ 		snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
++		iounmap(rme96->iobase);
+ 		return -EBUSY;
+ 	}
+ 	rme96->irq = pci->irq;
+@@ -1601,6 +1602,7 @@ snd_rme96_create(struct rme96 *rme96)
+ 	if ((err = snd_pcm_new(rme96->card, "Digi96 IEC958", 0,
+ 			       1, 1, &rme96->spdif_pcm)) < 0)
+ 	{
++		iounmap(rme96->iobase);
+ 		return err;
+ 	}
+ 	rme96->spdif_pcm->private_data = rme96;
+@@ -1619,6 +1621,7 @@ snd_rme96_create(struct rme96 *rme96)
+ 		if ((err = snd_pcm_new(rme96->card, "Digi96 ADAT", 1,
+ 				       1, 1, &rme96->adat_pcm)) < 0)
+ 		{
++			iounmap(rme96->iobase);
+ 			return err;
+ 		}		
+ 		rme96->adat_pcm->private_data = rme96;
+@@ -1671,6 +1674,7 @@ snd_rme96_create(struct rme96 *rme96)
+ 	
+ 	/* init switch interface */
+ 	if ((err = snd_rme96_create_switches(rme96->card, rme96)) < 0) {
++		iounmap(rme96->iobase);
+ 		return err;
+ 	}
+ 
+diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+index 3b3ef65..031285f 100644
+--- a/sound/pci/rme9652/hdsp.c
++++ b/sound/pci/rme9652/hdsp.c
+@@ -5049,6 +5049,7 @@ static int __devinit snd_hdsp_create(struct 
+snd_card *card,
+ 	if (request_irq(pci->irq, snd_hdsp_interrupt, IRQF_SHARED,
+ 			"hdsp", hdsp)) {
+ 		snd_printk(KERN_ERR "Hammerfall-DSP: unable to use IRQ %d\n", 
+pci->irq);
++		iounmap(hdsp->iobase);
+ 		return -EBUSY;
+ 	}
+ 
+@@ -5057,8 +5058,10 @@ static int __devinit snd_hdsp_create(struct 
+snd_card *card,
+ 	hdsp->use_midi_tasklet = 1;
+ 	hdsp->dds_value = 0;
+ 
+-	if ((err = snd_hdsp_initialize_memory(hdsp)) < 0)
++	if ((err = snd_hdsp_initialize_memory(hdsp)) < 0) {
++		iounmap(hdsp->iobase);
+ 		return err;
++	}
+ 	
+ 	if (!is_9652 && !is_9632) {
+ 		/* we wait 2 seconds to let freshly inserted cardbus cards do 
+their hardware init */
+@@ -5078,8 +5081,10 @@ static int __devinit snd_hdsp_create(struct 
+snd_card *card,
+ #endif
+ 			/* no iobox connected, we defer initialization */
+ 			snd_printk(KERN_INFO "Hammerfall-DSP: card initialization 
+pending : waiting for firmware\n");
+-			if ((err = snd_hdsp_create_hwdep(card, hdsp)) < 0)
++			if ((err = snd_hdsp_create_hwdep(card, hdsp)) < 0) {
++				iounmap(hdsp->iobase);
+ 				return err;
++			}
+ 			return 0;
+ 		} else {
+ 			snd_printk(KERN_INFO "Hammerfall-DSP: Firmware already present, 
+initializing card.\n");	    
+@@ -5090,8 +5095,10 @@ static int __devinit snd_hdsp_create(struct 
+snd_card *card,
+ 		}
+ 	}
+ 	
+-	if ((err = snd_hdsp_enable_io(hdsp)) != 0)
++	if ((err = snd_hdsp_enable_io(hdsp)) != 0) {
++		iounmap(hdsp->iobase);
+ 		return err;
++	}
+ 	
+ 	if (is_9652)
+ 	        hdsp->io_type = H9652;
+@@ -5099,16 +5106,20 @@ static int __devinit snd_hdsp_create(struct 
+snd_card *card,
+ 	if (is_9632)
+ 		hdsp->io_type = H9632;
+ 
+-	if ((err = snd_hdsp_create_hwdep(card, hdsp)) < 0)
++	if ((err = snd_hdsp_create_hwdep(card, hdsp)) < 0) {
++		iounmap(hdsp->iobase);
+ 		return err;
++	}
+ 	
+ 	snd_hdsp_initialize_channels(hdsp);
+ 	snd_hdsp_initialize_midi_flush(hdsp);
+ 
+ 	hdsp->state |= HDSP_FirmwareLoaded;	
+ 
+-	if ((err = snd_hdsp_create_alsa_devices(card, hdsp)) < 0)
++	if ((err = snd_hdsp_create_alsa_devices(card, hdsp)) < 0) {
++		iounmap(hdsp->iobase);
+ 		return err;
++	}
+ 
+ 	return 0;	
+ }
+diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
+index 143185e..41fa677 100644
+--- a/sound/pci/rme9652/hdspm.c
++++ b/sound/pci/rme9652/hdspm.c
+@@ -4423,6 +4423,7 @@ static int __devinit snd_hdspm_create(struct 
+snd_card *card, struct hdspm * hdsp
+ 	if (request_irq(pci->irq, snd_hdspm_interrupt,
+ 			IRQF_SHARED, "hdspm", hdspm)) {
+ 		snd_printk(KERN_ERR "HDSPM: unable to use IRQ %d\n", pci->irq);
++		iounmap(hdspm->iobase);
+ 		return -EBUSY;
+ 	}
+ 
+@@ -4439,6 +4440,7 @@ static int __devinit snd_hdspm_create(struct 
+snd_card *card, struct hdspm * hdsp
+ 	    = NULL) {
+ 		snd_printk(KERN_ERR "HDSPM: unable to kmalloc Mixer memory of %d 
+Bytes\n",
+ 			   (int)sizeof(struct hdspm_mixer));
++		iounmap(hdspm->iobase);
+ 		return err;
+ 	}
+ 
+@@ -4447,8 +4449,10 @@ static int __devinit snd_hdspm_create(struct 
+snd_card *card, struct hdspm * hdsp
+ 	hdspm->qs_channels = MADI_QS_CHANNELS;
+ 
+ 	snd_printdd("create alsa devices.\n");
+-	if ((err = snd_hdspm_create_alsa_devices(card, hdspm)) < 0)
++	if ((err = snd_hdspm_create_alsa_devices(card, hdspm)) < 0) {
++		iounmap(hdspm->iobase);
+ 		return err;
++        }
+ 
+ 	snd_hdspm_initialize_midi_flush(hdspm);
+ 
+diff --git a/sound/pci/rme9652/rme9652.c 
+b/sound/pci/rme9652/rme9652.c
+index 2de2740..39a54b0 100644
+--- a/sound/pci/rme9652/rme9652.c
++++ b/sound/pci/rme9652/rme9652.c
+@@ -2499,6 +2499,7 @@ static int __devinit 
+snd_rme9652_create(struct snd_card *card,
+ 	if (request_irq(pci->irq, snd_rme9652_interrupt, IRQF_SHARED,
+ 			"rme9652", rme9652)) {
+ 		snd_printk(KERN_ERR "unable to request IRQ %d\n", pci->irq);
++		iounmap(rme9652->iobase);
+ 		return -EBUSY;
+ 	}
+ 	rme9652->irq = pci->irq;
+@@ -2559,14 +2560,17 @@ static int __devinit 
+snd_rme9652_create(struct snd_card *card,
+ 	pci_set_master(rme9652->pci);
+ 
+ 	if ((err = snd_rme9652_initialize_memory(rme9652)) < 0) {
++		iounmap(rme9652->iobase);
+ 		return err;
+ 	}
+ 
+ 	if ((err = snd_rme9652_create_pcm(card, rme9652)) < 0) {
++		iounmap(rme9652->iobase);
+ 		return err;
+ 	}
+ 
+ 	if ((err = snd_rme9652_create_controls(card, rme9652)) < 0) {
++		iounmap(rme9652->iobase);
+ 		return err;
+ 	}
 
-> 
->> 2) KERN_DEBUG is inappropriate and wrap the string in the middle 
->> and not in the
->> beginning
-> 
-> Agree on the wordwrap, several artifacts were created on this 
-> patchset and this whole thing will be resubmitted through a 
-> different mail client. 
+--
+Visa, MasterCard, AMEX & Discover. Compare Offers & Apply Online. Click here!
+http://tagline.hushmail.com/fc/Ioyw6h4d7hwc9TYb77i4TMzBlQWyqliuM8ULRlB8TLPYUvZMHonHau/
 
-Aha. Anyways, if it's more that 80 columns in width, split it into more lines.
-
-> As for KERN_DEBUG, KERN_DEBUG is used in the function following 
-> this call as notification that this workaround was required.  When 
-> I audit code as I am here I generally try to blend the patch in 
-> with the style and conventions of the code around it.  If 
-> KERN_DEBUG is inappropriate on the subsequent call, both values 
-> should be changed.  
-
-Only a string, where you warn an user, that something went wrong and this and
-over that won't work... KERN_DEBUG messages are usually NOT logged. I suggest
-KERN_ERR for mapping failure and KERN_INFO for the message about the workaround
-is being used.
-
--- 
-Jiri Slaby (jirislaby@gmail.com)
-Faculty of Informatics, Masaryk University
