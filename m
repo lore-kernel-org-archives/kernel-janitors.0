@@ -1,43 +1,40 @@
-From: "Genaro Hunt" <jovdslmil@brandtmaderas.com.ar>
-Date: Wed, 22 Aug 2007 13:58:40 +0000
-Subject: [KJ] {LEGGSUB}
-Message-Id: <01c7e4dd$b05eb2d0$4a7119bd@jovdslmil>
+From: "Mike Frysinger" <vapier.adi@gmail.com>
+Date: Wed, 01 Aug 2007 10:03:16 +0000
+Subject: Re: [PATCH 06/68] 0 -> NULL, for arch/frv
+Message-Id: <8bd0f97a0708010303j7f443b06lf9d77f6d36816237@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <01c7e167$0d2f1920$a50e9c56@teeth.martin.soques>
-In-Reply-To: <01c7e167$0d2f1920$a50e9c56@teeth.martin.soques>
+References: <200707270944.LAA17167@ifs.emn.fr> <22618.1185531297@redhat.com>
+	 <87lkd29mk9.fsf@wanadoo.fr>
+	 <200707272138.23323.rgetz@blackfin.uclinux.org>
+	 <8bd0f97a0707271837q5d5f31d9pe342e72ebf9368c1@mail.gmail.com>
+	 <46AF255A.4050106@student.ltu.se>
+In-Reply-To: <46AF255A.4050106@student.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Richard Knutsson <ricknu-0@student.ltu.se>
+Cc: Robin Getz <rgetz@blackfin.uclinux.org>, Yoann Padioleau <padator@wanadoo.fr>, David Howells <dhowells@redhat.com>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-VACANCY: Executive manager
+On 7/31/07, Richard Knutsson <ricknu-0@student.ltu.se> wrote:
+> Mike Frysinger wrote:
+> > On 7/27/07, Robin Getz <rgetz@blackfin.uclinux.org> wrote:
+> >> If there is a definite style or semantic preference that everyone should live
+> >> with - does it make sense to put checks in checkpatch.pl to enforce it?
+> >
+> > checkpatch.pl does not have enough semantic knowledge to know if the
+> > thing being tested is a pointer ... dont know if the sparse utility
+> > would be able to pick it out as i'm not familiar with what level that
+> > thing runs at
+>
+> Didn't he mean "x = NULL" > "!x"?
 
-Section: Business and finance
-The direct employer
-The countries: Australia
-Gender : Male/Female
-Age: from 18 to 50
-Education: any
-Employment type: full time/part time
-Basic salary: 8800$ in a month
+i'm sure i understand your meaning of ">" ... are you saying that "x
+= NULL" is greater (preferred) to "!x" or are you saying that "x =
+NULL" should be changed to "!x" ?
 
-
-Requests:
-Australian  citizenship, communication skills, business communication skills, PC knowledge (user level), aiming for result.
-Responsibilities:
-Clients Order Processing . No clients searching. Our head-manager will send you tasks by email, After you finish a task, you can mark it Completed.
-Conditions:
-The guaranteed salary 8.800 AUD + awards 2.000 - 4.000 AUD(month). Career growth and compensation for taxi  expences.  US employment forms observance. The work schedule: monday - friday 10.00 AM - 3.00 PM
-Vacancy ID: 274008367
-
-E-Mail:  collierincs@aol.com
-The contact person: Jeremy West
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+i dont think the former case can be checked by checkpatch.pl, but the
+latter certainly can ... but i'd be very skeptical you could get the
+wider LKML audience to sign off one way or the other wrt to "x =
+NULL" vs "!x".  you can certainly get people to sign off on "x = 0"
+being wrong when x is a pointer.
+-mike
