@@ -1,31 +1,34 @@
-From: Christoph Lameter <clameter@sgi.com>
-Date: Mon, 20 Aug 2007 18:57:55 +0000
-Subject: Re: [PATCH 5/5] mm/... convert #include "linux/..." to #include
-Message-Id: <Pine.LNX.4.64.0708201157320.28863@schroedinger.engr.sgi.com>
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Wed, 01 Aug 2007 06:06:06 +0000
+Subject: [PATCH 3/3] sound/soc ioremap/iounmap balancing
+Message-Id: <20070801060606.BB9C3DA82E@mailserver8.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1187561983.4200.145.camel@localhost>
- <Pine.LNX.4.64.0708201106230.25248@schroedinger.engr.sgi.com>
- <1187635766.5963.3.camel@localhost>
-In-Reply-To: <1187635766.5963.3.camel@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <dada1@cosmosbay.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-mm@kvack.org
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
 
-On Mon, 20 Aug 2007, Joe Perches wrote:
+ioremap / iounmap balancing in sound/soc tree
 
-> Maybe.  I think it's just a simple error.
-> 
-> mm/slab.c has 2 other includes of
-> 
-> 	#include <linux/kmalloc_sizes.h>
-> 
-> cheers, Joe
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+---
+diff --git a/sound/soc/s3c24xx/s3c24xx-i2s.c 
+b/sound/soc/s3c24xx/s3c24xx-i2s.c
+index 39f0246..cd89c41 100644
+--- a/sound/soc/s3c24xx/s3c24xx-i2s.c
++++ b/sound/soc/s3c24xx/s3c24xx-i2s.c
+@@ -385,6 +385,7 @@ static int s3c24xx_i2s_probe(struct 
+platform_device *pdev)
+ 	s3c24xx_i2s.iis_clk=clk_get(&pdev->dev, "iis");
+ 	if (s3c24xx_i2s.iis_clk = NULL) {
+ 		DBG("failed to get iis_clock\n");
++		iounmap(s3c24xx_i2s.regs);
+ 		return -ENODEV;
+ 	}
+ 	clk_enable(s3c24xx_i2s.iis_clk);
 
-Ahh. ok.
+--
+Click to get freedom from your annoying glasses. Save on LASIK surgery.
+http://tagline.hushmail.com/fc/Ioyw6h4eJhpY2lk39qq0GYowuzjUjbLmD7mg54cZU7ogIFKBTZa55s/
 
-Then
-
-Acked-by: Christoph Lameter <clameter@sgi.com>
 
