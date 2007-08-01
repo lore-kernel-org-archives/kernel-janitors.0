@@ -1,59 +1,37 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 01 Aug 2007 04:52:26 +0000
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Wed, 01 Aug 2007 05:45:29 +0000
 Subject: Re: [PATCH]:  sound: ioremap/iounmap function balancing audit
-Message-Id: <20070731215226.e456560d.akpm@linux-foundation.org>
+Message-Id: <20070801054530.B6459DA820@mailserver8.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070801040601.009F3DA820@mailserver8.hushmail.com>
 In-Reply-To: <20070801040601.009F3DA820@mailserver8.hushmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: postfail@hushmail.com
+To: akpm@linux-foundation.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
 
-On Wed, 01 Aug 2007 00:05:59 -0400 "Scott Thompson" <postfail@hushmail.com> wrote:
+On Wed, 01 Aug 2007 00:52:26 -0400 Andrew Morton <akpm@linux-
+foundation.org> wrote:
+>The patch is terribly wordwrapped.
+>
+>I suspect a lot of the code which you're fixing is about to be 
+>removed. 
+>But I suppose we should fix it before removing it anwyay.  Still, 
+>please
+>split this patch into at least one for sound/oss and one for 
+>sound/soc and
+>sound/pci, thanks.
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
+Will do, though wordwrapping issues will still be there.  The part 
+of the function I was patching in i810_probe is nested so deep 
+birds have taken up residence.
 
-You might want to consider losing that stuff when sending patches - it just
-makes things harder.
+---------------------------------------
+Scott Thompson / postfail@hushmail.com
+---------------------------------------
 
-> This patch, along with previously submitted dmasound_awacs.c patch,
-> completes an audit of the 'sound' tree for ioremap/iounmap
-> balancing and return code checking on ioremap calls.  ioremap()
-> must be balanced by an iounmap() (else this causes a memory leak).
-> 
-> i810_audio.c had a 'fixme' issue regarding ioremap fail that was
-> addressed as well.
-> 
-> Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-> - ---
-> 
-> diff --git a/sound/oss/i810_audio.c b/sound/oss/i810_audio.c
-> index f5e31f1..407958c 100644
-> - --- a/sound/oss/i810_audio.c
-> +++ b/sound/oss/i810_audio.c
-> @@ -3362,7 +3362,7 @@ static int __devinit i810_probe(struct
-> pci_dev *pci_dev, const struct pci_device
-> 
->  	if (card->use_mmio) {
->  		if (request_mem_region(card->ac97base_mmio_phys, 512, "ich_audio
-> MMBAR")) {
-> - -			if ((card->ac97base_mmio = ioremap(card->ac97base_mmio_phys,
-> 512))) { /*@FIXME can ioremap fail? don't know (jsaw) */
-> +			if ((card->ac97base_mmio = ioremap(card->ac97base_mmio_phys,
-> 512))) {
->  				if (request_mem_region(card->iobase_mmio_phys, 256, "ich_audio
-> MBBAR")) {
->  					if ((card->iobase_mmio = ioremap(card->iobase_mmio_phys,
-> 256))) {
->  						printk(KERN_INFO "i810: %s mmio at 0x%04lx and 0x%04lx\n",
-
-The patch is terribly wordwrapped.
-
-I suspect a lot of the code which you're fixing is about to be removed. 
-But I suppose we should fix it before removing it anwyay.  Still, please
-split this patch into at least one for sound/oss and one for sound/soc and
-sound/pci, thanks.
+--
+Click to get kitchen cabinets direct, wholesale prices, special offer
+http://tagline.hushmail.com/fc/Ioyw6h4eNQG1ASUGkA6d4CPtDhN6vhvI3LexQ7Y94JEpBntvwniuyK/
 
