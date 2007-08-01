@@ -1,77 +1,46 @@
-From: "Victoria Crum" <EdithchurchmenCrum@funkylights.com>
-Date: Wed, 29 Aug 2007 09:35:19 +0000
-Subject: [KJ] Re: Thanks, we accepted your company application
-Message-Id: <a2f701c7ea1e$19df1fc0$231b490a@privatet2138b8>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1188379348-19182-177"
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Date: Wed, 01 Aug 2007 21:01:48 +0000
+Subject: Re: [PATCH 30] drivers/ide/arm/icside.c: kmalloc + memset conversion to kzalloc
+Message-Id: <200708012301.48963.bzolnier@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1188379348-19182-177
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-Your credit history does not matter to us!=0A=
-=0A=
-If you have your own business and need IMMEDIATE money to spend ANY way you=
- like or need Extra money to give your business a boost or wish A low inter=
-est loan - NO STRINGS ATTACHED, here is best deal we can offer you NOW (hur=
-ry, this deal will expire THIS NIGHT):=0A=
-=0A=
-$66,000+ loan=0A=
-=0A=
-Hurry, when best deal is gone, it is gone. Simply Call Us...=0A=
-=0A=
-Don't worry about approval, your credit will not disqualify you!=0A=
-=0A=
-Call Us Free on 866-847-0715=
-
-------------=_1188379348-19182-177
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707311958.20683.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311958.20683.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Your credit history does not matter to us! If you have
-  your own business and need IMMEDIATE money to spend ANY way you like or
-  need Extra money to give your business a boost or wish A low interest
-  loan - NO STRINGS ATTACHED, here is best deal we can offer you NOW
-  (hurry, this deal will expire THIS NIGHT): [...] 
-
-Content analysis details:   (6.5 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.0 OSDL_THANKSLOAN_BODY   BODY: Thanks Loan Body Spam
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1188379348-19182-177
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, rmk@arm.linux.org.uk
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+On Tuesday 31 July 2007, Mariusz Kozlowski wrote:
+> Is this a bug? In original verison memset cleared sizeof(state) bytes
+> instead of sizeof(*state). If it was intentional then this patch is invalid.
+> If not intentional -> valid :) Please review.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1188379348-19182-177--
+Yes, it is a bug so this patch is a valid bugfix. :-)
+
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+
+>  drivers/ide/arm/icside.c | 18883 -> 18849 (-34 bytes)
+> 
+>  drivers/ide/arm/icside.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+applied
+
+> --- linux-2.6.23-rc1-mm1-a/drivers/ide/arm/icside.c	2007-07-26 13:07:41.000000000 +0200
+> +++ linux-2.6.23-rc1-mm1-b/drivers/ide/arm/icside.c	2007-07-31 11:32:27.000000000 +0200
+> @@ -682,13 +682,12 @@ icside_probe(struct expansion_card *ec,
+>  	if (ret)
+>  		goto out;
+> 
+> -	state = kmalloc(sizeof(struct icside_state), GFP_KERNEL);
+> +	state = kzalloc(sizeof(struct icside_state), GFP_KERNEL);
+>  	if (!state) {
+>  		ret = -ENOMEM;
+>  		goto release;
+>  	}
+> 
+> -	memset(state, 0, sizeof(state));
+>  	state->type	= ICS_TYPE_NOTYPE;
+>  	state->dev	= &ec->dev;
+> 
