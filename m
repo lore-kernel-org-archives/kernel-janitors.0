@@ -1,25 +1,32 @@
-From: Eugene Teo <eugeneteo@kernel.sg>
-Date: Tue, 21 Aug 2007 05:52:32 +0000
-Subject: Re: [PATCH] video/geode: fix warnings
-Message-Id: <20070821055232.GB18465@kernel.sg>
+From: Kathleen Andersen <fqyo@netbilling.com>
+Date: Wed, 01 Aug 2007 09:56:05 +0000
+Subject: [KJ] (no subject)
+Message-Id: <46B058B5.1070601@netbilling.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------000506000400010205030605"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070820230320.6741bb15@shaun>
-In-Reply-To: <20070820230320.6741bb15@shaun>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <4277F774.9070506@tampabay.rr.com>
+In-Reply-To: <4277F774.9070506@tampabay.rr.com>
 To: kernel-janitors@vger.kernel.org
 
-<quote sender="Shaun Zinck">
-> Remove the double declaration of variable 'opt'.
-> 
-> Signed-off-by: Shaun Zinck <shaun.zinck@gmail.com>
-> ---
-> This is my first patch so I mostly wanted to make sure I got the formatting right.
-> Does this look OK?
+--------------000506000400010205030605
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Yes, the formatting is ok. Take a look at the following link:
-http://lxr.linux.no/source/Documentation/SubmittingPatches#L331
 
-Thanks,
-Eugene
+
+--------------000506000400010205030605
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------000506000400010205030605--
