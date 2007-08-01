@@ -1,51 +1,43 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Tue, 14 Aug 2007 10:17:59 +0000
-Subject: [KJ] Re: rounddown_pow_of_2 inclusion into log2.h
-Message-Id: <1187085959.3874.23.camel@merlin.linuxcoe.com>
+From: "Luis R. Rodriguez" <mcgrof@gmail.com>
+Date: Wed, 01 Aug 2007 01:12:49 +0000
+Subject: Re: [PATCH 60] drivers/net/wireless/prism54/oid_mgt.c: kmalloc + memset conversion to kzalloc
+Message-Id: <43e72e890707311812t3bf67684p6af4d0c21d44608e@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+	 <200707312334.51067.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312334.51067.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-wireless@vger.kernel.org
 
-13 that i can identify as of now :)
+On 7/31/07, Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-On Tue, 2007-08-14 at 05:48 -0400, Robert P. J. Day wrote:
-> On Tue, 14 Aug 2007, vignesh babu wrote:
-> 
-> >
-> > rday,
-> >
-> >   Any plans on including what Andrew Morton suggested in the near
-> > future? Think you have had enough time to convince yourself ;)
-> 
->   if there's value in it, the following seems to work fine in terms of
-> rounding down to the nearest power of two.
-> 
-> static inline unsigned long
-> rounddown_pow_of_two(unsigned long n)
-> {
-> 	return (n = 1) ? 0 : (1UL << ilog2(n));
-> }
-> 
->   args that are already a power of two will be unchanged, 1 will
-> clearly return 0, but an arg of zero should also be caught since
-> that's undefined -- perhaps it should also return zero?
-> 
->   in any event, that routine seems to work fine.  are there enough
-> places in the source tree to make this cleanup worth it?
-> 
-> rday
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Acked-by: Luis R. Rodriguez <mcgrof@gmail.com>
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+>  drivers/net/wireless/prism54/oid_mgt.c | 25377 -> 25297 (-80 bytes)
+>  drivers/net/wireless/prism54/oid_mgt.o | 128460 -> 128284 (-176 bytes)
+>
+>  drivers/net/wireless/prism54/oid_mgt.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> --- linux-2.6.23-rc1-mm1-a/drivers/net/wireless/prism54/oid_mgt.c       2007-07-26 13:07:43.000000000 +0200
+> +++ linux-2.6.23-rc1-mm1-b/drivers/net/wireless/prism54/oid_mgt.c       2007-07-30 00:27:44.000000000 +0200
+> @@ -244,13 +244,11 @@ mgt_init(islpci_private *priv)
+>         /* Alloc the cache */
+>         for (i = 0; i < OID_NUM_LAST; i++) {
+>                 if (isl_oid[i].flags & OID_FLAG_CACHED) {
+> -                       priv->mib[i] = kmalloc(isl_oid[i].size *
+> +                       priv->mib[i] = kzalloc(isl_oid[i].size *
+>                                                (isl_oid[i].range + 1),
+>                                                GFP_KERNEL);
+>                         if (!priv->mib[i])
+>                                 return -ENOMEM;
+> -                       memset(priv->mib[i], 0,
+> -                              isl_oid[i].size * (isl_oid[i].range + 1));
+>                 } else
+>                         priv->mib[i] = NULL;
+>         }
+>
