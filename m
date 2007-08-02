@@ -1,22 +1,20 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Sun, 26 Aug 2007 13:48:05 +0000
-Subject: use DIV_ROUND_UP
-Message-Id: <46D18495.9020500@gmail.com>
+From: David Miller <davem@davemloft.net>
+Date: Thu, 02 Aug 2007 04:53:35 +0000
+Subject: Re: [PATCH 58]
+Message-Id: <20070801.215335.112852785.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+	<200707312332.05176.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312332.05176.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: m.kozlowski@tuxland.pl
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, netfilter-devel@lists.netfilter.org, coreteam@netfilter.org
 
-Hi!
+From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Date: Tue, 31 Jul 2007 23:32:04 +0200
 
-some code defines this macro itself, or simply counts it on its own.
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-Use for example this command to find it
-grep -r '+.*\([^ ]*\).*-.*1.*/.*\1' *
-ion the tree and remove all those re-defines of this macro.
-
-regards,
--- 
-Jiri Slaby (jirislaby@gmail.com)
-Faculty of Informatics, Masaryk University
+Applied.
