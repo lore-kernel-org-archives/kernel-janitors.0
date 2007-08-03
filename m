@@ -1,34 +1,42 @@
-From: "Net Gambler" <aki@autocontrole.be>
-Date: Tue, 21 Aug 2007 02:48:46 +0000
-Subject: [KJ] Membership Details
-Message-Id: <1INK-000AJI-OB@kcbvm>
+From: James Smart <James.Smart@Emulex.Com>
+Date: Fri, 03 Aug 2007 15:41:16 +0000
+Subject: Re: [PATCH 45] drivers/scsi/lpfc/lpfc_init.c: kmalloc + memset conversion
+Message-Id: <46B34C9C.2050300@emulex.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312026.43947.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312026.43947.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
 
-New Member,
+ACK
 
-We are so happy you joined Net Gambler.
+-- james s
 
-Account Number: 3221827697999
-Temorary Login: user2339
-Temorary Password: oh102
-
-Your temporary Login Info will expire in 24 hours. Please login and change it.
-
-Click on the secure link or paste it to your browser: http://75.195.170.245/
-
-Enjoy,
-New Member Services
-Net Gambler
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Mariusz Kozlowski wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/scsi/lpfc/lpfc_init.c | 65932 -> 65881 (-51 bytes)
+>  drivers/scsi/lpfc/lpfc_init.o | 219760 -> 219616 (-144 bytes)
+> 
+>  drivers/scsi/lpfc/lpfc_init.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> --- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_init.c	2007-07-26 13:07:42.000000000 +0200
+> +++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_init.c	2007-07-31 11:07:59.000000000 +0200
+> @@ -1280,11 +1280,10 @@ lpfc_hba_init(struct lpfc_hba *phba, uin
+>  	uint32_t *HashWorking;
+>  	uint32_t *pwwnn = (uint32_t *) phba->wwnn;
+> 
+> -	HashWorking = kmalloc(80 * sizeof(uint32_t), GFP_KERNEL);
+> +	HashWorking = kcalloc(80, sizeof(uint32_t), GFP_KERNEL);
+>  	if (!HashWorking)
+>  		return;
+> 
+> -	memset(HashWorking, 0, (80 * sizeof(uint32_t)));
+>  	HashWorking[0] = HashWorking[78] = *pwwnn++;
+>  	HashWorking[1] = HashWorking[79] = *pwwnn;
+> 
+> 
