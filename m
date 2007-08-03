@@ -1,38 +1,81 @@
-From: andre@finow14.de
-Date: Thu, 30 Aug 2007 10:36:12 +0000
-Subject: [KJ][patch 1/3] IDT77252: use abs() from kernel.h where appropriate
-Message-Id: <20070830103612.GB14925@ahaupt-debian-vm.localdomain>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 03 Aug 2007 17:34:30 +0000
+Subject: [PATCH 08/13] dev->priv to netdev_priv(dev), for drivers/net/netxen
+Message-Id: <200708031734.TAA00783@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070830102551.131398783@finow14.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Andre Haupt <andre@finow14.de>, ecd@atecom.com
+Cc: amitkale@netxen.com, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-From: Andre Haupt <andre@finow14.de>
-Signed-off-by: Andre Haupt <andre@finow14.de>
+
+Replacing accesses to dev->priv to netdev_priv(dev). The replacment
+is safe when netdev_priv is used to access a private structure that is
+right next to the net_device structure in memory. Cf
+http://groups.google.com/group/comp.os.linux.development.system/browse_thread/thread/de19321bcd94dbb8/0d74a4adcd6177bd
+This is the case when the net_device structure was allocated with
+a call to alloc_netdev or one of its derivative.
+
+Here is an excerpt of the semantic patch that performs the transformation
+
+@ rule1 @
+type T;
+struct net_device *dev;
+@@
+
+ dev = 
+(
+        alloc_netdev
+|         
+        alloc_etherdev
+|
+        alloc_trdev
+)
+   (sizeof(T), ...)
+
+@ rule1bis @
+struct net_device *dev;
+expression E;
+@@
+ dev->priv = E
+
+@ rule2 depends on rule1 && !rule1bis  @
+struct net_device *dev;
+type rule1.T;
+@@
+
+- (T*) dev->priv
++ netdev_priv(dev)
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: amitkale@netxen.com
+Cc: akpm@linux-foundation.org
 ---
-Index: linus/drivers/atm/idt77252.c
-=================================--- linus.orig/drivers/atm/idt77252.c	2007-08-30 11:33:22.000000000 +0200
-+++ linus/drivers/atm/idt77252.c	2007-08-30 11:37:00.000000000 +0200
-@@ -2092,7 +2092,7 @@ idt77252_rate_logindex(struct idt77252_d
- {
- 	u16 afp;
+
+ drivers/net/netxen/netxen_nic_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
+index 08a62ac..c14c178 100644
+--- a/drivers/net/netxen/netxen_nic_main.c
++++ b/drivers/net/netxen/netxen_nic_main.c
+@@ -329,7 +329,7 @@ netxen_nic_probe(struct pci_dev *pdev, c
+ 	SET_MODULE_OWNER(netdev);
+ 	SET_NETDEV_DEV(netdev, &pdev->dev);
  
--	afp = idt77252_int_to_atmfp(pcr < 0 ? -pcr : pcr);
-+	afp = idt77252_int_to_atmfp(abs(pcr));
- 	if (pcr < 0)
- 		return rate_to_log[(afp >> 5) & 0x1ff];
- 	return rate_to_log[((afp >> 5) + 1) & 0x1ff];
-@@ -2149,7 +2149,7 @@ idt77252_init_est(struct vc_map *vc, int
- 	est = kzalloc(sizeof(struct rate_estimator), GFP_KERNEL);
- 	if (!est)
- 		return NULL;
--	est->maxcps = pcr < 0 ? -pcr : pcr;
-+	est->maxcps = abs(pcr);
- 	est->cps = est->maxcps;
- 	est->avcps = est->cps << 5;
+-	adapter = netdev->priv;
++	adapter = netdev_priv(netdev);
+ 	memset(adapter, 0 , sizeof(struct netxen_adapter));
+ 
+ 	adapter->ahw.pdev = pdev;
+@@ -850,7 +850,7 @@ static void __devexit netxen_nic_remove(
+  */
+ static int netxen_nic_open(struct net_device *netdev)
+ {
+-	struct netxen_adapter *adapter = (struct netxen_adapter *)netdev->priv;
++	struct netxen_adapter *adapter = netdev_priv(netdev);
+ 	int err = 0;
+ 	int ctx, ring;
  
 
---
