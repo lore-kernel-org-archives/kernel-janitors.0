@@ -1,70 +1,29 @@
-From: "hallmark.com" <djn@kevintdowns.com>
-Date: Fri, 10 Aug 2007 15:35:37 +0000
-Subject: [KJ] Colleague sent you an ecard from hallmark.com!
-Message-Id: <002001c7db64$1942cfd0$cfd237ee@tsfiq.ejnz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1186760145-15183-47"
+From: "Federico Winters" <QuincycaveTrujillo@blazinggrace.org>
+Date: Fri, 03 Aug 2007 20:40:47 +0000
+Subject: [KJ] Unusual Huge Volume
+Message-Id: <0a6a01c7d65a$2916f6c0$6401a8c0@neilkc1olduolz>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+*BUZZ* *BUZZ* CATCH THIS IMPORTANT MESSAGE BEFORE ITS TOO LATE!
 
-------------=_1186760145-15183-47
-Content-Type: text/plain; format=flowed; charset="windows-1252";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+HELPING IMPROVE COMMUNICATION IN THE CLASSROOMS THROUGH MOBILE APPLICATIONS! WOW.. CAN WE SAY BIG BUCKS OM THIS? WHO IS DOING THIS?
 
-Colleague has created a greeting ecard for you at hallmark.com,
-the Internet's most popular greeting card service. 
+Telecommunications Company - Name? Exchange Mobile Tele
+Tickk: EXMT
+Ending Value: AUG 03   $0.22  +0.02  10.0% Change 
+When Should You Get In? - AUG MONDAY 06, 2007
 
-Your greeting card ID is: 144e15456ec290b516c3c2cd8a7c0b58e47 
+VANCOUVER, July 18 /PRNewswire-FirstCall/ - Exchange Mobile has retained a consultant to conduct negotiations with the provincial authorities of Liaoning Province and the numerous school boards within the province, for the deployment of its Parent Teacher Message Exchange (PTMX) mobile application. PTMX is a part of the Mobile Application Suite for the Education Sector and will enable parents and teachers to regularly exchange information concerning student attendance and performance without using the student as the teacher's messenger.
 
-To see your custom greeting card, simply click on the link below: 
-http://24.3.61.60/?144e15456ec290b516c3c2cd8a7c0b58e47
+8 million students in Liaoning Province of China. There are more than 300 million students in China (primary, middle, & high school), of which more than 8 million are in Liaoning Province!
 
-Send greeting cards from hallmark.com whenever you want by visiting us at: 
-http://hallmark.com/
-Copyright (c) 1996-2007 hallmark.com All Rights Reserved
+In 2003 EXCHANGE MOBILE created the most complete and reliable two-way worldwide SMS (short message service) network. This network was built via partnerships and agreements with the best message routing wireless carriers, selected after in-depth industry analysis. Since then, EXCHANGE MOBILE has been providing two way global short messaging services to subscribers world wide. 
 
-
-------------=_1186760145-15183-47
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Colleague has created a greeting ecard for you at
-  hallmark.com, the Internet's most popular greeting card service. Your
-  greeting card ID is: 144e15456ec290b516c3c2cd8a7c0b58e47 To see your
-  custom greeting card, simply click on the link below:
-  http://24.3.61.60/?144e15456ec290b516c3c2cd8a7c0b58e47 [...] 
-
-Content analysis details:   (5.9 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
-                            1)
- 1.8 RCVD_ILLEGAL_IP        Received: contains illegal IP address
- 0.2 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
- 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
-                            [score: 0.5008]
-
-
-
-------------=_1186760145-15183-47
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+<EXMT> HOPEFULLY YOU CAUGHT A GLIPSE OF EXMT AND GOT IN NOW *MONDAY 08/06/07* AS SOON IT WILL BE TOO LATE. <EXMT>
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -74,4 +33,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1186760145-15183-47--
