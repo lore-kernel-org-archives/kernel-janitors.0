@@ -1,27 +1,25 @@
-From: <chicitabonita_81@george24.com>
-Date: Wed, 29 Aug 2007 14:31:41 +0000
-Subject: [KJ] dude this is not even on MTV yet
-Message-Id: <002001c7ea49$513fdb00$5fc73666@lw.fovky>
+From: "Stephanie Ferreira" <gerard@alwaysromance.com>
+Date: Fri, 03 Aug 2007 03:17:23 +0000
+Subject: [KJ] you save - $909 Our price - $89.95 Photoshop CS3
+Message-Id: <01c7d57b$10e0cc50$3944717d@gerard>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1188397914-19182-11"
+Content-Type: multipart/mixed; boundary="----------=_1186110294-15183-23"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1188397914-19182-11
-Content-Type: text/plain; format=flowed; charset="windows-1252";
-	reply-type=original
+------------=_1186110294-15183-23
+Content-Type: text/plain;
+	format=flowed;
+	charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-T-Pain did a new video.
-
-Go get it before they take it offline. Click here to download it:
-http://74.140.181.177/
+Our price US $ 269.90 creative 3 premium
 
 
-------------=_1188397914-19182-11
+------------=_1186110294-15183-23
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -34,21 +32,20 @@ has been attached to this so you can view it (if it isn't spam) or label
 similar future email.  If you have any questions, see
 the administrator of that system for details.
 
-Content preview:  T-Pain did a new video. Go get it before they take it
-  offline. Click here to download it: http://74.140.181.177/ [...] 
+Content preview:  Our price US $ 269.90 creative 3 premium [...] 
 
-Content analysis details:   (7.6 points, 5.0 required)
+Content analysis details:   (6.4 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
- 1.1 NO_REAL_NAME           From: does not include a real name
- 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 1.9 DATE_IN_FUTURE_06_12   Date: is 6 to 12 hours after Received: date
+ 1.0 OUTFLUX_INVEST_PRICE   BODY: contains "Price"
  3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
                             [score: 1.0000]
 
 
 
-------------=_1188397914-19182-11
+------------=_1186110294-15183-23
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -62,4 +59,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1188397914-19182-11--
+------------=_1186110294-15183-23--
