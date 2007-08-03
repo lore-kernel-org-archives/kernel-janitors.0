@@ -1,44 +1,45 @@
-From: "Scott Thompson" <postfail@hushmail.com>
-Date: Fri, 10 Aug 2007 18:37:06 +0000
-Subject: [PATCH 1/4]  /drivers/net ioremap balancing/returncode check (es3210.c)
-Message-Id: <20070810183707.36A1ADA81F@mailserver7.hushmail.com>
+From: James Smart <James.Smart@Emulex.Com>
+Date: Fri, 03 Aug 2007 15:42:03 +0000
+Subject: Re: [PATCH 44] drivers/scsi/lpfc/lpfc_debugfs.c: kmalloc + memset
+Message-Id: <46B34CCB.4070602@emulex.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312025.45603.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312025.45603.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
 
-patchset against 2.6.23-rc2 for /drivers/net ioremap balancing / 
-return check:
+ACK
 
-  corrects:
-  --sbus_ioremap return unchecked.
-  --ioremap function unchecked
-  --function failure cases did not clean up ioremap'd values.
-  lne390.c
-   -- believe had incorrect/not ideal variable check on if for 
-iounmap
+-- james s
 
-this audit was only for files directly in drivers/net directory, 
-not the full tree.
-
-I split patches up by file changed as each file had different 
-'owner' to ease accept/reject/revision process.
-
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-----------------------------------------------------------
-diff --git a/drivers/net/es3210.c b/drivers/net/es3210.c
-index 822e5bf..d7d6b90 100644
---- a/drivers/net/es3210.c
-+++ b/drivers/net/es3210.c
-@@ -307,6 +307,10 @@ out1:
- 	free_irq(dev->irq, dev);
- out:
- 	release_region(ioaddr + ES_SA_PROM, ES_IO_EXTENT);
-+
-+	if (ei_status.mem)
-+		iounmap(ei_status.mem);
-+	
- 	return retval;
-}
-
+Mariusz Kozlowski wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/scsi/lpfc/lpfc_debugfs.c | 13809 -> 13716 (-93 bytes)
+>  drivers/scsi/lpfc/lpfc_debugfs.o | 146124 -> 146124 (0 bytes)
+> 
+>  drivers/scsi/lpfc/lpfc_debugfs.c |    7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> --- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_debugfs.c	2007-07-26 13:07:42.000000000 +0200
+> +++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_debugfs.c	2007-07-31 14:11:24.000000000 +0200
+> @@ -432,14 +432,11 @@ lpfc_debugfs_initialize(struct lpfc_vpor
+>  	if (!lpfc_debugfs_start_time)
+>  		lpfc_debugfs_start_time = jiffies;
+> 
+> -	vport->disc_trc = kmalloc(
+> -		(sizeof(struct lpfc_disc_trc) * lpfc_debugfs_max_disc_trc),
+> -		GFP_KERNEL);
+> +	vport->disc_trc = kcalloc(lpfc_debugfs_max_disc_trc,
+> +				  sizeof(struct lpfc_disc_trc),	GFP_KERNEL);
+> 
+>  	if (!vport->disc_trc)
+>  		goto debug_failed;
+> -	memset(vport->disc_trc, 0,
+> -		(sizeof(struct lpfc_disc_trc) * lpfc_debugfs_max_disc_trc));
+> 
+>  	snprintf(name, sizeof(name), "discovery_trace");
+>  	vport->debug_disc_trc > 
