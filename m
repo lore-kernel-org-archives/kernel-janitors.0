@@ -1,71 +1,41 @@
-From: <rudolf.prsa@bncmortgage.com>
-Date: Thu, 16 Aug 2007 08:43:25 +0000
-Subject: [KJ] Funny e-card
-Message-Id: <000601c7dfe1$82e6ade0$4f23af19@qgn.yz>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1187253809-19182-17"
+From: James Smart <James.Smart@Emulex.Com>
+Date: Fri, 03 Aug 2007 15:41:26 +0000
+Subject: Re: [PATCH 46] drivers/scsi/lpfc/lpfc_scsi.c: kmalloc + memset conversion
+Message-Id: <46B34CA6.6010502@emulex.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1187253809-19182-17
-Content-Type: text/plain; format=flowed; charset="windows-1252";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-Good day.
-
-Your Neighbour has sent you Funny e-card from americangreetings.com.
-
-Click on your card's direct www address below:
-
-http://67.68.71.114/
-
-Copyright (c) 1996-2007 americangreetings.com All Rights Reserved
-
-
-------------=_1187253809-19182-17
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312027.55149.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312027.55149.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Good day. Your Neighbour has sent you Funny e-card from
-  americangreetings.com. Click on your card's direct www address below:
-  [...] 
-
-Content analysis details:   (7.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.1 NO_REAL_NAME           From: does not include a real name
- 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1187253809-19182-17
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+ACK
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1187253809-19182-17--
+-- james s
+
+Mariusz Kozlowski wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/scsi/lpfc/lpfc_scsi.c | 42769 -> 42721 (-48 bytes)
+>  drivers/scsi/lpfc/lpfc_scsi.o | 191332 -> 191240 (-92 bytes)
+> 
+>  drivers/scsi/lpfc/lpfc_scsi.c |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> --- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_scsi.c	2007-07-26 13:07:42.000000000 +0200
+> +++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_scsi.c	2007-07-31 11:08:46.000000000 +0200
+> @@ -208,10 +208,9 @@ lpfc_new_scsi_buf(struct lpfc_vport *vpo
+>  	dma_addr_t pdma_phys;
+>  	uint16_t iotag;
+> 
+> -	psb = kmalloc(sizeof(struct lpfc_scsi_buf), GFP_KERNEL);
+> +	psb = kzalloc(sizeof(struct lpfc_scsi_buf), GFP_KERNEL);
+>  	if (!psb)
+>  		return NULL;
+> -	memset(psb, 0, sizeof (struct lpfc_scsi_buf));
+> 
+>  	/*
+>  	 * Get memory from the pci pool to map the virt space to pci bus space
+> 
