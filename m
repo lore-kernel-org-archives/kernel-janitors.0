@@ -1,74 +1,125 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:10:47 +0000
-Subject: [kj] is_power_of_2 in ntfs
-Message-Id: <1187009927.7273.13.camel@merlin.linuxcoe.com>
+From: Yoann Padioleau <padator@wanadoo.fr>
+Date: Fri, 03 Aug 2007 17:33:27 +0000
+Subject: [PATCH 02/13] dev->priv to netdev_priv(dev), for drivers/net/appletalk
+Message-Id: <200708031733.TAA00739@ifs.emn.fr>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: aia21@cantab.net
-Cc: linux-ntfs-dev@lists.sourceforge.net, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
+Cc: jeff@garzik.org, netdev@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+Replacing accesses to dev->priv to netdev_priv(dev). The replacment
+is safe when netdev_priv is used to access a private structure that is
+right next to the net_device structure in memory. Cf
+http://groups.google.com/group/comp.os.linux.development.system/browse_thread/thread/de19321bcd94dbb8/0d74a4adcd6177bd
+This is the case when the net_device structure was allocated with
+a call to alloc_netdev or one of its derivative.
+
+Here is an excerpt of the semantic patch that performs the transformation
+
+@ rule1 @
+type T;
+struct net_device *dev;
+@@
+
+ dev = 
+(
+        alloc_netdev
+|         
+        alloc_etherdev
+|
+        alloc_trdev
+)
+   (sizeof(T), ...)
+
+@ rule1bis @
+struct net_device *dev;
+expression E;
+@@
+ dev->priv = E
+
+@ rule2 depends on rule1 && !rule1bis  @
+struct net_device *dev;
+type rule1.T;
+@@
+
+- (T*) dev->priv
++ netdev_priv(dev)
+
+Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
+Cc: jeff@garzik.org
+Cc: netdev@vger.kernel.org
+Cc: akpm@linux-foundation.org
 ---
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index b532a73..8152f79 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -27,6 +27,7 @@
- #include <linux/pagemap.h>
- #include <linux/quotaops.h>
- #include <linux/slab.h>
-+#include <linux/log2.h>
+
+ drivers/net/appletalk/ipddp.c |    6 +++---
+ drivers/net/appletalk/ltpc.c  |    8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/appletalk/ipddp.c b/drivers/net/appletalk/ipddp.c
+index f22e46d..61add0e 100644
+--- a/drivers/net/appletalk/ipddp.c
++++ b/drivers/net/appletalk/ipddp.c
+@@ -109,7 +109,7 @@ static struct net_device * __init ipddp_
+  */
+ static struct net_device_stats *ipddp_get_stats(struct net_device *dev)
+ {
+-        return dev->priv;
++        return netdev_priv(dev);
+ }
  
- #include "aops.h"
- #include "attrib.h"
-@@ -1574,7 +1575,7 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 	ntfs_debug("Index collation rule is 0x%x.",
- 			le32_to_cpu(ir->collation_rule));
- 	ni->itype.index.block_size = le32_to_cpu(ir->index_block_size);
--	if (ni->itype.index.block_size & (ni->itype.index.block_size - 1)) {
-+	if (!is_power_of_2(ni->itype.index.block_size)) {
- 		ntfs_error(vi->i_sb, "Index block size (%u) is not a power of "
- 				"two.", ni->itype.index.block_size);
- 		goto unm_err_out;
-diff --git a/fs/ntfs/logfile.c b/fs/ntfs/logfile.c
-index acfed32..00b2d02 100644
---- a/fs/ntfs/logfile.c
-+++ b/fs/ntfs/logfile.c
-@@ -26,6 +26,7 @@
- #include <linux/highmem.h>
- #include <linux/buffer_head.h>
- #include <linux/bitops.h>
-+#include <linux/log2.h>
+ /*
+@@ -171,8 +171,8 @@ static int ipddp_xmit(struct sk_buff *sk
  
- #include "attrib.h"
- #include "aops.h"
-@@ -63,9 +64,8 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 	logfile_log_page_size = le32_to_cpu(rp->log_page_size);
- 	if (logfile_system_page_size < NTFS_BLOCK_SIZE ||
- 			logfile_log_page_size < NTFS_BLOCK_SIZE ||
--			logfile_system_page_size &
--			(logfile_system_page_size - 1) ||
--			logfile_log_page_size & (logfile_log_page_size - 1)) {
-+			!is_power_of_2(logfile_system_page_size) ||
-+			!is_power_of_2(logfile_log_page_size)) {
- 		ntfs_error(vi->i_sb, "$LogFile uses unsupported page size.");
- 		return false;
- 	}
+         skb->protocol = htons(ETH_P_ATALK);     /* Protocol has changed */
+ 
+-	((struct net_device_stats *) dev->priv)->tx_packets++;
+-        ((struct net_device_stats *) dev->priv)->tx_bytes+=skb->len;
++	((struct net_device_stats *)netdev_priv(dev))->tx_packets++;
++        ((struct net_device_stats *)netdev_priv(dev))->tx_bytes+=skb->len;
+ 
+         if(aarp_send_ddp(rt->dev, skb, &rt->at, NULL) < 0)
+                 dev_kfree_skb(skb);
+diff --git a/drivers/net/appletalk/ltpc.c b/drivers/net/appletalk/ltpc.c
+index 6a6cbd3..be12c6b 100644
+--- a/drivers/net/appletalk/ltpc.c
++++ b/drivers/net/appletalk/ltpc.c
+@@ -726,7 +726,7 @@ static int sendup_buffer (struct net_dev
+ 	int dnode, snode, llaptype, len; 
+ 	int sklen;
+ 	struct sk_buff *skb;
+-	struct net_device_stats *stats = &((struct ltpc_private *)dev->priv)->stats;
++	struct net_device_stats *stats = &((struct ltpc_private *)netdev_priv(dev))->stats;
+ 	struct lt_rcvlap *ltc = (struct lt_rcvlap *) ltdmacbuf;
+ 
+ 	if (ltc->command != LT_RCVLAP) {
+@@ -823,7 +823,7 @@ static int ltpc_ioctl(struct net_device 
+ {
+ 	struct sockaddr_at *sa = (struct sockaddr_at *) &ifr->ifr_addr;
+ 	/* we'll keep the localtalk node address in dev->pa_addr */
+-	struct atalk_addr *aa = &((struct ltpc_private *)dev->priv)->my_addr;
++	struct atalk_addr *aa = &((struct ltpc_private *)netdev_priv(dev))->my_addr;
+ 	struct lt_init c;
+ 	int ltflags;
+ 
+@@ -913,7 +913,7 @@ static int ltpc_xmit(struct sk_buff *skb
+ 	 * and skb->len is the length of the ddp data + ddp header
+ 	 */
+ 
+-	struct net_device_stats *stats = &((struct ltpc_private *)dev->priv)->stats;
++	struct net_device_stats *stats = &((struct ltpc_private *)netdev_priv(dev))->stats;
+ 
+ 	int i;
+ 	struct lt_sendlap cbuf;
+@@ -952,7 +952,7 @@ static int ltpc_xmit(struct sk_buff *skb
+ 
+ static struct net_device_stats *ltpc_get_stats(struct net_device *dev)
+ {
+-	struct net_device_stats *stats = &((struct ltpc_private *) dev->priv)->stats;
++	struct net_device_stats *stats = &((struct ltpc_private *)netdev_priv(dev))->stats;
+ 	return stats;
+ }
+ 
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
