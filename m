@@ -1,105 +1,43 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 03 Aug 2007 18:03:05 +0000
-Subject: dev->priv to netdev_priv(dev)
-Message-Id: <87myx8338m.fsf_-_@wanadoo.fr>
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Date: Fri, 03 Aug 2007 23:42:38 +0000
+Subject: Re: dev->priv to netdev_priv(dev)
+Message-Id: <m3lkcskwwh.fsf@maximus.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <87r6mzmf6q.fsf@wanadoo.fr> <46AE43F5.8070802@garzik.org>
-In-Reply-To: <46AE43F5.8070802@garzik.org> (Jeff Garzik's message of "Mon, 30
-	Jul 2007 16:03:01 -0400")
+	<87myx8338m.fsf_-_@wanadoo.fr>
+In-Reply-To: <87myx8338m.fsf_-_@wanadoo.fr> (Yoann Padioleau's message of "Fri, 03 Aug 2007 20:03:05 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jeff Garzik <jeff@garzik.org>
-Cc: Yoann Padioleau <padator@wanadoo.fr>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: Yoann Padioleau <padator@wanadoo.fr>
+Cc: Jeff Garzik <jeff@garzik.org>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 
-Jeff Garzik <jeff@garzik.org> writes:
+Yoann Padioleau <padator@wanadoo.fr> writes:
 
->> PS: I have performed the same transformation on the whole kernel
->> and it affects around 70 files, most of them in drivers/net/.
->> Should I split my patch for each subnet directories ? (wireless/, wan/, etc)
->
-> applied.  splitting up by sub-directory would be helpful.
+> drivers/net/wan/hdlc_fr.c               
 
-Done. I was not always able to find the maintainer for all the subdirectories
-so for those cases I have considered you as the maintainer :)
+hdlc_fr (PVC device) uses dev->priv for N:1 mappings (a single pvc
+structure may be referenced as dev->priv by multiple (up to 2
+currently) PVC devs).
 
-I have run another semantic patch (more like a semantic grep in fact)
-to find the places where our tool didn't transform the dev->priv to
-netdev_priv. The reason is that our tool was not able to find the call
-to alloc_dev_xxx(sizeof(T),...) in the driver or there was an
-assignation to dev->priv which means that transforming to netdev_priv
-would do something wrong. I have printed the list of "bad driver"
-below.
+> drivers/net/wan/hdlc_ppp.c              
 
-In very few cases the driver was in fact "good" but because of the
-way the code was written, our tool was not able to find the alloc_xxx
-function.
+hdlc_ppp obviously has to do some tricks to use syncppp:
+static int ppp_open(struct net_device *dev)
+{
+        hdlc_device *hdlc = dev_to_hdlc(dev);
+        void *old_ioctl;
+        int result;
 
+        dev->priv = &state(hdlc)->syncppp_ptr;
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        state(hdlc)->syncppp_ptr = &state(hdlc)->pppdev;
+        state(hdlc)->pppdev.dev = dev;
 
+        old_ioctl = dev->do_ioctl;
+        state(hdlc)->old_change_mtu = dev->change_mtu;
+        sppp_attach(&state(hdlc)->pppdev);
 
-drivers/net/82596.c                     
-drivers/net/chelsio/cxgb2.c             
-drivers/net/chelsio/sge.c               
-drivers/net/cxgb3/cxgb3_main.c          
-drivers/net/cxgb3/sge.c                 
-drivers/net/e1000/e1000_main.c          
-drivers/net/ehea/ehea_main.c            
-drivers/net/hamradio/dmascc.c           
-drivers/net/hamradio/scc.c              
-drivers/net/lance.c                     
-drivers/net/mace.c                      
-
- for mace.c the code is written this way:
-
-    #define PRIV_BYTES	(sizeof(struct mace_data) \
-       + (N_RX_RING + NCMDS_TX * N_TX_RING + 3) * sizeof(struct dbdma_cmd))
-
-     dev = alloc_etherdev(PRIV_BYTES);
- 
- So our semantic patch can't find a   alloc_etherdev(sizeof(T)).
- If I inline the definition of PRIV_BYTES, then our tool will be
- able to transform it.
-
- 
-
-
-drivers/net/ni65.c      
-drivers/net/pcmcia/com20020_cs.c
-
-   dev = alloc_arcdev("");
- 
-
-drivers/net/ppp_generic.c       
-drivers/net/spider_net_ethtool.c 
-
- again, the code is written this way:
-
-       alloc_size = sizeof(struct spider_net_card) +
-          (tx_descriptors + rx_descriptors) * sizeof(struct spider_net_descr);
-       netdev = alloc_etherdev(alloc_size);
-
- If I inline the definition of alloc_size, then we can transform
- the file.
-
-drivers/net/tulip/xircom_cb.c           
-drivers/net/wan/cosa.c                  
-drivers/net/wan/cycx_x25.c              
-drivers/net/wan/hdlc_fr.c               
-drivers/net/wan/hdlc_ppp.c              
-drivers/net/wan/hostess_sv11.c          
-drivers/net/wan/pc300_drv.c             
-drivers/net/wan/sbni.c                  
-drivers/net/wireless/airo.c             
-drivers/net/wireless/libertas/ethtool.c 
-drivers/net/wireless/libertas/main.c    
-drivers/net/wireless/libertas/scan.c    
-drivers/net/wireless/libertas/wext.c    
-drivers/net/wireless/wavelan.c          
-drivers/net/wireless/zd1201.c           
-
-drivers/net/tokenring/tms380tr.c
-   This file is both used as a single module and used by other module.
-   The other modules have a call to a alloc_xxx but not tms380tr.c when
-   used as a single module. 
-  
-
+Perhaps I should remove that and make a sane interface in syncppp.
+-- 
+Krzysztof Halasa
