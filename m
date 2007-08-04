@@ -1,42 +1,37 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Fri, 24 Aug 2007 20:34:39 +0000
-Subject: Re: [PATCH] /drivers/char sx.c ioremap -> pci_ioremap api
-Message-Id: <20070824213439.0007e653@the-village.bc.nu>
+From: Pierre Ossman <drzeus-mmc@drzeus.cx>
+Date: Sat, 04 Aug 2007 13:03:34 +0000
+Subject: Re: [PATCH 72] drivers/mmc/core/sdio_bus.c: kmalloc + memset
+Message-Id: <20070804150334.75faf362@poseidon.drzeus.cx>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <46CF2849.2090008@gmail.com>
-	<4af2d03a0708241159v56b46299h46df9777a98590e5@mail.gmail.com>
-	<20070824201530.5d741b37@the-village.bc.nu>
-	<46CF399E.3010808@gmail.com>
-In-Reply-To: <46CF399E.3010808@gmail.com>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+	<200708010005.25352.m.kozlowski@tuxland.pl>
+In-Reply-To: <200708010005.25352.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jirislaby@gmail.com>
-Cc: postfail@hushmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-On Fri, 24 Aug 2007 22:03:42 +0200
-Jiri Slaby <jirislaby@gmail.com> wrote:
+On Wed, 1 Aug 2007 00:05:24 +0200
+Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
 
-> Alan Cox napsal(a):
-> > ase, 0x80);
-> >> remove also the hwbase var.
-> >>
-> >>> +	rebase = pci_iomap(pdev, 0, 0x80);
-> >>>   	t = readl(rebase + CNTRL_REG_OFFSET);
-> > 
-> > Switch to ioread* if you are using the iomap interface. Its not a trivial
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 > 
-> Why, if you know it's surely a mem region (and thus you rely on it and do
-> ioremap)? There are many places in the kernel, where this approach is used, e.g.
-> libata piix.
-
-Every single one of them is wrong. The encoding of iomap values is
-platform dependant. Fixed in my tree.
+>  drivers/mmc/core/sdio_bus.c | 5528 -> 5483 (-45 bytes)
+>  drivers/mmc/core/sdio_bus.o | 70044 -> 69876 (-168 bytes)
 > 
-> > conversion and its slower and bulkier - the original ioremap was much
-> > better
+>  drivers/mmc/core/sdio_bus.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> at least get rid of the reading the hwbase address from pci conf space, use
-> pci_resource_start instead.
 
-Agreed entirely
+Acked-by: Pierre Ossman <drzeus@drzeus.cx>
+
+Although this is code that only lives in my -mm tree. Should I carry
+this patch instead, perhaps?
+
+-- 
+     -- Pierre Ossman
+
+  Linux kernel, MMC maintainer        http://www.kernel.org
+  PulseAudio, core developer          http://pulseaudio.org
+  rdesktop, core developer          http://www.rdesktop.org
