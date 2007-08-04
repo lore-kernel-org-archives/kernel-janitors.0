@@ -1,44 +1,29 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:04:34 +0000
-Subject: [kj] is_power_of_2 in net/pcmcia/pcnet_cs.c
-Message-Id: <1187009554.7273.3.camel@merlin.linuxcoe.com>
+From: "Marshall Craig" <TerrenceshunObrien@cartoonstock.com>
+Date: Sat, 04 Aug 2007 13:18:37 +0000
+Subject: [KJ] Traders Daily HOT Report
+Message-Id: <282e701c7d6ca$b80aec90$6700a8c0@YOUR588B4A13EA>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dahinds@users.sourceforge.net, p_gortmaker@yahoo.com
-Cc: netdev@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+*BUZZ* *BUZZ* CATCH THIS IMPORTANT MESSAGE BEFORE ITS TOO LATE!
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/drivers/net/pcmcia/pcnet_cs.c b/drivers/net/pcmcia/pcnet_cs.c
-index 63de89e..d23bf6e 100644
---- a/drivers/net/pcmcia/pcnet_cs.c
-+++ b/drivers/net/pcmcia/pcnet_cs.c
-@@ -36,6 +36,7 @@
- #include <linux/string.h>
- #include <linux/timer.h>
- #include <linux/delay.h>
-+#include <linux/log2.h>
- #include <linux/ethtool.h>
- #include <linux/netdevice.h>
- #include <../drivers/net/8390.h>
-@@ -1486,7 +1487,7 @@ static int setup_shmem_window(struct pcmcia_device *link, int start_pg,
- 	window_size = 32 * 1024;
- 
-     /* Make sure it's a power of two.  */
--    while ((window_size & (window_size - 1)) != 0)
-+    while (!is_power_of_2(window_size))
- 	window_size += window_size & ~(window_size - 1);
- 
-     /* Allocate a memory window */
+HELPING IMPROVE COMMUNICATION IN THE CLASSROOMS THROUGH MOBILE APPLICATIONS! WOW.. CAN WE SAY BIG BUCKS OM THIS? WHO IS DOING THIS?
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Telecommunications Company - Name? Exchange Mobile Tele
+Tickk: EXMT
+Ending Value: AUG 03   $0.22  +0.02  10.0% Change 
+When Should You Get In? - AUG MONDAY 06, 2007
+
+VANCOUVER, July 18 /PRNewswire-FirstCall/ - Exchange Mobile has retained a consultant to conduct negotiations with the provincial authorities of Liaoning Province and the numerous school boards within the province, for the deployment of its Parent Teacher Message Exchange (PTMX) mobile application. PTMX is a part of the Mobile Application Suite for the Education Sector and will enable parents and teachers to regularly exchange information concerning student attendance and performance without using the student as the teacher's messenger.
+
+8 million students in Liaoning Province of China. There are more than 300 million students in China (primary, middle, & high school), of which more than 8 million are in Liaoning Province!
+
+In 2003 EXCHANGE MOBILE created the most complete and reliable two-way worldwide SMS (short message service) network. This network was built via partnerships and agreements with the best message routing wireless carriers, selected after in-depth industry analysis. Since then, EXCHANGE MOBILE has been providing two way global short messaging services to subscribers world wide. 
+
+<EXMT> HOPEFULLY YOU CAUGHT A GLIPSE OF EXMT AND GOT IN NOW *MONDAY 08/06/07* AS SOON IT WILL BE TOO LATE. <EXMT>
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
