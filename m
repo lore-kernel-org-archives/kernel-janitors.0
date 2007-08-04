@@ -1,54 +1,35 @@
-From: James Smart <James.Smart@Emulex.Com>
-Date: Sun, 05 Aug 2007 10:00:17 +0000
-Subject: [PATCH] lpfc : lpfc_debugfs.c kmalloc + memset conversion to
-Message-Id: <1186308017.2983.9.camel@localhost.localdomain>
+From: Pierre Ossman <drzeus-mmc@drzeus.cx>
+Date: Sat, 04 Aug 2007 13:01:29 +0000
+Subject: Re: [PATCH 05] drivers/mmc/core/bus.c: kmalloc + memset conversion
+Message-Id: <20070804150129.0a1234cf@poseidon.drzeus.cx>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200707311845.48807.m.kozlowski@tuxland.pl>
-	 <200707312027.55149.m.kozlowski@tuxland.pl>  <46B34CA6.6010502@emulex.com>
-In-Reply-To: <46B34CA6.6010502@emulex.com>
+	<200707311900.00143.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311900.00143.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-One more area, introduced by the lpfc 8.2.2 patches, that need the 
-  kmalloc+memset conversion.
+On Tue, 31 Jul 2007 18:59:59 +0200
+Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
 
-This patch to be applied atop the 8.2.2 patches.
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/mmc/core/bus.c | 5663 -> 5619 (-44 bytes)
+>  drivers/mmc/core/bus.o | 70899 -> 70731 (-168 bytes)
+> 
+>  drivers/mmc/core/bus.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
 
--- james s
-
-
-Signed-off-by: James Smart <James.Smart@emulex.com>
-
-
-diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-index 2e3c01b..ef99e2b 100644
---- a/drivers/scsi/lpfc/lpfc_debugfs.c
-+++ b/drivers/scsi/lpfc/lpfc_debugfs.c
-@@ -856,9 +856,9 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
- 			goto debug_failed;
- 		}
- 		if (!phba->slow_ring_trc) {
--			phba->slow_ring_trc = kmalloc(
--				(sizeof(struct lpfc_debugfs_trc) *
--				lpfc_debugfs_max_slow_ring_trc),
-+			phba->slow_ring_trc = kcalloc(
-+				lpfc_debugfs_max_slow_ring_trc,
-+				sizeof(struct lpfc_debugfs_trc),
- 				GFP_KERNEL);
- 			if (!phba->slow_ring_trc) {
- 				lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
-@@ -867,9 +867,6 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
- 				goto debug_failed;
- 			}
- 			atomic_set(&phba->slow_ring_trc_cnt, 0);
--			memset(phba->slow_ring_trc, 0,
--				(sizeof(struct lpfc_debugfs_trc) *
--				lpfc_debugfs_max_slow_ring_trc));
- 		}
- 	}
- 
+Acked-by: Pierre Ossman <drzeus@drzeus.cx>
 
 
+-- 
+     -- Pierre Ossman
+
+  Linux kernel, MMC maintainer        http://www.kernel.org
+  PulseAudio, core developer          http://pulseaudio.org
+  rdesktop, core developer          http://www.rdesktop.org
