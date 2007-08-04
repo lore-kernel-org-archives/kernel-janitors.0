@@ -1,71 +1,34 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:07:29 +0000
-Subject: [kj] is_power_of_2 in scsi
-Message-Id: <1187009729.7273.9.camel@merlin.linuxcoe.com>
+From: Pierre Ossman <drzeus-mmc@drzeus.cx>
+Date: Sat, 04 Aug 2007 13:01:45 +0000
+Subject: Re: [PATCH 29] drivers/mmc/core/host.c: kmalloc + memset conversion
+Message-Id: <20070804150145.08141a2c@poseidon.drzeus.cx>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+	<200707311953.17224.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707311953.17224.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com, davem@davemloft.net, open-iscsi@googlegroups.com
-Cc: linux-scsi@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+On Tue, 31 Jul 2007 19:53:16 +0200
+Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
-index 77b06a9..908f342 100644
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -14,6 +14,7 @@
- #include <linux/moduleparam.h>
- #include <linux/init.h>
- #include <linux/irqreturn.h>
-+#include <linux/log2.h>
- 
- #include <asm/irq.h>
- #include <asm/io.h>
-@@ -1126,7 +1127,7 @@ static int esp_reconnect(struct esp *esp)
- 		if (!(bits & esp->scsi_id_mask))
- 			goto do_reset;
- 		bits &= ~esp->scsi_id_mask;
--		if (!bits || (bits & (bits - 1)))
-+		if (!is_power_of_2(bits))
- 			goto do_reset;
- 
- 		target = ffs(bits) - 1;
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index 5606d1e..ffa6cc1 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -24,6 +24,7 @@
- #include <linux/types.h>
- #include <linux/kfifo.h>
- #include <linux/delay.h>
-+#include <linux/log2.h>
- #include <asm/unaligned.h>
- #include <net/tcp.h>
- #include <scsi/scsi_cmnd.h>
-@@ -1366,7 +1367,7 @@ iscsi_session_setup(struct iscsi_transport *iscsit,
- 		qdepth = ISCSI_DEF_CMD_PER_LUN;
- 	}
- 
--	if (cmds_max < 2 || (cmds_max & (cmds_max - 1)) ||
-+	if (!is_power_of_2(cmds_max) ||
- 	    cmds_max >= ISCSI_MGMT_ITT_OFFSET) {
- 		if (cmds_max != 0)
- 			printk(KERN_ERR "iscsi: invalid can_queue of %d. "
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/mmc/core/host.c | 3509 -> 3457 (-52 bytes)
+>  drivers/mmc/core/host.o | 92400 -> 92136 (-264 bytes)
+> 
+>  drivers/mmc/core/host.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+
+Acked-by: Pierre Ossman <drzeus@drzeus.cx>
 
 -- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+     -- Pierre Ossman
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+  Linux kernel, MMC maintainer        http://www.kernel.org
+  PulseAudio, core developer          http://pulseaudio.org
+  rdesktop, core developer          http://www.rdesktop.org
