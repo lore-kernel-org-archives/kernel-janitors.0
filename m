@@ -1,34 +1,35 @@
-From: Pierre Ossman <drzeus-mmc@drzeus.cx>
-Date: Sat, 04 Aug 2007 13:01:45 +0000
-Subject: Re: [PATCH 29] drivers/mmc/core/host.c: kmalloc + memset conversion
-Message-Id: <20070804150145.08141a2c@poseidon.drzeus.cx>
+From: "Edna Escobar" <TiffanywineDowning@bolsters.com>
+Date: Sat, 04 Aug 2007 18:42:12 +0000
+Subject: [KJ] Next Big market SuperWinner
+Message-Id: <b10ac01c7d745$0ec5ae60$2f01a8c0@poop>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-	<200707311953.17224.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311953.17224.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-janitors@vger.kernel.org
 
-On Tue, 31 Jul 2007 19:53:16 +0200
-Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
+SMS MESSAGING IS THE FUTURE AS WE KNOW IT. WHO WILL LEAD IN THIS TELECOMMUNICATIONS DIVISION? ExMt ExMt ExMt !!
 
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  drivers/mmc/core/host.c | 3509 -> 3457 (-52 bytes)
->  drivers/mmc/core/host.o | 92400 -> 92136 (-264 bytes)
-> 
->  drivers/mmc/core/host.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
+**BIG NEWS COMMING OUT FROM THIS COMPANY, FOR SURE TO BE A GROUND SHAKER.**
 
-Acked-by: Pierre Ossman <drzeus@drzeus.cx>
+So Who Is EXMT? Exchange Mobile Tele Co
+PK Sym: EXMT
+Closed At Last: AUG 03   $0.22  +0.02  10.0% Change 
+Date OF Action? - AUG MONDAY 06, 2007
 
--- 
-     -- Pierre Ossman
+Over the last 6 years, Exchange Mobile has been intensely involved in the wireless messaging and internet communications market. It has developed and implemented independent platforms to provide internet users and mobile subscribers an instantaneous form of communication. 
 
-  Linux kernel, MMC maintainer        http://www.kernel.org
-  PulseAudio, core developer          http://pulseaudio.org
-  rdesktop, core developer          http://www.rdesktop.org
+Founded in 2000, EXCHANGE MOBILE Telecommunications Corp. is an innovator in developing customized applications leveraging leading-edge wireless technology, capturing the imagination of the wireless market while fueling consumer demand. 
+
+In the early part of 2002, EXCHANGE MOBILE developed wireless applications that offered SMS (Short Messaging Services) based value-added services to mobile users. EXCHANGE MOBILE has spent the early stages of its corporate existence building and developing a powerful and dynamic platform based on current SMS, WAP, and other emerging wireless protocols. 
+
+EXMT A HIGH PERFORMANCE STOCK? WE THINK SO AND PLAN TO SEE HUGE THINGS AUGUST 06 (MONDAY) 2007. ^EXMT^
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
