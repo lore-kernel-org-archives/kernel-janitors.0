@@ -1,46 +1,54 @@
-From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Date: Wed, 01 Aug 2007 21:01:48 +0000
-Subject: Re: [PATCH 30] drivers/ide/arm/icside.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200708012301.48963.bzolnier@gmail.com>
+From: James Smart <James.Smart@Emulex.Com>
+Date: Sun, 05 Aug 2007 10:00:17 +0000
+Subject: [PATCH] lpfc : lpfc_debugfs.c kmalloc + memset conversion to
+Message-Id: <1186308017.2983.9.camel@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707311958.20683.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311958.20683.m.kozlowski@tuxland.pl>
+References: <200707311845.48807.m.kozlowski@tuxland.pl>
+	 <200707312027.55149.m.kozlowski@tuxland.pl>  <46B34CA6.6010502@emulex.com>
+In-Reply-To: <46B34CA6.6010502@emulex.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, rmk@arm.linux.org.uk
+To: linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mariusz Kozlowski <m.kozlowski@tuxland.pl>
 
-On Tuesday 31 July 2007, Mariusz Kozlowski wrote:
-> Is this a bug? In original verison memset cleared sizeof(state) bytes
-> instead of sizeof(*state). If it was intentional then this patch is invalid.
-> If not intentional -> valid :) Please review.
+One more area, introduced by the lpfc 8.2.2 patches, that need the 
+  kmalloc+memset conversion.
 
-Yes, it is a bug so this patch is a valid bugfix. :-)
+This patch to be applied atop the 8.2.2 patches.
 
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+-- james s
 
->  drivers/ide/arm/icside.c | 18883 -> 18849 (-34 bytes)
-> 
->  drivers/ide/arm/icside.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
 
-applied
+Signed-off-by: James Smart <James.Smart@emulex.com>
 
-> --- linux-2.6.23-rc1-mm1-a/drivers/ide/arm/icside.c	2007-07-26 13:07:41.000000000 +0200
-> +++ linux-2.6.23-rc1-mm1-b/drivers/ide/arm/icside.c	2007-07-31 11:32:27.000000000 +0200
-> @@ -682,13 +682,12 @@ icside_probe(struct expansion_card *ec,
->  	if (ret)
->  		goto out;
-> 
-> -	state = kmalloc(sizeof(struct icside_state), GFP_KERNEL);
-> +	state = kzalloc(sizeof(struct icside_state), GFP_KERNEL);
->  	if (!state) {
->  		ret = -ENOMEM;
->  		goto release;
->  	}
-> 
-> -	memset(state, 0, sizeof(state));
->  	state->type	= ICS_TYPE_NOTYPE;
->  	state->dev	= &ec->dev;
-> 
+
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+index 2e3c01b..ef99e2b 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -856,9 +856,9 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+ 			goto debug_failed;
+ 		}
+ 		if (!phba->slow_ring_trc) {
+-			phba->slow_ring_trc = kmalloc(
+-				(sizeof(struct lpfc_debugfs_trc) *
+-				lpfc_debugfs_max_slow_ring_trc),
++			phba->slow_ring_trc = kcalloc(
++				lpfc_debugfs_max_slow_ring_trc,
++				sizeof(struct lpfc_debugfs_trc),
+ 				GFP_KERNEL);
+ 			if (!phba->slow_ring_trc) {
+ 				lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
+@@ -867,9 +867,6 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+ 				goto debug_failed;
+ 			}
+ 			atomic_set(&phba->slow_ring_trc_cnt, 0);
+-			memset(phba->slow_ring_trc, 0,
+-				(sizeof(struct lpfc_debugfs_trc) *
+-				lpfc_debugfs_max_slow_ring_trc));
+ 		}
+ 	}
+ 
+
+
