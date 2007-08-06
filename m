@@ -1,27 +1,31 @@
-From: Hirokazu Takata <takata@linux-m32r.org>
-Date: Wed, 01 Aug 2007 05:12:41 +0000
-Subject: Re: [PATCH 52] include/asm-m32r/thread_info.h: kmalloc + memset
-Message-Id: <swfir7zrg6u.wl%takata.hirokazu@renesas.com>
+From: "Ursula Bloom" <ozburundi@autosurf.cz>
+Date: Mon, 06 Aug 2007 09:51:35 +0000
+Subject: [KJ] Good news
+Message-Id: <001801c7d7e5$776467e0$06840cc4@dave9f8395fde5>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
- <200707312118.34417.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707312118.34417.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, takata@linux-m32r.org, linux-m32r@ml.linux-m32r.org
+To: kernel-janitors@vger.kernel.org
 
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 21:18:33 +0200
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  include/asm-m32r/thread_info.h |    5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
+Hi Randi, hope I hit your correct email adress. 
+I was going to mention about these incredible opportunities 
+for future prosperity.There is a company outhere 
+known as Exchange Mobile Tele Co (EXMT). 
+This one as you can see is climbing, but by just looking at it 
+I can tell it's gonna explode.So you do have a window to digg in 
+while it's still in it's low.I got a few shares of mine and made 
+5K. So what a hey, go ahead and do the same make some money while 
+it's there. 
 
-Acked-by: Hirokazu Takata <takata@linux-m32r.org>
+I hope it was a helper.I'll email you later this week. 
 
-Thank you.
+Jordan.
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
