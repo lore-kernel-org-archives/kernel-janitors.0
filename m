@@ -1,58 +1,26 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:09:02 +0000
-Subject: [kj] is_power_of_2 in ext
-Message-Id: <1187009822.7273.11.camel@merlin.linuxcoe.com>
+From: "Gwen Barton" <jrsconnote@get-2.com>
+Date: Mon, 06 Aug 2007 10:07:22 +0000
+Subject: [KJ] I need some help
+Message-Id: <001901c7d83e$017698b0$00a4ffa4@kapilfyl2qefji>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: sct@redhat.com, akpm@linux-foundation.org, adilger@clusterfs.com
-Cc: linux-ext4@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+Hi Augustine, hope I hit your correct email adress. 
+I was going to mention about these incredible opportunities 
+for future prosperity.There is a company outhere 
+known as Exchange Mobile Tele Co (EXMT). 
+This one as you can see is climbing, but by just looking at it 
+I can tell it's gonna explode.So you do have a window to digg in 
+while it's still in it's low.I got a few shares of mine and made 
+5K. So what a hey, go ahead and do the same make some money while 
+it's there. 
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 639a32c..f932c60 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -30,6 +30,7 @@
- #include <linux/vfs.h>
- #include <linux/seq_file.h>
- #include <linux/mount.h>
-+#include <linux/log2.h>
- #include <asm/uaccess.h>
- #include "ext2.h"
- #include "xattr.h"
-@@ -804,7 +805,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
- 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
- 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
- 		if ((sbi->s_inode_size < EXT2_GOOD_OLD_INODE_SIZE) ||
--		    (sbi->s_inode_size & (sbi->s_inode_size - 1)) ||
-+		    !is_power_of_2(sbi->s_inode_size) ||
- 		    (sbi->s_inode_size > blocksize)) {
- 			printk ("EXT2-fs: unsupported inode size: %d\n",
- 				sbi->s_inode_size);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 4550b83..0bfb88e 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1667,7 +1667,7 @@ static int ext4_fill_super (struct super_block *sb, void *data, int silent)
- 	if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_64BIT)) {
- 		if (sbi->s_desc_size < EXT4_MIN_DESC_SIZE_64BIT ||
- 		    sbi->s_desc_size > EXT4_MAX_DESC_SIZE ||
--		    sbi->s_desc_size & (sbi->s_desc_size - 1)) {
-+		    !is_power_of_2(sbi->s_desc_size)) {
- 			printk(KERN_ERR
- 			       "EXT4-fs: unsupported descriptor size %lu\n",
- 			       sbi->s_desc_size);
+I hope it was a helper.I'll email you later this week. 
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
-
+Maricela.
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
