@@ -1,97 +1,54 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Tue, 14 Aug 2007 09:14:59 +0000
-Subject: [KJ] rounddown_pow_of_2 inclusion into log2.h
-Message-Id: <1187082179.3874.18.camel@merlin.linuxcoe.com>
+From: "Cardis Quaye" <Cardis.Quaye@bilalmasjid.com>
+Date: Tue, 07 Aug 2007 03:17:12 +0000
+Subject: [KJ] 464316
+Message-Id: <000b01c7d8a1$72603370$5a5f0356@SENICT>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1186456636-15183-113"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-rday,
+This is a multi-part message in MIME format...
 
-  Any plans on including what Andrew Morton suggested in the near
-future?
-Think you have had enough time to convince yourself ;)
+------------=_1186456636-15183-113
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-(Sorry, had put kj in bcc in prev mail by mistake)
+3421778f=
 
-Vignesh
+------------=_1186456636-15183-113
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-On Thu, 25 Jan 2007, Andrew Morton wrote:
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-> On Thu, 25 Jan 2007 04:32:12 -0500 (EST)
-> "Robert P. J. Day" <rpjday@mindspring.com> wrote:
+Content preview:  3421778f 3421778f [...] 
 
-> > +/*
-> > + * round down to nearest power of two
-> > + */
-> > +static inline __attribute__((const))
-> > +unsigned long __rounddown_pow_of_two(unsigned long n)
-> > +{
-> > +   return 1UL << (fls_long(n) - 1);
-> > +}
->
-> So __rounddown_pow_of_two(16) returns 8?
+Content analysis details:   (7.9 points, 5.0 required)
 
-it does?  but if that was true, so would 17, and 18, and 19 ...  i
-didn't actually test this since it seemed so straightforward.
-doesn't fls_long() return the most significant bit?  oh, wait ...
-reading further ...
- >
-> >  /**
-> >   * ilog2 - log of base 2 of 32-bit or a 64-bit unsigned value
-> >   * @n - parameter
-> > @@ -154,4 +174,20 @@ unsigned long __roundup_pow_of_two(unsigned
-long n)
-> >     __roundup_pow_of_two(n)                 \
-> >   )
-> >
-> > +/**
-> > + * rounddown_pow_of_two - round the given value down to nearest
-power of two
-> > + * @n - parameter
-> > + *
-> > + * round the given value down to the nearest power of two
-> > + * - the result is undefined when n = 0
-> > + * - this can be used to initialise global variables from constant
-data
-> > + */
-> > +#define rounddown_pow_of_two(n)                    \
-> > +(                                          \
-> > +   __builtin_constant_p(n) ? (             \
-> > +           (n = 1) ? 0 :                  \
-> > +           (1UL << ilog2(n)) :             \
-> > +   __rounddown_pow_of_two(n)               \
-> > + )
->
-> But (1UL << ilog2(16)) returns 16?
->
->
-> And, afiact, your __rounddown_pow_of_two() is basically equivalent to
-(1UL
-> << ilog2(n)) anyway.  So a suitable (and less buggy) implementation
-might be
->
-> static inline unsigned long rounddown_pow_of_two(unsigned long n)
-> {
->       return (n = 1) ? 0 : (1UL << ilog2(n));
-> }
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_HCC       Relay HELO'd using suspicious hostname (HCC)
+ 0.6 HTML_90_100            BODY: Message is 90% to 100% HTML
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 0.9997]
 
-i think you're right.  it's been a long day so give me a few minutes
-to convince myself.
 
-rday
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+------------=_1186456636-15183-113
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -101,3 +58,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1186456636-15183-113--
