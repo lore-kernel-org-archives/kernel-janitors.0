@@ -1,28 +1,36 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 19 Aug 2007 23:05:23 +0000
-Subject: Re: convert #include "linux/..." to #include <linux/...> [PATCH]s
-Message-Id: <1187564724.4200.170.camel@localhost>
+From: am kara <am_kara@yahoo.com>
+Date: Tue, 07 Aug 2007 06:35:17 +0000
+Subject: hello
+Message-Id: <967040.20748.qm@web36511.mail.mud.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1187561864.4200.136.camel@localhost>
-	 <Pine.LNX.4.64.0708200031560.19577@fbirervta.pbzchgretzou.qr>
-In-Reply-To: <Pine.LNX.4.64.0708200031560.19577@fbirervta.pbzchgretzou.qr>
+References: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
+In-Reply-To: <78525548330.aj761KKLtwgY78041@vesper8.clergy36hotmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jan Engelhardt <jengelh@computergmbh.de>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 2007-08-20 at 00:33 +0200, Jan Engelhardt wrote:
-> Not only that. All directories in include should be checked against
-> (e.g. <net/*>)
+Hello,
 
-Should any file in include/ have a line like:
+I am searching for some new LAN PCI ethernet cards for
+desktop PC and the potential related linux device
+driver source codes.
 
-	#include "[path/]file"
+Do you know any open source community to develop
+physical network drivers for Linux? I am looking for
+some hardware stuff which is currently unsupported in
+vanila mainstream kernel to start developing code for
+it.
 
-Shouldn't these all be
+Thank you to read my message,
+Amir.
 
-	#include <path/file>
 
-?
 
+
+
+       
+____________________________________________________________________________________
+Yahoo! oneSearch: Finally, mobile search 
+that gives answers, not web links. 
+http://mobile.yahoo.com/mobileweb/onesearch?refer=1ONXIC
