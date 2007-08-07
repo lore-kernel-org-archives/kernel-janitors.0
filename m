@@ -1,30 +1,24 @@
-From: "americangreetings.com" <liex@hudco.org>
-Date: Fri, 10 Aug 2007 13:51:02 +0000
-Subject: [KJ] Class mate sent you an ecard from americangreetings.com!
-Message-Id: <001601c7db55$7d13a110$74d25c29@suj.bfahv>
+From: Jeff Garzik <jgarzik@pobox.com>
+Date: Tue, 07 Aug 2007 21:57:43 +0000
+Subject: Re: [PATCH 69] drivers/net/sb1250-mac.c: kmalloc + memset conversion
+Message-Id: <46B8EAD7.2040105@pobox.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312358.36567.m.kozlowski@tuxland.pl>
+In-Reply-To: <200707312358.36567.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org
 
-Class mate has created an ecard for you at americangreetings.com,
-the Internet's most popular greeting card service. 
+Mariusz Kozlowski wrote:
+> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+> 
+>  drivers/net/sb1250-mac.c | 76286 -> 76199 (-87 bytes)
+> 
+>  drivers/net/sb1250-mac.c |    6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Your greeting card ID is: 9077573383e1a7a85955ab65e8517a 
+applied
 
-To see your custom greeting card, simply click on the link below: 
-http://70.228.80.49/?9077573383e1a7a85955ab65e8517a
 
-Send greeting cards from americangreetings.com whenever you want by visiting us at: 
-http://americangreetings.com/
-Copyright (c) 1996-2007 americangreetings.com All Rights Reserved
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
