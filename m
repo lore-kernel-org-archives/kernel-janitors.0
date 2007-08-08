@@ -1,14 +1,58 @@
-From: "Nathaniel Richardson" <pnonis.ama@webmylifetime.com>
-Date: Sun, 26 Aug 2007 19:15:31 +0000
-Subject: [KJ] Autodesk AutoCAD 2008 129$ - Save 6590.95 $ 0ff Retai1
-Message-Id: <000001c7e814$5a943200$0100007f@localhost>
+From: "Ferdinand Mckinnon" <terry@quisar.ambre.net>
+Date: Wed, 08 Aug 2007 13:30:39 +0000
+Subject: [KJ] AU Best Job Offer #218103170
+Message-Id: <01c7d9be$c28ad300$188c4955@terry>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-type " cheapoemsoft . com " ln lnternet ExpIorer browser bar
+JFCAutos Limited Liability Company
+Business Center of Nevada, Suite 543, 
+701 Bridger Ave, Las Vegas, NV 89101, USA
++1(413)4313936
+Mr. Yasuhiro Matokao
+
+Aug 8, 2007
+
+JFCAutos LLC is pleased to make you an offer on employment as an Official Distributor (Sales Executive, Ref: 21888) 
+Successful candidates should meet the following requirements:
+- Great analytical and problem solving skills.
+- Good people interaction skills.
+- Ability to work independently with minimal supervision.
+- Ability to respond on e-mails immediately and check an email minimum twice per day.
+- Good written and spoken English.
+
+Should You accept this job offer, per company policy You'll be eligible to receive the following 
+beginning on your hire date:
+- SALARY: Annual gross starting salary of $10,800 - $12,000 USD, paid in monthly installments by Your choice of check or direct deposit plus 5% from each sale (operation). 
+- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or direct deposit.
+- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares per year (just after trial period).
+
+TO ACCEPT THIS JOB OFFER:
+1. Send an e-mail letter to Mr. Tim Collins or Mrs. Caroline M. McMilen from our HR-department in below format:
+To:  jfcautos_vacancies@hotmail.com
+Subject: Sales Executive, Ref: 21888
+E-mail Text:
+-Your First Name (according to your ID)
+-Your Last Name (according to your ID)
+-Your Primary E-mail (e-mail address to receive our messages)
+-Your Country of your permanent living
+-Your City (city of your permanent living)
+-Your Address (address of home)
+-Your Phone (home AND mobile phone with area code for urgent contacts)
+Attachement: Your CV and colored passport copy.
+2. Wait for Hiring Coordinator replay.
+4. Be ready to have an email or phone interview.
+
+TO DECLINE THIS JOB OFFER:
+1. Ignore this e-mail letter.
+
+Sincerely,
+Mr. Yasuhiro Matokao 
+The Managing Director and President of JFCAutos LLC
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
