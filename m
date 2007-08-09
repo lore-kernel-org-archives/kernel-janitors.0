@@ -1,7 +1,7 @@
-From: "Farooq Nassor" <Nassor@pousadavidaverde.com.br>
-Date: Thu, 09 Aug 2007 18:33:22 +0000
+From: "Husein ledger" <Husein930@pousadavidaverde.com.br>
+Date: Thu, 09 Aug 2007 18:33:51 +0000
 Subject: [KJ] (no subject)
-Message-Id: <000d01c7dab3$c4571130$458f7dca@user>
+Message-Id: <025895052403.354191843893@pousadavidaverde.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
@@ -27,6 +27,8 @@ surrounding the stores.
 
 The Management team believes that the stores will each quickly reach an annualized
 run rate of 1.2 Million dollars of sales.
+
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
