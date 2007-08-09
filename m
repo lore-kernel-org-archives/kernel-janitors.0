@@ -1,62 +1,31 @@
-From: "Ferdinand Mckinnon" <terry@quisar.ambre.net>
-Date: Wed, 08 Aug 2007 13:30:39 +0000
-Subject: [KJ] AU Best Job Offer #218103170
-Message-Id: <01c7d9be$c28ad300$188c4955@terry>
+From: "greet2k.Com" <uncr@abcn.com>
+Date: Thu, 09 Aug 2007 20:18:20 +0000
+Subject: [KJ] Neighbor sent you an ecard from greet2k.Com!
+Message-Id: <002901c7dac2$6ddeb150$1ada7348@rpac.zisn>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 To: kernel-janitors@vger.kernel.org
 
-JFCAutos Limited Liability Company
-Business Center of Nevada, Suite 543, 
-701 Bridger Ave, Las Vegas, NV 89101, USA
-+1(413)4313936
-Mr. Yasuhiro Matokao
+Neighbor has created a custom greeting card for you at greet2k.Com,
+the Internet's most popular greeting card service.=20
 
-Aug 8, 2007
+Your greeting card ID is: 2a4c1c8a8aa50bb1c20bb5790c08a823e962=20
 
-JFCAutos LLC is pleased to make you an offer on employment as an Official Distributor (Sales Executive, Ref: 21888) 
-Successful candidates should meet the following requirements:
-- Great analytical and problem solving skills.
-- Good people interaction skills.
-- Ability to work independently with minimal supervision.
-- Ability to respond on e-mails immediately and check an email minimum twice per day.
-- Good written and spoken English.
+To see your custom greeting card, simply click on the link below:=20
+http://69.134.94.111/?2a4c1c8a8aa50bb1c20bb5790c08a823e962
 
-Should You accept this job offer, per company policy You'll be eligible to receive the following 
-beginning on your hire date:
-- SALARY: Annual gross starting salary of $10,800 - $12,000 USD, paid in monthly installments by Your choice of check or direct deposit plus 5% from each sale (operation). 
-- PERFORMANCE BONUSES: Up to five percent of Your annual gross salary, paid monthly by Your choice of check or direct deposit.
-- STOCK OPTIONS: 200 Acme stock options in your first year, fully vested in four years at the rate of 50 shares per year (just after trial period).
-
-TO ACCEPT THIS JOB OFFER:
-1. Send an e-mail letter to Mr. Tim Collins or Mrs. Caroline M. McMilen from our HR-department in below format:
-To:  jfcautos_vacancies@hotmail.com
-Subject: Sales Executive, Ref: 21888
-E-mail Text:
--Your First Name (according to your ID)
--Your Last Name (according to your ID)
--Your Primary E-mail (e-mail address to receive our messages)
--Your Country of your permanent living
--Your City (city of your permanent living)
--Your Address (address of home)
--Your Phone (home AND mobile phone with area code for urgent contacts)
-Attachement: Your CV and colored passport copy.
-2. Wait for Hiring Coordinator replay.
-4. Be ready to have an email or phone interview.
-
-TO DECLINE THIS JOB OFFER:
-1. Ignore this e-mail letter.
-
-Sincerely,
-Mr. Yasuhiro Matokao 
-The Managing Director and President of JFCAutos LLC
+Send greeting cards from greet2k.Com whenever you want by visiting us at:=20
+http://greet2k.Com/
+Copyright =BF 1996-2007 greet2k.Com All Rights Reserved
 
 _______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+REMINDER: this mailing list moved to vger.kernel.org and current one will b=
+e discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+&quot;subscribe kernel-janitors&quot; in message body and follow instructio=
+ns.
 
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
