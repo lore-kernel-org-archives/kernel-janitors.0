@@ -1,7 +1,7 @@
-From: "Husein ledger" <Husein930@pousadavidaverde.com.br>
-Date: Thu, 09 Aug 2007 18:33:51 +0000
+From: "Fedon Finken" <FedonFinken@pousadavidaverde.com.br>
+Date: Thu, 09 Aug 2007 18:34:25 +0000
 Subject: [KJ] (no subject)
-Message-Id: <025895052403.354191843893@pousadavidaverde.com.br>
+Message-Id: <929140106087.104264147026@pousadavidaverde.com.br>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
