@@ -1,43 +1,37 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:05:37 +0000
-Subject: [kj] is_power_of_2 in drivers/rtc/rtc-s3c.c
-Message-Id: <1187009617.7273.5.camel@merlin.linuxcoe.com>
+From: <jobs@careerone.com.au>
+Date: Thu, 09 Aug 2007 00:17:01 +0000
+Subject: [KJ] Only with us you can earn $800-1000 in a week.
+Message-Id: <603419643.20070617230256@careerone.com.au>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------E37B446C5EA5C"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+------------E37B446C5EA5C
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 8c1012b..9b06dc3 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -20,6 +20,7 @@
- #include <linux/rtc.h>
- #include <linux/bcd.h>
- #include <linux/clk.h>
-+#include <linux/log2.h>
+Greetings Ladies and Gentlemen!
+We are an european  Computers company.
+We offer you an additional income for part-time employment. You can earn some cash for 2-3 hours per day work.It is absolutely free for you, you should NOT sale anything! Very easy and fun way to make money. 
  
- #include <asm/hardware.h>
- #include <asm/uaccess.h>
-@@ -311,7 +312,7 @@ static int s3c_rtc_ioctl(struct device *dev,
- 	case RTC_IRQP_SET:
- 		/* check for power of 2 */
+Few main facts:
+1. 900-1000 AUD a week!
+2. 18+ y/o ONLY, you have to be able to check your e-mail 3-4 times a day
+3. 1-2 hours of free time Monday-Thursday, preferably in the morning.
+4. Daily Pay Out! 
  
--		if ((arg & (arg-1)) != 0 || arg < 1) {
-+		if (!is_power_of_2(arg)) {
- 			ret = -EINVAL;
- 			goto exit;
- 		}
+Requirements: 
+a) Knowledge of computer tools and the Internet is a must.
+b) English (written, spoken is preferably) .
+c) Autonomy, flexibility, initiative and creativity, good organizational  skills. 
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+If you really search for work and wish to start to work with us immediately, we wait for your e-mails:  oraclevac.vanessa@gmail.com 
+------------E37B446C5EA5C
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -47,3 +41,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------E37B446C5EA5C--
