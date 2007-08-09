@@ -1,7 +1,7 @@
-From: "Leanne Pacsai" <Leanne-Pacsai@stu.fbe.hku.hk>
-Date: Thu, 09 Aug 2007 19:05:41 +0000
+From: "huan minniti" <huan628@huffmail.zzn.com>
+Date: Thu, 09 Aug 2007 19:11:46 +0000
 Subject: [KJ] (no subject)
-Message-Id: <000201c7dab8$477ed300$27ad5050@arfacomputers>
+Message-Id: <076424952824.275778879868@huffmail.zzn.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
@@ -27,6 +27,8 @@ surrounding the stores.
 
 The Management team believes that the stores will each quickly reach an annualized
 run rate of 1.2 Million dollars of sales.
+
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
