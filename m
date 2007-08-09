@@ -1,7 +1,7 @@
-From: "Fedon Finken" <FedonFinken@pousadavidaverde.com.br>
-Date: Thu, 09 Aug 2007 18:34:25 +0000
+From: "arvind tamburr" <arvind_tamburr@pousadavidaverde.com.br>
+Date: Thu, 09 Aug 2007 18:34:26 +0000
 Subject: [KJ] (no subject)
-Message-Id: <929140106087.104264147026@pousadavidaverde.com.br>
+Message-Id: <000201c7dab3$e9fe3260$458f7dca@user>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <4277F774.9070506@tampabay.rr.com>
 In-Reply-To: <4277F774.9070506@tampabay.rr.com>
@@ -27,8 +27,6 @@ surrounding the stores.
 
 The Management team believes that the stores will each quickly reach an annualized
 run rate of 1.2 Million dollars of sales.
-
-
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
