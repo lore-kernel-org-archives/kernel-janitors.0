@@ -1,27 +1,44 @@
-From: "Celia Souza" <bjames@themadavejournal.com>
-Date: Sun, 19 Aug 2007 20:53:58 +0000
-Subject: [KJ] FW: Upgrade you qualification.
-Message-Id: <01c7e2a1$ba026680$b6ba0753@bjames>
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Fri, 10 Aug 2007 18:37:06 +0000
+Subject: [PATCH 1/4]  /drivers/net ioremap balancing/returncode check (es3210.c)
+Message-Id: <20070810183707.36A1ADA81F@mailserver7.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-F A S T    T R A C K   D E 
-G R E E   P R O G R A M  Obtain the degree you deserve, based on your 
-present knowledge and life experience. A prosperous future, money earning power, and the 
-Admiration of all. Degrees from an Established, Prestigious, Leading 
-Institution. Your Degree will show exactly what you really can 
-do. Get the Job, Promotion, Business 
-Opportunity and Social Advancement you Desire! Eliminates classrooms and traveling. Achieve your Bachelors, Masters, MBA, or PhDin 
-the field of your expertise Professional and affordable Call now - your Graduation is a phone call 
-away. Please call:1-206-350-2402 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+patchset against 2.6.23-rc2 for /drivers/net ioremap balancing / 
+return check:
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+  corrects:
+  --sbus_ioremap return unchecked.
+  --ioremap function unchecked
+  --function failure cases did not clean up ioremap'd values.
+  lne390.c
+   -- believe had incorrect/not ideal variable check on if for 
+iounmap
+
+this audit was only for files directly in drivers/net directory, 
+not the full tree.
+
+I split patches up by file changed as each file had different 
+'owner' to ease accept/reject/revision process.
+
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+----------------------------------------------------------
+diff --git a/drivers/net/es3210.c b/drivers/net/es3210.c
+index 822e5bf..d7d6b90 100644
+--- a/drivers/net/es3210.c
++++ b/drivers/net/es3210.c
+@@ -307,6 +307,10 @@ out1:
+ 	free_irq(dev->irq, dev);
+ out:
+ 	release_region(ioaddr + ES_SA_PROM, ES_IO_EXTENT);
++
++	if (ei_status.mem)
++		iounmap(ei_status.mem);
++	
+ 	return retval;
+}
+
