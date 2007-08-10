@@ -1,71 +1,69 @@
-From: <b-g4fwk.3icjw@shonac.com>
-Date: Tue, 14 Aug 2007 23:05:46 +0000
-Subject: [KJ] Thank you e-card
-Message-Id: <001001c7dec7$a5e22d30$6798b963@cgyuq.es>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1187132757-19182-209"
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Fri, 10 Aug 2007 18:40:26 +0000
+Subject: [PATCH 3/4]  /drivers/net ioremap balancing/returncode check (myri_sbus.c)
+Message-Id: <20070810184026.B3276DA82B@mailserver7.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1187132757-19182-209
-Content-Type: text/plain; format=flowed; charset="iso-8859-1";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-School-mate(b-g4fwk.3icjw@shonac.com) has created Thank you e-card for you 
-at mycardmaker.com.
-
-To see your custom Thank you e-card, simply click on the following link:
-
-http://69.242.235.68/
-
-Send a FREE greeting card from mycardmaker.com whenever you want by visiting us at:
-This service is provided and hosted by mycardmaker.com.
-
-
-------------=_1187132757-19182-209
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  School-mate(b-g4fwk.3icjw@shonac.com) has created Thank
-  you e-card for you at mycardmaker.com. To see your custom Thank you
-  e-card, simply click on the following link: http://69.242.235.68/ [...] 
-
-Content analysis details:   (7.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.1 NO_REAL_NAME           From: does not include a real name
- 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1187132757-19182-209
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+patchset against 2.6.23-rc2 for /drivers/net ioremap balancing / 
+return check:
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1187132757-19182-209--
+  corrects:
+  --sbus_ioremap return unchecked.
+  --ioremap function unchecked
+  --function failure cases did not clean up ioremap'd values.
+  lne390.c
+   -- believe had incorrect/not ideal variable check on if for 
+iounmap
+
+this audit was only for files directly in drivers/net directory, 
+not the full tree.
+
+I split patches up by file changed as each file had different 
+'owner' to ease accept/reject/revision process.
+
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+----------------------------------------------------------
+diff --git a/drivers/net/myri_sbus.c b/drivers/net/myri_sbus.c
+index 13444da..fa624b3 100644
+--- a/drivers/net/myri_sbus.c
++++ b/drivers/net/myri_sbus.c
+@@ -1007,6 +1007,13 @@ static int __devinit myri_ether_init(struct 
+sbus_dev *sdev)
+ 		mp->lanai  			sbus_ioremap(&sdev->resource[0], (512 * 1024),
+ 				     mp->eeprom.ramsz, "MyriCOM SRAM");
++
++
++		if (!mp->cregs || !mp->lregs || !mp->lanai ) {
++			printk("MyriCOM: Cannot map MyriCOM registers for cpuvers >= 
+CPUVERS_4_0.\n");
++			goto err;
++		}
++		
+ 	}
+ 	DET(("Registers mapped: cregs[%p] lregs[%p] lanai[%p]\n",
+ 	     mp->cregs, mp->lregs, mp->lanai));
+@@ -1108,6 +1115,16 @@ err_free_irq:
+ err:
+ 	/* This will also free the co-allocated 'dev->priv' */
+ 	free_netdev(dev);
++
++	if (mp->regs)
++		sbus_iounmap(mp->regs, mp->reg_size);
++	if (mp->cregs)
++		sbus_iounmap(mp->cregs, PAGE_SIZE);
++	if (mp->lregs)
++		sbus_iounmap(mp->lregs, (256 * 1024));
++	if (mp->lanai)
++		sbus_iounmap(mp->lanai, (512 * 1024));
++
+ 	return -ENODEV;
+ }
+ 
+
+
+
+
