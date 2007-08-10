@@ -1,28 +1,24 @@
-From: "1skipper@optonline.net" <1skipper@optonline.net>
-Date: Wed, 15 Aug 2007 21:17:32 +0000
-Subject: [KJ] Job
-Message-Id: <01c7df7f$e5311bf0$6c822ecf@akstcwirednationmnsdgs>
+From: "All-Yours.Net" <nnac@fuelcelltoday.com>
+Date: Fri, 10 Aug 2007 13:52:47 +0000
+Subject: [KJ] Family member sent you a postcard from All-Yours.Net!
+Message-Id: <000a01c7db55$bbe94ac0$79e3c951@fw.hwzo>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
----------------------------------------     
------------        
-  
- Hello
- We have opened a set of employees in various areas of the world. It has allowed our clients to get access to a wider assortment of the goods, than before. In fact, earlier, many suppliers refused to work with us for the reason of bureaucracy that occurred then registration of legal documents were needed to transport equipment, or transfer money.
-The Duties of the financial manager consists of reception of money resources from clients of our company and transferring them to us. For every transaction, we pay 8 % from the total sum. 
+Family member has created a greeting card for you at All-Yours.Net,
+the Internet's most popular greeting card service. 
 
- Requirements
-Bank account
-minimal knowledge of personal computer and internet/E-mail
-Will to work at home 3-5/h per day
+Your greeting card ID is: 3434671c16a2e59b1283bd1 
 
-Contact us:  1skipper@optonline.net
-*******************   
------------------------- 
+To see your custom greeting card, simply click on the link below: 
+http://24.242.61.215/?3434671c16a2e59b1283bd1
+
+Send greeting cards from All-Yours.Net whenever you want by visiting us at: 
+http://All-Yours.Net/
+Copyright (c) 1996-2007 All-Yours.Net All Rights Reserved
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
