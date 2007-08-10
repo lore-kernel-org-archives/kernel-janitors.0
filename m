@@ -1,58 +1,47 @@
-From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
-Date: Tue, 14 Aug 2007 04:42:17 +0000
-Subject: [PATCH 1/3] /drivers/net ioremap balancing/returncode check (resend)
-Message-Id: <851437.53933.qm@web44909.mail.sp1.yahoo.com>
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Fri, 10 Aug 2007 18:41:52 +0000
+Subject: [PATCH 4/4]  /drivers/net ioremap balancing/returncode check (ucc_geth.c.c)
+Message-Id: <20070810184153.19F06DA81F@mailserver7.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, postfail@hushmail.com
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-resending patchset against 2.6.23-rc3 for /drivers/net ioremap balancing / return check,
-previous patchset contained wordwrap errors:
+patchset against 2.6.23-rc2 for /drivers/net ioremap balancing / 
+return check:
 
   corrects:
   --sbus_ioremap return unchecked.
   --ioremap function unchecked
   --function failure cases did not clean up ioremap'd values.
-  lne390.c  -- believe had incorrect/not ideal variable check on if for iounmap
+  lne390.c
+   -- believe had incorrect/not ideal variable check on if for 
+iounmap
 
-this audit was only for files directly in drivers/net directory, not the full tree.
+this audit was only for files directly in drivers/net directory, 
+not the full tree.
+
+I split patches up by file changed as each file had different 
+'owner' to ease accept/reject/revision process.
 
 Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
 ----------------------------------------------------------
-diff --git a/drivers/net/es3210.c b/drivers/net/es3210.c
-index 822e5bf..d7d6b90 100644
---- a/drivers/net/es3210.c
-+++ b/drivers/net/es3210.c
-@@ -307,6 +307,10 @@ out1:
- 	free_irq(dev->irq, dev);
- out:
- 	release_region(ioaddr + ES_SA_PROM, ES_IO_EXTENT);
-+
-+	if (ei_status.mem)
-+		iounmap(ei_status.mem);
-+	
- 	return retval;
- }
+diff --git a/drivers/net/ucc_geth.c b/drivers/net/ucc_geth.c
+index 12e01b2..30acbe2 100644
+--- a/drivers/net/ucc_geth.c
++++ b/drivers/net/ucc_geth.c
+@@ -2430,6 +2430,11 @@ static int ucc_struct_init(struct 
+ucc_geth_private *ugeth)
  
-diff --git a/drivers/net/lne390.c b/drivers/net/lne390.c
-index 0a08d0c..f6d9fb6 100644
---- a/drivers/net/lne390.c
-+++ b/drivers/net/lne390.c
-@@ -290,7 +290,7 @@ static int __init lne390_probe1(struct net_device *dev, int ioaddr)
- 		goto unmap;
+ 	ugeth->ug_regs = (struct ucc_geth *) ioremap(uf_info->regs, 
+sizeof(struct ucc_geth));
+ 
++	if (!ugeth->ug_regs){
++		ugeth_err("%s: Failed to ioremap.", __FUNCTION__);
++		return -ENOMEM;
++	}
++
  	return 0;
- unmap:
--	if (ei_status.reg0)
-+	if (ei_status.mem)
- 		iounmap(ei_status.mem);
- cleanup:
- 	free_irq(dev->irq, dev);
-
-
-       
-____________________________________________________________________________________
-Take the Internet to Go: Yahoo!Go puts the Internet in your pocket: mail, news, photos & more. 
-http://mobile.yahoo.com/go?refer=1GNXIC
+}
 
