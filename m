@@ -1,29 +1,23 @@
-From: "Edna Escobar" <TiffanywineDowning@bolsters.com>
-Date: Sat, 04 Aug 2007 18:42:12 +0000
-Subject: [KJ] Next Big market SuperWinner
-Message-Id: <b10ac01c7d745$0ec5ae60$2f01a8c0@poop>
+From: Vien <Vien.hatch@fslkse.com>
+Date: Fri, 10 Aug 2007 12:19:54 +0000
+Subject: [KJ] Realtime quotes-kernel-janitors
+Message-Id: <60494B72.A7C6A87@fslkse.com>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="------------060806050403020601070104"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-SMS MESSAGING IS THE FUTURE AS WE KNOW IT. WHO WILL LEAD IN THIS TELECOMMUNICATIONS DIVISION? ExMt ExMt ExMt !!
+--------------060806050403020601070104
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
 
-**BIG NEWS COMMING OUT FROM THIS COMPANY, FOR SURE TO BE A GROUND SHAKER.**
 
-So Who Is EXMT? Exchange Mobile Tele Co
-PK Sym: EXMT
-Closed At Last: AUG 03   $0.22  +0.02  10.0% Change 
-Date OF Action? - AUG MONDAY 06, 2007
 
-Over the last 6 years, Exchange Mobile has been intensely involved in the wireless messaging and internet communications market. It has developed and implemented independent platforms to provide internet users and mobile subscribers an instantaneous form of communication. 
-
-Founded in 2000, EXCHANGE MOBILE Telecommunications Corp. is an innovator in developing customized applications leveraging leading-edge wireless technology, capturing the imagination of the wireless market while fueling consumer demand. 
-
-In the early part of 2002, EXCHANGE MOBILE developed wireless applications that offered SMS (Short Messaging Services) based value-added services to mobile users. EXCHANGE MOBILE has spent the early stages of its corporate existence building and developing a powerful and dynamic platform based on current SMS, WAP, and other emerging wireless protocols. 
-
-EXMT A HIGH PERFORMANCE STOCK? WE THINK SO AND PLAN TO SEE HUGE THINGS AUGUST 06 (MONDAY) 2007. ^EXMT^
+--------------060806050403020601070104
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -33,3 +27,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+--------------060806050403020601070104--
