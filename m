@@ -1,24 +1,26 @@
-From: "greeting-cards.com" <ttgn@rwra.org>
-Date: Thu, 09 Aug 2007 21:23:43 +0000
-Subject: [KJ] Colleague sent you a greeting card from greeting-cards.com!
-Message-Id: <001401c7dacb$8fe6eac0$a0ce5fc7@fozc.spypr>
+From: "freewebcards.com" <jniz@buildersconf.co.uk>
+Date: Fri, 10 Aug 2007 00:29:40 +0000
+Subject: [KJ] Colleague sent you a greeting card from freewebcards.com!
+Message-Id: <002d01c7dae5$8a7de1a0$e437933b@rdk.vyvii>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <001401c7dacb$8fe6eac0$a0ce5fc7@fozc.spypr>
+In-Reply-To: <001401c7dacb$8fe6eac0$a0ce5fc7@fozc.spypr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Colleague has created an ecard for you at greeting-cards.com,
+Colleague has created an ecard for you at freewebcards.com,
 the Internet's most popular greeting card service. 
 
-Your greeting card ID is: 38ee7c634591933434671c1 
+Your greeting card ID is: b19d3383b4c009ee64d82c3a9e 
 
 To see your custom greeting card, simply click on the link below: 
-http://75.202.75.166/?38ee7c634591933434671c1
+http://68.78.67.143/?b19d3383b4c009ee64d82c3a9e
 
-Send greeting cards from greeting-cards.com whenever you want by visiting us at: 
-http://greeting-cards.com/
-Copyright (c) 1996-2007 greeting-cards.com All Rights Reserved
+Send greeting cards from freewebcards.com whenever you want by visiting us at: 
+http://freewebcards.com/
+Copyright (c) 1996-2007 freewebcards.com All Rights Reserved
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
