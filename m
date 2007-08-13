@@ -1,31 +1,49 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Thu, 16 Aug 2007 11:24:02 +0000
-Subject: Re: debug printk's
-Message-Id: <20070816112402.GI16277@parisc-linux.org>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:05:59 +0000
+Subject: [kj] is_power_of_2 in drivers/s390/block/dasd_int.h
+Message-Id: <1187009639.7273.6.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070816070719.550CB179C7E@place.org>
-In-Reply-To: <20070816070719.550CB179C7E@place.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 16, 2007 at 02:07:19AM -0500, Paul Jimenez wrote:
-> So: 187 definitions of dprintk and 130 definitions of DPRINTK.  Plus
-> 10 mixed-case fans and various and sundry miscellaneous versions.  Note
-> this is not *uses*, it's the number of *definitions*.
-> 
-> So, to clarify my original question a bit: is there policy we can refer
-> to to justify cleaning this up?
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
 
-pr_debug() in include/linux/kernel.h, which also refers to dev_dbg(),
-neither of which you mentioned ;-)
-
-But take it slowly, co-ordinate with the driver author, and don't try to
-tell people that it's policy -- it's a best practice, sure, but people
-are free to ignore it if it makes their life easier.
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/drivers/s390/block/dasd_int.h b/drivers/s390/block/dasd_int.h
+index aeda526..d427dae 100644
+--- a/drivers/s390/block/dasd_int.h
++++ b/drivers/s390/block/dasd_int.h
+@@ -53,6 +53,7 @@
+ #include <linux/genhd.h>
+ #include <linux/hdreg.h>
+ #include <linux/interrupt.h>
++#include <linux/log2.h>
+ #include <asm/ccwdev.h>
+ #include <linux/workqueue.h>
+ #include <asm/debug.h>
+@@ -456,7 +457,7 @@ dasd_free_chunk(struct list_head *chunk_list, void *mem)
+ static inline int
+ dasd_check_blocksize(int bsize)
+ {
+-	if (bsize < 512 || bsize > 4096 || (bsize & (bsize - 1)) != 0)
++	if (bsize < 512 || bsize > 4096 || !is_power_of_2(bsize))
+ 		return -EMEDIUMTYPE;
+ 	return 0;
+ }
 
 -- 
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
