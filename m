@@ -1,64 +1,65 @@
-From: "Alvin Keene" <mejy@brainstormtech.com>
-Date: Thu, 16 Aug 2007 04:16:52 +0000
-Subject: [KJ] Re:VIRUS
-Message-Id: <01c7e01f$a92dd670$dafedbd9@mejy>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1187237227-19182-206"
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:07:29 +0000
+Subject: [kj] is_power_of_2 in scsi
+Message-Id: <1187009729.7273.9.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1187237227-19182-206
-Content-Type: text/plain;
-  charset="windows-1250"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-Have you ever wanted a pricey Watch?
-
-
-We have the piece for you!
-
-We have all the big names 
-for a low fraction of the price.
-
-www.speokii.com
-
-
-
-------------=_1187237227-19182-206
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Have you ever wanted a pricey Watch? We have the piece
-  for you! We have all the big names for a low fraction of the price.
-  [...] 
-
-Content analysis details:   (6.3 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.8 DATE_IN_FUTURE_12_24   Date: is 12 to 24 hours after Received: date
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1187237227-19182-206
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: James.Bottomley@SteelEye.com, davem@davemloft.net, open-iscsi@googlegroups.com
+Cc: linux-scsi@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/drivers/scsi/esp_scsi.c b/drivers/scsi/esp_scsi.c
+index 77b06a9..908f342 100644
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -14,6 +14,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/init.h>
+ #include <linux/irqreturn.h>
++#include <linux/log2.h>
+ 
+ #include <asm/irq.h>
+ #include <asm/io.h>
+@@ -1126,7 +1127,7 @@ static int esp_reconnect(struct esp *esp)
+ 		if (!(bits & esp->scsi_id_mask))
+ 			goto do_reset;
+ 		bits &= ~esp->scsi_id_mask;
+-		if (!bits || (bits & (bits - 1)))
++		if (!is_power_of_2(bits))
+ 			goto do_reset;
+ 
+ 		target = ffs(bits) - 1;
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index 5606d1e..ffa6cc1 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -24,6 +24,7 @@
+ #include <linux/types.h>
+ #include <linux/kfifo.h>
+ #include <linux/delay.h>
++#include <linux/log2.h>
+ #include <asm/unaligned.h>
+ #include <net/tcp.h>
+ #include <scsi/scsi_cmnd.h>
+@@ -1366,7 +1367,7 @@ iscsi_session_setup(struct iscsi_transport *iscsit,
+ 		qdepth = ISCSI_DEF_CMD_PER_LUN;
+ 	}
+ 
+-	if (cmds_max < 2 || (cmds_max & (cmds_max - 1)) ||
++	if (!is_power_of_2(cmds_max) ||
+ 	    cmds_max >= ISCSI_MGMT_ITT_OFFSET) {
+ 		if (cmds_max != 0)
+ 			printk(KERN_ERR "iscsi: invalid can_queue of %d. "
+
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -68,4 +69,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1187237227-19182-206--
