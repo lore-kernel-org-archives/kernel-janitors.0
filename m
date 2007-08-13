@@ -1,60 +1,68 @@
-From: "Carla Neal" <dan.buntmanplxf@houchies.com>
-Date: Mon, 27 Aug 2007 10:13:54 +0000
-Subject: [KJ] for Kernel-janitors
-Message-Id: <61276467.86554935864159@houchies.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1188210759-19182-214"
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:10:47 +0000
+Subject: [kj] is_power_of_2 in ntfs
+Message-Id: <1187009927.7273.13.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1188210759-19182-214
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Cultivate only the habits that you are willing should
-  master you. Keep in mind that the true measure of an individual is how
-  he treats a person who can do him absolutely no good. There were many
-  times my pants were so thin I could sit on a dime and tell if it was
-  heads or tails. Make haste slowly. All heiresses are beautiful. A
-  foolish consistency is the hobgoblin of little minds, adored by little
-  statesmen and philosophers and divines. A good memory is one trained to
-  forget the trivial. It is much easier to be critical than to be correct.
-  Consider how hard it is to change yourself and you'll understand what
-  little chance you have in trying to change others. Men always fall for
-  frigid women because they put on the best show. All love that has not
-  friendship for its base, is like a mansion built upon the sand. Hope on,
-  and save yourself for prosperous times. What the eye does not admire the
-  heart does not desire. [...] 
-
-Content analysis details:   (7.4 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 3.0 HTML_IMAGE_ONLY_12     BODY: HTML: images with 800-1200 bytes of words
- 1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
-                            [score: 0.7795]
- 0.0 HTML_MESSAGE           BODY: HTML included in message
- 1.4 HTML_10_20             BODY: Message is 10% to 20% HTML
- 2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
-
-
-
-------------=_1188210759-19182-214
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: aia21@cantab.net
+Cc: linux-ntfs-dev@lists.sourceforge.net, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
+index b532a73..8152f79 100644
+--- a/fs/ntfs/inode.c
++++ b/fs/ntfs/inode.c
+@@ -27,6 +27,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/quotaops.h>
+ #include <linux/slab.h>
++#include <linux/log2.h>
+ 
+ #include "aops.h"
+ #include "attrib.h"
+@@ -1574,7 +1575,7 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
+ 	ntfs_debug("Index collation rule is 0x%x.",
+ 			le32_to_cpu(ir->collation_rule));
+ 	ni->itype.index.block_size = le32_to_cpu(ir->index_block_size);
+-	if (ni->itype.index.block_size & (ni->itype.index.block_size - 1)) {
++	if (!is_power_of_2(ni->itype.index.block_size)) {
+ 		ntfs_error(vi->i_sb, "Index block size (%u) is not a power of "
+ 				"two.", ni->itype.index.block_size);
+ 		goto unm_err_out;
+diff --git a/fs/ntfs/logfile.c b/fs/ntfs/logfile.c
+index acfed32..00b2d02 100644
+--- a/fs/ntfs/logfile.c
++++ b/fs/ntfs/logfile.c
+@@ -26,6 +26,7 @@
+ #include <linux/highmem.h>
+ #include <linux/buffer_head.h>
+ #include <linux/bitops.h>
++#include <linux/log2.h>
+ 
+ #include "attrib.h"
+ #include "aops.h"
+@@ -63,9 +64,8 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
+ 	logfile_log_page_size = le32_to_cpu(rp->log_page_size);
+ 	if (logfile_system_page_size < NTFS_BLOCK_SIZE ||
+ 			logfile_log_page_size < NTFS_BLOCK_SIZE ||
+-			logfile_system_page_size &
+-			(logfile_system_page_size - 1) ||
+-			logfile_log_page_size & (logfile_log_page_size - 1)) {
++			!is_power_of_2(logfile_system_page_size) ||
++			!is_power_of_2(logfile_log_page_size)) {
+ 		ntfs_error(vi->i_sb, "$LogFile uses unsupported page size.");
+ 		return false;
+ 	}
+
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -64,4 +72,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1188210759-19182-214--
