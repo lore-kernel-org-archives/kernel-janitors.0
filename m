@@ -1,64 +1,51 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 03 Aug 2007 18:27:06 +0000
-Subject: Re: [PATCH 06/13] dev->priv to netdev_priv(dev), for drivers/net/ibm_emac
-Message-Id: <87ir7w324l.fsf_-_@wanadoo.fr>
+From: Surya Prabhakar N <surya.prabhakar@wipro.com>
+Date: Mon, 13 Aug 2007 10:04:44 +0000
+Subject: [KJ] replacing kmalloc with kzalloc in drivers/mtd/chips/jedec_probe.c
+Message-Id: <1186998764.29518.11.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200708031734.TAA00777@ifs.emn.fr>
-	<20070803174754.GA1352@gate.ebshome.net>
-In-Reply-To: <20070803174754.GA1352@gate.ebshome.net> (Eugene Surovegin's
-	message of "Fri, 3 Aug 2007 10:47:54 -0700")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Eugene Surovegin <ebs@ebshome.net>
-Cc: kernel-janitors@vger.kernel.org, jeff@garzik.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: dwmw2@infradead.org, linux-mtd@lists.infradead.org
+Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Eugene Surovegin <ebs@ebshome.net> writes:
-
-> On Fri, Aug 03, 2007 at 07:34:19PM +0200, Yoann Padioleau wrote:
->> 
->> Replacing accesses to dev->priv to netdev_priv(dev). The replacment
->> is safe when netdev_priv is used to access a private structure that is
->> right next to the net_device structure in memory. Cf
->> http://groups.google.com/group/comp.os.linux.development.system/browse_thread/thread/de19321bcd94dbb8/0d74a4adcd6177bd
->> This is the case when the net_device structure was allocated with
->> a call to alloc_netdev or one of its derivative.
->
-> NAK.
->
-> While that assumption is correct for the actual emac net device, it's 
-> not for MAL poll one.
-
-I forgot to add another condition in my semantic patch. 
-
-I was looking only for xxx->priv = yyy; 
-with this rule:
-
-@ danger @
-struct net_device *dev;
-expression E;
-@@
- dev->priv = E
-
-whereas sometimes it's written xxx.priv = yyy; 
-as in ibm_emac_mal ( mal->poll_dev.priv = mal; )
-
-By adding the following rule in my semantic patch I correctly
-_dont_ modify anything under drivers/net/ibm_emac
-
-@ danger @
-struct net_device dev;
-expression E;
-@@
- dev.priv = E
+Hi,
+   Replacing kmalloc with kzalloc and cleaning up memset in
+drivers/mtd/chips/jedec_probe.c.
 
 
-It's also the case for  drivers/net/e1000/e1000_main.c.
+Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
+---
 
+diff --git a/drivers/mtd/chips/jedec_probe.c b/drivers/mtd/chips/jedec_probe.c
+index 58e561e..ba5fc39 100644
+--- a/drivers/mtd/chips/jedec_probe.c
++++ b/drivers/mtd/chips/jedec_probe.c
+@@ -1853,14 +1853,12 @@ static int cfi_jedec_setup(struct cfi_private *p_cfi, int index)
+ 
+ 	num_erase_regions = jedec_table[index].NumEraseRegions;
+ 
+-	p_cfi->cfiq = kmalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
++	p_cfi->cfiq = kzalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
+ 	if (!p_cfi->cfiq) {
+ 		//xx printk(KERN_WARNING "%s: kmalloc failed for CFI ident structure\n", map->name);
+ 		return 0;
+ 	}
+ 
+-	memset(p_cfi->cfiq,0,sizeof(struct cfi_ident));
+-
+ 	p_cfi->cfiq->P_ID = jedec_table[index].CmdSet;
+ 	p_cfi->cfiq->NumEraseRegions = jedec_table[index].NumEraseRegions;
+ 	p_cfi->cfiq->DevSize = jedec_table[index].DevSize;
 
->
-> You patch breaks a working driver.
->
-> -- 
-> Eugene
+--
+thanks
+surya.
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
