@@ -1,8 +1,10 @@
 From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:02:33 +0000
+Date: Mon, 13 Aug 2007 13:02:57 +0000
 Subject: [kj] is_power_of_2 in drivers/block/rd.c
-Message-Id: <1187009433.7273.0.camel@merlin.linuxcoe.com>
+Message-Id: <1187009457.7273.1.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1187009433.7273.0.camel@merlin.linuxcoe.com>
+In-Reply-To: <1187009433.7273.0.camel@merlin.linuxcoe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
