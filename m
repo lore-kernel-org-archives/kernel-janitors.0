@@ -1,81 +1,63 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 03 Aug 2007 17:34:30 +0000
-Subject: [PATCH 08/13] dev->priv to netdev_priv(dev), for drivers/net/netxen
-Message-Id: <200708031734.TAA00783@ifs.emn.fr>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:09:02 +0000
+Subject: [kj] is_power_of_2 in ext
+Message-Id: <1187009822.7273.11.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: amitkale@netxen.com, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: sct@redhat.com, akpm@linux-foundation.org, adilger@clusterfs.com
+Cc: linux-ext4@vger.kernel.org, Kernel Janitors List <kernel-janitors@lists.osdl.org>
 
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
 
-Replacing accesses to dev->priv to netdev_priv(dev). The replacment
-is safe when netdev_priv is used to access a private structure that is
-right next to the net_device structure in memory. Cf
-http://groups.google.com/group/comp.os.linux.development.system/browse_thread/thread/de19321bcd94dbb8/0d74a4adcd6177bd
-This is the case when the net_device structure was allocated with
-a call to alloc_netdev or one of its derivative.
-
-Here is an excerpt of the semantic patch that performs the transformation
-
-@ rule1 @
-type T;
-struct net_device *dev;
-@@
-
- dev = 
-(
-        alloc_netdev
-|         
-        alloc_etherdev
-|
-        alloc_trdev
-)
-   (sizeof(T), ...)
-
-@ rule1bis @
-struct net_device *dev;
-expression E;
-@@
- dev->priv = E
-
-@ rule2 depends on rule1 && !rule1bis  @
-struct net_device *dev;
-type rule1.T;
-@@
-
-- (T*) dev->priv
-+ netdev_priv(dev)
-
-Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-Cc: amitkale@netxen.com
-Cc: akpm@linux-foundation.org
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
 ---
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 639a32c..f932c60 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -30,6 +30,7 @@
+ #include <linux/vfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/mount.h>
++#include <linux/log2.h>
+ #include <asm/uaccess.h>
+ #include "ext2.h"
+ #include "xattr.h"
+@@ -804,7 +805,7 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
+ 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
+ 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
+ 		if ((sbi->s_inode_size < EXT2_GOOD_OLD_INODE_SIZE) ||
+-		    (sbi->s_inode_size & (sbi->s_inode_size - 1)) ||
++		    !is_power_of_2(sbi->s_inode_size) ||
+ 		    (sbi->s_inode_size > blocksize)) {
+ 			printk ("EXT2-fs: unsupported inode size: %d\n",
+ 				sbi->s_inode_size);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 4550b83..0bfb88e 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1667,7 +1667,7 @@ static int ext4_fill_super (struct super_block *sb, void *data, int silent)
+ 	if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_64BIT)) {
+ 		if (sbi->s_desc_size < EXT4_MIN_DESC_SIZE_64BIT ||
+ 		    sbi->s_desc_size > EXT4_MAX_DESC_SIZE ||
+-		    sbi->s_desc_size & (sbi->s_desc_size - 1)) {
++		    !is_power_of_2(sbi->s_desc_size)) {
+ 			printk(KERN_ERR
+ 			       "EXT4-fs: unsupported descriptor size %lu\n",
+ 			       sbi->s_desc_size);
 
- drivers/net/netxen/netxen_nic_main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
-diff --git a/drivers/net/netxen/netxen_nic_main.c b/drivers/net/netxen/netxen_nic_main.c
-index 08a62ac..c14c178 100644
---- a/drivers/net/netxen/netxen_nic_main.c
-+++ b/drivers/net/netxen/netxen_nic_main.c
-@@ -329,7 +329,7 @@ netxen_nic_probe(struct pci_dev *pdev, c
- 	SET_MODULE_OWNER(netdev);
- 	SET_NETDEV_DEV(netdev, &pdev->dev);
- 
--	adapter = netdev->priv;
-+	adapter = netdev_priv(netdev);
- 	memset(adapter, 0 , sizeof(struct netxen_adapter));
- 
- 	adapter->ahw.pdev = pdev;
-@@ -850,7 +850,7 @@ static void __devexit netxen_nic_remove(
-  */
- static int netxen_nic_open(struct net_device *netdev)
- {
--	struct netxen_adapter *adapter = (struct netxen_adapter *)netdev->priv;
-+	struct netxen_adapter *adapter = netdev_priv(netdev);
- 	int err = 0;
- 	int ctx, ring;
- 
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
