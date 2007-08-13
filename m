@@ -1,65 +1,49 @@
-From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
-Date: Tue, 14 Aug 2007 04:44:49 +0000
-Subject: [PATCH 2/3] /drivers/net myri_sbus.c ioremap balancing/returncode check (resend)
-Message-Id: <303513.3821.qm@web44906.mail.sp1.yahoo.com>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:05:37 +0000
+Subject: [kj] is_power_of_2 in drivers/rtc/rtc-s3c.c
+Message-Id: <1187009617.7273.5.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, postfail@hushmail.com
+To: kernel-janitors@vger.kernel.org
 
-resending patchset against 2.6.23-rc3 for /drivers/net ioremap balancing / return check,
-previous patchset contained wordwrap errors:
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
 
-  corrects:
-  --sbus_ioremap return unchecked.
-  --ioremap function unchecked
-  --function failure cases did not clean up ioremap'd values.
-  lne390.c  -- believe had incorrect/not ideal variable check on if for iounmap
-
-this audit was only for files directly in drivers/net directory, not the full tree.
-
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-----------------------------------------------------------
-diff --git a/drivers/net/myri_sbus.c b/drivers/net/myri_sbus.c
-index 13444da..138aabd 100644
---- a/drivers/net/myri_sbus.c
-+++ b/drivers/net/myri_sbus.c
-@@ -1007,6 +1007,13 @@ static int __devinit myri_ether_init(struct sbus_dev *sdev)
- 		mp->lanai  			sbus_ioremap(&sdev->resource[0], (512 * 1024),
- 				     mp->eeprom.ramsz, "MyriCOM SRAM");
-+
-+
-+		if (!mp->cregs || !mp->lregs || !mp->lanai ) {
-+			printk("MyriCOM: Cannot map registers for ioremap fail.\n");
-+			goto err;
-+		}
-+		
- 	}
- 	DET(("Registers mapped: cregs[%p] lregs[%p] lanai[%p]\n",
- 	     mp->cregs, mp->lregs, mp->lanai));
-@@ -1108,6 +1115,16 @@ err_free_irq:
- err:
- 	/* This will also free the co-allocated 'dev->priv' */
- 	free_netdev(dev);
-+
-+	if (mp->regs)
-+		sbus_iounmap(mp->regs, mp->reg_size);
-+	if (mp->cregs)
-+		sbus_iounmap(mp->cregs, PAGE_SIZE);
-+	if (mp->lregs)
-+		sbus_iounmap(mp->lregs, (256 * 1024));
-+	if (mp->lanai)
-+		sbus_iounmap(mp->lanai, (512 * 1024));
-+
- 	return -ENODEV;
- }
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 8c1012b..9b06dc3 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -20,6 +20,7 @@
+ #include <linux/rtc.h>
+ #include <linux/bcd.h>
+ #include <linux/clk.h>
++#include <linux/log2.h>
  
+ #include <asm/hardware.h>
+ #include <asm/uaccess.h>
+@@ -311,7 +312,7 @@ static int s3c_rtc_ioctl(struct device *dev,
+ 	case RTC_IRQP_SET:
+ 		/* check for power of 2 */
+ 
+-		if ((arg & (arg-1)) != 0 || arg < 1) {
++		if (!is_power_of_2(arg)) {
+ 			ret = -EINVAL;
+ 			goto exit;
+ 		}
 
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-       
-____________________________________________________________________________________
-Be a better Heartthrob. Get better relationship answers from someone who knows. Yahoo! Answers - Check it out. 
-http://answers.yahoo.com/dir/?link=list&sid96545433
-
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
