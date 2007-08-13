@@ -1,69 +1,53 @@
-From: <glatz.zell@tkofc.org>
-Date: Tue, 14 Aug 2007 11:08:58 +0000
-Subject: [KJ] Animated e-card
-Message-Id: <000a01c7de63$82e9afb0$9c5052a5@xcxar.uvb>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1187089736-19182-177"
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:05:14 +0000
+Subject: [kj] is_power_of_2 in drivers/pci/pci.c
+Message-Id: <1187009594.7273.4.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1187089736-19182-177
-Content-Type: text/plain; format=flowed; charset="iso-8859-1";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-School mate(glatz.zell@tkofc.org) has created Animated e-card for you 
-at americangreetings.com.
-
-To see your custom Animated e-card, simply click on the following 
-Internet address (if your mail program doesn't support this feature 
-you will need to COPY and PASTE the address into your browser's address box):
-
-http://74.76.120.93/?145456fd20ac517d3c2de8b7dac58f47
-
-Send a FREE greeting card from americangreetings.com whenever you want by visiting us at:
-http://americangreetings.com/
-This service is provided and hosted by americangreetings.com.
-
-
-------------=_1187089736-19182-177
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  School mate(glatz.zell@tkofc.org) has created Animated
-  e-card for you at americangreetings.com. To see your custom Animated
-  e-card, simply click on the following Internet address (if your mail
-  program doesn't support this feature you will need to COPY and PASTE the
-  address into your browser's address box): [...] 
-
-Content analysis details:   (7.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.1 NO_REAL_NAME           From: does not include a real name
- 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1187089736-19182-177
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: gregkh@suse.de
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-pci@atrey.karlin.mff.cuni.cz, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 37c00f6..19a64a3 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/spinlock.h>
+ #include <linux/string.h>
++#include <linux/log2.h>
+ #include <asm/dma.h>	/* isa_dma_bridge_buggy */
+ #include "pci.h"
+ 
+@@ -1454,7 +1455,7 @@ int pcix_set_mmrbc(struct pci_dev *dev, int mmrbc)
+ 	int cap, err = -EINVAL;
+ 	u32 stat, cmd, v, o;
+ 
+-	if (mmrbc < 512 || mmrbc > 4096 || (mmrbc & (mmrbc-1)))
++	if (mmrbc < 512 || mmrbc > 4096 || !is_power_of_2(mmrbc))
+ 		goto out;
+ 
+ 	v = ffs(mmrbc) - 10;
+@@ -1526,7 +1527,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
+ 	int cap, err = -EINVAL;
+ 	u16 ctl, v;
+ 
+-	if (rq < 128 || rq > 4096 || (rq & (rq-1)))
++	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
+ 		goto out;
+ 
+ 	v = (ffs(rq) - 8) << 12;
+
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -73,4 +57,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1187089736-19182-177--
