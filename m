@@ -1,8 +1,10 @@
 From: Surya Prabhakar N <surya.prabhakar@wipro.com>
-Date: Mon, 13 Aug 2007 10:04:44 +0000
-Subject: [KJ] replacing kmalloc with kzalloc in drivers/mtd/chips/jedec_probe.c
-Message-Id: <1186998764.29518.11.camel@bluegenie>
+Date: Mon, 13 Aug 2007 10:08:32 +0000
+Subject: [KJ] replacing kmalloc with kzalloc in drivers/mtd/devices/docprobe.c
+Message-Id: <1186998992.29518.15.camel@bluegenie>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <1186998764.29518.11.camel@bluegenie>
+In-Reply-To: <1186998764.29518.11.camel@bluegenie>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,32 +13,35 @@ Cc: kernel-janitors <kernel-janitors@lists.osdl.org>, Linux Kernel <linux-kernel
 
 Hi,
    Replacing kmalloc with kzalloc and cleaning up memset in
-drivers/mtd/chips/jedec_probe.c.
+drivers/mtd/devices/docprobe.c.
 
 
 Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
 ---
 
-diff --git a/drivers/mtd/chips/jedec_probe.c b/drivers/mtd/chips/jedec_probe.c
-index 58e561e..ba5fc39 100644
---- a/drivers/mtd/chips/jedec_probe.c
-+++ b/drivers/mtd/chips/jedec_probe.c
-@@ -1853,14 +1853,12 @@ static int cfi_jedec_setup(struct cfi_private *p_cfi, int index)
+diff --git a/drivers/mtd/devices/docprobe.c b/drivers/mtd/devices/docprobe.c
+index 54aa759..53be397 100644
+--- a/drivers/mtd/devices/docprobe.c
++++ b/drivers/mtd/devices/docprobe.c
+@@ -254,7 +254,7 @@ static void __init DoC_Probe(unsigned long physadr)
+ 			return;
+ 		}
+ 		docfound = 1;
+-		mtd = kmalloc(sizeof(struct DiskOnChip) + sizeof(struct mtd_info), GFP_KERNEL);
++		mtd = kzalloc(sizeof(struct DiskOnChip) + sizeof(struct mtd_info), GFP_KERNEL);
  
- 	num_erase_regions = jedec_table[index].NumEraseRegions;
+ 		if (!mtd) {
+ 			printk(KERN_WARNING "Cannot allocate memory for data structures. Dropping.\n");
+@@ -264,9 +264,6 @@ static void __init DoC_Probe(unsigned long physadr)
  
--	p_cfi->cfiq = kmalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
-+	p_cfi->cfiq = kzalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
- 	if (!p_cfi->cfiq) {
- 		//xx printk(KERN_WARNING "%s: kmalloc failed for CFI ident structure\n", map->name);
- 		return 0;
- 	}
+ 		this = (struct DiskOnChip *)(&mtd[1]);
  
--	memset(p_cfi->cfiq,0,sizeof(struct cfi_ident));
+-		memset((char *)mtd,0, sizeof(struct mtd_info));
+-		memset((char *)this, 0, sizeof(struct DiskOnChip));
 -
- 	p_cfi->cfiq->P_ID = jedec_table[index].CmdSet;
- 	p_cfi->cfiq->NumEraseRegions = jedec_table[index].NumEraseRegions;
- 	p_cfi->cfiq->DevSize = jedec_table[index].DevSize;
+ 		mtd->priv = this;
+ 		this->virtadr = docptr;
+ 		this->physadr = physadr;
 
 --
 thanks
