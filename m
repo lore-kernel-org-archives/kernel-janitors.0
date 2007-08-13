@@ -1,29 +1,27 @@
-From: <mcefai@nnam.eds.com>
-Date: Tue, 28 Aug 2007 11:13:26 +0000
-Subject: [KJ] Your news release is here.
-Message-Id: <002101c7e964$74613ec0$90e0777d@bxkbg>
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Mon, 13 Aug 2007 14:09:26 +0000
+Subject: Withdrawn for now: /drivers/char/* /drivers/net/* drivers/atm/* ioremap balancing/ returncode check
+Message-Id: <20070813140926.6AA23DA82D@mailserver7.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <46D2F1C7.1040601@azbar.org>
-In-Reply-To: <46D2F1C7.1040601@azbar.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: alan@lxorguk.ukuu.org.uk
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-ERMX News Hits. Plans To Expand Dividend Opportunities!
+On Mon, 13 Aug 2007 09:21:03 -0400 Alan Cox 
+<alan@lxorguk.ukuu.org.uk> wrote:
+the patch itself appears to be wrapped and 
+>mangled
+>and is not suitable for application.
 
-EntreMetrix Inc. (ERMX)
-$0.089 UP 11.25%
+I just verified that several patches I've submitted since 8/10 hit 
+this same issue due to *some* recent change on the server side of 
+my mail client.
 
-ERMX Acquired Gladiator Challenge. G.C. is mixed martial arts biggest
-live event promoter. This asset expansion will increase dividend
-opportunities. Act fast, read up, and move on ERMX Tuesday first thing.
+Will resubmit after resolving issue w/ mail provider...
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+---------------------------------------
+Scott Thompson / postfail@hushmail.com
+---------------------------------------
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
