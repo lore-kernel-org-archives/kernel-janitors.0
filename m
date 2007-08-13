@@ -1,37 +1,50 @@
-From: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Date: Tue, 31 Jul 2007 22:14:57 +0000
-Subject: [PATCH 78] fs/proc/vmcore.c: kmalloc + memset conversion to kzalloc
-Message-Id: <200708010014.58099.m.kozlowski@tuxland.pl>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:15:13 +0000
+Subject: [kj] is_power_of_2 in mm/slub.c
+Message-Id: <1187010193.7273.15.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707311845.48807.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, gregkh@suse.de
+To: clameter@sgi.com
+Cc: linux-mm@kvack.org, linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
 
-Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
 
- fs/proc/vmcore.c | 16780 -> 16727 (-53 bytes)
- fs/proc/vmcore.o | 113032 -> 112744 (-288 bytes)
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/mm/slub.c b/mm/slub.c
+index 69d02e3..1241d14 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -20,6 +20,7 @@
+ #include <linux/mempolicy.h>
+ #include <linux/ctype.h>
+ #include <linux/kallsyms.h>
++#include <linux/log2.h>
+ 
+ /*
+  * Lock order:
+@@ -2606,7 +2607,7 @@ void __init kmem_cache_init(void)
+ 	 * around with ARCH_KMALLOC_MINALIGN
+ 	 */
+ 	BUILD_BUG_ON(KMALLOC_MIN_SIZE > 256 ||
+-		(KMALLOC_MIN_SIZE & (KMALLOC_MIN_SIZE - 1)));
++		!is_power_of_2(KMALLOC_MIN_SIZE));
+ 
+ 	for (i = 8; i < KMALLOC_MIN_SIZE; i += 8)
+ 		size_index[(i - 1) / 8] = KMALLOC_SHIFT_LOW;
 
- fs/proc/vmcore.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
---- linux-2.6.23-rc1-mm1-a/fs/proc/vmcore.c	2007-07-26 13:07:46.000000000 +0200
-+++ linux-2.6.23-rc1-mm1-b/fs/proc/vmcore.c	2007-07-31 15:51:05.000000000 +0200
-@@ -178,12 +178,7 @@ const struct file_operations proc_vmcore
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
- static struct vmcore* __init get_new_element(void)
- {
--	struct vmcore *p;
--
--	p = kmalloc(sizeof(*p), GFP_KERNEL);
--	if (p)
--		memset(p, 0, sizeof(*p));
--	return p;
-+	return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
- }
-
- static u64 __init get_vmcore_size_elf64(char *elfptr)
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
