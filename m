@@ -1,15 +1,17 @@
 From: eBay <xe01xe@yahoo.com>
-Date: Sun, 05 Aug 2007 14:20:43 +0000
+Date: Mon, 13 Aug 2007 17:40:35 +0000
 Subject: [KJ] eBay Unpaid Item Dispute for Item #300123887877-- Response
-Message-Id: <200708051420.l75EKh7H015264@pcfvirtual.propagation.net>
+Message-Id: <200708131740.l7DHeZi21712@toriton.propagation.net>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1186323646-15183-207"
+Content-Type: multipart/mixed; boundary="----------=_1187026839-19182-30"
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <200708051420.l75EKh7H015264@pcfvirtual.propagation.net>
+In-Reply-To: <200708051420.l75EKh7H015264@pcfvirtual.propagation.net>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1186323646-15183-207
+------------=_1187026839-19182-30
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -24,28 +26,28 @@ the administrator of that system for details.
 
 Content preview:  eBay Unpaid Item Dispute for Item #300123887877--
   Response Required Dear member, eBay member, lamotteboy, has indicated
-  that they already paid for #170136175191. Review payment details. Thank
+  that they already paid for #300123887877. Review payment details. Thank
   you, eBay [...] 
 
-Content analysis details:   (7.4 points, 5.0 required)
+Content analysis details:   (7.6 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
  0.5 REPLY_TO_EMPTY         Reply-To: is empty
  1.8 FORGED_YAHOO_RCVD      'From' yahoo.com does not match 'Received' headers
--0.2 BAYES_40               BODY: Bayesian spam probability is 20 to 40%
-                            [score: 0.3851]
  0.3 HTML_TAG_EXIST_TBODY   BODY: HTML has "tbody" tag
  0.3 HTML_WEB_BUGS          BODY: Image tag intended to identify you
  1.8 HTML_IMAGE_ONLY_24     BODY: HTML: images with 2000-2400 bytes of words
  0.0 HTML_MESSAGE           BODY: HTML included in message
+ 0.0 BAYES_50               BODY: Bayesian spam probability is 40 to 60%
+                            [score: 0.4946]
  2.0 MIME_HTML_ONLY         BODY: Message only has text/html MIME parts
  0.9 SARE_EBAY_SPOOF_NAME   SARE_EBAY_SPOOF_NAME
  0.0 HTML_MIME_NO_HTML_TAG  HTML-only message, but there is no HTML tag
 
 
 
-------------=_1186323646-15183-207
+------------=_1187026839-19182-30
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -59,4 +61,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1186323646-15183-207--
+------------=_1187026839-19182-30--
