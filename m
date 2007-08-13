@@ -1,24 +1,43 @@
-From: "dgreetings.Com" <jsx@rotophase.com>
-Date: Fri, 10 Aug 2007 10:24:22 +0000
-Subject: [KJ] Neighbour sent you a greeting card from dgreetings.Com!
-Message-Id: <002001c7db38$9e7cd0a0$20d5bf3e@ni.zqed>
+From: vignesh babu <vignesh.babu@wipro.com>
+Date: Mon, 13 Aug 2007 13:11:12 +0000
+Subject: [kj] is_power_of_2 in include/asm-sparc64/vio.h
+Message-Id: <1187009952.7273.14.camel@merlin.linuxcoe.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Neighbour has created a greeting card for you at dgreetings.Com,
-the Internet's most popular greeting card service. 
+Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
 
-Your greeting card ID is: 1ed706c2e194e15456ec290b516c3c2c 
+Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+---
+diff --git a/include/asm-sparc64/vio.h b/include/asm-sparc64/vio.h
+index f7417e9..2cc65a9 100644
+--- a/include/asm-sparc64/vio.h
++++ b/include/asm-sparc64/vio.h
+@@ -8,6 +8,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/completion.h>
+ #include <linux/list.h>
++#include <linux/log2.h>
+ 
+ #include <asm/ldc.h>
+ #include <asm/mdesc.h>
+@@ -258,7 +259,7 @@ static inline u32 vio_dring_avail(struct vio_dring_state *dr,
+ 				  unsigned int ring_size)
+ {
+ 	/* Ensure build-time power-of-2.  */
+-	BUILD_BUG_ON(ring_size & (ring_size - 1));
++	BUILD_BUG_ON(!is_power_of_2(ring_size));
+ 
+ 	return (dr->pending -
+ 		((dr->prod - dr->cons) & (ring_size - 1)));
 
-To see your custom greeting card, simply click on the link below: 
-http://124.125.253.128/?1ed706c2e194e15456ec290b516c3c2c
-
-Send greeting cards from dgreetings.Com whenever you want by visiting us at: 
-http://dgreetings.Com/
-Copyright (c) 1996-2007 dgreetings.Com All Rights Reserved
+-- 
+Vignesh Babu BM 
+_____________________________________________________________ 
+"Why is it that every time I'm with you, makes me believe in magic?"
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
