@@ -1,44 +1,53 @@
 From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
-Date: Tue, 14 Aug 2007 03:54:54 +0000
-Subject: [PATCH ] /drivers/atm ioremap balancing/ returncode check (resend)
-Message-Id: <66130.82953.qm@web44908.mail.sp1.yahoo.com>
+Date: Tue, 14 Aug 2007 04:27:51 +0000
+Subject: Re: [PATCH ] /drivers/atm ioremap balancing/ returncode check (re-resend)
+Message-Id: <710028.51582.qm@web44903.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070813033549.16C28DA820@mailserver8.hushmail.com>
 In-Reply-To: <20070813033549.16C28DA820@mailserver8.hushmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, postfail@hushmail.com
+To: postfail@hushmail.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net
 
-patchset against 2.6.23-rc3.  
-corrects missing ioremap return checks and balancing on iounmap calls..
+ patchset against 2.6.23-rc3.  
+ corrects missing ioremap return checks and balancing on iounmap calls..
 
-Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
-portions of ioremap audit. This patch had been submitted previously but hushmail client caused
-wordwrap issues, resending with different mail client.
+I attempted to actually reapply the patch that was sent but the following two lines that aren't
+changed with this patch exceed the yahoo wordwrap maximum (argh).  I also fixed an if condition in
+the first patch that would exceed 80 columns as well.
 
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-----------------------------------------------------------
+     fore200e->regs.sba.isr = sbus_ioremap(&sbus_dev->resource[2], 0, SBA200E_ISR_LENGTH, "SBA
+ISR");
+     fore200e->virt_base    = sbus_ioremap(&sbus_dev->resource[3], 0, SBA200E_RAM_LENGTH, "SBA
+RAM");
+ 
+ Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
+ portions of ioremap audit. This patch had been submitted previously but hushmail client caused
+ wordwrap issues, resending with different mail client.
+ 
+ Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+ ----------------------------------------------------------
 diff --git a/drivers/atm/fore200e.c b/drivers/atm/fore200e.c
-index 405ee5e..99e4ae4 100644
+index 405ee5e..1d47ebe 100644
 --- a/drivers/atm/fore200e.c
 +++ b/drivers/atm/fore200e.c
-@@ -795,8 +795,9 @@ fore200e_sba_map(struct fore200e* fore200e)
+@@ -795,8 +795,10 @@ fore200e_sba_map(struct fore200e* fore200e)
      fore200e->regs.sba.isr = sbus_ioremap(&sbus_dev->resource[2], 0, SBA200E_ISR_LENGTH, "SBA
 ISR");
      fore200e->virt_base    = sbus_ioremap(&sbus_dev->resource[3], 0, SBA200E_RAM_LENGTH, "SBA
 RAM");
  
 -    if (fore200e->virt_base = NULL) {
-+    if (!fore200e->regs.sba.hcr || !fore200e->regs.sba.bsr || !fore200e->regs.sba.isr ||
-!fore200e->virt_base) {
++    if (!fore200e->regs.sba.hcr || !fore200e->regs.sba.bsr
++	|| !fore200e->regs.sba.isr || !fore200e->virt_base) {
  	printk(FORE200E "unable to map RAM of device %s\n", fore200e->name);
 +	fore200e_sba_unmap(fore200e);
  	return -EFAULT;
      }
  
 diff --git a/drivers/atm/he.c b/drivers/atm/he.c
-index d33aba6..92d0d51 100644
+index d33aba6..5ac9260 100644
 --- a/drivers/atm/he.c
 +++ b/drivers/atm/he.c
 @@ -1107,6 +1107,7 @@ he_start(struct atm_dev *dev)
@@ -124,8 +133,17 @@ index d33aba6..92d0d51 100644
  	memset(he_dev->hsp, 0, sizeof(struct he_hsp));
 
 
-      ____________________________________________________________________________________
-Shape Yahoo! in your own image.  Join our Network Research Panel today!   http://surveylink.yahoo.com/gmrs/yahoo_panel_invite.asp?a=7 
+
+       
+____________________________________________________________________________________
+Need a vacation? Get great deals
+to amazing places on Yahoo! Travel.
+http://travel.yahoo.com/
 
 
+       
+____________________________________________________________________________________
+Sick sense of humor? Visit Yahoo! TV's 
+Comedy with an Edge to see what's on, when. 
+http://tv.yahoo.com/collections/222
 
