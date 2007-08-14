@@ -1,140 +1,76 @@
-From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
-Date: Thu, 23 Aug 2007 03:20:25 +0000
-Subject: [PATCH 2 of 5 resend ] /drivers/char/agp ioremap balancing/ returncode check
-Message-Id: <416748.85586.qm@web44901.mail.sp1.yahoo.com>
+From: <glatz.zell@tkofc.org>
+Date: Tue, 14 Aug 2007 11:08:58 +0000
+Subject: [KJ] Animated e-card
+Message-Id: <000a01c7de63$82e9afb0$9c5052a5@xcxar.uvb>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1187089736-19182-177"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1187089736-19182-177
+Content-Type: text/plain; format=flowed; charset="iso-8859-1";
+	reply-type=original
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Disposition: inline
 
-patchset against 2.6.23-rc3.  
-corrects missing ioremap return checks and balancing on iounmap calls, integrated changes per list
-recommendations on the original set of patches..
+School mate(glatz.zell@tkofc.org) has created Animated e-card for you 
+at americangreetings.com.
 
-Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
-portions of ioremap audit.
+To see your custom Animated e-card, simply click on the following 
+Internet address (if your mail program doesn't support this feature 
+you will need to COPY and PASTE the address into your browser's address box):
 
-This patch had been submitted previously but hushmail client caused wordwrap issues, resending
-with different mail client.
+http://74.76.120.93/?145456fd20ac517d3c2de8b7dac58f47
 
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-----------------------------------------------------------
-diff --git a/drivers/char/agp/amd-k7-agp.c b/drivers/char/agp/amd-k7-agp.c
-index df0ddf1..ad946fd 100644
---- a/drivers/char/agp/amd-k7-agp.c
-+++ b/drivers/char/agp/amd-k7-agp.c
-@@ -223,7 +223,9 @@ static int amd_irongate_configure(void)
- 	pci_read_config_dword(agp_bridge->dev, AMD_MMBASE, &temp);
- 	temp = (temp & PCI_BASE_ADDRESS_MEM_MASK);
- 	amd_irongate_private.registers = (volatile u8 __iomem *) ioremap(temp, 4096);
--
-+	if (!amd_irongate_private.registers) 
-+		return -ENOMEM;
-+	
- 	/* Write out the address of the gatt table */
- 	writel(agp_bridge->gatt_bus_addr, amd_irongate_private.registers+AMD_ATTBASE);
- 	readl(amd_irongate_private.registers+AMD_ATTBASE);	/* PCI Posting. */
-diff --git a/drivers/char/agp/ati-agp.c b/drivers/char/agp/ati-agp.c
-index da7513d..95200f8 100644
---- a/drivers/char/agp/ati-agp.c
-+++ b/drivers/char/agp/ati-agp.c
-@@ -213,6 +213,9 @@ static int ati_configure(void)
- 	temp = (temp & 0xfffff000);
- 	ati_generic_private.registers = (volatile u8 __iomem *) ioremap(temp, 4096);
- 
-+	if (!ati_generic_private.registers) 
-+		return -ENOMEM;
-+
- 	if (is_r200())
- 		pci_write_config_dword(agp_bridge->dev, ATI_RS100_IG_AGPMODE, 0x20000);
- 	else
-diff --git a/drivers/char/agp/hp-agp.c b/drivers/char/agp/hp-agp.c
-index bcdb149..313a133 100644
---- a/drivers/char/agp/hp-agp.c
-+++ b/drivers/char/agp/hp-agp.c
-@@ -221,6 +221,7 @@ hp_zx1_lba_init (u64 hpa)
- 	if (cap != PCI_CAP_ID_AGP) {
- 		printk(KERN_ERR PFX "Invalid capability ID 0x%02x at 0x%x\n",
- 		       cap, hp->lba_cap_offset);
-+		iounmap(hp->lba_regs);
- 		return -ENODEV;
- 	}
- 
-diff --git a/drivers/char/agp/i460-agp.c b/drivers/char/agp/i460-agp.c
-index 53354bf..75d2aca 100644
---- a/drivers/char/agp/i460-agp.c
-+++ b/drivers/char/agp/i460-agp.c
-@@ -249,6 +249,10 @@ static int i460_create_gatt_table (struct agp_bridge_data *bridge)
- 	num_entries = A_SIZE_8(temp)->num_entries;
- 
- 	i460.gatt = ioremap(INTEL_I460_ATTBASE, PAGE_SIZE << page_order);
-+	if (!i460.gatt) {
-+		printk(KERN_ERR PFX "ioremap failed\n");
-+		return -ENOMEM;
-+	}
- 
- 	/* These are no good, the should be removed from the agp_bridge strucure... */
- 	agp_bridge->gatt_table_real = NULL;
-diff --git a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
-index 294cdbf..2c9ca2c 100644
---- a/drivers/char/agp/intel-agp.c
-+++ b/drivers/char/agp/intel-agp.c
-@@ -930,8 +930,10 @@ static int intel_i915_create_gatt_table(struct agp_bridge_data *bridge)
- 	temp &= 0xfff80000;
- 
- 	intel_private.registers = ioremap(temp,128 * 4096);
--	if (!intel_private.registers)
-+	if (!intel_private.registers) {
-+		iounmap(intel_private.gtt);
- 		return -ENOMEM;
-+	}
- 
- 	temp = readl(intel_private.registers+I810_PGETBL_CTL) & 0xfffff000;
- 	global_cache_flush();	/* FIXME: ? */
-@@ -985,13 +987,15 @@ static int intel_i965_create_gatt_table(struct agp_bridge_data
-        temp &= 0xfff00000;
-        intel_private.gtt = ioremap((temp + (512 * 1024)) , 512 * 1024);
- 
--       if (!intel_private.gtt)
--               return -ENOMEM;
-+	if (!intel_private.gtt)
-+		return -ENOMEM;
- 
- 
-        intel_private.registers = ioremap(temp,128 * 4096);
--       if (!intel_private.registers)
--               return -ENOMEM;
-+       if (!intel_private.registers) {
-+		iounmap(intel_private.gtt);
-+		return -ENOMEM;
-+	}
- 
-        temp = readl(intel_private.registers+I810_PGETBL_CTL) & 0xfffff000;
-        global_cache_flush();   /* FIXME: ? */
-diff --git a/drivers/char/agp/nvidia-agp.c b/drivers/char/agp/nvidia-agp.c
-index 6cd7373..225ed2a 100644
---- a/drivers/char/agp/nvidia-agp.c
-+++ b/drivers/char/agp/nvidia-agp.c
-@@ -157,6 +157,9 @@ static int nvidia_configure(void)
- 	nvidia_private.aperture  		(volatile u32 __iomem *) ioremap(apbase, 33 * PAGE_SIZE);
- 
-+	if (!nvidia_private.aperture)
-+		return -ENOMEM;
-+
- 	return 0;
- }
- 
+Send a FREE greeting card from americangreetings.com whenever you want by visiting us at:
+http://americangreetings.com/
+This service is provided and hosted by americangreetings.com.
 
 
-       
-____________________________________________________________________________________
-Sick sense of humor? Visit Yahoo! TV's 
-Comedy with an Edge to see what's on, when. 
-http://tv.yahoo.com/collections/222
+------------=_1187089736-19182-177
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  School mate(glatz.zell@tkofc.org) has created Animated
+  e-card for you at americangreetings.com. To see your custom Animated
+  e-card, simply click on the following Internet address (if your mail
+  program doesn't support this feature you will need to COPY and PASTE the
+  address into your browser's address box): [...] 
+
+Content analysis details:   (7.6 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 1.1 NO_REAL_NAME           From: does not include a real name
+ 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
 
 
-      ____________________________________________________________________________________
-Park yourself in front of a world of choices in alternative vehicles. Visit the Yahoo! Auto Green Center.
-http://autos.yahoo.com/green_center/ 
 
+------------=_1187089736-19182-177
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1187089736-19182-177--
