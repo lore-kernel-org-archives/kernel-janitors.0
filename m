@@ -1,76 +1,58 @@
-From: <LIN1139@AOL.COM>
-Date: Wed, 08 Aug 2007 23:04:50 +0000
-Subject: [KJ] Want to meet with young girl ? offer #856
-Message-Id: <01c7da0f$8eb8aa60$6c822ecf@akstcvantslotmnsdgs>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1186613881-15183-2"
+From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
+Date: Tue, 14 Aug 2007 04:42:17 +0000
+Subject: [PATCH 1/3] /drivers/net ioremap balancing/returncode check (resend)
+Message-Id: <851437.53933.qm@web44909.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1186613881-15183-2
-Content-Type: text/plain;
-	charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-*****     
---------------------        
-       
-Want to meet with young girl ?
-Want to have sex with 12 years old girls ?
-We will help you !
-       
-mailto: LIN1139@AOL.COM       
-       
-       
-------------------------  
---------------------------     
-
-
-------------=_1186613881-15183-2
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  ***** Want to meet with young girl ? Want to have sex
-  with 12 years old girls ? We will help you ! mailto: LIN1139@AOL.COM
-  [...] 
-
-Content analysis details:   (5.8 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 0.2 OSDL_OFFER2            The word invest in subject
- 1.1 NO_REAL_NAME           From: does not include a real name
- 0.5 FROM_NO_LOWER          From address has no lower-case characters
- 0.4 MAILTO_TO_SPAM_ADDR    URI: Includes a link to a likely spammer email
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 0.9975]
-
-
-
-------------=_1186613881-15183-2
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, postfail@hushmail.com
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+resending patchset against 2.6.23-rc3 for /drivers/net ioremap balancing / return check,
+previous patchset contained wordwrap errors:
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1186613881-15183-2--
+  corrects:
+  --sbus_ioremap return unchecked.
+  --ioremap function unchecked
+  --function failure cases did not clean up ioremap'd values.
+  lne390.c  -- believe had incorrect/not ideal variable check on if for iounmap
+
+this audit was only for files directly in drivers/net directory, not the full tree.
+
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+----------------------------------------------------------
+diff --git a/drivers/net/es3210.c b/drivers/net/es3210.c
+index 822e5bf..d7d6b90 100644
+--- a/drivers/net/es3210.c
++++ b/drivers/net/es3210.c
+@@ -307,6 +307,10 @@ out1:
+ 	free_irq(dev->irq, dev);
+ out:
+ 	release_region(ioaddr + ES_SA_PROM, ES_IO_EXTENT);
++
++	if (ei_status.mem)
++		iounmap(ei_status.mem);
++	
+ 	return retval;
+ }
+ 
+diff --git a/drivers/net/lne390.c b/drivers/net/lne390.c
+index 0a08d0c..f6d9fb6 100644
+--- a/drivers/net/lne390.c
++++ b/drivers/net/lne390.c
+@@ -290,7 +290,7 @@ static int __init lne390_probe1(struct net_device *dev, int ioaddr)
+ 		goto unmap;
+ 	return 0;
+ unmap:
+-	if (ei_status.reg0)
++	if (ei_status.mem)
+ 		iounmap(ei_status.mem);
+ cleanup:
+ 	free_irq(dev->irq, dev);
+
+
+       
+____________________________________________________________________________________
+Take the Internet to Go: Yahoo!Go puts the Internet in your pocket: mail, news, photos & more. 
+http://mobile.yahoo.com/go?refer=1GNXIC
+
