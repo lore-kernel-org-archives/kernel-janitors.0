@@ -1,61 +1,54 @@
-From: <a.plaikner@soton.ac.uk>
-Date: Mon, 20 Aug 2007 04:04:41 +0000
-Subject: [KJ] I cant believe you talked me into taking these pictures,
-Message-Id: <002201c7e2df$3bd99c90$8a47ba69@ltaz.ticxk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1187582675-19182-208"
+From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
+Date: Tue, 14 Aug 2007 04:47:16 +0000
+Subject: [PATCH 3/3] /drivers/net ucc_geth ioremap balancing/returncode check (resend)
+Message-Id: <246708.59171.qm@web44916.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-To: kernel-janitors@vger.kernel.org
-
-This is a multi-part message in MIME format...
-
-------------=_1187582675-19182-208
-Content-Type: text/plain; format=flowed; charset="windows-1252";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-click http://67.172.252.193/
-
-
-------------=_1187582675-19182-208
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  click http://67.172.252.193/ [...] 
-
-Content analysis details:   (7.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.1 NO_REAL_NAME           From: does not include a real name
- 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1187582675-19182-208
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, postfail@hushmail.com
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+resending patchset against 2.6.23-rc3 for /drivers/net ioremap balancing / return check,
+previous patchset contained wordwrap errors:
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1187582675-19182-208--
+  corrects:
+  --sbus_ioremap return unchecked.
+  --ioremap function unchecked
+  --function failure cases did not clean up ioremap'd values.
+  lne390.c  -- believe had incorrect/not ideal variable check on if for iounmap
+
+this audit was only for files directly in drivers/net directory, not the full tree.
+
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+----------------------------------------------------------
+diff --git a/drivers/net/ucc_geth.c b/drivers/net/ucc_geth.c
+index 12e01b2..30acbe2 100644
+--- a/drivers/net/ucc_geth.c
++++ b/drivers/net/ucc_geth.c
+@@ -2430,6 +2430,11 @@ static int ucc_struct_init(struct ucc_geth_private *ugeth)
+ 
+ 	ugeth->ug_regs = (struct ucc_geth *) ioremap(uf_info->regs, sizeof(struct ucc_geth));
+ 
++	if (!ugeth->ug_regs){
++		ugeth_err("%s: Failed to ioremap.", __FUNCTION__);
++		return -ENOMEM;
++	}
++
+ 	return 0;
+ }
+ 
+
+
+
+       
+____________________________________________________________________________________
+Choose the right car based on your needs.  Check out Yahoo! Autos new Car Finder tool.
+http://autos.yahoo.com/carfinder/
+
+
+       
+____________________________________________________________________________________
+Need a vacation? Get great deals
+to amazing places on Yahoo! Travel.
+http://travel.yahoo.com/
+
