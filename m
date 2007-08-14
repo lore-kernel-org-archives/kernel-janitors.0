@@ -1,16 +1,21 @@
-From: "Scott Thompson" <postfail@hushmail.com>
-Date: Mon, 13 Aug 2007 03:35:48 +0000
-Subject: [PATCH ] /drivers/atm ioremap balancing/ returncode check
-Message-Id: <20070813033549.16C28DA820@mailserver8.hushmail.com>
+From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
+Date: Tue, 14 Aug 2007 03:54:54 +0000
+Subject: [PATCH ] /drivers/atm ioremap balancing/ returncode check (resend)
+Message-Id: <66130.82953.qm@web44908.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20070813033549.16C28DA820@mailserver8.hushmail.com>
+In-Reply-To: <20070813033549.16C28DA820@mailserver8.hushmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-atm-general@lists.sourceforge.net, postfail@hushmail.com
 
-patchset against 2.6.23-rc2.  
-corrects missing ioremap return checks and balancing on iounmap 
-calls in /drivers/atm...
+patchset against 2.6.23-rc3.  
+corrects missing ioremap return checks and balancing on iounmap calls..
+
+Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
+portions of ioremap audit. This patch had been submitted previously but hushmail client caused
+wordwrap issues, resending with different mail client.
 
 Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
 ----------------------------------------------------------
@@ -19,16 +24,15 @@ index 405ee5e..99e4ae4 100644
 --- a/drivers/atm/fore200e.c
 +++ b/drivers/atm/fore200e.c
 @@ -795,8 +795,9 @@ fore200e_sba_map(struct fore200e* fore200e)
-     fore200e->regs.sba.isr = sbus_ioremap(&sbus_dev->resource[2], 
-0, SBA200E_ISR_LENGTH, "SBA ISR");
-     fore200e->virt_base    = sbus_ioremap(&sbus_dev->resource[3], 
-0, SBA200E_RAM_LENGTH, "SBA RAM");
+     fore200e->regs.sba.isr = sbus_ioremap(&sbus_dev->resource[2], 0, SBA200E_ISR_LENGTH, "SBA
+ISR");
+     fore200e->virt_base    = sbus_ioremap(&sbus_dev->resource[3], 0, SBA200E_RAM_LENGTH, "SBA
+RAM");
  
 -    if (fore200e->virt_base = NULL) {
-+    if (!fore200e->regs.sba.hcr || !fore200e->regs.sba.bsr || 
-!fore200e->regs.sba.isr || !fore200e->virt_base) {
- 	printk(FORE200E "unable to map RAM of device %s\n", fore200e-
->name);
++    if (!fore200e->regs.sba.hcr || !fore200e->regs.sba.bsr || !fore200e->regs.sba.isr ||
+!fore200e->virt_base) {
+ 	printk(FORE200E "unable to map RAM of device %s\n", fore200e->name);
 +	fore200e_sba_unmap(fore200e);
  	return -EFAULT;
      }
@@ -56,12 +60,10 @@ index d33aba6..92d0d51 100644
 +	}
  
  #ifdef USE_TASKLET
- 	tasklet_init(&he_dev->tasklet, he_tasklet, (unsigned long) 
-he_dev);
+ 	tasklet_init(&he_dev->tasklet, he_tasklet, (unsigned long) he_dev);
 @@ -1226,6 +1229,7 @@ he_start(struct atm_dev *dev)
  
- 	if (nvpibits != -1 && nvcibits != -1 && nvpibits+nvcibits != 
-HE_MAXCIDBITS) {
+ 	if (nvpibits != -1 && nvcibits != -1 && nvpibits+nvcibits != HE_MAXCIDBITS) {
  		hprintk("nvpibits + nvcibits != %d\n", HE_MAXCIDBITS);
 +		iounmap(he_dev->membase);
  		return -ENODEV;
@@ -120,5 +122,10 @@ HE_MAXCIDBITS) {
  		return -ENOMEM;
  	}
  	memset(he_dev->hsp, 0, sizeof(struct he_hsp));
+
+
+      ____________________________________________________________________________________
+Shape Yahoo! in your own image.  Join our Network Research Panel today!   http://surveylink.yahoo.com/gmrs/yahoo_panel_invite.asp?a=7 
+
 
 
