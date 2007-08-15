@@ -1,98 +1,60 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Date: Mon, 13 Aug 2007 20:17:29 +0000
+From: "Scott Thompson" <postfail@hushmail.com>
+Date: Wed, 15 Aug 2007 04:35:01 +0000
 Subject: Re: [PATCH 1 of 5 ] /drivers/char ioremap balancing/ returncode check
-Message-Id: <46C0BC59.6070208@gmail.com>
+Message-Id: <20070815043503.535662281F@mailserver9.hushmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070813040039.71A3DDA820@mailserver8.hushmail.com>
 In-Reply-To: <20070813040039.71A3DDA820@mailserver8.hushmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: postfail@hushmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, dri-devel@lists.sourceforge.net
+To: jirislaby@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Scott Thompson napsal(a):
-> patchset against 2.6.23-rc2 and this set is an audit of 
-> /drivers/char/a* 
-> through drivers/char .   
-> 
-> this corrects missing ioremap return checks and balancing on 
-> iounmap calls..
-> 
-> Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+On Mon, 13 Aug 2007 16:17:29 -0400 Jiri Slaby <jirislaby@gmail.com> 
+wrote:
+>> diff --git a/drivers/char/sx.c b/drivers/char/sx.c
+>> index 85a2328..30829ed 100644
+>> --- a/drivers/char/sx.c
+>> +++ b/drivers/char/sx.c
+>> @@ -2627,6 +2627,12 @@ static void __devinit fix_sx_pci(struct 
+>> pci_dev *pdev, struct sx_board *board)
+>>  	pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &hwbase);
+>>  	hwbase &= PCI_BASE_ADDRESS_MEM_MASK;
+>>  	rebase = ioremap(hwbase, 0x80);
+>> +	if (!rebase) {
+>> +		printk(KERN_DEBUG 
+>> +			"sx:ioremap fail, unable to perform cntrl reg fix\n");
+>> +		return;
+>> +	}
+>> +		
+>
+>1) this should be pci_iomap(pdev, 0, 0x80)
+The ioremap call was there before my patch and I'm just trying to 
+audit ioremap calls to make sure that they are cleaned up and have 
+their return codes checked.   If you want me to take care of that 
+"while I'm in the neighborhood", let me know, but trying to avoid 
+too much scope creep on my audit to increase chances it actually 
+gets included...
 
+>2) KERN_DEBUG is inappropriate and wrap the string in the middle 
+>and not in the
+>beginning
 
-NAK.
+Agree on the wordwrap, several artifacts were created on this 
+patchset and this whole thing will be resubmitted through a 
+different mail client. 
+As for KERN_DEBUG, KERN_DEBUG is used in the function following 
+this call as notification that this workaround was required.  When 
+I audit code as I am here I generally try to blend the patch in 
+with the style and conventions of the code around it.  If 
+KERN_DEBUG is inappropriate on the subsequent call, both values 
+should be changed.  
 
-> ----------------------------------------------------------
-> diff --git a/drivers/char/moxa.c b/drivers/char/moxa.c
-> index ed76f0a..094323d 100644
-> --- a/drivers/char/moxa.c
-> +++ b/drivers/char/moxa.c
-> @@ -447,6 +447,13 @@ static int __init moxa_init(void)
->  	for (i = 0; i < numBoards; i++) {
->  		moxa_boards[i].basemem = ioremap(moxa_boards[i].baseAddr,
->  				0x4000);
-> +		if (!moxa_boards[i].basemem) { 
-> +			for (;i > 0;i--)
-> +				if (moxa_boards[i].basemem)
-> +					iounmap(moxa_boards[i].basemem);
-> +
-> +			return -ENOMEM; 
-> +		}
+Let me know your preferences on these issues and I will include in 
+the next pass.  Thanks for your comments and review...
 
-This leaks. This is loop only for ISA cards. If you have CONFIG_PCI and have the
-card, resources of the PCI one are not freed and are unusable from now.
+---------------------------------------
+Scott Thompson / postfail@hushmail.com
+---------------------------------------
 
->  	}
->  
->  	return retval;
-> diff --git a/drivers/char/sx.c b/drivers/char/sx.c
-> index 85a2328..30829ed 100644
-> --- a/drivers/char/sx.c
-> +++ b/drivers/char/sx.c
-> @@ -2627,6 +2627,12 @@ static void __devinit fix_sx_pci(struct 
-> pci_dev *pdev, struct sx_board *board)
->  	pci_read_config_dword(pdev, PCI_BASE_ADDRESS_0, &hwbase);
->  	hwbase &= PCI_BASE_ADDRESS_MEM_MASK;
->  	rebase = ioremap(hwbase, 0x80);
-> +	if (!rebase) {
-> +		printk(KERN_DEBUG 
-> +			"sx:ioremap fail, unable to perform cntrl reg fix\n");
-> +		return;
-> +	}
-> +		
-
-1) this should be pci_iomap(pdev, 0, 0x80)
-2) KERN_DEBUG is inappropriate and wrap the string in the middle and not in the
-beginning
-3) you should change void to int and return some error and check it in the caller
-
->  	t = readl(rebase + CNTRL_REG_OFFSET);
->  	if (t != CNTRL_REG_GOODVALUE) {
->  		printk(KERN_DEBUG "sx: performing cntrl reg fix: %08x -> "
-> diff --git a/drivers/char/vr41xx_giu.c b/drivers/char/vr41xx_giu.c
-> index e5ed091..2381162 100644
-> --- a/drivers/char/vr41xx_giu.c
-> +++ b/drivers/char/vr41xx_giu.c
-> @@ -639,8 +639,10 @@ static int __devinit giu_probe(struct 
-> platform_device *dev)
->  	}
->  
->  	irq = platform_get_irq(dev, 0);
-> -	if (irq < 0 || irq >= NR_IRQS)
-> +	if (irq < 0 || irq >= NR_IRQS) {
-> +		iounmap(giu_base);
-
-+ unregister_chrdev()?
-
->  		return -EBUSY;
-> +	}
->  
->  	return cascade_irq(irq, giu_get_irq);
->  }
-
-
--- 
-Jiri Slaby (jirislaby@gmail.com)
-Faculty of Informatics, Masaryk University
