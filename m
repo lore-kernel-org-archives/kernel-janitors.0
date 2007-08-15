@@ -1,17 +1,31 @@
-From: Andi Drebes <lists-receive@programmierforen.de>
-Date: Thu, 30 Aug 2007 15:29:12 +0000
-Subject: [patch 0/3] fs/cramfs/inode.c: code cleanup
-Message-Id: <200708301729.13256.lists-receive@programmierforen.de>
+From: "SHANTILAL6@NETZERO.COM" <SHANTILAL6@NETZERO.COM>
+Date: Wed, 15 Aug 2007 19:26:19 +0000
+Subject: [KJ] Want to meet
+Message-Id: <01c7df70$6c8b2ce0$6c822ecf@akstcwoonmodemnsdgs>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This patchset does some cleanup in fs/cramfs/inode.c:
+************* 
+-----------       
+  
+Want to meet with young girl ?
+Want to have sex with 12 years old girls ?
+We will help you !
+    
+mailto: SHANTILAL6@NETZERO.COM 
+        
+  
+***   
+******************* 
 
-Patch 1/3 removes an unused variable
-Patch 2/3 replaces a hardcoded value with a preprocessor constant
-Patch 3/3 deletes some lines of code and removes a variable that is just used once
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-Diffed against 2.6.23-rc3-mm1
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
