@@ -1,8 +1,10 @@
 From: nicolas john <daybestpuppy@yahoo.com>
-Date: Wed, 15 Aug 2007 16:31:15 +0000
+Date: Wed, 15 Aug 2007 16:31:16 +0000
 Subject: [KJ] lucky winners
-Message-Id: <E1ILLm7-0000MS-77@gator108.hostgator.com>
+Message-Id: <E1ILLm8-0008KK-5n@gator108.hostgator.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <E1ILLm7-0000MS-77@gator108.hostgator.com>
+In-Reply-To: <E1ILLm7-0000MS-77@gator108.hostgator.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
