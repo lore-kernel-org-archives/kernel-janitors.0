@@ -1,34 +1,71 @@
-From: Pierre Ossman <drzeus-mmc@drzeus.cx>
-Date: Sat, 04 Aug 2007 13:02:04 +0000
-Subject: Re: [PATCH 49] drivers/mmc/core/mmc_ops.c: kmalloc + memset
-Message-Id: <20070804150204.6c1d8801@poseidon.drzeus.cx>
+From: "Alvin Keene" <mejy@brainstormtech.com>
+Date: Thu, 16 Aug 2007 04:16:52 +0000
+Subject: [KJ] Re:VIRUS
+Message-Id: <01c7e01f$a92dd670$dafedbd9@mejy>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1187237227-19182-206"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl>
-	<200707312050.13687.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707312050.13687.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1187237227-19182-206
+Content-Type: text/plain;
+  charset="windows-1250"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Disposition: inline
 
-On Tue, 31 Jul 2007 20:50:13 +0200
-Mariusz Kozlowski <m.kozlowski@tuxland.pl> wrote:
+Have you ever wanted a pricey Watch?
 
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  drivers/mmc/core/mmc_ops.c | 7957 -> 7924 (-33 bytes)
->  drivers/mmc/core/mmc_ops.o | 101732 -> 101744 (+12 bytes)
-> 
->  drivers/mmc/core/mmc_ops.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
 
-Acked-by: Pierre Ossman <drzeus@drzeus.cx>
+We have the piece for you!
 
--- 
-     -- Pierre Ossman
+We have all the big names 
+for a low fraction of the price.
 
-  Linux kernel, MMC maintainer        http://www.kernel.org
-  PulseAudio, core developer          http://pulseaudio.org
-  rdesktop, core developer          http://www.rdesktop.org
+www.speokii.com
+
+
+
+------------=_1187237227-19182-206
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Have you ever wanted a pricey Watch? We have the piece
+  for you! We have all the big names for a low fraction of the price.
+  [...] 
+
+Content analysis details:   (6.3 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 2.8 DATE_IN_FUTURE_12_24   Date: is 12 to 24 hours after Received: date
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+
+
+
+------------=_1187237227-19182-206
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1187237227-19182-206--
