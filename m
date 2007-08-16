@@ -1,24 +1,71 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Date: Tue, 07 Aug 2007 21:57:43 +0000
-Subject: Re: [PATCH 69] drivers/net/sb1250-mac.c: kmalloc + memset conversion
-Message-Id: <46B8EAD7.2040105@pobox.com>
+From: <rudolf.prsa@bncmortgage.com>
+Date: Thu, 16 Aug 2007 08:43:25 +0000
+Subject: [KJ] Funny e-card
+Message-Id: <000601c7dfe1$82e6ade0$4f23af19@qgn.yz>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1187253809-19182-17"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312358.36567.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707312358.36567.m.kozlowski@tuxland.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1187253809-19182-17
+Content-Type: text/plain; format=flowed; charset="windows-1252";
+	reply-type=original
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, netdev@vger.kernel.org
+Content-Disposition: inline
 
-Mariusz Kozlowski wrote:
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  drivers/net/sb1250-mac.c | 76286 -> 76199 (-87 bytes)
-> 
->  drivers/net/sb1250-mac.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Good day.
 
-applied
+Your Neighbour has sent you Funny e-card from americangreetings.com.
+
+Click on your card's direct www address below:
+
+http://67.68.71.114/
+
+Copyright (c) 1996-2007 americangreetings.com All Rights Reserved
 
 
+------------=_1187253809-19182-17
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  Good day. Your Neighbour has sent you Funny e-card from
+  americangreetings.com. Click on your card's direct www address below:
+  [...] 
+
+Content analysis details:   (7.6 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 1.1 NO_REAL_NAME           From: does not include a real name
+ 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+
+
+
+------------=_1187253809-19182-17
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1187253809-19182-17--
