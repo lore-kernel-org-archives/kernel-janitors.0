@@ -1,29 +1,52 @@
-From: David Miller <davem@davemloft.net>
-Date: Sat, 25 Aug 2007 05:28:07 +0000
-Subject: Re: [kj] is_power_of_2 in net/core/neighbour.c
-Message-Id: <20070824.222807.102129512.davem@davemloft.net>
+From: Paul Jimenez <pj@place.org>
+Date: Thu, 16 Aug 2007 07:07:19 +0000
+Subject: debug printk's
+Message-Id: <20070816070719.550CB179C7E@place.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1187010227.7273.16.camel@merlin.linuxcoe.com>
-In-Reply-To: <1187010227.7273.16.camel@merlin.linuxcoe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vigneshbabu@gmail.com, vignesh.babu@wipro.com
-Cc: roque@di.fc.ul.pt, kuznet@ms2.inr.ac.ru, netdev@vger.kernel.org, kernel-janitors@lists.osdl.org
+To: kernel-janitors@vger.kernel.org
 
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 18:33:47 +0530
 
-> Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
-> 
-> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
+  Is there stated kernel plicy on debug printk's?  The source shows
+a lot of different versions of dprintk defined, some very small scripts
+came up with:
 
-Patch applied, thanks.
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+# symbol
+1 ASD_DPRINTK
+1 bay_dprintk
+1 dprintk1
+1 dprintk2
+1 dprintk_core
+1 dprintkl
+1 i2cdprintk
+1 ir_dprintk
+1 PDprintk
+2 cmdprintk
+2 ddprintk
+2 DDPRINTK
+2 dprintkdbg
+2 fs_dprintk
+2 gs_dprintk
+2 P9_DPRINTK
+2 PDPRINTK
+2 rio_dprintk
+2 SAS_DPRINTK
+2 sx_dprintk
+2 TOSHIBA_RBTX4927_IRQ_DPRINTK
+2 TOSHIBA_RBTX4927_SETUP_DPRINTK
+2 TX4927_IRQ_DPRINTK
+10 Dprintk
+130 DPRINTK
+187 dprintk
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+So: 187 definitions of dprintk and 130 definitions of DPRINTK.  Plus
+10 mixed-case fans and various and sundry miscellaneous versions.  Note
+this is not *uses*, it's the number of *definitions*.
+
+So, to clarify my original question a bit: is there policy we can refer
+to to justify cleaning this up?
+
+  --pj
+
