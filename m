@@ -1,52 +1,40 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:02:57 +0000
-Subject: [kj] is_power_of_2 in drivers/block/rd.c
-Message-Id: <1187009457.7273.1.camel@merlin.linuxcoe.com>
+From: Joe Perches <joe@perches.com>
+Date: Sun, 19 Aug 2007 22:19:43 +0000
+Subject: [PATCH 5/5] mm/... convert #include "linux/..." to #include
+Message-Id: <1187561983.4200.145.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1187009433.7273.0.camel@merlin.linuxcoe.com>
-In-Reply-To: <1187009433.7273.0.camel@merlin.linuxcoe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: axboe@kernel.dk
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Christoph Lameter <clameter@sgi.com>, Eric Dumazet <dada1@cosmosbay.com>, Pekka Enberg <penberg@cs.helsinki.fi>, linux-mm@kvack.org
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+(untested)
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/drivers/block/rd.c b/drivers/block/rd.c
-index 65150b5..81821d3 100644
---- a/drivers/block/rd.c
-+++ b/drivers/block/rd.c
-@@ -56,6 +56,7 @@
- #include <linux/backing-dev.h>
- #include <linux/blkpg.h>
- #include <linux/writeback.h>
-+#include <linux/log2.h>
- 
- #include <asm/uaccess.h>
- 
-@@ -422,7 +423,7 @@ static int __init rd_init(void)
- 	int err = -ENOMEM;
- 
- 	if (rd_blocksize > PAGE_SIZE || rd_blocksize < 512 ||
--			(rd_blocksize & (rd_blocksize-1))) {
-+			!is_power_of_2(rd_blocksize)) {
- 		printk("RAMDISK: wrong blocksize %d, reverting to defaults\n",
- 		       rd_blocksize);
- 		rd_blocksize = BLOCK_SIZE;
+There are several files that 
+#include "linux/file" not #include <linux/file>
+#include "asm/file" not #include <asm/file>
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Here's a little script that converts them:
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+egrep -i -r -l --include=*.[ch] \
+"^[[:space:]]*\#[[:space:]]*include[[:space:]]*\"(linux|asm)/(.*)\"" * \
+| xargs sed -i -e 's/^[[:space:]]*#[[:space:]]*include[[:space:]]*"\(linux\|asm\)\/\(.*\)"/#include <\1\/\2>/g'
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Signed-off-by: Joe Perches <joe@perches.com>
+
+diff --git a/mm/slab.c b/mm/slab.c
+index a684778..976aeff 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -334,7 +334,7 @@ static __always_inline int index_of(const size_t size)
+ 		return i; \
+ 	else \
+ 		i++;
+-#include "linux/kmalloc_sizes.h"
++#include <linux/kmalloc_sizes.h>
+ #undef CACHE
+ 		__bad_size();
+ 	} else
+
+
