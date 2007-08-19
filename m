@@ -1,7 +1,7 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Sun, 19 Aug 2007 22:19:44 +0000
-Subject: Re: convert #include "linux/..." to #include <linux/...> [PATCH]s follow
-Message-Id: <9a8748490708191519s73b5ab01w10295dab4083de96@mail.gmail.com>
+From: Jan Engelhardt <jengelh@computergmbh.de>
+Date: Sun, 19 Aug 2007 22:33:21 +0000
+Subject: Re: convert #include "linux/..." to #include <linux/...> [PATCH]s
+Message-Id: <Pine.LNX.4.64.0708200031560.19577@fbirervta.pbzchgretzou.qr>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1187561864.4200.136.camel@localhost>
 In-Reply-To: <1187561864.4200.136.camel@localhost>
@@ -11,18 +11,16 @@ Content-Transfer-Encoding: 7bit
 To: Joe Perches <joe@perches.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Whitcroft <apw@shadowen.org>
 
-On 20/08/07, Joe Perches <joe@perches.com> wrote:
-> There are several files that:
->
-> #include "linux/file" not #include <linux/file>
-> #include "asm/file" not #include <asm/file>
->
-> Here's a little script that converts them:
->
-If you've actually checked that such conversions are correct and work
-fine, how about a patch (or patches)?
 
+On Aug 19 2007 15:17, Joe Perches wrote:
+>There are several files that:
+>
+>#include "linux/file" not #include <linux/file>
+>#include "asm/file" not #include <asm/file>
+
+Not only that. All directories in include should be checked against
+(e.g. <net/*>)
+
+
+	Jan
 -- 
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
