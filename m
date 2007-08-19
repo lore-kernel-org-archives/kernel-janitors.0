@@ -1,43 +1,34 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 19 Aug 2007 22:41:07 +0000
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Sun, 19 Aug 2007 22:41:46 +0000
 Subject: Re: [PATCH 4/5] Documentation/firmware/... convert #include
-Message-Id: <1187563268.4200.162.camel@localhost>
+Message-Id: <20070819154146.337bf347.randy.dunlap@oracle.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <1187561972.4200.143.camel@localhost>
-	 <20070819153422.1e0b54af.randy.dunlap@oracle.com>
-	 <1187562717.4200.154.camel@localhost>
-	 <20070819154146.337bf347.randy.dunlap@oracle.com>
-In-Reply-To: <20070819154146.337bf347.randy.dunlap@oracle.com>
+	<20070819153422.1e0b54af.randy.dunlap@oracle.com>
+	<1187562717.4200.154.camel@localhost>
+In-Reply-To: <1187562717.4200.154.camel@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Randy Dunlap <randy.dunlap@oracle.com>
+To: Joe Perches <joe@perches.com>
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Markus Rechberger <markus.rechberger@amd.com>
 
-On Sun, 2007-08-19 at 15:41 -0700, Randy Dunlap wrote:
-> It's not only included in that directory.
-> I find it included in 88 source files throughout the kernel tree.
+On Sun, 19 Aug 2007 15:31:57 -0700 Joe Perches wrote:
 
-I see, sorry.  I didn't read the file.
-I thought it was a sample driver with a binary blob.
+> On Sun, 2007-08-19 at 15:34 -0700, Randy Dunlap wrote:
+> > > -#include "linux/firmware.h"
+> > > +#include "firmware.h"
+> > I believe that it should be <linux/firmware.h>.
+> 
+> OK.
+> 
+> That's not my taste though, especially if only
+> included by files in the firmware_class directory.
+> Less pollution/namespace collision in include/linux
 
-cheers,  Joe
+It's not only included in that directory.
+I find it included in 88 source files throughout the kernel tree.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-
-diff --git a/Documentation/firmware_class/firmware_sample_driver.c b/Documentation/firmware_class/firmware_sample_driver.c
-index 6865cbe..754ded2 100644
---- a/Documentation/firmware_class/firmware_sample_driver.c
-+++ b/Documentation/firmware_class/firmware_sample_driver.c
-@@ -13,7 +13,7 @@
- #include <linux/device.h>
- #include <linux/string.h>
- 
--#include "linux/firmware.h"
-+#include <linux/firmware.h>
- 
- static struct device ghost_device = {
- 	.bus_id    = "ghost0",
-
-
-
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
