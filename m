@@ -1,43 +1,46 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Date: Fri, 03 Aug 2007 23:42:38 +0000
-Subject: Re: dev->priv to netdev_priv(dev)
-Message-Id: <m3lkcskwwh.fsf@maximus.localdomain>
+From: Joe Perches <joe@perches.com>
+Date: Sun, 19 Aug 2007 22:19:32 +0000
+Subject: [PATCH 4/5] Documentation/firmware/... convert #include
+Message-Id: <1187561972.4200.143.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <87r6mzmf6q.fsf@wanadoo.fr> <46AE43F5.8070802@garzik.org>
-	<87myx8338m.fsf_-_@wanadoo.fr>
-In-Reply-To: <87myx8338m.fsf_-_@wanadoo.fr> (Yoann Padioleau's message of "Fri, 03 Aug 2007 20:03:05 +0200")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Yoann Padioleau <padator@wanadoo.fr>
-Cc: Jeff Garzik <jeff@garzik.org>, kernel-janitors@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, Markus Rechberger <markus.rechberger@amd.com>
 
-Yoann Padioleau <padator@wanadoo.fr> writes:
+(untested)
 
-> drivers/net/wan/hdlc_fr.c               
+There are several files that 
+#include "linux/file" not #include <linux/file>
+#include "asm/file" not #include <asm/file>
 
-hdlc_fr (PVC device) uses dev->priv for N:1 mappings (a single pvc
-structure may be referenced as dev->priv by multiple (up to 2
-currently) PVC devs).
+Here's a little script that converts them:
 
-> drivers/net/wan/hdlc_ppp.c              
+egrep -i -r -l --include=*.[ch] \
+"^[[:space:]]*\#[[:space:]]*include[[:space:]]*\"(linux|asm)/(.*)\"" * \
+| xargs sed -i -e 's/^[[:space:]]*#[[:space:]]*include[[:space:]]*"\(linux\|asm\)\/\(.*\)"/#include <\1\/\2>/g'
 
-hdlc_ppp obviously has to do some tricks to use syncppp:
-static int ppp_open(struct net_device *dev)
-{
-        hdlc_device *hdlc = dev_to_hdlc(dev);
-        void *old_ioctl;
-        int result;
+This one is probably wrong.
 
-        dev->priv = &state(hdlc)->syncppp_ptr;
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        state(hdlc)->syncppp_ptr = &state(hdlc)->pppdev;
-        state(hdlc)->pppdev.dev = dev;
+It should likely keep firmware.h in
+the same directory as firmware.c
 
-        old_ioctl = dev->do_ioctl;
-        state(hdlc)->old_change_mtu = dev->change_mtu;
-        sppp_attach(&state(hdlc)->pppdev);
+Signed-off-by: Joe Perches <joe@perches.com>
 
-Perhaps I should remove that and make a sane interface in syncppp.
--- 
-Krzysztof Halasa
+diff --git a/Documentation/firmware_class/firmware_sample_driver.c b/Documentation/firmware_class/firmware_sample_driver.c
+index 6865cbe..754ded2 100644
+--- a/Documentation/firmware_class/firmware_sample_driver.c
++++ b/Documentation/firmware_class/firmware_sample_driver.c
+@@ -13,7 +13,7 @@
+ #include <linux/device.h>
+ #include <linux/string.h>
+ 
+-#include "linux/firmware.h"
++#include "firmware.h"
+ 
+ static struct device ghost_device = {
+ 	.bus_id    = "ghost0",
+
+
+
