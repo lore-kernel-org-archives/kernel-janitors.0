@@ -1,61 +1,39 @@
-From: Surya Prabhakar N <surya.prabhakar@wipro.com>
-Date: Mon, 13 Aug 2007 10:25:30 +0000
-Subject: [KJ] drivers/net/tokenring/3c359.c
-Message-Id: <1187000010.29518.27.camel@bluegenie>
+From: Joe Perches <joe@perches.com>
+Date: Sun, 19 Aug 2007 22:19:11 +0000
+Subject: [PATCH 3/5] drivers/scsi/... convert #include "linux/..." to
+Message-Id: <1187561951.4200.142.camel@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: mikep@linuxtr.net, netdev@vger.kernel.org
-Cc: linux-tr@linuxtr.net, Linux Kernel <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@lists.osdl.org>
+To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
-   Replacing kmalloc with kzalloc and cleaning up memset in 
-drivers/net/tokenring/3c359.c
+(untested)
 
+There are several files that 
+#include "linux/file" not #include <linux/file>
+#include "asm/file" not #include <asm/file>
 
-Signed-off-by: Surya Prabhakar <surya.prabhakar@wipro.com>
----
+Here's a little script that converts them:
 
-diff --git a/drivers/net/tokenring/3c359.c b/drivers/net/tokenring/3c359.c
-index 9f1b6ab..d36dd53 100644
---- a/drivers/net/tokenring/3c359.c
-+++ b/drivers/net/tokenring/3c359.c
-@@ -641,14 +641,14 @@ static int xl_open(struct net_device *dev)
- 	 * Now to set up the Rx and Tx buffer structures
- 	 */
- 	/* These MUST be on 8 byte boundaries */
--	xl_priv->xl_tx_ring = kmalloc((sizeof(struct xl_tx_desc) * XL_TX_RING_SIZE) + 7, GFP_DMA | GFP_KERNEL) ; 
-+	xl_priv->xl_tx_ring = kzalloc((sizeof(struct xl_tx_desc) * XL_TX_RING_SIZE) + 7, GFP_DMA | GFP_KERNEL) ; 
- 	if (xl_priv->xl_tx_ring = NULL) {
- 		printk(KERN_WARNING "%s: Not enough memory to allocate rx buffers.\n",
- 				     dev->name);
- 		free_irq(dev->irq,dev);
- 		return -ENOMEM;
- 	}
--	xl_priv->xl_rx_ring = kmalloc((sizeof(struct xl_rx_desc) * XL_RX_RING_SIZE) +7, GFP_DMA | GFP_KERNEL) ; 
-+	xl_priv->xl_rx_ring = kzalloc((sizeof(struct xl_rx_desc) * XL_RX_RING_SIZE) +7, GFP_DMA | GFP_KERNEL) ; 
- 	if (xl_priv->xl_tx_ring = NULL) {
- 		printk(KERN_WARNING "%s: Not enough memory to allocate rx buffers.\n",
- 				     dev->name);
-@@ -656,8 +656,6 @@ static int xl_open(struct net_device *dev)
- 		kfree(xl_priv->xl_tx_ring);
- 		return -ENOMEM;
- 	}
--	memset(xl_priv->xl_tx_ring,0,sizeof(struct xl_tx_desc) * XL_TX_RING_SIZE) ; 
--	memset(xl_priv->xl_rx_ring,0,sizeof(struct xl_rx_desc) * XL_RX_RING_SIZE) ; 
+egrep -i -r -l --include=*.[ch] \
+"^[[:space:]]*\#[[:space:]]*include[[:space:]]*\"(linux|asm)/(.*)\"" * \
+| xargs sed -i -e 's/^[[:space:]]*#[[:space:]]*include[[:space:]]*"\(linux\|asm\)\/\(.*\)"/#include <\1\/\2>/g'
+
+Signed-off-by: Joe Perches <joe@perches.com>
+
+diff --git a/drivers/scsi/aic94xx/aic94xx_dump.c b/drivers/scsi/aic94xx/aic94xx_dump.c
+index 6bd8e30..ddf5f10 100644
+--- a/drivers/scsi/aic94xx/aic94xx_dump.c
++++ b/drivers/scsi/aic94xx/aic94xx_dump.c
+@@ -29,7 +29,7 @@
+  *
+  */
  
- 	 /* Setup Rx Ring */
- 	 for (i=0 ; i < XL_RX_RING_SIZE ; i++) { 
+-#include "linux/pci.h"
++#include <linux/pci.h>
+ #include "aic94xx.h"
+ #include "aic94xx_reg.h"
+ #include "aic94xx_reg_def.h"
 
---
-thanks
-surya.
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
