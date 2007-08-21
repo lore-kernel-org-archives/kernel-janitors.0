@@ -1,96 +1,77 @@
-From: Joe Perches <joe@perches.com>
-Date: Sun, 19 Aug 2007 22:18:48 +0000
-Subject: [PATCH 2/5] drivers/char/... convert #include "linux/..." to
-Message-Id: <1187561928.4200.139.camel@localhost>
+From: "Office Antics" <qermqoox@max-software.com>
+Date: Tue, 21 Aug 2007 08:24:46 +0000
+Subject: [KJ] Registration Confirmation
+Message-Id: <1INPT-000QKE-YO@221-128-165-158.static.exatt.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1187683979-19182-81"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1187683979-19182-81
+Content-Type: text/plain;charset=windows-1252
+Content-Transfer-Encoding: 7BIT
+Content-Disposition: inline
+
+Dear Member,
+
+We are glad you joined Office Antics.
+
+Confirmation Number: 71853973
+Temorary Login: user2266
+Your Password ID: oc669
+
+Please Change your login and change your Login Information.
+
+Follow this Link: http://75.30.162.156/
+
+Welcome,
+Membership Support Department
+Office Antics
+
+
+------------=_1187683979-19182-81
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alan Cox <alan@redhat.com>, Amit Choudhary <amit2030@gmail.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, Dave Airlie <airlied@linux.ie>, Greg Kroah-Hartman <gregkh@suse.de>, Jean Delvare <khali@linux-fr.org>, Paul Fulghum <paulkf@microgate.com>, Pierre Ossman <drzeus-list@drzeus.cx>, Roland Dreier <rolandd@cisco.com>, Russell King <rmk@arm.linux.org.uk>, Yoann Padioleau <padator@wanadoo.fr>, dri-devel@lists.sourceforge.net, linux-pcmcia@lists.infradead.org
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-(untested)
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-There are several files that 
-#include "linux/file" not #include <linux/file>
-#include "asm/file" not #include <asm/file>
+Content preview:  Dear Member, We are glad you joined Office Antics.
+  Confirmation Number: 71853973 Temorary Login: user2266 Your Password ID:
+  oc669 [...] 
 
-Here's a little script that converts them:
+Content analysis details:   (7.8 points, 5.0 required)
 
-egrep -i -r -l --include=*.[ch] \
-"^[[:space:]]*\#[[:space:]]*include[[:space:]]*\"(linux|asm)/(.*)\"" * \
-| xargs sed -i -e
-'s/^[[:space:]]*#[[:space:]]*include[[:space:]]*"\(linux\|asm\)\/\(.*
-\)"/#include <\1\/\2>/g'
-
-Signed-off-by: Joe Perches <joe@perches.com>
-
-diff --git a/drivers/char/drm/drm_ioctl.c b/drivers/char/drm/drm_ioctl.c
-index b195e10..902c4a1 100644
---- a/drivers/char/drm/drm_ioctl.c
-+++ b/drivers/char/drm/drm_ioctl.c
-@@ -36,7 +36,7 @@
-#include "drmP.h"
-#include "drm_core.h"
-
--#include "linux/pci.h"
-+#include <linux/pci.h>
-
-/**
-  * Get the bus id.
-diff --git a/drivers/char/pcmcia/synclink_cs.c
-b/drivers/char/pcmcia/synclink_cs.c
-index 2b88931..4a186ed 100644
---- a/drivers/char/pcmcia/synclink_cs.c
-+++ b/drivers/char/pcmcia/synclink_cs.c
-@@ -87,7 +87,7 @@
-
-#include <asm/uaccess.h>
-
--#include "linux/synclink.h"
-+#include <linux/synclink.h>
-
-static MGSL_PARAMS default_params = {
-MGSL_MODE_HDLC, /* unsigned long mode */
-diff --git a/drivers/char/synclink.c b/drivers/char/synclink.c
-index fdc256b..eb1d90a 100644
---- a/drivers/char/synclink.c
-+++ b/drivers/char/synclink.c
-@@ -114,7 +114,7 @@
-
-#include <asm/uaccess.h>
-
--#include "linux/synclink.h"
-+#include <linux/synclink.h>
-
-#define RCLRVALUE 0xffff
-
-diff --git a/drivers/char/synclink_gt.c b/drivers/char/synclink_gt.c
-index bbb7f12..cb3d061 100644
---- a/drivers/char/synclink_gt.c
-+++ b/drivers/char/synclink_gt.c
-@@ -81,7 +81,7 @@
-#include <asm/types.h>
-#include <asm/uaccess.h>
-
--#include "linux/synclink.h"
-+#include <linux/synclink.h>
-
-#if defined(CONFIG_HDLC) || (defined(CONFIG_HDLC_MODULE) &&
-defined(CONFIG_SYNCLINK_GT_MODULE))
-#define SYNCLINK_GENERIC_HDLC 1
-diff --git a/drivers/char/synclinkmp.c b/drivers/char/synclinkmp.c
-index c63013b..726581e 100644
---- a/drivers/char/synclinkmp.c
-+++ b/drivers/char/synclinkmp.c
-@@ -80,7 +80,7 @@
-
-#include <asm/uaccess.h>
-
--#include "linux/synclink.h"
-+#include <linux/synclink.h>
-
-static MGSL_PARAMS default_params = {
-MGSL_MODE_HDLC, /* unsigned long mode */
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.8 HELO_DYNAMIC_IPADDR2   Relay HELO'd using suspicious hostname (IP addr
+                            2)
+ 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
+                            [score: 0.6691]
 
 
+
+------------=_1187683979-19182-81
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1187683979-19182-81--
