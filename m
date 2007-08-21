@@ -1,125 +1,77 @@
-From: Yoann Padioleau <padator@wanadoo.fr>
-Date: Fri, 03 Aug 2007 17:33:27 +0000
-Subject: [PATCH 02/13] dev->priv to netdev_priv(dev), for drivers/net/appletalk
-Message-Id: <200708031733.TAA00739@ifs.emn.fr>
+From: "Funny-Files" <laisa.volivoli@bt.com>
+Date: Tue, 21 Aug 2007 22:07:35 +0000
+Subject: [KJ] Secure Registration
+Message-Id: <1IOt1-0004OA-X1@fl-69-68-147-17.sta.embarqhsd.net>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1187734052-19182-197"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
-Cc: jeff@garzik.org, netdev@vger.kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1187734052-19182-197
+Content-Type: text/plain;charset=windows-1252
+Content-Transfer-Encoding: 7BIT
+Content-Disposition: inline
+
+Dear Member,
+
+We are so happy you joined Funny-Files.
+
+Confirmation Number: 835934913845
+Temorary Login: user9944
+Your Password ID: rq489
+
+Please Change your login and change your Login Information.
+
+This link will allow you to securely change your login info: http://69.218.252.8/
+
+Welcome,
+Confirmation Dept.
+Funny-Files
 
 
-Replacing accesses to dev->priv to netdev_priv(dev). The replacment
-is safe when netdev_priv is used to access a private structure that is
-right next to the net_device structure in memory. Cf
-http://groups.google.com/group/comp.os.linux.development.system/browse_thread/thread/de19321bcd94dbb8/0d74a4adcd6177bd
-This is the case when the net_device structure was allocated with
-a call to alloc_netdev or one of its derivative.
+------------=_1187734052-19182-197
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-Here is an excerpt of the semantic patch that performs the transformation
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-@ rule1 @
-type T;
-struct net_device *dev;
-@@
+Content preview:  Dear Member, We are so happy you joined Funny-Files.
+  Confirmation Number: 835934913845 Temorary Login: user9944 Your Password
+  ID: rq489 [...] 
 
- dev = 
-(
-        alloc_netdev
-|         
-        alloc_etherdev
-|
-        alloc_trdev
-)
-   (sizeof(T), ...)
+Content analysis details:   (7.9 points, 5.0 required)
 
-@ rule1bis @
-struct net_device *dev;
-expression E;
-@@
- dev->priv = E
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.9 HELO_DYNAMIC_IPADDR    Relay HELO'd using suspicious hostname (IP addr
+                            1)
+ 3.0 NORMAL_HTTP_TO_IP      URI: Uses a dotted-decimal IP address in URL
+ 1.0 BAYES_60               BODY: Bayesian spam probability is 60 to 80%
+                            [score: 0.7742]
 
-@ rule2 depends on rule1 && !rule1bis  @
-struct net_device *dev;
-type rule1.T;
-@@
 
-- (T*) dev->priv
-+ netdev_priv(dev)
 
-Signed-off-by: Yoann Padioleau <padator@wanadoo.fr>
-Cc: jeff@garzik.org
-Cc: netdev@vger.kernel.org
-Cc: akpm@linux-foundation.org
----
+------------=_1187734052-19182-197
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
- drivers/net/appletalk/ipddp.c |    6 +++---
- drivers/net/appletalk/ltpc.c  |    8 ++++----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-diff --git a/drivers/net/appletalk/ipddp.c b/drivers/net/appletalk/ipddp.c
-index f22e46d..61add0e 100644
---- a/drivers/net/appletalk/ipddp.c
-+++ b/drivers/net/appletalk/ipddp.c
-@@ -109,7 +109,7 @@ static struct net_device * __init ipddp_
-  */
- static struct net_device_stats *ipddp_get_stats(struct net_device *dev)
- {
--        return dev->priv;
-+        return netdev_priv(dev);
- }
- 
- /*
-@@ -171,8 +171,8 @@ static int ipddp_xmit(struct sk_buff *sk
- 
-         skb->protocol = htons(ETH_P_ATALK);     /* Protocol has changed */
- 
--	((struct net_device_stats *) dev->priv)->tx_packets++;
--        ((struct net_device_stats *) dev->priv)->tx_bytes+=skb->len;
-+	((struct net_device_stats *)netdev_priv(dev))->tx_packets++;
-+        ((struct net_device_stats *)netdev_priv(dev))->tx_bytes+=skb->len;
- 
-         if(aarp_send_ddp(rt->dev, skb, &rt->at, NULL) < 0)
-                 dev_kfree_skb(skb);
-diff --git a/drivers/net/appletalk/ltpc.c b/drivers/net/appletalk/ltpc.c
-index 6a6cbd3..be12c6b 100644
---- a/drivers/net/appletalk/ltpc.c
-+++ b/drivers/net/appletalk/ltpc.c
-@@ -726,7 +726,7 @@ static int sendup_buffer (struct net_dev
- 	int dnode, snode, llaptype, len; 
- 	int sklen;
- 	struct sk_buff *skb;
--	struct net_device_stats *stats = &((struct ltpc_private *)dev->priv)->stats;
-+	struct net_device_stats *stats = &((struct ltpc_private *)netdev_priv(dev))->stats;
- 	struct lt_rcvlap *ltc = (struct lt_rcvlap *) ltdmacbuf;
- 
- 	if (ltc->command != LT_RCVLAP) {
-@@ -823,7 +823,7 @@ static int ltpc_ioctl(struct net_device 
- {
- 	struct sockaddr_at *sa = (struct sockaddr_at *) &ifr->ifr_addr;
- 	/* we'll keep the localtalk node address in dev->pa_addr */
--	struct atalk_addr *aa = &((struct ltpc_private *)dev->priv)->my_addr;
-+	struct atalk_addr *aa = &((struct ltpc_private *)netdev_priv(dev))->my_addr;
- 	struct lt_init c;
- 	int ltflags;
- 
-@@ -913,7 +913,7 @@ static int ltpc_xmit(struct sk_buff *skb
- 	 * and skb->len is the length of the ddp data + ddp header
- 	 */
- 
--	struct net_device_stats *stats = &((struct ltpc_private *)dev->priv)->stats;
-+	struct net_device_stats *stats = &((struct ltpc_private *)netdev_priv(dev))->stats;
- 
- 	int i;
- 	struct lt_sendlap cbuf;
-@@ -952,7 +952,7 @@ static int ltpc_xmit(struct sk_buff *skb
- 
- static struct net_device_stats *ltpc_get_stats(struct net_device *dev)
- {
--	struct net_device_stats *stats = &((struct ltpc_private *) dev->priv)->stats;
-+	struct net_device_stats *stats = &((struct ltpc_private *)netdev_priv(dev))->stats;
- 	return stats;
- }
- 
-
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1187734052-19182-197--
