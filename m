@@ -1,8 +1,10 @@
-From: "Abdul Blackwell" <teeth.martin.soques@amd.com>
-Date: Sat, 18 Aug 2007 07:11:52 +0000
+From: "Genaro Hunt" <jovdslmil@brandtmaderas.com.ar>
+Date: Wed, 22 Aug 2007 13:58:40 +0000
 Subject: [KJ] {LEGGSUB}
-Message-Id: <01c7e167$0d2f1920$a50e9c56@teeth.martin.soques>
+Message-Id: <01c7e4dd$b05eb2d0$4a7119bd@jovdslmil>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <01c7e167$0d2f1920$a50e9c56@teeth.martin.soques>
+In-Reply-To: <01c7e167$0d2f1920$a50e9c56@teeth.martin.soques>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -28,9 +30,8 @@ Conditions:
 The guaranteed salary 8.800 AUD + awards 2.000 - 4.000 AUD(month). Career growth and compensation for taxi  expences.  US employment forms observance. The work schedule: monday - friday 10.00 AM - 3.00 PM
 Vacancy ID: 274008367
 
-E-Mail:  collierincgroup@aol.com
+E-Mail:  collierincs@aol.com
 The contact person: Jeremy West
-
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
