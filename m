@@ -1,31 +1,52 @@
-From: "SHANTILAL6@NETZERO.COM" <SHANTILAL6@NETZERO.COM>
-Date: Wed, 15 Aug 2007 19:26:19 +0000
-Subject: [KJ] Want to meet
-Message-Id: <01c7df70$6c8b2ce0$6c822ecf@akstcwoonmodemnsdgs>
+From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
+Date: Thu, 23 Aug 2007 03:33:10 +0000
+Subject: [PATCH 5 of 5 resend ] /drivers/char/watchdog ioremap balancing/ returncode check
+Message-Id: <989872.81202.qm@web44910.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-************* 
------------       
-  
-Want to meet with young girl ?
-Want to have sex with 12 years old girls ?
-We will help you !
-    
-mailto: SHANTILAL6@NETZERO.COM 
-        
-  
-***   
-******************* 
+patchset against 2.6.23-rc3.  
+corrects missing ioremap return checks and balancing on iounmap calls, integrated changes per list
+recommendations on the original set of patches..
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
+portions of ioremap audit.
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+This patch had been submitted previously but hushmail client caused wordwrap issues, resending
+with different mail client.
+
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+----------------------------------------------------------
+diff --git a/drivers/char/watchdog/iTCO_wdt.c b/drivers/char/watchdog/iTCO_wdt.c
+index cd5a565..f87cac7 100644
+--- a/drivers/char/watchdog/iTCO_wdt.c
++++ b/drivers/char/watchdog/iTCO_wdt.c
+@@ -621,6 +621,12 @@ static int iTCO_wdt_init(struct pci_dev *pdev,
+ 		pci_read_config_dword(pdev, 0xf0, &base_address);
+ 		RCBA = base_address & 0xffffc000;
+ 		iTCO_wdt_private.gcs = ioremap((RCBA + 0x3410),4);
++		if (!iTCO_wdt_private.gcs) {
++			printk(KERN_ERR PFX "failed to ioremap\n");
++			ret = -ENOMEM;
++			goto out;
++		}
++
+ 	}
+ 
+ 	/* Check chipset's NO_REBOOT bit */
+
+
+       
+____________________________________________________________________________________
+Take the Internet to Go: Yahoo!Go puts the Internet in your pocket: mail, news, photos & more. 
+http://mobile.yahoo.com/go?refer=1GNXIC
+
+
+      ____________________________________________________________________________________
+Shape Yahoo! in your own image.  Join our Network Research Panel today!   http://surveylink.yahoo.com/gmrs/yahoo_panel_invite.asp?a=7 
+
+
+
