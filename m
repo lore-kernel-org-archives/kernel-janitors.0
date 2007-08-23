@@ -1,42 +1,55 @@
-From: James Smart <James.Smart@Emulex.Com>
-Date: Fri, 03 Aug 2007 15:41:16 +0000
-Subject: Re: [PATCH 45] drivers/scsi/lpfc/lpfc_init.c: kmalloc + memset conversion
-Message-Id: <46B34C9C.2050300@emulex.com>
+From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
+Date: Thu, 23 Aug 2007 03:26:01 +0000
+Subject: [PATCH 3 of 5 resend ] /drivers/char/drm ioremap balancing/ returncode check
+Message-Id: <525882.95198.qm@web44909.mail.sp1.yahoo.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl> <200707312026.43947.m.kozlowski@tuxland.pl>
-In-Reply-To: <200707312026.43947.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-ACK
+patchset against 2.6.23-rc3.  
+corrects missing ioremap return checks and balancing on iounmap calls, integrated changes per list
+recommendations on the original set of patches..
 
--- james s
+Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
+portions of ioremap audit.
 
-Mariusz Kozlowski wrote:
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  drivers/scsi/lpfc/lpfc_init.c | 65932 -> 65881 (-51 bytes)
->  drivers/scsi/lpfc/lpfc_init.o | 219760 -> 219616 (-144 bytes)
-> 
->  drivers/scsi/lpfc/lpfc_init.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> --- linux-2.6.23-rc1-mm1-a/drivers/scsi/lpfc/lpfc_init.c	2007-07-26 13:07:42.000000000 +0200
-> +++ linux-2.6.23-rc1-mm1-b/drivers/scsi/lpfc/lpfc_init.c	2007-07-31 11:07:59.000000000 +0200
-> @@ -1280,11 +1280,10 @@ lpfc_hba_init(struct lpfc_hba *phba, uin
->  	uint32_t *HashWorking;
->  	uint32_t *pwwnn = (uint32_t *) phba->wwnn;
-> 
-> -	HashWorking = kmalloc(80 * sizeof(uint32_t), GFP_KERNEL);
-> +	HashWorking = kcalloc(80, sizeof(uint32_t), GFP_KERNEL);
->  	if (!HashWorking)
->  		return;
-> 
-> -	memset(HashWorking, 0, (80 * sizeof(uint32_t)));
->  	HashWorking[0] = HashWorking[78] = *pwwnn++;
->  	HashWorking[1] = HashWorking[79] = *pwwnn;
-> 
-> 
+This patch had been submitted previously but hushmail client caused wordwrap issues, resending
+with different mail client.
+
+Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+----------------------------------------------------------
+diff --git a/drivers/char/drm/drm_bufs.c b/drivers/char/drm/drm_bufs.c
+index 923174c..448488b 100644
+--- a/drivers/char/drm/drm_bufs.c
++++ b/drivers/char/drm/drm_bufs.c
+@@ -177,8 +177,13 @@ static int drm_addmap_core(struct drm_device * dev, unsigned
+ 						     MTRR_TYPE_WRCOMB, 1);
+ 			}
+ 		}
+-		if (map->type = _DRM_REGISTERS)
++		if (map->type = _DRM_REGISTERS){
+ 			map->handle = ioremap(map->offset, map->size);
++			if (!map->handle) {
++				drm_free(map, sizeof(*map), DRM_MEM_MAPS);
++				return -ENOMEM;
++			}
++		}
+ 		break;
+ 	case _DRM_SHM:
+ 		list = drm_find_matching_map(dev, map);
+
+
+       
+____________________________________________________________________________________
+Be a better Heartthrob. Get better relationship answers from someone who knows. Yahoo! Answers -
+Check it out. 
+http://answers.yahoo.com/dir/?link=list&sid96545433
+
+
+       
+____________________________________________________________________________________
+Take the Internet to Go: Yahoo!Go puts the Internet in your pocket: mail, news, photos & more. 
+http://mobile.yahoo.com/go?refer=1GNXIC
+
