@@ -1,14 +1,42 @@
-From: CSP <Maryanne@la-mark.com.pl>
-Date: Thu, 16 Aug 2007 19:13:13 +0000
-Subject: [KJ] Nebenverdienst
-Message-Id: <001801c7e020$7f86e270$05241d24@usuario36bfc2b>
+From: "Amelia Briggs" <kathryn.bat3s@ntlworld.com>
+Date: Sat, 25 Aug 2007 15:41:57 +0000
+Subject: [KJ] Programming Specialists required! Freelance work!
+Message-Id: <01c7e72d$58e621d0$c9563050@kathryn.bat3s>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-                                                                                                                                                                                                                                                                                                                                                                                                                             Vertrieb Innendienst (First Level Support) Mitarbeiter/in in Teilzeit oder Vollzeit gesucht  Verdienst zwischen 500 und 1000 Euro pro Woche in der Probezeit      F&uuml;r unseren Unternehmen, CSP Solar Ltd &reg;  , suchen wir First Level Support Mitarbeiter/in in Teilzeit oder Vollzeit        Sie haben schon immer getr&auml;umt eine interessante und gut bezahlte T&auml;tigkeit auszu&uuml;ben, die dazu auch noch mit guten Aufstiegschancen verbunden ist!   CSP Solar &reg; bietet Ihnen eine solche M&ouml;glichkeit!   Ihre Aufgaben:   - Verwaltung und Weiterleitung der Kundengelder  - Weiterleitung der  Privatkunden-Gelder an unsere Vertriebspartner  - Auftragsannahme Unser Service Center bietet den ersten Kontakt mit unserem Unternehmen und &uuml;bertr&auml;gt den â€žSpirit" der Marke CSP Solar Ltd auf unsere Kunden.Sie gestalten den Kontakt &auml;u&szlig;erst positiv, indem Sie kompetent, verbindlich und freundlich gegen&uuml;ber unseren Kunden auftreten.   Ihr Profil:   Sie sind kommunikativ und trauen sich zu, die vertriebsorientierten Aufgaben in unserem Service Team zu bew&auml;ltigen  Die Besch&auml;ftigung erfolgt im Rahmen eines Job-Sharing Systems. Ihre Arbeitszeiten betragen 2 bis 8 Stunden in der Woche  Internet, E-Mail, Grundkenntnisse der Hauptzahlungssysteme. Es w&auml;re w&uuml;nschenswert, wenn Sie ein eigenes Konto in einem deutschenGeldinstitut mit Online Banking h&auml;tten  Genauigkeit, P&uuml;nktlichkeit, Zuverl&auml;ssigkeit und nat&uuml;rlich eine gesunde ArbeitseinstellungIhre Vorteile und Ihr Verdienst:   - Sie werden zun&auml;chst unser Vertreter und Mittelsmann zwischen uns und unseren Kunden in Ihrem Land  - Sie zahlen keine Geb&uuml;hren und m&uuml;ssen nichts investieren  - Sie haben eine flexible , interessante Arbeit , mit unterschiedlichen T&auml;tigkeitsschwerpunkten und hohen Bef&ouml;rderungsm&ouml;glichkeiten  - Sie verdienen zuerst zwischen 500 und 1000 Euro pro Woche  - Sie k&ouml;nnen selbst Ihren Verdienst bestimmen. - da Sie auf einem Prozentsatz arbeiten - h&auml;ngt Ihr Verdienst nur von Ihrer Arbeitsbereitschaft ab    Kurz &uuml;ber uns:   Die CSP Solar Ltd wurde Anfang 2004 in der Ukraine gegr&uuml;ndet und geh&ouml;rt mit Ihren hochwertigen Produkten heute zu den europaweit f&uuml;hrenden Unternehmen der Solartechnik.Das Produktspektrum umfa&szlig;t Solarstrommodule, Wechselrichter, Befestigungssysteme und weitere Komponenten sowie komplette Solarstromanlagen f&uuml;r netzgebundene und netzferne Anwendungen. Unsere Kunden sind Installationsbetriebe, Betreibergesellschaften, OEM-Kunden und der Gro&szlig;handel. Generalimporteure im Ausland sorgen f&uuml;r steigende Export-Zahlen.  Ein dezidiertes Qualit&auml;tssicherungskonzept und die Produktion in der mehrfach ausgezeichneten "Nullemissionsfabrik"sichern der Solar-Fabrik hohe Qualit&auml;tsstandards und &ouml;kologische Glaubw&uuml;rdigkeit.  Aufgrund des kontinuierlichen Wachstums auf dem europ&auml;ischen und den internationalen M&auml;rkten sowie den stetig steigenden Produktionskapazit&auml;ten sind wir immer auf der Suche nach qualifizierten und hoch motivierten Arbeitskr&auml;ften.       Kundenorientierung:   Die hohe Qualit&auml;t unserer Produkte und Dienstleistungen ist entscheidend f&uuml;r unseren Erfolg am Markt  Wir f&uuml;hlen uns dem Erfolg unserer Kunden verpflichtet und unterst&uuml;tzen sie deshalb bei ihren Aktivit&auml;ten.  Wir setzen auf eine vertrauensvolle Zusammenarbeit und partnerschaftliche, dauerhafte Beziehungen mit unseren Kunden, Lieferanten und anderen Gesch&auml;ftspartnern.  Wir sehen in einem kontinuierlichen Verbesserungsproze&szlig; (KVP) die Voraussetzung, um die Ergebnisse unserer Arbeit f&uuml;r den Kunden optimalzu gestalten. Die Beurteilung unserer Leistungen durch die Kunden stellt f&uuml;r uns ein wichtiges Instrument zur st&auml;ndigen Verbesserung dar.     -------------------------------------------------------------------------------------------------------------------------- Wenn Sie sich f&uuml;r eine innovative Energietechnik engagieren wollen und ein attraktives T&auml;tigkeitsfeld im Wachstumsmarkt Solarenergie suchen, freuen wir uns auf Ihre Bewerbung mit einem Foto Falls Sie f&uuml;r unser Angebot Interesse haben und bereit sind, eine gut bezahlte, aber auch verantwortungsvolle Arbeit auszuf&uuml;hren, so schreiben Sie uns bitte an:      csp53@bk.ru       Nach der Bearbeitung Ihrer Bewerbung, wird Ihnen im Falle einer Zusage Ihre T&auml;tigkeit genauestens erl&auml;utert, Sie werden mit unserer Gesellschaft bekannt gemacht und es folgt in k&uuml;rze der Arbeitsvertrag      Wir hoffen auf eine gute und erfolgreiche Zusammenarbeit   Mit freundlichen Gr&uuml;ssen   CSP LTD &reg; 2007      Wir freuen uns auf Sie!     Diese Email wurde von einem unserer Email Roboter erstellt. Antworten Sie bitte nicht an folgende Email mit der Option '' an Absender antworten'' , senden Sie keine Emails an die Absenderadresse, da Ihre Email automatisch gel&ouml;scht wird.                                                                                                                                                              
+WiSoft INC. is currently seeking outstanding people for freelance working to fill position of Software Development Team of a group of 6-10 developers. Free working graphic, stable payments, career growth, migration opportunity.
+
+
+
+
+Position A: System modules and driver deveploer.
+
+------- Successful candidates should correspond to the following required competencies / skills:
+- Deep knowledges of win32 systems structures
+- Average english language skills 
+- C++/ASSEMBLER expert programming skills
+- Expirience of programming TCP\IP-based applications.
+------- SALARY: Starting: 2.000$/Month
+
+
+
+
+Position B: Web-developer.
+
+------ Successful candidates should correspond to the following required competencies / skills:
+- Average english language skills
+- PHP(or Perl) & Mysql professional development skills
+- Expirience of development large web-based project
+----- SALARY: Starting from 1000$/Month
+
+Interesting? Send us your CV now!
+Contact e-mail: alex.kaufmann@a.org.ua .
+
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
