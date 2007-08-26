@@ -1,27 +1,45 @@
-From: nicolas john <daybestpuppy@yahoo.com>
-Date: Wed, 15 Aug 2007 16:31:16 +0000
-Subject: [KJ] lucky winners
-Message-Id: <E1ILLm8-0008KK-5n@gator108.hostgator.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Sun, 26 Aug 2007 11:15:44 +0000
+Subject: possible power-of-2 cleanup
+Message-Id: <Pine.LNX.4.64.0708260714110.24759@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <E1ILLm7-0000MS-77@gator108.hostgator.com>
-In-Reply-To: <E1ILLm7-0000MS-77@gator108.hostgator.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello
-  You are lucky,you are given a puppy from usa,we are giving our free puppy,you are only made to pay for the frieght fee of the puppy.
- Please mail back if you want this puppy.
-  thanks
+
+  is anyone still working on the power-of-2 stuff?  surely, there's a
+cleaner way to code this from fs/namespace.c:
 
 
+        /*
+         * Find the power-of-two list-heads that can fit into the allocation..
+         * We don't guarantee that "sizeof(struct list_head)" is necessarily
+         * a power-of-two.
+         */
+        nr_hash = PAGE_SIZE / sizeof(struct list_head);
+        hash_bits = 0;
+        do {
+                hash_bits++;
+        } while ((nr_hash >> hash_bits) != 0);
+        hash_bits--;
 
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+        /*
+         * Re-calculate the actual number of entries and the mask
+         * from the number of bits we can fit.
+         */
+        nr_hash = 1UL << hash_bits;
+        hash_mask = nr_hash - 1;
 
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
