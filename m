@@ -1,26 +1,14 @@
-From: "Ursula Bloom" <ozburundi@autosurf.cz>
-Date: Mon, 06 Aug 2007 09:51:35 +0000
-Subject: [KJ] Good news
-Message-Id: <001801c7d7e5$776467e0$06840cc4@dave9f8395fde5>
+From: "Nathaniel Richardson" <pnonis.ama@webmylifetime.com>
+Date: Sun, 26 Aug 2007 19:15:31 +0000
+Subject: [KJ] Autodesk AutoCAD 2008 129$ - Save 6590.95 $ 0ff Retai1
+Message-Id: <000001c7e814$5a943200$0100007f@localhost>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi Randi, hope I hit your correct email adress. 
-I was going to mention about these incredible opportunities 
-for future prosperity.There is a company outhere 
-known as Exchange Mobile Tele Co (EXMT). 
-This one as you can see is climbing, but by just looking at it 
-I can tell it's gonna explode.So you do have a window to digg in 
-while it's still in it's low.I got a few shares of mine and made 
-5K. So what a hey, go ahead and do the same make some money while 
-it's there. 
-
-I hope it was a helper.I'll email you later this week. 
-
-Jordan.
+type " cheapoemsoft . com " ln lnternet ExpIorer browser bar
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
