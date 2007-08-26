@@ -1,47 +1,22 @@
-From: "Scott Thompson" <postfail@hushmail.com>
-Date: Fri, 10 Aug 2007 18:41:52 +0000
-Subject: [PATCH 4/4]  /drivers/net ioremap balancing/returncode check (ucc_geth.c.c)
-Message-Id: <20070810184153.19F06DA81F@mailserver7.hushmail.com>
+From: Jiri Slaby <jirislaby@gmail.com>
+Date: Sun, 26 Aug 2007 13:48:05 +0000
+Subject: use DIV_ROUND_UP
+Message-Id: <46D18495.9020500@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-patchset against 2.6.23-rc2 for /drivers/net ioremap balancing / 
-return check:
+Hi!
 
-  corrects:
-  --sbus_ioremap return unchecked.
-  --ioremap function unchecked
-  --function failure cases did not clean up ioremap'd values.
-  lne390.c
-   -- believe had incorrect/not ideal variable check on if for 
-iounmap
+some code defines this macro itself, or simply counts it on its own.
 
-this audit was only for files directly in drivers/net directory, 
-not the full tree.
+Use for example this command to find it
+grep -r '+.*\([^ ]*\).*-.*1.*/.*\1' *
+ion the tree and remove all those re-defines of this macro.
 
-I split patches up by file changed as each file had different 
-'owner' to ease accept/reject/revision process.
-
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-----------------------------------------------------------
-diff --git a/drivers/net/ucc_geth.c b/drivers/net/ucc_geth.c
-index 12e01b2..30acbe2 100644
---- a/drivers/net/ucc_geth.c
-+++ b/drivers/net/ucc_geth.c
-@@ -2430,6 +2430,11 @@ static int ucc_struct_init(struct 
-ucc_geth_private *ugeth)
- 
- 	ugeth->ug_regs = (struct ucc_geth *) ioremap(uf_info->regs, 
-sizeof(struct ucc_geth));
- 
-+	if (!ugeth->ug_regs){
-+		ugeth_err("%s: Failed to ioremap.", __FUNCTION__);
-+		return -ENOMEM;
-+	}
-+
- 	return 0;
-}
-
+regards,
+-- 
+Jiri Slaby (jirislaby@gmail.com)
+Faculty of Informatics, Masaryk University
