@@ -1,43 +1,23 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Date: Wed, 15 Aug 2007 10:12:14 +0000
-Subject: Re: [kj] is_power_of_2 in drivers/s390/cio
-Message-Id: <20070815101214.GC16551@osiris.boeblingen.de.ibm.com>
+From: <wayneg@azbar.org>
+Date: Mon, 27 Aug 2007 15:46:15 +0000
+Subject: [KJ] Your news release is here.
+Message-Id: <46D2F1C7.1040601@azbar.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1187009705.7273.7.camel@merlin.linuxcoe.com>
-In-Reply-To: <1187009705.7273.7.camel@merlin.linuxcoe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-s390@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 13, 2007 at 06:25:05PM +0530, vignesh babu wrote:
-> Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
-> 
-> Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
-> ---
-> diff --git a/drivers/s390/cio/device_fsm.c b/drivers/s390/cio/device_fsm.c
-> index 8633dc5..c00ebf4 100644
-> --- a/drivers/s390/cio/device_fsm.c
-> +++ b/drivers/s390/cio/device_fsm.c
-> @@ -12,6 +12,7 @@
->  #include <linux/init.h>
->  #include <linux/jiffies.h>
->  #include <linux/string.h>
-> +#include <linux/log2.h>
-> 
->  #include <asm/ccwdev.h>
->  #include <asm/cio.h>
-> @@ -1129,7 +1130,7 @@ device_trigger_reprobe(struct subchannel *sch)
->  	sch->schib.pmcw.isc = 3;
->  	sch->schib.pmcw.csense = 1;
->  	sch->schib.pmcw.ena = 0;
-> -	if ((sch->lpm & (sch->lpm - 1)) != 0)
-> +	if (!is_power_of_2(sch->lpm))
->  		sch->schib.pmcw.mp = 1;
->  	sch->schib.pmcw.intparm = (__u32)(unsigned long)sch;
->  	/* We should also udate ssd info, but this has to wait. */
+ERMX Announces First Step In Asset Expansion Plan.
 
-This changes the path taken if sch->lpm = 0. Therefore NOT applied.
+EntreMetrix Inc. (ERMX)
+$0.089 UP 11.25%
+
+ERMX Acquired Gladiator Challenge. With over 200 recent events, it is
+mixed martial arts biggest promoter. This asset expansion will increase
+dividend opportunities. Act fast, read up, and move on ERMX Tuesday
+first thing.
+
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
