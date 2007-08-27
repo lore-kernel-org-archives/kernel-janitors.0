@@ -1,27 +1,52 @@
-From: "vignesh babu" <vigneshbabu@gmail.com>
-Date: Mon, 27 Aug 2007 12:42:49 +0000
-Subject: Re: possible power-of-2 cleanup
-Message-Id: <3d1754a30708270530l857eb83q8e643191d60b0a30@mail.gmail.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 27 Aug 2007 13:47:09 +0000
+Subject: standard for documenting conditional preprocessor directives?
+Message-Id: <Pine.LNX.4.64.0708270942001.2707@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0708260714110.24759@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0708260714110.24759@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On 8/26/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> On Sun, 26 Aug 2007, vignesh babu wrote:
->
-> just FYI, i ran my detection script on the entire tree and came up
-> with these possibilities for power of 2 cleanup -- i'm assuming you've
-> probably seen and processed some of them.  as for the rest of them,
-> have fun.  :-)
->
->
 
-wow...thanks for the list...i would cleanup as many of those...will
-mail u a list of committed changes to the list and will update wiki
-with the same sometime in the next few hours...
+  is there an understood standard for documenting conditional
+preprocessor directives so you can more easily follow the logic in
+lengthy code segments?
 
-Vignesh
+  consider:
+
+    #ifdef SNAFU
+    ... very long blah blah ...
+    #else
+    ... equally long woof woof ...
+    #endif
+
+  if you're perusing the code, and you hit the "#else" or "#endif",
+it's almost impossible to tell what they correspond to, particularly
+if they're mixed in with even more nested directives.  so what's the
+best way to make this more readable?
+
+  what about something like?
+
+    #ifdef SNAFU
+    ...
+    #else /* !SNAFU */
+    ...
+    #endif /* !SNAFU */
+
+  i contend that both of those new comments have value since, without
+them, you wouldn't know what either the "#else" or "#endif"
+represented.  but i'm willing to be disabused of that notion.
+
+  thoughts?
+
+rday
+
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
