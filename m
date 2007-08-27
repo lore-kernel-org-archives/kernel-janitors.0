@@ -1,36 +1,76 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Date: Thu, 30 Aug 2007 12:22:37 +0000
-Subject: Re: [KJ][patch 3/3] VIDC20: use abs() from kernel.h instead of own definition
-Message-Id: <20070830122237.GE10088@flint.arm.linux.org.uk>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 27 Aug 2007 13:10:14 +0000
+Subject: [PATCH] Add macro to round down to nearest power of two.
+Message-Id: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070830102551.131398783@finow14.de> <20070830104038.GD14925@ahaupt-debian-vm.localdomain> <20070830111746.GS14130@parisc-linux.org> <20070830115059.GA17168@ahaupt-debian-vm.localdomain>
-In-Reply-To: <20070830115059.GA17168@ahaupt-debian-vm.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andre Haupt <andre@finow14.de>
-Cc: Matthew Wilcox <matthew@wil.cx>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 30, 2007 at 01:50:59PM +0200, Andre Haupt wrote:
-> On Thu, Aug 30, 2007 at 05:17:47AM -0600, Matthew Wilcox wrote:
-> > On Thu, Aug 30, 2007 at 12:40:38PM +0200, andre@finow14.de wrote:
-> > > -		diff_int = my_abs(rate_ext-rate);
-> > > -		diff_ext = my_abs(rate_int-rate);
-> > > +		diff_int = abs(rate_ext-rate);
-> > > +		diff_ext = abs(rate_int-rate);
-> > 
-> > Nothing to do with the patch, but is this really correct?  Surely it
-> > should be diff_ext = abs(rate_ext-rate) ?
-> 
-> hmmh, not sure about this ...
 
-No idea.  The support for external clocking came from someone else
-(I was never able to work it out myself).
+Consistent with the existing roundup_pow_of_two() routine, add the
+corresponding rounddown_pow_of_two() routine.
 
-I can only assume that the code as it stands does work.  So let's
-remain bug-compatible until there's a proven problem.
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
+---
+
+  i'm not sure if this has already been accepted into one of the
+preliminary trees, but can someone check that the logic here makes
+sense?  i've tested it, and it seems to return the correct results.
+
+  and this would certainly allow some existing code to be simplified.
+
+
+diff --git a/include/linux/log2.h b/include/linux/log2.h
+index 1b8a2c1..ff8835b 100644
+--- a/include/linux/log2.h
++++ b/include/linux/log2.h
+@@ -63,6 +63,15 @@ unsigned long __roundup_pow_of_two(unsigned long n)
+ 	return 1UL << fls_long(n - 1);
+ }
+
++/*
++ * round down to nearest power of two
++ */
++static inline __attribute__((const))
++unsigned long __rounddown_pow_of_two(unsigned long n)
++{
++	return 1UL << (fls_long(n) - 1);
++}
++
+ /**
+  * ilog2 - log of base 2 of 32-bit or a 64-bit unsigned value
+  * @n - parameter
+@@ -165,4 +174,20 @@ unsigned long __roundup_pow_of_two(unsigned long n)
+ 	__roundup_pow_of_two(n)			\
+  )
+
++/**
++ * rounddown_pow_of_two - round the given value down to nearest power of two
++ * @n - parameter
++ *
++ * round the given value down to the nearest power of two
++ * - the result is undefined when n = 0
++ * - this can be used to initialise global variables from constant data
++ */
++#define rounddown_pow_of_two(n)			\
++(						\
++	__builtin_constant_p(n) ? (		\
++		(n = 1) ? 0 :			\
++		(1UL << ilog2(n)) :		\
++	__rounddown_pow_of_two(n)		\
++ )
++
+ #endif /* _LINUX_LOG2_H */
+
+rday
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
