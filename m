@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Mon, 27 Aug 2007 12:26:44 +0000
+Date: Mon, 27 Aug 2007 12:37:28 +0000
 Subject: Re: possible power-of-2 cleanup
-Message-Id: <Pine.LNX.4.64.0708270822500.31099@localhost.localdomain>
+Message-Id: <Pine.LNX.4.64.0708270830560.31657@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0708260714110.24759@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0708260714110.24759@localhost.localdomain>
@@ -24,18 +24,35 @@ On Mon, 27 Aug 2007, vignesh babu wrote:
 > mail u a list of committed changes to the list and will update wiki
 > with the same sometime in the next few hours...
 
-be careful with some of them.  as i recall, there were the occasional
-cases once upon a time where someone was using a construct like "tmp &
-(tmp - 1)" but for some other purpose than just checking for power of
-2.  so you should check the context first.
+by the way, in some places, there is just some really weird sh*t going
+on.  like here, in fs/hfs/mdb.c:
+
+        /* size must be a multiple of 512 */
+        while (size & (size - 1))
+                size -= HFS_SECTOR_SIZE;
+
+now, it turns out that HFS_SECTOR_SIZE is defined as 512, but i'm
+baffled as to how continually *subtracting* 512 is going to end up
+giving you a *multiple* of 512.
+
+in general, i would be intensely suspicious of any loop that iterates
+*until* something is a power of 2 -- that's probably something that
+can be simplified.  some of those cases are screamingly obvious, like
+this from drivers/md/dm-snap.c:
+
+/*
+ * Rounds a number down to a power of 2.
+ */
+static uint32_t round_down(uint32_t n)
+{
+        while (n & (n - 1))
+                n &= (n - 1);
+        return n;
+}
+
+  anyway, you get the idea.
 
 rday
-
-p.s.  here's a grep command for tracking down potential cleanups:
-
-grep -Er "([^\(\)]+) ?\& ?\(\1 ?- ?1\)" *
-
-
 -- 
 ====================================
 Robert P. J. Day
