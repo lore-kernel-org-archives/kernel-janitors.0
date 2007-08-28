@@ -1,14 +1,16 @@
-From: <charris215@azbar.org>
-Date: Mon, 27 Aug 2007 15:47:24 +0000
+From: <ni@volja.net>
+Date: Tue, 28 Aug 2007 01:20:57 +0000
 Subject: [KJ] The News Everyone has been waiting for.
-Message-Id: <46D2F20C.6040604@azbar.org>
+Message-Id: <46D3D825.5060802@volja.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <46D2F20C.6040604@azbar.org>
+In-Reply-To: <46D2F20C.6040604@azbar.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hot News Finally Hits On ERMX, And It Was Worth The Wait.
+Here Comes ERMX With Huge News, Its Hot!
 
 EntreMetrix Inc. (ERMX)
 $0.089 UP 11.25%
