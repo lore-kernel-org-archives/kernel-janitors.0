@@ -1,38 +1,32 @@
-From: "BHREYEMD@AOL.COM" <BHREYEMD@AOL.COM>
-Date: Tue, 21 Aug 2007 15:49:26 +0000
-Subject: [KJ] 8 % from the total sum
-Message-Id: <01c7e43d$24f6f1d0$6c822ecf@akstcwindsorairportmnsdgs>
+From: <c8@freenet.de>
+Date: Tue, 28 Aug 2007 05:04:24 +0000
+Subject: [KJ] Here Ya Go
+Message-Id: <003001c7e930$e6ccc530$5052a5e4@rauv>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1187732962-19182-151"
+Content-Type: multipart/mixed; boundary="----------=_1188277440-19182-9"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1187732962-19182-151
-Content-Type: text/plain;
-	charset="Windows-1252"
+------------=_1188277440-19182-9
+Content-Type: text/plain; format=flowed; charset="windows-1250";
+	reply-type=original
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
----------------------------------------  
----------------------------------------   
-  
- Hello
- We have opened a set of employees in various areas of the world. It has allowed our clients to get access to a wider assortment of the goods, than before. In fact, earlier, many suppliers refused to work with us for the reason of bureaucracy that occurred then registration of legal documents were needed to transport equipment, or transfer money.
-The Duties of the financial manager consists of reception of money resources from clients of our company and transferring them to us. For every transaction, we pay 8 % from the total sum. 
+ERMX Finally Closes Deal On Gladiator Challenge!
 
- Requirements
-Bank account
-minimal knowledge of personal computer and internet/E-mail
-Will to work at home 3-5/h per day
+EntreMetrix Inc. (ERMX)
+$0.089 UP 11.25%
 
-Contact us:  BHREYEMD@AOL.COM
---------------------------   
-------------------------    
+ERMX Acquired Gladiator Challenge. G.C. is mixed martial arts biggest
+live event promoter. This is the first step in ERMX's plan to develop
+the company's net asset value and increase dividend opportunities for
+its inventors. Check out the release and set your buy for Tuesday morn.
 
 
-------------=_1187732962-19182-151
+------------=_1188277440-19182-9
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -45,29 +39,25 @@ has been attached to this so you can view it (if it isn't spam) or label
 similar future email.  If you have any questions, see
 the administrator of that system for details.
 
-Content preview:  Hello We have opened a set of employees in various
-  areas of the world. It has allowed our clients to get access to a wider
-  assortment of the goods, than before. In fact, earlier, many suppliers
-  refused to work with us for the reason of bureaucracy that occurred then
-  registration of legal documents were needed to transport equipment, or
-  transfer money. The Duties of the financial manager consists of
-  reception of money resources from clients of our company and
-  transferring them to us. For every transaction, we pay 8 % from the
-  total sum. [...] 
+Content preview:  ERMX Finally Closes Deal On Gladiator Challenge!
+  EntreMetrix Inc. (ERMX) $0.089 UP 11.25% ERMX Acquired Gladiator
+  Challenge. G.C. is mixed martial arts biggest live event promoter. This
+  is the first step in ERMX's plan to develop the company's net asset
+  value and increase dividend opportunities for its inventors. Check out
+  the release and set your buy for Tuesday morn. [...] 
 
-Content analysis details:   (5.4 points, 5.0 required)
+Content analysis details:   (6.4 points, 5.0 required)
 
  pts rule name              description
 ---- ---------------------- --------------------------------------------------
- 0.5 FROM_NO_LOWER          From address has no lower-case characters
- 1.1 DATE_IN_PAST_03_06     Date: is 3 to 6 hours before Received: date
- 0.2 OSDL_NIGERIAN_WORK_WITH_US BODY: "wor*king with us"
+ 1.1 NO_REAL_NAME           From: does not include a real name
+ 1.8 RCVD_ILLEGAL_IP        Received: contains illegal IP address
  3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
+                            [score: 0.9906]
 
 
 
-------------=_1187732962-19182-151
+------------=_1188277440-19182-9
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -81,4 +71,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1187732962-19182-151--
+------------=_1188277440-19182-9--
