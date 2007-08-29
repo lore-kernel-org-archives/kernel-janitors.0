@@ -1,53 +1,71 @@
-From: vignesh babu <vignesh.babu@wipro.com>
-Date: Mon, 13 Aug 2007 13:05:14 +0000
-Subject: [kj] is_power_of_2 in drivers/pci/pci.c
-Message-Id: <1187009594.7273.4.camel@merlin.linuxcoe.com>
+From: "Helga Delong" <AnnmarieinsulinBrand@zawodny.com>
+Date: Wed, 29 Aug 2007 16:37:19 +0000
+Subject: [KJ] Re: Thanks, we are accepting your company application
+Message-Id: <2adf01c7ea59$abbd5750$9865fea9@uw8b4cbca580ff>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1188404932-19182-167"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: kernel-janitors@vger.kernel.org
+
+This is a multi-part message in MIME format...
+
+------------=_1188404932-19182-167
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Your your credit report does not matter to us!=0A=
+=0A=
+If you have your own business and require IMMEDIATE money to spend ANY way =
+you like or require Extra money to give the business a boost or need A low =
+interest loan - NO STRINGS ATTACHED, here is our best deal we can offer you=
+ THIS EVENING (hurry, this offer will expire THIS EVENING):=0A=
+=0A=
+$65,000+ loan=0A=
+=0A=
+Hurry, when best deal is gone, it is gone. Simply Call Us...=0A=
+=0A=
+Do not worry about approval, your your credit report will not disqualify yo=
+u!=0A=
+=0A=
+Call Us Free on 866-847-0715=
+
+------------=_1188404932-19182-167
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-pci@atrey.karlin.mff.cuni.cz, Kernel Janitors List <kernel-janitors@lists.osdl.org>
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-Replacing n & (n - 1) for power of 2 check by is_power_of_2(n)
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
 
-Signed-off-by: vignesh babu <vignesh.babu@wipro.com>
----
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 37c00f6..19a64a3 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/spinlock.h>
- #include <linux/string.h>
-+#include <linux/log2.h>
- #include <asm/dma.h>	/* isa_dma_bridge_buggy */
- #include "pci.h"
- 
-@@ -1454,7 +1455,7 @@ int pcix_set_mmrbc(struct pci_dev *dev, int mmrbc)
- 	int cap, err = -EINVAL;
- 	u32 stat, cmd, v, o;
- 
--	if (mmrbc < 512 || mmrbc > 4096 || (mmrbc & (mmrbc-1)))
-+	if (mmrbc < 512 || mmrbc > 4096 || !is_power_of_2(mmrbc))
- 		goto out;
- 
- 	v = ffs(mmrbc) - 10;
-@@ -1526,7 +1527,7 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
- 	int cap, err = -EINVAL;
- 	u16 ctl, v;
- 
--	if (rq < 128 || rq > 4096 || (rq & (rq-1)))
-+	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
- 		goto out;
- 
- 	v = (ffs(rq) - 8) << 12;
+Content preview:  Your your credit report does not matter to us! If you
+  have your own business and require IMMEDIATE money to spend ANY way you
+  like or require Extra money to give the business a boost or need A low
+  interest loan - NO STRINGS ATTACHED, here is our best deal we can offer
+  you THIS EVENING (hurry, this offer will expire THIS EVENING): [...] 
 
--- 
-Vignesh Babu BM 
-_____________________________________________________________ 
-"Why is it that every time I'm with you, makes me believe in magic?"
+Content analysis details:   (6.5 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 3.0 OSDL_THANKSLOAN_BODY   BODY: Thanks Loan Body Spam
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+
+
+
+------------=_1188404932-19182-167
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -57,3 +75,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1188404932-19182-167--
