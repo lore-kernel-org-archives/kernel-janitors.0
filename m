@@ -1,57 +1,56 @@
-From: Brandon Philips <brandon@ifup.org>
-Date: Wed, 22 Aug 2007 18:11:18 +0000
-Subject: Re: [PATCH ] /drivers/ata ioremap returncode check
-Message-Id: <20070822181118.GA15764@ifup.org>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Wed, 29 Aug 2007 12:01:36 +0000
+Subject: collective project:  identify dead but still documented kernel parms
+Message-Id: <Pine.LNX.4.64.0708290749560.12361@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <387498.11798.qm@web44905.mail.sp1.yahoo.com>
-In-Reply-To: <387498.11798.qm@web44905.mail.sp1.yahoo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: postfail@hushmail.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
-On 20:31 Mon 13 Aug 2007, Scott Thompson wrote:
-> patchset against 2.6.23-rc3.  corrects missing ioremap return checks.
-> 
-> Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
-> portions of ioremap audit.
-> 
-> This patch had been submitted previously but hushmail client caused wordwrap issues, resending
-> with different mail client.
-> 
-> Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-> ----------------------------------------------------------
-> 
-> diff --git a/drivers/ata/pata_ixp4xx_cf.c b/drivers/ata/pata_ixp4xx_cf.c
-> index 4ca7fd6..eaebc4d 100644
-> --- a/drivers/ata/pata_ixp4xx_cf.c
-> +++ b/drivers/ata/pata_ixp4xx_cf.c
-> @@ -189,6 +189,14 @@ static __devinit int ixp4xx_pata_probe(struct platform_device *pdev)
->  	data->cs0 = devm_ioremap(&pdev->dev, cs0->start, 0x1000);
->  	data->cs1 = devm_ioremap(&pdev->dev, cs1->start, 0x1000);
->  
-> +	if (!data->cs0 || !data->cs1) {
-> +		if (data->cs0)
-> +			iounmap(data->cs0);
-> +		if (data->cs1)
-> +			iounmap(data->cs1);
-> +		return -ENOMEM;
-> +	}
-> +
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq)
->  		set_irq_type(irq, IRQT_RISING);
 
-The iounmap calls are unnecessary since devm_ioremap will un-allocate
-the space if you return an error from probe.  See
-Documentation/driver-model/devres.txt
+  given the two(?) files in the kernel source tree that allegedly
+document valid kernel parameters:
 
-But, something like this is needed.
+  Documentation/kernel-parameters.txt
+  Documentation/m68k/kernel-options.txt
 
-+	if (!data->cs0 || !data->cs1)
-+		return -ENOMEM;
+it's obvious that there are a number of still-documented parms that
+are long deceased.  for example:
 
-Thanks,
+  $ grep -rw sg_def_reserved_size *
+  Documentation/kernel-parameters.txt:    sg_def_reserved_size=3D   [SCSI]
 
-	Brandon
+that suggests pretty clearly that that entry can be tossed from the
+Doc file.
+
+  there's a wiki page that i set up a while back for collecting
+examples like this:
+
+http://fsdev.net/wiki/index.php?title=DEfunct_kernel_parameters
+
+feel free to ignore the crap on most of that page and, if you want,
+just add other examples of dead parms to the first section.  then a
+single patch can be sent in to remove all of them at once.
+
+(note:  it may be that the removal of a dead parm represents more than
+just deleting a line from one of those files.  if that's the case, you
+can expand on that when you add its entry.  no need to be too formal
+about it, i can tidy things up later.)
+
+rday
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
