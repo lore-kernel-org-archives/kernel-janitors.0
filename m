@@ -1,51 +1,40 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 01 Aug 2007 11:45:57 +0000
-Subject: Re: [PATCH 3/3] sound/soc ioremap/iounmap balancing
-Message-Id: <s5hk5sftr4a.wl%tiwai@suse.de>
+From: andre@finow14.de
+Date: Thu, 30 Aug 2007 10:40:38 +0000
+Subject: [KJ][patch 3/3] VIDC20: use abs() from kernel.h instead of own definition
+Message-Id: <20070830104038.GD14925@ahaupt-debian-vm.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20070801060606.BB9C3DA82E@mailserver8.hushmail.com>
-In-Reply-To: <20070801060606.BB9C3DA82E@mailserver8.hushmail.com>
+References: <20070830102551.131398783@finow14.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: postfail@hushmail.com
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andre Haupt <andre@finow14.de>, rmk@arm.linux.org.uk
 
-At Wed, 01 Aug 2007 02:06:06 -0400,
-Scott Thompson wrote:
-> 
-> ioremap / iounmap balancing in sound/soc tree
-> 
-> Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
+From: Andre Haupt <andre@finow14.de>
+Signed-off-by: Andre Haupt <andre@finow14.de>
+---
+Index: linus/sound/oss/vidc.c
+=================================--- linus.orig/sound/oss/vidc.c	2007-08-30 11:57:13.000000000 +0200
++++ linus/sound/oss/vidc.c	2007-08-30 11:57:53.000000000 +0200
+@@ -185,8 +185,6 @@ static unsigned int vidc_audio_set_forma
+ 	return vidc_audio_format;
+ }
+ 
+-#define my_abs(i) ((i)<0 ? -(i) : (i))
+-
+ static int vidc_audio_set_speed(int dev, int rate)
+ {
+ 	if (rate) {
+@@ -214,8 +212,8 @@ static int vidc_audio_set_speed(int dev,
+ 		rate_ext = VIDC_SOUND_CLOCK_EXT / hwrate_ext;
+ 
+ 		/* Chose between external and internal clock */
+-		diff_int = my_abs(rate_ext-rate);
+-		diff_ext = my_abs(rate_int-rate);
++		diff_int = abs(rate_ext-rate);
++		diff_ext = abs(rate_int-rate);
+ 		if (diff_ext < diff_int) {
+ 			/*printk("VIDC: external %d %d %d\n", rate, rate_ext, hwrate_ext);*/
+ 			hwrate=hwrate_ext;
 
-Applied to ALSA tree.  Thanks.
-
-
-Takashi
-
-> ---
-> diff --git a/sound/soc/s3c24xx/s3c24xx-i2s.c 
-> b/sound/soc/s3c24xx/s3c24xx-i2s.c
-> index 39f0246..cd89c41 100644
-> --- a/sound/soc/s3c24xx/s3c24xx-i2s.c
-> +++ b/sound/soc/s3c24xx/s3c24xx-i2s.c
-> @@ -385,6 +385,7 @@ static int s3c24xx_i2s_probe(struct 
-> platform_device *pdev)
->  	s3c24xx_i2s.iis_clk=clk_get(&pdev->dev, "iis");
->  	if (s3c24xx_i2s.iis_clk = NULL) {
->  		DBG("failed to get iis_clock\n");
-> +		iounmap(s3c24xx_i2s.regs);
->  		return -ENODEV;
->  	}
->  	clk_enable(s3c24xx_i2s.iis_clk);
-> 
-> --
-> Start providing for your family by becoming a paralegal. Click Now.
-> http://tagline.hushmail.com/fc/Ioyw6h4ek5ocrsblBGe95tDruAMchCwVmpqjJUiDSVabB25GwhAcU8/
-> 
-> 
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+--
