@@ -1,23 +1,14 @@
-From: Vien <Vien.hatch@fslkse.com>
-Date: Fri, 10 Aug 2007 12:19:54 +0000
-Subject: [KJ] Realtime quotes-kernel-janitors
-Message-Id: <60494B72.A7C6A87@fslkse.com>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060806050403020601070104"
+From: Mr BOKA COULIBALY <mrcoulibalyboka@yahoo.fr>
+Date: Thu, 30 Aug 2007 23:49:36 +0000
+Subject: [KJ] ATTN: Sir,
+Message-Id: <a9c9073824fc31c5a6777df6377d526b@www.c360uk.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
---------------060806050403020601070104
-Content-Type: text/plain; charset=iso-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
-
-
-
---------------060806050403020601070104
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+ATTN : Sir,&nbsp;We are representing our corporate associate a member of the contract award committee and 14 project allocation manager of the Department of Minerals and Natural Resources in Cote d&#39;Ivoire West Africa.&nbsp;I am in search of an agent to assist us in the transfer of ( USD$5.5M) and subsequent investment in properties in your country. &nbsp;You will be required to.(1) Assist in the transfer of the said funds(2) Advise on lucrative areas for investment(3) Assist us in purchase of properties or Profitable Business.If you decide to render your service to us in this regard, 20% of the total sum of USD$5.5M will be for you. &nbsp;Thank you and God bless as I awaits in anticipation of your fullest co-operation. &nbsp;Mr BOKA COULIBALYFinancierEmail: mrcoulibalyboka@yahoo.frTo join the party go to http://www.labour.org.uk/join 
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
@@ -27,4 +18,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
---------------060806050403020601070104--
