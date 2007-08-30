@@ -1,31 +1,52 @@
-From: barrios <barrioskmc@gmail.com>
-Date: Wed, 01 Aug 2007 04:34:10 +0000
-Subject: Anyone is fixing with spin_lock_init?
-Message-Id: <44c63dc40707312134k52e27402u43b5ce395973edc0@mail.gmail.com>
+From: Shaun Zinck <shaun.zinck@gmail.com>
+Date: Thu, 30 Aug 2007 03:49:44 +0000
+Subject: [PATCH] fs: Use DIV_ROUND_UP where possible
+Message-Id: <20070829224944.58f2934a@shaun>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi all
+This replaces code that does the same as DIV_ROUND_UP, defined in kernel.h,
+to use the macro. 
 
-I am about staring kernel janitor project.
-I make myself to fix following that
-
-- convert all explicit lock initializations to spin_lock_init() or
-rwlock_init().
-
-Before starting my kernel hack, I read the janitor FAQ.
-It said that
-
-Q: What version should I be patching against?
-A: Latest "linus" (2.6.x-rcY from kernel.org).
-   Be sure to check -mm and -kj trees to see if someone already did that.
-
-Currenty, lastest kernel version is 2.6.23-rc1.
-But there are NOT any patch list about 2.6.23-rc1 in http://coderock.org/kj/
-So How do I know that anyone already fix it ?
-
-
-May I continue on fixing spin_lock of 2.6.23-rc1 ?
+Signed-off-by: Shaun Zinck <shaun.zinck@gmail.com>
+---
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 2980eab..8e0051d 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -286,7 +286,7 @@ blkdev_direct_IO(int rw, struct kiocb *iocb, const struct iovec *iov,
+ 
+ 	while (nbytes) {
+ 		/* roughly estimate number of bio vec needed */
+-		nvec = (nbytes + PAGE_SIZE - 1) / PAGE_SIZE;
++		nvec = DIV_ROUND_UP(nbytes, PAGE_SIZE);
+ 		nvec = max(nvec, nr_segs - seg);
+ 		nvec = min(nvec, (unsigned long) BIO_MAX_PAGES);
+ 
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 901dc55..55735a5 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -984,9 +984,8 @@ direct_io_worker(int rw, struct kiocb *iocb, struct inode *inode,
+ 
+ 	for (seg = 0; seg < nr_segs; seg++) {
+ 		user_addr = (unsigned long)iov[seg].iov_base;
+-		dio->pages_in_io +-			((user_addr+iov[seg].iov_len +PAGE_SIZE-1)/PAGE_SIZE
+-				- user_addr/PAGE_SIZE);
++		dio->pages_in_io += DIV_ROUND_UP(user_addr+iov[seg].iov_len, PAGE_SIZE)
++			- user_addr/PAGE_SIZE;
+ 	}
+ 
+ 	for (seg = 0; seg < nr_segs; seg++) {
+@@ -1007,7 +1006,7 @@ direct_io_worker(int rw, struct kiocb *iocb, struct inode *inode,
+ 			dio->total_pages++;
+ 			bytes -= PAGE_SIZE - (user_addr & (PAGE_SIZE - 1));
+ 		}
+-		dio->total_pages += (bytes + PAGE_SIZE - 1) / PAGE_SIZE;
++		dio->total_pages += DIV_ROUND_UP(bytes, PAGE_SIZE);
+ 		dio->curr_user_address = user_addr;
+ 	
+ 		ret = do_direct_IO(dio);
