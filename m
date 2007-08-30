@@ -1,34 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Sun, 19 Aug 2007 22:41:46 +0000
-Subject: Re: [PATCH 4/5] Documentation/firmware/... convert #include
-Message-Id: <20070819154146.337bf347.randy.dunlap@oracle.com>
+From: Shaun Zinck <shaun.zinck@gmail.com>
+Date: Thu, 30 Aug 2007 04:17:14 +0000
+Subject: [PATCH] fs/jfs: use DIV_ROUND_UP where appropriate
+Message-Id: <20070829231714.6ddfbd16@shaun>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1187561972.4200.143.camel@localhost>
-	<20070819153422.1e0b54af.randy.dunlap@oracle.com>
-	<1187562717.4200.154.camel@localhost>
-In-Reply-To: <1187562717.4200.154.camel@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Joe Perches <joe@perches.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Markus Rechberger <markus.rechberger@amd.com>
+To: shaggy@austin.ibm.com, kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-On Sun, 19 Aug 2007 15:31:57 -0700 Joe Perches wrote:
+This replaces some macros and code, which do the same thing as DIV_ROUND_UP
+defined in kernel.h, to use the DIV_ROUND_UP macro.
 
-> On Sun, 2007-08-19 at 15:34 -0700, Randy Dunlap wrote:
-> > > -#include "linux/firmware.h"
-> > > +#include "firmware.h"
-> > I believe that it should be <linux/firmware.h>.
-> 
-> OK.
-> 
-> That's not my taste though, especially if only
-> included by files in the firmware_class directory.
-> Less pollution/namespace collision in include/linux
-
-It's not only included in that directory.
-I find it included in 88 source files throughout the kernel tree.
-
+Signed-off-by: Shaun Zinck <shaun.zinck@gmail.com>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+diff --git a/fs/jfs/jfs_dtree.h b/fs/jfs/jfs_dtree.h
+index 8561c6e..cdac2d5 100644
+--- a/fs/jfs/jfs_dtree.h
++++ b/fs/jfs/jfs_dtree.h
+@@ -74,7 +74,7 @@ struct idtentry {
+ #define DTIHDRDATALEN	11
+ 
+ /* compute number of slots for entry */
+-#define	NDTINTERNAL(klen) ( ((4 + (klen)) + (15 - 1)) / 15 )
++#define	NDTINTERNAL(klen) (DIV_ROUND_UP((4 + (klen)), 15))
+ 
+ 
+ /*
+@@ -133,7 +133,7 @@ struct dir_table_slot {
+ 	( ((s64)((dts)->addr1)) << 32 | __le32_to_cpu((dts)->addr2) )
+ 
+ /* compute number of slots for entry */
+-#define	NDTLEAF_LEGACY(klen)	( ((2 + (klen)) + (15 - 1)) / 15 )
++#define	NDTLEAF_LEGACY(klen)	(DIV_ROUND_UP((2 + (klen)), 15))
+ #define	NDTLEAF	NDTINTERNAL
+ 
+ 
+diff --git a/fs/jfs/resize.c b/fs/jfs/resize.c
+index 71984ee..7f24a0b 100644
+--- a/fs/jfs/resize.c
++++ b/fs/jfs/resize.c
+@@ -172,7 +172,7 @@ int jfs_extendfs(struct super_block *sb, s64 newLVSize, int newLogSize)
+ 	 */
+ 	t64 = ((newLVSize - newLogSize + BPERDMAP - 1) >> L2BPERDMAP)
+ 	    << L2BPERDMAP;
+-	t32 = ((t64 + (BITSPERPAGE - 1)) / BITSPERPAGE) + 1 + 50;
++	t32 = DIV_ROUND_UP(t64, BITSPERPAGE) + 1 + 50;
+ 	newFSCKSize = t32 << sbi->l2nbperpage;
+ 	newFSCKAddress = newLogAddress - newFSCKSize;
+ 
