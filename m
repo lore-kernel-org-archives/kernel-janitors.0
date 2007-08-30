@@ -1,25 +1,39 @@
-From: Jeff Garzik <jeff@garzik.org>
-Date: Tue, 07 Aug 2007 21:57:50 +0000
-Subject: Re: [PATCH 76] drivers/net/via-velocity.c: mostly kmalloc + memset
-Message-Id: <46B8EADE.3030705@garzik.org>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Thu, 30 Aug 2007 15:37:48 +0000
+Subject: [patch 3/3] fs/cramfs/inode.c: remove error variable
+Message-Id: <200708301737.49018.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200707311845.48807.m.kozlowski@tuxland.pl> <200708010011.50979.m.kozlowski@tuxland.pl>
-In-Reply-To: <200708010011.50979.m.kozlowski@tuxland.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, romieu@fr.zoreil.com, netdev@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Mariusz Kozlowski wrote:
-> Signed-off-by: Mariusz Kozlowski <m.kozlowski@tuxland.pl>
-> 
->  drivers/net/via-velocity.c | 88263 -> 88120 (-143 bytes)
->  drivers/net/via-velocity.o | 254264 -> 253828 (-436 bytes)
-> 
->  drivers/net/via-velocity.c |   24 ++++++++++--------------
->  1 file changed, 10 insertions(+), 14 deletions(-)
+This patch removes a variable from fs/cramfs/inode.c that is just used to store
+a return value which is immediately read afterwards.
 
-applied
-
-
+Tested on an i386 box.
+Signed-off-by: Andi Drebes <lists-receive@programmierforen.de>
+---
+diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+index 350680f..42d2cf8 100644
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -372,7 +372,7 @@ static int cramfs_readdir(struct file *filp, void *dirent, filldir_t filldir)
+ 		char *name;
+ 		ino_t ino;
+ 		mode_t mode;
+-		int namelen, error;
++		int namelen;
+ 
+ 		mutex_lock(&read_mutex);
+ 		de = cramfs_read(sb, OFFSET(inode) + offset, sizeof(*de)+CRAMFS_MAXPATHLEN);
+@@ -398,8 +398,7 @@ static int cramfs_readdir(struct file *filp, void *dirent, filldir_t filldir)
+ 				break;
+ 			namelen--;
+ 		}
+-		error = filldir(dirent, buf, namelen, offset, ino, mode >> 12);
+-		if (error)
++		if(filldir(dirent, buf, namelen, offset, ino, mode >> 12))
+ 			break;
+ 
+ 		offset = nextoffset;
