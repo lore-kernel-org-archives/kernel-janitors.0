@@ -1,33 +1,19 @@
-From: "Intradot Labs" <vm1017799987-1804560735tl@ml.unmcs.com>
-Date: Thu, 06 Sep 2007 15:19:53 +0000
-Subject: [KJ] Parce que votre =?iso-8859-1?q?activit=E9?= ne s'
-Message-Id: <20070906151953.14D1A1242A5@auguste.alinto.net>
+From: "Shari Webber" <hagcvynb@xsptt.zjpta.net.cn>
+Date: Sat, 01 Sep 2007 01:12:33 +0000
+Subject: [KJ] $500 for you! just register
+Message-Id: <5988218661.8395128702@xsptt.zjpta.net.cn>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-PARCE QUE VOTRE ACTIVITE NE S'ARRETE JAMAIS
-Intradot protège votre réseau et sauvegarde vos données en toute simplicité.
+What's so good about it? :) Kernel-janitors
+$500 for you here
+http://www.geocities.com/VanDyer20/index.html?mdc312fgr45
 
-Sauvegardes 100% automatisées, 24 heures sur 24, de toutes les données du réseau !
+ecstaticize breathes
 
-L'activité des professionnels du transport dépend plus que jamais de la bonne santé de leur système d'information. Les flux tendus, le caractère urgent et confidentiel des données stockées ainsi que l'augmentation des volumes de données font qu'une attention toute particulière doit être portée à leur sauvegarde et à la protection du réseau.
-          
-- Que se passerait-il si vous perdiez tout ou partie de vos données informatiques ?
-- Quelles seraient les conséquences sur votre activité en cas de perte de données ?
-- Et en cas de vol de données par un tiers, quel est le poids des implications légales pour votre entreprise ?
-
-Leader dans le domaine de la protection des données informatique, Intradot Labs présente avec Boss et Distribackup la première solution de sauvegarde en continu de bout en bout, entièrement automatisée. Déployée au sein de votre réseau, elle garantit la disponibilité des données du réseau informatique et leur restauration rapide en cas de sinistre.
-
-# Suivez la présentation « 30 secondes » pour découvrir Boss : http://www.intradot.com/produits/boss/boss-sx-generalites.html
-# Inscrivez-vous à l'une de nos webconfs hebdomadaires pour découvrir les solutions Intradot : http://www.intradot.com/societe/evenements.html
-# Recevez une brochure de nos produits au format PDF ou par courrier sur simple demande : http://www.intradot.com/divers/nous-contacter.html#form1
-
---
-Copyright © 2007 Intradot. Tous droits réservés.
-Désinscription : http://tracking.unmcs.com/desinscription.php?ids=fr,1017799987,1804560735
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
