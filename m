@@ -1,20 +1,22 @@
-From: "Alexandrasu Kyle" <cedgih@feedrite.com>
-Date: Sat, 08 Sep 2007 14:28:45 +0000
-Subject: [KJ] Hey
-Message-Id: <GNGSSHV.29199777271@feedrite.com>
+From: <harleyd@jud.ct.gov>
+Date: Sat, 01 Sep 2007 19:06:57 +0000
+Subject: [KJ] I can not stress this more
+Message-Id: <002e01c7eccb$4469d050$cf333422@oeke>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-hello Glenna
+Taking Subscription gaming to the bank.
 
-Huge Watch placed on this stk, 
-sign-chvc
-Get in today before news gets
+VEGA PROMOTIONAL
+VGPM
+$0.07
 
-Tamika
+Subscription gaming hits Billion dollare mark. One online game pulled in
+over 471 Million in 2006 VGPM is bringing a whole new world of
+subscription games to the market. Get all over VGPM first thing Tuesday.
 
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
