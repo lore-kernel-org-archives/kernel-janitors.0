@@ -1,42 +1,63 @@
-From: Leonardo Chiquitto <leonardo@iken.com.br>
-Date: Tue, 11 Sep 2007 01:40:44 +0000
-Subject: [PATCH] Documentation: Add new /proc/stat field into proc.txt
-Message-Id: <20070911014043.GB12623@libre.l.ngdn.org>
+From: "Edward Kelley" <unknown@needforexhaust.com>
+Date: Sun, 02 Sep 2007 11:31:35 +0000
+Subject: [KJ] adobe acrobat V8 our price $79.95
+Message-Id: <00f1ffa4$00f1fe78$a663033b@unknown>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1188732057-19182-5"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello,
+This is a multi-part message in MIME format...
 
-  The following patch updates the "cat /proc/stat" output found
-in Documentation/filesystems/proc.txt, adding the new field "steal".
+------------=_1188732057-19182-5
+Content-Type: text/plain; format=flowed; charset="us-ascii";
+	reply-type=original
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Leonardo
+adobe suite 3 Our price: $269
+http://www.regaicndomeni.cn
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 4a37e25..ae795fe 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -785,9 +785,9 @@ Various pieces   of  information about  kernel activity  are  available in the
- since the system first booted.  For a quick look, simply cat the file:
- 
-   > cat /proc/stat
--  cpu  2255 34 2290 22625563 6290 127 456
--  cpu0 1132 34 1441 11311718 3675 127 438
--  cpu1 1123 0 849 11313845 2614 0 18
-+  cpu  2255 34 2290 22625563 6290 127 456 0
-+  cpu0 1132 34 1441 11311718 3675 127 438 0
-+  cpu1 1123 0 849 11313845 2614 0 18 0
-   intr 114930548 113199788 3 0 5 263 0 4 [... lots more numbers ...]
-   ctxt 1990473
-   btime 1062191376
-@@ -807,6 +807,7 @@ second).  The meanings of the columns are as follows, from left to right:
- - iowait: waiting for I/O to complete
- - irq: servicing interrupts
- - softirq: servicing softirqs
-+- steal: involuntary wait
- 
- The "intr" line gives counts of interrupts  serviced since boot time, for each
- of the  possible system interrupts.   The first  column  is the  total of  all
+
+------------=_1188732057-19182-5
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
+
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  adobe suite 3 Our price: $269
+  http://www.regaicndomeni.cn [...] 
+
+Content analysis details:   (6.5 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 2.0 INVALID_DATE           Invalid Date: header (not RFC 2822)
+ 1.0 OUTFLUX_INVEST_PRICE   BODY: contains "Price"
+ 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+
+
+
+------------=_1188732057-19182-5
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1188732057-19182-5--
