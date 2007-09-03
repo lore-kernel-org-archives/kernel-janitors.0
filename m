@@ -1,43 +1,34 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 09 Sep 2007 08:54:43 +0000
-Subject: Re: some version_string() magic i'm not aware of?
-Message-Id: <Pine.LNX.4.64.0709090454020.28019@localhost.localdomain>
+From: Tejun Heo <htejun@gmail.com>
+Date: Mon, 03 Sep 2007 08:29:57 +0000
+Subject: Re: [PATCH resubmit] /drivers/ata ioremap returncode check
+Message-Id: <46DBC605.9040401@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0709072033570.10879@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0709072033570.10879@localhost.localdomain>
+References: <648310.70195.qm@web44903.mail.sp1.yahoo.com>
+In-Reply-To: <648310.70195.qm@web44903.mail.sp1.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: postfail@hushmail.com
+Cc: brandon@ifup.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org
 
-On Sun, 9 Sep 2007, Vegard Nossum wrote:
+Scott Thompson wrote:
+> Patchset against 2.6.23-rc3.  corrects missing ioremap return 
+> checks, resending after fixing for documentation making changes suggested...
+> 
+> As for suggestions, I did fix the {} that weren't needed.  I did not add in a
+> "printk" err or warn statement as the rest of the module does not contain these
+> messages.  When auditing (as I am for ioremap checking here) I am attempting
+> to keep changes "in the style of their surroundings".  Otherwise it's massive
+> scope screep on these patches.
+>  
+> Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
 
-> On 9/8/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
-> > #define version(a) Version_ ## a
-> > #define version_string(a) version(a)
-> >
-> > int version_string(LINUX_VERSION_CODE);
-> > ...
-> >
-> > puzzled because this appears to be the only place in the entire
-> > tree that uses the macro version_string().  so is there some
-> > reason it even exists, as opposed to just using version() as it's
-> > defined there?
->
-> The double macro is needed to create a symbol with the name
-> Version_<LINUX_VERSION_CODE>. If you simply replace "version_string"
-> with "version", you'd get a symbol named
-> "Version_LINUX_VERSION_CODE".
+Acked-by: Tejun Heo <htejun@gmail.com>
 
-ah, quite right -- i *figured* there was a reason for that, i just
-didn't see it right away.  thanks.
+It would be better to start the subject line with pata_ixp4xx_cf: but
+maybe Jeff can fix it up while applying.
 
-rday
+Thanks.
+
 -- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://crashcourse.ca
-====================================
+tejun
