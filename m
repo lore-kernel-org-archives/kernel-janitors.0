@@ -1,45 +1,39 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Fri, 07 Sep 2007 14:51:51 +0000
-Subject: Re: [PATCH] Add macro to round down to nearest power of two.
-Message-Id: <Pine.LNX.4.64.0709071050280.30686@localhost.localdomain>
+From: Oleg Verych <for.gmane@flower.upol.cz>
+Date: Tue, 04 Sep 2007 10:13:30 +0000
+Subject: Re: standard for documenting conditional preprocessor directives?
+Message-Id: <slrnfdqcqi.anq.for.gmane@flower.upol.cz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
-In-Reply-To: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
+References: <Pine.LNX.4.64.0708270942001.2707@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0708270942001.2707@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Wed, 5 Sep 2007, vignesh babu wrote:
+* 27-08-2007
 
-> Resending this...as I did not get the mail thru KJ...
->
-> Robert,
->
->  Maybe its late, but I would still like to discuss if it is
-> needed-is_power_of_2 has '2' and not 'two' which I think is easier to
-> work with. I was hoping that the 2 macros that you have coded can also
-> be named with a '2' in them than a 'two'.
->
-> There have been many changes that went in already based on these 2
-> macros.I have the cleanup patches ready(for log2.h AND all the changes
-> that went in), but my net at home went down, should be up in a few
-> hours and so i should be able to mail in the cleanups in a few hours.
->
-> If you and others feel that the 'two's can be replaced with '2' then I
-> would push in the patches by tonight.
+Randy,
 
-sorry for the delay in answering this -- i suspect we're stuck with
-"two" since that's what the existing roundup macro used.  does anyone
-else have a strong opinion on this either way?  personally, i would
-have preferred "2", but it might be too late for that.
+[]
+> Your example almost matches my preference/style, but there is no Linux
+> kernel "standard" for this AFAIK.
 
-rday
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+i've proposed all this some time ago, in order to simplify scripts, that
+strip __KERNEL__ in headers, and get rid of `unifdef`. I'm sure you've
+saw that in LKML. But you, as well known documentation supporter, didn't
+wrote proposition in English. Now you are saying "no standard". Who other
+than you can propose it?
 
-http://crashcourse.ca
-====================================
+[]
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+____
+> -
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Argh!!..
+____
+
