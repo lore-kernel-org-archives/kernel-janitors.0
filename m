@@ -1,52 +1,67 @@
-From: Scott Thompson <postfailathushmaildotcom@yahoo.com>
-Date: Thu, 23 Aug 2007 03:33:10 +0000
-Subject: [PATCH 5 of 5 resend ] /drivers/char/watchdog ioremap balancing/ returncode check
-Message-Id: <989872.81202.qm@web44910.mail.sp1.yahoo.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 04 Sep 2007 10:22:59 +0000
+Subject: [PATCH] Documentation:  Remove references to dead "cyclades=" boot
+Message-Id: <Pine.LNX.4.64.0709040622420.740@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-patchset against 2.6.23-rc3.  
-corrects missing ioremap return checks and balancing on iounmap calls, integrated changes per list
-recommendations on the original set of patches..
-
-Warning -- cleanup handler here may miss additional required cleanup as has occurred on other
-portions of ioremap audit.
-
-This patch had been submitted previously but hushmail client caused wordwrap issues, resending
-with different mail client.
-
-Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
-----------------------------------------------------------
-diff --git a/drivers/char/watchdog/iTCO_wdt.c b/drivers/char/watchdog/iTCO_wdt.c
-index cd5a565..f87cac7 100644
---- a/drivers/char/watchdog/iTCO_wdt.c
-+++ b/drivers/char/watchdog/iTCO_wdt.c
-@@ -621,6 +621,12 @@ static int iTCO_wdt_init(struct pci_dev *pdev,
- 		pci_read_config_dword(pdev, 0xf0, &base_address);
- 		RCBA = base_address & 0xffffc000;
- 		iTCO_wdt_private.gcs = ioremap((RCBA + 0x3410),4);
-+		if (!iTCO_wdt_private.gcs) {
-+			printk(KERN_ERR PFX "failed to ioremap\n");
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
- 	}
- 
- 	/* Check chipset's NO_REBOOT bit */
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+To: kernel-janitors@vger.kernel.org
 
 
-       
-____________________________________________________________________________________
-Take the Internet to Go: Yahoo!Go puts the Internet in your pocket: mail, news, photos & more. 
-http://mobile.yahoo.com/go?refer=1GNXIC
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+
+---
+
+  since there is no trace of a "cy_setup" routine anywhere, i'm
+guessing that this boot-time parm is long since defunct.
 
 
-      ____________________________________________________________________________________
-Shape Yahoo! in your own image.  Join our Network Research Panel today!   http://surveylink.yahoo.com/gmrs/yahoo_panel_invite.asp?a=7 
+ Documentation/kernel-parameters.txt |    2 --
+ drivers/char/cyclades.c             |    2 --
+ 2 files changed, 4 deletions(-)
 
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-par=
+ameters.txt
+index b41cde3..926a646 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -484,8 +484,6 @@ and is between 256 and 4096 characters. It is defined i=
+n the file
+ 	cs89x0_media=3D	[HW,NET]
+ 			Format: { rj45 | aui | bnc }
 
+-	cyclades=3D	[HW,SERIAL] Cyclades multi-serial port adapter.
+-
+ 	dasd=3D		[HW,NET]
+ 			See header of drivers/s390/block/dasd_devmap.c.
 
+diff --git a/drivers/char/cyclades.c b/drivers/char/cyclades.c
+index 9e0adfe..2ec5ad7 100644
+--- a/drivers/char/cyclades.c
++++ b/drivers/char/cyclades.c
+@@ -727,8 +727,6 @@ static struct tty_driver *cy_serial_driver;
+    driver to probe addresses at a different address, add it to
+    this table.  If the driver is probing some other board and
+    causing problems, remove the offending address from this table.
+-   The cy_setup function extracts additional addresses from the
+-   boot options line.  The form is "cyclades=ADdress,address..."
+ */
+
+ static unsigned int cy_isa_addresses[] =3D {
+
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+-
+To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
