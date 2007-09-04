@@ -1,46 +1,22 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Tue, 11 Sep 2007 08:13:51 +0000
-Subject: [PATCH] BOOT: Show that no_ipi_broadcast() takes a parameter.
-Message-Id: <Pine.LNX.4.64.0709110410340.24546@localhost.localdomain>
+From: "Gale" <fmilesnyqi@flm.com>
+Date: Tue, 04 Sep 2007 13:37:14 +0000
+Subject: [KJ] Older means bolder - can you handle it?
+Message-Id: <2319702045.20070904153714@uptioioizahd>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+freexxxpass http://www.geocities.com/AlejandroSutton24/index.html?bro3ase
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+acatery shipper
 
----
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
 
-  a rather obvious fix given the opening of the function:
-
-...
-static __init int no_ipi_broadcast(char *str)
-{
-        get_option(&str, &no_broadcast);
-...
-
-
-diff --git a/arch/i386/mach-default/setup.c b/arch/i386/mach-default/setup.c
-index 7f635c7..31fb68e 100644
---- a/arch/i386/mach-default/setup.c
-+++ b/arch/i386/mach-default/setup.c
-@@ -127,7 +127,7 @@ static __init int no_ipi_broadcast(char *str)
- 	return 1;
- }
-
--__setup("no_ipi_broadcast", no_ipi_broadcast);
-+__setup("no_ipi_broadcast=", no_ipi_broadcast);
-
- static int __init print_ipi_mode(void)
- {
-
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://crashcourse.ca
-====================================
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
