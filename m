@@ -1,33 +1,30 @@
-From: <grc.amgun@btkids.com>
-Date: Sat, 01 Sep 2007 19:07:56 +0000
-Subject: [KJ] Get on this right away
-Message-Id: <000d01c7eccb$678e1730$dd5f8acc@wfelw>
+From: <issu143@mcclb0.med.nyu.edu>
+Date: Tue, 04 Sep 2007 16:37:13 +0000
+Subject: [KJ] Your Portfolio Update
+Message-Id: <46DD89B9.4000102@mcclb0.med.nyu.edu>
 MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1188673439-19182-254"
+Content-Type: multipart/mixed; boundary="----------=_1188923839-19182-99"
 List-Id: <kernel-janitors.vger.kernel.org>
 To: kernel-janitors@vger.kernel.org
 
 This is a multi-part message in MIME format...
 
-------------=_1188673439-19182-254
-Content-Type: text/plain; format=flowed; charset="iso-8859-1";
-	reply-type=original
+------------=_1188923839-19182-99
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
-Here comes VGPM with a plan that rocks investors.
+Investors Seek Opportunities With Gaming Company
 
-Vega Promotional, Inc
+Vega Promotional Sys
 V G P M . P K
 $0.07
 
-Subscription gamers spend over 1 billion a year. Games like World of
-Warcraft pulled in over 471 million in 2006. VGPM steps into the market
-to offer subscription based games. Read the news, see the potential, and
-get on VGPM Tuesday.
+VGPM is not playing games. Keep your eyes on the wires Tuesday for more
+news on this one. Grab VGPM before the news hits.
 
 
-------------=_1188673439-19182-254
+------------=_1188923839-19182-99
 Content-Type: text/plain; name="SpamAssassinReport.txt"
 Content-Disposition: inline; filename="SpamAssassinReport.txt"
 Content-Transfer-Encoding: 7bit
@@ -40,11 +37,10 @@ has been attached to this so you can view it (if it isn't spam) or label
 similar future email.  If you have any questions, see
 the administrator of that system for details.
 
-Content preview:  Here comes VGPM with a plan that rocks investors. Vega
-  Promotional, Inc V G P M . P K $0.07 Subscription gamers spend over 1
-  billion a year. Games like World of Warcraft pulled in over 471 million
-  in 2006. VGPM steps into the market to offer subscription based games.
-  Read the news, see the potential, and get on VGPM Tuesday. [...] 
+Content preview:  Investors Seek Opportunities With Gaming Company Vega
+  Promotional Sys V G P M . P K $0.07 VGPM is not playing games. Keep your
+  eyes on the wires Tuesday for more news on this one. Grab VGPM before
+  the news hits. [...] 
 
 Content analysis details:   (5.6 points, 5.0 required)
 
@@ -52,12 +48,12 @@ Content analysis details:   (5.6 points, 5.0 required)
 ---- ---------------------- --------------------------------------------------
  1.1 NO_REAL_NAME           From: does not include a real name
  3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
+                            [score: 0.9989]
  1.0 OUTFLUX_INVEST_TICKER  FULL: Found gappy stock ticker name repeated
 
 
 
-------------=_1188673439-19182-254
+------------=_1188923839-19182-99
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -71,4 +67,4 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1188673439-19182-254--
+------------=_1188923839-19182-99--
