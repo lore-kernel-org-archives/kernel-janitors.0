@@ -1,7 +1,7 @@
 From: "vignesh babu" <vigneshbabu@gmail.com>
-Date: Wed, 05 Sep 2007 04:55:34 +0000
+Date: Wed, 05 Sep 2007 09:07:05 +0000
 Subject: Re: [PATCH] Add macro to round down to nearest power of two.
-Message-Id: <3d1754a30709042143j10da2377v2bcc0bdb23f3ba41@mail.gmail.com>
+Message-Id: <3d1754a30709050155k367f9a36j482229e5e9a61d8d@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
@@ -9,6 +9,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
+
+Resending this...as I did not get the mail thru KJ...
 
 Robert,
 
