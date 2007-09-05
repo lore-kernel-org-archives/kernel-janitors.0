@@ -1,115 +1,107 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Sat, 29 Sep 2007 17:45:45 +0000
-Subject: Re: [PATCH] sa1100 dma s/DPRINTK/pr_debug/
-Message-Id: <20070929104545.ac7c2150.rdunlap@xenotime.net>
+From: "vignesh babu" <vigneshbabu@gmail.com>
+Date: Wed, 05 Sep 2007 04:55:34 +0000
+Subject: Re: [PATCH] Add macro to round down to nearest power of two.
+Message-Id: <3d1754a30709042143j10da2377v2bcc0bdb23f3ba41@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <46FE2982.3070405@tiscali.nl>
-In-Reply-To: <46FE2982.3070405@tiscali.nl>
+References: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Sat, 29 Sep 2007 12:31:30 +0200 Roel Kluin wrote:
+Robert,
 
-> I replaced a DPRINTK with pr_debug and was wondering whether I was doing it
-> correctly. See the example changes to arch/arm/mach-sa1100/dma.c, diffed 
-> against the current git.
-> 
-> * Are the changes in arch/arm/mach-sa1100/kconfig files also required?
+ Maybe its late, but I would still like to discuss if it is
+needed-is_power_of_2 has '2' and not 'two' which I think is easier to
+work with. I was hoping that the 2 macros that you have coded can also
+be named with a '2' in them than a 'two'.
 
-Yes, the option needs to be presented during 'make *config'.
+There have been many changes that went in already based on these 2
+macros.I have the cleanup patches ready(for log2.h AND all the changes
+that went in), but my net at home went down, should be up in a few
+hours and so i should be able to mail in the cleanups in a few hours.
 
-> * Should changes be made to the arch/arm/mach-sa1100/Makefile?
+If you and others feel that the 'two's can be replaced with '2' then I
+would push in the patches by tonight.
 
-Not that I know of.  What would they be?
+Vignesh Babu.
 
-> * Is an '#undef DEBUG' at the end not required?
-
-Right, it is not required.
-
-The biggest thing that I see missing is this (and this is not
-part of the new doc file about using pr_debug() either; it probably
-needs to be added):
-
-a.  pr_debug() is #defined in <linux/kernel.h>, so that file needs
-    to be #included.  This is happening indirectly now, but it should
-    be done explictly.
-
-b.  The value of DEBUG must be known (set) before the #include of
-    <linux/kernel.h> so that pr_debug() is defined correctly, so all
-    of the new CONFIG + DEBUG lines need to be before (all of) the
-    #include lines.
-
-
-> Signed-off-by: Roel Kluin <12o3l@tiscali.nl>
+On 8/27/07, Robert P. J. Day <rpjday@mindspring.com> wrote:
+>
+> Consistent with the existing roundup_pow_of_two() routine, add the
+> corresponding rounddown_pow_of_two() routine.
+>
+> Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+>
 > ---
-> diff --git a/arch/arm/mach-sa1100/Kconfig b/arch/arm/mach-sa1100/Kconfig
-> index f99d901..f81c323 100644
-> --- a/arch/arm/mach-sa1100/Kconfig
-> +++ b/arch/arm/mach-sa1100/Kconfig
-> @@ -157,6 +157,11 @@ config SA1100_SSP
->  	  This isn't for audio support, but for attached sensors and
->  	  other devices, eg for BadgePAD 4 sensor support.
->  
-> +config SA1100_DMA_DEBUG
-> +	bool "dma"
-
-	bool "Debug DMA"
-
-> +	help
-> +	  Say Y here if you want verbose debugging for StrongARM 1110 dma.
+>
+>   i'm not sure if this has already been accepted into one of the
+> preliminary trees, but can someone check that the logic here makes
+> sense?  i've tested it, and it seems to return the correct results.
+>
+>   and this would certainly allow some existing code to be simplified.
+>
+>
+> diff --git a/include/linux/log2.h b/include/linux/log2.h
+> index 1b8a2c1..ff8835b 100644
+> --- a/include/linux/log2.h
+> +++ b/include/linux/log2.h
+> @@ -63,6 +63,15 @@ unsigned long __roundup_pow_of_two(unsigned long n)
+>         return 1UL << fls_long(n - 1);
+>  }
+>
+> +/*
+> + * round down to nearest power of two
+> + */
+> +static inline __attribute__((const))
+> +unsigned long __rounddown_pow_of_two(unsigned long n)
+> +{
+> +       return 1UL << (fls_long(n) - 1);
+> +}
 > +
->  config H3600_SLEEVE
->  	tristate "Compaq iPAQ Handheld sleeve support"
->  	depends on SA1100_H3100 || SA1100_H3600
-> diff --git a/arch/arm/mach-sa1100/dma.c b/arch/arm/mach-sa1100/dma.c
-> index 1fbe053..d925dda 100644
-> --- a/arch/arm/mach-sa1100/dma.c
-> +++ b/arch/arm/mach-sa1100/dma.c
-> @@ -22,11 +22,8 @@
->  #include <asm/dma.h>
->  
->  
-> -#undef DEBUG
-> -#ifdef DEBUG
-> -#define DPRINTK( s, arg... )  printk( "dma<%p>: " s, regs , ##arg )
-> -#else
-> -#define DPRINTK( x... )
-> +#ifdef CONFIG_SA1100_DMA_DEBUG
-> +#	define DEBUG 1
->  #endif
->  
->  
-> @@ -232,7 +229,7 @@ int sa1100_start_dma(dma_regs_t *regs, dma_addr_t dma_ptr, u_int size)
->  
->  	/* If both DMA buffers are started, there's nothing else we can do. */
->  	if ((status & (DCSR_STRTA | DCSR_STRTB)) = (DCSR_STRTA | DCSR_STRTB)) {
-> -		DPRINTK("start: st %#x busy\n", status);
-> +		pr_debug("dma<%p>: start: st %#x busy\n", regs , status);
->  		ret = -EBUSY;
->  		goto out;
->  	}
-> @@ -247,7 +244,7 @@ int sa1100_start_dma(dma_regs_t *regs, dma_addr_t dma_ptr, u_int size)
->  		regs->DBSA = dma_ptr;
->  		regs->DBTA = size;
->  		regs->SetDCSR = DCSR_STRTA | DCSR_IE | DCSR_RUN;
-> -		DPRINTK("start a=%#x s=%d on A\n", dma_ptr, size);
-> +		pr_debug("dma<%p>: start a=%#x s=%d on A\n", regs , dma_ptr, size);
->  	} else {
->  		if (status & DCSR_DONEB) {
->  			/* give a chance for the interrupt to be processed */
-> @@ -257,7 +254,7 @@ int sa1100_start_dma(dma_regs_t *regs, dma_addr_t dma_ptr, u_int size)
->  		regs->DBSB = dma_ptr;
->  		regs->DBTB = size;
->  		regs->SetDCSR = DCSR_STRTB | DCSR_IE | DCSR_RUN;
-> -		DPRINTK("start a=%#x s=%d on B\n", dma_ptr, size);
-> +		pr_debug("dma<%p>: start a=%#x s=%d on B\n", regs , dma_ptr, size);
->  	}
->  	ret = 0;
->  
+>  /**
+>   * ilog2 - log of base 2 of 32-bit or a 64-bit unsigned value
+>   * @n - parameter
+> @@ -165,4 +174,20 @@ unsigned long __roundup_pow_of_two(unsigned long n)
+>         __roundup_pow_of_two(n)                 \
+>   )
+>
+> +/**
+> + * rounddown_pow_of_two - round the given value down to nearest power of two
+> + * @n - parameter
+> + *
+> + * round the given value down to the nearest power of two
+> + * - the result is undefined when n = 0
+> + * - this can be used to initialise global variables from constant data
+> + */
+> +#define rounddown_pow_of_two(n)                        \
+> +(                                              \
+> +       __builtin_constant_p(n) ? (             \
+> +               (n = 1) ? 0 :                  \
+> +               (1UL << ilog2(n)) :             \
+> +       __rounddown_pow_of_two(n)               \
+> + )
+> +
+>  #endif /* _LINUX_LOG2_H */
+>
+> rday
+> --
+> ====================================
+> Robert P. J. Day
+> Linux Consulting, Training and Annoying Kernel Pedantry
+> Waterloo, Ontario, CANADA
+>
+> http://crashcourse.ca
+> ====================================
 > -
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
----
-~Randy
-Phaedrus says that Quality is about caring.
+
+-- 
+
+----------------------------------------------
+"Why is it that every time I'm with you, makes me believe in magic?"
