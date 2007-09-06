@@ -1,64 +1,33 @@
-From: <woldt@datamatics.com>
-Date: Mon, 03 Sep 2007 06:29:29 +0000
-Subject: [KJ] Inside The Market
-Message-Id: <000901c7edf3$c8773580$831c80bc@otgl>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1188887627-19182-163"
+From: "Intradot Labs" <vm348882409-315509158tl@ml.unmcs.com>
+Date: Thu, 06 Sep 2007 14:39:24 +0000
+Subject: [KJ] Vos =?iso-8859-1?q?donn=E9es?= aussi sont vitales
+Message-Id: <20070906143924.EEB13140066@mercury.alinto.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
+VOS DONNÉES AUSSI SONT VITALES
+Intradot protège votre réseau, sauvegarde vos données et garantit la confidentialité des informations concernant vos patients.
 
-------------=_1188887627-19182-163
-Content-Type: text/plain; format=flowed; charset="windows-1250";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Sauvegardes 100% automatisées, 24 heures sur 24, de toutes les données du réseau !
 
-Tuesday News Break Excpected!
+L'activité des professionnels de santé est de plus en plus dépendante de la bonne santé... de leur système d'information. Le caractère hautement confidentiel des données stockées ainsi que l'augmentation des volumes de données font qu'une attention toute particulière doit être portée à leur sauvegarde et à la protection du réseau.
+          
+- Que se passerait-il si vous perdiez tout ou partie de vos données informatiques ?
+- Quelles seraient les conséquences sur votre activité en cas de perte de données ?
+- Et en cas de vol de données par un tiers, quel est le poids des implications légales pour votre cabinet ?
 
-Vega Promotional
-V G P M . P K
-$0.07
+Leader dans le domaine de la protection des données informatique, Intradot Labs présente avec Boss et Distribackup la première solution de sauvegarde en continu de bout en bout, entièrement automatisée. Déployée au sein de votre réseau, elle garantit la disponibilité des données du réseau informatique et leur restauration rapide en cas de sinistre.
 
-VGPM is charging up to the plate. The news wires will be humming with
-reports on Tuesday. Set your buy for VGPM.
+# Suivez la présentation « 30 secondes » pour découvrir Boss : http://www.intradot.com/produits/boss/boss-sx-generalites.html
+# Inscrivez-vous à l'une de nos webconfs hebdomadaires pour découvrir les solutions Intradot : http://www.intradot.com/societe/evenements.html
+# Recevez une brochure de nos produits au format PDF ou par courrier sur simple demande : http://www.intradot.com/divers/nous-contacter.html#form1
 
-
-------------=_1188887627-19182-163
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
-
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
-
-Content preview:  Tuesday News Break Excpected! Vega Promotional V G P M .
-  P K $0.07 VGPM is charging up to the plate. The news wires will be
-  humming with reports on Tuesday. Set your buy for VGPM. [...] 
-
-Content analysis details:   (5.6 points, 5.0 required)
-
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 1.1 NO_REAL_NAME           From: does not include a real name
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
- 1.0 OUTFLUX_INVEST_TICKER  FULL: Found gappy stock ticker name repeated
-
-
-
-------------=_1188887627-19182-163
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
+--
+Copyright © 2007 Intradot. Tous droits réservés.
+Désinscription : http://tracking.unmcs.com/desinscription.php?ids=fr,348882409,315509158
 _______________________________________________
 REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
 To resubscribe, send email to majordomo@vger.kernel.org with
@@ -67,4 +36,3 @@ To resubscribe, send email to majordomo@vger.kernel.org with
 Kernel-janitors mailing list
 Kernel-janitors@lists.linux-foundation.org
 https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1188887627-19182-163--
