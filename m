@@ -1,7 +1,7 @@
-From: Andre Haupt <andre@finow14.de>
-Date: Fri, 07 Sep 2007 15:10:12 +0000
+From: Randy Dunlap <rdunlap@xenotime.net>
+Date: Fri, 07 Sep 2007 15:13:37 +0000
 Subject: Re: large patches
-Message-Id: <20070907151012.GA847@ahaupt-debian-vm.localdomain>
+Message-Id: <20070907081337.2e7c1c8b.rdunlap@xenotime.net>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20070907131821.GA14711@ahaupt-debian-vm.localdomain>
 In-Reply-To: <20070907131821.GA14711@ahaupt-debian-vm.localdomain>
@@ -10,25 +10,29 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Sep 07, 2007 at 10:49:02AM -0400, Robert P. J. Day wrote:
+On Fri, 7 Sep 2007 18:54:45 +0400 Alexey Dobriyan wrote:
 
-> if this patch is limited to a very restricted subsystem for which
-> you're personally responsible, you might have a chance to get it in.
-I am not responsible for this driver. I just saw some warnings about
-unused variables during compilation and decided to have a look. Then i
-realised that this driver violates CodingStyle and began some fixing.
+> On 9/7/07, Andre Haupt <andre@finow14.de> wrote:
+> > I have a driver (drivers/atm/iphase.*) which i try to get in conformance
+> > with CodingStyle. I started by fixing whitespace issues (by hand). The
+> > resulting
+> > patch is about 177 kB because those whitespace issues appear on every
+> > single line of the original file.
+> > Is it ok to send this large patch to kernel-janitors and lkml?
+> >
+> > BTW, this driver has *LOTS* of additional style problems. All kinds of
+> > mixed indentation to name one.
+> 
+> Send "Linus please do Lindent blah-blah" request to Linus. Before that
+> do it yourself and verify that code doesn't change or something.
 
-> but rather than posting it to any list, it might be better to just
-> make it available as a download.
-hmmh, chances that actually nobody will have a look are bigger then, no?
+or do whitespace-only changes and verify that the code does not change
+any, and put that comment in the patch description.
 
-> you just have to decide whether that amount of patching is justified
-> by the fact that it's all formatting and clean-up.  tough call.
-This code is IMO very hard to read even without the style problems. I
-have a strong (but not yet substantiated) feeling that this driver could
-need some refactoring. Maybe a style cleanup would make future work on
-this easier?
+> Then start working from there.
 
-regards,
+ack
 
-Andre
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
