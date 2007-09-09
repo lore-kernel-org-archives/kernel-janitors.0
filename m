@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Wed, 05 Sep 2007 15:01:37 +0000
-Subject: [PATCH] Documentation:  Remove references to dead "eda" and "edb"
-Message-Id: <Pine.LNX.4.64.0709051100430.18455@localhost.localdomain>
+Date: Sun, 09 Sep 2007 16:07:44 +0000
+Subject: [PATCH] Documentation:  Remove reference to non-existent "unwind_debug"
+Message-Id: <Pine.LNX.4.64.0709091205530.16190@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0709040622420.740@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0709040622420.740@localhost.localdomain>
@@ -16,20 +16,20 @@ Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 ---
 
 diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
-index b41cde3..cfe2583 100644
+index b41cde3..c9cff33 100644
 --- a/Documentation/kernel-parameters.txt
 +++ b/Documentation/kernel-parameters.txt
-@@ -577,10 +577,6 @@ and is between 256 and 4096 characters. It is defined in the file
- 			0: polling mode
- 			non-0: interrupt mode (default)
+@@ -1957,10 +1957,6 @@ and is between 256 and 4096 characters. It is defined in the file
+ 	norandmaps	Don't use address space randomization
+ 			Equivalent to echo 0 > /proc/sys/kernel/randomize_va_space
 
--	eda=		[HW,PS2]
+- 	unwind_debug=N 	N > 0 will enable dwarf2 unwinder debugging
+-			This is useful to get more information why
+-			you got a "dwarf2 unwinder stuck"
 -
--	edb=		[HW,PS2]
--
- 	edd=		[EDD]
- 			Format: {"of[f]" | "sk[ipmbr]"}
- 			See comment in arch/i386/boot/edd.S
+ ______________________________________________________________________
+
+ TODO:
 
 -- 
 ====================================
