@@ -1,114 +1,73 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 06 Sep 2007 09:21:53 +0000
-Subject: [PATCH] Documentation:  Delete unreferenced xterm-linux.xpm file.
-Message-Id: <Pine.LNX.4.64.0709060518550.4022@localhost.localdomain>
+From: "Bridgett Carrier" <MaryellendivisibleNaquin@ncpdp.org>
+Date: Mon, 10 Sep 2007 02:39:24 +0000
+Subject: [KJ] Fw: Thanks, we accepted your company application
+Message-Id: <e6b6e01c7f39f$7592c0d0$2f01a8c0@FAMILYROOM>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="----------=_1189424567-19182-135"
 List-Id: <kernel-janitors.vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+This is a multi-part message in MIME format...
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+------------=_1189424567-19182-135
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
----
+If you have your own business and require IMMEDIATE ready money to spend AN=
+Y way you like or wish Extra money to give the business a boost or need A l=
+ow interest loan - NO STRINGS ATTACHED, here is the deal we can offer you N=
+OW (hurry, this tender will expire THIS NIGHT):=0A=
+=0A=
+$38,000+ loan=0A=
+=0A=
+Hurry, when our best deal is gone, it is gone. Simply Call Us Free on 877-4=
+82-4954=
 
-as amusing as a penguin xpm file is, i don't think it's the kernel's
-job to be carrying it around if absolutely nothing else in the tree
-refers to it.
+------------=_1189424567-19182-135
+Content-Type: text/plain; name="SpamAssassinReport.txt"
+Content-Disposition: inline; filename="SpamAssassinReport.txt"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Mailer: MIME-tools 5.419 (Entity 5.419)
 
-of course, if there *is* a reason for it to be there, that's cool,
-too.  it's not like i feel strongly about it either way.
+Spam detection software, running on the system "daredevil.linux-foundation.org", has
+identified this incoming email as possible spam.  The original message
+has been attached to this so you can view it (if it isn't spam) or label
+similar future email.  If you have any questions, see
+the administrator of that system for details.
+
+Content preview:  If you have your own business and require IMMEDIATE
+  ready money to spend ANY way you like or wish Extra money to give the
+  business a boost or need A low interest loan - NO STRINGS ATTACHED, here
+  is the deal we can offer you NOW (hurry, this tender will expire THIS
+  NIGHT): [...] 
+
+Content analysis details:   (7.9 points, 5.0 required)
+
+ pts rule name              description
+---- ---------------------- --------------------------------------------------
+ 0.9 DATE_IN_PAST_06_12     Date: is 6 to 12 hours before Received: date
+ 0.0 HTML_MESSAGE           BODY: HTML included in message
+ 4.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
+                            [score: 1.0000]
+ 2.5 FORGED_MUA_OUTLOOK     Forged mail pretending to be from MS Outlook
 
 
- Documentation/00-INDEX        |    2 -
- Documentation/xterm-linux.xpm |   61 --------------------------------
- 2 files changed, 63 deletions(-)
 
-diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
-index 8b05636..e5393a1 100644
---- a/Documentation/00-INDEX
-+++ b/Documentation/00-INDEX
-@@ -420,7 +420,5 @@ watchdog/
- 	- how to auto-reboot Linux if it has "fallen and can't get up". ;-)
- x86_64/
- 	- directory with info on Linux support for AMD x86-64 (Hammer) machines.
--xterm-linux.xpm
--	- XPM image of penguin logo (see logo.txt) sitting on an xterm.
- zorro.txt
- 	- info on writing drivers for Zorro bus devices found on Amigas.
-diff --git a/Documentation/xterm-linux.xpm b/Documentation/xterm-linux.xpm
-deleted file mode 100644
-index f469c1a..0000000
---- a/Documentation/xterm-linux.xpm
-+++ /dev/null
-@@ -1,61 +0,0 @@
--/* XPM */
--/*****************************************************************************/
--/**       This pixmap was made by Torsten Poulin - 1996 - torsten@diku.dk   **/
--/**       It was made by combining xterm-blank.xpm with                     **/
--/**       the wonderfully cute Linux penguin mascot by Larry Ewing.         **/
--/**       I had to change Larry's penguin a little to make it fit.          **/
--/**       xterm-blank.xpm contained the following comment:                  **/
--/**       This pixmap is kindly offered by Ion Cionca - 1992 -              **/
--/**       Swiss Federal Institute of Technology                             **/
--/**       Central Computing Service                                         **/
--/*****************************************************************************/
--static char * image_name [] = {
--/**/
--"64 38 8 1",
--/**/
--" 	s mask	c none",
--".	c gray70",
--"X	c gray85",
--"o	c gray50",
--"O	c yellow",
--"+	c darkolivegreen",
--"@	c white",
--"#	c black",
--"              ######                                            ",
--"             ########                                           ",
--"            ##########    ...........................           ",
--"            ###########  .XXXXXXXXXXXXXXXXXXXXXXXXXXX.          ",
--"            ########### .XXXXXXXXXXXXXXXXXXXXXXXXXXXXXoo        ",
--"            #@@@#@@@### .XX+++++++++++++++++++++++XXXXoo        ",
--"            #@#@#@#@### .XX++++++++++++++++++++++++XXXooo       ",
--"            #@#####@### .XX++@@+@++@+@@@@++@+++++++XXXooo       ",
--"            ###OOO######.XX++++++++++++++++++++++++XXXoooo      ",
--"            ##OOOOOO####.XX++@@@@+@@+@@@+++++++++++XXXoooo      ",
--"            #O#OOO#O####.XX++++++++++++++++++++++++XXXooooo     ",
--"            ##O###OO####.XX++@@@@@@@@@@+@@@@@++++++XXXooooo     ",
--"            ###OOOO@#####XX++++++++++++++++++++++++XXXooooo     ",
--"           ##@###@@@@####XX++@@@+@@@@+@@++@@@++++++XXXooooo     ",
--"           #@@@@@@@@@@####X++++++++++++++++++++++++XXXooooo     ",
--"          ##@@@@@@@@@@#####++@+++++++++++++++++++++XXXooooo     ",
--"         ###@@@@@@@@@@######+++++++++++++++++++++++XXXooooo     ",
--"        ####@@@@@@@@@@@#####+@@@@+@+@@@+@++++++++++XXXooooo     ",
--"        ###@@@@@@@@@@@@######++++++++++++++++++++++XXXooooo     ",
--"        ##@@@@@@@@@@@@@@#####@+@@@@++++++++++++++++XXXooooo     ",
--"       ###@@@@@@@@@@@@@@######++++++++++++++++++++XXXXoooo      ",
--"       ###@@@@@@@@@@@@@@######XXXXXXXXXXXXXXXXXXXXXXXXooo       ",
--"      ###@@@@@@@@@@@@@@@######XXXXXXXXXXXXXXXXXXXXXXXooo        ",
--"      ###@@@@@@@@@@@@@@@@#####ooooooooooooooooooooooo...oo      ",
--"      ###@@@@@@@@@@@@@@@######.........................ooo      ",
--"     #OO##@@@@@@@@@@@@@#######oooooooooooooooooooooooooooo      ",
--"     #OOO##@@@@@@@@@@@#OO####O#XXXXXXXXXXXXXXXXXXXXXXXoooo.. .. ",
--"  ###OOOOO##@@@@@@@@@@#OOO#OOO#XXXXXXXXXXXXXX#######XXoooo  .  .",
--" #OOOOOOOO###@@@@@@@@@#OOOOOOO#ooooooooooooooooooooXXXooo     . ",
--" #OOOOOOOOO###@@@@@@@@@#OOOOOOO##XXXXXXXXXXXXXXXXXooooo      .  ",
--"  #OOOOOOOOO#@@@@@@@@###OOOOOOOOO#XXXXXXXXXXXXXXXoo      oooooo ",
--"  #OOOOOOOOO#@@@@@@@####OOOOOOOO#@@@@@@@@@@@XXXXXoo   ooooo...o ",
--" #OOOOOOOOOOO###########OOOOOO##XXXXXXXXXXXXXXXXoo   ooXXXoo..o ",
--"  ##OOOOOOOOO###########OOOO##@@@@@@@@@@@@@XXXXoo    oXXXXX..o  ",
--"     ###OOOO###    oXX##OOO#XXXXXXXXXXXXXXXXXXoo     o.....oo   ",
--"         ####      oooo####oooooooooooooooooooo      ooooooo    ",
--"                                                                ",
--"                                                                "};
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+------------=_1189424567-19182-135
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-http://crashcourse.ca
-====================================
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+------------=_1189424567-19182-135--
