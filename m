@@ -1,63 +1,50 @@
-From: "Edward Kelley" <unknown@needforexhaust.com>
-Date: Sun, 02 Sep 2007 11:31:35 +0000
-Subject: [KJ] adobe acrobat V8 our price $79.95
-Message-Id: <00f1ffa4$00f1fe78$a663033b@unknown>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="----------=_1188732057-19182-5"
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Mon, 10 Sep 2007 12:49:14 +0000
+Subject: [PATCH] Documentation:  Replace incorrect "rcu" prefix with "rcupdate".
+Message-Id: <Pine.LNX.4.64.0709100847580.3384@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This is a multi-part message in MIME format...
 
-------------=_1188732057-19182-5
-Content-Type: text/plain; format=flowed; charset="us-ascii";
-	reply-type=original
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
-adobe suite 3 Our price: $269
-http://www.regaicndomeni.cn
+---
 
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+index b41cde3..463125d 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -1449,14 +1449,17 @@ and is between 256 and 4096 characters. It is defined in the file
+ 			New name for the ramdisk parameter.
+ 			See Documentation/ramdisk.txt.
 
-------------=_1188732057-19182-5
-Content-Type: text/plain; name="SpamAssassinReport.txt"
-Content-Disposition: inline; filename="SpamAssassinReport.txt"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Mailer: MIME-tools 5.419 (Entity 5.419)
+-	rcu.blimit=	[KNL,BOOT] Set maximum number of finished
+-			RCU callbacks to process in one batch.
++	rcupdate.blimit=	[KNL,BOOT]
++			Set maximum number of finished RCU callbacks to process
++			in one batch.
 
-Spam detection software, running on the system "daredevil.linux-foundation.org", has
-identified this incoming email as possible spam.  The original message
-has been attached to this so you can view it (if it isn't spam) or label
-similar future email.  If you have any questions, see
-the administrator of that system for details.
+-	rcu.qhimark=	[KNL,BOOT] Set threshold of queued
++	rcupdate.qhimark=	[KNL,BOOT]
++			Set threshold of queued
+ 			RCU callbacks over which batch limiting is disabled.
 
-Content preview:  adobe suite 3 Our price: $269
-  http://www.regaicndomeni.cn [...] 
+-	rcu.qlowmark=	[KNL,BOOT] Set threshold of queued
+-			RCU callbacks below which batch limiting is re-enabled.
++	rcupdate.qlowmark=	[KNL,BOOT]
++			Set threshold of queued RCU callbacks below which
++			batch limiting is re-enabled.
 
-Content analysis details:   (6.5 points, 5.0 required)
+ 	rdinit=		[KNL]
+ 			Format: <full_path>
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
- pts rule name              description
----- ---------------------- --------------------------------------------------
- 2.0 INVALID_DATE           Invalid Date: header (not RFC 2822)
- 1.0 OUTFLUX_INVEST_PRICE   BODY: contains "Price"
- 3.5 BAYES_99               BODY: Bayesian spam probability is 99 to 100%
-                            [score: 1.0000]
-
-
-
-------------=_1188732057-19182-5
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
-------------=_1188732057-19182-5--
+http://crashcourse.ca
+====================================
