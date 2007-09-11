@@ -1,34 +1,45 @@
-From: Tejun Heo <htejun@gmail.com>
-Date: Mon, 03 Sep 2007 08:29:57 +0000
-Subject: Re: [PATCH resubmit] /drivers/ata ioremap returncode check
-Message-Id: <46DBC605.9040401@gmail.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 11 Sep 2007 19:41:02 +0000
+Subject: does '__setup("dscc4.setup=", dscc4_setup);' make any sense?
+Message-Id: <Pine.LNX.4.64.0709111538230.25770@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <648310.70195.qm@web44903.mail.sp1.yahoo.com>
-In-Reply-To: <648310.70195.qm@web44903.mail.sp1.yahoo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: postfail@hushmail.com
-Cc: brandon@ifup.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-Scott Thompson wrote:
-> Patchset against 2.6.23-rc3.  corrects missing ioremap return 
-> checks, resending after fixing for documentation making changes suggested...
-> 
-> As for suggestions, I did fix the {} that weren't needed.  I did not add in a
-> "printk" err or warn statement as the rest of the module does not contain these
-> messages.  When auditing (as I am for ioremap checking here) I am attempting
-> to keep changes "in the style of their surroundings".  Otherwise it's massive
-> scope screep on these patches.
->  
-> Signed-off-by: Scott Thompson <postfail <at> hushmail.com>
 
-Acked-by: Tejun Heo <htejun@gmail.com>
+  in drivers/net/wan/dscc4.c, you have the snippet:
 
-It would be better to start the subject line with pata_ixp4xx_cf: but
-maybe Jeff can fix it up while applying.
+==#ifndef MODULE
+static int __init dscc4_setup(char *str)
+{
+        int *args[] = { &debug, &quartz, NULL }, **p = args;
 
-Thanks.
+        while (*p && (get_option(&str, *p) = 2))
+                p++;
+        return 1;
+}
 
+__setup("dscc4.setup=", dscc4_setup);
+#endif
+==
+  but is that call to __setup() correct?  i thought you would just use
+
+  __setup("setup=", dscc4_setup);
+
+but you * would* specify "dscc4.setup=" on the boot line and that
+would properly be associated with that setup routine if that code were
+compiled into the kernel.
+
+or am i totally misreading how this mechanism works?
+
+rday
 -- 
-tejun
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
