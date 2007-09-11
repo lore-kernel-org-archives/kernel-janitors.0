@@ -1,7 +1,7 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Tue, 11 Sep 2007 22:16:20 +0000
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Tue, 11 Sep 2007 23:44:06 +0000
 Subject: Re: does '__setup("dscc4.setup=", dscc4_setup);' make any sense?
-Message-Id: <20070911151620.3b7104b7.rdunlap@xenotime.net>
+Message-Id: <Pine.LNX.4.64.0709111926300.4198@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0709111538230.25770@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0709111538230.25770@localhost.localdomain>
@@ -10,184 +10,119 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, 11 Sep 2007 17:21:53 -0400 (EDT) Robert P. J. Day wrote:
+On Tue, 11 Sep 2007, Randy Dunlap wrote:
 
-> On Tue, 11 Sep 2007, Randy Dunlap wrote:
-> 
-> > On Tue, 11 Sep 2007 15:41:02 -0400 (EDT) Robert P. J. Day wrote:
-> ...
-> > > __setup("dscc4.setup=", dscc4_setup);
-> 
-> > You are correct AFAIK.  Please check with the driver maintainer:
+> On Tue, 11 Sep 2007 17:21:53 -0400 (EDT) Robert P. J. Day wrote:
+>
+> > On Tue, 11 Sep 2007, Randy Dunlap wrote:
+> >
+> > > On Tue, 11 Sep 2007 15:41:02 -0400 (EDT) Robert P. J. Day wrote:
+> > ...
+> > > > __setup("dscc4.setup=", dscc4_setup);
+> >
+> > > You are correct AFAIK.  Please check with the driver maintainer:
+>
+> Nope, I be wrong.  I jumped too quickly, thinking this was a
+> module_param() instead of a __setup()...  Sorry about that.
 
-Nope, I be wrong.  I jumped too quickly, thinking this was a
-module_param() instead of a __setup()...  Sorry about that.
+i noticed that as well.  so there's nothing *technically* wrong with
+defining a boot-time parm with __setup() that just happens to match
+"module.param" syntax but, holy crap, it's confusing.  :-P
 
+> I think that the early_param() serves a clear purpose, but __setup()
+> being used in drivers is mostly historical.
 
-> > DSCC4 DRIVER
-> > P:	Francois Romieu
-> > M:	romieu@fr.zoreil.com
-> > L:	netdev@vger.kernel.org
-> > S:	Maintained
-> 
->   before i do that, there are a couple things i want to clarify, since
-> i think i *just* twigged on how all this hangs together.
-> 
-> AIUI, there are two ways to define your basic kernel boot-time parms:
-> 
->   a)  __setup(), or
->   b)   early_param()
-> 
->   for the most part, these macros are used to define boot-time parms
-> that you'd normally consider *really* fundamental -- that is, parms
-> related to code that is *always* compiled into the kernel.  as in:
-> 
-> $ grep -rw __setup arch/i386/kernel
-> arch/i386/kernel/acpi/sleep.c:__setup("acpi_sleep=", acpi_sleep_setup);
-> arch/i386/kernel/reboot.c:__setup("reboot=", reboot_setup);
-> arch/i386/kernel/traps.c:__setup("kstack=", kstack_setup);
-> arch/i386/kernel/traps.c:__setup("code_bytes=", code_bytes_setup);
-> arch/i386/kernel/hpet.c:__setup("hpet=", hpet_setup);
-> arch/i386/kernel/cpu/mcheck/mce.c:__setup("nomce", mcheck_disable);
-> arch/i386/kernel/cpu/mcheck/mce.c:__setup("mce", mcheck_enable);
-> ...
-> $
+even early_param() has limited usefulness in drivers given that those
+params really are processed early in the startup sequence, long before
+any modules would be loaded.  in fact, there's not a lot of that in
+the drivers/ directory:
 
-I think that the early_param() serves a clear purpose, but __setup()
-being used in drivers is mostly historical.  I'd prefer to see
-drivers just use module_param() now, but it is relatively new, so
-lots of drivers were written before it existed.
+$ grep -rw early_param drivers
+drivers/acpi/tables.c:early_param("acpi_apic_instance", acpi_parse_apic_instance);
+drivers/serial/8250_early.c:early_param("earlycon", setup_early_serial8250_console);
+drivers/pci/pci.c:early_param("pci", pci_setup);
+$
 
-Which one of __setup() or module_param() is used is a bit
-haphazard ATM.
+which is about what i would have expected.  there's a *lot* more
+__setup() stuff in drivers:
 
->   that is, if you look at the above, all of that code is guaranteed to
-> be compiled into the kernel no matter what your configuration
-> selections -- no modular builds for any of *that* stuff.  so far, so
-> good?
+$ grep -rw __setup drivers | wc -l
+139
 
-I suppose so.
+but i'm guessing that a lot of that would look better as actual module
+parameters.  you can see the historical cruft left over in the
+kernel-parameters.txt file, such as:
 
->   at the other end, if you have code (perhaps driver code) that
-> *could* be selected as either built-in or modular, and it has standard
-> module parameters, then if you choose to build that code into the
-> kernel, you *automatically* get access to the corresponding parameters
-> with the syntax "modulename.paramname=whatever" at the kernel boot
-> line.  there is no need to "__setup" those things -- you can just
-> access them from the boot line.  again, sound reasonable?  but here's
-> the part that i want to make sure i understand.
+   blkmtd_device=  [HW,MTD]
+   blkmtd_erasesz   blkmtd_ro   blkmtd_bs   blkmtd_count
+sort of suggests that, once upon a time, there was a blkmtd module.
+:-)
 
-OK.
+> I'd prefer to see drivers just use module_param() now, but it is
+> relatively new, so lots of drivers were written before it existed.
 
->   as i read it, you can pretty much use __setup() to define boot-time
-> parms from *anywhere* in the source tree if you want to initialize
-> some parameter from the boot line.  for example, consider this snippet
-> from drivers/mtd/cmdlinepart.c:
-> 
-> ==> /*
->  * This is the handler for our kernel parameter, called from
->  * main.c::checksetup(). Note that we can not yet kmalloc() anything,
->  * so we only save the commandline for later processing.
->  *
->  * This function needs to be visible for bootloaders.
->  */
-> static int mtdpart_setup(char *s)
-> {
->         cmdline = s;
->         return 1;
-> }
-> 
-> __setup("mtdparts=", mtdpart_setup);
-> ==> 
->   so, from some MTD code, we've defined a boot-time parm, and we can
-> even see why from the comment.  but that source file cmdlinepart.c can
-> be selected to be *modular* as well.  and if it is, it won't even be
-> *loaded* at boot time, so trying to assign that parameter will simply
-> fail, right?  it makes sense if that source file is compiled into
+clearly.
 
-fail silently IIRC.  Putting "foobar=blah" on the kernel command line
-is just noise unless it is recognized.
+...
+> >   so, from some MTD code, we've defined a boot-time parm, and we
+> > can even see why from the comment.  but that source file
+> > cmdlinepart.c can be selected to be *modular* as well.  and if it
+> > is, it won't even be *loaded* at boot time, so trying to assign
+> > that parameter will simply fail, right?  it makes sense if that
+> > source file is compiled into
+>
+> fail silently IIRC.  Putting "foobar=blah" on the kernel command line
+> is just noise unless it is recognized.
 
-> the kernel, but not so much if it's modular.  am i understanding all
-> that correctly?  because there's one more level of silliness in all of
-> this.
+the relevant code is in kernel/params.c:
+        ...
+        if (handle_unknown) {
+                DEBUGP("Unknown argument: calling %p\n", handle_unknown);
+                return handle_unknown(param, val);
+        }
 
-It's just historical, not silliness.  If MTD is modular, you can't
-boot from it -- unless maybe an initrd is used (?).
-Did you think about that case?
+        DEBUGP("Unknown argument `%s'\n", param);
+        return -ENOENT;
+        ...
 
+and DEBUGP is currently hard-coded into nothingness in that file so,
+yes, it would be silent.  (would it be such a bad idea to make that
+debugging user-configurable?  would it ever be handy to see those
+messages?)
 
->   it looks like there are source files that are trying to have it both
-> ways, without any compelling reason.  consider the source file
-> drivers/char/hangcheck-timer.c.  first there are the regular module
-> parameters:
-> 
-> ...
-> module_param(hangcheck_tick, int, 0);
-> module_param(hangcheck_margin, int, 0);
-> module_param(hangcheck_reboot, int, 0);
-> ... etc etc ...
-> 
->   those parameter names seem really badly chosen since, if you wanted
-> to manipulate them on the boot line, it would look like:
-> 
->   ... hangcheck-timer.hangcheck_tick=5
+> >   it looks like there are source files that are trying to have it both
+> > ways, without any compelling reason.  consider the source file
+> > drivers/char/hangcheck-timer.c.  first there are the regular module
+> > parameters:
+> >
+> > ...
+> > module_param(hangcheck_tick, int, 0);
+> > module_param(hangcheck_margin, int, 0);
+> > module_param(hangcheck_reboot, int, 0);
+> > ... etc etc ...
+> >
+> >   those parameter names seem really badly chosen since, if you wanted
+> > to manipulate them on the boot line, it would look like:
+> >
+> >   ... hangcheck-timer.hangcheck_tick=5
+>
+> Yeah, but that's a different subject.
 
-Yeah, but that's a different subject.
+true, but i think it's safe to say that there's no compelling reason
+to *ever* have created module parameters with the module name as a
+prefix.  that seems wholly redundant.  yes, there's a lot of that
+old-style parm definition that would look nicer using the newer
+technique.
 
-> barf.  it would have made far more sense to just call those params
-> tick, margin and so on, no?  they're not going to clash since they're
-> defined purely within the context of this module.  but here's where it
-> gets ugly, since that very same source file *also* uses __setup() to
-> define even more boot-time params if this file is not being built as a
-> module:
-> 
-> ==> #ifndef MODULE
-> 
-> static int __init hangcheck_parse_tick(char *str)
-> {
->         int par;
->         if (get_option(&str,&par))
->                 hangcheck_tick = par;
->         return 1;
-> }
-> ...
-> __setup("hcheck_tick", hangcheck_parse_tick);
-> ==> 
->   ok, that is just grotesque.  if i read this properly, someone
-> originally created the module parameter names, then realized that
-> setting them at boot time would be a real PITA, and so hacked it even
-> further by creating even *more* parameter names with __setup() to deal
-> with that.
+anyway, back to the grind.
 
-It probably means that someone is not aware of module_param_named(),
-or this code was written before module_param_named() was available,
-and then no one went back to clean this up.  One reason for not
-cleaning it up would be that some users might already be using it
-in the __setup() syntax and would have to change the kernel boot
-options, but they may not be aware of this.  Eh?
+rday
 
->   am i justifiably nauseated by this?  or is there something clever
-> happening here that i haven't figured out yet?
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-It's not perfect, it's not the best of all possible worlds.
-It's reality.  Things don't get cleaned up all that often.
-
-
-> rday
-> 
-> p.s.  and regarding my original question, i'm guessing that,
-> *technically*, there's nothing wrong with using __setup() to define a
-> parameter named "dssc4.setup", but that seems to violate the spirit of
-> how you're supposed to use this and, as above, that will fail anyway
-> if you choose to build dssc4 as a module.
-
-Yes.
-
->   so ...thoughts?
-
-above.
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+http://crashcourse.ca
+====================================
