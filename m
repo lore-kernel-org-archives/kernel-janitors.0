@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Thu, 13 Sep 2007 16:31:11 +0000
+Date: Thu, 13 Sep 2007 18:12:34 +0000
 Subject: Re: [PATCH][RFC] Drop the "static __initdata" from tmp_cmdline in
-Message-Id: <Pine.LNX.4.64.0709131226290.9081@localhost.localdomain>
+Message-Id: <Pine.LNX.4.64.0709131406050.5579@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <Pine.LNX.4.64.0709131043070.4208@localhost.localdomain>
 In-Reply-To: <Pine.LNX.4.64.0709131043070.4208@localhost.localdomain>
@@ -32,13 +32,26 @@ On Thu, 13 Sep 2007, Thomas Petazzoni wrote:
 > stack, leaving only 2k for the rest of the code to execute, which
 > may not be enough. I think that why this buffer is static.
 
-ah, quite right -- that hadn't occurred to me.  so it's entirely
-possible that there is no *programmatic* reason why that array needs
-to persist after the function call other than for reasons of stack
-size.  that would certainly explain a lot of other "static __initdata"
-declarations i've seen that didn't really seem necessary.
+  as a (sort of) related followup to the above, note that having
+dropped the "static __initdata" would have had a nasty effect on any
+__setup or early_param-registered setup functions that assumed that
+the data at the address they were passed was going to persist, or
+assumed that they could write back to that address.
 
-thanks.
+  but technically, that's not disallowed.  look at the layout of the
+relevant structure:
+
+struct obs_kernel_param {
+        const char *str;
+        int (*setup_func)(char *);
+        int early;
+};
+
+  note that the setup_func accepts "char *" as opposed to "const char
+*".  any legitimate reason for that?  are there, in fact, any of those
+setup functions anywhere in the tree that try to modify the data back
+at that passed address?  i would have assumed not, but i haven't
+looked closely enough.
 
 rday
 -- 
