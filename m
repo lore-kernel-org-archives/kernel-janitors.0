@@ -1,7 +1,7 @@
 From: Liran Tal <liransgarage@gmail.com>
-Date: Mon, 17 Sep 2007 12:37:53 +0000
+Date: Wed, 19 Sep 2007 07:32:56 +0000
 Subject: [KJ] [PATCH-RESUBMIT] net/netfilter/x_tables.c unnecessary casts
-Message-Id: <20070917143753.3d2d19ed@liri>
+Message-Id: <20070919093256.3436ce77@liri>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <3ed55890709110649n29c98a10j7f1479aeda368f11@mail.gmail.com>
 In-Reply-To: <3ed55890709110649n29c98a10j7f1479aeda368f11@mail.gmail.com>
@@ -31,3 +31,11 @@ Signed-off-by: Liran Tal <liran.tal@gmail.com>
  	u_int16_t type = (unsigned long)pde->data >> 16;
  	struct list_head *list;
 
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
