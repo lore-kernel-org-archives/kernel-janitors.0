@@ -1,65 +1,81 @@
-From: "liran tal" <liransgarage@gmail.com>
-Date: Tue, 11 Sep 2007 11:11:13 +0000
-Subject: Re: [KJ] [PATCH 1/1] net/netfilter/x_tables.c unnecessary casts
-Message-Id: <3ed55890709110411l7a923ebbwd7a8aca0d741fe11@mail.gmail.com>
+From: Roel Kluin <12o3l@tiscali.nl>
+Date: Sat, 29 Sep 2007 10:31:30 +0000
+Subject: [PATCH] sa1100 dma s/DPRINTK/pr_debug/
+Message-Id: <46FE2982.3070405@tiscali.nl>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ed55890709110255w7c1475ffidf75ebc25f47d541@mail.gmail.com>
-In-Reply-To: <3ed55890709110255w7c1475ffidf75ebc25f47d541@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thank you.
-Here it is again.
+I replaced a DPRINTK with pr_debug and was wondering whether I was doing it
+correctly. See the example changes to arch/arm/mach-sa1100/dma.c, diffed 
+against the current git.
 
---- x_tables.c.orig     2007-09-11 11:21:44.000000000 +0300
-+++ x_tables.c  2007-09-11 11:22:11.000000000 +0300
-@@ -691,7 +691,7 @@ static struct list_head *type2list(u_int
+* Are the changes in arch/arm/mach-sa1100/kconfig files also required?
+* Should changes be made to the arch/arm/mach-sa1100/Makefile?
+* Is an '#undef DEBUG' at the end not required?
 
- static void *xt_tgt_seq_start(struct seq_file *seq, loff_t *pos)
- {
--       struct proc_dir_entry *pde = (struct proc_dir_entry *) seq->private;
-+       struct proc_dir_entry *pde = seq->private;
-        u_int16_t af = (unsigned long)pde->data & 0xffff;
-        u_int16_t type = (unsigned long)pde->data >> 16;
-        struct list_head *list;
-
-
-
-On 9/11/07, Bernd Petrovitsch <bernd@firmix.at> wrote:
->
-> On Tue, 2007-09-11 at 12:55 +0300, liran tal wrote:
-> > The patch removes an unnecessary cast in accordance to the rest of
->              ^^^^^^^
-> > the code. Kernel version is 2.6.22 with latest patches.
-> >
-> >
-> > --- x_tables.c  2007-09-11 11:22:11.000000000 +0300
-> > +++ x_tables.c.orig     2007-09-11 11:21: 44.000000000 +0300
-> > @@ -691,7 +691,7 @@ static struct list_head *type2list(u_int
-> >
-> >  static void *xt_tgt_seq_start(struct seq_file *seq, loff_t *pos)
-> >  {
-> > -       struct proc_dir_entry *pde = seq->private;
-> > +       struct proc_dir_entry *pde = (struct proc_dir_entry *)
-> seq->private;
->
-> The patch looks reversed.
->
->         Bernd
-> --
-> Firmix Software GmbH                   http://www.firmix.at/
-> mobil: +43 664 4416156                 fax: +43 1 7890849-55
->           Embedded Linux Development and Services
->
->
->
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Signed-off-by: Roel Kluin <12o3l@tiscali.nl>
+---
+diff --git a/arch/arm/mach-sa1100/Kconfig b/arch/arm/mach-sa1100/Kconfig
+index f99d901..f81c323 100644
+--- a/arch/arm/mach-sa1100/Kconfig
++++ b/arch/arm/mach-sa1100/Kconfig
+@@ -157,6 +157,11 @@ config SA1100_SSP
+ 	  This isn't for audio support, but for attached sensors and
+ 	  other devices, eg for BadgePAD 4 sensor support.
+ 
++config SA1100_DMA_DEBUG
++	bool "dma"
++	help
++	  Say Y here if you want verbose debugging for StrongARM 1110 dma.
++
+ config H3600_SLEEVE
+ 	tristate "Compaq iPAQ Handheld sleeve support"
+ 	depends on SA1100_H3100 || SA1100_H3600
+diff --git a/arch/arm/mach-sa1100/dma.c b/arch/arm/mach-sa1100/dma.c
+index 1fbe053..d925dda 100644
+--- a/arch/arm/mach-sa1100/dma.c
++++ b/arch/arm/mach-sa1100/dma.c
+@@ -22,11 +22,8 @@
+ #include <asm/dma.h>
+ 
+ 
+-#undef DEBUG
+-#ifdef DEBUG
+-#define DPRINTK( s, arg... )  printk( "dma<%p>: " s, regs , ##arg )
+-#else
+-#define DPRINTK( x... )
++#ifdef CONFIG_SA1100_DMA_DEBUG
++#	define DEBUG 1
+ #endif
+ 
+ 
+@@ -232,7 +229,7 @@ int sa1100_start_dma(dma_regs_t *regs, dma_addr_t dma_ptr, u_int size)
+ 
+ 	/* If both DMA buffers are started, there's nothing else we can do. */
+ 	if ((status & (DCSR_STRTA | DCSR_STRTB)) = (DCSR_STRTA | DCSR_STRTB)) {
+-		DPRINTK("start: st %#x busy\n", status);
++		pr_debug("dma<%p>: start: st %#x busy\n", regs , status);
+ 		ret = -EBUSY;
+ 		goto out;
+ 	}
+@@ -247,7 +244,7 @@ int sa1100_start_dma(dma_regs_t *regs, dma_addr_t dma_ptr, u_int size)
+ 		regs->DBSA = dma_ptr;
+ 		regs->DBTA = size;
+ 		regs->SetDCSR = DCSR_STRTA | DCSR_IE | DCSR_RUN;
+-		DPRINTK("start a=%#x s=%d on A\n", dma_ptr, size);
++		pr_debug("dma<%p>: start a=%#x s=%d on A\n", regs , dma_ptr, size);
+ 	} else {
+ 		if (status & DCSR_DONEB) {
+ 			/* give a chance for the interrupt to be processed */
+@@ -257,7 +254,7 @@ int sa1100_start_dma(dma_regs_t *regs, dma_addr_t dma_ptr, u_int size)
+ 		regs->DBSB = dma_ptr;
+ 		regs->DBTB = size;
+ 		regs->SetDCSR = DCSR_STRTB | DCSR_IE | DCSR_RUN;
+-		DPRINTK("start a=%#x s=%d on B\n", dma_ptr, size);
++		pr_debug("dma<%p>: start a=%#x s=%d on B\n", regs , dma_ptr, size);
+ 	}
+ 	ret = 0;
+ 
