@@ -1,32 +1,38 @@
-From: Chris Rankin <rankincj@yahoo.com>
-Date: Mon, 22 Oct 2007 08:11:36 +0000
-Subject: IRQ error when enabling PCI device in Linux 2.6
-Message-Id: <218792.41386.qm@web52906.mail.re2.yahoo.com>
+From: "Robert P. J. Day" <rpjday@mindspring.com>
+Date: Wed, 03 Oct 2007 14:50:41 +0000
+Subject: "#ifdef __KERNEL__" and user-space headers
+Message-Id: <Pine.LNX.4.64.0710031047360.31616@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
 
-I have a PCI driver in 2.6.23.1 that is causing an unhandled IRQ error as soon as the PCI device
-is enabled! (It's hostap_plx.) Now I understand that you *need* to enable the PCI device before
-you can read the IRQ number or other resources, and this device does work fine in an old Linux
-2.4.33 box. So can someone suggest the best way of fixing this driver in Linux 2.6, please?
-
-For reference, the IRQ which the kernel complains that no-one cares about is indeed the IRQ of my
-shiny PCI device, as given by lspci. This IRQ is also being shared by another PCI device (and
-unavoidably so, I'm afraid).
-
-My kernel is compiled as UP with 4K stacks and PREEMPT enabled.
-
-Cheers,
-Chris
+  i'm curious -- is there a standard for protecting the contents of
+header files that aren't even exported to user space?  for example, in
+include/linux/string.h:
 
 
+#ifndef _LINUX_STRING_H_
+#define _LINUX_STRING_H_
 
-      ___________________________________________________________
-Yahoo! Answers - Got a question? Someone out there knows the answer. Try it
-now.
-http://uk.answers.yahoo.com/ 
+/* We don't want strings.h stuff being user by user stuff by accident
+*/
+
+#ifdef __KERNEL__
+... etc etc ...
+
+  but according to include/linux/Kbuild, that header file isn't
+exported to userspace, anyway.  so the "#ifdef __KERNEL__" doesn't
+technically hurt, but it's kind of redundant, no?
+
+rday
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
