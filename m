@@ -1,69 +1,44 @@
-From: "liran tal" <liransgarage@gmail.com>
-Date: Tue, 09 Oct 2007 19:43:46 +0000
-Subject: Re: [KJ] [PATCH-RESUBMIT] net/netfilter/x_tables.c unnecessary casts
-Message-Id: <3ed55890710091243o77673205ofd068cbf2b93d076@mail.gmail.com>
+From: walter harms <wharms@bfs.de>
+Date: Sat, 06 Oct 2007 16:32:45 +0000
+Subject: Re: [PATCH][RFC] Drop the "static __initdata" from tmp_cmdline in
+Message-Id: <4707B8AD.8040300@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <3ed55890709110649n29c98a10j7f1479aeda368f11@mail.gmail.com>
-In-Reply-To: <3ed55890709110649n29c98a10j7f1479aeda368f11@mail.gmail.com>
+References: <Pine.LNX.4.64.0709131043070.4208@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0709131043070.4208@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Thanks Ahmed, notes taken :-)
 
-Have a good day,
-Liran Tal.
+would a kalloc/free be suffizient ? some could do it like strdup().
+
+re,
+ wh
 
 
-On 10/9/07, Ahmed S. Darwish <darwish.07@gmail.com> wrote:
->
-> On Wed, Sep 19, 2007 at 09:32:56AM +0200, Liran Tal wrote:
-> >
-> > The patch removes an unnecessary cast in accordance to the rest of
-> > the code. Kernel version is 2.6.22 with latest patches.
-> >
-> > The spaces that appeared before have been replaced with tabs,
-> > hopefully this version of the patch is compliant.
-> >
-> > Signed-off-by: Liran Tal <liran.tal@gmail.com>
-> >
-> > --- linux/net/netfilter/x_tables.c.orig       2007-09-11 11:21:
-> 44.000000000 +0300
-> > +++ linux/net/netfilter/x_tables.c    2007-09-11 11:22:11.000000000+0300
-> > @@ -691,7 +691,7 @@ static struct list_head *type2list(u_int
-> >
-> >  static void *xt_tgt_seq_start(struct seq_file *seq, loff_t *pos)
-> >  {
-> > -     struct proc_dir_entry *pde = (struct proc_dir_entry *)
-> seq->private;
-> > +     struct proc_dir_entry *pde = seq->private;
-> >       u_int16_t af = (unsigned long)pde->data & 0xffff;
-> >       u_int16_t type = (unsigned long)pde->data >> 16;
-> >       struct list_head *list;
-> >
->
-> Patch was applied with no problems. Just some minor notes:
-> 1- a "---" string below the Signed-off-by line
-> 2- Take care that most of the sentences above the signed-off-by line are
->    written in the git logs. so don't put unwanted text.
-> 3- you can write any info that's not appropriate for the logs under the
->    "---" line and before the patch (like the kernel version).
->
-> That's all :).
->
-> Regards,
->
-> --
-> Ahmed S. Darwish
-> HomePage: http://darwish.07.googlepages.com
-> Blog: http://darwish-07.blogspot.com
->
-_______________________________________________
-REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
-To resubscribe, send email to majordomo@vger.kernel.org with
-&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
-
-Kernel-janitors mailing list
-Kernel-janitors@lists.linux-foundation.org
-https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+Thomas Petazzoni wrote:
+> Hi,
+> 
+> Robert P. J. Day wrote:
+> 
+>> --- a/init/main.c
+>> +++ b/init/main.c
+>> @@ -482,7 +482,7 @@ static int __init do_early_param(char *param, char
+>> *val)
+>>  void __init parse_early_param(void)
+>>  {
+>>      static __initdata int done = 0;
+>> -    static __initdata char tmp_cmdline[COMMAND_LINE_SIZE];
+>> +    char tmp_cmdline[COMMAND_LINE_SIZE];
+> 
+> As I've said in an answer to an e-mail from you on the kernelnewbies
+> mailing list, this change is going to allocate 2k on the stack, which is
+> quite big compared to the overall stack size. If you use 8k stacks, it
+> may still work, but with 4k stacks, it eats half of the stack, leaving
+> only 2k for the rest of the code to execute, which may not be enough. I
+> think that why this buffer is static.
+> 
+> Sincerly,
+> 
+> Thomas
