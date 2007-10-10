@@ -1,53 +1,48 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Mon, 15 Oct 2007 18:23:16 +0000
-Subject: Re: removing lock_kernel() from fs/fat
-Message-Id: <20071015182316.GE25488@parisc-linux.org>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Wed, 10 Oct 2007 09:25:21 +0000
+Subject: Re: [PATCH] Add macro to round down to nearest power of two.
+Message-Id: <470C9A81.2090406@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <2886DD596C4DC74CB5F37646863CD63501A7256D@S99XCHNG3.okdhs.int>
-In-Reply-To: <2886DD596C4DC74CB5F37646863CD63501A7256D@S99XCHNG3.okdhs.int>
+References: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
+In-Reply-To: <Pine.LNX.4.64.0708270907270.929@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 15, 2007 at 11:39:42AM -0500, Little, Chris wrote:
-> > Another mistake you've made is using an rwlock.  This is a 
-> > classic beginners mistake, as the problem with it is highly 
-> > non-obvious.  The trouble with rwlocks is that they're unfair 
-> > to writers.  A storm of readers can prevent a writer from 
-> > ever getting the lock.  It's normally a good thing to use a 
-> > plain spinlock and only convert to an rwlock if you're sure 
-> > it's a good idea.
-> 
-> Question:  Are there appropriate times to use rwlock, then? Doesn't it
-> imply that there are writers?
+Robert P. J. Day wrote:
+> On Wed, 5 Sep 2007, vignesh babu wrote:
+>
+>   
+>> Resending this...as I did not get the mail thru KJ...
+>>
+>> Robert,
+>>
+>>  Maybe its late, but I would still like to discuss if it is
+>> needed-is_power_of_2 has '2' and not 'two' which I think is easier to
+>> work with. I was hoping that the 2 macros that you have coded can also
+>> be named with a '2' in them than a 'two'.
+>>
+>> There have been many changes that went in already based on these 2
+>> macros.I have the cleanup patches ready(for log2.h AND all the changes
+>> that went in), but my net at home went down, should be up in a few
+>> hours and so i should be able to mail in the cleanups in a few hours.
+>>
+>> If you and others feel that the 'two's can be replaced with '2' then I
+>> would push in the patches by tonight.
+>>     
+>
+> sorry for the delay in answering this -- i suspect we're stuck with
+> "two" since that's what the existing roundup macro used.  does anyone
+> else have a strong opinion on this either way?  personally, i would
+> have preferred "2", but it might be too late for that.
+>   
+Just grep'ed for 'roundup_pow_of_two' and found only 45 occurrences in 
+27 files (log2.h included), so imho I think it is still possible to 
+change this. I would suggest to rename the roundup_pow_of_two() and then 
+make a #define to preserve the old name until it been cleaned up. (would 
+guess 10-11 patches to clean this up, so if there is something else to 
+patch on those subsystems...)
 
-There definitely are appropriate times to use rwlock.  This might even
-be one of them.  But it's a non-obvious risk that needs to be born in
-mind, and it's rarely a win.
+Richard Knutsson
 
-Here's a good example:
-include/linux/netdevice.h:extern rwlock_t dev_base_lock;          /* Device list lock */
-
-So when we're adding a new network device or removing an old one
-(infrequent operation, can afford to wait for a long time), we take it
-for write.  All kinds of places in the network layer require the list
-of network devices don't change while they look things up, so they all
-take it for read, and there's no need to exclude them against each other.
-
-It's possible that a situation like this obtains in fat.  I haven't
-looked into it.  But anyone who wants to change a lock type really needs
-to provide a good argument for why it should be changed.  Back when we
-had a BKL brigade, they posted a patch to fs/locks.c which I was able
-to show would actually increase contention.
-
-> Many thanks for your comments.  Things to file away.  Pardon me if I
-> keep throwing stuff up.  One day I might just get good at this.
-
-It takes a while.  Keep reading code, it's the best way to learn.
-
--- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
