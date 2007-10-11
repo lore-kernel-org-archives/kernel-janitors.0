@@ -1,50 +1,43 @@
-From: Roel Kluin <12o3l@tiscali.nl>
-Date: Sun, 21 Oct 2007 17:53:54 +0000
-Subject: [PATCH addition to nr 1] SuperH CPU Frequency and SMP debugging
-Message-Id: <471B9232.2010702@tiscali.nl>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 11 Oct 2007 11:45:34 +0000
+Subject: [KJ] janitor job: CL_SIZE
+Message-Id: <470E0CDE.3090506@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-This should be applied in combination with my first patch:
-module debugging
+hi list,
+i looked into COMMAND_LINE_SIZE usage and found
 
----
-    SuperH CPU Frequency and SMP debugging
+./include/asm-mips/bootinfo.h:#define CL_SIZE                   COMMAND_LINE_SIZE
+./include/asm-m68k/setup.h:#define CL_SIZE COMMAND_LINE_SIZE
 
-    Signed-off-by: Roel Kluin <12o3l@tiscali.nl>
----
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index 247f8a6..47497d1 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -485,6 +485,11 @@ config SH_CPU_FREQ
- 
- 	  If unsure, say N.
- 
-+config SH_CPU_FREQ_DEBUG
-+	bool "SuperH CPU Frequency driver debugging"
-+	depends on SH_CPU_FREQ
-+	default n
-+
- endmenu
- 
- source "arch/sh/drivers/Kconfig"
-diff --git a/arch/x86_64/Kconfig b/arch/x86_64/Kconfig
-index aab25f3..dc76d43 100644
---- a/arch/x86_64/Kconfig
-+++ b/arch/x86_64/Kconfig
-@@ -326,6 +326,11 @@ config SMP
- 
- 	  If you don't know what to do here, say N.
- 
-+config SMP_DEBUG
-+	bool "Symmetric multi-processing debugging"
-+	depends on SMP
-+	default n
-+
- config SCHED_SMT
- 	bool "SMT (Hyperthreading) scheduler support"
- 	depends on SMP
+CL_SIZE is used in:
+
+./arch/ppc/amiga/bootinfo.c:extern char cmd_line[CL_SIZE];
+./arch/m68k/mac/config.c:extern char m68k_command_line[CL_SIZE];
+./arch/m68k/kernel/setup.c:static char m68k_command_line[CL_SIZE];
+./arch/m68k/kernel/setup.c:     memcpy(boot_command_line, *cmdline_p, CL_SIZE);
+./arch/mips/lasat/prom.c:               strncpy(arcs_cmdline, argv[0], CL_SIZE-1);
+./arch/mips/lasat/prom.c:               arcs_cmdline[CL_SIZE-1] = '\0';
+./arch/mips/kernel/setup.c:static char command_line[CL_SIZE];
+./arch/mips/kernel/setup.c:       char arcs_cmdline[CL_SIZE]=CONFIG_CMDLINE;
+./arch/mips/sibyte/cfe/setup.c: if (cfe_getenv("LINUX_CMDLINE", arcs_cmdline, CL_SIZE) < 0) {
+./arch/mips/sibyte/cfe/setup.c: arcs_cmdline[CL_SIZE-1] = 0;
+./arch/mips/mips-boards/generic/memory.c:       char cmdline[CL_SIZE], *ptr;
+
+is there any good reason to do it this way ?
+otherwise s/CL_SIZE/COMMAND_LINE_SIZE/ can be used ?
+
+re,
+ wh
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
