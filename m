@@ -1,29 +1,46 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Fri, 12 Oct 2007 08:33:09 +0000
-Subject: Re: current todo list
-Message-Id: <470F3145.6010505@student.ltu.se>
+From: walter harms <wharms@bfs.de>
+Date: Thu, 11 Oct 2007 12:53:57 +0000
+Subject: janitor job: CL_SIZE
+Message-Id: <470E1CE5.80606@bfs.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <e605aed80710112303r7fa5f663w7cf0722eda795741@mail.gmail.com>
-In-Reply-To: <e605aed80710112303r7fa5f663w7cf0722eda795741@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-srinivasa raghavan wrote:
-> Hi all,
-> i am new to kernel janitors. I am searching for current janitor todo
-> list. i have found two links using google.
-> 1) kernelnewbies.org/KernelJanitors/Todo
-> 2) janitor.kernelnewbies.org/TODO
->
-> Though having a look at them, i feel they are quite similiar. :(
->
-> Can anyone give me the link for current todo list
->   
-Hi and welcome :)
-http://fsdev.net/wiki/index.php?title=Kernel_Janitor%27s_Todo_List
+hi list,
+i looked into COMMAND_LINE_SIZE usage and found
 
-cu
-Richard Knutsson
+./include/asm-mips/bootinfo.h:#define CL_SIZE                   COMMAND_LINE_SIZE
+./include/asm-m68k/setup.h:#define CL_SIZE COMMAND_LINE_SIZE
+
+CL_SIZE is used in:
+
+./arch/ppc/amiga/bootinfo.c:extern char cmd_line[CL_SIZE];
+./arch/m68k/mac/config.c:extern char m68k_command_line[CL_SIZE];
+./arch/m68k/kernel/setup.c:static char m68k_command_line[CL_SIZE];
+./arch/m68k/kernel/setup.c:     memcpy(boot_command_line, *cmdline_p, CL_SIZE);
+./arch/mips/lasat/prom.c:               strncpy(arcs_cmdline, argv[0], CL_SIZE-1);
+./arch/mips/lasat/prom.c:               arcs_cmdline[CL_SIZE-1] = '\0';
+./arch/mips/kernel/setup.c:static char command_line[CL_SIZE];
+./arch/mips/kernel/setup.c:       char arcs_cmdline[CL_SIZE]=CONFIG_CMDLINE;
+./arch/mips/sibyte/cfe/setup.c: if (cfe_getenv("LINUX_CMDLINE", arcs_cmdline, CL_SIZE) < 0) {
+./arch/mips/sibyte/cfe/setup.c: arcs_cmdline[CL_SIZE-1] = 0;
+./arch/mips/mips-boards/generic/memory.c:       char cmdline[CL_SIZE], *ptr;
+
+is there any good reason to do it this way ?
+otherwise s/CL_SIZE/COMMAND_LINE_SIZE/ can be used ?
+
+re,
+ wh
+_______________________________________________
+REMINDER: this mailing list moved to vger.kernel.org and current one will be discontinued soon.
+To resubscribe, send email to majordomo@vger.kernel.org with
+&quot;subscribe kernel-janitors&quot; in message body and follow instructions.
+
+Kernel-janitors mailing list
+Kernel-janitors@lists.linux-foundation.org
+https://lists.linux-foundation.org/mailman/listinfo/kernel-janitors
+
+
 
