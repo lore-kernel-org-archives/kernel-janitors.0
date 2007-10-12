@@ -1,67 +1,104 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Sun, 09 Sep 2007 07:14:18 +0000
-Subject: [PATCH] Documentation:  Fix erroneous "dmascc=" documentation.
-Message-Id: <Pine.LNX.4.64.0709090312470.23379@localhost.localdomain>
+From: "Little, Chris" <Chris.Little@okdhs.org>
+Date: Fri, 12 Oct 2007 17:18:23 +0000
+Subject: removing lock_kernel() from fs/fat
+Message-Id: <2886DD596C4DC74CB5F37646863CD63501A7256D@S99XCHNG3.okdhs.int>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Background:
+Not much.  Some C. Have been using Linux since pre-1.0 and s390 Linux
+admin for the last seven years or so.  I've been following kernel
+janitors and lkml (lkml when i can) for awhile now.  Also reading "Linux
+Kernel Development" by Robert Love.
 
-Correct the erroneous documentation in the Kconfig file, and remove
-the reference entirely from the kernel-parameters.txt file.
+Now:
+Saw in the janitor list about removing lock_kernel().  Created the
+following patch for linux/fs/fat against vanilla 2.6.23, but I have some
+questions.
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+1.  In file.c, line 304:
+	lock_kernel();
+	fat_free(inode, nr_clusters);
+	unlock_kernel();
 
----
+	Why wrap fat_free with lock_kernel and not lock in the function
+itself?
 
- Documentation/kernel-parameters.txt |    4 ----
- drivers/net/hamradio/Kconfig        |    2 +-
- 2 files changed, 1 insertion(+), 5 deletions(-)
+2.  In inode.c, starting at lines 439 and 570, the two functions
+fat_clear_inode() and fat_write_inode() lock_kernel and then spin lock.
+Why the spin lock if it already has the bkl?  Since the spin locks are
+used, it makes me less sure of this.  I didn't touch lock_kernel() in
+inode.c at all.  In fact I'm almost positive I'm missing something, but
+I'm here to learn.  So here it is:
 
-diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-par=
-ameters.txt
-index b41cde3..967c0c7 100644
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -543,10 +543,6 @@ and is between 256 and 4096 characters. It is defined =
-in the file
- 			See drivers/char/README.epca and
- 			Documentation/digiepca.txt.
-
--	dmascc=3D		[HW,AX25,SERIAL] AX.25 Z80SCC driver with DMA
--			support available.
--			Format: <io_dev0>[,<io_dev1>[,..<io_dev32>]]
--
- 	dmasound=3D	[HW,OSS] Sound subsystem buffers
-
- 	dscc4.setup=3D	[NET]
-diff --git a/drivers/net/hamradio/Kconfig b/drivers/net/hamradio/Kconfig
-index 36d2c7d..62d5d5c 100644
---- a/drivers/net/hamradio/Kconfig
-+++ b/drivers/net/hamradio/Kconfig
-@@ -64,7 +64,7 @@ config DMASCC
- 	  dmascc. If you don't pass any parameter to the driver, all
- 	  possible I/O addresses are probed. This could irritate other devices
- 	  that are currently not in use. You may specify the list of addresses
--	  to be probed by "dmascc=ADdr1,addr2,..." (when compiled into the
-+	  to be probed by "dmascc.io=ADdr1,addr2,..." (when compiled into the
- 	  kernel image) or "io=ADdr1,addr2,..." (when loaded as a module). The
- 	  network interfaces will be called dmascc0 and dmascc1 for the board
- 	  detected first, dmascc2 and dmascc3 for the second one, and so on.
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://crashcourse.ca
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
--
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--- linux-2.6.23/fs/fat/dir.c   2007-10-09 15:31:38.000000000 -0500
++++ linux-2.6.23-jcl/fs/fat/dir.c     2007-10-12 11:02:17.000000000
+-0500
+@@ -459,8 +459,9 @@
+        int chi, chl, i, i2, j, last, last_u, dotoffset = 0;
+        loff_t cpos;
+        int ret = 0;
++       rwlock_t mr_rwlock = RW_LOCK_UNLOCKED;
+ 
+-       lock_kernel();
++       read_lock(&mr_rwlock);
+ 
+        cpos = filp->f_pos;
+        /* Fake . and .. for the root directory. */
+@@ -642,7 +643,7 @@
+        if (unicode)
+                free_page((unsigned long)unicode);
+ out:
+-       unlock_kernel();
++       read_unlock(&mr_rwlock);
+        return ret;
+ }
+ 
+diff -ur linux-2.6.23/fs/fat/file.c linux-2.6.23-jcl/fs/fat/file.c
+--- linux-2.6.23/fs/fat/file.c  2007-10-09 15:31:38.000000000 -0500
++++ linux-2.6.23-jcl/fs/fat/file.c    2007-10-12 11:37:47.000000000
+-0500
+@@ -160,8 +160,9 @@
+        struct msdos_sb_info *sbi = MSDOS_SB(dentry->d_sb);
+        struct inode *inode = dentry->d_inode;
+        int mask, error = 0;
++       rwlock_t mr_rwlock = RW_LOCK_UNLOCKED;
+ 
+-       lock_kernel();
++       write_lock(&mr_rwlock);
+ 
+        /*
+         * Expand the file. Since inode_setattr() updates ->i_size
+@@ -206,7 +207,7 @@
+                mask = sbi->options.fs_fmask;
+        inode->i_mode &= S_IFMT | (S_IRWXUGO & ~mask);
+ out:
+-       unlock_kernel();
++       write_unlock(&mr_rwlock);
+        return error;
+ }
+ 
+@@ -287,6 +288,7 @@
+        struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
+        const unsigned int cluster_size = sbi->cluster_size;
+        int nr_clusters;
++       rwlock_t mr_rwlock = RW_LOCK_UNLOCKED;
+ 
+        /*
+         * This protects against truncating a file bigger than it was
+then
+@@ -297,9 +299,9 @@
+ 
+        nr_clusters = (inode->i_size + (cluster_size - 1)) >>
+sbi->cluster_bits;
+ 
+-       lock_kernel();
++       write_lock(&mr_rwlock);
+        fat_free(inode, nr_clusters);
+-       unlock_kernel();
++       write_lock(&mr_rwlock);
+        fat_flush_inodes(inode->i_sb, inode, NULL);
+ }
