@@ -1,7 +1,7 @@
 From: "Little, Chris" <Chris.Little@okdhs.org>
-Date: Mon, 15 Oct 2007 16:34:33 +0000
+Date: Mon, 15 Oct 2007 16:39:42 +0000
 Subject: RE: removing lock_kernel() from fs/fat
-Message-Id: <2886DD596C4DC74CB5F37646863CD63501A725BB@S99XCHNG3.okdhs.int>
+Message-Id: <2886DD596C4DC74CB5F37646863CD63501A725BD@S99XCHNG3.okdhs.int>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <2886DD596C4DC74CB5F37646863CD63501A7256D@S99XCHNG3.okdhs.int>
 In-Reply-To: <2886DD596C4DC74CB5F37646863CD63501A7256D@S99XCHNG3.okdhs.int>
@@ -10,9 +10,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-First, thanks for the reply.  Except for the details, it is much what I
-expected, but this is a good thing. If nothing else other than realizing
-how far I have to go. :) 
+Crap.  Hit send before I was done. 
 
 > -----Original Message-----
 > From: Matthew Wilcox [mailto:matthew@wil.cx] 
@@ -20,68 +18,15 @@ how far I have to go. :)
 > To: Little, Chris
 > Cc: kernel-janitors@vger.kernel.org
 > Subject: Re: removing lock_kernel() from fs/fat
-> 
-> On Fri, Oct 12, 2007 at 12:18:23PM -0500, Little, Chris wrote:
-> > 1.  In file.c, line 304:
-> > 	lock_kernel();
-> > 	fat_free(inode, nr_clusters);
-> > 	unlock_kernel();
-> > 
-> > 	Why wrap fat_free with lock_kernel and not lock in the function 
-> > itself?
-> 
-> Probably no good reason.  You should be able to push it down 
-> into the function.
-
-I don't know that it matter either way except that it seems logical to
-me to have it part of fat_free() IF locking is required for fat_free().
-However, fat_free() is inlined and only called once.  Here.  Would that
-be worth it?
-
-> 
-> > 2.  In inode.c, starting at lines 439 and 570, the two functions
-> > fat_clear_inode() and fat_write_inode() lock_kernel and 
-> then spin lock.
+>
 > > Why the spin lock if it already has the bkl?
 > 
 > Because you have to protect against other CPUs reading this 
 > inode, some of which may have the BKL and others may have the 
 > inode_hash_lock.
-> 
-> > In fact I'm almost positive I'm missing something, but I'm here to 
-> > learn.  So here it is:
-> > 
-> > --- linux-2.6.23/fs/fat/dir.c   2007-10-09 15:31:38.000000000 -0500
-> > +++ linux-2.6.23-jcl/fs/fat/dir.c     2007-10-12 11:02:17.000000000
-> > -0500
-> > @@ -459,8 +459,9 @@
-> >         int chi, chl, i, i2, j, last, last_u, dotoffset = 0;
-> >         loff_t cpos;
-> >         int ret = 0;
-> > +       rwlock_t mr_rwlock = RW_LOCK_UNLOCKED;
-> >  
-> > -       lock_kernel();
-> > +       read_lock(&mr_rwlock);
-> >  
-> >         cpos = filp->f_pos;
-> >         /* Fake . and .. for the root directory. */ @@ 
-> -642,7 +643,7 
-> > @@
-> >         if (unicode)
-> >                 free_page((unsigned long)unicode);
-> >  out:
-> > -       unlock_kernel();
-> > +       read_unlock(&mr_rwlock);
-> >         return ret;
-> >  }
-> >  
-> 
-> Basically, you should never put a spinlock on the stack.  You 
-> can't exclude any other caller because they'll have their own 
-> copy of this spinlock.  If it were static, that would be one 
-> thing, but I think you intend for it to be shared with the 
-> function below ...
-> 
+
+That makes sense.
+
 > Another mistake you've made is using an rwlock.  This is a 
 > classic beginners mistake, as the problem with it is highly 
 > non-obvious.  The trouble with rwlocks is that they're unfair 
@@ -96,10 +41,11 @@ be worth it?
 > of places where the VFS takes the BKL on behalf of the 
 > filesystem.  So taking the BKL inside a filesystem implicitly 
 > locks out a lot of places that might call into the filesystem.
-> 
-> --
-> Intel are signing my paycheques ... these opinions are still 
-> mine "Bill, look, we understand that you're interested in 
-> selling us this operating system, but compare it to ours.  We 
-> can't possibly take such a retrograde step."
-> 
+
+Question:  Are there appropriate times to use rwlock, then? Doesn't it
+imply that there are writers?
+
+Many thanks for your comments.  Things to file away.  Pardon me if I
+keep throwing stuff up.  One day I might just get good at this.
+
+:)
