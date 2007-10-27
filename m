@@ -1,28 +1,39 @@
-From: "Chris Miller" <lordsauronthegreat@gmail.com>
-Date: Tue, 30 Oct 2007 00:47:17 +0000
-Subject: Wiki Movement
-Message-Id: <e5a3e9ac0710291747l476a0a94id3f04ecf2064069b@mail.gmail.com>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Sat, 27 Oct 2007 15:32:45 +0000
+Subject: [PATCH] HEADERS: rename macro to prevent multiple inclusion in
+Message-Id: <Pine.LNX.4.64.0710271127490.29319@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Because the wiki was cluttering my root web directory, I moved it to a
-subdomain ('cause it was causing issues when trying to upgrade
-Wordpress, which is a long story largely aggravated by the nonexistent
-FTP support of Windows, but nonetheless, I moved it).
 
-The wiki is now located at http://wiki.fsdev.net/ or
-http://www.wiki.fsdev.net/, depending upon your preference.  It will
-rewrite both ways.
+Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
 
-I'm going to leave the wiki in the old spot for about a week to give
-you time to get used to it.
+---
 
-Thought I'd let you know :)
+Having the macro to prevent multiple inclusion of
+include/linux/dma-mapping.h contain the prefix "_ASM" is just begging
+for possible confusion some day.
 
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 101a2d4..4470950 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -1,5 +1,5 @@
+-#ifndef _ASM_LINUX_DMA_MAPPING_H
+-#define _ASM_LINUX_DMA_MAPPING_H
++#ifndef _LINUX_DMA_MAPPING_H
++#define _LINUX_DMA_MAPPING_H
+
+ #include <linux/device.h>
+ #include <linux/err.h>
 -- 
-Registered Linux Addict #431495
-http://profile.xfire.com/mrstalinman
-John 3:16!
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
