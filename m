@@ -1,46 +1,28 @@
-From: "Robert P. J. Day" <rpjday@mindspring.com>
-Date: Tue, 02 Oct 2007 18:27:11 +0000
-Subject: [PATCH] LIB: Replace inappropriate include of <linux/bug.h>
-Message-Id: <Pine.LNX.4.64.0710021424450.983@localhost.localdomain>
+From: "Chris Miller" <lordsauronthegreat@gmail.com>
+Date: Tue, 30 Oct 2007 00:47:17 +0000
+Subject: Wiki Movement
+Message-Id: <e5a3e9ac0710291747l476a0a94id3f04ecf2064069b@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Because the wiki was cluttering my root web directory, I moved it to a
+subdomain ('cause it was causing issues when trying to upgrade
+Wordpress, which is a long story largely aggravated by the nonexistent
+FTP support of Windows, but nonetheless, I moved it).
 
-Replace an irrelevant include of bug.h with the more appropriate
-includes of slab.h and module.h.
+The wiki is now located at http://wiki.fsdev.net/ or
+http://www.wiki.fsdev.net/, depending upon your preference.  It will
+rewrite both ways.
 
-Signed-off-by: Robert P. J. Day <rpjday@mindspring.com>
+I'm going to leave the wiki in the old spot for about a week to give
+you time to get used to it.
 
----
+Thought I'd let you know :)
 
-  it's not as if the original inclusion is an error, it's simply not
-related to the contents of that source file, while the other two are.
-
-  compile-tested on i386.
-
-
-diff --git a/lib/argv_split.c b/lib/argv_split.c
-index 4096ed4..8eada37 100644
---- a/lib/argv_split.c
-+++ b/lib/argv_split.c
-@@ -4,7 +4,8 @@
-
- #include <linux/kernel.h>
- #include <linux/ctype.h>
--#include <linux/bug.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-
- static const char *skip_sep(const char *cp)
- {
 -- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-http://crashcourse.ca
-====================================
+Registered Linux Addict #431495
+http://profile.xfire.com/mrstalinman
+John 3:16!
