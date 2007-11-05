@@ -1,18 +1,17 @@
-From: David Howells <dhowells@redhat.com>
-Date: Thu, 08 Nov 2007 17:50:11 +0000
-Subject: Re: [PATCH] FRV - remove dead config symbol from FRV code
-Message-Id: <27598.1194544211@redhat.com>
+From: Lucas Woods <woodzy@gmail.com>
+Date: Mon, 05 Nov 2007 13:36:36 +0000
+Subject: [PATCH 0/12] arch: Remove duplicate includes.
+Message-Id: <472F1C64.9000902@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47332668.7060301@gmail.com>
-In-Reply-To: <47332668.7060301@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Jiri Olsa <olsajiri@gmail.com> wrote:
+Hi,
 
-> remove dead config symbol from FRV code
-> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+This patch set removes duplicate includes from arch/.
 
-Acked-by: David Howells <dhowells@redhat.com>
+Cheers,
+Lucas
+
