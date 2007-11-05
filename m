@@ -1,59 +1,42 @@
-From: Takashi Iwai <tiwai@suse.de>
-Date: Wed, 14 Nov 2007 10:01:11 +0000
-Subject: Re: [PATCH 4/4] sound/pci: Drop unnecessary continue
-Message-Id: <s5hy7d1du3c.wl%tiwai@suse.de>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Mon, 05 Nov 2007 20:14:07 +0000
+Subject: [PATCH] mm: Removing duplicit #includes
+Message-Id: <472F798F.1030004@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0711140915220.26019@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0711140915220.26019@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: perex@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-At Wed, 14 Nov 2007 09:15:51 +0100 (CET),
-Julia Lawall wrote:
-> 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Continue is not needed at the bottom of a loop.
-> 
-> The semantic patch implementing this change is as follows:
-> 
-> @@
-> @@
-> 
-> for (...;...;...) {
->    ...
->    if (...) {
->      ...
-> -   continue;
->    }
-> }
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Removing duplicit #includes for mm/
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+---
+mm/filemap.c  |    1 -
+mm/swapfile.c |    1 -
+2 files changed, 0 insertions(+), 2 deletions(-)
 
-Applied to ALSA tree.  Thanks.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 188cf5f..0b360de 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -28,7 +28,6 @@
+#include <linux/backing-dev.h>
+#include <linux/pagevec.h>
+#include <linux/blkdev.h>
+-#include <linux/backing-dev.h>
+#include <linux/security.h>
+#include <linux/syscalls.h>
+#include <linux/cpuset.h>
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f071648..83da158 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1153,7 +1153,6 @@ out:
+}
 
+#if 0  /* We don't need this yet */
+-#include <linux/backing-dev.h>
+int page_queue_congested(struct page *page)
+{
+        struct backing_dev_info *bdi;
 
-Takashi
-
-> ---
-> 
-> diff -u -p -b -B a/sound/pci/intel8x0.c b/sound/pci/intel8x0.c
-> --- a/sound/pci/intel8x0.c 2007-10-22 11:25:53.000000000 +0200
-> +++ b/sound/pci/intel8x0.c 2007-11-13 23:53:44.000000000 +0100
-> @@ -2144,7 +2144,6 @@ static int __devinit snd_intel8x0_mixer(
->   				snd_printk(KERN_ERR "Unable to initialize codec #%d\n", i);
->   			if (i = 0)
->   				goto __err;
-> -			continue;
->   		}
->   	}
->   	/* tune up the primary codec */
-> -
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
