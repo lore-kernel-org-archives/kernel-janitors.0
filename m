@@ -1,7 +1,7 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sat, 03 Nov 2007 13:20:18 +0000
-Subject: online list of dead(?) CONFIG variables
-Message-Id: <Pine.LNX.4.64.0711030918060.27821@localhost.localdomain>
+From: Lucas Woods <woodzy@gmail.com>
+Date: Mon, 05 Nov 2007 20:12:20 +0000
+Subject: [PATCH 01/12] arch/alpha: Removed duplicate includes.
+Message-Id: <472F7924.1050704@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,24 +9,23 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-  if you're bored, you can go peruse the latest edition of allegedly
-dead kernel CONFIG variables and see if there's anything there you
-recognize that you might want to submit a cleanup patch for if it's
-appropriate:
+Signed-off-by: Lucas Woods <woodzy@gmail.com>
+---
+ arch/alpha/kernel/setup.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-http://www.crashcourse.ca/wiki/index.php/Dead_CONFIG_variables
-
-rday
-
-p.s.  the list is not quite complete, the script to scan the net/
-directory is running as we speak, but there's plenty there to pick
-from as it is.
-
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index bd5e68c..beff629 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -58,7 +58,6 @@ static struct notifier_block alpha_panic_block = {
+ #include <asm/system.h>
+ #include <asm/hwrpb.h>
+ #include <asm/dma.h>
+-#include <asm/io.h>
+ #include <asm/mmu_context.h>
+ #include <asm/console.h>
+ 
 -- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
 
-http://crashcourse.ca
-====================================
+
