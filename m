@@ -1,7 +1,7 @@
 From: "Lucas Woods" <woodzy@gmail.com>
-Date: Mon, 05 Nov 2007 13:39:06 +0000
+Date: Mon, 05 Nov 2007 19:37:40 +0000
 Subject: Re: [PATCH 0/12] arch: Remove duplicate includes.
-Message-Id: <af42259d0711050539n3b07495bg6446bf062976937f@mail.gmail.com>
+Message-Id: <af42259d0711051137h36372cd6n18b1be7b89b8ec4b@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <472F1C64.9000902@gmail.com>
 In-Reply-To: <472F1C64.9000902@gmail.com>
@@ -10,16 +10,10 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hi,
+OK... so even though it *appears* as thought I spammed this list like
+crazy, it hasn't actually sent.
 
-Very sorry about the excess email.
-
-Gmail/IMAP doesn't appear to handle drafts very well at all :(
-
-Again, apologies to all for the noise.
-
-Cheers,
-Lucas.
+I'll send through the  patch sets now.
 
 On 11/6/07, Lucas Woods <woodzy@gmail.com> wrote:
 > Hi,
