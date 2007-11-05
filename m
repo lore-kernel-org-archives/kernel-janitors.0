@@ -1,53 +1,52 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 15 Nov 2007 10:40:49 +0000
-Subject: [PATCH 2/2]: drivers/video: remove unnecessary pci_dev_put
-Message-Id: <Pine.LNX.4.58.0711151140100.1184@pc-041.diku.dk>
+From: Lucas Woods <woodzy@gmail.com>
+Date: Mon, 05 Nov 2007 20:14:19 +0000
+Subject: [PATCH 06/12] arch/powerpc: Remove duplicate includes.
+Message-Id: <472F799B.5020402@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: thomas@winischhofer.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-pci_get_class implicitly does a pci_dev_put on its second argument, so
-pci_dev_put is only needed if there is a break out of the loop.
-
-The semantic match detecting this problem is as follows:
-
-// <smpl>
-@@
-expression dev;
-expression E;
-@@
-
-* pci_dev_put(dev)
-  ... when != dev = E
-(
-* pci_get_device(...,dev)
-|
-* pci_get_device_reverse(...,dev)
-|
-* pci_get_subsys(...,dev)
-|
-* pci_get_class(...,dev)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Lucas Woods <woodzy@gmail.com>
 ---
+ arch/powerpc/kernel/signal_32.c         |    3 +--
+ arch/powerpc/platforms/powermac/setup.c |    1 -
+ 2 files changed, 1 insertions(+), 3 deletions(-)
 
-diff -up a/drivers/video/sis/sis_main.c b/drivers/video/sis/sis_main.c
---- a/drivers/video/sis/sis_main.c	2007-11-15 07:33:31.000000000 +0100
-+++ b/drivers/video/sis/sis_main.c	2007-11-15 07:38:48.000000000 +0100
-@@ -4620,9 +4620,9 @@ sisfb_find_host_bridge(struct sis_video_
+diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
+index 6126bca..829d6c1 100644
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -24,13 +24,12 @@
+ #include <linux/signal.h>
+ #include <linux/errno.h>
+ #include <linux/elf.h>
++#include <linux/ptrace.h>
+ #ifdef CONFIG_PPC64
+ #include <linux/syscalls.h>
+ #include <linux/compat.h>
+-#include <linux/ptrace.h>
+ #else
+ #include <linux/wait.h>
+-#include <linux/ptrace.h>
+ #include <linux/unistd.h>
+ #include <linux/stddef.h>
+ #include <linux/tty.h>
+diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platforms/powermac/setup.c
+index 02c5330..a7ea363 100644
+--- a/arch/powerpc/platforms/powermac/setup.c
++++ b/arch/powerpc/platforms/powermac/setup.c
+@@ -94,7 +94,6 @@ extern struct machdep_calls pmac_md;
+ #define DEFAULT_ROOT_DEVICE Root_SDA1	/* sda1 - slightly silly choice */
+ 
+ #ifdef CONFIG_PPC64
+-#include <asm/udbg.h>
+ int sccdbg;
+ #endif
+ 
+-- 
 
- 	while((pdev = pci_get_class(PCI_CLASS_BRIDGE_HOST, pdev))) {
- 		temp = pdev->vendor;
--		pci_dev_put(pdev);
- 		if(temp = pcivendor) {
- 			ret = 1;
-+			pci_dev_put(pdev);
- 			break;
- 		}
- 	}
+
+
