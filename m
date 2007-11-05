@@ -1,37 +1,63 @@
-From: Andre Haupt <andre@bitwigglers.org>
-Date: Tue, 27 Nov 2007 15:51:39 +0000
-Subject: [PATCH 1/2] fbmon: remove unnecessary local variable
-Message-Id: <94ed2e6692de667821f02aacc69b8df99de683cf.1196176751.git.andre@bitwigglers.org>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Mon, 05 Nov 2007 18:07:19 +0000
+Subject: [PATCH] kernel: Removing duplicit #includes
+Message-Id: <472F5BD7.8030409@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: y
-In-Reply-To: y
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: jsimmons@users.sourceforge.net, kernel-janitors@vger.kernel.org, adaplas@gmail.com, Andre Haupt <andre@bitwigglers.org>
+To: kernel-janitors@vger.kernel.org
 
-This fixes a sparse warning about symbol 'i' shadowing an earlier one.
-
-From: Andre Haupt <andre@bitwigglers.org>
-Signed-off-by: Andre Haupt <andre@bitwigglers.org>
+Removing duplicit #includes for kernel/
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
 ---
- drivers/video/fbmon.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ kernel/printk.c  |    1 -
+ kernel/profile.c |    2 --
+ kernel/sysctl.c  |    1 -
+ 3 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/video/fbmon.c b/drivers/video/fbmon.c
-index 4ba9c08..3f3a4e9 100644
---- a/drivers/video/fbmon.c
-+++ b/drivers/video/fbmon.c
-@@ -686,7 +686,7 @@ static int fb_get_monitor_limits(unsigned char *edid, struct fb_monspecs *specs)
- 	/* estimate monitor limits based on modes supported */
- 	if (retval) {
- 		struct fb_videomode *modes, *mode;
--		int num_modes, i, hz, hscan, pixclock;
-+		int num_modes, hz, hscan, pixclock;
- 		int vtotal, htotal;
+diff --git a/kernel/printk.c b/kernel/printk.c
+index a30fe33..3f06748 100644
+--- a/kernel/printk.c
++++ b/kernel/printk.c
+@@ -32,7 +32,6 @@
+ #include <linux/security.h>
+ #include <linux/bootmem.h>
+ #include <linux/syscalls.h>
+-#include <linux/jiffies.h>
  
- 		modes = fb_create_modedb(edid, &num_modes);
--- 
-1.4.4.4
+ #include <asm/uaccess.h>
+ 
+diff --git a/kernel/profile.c b/kernel/profile.c
+index 5e95330..92b71ea 100644
+--- a/kernel/profile.c
++++ b/kernel/profile.c
+@@ -20,7 +20,6 @@
+ #include <linux/mm.h>
+ #include <linux/cpumask.h>
+ #include <linux/cpu.h>
+-#include <linux/profile.h>
+ #include <linux/highmem.h>
+ #include <linux/mutex.h>
+ #include <asm/sections.h>
+@@ -425,7 +424,6 @@ void profile_tick(int type)
+ #ifdef CONFIG_PROC_FS
+ #include <linux/proc_fs.h>
+ #include <asm/uaccess.h>
+-#include <asm/ptrace.h>
+ 
+ static int prof_cpu_mask_read_proc (char *page, char **start, off_t off,
+                        int count, int *eof, void *data)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 3b4efbe..5aec15e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -37,7 +37,6 @@
+ #include <linux/highuid.h>
+ #include <linux/writeback.h>
+ #include <linux/hugetlb.h>
+-#include <linux/security.h>
+ #include <linux/initrd.h>
+ #include <linux/times.h>
+ #include <linux/limits.h>
 
