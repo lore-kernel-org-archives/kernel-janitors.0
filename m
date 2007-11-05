@@ -1,55 +1,70 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 19 Nov 2007 08:08:40 +0000
-Subject: [PATCH 5/5] sound/core/memalloc.c: Add missing pci_dev_put
-Message-Id: <Pine.LNX.4.64.0711190907230.19198@ask.diku.dk>
+From: Lucas Woods <woodzy@gmail.com>
+Date: Mon, 05 Nov 2007 20:16:06 +0000
+Subject: [PATCH 12/12] arch/xtensa: Remove duplicate includes.
+Message-Id: <472F7A06.1040200@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: perex@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-There should be a pci_dev_put when breaking out of a loop that iterates
-over calls to pci_get_device and similar functions.
-
-In this case, the return under the initial if needs a pci_dev_put in the
-same way that the return under the subsequent for loop has a pci_dev_put.
-
-This was fixed using the following semantic patch.
-
-// <smpl>
-@@
-type T;
-identifier d;
-expression e;
-@@
-
-T *d;
-...
-while ((d = \(pci_get_device\|pci_get_device_reverse\|pci_get_subsys\|pci_get_class\)(..., d)) != NULL)
-  {... when != pci_dev_put(d)
-       when != e = d
-(
-    return d;
-|
-+  pci_dev_put(d);
-?  return ...;
-)
-...}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Lucas Woods <woodzy@gmail.com>
 ---
+ arch/xtensa/kernel/asm-offsets.c   |    1 -
+ arch/xtensa/kernel/syscall.c       |    1 -
+ arch/xtensa/mm/cache.c             |    1 -
+ arch/xtensa/platform-iss/network.c |    1 -
+ 4 files changed, 0 insertions(+), 4 deletions(-)
 
-diff -u -p a/sound/core/memalloc.c b/sound/core/memalloc.c
---- a/sound/core/memalloc.c	2007-10-22 11:25:51.000000000 +0200
-+++ b/sound/core/memalloc.c	2007-11-19 08:08:08.000000000 +0100
-@@ -568,6 +568,7 @@ static ssize_t snd_mem_proc_write(struct
-  				if (pci_set_dma_mask(pci, mask) < 0 ||
-  				    pci_set_consistent_dma_mask(pci, mask) < 0) {
-  					printk(KERN_ERR "snd-page-alloc: cannot set DMA mask %lx for pci %04x:%04x\n", mask, vendor, device);
-+					pci_dev_put(pci);
-  					return count;
-  				}
-  			}
+diff --git a/arch/xtensa/kernel/asm-offsets.c b/arch/xtensa/kernel/asm-offsets.c
+index d5ffe7b..5d9ef51 100644
+--- a/arch/xtensa/kernel/asm-offsets.c
++++ b/arch/xtensa/kernel/asm-offsets.c
+@@ -21,7 +21,6 @@
+ #include <linux/mm.h>
+ 
+ #include <asm/ptrace.h>
+-#include <asm/processor.h>
+ #include <asm/uaccess.h>
+ 
+ #define DEFINE(sym, val) asm volatile("\n->" #sym " %0 " #val : : "i" (val))
+diff --git a/arch/xtensa/kernel/syscall.c b/arch/xtensa/kernel/syscall.c
+index f3e16ef..b06e030 100644
+--- a/arch/xtensa/kernel/syscall.c
++++ b/arch/xtensa/kernel/syscall.c
+@@ -36,7 +36,6 @@ syscall_t sys_call_table[__NR_syscall_count] /* FIXME __cacheline_aligned */= {
+ #define __SYSCALL(nr,symbol,nargs) [ nr ] = (syscall_t)symbol,
+ #undef _XTENSA_UNISTD_H
+ #undef  __KERNEL_SYSCALLS__
+-#include <asm/unistd.h>
+ };
+ 
+ /*
+diff --git a/arch/xtensa/mm/cache.c b/arch/xtensa/mm/cache.c
+index 9a1fa94..42bfb69 100644
+--- a/arch/xtensa/mm/cache.c
++++ b/arch/xtensa/mm/cache.c
+@@ -25,7 +25,6 @@
+ #include <linux/swap.h>
+ #include <linux/pagemap.h>
+ 
+-#include <asm/pgtable.h>
+ #include <asm/bootparam.h>
+ #include <asm/mmu_context.h>
+ #include <asm/tlb.h>
+diff --git a/arch/xtensa/platform-iss/network.c b/arch/xtensa/platform-iss/network.c
+index b61fb36..31c8d21 100644
+--- a/arch/xtensa/platform-iss/network.c
++++ b/arch/xtensa/platform-iss/network.c
+@@ -31,7 +31,6 @@
+ #include <linux/bootmem.h>
+ #include <linux/ethtool.h>
+ #include <linux/rtnetlink.h>
+-#include <linux/timer.h>
+ #include <linux/platform_device.h>
+ 
+ #include <asm/platform/simcall.h>
+-- 
+
+
