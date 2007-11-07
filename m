@@ -1,44 +1,36 @@
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Thu, 15 Nov 2007 12:42:28 +0000
-Subject: Re: [PATCH 1/4] drivers/i2c: Drop redundant includes of
-Message-Id: <alpine.LFD.0.9999.0711150739490.9736@localhost.localdomain>
+Date: Wed, 07 Nov 2007 08:03:39 +0000
+Subject: [PATCH] use "is_power_of_2()" macro for simplicity.
+Message-Id: <Pine.LNX.4.64.0711070301540.8914@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0711132231080.18337@ask.diku.dk> <alpine.LFD.0.9999.0711131632490.26111@localhost.localdomain> <Pine.LNX.4.64.0711140707120.25487@ask.diku.dk> <alpine.LFD.0.9999.0711140416160.4673@localhost.localdomain>
- <20071115131915.0eb34c98@hyperion.delvare>
-In-Reply-To: <20071115131915.0eb34c98@hyperion.delvare>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Julia Lawall <julia@diku.dk>, i2c@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Thu, 15 Nov 2007, Jean Delvare wrote:
 
-... snip ...
+Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
 
-> I share Robert's point of view here. Relying on header files
-> including each other is usually not a good idea, as build then
-> breaks when the headers are cleaned up or reorganized.
+---
 
-... more snip ...
+  this source file already includes log2.h for other power-of-2
+operations, so might as well finish off the job.
 
-> If there's a fundamental reason why module.h has to include
-> moduleparam.h, then both headers should be merged in a single file.
-> If not, then both header files should be clearly split and drivers
-> should include each of them as needed. Either way, header files must
-> be fixed first, and drivers adjusted in consequence. So, I'm not
-> taking this patch, sorry.
 
-keeping this short and sweet, i updated my wiki page on this topic:
-
-http://www.crashcourse.ca/wiki/index.php/Module.h_and_moduleparam.h
-
-i think the fundamental question here is whether this is even
-cleanable without massive disruption.
-
-rday
-
---
+diff --git a/kernel/kfifo.c b/kernel/kfifo.c
+index bc41ad0..04a1748 100644
+--- a/kernel/kfifo.c
++++ b/kernel/kfifo.c
+@@ -74,7 +74,7 @@ struct kfifo *kfifo_alloc(unsigned int size, gfp_t gfp_mask, spinlock_t *lock)
+ 	 * round up to the next power of 2, since our 'let the indices
+ 	 * wrap' tachnique works only in this case.
+ 	 */
+-	if (size & (size - 1)) {
++	if (!is_power_of_2(size)) {
+ 		BUG_ON(size > 0x80000000);
+ 		size = roundup_pow_of_two(size);
+ 	}
+-- 
 ====================================
 Robert P. J. Day
 Linux Consulting, Training and Annoying Kernel Pedantry
