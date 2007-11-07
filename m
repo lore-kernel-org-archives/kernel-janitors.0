@@ -1,53 +1,46 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Thu, 15 Nov 2007 10:40:08 +0000
-Subject: [PATCH 1/2]: drivers/char: remove unnecessary pci_dev_put
-Message-Id: <Pine.LNX.4.58.0711151139250.1184@pc-041.diku.dk>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Wed, 07 Nov 2007 09:55:36 +0000
+Subject: somehow, there *must* be a cleaner "log2" rewrite of this
+Message-Id: <Pine.LNX.4.64.0711070453410.26359@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davej@codemonkey.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-pci_get_class implicitly does a pci_dev_put on its second argument, so
-pci_dev_put is only needed if there is a break out of the loop.
+  from fs/nfs/internal.h:
 
-The semantic match detecting this problem is as follows:
+==/*
+ * Determine the actual block size (and log2 thereof)
+ */
+static inline
+unsigned long nfs_block_bits(unsigned long bsize, unsigned char *nrbitsp)
+{
+        /* make sure blocksize is a power of two */
+        if ((bsize & (bsize - 1)) || nrbitsp) {
+                unsigned char   nrbits;
 
-// <smpl>
-@@
-expression dev;
-expression E;
-@@
+                for (nrbits = 31; nrbits && !(bsize & (1 << nrbits)); nrbits--)
+                        ;
+                bsize = 1 << nrbits;
+                if (nrbitsp)
+                        *nrbitsp = nrbits;
+        }
 
-* pci_dev_put(dev)
-  ... when != dev = E
-(
-* pci_get_device(...,dev)
-|
-* pci_get_device_reverse(...,dev)
-|
-* pci_get_subsys(...,dev)
-|
-* pci_get_class(...,dev)
-)
-// </smpl>
+        return bsize;
+}
+==
+  there *has* to be a simpler version of that using the log2 macros
+from log2.h, no?  i'm just too lazy to think about it right now.
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
+rday
 
-diff -up a/drivers/char/agp/amd-k7-agp.c b/drivers/char/agp/amd-k7-agp.c
---- a/drivers/char/agp/amd-k7-agp.c	2007-11-15 07:33:31.000000000 +0100
-+++ b/drivers/char/agp/amd-k7-agp.c	2007-11-15 07:40:48.000000000 +0100
-@@ -436,10 +436,6 @@ static int __devinit agp_amdk7_probe(str
- 				return -ENODEV;
- 			}
- 			cap_ptr = pci_find_capability(gfxcard, PCI_CAP_ID_AGP);
--			if (!cap_ptr) {
--				pci_dev_put(gfxcard);
--				continue;
--			}
- 		}
+-- 
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
- 		/* With so many variants of NVidia cards, it's simpler just
+http://crashcourse.ca
+====================================
