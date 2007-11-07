@@ -1,26 +1,39 @@
-From: Greg KH <greg@kroah.com>
-Date: Tue, 20 Nov 2007 06:36:49 +0000
-Subject: Re: 2.6.23.1->2.6.23.8 breaks root Makefile
-Message-Id: <20071120063649.GA4846@kroah.com>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Wed, 07 Nov 2007 12:28:59 +0000
+Subject: [PATCH] drivers/hwmon: remove duplicated defines
+Message-Id: <20071107132859.1d961027@lucky.kitzblitz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1195489140.21337.10.camel@ronispc.chem.mcgill.ca>
-In-Reply-To: <1195489140.21337.10.camel@ronispc.chem.mcgill.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 19, 2007 at 11:19:00AM -0500, David Ronis wrote:
-> Hi
-> 
-> The current main Makefile incorrectly identified my ld as one that
-> supports --build-id (it didn't).  The problem is fixed by upgrading to
-> the latest binutils, version 2.18, which does, but somehow  I suspect
-> that this wasn't what was intended.  For what it's worth, I was running
-> with slackware's binutils-2.17.50.0.17.
+Remove duplicated defines.
 
-Can you narrow it down to the patch that caused this problem?
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+---
 
-thanks,
+ drivers/hwmon/w83793.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-greg k-h
+--- a/drivers/hwmon/w83793.c	2007-11-07 11:28:29.000000000 +0100
++++ b/drivers/hwmon/w83793.c	2007-11-07 13:08:54.000000000 +0100
+@@ -131,6 +131,7 @@
+ #define PWM_DUTY			0
+ #define PWM_START			1
+ #define PWM_NONSTOP			2
++#define PWM_STOP_TIME			3
+ #define W83793_REG_PWM(index, nr)	(((nr) = 0 ? 0xb3 : \
+ 					 (nr) = 1 ? 0x220 : 0x218) + (index))
+ 
+@@ -407,10 +408,6 @@
+ 	return count;
+ }
+ 
+-#define PWM_DUTY			0
+-#define PWM_START			1
+-#define PWM_NONSTOP			2
+-#define PWM_STOP_TIME			3
+ static ssize_t
+ show_pwm(struct device *dev, struct device_attribute *attr, char *buf)
+ {
