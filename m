@@ -1,43 +1,32 @@
 From: Jiri Olsa <olsajiri@gmail.com>
-Date: Mon, 05 Nov 2007 22:48:45 +0000
-Subject: [PATCH] mm: Removing duplicit #includes
-Message-Id: <472F9DCD.7030900@gmail.com>
+Date: Thu, 08 Nov 2007 15:08:24 +0000
+Subject: [PATCH] FRV - remove dead config symbol from FRV code
+Message-Id: <47332668.7060301@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <472F798F.1030004@gmail.com>
-In-Reply-To: <472F798F.1030004@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Removing duplicit #includes for mm/
-Signed-off-by: Jiri Olsa <olsajiri@gmail.com> 
----
- mm/filemap.c  |    1 -
- mm/swapfile.c |    1 -
- 2 files changed, 0 insertions(+), 2 deletions(-)
+remove dead config symbol from FRV code
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 188cf5f..0b360de 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -28,7 +28,6 @@
- #include <linux/backing-dev.h>
- #include <linux/pagevec.h>
- #include <linux/blkdev.h>
--#include <linux/backing-dev.h>
- #include <linux/security.h>
- #include <linux/syscalls.h>
- #include <linux/cpuset.h>
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index f071648..83da158 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1153,7 +1153,6 @@ out:
- }
+---
+ include/asm-frv/page.h |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
+
+diff --git a/include/asm-frv/page.h b/include/asm-frv/page.h
+index 213d92f..bd9bd2d 100644
+--- a/include/asm-frv/page.h
++++ b/include/asm-frv/page.h
+@@ -76,10 +76,6 @@ extern unsigned long max_pfn;
  
- #if 0	/* We don't need this yet */
--#include <linux/backing-dev.h>
- int page_queue_congested(struct page *page)
- {
- 	struct backing_dev_info *bdi;
+ #endif /* __ASSEMBLY__ */
+ 
+-#ifdef CONFIG_CONTIGUOUS_PAGE_ALLOC
+-#define WANT_PAGE_VIRTUAL	1
+-#endif
+-
+ #include <asm-generic/memory_model.h>
+ #include <asm-generic/page.h>
+ 
