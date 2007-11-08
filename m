@@ -1,25 +1,41 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Wed, 28 Nov 2007 13:18:16 +0000
-Subject: Re: [PATCH 4/5] drivers/pnp/resource.c: Add missing pci_dev_put
-Message-Id: <20071128131816.49e92fde@the-village.bc.nu>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Thu, 08 Nov 2007 17:17:45 +0000
+Subject: [PATCH] SH - remove dead config symbol from SH code
+Message-Id: <473344B9.1010302@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0711190905100.19198@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0711190905100.19198@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: ambx1@neo.rr.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 19 Nov 2007 09:07:22 +0100 (CET)
-Julia Lawall <julia@diku.dk> wrote:
+remove dead config symbols from SH code
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> There should be a pci_dev_put when breaking out of a loop that iterates
-> over calls to pci_get_device and similar functions.
+---
+ include/asm-sh/cpu-sh3/timer.h |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
 
-
-Entire series:
-
-Acked-by: Alan Cox <alan@redhat.com>
+diff --git a/include/asm-sh/cpu-sh3/timer.h b/include/asm-sh/cpu-sh3/timer.h
+index 3880ce0..7b795ac 100644
+--- a/include/asm-sh/cpu-sh3/timer.h
++++ b/include/asm-sh/cpu-sh3/timer.h
+@@ -23,8 +23,7 @@
+  * ---------------------------------------------------------------------------
+  */
+ 
+-#if  !defined(CONFIG_CPU_SUBTYPE_SH7720) && \
+-     !defined(CONFIG_CPU_SUBTYPE_SH7727)
++#if  !defined(CONFIG_CPU_SUBTYPE_SH7720)
+ #define TMU_TOCR	0xfffffe90	/* Byte access */
+ #endif
+ 
+@@ -58,8 +57,7 @@
+ #define TMU2_TCOR	0xfffffeac	/* Long access */
+ #define TMU2_TCNT	0xfffffeb0	/* Long access */
+ #define TMU2_TCR	0xfffffeb4	/* Word access */
+-#if !defined(CONFIG_CPU_SUBTYPE_SH7720) && \
+-    !defined(CONFIG_CPU_SUBTYPE_SH7727)
++#if !defined(CONFIG_CPU_SUBTYPE_SH7720)
+ #define TMU2_TCPR2	0xfffffeb8	/* Long access */
+ #endif
+ #endif
