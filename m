@@ -1,7 +1,7 @@
 From: David Howells <dhowells@redhat.com>
-Date: Thu, 08 Nov 2007 17:49:55 +0000
+Date: Thu, 08 Nov 2007 17:50:11 +0000
 Subject: Re: [PATCH] FRV - remove dead config symbol from FRV code
-Message-Id: <27585.1194544195@redhat.com>
+Message-Id: <27598.1194544211@redhat.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <47332668.7060301@gmail.com>
 In-Reply-To: <47332668.7060301@gmail.com>
@@ -12,9 +12,7 @@ To: kernel-janitors@vger.kernel.org
 
 Jiri Olsa <olsajiri@gmail.com> wrote:
 
-> the WANT_PAGE_VIRTUAL is defined only when CONFIG_CONTIGUOUS_PAGE_ALLOC is
-> defined, which wont happend, since it is not defined at all:
+> remove dead config symbol from FRV code
+> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
 
-Okay.  That makes sense.
-
-David
+Acked-by: David Howells <dhowells@redhat.com>
