@@ -1,31 +1,22 @@
-From: Leonardo Chiquitto <leonardo@iken.com.br>
-Date: Tue, 20 Nov 2007 16:41:12 +0000
-Subject: [PATCH] Documentation: missing proc/$PID/stat field
-Message-Id: <20071120164009.GA10909@libre.l.ngdn.org>
+From: "Mike Frysinger" <vapier.adi@gmail.com>
+Date: Thu, 08 Nov 2007 18:59:02 +0000
+Subject: Re: [Uclinux-dist-devel] [PATCH] BLACKFIN - remove dead config symbol from BLACKFIN code
+Message-Id: <8bd0f97a0711081059o531019e1i4edefbf9d0529578@mail.gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Hello,
+On Nov 8, 2007 10:01 AM, Jiri Olsa <olsajiri@gmail.com> wrote:
+> remove dead config symbols from BLACKFIN code
+> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+>
+> ---
+>  include/asm-blackfin/mach-bf527/mem_init.h |    9 +--------
+>  include/asm-blackfin/mach-bf537/mem_init.h |    9 +--------
+>  2 files changed, 2 insertions(+), 16 deletions(-)
 
-  There's a missing field in the /proc/$PID/stat output documented in
-Documentation/filesystems/proc.txt.
-  I couldn't find a proper description for the field, but here's a patch
-documenting it as an obsolete value.
-
-Leonardo
-
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index e5c1df5..7ecfa23 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -216,6 +216,7 @@ Table 1-3: Contents of the stat files (as of 2.6.22-rc3)
-   priority      priority level
-   nice          nice level
-   num_threads   number of threads
-+  it_real_value	(obsolete, always 0)
-   start_time    time the process started after system boot
-   vsize         virtual memory size
-   rss           resident set memory size
+sorry, but we'd prefer the mem_init.h files just sit until we get a
+chance to throw it out and redo it
+-mike
