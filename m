@@ -1,88 +1,72 @@
 From: Jiri Olsa <olsajiri@gmail.com>
-Date: Thu, 15 Nov 2007 08:41:44 +0000
-Subject: [PATCH]  m68knommu: Removing config variable BDM_DISABLE
-Message-Id: <473C0648.6050501@gmail.com>
+Date: Thu, 08 Nov 2007 15:01:23 +0000
+Subject: [PATCH] BLACKFIN - remove dead config symbol from BLACKFIN code
+Message-Id: <473324C3.2080807@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Removing config variable BDM_DISABLE, since it is not used
-Removing #ifdef MCF_BDM_DISABLE code , since MCF_BDM_DISABLE is not defined
-
+remove dead config symbols from BLACKFIN code
 Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
----
- arch/m68knommu/Kconfig.debug          |    6 ------
- arch/m68knommu/defconfig              |    1 -
- arch/m68knommu/platform/5307/config.c |    9 ---------
- arch/m68knommu/platform/532x/config.c |    9 ---------
- 4 files changed, 0 insertions(+), 25 deletions(-)
 
-diff --git a/arch/m68knommu/Kconfig.debug b/arch/m68knommu/Kconfig.debug
-index 9ff47bd..2784b46 100644
---- a/arch/m68knommu/Kconfig.debug
-+++ b/arch/m68knommu/Kconfig.debug
-@@ -33,10 +33,4 @@ config NO_KERNEL_MSG
- 	help
- 	  Do not output any debug BUG messages within the kernel.
+---
+ include/asm-blackfin/mach-bf527/mem_init.h |    9 +--------
+ include/asm-blackfin/mach-bf537/mem_init.h |    9 +--------
+ 2 files changed, 2 insertions(+), 16 deletions(-)
+
+diff --git a/include/asm-blackfin/mach-bf527/mem_init.h b/include/asm-blackfin/mach-bf527/mem_init.h
+index 008ca66..60d71f7 100644
+--- a/include/asm-blackfin/mach-bf527/mem_init.h
++++ b/include/asm-blackfin/mach-bf527/mem_init.h
+@@ -29,7 +29,7 @@
+  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  */
  
--config BDM_DISABLE
--	bool "Disable BDM signals"
--	depends on (EXPERIMENTAL && COLDFIRE)
--	help
--	  Disable the ColdFire CPU's BDM signals.
--
- endmenu
-diff --git a/arch/m68knommu/defconfig b/arch/m68knommu/defconfig
-index 5a0ecaa..fa44eea 100644
---- a/arch/m68knommu/defconfig
-+++ b/arch/m68knommu/defconfig
-@@ -599,7 +599,6 @@ CONFIG_MSDOS_PARTITION=y
- # CONFIG_BOOTPARAM is not set
- # CONFIG_DUMPTOFLASH is not set
- # CONFIG_NO_KERNEL_MSG is not set
--# CONFIG_BDM_DISABLE is not set
- 
- #
- # Security options
-diff --git a/arch/m68knommu/platform/5307/config.c b/arch/m68knommu/platform/5307/config.c
-index 6040821..e356e4a 100644
---- a/arch/m68knommu/platform/5307/config.c
-+++ b/arch/m68knommu/platform/5307/config.c
-@@ -116,15 +116,6 @@ void config_BSP(char *commandp, int size)
+-#if (CONFIG_MEM_MT48LC16M16A2TG_75 || CONFIG_MEM_MT48LC64M4A2FB_7E || CONFIG_MEM_MT48LC16M8A2TG_75 || CONFIG_MEM_GENERIC_BOARD || CONFIG_MEM_MT48LC32M8A2_75 || CONFIG_MEM_MT48LC32M16A2TG_75)
++#if (CONFIG_MEM_MT48LC16M16A2TG_75 || CONFIG_MEM_MT48LC64M4A2FB_7E || CONFIG_MEM_GENERIC_BOARD || CONFIG_MEM_MT48LC32M8A2_75 || CONFIG_MEM_MT48LC32M16A2TG_75)
+ #if (CONFIG_SCLK_HZ > 119402985)
+ #define SDRAM_tRP       TRP_2
+ #define SDRAM_tRP_num   2
+@@ -111,13 +111,6 @@
+ #define SDRAM_CL    CL_3
  #endif
  
- 	mach_reset = coldfire_reset;
--
--#ifdef MCF_BDM_DISABLE
--	/*
--	 * Disable the BDM clocking.  This also turns off most of the rest of
--	 * the BDM device.  This is good for EMC reasons. This option is not
--	 * incompatible with the memory protection option.
--	 */
--	wdebug(MCFDEBUG_CSR, MCFDEBUG_CSR_PSTCLK);
+-#if (CONFIG_MEM_MT48LC16M8A2TG_75)
+-  /*SDRAM INFORMATION: */
+-#define SDRAM_Tref  64		/* Refresh period in milliseconds   */
+-#define SDRAM_NRA   4096	/* Number of row addresses in SDRAM */
+-#define SDRAM_CL    CL_3
 -#endif
- }
- 
- /***************************************************************************/
-diff --git a/arch/m68knommu/platform/532x/config.c b/arch/m68knommu/platform/532x/config.c
-index f77328b..4166ce5 100644
---- a/arch/m68knommu/platform/532x/config.c
-+++ b/arch/m68knommu/platform/532x/config.c
-@@ -98,15 +98,6 @@ void config_BSP(char *commandp, int size)
- 	mcf_timervector = 64+32;
- 	mcf_profilevector = 64+33;
- 	mach_reset = coldfire_reset;
 -
--#ifdef MCF_BDM_DISABLE
--	/*
--	 * Disable the BDM clocking.  This also turns off most of the rest of
--	 * the BDM device.  This is good for EMC reasons. This option is not
--	 * incompatible with the memory protection option.
--	 */
--	wdebug(MCFDEBUG_CSR, MCFDEBUG_CSR_PSTCLK);
--#endif
- }
+ #if (CONFIG_MEM_MT48LC32M8A2_75)
+   /*SDRAM INFORMATION: */
+ #define SDRAM_Tref  64		/* Refresh period in milliseconds   */
+diff --git a/include/asm-blackfin/mach-bf537/mem_init.h b/include/asm-blackfin/mach-bf537/mem_init.h
+index 9ad979d..a06c1d3 100644
+--- a/include/asm-blackfin/mach-bf537/mem_init.h
++++ b/include/asm-blackfin/mach-bf537/mem_init.h
+@@ -29,7 +29,7 @@
+  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  */
  
- /***************************************************************************/
+-#if (CONFIG_MEM_MT48LC16M16A2TG_75 || CONFIG_MEM_MT48LC64M4A2FB_7E || CONFIG_MEM_MT48LC16M8A2TG_75 || CONFIG_MEM_GENERIC_BOARD || CONFIG_MEM_MT48LC32M8A2_75)
++#if (CONFIG_MEM_MT48LC16M16A2TG_75 || CONFIG_MEM_MT48LC64M4A2FB_7E || CONFIG_MEM_GENERIC_BOARD || CONFIG_MEM_MT48LC32M8A2_75)
+ #if (CONFIG_SCLK_HZ > 119402985)
+ #define SDRAM_tRP       TRP_2
+ #define SDRAM_tRP_num   2
+@@ -111,13 +111,6 @@
+ #define SDRAM_CL    CL_3
+ #endif
+ 
+-#if (CONFIG_MEM_MT48LC16M8A2TG_75)
+-  /*SDRAM INFORMATION: */
+-#define SDRAM_Tref  64		/* Refresh period in milliseconds   */
+-#define SDRAM_NRA   4096	/* Number of row addresses in SDRAM */
+-#define SDRAM_CL    CL_3
+-#endif
+-
+ #if (CONFIG_MEM_MT48LC32M8A2_75)
+   /*SDRAM INFORMATION: */
+ #define SDRAM_Tref  64		/* Refresh period in milliseconds   */
