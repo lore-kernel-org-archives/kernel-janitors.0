@@ -1,35 +1,29 @@
-From: Nicolas Pitre <nico@cam.org>
-Date: Sat, 24 Nov 2007 15:35:44 +0000
-Subject: Re: [PATCH] sdio_uart: fix sign of paramter status in
-Message-Id: <alpine.LFD.0.99999.0711241029010.9605@xanadu.home>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Fri, 09 Nov 2007 13:08:32 +0000
+Subject: [PATCH] drivers/misc/sony-laptop.c: remove duplicated define
+Message-Id: <20071109140832.4f2a145c@lucky.kitzblitz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11956448251191-git-send-email-andre@bitwigglers.org>
- <20071124153650.27a572a6@poseidon.drzeus.cx>
-In-Reply-To: <20071124153650.27a572a6@poseidon.drzeus.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pierre Ossman <drzeus-mmc@drzeus.cx>
-Cc: Andre Haupt <andre@bitwigglers.org>, lkml <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.orgAndre Haupt <andre@bitwigglers.org>
+To: Mattia Dongili <malattia@linux.it>
+Cc: linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Sat, 24 Nov 2007, Pierre Ossman wrote:
+Remove duplicated define.
 
-> On Wed, 21 Nov 2007 12:33:45 +0100
-> Andre Haupt <andre@bitwigglers.org> wrote:
-> 
-> > I think, the status paramter should be unsigned. Is this correct?
-> > This also fixes a sparse warning about different signedness.
-> > Only compile tested, because i do not have the hardware.
-> > 
-> > From: Andre Haupt <andre@bitwigglers.org>
-> > Signed-off-by: Andre Haupt <andre@bitwigglers.org>
-> 
-> Nicolas, does this seem correct to you? I'm not familiar with the 
-> serial stuff.
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+---
 
-Yes, that should be fine.
+ drivers/misc/sony-laptop.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-Acked-by: Nicolas Pitre <nico@cam.org>
-
-
-Nicolas
+--- a/drivers/misc/sony-laptop.c	2007-11-07 11:26:12.000000000 +0100
++++ b/drivers/misc/sony-laptop.c	2007-11-09 13:56:36.000000000 +0100
+@@ -1504,7 +1504,6 @@
+ #define SONYPI_CAMERA_SHUTTER_MASK 		0x7
+ 
+ #define SONYPI_CAMERA_SHUTDOWN_REQUEST		7
+-#define SONYPI_CAMERA_CONTROL			0x10
+ 
+ #define SONYPI_CAMERA_STATUS 			7
+ #define SONYPI_CAMERA_STATUS_READY 		0x2
