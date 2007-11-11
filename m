@@ -1,34 +1,33 @@
-From: Hirokazu Takata <takata@linux-m32r.org>
-Date: Thu, 08 Nov 2007 11:38:52 +0000
-Subject: Re: [PATCH] M32R - remove dead config symbols from M32R code
-Message-Id: <swfk5ot0xwz.wl%takata.hirokazu@renesas.com>
+From: Nicolas Kaiser <nikai@nikai.net>
+Date: Sun, 11 Nov 2007 12:43:51 +0000
+Subject: [PATCH] fs/xfs: remove duplicated defines
+Message-Id: <20071111134351.106efb98@lucky.kitzblitz>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4732F322.8040008@gmail.com>
-In-Reply-To: <4732F322.8040008@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Jiri Olsa <olsajiri@gmail.com>
-Subject: [PATCH] M32R - remove dead config symbols from M32R code
-Date: Thu, 08 Nov 2007 12:29:38 +0100
-> remove dead config symbols from M32R code
-> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
-> 
-> ---
->  arch/m32r/boot/compressed/m32r_sio.c     |    4 ++--
->  include/asm-m32r/irq.h                   |    2 +-
->  include/asm-m32r/m32700ut/m32700ut_pld.h |    4 +---
->  3 files changed, 4 insertions(+), 6 deletions(-)
-> 
+Remove duplicated defines.
 
-It looks fine to me.
+Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+---
 
-Acked-by: Hirokazu Takata <takata@linux-m32r.org>
+ fs/xfs/linux-2.6/xfs_linux.h |    4 ----
+ 1 file changed, 4 deletions(-)
 
-Thank you.
-
---
-Hirokazu Takata <takata@linux-m32r.org>
-Linux/M32R Project:  http://www.linux-m32r.org/
+--- a/fs/xfs/linux-2.6/xfs_linux.h	2007-11-07 11:26:20.000000000 +0100
++++ b/fs/xfs/linux-2.6/xfs_linux.h	2007-11-11 13:07:11.000000000 +0100
+@@ -167,12 +167,8 @@
+ 
+ /* clicks to bytes */
+ #define	ctob(x)		((__psunsigned_t)(x)<<BPCSHIFT)
+-#define btoct(x)        ((__psunsigned_t)(x)>>BPCSHIFT)
+ #define	ctob64(x)	((__uint64_t)(x)<<BPCSHIFT)
+ 
+-/* bytes to clicks */
+-#define btoc(x)         (((__psunsigned_t)(x)+(NBPC-1))>>BPCSHIFT)
+-
+ #define ENOATTR		ENODATA		/* Attribute not found */
+ #define EWRONGFS	EINVAL		/* Mount with wrong filesystem type */
+ #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
