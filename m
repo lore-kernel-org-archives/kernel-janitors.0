@@ -1,30 +1,75 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 20 Nov 2007 06:50:48 +0000
-Subject: Re: [PATCH 1/5] arch/sparc64: Add missing pci_dev_put
-Message-Id: <20071119.225048.111848671.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 13 Nov 2007 21:32:10 +0000
+Subject: [PATCH 1/4] drivers/i2c: Drop redundant includes of moduleparam.h
+Message-Id: <Pine.LNX.4.64.0711132231080.18337@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0711190901330.19198@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0711190901330.19198@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: khali@linux-fr.org
+Cc: i2c@lm-sensors.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+Send to:
+khali@linux-fr.org,
+i2c@lm-sensors.org,
+linux-kernel@vger.kernel.org,
+kernel-janitors@vger.kernel.org
+
+Subject: [PATCH 1/4] drivers/i2c: Drop redundant includes of moduleparam.h
+
+
+------------------------------------------------------
 
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 19 Nov 2007 09:02:22 +0100 (CET)
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> There should be a pci_dev_put when breaking out of a loop that iterates
-> over calls to pci_get_device and similar functions.
- ..
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+Drop #include <linux/moduleparam.h> in files that also include #include
+<linux/module.h>.  module.h includes moduleparam.h already.
 
-Patch applied, but something in your email client adds
-extra spaces to the second column of several lines in your
-your patch.
+The semantic patch implementing this change is as follows:
 
-Please correct this before making future patch submissions.
+@ includesmodule @
+@@
 
-Thank you.
+#include <linux/module.h>
+
+@ depends on includesmodule @
+@@
+
+- #include <linux/moduleparam.h>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p -b -B a/drivers/i2c/algos/i2c-algo-pca.c b/drivers/i2c/algos/i2c-algo-pca.c
+--- a/drivers/i2c/algos/i2c-algo-pca.c 2007-10-22 11:25:06.000000000 +0200
++++ b/drivers/i2c/algos/i2c-algo-pca.c 2007-11-13 17:49:31.000000000 +0100
+@@ -19,7 +19,6 @@
+
+  #include <linux/kernel.h>
+  #include <linux/module.h>
+-#include <linux/moduleparam.h>
+  #include <linux/delay.h>
+  #include <linux/slab.h>
+  #include <linux/init.h>
+diff -u -p -b -B a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
+--- a/drivers/i2c/busses/i2c-piix4.c 2007-09-09 08:31:35.000000000 +0200
++++ b/drivers/i2c/busses/i2c-piix4.c 2007-11-13 17:49:33.000000000 +0100
+@@ -30,7 +30,6 @@
+  */
+
+  #include <linux/module.h>
+-#include <linux/moduleparam.h>
+  #include <linux/pci.h>
+  #include <linux/kernel.h>
+  #include <linux/delay.h>
+diff -u -p -b -B a/drivers/i2c/busses/i2c-pca-isa.c b/drivers/i2c/busses/i2c-pca-isa.c
+--- a/drivers/i2c/busses/i2c-pca-isa.c 2007-06-02 22:32:11.000000000 +0200
++++ b/drivers/i2c/busses/i2c-pca-isa.c 2007-11-13 17:49:34.000000000 +0100
+@@ -20,7 +20,6 @@
+  #include <linux/kernel.h>
+  #include <linux/ioport.h>
+  #include <linux/module.h>
+-#include <linux/moduleparam.h>
+  #include <linux/delay.h>
+  #include <linux/slab.h>
+  #include <linux/init.h>
