@@ -1,107 +1,23 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 13 Nov 2007 21:35:14 +0000
-Subject: [PATCH 3/4] drivers/infiniband: Drop redundant includes of moduleparam.h
-Message-Id: <Pine.LNX.4.64.0711132234110.18337@ask.diku.dk>
+From: Roland Dreier <rdreier@cisco.com>
+Date: Wed, 14 Nov 2007 20:54:52 +0000
+Subject: Re: [PATCH 3/4] drivers/infiniband: Drop redundant includes of moduleparam.h
+Message-Id: <adalk90zgwz.fsf@cisco.com>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0711132234110.18337@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0711132234110.18337@ask.diku.dk> (Julia Lawall's message of "Tue, 13 Nov 2007 22:35:14 +0100 (CET)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: rolandd@cisco.com, mshefty@ichips.intel.com, halr@voltaire.com, openib-general@openib.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: rolandd@cisco.com, mshefty@ichips.intel.com, halr@voltaire.com, openib-general@openib.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+ > Drop #include <linux/moduleparam.h> in files that also include #include
+ > <linux/module.h>.  module.h includes moduleparam.h already.
 
-Drop #include <linux/moduleparam.h> in files that also include #include
-<linux/module.h>.  module.h includes moduleparam.h already.
+Do we want to make this sort of source code change?  I thought that
+the consensus about the kernel was that we wanted to avoid relying of
+implicit includes of <Y.h> by <X.h> -- in this case a better change
+would actually seem to be to explicitly include moduleparam.h in files
+using module parameters and then remove the include from module.h.
 
-The semantic patch implementing this change is as follows:
-
-@ includesmodule @
-@@
-
-#include <linux/module.h>
-
-@ depends on includesmodule @
-@@
-
-- #include <linux/moduleparam.h>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -u -p -b -B a/drivers/infiniband/hw/amso1100/c2.c b/drivers/infiniband/hw/amso1100/c2.c
---- a/drivers/infiniband/hw/amso1100/c2.c 2007-10-22 11:25:09.000000000 +0200
-+++ b/drivers/infiniband/hw/amso1100/c2.c 2007-11-13 17:50:03.000000000 +0100
-@@ -31,7 +31,6 @@
-   * SOFTWARE.
-   */
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-  #include <linux/pci.h>
-  #include <linux/netdevice.h>
-  #include <linux/etherdevice.h>
-diff -u -p -b -B a/drivers/infiniband/hw/amso1100/c2_provider.c b/drivers/infiniband/hw/amso1100/c2_provider.c
---- a/drivers/infiniband/hw/amso1100/c2_provider.c 2007-10-22 11:25:09.000000000 +0200
-+++ b/drivers/infiniband/hw/amso1100/c2_provider.c 2007-11-13 17:50:05.000000000 +0100
-@@ -33,7 +33,6 @@
-   */
-
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-  #include <linux/pci.h>
-  #include <linux/netdevice.h>
-  #include <linux/etherdevice.h>
-diff -u -p -b -B a/drivers/infiniband/hw/amso1100/c2_rnic.c b/drivers/infiniband/hw/amso1100/c2_rnic.c
---- a/drivers/infiniband/hw/amso1100/c2_rnic.c 2007-02-09 17:34:09.000000000 +0100
-+++ b/drivers/infiniband/hw/amso1100/c2_rnic.c 2007-11-13 17:50:06.000000000 +0100
-@@ -34,7 +34,6 @@
-
-
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-  #include <linux/pci.h>
-  #include <linux/netdevice.h>
-  #include <linux/etherdevice.h>
-diff -u -p -b -B a/drivers/infiniband/hw/ehca/ehca_tools.h b/drivers/infiniband/hw/ehca/ehca_tools.h
---- a/drivers/infiniband/hw/ehca/ehca_tools.h 2007-10-22 11:25:09.000000000 +0200
-+++ b/drivers/infiniband/hw/ehca/ehca_tools.h 2007-11-13 17:50:06.000000000 +0100
-@@ -52,7 +52,6 @@
-  #include <linux/mm.h>
-  #include <linux/mman.h>
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-  #include <linux/vmalloc.h>
-  #include <linux/version.h>
-  #include <linux/notifier.h>
-diff -u -p -b -B a/drivers/infiniband/hw/mthca/mthca_profile.c b/drivers/infiniband/hw/mthca/mthca_profile.c
---- a/drivers/infiniband/hw/mthca/mthca_profile.c 2007-06-02 22:32:12.000000000 +0200
-+++ b/drivers/infiniband/hw/mthca/mthca_profile.c 2007-11-13 17:50:23.000000000 +0100
-@@ -34,7 +34,6 @@
-   */
-
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-  #include <linux/string.h>
-  #include <linux/slab.h>
-
-diff -u -p -b -B a/drivers/infiniband/hw/cxgb3/iwch.c b/drivers/infiniband/hw/cxgb3/iwch.c
---- a/drivers/infiniband/hw/cxgb3/iwch.c 2007-06-02 22:32:12.000000000 +0200
-+++ b/drivers/infiniband/hw/cxgb3/iwch.c 2007-11-13 17:50:25.000000000 +0100
-@@ -30,7 +30,6 @@
-   * SOFTWARE.
-   */
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-
-  #include <rdma/ib_verbs.h>
-
-diff -u -p -b -B a/drivers/infiniband/hw/cxgb3/iwch_provider.c b/drivers/infiniband/hw/cxgb3/iwch_provider.c
---- a/drivers/infiniband/hw/cxgb3/iwch_provider.c 2007-07-20 17:45:46.000000000 +0200
-+++ b/drivers/infiniband/hw/cxgb3/iwch_provider.c 2007-11-13 17:50:27.000000000 +0100
-@@ -30,7 +30,6 @@
-   * SOFTWARE.
-   */
-  #include <linux/module.h>
--#include <linux/moduleparam.h>
-  #include <linux/device.h>
-  #include <linux/netdevice.h>
-  #include <linux/etherdevice.h>
+ - R.
