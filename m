@@ -1,166 +1,62 @@
-From: Jiri Olsa <olsajiri@gmail.com>
-Date: Fri, 09 Nov 2007 09:47:10 +0000
-Subject: [PATCH] sound - remove dead config symbol from sound code
-Message-Id: <47342C9E.4030409@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 14 Nov 2007 08:14:35 +0000
+Subject: [PATCH 2/4] drivers/net: Drop unnecessary continue
+Message-Id: <Pine.LNX.4.64.0711140914000.26019@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, alsa-devel@alsa-project.org
+To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-remove dead config symbols from sound code
-Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+From: Julia Lawall <julia@diku.dk>
 
+Continue is not needed at the bottom of a loop.
+
+The semantic patch implementing this change is as follows:
+
+@@
+statement S;
+@@
+
+for (...;...;...) {
+   ...
+   if (...)
+- {
+     S
+-   continue;
+- }
+}
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- include/sound/cs46xx.h        |    3 -
- include/sound/driver.h        |    4 --
- sound/pci/cs46xx/cs46xx_lib.c |   99 -----------------------------------------
- 3 files changed, 0 insertions(+), 106 deletions(-)
 
-diff --git a/include/sound/cs46xx.h b/include/sound/cs46xx.h
-index 6b40ee6..e3005a6 100644
---- a/include/sound/cs46xx.h
-+++ b/include/sound/cs46xx.h
-@@ -1708,9 +1708,6 @@ struct snd_cs46xx {
- 
- 	struct gameport *gameport;
- 
--#ifdef CONFIG_SND_CS46XX_DEBUG_GPIO
--	int current_gpio;
--#endif
- #ifdef CONFIG_SND_CS46XX_NEW_DSP
- 	struct mutex spos_mutex;
- 
-diff --git a/include/sound/driver.h b/include/sound/driver.h
-index 5ccb6c5..1889929 100644
---- a/include/sound/driver.h
-+++ b/include/sound/driver.h
-@@ -38,10 +38,6 @@
- #define CONFIG_SND_MAJOR	116
- #endif
- 
--#ifndef CONFIG_SND_DEBUG
--#undef CONFIG_SND_DEBUG_MEMORY
--#endif
--
- #ifdef ALSA_BUILD
- #include "adriver.h"
- #endif
-diff --git a/sound/pci/cs46xx/cs46xx_lib.c b/sound/pci/cs46xx/cs46xx_lib.c
-index 2c7bfc9..8c44fef 100644
---- a/sound/pci/cs46xx/cs46xx_lib.c
-+++ b/sound/pci/cs46xx/cs46xx_lib.c
-@@ -2084,71 +2084,6 @@ static int snd_cs46xx_spdif_stream_put(struct snd_kcontrol *kcontrol,
- #endif /* CONFIG_SND_CS46XX_NEW_DSP */
- 
- 
--#ifdef CONFIG_SND_CS46XX_DEBUG_GPIO
--static int snd_cs46xx_egpio_select_info(struct snd_kcontrol *kcontrol, 
--                                        struct snd_ctl_elem_info *uinfo)
--{
--	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
--	uinfo->count = 1;
--	uinfo->value.integer.min = 0;
--	uinfo->value.integer.max = 8;
--	return 0;
--}
--
--static int snd_cs46xx_egpio_select_get(struct snd_kcontrol *kcontrol, 
--                                       struct snd_ctl_elem_value *ucontrol)
--{
--	struct snd_cs46xx *chip = snd_kcontrol_chip(kcontrol);
--	ucontrol->value.integer.value[0] = chip->current_gpio;
--
--	return 0;
--}
--
--static int snd_cs46xx_egpio_select_put(struct snd_kcontrol *kcontrol, 
--                                       struct snd_ctl_elem_value *ucontrol)
--{
--	struct snd_cs46xx *chip = snd_kcontrol_chip(kcontrol);
--	int change = (chip->current_gpio != ucontrol->value.integer.value[0]);
--	chip->current_gpio = ucontrol->value.integer.value[0];
--
--	return change;
--}
--
--
--static int snd_cs46xx_egpio_get(struct snd_kcontrol *kcontrol, 
--                                       struct snd_ctl_elem_value *ucontrol)
--{
--	struct snd_cs46xx *chip = snd_kcontrol_chip(kcontrol);
--	int reg = kcontrol->private_value;
--
--	snd_printdd ("put: reg = %04x, gpio %02x\n",reg,chip->current_gpio);
--	ucontrol->value.integer.value[0] = 
--		(snd_cs46xx_peekBA0(chip, reg) & (1 << chip->current_gpio)) ? 1 : 0;
--  
--	return 0;
--}
--
--static int snd_cs46xx_egpio_put(struct snd_kcontrol *kcontrol, 
--                                       struct snd_ctl_elem_value *ucontrol)
--{
--	struct snd_cs46xx *chip = snd_kcontrol_chip(kcontrol);
--	int reg = kcontrol->private_value;
--	int val = snd_cs46xx_peekBA0(chip, reg);
--	int oldval = val;
--	snd_printdd ("put: reg = %04x, gpio %02x\n",reg,chip->current_gpio);
--
--	if (ucontrol->value.integer.value[0])
--		val |= (1 << chip->current_gpio);
--	else
--		val &= ~(1 << chip->current_gpio);
--
--	snd_cs46xx_pokeBA0(chip, reg,val);
--	snd_printdd ("put: val %08x oldval %08x\n",val,oldval);
--
--	return (oldval != val);
--}
--#endif /* CONFIG_SND_CS46XX_DEBUG_GPIO */
--
- static struct snd_kcontrol_new snd_cs46xx_controls[] __devinitdata = {
- {
- 	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-@@ -2241,40 +2176,6 @@ static struct snd_kcontrol_new snd_cs46xx_controls[] __devinitdata = {
- },
- 
- #endif
--#ifdef CONFIG_SND_CS46XX_DEBUG_GPIO
--{
--	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
--	.name = "EGPIO select",
--	.info = snd_cs46xx_egpio_select_info,
--	.get = snd_cs46xx_egpio_select_get,
--	.put = snd_cs46xx_egpio_select_put,
--	.private_value = 0,
--},
--{
--	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
--	.name = "EGPIO Input/Output",
--	.info = snd_mixer_boolean_info,
--	.get = snd_cs46xx_egpio_get,
--	.put = snd_cs46xx_egpio_put,
--	.private_value = BA0_EGPIODR,
--},
--{
--	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
--	.name = "EGPIO CMOS/Open drain",
--	.info = snd_mixer_boolean_info,
--	.get = snd_cs46xx_egpio_get,
--	.put = snd_cs46xx_egpio_put,
--	.private_value = BA0_EGPIOPTR,
--},
--{
--	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
--	.name = "EGPIO On/Off",
--	.info = snd_mixer_boolean_info,
--	.get = snd_cs46xx_egpio_get,
--	.put = snd_cs46xx_egpio_put,
--	.private_value = BA0_EGPIOSR,
--},
--#endif
- };
- 
- #ifdef CONFIG_SND_CS46XX_NEW_DSP
+diff -u -p -b -B a/drivers/net/ni65.c b/drivers/net/ni65.c
+--- a/drivers/net/ni65.c 2007-10-22 11:25:14.000000000 +0200
++++ b/drivers/net/ni65.c 2007-11-13 22:49:02.000000000 +0100
+@@ -427,10 +427,8 @@ static int __init ni65_probe1(struct net
+  		}
+  		if(cards[i].vendor_id) {
+  			for(j=0;j<3;j++)
+-				if(inb(ioaddr+cards[i].addr_offset+j) != cards[i].vendor_id[j]) {
++				if(inb(ioaddr+cards[i].addr_offset+j) != cards[i].vendor_id[j])
+  					release_region(ioaddr, cards[i].total_size);
+-					continue;
+-			  }
+  		}
+  		break;
+  	}
+diff -u -p -b -B a/drivers/net/s2io.c b/drivers/net/s2io.c
+--- a/drivers/net/s2io.c 2007-10-22 11:25:15.000000000 +0200
++++ b/drivers/net/s2io.c 2007-11-13 22:49:53.000000000 +0100
+@@ -3599,10 +3599,8 @@ static void restore_xmsi_data(struct s2i
+  		writeq(nic->msix_info[i].data, &bar0->xmsi_data);
+  		val64 = (s2BIT(7) | s2BIT(15) | vBIT(i, 26, 6));
+  		writeq(val64, &bar0->xmsi_access);
+-		if (wait_for_msix_trans(nic, i)) {
++		if (wait_for_msix_trans(nic, i))
+  			DBG_PRINT(ERR_DBG, "failed in %s\n", __FUNCTION__);
+-			continue;
+-		}
+  	}
+  }
+
