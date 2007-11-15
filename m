@@ -1,97 +1,88 @@
-From: Lucas Woods <woodzy@gmail.com>
-Date: Mon, 05 Nov 2007 20:15:49 +0000
-Subject: [PATCH 11/12] arch/x86: Remove duplicate includes.
-Message-Id: <472F79F5.30707@gmail.com>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Thu, 15 Nov 2007 08:41:44 +0000
+Subject: [PATCH]  m68knommu: Removing config variable BDM_DISABLE
+Message-Id: <473C0648.6050501@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Removing config variable BDM_DISABLE, since it is not used
+Removing #ifdef MCF_BDM_DISABLE code , since MCF_BDM_DISABLE is not defined
 
-Signed-off-by: Lucas Woods <woodzy@gmail.com>
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
 ---
- arch/x86/kernel/hpet.c           |    1 -
- arch/x86/kernel/pci-calgary_64.c |    1 -
- arch/x86/kernel/time_64.c        |    1 -
- arch/x86/mm/fault_32.c           |    1 -
- arch/x86/mm/fault_64.c           |    1 -
- arch/x86/vdso/vclock_gettime.c   |    1 -
- 6 files changed, 0 insertions(+), 6 deletions(-)
+ arch/m68knommu/Kconfig.debug          |    6 ------
+ arch/m68knommu/defconfig              |    1 -
+ arch/m68knommu/platform/5307/config.c |    9 ---------
+ arch/m68knommu/platform/532x/config.c |    9 ---------
+ 4 files changed, 0 insertions(+), 25 deletions(-)
 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 53303f2..7a29e0e 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -6,7 +6,6 @@
- #include <linux/init.h>
- #include <linux/sysdev.h>
- #include <linux/pm.h>
--#include <linux/delay.h>
+diff --git a/arch/m68knommu/Kconfig.debug b/arch/m68knommu/Kconfig.debug
+index 9ff47bd..2784b46 100644
+--- a/arch/m68knommu/Kconfig.debug
++++ b/arch/m68knommu/Kconfig.debug
+@@ -33,10 +33,4 @@ config NO_KERNEL_MSG
+ 	help
+ 	  Do not output any debug BUG messages within the kernel.
  
- #include <asm/fixmap.h>
- #include <asm/hpet.h>
-diff --git a/arch/x86/kernel/pci-calgary_64.c b/arch/x86/kernel/pci-calgary_64.c
-index 6bf1f71..c9060b0 100644
---- a/arch/x86/kernel/pci-calgary_64.c
-+++ b/arch/x86/kernel/pci-calgary_64.c
-@@ -30,7 +30,6 @@
- #include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/dma-mapping.h>
--#include <linux/init.h>
- #include <linux/bitops.h>
- #include <linux/pci_ids.h>
- #include <linux/pci.h>
-diff --git a/arch/x86/kernel/time_64.c b/arch/x86/kernel/time_64.c
-index c821edc..0ecccbf 100644
---- a/arch/x86/kernel/time_64.c
-+++ b/arch/x86/kernel/time_64.c
-@@ -41,7 +41,6 @@
- #include <asm/sections.h>
- #include <linux/hpet.h>
- #include <asm/apic.h>
--#include <asm/hpet.h>
- #include <asm/mpspec.h>
- #include <asm/nmi.h>
- #include <asm/vgtod.h>
-diff --git a/arch/x86/mm/fault_32.c b/arch/x86/mm/fault_32.c
-index a2273d4..816de97 100644
---- a/arch/x86/mm/fault_32.c
-+++ b/arch/x86/mm/fault_32.c
-@@ -25,7 +25,6 @@
- #include <linux/kprobes.h>
- #include <linux/uaccess.h>
- #include <linux/kdebug.h>
--#include <linux/kprobes.h>
+-config BDM_DISABLE
+-	bool "Disable BDM signals"
+-	depends on (EXPERIMENTAL && COLDFIRE)
+-	help
+-	  Disable the ColdFire CPU's BDM signals.
+-
+ endmenu
+diff --git a/arch/m68knommu/defconfig b/arch/m68knommu/defconfig
+index 5a0ecaa..fa44eea 100644
+--- a/arch/m68knommu/defconfig
++++ b/arch/m68knommu/defconfig
+@@ -599,7 +599,6 @@ CONFIG_MSDOS_PARTITION=y
+ # CONFIG_BOOTPARAM is not set
+ # CONFIG_DUMPTOFLASH is not set
+ # CONFIG_NO_KERNEL_MSG is not set
+-# CONFIG_BDM_DISABLE is not set
  
- #include <asm/system.h>
- #include <asm/desc.h>
-diff --git a/arch/x86/mm/fault_64.c b/arch/x86/mm/fault_64.c
-index 0e26230..6c3f7b0 100644
---- a/arch/x86/mm/fault_64.c
-+++ b/arch/x86/mm/fault_64.c
-@@ -25,7 +25,6 @@
- #include <linux/kprobes.h>
- #include <linux/uaccess.h>
- #include <linux/kdebug.h>
--#include <linux/kprobes.h>
+ #
+ # Security options
+diff --git a/arch/m68knommu/platform/5307/config.c b/arch/m68knommu/platform/5307/config.c
+index 6040821..e356e4a 100644
+--- a/arch/m68knommu/platform/5307/config.c
++++ b/arch/m68knommu/platform/5307/config.c
+@@ -116,15 +116,6 @@ void config_BSP(char *commandp, int size)
+ #endif
  
- #include <asm/system.h>
- #include <asm/pgalloc.h>
-diff --git a/arch/x86/vdso/vclock_gettime.c b/arch/x86/vdso/vclock_gettime.c
-index 5b54cdf..23476c2 100644
---- a/arch/x86/vdso/vclock_gettime.c
-+++ b/arch/x86/vdso/vclock_gettime.c
-@@ -19,7 +19,6 @@
- #include <asm/hpet.h>
- #include <asm/unistd.h>
- #include <asm/io.h>
--#include <asm/vgtod.h>
- #include "vextern.h"
+ 	mach_reset = coldfire_reset;
+-
+-#ifdef MCF_BDM_DISABLE
+-	/*
+-	 * Disable the BDM clocking.  This also turns off most of the rest of
+-	 * the BDM device.  This is good for EMC reasons. This option is not
+-	 * incompatible with the memory protection option.
+-	 */
+-	wdebug(MCFDEBUG_CSR, MCFDEBUG_CSR_PSTCLK);
+-#endif
+ }
  
- #define gtod vdso_vsyscall_gtod_data
--- 
-
-
-
+ /***************************************************************************/
+diff --git a/arch/m68knommu/platform/532x/config.c b/arch/m68knommu/platform/532x/config.c
+index f77328b..4166ce5 100644
+--- a/arch/m68knommu/platform/532x/config.c
++++ b/arch/m68knommu/platform/532x/config.c
+@@ -98,15 +98,6 @@ void config_BSP(char *commandp, int size)
+ 	mcf_timervector = 64+32;
+ 	mcf_profilevector = 64+33;
+ 	mach_reset = coldfire_reset;
+-
+-#ifdef MCF_BDM_DISABLE
+-	/*
+-	 * Disable the BDM clocking.  This also turns off most of the rest of
+-	 * the BDM device.  This is good for EMC reasons. This option is not
+-	 * incompatible with the memory protection option.
+-	 */
+-	wdebug(MCFDEBUG_CSR, MCFDEBUG_CSR_PSTCLK);
+-#endif
+ }
+ 
+ /***************************************************************************/
