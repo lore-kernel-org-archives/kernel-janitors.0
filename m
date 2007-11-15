@@ -1,46 +1,53 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Wed, 07 Nov 2007 09:55:36 +0000
-Subject: somehow, there *must* be a cleaner "log2" rewrite of this
-Message-Id: <Pine.LNX.4.64.0711070453410.26359@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 15 Nov 2007 10:40:49 +0000
+Subject: [PATCH 2/2]: drivers/video: remove unnecessary pci_dev_put
+Message-Id: <Pine.LNX.4.58.0711151140100.1184@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: thomas@winischhofer.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-  from fs/nfs/internal.h:
+pci_get_class implicitly does a pci_dev_put on its second argument, so
+pci_dev_put is only needed if there is a break out of the loop.
 
-==/*
- * Determine the actual block size (and log2 thereof)
- */
-static inline
-unsigned long nfs_block_bits(unsigned long bsize, unsigned char *nrbitsp)
-{
-        /* make sure blocksize is a power of two */
-        if ((bsize & (bsize - 1)) || nrbitsp) {
-                unsigned char   nrbits;
+The semantic match detecting this problem is as follows:
 
-                for (nrbits = 31; nrbits && !(bsize & (1 << nrbits)); nrbits--)
-                        ;
-                bsize = 1 << nrbits;
-                if (nrbitsp)
-                        *nrbitsp = nrbits;
-        }
+// <smpl>
+@@
+expression dev;
+expression E;
+@@
 
-        return bsize;
-}
-==
-  there *has* to be a simpler version of that using the log2 macros
-from log2.h, no?  i'm just too lazy to think about it right now.
+* pci_dev_put(dev)
+  ... when != dev = E
+(
+* pci_get_device(...,dev)
+|
+* pci_get_device_reverse(...,dev)
+|
+* pci_get_subsys(...,dev)
+|
+* pci_get_class(...,dev)
+)
+// </smpl>
 
-rday
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
 
--- 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+diff -up a/drivers/video/sis/sis_main.c b/drivers/video/sis/sis_main.c
+--- a/drivers/video/sis/sis_main.c	2007-11-15 07:33:31.000000000 +0100
++++ b/drivers/video/sis/sis_main.c	2007-11-15 07:38:48.000000000 +0100
+@@ -4620,9 +4620,9 @@ sisfb_find_host_bridge(struct sis_video_
 
-http://crashcourse.ca
-====================================
+ 	while((pdev = pci_get_class(PCI_CLASS_BRIDGE_HOST, pdev))) {
+ 		temp = pdev->vendor;
+-		pci_dev_put(pdev);
+ 		if(temp = pcivendor) {
+ 			ret = 1;
++			pci_dev_put(pdev);
+ 			break;
+ 		}
+ 	}
