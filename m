@@ -1,58 +1,48 @@
-From: "Mark M. Hoffman" <mhoffman@lightlink.com>
-Date: Sun, 18 Nov 2007 19:22:38 +0000
-Subject: Re: [lm-sensors] [PATCH] drivers/hwmon: remove duplicated defines
-Message-Id: <20071118192238.GB12086@jupiter.solarsys.private>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Thu, 15 Nov 2007 08:41:31 +0000
+Subject: [PATCH] m68knommu: Removing config variable DUMPTOFLASH
+Message-Id: <473C063B.2060400@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071107132859.1d961027@lucky.kitzblitz>
-In-Reply-To: <20071107132859.1d961027@lucky.kitzblitz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-* Jean Delvare <khali@linux-fr.org> [2007-11-09 14:52:59 +0100]:
-> Hi Nicolas,
-> 
-> On Wed, 7 Nov 2007 13:28:59 +0100, Nicolas Kaiser wrote:
-> > Remove duplicated defines.
-> 
-> Obviously correct, thanks.
-> 
-> > 
-> > Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
-> 
-> Acked-by: Jean Delvare <khali@linux-fr.org>
-> 
-> > ---
-> > 
-> >  drivers/hwmon/w83793.c |    5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > --- a/drivers/hwmon/w83793.c	2007-11-07 11:28:29.000000000 +0100
-> > +++ b/drivers/hwmon/w83793.c	2007-11-07 13:08:54.000000000 +0100
-> > @@ -131,6 +131,7 @@
-> >  #define PWM_DUTY			0
-> >  #define PWM_START			1
-> >  #define PWM_NONSTOP			2
-> > +#define PWM_STOP_TIME			3
-> >  #define W83793_REG_PWM(index, nr)	(((nr) = 0 ? 0xb3 : \
-> >  					 (nr) = 1 ? 0x220 : 0x218) + (index))
-> >  
-> > @@ -407,10 +408,6 @@
-> >  	return count;
-> >  }
-> >  
-> > -#define PWM_DUTY			0
-> > -#define PWM_START			1
-> > -#define PWM_NONSTOP			2
-> > -#define PWM_STOP_TIME			3
-> >  static ssize_t
-> >  show_pwm(struct device *dev, struct device_attribute *attr, char *buf)
-> >  {
+Removing config variable DUMPTOFLASH, since it is not used
 
-Applied to hwmon-2.6.git/testing, thanks.
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+---
+ arch/m68knommu/Kconfig.debug |    7 -------
+ arch/m68knommu/defconfig     |    1 -
+ 2 files changed, 0 insertions(+), 8 deletions(-)
 
--- 
-Mark M. Hoffman
-mhoffman@lightlink.com
-
+diff --git a/arch/m68knommu/Kconfig.debug b/arch/m68knommu/Kconfig.debug
+index 9ff47bd..ed6d9a8 100644
+--- a/arch/m68knommu/Kconfig.debug
++++ b/arch/m68knommu/Kconfig.debug
+@@ -21,13 +21,6 @@ config BOOTPARAM_STRING
+ 	default 'console=ttyS0,19200'
+ 	depends on BOOTPARAM
+ 
+-config DUMPTOFLASH
+-	bool "Panic/Dump to FLASH"
+-	depends on COLDFIRE
+-	help
+-	  Dump any panic of trap output into a flash memory segment
+-	  for later analysis.
+-
+ config NO_KERNEL_MSG
+ 	bool "Suppress Kernel BUG Messages"
+ 	help
+diff --git a/arch/m68knommu/defconfig b/arch/m68knommu/defconfig
+index 5a0ecaa..6481130 100644
+--- a/arch/m68knommu/defconfig
++++ b/arch/m68knommu/defconfig
+@@ -597,7 +597,6 @@ CONFIG_MSDOS_PARTITION=y
+ # CONFIG_FULLDEBUG is not set
+ # CONFIG_HIGHPROFILE is not set
+ # CONFIG_BOOTPARAM is not set
+-# CONFIG_DUMPTOFLASH is not set
+ # CONFIG_NO_KERNEL_MSG is not set
+ # CONFIG_BDM_DISABLE is not set
+ 
