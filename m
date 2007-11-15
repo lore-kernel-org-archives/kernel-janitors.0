@@ -1,31 +1,53 @@
-From: Lucas Woods <woodzy@gmail.com>
-Date: Mon, 05 Nov 2007 20:15:38 +0000
-Subject: [PATCH 10/12] arch/um: Remove duplicate includes.
-Message-Id: <472F79EA.2030509@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Thu, 15 Nov 2007 10:40:08 +0000
+Subject: [PATCH 1/2]: drivers/char: remove unnecessary pci_dev_put
+Message-Id: <Pine.LNX.4.58.0711151139250.1184@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davej@codemonkey.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Lucas Woods <woodzy@gmail.com>
+pci_get_class implicitly does a pci_dev_put on its second argument, so
+pci_dev_put is only needed if there is a break out of the loop.
+
+The semantic match detecting this problem is as follows:
+
+// <smpl>
+@@
+expression dev;
+expression E;
+@@
+
+* pci_dev_put(dev)
+  ... when != dev = E
+(
+* pci_get_device(...,dev)
+|
+* pci_get_device_reverse(...,dev)
+|
+* pci_get_subsys(...,dev)
+|
+* pci_get_class(...,dev)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- arch/um/os-Linux/sigio.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/arch/um/os-Linux/sigio.c b/arch/um/os-Linux/sigio.c
-index dc03e9c..b068d63 100644
---- a/arch/um/os-Linux/sigio.c
-+++ b/arch/um/os-Linux/sigio.c
-@@ -20,7 +20,6 @@
- #include "sigio.h"
- #include "os.h"
- #include "um_malloc.h"
--#include "init.h"
- 
- /* Protected by sigio_lock(), also used by sigio_cleanup, which is an
-  * exitcall.
--- 
+diff -up a/drivers/char/agp/amd-k7-agp.c b/drivers/char/agp/amd-k7-agp.c
+--- a/drivers/char/agp/amd-k7-agp.c	2007-11-15 07:33:31.000000000 +0100
++++ b/drivers/char/agp/amd-k7-agp.c	2007-11-15 07:40:48.000000000 +0100
+@@ -436,10 +436,6 @@ static int __devinit agp_amdk7_probe(str
+ 				return -ENODEV;
+ 			}
+ 			cap_ptr = pci_find_capability(gfxcard, PCI_CAP_ID_AGP);
+-			if (!cap_ptr) {
+-				pci_dev_put(gfxcard);
+-				continue;
+-			}
+ 		}
 
-
+ 		/* With so many variants of NVidia cards, it's simpler just
