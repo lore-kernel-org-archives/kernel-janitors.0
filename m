@@ -1,50 +1,49 @@
-From: Karsten Keil <kkeil@suse.de>
-Date: Fri, 09 Nov 2007 13:06:39 +0000
-Subject: Re: [PATCH] isdn - remove dead config symbol from isdn code
-Message-Id: <20071109130639.GC32605@pingi.kke.suse.de>
+From: Jiri Olsa <olsajiri@gmail.com>
+Date: Thu, 15 Nov 2007 08:41:55 +0000
+Subject: [PATCH] arm: Removing config variable DEBUG_S3C_PORT
+Message-Id: <473C0653.7070207@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <47344579.10405@gmail.com>
-In-Reply-To: <47344579.10405@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Fri, Nov 09, 2007 at 12:33:13PM +0100, Jiri Olsa wrote:
-> remove dead config symbol from isdn code
-> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
-> 
+Removing config variable DEBUG_S3C_PORT, since it is not used
 
-Please not. Even if here is not such COBALT_MICRO_SERVER
-config symbol this give some hint how to setup I4L
-for small systems.
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+---
+ arch/arm/Kconfig.debug             |    8 --------
+ arch/arm/configs/s3c2410_defconfig |    1 -
+ 2 files changed, 0 insertions(+), 9 deletions(-)
 
-> ---
->  include/linux/isdn.h |    6 ------
->  1 files changed, 0 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/isdn.h b/include/linux/isdn.h
-> index d0ecc8e..a2303b6 100644
-> --- a/include/linux/isdn.h
-> +++ b/include/linux/isdn.h
-> @@ -16,14 +16,8 @@
->  
->  #include <linux/ioctl.h>
->  
-> -#ifdef CONFIG_COBALT_MICRO_SERVER
-> -/* Save memory */
-> -#define ISDN_MAX_DRIVERS    2
-> -#define ISDN_MAX_CHANNELS   8
-> -#else
->  #define ISDN_MAX_DRIVERS    32
->  #define ISDN_MAX_CHANNELS   64
-> -#endif
->  
->  /* New ioctl-codes */
->  #define IIOCNETAIF  _IO('I',1)
-
--- 
-Karsten Keil
-SuSE Labs
-ISDN and VOIP development
-SUSE LINUX Products GmbH, Maxfeldstr.5 90409 Nuernberg, GF: Markus Rex, HRB 16746 (AG Nuernberg)
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 18101f5..55a3b40 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -82,14 +82,6 @@ config DEBUG_CLPS711X_UART2
+ 	  output to the second serial port on these devices.  Saying N will
+ 	  cause the debug messages to appear on the first serial port.
+ 
+-config DEBUG_S3C_PORT
+-	depends on DEBUG_LL && PLAT_S3C
+-	bool "Kernel low-level debugging messages via S3C UART"
+-	help
+-	  Say Y here if you want debug print routines to go to one of the
+-	  S3C internal UARTs. The chosen UART must have been configured
+-	  before it is used.
+-
+ config DEBUG_S3C_UART
+ 	depends on PLAT_S3C
+ 	int "S3C UART to use for low-level debug"
+diff --git a/arch/arm/configs/s3c2410_defconfig b/arch/arm/configs/s3c2410_defconfig
+index f8a1645..b94d8d4 100644
+--- a/arch/arm/configs/s3c2410_defconfig
++++ b/arch/arm/configs/s3c2410_defconfig
+@@ -1392,7 +1392,6 @@ CONFIG_DEBUG_USER=y
+ # CONFIG_DEBUG_ERRORS is not set
+ CONFIG_DEBUG_LL=y
+ # CONFIG_DEBUG_ICEDCC is not set
+-CONFIG_DEBUG_S3C_PORT=y
+ CONFIG_DEBUG_S3C_UART=0
+ 
+ #
