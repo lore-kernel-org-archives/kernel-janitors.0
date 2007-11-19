@@ -1,62 +1,59 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Date: Fri, 30 Nov 2007 17:22:00 +0000
-Subject: Re: const __initdata?
-Message-Id: <20071130092200.a3409ddd.rdunlap@xenotime.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 19 Nov 2007 08:02:22 +0000
+Subject: [PATCH 1/5] arch/sparc64: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.0711190901330.19198@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.0.9999.0711290227150.25822@localhost.localdomain>
-In-Reply-To: <alpine.LFD.0.9999.0711290227150.25822@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 30 Nov 2007 12:08:46 -0500 (EST) Robert P. J. Day wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Thu, 29 Nov 2007, Randy Dunlap wrote:
-> 
-> > On Thu, 29 Nov 2007 02:28:43 -0500 (EST) Robert P. J. Day wrote:
-> >
-> > >
-> > >   from include/linux/init.h:
-> > >
-> > >  * For initialized data:
-> > >  * You should insert __initdata between the variable name and equal
-> > >  * sign followed by value, e.g.:
-> > >  *
-> > >  * static int init_variable __initdata = 0;
-> > >  * static char linux_logo[] __initdata = { 0x32, 0x36, ... };
-> > >  *
-> > >  * Don't forget to initialize data not at file scope, i.e. within a function,
-> > >  * as gcc otherwise puts the data into the bss section and not into the init
-> > >  * section.
-> > >  *
-> > >  * Also note, that this data cannot be "const".
-> > >
-> > > you mean, like this in drivers/hwmon/w83627ehf.c:
-> > >
-> > > /* w83627ehf_find() looks for a '627 in the Super-I/O config space */
-> > > static int __init w83627ehf_find(int sioaddr, unsigned short *addr,
-> > >                                  struct w83627ehf_sio_data *sio_data)
-> > > {
-> > >         static const char __initdata sio_name_W83627EHF[] = "W83627EHF";
-> > >         static const char __initdata sio_name_W83627EHG[] = "W83627EHG";
-> > >         static const char __initdata sio_name_W83627DHG[] = "W83627DHG";
-> > > 	...
-> > >
-> > > or am i misreading that?
-> >
-> > We have certainly seen problems with const __initdata being put
-> > into a read-only section instead of the .init.data section, but
-> > with gcc 4.2.1, I see these 3 __initdata items being placed into
-> > the .init.data section no matter where I put "const" on the data
-> > declaration line.  Maybe the problem has been fixed (relatively
-> > recently).
-> 
-> hmmmm ... not sure if i replied to this already but, in any event,
-> *something* should be updated, no?  at the very least, that comment.
+There should be a pci_dev_put when breaking out of a loop that iterates
+over calls to pci_get_device and similar functions.
 
-Sure, when we are sure that all supported versions of gcc do the
-right thing.
+This was fixed using the following semantic patch.
 
+// <smpl>
+@@
+type T;
+identifier d;
+expression e;
+@@
+
+T *d;
+...
+while ((d = \(pci_get_device\|pci_get_device_reverse\|pci_get_subsys\|pci_get_class\)(..., d)) != NULL)
+  {... when != pci_dev_put(d)
+       when != e = d
+(
+    return d;
+|
++  pci_dev_put(d);
+?  return ...;
+)
+...}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-~Randy
+
+diff -u -p a/arch/sparc64/kernel/isa.c b/arch/sparc64/kernel/isa.c
+--- a/arch/sparc64/kernel/isa.c	2007-08-12 13:27:06.000000000 +0200
++++ b/arch/sparc64/kernel/isa.c	2007-11-19 08:06:48.000000000 +0100
+@@ -155,6 +155,7 @@ void __init isa_init(void)
+  		isa_br = kzalloc(sizeof(*isa_br), GFP_KERNEL);
+  		if (!isa_br) {
+  			printk(KERN_DEBUG "isa: cannot allocate sparc_isa_bridge");
++			pci_dev_put(pdev);
+  			return;
+  		}
+
+@@ -168,6 +169,7 @@ void __init isa_init(void)
+  			printk(KERN_DEBUG "isa: device registration error for %s!\n",
+  			       dp->path_component_name);
+  			kfree(isa_br);
++			pci_dev_put(pdev);
+  			return;
+  		}
