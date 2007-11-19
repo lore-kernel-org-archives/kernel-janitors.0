@@ -1,52 +1,60 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Fri, 30 Nov 2007 21:28:40 +0000
-Subject: Re: [PATCH] Some grammatical and whitespace cleanups in init.h.
-Message-Id: <alpine.LFD.0.9999.0711301625001.1659@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 19 Nov 2007 08:03:48 +0000
+Subject: [PATCH 2/5] drivers/macintosh/via-pmu.c: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.0711190903100.19198@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <alpine.LFD.0.9999.0711301424120.25301@localhost.localdomain>
-In-Reply-To: <alpine.LFD.0.9999.0711301424120.25301@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, 30 Nov 2007, Matthew Wilcox wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Fri, Nov 30, 2007 at 04:01:56PM -0500, Robert P. J. Day wrote:
-> > On Fri, 30 Nov 2007, Matthew Wilcox wrote:
-> >
-> > > On Fri, Nov 30, 2007 at 02:24:57PM -0500, Robert P. J. Day wrote:
-> > > > -/* These macros are used to mark some functions or
-> > > > - * initialized data (doesn't apply to uninitialized data)
-> > > > - * as `initialization' functions. The kernel can take this
-> > > > - * as hint that the function is used only during the initialization
-> > > > - * phase and free up used memory resources after
-> > > > +/* These macros are used to mark functions and initialized
-> > > > + * data as 'initialization' objects, which tells the kernel that
-> > > > + * they are used only during the initialization phase and can be
-> > > > + * freed afterwards to recover memory.
-> > >
-> > > If you're going to get rid of 'some', then you need to change 'are' to
-> > > 'may be' or 'can be'.
-> >
-> > i'm sorry, i don't see a problem here.  that replacement text looks
-> > perfectly unambiguous.  how do you think it might be misinterpreted?
->
-> It implies that all functions have to be marked as __init, which is
-> plainly not true.
+There should be a pci_dev_put when breaking out of a loop that iterates
+over calls to pci_get_device and similar functions.
 
-what nonsense.  the word "some" is entirely superfluous there.  are
-you saying you would be confused if i said something like, "these red
-tags are used to identify merchandise in the store that is on sale at
-50% off."  are you seriously saying that, without the word "some", you
-would think i was talking about every single piece of merchandise?
+In this case, the return under the #else case of #ifdef HACKED_PCI_SAVE
+should have a pci_dev_put, just as the return in the case where
+HACKED_PCI_SAVE is true does.
 
-rday
+This was fixed using the following semantic patch.
 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+// <smpl>
+@@
+type T;
+identifier d;
+expression e;
+@@
 
-http://crashcourse.ca
-====================================
+T *d;
+...
+while ((d = \(pci_get_device\|pci_get_device_reverse\|pci_get_subsys\|pci_get_class\)(..., d)) != NULL)
+  {... when != pci_dev_put(d)
+       when != e = d
+(
+    return d;
+|
++  pci_dev_put(d);
+?  return ...;
+)
+...}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+--- a/drivers/macintosh/via-pmu.c	2007-11-18 20:43:10.000000000 +0100
++++ b/drivers/macintosh/via-pmu.c	2007-11-19 08:16:44.000000000 +0100
+@@ -1896,8 +1896,10 @@ pbook_pci_restore(void)
+  			pci_write_config_dword(pd, i<<4, ps->config[i]);
+  		pci_write_config_dword(pd, 4, ps->config[1]);
+  #else
+-		if (npci-- = 0)
++		if (npci-- = 0) {
++			pci_dev_put(pd);
+  			return;
++		}
+  		ps++;
+  		if (ps->command = 0)
+  			continue;
