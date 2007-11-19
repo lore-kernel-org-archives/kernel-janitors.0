@@ -1,75 +1,55 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Fri, 30 Nov 2007 15:50:59 +0000
-Subject: [PATCH 1/2] arch/cris: Added a missing iounmap
-Message-Id: <Pine.LNX.4.64.0711301649570.26269@ask.diku.dk>
+Date: Mon, 19 Nov 2007 08:08:40 +0000
+Subject: [PATCH 5/5] sound/core/memalloc.c: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.0711190907230.19198@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: starvik@axis.com
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: perex@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-An extra error handling label is needed for the case where the ioremap has
-succeeded.
+There should be a pci_dev_put when breaking out of a loop that iterates
+over calls to pci_get_device and similar functions.
 
-The problem was detected using the following semantic match
-(http://www.emn.fr/x-info/coccinelle/)
+In this case, the return under the initial if needs a pci_dev_put in the
+same way that the return under the subsequent for loop has a pci_dev_put.
+
+This was fixed using the following semantic patch.
 
 // <smpl>
 @@
-type T,T1,T2;
-identifier E;
-statement S;
-expression x1,x2;
-constant C;
-int ret;
+type T;
+identifier d;
+expression e;
 @@
 
-  T E;
-  ...
-* E = ioremap(...);
-  if (E = NULL) S
-  ... when != iounmap(E)
-      when != if (E != NULL) { ... iounmap(E); ...}
-      when != x1 = (T1)E
-  if (...) {
-    ... when != iounmap(E)
-        when != if (E != NULL) { ... iounmap(E); ...}
-        when != x2 = (T2)E
+T *d;
+...
+while ((d = \(pci_get_device\|pci_get_device_reverse\|pci_get_subsys\|pci_get_class\)(..., d)) != NULL)
+  {... when != pci_dev_put(d)
+       when != e = d
 (
-*   return;
+    return d;
 |
-*   return C;
-|
-*   return ret;
++  pci_dev_put(d);
+?  return ...;
 )
-  }
+...}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
-
 ---
 
-diff -u -p a/arch/cris/arch-v32/drivers/pci/dma.c b/arch/cris/arch-v32/drivers/pci/dma.c
---- a/arch/cris/arch-v32/drivers/pci/dma.c	2007-07-20 17:45:43.000000000 +0200
-+++ b/arch/cris/arch-v32/drivers/pci/dma.c	2007-11-29 18:45:16.000000000 +0100
-@@ -93,7 +93,7 @@ int dma_declare_coherent_memory(struct d
- 
- 	dev->dma_mem = kzalloc(sizeof(struct dma_coherent_mem), GFP_KERNEL);
- 	if (!dev->dma_mem)
--		goto out;
-+		goto iounmap_out;
- 	dev->dma_mem->bitmap = kzalloc(bitmap_size, GFP_KERNEL);
- 	if (!dev->dma_mem->bitmap)
- 		goto free1_out;
-@@ -110,6 +110,8 @@ int dma_declare_coherent_memory(struct d
- 
-  free1_out:
- 	kfree(dev->dma_mem);
-+ iounmap_out:
-+	iounmap(mem_base);
-  out:
- 	return 0;
- }
+diff -u -p a/sound/core/memalloc.c b/sound/core/memalloc.c
+--- a/sound/core/memalloc.c	2007-10-22 11:25:51.000000000 +0200
++++ b/sound/core/memalloc.c	2007-11-19 08:08:08.000000000 +0100
+@@ -568,6 +568,7 @@ static ssize_t snd_mem_proc_write(struct
+  				if (pci_set_dma_mask(pci, mask) < 0 ||
+  				    pci_set_consistent_dma_mask(pci, mask) < 0) {
+  					printk(KERN_ERR "snd-page-alloc: cannot set DMA mask %lx for pci %04x:%04x\n", mask, vendor, device);
++					pci_dev_put(pci);
+  					return count;
+  				}
+  			}
