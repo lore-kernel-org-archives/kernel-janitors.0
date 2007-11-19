@@ -1,32 +1,57 @@
-From: Lucas Woods <woodzy@gmail.com>
-Date: Mon, 05 Nov 2007 20:14:02 +0000
-Subject: [PATCH 05/12] arch/parisc: Remove duplicate includes.
-Message-Id: <472F798A.8020008@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 19 Nov 2007 08:05:08 +0000
+Subject: [PATCH 3/5] drivers/pci/pci-sysfs.c: Add missing pci_dev_put
+Message-Id: <Pine.LNX.4.64.0711190903550.19198@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Lucas Woods <woodzy@gmail.com>
+There should be a pci_dev_put when breaking out of a loop that iterates
+over calls to pci_get_device and similar functions.
+
+This was fixed using the following semantic patch.
+
+// <smpl>
+@@
+identifier d;
+type T;
+expression e;
+iterator for_each_pci_dev;
+@@
+
+T *d;
+...
+for_each_pci_dev(d)
+   {... when != pci_dev_put(d)
+        when != e = d
+(
+    return d;
+|
++  pci_dev_put(d);
+?  return ...;
+)
+...}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- arch/parisc/kernel/signal.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/arch/parisc/kernel/signal.c b/arch/parisc/kernel/signal.c
-index 2ce3806..aff469c 100644
---- a/arch/parisc/kernel/signal.c
-+++ b/arch/parisc/kernel/signal.c
-@@ -23,7 +23,6 @@
- #include <linux/ptrace.h>
- #include <linux/unistd.h>
- #include <linux/stddef.h>
--#include <linux/compat.h>
- #include <linux/elf.h>
- #include <asm/ucontext.h>
- #include <asm/rt_sigframe.h>
--- 
+diff -u -p a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+--- a/drivers/pci/pci-sysfs.c   2007-07-20 17:45:56.000000000 +0200
++++ b/drivers/pci/pci-sysfs.c   2007-11-19 08:17:43.000000000 +0100
+@@ -702,8 +702,10 @@ static int __init pci_sysfs_init(void)
+         sysfs_initialized = 1;
+         for_each_pci_dev(pdev) {
+                 retval = pci_create_sysfs_dev_files(pdev);
+-               if (retval)
++               if (retval) {
++                       pci_dev_put(pdev);
+                         return retval;
++               }
+         }
 
-
-
+         return 0;
