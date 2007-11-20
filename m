@@ -1,59 +1,30 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 19 Nov 2007 08:02:22 +0000
-Subject: [PATCH 1/5] arch/sparc64: Add missing pci_dev_put
-Message-Id: <Pine.LNX.4.64.0711190901330.19198@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 20 Nov 2007 06:50:48 +0000
+Subject: Re: [PATCH 1/5] arch/sparc64: Add missing pci_dev_put
+Message-Id: <20071119.225048.111848671.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0711190901330.19198@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0711190901330.19198@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Mon, 19 Nov 2007 09:02:22 +0100 (CET)
 
-There should be a pci_dev_put when breaking out of a loop that iterates
-over calls to pci_get_device and similar functions.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> There should be a pci_dev_put when breaking out of a loop that iterates
+> over calls to pci_get_device and similar functions.
+ ..
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-This was fixed using the following semantic patch.
+Patch applied, but something in your email client adds
+extra spaces to the second column of several lines in your
+your patch.
 
-// <smpl>
-@@
-type T;
-identifier d;
-expression e;
-@@
+Please correct this before making future patch submissions.
 
-T *d;
-...
-while ((d = \(pci_get_device\|pci_get_device_reverse\|pci_get_subsys\|pci_get_class\)(..., d)) != NULL)
-  {... when != pci_dev_put(d)
-       when != e = d
-(
-    return d;
-|
-+  pci_dev_put(d);
-?  return ...;
-)
-...}
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -u -p a/arch/sparc64/kernel/isa.c b/arch/sparc64/kernel/isa.c
---- a/arch/sparc64/kernel/isa.c	2007-08-12 13:27:06.000000000 +0200
-+++ b/arch/sparc64/kernel/isa.c	2007-11-19 08:06:48.000000000 +0100
-@@ -155,6 +155,7 @@ void __init isa_init(void)
-  		isa_br = kzalloc(sizeof(*isa_br), GFP_KERNEL);
-  		if (!isa_br) {
-  			printk(KERN_DEBUG "isa: cannot allocate sparc_isa_bridge");
-+			pci_dev_put(pdev);
-  			return;
-  		}
-
-@@ -168,6 +169,7 @@ void __init isa_init(void)
-  			printk(KERN_DEBUG "isa: device registration error for %s!\n",
-  			       dp->path_component_name);
-  			kfree(isa_br);
-+			pci_dev_put(pdev);
-  			return;
-  		}
+Thank you.
