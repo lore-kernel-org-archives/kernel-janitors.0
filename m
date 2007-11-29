@@ -1,7 +1,7 @@
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Wed, 21 Nov 2007 07:44:43 +0000
-Subject: conditional inclusion of module entry and exit functions in
-Message-Id: <alpine.LFD.0.9999.0711210238420.6372@localhost.localdomain>
+Date: Thu, 29 Nov 2007 07:39:25 +0000
+Subject: [PATCH][RFC] cleanup of init.h WRT unused parameter definition
+Message-Id: <alpine.LFD.0.9999.0711290236010.5566@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,61 +9,53 @@ Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
 
-  i've noticed a pile of code that appears to have some legacy stuff
-in it regarding how to define module init and exit routines that can
-probably be simplified, unless i'm misreading something.
+  the following builds on x86 under "make defconfig".  is there
+anything else related to this that can be added to a patch to
+include/linux/init.h?
 
-  as an example, consider drivers/net/ne.c.  take a look toward the
-end of that file, where you find:
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 5141381..ab6e281 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -160,24 +160,21 @@ struct obs_kernel_param {
+  * Force the alignment so the compiler doesn't space elements of the
+  * obs_kernel_param "array" too far apart in .init.setup.
+  */
+-#define __setup_param(str, unique_id, fn, early)			\
+-	static char __setup_str_##unique_id[] __initdata __aligned(1) = str; \
+-	static struct obs_kernel_param __setup_##unique_id	\
++#define __setup_param(str, fn, early)				\
++	static char __setup_str_##fn[] __initdata __aligned(1) = str; \
++	static struct obs_kernel_param __setup_##fn	\
+ 		__attribute_used__				\
+ 		__attribute__((__section__(".init.setup")))	\
+ 		__attribute__((aligned((sizeof(long)))))	\
+-		= { __setup_str_##unique_id, fn, early }
+-
+-#define __setup_null_param(str, unique_id)			\
+-	__setup_param(str, unique_id, NULL, 0)
++		= { __setup_str_##fn, fn, early }
 
-====static int __init ne_init(void)
-{
-        return platform_driver_probe(&ne_driver, ne_drv_probe);
-}
+ #define __setup(str, fn)					\
+-	__setup_param(str, fn, fn, 0)
++	__setup_param(str, fn, 0)
 
-static void __exit ne_exit(void)
-{
-        platform_driver_unregister(&ne_driver);
-}
+ /* NOTE: fn is as per module_param, not __setup!  Emits warning if fn
+  * returns non-zero. */
+ #define early_param(str, fn)					\
+-	__setup_param(str, fn, fn, 1)
++	__setup_param(str, fn, 1)
 
-#ifdef MODULE
-#define MAX_NE_CARDS    4       /* Max number of NE cards per module */
-static struct net_device *dev_ne[MAX_NE_CARDS];
-static int io[MAX_NE_CARDS];
-static int irq[MAX_NE_CARDS];
-static int bad[MAX_NE_CARDS];   /* 0xbad = bad sig or no reset ack */
+ /* Relies on boot_command_line being set */
+ void __init parse_early_param(void);
+@@ -237,7 +234,6 @@ void __init parse_early_param(void);
+ 	void cleanup_module(void) __attribute__((alias(#exitfn)));
 
-module_param_array(io, int, NULL, 0);
-module_param_array(irq, int, NULL, 0);
-module_param_array(bad, int, NULL, 0);
-MODULE_PARM_DESC(io, "I/O base address(es),required");
-MODULE_PARM_DESC(irq, "IRQ number(s)");
-MODULE_PARM_DESC(bad, "Accept card(s) with bad signatures");
-MODULE_DESCRIPTION("NE1000/NE2000 ISA/PnP Ethernet driver");
-MODULE_LICENSE("GPL");
-...
-int __init init_module(void)
-{
-...
-}
+ #define __setup_param(str, unique_id, fn)	/* nothing */
+-#define __setup_null_param(str, unique_id) 	/* nothing */
+ #define __setup(str, func) 			/* nothing */
+ #endif
 
-void __exit cleanup_module(void)
-{
-...
-}
-#else /* MODULE */
-module_init(ne_init);
-module_exit(ne_exit);
-#endif /* MODULE */
-====
-  surely you don't have to do all that these days -- check if MODULE
-is defined and include code based on that.  don't you simply define
-the module init and exit routines, whatever parameters you want, and
-let the appropriate code deal with all of that properly when the time
-comes, depending on whether that code is modular or built-in?
-
-rday
---
 
 ====================================
 Robert P. J. Day
