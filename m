@@ -1,70 +1,64 @@
-From: Lucas Woods <woodzy@gmail.com>
-Date: Mon, 05 Nov 2007 20:16:06 +0000
-Subject: [PATCH 12/12] arch/xtensa: Remove duplicate includes.
-Message-Id: <472F7A06.1040200@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 30 Nov 2007 15:51:50 +0000
+Subject: [PATCH 2/2] drivers/macintosh/via-pmu.c: Added a missing iounmap
+Message-Id: <Pine.LNX.4.64.0711301651020.26269@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: benh@kernel.crashing.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Lucas Woods <woodzy@gmail.com>
+The error handling code should undo the ioremap as well.
+
+The problem was detected using the following semantic match
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type T,T1,T2;
+identifier E;
+statement S;
+expression x1,x2;
+constant C;
+int ret;
+@@
+
+  T E;
+  ...
+* E = ioremap(...);
+  if (E = NULL) S
+  ... when != iounmap(E)
+      when != if (E != NULL) { ... iounmap(E); ...}
+      when != x1 = (T1)E
+  if (...) {
+    ... when != iounmap(E)
+        when != if (E != NULL) { ... iounmap(E); ...}
+        when != x2 = (T2)E
+(
+*   return;
+|
+*   return C;
+|
+*   return ret;
+)
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+
 ---
- arch/xtensa/kernel/asm-offsets.c   |    1 -
- arch/xtensa/kernel/syscall.c       |    1 -
- arch/xtensa/mm/cache.c             |    1 -
- arch/xtensa/platform-iss/network.c |    1 -
- 4 files changed, 0 insertions(+), 4 deletions(-)
 
-diff --git a/arch/xtensa/kernel/asm-offsets.c b/arch/xtensa/kernel/asm-offsets.c
-index d5ffe7b..5d9ef51 100644
---- a/arch/xtensa/kernel/asm-offsets.c
-+++ b/arch/xtensa/kernel/asm-offsets.c
-@@ -21,7 +21,6 @@
- #include <linux/mm.h>
- 
- #include <asm/ptrace.h>
--#include <asm/processor.h>
- #include <asm/uaccess.h>
- 
- #define DEFINE(sym, val) asm volatile("\n->" #sym " %0 " #val : : "i" (val))
-diff --git a/arch/xtensa/kernel/syscall.c b/arch/xtensa/kernel/syscall.c
-index f3e16ef..b06e030 100644
---- a/arch/xtensa/kernel/syscall.c
-+++ b/arch/xtensa/kernel/syscall.c
-@@ -36,7 +36,6 @@ syscall_t sys_call_table[__NR_syscall_count] /* FIXME __cacheline_aligned */= {
- #define __SYSCALL(nr,symbol,nargs) [ nr ] = (syscall_t)symbol,
- #undef _XTENSA_UNISTD_H
- #undef  __KERNEL_SYSCALLS__
--#include <asm/unistd.h>
- };
- 
- /*
-diff --git a/arch/xtensa/mm/cache.c b/arch/xtensa/mm/cache.c
-index 9a1fa94..42bfb69 100644
---- a/arch/xtensa/mm/cache.c
-+++ b/arch/xtensa/mm/cache.c
-@@ -25,7 +25,6 @@
- #include <linux/swap.h>
- #include <linux/pagemap.h>
- 
--#include <asm/pgtable.h>
- #include <asm/bootparam.h>
- #include <asm/mmu_context.h>
- #include <asm/tlb.h>
-diff --git a/arch/xtensa/platform-iss/network.c b/arch/xtensa/platform-iss/network.c
-index b61fb36..31c8d21 100644
---- a/arch/xtensa/platform-iss/network.c
-+++ b/arch/xtensa/platform-iss/network.c
-@@ -31,7 +31,6 @@
- #include <linux/bootmem.h>
- #include <linux/ethtool.h>
- #include <linux/rtnetlink.h>
--#include <linux/timer.h>
- #include <linux/platform_device.h>
- 
- #include <asm/platform/simcall.h>
--- 
-
-
+diff -u -p a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+--- a/drivers/macintosh/via-pmu.c	2007-11-18 20:43:10.000000000 +0100
++++ b/drivers/macintosh/via-pmu.c	2007-11-29 18:47:46.000000000 +0100
+@@ -2336,6 +2336,7 @@ powerbook_sleep_3400(void)
+ 	ret = pmac_suspend_devices();
+ 	if (ret) {
+ 		pbook_free_pci_save();
++		iounmap(mem_ctrl);
+ 		printk(KERN_ERR "Sleep rejected by devices\n");
+ 		return ret;
+ 	}
