@@ -1,50 +1,68 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Sat, 22 Dec 2007 10:27:01 +0000
-Subject: Re: [PATCH 1/3] ipc: Convert handmade 'max' to max().
-Message-Id: <20071222022701.1ddd2ae2.akpm@linux-foundation.org>
+From: Adrian Bunk <bunk@kernel.org>
+Date: Sat, 01 Dec 2007 00:20:55 +0000
+Subject: Re: const __initdata?
+Message-Id: <20071201002055.GQ29463@stusta.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071217023555.24944.62155.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20071217023555.24944.62155.sendpatchset@thinktank.campus.ltu.se>
+References: <alpine.LFD.0.9999.0711290227150.25822@localhost.localdomain>
+In-Reply-To: <alpine.LFD.0.9999.0711290227150.25822@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-On Mon, 17 Dec 2007 03:35:55 +0100 (MET) Richard Knutsson <ricknu-0@student.ltu.se> wrote:
-
-> Convert handmade 'max' to max().
+On Thu, Nov 29, 2007 at 08:53:03AM -0800, Randy Dunlap wrote:
+> On Thu, 29 Nov 2007 02:28:43 -0500 (EST) Robert P. J. Day wrote:
 > 
-> ...
->
-> --- a/ipc/msg.c
-> +++ b/ipc/msg.c
-> @@ -473,7 +473,7 @@ asmlinkage long sys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf)
->  		up_read(&msg_ids(ns).rw_mutex);
->  		if (copy_to_user(buf, &msginfo, sizeof(struct msginfo)))
->  			return -EFAULT;
-> -		return (max_id < 0) ? 0 : max_id;
-> +		return max(max_id, 0);
+> > 
+> >   from include/linux/init.h:
+> > 
+> >  * For initialized data:
+> >  * You should insert __initdata between the variable name and equal
+> >  * sign followed by value, e.g.:
+> >  *
+> >  * static int init_variable __initdata = 0;
+> >  * static char linux_logo[] __initdata = { 0x32, 0x36, ... };
+> >  *
+> >  * Don't forget to initialize data not at file scope, i.e. within a function,
+> >  * as gcc otherwise puts the data into the bss section and not into the init
+> >  * section.
+> >  *
+> >  * Also note, that this data cannot be "const".
+> > 
+> > you mean, like this in drivers/hwmon/w83627ehf.c:
+> > 
+> > /* w83627ehf_find() looks for a '627 in the Super-I/O config space */
+> > static int __init w83627ehf_find(int sioaddr, unsigned short *addr,
+> >                                  struct w83627ehf_sio_data *sio_data)
+> > {
+> >         static const char __initdata sio_name_W83627EHF[] = "W83627EHF";
+> >         static const char __initdata sio_name_W83627EHG[] = "W83627EHG";
+> >         static const char __initdata sio_name_W83627DHG[] = "W83627DHG";
+> > 	...
+> > 
+> > or am i misreading that?
+> 
+> We have certainly seen problems with const __initdata being put
+> into a read-only section instead of the .init.data section, but
+> with gcc 4.2.1, I see these 3 __initdata items being placed into
+> the .init.data section no matter where I put "const" on the data
+> declaration line.  Maybe the problem has been fixed (relatively
+> recently).
 
-I don't think I like that much.
+No, the difference is most likely related to the fact that these 
+variables are inside a function, and "static" on variables inside a 
+function does something different from "static" on variables outside
+any function...
 
-I tend to think of max() as being an arithmetic sort of thing: pick the
-largest of two scalars.
+> ~Randy
 
-But the code which you're changing is a _logical_ operation.  It says "if
-ipc_get_maxid() returned an error, then return zero.  Otherwise return
-whatever ipc_get_maxid() returned".
+cu
+Adrian
 
-Yes, max() will do the right thing here, but I think it's a bit of weird
-trick?
+-- 
 
-
-I mean, if ipc_get_maxid() were a better function, it would return a -ve
-errno when something failed rather than the present dopey hard-coded -1. 
-In which case the code would read 
-
-	return IS_ERR_VALUE(max_id) ? 0 : max_id;
-
-in which case, converting it to max() would be even less appropriate.  If
-you see what I mean...
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
 
