@@ -1,62 +1,54 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 Dec 2007 16:14:25 +0000
-Subject: [PATCH 2/3] drivers/s390: Use offsetof
-Message-Id: <Pine.LNX.4.58.0712261713530.1185@pc-041.diku.dk>
+Date: Sun, 02 Dec 2007 20:04:05 +0000
+Subject: [PATCH 1/3] arch/powerpc: Add missing of_node_put
+Message-Id: <Pine.LNX.4.64.0712022101010.3361@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, viro@ftp.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-In the patch cc154ac64aa8d3396b187f64cef01ce67f433324, Al Viro observed
-that the proper way to compute the distance between two structure fields is
-to use offsetof() or a cast to a pointer to character.  The same change can
-be applied to a few more files.
+There should be an of_node_put when breaking out of a loop that iterates
+using for_each_node_by_type.
 
-The change was made using the following semantic patch
+This was detected and fixed using the following semantic patch.
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@r3 disable ptr_to_array@
+@@
+identifier d;
 type T;
-T *s;
-type T1, T2;
-identifier fld1;
+expression e;
+iterator for_each_node_by_type;
 @@
 
+T *d;
+...
+for_each_node_by_type(d,...)
+  {... when != of_node_put(d)
+       when != e = d
 (
-  (char *)&s->fld1 - (char *)s
+   return d;
 |
-  (uint8_t *)&s->fld1 - (uint8_t *)s
-|
-  (u8 *)&s->fld1 - (u8 *)s
-|
-- (T1)&s->fld1 - (T2)s
-+ offsetof(T,fld1)
++  of_node_put(d);
+?  return ...;
 )
-
-@@
-type T;
-expression E;
-@@
-
-- (int)(offsetof(T,E))
-+ offsetof(T,E)
+...}
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -u -p a/drivers/s390/scsi/zfcp_dbf.c b/drivers/s390/scsi/zfcp_dbf.c
---- a/drivers/s390/scsi/zfcp_dbf.c	2007-10-22 11:25:20.000000000 +0200
-+++ b/drivers/s390/scsi/zfcp_dbf.c	2007-12-26 16:25:51.000000000 +0100
-@@ -614,7 +614,7 @@ void zfcp_san_dbf_event_incoming_els(str
- 	struct fsf_status_read_buffer *status_buffer  	    (struct fsf_status_read_buffer *)fsf_req->data;
- 	int length = (int)status_buffer->length -
--	    (int)((void *)&status_buffer->payload - (void *)status_buffer);
-+	    offsetof(struct fsf_status_read_buffer, payload);
-
- 	_zfcp_san_dbf_event_common_els("iels", 1, fsf_req, status_buffer->d_id,
- 				       fc_host_port_id(adapter->scsi_host),
+diff -u -p a/arch/powerpc/platforms/cell/cbe_regs.c b/arch/powerpc/platforms/cell/cbe_regs.c
+--- a/arch/powerpc/platforms/cell/cbe_regs.c 2007-10-22 11:24:59.000000000 +0200
++++ b/arch/powerpc/platforms/cell/cbe_regs.c 2007-12-02 17:40:26.000000000 +0100
+@@ -256,6 +256,7 @@ void __init cbe_regs_init(void)
+ 			printk(KERN_ERR "cbe_regs: More BE chips than supported"
+ 			       "!\n");
+ 			cbe_regs_map_count--;
++			of_node_put(cpu);
+ 			return;
+ 		}
+ 		map->cpu_node = cpu;
