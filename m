@@ -1,84 +1,54 @@
-From: Johannes Weiner <hannes-kernel@saeurebad.de>
-Date: Thu, 13 Dec 2007 14:51:54 +0000
-Subject: Re: [PATCH][KJ] 8250: remove unnecessary variable tmout from  wait_for_xmitr()
-Message-Id: <x7hcim4ph1.fsf@saeurebad.de>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 02 Dec 2007 20:06:54 +0000
+Subject: [PATCH 3/3] drivers/serial/uartlite.c: Add missing of_node_put
+Message-Id: <Pine.LNX.4.64.0712022105480.3361@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <11975548843528-git-send-email-andre@bitwigglers.org>
-In-Reply-To: <11975548843528-git-send-email-andre@bitwigglers.org> (Andre
-	Haupt's message of "Thu, 13 Dec 2007 15:08:04 +0100")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andre Haupt <andre@bitwigglers.org>
-Cc: kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, trivial@kernel.org
+To: jacmet@sunsite.dk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi,
+From: Julia Lawall <julia@diku.dk>
 
-Andre Haupt <andre@bitwigglers.org> writes:
+There should be an of_node_put when breaking out of a loop that iterates
+using for_each_compatible_node.
 
-> This fixes a sparse warning about symbol tmout shadowing an earlier one.
->
-> Signed-off-by: Andre Haupt <andre@bitwigglers.org>
-> ---
->  drivers/serial/8250.c |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
+This was detected and fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
 
-The whole timeout loops look somewhat odd.  How about the following,
-totally untested, solution?
+// <smpl>
+@@
+identifier d;
+type T;
+expression e;
+iterator for_each_compatible_node;
+@@
 
-This converts the function to use more common timeout-loop constructs,
-gets rid of the shadowed variable and localises another variable even
-more! Hooray!
+T *d;
+...
+for_each_compatible_node(d,...)
+  {... when != of_node_put(d)
+       when != e = d
+(
+   return d;
+|
++  of_node_put(d);
+?  return ...;
+)
+...}
+// </smpl>
 
-	Hannes
-
-Signed-off-by: Johannes Weiner <hannes@saeurebad.de>
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
- drivers/serial/8250.c |   18 +++++++++---------
- 1 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/serial/8250.c b/drivers/serial/8250.c
-index f94109c..7215f6a 100644
---- a/drivers/serial/8250.c
-+++ b/drivers/serial/8250.c
-@@ -1712,30 +1712,30 @@ static void serial8250_break_ctl(struct uart_port *port, int break_state)
-  */
- static inline void wait_for_xmitr(struct uart_8250_port *up, int bits)
- {
--	unsigned int status, tmout = 10000;
-+	unsigned int tmout;
+diff -u -p a/drivers/serial/uartlite.c b/drivers/serial/uartlite.c
+--- a/drivers/serial/uartlite.c 2007-11-12 10:35:57.000000000 +0100
++++ b/drivers/serial/uartlite.c 2007-12-02 17:43:57.000000000 +0100
+@@ -393,6 +393,7 @@ static inline void __init ulite_console_
+ 			continue;
  
- 	/* Wait up to 10ms for the character(s) to be sent. */
-+	tmout = jiffies + jiffies_to_msecs(10);
- 	do {
--		status = serial_in(up, UART_LSR);
-+		unsigned int status = serial_in(up, UART_LSR);
- 
--		up->lsr_saved_flags |= status & LSR_SAVE_FLAGS;
--
--		if (--tmout = 0)
-+		up->lsr_saved_flags |= (status & LSR_SAVE_FLAGS);
-+		if ((status & bits) = bits)
- 			break;
- 		udelay(1);
--	} while ((status & bits) != bits);
-+	} while (time_after_eq(tmout, jiffies));
- 
- 	/* Wait up to 1s for flow control if necessary */
- 	if (up->port.flags & UPF_CONS_FLOW) {
--		unsigned int tmout;
--		for (tmout = 1000000; tmout; tmout--) {
-+		tmout = jiffies + jiffies_to_msecs(1000);
-+		do {
- 			unsigned int msr = serial_in(up, UART_MSR);
- 			up->msr_saved_flags |= msr & MSR_SAVE_FLAGS;
- 			if (msr & UART_MSR_CTS)
- 				break;
- 			udelay(1);
- 			touch_nmi_watchdog();
--		}
-+		} while (time_after_eq(tmout, jiffies));
+ 		ulite_ports[id].mapbase = res.start;
++		of_node_put(np);
+ 		return;
  	}
  }
- 
