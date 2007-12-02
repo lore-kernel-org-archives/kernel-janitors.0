@@ -1,29 +1,53 @@
-From: Qi Yong <qiyong@fc-cn.com>
-Date: Mon, 03 Dec 2007 03:43:59 +0000
-Subject: [patch] kill an unused PTR_ERR in bdev_cache_init
-Message-Id: <200712031143.59946.qiyong@fc-cn.com>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Sun, 02 Dec 2007 17:37:21 +0000
+Subject: "unpack_to_rootfs()" -- augment or replace the current root fs?
+Message-Id: <alpine.LFD.0.9999.0712021235470.24023@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-Kill an old unused PTR_ERR in bdev_cache_init().
+
+  (apologies for posting this to the kj list rather than the newbies
+list, but the newbies list seems to be deader than dick cheney's heart
+right now.)
 
 
-Signed-off-by: Qi Yong <qiyong@fc-cn.com>
+  in the source file init/initramfs.c, near the bottom, the beginning
+of populating the root filesystem:
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 993f78c..b5fa625 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -534,7 +534,6 @@ void __init bdev_cache_init(void)
- 	if (err)
- 		panic("Cannot register bdev pseudo-fs");
- 	bd_mnt = kern_mount(&bd_type);
--	err = PTR_ERR(bd_mnt);
- 	if (IS_ERR(bd_mnt))
- 		panic("Cannot create bdev pseudo-fs");
- 	blockdev_superblock = bd_mnt->mnt_sb;	/* For writeback */
--- 
-Qi Yong
+...
+static int __init populate_rootfs(void)
+{
+        char *err = unpack_to_rootfs(__initramfs_start,
+                         __initramfs_end - __initramfs_start, 0);
+        if (err)
+                panic(err);
+#ifdef CONFIG_BLK_DEV_INITRD
+        if (initrd_start) {
+#ifdef CONFIG_BLK_DEV_RAM
+                int fd;
+                printk(KERN_INFO "checking if image is initramfs...");
+                err = unpack_to_rootfs((char *)initrd_start,
+                        initrd_end - initrd_start, 1);
+...
+
+  now, i'm still working my way thru the unpack_to_rootfs() routine
+but, given that the code above first unpacks the in-kernel cpio-format
+initramfs, if there *is* an external initrd (either cpio or ext2
+format, perhaps), would that second unpacking *replace* the current
+unpacked rootfs, or would it simply *augment* its contents?
+
+  yes, i realize i could figure it out from RTFS, but TFS is a bit
+convoluted to say the least.
+
+rday
+
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
+
+http://crashcourse.ca
+====================================
