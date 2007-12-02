@@ -1,53 +1,62 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Sun, 02 Dec 2007 17:37:21 +0000
-Subject: "unpack_to_rootfs()" -- augment or replace the current root fs?
-Message-Id: <alpine.LFD.0.9999.0712021235470.24023@localhost.localdomain>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 02 Dec 2007 09:32:43 +0000
+Subject: [RFC] "Centralized" scanning of the source-code.
+Message-Id: <47527BBB.90403@student.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+Hi all
 
-  (apologies for posting this to the kj list rather than the newbies
-list, but the newbies list seems to be deader than dick cheney's heart
-right now.)
+Would like to hear your opinion on a little proposal:
+
+I have a server who wastes quite a few cpu-cycles, and for a couple of 
+months, it has been compiling a 'allyesconfig', 'allmodconfig' and 
+'allnoconfig' i386-kernel every week, with 'C=2'. Most of the successful 
+logs are saved and I also wrote a small diff-script in PHP (it first 
+uses 'diff' and then it tries to remove as much cruft as possible, to 
+show new warnings) (no guaranty on the script).
+
+But lately, I have also made a little "code-checker" (sound more fancy 
+then it really is) by making small scripts, who preform certain simple 
+tests (like finding "hand-coded" abs()/min()/max(), spelling-errors, 
+Kconfig-errors etc), all executed by 'scripts.sh' during the "scanning" 
+(each script can be used separately).
+
+What I am suggesting is: by collecting all this about a certain 
+area/subsystem, a janitor can clean it up with a single/few 
+patch-set(s), reducing the maintainer's headache, and when it is done, 
+monitor those areas for introduction of new "errors". In such a case, we 
+can easily use git-blame to find the route the offending commit has 
+taken, and use it when sending the patch. Also, referring the patch as a 
+cleanup for the recent commit X, should make the patch even more attractive.
+
+If a subsystem is clean(ed), a special log will be made for it, to make 
+it easier to find introduced "errors".
 
 
-  in the source file init/initramfs.c, near the bottom, the beginning
-of populating the root filesystem:
+The rest of the mail is about the more practical aspects...
 
-...
-static int __init populate_rootfs(void)
-{
-        char *err = unpack_to_rootfs(__initramfs_start,
-                         __initramfs_end - __initramfs_start, 0);
-        if (err)
-                panic(err);
-#ifdef CONFIG_BLK_DEV_INITRD
-        if (initrd_start) {
-#ifdef CONFIG_BLK_DEV_RAM
-                int fd;
-                printk(KERN_INFO "checking if image is initramfs...");
-                err = unpack_to_rootfs((char *)initrd_start,
-                        initrd_end - initrd_start, 1);
-...
+Right now, the homepage for it is 
+"http://lserver.campus.ltu.se/linux_kj/" (may get a better name later, 
+ex on dyndns.org (any ideas on names?)). I have basically just moved my 
+files (logs and scripts) there, so any suggestions on how to present it 
+better is welcome.
 
-  now, i'm still working my way thru the unpack_to_rootfs() routine
-but, given that the code above first unpacks the in-kernel cpio-format
-initramfs, if there *is* an external initrd (either cpio or ext2
-format, perhaps), would that second unpacking *replace* the current
-unpacked rootfs, or would it simply *augment* its contents?
+I am just following Linus' git-tree for the moment, but if there is a 
+need to follow other trees, just let me know how to follow them in an 
+automatic fashion (maybe with 'ketchup' or similar).
 
-  yes, i realize i could figure it out from RTFS, but TFS is a bit
-convoluted to say the least.
+Please send me suggestions/patches for more things to check up. I don't 
+really mind if the scans take a while (also, will let them stay in, even 
+after all occurrences has been fixed, in the case they will occur again).
+Will let it automatically scan the tree once every week, unless 
+requested to do it more often (or just on the subsystem of interest, for 
+easier use).
 
-rday
+If there is any security issues on the server, please let me know. ;)
 
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
+Richard Knutsson
 
-http://crashcourse.ca
-====================================
