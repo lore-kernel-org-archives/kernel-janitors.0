@@ -1,33 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Date: Tue, 11 Dec 2007 01:17:59 +0000
-Subject: Re: [PATCH 3/3] Fix use of skb after netif_rx
-Message-Id: <20071210.171759.78444664.davem@davemloft.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 02 Dec 2007 20:05:24 +0000
+Subject: [PATCH 2/3] arch/sparc: Add missing of_node_put
+Message-Id: <Pine.LNX.4.64.0712022104110.3361@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0712092103560.11165@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0712092103560.11165@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: julia@diku.dk
-Cc: fpavlic@de.ibm.com, wangchen@cn.fujitsu.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: wli@holomorphy.com, davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
-Date: Sun, 9 Dec 2007 21:05:30 +0100 (CET)
 
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Recently, Wang Chen submitted a patch
-> (d30f53aeb31d453a5230f526bea592af07944564) to move a call to netif_rx(skb)
-> after a subsequent reference to skb, because netif_rx may call kfree_skb on
-> its argument.  netif_rx_ni calls netif_rx, so the same problem occurs in
-> the files below.
-> 
-> I have left the updating of dev->last_rx after the calls to netif_rx_ni
-> because it seems time dependent, but moved the other field updates before.
-> 
-> This was found using the following semantic match.
-> (http://www.emn.fr/x-info/coccinelle/)
- ...
-> Signed-off-by: Julia Lawall <julia@diku.dk>
+There should be an of_node_put when breaking out of a loop that iterates
+using for_each_node_by_type.
 
-Applied.
+This was detected and fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+identifier d;
+type T;
+expression e;
+iterator for_each_node_by_type;
+@@
+
+T *d;
+...
+for_each_node_by_type(d,...)
+  {... when != of_node_put(d)
+       when != e = d
+(
+   return d;
+|
++  of_node_put(d);
+?  return ...;
+)
+...}
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/arch/sparc/kernel/devices.c b/arch/sparc/kernel/devices.c
+--- a/arch/sparc/kernel/devices.c	2006-11-30 19:04:17.000000000 +0100
++++ b/arch/sparc/kernel/devices.c	2007-12-02 17:57:39.000000000 +0100
+@@ -62,8 +62,10 @@ static int __cpu_find_by(int (*compare)(
+ 		int err = check_cpu_node(dp->node, &cur_inst,
+ 					 compare, compare_arg,
+ 					 prom_node, mid);
+-		if (!err)
++		if (!err) {			 
++			of_node_put(dp);
+ 			return 0;
++		}
+ 	}
+ 
+ 	return -ENODEV;
