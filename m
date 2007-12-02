@@ -1,71 +1,63 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:39:33 +0000
-Subject: [PATCH 19/38] drivers/net/appletalk: Use time_before, time_before_eq,
-Message-Id: <Pine.LNX.4.64.0712241539040.23999@ask.diku.dk>
+Date: Sun, 02 Dec 2007 20:00:38 +0000
+Subject: Subject: [PATCH] arch/powerpc/platforms/powermac: Drop unneeded
+Message-Id: <Pine.LNX.4.64.0712022058570.3361@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: acme@ghostprotocols.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
+After using for_each_node_by_name, there is no need for of_node_put unless
+there was a break in the loop body, as for_each_node_by_name does a
+of_node_put on each of the elements it returns.
 
-A simplified version of the semantic patch making this change is as follows:
+This was detected and fixed using the following semantic patch.
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@ change_compare_np @
-expression E;
+@@
+iterator for_each_node_by_name;
+expression d;
 @@
 
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
+  for_each_node_by_name(d,...) {
+    ... when != break;
+  }
+  ... when != d
+?- of_node_put(d);
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/drivers/net/appletalk/cops.c b/drivers/net/appletalk/cops.c
---- a/drivers/net/appletalk/cops.c	2007-10-22 11:25:13.000000000 +0200
-+++ b/drivers/net/appletalk/cops.c	2007-12-23 20:30:39.000000000 +0100
-@@ -69,6 +69,7 @@ static const char *version  #include <linux/atalk.h>
- #include <linux/spinlock.h>
- #include <linux/bitops.h>
-+#include <linux/jiffies.h>
+diff -u -p a/arch/powerpc/platforms/powermac/feature.c b/arch/powerpc/platforms/powermac/feature.c
+--- a/arch/powerpc/platforms/powermac/feature.c 2007-08-12 13:27:05.000000000 +0200
++++ b/arch/powerpc/platforms/powermac/feature.c 2007-12-02 17:16:04.000000000 +0100
+@@ -2861,7 +2861,6 @@ set_initial_features(void)
+ 				core99_airport_enable(np, 0, 0);
+ 			}
+ 		}
+-		of_node_put(np);
+ 	}
  
- #include <asm/system.h>
- #include <asm/io.h>
-@@ -503,7 +504,7 @@ static void cops_reset(struct net_device
-                         long snap=jiffies;
+ 	/* On all machines that support sound PM, switch sound off */
+diff -u -p a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
+--- a/arch/powerpc/platforms/powermac/pci.c 2007-10-22 11:24:59.000000000 +0200
++++ b/arch/powerpc/platforms/powermac/pci.c 2007-12-02 17:16:05.000000000 +0100
+@@ -1162,13 +1162,11 @@ void __init pmac_pcibios_after_init(void
+ 			pmac_call_feature(PMAC_FTR_1394_CABLE_POWER, nd, 0, 0);
+ 		}
+ 	}
+-	of_node_put(nd);
+ 	for_each_node_by_name(nd, "ethernet") {
+ 		if (nd->parent && of_device_is_compatible(nd, "gmac")
+ 		    && of_device_is_compatible(nd->parent, "uni-north"))
+ 			pmac_call_feature(PMAC_FTR_GMAC_ENABLE, nd, 0, 0);
+ 	}
+-	of_node_put(nd);
+ }
  
- 			/* Let card finish initializing, about 1/3 second */
--	                while(jiffies-snap<HZ/3)
-+			while (time_before(jiffies, snap + HZ/3))
-                                 schedule();
-                 }
-                 else
+ #ifdef CONFIG_PPC32
