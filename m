@@ -1,68 +1,29 @@
-From: Francisco Alecrim <francisco.alecrim@indt.org.br>
-Date: Fri, 14 Dec 2007 18:56:48 +0000
-Subject: [PATCH 4/6] drivers/input: clean up remove duplicated headers
-Message-Id: <1197658610-4558-5-git-send-email-francisco.alecrim@indt.org.br>
+From: Qi Yong <qiyong@fc-cn.com>
+Date: Mon, 03 Dec 2007 03:43:59 +0000
+Subject: [patch] kill an unused PTR_ERR in bdev_cache_init
+Message-Id: <200712031143.59946.qiyong@fc-cn.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
- <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br>
- <1197658610-4558-2-git-send-email-francisco.alecrim@indt.org.br>
- <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
- <1197658610-4558-4-git-send-email-francisco.alecrim@indt.org.br>
-In-Reply-To: <1197658610-4558-4-git-send-email-francisco.alecrim@indt.org.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com, Francisco Alecrim <francisco.alecrim@indt.org.br>
+To: kernel-janitors@vger.kernel.org
 
-Remove duplicated headers in drivers/input:
-drivers/input/keyboard/bf54x-keys.c: linux/irq.h is included more than once.
-drivers/input/keyboard/jornada720_kbd.c: linux/init.h is included more than once.
-drivers/input/gameport/gameport.c: linux/sched.h is included more than once.
+Kill an old unused PTR_ERR in bdev_cache_init().
 
-Signed-off-by: Francisco Alecrim <francisco.alecrim@indt.org.br>
----
- drivers/input/gameport/gameport.c       |    1 -
- drivers/input/keyboard/bf54x-keys.c     |    1 -
- drivers/input/keyboard/jornada720_kbd.c |    1 -
- 3 files changed, 0 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/gameport/gameport.c b/drivers/input/gameport/gameport.c
-index bfc6061..682a70e 100644
---- a/drivers/input/gameport/gameport.c
-+++ b/drivers/input/gameport/gameport.c
-@@ -17,7 +17,6 @@
- #include <linux/init.h>
- #include <linux/gameport.h>
- #include <linux/wait.h>
--#include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/delay.h>
- #include <linux/kthread.h>
-diff --git a/drivers/input/keyboard/bf54x-keys.c b/drivers/input/keyboard/bf54x-keys.c
-index e5f4da9..05e3494 100644
---- a/drivers/input/keyboard/bf54x-keys.c
-+++ b/drivers/input/keyboard/bf54x-keys.c
-@@ -42,7 +42,6 @@
- #include <linux/delay.h>
- #include <linux/platform_device.h>
- #include <linux/input.h>
--#include <linux/irq.h>
- 
- #include <asm/portmux.h>
- #include <asm/mach/bf54x_keys.h>
-diff --git a/drivers/input/keyboard/jornada720_kbd.c b/drivers/input/keyboard/jornada720_kbd.c
-index e6696b3..4dfdfef 100644
---- a/drivers/input/keyboard/jornada720_kbd.c
-+++ b/drivers/input/keyboard/jornada720_kbd.c
-@@ -19,7 +19,6 @@
- #include <linux/errno.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
--#include <linux/init.h>
- #include <linux/input.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
+Signed-off-by: Qi Yong <qiyong@fc-cn.com>
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 993f78c..b5fa625 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -534,7 +534,6 @@ void __init bdev_cache_init(void)
+ 	if (err)
+ 		panic("Cannot register bdev pseudo-fs");
+ 	bd_mnt = kern_mount(&bd_type);
+-	err = PTR_ERR(bd_mnt);
+ 	if (IS_ERR(bd_mnt))
+ 		panic("Cannot create bdev pseudo-fs");
+ 	blockdev_superblock = bd_mnt->mnt_sb;	/* For writeback */
 -- 
-1.5.3.7
-
+Qi Yong
