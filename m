@@ -1,73 +1,23 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:27:32 +0000
-Subject: [PATCH 14/38] drivers/char/rtc.c: Use time_before, time_before_eq,
-Message-Id: <Pine.LNX.4.64.0712241527070.23999@ask.diku.dk>
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Date: Mon, 03 Dec 2007 09:05:05 +0000
+Subject: is kernelnewbies list down?
+Message-Id: <alpine.LFD.0.9999.0712030404310.904@localhost.localdomain>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: a.zummo@towertech.it, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
+  i haven't been able to post to the newbies list since yesterday.  is
+anyone else having the same problem?
 
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+rday
 
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
+====================================
+Robert P. J. Day
+Linux Consulting, Training and Annoying Kernel Pedantry
+Waterloo, Ontario, CANADA
 
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -r -u -p a/drivers/char/rtc.c b/drivers/char/rtc.c
---- a/drivers/char/rtc.c	2007-11-15 15:09:36.000000000 +0100
-+++ b/drivers/char/rtc.c	2007-12-23 20:35:15.000000000 +0100
-@@ -88,6 +88,7 @@
- 
- #ifdef CONFIG_SPARC32
- #include <linux/pci.h>
-+#include <linux/jiffies.h>
- #include <asm/ebus.h>
- 
- static unsigned long rtc_port;
-@@ -1282,7 +1283,8 @@ void rtc_get_rtc_time(struct rtc_time *r
- 	 * Once the read clears, read the RTC time (again via ioctl). Easy.
- 	 */
- 
--	while (rtc_is_updating() != 0 && jiffies - uip_watchdog < 2*HZ/100)
-+	while (rtc_is_updating() != 0 &&
-+	       time_before(jiffies, uip_watchdog + 2*HZ/100))
- 		cpu_relax();
- 
- 	/*
+http://crashcourse.ca
+====================================
