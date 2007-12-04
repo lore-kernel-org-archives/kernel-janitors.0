@@ -1,58 +1,61 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Dec 2007 20:05:24 +0000
-Subject: [PATCH 2/3] arch/sparc: Add missing of_node_put
-Message-Id: <Pine.LNX.4.64.0712022104110.3361@ask.diku.dk>
+From: David Miller <davem@davemloft.net>
+Date: Tue, 04 Dec 2007 08:33:52 +0000
+Subject: Re: [PATCH 2/3] arch/sparc: Add missing of_node_put
+Message-Id: <20071204.003352.120654801.davem@davemloft.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0712022104110.3361@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0712022104110.3361@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: wli@holomorphy.com, davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: wli@holomorphy.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
+Date: Sun, 2 Dec 2007 21:05:24 +0100 (CET)
 
-There should be an of_node_put when breaking out of a loop that iterates
-using for_each_node_by_type.
+> From: Julia Lawall <julia@diku.dk>
+> 
+> There should be an of_node_put when breaking out of a loop that iterates
+> using for_each_node_by_type.
+> 
+> This was detected and fixed using the following semantic patch.
+> (http://www.emn.fr/x-info/coccinelle/)
+> 
+> // <smpl>
+> @@
+> identifier d;
+> type T;
+> expression e;
+> iterator for_each_node_by_type;
+> @@
+> 
+> T *d;
+> ...
+> for_each_node_by_type(d,...)
+>   {... when != of_node_put(d)
+>        when != e = d
+> (
+>    return d;
+> |
+> +  of_node_put(d);
+> ?  return ...;
+> )
+> ...}
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <julia@diku.dk>
 
-This was detected and fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
+Applied, but I had to fixup the trailing whitespace on this line:
 
-// <smpl>
-@@
-identifier d;
-type T;
-expression e;
-iterator for_each_node_by_type;
-@@
+> -		if (!err)
+> +		if (!err) {			 
 
-T *d;
-...
-for_each_node_by_type(d,...)
-  {... when != of_node_put(d)
-       when != e = d
-(
-   return d;
-|
-+  of_node_put(d);
-?  return ...;
-)
-...}
-// </smpl>
+As indicated by GIT:
 
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
+Adds trailing whitespace.
+diff:9:		if (!err) {			 
+warning: 1 line adds whitespace errors.
 
-diff -u -p a/arch/sparc/kernel/devices.c b/arch/sparc/kernel/devices.c
---- a/arch/sparc/kernel/devices.c	2006-11-30 19:04:17.000000000 +0100
-+++ b/arch/sparc/kernel/devices.c	2007-12-02 17:57:39.000000000 +0100
-@@ -62,8 +62,10 @@ static int __cpu_find_by(int (*compare)(
- 		int err = check_cpu_node(dp->node, &cur_inst,
- 					 compare, compare_arg,
- 					 prom_node, mid);
--		if (!err)
-+		if (!err) {			 
-+			of_node_put(dp);
- 			return 0;
-+		}
- 	}
- 
- 	return -ENODEV;
+Please correct these kinds of errors before submitting in
+the future, thanks.
