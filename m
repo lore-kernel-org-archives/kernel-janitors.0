@@ -1,29 +1,56 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date: Tue, 11 Dec 2007 13:22:22 +0000
-Subject: Re: [PATCH 2/6] pcmcia/3c574_cs: Fix 'shadow variable' warning
-Message-Id: <20071211132222.598d69ec@the-village.bc.nu>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 09 Dec 2007 20:02:31 +0000
+Subject: [PATCH 1/3] Fix use of skb after netif_rx
+Message-Id: <Pine.LNX.4.64.0712092101160.11165@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
-	<20071211043417.28518.39249.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20071211043417.28518.39249.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: linux-pcmcia@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: jdike@karaya.com, wangchen@cn.fujitsu.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, 11 Dec 2007 05:32:43 +0100 (MET)
-Richard Knutsson <ricknu-0@student.ltu.se> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Fixing:
->   CHECK   drivers/net/pcmcia/3c574_cs.c
-> drivers/net/pcmcia/3c574_cs.c:695:7: warning: symbol 'i' shadows an earlier one
-> drivers/net/pcmcia/3c574_cs.c:636:6: originally declared here
-> 
-> Signed-off-by: Richard Knutson <ricknu-0@student.ltu.se>
+Recently, Wang Chen submitted a patch
+(d30f53aeb31d453a5230f526bea592af07944564) to move a call to netif_rx(skb)
+after a subsequent reference to skb, because netif_rx may call kfree_skb on
+its argument.  The same problem occurs in some other drivers as well.
 
-For 2/3/4/5/6:
+This was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
 
-Acked-by: Alan Cox <alan@redhat.com>
+// <smpl>
+@@
+expression skb, e,e1;
+@@
 
-Not sure I agree with the first patch though.
+(
+ netif_rx(skb);
+|
+ netif_rx_ni(skb);
+)
+  ... when != skb = e
+(
+  skb = e1
+|
+* skb
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff a/arch/um/drivers/net_kern.c b/arch/um/drivers/net_kern.c
+--- a/arch/um/drivers/net_kern.c	2007-11-15 15:09:36.000000000 +0100
++++ b/arch/um/drivers/net_kern.c	2007-12-05 19:01:14.000000000 +0100
+@@ -98,10 +98,10 @@ static int uml_net_rx(struct net_device 
+ 	if (pkt_len > 0) {
+ 		skb_trim(skb, pkt_len);
+ 		skb->protocol = (*lp->protocol)(skb);
+-		netif_rx(skb);
+ 
+ 		lp->stats.rx_bytes += skb->len;
+ 		lp->stats.rx_packets++;
++		netif_rx(skb);
+ 		return pkt_len;
+ 	}
+ 
