@@ -1,21 +1,58 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Date: Fri, 14 Dec 2007 19:33:14 +0000
-Subject: Re: [PATCH 2/6] drivers/parisc/ccio-dma.c: clean up remove duplicated headers
-Message-Id: <20071214193314.GA11163@fattire.cabal.ca>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 09 Dec 2007 20:03:55 +0000
+Subject: [PATCH 2/3] Fix use of skb after netif_rx
+Message-Id: <Pine.LNX.4.64.0712092102340.11165@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br> <1197658610-4558-2-git-send-email-francisco.alecrim@indt.org.br> <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
-In-Reply-To: <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Francisco Alecrim <francisco.alecrim@indt.org.br>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com
+To: chris@zankel.net, wangchen@cn.fujitsu.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Fri, Dec 14, 2007 at 02:56:46PM -0400, Francisco Alecrim wrote:
-> Remove duplicated headers in drivers/parisc/ccio-dma.c:
-> drivers/parisc/ccio-dma.c: linux/proc_fs.h is included more than once.
-> 
+From: Julia Lawall <julia@diku.dk>
 
-Seems kind of pointless, but I'll apply it.
+Recently, Wang Chen submitted a patch
+(d30f53aeb31d453a5230f526bea592af07944564) to move a call to netif_rx(skb)
+after a subsequent reference to skb, because netif_rx may call kfree_skb on
+its argument.  The same problem occurs in some other drivers as well.
 
-cheers, Kyle
+This was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+expression skb, e,e1;
+@@
+
+(
+ netif_rx(skb);
+|
+ netif_rx_ni(skb);
+)
+  ... when != skb = e
+(
+  skb = e1
+|
+* skb
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff a/arch/xtensa/platform-iss/network.c b/arch/xtensa/platform-iss/network.c
+--- a/arch/xtensa/platform-iss/network.c	2007-10-22 16:31:51.000000000 +0200
++++ b/arch/xtensa/platform-iss/network.c	2007-12-05 19:01:34.000000000 +0100
+@@ -393,11 +393,11 @@ static int iss_net_rx(struct net_device 
+ 	if (pkt_len > 0) {
+ 		skb_trim(skb, pkt_len);
+ 		skb->protocol = lp->tp.protocol(skb);
+-	//	netif_rx(skb);
+-		netif_rx_ni(skb);
+ 
+ 		lp->stats.rx_bytes += skb->len;
+ 		lp->stats.rx_packets++;
++	//	netif_rx(skb);
++		netif_rx_ni(skb);
+ 		return pkt_len;
+ 	}
+ 	kfree_skb(skb);
