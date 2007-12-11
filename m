@@ -1,63 +1,71 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Sun, 02 Dec 2007 20:00:38 +0000
-Subject: Subject: [PATCH] arch/powerpc/platforms/powermac: Drop unneeded
-Message-Id: <Pine.LNX.4.64.0712022058570.3361@ask.diku.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 11 Dec 2007 04:33:04 +0000
+Subject: [PATCH 6/6] pcmcia/pcnet_cs: Fix 'shadow variable' warning
+Message-Id: <20071211043438.28518.66675.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Julia Lawall <julia@diku.dk>
+Fixing:
+  CHECK   drivers/net/pcmcia/pcnet_cs.c
+drivers/net/pcmcia/pcnet_cs.c:523:15: warning: symbol 'hw_info' shadows an earlier one
+drivers/net/pcmcia/pcnet_cs.c:148:18: originally declared here
 
-After using for_each_node_by_name, there is no need for of_node_put unless
-there was a break in the loop body, as for_each_node_by_name does a
-of_node_put on each of the elements it returns.
-
-This was detected and fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-iterator for_each_node_by_name;
-expression d;
-@@
-
-  for_each_node_by_name(d,...) {
-    ... when != break;
-  }
-  ... when != d
-?- of_node_put(d);
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
 
-diff -u -p a/arch/powerpc/platforms/powermac/feature.c b/arch/powerpc/platforms/powermac/feature.c
---- a/arch/powerpc/platforms/powermac/feature.c 2007-08-12 13:27:05.000000000 +0200
-+++ b/arch/powerpc/platforms/powermac/feature.c 2007-12-02 17:16:04.000000000 +0100
-@@ -2861,7 +2861,6 @@ set_initial_features(void)
- 				core99_airport_enable(np, 0, 0);
- 			}
- 		}
--		of_node_put(np);
- 	}
+
+diff --git a/drivers/net/pcmcia/pcnet_cs.c b/drivers/net/pcmcia/pcnet_cs.c
+index db6a97d..5779344 100644
+--- a/drivers/net/pcmcia/pcnet_cs.c
++++ b/drivers/net/pcmcia/pcnet_cs.c
+@@ -520,7 +520,7 @@ static int pcnet_config(struct pcmcia_device *link)
+     int i, last_ret, last_fn, start_pg, stop_pg, cm_offset;
+     int has_shmem = 0;
+     u_short buf[64];
+-    hw_info_t *hw_info;
++    hw_info_t *local_hw_info;
+     DECLARE_MAC_BUF(mac);
  
- 	/* On all machines that support sound PM, switch sound off */
-diff -u -p a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
---- a/arch/powerpc/platforms/powermac/pci.c 2007-10-22 11:24:59.000000000 +0200
-+++ b/arch/powerpc/platforms/powermac/pci.c 2007-12-02 17:16:05.000000000 +0100
-@@ -1162,13 +1162,11 @@ void __init pmac_pcibios_after_init(void
- 			pmac_call_feature(PMAC_FTR_1394_CABLE_POWER, nd, 0, 0);
- 		}
- 	}
--	of_node_put(nd);
- 	for_each_node_by_name(nd, "ethernet") {
- 		if (nd->parent && of_device_is_compatible(nd, "gmac")
- 		    && of_device_is_compatible(nd->parent, "uni-north"))
- 			pmac_call_feature(PMAC_FTR_GMAC_ENABLE, nd, 0, 0);
- 	}
--	of_node_put(nd);
- }
+     DEBUG(0, "pcnet_config(0x%p)\n", link);
+@@ -589,23 +589,23 @@ static int pcnet_config(struct pcmcia_device *link)
+ 	dev->if_port = 0;
+     }
  
- #ifdef CONFIG_PPC32
+-    hw_info = get_hwinfo(link);
+-    if (hw_info = NULL)
+-	hw_info = get_prom(link);
+-    if (hw_info = NULL)
+-	hw_info = get_dl10019(link);
+-    if (hw_info = NULL)
+-	hw_info = get_ax88190(link);
+-    if (hw_info = NULL)
+-	hw_info = get_hwired(link);
+-
+-    if (hw_info = NULL) {
++    local_hw_info = get_hwinfo(link);
++    if (local_hw_info = NULL)
++	local_hw_info = get_prom(link);
++    if (local_hw_info = NULL)
++	local_hw_info = get_dl10019(link);
++    if (local_hw_info = NULL)
++	local_hw_info = get_ax88190(link);
++    if (local_hw_info = NULL)
++	local_hw_info = get_hwired(link);
++
++    if (local_hw_info = NULL) {
+ 	printk(KERN_NOTICE "pcnet_cs: unable to read hardware net"
+ 	       " address for io base %#3lx\n", dev->base_addr);
+ 	goto failed;
+     }
+ 
+-    info->flags = hw_info->flags;
++    info->flags = local_hw_info->flags;
+     /* Check for user overrides */
+     info->flags |= (delay_output) ? DELAY_OUTPUT : 0;
+     if ((link->manf_id = MANFID_SOCKET) &&
