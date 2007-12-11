@@ -1,32 +1,44 @@
-From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
-Date: Tue, 18 Dec 2007 21:16:50 +0000
-Subject: [PATCH 2/3] remove explicit memset to memory allocated with k[zc]alloc
-Message-Id: <004a01c841bb$4eb629b0$0b01a8c0@bureau>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 11 Dec 2007 04:32:48 +0000
+Subject: [PATCH 3/6] pcmcia/axnet_cs: Make functions static
+Message-Id: <20071211043423.28518.72145.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-Remove an explicit memset(.., 0, ...) to a varialable allocated with
-kcalloc.
+Fixing:
+  CHECK   drivers/net/pcmcia/axnet_cs.c
+drivers/net/pcmcia/axnet_cs.c:994:5: warning: symbol 'ax_close' was not declared. Should it be static?
+drivers/net/pcmcia/axnet_cs.c:1017:6: warning: symbol 'ei_tx_timeout' was not declared. Should it be static?
 
-Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
 
---- linux-2.6.24-rc5/arch/blackfin/kernel/bfin_gpio.c 2007-12-16
-11:13:58.000000000 +0100
-+++ linux-2.6.24-rc5/arch/blackfin/kernel/bfin_gpio.c.cj 2007-12-17
-21:58:02.000000000 +0100
-@@ -423,8 +423,6 @@ static int __init bfin_gpio_init(void)
-  if (str_ident = NULL)
-   return -ENOMEM;
 
-- memset(str_ident, 0, MAX_RESOURCES * sizeof(struct str_ident));
--
-  printk(KERN_INFO "Blackfin GPIO Controller\n");
-
-  return 0;
-
-
+diff --git a/drivers/net/pcmcia/axnet_cs.c b/drivers/net/pcmcia/axnet_cs.c
+index 8d910a3..96931cc 100644
+--- a/drivers/net/pcmcia/axnet_cs.c
++++ b/drivers/net/pcmcia/axnet_cs.c
+@@ -991,7 +991,7 @@ static int ax_open(struct net_device *dev)
+  *
+  * Opposite of ax_open(). Only used when "ifconfig <devname> down" is done.
+  */
+-int ax_close(struct net_device *dev)
++static int ax_close(struct net_device *dev)
+ {
+ 	unsigned long flags;
+ 
+@@ -1014,7 +1014,7 @@ int ax_close(struct net_device *dev)
+  * completed (or failed) - i.e. never posted a Tx related interrupt.
+  */
+ 
+-void ei_tx_timeout(struct net_device *dev)
++static void ei_tx_timeout(struct net_device *dev)
+ {
+ 	long e8390_base = dev->base_addr;
+ 	struct ei_device *ei_local = (struct ei_device *) netdev_priv(dev);
