@@ -1,84 +1,36 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:43:59 +0000
-Subject: [PATCH 27/38] kernel: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241543320.23999@ask.diku.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 11 Dec 2007 04:32:59 +0000
+Subject: [PATCH 5/6] pcmcia/fmvj18x_cs: Fix 'shadow variable' warning
+Message-Id: <20071211043433.28518.30708.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Julia Lawall <julia@diku.dk>
+Fixing:
+  CHECK   drivers/net/pcmcia/fmvj18x_cs.c
+drivers/net/pcmcia/fmvj18x_cs.c:1205:6: warning: symbol 'i' shadows an earlier one
+drivers/net/pcmcia/fmvj18x_cs.c:1179:9: originally declared here
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
-
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
-
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
 
-diff -r -u -p a/kernel/irq/spurious.c b/kernel/irq/spurious.c
---- a/kernel/irq/spurious.c	2007-07-20 17:46:05.000000000 +0200
-+++ b/kernel/irq/spurious.c	2007-12-23 20:30:40.000000000 +0100
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/kallsyms.h>
- #include <linux/interrupt.h>
-+#include <linux/jiffies.h>
- 
- static int irqfixup __read_mostly;
- 
-@@ -178,7 +179,7 @@ void note_interrupt(unsigned int irq, st
- 		 * otherwise the couter becomes a doomsday timer for otherwise
- 		 * working systems
- 		 */
--		if (jiffies - desc->last_unhandled > HZ/10)
-+		if (time_after(jiffies, desc->last_unhandled + HZ/10))
- 			desc->irqs_unhandled = 1;
- 		else
- 			desc->irqs_unhandled++;
-diff -r -u -p a/kernel/timer.c b/kernel/timer.c
---- a/kernel/timer.c	2007-12-21 06:57:20.000000000 +0100
-+++ b/kernel/timer.c	2007-12-23 20:30:40.000000000 +0100
-@@ -165,7 +165,7 @@ unsigned long __round_jiffies(unsigned l
- 	/* now that we have rounded, subtract the extra skew again */
- 	j -= cpu * 3;
- 
--	if (j <= jiffies) /* rounding ate our timeout entirely; */
-+	if (time_before_eq(jiffies, j))/* rounding ate our timeout entirely; */
- 		return original;
- 	return j;
- }
+
+diff --git a/drivers/net/pcmcia/fmvj18x_cs.c b/drivers/net/pcmcia/fmvj18x_cs.c
+index 8c719b4..4f604ae 100644
+--- a/drivers/net/pcmcia/fmvj18x_cs.c
++++ b/drivers/net/pcmcia/fmvj18x_cs.c
+@@ -1202,8 +1202,7 @@ static void set_rx_mode(struct net_device *dev)
+ 	outb(1, ioaddr + RX_MODE);	/* Ignore almost all multicasts. */
+     } else {
+ 	struct dev_mc_list *mclist;
+-	int i;
+-	
++
+ 	memset(mc_filter, 0, sizeof(mc_filter));
+ 	for (i = 0, mclist = dev->mc_list; mclist && i < dev->mc_count;
+ 	     i++, mclist = mclist->next) {
