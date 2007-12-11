@@ -1,27 +1,40 @@
-From: Peter Korsgaard <jacmet@sunsite.dk>
-Date: Tue, 04 Dec 2007 15:53:20 +0000
-Subject: Re: [PATCH 3/3] drivers/serial/uartlite.c: Add missing of_node_put
-Message-Id: <87bq96xxqn.fsf@macbook.be.48ers.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 11 Dec 2007 04:32:38 +0000
+Subject: [PATCH 1/6] pcmcia/3c574_cs: Fix dubious bitfield warning
+Message-Id: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0712022105480.3361@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0712022105480.3361@ask.diku.dk> (Julia Lawall's message of "Sun\, 2 Dec 2007 21\:06\:54 +0100 \(CET\)")
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
->>>>> "Julia" = Julia Lawall <julia@diku.dk> writes:
+Fixing:
+  CHECK   drivers/net/pcmcia/3c574_cs.c
+drivers/net/pcmcia/3c574_cs.c:194:13: warning: dubious bitfield without explicit `signed' or `unsigned'
+drivers/net/pcmcia/3c574_cs.c:196:14: warning: dubious bitfield without explicit `signed' or `unsigned'
 
- Julia> From: Julia Lawall <julia@diku.dk>
- Julia> There should be an of_node_put when breaking out of a loop
- Julia> that iterates using for_each_compatible_node.
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+---
+Is there a reason for not doing it this way?
 
-..
 
- Julia> Signed-off-by: Julia Lawall <julia@diku.dk>
-
-Acked-by: Peter Korsgaard <jacmet@sunsite.dk>
-
--- 
-Bye, Peter Korsgaard
+diff --git a/drivers/net/pcmcia/3c574_cs.c b/drivers/net/pcmcia/3c574_cs.c
+index ad134a6..97b6daa 100644
+--- a/drivers/net/pcmcia/3c574_cs.c
++++ b/drivers/net/pcmcia/3c574_cs.c
+@@ -190,10 +190,10 @@ enum Window3 {			/* Window 3: MAC/config bits. */
+ union wn3_config {
+ 	int i;
+ 	struct w3_config_fields {
+-		unsigned int ram_size:3, ram_width:1, ram_speed:2, rom_size:2;
+-		int pad8:8;
+-		unsigned int ram_split:2, pad18:2, xcvr:3, pad21:1, autoselect:1;
+-		int pad24:7;
++		u8 ram_size:3, ram_width:1, ram_speed:2, rom_size:2;
++		u8 pad8;
++		u8 ram_split:2, pad18:2, xcvr:3, pad21:1;
++		u8 autoselect:1, pad24:7;
+ 	} u;
+ };
+ 
