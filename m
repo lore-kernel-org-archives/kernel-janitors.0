@@ -1,73 +1,34 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:27:01 +0000
-Subject: [PATCH 13/38] drivers/char/keyboard.c: Use time_before, time_before_eq,
-Message-Id: <Pine.LNX.4.64.0712241526190.23999@ask.diku.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Tue, 11 Dec 2007 04:32:54 +0000
+Subject: [PATCH 4/6] pcmcia/axnet_cs: Make use of 'max()' instead of handcrafted one
+Message-Id: <20071211043428.28518.24891.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: dmitry.torokhov@gmail.com, vojtech@suse.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-pcmcia@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Julia Lawall <julia@diku.dk>
+Use 'max(x,y)' instead of 'x < y ? y : x'.
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
-
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
-
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
 
-diff -r -u -p a/drivers/char/keyboard.c b/drivers/char/keyboard.c
---- a/drivers/char/keyboard.c	2007-10-22 11:25:05.000000000 +0200
-+++ b/drivers/char/keyboard.c	2007-12-23 20:35:00.000000000 +0100
-@@ -43,6 +43,7 @@
- #include <linux/input.h>
- #include <linux/reboot.h>
- #include <linux/notifier.h>
-+#include <linux/jiffies.h>
+
+diff --git a/drivers/net/pcmcia/axnet_cs.c b/drivers/net/pcmcia/axnet_cs.c
+index 8d910a3..96931cc 100644
+--- a/drivers/net/pcmcia/axnet_cs.c
++++ b/drivers/net/pcmcia/axnet_cs.c
+@@ -1091,8 +1091,8 @@ static int ei_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	
+ 	ei_local->irqlock = 1;
  
- extern void ctrl_alt_del(void);
- 
-@@ -929,7 +930,8 @@ static void k_brl(struct vc_data *vc, un
- 	if (up_flag) {
- 		if (brl_timeout) {
- 			if (!committing ||
--			    jiffies - releasestart > (brl_timeout * HZ) / 1000) {
-+			    time_after(jiffies,
-+				       releasestart + (brl_timeout*HZ)/1000)) {
- 				committing = pressed;
- 				releasestart = jiffies;
- 			}
+-	send_length = ETH_ZLEN < length ? length : ETH_ZLEN;
+-	
++	send_length = max(length, ETH_ZLEN);
++
+ 	/*
+ 	 * We have two Tx slots available for use. Find the first free
+ 	 * slot, and then perform some sanity checks. With two Tx bufs,
