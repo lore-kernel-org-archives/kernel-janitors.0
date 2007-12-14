@@ -1,56 +1,69 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Wed, 26 Dec 2007 16:15:08 +0000
-Subject: [PATCH 3/3] drivers/scsi: Use offsetof
-Message-Id: <Pine.LNX.4.58.0712261714270.1185@pc-041.diku.dk>
+From: Francisco Alecrim <francisco.alecrim@indt.org.br>
+Date: Fri, 14 Dec 2007 18:56:49 +0000
+Subject: [PATCH 5/6] drivers/net: clean up remove duplicated headers
+Message-Id: <1197658610-4558-6-git-send-email-francisco.alecrim@indt.org.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
+ <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-2-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-4-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-5-git-send-email-francisco.alecrim@indt.org.br>
+In-Reply-To: <1197658610-4558-5-git-send-email-francisco.alecrim@indt.org.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-scsi@vger.kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com, Francisco Alecrim <francisco.alecrim@indt.org.br>
 
-From: Julia Lawall <julia@diku.dk>
+Remove duplicated headers in drivers/net:
+drivers/net/ucc_geth_ethtool.c: asm/uaccess.h is included more than once.
+drivers/net/irda/ks959-sir.c: linux/module.h is included more than once.
+drivers/net/irda/ksdazzle-sir.c: linux/module.h is included more than once.
 
-In the patch cc154ac64aa8d3396b187f64cef01ce67f433324, Al Viro observed
-that the proper way to compute the distance between two structure fields is
-to use offsetof() or a cast to a pointer to character.  The same change can
-be applied to a few more files.
-
-The change was made using the following semantic patch
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@r3 disable ptr_to_array@
-type T;
-T *s;
-type T1, T2;
-identifier fld1;
-@@
-
-(
-  (char *)&s->fld1 - (char *)s
-|
-  (uint8_t *)&s->fld1 - (uint8_t *)s
-|
-  (u8 *)&s->fld1 - (u8 *)s
-|
-- (T1)&s->fld1 - (T2)s
-+ offsetof(T,fld1)
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Francisco Alecrim <francisco.alecrim@indt.org.br>
 ---
+ drivers/net/irda/ks959-sir.c    |    1 -
+ drivers/net/irda/ksdazzle-sir.c |    1 -
+ drivers/net/ucc_geth_ethtool.c  |    1 -
+ 3 files changed, 0 insertions(+), 3 deletions(-)
 
-diff -u -p a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
---- a/drivers/scsi/BusLogic.c	2007-10-22 11:25:20.000000000 +0200
-+++ b/drivers/scsi/BusLogic.c	2007-12-26 16:33:42.000000000 +0100
-@@ -2856,7 +2856,10 @@ static int BusLogic_QueueCommand(struct
- 		CCB->Opcode = BusLogic_InitiatorCCB_ScatterGather;
- 		CCB->DataLength = Count * sizeof(struct BusLogic_ScatterGatherSegment);
- 		if (BusLogic_MultiMasterHostAdapterP(HostAdapter))
--			CCB->DataPointer = (unsigned int) CCB->DMA_Handle + ((unsigned long) &CCB->ScatterGatherList - (unsigned long) CCB);
-+			CCB->DataPointer +				(unsigned int) CCB->DMA_Handle +
-+				offsetof(struct BusLogic_CCB,
-+					 ScatterGatherList);
- 		else
- 			CCB->DataPointer = Virtual_to_32Bit_Virtual(CCB->ScatterGatherList);
+diff --git a/drivers/net/irda/ks959-sir.c b/drivers/net/irda/ks959-sir.c
+index 8c257a5..db48998 100644
+--- a/drivers/net/irda/ks959-sir.c
++++ b/drivers/net/irda/ks959-sir.c
+@@ -118,7 +118,6 @@
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+-#include <linux/module.h>
+ #include <linux/kref.h>
+ #include <linux/usb.h>
+ #include <linux/device.h>
+diff --git a/drivers/net/irda/ksdazzle-sir.c b/drivers/net/irda/ksdazzle-sir.c
+index d01a285..10c25b2 100644
+--- a/drivers/net/irda/ksdazzle-sir.c
++++ b/drivers/net/irda/ksdazzle-sir.c
+@@ -82,7 +82,6 @@
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+-#include <linux/module.h>
+ #include <linux/kref.h>
+ #include <linux/usb.h>
+ #include <linux/device.h>
+diff --git a/drivers/net/ucc_geth_ethtool.c b/drivers/net/ucc_geth_ethtool.c
+index 9a9622c..68c8700 100644
+--- a/drivers/net/ucc_geth_ethtool.c
++++ b/drivers/net/ucc_geth_ethtool.c
+@@ -37,7 +37,6 @@
+ #include <asm/irq.h>
+ #include <asm/uaccess.h>
+ #include <asm/types.h>
+-#include <asm/uaccess.h>
+ 
+ #include "ucc_geth.h"
+ #include "ucc_geth_mii.h"
+-- 
+1.5.3.7
+
