@@ -1,65 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:29:38 +0000
-Subject: [PATCH 16/38] drivers/md: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241528430.23999@ask.diku.dk>
+From: Francisco Alecrim <francisco.alecrim@indt.org.br>
+Date: Fri, 14 Dec 2007 18:56:50 +0000
+Subject: [PATCH 6/6] drivers/misc/atmel-ssc.c: clean up remove duplicated headers
+Message-Id: <1197658610-4558-7-git-send-email-francisco.alecrim@indt.org.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
+ <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-2-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-4-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-5-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-6-git-send-email-francisco.alecrim@indt.org.br>
+In-Reply-To: <1197658610-4558-6-git-send-email-francisco.alecrim@indt.org.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hpa@zytor.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com, Francisco Alecrim <francisco.alecrim@indt.org.br>
 
-From: Julia Lawall <julia@diku.dk>
+Remove duplicated headers in drivers/misc/atmel-ssc.c:
+drivers/misc/atmel-ssc.c: linux/list.h is included more than once.
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
-
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
-
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Francisco Alecrim <francisco.alecrim@indt.org.br>
 ---
+ drivers/misc/atmel-ssc.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff -r -u -p a/drivers/md/raid6algos.c b/drivers/md/raid6algos.c
---- a/drivers/md/raid6algos.c	2007-11-01 10:30:39.000000000 +0100
-+++ b/drivers/md/raid6algos.c	2007-12-23 20:36:20.000000000 +0100
-@@ -121,7 +121,8 @@ int __init raid6_select_algo(void)
- 			j0 = jiffies;
- 			while ( (j1 = jiffies) = j0 )
- 				cpu_relax();
--			while ( (jiffies-j1) < (1 << RAID6_TIME_JIFFIES_LG2) ) {
-+			while ( time_before(jiffies,
-+					    j1 + (1<<RAID6_TIME_JIFFIES_LG2)) ) {
- 				(*algo)->gen_syndrome(disks, PAGE_SIZE, dptrs);
- 				perf++;
- 			}
+diff --git a/drivers/misc/atmel-ssc.c b/drivers/misc/atmel-ssc.c
+index 058ccac..992d371 100644
+--- a/drivers/misc/atmel-ssc.c
++++ b/drivers/misc/atmel-ssc.c
+@@ -13,7 +13,6 @@
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+-#include <linux/list.h>
+ #include <linux/spinlock.h>
+ #include <linux/atmel-ssc.h>
+ 
+-- 
+1.5.3.7
+
