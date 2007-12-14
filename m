@@ -1,84 +1,20 @@
-From: Stephen Hemminger <shemminger@linux-foundation.org>
-Date: Mon, 24 Dec 2007 17:22:45 +0000
-Subject: Re: [PATCH 30/38] net/bridge: Use time_before, time_before_eq, etc.
-Message-Id: <20071224092245.57b1397e@deepthought>
+From: Francisco Alecrim <francisco.alecrim@indt.org.br>
+Date: Fri, 14 Dec 2007 18:56:07 +0000
+Subject: [PATCH 0/6] clean up patches
+Message-Id: <1197658567-4450-1-git-send-email-francisco.alecrim@indt.org.br>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0712241545090.23999@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0712241545090.23999@ask.diku.dk>
+References: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
+In-Reply-To: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-
-On Mon, 24 Dec 2007 15:45:32 +0100 (CET)
-Julia Lawall <julia@diku.dk> wrote:
-
-> From: Julia Lawall <julia@diku.dk>
-> 
-> The functions time_before, time_before_eq, time_after, and time_after_eq
-> are more robust for comparing jiffies against other values.
-> 
-> A simplified version of the semantic patch making this change is as follows:
-> (http://www.emn.fr/x-info/coccinelle/)
-> 
-> // <smpl>
-> @ change_compare_np @
-> expression E;
-> @@
-> 
-> (
-> - jiffies <= E
-> + time_before_eq(jiffies,E)
-> |
-> - jiffies >= E
-> + time_after_eq(jiffies,E)
-> |
-> - jiffies < E
-> + time_before(jiffies,E)
-> |
-> - jiffies > E
-> + time_after(jiffies,E)
-> )
-> 
-> @ include depends on change_compare_np @
-> @@
-> 
-> #include <linux/jiffies.h>
-> 
-> @ no_include depends on !include && change_compare_np @
-> @@
-> 
->   #include <linux/...>
-> + #include <linux/jiffies.h>
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <julia@diku.dk>
-> ---
-> 
-> diff -r -u -p a/net/bridge/br_netfilter.c b/net/bridge/br_netfilter.c
-> --- a/net/bridge/br_netfilter.c	2007-11-15 15:09:37.000000000 +0100
-> +++ b/net/bridge/br_netfilter.c	2007-12-23 20:30:40.000000000 +0100
-> @@ -46,6 +46,7 @@
->  #include "br_private.h"
->  #ifdef CONFIG_SYSCTL
->  #include <linux/sysctl.h>
-> +#include <linux/jiffies.h>
->  #endif
->  
->  #define skb_origaddr(skb)	 (((struct bridge_skb_cb *) \
-> @@ -221,7 +222,7 @@ static void __br_dnat_complain(void)
->  {
->  	static unsigned long last_complaint;
->  
-> -	if (jiffies - last_complaint >= 5 * HZ) {
-> +	if (time_before_eq(jiffies, last_complaint + 5 * HZ)) {
->  		printk(KERN_WARNING "Performing cross-bridge DNAT requires IP "
->  		       "forwarding to be enabled\n");
->  		last_complaint = jiffies;
-
-I would recommend changing this to net_ratelimit() instead.
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com
 
 
--- 
-Stephen Hemminger <stephen.hemminger@vyatta.com>
+Hi all,
+
+The series of 6 patches contain clean ups related to duplicated headers.
+
+Regards,
+Alecrim.
