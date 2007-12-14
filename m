@@ -1,66 +1,69 @@
-From: Fabio Olive Leite <fleite@redhat.com>
-Date: Fri, 28 Dec 2007 14:21:09 +0000
-Subject: Re: [autofs] [PATCH 1/4] fs/autofs: Use time_before, time_before_eq, etc.
-Message-Id: <20071228142109.GA3801@sleipnir.redhat.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 14 Dec 2007 09:28:17 +0000
+Subject: [PATCH] s390/net/qeth_main.c: Fix use of skb after netif_rx
+Message-Id: <Pine.LNX.4.64.0712141025470.29947@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0712261621000.1185@pc-041.diku.dk> <2c0942db0712261158q34cddebeifceef6ceda683320@mail.gmail.com>
-In-Reply-To: <2c0942db0712261158q34cddebeifceef6ceda683320@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-To: Ray Lee <ray-lk@madrabbit.org>
-Cc: Julia Lawall <julia@diku.dk>, autofs@linux.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: fpavlic@de.ibm.com, jgarzik@pobox.com, wangchen@cn.fujitsu.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Dec 26, 2007 at 11:58:56AM -0800, Ray Lee wrote:
->=20
-> On Dec 26, 2007 7:21 AM, Julia Lawall <julia@diku.dk> wrote:
-> > -               if (jiffies - ent->last_usage < timeout)
-> > +               if (time_before(jiffies, ent->last_usage + timeout))
->=20
-> I don't think this is a safe change? subtraction is always safe (if
-> you think about it as 'distance'), addition isn't always safe unless
-> you know the range.
+From: Julia Lawall <julia@diku.dk>
 
-This thinking is wrong, and is exactly the kind of wrong thinking that
-led to the time_{before,after}{,_eq} macros. If jiffies just wrapped,
-your safe subtraction will underflow, and you'll be comparing very
-different unsigned values.
+Recently, Wang Chen submitted a patch
+(d30f53aeb31d453a5230f526bea592af07944564) to move a call to netif_rx(skb)
+after a subsequent reference to skb, because netif_rx may call kfree_skb on
+its argument.  The same problem occurs in some other drivers as well.
 
-This is only a concern for 32bit architectures, of course. With 64bit
-jiffies, even if HZ is set to 1000000 in the far future, this
-civilization will still not outlive the jiffies counter (insert
-shocking soundtrack!) as it will wrap in half a million years.
+This was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
 
-Sadly with 32bit jiffies it currently wraps every 50 days, and the
-sign (if cast to signed) changes every 25 days.
+// <smpl>
+@@
+expression skb, e,e1;
+@@
 
-> The time_before macro will expand that out to
-> (effectively):
->=20
->   if ( (long)(ent->last_usage + timeout) - (long)(jiffies) < 0 )
+(
+ netif_rx(skb);
+|
+ netif_rx_ni(skb);
+)
+  ... when != skb = e
+(
+  skb = e1
+|
+* skb
+)
+// </smpl>
 
-After contemplating this for a very long time (for an NFS fix at the
-time) I _think_ the magic is in the casts to signed. The construct
-manages to compare correctly any given jiffie values within 2^31 of
-each other (on 32bit arches) even with wraps, assuming you really have
-timestamps where the second one is taken less than 2^31 jiffies after
-the first.
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
 
-Of course, if the highest jiffies bit wraps twice between the first
-and second timestamps, you'll be comparing apples and oranges. If the
-timing is right this can happen if you compare two timestamps i.e. 26
-days from each other, but I think only NFS is wicked enough to produce
-such long living (and stale) kernel data structures.
-
-So in summary: don't question time_after and friends. Not without a
-very good analysis and testing with a matrix of timestamps. :)
-
-Cheers!
-F=E1bio Oliv=E9
---=20
-ex sed lex awk yacc, e pluribus unix, amem
--
-To unsubscribe from this list: send the line "unsubscribe kernel-janitors" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff -u -p a/drivers/s390/net/qeth_main.c b/drivers/s390/net/qeth_main.c
+--- a/drivers/s390/net/qeth_main.c	2007-10-22 11:25:20.000000000 +0200
++++ b/drivers/s390/net/qeth_main.c	2007-12-14 10:20:06.000000000 +0100
+@@ -2689,6 +2689,7 @@ qeth_process_inbound_buffer(struct qeth_
+ 	int offset;
+ 	int rxrc;
+ 	__u16 vlan_tag = 0;
++	unsigned int len;
+ 
+ 	/* get first element of current buffer */
+ 	element = (struct qdio_buffer_element *)&buf->buffer->element[0];
+@@ -2717,6 +2718,7 @@ qeth_process_inbound_buffer(struct qeth_
+ 			dev_kfree_skb_any(skb);
+ 			continue;
+ 		}
++		len = skb->len;
+ 		if (card->info.type = QETH_CARD_TYPE_OSN)
+ 			rxrc = card->osn_info.data_cb(skb);
+ 		else
+@@ -2733,7 +2735,7 @@ qeth_process_inbound_buffer(struct qeth_
+ 			rxrc = netif_rx(skb);
+ 		card->dev->last_rx = jiffies;
+ 		card->stats.rx_packets++;
+-		card->stats.rx_bytes += skb->len;
++		card->stats.rx_bytes += len;
+ 	}
+ }
+ 
