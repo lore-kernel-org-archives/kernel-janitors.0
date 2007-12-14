@@ -1,64 +1,39 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:42:24 +0000
-Subject: [PATCH 24/38] fs/autofs: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241542010.23999@ask.diku.dk>
+From: Francisco Alecrim <francisco.alecrim@indt.org.br>
+Date: Fri, 14 Dec 2007 18:56:47 +0000
+Subject: [PATCH 3/6] drivers/char/keyboard.c: clean up remove duplicated headers
+Message-Id: <1197658610-4558-4-git-send-email-francisco.alecrim@indt.org.br>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
+ <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-2-git-send-email-francisco.alecrim@indt.org.br>
+ <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
+In-Reply-To: <1197658610-4558-3-git-send-email-francisco.alecrim@indt.org.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: hpa@zytor.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com, Francisco Alecrim <francisco.alecrim@indt.org.br>
 
-From: Julia Lawall <julia@diku.dk>
+Remove duplicated headers in drivers/char/keyboard.c:
+drivers/char/keyboard.c: linux/consolemap.h is included more than once.
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
-
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
-
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Francisco Alecrim <francisco.alecrim@indt.org.br>
 ---
+ drivers/char/keyboard.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff -r -u -p a/fs/autofs/dirhash.c b/fs/autofs/dirhash.c
---- a/fs/autofs/dirhash.c	2006-11-30 19:05:26.000000000 +0100
-+++ b/fs/autofs/dirhash.c	2007-12-23 20:30:39.000000000 +0100
-@@ -47,7 +47,7 @@ struct autofs_dir_ent *autofs_expire(str
- 			return NULL;	/* No entries */
- 		/* We keep the list sorted by last_usage and want old stuff */
- 		ent = list_entry(dh->expiry_head.next, struct autofs_dir_ent, exp);
--		if (jiffies - ent->last_usage < timeout)
-+		if (time_before(jiffies, ent->last_usage + timeout))
- 			break;
- 		/* Move to end of list in case expiry isn't desirable */
- 		autofs_update_usage(dh, ent);
+diff --git a/drivers/char/keyboard.c b/drivers/char/keyboard.c
+index fc54d23..2c21fb1 100644
+--- a/drivers/char/keyboard.c
++++ b/drivers/char/keyboard.c
+@@ -38,7 +38,6 @@
+ #include <linux/kbd_kern.h>
+ #include <linux/kbd_diacr.h>
+ #include <linux/vt_kern.h>
+-#include <linux/consolemap.h>
+ #include <linux/sysrq.h>
+ #include <linux/input.h>
+ #include <linux/reboot.h>
+-- 
+1.5.3.7
+
