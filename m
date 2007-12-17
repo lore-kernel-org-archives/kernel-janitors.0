@@ -1,103 +1,61 @@
 From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Wed, 12 Dec 2007 01:40:56 +0000
-Subject: Re: [PATCH 1/6] pcmcia/3c574_cs: Fix dubious bitfield warning
-Message-Id: <475F3C28.7010409@student.ltu.se>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="------------060808040403080803070107"
+Date: Mon, 17 Dec 2007 02:35:55 +0000
+Subject: [PATCH 1/3] ipc: Convert handmade 'max' to max().
+Message-Id: <20071217023555.24944.62155.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se> <20071211131936.3379f2af@the-village.bc.nu>
-In-Reply-To: <20071211131936.3379f2af@the-village.bc.nu>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-pcmcia@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-
-This is a multi-part message in MIME format.
---------------060808040403080803070107
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-Alan Cox wrote:
-> On Tue, 11 Dec 2007 05:32:38 +0100 (MET)
-> Richard Knutsson <ricknu-0@student.ltu.se> wrote:
->
->   
->> Fixing:
->>   CHECK   drivers/net/pcmcia/3c574_cs.c
->> drivers/net/pcmcia/3c574_cs.c:194:13: warning: dubious bitfield without explicit `signed' or `unsigned'
->> drivers/net/pcmcia/3c574_cs.c:196:14: warning: dubious bitfield without explicit `signed' or `unsigned'
->>
->> Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
->> ---
->> Is there a reason for not doing it this way?
->>     
->
-> How is the endianness handled here (I suspect its always been broken)
->   
-Guess so, but it should not handle the endians differently with such a 
-change, does it?
->   
->> diff --git a/drivers/net/pcmcia/3c574_cs.c b/drivers/net/pcmcia/3c574_cs.c
->> index ad134a6..97b6daa 100644
->> --- a/drivers/net/pcmcia/3c574_cs.c
->> +++ b/drivers/net/pcmcia/3c574_cs.c
->> @@ -190,10 +190,10 @@ enum Window3 {			/* Window 3: MAC/config bits. */
->>  union wn3_config {
->>  	int i;
->>  	struct w3_config_fields {
->> -		unsigned int ram_size:3, ram_width:1, ram_speed:2, rom_size:2;
->> -		int pad8:8;
->> -		unsigned int ram_split:2, pad18:2, xcvr:3, pad21:1, autoselect:1;
->> -		int pad24:7;
->> +		u8 ram_size:3, ram_width:1, ram_speed:2, rom_size:2;
->> +		u8 pad8;
->> +		u8 ram_split:2, pad18:2, xcvr:3, pad21:1;
->> +		u8 autoselect:1, pad24:7;
->>     
->
-> Just changing the int pad to unsigned int pad would be safer in terms of
-> not causing changes. Simply delcaring a 32bit field and bit masks to
-> and/or into it is probably a lot saner in the general case.
->   
-Thought about it before and with the endian-issue it seem like a better 
-solution.
-So, something like this?
-
-
---------------060808040403080803070107
-Content-Type: text/x-patch;
- name="drivers_net_pcmcia_3c574_cs.c-dubious-bitfield.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename*0="drivers_net_pcmcia_3c574_cs.c-dubious-bitfield.patch"
-
-Fixing:
-  CHECK   drivers/net/pcmcia/3c574_cs.c
-drivers/net/pcmcia/3c574_cs.c:194:13: warning: dubious bitfield without explicit `signed' or `unsigned'
-drivers/net/pcmcia/3c574_cs.c:196:14: warning: dubious bitfield without explicit `signed' or `unsigned'
+Convert handmade 'max' to max().
 
 Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
-Moved 'autoselect' to the last line to make every line 8 bits.
-Is there a reason for not doing it this way?
+
+ msg.c |    2 +-
+ sem.c |    2 +-
+ shm.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 
-diff --git a/drivers/net/pcmcia/3c574_cs.c b/drivers/net/pcmcia/3c574_cs.c
-index ad134a6..e549427 100644
---- a/drivers/net/pcmcia/3c574_cs.c
-+++ b/drivers/net/pcmcia/3c574_cs.c
-@@ -190,10 +190,10 @@ enum Window3 {			/* Window 3: MAC/config bits. */
- union wn3_config {
- 	int i;
- 	struct w3_config_fields {
--		unsigned int ram_size:3, ram_width:1, ram_speed:2, rom_size:2;
--		int pad8:8;
--		unsigned int ram_split:2, pad18:2, xcvr:3, pad21:1, autoselect:1;
--		int pad24:7;
-+		u32 ram_size:3, ram_width:1, ram_speed:2, rom_size:2,
-+		    pad8:8,
-+		    ram_split:2, pad18:2, xcvr:3, pad21:1,
-+		    autoselect:1, pad24:7;
- 	} u;
- };
+diff --git a/ipc/msg.c b/ipc/msg.c
+index fdf3db5..74d0709 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -473,7 +473,7 @@ asmlinkage long sys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf)
+ 		up_read(&msg_ids(ns).rw_mutex);
+ 		if (copy_to_user(buf, &msginfo, sizeof(struct msginfo)))
+ 			return -EFAULT;
+-		return (max_id < 0) ? 0 : max_id;
++		return max(max_id, 0);
+ 	}
+ 	case MSG_STAT:	/* msqid is an index rather than a msg queue id */
+ 	case IPC_STAT:
+diff --git a/ipc/sem.c b/ipc/sem.c
+index 35952c0..9ac00ac 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -641,7 +641,7 @@ static int semctl_nolock(struct ipc_namespace *ns, int semid, int semnum,
+ 		up_read(&sem_ids(ns).rw_mutex);
+ 		if (copy_to_user (arg.__buf, &seminfo, sizeof(struct seminfo))) 
+ 			return -EFAULT;
+-		return (max_id < 0) ? 0: max_id;
++		return max(max_id, 0);
+ 	}
+ 	case SEM_STAT:
+ 	{
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 3818fae..45e154a 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -704,7 +704,7 @@ asmlinkage long sys_shmctl (int shmid, int cmd, struct shmid_ds __user *buf)
+ 			goto out;
+ 		}
  
-
---------------060808040403080803070107--
+-		err = err < 0 ? 0 : err;
++		err = max(err, 0);
+ 		goto out;
+ 	}
+ 	case SHM_STAT:
