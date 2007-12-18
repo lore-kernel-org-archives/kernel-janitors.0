@@ -1,50 +1,45 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 15:30:51 +0000
-Subject: Re: [PATCH 15/38] drivers/infiniband: Use time_before, time_before_eq,
-Message-Id: <Pine.LNX.4.64.0712241630030.23999@ask.diku.dk>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="-511516320-812127195-1198510251=:23999"
+From: "Christophe Jaillet" <christophe.jaillet@wanadoo.fr>
+Date: Tue, 18 Dec 2007 21:17:31 +0000
+Subject: [PATCH 3/3] remove explicit memset to memory allocated with k[zc]alloc
+Message-Id: <005801c841bb$6723d330$0b01a8c0@bureau>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0712241528140.23999@ask.diku.dk>
- <20071225.002900.00703855.yoshfuji@linux-ipv6.org>
-In-Reply-To: <20071225.002900.00703855.yoshfuji@linux-ipv6.org>
-To: YOSHIFUJI Hideaki / =?iso-2022-jp?B?GyRCNUhGIzFRTEAbKEI=?= <yoshfuji@linux-ipv6.org>
-Cc: rolandd@cisco.com, mshefty@ichips.intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+1) Remove an explicit memset(.., 0, ...) to a varialable allocated with
+kzalloc.
 
----511516320-812127195-1198510251=:23999
-Content-Type: TEXT/PLAIN; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+2) Allocate 'src' with kmalloc instead of kzalloc as all elements of the
+'src' buffer are initialized in a 'for(...)' loop
 
-On Tue, 25 Dec 2007, YOSHIFUJI Hideaki / =B5=C8=C6=A3=B1=D1=CC=C0 wrote:
+Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-> In article <Pine.LNX.4.64.0712241528140.23999@ask.diku.dk> (at Mon, 24 De=
-c 2007 15:28:42 +0100 (CET)), Julia Lawall <julia@diku.dk> says:
->=20
-> > diff -r -u -p a/drivers/infiniband/hw/ipath/ipath_mad.c b/drivers/infin=
-iband/hw/ipath/ipath_mad.c
-> > --- a/drivers/infiniband/hw/ipath/ipath_mad.c	2007-10-22 11:25:09.00000=
-0000 +0200
-> > +++ b/drivers/infiniband/hw/ipath/ipath_mad.c	2007-12-23 20:35:37.00000=
-0000 +0100
-> > @@ -1334,7 +1334,8 @@ static int process_subn(struct ib_device
-> >  	}
-> > =20
-> >  	/* Is the mkey in the process of expiring? */
-> > -	if (dev->mkey_lease_timeout && jiffies >=3D dev->mkey_lease_timeout) {
-> > +	if (dev->mkey_lease_timeout &&
-> > +	    time_before_eq(jiffies, dev->mkey_lease_timeout)) {
-> >  		/* Clear timeout and mkey protection field. */
-> >  		dev->mkey_lease_timeout =3D 0;
-> >  		dev->mkeyprot =3D 0;
->=20
-> time_after_eq()
+---
 
-I see that there are quite a lot of problems like this.  I will have to=20
-start over...
+--- linux-2.6.24-rc5/drivers/dma/iop-adma.c 2007-12-16 11:15:52.000000000
++0100
++++ linux-2.6.24-rc5/drivers/dma/iop-adma.c.cj 2007-12-17 22:05:36.000000000
++0100
+@@ -858,7 +858,7 @@ static int __devinit iop_adma_memcpy_sel
 
-julia
+  dev_dbg(device->common.dev, "%s\n", __FUNCTION__);
 
----511516320-812127195-1198510251=:23999--
+- src = kzalloc(sizeof(u8) * IOP_ADMA_TEST_SIZE, GFP_KERNEL);
++ src = kmalloc(sizeof(u8) * IOP_ADMA_TEST_SIZE, GFP_KERNEL);
+  if (!src)
+   return -ENOMEM;
+  dest = kzalloc(sizeof(u8) * IOP_ADMA_TEST_SIZE, GFP_KERNEL);
+@@ -871,8 +871,6 @@ static int __devinit iop_adma_memcpy_sel
+  for (i = 0; i < IOP_ADMA_TEST_SIZE; i++)
+   ((u8 *) src)[i] = (u8)i;
+
+- memset(dest, 0, IOP_ADMA_TEST_SIZE);
+-
+  /* Start copy, using first DMA channel */
+  dma_chan = container_of(device->common.channels.next,
+     struct dma_chan,
+
+
+
