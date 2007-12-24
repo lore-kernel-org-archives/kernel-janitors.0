@@ -1,44 +1,93 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Tue, 11 Dec 2007 04:32:48 +0000
-Subject: [PATCH 3/6] pcmcia/axnet_cs: Make functions static
-Message-Id: <20071211043423.28518.72145.sendpatchset@thinktank.campus.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:20:47 +0000
+Subject: [PATCH 6/38] arch/sparc64: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241520120.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixing:
-  CHECK   drivers/net/pcmcia/axnet_cs.c
-drivers/net/pcmcia/axnet_cs.c:994:5: warning: symbol 'ax_close' was not declared. Should it be static?
-drivers/net/pcmcia/axnet_cs.c:1017:6: warning: symbol 'ei_tx_timeout' was not declared. Should it be static?
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
+
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-
-diff --git a/drivers/net/pcmcia/axnet_cs.c b/drivers/net/pcmcia/axnet_cs.c
-index 8d910a3..96931cc 100644
---- a/drivers/net/pcmcia/axnet_cs.c
-+++ b/drivers/net/pcmcia/axnet_cs.c
-@@ -991,7 +991,7 @@ static int ax_open(struct net_device *dev)
-  *
-  * Opposite of ax_open(). Only used when "ifconfig <devname> down" is done.
-  */
--int ax_close(struct net_device *dev)
-+static int ax_close(struct net_device *dev)
- {
- 	unsigned long flags;
+diff -r -u -p a/arch/sparc64/kernel/binfmt_aout32.c b/arch/sparc64/kernel/binfmt_aout32.c
+--- a/arch/sparc64/kernel/binfmt_aout32.c	2007-10-22 11:24:59.000000000 +0200
++++ b/arch/sparc64/kernel/binfmt_aout32.c	2007-12-23 20:33:56.000000000 +0100
+@@ -27,6 +27,7 @@
+ #include <linux/binfmts.h>
+ #include <linux/personality.h>
+ #include <linux/init.h>
++#include <linux/jiffies.h>
  
-@@ -1014,7 +1014,7 @@ int ax_close(struct net_device *dev)
-  * completed (or failed) - i.e. never posted a Tx related interrupt.
-  */
+ #include <asm/system.h>
+ #include <asm/uaccess.h>
+@@ -273,7 +274,8 @@ static int load_aout32_binary(struct lin
+ 	} else {
+ 		static unsigned long error_time;
+ 		if ((ex.a_text & 0xfff || ex.a_data & 0xfff) &&
+-		    (N_MAGIC(ex) != NMAGIC) && (jiffies-error_time) > 5*HZ)
++		    (N_MAGIC(ex) != NMAGIC) &&
++		    time_after(jiffies, error_time + 5*HZ))
+ 		{
+ 			printk(KERN_NOTICE "executable not page aligned\n");
+ 			error_time = jiffies;
+diff -r -u -p a/arch/sparc64/kernel/unaligned.c b/arch/sparc64/kernel/unaligned.c
+--- a/arch/sparc64/kernel/unaligned.c	2007-06-02 22:32:07.000000000 +0200
++++ b/arch/sparc64/kernel/unaligned.c	2007-12-23 20:30:39.000000000 +0100
+@@ -20,6 +20,7 @@
+ #include <linux/smp.h>
+ #include <linux/bitops.h>
+ #include <linux/kallsyms.h>
++#include <linux/jiffies.h>
+ #include <asm/fpumacro.h>
  
--void ei_tx_timeout(struct net_device *dev)
-+static void ei_tx_timeout(struct net_device *dev)
+ /* #define DEBUG_MNA */
+@@ -283,7 +284,7 @@ static void log_unaligned(struct pt_regs
  {
- 	long e8390_base = dev->base_addr;
- 	struct ei_device *ei_local = (struct ei_device *) netdev_priv(dev);
+ 	static unsigned long count, last_time;
+ 
+-	if (jiffies - last_time > 5 * HZ)
++	if (time_after(jiffies, last_time + 5 * HZ))
+ 		count = 0;
+ 	if (count < 5) {
+ 		last_time = jiffies;
