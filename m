@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:49:10 +0000
-Subject: [PATCH 34/38] net/ipv6: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241548490.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:24:39 +0000
+Subject: [PATCH 9/38] arch/x86/kernel/io_apic_{64,32}.c: Use time_before,
+Message-Id: <Pine.LNX.4.64.0712241523510.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: mingo@redhat.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,33 +50,45 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/net/ipv6/sit.c b/net/ipv6/sit.c
---- a/net/ipv6/sit.c	2007-11-01 10:30:45.000000000 +0100
-+++ b/net/ipv6/sit.c	2007-12-23 20:46:01.000000000 +0100
-@@ -33,6 +33,7 @@
- #include <linux/init.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/if_ether.h>
+diff -r -u -p a/arch/x86/kernel/io_apic_32.c b/arch/x86/kernel/io_apic_32.c
+--- a/arch/x86/kernel/io_apic_32.c	2007-12-21 06:57:18.000000000 +0100
++++ b/arch/x86/kernel/io_apic_32.c	2007-12-23 20:30:39.000000000 +0100
+@@ -351,7 +351,8 @@ static void set_ioapic_affinity_irq(unsi
+ # include <asm/processor.h>	/* kernel_thread() */
+ # include <linux/kernel_stat.h>	/* kstat */
+ # include <linux/slab.h>		/* kmalloc() */
+-# include <linux/timer.h>	/* time_after() */
++# include <linux/timer.h>
++#include <linux/jiffies.h>	/* time_after() */
+  
+ #define IRQBALANCE_CHECK_ARCH -999
+ #define MAX_BALANCED_IRQ_INTERVAL	(5*HZ)
+@@ -1900,7 +1901,7 @@ static int __init timer_irq_works(void)
+ 	 * might have cached one ExtINT interrupt.  Finally, at
+ 	 * least one tick may be lost due to delays.
+ 	 */
+-	if (jiffies - t1 > 4)
++	if (time_after(jiffies, t1 + 4))
+ 		return 1;
+ 
+ 	return 0;
+diff -r -u -p a/arch/x86/kernel/io_apic_64.c b/arch/x86/kernel/io_apic_64.c
+--- a/arch/x86/kernel/io_apic_64.c	2007-12-21 06:57:18.000000000 +0100
++++ b/arch/x86/kernel/io_apic_64.c	2007-12-23 20:30:39.000000000 +0100
+@@ -32,6 +32,7 @@
+ #include <linux/msi.h>
+ #include <linux/htirq.h>
+ #include <linux/dmar.h>
 +#include <linux/jiffies.h>
+ #ifdef CONFIG_ACPI
+ #include <acpi/acpi_bus.h>
+ #endif
+@@ -1298,7 +1299,7 @@ static int __init timer_irq_works(void)
+ 	 */
  
- #include <net/sock.h>
- #include <net/snmp.h>
-@@ -263,7 +264,7 @@ static int ipip6_err(struct sk_buff *skb
- 	if (t->parms.iph.ttl = 0 && type = ICMP_TIME_EXCEEDED)
- 		goto out;
- 
--	if (jiffies - t->err_time < IPTUNNEL_ERR_TIMEO)
-+	if (time_before(jiffies, t->err_time + IPTUNNEL_ERR_TIMEO))
- 		t->err_count++;
- 	else
- 		t->err_count = 1;
-@@ -520,7 +521,8 @@ static int ipip6_tunnel_xmit(struct sk_b
- 	}
- 
- 	if (tunnel->err_count > 0) {
--		if (jiffies - tunnel->err_time < IPTUNNEL_ERR_TIMEO) {
-+		if (time_before(jiffies,
-+				tunnel->err_time + IPTUNNEL_ERR_TIMEO)) {
- 			tunnel->err_count--;
- 			dst_link_failure(skb);
- 		} else
+ 	/* jiffies wrap? */
+-	if (jiffies - t1 > 4)
++	if (time_after(jiffies, t1 + 4))
+ 		return 1;
+ 	return 0;
+ }
