@@ -1,36 +1,65 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Tue, 11 Dec 2007 04:32:59 +0000
-Subject: [PATCH 5/6] pcmcia/fmvj18x_cs: Fix 'shadow variable' warning
-Message-Id: <20071211043433.28518.30708.sendpatchset@thinktank.campus.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:19:29 +0000
+Subject: [PATCH 4/38] arch/parisc: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241518580.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20071211043412.28518.40867.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: matthew@wil.cx, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Fixing:
-  CHECK   drivers/net/pcmcia/fmvj18x_cs.c
-drivers/net/pcmcia/fmvj18x_cs.c:1205:6: warning: symbol 'i' shadows an earlier one
-drivers/net/pcmcia/fmvj18x_cs.c:1179:9: originally declared here
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
+
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-
-diff --git a/drivers/net/pcmcia/fmvj18x_cs.c b/drivers/net/pcmcia/fmvj18x_cs.c
-index 8c719b4..4f604ae 100644
---- a/drivers/net/pcmcia/fmvj18x_cs.c
-+++ b/drivers/net/pcmcia/fmvj18x_cs.c
-@@ -1202,8 +1202,7 @@ static void set_rx_mode(struct net_device *dev)
- 	outb(1, ioaddr + RX_MODE);	/* Ignore almost all multicasts. */
-     } else {
- 	struct dev_mc_list *mclist;
--	int i;
--	
-+
- 	memset(mc_filter, 0, sizeof(mc_filter));
- 	for (i = 0, mclist = dev->mc_list; mclist && i < dev->mc_count;
- 	     i++, mclist = mclist->next) {
+diff -r -u -p a/arch/parisc/kernel/unaligned.c b/arch/parisc/kernel/unaligned.c
+--- a/arch/parisc/kernel/unaligned.c	2007-10-22 11:24:58.000000000 +0200
++++ b/arch/parisc/kernel/unaligned.c	2007-12-23 20:33:36.000000000 +0100
+@@ -460,7 +460,8 @@ void handle_unaligned(struct pt_regs *re
+ 			goto force_sigbus;
+ 		}
+ 
+-		if (unaligned_count > 5 && jiffies - last_time > 5*HZ) {
++		if (unaligned_count > 5 &&
++		    time_after(jiffies, last_time + 5*HZ)) {
+ 			unaligned_count = 0;
+ 			last_time = jiffies;
+ 		}
