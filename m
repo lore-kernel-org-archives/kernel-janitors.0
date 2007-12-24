@@ -1,24 +1,73 @@
-From: Wang Chen <wangchen@cn.fujitsu.com>
-Date: Fri, 14 Dec 2007 09:32:53 +0000
-Subject: Re: [PATCH] s390/net/qeth_main.c: Fix use of skb after netif_rx
-Message-Id: <47624DC5.2010803@cn.fujitsu.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:27:32 +0000
+Subject: [PATCH 14/38] drivers/char/rtc.c: Use time_before, time_before_eq,
+Message-Id: <Pine.LNX.4.64.0712241527070.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.64.0712141025470.29947@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0712141025470.29947@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: fpavlic@de.ibm.com, jgarzik@pobox.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: a.zummo@towertech.it, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Julia Lawall said the following on 2007-12-14 17:28:
-> From: Julia Lawall <julia@diku.dk>
-> 
-> Recently, Wang Chen submitted a patch
-> (d30f53aeb31d453a5230f526bea592af07944564) to move a call to netif_rx(skb)
-> after a subsequent reference to skb, because netif_rx may call kfree_skb on
-> its argument.  The same problem occurs in some other drivers as well.
-> 
+From: Julia Lawall <julia@diku.dk>
 
-It looks good to me.
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -r -u -p a/drivers/char/rtc.c b/drivers/char/rtc.c
+--- a/drivers/char/rtc.c	2007-11-15 15:09:36.000000000 +0100
++++ b/drivers/char/rtc.c	2007-12-23 20:35:15.000000000 +0100
+@@ -88,6 +88,7 @@
+ 
+ #ifdef CONFIG_SPARC32
+ #include <linux/pci.h>
++#include <linux/jiffies.h>
+ #include <asm/ebus.h>
+ 
+ static unsigned long rtc_port;
+@@ -1282,7 +1283,8 @@ void rtc_get_rtc_time(struct rtc_time *r
+ 	 * Once the read clears, read the RTC time (again via ioctl). Easy.
+ 	 */
+ 
+-	while (rtc_is_updating() != 0 && jiffies - uip_watchdog < 2*HZ/100)
++	while (rtc_is_updating() != 0 &&
++	       time_before(jiffies, uip_watchdog + 2*HZ/100))
+ 		cpu_relax();
+ 
+ 	/*
