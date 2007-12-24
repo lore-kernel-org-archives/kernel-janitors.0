@@ -1,33 +1,132 @@
-From: Nicolas Kaiser <nikai@nikai.net>
-Date: Sun, 11 Nov 2007 11:51:32 +0000
-Subject: [PATCH] fs/hfs: remove duplicated defines
-Message-Id: <20071111125132.1ce29211@lucky.kitzblitz>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:18:56 +0000
+Subject: [PATCH 3/38] arch/ia64/sn: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241518040.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Roman Zippel <zippel@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jes@sgi.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove duplicated defines.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Nicolas Kaiser <nikai@nikai.net>
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
+
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
- fs/hfs/btree.h |    5 -----
- 1 file changed, 5 deletions(-)
-
---- a/fs/hfs/btree.h	2007-10-09 22:31:38.000000000 +0200
-+++ b/fs/hfs/btree.h	2007-11-11 12:42:59.000000000 +0100
-@@ -153,11 +153,6 @@
- 	u32 reserved3[16];
- } __packed;
+diff -r -u -p a/arch/ia64/sn/kernel/xpc_main.c b/arch/ia64/sn/kernel/xpc_main.c
+--- a/arch/ia64/sn/kernel/xpc_main.c	2007-11-12 10:35:56.000000000 +0100
++++ b/arch/ia64/sn/kernel/xpc_main.c	2007-12-23 20:32:54.000000000 +0100
+@@ -56,6 +56,7 @@
+ #include <linux/reboot.h>
+ #include <linux/completion.h>
+ #include <linux/kdebug.h>
++#include <linux/jiffies.h>
+ #include <asm/sn/intr.h>
+ #include <asm/sn/sn_sal.h>
+ #include <asm/uaccess.h>
+@@ -199,7 +200,7 @@ xpc_timeout_partition_disengage_request(
+ 	struct xpc_partition *part = (struct xpc_partition *) data;
  
--#define HFS_NODE_INDEX	0x00	/* An internal (index) node */
--#define HFS_NODE_HEADER	0x01	/* The tree header node (node 0) */
--#define HFS_NODE_MAP		0x02	/* Holds part of the bitmap of used nodes */
--#define HFS_NODE_LEAF		0xFF	/* A leaf (ndNHeight=1) node */
--
- #define BTREE_ATTR_BADCLOSE	0x00000001	/* b-tree not closed properly. not
- 						   used by hfsplus. */
- #define HFS_TREE_BIGKEYS	0x00000002	/* key length is u16 instead of u8.
+ 
+-	DBUG_ON(jiffies < part->disengage_request_timeout);
++	DBUG_ON(time_before(jiffies, part->disengage_request_timeout));
+ 
+ 	(void) xpc_partition_disengaged(part);
+ 
+@@ -230,7 +231,7 @@ xpc_hb_beater(unsigned long dummy)
+ {
+ 	xpc_vars->heartbeat++;
+ 
+-	if (jiffies >= xpc_hb_check_timeout) {
++	if (time_before_eq(jiffies, xpc_hb_check_timeout)) {
+ 		wake_up_interruptible(&xpc_act_IRQ_wq);
+ 	}
+ 
+@@ -270,7 +271,7 @@ xpc_hb_checker(void *ignore)
+ 
+ 
+ 		/* checking of remote heartbeats is skewed by IRQ handling */
+-		if (jiffies >= xpc_hb_check_timeout) {
++		if (time_before_eq(jiffies, xpc_hb_check_timeout)) {
+ 			dev_dbg(xpc_part, "checking remote heartbeats\n");
+ 			xpc_check_remote_hb();
+ 
+@@ -305,7 +306,7 @@ xpc_hb_checker(void *ignore)
+ 		/* wait for IRQ or timeout */
+ 		(void) wait_event_interruptible(xpc_act_IRQ_wq,
+ 			    (last_IRQ_count < atomic_read(&xpc_act_IRQ_rcvd) ||
+-					jiffies >= xpc_hb_check_timeout ||
++			     time_before_eq(jiffies, xpc_hb_check_timeout) ||
+ 						(volatile int) xpc_exiting));
+ 	}
+ 
+diff -r -u -p a/arch/ia64/sn/kernel/xpc_partition.c b/arch/ia64/sn/kernel/xpc_partition.c
+--- a/arch/ia64/sn/kernel/xpc_partition.c	2007-06-02 22:32:05.000000000 +0200
++++ b/arch/ia64/sn/kernel/xpc_partition.c	2007-12-23 20:33:17.000000000 +0100
+@@ -22,6 +22,7 @@
+ #include <linux/cache.h>
+ #include <linux/mmzone.h>
+ #include <linux/nodemask.h>
++#include <linux/jiffies.h>
+ #include <asm/uncached.h>
+ #include <asm/sn/bte.h>
+ #include <asm/sn/intr.h>
+@@ -877,7 +878,8 @@ xpc_partition_disengaged(struct xpc_part
+ 	disengaged = (xpc_partition_engaged(1UL << partid) = 0);
+ 	if (part->disengage_request_timeout) {
+ 		if (!disengaged) {
+-			if (jiffies < part->disengage_request_timeout) {
++			if (time_before(jiffies,
++					part->disengage_request_timeout)) {
+ 				/* timelimit hasn't been reached yet */
+ 				return 0;
+ 			}
+diff -r -u -p a/arch/mips/cobalt/reset.c b/arch/mips/cobalt/reset.c
+--- a/arch/mips/cobalt/reset.c	2007-10-22 11:24:58.000000000 +0200
++++ b/arch/mips/cobalt/reset.c	2007-12-23 20:30:39.000000000 +0100
+@@ -49,7 +49,7 @@ void cobalt_machine_halt(void)
+ 		if((diff & (COBALT_KEY_ENTER | COBALT_KEY_SELECT)) && !(~last & (COBALT_KEY_ENTER | COBALT_KEY_SELECT)))
+ 			writeb(RESET, RESET_PORT);
+ 
+-		for (mark = jiffies; jiffies - mark < HZ;)
++		for (mark = jiffies; time_before(jiffies, mark + HZ);)
+ 			;
+ 	}
+ }
