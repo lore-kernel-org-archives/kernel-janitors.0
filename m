@@ -1,18 +1,65 @@
-From: "richard -rw- weinberger" <richard.weinberger@gmail.com>
-Date: Tue, 04 Dec 2007 11:50:02 +0000
-Subject: KernelProject "/dev/random statistics"
-Message-Id: <2b41c200712040350g6e3a1aabo33353c0483500d53@mail.gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:29:38 +0000
+Subject: [PATCH 16/38] drivers/md: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241528430.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: hpa@zytor.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi List!
+From: Julia Lawall <julia@diku.dk>
 
-The "/dev/random statistics" project sounds quite interesting.
-Are any further information available on this project?
-Maybe a contact address or so...
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
-Thanks,
-//richard
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -r -u -p a/drivers/md/raid6algos.c b/drivers/md/raid6algos.c
+--- a/drivers/md/raid6algos.c	2007-11-01 10:30:39.000000000 +0100
++++ b/drivers/md/raid6algos.c	2007-12-23 20:36:20.000000000 +0100
+@@ -121,7 +121,8 @@ int __init raid6_select_algo(void)
+ 			j0 = jiffies;
+ 			while ( (j1 = jiffies) = j0 )
+ 				cpu_relax();
+-			while ( (jiffies-j1) < (1 << RAID6_TIME_JIFFIES_LG2) ) {
++			while ( time_before(jiffies,
++					    j1 + (1<<RAID6_TIME_JIFFIES_LG2)) ) {
+ 				(*algo)->gen_syndrome(disks, PAGE_SIZE, dptrs);
+ 				perf++;
+ 			}
