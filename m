@@ -1,132 +1,55 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:18:56 +0000
-Subject: [PATCH 3/38] arch/ia64/sn: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241518040.23999@ask.diku.dk>
+From: YOSHIFUJI Hideaki / =?iso-2022-jp?B?GyRCNUhGIzFRTEAbKEI=?=
+Date: Mon, 24 Dec 2007 15:25:53 +0000
+Subject: Re: [PATCH 3/38] arch/ia64/sn: Use time_before, time_before_eq,
+Message-Id: <20071225.002553.56248499.yoshfuji@linux-ipv6.org>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.64.0712241518040.23999@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0712241518040.23999@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jes@sgi.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: julia@diku.dk
+Cc: jes@sgi.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+In article <Pine.LNX.4.64.0712241518040.23999@ask.diku.dk> (at Mon, 24 Dec 2007 15:18:56 +0100 (CET)), Julia Lawall <julia@diku.dk> says:
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
+> diff -r -u -p a/arch/ia64/sn/kernel/xpc_main.c b/arch/ia64/sn/kernel/xpc_main.c
+> --- a/arch/ia64/sn/kernel/xpc_main.c	2007-11-12 10:35:56.000000000 +0100
+> +++ b/arch/ia64/sn/kernel/xpc_main.c	2007-12-23 20:32:54.000000000 +0100
+> @@ -230,7 +231,7 @@ xpc_hb_beater(unsigned long dummy)
+>  {
+>  	xpc_vars->heartbeat++;
+>  
+> -	if (jiffies >= xpc_hb_check_timeout) {
+> +	if (time_before_eq(jiffies, xpc_hb_check_timeout)) {
+>  		wake_up_interruptible(&xpc_act_IRQ_wq);
+>  	}
+>  
 
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+time_after_eq()
 
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
+> @@ -270,7 +271,7 @@ xpc_hb_checker(void *ignore)
+>  
+>  
+>  		/* checking of remote heartbeats is skewed by IRQ handling */
+> -		if (jiffies >= xpc_hb_check_timeout) {
+> +		if (time_before_eq(jiffies, xpc_hb_check_timeout)) {
+>  			dev_dbg(xpc_part, "checking remote heartbeats\n");
+>  			xpc_check_remote_hb();
+>  
 
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
+ditto.
 
-@ include depends on change_compare_np @
-@@
+> @@ -305,7 +306,7 @@ xpc_hb_checker(void *ignore)
+>  		/* wait for IRQ or timeout */
+>  		(void) wait_event_interruptible(xpc_act_IRQ_wq,
+>  			    (last_IRQ_count < atomic_read(&xpc_act_IRQ_rcvd) ||
+> -					jiffies >= xpc_hb_check_timeout ||
+> +			     time_before_eq(jiffies, xpc_hb_check_timeout) ||
+>  						(volatile int) xpc_exiting));
+>  	}
+>  
 
-#include <linux/jiffies.h>
+ditto.
 
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -r -u -p a/arch/ia64/sn/kernel/xpc_main.c b/arch/ia64/sn/kernel/xpc_main.c
---- a/arch/ia64/sn/kernel/xpc_main.c	2007-11-12 10:35:56.000000000 +0100
-+++ b/arch/ia64/sn/kernel/xpc_main.c	2007-12-23 20:32:54.000000000 +0100
-@@ -56,6 +56,7 @@
- #include <linux/reboot.h>
- #include <linux/completion.h>
- #include <linux/kdebug.h>
-+#include <linux/jiffies.h>
- #include <asm/sn/intr.h>
- #include <asm/sn/sn_sal.h>
- #include <asm/uaccess.h>
-@@ -199,7 +200,7 @@ xpc_timeout_partition_disengage_request(
- 	struct xpc_partition *part = (struct xpc_partition *) data;
- 
- 
--	DBUG_ON(jiffies < part->disengage_request_timeout);
-+	DBUG_ON(time_before(jiffies, part->disengage_request_timeout));
- 
- 	(void) xpc_partition_disengaged(part);
- 
-@@ -230,7 +231,7 @@ xpc_hb_beater(unsigned long dummy)
- {
- 	xpc_vars->heartbeat++;
- 
--	if (jiffies >= xpc_hb_check_timeout) {
-+	if (time_before_eq(jiffies, xpc_hb_check_timeout)) {
- 		wake_up_interruptible(&xpc_act_IRQ_wq);
- 	}
- 
-@@ -270,7 +271,7 @@ xpc_hb_checker(void *ignore)
- 
- 
- 		/* checking of remote heartbeats is skewed by IRQ handling */
--		if (jiffies >= xpc_hb_check_timeout) {
-+		if (time_before_eq(jiffies, xpc_hb_check_timeout)) {
- 			dev_dbg(xpc_part, "checking remote heartbeats\n");
- 			xpc_check_remote_hb();
- 
-@@ -305,7 +306,7 @@ xpc_hb_checker(void *ignore)
- 		/* wait for IRQ or timeout */
- 		(void) wait_event_interruptible(xpc_act_IRQ_wq,
- 			    (last_IRQ_count < atomic_read(&xpc_act_IRQ_rcvd) ||
--					jiffies >= xpc_hb_check_timeout ||
-+			     time_before_eq(jiffies, xpc_hb_check_timeout) ||
- 						(volatile int) xpc_exiting));
- 	}
- 
-diff -r -u -p a/arch/ia64/sn/kernel/xpc_partition.c b/arch/ia64/sn/kernel/xpc_partition.c
---- a/arch/ia64/sn/kernel/xpc_partition.c	2007-06-02 22:32:05.000000000 +0200
-+++ b/arch/ia64/sn/kernel/xpc_partition.c	2007-12-23 20:33:17.000000000 +0100
-@@ -22,6 +22,7 @@
- #include <linux/cache.h>
- #include <linux/mmzone.h>
- #include <linux/nodemask.h>
-+#include <linux/jiffies.h>
- #include <asm/uncached.h>
- #include <asm/sn/bte.h>
- #include <asm/sn/intr.h>
-@@ -877,7 +878,8 @@ xpc_partition_disengaged(struct xpc_part
- 	disengaged = (xpc_partition_engaged(1UL << partid) = 0);
- 	if (part->disengage_request_timeout) {
- 		if (!disengaged) {
--			if (jiffies < part->disengage_request_timeout) {
-+			if (time_before(jiffies,
-+					part->disengage_request_timeout)) {
- 				/* timelimit hasn't been reached yet */
- 				return 0;
- 			}
-diff -r -u -p a/arch/mips/cobalt/reset.c b/arch/mips/cobalt/reset.c
---- a/arch/mips/cobalt/reset.c	2007-10-22 11:24:58.000000000 +0200
-+++ b/arch/mips/cobalt/reset.c	2007-12-23 20:30:39.000000000 +0100
-@@ -49,7 +49,7 @@ void cobalt_machine_halt(void)
- 		if((diff & (COBALT_KEY_ENTER | COBALT_KEY_SELECT)) && !(~last & (COBALT_KEY_ENTER | COBALT_KEY_SELECT)))
- 			writeb(RESET, RESET_PORT);
- 
--		for (mark = jiffies; jiffies - mark < HZ;)
-+		for (mark = jiffies; time_before(jiffies, mark + HZ);)
- 			;
- 	}
- }
+--yoshfuji
