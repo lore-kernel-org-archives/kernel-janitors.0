@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:20:47 +0000
-Subject: [PATCH 6/38] arch/sparc64: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241520120.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:25:47 +0000
+Subject: [PATCH 11/38] drivers/char/drm: Use time_before, time_before_eq,
+Message-Id: <Pine.LNX.4.64.0712241525170.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: airlied@linux.ie, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,44 +50,15 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/arch/sparc64/kernel/binfmt_aout32.c b/arch/sparc64/kernel/binfmt_aout32.c
---- a/arch/sparc64/kernel/binfmt_aout32.c	2007-10-22 11:24:59.000000000 +0200
-+++ b/arch/sparc64/kernel/binfmt_aout32.c	2007-12-23 20:33:56.000000000 +0100
-@@ -27,6 +27,7 @@
- #include <linux/binfmts.h>
- #include <linux/personality.h>
- #include <linux/init.h>
-+#include <linux/jiffies.h>
- 
- #include <asm/system.h>
- #include <asm/uaccess.h>
-@@ -273,7 +274,8 @@ static int load_aout32_binary(struct lin
- 	} else {
- 		static unsigned long error_time;
- 		if ((ex.a_text & 0xfff || ex.a_data & 0xfff) &&
--		    (N_MAGIC(ex) != NMAGIC) && (jiffies-error_time) > 5*HZ)
-+		    (N_MAGIC(ex) != NMAGIC) &&
-+		    time_after(jiffies, error_time + 5*HZ))
- 		{
- 			printk(KERN_NOTICE "executable not page aligned\n");
- 			error_time = jiffies;
-diff -r -u -p a/arch/sparc64/kernel/unaligned.c b/arch/sparc64/kernel/unaligned.c
---- a/arch/sparc64/kernel/unaligned.c	2007-06-02 22:32:07.000000000 +0200
-+++ b/arch/sparc64/kernel/unaligned.c	2007-12-23 20:30:39.000000000 +0100
-@@ -20,6 +20,7 @@
- #include <linux/smp.h>
- #include <linux/bitops.h>
- #include <linux/kallsyms.h>
-+#include <linux/jiffies.h>
- #include <asm/fpumacro.h>
- 
- /* #define DEBUG_MNA */
-@@ -283,7 +284,7 @@ static void log_unaligned(struct pt_regs
- {
- 	static unsigned long count, last_time;
- 
--	if (jiffies - last_time > 5 * HZ)
-+	if (time_after(jiffies, last_time + 5 * HZ))
- 		count = 0;
- 	if (count < 5) {
- 		last_time = jiffies;
+diff -r -u -p a/drivers/char/drm/i830_irq.c b/drivers/char/drm/i830_irq.c
+--- a/drivers/char/drm/i830_irq.c	2007-10-22 11:25:05.000000000 +0200
++++ b/drivers/char/drm/i830_irq.c	2007-12-23 20:30:39.000000000 +0100
+@@ -90,7 +90,7 @@ static int i830_wait_irq(struct drm_devi
+ 		__set_current_state(TASK_INTERRUPTIBLE);
+ 		if (atomic_read(&dev_priv->irq_received) >= irq_nr)
+ 			break;
+-		if ((signed)(end - jiffies) <= 0) {
++		if (time_before_eq(jiffies, end)) {
+ 			DRM_ERROR("timeout iir %x imr %x ier %x hwstam %x\n",
+ 				  I830_READ16(I830REG_INT_IDENTITY_R),
+ 				  I830_READ16(I830REG_INT_MASK_R),
