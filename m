@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:19:29 +0000
-Subject: [PATCH 4/38] arch/parisc: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241518580.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:42:24 +0000
+Subject: [PATCH 24/38] fs/autofs: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241542010.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: matthew@wil.cx, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: hpa@zytor.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,16 +50,15 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/arch/parisc/kernel/unaligned.c b/arch/parisc/kernel/unaligned.c
---- a/arch/parisc/kernel/unaligned.c	2007-10-22 11:24:58.000000000 +0200
-+++ b/arch/parisc/kernel/unaligned.c	2007-12-23 20:33:36.000000000 +0100
-@@ -460,7 +460,8 @@ void handle_unaligned(struct pt_regs *re
- 			goto force_sigbus;
- 		}
- 
--		if (unaligned_count > 5 && jiffies - last_time > 5*HZ) {
-+		if (unaligned_count > 5 &&
-+		    time_after(jiffies, last_time + 5*HZ)) {
- 			unaligned_count = 0;
- 			last_time = jiffies;
- 		}
+diff -r -u -p a/fs/autofs/dirhash.c b/fs/autofs/dirhash.c
+--- a/fs/autofs/dirhash.c	2006-11-30 19:05:26.000000000 +0100
++++ b/fs/autofs/dirhash.c	2007-12-23 20:30:39.000000000 +0100
+@@ -47,7 +47,7 @@ struct autofs_dir_ent *autofs_expire(str
+ 			return NULL;	/* No entries */
+ 		/* We keep the list sorted by last_usage and want old stuff */
+ 		ent = list_entry(dh->expiry_head.next, struct autofs_dir_ent, exp);
+-		if (jiffies - ent->last_usage < timeout)
++		if (time_before(jiffies, ent->last_usage + timeout))
+ 			break;
+ 		/* Move to end of list in case expiry isn't desirable */
+ 		autofs_update_usage(dh, ent);
