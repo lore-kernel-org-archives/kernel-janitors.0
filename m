@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:40:34 +0000
-Subject: [PATCH 21/38] drivers/scsi: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241540070.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:42:51 +0000
+Subject: [PATCH 25/38] fs: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241542250.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,104 +50,82 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/drivers/scsi/eata.c b/drivers/scsi/eata.c
---- a/drivers/scsi/eata.c	2007-10-22 11:25:23.000000000 +0200
-+++ b/drivers/scsi/eata.c	2007-12-23 20:30:39.000000000 +0100
-@@ -928,6 +928,7 @@ static char boot_options[MAX_BOOT_OPTION
- #if defined(MODULE)
- #include <linux/module.h>
- #include <linux/moduleparam.h>
+diff -r -u -p a/fs/binfmt_aout.c b/fs/binfmt_aout.c
+--- a/fs/binfmt_aout.c	2007-12-21 06:57:19.000000000 +0100
++++ b/fs/binfmt_aout.c	2007-12-23 20:42:57.000000000 +0100
+@@ -24,6 +24,7 @@
+ #include <linux/binfmts.h>
+ #include <linux/personality.h>
+ #include <linux/init.h>
 +#include <linux/jiffies.h>
  
- module_param_string(eata, boot_options, MAX_BOOT_OPTIONS_SIZE, 0);
- MODULE_PARM_DESC(eata, " equivalent to the \"eata=...\" kernel boot option."
-@@ -1996,7 +1997,7 @@ static int eata2x_eh_host_reset(struct s
+ #include <asm/system.h>
+ #include <asm/uaccess.h>
+@@ -373,14 +374,15 @@ static int load_aout_binary(struct linux
+ 	} else {
+ 		static unsigned long error_time, error_time2;
+ 		if ((ex.a_text & 0xfff || ex.a_data & 0xfff) &&
+-		    (N_MAGIC(ex) != NMAGIC) && (jiffies-error_time2) > 5*HZ)
++		    (N_MAGIC(ex) != NMAGIC) &&
++		    time_after(jiffies, error_time2 + 5*HZ))
+ 		{
+ 			printk(KERN_NOTICE "executable not page aligned\n");
+ 			error_time2 = jiffies;
+ 		}
  
- 	/* FIXME: use a sleep instead */
- 	time = jiffies;
--	while ((jiffies - time) < (10 * HZ) && limit++ < 200000)
-+	while (time_before(jiffies, time + 10 * HZ) && limit++ < 200000)
- 		udelay(100L);
+ 		if ((fd_offset & ~PAGE_MASK) != 0 &&
+-		    (jiffies-error_time) > 5*HZ)
++		    time_after(jiffies, error_time + 5*HZ))
+ 		{
+ 			printk(KERN_WARNING 
+ 			       "fd_offset is not page aligned. Please convert program: %s\n",
+@@ -497,7 +499,7 @@ static int load_aout_library(struct file
+ 		static unsigned long error_time;
+ 		loff_t pos = N_TXTOFF(ex);
  
- 	spin_lock_irq(shost->host_lock);
-diff -r -u -p a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
---- a/drivers/scsi/lpfc/lpfc_scsi.c	2007-11-08 08:00:52.000000000 +0100
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c	2007-12-23 20:41:54.000000000 +0100
-@@ -22,6 +22,7 @@
- #include <linux/pci.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
+-		if ((jiffies-error_time) > 5*HZ)
++		if (time_after(jiffies, error_time + 5*HZ))
+ 		{
+ 			printk(KERN_WARNING 
+ 			       "N_TXTOFF is not page aligned. Please convert library: %s\n",
+diff -r -u -p a/fs/ncpfs/dir.c b/fs/ncpfs/dir.c
+--- a/fs/ncpfs/dir.c	2007-06-02 22:32:35.000000000 +0200
++++ b/fs/ncpfs/dir.c	2007-12-23 20:43:19.000000000 +0100
+@@ -23,6 +23,7 @@
+ #include <linux/smp_lock.h>
+ 
+ #include <linux/ncp_fs.h>
 +#include <linux/jiffies.h>
  
- #include <scsi/scsi.h>
- #include <scsi/scsi_device.h>
-@@ -55,7 +56,8 @@ lpfc_adjust_queue_depth(struct lpfc_hba 
- 	atomic_inc(&phba->num_rsrc_err);
- 	phba->last_rsrc_error_time = jiffies;
+ #include "ncplib_kernel.h"
  
--	if ((phba->last_ramp_down_time + QUEUE_RAMP_DOWN_INTERVAL) > jiffies) {
-+	if (time_before(jiffies,
-+			phba->last_ramp_down_time + QUEUE_RAMP_DOWN_INTERVAL)){
- 		spin_unlock_irqrestore(&phba->hbalock, flags);
- 		return;
+@@ -447,7 +448,8 @@ static int ncp_readdir(struct file *filp
+ 		goto init_cache;
+ 
+ 	if (filp->f_pos = 2) {
+-		if (jiffies - ctl.head.time >= NCP_MAX_AGE(server))
++		if (time_before_eq(jiffies,
++				   ctl.head.time + NCP_MAX_AGE(server)))
+ 			goto init_cache;
+ 
+ 		mtime = ncp_obtain_mtime(dentry);
+diff -r -u -p a/fs/smbfs/dir.c b/fs/smbfs/dir.c
+--- a/fs/smbfs/dir.c	2007-06-02 22:32:36.000000000 +0200
++++ b/fs/smbfs/dir.c	2007-12-23 20:43:34.000000000 +0100
+@@ -18,6 +18,7 @@
+ #include <linux/smb_fs.h>
+ #include <linux/smb_mount.h>
+ #include <linux/smbno.h>
++#include <linux/jiffies.h>
+ 
+ #include "smb_debug.h"
+ #include "proto.h"
+@@ -131,7 +132,7 @@ smb_readdir(struct file *filp, void *dir
  	}
-@@ -94,8 +96,10 @@ lpfc_rampup_queue_depth(struct lpfc_vpor
- 	if (vport->cfg_lun_queue_depth <= sdev->queue_depth)
- 		return;
- 	spin_lock_irqsave(&phba->hbalock, flags);
--	if (((phba->last_ramp_up_time + QUEUE_RAMP_UP_INTERVAL) > jiffies) ||
--	 ((phba->last_rsrc_error_time + QUEUE_RAMP_UP_INTERVAL ) > jiffies)) {
-+	if ((time_before(jiffies,
-+			 phba->last_ramp_up_time + QUEUE_RAMP_UP_INTERVAL)) ||
-+	 (time_before(jiffies,
-+		      phba->last_rsrc_error_time + QUEUE_RAMP_UP_INTERVAL))) {
- 		spin_unlock_irqrestore(&phba->hbalock, flags);
- 		return;
- 	}
-@@ -617,10 +621,12 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba 
- 		lpfc_rampup_queue_depth(vport, sdev);
  
- 	if (!result && pnode != NULL &&
--	   ((jiffies - pnode->last_ramp_up_time) >
--		LPFC_Q_RAMP_UP_INTERVAL * HZ) &&
--	   ((jiffies - pnode->last_q_full_time) >
--		LPFC_Q_RAMP_UP_INTERVAL * HZ) &&
-+	   (time_after(jiffies,
-+		       pnode->last_ramp_up_time +
-+		       LPFC_Q_RAMP_UP_INTERVAL * HZ)) &&
-+	   (time_after(jiffies,
-+		       pnode->last_q_full_time +
-+		       LPFC_Q_RAMP_UP_INTERVAL * HZ)) &&
- 	   (vport->cfg_lun_queue_depth > sdev->queue_depth)) {
- 		shost_for_each_device(tmp_sdev, sdev->host) {
- 			if (vport->cfg_lun_queue_depth > tmp_sdev->queue_depth){
-diff -r -u -p a/drivers/scsi/u14-34f.c b/drivers/scsi/u14-34f.c
---- a/drivers/scsi/u14-34f.c	2007-10-22 11:25:24.000000000 +0200
-+++ b/drivers/scsi/u14-34f.c	2007-12-23 20:42:31.000000000 +0100
-@@ -673,6 +673,7 @@ static char boot_options[MAX_BOOT_OPTION
- #if defined(MODULE)
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-+#include <linux/jiffies.h>
+ 	if (filp->f_pos = 2) {
+-		if (jiffies - ctl.head.time >= SMB_MAX_AGE(server))
++		if (time_before_eq(jiffies, ctl.head.time+SMB_MAX_AGE(server)))
+ 			goto init_cache;
  
- module_param_string(u14_34f, boot_options, MAX_BOOT_OPTIONS_SIZE, 0);
- MODULE_PARM_DESC(u14_34f, " equivalent to the \"u14-34f=...\" kernel boot " \
-@@ -778,7 +779,7 @@ static int board_inquiry(unsigned int j)
- 
-    spin_unlock_irq(&driver_lock);
-    time = jiffies;
--   while ((jiffies - time) < HZ && limit++ < 20000) udelay(100L);
-+   while (time_before(jiffies, time + HZ) && limit++ < 20000) udelay(100L);
-    spin_lock_irq(&driver_lock);
- 
-    if (cpp->adapter_status || HD(j)->cp_stat[0] != FREE) {
-@@ -1479,7 +1480,8 @@ static int u14_34f_eh_host_reset(struct 
- 
-    spin_unlock_irq(sh[j]->host_lock);
-    time = jiffies;
--   while ((jiffies - time) < (10 * HZ) && limit++ < 200000) udelay(100L);
-+   while (time_before(jiffies, time + 10 * HZ) && limit++ < 200000)
-+      udelay(100L);
-    spin_lock_irq(sh[j]->host_lock);
- 
-    printk("%s: reset, interrupts disabled, loops %d.\n", BN(j), limit);
+ 		/*
