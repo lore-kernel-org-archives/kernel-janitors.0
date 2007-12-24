@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:20:10 +0000
-Subject: [PATCH 5/38] arch/powerpc: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241519310.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:45:03 +0000
+Subject: [PATCH 29/38] net/bluetooth: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241544390.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: paulus@samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: marcel@holtmann.org, maxk@qualcomm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,68 +50,34 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/arch/powerpc/platforms/iseries/pci.c b/arch/powerpc/platforms/iseries/pci.c
---- a/arch/powerpc/platforms/iseries/pci.c	2007-07-20 17:45:44.000000000 +0200
-+++ b/arch/powerpc/platforms/iseries/pci.c	2007-12-23 20:30:39.000000000 +0100
-@@ -25,6 +25,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/pci.h>
+diff -r -u -p a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+--- a/net/bluetooth/hci_core.c	2007-11-01 10:30:44.000000000 +0100
++++ b/net/bluetooth/hci_core.c	2007-12-23 20:44:22.000000000 +0100
+@@ -38,6 +38,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/interrupt.h>
+ #include <linux/notifier.h>
 +#include <linux/jiffies.h>
+ #include <net/sock.h>
  
- #include <asm/io.h>
- #include <asm/irq.h>
-@@ -405,7 +406,7 @@ static u8 iSeries_Read_Byte(const volati
- 		static unsigned long last_jiffies;
- 		static int num_printed;
+ #include <asm/system.h>
+@@ -1321,7 +1322,8 @@ static inline void hci_sched_acl(struct 
+ 	if (!test_bit(HCI_RAW, &hdev->flags)) {
+ 		/* ACL tx timeout must be longer than maximum
+ 		 * link supervision timeout (40.9 seconds) */
+-		if (!hdev->acl_cnt && (jiffies - hdev->acl_last_tx) > (HZ * 45))
++		if (!hdev->acl_cnt &&
++		    time_after(jiffies, hdev->acl_last_tx + HZ * 45))
+ 			hci_acl_tx_to(hdev);
+ 	}
  
--		if ((jiffies - last_jiffies) > 60 * HZ) {
-+		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
- 			last_jiffies = jiffies;
- 			num_printed = 0;
- 		}
-@@ -434,7 +435,7 @@ static u16 iSeries_Read_Word(const volat
- 		static unsigned long last_jiffies;
- 		static int num_printed;
+@@ -1543,7 +1545,8 @@ static void hci_cmd_task(unsigned long a
  
--		if ((jiffies - last_jiffies) > 60 * HZ) {
-+		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
- 			last_jiffies = jiffies;
- 			num_printed = 0;
- 		}
-@@ -464,7 +465,7 @@ static u32 iSeries_Read_Long(const volat
- 		static unsigned long last_jiffies;
- 		static int num_printed;
+ 	BT_DBG("%s cmd %d", hdev->name, atomic_read(&hdev->cmd_cnt));
  
--		if ((jiffies - last_jiffies) > 60 * HZ) {
-+		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
- 			last_jiffies = jiffies;
- 			num_printed = 0;
- 		}
-@@ -498,7 +499,7 @@ static void iSeries_Write_Byte(u8 data, 
- 		static unsigned long last_jiffies;
- 		static int num_printed;
- 
--		if ((jiffies - last_jiffies) > 60 * HZ) {
-+		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
- 			last_jiffies = jiffies;
- 			num_printed = 0;
- 		}
-@@ -524,7 +525,7 @@ static void iSeries_Write_Word(u16 data,
- 		static unsigned long last_jiffies;
- 		static int num_printed;
- 
--		if ((jiffies - last_jiffies) > 60 * HZ) {
-+		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
- 			last_jiffies = jiffies;
- 			num_printed = 0;
- 		}
-@@ -551,7 +552,7 @@ static void iSeries_Write_Long(u32 data,
- 		static unsigned long last_jiffies;
- 		static int num_printed;
- 
--		if ((jiffies - last_jiffies) > 60 * HZ) {
-+		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
- 			last_jiffies = jiffies;
- 			num_printed = 0;
- 		}
+-	if (!atomic_read(&hdev->cmd_cnt) && (jiffies - hdev->cmd_last_tx) > HZ) {
++	if (!atomic_read(&hdev->cmd_cnt) &&
++	    time_after(jiffies, hdev->cmd_last_tx + HZ)) {
+ 		BT_ERR("%s command tx timeout", hdev->name);
+ 		atomic_set(&hdev->cmd_cnt, 1);
+ 	}
