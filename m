@@ -1,30 +1,90 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Thu, 20 Dec 2007 17:35:31 +0000
-Subject: Re: [parisc-linux] [PATCH] alpha/parisc: Removing config variable
-Message-Id: <20071220093531.101c51b7.akpm@linux-foundation.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:23:19 +0000
+Subject: [PATCH 7/38] arch/x86/ia32: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241522410.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <473C065D.1000000@gmail.com>
-In-Reply-To: <473C065D.1000000@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: andi@firstfloor.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 20 Dec 2007 12:07:00 -0500 Kyle McMartin <kyle@mcmartin.ca> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> On Thu, Nov 15, 2007 at 09:42:05AM +0100, Jiri Olsa wrote:
-> > Removing config variable DEBUG_RWLOCK, since it is not used
-> > 
-> > Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
-> 
-> ack.
-> 
-> Andrew, should I apply the parisc half of this, or do you want to
-> queue the whole patch?
-> 
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
-I can take care of it.  Jiri, next time please do this sort of thing as
-separate patches: alpha and parisc changes get into the mainline tree via
-different routes (ie: via different maintainer trees).
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Thanks.
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -r -u -p a/arch/x86/ia32/ia32_aout.c b/arch/x86/ia32/ia32_aout.c
+--- a/arch/x86/ia32/ia32_aout.c	2007-10-22 11:25:00.000000000 +0200
++++ b/arch/x86/ia32/ia32_aout.c	2007-12-23 20:31:29.000000000 +0100
+@@ -25,6 +25,7 @@
+ #include <linux/binfmts.h>
+ #include <linux/personality.h>
+ #include <linux/init.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/system.h>
+ #include <asm/uaccess.h>
+@@ -344,14 +345,15 @@ static int load_aout_binary(struct linux
+ #ifdef WARN_OLD
+ 		static unsigned long error_time, error_time2;
+ 		if ((ex.a_text & 0xfff || ex.a_data & 0xfff) &&
+-		    (N_MAGIC(ex) != NMAGIC) && (jiffies-error_time2) > 5*HZ)
++		    (N_MAGIC(ex) != NMAGIC) &&
++		    time_after(jiffies, error_time2 + 5*HZ))
+ 		{
+ 			printk(KERN_NOTICE "executable not page aligned\n");
+ 			error_time2 = jiffies;
+ 		}
+ 
+ 		if ((fd_offset & ~PAGE_MASK) != 0 &&
+-		    (jiffies-error_time) > 5*HZ)
++		    time_after(jiffies, error_time + 5*HZ))
+ 		{
+ 			printk(KERN_WARNING 
+ 			       "fd_offset is not page aligned. Please convert program: %s\n",
+@@ -467,7 +469,7 @@ static int load_aout_library(struct file
+ 
+ #ifdef WARN_OLD
+ 		static unsigned long error_time;
+-		if ((jiffies-error_time) > 5*HZ)
++		if (time_after(jiffies, error_time + 5*HZ))
+ 		{
+ 			printk(KERN_WARNING 
+ 			       "N_TXTOFF is not page aligned. Please convert library: %s\n",
