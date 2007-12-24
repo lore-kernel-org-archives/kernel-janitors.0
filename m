@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:25:47 +0000
-Subject: [PATCH 11/38] drivers/char/drm: Use time_before, time_before_eq,
-Message-Id: <Pine.LNX.4.64.0712241525170.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:17:56 +0000
+Subject: [PATCH 2/38] arch/ia64: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241517020.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: tony.luck@intel.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,15 +50,56 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/drivers/char/drm/i830_irq.c b/drivers/char/drm/i830_irq.c
---- a/drivers/char/drm/i830_irq.c	2007-10-22 11:25:05.000000000 +0200
-+++ b/drivers/char/drm/i830_irq.c	2007-12-23 20:30:39.000000000 +0100
-@@ -90,7 +90,7 @@ static int i830_wait_irq(struct drm_devi
- 		__set_current_state(TASK_INTERRUPTIBLE);
- 		if (atomic_read(&dev_priv->irq_received) >= irq_nr)
- 			break;
--		if ((signed)(end - jiffies) <= 0) {
-+		if (time_before_eq(jiffies, end)) {
- 			DRM_ERROR("timeout iir %x imr %x ier %x hwstam %x\n",
- 				  I830_READ16(I830REG_INT_IDENTITY_R),
- 				  I830_READ16(I830REG_INT_MASK_R),
+diff -r -u -p a/arch/ia64/kernel/irq_ia64.c b/arch/ia64/kernel/irq_ia64.c
+--- a/arch/ia64/kernel/irq_ia64.c	2007-12-21 06:57:18.000000000 +0100
++++ b/arch/ia64/kernel/irq_ia64.c	2007-12-23 20:30:39.000000000 +0100
+@@ -405,7 +405,7 @@ ia64_handle_irq (ia64_vector vector, str
+ 			static unsigned char count;
+ 			static long last_time;
+ 
+-			if (jiffies - last_time > 5*HZ)
++			if (time_after(jiffies, last_time + 5*HZ))
+ 				count = 0;
+ 			if (++count < 5) {
+ 				last_time = jiffies;
+diff -r -u -p a/arch/ia64/kernel/mca.c b/arch/ia64/kernel/mca.c
+--- a/arch/ia64/kernel/mca.c	2007-12-21 06:57:18.000000000 +0100
++++ b/arch/ia64/kernel/mca.c	2007-12-23 20:31:54.000000000 +0100
+@@ -76,6 +76,7 @@
+ #include <linux/cpumask.h>
+ #include <linux/kdebug.h>
+ #include <linux/cpu.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/delay.h>
+ #include <asm/machvec.h>
+@@ -285,7 +286,8 @@ static void ia64_mlogbuf_dump_from_init(
+ 	if (mlogbuf_finished)
+ 		return;
+ 
+-	if (mlogbuf_timestamp && (mlogbuf_timestamp + 30*HZ > jiffies)) {
++	if (mlogbuf_timestamp &&
++	    (time_before(jiffies, mlogbuf_timestamp + 30*HZ))) {
+ 		printk(KERN_ERR "INIT: mlogbuf_dump is interrupted by INIT "
+ 			" and the system seems to be messed up.\n");
+ 		ia64_mlogbuf_finish(0);
+diff -r -u -p a/arch/ia64/kernel/unaligned.c b/arch/ia64/kernel/unaligned.c
+--- a/arch/ia64/kernel/unaligned.c	2007-10-22 11:24:57.000000000 +0200
++++ b/arch/ia64/kernel/unaligned.c	2007-12-23 20:30:39.000000000 +0100
+@@ -16,6 +16,7 @@
+ #include <linux/kernel.h>
+ #include <linux/sched.h>
+ #include <linux/tty.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/intrinsics.h>
+ #include <asm/processor.h>
+@@ -1289,7 +1290,7 @@ within_logging_rate_limit (void)
+ {
+ 	static unsigned long count, last_time;
+ 
+-	if (jiffies - last_time > 5*HZ)
++	if (time_after(jiffies, last_time + 5*HZ))
+ 		count = 0;
+ 	if (count < 5) {
+ 		last_time = jiffies;
