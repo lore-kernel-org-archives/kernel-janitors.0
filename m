@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:48:43 +0000
-Subject: [PATCH 33/38] net/ipv4: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241548180.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:50:34 +0000
+Subject: [PATCH 36/38] net/mac80211: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241550090.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: jbenc@suse.cz, flamingice@sourmilk.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,76 +50,43 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
---- a/net/ipv4/ip_gre.c	2007-11-01 10:30:44.000000000 +0100
-+++ b/net/ipv4/ip_gre.c	2007-12-23 20:44:52.000000000 +0100
-@@ -28,6 +28,7 @@
- #include <linux/igmp.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/if_ether.h>
+diff -r -u -p a/net/mac80211/rc80211_simple.c b/net/mac80211/rc80211_simple.c
+--- a/net/mac80211/rc80211_simple.c	2007-11-13 16:01:34.000000000 +0100
++++ b/net/mac80211/rc80211_simple.c	2007-12-23 20:30:40.000000000 +0100
+@@ -13,6 +13,7 @@
+ #include <linux/slab.h>
+ #include <linux/skbuff.h>
+ #include <linux/compiler.h>
 +#include <linux/jiffies.h>
  
- #include <net/sock.h>
- #include <net/ip.h>
-@@ -373,7 +374,7 @@ static void ipgre_err(struct sk_buff *sk
- 	if (t->parms.iph.ttl = 0 && type = ICMP_TIME_EXCEEDED)
- 		goto out;
- 
--	if (jiffies - t->err_time < IPTUNNEL_ERR_TIMEO)
-+	if (time_before(jiffies, t->err_time + IPTUNNEL_ERR_TIMEO))
- 		t->err_count++;
- 	else
- 		t->err_count = 1;
-@@ -799,7 +800,8 @@ static int ipgre_tunnel_xmit(struct sk_b
- #endif
- 
- 	if (tunnel->err_count > 0) {
--		if (jiffies - tunnel->err_time < IPTUNNEL_ERR_TIMEO) {
-+		if (time_before(jiffies,
-+				tunnel->err_time + IPTUNNEL_ERR_TIMEO)) {
- 			tunnel->err_count--;
- 
- 			dst_link_failure(skb);
-diff -r -u -p a/net/ipv4/ipip.c b/net/ipv4/ipip.c
---- a/net/ipv4/ipip.c	2007-11-01 10:30:44.000000000 +0100
-+++ b/net/ipv4/ipip.c	2007-12-23 20:45:06.000000000 +0100
-@@ -108,6 +108,7 @@
- #include <linux/init.h>
- #include <linux/netfilter_ipv4.h>
- #include <linux/if_ether.h>
-+#include <linux/jiffies.h>
- 
- #include <net/sock.h>
- #include <net/ip.h>
-@@ -317,7 +318,7 @@ static int ipip_err(struct sk_buff *skb,
- 	if (t->parms.iph.ttl = 0 && type = ICMP_TIME_EXCEEDED)
- 		goto out;
- 
--	if (jiffies - t->err_time < IPTUNNEL_ERR_TIMEO)
-+	if (time_before(jiffies, t->err_time + IPTUNNEL_ERR_TIMEO))
- 		t->err_count++;
- 	else
- 		t->err_count = 1;
-@@ -582,7 +583,8 @@ static int ipip_tunnel_xmit(struct sk_bu
+ #include <net/mac80211.h>
+ #include "ieee80211_i.h"
+@@ -194,7 +195,7 @@ static void rate_control_simple_tx_statu
+ 		rate_control_rate_dec(local, sta);
  	}
  
- 	if (tunnel->err_count > 0) {
--		if (jiffies - tunnel->err_time < IPTUNNEL_ERR_TIMEO) {
-+		if (time_before(jiffies,
-+				tunnel->err_time + IPTUNNEL_ERR_TIMEO)) {
- 			tunnel->err_count--;
- 			dst_link_failure(skb);
- 		} else
-diff -r -u -p a/net/ipv4/ipvs/ip_vs_lblcr.c b/net/ipv4/ipvs/ip_vs_lblcr.c
---- a/net/ipv4/ipvs/ip_vs_lblcr.c	2007-12-09 09:35:20.000000000 +0100
-+++ b/net/ipv4/ipvs/ip_vs_lblcr.c	2007-12-23 20:45:42.000000000 +0100
-@@ -733,7 +733,8 @@ ip_vs_lblcr_schedule(struct ip_vs_servic
- 			ip_vs_dest_set_insert(&en->set, dest);
+-	if (srctrl->avg_rate_update + 60 * HZ < jiffies) {
++	if (time_after(jiffies, srctrl->avg_rate_update + 60 * HZ)) {
+ 		srctrl->avg_rate_update = jiffies;
+ 		if (srctrl->tx_avg_rate_num > 0) {
+ #ifdef CONFIG_MAC80211_VERBOSE_DEBUG
+diff -r -u -p a/net/mac80211/rx.c b/net/mac80211/rx.c
+--- a/net/mac80211/rx.c	2007-12-04 13:19:55.000000000 +0100
++++ b/net/mac80211/rx.c	2007-12-23 20:30:40.000000000 +0100
+@@ -14,6 +14,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
+ #include <linux/rcupdate.h>
++#include <linux/jiffies.h>
+ #include <net/mac80211.h>
+ #include <net/ieee80211_radiotap.h>
+ 
+@@ -741,7 +742,7 @@ ieee80211_reassemble_find(struct ieee802
+ 		    compare_ether_addr(hdr->addr2, f_hdr->addr2) != 0)
+ 			continue;
+ 
+-		if (entry->first_frag_time + 2 * HZ < jiffies) {
++		if (time_after(jiffies, entry->first_frag_time + 2 * HZ)) {
+ 			__skb_queue_purge(&entry->skb_list);
+ 			continue;
  		}
- 		if (atomic_read(&en->set.size) > 1 &&
--		    jiffies-en->set.lastmod > sysctl_ip_vs_lblcr_expiration) {
-+		    time_after(jiffies,
-+			       en->set.lastmod+sysctl_ip_vs_lblcr_expiration)){
- 			struct ip_vs_dest *m;
- 			m = ip_vs_dest_set_max(&en->set);
- 			if (m)
