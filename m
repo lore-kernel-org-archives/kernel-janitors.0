@@ -1,49 +1,72 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Date: Sat, 22 Dec 2007 10:31:37 +0000
-Subject: Re: [PATCH 2/3] msg.h: Convert m_ts from int to size_t.
-Message-Id: <20071222023137.c8800f6f.akpm@linux-foundation.org>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:16:46 +0000
+Subject: [PATCH 1/38] arch/alpha: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241516010.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071217023555.24944.62155.sendpatchset@thinktank.campus.ltu.se>
-	<20071217023600.24944.84644.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20071217023600.24944.84644.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: rth@twiddle.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, 17 Dec 2007 03:36:00 +0100 (MET) Richard Knutsson <ricknu-0@student.ltu.se> wrote:
+From: Julia Lawall <julia@diku.dk>
 
-> Convert m_ts ("message text size") from int to size_t.
-> 
-> Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
-> ---
-> Remove some trailing spaces, since we are in the neighborhood.
-> 
-> 
-> diff --git a/include/linux/msg.h b/include/linux/msg.h
-> index 10a3d5a..7a61952 100644
-> --- a/include/linux/msg.h
-> +++ b/include/linux/msg.h
-> @@ -67,8 +67,8 @@ struct msginfo {
->  /* one msg_msg structure for each message */
->  struct msg_msg {
->  	struct list_head m_list; 
-> -	long  m_type;          
-> -	int m_ts;           /* message text size */
-> +	long  m_type;
-> +	size_t m_ts;           /* message text size */
->  	struct msg_msgseg* next;
->  	void *security;
->  	/* the actual message follows immediately */
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
-hm, spose so.  But if we're to do this then we'd need to fix qsize and
-r_maxsize and various other things.  And we'd need to convert msg_bytes to
-atomic_size_t, which would prove interesting ;)
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-So this is at best a partial conversion and the code in there does need
-careful checking for the use of appropriate types.  Does this patch get us
-partway toward the proper solution?  Dunno - someone would need to sit down
-and work out what the best types are for all those related things.
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
 
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
 
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -r -u -p a/arch/alpha/kernel/traps.c b/arch/alpha/kernel/traps.c
+--- a/arch/alpha/kernel/traps.c	2007-10-22 11:24:57.000000000 +0200
++++ b/arch/alpha/kernel/traps.c	2007-12-23 20:30:39.000000000 +0100
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/kallsyms.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/gentrap.h>
+ #include <asm/uaccess.h>
+@@ -781,7 +782,7 @@ do_entUnaUser(void __user * va, unsigned
+ 	   with the unaliged access.  */
+ 
+ 	if (!test_thread_flag (TIF_UAC_NOPRINT)) {
+-		if (cnt >= 5 && jiffies - last_time > 5*HZ) {
++		if (cnt >= 5 && time_after(jiffies, last_time + 5*HZ)) {
+ 			cnt = 0;
+ 		}
+ 		if (++cnt < 5) {
