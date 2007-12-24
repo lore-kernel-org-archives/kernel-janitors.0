@@ -1,65 +1,84 @@
-From: Francisco Alecrim <francisco.alecrim@indt.org.br>
-Date: Fri, 14 Dec 2007 18:56:45 +0000
-Subject: [PATCH 1/6] SPI: clean up remove duplicated headers
-Message-Id: <1197658610-4558-2-git-send-email-francisco.alecrim@indt.org.br>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:43:59 +0000
+Subject: [PATCH 27/38] kernel: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241543320.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: "Francisco Alecrim <francisco.alecrim@indt.org.br>"
- <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br>
-In-Reply-To: <1197658610-4558-1-git-send-email-francisco.alecrim@indt.org.br>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, dbrownell@users.sourceforge.net, kyle@parisc-linux.org, dmitry.torokhov@gmail.com, hcegtvedt@atmel.com, Francisco Alecrim <francisco.alecrim@indt.org.br>
+To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Remove duplicated headers in SPI subsystem:
-drivers/spi/spi_butterfly.c: linux/spi/spi_bitbang.h is included more than once.
-drivers/spi/spi_lm70llp.c: linux/spi/spi_bitbang.h is included more than once.
-drivers/spi/spi_s3c24xx_gpio.c: linux/spi/spi_bitbang.h is included more than once.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Francisco Alecrim <francisco.alecrim@indt.org.br>
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
+
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
+
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
- drivers/spi/spi_butterfly.c    |    1 -
- drivers/spi/spi_lm70llp.c      |    1 -
- drivers/spi/spi_s3c24xx_gpio.c |    1 -
- 3 files changed, 0 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi_butterfly.c b/drivers/spi/spi_butterfly.c
-index 0ee2b20..54eed48 100644
---- a/drivers/spi/spi_butterfly.c
-+++ b/drivers/spi/spi_butterfly.c
-@@ -150,7 +150,6 @@ static void butterfly_chipselect(struct spi_device *spi, int value)
- //#define	spidelay	ndelay
+diff -r -u -p a/kernel/irq/spurious.c b/kernel/irq/spurious.c
+--- a/kernel/irq/spurious.c	2007-07-20 17:46:05.000000000 +0200
++++ b/kernel/irq/spurious.c	2007-12-23 20:30:40.000000000 +0100
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/kallsyms.h>
+ #include <linux/interrupt.h>
++#include <linux/jiffies.h>
  
- #define	EXPAND_BITBANG_TXRX
--#include <linux/spi/spi_bitbang.h>
+ static int irqfixup __read_mostly;
  
- static u32
- butterfly_txrx_word_mode0(struct spi_device *spi,
-diff --git a/drivers/spi/spi_lm70llp.c b/drivers/spi/spi_lm70llp.c
-index 39d8d8a..9128ed5 100644
---- a/drivers/spi/spi_lm70llp.c
-+++ b/drivers/spi/spi_lm70llp.c
-@@ -167,7 +167,6 @@ static inline int getmiso(struct spi_device *s)
- /*--------------------------------------------------------------------*/
+@@ -178,7 +179,7 @@ void note_interrupt(unsigned int irq, st
+ 		 * otherwise the couter becomes a doomsday timer for otherwise
+ 		 * working systems
+ 		 */
+-		if (jiffies - desc->last_unhandled > HZ/10)
++		if (time_after(jiffies, desc->last_unhandled + HZ/10))
+ 			desc->irqs_unhandled = 1;
+ 		else
+ 			desc->irqs_unhandled++;
+diff -r -u -p a/kernel/timer.c b/kernel/timer.c
+--- a/kernel/timer.c	2007-12-21 06:57:20.000000000 +0100
++++ b/kernel/timer.c	2007-12-23 20:30:40.000000000 +0100
+@@ -165,7 +165,7 @@ unsigned long __round_jiffies(unsigned l
+ 	/* now that we have rounded, subtract the extra skew again */
+ 	j -= cpu * 3;
  
- #define EXPAND_BITBANG_TXRX 1
--#include <linux/spi/spi_bitbang.h>
- 
- static void lm70_chipselect(struct spi_device *spi, int value)
- {
-diff --git a/drivers/spi/spi_s3c24xx_gpio.c b/drivers/spi/spi_s3c24xx_gpio.c
-index 109d82c..fe6aff7 100644
---- a/drivers/spi/spi_s3c24xx_gpio.c
-+++ b/drivers/spi/spi_s3c24xx_gpio.c
-@@ -58,7 +58,6 @@ static inline u32 getmiso(struct spi_device *dev)
- #define spidelay(x) ndelay(x)
- 
- #define	EXPAND_BITBANG_TXRX
--#include <linux/spi/spi_bitbang.h>
- 
- 
- static u32 s3c2410_spigpio_txrx_mode0(struct spi_device *spi,
--- 
-1.5.3.7
-
+-	if (j <= jiffies) /* rounding ate our timeout entirely; */
++	if (time_before_eq(jiffies, j))/* rounding ate our timeout entirely; */
+ 		return original;
+ 	return j;
+ }
