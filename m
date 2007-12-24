@@ -1,62 +1,125 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 02 Dec 2007 09:32:43 +0000
-Subject: [RFC] "Centralized" scanning of the source-code.
-Message-Id: <47527BBB.90403@student.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:48:43 +0000
+Subject: [PATCH 33/38] net/ipv4: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241548180.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davem@davemloft.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi all
+From: Julia Lawall <julia@diku.dk>
 
-Would like to hear your opinion on a little proposal:
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
-I have a server who wastes quite a few cpu-cycles, and for a couple of 
-months, it has been compiling a 'allyesconfig', 'allmodconfig' and 
-'allnoconfig' i386-kernel every week, with 'C=2'. Most of the successful 
-logs are saved and I also wrote a small diff-script in PHP (it first 
-uses 'diff' and then it tries to remove as much cruft as possible, to 
-show new warnings) (no guaranty on the script).
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-But lately, I have also made a little "code-checker" (sound more fancy 
-then it really is) by making small scripts, who preform certain simple 
-tests (like finding "hand-coded" abs()/min()/max(), spelling-errors, 
-Kconfig-errors etc), all executed by 'scripts.sh' during the "scanning" 
-(each script can be used separately).
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
 
-What I am suggesting is: by collecting all this about a certain 
-area/subsystem, a janitor can clean it up with a single/few 
-patch-set(s), reducing the maintainer's headache, and when it is done, 
-monitor those areas for introduction of new "errors". In such a case, we 
-can easily use git-blame to find the route the offending commit has 
-taken, and use it when sending the patch. Also, referring the patch as a 
-cleanup for the recent commit X, should make the patch even more attractive.
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
 
-If a subsystem is clean(ed), a special log will be made for it, to make 
-it easier to find introduced "errors".
+@ include depends on change_compare_np @
+@@
 
+#include <linux/jiffies.h>
 
-The rest of the mail is about the more practical aspects...
+@ no_include depends on !include && change_compare_np @
+@@
 
-Right now, the homepage for it is 
-"http://lserver.campus.ltu.se/linux_kj/" (may get a better name later, 
-ex on dyndns.org (any ideas on names?)). I have basically just moved my 
-files (logs and scripts) there, so any suggestions on how to present it 
-better is welcome.
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
 
-I am just following Linus' git-tree for the moment, but if there is a 
-need to follow other trees, just let me know how to follow them in an 
-automatic fashion (maybe with 'ketchup' or similar).
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
 
-Please send me suggestions/patches for more things to check up. I don't 
-really mind if the scans take a while (also, will let them stay in, even 
-after all occurrences has been fixed, in the case they will occur again).
-Will let it automatically scan the tree once every week, unless 
-requested to do it more often (or just on the subsystem of interest, for 
-easier use).
-
-If there is any security issues on the server, please let me know. ;)
-
-Richard Knutsson
-
+diff -r -u -p a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
+--- a/net/ipv4/ip_gre.c	2007-11-01 10:30:44.000000000 +0100
++++ b/net/ipv4/ip_gre.c	2007-12-23 20:44:52.000000000 +0100
+@@ -28,6 +28,7 @@
+ #include <linux/igmp.h>
+ #include <linux/netfilter_ipv4.h>
+ #include <linux/if_ether.h>
++#include <linux/jiffies.h>
+ 
+ #include <net/sock.h>
+ #include <net/ip.h>
+@@ -373,7 +374,7 @@ static void ipgre_err(struct sk_buff *sk
+ 	if (t->parms.iph.ttl = 0 && type = ICMP_TIME_EXCEEDED)
+ 		goto out;
+ 
+-	if (jiffies - t->err_time < IPTUNNEL_ERR_TIMEO)
++	if (time_before(jiffies, t->err_time + IPTUNNEL_ERR_TIMEO))
+ 		t->err_count++;
+ 	else
+ 		t->err_count = 1;
+@@ -799,7 +800,8 @@ static int ipgre_tunnel_xmit(struct sk_b
+ #endif
+ 
+ 	if (tunnel->err_count > 0) {
+-		if (jiffies - tunnel->err_time < IPTUNNEL_ERR_TIMEO) {
++		if (time_before(jiffies,
++				tunnel->err_time + IPTUNNEL_ERR_TIMEO)) {
+ 			tunnel->err_count--;
+ 
+ 			dst_link_failure(skb);
+diff -r -u -p a/net/ipv4/ipip.c b/net/ipv4/ipip.c
+--- a/net/ipv4/ipip.c	2007-11-01 10:30:44.000000000 +0100
++++ b/net/ipv4/ipip.c	2007-12-23 20:45:06.000000000 +0100
+@@ -108,6 +108,7 @@
+ #include <linux/init.h>
+ #include <linux/netfilter_ipv4.h>
+ #include <linux/if_ether.h>
++#include <linux/jiffies.h>
+ 
+ #include <net/sock.h>
+ #include <net/ip.h>
+@@ -317,7 +318,7 @@ static int ipip_err(struct sk_buff *skb,
+ 	if (t->parms.iph.ttl = 0 && type = ICMP_TIME_EXCEEDED)
+ 		goto out;
+ 
+-	if (jiffies - t->err_time < IPTUNNEL_ERR_TIMEO)
++	if (time_before(jiffies, t->err_time + IPTUNNEL_ERR_TIMEO))
+ 		t->err_count++;
+ 	else
+ 		t->err_count = 1;
+@@ -582,7 +583,8 @@ static int ipip_tunnel_xmit(struct sk_bu
+ 	}
+ 
+ 	if (tunnel->err_count > 0) {
+-		if (jiffies - tunnel->err_time < IPTUNNEL_ERR_TIMEO) {
++		if (time_before(jiffies,
++				tunnel->err_time + IPTUNNEL_ERR_TIMEO)) {
+ 			tunnel->err_count--;
+ 			dst_link_failure(skb);
+ 		} else
+diff -r -u -p a/net/ipv4/ipvs/ip_vs_lblcr.c b/net/ipv4/ipvs/ip_vs_lblcr.c
+--- a/net/ipv4/ipvs/ip_vs_lblcr.c	2007-12-09 09:35:20.000000000 +0100
++++ b/net/ipv4/ipvs/ip_vs_lblcr.c	2007-12-23 20:45:42.000000000 +0100
+@@ -733,7 +733,8 @@ ip_vs_lblcr_schedule(struct ip_vs_servic
+ 			ip_vs_dest_set_insert(&en->set, dest);
+ 		}
+ 		if (atomic_read(&en->set.size) > 1 &&
+-		    jiffies-en->set.lastmod > sysctl_ip_vs_lblcr_expiration) {
++		    time_after(jiffies,
++			       en->set.lastmod+sysctl_ip_vs_lblcr_expiration)){
+ 			struct ip_vs_dest *m;
+ 			m = ip_vs_dest_set_max(&en->set);
+ 			if (m)
