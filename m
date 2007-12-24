@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:45:03 +0000
-Subject: [PATCH 29/38] net/bluetooth: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241544390.23999@ask.diku.dk>
+Date: Mon, 24 Dec 2007 14:30:11 +0000
+Subject: [PATCH 17/38] drivers/media/dvb: Use time_before, time_before_eq,
+Message-Id: <Pine.LNX.4.64.0712241529400.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: marcel@holtmann.org, maxk@qualcomm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: v4l-dvb-maintainer@linuxtv.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,34 +50,36 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
---- a/net/bluetooth/hci_core.c	2007-11-01 10:30:44.000000000 +0100
-+++ b/net/bluetooth/hci_core.c	2007-12-23 20:44:22.000000000 +0100
-@@ -38,6 +38,7 @@
- #include <linux/skbuff.h>
- #include <linux/interrupt.h>
- #include <linux/notifier.h>
-+#include <linux/jiffies.h>
- #include <net/sock.h>
+diff -r -u -p a/drivers/media/dvb/frontends/stv0299.c b/drivers/media/dvb/frontends/stv0299.c
+--- a/drivers/media/dvb/frontends/stv0299.c	2007-10-22 11:25:10.000000000 +0200
++++ b/drivers/media/dvb/frontends/stv0299.c	2007-12-23 20:30:39.000000000 +0100
+@@ -192,7 +192,7 @@ static int stv0299_wait_diseqc_fifo (str
+ 	dprintk ("%s\n", __FUNCTION__);
  
- #include <asm/system.h>
-@@ -1321,7 +1322,8 @@ static inline void hci_sched_acl(struct 
- 	if (!test_bit(HCI_RAW, &hdev->flags)) {
- 		/* ACL tx timeout must be longer than maximum
- 		 * link supervision timeout (40.9 seconds) */
--		if (!hdev->acl_cnt && (jiffies - hdev->acl_last_tx) > (HZ * 45))
-+		if (!hdev->acl_cnt &&
-+		    time_after(jiffies, hdev->acl_last_tx + HZ * 45))
- 			hci_acl_tx_to(hdev);
- 	}
+ 	while (stv0299_readreg(state, 0x0a) & 1) {
+-		if (jiffies - start > timeout) {
++		if (time_after(jiffies, start + timeout)) {
+ 			dprintk ("%s: timeout!!\n", __FUNCTION__);
+ 			return -ETIMEDOUT;
+ 		}
+@@ -209,7 +209,7 @@ static int stv0299_wait_diseqc_idle (str
+ 	dprintk ("%s\n", __FUNCTION__);
  
-@@ -1543,7 +1545,8 @@ static void hci_cmd_task(unsigned long a
+ 	while ((stv0299_readreg(state, 0x0a) & 3) != 2 ) {
+-		if (jiffies - start > timeout) {
++		if (time_after(jiffies, start + timeout)) {
+ 			dprintk ("%s: timeout!!\n", __FUNCTION__);
+ 			return -ETIMEDOUT;
+ 		}
+diff -r -u -p a/drivers/media/dvb/frontends/tda8083.c b/drivers/media/dvb/frontends/tda8083.c
+--- a/drivers/media/dvb/frontends/tda8083.c	2007-10-22 11:25:10.000000000 +0200
++++ b/drivers/media/dvb/frontends/tda8083.c	2007-12-23 20:30:39.000000000 +0100
+@@ -171,7 +171,7 @@ static void tda8083_wait_diseqc_fifo (st
+ {
+ 	unsigned long start = jiffies;
  
- 	BT_DBG("%s cmd %d", hdev->name, atomic_read(&hdev->cmd_cnt));
- 
--	if (!atomic_read(&hdev->cmd_cnt) && (jiffies - hdev->cmd_last_tx) > HZ) {
-+	if (!atomic_read(&hdev->cmd_cnt) &&
-+	    time_after(jiffies, hdev->cmd_last_tx + HZ)) {
- 		BT_ERR("%s command tx timeout", hdev->name);
- 		atomic_set(&hdev->cmd_cnt, 1);
- 	}
+-	while (jiffies - start < timeout &&
++	while (time_before(jiffies, start + timeout) &&
+ 	       !(tda8083_readreg(state, 0x02) & 0x80))
+ 	{
+ 		msleep(50);
