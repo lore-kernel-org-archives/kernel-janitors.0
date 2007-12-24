@@ -1,62 +1,117 @@
-From: Ian Kent <raven@themaw.net>
-Date: Fri, 28 Dec 2007 04:34:10 +0000
-Subject: Re: [autofs] [PATCH 1/4] fs/autofs: Use time_before,
-Message-Id: <1198816450.3089.24.camel@raven.themaw.net>
+From: Julia Lawall <julia@diku.dk>
+Date: Mon, 24 Dec 2007 14:20:10 +0000
+Subject: [PATCH 5/38] arch/powerpc: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.64.0712241519310.23999@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0712261621000.1185@pc-041.diku.dk>
-	 <2c0942db0712261158q34cddebeifceef6ceda683320@mail.gmail.com>
-	 <4772BD6C.1010502@zytor.com> <Pine.LNX.4.64.0712270805370.6952@ask.diku.dk>
-In-Reply-To: <Pine.LNX.4.64.0712270805370.6952@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Julia Lawall <julia@diku.dk>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Ray Lee <ray-lk@madrabbit.org>, autofs@linux.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: paulus@samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Thu, 2007-12-27 at 08:08 +0100, Julia Lawall wrote:
-> On Wed, 26 Dec 2007, H. Peter Anvin wrote:
-> 
-> > Ray Lee wrote:
-> > > On Dec 26, 2007 7:21 AM, Julia Lawall <julia@diku.dk> wrote:
-> > > > -               if (jiffies - ent->last_usage < timeout)
-> > > > +               if (time_before(jiffies, ent->last_usage + timeout))
-> > > 
-> > > I don't think this is a safe change? subtraction is always safe (if
-> > > you think about it as 'distance'), addition isn't always safe unless
-> > > you know the range. The time_before macro will expand that out to
-> > > (effectively):
+From: Julia Lawall <julia@diku.dk>
 
-I don't see how subtraction is any different in this case as that could
-just as easily underflow leading to the same issue.
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
-> > > 
-> > >   if ( (long)(ent->last_usage + timeout) - (long)(jiffies) < 0 )
-> > > 
-> > > which seems to introduce an overflow condition in the first term.
-> > > 
-> > > Dunno, I may be wrong (happens often), but at the very least what
-> > > you've transformed it into is no longer obviously correct, and so it's
-> > > not a great change.
-> > 
-> > Indeed.  The bottom form will have overflow issues at time
-> > jiffies_wraparound/2, whereas the top form will have overflow issues only near
-> > jiffies_wraparound/1.
-> 
-> OK, so it seems like it is not such a good idea.
-> 
-> There are, however, over 200 files that contain calls to the various time 
-> functions that follow this pattern, eg:
-> 
-> arch/arm/kernel/ecard.c:563
-> if (!last || time_after(jiffies, last + 5*HZ)) {
+A simplified version of the semantic patch making this change is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
 
-Including autofs4.
+// <smpl>
+@ change_compare_np @
+expression E;
+@@
 
-> 
-> Perhaps they should be coverted to use a subtraction as well?
+(
+- jiffies <= E
++ time_before_eq(jiffies,E)
+|
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
+)
 
-Thinking about the cases involved always makes my head ache.
+@ include depends on change_compare_np @
+@@
 
-Ian
+#include <linux/jiffies.h>
 
+@ no_include depends on !include && change_compare_np @
+@@
 
+  #include <linux/...>
++ #include <linux/jiffies.h>
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -r -u -p a/arch/powerpc/platforms/iseries/pci.c b/arch/powerpc/platforms/iseries/pci.c
+--- a/arch/powerpc/platforms/iseries/pci.c	2007-07-20 17:45:44.000000000 +0200
++++ b/arch/powerpc/platforms/iseries/pci.c	2007-12-23 20:30:39.000000000 +0100
+@@ -25,6 +25,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
++#include <linux/jiffies.h>
+ 
+ #include <asm/io.h>
+ #include <asm/irq.h>
+@@ -405,7 +406,7 @@ static u8 iSeries_Read_Byte(const volati
+ 		static unsigned long last_jiffies;
+ 		static int num_printed;
+ 
+-		if ((jiffies - last_jiffies) > 60 * HZ) {
++		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+ 			last_jiffies = jiffies;
+ 			num_printed = 0;
+ 		}
+@@ -434,7 +435,7 @@ static u16 iSeries_Read_Word(const volat
+ 		static unsigned long last_jiffies;
+ 		static int num_printed;
+ 
+-		if ((jiffies - last_jiffies) > 60 * HZ) {
++		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+ 			last_jiffies = jiffies;
+ 			num_printed = 0;
+ 		}
+@@ -464,7 +465,7 @@ static u32 iSeries_Read_Long(const volat
+ 		static unsigned long last_jiffies;
+ 		static int num_printed;
+ 
+-		if ((jiffies - last_jiffies) > 60 * HZ) {
++		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+ 			last_jiffies = jiffies;
+ 			num_printed = 0;
+ 		}
+@@ -498,7 +499,7 @@ static void iSeries_Write_Byte(u8 data, 
+ 		static unsigned long last_jiffies;
+ 		static int num_printed;
+ 
+-		if ((jiffies - last_jiffies) > 60 * HZ) {
++		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+ 			last_jiffies = jiffies;
+ 			num_printed = 0;
+ 		}
+@@ -524,7 +525,7 @@ static void iSeries_Write_Word(u16 data,
+ 		static unsigned long last_jiffies;
+ 		static int num_printed;
+ 
+-		if ((jiffies - last_jiffies) > 60 * HZ) {
++		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+ 			last_jiffies = jiffies;
+ 			num_printed = 0;
+ 		}
+@@ -551,7 +552,7 @@ static void iSeries_Write_Long(u32 data,
+ 		static unsigned long last_jiffies;
+ 		static int num_printed;
+ 
+-		if ((jiffies - last_jiffies) > 60 * HZ) {
++		if (time_after(jiffies, last_jiffies + 60 * HZ)) {
+ 			last_jiffies = jiffies;
+ 			num_printed = 0;
+ 		}
