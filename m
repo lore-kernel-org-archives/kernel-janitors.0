@@ -1,75 +1,56 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:43:26 +0000
-Subject: [PATCH 26/38] init: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241542530.23999@ask.diku.dk>
+Date: Wed, 26 Dec 2007 16:15:08 +0000
+Subject: [PATCH 3/3] drivers/scsi: Use offsetof
+Message-Id: <Pine.LNX.4.58.0712261714270.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: linux-scsi@vger.kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
+In the patch cc154ac64aa8d3396b187f64cef01ce67f433324, Al Viro observed
+that the proper way to compute the distance between two structure fields is
+to use offsetof() or a cast to a pointer to character.  The same change can
+be applied to a few more files.
 
-A simplified version of the semantic patch making this change is as follows:
+The change was made using the following semantic patch
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@ change_compare_np @
-expression E;
+@r3 disable ptr_to_array@
+type T;
+T *s;
+type T1, T2;
+identifier fld1;
 @@
 
 (
-- jiffies <= E
-+ time_before_eq(jiffies,E)
+  (char *)&s->fld1 - (char *)s
 |
-- jiffies >= E
-+ time_after_eq(jiffies,E)
+  (uint8_t *)&s->fld1 - (uint8_t *)s
 |
-- jiffies < E
-+ time_before(jiffies,E)
+  (u8 *)&s->fld1 - (u8 *)s
 |
-- jiffies > E
-+ time_after(jiffies,E)
+- (T1)&s->fld1 - (T2)s
++ offsetof(T,fld1)
 )
-
-@ include depends on change_compare_np @
-@@
-
-#include <linux/jiffies.h>
-
-@ no_include depends on !include && change_compare_np @
-@@
-
-  #include <linux/...>
-+ #include <linux/jiffies.h>
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/init/calibrate.c b/init/calibrate.c
---- a/init/calibrate.c	2007-10-22 11:25:44.000000000 +0200
-+++ b/init/calibrate.c	2007-12-23 20:44:00.000000000 +0100
-@@ -65,7 +65,7 @@ static unsigned long __devinit calibrate
- 		pre_start = 0;
- 		read_current_timer(&start);
- 		start_jiffies = jiffies;
--		while (jiffies <= (start_jiffies + 1)) {
-+		while (time_after_eq(jiffies, start_jiffies + 1)) {
- 			pre_start = start;
- 			read_current_timer(&start);
- 		}
-@@ -73,8 +73,9 @@ static unsigned long __devinit calibrate
- 
- 		pre_end = 0;
- 		end = post_start;
--		while (jiffies <-		       (start_jiffies + 1 + DELAY_CALIBRATION_TICKS)) {
-+		while (time_after_eq(jiffies,
-+				     start_jiffies +
-+				     1 + DELAY_CALIBRATION_TICKS)) {
- 			pre_end = end;
- 			read_current_timer(&end);
- 		}
+diff -u -p a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
+--- a/drivers/scsi/BusLogic.c	2007-10-22 11:25:20.000000000 +0200
++++ b/drivers/scsi/BusLogic.c	2007-12-26 16:33:42.000000000 +0100
+@@ -2856,7 +2856,10 @@ static int BusLogic_QueueCommand(struct
+ 		CCB->Opcode = BusLogic_InitiatorCCB_ScatterGather;
+ 		CCB->DataLength = Count * sizeof(struct BusLogic_ScatterGatherSegment);
+ 		if (BusLogic_MultiMasterHostAdapterP(HostAdapter))
+-			CCB->DataPointer = (unsigned int) CCB->DMA_Handle + ((unsigned long) &CCB->ScatterGatherList - (unsigned long) CCB);
++			CCB->DataPointer +				(unsigned int) CCB->DMA_Handle +
++				offsetof(struct BusLogic_CCB,
++					 ScatterGatherList);
+ 		else
+ 			CCB->DataPointer = Virtual_to_32Bit_Virtual(CCB->ScatterGatherList);
