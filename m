@@ -1,58 +1,106 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Tue, 04 Dec 2007 10:10:46 +0000
-Subject: [PATCH] arch/powerpc: Add missing of_node_put
-Message-Id: <Pine.LNX.4.64.0712041109560.23712@ask.diku.dk>
+Date: Wed, 26 Dec 2007 15:22:23 +0000
+Subject: [PATCH 2/4] sound/oss: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.58.0712261621390.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: olof@lixom.net, paulus@samba.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: perex@perex.cz, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
-There should be an of_node_put when breaking out of a loop that iterates
-over calls to of_find_all_nodes, as this function does an of_node_get on
-the value it returns.
+The functions time_before, time_before_eq, time_after, and time_after_eq
+are more robust for comparing jiffies against other values.
 
-This was fixed using the following semantic patch.
+A simplified version of the semantic patch making this change is as follows:
 (http://www.emn.fr/x-info/coccinelle/)
 
 // <smpl>
-@@
-type T;
-identifier d;
-expression e;
+@ change_compare_np @
+expression E;
 @@
 
-T *d;
-...
-for (d = NULL; (d = of_find_all_nodes(d)) != NULL; )
- {... when != of_node_put(d)
-      when != e = d
 (
-   return d;
+- jiffies <= E
++ time_before_eq(jiffies,E)
 |
-+  of_node_put(d);
-?  return ...;
+- jiffies >= E
++ time_after_eq(jiffies,E)
+|
+- jiffies < E
++ time_before(jiffies,E)
+|
+- jiffies > E
++ time_after(jiffies,E)
 )
-...}
+
+@ include depends on change_compare_np @
+@@
+
+#include <linux/jiffies.h>
+
+@ no_include depends on !include && change_compare_np @
+@@
+
+  #include <linux/...>
++ #include <linux/jiffies.h>
 // </smpl>
 
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -u -p a/arch/powerpc/platforms/iseries/iommu.c b/arch/powerpc/platforms/iseries/iommu.c
---- a/arch/powerpc/platforms/iseries/iommu.c	2007-12-01 17:56:55.000000000 +0100
-+++ b/arch/powerpc/platforms/iseries/iommu.c	2007-12-02 16:39:23.000000000 +0100
-@@ -163,8 +163,10 @@ static struct iommu_table *iommu_table_f
- 		    (it->it_type = TCE_PCI) &&
- 		    (it->it_offset = tbl->it_offset) &&
- 		    (it->it_index = tbl->it_index) &&
--		    (it->it_size = tbl->it_size))
-+		    (it->it_size = tbl->it_size)) {
-+			of_node_put(node);
- 			return it;
-+		}
- 	}
- 	return NULL;
- }
+diff -u -p linux-2.6/sound/oss/pss.c linuxcopy/sound/oss/pss.c
+--- linux-2.6/sound/oss/pss.c	2006-11-30 19:05:48.000000000 +0100
++++ linuxcopy/sound/oss/pss.c	2007-12-26 15:59:55.000000000 +0100
+@@ -60,6 +60,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/spinlock.h>
++#include <linux/jiffies.h>
+
+ #include "sound_config.h"
+ #include "sound_firmware.h"
+@@ -271,7 +272,7 @@ static int pss_reset_dsp(pss_confdata *
+ 	unsigned long   i, limit = jiffies + HZ/10;
+
+ 	outw(0x2000, REG(PSS_CONTROL));
+-	for (i = 0; i < 32768 && (limit-jiffies >= 0); i++)
++	for (i = 0; i < 32768 && (time_before_eq(jiffies, limit)); i++)
+ 		inw(REG(PSS_CONTROL));
+ 	outw(0x0000, REG(PSS_CONTROL));
+ 	return 1;
+@@ -371,11 +372,11 @@ static int pss_download_boot(pss_confdat
+ 		outw(0, REG(PSS_DATA));
+
+ 		limit = jiffies + HZ/10;
+-		for (i = 0; i < 32768 && (limit - jiffies >= 0); i++)
++		for (i = 0; i < 32768 && (time_before_eq(jiffies, limit)); i++)
+ 			val = inw(REG(PSS_STATUS));
+
+ 		limit = jiffies + HZ/10;
+-		for (i = 0; i < 32768 && (limit-jiffies >= 0); i++)
++		for (i = 0; i < 32768 && (time_before_eq(jiffies, limit)); i++)
+ 		{
+ 			val = inw(REG(PSS_STATUS));
+ 			if (val & 0x4000)
+diff -u -p linux-2.6/sound/oss/sb_common.c linuxcopy/sound/oss/sb_common.c
+--- linux-2.6/sound/oss/sb_common.c	2007-02-09 17:34:30.000000000 +0100
++++ linuxcopy/sound/oss/sb_common.c	2007-12-26 15:59:55.000000000 +0100
+@@ -31,6 +31,7 @@
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/spinlock.h>
++#include <linux/jiffies.h>
+
+ #include "sound_config.h"
+ #include "sound_firmware.h"
+@@ -97,7 +98,7 @@ int sb_dsp_command(sb_devc * devc, unsig
+ 	 * loops.
+ 	 */
+
+-	for (i = 0; i < 500000 && (limit-jiffies)>0; i++)
++	for (i = 0; i < 500000 && time_before(jiffies, limit); i++)
+ 	{
+ 		if ((inb(DSP_STATUS) & 0x80) = 0)
+ 		{
