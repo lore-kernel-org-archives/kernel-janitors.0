@@ -1,12 +1,12 @@
 From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:41:42 +0000
-Subject: [PATCH 23/38] usb/serial: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241541170.23999@ask.diku.dk>
+Date: Wed, 26 Dec 2007 15:23:05 +0000
+Subject: [PATCH 3/4] drivers/scsi/lpfc: Use time_before, time_before_eq, etc.
+Message-Id: <Pine.LNX.4.58.0712261622240.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: gregkh@suse.de, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: james.smart@emulex.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 From: Julia Lawall <julia@diku.dk>
 
@@ -50,35 +50,54 @@ expression E;
 Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-diff -r -u -p a/drivers/usb/serial/io_ti.c b/drivers/usb/serial/io_ti.c
---- a/drivers/usb/serial/io_ti.c	2007-07-23 11:27:17.000000000 +0200
-+++ b/drivers/usb/serial/io_ti.c	2007-12-23 20:30:39.000000000 +0100
-@@ -639,7 +639,7 @@ static void TIChasePort(struct edgeport_
- 
- 	/* wait for data to drain from the device */
- 	timeout += jiffies;
--	while ((long)(jiffies - timeout) < 0 && !signal_pending(current)
-+	while (time_before(jiffies, timeout) && !signal_pending(current)
- 	&& usb_get_intfdata(port->port->serial->interface)) {  /* not disconnected */
- 		if (!TIIsTxActive(port))
- 			break;
-diff -r -u -p a/drivers/usb/serial/ti_usb_3410_5052.c b/drivers/usb/serial/ti_usb_3410_5052.c
---- a/drivers/usb/serial/ti_usb_3410_5052.c	2007-10-22 11:25:25.000000000 +0200
-+++ b/drivers/usb/serial/ti_usb_3410_5052.c	2007-12-23 20:30:39.000000000 +0100
-@@ -84,6 +84,7 @@
- #include <asm/semaphore.h>
- #include <linux/usb.h>
- #include <linux/usb/serial.h>
+diff -u -p linux-2.6/drivers/scsi/lpfc/lpfc_scsi.c linuxcopy/drivers/scsi/lpfc/lpfc_scsi.c
+--- linux-2.6/drivers/scsi/lpfc/lpfc_scsi.c	2007-11-08 08:00:52.000000000 +0100
++++ linuxcopy/drivers/scsi/lpfc/lpfc_scsi.c	2007-12-25 20:53:54.000000000 +0100
+@@ -22,6 +22,7 @@
+ #include <linux/pci.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
 +#include <linux/jiffies.h>
- 
- #include "ti_usb_3410_5052.h"
- #include "ti_fw_3410.h"		/* firmware image for 3410 */
-@@ -1531,7 +1532,7 @@ static void ti_drain(struct ti_port *tpo
- 	/* wait for empty tx register, plus 20 ms */
- 	timeout += jiffies;
- 	tport->tp_lsr &= ~TI_LSR_TX_EMPTY;
--	while ((long)(jiffies - timeout) < 0 && !signal_pending(current)
-+	while (time_before(jiffies, timeout) && !signal_pending(current)
- 	&& !(tport->tp_lsr&TI_LSR_TX_EMPTY) && !tdev->td_urb_error
- 	&& usb_get_intfdata(port->serial->interface)) {  /* not disconnected */
- 		if (ti_get_lsr(tport))
+
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_device.h>
+@@ -55,7 +56,8 @@ lpfc_adjust_queue_depth(struct lpfc_hba
+ 	atomic_inc(&phba->num_rsrc_err);
+ 	phba->last_rsrc_error_time = jiffies;
+
+-	if ((phba->last_ramp_down_time + QUEUE_RAMP_DOWN_INTERVAL) > jiffies) {
++	if (time_before(jiffies,
++			phba->last_ramp_down_time+QUEUE_RAMP_DOWN_INTERVAL)) {
+ 		spin_unlock_irqrestore(&phba->hbalock, flags);
+ 		return;
+ 	}
+@@ -94,8 +96,10 @@ lpfc_rampup_queue_depth(struct lpfc_vpor
+ 	if (vport->cfg_lun_queue_depth <= sdev->queue_depth)
+ 		return;
+ 	spin_lock_irqsave(&phba->hbalock, flags);
+-	if (((phba->last_ramp_up_time + QUEUE_RAMP_UP_INTERVAL) > jiffies) ||
+-	 ((phba->last_rsrc_error_time + QUEUE_RAMP_UP_INTERVAL ) > jiffies)) {
++	if ((time_before(jiffies,
++			 phba->last_ramp_up_time + QUEUE_RAMP_UP_INTERVAL)) ||
++	 (time_before(jiffies,
++		      phba->last_rsrc_error_time + QUEUE_RAMP_UP_INTERVAL))) {
+ 		spin_unlock_irqrestore(&phba->hbalock, flags);
+ 		return;
+ 	}
+@@ -617,10 +621,12 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba
+ 		lpfc_rampup_queue_depth(vport, sdev);
+
+ 	if (!result && pnode != NULL &&
+-	   ((jiffies - pnode->last_ramp_up_time) >
+-		LPFC_Q_RAMP_UP_INTERVAL * HZ) &&
+-	   ((jiffies - pnode->last_q_full_time) >
+-		LPFC_Q_RAMP_UP_INTERVAL * HZ) &&
++	   (time_after(jiffies,
++		       pnode->last_ramp_up_time +
++		       LPFC_Q_RAMP_UP_INTERVAL * HZ)) &&
++	   (time_after(jiffies,
++		       pnode->last_q_full_time +
++		       LPFC_Q_RAMP_UP_INTERVAL * HZ)) &&
+ 	   (vport->cfg_lun_queue_depth > sdev->queue_depth)) {
+ 		shost_for_each_device(tmp_sdev, sdev->host) {
+ 			if (vport->cfg_lun_queue_depth > tmp_sdev->queue_depth){
