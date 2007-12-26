@@ -1,39 +1,59 @@
-From: Leonardo Potenza <lpotenza@inwind.it>
-Date: Sun, 23 Dec 2007 20:59:29 +0000
-Subject: [PATCH] drivers/atm/iphase.c: compilation warning fix
-Message-Id: <200712232159.29844.lpotenza@inwind.it>
+From: Julia Lawall <julia@diku.dk>
+Date: Wed, 26 Dec 2007 16:13:50 +0000
+Subject: [PATCH 1/3] arch/x86: Use offsetof
+Message-Id: <Pine.LNX.4.58.0712261712450.1185@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: tglx@linutronix.de, viro@ftp.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-From: Leonardo Potenza <lpotenza@inwind.it>
+From: Julia Lawall <julia@diku.dk>
 
-Compilation warning fix (tcnter and xdump() used only in debug build)
+In the patch cc154ac64aa8d3396b187f64cef01ce67f433324, Al Viro observed
+that the proper way to compute the distance between two structure fields is
+to use offsetof() or a cast to a pointer to character.  The same change can
+be applied to a few more files.
 
-Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+The change was made using the following semantic patch
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@r@
+type T;
+T s;
+type T1, T2;
+identifier fld1, fld2;
+typedef uint8_t;
+typedef u8;
+@@
+
+(
+  (char *)&s.fld1 - (char *)&s.fld2
+|
+  (uint8_t *)&s.fld1 - (uint8_t *)&s.fld2
+|
+  (u8 *)&s.fld1 - (u8 *)&s.fld2
+|
+- (T1)&s.fld1 - (T2)&s.fld2
++ offsetof(T,fld1) - offsetof(T,fld2)
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
 
-When trying to build with CONFIG_ATM_IA_DEBUG not set, I got the following warning messages:
-drivers/atm/iphase.c:961: warning: 'tcnter' defined but not used
-drivers/atm/iphase.c:963: warning: 'xdump' defined but not used
-
---- linux-2.6/drivers/atm/iphase.c.orig	2007-12-23 17:57:16.000000000 +0100
-+++ linux-2.6/drivers/atm/iphase.c	2007-12-23 18:00:23.000000000 +0100
-@@ -958,6 +958,7 @@ static void ia_suni_pm7345_init (IADEV *
- 
- /***************************** IA_LIB END *****************************/
-     
-+#ifdef CONFIG_ATM_IA_DEBUG
- static int tcnter = 0;
- static void xdump( u_char*  cp, int  length, char*  prefix )
- {
-@@ -992,6 +993,7 @@ static void xdump( u_char*  cp, int  len
-     }
- 
- }  /* close xdump(... */
-+#endif /* CONFIG_ATM_IA_DEBUG */
- 
-   
- static struct atm_dev *ia_boards = NULL;  
+diff -u -p a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
+--- a/arch/x86/kernel/vm86_32.c	2007-10-22 11:25:00.000000000 +0200
++++ b/arch/x86/kernel/vm86_32.c	2007-12-26 16:27:15.000000000 +0100
+@@ -215,7 +215,9 @@ asmlinkage int sys_vm86old(struct pt_reg
+ 	ret = -EFAULT;
+ 	if (tmp)
+ 		goto out;
+-	memset(&info.vm86plus, 0, (int)&info.regs32 - (int)&info.vm86plus);
++	memset(&info.vm86plus, 0,
++	       offsetof(struct kernel_vm86_struct, regs32) -
++	       offsetof(struct kernel_vm86_struct, vm86plus));
+ 	info.regs32 = &regs;
+ 	tsk->thread.vm86_info = v86;
+ 	do_sys_vm86(&info, tsk);
