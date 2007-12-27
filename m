@@ -1,36 +1,21 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Date: Thu, 27 Dec 2007 01:01:38 +0000
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Date: Thu, 27 Dec 2007 01:17:12 +0000
 Subject: Re: [PATCH 1/3] arch/x86: Use offsetof
-Message-Id: <4772F972.7070802@zytor.com>
+Message-Id: <20071227011712.GG27894@ZenIV.linux.org.uk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <Pine.LNX.4.58.0712261712450.1185@pc-041.diku.dk> <20071226194718.GB8844@elf.ucw.cz>
-In-Reply-To: <20071226194718.GB8844@elf.ucw.cz>
+References: <Pine.LNX.4.58.0712261712450.1185@pc-041.diku.dk> <20071226194718.GB8844@elf.ucw.cz> <4772F972.7070802@zytor.com>
+In-Reply-To: <4772F972.7070802@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Julia Lawall <julia@diku.dk>, tglx@linutronix.de, viro@ftp.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Julia Lawall <julia@diku.dk>, tglx@linutronix.de, viro@ftp.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Pavel Machek wrote:
->>
->> diff -u -p a/arch/x86/kernel/vm86_32.c b/arch/x86/kernel/vm86_32.c
->> --- a/arch/x86/kernel/vm86_32.c	2007-10-22 11:25:00.000000000 +0200
->> +++ b/arch/x86/kernel/vm86_32.c	2007-12-26 16:27:15.000000000 +0100
->> @@ -215,7 +215,9 @@ asmlinkage int sys_vm86old(struct pt_reg
->>  	ret = -EFAULT;
->>  	if (tmp)
->>  		goto out;
->> -	memset(&info.vm86plus, 0, (int)&info.regs32 - (int)&info.vm86plus);
->> +	memset(&info.vm86plus, 0,
->> +	       offsetof(struct kernel_vm86_struct, regs32) -
->> +	       offsetof(struct kernel_vm86_struct, vm86plus));
+On Wed, Dec 26, 2007 at 05:01:38PM -0800, H. Peter Anvin wrote:
+
+> The right way to do it is:
 > 
-> I do not think this makes it more readable... (int) -> (char *) would
-> make it portable and readable, AFAICT.
-> 								Pavel
+> 	memset(&info.vm86plus, 0, sizeof info.vm86plus);
 
-The right way to do it is:
-
-	memset(&info.vm86plus, 0, sizeof info.vm86plus);
-
-	-hpa
+If it's just one field _and_ we don't have padding we want to zero out -
+certainly...
