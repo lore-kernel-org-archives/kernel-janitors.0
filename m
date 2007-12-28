@@ -1,92 +1,62 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Mon, 24 Dec 2007 14:50:34 +0000
-Subject: [PATCH 36/38] net/mac80211: Use time_before, time_before_eq, etc.
-Message-Id: <Pine.LNX.4.64.0712241550090.23999@ask.diku.dk>
+From: Ian Kent <raven@themaw.net>
+Date: Fri, 28 Dec 2007 04:34:10 +0000
+Subject: Re: [autofs] [PATCH 1/4] fs/autofs: Use time_before,
+Message-Id: <1198816450.3089.24.camel@raven.themaw.net>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <Pine.LNX.4.58.0712261621000.1185@pc-041.diku.dk>
+	 <2c0942db0712261158q34cddebeifceef6ceda683320@mail.gmail.com>
+	 <4772BD6C.1010502@zytor.com> <Pine.LNX.4.64.0712270805370.6952@ask.diku.dk>
+In-Reply-To: <Pine.LNX.4.64.0712270805370.6952@ask.diku.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: jbenc@suse.cz, flamingice@sourmilk.net, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Julia Lawall <julia@diku.dk>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Ray Lee <ray-lk@madrabbit.org>, autofs@linux.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+On Thu, 2007-12-27 at 08:08 +0100, Julia Lawall wrote:
+> On Wed, 26 Dec 2007, H. Peter Anvin wrote:
+> 
+> > Ray Lee wrote:
+> > > On Dec 26, 2007 7:21 AM, Julia Lawall <julia@diku.dk> wrote:
+> > > > -               if (jiffies - ent->last_usage < timeout)
+> > > > +               if (time_before(jiffies, ent->last_usage + timeout))
+> > > 
+> > > I don't think this is a safe change? subtraction is always safe (if
+> > > you think about it as 'distance'), addition isn't always safe unless
+> > > you know the range. The time_before macro will expand that out to
+> > > (effectively):
 
-The functions time_before, time_before_eq, time_after, and time_after_eq
-are more robust for comparing jiffies against other values.
+I don't see how subtraction is any different in this case as that could
+just as easily underflow leading to the same issue.
 
-A simplified version of the semantic patch making this change is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+> > > 
+> > >   if ( (long)(ent->last_usage + timeout) - (long)(jiffies) < 0 )
+> > > 
+> > > which seems to introduce an overflow condition in the first term.
+> > > 
+> > > Dunno, I may be wrong (happens often), but at the very least what
+> > > you've transformed it into is no longer obviously correct, and so it's
+> > > not a great change.
+> > 
+> > Indeed.  The bottom form will have overflow issues at time
+> > jiffies_wraparound/2, whereas the top form will have overflow issues only near
+> > jiffies_wraparound/1.
+> 
+> OK, so it seems like it is not such a good idea.
+> 
+> There are, however, over 200 files that contain calls to the various time 
+> functions that follow this pattern, eg:
+> 
+> arch/arm/kernel/ecard.c:563
+> if (!last || time_after(jiffies, last + 5*HZ)) {
 
-// <smpl>
-@ change_compare_np @
-expression E;
-@@
+Including autofs4.
 
-(
-- jiffies <= E
-+ time_before_eq(jiffies,E)
-|
-- jiffies >= E
-+ time_after_eq(jiffies,E)
-|
-- jiffies < E
-+ time_before(jiffies,E)
-|
-- jiffies > E
-+ time_after(jiffies,E)
-)
+> 
+> Perhaps they should be coverted to use a subtraction as well?
 
-@ include depends on change_compare_np @
-@@
+Thinking about the cases involved always makes my head ache.
 
-#include <linux/jiffies.h>
+Ian
 
-@ no_include depends on !include && change_compare_np @
-@@
 
-  #include <linux/...>
-+ #include <linux/jiffies.h>
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -r -u -p a/net/mac80211/rc80211_simple.c b/net/mac80211/rc80211_simple.c
---- a/net/mac80211/rc80211_simple.c	2007-11-13 16:01:34.000000000 +0100
-+++ b/net/mac80211/rc80211_simple.c	2007-12-23 20:30:40.000000000 +0100
-@@ -13,6 +13,7 @@
- #include <linux/slab.h>
- #include <linux/skbuff.h>
- #include <linux/compiler.h>
-+#include <linux/jiffies.h>
- 
- #include <net/mac80211.h>
- #include "ieee80211_i.h"
-@@ -194,7 +195,7 @@ static void rate_control_simple_tx_statu
- 		rate_control_rate_dec(local, sta);
- 	}
- 
--	if (srctrl->avg_rate_update + 60 * HZ < jiffies) {
-+	if (time_after(jiffies, srctrl->avg_rate_update + 60 * HZ)) {
- 		srctrl->avg_rate_update = jiffies;
- 		if (srctrl->tx_avg_rate_num > 0) {
- #ifdef CONFIG_MAC80211_VERBOSE_DEBUG
-diff -r -u -p a/net/mac80211/rx.c b/net/mac80211/rx.c
---- a/net/mac80211/rx.c	2007-12-04 13:19:55.000000000 +0100
-+++ b/net/mac80211/rx.c	2007-12-23 20:30:40.000000000 +0100
-@@ -14,6 +14,7 @@
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
- #include <linux/rcupdate.h>
-+#include <linux/jiffies.h>
- #include <net/mac80211.h>
- #include <net/ieee80211_radiotap.h>
- 
-@@ -741,7 +742,7 @@ ieee80211_reassemble_find(struct ieee802
- 		    compare_ether_addr(hdr->addr2, f_hdr->addr2) != 0)
- 			continue;
- 
--		if (entry->first_frag_time + 2 * HZ < jiffies) {
-+		if (time_after(jiffies, entry->first_frag_time + 2 * HZ)) {
- 			__skb_queue_purge(&entry->skb_list);
- 			continue;
- 		}
