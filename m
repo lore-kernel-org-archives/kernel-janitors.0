@@ -1,7 +1,7 @@
-From: Adrian Bunk <bunk@kernel.org>
-Date: Mon, 31 Dec 2007 00:51:37 +0000
-Subject: Re: [PATCH 3/3] remove explicit memset to memory allocated with
-Message-Id: <20071231005137.GC3083@does.not.exist>
+From: Andi Drebes <lists-receive@programmierforen.de>
+Date: Mon, 31 Dec 2007 11:29:24 +0000
+Subject: Re: [PATCH 3/3] remove explicit memset to memory allocated with k[zc]alloc
+Message-Id: <200712311229.25418.lists-receive@programmierforen.de>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <005801c841bb$6723d330$0b01a8c0@bureau>
 In-Reply-To: <005801c841bb$6723d330$0b01a8c0@bureau>
@@ -10,40 +10,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 18, 2007 at 11:53:58PM +0100, Andi Drebes wrote:
-> Hi!
-> 
-> > 1) Remove an explicit memset(.., 0, ...) to a varialable allocated with
-> > kzalloc.
+> > There are quite a lot of statements like that in the kernel...
 > > 
-> > 2) Allocate 'src' with kmalloc instead of kzalloc as all elements of the
-> > 'src' buffer are initialized in a 'for(...)' loop
-> The changes look good to me, but there's another thing that could be done in that file:
-> There's no need for the expression "sizeof(u8)" since it always returns 1. Could you
-> fix that too and submit a new patch?
+> > $ grep -r "sizeof(u8)" . | wc -l
+> > 53
 > 
-> There are quite a lot of statements like that in the kernel...
-> 
-> $ grep -r "sizeof(u8)" . | wc -l
-> 53
+> What is the problem you are trying to solve?
+> It might in some places be an improvement to replace a sizeof(u8) with a 
+> sizeof() on the actual variable, but blindly replacing sizeof(u8) with 1 
+> sounds like an attempt to make the code harder to read without bringing 
+> any advantage...
+Perhaps my comments on the particular patch from Christophe sounded as if
+they applied to all sizeof(u8) statements. I was not talking about *blindly*
+replacing them. I didn't even say that they *all* should be replaced. What
+I wanted to say was: maybe one should have a look at other places in the
+kernel aswell. The above grep was just a quick grep through the sources.
 
-What is the problem you are trying to solve?
+Of course, there's no functional problem with sizeof(u8). It should be kept
+in places where it makes things clear. But in my eyes, sizeof(u8) in something
+like this (as in the lines affected by the patch):
 
-It might in some places be an improvement to replace a sizeof(u8) with a 
-sizeof() on the actual variable, but blindly replacing sizeof(u8) with 1 
-sounds like an attempt to make the code harder to read without bringing 
-any advantage...
+kmalloc(sizeof(u8) * IOP_ADMA_TEST_SIZE, GFP_KERNEL);
 
-> Regards,
-> 	Andi
+isn't very useful. I think it's quite clear that kmalloc takes a number of
+bytes as the first argument. So replacing the above code with the following
 
-cu
-Adrian
+kmalloc(IOP_ADMA_TEST_SIZE, GFP_KERNEL);
 
--- 
+would save some bytes and make it compile faster. And it isn't harder to read.
+However, I don't insist on changes like that. I just thought that for
+drivers/dma/iop-adma.c it may be included in Christophe's patch.
 
-       "Is there not promise of rain?" Ling Tan asked suddenly out
-        of the darkness. There had been need of rain for many days.
-       "Only a promise," Lao Er said.
-                                       Pearl S. Buck - Dragon Seed
-
+	Andi
