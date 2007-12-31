@@ -1,34 +1,25 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Date: Sun, 30 Dec 2007 21:49:34 +0000
+From: Christoph Hellwig <hch@infradead.org>
+Date: Mon, 31 Dec 2007 09:17:32 +0000
 Subject: Re: [RFC][PATCH] byteorder: introduce le32_add_cpu & friends to
-Message-Id: <20071230214857.GA14177@joi>
+Message-Id: <20071231091732.GA29043@infradead.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071230190619.GA13757@joi> <20071230191825.GA6447@infradead.org>
-In-Reply-To: <20071230191825.GA6447@infradead.org>
+References: <20071230190619.GA13757@joi> <20071230191825.GA6447@infradead.org> <20071230214857.GA14177@joi>
+In-Reply-To: <20071230214857.GA14177@joi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Christoph Hellwig <hch@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
+To: Marcin Slusarz <marcin.slusarz@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, ocfs2-devel@oss.oracle.com, LKML <linux-kernel@vger.kernel.org>, kernel-janitors <kernel-janitors@vger.kernel.org>
 
-On Sun, Dec 30, 2007 at 07:18:25PM +0000, Christoph Hellwig wrote:
-> On Sun, Dec 30, 2007 at 08:06:34PM +0100, Marcin Slusarz wrote:
-> > There are many places where these functions would be useful.
-> > (just look at: grep -r 'cpu_to_[ble12346]*([ble12346]*_to_cpu.*[-+]' linux-src/)
-> > What do you think?
-> > 
-> > ps: this patch depends on http://lkml.org/lkml/2007/12/25/35
-> > --
-> > 
-> > add inline functions which add native byte order variable to
-> > little/big endian variable to core header and as an example
-> > convert ext3 to use them
-> 
-> Various places already have this as be*_add / le*_add, so it might be
-> more useful to keep those names already in use.
+On Sun, Dec 30, 2007 at 10:49:34PM +0100, Marcin Slusarz wrote:
+> I found it in XFS only. Did I miss something?
 
-I found it in XFS only. Did I miss something?
-be32_add is shorter than be32_add_cpu but I think it's not clear
-whether second parameter is in native byte order or not.
+These helpers come from ocfs2 which has both be and le variants.
 
-Marcin
+> be32_add is shorter than be32_add_cpu but I think it's not clear
+> whether second parameter is in native byte order or not.
+
+Then again adding foreing endian values doesn't make much sense.
+
+If you insist on your naming please make sure to convert ocfs and xfs
+to your naming.
