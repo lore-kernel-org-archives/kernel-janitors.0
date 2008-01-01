@@ -1,101 +1,66 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:05:23 +0000
-Subject: [PATCH 30/33][SCSI] sun3x_esp: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030523.30002.87000.sendpatchset@thinktank.campus.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jan 2008 21:09:20 +0000
+Subject: [PATCH 2/2] drivers/media/common: Add missing video_device_release
+Message-Id: <Pine.LNX.4.64.0801012208150.19803@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: v4l-dvb-maintainer@linuxtv.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+Video_device_alloc returns the result of a kzalloc.  In this case, the
+value is stored in a local variable which is not copied elsewhere before
+the point of the error return (video_register_device does not save its
+first argument anywhere if it returns a negative value).  Thus, a
+video_device_release it needed before the error return.
+
+
+The problem was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type T,T1,T2;
+identifier E;
+statement S;
+expression x1,x2,x3;
+int ret;
+@@
+
+  T E;
+  ...
+* E = video_device_alloc(...);
+  if (E = NULL) S
+  ... when != video_device_release(...,(T1)E,...)
+      when != if (E != NULL) { ... video_device_release(...,(T1)E,...); ...}
+      when != x1 = (T1)E
+      when != E = x3;
+      when any
+  if (...) {
+    ... when != video_device_release(...,(T2)E,...)
+        when != if (E != NULL) { ... video_device_release(...,(T2)E,...); ...}
+        when != x2 = (T2)E
+(
+*   return;
+|
+*   return ret;
+)
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
-Cleaned up checkpatch.pl-warnings.
 
-
-diff --git a/drivers/scsi/sun3x_esp.c b/drivers/scsi/sun3x_esp.c
-index 1bc4190..8a7d5a4 100644
---- a/drivers/scsi/sun3x_esp.c
-+++ b/drivers/scsi/sun3x_esp.c
-@@ -25,7 +25,7 @@
+diff -u -p a/drivers/media/common/saa7146_fops.c b/drivers/media/common/saa7146_fops.c
+--- a/drivers/media/common/saa7146_fops.c	2007-10-22 11:25:10.000000000 +0200
++++ b/drivers/media/common/saa7146_fops.c	2008-01-01 14:20:33.000000000 +0100
+@@ -538,6 +538,7 @@ int saa7146_register_device(struct video
+ 	// fixme: -1 should be an insmod parameter *for the extension* (like "video_nr");
+ 	if (video_register_device(vfd, type, -1) < 0) {
+ 		ERR(("cannot register v4l2 device. skipping.\n"));
++		video_device_release(vfd);
+ 		return -1;
+ 	}
  
- static void dma_barrier(struct NCR_ESP *esp);
- static int  dma_bytes_sent(struct NCR_ESP *esp, int fifo_count);
--static int  dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp);
-+static int  dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp);
- static void dma_drain(struct NCR_ESP *esp);
- static void dma_invalidate(struct NCR_ESP *esp);
- static void dma_dump_state(struct NCR_ESP *esp);
-@@ -38,11 +38,11 @@ static void dma_poll(struct NCR_ESP *esp, unsigned char *vaddr);
- static int  dma_ports_p(struct NCR_ESP *esp);
- static void dma_reset(struct NCR_ESP *esp);
- static void dma_setup(struct NCR_ESP *esp, __u32 addr, int count, int write);
--static void dma_mmu_get_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp);
--static void dma_mmu_get_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp);
--static void dma_mmu_release_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp);
--static void dma_mmu_release_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp);
--static void dma_advance_sg (Scsi_Cmnd *sp);
-+static void dma_mmu_get_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp);
-+static void dma_mmu_get_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp);
-+static void dma_mmu_release_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp);
-+static void dma_mmu_release_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp);
-+static void dma_advance_sg(struct scsi_cmnd *sp);
- 
- /* Detecting ESP chips on the machine.  This is the simple and easy
-  * version.
-@@ -174,7 +174,7 @@ static int dma_bytes_sent(struct NCR_ESP *esp, int fifo_count)
- 	return rval - fifo_count;
- }
- 
--static int dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+static int dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
- 	return sp->SCp.this_residual;
- }
-@@ -319,14 +319,14 @@ static void dma_setup(struct NCR_ESP *esp, __u32 addr, int count, int write)
- 	dregs->st_addr = addr;
- }
- 
--static void dma_mmu_get_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+static void dma_mmu_get_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
-     sp->SCp.have_data_in = dvma_map((unsigned long)sp->SCp.buffer,
- 				       sp->SCp.this_residual);
-     sp->SCp.ptr = (char *)((unsigned long)sp->SCp.have_data_in);
- }
- 
--static void dma_mmu_get_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+static void dma_mmu_get_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
-     int sz = sp->SCp.buffers_residual;
-     struct scatterlist *sg = sp->SCp.buffer;
-@@ -339,12 +339,12 @@ static void dma_mmu_get_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
-     sp->SCp.ptr=(char *)((unsigned long)sp->SCp.buffer->dma_address);
- }
- 
--static void dma_mmu_release_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+static void dma_mmu_release_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
-     dvma_unmap((char *)sp->SCp.have_data_in);
- }
- 
--static void dma_mmu_release_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+static void dma_mmu_release_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
-     int sz = sp->use_sg - 1;
-     struct scatterlist *sg = (struct scatterlist *)sp->request_buffer;
-@@ -355,7 +355,7 @@ static void dma_mmu_release_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
-     }
- }
- 
--static void dma_advance_sg (Scsi_Cmnd *sp)
-+static void dma_advance_sg(struct scsi_cmnd *sp)
- {
-     sp->SCp.ptr = (char *)((unsigned long)sp->SCp.buffer->dma_address);
- }
