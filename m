@@ -1,82 +1,87 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:04:17 +0000
-Subject: [PATCH 17/33][SCSI] g_NCR5380: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030417.30002.42297.sendpatchset@thinktank.campus.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jan 2008 21:05:50 +0000
+Subject: [PATCH] drivers/pcmcia: Add missing iounmap
+Message-Id: <Pine.LNX.4.64.0801012205020.19803@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: linux-pcmcia@lists.infradead.org, vbordug@ru.mvista.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+of_iomap calls ioremap, and so should be matched with an iounmap.  At the
+two error returns, the result of calling of_iomap is only stored in a local
+variable, so these error paths need to call iounmap.  Furthermore, this
+function ultimately stores the result of of_iomap in an array that is local
+to the file.  These values should be iounmapped at some point.  I have
+added a corresponding call to iounmap at the end of the function m8xx_remove.
+
+
+
+The problem was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type T,T1,T2;
+identifier E;
+statement S;
+expression x1,x2,x3;
+int ret;
+@@
+
+  T E;
+  ...
+* E = of_iomap(...);
+  if (E = NULL) S
+  ... when != iounmap(...,(T1)E,...)
+      when != if (E != NULL) { ... iounmap(...,(T1)E,...); ...}
+      when != x1 = (T1)E
+      when != E = x3;
+      when any
+  if (...) {
+    ... when != iounmap(...,(T2)E,...)
+        when != if (E != NULL) { ... iounmap(...,(T2)E,...); ...}
+        when != x2 = (T2)E
+(
+*   return;
+|
+*   return ret;
+)
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
-
-
-diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
-index 75585a5..5303e1d 100644
---- a/drivers/scsi/g_NCR5380.c
-+++ b/drivers/scsi/g_NCR5380.c
-@@ -774,7 +774,7 @@ static int sprint_command(char *buffer, int len, unsigned char *command)
-  *	Print out the target and command data in hex
-  */
+diff -u -p a/drivers/pcmcia/m8xx_pcmcia.c b/drivers/pcmcia/m8xx_pcmcia.c
+--- a/drivers/pcmcia/m8xx_pcmcia.c	2007-10-22 11:25:20.000000000 +0200
++++ b/drivers/pcmcia/m8xx_pcmcia.c	2008-01-01 14:31:36.000000000 +0100
+@@ -1174,8 +1174,10 @@ static int __init m8xx_probe(struct of_d
  
--static int sprint_Scsi_Cmnd(char *buffer, int len, Scsi_Cmnd * cmd)
-+static int sprint_Scsi_Cmnd(char *buffer, int len, struct scsi_cmnd *cmd)
- {
- 	int start = len;
- 	PRINTP("host number %d destination target %d, lun %d\n" ANDP cmd->device->host->host_no ANDP cmd->device->id ANDP cmd->device->lun);
-@@ -807,7 +807,7 @@ static int generic_NCR5380_proc_info(struct Scsi_Host *scsi_ptr, char *buffer, c
- 	unsigned long flags;
- 	unsigned char status;
- 	int i;
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	struct NCR5380_hostdata *hostdata;
- #ifdef NCR5380_STATS
- 	struct scsi_device *dev;
-@@ -886,17 +886,17 @@ static int generic_NCR5380_proc_info(struct Scsi_Host *scsi_ptr, char *buffer, c
- 	if (!hostdata->connected) {
- 		PRINTP("No currently connected command\n");
- 	} else {
--		len += sprint_Scsi_Cmnd(buffer, len, (Scsi_Cmnd *) hostdata->connected);
-+		len += sprint_Scsi_Cmnd(buffer, len, (struct scsi_cmnd *) hostdata->connected);
+ 	pcmcia_schlvl = irq_of_parse_and_map(np, 0);
+ 	hwirq = irq_map[pcmcia_schlvl].hwirq;
+-	if (pcmcia_schlvl < 0)
++	if (pcmcia_schlvl < 0) {
++		iounmap(pcmcia);
+ 		return -EINVAL;
++	}
+ 
+ 	m8xx_pgcrx[0] = &pcmcia->pcmc_pgcra;
+ 	m8xx_pgcrx[1] = &pcmcia->pcmc_pgcrb;
+@@ -1189,6 +1191,7 @@ static int __init m8xx_probe(struct of_d
+ 			driver_name, socket)) {
+ 		pcmcia_error("Cannot allocate IRQ %u for SCHLVL!\n",
+ 			     pcmcia_schlvl);
++		iounmap(pcmcia);
+ 		return -1;
  	}
  
- 	PRINTP("issue_queue\n");
+@@ -1284,6 +1287,7 @@ static int m8xx_remove(struct of_device 
+ 	}
+ 	for (i = 0; i < PCMCIA_SOCKETS_NO; i++)
+ 		pcmcia_unregister_socket(&socket[i].socket);
++	iounmap(pcmcia);
  
--	for (ptr = (Scsi_Cmnd *) hostdata->issue_queue; ptr; ptr = (Scsi_Cmnd *) ptr->host_scribble)
-+	for (ptr = (struct scsi_cmnd *) hostdata->issue_queue; ptr; ptr = (struct scsi_cmnd *) ptr->host_scribble)
- 		len += sprint_Scsi_Cmnd(buffer, len, ptr);
+ 	free_irq(pcmcia_schlvl, NULL);
  
- 	PRINTP("disconnected_queue\n");
- 
--	for (ptr = (Scsi_Cmnd *) hostdata->disconnected_queue; ptr; ptr = (Scsi_Cmnd *) ptr->host_scribble)
-+	for (ptr = (struct scsi_cmnd *) hostdata->disconnected_queue; ptr; ptr = (struct scsi_cmnd *) ptr->host_scribble)
- 		len += sprint_Scsi_Cmnd(buffer, len, ptr);
- 
- 	*start = buffer + offset;
-diff --git a/drivers/scsi/g_NCR5380.h b/drivers/scsi/g_NCR5380.h
-index df0b3f6..a49e789 100644
---- a/drivers/scsi/g_NCR5380.h
-+++ b/drivers/scsi/g_NCR5380.h
-@@ -43,11 +43,11 @@
- #endif
- 
- #ifndef ASM
--static int generic_NCR5380_abort(Scsi_Cmnd *);
-+static int generic_NCR5380_abort(struct scsi_cmnd *);
- static int generic_NCR5380_detect(struct scsi_host_template *);
- static int generic_NCR5380_release_resources(struct Scsi_Host *);
--static int generic_NCR5380_queue_command(Scsi_Cmnd *, void (*done)(Scsi_Cmnd *));
--static int generic_NCR5380_bus_reset(Scsi_Cmnd *);
-+static int generic_NCR5380_queue_command(struct scsi_cmnd *, void (*done)(struct scsi_cmnd *));
-+static int generic_NCR5380_bus_reset(struct scsi_cmnd *);
- static const char* generic_NCR5380_info(struct Scsi_Host *);
- 
- #ifndef CMD_PER_LUN
