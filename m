@@ -1,25 +1,67 @@
-From: marcin.slusarz@gmail.com
-Date: Sat, 05 Jan 2008 15:36:19 +0000
-Subject: [PATCH 0/3] byteorder: introduce le32_add_cpu & friends to core
-Message-Id: <1199547382-29969-1-git-send-email-marcin.slusarz@gmail.com>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jan 2008 21:08:10 +0000
+Subject: [PATCH 1/2] drivers/media/radio: Use video_device_release rather
+Message-Id: <Pine.LNX.4.64.0801012207110.19803@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Mark Fasheh <mark.fasheh@oracle.com>, OCFS2-devel <ocfs2-devel@oss.oracle.com>, Christoph Hellwig <hch@infradead.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-ext4@vger.kernel.org, xfs-masters@oss.sgi.com, Marcin Slusarz <marcin.slusarz@gmail.com>
+To: v4l-dvb-maintainer@linuxtv.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Hi
+From: Julia Lawall <julia@diku.dk>
 
-This patchset moves le*_add_cpu and be*_add_cpu functions from OCFS2 to core
-header (1st), converts ext3 filesystem to this API (2nd) and replaces
-XFS different named functions with new ones (3rd).
+The file drivers/media/video/videodev.c defines both video_device_alloc and
+video_device_release.  These are essentially just kzmalloc and kfree,
+respectively, but it seems better to use video_device_release, as done in
+the other media files, rather than kfree, in case the implementation some
+day changes.
 
-There are many places where these functions will be useful.
-Just look at: grep -r 'cpu_to_[ble12346]*([ble12346]*_to_cpu.*[-+]' linux-src/
-Patch for ext3 is an example how conversions will probably look like.
 
-ps: this patchset depends on http://lkml.org/lkml/2007/12/25/35 (which is
-    in ocfs2 git tree, branches: trivial, ALL)
+The problem was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
 
-Marcin Slusarz
+// <smpl>
+@@
+type T,T1,T2;
+identifier E;
+statement S;
+expression x1,x2,x3;
+int ret;
+@@
+
+  T E;
+  ...
+* E = video_device_alloc(...);
+  if (E = NULL) S
+  ... when != video_device_release(...,(T1)E,...)
+      when != if (E != NULL) { ... video_device_release(...,(T1)E,...); ...}
+      when != x1 = (T1)E
+      when != E = x3;
+      when any
+  if (...) {
+    ... when != video_device_release(...,(T2)E,...)
+        when != if (E != NULL) { ... video_device_release(...,(T2)E,...); ...}
+        when != x2 = (T2)E
+(
+*   return;
+|
+*   return ret;
+)
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/drivers/media/radio/radio-maestro.c b/drivers/media/radio/radio-maestro.c
+--- a/drivers/media/radio/radio-maestro.c	2007-06-02 22:32:16.000000000 +0200
++++ b/drivers/media/radio/radio-maestro.c	2008-01-01 14:18:44.000000000 +0100
+@@ -423,7 +423,7 @@ static int __devinit maestro_probe(struc
+ errunr:
+ 	video_unregister_device(maestro_radio_inst);
+ errfr1:
+-	kfree(maestro_radio_inst);
++	video_device_release(maestro_radio_inst);
+ errfr:
+ 	kfree(radio_unit);
+ err:
