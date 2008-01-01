@@ -1,60 +1,63 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Fri, 04 Jan 2008 06:46:44 +0000
-Subject: Re: [PATCH 1/3] ipc: Convert handmade 'max' to max().
-Message-Id: <477DD654.1010709@student.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Tue, 01 Jan 2008 21:02:49 +0000
+Subject: [PATCH 1/3] arch/powerpc/platforms/pseries: Add missing of_node_put
+Message-Id: <Pine.LNX.4.64.0801012202040.19803@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20071217023555.24944.62155.sendpatchset@thinktank.campus.ltu.se> <20071222022701.1ddd2ae2.akpm@linux-foundation.org>
-In-Reply-To: <20071222022701.1ddd2ae2.akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: paulus@au.ibm.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Sorry for the late response, have been away during the holidays.
+From: Julia Lawall <julia@diku.dk>
 
-Andrew Morton wrote:
-> On Mon, 17 Dec 2007 03:35:55 +0100 (MET) Richard Knutsson <ricknu-0@student.ltu.se> wrote:
->
->   
->> Convert handmade 'max' to max().
->>
->> ...
->>
->> --- a/ipc/msg.c
->> +++ b/ipc/msg.c
->> @@ -473,7 +473,7 @@ asmlinkage long sys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf)
->>  		up_read(&msg_ids(ns).rw_mutex);
->>  		if (copy_to_user(buf, &msginfo, sizeof(struct msginfo)))
->>  			return -EFAULT;
->> -		return (max_id < 0) ? 0 : max_id;
->> +		return max(max_id, 0);
->>     
->
-> I don't think I like that much.
->
-> I tend to think of max() as being an arithmetic sort of thing: pick the
-> largest of two scalars.
->
-> But the code which you're changing is a _logical_ operation.  It says "if
-> ipc_get_maxid() returned an error, then return zero.  Otherwise return
-> whatever ipc_get_maxid() returned".
->
-> Yes, max() will do the right thing here, but I think it's a bit of weird
-> trick?
->
->
-> I mean, if ipc_get_maxid() were a better function, it would return a -ve
-> errno when something failed rather than the present dopey hard-coded -1. 
-> In which case the code would read 
->
-> 	return IS_ERR_VALUE(max_id) ? 0 : max_id;
->
-> in which case, converting it to max() would be even less appropriate.  If
-> you see what I mean...
->   
-Yes, have to agree. Were too quick with the changing...
+Of_get_parent and of_find_compatible_node do an of_node_get, and thus a
+corresponding of_code_put is needed in the error case.
 
-Thanks
-Richard Knutsson
 
+The problem was found using the following semantic match.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type T,T1,T2;
+identifier E;
+statement S;
+expression x1,x2,x3;
+int ret;
+@@
+
+  T E;
+  ...
+* E = \(of_get_parent\|of_find_compatible_node\)(...);
+  if (E = NULL) S
+  ... when != of_node_put(...,(T1)E,...)
+      when != if (E != NULL) { ... of_node_put(...,(T1)E,...); ...}
+      when != x1 = (T1)E
+      when != E = x3;
+      when any
+  if (...) {
+    ... when != of_node_put(...,(T2)E,...)
+        when != if (E != NULL) { ... of_node_put(...,(T2)E,...); ...}
+        when != x2 = (T2)E
+(
+*   return;
+|
+*   return ret;
+)
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
+
+diff -u -p a/arch/powerpc/platforms/pseries/reconfig.c b/arch/powerpc/platforms/pseries/reconfig.c
+--- a/arch/powerpc/platforms/pseries/reconfig.c	2007-07-20 17:45:44.000000000 +0200
++++ b/arch/powerpc/platforms/pseries/reconfig.c	2008-01-01 14:33:54.000000000 +0100
+@@ -167,6 +167,7 @@ static int pSeries_reconfig_remove_node(
+ 
+ 	if ((child = of_get_next_child(np, NULL))) {
+ 		of_node_put(child);
++		of_node_put(parent);
+ 		return -EBUSY;
+ 	}
+ 
