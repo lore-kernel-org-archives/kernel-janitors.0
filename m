@@ -1,7 +1,7 @@
-From: David Miller <davem@davemloft.net>
-Date: Thu, 03 Jan 2008 09:41:04 +0000
-Subject: Re: [PATCH] drivers/video/aty/radeon_base.c: compilation warning
-Message-Id: <20080103.014104.46420831.davem@davemloft.net>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Thu, 03 Jan 2008 17:12:28 +0000
+Subject: Re: [PATCH] drivers/video/aty/radeon_base.c: compilation warning fix
+Message-Id: <200801031812.28943.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <200801021901.44226.lpotenza@inwind.it>
 In-Reply-To: <200801021901.44226.lpotenza@inwind.it>
@@ -10,33 +10,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Thu, 03 Jan 2008 07:19:33 +1100
-
-> 
-> On Wed, 2008-01-02 at 19:01 +0100, Leonardo Potenza wrote:
-> > From: Leonardo Potenza <lpotenza@inwind.it>
+On Thursday 03 January 2008 01:32:13 Benjamin Herrenschmidt wrote:
+> > Do you think that a solution like:
 > > 
-> > Added a check for the sysfs_create_bin_file() return value
+> > [...]
+> >       if (rinfo->mon1_EDID) {
+> >               ret = sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid1_attr);
+> >               if (ret != 0)
+> >                       printk( KERN_WARNING "radeonfb (%s): cannot create edid1 bin file\n",
+> >                               pci_name(rinfo->pdev));
+> >       }
+> > [...]
 > > 
-> > Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+> > would be acceptable in this case?
+> > 
+> > If you agree, I could re-submit the patch modified.
 > 
-> NACK.
+> Bloat bloat bloat... 
 > 
-> The warnings are stupid, this is a long argument we had with akpm among
-> others, I totally refuse to fail creating the framebuffer because
-> something went bonkers creating some sysfs file that are in no way
-> mandatory for the good operations of the fb.
+> Ben.
 > 
-> There is a _shitload_ of cases where testing the result of those sysfs
-> calls is pure bloat.
 
-I agree.
+I have to agree with you that my first proposal (avoid creating 
+the framebuffer in case of a problem in the creation of a sysfs file) 
+was a little bit "drastic" measure.
 
-In fact my first reaction to this patch is "Damn, I better test
-to make sure I don't lose my console on my workstation because
-of this stupid patch."
+I thought that at least the user should be aware that something went
+wrong in the driver initialization and that not all the features 
+will be available at run-time. 
+That's why I tried to add a specific warning message.
 
-Just put (void)'s there or whatever, or we should get rid of
-the mustcheck annotations.  Either way is fine with me.
+Anyway, I didn't intend to waste so much of your time with my patch
+submission.
 
+Sorry for that.
+
+Leonardo
