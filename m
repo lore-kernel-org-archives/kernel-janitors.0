@@ -1,52 +1,79 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:04:57 +0000
-Subject: [PATCH 25/33][SCSI] NCR53c406a: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030457.30002.98237.sendpatchset@thinktank.campus.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 04 Jan 2008 14:45:01 +0000
+Subject: [PATCH] drivers/pcmcia: Add missing pci_dev_get
+Message-Id: <Pine.LNX.4.58.0801041542280.1184@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+pci_get_slot does a pci_dev_get, so pci_dev_put needs to be called in an
+error case.
+
+
+An extract of the semantic match used to find the problem is as follows:
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@@
+type find1.T,T1,T2;
+identifier find1.E;
+statement find1.S;
+expression x1,x2,x3;
+expression find1.test;
+int ret != 0;
+@@
+
+  T E;
+  ...
+(
+* E = pci_get_slot(...);
+  if (E = NULL) S
+|
+* if ((E = pci_get_slot(...)) = NULL)
+  S
+)
+  ... when != pci_dev_put(...,(T1)E,...)
+      when != if (E != NULL) { ... pci_dev_put(...,(T1)E,...); ...}
+      when != x1 = (T1)E
+      when != E = x3;
+      when any
+  if (test) {
+    ... when != pci_dev_put(...,(T2)E,...)
+        when != if (E != NULL) { ... pci_dev_put(...,(T2)E,...); ...}
+        when != x2 = (T2)E
+(
+*   return;
+|
+*   return ret;
+)
+  }
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
-Cleaned up checkpatch.pl-errors (so no '> 80 lines'-warning).
 
-
-diff --git a/drivers/scsi/NCR53c406a.c b/drivers/scsi/NCR53c406a.c
-index 137d065..bdb2ca5 100644
---- a/drivers/scsi/NCR53c406a.c
-+++ b/drivers/scsi/NCR53c406a.c
-@@ -201,7 +201,7 @@ static int dma_chan;
- static int fast_pio = USE_FAST_PIO;
- #endif
- 
--static Scsi_Cmnd *current_SC;
-+static struct scsi_cmnd *current_SC;
- static char info_msg[256];
- 
- /* ================================= */
-@@ -693,7 +693,7 @@ static void wait_intr(void)
- }
- #endif
- 
--static int NCR53c406a_queue(Scsi_Cmnd * SCpnt, void (*done) (Scsi_Cmnd *))
-+static int NCR53c406a_queue(struct scsi_cmnd *SCpnt, void (*done) (struct scsi_cmnd *))
- {
- 	int i;
- 
-@@ -726,7 +726,7 @@ static int NCR53c406a_queue(Scsi_Cmnd * SCpnt, void (*done) (Scsi_Cmnd *))
+diff -u -p a/drivers/pcmcia/cardbus.c b/drivers/pcmcia/cardbus.c
+--- a/drivers/pcmcia/cardbus.c	2007-06-02 22:32:26.000000000 +0200
++++ b/drivers/pcmcia/cardbus.c	2008-01-04 14:17:42.000000000 +0100
+@@ -143,7 +143,7 @@ int read_cb_mem(struct pcmcia_socket * s
+ 	/* Config space? */
+ 	if (space = 0) {
+ 		if (addr + len > 0x100)
+-			goto fail;
++			goto failput;
+ 		for (; len; addr++, ptr++, len--)
+ 			pci_read_config_byte(dev, addr, ptr);
+ 		return 0;
+@@ -171,6 +171,8 @@ int read_cb_mem(struct pcmcia_socket * s
+ 	memcpy_fromio(ptr, s->cb_cis_virt + addr, len);
  	return 0;
- }
- 
--static int NCR53c406a_host_reset(Scsi_Cmnd * SCpnt)
-+static int NCR53c406a_host_reset(struct scsi_cmnd *SCpnt)
- {
- 	DEB(printk("NCR53c406a_reset called\n"));
- 
+
++failput:
++	pci_dev_put(dev);
+ fail:
+ 	memset(ptr, 0xff, len);
+ 	return -1;
