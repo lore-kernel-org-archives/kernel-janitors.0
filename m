@@ -1,268 +1,85 @@
-From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:03:05 +0000
-Subject: [PATCH  3/33][SCSI] aha152x: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030305.30002.55434.sendpatchset@thinktank.campus.ltu.se>
+From: Julia Lawall <julia@diku.dk>
+Date: Fri, 04 Jan 2008 14:45:33 +0000
+Subject: [PATCH] drivers/macintosh: Add missing pci_dev_get
+Message-Id: <Pine.LNX.4.58.0801041545020.1184@pc-041.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
-In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: James.Bottomley@SteelEye.com
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+To: benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+From: Julia Lawall <julia@diku.dk>
 
-Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+pci_get_bus_and_slot does a pci_dev_get, so pci_dev_put needs to be called
+in an error case.
+
+The problem was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
+
+// <smpl>
+@exists@
+type T1,T2;
+identifier E;
+statement S,S1;
+expression x1,x2,x3;
+expression test;
+int ret != 0;
+@@
+
+  struct pci_dev *E;
+  ...
+(
+  E = \(pci_get_slot\|pci_get_device\|pci_get_bus_and_slot\)(...);
+  if (E = NULL) S
+|
+  if ((E = \(pci_get_slot\|pci_get_device\|pci_get_bus_and_slot\)(...)) = NULL) S
+)
+  ... when != pci_dev_put(...,(T1)E,...)
+      when != if (E != NULL) { ... pci_dev_put(...,(T1)E,...); ...}
+      when != x1 = (T1)E
+      when != E = x3;
+      when any
+(
+  if (E = NULL) S1
+|
+  if (test)
++   {
+(
++   pci_dev_put(E);
+    return;
+|
++   pci_dev_put(E);
+    return ret;
+)
++   }
+|
+  if (test) {
+    ... when != pci_dev_put(...,(T2)E,...)
+        when != if (E != NULL) { ... pci_dev_put(...,(T2)E,...); ...}
+        when != x2 = (T2)E
+(
++   pci_dev_put(E);
+    return;
+|
++   pci_dev_put(E);
+    return ret;
+)
+  }
+)
+// </smpl>
+
+Signed-off-by: Julia Lawall <julia@diku.dk>
 ---
-Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
-Cleaned up checkpatch.pl-errors (so no '> 80 lines'-warning).
 
 
-diff --git a/drivers/scsi/aha152x.c b/drivers/scsi/aha152x.c
-index ea8c699..e8eed86 100644
---- a/drivers/scsi/aha152x.c
-+++ b/drivers/scsi/aha152x.c
-@@ -460,16 +460,16 @@ enum aha152x_state {
-  *
-  */
- struct aha152x_hostdata {
--	Scsi_Cmnd *issue_SC;
-+	struct scsi_cmnd *issue_SC;
- 		/* pending commands to issue */
- 
--	Scsi_Cmnd *current_SC;
-+	struct scsi_cmnd *current_SC;
- 		/* current command on the bus */
- 
--	Scsi_Cmnd *disconnected_SC;
-+	struct scsi_cmnd *disconnected_SC;
- 		/* commands that disconnected */
- 
--	Scsi_Cmnd *done_SC;
-+	struct scsi_cmnd *done_SC;
- 		/* command that was completed */
- 
- 	spinlock_t lock;
-@@ -556,7 +556,7 @@ struct aha152x_hostdata {
-  *
-  */
- struct aha152x_scdata {
--	Scsi_Cmnd *next;	/* next sc in queue */
-+	struct scsi_cmnd *next;	/* next sc in queue */
- 	struct completion *done;/* semaphore to block on */
- 	unsigned char aha_orig_cmd_len;
- 	unsigned char aha_orig_cmnd[MAX_COMMAND_SIZE];
-@@ -682,7 +682,7 @@ static void done(struct Scsi_Host *shpnt, int error);
- 
- /* diagnostics */
- static void disp_ports(struct Scsi_Host *shpnt);
--static void show_command(Scsi_Cmnd * ptr);
-+static void show_command(struct scsi_cmnd *ptr);
- static void show_queues(struct Scsi_Host *shpnt);
- static void disp_enintr(struct Scsi_Host *shpnt);
- 
-@@ -691,9 +691,9 @@ static void disp_enintr(struct Scsi_Host *shpnt);
-  *  queue services:
-  *
-  */
--static inline void append_SC(Scsi_Cmnd **SC, Scsi_Cmnd *new_SC)
-+static inline void append_SC(struct scsi_cmnd **SC, struct scsi_cmnd *new_SC)
- {
--	Scsi_Cmnd *end;
-+	struct scsi_cmnd *end;
- 
- 	SCNEXT(new_SC) = NULL;
- 	if (!*SC)
-@@ -705,9 +705,9 @@ static inline void append_SC(Scsi_Cmnd **SC, Scsi_Cmnd *new_SC)
+diff -u -p a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+--- a/drivers/macintosh/via-pmu.c 2007-12-21 06:57:19.000000000 +0100
++++ b/drivers/macintosh/via-pmu.c 2008-01-04 14:00:03.000000000 +0100
+@@ -2142,6 +2142,7 @@ static int powerbook_sleep_grackle(void)
+ 	ret = pmac_suspend_devices();
+ 	if (ret) {
+ 		printk(KERN_ERR "Sleep rejected by devices\n");
++		pci_dev_put(grackle);
+ 		return ret;
  	}
- }
- 
--static inline Scsi_Cmnd *remove_first_SC(Scsi_Cmnd ** SC)
-+static inline struct scsi_cmnd *remove_first_SC(struct scsi_cmnd **SC)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 
- 	ptr = *SC;
- 	if (ptr) {
-@@ -717,9 +717,9 @@ static inline Scsi_Cmnd *remove_first_SC(Scsi_Cmnd ** SC)
- 	return ptr;
- }
- 
--static inline Scsi_Cmnd *remove_lun_SC(Scsi_Cmnd ** SC, int target, int lun)
-+static inline struct scsi_cmnd *remove_lun_SC(struct scsi_cmnd **SC, int target, int lun)
- {
--	Scsi_Cmnd *ptr, *prev;
-+	struct scsi_cmnd *ptr, *prev;
- 
- 	for (ptr = *SC, prev = NULL;
- 	     ptr && ((ptr->device->id != target) || (ptr->device->lun != lun));
-@@ -738,9 +738,9 @@ static inline Scsi_Cmnd *remove_lun_SC(Scsi_Cmnd ** SC, int target, int lun)
- 	return ptr;
- }
- 
--static inline Scsi_Cmnd *remove_SC(Scsi_Cmnd **SC, Scsi_Cmnd *SCp)
-+static inline struct scsi_cmnd *remove_SC(struct scsi_cmnd **SC, struct scsi_cmnd *SCp)
- {
--	Scsi_Cmnd *ptr, *prev;
-+	struct scsi_cmnd *ptr, *prev;
- 
- 	for (ptr = *SC, prev = NULL;
- 	     ptr && SCp!=ptr;
-@@ -972,8 +972,8 @@ static int setup_expected_interrupts(struct Scsi_Host *shpnt)
- /* 
-  *  Queue a command and setup interrupts for a free bus.
-  */
--static int aha152x_internal_queue(Scsi_Cmnd *SCpnt, struct completion *complete,
--		int phase, void (*done)(Scsi_Cmnd *))
-+static int aha152x_internal_queue(struct scsi_cmnd *SCpnt, struct completion *complete,
-+		int phase, void (*done)(struct scsi_cmnd *))
- {
- 	struct Scsi_Host *shpnt = SCpnt->device->host;
- 	unsigned long flags;
-@@ -1062,7 +1062,7 @@ static int aha152x_internal_queue(Scsi_Cmnd *SCpnt, struct completion *complete,
-  *  queue a command
-  *
-  */
--static int aha152x_queue(Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))
-+static int aha152x_queue(struct scsi_cmnd *SCpnt, void (*done)(struct scsi_cmnd *))
- {
- #if 0
- 	if(*SCpnt->cmnd = REQUEST_SENSE) {
-@@ -1081,7 +1081,7 @@ static int aha152x_queue(Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))
-  *  
-  *
-  */
--static void reset_done(Scsi_Cmnd *SCpnt)
-+static void reset_done(struct scsi_cmnd *SCpnt)
- {
- #if 0
- 	struct Scsi_Host *shpnt = SCpnt->host;
-@@ -1098,10 +1098,10 @@ static void reset_done(Scsi_Cmnd *SCpnt)
-  *  Abort a command
-  *
-  */
--static int aha152x_abort(Scsi_Cmnd *SCpnt)
-+static int aha152x_abort(struct scsi_cmnd *SCpnt)
- {
- 	struct Scsi_Host *shpnt = SCpnt->device->host;
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	unsigned long flags;
- 
- #if defined(AHA152X_DEBUG)
-@@ -1147,7 +1147,7 @@ static int aha152x_abort(Scsi_Cmnd *SCpnt)
-  * Reset a device
-  *
-  */
--static int aha152x_device_reset(Scsi_Cmnd * SCpnt)
-+static int aha152x_device_reset(struct scsi_cmnd *SCpnt)
- {
- 	struct Scsi_Host *shpnt = SCpnt->device->host;
- 	DECLARE_COMPLETION(done);
-@@ -1212,13 +1212,13 @@ static int aha152x_device_reset(Scsi_Cmnd * SCpnt)
- 	return ret;
- }
- 
--static void free_hard_reset_SCs(struct Scsi_Host *shpnt, Scsi_Cmnd **SCs)
-+static void free_hard_reset_SCs(struct Scsi_Host *shpnt, struct scsi_cmnd **SCs)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 
- 	ptr=*SCs;
- 	while(ptr) {
--		Scsi_Cmnd *next;
-+		struct scsi_cmnd *next;
- 
- 		if(SCDATA(ptr)) {
- 			next = SCNEXT(ptr);
-@@ -1281,7 +1281,7 @@ static int aha152x_bus_reset_host(struct Scsi_Host *shpnt)
-  * Reset the bus
-  *
-  */
--static int aha152x_bus_reset(Scsi_Cmnd *SCpnt)
-+static int aha152x_bus_reset(struct scsi_cmnd *SCpnt)
- {
- 	return aha152x_bus_reset_host(SCpnt->device->host);
- }
-@@ -1343,7 +1343,7 @@ int aha152x_host_reset_host(struct Scsi_Host *shpnt)
-  * Reset the host (bus and controller)
-  * 
-  */
--static int aha152x_host_reset(Scsi_Cmnd *SCpnt)
-+static int aha152x_host_reset(struct scsi_cmnd *SCpnt)
- {
- 	return aha152x_host_reset_host(SCpnt->device->host);
- }
-@@ -1581,7 +1581,7 @@ static void busfree_run(struct Scsi_Host *shpnt)
- 
- 			if(!(DONE_SC->SCp.phase & not_issued)) {
- 				struct aha152x_scdata *sc;
--				Scsi_Cmnd *ptr = DONE_SC;
-+				struct scsi_cmnd *ptr = DONE_SC;
- 				DONE_SC=NULL;
- #if 0
- 				DPRINTK(debug_eh, ERR_LEAD "requesting sense\n", CMDINFO(ptr));
-@@ -1620,7 +1620,7 @@ static void busfree_run(struct Scsi_Host *shpnt)
- 			int id=DONE_SC->device->id & 0xf;
- 			int lun=DONE_SC->device->lun & 0x7;
- #endif
--			Scsi_Cmnd *ptr = DONE_SC;
-+			struct scsi_cmnd *ptr = DONE_SC;
- 			DONE_SC=NULL;
- 
- 			/* turn led off, when no commands are in the driver */
-@@ -2490,13 +2490,13 @@ static void parerr_run(struct Scsi_Host *shpnt)
-  */
- static void rsti_run(struct Scsi_Host *shpnt)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 
- 	printk(KERN_NOTICE "aha152x%d: scsi reset in\n", HOSTNO);
- 	
- 	ptr=DISCONNECTED_SC;
- 	while(ptr) {
--		Scsi_Cmnd *next = SCNEXT(ptr);
-+		struct scsi_cmnd *next = SCNEXT(ptr);
- 
- 		if (!ptr->device->soft_reset) {
- 			remove_SC(&DISCONNECTED_SC, ptr);
-@@ -2930,7 +2930,7 @@ static void disp_enintr(struct Scsi_Host *shpnt)
- /*
-  * Show the command data of a command
-  */
--static void show_command(Scsi_Cmnd *ptr)
-+static void show_command(struct scsi_cmnd *ptr)
- {
- 	scmd_printk(KERN_DEBUG, ptr, "%p: cmnd=(", ptr);
- 
-@@ -2969,7 +2969,7 @@ static void show_command(Scsi_Cmnd *ptr)
-  */
- static void show_queues(struct Scsi_Host *shpnt)
- {
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	unsigned long flags;
- 
- 	DO_LOCK(flags);
-@@ -2995,7 +2995,7 @@ static void show_queues(struct Scsi_Host *shpnt)
- #undef SPRINTF
- #define SPRINTF(args...) pos += sprintf(pos, ## args)
- 
--static int get_command(char *pos, Scsi_Cmnd * ptr)
-+static int get_command(char *pos, struct scsi_cmnd *ptr)
- {
- 	char *start = pos;
- 	int i;
-@@ -3345,7 +3345,7 @@ static int aha152x_proc_info(struct Scsi_Host *shpnt, char *buffer, char **start
- {
- 	int i;
- 	char *pos = buffer;
--	Scsi_Cmnd *ptr;
-+	struct scsi_cmnd *ptr;
- 	unsigned long flags;
- 	int thislength;
- 
+
