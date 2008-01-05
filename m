@@ -1,79 +1,25 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 04 Jan 2008 14:45:01 +0000
-Subject: [PATCH] drivers/pcmcia: Add missing pci_dev_get
-Message-Id: <Pine.LNX.4.58.0801041542280.1184@pc-041.diku.dk>
+From: marcin.slusarz@gmail.com
+Date: Sat, 05 Jan 2008 15:36:19 +0000
+Subject: [PATCH 0/3] byteorder: introduce le32_add_cpu & friends to core
+Message-Id: <1199547382-29969-1-git-send-email-marcin.slusarz@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: linux-pcmcia@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Mark Fasheh <mark.fasheh@oracle.com>, OCFS2-devel <ocfs2-devel@oss.oracle.com>, Christoph Hellwig <hch@infradead.org>, kernel-janitors <kernel-janitors@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-ext4@vger.kernel.org, xfs-masters@oss.sgi.com, Marcin Slusarz <marcin.slusarz@gmail.com>
 
-From: Julia Lawall <julia@diku.dk>
+Hi
 
-pci_get_slot does a pci_dev_get, so pci_dev_put needs to be called in an
-error case.
+This patchset moves le*_add_cpu and be*_add_cpu functions from OCFS2 to core
+header (1st), converts ext3 filesystem to this API (2nd) and replaces
+XFS different named functions with new ones (3rd).
 
+There are many places where these functions will be useful.
+Just look at: grep -r 'cpu_to_[ble12346]*([ble12346]*_to_cpu.*[-+]' linux-src/
+Patch for ext3 is an example how conversions will probably look like.
 
-An extract of the semantic match used to find the problem is as follows:
-(http://www.emn.fr/x-info/coccinelle/)
+ps: this patchset depends on http://lkml.org/lkml/2007/12/25/35 (which is
+    in ocfs2 git tree, branches: trivial, ALL)
 
-// <smpl>
-@@
-type find1.T,T1,T2;
-identifier find1.E;
-statement find1.S;
-expression x1,x2,x3;
-expression find1.test;
-int ret != 0;
-@@
-
-  T E;
-  ...
-(
-* E = pci_get_slot(...);
-  if (E = NULL) S
-|
-* if ((E = pci_get_slot(...)) = NULL)
-  S
-)
-  ... when != pci_dev_put(...,(T1)E,...)
-      when != if (E != NULL) { ... pci_dev_put(...,(T1)E,...); ...}
-      when != x1 = (T1)E
-      when != E = x3;
-      when any
-  if (test) {
-    ... when != pci_dev_put(...,(T2)E,...)
-        when != if (E != NULL) { ... pci_dev_put(...,(T2)E,...); ...}
-        when != x2 = (T2)E
-(
-*   return;
-|
-*   return ret;
-)
-  }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
----
-
-diff -u -p a/drivers/pcmcia/cardbus.c b/drivers/pcmcia/cardbus.c
---- a/drivers/pcmcia/cardbus.c	2007-06-02 22:32:26.000000000 +0200
-+++ b/drivers/pcmcia/cardbus.c	2008-01-04 14:17:42.000000000 +0100
-@@ -143,7 +143,7 @@ int read_cb_mem(struct pcmcia_socket * s
- 	/* Config space? */
- 	if (space = 0) {
- 		if (addr + len > 0x100)
--			goto fail;
-+			goto failput;
- 		for (; len; addr++, ptr++, len--)
- 			pci_read_config_byte(dev, addr, ptr);
- 		return 0;
-@@ -171,6 +171,8 @@ int read_cb_mem(struct pcmcia_socket * s
- 	memcpy_fromio(ptr, s->cb_cis_virt + addr, len);
- 	return 0;
-
-+failput:
-+	pci_dev_put(dev);
- fail:
- 	memset(ptr, 0xff, len);
- 	return -1;
+Marcin Slusarz
