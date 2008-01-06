@@ -1,89 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Tue, 01 Jan 2008 21:03:53 +0000
-Subject: [PATCH 3/3] arch/powerpc/platforms/82xx: Add missing of_node_put
-Message-Id: <Pine.LNX.4.64.0801012202560.19803@ask.diku.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 06 Jan 2008 03:04:42 +0000
+Subject: [PATCH 22/33][SCSI] mca_53c9x: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030442.30002.81459.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: vbordug@ru.mvista.com, marcelo@kvack.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James.Bottomley@SteelEye.com
+Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Julia Lawall <julia@diku.dk>
+Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
 
-Of_get_parent and of_find_compatible_node do a of_node_get, and thus a
-corresponding of_code_put is needed in both the error case and the normal
-return case.
-
-
-The problem was found using the following semantic match.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@@
-type T,T1,T2;
-identifier E;
-statement S;
-expression x1,x2,x3;
-int ret;
-@@
-
-  T E;
-  ...
-* E = \(of_get_parent\|of_find_compatible_node\)(...);
-  if (E = NULL) S
-  ... when != of_node_put(...,(T1)E,...)
-      when != if (E != NULL) { ... of_node_put(...,(T1)E,...); ...}
-      when != x1 = (T1)E
-      when != E = x3;
-      when any
-  if (...) {
-    ... when != of_node_put(...,(T2)E,...)
-        when != if (E != NULL) { ... of_node_put(...,(T2)E,...); ...}
-        when != x2 = (T2)E
-(
-*   return;
-|
-*   return ret;
-)
-  }
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
+Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
 
-diff -u -p a/arch/powerpc/platforms/82xx/mpc8272_ads.c b/arch/powerpc/platforms/82xx/mpc8272_ads.c
---- a/arch/powerpc/platforms/82xx/mpc8272_ads.c	2007-10-22 11:24:59.000000000 +0200
-+++ b/arch/powerpc/platforms/82xx/mpc8272_ads.c	2008-01-01 14:35:37.000000000 +0100
-@@ -134,13 +134,12 @@ static void __init mpc8272_ads_setup_arc
- 	}
+
+diff --git a/drivers/scsi/mca_53c9x.c b/drivers/scsi/mca_53c9x.c
+index d693d0f..5dbc259 100644
+--- a/drivers/scsi/mca_53c9x.c
++++ b/drivers/scsi/mca_53c9x.c
+@@ -77,7 +77,7 @@
+                         }
  
- 	bcsr = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!bcsr) {
- 		printk(KERN_ERR "Cannot map BCSR registers\n");
- 		return;
- 	}
+ static int  dma_bytes_sent(struct NCR_ESP *, int);
+-static int  dma_can_transfer(struct NCR_ESP *, Scsi_Cmnd *);
++static int  dma_can_transfer(struct NCR_ESP *, struct scsi_cmnd *);
+ static void dma_dump_state(struct NCR_ESP *);
+ static void dma_init_read(struct NCR_ESP *, __u32, int);
+ static void dma_init_write(struct NCR_ESP *, __u32, int);
+@@ -313,7 +313,7 @@ static int dma_bytes_sent(struct NCR_ESP *esp, int fifo_count)
+ 	return fifo_count;
+ }
  
--	of_node_put(np);
--
- 	clrbits32(&bcsr[1], BCSR1_RS232_EN1 | BCSR1_RS232_EN2 | BCSR1_FETHIEN);
- 	setbits32(&bcsr[1], BCSR1_FETH_RST);
- 
-diff -u -p a/arch/powerpc/platforms/82xx/pq2fads.c b/arch/powerpc/platforms/82xx/pq2fads.c
---- a/arch/powerpc/platforms/82xx/pq2fads.c	2007-10-22 11:24:59.000000000 +0200
-+++ b/arch/powerpc/platforms/82xx/pq2fads.c	2008-01-01 14:36:28.000000000 +0100
-@@ -130,13 +130,12 @@ static void __init pq2fads_setup_arch(vo
- 	}
- 
- 	bcsr = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!bcsr) {
- 		printk(KERN_ERR "Cannot map BCSR registers\n");
- 		return;
- 	}
- 
--	of_node_put(np);
--
- 	/* Enable the serial and ethernet ports */
- 
- 	clrbits32(&bcsr[1], BCSR1_RS232_EN1 | BCSR1_RS232_EN2 | BCSR1_FETHIEN);
+-static int dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp)
++static int dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp)
+ {
+ 	/* 
+ 	 * The MCA dma channels can only do up to 128K bytes at a time.
