@@ -1,34 +1,71 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Thu, 17 Jan 2008 15:54:36 +0000
-Subject: "memset(..., 0, PAGE_SIZE)" replaceable by "clear_page()"?
-Message-Id: <alpine.LFD.1.00.0801171050220.11265@localhost.localdomain>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 06 Jan 2008 03:04:01 +0000
+Subject: [PATCH 14/33][SCSI] fd_mcs: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030401.30002.19860.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: James.Bottomley@SteelEye.com
+Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+
+Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
+
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+---
+Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
+Cleaned up checkpatch.pl-errors (so no '> 80 lines'-warning).
 
 
-  i recall a discussion about this once upon a time, but there are
-numerous invocations of the form:
-
-  memset(addr, 0, PAGE_SIZE)
-
-for which *some* of those could probably be replaced by a call to
-clear_page() instead.  just to see the possibilities:
-
-grep -Er "memset ?\([^,]+, ?0, ?PAGE_SIZE\)" ${DIR} | grep -v "#define clear_page" .
-
-  if someone wanted to poke around there, they're welcome to it.
-
-rday
---
-
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-Home page:                                         http://crashcourse.ca
-Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
-====================================
+diff --git a/drivers/scsi/fd_mcs.c b/drivers/scsi/fd_mcs.c
+index 8335b60..5feb9f2 100644
+--- a/drivers/scsi/fd_mcs.c
++++ b/drivers/scsi/fd_mcs.c
+@@ -184,7 +184,7 @@ struct fd_hostdata {
+ 	int _bios_major;
+ 	int _bios_minor;
+ 	volatile int _in_command;
+-	Scsi_Cmnd *_current_SC;
++	struct scsi_cmnd *_current_SC;
+ 	enum chip_type _chip;
+ 	int _adapter_mask;
+ 	int _fifo_count;	/* Number of 512 byte blocks before INTR */
+@@ -1089,7 +1089,7 @@ static int fd_mcs_release(struct Scsi_Host *shpnt)
+ 	return 0;
+ }
+ 
+-static int fd_mcs_queue(Scsi_Cmnd * SCpnt, void (*done) (Scsi_Cmnd *))
++static int fd_mcs_queue(struct scsi_cmnd *SCpnt, void (*done) (struct scsi_cmnd *))
+ {
+ 	struct Scsi_Host *shpnt = SCpnt->device->host;
+ 
+@@ -1138,7 +1138,7 @@ static int fd_mcs_queue(Scsi_Cmnd * SCpnt, void (*done) (Scsi_Cmnd *))
+ }
+ 
+ #if DEBUG_ABORT || DEBUG_RESET
+-static void fd_mcs_print_info(Scsi_Cmnd * SCpnt)
++static void fd_mcs_print_info(struct scsi_cmnd *SCpnt)
+ {
+ 	unsigned int imr;
+ 	unsigned int irr;
+@@ -1207,7 +1207,7 @@ static void fd_mcs_print_info(Scsi_Cmnd * SCpnt)
+ }
+ #endif
+ 
+-static int fd_mcs_abort(Scsi_Cmnd * SCpnt)
++static int fd_mcs_abort(struct scsi_cmnd *SCpnt)
+ {
+ 	struct Scsi_Host *shpnt = SCpnt->device->host;
+ 
+@@ -1243,7 +1243,8 @@ static int fd_mcs_abort(Scsi_Cmnd * SCpnt)
+ 	return SUCCESS;
+ }
+ 
+-static int fd_mcs_bus_reset(Scsi_Cmnd * SCpnt) {
++static int fd_mcs_bus_reset(struct scsi_cmnd *SCpnt)
++{
+ 	struct Scsi_Host *shpnt = SCpnt->device->host;
+ 	unsigned long flags;
+ 
