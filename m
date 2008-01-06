@@ -1,81 +1,82 @@
-From: Leonardo Potenza <lpotenza@inwind.it>
-Date: Sun, 20 Jan 2008 18:28:29 +0000
-Subject: [PATCH] drivers/net/tlan.c: compilation warning fix
-Message-Id: <200801201928.29446.lpotenza@inwind.it>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 06 Jan 2008 03:04:17 +0000
+Subject: [PATCH 17/33][SCSI] g_NCR5380: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030417.30002.42297.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
-Cc: chessman@tux.org, linux-kernel@vger.kernel.org
+To: James.Bottomley@SteelEye.com
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Leonardo Potenza <lpotenza@inwind.it>
+Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
 
-Added a check for the pci_register_driver() return value.
-Removed unused variable pad_allocated.
-
-Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
+Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
 
-The aim of this patch is to remove the following warning messages:
-drivers/net/tlan.c: In function 'tlan_probe':
-drivers/net/tlan.c:486: warning: ignoring return value of 'pci_register_driver', declared with attribute warn_unused_result
 
---- linux-2.6.orig/drivers/net/tlan.c
-+++ linux-2.6/drivers/net/tlan.c
-@@ -465,7 +465,7 @@ static struct pci_driver tlan_driver = {
+diff --git a/drivers/scsi/g_NCR5380.c b/drivers/scsi/g_NCR5380.c
+index 75585a5..5303e1d 100644
+--- a/drivers/scsi/g_NCR5380.c
++++ b/drivers/scsi/g_NCR5380.c
+@@ -774,7 +774,7 @@ static int sprint_command(char *buffer, int len, unsigned char *command)
+  *	Print out the target and command data in hex
+  */
  
- static int __init tlan_probe(void)
+-static int sprint_Scsi_Cmnd(char *buffer, int len, Scsi_Cmnd * cmd)
++static int sprint_Scsi_Cmnd(char *buffer, int len, struct scsi_cmnd *cmd)
  {
--	static int	pad_allocated;
-+	int rc = -ENODEV;
- 
- 	printk(KERN_INFO "%s", tlan_banner);
- 
-@@ -473,17 +473,22 @@ static int __init tlan_probe(void)
- 
- 	if (TLanPadBuffer = NULL) {
- 		printk(KERN_ERR "TLAN: Could not allocate memory for pad buffer.\n");
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto err_out;
+ 	int start = len;
+ 	PRINTP("host number %d destination target %d, lun %d\n" ANDP cmd->device->host->host_no ANDP cmd->device->id ANDP cmd->device->lun);
+@@ -807,7 +807,7 @@ static int generic_NCR5380_proc_info(struct Scsi_Host *scsi_ptr, char *buffer, c
+ 	unsigned long flags;
+ 	unsigned char status;
+ 	int i;
+-	Scsi_Cmnd *ptr;
++	struct scsi_cmnd *ptr;
+ 	struct NCR5380_hostdata *hostdata;
+ #ifdef NCR5380_STATS
+ 	struct scsi_device *dev;
+@@ -886,17 +886,17 @@ static int generic_NCR5380_proc_info(struct Scsi_Host *scsi_ptr, char *buffer, c
+ 	if (!hostdata->connected) {
+ 		PRINTP("No currently connected command\n");
+ 	} else {
+-		len += sprint_Scsi_Cmnd(buffer, len, (Scsi_Cmnd *) hostdata->connected);
++		len += sprint_Scsi_Cmnd(buffer, len, (struct scsi_cmnd *) hostdata->connected);
  	}
  
- 	memset(TLanPadBuffer, 0, TLAN_MIN_FRAME_SIZE);
--	pad_allocated = 1;
+ 	PRINTP("issue_queue\n");
  
- 	TLAN_DBG(TLAN_DEBUG_PROBE, "Starting PCI Probe....\n");
+-	for (ptr = (Scsi_Cmnd *) hostdata->issue_queue; ptr; ptr = (Scsi_Cmnd *) ptr->host_scribble)
++	for (ptr = (struct scsi_cmnd *) hostdata->issue_queue; ptr; ptr = (struct scsi_cmnd *) ptr->host_scribble)
+ 		len += sprint_Scsi_Cmnd(buffer, len, ptr);
  
- 	/* Use new style PCI probing. Now the kernel will
- 	   do most of this for us */
--	pci_register_driver(&tlan_driver);
-+	rc = pci_register_driver(&tlan_driver);
-+
-+	if (rc != 0) {
-+		printk(KERN_ERR "TLAN: Could not register pci driver.\n");
-+		goto err_out_pci_free;
-+	}
+ 	PRINTP("disconnected_queue\n");
  
- 	TLAN_DBG(TLAN_DEBUG_PROBE, "Starting EISA Probe....\n");
- 	TLan_EisaProbe();
-@@ -493,11 +498,17 @@ static int __init tlan_probe(void)
- 		 tlan_have_pci, tlan_have_eisa);
+-	for (ptr = (Scsi_Cmnd *) hostdata->disconnected_queue; ptr; ptr = (Scsi_Cmnd *) ptr->host_scribble)
++	for (ptr = (struct scsi_cmnd *) hostdata->disconnected_queue; ptr; ptr = (struct scsi_cmnd *) ptr->host_scribble)
+ 		len += sprint_Scsi_Cmnd(buffer, len, ptr);
  
- 	if (TLanDevicesInstalled = 0) {
--		pci_unregister_driver(&tlan_driver);
--		pci_free_consistent(NULL, TLAN_MIN_FRAME_SIZE, TLanPadBuffer, TLanPadBufferDMA);
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto  err_out_pci_unreg;
- 	}
- 	return 0;
-+
-+err_out_pci_unreg:
-+	pci_unregister_driver(&tlan_driver);
-+err_out_pci_free:
-+	pci_free_consistent(NULL, TLAN_MIN_FRAME_SIZE, TLanPadBuffer, TLanPadBufferDMA);
-+err_out:
-+	return rc;
- }
+ 	*start = buffer + offset;
+diff --git a/drivers/scsi/g_NCR5380.h b/drivers/scsi/g_NCR5380.h
+index df0b3f6..a49e789 100644
+--- a/drivers/scsi/g_NCR5380.h
++++ b/drivers/scsi/g_NCR5380.h
+@@ -43,11 +43,11 @@
+ #endif
  
+ #ifndef ASM
+-static int generic_NCR5380_abort(Scsi_Cmnd *);
++static int generic_NCR5380_abort(struct scsi_cmnd *);
+ static int generic_NCR5380_detect(struct scsi_host_template *);
+ static int generic_NCR5380_release_resources(struct Scsi_Host *);
+-static int generic_NCR5380_queue_command(Scsi_Cmnd *, void (*done)(Scsi_Cmnd *));
+-static int generic_NCR5380_bus_reset(Scsi_Cmnd *);
++static int generic_NCR5380_queue_command(struct scsi_cmnd *, void (*done)(struct scsi_cmnd *));
++static int generic_NCR5380_bus_reset(struct scsi_cmnd *);
+ static const char* generic_NCR5380_info(struct Scsi_Host *);
  
+ #ifndef CMD_PER_LUN
