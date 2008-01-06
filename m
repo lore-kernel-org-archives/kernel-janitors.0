@@ -1,34 +1,80 @@
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Date: Thu, 17 Jan 2008 15:35:23 +0000
-Subject: still lots of ARRAY_SIZE cleanup
-Message-Id: <alpine.LFD.1.00.0801171033260.10452@localhost.localdomain>
+From: Julia Lawall <julia@diku.dk>
+Date: Sun, 06 Jan 2008 16:05:48 +0000
+Subject: [PATCH] drivers/cpufreq: Add calls to cpufreq_cpu_put
+Message-Id: <Pine.LNX.4.64.0801061704500.24950@ask.diku.dk>
 List-Id: <kernel-janitors.vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: davej@codemonkey.org.uk, cpufreq@lists.linux.org.uk, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+
+From: Julia Lawall <julia@diku.dk>
+
+A call to cpufreq_cpu_get should be matched by a call to cpufreq_cpu_put.
 
 
-  i'm currently tidying up my cleanup scripts, and there appears to
-still be a fair bit of work to do in terms of replacing explicit
-expressions with an invocation of the ARRAY_SIZE macro.
+The problem was fixed using the following semantic patch.
+(http://www.emn.fr/x-info/coccinelle/)
 
-  feel free to run:
+// <smpl>
+@@
+type T;
+identifier E;
+expression E1, E2;
+int ret;
+statement S;
+@@
 
-$ grep -Er "sizeof ?\(?([^\)]+)\)? ?/ ?sizeof ?\(?.*\1.*" .
+  T E;
+  ... when any
+(
+  E = cpufreq_cpu_get(...);
+  if (E = NULL) S
+|
+  if ((E = cpufreq_cpu_get(...)) = NULL) S
+)
+  ... when != E2 = E
+      when strict
+(
+  cpufreq_cpu_put(E);
+|
+  E1 = E;
+|
++ cpufreq_cpu_put(E);
+  return;
+|
++ cpufreq_cpu_put(E);
+  return ret;
+)
+// </smpl>
 
-to see what i'm talking about.  anyone who wants to take that on, feel
-free, although i have no idea how much of that has already been
-cleaned and is waiting for the next merge window.
+Signed-off-by: Julia Lawall <julia@diku.dk>
+---
 
-rday
---
-
-====================================
-Robert P. J. Day
-Linux Consulting, Training and Annoying Kernel Pedantry
-Waterloo, Ontario, CANADA
-
-Home page:                                         http://crashcourse.ca
-Fedora Cookbook:    http://crashcourse.ca/wiki/index.php/Fedora_Cookbook
-====================================
+diff -u -p a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+--- a/drivers/cpufreq/cpufreq.c 2008-01-06 11:51:40.000000000 +0100
++++ b/drivers/cpufreq/cpufreq.c 2008-01-06 12:01:47.000000000 +0100
+@@ -649,8 +649,10 @@ static ssize_t show(struct kobject * kob
+ 	if (!policy)
+ 		return -EINVAL;
+ 
+-	if (lock_policy_rwsem_read(policy->cpu) < 0)
++	if (lock_policy_rwsem_read(policy->cpu) < 0) {
++		cpufreq_cpu_put(policy);
+ 		return -EINVAL;
++	}
+ 
+ 	if (fattr->show)
+ 		ret = fattr->show(policy, buf);
+@@ -673,8 +675,10 @@ static ssize_t store(struct kobject * ko
+ 	if (!policy)
+ 		return -EINVAL;
+ 
+-	if (lock_policy_rwsem_write(policy->cpu) < 0)
++	if (lock_policy_rwsem_write(policy->cpu) < 0) {
++		cpufreq_cpu_put(policy);
+ 		return -EINVAL;
++	}
+ 
+ 	if (fattr->store)
+ 		ret = fattr->store(policy, buf, count);
