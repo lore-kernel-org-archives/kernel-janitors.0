@@ -1,7 +1,7 @@
 From: Richard Knutsson <ricknu-0@student.ltu.se>
-Date: Sun, 06 Jan 2008 03:05:12 +0000
-Subject: [PATCH 28/33][SCSI] oktagon_esp: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
-Message-Id: <20080106030512.30002.83966.sendpatchset@thinktank.campus.ltu.se>
+Date: Sun, 06 Jan 2008 03:05:23 +0000
+Subject: [PATCH 30/33][SCSI] sun3x_esp: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030523.30002.87000.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
@@ -16,76 +16,86 @@ Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
 Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
 Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
-Cleaned up checkpatch.pl-errors.
+Cleaned up checkpatch.pl-warnings.
 
 
-diff --git a/drivers/scsi/oktagon_esp.c b/drivers/scsi/oktagon_esp.c
-index 8e5eadb..9bc4eea 100644
---- a/drivers/scsi/oktagon_esp.c
-+++ b/drivers/scsi/oktagon_esp.c
-@@ -49,7 +49,7 @@
+diff --git a/drivers/scsi/sun3x_esp.c b/drivers/scsi/sun3x_esp.c
+index 1bc4190..8a7d5a4 100644
+--- a/drivers/scsi/sun3x_esp.c
++++ b/drivers/scsi/sun3x_esp.c
+@@ -25,7 +25,7 @@
  
- 
+ static void dma_barrier(struct NCR_ESP *esp);
  static int  dma_bytes_sent(struct NCR_ESP *esp, int fifo_count);
 -static int  dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp);
 +static int  dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp);
- static void dma_dump_state(struct NCR_ESP *esp);
- static void dma_init_read(struct NCR_ESP *esp, __u32 vaddress, int length);
- static void dma_init_write(struct NCR_ESP *esp, __u32 vaddress, int length);
-@@ -64,11 +64,11 @@ static void dma_setup(struct NCR_ESP *esp, __u32 addr, int count, int write);
- static void dma_irq_exit(struct NCR_ESP *esp);
+ static void dma_drain(struct NCR_ESP *esp);
  static void dma_invalidate(struct NCR_ESP *esp);
+ static void dma_dump_state(struct NCR_ESP *esp);
+@@ -38,11 +38,11 @@ static void dma_poll(struct NCR_ESP *esp, unsigned char *vaddr);
+ static int  dma_ports_p(struct NCR_ESP *esp);
+ static void dma_reset(struct NCR_ESP *esp);
+ static void dma_setup(struct NCR_ESP *esp, __u32 addr, int count, int write);
+-static void dma_mmu_get_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp);
+-static void dma_mmu_get_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp);
+-static void dma_mmu_release_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp);
+-static void dma_mmu_release_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp);
+-static void dma_advance_sg (Scsi_Cmnd *sp);
++static void dma_mmu_get_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp);
++static void dma_mmu_get_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp);
++static void dma_mmu_release_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp);
++static void dma_mmu_release_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp);
++static void dma_advance_sg(struct scsi_cmnd *sp);
  
--static void dma_mmu_get_scsi_one(struct NCR_ESP *,Scsi_Cmnd *);
--static void dma_mmu_get_scsi_sgl(struct NCR_ESP *,Scsi_Cmnd *);
--static void dma_mmu_release_scsi_one(struct NCR_ESP *,Scsi_Cmnd *);
--static void dma_mmu_release_scsi_sgl(struct NCR_ESP *,Scsi_Cmnd *);
--static void dma_advance_sg(Scsi_Cmnd *);
-+static void dma_mmu_get_scsi_one(struct NCR_ESP *, struct scsi_cmnd *);
-+static void dma_mmu_get_scsi_sgl(struct NCR_ESP *, struct scsi_cmnd *);
-+static void dma_mmu_release_scsi_one(struct NCR_ESP *, struct scsi_cmnd *);
-+static void dma_mmu_release_scsi_sgl(struct NCR_ESP *, struct scsi_cmnd *);
-+static void dma_advance_sg(struct scsi_cmnd *);
- static int  oktagon_notify_reboot(struct notifier_block *this, unsigned long code, void *x);
- 
- #ifdef USE_BOTTOM_HALF
-@@ -395,7 +395,7 @@ static int dma_bytes_sent(struct NCR_ESP *esp, int fifo_count)
- 	return fifo_count;
+ /* Detecting ESP chips on the machine.  This is the simple and easy
+  * version.
+@@ -174,7 +174,7 @@ static int dma_bytes_sent(struct NCR_ESP *esp, int fifo_count)
+ 	return rval - fifo_count;
  }
  
 -static int dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp)
 +static int dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp)
  {
- 	unsigned long sz = sp->SCp.this_residual;
- 	if(sz > DMA_MAXTRANSFER)
-@@ -542,26 +542,26 @@ static void dma_invalidate(struct NCR_ESP *esp)
-  * mmu interface to pass the virtual address, not the physical.
-  */
- 
--void dma_mmu_get_scsi_one(struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+void dma_mmu_get_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp)
- {
-         sp->SCp.ptr                  sp->request_buffer;
+ 	return sp->SCp.this_residual;
+ }
+@@ -319,14 +319,14 @@ static void dma_setup(struct NCR_ESP *esp, __u32 addr, int count, int write)
+ 	dregs->st_addr = addr;
  }
  
--void dma_mmu_get_scsi_sgl(struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+void dma_mmu_get_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp)
+-static void dma_mmu_get_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp)
++static void dma_mmu_get_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp)
  {
-         sp->SCp.ptr = sg_virt(sp->SCp.buffer);
+     sp->SCp.have_data_in = dvma_map((unsigned long)sp->SCp.buffer,
+ 				       sp->SCp.this_residual);
+     sp->SCp.ptr = (char *)((unsigned long)sp->SCp.have_data_in);
  }
  
--void dma_mmu_release_scsi_one(struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+void dma_mmu_release_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp)
+-static void dma_mmu_get_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
++static void dma_mmu_get_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp)
  {
+     int sz = sp->SCp.buffers_residual;
+     struct scatterlist *sg = sp->SCp.buffer;
+@@ -339,12 +339,12 @@ static void dma_mmu_get_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
+     sp->SCp.ptr=(char *)((unsigned long)sp->SCp.buffer->dma_address);
  }
  
--void dma_mmu_release_scsi_sgl(struct NCR_ESP *esp, Scsi_Cmnd *sp)
-+void dma_mmu_release_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp)
+-static void dma_mmu_release_scsi_one (struct NCR_ESP *esp, Scsi_Cmnd *sp)
++static void dma_mmu_release_scsi_one(struct NCR_ESP *esp, struct scsi_cmnd *sp)
  {
+     dvma_unmap((char *)sp->SCp.have_data_in);
  }
  
--void dma_advance_sg(Scsi_Cmnd *sp)
-+void dma_advance_sg(struct scsi_cmnd *sp)
+-static void dma_mmu_release_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
++static void dma_mmu_release_scsi_sgl(struct NCR_ESP *esp, struct scsi_cmnd *sp)
  {
- 	sp->SCp.ptr = sg_virt(sp->SCp.buffer);
+     int sz = sp->use_sg - 1;
+     struct scatterlist *sg = (struct scatterlist *)sp->request_buffer;
+@@ -355,7 +355,7 @@ static void dma_mmu_release_scsi_sgl (struct NCR_ESP *esp, Scsi_Cmnd *sp)
+     }
+ }
+ 
+-static void dma_advance_sg (Scsi_Cmnd *sp)
++static void dma_advance_sg(struct scsi_cmnd *sp)
+ {
+     sp->SCp.ptr = (char *)((unsigned long)sp->SCp.buffer->dma_address);
  }
