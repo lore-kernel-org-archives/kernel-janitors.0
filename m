@@ -1,85 +1,66 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 04 Jan 2008 14:45:33 +0000
-Subject: [PATCH] drivers/macintosh: Add missing pci_dev_get
-Message-Id: <Pine.LNX.4.58.0801041545020.1184@pc-041.diku.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 06 Jan 2008 03:05:28 +0000
+Subject: [PATCH 31/33][SCSI] sym53c416: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030528.30002.71404.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: benh@kernel.crashing.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James.Bottomley@SteelEye.com
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Julia Lawall <julia@diku.dk>
+Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
 
-pci_get_bus_and_slot does a pci_dev_get, so pci_dev_put needs to be called
-in an error case.
-
-The problem was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@exists@
-type T1,T2;
-identifier E;
-statement S,S1;
-expression x1,x2,x3;
-expression test;
-int ret != 0;
-@@
-
-  struct pci_dev *E;
-  ...
-(
-  E = \(pci_get_slot\|pci_get_device\|pci_get_bus_and_slot\)(...);
-  if (E = NULL) S
-|
-  if ((E = \(pci_get_slot\|pci_get_device\|pci_get_bus_and_slot\)(...)) = NULL) S
-)
-  ... when != pci_dev_put(...,(T1)E,...)
-      when != if (E != NULL) { ... pci_dev_put(...,(T1)E,...); ...}
-      when != x1 = (T1)E
-      when != E = x3;
-      when any
-(
-  if (E = NULL) S1
-|
-  if (test)
-+   {
-(
-+   pci_dev_put(E);
-    return;
-|
-+   pci_dev_put(E);
-    return ret;
-)
-+   }
-|
-  if (test) {
-    ... when != pci_dev_put(...,(T2)E,...)
-        when != if (E != NULL) { ... pci_dev_put(...,(T2)E,...); ...}
-        when != x2 = (T2)E
-(
-+   pci_dev_put(E);
-    return;
-|
-+   pci_dev_put(E);
-    return ret;
-)
-  }
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
+Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
 
 
-diff -u -p a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
---- a/drivers/macintosh/via-pmu.c 2007-12-21 06:57:19.000000000 +0100
-+++ b/drivers/macintosh/via-pmu.c 2008-01-04 14:00:03.000000000 +0100
-@@ -2142,6 +2142,7 @@ static int powerbook_sleep_grackle(void)
- 	ret = pmac_suspend_devices();
- 	if (ret) {
- 		printk(KERN_ERR "Sleep rejected by devices\n");
-+		pci_dev_put(grackle);
- 		return ret;
- 	}
-
+diff --git a/drivers/scsi/sym53c416.c b/drivers/scsi/sym53c416.c
+index 90cee94..689408a 100644
+--- a/drivers/scsi/sym53c416.c
++++ b/drivers/scsi/sym53c416.c
+@@ -225,7 +225,7 @@ static host hosts[MAXHOSTS] = {
+ 
+ static int host_index = 0;
+ static char info[120];
+-static Scsi_Cmnd *current_command = NULL;
++static struct scsi_cmnd *current_command = NULL;
+ static int fastpio = 1;
+ 
+ static int probeaddrs[] = {0x200, 0x220, 0x240, 0};
+@@ -748,7 +748,7 @@ const char *sym53c416_info(struct Scsi_Host *SChost)
+ 	return info;
+ }
+ 
+-int sym53c416_queuecommand(Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))
++int sym53c416_queuecommand(struct scsi_cmnd *SCpnt, void (*done)(struct scsi_cmnd *))
+ {
+ 	int base;
+ 	unsigned long flags = 0;
+@@ -775,7 +775,7 @@ int sym53c416_queuecommand(Scsi_Cmnd *SCpnt, void (*done)(Scsi_Cmnd *))
+ 	return 0;
+ }
+ 
+-static int sym53c416_host_reset(Scsi_Cmnd *SCpnt)
++static int sym53c416_host_reset(struct scsi_cmnd *SCpnt)
+ {
+ 	int base;
+ 	int scsi_id = -1;	
+diff --git a/drivers/scsi/sym53c416.h b/drivers/scsi/sym53c416.h
+index 77860d0..a6a89fd 100644
+--- a/drivers/scsi/sym53c416.h
++++ b/drivers/scsi/sym53c416.h
+@@ -25,8 +25,8 @@
+ static int sym53c416_detect(struct scsi_host_template *);
+ static const char *sym53c416_info(struct Scsi_Host *);
+ static int sym53c416_release(struct Scsi_Host *);
+-static int sym53c416_queuecommand(Scsi_Cmnd *, void (*done)(Scsi_Cmnd *));
+-static int sym53c416_host_reset(Scsi_Cmnd *);
++static int sym53c416_queuecommand(struct scsi_cmnd *, void (*done)(struct scsi_cmnd *));
++static int sym53c416_host_reset(struct scsi_cmnd *);
+ static int sym53c416_bios_param(struct scsi_device *, struct block_device *,
+ 		sector_t, int *);
+ static void sym53c416_setup(char *str, int *ints);
