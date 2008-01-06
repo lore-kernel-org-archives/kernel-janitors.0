@@ -1,44 +1,33 @@
-From: Nikanth Karthikesan <knikanth@suse.de>
-Date: Fri, 11 Jan 2008 03:37:42 +0000
-Subject: [PATCH 3/11 ] Change drm_ioctl as an unlocked_ioctl function : i830
-Message-Id: <1200021942.3844.4.camel@nikanth-laptop.blr.novell.com>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 06 Jan 2008 03:03:00 +0000
+Subject: [PATCH  2/33][SCSI] advansys: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030300.30002.13173.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie, dri-devel@lists.sourceforge.net, benh@kernel.crashing.org, paulus@samba.org, thomas@winischhofer.net, adaplas@gmail.com, sylvain.meyer@worldonline.fr
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James.Bottomley@SteelEye.com
+Cc: kernel-janitors@vger.kernel.org, trivial@kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-Register drm_ioctl as an unlocked_ioctl function.
+Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
 
-Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
-
---- 
-diff --git a/drivers/char/drm/i830_dma.c b/drivers/char/drm/i830_dma.c
-index 69a363e..2f82480 100644
---- a/drivers/char/drm/i830_dma.c
-+++ b/drivers/char/drm/i830_dma.c
-@@ -117,7 +117,7 @@ static int i830_mmap_buffers(struct file *filp, struct vm_area_struct *vma)
- static const struct file_operations i830_buffer_fops = {
- 	.open = drm_open,
- 	.release = drm_release,
--	.ioctl = drm_ioctl,
-+	.unlocked_ioctl = drm_ioctl,
- 	.mmap = i830_mmap_buffers,
- 	.fasync = drm_fasync,
- };
-diff --git a/drivers/char/drm/i830_drv.c b/drivers/char/drm/i830_drv.c
-index 389597e..44f990b 100644
---- a/drivers/char/drm/i830_drv.c
-+++ b/drivers/char/drm/i830_drv.c
-@@ -70,7 +70,7 @@ static struct drm_driver driver = {
- 		 .owner = THIS_MODULE,
- 		 .open = drm_open,
- 		 .release = drm_release,
--		 .ioctl = drm_ioctl,
-+		 .unlocked_ioctl = drm_ioctl,
- 		 .mmap = drm_mmap,
- 		 .poll = drm_poll,
- 		 .fasync = drm_fasync,
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
+---
+Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
 
 
+diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+index 9dd3952..a9a8685 100644
+--- a/drivers/scsi/advansys.c
++++ b/drivers/scsi/advansys.c
+@@ -10920,7 +10920,7 @@ static int AdvExeScsiQueue(ADV_DVC_VAR *asc_dvc, ADV_SCSI_REQ_Q *scsiq)
+ }
+ 
+ /*
+- * Execute a single 'Scsi_Cmnd'.
++ * Execute a single 'scsi_cmnd'.
+  */
+ static int asc_execute_scsi_cmnd(struct scsi_cmnd *scp)
+ {
