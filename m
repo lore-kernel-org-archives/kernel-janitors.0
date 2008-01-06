@@ -1,29 +1,37 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date: Sat, 05 Jan 2008 20:53:30 +0000
-Subject: Re: [PATCH] drivers/video/aty/radeon_base.c: compilation warning
-Message-Id: <1199566410.7291.60.camel@pasglop>
+From: Leonardo Potenza <lpotenza@inwind.it>
+Date: Sun, 06 Jan 2008 15:24:22 +0000
+Subject: [PATCH resubmit] drivers/video/aty/radeon_base.c: compilation warning fix
+Message-Id: <200801061624.22567.lpotenza@inwind.it>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <200801021901.44226.lpotenza@inwind.it>
-In-Reply-To: <200801021901.44226.lpotenza@inwind.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: kernel-janitors@vger.kernel.org
 
+From: Leonardo Potenza <lpotenza@inwind.it>
 
-> 	if (rinfo->mon1_EDID)
-> 		WARN_ON(sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid1_attr));
-> 
-> could suppress the compilation warning while keeping the generation of a warning 
-> message in case of error.
-> 
-> I wonder if this solution could be acceptable for you.
-> 
-> It doesn't sound too bloat to me, but maybe you were thinking about something 
-> completely different...
+Added a check for the sysfs_create_bin_file() return value.
+In case of error the framebuffer creation is not aborted, but a warning message is generated instead.
 
-That would be allright I suppose.
+Signed-off-by: Leonardo Potenza <lpotenza@inwind.it>
+---
 
-Ben.
+The aim of this patch is to remove the following warning messages:
+drivers/video/aty/radeon_base.c: In function 'radeonfb_pci_register':
+drivers/video/aty/radeon_base.c:2334: warning: ignoring return value of 'sysfs_create_bin_file', declared with attribute warn_unused_result
+drivers/video/aty/radeon_base.c:2336: warning: ignoring return value of 'sysfs_create_bin_file', declared with attribute warn_unused_result
 
-
+--- linux-2.6.orig/drivers/video/aty/radeon_base.c
++++ linux-2.6/drivers/video/aty/radeon_base.c
+@@ -2331,9 +2331,9 @@ static int __devinit radeonfb_pci_regist
+ 
+ 	/* Register some sysfs stuff (should be done better) */
+ 	if (rinfo->mon1_EDID)
+-		sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid1_attr);
++		WARN_ON(sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid1_attr));
+ 	if (rinfo->mon2_EDID)
+-		sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid2_attr);
++		WARN_ON(sysfs_create_bin_file(&rinfo->pdev->dev.kobj, &edid2_attr));
+ 
+ 	/* save current mode regs before we switch into the new one
+ 	 * so we can restore this upon __exit
