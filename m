@@ -1,112 +1,42 @@
-From: Julia Lawall <julia@diku.dk>
-Date: Fri, 04 Jan 2008 14:42:26 +0000
-Subject: [PATCH] drivers/char/agp: Add missing pci_dev_get
-Message-Id: <Pine.LNX.4.58.0801041541380.1184@pc-041.diku.dk>
+From: Richard Knutsson <ricknu-0@student.ltu.se>
+Date: Sun, 06 Jan 2008 03:03:46 +0000
+Subject: [PATCH 11/33][SCSI] cyberstormII: Convert 'Scsi_Cmnd' to 'struct scsi_cmnd'
+Message-Id: <20080106030346.30002.32267.sendpatchset@thinktank.campus.ltu.se>
 List-Id: <kernel-janitors.vger.kernel.org>
+References: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
+In-Reply-To: <20080106030250.30002.96493.sendpatchset@thinktank.campus.ltu.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: airlied@linux.ie, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: James.Bottomley@SteelEye.com
+Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
-From: Julia Lawall <julia@diku.dk>
+Convert the typedef'ed 'Scsi_Cmnd' to 'struct scsi_cmnd'.
 
-pci_get_slot does a pci_dev_get, so pci_dev_put needs to be called in an
-error case
-
-The problem was fixed using the following semantic patch.
-(http://www.emn.fr/x-info/coccinelle/)
-
-// <smpl>
-@exists@
-type T1,T2;
-identifier E;
-statement S,S1;
-expression x1,x2,x3;
-expression test;
-int ret != 0;
-@@
-
-  struct pci_dev *E;
-  ...
-(
-  E = \(pci_get_slot\|pci_get_device\|pci_get_bus_and_slot\)(...);
-  if (E = NULL) S
-|
-  if ((E = \(pci_get_slot\|pci_get_device\|pci_get_bus_and_slot\)(...)) = NULL) S
-)
-  ... when != pci_dev_put(...,(T1)E,...)
-      when != if (E != NULL) { ... pci_dev_put(...,(T1)E,...); ...}
-      when != x1 = (T1)E
-      when != E = x3;
-      when any
-(
-  if (E = NULL) S1
-|
-  if (test)
-+   {
-(
-+   pci_dev_put(E);
-    return;
-|
-+   pci_dev_put(E);
-    return ret;
-)
-+   }
-|
-  if (test) {
-    ... when != pci_dev_put(...,(T2)E,...)
-        when != if (E != NULL) { ... pci_dev_put(...,(T2)E,...); ...}
-        when != x2 = (T2)E
-(
-+   pci_dev_put(E);
-    return;
-|
-+   pci_dev_put(E);
-    return ret;
-)
-  }
-)
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
+Signed-off-by: Richard Knutsson <ricknu-0@student.ltu.se>
 ---
+Last item before 'drivers/scsi/scsi_typedefs.h' can be removed.
 
-diff -u -p a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
---- a/drivers/char/agp/amd64-agp.c 2007-11-01 10:30:39.000000000 +0100
-+++ b/drivers/char/agp/amd64-agp.c 2008-01-04 13:59:45.000000000 +0100
-@@ -422,6 +422,7 @@ static int __devinit uli_agp_init(struct
 
- 	if (i = ARRAY_SIZE(uli_sizes)) {
- 		printk(KERN_INFO PFX "No ULi size found for %d\n", size);
-+		pci_dev_put(dev1);
- 		return -ENODEV;
- 	}
-
-@@ -429,8 +430,10 @@ static int __devinit uli_agp_init(struct
- 	pci_read_config_dword (k8_northbridges[0], AMD64_GARTAPERTUREBASE, &httfea);
-
- 	/* if x86-64 aperture base is beyond 4G, exit here */
--	if ((httfea & 0x7fff) >> (32 - 25))
-+	if ((httfea & 0x7fff) >> (32 - 25)) {
-+		pci_dev_put(dev1);
- 		return -ENODEV;
-+	}
-
- 	httfea = (httfea& 0x7fff) << 25;
-
-@@ -482,6 +485,7 @@ static int nforce3_agp_init(struct pci_d
-
- 	if (i = ARRAY_SIZE(nforce3_sizes)) {
- 		printk(KERN_INFO PFX "No NForce3 size found for %d\n", size);
-+		pci_dev_put(dev1);
- 		return -ENODEV;
- 	}
-
-@@ -496,6 +500,7 @@ static int nforce3_agp_init(struct pci_d
- 	/* if x86-64 aperture base is beyond 4G, exit here */
- 	if ( (apbase & 0x7fff) >> (32 - 25) ) {
- 		printk(KERN_INFO PFX "aperture base > 4G\n");
-+		pci_dev_put(dev1);
- 		return -ENODEV;
- 	}
-
+diff --git a/drivers/scsi/cyberstormII.c b/drivers/scsi/cyberstormII.c
+index e336e85..e1d9c56 100644
+--- a/drivers/scsi/cyberstormII.c
++++ b/drivers/scsi/cyberstormII.c
+@@ -62,7 +62,7 @@ struct cyberII_dma_registers {
+ #define CYBERII_DMA_LED    0x02	/* HD led control 1 = on */
+ 
+ static int  dma_bytes_sent(struct NCR_ESP *esp, int fifo_count);
+-static int  dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp);
++static int  dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp);
+ static void dma_dump_state(struct NCR_ESP *esp);
+ static void dma_init_read(struct NCR_ESP *esp, __u32 addr, int length);
+ static void dma_init_write(struct NCR_ESP *esp, __u32 addr, int length);
+@@ -183,7 +183,7 @@ static int dma_bytes_sent(struct NCR_ESP *esp, int fifo_count)
+ 	return fifo_count;
+ }
+ 
+-static int dma_can_transfer(struct NCR_ESP *esp, Scsi_Cmnd *sp)
++static int dma_can_transfer(struct NCR_ESP *esp, struct scsi_cmnd *sp)
+ {
+ 	/* I don't think there's any limit on the CyberDMA. So we use what
+ 	 * the ESP chip can handle (24 bit).
