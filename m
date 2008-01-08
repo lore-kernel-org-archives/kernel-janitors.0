@@ -1,46 +1,69 @@
 From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 08 Jan 2008 20:16:06 +0000
+Date: Tue, 08 Jan 2008 20:21:00 +0000
 Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl
-Message-Id: <20080108201606.GJ16309@parisc-linux.org>
+Message-Id: <20080108202059.GK16309@parisc-linux.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080108164015.GC31504@one.firstfloor.org> <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com> <20080108200044.GI16309@parisc-linux.org> <4d8e3fd30801081203l636c5923j7965efaa9c121c56@mail.gmail.com>
-In-Reply-To: <4d8e3fd30801081203l636c5923j7965efaa9c121c56@mail.gmail.com>
+References: <20080108164015.GC31504@one.firstfloor.org> <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com> <20080108200044.GI16309@parisc-linux.org> <4d8e3fd30801081203l636c5923j7965efaa9c121c56@mail.gmail.com> <20080108201606.GJ16309@parisc-linux.org>
+In-Reply-To: <20080108201606.GJ16309@parisc-linux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
 Cc: Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, gorcunov@gmail.com
 
-On Tue, Jan 08, 2008 at 09:03:13PM +0100, Paolo Ciarrocchi wrote:
-> On Jan 8, 2008 9:00 PM, Matthew Wilcox <matthew@wil.cx> wrote:
-> > On Tue, Jan 08, 2008 at 08:58:04PM +0100, Paolo Ciarrocchi wrote:
-> > > -static const struct file_operations rtc_fops = {
-> > > +static long rtc_fioctl(struct file_operations rtc_fops)
-> > > +{
-> > > +     lock_kernel();
-> > >       .owner          = THIS_MODULE,
-> >
-> > You should probably restrict yourself to files that you can at least
-> > compile ...
+On Tue, Jan 08, 2008 at 01:16:06PM -0700, Matthew Wilcox wrote:
+> On Tue, Jan 08, 2008 at 09:03:13PM +0100, Paolo Ciarrocchi wrote:
+> > Yes of course, I've been silly in didn't verify whether the file compile
+> > but I would appreciate to know whether I'm on the right track or not.
 > 
-> Yes of course, I've been silly in didn't verify whether the file compile
-> but I would appreciate to know whether I'm on the right track or not.
+> Well ... you're not.
 
-Well ... you're not.
+Here's what a correct conversion might look like.  I haven't tried to
+compile it, so I'm copying and pasting it in order to damage whitespace
+and make sure nobody tries to compile it.
 
-You've deleted the definition of rtc_fops for no reason I can tell.
+index bf1075e..0c543a8 100644
+--- a/arch/arm/common/rtctime.c
++++ b/arch/arm/common/rtctime.c
+@@ -174,8 +174,7 @@ static unsigned int rtc_poll(struct file *file, poll_table *
+        return data != 0 ? POLLIN | POLLRDNORM : 0;
+ }
+ 
+-static int rtc_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
+-                    unsigned long arg)
++static long rtc_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+        struct rtc_ops *ops = file->private_data;
+        struct rtc_time tm;
+@@ -183,6 +182,8 @@ static int rtc_ioctl(struct inode *inode, struct file *file,
+        void __user *uarg = (void __user *)arg;
+        int ret = -EINVAL;
+ 
++       lock_kernel();
++
+        switch (cmd) {
+        case RTC_ALM_READ:
+                ret = rtc_arm_read_alarm(ops, &alrm);
+@@ -277,6 +278,9 @@ static int rtc_ioctl(struct inode *inode, struct file *file,
+                        ret = ops->ioctl(cmd, arg);
+                break;
+        }
++
++       unlock_kernel();
++
+        return ret;
+ }
+ 
+@@ -334,7 +338,7 @@ static const struct file_operations rtc_fops = {
+        .llseek         = no_llseek,
+        .read           = rtc_read,
+        .poll           = rtc_poll,
+-       .ioctl          = rtc_ioctl,
++       .unlocked_ioctl = rtc_ioctl,
+        .open           = rtc_open,
+        .release        = rtc_release,
+        .fasync         = rtc_fasync,
 
-You put an unlock_kernel() on every place that invokes break;.  You
-should instead have put an unlock_kernel() before every return;.
-
-You needed to put a lock_kernel() at the beginning of rtc_ioctl().
-
-You needed to adjust the prototype of rtc_ioctl().
-
-Honestly, if your C skills are as weak as they seem to be, you may be
-better off trying to gain experience with some other project -- the
-patch you sent appeared to be simple cargo-cult programming, and we
-don't need that kind of contribution.
 
 -- 
 Intel are signing my paycheques ... these opinions are still mine
