@@ -1,72 +1,39 @@
-From: Matthew Wilcox <matthew@wil.cx>
-Date: Tue, 08 Jan 2008 20:21:00 +0000
+From: Rik van Riel <riel@redhat.com>
+Date: Tue, 08 Jan 2008 20:22:45 +0000
 Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl
-Message-Id: <20080108202059.GK16309@parisc-linux.org>
+Message-Id: <20080108152245.3a8b415f@bree.surriel.com>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080108164015.GC31504@one.firstfloor.org> <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com> <20080108200044.GI16309@parisc-linux.org> <4d8e3fd30801081203l636c5923j7965efaa9c121c56@mail.gmail.com> <20080108201606.GJ16309@parisc-linux.org>
-In-Reply-To: <20080108201606.GJ16309@parisc-linux.org>
+References: <20080108164015.GC31504@one.firstfloor.org>
+	<4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
+In-Reply-To: <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
 Cc: Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, gorcunov@gmail.com
 
-On Tue, Jan 08, 2008 at 01:16:06PM -0700, Matthew Wilcox wrote:
-> On Tue, Jan 08, 2008 at 09:03:13PM +0100, Paolo Ciarrocchi wrote:
-> > Yes of course, I've been silly in didn't verify whether the file compile
-> > but I would appreciate to know whether I'm on the right track or not.
-> 
-> Well ... you're not.
+On Tue, 8 Jan 2008 20:58:04 +0100
+"Paolo Ciarrocchi" <paolo.ciarrocchi@gmail.com> wrote:
 
-Here's what a correct conversion might look like.  I haven't tried to
-compile it, so I'm copying and pasting it in order to damage whitespace
-and make sure nobody tries to compile it.
+> -static const struct file_operations rtc_fops = {
+> +static long rtc_fioctl(struct file_operations rtc_fops)
+> +{
+> +	lock_kernel();
+>  	.owner		= THIS_MODULE,
+>  	.llseek		= no_llseek,
+>  	.read		= rtc_read,
+>  	.poll		= rtc_poll,
+> -	.ioctl		= rtc_ioctl,
+> +	.unlocked_ioctl	= rtc_ioctl,
+>  	.open		= rtc_open,
+>  	.release	= rtc_release,
+>  	.fasync		= rtc_fasync,
+> +	unlock_kernel();
+>  };
 
-index bf1075e..0c543a8 100644
---- a/arch/arm/common/rtctime.c
-+++ b/arch/arm/common/rtctime.c
-@@ -174,8 +174,7 @@ static unsigned int rtc_poll(struct file *file, poll_table *
-        return data != 0 ? POLLIN | POLLRDNORM : 0;
- }
- 
--static int rtc_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
--                    unsigned long arg)
-+static long rtc_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
-        struct rtc_ops *ops = file->private_data;
-        struct rtc_time tm;
-@@ -183,6 +182,8 @@ static int rtc_ioctl(struct inode *inode, struct file *file,
-        void __user *uarg = (void __user *)arg;
-        int ret = -EINVAL;
- 
-+       lock_kernel();
-+
-        switch (cmd) {
-        case RTC_ALM_READ:
-                ret = rtc_arm_read_alarm(ops, &alrm);
-@@ -277,6 +278,9 @@ static int rtc_ioctl(struct inode *inode, struct file *file,
-                        ret = ops->ioctl(cmd, arg);
-                break;
-        }
-+
-+       unlock_kernel();
-+
-        return ret;
- }
- 
-@@ -334,7 +338,7 @@ static const struct file_operations rtc_fops = {
-        .llseek         = no_llseek,
-        .read           = rtc_read,
-        .poll           = rtc_poll,
--       .ioctl          = rtc_ioctl,
-+       .unlocked_ioctl = rtc_ioctl,
-        .open           = rtc_open,
-        .release        = rtc_release,
-        .fasync         = rtc_fasync,
+This is a struct with function pointers, not a function.
 
+No wonder it doesn't compile after you tried turning it into one :)
 
 -- 
-Intel are signing my paycheques ... these opinions are still mine
-"Bill, look, we understand that you're interested in selling us this
-operating system, but compare it to ours.  We can't possibly take such
-a retrograde step."
+All rights reversed.
