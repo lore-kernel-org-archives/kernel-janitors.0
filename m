@@ -1,63 +1,31 @@
-From: "Paolo Ciarrocchi" <paolo.ciarrocchi@gmail.com>
-Date: Tue, 08 Jan 2008 23:43:52 +0000
-Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl II
-Message-Id: <4d8e3fd30801081543l57add8bei48052bdf68730474@mail.gmail.com>
+From: Kevin Winchester <kjwinchester@gmail.com>
+Date: Tue, 08 Jan 2008 23:50:47 +0000
+Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl
+Message-Id: <47840C57.6000304@gmail.com>
 List-Id: <kernel-janitors.vger.kernel.org>
 References: <20080108164015.GC31504@one.firstfloor.org>
-	 <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
-	 <20080108204214.GA2117@one.firstfloor.org>
-	 <20080108230636.GC2117@one.firstfloor.org>
-In-Reply-To: <20080108230636.GC2117@one.firstfloor.org>
+In-Reply-To: <20080108164015.GC31504@one.firstfloor.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 To: Andi Kleen <andi@firstfloor.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, gorcunov@gmail.com
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, paolo.ciarrocchi@gmail.com, gorcunov@gmail.com, jgarzik@pobox.com, linux-ide@vger.kernel.org
 
-On Jan 9, 2008 12:06 AM, Andi Kleen <andi@firstfloor.org> wrote:
-> > I would suggest to only work on files that compile. e.g. do a
-> >
-> > make allyesconfig
-> > make -j$[$(grep -c processor /proc/cpuinfo)*2] &1 |tee LOG             (will probably take a long time)
-> >
-> > first and then only modify files when are mentioned in "LOG"
->
-> Actually since this will probably take very long on a slower machine you can refer to
->
-> http://halobates.de/allyes/
+Andi Kleen wrote:
+> Here's a proposal for some useful code transformations the kernel janitors
+> could do as opposed to running checkpatch.pl.
+> 
+<snip>
 
-Thank you Andi.
+I notice that every driver in drivers/ata uses a .ioctl that points to
+ata_scsi_ioctl().  I could add the BKL to that function, and then change
+all of the drivers to .unlocked_ioctl, but I assume this would be a
+candidate to actually clean up by determining why the lock is needed and
+removing it if necessary.  Does anyone know off-hand the reason for
+needing the lock (I assume someone does or it wouldn't have survived
+this long)?  If the lock is absolutely required, then I can write the
+patch to add lock_kernel() and unlock_kernel().
 
-> for some allyes buildlogs of recent kernels for i386 and x86-64. A trick to quickly check
-> if something compiles is also to do
->
-> make allyesconfig
-> make path/to/file.o
->
-> That won't catch linker errors, but if you don't have warnings there are normally no
-> linker errors either.
-
-I did grep for "struct file_operations" in mm:
-
-paolo@paolo-desktop:~/linux-2.6/mm$ grep "struct file_operations" *
-shmem.c:static const struct file_operations shmem_file_operations;
-shmem.c:static const struct file_operations shmem_file_operations = {
-swapfile.c:static const struct file_operations proc_swaps_operations = {
-
-Am I right in saying that both the files don't need to be modified?
-
-There is nothing like:
-struct file_operations xyz_ops = {
-       ...
-       .ioctl = xyz_ioctl
-};
-
-in there.
-
-So I guess I need a smarter trick to find out which files need to be modified
-as you previously suggested.
-
-Ciao,
 -- 
-Paolo
-http://paolo.ciarrocchi.googlepages.com/
+Kevin Winchester
+
