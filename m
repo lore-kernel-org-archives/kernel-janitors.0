@@ -1,80 +1,83 @@
-From: "Paolo Ciarrocchi" <paolo.ciarrocchi@gmail.com>
-Date: Tue, 08 Jan 2008 20:26:45 +0000
+From: Andi Kleen <andi@firstfloor.org>
+Date: Tue, 08 Jan 2008 20:42:14 +0000
 Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl
-Message-Id: <4d8e3fd30801081226u8911e19w7e2d3ef5a3545ef8@mail.gmail.com>
+Message-Id: <20080108204214.GA2117@one.firstfloor.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080108164015.GC31504@one.firstfloor.org>
-	 <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
-	 <20080108200044.GI16309@parisc-linux.org>
-	 <4d8e3fd30801081203l636c5923j7965efaa9c121c56@mail.gmail.com>
-	 <20080108201606.GJ16309@parisc-linux.org>
-	 <20080108202059.GK16309@parisc-linux.org>
-In-Reply-To: <20080108202059.GK16309@parisc-linux.org>
+References: <20080108164015.GC31504@one.firstfloor.org> <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
+In-Reply-To: <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: Matthew Wilcox <matthew@wil.cx>
+To: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
 Cc: Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, gorcunov@gmail.com
 
-On Jan 8, 2008 9:21 PM, Matthew Wilcox <matthew@wil.cx> wrote:
-> On Tue, Jan 08, 2008 at 01:16:06PM -0700, Matthew Wilcox wrote:
-> > On Tue, Jan 08, 2008 at 09:03:13PM +0100, Paolo Ciarrocchi wrote:
-> > > Yes of course, I've been silly in didn't verify whether the file compile
-> > > but I would appreciate to know whether I'm on the right track or not.
-> >
-> > Well ... you're not.
->
-> Here's what a correct conversion might look like.  I haven't tried to
-> compile it, so I'm copying and pasting it in order to damage whitespace
-> and make sure nobody tries to compile it.
->
-> index bf1075e..0c543a8 100644
+> I grepped and tried to do what you suggested.
+
+First a quick question: how would you rate your C knowledge? Did you
+ever write a program yourself? 
+
+My proposal assumes that you have at least basic C knowledge.
+
+> The first file that git grep reported was:
+> arch/arm/common/rtctime.c:static const struct file_operations rtc_fops = {
+
+It's probably better to only do that on files which you can easily compile.
+For ARM you would need a cross compiler.
+
+> 
+> So I cooked up the following patch (probably mangled, just to give you
+> a rough idea of what I did):
+> diff --git a/arch/arm/common/rtctime.c b/arch/arm/common/rtctime.c
+> index bf1075e..19dedb5 100644
 > --- a/arch/arm/common/rtctime.c
 > +++ b/arch/arm/common/rtctime.c
-> @@ -174,8 +174,7 @@ static unsigned int rtc_poll(struct file *file, poll_table *
->         return data != 0 ? POLLIN | POLLRDNORM : 0;
->  }
->
-> -static int rtc_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
-> -                    unsigned long arg)
-> +static long rtc_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  {
->         struct rtc_ops *ops = file->private_data;
->         struct rtc_time tm;
-> @@ -183,6 +182,8 @@ static int rtc_ioctl(struct inode *inode, struct file *file,
->         void __user *uarg = (void __user *)arg;
->         int ret = -EINVAL;
->
-> +       lock_kernel();
-> +
->         switch (cmd) {
->         case RTC_ALM_READ:
->                 ret = rtc_arm_read_alarm(ops, &alrm);
-> @@ -277,6 +278,9 @@ static int rtc_ioctl(struct inode *inode, struct file *file,
->                         ret = ops->ioctl(cmd, arg);
->                 break;
->         }
-> +
-> +       unlock_kernel();
-> +
->         return ret;
->  }
->
-> @@ -334,7 +338,7 @@ static const struct file_operations rtc_fops = {
->         .llseek         = no_llseek,
->         .read           = rtc_read,
->         .poll           = rtc_poll,
-> -       .ioctl          = rtc_ioctl,
-> +       .unlocked_ioctl = rtc_ioctl,
->         .open           = rtc_open,
->         .release        = rtc_release,
->         .fasync         = rtc_fasync,
->
+> @@ -189,13 +189,16 @@ static int rtc_ioctl(struct inode *inode, struct
+> file *file, unsigned int cmd,
+>  		if (ret)
+>  			break;
+>  		ret = copy_to_user(uarg, &alrm.time, sizeof(tm));
+> -		if (ret)
+> +		if (ret) {
+> +			unlock_kernel();
+>  			ret = -EFAULT;
 
-Thank you Matthew,
-I definitely need to back studying before submitting another patch.
+In this case it would be better to just put the unlock_kernel() directly
+before the single return. You only need to sprinkle them all over when
+the function has multiple returns. Or then change the flow to only
+have a single return, but that would be slightly advanced.
 
-Ciao,
--- 
-Paolo
-http://paolo.ciarrocchi.googlepages.com/
+
+> -		if (ret)
+> +		if (ret) {
+> +			unlock_kernel();
+>  			ret = -EFAULT;
+> +		}
+>  		break;
+> 
+>  	default:
+> @@ -329,15 +340,18 @@ static int rtc_fasync(int fd, struct file *file, int on)
+>  	return fasync_helper(fd, file, on, &rtc_async_queue);
+>  }
+> 
+> -static const struct file_operations rtc_fops = {
+> +static long rtc_fioctl(struct file_operations rtc_fops)
+> +{
+> +	lock_kernel();
+
+No the lock_kernel() of course has to be in the function, not in the structure
+definition which does not contain any code.
+
+Also the _operations structure stays the same (except for .ioctl -> .unlocked_ioctl); 
+only the the ioctl function prototype changes.
+
+
+> Am I'm working in the right direction or should I completely redo the patch?
+
+I would suggest to only work on files that compile. e.g. do a
+
+make allyesconfig
+make -j$[$(grep -c processor /proc/cpuinfo)*2] &1 |tee LOG             (will probably take a long time) 
+
+first and then only modify files when are mentioned in "LOG" 
+
+-Andi
