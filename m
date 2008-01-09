@@ -1,56 +1,47 @@
-From: Andre Noll <maan@systemlinux.org>
-Date: Wed, 09 Jan 2008 13:33:23 +0000
+From: Matt Mackall <mpm@selenic.com>
+Date: Wed, 09 Jan 2008 20:12:40 +0000
 Subject: Re: [JANITOR PROPOSAL] Switch ioctl functions to ->unlocked_ioctl
-Message-Id: <20080109133323.GD16462@skl-net.de>
-MIME-Version: 1
-Content-Type: multipart/mixed; boundary="XvKFcGCOAo53UbWW"
+Message-Id: <1199909560.6245.67.camel@cinder.waste.org>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080108164015.GC31504@one.firstfloor.org> <20080109103459.GC16462@skl-net.de> <4784C96D.5030805@student.ltu.se>
-In-Reply-To: <4784C96D.5030805@student.ltu.se>
-To: Richard Knutsson <ricknu-0@student.ltu.se>
-Cc: Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, paolo.ciarrocchi@gmail.com, gorcunov@gmail.com
+References: <20080108164015.GC31504@one.firstfloor.org>
+	 <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
+In-Reply-To: <4d8e3fd30801081158j3e7292d0i939776342015b12d@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+To: Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com>
+Cc: Andi Kleen <andi@firstfloor.org>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, gorcunov@gmail.com
 
 
---XvKFcGCOAo53UbWW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2008-01-08 at 20:58 +0100, Paolo Ciarrocchi wrote:
+> On Jan 8, 2008 5:40 PM, Andi Kleen <andi@firstfloor.org> wrote:
+> So I cooked up the following patch (probably mangled, just to give you
+> a rough idea of what I did):
+> diff --git a/arch/arm/common/rtctime.c b/arch/arm/common/rtctime.c
+> index bf1075e..19dedb5 100644
+> --- a/arch/arm/common/rtctime.c
+> +++ b/arch/arm/common/rtctime.c
+> @@ -189,13 +189,16 @@ static int rtc_ioctl(struct inode *inode, struct
+> file *file, unsigned int cmd,
 
-On 14:17, Richard Knutsson wrote:
+You'll need to change the prototype, the unlocked version doesn't take
+an inode. And you'll need to make sure that nothing in the function uses
+the inode, which I think Andi forgot to mention.
 
-> Would had preferred:
->=20
-> if (x) {
->    result =3D -Exxxx;
->    goto out;
-> }
->=20
-> then:
->=20
-> result =3D -Exxxx;
-> if (x)
->    goto out;
->=20
+> +		if (ret) {
+> +			unlock_kernel();
+>  			ret = -EFAULT;
 
-AFAIK, the second form is preferred in Linux because it is better
-readable and it generates slightly better code.
+This is not a return statement. You only need to unlock before the
+actual return.
 
-Thanks for the review.
-Andre
---=20
-The only person who always got his work done by Friday was Robinson Crusoe
+> -static const struct file_operations rtc_fops = {
+> +static long rtc_fioctl(struct file_operations rtc_fops)
+> +{
+> +	lock_kernel();
 
---XvKFcGCOAo53UbWW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
+Heh.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.1 (GNU/Linux)
+-- 
+Mathematics is the supreme nostalgia of our time.
 
-iD8DBQFHhM0jWto1QDEAkw8RAhw8AJ4x2Jt2rknSfKQRxn8+4/t1ly+WAgCfZNRr
-vBjDHDAL+TsEaBbDDD6ZnHQ=
-=n25R
------END PGP SIGNATURE-----
-
---XvKFcGCOAo53UbWW--
