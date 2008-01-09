@@ -1,49 +1,52 @@
-From: "Jesper Juhl" <jesper.juhl@gmail.com>
-Date: Mon, 14 Jan 2008 00:12:25 +0000
-Subject: Re: Statistics with checkpatch.pl
-Message-Id: <9a8748490801131612v6b8362dfxe01d2c7c961d0424@mail.gmail.com>
+From: Nikanth Karthikesan <knikanth@suse.de>
+Date: Wed, 09 Jan 2008 05:51:40 +0000
+Subject: [PATCH] Change x86 Machine check handler to use unlocked_iocl instead
+Message-Id: <4785B342.2070501@suse.de>
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
-In-Reply-To: <4d8e3fd30801131326n263c3b57t32289bcb49303e35@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-To: kernel-janitors@vger.kernel.org
+To: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On 13/01/2008, Paolo Ciarrocchi <paolo.ciarrocchi@gmail.com> wrote:
-> On Jan 13, 2008 10:42 PM, Jesper Juhl <jesper.juhl@gmail.com> wrote:
-> [...]
-> > Hmm, something along the lines of this should do...
-> >
-> > yourscript | grep "total:" | sort --key=2 | tail -n 10
-> >
->
-> Not really:
-> paolo@paolo-desktop:~/linux-2.6/arch/x86$ cat
-> /home/paolo/Desktop/checkpatch_output.txt |grep "total:" | sort
-> --key=2 | tail -n 10
-> total: 8 errors, 46 warnings, 763 lines checked
-> total: 8 errors, 4 warnings, 125 lines checked
-> total: 97 errors, 69 warnings, 2889 lines checked
-> total: 9 errors, 34 warnings, 423 lines checked
-> total: 9 errors, 6 warnings, 194 lines checked
-> total: 9 errors, 6 warnings, 440 lines checked
-> total: 9 errors, 8 warnings, 175 lines checked
-> total: 9 errors, 8 warnings, 544 lines checked
-> total: 9 errors, 9 warnings, 307 lines checked
-> total: 9 errors, 9 warnings, 422 lines checked
->
-> Looks like sort is only looking at the first digit.
->
+The Machine check handler registers ioctl handler that is called
+with the BKL held. Changing to register unlocked_ioctl instead.
+Also mce ioctl handler does not seem to need any lock protection.
 
-Yes, 'sort' does a lexicographic sort by default, to get a numeric
-sort, use 'sort -n'.
+To: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
 
-I didn't test what I wrote, hence the "something along the lines of",
-I assumed you could work out the details when pointed in the general
-direction :-)
+Change the Machine check handler to use unlocked_ioctl instead of
+ioctl handler. Also the mce ioctl handler does not need any lock
+protection.
 
--- 
-Jesper Juhl <jesper.juhl@gmail.com>
-Don't top-post  http://www.catb.org/~esr/jargon/html/T/top-post.html
-Plain text mails only, please      http://www.expita.com/nomime.html
+Signed-off-by: Nikanth Karthikesan <knikanth@suse.de>
+
+---
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_64.c
+b/arch/x86/kernel/cpu/mcheck/mce_64.c
+index 4b21d29..d3baa62 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_64.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_64.c
+@@ -634,8 +634,7 @@ static unsigned int mce_poll(struct file *file,
+poll_table *wait)
+ 	return 0;
+ }
+
+-static int mce_ioctl(struct inode *i, struct file *f,unsigned int cmd,
+-		     unsigned long arg)
++static long mce_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+ {
+ 	int __user *p = (int __user *)arg;
+
+@@ -664,7 +663,7 @@ static const struct file_operations mce_chrdev_ops = {
+ 	.release = mce_release,
+ 	.read = mce_read,
+ 	.poll = mce_poll,
+-	.ioctl = mce_ioctl,
++	.unlocked_ioctl = mce_ioctl,
+ };
+
+ static struct miscdevice mce_log_device = {
