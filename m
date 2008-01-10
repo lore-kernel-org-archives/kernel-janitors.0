@@ -1,35 +1,48 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Date: Thu, 10 Jan 2008 19:03:48 +0000
-Subject: Re: [patch 1/1] Switch ioctl functions of drivers/scsi/sg.c to
-Message-Id: <1199991828.3141.82.camel@localhost.localdomain>
+From: Andre Noll <maan@systemlinux.org>
+Date: Thu, 10 Jan 2008 19:07:48 +0000
+Subject: Re: [patch 1/1] Switch ioctl functions of drivers/scsi/sg.c to unlocked_ioctl
+Message-Id: <20080110190748.GA20152@skl-net.de>
+MIME-Version: 1
+Content-Type: multipart/mixed; boundary="k+w/mQv8wyuph6w0"
 List-Id: <kernel-janitors.vger.kernel.org>
-References: <20080110180529.GA32640@skl-net.de>
-	 <1199991298.3141.75.camel@localhost.localdomain>
-	 <20080110185944.GA1690@one.firstfloor.org>
+References: <20080110180529.GA32640@skl-net.de> <1199991298.3141.75.camel@localhost.localdomain> <20080110185944.GA1690@one.firstfloor.org>
 In-Reply-To: <20080110185944.GA1690@one.firstfloor.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
 To: Andi Kleen <andi@firstfloor.org>
-Cc: Andre Noll <maan@systemlinux.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Richard Knutsson <ricknu-0@student.ltu.se>
 
 
-On Thu, 2008-01-10 at 19:59 +0100, Andi Kleen wrote:
-> > Really, all this is doing is open coding what the ioctl handler is doing
-> > anyway, isn't it? in which case, why bother to change it at all?
-> 
-> Because once it's open coded it is visible and can then be eliminated.
-> Does SCSI need the BKL at all?
+--k+w/mQv8wyuph6w0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No, of course not ... it hasn't for ages, otherwise linux performance
-would be in the tank.  If we require the BKL at all in the ioctl path it
-will be to protect the non-SCSI structures we have to use.  Is there any
-guide to which structures in the kernel still require the BKL?
+On 19:59, Andi Kleen wrote:
 
 > But perhaps for such a long ioctl handler it would be better to move
 > the lock/unlock_kernel()s into the individual case ...: statements;
 > then it could be eliminated step by step.
 
-James
+Sure, I can do that if James likes the idea. Since not all case
+statements need the BKL, we could add it only to those for which it
+isn't clear that it is unnecessary.
 
+And this would actually improve something.
 
+Andre
+--=20
+The only person who always got his work done by Friday was Robinson Crusoe
+
+--k+w/mQv8wyuph6w0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.1 (GNU/Linux)
+
+iD8DBQFHhm0EWto1QDEAkw8RAnHLAKCVzJIQO3qkNpYDADIwByWgXWCKBQCeIHoX
+3jVTY6J2pWn+rpEc/A84rUE=
+=KeEV
+-----END PGP SIGNATURE-----
+
+--k+w/mQv8wyuph6w0--
